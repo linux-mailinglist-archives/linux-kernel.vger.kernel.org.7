@@ -1,279 +1,146 @@
-Return-Path: <linux-kernel+bounces-887218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD110C37978
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD591C3797B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0C254E5479
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02E83BDD30
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404A73446D6;
-	Wed,  5 Nov 2025 19:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Pe9z5wHi";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="plTvXWVz"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B534404A;
+	Wed,  5 Nov 2025 19:56:31 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857C9320CD1;
-	Wed,  5 Nov 2025 19:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762372637; cv=fail; b=TXCXGwBQwtlPAgzEEgg20VHSq7q9TsfBpeOZf9UQgVIWI+XBoSQ6zIQ9tAk+hnpohFWtP38gNTCK1g1sJHBj2R29bBNaPLW0jZB9p4jc3RuO03bHmVIiFvSJFo+AiiRJZwmWSfG8uUx/5CUXyiX8dOWHOD6zeaEUWP7BMZ4YaGk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762372637; c=relaxed/simple;
-	bh=/FFVpZGYYqWPHxXUfQ449/r+KqZtTqQOuIL31Zy+Gf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=huQ1R5bpW2QdxipwzxCvvg9FKR7X7fHPAMLvrr3aAvUjJpURoCv1w4gXiHvL/71sYNAhN6Wsk1fn5N+9TPffPwiuoNobgpdTbUR2aBFB7INdYGAg4juIia8fBHMYxkR6FZyxZKBZWHiA7rJY4pte7dzIzzIrw6AtOqvvQk+4oYA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Pe9z5wHi; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=plTvXWVz; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5HTV32016150;
-	Wed, 5 Nov 2025 19:56:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=MULgnlS1iPcjk1cCr/
-	fn3tC0xm9DOPEMwPLIHAS/X58=; b=Pe9z5wHih4GKCxwb2ovx6mRaeJ3UoF0Qcj
-	FWF8/Ru+M1ZGPK8P/EhgyuDXXrniZ3Ev7L483tB75mq8W7M5PkUrvd/BWRjGa1ln
-	pVsvukamtcddk65Qrz/ovrbqFeFZbxHkkMGRE6VhkGz/dvxlzAqQUWxoMQdRgiJO
-	qoQ6OXKbNP+vEh17BINW/3d97W4H4bQcSmGGbACUfxISvrGqptHdmcPqj97dcaj/
-	OVxUn+7j9MCD9tXVdgLVf3YpX+C03p8ITsIB/hmp1kaMFlWHkybGxNZXmINYcU3+
-	14+LnqupPsMGoCqOQfJuC22nSUrGJMha8HfDHiMr2B65/DgMkaFw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8b1a8au0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 19:56:18 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5I6DaJ039423;
-	Wed, 5 Nov 2025 19:56:17 GMT
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010052.outbound.protection.outlook.com [52.101.193.52])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58nb71w9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 19:56:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hf4iYqYa2tzEfGIfoghzc0GnGAcdW6uXxnVmIgnOU6WhpWlE443dsnLsntS0WzcHYFNlmwZKg5q9OW8TlaeU4c9Z6hCahjpA9r4OEkKwi2RWslQBhYpa4sMOCVIxIrkLa/60FxYHxJmQrLc29MKlwQaEtczIO7J2lX4dVsMCmvslD3sKKTWYI+28pzsXAsOQHvIHbSNrfC2ctr+RcPsJkshezbvaGwH3K6OGCqG7lSljqGTyCXX6IXwR/4mI+RM2k2rP7ZKsAiI0SK3xXtDCsvTmwrBVVmfUqSWU3+ZYIVueYC3xPPjYqCO80lPMMuC5wgcuOJMxWSrOafxvoT5pVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MULgnlS1iPcjk1cCr/fn3tC0xm9DOPEMwPLIHAS/X58=;
- b=eeSBNDvBwJ0TDY774G5Z01LED6mXiYnn3cD9FZq9GoxowBv1WM+XVYLNtvqTBPOEl/aHElwJx6M0DzOsOIp3JrVNZYUp/4ZNS6Cmx4szsnJFsGGN/h8QoYjlrx5Th6zEWuUJ008hSBjY8zlAL0Hm0DmeDsHMYfcIjo+UCjcB8sIGjCBkHpwZUloMlTMxdDl/b2JDODhWxuclIR41FpaWV5s5Quwj8EkppdaVKMaGgAR40PE6daRFNcDdOHrSWbFUZnAgtC+iVuwSHJ0VNsWuiwAsqN8a6MDLuvsKgTC9+nULWg0pjn5pxXj97coAi6WOgmdMnL9dq7ydeVaW+KZI1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MULgnlS1iPcjk1cCr/fn3tC0xm9DOPEMwPLIHAS/X58=;
- b=plTvXWVzZWLss5FfEQpUbEn2ZLTYALgFXLEXAzJjhKiv0RbUEl95t9Qax8/zs6gkg02CscGVXyKKX1fZLNFBfpfxCLUctQeqkjfsHjPewb7EUlE3fPvd9Y5ivsOiV7O1tFRyXIhzQ+3/2wtO+rj6cVsfkfCbBg8xDlQjRJZOpI8=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CH2PR10MB4215.namprd10.prod.outlook.com (2603:10b6:610:7e::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Wed, 5 Nov
- 2025 19:56:12 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.9275.015; Wed, 5 Nov 2025
- 19:56:12 +0000
-Date: Wed, 5 Nov 2025 19:56:10 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-        SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Pedro Falcato <pfalcato@suse.de>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-        Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH 02/16] mm: introduce leaf entry type and use to simplify
- leaf entry logic
-Message-ID: <f8f748ca-3bf0-473d-bd91-ca2bb1141511@lucifer.local>
-References: <cover.1762171281.git.lorenzo.stoakes@oracle.com>
- <2c75a316f1b91a502fad718de9b1bb151aafe717.1762171281.git.lorenzo.stoakes@oracle.com>
- <aQugI-F_Jig41FR9@casper.infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQugI-F_Jig41FR9@casper.infradead.org>
-X-ClientProxiedBy: LO4P123CA0238.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a7::9) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930A7342CB6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762372591; cv=none; b=EJ1zsdBHtUVxMu+/+Mz0vBV2udUHQGb/liZIoFyvBg6MRXk2mV8zI1AKmtmOcDuujlalSMExfUPjJ3zZXyL5MDibA9xN+IB7GVKQqudqSBJNOqdKb2QWr1iCy+aZQIFQRPNgIuaM+Nqe3TuigcuUbz9Pk3xUboQfOFdvG8ZEio0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762372591; c=relaxed/simple;
+	bh=DA/TgFcrQsJdkNiib746rgjUVZmzRttIe9da/NbC0fQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cSRE8KgmRDmSJK8uAf1BOewNagDTG4CcmF2G5sSPjHkHsUjRN5SLIrbO3vAYG7qbpidMNQVwebdTfL/P0qEFZEUK6Jd7Hth62osqnf3ymzR5m3R+u/voXA4jVS2h/l9MdfUdveRvb3kSeprKp8bgVnj0HltUfTRwQi2f6eInZQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-43331987addso4385975ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:56:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762372588; x=1762977388;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DsJIerXbiX87dCz1LLhmZWGziBLNayY2WNg901pyJbA=;
+        b=VUV6dLm0Q/8gXqw3nQCeMjuvLvsZexjYGVQEnmfU7J1RBsN8Fxn1Nl+vPEwuyXhz3u
+         Y+c+a6OjWDtmPfLR7DJ+Lg1pE/IjcULjFebijUq+qg5qTebXewPXe8qdpQFuQzaeEZLk
+         gZqbqt/0hOHQIa3mvUsczyDu+YYZ4TsoCmwBLI/+T+Dk3l5MaETaeWM47qpPysspOKBf
+         wZG/yIxq/8kREXoKIQktq+GOVDRVbhZaIdq/pOveyXXAsLg1twXthvxCvETx2FyFwh/Y
+         n90lK0IArqEXmZCvVISHHHFTJQj1l3cCj84jyoJ0qmx2WBgQ81WRWfVJTerxEVwf2tbJ
+         dzsQ==
+X-Gm-Message-State: AOJu0YzdEryYi8p0zzhKP+SqMgvoJFJ3sJObs3idO+fs2d6jvb9Uk78Q
+	6iJVjtnI5X/NmrAWpw1pk+zslHStAem5gG4rvE8jDklMVoU5LcBEGpQbyv9g1zyf1LJT+EY65Ki
+	K66tmkcVXZ6or3cjbECMfKP98Wx/Ftaij4yDlTziKtHywFPp+HqRKr3Icfb9wRw==
+X-Google-Smtp-Source: AGHT+IEwPu4aVxUjew24tnX4NK4p2HgqB3ivS5W1s02DNQalhuoV3OG/emTB2nC2LCQlj298Nc6cOTffAMSkxW9WvQtOVEJISneK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH2PR10MB4215:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbff7888-31cb-4569-2b16-08de1ca55f46
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?T38Wo9Qg4mfXhXUgmWOz0PoiNI5A0pV6OW73fNxJgac5ZRKclCbT5skKoIRu?=
- =?us-ascii?Q?4xF5boL6s2KyhybV/RO2T6X5lz9BKubnFiHAcHeOCV/vvAcd7cL2NnIeOjpp?=
- =?us-ascii?Q?tnCpXyNOG6H7M1VrSyUWLMae99/SwRYYBHyiTxKxRSvmoviJvWuyeHHGwirK?=
- =?us-ascii?Q?6PhKfJ/YBClz3AkYBYqXhvDQ3jLO+9QmdRi+9fT/KsDOLYxUCeFUAu6YExqt?=
- =?us-ascii?Q?Gwnw6XZA2vBtKRiQy+BvTDoqBVgQZqQA55rdCjfeH1wgOtNvWTxiqjlT3tLN?=
- =?us-ascii?Q?NJH+6U7NUU9grCFi8l+Z3MLAYhpwgV1aFC9VwdTSE4EBS74H5HZ1q8Ax+n/y?=
- =?us-ascii?Q?QsyknWM3ii9g/tQynBKqZj7VbBfEMXYbNf5RlmZsnHpB6gAlJlnzxrK9UD+x?=
- =?us-ascii?Q?R0lxw5ZCIJsqvpTrGJsm0hbyXL2xVVaFms8r58bS0kYSabt+rHmoI79vSoGi?=
- =?us-ascii?Q?E1oroN3Z4B0vo9vG/Yq/Ot58qQPsG1usyyDSetx7WvMAkjhYBpa4TigvLyeX?=
- =?us-ascii?Q?FVkMKBbpYKDRr6Ao/nx0sLTbyqt5YMQQj0b42gULhNk7fofBcCqLD16Q1NI3?=
- =?us-ascii?Q?p4rgYnWuCr/QpHFWSNPXro/q9QGNdRwbBAbHS+6z01w7NP9Suw+gs4hlcb+M?=
- =?us-ascii?Q?8EJmrmBY1Sdbtx1hsQkcgk7AD2diJVu9G4Nv7B5OcNrjEO+pACzNBFkg6gAJ?=
- =?us-ascii?Q?gJNqgTYE1DYR1u1tuv2+6kC+evzhlzhD6mM0L/tGbkFWHHi6zn2UQqY3bAPT?=
- =?us-ascii?Q?CX/7UHn2igEuUynZPKQHogJ7fWDNLNUr0xwQg73Emqe37L6KXuN0ief948y/?=
- =?us-ascii?Q?0z0BuFVnxUCM2oPWUa4j3VUNkAboVNSr62z1krwFm7amSRl0rN7wJ5SQMLWm?=
- =?us-ascii?Q?LTZqwKFdlJLDAJd5ZbztCWizcYUUcDwctI+fbogI4ufsnA/d9Icw8zYSE366?=
- =?us-ascii?Q?lyoNh0oN3BCVknMZ0ZmeFwD7kebrD4PgSmWpKUIumpGf3mkuPfo5Fq9E6fof?=
- =?us-ascii?Q?CxawxDZdK/2HdYOvyotMlKifk+n3iL+KPRilblgI4GwmqUXew6A3BY1q98B0?=
- =?us-ascii?Q?MqPXxYdrMvp35QcanhL/y9NqeTZPv9zeXoou9t+FLOcBsIFLFGkJfp1At86q?=
- =?us-ascii?Q?MW8nJY0gafKYOJG9QnSZt0g2l3Cz5PT/gXQF+b4QT9twDLCw+03x8kMn/64T?=
- =?us-ascii?Q?CGXMOAfxYhmY6D4A4JgrRrOyQGUZWXFeZEKmNYyWzaJd0CMatyGK1Gtu0AKT?=
- =?us-ascii?Q?aOhlkbx08d20YXFqc7FPkdHfSn7SLhk4VsiXEsdZEZeO/iMQCubBPhqJjZ/R?=
- =?us-ascii?Q?+hCQrp/O+MuD+lSUfS57qCPssQjA+HfXuLtQhKAEUA1yGtFOWp3qTo4Py/uw?=
- =?us-ascii?Q?XWG4U2PpKIgDpA7l/YqrYTmxQx+ONdbROClFhCgvzDMY680T08Fb/mikBGj3?=
- =?us-ascii?Q?8VPIRuLyS7waJnVcmJsKovKf8HT81Db4?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qSE9YJbcr7C93TjP8JPlefynyGbajN5y80wqLSb8qxc6wzQNjSebabOZFCMc?=
- =?us-ascii?Q?DKWOC8YrqzHUw1o6I8jhh0qyMcjgFwqBWSAytG5XCYN0H49rr8ySQJ3mXxuQ?=
- =?us-ascii?Q?oc/11Ca36qeO0GiZzP3Oqp1t5stzB1bwsRr7Q0dA0uOT97BEuIYLJDx3Jkj/?=
- =?us-ascii?Q?EK8nBjw/IAWU8j9Er9tTGHr4vIveBRvMN0tbzoHMsFzCWbcucFhJz0EzaaWN?=
- =?us-ascii?Q?90A+4xB73o8kNMiPzM9vdPO+PKsXVjDbpp/3tf5A3tOx/8HO/qHwDLndS27w?=
- =?us-ascii?Q?k9IiUFqPRfsCpCzw1sl310XvCC3vYXiTIdp+gGAAG9/GBLfbGECcZ23UwiIl?=
- =?us-ascii?Q?dSANEtMQJLME3BRfSdR7aOoJZ6HxviWMlmkCwcxdxOob9nPjHEkScz17iRU1?=
- =?us-ascii?Q?CudUkybNNcm9fIqu86mYD53geFLxfOlNuCSaRkX81/sEk1wYAJdgaPEhAvhx?=
- =?us-ascii?Q?bvBe5RYXwlbIPTlwtBJCVqZqDXaGh+6upugp8NaF/I6c7fZW2OjNpyAJnvIo?=
- =?us-ascii?Q?Kn6JYDENLsJlbfGY2qC0d0kNSlwddrv32eTVcdgmJ1nbrwL3n6MP9I8/wOT6?=
- =?us-ascii?Q?lXEwkHsK6/ttZ/U9MAZ7Or/USKDGntw3Ligvoh7clbLskSo6F6fFxyp3homl?=
- =?us-ascii?Q?ROMx6ToOE1Ut4au/9LnHo0W+TVnf5kTH7FlUDBgGJpnzx91IJarlAq7Mow30?=
- =?us-ascii?Q?yKKIwGbME4C5KPnbDcESXeW5fcCXpUJCMS+fnSd4jv5DhTKFyeJRJWp1yatq?=
- =?us-ascii?Q?fpE01WCa6OZszTvDXVSwblPOPFT4k7A0DlRK2xFZStQ+yeapeog6uYd0hAdv?=
- =?us-ascii?Q?Gy+YGh60udmuiHWOqdFGDM8PT9PZeGesKsddWtTE1knSkjw4KHNc+rszjI2D?=
- =?us-ascii?Q?tkaAMhMthGFDw72FyYy9/0c1i7bwFhKORPta/wBdd6L5Wc346CO1neBPEOk/?=
- =?us-ascii?Q?TyDaVftC/R8QePMLZV6b9CWPWbMzwkSIYK7Y4DZbQczvrPCkRen3h3v51YIQ?=
- =?us-ascii?Q?LtA0dccyrQIj26oJH6gnCV1LQAPO2flJhcddHZz6kVfnbSk1RpUY4hO6uYRh?=
- =?us-ascii?Q?pJM+tnO47yJNrVoldEm1lIkyRK1KSCr6qVkfBLz1iSLE/RIxp7ksL+moynWM?=
- =?us-ascii?Q?e5UnaKPROAFGbwXGbJ3a1EtiO6Zie1ERa6zqPZYeuqfOW6gz2sSriiAK826y?=
- =?us-ascii?Q?+USzEUzrs6GMGcPTYF0GNm1iPHoBcbLE6zmr6VXPhDE/vlXoeWOA+j3DLyQU?=
- =?us-ascii?Q?vU7C39bJPXuWL4AMZElL/ZJ++3rnfqZ9Brq57koqm3fymCXILuIsmLhiyRvA?=
- =?us-ascii?Q?fSUN3XY57TunCfmz67tqZh0L2lAZ4jEjCfJciXcf3Afav1gJ72b9DZ2MkdmR?=
- =?us-ascii?Q?MSrzdGbnsCu3M34igcedxjag719QK7DfbP24RuSW2TyoCY3OlBz9lvnhd18Q?=
- =?us-ascii?Q?rdylTazArQbl/eN34Qd6nOMVzIearY0l6VEFwZEH79EzjAgTU/AHosm7mP9Z?=
- =?us-ascii?Q?stD5YZQVejhYkY9bR5XPAOghOj7WowgL/J+yli5LajNwU/5dy3an76vAlkFz?=
- =?us-ascii?Q?FJ7oDr8bncgGreHBnIrVfO1r1N1RoJcd3xcqC6tenn7NZQFBfVehp6iwoawW?=
- =?us-ascii?Q?8g=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	MWXa0xBPoXxa9RVbSpkrV6P+6NdTW0VX315yRc53r9ONgNxhlaq5pwVHJvtemWLmPdu52ctJoqq/w58/GRERRmo2nqj/bn83Bgvcm+oUvUVVvrc1/q9PwqY9c5L5FFsznhDe8749LP9dTgCNskn0o2zKmFNuYOAYQhAVgYOpKTBpgHWgJ4VLdCicJWdZGeJQTniXwqw1Ad5B7Q9HCUu5zQZKqUHjRMdjSzi76ZBo/neSDZzjQGGBr6ev5YF/77l6+upQKn+T8Jz86dzf+6YXbWnr6O9voFIXbdEGSV82EAPGutAGEmPvfn8IX9qV5kRou/n/Ak2ZrGCWawZw+6GIvf4O4P47EMhQoWaCNYy22pRZAOuuRl/68m+VUTYjtC8gEOO61yykNsJ5pKcew7d7HJV9HScrGzys2YtCw0buGiw7GeX7mhbFHOK9eZcSkpK/uuYTaJf/yeuPRILBiUdk09atSDeT+4oK2VQoIIecYLMf6/heiOJuFUnNicCigt7mDyrl0YlBO7tbEg2l8jGMht36SI9r9tUKQWtuoNyB+460K77llqUscxedudlBrmOvdfILLQuir2uDI5FhGvslOSbIfh4AupVtOlWV6kzgA9Q=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbff7888-31cb-4569-2b16-08de1ca55f46
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 19:56:12.8471
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lo3zmhyi8E0HxOHELs5sxRG6agJ7DlRI6DDPRV4wZG65YvIFgOMRRVXyLvm89rGd8j4Hukfd2MPHvLUzyps/TC7ySke162azQvcntWoWppA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4215
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_07,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511050155
-X-Proofpoint-GUID: 0p09Z5DiJL_0aEaI4iqbFKLAoah3YVPL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEzNiBTYWx0ZWRfXyVPh2VaBWDVR
- KMj7h2MfZTR9jpaWSdM0Tlghy90CRVxH7t8TzSsyeVyV/+8bsUTnAZLiT/F1DZiLV2eLlhu8j+r
- Fz3OWALL22pYFrxEi9JWF/gppZEOZvlT/wS6uEe3cDmkQ+3GehSdRQNhGsbLWRA20Zzav1kdD2P
- +sr269T0w9maeqhNuM+2ruG/vV0cNkpFSk+YGiP6EtH3T7cbIaWS/e0mxGm/sysrsGFgWba83mK
- x6f0NWntvlZn2jxoO1o0hmZABOFQ0hz0m8NqZMsjrmq2UEizDp835KVONLRuKCMxiV33DOVMnBj
- 3gF+LcFwXA4zTndvjs6E/TzIUOrPulttjEfA7lLw1crW7XP/N/UeBPOuGkT2EVJ15IFmK8/idUY
- DmEHOKmyriFVA2YJDrIoaxQ25MPp4Q==
-X-Authority-Analysis: v=2.4 cv=DoBbOW/+ c=1 sm=1 tr=0 ts=690babe2 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=8WywiDPCvVzKtv7gWyYA:9 a=CjuIK1q_8ugA:10 a=UhEZJTgQB8St2RibIkdl:22
- a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=QOGEsqRv6VhmHaoFNykA:22
-X-Proofpoint-ORIG-GUID: 0p09Z5DiJL_0aEaI4iqbFKLAoah3YVPL
+X-Received: by 2002:a05:6e02:216b:b0:433:2aac:c540 with SMTP id
+ e9e14a558f8ab-433407a409emr71594115ab.14.1762372588688; Wed, 05 Nov 2025
+ 11:56:28 -0800 (PST)
+Date: Wed, 05 Nov 2025 11:56:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690babec.050a0220.baf87.0064.GAE@google.com>
+Subject: [syzbot] [trace?] WARNING in ring_buffer_map_get_reader
+From: syzbot <syzbot+92a3745cea5ec6360309@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 05, 2025 at 07:06:11PM +0000, Matthew Wilcox wrote:
-> On Mon, Nov 03, 2025 at 12:31:43PM +0000, Lorenzo Stoakes wrote:
-> > The kernel maintains leaf page table entries which contain either:
-> >
-> > - Nothing ('none' entries)
-> > - Present entries (that is stuff the hardware can navigate without fault)
-> > - Everything else that will cause a fault which the kernel handles
->
-> The problem is that we're already using 'pmd leaf entries' to mean "this
-> is a pointer to a PMD entry rather than a table of PTEs".  So I think
-> we need a new name.  A boring name would be 'swent' (software entry).
-> An acronym would be SWE.  In the XArray I distinguish between pointer
-> entries and value entries -- would calling them value entries work here?
-> Or we could call them something entirely different.  Say 'twig'.  Or
-> 'cask'.
->
+Hello,
 
-Yeah as discussed off-list I do concede 'leaf entry' is overloaded
-vs. hardware leaf entries, I just found the idea of sw_leaf_entry_t a bit
-gross and unclear.
+syzbot found the following issue on:
 
-Of course we now add a new ambiguity with this as really we do mean
-software leaf entry.
+HEAD commit:    691d401c7e0e Merge tag 'spi-fix-v6.18-rc3' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1388b932580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=19d831c6d0386a9c
+dashboard link: https://syzkaller.appspot.com/bug?extid=92a3745cea5ec6360309
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-How about:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-soft_leaf_t
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5eaccda03e4f/disk-691d401c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0df5294a69bc/vmlinux-691d401c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f4f242731772/bzImage-691d401c.xz
 
-softleaf_xxx()
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+92a3745cea5ec6360309@syzkaller.appspotmail.com
 
-?
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9655 at kernel/trace/ring_buffer.c:7348 ring_buffer_map_get_reader+0x676/0x8e0 kernel/trace/ring_buffer.c:7348
+Modules linked in:
+CPU: 0 UID: 0 PID: 9655 Comm: syz.2.14601 Tainted: G     U  W I  L XTNJ syzkaller #0 PREEMPT(full) 
+Tainted: [U]=USER, [W]=WARN, [I]=FIRMWARE_WORKAROUND, [L]=SOFTLOCKUP, [X]=AUX, [T]=RANDSTRUCT, [N]=TEST, [J]=FWCTL
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:ring_buffer_map_get_reader+0x676/0x8e0 kernel/trace/ring_buffer.c:7348
+Code: 02 00 00 49 8b 0c 24 8b 74 24 3c 4c 89 f2 48 c7 c7 a0 09 93 8b e8 7a 1d da ff e9 e2 fe ff ff 4c 8b 74 24 58 e8 7b b0 fb ff 90 <0f> 0b 90 e8 72 b0 fb ff 48 89 df 31 db e8 88 f6 fd ff 48 8b 74 24
+RSP: 0018:ffffc900053b7db0 EFLAGS: 00010083
+RAX: 0000000000000773 RBX: ffff88813ff28800 RCX: ffffc900130af000
+RDX: 0000000000080000 RSI: ffffffff81c0bcd5 RDI: 0000000000000007
+RBP: dffffc0000000000 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: ffff88813ff288b0 R12: ffff88813ff288b0
+R13: 0000000000000000 R14: ffff88813ff28818 R15: ffff88813ff14c00
+FS:  00007f5e1e7046c0(0000) GS:ffff888124a10000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32a12ff8 CR3: 0000000021b1c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ tracing_buffers_ioctl+0x2bd/0x370 kernel/trace/trace.c:8717
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl fs/ioctl.c:583 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5e1d78efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5e1e704038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f5e1d9e5fa0 RCX: 00007f5e1d78efc9
+RDX: 0000000000000000 RSI: 0000000000005220 RDI: 0000000000000004
+RBP: 00007f5e1d811f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f5e1d9e6038 R14: 00007f5e1d9e5fa0 R15: 00007ffcaeda0b48
+ </TASK>
 
-Cheers, Lorenzo
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
