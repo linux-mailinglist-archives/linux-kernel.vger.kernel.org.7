@@ -1,112 +1,181 @@
-Return-Path: <linux-kernel+bounces-885754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F90CC33D51
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:13:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 734DEC33DDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:42:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77DD1463725
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9D318C5AC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B46723BD1D;
-	Wed,  5 Nov 2025 03:12:48 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92D117C220
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 03:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28C62765DC;
+	Wed,  5 Nov 2025 03:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZi7d2sU"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729F21D9324
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 03:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762312368; cv=none; b=Lj7qXwIjBFBk9qX/V0L6S6it+8fw5KiWpkglA54pqzMKCLJ+nhapotDwfb5jZKMrLJiS2QOOEG0v+ak543LQyIhDKE5iSGAY+wee95i2TR1Xh4OScP97LeZc77pFrScO359XoG9X25X72S9TlUgQGKVCsCnCdNJGRsNcxWpmwjo=
+	t=1762314118; cv=none; b=PaYbuGX2NbnYBKTjVJhPaoFpG5LRtgzn4fA2wohShbH2HkqZFFmr7hWao1NxOykbe9EP8D/XAbPou3pyGgCw6X8QxzWljpUEGELy4FEleBEhTz8CTD0b+N5K6BfOqkqw5sh4f5mGL1N3Hp6oY4lB2nbZDJHxnLWedI5kt/8J2lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762312368; c=relaxed/simple;
-	bh=Cc8tcOLIYtLa02HjBXT/S5QLaMDyVzaGmWUsKoqT0uM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WTL0g/T1ghomSNVXpi9KpXI2BYdbVlq0gthvCwSJYv6Dn9SFFZo0P5UaE9f1wVSGLU/Eg3p1r3zJvCg5Slag6JohhwL/24x4Ful6iOx9UqrvHkMMdmCCUlITJQVdNJHDeq9A4BeXK6jtQDo/tQQeQ0csg5EhpagKU6cskWn/4GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxSNGowAppMQgfAA--.2413S3;
-	Wed, 05 Nov 2025 11:12:40 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxE+SkwAppoaAnAQ--.58995S3;
-	Wed, 05 Nov 2025 11:12:37 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: ptrace: Merge ptrace_hbp_set_*()
-To: Huacai Chen <chenhuacai@kernel.org>, Bill Tsui <b10902118@ntu.edu.tw>
-Cc: oleg@redhat.com, kernel@xen0n.name, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251029153649.33345-1-b10902118@ntu.edu.tw>
- <CAAhV-H5E79jZ9rMYyP3h+KLX5rDGcB-Ec8WqyAhPC-pvuvv5UQ@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <429e94ee-ee77-3a5c-a2f7-c0d027fb7c4c@loongson.cn>
-Date: Wed, 5 Nov 2025 11:12:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1762314118; c=relaxed/simple;
+	bh=A7T7h1LobUivdMEwPvmLCL0uHKn/vDln9L++QIr/1v8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=nXWquKEBrgsqJba2DHVkamtF9uXv9o4sQX5o3dRMVljVxZ7K0FicWeC8P9mLXZN/GddGbVaP2AWwSipgRvkpCiMYwbeks2kV9XITTnWkXpq8dEc6H0d8VgGghlpbMUqQPMeBFNXaMmR5SAm4JIHmtlSzbhWCUgn5NCdEzxRMdXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZi7d2sU; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2952048eb88so68096595ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Nov 2025 19:41:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762314117; x=1762918917; darn=vger.kernel.org;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9PpcYW9rXkka09Jy11m9xJQRt/n8jdZMdqOTeKYVeZk=;
+        b=VZi7d2sUgMaFcZboFmJzXN6+BycKSs/it+WL0w1wuJbbtKEkYvFP1k6V/6dERNrJdp
+         TqmP/eRybHARHG1kDdqHRYKJmHV8TjTt49/FkRpt85rTK2+sSEiQWRXEJ6zo58dgNzqd
+         FwgwPtJV/BLJTl6aL2Psc2L1Te0M4nVyvoxJAttGB464xD3/5yQl3xouyCx4NrjcHIlq
+         X/LYJEREmMC2yZ5egAY0Ez964tCXaqRstPPkg7x4I/2B9EaofJCiXQvSvErS1q3fMlFa
+         1NKQSBdorRwBVVsU+aByxRbl4YsyTcG+fbuXOaWmoPRDKth1qsXVB41eU9ZI1FOYZOxa
+         zwCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762314117; x=1762918917;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9PpcYW9rXkka09Jy11m9xJQRt/n8jdZMdqOTeKYVeZk=;
+        b=G23MZv6NpU6TZZ/K+1Qcc+4uFqKexqZT0FTGpYddMkkefKHbutQ44Se8FQQRMX1uXq
+         tzM4FYr4QYYO/E+GThEYmU1HLJkmM151FzwOdTI6mD7ThMWdcVFY3hCHWmRqlWOzmhA0
+         jo5sXFUXMiQWfHuOiHagqMB2XoXMP+ZqQ9DaXZU2rtuQ48KOEEwfYin7ss04KAxdrOJP
+         CNDnimtkJuCgvA0x8I/uC0su0AfFPWE6N75N4xENwXQLHD+IzTOtX+dH88rcosCBJSlH
+         nNK14qEx/w3Zyr7VPakrwJzVkDbgrMQrmN8kEo7S7fOr7iFEoJsaTXeoql/JsDvetXWK
+         J1Mw==
+X-Gm-Message-State: AOJu0Yyf204Ss194w8YqN//meb44yiUTicQIkaYoxpgJzrPxVCmaT1Mh
+	Ommq+hUCVTmOvTsmS8+JxUVQafHg9BTxbyHPHqVmXZfHoEWg5dQeWjfK
+X-Gm-Gg: ASbGncvNXxgR6ZN167DVV4n0qVVxBPEy/247O+MZzBlfRfnHsKVCjLgRU2aCT938e+8
+	2R48PKsq7FOmAngR8YkH/bqSlcpaJzjWOHq8YV1uu2nVL/zvBQzNBXY3gp4Fpy2CcuNMctbGDvn
+	l0sQUY77dCFBMtrlWiGgiPIaAEApDimocfxhFJtQxTDXrISxqVIXKc1ds3p4qp7nmLi/5Oi1my3
+	PBDCWjCd+SmBLjSPR0QrJDbsJNNIMzzzicDI5CRdzPPjDwJqT8I+RoXXuEIGtCiXOdDHULkiUFn
+	Qg8n2Ko0L2Qh2Q/YzZj46CbFlVSl5CrNCMKd/ZRARuCTij+vZ+wLlqxM/krjfO8T4QEOkqne6oI
+	pR8MdDnJn2CKeEQxi1YFFWd5LEmojjIdesr7RfNBDNQADJbG/pswHo14f6hBFMeVOJCGo3g==
+X-Google-Smtp-Source: AGHT+IHU+u4c4m70sp/Km2qphWV2GETQaiqBJlBLQ9oH8KuDbSRxjLHzXNgoB+GOOUcEEs7QOw2HMQ==
+X-Received: by 2002:a17:903:944:b0:295:7f1d:b02d with SMTP id d9443c01a7336-2962ad3340fmr26429125ad.22.1762314116721;
+        Tue, 04 Nov 2025 19:41:56 -0800 (PST)
+Received: from dw-tp ([171.76.85.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a61418sm43663725ad.96.2025.11.04.19.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Nov 2025 19:41:56 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Hildenbrand <david@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>, 
+	Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, 
+	Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+Subject: Re: [PATCH v4 03/12] powerpc/mm: implement arch_flush_lazy_mmu_mode()
+In-Reply-To: <20251029100909.3381140-4-kevin.brodsky@arm.com>
+Date: Wed, 05 Nov 2025 08:45:06 +0530
+Message-ID: <87pl9x41c5.ritesh.list@gmail.com>
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com> <20251029100909.3381140-4-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5E79jZ9rMYyP3h+KLX5rDGcB-Ec8WqyAhPC-pvuvv5UQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+SkwAppoaAnAQ--.58995S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWrZFWfGw1rKry7CrykAw4rCrX_yoW8JF1rp3
-	yIyrs0kFs8tw40kw1xKw10qa4j9r1UKa45C3s5Xa4rZ3WY9Fn3AFWI9ay3KayUGry0934I
-	vrZxZrZ3uFy5uacCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
-	JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-	v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
-	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
-	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8q2NtUUUUU==
+Content-Type: text/plain
 
-Hi Bill,
+Kevin Brodsky <kevin.brodsky@arm.com> writes:
 
-On 2025/11/5 上午8:57, Huacai Chen wrote:
-> Hi, Tiezhu,
-> 
-> On Wed, Oct 29, 2025 at 11:38 PM Bill Tsui <b10902118@ntu.edu.tw> wrote:
->>
->> In hw_break_set(), those functions actually can be combined into one.
->> This eliminates intermediate calls to modify_user_hw_breakpoint() that
->> may leave hardware registers in a partially updated state.
->>
->> This redundancy was originally found in ARM ptrace, where it caused
->> non-4-byte address alignment checks to fail.
->>
->> Link:
->> https://lore.kernel.org/all/20251018133731.42505-2-b10902118@ntu.edu.tw/
->>
->> The LoongArch implementation appears to have been derived from ARM,
->> so this refactor helps avoid the same issue and simplifies future
->> maintenance.
-> What do you think about it?
+> Upcoming changes to the lazy_mmu API will cause
+> arch_flush_lazy_mmu_mode() to be called when leaving a nested
+> lazy_mmu section.
+>
+> Move the relevant logic from arch_leave_lazy_mmu_mode() to
+> arch_flush_lazy_mmu_mode() and have the former call the latter.
+>
+> Note: the additional this_cpu_ptr() on the
+> arch_leave_lazy_mmu_mode() path will be removed in a subsequent
+> patch.
+>
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+>  .../powerpc/include/asm/book3s/64/tlbflush-hash.h | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> index 146287d9580f..7704dbe8e88d 100644
+> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> @@ -41,6 +41,16 @@ static inline void arch_enter_lazy_mmu_mode(void)
+>  	batch->active = 1;
+>  }
+>  
+> +static inline void arch_flush_lazy_mmu_mode(void)
+> +{
+> +	struct ppc64_tlb_batch *batch;
+> +
+> +	batch = this_cpu_ptr(&ppc64_tlb_batch);
+> +
+> +	if (batch->index)
+> +		__flush_tlb_pending(batch);
+> +}
+> +
 
-Can you describe directly what is wrong with the current code
-on LoongArch? Please do not show the ARM's under-review patch
-link in the commit message.
+This looks a bit scary since arch_flush_lazy_mmu_mode() is getting
+called from several of the places in later patches(). 
 
-Does this patch fix real problem? If there is a test case to
-reproduce the problem, please add it into the commit message.
+Although I think arch_flush_lazy_mmu_mode() will only always be called
+in nested lazy mmu case right?
 
-If there is no functional change, just to refactor the code or
-avoid the potential issues, please give a explicit description.
-We will test GDB to see whether there is a regression.
+Do you think we can add a VM_BUG_ON(radix_enabled()); in above to make
+sure the above never gets called in radix_enabled() case. 
 
-Thanks,
-Tiezhu
+I am still going over the patch series, but while reviewing this I
+wanted to take your opinion.
 
+Ohh wait.. There is no way of knowing the return value from
+arch_enter_lazy_mmu_mode().. I think you might need a similar check to
+return from arch_flush_lazy_mmu_mode() too, if radix_enabled() is true.
+
+
+-ritesh
+
+
+>  static inline void arch_leave_lazy_mmu_mode(void)
+>  {
+>  	struct ppc64_tlb_batch *batch;
+> @@ -49,14 +59,11 @@ static inline void arch_leave_lazy_mmu_mode(void)
+>  		return;
+>  	batch = this_cpu_ptr(&ppc64_tlb_batch);
+>  
+> -	if (batch->index)
+> -		__flush_tlb_pending(batch);
+> +	arch_flush_lazy_mmu_mode();
+>  	batch->active = 0;
+>  	preempt_enable();
+>  }
+>  
+> -#define arch_flush_lazy_mmu_mode()      do {} while (0)
+> -
+>  extern void hash__tlbiel_all(unsigned int action);
+>  
+>  extern void flush_hash_page(unsigned long vpn, real_pte_t pte, int psize,
+> -- 
+> 2.47.0
 
