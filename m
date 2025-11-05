@@ -1,110 +1,89 @@
-Return-Path: <linux-kernel+bounces-885649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2771DC33975
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 02:10:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD59C33979
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 02:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F2618C2C1B
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6AC428011
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 01:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9B723EA92;
-	Wed,  5 Nov 2025 01:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB5D243387;
+	Wed,  5 Nov 2025 01:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cnv/qcxT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv2juyZ5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E9F27462;
-	Wed,  5 Nov 2025 01:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7483EACE;
+	Wed,  5 Nov 2025 01:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762305014; cv=none; b=MWYuS4Trxjn9WhRcQkwZ9WNdRCzTfX0nbE052euNVCH/n7QChPv6vMDTVR1psoWUAXTQaH4OxW7BjdqCYThHSn+8gNrvBE2bjflUjsxB/Aw9DOGHS2FmYFZIlDNvXWr+jPFhOkHbfrz6jGjN9E4dFUo+FQKLt5B/soBE0ddqrnQ=
+	t=1762305039; cv=none; b=LKzPJGcXY4RHsXrwI3SD/V1KREq/TMordPhoidVeAx1Q3NO9wtRNmrhj/vNF2HfA8ErsrZYrU8h42hGp2O1K5vvTXYV/oRx+ur/RahoyGk+G/w0IzpnZ8lU7EIlz6gMJuQyPzPwAWhwi1gfU22jTGpaxdJ3DT36iZkZ2YgdsIf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762305014; c=relaxed/simple;
-	bh=BR9QOkMBKtKQNFZBXhVhpUa+W8KCMPzKLzdfkVez+Pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvMvwIeS2fGm6NBJcU8ar/9E9ZJdJaD1eYgpvmJ8r+djcrbgrGMtiMhmWfXX4QiQdGMD/qcehr3tvb0WKpHPAleRMbZIYBTvhSfPtQti3a+suiQzcZN+eWMEXaszfFFenY8X4+GZz+Yo4/9oY9nAr89BjU5uDkUXBkWQZi+922Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cnv/qcxT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5587C4CEF7;
-	Wed,  5 Nov 2025 01:10:12 +0000 (UTC)
+	s=arc-20240116; t=1762305039; c=relaxed/simple;
+	bh=nzW5knNnDIiz1vAzKZBXSGQm7IQsdPAMRxiQqDCZQF0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gMcgYfAMjQAVJ9GvIELLFBVkEqlZ8ogBKbPc07oYGenM2gC78gjtNhqi3lWop85B4Pc0K22NpVRC5iMzn4PyoTQlKZcT7mDzVOwrCZU/VjCYNPbl0FV3Q8JNNNUwD60TYWxP5hIulKoe+OyaFLglPLfe/0mQsrVnGfobVs8KfbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hv2juyZ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C028C4CEF7;
+	Wed,  5 Nov 2025 01:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762305012;
-	bh=BR9QOkMBKtKQNFZBXhVhpUa+W8KCMPzKLzdfkVez+Pc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cnv/qcxTuwvpuaFbOkgxhwPhIjiuY8i0WBvmeo8bbKesf9fimeM6dooW3EORbcug6
-	 +hihFA0uY49GgaImD3HnpUaRdJaJfccr0QrmDMZGBPCxrfBvZjwRfNw4DWZOcZRavG
-	 hGeGfZRBN/l1qwdiemzqj6eufubYNxUqQ148uRWzp+GCYI0z7yYho/9BQirVm+2B1E
-	 mM/We650ebIw9w7HxwiBkZLgrz7fM12HcjUhsJ4+6maqhKGgXo6AOqO0P508jMBGC0
-	 xr9ceG0HxHdGOiQNpX4KjNpnu1fy3usOq5JhUvhBca3vwWslHYuzsTAZVDZipanYOg
-	 dRrlBnBaT4Xig==
-Date: Tue, 4 Nov 2025 17:10:11 -0800
-From: Drew Fustini <fustini@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: Add tenstorrent to linux-next
-Message-ID: <aQqj8yBEUUxfqPA5@x1>
-References: <aQpkDYXT3N6qWiZs@x1>
- <20251105091947.2692a796@canb.auug.org.au>
+	s=k20201202; t=1762305039;
+	bh=nzW5knNnDIiz1vAzKZBXSGQm7IQsdPAMRxiQqDCZQF0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Hv2juyZ5q32TCg6Vu0IEb6nmdwjycFiXo+OiaSTmV6Kz3V55W0aigVPkOUvgbLehR
+	 esmQWq2gSLChEcMy+mGQHi+GFuoEd8Tqda/qtnQFn6mxqyiZMK4G6Tfc/h+V4fu/4V
+	 TCm4WqgXsZcWkHzFco3Qi6GOBJjn3jlRMX1WNrHIRXZ0Ad74cTrUWECom/2MKW3Qjp
+	 MLNZZCrtbrKdcPMeXdqQRwrtowLGstd2Ag06eRJ7ApGDe+hhrhhr0r42f1Padts16r
+	 BSyWoh+g9V6+KfIEnY0Rd5eX/sayg15tvtLiLnVJSerCpvT3vP9hBdOYPv6FYNEwxc
+	 6i9PieYK2KDcw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D73380AA54;
+	Wed,  5 Nov 2025 01:10:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zkB9bKyoC6CL6du+"
-Content-Disposition: inline
-In-Reply-To: <20251105091947.2692a796@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] veth: Fix a typo error in veth
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176230501325.3047110.3705400838516504143.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Nov 2025 01:10:13 +0000
+References: <20251103055351.3150-1-chuguangqing@inspur.com>
+In-Reply-To: <20251103055351.3150-1-chuguangqing@inspur.com>
+To: Chu Guangqing <chuguangqing@inspur.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 3 Nov 2025 13:53:51 +0800 you wrote:
+> Fix a spellling error for resources
+> 
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> ---
+>  drivers/net/veth.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - veth: Fix a typo error in veth
+    https://git.kernel.org/netdev/net-next/c/9781642e5890
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---zkB9bKyoC6CL6du+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 05, 2025 at 09:19:47AM +1100, Stephen Rothwell wrote:
-> Hi Drew,
->=20
-> On Tue, 4 Nov 2025 12:37:33 -0800 Drew Fustini <fustini@kernel.org> wrote:
-> >
-> > I have setup device tree branches for Tenstorrent RISC-V SoCs, and I
-> > would like to add them to linux-next for testing coverage. I have sent a
-> > v6.19 PR to Arnd to add the Tenstorrent Blachkole SoC device tree [1].
-> >=20
-> > tenstorrent-dt-fixes git https://github.com/tenstorrent/linux.git#tenst=
-orrent-dt-fixes
-> > tenstorrent-dt-for-next git https://github.com/tenstorrent/linux.git#te=
-nstorrent-dt-for-next
->=20
-> Added from today (I called the second "tenstorrent-dt").  I have just
-> you as contact so far - should I add anyone else?
-
-Thank you. Yes, please add:
-
-Joel Stanley <joel@jms.id.au>
-
-> Also, should I update your other trees (thead-clk, thead-clk-fixes,
-> thead-dt and thead-dt-fixes) to use your kernel.org address as contact?
-
-Yes, please update my address to be fustini@kernel.org.
-
-Thanks,
-Drew
-
---zkB9bKyoC6CL6du+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSy8G7QpEpV9aCf6Lbb7CzD2SixDAUCaQqj7QAKCRDb7CzD2Six
-DL58AQCpFIUMeXY0rCeIY01BQ2uMYaDh5orPo+zf7ywG4VB6ZAEAvIBjWVj0Y6+C
-fuZ9e77niZ/sOIZgzVm5IlOAQzbqswA=
-=ZSEW
------END PGP SIGNATURE-----
-
---zkB9bKyoC6CL6du+--
 
