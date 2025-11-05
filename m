@@ -1,311 +1,201 @@
-Return-Path: <linux-kernel+bounces-886012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB51BC3480E
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:37:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383EDC34817
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B46E1896845
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99843AD4C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DF62C325F;
-	Wed,  5 Nov 2025 08:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0192D0C98;
+	Wed,  5 Nov 2025 08:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pA8Z6A3c"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010058.outbound.protection.outlook.com [52.101.201.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ODSu4f0v"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2307A28D836
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762331810; cv=fail; b=eyvyVx6g6xkfIFWY+X8u3rMMZrp9VzOK5rmhWkcWcbrqDHt3oHGvKdQVeGnCclcd0Tv0as9SCQo8iIaaQdAlBrtFrSzz3fC4xlh8BYN4mkeQNfaaGTj5bUoswyfzJKjMDmwn5rkPO4DOQMUSdcCSD5Wi96qrYjxty7otDdxj7A8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762331810; c=relaxed/simple;
-	bh=a5+2+yq+XveP6CL8k5lJ1SuHwPXZrdjz/KmVhxDnVHc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MqovSAklQfSKW/iQZsPWXbr+nzzqrhOGWHv+uXIgp7i+tV+J6FOc1kQT6c43haNVoibyS/Qn5qSWzswygqEHoonnzaPix+7RM8W6W57eTwif0E8cajd58OGODioB/ooDAXfCCP5XASGppSReMAT31M2dHmHzCZxC3XKchBEzIlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pA8Z6A3c; arc=fail smtp.client-ip=52.101.201.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=khGGi3fngHL/K4xhl0RyHoPKb43gN1yOdMCEoVuBFrwS32e45wN4K2mDIXjW0Jvg2QdpKCPY6pSBTuRhJ2LMjfOZNH4ZPEbfU0/JwlYT3IePMNc6oqv4F9yG2MP//IgEqiLZOpFvOk8KotsIjCPVhPo3d6BfCsvIoZ48esg0/fvIozwe7AyKQV5CUGy+ROqOpeWEK/0m2/bXP+gPVyJmsjsZxrActpS6FszKcRZuZoi2YPkRfnJNF0wWevNhZI3t8gI7BcQEImgJn1Hsrx/0faku33yDLp6Zm5wXkCplJQmvAfILt/G+1+/DJ5DFnv8SBKpJ8g65ag3w498yxGnVlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/SDGveDoW7rRemaKWQAjLLOWGQ+DzZjAA1mApE6Pva4=;
- b=JbzPSs+IicCsZfhuDbXo+cAvTh83jL96AKNfADsLM2kPH5d1RWv5cGd2WnFyjDMzM4oijqCKawsPZ+YF/KmGoYky5pT/tRlhdPb4QdpDe3kmE/Mtb5ftIODgRhzi3Y8YxDbBsJaUA4xZRcsKi9EaYMhwjpG16CeAe83fX6CrEkKbjZeRS4ZgAmAofRXb5X09+idddzL7IsPB8A7HftwlsSVCx1ZncYD5LMvHYuVQygCy3PxGvF6xUopiaC06bNiHsRdqVmf/60qPI+KSJmYYZDPkE9zypEz7XFyRqttj+oNYKkhe1lyyc2eNnewSMv8RZnEWDSqa4uE5rtvim0YeVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/SDGveDoW7rRemaKWQAjLLOWGQ+DzZjAA1mApE6Pva4=;
- b=pA8Z6A3cc3wO3XNQADBHm1ct9n71YGOsccSjciUe9go6x3ykGHQsBHBc2CtrGc3emqLdB+bScusbJpdCNH9XalAXFubQOuB/FhNXZ1XCMMe8BTylYRQKgDFbe2cKldDNJxBRxPDiHmxkzsgwdz3A6yKROijIf1PzrvtK/7+z1Do=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SA1PR12MB8164.namprd12.prod.outlook.com (2603:10b6:806:338::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
- 2025 08:36:46 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9275.015; Wed, 5 Nov 2025
- 08:36:45 +0000
-Message-ID: <23715885-c050-4f19-a964-30cd0e511d8a@amd.com>
-Date: Wed, 5 Nov 2025 09:36:41 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 12/20] drm/amdgpu: use TTM_FENCES_MAX_SLOT_COUNT
-To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Felix Kuehling <Felix.Kuehling@amd.com>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251104083605.13677-1-pierre-eric.pelloux-prayer@amd.com>
- <20251104083605.13677-13-pierre-eric.pelloux-prayer@amd.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20251104083605.13677-13-pierre-eric.pelloux-prayer@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0375.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f8::10) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152EA21CC6A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762331829; cv=none; b=kwG7kvTLEAtfvI2Rj4wMjSmUZYFpW+9kgDEANi6LQitJTrIi15lDmQJ7UFGX6cHamfQtUZEUZpQkdl2o1hMZgt1Fq66eszvXh+jZvryDiEsqHRdviA9fclhpDMu8vYMTq4sunOjDyMBNh+ZaoQ5IAKt2jHkDZ2v4pbN7wVDEfJE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762331829; c=relaxed/simple;
+	bh=xR67HqqaineWK1nU1mFeUiJ99qVPU6mI4Zt5EDPJQWI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G1XSWz+ZDNGTv3c/TaWtgJrt/xGI6MXMSREyzo1kbwTYM5/i/5q2c0Sz7/ksTXfis2zfzzIN+Kt/VJDcFZfxYgNSdysGzH5PseYv6sODXXXf9oeUg+P3tTwdpg2UGDYkIJu1v8fKCdz0zfGXsXA0xh4khvy8toeBdQxfDM2OGl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ODSu4f0v; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-37a415a22ecso5829741fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:37:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762331824; x=1762936624; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mHOJFLp1t8uz0Lsz9qQ9rEc7dvRTR/CUwEhE0XR2fDY=;
+        b=ODSu4f0vsCQh7VXKYMXLwIJecnRMUpt/KhKML7CAlhqQMxs1TQnu6pQhI8o66L4YEU
+         sHwrrnifbJ5acIjE8ti2dqr6vZq0dk/PxJEiUmLG9gBCSxRDsHABFl5VrEjbI+SJ4GyB
+         MQ8tdeml+qsxQwCMHRhCyf3qwkzzDf+SUfzrlg1lyML304Uwn1cQBxGBY59sRxfmL/er
+         4lay+1yDaZ+yMzEXwT0qMMnlTKqADpZAs5NQDPSToH26isuyqJMSVzAnxDdWFGe/2Otr
+         OEFOaAn5VaLasFGgjtFKGpzfHAMZrMaoWD1x6R+KZlqrCTnP5IKyxAISy4a64zWKAQOB
+         tGiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762331824; x=1762936624;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mHOJFLp1t8uz0Lsz9qQ9rEc7dvRTR/CUwEhE0XR2fDY=;
+        b=UVGFCONmyV5b2ca2w9vdTsM+6NfcT+FtviCp3q+xYtYbxUtK5rLV/GITNpKCzDDlaP
+         YiK7HVrGePac9H/BGL9BCbjshK9DNH+QcDjI9zCfsB6HPY6sgskjwXi4tZd7jGh6DdPe
+         24bb1y1m8PZeyaEXvjr59h1qjoYNcRyyPSMEuPhzmB4sQDasjW34PwIkHIkIcpVpe5F9
+         YAC0B8v9tMbLavsPHGinU64lIsRESOofwUUsnc+StO7boLpF1NiGLa0S95KxvvQ+nqZN
+         nK/zD1GxoRljMLyQfcKvkmZQ9K5GzOnj4XVMKQmxbfoaevxsWIsh7NgI1LF/WxU/uYFD
+         MzZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKr0FsyeEjrmFMiVvI2QDHVhjcDljgMj25NLrVN60iB7GKNGGL85rgoC/lS+SgPvsCOnSi7tA8VcmPnAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLGCEXxQ05fGqlNK1dtzzjKETGYQgNJjehNSK+O2RMjAW5E6k9
+	JLiaRPDdts7Cv3Ckt5hYC4OCleyD63XKDZ84FWcZ+7Wu81DOiPYDf0MyNd/3+9KYWnkME4FBQdn
+	aScmh2QpAfctbjHoSPhc1LGvQ11tl9NQXAFdbkJg2/g==
+X-Gm-Gg: ASbGncvPflpLAkkrmm11z0GOJPCIdvliT4/hKQoEJSnhN9Qf0VP9MnqXCEiSDr/DFr6
+	cQQOShOPhbAR7bJbcjgI6bVGmBOb4Ic3cJO+tQCUF9FDxDX7XJkhBDxmNNhKbs6wtjTmK7rmK5T
+	2ik1PFdObTCJzjhuC32531sr9JaLwLRTd0awGwxIzVn2MKcInQcXMdkcgOEdlR/AOwyraxS4F1H
+	yTJMgLEWWk2jWqbEpMX8gPK8RICBh7HwM9eh8V4OFEi+i+xhxI2i8h5zmY76qgD/wqfl+nckeBI
+	U8qJU+pqau9oOdse4onzhKXpDHs=
+X-Google-Smtp-Source: AGHT+IEwS9FJDoIyI1ANLrrhoGtmMGkWsCaeKM8aHV9xzA7vPJjZd2MFaNrpSzeGzM2NtOTXhxY2bgRBdfdqZROJ5jc=
+X-Received: by 2002:a05:651c:12c3:b0:37a:4277:86f8 with SMTP id
+ 38308e7fff4ca-37a4e723508mr5936831fa.10.1762331824053; Wed, 05 Nov 2025
+ 00:37:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB8164:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79de6ca2-5527-4f97-d43f-08de1c467425
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SXRQYzg3SFlBcGx5WS95d2VwbXVnRE5CeTY5TlB6K2Z3SlNzTTYzWjZ2TDRZ?=
- =?utf-8?B?dnl4eEp5K3pkbDZkOXhDd3hRN1NMT0c3QmpxdlUwWldoZXJCajNFWjRCbVBR?=
- =?utf-8?B?WHdLcjUyQWFqK0ZybDNPN0RTRWp2aDE4U2NON2FZd1pRSXF2bEFoay9rTkFC?=
- =?utf-8?B?LzhlOGZNblEzeEgyaVh3cERQb0JUNm1BY2FHV2FlM1E2eEdxVkVzNnRia01B?=
- =?utf-8?B?R3d2R1lLRjBEU0dtQkt5S2hGL1ZIbm5wMUVOL281NGRqTXdocW8yOFptTnY4?=
- =?utf-8?B?bHVPUWVWZXc5d3dNYlRGbCs1QXJhVFQvNFZPV3VZVEx5NUVtbGlrdjA0RFpM?=
- =?utf-8?B?Z090UUQ0Q01XSndxTmdybldpaFV5dnRRNlRaTzFVb2lPNE9ieTcrM3JPR2hk?=
- =?utf-8?B?eWVLWWJHb2NQdzIxNWVDSDNiRGs5d3k1blBueXdDWUhIb0JyM3Jpei9zSmt1?=
- =?utf-8?B?eFhtQ2d0MS9SbmhFNDlTL1pXOUZNdWo3aDFqWEw2YjhiMklqRzl5ZWd1NHV4?=
- =?utf-8?B?SkhuNnNrQWtNcHBKYXdadS9OdlJKcCt0bTJwQ3d1b3l1d3I4NmNTZmpkU3lC?=
- =?utf-8?B?aW96Z0t3b0Rrb1p6VlhrQVVEeTF2WlJrbGlLL0dHS1ZZVFp5Nlg5TS9QMGo0?=
- =?utf-8?B?TCt1UnhrTDBxQkF5ZVdCRzBXZHZIMHFobk0wTVZjdm5UT1BlS1lKcHNPZnNs?=
- =?utf-8?B?TmI0SkpHYkM2czdmajRqazJWOFFJVTBTajVqcXVjL0hOMnlCYThOM2hmbWF0?=
- =?utf-8?B?blJZaTRLSlZkckEybE1YNHBBdlFWOEtIc3RndEZPbG15TElnNURVTFIyMzdl?=
- =?utf-8?B?amM4TGthYXRhTkRmNHdMSityYW83dEtHc2IzVDRiRFdxc21oN3htWlZFWS9t?=
- =?utf-8?B?QmV1cHlFanJSRjZUbzEwNXFnZDFacVAxNUQyMEpTQm9HU2JpY1lCUDNUbU5r?=
- =?utf-8?B?Y2JwbzRkalNuWUpjYVlPdTJFRm5QNFFhbTRndzlBaEFwNTBHOC9Yb3JKbGFD?=
- =?utf-8?B?SzQ0NHdMNm11dDBKb2lzc1A5c3d5MXR2RjdUbUNzcjl1cEszdGQzQTVlT25D?=
- =?utf-8?B?dWFjYnRQc3JSZkYvcnNRcjZjcUNrOU01ZUpyaTRybDZFazJVbS8ySEFOcGZ2?=
- =?utf-8?B?Q3ZjSWk5SUMzUUxiQjVzd055NlJOQTY2S3ZqbTQ1T2ZsWVdtaHdlNjlXMnhH?=
- =?utf-8?B?aVRxZ2YvT1YwQnlIUGZtUU44VFo3b0RhaUkxTDNqbStOdDM5NE05UEhwMGdK?=
- =?utf-8?B?elcyRWhRVmVRYjR1WUNsdVJObThRanhkZnR1a0dBS0cxN2h1bG9QV3N1Sy9h?=
- =?utf-8?B?ZGFKTExhcHk1T1Z5cUc5bnNKYlpJV1I0blNCcXV2OVpncW93QS8xdklCMlZO?=
- =?utf-8?B?bVc2SXNXdTYrcnRxcDlUWUQyMWMzdnhhS3RoQ2ZISDZHYUtZWUhBOVVBZGxQ?=
- =?utf-8?B?Z2IrSjNYdTBOMWxXL3NWSER5T0JXYnJIUjlwbUpoQUVGUlZRL2Jzb2xpL0JM?=
- =?utf-8?B?UHppMXd0RjJEZXprVElReVVUMDVFOEswcldOdUJDbkJvMmRzYTFnL3ZaU3Jx?=
- =?utf-8?B?Z2F4YzBLNDl3RzJST2t4VVZNWHh3YXRFZ0VRckxVVGpiYm1lK0wxUmlxaWlr?=
- =?utf-8?B?OG9PQVpPcGtRWG1uSXYwWVZ5VEg0S1BnZXZNMEl5OXZaMlZPbERFTGtTY0J2?=
- =?utf-8?B?SVdvd2pRUVVoWUZLWVVzVTZ3ZW1GTXJjZ2YxMSs4SXBhcmhQcW5ERHczYk5l?=
- =?utf-8?B?Q0hUR0V0MUVKUW0rN1M2MkxTNmVaOEs1NGE5MXRReEVwNWdjelo1T0NqQ3BR?=
- =?utf-8?B?cUNvZjVGZ05Uekd6b0pPNW1rWFJtZFlYRXExQllxaTBjRE56Q1NTMjI4UmVZ?=
- =?utf-8?B?WFlJZExndGl0aHZMTFZIeTNVbDRodGEwV0ZTZXZacGhzbDlSMVAvU3czd1lp?=
- =?utf-8?Q?UpYq9Ia29MTOCV9mg2lnJTmFjoK1UYjP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YWp6UCt2bko5T0YvOUtSOHcwMTF3QWFNamo4YmpEVDkxUHJ0dnMxQllJMTVR?=
- =?utf-8?B?Z1U1SGY1bVR4QldOOE1GSlh3dGoySjNDclB3ZlF2RnRtbmorVC9tdWF2b0Fw?=
- =?utf-8?B?d2VFWEVCSC9ZclpSOHFmZGxjR08xNDVnd1RleTFVS1pQcjg4ZFFmL0VLamNk?=
- =?utf-8?B?cVVQTW5mSVVZVXc0bkN0L05CNU9nR1Mya050M0xxTXhXR1BZRDhJMUEyR3ND?=
- =?utf-8?B?Nm5xRVFMbEhRR0JhZG9QaTdHY04yTTJ0WEE4UnVsaUwwdGl6NzhXMHFDcmEr?=
- =?utf-8?B?TFJOZHpHU0FEdThlVDZ1MVc4bDl0YmI1YjM2L1J6WFpUT2tSZ0NTS1N4MHZH?=
- =?utf-8?B?bHJweFRQT2hMaUhXdkRDQjI4ZXdqa1RpQ3A1cmQ4dUdSWWZ3ZWYxRVVhTnhF?=
- =?utf-8?B?V2Y2YU95SXdudm9ralIrV05vSnVBUTJmNlROdDZvZjdMbEZVWUJFM0ZtQW5a?=
- =?utf-8?B?aSs4S09JNm1LaG03dmRxNXZMdllCZldwK2s3VW4ydTBpTzFhc1JkbXFzMFZo?=
- =?utf-8?B?cHJ1TTErL0dBMVYzK1kzSlgxR25iR0JRK2c1QzhobWtOM1kzK0hUU2FuSTlB?=
- =?utf-8?B?NjBxK2kvS2cwYWlhcXRibmpkWWJWSk1VYitBZHUrOWU0NTBGK1FKbmw2NkRy?=
- =?utf-8?B?L3JrY2xHdXdybytSZDhQMmZLZlNLM21DWjZQWGh2RTE1L3lqMmVjdWZ5VVhr?=
- =?utf-8?B?RHRrUmhQYjdQWnZsMFRpU2QzNU4zeEl2SFNHMFFaem14eW1RZ0ZUMjJmZ0pM?=
- =?utf-8?B?UlVtTFo5MjlHbjNzQ0x0R0tNYW82Ym44b1hCK3ExL2llMlhsZ2dqMkJMblBs?=
- =?utf-8?B?K1RxeElGSDJnN00vQ2htMklDTmpoRE85UkJvc2ZYbFdhcnNJU0dReGFDR2JG?=
- =?utf-8?B?QzUwaWUwVU5xWHBIc2daQndjL1N0emNTUGxaY0RzWkM1ZEZxK2VHdWdkNHpo?=
- =?utf-8?B?NG8xVXlhMTRnZWRKR3d1RktESFU5UTZ1UXZQcWhmRFg1SWpWZG9RSHhRU2VZ?=
- =?utf-8?B?NTVpeTg4MWNDcEk0cGp1dmFhdkY3NUw4MyswZU9DTTV1SENRVEpaWVc5eVpa?=
- =?utf-8?B?dUFwTUJhTG41elRYSzExWlBPTmhwUTJwKzc3T2dING0yUEVMdys1Q0NYRTIw?=
- =?utf-8?B?MEhVQW1VT2tMM1Nub3ZUd3NsaXp3bmpoSTFZSFZrS2FGOXRFekk2ckloQUhX?=
- =?utf-8?B?am1BNmlpWEVxMmhXZ0EzdzZxUzJqMG5MbzAzRWI2cVpCTktUV3NZbklLSFFw?=
- =?utf-8?B?SEhQdUZpQ01HQWhURGdKL2p1ZHRmN3ZaZm1FYnhaMU1KNzFhTEhDM1k1emRM?=
- =?utf-8?B?bFl6am50VG9xNkdVa01ITy9uSC8vZUE0bk1VRjVEWDd0eENCNWJ4bUNtRmxM?=
- =?utf-8?B?RGtnQTNQMVF4bUJGRXJkTmRVbUdYWkI4Wjc4bjNoQ1lMMFE1MnpndERKYmto?=
- =?utf-8?B?SVN1d0JkdXUyRlZHOUhveFJwWmh3c1N5eUt1VENPVWFERHBjT3YvMkYzRWJD?=
- =?utf-8?B?ckY3SkJwVHZ4dFFHVGh6eG51ZHg5VC9QK3NEaHZuR2k4SDBsM01mb3VDQnp1?=
- =?utf-8?B?elVqeDM0dGx5bW1FYzJKU2NnL2crWlI4R2d2cVlRdzVzd2lHK1BiY1pRN2sw?=
- =?utf-8?B?TFBTSlV2dTBxSmw0SXBUSk85Y2tXblB4c21HNDdYSXE3MXNxdnhubHV4SHBu?=
- =?utf-8?B?ak1OTHY0WmJoZ3huVDB3VU85QzVSMWUzMjk0aGxtbkJ5OWdTNTRBc2lOWnFv?=
- =?utf-8?B?ZzllSzJHOTdQTjZ3c3hZSTZocXR1bnUwZmFETUFmdGdaT1lodzVuQlhUUFc4?=
- =?utf-8?B?TmZzZllnNmN5VnUxZE9TNkVLRGttQ1JZOTZuQTVZY3VUV21CZytKNEZWM2Zv?=
- =?utf-8?B?dk43SXZZbGcrSE1PUmxiQWZSWHBoWk1tMmlqeEkrdi81bU9maU12dWN1YTJ0?=
- =?utf-8?B?VlBBTFY0MEI1MVU2WDh0a1JBSFdLRzhOZUJoa2NqOWVYYUZ0VmtPMkdiY1dP?=
- =?utf-8?B?eXBtNDFSYzVaODJzUzVUMnJwTlFvMDF5N0FVR1JsRi92enNad0M5NkMyOTR5?=
- =?utf-8?B?d0c5Mm11UWVtMEtRZ08ya1F6NHV6amhWWEpWb2d0cmV4L0FWZGh4cTRaTWh0?=
- =?utf-8?Q?emHNjwMD7vwM065z+kKQarmc3?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79de6ca2-5527-4f97-d43f-08de1c467425
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 08:36:45.7449
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZbfPAJd+bJhxRxZVEib4C2Njp1DYS4TifvWfL1CkUZ4+N/VVKHE6kiWSQw/Obzxj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8164
+References: <e6107389-ce76-66c9-b390-4ce79a19c0d1@duagon.com>
+In-Reply-To: <e6107389-ce76-66c9-b390-4ce79a19c0d1@duagon.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 5 Nov 2025 09:36:52 +0100
+X-Gm-Features: AWmQ_bl8iqNWLm--BTBsodCChq7EXhDAHNdIikJEOtLyoBd2kTAgFryCzLDI8Vk
+Message-ID: <CAMRc=MddjpF_GbJW-n8c9OTnAmMqb=P7NFZXR=3tPSRoHe8Nyw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: menz127: add support for 16Z034 and 16Z037 GPIO controllers
+To: Jose Javier Rodriguez Barbarin <dev-josejavier.rodriguez@duagon.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/4/25 09:35, Pierre-Eric Pelloux-Prayer wrote:
-> Use TTM_FENCES_MAX_SLOT_COUNT as an upperbound of how many fences
-> ttm might need to deal with moves/evictions.
-> 
-> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+On Fri, Oct 31, 2025 at 11:08=E2=80=AFAM Jose Javier Rodriguez Barbarin
+<dev-josejavier.rodriguez@duagon.com> wrote:
+>
+> From 7655a73f3888a5d164d1f287ba1f2989bb2aadd2 Mon Sep 17 00:00:00 2001
+> From: Javier Rodriguez <josejavier.rodriguez@duagon.com>
+> Date: Tue, 28 Oct 2025 17:40:14 +0100
+> Subject: [PATCH] gpio: menz127: add support for 16Z034 and 16Z037 GPIO
+>  controllers
+>
+
+I don't think you used `git send-email` to send this, did you just
+copy the contents of the generated .patch into the email client?
+
+> The 16Z034 and 16Z037 are 8 bits GPIO controllers that share the
+> same registers and features of the 16Z127 GPIO controller.
+>
+> Reviewed-by: Felipe Fensen Casado <felipe.jensen@duagon.com>
+> Signed-off-by: Javier Rodriguez <josejavier.rodriguez@duagon.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c                  | 5 ++---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c                 | 2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c                | 2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c                  | 3 ++-
->  drivers/gpu/drm/amd/amdkfd/kfd_svm.c                    | 2 +-
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 2 +-
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c    | 2 +-
->  7 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> index ecdfe6cb36cc..b232ed28872b 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> @@ -916,9 +916,8 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
->  			goto out_free_user_pages;
->  
->  		amdgpu_bo_list_for_each_entry(e, p->bo_list) {
-> -			/* One fence for TTM and one for each CS job */
->  			r = drm_exec_prepare_obj(&p->exec, &e->bo->tbo.base,
-> -						 1 + p->gang_size);
-> +						 TTM_FENCES_MAX_SLOT_COUNT + p->gang_size);
->  			drm_exec_retry_on_contention(&p->exec);
->  			if (unlikely(r))
->  				goto out_free_user_pages;
-> @@ -928,7 +927,7 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
->  
->  		if (p->uf_bo) {
->  			r = drm_exec_prepare_obj(&p->exec, &p->uf_bo->tbo.base,
-> -						 1 + p->gang_size);
-> +						 TTM_FENCES_MAX_SLOT_COUNT + p->gang_size);
->  			drm_exec_retry_on_contention(&p->exec);
->  			if (unlikely(r))
->  				goto out_free_user_pages;
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> index ce073e894584..f773b06dd135 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> @@ -353,7 +353,7 @@ static void amdgpu_gem_object_close(struct drm_gem_object *obj,
->  
->  	drm_exec_init(&exec, DRM_EXEC_IGNORE_DUPLICATES, 0);
->  	drm_exec_until_all_locked(&exec) {
-> -		r = drm_exec_prepare_obj(&exec, &bo->tbo.base, 1);
-> +		r = drm_exec_prepare_obj(&exec, &bo->tbo.base, TTM_FENCES_MAX_SLOT_COUNT);
->  		drm_exec_retry_on_contention(&exec);
->  		if (unlikely(r))
->  			goto out_unlock;
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> index 79bad9cbe2ab..d9bb16186e1f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-> @@ -326,7 +326,7 @@ static int amdgpu_vkms_prepare_fb(struct drm_plane *plane,
->  		return r;
->  	}
->  
-> -	r = dma_resv_reserve_fences(rbo->tbo.base.resv, 1);
-> +	r = dma_resv_reserve_fences(rbo->tbo.base.resv, TTM_FENCES_MAX_SLOT_COUNT);
->  	if (r) {
->  		dev_err(adev->dev, "allocating fence slot failed (%d)\n", r);
+>  drivers/gpio/gpio-menz127.c | 36 ++++++++++++++++++++++++++++++++++--
+>  1 file changed, 34 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
+> index da2bf9381cc4..ec9228f1e631 100644
+> --- a/drivers/gpio/gpio-menz127.c
+> +++ b/drivers/gpio/gpio-menz127.c
+> @@ -24,6 +24,12 @@
+>  #define MEN_Z127_ODER  0x1C
+>  #define GPIO_TO_DBCNT_REG(gpio)        ((gpio * 4) + 0x80)
+>
+> +
 
-While at it please also drop this error message. It is absolutely not helpful at all.
+Stray newline.
 
->  		goto error_unlock;
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> index 2f8e83f840a8..bc11e212f08c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> @@ -2630,7 +2630,8 @@ int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm,
->  	}
->  
->  	amdgpu_vm_bo_base_init(&vm->root, vm, root_bo);
-> -	r = dma_resv_reserve_fences(root_bo->tbo.base.resv, 1);
-> +	r = dma_resv_reserve_fences(root_bo->tbo.base.resv,
-> +				    TTM_FENCES_MAX_SLOT_COUNT);
->  	if (r)
->  		goto error_free_root;
->  
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-> index ffb7b36e577c..ea8dd17e2852 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-> @@ -627,7 +627,7 @@ svm_range_vram_node_new(struct kfd_node *node, struct svm_range *prange,
->  		}
->  	}
->  
-> -	r = dma_resv_reserve_fences(bo->tbo.base.resv, 1);
-> +	r = dma_resv_reserve_fences(bo->tbo.base.resv, TTM_FENCES_MAX_SLOT_COUNT);
->  	if (r) {
->  		pr_debug("failed %d to reserve bo\n", r);
+> +/* MEN Z127 supported model ids*/
+> +#define MEN_Z127_ID    0x7f
+> +#define MEN_Z034_ID    0x22
+> +#define MEN_Z037_ID    0x25
+> +
+>  #define MEN_Z127_DB_MIN_US     50
+>  /* 16 bit compare register. Each bit represents 50us */
+>  #define MEN_Z127_DB_MAX_US     (0xffff * MEN_Z127_DB_MIN_US)
+> @@ -36,6 +42,25 @@ struct men_z127_gpio {
+>         struct resource *mem;
+>  };
+>
+> +static int men_z127_lookup_gpio_size(struct mcb_device *mdev,
+> +                                    unsigned long *sz)
+> +{
+> +       switch (mdev->id) {
+> +       case MEN_Z127_ID:
+> +               *sz =3D 4;
+> +               break;
+> +       case MEN_Z034_ID:
+> +       case MEN_Z037_ID:
+> +               *sz =3D 1;
+> +               break;
+> +       default:
+> +               dev_err(&mdev->dev, "no size found for id %d", mdev->id);
+> +               return -EINVAL;
 
-Same here.
+You can return dev_err_probe() here, it's only used in probe(). But
+TBH probe() is so small I'd just inline this into it.
 
->  		amdgpu_bo_unreserve(bo);
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> index 56cb866ac6f8..1f2a5dcfa3e5 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> @@ -952,7 +952,7 @@ static int amdgpu_dm_plane_helper_prepare_fb(struct drm_plane *plane,
->  		return r;
->  	}
->  
-> -	r = dma_resv_reserve_fences(rbo->tbo.base.resv, 1);
-> +	r = dma_resv_reserve_fences(rbo->tbo.base.resv, TTM_FENCES_MAX_SLOT_COUNT);
->  	if (r) {
->  		drm_err(adev_to_drm(adev), "reserving fence slot failed (%d)\n", r);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int men_z127_debounce(struct gpio_chip *gc, unsigned gpio,
+>                              unsigned debounce)
+>  {
+> @@ -140,6 +165,7 @@ static int men_z127_probe(struct mcb_device *mdev,
+>         struct men_z127_gpio *men_z127_gpio;
+>         struct device *dev =3D &mdev->dev;
+>         int ret;
+> +       unsigned long sz;
+>
+>         men_z127_gpio =3D devm_kzalloc(dev, sizeof(struct men_z127_gpio),
+>                                      GFP_KERNEL);
+> @@ -163,9 +189,13 @@ static int men_z127_probe(struct mcb_device *mdev,
+>
+>         mcb_set_drvdata(mdev, men_z127_gpio);
+>
+> +       ret =3D men_z127_lookup_gpio_size(mdev, &sz);
+> +       if (ret)
+> +               return ret;
+> +
+>         config =3D (struct gpio_generic_chip_config) {
+>                 .dev =3D &mdev->dev,
+> -               .sz =3D 4,
+> +               .sz =3D sz,
+>                 .dat =3D men_z127_gpio->reg_base + MEN_Z127_PSR,
+>                 .set =3D men_z127_gpio->reg_base + MEN_Z127_CTRL,
+>                 .dirout =3D men_z127_gpio->reg_base + MEN_Z127_GPIODR,
+> @@ -186,7 +216,9 @@ static int men_z127_probe(struct mcb_device *mdev,
+>  }
+>
+>  static const struct mcb_device_id men_z127_ids[] =3D {
+> -       { .device =3D 0x7f },
+> +       { .device =3D MEN_Z127_ID },
+> +       { .device =3D MEN_Z034_ID },
+> +       { .device =3D MEN_Z037_ID },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(mcb, men_z127_ids);
+> --
+> 2.51.0
 
-And here.
-
->  		goto error_unlock;
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-> index d9527c05fc87..60b57d213bdd 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-> @@ -106,7 +106,7 @@ static int amdgpu_dm_wb_prepare_job(struct drm_writeback_connector *wb_connector
->  		return r;
->  	}
->  
-> -	r = dma_resv_reserve_fences(rbo->tbo.base.resv, 1);
-> +	r = dma_resv_reserve_fences(rbo->tbo.base.resv, TTM_FENCES_MAX_SLOT_COUNT);
->  	if (r) {
->  		drm_err(adev_to_drm(adev), "reserving fence slot failed (%d)\n", r);
-
-And here.
-
-Regards,
-Christian.
-
->  		goto error_unlock;
-
+Bartosz
 
