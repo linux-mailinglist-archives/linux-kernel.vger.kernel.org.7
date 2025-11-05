@@ -1,196 +1,237 @@
-Return-Path: <linux-kernel+bounces-886103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85067C34B8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:15:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C473C34CFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D7A1884A99
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:14:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 957574FFFAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64682FB0BD;
-	Wed,  5 Nov 2025 09:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DM49Z0AV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QqrZbFsD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DM49Z0AV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QqrZbFsD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F312DECA5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528FB2FB99E;
+	Wed,  5 Nov 2025 09:16:00 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E13430FC0A;
+	Wed,  5 Nov 2025 09:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334043; cv=none; b=jEubQbuxXcB3nU9afM3V3QV0/YBG+oZzYZw1YnoKtfXxT+ZIBUUoCbXBzYeopDYYZOlcqiJjKp3WgRJ0a9tA0sUqvTtQoCEdgt0UI2PpG7uaJ4Gikx00kcPGQ7Lx3glrO2X6eJHwuSlKD9ZliTwufOXajUMtfCfgPBVwk/FDmGU=
+	t=1762334159; cv=none; b=FwIrkRt+Yg8lS8o3ZUs32uP/Oe/J1N9XXVjk2xJ0iG3YUhwGiOcqMwR0XRvv+9MpjmGIAB+WdMw43T+DVEu938qQPXNeeSKYKGWhN8ra40qWCFcMEzmGnamwM1ID0KWcYaUmjwqfx1+yqGLCbjja2+czQJJEFuspooq0rDBidtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334043; c=relaxed/simple;
-	bh=CV9fZREeCgOAqmEQden0wucsawb7ZKlS5/iwvuk6mQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elsnkyEO9+JQ21jcyHdPoJ+OeuH+WGCf40iWlfbP7bFJwRHtcvG5rEVytBqMrnLfJLkm6SREHBf7hV0OXjH6+FJ6muwGqt22Q4GR1n+scqbv3bMKSgLppY/TJkman+6t8Mbtpkc/YDUDs1iSj4iqq1fxZFFc447qz9Hqu8VMrpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DM49Z0AV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QqrZbFsD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DM49Z0AV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QqrZbFsD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 88A842117A;
-	Wed,  5 Nov 2025 09:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXVULkgdA4xsS+fwyNhdq5btCzXP1JoCzKO3djpV8yo=;
-	b=DM49Z0AVDbdX9K4m55bhvKSEXvqStAOD7sIrHzA2bDCs946x17M1wBUmJl0KvkxTtzOv4r
-	J/GnFld1WgFiQx9BLNFwVIqYw3fRfJbcU1YjkAzYcmfPgsN67hftIv0BLEzuJBNfQz21O1
-	Q5q6j0oV0lJ+5ArhM/wnnjKTAkCmw3g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334039;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXVULkgdA4xsS+fwyNhdq5btCzXP1JoCzKO3djpV8yo=;
-	b=QqrZbFsD8QMZ+iHmxR557wLBgrgr/Tw9H8D62mgtMmeUi4R2sCijayKcLEYoWvYdCqYtph
-	IDipEq2zq1JG4sDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DM49Z0AV;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QqrZbFsD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334039; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXVULkgdA4xsS+fwyNhdq5btCzXP1JoCzKO3djpV8yo=;
-	b=DM49Z0AVDbdX9K4m55bhvKSEXvqStAOD7sIrHzA2bDCs946x17M1wBUmJl0KvkxTtzOv4r
-	J/GnFld1WgFiQx9BLNFwVIqYw3fRfJbcU1YjkAzYcmfPgsN67hftIv0BLEzuJBNfQz21O1
-	Q5q6j0oV0lJ+5ArhM/wnnjKTAkCmw3g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334039;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXVULkgdA4xsS+fwyNhdq5btCzXP1JoCzKO3djpV8yo=;
-	b=QqrZbFsD8QMZ+iHmxR557wLBgrgr/Tw9H8D62mgtMmeUi4R2sCijayKcLEYoWvYdCqYtph
-	IDipEq2zq1JG4sDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79C33132DD;
-	Wed,  5 Nov 2025 09:13:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OkO0HVcVC2kwDQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:13:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 36A42A083B; Wed,  5 Nov 2025 10:13:55 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:13:55 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 12/25] ext4: support large block size in
- ext4_mb_get_buddy_page_lock()
-Message-ID: <5kbyz6ilhj7zde4dtv7fhy33yks3bhs2g6xesdzwptdenrrfdg@ydurgdouhuwn>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-13-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762334159; c=relaxed/simple;
+	bh=IQM97WM4LGSPVbQBYCceUs7L95Q21jhekNtfo5mpqxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mjz8Z7P2wpHxRqLFnxhTuKEvz3aM7YXl9k1gEQk42zzrZ73+TwK0WaDGXv2qu0zAjh4XTVAgPvZnKSxfSXlP4UeeaElEbKKJADqtkJR47dupHKJp34TR9H9t3HcGuR8G+M7YKQVrGfNsb6DIaYHhYHSVzcnQfvKDyF1AiTSZNTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: 6eOnn7FORsOh1Eg+Ypfpuw==
+X-CSE-MsgGUID: Qt4XoM2cThaS3t+bQ6V4pQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 05 Nov 2025 18:15:57 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.38])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4086241763FB;
+	Wed,  5 Nov 2025 18:15:51 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-spi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 12/14] spi: rzv2h-rspi: add support for RZ/T2H and RZ/N2H
+Date: Wed,  5 Nov 2025 11:13:56 +0200
+Message-ID: <20251105091401.1462985-13-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-13-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	BAD_REP_POLICIES(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,suse.cz:dkim,suse.cz:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 88A842117A
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
+Content-Transfer-Encoding: 8bit
 
-On Sat 25-10-25 11:22:08, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Currently, ext4_mb_get_buddy_page_lock() uses blocks_per_page to calculate
-> folio index and offset. However, when blocksize is larger than PAGE_SIZE,
-> blocks_per_page becomes zero, leading to a potential division-by-zero bug.
-> 
-> To support BS > PS, use bytes to compute folio index and offset within
-> folio to get rid of blocks_per_page.
-> 
-> Also, since ext4_mb_get_buddy_page_lock() already fully supports folio,
-> rename it to ext4_mb_get_buddy_folio_lock().
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Compared to the previously supported RZ/V2H, the Renesas RZ/T2H
+(R9A09G077) and RZ/N2H (R9A09G087) SoCs have a smaller FIFO, no resets,
+and only two clocks: PCLKSPIn and PCLK. PCLKSPIn, being the clock from
+which the SPI transfer clock is generated, is the equivalent of the TCLK
+clock from RZ/V2H. They also support generating the SPI transfer clock
+from PCLK.
 
-Looks good, just two typo fixes below. Feel free to add:
+PCLKSPIn supports multiple dividers, generating multiple possible
+frequencies from its parent. To handle this, do the following changes.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Use the minimum frequency of SPI clock to calculate the SPI controller's
+min_speed_hz, and the maximum frequency to calculate max_speed_hz.
 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 3494c6fe5bfb..d42d768a705a 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -1510,50 +1510,52 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
->  }
->  
+Add a new function, rzv2h_rspi_find_rate_variable(), which is used for
+the .find_tclk_rate() callback, and which supports handling clocks with
+a variable rate, with the following overall logic.
 
-Let's fix some typos when updating the comment:
+Iterate through all possible BRDV values.
 
->  /*
-> - * Lock the buddy and bitmap pages. This make sure other parallel init_group
-> - * on the same buddy page doesn't happen whild holding the buddy page lock.
-> - * Return locked buddy and bitmap pages on e4b struct. If buddy and bitmap
-> - * are on the same page e4b->bd_buddy_folio is NULL and return value is 0.
-> + * Lock the buddy and bitmap folios. This make sure other parallel init_group
-					     ^^^ makes
+For each BRDV, calculate two different SPRs, one for the clock's minimum
+frequency, and one for the maxmimum, and iterate through each SPR
+between them.
 
-> + * on the same buddy folio doesn't happen whild holding the buddy folio lock.
-					     ^^ while
+If the minimum SPR is higher than the upper SPR limit, the minimum rate
+is too high to achieve the requested SPI frequency, skip to the next
+BRDV.
 
-> + * Return locked buddy and bitmap folios on e4b struct. If buddy and bitmap
-> + * are on the same folio e4b->bd_buddy_folio is NULL and return value is 0.
->   */
+For each SPR, calculate a rate and let the clock framework round it to
+the closest supported rate of the clock.
 
-								Honza
+The rate and SPR that generate a transfer frequency closest to the
+requested SPI transfer frequency will be picked.
+
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+---
+ drivers/spi/spi-rzv2h-rspi.c | 108 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+
+diff --git a/drivers/spi/spi-rzv2h-rspi.c b/drivers/spi/spi-rzv2h-rspi.c
+index da110efba971..1db7e4e5d64e 100644
+--- a/drivers/spi/spi-rzv2h-rspi.c
++++ b/drivers/spi/spi-rzv2h-rspi.c
+@@ -261,6 +261,105 @@ static inline u32 rzv2h_rspi_calc_bitrate(unsigned long tclk_rate, u8 spr,
+ 	return DIV_ROUND_UP(tclk_rate, (2 * (spr + 1) * (1 << brdv)));
+ }
+ 
++static void rzv2h_rspi_find_rate_variable(struct clk *clk, u32 hz,
++					  u8 spr_min, u8 spr_max,
++					  struct rzv2h_rspi_best_clock *best)
++{
++	long clk_rate, clk_min_rate, clk_max_rate;
++	int min_rate_spr, max_rate_spr;
++	unsigned long error;
++	u32 actual_hz;
++	u8 brdv;
++	int spr;
++
++	/*
++	 * On T2H / N2H, the source for the SPI clock is PCLKSPIn, which is a
++	 * 1/32, 1/30, 1/25 or 1/24 divider of PLL4, which is 2400MHz,
++	 * resulting in either 75MHz, 80MHz, 96MHz or 100MHz.
++	 */
++	clk_min_rate = clk_round_rate(clk, 0);
++	if (clk_min_rate < 0)
++		return;
++
++	clk_max_rate = clk_round_rate(clk, ULONG_MAX);
++	if (clk_max_rate < 0)
++		return;
++
++	/*
++	 * From the manual:
++	 * Bit rate = f(PCLKSPIn) / (2 * (n + 1) * 2^N)
++	 *
++	 * If we adapt it to the current context, we get the following:
++	 * hz = rate / ((spr + 1) * (1 << (brdv + 1)))
++	 *
++	 * This can be written in multiple forms depending on what we want to
++	 * determine.
++	 *
++	 * To find the rate, having hz, spr and brdv:
++	 * rate = hz * (spr + 1) * (1 << (brdv + 1)
++	 *
++	 * To find the spr, having rate, hz, and spr:
++	 * spr = rate / (hz * (1 << (brdv + 1)) - 1
++	 */
++
++	for (brdv = RSPI_SPCMD_BRDV_MIN; brdv <= RSPI_SPCMD_BRDV_MAX; brdv++) {
++		/* Calculate the divisor needed to find the SPR from a rate. */
++		u32 rate_div = hz * (1 << (brdv + 1));
++
++		/*
++		 * If the SPR for the minimum rate is greater than the maximum
++		 * allowed value skip this BRDV. The divisor increases with each
++		 * BRDV iteration, so the following BRDV might result in a
++		 * minimum SPR that is in the valid range.
++		 */
++		min_rate_spr = DIV_ROUND_CLOSEST(clk_min_rate, rate_div) - 1;
++		if (min_rate_spr > spr_max)
++			continue;
++
++		/*
++		 * If the SPR for the maximum rate is less than the minimum
++		 * allowed value, exit. The divisor only increases with each
++		 * BRDV iteration, so the following BRDV cannot result in a
++		 * maximum SPR that is in the valid range.
++		 */
++		max_rate_spr = DIV_ROUND_CLOSEST(clk_max_rate, rate_div) - 1;
++		if (max_rate_spr < spr_min)
++			break;
++
++		if (min_rate_spr < spr_min)
++			min_rate_spr = spr_min;
++
++		if (max_rate_spr > spr_max)
++			max_rate_spr = spr_max;
++
++		for (spr = min_rate_spr; spr <= max_rate_spr; spr++) {
++			clk_rate = (spr + 1) * rate_div;
++
++			clk_rate = clk_round_rate(clk, clk_rate);
++			if (clk_rate <= 0)
++				continue;
++
++			actual_hz = rzv2h_rspi_calc_bitrate(clk_rate, spr, brdv);
++			error = abs((long)hz - (long)actual_hz);
++
++			if (error >= best->error)
++				continue;
++
++			*best = (struct rzv2h_rspi_best_clock) {
++				.clk = clk,
++				.clk_rate = clk_rate,
++				.error = error,
++				.actual_hz = actual_hz,
++				.brdv = brdv,
++				.spr = spr,
++			};
++
++			if (!error)
++				return;
++		}
++	}
++}
++
+ static void rzv2h_rspi_find_rate_fixed(struct clk *clk, u32 hz,
+ 				       u8 spr_min, u8 spr_max,
+ 				       struct rzv2h_rspi_best_clock *best)
+@@ -558,8 +657,17 @@ static const struct rzv2h_rspi_info rzv2h_info = {
+ 	.num_clks = 3,
+ };
+ 
++static const struct rzv2h_rspi_info rzt2h_info = {
++	.find_tclk_rate = rzv2h_rspi_find_rate_variable,
++	.find_pclk_rate = rzv2h_rspi_find_rate_fixed,
++	.tclk_name = "pclkspi",
++	.fifo_size = 4,
++	.num_clks = 2,
++};
++
+ static const struct of_device_id rzv2h_rspi_match[] = {
+ 	{ .compatible = "renesas,r9a09g057-rspi", &rzv2h_info },
++	{ .compatible = "renesas,r9a09g077-rspi", &rzt2h_info },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzv2h_rspi_match);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.51.2
+
 
