@@ -1,142 +1,81 @@
-Return-Path: <linux-kernel+bounces-886494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B835C35C0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:05:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 073F2C35C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC6CC4FB070
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:01:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47AE94FC6AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A806D258EFB;
-	Wed,  5 Nov 2025 13:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477AE314B79;
+	Wed,  5 Nov 2025 13:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IGhzfLqj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="REvYQ2nn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zAT8hCeT"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24023161BC;
-	Wed,  5 Nov 2025 13:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317A8D531
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762347664; cv=none; b=LDqPwDnFeKFn1uMbU0bv4vi+p7TNu/vJ7MD1GnBYSvHRM9GTuH2FY1ZkV20Fa+6GTHaTKbfMuMBvUCcm+0i5pvZz66kpYh79xj4LLBlUrGYs/HyIXvhCXm7+dGo8O1O4sTdL5TfaoqWbLSU36MRlO/xiP4pzvC05FueMdOLSgJA=
+	t=1762347710; cv=none; b=iHDksEH525qr1OYkkY4wRqcjNNn+9rBsU376jmWcawb0w8gpBBuVEiPv4SlpEYOIliQYLVs46mvD8Dx87xncVQhK86nbOecJuS1gPHKkQcuutMi+9LzYCJxZLHbNO/HrQrfrkH6crfBrTElLBBH+dsaWBb/vLQAufgFwIoZArWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762347664; c=relaxed/simple;
-	bh=t4Cx2mFtN8jnmwhYbtwop1LWt3hgla29HOyT/twWY/o=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=hn7XlmKpxVnaVQ1FKt3oW9ytyJv8/V0HpxUZOJRlzjSh1dRJP6HM4c1Zi8aj3Sgv5nx4xpwilJshBXOLBCveGrOV/eYkB9JQ4fBaZBExjvm1tltRUxQHqXs6agExKvBWyjn9B+U8AKfhxUpNB59fR4SYiNbfOtBDxpvvBNDmVxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IGhzfLqj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=REvYQ2nn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 05 Nov 2025 13:00:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762347659;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9CboAPnZGVq8QmhqYTIdS27j9IaKB415/9HLvfhRzUo=;
-	b=IGhzfLqj2g2Tr7RCVLWOV0D5C91r6x0GSQA6VIkTo76+EktF/rrHjYk5cPteWDDuA31+5f
-	nBx6dqoNuhvbKZFRSdUL2FaWGv1Swij2PvsrwLWcJrYXlUAu+hG2IURITWlaKz0cMvRyAJ
-	3gPMEB/RDSWEa+LSEhXVQ2TQS5EOajjPaMxShQUbwCDOTQwOZzEVxd1X7RLdoykLszkgFR
-	8rjibETaqSEMTPkSvul2+MdKaS0pFDwATAnx8Aj2DKD1mIPEMa4Zr9ZhMK8rgV1OP/ec2a
-	zTskEcUaOeV8pCkmTzlln2LZMWYL6UnC8kg/9M4VTBACv6YhwwjG6DAlglLP0w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762347659;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9CboAPnZGVq8QmhqYTIdS27j9IaKB415/9HLvfhRzUo=;
-	b=REvYQ2nnCX0efqJbnluEpzkLYxYFSfaHlnQlzA9Pc/hJTadeE70ZlWAjxOv6rt/GCHs9sP
-	WX8S+W5dJM3skcCg==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] entry,unwind/deferred: Fix unwind_reset_info() placement
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251105100014.GY4068168@noisy.programming.kicks-ass.net>
-References: <20251105100014.GY4068168@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1762347710; c=relaxed/simple;
+	bh=GuKbF2tGqHqc/LzKPMiopljz78rkMbJvC20daXRv560=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNDD20xK6Kcils5vsEkXv9gqpCdXV+kaHhpd1AckWjWPqfj0zS/BL1KweIA7XqqrDr3LrZGQbDV87c6dmxq2HDqDfPzGtLZdgcQBpukCIpK0ng9rPQ3ZqTgr4Ox0d52oGeRnnNtnEUhKE+c9dUHyaTVAG4LwFa1t/RHlRVtK6J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zAT8hCeT; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0SkAnIknvk3SMCKddWqAjNfzOP9dD1Hs+521Sl/DWOM=; b=zAT8hCeTjD81JATA0JMkbyvouX
+	UDyZm3PipgbUvbWNSm5VXbe7bcr3bi8t4zpX6c0EL+2naSLVK8YkaVQbcPsAAxRQCdMdNilWsD0S0
+	xR2OzktZotO/6q9ZcaNxkTEkcXGsHzGY5ZdL3RyCciHliF7lmnM3cVrCoip7Zqfq9MjEhIGo9K+wd
+	k5TcOgtZg6X8xkzG66VOCH6uYAG0DuUhfOYY8PlkZqjm8g0mTQFdk+8qZ6EX984LQri/vlfxY5VdT
+	f7MveOZcT13YMjWyF6gamlGxsg1T3iiAvnNHsM5r0THapZVdHDHIvnehQD1Lxp53flOf1XwBWLTxn
+	YTv/tHGg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGd90-0000000Dj75-2GIv;
+	Wed, 05 Nov 2025 13:01:46 +0000
+Date: Wed, 5 Nov 2025 05:01:46 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Joe Perches <joe@perches.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 1/1] checkpatch: Deprecate container_of() in favour of
+ container_of_const()
+Message-ID: <aQtKul7TSt-UVsIl@infradead.org>
+References: <20250811085731.2117377-1-sakari.ailus@linux.intel.com>
+ <aQsF9tuTWRn3tfS_@valkosipuli.retiisi.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176234765743.2601451.1305731973420064193.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQsF9tuTWRn3tfS_@valkosipuli.retiisi.eu>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The following commit has been merged into the perf/core branch of tip:
+Well, if container_of_const is a drop-in replacement for all uses of
+container_of, just fix the implementation?  If it is an almost but not
+complete replacement, find a different name for the few uses.  And if
+it's not anywhere near drop in, just using container_of make a lot more
+sense.
 
-Commit-ID:     cf76553aaa363620f58a6b6409bf544f4bcfa8de
-Gitweb:        https://git.kernel.org/tip/cf76553aaa363620f58a6b6409bf544f4bc=
-fa8de
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 05 Nov 2025 11:00:14 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 05 Nov 2025 13:57:32 +01:00
+Just in case it wasn't clear:  We really should keep the shorter nice
+name as the default if at all possible.  Both because it reads better
+and because it avoids churn.
 
-entry,unwind/deferred: Fix unwind_reset_info() placement
-
-Stephen reported that on KASAN builds he's seeing:
-
-vmlinux.o: warning: objtool: user_exc_vmm_communication+0x15a: call to __kasa=
-n_check_read() leaves .noinstr.text section
-vmlinux.o: warning: objtool: exc_debug_user+0x182: call to __kasan_check_read=
-() leaves .noinstr.text section
-vmlinux.o: warning: objtool: exc_int3+0x123: call to __kasan_check_read() lea=
-ves .noinstr.text section
-vmlinux.o: warning: objtool: noist_exc_machine_check+0x17a: call to __kasan_c=
-heck_read() leaves .noinstr.text section
-vmlinux.o: warning: objtool: fred_exc_machine_check+0x17e: call to __kasan_ch=
-eck_read() leaves .noinstr.text section
-
-This turns out to be atomic ops from unwind_reset_info() that have
-explicit instrumentation. Place unwind_reset_info() in the preceding
-instrumentation_begin() section.
-
-Fixes: c6439bfaabf2 ("Merge tag 'trace-deferred-unwind-v6.17' of git://git.ke=
-rnel.org/pub/scm/linux/kernel/git/trace/linux-trace")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://patch.msgid.link/20251105100014.GY4068168@noisy.programming.kic=
-ks-ass.net
----
- include/linux/irq-entry-common.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/irq-entry-common.h b/include/linux/irq-entry-commo=
-n.h
-index d643c7c..ba1ed42 100644
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -253,11 +253,11 @@ static __always_inline void exit_to_user_mode_prepare(s=
-truct pt_regs *regs)
- static __always_inline void exit_to_user_mode(void)
- {
- 	instrumentation_begin();
-+	unwind_reset_info();
- 	trace_hardirqs_on_prepare();
- 	lockdep_hardirqs_on_prepare();
- 	instrumentation_end();
-=20
--	unwind_reset_info();
- 	user_enter_irqoff();
- 	arch_exit_to_user_mode();
- 	lockdep_hardirqs_on(CALLER_ADDR0);
 
