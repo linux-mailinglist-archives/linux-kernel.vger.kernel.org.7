@@ -1,87 +1,159 @@
-Return-Path: <linux-kernel+bounces-887142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4A7C37604
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:49:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C41DC375F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:48:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D3B3B6AFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:45:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952951A21B88
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E928C29A300;
-	Wed,  5 Nov 2025 18:45:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F0C2BEC44;
+	Wed,  5 Nov 2025 18:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mmPfOgXS"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E7629AB02
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665F3258CED
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762368306; cv=none; b=TW9lwHgaCzmUMyJaBnMBNEo1VrXNhvFMRrX7AuU1J95hvbwYW3fKnY2kQ23ehFLk4GmFOMKzrfEx8u66FfyBZKwcY79YweshZ7J2JvEy4oFZjPLPDu2FFJS1aWVm2fMcWcKFaMX0uXsxGVqGOiXyMzQSetWXiSY01xc8U3CKljQ=
+	t=1762368511; cv=none; b=VkcNl8q1aIH4k9/SjJYbr4mIO+BYyVavREjmjrt4UYKhj3d6GMN7oKwmFtsfkXgXDTNZ0tJ/MqZJEqJWJVONT0j+xt4K2nlhVarGgpuylsXZEAlvc5Uy3zBgQFXsP8HrkFEgfNucV2mEACzyeL0BWOKUA3tswCaEIjPY/DyetTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762368306; c=relaxed/simple;
-	bh=q54dNgo6K5UOR96Tf4ngFctDUlBxCu8oDOzaeRNHx90=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=m9sLR4cs+HJ6KXiitomdOSji4hy1CMMigny8Mw6jwchGbE5QCjOj+fV5gIyFudwpIms02gYA0BpGjLZ7CV4pztZZ0ai3jc4nnJ8pSe3Ir4CPhH9p8VvLPl9tK9pLG8vHjnS+8BwfvDFvL/nRtvqmlJo3Whv6iEYpfXVP08uZ9TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93e8db8badeso7533139f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:45:03 -0800 (PST)
+	s=arc-20240116; t=1762368511; c=relaxed/simple;
+	bh=6VX/MaVGYB8nnDcW+9XMWl4yI03AMMC4TwfOr1Tb1bU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EPZhW+dPN0A6STKDdHnW2zsxEut6ZfW0u79bP1C/V9vaTLb09QaOU539kl77lYs6w7lnPXD/Si5S9DZrpIwe/9vsi3r8sOm/Z2DZqmbgmpMZ4RiM2jsFncJFa5MoI0HMqVc96LTvHZRt9cKhW3hmOfhMbPGMzUZ/oTz0K/02cG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mmPfOgXS; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3407734d98bso210258a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:48:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762368510; x=1762973310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uwldtlJsW8UutEA5JzxFh14mKn4uh9aSlx+yupLBCtg=;
+        b=mmPfOgXSi+CKRuqTpqKQwQIhMjo5ZiwafiHeahLMvTOfevN+4WK9pMuh7XQ7xdxusk
+         +/82y0yU9DfGTWEhP3lF69f3bKAclHaxmogFGqtTxWGsqyHF/EtlXcA3qVJ0BA4pO606
+         xDsEAZDozSpqumzaDFDKPG+3OxVm0p8yB/AagLzzeT6Q0KDKiMg2d1Bt3jP1QD4l//Qs
+         HR19ZAN0nnr4wJaD7UzIddQjrwFPGfklbvYHUklHlUQiTfpis2lj1oo0VRmOBTyU14hc
+         2BBYJdmFL4gcvGApzet7FJrHO8Kp/aL4b5aGmdKInRehRedAbogwbNLy9uWtIpz9ZyMA
+         MmWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762368303; x=1762973103;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kUEEF9SSZgYEPSraNuyYiMnRT2c/zWLiADfJil5r+dM=;
-        b=qn2CRyGcasly6hnNce7WVYuf0tO6ljU07hLSxFl5SHpaWjUf87ELEEDYwgYvhGRVwT
-         vB3Ss5+AGbo+4U2dV7ME+tM83z84GCjD2vkbtULxe+mndXD6qzUEiGfiJqklza9zE751
-         xqXyIxzw9bQttVKtDPjMASARfABng27G4T9Ytu00VGBcrKyzxy188ExfphaKCg/ZWw/R
-         HyVPAEvkNnhCdeyfcvVn27XlHIOWzrivUI7iJWYc5sR3he2mjWUs7bIwnnQqs+cQtuPW
-         cwyd9NFDo7nvqTm3leq25+GkdonJMtQQev17IdCC8gGbnlBj0wKEF2cbRUbSJSxrVNFW
-         4YWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFeWnSmp6NL37O4HoUOrwe1cF0taQ+ezYVdTkuuOOa4yI9DvNm1tEWoxBifSVvnTi5WlALLVSvrI5YzD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHvAP8VWZmDTJuWZCyn0ZRTIeb8P5RMfIObq4f00ar6/xvaFIG
-	5KyoI6F9wq+jfKoU4ZiK8wNitzILD6HWMjTlAGf1IWox/ovPYXitmovc6VsYVgAmvEvSxHY70zv
-	wENpivTYAavreIGzlDX171Inhf1/v1DUdJnDNjvV0O6Ikc6QXn/lxzWkKnag=
-X-Google-Smtp-Source: AGHT+IGPswf6wkub0m8m8oViVUve53pMcZxJyBV/j6u5WHYHxMJ+7d3Fm+Z1EWlLj0UpTtbYMLUQG0aUogTnwoxo9dk9bTbSzX1d
+        d=1e100.net; s=20230601; t=1762368510; x=1762973310;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uwldtlJsW8UutEA5JzxFh14mKn4uh9aSlx+yupLBCtg=;
+        b=AHbBNJ4vS+9M0R4UydEdJKqUWM5pKGetWFdLKIpdTox6Ue8uCIcJgt4FoUQwsckcvw
+         ZjcaZp2czAV47FWH3do2n22lzwNCr87x/3+ioCliVab8VC+eWmxm976Tmz/zSaUfb1h6
+         1yDwOM0ESSXQ1AZtIyPRox6F5JqB+qr/cS6dc4yYyyvcZwgYbClQX/UEvhuiUpiKW9I7
+         XTXAgdUTxkfanXfu2Y5HTZMUt4Ed7E5660DiAS/AQ3iwp6lEUS13Pj+aU2/dimWKhaU3
+         Yc1phfX+oMoAxdjamyRWmgpCpOut/DVmt1DEsC0dX+1IUFNMea5Wa5MmzXsPwgLp6wjB
+         sF6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXearPZorC+PzGyEiJTkE8pAbJVLG+uoZKxmhkUB0BIpxRktuI4RaA/ziedjaKDPcFEHRTJU+DFjJkgL2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyed4m6ozJz8xE2NmHQnakrorxWd31QSceGXPVJ1ZipI6+7H7eZ
+	1Xf+/kKMKNnHAwGbrubwtv8RDzo9YFjG45A+RuhYH9cLdLAQJncr1eOgXiUUxsf5UqxgbCdCasn
+	78pq3Kg==
+X-Google-Smtp-Source: AGHT+IFLaNnoj3qggxHJas4K5ftn8LNDGyunMGhaWQS5bBqsth8bncL9oJPd1LFrTN+cPLAJBX0FF/cK8TA=
+X-Received: from plbku7.prod.google.com ([2002:a17:903:2887:b0:24c:966a:4a6b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e88b:b0:295:5138:10f9
+ with SMTP id d9443c01a7336-2962ae9408bmr60414175ad.54.1762368509678; Wed, 05
+ Nov 2025 10:48:29 -0800 (PST)
+Date: Wed, 5 Nov 2025 10:48:28 -0800
+In-Reply-To: <20251104195949.3528411-4-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2b13:b0:945:8eeb:14ab with SMTP id
- ca18e2360f4ac-94869e2265emr657047839f.9.1762368303030; Wed, 05 Nov 2025
- 10:45:03 -0800 (PST)
-Date: Wed, 05 Nov 2025 10:45:03 -0800
-In-Reply-To: <c2d8fc24-08a7-47fe-8f68-cc9bbe6c55a4@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b9b2f.050a0220.2e3c35.000c.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20251104195949.3528411-1-yosry.ahmed@linux.dev> <20251104195949.3528411-4-yosry.ahmed@linux.dev>
+Message-ID: <aQub_AbP6l6BJlB2@google.com>
+Subject: Re: [PATCH 03/11] KVM: nSVM: Add missing consistency check for event_inj
+From: Sean Christopherson <seanjc@google.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Nov 04, 2025, Yosry Ahmed wrote:
+> According to the APM Volume #2, 15.20 (24593=E2=80=94Rev. 3.42=E2=80=94Ma=
+rch 2024):
+>=20
+>   VMRUN exits with VMEXIT_INVALID error code if either:
+>   =E2=80=A2 Reserved values of TYPE have been specified, or
+>   =E2=80=A2 TYPE =3D 3 (exception) has been specified with a vector that =
+does not
+>     correspond to an exception (this includes vector 2, which is an NMI,
+>     not an exception).
+>=20
+> Add the missing consistency checks to KVM. For the second point, inject
+> VMEXIT_INVALID if the vector is anything but the vectors defined by the
+> APM for exceptions. Reserved vectors are also considered invalid, which
+> matches the HW behavior.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Ugh.  Strictly speaking, that means KVM needs to match the capabilities of =
+the
+virtual CPU.  E.g. if the virtual CPU predates SEV-ES, then #VC should be r=
+eserved
+from the guest's perspective.
 
-Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
-Tested-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+> Vector 9 (i.e. #CSO) is considered invalid because it is reserved on mode=
+rn
+> CPUs, and according to LLMs no CPUs exist supporting SVM and producing #C=
+SOs.
+>=20
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+>  arch/x86/include/asm/svm.h |  5 +++++
+>  arch/x86/kvm/svm/nested.c  | 33 +++++++++++++++++++++++++++++++++
+>  2 files changed, 38 insertions(+)
+>=20
+> diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
+> index e69b6d0dedcf0..3a9441a8954f3 100644
+> --- a/arch/x86/include/asm/svm.h
+> +++ b/arch/x86/include/asm/svm.h
+> @@ -633,6 +633,11 @@ static inline void __unused_size_checks(void)
+>  #define SVM_EVTINJ_VALID (1 << 31)
+>  #define SVM_EVTINJ_VALID_ERR (1 << 11)
+> =20
+> +/* Only valid exceptions (and not NMIs) are allowed for SVM_EVTINJ_TYPE_=
+EXEPT */
+> +#define SVM_EVNTINJ_INVALID_EXEPTS (NMI_VECTOR | BIT_ULL(9) | BIT_ULL(15=
+) | \
+> +				    BIT_ULL(20) | GENMASK_ULL(27, 22) | \
+> +				    BIT_ULL(31))
 
-Tested on:
+As above, hardcoding this won't work.  E.g. if a VM is migrated from a CPU =
+where
+vector X is reserved to a CPU where vector X is valid, then the VM will obs=
+erve
+a change in behavior.=20
 
-commit:         1c3df6de RDMA/core: Fix WARNING in gid_table_release_one
-git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
-console output: https://syzkaller.appspot.com/x/log.txt?x=10908532580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Even if we're ok being overly permissive today (e.g. by taking an erratum),=
+ this
+will create problems in the future when one of the reserved vectors is defi=
+ned,
+at which point we'll end up changing guest-visible behavior (and will have =
+to
+take another erratum, or maybe define the erratum to be that KVM straight u=
+p
+doesn't enforce this correctly?)
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+And if we do throw in the towel and don't try to enforce this, we'll still =
+want
+a safeguard against this becoming stale, e.g. when KVM adds support for new
+feature XYZ that comes with a new vector.
+
+Off the cuff, the best idea I have is to define the positive set of vectors
+somewhere common with a static assert, and then invert that.  E.g. maybe so=
+mething
+shared with kvm_trace_sym_exc()?
 
