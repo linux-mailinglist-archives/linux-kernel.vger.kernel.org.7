@@ -1,230 +1,215 @@
-Return-Path: <linux-kernel+bounces-885795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFAEC33EE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:34:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B0BC33F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:56:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CA1189F512
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:34:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C5E4644A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E60224AEB;
-	Wed,  5 Nov 2025 04:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A2261B83;
+	Wed,  5 Nov 2025 04:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Mu6k5nbZ"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="I4rmmufg"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010050.outbound.protection.outlook.com [52.101.84.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BF2153598
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 04:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762317233; cv=none; b=C0soyrygzEC1XA+30ZmTqz7e6Vr9AX8OfyFaJvJSe5HrNzs7A6YcDN/HOd7tonPcg36xAQ/SFVpL/i+6KuAj7LJWJiZT4z4+t1vSAa9/9X6mfWmc7qj50rFSfEonmKauanvWDUxn6cwKnd/pIq/KpZC5WL1lg4XFd6nbC35xlBA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762317233; c=relaxed/simple;
-	bh=/xApc7JPeLpV0U6AkHyleu4h5wlN0YAP2dh/lOrUkPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RXMeK23DvsInsJjPij3nQIuPSvFlJ7h0evp9YB5Bt3T8fX4daYYKGjU5fUMYa+HKKGmfmpHbarOBfYxAczmBwGGvW0Lh68g31AvDRCSXrxBpk1KxcC9vpGoEJbCV/asd5lyt7FC9fsTuN6vj6BlNLILs2z9Li6XwKFFjeiFMqPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Mu6k5nbZ; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1762317166;
-	bh=IzRkElXePV0e5YJI1LL9d23HgU39352OJQ6VVeYJKEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Mu6k5nbZZxZE9H8O4BVi2LQU7nXCv59m91kkg5hDyjcnRJpr0dkKdO/c2otPPklIo
-	 KFZlI8WNzsetfoNHYizIk0izCmas1TIJ01si5swn+ov1Bizc+g80Vrf1eWmwEpeu0t
-	 orUgqi3+83P7fmijvdv9hi/8e6wxfkI/jgdzOWeM=
-X-QQ-mid: zesmtpgz7t1762317163t58b5e436
-X-QQ-Originating-IP: IVuLNbt0LM4XVn04dFFo5bmVH3eL0NEBQpBWLy9Dm8g=
-Received: from [10.10.74.117] ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 05 Nov 2025 12:32:42 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5240506837288176278
-Message-ID: <CCA9495F3D18EFF3+40304116-c894-4b4b-9f9f-e0398bc4deac@uniontech.com>
-Date: Wed, 5 Nov 2025 12:32:42 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C271DFF0;
+	Wed,  5 Nov 2025 04:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762318572; cv=fail; b=YTOagRIkvuLzFzTCoCiaxbS/uee9Gv+ccpURcQ0g5euBdAjXVP6O3HcgL7H82tkHdgCrKCG4NsXsaQuaZ5HOEZh1IBvtM0MUjoiVjbNgKbalCfMFpl7N/+xEcmnOD4QdIEFpMcKKhrKO39XJVkETQcsUk5KlgE5to6NsVo/JL6E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762318572; c=relaxed/simple;
+	bh=dym3C2iwkFh/C6dqPcOtke04aErUZJXGmaYPteE/Js8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Na1zCTyOwXGAEfjdQiQk81tC0dXtYOy/GcaQs4K+E0jgXrPSUl89LwNyaWektb7MRilY+EO5cJUDsIZ97wgEAIPNTiwW2UB1y76gDHndUbzKdScF39ySVJQNtQSvIuy8Z45uusj3jAWasDCUKxrN949MtkpGpyb98XqZfXFQt8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=I4rmmufg; arc=fail smtp.client-ip=52.101.84.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=scoYMxcn/SSdCSXl+AwQ28tc1d04D2VqXU0q6w+0ulmN4jFHK4wEv0HX0K48HJSN0Vfqf8wkmIYDZOtPO52DqYEs0FudwqM8soU8GZl9fBfyuYzOZde5cHxt8c3c9nxiR3u8UYhNl4BWhpgUfIY5cKH6nKWbhYafX50nUtksfHGaj+7WbF69s28RvxaOIMeRvgek9hyOeUjCP9So2p9nAjfeVuguzSSwCqdH/qoBA362weqvCpHgZDqimAMaX6VgBwEEoP5rOJW0Bw1yNmsr1leTPm/Ya6yBysextLcE5oAz/2M6LEZXSx6bu/lJkV8f2/sB0VhKnmkKVX3s1VFDZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2LvE111NBgpnQ7JtePoURKur1qOXgN9XAnRMZbnuM1A=;
+ b=Tn4vvtD/30L3VB+qkMH0JXeTRLOaynkH40lhwTp4qKK2lNmzHHbukLuODRCOpRRKaCgmbqj+WYx0mcSe179NYcIiZ7JpvEWkATThoGBl5zU2OeLi9bj0KdaMLxxIpisMB1L5Jicp96R+vY9HZmqeHz8h3o716iFR+09URDrQkU5hK1+XySRTUbMjrb+hK+L/bEzP79sE7nwZCUOVvRkcObTweKy6xB+lCDvFjRZNbsyAkJCSKCXzBT6/+gJl1zGt1D0YHUu5UEe0FQr668hyJmjBqcLcD/aZY7EWc6cK/2iBcK0xewfeiFgNCe7aB3pOQIodL12NyTK/FfbKkDW3FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2LvE111NBgpnQ7JtePoURKur1qOXgN9XAnRMZbnuM1A=;
+ b=I4rmmufgLEA8okGCirv4yB5MEvBTD0PNxQvCrXixp7gcp3cabvXJyu1WpO6gdRuk2YAkYp1BzbaGLOW8zixG7DbJb/ifoZFM/xMkYzi7tD0TR+SUkQrROR2ywKkN6550OoqW9lNV/11qwU+mt1eICC27kwvuvsQVqbwwWqyWUywyjzKEGXR7DuVabzkirEuFYqLL6IyBouJXfK9XsO6PNIqgVP5LXjpjOnMUiVf0A9/gVGiAzKybnnepx3MwjgDRRE+KGNteIwCsK2GxFSGPYLbHnxVlVuVbbggfAjWarUTVWO6rXqvqfZ/GM3ulBMHJEOp4cJa+SNMw3t+k6hzheQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AM9PR04MB8356.eurprd04.prod.outlook.com (2603:10a6:20b:3b4::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Wed, 5 Nov
+ 2025 04:56:03 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
+ 04:56:03 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: aziz.sellami@nxp.com,
+	imx@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 net-next 0/3] net: enetc: add port MDIO support for both i.MX94 and i.MX95
+Date: Wed,  5 Nov 2025 12:33:41 +0800
+Message-Id: <20251105043344.677592-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MA5P287CA0174.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:1af::8) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] kexec: add kexec_core flag to control debug
- printing
-To: Baoquan He <bhe@redhat.com>
-Cc: akpm@linux-foundation.org, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251103063440.1681657-1-maqianga@uniontech.com>
- <20251103063440.1681657-3-maqianga@uniontech.com>
- <aQq/2WN8Sqz6m6xc@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Qiang Ma <maqianga@uniontech.com>
-In-Reply-To: <aQq/2WN8Sqz6m6xc@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: MkB8ALqi1u9wA9WpJpvI3pzCPR7FOINZ512Mm3x6iHJCTKcTr/9iwLs8
-	gmE57fi2nUw4btu5CCxYBCLQDc+lRkK589ZbN2Dz6pStnlgIjwer2G7mTw3lFslAVdRWBm5
-	6Zof93o2edMvfQo2i3AeCNl5T9pxAnB2fbeq7JMP1jpy7eUiqXWq6GOr4hiSl1uaHhDQ/m1
-	mlLUfd167vREg2lkDDZOEwTAoVNuJAfwaSAJEvaLMsQeFT3/z3dDfluIitsjSMbn0dBIbJA
-	fOEE/ZJSleNQJn0sAjnNmLvlBZZeKlEq1uS4XlsfVKM24VxxQRp83ZbYXIvhGQjkbqz9wii
-	QfsLZ4Skz97mXCDTc/SdCsxDJTCUIFhgnSX8ED5YXCAVx98i6dc1KH0xm7vYNTA9NGVtNQh
-	8mOm2jEAVmB5oppvitrCpfSZo31kBOHA65O1RiNa3q/CP0CnQ1w2XHxzb7w9Yo5Y8GPweEO
-	B4VSU4fffO8iW/ccONcSmwoUn8AS72kcU76HzugTZEVkJLH1Hh73pCuAx65LJruBVQUwE/T
-	lq5U9SFHQZP+n8m5vB8ZlIFcop4birFVA3M5++UKfVsJTQWH2pwwU8wkqazOeXYapr5TaHn
-	KCTlB7VjcqdLlGAzLA1wWr+ewlbN8bLydyq9DaqAOF1oannCfjs/Sr8HHDXTQGuw9fWRZsN
-	NAtG5Wr5yBbVNXFtAcNVhe/ovKVA4BDuJ/ikqYni7ypmMD2/NW+ndpDXRHuPZTvCpOX7qJP
-	0oP+TK/SodxuiyjiUm9gIFx2nwxb6g03vNcE6Akd9JBQWV+ltvxA7aM9iR+7k7LQrVdTfkN
-	8cctXOWlazdDTCkhqqAmlbGezP2xW7V+QlskD5643t9+TuwtqlJ07394ZEvzTVbhpMUzvA0
-	6i84R861xkofoytGOjQkuB+wF5FrqhT5JqKjyaDhd+h3eHSVk87ev84FoRZey6gjLXbr0iR
-	j8vVvmR8V0SdKkUOjL38JpMRgaRVf1fFHS9+YAMhZ50zWXibNlM50ltY0fl9waPIAC2nXew
-	ApBYlYMC0wIQ+xCUl3
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|AM9PR04MB8356:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7198bb64-afc6-4957-f565-08de1c279f09
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gZGPJim8mAjH61n88FSs5yswHrWto5q1XbBSxPYwx6VmcY0H/b+9HyR3VvqS?=
+ =?us-ascii?Q?rx+D+c5MuvUOBrdFbFl8qsVxasVeqQHnjwIdAaWQXcfYuiq2xFzJ5Xy27tfF?=
+ =?us-ascii?Q?tXnlHQaS1vjzhBNOloydQQ2GuRDXxHr7MMnrd5+9vgkR392W6HARMFKF+TtB?=
+ =?us-ascii?Q?nNhEtN/GNgR3AJ+c1u/bV3130zxjaXgrpYL9sJVzar3WFlNhrKZdtG5Tvxb3?=
+ =?us-ascii?Q?0m7IdgrxualSjzakOx+Gl/4zAf1ThYOOnYc6xkCMsq9wn5PzpaE5/DT+8S/G?=
+ =?us-ascii?Q?gJixufamHB+9GV0uHcO0trhlTWH7LC+NXVi6epjjef6fP31hq8vqV72KiW6c?=
+ =?us-ascii?Q?2BRBwjSHeVR8ZX5XsEZP31TiWuyiFehXYY19ukczNPaU89JtR+NXHk6rmmCM?=
+ =?us-ascii?Q?kc8MP1jKHmZw1Hxh7nC03n/mOZyjKH7wJ/reTjYgIEusPxGxpHMQgIxq+i4g?=
+ =?us-ascii?Q?ODg2dDUUzVTD1PXbHSzB1sMcBp6fH7pL9LHKvVmllGqZgMcPYnBjpGioA01W?=
+ =?us-ascii?Q?GF1yF9rVmhbjOc6OLWtTds8rsVfD45rs81xsLpGjLYXAeX5+pzKF9ScHt5X+?=
+ =?us-ascii?Q?pCUuasGO2XgIseA4GlIGZ5P4fYJ37gh4bFYscOf1/MqtYpPM+rKykBvu3LuY?=
+ =?us-ascii?Q?PaIKdjJ3M0RKdXjpxpyp22LhWp6M0dKyo5DMBBZKVaV173ZLBvLfEvkH1hdp?=
+ =?us-ascii?Q?aMwPl1aPXR7b0Kskxx1OaCsoqi/hIvXUBHlXoP2OVED8uMQPwUefKFypsYZY?=
+ =?us-ascii?Q?0xj6FLuQbX9qLVrjeiK65Y/uM5hVdp87qzpFrlnwRftnmgcLs7v61ObIGpjp?=
+ =?us-ascii?Q?n4XTr8ejjAtRpLlU065kbhm/EbKuo92MbvZ5ir+i8LQjrTryXhAw3nCwfAup?=
+ =?us-ascii?Q?rSpoJtVr0mRJj+OuzbgsJwamfri6Q60BXVnsrbpxI8hJJtd56erCfpXgGrgl?=
+ =?us-ascii?Q?7SVlyY/WGuqGmAyDdsi1/pXlfpIWf1+JkQRIb9IuMbZmOU7Y5EFmyBTDbRZK?=
+ =?us-ascii?Q?zeG/5pl1dPWplAzccBzqDdeNbOfwgaFCTkkfmhBtlkiZzLT9Zc7cndd78hZt?=
+ =?us-ascii?Q?tgZUoWnrckcpBJuTSRYY5oQAzzFEvPKc1vduVLPUnJZT0JOL0cc+/pbLzKnM?=
+ =?us-ascii?Q?GxgYTfqXa8v5LNk6tSjrrh1wsBVoimOAaSdEZlyg2Hgi3ExWOXnDKVdEZa1f?=
+ =?us-ascii?Q?kA6yXnZO4Pz+eWlzeaXilfycSVpjzJNVlMD9o/W5cpnatsH6iTZx/rueMYzF?=
+ =?us-ascii?Q?nkuJrzHsCBUZElbdPz2AWGHWK2qROIt9rC0pBUnBBKqq6Sdqet/3erSMcqmO?=
+ =?us-ascii?Q?bEFmIonfxSToCNKlOyJplJ45YwuaD1rngltiSUOGBff6pBvQBS1tXTGRz8po?=
+ =?us-ascii?Q?Vpyo0/gA17jirCautPUc3rd4ZjViQTcU+jylAd+5JbWyzxJ2aJ7i+xMTmLFI?=
+ =?us-ascii?Q?flVC7pCryj5ChmdMWvIcPymWHz7SAZyDE83sqF0ticIFmgdlDV63leGTc+pm?=
+ =?us-ascii?Q?6PA+ki0a9vN/ymfpoxEhDvLBhZjWSsb5xcub?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hKR4owLQcxTyaFBk+bZfGwYjoaz/68ns3PGtWr2K1CO+bRpfMeHnH+jsm2YB?=
+ =?us-ascii?Q?Gm0bVbklMQNZqy3RVFQGd4gtdswrcrbc7cVU/sCat9CWnmEqLDlS532+jn0Y?=
+ =?us-ascii?Q?qir4FlRr3lCXH5YhGR1JuL3jPFcI1I7zBEt+18xLsfAyb3Bg+7nHb8oegTnh?=
+ =?us-ascii?Q?ODwwcMfdIsQ2PLBXglFrBmH6grVQGzAa7TOLWlW1Xw1uG0HwUmgFfM0Si1p7?=
+ =?us-ascii?Q?yV2o+dD3FJ1+01yqMhjjwOndM4etTXNDTydw/nCPSuZwk9SkG0SVmUdCR2NH?=
+ =?us-ascii?Q?m7TxoFxojhcMw8cIa8SfNpHDBeCeeAikMJC+wp1Sg73VH6u6A59PDK3SpkZz?=
+ =?us-ascii?Q?U6UiGXjvCTgE5ZddW40fSd9tNrW6C7U8GWl/IoWpr3Qr7MYJ/6DDdJjsdd9y?=
+ =?us-ascii?Q?TxbV/UjnkuiB5Elz7RZDwFwo0/vwjKHC8W666IpfO04KatmUlHJKcNLb8GY7?=
+ =?us-ascii?Q?af/Ce+DPsY7ZRugugH2MtJkkoYuh0JoXB+5RUrrrAWVG04N/ntsBltAEmvs8?=
+ =?us-ascii?Q?pzfe5TIC94D4vlaUNS0in4BF8HOYu2ukqzSz6R6z+37mrrm+IuWpP3i0s90w?=
+ =?us-ascii?Q?GGxks9xkdcJks9dYEM+uaw29lZfBhUvHBh5gH9J5bIQpEZ+4U2FlulCilCa+?=
+ =?us-ascii?Q?vGGPP++kRw7xyG7GyejOgZkjJElb8LsxK24AXe2M2wfoR2qxpxadzduyTtD/?=
+ =?us-ascii?Q?az1G9hlYuifGeS45owbY6+t9dDbWHyrt3cR7Tf9nDMz22awKTFpqS4H82Cfz?=
+ =?us-ascii?Q?TeMHvfyNRuDwXXTnfTOWz+MkeaYrn5NqU3nzTFvU/WITRurpFsPJhg2+WUSF?=
+ =?us-ascii?Q?T2djWh9oIGmz+L4omzBlKfG2KW0Xwc+8UB+QOOL+2XZ5YqmoD9Q4klCiuQ5s?=
+ =?us-ascii?Q?pb30PJH7p7SiTqKn6cAa5qjYzeXobiIShQxrvJUGkNjmHgfiWpt97zY+pk5T?=
+ =?us-ascii?Q?Ezn/MZzg0KUdhtSWwqYOSmAdeBf7KsopMkTw7kCLQddkDwT2ZFnp+LH0g2KT?=
+ =?us-ascii?Q?BrQUPAUGTcwaoAfslOk6e0Z7oX63H0Jl66L/e+a1a0nd3+n1tGMkwFKecjdE?=
+ =?us-ascii?Q?GK0UqLg6DJn+vPEFKbp661ND7fyLorB7cfcDHNQcEmj3leawS31jm5caL+3W?=
+ =?us-ascii?Q?BMhJurzvoR7lJ9I+Wx92V0JkomvBwsQtfXSJBQ3OOcbqYpIjKdDav3oKW6m/?=
+ =?us-ascii?Q?u+IWklWXDpWKFb6fr9+cL8QIQHV+sjtxLiabj2pADu5CwL5CvOA4cbz10Hyy?=
+ =?us-ascii?Q?gRkikisf1bCZySH7mg3Rgo2E439WAyvWil4FLPetNx2saQWXmRzUiHZhlymF?=
+ =?us-ascii?Q?Oes++gCqhEwal4mFwnfrhFwR3peXctUyqSx/H4sWE0jYfKWu29sJfzRF0kol?=
+ =?us-ascii?Q?wJkwbfAy7bDPdbJlXJ0L0Tgs3I7COfr7PRftIm8UpjtgI5sBOfZrNAUItyTK?=
+ =?us-ascii?Q?W9o+LMgnWsbq6lODN9IsyWGy1S0JhvGn4/zJrrJ9xN+IoNkIVXZ+SCIHOrbI?=
+ =?us-ascii?Q?V2o4q5ho5WRZRDeiV/q24S+46M5PVHkZIkyhDf5MJ62kXdbfUhdiZ7TDhYxb?=
+ =?us-ascii?Q?l1/8eB0W2B0gCh8ViG6hP4Uo+uMPTFlsRrrRye8M?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7198bb64-afc6-4957-f565-08de1c279f09
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 04:56:03.3658
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8GhpNXMZJ6O6zPJ7HvFn2r9h/VYPoSGgrrFI279RiIwFUp0yTGN80Dbah8S170YXsf+3YgHgkAyIcANTWyhKMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8356
 
+From the hardware perspective, NETC IP has only one external master MDIO
+interface (eMDIO) for managing external PHYs. The EMDIO function and the
+ENETC port MDIO are all virtual ports of the eMDIO.
 
-在 2025/11/5 11:09, Baoquan He 写道:
-> On 11/03/25 at 02:34pm, Qiang Ma wrote:
->> The commit a85ee18c7900 ("kexec_file: print out debugging message
->> if required") has added general code printing in kexec_file_load(),
->> but not in kexec_load().
->>
->> Since kexec_load and kexec_file_load are not triggered
->> simultaneously, we can unify the debug flag of kexec and kexec_file
->> as kexec_core_dbg_print.
-> After reconsidering this, I regret calling it kexec_core_dbg_print.
-> That sounds a printing only happening in kexec_core. Maybe
-> kexec_dbg_print is better. Because here kexec refers to a generic
-> concept, but not limited to kexec_load interface only. Just my personal
-> thinking.
-This sounds reasonable. The next version will be renamed kexec_dbg_print.
->
-> Other than the naming, the whole patch looks good to me. Thanks.
->
->> Next, we need to do four things:
->>
->> 1. rename kexec_file_dbg_print to kexec_core_dbg_print
->> 2. Add KEXEC_DEBUG
->> 3. Initialize kexec_core_dbg_print for kexec
->> 4. Set the reset of kexec_file_dbg_print to kimage_free
->>
->> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
->> ---
->>   include/linux/kexec.h      | 9 +++++----
->>   include/uapi/linux/kexec.h | 1 +
->>   kernel/kexec.c             | 1 +
->>   kernel/kexec_core.c        | 4 +++-
->>   kernel/kexec_file.c        | 4 +---
->>   5 files changed, 11 insertions(+), 8 deletions(-)
->>
->> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
->> index ff7e231b0485..cad8b5c362af 100644
->> --- a/include/linux/kexec.h
->> +++ b/include/linux/kexec.h
->> @@ -455,10 +455,11 @@ bool kexec_load_permitted(int kexec_image_type);
->>   
->>   /* List of defined/legal kexec flags */
->>   #ifndef CONFIG_KEXEC_JUMP
->> -#define KEXEC_FLAGS    (KEXEC_ON_CRASH | KEXEC_UPDATE_ELFCOREHDR | KEXEC_CRASH_HOTPLUG_SUPPORT)
->> +#define KEXEC_FLAGS    (KEXEC_ON_CRASH | KEXEC_UPDATE_ELFCOREHDR | KEXEC_CRASH_HOTPLUG_SUPPORT | \
->> +			KEXEC_DEBUG)
->>   #else
->>   #define KEXEC_FLAGS    (KEXEC_ON_CRASH | KEXEC_PRESERVE_CONTEXT | KEXEC_UPDATE_ELFCOREHDR | \
->> -			KEXEC_CRASH_HOTPLUG_SUPPORT)
->> +			KEXEC_CRASH_HOTPLUG_SUPPORT | KEXEC_DEBUG)
->>   #endif
->>   
->>   /* List of defined/legal kexec file flags */
->> @@ -525,10 +526,10 @@ static inline int arch_kexec_post_alloc_pages(void *vaddr, unsigned int pages, g
->>   static inline void arch_kexec_pre_free_pages(void *vaddr, unsigned int pages) { }
->>   #endif
->>   
->> -extern bool kexec_file_dbg_print;
->> +extern bool kexec_core_dbg_print;
->>   
->>   #define kexec_dprintk(fmt, arg...) \
->> -        do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
->> +	do { if (kexec_core_dbg_print) pr_info(fmt, ##arg); } while (0)
->>   
->>   extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
->>   extern void kimage_unmap_segment(void *buffer);
->> diff --git a/include/uapi/linux/kexec.h b/include/uapi/linux/kexec.h
->> index 55749cb0b81d..819c600af125 100644
->> --- a/include/uapi/linux/kexec.h
->> +++ b/include/uapi/linux/kexec.h
->> @@ -14,6 +14,7 @@
->>   #define KEXEC_PRESERVE_CONTEXT	0x00000002
->>   #define KEXEC_UPDATE_ELFCOREHDR	0x00000004
->>   #define KEXEC_CRASH_HOTPLUG_SUPPORT 0x00000008
->> +#define KEXEC_DEBUG		0x00000010
->>   #define KEXEC_ARCH_MASK		0xffff0000
->>   
->>   /*
->> diff --git a/kernel/kexec.c b/kernel/kexec.c
->> index 9bb1f2b6b268..c7a869d32f87 100644
->> --- a/kernel/kexec.c
->> +++ b/kernel/kexec.c
->> @@ -42,6 +42,7 @@ static int kimage_alloc_init(struct kimage **rimage, unsigned long entry,
->>   	if (!image)
->>   		return -ENOMEM;
->>   
->> +	kexec_core_dbg_print = !!(flags & KEXEC_DEBUG);
->>   	image->start = entry;
->>   	image->nr_segments = nr_segments;
->>   	memcpy(image->segment, segments, nr_segments * sizeof(*segments));
->> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
->> index fa00b239c5d9..865f2b14f23b 100644
->> --- a/kernel/kexec_core.c
->> +++ b/kernel/kexec_core.c
->> @@ -53,7 +53,7 @@ atomic_t __kexec_lock = ATOMIC_INIT(0);
->>   /* Flag to indicate we are going to kexec a new kernel */
->>   bool kexec_in_progress = false;
->>   
->> -bool kexec_file_dbg_print;
->> +bool kexec_core_dbg_print;
->>   
->>   /*
->>    * When kexec transitions to the new kernel there is a one-to-one
->> @@ -576,6 +576,8 @@ void kimage_free(struct kimage *image)
->>   	kimage_entry_t *ptr, entry;
->>   	kimage_entry_t ind = 0;
->>   
->> +	kexec_core_dbg_print = false;
->> +
->>   	if (!image)
->>   		return;
->>   
->> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
->> index eb62a9794242..4a24aadbad02 100644
->> --- a/kernel/kexec_file.c
->> +++ b/kernel/kexec_file.c
->> @@ -138,8 +138,6 @@ void kimage_file_post_load_cleanup(struct kimage *image)
->>   	 */
->>   	kfree(image->image_loader_data);
->>   	image->image_loader_data = NULL;
->> -
->> -	kexec_file_dbg_print = false;
->>   }
->>   
->>   #ifdef CONFIG_KEXEC_SIG
->> @@ -314,7 +312,7 @@ kimage_file_alloc_init(struct kimage **rimage, int kernel_fd,
->>   	if (!image)
->>   		return -ENOMEM;
->>   
->> -	kexec_file_dbg_print = !!(flags & KEXEC_FILE_DEBUG);
->> +	kexec_core_dbg_print = !!(flags & KEXEC_FILE_DEBUG);
->>   	image->file_mode = 1;
->>   
->>   #ifdef CONFIG_CRASH_DUMP
->> -- 
->> 2.20.1
->>
->
+The difference is that EMDIO function is a 'global port', it can access
+all the PHYs on the eMDIO, so it provides a means for different software
+modules to share a single set of MDIO signals to access their PHYs.
+
+But for ENETC port MDIO, each ENETC can access its set of registers to
+initiate accesses on the MDIO and the eMDIO arbitrates between them,
+completing one access before proceeding with the next. It is required
+that each ENETC port MDIO has exclusive access and control of its PHY.
+Therefore, we need to set the external PHY address for ENETCs, so that
+its port MDIO can only access its own PHY. If the PHY address accessed
+by the port MDIO is different from the preset PHY address, the MDIO
+access will be invalid.
+
+Normally, all ENETCs use the interfaces provided by the EMDIO function
+to access their PHYs, provided that the ENETC and EMDIO are on the same
+OS. If an ENETC is assigned to a guest OS, it will not be able to use
+the interfaces provided by the EMDIO function, so it must uses its port
+MDIO to access and manage its PHY.
+
+In DTS, when the PHY node is a child node of EMDIO, ENETC will use EMDIO
+to access the PHY. If ENETC wants to use port MDIO, it only needs to add
+a mdio child node to the ENETC node.
+
+Different from the external MDIO interface, each ENETC has an internal
+MDIO interface for managing on-die PHY (PCS) if it has PCS layer. The
+internal MDIO interface is controlled by the internal MDIO registers of
+the ENETC port.
+
+---
+v2 changes:
+Improve the commit message.
+v1 link: https://lore.kernel.org/imx/20251030091538.581541-1-wei.fang@nxp.com/
+---
+
+Aziz Sellami (1):
+  net: enetc: set external MDIO PHY address for i.MX95 ENETC
+
+Wei Fang (2):
+  net: enetc: set external MDIO PHY address for i.MX94 ENETC
+  net: enetc: add port MDIO support for ENETC v4
+
+ .../net/ethernet/freescale/enetc/enetc4_hw.h  |   6 +
+ .../freescale/enetc/enetc_pf_common.c         |  14 ++-
+ .../ethernet/freescale/enetc/netc_blk_ctrl.c  | 111 +++++++++++++++++-
+ 3 files changed, 128 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
 
 
