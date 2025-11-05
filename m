@@ -1,57 +1,87 @@
-Return-Path: <linux-kernel+bounces-887229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE666C37A1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:08:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1831FC379F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96FB63A841D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:04:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB8A04E6987
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143E52D6E49;
-	Wed,  5 Nov 2025 20:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC7C325707;
+	Wed,  5 Nov 2025 20:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fKoyvWoE"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="X37PonFU"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BD2325707
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA3325522B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762373070; cv=none; b=l5kshaWl3qD7naCFKJltG1Aoab7YUF96kkkzYOqKVTcm+wjUXJDEQ4c1v7QIhR5p5SwYnDHJCayhL6BOTPpkNv6XdF3rUXaLWJswiJPxU7E+FH8FhXgG1kzYFpjW4rUeORQ1Q7b6FUcTATfQzHrFPIXlMjjGLMyCLxwdP80EUSI=
+	t=1762373118; cv=none; b=G8iY4Ewx3Au4jXobeL3XkO/GVA648wpYtzz+8xkrR7Gjt2yHEYtgd46KYqmZ/naRAkgp5DOMiqV/CGST+4T5QXwBYy4czyMcDQwZ/Sz9TQlP8xBKLhKn28oB/eBq0VZYsvXJlRLkdRaiYxf1A2u2kviH6vmOpxgpp1MUD89nC28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762373070; c=relaxed/simple;
-	bh=mY7NO0+qU5X9V5PbwePYWzYmDJPdI94x5mJXLK2Pjd0=;
+	s=arc-20240116; t=1762373118; c=relaxed/simple;
+	bh=8HMzQGuxndB9dt/RPjaCJbkzRlRpF2cFYPqFtIS3c9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnD2F4mAHKw/wbQUzJ/G4ibwjWxsl4vQt8LKIE/YY5+ub/+DM5W6np4qCd+BcwgPnvxqPpEz+GobNewAhkS8r1BlIUFWsQwwBPu2bhWqne73noNs1G8XjM+Q+WfHDcGqHbRP0vvGa1i7IogoRXm8JquZ4SdUcdGbNACZCntFAjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fKoyvWoE; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Nov 2025 20:04:22 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762373066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7c3VKkhTGYq+wSgt8NGN39M9SWqcyVAMnzwEFySADl8=;
-	b=fKoyvWoEsE9wcHIJ/+7f6q/bwXfBMBa6QeN3+/P4G9MGieNGdtfM2g4MYFK1txg+iCwKuq
-	Gnl9JsTxpnKrN/CFYjgK00ihwObhQj/F6QaIz0x81qic/OsEPUKRqf1N03Soljpl2DrrhR
-	3Ekugq6plrcAlpC61J9XGqnpw5H858U=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel
-Subject: Re: [PATCH 3/3] KVM: nSVM: Avoid incorrect injection of
- SVM_EXIT_CR0_SEL_WRITE
-Message-ID: <ek624i3z4e4nwlk36h7frogzgiml47xdzzilu5zuhiyb5gk5eb@tr2a6ptojzyo>
-References: <20251024192918.3191141-1-yosry.ahmed@linux.dev>
- <20251024192918.3191141-4-yosry.ahmed@linux.dev>
- <aQuqC6Nh4--OV0Je@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dY2JMiIqRNMKetB0HVSTduwjaWR91aF3nF1NbCr7jiUn12t99c9+OuAeoZocV7RZblGpn44R0O8ABgc+ykUJO1ZJ3Nn6jgkdavji1jWn8C8aLqcwqkCHPNYKu4UAIqSUEmbfPpfs5uahkxSb2/QX93CoVb+Ff4JwXP7TpMoC+ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=X37PonFU; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0577340E015B;
+	Wed,  5 Nov 2025 20:05:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id i-AnOtrUsI_d; Wed,  5 Nov 2025 20:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762373106; bh=fYfYWQekpKMSwocEBAEzndoctUQRvHdirTXWANQiR6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X37PonFU+7CKwP5bXRcvEfrdQ4jn3n3ucT49c0S6toQ0hRvhHlN/WZLLsDnf4zeEp
+	 X+YLtog/hNI7J8+pt4q8jK/yuMakTwJ2io1X0hdzRkbwLfc32vJEUq4SYjUhcy9JcD
+	 eUYSM9hI0UQpRUm3K//rgJeffHk2x2/+hYHFOt3TQaspRLH3g1uUYwwZ+G/b16dVgj
+	 9Su6oGg6zyoIei2g0sBNQrkhofpu7lIplDSgOyjH/lehgR7oo2fiJchHpVzjqxCIqZ
+	 EyV1LnTOtd03xd7RaB4pL5n74Ano8noBbDEndpNBFl3b2SaDBh3LwtjpDylo1wi4pn
+	 3vhDM4NBzHvMzfvyfmJ/RF61JxDlnNcJhQBFIxhbj/Mk99wgMzOoMPe0EXOXCXlREq
+	 XianHepFrLbt0cNChc4DsSKD9y9xHQIoSQ4zU9SPsT0bIQGd03Axa5aOnE/a2fQIea
+	 91HVSJtTw+Q9gL7ptiC2uG+EO8XVHW0cNlyE8ssZ19XVl5+reHxcIfFFQJt6I4tIS4
+	 vNs2UZyC40pm4FrPVOp7H6pHyLhu7u++JUZOcuUjz8IFv9VNn/Al5PBOjCwtEdmG3A
+	 QRK2Cbd9n7ZCQB71MkJac51OGcnrgbam4VYKC9YdNoRrmcmYDtNai9lFEGzMkJGqaz
+	 GCoymYSKgHaZ/+KQ2I7v4pwQ=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 07FD440E00DA;
+	Wed,  5 Nov 2025 20:04:53 +0000 (UTC)
+Date: Wed, 5 Nov 2025 21:04:47 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: "Kaplan, David" <David.Kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 05/56] x86/bugs: Reset spectre_v2 mitigations
+Message-ID: <20251105200447.GBaQut3w4dLilZrX-z@fat_crate.local>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-6-david.kaplan@amd.com>
+ <20251103193130.GQaQkDEquEnEwb_cwC@fat_crate.local>
+ <LV3PR12MB92655CEB1AF94875901E700C94C7A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20251103202811.GMaQkQW54Gml6i1jQy@fat_crate.local>
+ <j2mds5vdblnhpha6oyejqcj2fgmveylgaudzzljvfwwl3fgvnw@xgmsl4f7jzv4>
+ <20251105110318.GAaQsu9vGkzSxGbzzx@fat_crate.local>
+ <b7xcrqkx4ouye4ayqkkvmpoirpqydhf663uim63w7nt3xwbgyc@kytyca6dgztu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,106 +90,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQuqC6Nh4--OV0Je@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <b7xcrqkx4ouye4ayqkkvmpoirpqydhf663uim63w7nt3xwbgyc@kytyca6dgztu>
 
-On Wed, Nov 05, 2025 at 11:48:27AM -0800, Sean Christopherson wrote:
-> On Fri, Oct 24, 2025, Yosry Ahmed wrote:
-> > When emulating L2 instructions, svm_check_intercept() checks whether a
-> > write to CR0 should trigger a synthesized #VMEXIT with
-> > SVM_EXIT_CR0_SEL_WRITE. However, it does not check whether L1 enabled
-> > the intercept for SVM_EXIT_WRITE_CR0, which has higher priority
-> > according to the APM (24593—Rev.  3.42—March 2024, Table 15-7):
-> > 
-> >   When both selective and non-selective CR0-write
-> >   intercepts are active at the same time, the non-selective
-> >   intercept takes priority. With respect to exceptions, the
-> >   priority of this inter
-> > 
-> > Make sure L1 does NOT intercept SVM_EXIT_WRITE_CR0 before checking if
-> > SVM_EXIT_CR0_SEL_WRITE needs to be injected.
-> > 
-> > Fixes: cfec82cb7d31 ("KVM: SVM: Add intercept check for emulated cr accesses")
-> > Cc: stable@vger.kernel
-> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > ---
-> >  arch/x86/kvm/svm/svm.c | 16 +++++++++++++---
-> >  1 file changed, 13 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index 9ea0ff136e299..4f79c4d837535 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -4533,12 +4533,22 @@ static int svm_check_intercept(struct kvm_vcpu *vcpu,
-> >  		if (info->intercept == x86_intercept_cr_write)
-> >  			icpt_info.exit_code += info->modrm_reg;
-> >  
-> > +		/*
-> > +		 * If the write is indeed to CR0, check whether the exit_code
-> > +		 * needs to be converted to SVM_EXIT_CR0_SEL_WRITE. Intercepting
-> > +		 * SVM_EXIT_WRITE_CR0 has higher priority than
-> > +		 * SVM_EXIT_CR0_SEL_WRITE, so this is only relevant if L1 sets
-> > +		 * INTERCEPT_SELECTIVE_CR0 but not INTERCEPT_CR0_WRITE.
-> > +		 */
-> >  		if (icpt_info.exit_code != SVM_EXIT_WRITE_CR0 ||
-> 
-> Oof, the existing is all kinds of confusing.  Even with your comment, it took me
-> a few seconds to understand how/where the exit_code is being modified.  Eww.
-> 
-> Any objection to opportunistically fixing this up to the (completely untested)
-> below when applying?
+On Wed, Nov 05, 2025 at 09:06:36AM -0800, Josh Poimboeuf wrote:
+> Nope, these patches don't add any forward declarations because they
+> sanely put the caller below the callees.
 
-Looks good with a minor nit:
+Not happy about the added ifdeffery tho. I guess we can move it inside the
+functions themselves or mark them __maybe_unused - whatever makes the
+compilers not complain.
 
-> 
-> 		/*
-> 		 * Adjust the exit code accordingly if a CR other than CR0 is
-> 		 * being written, and skip straight to the common handling as
-> 		 * only CR0 has an additional selective intercept.
-> 		 */
-> 		if (info->intercept == x86_intercept_cr_write && info->modrm_reg) {
-> 			icpt_info.exit_code += info->modrm_reg;
-> 			break;
-> 		}
-> 
-> 		/*
-> 		 * Convert the exit_code to SVM_EXIT_CR0_SEL_WRITE if L1 set
-> 		 * INTERCEPT_SELECTIVE_CR0 but not INTERCEPT_CR0_WRITE, as the
-> 		 * unconditional intercept has higher priority.
-> 		 */
+> We should put cpu_select_mitigations() at the bottom too, then all those
+> existing forward declarations can go away.
 
-We only convert the exict_code to SVM_EXIT_CR0_SEL_WRITE if other
-conditions are true below. So maybe "Check if the exit_code needs to be
-converted to.."?
+That's a good idea. We should, if it doesn't get too hairy.
 
-> 		if (vmcb12_is_intercept(&svm->nested.ctl, INTERCEPT_CR0_WRITE) ||
-> 		    !(vmcb12_is_intercept(&svm->nested.ctl, INTERCEPT_SELECTIVE_CR0)))
-> 			break;
-> 
-> 
-> > -		    info->intercept == x86_intercept_clts)
-> > +		    vmcb12_is_intercept(&svm->nested.ctl,
-> > +					INTERCEPT_CR0_WRITE) ||
-> > +		    !(vmcb12_is_intercept(&svm->nested.ctl,
-> > +					  INTERCEPT_SELECTIVE_CR0)))
-> 
-> Let these poke out.
+> I don't see how the solution to "too many functions" is to start
+> squirreling away some arbitrary parts of (otherwise logically separated)
+> code in a hidden uber-function away from the rest?
 
-Sure. Do you prefer a new version with this + your fixup above, or will
-you fix them up while applying?
+I aim for this file to "keep it as simple as possible and leave enough
+breadcrumbs as possible for later."
 
-> 
-> >  			break;
-> >  
-> > -		if (!(vmcb12_is_intercept(&svm->nested.ctl,
-> > -					INTERCEPT_SELECTIVE_CR0)))
-> > +		/* CLTS never triggers INTERCEPT_SELECTIVE_CR0 */
-> > +		if (info->intercept == x86_intercept_clts)
-> >  			break;
-> >  
-> >  		/* LMSW always triggers INTERCEPT_SELECTIVE_CR0 */
-> > -- 
-> > 2.51.1.821.gb6fe4d2222-goog
-> > 
+But your argument about keeping all the mitigations and their functions
+together has some merit too.
+
+Maybe we should do
+
+arch/x86/kernel/cpu/bugs/mtg_<bla>.c
+arch/x86/kernel/cpu/bugs/mtg_<foo>.c
+
+:-P
+ 
+> If "functions bad" then why not make cpu_select_mitigations() one big
+> happy function with a ton of comments?  Just think of all the function
+> savings ;-)
+
+If it makes it more readable, always. But I see your point.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
