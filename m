@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-886486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BE6C35BC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:58:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CBCC35BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:57:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6276F4F9501
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:56:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7066D34C6F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2A13164A8;
-	Wed,  5 Nov 2025 12:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006113148B2;
+	Wed,  5 Nov 2025 12:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UCEL5Tyc"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyVp+qtp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1E02E62B3;
-	Wed,  5 Nov 2025 12:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1953128B4;
+	Wed,  5 Nov 2025 12:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762347409; cv=none; b=IXe/R+1ivktl4uk3wBBM0gHsLaQ/aqbedTYTALbwSLmQfamNTuFULoLxdDmbu5S1z7UcAN2k9VmRLWnRysGuz+47LEkTCpi+aO5hlPghU/Zp3CcktFaI3EQXums/JizcuRXKLoBPHoTD7yfkhjWynmzzTrUTkzWjiX9CZgwxMng=
+	t=1762347441; cv=none; b=dejmu6cTNSX+ZEmUn0F/LtuYpsWLmMbL+SdeI2NmGL4HuQ/agMkB/gFE88HaUZ60NDdEhjQmrCzawR8Inx2uSuxbJD/sMzjO4yKgjXaLapA6pI78CG0aRp9uo6y6tRh/1WBuum/pha1a3pksgsd06mudITBENkFoSbtzUCtrP/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762347409; c=relaxed/simple;
-	bh=zsnwty4DLcrZ2EUkS8MJ4pcrgNIbrvhUP3gBR7CEr5Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=F4WmnfwV/yWgYRleLdXYFgr5vBRXGUAfbanE2OQ3uWzRtpPpkqHnf9ueHrD669ggtmhvOi4MAEldmwMRgrG+T1ctjdWMjZ0GMPrguI0ex9QkVsr+8iIdY0TCuBB/VhydUPUR0BX2DT0UzToMGNaZ+eL1S3P8cLLwZgOKxEF5nFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UCEL5Tyc; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762347406;
-	bh=zsnwty4DLcrZ2EUkS8MJ4pcrgNIbrvhUP3gBR7CEr5Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UCEL5Tyc+WmgK+8W7uwi4S4i+54SOTgymbKDKUO9kLVNg2pCje+jeIW5t8osCuFmp
-	 ZK1CbG4eG3vtGhrz2FUfdaV9kjl1fvxsRyjmw9su9G6iU+7e9XSq9b2mihiW2QZXFk
-	 o+7X280FWB7c/ZOrZ4kpRalhlacenF74cxlWJP8hYdF2Fpr2fXidaRpTtI+yA4NM8p
-	 YSXMLDluJMiIeK09OS8OSv9zEMEc++8N1KhIDEHOj3PzjZpkEOG3cKYZ1Cmf6imBjD
-	 sgPBNCC1rwlebjn6mMdr1w0F27kuq9f1WOehIOa/EkqIMoG53LWRy+NB05hRoYnSZa
-	 fz2eTOoidP7eA==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7B37417E128C;
-	Wed,  5 Nov 2025 13:56:45 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Frank Wunderlich <linux@fw-web.de>
-Cc: Frank Wunderlich <frank-w@public-files.de>, 
- Sean Wang <sean.wang@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <20251027132817.212534-1-linux@fw-web.de>
-References: <20251027132817.212534-1-linux@fw-web.de>
-Subject: Re: (subset) [PATCH v1 0/6] Add Bananapi R4 Pro support
-Message-Id: <176234740545.29963.12296506699287860071.b4-ty@collabora.com>
-Date: Wed, 05 Nov 2025 13:56:45 +0100
+	s=arc-20240116; t=1762347441; c=relaxed/simple;
+	bh=hIATDbt/RsrH8ZIiC8JoCLILbqxUzH0/OZQz+Ym01Tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aY1C71m+bSH9P9X9bpbNiQI5DRithDwuUQh8CNPW0CKQM/VKz4upAnMSewJi61bFF8FHIHnvwTixnFRPw4ucJNuYhfBQznU5DcBCBVzL2ctVGQwGPk3/rFgGom3mRYyhby3BHrfVvu//0du/1/yDkE81IbprldwPstPExPa9Zzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyVp+qtp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F873C4CEF8;
+	Wed,  5 Nov 2025 12:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762347440;
+	bh=hIATDbt/RsrH8ZIiC8JoCLILbqxUzH0/OZQz+Ym01Tw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uyVp+qtp31l6qzqBBFg/KjZ/r3ewyocLtuGIKSTuRAtNZ56Kx7tGofQuowtlA6uGQ
+	 qHni5QDiVeZ1HxgesDoA2pjDrzTH/QHRs4e4NQznZPgMTltS9YPWu8oJ/tHsEHXMh/
+	 BvOfRNPbbd8ZVvwDBOgDTbgLrBIunisc4GCSeKcF1inNZTCo+KXX9dkKqRcRorq4lb
+	 bZeo74gn3u5LgxjXguB6c5thwN4C898ujDtCSPFlBirRdrplh5m2pOCw/gw4TmDL5U
+	 3HRnZDbTcBMVbuCIKmiutz5j23n8WyHxUYzUUdR3P70WfXBsvqhqnA83bMjLU9O3mT
+	 2eQoPEdtWUfMg==
+Date: Wed, 5 Nov 2025 14:57:13 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: haris.iqbal@ionos.com, jinpu.wang@ionos.com, jgg@ziepe.ca,
+	danil.kipnis@cloud.ionos.com, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] RDMA/rtrs: server: Fix error handling in
+ get_or_create_srv
+Message-ID: <20251105125713.GC16832@unreal>
+References: <20251104021900.11896-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104021900.11896-1-make24@iscas.ac.cn>
 
-On Mon, 27 Oct 2025 14:28:10 +0100, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
+On Tue, Nov 04, 2025 at 10:19:00AM +0800, Ma Ke wrote:
+> get_or_create_srv() fails to call put_device() after
+> device_initialize() when memory allocation fails. This could cause
+> reference count leaks during error handling, preventing proper device
+> cleanup and resulting in memory leaks.
+
+Nothing from above is true. put_device is preferable way to release
+memory after call to device_initialize(), but direct call to kfree is
+also fine.
+
 > 
-> BananaPi R4 Pro is a MT7988A based board which exists in 2 different
-> hardware versions:
+> Found by code review.
 > 
-> - 4E: 4 GB RAM and using internal 2.5G Phy for WAN-Combo
-> - 8X: 8 GB RAM and 2x Aeonsemi AS21010P 10G phys
+> Cc: stable@vger.kernel.org
+
+There is no need in this line at all, it is not fixing anything.
+
+Please rewrite commit message, thanks.
+
+> Fixes: 9cb837480424 ("RDMA/rtrs: server: main functionality")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/infiniband/ulp/rtrs/rtrs-srv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
-
-Applied to v6.18-next/dts64, thanks!
-
-[2/6] dt-bindings: arm: mediatek: add BPI-R4 Pro board
-      commit: b88827cb0bd1a192855db40494970bbdd7aad939
-
-Cheers,
-Angelo
-
-
+> diff --git a/drivers/infiniband/ulp/rtrs/rtrs-srv.c b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+> index ef4abdea3c2d..9ecc6343455d 100644
+> --- a/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+> +++ b/drivers/infiniband/ulp/rtrs/rtrs-srv.c
+> @@ -1450,7 +1450,7 @@ static struct rtrs_srv_sess *get_or_create_srv(struct rtrs_srv_ctx *ctx,
+>  	kfree(srv->chunks);
+>  
+>  err_free_srv:
+> -	kfree(srv);
+> +	put_device(&srv->dev);
+>  	return ERR_PTR(-ENOMEM);
+>  }
+>  
+> -- 
+> 2.17.1
+> 
 
