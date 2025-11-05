@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-886336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4E9C354A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:06:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8051EC354AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 12:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111F956628B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A0362275F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 11:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DAC30F7EE;
-	Wed,  5 Nov 2025 11:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9475730F546;
+	Wed,  5 Nov 2025 11:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tb1higuk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iCKKnfn7"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0D630F539;
-	Wed,  5 Nov 2025 11:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1153E30EF89;
+	Wed,  5 Nov 2025 11:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762340419; cv=none; b=GjjFeQBzZBiDUrK1kAUjXCBi2yo+eUqHZWS3ejG+RrvzlLfQCOtdel5TVt1EnyzhgakiYGb+d0FODaz+9REWFfovJMlNQ2jn4Ig7wL+E+P6BthS3LtyUyYIIiSe7bCx2ScWL1I9uJrhEpb5MuGh1cImNu+1ls7fArUqEg0gjP50=
+	t=1762340437; cv=none; b=E/yEZJZ7mVQgZCaOomieixUoXkDK78rXDNk8C2IA6h43AR4xFGp2rBItvPj+puSYGjYCE6qf4HRmFgA9YiqZJWShq4d5Ux3S0LtUI5YoFDDtJwGUK+AQmcZf3LxkFaNq7aJlAcwbiKznFdFO/k10wGrDLLT0DnnQkMWr6E5Tjfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762340419; c=relaxed/simple;
-	bh=B+4pOh83F8unCV02t+zRv+dq7jLqx/Ju8WvlRa4iwIA=;
+	s=arc-20240116; t=1762340437; c=relaxed/simple;
+	bh=0frN4Ydex62MR9blW5nQL3JIscHl7H6SztNBiRDUr9A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXDL/He0W0LCmxbR9/Ok+JXPiSiB8+0bqtma1khx8QOVHUpIJeVA5I4IuMSv9QhDe+hBVLlOFvWX50iGApFKrRlD1yyTKjMtN4Ad4VQKPVkHPG521bqts/a2J2TVvFxERn8hc1kaBOygUkg+E1FEH4rc41+LqSfHegvsHgKZWY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tb1higuk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D59EC4CEF8;
-	Wed,  5 Nov 2025 11:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762340419;
-	bh=B+4pOh83F8unCV02t+zRv+dq7jLqx/Ju8WvlRa4iwIA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tb1higukqPOJoexZHUEDVn6rdv63fY6hwZ3LV4uK9zfaqjIuKOMWH7LZ4d0ei9f6i
-	 +Egjj7f7HKarz2VVvZFrRKdipbZCs+gjsHMTO/1Q8LUrz0zUhTV5XVBL3pohY5XmHu
-	 RysFQqMm2Isu9fWxUx2TjLmXekMKFPGNnX0QFn3oEI7OyfZt3sv6P0bdlxlGaO0i9V
-	 P/E4gdoX5HoPqW2RoSwNAE9CLBeXGYyQl+5WI6HlAHVwhNjGJDIdAQEsDQLbnfQzBZ
-	 qTAvA4Jc11XR+uK5HGEm/v7qUH+IwW7fYLF3eo0KdMaV6ttUikGFpjQCV0FDT5y/9P
-	 Sis0E2ZpiD/0A==
-Date: Wed, 5 Nov 2025 12:00:11 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Bjorn Helgaas <helgaas@kernel.org>, chester62515@gmail.com,
-	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com,
-	bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
-	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
-	Frank.li@nxp.com, linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 3/4 v3] PCI: s32g: Add initial PCIe support (RC)
-Message-ID: <aQsuO5WaYPK0KbVw@ryzen>
-References: <20251022174309.1180931-4-vincent.guittot@linaro.org>
- <20251022190402.GA1262472@bhelgaas>
- <CAKfTPtCtHquxtK=Zx2WSNm15MmqeUXO8XXi8FkS4EpuP80PP7g@mail.gmail.com>
- <aQsmtKsTEmf7e7Sd@ryzen>
- <bf3b2d2a-ce3e-87af-4154-abd022c6a3b4@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBZJ1/bQ8/xHQYegmk4prJPgt9yPF8SjVKu30/YsiE4Il+Z101yU+R506mZHzXLoY8O120FI/3aU0iHxnGryik8hdaiUlk6FZfxvQpy+GI8HCFjXSwkl9qoBF+gQUohyMgH6MttP3d+9pj3w//0y8nGxLJCv0UZrnEZT07FNJU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iCKKnfn7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=r4dNssuBIX3kLf4QLulycGpF4N2z+mVGDeDOZbf0Sz4=; b=iCKKnfn7I2hblI+EDuOylvkM43
+	LWVWUtBVQ92Y+eg3+G2VO0cBfRv2Dl3ir418Qi8U2HDUgURG7fhtNKlqn+x0HbKL7J/xExY+IonBV
+	R3wIxt3ILBNzHhSbJFWh9pXPLOOzSa56NwNX5SKILtXpijKahN5GOO+A11i8YpDKnOZs93dOc6Y0C
+	NGwhl3ykyU5BLFaVf/4gcVDYes6Olwhn6c5baQovL6oFH6pDn/cD+PNr8aYkhI6RZ/xWF4f5ZD98Q
+	MjR+lUS3u6oitkDAl9nJOCZE1Kdt+lzQN2+x8LTVA1KM1AoCb+QwMTbAFpw0jD2NBAId7BGBm2FJE
+	rZvGz0Sw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGbFb-00000003i8h-0Lnl;
+	Wed, 05 Nov 2025 11:00:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id ED3FE300230; Wed, 05 Nov 2025 12:00:26 +0100 (CET)
+Date: Wed, 5 Nov 2025 12:00:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: kernel test robot <oliver.sang@intel.com>,
+	Fernand Sieber <sieberf@amazon.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	aubrey.li@linux.intel.com
+Subject: Re: [tip:sched/core] [sched/fair] 79104becf4:
+ BUG:kernel_NULL_pointer_dereference,address
+Message-ID: <20251105110026.GI988547@noisy.programming.kicks-ass.net>
+References: <202510211205.1e0f5223-lkp@intel.com>
+ <20251021110449.GO3245006@noisy.programming.kicks-ass.net>
+ <20251027125453.GY4067720@noisy.programming.kicks-ass.net>
+ <3b30e40b-f1fb-4145-b4d9-a9279b9602d8@intel.com>
+ <20251027135516.GA3419281@noisy.programming.kicks-ass.net>
+ <20251027140718.GT1386988@noisy.programming.kicks-ass.net>
+ <20251027140959.GU1386988@noisy.programming.kicks-ass.net>
+ <e9f705f3-3a8f-4952-b5d5-e36f4fa1515d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bf3b2d2a-ce3e-87af-4154-abd022c6a3b4@linux.intel.com>
+In-Reply-To: <e9f705f3-3a8f-4952-b5d5-e36f4fa1515d@intel.com>
 
-On Wed, Nov 05, 2025 at 12:43:09PM +0200, Ilpo Järvinen wrote:
-> On Wed, 5 Nov 2025, Niklas Cassel wrote:
-> 
-> > On Fri, Oct 24, 2025 at 08:50:46AM +0200, Vincent Guittot wrote:
-> > > On Wed, 22 Oct 2025 at 21:04, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > > > +     dw_pcie_dbi_ro_wr_en(pci);
-> > > > > +
-> > > > > +     val = dw_pcie_readl_dbi(pci, PCIE_PORT_FORCE);
-> > > > > +     val |= PORT_FORCE_DO_DESKEW_FOR_SRIS;
-> > > > > +     dw_pcie_writel_dbi(pci, PCIE_PORT_FORCE, val);
-> > > > > +
-> > > > > +     /*
-> > > > > +      * Set max payload supported, 256 bytes and
-> > > > > +      * relaxed ordering.
-> > > > > +      */
-> > > > > +     val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
-> > > > > +     val &= ~(PCI_EXP_DEVCTL_RELAX_EN |
-> > > > > +              PCI_EXP_DEVCTL_PAYLOAD |
-> > > > > +              PCI_EXP_DEVCTL_READRQ);
-> > > > > +     val |= PCI_EXP_DEVCTL_RELAX_EN |
-> > > > > +            PCI_EXP_DEVCTL_PAYLOAD_256B |
-> > > > > +            PCI_EXP_DEVCTL_READRQ_256B;
-> > > > > +     dw_pcie_writel_dbi(pci, offset + PCI_EXP_DEVCTL, val);
-> > > >
-> > > > MPS and relaxed ordering should be configured by the PCI core.  Is
-> > > > there some s32g-specific restriction about these?
+On Tue, Oct 28, 2025 at 10:30:08AM +0800, Chen, Yu C wrote:
+> On 10/27/2025 10:09 PM, Peter Zijlstra wrote:
+> > On Mon, Oct 27, 2025 at 03:07:18PM +0100, Peter Zijlstra wrote:
+> > > On Mon, Oct 27, 2025 at 02:55:16PM +0100, Peter Zijlstra wrote:
 > > > 
-> > > I will check with the team why they did that
+> > > > > May I know if you are using the kernel config 0day attached?
+> > > > > I found that the config 0day attached
+> > > > > (https://download.01.org/0day-ci/archive/20251021/202510211205.1e0f5223-lkp@intel.com/config-6.18.0-rc1-00001-g79104becf42b)
+> > > > > has
+> > > > > CONFIG_IA32_EMULATION=y
+> > > > > CONFIG_IA32_EMULATION_DEFAULT_DISABLED=y
+> > > 
+> > > Yep, deleting that entry makes it all work.
 > > 
-> > Most likely, the reason is that, the PCI core does not set the MPS to the
-> > maximum supported MPS for the root port.
+> > 'work' might be over stating, it boots and starts trinity, which then
+> > promptly (as in a handful of seconds) triggers OOM and dies. Not
+> > actually reproducing the NULL deref I was looking for.
 > 
-> PCI core set/doesn't set MPS based on config. Perhaps try with 
-> CONFIG_PCIE_BUS_PERFORMANCE.
+> Change the following line in job-script
+> export memory='16G'
+> to
+> export memory='64G'
+> ?
 
-Sorry, I should have been more clear.
+Yes, that seems to help.
 
-Since a lot of PCIe controller drivers have similar code to the above,
-it is obvious that a lot of controller drivers want to increase the MPS
-regardless of PCIE_BUS_* bus config value.
+> I had a try and can reproduce the NULL except at first run:
 
-With the current PCI code, MPS for root ports will not be touched if
-PCIE_BUS_TUNE_OFF or PCIE_BUS_DEFAULT.
+Took me two runs, but yes, I can see it now.
 
-After the above series, MPS for root ports will be set to max supported
-also for PCIE_BUS_DEFAULT.
+Anyway, this is two bugs in the robot, can we please fix all this to not
+happen again?
 
+ - .config has 32bit disabled while robot provides 32bit images. Clearly
+   the actual robot runs 64bit images and the reproduction should
+   provide those too.
 
-Kind regards,
-Niklas
+ - job description is inaccurate in the amount of memory required.
+
+The reproduction steps must exactly match what the real robot runs, not
+something else.
 
