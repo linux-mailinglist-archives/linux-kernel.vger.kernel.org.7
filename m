@@ -1,186 +1,183 @@
-Return-Path: <linux-kernel+bounces-886583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC70C36015
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:16:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEC2C3611B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 15:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09213A71DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1467418C827A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 14:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93881A9FB6;
-	Wed,  5 Nov 2025 14:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34B2325480;
+	Wed,  5 Nov 2025 14:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZAgnZp1b";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jco2c2Ts";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZAgnZp1b";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jco2c2Ts"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b="hVItn9BC"
+Received: from sg-1-35.ptr.blmpb.com (sg-1-35.ptr.blmpb.com [118.26.132.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C83312CDBE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DFB21D59C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 14:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762352184; cv=none; b=MuOT3IGeNa0xtv7ueeDrV9CDR+9deavfM0KCHklXzTQUzNzK3fj5s0VGuiAC/4h/5bqUDIsO8sVyZE0iIAoZrC+NaS8jVNXkuACpYFBKgEikqc7BldkfOj2g72n2wL08FThDQsWx47KEkTt4tPpRlU81k6AyikPNaSKaXNUvmmc=
+	t=1762353061; cv=none; b=CQJAc8YGH56IqrkgjDU1+uJpOpKfU0gJkQpI9NvIjMJa31RLRX59Z2RypDw9zWAo58DI4hCUqUlh3iJ5oBsSLjt9ZyQHVQAl8/dWUt1FGTw4x2vMTg5brHR3FdSlFUsmjq6gt+a7GI+8MQ4Z02+vL1nia7UQqROtYPY8rhd0818=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762352184; c=relaxed/simple;
-	bh=wCHN5H9mchP1y9fkZJjQxB8pWxo4aGOEsmVIwaBLFLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FnGf7/ng7YFZ85rmMSpUBF4od+FN5Md2IM6BLAWteZzeIOp/6Rvit1IVkM1h8hYaVycdoDcNVwHidNzHtJEjjCBw49xA619e6jHGHW+BBdELmIv6QEphSyVPK2sFn3Jth2KwRKXh2S8fovdiilqQEYeXry6xvM7SHhhNTEEjTPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZAgnZp1b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jco2c2Ts; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZAgnZp1b; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jco2c2Ts; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4F0D11F443;
-	Wed,  5 Nov 2025 14:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762352180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
-	b=ZAgnZp1beMCDQuPib8hLvJz5oCykZmr6ck6Ej/Nhdxtb+z+12++QaMDxGcyG/L3DJn2yl2
-	tqa/wT8kM3RDINdiMAua9A1d74/H2TpsRoLEJ3ycvxFUEqse0CnvV9W/ewuK17MdpJOgLx
-	9FZykxZ9cikAYKOERiwE9l85Hw7cOR0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762352180;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
-	b=jco2c2TsE1GvQjlBUxLKyXGvVE4Ef/jz0HVJ8IitvIor3aznOWSQ7I+FaCIdZMwU43atBk
-	Spa1RB0ytSTVoPDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762352180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
-	b=ZAgnZp1beMCDQuPib8hLvJz5oCykZmr6ck6Ej/Nhdxtb+z+12++QaMDxGcyG/L3DJn2yl2
-	tqa/wT8kM3RDINdiMAua9A1d74/H2TpsRoLEJ3ycvxFUEqse0CnvV9W/ewuK17MdpJOgLx
-	9FZykxZ9cikAYKOERiwE9l85Hw7cOR0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762352180;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxijTgwj4qu/PtpAhpALHtZ5gBcQ08IIOzs5scz9wAA=;
-	b=jco2c2TsE1GvQjlBUxLKyXGvVE4Ef/jz0HVJ8IitvIor3aznOWSQ7I+FaCIdZMwU43atBk
-	Spa1RB0ytSTVoPDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEBAF13A88;
-	Wed,  5 Nov 2025 14:16:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id q5rPLzNcC2kzQAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 05 Nov 2025 14:16:19 +0000
-Date: Wed, 5 Nov 2025 15:16:18 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Hui Zhu <hui.zhu@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Hui Zhu <zhuhui@kylinos.cn>
-Subject: Re: [PATCH v4 0/2] mm/hugetlb: refactor sysfs/sysctl interfaces
-Message-ID: <aQtcMkivdFHbW2lK@localhost.localdomain>
-References: <cover.1762310125.git.zhuhui@kylinos.cn>
+	s=arc-20240116; t=1762353061; c=relaxed/simple;
+	bh=+yn8kCg0DcocwldbWqFx7eecPWeUurwZTTG8G8mO0Eo=;
+	h=Mime-Version:References:Content-Type:Subject:Message-Id:Cc:
+	 In-Reply-To:To:From:Date; b=V51Mm6yNWX/tBRVHKYx0xHepVmd2s7nXbRHW0c3lp3M2D2m6iTtWcAXqLTLbTn300v/etwH1w2DqaVJJOoXgXwCxDL9iDB3rUVxvURR/QM0MLpjpWNH4LE70Kwzzf/QyaHDy5rZxN7PCxo3dRD3MdfF+BgNvnaxDW18uPhpvhc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club; spf=pass smtp.mailfrom=openatom.club; dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b=hVItn9BC; arc=none smtp.client-ip=118.26.132.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openatom.club
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=openatom-club.20200927.dkim.feishu.cn; t=1762352208;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=QPF4dN9RFRcdX3bhAtclDyHuCbEVFOt7Ivic9yuyuzg=;
+ b=hVItn9BCqYjzguDumS3Z3E0yFh7ixfKp3B0OtcRLUSDYz1ptmi4yUK7P+MQY2r+IrtlbKo
+ lJySlzHB6YBH+ZoyMj+hMoaNfyJWvJditUGQ9jm0cR0FyVLHanwwNYv5AqEHw8pIscnPVi
+ 3HyxfoMyvKc/SxhCIATB7v/Ak7cqk5re1x46H5kRrA62yXMKVACwq1puUQCrYiN4PQM/Oj
+ LBWgOz5O9Lb7hCRTjMNGyqU/m3PRIpj29VYHXrgm8gk8KjamZqf5RvvGY22lcm5FH9pW2d
+ pdc3OAUY+OMBSsRiwcW+9ZKT98w6DxP0HgMb6iR8mVHE7++Hsbl4HtaoIn/8jQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1762310125.git.zhuhui@kylinos.cn>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Mime-Version: 1.0
+References: <df3a68334760b2b254219a69426982bf858dee39.1762221537.git.chenmiao@openatom.club> <aQoIliAbrn0Re7E3@google.com> <b3f50745-5351-4e69-b3e2-ede99511e8dc@openatom.club> <aQtTRUMUaaUmTAWZ@google.com> <90bfcb3e-dee1-4f78-a1b2-02ce99db4997@openatom.club> <aQtbeWpRD7ip8-2A@google.com>
+X-Original-From: Chen Miao <chenmiao@openatom.club>
+Content-Type: text/plain; charset=UTF-8
+X-Lms-Return-Path: <lba+2690b5c4e+db2974+vger.kernel.org+chenmiao@openatom.club>
+Subject: Re: [PATCH] rust: kernel: Support more jump_label api
+Message-Id: <9c01f57e-35b0-494f-9e8e-c8d44e4a7596@openatom.club>
+Received: from [198.18.0.1] ([114.249.49.233]) by smtp.feishu.cn with ESMTPS; Wed, 05 Nov 2025 22:16:45 +0800
+Cc: <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, 
+	"Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	"Benno Lossin" <lossin@kernel.org>, 
+	"Andreas Hindborg" <a.hindborg@kernel.org>, 
+	"Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, 
+	"open list:RUST" <rust-for-linux@vger.kernel.org>, 
+	"open list" <linux-kernel@vger.kernel.org>, 
+	<hust-os-kernel-patches@googlegroups.com>
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+In-Reply-To: <aQtbeWpRD7ip8-2A@google.com>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Chen Miao" <chenmiao@openatom.club>
+Date: Wed, 5 Nov 2025 22:16:44 +0800
 
-On Wed, Nov 05, 2025 at 10:42:42AM +0800, Hui Zhu wrote:
-> From: Hui Zhu <zhuhui@kylinos.cn>
-> 
-> The hugetlb.c file has grown significantly and become difficult to
-> maintain. This patch series extracts the sysfs and sysctl interface
-> code into separate dedicated files to improve code organization.
-> 
-> The refactoring includes:
-> - Patch 1: Extract sysfs interface into mm/hugetlb_sysfs.c
-> - Patch 2: Extract sysctl interface into mm/hugetlb_sysctl.c
-> 
-> No functional changes are introduced in this series. The code is moved
-> as-is, with only minor formatting adjustments for code style
-> consistency. This should make future maintenance and enhancements to
-> the hugetlb subsystem easier.
-> 
-> Testing: The patch series has been compile-tested and maintains the
-> same functionality as the original code.
-> 
-> Changelog:
-> v4:
-> According to the comments of David Hildenbrand, add copyright of
-> hugetlb.c to hugetlb_internal.h, hugetlb_sysctl.c and hugetlb_sysfs.c.
-> v3:
-> According to the comments of SeongJae Park, updated MAINTAINERS to
-> add new files.
-> Removed the wrong copyright in hugetlb_internal.h.
-> v2:
-> According to the comments of David Hildenbrand, removed the wrong
-> copyright in the file headers.
-> 
-> Hui Zhu (2):
->   mm/hugetlb: extract sysfs into hugetlb_sysfs.c
->   mm/hugetlb: extract sysctl into hugetlb_sysctl.c
-
-I am replying here as a response to https://lore.kernel.org/linux-mm/58d3c50f-2b4a-4053-a846-613434d5bcd9@redhat.com/T/#mf694af3f5a6ca56b76adf66352cbb88d022fe36c
-
-So, taking a look at patch#1 as an example,which moves sysfs stuff into hugetlb_sysfs.c.
-I have the feeling we are moving too much stuff. It is true that drawing a line
-is not easy, but e.g: you mention
-
-The following components are moved to mm/hugetlb_sysfs.c:
-- hugetlb page demote functions (demote_free_hugetlb_folios,
-  demote_pool_huge_page)
-
-I __think__ that moving demote_store() into hugetlb_sysfs.c is fine, but although
-demote_pool_huge_page and demote_free_hugetlb_folios are only called from there,
-they look more than a sysfs interface and more like hugetlb generic code.
-
-Again, drawing a like might be difficult, but I think that e.g: we should only move
-sysfs entry points functions into hugetlb_sysfs.c
-
-Does that make sense?
- 
-
--- 
-Oscar Salvador
-SUSE Labs
+On 11/5/2025 10:13 PM, Alice Ryhl wrote:
+> On Wed, Nov 05, 2025 at 09:55:27PM +0800, Chen Miao wrote:
+>> On 11/5/2025 9:38 PM, Alice Ryhl wrote:
+>>> On Wed, Nov 05, 2025 at 09:28:39PM +0800, Chen Miao wrote:
+>>>> On 11/4/2025 10:07 PM, Alice Ryhl wrote:
+>>>>> On Tue, Nov 04, 2025 at 02:04:17AM +0000, chenmiao wrote:
+>>>>>> The initial implementation of arch_static_branch was achieved by acc=
+essing
+>>>>>> the offset from the original type. However, this approach extended t=
+he
+>>>>>> path and introduced redundant calculations when dealing with types l=
+ike
+>>>>>> `static_key_true/false`, as shown below:
+>>>>>>
+>>>>>> ```
+>>>>>> static_brach_unlikely(tp, tracepoint, key)
+>>>>>>      =3D> tracepoint->key->key
+>>>>>>      =3D> &tracepoint->key(static_key_false) =3D=3D &tracepoint->key=
+.key(static_key)
+>>>>>>      =3D> off: tracepoint->key - tracepoint
+>>>>>> ```
+>>>>>>
+>>>>>> In practice, the implementation of `arch_static_branch` overlooked m=
+any
+>>>>>> detailed descriptions. To improve clarity, additional comments have =
+been
+>>>>>> added to the original logic. The approach has been modified to direc=
+tly
+>>>>>> locate the corresponding `static_key` instead of using offsets, ther=
+eby
+>>>>>> reducing  computational overhead.
+>>>>>>
+>>>>>> If finding the offset from the primitive type is necessary for this
+>>>>>> implementation, I will abandon this change.
+>>>>>>
+>>>>>> Additionally, support for the `static_branch_enable/disable` APIs ha=
+s been
+>>>>>> introduced.
+>>>>>>
+>>>>>> Signed-off-by: chenmiao <chenmiao@openatom.club>
+>>>>>> +    ($basety:ty, $branch:expr, $key:path, $keytyp:ty, $field:ident)=
+ =3D> {{
+>>>>>>             let _key: *const $keytyp =3D ::core::ptr::addr_of!($key)=
+;
+>>>>>> -        let _key: *const $crate::bindings::static_key_false =3D ::c=
+ore::ptr::addr_of!((*_key).$field);
+>>>>>> +        let _key: *const $basety =3D ::core::ptr::addr_of!((*_key).=
+$field);
+>>>>>>             let _key: *const $crate::bindings::static_key =3D _key.c=
+ast();
+>>>>>>    =20
+>>>>>>             #[cfg(not(CONFIG_JUMP_LABEL))]
+>>>>>> @@ -30,7 +71,88 @@ macro_rules! static_branch_unlikely {
+>>>>>>             }
+>>>>>>    =20
+>>>>>>             #[cfg(CONFIG_JUMP_LABEL)]
+>>>>>> -        $crate::jump_label::arch_static_branch! { $key, $keytyp, $f=
+ield, false }
+>>>>>> +        {
+>>>>>> +            $crate::jump_label::arch_static_branch! { _key, $branch=
+ }
+>>>>>> +        }
+>>>>> So ... this is changing from $key to _key. That's replacing the globa=
+l
+>>>>> variable with a local variable holding a pointer to the global variab=
+le.
+>>>>> However, the arch_static_branch! macro uses the `sym` operand which
+>>>>> requires you to pass it the global directly.
+>>>>>
+>>>>> Did you try this code? I don't believe it will work.
+>>>>>
+>>>>> Alice
+>>>> I'm very sorry for making a fatal mistake. My misunderstanding of sym =
+led to
+>>>> this issue, so I shouldn't make any changes to that part. However, reg=
+arding
+>>>> the other modifications, I believe it is necessary to support the dire=
+ct
+>>>> passing of structures similar to `static_key_false`, just as in C lang=
+uage.
+>>> It sounds like you are adding a new use-case for this macro. Can you
+>>> provide more information for this new feature? It is currently unclear
+>>> to me exactly how this will be used.
+>>>
+>>> Alice
+>> If there's a binding-required driver implementation in the future where =
+a key
+>> function uses if (static_branch_unlikely(&zoned_enabled))=E2=80=94 defin=
+ed by
+>> DEFINE_STATIC_KEY_FALSE(zoned_enabled);=E2=80=94 then in Rust we can dir=
+ectly
+>> implement it using if static_branch_unlikely!(zoned_enabled), without ha=
+ving
+>> to call it via if static_branch_unlikely!(zoned_enabled,
+>> bindings::static_key_false, key).
+>>
+>> static_branch_unlikely!(zoned_enabled) instead of
+>> static_branch_unlikely!(zoned_enabled, bindings::static_key_false, key).
+> In general, you would never use "static_key_false" as the second
+> argument to static_branch_unlikely!. The second argument is the name of
+> the struct *containing* a field of type static_key_false.
+>
+> I guess your point is that there's no way to use the macro right now if
+> the global is a bare static_key_false that is not wrapped in a struct?
+>
+> Alice
+Yes, you're right. But in fact, currently there are no other uses of=20
+static_branch_unlikely in Rust for Linux (except for tracepoint), so this i=
+s=20
+also a bit awkward.
 
