@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-885790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68AC4C33E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:03:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADA8C33EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 05:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABE724F0AFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCC44247EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 04:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356B825291B;
-	Wed,  5 Nov 2025 04:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F28324466B;
+	Wed,  5 Nov 2025 04:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eRNmz8V+"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="me5sjNZ3"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF571F5437;
-	Wed,  5 Nov 2025 04:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA247260F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 04:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762315368; cv=none; b=sC0iNKO14ByTdhnoXq+f9Q1WUZkCkSnB8/L1k0kUfBj1osZs1ZqQFzO2Oh1urEfDTH4pXt8q+xqrSDJ070K85yBzqnzAAnjnLgvZeNgn2NXYJ3nzrSvTyUhnu94ckaxqxiA5Oz/Z67Z2gkMoN0/JKWFeVpxCQiQD//y/0z5t6oQ=
+	t=1762315986; cv=none; b=lpVSMQ8YpnWb3ZOH2BPjR+1TyfgplJ7XdN8JubJc2nA6FVj+AOoHe8elO82L7u4OqCbBBZTrheWviZoru6MBgjWt72/APwxBkxzZcBxo8nFQQMYn1tzOKlxOJB+6DqRBhVHIU0psjaX1eaBbgMLXoQzeKoK3fdazMnPm8eqqIa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762315368; c=relaxed/simple;
-	bh=jqf3fkA6oX0rwGlsrVbUrrG09tiatuuy3zH4FgSa0dE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=umyhUyd1qjnE4ArPNzP8sHcmRP8HBsGF7TUnug7MGyelyXiFuYgihyEnQdcjLtfd63zDfDVG7Fy4LXdbe1Cx8YDmXr57zLSVA9KOQe+zuxSfKoGy6lG0Zkzyi45pewFR4f1irUZLGBjuAg0L4dPcCy92CXICsvMTfrjkYRSrgFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eRNmz8V+; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A53GHPb022581;
-	Wed, 5 Nov 2025 04:02:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=YsH5r/6vzUJZtwJSh4laP2CRaInCJhfRCw+nEMpXmAE=; b=
-	eRNmz8V+0wX2p5FgaNbOxo00KhVqq1gHlRmxlqb3zqjm9QNZ4FD/U6Qesc2EaGBX
-	XtLNinPDiyA4p4a+7oSTIjhespG4pAoA6DwDlAl5frJNSxLQjnkVj3pPLq+Fs9tR
-	tuZWGKWt0rLNN2xoLrLgNj1XkXR0DpkFMYvJlO19oBKltbAQa8mWgqRkE6AC0mlT
-	ZQehWWNOMN5aVmOyiemakDaWMSljpmbYr147zPAr7jNddUm7/QS2CENI7lcXosXv
-	3T7M0lm6sdRU88oWuTvC8BJ7Y7MeuL5B3cDJ78a7KMGwyijUphEWNgrw2DLu0ilt
-	T0fsKwkMheSX0utflxaxug==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a7xhdg201-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 04:02:28 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A524FLm024893;
-	Wed, 5 Nov 2025 04:02:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ne15j1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Nov 2025 04:02:28 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A542Pro005395;
-	Wed, 5 Nov 2025 04:02:27 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4a58ne15gy-6;
-	Wed, 05 Nov 2025 04:02:27 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: linux-scsi@vger.kernel.org, peter.wang@mediatek.com
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-        robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jejb@linux.ibm.com, lgirdwood@gmail.com,
-        broonie@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, wenst@chromium.org,
-        michael@walle.cc, conor.dooley@microchip.com, chu.stanley@gmail.com,
-        chun-hung.wu@mediatek.com, alice.chao@mediatek.com,
-        naomi.chu@mediatek.com, ed.tsai@mediatek.com
-Subject: Re: [PATCH v1] dt-bindings: ufs: mediatek,ufs: Update maintainer information in mediatek,ufs.yaml
-Date: Tue,  4 Nov 2025 23:02:20 -0500
-Message-ID: <176231440764.2306382.16356889887368434971.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251031122008.1517549-1-peter.wang@mediatek.com>
-References: <20251031122008.1517549-1-peter.wang@mediatek.com>
+	s=arc-20240116; t=1762315986; c=relaxed/simple;
+	bh=Eeg8JaMqf0IVm+msPAuMZVAemXY1r9F8Xrpn+cUTUbk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Wj43DaYfXg7N9xe2QDvwolGtujyBifhpkyGltD3rFC6QECck+yJSoex2JHaC8kf7sfgbo+1aYWN1pGIlulzVocIuuY5ZjvUIvzZjmMfR+5gfeIMnaIlyxbOL5r7zoKDIVzjVHZWSVvrjU/YaqwzKucs7paVsK7xoHiy8nSWUUhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=me5sjNZ3; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 55858EC0213;
+	Tue,  4 Nov 2025 23:13:02 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 04 Nov 2025 23:13:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762315982; x=1762402382; bh=J8MSnqb9oJ8hOyo/Cuc0Lahe+ACYy1X7u4c
+	6Cmkf0Ec=; b=me5sjNZ3cOuy9BjgUmaJtcG4W0KHRF35S9yNi0PjDrGQkc7il31
+	F5G2V/B2YbkIzvxej1bhcMOUcWGrf40Plw1YRsHGepdF6Z2pJUUObLfRoai1m/dv
+	/ypUwxuYfrI2CWkVpGKspS1uvrt+k6eUJgrq3889dC8czyCWgMeMQFNjA2ulgW/z
+	Fnv1DTZ3PoJ1NsjYB/+qiHfRQYQzEcaJS7By1ocwQ96AuK7zLau1efeG4EXgcjTt
+	VcafHWSYUU3xZ26LGu18uvzJf+Y6aDZpHWcFWY3MjjFZPhbeuB0FSUyfFj6wJ9HL
+	bjBYau+rWv8dFVY2nBctC8hNlBKVaGZYR2w==
+X-ME-Sender: <xms:zM4KaR0l1OxErxWXaygApfF_9BONM9C2pMz07CzuU3Teevzpux5yww>
+    <xme:zM4KaT5GmYkH6L3Hc_d_O-twnq6TDZQVj2sviQ1d8XNEE5V7sxMdiQWeaEkuM7fg5
+    nhh1SJYkHiRNs_7XXSaIb2SpEzMN4hRq7OI9IFkVJPV-X03a6IAwbo>
+X-ME-Received: <xmr:zM4KadTV15gR_oE47J17283eElwFXqEAHdAhnnDeImIib6dLrRyPhK-Wb_T2vXS6kXYmEPaBi9kt_6XHuPi0KhhFzqzib9yu1GE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukedvleduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrgh
+    dprhgtphhtthhopehushgvrhhmheejseihrghhohhordgtohhmpdhrtghpthhtohepmhhp
+    vgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepnhhpihhgghhinhesghhmrg
+    hilhdrtghomhdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhr
+    ohhuphdrvghupdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpth
+    htohepsggvnhhhsehkvghrnhgvlhdrtghrrghshhhinhhgrdhorhhgpdhrtghpthhtohep
+    lhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zM4KaYXAICgnitXLRix7RN-xOnsznBzZtbi6Oqh2k_pBrDpMkSzeOw>
+    <xmx:zM4KaSENEJpWEIxaOlbbiV9NSjRqK1DurtvOrl66jqRPyoMUAkOS8A>
+    <xmx:zM4KabcODOifgDuXFQVlqpGVTuhMs0g6SaXjf5HKiTk68eW4_vxOpA>
+    <xmx:zM4Kabq7p643LGzplcMHhsBzAlsyP2aWZicZVnJ0IAOHnnQEMjKu9Q>
+    <xmx:zs4KacX86euGDMYc27_IarFDd8axj6mdTHAG8SuD5NUBok2K_O5qdOP1>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 4 Nov 2025 23:12:57 -0500 (EST)
+Date: Wed, 5 Nov 2025 15:13:09 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+cc: Stan Johnson <userm57@yahoo.com>, mpe@ellerman.id.au, npiggin@gmail.com, 
+    christophe.leroy@csgroup.eu, sam@ravnborg.org, benh@kernel.crashing.org, 
+    linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+    rdunlap@infradead.org, Cedar Maxwell <cedarmaxwell@mac.com>
+Subject: QEMU limitations, was Re: [PATCH v4] powerpc: Use shared font data
+In-Reply-To: <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
+Message-ID: <492c13c9-666c-9578-6c66-0eb8fefc93dc@linux-m68k.org>
+References: <20230825142754.1487900-1-linux@treblig.org> <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com> <aQeQYNANzlTqJZdR@gallifrey> <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org> <aQgJ95Y3pA-8GdbP@gallifrey>
+ <797f0a13-350f-e26d-f1ef-876419e1c013@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_02,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=921 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511050024
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDAxOSBTYWx0ZWRfX+uE1GIt984Gq
- 4/GHMEsw9maJTT375X+rmpBf5mLpXxua/eTTSKpNLnEGcmns2VLHp2v9fHVEKAuCzVnrZEIhCAm
- 9erOZPx6vRi8KgbnS5iMXT7ojITDj7WqJIhCMqjRDbhxvkl48Ketl+YjXTZBbJXi1NvKBWfROxS
- R9+x+365zLpzU0Kc9H3sN5IOs7RnKfkXkSPm8gphNh+OWhLvU8Xzi3R4WlKDRSTnpm6rXQzx/UN
- WBNqsTx46cDHbk9eLm/CevyLK+0U696VVxkQgeaFv0RP/zgIWVtLUV5dGpyNwtBNrkAA6tYoyIK
- 5sl+8AiW5T7FuuQEdusv+qDnDi3IxTt7kEF+yilQJt4fhSJus6YP+qnGHDLYG8UxJTHd/qVC/kL
- 6MqSTyfIHUsbn3KOwsKN3RhLYgVVuP4P3bp8Df7TMnj4uqM9uXs=
-X-Authority-Analysis: v=2.4 cv=ZpDg6t7G c=1 sm=1 tr=0 ts=690acc54 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=mpaa-ttXAAAA:8 a=8d0GUG1h20LVvl_VnrYA:9 a=QEXdDO2ut3YA:10
- cc=ntf awl=host:13657
-X-Proofpoint-ORIG-GUID: HuzLGcL3yYhgijfTvd2LcY2rHs5jwfRD
-X-Proofpoint-GUID: HuzLGcL3yYhgijfTvd2LcY2rHs5jwfRD
+Content-Type: text/plain; charset=us-ascii
 
-On Fri, 31 Oct 2025 20:19:12 +0800, peter.wang@mediatek.com wrote:
 
-> Replace Stanley Chu with me and Chaotian in the maintainers field,
-> since his email address is no longer active.
+On Mon, 3 Nov 2025, Finn Thain wrote:
+
+> > OK, remember I don't think I've ever tried PPC via MacOS booting, so 
+> > not familiar with it.
+> > 
 > 
+> I will try to set up a MacOS guest in QEMU, to see if the hang can be 
+> reproduced that way.
 > 
 
-Applied to 6.19/scsi-queue, thanks!
+QEMU appears to be incompatible with the Old World ROM from the Beige G3. 
+'qemu-system-ppc -M g3beige -bios 78F57389.ROM -serial stdio' drops into a 
+ROM diagnostic menu and won't boot.
 
-[1/1] dt-bindings: ufs: mediatek,ufs: Update maintainer information in mediatek,ufs.yaml
-      https://git.kernel.org/mkp/scsi/c/480ca7954664
+I did get 'qemu-system-ppc -M mac99 ...' to boot into MacOS 9, by using 
+OpenBIOS instead of Apple firmware. Unforunately, BootX is not compatible 
+with this configuration, so it won't help.
 
--- 
-Martin K. Petersen
+BootX is compatible with beige powermacs, but 'qemu-system-ppc -M g3beige' 
+with OpenBIOS fails to boot MacOS 9 ("MacOS: unable to find an interrupt 
+controller node").
+
+OpenBIOS wouldn't boot a MacOS 8.1 CD-ROM either, but for different 
+reasons: both mac99 and g3beige failed with "No valid state has been set 
+by load or init-program".
 
