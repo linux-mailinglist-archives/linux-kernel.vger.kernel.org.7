@@ -1,98 +1,116 @@
-Return-Path: <linux-kernel+bounces-886546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC02C35E83
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:46:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5664FC35E9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 234BD34C3CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6012618C178D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED1D324B20;
-	Wed,  5 Nov 2025 13:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C652325482;
+	Wed,  5 Nov 2025 13:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b="TTxyY3lE"
-Received: from sg-1-17.ptr.blmpb.com (sg-1-17.ptr.blmpb.com [118.26.132.17])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="N3pZ3d1Z"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B1F311971
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF65315D2E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762350382; cv=none; b=nLWfgO4DdmthSCLw7jihpkOiGsaWRMyJIvtuMuEVfgIVAVosPpxAeRyjhlHx8iqOVNGsOIm5qwo4reTachzQy4dUbC+tRJWxvLnGZ/iGZRSW7jlCg83CKX9uKzlxrjm9Gqn0M4j9jJaT3oSSXuLJ44OgUs+HVUsmYjxfEtCEqSg=
+	t=1762350423; cv=none; b=oAIo5fmqzAcBu+P7I5m0GfVrKhaByrmA2okPfIWykbL/OEpvZjZMeN0NM1od3wn5FosNx7BQYY+U52mQlAA0vE22QZNjh5A0hHVXHWQHGXGGTMoJR6Rt2tk2Och//CviWT73OjzsEURW++o64rLIEgFN48RWZvkEu9WVCIFAlio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762350382; c=relaxed/simple;
-	bh=8+E+wvcxBVM0MPG0WH1f2Ay5kSxXX3yb3qO1FxQOTls=;
-	h=Mime-Version:In-Reply-To:To:Cc:From:Subject:Date:Message-Id:
-	 Content-Type:References; b=nh4IqJ5mFdu1ZNzMvPbZz8EW8t6A7SRrF4/iR3pPYToiURPEIIeIU1z7hanGQu00ZF+PHoVzixAMPDlpbFDchYZBpeBm4A5Y5TOZ67Be8HwuS7lMT1Nzjb5l+qkTinfe21eOmyFDYOhnlMF9p2b2rTp9d7B2NUmPhFTEUXbbb+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club; spf=pass smtp.mailfrom=openatom.club; dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b=TTxyY3lE; arc=none smtp.client-ip=118.26.132.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openatom.club
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=openatom-club.20200927.dkim.feishu.cn; t=1762350367;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=8+E+wvcxBVM0MPG0WH1f2Ay5kSxXX3yb3qO1FxQOTls=;
- b=TTxyY3lEsgB/ruiv12o5h9soSJW+ZDCU82keg4+yJJctTVzAv06sP3lQ4f3pUi9pGZf+kJ
- 70W8OchN4+pHhQ0bOCiosqc9Wz4cSMZyURaI/ED8ZnKpMYF3F/7nSWLUozgxFCYG3cjj8p
- iCLlDB6n39Fziu1w4/s3i6WPdtuWSOoyyUfTjxiyNZKJMjhScIj0vPTxui6txfHJs7HDUN
- z2WGKlga3x4pgkX6lrdoZrguKykgxDy9ur5GQ+vp1itYOYMc6dhaSkPW/+gQZ1hZmJpBuI
- JE+rkDmp5XKCk1NO7xv539CkHx8mh5oiJ2Tuw+WGn0xZrjNuNrvbzsP0uPaMrw==
+	s=arc-20240116; t=1762350423; c=relaxed/simple;
+	bh=bvfb8EO/Jqx4CYfgIOHPa1nosqTQWDLTokUveNsd720=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6yAaEUm7dNbpd5+Pad5P8h7XknBxMiHEBcu5SHgd9otTVS3ZuSzCX1OYylgBeUaYiTymhVVCmBEyReaSF7iGJVj/bix1iSCHZM4D9wB7HNNiS+qFoQw9LvQwtaFLCaxzAnO7lG9QgmKx/TPwRbQJBSngHaGzP7TJFvBA0S9HYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=N3pZ3d1Z; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ed7c33bb01so3029651cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:47:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1762350421; x=1762955221; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Zp2fLrlqJdhZLczeGkjeF6Ah1WqCYQgeoq7QTO4hMM=;
+        b=N3pZ3d1Z8mSqvUg0662RC8bZpvOpu1qb+bANagfhvp5hZFNgEHpxU2PahBcew+Pa/u
+         utZnfv9zIa9G34AoF7vaFOZoZ1gJsjSWlt+X1VCQX8Smq+blDDOCQWHW6MDWg+ww/wy1
+         VRwkhKVRJFydAxQNS/3lZw44TocdqEqYzKvXFK5VccnNTL+lznJkK3FZyzzvy4l/dVe7
+         ZDaDoa6p0vAbN8GraudRxwJEm72c9ML32aeyhrj7sOGy1Gq2OHxwLoot7zIQ4Bwma3V5
+         E9oI73lULX4bRzmH7Af+/3DcoDsTKaz7guepOdSAONKPqeWmfWvoCKuyKA56QhlMY1oK
+         HquA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762350421; x=1762955221;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Zp2fLrlqJdhZLczeGkjeF6Ah1WqCYQgeoq7QTO4hMM=;
+        b=rtQYqAYG8V7TmNc+4dG0F80GesxNowhsJ0XUBXbPfhpW/qge/pogSik1H2hkMehBPE
+         +r5PkRgU4u9UBWNY/W0QBNBBKBXrFVq/nyChNOheleW76koe6Kr+9NLd0oPQMl2yDqj5
+         J/uxRDbDqeBgkTqApHNTK1RhmdUjErMdRL3DZUxoemQnrD5CxRusPKXTWVP4Ly1rZIqy
+         gHl5tHfgTwiFst153Fu7gL+tuFWRXOl/5t+WmAesSl1IfYETGhT7LRCjRGMzlPskoOwf
+         NpT8YjlXcoIEDR4aFN/EBN1EyqC5bVJSPUJUW8YC91tmOt+mtveqmOkKvf3eZKRBWRvB
+         sPbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ5w8CT/0f1mPxB1IeuSiLaS/MJ/XQWcGmsFYuBusrC6ATYRDbUHzF8Y/RGJVO7fZJn5KdxzHigY03SsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBoGHAQS+IaNtUg0Z/MKuPteRdvDAoJHJbGhXKwdvCxi9D5Mxu
+	u2LX2Iac08yqtOQAWl30QhS0YMJwxp7uXv0Ycjd3fyks4LkzkwFFVRZ9ptdXucnxJXg=
+X-Gm-Gg: ASbGnctKZ9xYGMi8fjxCXouPOfmBNs/PtF2STC/hl23dygQReeT/VD86D5yfa/cTsVw
+	c77hAVNQO8ntUNa2Lx7UwCuOrKF5ZCz8wvmncNLwNzdMQoUOKdqzDud7LSS4SKjm3H8ZYmGbDqq
+	3DgpT9vQxT1S+brxI+C/rx/dAEZ1ohcesxdnGVINT6i3quih86+cY0nx1UjZgU8jtKpa7YBQKSv
+	0IB18A9jiIn9hfkjMnxVzWsBRn0UK+oCk1Tb56XSedep2YOet58SmSHcSwiJ6uOv1lJENNl2chJ
+	escINnEVtXgknxn6KRA5IEar7NZ3wM/rvbwzhnbZ7Q+N21Rw35lb2dLgY6NlHtsU3TeECXvtrNd
+	Z7RYOg8sxagYaf0I/zWMnhVUYmampoNNI8w8uX4Qo4ltI5i907FHaiAdOnf2WrlbRoZquaItWGN
+	6fq3M7C+HzfK+GSl9hP010bOs7aEEl0T//XFcVV+XMAxTiLg==
+X-Google-Smtp-Source: AGHT+IHiV3DU9pUwV6yRzvNAkLqpA9Q0anM5JtolaRsT/xrM1GR0vgEGuAlaC/LkLUMiyZ6hyzBu1w==
+X-Received: by 2002:a05:622a:110b:b0:4ec:fafd:7607 with SMTP id d75a77b69052e-4ed72673eb5mr39574611cf.81.1762350420869;
+        Wed, 05 Nov 2025 05:47:00 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed5faf6038sm36924761cf.11.2025.11.05.05.47.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 05:47:00 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vGdql-000000079Nw-3Qc1;
+	Wed, 05 Nov 2025 09:46:59 -0400
+Date: Wed, 5 Nov 2025 09:46:59 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Ma Ke <make24@iscas.ac.cn>, haris.iqbal@ionos.com, jinpu.wang@ionos.com,
+	danil.kipnis@cloud.ionos.com, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] RDMA/rtrs: server: Fix error handling in
+ get_or_create_srv
+Message-ID: <20251105134659.GM1204670@ziepe.ca>
+References: <20251104021900.11896-1-make24@iscas.ac.cn>
+ <20251105125713.GC16832@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Lms-Return-Path: <lba+2690b551d+de204c+vger.kernel.org+chenmiao@openatom.club>
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CANiq72=OE3JNpemanR-r1efbgKqQrZCiQ7hY2-=_bvxLyJZ-HQ@mail.gmail.com>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, 
-	"Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, 
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	"Benno Lossin" <lossin@kernel.org>, 
-	"Andreas Hindborg" <a.hindborg@kernel.org>, 
-	"Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, 
-	"Danilo Krummrich" <dakr@kernel.org>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>, 
-	"open list:RUST" <rust-for-linux@vger.kernel.org>, 
-	"open list" <linux-kernel@vger.kernel.org>
-From: "Chen Miao" <chenmiao@openatom.club>
-Subject: Re: [PATCH] rust: kernel: Support more jump_label api
-Date: Wed, 5 Nov 2025 21:46:02 +0800
-X-Original-From: Chen Miao <chenmiao@openatom.club>
-Received: from [198.18.0.1] ([114.249.49.233]) by smtp.feishu.cn with ESMTPS; Wed, 05 Nov 2025 21:46:04 +0800
-Message-Id: <282bd8d5-afde-4a96-b294-bbd7b69ce684@openatom.club>
-User-Agent: Mozilla Thunderbird
-Content-Type: text/plain; charset=UTF-8
-References: <df3a68334760b2b254219a69426982bf858dee39.1762221537.git.chenmiao@openatom.club> <CANiq72=WZJ5=UACpFLWCVJ7mcXbc93X9MyYAZP8-0F==2b0adw@mail.gmail.com> <8d865a46-82c8-428d-a371-407889eefb62@openatom.club> <CANiq72=OE3JNpemanR-r1efbgKqQrZCiQ7hY2-=_bvxLyJZ-HQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105125713.GC16832@unreal>
 
-On 11/5/2025 9:40 PM, Miguel Ojeda wrote:
-> On Wed, Nov 5, 2025 at 2:35=E2=80=AFPM Chen Miao <chenmiao@openatom.club>=
- wrote:
->> I can understand, but I'd like to make a brief explanation here. "Chen M=
-iao"
->> is my name, so the prefix of all my email addresses is "chenmiao." There=
-fore,
->> "Chen Miao" and "chenmiao" are equivalent.
-> That is fine, but what I was trying to say is that, in that case the
-> Signed-off-by should be "Chen Miao".
->
-> Please see https://docs.kernel.org/process/submitting-patches.html#sign-y=
-our-work-the-developer-s-certificate-of-origin
-> -- thanks!
->
-> Cheers,
-> Miguel
+On Wed, Nov 05, 2025 at 02:57:13PM +0200, Leon Romanovsky wrote:
+> On Tue, Nov 04, 2025 at 10:19:00AM +0800, Ma Ke wrote:
+> > get_or_create_srv() fails to call put_device() after
+> > device_initialize() when memory allocation fails. This could cause
+> > reference count leaks during error handling, preventing proper device
+> > cleanup and resulting in memory leaks.
+> 
+> Nothing from above is true. put_device is preferable way to release
+> memory after call to device_initialize(), but direct call to kfree is
+> also fine.
 
-Well, I will follow this rule and change the Signed-off-by to "Chen Miao"=
-=20
-before the next push.
+Once device_initialize() happens you must call put_device(), it is one
+of Greg's rules.
 
-Regards,
-
-Chen Miao
+Jason
 
