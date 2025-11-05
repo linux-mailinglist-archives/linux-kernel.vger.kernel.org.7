@@ -1,76 +1,152 @@
-Return-Path: <linux-kernel+bounces-886844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A52A1C36B21
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:29:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FD6C3697E
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CC8645F00
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:06:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 789614FDEC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A45F335064;
-	Wed,  5 Nov 2025 16:05:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A69333439B;
+	Wed,  5 Nov 2025 16:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Wqwoshp9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EQN0Vx60"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E9A33374E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C012320CAF;
+	Wed,  5 Nov 2025 16:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358731; cv=none; b=j+cB7CYVLYWPf3qi4tWeMWjy7fXvEYY6DRb1EzOs65rZNVzPWGG+WTHtBxedBwV0gh4VdVlRJ7WRl7A/R8r5k8d1J+ka8774+VtLTLDasCTHH9DclJmn0ptxK1p7/e+QAJiGOUMj/049WNK/O0mMB7L3Oqvejx1linomfMmD0nE=
+	t=1762358795; cv=none; b=sVwaxbOMj9+5D8rz9VvrRWFhA4SMBRvGsO9JRzffqJA6H5LDTrQYggXnTNPr7kZLLorUWEfKLj7frS0zrK016iHUqTzzWR7g72yNcTDZZzmZMyvaVL4FWAQOaXcSgjWbC/6HRmuwi3qS4QTDZwNZnIIFJvrryGvZ+SfPTOldAPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358731; c=relaxed/simple;
-	bh=dn4UMedC7Sk/Ra/s80vgLZB69FibUiTfYSTiYhu5Csk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pIu+TG9UpHyTGIFBILpTrLkSUKD/6UuXnDVK9xYRQrL23nV0/J4zATnJpVo+lzal2qdL4vjGiLznChx3pEESl58wu5nArZDfUuWVffBwUu8tMSJPDhq2o5i68FffaWT4RgWhhmchUwkgRkvXgFxCDz3C6ygoQp+FYjpHu6w6Kfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-433316b78f4so30129045ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:05:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358729; x=1762963529;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dn4UMedC7Sk/Ra/s80vgLZB69FibUiTfYSTiYhu5Csk=;
-        b=rsvg0aCngzfSEt9oOEd1FoL/8Y8uZOKmtPDdlV6sR41seKJBNBE/TCFduaE/YrUuq2
-         vHnXMJThPHrOLUyfgfy1RmHenPYM/jBcHcnrACilIvRsmBmmjJi7lAbGfa+54z3F8v80
-         vjKWriBXSclLV5+YJyMutbtd60OlG4nS6URbqRhB13iMPHThOo1XUWRwDlw5yPEvVOJh
-         7pvCRdDVZ96DLUGJzpxOu0wdtdMQ+ukfRhsmA/ow0yuSVm4WqlpLJdmi26SyUcO9IBrK
-         L0VctXH3OYAdYNqbF2a7Wn+igNjB2oDhSf3nNm+mdu0RLgipin7sf4Y6Ng4iGMj1s25F
-         HEig==
-X-Gm-Message-State: AOJu0Yw82Kx3xiAuP8hvy6PsyRXBJuYP0k0B6OHN8ccTxpvhCBWyo5NO
-	XSz6/EdvswujPOq8BbkEiuABI4dlJMtiUX8+gOIQpmbfVm7wmYSoVG+qH5G/r0PZGLuWscex0H5
-	8Md//f7XnkQBaRpBdWWbl3og2SAUJB97vhECkOo1UCqTTVZcdq2/q/frO8ec=
-X-Google-Smtp-Source: AGHT+IG/KaRhb6ALdq/apRYYRhb6++D3Wv+7Pa4siEhyY7QwkycMog8YxDJltoRGz8BD02Hq7XWeW1CiXnnfObVvyu9kjcKe9opO
+	s=arc-20240116; t=1762358795; c=relaxed/simple;
+	bh=rGfCv7vuiprcBNZEJ+MWt+heb9PV/93FqBq0TQgB/yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+9GzppniQMbB0hzhTT74QvFX92eUMAqUOOwBvQezFUQSWi0rxZqTw81agFQYQdddw/fL4pC/AOT2g6AXT4FkNgpyYFiPSDuOutVWStYoK5PsYnff/+XO4xn2iPcBwZMbpHssMVdJ56UwFqOVksOIqrcFYCH/1agK8TCzc/jaE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Wqwoshp9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EQN0Vx60; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 55BF41D001EB;
+	Wed,  5 Nov 2025 11:06:31 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 05 Nov 2025 11:06:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762358791;
+	 x=1762445191; bh=8usdL0mgzayREHu+RaTh3ftu+QOtvSunzv+P6XmA1lk=; b=
+	Wqwoshp95SextNFtlKVIjo1SlQjyumllgwLKpwfcsTVyA5jjLA/NacAbd8fTbyGN
+	040NMFI0ukPhXXnfeiRDwXXCpnRRVGq3XqwLtFTsltEFKT+ZmR72Eu1ihZgg3OlB
+	DeJqxG1L+V5uh2edP/kewbKagDNHvUpl4KXdr6kcvjuokaYV0uFKYGSXk36SjHva
+	Pg14tbx6gLeECjF70n9L0fXUKfdyWJdXSIUV/fVsMjof641baCSV2LdMCwZWuFrI
+	/wOAw75pcaPrJb/kRI8mRRxlH9JcJ6qR/QM20neT1UHepwoKqiCSHZj1JxJjE5L5
+	l+HmrMrqIHdAMoE2gHtPyg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762358791; x=
+	1762445191; bh=8usdL0mgzayREHu+RaTh3ftu+QOtvSunzv+P6XmA1lk=; b=E
+	QN0Vx60Rj28L3NTGqhbqvT7hkOpv3gOg7Q82IS2T0cevZJn1ZQi8fwFTY04p6Wnc
+	w1KR50Pt85epnU3OUxqj34MucyYJb82aJKqgt03gaMYuVNDvfhpBmfZEGizNaVV7
+	Ogroq6Vu+XMShFs46EZ11v3XxnG3NTFNZYfXX0ybOKbuDvwSNVY3IA/lWiIhpz9E
+	jxzFImTltD9hWWBTetE5Kw21MeXJdu5LXjwpAoJEialdO5AqQ5wqOM5VuB0n3ePG
+	T2obkq1/CLtBjuw2tv6GH5iu8t1sI0x63BjHnaIyU2U2QpUNHagHiUH8KV2NagQl
+	95gC6dlFWn22fCf4G1ugA==
+X-ME-Sender: <xms:BnYLaT73uRue_vXFLMNDdQE0Kzm4FTjC5amwwj_l_I5IwD63P9yruA>
+    <xme:BnYLaSNpZXf3UrLfElLbHSX0EFj3JkULWTKcjmR8vFwoaoFlGtstIMIONzWaAXz5O
+    57YctqTHA5x-ILdO1Ak0g1S-mOapPaMhOWPby_TDeiQrLycSSm555k>
+X-ME-Received: <xmr:BnYLaRsFXZ_nJFbn8whBHW1hYVwh8HTMygm4licnGoTKwmAk6MxErquAVLx_y3dXCRvGH53KQfqGDs7BP0KCVkC12QqaqvI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegfeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
+    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
+    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeejveehuddtgfet
+    uedtffefheehtdefleejgeffudettddtveffudevudelvddugeenucffohhmrghinheplh
+    hinhgrrhhordhorhhgpdhfrggtvggsohhokhdrtghomhdpthifihhtthgvrhdrtghomhen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklh
+    grshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvpdhn
+    sggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghnih
+    gvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtohepthhglhigsehl
+    ihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheike
+    hkrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehg
+    lhhiuggvrhdrsggv
+X-ME-Proxy: <xmx:BnYLaVaNRRv-o_U_J5sPHg3dd6VveL_TYUwcVAa09sId19WFpkFhLw>
+    <xmx:BnYLaTzo6AbKTogRBqs3bPRnGHZku0WpmidhRjiNqGUkjjSLqWDMiA>
+    <xmx:BnYLadjN7k8ZOsXLSIA8H4J5he_XJGzzTCvJZSjds-jA612get7i-Q>
+    <xmx:BnYLafmQAZSRUJScIK9wXQK5_7XDm4xkRnbB0N54xrq1hHMGxuUBQA>
+    <xmx:B3YLaY9UJ6V07SMb5_DrDjVFfROtAf1K7DpSCFjNdFYl0cXs_61QT-_p>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Nov 2025 11:06:30 -0500 (EST)
+Date: Wed, 5 Nov 2025 17:06:27 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2] clocksource/drivers/sh_cmt: Always leave device
+ running after probe
+Message-ID: <20251105160627.GA3684509@ragnatech.se>
+References: <20251016182022.1837417-1-niklas.soderlund+renesas@ragnatech.se>
+ <c07ae384-4042-43f4-b876-7207b72260f7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1805:b0:432:10f9:5e0a with SMTP id
- e9e14a558f8ab-433407d9accmr46249535ab.19.1762358729355; Wed, 05 Nov 2025
- 08:05:29 -0800 (PST)
-Date: Wed, 05 Nov 2025 08:05:29 -0800
-In-Reply-To: <68678de0.a70a0220.29cf51.0012.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690b75c9.050a0220.3d0d33.005c.GAE@google.com>
-Subject: Forwarded: potential fix
-From: syzbot <syzbot+2fc81b50a4f8263a159b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c07ae384-4042-43f4-b876-7207b72260f7@linaro.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 2025-11-05 16:36:15 +0100, Daniel Lezcano wrote:
+> On 10/16/25 20:20, Niklas Söderlund wrote:
+> > The CMT device can be used as both a clocksource and a clockevent
+> > provider. The driver tries to be smart and power itself on and off, as
+> > well as enabling and disabling its clock when it's not in operation.
+> > This behavior is slightly altered if the CMT is used as an early
+> > platform device in which case the device is left powered on after probe,
+> > but the clock is still enabled and disabled at runtime.
+> > 
+> > This has worked for a long time, but recent improvements in PREEMPT_RT
+> > and PROVE_LOCKING have highlighted an issue. As the CMT registers itself
+> > as a clockevent provider, clockevents_register_device(), it needs to use
+> > raw spinlocks internally as this is the context of which the clockevent
+> > framework interacts with the CMT driver. However in the context of
+> > holding a raw spinlock the CMT driver can't really manage its power
+> > state or clock with calls to pm_runtime_*() and clk_*() as these calls
+> > end up in other platform drivers using regular spinlocks to control
+> > power and clocks.
+> 
+> So the fix is to remove PM management in the driver ?
 
-***
+Yes. As I understand it we can't do runtime pm in these drivers as the 
+core calls into the functions with the raw spinlock held. I hope we can 
+improve this in future.
 
-Subject: potential fix
-Author: rpthibeault@gmail.com
+> 
+> 
+> -- 
+> <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> 
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+-- 
+Kind Regards,
+Niklas Söderlund
 
