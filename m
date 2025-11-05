@@ -1,177 +1,76 @@
-Return-Path: <linux-kernel+bounces-886082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2494C34B0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:07:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E08BC34ADC
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:05:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70AC53B5CB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:03:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B7B1921375
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A102F25F5;
-	Wed,  5 Nov 2025 09:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YI/2gs+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A161D2F12DF;
+	Wed,  5 Nov 2025 09:03:28 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAB23F9FB;
-	Wed,  5 Nov 2025 09:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9F92D7D3A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333390; cv=none; b=a6JlBH6kZ+KUrERO4NcQ57SVo0MWsxiZ2gb7k5B4z3W2VMM4W+e4JbU8qbs2NVvd4LExlNJ4H6CYM4/ijUWfjZi1l+hamYuzGyb+v6ogj2XCpvkpdUqc40AVXh0DAO9gBLGrTP34j7g1MDQrUiO4ucokTNeLO5bqTmkpb3NgWTg=
+	t=1762333408; cv=none; b=T4vHbSz2JSphL1fwcrC00Zc32Y6uFWd6nfYoUrEEKZWBqo6P1UCkWCGroLcF0siXJAYX2Z4BDhaSpWznFzYZ+JkEv0FnWJ5UqPwtMW3szR9Q77DqXGyQR9Gatf76p8NGWbhf7dr3ltvuiarJaoxj13eqqUp0KPH1nTxrD38J+vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333390; c=relaxed/simple;
-	bh=hQ/jGydxUaD/JpGjbYckC8YXEagYSitACWYk/eSODd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QFQ4bBBE2c0DdNGNIF3eM2cIMDsP5S0OWYTT2Xl/nKbtFty2yps+dU487VUBX3y2um/zGBiqb49VTBOzIrfa/45tqmm53UPm7VmJOdzKXxISXoH1HR3uiZNI0GWZAuHocs88wuhkTZl8s1mzXtb1wLxPmoG9qlPKO6q580f5uwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YI/2gs+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81BE1C4CEFB;
-	Wed,  5 Nov 2025 09:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762333390;
-	bh=hQ/jGydxUaD/JpGjbYckC8YXEagYSitACWYk/eSODd8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YI/2gs+0AWGiBduFomCc+RSz1PCliizkdX1DVBz+qdRtB9QHQQlvuvravV0A+hm6Y
-	 ycTn1M9KZzRuZMz7gB5uMs7MsAQvhmziwe3rlInOFvLpQUzlJQTsuY5c104zvEuoxo
-	 3PlPRyS3XQuTDMfwJylcUp/NXIjsh8qSiRhz+kLr7LGN7G9HzijAeWQShxUJNg9v7Q
-	 zzVixHEinoDnPZ3y05mHfFklPh8ujBSlB1JmIOrQyd+nnuBhz8US5fu3yBfHsd6fP2
-	 NUHT9+mZDjkEy4cA0w2m1GLt9Jboh4Abz5kU29UCjPR4wRojFiUtOMKGfCLtC8J/rK
-	 6lS6a34xQoImQ==
-Message-ID: <38452e04-255e-477d-8262-53aeb3c87a01@kernel.org>
-Date: Wed, 5 Nov 2025 10:03:04 +0100
+	s=arc-20240116; t=1762333408; c=relaxed/simple;
+	bh=Mtp/IZeTOzN5uEFQtUJaeirpKxn3xAWa5J48TubBbcE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Y4AbzrBhzEWZpKv0FIEo15oGJhsA4zuDoqQTclFzsbCRbUkaB3hy2Un3rTjKPLLvf+0jExyqatyGsaCXS4lYedJLDCK4zNHeqmLYYgQdKwLkpXANbg+wha3pG58kT8pUun/ttFhFSI4tleehvPE5MtQ1e48RKWeN51/4OM72Tz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-43323ffc26bso26327845ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:03:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762333406; x=1762938206;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mtp/IZeTOzN5uEFQtUJaeirpKxn3xAWa5J48TubBbcE=;
+        b=qW0R2p3bsw7SSnWBeHHS/olNcK7PsRO2TQqySLtOi0fuoCOOU9/r7ZEDmO96EL/hkK
+         NCFF5EAAkKYLwX7UiXo0arEUKPO9Lf+8S5p33DPrGRhKZFSbU0QbBKfTdvhjCa11naaJ
+         gyaTPXz5HR9/xqe1A1R+KLn6cvcmv94uwP0k3Bw/HCIHoAo4m65GE8qoRNWrIz1wIycS
+         DhBTjKAVqokSkh9vEZIKjRzZAsVIGxYPjzwz0MKlQWbJlp33qd3cKuJQfZQWZJIo0AEG
+         bZBpruSc2Xa1LssL2O5JOTpeZRd/yAeZNdNTI4dZfMigCKN3D4tYxz5A/hfW5schKuuo
+         mxew==
+X-Gm-Message-State: AOJu0YzU5NruRCfhb5TFVrLnNit+fTWulGjwqGhZ/EfqXhzTfyabOdcL
+	6te8xd4nWYKkeZmPlR1jKVJNXv18cK3z4qfuGr6QQLAh4sgeCZZTV5XJ66NOuk2cIKSyPHihmXs
+	ZKkKonNBDlC/6zPQQKT2okhXTD2yi2nffd/NPkcPO9v0V/XjLkLKbkUg/t+E=
+X-Google-Smtp-Source: AGHT+IGDlnaXJ3nij1qZek8fR5/jgSh6kzCkR9nECOSloDi2n206DlBMuF2uzfLnX48QDZa/oK2lQ0yWB+GfRWv8Z2GMv5GGH2E9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/7] dt-bindings: arm: Add support for Qualcomm TGU
- trace
-To: Songwei Chai <songwei.chai@oss.qualcomm.com>
-Cc: andersson@kernel.org, alexander.shishkin@linux.intel.com,
- kernel@oss.qualcomm.com, mike.leach@linaro.org, suzuki.poulose@arm.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
- devicetree@vger.kernel.org
-References: <20251104064043.88972-1-songwei.chai@oss.qualcomm.com>
- <20251104064043.88972-2-songwei.chai@oss.qualcomm.com>
- <20251105-industrious-oxpecker-of-valor-af17fa@kuoka>
- <746b292f-fc3a-43a8-89b1-76f61ccc0630@oss.qualcomm.com>
- <7ba7e32b-f00a-4f77-88da-047126a8c3f9@kernel.org>
- <b9e7f8ba-a629-4316-a6dd-d765ed0037ee@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <b9e7f8ba-a629-4316-a6dd-d765ed0037ee@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:174b:b0:42e:7273:a370 with SMTP id
+ e9e14a558f8ab-433407a3104mr32864925ab.5.1762333405926; Wed, 05 Nov 2025
+ 01:03:25 -0800 (PST)
+Date: Wed, 05 Nov 2025 01:03:25 -0800
+In-Reply-To: <00000000000035941f061932a077@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690b12dd.050a0220.baf87.000e.GAE@google.com>
+Subject: Forwarded: KMSAN: kernel-infoleak in __skb_datagram_iter (4)
+From: syzbot <syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 05/11/2025 09:49, Songwei Chai wrote:
-> 
-> On 11/5/2025 4:15 PM, Krzysztof Kozlowski wrote:
->> On 05/11/2025 09:11, Songwei Chai wrote:
->>> On 11/5/2025 3:49 PM, Krzysztof Kozlowski wrote:
->>>> On Mon, Nov 03, 2025 at 10:40:37PM -0800, Songwei Chai wrote:
->>>>> The Trigger Generation Unit (TGU) is designed to detect patterns or
->>>>> sequences within a specific region of the System on Chip (SoC). Once
->>>>> configured and activated, it monitors sense inputs and can detect a
->>>>> pre-programmed state or sequence across clock cycles, subsequently
->>>>> producing a trigger.
->>>>>
->>>> I do not understand: You got review which you ignored and then you
->>>> removed pieces of this code to make it incorrect. Go back to previous
->>>> versions so you won't waste our time re-doing review.
->>> Hi Krzysztof,
->>>
->>> The previous reviewed-by is no longer applicable because in this
->>> version, we moved
->>>
->>> the driver from /drivers/hwtracing/coresight/ to
->>> /drivers/hwtracing/qcom/. This means the
->>>
->>> required compatible has changed from "/qcom,coresight-tgu/" to "/qcom,tgu/".
->>>
->>> Since this involves changes to devicetree binding, i didn't not carry
->>> over the previous review tags.
->> And which part of changelog explains the exact reasons to drop review
->> tags? Not mentioning that changelog is almost impossible to find, buried
->> under 10 pages of some repetitive introduction
->>
->> Did you read submitting patches?
-> 
-> As I mentioned above, the |compatible| string in this version has 
-> changed compared to
-> 
-> the previously reviewed binding. Therefore, I believe it's a default 
-> rule that the previous
-> 
-> |Reviewed-by|tags are no longer applicable. If the community requires a 
-> note in the changelog to explain this,
-> 
-> I will make sure to include it in the next version.
-> 
-> 
-> “
-> 
-> Did you read submitting patches?
-> 
-> ”
-> 
-> Yes, the explanations in the cover letter were written by me, so I have 
-> definitely read them. All of these explanatory documents are
-> 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-Heh, why I am even reviewing this... you indicated in your address list
-that you do not wish review from me, so I will keep that in mind and not
-provide review.
+Subject: KMSAN: kernel-infoleak in __skb_datagram_iter (4)
+Author: vnranganath.20@gmail.com
 
-Best regards,
-Krzysztof
+#syz test
 
