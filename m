@@ -1,102 +1,58 @@
-Return-Path: <linux-kernel+bounces-886239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79898C350E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:14:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A28DC350E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 11:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3016C18C67A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C65818C766D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 10:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98BA2FDC31;
-	Wed,  5 Nov 2025 10:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A672FF166;
+	Wed,  5 Nov 2025 10:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="l0cQXXR6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4e0fPDMY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="l0cQXXR6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4e0fPDMY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFyWDEqK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0882FE06E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 10:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB06017C220;
+	Wed,  5 Nov 2025 10:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762337651; cv=none; b=RsKcVoo5MgxmD8sjcJEJ5rQyLgZZ/jf+asuEKY+OVBpR9D+zzjg5USZMM1ihrcFrFXTaqcoUOmAreq1zt6jYjJVzOjGOigait6eO9VS94YpXTA0LCS5fiQ0EBRKUgczo2h/yN+8zSjufiKS3wMUNN98Ou0feQzLwb1+lh6K+ehQ=
+	t=1762337657; cv=none; b=JoWDHWZO8P4Fh8eg0otY15CAFn94xClmDd+nxYwJ9FLTnrMzTHm01SGM2nhtf/12rC2usSoU0hqFe6FJJvQmnt35kU0gO2txrMW3cmLHi2hu0G1WuIOHfo1dJ6pD8sqrTyouKHPFP9ZjEEuR821cleBMbqKcDqf6wdYcvf2pmrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762337651; c=relaxed/simple;
-	bh=ma3NUSKZRaLFgW3cU1K6dPbec62gMsfiSS4Lyfg+le0=;
+	s=arc-20240116; t=1762337657; c=relaxed/simple;
+	bh=Okbe7o8+me/nPHM9MBYNTFsR959vwaadU/clvuSJ3Vk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2ratNFlMyMR90CS4JcdOHvpk3upN0od48YaPRQHxxk1IbvpJLxWkn6KkRvtMTs5y0uPxnWqjZ5doFzgvX/UDb8Onv6kR1s0sIu4lV1yDUEecnnamfum0+q6ttVFl0l4ZCRJnfFeLoUldaID/IukZgx/WU7cKERPh7s5YTC6HeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=l0cQXXR6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4e0fPDMY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=l0cQXXR6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4e0fPDMY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6A58221194;
-	Wed,  5 Nov 2025 10:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762337646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnRVR2SMvEXU1ELRAdRpW7eZedo4gImxWnnMJ4zuclU=;
-	b=l0cQXXR65kwfMnOQuqf4sI31Lioyf3TVNPKTfrgIj4F6XXWGa9fkHS+kgkKS8YiAr9fqDF
-	oj3FT/D2jbICKbvHgBx1QW8QqBdsQ8CGPkg36UDKNd6IqnIuzfxTo56tFt5l4W4k1LCKaf
-	ObyaP+p8qJEHf2kXWCaTuW9wJsKJxXo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762337646;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnRVR2SMvEXU1ELRAdRpW7eZedo4gImxWnnMJ4zuclU=;
-	b=4e0fPDMYKopYKys+zw4ggx2+K8sISKVGpt9q+xE+8lppJSi8hVuDEhD7QzM9Yti4Qzw/jq
-	qCleDpry2UkyKACw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762337646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnRVR2SMvEXU1ELRAdRpW7eZedo4gImxWnnMJ4zuclU=;
-	b=l0cQXXR65kwfMnOQuqf4sI31Lioyf3TVNPKTfrgIj4F6XXWGa9fkHS+kgkKS8YiAr9fqDF
-	oj3FT/D2jbICKbvHgBx1QW8QqBdsQ8CGPkg36UDKNd6IqnIuzfxTo56tFt5l4W4k1LCKaf
-	ObyaP+p8qJEHf2kXWCaTuW9wJsKJxXo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762337646;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnRVR2SMvEXU1ELRAdRpW7eZedo4gImxWnnMJ4zuclU=;
-	b=4e0fPDMYKopYKys+zw4ggx2+K8sISKVGpt9q+xE+8lppJSi8hVuDEhD7QzM9Yti4Qzw/jq
-	qCleDpry2UkyKACw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DC9013699;
-	Wed,  5 Nov 2025 10:14:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6KXwFm4jC2mUSQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 10:14:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0A2C1A28C2; Wed,  5 Nov 2025 11:14:02 +0100 (CET)
-Date: Wed, 5 Nov 2025 11:14:01 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 25/25] ext4: enable block size larger than page size
-Message-ID: <yp4gorgjhh6c3qeopjabmknimeifhnpbz63irrrtjpplatnk4k@ycofoucc4ry3>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-26-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iarlZ/8W9eFhGqCWiWlftKgykuT6YlTW10dTw3TVjmdunOPkCKOAr/e94e4PICHaDVNjvdxXHETkDU7w6DO/8NmA0wfo7zK4+VY2jPtT5/UfKS2oC2c2TdQiPN+/lGJDwGLHetWX0GdW3lvYrZDJ0O0G//KAataZLrz11oVN3Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFyWDEqK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4F4FC4CEFB;
+	Wed,  5 Nov 2025 10:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762337657;
+	bh=Okbe7o8+me/nPHM9MBYNTFsR959vwaadU/clvuSJ3Vk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mFyWDEqKrRI+sa/wNzDR0UcsEfiY3Pz9GBl6hFu7iBVTL6Sf33fIK7EBGOmVRxg+D
+	 35XW2yjb1su+VuodnvjAJTjmJSEVhvRxvfgKZB29G/bL9WpkImlAasSStMM5OAZ800
+	 2kYh3U/VDj/gZx1NTjWhb1DdwdJURaulYDq1VnEt0MosRMGynhPc8Pgh6yll4vOUwF
+	 21cwFGG1/0mWdOU+2lTe8y1QWpoPiAfHQ8zvxkaT52xoQ2VxLQgRgsisXvH+O4Ir8o
+	 FqVJiNDkOAwx/Gwh2C5wI9lVWEs60rz/chgJWBcJQotwgdzMqts9orR3hWLx92pa5e
+	 SMXbxaf4znOLw==
+Date: Wed, 5 Nov 2025 10:14:12 +0000
+From: Simon Horman <horms@kernel.org>
+To: Meghana Malladi <m-malladi@ti.com>
+Cc: h-mittal1@ti.com, pabeni@redhat.com, kuba@kernel.org,
+	edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com
+Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix fdb hash size
+ configuration
+Message-ID: <aQsjdAClmmKPLHWM@horms.kernel.org>
+References: <20251104104415.3110537-1-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,114 +61,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-26-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email,huawei.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.30
-X-Spam-Level: 
+In-Reply-To: <20251104104415.3110537-1-m-malladi@ti.com>
 
-On Sat 25-10-25 11:22:21, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+On Tue, Nov 04, 2025 at 04:14:15PM +0530, Meghana Malladi wrote:
+> The ICSSG driver does the initial FDB configuration which
+> includes setting the control registers. Other run time
+> management like learning is managed by the PRU's. The default
+> FDB hash size used by the firmware is 512 slots, which is
+> currently missing in the current driver. Update the driver
+> FDB config to include FDB hash size as well.
 > 
-> Since block device (See commit 3c20917120ce ("block/bdev: enable large
-> folio support for large logical block sizes")) and page cache (See commit
-> ab95d23bab220ef8 ("filemap: allocate mapping_min_order folios in the page
-> cache")) has the ability to have a minimum order when allocating folio,
-> and ext4 has supported large folio in commit 7ac67301e82f ("ext4: enable
-> large folio for regular file"), now add support for block_size > PAGE_SIZE
-> in ext4.
+> Please refer trm [1] 6.4.14.12.17 section on how the FDB config
+> register gets configured. From the table 6-1404, there is a reset
+> field for FDB_HAS_SIZE which is 4, meaning 1024 slots. Currently
+> the driver is not updating this reset value from 4(1024 slots) to
+> 3(512 slots). This patch fixes this by updating the reset value
+> to 512 slots.
 > 
-> set_blocksize() -> bdev_validate_blocksize() already validates the block
-> size, so ext4_load_super() does not need to perform additional checks.
+> [1]: https://www.ti.com/lit/pdf/spruim2
+> Fixes: abd5576b9c57f ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+> ---
 > 
-> Here we only need to enable large folio by default when s_min_folio_order
-> is greater than 0 and add the FS_LBS bit to fs_flags.
+> v2-v1:
+> - Update the commit message and give more context w.r.t hardware
+>   for the fix as suggested by Simon Horman <horms@kernel.org>
 > 
-> In addition, mark this feature as experimental.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> v1: https://lore.kernel.org/all/20251013085925.1391999-1-m-malladi@ti.com/
 
-...
+Thanks for the updated commit message, this seems much clearer to me.
 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 04f9380d4211..ba6cf05860ae 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5146,6 +5146,9 @@ static bool ext4_should_enable_large_folio(struct inode *inode)
->  	if (!ext4_test_mount_flag(sb, EXT4_MF_LARGE_FOLIO))
->  		return false;
->  
-> +	if (EXT4_SB(sb)->s_min_folio_order)
-> +		return true;
-> +
+Sorry for not responding to your reply to my review of v1. For some
+reason I missed it until I checked the link above a few moments ago.
 
-But now files with data journalling flag enabled will get large folios
-possibly significantly greater that blocksize. I don't think there's a
-fundamental reason why data journalling doesn't work with large folios, the
-only thing that's likely going to break is that credit estimates will go
-through the roof if there are too many blocks per folio. But that can be
-handled by setting max folio order to be equal to min folio order when
-journalling data for the inode.
-
-It is a bit scary to be modifying max folio order in
-ext4_change_inode_journal_flag() but I guess less scary than setting new
-aops and if we prune the whole page cache before touching the order and
-inode flag, we should be safe (famous last words ;).
-
-								Honza
-
->  	if (!S_ISREG(inode->i_mode))
->  		return false;
->  	if (ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index fdc006a973aa..4c0bd79bdf68 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -5053,6 +5053,9 @@ static int ext4_check_large_folio(struct super_block *sb)
->  		return -EINVAL;
->  	}
->  
-> +	if (sb->s_blocksize > PAGE_SIZE)
-> +		ext4_msg(sb, KERN_NOTICE, "EXPERIMENTAL bs(%lu) > ps(%lu) enabled.",
-> +			 sb->s_blocksize, PAGE_SIZE);
->  	return 0;
->  }
->  
-> @@ -7432,7 +7435,8 @@ static struct file_system_type ext4_fs_type = {
->  	.init_fs_context	= ext4_init_fs_context,
->  	.parameters		= ext4_param_specs,
->  	.kill_sb		= ext4_kill_sb,
-> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
-> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
-> +				  FS_LBS,
->  };
->  MODULE_ALIAS_FS("ext4");
->  
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Simon Horman <horms@kernel.org>
 
