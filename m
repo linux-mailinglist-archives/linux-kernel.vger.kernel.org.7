@@ -1,152 +1,162 @@
-Return-Path: <linux-kernel+bounces-886058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6D9C349B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:55:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D032C349F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 09:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975C81920267
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:53:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 596A44FB4D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 08:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AA82EDD51;
-	Wed,  5 Nov 2025 08:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129BD2E8B87;
+	Wed,  5 Nov 2025 08:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MacXn/Ie";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="dKrVDJ9N"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="aHFw+XW4"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32BF2ECD31
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1D62DF3F9
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 08:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762332704; cv=none; b=F94QGH2r1MLYGuVDvvtlg06lrn+EgunMm9cHKcx59fmriUQcH0gFCcoUKADBPZdlFHNv2B7vbVSSnLuUW1n6xZmjkhqayIiyw5/+VPsEaBUehnnkVEE5NNeJ90kxJN5JD69Fb1VclJMIGT871FB5Wa0b7kYGZUAn6RCYVK+TMK8=
+	t=1762332746; cv=none; b=mwIm+6CLUdmtSye9csNUhALG63NCqSe09V8velcIU2/6QwV83xpSLsXq4MuxU3CIzSCAquQMaE2IBjtCslEabrZzVt/X5JZgzt81gBH73uR6l3Dt+hF9PUsqAj0py1ABcpbgl7MX6q9fF4CSukIYXBUtnkpmmwu+3I2xa9QXAVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762332704; c=relaxed/simple;
-	bh=d0bMgwYGLUbWwQ5ERkqkhDZb1LoSzCYkR7394pA0AiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IIQHOyTE8lUQprhz87GamxzfZ0yrLb2zW3Fkpu1jC/MuRjsVyr9iE31vKp/hMZTCgDKRmSam325GRvS1S8LDXWfjy6rdZJmTGeHgjMLILNOEtnzCjJxDaes0MiGaJBAZYUJe0IxkKQMqRA9UDEls5RWnv1OSM6FRKo/5BmQ8Vhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MacXn/Ie; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=dKrVDJ9N; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A58A0XS3049610
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Nov 2025 08:51:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d9izaKi/37YdD7Vt7gQGjGwEAmilLW9eyuUU4XYRPOw=; b=MacXn/IeuGbJuE4j
-	wckOCLXMyzABVkYtoQlcbXbl2LnAPJk/bvrxciicyLWj5ArsPqgZIt1W3r8r2eSo
-	Wz+Q+IkcH/FCoVOEC8udC1ZMQVyFbeKZmgu1J8Twqdx7vrC4YZQZRStUVdebPLhR
-	jjZ0TtnzxIu3jAHHnSGoBQ9acGkb7byqmo/GnwAUhHC49myHK/tl5gecgeWaw0pp
-	6wLOJ4M30EGW8jDTRgsszA1EDgJk3eiNZpGqQm/ueBxi5KSHb5XguQqni/Njmgm1
-	/bNrJL/2OJOOxt4oR1svKMIPG5SCOVE00lQLSFFuvAhAabS4YtnLmd3tDhi+YP2+
-	GVVmMA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7ex7upmq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:51:41 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b10c2ea0b5so70684385a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:51:41 -0800 (PST)
+	s=arc-20240116; t=1762332746; c=relaxed/simple;
+	bh=gp6ONkk4LnltkUdA1hEntsuPx28a5fC4wPGe0V4ewNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BcfY0tLqcE0Sf6PXHL4KfB32435mWGrhpNl7AaW8P4/MgLijyPGP3GjHwk2yGK+DkMMPBhf8erVAfA2yuE72p7RQBPDQJi7ucuoZihn4kVA34GZUcBqV0zFsEXbiD4roe0IrMUf5YZdfqF0a2j28tU8xzJeepyopXtDZYA5sM3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=aHFw+XW4; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso1242595266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 00:52:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762332701; x=1762937501; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d9izaKi/37YdD7Vt7gQGjGwEAmilLW9eyuUU4XYRPOw=;
-        b=dKrVDJ9NXBbwE6+SrWXIXWgF+b3dDyWiQ+W5mXKcoiyawKH1ErjfFil1+UatoAm8EW
-         53v+cMFblPLjrp1k7BAgDfa0R7rIn8coOiHDAkG4nSr6dvcohDBXwHmQ38yBFoH/8vSH
-         8ilfhJarcDTxO/kg/IOKWQeumKs5DNj8GMwwbqLvZ4zc4hG7C5iqI5a9bSo7O/XZEMzE
-         GzZt/ZGEogEQQJ3OJlpZdmJeb2KRcFOnvKdBohb703g+8CibabA+t/YTmcuQRV7EnMzQ
-         /U3Aimt03yAza0bP5LOR9dH9c+4LzdNHjVcVLMGd0NBvkHLDv6xEF9J117bmMicBgbaz
-         Jgew==
+        d=shopee.com; s=shopee.com; t=1762332742; x=1762937542; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gkg/vCbQBbLgfYhLaxoF1MxQ4LNFqiCSVDKlCPX94O8=;
+        b=aHFw+XW4mgvH2IW+imtB8XNv+Z3U80mSDKucZErMakceTCGynpaRjTwdXsIcbVac8G
+         KZ5GJ5et88w5Tc5qsuk5y2eQ4qUyjteNXF5n7IgroX8WAx38lbIgI42gIR5G9CeBfWPZ
+         KzrkYKd1nskvwA9a/ZK1TN4v5imG1MiieXqgf5xzfggaXb9OMMNJy+LmUk9smGhiKdO/
+         kxmUr5xnsD7izLn/8XqoAOZ0el239ju43c3gBMPbnCaXv0zK09NtgiyWC3BOnWVILg5y
+         qaYTlf84w5RMpqvFpzIqLOzmDllQ6c3/12YUTPhwpVJNWa8ySDruaG1xR39me0r2RmCT
+         7bkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762332701; x=1762937501;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d9izaKi/37YdD7Vt7gQGjGwEAmilLW9eyuUU4XYRPOw=;
-        b=RjCqO4y1YHvpPivGN7e2GOiLV1Cwy1Ae60eNXtwhgHP6hiEAn9YYClGZf7r3Hgae/W
-         5fIaRf1T38om6WJ47JkvJ2Y5AkENXGFQOvATBboX5rqcyQWFltVTlDvLXbBLdn5Ahgue
-         ZXtQ57y0u1et+v4v2jGhjJ10EE0DSwC6FAuYVEDlp4R0JuuICop+18Yox5ufEB6N3UrA
-         Sn53faDFxUIyN4peWmfp+3/BHy5IyOfeYFVYuVuPJNVQmd5cGGXGS5/sd9fb4OQHe4uq
-         ukbTPEW5MeMmWKgFoIwXzDEl19G078XU+jzVJUnuz6K0bNSigRPA7QzrjT6UMrm/nz9E
-         zJhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtObGzWQXe26LaMaw1VxqUVhNoziLtFWmJ44qdHm/qRXcAm92pBvcQsv3qTlKJO6Pr0aZolfNm08KjN0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/pYdHcld+oZdRB9X9dWhAF+vTZWGdlPuXw0PfOWU1enKs9Gdt
-	UDTNHiKwdOmFKyNSBjx5tN2UqwlILekHmMFr3+VCc3I/Yq58dtNWrCa4Q0Rl99PJcP5TheOqUAJ
-	n+dIyZVePSekS1MqwwpGjiZyLmgQ7IB3JPXQQEF6rmsBBRjtm72cpdrh+tGo21oGYiLI=
-X-Gm-Gg: ASbGnctRnxr0ZmZprwNw1a0SL9gR4QH5+8G6LFlFhLSXKRdxPBEOlbEf8oVAOtiN9CA
-	ZJlZC7Tc+uvP8DPuysiP75OI3JM/b50ka/NeUpVYmuj0ekcwLGY3MRkCMGgqm96dCJJksrMR+NM
-	+Wz+sEyExEoxgkJbuSbh9aSy6zMetVfVkc24Y5IvuTfOvmZxkymTQYM+BG/nx/nhKebiWnXGz1N
-	eG0kMLyOY10/K7rKbuY1//rsjpDMvXc3IoWBjTvpSyz42RAL/+RTDxGtK2rGmhD9sI1HlSrruNR
-	2Q7N4HLhUHpLaPT/br7HjcXn2m53FC5UdBeAvowd5HoSzJoNPXKxcbzCzYmDJ7RfZBDB+p5+ym9
-	gHx8RHrUvgq4lJ1oguRURmkRwI6B3xgghBUlP+TguwFx9WAkAopUbMyzb
-X-Received: by 2002:a05:622a:1a9f:b0:4ed:4369:f3c5 with SMTP id d75a77b69052e-4ed725ee834mr21592691cf.12.1762332701130;
-        Wed, 05 Nov 2025 00:51:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE8BF9xVY6+n2uyxJUIST3H7zllQ3FZVT76UKK8QHLabE8qTZfJdc6qVuYCZ3/l7BmrDK1mmA==
-X-Received: by 2002:a05:622a:1a9f:b0:4ed:4369:f3c5 with SMTP id d75a77b69052e-4ed725ee834mr21592561cf.12.1762332700558;
-        Wed, 05 Nov 2025 00:51:40 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640e6a5c773sm4092065a12.18.2025.11.05.00.51.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 00:51:40 -0800 (PST)
-Message-ID: <40bde143-fc3c-41b0-8861-9c856d52bc8d@oss.qualcomm.com>
-Date: Wed, 5 Nov 2025 09:51:38 +0100
+        d=1e100.net; s=20230601; t=1762332742; x=1762937542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gkg/vCbQBbLgfYhLaxoF1MxQ4LNFqiCSVDKlCPX94O8=;
+        b=vCDAVMZkbKB9dj/SFeE4U8aqBp7IPT5XWb0Cn6rvA9vP7rcTMJHNRUmcrsDBqmDryp
+         KHp/Ms8CPNA4F7XJXnZQxArfSBtEHeSenwvr/yVT6l9mI7vIWHlpVor4qlM7MUFZlEGi
+         5bLmh9hGERoHUf4kn07MaoiW04UcfhRLQsaRjMoaO06ahZCe3OrK9g/pTOUjSNB8OcHV
+         ZPCgPaaD2lQ0oa5qWYajfDCItwFjIwWr3ugiq7mX1Fo6t2WSoMMcNiHyZAXt/+NcIHLR
+         Hqbk4ifFOgKoKIdHssyspU2M43B0eKqN/KNPlLSXHCatla8G9eXiqugqAzsSwvpD6WKc
+         20rw==
+X-Forwarded-Encrypted: i=1; AJvYcCX45Rqrpa1wu0NCxufUtCOrVVITyn+9Dc20N8KYTWbXrrVabxhOv2TTW4yezYm2vVE8Wh6N/FUutMFx6Z0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz257p2aLF3Hvrn8Fq0JBU7tZtOT2sonHXNqLvbwyqE4vc8WCXA
+	I3fXNJz8iElMeuJmnrMZHEgcfZ7og3E7hClWoqVNGCQ0vVOb6n0Gfnxbv0EBu7FSp9+n1WJyUDx
+	0k/z5tgcB/HX0+FkiN1/0xehgEIkOFO4F6EBWIvNVRQ==
+X-Gm-Gg: ASbGnctoedEkPbjXrL8EXNJbctt+1N5Rjvdsvn/qRHMHl7HqY0LYPdMX9o9Z4lRUIDl
+	A/aueQziTFPTuq9JpSacSxzhD6WyYd9RO7GV6pLQNGxqMU6hZg0ik+g9ck1LilosKLGEZddeNoi
+	e1Tqj0yXiFEmZATn9ed6EAGMzj+RTnuaHbWGdJGQzAO0X0C3CIiwEUPHZyEzj1ggEYx5qlg19z6
+	aukh6B5yDLt9R3P+AfGooIoUXc8nZWnQdar66RMnEg9Fv9npDUz/0azH6Q9iH6KQDO/3A==
+X-Google-Smtp-Source: AGHT+IFxxt2EdxGwLdk3L9EezdOqzEzIoElbn2uBq8KS5FKpSP/CV4oKR3J8eSFfaFisM3JEbR7uWvI68mpagt1N8hs=
+X-Received: by 2002:a17:907:9815:b0:b71:cec2:d54 with SMTP id
+ a640c23a62f3a-b72655a5d40mr200972466b.57.1762332741872; Wed, 05 Nov 2025
+ 00:52:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Add Akhil as a reviewer for the Adreno
- driver
-To: Rob Clark <robin.clark@oss.qualcomm.com>, dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20251104220245.240480-1-robin.clark@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251104220245.240480-1-robin.clark@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA2NSBTYWx0ZWRfX75qZSp3IklZ8
- jQLVA1OgLjku+kqdSEkGqp1E+QDlbnog+kE/8+0fkm7Qs/Z9ctczyVXek35y3DUqXe4XaVUXX67
- 3npWIaBKgQLQ0HsDEOZMASpsUUSuN8x0TfAJMdMszI2sRVuDfKfhYc133C/Cl7fCr/UBmXZJN2V
- o+53yXJWTFH/Xb7meWqmLkpCCYhPC/0qZZkCcPq8w2pXNdpn1wHgXHNVG3n+KxRIFV07+N4QlNi
- v/FXbBsHZImQshwjP6k4yyzRf22ZtlLrkP3HzWJMto6V5KMrX6yFLnmXFwEFYt+bnlI+YBqTEo4
- bhFE2islU+3FG0CbkJ7QPJjlVGT6pDTjTCBU7C0xr4kjj7HtVAsRPG6gYo3cIF9O6qot37p/QLC
- X8xJF4SNJkefGJ2NeXmcX2y7rKaKTA==
-X-Proofpoint-ORIG-GUID: IFwNxqrFegmiSwSKuyv2fv9mnCNlh_VW
-X-Proofpoint-GUID: IFwNxqrFegmiSwSKuyv2fv9mnCNlh_VW
-X-Authority-Analysis: v=2.4 cv=auy/yCZV c=1 sm=1 tr=0 ts=690b101d cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=V8cJkdWAq56nonIdhLQA:9
- a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 spamscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050065
+References: <20251105074917.94531-1-leon.huangfu@shopee.com>
+ <aQsIq_zQXMfNNo6G@tiehlicka> <19986584-885b-4754-b98c-948e4bf9716b@linux.dev>
+In-Reply-To: <19986584-885b-4754-b98c-948e4bf9716b@linux.dev>
+From: Leon Huang Fu <leon.huangfu@shopee.com>
+Date: Wed, 5 Nov 2025 16:51:45 +0800
+X-Gm-Features: AWmQ_bmvHlhc5eJ8ueTjqxVXAa3vivPGkX-f4MR8OhK4W12VAolYXW0qkjbzZYQ
+Message-ID: <CAPV86roGZa5q1N95+ehdPRE6GkXr6bZbEU89--BgpOD8td5SoQ@mail.gmail.com>
+Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	akpm@linux-foundation.org, joel.granados@kernel.org, jack@suse.cz, 
+	laoar.shao@gmail.com, mclapinski@google.com, kyle.meyer@hpe.com, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/4/25 11:02 PM, Rob Clark wrote:
-> Akhil should be getting tagged to review GPU patches.
-> 
-> Cc: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
-> ---
+On Wed, Nov 5, 2025 at 4:39=E2=80=AFPM Lance Yang <lance.yang@linux.dev> wr=
+ote:
+> On 2025/11/5 16:19, Michal Hocko wrote:
+> > On Wed 05-11-25 15:49:16, Leon Huang Fu wrote:
+> >> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+> >> index 6eed14bff742..8cab6b52424b 100644
+> >> --- a/mm/memcontrol-v1.c
+> >> +++ b/mm/memcontrol-v1.c
+> >> @@ -2040,6 +2040,7 @@ struct cftype mem_cgroup_legacy_files[] =3D {
+> >>      {
+> >>              .name =3D "stat",
+> >>              .seq_show =3D memory_stat_show,
+> >> +            .write_u64 =3D memory_stat_write,
+> >>      },
+> >>      {
+> >>              .name =3D "force_empty",
+> >> @@ -2078,6 +2079,7 @@ struct cftype mem_cgroup_legacy_files[] =3D {
+> >>      {
+> >>              .name =3D "numa_stat",
+> >>              .seq_show =3D memcg_numa_stat_show,
+> >> +            .write_u64 =3D memory_stat_write,
+> >>      },
+> >
+> > Any reason you are not using .write like others? Also is there any
+> > reason why a specific value is required. /proc/sys/vm/stat_refresh whic=
+h does
+> > something similar ignores the value. Also memcg.peak write handler whic=
+h
+> > resets the peak value ignores it. It is true that a specific value
+> > allows for future extensions but I guess it would be better to be
+> > consistent with others here.
+> >
+> > One last thing to consider is whether this should follow
+> > /proc/sys/vm/stat_refresh path and have a single file to flush them all
+> > or have a per file flushing. I do not have a strong preference but
+> > considering both are doing the same thing it makes sense to go
+> > stat_refresh path.
+>
+> +1
+>
+> IMHO, a dedicated file like memory.stat_refresh is a much better approach=
+ ;)
+>
+> It's cleaner, simpler to use, and much more intuitive for users.
+>
 
-About time!
+Agreed. Thank you both for the feedback.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+You're right that following the /proc/sys/vm/stat_refresh pattern makes
+more sense here. A dedicated memory.stat_refresh file has several advantage=
+s:
 
-Konrad
+1) It provides a clear, explicit interface for the refresh operation rather
+    than overloading existing stat files with write capability
+2) It's more consistent with the existing kernel patterns - stat_refresh
+    ignores the written value, and memory.peak also ignores it for reset
+3) It's more intuitive for users - the purpose is immediately clear from
+    the filename
+
+For the next revision, I'll introduce a dedicated memory.stat_refresh file
+that ignores the written value (similar to stat_refresh and memory.peak).
+This will work for both cgroup v1 and v2.
+
+Thanks,
+Leon
+
+[...]
 
