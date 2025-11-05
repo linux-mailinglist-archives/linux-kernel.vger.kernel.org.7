@@ -1,101 +1,82 @@
-Return-Path: <linux-kernel+bounces-887517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615D2C386BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F02FC386D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2790C4EA576
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:54:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A02124E86B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FBC2F5A34;
-	Wed,  5 Nov 2025 23:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF582F5A2D;
+	Wed,  5 Nov 2025 23:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaUlGxBN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JmhHw+Tm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E502F5492
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0C61D5151;
+	Wed,  5 Nov 2025 23:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762386869; cv=none; b=iaJ+Ogepacrd1NNEPqMvk0adBomCLo6Ofcj30MDAfp1S3F5iC4TWRMc8UXOHa1B+dFN5MFS7ON55UEL8SuDOpXocvUcOyhUCu5mWzcsbGrtxqwuOLbDUUQNifAva8luv9MmRkcVBU54JtTNaYIM2MXVyniySYpr1BhgIBInK1vE=
+	t=1762387074; cv=none; b=ZtaS5pSrvaZObdWklaHhrp+HbD4EKsWuFKqvjZ50rQQvEInv+Db1YY9lay5c0DpnhlNUI5zazfInwCPabrQAal1SQgH5SEEMowwxyb/9WhUEYUxvT+rCZYWWA9KJKWzUzLTEgX+DSfiOIKEIH+9pmhbwY6j0hJu66bir00+qsr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762386869; c=relaxed/simple;
-	bh=0JrdArxjppgXWbB9b0LpkopP+yu3WU3K3d/AEk/KiT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qj1ucbAQxcHZtkKkOMSJ2xuORMzgeGEE0EmG/zI5LetmPGHbJkXPiuuWv9qkxaaBhPGprSqnE2RhEboRjk4cCbHAxKbCN0NMQjvR1olxjWLm6t/HcnVRe5L3EHII4ZVXF6os89bO0a8E2eJh4Yo9yKnG8PUSAK2e5lFPytA+AuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaUlGxBN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B85C116B1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:54:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762386868;
-	bh=0JrdArxjppgXWbB9b0LpkopP+yu3WU3K3d/AEk/KiT8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DaUlGxBNyCMBuoP4EpB/m2QGlIQapxe3jBYAUNeCPBjpyYAokjY+4hd/AdN1ntpUf
-	 ojRc6ecZhXBl6Mtt635a+f2YLxV7eij0d1w74PzyEdR2K78aYnyzG8Hoc04xL5N3Z6
-	 ux8V0FPYTVXWDha9JWzBOtCAbapfslRuE05fKKVPBm1+5eEGe8bZBOy9Wgdbgn8eiZ
-	 jIy8wlzjQrtpGfSrRqHj0bZlzIgwGD+suASY184aE7GgEUoPi07K0wiHk8kI3kWZF8
-	 XB6VTknbjvnROZvx1vK/fuhrBDf2mv7vhKh93Q1rquLOyqRn0LEkSH5jZB34qCxrw6
-	 8lqViVJkkqa/Q==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-641018845beso490042a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:54:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWY/2Y/w6NCW1WeqyqrMBDjfvIvIUKamSfgywJrBJdBws3QLJqC3bgfSZcsm6FfVvndT7XFNOFVqw69O5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt98CFobX1PBKpbaI3z+xjQoe5OQGZ87FVbsAO5xkk/4lC8+hn
-	Xk1clnW56Ky2e/AJOi9ZQ4QkZr7OdU+t/p3w4etu6gcuDu1eqaW7PpY+6hnVDdwiIbJ2OuoEwR4
-	h1/9H+5JpwSeUy60z/p+X8Vr5sKJRjw8=
-X-Google-Smtp-Source: AGHT+IF+SbDqKedSslrWm8uMQYYqZy4ZQlhrBwFAts+++xikLYbWpJnK70RqmKfn5RSkkNZJ2cT9KekHmwayIlqPnCo=
-X-Received: by 2002:a17:907:720d:b0:b3c:a161:683b with SMTP id
- a640c23a62f3a-b72655ee4a9mr516765666b.60.1762386867031; Wed, 05 Nov 2025
- 15:54:27 -0800 (PST)
+	s=arc-20240116; t=1762387074; c=relaxed/simple;
+	bh=2Y3mQFTXDjBIqGVv4+kIDxm2f6jAQbNAnGy7he78Hts=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qK5+bOkaLQ/0/c4/APcOzIRlVMCWJBx6GKgh9TfZijwHF42bVObIQIv4Y43hdqhtDDAkVK/Q00u1HWYKzD0R1WdfqbzfRdVRilrye7/pAaKEENSM7FXH1nxRyNRdkUKo5Q1ePECR7IBT0OF70k1EQVd48ViFKy9xg/U57I5/xs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JmhHw+Tm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68760C4CEF5;
+	Wed,  5 Nov 2025 23:57:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1762387073;
+	bh=2Y3mQFTXDjBIqGVv4+kIDxm2f6jAQbNAnGy7he78Hts=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JmhHw+TmiZ0zvjghAeXmox4sDcO/3+eSl2QW8OHdnfRmWJH6i/l+yb+rvx/TZKerN
+	 CHU/H+43D/+hM0VrHf9mxhTR9KZ6oaQFsnaYQ8tYxHllE4XkNxaUSpL950mH1vf7NP
+	 +dyRxJGUsHAKLbwgNVrgSfxL0baSDJuz6xov0xUw=
+Date: Wed, 5 Nov 2025 15:57:52 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@kernel.org>, Wei Yang
+ <richard.weiyang@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+ <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mm/huge_memory: fix folio split check for anon folios
+ in swapcache.
+Message-Id: <20251105155752.fabace52f503424c64517735@linux-foundation.org>
+In-Reply-To: <20251105162910.752266-1-ziy@nvidia.com>
+References: <20251105162910.752266-1-ziy@nvidia.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251106101257.6e9b46f5@canb.auug.org.au>
-In-Reply-To: <20251106101257.6e9b46f5@canb.auug.org.au>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 6 Nov 2025 08:54:14 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9Au1LoZjjx07TFm0E6GbfXZ_UFp+pyQT7J_GO-L5joDA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkXYm64qfCJeQd08vujSBeJ3WmgbPBEyzsDWan02D7j4kDzfaRMljYozQs
-Message-ID: <CAKYAXd9Au1LoZjjx07TFm0E6GbfXZ_UFp+pyQT7J_GO-L5joDA@mail.gmail.com>
-Subject: Re: linux-next: duplicate patch in the exfat tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 6, 2025 at 8:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
->
-> Hi all,
-Hi Stephen,
->
-> The following commit is also in the vfs-brauner-fixes tree as a different
-> commit (but the same patch):
->
->   772a65ec60d5 ("exfat: check return value of sb_min_blocksize in exfat_r=
-ead_boot_sector")
-I have removed it in my tree.
->
-> This is commit
->
->   f2c1f631630e ("exfat: check return value of sb_min_blocksize in exfat_r=
-ead_boot_sector")
->
-> in the vfs-brauner-fixes tree.
-Christian, Please add my acked-by tag to this patch.
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+On Wed,  5 Nov 2025 11:29:10 -0500 Zi Yan <ziy@nvidia.com> wrote:
 
-Thanks!
->
-> --
-> Cheers,
-> Stephen Rothwell
+> Both uniform and non uniform split check missed the check to prevent
+> splitting anon folios in swapcache to non-zero order. Fix the check.
+
+Please describe the possible userspace-visible effects of the bug
+especially when proposing a -stable backport.
+
+> Fixes: 58729c04cf10 ("mm/huge_memory: add buddy allocator like (non-uniform) folio_split()")
+> Reported-by: "David Hildenbrand (Red Hat)" <david@kernel.org>
+> Closes: https://lore.kernel.org/all/dc0ecc2c-4089-484f-917f-920fdca4c898@kernel.org/
+
+I was hopeful, but that's "from code inspection".
+
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+
 
