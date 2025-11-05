@@ -1,122 +1,201 @@
-Return-Path: <linux-kernel+bounces-885761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-885762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EC7C33D7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:35:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16BBC33D82
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 04:36:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5706D4E5DB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9794B428214
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 03:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C460F221FA0;
-	Wed,  5 Nov 2025 03:35:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817291DDA1E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 03:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968FB223DE5;
+	Wed,  5 Nov 2025 03:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aGBfBYj+"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1701E9919
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 03:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762313738; cv=none; b=e2O2QaLmQiTEXscx18PDS9aWRWyYjvIzahuEFyMoELD3mcmgkw/9o+y60HXj1zJaWqWZjcCCEmoYkOlDHDBoxaWeWMQwaqHmiA0fxfnjI4U03BpKzRmi1IYWMcwlWS5gYOIdM7HDDX76jsfnsizU+8KtDUcA70Z+OmKcNDX/dqk=
+	t=1762313763; cv=none; b=SA3B18mp0su5zyewppKHLjamDHxjPS1SXBXetnbLXw1zksJBjl92/+QzLF3caxxAySw/bSF4/01xD2+xU/NP1DVpnqqklirJ5QGnoUKT5RtAPJ800GdIo83ZHJdT9ZzMYOAwmUftsIt9jGGS76fZjYmxO0lPtNt1z3/OTvae+HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762313738; c=relaxed/simple;
-	bh=+eRNRLSXSO9KuDn/dZ765B7NIftgANi0Xgy0mUSddAg=;
+	s=arc-20240116; t=1762313763; c=relaxed/simple;
+	bh=Grs3ShgDLUGKKSpWpKSVo8zGkRLNBbByj3CMSD53Jtk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGIeU1+vup02qbjM+6wyBaDekPqCTucprlC/Wr9nPory66EyKKyXTBBbGXvIhddec1/NKVh0Za/oeN55OnhxXjHyudl+QbuEuWkRUdFprbTt9sXx2nXIalV1Bl+/pzjnLqdNu6rE/LdUQPKcnnmygrlxyFoWjSGn/t5JC+atgmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDFFA1655;
-	Tue,  4 Nov 2025 19:35:27 -0800 (PST)
-Received: from [10.164.18.45] (unknown [10.164.18.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 762263F66E;
-	Tue,  4 Nov 2025 19:35:33 -0800 (PST)
-Message-ID: <b5ff76a5-b068-4c6b-aa21-d932da42e1e9@arm.com>
-Date: Wed, 5 Nov 2025 09:05:30 +0530
+	 In-Reply-To:Content-Type; b=YoytmDArcoOtiWgl97vbXonbLLzuY+VdUT0MJp5BQL36iDXpIxltMK26xTUxOzGehI+NmclK6Yu1C/RDtvvtOpDJe4ipwCcRPNAQTS+n9naogp1ynxMKDrrgr5r9aaiyHnEmdA9nxLJ9PrHHaVlEH5KPfojarzklqewz4Tj+sms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aGBfBYj+; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a22dd9a4-94a7-4a9b-ac66-4076caacc9a9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762313757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tednmqSeWKE2vdAr3M4CEfIfWy7x4aBJvsASV0JQaog=;
+	b=aGBfBYj+BFhcqH11ToDWbF1TLEW9AHm8XN6/RElHjeD2bJhKi8qfVlh+Aei5A8NkhWg2s1
+	0BtCNQ3cWIC2H4Ns6SdJQjf395HGPCzMVvb3VAb5VU31fzPExu2cxtBIcUbCZclqaR1mx5
+	Pzzt8s40wng1EfL1VJgfjLQplyQaL2A=
+Date: Tue, 4 Nov 2025 19:35:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] arm64/mm: Ensure correct 48 bit PA gets into
- TTBRx_EL1
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ryan Roberts <ryan.roberts@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20251103052618.586763-1-anshuman.khandual@arm.com>
- <20251103052618.586763-5-anshuman.khandual@arm.com>
- <aQoZDbuBJ_2YcsyP@J2N7QTR9R3.cambridge.arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <aQoZDbuBJ_2YcsyP@J2N7QTR9R3.cambridge.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH bpf-next v4 4/4] selftests/bpf: Add tests to verify
+ freeing the special fields when update hash and local storage maps
+Content-Language: en-GB
+To: Leon Hwang <leon.hwang@linux.dev>, bpf@vger.kernel.org
+Cc: ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, ameryhung@gmail.com,
+ linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
+References: <20251030152451.62778-1-leon.hwang@linux.dev>
+ <20251030152451.62778-5-leon.hwang@linux.dev>
+ <02b8c4ba-eb24-41e2-813c-98b83561ef9d@linux.dev>
+ <697dc64e-8707-44ba-8cda-ba48747f2973@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <697dc64e-8707-44ba-8cda-ba48747f2973@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
 
-On 04/11/25 8:47 PM, Mark Rutland wrote:
-> On Mon, Nov 03, 2025 at 05:26:16AM +0000, Anshuman Khandual wrote:
->> Even though 48 bit PA representation in TTBRx_EL1 does not involve shifting
->> partial bits like 52 bit variant does, they sill need to be masked properly
->> for correctness. Hence mask 48 bit PA with TTBRx_EL1_BADDR_MASK.
-> 
-> There is no need for the address "to be masked properly for
-> correctness".
-> 
-> We added masking for 52-bit PAs due to the need to shuffle the bits
-> around. There is no need for that when using 48-bit PAs, since the
-> address must be below 2^48, and the address must be suitably aligned.
-> 
-> If any bits are set outside of this mask, that is a bug in the caller.
-> 
-> Mark.
-
-Agreed - probably should not be masking out an wrong address from the caller
-in order to proceed further with TTBRx_EL1 and then cause a problem down the
-line.
-> 
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/include/asm/assembler.h | 1 +
->>  arch/arm64/include/asm/pgtable.h   | 2 +-
->>  2 files changed, 2 insertions(+), 1 deletion(-)
+On 11/4/25 6:14 PM, Leon Hwang wrote:
+>
+> On 5/11/25 01:30, Yonghong Song wrote:
 >>
->> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
->> index 23be85d93348..d5eb09fc5f8a 100644
->> --- a/arch/arm64/include/asm/assembler.h
->> +++ b/arch/arm64/include/asm/assembler.h
->> @@ -609,6 +609,7 @@ alternative_endif
->>  	and	\ttbr, \ttbr, #TTBR_BADDR_MASK_52
->>  #else
->>  	mov	\ttbr, \phys
->> +	and	\ttbr, \ttbr, #TTBRx_EL1_BADDR_MASK
->>  #endif
->>  	.endm
->>  
->> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->> index 0944e296dd4a..c3110040c137 100644
->> --- a/arch/arm64/include/asm/pgtable.h
->> +++ b/arch/arm64/include/asm/pgtable.h
->> @@ -1604,7 +1604,7 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
->>  #ifdef CONFIG_ARM64_PA_BITS_52
->>  #define phys_to_ttbr(addr)	(((addr) | ((addr) >> 46)) & TTBR_BADDR_MASK_52)
->>  #else
->> -#define phys_to_ttbr(addr)	(addr)
->> +#define phys_to_ttbr(addr)	(addr & TTBRx_EL1_BADDR_MASK)
->>  #endif
->>  
->>  /*
->> -- 
->> 2.30.2
+>> On 10/30/25 8:24 AM, Leon Hwang wrote:
+>>> Add tests to verify that updating hash and local storage maps decrements
+>>> refcount when BPF_KPTR_REF objects are involved.
+>>>
+>>> The tests perform the following steps:
+>>>
+>>> 1. Call update_elem() to insert an initial value.
+>>> 2. Use bpf_refcount_acquire() to increment the refcount.
+>>> 3. Store the node pointer in the map value.
+>>> 4. Add the node to a linked list.
+>>> 5. Probe-read the refcount and verify it is *2*.
+>>> 6. Call update_elem() again to trigger refcount decrement.
+>>> 7. Probe-read the refcount and verify it is *1*.
+>>>
+>>> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+>> I applied this patch only (i.e., not including patches 1/2/3) to master
+>> branch and do bpf selftest and all tests succeeded.
 >>
+>> [root@arch-fb-vm1 bpf]# ./test_progs -t refcounted_kptr
+>> #294/1   refcounted_kptr/insert_read_both: remove from tree + list:OK
+>> ...
+>> #294/18  refcounted_kptr/pcpu_hash_refcount_leak:OK
+>> #294/19  refcounted_kptr/check_pcpu_hash_refcount:OK
+>> #294/20  refcounted_kptr/hash_lock_refcount_leak:OK
+>> #294/21  refcounted_kptr/check_hash_lock_refcount:OK
+>> #294/22  refcounted_kptr/rbtree_sleepable_rcu:OK
+>> #294/23  refcounted_kptr/rbtree_sleepable_rcu_no_explicit_rcu_lock:OK
+>> #294/24  refcounted_kptr/cgroup_storage_lock_refcount_leak:OK
+>> #294/25  refcounted_kptr/check_cgroup_storage_lock_refcount:OK
+>> ...
+>>
+>> Did I miss anything?
+>>
+> Oops.
+>
+> You should run:
+> ./test_progs -t kptr_refcount
+>
+> The results are as follows:
+>
+> test_percpu_hash_refcount_leak:PASS:libbpf_num_possible_cpus 0 nsec
+> test_percpu_hash_refcount_leak:PASS:calloc values 0 nsec
+> test_percpu_hash_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:PASS:refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
+> #158/1   kptr_refcount_leak/percpu_hash_refcount_leak:FAIL
+> test_hash_lock_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:PASS:refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
+> #158/2   kptr_refcount_leak/hash_lock_refcount_leak:FAIL
+> test_cgroup_storage_lock_refcount_leak:PASS:setup_cgroup_environment 0 nsec
+> test_cgroup_storage_lock_refcount_leak:PASS:get_root_cgroup 0 nsec
+> test_cgroup_storage_lock_refcount_leak:PASS:refcounted_kptr__open_and_load
+> 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:PASS:refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
+> #158/3   kptr_refcount_leak/cgroup_storage_lock_refcount_leak:FAIL
+> #158     kptr_refcount_leak:FAIL
+>
+> All error logs:
+> test_percpu_hash_refcount_leak:PASS:libbpf_num_possible_cpus 0 nsec
+> test_percpu_hash_refcount_leak:PASS:calloc values 0 nsec
+> test_percpu_hash_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:PASS:refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
+> #158/1   kptr_refcount_leak/percpu_hash_refcount_leak:FAIL
+> test_hash_lock_refcount_leak:PASS:refcounted_kptr__open_and_load 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:PASS:refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
+> #158/2   kptr_refcount_leak/hash_lock_refcount_leak:FAIL
+> test_cgroup_storage_lock_refcount_leak:PASS:setup_cgroup_environment 0 nsec
+> test_cgroup_storage_lock_refcount_leak:PASS:get_root_cgroup 0 nsec
+> test_cgroup_storage_lock_refcount_leak:PASS:refcounted_kptr__open_and_load
+> 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem init 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:PASS:refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_map__update_elem dec refcount 0 nsec
+> test_refcnt_leak:PASS:bpf_prog_test_run_opts 0 nsec
+> test_refcnt_leak:FAIL:refcount unexpected refcount: actual 2 != expected 1
+> #158/3   kptr_refcount_leak/cgroup_storage_lock_refcount_leak:FAIL
+> #158     kptr_refcount_leak:FAIL
+> Summary: 0/0 PASSED, 0 SKIPPED, 1 FAILED
+>
+> All three tests failed because the refcount remained 2 instead of
+> decreasing to 1 after the second update_elem() call.
+>
+> The CI result [1] also demonstrates this issue.
+>
+> Sorry for the misleading test name earlier.
+
+Sorry. It is my fault. Indeed, with patches 1-3, the tests indeed failed.
+I obviously looked at the wrong selftest.
+
+>
+> Links:
+> [1] https://github.com/kernel-patches/bpf/pull/10203
+>
+> Thanks,
+> Leon
+>
+> [...]
+>
 
 
