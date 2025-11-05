@@ -1,250 +1,210 @@
-Return-Path: <linux-kernel+bounces-886146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC83C34D49
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:28:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D62C34DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D98188298A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:25:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 883F24F70FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE41C30DEDA;
-	Wed,  5 Nov 2025 09:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8992FD1CE;
+	Wed,  5 Nov 2025 09:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xeiR4NoS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uqvwPEKU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xeiR4NoS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uqvwPEKU"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eRH98J6F"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C330CDBE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AB92FBDE9;
+	Wed,  5 Nov 2025 09:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334516; cv=none; b=GbHfBF53cDClPC2ejdc1p3bwvIosaHbeTjb0/muKk3dIVXYWPhWAWcIsz/Z25Jn/aFg4q8vbbZdE3v4KirB3bLLoLqDPY9d8k55qX1HYtBBKWkNM99+ehmPi4HJ/oHY6bdBxhfiqP+PFYTJJtN2AKlNPxlQtS9a2uOcpEO0Imt8=
+	t=1762334562; cv=none; b=OrCp04dyU3O0F6amvNa5UzjAK3tFc7NGXTMWxtu3+zycXwLsMX9gIoQnlqqdYeh4Tk6j2mL/ujezvf8Qu8/0dtW5Ezs/C/guXTD8nT1KnFQNFbHqemQ1tTQSve4ayJ5pFYnovixfJ0wTfw5WbMjj98sGoB511tzGeMJ2jxvnduU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334516; c=relaxed/simple;
-	bh=7QmbSoSFkJU0x22h/fBGtFwP6eIRiQcW2vzomv5wvQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iy62IagKXxTzBXPkvubrzc1oSc4AtmITvbAFGCOeVTJDB38XL+5BWro3JjZLUfT2+p0DvpdBeGI5fI2cv+HgOjUjqGB4fKg3EHkOMhel4p9NRbpXYhdrhaTb17qB0Ga97TDzGE9rKeRSYEKnxG8AzPEhPyRAY2vY2wNW3Kyfc5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xeiR4NoS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uqvwPEKU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xeiR4NoS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uqvwPEKU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 86F8221181;
-	Wed,  5 Nov 2025 09:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
-	b=xeiR4NoS39SfhExjX/IbEG6Ah8riUDdj05SyDWi1Sjm9P9AsioakTVj/b4F3y8W45kAu4W
-	5JQ1mVje6U2i+f9ewV8olKWoCRUJJRS+kYHzMD8Px1I5k0884E86/sIlxi5crdmbfWcx4n
-	vN0RXs9+aW3yziq5bmUFWj0HmIUlTXg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334512;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
-	b=uqvwPEKUZeWCS1Oon506yU+IqoyTApTuNFNmwCAHWz+xxfm0SCKL6bFFw+gnQSOCgnLMrT
-	8zuVFDiV0O47eWCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762334512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
-	b=xeiR4NoS39SfhExjX/IbEG6Ah8riUDdj05SyDWi1Sjm9P9AsioakTVj/b4F3y8W45kAu4W
-	5JQ1mVje6U2i+f9ewV8olKWoCRUJJRS+kYHzMD8Px1I5k0884E86/sIlxi5crdmbfWcx4n
-	vN0RXs9+aW3yziq5bmUFWj0HmIUlTXg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762334512;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PiimWwxWLRmp6RdY8hBpnmT5w5iOYiscsbCX56fNBAM=;
-	b=uqvwPEKUZeWCS1Oon506yU+IqoyTApTuNFNmwCAHWz+xxfm0SCKL6bFFw+gnQSOCgnLMrT
-	8zuVFDiV0O47eWCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CEA3132DD;
-	Wed,  5 Nov 2025 09:21:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x4h8HjAXC2lVFQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:21:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 382E2A083B; Wed,  5 Nov 2025 10:21:52 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:21:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 15/25] ext4: rename 'page' references to 'folio' in
- multi-block allocator
-Message-ID: <zi2xv42wg45qbveq4vxtdodencx7zb2esscwensoaka2hiojdr@imra4faaz42g>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-16-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762334562; c=relaxed/simple;
+	bh=7yLkrBwTjt7wnToghWwiDhk0t6t6nvsEA1O9oSg398E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XmqLv3kfHc7pHscqPWe0Mb34oasoYjrfyoN3yMYPbkg2A3tfP8VqJWb80X0SwiALACn+28ji+VbRd4juiurRQulblnd1RqGGJoosW0wU3ycj3heyOs+HjFayEtdEc1fhWkJb0hVJluUHex35FAtvckx4moJOiSzUlvgm0utHXT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eRH98J6F; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A55udU4007542;
+	Wed, 5 Nov 2025 09:22:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=oCaa74
+	4/yx6Gsm/RozBFAn6s5R65rM23DqxrRNPJW44=; b=eRH98J6FH91A4UZTTLgcPV
+	WvAtl+xZp6NDo6wrxaVOB3jSxqwF7KroIzhlfuFQRovDNlp2WOVH5480nZlCUQ73
+	ilygzTTL3hSo1sFDIsIA3DSaG/QWqKf2PYq9aceO6aMfhbppKJnM7bYxlMjbLfB5
+	GKIsXV4gJrqEFKPcb094QeHi7Ro3FiwUJ0knt3AUnVpQG3/IWlrWAu8DxAgzokGQ
+	ieECzr7AwZOkxGynvqMWByzv7WeL+Ri5dUt+miqOPYLwqAfvSCB3Y2SeF6d7jF/D
+	h8FBg4B/PHsqt7W0Fb0MDn/Boq/Gv2IPAiU/4PNpoKMF5mxkAc/Ovcrd8EyDm/oQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vugcmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 09:22:26 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A599D0r012923;
+	Wed, 5 Nov 2025 09:22:25 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5y81y1md-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Nov 2025 09:22:25 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A59M9XO30016136
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Nov 2025 09:22:10 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0B9D658059;
+	Wed,  5 Nov 2025 09:22:23 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 90A5D58055;
+	Wed,  5 Nov 2025 09:22:19 +0000 (GMT)
+Received: from [9.98.109.80] (unknown [9.98.109.80])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Nov 2025 09:22:19 +0000 (GMT)
+Message-ID: <2ab4297c-b4b5-4eb2-8389-cd9fe29d7bc3@linux.ibm.com>
+Date: Wed, 5 Nov 2025 14:52:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-16-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,huaweicloud.com:email,suse.cz:email,huawei.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.30
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [mainline]Error while running make modules_install command
+Content-Language: en-GB
+To: Nathan Chancellor <nathan@kernel.org>, Omar Sandoval <osandov@osandov.com>
+Cc: Samir M <samir@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, dimitri.ledkov@surgut.co.uk,
+        stable@vger.kernel.org, Nicolas Schier <nsc@kernel.org>,
+        Alexey Gladkov <legion@kernel.org>, linux-debuggers@vger.kernel.org
+References: <7fef7507-ad64-4e51-9bb8-c9fb6532e51e@linux.ibm.com>
+ <56905387-ec43-4f89-9146-0db6889e46ab@linux.ibm.com>
+ <20251105005603.GA769905@ax162>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <20251105005603.GA769905@ax162>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ya8hwmud08LkMknuqq7GXmfR9YS6A8zH
+X-Proofpoint-GUID: ya8hwmud08LkMknuqq7GXmfR9YS6A8zH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX6CR4MZ02sUer
+ 1aMpOY+rDbjWAsp6mrqRyT1PA8iB9yf0U0FnlwHJTI3D5/cuqU2sRjXHhKQzDTgEAhoPmIIOor9
+ 9jx5Yz2a9CJAcEBfklG5csj+5SfUA5PO/S3EPueuP44a1rA51YDtRprp9vBK9z1d3NE4tgPKtT9
+ 5E6JIIIPPQPvjIH94TvteBCNq27cW50JWBqCuW+RrGQ6wTM43CyxVZniu3Qfzx7xA3ZSaEmrFtT
+ dNdZnVymY7aXQbm/PFHEuJFS3Nuq/HzhUE7l3QcmQFqCWt/RlckYwvA56ymMu2mmJYc/s93eTzw
+ mnthn+kAwgjGF2fpi6w11/Os26xa6qUxoF94xYtdxwvverDCSY2ejYxeaX1+nTrs4kHuC3PAAVw
+ FUMK1/AM5A68U2gUtOxinxOiBTKW+w==
+X-Authority-Analysis: v=2.4 cv=U6qfzOru c=1 sm=1 tr=0 ts=690b1752 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=WG_6xDmpAAAA:8 a=s5HezVcRJVFevGRlhjIA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=vnvZt3YqmSlbJLwVaSfU:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ clxscore=1011 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511010021
 
-On Sat 25-10-25 11:22:11, libaokun@huaweicloud.com wrote:
-> From: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> The ext4 multi-block allocator now fully supports folio objects. Update
-> all variable names, function names, and comments to replace legacy 'page'
-> terminology with 'folio', improving clarity and consistency.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-Looks good. Feel free to add:
+On 05/11/25 6:26 am, Nathan Chancellor wrote:
+> + Nicolas and Alexey, just as an FYI.
+>
+> Top of thread is:
+>
+> https://lore.kernel.org/7fef7507-ad64-4e51-9bb8-c9fb6532e51e@linux.ibm.com/
+>
+> On Tue, Nov 04, 2025 at 04:54:38PM +0530, Venkat Rao Bagalkote wrote:
+>> IBM CI has also reported this error.
+>>
+>>
+>> Error:
+>>
+>>
+>> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
+>> prefix
+>>    INSTALL /boot
+>> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
+>> prefix
+>> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
+>> prefix
+>>
+>>
+>> Git bisect is pointing to below commit as first bad commit.
+>>
+>>
+>> d50f21091358b2b29dc06c2061106cdb0f030d03 is the first bad commit
+>> commit d50f21091358b2b29dc06c2061106cdb0f030d03
+>> Author: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>
+>> Date:   Sun Oct 26 20:21:00 2025 +0000
+>>
+>>      kbuild: align modinfo section for Secureboot Authenticode EDK2 compat
+> Thank you for the bisect. I can reproduce this with at least kmod 29.1,
+> which is the version I can see failing in drgn's CI from Ubuntu Jammy
+> (but I did not see it with kmod 34, which is the latest version in Arch
+> Linux at the moment).
+>
+> Could you and Omar verify if the following diff resolves the error for
+> you? I think this would allow us to keep Dimitri's fix for the
+> Authenticode EDK2 calculation (i.e., the alignment) while keeping kmod
+> happy. builtin.modules.modinfo is the same after this diff as it was
+> before Dimitri's change for me.
+>
+> Cheers,
+> Nathan
+>
+> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> index ced4379550d7..c3f135350d7e 100644
+> --- a/scripts/Makefile.vmlinux
+> +++ b/scripts/Makefile.vmlinux
+> @@ -102,11 +102,23 @@ vmlinux: vmlinux.unstripped FORCE
+>   # modules.builtin.modinfo
+>   # ---------------------------------------------------------------------------
+>   
+> +# .modinfo in vmlinux is aligned to 8 bytes for compatibility with tools that
+> +# expect sufficiently aligned sections but the additional NULL bytes used for
+> +# padding to satisfy this requirement break certain versions of kmod with
+> +#
+> +#   depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname prefix
+> +#
+> +# Strip the trailing padding bytes after extracting the .modinfo sections to
+> +# comply with what kmod expects to parse.
+> +quiet_cmd_modules_builtin_modinfo = GEN     $@
+> +      cmd_modules_builtin_modinfo = $(cmd_objcopy); \
+> +                                    sed -i 's/\x00\+$$/\x00/g' $@
+> +
+>   OBJCOPYFLAGS_modules.builtin.modinfo := -j .modinfo -O binary
+>   
+>   targets += modules.builtin.modinfo
+>   modules.builtin.modinfo: vmlinux.unstripped FORCE
+> -	$(call if_changed,objcopy)
+> +	$(call if_changed,modules_builtin_modinfo)
+>   
+>   # modules.builtin
+>   # ---------------------------------------------------------------------------
+>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+This change fixes the reported issue. You can add below tag as well, 
+while sending a patch.
 
-								Honza
 
-> ---
->  fs/ext4/mballoc.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 155c43ff2bc2..cf07d1067f5f 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -98,14 +98,14 @@
->   * block bitmap and buddy information. The information are stored in the
->   * inode as:
->   *
-> - *  {                        page                        }
-> + *  {                        folio                        }
->   *  [ group 0 bitmap][ group 0 buddy] [group 1][ group 1]...
->   *
->   *
->   * one block each for bitmap and buddy information.  So for each group we
-> - * take up 2 blocks. A page can contain blocks_per_page (PAGE_SIZE /
-> - * blocksize) blocks.  So it can have information regarding groups_per_page
-> - * which is blocks_per_page/2
-> + * take up 2 blocks. A folio can contain blocks_per_folio (folio_size /
-> + * blocksize) blocks.  So it can have information regarding groups_per_folio
-> + * which is blocks_per_folio/2
->   *
->   * The buddy cache inode is not stored on disk. The inode is thrown
->   * away when the filesystem is unmounted.
-> @@ -1556,7 +1556,7 @@ static int ext4_mb_get_buddy_folio_lock(struct super_block *sb,
->  	return 0;
->  }
->  
-> -static void ext4_mb_put_buddy_page_lock(struct ext4_buddy *e4b)
-> +static void ext4_mb_put_buddy_folio_lock(struct ext4_buddy *e4b)
->  {
->  	if (e4b->bd_bitmap_folio) {
->  		folio_unlock(e4b->bd_bitmap_folio);
-> @@ -1570,7 +1570,7 @@ static void ext4_mb_put_buddy_page_lock(struct ext4_buddy *e4b)
->  
->  /*
->   * Locking note:  This routine calls ext4_mb_init_cache(), which takes the
-> - * block group lock of all groups for this page; do not hold the BG lock when
-> + * block group lock of all groups for this folio; do not hold the BG lock when
->   * calling this routine!
->   */
->  static noinline_for_stack
-> @@ -1618,7 +1618,7 @@ int ext4_mb_init_group(struct super_block *sb, ext4_group_t group, gfp_t gfp)
->  	if (e4b.bd_buddy_folio == NULL) {
->  		/*
->  		 * If both the bitmap and buddy are in
-> -		 * the same page we don't need to force
-> +		 * the same folio we don't need to force
->  		 * init the buddy
->  		 */
->  		ret = 0;
-> @@ -1634,7 +1634,7 @@ int ext4_mb_init_group(struct super_block *sb, ext4_group_t group, gfp_t gfp)
->  		goto err;
->  	}
->  err:
-> -	ext4_mb_put_buddy_page_lock(&e4b);
-> +	ext4_mb_put_buddy_folio_lock(&e4b);
->  	return ret;
->  }
->  
-> @@ -2227,7 +2227,7 @@ static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
->  	ac->ac_buddy = ret >> 16;
->  
->  	/*
-> -	 * take the page reference. We want the page to be pinned
-> +	 * take the folio reference. We want the folio to be pinned
->  	 * so that we don't get a ext4_mb_init_cache_call for this
->  	 * group until we update the bitmap. That would mean we
->  	 * double allocate blocks. The reference is dropped
-> @@ -2933,7 +2933,7 @@ static int ext4_mb_scan_group(struct ext4_allocation_context *ac,
->  	if (cr < CR_ANY_FREE && spin_is_locked(ext4_group_lock_ptr(sb, group)))
->  		return 0;
->  
-> -	/* This now checks without needing the buddy page */
-> +	/* This now checks without needing the buddy folio */
->  	ret = ext4_mb_good_group_nolock(ac, group, cr);
->  	if (ret <= 0) {
->  		if (!ac->ac_first_err)
-> @@ -4725,7 +4725,7 @@ static void ext4_discard_allocated_blocks(struct ext4_allocation_context *ac)
->  				   "ext4: mb_load_buddy failed (%d)", err))
->  			/*
->  			 * This should never happen since we pin the
-> -			 * pages in the ext4_allocation_context so
-> +			 * folios in the ext4_allocation_context so
->  			 * ext4_mb_load_buddy() should never fail.
->  			 */
->  			return;
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+
+
+Regards,
+
+Venkat.
+
+
 
