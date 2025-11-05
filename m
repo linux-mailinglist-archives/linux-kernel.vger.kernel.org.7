@@ -1,135 +1,114 @@
-Return-Path: <linux-kernel+bounces-886534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECD1C35DC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:37:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA31C35DDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 14:38:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53BB74F8388
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:35:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE3294F1BE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 13:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED86B31E10C;
-	Wed,  5 Nov 2025 13:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA14322C73;
+	Wed,  5 Nov 2025 13:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1xA9WFF"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b="vMHHFEWV"
+Received: from sg-1-18.ptr.blmpb.com (sg-1-18.ptr.blmpb.com [118.26.132.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14803A41
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CF1322A00
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 13:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762349731; cv=none; b=rARVcCDmUpbi2RRbgD1oddIuM0/LseRRWZ0vXeHcHaXEYuzC5EA9eqiD45CgD/LyRDQGmaVhFiEGTh71JFd4jGFUBHm2WlaEnyhx7mFPxJGJz89MneOh+MEefj/JmwdEKbkCoygIryziNs3/RZyT00aEmIPSI4TqSjDYZ3pT2WM=
+	t=1762349758; cv=none; b=Ct8+Ekiz4/9lYervyB2G4i/f3qvOdq963IQEyOTBYj/DJDWOjzAVd8IKj6cvzrRR/NLwBV6bS5UbCP5G128qbzfUHvb6NAGdbvQ3NaEOkXt7J1oHi1/SuYQV4QFu7/9Fh4pLHnQFX8pV3U+iGRidBOGuWDOoWGwJo8GP0Zbgj8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762349731; c=relaxed/simple;
-	bh=YVzjZNvEY5wlcsOgc5iechhwm+0MSXEhvT2EVqSRpM4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L9/ouZF1tQCQ1dB0IMm+/0aenQ/7o0DGeauiwh2CdqxXtskojLYiZH98GgHjkRhCq6RMMORjhA6RazIZtRedsyP5RT/QjIc2eBH6c7CV0cZvPtZX6EuClvpCTVCw+B7v0GrDgFlAT7XS1fdFS7Y/73FZ/oVRkYbbGZEUiLjt8nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1xA9WFF; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7a9c64dfa8aso3103540b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 05:35:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762349729; x=1762954529; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vMcpJM9U609o9K6c/w24YMzRJfQOd+BnRUVotnA4m/o=;
-        b=F1xA9WFF/c1QCjJ8qbDs76E/GIGR7d4k59pjS61abxgu+zw8ibTnVYbEl6P0+MncCe
-         Mjypz1FAm6JlFDNEGdjKV9dk0Wg4ly/Te3T00sv6RQSDNIGCNwObx2sBkHN1iFr+IX16
-         d102L7CKiVpualBJK93o7ZnHImxF7eg+AZRhB4R3QCWc+SYlzAtwc30mqTXIXluplJDr
-         1Kj2a5UJ8wv6hpUgZ8DLWuuilj84R33aEhCNTe6Z8GiRvi8CkLJrYkKD5U/8p7vjJvQh
-         ognYsUZAQk1bL/oskiCX8Fk6ollbChqtMJxmpehE4siqy9MIicPSZc0g6NO0yteP1RR0
-         v5tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762349729; x=1762954529;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vMcpJM9U609o9K6c/w24YMzRJfQOd+BnRUVotnA4m/o=;
-        b=FEvUWHnpYO2ZGp2r7kCiTrUvhXfE8hJicEDN/VjyWYZkhTdTrebvArZSEMsBuRVBEo
-         DvBfvLxspyDg8pr8ZMl/7Dl+U1R+HwiJmQKnM86viBfijuc48FadzFleRhKPJLCYF/l6
-         UeFDq+DhHJzRHE6vJIKV9u0hMqaSIKfn9nCjBrErp4nX4Fg7vY3/JeAT1KKOVaj9fhlR
-         MHn6QnGHNGAtuXonkVlBxPCBOmu+DlpRJrgVlihOLKxo0lObxhZv6Fm+0guldt9dmKaO
-         UPjOWwdI041TH2mEWkXvu3yQ9y8U2okbuRXtoej2Fb+DusPq5ydFA1nOGBFQYWZLQiEV
-         jwXQ==
-X-Gm-Message-State: AOJu0Yx+LBJQQQ8i570gtb/93USM3s1nOCrSMxUCxUCg4jx/21LAyGCE
-	WJgPQ1190dJ/P1ur6mPJ89cOB+dLiT8pzHVkGP37OioWL/cLiVUBtZ9t
-X-Gm-Gg: ASbGnctIvJs1CTY3lz1MkUke6DqCqYPqofdP0Ormo2sGr490ChRmB/Q5aSPrYDpvsQO
-	IU9UkqhnoUQQnLsNwdSyzpzuQ+CEMXhs4UjTMaFDednXyf+dDmQm09pNovGt4brfODisJmTbAzu
-	tfzYvWS7Q6NBSQ1GK/d/9f9nMf6Xsg6q1RepLyfxfwpg4OhUAuRyhf1MX8qt/d9DnT/+SJGaSap
-	2EvkUnziT6Xj9isV16vtlBE+XHtZK5jaMQDhWlstIqZ1hTVtiGv5ftn/oCs3fwVq9KEDDfUgmnW
-	DnfrixK1Hlfq/9pASsTsU8PSn6Md+zG7RD+UebVzZYqtiCX6fwLR1+Vm4dPut+yH6pVCuCcSwal
-	j3xxy7U8C9Xd/Le3Pq5bjdejzIFnggrAY+sBWnvteVSL+AWk+IoCcCTokAs3uFvKxp1aF3AkQ
-X-Google-Smtp-Source: AGHT+IEMZ5fuJ86E4V4D8bLK1dn2Zk3jFYtQ6tft/Z6WD2q8e+rKY6orgtWKTyq3NHL/DJeWpblx2Q==
-X-Received: by 2002:a05:6a00:1496:b0:781:556:f33 with SMTP id d2e1a72fcca58-7ae1cb64038mr4101234b3a.5.1762349728805;
-        Wed, 05 Nov 2025 05:35:28 -0800 (PST)
-Received: from localhost ([2408:841b:d10:e194:6f22:8ad4:a287:fde3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd3824e5bsm6367965b3a.17.2025.11.05.05.35.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 05:35:28 -0800 (PST)
-From: Encrow Thorne <jyc0019@gmail.com>
-Date: Wed, 05 Nov 2025 21:35:02 +0800
-Subject: [PATCH RFC] reset: fix BIT macro reference
+	s=arc-20240116; t=1762349758; c=relaxed/simple;
+	bh=HvtCFB+YVlcHXviOlDNyWHCt60UpWIwHrdNsZvjwr6M=;
+	h=From:In-Reply-To:Content-Type:Subject:References:To:Date:Cc:
+	 Message-Id:Mime-Version; b=Ef6ZCUYNiuPfLy4awnwBF06OtkbNMSK+Ciqj2XXIZf2kQU9wrEvUWsTuu2Hh0ZmBPLdl77pQTk8lNpxrQnIwVmVcPiihXRh787tUOBt0+zO3y8sIKoOlXRI5xgCba8T3xmylYuuorAvHmD/dmPuxARQVM3zgLwwZg0oqd77qbhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club; spf=pass smtp.mailfrom=openatom.club; dkim=pass (2048-bit key) header.d=openatom-club.20200927.dkim.feishu.cn header.i=@openatom-club.20200927.dkim.feishu.cn header.b=vMHHFEWV; arc=none smtp.client-ip=118.26.132.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openatom.club
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openatom.club
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=openatom-club.20200927.dkim.feishu.cn; t=1762349744;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=HvtCFB+YVlcHXviOlDNyWHCt60UpWIwHrdNsZvjwr6M=;
+ b=vMHHFEWVDlSZLz4CtRwt9m1zBgG8qB3NUSvXN53QMOJq+9ULBo9TkR+qeGb2OERJL3IMhO
+ y0aqnLMG21dl9Qj5DvOSw1o6oQIIml/6a7pyR8h2ZmrOlZ35TCP3Zu8z69tirseBJBSi9t
+ uGMaQhMZnKckrtA7dvZMD5ZCEpifpgAOKuehEFxn/9aKZrAUKiz6KRkYRT/qzT3H4yJ3Py
+ UjFiwEsxE2JNjuVZOjmwKi1n879lIcUEKZ47+F3EAX0/5xuxkIzGFZaWxf+tx2CZ4StIvn
+ Er7fPBnuH2eFLwsG1mulDQ6wTKtKhk+mIPMKDgmivDY7q0BR2UrOXdu2KS15nA==
+From: "Chen Miao" <chenmiao@openatom.club>
+X-Original-From: Chen Miao <chenmiao@openatom.club>
+In-Reply-To: <CANiq72=WZJ5=UACpFLWCVJ7mcXbc93X9MyYAZP8-0F==2b0adw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] rust: kernel: Support more jump_label api
+X-Lms-Return-Path: <lba+2690b52ae+2e2957+vger.kernel.org+chenmiao@openatom.club>
+References: <df3a68334760b2b254219a69426982bf858dee39.1762221537.git.chenmiao@openatom.club> <CANiq72=WZJ5=UACpFLWCVJ7mcXbc93X9MyYAZP8-0F==2b0adw@mail.gmail.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 5 Nov 2025 21:35:40 +0800
+User-Agent: Mozilla Thunderbird
+Cc: <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, 
+	"Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	"Benno Lossin" <lossin@kernel.org>, 
+	"Andreas Hindborg" <a.hindborg@kernel.org>, 
+	"Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, 
+	"Danilo Krummrich" <dakr@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, 
+	"open list:RUST" <rust-for-linux@vger.kernel.org>, 
+	"open list" <linux-kernel@vger.kernel.org>
+Message-Id: <8d865a46-82c8-428d-a371-407889eefb62@openatom.club>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251105-rfc-reset-include-bits-v1-1-d7e1bbc7e1ab@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIVSC2kC/x3MQQqDMBBG4avIrB0wMSL0KqULTX51oESZ0VIQ7
- 25w+S3eO8mgAqNXdZLiJyZrLnB1RXEZ8gyWVEy+8Z1zTcc6RVYYdpYcv0cCj7IbB8TetyEkN7R
- U4k0xyf8Zvz/XdQPqOefCaAAAAA==
-X-Change-ID: 20251105-rfc-reset-include-bits-4ec72344d1a3
-To: Philipp Zabel <p.zabel@pengutronix.de>, 
- Troy Mitchell <troy.mitchell@linux.dev>
-Cc: linux-kernel@vger.kernel.org, Encrow Thorne <jyc0019@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762349722; l=926;
- i=jyc0019@gmail.com; s=20251009; h=from:subject:message-id;
- bh=YVzjZNvEY5wlcsOgc5iechhwm+0MSXEhvT2EVqSRpM4=;
- b=z5nNIh0yvOYQCqTKP/x+gq/NSPx+Kb6ubMHvNUA3XLH4pmdjKlDl9WzqfSI/MDGI8PrtxpTG0
- si9n5TeXXGKDvKiuYB5D5lX3MGVDb6ZCd4hh3GTXEuAnAfKS4tixy5G
-X-Developer-Key: i=jyc0019@gmail.com; a=ed25519;
- pk=nnjLv04DUE0FXih6IcJUOjWFTEoo4xYQOu7m5RRHvZ4=
+Mime-Version: 1.0
+Received: from [198.18.0.1] ([114.249.49.233]) by smtp.feishu.cn with ESMTPS; Wed, 05 Nov 2025 21:35:41 +0800
+Content-Transfer-Encoding: quoted-printable
 
-RESET_CONTROL_FLAGS_BIT_* macros use BIT(), but reset.h does not
-include bits.h or bitops.h. This causes compilation errors when
-including reset.h standalone.
+On 11/4/2025 10:14 PM, Miguel Ojeda wrote:
+> Hi chenmiao,
+>
+> A few procedural bits below for future versions/patches...
+>
+> On Tue, Nov 4, 2025 at 3:04=E2=80=AFAM chenmiao <chenmiao@openatom.club> =
+wrote:
+>> If finding the offset from the primitive type is necessary for this
+>> implementation, I will abandon this change.
+> In general, this should not be part of the commit message, but go
+> below the `---` line.
+>
+> And if the commit is not ready, typically it should be marked as RFC.
+Understood. I will pay attention to this in my future possible emails.
+>> Additionally, support for the `static_branch_enable/disable` APIs has be=
+en
+>> introduced.
+> Please split different changes in different patches if possible.
+As the same I said above.
+>> Signed-off-by: chenmiao <chenmiao@openatom.club>
+> In another email you used Chen Miao in the From -- in general, please
+> note that the SoB is supposed to have the "full name" ("known
+> identity") as you would normally write it. I mention this since
+> sometimes people use the local part of the email address, i.e. `...@`,
+> but that is usually not the normal spelling of a full name. Of course,
+> please ignore this if it is correct already.
+>
+> Thanks!
+>
+> Cheers,
+> Miguel
 
-Include bits.h to make reset.h self-contained.
+I can understand, but I'd like to make a brief explanation here. "Chen Miao=
+"=20
+is my name, so the prefix of all my email addresses is "chenmiao." Therefor=
+e,=20
+"Chen Miao" and "chenmiao" are equivalent.
 
-This patch is sent as RFC to discuss whether including bits.h in
-reset.h is appropriate.
+Regards,
 
-Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
----
- include/linux/reset.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 840d75d172f6..d3102eef085e 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -5,6 +5,7 @@
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/types.h>
-+#include <linux/bits.h>
- 
- struct device;
- struct device_node;
-
----
-base-commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
-change-id: 20251105-rfc-reset-include-bits-4ec72344d1a3
-
-Best regards,
--- 
-Encrow Thorne <jyc0019@gmail.com>
-
+Chen Miao
 
