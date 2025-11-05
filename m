@@ -1,109 +1,163 @@
-Return-Path: <linux-kernel+bounces-886105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA3BC34BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:20:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 173A8C34BFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EC854FB8A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:15:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E49874FCF32
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AD92FC01B;
-	Wed,  5 Nov 2025 09:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E22C2FB62C;
+	Wed,  5 Nov 2025 09:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH7cu0yH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Tk5fXqtT"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543BE2F7AB4;
-	Wed,  5 Nov 2025 09:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AFD2F90C9
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334064; cv=none; b=N5kv3DR+PXpEEVwz0FZGVHOAlMTDTIrBU0iHbXHf4vawp6oUQO3myBUX7heFsdRXXYakll7a3K2JSjEdCMzo1dzFdngZW2x85wApVzTwvCMISXYfyR8ZyY7ZdzXEoj0NKigpFjg8RBzrBRCGscFHp6OG9jL3bchBqCHQgsjskE8=
+	t=1762334075; cv=none; b=rmIMJSxF2iPp2i4fzf4+9UeYWOdRaL4Rh8h6d02daLBi3TSiv6sJ37+X6E0GM1trOe2fKHK+0c/PU7CopWWj6z2c60hiTLCYPD0GSg34nVj8I1LNzKA4uCgNJCsX15b4LJ0RV+d7Hgh5AxVewxicwyheR8k9/VNQFPlAeYlLZzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334064; c=relaxed/simple;
-	bh=KwmEx9hgVk7y+RSTS2QImEXQ30/Rh4I9Ht/dNmvoaNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isoOnzstEqf6s1L5cdl/LQNpdIcP4DxV5LfqyQZ0JBxC3fLYdBit/Zu1TzqB1bB0/XSEeWZEaaCjVBE2X+oFgCQD1Dw6bKmOafHnoVzfb9N/SWEQqd2ZtRmLw6ukMG/5hwDYTuUPsqG4wcFUy6dEv+vePZTQJl/x/f5smRx7mOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pH7cu0yH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52BBCC4CEF8;
-	Wed,  5 Nov 2025 09:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762334063;
-	bh=KwmEx9hgVk7y+RSTS2QImEXQ30/Rh4I9Ht/dNmvoaNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pH7cu0yHXFCgGt/0ca4SBMfZGTNDILeOA0KZMzEsw4w+vZj60tTfcxwaYWfKrwu3w
-	 o7J1IPVKRIdWcEBAZSy/fj8XR3vKj2Hu9atKHPZUXmsS3655T9txDKldlerftBkxNA
-	 8amFqn5ek/xXu6qOJuS8XsPTqzFH7AwCIMGCXdvGpn0Pqz+q9PMRD2xf9kFvhFFv8A
-	 2GKm8Hm4v8/Nnh9pmVXUzvFD6JMXXBrVjnDBjvTNt50KX4ZRa1Q2WD1/F1jBIUdCxh
-	 FJDEWEvqtokO1UTT+PmsVKu4AYcEr14JwL9Y+fowwcjRFKaDJ/1WMs4Ek1Lh0bP8E7
-	 ihgx6P3BrvcFw==
-Date: Wed, 5 Nov 2025 10:14:21 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 2/5] dt-bindings: remoteproc: qcom,sc8280xp-pas: Fix CDSP
- power desc
-Message-ID: <20251105-dramatic-denim-kangaroo-cef9ed@kuoka>
-References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
- <20251104-topic-8280_mxc-v1-2-df545af0ef94@oss.qualcomm.com>
+	s=arc-20240116; t=1762334075; c=relaxed/simple;
+	bh=jKr1rGV4rgIjUCb1jumVH+bKGuwyxjg5hXXi6aiGi88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i2YfhmZRyQRv1opmoOAud5pnecadHEwgmxNksId5mcuC+fppQcIg0U3oxOosDFhZPsARRs1J8qCFQDQ/pArxYFt6++rkrJvXWvS/LXz6I+47WTJtEO79FhWzcs1cRUcvLRt7ux0XCXuABQsJbkkZB+QNBb2VNb3F/AhooRvHadI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Tk5fXqtT; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b6d402422c2so389434166b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 01:14:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762334071; x=1762938871; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeoEzzS+NATU1AiVy+MYjoyYjfzwHEiduVCED9EMil8=;
+        b=Tk5fXqtTMfvhqo6PMaVXmzdMSqF4YQRRAUm3HCATCdyJIquDWkyil5KYq40TutFErv
+         L/SV51Nb5XQn2zgoe7HViweLJAp8Hj7gwUvK5GFYwKwb18pdX+vLPHik4flcJTbOiRqr
+         Jpc733kNLVF1JTD2MnqA3dXbHfILnkCUvX+6sm8WJ128PV0D6r4wTC2i2vkz4NUGEc4d
+         56S7Y1DbWhAGdJaFlmMDi3ibsLmjECuZtwX2RpkmjG5oI6gWYQsNgTPVUH2JyNZR+He5
+         fopJVsTn5CA5sMNuttu42VH5RDMOdcOhUyda7SMIhczgHto9oO54MCOR/mkdvwT8Jo/p
+         ko0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762334071; x=1762938871;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jeoEzzS+NATU1AiVy+MYjoyYjfzwHEiduVCED9EMil8=;
+        b=CZp/JWRXimMr9wRiR8ZVk2aQDvI/IiT1u3nOFIvUoUUAv6WiiKzwDSS23e/Vj3xSOt
+         D9UnuADtcCIwbs1/VNbQ5SgptJtj2qEXSCNK2wbgUJI2qCHzKXbAzdfAWVNy963Z7BVg
+         sxgOO/EHPDdP5EhAQ3pXVk9tgr3CsKO2aK25qI+fPyyhfOwdA3/FaMglrTbQrdVU6s9n
+         rUWpURWxD7SKv3uPBW0cJCSwJN5SPMtrsyF2qTcxZd83ketkSESKXyynnHv1e4NMDccO
+         aeDOkpAKajo5FzOL4/FLRd+AEumGLO0F0p+7V/igWFLiw10k5hUvT3MGl+w7/dXWqgCm
+         ngaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUM2NdhsuiAYFlYj1bVeKNCrQyUe3gbGkvMmx3D9K0Cm6oXnkGbMkKyTwT6ioiV3kV/OKJRtatvGTvvZNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTOI3pey9PpLepuoJxS1rrqhBb4qweHeaNVkH5xl2GeHBGJEqU
+	wSoRz24BN+gZ/8nMjCHE8CroiJg88oJ4C5KPIKeAscuhP3xoEf+h+qVmqix4ABHI+iU=
+X-Gm-Gg: ASbGnct8Gje3vd+ubyrQ/YC+vBB4a3Lo958w3PIn4Js67YBWmOumE71YdIgScvpq4ZM
+	mhPnFcwNbowZ0990mHl4ufqMVGkr+7v7JrVwuDhu1wuyFuAyLNkrPLo5U7BmoNPVezc4ftJ5V3P
+	P0Kjq/kxeeR6/ymGZ8yeKK57TamRBaDjzcvgfFzkAkMbODiPFVrGywdiuFO94RvCSNl8+M4/HiO
+	4/fThzSeBmlyBr9uV5bUtTDtvVKCGG/QFYxALOIg/5pKZ0pLPEoq0FrxQq/q7X446OjFv/mBvON
+	SVVQvrcVqWIlcSvtQdEaft6IoEjagX8UwJu4ohgOuQSsnguNjri45SsjIpIW/I9pIqaguE5i358
+	ZMzeK/JD6l6dMszYXgchKUJ6ycpCq7lS90tNhvEPMvmln8TJUwwfAJ+YcsWUAvVubT7y4SWpE0U
+	BxW45avOMl1NNDFay6VlOcQPRW/5vz
+X-Google-Smtp-Source: AGHT+IGPSpGbGi5CTwXbJ9njpmQ6nj0G/4Pf35m44cY/AqKJokN1oC23P9uAmuDjc7gnyRJnKlHQug==
+X-Received: by 2002:a17:907:720e:b0:b65:dafc:cd0a with SMTP id a640c23a62f3a-b72655cde5amr209742766b.52.1762334070811;
+        Wed, 05 Nov 2025 01:14:30 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::e9d? (2403-580d-fda1--e9d.ip6.aussiebb.net. [2403:580d:fda1::e9d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29601a69d91sm53105955ad.95.2025.11.05.01.14.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 01:14:30 -0800 (PST)
+Message-ID: <a794be48-90a3-4a6b-8cf5-d063f52fdd2f@suse.com>
+Date: Wed, 5 Nov 2025 19:44:25 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104-topic-8280_mxc-v1-2-df545af0ef94@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: fix memory leak in
+ data_reloc_print_warning_inode()
+To: Zilin Guan <zilin@seu.edu.cn>, clm@fb.com
+Cc: dsterba@suse.com, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jianhao.xu@seu.edu.cn
+References: <20251105023722.1820102-1-zilin@seu.edu.cn>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20251105023722.1820102-1-zilin@seu.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 08:31:07PM +0100, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+
+在 2025/11/5 13:07, Zilin Guan 写道:
+> data_reloc_print_warning_inode() calls btrfs_get_fs_root() to obtain
+> local_root, but fails to release its reference when paths_from_inode()
+> returns an error. This causes a potential memory leak.
 > 
-> The power requirements for the CDSP instances on SC8280XP aren't fully
-> described, with only one of the three present. Fix that.
+> Add a missing btrfs_put_root() call in the error path to properly
+> decrease the reference count of local_root.
 > 
-> Fixes: ee651cd1e944 ("dt-bindings: remoteproc: qcom: pas: Add sc8280xp adsp and nsp pair")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Fixes: b9a9a85059cde ("btrfs: output affected files when relocation fails")
+> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+
+Now merged into for-next branch.
+
+Thanks,
+Qu
+
 > ---
->  Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+>   fs/btrfs/inode.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-> index 96d53baf6e00..5dbda3a55047 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-> @@ -91,9 +91,13 @@ allOf:
->          power-domains:
->            items:
->              - description: NSP power domain
-> +            - description: CX power domain
-> +            - description: MXC power domain
->          power-domain-names:
->            items:
->              - const: nsp
-> +            - const: cx
-> +            - const: mxc
-
-Heh, so if this was described since beginning entire binding would fit
-100% into qcom,sm8550-pas.yaml, instead having this now in different
-file because of different order. Not great. :(
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 3df5f36185a0..6282911e536f 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -177,8 +177,10 @@ static int data_reloc_print_warning_inode(u64 inum, u64 offset, u64 num_bytes,
+>   		return ret;
+>   	}
+>   	ret = paths_from_inode(inum, ipath);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+> +		btrfs_put_root(local_root);
+>   		goto err;
+> +	}
+>   
+>   	/*
+>   	 * We deliberately ignore the bit ipath might have been too small to
 
 
