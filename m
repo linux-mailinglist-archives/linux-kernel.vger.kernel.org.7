@@ -1,101 +1,174 @@
-Return-Path: <linux-kernel+bounces-887096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA22DC3744D
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:19:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA88EC37453
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 19:20:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD9A44E1C03
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:19:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2DD6334F6E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 18:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660A7270575;
-	Wed,  5 Nov 2025 18:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D942749D6;
+	Wed,  5 Nov 2025 18:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DbchI3qT"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clAkR1/E"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549F41C84BB;
-	Wed,  5 Nov 2025 18:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961832701DA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 18:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762366785; cv=none; b=KmDLB/b6IqW3ePiKR4euB86NFtLYSujr3LuwLrRh6EQ1gUt5RB1vgv5uyUl2/qHVJg84wch/d4FKFQCG9813f968in4pRB7gswicLv+tFaY10Ckto/NGlH6Z3wmglXuO/9yKNZ+SMMx7D81SpTFAe2b3XrJQaKQlBahLgvrqjXk=
+	t=1762366824; cv=none; b=GtUnkMaeMYvJK8YkQpjpdGM3wRaj0tq6Vxrafs/3On5S/D5afANb4KdhngCFNm4jZsLmEZ1rgDRFs5ER5nfiWT2pRCOhpXZjJQEf4rg7Sx1y4bCZ3j2SzZ9zWFGarT7N//w9HEp3omPsMFh75A72LJDP1dGlxaAwys0LgqELSYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762366785; c=relaxed/simple;
-	bh=IkLKwU/YV+5gjEM7bAH2y8c6Z77GNd23z+Ydrh6r/pA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CLdahEDf5megMDD6r6cqm6eHALNP47GHDjin7XplecAYyIkDwY766DxpCZZC1iSCoyymFh7pGal1H9iJ3cib/V+nurcHwvySV/BSrIueWgKiGQkeql4rBBVc58S2ZIyAsMWiWuIEs5nLuNTjSiEawi8BgZNpGn1/PhPXw0OIpeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DbchI3qT; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 812AF40AFB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762366783; bh=zXAqjAPKip0SeqM54VLiYEodzs2TXgAJHcY2JAcv7uU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DbchI3qTVsT3dMrcWs09agmeZ5FAOD8sOhKkG4O0GGHsc1IrlXOZ6F7BrzNn2Ha/G
-	 CSYDa7NqDVKv3VQ/lpPYnSDlADpcrkXLtecDEBRebLQGzrr5A6iOjkzFal3x27SeaL
-	 1tRgUoeRvcogG5CSpgZRGYljqjkTzVs/+1FBnRWm36wb/cFJKrXLpoU6uiBWV2yPHx
-	 zcNPzDs0DzG/jQFT09TPDIJ1WTJk7Idf2RJ1oJ9VwUVSb4UqPa2iicXN+DiVBYBayZ
-	 6WSRPE4/+/ZtuxwzMKeTEoLFYhExLyzDlV+QCQsDb06un4dtD3KisZ7FkCCT4t6fYT
-	 TtB5uJJ5lF9tg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 812AF40AFB;
-	Wed,  5 Nov 2025 18:19:43 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Tomas Glozar <tglozar@redhat.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, John Kacur <jkacur@redhat.com>, Luis
- Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
- Crystal Wood <crwood@redhat.com>, Attila Fazekas <afazekas@redhat.com>
-Subject: Re: [PATCH 0/9] Documentation/rtla: Cover default options
-In-Reply-To: <20251103192201.4a93be06@gandalf.local.home>
-References: <20251010083338.478961-1-tglozar@redhat.com>
- <87fraubsfv.fsf@trenco.lwn.net>
- <20251103192201.4a93be06@gandalf.local.home>
-Date: Wed, 05 Nov 2025 11:19:42 -0700
-Message-ID: <87jz04735t.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1762366824; c=relaxed/simple;
+	bh=xyznBg8bPCkAbSVervFyuPrEom/+I/KelDwTFZFNcoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AyNgKebR66epyGCwu8feJ7cW4StsMo58hcb33TNxhYpLESjxzC0+fipwYtdICDNZm1HGk+8UQbxXcNFN6ZCjR6zv/MVTs8x4OpaVgGwPY2IDy9YZ0XpcVD9KOkoXlZ5WcUD4rJDt4pJMkjbCoglJnGTlG83EB83lBxvdGCebgUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clAkR1/E; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33ff5149ae8so119545a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 10:20:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762366821; x=1762971621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YRNEtJ8HSzNu73MI7MXlf4Rp8v1VK9mI/rxZ4K0ZODI=;
+        b=clAkR1/EGtAVXoSs1L44ez/QwDeek84tf9eCq/2qIis2c/qtrpbV04/GtzhLwt3SEm
+         R4jklpdObxObou/mzgKPSOhPBWUBdoGWsU1+nbXGyGjRrz//HKmSFtkFhHa/wxeKpM2a
+         pGBYp6oNTeajE6CEfx94r9PERLyYmxp0DFna1lRKiAdjG3RmrAQfqgHRCSfqzdKu9N/j
+         fLzPmvfg9/FgzIpRlwWDt4hYtI0l60upbN52mK60aSTu2xdrPm6gL7AdSG6MaxlHwbYF
+         7gPOsig8ujz1VnI0ysEhmX4tpISypQw9KTnzqOqbJ5nKgd4kEeOe2+m0rqMjRbW+JMtG
+         KDAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762366821; x=1762971621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YRNEtJ8HSzNu73MI7MXlf4Rp8v1VK9mI/rxZ4K0ZODI=;
+        b=Rs8cDKCES9g+fg8wJJ9Xq6luryXaEJjeYH+v+G3ewaEhgQWIxhCzDAFvoW55vhh7Ni
+         iHnCmBRBoj/eeS2dKYqhL/Zmu1pZ5cjdAzUK+QbvL8mnu0xTNeMIlVL670E3Y/Cpun0V
+         KbFVHWg9EQ5lY8hc6UA+AgnMvgRE6x2Ny0Nzt2YoQsmXhhOa8GYAtt1fMNFoqP/2wYsx
+         +pjoHpudQasxWx19Th4w5mxAziIPaXo7dPSEqG2tL+rymtmp0oREZMd69aw8QbSEDJ1g
+         crtT9G12PcnDryPGNXfInxv5QxVEe/Q8cBaZbGTOce2SJGQdm8IFcK72vwShPn1KYHm9
+         Bttw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzd0koyUzBMXcxxXPtv1qRuLyHWKDKpfLlKmmuriQknie+6Dv5REtPc7tpVoYlQLYtlef4QAhBzrGUePM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF/amGw9kyANRsczmfcdyWZf9rc5QpZ1Q1W9+G7xpRdcHI5+9C
+	alr5wsPiDTscZMJf4MzKe9dwuxitCBXNYV0dyBtJ02UB4QAW6NFJeWqHVZEKr2DpM/6iyVm/ZJ8
+	RYfMwa1oKK/cMtPboMKtvhWxhHo+a9uo=
+X-Gm-Gg: ASbGncvdMJwlQDzyErupFGQjqp1RsdT5YIiQ7AuoyYNGEAuBRWNfLy/MQtPn+knKArP
+	y9lnYcO0xCXaS+boBxXbxb7oOnGtrALfO03uV7v287z8PsrqvSiogGfgMX0lsWaf0GkfxGbgTjz
+	1Pxlmdzs7pRclOjJQEYcEaohpZ73VJjMIQEFjsN/bUZv39IDwHrqu4kyCP4juGyBuGZ2n83PdYo
+	8XfCkDDFsYTbj/IZBG5HGzepgQdLHrIfo0mgkIqawx8/VRPo4nCs6R9QngSPjEUYRHNnbA=
+X-Google-Smtp-Source: AGHT+IGus8TJU8QkKB5Se4uQPYLLb+yyzFNRAIPH/6IHHSouV82Pu17ktViR3Jp0IP6UsdzEFCXVYhUfHgJPGH90eiE=
+X-Received: by 2002:a17:90a:d406:b0:340:b572:3b7f with SMTP id
+ 98e67ed59e1d1-341a6dcb832mr5547227a91.20.1762366820810; Wed, 05 Nov 2025
+ 10:20:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+ <20251104134033.344807-2-dolinux.peng@gmail.com> <CAEf4BzaPDKJvQtCss4Gm1073wyBGXmixv4s9V5twnF7uEHRhPg@mail.gmail.com>
+ <61e92756ea7f202f2e501747b574e97b2f5bc32f.camel@gmail.com>
+ <CAEf4BzanAmmSe84GnvWSR_KLFVmeEvrxVVJAvApFNRjgeRXk8Q@mail.gmail.com> <61f94d36d6777b9b84e9bf865edd17476a278e73.camel@gmail.com>
+In-Reply-To: <61f94d36d6777b9b84e9bf865edd17476a278e73.camel@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Nov 2025 10:20:08 -0800
+X-Gm-Features: AWmQ_blkJQviRlhU2we_k_QwrAfW2pz3y165tNeAghpP-pTEgRNfpEg02PZWoIs
+Message-ID: <CAEf4BzZffw1sTJUBxwUnhx8XjQNMRf2-e+vUzOfyMqgMTpYsdA@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 1/7] libbpf: Extract BTF type remapping logic into
+ helper function
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Steven Rostedt <rostedt@goodmis.org> writes:
-
-> On Mon, 03 Nov 2025 16:35:32 -0700
-> Jonathan Corbet <corbet@lwn.net> wrote:
+On Tue, Nov 4, 2025 at 5:23=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com>=
+ wrote:
 >
->> Tomas Glozar <tglozar@redhat.com> writes:
->> 
->> > RTLA has many options that have a default value that is used when
->> > the option is not set associated with them. Those are not covered in
->> > the documentation for the options, which creates confusion among users.
->> >
->> > Document the default behavior for all relevant options: -H, -P, -C,
->> > --trace-buffer-size. Some of these are covered in general
->> > descriptions, only missing from the option documentation.
->> >
->> > Also, fix a few typos and incorrect naming of tracers.  
->> 
->> So I see that this series is still unapplied...should I take it through
->> docs?
+> On Tue, 2025-11-04 at 16:57 -0800, Andrii Nakryiko wrote:
+> > On Tue, Nov 4, 2025 at 4:36=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.=
+com> wrote:
+> > >
+> > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
+> > >
+> > > [...]
+> > >
+> > > > > @@ -3400,6 +3400,37 @@ int btf_ext__set_endianness(struct btf_ext=
+ *btf_ext, enum btf_endianness endian)
+> > > > >         return 0;
+> > > > >  }
+> > > > >
+> > > > > +static int btf_remap_types(struct btf *btf, struct btf_ext *btf_=
+ext,
+> > > > > +                          btf_remap_type_fn visit, void *ctx)
+> > > >
+> > > > tbh, my goal is to reduce the amount of callback usage within libbp=
+f,
+> > > > not add more of it...
+> > > >
+> > > > I don't like this refactoring. We should convert
+> > > > btf_ext_visit_type_ids() into iterators, have btf_field_iter_init +
+> > > > btf_field_iter_next usable in for_each() form, and not try to reuse=
+ 5
+> > > > lines of code. See my comments in the next patch.
+> > >
+> > > Remapping types is a concept.
+> > > I hate duplicating code for concepts.
+> > > Similarly, having patch #3 =3D=3D patch #5 and patch #4 =3D=3D patch =
+#6 is
+> > > plain ugly. Just waiting for a bug because we changed the one but
+> > > forgot to change another in a year or two.
+> >
+> > Tricky and evolving part (iterating all type ID fields) is abstracted
+> > behind the iterator (and we should do the same for btf_ext). Iterating
+> > types is not something tricky or requiring constant maintenance.
+> >
+> > Same for binary search, I don't see why we'd need to adjust it. So no,
+> > I don't want to share code between kernel and libbpf just to reuse
+> > binary search implementation, sorry.
 >
-> Yes please!
+> <rant>
 >
-> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Sure binary search is trivial, but did you count how many times you
+> asked people to re-implement binary search as in [1]?
 
-OK, I have done that.
+Exact match binary search can be called trivial, yes. Lower/upper
+bound binary search looks deceivingly simple, but it requires
+attention to every single line of code. But the end result is simple
+and straightforward, yes.
 
-Thanks,
+I'm not sure what point you are trying to make, though. Yes, I've
+asked people many times to implement upper/lower bound binary search
+similarly to the one in find_linfo(), because usually people have
+various unnecessary checks, keeping track not just of bounds, but also
+remembering some element that we know satisfied the condition at some
+point before, etc. It's not elegant, harder to reason about, and can
+be done more succinctly.
 
-jon
+You don't like that I ask people to improve implementation? You don't
+like the implementation itself? Or are you suggesting that we should
+add a "generic" C implementation of lower_bound/upper_bound and use
+callbacks for comparison logic? What are you ranting about, exactly?
+
+As I said, once binary search (of whatever kind, bounds or exact) is
+written for something like this, it doesn't have to ever be modified.
+I don't see this as a maintainability hurdle at all. But sharing code
+between libbpf and kernel is something to be avoided. Look at #ifdef
+__KERNEL__ sections of relo_core.c as one reason why.
+
+>
+> [1] https://elixir.bootlin.com/linux/v6.18-rc4/source/kernel/bpf/verifier=
+.c#L2952
+>
+> </rant>
 
