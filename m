@@ -1,446 +1,305 @@
-Return-Path: <linux-kernel+bounces-887292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1E2C37C52
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:43:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBCAC37C5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 21:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A5F84E701C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C40C3B05E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 20:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7923E347BBE;
-	Wed,  5 Nov 2025 20:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F66A26ED55;
+	Wed,  5 Nov 2025 20:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzpElxNL"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jOWw9QaQ"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA4B208AD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B1F17993
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 20:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762375341; cv=none; b=e1SuTGI7EWFjdQyplns6MflqGYDEH260KnfIFzYaXnsd/4Wgy8V9nznjOMzfebkNhZ/VN/g+Y8I2I7/lljOze9Gq1o1t8LWQnCTFUdOLRdmhofFt6kceXVOmNdFkvydpC58dh4JHUuXJefSzIuB0/vRCup11GNfi4BntEhhkfeo=
+	t=1762375539; cv=none; b=nBlS5yJzWeej1FPbAi+6kgqZ4QVGt699YagZwf2gWkRJDixHCVZxtRzoNBnyzgSOWrw/ljTrVEwI5cKAxJhZryv1nRC14HGqZzSB5/xTqxmhJFzXVrC0hYurNNJaiHa01eSGnuRn+58q/C61Mwbn7ynrN4ZbSdOVVSkoNj/uvwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762375341; c=relaxed/simple;
-	bh=/jBXRvPVDzl9DoeGfK2L7DwQNS6SwHfuRTTZ6EGtk6Y=;
+	s=arc-20240116; t=1762375539; c=relaxed/simple;
+	bh=usZuEfgTiQjSdoGWOEKccGdEdjv0wfrgaBT3Xw39F64=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZzNpFWGTmsfzraT9D+DFnQ7mAlokFTVJxO2XNYVd2wCm3XJ82Gg7Ck6IQlsj/8vUkXfO0rdfqeZmqcMzIXko8DLnanuXNOwLjFZMOyq1dfkBxLHY4jyRZWxNkyxEBCOcgE33PofqUoXYaPpceW3ftj7KLNsUF90rongv2qZfUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzpElxNL; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7815092cd0bso1939337b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 12:42:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762375338; x=1762980138; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/jBXRvPVDzl9DoeGfK2L7DwQNS6SwHfuRTTZ6EGtk6Y=;
-        b=AzpElxNL0wi8SQnyW+3v4I/oDrMGAO76+TlQiNJru2KWhTKDNFHN0ogJOfujEtJZ6g
-         ZeRntOTJxcE+jY9cKkjpH8D3mCAhWCuiZ4P4jjp3fbd4ahWJXU1vg6Y6kbXslhqQ0aGL
-         vxhRshJjHG4O/M2BY65EoI08k0geyGJ1xG6CT1ZhCm50Uqhe3bZ8OXslJFT3oDMj+rU2
-         aRF/RGvhzstCSaK5f3yYmOYYTAo5bKyBwI/sStX/IapSkxwTmNIfMVTey/nGdS718iUF
-         6dNFmjepPcc+wFkkVRvzun4KOW0DSFZA7mECXvTxSv5pr7+CLszAagrREIVpOqTnPaqi
-         1iDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762375338; x=1762980138;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/jBXRvPVDzl9DoeGfK2L7DwQNS6SwHfuRTTZ6EGtk6Y=;
-        b=CxnEaGoeqiaA9JOeG+J95qaS4Mz8l3YqDkfOet+dwN+uM0zFv5nYzsQi7SBO9SXLLN
-         0Wgfl5Yx2VfMMwKU4JytU/95UoVN91Z2sV0iCNu76J9DdPJEHD1VMiJro6ep6KSQZHuZ
-         vdxw1hGXcpGwLl3GiAnpr6f1CQ86aU2BLlgWhv4zkHfFt1y/7n4iXJbmE6LP4RpZYrPA
-         WYHVWNxzXikC2vN1wOe4Mu07xfdZo/atvOTyvJF7lr0sT1tHIhKnVDN72HDzhKEunGpk
-         yR3f9MaOOKfs1rQjKZXZvEuA1UwCuu8Ua9JdaDT+F1Q4luKLrZ40qKurcY8r92ByTiZY
-         PEeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ2mnfjzINO9jjrglfHsZXfHZ6R5Ad+ZCL9SS2NNmNxTD6Ea4HMhMp19eHjw9xpGZWk9eBZM1Q74h5CXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt8t1I12kR7hSqWP5tj6EYlbQT87ZcLSyOjHlF117Z1AlJT/Iw
-	k1c2v+zmtddLRaMEN/vSzspyEYA9EuybFhh41NCnOyaMCQlimu7VLHdX
-X-Gm-Gg: ASbGnctYwbnzrZZgNq4kxhC2Tf+GC7w1OYxtt8RQi936et58bdfWtQrTO4GxKjWqLyf
-	aXW6xru/t0xCI+t2S3RpeIGjJoIf3Gp9B6kALmntS+G0NGU+oA4XgjzbuPJ/IMYecR5HFF3D4gt
-	NMTnRy4YhEVROcQBV14kkcQ0Ujapie4B5LcanZ6xcCW8YxITy0CS5KAaSEW7zGh6tKMFppY4eqO
-	Q+TOsOh5+0rMIk/+NPJU2rTo56enZ6VPo8khZ9Gjmw6Y9b7jrkHEa/2ebJEfhXT1JfzSIcfruA5
-	8S0ggPcdPmPdgph6GlbATr1Unz+Lw5vL2Kvgv9JOf1v9f4jJfGDA259cxTsDO+QLrVN9P7qV0db
-	rWPwCvDoOx+V9jHlz/t+maYYcVTBELM/pRYqvRTCRgXjjGEw0R5BGhz+QO68uVby6CMMW8WTSjT
-	WIoZH0LMGRXRoaPL0+HCHhClaKppPXWxQ/0GXCHABTJ3zkzPjSjFpuQhyt4BTq8/opmuHpT4cgc
-	t7+tr3VE8Skov13
-X-Google-Smtp-Source: AGHT+IE/wzedgF2aJUusKlp6WnXPjlZPSxny9Z6uZooWb1tyqZvj6qIw92pAygzMlT+R6egnw4DwqQ==
-X-Received: by 2002:a05:690c:1a:b0:787:abb8:628 with SMTP id 00721157ae682-787abb80b86mr31843197b3.27.1762375338065;
-        Wed, 05 Nov 2025 12:42:18 -0800 (PST)
-Received: from [10.138.34.110] (h96-60-249-169.cncrtn.broadband.dynamic.tds.net. [96.60.249.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b159c5a3sm1853647b3.35.2025.11.05.12.42.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 12:42:17 -0800 (PST)
-Message-ID: <eeff3f76-b5ba-4386-a8bf-7a987752802b@gmail.com>
-Date: Wed, 5 Nov 2025 15:42:14 -0500
+	 In-Reply-To:Content-Type; b=n0EnGkeFF1nFRUsfCZVdFvmlcOeXYt70Pokb2oVD+d6+yPafs2O4sq2CW9sSYgVnLEbj5wadj0O8aB2P4jZtdCiob0sLN88pIaRIZ2ik/uZDSdlq6bJfz/G/n+aIH1wsTt7YFR0rvqYNodkA42WT4kZuNUrvi/ViTIiwJAwsVi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jOWw9QaQ; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c686a971-1483-42c0-8199-376d4d4b3875@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762375525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYHtYxEt0GXZ3t+T7LTvPbBdGxB31zAaoF7FHEzvEl8=;
+	b=jOWw9QaQmnq5H+hRmtWbA7Vh0xUKS3kjcTe5QtO3EKzUJ56iraZUg3nrHnfDUIzV+7Y/Dl
+	1sy5XiClQxWwcKjELrQJclqX/onQ8y4Pm4OkYP5mKlEtUYB+0M9wK9MUNJkTtYXzQRsLbL
+	4I+ZUAqpT5KU8hJYOaoAWdXd0YFdIIg=
+Date: Wed, 5 Nov 2025 12:45:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] xen: privcmd: fix ioeventfd/ioreq crashing PV domain
-To: Val Packett <val@invisiblethingslab.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
- <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20251015195713.6500-1-val@invisiblethingslab.com>
- <5a3660c9-1b18-4d87-a1f7-efa8d68239d8@suse.com>
- <7f73fdfa-2875-4349-9ef6-134e678ac691@invisiblethingslab.com>
-Content-Language: en-US
-From: Demi Marie Obenour <demiobenour@gmail.com>
-Autocrypt: addr=demiobenour@gmail.com; keydata=
- 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
- +MYSfkEjBz0E8CLOcAw7JIwAaeBT
-In-Reply-To: <7f73fdfa-2875-4349-9ef6-134e678ac691@invisiblethingslab.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------G30oE370V0qo6Xm1bdPT5v58"
+Subject: Re: [PATCH bpf-next v4 1/2] perf: Refactor get_perf_callchain
+Content-Language: en-GB
+To: Tao Chen <chen.dylane@linux.dev>, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20251028162502.3418817-1-chen.dylane@linux.dev>
+ <20251028162502.3418817-2-chen.dylane@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20251028162502.3418817-2-chen.dylane@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------G30oE370V0qo6Xm1bdPT5v58
-Content-Type: multipart/mixed; boundary="------------UVOZ4jXaoupmEQPrgEDndzIr";
- protected-headers="v1"
-From: Demi Marie Obenour <demiobenour@gmail.com>
-To: Val Packett <val@invisiblethingslab.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
- <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Message-ID: <eeff3f76-b5ba-4386-a8bf-7a987752802b@gmail.com>
-Subject: Re: [RFC PATCH] xen: privcmd: fix ioeventfd/ioreq crashing PV domain
-References: <20251015195713.6500-1-val@invisiblethingslab.com>
- <5a3660c9-1b18-4d87-a1f7-efa8d68239d8@suse.com>
- <7f73fdfa-2875-4349-9ef6-134e678ac691@invisiblethingslab.com>
-In-Reply-To: <7f73fdfa-2875-4349-9ef6-134e678ac691@invisiblethingslab.com>
-Autocrypt-Gossip: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
 
---------------UVOZ4jXaoupmEQPrgEDndzIr
-Content-Type: multipart/mixed; boundary="------------20sSEzjyop50utZCh8dFGMN0"
 
---------------20sSEzjyop50utZCh8dFGMN0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On 10/28/25 9:25 AM, Tao Chen wrote:
+>  From BPF stack map, we want to use our own buffers to avoid
+> unnecessary copy and ensure that the buffer will not be
+> overwritten by other preemptive tasks. Peter suggested
+> provide more flexible stack-sampling APIs, which can be used
+> in BPF, and we can still use the perf callchain entry with
+> the help of these APIs. The next patch will modify the BPF part.
+>
+> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
+>   include/linux/perf_event.h | 11 +++++-
+>   kernel/bpf/stackmap.c      |  4 +-
+>   kernel/events/callchain.c  | 75 ++++++++++++++++++++++++--------------
+>   kernel/events/core.c       |  2 +-
+>   4 files changed, 61 insertions(+), 31 deletions(-)
+>
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index fd1d91017b9..14a382cad1d 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -67,6 +67,7 @@ struct perf_callchain_entry_ctx {
+>   	u32				nr;
+>   	short				contexts;
+>   	bool				contexts_maxed;
+> +	bool				add_mark;
+>   };
+>   
+>   typedef unsigned long (*perf_copy_f)(void *dst, const void *src,
+> @@ -1718,9 +1719,17 @@ DECLARE_PER_CPU(struct perf_callchain_entry, perf_callchain_entry);
+>   
+>   extern void perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+>   extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+> +
+> +extern void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
+> +				      struct perf_callchain_entry *entry,
+> +				      u32 max_stack, bool add_mark);
+> +
+> +extern void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
+> +extern void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
+> +
+>   extern struct perf_callchain_entry *
+>   get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+> -		   u32 max_stack, bool crosstask, bool add_mark);
+> +		   u32 max_stack, bool crosstask);
+>   extern int get_callchain_buffers(int max_stack);
+>   extern void put_callchain_buffers(void);
+>   extern struct perf_callchain_entry *get_callchain_entry(int *rctx);
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 4d53cdd1374..e28b35c7e0b 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -315,7 +315,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>   		max_depth = sysctl_perf_event_max_stack;
+>   
+>   	trace = get_perf_callchain(regs, kernel, user, max_depth,
+> -				   false, false);
+> +				   false);
 
-On 11/4/25 20:16, Val Packett wrote:
->=20
-> On 11/4/25 9:15 AM, J=C3=BCrgen Gro=C3=9F wrote:
->> On 15.10.25 21:57, Val Packett wrote:
->>> Starting a virtio backend in a PV domain would panic the kernel in
->>> alloc_ioreq, trying to dereference vma->vm_private_data as a pages
->>> pointer when in reality it stayed as PRIV_VMA_LOCKED.
->>>
->>> Fix by allocating a pages array in mmap_resource in the PV case,
->>> filling it with page info converted from the pfn array. This allows
->>> ioreq to function successfully with a backend provided by a PV dom0.
->>>
->>> Signed-off-by: Val Packett <val@invisiblethingslab.com>
->>> ---
->>> I've been porting the xen-vhost-frontend[1] to Qubes, which runs on=20
->>> amd64
->>> and we (still) use PV for dom0. The x86 part didn't give me much=20
->>> trouble,
->>> but the first thing I found was this crash due to using a PV domain=20
->>> to host
->>> the backend. alloc_ioreq was dereferencing the '1' constant and=20
->>> panicking
->>> the dom0 kernel.
->>>
->>> I figured out that I can make a pages array in the expected format=20
->>> from the
->>> pfn array where the actual memory mapping happens for the PV case,=20
->>> and with
->>> the fix, the ioreq part works: the vhost frontend replies to the prob=
-ing
->>> sequence and the guest recognizes which virtio device is being provid=
-ed.
->>>
->>> I still have another thing to debug: the MMIO accesses from the inner=
-=20
->>> driver
->>> (e.g. virtio_rng) don't get through to the vhost provider (ioeventfd =
+This is not a refactor. Here, the add_mark parameter is removed. The 'add_mark'
+value here is expected to be false, but later get_perf_callchain(...) has 'add_mark'
+is true in __init_perf_callchain_ctx().
 
->>> does
->>> not get notified), and manually kicking the eventfd from the frontend=
+Applying this patch only on top of bpf-next master branch, we will have the
+following crash:
 
->>> seems to crash... Xen itself?? (no Linux panic on console, just a=20
->>> freeze and
->>> quick reboot - will try to set up a serial console now)
->>
->> IMHO for making the MMIO accesses work you'd need to implement=20
->> ioreq-server
->> support for PV-domains in the hypervisor. This will be a major=20
->> endeavor, so
->> before taking your Linux kernel patch I'd like to see this covered.
->=20
-> Sorry, I wasn't clear enough.. it's *not* that MMIO accesses don't work=
-=2E
->=20
-> I debugged this a bit more, and it turns out:
->=20
-> 1. the reason why "ioeventfd does not get notified" is because accessin=
-g=20
-> the virtio page (allocated with this privcmd interface) from the kernel=
-=20
-> was failing. The exchange between the guest driver and the userspace=20
-> ioreq server has been working perfectly, but the *kernel* access (which=
-=20
-> is what needs this `struct page` allocation with the current code) was =
+[  457.730077] bpf_testmod: oh no, recursing into test_1, recursion_misses 1
+[  460.221871] BUG: unable to handle page fault for address: fffa3bfffffff000
+[  460.221912] #PF: supervisor read access in kernel mode
+[  460.221912] #PF: error_code(0x0000) - not-present page
+[  460.221912] PGD 1e0ef1067 P4D 1e0ef0067 PUD 1e0eef067 PMD 1e0eee067 PTE 0
+[  460.221912] Oops: Oops: 0000 [#1] SMP KASAN NOPTI
+[  460.221912] CPU: 2 UID: 0 PID: 2012 Comm: test_progs Tainted: G        W  OE       6.18.0-rc4-gafe2e8
+[  460.221912] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[  460.221912] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-pr4
+[  460.221912] RIP: 0010:kasan_check_range+0x183/0x2c0
+[  460.221912] Code: 41 bf 08 00 00 00 41 29 ef 4d 01 fb 4d 29 de 4d 89 f4 4d 8d 6c 24 07 4d 85 e4 4d 0fd
+[  460.221912] RSP: 0018:ff110001193bfc78 EFLAGS: 00010206
+[  460.221912] RAX: ffd1ffffffd5b301 RBX: dffffc0000000001 RCX: ffffffff819a2ecb
+[  460.221912] RDX: 0000000000000001 RSI: 00000000ffffffb0 RDI: ffd1ffffffd5b360
+[  460.221912] RBP: 0000000000000004 R08: ffd20000ffd5b30f R09: 1ffa40001ffab661
+[  460.221912] R10: dffffc0000000000 R11: fffa3bfffffab670 R12: 000000001ffffff2
+[  460.221912] R13: 0000000003ff58cc R14: 0000000000053990 R15: 0000000000000000
+[  460.221912] FS:  00007f358c6460c0(0000) GS:ff110002384b4000(0000) knlGS:0000000000000000
+[  460.221912] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  460.221912] CR2: fffa3bfffffff000 CR3: 000000011468c006 CR4: 0000000000371ef0
+[  460.221912] Call Trace:
+[  460.221912]  <TASK>
+[  460.221912]  __asan_memset+0x22/0x50
+[  460.221912]  __bpf_get_stack+0x6eb/0x7a0
+[  460.221912]  ? bpf_perf_event_output_raw_tp+0x58c/0x6c0
+[  460.221912]  bpf_get_stack+0x1d/0x30
+[  460.221912]  bpf_get_stack_raw_tp+0x148/0x180
+[  460.221912]  bpf_prog_40e346a03dc2914c_bpf_prog1+0x169/0x1af
+[  460.221912]  bpf_trace_run2+0x1bc/0x350
+[  460.221912]  ? bpf_trace_run2+0x104/0x350
+[  460.221912]  ? trace_sys_enter+0x6b/0xf0
+[  460.221912]  __bpf_trace_sys_enter+0x38/0x60
+[  460.221912]  trace_sys_enter+0xa7/0xf0
+[  460.221912]  syscall_trace_enter+0xfc/0x160
+[  460.221912]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  460.221912]  do_syscall_64+0x5a/0xfa0
+[  460.221912]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[  460.221912]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-> returning nonsense and the check for the virtqueue readiness flag was=20
-> failing.
->=20
-> I have noticed and fixed (locally) a bug in this patch: reusing the=20
-> `pfns` allocation for `errs` in=C2=A0`xen_remap_domain_mfn_array`=C2=A0=
-meant that=20
-> the actual pfn value was overwritten with a zero ("success" error code)=
-,=20
-> and that's the `pfn` I was using.
->=20
-> Still, the memory visible in the dom0 kernel at that pfn is not the sam=
-e=20
-> allocation that's mapped into the process. Instead, it's some random=20
-> other memory. I've added a hexdump for it in the ioeventfd notifier and=
-=20
-> it was returning random stuff from other userspace programs such as "//=
-=20
-> SPDX-License-Identifier" from a text editor (haha). Actually, *once* it=
-=20
-> did just work and I've managed to attach a virtio-rng driver and have i=
-t=20
-> fully work.
->=20
-> Clearly I'm just struggling with the way memory mappings work under PV.=
-=20
-> Do I need to specifically create a second mapping for the kernel using =
+>   
+>   	if (unlikely(!trace))
+>   		/* couldn't fetch the stack trace */
+> @@ -452,7 +452,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   		trace = get_callchain_entry_for_task(task, max_depth);
+>   	else
+>   		trace = get_perf_callchain(regs, kernel, user, max_depth,
+> -					   crosstask, false);
+> +					   crosstask);
+>   
+>   	if (unlikely(!trace) || trace->nr < skip) {
+>   		if (may_fault)
+> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+> index 808c0d7a31f..2c36e490625 100644
+> --- a/kernel/events/callchain.c
+> +++ b/kernel/events/callchain.c
+> @@ -216,13 +216,54 @@ static void fixup_uretprobe_trampoline_entries(struct perf_callchain_entry *entr
+>   #endif
+>   }
+>   
+> +void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
+> +			       struct perf_callchain_entry *entry,
+> +			       u32 max_stack, bool add_mark)
+> +
+> +{
+> +	ctx->entry		= entry;
+> +	ctx->max_stack		= max_stack;
+> +	ctx->nr			= entry->nr = 0;
+> +	ctx->contexts		= 0;
+> +	ctx->contexts_maxed	= false;
+> +	ctx->add_mark		= add_mark;
+> +}
+> +
+> +void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
+> +{
+> +	if (user_mode(regs))
+> +		return;
+> +
+> +	if (ctx->add_mark)
+> +		perf_callchain_store_context(ctx, PERF_CONTEXT_KERNEL);
+> +	perf_callchain_kernel(ctx, regs);
+> +}
+> +
+> +void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs)
+> +{
+> +	int start_entry_idx;
+> +
+> +	if (!user_mode(regs)) {
+> +		if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> +			return;
+> +		regs = task_pt_regs(current);
+> +	}
+> +
+> +	if (ctx->add_mark)
+> +		perf_callchain_store_context(ctx, PERF_CONTEXT_USER);
+> +
+> +	start_entry_idx = ctx->nr;
+> +	perf_callchain_user(ctx, regs);
+> +	fixup_uretprobe_trampoline_entries(ctx->entry, start_entry_idx);
+> +}
+> +
+>   struct perf_callchain_entry *
+>   get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+> -		   u32 max_stack, bool crosstask, bool add_mark)
+> +		   u32 max_stack, bool crosstask)
+>   {
+>   	struct perf_callchain_entry *entry;
+>   	struct perf_callchain_entry_ctx ctx;
+> -	int rctx, start_entry_idx;
+> +	int rctx;
+>   
+>   	/* crosstask is not supported for user stacks */
+>   	if (crosstask && user && !kernel)
+> @@ -232,34 +273,14 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+>   	if (!entry)
+>   		return NULL;
+>   
+> -	ctx.entry		= entry;
+> -	ctx.max_stack		= max_stack;
+> -	ctx.nr			= entry->nr = 0;
+> -	ctx.contexts		= 0;
+> -	ctx.contexts_maxed	= false;
+> +	__init_perf_callchain_ctx(&ctx, entry, max_stack, true);
+>   
+> -	if (kernel && !user_mode(regs)) {
+> -		if (add_mark)
+> -			perf_callchain_store_context(&ctx, PERF_CONTEXT_KERNEL);
+> -		perf_callchain_kernel(&ctx, regs);
+> -	}
+> -
+> -	if (user && !crosstask) {
+> -		if (!user_mode(regs)) {
+> -			if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> -				goto exit_put;
+> -			regs = task_pt_regs(current);
+> -		}
+> +	if (kernel)
+> +		__get_perf_callchain_kernel(&ctx, regs);
+>   
+> -		if (add_mark)
+> -			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
+> -
+> -		start_entry_idx = entry->nr;
+> -		perf_callchain_user(&ctx, regs);
+> -		fixup_uretprobe_trampoline_entries(entry, start_entry_idx);
+> -	}
+> +	if (user && !crosstask)
+> +		__get_perf_callchain_user(&ctx, regs);
+>   
+> -exit_put:
+>   	put_callchain_entry(rctx);
+>   
+>   	return entry;
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 7541f6f85fc..eb0f110593d 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8218,7 +8218,7 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+>   		return &__empty_callchain;
+>   
+>   	callchain = get_perf_callchain(regs, kernel, user,
+> -				       max_stack, crosstask, true);
+> +				       max_stack, crosstask);
+>   	return callchain ?: &__empty_callchain;
+>   }
+>   
 
-> the same `xen_remap_domain_mfn_array` call?
->=20
-> 2. the reason why "manually kicking the eventfd from the frontend seems=
-=20
-> to crash... Xen itself" was actually because that triggered the guest=20
-> interrupt and I was using the ISA interrupts that required the virtual =
-
-> (IO)APIC to exist, and it doesn't in PVH domains. For now I switched my=
-=20
-> test setup to HVM to get around that, but I'd need to.. figure out a=20
-> virq/pirq type setup to route XEN_DMOP_set_isa_irq_level calls over=20
-> event channels for PV(H) guests.
-
-Still, this should return an error rather than crashing the hypervisor.
---=20
-Sincerely,
-Demi Marie Obenour (she/her/hers)
---------------20sSEzjyop50utZCh8dFGMN0
-Content-Type: application/pgp-keys; name="OpenPGP_0xB288B55FFF9C22C1.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB288B55FFF9C22C1.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49y
-B+l2nipdaq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYf
-bWpr/si88QKgyGSVZ7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/
-UorR+FaSuVwT7rqzGrTlscnTDlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7M
-MPCJwI8JpPlBedRpe9tfVyfu3euTPLPxwcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9H
-zx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR6h3nBc3eyuZ+q62HS1pJ5EvU
-T1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl5FMWo8TCniHynNXs
-BtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2Bkg1b//r
-6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
-9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nS
-m9BBff0Nm0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQAB
-zTxEZW1pIE9iZW5vdXIgKElUTCBFbWFpbCBLZXkpIDxhdGhlbmFAaW52aXNpYmxl
-dGhpbmdzbGFiLmNvbT7CwY4EEwEIADgWIQR2h02fEza6IlkHHHGyiLVf/5wiwQUC
-X6YJvQIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCyiLVf/5wiwWRhD/0Y
-R+YYC5Kduv/2LBgQJIygMsFiRHbR4+tWXuTFqgrxxFSlMktZ6gQrQCWe38WnOXkB
-oY6n/5lSJdfnuGd2UagZ/9dkaGMUkqt+5WshLFly4BnP7pSsWReKgMP7etRTwn3S
-zk1OwFx2lzY1EnnconPLfPBc6rWG2moA6l0WX+3WNR1B1ndqpl2hPSjT2jUCBWDV
-rGOUSX7r5f1WgtBeNYnEXPBCUUM51pFGESmfHIXQrqFDA7nBNiIVFDJTmQzuEqIy
-Jl67pKNgooij5mKzRhFKHfjLRAH4mmWZlB9UjDStAfFBAoDFHwd1HL5VQCNQdqEc
-/9lZDApqWuCPadZN+pGouqLysesIYsNxUhJ7dtWOWHl0vs7/3qkWmWun/2uOJMQh
-ra2u8nA9g91FbOobWqjrDd6x3ZJoGQf4zLqjmn/P514gb697788e573WN/MpQ5XI
-Fl7aM2d6/GJiq6LC9T2gSUW4rbPBiqOCeiUx7Kd/sVm41p9TOA7fEG4bYddCfDsN
-xaQJH6VRK3NOuBUGeL+iQEVF5Xs6Yp+U+jwvv2M5Lel3EqAYo5xXTx4ls0xaxDCu
-fudcAh8CMMqx3fguSb7Mi31WlnZpk0fDuWQVNKyDP7lYpwc4nCCGNKCj622ZSocH
-AcQmX28L8pJdLYacv9pU3jPy4fHcQYvmTavTqowGnM08RGVtaSBNYXJpZSBPYmVu
-b3VyIChsb3ZlciBvZiBjb2RpbmcpIDxkZW1pb2Jlbm91ckBnbWFpbC5jb20+wsF4
-BBMBAgAiBQJafgNKAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyiLVf
-/5wiwYa/EACv8a2+MMou9cSCNoZBQaU+fTmyzft9hUE+0d5W2UY1RY3OsjFIzm9R
-/4SVccfsqOYLEo+S0vQMIIIqFEq3FCpXXwPzyimotps05VA8U3Bd7yseojFygOgK
-sAMOAee2RCaDDOnoJue01dfZMzzHPO/TVdp3OvnpWipfv5G1Xg96rwbhMLE3tg6N
-xwAHa31Bv4/Xq8CJOoIWvx6fcmZQpz01/lSvsYn0KrfEbTKkuUf0vM9JrCTCP2oz
-VNN5BYzqaq2M4r+jmSyeXLim922VOWqGkUEQ85BSEemqrRS06IU6NtEMsF8EWt/b
-hWjk/9GDKTcnpdJHTrMxTspExBiNrvpI2t+YPU5B/dJJAUxvmhFrbSIbdB8umBZs
-I3AMYrEmpAbh5x7jEjoskUC7uN3o9vpg1oCLS2ePDLtAtyBtbHnkA4xGD7ar8mem
-xpH9lY/i+sC6CyyIUWcUDnnagKyJP0m9ks0GLsTeOCA0bft2XA6rD6aaCnMUsndT
-ctrab42CV5XypjmC4U1rPJ8JQJUh1/3P48/8sMH+3krxpJ06KNWNFaUbaMTGiltZ
-7x9DngklSYrX0T+2G4kVXNmjaljwkoLahwLla2gUWwBSyofXdqyhQdwZsp01KXNQ
-UCyT/Pg+aDcm/E7OMV3d4lf7g/CSxiX2GSEe6BlhSz+Lmd7ZJ3g32M1ARGVtaSBN
-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
-EtJuZYM5blWncBOJCoWMnBEcTEo/viU3GgcVRw=3D=3D
-=3Dx94R
------END PGP PUBLIC KEY BLOCK-----
-
---------------20sSEzjyop50utZCh8dFGMN0--
-
---------------UVOZ4jXaoupmEQPrgEDndzIr--
-
---------------G30oE370V0qo6Xm1bdPT5v58
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmkLtqcACgkQszaHOrMp
-8lOWhw/+KwhreZmyNV1DfrbWvGklbYZ19zQDijnS6P1KwGTFVfBtQ8Jc58pmNdOo
-8fGVEM1q4nAgglTUL+Rch2m1TKitutv6VQ3L4WlKuiSKTwM7y42uZjAB/yBfUXGW
-UHINbApOr78W3mvkOLhyolpyXLOAnY6lnqZuCrbp82RTZ0vlN7orVbx3+X7sNgMJ
-Dz9ggRqzWDbV6JBANd3T3cMDPx470xtzWVLBksHchu7Pcu28ZyJCaPrr+RwRjPx4
-UGhDc9OOWjIUdPTqJEio3YpjvWFONXc4s7fg5pvMSKF3dAxph7vB30Dk6T+wn68l
-TgS4WvAtVDvuWhPFl9EINVAvI9FDcIdEbiZNLwA0pHn4wnFQK+/wSqlEmu5OV2Sb
-3NPeB98oNg1PwpEuTuUi9kNhZKKg9iefnjs232YRFDUMvad8b3str9jhYVwDd4Rm
-ABavcZGhBAcc6/XY8U/jlsaoI1N2wQkIuC783VzP28aBwHzHaf186h0Ch07mG0bJ
-XCOvKr0BJaeejOJX8/KJsT6WCNPLIlLkYT0t5meaudz/wmjIvdZN4y6UpHAxnf98
-mVcwmYJK9mm87eu0o2yXKkm1KQuKoIqOB8RMG1Q7jTrig8QZTskSIyjoowCTuoFv
-75G6cPepdF6nYGr0TQtWwGl8d7Fxt+vse9VtswVKGn+0CSCE0+0=
-=NBZJ
------END PGP SIGNATURE-----
-
---------------G30oE370V0qo6Xm1bdPT5v58--
 
