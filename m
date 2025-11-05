@@ -1,209 +1,147 @@
-Return-Path: <linux-kernel+bounces-887193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6120CC37825
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:37:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2D0C3782B
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 20:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4163B6483
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:36:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D05BE344307
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 19:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C20340D85;
-	Wed,  5 Nov 2025 19:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="R5sY4jAT"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CEB334C0C;
+	Wed,  5 Nov 2025 19:38:09 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE28B263F30;
-	Wed,  5 Nov 2025 19:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762371395; cv=pass; b=SqDeV0mGXn+GOMuSZZ1nvH/4JEeqBwaSwLkLMIOu9lGnWFC5YemgjC4cWef0SkzndlvqJJHLH+igxC3srBuuXU4eWKofRblWivtk9YCNLpYHZbsGTZ5l378h4d5zMShA4Xp3rEoz9Awz7LetmxuqeV8Z10n6ZP4prbt5jRlJ5AQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762371395; c=relaxed/simple;
-	bh=xkYj+8SDXQPbonT6FgJmRgGbw/qgkW61tNYCcxZyim8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ii0qdJHaQ7W9QQeaPG/cPBFGiiUrchfPcIYtAwcMERYqojKOMY+bQHEEmLblyt+M4xf/VNkyshYOkVp+I4K1YTiaUn+aPx4jAH7H6yZJ/19nNEpe2BClOLH+HXWi9iAnUq6EkH/d2lmsMgvqEV7dHf0qAGgvNmy0DmuwfQW1e4U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=R5sY4jAT; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from [192.168.1.195] (unknown [IPv6:2a0c:f040:0:2790::a03d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pav@iki.fi)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4d1wYN438Nz49Q7N;
-	Wed,  5 Nov 2025 21:36:24 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1762371385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RqJ93xJX5OuqZg0mBGT/lR+PWBGKlPoVMo6IMD3egmE=;
-	b=R5sY4jATQEUld5Rp8xiHIk/3q055tdxIdyP85h3pC3qvlCO+mHkES3wRlO28HfeEoVI8P5
-	m4Phr1EAOeFmg+SlIF4YgsmVq2Qas4SUN6kLszQEJzF/+7QfAwyZqyHwVj8mWTBCV5HzxK
-	ALK0g1MDj9BnvhPgj2ji+RxhhJVMDKNzbjC6FIr3GMyMtuVBPvgJduPLo1+/V61TkmQiMq
-	/cz704o6tFR3StfzIIMVyJaIPnInlbYMRtgv2Yp0Kupc3h2AGvIbXFvtlQCxeGpFSTv3ww
-	69RMu3ZLU7jSZ49WiRmWSKjprQbPEk5Qw+O6W6ckzH/oH7tyQNzKpZcXEGyLJg==
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1762371385; a=rsa-sha256;
-	cv=none;
-	b=mOaODOuP7Lqj1bYwzHXEFDDdESZkWHkeTQR/gIIuDULmbxnpLgVD3xlpslp8rE/7N78ovG
-	k0XM0iKqwo+QKQ1tDKS6SRuhZ2d3Mnu5VQXVnbSNln5pCjdpK/Hb0oiBud3fly+ESFL0I8
-	bIuHC1zKM8JVM276NQ9Y0Pypn+8AGYnhlHr0NE+ftb4lG8UGOzcLtEHybe9DPSoI/Mg8GB
-	lES9Y39LQa/0LwbKy0wQ9+Xfh3qnkMGFkfdw3GMTAHEVDi6SbCi35dxIFcC6LGbmW4uQ8u
-	QSuDGot7NX8ctotlx5ORYC1t3QhQsxHfe2JXYWBguGgrX8droNT9LFLvQ2slQw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pav@iki.fi smtp.mailfrom=pav@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1762371385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RqJ93xJX5OuqZg0mBGT/lR+PWBGKlPoVMo6IMD3egmE=;
-	b=eEdP23Pr3mRFg8pbhwNRCDokSINP571+515LrmVjW0ud7H2Of01Mq3hE71HsJGSKefcJrW
-	bcKolFky7RNxkHNrgtSYgfhXVuayKfsQWttXeKv9E1WggPgKQ9l+0NgMt8RdNGQxXADAec
-	MlGF6VJsyX4/BWhTHfWVAH8vd/y6vZmus+6YOMClfIOSGOgCk9NNZx9qPH4xr2ANYcpAbh
-	QULcc2fulBD7/oPmJIGa8iokucQR/0C7Tk5ZrQJb8HQFNPO8aJ+AbbUmizyuF4tXjuJxOb
-	sJSTiUCpfmrltuPD31XlK09z1TTRfVmmxz+eEPPaYri89Xbmq3YMgPCiM81OSg==
-Message-ID: <e795d2b600d98bfaf9b63088929e8ac0e8d4e3ba.camel@iki.fi>
-Subject: Re: [PATCH] Bluetooth: L2CAP: Fix use-after-free in
- l2cap_unregister_user
-From: Pauli Virtanen <pav@iki.fi>
-To: ssrane_b23@ee.vjti.ac.in
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org
-Date: Wed, 05 Nov 2025 21:36:23 +0200
-In-Reply-To: <20251105142251.101852-1-ssranevjti@gmail.com>
-References: <20251105142251.101852-1-ssranevjti@gmail.com>
-Autocrypt: addr=pav@iki.fi; prefer-encrypt=mutual;
- keydata=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
- bzyGkKh2h8XdrYhtDjw9LmrprPQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFFE25EF87
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 19:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762371489; cv=none; b=LBsUNeCIqVFD3dESMxbhztylto5CowEC8urwv+nUyN9xylUx44DK749uUp9yA99m0fauKbhwSgDVnvYq/gbabpFYoFNNqQSVkTY6QHG530rJOk28ggwssoORw/ipziZdkD6dBHzcx4wKuqK60ruxlu+qPuJWn0AGl85P4s2/SDk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762371489; c=relaxed/simple;
+	bh=1PDg1CmlO+cVhtIKINwtYqMmJ/UcTCIKmaELE7ch+Ds=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=c6CpH9S/3WkesiGW9ydX0/5lve6A7l7LTL1HSvRzzYtPgx6gOJPSinV2nzz5+rIuLqF9bEl0Hbewrjh7H5wp5dBTHttsEpIApnC5W+HdpKtnpl6HYa9aQSuykv/YhYEoRuJKzxzYUu/YCPBOBXm+IjFbMnHxnkRoZbrGtkVG7tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43328dcdac1so3380825ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 11:38:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762371486; x=1762976286;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qEUWlEwRjtU8+wKvFtOCXhD2/qfkw3QweZwrBKzGL7w=;
+        b=krfiMG4u2pAuznPT1YMUVY9UcsfRG0klmKee3x4wypcX8mFmPkAR28EieJ7YhsIHyz
+         tuNYHCAEFzN/LF+TsbRDmnmfYy29Pgi0TqVNzdC7kb21P6jzRmDwasKe8hc6BCaW1JJz
+         AAJpR1lQ/vARFwM69N5bmoAQkLRBEQ4RdHhd3U6tL1bvpwzLp1ZETcstABCIXuP2yjaD
+         QIyohvgsWbvaut0yRNw+mvrW/RUlOh0Oip8Te8fPCm2qVQSwg0d50pXXs383mrIb5YNe
+         0cVJIC+oxgDuCCL3b8ZzyxwFEuAGLg7If8P3JJb0Yo4uOxfMY1szhpwkzCuh1Umk56vp
+         kvlg==
+X-Gm-Message-State: AOJu0YxVzYCFBtm0Ihub9rXH0Pxnm+VLsI8/U6NPJikQoHwNw1znDOpK
+	Xbd+C13unJUJj57aTURw2Kd9kRQIjFCFICwmXGfAVkZ2lz7PUJMpttYHrym4OUcloPByx7OIsBJ
+	6BjTPPT9kybrp4TtDqgnPShnltFG5AJOF951pSczzs6ov7zk0XjAnC06b/cc=
+X-Google-Smtp-Source: AGHT+IGJXQCBdk2d794CVebmpenWZ9Hh1DaxkPUu8H494+GPrzH8zeWc+ECx92J/y/4NG9BNUlQDl8g7K0+nbyvCRVyBamBJk/2/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:10:b0:431:d951:ab9b with SMTP id
+ e9e14a558f8ab-4334061d166mr66057575ab.0.1762371486536; Wed, 05 Nov 2025
+ 11:38:06 -0800 (PST)
+Date: Wed, 05 Nov 2025 11:38:06 -0800
+In-Reply-To: <68d32659.a70a0220.4f78.0012.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690ba79e.050a0220.3d0d33.008a.GAE@google.com>
+Subject: Forwarded: [PATCH v1] fs: Move might_sleep() annotation to iput_final()
+From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ke, 2025-11-05 kello 19:52 +0530, ssrane_b23@ee.vjti.ac.in kirjoitti:
-> From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
->=20
-> Syzbot reported a use-after-free in l2cap_unregister_user(), caused by
-> missing reference counting on the associated hci_dev. If the device is
-> unregistered while L2CAP users are still active, l2cap_unregister_user()
-> may access a freed hci_dev when taking its lock.
->=20
-> Fix this by taking a device reference in l2cap_register_user() using
-> hci_dev_hold(), and releasing it in l2cap_unregister_user() via
-> hci_dev_put(). This ensures the hci_dev remains valid for the lifetime
-> of registered L2CAP users.
->=20
-> Reported-by: syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D14b6d57fb728e27ce23c
-> Fixes: c8992cffbe74 ("Bluetooth: hci_event: Use of a function table to ha=
-ndle Command Complete")
-> Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-> ---
->  net/bluetooth/l2cap_core.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->=20
-> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-> index 805c752ac0a9..6a880f8ab6c2 100644
-> --- a/net/bluetooth/l2cap_core.c
-> +++ b/net/bluetooth/l2cap_core.c
-> @@ -1688,6 +1688,11 @@ int l2cap_register_user(struct l2cap_conn *conn, s=
-truct l2cap_user *user)
->  	struct hci_dev *hdev =3D conn->hcon->hdev;
->  	int ret;
-> =20
-> +	/* Hold a reference to hdev to prevent it from being freed while
-> +	 * we have registered users.
-> +	 */
-> +	hci_dev_hold(hdev);
-> +
->  	/* We need to check whether l2cap_conn is registered. If it is not, we
->  	 * must not register the l2cap_user. l2cap_conn_del() is unregisters
->  	 * l2cap_conn objects, but doesn't provide its own locking. Instead, it
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-The old comment here seems out of date since commit ab4eedb790cae,
-currently l2cap_conn_del() appears to be using conn->lock to do
+***
 
-	mutex_lock(&conn->lock);
-	...
-	l2cap_unregister_all_users(conn);
-	...
-        hci_chan_del(conn->hchan);
-        conn->hchan =3D NULL;
-	...
-	mutex_unlock(&conn->lock);
+Subject: [PATCH v1] fs: Move might_sleep() annotation to iput_final()
+Author: mic@digikod.net
 
-so it looks likely also taking conn->lock could avoid the races with
-conn->users and conn->hchan.
+iput() don't directly call any sleepable code but mostly checks flags
+and decrement a reference counter before calling iput_final() and then
+evict().
 
-> @@ -1717,6 +1722,10 @@ int l2cap_register_user(struct l2cap_conn *conn, s=
-truct l2cap_user *user)
-> =20
->  out_unlock:
->  	hci_dev_unlock(hdev);
-> +
-> +	if (ret)
-> +		hci_dev_put(hdev);
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL(l2cap_register_user);
-> @@ -1735,6 +1744,9 @@ void l2cap_unregister_user(struct l2cap_conn *conn,=
- struct l2cap_user *user)
-> =20
->  out_unlock:
->  	hci_dev_unlock(hdev);
-> +
-> +	/* Release the reference we took in l2cap_register_user */
-> +	hci_dev_put(hdev);
->  }
->  EXPORT_SYMBOL(l2cap_unregister_user);
-> =20
+Some code might call iput() with guarantees that iput_final() will not
+be called.  This is the case for Landlock's hook_sb_delete() where the
+inode counter must de decremented while holding it with another
+reference, see comment above the first iput() call.
 
+Move the new might_sleep() call from iput() to iput_final().  The
+alternative would be to manually decrement the counter without calling
+iput(), but it doesn't seem right.
+
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Edward Adam Davis <eadavis@qq.com>
+Cc: G=C3=BCnther Noack <gnoack@google.com>
+Cc: Hillf Danton <hdanton@sina.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Cc: Tingmao Wang <m@maowtm.org>
+Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68d32659.a70a0220.4f78.0012.GAE@google.=
+com/
+Fixes: 2ef435a872ab ("fs: add might_sleep() annotation to iput() and more")
+Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+---
+
+From hook_sb_delete():
+
+	/*
+	 * At this point, we own the ihold() reference that was
+	 * originally set up by get_inode_object() and the
+	 * __iget() reference that we just set in this loop
+	 * walk.  Therefore the following call to iput() will
+	 * not sleep nor drop the inode because there is now at
+	 * least two references to it.
+	 */
+	iput(inode);
+
+#syz test
+
+---
+ fs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 84f539497857..64120cb21e8b 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1917,6 +1917,7 @@ static void iput_final(struct inode *inode)
+ 	const struct super_operations *op =3D inode->i_sb->s_op;
+ 	int drop;
+=20
++	might_sleep();
+ 	WARN_ON(inode_state_read(inode) & I_NEW);
+ 	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) !=3D 0, inode);
+=20
+@@ -1969,7 +1970,6 @@ static void iput_final(struct inode *inode)
+  */
+ void iput(struct inode *inode)
+ {
+-	might_sleep();
+ 	if (unlikely(!inode))
+ 		return;
+=20
 --=20
-Pauli Virtanen
+2.51.0
+
 
