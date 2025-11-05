@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-886871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE44C36B24
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:29:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E737C36A73
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF95E503F5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A93E1A254CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05090335558;
-	Wed,  5 Nov 2025 16:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEA741C63;
+	Wed,  5 Nov 2025 16:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DXD+P7YT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uBx1FG07"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VTpoULf4"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE86322DA8;
-	Wed,  5 Nov 2025 16:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDCC334C0C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762359235; cv=none; b=Dmhdi/D+Vh9l7M8FFqDS/6zbZukxIJmFg4V1MOU/s7tnOt/swMVj7c+iZY/ZPhJOOzm+PnktyzISkDvhkK0ALO9M+XtFEZVi2igAOrFJ3uTVWP51yapx9iHSg1reH/zzwnjbb+nnrqhQCPRoMsYgrjDyH6O0wmPNTAUDTrn3Cak=
+	t=1762359278; cv=none; b=aN8DJbS767+x4PgVssfG0T4IVkKPUOyiwGCuN3BbY7k8NGEOIziq+EVD19rrB5Y8TGW6iK/65yW3epL1TMIy09OJ4CNzR4w0aBOA/CG6mSCc7TQ4JlimAUBoUocPjiylo6rFHQFRLLgYd9mHQ0aR1/hUvZsPUxlA/G3NZh60Ly0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762359235; c=relaxed/simple;
-	bh=Jji1FxMQE0nQwMRkGHd2vycQQBeWk2wadKdm4pviox8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ME+VpF4znpHJ+vMcPLhjCuhVsgmVTS3Gm5R5jqQhe5RH9qcb4fSQzperEsnpVzVIurTYkytSQgXzcgOYGsOzskjB85533TW9zBf3U2zK8llYT9ypnyPX6ONYRSpxh4PVv174H/Rlrx8YEMQLHdj5wO093Bi1lzXKsl49cLEUozg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DXD+P7YT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uBx1FG07; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 5 Nov 2025 17:13:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762359231;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g1kjwvsagYmMzNuZ/CDg1YQEqNnD94LL7vwY0lbT+zs=;
-	b=DXD+P7YTv6IEX026kjt1F8YVXgIehfvUAI2O1StYFCuCM36Ax/oj2ROl9Escj22TUSaV4K
-	XfImvsPVa/mQ0I7DEHuibSVfWzOlMz3M+KgDJSXVorRx5bGPSFHoqM9FycVPirDojnhUtq
-	CbfssrMGHETE2LY0v3CA6uyP4tl9UFs8OzAbl8KW55+3K2/fgA63xL1Sl97z/Vk28JOo6U
-	6Mgp/npslthxLyh+pFwUz6WNsceCFuwjKZjnO/eE/Z4H1ieVecgE0St4CC4+WoGo8HhH3T
-	8wcbegPnMEc80NKfWlyWW2w+PimxAYcJeifVJHoT6Gus/rczh64e5m+aNhrDRg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762359231;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g1kjwvsagYmMzNuZ/CDg1YQEqNnD94LL7vwY0lbT+zs=;
-	b=uBx1FG075ggbcRA5/Y07q3BLRHNQ+GDoQ7eqUFqWhPI3pyBOqf8No/MhlVY8xo1RqAIQA2
-	9qHdPiWxMev3tkDw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Shuah Khan <shuah@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Russell King <linux@armlinux.org.uk>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
-	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH v4 24/35] vdso/datastore: Allocate data pages dynamically
-Message-ID: <20251105170813-070d53d9-aa2a-4cb6-bcda-3bce8c5be9c1@linutronix.de>
-References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
- <20251014-vdso-sparc64-generic-2-v4-24-e0607bf49dea@linutronix.de>
- <20251105153426.16228C13-hca@linux.ibm.com>
+	s=arc-20240116; t=1762359278; c=relaxed/simple;
+	bh=+RqzI7DmaHbnC2L4j+PhZU6q5miuhQzf6z7aKSIP4vM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vqawd/bsvtXq7vIEFUsV2E+trvm2wN9tbi6xHmdN2eAhP98bV8OkHonvZMcpLQeRlamoEp7u63guZve/rplGC1ArJms34U5mSYZZ6RosJt5fLjXMrjiE6wqPyZZuSgE0lgGjnyw/IPlSJ6tdjykUQEakJvKYukoLP/5EtqW2VBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VTpoULf4; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-429cf861327so20174f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:14:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762359274; x=1762964074; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cRA35tpQfzjsxooDaaqj7UJHSVhlCQN3eSDYhgPLw1A=;
+        b=VTpoULf45QtKxF2b4bn3kAuE+Zvp7V7TN1neyeKR7k2WwP+ncRA2WhMC///MiZ+fPg
+         4/vyEj/tfHSOnjyA7yCe7Vh/EUecbXqHBcCuWsvvQG9hzure5o1TgoiFI3reG5JvNUfX
+         RqcOu8VZJbidRcUUmt/j58IeVjkr2My9sF/gHHYeq/q/K64EycMsyX5Itw+4CtSqePBB
+         0sJ9mepzfdtbQ/83N+8giml8xenShqK6jwWjPw20f6uJ3adTSma8tN9q8mk+slVHEOFB
+         ZUkLRzaJQlZUYEaNrQw3VoPJGCY6b7cPIL0q630GscWjVhz4ffaVDALpaLaSTSgh6/cy
+         VxOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762359274; x=1762964074;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cRA35tpQfzjsxooDaaqj7UJHSVhlCQN3eSDYhgPLw1A=;
+        b=wOZARXDiBA1h2Dub1Hl4XYVvggD2HSGpadUcVq3rM/xgHQvHvGTs7aDE91VTEYJa4B
+         KATfzgcSRLm6w58AhxGXJYydcjJzkqH84KKNmwq/7J68cxI482kW6mksn4BGjBeqrpOO
+         H8qnmxsJWBkSTJqt79ZkBX9CwCz2c/ZAO5h/qVQqk2CS3OxanjllxdndwM7AQtqh+xNP
+         O0REo4vumF5GC72YFWoBQINis/NJgF+PJjktes0lGwVhk3DXe32fJStfTg61VrgkJc3f
+         O/Tspa9knKqCbxM1mcYbsBWoSYZlafmSkNnnqOjvKYtximFZGzfW9d8lRcMmWYaKbgNp
+         WERQ==
+X-Gm-Message-State: AOJu0Yw0JJTyQA5rCC9S93BKCvPsav8CdIYCCbUIwNFboeEx+eORR+t2
+	PzKqOsR/eeV9taJjVOlRL1bfFSyzD20gdYwBSyR6tWvmZE1WzxF+EqyXwQq080o+PCd0Q6gEGM0
+	VZoP8
+X-Gm-Gg: ASbGnctk5T4jdBp/fa5lzgxq07BxPFmDmI8AX3b5Qb3W6utdh63FhJm6DFqaTydDXGw
+	Lr7hLH4XLuezCUwH9XSXTR1DNLhYoXiJj8FXffhXZ+i1q9M2fwF6DnqJCPTi8/YiEdZmTUczMhX
+	k44QvBTHL6gUwytrkhUJ6KBP0wMlLIc3H5ILRhCCXHZcg4YUQpU4Py0uZ8voWNueKW0kHUrU6Nt
+	qMLwqfMp5MjW22LRenmaJ4v6dz98/fMOP7pn4j8GPyHG3VPdt+TFb4z8hajiqHQl4wnRWOCxGd5
+	ULZpPhc5fXhaw6Tc+8rkkPdoYnDycM0n5/dUetop3aO4ywon7cxPqT1X0I3T1lTvxKLQs0WXdiJ
+	J5qVcg6C8VcChPchBiQlMEsaGPLmSijyqdt1MQ3Ds7DwNWbfJUb3CbKIHv0KMnzNfCmOQ7eLaaU
+	L9jpEswBWuobmzknWR+QNWlE4=
+X-Google-Smtp-Source: AGHT+IHNe9YjvUvCQil+uYmv2TjbMeloFxryl8gTcYWClByDg3GQY2jUp7fSBGOSrDWJRS2WxtFx7A==
+X-Received: by 2002:a05:6000:186d:b0:429:b9bc:e825 with SMTP id ffacd0b85a97d-429e330bbecmr3757724f8f.46.1762359274478;
+        Wed, 05 Nov 2025 08:14:34 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1fdef7sm11808315f8f.43.2025.11.05.08.14.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 08:14:34 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH] regulator: irq_helper: replace use of system_wq with system_percpu_wq
+Date: Wed,  5 Nov 2025 17:14:25 +0100
+Message-ID: <20251105161425.308499-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251105153426.16228C13-hca@linux.ibm.com>
 
-On Wed, Nov 05, 2025 at 04:34:26PM +0100, Heiko Carstens wrote:
-> On Tue, Oct 14, 2025 at 08:49:10AM +0200, Thomas Weiﬂschuh wrote:
-> > Allocating the datapages as part of the kernel image does not work on
-> > SPARC. It is also problematic with regards to dcache aliasing as there is
-> > no guarantee that the virtual addresses used by the kernel are compatible
-> > with those used by userspace.
-> > 
-> > Allocate the data pages through the page allocator instead.
-> > Unused pages in the vDSO VMA are still allocated to keep the virtual
-> > addresses aligned.
-> > 
-> > These pages are used by both the timekeeping, random pool and architecture
-> > initialization code. Introduce a new early initialization step, to make
-> > sure they are available when needed.
-> > 
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > Tested-by: Andreas Larsson <andreas@gaisler.com>
-> > Reviewed-by: Andreas Larsson <andreas@gaisler.com>
-> > ---
-> >  include/linux/vdso_datastore.h |  6 ++++++
-> >  init/main.c                    |  2 ++
-> >  lib/vdso/datastore.c           | 44 ++++++++++++++++++++++--------------------
-> >  3 files changed, 31 insertions(+), 21 deletions(-)
-> 
-> ...
-> 
-> > +void __init vdso_setup_data_pages(void)
-> > +{
-> > +	unsigned int order = get_order(VDSO_NR_PAGES * PAGE_SIZE);
-> > +	struct folio *folio = folio_alloc(GFP_KERNEL, order);
-> 
-> I'm seeing random hangs on s390 too with our CI, but unfortunately I cannot
-> reproduce it manually. But looking at one of the dumps it looks to me like the
-> vdso time page contains (more or less) random junk at the end. Or in other
-> words, shouldn't this be:
-> 
-> 	struct folio *folio = folio_alloc(GFP_KERNEL | __GFP_ZERO, order);
-> 
-> ? At least that is a difference to before as far as I can tell.
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Thanks! This perfectly explains all the weird issues. It also does fix
-the issue on the affected hardware which Mark kindly let me use.
-I'll test it some more and send a fixed series tomorrow.
+This lack of consistency cannot be addressed without refactoring the API.
 
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
 
-Thanks again!
-Thomas
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+Replace system_wq with system_percpu_wq, keeping the old behavior.
+The old wq (system_wq) will be kept for a few release cycles.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/regulator/irq_helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_helpers.c
+index 5742faee8071..54dd19e1e94c 100644
+--- a/drivers/regulator/irq_helpers.c
++++ b/drivers/regulator/irq_helpers.c
+@@ -146,7 +146,7 @@ static void regulator_notifier_isr_work(struct work_struct *work)
+ 
+ reschedule:
+ 	if (!d->high_prio)
+-		mod_delayed_work(system_wq, &h->isr_work,
++		mod_delayed_work(system_percpu_wq, &h->isr_work,
+ 				 msecs_to_jiffies(tmo));
+ 	else
+ 		mod_delayed_work(system_highpri_wq, &h->isr_work,
+-- 
+2.51.1
+
 
