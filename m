@@ -1,230 +1,150 @@
-Return-Path: <linux-kernel+bounces-886743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561F0C3669A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:43:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65737C366BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 16:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FCF24FEEA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:30:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 286714FE120
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB426332EA3;
-	Wed,  5 Nov 2025 15:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BF0338937;
+	Wed,  5 Nov 2025 15:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pv2RJGvq"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ILGDIP5O"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0258832ED38
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80D53385BC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762356388; cv=none; b=Sn7eL+PfPC02TSR5Fde5+5yXHvV7BfhiiITGLz9k7H2lD7aMybHqyb9NLzIJrYv3jlDFAtmgsqLs0o8pbGEXsttHsXJVsQFwswFGfmxZw8GeJqiTkgMM+r6+DheVI6SDS8Lvq1LVgEc8bPdc3RG8BZ/eYlPvrQweVfk1Xr7mqzU=
+	t=1762356397; cv=none; b=uxh2sHG1+/vVaAuH0mZgk734+TEUOjGcNn35HbZEdrWr4Yvi5s96km/HPdWtaXpEZ/TdQwg+x9zYgv+HwlXa9+3NTRYQikuIKMfhrsjXd0So11SIGh6ytzzjs6a3r0l6WaODLXOciBj/wvzDsVtlhviOpDkG0Ex2fCPFCvnDGXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762356388; c=relaxed/simple;
-	bh=5ue5tL8Jb7H7Gv3Q/MlTFY91FC7k7XwAJqyggs6Au6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IpqHi3o5juBw1gck+z09N43KBoiy/nD4cKnfoMNuDgc4UXQZEuHfTLRmWsRXxV2GgzhUlRNfHnvtWTbW8rBs8afJ59m98iG+AGwvuByaTyF5a1X8iPYg/f/FzLsAp/3YRRpFMPB+miGC6pcPjiYj01W8O8bsyATJR24zx8R163U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pv2RJGvq; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-4331709968fso50327965ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:26:24 -0800 (PST)
+	s=arc-20240116; t=1762356397; c=relaxed/simple;
+	bh=d8JWxeRGmjq8jXPHzr0bSzSADeEyMQIUeCD2xQhaO6I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=F0XSCCFgeiRDKFyA+7WCfYTUm/kMnBoaOdtG3Gs4LGHY5+nFihQxSnKHEFG1QqSPdP20gr/2kLmjteJXGVYE8zWJdE88JMBDkRyVfEpZK9zBv5ATSeUC5YFEJzFpvSnobSlc/0QZawdr4RSC+QDJag+P7eNLeDbcb5HPSR5+xoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ILGDIP5O; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3418ada9e6cso1978170a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:26:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762356384; x=1762961184; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wJMw23ag07d9YyGaAXQZB3LwsXKp0Eq82MOZSboYNLA=;
-        b=pv2RJGvqqlS6qwKxPM2/MUYvyx4JbywtIfIkm80E8mWJF1SMUBMqT35cxKcA9ayzPl
-         46iD1ySEe94AvJSnMzzfq4DGbHtPV0kZU4zBxnwUR9oKzw7jeGmEaLwCRCQ1NncpJbxL
-         N9vwF4+oe1bZVzsBvUT7S0w2dCgSWq7U14wVEoUGhuodwcQBnFV51exHDfds+6aesg2h
-         F9DP89jla99t0+HXPqG2eepAzjL/hnS5kOpUUgc8j9GuQM3FY1Mov2kAsKammdG/PJ+R
-         rkTr5FVY2n1p2h+7G3L9f1NvIwyXHwqIlH1ozkcAI6T4Jjxk2J84au1MgK5haYiMErg1
-         pfZA==
+        d=google.com; s=20230601; t=1762356395; x=1762961195; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dmjmfo22QwufKip+RFN2GwcKXDk7+fDMohFzNqFh1wo=;
+        b=ILGDIP5O5BP+SYZYgKaOIaimg87TU8QKC8EJF/uP7rDmTzgvxHRnjh26J0McWVE2tX
+         xjdiyiYpL9TXxeCED6TAeEs8jD6PIIhWiDvgW1l4mcsTpVDqohWa8u8IQD8dOmuRI9Td
+         uDNxLQRlPc1dydrRYVGUNHzgHi3xAr5yNki7VN6iKVXwlAx1pN1l999r5o3knbR0QoT4
+         Z2ImKQQjei9H+0BOVHp7DXRQ1IgTVPloVQk3p9UjN3JreJpiEQt3YYxwp6cbLRpB639k
+         AzbBvE8/jpXoFZPNwmqGculRqBCQzzCh7DC6qg7Qt8aZZQ14Z5eDxix6hs1K8iTqhfqx
+         YhAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762356384; x=1762961184;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wJMw23ag07d9YyGaAXQZB3LwsXKp0Eq82MOZSboYNLA=;
-        b=fVXZjdKt2GX6vb7xdHFcBJXnd4atjb5xOvsBjbopG5pE7897OTZ3eph+8gGFsdhJpy
-         nWG5HmZs1gWZZyicT1HOKcsnmwEmcWbV0QNJyMYBNDE+G5i/VSgdYPzz5MuOhAYG9ERw
-         b5rixeeKTGR1yox8BbWJ4LR6wnAFS8k3/ZzihidD7HjBWS4PZn4veXlkxbQ9cT6YZAUg
-         v/KWrZhkzlCzSsXKSuJYQGUjimDEDk8w+htXasfhqX/RS/P4FcC7pf4Pjh2FvSWJd9CK
-         vFzau6iR/M5b5Cg+2nGAQ/lB6jb5GdyTaiQzowPzMVxHjkIkXq+nfmyL4RzoaabfbluG
-         QUfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqjvtZJyHhU7e6qt56IEpkLzX6o82q5wH2ZAg5NumR05I0SO0cTvTYTTQrASZOMgfGBHlkt1Qv7H8Y8BA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0nV5AHkZrghsGES2T2YbWxiPXn4jebnoToEIj207hKbyxHdsr
-	gcjXMkmlg00SQ0enjPGnnOZPV04LFb1DheRwJk+CxO+X+Ygt4gZodmOPozoBVwX90mIOWg6ZEum
-	OdAx8
-X-Gm-Gg: ASbGncuXPI9DWbjW87vsRKYbg/4YTajwjy3GQ0KqSoqBd7bVseZtCQ/HBx8k4ELsgCY
-	NmjGA+rrXINdhVCkzojJt0kFLk8sIk26EiiP+Xvc+JEQ04ODdKiqXQgh2d0Mr8W/RiRng+wKxCe
-	zZt6VC6oG3n9GQ2zcaaApJxD8aL04qDA/hqlsct2NJonv/MUD2ap2GV2++jOGECXhNbu5ldddM/
-	jQnh3CtNQmPM91dcOjUiTWv7Fzvg5uzpAuJgNCeYsaxiQjjMieYUeGM43yEPQ5WbZbmAd1do5Pg
-	hm4OHxUJHgcoPs5qde+4LpDB1VILmtgD19EkI7WQxro9GGKEwhQGfzDqCtq58m5F77J30H2bH9g
-	IZyZvrDqsmfjAekpyVWasbu0OM5TocPCWpqeRPEUxYR/0QoB+EqJ5wEZMZZHp+qvhu9pSTLi+6O
-	nljwizvWQ=
-X-Google-Smtp-Source: AGHT+IFOCqH9vMp8Y+tbAbwhk4CARwNNBKaPtY2QKZEvv3tWyjN4/HIZU+2nmwOokQud2POY49dJtA==
-X-Received: by 2002:a05:6e02:164f:b0:431:f7df:f026 with SMTP id e9e14a558f8ab-43340753584mr55884735ab.2.1762356383969;
-        Wed, 05 Nov 2025 07:26:23 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335aafb84sm26538755ab.16.2025.11.05.07.26.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 07:26:23 -0800 (PST)
-Message-ID: <34e94983-3828-469b-bb87-6a08061c101a@kernel.dk>
-Date: Wed, 5 Nov 2025 08:26:22 -0700
+        d=1e100.net; s=20230601; t=1762356395; x=1762961195;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dmjmfo22QwufKip+RFN2GwcKXDk7+fDMohFzNqFh1wo=;
+        b=SGnFGL3GQcdq7VcaOcZ4zfVreHW9BJdyCF0Dz+jL/2MUA+Qphvcfoqke7S5iIW6kn9
+         XmROqLK7abu9dbtBVx2Q3S9ac7Jx/OX8Pa00a69eKNRapQC2o16LzWBM/E/c8oqXlvfK
+         uMhHzI0e228V8t9+Cy5tseZb1kPjp1PBDVHFV9Q1d5iQNp2NiQqmd2v2aN0HsHNgQsy1
+         bG1DNDqj0zrR10WVGQusRIas5AEM+H+8xHNbUk4dM1JTid9pSv3qr3EKSw1YNFDrXvuu
+         fJcoUCxJbUQwPnt2v4xYJ6QZa2LbeWbO0Y30/eyV8pR4pf8CUxfpeFbKRiSjBwCQjCkC
+         /54Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8N9IHTqHDcRRC2iUmJIEmJdAj8SqzAzBjIXbCDxvp+THiEPlmTtsMu5mkw6PN7HknwgRqmdIQCe0ApAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy08nS/unAg5iF6NL2i2+4ENa2AwaqbmpzDPrDR3YGPixn9H94u
+	9m1z3nY3NB7VSfXruuzRSDZnolDGD/ZGSnBXciVUVhFHw0N/6p8p6b6FE16Z4OWJ/YbnZ4EPHSw
+	EuwwgXw==
+X-Google-Smtp-Source: AGHT+IEksiko2nLkYHDcuQoizh41Xk4dhEPlLcSxUswEaWhydqjlp9gNPv6q5VYl/pXem0FsGEVxprPZGIk=
+X-Received: from pjbtc7.prod.google.com ([2002:a17:90b:5407:b0:340:b503:505f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:384d:b0:340:9cf1:54d0
+ with SMTP id 98e67ed59e1d1-341a6c08e65mr4623520a91.1.1762356395074; Wed, 05
+ Nov 2025 07:26:35 -0800 (PST)
+Date: Wed, 5 Nov 2025 07:26:33 -0800
+In-Reply-To: <aQsBI1/SIXGbf9nA@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ublk: use copy_{to,from}_iter() for user copy
-To: Ming Lei <ming.lei@redhat.com>,
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251031010522.3509499-1-csander@purestorage.com>
- <aQQwy7l_OCzG430i@fedora>
- <CADUfDZoPDbKO60nNVFk35X2JvT=8EV7vgROP+y2jgx6P39Woew@mail.gmail.com>
- <aQVAVBGM7inQUa7z@fedora>
- <CADUfDZqKV2SzbWoe4gr4aSPaBtr+VwmEgEidZKo=LQBU9Quf2Q@mail.gmail.com>
- <aQqs2TlXU0UYlsuy@fedora>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <aQqs2TlXU0UYlsuy@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-5-seanjc@google.com>
+ <aPhjYcOFjL1Z8m2s@yzhao56-desk.sh.intel.com> <aQMi/n9DVyeaWsVH@yzhao56-desk.sh.intel.com>
+ <aQo-hus99rE7WBgb@google.com> <aQr9jW/7zwWJaDFf@yzhao56-desk.sh.intel.com> <aQsBI1/SIXGbf9nA@yzhao56-desk.sh.intel.com>
+Message-ID: <aQtsqXPaZo2SMdJU@google.com>
+Subject: Re: [PATCH v3 04/25] KVM: x86/mmu: Add dedicated API to map
+ guest_memfd pfn into TDP MMU
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 11/4/25 6:48 PM, Ming Lei wrote:
-> On Mon, Nov 03, 2025 at 08:40:30AM -0800, Caleb Sander Mateos wrote:
->> On Fri, Oct 31, 2025 at 4:04?PM Ming Lei <ming.lei@redhat.com> wrote:
->>>
->>> On Fri, Oct 31, 2025 at 09:02:48AM -0700, Caleb Sander Mateos wrote:
->>>> On Thu, Oct 30, 2025 at 8:45?PM Ming Lei <ming.lei@redhat.com> wrote:
->>>>>
->>>>> On Thu, Oct 30, 2025 at 07:05:21PM -0600, Caleb Sander Mateos wrote:
->>>>>> ublk_copy_user_pages()/ublk_copy_io_pages() currently uses
->>>>>> iov_iter_get_pages2() to extract the pages from the iov_iter and
->>>>>> memcpy()s between the bvec_iter and the iov_iter's pages one at a time.
->>>>>> Switch to using copy_to_iter()/copy_from_iter() instead. This avoids the
->>>>>> user page reference count increments and decrements and needing to split
->>>>>> the memcpy() at user page boundaries. It also simplifies the code
->>>>>> considerably.
->>>>>>
->>>>>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
->>>>>> ---
->>>>>>  drivers/block/ublk_drv.c | 62 +++++++++-------------------------------
->>>>>>  1 file changed, 14 insertions(+), 48 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
->>>>>> index 0c74a41a6753..852350e639d6 100644
->>>>>> --- a/drivers/block/ublk_drv.c
->>>>>> +++ b/drivers/block/ublk_drv.c
->>>>>> @@ -912,58 +912,47 @@ static const struct block_device_operations ub_fops = {
->>>>>>       .open =         ublk_open,
->>>>>>       .free_disk =    ublk_free_disk,
->>>>>>       .report_zones = ublk_report_zones,
->>>>>>  };
->>>>>>
->>>>>> -#define UBLK_MAX_PIN_PAGES   32
->>>>>> -
->>>>>>  struct ublk_io_iter {
->>>>>> -     struct page *pages[UBLK_MAX_PIN_PAGES];
->>>>>>       struct bio *bio;
->>>>>>       struct bvec_iter iter;
->>>>>>  };
->>>>>
->>>>> ->pages[] is actually for pinning user io pages in batch, so killing it may cause
->>>>> perf drop.
->>>>
->>>> As far as I can tell, copy_to_iter()/copy_from_iter() avoids the page
->>>> pinning entirely. It calls copy_to_user_iter() for each contiguous
->>>> user address range:
->>>>
->>>> size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
->>>> {
->>>>         if (WARN_ON_ONCE(i->data_source))
->>>>                 return 0;
->>>>         if (user_backed_iter(i))
->>>>                 might_fault();
->>>>         return iterate_and_advance(i, bytes, (void *)addr,
->>>>                                    copy_to_user_iter, memcpy_to_iter);
->>>> }
->>>>
->>>> Which just checks that the address range doesn't include any kernel
->>>> addresses and then memcpy()s directly via the userspace virtual
->>>> addresses:
->>>>
->>>> static __always_inline
->>>> size_t copy_to_user_iter(void __user *iter_to, size_t progress,
->>>>                          size_t len, void *from, void *priv2)
->>>> {
->>>>         if (should_fail_usercopy())
->>>>                 return len;
->>>>         if (access_ok(iter_to, len)) {
->>>>                 from += progress;
->>>>                 instrument_copy_to_user(iter_to, from, len);
->>>>                 len = raw_copy_to_user(iter_to, from, len);
->>>>         }
->>>>         return len;
->>>> }
->>>>
->>>> static __always_inline __must_check unsigned long
->>>> raw_copy_to_user(void __user *dst, const void *src, unsigned long size)
->>>> {
->>>>         return copy_user_generic((__force void *)dst, src, size);
->>>> }
->>>>
->>>> static __always_inline __must_check unsigned long
->>>> copy_user_generic(void *to, const void *from, unsigned long len)
->>>> {
->>>>         stac();
->>>>         /*
->>>>          * If CPU has FSRM feature, use 'rep movs'.
->>>>          * Otherwise, use rep_movs_alternative.
->>>>          */
->>>>         asm volatile(
->>>>                 "1:\n\t"
->>>>                 ALTERNATIVE("rep movsb",
->>>>                             "call rep_movs_alternative",
->>>> ALT_NOT(X86_FEATURE_FSRM))
->>>>                 "2:\n"
->>>>                 _ASM_EXTABLE_UA(1b, 2b)
->>>>                 :"+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTRAINT
->>>>                 : : "memory", "rax");
->>>>         clac();
->>>>         return len;
->>>> }
->>>>
->>>> Am I missing something?
->>>
->>> page is allocated & mapped in page fault handler.
->>
->> Right, physical pages certainly need to be allocated for the virtual
->> address range being copied to/from. But that would have happened
->> previously in iov_iter_get_pages2(), so this isn't a new cost. And as
->> you point out, in the common case that the virtual pages are already
->> mapped to physical pages, the copy won't cause any page faults.
->>
->>>
->>> However, in typical cases, pages in io buffer shouldn't be swapped out
->>> frequently, so this cleanup may be good, I will run some perf test.
->>
->> Thanks for testing.
+On Wed, Nov 05, 2025, Yan Zhao wrote:
+> On Wed, Nov 05, 2025 at 03:32:29PM +0800, Yan Zhao wrote:
+> > On Tue, Nov 04, 2025 at 09:57:26AM -0800, Sean Christopherson wrote:
+> > > On Thu, Oct 30, 2025, Yan Zhao wrote:
+> > > > On Wed, Oct 22, 2025 at 12:53:53PM +0800, Yan Zhao wrote:
+> > > > > On Thu, Oct 16, 2025 at 05:32:22PM -0700, Sean Christopherson wrote:
+> > > > > > Link: https://lore.kernel.org/all/20250709232103.zwmufocd3l7sqk7y@amd.com
+> > > > > 
+> > > > > Hi Sean,                                                                         
+> > > > > 
+> > > > > Will you post [1] to fix the AB-BA deadlock issue for huge page in-place
+> > > > > conversion as well?
+> > > 
+> > > If you (or anyone) has the bandwidth, please pick it up.  I won't have cycles to
+> > > look at that for many weeks (potentially not even this calendar year).
+> > Got it!
+> > On the other hand, do you think we can address the warning as below?
+> > The code is based on [2].
+> Hmm, updated the diff.
 > 
-> `fio/t/io_uring` shows 40% improvement on `./kublk -t null -q 2` with this
-> patch in my test VM, so looks very nice improvement.
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 7b4a4474d468..543e1eb9db65 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -853,6 +853,9 @@ static int kvm_gmem_init_inode(struct inode *inode, loff_t size, u64 flags)
+>         inode->i_size = size;
+>         mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+>         mapping_set_inaccessible(inode->i_mapping);
+> +       if (flags &GUEST_MEMFD_FLAG_MMAP)
+> +               lockdep_set_subclass(&inode->i_mapping->invalidate_lock, 1);
+> +
+>         /* Unmovable mappings are supposed to be marked unevictable as well. */
+>         WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
 > 
-> Also it works well by forcing to pass IOSQE_ASYNC on the ublk uring_cmd,
-> and this change is correct because the copy is guaranteed to be done in ublk
-> daemon context.
+>  
+> > As noted in [3], the only scenario can trigger the warning after [2] is when a
+> > process creates a TDX VM with non-in-place-conversion guest_memfd and a normal
+> > VM with in-place-conversion guest_memfd. The two invalidate_lock's don't contend
+> > with each other theoretically.
 
-We good to queue this up then?
+Hmm, no, I think we need to hoist gup() call outside of filemap_invalidate_lock(),
+because I don't think this is strictly limited to TDX VMs without in-place
+conversion.  Even with in-place conversion, I think KVM should allow the source
+page to be shared memory, at which point I believe this becomes a legimate AB-BA
+issue.
 
--- 
-Jens Axboe
+In general, playing lockdep games with so many subsystems involved terrifies me.
+
+> > [2] https://lore.kernel.org/all/cover.1760731772.git.ackerleytng@google.com/
+> > [3] https://lore.kernel.org/all/aQMi%2Fn9DVyeaWsVH@yzhao56-desk.sh.intel.com/
 
