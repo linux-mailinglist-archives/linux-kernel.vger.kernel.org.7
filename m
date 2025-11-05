@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-886819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F6FC368AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:03:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84BACC36975
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 236974FCEE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6312A1A456E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 15:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6707833DEE4;
-	Wed,  5 Nov 2025 15:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E72F30C37C;
+	Wed,  5 Nov 2025 15:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjFlp/Re"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vo0qZWCG"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AF8334C0C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D07919F12D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 15:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762357776; cv=none; b=Ez+6MEM0tO5P1alWbuEjvI+NSNX5Z31aliEsWr9Sevg2Ck8k6eUz0AtZznLnN6xTyXZp4ccopTPp+72RFqX1POxvoP3XVBz4xgugm+wa6opQAb9ZM1v3WXBQmNel9gWJ9mevamUomEvJ4/17tOrE0IV7h5HvfURy7lB/Zz4QZDw=
+	t=1762357817; cv=none; b=MdPMNmCizdoGafYE33HF0xP/O0TSa2VDtWZxUoijXRhL+NHfBN9nkUMGk10KSra4/60vyiSUNEBJEfY0GWTcfBxccu54eN4cBINbXDYCkobmENUS0HUkveh/bAuPHooQGQ07aBFOBOL/FCsMrBuKZqGQUtYYXslyP9O6CTh7iaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762357776; c=relaxed/simple;
-	bh=DtATJshX8Uw22T0PAFWfM5w5TCFndGBfJmM2TM7nGJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a9QGjbEx4hUM7R1BN3EbvZmtjwSFAa+iTc2jxnNy83KGuFJwrDBIAjzOJhhIeLTV66ySLDK6rQWAoR4gWX1igf4dACrfa16lcCcbAUUf8m1VfsvQkTUHOJ9PZgKOAQPHOVEVLXbKTsOj7tY2a7Ba1NS4zJzdrWWv5La229GoMFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gjFlp/Re; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429cf861327so1290307f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:49:34 -0800 (PST)
+	s=arc-20240116; t=1762357817; c=relaxed/simple;
+	bh=hdq/GVI2SGoWK138x7X8PKK2wycYlsaIeDm/ZhRRxLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iAtRNeeDHa4BahO/nXEEsXUvHbGXwGmfqxwrB4R7z2IvLcLk0YNXKrDfrr8TmWtIZtlPkjI9u0BzV4IcdylDbZgzOW0WboJzF7bfrKPLZ1qJ4I0e86I7hnPug79CO8fNRYLFrpcd2HJmk2EEcD9kVeBMAEcJDspkbNxRToSZd9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vo0qZWCG; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ed75832448so12238521cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 07:50:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762357773; x=1762962573; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XcEZQFVnOtJdsvRu0YCs5+hYadtJeqzkPyRDef1hGG0=;
-        b=gjFlp/ReyvozfdECxOHUx3nS9r72ELtFNO33lrbOKM7wznjEm7NAjhELmegkzWBNAH
-         DIAGxqVcEzbC+nZ6XJLN0y0Wvk/I7MHh5wfj1qK5zztjZjFYn9S2vjGo9C/LX61XXzkB
-         MLWNdFgbCuH2D04TqwHN03NB+wlFIln3WJFivQcJl1C5ZbdgiLjcC3eMH6giUc6hv48M
-         BXAoMKG+IAbXmhzEZ8wJ4YcoybrMI9Ugj8afOrV4anzsQDdMaZ45HqyKMf597tGDEOHa
-         KvNnSzGMO5mALAMrtxq8Pc7SsTk7oPkVWtxIsH9Eo0jNIocm++W/HXOUj5GPS3vlzgpO
-         wmGQ==
+        d=google.com; s=20230601; t=1762357815; x=1762962615; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tqiWytgC8JjSUZSjwiIgPuw7W0sj8LhImNjBhccChSg=;
+        b=vo0qZWCGl/CRh/DKrpIwhUvL0V5/IBELS+92E1anvC3w4T3cJyeK01lfWRyQsZVzx1
+         AC22gjUUY55Jxj6+DiKXjbpj6x3NXSpYvXUAaXgx2uNLS8euszhnbctAx72yZ7t8KhPd
+         GygLmIVDmddAwHx1wKxgJCbm1ANnyHxUjVst/v3LQkG4pUFWY77RnHLSVZOBbB5otAiL
+         jbb483loI4Vpknfhpza1irIqYhDCUUJG5dLG1wucGI2ojc3TAwRiJid9elc3ubE8ZOz+
+         KG4ve1NZAGAxNHweQPInM7OKcMMsPrMRvoaaLjAIyUL4M6k8jbumEgDw2KIMfay7R++h
+         yTLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762357773; x=1762962573;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XcEZQFVnOtJdsvRu0YCs5+hYadtJeqzkPyRDef1hGG0=;
-        b=qYMDwVn8tnGSinANnrpA/oyffcx//FmPDN+YW42WR6HM27KAwZljBLGCrrnByxiWtL
-         iyOnUh9TdCcJuJqNqLyuHPdqmVthtDjCPhRpfdWxCBjtLjbuJDxKsaTHo8JnBdkeP8cI
-         4uJeke9JZDBq/+q3v0lbJH6/QV5dpV7yEJesWIF6t+cgOJrYgDMuiEIvVEEYBYgRhf4n
-         tIJmU1MuXCLJk+lg7JBJmfAmDdX2oWAap9ip5/c7WIsQiTa6WMe6FVvRqoJQvSs9295H
-         WBATD8trNaXLgdnBPGwU58toMpybj1mxfwKGMO/lsZJF2EOgJgh24TqfCJAB0ZESZRUS
-         qZng==
-X-Forwarded-Encrypted: i=1; AJvYcCVO9XRlAuy33a6F/sMaw7USu18bx2BFGiSc8pKtrG2y+dMTlB+ZxnJb+YXtXeoKtLiKlBSFANdyOBMkkao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGtsQMBB6BQussqxsfhm5vvMuia+FxV5ZjJ2FMRXGJHtcrxEwu
-	TRtP3fgcm5yzcsQpQ8td/pcWiy7PdbpKsvRyja+ZM1mljCoAE4pjpCWg/eoRVA==
-X-Gm-Gg: ASbGncvWKPbSl3sUGwFl3a0K2thakenJCt25yiLb0NFvvzhyGoevovdP/YlMFL3IYzn
-	H8ZJ6rMKwuYp6Ast114G76nmdOsX9nRn2itRQY8U4fLEPSgG/8GhAkqkP20ndG5MkhFxiGe3IsY
-	36XQD4TeJi0tYWYLVWN+NxnUxVCaUwwgh0aWTsGz+4srCwbQ88cWC9YWjrhN6GgIpu693MVxvzw
-	jkmEFp1toNcP3G3d+bgoRyJDHKnaxnfbRgi4QmohPP1vixbIcocA4Sphx1ki78WVWuBZ2KDxuTq
-	zDV+Pdm5jDqtYKTj1iv+SsAKaBLYIYC/SZnbs94cAEwAH9+1VmHl7vWHaFyAq0m1i055ZgiCFDa
-	JEzQZsp6Rm/YghC4EZyrFATfO7mH+WnhPrQKLQkrTNHi223A11hA/UOH9PZzpcQPWURoHeTU01B
-	5cQtTZrvXeJZCofc3taXNC0LhLyO6go6U9RqO7D7HmBXsny0GPpKLShVAtNLL67jgzChTCMi2YV
-	FuldAxGbtBs1Q==
-X-Google-Smtp-Source: AGHT+IEzs1S1sLAl7p/we9qqsVeyvz/pALsABAmrgieR9Td73H2qHs3uXGuyNO1AkR/BhQluU5EN8Q==
-X-Received: by 2002:a5d:5f91:0:b0:429:a867:41f2 with SMTP id ffacd0b85a97d-429e330bf0bmr2820132f8f.49.1762357773110;
-        Wed, 05 Nov 2025 07:49:33 -0800 (PST)
-Received: from ?IPV6:2001:9e8:f106:5b01:5cbf:5078:e623:8643? ([2001:9e8:f106:5b01:5cbf:5078:e623:8643])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5be4sm11086326f8f.31.2025.11.05.07.49.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 07:49:32 -0800 (PST)
-Message-ID: <ebeada4e-d739-4a8f-8e5f-a8de0d4e885e@gmail.com>
-Date: Wed, 5 Nov 2025 16:49:31 +0100
+        d=1e100.net; s=20230601; t=1762357815; x=1762962615;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tqiWytgC8JjSUZSjwiIgPuw7W0sj8LhImNjBhccChSg=;
+        b=SsGFW8RsMG4jgMUQQ6cLmZx1L84ChNYpXVqzEwpWlCV6wER/VoZGDl3A4/eRUSrBDI
+         sKOWisXxsWEdWRrTg4+OAiOZ2djCeBh9AOPBpa3nS7LH0sGko2Mq8haUO0zQILLS4qn/
+         3FBj1Jxme5A57DELrRqiR8y8fngXAORGF6l+0Cf8PrnqB4buOBuDAccjnPTolRJRXH6F
+         DGFW3axlBHoR8dTFr6lbNGTZ2N2tOW/1+bOvUifZ6pD8xf835lQOIsrPl7KYBxVtd89q
+         618rZYS4R6qp1cN3D6RjTahEaNyvV/v7rRZxBTUN75bwAwV1Lj/TGHpcmCnp4U7MBPUa
+         RZjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuw8fJB5SmZHprcElnl7xlohl+tJP77W4cdpgK9RXu5FUlZkqJlrTztpz+0mEpjHsHHjHZWQGrgCjJyEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+SDKkefX3X0ct2cgPX8i2d6ghVQELK/1B5m039O+la8W94glp
+	40RhhlSrty78L3WHNwEvUQaPa+pYLqtf77UgFAvmvnE8jZ0/YwolDXtyU8U6G3//SsAGhptFlZk
+	NkDuR8Xv7/0JSPJvDfuecHpXcmCPg6e/98CGTfoOr
+X-Gm-Gg: ASbGncssX3t16rJ5KNCYND9thJAM4A1VyzLPUNH3xZx9lZm1Ob15ChW5UEUfh8xUjKf
+	uUZCIInPzA9ed7eocbCb9mMMjnXKRC6lY/7N7FS30wqy/f1XDlm2F94J7gzJFURjRswU5xw+8xw
+	5wuCAIAXvHO2tPXpPhtDDu8IkDYmgsTh/DMS9uOTkJXiip/EOw95lFnnB8jxplQTVplMNp5XFeL
+	Az8l3ZPbSShGD6gnwReT9RmBE4nG8q7mttzQ+tzWATwps2QXqTldTA2bbT+8SgAse/2JoY=
+X-Google-Smtp-Source: AGHT+IGL7epoV3JxPuVAZBmXv50n9ruWohYM79Cz/AFuK5389s6ymRdaTVuwUkUv8UHdtPghyl5+rpr7nFVp+k4bPA4=
+X-Received: by 2002:a05:622a:50c:b0:4ed:608f:b085 with SMTP id
+ d75a77b69052e-4ed72330116mr48188281cf.13.1762357814466; Wed, 05 Nov 2025
+ 07:50:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] gpio: add gpio-line-mux driver
-Content-Language: en-US
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Peter Rosin <peda@axentia.se>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Richard <thomas.richard@bootlin.com>
-References: <20251105103607.393353-1-jelonek.jonas@gmail.com>
- <20251105103607.393353-3-jelonek.jonas@gmail.com>
- <CAMRc=MdQLN5s+MpkLUF2Ggc4vYo30zOXrA=8qkGmXvu7N3JjeA@mail.gmail.com>
- <12efb5b2-058e-4a9c-a45d-4b1b0ee350e7@gmail.com>
- <CAMRc=MehBmd+-z5PRQ04UTWVFYzn7U4=32kyvDCf4ZQ4iTqXhw@mail.gmail.com>
- <74603667-c77a-e791-d692-34d0201e5968@axentia.se>
- <CAMRc=MdkkRnwxx3vcMB3duOteQNdC9eb+A1P4GActou=xY9yJQ@mail.gmail.com>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <CAMRc=MdkkRnwxx3vcMB3duOteQNdC9eb+A1P4GActou=xY9yJQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CACueBy7yNo4jq4HbiLXn0ez14w8CUTtTpPHmpSB-Ou6jhhNypA@mail.gmail.com>
+ <CANn89iL9e9TZoOZ8KG66ea37bo=WztPqRPk8A9i0Ntx2KidYBw@mail.gmail.com> <aQtubP3V6tUOaEl5@shredder>
+In-Reply-To: <aQtubP3V6tUOaEl5@shredder>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 5 Nov 2025 07:50:03 -0800
+X-Gm-Features: AWmQ_blOVSXRRuKdEbWUc_1BRTQAqNrcY5trU04c5gUTWWYtSlNRJ5P-YSXs5vg
+Message-ID: <CANn89iKg2+HYCJgNBMCnEw+cmJY8JPk00VHkREc_jULuc6en5A@mail.gmail.com>
+Subject: Re: [PATCH net] ipv4: route: Prevent rt_bind_exception() from
+ rebinding stale fnhe
+To: Ido Schimmel <idosch@idosch.org>
+Cc: chuang <nashuiliang@gmail.com>, stable@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Networking <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 05.11.25 16:37, Bartosz Golaszewski wrote:
-> Ah, that's what you get for revieweing with a fever. :/
+On Wed, Nov 5, 2025 at 7:34=E2=80=AFAM Ido Schimmel <idosch@idosch.org> wro=
+te:
 >
-> You're right of course.
+> On Wed, Nov 05, 2025 at 06:26:22AM -0800, Eric Dumazet wrote:
+> > On Mon, Nov 3, 2025 at 7:09=E2=80=AFPM chuang <nashuiliang@gmail.com> w=
+rote:
+> > >
+> > > From 35dbc9abd8da820007391b707bd2c1a9c99ee67d Mon Sep 17 00:00:00 200=
+1
+> > > From: Chuang Wang <nashuiliang@gmail.com>
+> > > Date: Tue, 4 Nov 2025 02:52:11 +0000
+> > > Subject: [PATCH net] ipv4: route: Prevent rt_bind_exception() from re=
+binding
+> > >  stale fnhe
+> > >
+> > > A race condition exists between fnhe_remove_oldest() and
+> > > rt_bind_exception() where a fnhe that is scheduled for removal can be
+> > > rebound to a new dst.
+> > >
+> > > The issue occurs when fnhe_remove_oldest() selects an fnhe (fnheX)
+> > > for deletion, but before it can be flushed and freed via RCU,
+> > > CPU 0 enters rt_bind_exception() and attempts to reuse the entry.
+> > >
+> > > CPU 0                             CPU 1
+> > > __mkroute_output()
+> > >   find_exception() [fnheX]
+> > >                                   update_or_create_fnhe()
+> > >                                     fnhe_remove_oldest() [fnheX]
+> > >   rt_bind_exception() [bind dst]
+> > >                                   RCU callback [fnheX freed, dst leak=
+]
+> > >
+> > > If rt_bind_exception() successfully binds fnheX to a new dst, the
+> > > newly bound dst will never be properly freed because fnheX will
+> > > soon be released by the RCU callback, leading to a permanent
+> > > reference count leak on the old dst and the device.
+> > >
+> > > This issue manifests as a device reference count leak and a
+> > > warning in dmesg when unregistering the net device:
+> > >
+> > >   unregister_netdevice: waiting for ethX to become free. Usage count =
+=3D N
+> > >
+> > > Fix this race by clearing 'oldest->fnhe_daddr' before calling
+> > > fnhe_flush_routes(). Since rt_bind_exception() checks this field,
+> > > setting it to zero prevents the stale fnhe from being reused and
+> > > bound to a new dst just before it is freed.
+> > >
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 67d6d681e15b ("ipv4: make exception cache less predictible")
+> >
+> > I do not see how this commit added the bug you are looking at ?
 >
-> And yes, we'd need to modify the bindings.
+> Not the author, but my understanding is that the issue is that an
+> exception entry which is queued for deletion allows a dst entry to be
+> bound to it. As such, nobody will ever release the reference from the
+> dst entry and the associated net device.
 >
->> Or, are we talking about
->>
->>         glm->shared_gpio = devm_gpiod_get(dev, "muxed", GPIOD_ASIS);
->>
->> and
->>
->>         muxed-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
->>
->> ?
->>
-> I would make it: glm->muxed_gpio = devm_gpiod_get(dev, "muxed", GPIOD_ASIS);
+> Before 67d6d681e15b, exception entries were only queued for deletion by
+> ip_del_fnhe() and it prevented dst entries from binding themselves to
+> the deleted exception entry by clearing 'fnhe->fnhe_daddr' which is
+> checked in rt_bind_exception(). See ee60ad219f5c7.
 >
-> Jonas, could you please send another version with that addressed both
-> here and in the bindings?
+> 67d6d681e15b added another point in the code that queues exception
+> entries for deletion, but without clearing 'fnhe->fnhe_daddr' first.
+> Therefore, it added another instance of the bug that was fixed in
+> ee60ad219f5c7.
+>
 
-Yes, I'll do.
-
-> Bartosz
-
-Best,
-Jonas
+Thanks for the clarification.
 
