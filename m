@@ -1,203 +1,150 @@
-Return-Path: <linux-kernel+bounces-886160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEEBC34E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:36:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717B5C34DA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 10:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D483A563E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:31:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EA70934CAA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 09:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931303009E9;
-	Wed,  5 Nov 2025 09:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9553016E8;
+	Wed,  5 Nov 2025 09:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KuZQtyDj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cn3IsDC1";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KuZQtyDj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cn3IsDC1"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJfvml5f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18282FFFAE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 09:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C610301026;
+	Wed,  5 Nov 2025 09:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762335066; cv=none; b=NmDIwenGIfrYxbl0KAWxaHUu5bY6XP1Qmk8R47t1rIQDKZsaV5v8UtImnQbhR0AXy5vT5T5RhNrEtYWzZyfjeEw2wIOksZkaZGbj65Yrzp6CJuimUt1f2G0qHmbToL3LPfPFNnhMribuaSxqD+7hZBztUkO5ZK4RxwSUbaEvpYc=
+	t=1762335073; cv=none; b=BgBB/cJTh8qg/qIOGTqeYB1nePfwdHIKJ803bOINGAOr4+gZP3fzUSGkzW7VkTLup1I+a24UPT+rdYGQP/V83bd098DDBRTX3qlG7SX0PeQ1jHVp1lHnOPdQRCEI1SRl93KusZaWh9+rXYXJHTvDUkkxvyYX1Ho18oug0FAhD3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762335066; c=relaxed/simple;
-	bh=S8h7iUaVF7c86BoK6i0mG+iUthG0j0q+DUEPZ3HsKzM=;
+	s=arc-20240116; t=1762335073; c=relaxed/simple;
+	bh=/1quHRth7L4XkYnHL1XHj+8BCMcoW5MGEeKrzUKwfhw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BO39/V4ExJphg5Vo++KyeP32Xfxe4guAzzzjJHYgYJOiiBl78PREyCktrhX5iaBwVR3yRCG5HpXup0P2rkvZ1jXfCTHbPUYJSP2Y4fc2aRRZzBy0yY1luyenz3izOBc3Ro2CxsThEvqYxDaIsgh0VelTQekhg5VkTSUVSuNgRuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KuZQtyDj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cn3IsDC1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KuZQtyDj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cn3IsDC1; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B9A691F443;
-	Wed,  5 Nov 2025 09:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762335061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p3v0IBakxPfN80lKZ9HG+/JKVr7LVerWut7g1o96eek=;
-	b=KuZQtyDjDUi7V99tm5RZCGH6RaZguDOoGjZ3UKdBXbYzrtKjGV6VqRMeSTuk0gMYQpaWs7
-	ANBEo3cnhvywej/ZR7p4863VnVib1MuQybQG+sJKjhDvGk+o2esTiXlx/P41jamBcA7X6v
-	C5CYJee1QE3CSvn2WIp1rAMlt3uvYgc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762335061;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p3v0IBakxPfN80lKZ9HG+/JKVr7LVerWut7g1o96eek=;
-	b=cn3IsDC1WuCkmuWAXqBY5fycF9EKm9Cx/1ov+sr8+dV249nzyqfUgdOZSsFaUmVjt5VCIh
-	XLspu1adc1xBnpDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KuZQtyDj;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cn3IsDC1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762335061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p3v0IBakxPfN80lKZ9HG+/JKVr7LVerWut7g1o96eek=;
-	b=KuZQtyDjDUi7V99tm5RZCGH6RaZguDOoGjZ3UKdBXbYzrtKjGV6VqRMeSTuk0gMYQpaWs7
-	ANBEo3cnhvywej/ZR7p4863VnVib1MuQybQG+sJKjhDvGk+o2esTiXlx/P41jamBcA7X6v
-	C5CYJee1QE3CSvn2WIp1rAMlt3uvYgc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762335061;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p3v0IBakxPfN80lKZ9HG+/JKVr7LVerWut7g1o96eek=;
-	b=cn3IsDC1WuCkmuWAXqBY5fycF9EKm9Cx/1ov+sr8+dV249nzyqfUgdOZSsFaUmVjt5VCIh
-	XLspu1adc1xBnpDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF959132DD;
-	Wed,  5 Nov 2025 09:31:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Ir3cKlUZC2kpHgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Nov 2025 09:31:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5E667A083B; Wed,  5 Nov 2025 10:30:57 +0100 (CET)
-Date: Wed, 5 Nov 2025 10:30:57 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 18/25] ext4: support large block size in
- mpage_map_and_submit_buffers()
-Message-ID: <cyxlv42ng4cetw55mzxywfmzoqo7uzeemswnwn3ztfuphdpdiv@bjlhohw3gdzs>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-19-libaokun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyK84K9vC+F9Ug5oEQ5kb9lbryAa7KAJVlQmr4LXcrQH3o9YtAIZaYj7uHxCCFCHXEaJT13wIW9dzCmY1C3b4AnJs5cUU9UZZYD4eLgj4j02R5riAhAukCIldOA2sKfpiaWi+jVZ+hiZSKPZPwfQAjyazpReWq7ZKpbUlhPjYcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJfvml5f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFAFC116B1;
+	Wed,  5 Nov 2025 09:31:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762335073;
+	bh=/1quHRth7L4XkYnHL1XHj+8BCMcoW5MGEeKrzUKwfhw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qJfvml5fEdgBIeHYD7vaMyrMbHdEsmpIMoe5nBjM3r0/2wSEkRf258TN+4PQUyztk
+	 U2xCS0NX+zWzqTICSVStcVmmkEGLTuHXPSKj+2+hM3UDsQvNWR8q3ObZVWFwsowyM0
+	 cyGC4PTFUHt7ognM7kXaU5QOgl997IJemKvi+aGX9cCHvVAcbUCNfOjh3mg1fQI11y
+	 noVVmiJylnGcUm3DdFMO4ArsPu5tpIXrFzqlLDJMqE5Epa0hvi5KePo7/CuFpvOTyQ
+	 8ZGS4SrWARoCPyhMY4bJ4und9bh5S1KBOJkk4gGg/huAwI9EGFAeseNY3NzPFYPE3N
+	 EYyIMiJuB1ajA==
+Date: Wed, 5 Nov 2025 15:01:03 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, PCI <linux-pci@vger.kernel.org>, 
+	"open list:THERMAL" <linux-pm@vger.kernel.org>
+Subject: Re: PCIe link training and pwrctrl sequence
+Message-ID: <rz6ajnl7l25hfl2u7lloywtw7sq7smhb63hg76wjslyuwyjb7a@fhuafuino5kv>
+References: <zk4ea5cibrkp4vttuy4evrqybf76b3nop5lnyck4ws4nyf2yc4@ghj2eyswsoow>
+ <CAMRc=MdWmO4wvX6zpzN0-LZF1pF5Y2=sS8fBwr=CKMGWHg+shA@mail.gmail.com>
+ <rfr5cou6jr7wmtxixfgjxhnda6yywlsxsei7md7ne3qge7r3gk@xv6n5pvcjzrm>
+ <CAMRc=Me9Td5G9qZV8A98XkGROKw1D2UeQHpFzt8uApF8995MZw@mail.gmail.com>
+ <rvsyll4u6v4tpaxs4z3k4pbusoktkaocq4o3g6rjt6d2zrzqst@raiuch3hu3ce>
+ <CAMRc=Me+4H6G+-Qj_Gz2cv2MgRHOmrjMyNwJr+ardDR1ndYHvQ@mail.gmail.com>
+ <fydmplp5z4hjic2wlmvcy6yr3s5t5u4qsgo7yzbqq3xu2g6hdk@v4tzjj3ww4s6>
+ <CAMRc=McGuNX42k_HdV20zW+buACBTmTZEHWgS-ddRYsvnfwDSg@mail.gmail.com>
+ <ibdmghl5dg3oda2j5ejp35ydky4xkazewhdvskm7p32vstdegr@36pj32b6dt44>
+ <CAGb2v65acHoO5025ZN7DhX0xVQf6JyHmUK3CB9UhnmTDDHq6vg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-19-libaokun@huaweicloud.com>
-X-Rspamd-Queue-Id: B9A691F443
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,huawei.com:email,suse.cz:email,suse.cz:dkim]
-X-Spamd-Bar: /
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGb2v65acHoO5025ZN7DhX0xVQf6JyHmUK3CB9UhnmTDDHq6vg@mail.gmail.com>
 
-On Sat 25-10-25 11:22:14, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+On Wed, Oct 22, 2025 at 12:39:41AM +0800, Chen-Yu Tsai wrote:
+> (recipient list trimmed down and added PCI & pwrctrl maintainers and lists)
 > 
-> Use the EXT4_P_TO_LBLK/EXT4_LBLK_TO_P macros to complete the conversion
-> between folio indexes and blocks to avoid negative left/right shifts after
-> supporting blocksize greater than PAGE_SIZE.
+> On Tue, Oct 21, 2025 at 8:54 PM Manivannan Sadhasivam <mani@kernel.org> wrote:
+> >
+> > On Tue, Oct 21, 2025 at 02:22:46PM +0200, Bartosz Golaszewski wrote:
+> > > On Tue, Oct 21, 2025 at 2:20 PM Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > > >
+> > > > >
+> > > > > And with the implementation this series proposes it would mean that
+> > > > > the perst signal will go high after the first endpoint pwrctl driver
+> > > > > sets it to high and only go down once the last driver sets it to low.
+> > > > > The only thing I'm not sure about is the synchronization between the
+> > > > > endpoints - how do we wait for all of them to be powered-up before
+> > > > > calling the last gpiod_set_value()?
+> > > > >
+> > > >
+> > > > That will be handled by the pwrctrl core. Not today, but in the coming days.
+> > > >
+> > >
+> > > But is this the right approach or are you doing it this way *because*
+> > > there's no support for enable-counted GPIOs as of yet?
+> > >
+> >
+> > This is the right approach since as of today, pwrctrl core scans the bus, tries
+> > to probe the pwrctrl driver (if one exists for the device to be scanned), powers
+> > it ON, and deasserts the PERST#. If the device is a PCI bridge/switch, then the
+> > devices underneath the downstream bus will only be powered ON after the further
+> > rescan of the downstream bus. But the pwrctrl drivers for those devices might
+> > get loaded at any time (even after the bus rescan).
+> >
+> > This causes several issues with the PCI core as this behavior sort of emulates
+> > the PCI hot-plug (devices showing up at random times after bus scan). If the
+> > upstream PCI bridge/switch is not hot-plug capable, then the devices that were
+> > showing up later will fail to enumerate due to lack of resources. The failure
+> > is due to PCI core limiting the resources for non hot-plug PCI bridges as it
+> > doesn't expect the devices to show up later in the downstream port.
 > 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/inode.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+> Side note:
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index d97ce88d6e0a..cbf04b473ae7 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2289,15 +2289,14 @@ static int mpage_map_and_submit_buffers(struct mpage_da_data *mpd)
->  	struct folio_batch fbatch;
->  	unsigned nr, i;
->  	struct inode *inode = mpd->inode;
-> -	int bpp_bits = PAGE_SHIFT - inode->i_blkbits;
->  	pgoff_t start, end;
->  	ext4_lblk_t lblk;
->  	ext4_fsblk_t pblock;
->  	int err;
->  	bool map_bh = false;
->  
-> -	start = mpd->map.m_lblk >> bpp_bits;
-> -	end = (mpd->map.m_lblk + mpd->map.m_len - 1) >> bpp_bits;
-> +	start = EXT4_LBLK_TO_P(inode, mpd->map.m_lblk);
-> +	end = EXT4_LBLK_TO_P(inode, mpd->map.m_lblk + mpd->map.m_len - 1);
->  	pblock = mpd->map.m_pblk;
->  
->  	folio_batch_init(&fbatch);
-> @@ -2308,7 +2307,7 @@ static int mpage_map_and_submit_buffers(struct mpage_da_data *mpd)
->  		for (i = 0; i < nr; i++) {
->  			struct folio *folio = fbatch.folios[i];
->  
-> -			lblk = folio->index << bpp_bits;
-> +			lblk = EXT4_P_TO_LBLK(inode, folio->index);
->  			err = mpage_process_folio(mpd, folio, &lblk, &pblock,
->  						 &map_bh);
->  			/*
-> -- 
-> 2.46.1
+> Today I was looking into how the PCI core does slot pwrctrl, and it doesn't
+> really work for some of the PCI controller drivers.
 > 
+> The pwrctrl stuff happens after the driver adds the host bus bridge.
+> However drivers are doing link training before that. If the power is
+> not on, link training will fail, and the driver errors out. It never
+> has a chance to get to pwrctrl.
+> 
+> I wonder if some bits should be split out so they could be interleaved with
+> link management on the host side. AFAICT only dwc and qcom will rescan the
+> bus when an interrupt says the link is up. Other controllers might not have
+> such an interrupt notification. I was looking at the MediaTek gen3 driver
+> specifically.
+> 
+
+This is a known issue. With the initial design of the pwrctrl framework, we
+thought that the pwrctrl devices should be created without controller
+intervention. But it is proving to be wrong as some controllers expect the
+devices to show up before the PHY initialization, as yours.
+
+We are working on a series (almost complete, just needs cleanup) that moves the
+pwrctrl creation to a new exported API and allows the controller drivers to call
+the API from whereever they want based on the requirement. This series also
+fixes the above mentioned hotplug/PERST# issues by scanning all the PCIe nodes
+in one shot and creating pwrctrl devices and making use all of them gets probed
+(just the pwrctrl drivers, not PCIe client drivers) before deasserting PERST#
+and then scanning the bus. This would require all the pwrctrl drivers to be
+loaded before probing the controller driver (otherwise, probe deferral will
+happen), but that's a valid dependency.
+
+This will allow the PCI core to find all the devices during the initial bus
+scan and will fix the resource allocation issue.
+
+- Mani
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+மணிவண்ணன் சதாசிவம்
 
