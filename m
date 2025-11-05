@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-886845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61122C3696F
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:12:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F4FC36A58
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 17:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E8624FDB47
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5CFF664842
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 16:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8883346A3;
-	Wed,  5 Nov 2025 16:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F5A335558;
+	Wed,  5 Nov 2025 16:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fhzPk93K"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fEwgo+LU"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB5A320A24
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA76C335547
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 16:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762358774; cv=none; b=OCWWJSnPhF2QMFEgqhjp3H9YtXMrnmAl/hLsvM+hKAdB/EHXA3IhE8Axc9XTSRYw5lFh3W1MrKhkJ53K12VqSty2h/oPMkZWoeujyg+uaoMCPvwzmqNGh90tkTylmzhi1reSksqgYLLQdwpMbWDfpT0OiyYLWu9+5twpkPdZa4c=
+	t=1762358913; cv=none; b=HXseOa+06cCv4dmzcP+d8RHn00LiDDZ4E8ifT1m8O5b337BFNO1WQIEUBrJBjcsgUhA8OEiTbv6nFlWW//wzjo05Wnv8PqhD4rYgJWhyBprUWZafYn91a9zLDQsXaczRWG38LdjjfmH2oAlbhxsmZgjdEpUwAokwy8eKOPS56zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762358774; c=relaxed/simple;
-	bh=KcSnJWC60R138mru0pJ0myDzIFcgggIJUrFvZuwSLjo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mnEg+haaFYqypqbcdWwq4P2seWSFPV+PH8pJBXqdmpZiggemyMG2B5q6ZfV/fhBw5X+TUftG7GXsqmg/QNDfmyD4B3/UJXVZ+VA8tv+NBOp3GeUsqiVsOVCJKC4j7rRlgPsXpu4VcxOekAi6ISogEIub6/YBeGhgkNWZeriF4d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fhzPk93K; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1762358913; c=relaxed/simple;
+	bh=qhthCQOxbmIIKyNheM8Rnhvvbyw9VuqTjkGB1Gw9Shs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cSj544NYnLh6EYzUIvql2IOfGNMV20B5n/aMwoiiqs8HU0N+OxdWRMj52JrXAma2r9P4lqHgIEFcpT4JzdE66uh6YsiNNThCUNpoOsAXYiV/rOc3S3ZlARHn6Sd2yJCeppcVnOAl5eRUt08Unl0iiEThxMTptGgh6BcUmnKJ14I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fEwgo+LU; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64080ccf749so9359266a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:06:11 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477563bcaacso15404405e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 08:08:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762358769; x=1762963569; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1762358909; x=1762963709; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9JU55dvg1sxiC93br6YKsgoKQQ1DbSeUT0OqWuZGXWs=;
-        b=fhzPk93KJPs1BjdGAuKWk+ncOOPfEq/to3yJ+7N3+m5EWVwTu4jyMb0TfnNmFRD9TQ
-         RkzdyJGkmFB5Z9aaaNtRkYTYw+J1+TMdq4E382TIMdrZfAcDGmnqDUJ3zlGVykybyxWp
-         sB9b5Ylh6w/khQugI1kisWGeyMAGALeE1+Ovjkgj/e2IbtWfrv6kxPo6b+6vt45RcqBZ
-         Jp5t++kCvvQ4CHddXQBM+Q0iPtvwtpg21SL2W+9MsqOB7tF4u7p51xHwDq9nzvsSOPYF
-         uWSaskh5/ATMduTkjZHrgL9y/nhcNuGdpawOEFmxRgBFl9j4w/gtDGEJs9q/LzRBtph1
-         TX/A==
+        bh=f1yBP/HblraJDKUqDJbJpnQ6bTQTPKGimKm7/HBY3uI=;
+        b=fEwgo+LUn1JIcmd4fOYUTwR/jPimwMGMx0wEX7Hc/CiCGID2bxFmLcRF2vAQ4ixGRD
+         v3W1vhr9T+VMgKDSjrCOBPRBdMs6oEnvAu2TCnPt2wHuReJC6P2H5f4kQ1cCQFTFmuxR
+         55Ri/CMrj548FjVwNuP7XLbojQoAVmpE8o4j8++vWLBbPz6yMpvQHX0pYQTYL4c+7n5H
+         3c4HFURCYdWYEvexECi5lh4/xTFl0ZWasKshkkVFH0PjKBQ8MWwTBqJvMZzFcQe56fJw
+         m2y4P9oKPtz4n+dT2IsktVgBKz6X/9zn/cq+edt0c7U8+0o68UmmgHaRJ04J4tewnpwp
+         NHGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762358769; x=1762963569;
+        d=1e100.net; s=20230601; t=1762358909; x=1762963709;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9JU55dvg1sxiC93br6YKsgoKQQ1DbSeUT0OqWuZGXWs=;
-        b=ECOD8M7rHa1wp27RqyCwEmsuJgs4WZgbTf2SdN73MVIuzU4WCz5g2Aj32I5CljHExO
-         po4/qKqdH4t68l+F9RJSPdZl5rDSUDpbnXtmrHt62+UMnIbtEmpg9pFAL6hZ2UqJ1+7t
-         AmTAtFUPF/kO6zYo7rx9dRnu3swraVoFMUITtVHqEYsXE0LopeZSKZgm3fQqcvvS/HPP
-         n6qJM/BGARM/RS0FJ/xIjNVHlPI9AOHE39HGpP5foOD/41KBM0BWrDULaIpSfOefikil
-         avJWj2vB85LG2aMcBNmFar48Gw+cuFYidWZ1s5F5qj0w2HMUHYS9R3Cep6IIbNhSrl/0
-         2f/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUbPRnyuqvwTsXj+PXP845dCJelRq80WMph36YJ0OxNbxov8y4wsHtk18NBstBp5hL9TXZ80A82ZKs0W6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc5jWz8pqEX+JnWcvu6zfIw7WADs58CoKxJtjm390r3m5GVE+a
-	Svr1VrtAPxe0IHpYfC2DDRV2mIPdgI+CecpuuW1EC+8HkQph17jgSaPYksPItsG08ac=
-X-Gm-Gg: ASbGncvZN/OQ0HL5MselL6XKC7ORD/jZOp5GCkYr3Mq+dQEEwIuavoCQs/BAnlHO6Wk
-	+Ml0rEd945KYKfYyLBioEvdZPSPl1Oq8IiskApu1Y+QPRxirsH3F9Yt5yPsqikg63yrU5LH7EEe
-	qa1aGPG0mFd+fY+cxVsPLsHy2yr+RZ6SVkd15ZLp5pyA6Gg6Dffminsral8bUAsU7MgBS0S27l2
-	Q8nfEu/jQ75aAlumtEClzKiRZ/Y3ueCh5kzNmoM2Rv4/FwuRwazWK3It0a3Oi9/XNkbSpBvvVOE
-	NyuXSrm16eE3TMIs1YkB4vvQaTnkcvGvDLot/twhuWTFfMYk4YnnOq9Pz39Ih7OkUqxuPtLxQir
-	Ar3UgfsL28liqG3crBBfnAXKZddg/x27x1ARRTj/xwRCxsmGNLNMBuQ2/omtu4BFAVPPRbOietk
-	I2up/7eRgGMbCCKjlIAg/RnfdGj+xrbS9aETcBJfig3mZtjBPl1GI=
-X-Google-Smtp-Source: AGHT+IH6FMBpzs4E7NTuobAA+/xfJzq13fX0E43pfnxRPchTh+4OeHM+pc+2H7s+7utdeqkabqOA2A==
-X-Received: by 2002:a17:907:7252:b0:b6d:4fe5:ead8 with SMTP id a640c23a62f3a-b72652bace2mr426204166b.25.1762358769482;
-        Wed, 05 Nov 2025 08:06:09 -0800 (PST)
-Received: from localhost (host-79-51-28-73.retail.telecomitalia.it. [79.51.28.73])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7276298b54sm129632666b.14.2025.11.05.08.06.08
+        bh=f1yBP/HblraJDKUqDJbJpnQ6bTQTPKGimKm7/HBY3uI=;
+        b=sAMNZ2zJIlHtv+VZChhbR3ZDgMK/Dv/UboAtYvHvrASe4fzWs1r2i27Dkn4IkvqkNl
+         RDuTHe2hnk9hb72qaR6Yyh6p+mvttQ9uIsZKyz6W83wyViyyUdNd9AFks5OS+OGQTQo/
+         +qUKorJKtFA5w2mLYuqHJA2OnNn5PnLMaxWM6xo6gwhkW7XBThcHe1tBmsfBFOSzhWG1
+         DbJH1A46m87bJmQzACQ+tP7IvNEHgixm3Tl15KFeQ7A4D+xwttNTedxOCeIDUFVS0wEl
+         RcMvuUQPtRzvvtLIA3nppkU81qAoypU5Wy1H8xB/0NBe4aJI4hn/FvB/eFCVATcUuuBB
+         p4HQ==
+X-Gm-Message-State: AOJu0YxmmR34Iti60R/P5NvjG4n692FQ6+YqtORDLr9Krn035SdwM8bK
+	Jx1AAITPzeL5T07L0Wkze+unnlymfWtGrJ0mzFuoLuJEEyfcAVwj54oT+wx196VSM1Ksa5Nr8pG
+	OlG6U
+X-Gm-Gg: ASbGncvwxRXTZmMpU6ZST9WqZac7tIgnsDc8KQwzCYl6FwU1szksr4gUHS6PA3a2Oy6
+	Z99hSlx6jX6n4yyUxp2A8UwJ3C2dfenTvl01pZ7Oj8+I9mYCZtNNutuTiCc94XHZ0yRysGr20uy
+	/7AD86z94ru90tKXlkYInyqMuasr7D38ptl37bI+o6QBbwRo7VRFlucy3GzyV94egx8du0q7OFg
+	oiFg0fPmyUpM2R7O4ihv7eIDF+orFm5YuTMM8OILgYIyzGKGd7aEvui9rzGmHuyaT9FbtTtfzca
+	xihnxowUshToF6+pH3nxUuqO8NTEb/7Ra2SX7ZcS88A008erjheBF6bhncPAxbVj+4/yhOruri4
+	RsFqRaF/Of8W9BKfUfNeS0cjXN8yeJveqJX6KJFG1k8qG6hZWLjbx+/RU6T0B5v0FbWR8ZL65D/
+	kx0O4S96zDWmiXQzguAr9q/0o=
+X-Google-Smtp-Source: AGHT+IEXc55RGqBKbQMEgoEC9e3feBi0MKsyQiqEKNba7Kuda4jmUF2LBb9/lCW7e1CfbTQzDss9Iw==
+X-Received: by 2002:a05:600c:621b:b0:477:fad:acd9 with SMTP id 5b1f17b1804b1-4775ce7dfcfmr49120665e9.34.1762358908612;
+        Wed, 05 Nov 2025 08:08:28 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc552sm58255715e9.6.2025.11.05.08.08.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 08:06:09 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	iivanov@suse.de,
-	svarbanov@suse.de,
-	mbrugger@suse.com,
-	Phil Elwell <phil@raspberrypi.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>
-Subject: [PATCH v2] of: reserved_mem: Add fixup function to amend corrupted reserved memory regions
-Date: Wed,  5 Nov 2025 17:08:18 +0100
-Message-ID: <625eee03632c6f5c4349d6f3cdfe3f85a8e4c466.1762356853.git.andrea.porta@suse.com>
-X-Mailer: git-send-email 2.51.0
+        Wed, 05 Nov 2025 08:08:28 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] RAS/CEC: replace use of system_wq with system_percpu_wq
+Date: Wed,  5 Nov 2025 17:08:19 +0100
+Message-ID: <20251105160819.302988-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,188 +94,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When parsing static reserved-memory DT nodes, any node with a reg property
-length that is not perfectly conformant is discarded.
-Specifically, any reg property whose length is not a multiple of the
-parent's (#address-cells + #size-cells) is dropped.
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-For example, in the following scenario:
+This lack of consistency cannot be addressed without refactoring the API.
 
-/ {
-    #address-cells = <0x02>;
-    #size-cells = <0x02>;
-    ...
+This patch continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
 
-    reserved-memory {
-	    #address-cells = <0x02>;
-	    #size-cells = <0x02>;
-	    ...
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-	    nvram {
-		    reg = <0x00 0x3fd16d00 0x37>;
-		    ...
-	    };
-    };
-};
+Replace system_wq with system_percpu_wq, keeping the old behavior.
+The old wq (system_wq) will be kept for a few release cycles.
 
-Even though the reg property of the nvram node is not well-formed from a DT
-syntax perspective, it still references a perfectly valid memory region of
-0x37 bytes that should be reserved.
-
-This has at least one real-world equivalent on the Raspberry Pi 5, for
-example, on which the firmware incorrectly overwrites the nvram node's reg
-property without taking into account the actual value of the parent's
-size-cells.
-
-Add a fixup function that corrects the FDT in early stage by adding the
-missing cell in the size portion of the reg property, so that the resulting
-DT is well-formed and can be correctly parsed.
-Since it's searching for 'raspberrypi,bootloader-config' compatible
-node, this fix is specific for Raspberry PI.
-
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
-This patch can be considered a followup version of [1] even though the
-commit subject has changed entirely and the approch has evolved from a
-general heuristic to a fixup handler specific for RPi5.
+ drivers/ras/cec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-A couple of notes:
-
-* The FDT region is precisely sized so I needed to copy it on a new
-  buffer big enough to contain it. Using memblock to dinamically allocate
-  the precise amount of memory is not feasible since memblock cannot
-  be used before paging is up. Also, AFAIK any memory allocated through
-  memblock will be reclaimed by the buddy allocator and we need that
-  memory to be preserved since it will be referenced by the live DT.
-  This could *may* be avoided via a clever usage of memblock_reserve()
-  and mapping the memory later, but we still have the former problem of
-  not being able to map the memory for immediate usage.
-  So I've just used a static buffer that should be big enough to
-  accomodate for the DTB + overlays.
-  For reference, those are the current sizes for the DTBs for RPi5:
-
-  - upstream DTB: ~23Kb
-  - downstream DTB: ~85Kb
-  - size of the static buffer: 150Kb
-
-  If this space is of concern to anyone we can maybe guard this fixup
-  handelr behind a CONFIG_ option.
-
-* This fixup is specific for RPi5 and I don't have in mind any other
-  use cases for other handlers, but in case we need to extend this for
-  other platforms it may be worth to setup a list of handlers to be
-  registered so that they can be called in sequence (and on specific
-  nodes).
-
-Links:
-[1] - https://lore.kernel.org/all/aO-Q6xMDd8Bfeww2@apocalypse/
----
- drivers/of/of_reserved_mem.c | 77 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 76 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index 2e9ea751ed2d..2c278ab91b9d 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -148,6 +148,73 @@ static int __init early_init_dt_reserve_memory(phys_addr_t base,
- 	return memblock_reserve(base, size);
+diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+index e440b15fbabc..15f7f043c8ef 100644
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -166,7 +166,7 @@ static void cec_mod_work(unsigned long interval)
+ 	unsigned long iv;
+ 
+ 	iv = interval * HZ;
+-	mod_delayed_work(system_wq, &cec_work, round_jiffies(iv));
++	mod_delayed_work(system_percpu_wq, &cec_work, round_jiffies(iv));
  }
  
-+static void * __init of_apply_rmem_fixups(const void *fdt, int node)
-+{
-+	int t_len = (dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32);
-+	int parent_node, new_node, child;
-+	static char new_fdt[150000];
-+	int len, err, alloc_size;
-+	phys_addr_t base, size;
-+	__be32 new_reg_prop[4];
-+	const __be32 *prop;
-+	const char *uname;
-+
-+	fdt_for_each_subnode(child, fdt, node) {
-+		if (!of_fdt_device_is_available(fdt, child))
-+			continue;
-+
-+		prop = of_get_flat_dt_prop(child, "reg", &len);
-+		if (!prop ||
-+		    !of_flat_dt_is_compatible(child, "raspberrypi,bootloader-config") ||
-+		    (t_len - len) != sizeof(__be32) ||
-+		    t_len != 4 * sizeof(__be32))
-+			continue;
-+
-+		alloc_size = fdt_totalsize(fdt) + sizeof(__be32);
-+		err = fdt_open_into(fdt, new_fdt, alloc_size);
-+		if (err) {
-+			pr_err("Failed to open FDT\n");
-+			return ERR_PTR(err);
-+		}
-+
-+		base = dt_mem_next_cell(dt_root_addr_cells, &prop);
-+		size = dt_mem_next_cell(1, &prop);
-+		new_reg_prop[0] = cpu_to_be32(upper_32_bits(base));
-+		new_reg_prop[1] = cpu_to_be32(lower_32_bits(base));
-+		new_reg_prop[2] = 0;
-+		new_reg_prop[3] = cpu_to_be32(size);
-+
-+		parent_node = fdt_path_offset(new_fdt, "/reserved-memory");
-+		if (parent_node < 0) {
-+			pr_err("No reserved-memory node in the copied FDT\n");
-+			return ERR_PTR(parent_node);
-+		}
-+
-+		uname = fdt_get_name(fdt, child, NULL);
-+		if (!uname) {
-+			pr_err("Cannot retrieve the node name\n");
-+			return ERR_PTR(-EINVAL);
-+		}
-+
-+		new_node = fdt_subnode_offset(new_fdt, parent_node, uname);
-+		if (new_node < 0) {
-+			pr_err("No %s node in the copied FDT\n", uname);
-+			return ERR_PTR(new_node);
-+		}
-+
-+		err = fdt_setprop(new_fdt, new_node, "reg", new_reg_prop, sizeof(new_reg_prop));
-+		if (err < 0) {
-+			pr_warn("Cannot fix 'reg' property for node %s: %s\n",
-+				uname, fdt_strerror(err));
-+			return ERR_PTR(err);
-+		}
-+
-+		return new_fdt;
-+	}
-+
-+	return NULL;
-+}
-+
- /*
-  * __reserved_mem_reserve_reg() - reserve all memory described in 'reg' property
-  */
-@@ -295,7 +362,8 @@ int __init fdt_scan_reserved_mem(void)
- 	int node, child;
- 	int dynamic_nodes_cnt = 0, count = 0;
- 	int dynamic_nodes[MAX_RESERVED_REGIONS];
--	const void *fdt = initial_boot_params;
-+	void *fdt = initial_boot_params;
-+	void *fixed_fdt;
- 
- 	node = fdt_path_offset(fdt, "/reserved-memory");
- 	if (node < 0)
-@@ -306,6 +374,13 @@ int __init fdt_scan_reserved_mem(void)
- 		return -EINVAL;
- 	}
- 
-+	fixed_fdt = of_apply_rmem_fixups(fdt, node);
-+	if (!IS_ERR_OR_NULL(fixed_fdt)) {
-+		initial_boot_params = fixed_fdt;
-+		fdt = fixed_fdt;
-+		node = fdt_path_offset(fdt, "/reserved-memory");
-+	}
-+
- 	fdt_for_each_subnode(child, fdt, node) {
- 		const char *uname;
- 		int err;
+ static void cec_work_fn(struct work_struct *work)
 -- 
-2.35.3
+2.51.1
 
 
