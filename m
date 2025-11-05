@@ -1,103 +1,124 @@
-Return-Path: <linux-kernel+bounces-886446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-886449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3B3C35A3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:25:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE03C35A67
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 13:29:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72FE31A233E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212934252C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 12:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AC4314A94;
-	Wed,  5 Nov 2025 12:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55511314A6D;
+	Wed,  5 Nov 2025 12:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hH734Fyu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="GK4T82Md"
+Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9353314A62;
-	Wed,  5 Nov 2025 12:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6373148DA;
+	Wed,  5 Nov 2025 12:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762345495; cv=none; b=F9w9IHacopC3yCrV5LzPEdYawqHIGa45hsliZrrNRWte8KctH/2/j5zUaR7xIU+i8ndaiYe90X3uLVOGEq0LfTNIqZOZHkX8tT6eBpGjQlrGxC87Oh6ON+zp+zTNtKu3L8AT5xlywxD410CG2LGd0Jw/uz34eBJiDtbfnGDOtyo=
+	t=1762345667; cv=none; b=I9GVy1A3e1IOD2PT9Aqg5uMiMETvkNw7QQsmXF7KQQ5SCfHjSKD9/X1ZTtnIAKVG66lwSji64yJfy+X6vZlOMGQ6NeEaI2cbu3hRBvbPDNmtu4HaTJIYlt7HYUVWuV0nwpQcSACXBOZLvfnjZBaXfM11Cnv05odokl5OPyeb54E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762345495; c=relaxed/simple;
-	bh=FKFCO9REDvc4qdrHAWjM2S45BMi7OlPGh6Peucxlhzo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JZnr7LWnp/ELmrZ+o41uSK6j1DkZdlMfz+QgeEnx0FXDuJ4RmqtPqG7P84tEhwF3AxAA8nk5vJnYL1jpcKNTEBLouXAGb8YO9cLYxMffs4+DvXNxo1ZQFJROXht3oSFzHG0XJPZ/oxalsFJAo0CxsCXKVYe4Tx9msaJnNVXF4zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hH734Fyu; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762345493; x=1793881493;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=FKFCO9REDvc4qdrHAWjM2S45BMi7OlPGh6Peucxlhzo=;
-  b=hH734FyuCoYWrzfM4ReSK0YE8yt02bg9TCguFg16jGhpsfJmzSCgZoZH
-   hR5YIH0jcFBEocoDze0tkybPpLgUDBlpZvynCE++sHiuUC5Kqm91BFGEH
-   8Bsm6Q0WA/K/DbBnwurdEFvUu3UdzBoBIJxZpG5hBOA333m3geq4p1SOl
-   BXpF0hvUXZ58adP3bW00jx/9Ifuy9NKUvn01X5VeKvVuxpg0WhyykpJ3c
-   YQuNPN0EdnKxPeQwvImfiKSuS5HvaaFXWVaiVFN710jxIZfxA0SfqtWjj
-   nBObvCGymeuMYf0LbiX1qP9/jGlaUsjZpY6HlFBpgMl0gZ6TLhVjHN6tu
-   A==;
-X-CSE-ConnectionGUID: F8MIST8+TVyKbOsLpsdE2w==
-X-CSE-MsgGUID: whqHEojYTQ6qQ0a0XH1hFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11603"; a="63663189"
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="63663189"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 04:24:53 -0800
-X-CSE-ConnectionGUID: D75+d1xyQcqguPdfkIKw1A==
-X-CSE-MsgGUID: 7tIFXF4CTHmFbyMYzt+dLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,281,1754982000"; 
-   d="scan'208";a="191542555"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.252])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 04:24:50 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>, Shyam-sundar.S-k@amd.com, 
- hansg@kernel.org, Antheas Kapenekakis <lkml@antheas.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Pearson <mpearson-lenovo@squebb.ca>
-In-Reply-To: <20251008135057.731928-1-lkml@antheas.dev>
-References: <20251008135057.731928-1-lkml@antheas.dev>
-Subject: Re: [PATCH v1] platform/x86/amd: pmc: Add Lenovo Legion Go 2 to
- pmc quirk list
-Message-Id: <176234547810.15175.1595657174833282941.b4-ty@linux.intel.com>
-Date: Wed, 05 Nov 2025 14:24:38 +0200
+	s=arc-20240116; t=1762345667; c=relaxed/simple;
+	bh=aDmhW/SCqJy4FgWJbCC+D+B6edbfpUj7YKK4HhZDGMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=py3qrmcWJ4O+kayc+NcSJ+hs78Z+mPVUgFTDQhYUk3kOqxOInvi1q6RRijgNqob5Ab+YNmrw8LiAFVm+OBVVoQsW/ASUW/ma8CLNK0rQmvHf6c9JpUC6jQdA4gHlBd3PzoVMC6HYznHN2fG7CemcMfB410VqjuHIlV+395pq+BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=GK4T82Md; arc=none smtp.client-ip=178.154.239.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net [IPv6:2a02:6b8:c21:2d8b:0:640:7d49:0])
+	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id C4FE0C01E6;
+	Wed, 05 Nov 2025 15:25:54 +0300 (MSK)
+Received: from i111667286.ld.yandex.ru (unknown [2a02:6bf:8080:673::1:31])
+	by mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id oPkVj10F2uQ0-f1IIpPFi;
+	Wed, 05 Nov 2025 15:25:54 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1762345554;
+	bh=MpDXcupdB1+HpjGFUEV7oRUOAUpuEPaulnCwN+XtQsM=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=GK4T82MdqXVbkUB9Wb5FXj4+WOmkbe+MgAMoRAR+hcLpC3TIaUjnaecIEGnoVvjRX
+	 Hvtw6Q+yodwkIPVN1v9Wq17aI8D9ZEFTPVq4O9CG1C4jtMCWySf5WV5wEExiQpUTiQ
+	 DitsS4ePZgZiX4EZChfFGfFjJ6TZP14j72JxnxHM=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Andrey Troshin <drtrosh@yandex-team.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrey Troshin <drtrosh@yandex-team.ru>,
+	Steve French <sfrench@samba.org>,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] net: dlink: handle copy_thresh allocation failure
+Date: Wed,  5 Nov 2025 15:25:50 +0300
+Message-ID: <20251105122550.1497-1-drtrosh@yandex-team.ru>
+X-Mailer: git-send-email 2.51.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 08 Oct 2025 15:50:57 +0200, Antheas Kapenekakis wrote:
+From: Yeounsu Moon <yyyynoom@gmail.com>
 
-> The Lenovo Legion Go 2 takes a long time to resume from suspend.
-> This is due to it having an nvme resume handler that interferes
-> with IOMMU mappings. It is a common issue with older Lenovo
-> laptops. Adding it to that quirk list fixes this issue.
-> 
-> 
+[ Upstream commit 8169a6011c5fecc6cb1c3654c541c567d3318de8 ]
 
+The driver did not handle failure of `netdev_alloc_skb_ip_align()`.
+If the allocation failed, dereferencing `skb->protocol` could lead to
+a NULL pointer dereference.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+This patch tries to allocate `skb`. If the allocation fails, it falls
+back to the normal path.
 
-The list of commits applied:
-[1/1] platform/x86/amd: pmc: Add Lenovo Legion Go 2 to pmc quirk list
-      commit: ad537973e63dbd8fa1342489c818ab26cf447649
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Tested-on: D-Link DGE-550T Rev-A3
+Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Link: https://patch.msgid.link/20250928190124.1156-1-yyyynoom@gmail.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+[Andrey Troshin: fixe merge conflicts]
+Signed-off-by: Andrey Troshin <drtrosh@yandex-team.ru>
+---
+Backport fix for CVE-2025-40053
+Link: https://nvd.nist.gov/vuln/detail/CVE-2025-40053
+---
+ drivers/net/ethernet/dlink/dl2k.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---
- i.
+diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
+index af1e96e0209f..0af58c4dcebc 100644
+--- a/drivers/net/ethernet/dlink/dl2k.c
++++ b/drivers/net/ethernet/dlink/dl2k.c
+@@ -957,15 +957,18 @@ receive_packet (struct net_device *dev)
+ 		} else {
+ 			struct sk_buff *skb;
+ 
++			skb = NULL;
+ 			/* Small skbuffs for short packets */
+-			if (pkt_len > copy_thresh) {
++			if (pkt_len <= copy_thresh)
++				skb = netdev_alloc_skb_ip_align(dev, pkt_len);
++			if (!skb) {
+ 				dma_unmap_single(&np->pdev->dev,
+ 						 desc_to_dma(desc),
+ 						 np->rx_buf_sz,
+ 						 DMA_FROM_DEVICE);
+ 				skb_put (skb = np->rx_skbuff[entry], pkt_len);
+ 				np->rx_skbuff[entry] = NULL;
+-			} else if ((skb = netdev_alloc_skb_ip_align(dev, pkt_len))) {
++			} else {
+ 				dma_sync_single_for_cpu(&np->pdev->dev,
+ 							desc_to_dma(desc),
+ 							np->rx_buf_sz,
+-- 
+2.34.1
 
 
