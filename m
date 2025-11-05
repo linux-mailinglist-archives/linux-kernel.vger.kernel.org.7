@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-887516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD522C386C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:55:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615D2C386BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 00:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64F118952BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:54:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2790C4EA576
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 23:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14252F5498;
-	Wed,  5 Nov 2025 23:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FBC2F5A34;
+	Wed,  5 Nov 2025 23:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qHKe0Ako"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaUlGxBN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9F92F3C09
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E502F5492
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762386856; cv=none; b=VeaXY382NMPKaMYDcuQmdJb5JmxRBA+lPMAukow2LNy2iycA9/ECNTvYFUHw9CEElDV+A06Cmrlnr98P5CijaCsGb4bQgioo0b4ZP6hpTbITshdvErXedTdgjnXbnk8YlltKFhAaunUas+Um/yIMtjJLd4J7TVOhGRlSTRg1Ypw=
+	t=1762386869; cv=none; b=iaJ+Ogepacrd1NNEPqMvk0adBomCLo6Ofcj30MDAfp1S3F5iC4TWRMc8UXOHa1B+dFN5MFS7ON55UEL8SuDOpXocvUcOyhUCu5mWzcsbGrtxqwuOLbDUUQNifAva8luv9MmRkcVBU54JtTNaYIM2MXVyniySYpr1BhgIBInK1vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762386856; c=relaxed/simple;
-	bh=bqTrvNYJcHGeMNets2XRzmoJwHvog1wV/FZj31K+1Rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m+g88OB58OfbvcN9XzOOkuGH5l3HHnr3nTgokrsR/s01Rc10mUgb/5iRjcTD37lG3A4AmXMVDvfBg5npW7Ul0Mjd6ZBkXLgF30RdQGoOLuHnO5UInvXlowLlxP9v0R8xVcVwJpS2M2Li+EIOPER1k7k1frLFNZgx6SixUuhWQ98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qHKe0Ako; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=W85a3Bth4H+0PuSuOPezMPOuhSZAa3dLiOvxgBT/vp8=; b=qHKe0AkoxPIo5gNP1bjl3ETDrE
-	5k8Jknr78aZ3Yy2BlIAyTxULspppywWTy7rCKF471AcyqXFhrwvjGoTqmWYuAg7WvEkUs8FZUFIYy
-	33rm/qGvFOoMAvsYwThcZke9XF8/P3+VXWz9tp3UR/bGTc+PYDeAPVdQls6kmTw/YKWgJd4w9au7s
-	yq6N/5hJdQbv+xeJR/F9yGOrkoBDd7diawFiBsVpw8SiXQunr1NR99Oem/0m5RUy/yedt+ntjjHLY
-	QP2dfkjSpSkzjg18ZlSCKzAn8D69BBWOoKVj7mlYV7qKjVaxEN78/s+SAx2zDn3LJK8yGQcTTzK14
-	r6sVfttw==;
-Received: from i53875bde.versanet.de ([83.135.91.222] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vGnKM-0001Qu-Gh; Thu, 06 Nov 2025 00:54:10 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	diederik@cknow-tech.com
-Subject: [PATCH] arm64: dts: rockchip: use SCMI clock id for gpu clock on rk356x
-Date: Thu,  6 Nov 2025 00:54:08 +0100
-Message-ID: <20251105235408.163282-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1762386869; c=relaxed/simple;
+	bh=0JrdArxjppgXWbB9b0LpkopP+yu3WU3K3d/AEk/KiT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qj1ucbAQxcHZtkKkOMSJ2xuORMzgeGEE0EmG/zI5LetmPGHbJkXPiuuWv9qkxaaBhPGprSqnE2RhEboRjk4cCbHAxKbCN0NMQjvR1olxjWLm6t/HcnVRe5L3EHII4ZVXF6os89bO0a8E2eJh4Yo9yKnG8PUSAK2e5lFPytA+AuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaUlGxBN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B85C116B1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 23:54:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762386868;
+	bh=0JrdArxjppgXWbB9b0LpkopP+yu3WU3K3d/AEk/KiT8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DaUlGxBNyCMBuoP4EpB/m2QGlIQapxe3jBYAUNeCPBjpyYAokjY+4hd/AdN1ntpUf
+	 ojRc6ecZhXBl6Mtt635a+f2YLxV7eij0d1w74PzyEdR2K78aYnyzG8Hoc04xL5N3Z6
+	 ux8V0FPYTVXWDha9JWzBOtCAbapfslRuE05fKKVPBm1+5eEGe8bZBOy9Wgdbgn8eiZ
+	 jIy8wlzjQrtpGfSrRqHj0bZlzIgwGD+suASY184aE7GgEUoPi07K0wiHk8kI3kWZF8
+	 XB6VTknbjvnROZvx1vK/fuhrBDf2mv7vhKh93Q1rquLOyqRn0LEkSH5jZB34qCxrw6
+	 8lqViVJkkqa/Q==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-641018845beso490042a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 15:54:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWY/2Y/w6NCW1WeqyqrMBDjfvIvIUKamSfgywJrBJdBws3QLJqC3bgfSZcsm6FfVvndT7XFNOFVqw69O5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt98CFobX1PBKpbaI3z+xjQoe5OQGZ87FVbsAO5xkk/4lC8+hn
+	Xk1clnW56Ky2e/AJOi9ZQ4QkZr7OdU+t/p3w4etu6gcuDu1eqaW7PpY+6hnVDdwiIbJ2OuoEwR4
+	h1/9H+5JpwSeUy60z/p+X8Vr5sKJRjw8=
+X-Google-Smtp-Source: AGHT+IF+SbDqKedSslrWm8uMQYYqZy4ZQlhrBwFAts+++xikLYbWpJnK70RqmKfn5RSkkNZJ2cT9KekHmwayIlqPnCo=
+X-Received: by 2002:a17:907:720d:b0:b3c:a161:683b with SMTP id
+ a640c23a62f3a-b72655ee4a9mr516765666b.60.1762386867031; Wed, 05 Nov 2025
+ 15:54:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251106101257.6e9b46f5@canb.auug.org.au>
+In-Reply-To: <20251106101257.6e9b46f5@canb.auug.org.au>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 6 Nov 2025 08:54:14 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9Au1LoZjjx07TFm0E6GbfXZ_UFp+pyQT7J_GO-L5joDA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkXYm64qfCJeQd08vujSBeJ3WmgbPBEyzsDWan02D7j4kDzfaRMljYozQs
+Message-ID: <CAKYAXd9Au1LoZjjx07TFm0E6GbfXZ_UFp+pyQT7J_GO-L5joDA@mail.gmail.com>
+Subject: Re: linux-next: duplicate patch in the exfat tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Instead of hard-coding 1, use the more descriptive ID from the binding
-to reference the SCMI clock for the gpu on rk356x.
+On Thu, Nov 6, 2025 at 8:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>
+> Hi all,
+Hi Stephen,
+>
+> The following commit is also in the vfs-brauner-fixes tree as a different
+> commit (but the same patch):
+>
+>   772a65ec60d5 ("exfat: check return value of sb_min_blocksize in exfat_r=
+ead_boot_sector")
+I have removed it in my tree.
+>
+> This is commit
+>
+>   f2c1f631630e ("exfat: check return value of sb_min_blocksize in exfat_r=
+ead_boot_sector")
+>
+> in the vfs-brauner-fixes tree.
+Christian, Please add my acked-by tag to this patch.
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-index a1815f8a96e1..16773904ff66 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-@@ -616,7 +616,7 @@ gpu: gpu@fde60000 {
- 			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "job", "mmu", "gpu";
--		clocks = <&scmi_clk 1>, <&cru CLK_GPU>;
-+		clocks = <&scmi_clk SCMI_CLK_GPU>, <&cru CLK_GPU>;
- 		clock-names = "gpu", "bus";
- 		#cooling-cells = <2>;
- 		power-domains = <&power RK3568_PD_GPU>;
--- 
-2.47.2
-
+Thanks!
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
