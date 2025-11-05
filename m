@@ -1,188 +1,305 @@
-Return-Path: <linux-kernel+bounces-887056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EDDC3716B
-	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:30:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDEDC37345
+	for <lists+linux-kernel@lfdr.de>; Wed, 05 Nov 2025 18:53:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B317D18966B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED64625F18
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Nov 2025 17:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A414433A021;
-	Wed,  5 Nov 2025 17:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B723D3375CB;
+	Wed,  5 Nov 2025 17:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQNBG1NE"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="soFtLtDH"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012055.outbound.protection.outlook.com [52.101.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646F822157B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Nov 2025 17:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762363800; cv=none; b=k9nI2vJFd3pQMEiEfPv6qyZFi1JXA/8pcuhT0RqYqoakTwkqCgBOBURpZ9wNeBZQ0M/fmZzSzdvhwAEx+77+Z3lvqU+maqFNJQgLTOF1SXWQm0QU2DMpQi9s24ORPZEdtR4b7Kq3ho5VVMcTFz/sdNuptsP851s3pom4Z+x9hDg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762363800; c=relaxed/simple;
-	bh=RvSfWVZfvt6ZvxqcXys/+zepByojWnev0+IFDvJvzak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pta+pl5o53rSZOqW+5S3QWmk5CUwWVmeOI3+yTBm4fQ616XYgEZH9h0Tnuu0F3GR4YJU08VyfrjM6USouS0E4BcIrDtnExXP5J2DsKd8jA7CGqurjQD5/45xuzREB5bCI7zXy22LLLMH4d+Qdq5wk7NkTXKuoYjHqseKpop95c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQNBG1NE; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3408dd56b15so107784a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 09:29:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762363799; x=1762968599; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T2hQIMYQG3Hf6nYd9wO88tObbD60jSpKwJAfmQ0sEW4=;
-        b=RQNBG1NEJPSwLEnYZj1C9N2ryyjY5yZTyipLqw2liAucEx0iNOabw/9sp+SSjX6HCJ
-         Mnfwvynj/kPqm0ctoICyvamvjGiG9V6qcpqrpN8xf3u23kqIE39lsnL2fExB1pU4mqzB
-         GcoVzZfSJeuqgOCufONYBTKlgWXOfCBovtX3FzVQED1vaDyzcJAKYOG6JUKq4pu/Mr1W
-         we3cDA6XNa3wHmn1HIMh/2Widk/TB4Zyq/Q7LzQzCGg04XqKaHtzJfd9YEX+jFMRX1Br
-         M2ri8BUf1dagz/wdZxHQXPEVEUzHWPNEseIWFCRTENP46YFsOHIBMW7EGb1eOdtMwHpr
-         fHTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762363799; x=1762968599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T2hQIMYQG3Hf6nYd9wO88tObbD60jSpKwJAfmQ0sEW4=;
-        b=sahLVR7LtfgqFXmvt+El/OJ9emrZuCDQdpwyi8oNBm2oqYYGJTRugVef9lBy9XSATf
-         OVRZsmM+QBc/1MyHipBB9touqwsLwOfg4FJK/shNL6OMpP/7KoSNtKpBGh5qSSIRyhRr
-         lohR83BweYFpS1v7joC6U2Kr6sc61sL+Hb/Mc6U2XXpXCCEK5FxeYES1gcSKbYsIMAiQ
-         5T8o/v1Wuv9Qa17C6ptK5NgOA6KGtB3TlC+VS/npV6cun4JVeREoLL6+z9VTl6F3f3tU
-         QUZJjQV1dmMO4iUx2E54NV9ZCSwdvqBOu8YmLFQnqFAAlqum75reRu1CuUChjvH9hemU
-         diuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCZ01sletvamu9RfKY11NP/6lhB7hsXlif2TBrpVLX6oxR/7NbvrzsLS/YoabqMJWtGiVQx502aSs3daE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0y/t8u1xrb8HN+pbpH5FVaCR6DohjprxHBg918T2dadR8tGD/
-	JSVb1pjYKGfGDodQt81K4RMK0UrfPFjS4jpt22Qa6i5GrF0enA5oQQVSNKHCfra9LpRN/Np3Kjv
-	+4HlymcVVC1kbLf09ScKV+Z9Ch2K8rlw=
-X-Gm-Gg: ASbGncsK8DGlteZ2y1ww6YwXfOyJnkC+TzIBE+tUH4doV2jl2mchw7mhQbZPsGBcy8a
-	Jqc4Kf0XjkdoIVa1Y/QvMHyvw3/wwvrYJFuimRXdKw2NSDquEf7uJk0qUR57FkeeHppJwy/ctz2
-	n04apit5gc/qLOnG66fOWzD++Y/xIP8EPf2KS+6sqX66f49An2GpDj05Yomk1xNXYtBJ23Mx+pn
-	ZNc2qQaYxpDnoOI7Y3VHpBhEx7g2HAMgi5zZ1w+g3gQUL+FoeiGisXI6E8Ds+27H1DBdqY=
-X-Google-Smtp-Source: AGHT+IFgAXJJOk7ORU5o6YIKB0A34EpEk1PJ4V+J9E6KEas3UShp7DR4vAS7t6oA1ZcaWPHA1qFEfxUfiKX3z6blJOE=
-X-Received: by 2002:a17:902:f647:b0:295:ceaf:8d76 with SMTP id
- d9443c01a7336-2962add07f1mr53423145ad.47.1762363798567; Wed, 05 Nov 2025
- 09:29:58 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA70B1A9F82;
+	Wed,  5 Nov 2025 17:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762363871; cv=fail; b=ujceym+DBNXW50DMnO0F4Hcej818hCaDPjfTSz/mZLxjQ2OmhNEllSoCN4Kg5fKCfOyyXB7trZGL06+MLwwf+i5Ea8I242UjbhiQpr4IaQcwC9Kfzbdjv8oAy+iGisIAy8O6xQkal2ZAFdDXP+c84MIOZoSWfK0Mp/EvyzxFkx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762363871; c=relaxed/simple;
+	bh=yiIbGnZ2p/0suxQQePCl4xWEgHqlQkm2YOHq0726n4w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ei1uIvTf5/iirWCXkSr4o6Id5bKbx3y685iMiHrUdqdSdtz8dOanTWe2Bf4NfSP24VvrYTnJfmzRVQL3sNYTr7a8hhIw5EXSP7E1256KUE3Nc50wnFHFAuEZ+FWOpRqaNMjIAx3aaiPx7LbwzGQEYmspBI/KI+LTOFhbhh6ng0w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=soFtLtDH; arc=fail smtp.client-ip=52.101.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Dpp/T7qnMqYu6GLIdqwTN3CqiY45geBZ1S/1EDz7hYf+IL2QB0x4HJw2ApMbtPfUoYp4CK5Vb8FjuNFGUI7y1fyRbydwsxf2M6rNlYIoaiDlusCwL47EbrioW69YaXEeuPlFQbN0vvxeZ3XMjve5sTv0N97L+6Hb2pCONviai/oKQkwC7fxWr6DnPNtOp8/z+M/tlps+oYFJLeHBPGEeia5TheIzuaYQw73qqvuYFaSbE3D27qSelTqq1dfJ3fjEgTMPxCgdRoRsSuBw4gwiAq3bVCdpl8eLHXQ/BbqD0C3ROjda+2gdR8LI8fKHZGDrV69UXvvXuX/o5Ob//6iihA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TDHO8QMskRnU+nScLhsVdhmJw6rRR05/NMLqoXYfmoI=;
+ b=nIEHGQN3oNw7hgk6GT2lzoNNQiBFX71Ve2UGSdXJE0EgsQLvwu4neWt+mikPfke5pIhJlPdcSTMLgYZ2FxmRETGVHqCsEHRH3ftWNq1HK2OvNRzr0b+buBER64Bp7SM4aOv1ePYBaRfsQ90Clw15RHtlyDFlRdqpW3Oj5bxuhen/qw0iR7R3TWY5gvUpOxjSYg36pk3yS1j3falBBAamokwgxStLr7kX3l0ofmvgV5JvXD4jY6HB+HaaSsn0tPoCeQAKB205+ynm60DDq8x5BhH+KkrmKqS98T/P5Kh3dcYg6zHRbNaZizmw/pEhl/XLj31IYcGD1s7MdKTT3OnGRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TDHO8QMskRnU+nScLhsVdhmJw6rRR05/NMLqoXYfmoI=;
+ b=soFtLtDH4nEs1x3VI+aA6whyLDYgwUuh0Hb7WB5QvSqXFXhbOKz7dRsgy/Cvmr0huWIr4hEKfp+DwCbKruVmtRlBjHr3bC4YXRalmdAA9J2GgxLVbGsTAcxmvBA284eJKY+UMoY1XZIQzBxgUvkVQiQ6fbpCwFYmpblucD79UGk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc) by CH3PR12MB8076.namprd12.prod.outlook.com
+ (2603:10b6:610:127::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Wed, 5 Nov
+ 2025 17:31:06 +0000
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::8d61:56ca:a8ea:b2eb]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::8d61:56ca:a8ea:b2eb%8]) with mapi id 15.20.9298.006; Wed, 5 Nov 2025
+ 17:31:06 +0000
+Message-ID: <4a120a9b-b84e-4cfe-af46-1b4d721c2995@amd.com>
+Date: Wed, 5 Nov 2025 11:31:02 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 06/10] fs/resctrl: Add user interface to
+ enable/disable io_alloc feature
+To: Dave Martin <Dave.Martin@arm.com>, Babu Moger <babu.moger@amd.com>
+Cc: tony.luck@intel.com, reinette.chatre@intel.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, corbet@lwn.net,
+ james.morse@arm.com, x86@kernel.org, hpa@zytor.com,
+ akpm@linux-foundation.org, paulmck@kernel.org, rdunlap@infradead.org,
+ pmladek@suse.com, kees@kernel.org, arnd@arndb.de, fvdl@google.com,
+ seanjc@google.com, pawan.kumar.gupta@linux.intel.com, xin@zytor.com,
+ thomas.lendacky@amd.com, sohil.mehta@intel.com, jarkko@kernel.org,
+ chang.seok.bae@intel.com, ebiggers@google.com, elena.reshetova@intel.com,
+ ak@linux.intel.com, mario.limonciello@amd.com, perry.yuan@amd.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peternewman@google.com, feng.tang@linux.alibaba.com
+References: <cover.1761844489.git.babu.moger@amd.com>
+ <deb3a4f19d6e138a502b136034fb88ad8b8c9c75.1761844489.git.babu.moger@amd.com>
+ <aQt/dSRgtQNfJPCj@e133380.arm.com>
+Content-Language: en-US
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <aQt/dSRgtQNfJPCj@e133380.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0072.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2c1::28) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026030143.23807-1-dongml2@chinatelecom.cn>
- <CADxym3Y4nc2Qaq00Pp7XwmCXJHn0SsEoOejK8ZxhydepcbB8kQ@mail.gmail.com>
- <CAADnVQKDza_ueBFRkZS8rmUVJriynWi_0FqsZE8=VbTzQYuM4w@mail.gmail.com>
- <3577705.QJadu78ljV@7950hx> <CAEf4Bzas7Or4yPzqdHqEcgVpTDx2j26dR5oRnSg7bepr-uDqHw@mail.gmail.com>
- <CAADnVQKV_a7NxvWwXDgRab_gakwJ=VadZ0=eC5sHwutVyM0rmg@mail.gmail.com>
-In-Reply-To: <CAADnVQKV_a7NxvWwXDgRab_gakwJ=VadZ0=eC5sHwutVyM0rmg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 5 Nov 2025 09:29:46 -0800
-X-Gm-Features: AWmQ_bnteJmeSonAy7_JuZJ4InwEV7gR1gsgI7sE1YVD_mQPjGGbTjZoahh0RKQ
-Message-ID: <CAEf4BzZcrWCyC3DhNoefJsWNUhE46_yu0d3XyJZttQ8sRRpyag@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting
- for x86_64
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Menglong Dong <menglong.dong@linux.dev>, Menglong Dong <menglong8.dong@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|CH3PR12MB8076:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6d63ee7-13cb-44c1-965d-08de1c9119ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K2JtYXJUM1NjcFMrUHhEbzQ0MGxXcFVqMGtMWGlLN3lTeWN6RVRNZlpZRVJq?=
+ =?utf-8?B?ZUwybEs1Mmdwd0tnNEhhb0MxQVM5aHRZd25DV1g1NElDK3dDdlB1UFYrSm5R?=
+ =?utf-8?B?eVVjRHRlM0RFd0FaWEU1R1daY2l5c2F2b1RDVTZOZE5UMUZoNEhkMTlXdVRY?=
+ =?utf-8?B?aHdIZTlLNDh0SFJhMGZxWGpWK1RUcm80RCtpZ1FZWnhVM1RGN1JrbnBXQ1dJ?=
+ =?utf-8?B?YngzRVpmU2NsbWFhajEzc3FQVURBdnQwcG1oa1lIZlo3eEtyWS9aeXFRdGdD?=
+ =?utf-8?B?OWIwcXYwTVh1UjlxTUpaWE5sem1UblVwWXZWRTlXNGIvRE0yOUVNYTJEcEM5?=
+ =?utf-8?B?UFdWbEJPd2RpLzU5aXJUNEozZkhZMzc4TCtueHBpeDFYYUIrcHJObkxkaTFv?=
+ =?utf-8?B?Y3BRY0xDNUVsa0xmY1pGTjBycXpSSzZBei9Rb3hjNmhjV1V2WXpwNDVsdnd3?=
+ =?utf-8?B?K29iY29DUEVrUlVxUlBLTDFiMytOdFNmVUJ1WkNTTXFIQ3Y3RjV2aDU1UWRh?=
+ =?utf-8?B?SlRUaGdNVVRMcUswRFNtRjg3cFZxMmRNdEdjeVF1clMwQnVacmJCbitiOXhQ?=
+ =?utf-8?B?RXdhekN0aG5sbDVsTUJ4aXdjZFdyaGFFVXh2TzBvRGw4WHMyUXRmc3BxOHQv?=
+ =?utf-8?B?SG8vT215UVRlSGdqY24xTUVDcVlXK0s3UXBKZWkydjZUSVNzZ0RuNDFvZCt4?=
+ =?utf-8?B?V1BlT2R4QVpwWnBhWExSZTNKL0YxQjM2dU1RVXZ4RzVKL1E5aHRxS3RkVHJQ?=
+ =?utf-8?B?RnptL29rSTVBWURCcVpyWU0vRmU0WVpqRCtTMEdGNW9BMTdWUm9Pdko0NHBn?=
+ =?utf-8?B?aFNNSWdVSE83b3M5bUNoNnN5MUhDMUVSQXNhSk5qVmVvWXRmUzdVS1FVWHlm?=
+ =?utf-8?B?dGEwQVVsek9mK0JuRjREZXFoMnNPTkkydmRnZGltRlVGSmhYbC9MZDQ2UGNk?=
+ =?utf-8?B?clRldlhkd0ZES3dybi9mSTZoNU15QXpYY1JhMy9mSXpkbXpTV1F1T0JYMTRZ?=
+ =?utf-8?B?clYzT1piYjVKWTAyQTArU3pvTXdWdkhtZXVtUUNBblpvVDR6RGYxRUE0RHZh?=
+ =?utf-8?B?UExpR0FkN09iYXlqRXNDWXJmclBoL00rWm5leVN6Vkp0dmk0UFRPK1lNaG5j?=
+ =?utf-8?B?Mm5XVkVjaExwT1BDaGFHSHlWbTVCVTc2dnhtYldhN2c4ZE9MclhxVytvVkFs?=
+ =?utf-8?B?U21UNkNDc3U2eHQ0TGU2M3hUSzNFM21LdXpKNWRjL1gxaUdZcm9pU2MrQm9W?=
+ =?utf-8?B?U1MxMnUwR3YwUy9aV1pjeVY5QVk1d1FtK3ZDTzdTRklEVk1ZS2xMc3J2Tldq?=
+ =?utf-8?B?bFpmVXRIck96UFk1dTR0WUU5ZDh1SlZwWlhHbEF1cTkraHRQYXl6YkdXYTlX?=
+ =?utf-8?B?b1MraklQT0pjdHdmNFFsM0duZWlLemNOTWZzbHUwVkV1aE5HYkVqOUtiR1k2?=
+ =?utf-8?B?b003VE5XNTI5TnNtWERVMHBpNkdFaFhiVm1YV2JHQ0V1aG5GbGJZQzI0TDlJ?=
+ =?utf-8?B?R2QrMEl0ZktRNXZjeHZORzdTTkpkenN5dFRwSkh0WGxQanphY1N3SGlhb1M1?=
+ =?utf-8?B?L1BoeGxiWmhnMzZ0d2VJS3NCYUsyMGFBT0RQY2EwRHB5bEFjak9rbUNLZ2Rw?=
+ =?utf-8?B?dXB2SVpmU0xjSWlIRWpVRWNoZzVWNDNaM0JteXhMbkNMcXVkQ0JGT0NNN1E0?=
+ =?utf-8?B?aFRjNE5nVm5TY0l6QXlyaWhFY1ZGdjZRcVpDWUlKY2ZxNkpsK0VBRjlpT09H?=
+ =?utf-8?B?cnI3Z2Jsci9QTHZZK0c2dWxxK3NQZXlNc1BvU2JrZTRJNk9wa0NJQlcyWm1x?=
+ =?utf-8?B?R0F4WVdhT1JBeCs0VTNPVkZCbmI5OEV5SjJqM0Fxb1VGbFNFVGFIK2g5STFM?=
+ =?utf-8?B?L0pwV0pxZ2Y5anpDQ3lpbTREY1EybWJFQml5UUltS3RRVE1SL3dhWUpZbTJt?=
+ =?utf-8?Q?73CUlWbGUXCWbuLZCYeKVB/YGjRYu+H+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a2ZjYzUyU2NVZzlSZnJaY21wRWlPYWhRNjBtQ1BvOHNweGJpS2xvekZPZHFP?=
+ =?utf-8?B?dFdVYXZDdW1iWjhicjdOMVpDbUM2VkdPQ2FGUHhEdG1HcVBRK3pSUHRnUi9z?=
+ =?utf-8?B?MXVXelFaYjYvNWVJMWNCNm1sekdCS0ZBQWRFam5DRURKK210YkxCVVFURnFk?=
+ =?utf-8?B?VXBEVHBBSFlubGI3TUpnSnJqOWUrSGJCc3owZ0Y4T0xlU3BCV0l5MjB1bERF?=
+ =?utf-8?B?Sy9WNkZTdXkzdUdHN3ErUVNodkptejNoSDQrQlRFNWdVU1pFM1NINGIySDkr?=
+ =?utf-8?B?L3NqS3RydW5MeEErSUdLSDdjUUhBbWd1L1M0blVqbzUydVNEcHhvRkZJbGVr?=
+ =?utf-8?B?a2d3ejlqQkpWV3lCRFhabEMwTTU5RWdpNjdvekFUdXMzNlVrQ3cyUUJXMzRw?=
+ =?utf-8?B?MDczMnNQbzFWZzRsTFFVakZPLzdtNURHWnFwMFdJVlRKcUZjdi85bkRlYzBK?=
+ =?utf-8?B?b3o4RGl0bEwzd3dxSFNlT1FSaGZnMGRsejZacC8yVENjcG84bVMyTjBHQVpC?=
+ =?utf-8?B?ZE9kbzdzSFZiZklrbGpjV2hyWU9oRVczL3FydjZNbk44R205OFlCLzlQWkRh?=
+ =?utf-8?B?eFlZNjZIM1JmMms2MHRGN0R4N3dyc0lxd3ZVV2FJbFpUN3pHbE5BSEVvRWlZ?=
+ =?utf-8?B?RkxtVnJYdWU5VHJTTklPTTZTNFZNcXA1VDkvUjkzUEI4VFBHME9tL2dMWkRy?=
+ =?utf-8?B?OGlSUXJTWkgvYVZrRTZvdFdzSmNvZjRxbHdmRzJlMFRHVVc0NVZqTytJQlRy?=
+ =?utf-8?B?a25KM3NkV29GWWRCbEtXT1o5Ri9adkhYZDhPVEFiUzYxM251cHROM3JhNDll?=
+ =?utf-8?B?MUlNdnJ6R2hkd1dSWjZkN2pXQzN2QnJBQlZRYlJUV09sSHZGb3lZVVB3WEpq?=
+ =?utf-8?B?QTBsZExSVUsrdDhhTUNLc2VGR2xkWVRra0l0R3ZZY2xkZzVqSVpRN1E5dW1G?=
+ =?utf-8?B?TW51MUJkNjliNklibURCOEdSK09xSGRmMmtKcnlzcHErYjZjaGZFRytCdzI4?=
+ =?utf-8?B?REdMTFFhU3p0Nk03bU5CRGRsc3BMemZVTVk1USswUEw4ZkN0dWpoTEhoSlZl?=
+ =?utf-8?B?SStuZ1EwRTVEM3h0QVNwYi8yUzNnUjB5TkdFNEhKOEpBckp1TGpFd2xxb0FN?=
+ =?utf-8?B?UGxyclV0RVJvZngzZnMzUzRMMW5jVFhUeWZlV1JkWVovajQ1VEpEYUhjNkV1?=
+ =?utf-8?B?ekxsNi9BdXc4OEEwYVFkUmNDSkJoTE9GdGV2aFQwNEZFUnJhcFZHQlJncExR?=
+ =?utf-8?B?NHdoWDNHTlVPWTFac2VyQW5uQW1mV1dMdFE5Ymx4Nm9kbkVhdVZJVXh5UU8x?=
+ =?utf-8?B?R0xFaERhaDhFZmNCdS90VzNpdm5RK3hTc2RwUTVjUW9OTWsrQ3RPUFpRa1Bk?=
+ =?utf-8?B?NmNpSkNQcHBCYWVpckpQbmVPREdEeFBjS3Z2blJ5ODhiejJSdThXZWFJM25M?=
+ =?utf-8?B?emZZUHZQOVVkWVdzTlY2a2FvZ2xZcSsvNkE4YzNmUzhiOGNLdkx1SDhtMlFq?=
+ =?utf-8?B?UXA1RGkvajFUTytBMkJDRitRb01aLzdXOGJhRzRmM2s4L1gyTnhZTGtyTjVF?=
+ =?utf-8?B?YXJxTDBCT2NKNEZDdUJKaHFSWWd4U1JRV1dvWjJBTzNXM0xvRHFFZ0lyeTZ2?=
+ =?utf-8?B?c0EvSzNQRElMcHY4ZERHUEUzNjlmM1hQTEprY1JtZDU4aXhQUFU5YmNLSHVm?=
+ =?utf-8?B?TVZKS08weXA5c1hOSHVSUmFhUHZEcGsxOWlLWTdkTWpPQmJiMzZrQVlQL0c0?=
+ =?utf-8?B?d1diZXdNeWxmdEdQenZzcStqbU1XdVF5a3pVT3RYOTdZZ2ZNZU4wT2JSQmdL?=
+ =?utf-8?B?ZGl3MllCVExOcjRiMEhnN0dWTHIzRUMrN3dJd3YxNldxTTdUQ0VMNXhhSUpJ?=
+ =?utf-8?B?eUsyVmtHVDRxUlVCYmFGWWlTWUhhblg5VXRORDFrSHE5QjJsZDcyWnF5RHRx?=
+ =?utf-8?B?UGc5cWJMQmRyL3Z2TzNHZ3htVy9xdnNXT1JFQVZtemMzMm9EeHl4bXIya21Q?=
+ =?utf-8?B?eUd1dS9SUGExVlN3N1NGWVM2VE5lWFF4clBHdm14M2RUSUlSenkzZTZPTnRl?=
+ =?utf-8?B?VWpOMkh4ZW1aR1A4NEZPL2J6ejkzSlNCa2EvRGE2Vmgwd3VPNmZKMkpxV1Bx?=
+ =?utf-8?Q?5LyYHvg2jkqj9m2EU1z0JtvnC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6d63ee7-13cb-44c1-965d-08de1c9119ef
+X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 17:31:06.6764
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2YpnpdePpa4Xr2jktLEZwnP5glVkEFmkoRSE7jNIchCSJspXMmpG8FH0P7MtVzm+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8076
 
-On Tue, Nov 4, 2025 at 6:43=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Nov 4, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Mon, Nov 3, 2025 at 3:29=E2=80=AFAM Menglong Dong <menglong.dong@lin=
-ux.dev> wrote:
-> > >
-> > > On 2025/11/1 01:57, Alexei Starovoitov wrote:
-> > > > On Thu, Oct 30, 2025 at 8:36=E2=80=AFPM Menglong Dong <menglong8.do=
-ng@gmail.com> wrote:
-> > > > >
-> > > > > On Fri, Oct 31, 2025 at 9:42=E2=80=AFAM Alexei Starovoitov
-> > > > > <alexei.starovoitov@gmail.com> wrote:
-> > > > > >
-> > > > > > On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong=
-8.dong@gmail.com> wrote:
-> > > > > > >
-> > > > > > > Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_sessio=
-n_entry and
-> > > > > > > invoke_bpf_session_exit is introduced for this purpose.
-> > > > > > >
-> > > > > > > In invoke_bpf_session_entry(), we will check if the return va=
-lue of the
-> > > > > > > fentry is 0, and set the corresponding session flag if not. A=
-nd in
-> > > > > > > invoke_bpf_session_exit(), we will check if the corresponding=
- flag is
-> > > > > > > set. If set, the fexit will be skipped.
-> > > > > > >
-> > > > > > > As designed, the session flags and session cookie address is =
-stored after
-> > > > > > > the return value, and the stack look like this:
-> > > > > > >
-> > > > > > >   cookie ptr    -> 8 bytes
-> > > > > > >   session flags -> 8 bytes
-> > > > > > >   return value  -> 8 bytes
-> > > > > > >   argN          -> 8 bytes
-> > > > > > >   ...
-> > > > > > >   arg1          -> 8 bytes
-> > > > > > >   nr_args       -> 8 bytes
-> >
-> > Let's look at "cookie ptr", "session flags", and "nr_args". We can
-> > combine all of them into a single 8 byte slot: assign each session
-> > program index 0, 1, ..., Nsession. 1 bit for entry/exit flag, few bits
-> > for session prog index, and few more bits for nr_args, and we still
-> > will have tons of space for some other additions in the future. From
-> > that session program index you can calculate cookieN address to return
-> > to user.
-> >
-> > And we should look whether moving nr_args into bpf_run_ctx would
-> > actually minimize amount of trampoline assembly code, as we can
-> > implement a bunch of stuff in pure C. (well, BPF verifier inlining is
-> > a separate thing, but it can be mostly arch-independent, right?)
->
-> Instead of all that I have a different suggestion...
->
-> how about we introduce this "session" attach type,
-> but won't mess with trampoline and whole new session->nr_links.
-> Instead the same prog can be added to 'fentry' list
-> and 'fexit' list.
-> We lose the ability to skip fexit, but I'm still not convinced
-> it's necessary.
-> The biggest benefit is that it will work for existing JITs and trampoline=
-s.
-> No new complex asm will be necessary.
-> As far as writable session_cookie ...
-> let's add another 8 byte space to bpf_tramp_run_ctx
-> and only allow single 'fsession' prog for a given kernel function.
-> Again to avoid changing all trampolines.
-> This way the feature can be implemented purely in C and no arch
-> specific changes.
-> It's more limited, but doesn't sound that the use case for multiple
-> fsession-s exist. All this is on/off tracing. Not something
-> that will be attached 24/7.
+Hi Dave,
 
-I'd rather not have a feature at all, than have a feature that might
-or might not work depending on circumstances I don't control. If
-someone happens to be using fsession program on the same kernel
-function I happen to be tracing (e.g., with retsnoop), random failure
-to attach would be maddening to debug.
+On 11/5/2025 10:46 AM, Dave Martin wrote:
+> Hi Babu,
+> 
+> On Thu, Oct 30, 2025 at 12:15:35PM -0500, Babu Moger wrote:
+>> AMD's SDCIAE forces all SDCI lines to be placed into the L3 cache portions
+>> identified by the highest-supported L3_MASK_n register, where n is the
+>> maximum supported CLOSID.
+>>
+>> To support AMD's SDCIAE, when io_alloc resctrl feature is enabled, reserve
+>> the highest CLOSID exclusively for I/O allocation traffic making it no
+>> longer available for general CPU cache allocation.
+> 
+> Does resctrl have a free choice for which CLOSID to use?  (From the
+> code, it appears "yes"?)
 
-If we can't implement this properly, let's just put it on hold instead
-of adding crippled implementation.
+Yes.
+
+But in AMD systems its the highest CLOSID (15). Also, this CLOSID usage 
+in not visible to user. There is no update of PQR_ASSOC register during 
+the context switch. Hardware internally routes the traffic using the 
+CLOSID's(15) limits.
+
+> 
+> Could this be exposed as a special control group?  Or could IO be made
+> a special "task" that can be added to regular control groups?
+> 
+> e.g.,
+> 
+> # mkdir /sys/fs/resctrl/some_group
+> # some_group IO >/sys/fs/resctrl/some_group/tasks
+> 
+> This would assign the group's CLOSID to IO (in addition to any tasks
+> using the CLOSID).
+> 
+> Or, we have some special file:
+> 
+> # echo foo >/sys/fs/resctrl/some_group/io_devices
+> 
+> This would assign the group's CLOSID to the device "foo" (we'd need
+> some manageable naming scheme, preferably that maps in a sane way to
+> sysfs).
+> 
+> 
+> I'm not trying to rock the boat here, but for MPAM we're anticipating
+> the need to be able to control the CLOSID used by devices that are
+> behind an IOMMU.  (Arm's SMMU allows a PARTID to be configured for each
+> device I/O context behind the SMMU.)
+> 
+> This is desirable for assigning devices to VMs, so that their traffic
+> can be managed alongside the VM.
+> 
+> 
+> Do you think SDCIAE could fit in with this kind of scheme?
+
+All these things you mentioned can be done today without SDCIAE also.
+It does not need SDCIAE or similar feature.
+
+You can consolidate all the IO tasks into one group and assign limits or 
+monitor. However, resctrl does not have the knowledge of IO devices (or 
+names of the devices). It only knows about the tasks.
+
+> 
+> 
+> [...]
+> 
+>> diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+>> index 108995640ca5..89e856e6892c 100644
+>> --- a/Documentation/filesystems/resctrl.rst
+>> +++ b/Documentation/filesystems/resctrl.rst
+>> @@ -152,6 +152,29 @@ related to allocation:
+>>   			"not supported":
+>>   			      Support not available for this resource.
+>>   
+>> +		The feature can be modified by writing to the interface, for example:
+>> +
+>> +		To enable:
+>> +			# echo 1 > /sys/fs/resctrl/info/L3/io_alloc
+>> +
+>> +		To disable:
+>> +			# echo 0 > /sys/fs/resctrl/info/L3/io_alloc
+> 
+> "info" is mostly read-only, though it does seems a reasonable place for
+> per-resource global controls.  Today, there is already
+> "max_threshold_occupancy".
+
+Agree.
+
+> 
+> It doesn't feel worth trying to introduce a new hierarchy for this kind
+> of thing, but the name "info" does not suggest that there are writable
+> controls here.
+> 
+> To make it official, does it make sense to add something like:
+> 
+> --8<--
+> 
+> diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+> index fbbcf5421346..0cc9edf8d357 100644
+> --- a/Documentation/filesystems/resctrl.rst
+> +++ b/Documentation/filesystems/resctrl.rst
+> @@ -72,6 +72,10 @@ The 'info' directory contains information about the enabled
+>   resources. Each resource has its own subdirectory. The subdirectory
+>   names reflect the resource names.
+>   
+> +Most of the files in the resource's subdirectory are read-only, and describe
+> +properties of the resource. Resources that have global configuration options
+> +provide writable files here that can be used to control them.
+> +
+
+Yes. It is reasonable. We can add it. How about this?
+
+"Most of the files in the resource's subdirectory are read-only, and 
+describe properties of the resource. Resources that support global 
+configuration options also include writable files that can be used to 
+modify those settings."
+
+
+Thanks
+Babu
 
