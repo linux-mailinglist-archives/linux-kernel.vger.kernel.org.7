@@ -1,105 +1,92 @@
-Return-Path: <linux-kernel+bounces-888804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6743C3BF74
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:11:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83064C3BF5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:09:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E6D3AE25A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA521883E35
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C96346A0B;
-	Thu,  6 Nov 2025 15:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DD6337B93;
+	Thu,  6 Nov 2025 15:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wGQ+gtaT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DDexFs6t";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="01wpdMeT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oe31NF4m"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mkhYncQU"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9236F337B93
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1937D342C88
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762441412; cv=none; b=jkmoXGyVn64VYxpdQyiUee4/vcJdEuqXRFF7pAtiBXcsfVntpSnubBeOacixHiiK/pTochx36qiHXDqt41a1OaP/UQq27cYj8jwt3Gd/TgyMB+9rby5WrKbLsDU5RHxFDVaAP3vKDUzdZiiREfex8iAk8t0ED7m24HTDN0zOIpc=
+	t=1762441442; cv=none; b=oJy6xjxraj2KDIW9pXab5YeoEc37Nsq+JusJ4zKIKyrMatqiAB7DDGN0C48OWod24L1Dlu6bnW4JUSyNvoY2dkN32VcL9pqDq+NE5t0AGP72uaDC2iNzKpNx7tarQYp1gV6ScxBwmegKEs5fpbW6z1qMhkFOy3iL1TQtxlvtfI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762441412; c=relaxed/simple;
-	bh=gzuh4VEHpFf40kRVaRGCio7glNRsExEQD401s+o6QZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQO8bZeUzYhEp9uyUo9xGHyMGRRHt4KPEXGzR3MSDl2URQk4VCANl/WzgcNGawrm3yoNSuWmwwBBR0phw3t1LOX/lgQA3aGX67PBPC5wC7bOZkrP8Ddft3WgfpvWWifjYIwmkNzCSTV4nL8R1quTHbEj906KrD+FjRI10SlulBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wGQ+gtaT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DDexFs6t; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=01wpdMeT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oe31NF4m; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F3BAD2116D;
-	Thu,  6 Nov 2025 15:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762441407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOuwkH32wNh1jajTPykXv5BJYRoed9vUlh1FUYNSAaA=;
-	b=wGQ+gtaT9MVIJPxQzAJk9nHKON1QhKutJFbvCIET4Yb4/bJtMaFPPy9w5qrEdWeo6ix+p6
-	fYazGMnFXb9JuT7ytDt73mBc9+LHk6ypWWhdfltInKdExHoD0amJrZVUyHXZ3Y7AhISHm+
-	VGLRDpEnEcXvYCUe0cx82pgtS+0P6IY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762441407;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOuwkH32wNh1jajTPykXv5BJYRoed9vUlh1FUYNSAaA=;
-	b=DDexFs6tGKjcQ2YvkaPfgLWY1m4/M1FVIlK39uUpI+aBoiAROQYqo19U6sm5VdLFRKQLFo
-	pVNwvJVw485STHDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=01wpdMeT;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oe31NF4m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762441406; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOuwkH32wNh1jajTPykXv5BJYRoed9vUlh1FUYNSAaA=;
-	b=01wpdMeT4QaOzQTmQOmtg8AandmWnWsQXos0e+S2FB9sjS0GXp+HMMMx81IDz9F/VzQnWB
-	pEBB2oJ1GpSVbdv8zvO+zYm5xeR/EZHMJY1ocEQGKxP3Ul8N1Sz+7CbSzWv8JA4hpL+CVH
-	AMSeqRac+lDfh4rOxUqXx3GhFnruiWw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762441406;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOuwkH32wNh1jajTPykXv5BJYRoed9vUlh1FUYNSAaA=;
-	b=oe31NF4mP4vowzTL73VNM7GCu03qi2RD4jLPC2Zh3f9PMX3e538CzoelHIZ11XymFz/VrB
-	y69Gxa4avZC+t6AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AFF7C139A9;
-	Thu,  6 Nov 2025 15:03:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3jNTJ7y4DGlKZwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 06 Nov 2025 15:03:24 +0000
-Date: Thu, 6 Nov 2025 15:03:22 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH v2 3/5] mm: implement sticky, copy on fork VMA flags
-Message-ID: <ksk52ws4jyfihg4s6jeliqthzk44vapkjhycitsb63ujzpt7j4@pkbjovy4ad7a>
-References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
- <9c9e9fb6b767556594b2cef023db01d45d8f8463.1762422915.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1762441442; c=relaxed/simple;
+	bh=55SSt3Gkzzq+ugMem0J0DiZiyJVQiw2q4O9Mf2FxiCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fU+NzRN/ObSHhaJTAsudk1KRwnyBqsazfXr3p4TE6dl/7rRnGdEQfaHKqPmQntDfzNp0Idf6DUTBB4CdBopwbgPL7w9/jhKBKcrv7Fy9tKi8Vtdwn38b9mircxleMYWdTXwPSaOEsRjq3rFz7pHCF1Be5fsm30X3aRg4OSg1+PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mkhYncQU; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b725ead5800so154924966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:03:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762441436; x=1763046236; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XRLohXtRGatztz+SeKrGjSMg+wc0GgYqEIBKdX3UGlY=;
+        b=mkhYncQUeHCjVYQr2crN7i5XLfG1A9As//o3WZTqR39K9YDblKGXqDPyvD5AnNQEww
+         /nrJ0ic2aQpRs9Fgdvz7/wSVOLRhlY7FBy4VQfP5STyHwaNieBKOajojBHExLQvk7yX8
+         2VBGXM0WjNrMAB5QJKsskZYMKToyyApdFyqyIEyUTtW3Tx7U6wvxfHZv0/6VxZz+RzZB
+         ZLE128WNk0WDgupMjqfhIN6ixFMXLZAz4+JXai6RLepAi0sGKqIXdVz2Ny2H/pzi3mB3
+         UokyTpY7D2UiSlDNhqEd4BwK3tqCoIUuwJxJz6Ug6fwLnXwz+4b/ETLTCEU2VqZXXYXf
+         C81w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762441436; x=1763046236;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XRLohXtRGatztz+SeKrGjSMg+wc0GgYqEIBKdX3UGlY=;
+        b=gjCL3JtESspe52l5cvTjnaMsJAso2gJteBdiuHMf5sBGzFjubEvWOLVzzzgOh7nHR2
+         6zRPJ9Ab08QRswF/BjG5PiX+pxyjT3ZxNkvheI+RyxB2+k1TVxfucpAKzNiP7pyhsvm+
+         w3sKk8ujDklbViO16NInMoTsVKU1+dyvy9M2dytuOP5SItOaLrbt31AxaN2fJJ2dP2uF
+         Pd+ZtjVXDbY7mC1s9YUkNS3gt5wQ+HL/tc+8RjalneAUvwxu7frzWU3WTBpgjGeT3jg4
+         xaQAW4a7UI8pPr1LdnkHGTTXIpr8Bsd1JUsfTvTKLQFNn4x3pPr+2KmMjfz/G0wcoabY
+         QS4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtaMSTChx0pAxkuClmoVTr71MF+G6olnuY247UiOwnMnx//kR/2ZPUmJp4N2iDZ7tPSf8x6ViqpdcjFB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxjA7kZYYgA2oSyLBx3V79m7YrTCs1588Rwxjc18bm5utNR0Va
+	NXvHVFApjI4HUbzserh9ajrQ7z7b0Zus41Pvcyk4WCOPZNuWQ4558rZLv+IjUvXvjDw=
+X-Gm-Gg: ASbGncscvzzBPBEIKCt0TBqL7Q1qpSlMFtApYX13hDdRucFALa2Szg64tmXFCSgQHwc
+	hw9008cNXE+KtlluPpPZ8xjh9tqncR2wDl5z+0UWn+lNhwN7lhysiYklgkLDssMf60CqbQ6T3ZE
+	duo80OW9kX29+RgQa5CEWnJTJPUQ0WE/Xh597Zd4L6PsToDmKwRVe0FGUGeS9n721JeGIGF0Dq/
+	XewSeG1A2lF4OLCzzU6B9B5ETZwTpDzV7zW1W+pkui2y2SR0cx2NYWslypza822yzUI1NnaEXhb
+	t1w43LosuM4IxTcm/3aKEFkW9woNVbo14pwaBFqeh3Poy4uK3eCEoDo1wIwLFjE0owlVFHRHIrt
+	oPx5awe+456wNdRyVnUAnbCaLckCsKgEhyAHmKvgaWtHepW/f7VzvfycxnhStUsdjxG/RMr63sA
+	BoXuIbvnx9Ohfu
+X-Google-Smtp-Source: AGHT+IFnv2kR+7AyxozjbIcjjKi77N+kW4qDPXl6xjDKudbBmTU0vSNFCi9nDzLNKrbJlFvId55g3g==
+X-Received: by 2002:a17:907:7b88:b0:b70:a9fd:1170 with SMTP id a640c23a62f3a-b72656112a3mr832404066b.65.1762441434963;
+        Thu, 06 Nov 2025 07:03:54 -0800 (PST)
+Received: from localhost ([87.213.113.147])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7289377c0dsm238249566b.20.2025.11.06.07.03.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 07:03:54 -0800 (PST)
+Date: Thu, 6 Nov 2025 18:03:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
+	robin.murphy@arm.com, will@kernel.org, joro@8bytes.org,
+	robh@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+	konrad.dybcio@oss.qualcomm.com, bjorn.andersson@oss.qualcomm.com,
+	bod@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+	saravanak@google.com, prakash.gupta@oss.qualcomm.com,
+	vikash.garodia@oss.qualcomm.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
+Subject: Re: [PATCH 5/6] of: add infra to parse iommu-map per IOMMU cell count
+Message-ID: <3fc0cd48-91d3-401b-9102-ebc77de731c4@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,100 +95,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9c9e9fb6b767556594b2cef023db01d45d8f8463.1762422915.git.lorenzo.stoakes@oracle.com>
-X-Rspamd-Queue-Id: F3BAD2116D
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,redhat.com,oracle.com,suse.cz,kernel.org,google.com,suse.com,goodmis.org,efficios.com,vger.kernel.org,kvack.org,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <74d4ddf90c0fb485fda1feec5116dc38e5fd23cf.1762235099.git.charan.kalla@oss.qualcomm.com>
 
-On Thu, Nov 06, 2025 at 10:46:14AM +0000, Lorenzo Stoakes wrote:
-> It's useful to be able to force a VMA to be copied on fork outside of the
-> parameters specified by vma_needs_copy(), which otherwise only copies page
-> tables if:
-> 
-> * The destination VMA has VM_UFFD_WP set
-> * The mapping is a PFN or mixed map
-> * The mapping is anonymous and forked in (i.e. vma->anon_vma is non-NULL)
-> 
-> Setting this flag implies that the page tables mapping the VMA are such
-> that simply re-faulting the VMA will not re-establish them in identical
-> form.
-> 
-> We introduce VM_COPY_ON_FORK to clearly identify which flags require this
-> behaviour, which currently is only VM_MAYBE_GUARD.
-> 
-> Any VMA flags which require this behaviour are inherently 'sticky', that
-> is, should we merge two VMAs together, this implies that the newly merged
-> VMA maps a range that requires page table copying on fork.
-> 
-> In order to implement this we must both introduce the concept of a 'sticky'
-> VMA flag and adjust the VMA merge logic accordingly, and also have VMA
-> merge still successfully succeed should one VMA have the flag set and
-> another not.
+Hi Charan,
 
-Perhaps we should separate this patch into two? It looks like we're doing two
-things at once for no great reason. But it's a bit of a sticky situation...
+kernel test robot noticed the following build warnings:
 
-> 
-> Note that we update the VMA expand logic to handle new VMA merging, as this
-> function is the one ultimately called by all instances of merging of new
-> VMAs.
-> 
-> This patch implements this, establishing VM_STICKY to contain all such
-> flags and VM_IGNORE_MERGE for those flags which should be ignored when
-> comparing adjacent VMA's flags for the purposes of merging.
-> 
-> As part of this change we place VM_SOFTDIRTY in VM_IGNORE_MERGE as it
-> already had this behaviour, alongside VM_STICKY as sticky flags by
-> implication must not disallow merge.
-> 
-> As a result of this change, VMAs with guard ranges will now not have their
-> merge behaviour impacted by doing so and can be freely merged with other
-> VMAs without VM_MAYBE_GUARD set.
-> 
-> We also update the VMA userland tests to account for the changes.
-> 
-> Note that VM_MAYBE_GUARD being set atomically remains correct as
-> vma_needs_copy() is invoked with the mmap and VMA write locks held,
-> excluding any race with madvise_guard_install().
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Overall the patch LGTM.
+url:    https://github.com/intel-lab-lkp/linux/commits/Charan-Teja-Kalla/of-create-a-wrapper-for-of_map_id/20251104-170223
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/74d4ddf90c0fb485fda1feec5116dc38e5fd23cf.1762235099.git.charan.kalla%40oss.qualcomm.com
+patch subject: [PATCH 5/6] of: add infra to parse iommu-map per IOMMU cell count
+config: hexagon-randconfig-r072-20251105 (https://download.01.org/0day-ci/archive/20251105/202511051256.fSouTFuY-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d2625a438020ad35330cda29c3def102c1687b1b)
 
-Feel free to add:
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202511051256.fSouTFuY-lkp@intel.com/
 
-and maybe print it out on a sticker.
+smatch warnings:
+drivers/of/base.c:2130 of_iommu_map_id_cell_count() error: uninitialized symbol 'legacy_iommu_cells'.
+
+vim +/legacy_iommu_cells +2130 drivers/of/base.c
+
+5288ad2aeeeb419 Charan Teja Kalla 2025-11-04  2123  static int of_iommu_map_id_cell_count(const __be32 *map, int map_len, u32 cells)
+c74d6f4acf99ef3 Charan Teja Kalla 2025-11-04  2124  {
+5288ad2aeeeb419 Charan Teja Kalla 2025-11-04  2125  	u32 legacy_iommu_cells;
+5288ad2aeeeb419 Charan Teja Kalla 2025-11-04  2126  
+c74d6f4acf99ef3 Charan Teja Kalla 2025-11-04  2127  	if (map_len % 4 != 0)
+5288ad2aeeeb419 Charan Teja Kalla 2025-11-04  2128  		legacy_iommu_cells = of_iommu_map_id_legacy_cell_count(map, map_len);
+
+legacy_iommu_cells uninitialize on else path
+
+c74d6f4acf99ef3 Charan Teja Kalla 2025-11-04  2129  
+5288ad2aeeeb419 Charan Teja Kalla 2025-11-04 @2130  	return legacy_iommu_cells ? : of_iommu_map_id_actual_cell_count(map, map_len, cells);
+c74d6f4acf99ef3 Charan Teja Kalla 2025-11-04  2131  }
 
 -- 
-Pedro
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
