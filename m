@@ -1,168 +1,205 @@
-Return-Path: <linux-kernel+bounces-888089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E91C39D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:31:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9DEC39D22
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 307EE188FDAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:31:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D94893BAFB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AF42D6E53;
-	Thu,  6 Nov 2025 09:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51546263F22;
+	Thu,  6 Nov 2025 09:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WCLHVOIL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuTVu+ys"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7447935965;
-	Thu,  6 Nov 2025 09:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E3E35965
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762421479; cv=none; b=h3TemJJ04vUJsjJBW9rr2jzPJFNXsnHOjIiNZNk3ZXAttDbPh0yRHe7/jjEoHBZwLO/RcsDmVY27rtDh34m355TyrdOHkxzXCDS+rtTgeUAFwP5GBkxKHGfuAPwOPEYvu0fDGz+QTs98lYT2So/vtRrdTdDUEE9XdvNNmsqrndI=
+	t=1762421504; cv=none; b=nGZppkaqj7IbZzjJDWxxxVZyrIgE+CNzlGM8I/ORWzXGUGNYSW5UJ6qoi9Jmk6cXjNPm63HeEGEQxCyCWyCWKQPO9QCzR37E3p+73N3ZJelRugmaNVV13RGcBEzzT/FA/3I6veKxKBonBcu6EiqdXTnVpgHbmr7oy/RqUgYEt4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762421479; c=relaxed/simple;
-	bh=8tuXIJaRQj67Wuzt3GQJZZ9j955PqstWCmEb3K0qaJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u3iv8DRqH4soJ0A2JumoCW1zWlrHn/lw9r1TR/CyO+pcOvrzy+WSmuKBxvVW/C/TPgu73swQBaG4vcIKuCHgRcHKs0iKe1XZqIaJTeWpidqqe25zKa740SZooxmZibV3DueBzoA7lmYWLdE74GSa6CQBoFnCzJwoVqQtjssaNUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WCLHVOIL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A690r6q2797652;
-	Thu, 6 Nov 2025 09:31:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	E1ifgCrzhtp1+j9Pung6ohTcRTZrJt0ve1KAMLyjOMk=; b=WCLHVOILHMO6EOWz
-	K4oqoEaEdpNkA3DQqiwiXVQQkXZZuR0thIYFQHxfbK1wy9C+m2mZrccMOFD1pT+1
-	V5+2C2TiW/Ih7/84J7eTtGPfk72oaXvCCKpo7lizjbEj5urcb7woCax/sc20T5gZ
-	M+91LCFgY7G+0vNUKHLIVn6KDo4tYdikqzTe5PsGlbWpDebjkyLfiKy2MQ+t9Ila
-	wKmCZYsw3CcqvuH3ZFGiyObSrs/UgsIsYr2oTslwduN/ZYeZN4poo6a2xg0j7Ktt
-	SWHtCBHzf9q36hFEcdsJQ8TlXeZXEfQYHn+G2MKuOey6E3ZOpq4gfIhROX7C+66U
-	EPFY/A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8hyts7h3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 09:31:14 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A69VEqA020470
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Nov 2025 09:31:14 GMT
-Received: from [10.204.78.32] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 6 Nov
- 2025 01:31:10 -0800
-Message-ID: <c6ef0324-c932-4c80-8252-97dd3ee255d3@quicinc.com>
-Date: Thu, 6 Nov 2025 15:01:07 +0530
+	s=arc-20240116; t=1762421504; c=relaxed/simple;
+	bh=j1+M3emMe9tqmPSbKCgIoXD49IQZIb4FHliGCLpUH2s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lgx6KBoL481TQNkSwvqUz9j6ErLQXorX9P9z3PoLprja6okmPmmVTVBgd+/qaTefrySQIB8qDXABO1GFk6Ehxx/V6OLCuE24mLDg8pZPhGmri3YJXiyY0bCMXDKl4ktywx0ZJxjcNjcsVoz1zYlWvQG/ZMzIlszL2az1OpNwU4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuTVu+ys; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7810289cd4bso722160b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:31:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762421502; x=1763026302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bU7AjJowjDZcDckJUJRmtF/yOybguMZZsthXphjlG7M=;
+        b=kuTVu+ys5mAnXO+Ug532x5/DeRWWT6p2dJpyzUtJ8YaZ5wXvEP4FjYXNPY407SXUyI
+         eQ8dDBsu+hYfa94jTH7wR5RWF+TDOJo5SELm2USBEWjB4wKErek0SthNNGw3TlPRsgHl
+         KQ1E8J1nHzXlHT12dy1Tn5WfkA3SISC2dIBrEEKzz+IhtQ0o9bc5alJult8LdvE7PkBX
+         qudBLphdGfMBCzaHSojZcfnkZN+TLCQffr0HWPNnfa7F2JD6szKX3DCUfU193KxTlGVm
+         uAIByUTgDAvlne8XxKITXbzbXIIxKscDQ7MiC5lRe2w4lGBWpYNuRFLo/jXmkFa+VY9p
+         h4Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762421502; x=1763026302;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bU7AjJowjDZcDckJUJRmtF/yOybguMZZsthXphjlG7M=;
+        b=utddIODGlEVuU6Iehc7EKvCM9H97IoVAzadMQGXfcskjLGLyid/AM8Nx+ogz+bSwdC
+         zrJcBnA4URR2z2BSRvvf2vEKuinq+hn2rZzxjV3xa4EQQfSrVvamojgNGz/rSB/T1ydm
+         4cFG6Xj9H44/26zoyApdq/eKKnYvknFvbDGURuGZ4AAWPnKAYyzTCxPzyXK3m5QE8AoR
+         PoBnpVejo79SGZcGMkxl1mZw0UDqyTzvZ9HPRG8jbX9n5Fa39ZKmX8gDCCtDvuuBDPGA
+         1C3CmRGsA4M+Fsgz6LHtAgcru+hRslCnaKPPg1La9Tf31Jrs39KQrlXiJlDh+gvoNzY4
+         Kc5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXyio1te+WcwTsS5GSCKixihj4DrMhtCCrzic8Sr65g6kuHVLHT57v88z9kZeVGWXmDAdLZSG5wvCD+i1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjSta5jLA7mmwIf2qiYtHjRXBd1Kfg/5/AC5A0lg9fqac2dUqY
+	Zff/5vRKT8kCTy4g41e0t5wg7WZqWXJX2ey6EKsWxUryVVhPSN5+n1SM
+X-Gm-Gg: ASbGncuwvphdBt5Kz+J22iMih2PIvu/Re5PF2f4YZHvXW44zkVIZPALE7p9DU2Iwsl4
+	/fFbzYF7Dvi2KfrHKRpAS+cebUOaGPhGKbMSn/LG8f0O4YN2Ct01KrC+cjTN2j0NaqnFZswQJH/
+	WWCWQcFfpXYAn5u5Y0a5WPiD9FO4qsJkQlLYLsl8x98gSNhxJlwJW5RowxqSqJCwzgthLvy5xmD
+	5JbQoVOk5Nqw+i5ibNaDMlWlOzCA3K8e2D19fsfrakQY9zT0lxeQRbNrlmjf3iHsBR7aD8EJCsr
+	cHnU0JfZLYVo7WOTRL2+fBkUu9/ZkBy+oUOjceG4qZuIg/18wcy1GhuRP45MTIMkHdwWfylbW7X
+	twBBeMugqt5/kJkMzwwP3f3eLEEmUaXrBnp7frJVLZ806EhmE2wBSyGkz7+O9B1wXVasz4aN/56
+	H1eQx5MlltJaNrlIxiE4LLGbe53GF7tTedjlFSDh0r4M7/QbGNK+HYWaqLvksT
+X-Google-Smtp-Source: AGHT+IGBlclwFd/WiSybw2BLg2Lg7w42XKfs3KgCEfbKDZNZqWng5nmOi+qqs1EkrFKbQ+0aeHT+Qw==
+X-Received: by 2002:a05:6a00:1d91:b0:7ae:8821:96c3 with SMTP id d2e1a72fcca58-7ae882198bfmr7251931b3a.32.1762421502528;
+        Thu, 06 Nov 2025 01:31:42 -0800 (PST)
+Received: from JF.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b043644b34sm496220b3a.28.2025.11.06.01.31.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 01:31:42 -0800 (PST)
+From: Jeff Lin <jefflin994697@gmail.com>
+To: jefflin994697@gmail.com
+Cc: Mariel.Tinaco@analog.com,
+	andriy.shevchenko@linux.intel.com,
+	cedricjustine.encarnacion@analog.com,
+	chiang.brian@inventec.com,
+	grantpeltier93@gmail.com,
+	gregkh@linuxfoundation.org,
+	jbrunet@baylibre.com,
+	jdelvare@suse.com,
+	johnerasmusmari.geronimo@analog.com,
+	kimseer.paller@analog.com,
+	krzysztof.kozlowski@linaro.org,
+	leo.yang.sy0@gmail.com,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	ninad@linux.ibm.com,
+	nuno.sa@analog.com,
+	peterz@infradead.org,
+	thorsten.blum@linux.dev,
+	tzungbi@kernel.org,
+	william@wkennington.com
+Subject: [PATCH v2] drivers/hwmon/pmbus: Add support for raa229141 in isl68137
+Date: Thu,  6 Nov 2025 17:31:31 +0800
+Message-Id: <20251106093131.2009841-1-jefflin994697@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250926014552.1625950-1-jefflin994697@gmail.com>
+References: <20250926014552.1625950-1-jefflin994697@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot' function
- for hpd gpio
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_riteshk@quicinc.com>, <quic_rajeevny@quicinc.com>,
-        <quic_vproddut@quicinc.com>
-References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
- <nzg7auudxocxnpnjsc2emot7sgh5azvucl72jqzgqsp4jhzint@hykb2xyx66uh>
-Content-Language: en-US
-From: Amit Singh <quic_amitsi@quicinc.com>
-In-Reply-To: <nzg7auudxocxnpnjsc2emot7sgh5azvucl72jqzgqsp4jhzint@hykb2xyx66uh>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: e0rMN5I_0VamN8TIDerrPR0BN_k2Hq8v
-X-Proofpoint-ORIG-GUID: e0rMN5I_0VamN8TIDerrPR0BN_k2Hq8v
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA3NiBTYWx0ZWRfX8Qz6ZiMVY6Zd
- R+RKR3EgmKNmdheHITTOGKMjZFXvYhV/aFKvNwTfEMpJPDjSpaEox8nQP7puL6jT5qF7gyN/EtN
- eZtdwoxMpHxc/resGTxcCrAzxu6Ek/YvfoQOM28wBl746XstcJ7PpKw/8BA7z3c6ckO0cHk4xTe
- uFnEs8xGgVYDl9UUa4q5qo5eIm8B9A7qG3YSP6FBivdCoc0jZHjKGs2GNrHQO1JhjFOZ+pxalQm
- eWW4YRQ7zJlNKba6R+x0LibxxDmx8MwFIVIQCQd5+Q0Bq0vu117PkFEu5t2x7bLQ0YmI46A59LZ
- cQZjQ35xbNlK5ZKHEgTkdNLPd+OkL5+9zMtFLsPVNrnRatBc2uRwDJMfFJhME2PL2LYGjcMhUvX
- I+FhGpkqkT3taIJZ5D38M3lBI+3PBQ==
-X-Authority-Analysis: v=2.4 cv=X+Rf6WTe c=1 sm=1 tr=0 ts=690c6ae2 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=X2bJkxrq0LOtwHL-icMA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- clxscore=1015 malwarescore=0 adultscore=0 lowpriorityscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060076
 
+The RAA229141A is a digital dual output multiphase (X+Y ≤ 12) PWM
+controller designed to be compliant with Intel VR13, VR13.HC, VR14 and
+VR14.Cloud specifications, targeting VCORE and auxiliary rails.
 
+The RAA229141A supports the Intel SVID interface along with PMBus V1.3
+specifications, making it ideal for controlling the microprocessor core and
+system rails in Intel VR13, VR13.HC, VR14 and VR14.Cloud platforms.
 
-On 11/2/2025 12:29 AM, Bjorn Andersson wrote:
-> On Fri, Oct 31, 2025 at 02:27:39PM +0530, Amit Singh wrote:
->> Currently, hpd gpio is configured as a general-purpose gpio, which does
->> not support interrupt generation. This change removes the generic
->> hpd-gpios property and assigns the edp_hot function to the pin,
->> enabling proper irq support.
->>
-> 
-> No, it replaces the use of display-connector for hotplug detect with the
-> DP-controller's internal HPD logic.
-> 
-> There might be good reasons to do so, but you need to describe them.
-> 
-> I'm guessing that there are still some issues in the DP driver's logic
-> for handling of external HPD? This should be addressed by fixing that
-> logic in the DP driver, to ensure that this (display-connector +
-> hpd-gpios) works, and then you should send this patch again explaining
-> why the internal HPD hardware does a better job.
-> 
-> Regards,
-> Bjorn
+Signed-off-by: Jeff Lin <jefflin994697@gmail.com>
+---
+v1 -> v2:
+- Modify subject and description for the requirements
+- Remove CONFIG_SENSORS_RAA229141 in Kconfig
+- Remove the part for multifunction pin in v1 patchset
+- Rename function raa_dmpvr2_2rail_isys to raa_dmpvr2_2rail_pmbus
+- Link to v1: https://lore.kernel.org/all/20250926014552.1625950-1-jefflin994697@gmail.com/
+---
+ Documentation/hwmon/isl68137.rst | 10 ++++++++++
+ drivers/hwmon/pmbus/isl68137.c   | 14 ++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-Thanks for the feedback and clarification.
+diff --git a/Documentation/hwmon/isl68137.rst b/Documentation/hwmon/isl68137.rst
+index 5bc029c98383..e77f582c2850 100644
+--- a/Documentation/hwmon/isl68137.rst
++++ b/Documentation/hwmon/isl68137.rst
+@@ -414,6 +414,16 @@ Supported chips:
+ 
+       Publicly available (after August 2020 launch) at the Renesas website
+ 
++  * Renesas RAA229141
++
++    Prefix: 'raa229141'
++
++    Addresses scanned: -
++
++    Datasheet:
++
++      Provided by Renesas upon request and NDA
++
+ Authors:
+       - Maxim Sloyko <maxims@google.com>
+       - Robert Lippert <rlippert@google.com>
+diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
+index 6bba9b50c51b..97b61836f53a 100644
+--- a/drivers/hwmon/pmbus/isl68137.c
++++ b/drivers/hwmon/pmbus/isl68137.c
+@@ -65,6 +65,7 @@ enum chips {
+ 	raa228246,
+ 	raa229001,
+ 	raa229004,
++	raa229141,
+ 	raa229621,
+ };
+ 
+@@ -73,6 +74,7 @@ enum variants {
+ 	raa_dmpvr2_1rail,
+ 	raa_dmpvr2_2rail,
+ 	raa_dmpvr2_2rail_nontc,
++	raa_dmpvr2_2rail_pmbus,
+ 	raa_dmpvr2_3rail,
+ 	raa_dmpvr2_hv,
+ };
+@@ -399,6 +401,17 @@ static int isl68137_probe(struct i2c_client *client)
+ 		info->read_word_data = raa_dmpvr2_read_word_data;
+ 		info->write_word_data = raa_dmpvr2_write_word_data;
+ 		break;
++	case raa_dmpvr2_2rail_pmbus:
++		info->format[PSC_VOLTAGE_IN] = linear,
++		info->format[PSC_VOLTAGE_OUT] = linear,
++		info->format[PSC_CURRENT_IN] = linear;
++		info->format[PSC_CURRENT_OUT] = linear;
++		info->format[PSC_POWER] = linear;
++		info->format[PSC_TEMPERATURE] = linear;
++		info->pages = 2;
++		info->read_word_data = raa_dmpvr2_read_word_data;
++		info->write_word_data = raa_dmpvr2_write_word_data;
++		break;
+ 	case raa_dmpvr2_3rail:
+ 		info->read_word_data = raa_dmpvr2_read_word_data;
+ 		info->write_word_data = raa_dmpvr2_write_word_data;
+@@ -469,6 +482,7 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
+ 	{"raa228246", raa_dmpvr2_2rail_nontc},
+ 	{"raa229001", raa_dmpvr2_2rail},
+ 	{"raa229004", raa_dmpvr2_2rail},
++	{"raa229141", raa_dmpvr2_2rail_pmbus},
+ 	{"raa229621", raa_dmpvr2_2rail},
+ 	{}
+ };
+-- 
+2.34.1
 
-We observed a specific use case where using the GPIO-based external HPD
-handling via display-connector leads to a functional issue.
-When the DisplayPort cable is already connected and the display is active,
-and we perform a system reboot, the display does not come up automatically
-after boot with the current configuration (using hpd-gpios).
-This happens because we do not receive a connect event post boot —
-the GPIO-based HPD path does not generate an interrupt in this scenario,
-as the line remains high and no edge event is triggered.
-
-However, when we configure the pin with the edp_hot function and use the
-internal HPD logic of the DP controller, the controller correctly detects
-the HPD state after reboot. The internal HPD block generates the necessary
-interrupt, and the display comes up automatically without requiring a
-replug event.
-
-This behavior aligns with other Qualcomm reference platforms where,
-if the controller’s internal HPD is available, it is preferred over
-the external GPIO path. Using the internal HPD provides more reliable
-detection and keeps the configuration consistent across platforms.
-So, this change ensures:
-1. The display recovers correctly after reboot when the cable
-remains connected.
-2. We leverage the controller’s native HPD interrupt capability for
-better reliability.
-3. We maintain consistency with other DP-enabled Qualcomm boards that
-use internal HPD.
-4. edp_hot follows the Source device behavior upon HPD pulse
-Detection [VESA DP standard v1.4 section 5.1.4].
-
-I’ll add these details to the commit message in the next revision.
-
-Thanks,
-Amit
 
