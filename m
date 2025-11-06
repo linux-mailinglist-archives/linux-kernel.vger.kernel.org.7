@@ -1,121 +1,148 @@
-Return-Path: <linux-kernel+bounces-889385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67B9C3D716
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:02:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9336C3D719
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:02:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AE784E59FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB941891D51
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776193019C7;
-	Thu,  6 Nov 2025 21:02:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D203043A9;
+	Thu,  6 Nov 2025 21:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z+I6Uk42"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB172E719B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B7E303C9A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762462928; cv=none; b=DL8yCwIDaNcDzDIGH2j1M6TPQ+y0jXCATHaYawBopeYzyxkQTOLfSNff2ng1EFMjTiDbaueW1DocVSvkRrLEJoqeMygw7ilqRCs8NupixSR9gaYgBtwXi/g0d+0wvXBirjcfIbcnoQyqDMtbiDvhAqbSYaQWTVWTPesZMSDPSnQ=
+	t=1762462931; cv=none; b=PZWEENLu2/68xt9rH3JLOZy95JLU7FqHs7W17icp0MXIXQQe2Jg5Av53GWwtS3ZUxIyuv54NzHiVZYDX5g8R+RekgnBVgaIZLY4vWR4nd7PivV/PrAah4pOPtBG7nyfSqewDFCoca/cUZA3whPLYiGtHg+FaLx9lHlMKljKt/zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762462928; c=relaxed/simple;
-	bh=nBYhpFJgds7k16pvBhZt5edoFuijzMVHZhuJ5kSK2XE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BdDvecVwIpZik1ZDZiYCWo2SHKOOG41RHECDSUBG1rOhavHVRgRN005koxga5zT1lt/Up+LWaF4DGytXN8vxLznr437EFuPq/ImabgQP0/neW1k6OkuHFQcWtfjbfh9mBirHPrAcSICUbpXHIrq4wBF5PEiNV4erktsNV1/mWyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43328dcdac1so1773445ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:02:06 -0800 (PST)
+	s=arc-20240116; t=1762462931; c=relaxed/simple;
+	bh=K4r0PNR/pXspBk+Ybp47LxKdosojHAfMcGsiWbchkRM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=COXk+CPavOSxw5w6VsHW3A1/dRqt8LaaxvMQdx90FxS59GOdPJtCxXzW92WrwQZKIPiKa/RZiliD8yZTYxFoEqASvT772pT0bABjxEjDNKDHs+Y0RkIfMxD6UexQcjrYDjNIntOqEnPFToUahH08Y/9hyiaLA2jdNYK42tESgdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z+I6Uk42; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-272b7bdf41fso1395115ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:02:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762462929; x=1763067729; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=etgqy533ROEysuZvffdaI1/BVd4Q9s3epCFCu4cehdk=;
+        b=Z+I6Uk42XJ6/OFmZdWOBnzPppMF8JHtQ6cQg2cDarSi0fYcAIqGH5OI06NdPJ1LcLL
+         J1wd0PxQHyTyY5N5EwX4a760DLxcnFUHUUduqF6jVNKG+X8s8xZeSw1N80KOavyudD/x
+         3Q0sguD7JvA1gmIQqQaXQ5n58b/NvuufBKitbTrlvKxsagXFExKU73oNQtHKpGn+PUT9
+         DJ9vdtT3+hsTO40Wwm+ysDjWOLAgAnMDRTMtKDuLEsH1UCzwMMPD8/R/ZcdeGRRP7OEa
+         8J4xGo6Htc9KUaGppZzzOI2+2XjYvVdQzFUW9G2MKstcQtPOqeYoes2QdgHK/tv39JLN
+         iOMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762462925; x=1763067725;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1762462929; x=1763067729;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1P5fry+YhpP/GQ2PB9FayW+Xhf/s0t07JFkZZepi76s=;
-        b=H0LCSQVdB2zEqH5cQ6onY+HxOpcJj1WAyGaqsthqPU0XgWiZ2Ed5un4bHcoBz95qQa
-         cI56WXyb856uVWb++phvbuo7PtpB0bPNsr1j/V0WCGe7vC+pPXE3WqH6oNmF8SqxaC0/
-         OQ43yH+SadzLHw0D/5V0zS690zwNSsZmQ0CKeYKMOmBLuo54CK0M69VoSqWGXngI9F8K
-         5P6PwQ4VdAjtYd8DRZ5US2V7TwgNJKHZ35QSrJB5poHxUY1oKmrudn0CIw6ScGvJfxwM
-         Y6zZuHP3e5Wid3UJlAQN8su6ax/mAHSqQo+i5yPJobM2OURgEkrggV34Lv1tqlZjso5/
-         5EiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUo0WIUrur/5I13A8hJ7a6/Ue++wF60WKKXZzT9KHJB3rkenYJIgUNXRG8uh+Rvtu0bpHGdrkifKEnEYCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+xP6NjqgGWYIVz5xo2FpAukHs56hFHcmyBtcEwNhEHqQqkHlL
-	itQ56g1I1LFwuq8zHrD0QqWVybcwmCzj3O+fk138zmSa6QALRHprFSqrdCd/B4x0SKF1uWqzXq3
-	iycdCMAUaVSpsMKstm9jepptyDO6+NQPwLSSSgBFXnp2S3X5Bu5mZPwbetjE=
-X-Google-Smtp-Source: AGHT+IHj5wLviO4uhYrntm+ASBL9DTQ0+auYUccKhkVxQTc+WLSyQ/KS+oY96kg59cxbda7Qt4f4PWDtywqCFZyr6VkHlkh3ZCAw
+        bh=etgqy533ROEysuZvffdaI1/BVd4Q9s3epCFCu4cehdk=;
+        b=COyKodedMH7J33rZp9LskrLPVCO697aULaoMCFriKZ7jCaDOesYqvEIKdzSsurbPfy
+         fN/ObwWt7pB7WGZUSw1dGOu+wBzlvrZ7O/WmNVtb0zw8e9UVYX9Cf0GSCfDQzhLulilR
+         /0YLZrN9jD+81SfqQK/o7WQOBWoznUqFJ9fk+XzvxfzixPfb/pZiJ/nuPSdLjv+uEYwN
+         Wgh/JcJtJ3sdbY27VDyCKgpoZ6C0Kh3TNEzcqCbJFKfK3N+jk7GnP9m/c1YDUGH6NWsw
+         0mc7uBPbKpC/Zm/y/le5nS4URBE4SLa5meQn1R54FoRAtSTO1DNE3F0E85/2KtkJVjNm
+         1bsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJdfoHcVHs8DPYC1lVv15o1sKbgb/5gNBmezgdpB1l6rozjjong8befINNgBpQW1C0LjDuNZH7BPbmJ+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUxT21bVpYLz8kUXb9+Sna90jEZ8PFm5Q7Qqhi/SnqQZig/uXi
+	EZeue5aiJvXmb4sEBCISxmRPpUzeNXwSgSdMqjGj5V0oliYD9k3RgudjZCYwcevmp9iykcM7Nav
+	EuQ4kAQ==
+X-Google-Smtp-Source: AGHT+IF68+vi3zbqywUQatkJVyKP2WAhgDao7YLP3uY26pGcAOhsev+0/UeCKxtZdrx+5pOPGxmZ0MpMUNk=
+X-Received: from plblk16.prod.google.com ([2002:a17:903:8d0:b0:294:f721:8bc2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5cb:b0:295:24ab:fb08
+ with SMTP id d9443c01a7336-297c0474ce9mr11049625ad.47.1762462928932; Thu, 06
+ Nov 2025 13:02:08 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu,  6 Nov 2025 13:02:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:348d:b0:433:377:abd with SMTP id
- e9e14a558f8ab-4335f47f038mr12529475ab.22.1762462925666; Thu, 06 Nov 2025
- 13:02:05 -0800 (PST)
-Date: Thu, 06 Nov 2025 13:02:05 -0800
-In-Reply-To: <ffdab397-0096-4946-a7d5-073300cc34a3@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690d0ccd.a70a0220.22f260.000a.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251106210206.221558-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Use "checked" versions of get_user() and put_user()
+From: Sean Christopherson <seanjc@google.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Borislav Petkov <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Use the normal, checked versions for get_user() and put_user() instead of
+the double-underscore versions that omit range checks, as the checked
+versions are actually measurably faster on modern CPUs (12%+ on Intel,
+25%+ on AMD).
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in gid_table_release_one
+The performance hit on the unchecked versions is almost entirely due to
+the added LFENCE on CPUs where LFENCE is serializing (which is effectively
+all modern CPUs), which was added by commit 304ec1b05031 ("x86/uaccess:
+Use __uaccess_begin_nospec() and uaccess_try_nospec").  The small
+optimizations done by commit b19b74bc99b1 ("x86/mm: Rework address range
+check in get_user() and put_user()") likely shave a few cycles off, but
+the bulk of the extra latency comes from the LFENCE.
 
-------------[ cut here ]------------
-Possibly kref leak, ref:403, state: 3
-WARNING: CPU: 0 PID: 12 at drivers/infiniband/core/cache.c:820 release_gid_table drivers/infiniband/core/cache.c:819 [inline]
-WARNING: CPU: 0 PID: 12 at drivers/infiniband/core/cache.c:820 gid_table_release_one+0x4fb/0x800 drivers/infiniband/core/cache.c:897
-Modules linked in:
-CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: ib-unreg-wq ib_unregister_work
-RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:819 [inline]
-RIP: 0010:gid_table_release_one+0x4fb/0x800 drivers/infiniband/core/cache.c:897
-Code: 49 01 c6 4c 89 f0 48 c1 e8 03 42 0f b6 04 28 84 c0 0f 85 be 01 00 00 41 8b 16 48 c7 c7 60 7d 2b 8c 44 89 e6 e8 16 e2 35 f9 90 <0f> 0b 90 90 e9 c4 fe ff ff e8 f7 76 72 f9 4c 8b 7c 24 48 4c 89 f8
-RSP: 0018:ffffc90000117900 EFLAGS: 00010246
-RAX: a2ec906fdf0a5800 RBX: ffff888030cab6d8 RCX: ffff88801c6e5ac0
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: ffff888079d48010 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1b7a680 R12: 0000000000000193
-R13: dffffc0000000000 R14: ffff888028a68690 R15: ffff888030cab600
-FS:  0000000000000000(0000) GS:ffff88812636a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f49bf3056c0 CR3: 00000000772e8000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
- device_release+0x9c/0x1c0 drivers/base/core.c:-1
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22b/0x480 lib/kobject.c:737
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Don't bother trying to open-code an equivalent for performance reasons, as
+the loss of inlining (e.g. see commit ea6f043fc984 ("x86: Make __get_user()
+generate an out-of-line call") is largely a non-factor (ignoring setups
+where RET is something entirely different),
 
+As measured across tens of millions of calls of guest PTE reads in
+FNAME(walk_addr_generic):
 
-Tested on:
+              __get_user()  get_user()  open-coded  open-coded, no LFENCE
+Intel (EMR)           75.1        67.6        75.3                   65.5
+AMD (Turin)           68.1        51.1        67.5                   49.3
 
-commit:         690e9fda RDMA/core: Fix WARNING in gid_table_release_one
-git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
-console output: https://syzkaller.appspot.com/x/log.txt?x=16bbb012580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Closes: https://lore.kernel.org/all/CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com
+Cc: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/hyperv.c          | 2 +-
+ arch/x86/kvm/mmu/paging_tmpl.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Note: no patches were applied.
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 38595ecb990d..de92292eb1f5 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1568,7 +1568,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 		 * only, there can be valuable data in the rest which needs
+ 		 * to be preserved e.g. on migration.
+ 		 */
+-		if (__put_user(0, (u32 __user *)addr))
++		if (put_user(0, (u32 __user *)addr))
+ 			return 1;
+ 		hv_vcpu->hv_vapic = data;
+ 		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
+index ed762bb4b007..901cd2bd40b8 100644
+--- a/arch/x86/kvm/mmu/paging_tmpl.h
++++ b/arch/x86/kvm/mmu/paging_tmpl.h
+@@ -402,7 +402,7 @@ static int FNAME(walk_addr_generic)(struct guest_walker *walker,
+ 			goto error;
+ 
+ 		ptep_user = (pt_element_t __user *)((void *)host_addr + offset);
+-		if (unlikely(__get_user(pte, ptep_user)))
++		if (unlikely(get_user(pte, ptep_user)))
+ 			goto error;
+ 		walker->ptep_user[walker->level - 1] = ptep_user;
+ 
+
+base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
+
 
