@@ -1,202 +1,112 @@
-Return-Path: <linux-kernel+bounces-888969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89C2C3C603
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:24:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4DBC3C638
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764191888D0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A556A3AC885
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C632634D4FC;
-	Thu,  6 Nov 2025 16:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E1B34CFC6;
+	Thu,  6 Nov 2025 16:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWx40cys"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="l7erD0tX"
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CFE34B1B8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFDD1E51E0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445533; cv=none; b=F5WWCRzKIqPicM0R18MSE/5/JWqhE2sdTeAxHYZ+WS4cnjP6v92f+29k0fwC7PEaOVDQUn0VS9XqYMTIO57wdShezc/TwJY17nAS11MuH6cVH8ntNiaaUEGXTz2NRw99Wufh7ytKApY58STsgsQ5VTpkQRu62ZR8B2xOGGl/pp4=
+	t=1762445598; cv=none; b=OCbUmD65TOf0+FqbLcCTWRAMiG4RljtI6uXc/bdHh5eBiQZzR7DXaJdVtAmxupd61UW17O53YVQcb1xnTW55XPI4cft/Xp8RdVpAy19k+FwCM7aSQ8qhKphLNHD68nN3Zm+MkMdNXbLtWt4hzuuPzLSXzUZLjslTk64TnaOLCEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445533; c=relaxed/simple;
-	bh=NbJj9rTQle2z19HgYJ5MWl9JI99ZIRhaunRQvc4H06g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I1dt+S9pAxON+7OobmdmMZVl0RPhidSPoow7llLEe2efHnNaGKoE8sEZpvWaJlPv47N3QxhdBGQyy5LzO7u2VHn1pKh6mTA2V7/xzNU3PSo+hS92M3lcuUIWvfJ4bZqqodJfXrew3VZGgkm1laV683VVTtLFDIrPik2jgySEo9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWx40cys; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso1958971a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:12:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762445529; x=1763050329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bnzUbhAGhtiikERLfxbbxGU6Jui5/OxYbpanoHjzJwo=;
-        b=dWx40cysVl/PjWtX74P7LT/3vf/rfUuvrRWPBVAmXtkW1uokUJwa7loA4aslq3h9gV
-         gr7y1qks8k92rMof38y5URthUboiM3eprQTDqC4mcwPe6VTtGm3v8R0mgvsdeHlMZrJL
-         M+8syqXoKTEKoBdWLBdjq3IGzjBfYiPb7TO1DSAve7hzJ0XTekgmtPwyw2XAblhFw83B
-         Xj18XuigY4GAp0Cdoej0yYIvsqXkDu0ZrwztbY6X+pMdm06btjlVffBcTLiC+XFf1y/B
-         nGUgrcny1dyWg3BEbNejiaQlxXQXuoWna2ORCYc0h3w7W6NSI0qShl5qO76ggQFdxdv2
-         QylQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762445529; x=1763050329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bnzUbhAGhtiikERLfxbbxGU6Jui5/OxYbpanoHjzJwo=;
-        b=aAjB+rpIBbzv7ncePRjOtsVpUj1n2IjiL4vqqcaAVRsID/q1PodhXPQTs291+SnLuT
-         YNljnAJpiFNQwRaMA+1OWLRn+eaMQW0TrysiuKhbhBfa/Z8zr/wg4CyU4ng+iODzcrln
-         epBaccGFcqWRP6NJMDZRImR1UGblFcE2/ee3qo7NtR35gkzOQISHzCH5DoIfKIu50nI0
-         Tpgm/4PQtDLKBTUaUh3CLYYEgXQdcgNx1AVlW3Q8IosixyKdgaqGcN6QoFQ9yMlk3d2Q
-         L/KtXhyHHok9b9xWO2VImcqaLLjGSoUYikAkydQ2nh9YgVDatY2BWi3qMkwVLLQLqqZ/
-         h9ag==
-X-Forwarded-Encrypted: i=1; AJvYcCWff0fGWK8QmzgYVnUbtt0DYYcdwc8w8ARQSLFFI0lswJO+D5sqjaOSim2CvDcndrXyoYOIkPqR7ddP1ic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEspUTHJa/FKTynNH7j56pr/mPyswFLAL9p91Gyu1YpVjQhnkG
-	V0o8H/hgzjEaKsCENG6QTm6sCNWASY5WfkQQNt4CWuNjQmFd3mS40EozeiaVp5oFMEpIWaiuvJA
-	NxtltI+8ms+gRl51v1NON4oguPVn+/XM=
-X-Gm-Gg: ASbGncvUE8Bc9cCCdaT9jLz4U5c1la0b85ouqiw4pPMEnVhVxVs1N/GDaLu82piacjD
-	xEEdzL54uSiR409XvSKZ4cdb5giMJtoAksjfCXIiF6MOxMo3qjGr/p2cotsAKLt7/s0Cf6OZGGX
-	9cLifajs4G2cfW1WIE9XC7XUXydqlfpPtjyc3N/UUQnjC/X4rpu+WwntP3xLRpWw8Cf0rKeXjpW
-	l7hqr3HmZbnypOTJxy92WrF5RBoJpmBM/2ib+4BNaIlhekYM961/IW0x7BYTzYSVZ9xmwmDnjS5
-	jGH5nuoYUwkf9VblM0wo4CAJiZDtEk/03K6D68NJ
-X-Google-Smtp-Source: AGHT+IFu4h93C4tc1A9QoKKyl4nvS7r/OLUFDtq4F1bju/fRPK7xWdltxiKdlUWE8bKunfVG/DxpCyiqg7Afj7IykpM=
-X-Received: by 2002:a05:6402:5251:b0:63c:18e:1dee with SMTP id
- 4fb4d7f45d1cf-64105a48104mr7659373a12.24.1762445528567; Thu, 06 Nov 2025
- 08:12:08 -0800 (PST)
+	s=arc-20240116; t=1762445598; c=relaxed/simple;
+	bh=y7vFDbq+p9hSXegJt4sq8fTKw5ztR1lLNQq9McecPT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GKByYZSD2VrAMYrNpF0NTp7TkvncEff4OWmEbDhHL9tVBHEZlsR+N3Xfs+moeoXC9w/MP2CQa9Z/uZD8lkxF8SgH500gsf6YaiQPGO/yCmoWijQQeUKXFlhq7SMNutUToLkPsEXqcCS/xh2ZjfE/8v8XTDV2jr5/3ngxuOZKsbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=l7erD0tX; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20251106161306c54ac8135800020773
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 06 Nov 2025 17:13:06 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=Gy0ftG97+mstgfIA9joFhRdJ0+nhWeUJZKFkRz4J5Uc=;
+ b=l7erD0tXFMESYDV30nQ2D/mJik3/+xfJPC+drtKKbGRA8r4APcB11Jeg2qhGVKderhhuDt
+ h2wrp0HxZYTzHp5byjdmzeTiC0FQcqfXhXH5qEV6zmyNQW77UZs6zfqs3LZuPXIz6knTU37Y
+ qTA6npBlIsZ7GPeKPMD0sG5EZ+VcjvOFcMoIwd8YD/3KAna0JR4eOcsF/Pu6JwozhpC1cyVP
+ qSIoO55PdSSk1LQkz7pfCbqGZ/7Yhd7PgXQ8j6Xm3SLyNpuGo6crfMo0ZPKi7/GfvChyTkX7
+ dimrwzGGBPKDRc+8wtfxtR8OLKrBLHEU68B7lCU4OUnJZpHkuD+M1QTA==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v3] selftests: net: local_termination: Wait for interfaces to come up
+Date: Thu,  6 Nov 2025 17:12:09 +0100
+Message-ID: <20251106161213.459501-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
- <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
- <87ldkm6n5o.fsf@wotan.olymp> <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
- <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com> <20251105224245.GP196362@frogsfrogsfrogs>
- <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com> <CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
- <20251106154940.GF196391@frogsfrogsfrogs>
-In-Reply-To: <20251106154940.GF196391@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 6 Nov 2025 17:11:56 +0100
-X-Gm-Features: AWmQ_bnkeq4DJh6pYcDoOyVTl77x98taKvxhHR6JnALCqm1GLalcfSIbGgqlyA0
-Message-ID: <CAOQ4uxhaDboSe0T1tb9ArVDFg9SEQCBmSH3YEGJv_fG0kJmu2Q@mail.gmail.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Bernd Schubert <bschubert@ddn.com>, Luis Henriques <luis@igalia.com>, 
-	Bernd Schubert <bernd@bsbernd.com>, "Theodore Ts'o" <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kevin Chen <kchen@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-On Thu, Nov 6, 2025 at 4:49=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
-wrote:
->
-> On Thu, Nov 06, 2025 at 11:13:01AM +0100, Amir Goldstein wrote:
-> > [...]
-> >
-> > > >>> fuse_entry_out was extended once and fuse_reply_entry()
-> > > >>> sends the size of the struct.
-> > > >>
-> > > >> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
-> >
-> > Sorry, I meant to say that the reply size is variable.
-> > The size is obviously determined at init time.
-> >
-> > > >>
-> > > >>> However fuse_reply_create() sends it with fuse_open_out
-> > > >>> appended and fuse_add_direntry_plus() does not seem to write
-> > > >>> record size at all, so server and client will need to agree on th=
-e
-> > > >>> size of fuse_entry_out and this would need to be backward compat.
-> > > >>> If both server and client declare support for FUSE_LOOKUP_HANDLE
-> > > >>> it should be fine (?).
-> > > >>
-> > > >> If max_handle size becomes a value in fuse_init_out, server and
-> > > >> client would use it? I think appended fuse_open_out could just
-> > > >> follow the dynamic actual size of the handle - code that
-> > > >> serializes/deserializes the response has to look up the actual
-> > > >> handle size then. For example I wouldn't know what to put in
-> > > >> for any of the example/passthrough* file systems as handle size -
-> > > >> would need to be 128B, but the actual size will be typically
-> > > >> much smaller.
-> > > >
-> > > > name_to_handle_at ?
-> > > >
-> > > > I guess the problem here is that technically speaking filesystems c=
-ould
-> > > > have variable sized handles depending on the file.  Sometimes you e=
-ncode
-> > > > just the ino/gen of the child file, but other times you might know =
-the
-> > > > parent and put that in the handle too.
-> > >
-> > > Yeah, I don't think it would be reliable for *all* file systems to us=
-e
-> > > name_to_handle_at on startup on some example file/directory. At least
-> > > not without knowing all the details of the underlying passthrough fil=
-e
-> > > system.
-> > >
-> >
-> > Maybe it's not a world-wide general solution, but it is a practical one=
-.
-> >
-> > My fuse_passthrough library knows how to detect xfs and ext4 and
-> > knows about the size of their file handles.
-> > https://github.com/amir73il/libfuse/blob/fuse_passthrough/passthrough/f=
-use_passthrough.cpp#L645
-> >
-> > A server could optimize for max_handle_size if it knows it or use
-> > MAX_HANDLE_SZ if it doesn't.
-> >
-> > Keep in mind that for the sake of restarting fuse servers (title of thi=
-s thread)
-> > file handles do not need to be the actual filesystem file handles.
-> > Server can use its own pid as generation and then all inodes get
-> > auto invalidated on server restart.
-> >
-> > Not invalidating file handles on server restart, because the file handl=
-es
-> > are persistent file handles is an optimization.
-> >
-> > LOOKUP_HANDLE still needs to provide the inode+gen of the parent
-> > which LOOKUP currently does not.
-> >
-> > I did not understand why Darrick's suggestion of a flag that ino+gen
-> > suffice is any different then max_handle_size =3D 12 and using the
-> > standard FILEID_INO64_GEN in that case?
->
-> Technically speaking, a 12-byte handle could contain anything.  Maybe
-> you have a u32 volumeid, inumber, and generation, whereas the flag that
-> I was mumbling about would specify the handle format as well.
->
-> Speaking of which: should file handles be exporting volume ids for the
-> filesystem (btrfs) that supports it?
->
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-file handles are opaque so the server can put whatever server wants in them
-it does not need to put the native fs file handles (in case of passthrough =
-fs
-or in case of iomap fs).
+It seems that most of the tests prepare the interfaces once before the test
+run (setup_prepare()), rely on setup_wait() to wait for link and only then
+run the test(s).
 
-Take struct ovl_fh for example, the format of file handles that overlayfs
-exports to NFS encapsulates the underlying fs uuid and file handle.
+local_termination brings the physical interfaces down and up during test
+run but never wait for them to come up. If the auto-negotiation takes
+some seconds, first test packets are being lost, which leads to
+false-negative test results.
 
-Note that when exporting such a fuse filesystem to NFS, it is still the
-responsibility of the exporter to specify an explicit fsid identifier in
-/etc/exports for this fuse server type/instance and then the file handles
-generated by this server are expected to be unique in the scope of this
-NFS export. Not sure how much of this is relevant for the use case
-of restarting a fuse server.
+Use setup_wait() in run_test() to make sure auto-negotiation has been
+completed after all simple_if_init() calls on physical interfaces and test
+packets will not be lost because of the race against link establishment.
 
-Thanks,
-Amir.
+Fixes: 90b9566aa5cd3f ("selftests: forwarding: add a test for local_termination.sh")
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+Changelog:
+v3:
+- moved setup_wait() from individual test groups into run_test()
+v2:
+- replaced "setup_wait_dev $h1; setup_wait_dev $h2" with setup_wait()
+ tools/testing/selftests/net/forwarding/local_termination.sh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/testing/selftests/net/forwarding/local_termination.sh b/tools/testing/selftests/net/forwarding/local_termination.sh
+index ecd34f364125c..892895659c7e4 100755
+--- a/tools/testing/selftests/net/forwarding/local_termination.sh
++++ b/tools/testing/selftests/net/forwarding/local_termination.sh
+@@ -176,6 +176,8 @@ run_test()
+ 	local rcv_dmac=$(mac_get $rcv_if_name)
+ 	local should_receive
+ 
++	setup_wait
++
+ 	tcpdump_start $rcv_if_name
+ 
+ 	mc_route_prepare $send_if_name
+-- 
+2.51.1
+
 
