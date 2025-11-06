@@ -1,157 +1,154 @@
-Return-Path: <linux-kernel+bounces-888326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 080F2C3A823
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:19:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD644C3A82F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8563B420A74
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9FB425EB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDA330DEAB;
-	Thu,  6 Nov 2025 11:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF5830DEDA;
+	Thu,  6 Nov 2025 11:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="OCRfKnAx"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="mN//bWVx"
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF9A2F3C31;
-	Thu,  6 Nov 2025 11:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A28F30DD20;
+	Thu,  6 Nov 2025 11:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427746; cv=none; b=rR7KB/t8oPCjrvbpSaVkC6UMFe+LjDf9g+CNXw8um6Ut0AasTRP62VCPwzrxDZkXe2nxBGFa/7/sNZanUzwDOYMIE04hIsoy/0Nht2b9dmbkyHl+jiTwpabXlVmP/A3QnM70UEUEtH+RRUvHlZyv6MJla9urwi7mCepvNWt6pYI=
+	t=1762427790; cv=none; b=gnIRkgSybKMoM/51F76oWoeAxLWINN792BX7AKxhRWQUmH3FoJv5JqVfM5OKWqdryFoMNtca6Jk9ftfxg4JUwj2lMTTToS1Ry1vtWL9gT2eF+swanP70BEOmRBRZ0Owha8e7+bONTdu5tKYTKh4D8zTg6PVohslmvaHs7NfpICY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427746; c=relaxed/simple;
-	bh=lYkIhJxU7rP5Y3NCddHpLryYMH2tAllNb5EKkOGzyUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mSZGB5f8E7Hjt8UD/HgVDjW952fzV3GYOkdFBorvP1UnYyJP6+GzLHp+delPqSOaHL/g+PJDhXKBKIxXelkSNKL+PwJrzk9lXVvwRl29jJD0AoqifyIXlskRd0UDRqYMgBZWLdAUPZsh2dSGt9U+uRZK9tHo8detAJGm3LGhYns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=OCRfKnAx; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.178.76] (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
-	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id B62932FC0061;
-	Thu,  6 Nov 2025 12:15:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762427740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9Z+E3QqXUCN1pdJ+BrbWF58Nf6AFtBf9cJZpSMo21G4=;
-	b=OCRfKnAxevmGQ7aquNnAJ3LAgfmyoIiA3cDbWblgePemEsbCZwOEeBc3RlEHhLl4zizm3R
-	Se0PQHntkkEvSQSiwOgWNxVIKuE8Zq1r6p4ZavnVZKncxmmm1LLBq9G0azPAGezGwv83Cs
-	+EgFvVfkHWZwYuHIbQRc6xJ7WYOQUYc=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=g.gottleuber@tuxedocomputers.com
-Message-ID: <187d37c6-6197-4119-8fed-d187bed4a8d9@tuxedocomputers.com>
-Date: Thu, 6 Nov 2025 12:15:39 +0100
+	s=arc-20240116; t=1762427790; c=relaxed/simple;
+	bh=2/id/VRNdAESqM7Xs/sXc8Ff0Tm2zROdfLId4mPu+9Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YnbIGDOdaM2M0+6tXglgpd/GwmH/G7XmwUjPTkl/mxY9Brb+Vy+abElzEXm+wu5JVg/9cIVmhPx+dGpetT70++DF0+nVB5k8hxpVYKsMoCPoStys67kksquiR/CFrSiY1eBhpGjM+vd28EuVvvYYa0bGIvB9VbGQqdslZiBZuX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=mN//bWVx; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=KMoCDTNxPReZy/vhtkeISGANvyXpsOiedx4glBSIbos=;
+	b=mN//bWVxoXZUShLVYzx1xozI2yEm1/KT4m2BH0tDLhyX1CjNc2eK79GV0h+JG2KQsVsKlxcn7
+	1AO30tBf34NcnULV33t2kJDTBCEIOr50NMDdNnyi5W0odC+TkSePwdrizTWKWGzf6QXxeQLuJ54
+	aLfrmkt/MWZb8J2Dl9w3MY4=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d2KN22g8SzLlSd;
+	Thu,  6 Nov 2025 19:14:42 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id DDB0C140279;
+	Thu,  6 Nov 2025 19:16:17 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.188.120) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 6 Nov 2025 19:16:16 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
+	<netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, <Markus.Elfring@web.de>, <pavan.chebbi@broadcom.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>, luosifu
+	<luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>, Shen Chenyang
+	<shenchenyang1@hisilicon.com>, Zhou Shuai <zhoushuai28@huawei.com>, Wu Like
+	<wulike1@huawei.com>, Shi Jing <shijing34@huawei.com>, Luo Yang
+	<luoyang82@h-partners.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
+	<gur.stavi@huawei.com>
+Subject: [PATCH net-next v05 0/5] net: hinic3: PF initialization
+Date: Thu, 6 Nov 2025 19:15:50 +0800
+Message-ID: <cover.1762414088.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.51.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: vendor-prefixes: Add ASL Xiamen
- Technology
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Georg Gottleuber <ggo@tuxedocomputers.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ettore Chimenti <ettore.chimenti@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>, stefan.schmidt@linaro.org,
- stephan.gerhold@linaro.org, wse@tuxedocomputers.com, cs@tuxedo.de
-References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
- <20251105154107.148187-2-ggo@tuxedocomputers.com>
- <20251106-lemon-kittiwake-of-freedom-dfcfdf@kuoka>
-Content-Language: en-US
-From: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
-Autocrypt: addr=g.gottleuber@tuxedocomputers.com; keydata=
- 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
- bsxTTcOuRnk=
-In-Reply-To: <20251106-lemon-kittiwake-of-freedom-dfcfdf@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
+
+This is [1/3] part of hinic3 Ethernet driver second submission.
+With this patch hinic3 becomes a complete Ethernet driver with
+pf and vf.
+
+The driver parts contained in this patch:
+Add support for PF framework based on the VF code.
+Add PF management interfaces to communicate with HW.
+Add ops to configure NIC features.
+Support mac filter to unicast and multicast.
+Add netdev notifier.
+
+Changes:
+
+PATCH 01 V01: https://lore.kernel.org/netdev/cover.1760502478.git.zhuyikai1@h-partners.com/
+
+PATCH 01 V02: https://lore.kernel.org/netdev/cover.1760685059.git.zhuyikai1@h-partners.com/
+* Change the order of hinic3_netdev_event (Jakub Kicinski)
+* Use netdev_hold/put instead of dev_hold/put (Jakub Kicinski)
+* Remove the semicolon at the end of switch case (Jakub Kicinski)
+* Remove redundant PF judgement in hinic3_rx_tx_flush (Paven Chebbi)
+* change hinic3_send_mbox_to_mgmt errcode to EFAULT (Paven Chebbi)
+* Optimize hinic3_set_bdf_ctxt parameters (Paven Chebbi)
+* Modify main and CC recipients (Markus Elfring)
+
+PATCH 01 V03: https://lore.kernel.org/netdev/cover.1761362580.git.zhuyikai1@h-partners.com/
+* Use disable_delayed_work_sync instead of cancel_delayed_work_sync (Paolo Abeni)
+* Fill in the missing hinic3_sync_time & hinic3_free_ppf_work (Paolo Abeni)
+* Refactor hinic3_mac_filter_sync to implement linux coding style(err label)
+  and improve readability (Paolo Abeni & Markus Elfring)
+
+PATCH 01 V04: https://lore.kernel.org/netdev/cover.1761711549.git.zhuyikai1@h-partners.com/
+* Use linux error value(EADDRINUSE) instead of custom value in set_mac (Simon Horman)
+* Use "hinic3_check_pf_set_vf_already" function instead of macro (Simon Horman)
+
+PATCH 01 V04:
+* Code format fixes: wrap the code at 80 characters (Jakub Kicinski)
+* Use str_up_down instead of ternary expression (Simon Horman)
+* Remove needless override of error value (Simon Horman)
+
+Fan Gong (5):
+  hinic3: Add PF framework
+  hinic3: Add PF management interfaces
+  hinic3: Add NIC configuration ops
+  hinic3: Add mac filter ops
+  hinic3: Add netdev register interfaces
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   1 +
+ .../net/ethernet/huawei/hinic3/hinic3_csr.h   |   6 +
+ .../ethernet/huawei/hinic3/hinic3_filter.c    | 418 ++++++++++++++++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   | 115 +++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |   6 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   |  24 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  97 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.h |  21 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  |  90 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  23 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 138 +++++-
+ .../net/ethernet/huawei/hinic3/hinic3_lld.c   |  53 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  | 263 ++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.c  |  55 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.h  |   2 +
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.c  | 311 ++++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |  53 +++
+ .../huawei/hinic3/hinic3_mgmt_interface.h     |  69 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         | 380 ++++++++++++++++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 284 +++++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  47 ++
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  84 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  20 +
+ .../net/ethernet/huawei/hinic3/hinic3_tx.h    |  18 +
+ 24 files changed, 2547 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_filter.c
 
 
-
-Am 06.11.25 um 09:05 schrieb Krzysztof Kozlowski:
-> On Wed, Nov 05, 2025 at 04:41:01PM +0100, Georg Gottleuber wrote:
->> From: Ettore Chimenti <ettore.chimenti@linaro.org>
->>
->> ASL Xiamen Technology Co. Ltd. is a Chinese high-speed interface and
->> display system chip design company. Adding it to the vendor prefixes.
->>
->> Link: https://www.asl-tek.com/
->>
->> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
->> ---
->>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->> index f1d1882009ba..278cb879781f 100644
->> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
->> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->> @@ -176,6 +176,8 @@ patternProperties:
->>      description: All Sensors Corporation
->>    "^asix,.*":
->>      description: ASIX Electronics Corporation
->> +  "^asl,.*":
-> 
-> So the prefix is asl-tek, like its domain.
-
-OK, I will include this in v3.
-> Best regards,
-> Krzysztof
-> 
-> 
+base-commit: 16a2206354d169bfd13552ad577e07ce66e439ab
+-- 
+2.43.0
 
 
