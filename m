@@ -1,599 +1,282 @@
-Return-Path: <linux-kernel+bounces-887540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1B7C387B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:28:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84CFC387B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C4814F46DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260E73AFE4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AAE209F43;
-	Thu,  6 Nov 2025 00:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F5C165F16;
+	Thu,  6 Nov 2025 00:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T3d4viBJ"
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="cYdNqKVc"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147D21C5D6A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877111891AB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762388777; cv=none; b=qx85V9gNUveDgWdbLyn5sWpDBEu7D342IMeglD2Yd/9oMLx66vaZQEslp9rxtvvHaxoFAuN3c+D/YP5cRRJi1evEZ6klGIDYXeypB/EYDpD1LfZe/21wcJVrIrWYlg57zWojDSYaDIxll58Sk1gVHhL6/3ivCDVz2NbrAmV5Up8=
+	t=1762388820; cv=none; b=qai08LW1R7/rTIbyFJEGh9VubLBhRDC+54KzOivFt9Y0zc6SyEeGmKoPxY7nRHcLEg1TBWWgK1ErJziMecA5qJz/YrcCirTazZ91L8aLj1evLM+fxzBwiZtxS9oPg4c7EogfJfCTu5UjSX1DUpSEJi5SCWknWIkN9j29ZC1ZKpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762388777; c=relaxed/simple;
-	bh=za45gZn58io3q7G6R6uiLs/BWVajHmLqJcwZnfN5KLw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rQXHBybpuO3zOg3HDMuy0acsZgKoPAoUwRiJpMdWTBj/AOVJ7qE3M3dymmuPRTugX4Tip1eKhuvxBccKjR2N79gPReLWtt/UuscJFEvOGtZYoTTzSQSassVzohftdknrHSY7bssLAadGGMojVx0/ZvuMHLMiD2WbxRwSNoWhMJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T3d4viBJ; arc=none smtp.client-ip=74.125.224.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-63f95dc176fso455853d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:26:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762388774; x=1762993574; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s2wQ5QxA+Nt4F/G4CAuMI2bjmJWmfwgXVieJdAcKAY0=;
-        b=T3d4viBJTbj43qAWpPl1nIc2bz7A6+sGBSIQUqg9mWEY6aqqYjoXYgEkUPubCMaq5J
-         2e7bH2ZwOsusIs7iFum/YzOM1J3N2xxP+Qde6kjH64rtFJUHTX18Q+ODqipJ1ThFyagF
-         BUuvY+xmNdIAGcNXtf4jQWdyo3/jnb3MJRMLTL02jLII0xtnJifJshkX8xrJN14V4tKi
-         qRtFLhPoT0pQZoCuYzF+5EedCQJ3RBa350apbld/lungBaG5643m7m5Fq/fje5lRSYJz
-         GuES+P5k1rIixYmSJvM43ipWOL+nGKydenU8MW9ReI0OZ3Vfnr53RfnBiB4CePwekx1u
-         P12Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762388774; x=1762993574;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s2wQ5QxA+Nt4F/G4CAuMI2bjmJWmfwgXVieJdAcKAY0=;
-        b=rFglNpPVqMsXy+YkQR4/9aSZy95L0Curpz6e/eeZ221HEnldJju/W5MuKl7/ar+WMv
-         S4cw5QEg07b2GeY+wfuFNXFrOcEiqo9kJa113uq8MO+cEuy0cTyBL4eQyXyoj0IHJT6a
-         fokb8XR45SCPi0j6qg6R49pFQD2JYGB/HV0jLRwR9Ae3BUvXGhDc/xlJL8iFWuvP8U1R
-         zVo7CYlg+qO7rvoprv7YN5jaNYGlBCRDV1ZfESFVzAlquV1OGBVAdjT+23edKCsfz2wI
-         1fq0+QbkcYMZ1thJaHQAdPOw12REPoQQzSFwZGXvpNC20g7tVcyB2gzGUCsfeFbQeLVS
-         QKDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoAR/RlAsuS3tVEeE3cA4fvhr40DscnMxTCQLSlu9f/jGw0SswsHyhfw9t1Stn5Om9OzftxEpZMGib1IU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIRt+Xz63vauKgmwkloKsLs0r4XtEbooDZtdOz+HsSMb822EXy
-	Q4j8hA1qU+WgSRn3+qYf3hiCXVoYMd8TLkyaL1Q+43UMNe373jRI3IN/
-X-Gm-Gg: ASbGncteWmyEoNFSIzdoA3WFyZsVvNSifK+pulgpvpSUvrec+SZuGLfRBUN7pAvJWsz
-	auVrcE5q3ppvZtyTF72B9+65QfYJIft/Z/eOE+3I6Ocv/zr3f5WoTmM/hw/U9E95rMIta87lBBO
-	xGVZk/jBxzbF6Aw9Emj+Jby8l3n13DOEYRZ5BGy2b97eTf7T+02uvOGZzZIHUe9lbMzp91xD8RN
-	ul95NECBYyjpknabH0NDX3I1seMnvkgzTbBvPfCSE/ZFEu61UwTxhxWpq2s3S9ab+voHwr3lmtD
-	h+NdbzzICIINTo6TzfS46Da1YAnukqxOIcMOZJQ45zEF+y9chIE4Eybq93BoBj5Uqhb3+ZSLFzf
-	k6u5aV9aIVfuY4MnSxThuyvDLLteJ/rwNJZKsr+iaoQBNrW3OmZ3tKN1RKP8+p6rwrdCM6D2KBO
-	6zgIc8TA39DA==
-X-Google-Smtp-Source: AGHT+IE59zLZZYyAmzryk94tw8TktRRSTJ6JnEVpxnemBG5Bk+jMcvGOFztXLqAXDxrgMv9zYV/INA==
-X-Received: by 2002:a05:690e:4082:b0:63d:bfad:6c7 with SMTP id 956f58d0204a3-63fd35b4528mr3942831d50.58.1762388773845;
-        Wed, 05 Nov 2025 16:26:13 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:13::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b1400351sm3511567b3.20.2025.11.05.16.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 16:26:13 -0800 (PST)
-From: Daniel Zahka <daniel.zahka@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shuah Khan <shuah@kernel.org>,
-	Boris Pismenny <borisp@nvidia.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH net-next v3 4/5] net/mlx5e: Add PSP stats support for Rx/Tx flows
-Date: Wed,  5 Nov 2025 16:26:05 -0800
-Message-ID: <20251106002608.1578518-5-daniel.zahka@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251106002608.1578518-1-daniel.zahka@gmail.com>
-References: <20251106002608.1578518-1-daniel.zahka@gmail.com>
+	s=arc-20240116; t=1762388820; c=relaxed/simple;
+	bh=2RccvUb7XJUT/2d3d/TOtrM4akK/I7QprNe4Lii3AN8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=BDabSUdKY1lJxLZdpuRyOZfteR71mXQrSkZCPwRvKUMcGHdCF1U+UE6sTBu93D4dp6undSn0dfIQe/05FKWXNkLuzvHeWa4QAYYNU6l6aQwjooSeByVE8FKn2+XKDXUC02dG6viM0vE9ZkoDAcyiqW2F08NXG23W2+kcUG0tfUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=cYdNqKVc; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5A60Q7oc751608
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 5 Nov 2025 16:26:07 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5A60Q7oc751608
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762388769;
+	bh=3onwbObq7kt4uvm9quoDuPPWpqlzWSstC/IyMgBI4eY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=cYdNqKVcs5cbrJ/3nzCtgAmw1T8jQYL4PIQgPi58DD+/ZvyYmcWfeONuP3xBCBjMP
+	 6qaVV4WPKHecNzy/iIk5Tz9Z5TQ+lXNtz3srJQevjjKF0J8DF3OBTQDjlTe71n656t
+	 WtFTk9iljWcwz4kF+f2pig/flLafaHrvnqowz4TeYkD9z5zs5eIzpOtHtyt2FLiOcX
+	 +soqvesrh4RdEwETZ+TB0imvb/+Y54A/tCLQ3zwH+lzurj6vGfbK+GudyQYhySFw6d
+	 gVINW3Em0VDzqMBFSkUL4PYsfzfMbzi3FBqPu7xgUFvaOUlQ5xr6Yw8R/SYm9Y9GDg
+	 bSeQC3ofFK4Ng==
+Date: Wed, 05 Nov 2025 16:26:05 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: David Laight <david.laight.linux@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+CC: u.kleine-koenig@baylibre.com, Nicolas Pitre <npitre@baylibre.com>,
+        Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Li RongQing <lirongqing@baidu.com>,
+        Khazhismel Kumykov <khazhy@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+        x86@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_next_4/9=5D_lib=3A_Add_mul=5Fu64=5Fadd=5Fu?=
+ =?US-ASCII?Q?64=5Fdiv=5Fu64=28=29_and_mul=5Fu6?=
+ =?US-ASCII?Q?4=5Fu64=5Fdiv=5Fu64=5Froundup=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20251105201035.64043-5-david.laight.linux@gmail.com>
+References: <20251105201035.64043-1-david.laight.linux@gmail.com> <20251105201035.64043-5-david.laight.linux@gmail.com>
+Message-ID: <128901BE-2651-4335-935F-34A5B50D811E@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Jakub Kicinski <kuba@kernel.org>
+On November 5, 2025 12:10:30 PM PST, David Laight <david=2Elaight=2Elinux@g=
+mail=2Ecom> wrote:
+>The existing mul_u64_u64_div_u64() rounds down, a 'rounding up'
+>variant needs 'divisor - 1' adding in between the multiply and
+>divide so cannot easily be done by a caller=2E
+>
+>Add mul_u64_add_u64_div_u64(a, b, c, d) that calculates (a * b + c)/d
+>and implement the 'round down' and 'round up' using it=2E
+>
+>Update the x86-64 asm to optimise for 'c' being a constant zero=2E
+>
+>Add kerndoc definitions for all three functions=2E
+>
+>Signed-off-by: David Laight <david=2Elaight=2Elinux@gmail=2Ecom>
+>Reviewed-by: Nicolas Pitre <npitre@baylibre=2Ecom>
+>---
+>
+>Changes for v2 (formally patch 1/3):
+>- Reinstate the early call to div64_u64() on 32bit when 'c' is zero=2E
+>  Although I'm not convinced the path is common enough to be worth
+>  the two ilog2() calls=2E
+>=20
+>Changes for v3 (formally patch 3/4):
+>- The early call to div64_u64() has been removed by patch 3=2E
+>  Pretty much guaranteed to be a pessimisation=2E
+>
+>Changes for v4:=20
+>- For x86-64 split the multiply, add and divide into three asm blocks=2E
+>  (gcc makes a pigs breakfast of (u128)a * b + c)
+>- Change the kerndoc since divide by zero will (probably) fault=2E
+>
+>Changes for v5:
+>- Fix test that excludes the add/adc asm block for constant zero 'add'=2E
+>
+> arch/x86/include/asm/div64=2Eh | 20 +++++++++------
+> include/linux/math64=2Eh       | 48 +++++++++++++++++++++++++++++++++++-
+> lib/math/div64=2Ec             | 14 ++++++-----
+> 3 files changed, 67 insertions(+), 15 deletions(-)
+>
+>diff --git a/arch/x86/include/asm/div64=2Eh b/arch/x86/include/asm/div64=
+=2Eh
+>index 9931e4c7d73f=2E=2E6d8a3de3f43a 100644
+>--- a/arch/x86/include/asm/div64=2Eh
+>+++ b/arch/x86/include/asm/div64=2Eh
+>@@ -84,21 +84,25 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
+>  * Will generate an #DE when the result doesn't fit u64, could fix with =
+an
+>  * __ex_table[] entry when it becomes an issue=2E
+>  */
+>-static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+>+static inline u64 mul_u64_add_u64_div_u64(u64 rax, u64 mul, u64 add, u64=
+ div)
+> {
+>-	u64 q;
+>+	u64 rdx;
+>=20
+>-	asm ("mulq %2; divq %3" : "=3Da" (q)
+>-				: "a" (a), "rm" (mul), "rm" (div)
+>-				: "rdx");
+>+	asm ("mulq %[mul]" : "+a" (rax), "=3Dd" (rdx) : [mul] "rm" (mul));
+>=20
+>-	return q;
+>+	if (!statically_true(!add))
+>+		asm ("addq %[add], %[lo]; adcq $0, %[hi]" :
+>+			[lo] "+r" (rax), [hi] "+r" (rdx) : [add] "irm" (add));
+>+
+>+	asm ("divq %[div]" : "+a" (rax), "+d" (rdx) : [div] "rm" (div));
+>+
+>+	return rax;
+> }
+>-#define mul_u64_u64_div_u64 mul_u64_u64_div_u64
+>+#define mul_u64_add_u64_div_u64 mul_u64_add_u64_div_u64
+>=20
+> static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 div)
+> {
+>-	return mul_u64_u64_div_u64(a, mul, div);
+>+	return mul_u64_add_u64_div_u64(a, mul, 0, div);
+> }
+> #define mul_u64_u32_div	mul_u64_u32_div
+>=20
+>diff --git a/include/linux/math64=2Eh b/include/linux/math64=2Eh
+>index 6aaccc1626ab=2E=2Ee889d850b7f1 100644
+>--- a/include/linux/math64=2Eh
+>+++ b/include/linux/math64=2Eh
+>@@ -282,7 +282,53 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u3=
+2 divisor)
+> }
+> #endif /* mul_u64_u32_div */
+>=20
+>-u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div);
+>+/**
+>+ * mul_u64_add_u64_div_u64 - unsigned 64bit multiply, add, and divide
+>+ * @a: first unsigned 64bit multiplicand
+>+ * @b: second unsigned 64bit multiplicand
+>+ * @c: unsigned 64bit addend
+>+ * @d: unsigned 64bit divisor
+>+ *
+>+ * Multiply two 64bit values together to generate a 128bit product
+>+ * add a third value and then divide by a fourth=2E
+>+ * The Generic code divides by 0 if @d is zero and returns ~0 on overflo=
+w=2E
+>+ * Architecture specific code may trap on zero or overflow=2E
+>+ *
+>+ * Return: (@a * @b + @c) / @d
+>+ */
+>+u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d);
+>+
+>+/**
+>+ * mul_u64_u64_div_u64 - unsigned 64bit multiply and divide
+>+ * @a: first unsigned 64bit multiplicand
+>+ * @b: second unsigned 64bit multiplicand
+>+ * @d: unsigned 64bit divisor
+>+ *
+>+ * Multiply two 64bit values together to generate a 128bit product
+>+ * and then divide by a third value=2E
+>+ * The Generic code divides by 0 if @d is zero and returns ~0 on overflo=
+w=2E
+>+ * Architecture specific code may trap on zero or overflow=2E
+>+ *
+>+ * Return: @a * @b / @d
+>+ */
+>+#define mul_u64_u64_div_u64(a, b, d) mul_u64_add_u64_div_u64(a, b, 0, d)
+>+
+>+/**
+>+ * mul_u64_u64_div_u64_roundup - unsigned 64bit multiply and divide roun=
+ded up
+>+ * @a: first unsigned 64bit multiplicand
+>+ * @b: second unsigned 64bit multiplicand
+>+ * @d: unsigned 64bit divisor
+>+ *
+>+ * Multiply two 64bit values together to generate a 128bit product
+>+ * and then divide and round up=2E
+>+ * The Generic code divides by 0 if @d is zero and returns ~0 on overflo=
+w=2E
+>+ * Architecture specific code may trap on zero or overflow=2E
+>+ *
+>+ * Return: (@a * @b + @d - 1) / @d
+>+ */
+>+#define mul_u64_u64_div_u64_roundup(a, b, d) \
+>+	({ u64 _tmp =3D (d); mul_u64_add_u64_div_u64(a, b, _tmp - 1, _tmp); })
+>+
+>=20
+> /**
+>  * DIV64_U64_ROUND_UP - unsigned 64bit divide with 64bit divisor rounded=
+ up
+>diff --git a/lib/math/div64=2Ec b/lib/math/div64=2Ec
+>index 4a4b1aa9e6e1=2E=2Ea88391b8ada0 100644
+>--- a/lib/math/div64=2Ec
+>+++ b/lib/math/div64=2Ec
+>@@ -183,13 +183,13 @@ u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64=
+ *remainder)
+> }
+> EXPORT_SYMBOL(iter_div_u64_rem);
+>=20
+>-#ifndef mul_u64_u64_div_u64
+>-u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+>+#ifndef mul_u64_add_u64_div_u64
+>+u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> {
+> #if defined(__SIZEOF_INT128__)
+>=20
+> 	/* native 64x64=3D128 bits multiplication */
+>-	u128 prod =3D (u128)a * b;
+>+	u128 prod =3D (u128)a * b + c;
+> 	u64 n_lo =3D prod, n_hi =3D prod >> 64;
+>=20
+> #else
+>@@ -198,8 +198,10 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+> 	u32 a_lo =3D a, a_hi =3D a >> 32, b_lo =3D b, b_hi =3D b >> 32;
+> 	u64 x, y, z;
+>=20
+>-	x =3D (u64)a_lo * b_lo;
+>-	y =3D (u64)a_lo * b_hi + (u32)(x >> 32);
+>+	/* Since (x-1)(x-1) + 2(x-1) =3D=3D x=2Ex - 1 two u32 can be added to a=
+ u64 */
+>+	x =3D (u64)a_lo * b_lo + (u32)c;
+>+	y =3D (u64)a_lo * b_hi + (u32)(c >> 32);
+>+	y +=3D (u32)(x >> 32);
+> 	z =3D (u64)a_hi * b_hi + (u32)(y >> 32);
+> 	y =3D (u64)a_hi * b_lo + (u32)y;
+> 	z +=3D (u32)(y >> 32);
+>@@ -265,5 +267,5 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+>=20
+> 	return res;
+> }
+>-EXPORT_SYMBOL(mul_u64_u64_div_u64);
+>+EXPORT_SYMBOL(mul_u64_add_u64_div_u64);
+> #endif
 
-Add all statistics described under the "Implementation Requirements"
-section of the PSP Architecture Specification:
+For the roundup case, I'm somewhat curious how this compares with doing:
 
-Rx successfully decrypted PSP packets:
-psp_rx_pkts  : Number of packets decrypted successfully
-psp_rx_bytes : Number of bytes decrypted successfully
+   cmp $1, %rdx
+   sbb $-1, %rax
 
-Rx PSP authentication failure statistics:
-psp_rx_pkts_auth_fail  : Number of PSP packets that failed authentication
-psp_rx_bytes_auth_fail : Number of PSP bytes that failed authentication
+=2E=2E=2E after the division=2E At least it means not needing to compute d=
+ - 1, saving an instruction as well as a register=2E Unfortunately using an=
+ lea instruction to compute %rax (which otherwise would incorporate both) i=
+sn't possible since it doesn't set the flags=2E
 
-Rx PSP bad frame error statistics:
-psp_rx_pkts_frame_err;
-psp_rx_bytes_frame_err;
-
-Rx PSP drop statistics:
-psp_rx_pkts_drop  : Number of PSP packets dropped
-psp_rx_bytes_drop : Number of PSP bytes dropped
-
-Tx successfully encrypted PSP packets:
-psp_tx_pkts  : Number of packets encrypted successfully
-psp_tx_bytes : Number of bytes encrypted successfully
-
-Tx drops:
-tx_drop : Number of misc psp related drops
-
-The above can be seen using the ynl cli:
-./pyynl/cli.py  --spec netlink/specs/psp.yaml --dump get-stats
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Raed Salem <raeds@nvidia.com>
-Signed-off-by: Rahul Rameshbabu <rrameshbabu@nvidia.com>
-Signed-off-by: Daniel Zahka <daniel.zahka@gmail.com>
----
-
-Notes:
-    v3:
-    - simplify error path in accel_psp_fs_init_tx()
-    - avoid casting argument in mlx5e_accel_psp_fs_get_stats_fill()
-    - delete unused member stats member in mlx5e_psp
-    v2:
-    - use %pe to print PTR_ERR()
-
- .../mellanox/mlx5/core/en_accel/psp.c         | 233 ++++++++++++++++--
- .../mellanox/mlx5/core/en_accel/psp.h         |  16 ++
- .../mellanox/mlx5/core/en_accel/psp_rxtx.c    |   1 +
- .../net/ethernet/mellanox/mlx5/core/en_main.c |   5 +
- 4 files changed, 240 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.c
-index 8565cfe8d7dc..38e7c77cc851 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.c
-@@ -28,12 +28,15 @@ struct mlx5e_psp_tx {
- 	struct mlx5_flow_handle *rule;
- 	struct mutex mutex; /* Protect PSP TX steering */
- 	u32 refcnt;
-+	struct mlx5_fc *tx_counter;
- };
- 
- struct mlx5e_psp_rx_err {
- 	struct mlx5_flow_table *ft;
- 	struct mlx5_flow_handle *rule;
--	struct mlx5_flow_handle *drop_rule;
-+	struct mlx5_flow_handle *auth_fail_rule;
-+	struct mlx5_flow_handle *err_rule;
-+	struct mlx5_flow_handle *bad_rule;
- 	struct mlx5_modify_hdr *copy_modify_hdr;
- };
- 
-@@ -50,6 +53,10 @@ struct mlx5e_accel_fs_psp_prot {
- 
- struct mlx5e_accel_fs_psp {
- 	struct mlx5e_accel_fs_psp_prot fs_prot[ACCEL_FS_PSP_NUM_TYPES];
-+	struct mlx5_fc *rx_counter;
-+	struct mlx5_fc *rx_auth_fail_counter;
-+	struct mlx5_fc *rx_err_counter;
-+	struct mlx5_fc *rx_bad_counter;
- };
- 
- struct mlx5e_psp_fs {
-@@ -72,9 +79,19 @@ static enum mlx5_traffic_types fs_psp2tt(enum accel_fs_psp_type i)
- static void accel_psp_fs_rx_err_del_rules(struct mlx5e_psp_fs *fs,
- 					  struct mlx5e_psp_rx_err *rx_err)
- {
--	if (rx_err->drop_rule) {
--		mlx5_del_flow_rules(rx_err->drop_rule);
--		rx_err->drop_rule = NULL;
-+	if (rx_err->bad_rule) {
-+		mlx5_del_flow_rules(rx_err->bad_rule);
-+		rx_err->bad_rule = NULL;
-+	}
-+
-+	if (rx_err->err_rule) {
-+		mlx5_del_flow_rules(rx_err->err_rule);
-+		rx_err->err_rule = NULL;
-+	}
-+
-+	if (rx_err->auth_fail_rule) {
-+		mlx5_del_flow_rules(rx_err->auth_fail_rule);
-+		rx_err->auth_fail_rule = NULL;
- 	}
- 
- 	if (rx_err->rule) {
-@@ -117,6 +134,7 @@ static int accel_psp_fs_rx_err_add_rule(struct mlx5e_psp_fs *fs,
- {
- 	u8 action[MLX5_UN_SZ_BYTES(set_add_copy_action_in_auto)] = {};
- 	struct mlx5_core_dev *mdev = fs->mdev;
-+	struct mlx5_flow_destination dest[2];
- 	struct mlx5_flow_act flow_act = {};
- 	struct mlx5_modify_hdr *modify_hdr;
- 	struct mlx5_flow_handle *fte;
-@@ -147,10 +165,14 @@ static int accel_psp_fs_rx_err_add_rule(struct mlx5e_psp_fs *fs,
- 	accel_psp_setup_syndrome_match(spec, PSP_OK);
- 	/* create fte */
- 	flow_act.action = MLX5_FLOW_CONTEXT_ACTION_MOD_HDR |
--		MLX5_FLOW_CONTEXT_ACTION_FWD_DEST;
-+			  MLX5_FLOW_CONTEXT_ACTION_FWD_DEST |
-+			  MLX5_FLOW_CONTEXT_ACTION_COUNT;
- 	flow_act.modify_hdr = modify_hdr;
--	fte = mlx5_add_flow_rules(rx_err->ft, spec, &flow_act,
--				  &fs_prot->default_dest, 1);
-+	dest[0].type = fs_prot->default_dest.type;
-+	dest[0].ft = fs_prot->default_dest.ft;
-+	dest[1].type = MLX5_FLOW_DESTINATION_TYPE_COUNTER;
-+	dest[1].counter = fs->rx_fs->rx_counter;
-+	fte = mlx5_add_flow_rules(rx_err->ft, spec, &flow_act, dest, 2);
- 	if (IS_ERR(fte)) {
- 		err = PTR_ERR(fte);
- 		mlx5_core_err(mdev, "fail to add psp rx err copy rule err=%d\n", err);
-@@ -158,22 +180,69 @@ static int accel_psp_fs_rx_err_add_rule(struct mlx5e_psp_fs *fs,
- 	}
- 	rx_err->rule = fte;
- 
--	/* add default drop rule */
-+	/* add auth fail drop rule */
- 	memset(spec, 0, sizeof(*spec));
- 	memset(&flow_act, 0, sizeof(flow_act));
-+	accel_psp_setup_syndrome_match(spec, PSP_ICV_FAIL);
- 	/* create fte */
--	flow_act.action = MLX5_FLOW_CONTEXT_ACTION_DROP;
--	fte = mlx5_add_flow_rules(rx_err->ft, spec, &flow_act, NULL, 0);
-+	flow_act.action = MLX5_FLOW_CONTEXT_ACTION_DROP |
-+			  MLX5_FLOW_CONTEXT_ACTION_COUNT;
-+	dest[0].type = MLX5_FLOW_DESTINATION_TYPE_COUNTER;
-+	dest[0].counter = fs->rx_fs->rx_auth_fail_counter;
-+	fte = mlx5_add_flow_rules(rx_err->ft, spec, &flow_act, dest, 1);
- 	if (IS_ERR(fte)) {
- 		err = PTR_ERR(fte);
--		mlx5_core_err(mdev, "fail to add psp rx err drop rule err=%d\n", err);
-+		mlx5_core_err(mdev, "fail to add psp rx auth fail drop rule err=%d\n",
-+			      err);
- 		goto out_drop_rule;
- 	}
--	rx_err->drop_rule = fte;
-+	rx_err->auth_fail_rule = fte;
-+
-+	/* add framing drop rule */
-+	memset(spec, 0, sizeof(*spec));
-+	memset(&flow_act, 0, sizeof(flow_act));
-+	accel_psp_setup_syndrome_match(spec, PSP_BAD_TRAILER);
-+	/* create fte */
-+	flow_act.action = MLX5_FLOW_CONTEXT_ACTION_DROP |
-+			  MLX5_FLOW_CONTEXT_ACTION_COUNT;
-+	dest[0].type = MLX5_FLOW_DESTINATION_TYPE_COUNTER;
-+	dest[0].counter = fs->rx_fs->rx_err_counter;
-+	fte = mlx5_add_flow_rules(rx_err->ft, spec, &flow_act, dest, 1);
-+	if (IS_ERR(fte)) {
-+		err = PTR_ERR(fte);
-+		mlx5_core_err(mdev, "fail to add psp rx framing err drop rule err=%d\n",
-+			      err);
-+		goto out_drop_auth_fail_rule;
-+	}
-+	rx_err->err_rule = fte;
-+
-+	/* add misc. errors drop rule */
-+	memset(spec, 0, sizeof(*spec));
-+	memset(&flow_act, 0, sizeof(flow_act));
-+	/* create fte */
-+	flow_act.action = MLX5_FLOW_CONTEXT_ACTION_DROP |
-+			  MLX5_FLOW_CONTEXT_ACTION_COUNT;
-+	dest[0].type = MLX5_FLOW_DESTINATION_TYPE_COUNTER;
-+	dest[0].counter = fs->rx_fs->rx_bad_counter;
-+	fte = mlx5_add_flow_rules(rx_err->ft, spec, &flow_act, dest, 1);
-+	if (IS_ERR(fte)) {
-+		err = PTR_ERR(fte);
-+		mlx5_core_err(mdev, "fail to add psp rx misc. err drop rule err=%d\n",
-+			      err);
-+		goto out_drop_error_rule;
-+	}
-+	rx_err->bad_rule = fte;
-+
- 	rx_err->copy_modify_hdr = modify_hdr;
- 
- 	goto out_spec;
- 
-+out_drop_error_rule:
-+	mlx5_del_flow_rules(rx_err->err_rule);
-+	rx_err->err_rule = NULL;
-+out_drop_auth_fail_rule:
-+	mlx5_del_flow_rules(rx_err->auth_fail_rule);
-+	rx_err->auth_fail_rule = NULL;
- out_drop_rule:
- 	mlx5_del_flow_rules(rx_err->rule);
- 	rx_err->rule = NULL;
-@@ -461,6 +530,10 @@ static void accel_psp_fs_cleanup_rx(struct mlx5e_psp_fs *fs)
- 		return;
- 
- 	accel_psp = fs->rx_fs;
-+	mlx5_fc_destroy(fs->mdev, accel_psp->rx_bad_counter);
-+	mlx5_fc_destroy(fs->mdev, accel_psp->rx_err_counter);
-+	mlx5_fc_destroy(fs->mdev, accel_psp->rx_auth_fail_counter);
-+	mlx5_fc_destroy(fs->mdev, accel_psp->rx_counter);
- 	for (i = 0; i < ACCEL_FS_PSP_NUM_TYPES; i++) {
- 		fs_prot = &accel_psp->fs_prot[i];
- 		mutex_destroy(&fs_prot->prot_mutex);
-@@ -474,7 +547,10 @@ static int accel_psp_fs_init_rx(struct mlx5e_psp_fs *fs)
- {
- 	struct mlx5e_accel_fs_psp_prot *fs_prot;
- 	struct mlx5e_accel_fs_psp *accel_psp;
-+	struct mlx5_core_dev *mdev = fs->mdev;
-+	struct mlx5_fc *flow_counter;
- 	enum accel_fs_psp_type i;
-+	int err;
- 
- 	accel_psp = kzalloc(sizeof(*accel_psp), GFP_KERNEL);
- 	if (!accel_psp)
-@@ -485,9 +561,68 @@ static int accel_psp_fs_init_rx(struct mlx5e_psp_fs *fs)
- 		mutex_init(&fs_prot->prot_mutex);
- 	}
- 
-+	flow_counter = mlx5_fc_create(mdev, false);
-+	if (IS_ERR(flow_counter)) {
-+		mlx5_core_warn(mdev,
-+			       "fail to create psp rx flow counter err=%pe\n",
-+			       flow_counter);
-+		err = PTR_ERR(flow_counter);
-+		goto out_err;
-+	}
-+	accel_psp->rx_counter = flow_counter;
-+
-+	flow_counter = mlx5_fc_create(mdev, false);
-+	if (IS_ERR(flow_counter)) {
-+		mlx5_core_warn(mdev,
-+			       "fail to create psp rx auth fail flow counter err=%pe\n",
-+			       flow_counter);
-+		err = PTR_ERR(flow_counter);
-+		goto out_counter_err;
-+	}
-+	accel_psp->rx_auth_fail_counter = flow_counter;
-+
-+	flow_counter = mlx5_fc_create(mdev, false);
-+	if (IS_ERR(flow_counter)) {
-+		mlx5_core_warn(mdev,
-+			       "fail to create psp rx error flow counter err=%pe\n",
-+			       flow_counter);
-+		err = PTR_ERR(flow_counter);
-+		goto out_auth_fail_counter_err;
-+	}
-+	accel_psp->rx_err_counter = flow_counter;
-+
-+	flow_counter = mlx5_fc_create(mdev, false);
-+	if (IS_ERR(flow_counter)) {
-+		mlx5_core_warn(mdev,
-+			       "fail to create psp rx bad flow counter err=%pe\n",
-+			       flow_counter);
-+		err = PTR_ERR(flow_counter);
-+		goto out_err_counter_err;
-+	}
-+	accel_psp->rx_bad_counter = flow_counter;
-+
- 	fs->rx_fs = accel_psp;
- 
- 	return 0;
-+
-+out_err_counter_err:
-+	mlx5_fc_destroy(mdev, accel_psp->rx_err_counter);
-+	accel_psp->rx_err_counter = NULL;
-+out_auth_fail_counter_err:
-+	mlx5_fc_destroy(mdev, accel_psp->rx_auth_fail_counter);
-+	accel_psp->rx_auth_fail_counter = NULL;
-+out_counter_err:
-+	mlx5_fc_destroy(mdev, accel_psp->rx_counter);
-+	accel_psp->rx_counter = NULL;
-+out_err:
-+	for (i = 0; i < ACCEL_FS_PSP_NUM_TYPES; i++) {
-+		fs_prot = &accel_psp->fs_prot[i];
-+		mutex_destroy(&fs_prot->prot_mutex);
-+	}
-+	kfree(accel_psp);
-+	fs->rx_fs = NULL;
-+
-+	return err;
- }
- 
- void mlx5_accel_psp_fs_cleanup_rx_tables(struct mlx5e_priv *priv)
-@@ -532,6 +667,7 @@ static int accel_psp_fs_tx_create_ft_table(struct mlx5e_psp_fs *fs)
- {
- 	int inlen = MLX5_ST_SZ_BYTES(create_flow_group_in);
- 	struct mlx5_flow_table_attr ft_attr = {};
-+	struct mlx5_flow_destination dest = {};
- 	struct mlx5_core_dev *mdev = fs->mdev;
- 	struct mlx5_flow_act flow_act = {};
- 	u32 *in, *mc, *outer_headers_c;
-@@ -580,8 +716,11 @@ static int accel_psp_fs_tx_create_ft_table(struct mlx5e_psp_fs *fs)
- 	flow_act.crypto.type = MLX5_FLOW_CONTEXT_ENCRYPT_DECRYPT_TYPE_PSP;
- 	flow_act.flags |= FLOW_ACT_NO_APPEND;
- 	flow_act.action = MLX5_FLOW_CONTEXT_ACTION_ALLOW |
--			  MLX5_FLOW_CONTEXT_ACTION_CRYPTO_ENCRYPT;
--	rule = mlx5_add_flow_rules(ft, spec, &flow_act, NULL, 0);
-+			  MLX5_FLOW_CONTEXT_ACTION_CRYPTO_ENCRYPT |
-+			  MLX5_FLOW_CONTEXT_ACTION_COUNT;
-+	dest.type = MLX5_FLOW_DESTINATION_TYPE_COUNTER;
-+	dest.counter = tx_fs->tx_counter;
-+	rule = mlx5_add_flow_rules(ft, spec, &flow_act, &dest, 1);
- 	if (IS_ERR(rule)) {
- 		err = PTR_ERR(rule);
- 		mlx5_core_err(mdev, "PSP: fail to add psp tx flow rule, err = %d\n", err);
-@@ -650,6 +789,7 @@ static void accel_psp_fs_cleanup_tx(struct mlx5e_psp_fs *fs)
- 	if (!tx_fs)
- 		return;
- 
-+	mlx5_fc_destroy(fs->mdev, tx_fs->tx_counter);
- 	mutex_destroy(&tx_fs->mutex);
- 	WARN_ON(tx_fs->refcnt);
- 	kfree(tx_fs);
-@@ -658,10 +798,12 @@ static void accel_psp_fs_cleanup_tx(struct mlx5e_psp_fs *fs)
- 
- static int accel_psp_fs_init_tx(struct mlx5e_psp_fs *fs)
- {
-+	struct mlx5_core_dev *mdev = fs->mdev;
- 	struct mlx5_flow_namespace *ns;
-+	struct mlx5_fc *flow_counter;
- 	struct mlx5e_psp_tx *tx_fs;
- 
--	ns = mlx5_get_flow_namespace(fs->mdev, MLX5_FLOW_NAMESPACE_EGRESS_IPSEC);
-+	ns = mlx5_get_flow_namespace(mdev, MLX5_FLOW_NAMESPACE_EGRESS_IPSEC);
- 	if (!ns)
- 		return -EOPNOTSUPP;
- 
-@@ -669,12 +811,55 @@ static int accel_psp_fs_init_tx(struct mlx5e_psp_fs *fs)
- 	if (!tx_fs)
- 		return -ENOMEM;
- 
-+	flow_counter = mlx5_fc_create(mdev, false);
-+	if (IS_ERR(flow_counter)) {
-+		mlx5_core_warn(mdev,
-+			       "fail to create psp tx flow counter err=%pe\n",
-+			       flow_counter);
-+		kfree(tx_fs);
-+		return PTR_ERR(flow_counter);
-+	}
-+	tx_fs->tx_counter = flow_counter;
- 	mutex_init(&tx_fs->mutex);
- 	tx_fs->ns = ns;
- 	fs->tx_fs = tx_fs;
- 	return 0;
- }
- 
-+static void
-+mlx5e_accel_psp_fs_get_stats_fill(struct mlx5e_priv *priv,
-+				  struct mlx5e_psp_stats *stats)
-+{
-+	struct mlx5e_psp_tx *tx_fs = priv->psp->fs->tx_fs;
-+	struct mlx5_core_dev *mdev = priv->mdev;
-+	struct mlx5e_accel_fs_psp *accel_psp;
-+
-+	accel_psp = (struct mlx5e_accel_fs_psp *)priv->psp->fs->rx_fs;
-+
-+	if (tx_fs->tx_counter)
-+		mlx5_fc_query(mdev, tx_fs->tx_counter, &stats->psp_tx_pkts,
-+			      &stats->psp_tx_bytes);
-+
-+	if (accel_psp->rx_counter)
-+		mlx5_fc_query(mdev, accel_psp->rx_counter, &stats->psp_rx_pkts,
-+			      &stats->psp_rx_bytes);
-+
-+	if (accel_psp->rx_auth_fail_counter)
-+		mlx5_fc_query(mdev, accel_psp->rx_auth_fail_counter,
-+			      &stats->psp_rx_pkts_auth_fail,
-+			      &stats->psp_rx_bytes_auth_fail);
-+
-+	if (accel_psp->rx_err_counter)
-+		mlx5_fc_query(mdev, accel_psp->rx_err_counter,
-+			      &stats->psp_rx_pkts_frame_err,
-+			      &stats->psp_rx_bytes_frame_err);
-+
-+	if (accel_psp->rx_bad_counter)
-+		mlx5_fc_query(mdev, accel_psp->rx_bad_counter,
-+			      &stats->psp_rx_pkts_drop,
-+			      &stats->psp_rx_bytes_drop);
-+}
-+
- void mlx5_accel_psp_fs_cleanup_tx_tables(struct mlx5e_priv *priv)
- {
- 	if (!priv->psp)
-@@ -849,12 +1034,30 @@ mlx5e_psp_key_rotate(struct psp_dev *psd, struct netlink_ext_ack *exack)
- 	return mlx5e_psp_rotate_key(priv->mdev);
- }
- 
-+static void
-+mlx5e_psp_get_stats(struct psp_dev *psd, struct psp_dev_stats *stats)
-+{
-+	struct mlx5e_priv *priv = netdev_priv(psd->main_netdev);
-+	struct mlx5e_psp_stats nstats;
-+
-+	mlx5e_accel_psp_fs_get_stats_fill(priv, &nstats);
-+	stats->rx_packets = nstats.psp_rx_pkts;
-+	stats->rx_bytes = nstats.psp_rx_bytes;
-+	stats->rx_auth_fail = nstats.psp_rx_pkts_auth_fail;
-+	stats->rx_error = nstats.psp_rx_pkts_frame_err;
-+	stats->rx_bad = nstats.psp_rx_pkts_drop;
-+	stats->tx_packets = nstats.psp_tx_pkts;
-+	stats->tx_bytes = nstats.psp_tx_bytes;
-+	stats->tx_error = atomic_read(&priv->psp->tx_drop);
-+}
-+
- static struct psp_dev_ops mlx5_psp_ops = {
- 	.set_config   = mlx5e_psp_set_config,
- 	.rx_spi_alloc = mlx5e_psp_rx_spi_alloc,
- 	.tx_key_add   = mlx5e_psp_assoc_add,
- 	.tx_key_del   = mlx5e_psp_assoc_del,
- 	.key_rotate   = mlx5e_psp_key_rotate,
-+	.get_stats    = mlx5e_psp_get_stats,
- };
- 
- void mlx5e_psp_unregister(struct mlx5e_priv *priv)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.h b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.h
-index 42bb671fb2cb..6b62fef0d9a7 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp.h
-@@ -7,11 +7,27 @@
- #include <net/psp/types.h>
- #include "en.h"
- 
-+struct mlx5e_psp_stats {
-+	u64 psp_rx_pkts;
-+	u64 psp_rx_bytes;
-+	u64 psp_rx_pkts_auth_fail;
-+	u64 psp_rx_bytes_auth_fail;
-+	u64 psp_rx_pkts_frame_err;
-+	u64 psp_rx_bytes_frame_err;
-+	u64 psp_rx_pkts_drop;
-+	u64 psp_rx_bytes_drop;
-+	u64 psp_tx_pkts;
-+	u64 psp_tx_bytes;
-+	u64 psp_tx_pkts_drop;
-+	u64 psp_tx_bytes_drop;
-+};
-+
- struct mlx5e_psp {
- 	struct psp_dev *psp;
- 	struct psp_dev_caps caps;
- 	struct mlx5e_psp_fs *fs;
- 	atomic_t tx_key_cnt;
-+	atomic_t tx_drop;
- };
- 
- static inline bool mlx5_is_psp_device(struct mlx5_core_dev *mdev)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp_rxtx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp_rxtx.c
-index 828bff1137af..c17ea0fcd8ef 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp_rxtx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_accel/psp_rxtx.c
-@@ -186,6 +186,7 @@ bool mlx5e_psp_handle_tx_skb(struct net_device *netdev,
- 	/* psp_encap of the packet */
- 	if (!psp_dev_encapsulate(net, skb, psp_st->spi, psp_st->ver, 0)) {
- 		kfree_skb_reason(skb, SKB_DROP_REASON_PSP_OUTPUT);
-+		atomic_inc(&priv->psp->tx_drop);
- 		return false;
- 	}
- 	if (skb_is_gso(skb)) {
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index 7b7a0060979d..3fdb1de94c9b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -4011,6 +4011,11 @@ void mlx5e_fold_sw_stats64(struct mlx5e_priv *priv, struct rtnl_link_stats64 *s)
- 		s->rx_bytes     += rq_stats->bytes;
- 		s->multicast    += rq_stats->mcast_packets;
- 	}
-+
-+#ifdef CONFIG_MLX5_EN_PSP
-+	if (priv->psp)
-+		s->tx_dropped	+= atomic_read(&priv->psp->tx_drop);
-+#endif
- }
- 
- void
--- 
-2.47.3
-
+The cmp; sbb sequence should be no slower than add; adc =E2=80=93 I'm sayi=
+ng "no slower" because %rdx is never written to, so I think this is provabl=
+y a better sequence; whether or not it is measurable is another thing (but =
+if we are tweaking this stuff=2E=2E=2E)
 
