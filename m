@@ -1,190 +1,216 @@
-Return-Path: <linux-kernel+bounces-888029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4DCC399E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:44:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A46C399E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:43:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F7A3BC026
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:43:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EDDBA35056E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A0B3090CA;
-	Thu,  6 Nov 2025 08:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356A33090CC;
+	Thu,  6 Nov 2025 08:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AXbiUoiK"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qx1DyF8b";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hz83f4WF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qx1DyF8b";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hz83f4WF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DE43081C8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 08:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E289308F2E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 08:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762418588; cv=none; b=XpR7pmWjLyQXWus6VLcFa2eqUnA7rbUbupIE5noffPAWZy04jZUmxTkTAA/CNEtOmip8AtssaqcDHitO7uK22/V14G/AIzpHvZuxUlmAFiYHf0knZG4jkeTQPYbIJkN35dtD3RFIUrT+K0OXz/xHB+5BkyHaHXenDQ/ES+e+LZA=
+	t=1762418609; cv=none; b=nSSNFDHpK3f9ajKLak8iSAZ1y7IVRA3pOxJECKn6zw/ValgW0v13ltYHr0OaM9WpqZeumRRoS+2lhwLHzIJpwL3OK6MlNjXo/7C98f6rLOD9b1Xmz1xEtxP/0drGwLYeGdbGCqlTmBm4J4zVzg6SJ7MNS358Oj2Pn5LEaUn3OjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762418588; c=relaxed/simple;
-	bh=v2YRLhXm0HrSxf8BfnjaxENfVrRRGKx6UO6gEm876iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJv74XemvXF9qiwx7h1xf+YvhUhNtLOeDyLfF1sGJRFtPy/OKmmzCJW96/sjg8o7uX6g2pIRHsOXFAxkqw7HKyCsOVKAD6DuVZDto1UQ4WKPmuAU1K/sP35Ms1S2BHke0hTXWnC2GCsLLJ/Z0oMRRe55xBEdbgR0bM85kix/Tso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AXbiUoiK; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4710022571cso6554125e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 00:43:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762418585; x=1763023385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CEZG+cPMJvuhS066wIUvNEiIclF+bAdS7OADAJRzuRM=;
-        b=AXbiUoiKwSEwThe20kSTf78zkHpVd/2/3SqzU5MOBRHnhqE3mTEYqd6hpTPEoNxDE6
-         wV+DIqjENsTYICmtrViu/MW8NXB9VhXDDR+Omye/uT961VCM5awgSu/kQdQG4w4jYxVA
-         q2frONyxUILlcJlJ1t6RAKpamMxhg5rzysN6A4CgxSLMeJTpGeMiVCmWzP183xK7Ckw+
-         HMbF+q0OJibWGZYzBY8wfLHmBHV+BvWbH4XO34JPYJyRzHuJIkBTEyhO2bScg6F9ZmyT
-         J2p9pfOrFikyVs3tXlLJpH9zziKb1q0HayI1Y2Bs7+/xrsG+Ju189ERklaZBJXEu5+m3
-         fQTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762418585; x=1763023385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CEZG+cPMJvuhS066wIUvNEiIclF+bAdS7OADAJRzuRM=;
-        b=ffo/pgUxiocqnfoW6UsPbUrGcqqx/sYx3Ls9XaP2tKXDQGz1xF0Ep33IsM9wmgJLHm
-         W5dS0eCzpGml9g0N/Rq9ElMD7knODT/6agwViIzheKw+qyF+CCzVkF+8+sAXxyN4u9GO
-         JicX1F6V7NnORusduEHon9Hf3GGY6u8vRKj23ZeefsDud9OyONg6QB5zz0I5gQeyW/aD
-         cXd+sMaVZq7SaVJSZrjX6swY48l5hQ4Fz50rzkKw5fiGu3mLBGs5p7NzIgUs3TdhZTXV
-         Nv2ZNKrqimwruvP4EpOsMEkaQwNnC0LS5rKM6ZD4PYWgtd11I1Ol6hjmfJziv7MI6sDi
-         wCiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXolneDFHwSG/5trWwjs0+Kt86soFGj0yXnFB2AF4gEaN7ytbIl+EUeH0brVK7Dy3gXBfnJ+qq3u3J3VYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7WRBc/2LXfYNy6GiYcn8K+Rz71bs001PO+0rzXVIV0Ka1Cglz
-	elPF0ST8yYYUqPqG9JlLfXW63bTMZMzAHoPCwCglUUKQ5FmgLF+FzwHnpJ+lMCZHZjg=
-X-Gm-Gg: ASbGncuWq23epT0B3rwBL6Xil+IArtLjGXj9ghWNaS/9NIXtjaVRRcPVGBeDyFmZw+K
-	SV2oVJj+yMULV+4IZWcswCPDjCDH8ZY5CWNqZja+gtmfjZ++BsutOcuA+C0ZM1VByd1kLjuZc5f
-	xXjOKDYPBVIPNixkcYMULDdRekAxLS3KyAwyjWui+OvmnT7bXzrsFchrYp723O+cJ5wE1BhexBS
-	8ZmlQ53aKDLtHf5bImxWbtdCUN9GwT3w23JZttOZ0sAz7hrVRz0BUAXFX9ZZuhHatMVtFt7RBG+
-	Zefet0mkjvXuBgm/ZfLsUoaeyIBUEOZeVdBkEV58Uhpyp0PzWjL7CZ0jYxwrwtngHofyop5egc8
-	qPB2oAjCWixZ2L35+rpzgnv/6Nn2UqfGenHk7UjXnASSu5cdwClS8qeKykkdsLW1+juoWXdGn9S
-	HpIUdxjEk=
-X-Google-Smtp-Source: AGHT+IHG3bk5k/CAUj7UuEtNvG0FbRc/6YbDxKYe2c7MR76MuFl90nA72JE7FrRjCKkX4v4cMMJrfw==
-X-Received: by 2002:a05:600c:5486:b0:477:5a30:1c37 with SMTP id 5b1f17b1804b1-4775ce9de52mr52438205e9.41.1762418584714;
-        Thu, 06 Nov 2025 00:43:04 -0800 (PST)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625eabf3sm40097725e9.16.2025.11.06.00.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:43:03 -0800 (PST)
-Date: Thu, 6 Nov 2025 10:43:02 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: hamoa-iot-evk: Add backlight
- support for eDP panel
-Message-ID: <vycaiobp3kpwu5pntzwbbzyp753ugvprkiu5sf45een2mu433m@2rbvtg5y5hw5>
-References: <20251106-hamoa_dvt_backlight-v2-1-9f844c8f8110@oss.qualcomm.com>
+	s=arc-20240116; t=1762418609; c=relaxed/simple;
+	bh=FtgI6O8UMpQD3snaAbDJileT5NGjX2zMHwbt/wnPcd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1vjXUR0hlLU4OXQenJo6A6OkrKacXn5BC53zs+2m44RvG/0jTEY+rmysfzP816PY8FP+DmuuNUi/E93Sm2/dY2VBGYf1FBcFCdB1NpP7CVaO++pVNrnD9061oMOwYeDsHOg/jBV6X/BiSUzMik4ck5906pBkxNeiQOAXo2rajQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qx1DyF8b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hz83f4WF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qx1DyF8b; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hz83f4WF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 341A221190;
+	Thu,  6 Nov 2025 08:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762418605; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6wxOKvhAdm48qlooVKjaBjyYeH3EW3cuitf/SbPCNNM=;
+	b=Qx1DyF8bQCYLj9t7mZCAvvFrws8+n1jXO5EwKpY8+rQEg6oXH1nDLJbO6h8Nzx05Hd+3qU
+	VoUQ66QxjBoEciDBd6vd9pIqD9WakEc8eS/VshX6hLW1DnGpHNp/AuoWOPNtqxgejDzwrd
+	tlmVZ/8LbBlZlwLcIJoNdsqJYfnnW/o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762418605;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6wxOKvhAdm48qlooVKjaBjyYeH3EW3cuitf/SbPCNNM=;
+	b=hz83f4WFMbiUeZtQU2g58YEkl2m37uvhtVYbr3fl+k+lJ2fwYEi8ZNC6Yce+LjAUzwkCMR
+	z0Is4VktCuM5Z0DQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762418605; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6wxOKvhAdm48qlooVKjaBjyYeH3EW3cuitf/SbPCNNM=;
+	b=Qx1DyF8bQCYLj9t7mZCAvvFrws8+n1jXO5EwKpY8+rQEg6oXH1nDLJbO6h8Nzx05Hd+3qU
+	VoUQ66QxjBoEciDBd6vd9pIqD9WakEc8eS/VshX6hLW1DnGpHNp/AuoWOPNtqxgejDzwrd
+	tlmVZ/8LbBlZlwLcIJoNdsqJYfnnW/o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762418605;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6wxOKvhAdm48qlooVKjaBjyYeH3EW3cuitf/SbPCNNM=;
+	b=hz83f4WFMbiUeZtQU2g58YEkl2m37uvhtVYbr3fl+k+lJ2fwYEi8ZNC6Yce+LjAUzwkCMR
+	z0Is4VktCuM5Z0DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1271413A31;
+	Thu,  6 Nov 2025 08:43:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ptHYA61fDGl+ZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 06 Nov 2025 08:43:25 +0000
+Message-ID: <a1922c8a-6cd1-4d79-8a7a-7462a1e791f5@suse.cz>
+Date: Thu, 6 Nov 2025 09:43:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106-hamoa_dvt_backlight-v2-1-9f844c8f8110@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] slab: make __slab_free() more clear
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Alexei Starovoitov <ast@kernel.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ kasan-dev@googlegroups.com
+References: <20251105-sheaves-cleanups-v1-0-b8218e1ac7ef@suse.cz>
+ <20251105-sheaves-cleanups-v1-1-b8218e1ac7ef@suse.cz>
+ <aQxbp0cikSkiON5M@harry>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aQxbp0cikSkiON5M@harry>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,oracle.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On 25-11-06 15:12:06, Yongxing Mou wrote:
-> Previously, the eDP panel backlight was enabled via UEFI. Added backlight
-> control node in kernel DTS due to some meta may not enable the backlight.
+On 11/6/25 09:26, Harry Yoo wrote:
+> On Wed, Nov 05, 2025 at 10:05:29AM +0100, Vlastimil Babka wrote:
+>> The function is tricky and many of its tests are hard to understand. Try
+>> to improve that by using more descriptively named variables and added
+>> comments.
+>> 
+>> - rename 'prior' to 'old_head' to match the head and tail parameters
+>> - introduce a 'bool was_full' to make it more obvious what we are
+>>   testing instead of the !prior and prior tests
 > 
-> Aligned with other x1e80100-based platforms: the PWM signal is controlled
-> by PMK8550, and the backlight enable signal is handled by PMC8380.
+> Yeah I recall these were cryptic when I was analyzing slab few years
+> ago :)
 > 
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Add hamoa-iot-evk to the commit subject. [Konrad]
-> - Correct the property order in the vreg_edp_bl node. [Konrad]
-> - Link to v1: https://lore.kernel.org/r/20251028-hamoa_dvt_backlight-v1-1-97ecb8d0ad01@oss.qualcomm.com
-> ---
->  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 55 ++++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
+>> - add or improve comments in various places to explain what we're doing
+>> 
+>> Also replace kmem_cache_has_cpu_partial() tests with
+>> IS_ENABLED(CONFIG_SLUB_CPU_PARTIAL) which are compile-time constants.
+>>
+>> We can do that because the kmem_cache_debug(s) case is handled upfront
+>> via free_to_partial_list().
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> index 36dd6599402b..454aad40de34 100644
-> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> @@ -17,6 +17,16 @@ aliases {
->  		serial1 = &uart14;
->  	};
->  
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&pmk8550_pwm 0 5000000>;
-> +		enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
-> +		power-supply = <&vreg_edp_bl>;
-> +
-> +		pinctrl-0 = <&edp_bl_en>, <&edp_bl_pwm>;
-> +		pinctrl-names = "default";
-> +	};
-> +
->  	wcd938x: audio-codec {
->  		compatible = "qcom,wcd9385-codec";
->  
-> @@ -183,6 +193,22 @@ vreg_edp_3p3: regulator-edp-3p3 {
->  		regulator-boot-on;
->  	};
->  
-> +	vreg_edp_bl: regulator-edp-bl {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VBL9";
-> +		regulator-min-microvolt = <3600000>;
-> +		regulator-max-microvolt = <3600000>;
-> +
-> +		gpio = <&pmc8380_3_gpios 10 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-0 = <&edp_bl_reg_en>;
-> +		pinctrl-names = "default";
-> +
-> +		regulator-boot-on;
-> +	};
-> +
->  	vreg_nvme: regulator-nvme {
->  		compatible = "regulator-fixed";
->  
-> @@ -819,6 +845,8 @@ &mdss_dp3 {
->  	aux-bus {
->  		panel {
->  			compatible = "edp-panel";
-> +
-> +			backlight = <&backlight>;
->  			power-supply = <&vreg_edp_3p3>;
->  
->  			port {
-> @@ -879,6 +907,22 @@ usb0_1p8_reg_en: usb0-1p8-reg-en-state {
->  	};
->  };
->  
-> +&pmc8380_3_gpios {
-> +	edp_bl_en: edp-bl-en-state {
-> +		pins = "gpio4";
-> +		function = "normal";
-> +		power-source = <1>;
-> +		input-disable;
-> +		output-enable;
-> +	};
-> +
-> +	edp_bl_reg_en: edp-bl-reg-en-state {
-> +		pins = "gpio10";
-> +		function = "normal";
-> +	};
-> +
+> This makes sense. By the way, should we also check IS_ENABLED(CONFIG_SLUB_TINY)
+> in kmem_cache_has_cpu_partial()?
 
-Drop empty line.
+If you really mean testing CONFIG_SLUB_TINY then it's not necessary because
+CONFIG_SLUB_CPU_PARTIAL depends on !TINY.
+If you mean using IS_ENABLED(CONFIG_SLUB_CPU_PARTIAL) instead of the #ifdef,
+that could be possible, just out of scope here. And hopefully will be gone
+fully, so no point in polishing at this point. Unlike __slab_free() which stays.
 
-With that fixed:
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+> 
+> The code is much cleaner!
+> 
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> 
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
