@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-887649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C965FC38CD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:08:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EE6C38CEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E25054EBD6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:08:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728633AEBE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC64226D14;
-	Thu,  6 Nov 2025 02:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8855025524C;
+	Thu,  6 Nov 2025 02:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="B1kxuvoo"
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="CMpCFxli"
 Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E588EDF6C;
-	Thu,  6 Nov 2025 02:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2C023183A;
+	Thu,  6 Nov 2025 02:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394878; cv=none; b=eQzEUSsglGgd2PapAFh59IN791vIdQ0KNoMwyKMnWFhDo/g8AJr4x5fQeHvj8tlsMg64dZ4izGgRXUY7PYvA7SKIsJEImIZOM82L4y0UW3kkxM8lv0SM+4jGQysKvQ5V534qkaSW3ptivyBBdRkJQTlk+fVthbpAcyIGJiAvr3Q=
+	t=1762394886; cv=none; b=N7TXRCnoYfPZGmJ3izMZavAxDWNi11rfeDavI9EbZdvodDs91tV++EJLrDSvnDX0toUBF94Fz1lHkxL2LkbjZcP4wMPFWqBd/6tZl1Pp9dWTjgXFTbkdulV/w9JTIlRY2SOO3qOK8uBKVOJGFyws0eR6G1/2+fwr6qSHwdcfP68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394878; c=relaxed/simple;
-	bh=q/O5jS5BqeQsuyDsuXUwZuvtJThb2oTdqTNPgEcLa6Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=No+UfRs7a+gnipNw1jA6Lcg58mllfUgsmEpO6vz+HTsawVciKp1OdOQTxB0UnBCrQvcd4tfDIbvzfRP1uCoF28SbtODxYpRg2+g4xZkmkcrn0uwvlzP2yAylQpjZ3BvGzTMxAE3tvNGaRCrZNZhgTu4KOphZGUQ0/VpbakxCE4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=B1kxuvoo; arc=none smtp.client-ip=54.207.22.56
+	s=arc-20240116; t=1762394886; c=relaxed/simple;
+	bh=e+hVU1RC2LYfYzZmWNnPMdE+z/tJGbuEiNFlNe9HImA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=iDJ8onTDuCgPX4lUlbpgQ8o8CsGimSLZASxSWsSmDDEaViu8qoIShB/ZvP1aSVExBX7gGXEAalckdnfIg98YQubfMJ2oGyRqiGOfDooVruM7ndFWKz1ufF880cZa2z8VBvmEdSJvjh4yOElwg94mpfLHpZbV3jmBnieOgDlGyII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=CMpCFxli; arc=none smtp.client-ip=54.207.22.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1762394810;
-	bh=x0b6nYcdg7hiAcKdA4JhGlxHiilGQ3K7Dert+al7aoA=;
+	s=altu2504; t=1762394813;
+	bh=vMnx+1Z0AQ+IaQ+rncoQKPgi68bObdKKAtspniD0a0Q=;
 	h=From:To:Subject:Date:Message-Id;
-	b=B1kxuvooB2GQMghXnBGjsUY0nM2kNBC6VAT7XUeXLGjGFv8I3THJNKkFd6jMVBj2v
-	 4wiXOm2KR9GmWWX6cmZXw9teXpRioPjmrmDWNXjEepDP8BZvFaWxjvE4ranHaEXEyx
-	 Y6G/5S98C//Tznwl9dSNk4Rw6wcR+VI3tdaPw8N8=
-X-QQ-mid: esmtpgz15t1762394808tb962b6a1
-X-QQ-Originating-IP: Kxt++LRpNywAhVRcx54Iw5qydXwjg4t+r/VQWDBNVZU=
+	b=CMpCFxlinqhCcXioaU+1CIgiZcAeVgeyPI99SbsvPODXihbiTC8nCvl5lYhqiPy9E
+	 77tx9UPJCI6jWp/3Y/E/nai7Cghu7ZP2S1/j3CK/zaP/7mNf85MH1QymYxU3ACjb6I
+	 EA6aUgJQrPGPDINuXCwLkQSRJfAIiU7ehIN4WyV8=
+X-QQ-mid: esmtpgz15t1762394812ta4938bad
+X-QQ-Originating-IP: kCOxFyGhvUgtQVW7lgiKC2yFp3VgIVWm+DtouM+o6Gs=
 Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 06 Nov 2025 10:06:41 +0800 (CST)
+	id ; Thu, 06 Nov 2025 10:06:49 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3992485569025743558
+X-BIZMAIL-ID: 4724032086787846867
 From: Chaoyi Chen <kernel@airkyi.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
@@ -67,31 +67,31 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-rockchip@lists.infradead.org,
 	linux-phy@lists.infradead.org,
 	Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Subject: [PATCH 1/9] dt-bindings: ili9881c: Add compatible string for Wanchanglong w552946aaa
-Date: Thu,  6 Nov 2025 10:06:24 +0800
-Message-Id: <20251106020632.92-2-kernel@airkyi.com>
+Subject: [PATCH 2/9] dt-bindings: phy: rockchip-inno-dsidphy: Add compatible for rk3506
+Date: Thu,  6 Nov 2025 10:06:25 +0800
+Message-Id: <20251106020632.92-3-kernel@airkyi.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251106020632.92-1-kernel@airkyi.com>
 References: <20251106020632.92-1-kernel@airkyi.com>
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:airkyi.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: OYPMZDjp99nuc/wUw2MdUSwpzyG4/mrfL/0v7O17UWEQtq6vNT81vMIG
-	zuZLhWSFK8nSwjfqDwWyRYACQ1qqjB0pmwx2NzfvxuuB9KZCFkyupnNq53wtAl6zea0cTC5
-	Nl+qSww2hhZporfG0iYXlbdmtOMYpk2GLLDAQd5G9h8zA9nAy9lu6oGb2WP6rVfQEPWI8mr
-	nHWRgbZsezAuiel/k1VxmGDhGXLiOa+8BdMFLAwa4vHMyBOIXRP1FjNjvsu1snz/oqJzJCJ
-	E1ZnxpTUcN+L6vXTTBljbkrrsITOZdFeKcLm0N1dpxVRHKcgSWmj7UOy6lijJ/1KivuNXQT
-	Yj8hRnA3tcwynQgXD4ulRxnwf9md2hbEMf7UPLVewWOaxVS7x04Wp8oTTjZOOWELQG0vQ2U
-	f1EyFXKl/1v7mquAGnagRv0gNOeSyat/JIS2o9MpBepMSnpVFKIpw6lhSSxqEt/o0JiSwXK
-	5sQgSJUzi5tyA/kL+Umr1BmCSvpa6KkhFHoTwO8XQ/nGnJZCg9TJFVHJ9BdjgfJ8nCV2pKq
-	eTkS4HrkNbimGUl8XZH4C6Sz+s1e/wvS5QXWXnPiY9o+Cc/01PoubsaFRzWo+E7L0b5zCKi
-	4fOdbXVLQ1OR4zUwkL5YDhPlygfYyanvAbBZbMRfrIqMHHiOtsGoiKMXhTI3EB3ViY8KwlX
-	ROfKRhIiZc5eWFD+KtmHejBlZXKtDTV9hpdcVojcgJrZMO9+a99CWY6+DDqZeKFZHmL1C7P
-	TVN63/+zLjzVY2CIV+yL/g6y/IjYzGrNzz/oos27I8d1mvDxuAcTsNDbHmmAh62lGveHYSo
-	UW7Pn9uBbH8nOU8WKDMr8BOdqLjeE79JTxMi3sBebZlUBr6gcvWULrGoTVt5iE+BNKF6FrY
-	fsigN7Jrk0qLoV99BLRCW3fKX4cLqLF6eCAvxgybyZsYPkzbAyuKz4f78QAh1O8kxb6O1uE
-	g7tdfXdCJjIROf3ZmqQ10XJ39qdUVokqjMbN6mxQzz0PnNVQYSubJOqdY+mnlladSNraHJv
-	zwjx2WrWPrsS1QqI51iCtcsKCxatWcpeGcoziCZA==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-XMAILINFO: OanpiDkno5AWnu1kQ4CCcJbB5Kv81QjBSegSBNeN7MWLveon9DgMBezS
+	BIShNojkiNr/sa7nHgs/0Vu8oagasq5OTe4VDsjO2uiwNcBqsqNXxh892faVevjMWuwnxTN
+	lgfPKfHySElUMRxuPHQE8Hl+o3i1x1LDwczybs0j/6izzGJaqCUKlY+izvpZuCA4Qi3QZUW
+	SRWSJZC6ZGlRMMFePG3FeI0PBjVcdkgQXsFK9VMYVCbBKa4bAG5nr6kzaofVNGOL68nIlHR
+	IvaSnQZpQFikg9FZU19b9Q1XwF3pW8OJH6cFjtanmUWNr3CKIJ29XiD9hBsydS8Zw0jKcNT
+	BSpdOByunyYARuGOPeSVdX59Q+9250S2hEbogMosTXm0mCpoKb2ay+B90yt2FaHjCAt+xm7
+	zni9xrcDsw2flv+yyNxhzjRw2ItW9nBL8KwLiK7tWOK4JMjS2H/woap1wllK4UFTmp94mAB
+	kYg05wzcC6jXgmEfGZ7DsBkp7xxpOiwdR1tfwQwQ82mr5gyorbMzoUC4oIxEElsLdRt7RJL
+	lQaVkLL4kuKMcoxQeB/6wYV6sJZgy3yK3/KpwzB2/Jkee5zi7xC14mhGyHLlCCq/6GB1UQ5
+	Uj0kReasxskT8byZ2AZOl60AUoPRwHQ5psB6ZXCqD5GkRjLPi+9E9uBa/C56uCSKYNfMHXA
+	cJ3suRAzmSBZSwmBJnj7JFAcjCJm0b+4SMKB/aDyqj4Y5Qa5/7LHba2Io7+alSVddxVDnpD
+	0ASuOyCfMpNKlOUC8Pyjsx/5mPOi2oGf2Vm7X5VkzBnMtbSUulAgwy/lMDIu4wG6qRbqy3g
+	YiiazW0//wdx5qGDHFC1WjaD6TVVmHClOM69GlyeE/ZQejNmnJVqlEpJihzNaxT9xXBVArb
+	0QrJoYcNvxobJD6h9a6n+0FA+z3GcsCYWXA8yLrPC4okC8J2oSuX74KBsde7cCnRCwldJ/B
+	kECvX7Y3DR99U11+6EEIX1zx6fLnZfbBZBbTz3CilfCFj5qYm1klTWxCtKc9JjcdZhhsuLu
+	txsgqwEwUFGtAeUPlgbcrry3+YlHU=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -101,27 +101,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-Like w552946aba, w552946aaa uses the Ilitek ILI9881D controller chip,
-and it supports up to 2 lanes.
+Document a compatible string for the rk3506 dsi-dphy.
 
 Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 ---
- .../devicetree/bindings/display/panel/ilitek,ili9881c.yaml       | 1 +
+ .../devicetree/bindings/phy/rockchip,px30-dsi-dphy.yaml          | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
-index 434cc6af9c95..f331a47cc759 100644
---- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
-@@ -23,6 +23,7 @@ properties:
-           - raspberrypi,dsi-7inch
-           - startek,kd050hdfia020
-           - tdo,tl050hdv35
-+          - wanchanglong,w552946aaa
-           - wanchanglong,w552946aba
-       - const: ilitek,ili9881c
+diff --git a/Documentation/devicetree/bindings/phy/rockchip,px30-dsi-dphy.yaml b/Documentation/devicetree/bindings/phy/rockchip,px30-dsi-dphy.yaml
+index 46e64fa293d5..83e7c825860c 100644
+--- a/Documentation/devicetree/bindings/phy/rockchip,px30-dsi-dphy.yaml
++++ b/Documentation/devicetree/bindings/phy/rockchip,px30-dsi-dphy.yaml
+@@ -18,6 +18,7 @@ properties:
+       - rockchip,px30-dsi-dphy
+       - rockchip,rk3128-dsi-dphy
+       - rockchip,rk3368-dsi-dphy
++      - rockchip,rk3506-dsi-dphy
+       - rockchip,rk3568-dsi-dphy
+       - rockchip,rv1126-dsi-dphy
  
 -- 
 2.51.1
+
 
 
