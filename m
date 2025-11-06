@@ -1,221 +1,163 @@
-Return-Path: <linux-kernel+bounces-889132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7964DC3CCD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:23:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE53C3CCC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E63566FBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D357C3AD871
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6703334F466;
-	Thu,  6 Nov 2025 17:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB66034C828;
+	Thu,  6 Nov 2025 17:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Goh0CI3z"
-Received: from mail-il1-f229.google.com (mail-il1-f229.google.com [209.85.166.229])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CJdOVjO9"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEF034E771
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4D92D8364
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449428; cv=none; b=QbTFP7fR0nZ+cL3Axsea2IUJb3WJDJvxI0PzPIGJehC1XWTGuMTpbf8lhi2IFDGcInA5KjE/pWRBLlpOCoxNfsato5ETM1rind3OO9kB519bab2867s2j1HcerQq7/9hnDt79xGICsHs2aqsu4JZttEsCNhVH/cq/UmXEkaDAWc=
+	t=1762449419; cv=none; b=i+yXgJ2Xbjrgze+o+Okj4UyyEFQh1IPx2FLjeMQ1ZowhJunRZ5pyGh/1WUImA2qNsFuRrs2urECoKPxfJprJYbvMQ+O5jT7XJ2sIiVfIT8eOlHsBo8cGTAdXdeTQSy42fF7TaGjZ7zdQgLvvMT/GQTkokyDZ0RRY0u4zjHouOt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449428; c=relaxed/simple;
-	bh=OBV5Wvf7Pf20YICHZs8rawC+9onihr9HjuRkLnqfYV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RzMj2EhaJiPCR+bTetwDhwGo89pkNeWiw0pjl/RLpNsRkSYxfyIiYV5hQPglTZQCracAT3FR/Ri8mS73+yO3NYGOH6956ZVQDouGxm3S/35yoGzbFwWR62MhmGyy2qPGkvNfhQ9q+3RB0hhaYEaNGl1BJvY7FXyAr7LvEnG+dXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Goh0CI3z; arc=none smtp.client-ip=209.85.166.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f229.google.com with SMTP id e9e14a558f8ab-4334ebed4b7so480735ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:17:06 -0800 (PST)
+	s=arc-20240116; t=1762449419; c=relaxed/simple;
+	bh=dIwybaZojCu29+P9gEfB8CIvmj6Bl08p1VgiPhwpKTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOSl3c466tLcJKZt4jX/f3LzjRieS/DtQubOfNB4FzpbheK6p1yWMr6iS0Y7WA2S6+6bVh1xZxgtpr6cDjGT0EQp2IQ9CJdJDIk/qsRyq9ui/TpjlrkZgADeYSwZk6lBjaUMwBzw7BrQnFg75O2C9JICZ2iUu/+kz09DYE0WO+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CJdOVjO9; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ed79ad2846so9089831cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:16:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1762449425; x=1763054225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IB1zx0ug02eNzGM3pa1SYRczl09y5Mp94LC3eOoPIeo=;
-        b=Goh0CI3zkM4IOSL9nJI4JIR2jxS6Y9YB0kE/V3bp0/Hge2nAsu0oi7R6ObzSqgp7y9
-         uGuEfjvr5YGbjgKndGkW+yayIj9zVNBipblQf93xMh46pIZvCHX4LHfEx+OtAeg8lEWR
-         5wtMmPksr2gmmqqrsKDCuraDwu+Rp/HFroSyTSn5SwgVaqPlBGi6PuiJtIWgnaw/3T8N
-         HYB9mEzZbHG3jUPtJBlj3sClEDpm4P7VI0J8Dkd1H2Jy+nKrhgEF93SKo92JrM82/syZ
-         7QDDY9oUGRq737Tj1vNL7LhWo65AgetWnXpEOySkQrKzj/+1SUjCkJ+12QRNMDmzaGQ6
-         8OJg==
+        d=ziepe.ca; s=google; t=1762449416; x=1763054216; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XyqXd6ge5y2aj27CRXRh3J8Q1q4rd+TcymckOxNEG8A=;
+        b=CJdOVjO9imBTSxRyHc/n7zEODCoSd74/aaeElwF9WgjP2wdlDWZhSwPn792CK0dR4W
+         KHXPtZD92yH4MNq/bVEqZdK4g4id00yTS8fILUWgJPqFAi5xbLz063ysBVToTU3HlDeg
+         5TIAJQRl3M6HXnLaXOtEJHD/zngFExbf0QGK7lHYmDLLD72qjYpWELXu46D7xxR9mwTr
+         jqt2Xi6xjo043WZA5Qse1KM5rLdOmUxzonwEGAn1I/1THIW25caUyC6g678B8RxqXsnN
+         uHyBKKnqa8sVTi8iMMOds9OA8oo9FhPYCJgBeA9I8W4TW7Pq0eR4qWOu+uLblNW6cauz
+         qCeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762449425; x=1763054225;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IB1zx0ug02eNzGM3pa1SYRczl09y5Mp94LC3eOoPIeo=;
-        b=wI1KRrejPUbfYNPFNE6bXycrcgyQYXGjFxq6Ys0ckxfaAeL+xPxf5jm6gZz32frbBF
-         AnMahbqpBc80gwSqUP292woRB9H0/4DpWnuBfMmSz9t4dv6RvzxFO7FQukI87ovzhQQ5
-         v90ijpd6bVlw8FjC9SloQaexpLdFN3B+10T6bsrg1ABJsr/VqN2FHaamNDHAifNxkqNU
-         EB6/ptAQ0zF+kptzpIGlqc/PXKAjsOVmr3YvbCDCd5JzOzXWTBBvFShyvWSkWD5ekzEB
-         Qy1+FkCELDjGd2IA6vq0jHlkFtOoiGsjDNEYwt7qIGuJXNHzVrYaonDBJ0fHRA6usH9r
-         TX3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJcYtCK78XxDUe9gmhcyhP4dyrAOMGW6L/fBelqnKrbbMgvz0jx5/6AKc5poBfKCDgge2HIzTZzErfidY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIhOtq/hk8izKuak002ox5JYnDKqhzYBVf+xj5ad7XCgL5SPzZ
-	83BpWMVl20K3AZ4krrKi/f1nwd2lVFNMJ+N9Gx5pwrkp1Ewf/8DO+TyAyiVhwoQSNea2xYSPQiT
-	3dH3seiUS5g+j54skSvFWriJO3xjXdZy46tkE
-X-Gm-Gg: ASbGncvaIl2JxxskWPCUqnY34bUbl3aGzwCyTK1QyTJ18KUrJXm/T5VGG2TcWxF7Rye
-	Imw0j4VwCkM2k7wf8eZg4jZE2rgvkbAbdJcF8xpPTUp+zG+lwPE9kKZoIkoa3AUyb+mWYYXpyG8
-	W/wsnXQpBfi+0yMjamp6g5XZZdIzJK6vRW0Dv4Do7bApqusZ86jHNXTOoHkObqvi8D/Y2nV7Wur
-	MTMwohf12aJkAHthpmqXHj5VjW8K6+qyrqrgejdcvyixne2k1PP+XAoQ0gzFcAAkuD2qQa1ofhn
-	NcXAgS3ywo1oJrv/pyRg4Jz78mgjPm3PxwNOxehG6Kow/U8tQqE9lFZwdJQ5AS6P9VJcdrFf7XS
-	1IlxDBoCgcMSGUCggjv5DL3Dx1rmS23k=
-X-Google-Smtp-Source: AGHT+IE3SOPR3RvvTYbgxmQWXBVVJ3yDbMy/iZny5RZkVIcJY2XztktIO9465VGyzSGLf0729xvn39bTVg5V
-X-Received: by 2002:a05:6e02:1d85:b0:433:5c6b:4b72 with SMTP id e9e14a558f8ab-4335f49a8c0mr835205ab.6.1762449425552;
-        Thu, 06 Nov 2025 09:17:05 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-4334f4b46basm2221115ab.19.2025.11.06.09.17.05
+        d=1e100.net; s=20230601; t=1762449416; x=1763054216;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XyqXd6ge5y2aj27CRXRh3J8Q1q4rd+TcymckOxNEG8A=;
+        b=jJM7MAh7CWC38mIX/OHGBE27Fe587xBk2KxTYR3ZUMfePrWDw328Eq1XwVFeM1jlL4
+         42uPVJM2oAXccdjrADfr7swY9hEgn3sGNxtYJZ50WgQW+DKgv6+dSIqyQwK/B9s7FU9Z
+         VNKaMoYbOC+wYGzrie4GbLiLLcegh0LccMn91tjlnoKUpDO4x3J7xe7N8LE5GfdtZQ6V
+         Uyi7fXVmFLPHBnfKaAM9+dGIMc5L/HoN79QldmQNMvIHjHiOh9fW7hkxepYqddLyM7Go
+         t25gy8cgmjBl2TmiSn8xfvIXe3N6q4w2nEsoVQJujoGHHu1xBI+bVX2BluYpWko6Od6n
+         UMxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVd+VocAR58g8W1602iK+SMdlxNHcsRXdiwcu4tzWy3qzB6yn6GxNy4osMn7mimjZy9MmisPP45kS1KyUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGkGl9sXCgFzhh8AlaRpBWuckjaJSKvPVXDBsU//Minub1/Jno
+	VWv9Q0TI2Xag3cpQdfSInegVZP+trh9UwDO2pZHt9BQPoTlKZzAC1W5QWyqFAGkzFtY=
+X-Gm-Gg: ASbGncv+kDzLnY3YoaTG1dyyzQ/QNH9XbQ4IeijjmoKkL4EqxGhWFUHPvISqQksPV5n
+	upmEkBe0zIYP9+f8HO9siwkU2a8CVAA5wKpliDaFKAmyO3cDrjOF4zbWYUYmZ/BNRib6lohoAHp
+	URYmchrGab6V8vFQQTOt/0qFoZa6MdSWM3hkwA8ZaGGrhI8+ztiSEBBwAWRyhyCHadu2MfELo7Z
+	T2Q88SRIrHVfD83aiwBSoemBIr8xssaTEuKp2qMcJyOp2REWOyoqgGJDpUgkApcHyMAPwGOA4+a
+	Ux4dI6hd/D+rfg+G2/YsrBvpA8pAg0sCWB2TB4qr2M4XXGtv2JT/bWT2lPhvlD9WrW1ixCXVITF
+	6L7SfDq7bLCvTLtYeQORRl0jcYMWGbPEWw0t3Z8nqIx7Cqzlf/0wRUtdCLyUu1fBD0u201SdLKu
+	o5L/4h3NPrrlgu2K1WbjJhIteu8aC3NSqiSbnmHFl8e0iCcw==
+X-Google-Smtp-Source: AGHT+IGm7rjI4btGT0uAp5U2+RTOpSSDx/JneJwxU99rel9EmV7Mer/iD0OJK3RWNsxIkY3fdHP+mA==
+X-Received: by 2002:a05:622a:410d:b0:4e8:ac66:ee44 with SMTP id d75a77b69052e-4ed725e06eemr111576881cf.39.1762449415840;
+        Thu, 06 Nov 2025 09:16:55 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed813b7ce2sm21908131cf.24.2025.11.06.09.16.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 09:17:05 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 3C217340315;
-	Thu,  6 Nov 2025 10:17:05 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 3922EE401BC; Thu,  6 Nov 2025 10:17:05 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v3 2/2] ublk: use rq_for_each_segment() for user copy
-Date: Thu,  6 Nov 2025 10:16:47 -0700
-Message-ID: <20251106171647.2590074-3-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251106171647.2590074-1-csander@purestorage.com>
-References: <20251106171647.2590074-1-csander@purestorage.com>
+        Thu, 06 Nov 2025 09:16:55 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vH3bS-00000007OJk-2iYD;
+	Thu, 06 Nov 2025 13:16:54 -0400
+Date: Thu, 6 Nov 2025 13:16:54 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
+ mode
+Message-ID: <20251106171654.GV1204670@ziepe.ca>
+References: <aMQmA9cLaeYWG5_C@willie-the-truck>
+ <aNKwROPzDCWgJBGQ@google.com>
+ <20250923173806.GF2547959@ziepe.ca>
+ <aNppE9A3PDiDg_1W@google.com>
+ <20251002151308.GG3195829@ziepe.ca>
+ <aQt9-kTCe8TpuyVq@google.com>
+ <20251105171208.GN1204670@ziepe.ca>
+ <aQyBIohAuxNHV-XI@google.com>
+ <20251106132331.GU1204670@ziepe.ca>
+ <aQzSzhcndQ3Ry0a2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aQzSzhcndQ3Ry0a2@google.com>
 
-ublk_advance_io_iter() and ublk_copy_io_pages() currently open-code the
-iteration over the request's bvecs. Switch to the rq_for_each_segment()
-macro provided by blk-mq to avoid reaching into the bio internals and
-simplify the code.
+On Thu, Nov 06, 2025 at 04:54:38PM +0000, Mostafa Saleh wrote:
+> Maybe I am misunderstanding this, but that looks really intrusive to me,
+> at the moment arm-smmuv-3.c is a platform driver, and rely on the
+> platform bus to understand the device (platform_get_resource...)
+>
+> You are suggesting to change that so it can also bind to AUX devices, then
+> change the “arm_smmu_device_probe” function to understand that and possibly
+> parse info from the parent device?
 
-Suggested-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/block/ublk_drv.c | 70 +++++++++++-----------------------------
- 1 file changed, 19 insertions(+), 51 deletions(-)
+Yes, it is probably only a couple lines I think. You still have a
+platform device, it just comes from a different spot.
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 40eee3e15a4c..5cf288809226 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -911,26 +911,33 @@ static const struct block_device_operations ub_fops = {
- 	.open =		ublk_open,
- 	.free_disk =	ublk_free_disk,
- 	.report_zones =	ublk_report_zones,
- };
- 
--struct ublk_io_iter {
--	struct bio *bio;
--	struct bvec_iter iter;
--};
--
--/* return how many bytes are copied */
--static size_t ublk_copy_io_pages(struct ublk_io_iter *data,
--		struct iov_iter *uiter, int dir)
+I didn't it audit it closely, but basically it starts like this:
+
+-static int arm_smmu_device_probe(struct platform_device *pdev)
 +/*
-+ * Copy data between request pages and io_iter, and 'offset'
-+ * is the start point of linear offset of request.
++ * dev is the device that the driver is bound to
++ * pdev is the device that has the physical resources describing the smmu
 + */
-+static size_t ublk_copy_user_pages(const struct request *req,
-+		unsigned offset, struct iov_iter *uiter, int dir)
++static int arm_smmu_device_probe_impl(struct device *dev,
++                                     struct platform_device *pdev)
  {
-+	struct req_iterator iter;
-+	struct bio_vec bv;
- 	size_t done = 0;
+        int irq, ret;
+        struct resource *res;
+        resource_size_t ioaddr;
+        struct arm_smmu_device *smmu;
+-       struct device *dev = &pdev->dev;
  
--	for (;;) {
--		struct bio_vec bv = bio_iter_iovec(data->bio, data->iter);
--		void *bv_buf = bvec_kmap_local(&bv);
-+	rq_for_each_segment(bv, req, iter) {
-+		void *bv_buf;
- 		size_t copied;
- 
-+		if (offset >= bv.bv_len) {
-+			offset -= bv.bv_len;
-+			continue;
-+		}
-+
-+		bv.bv_offset += offset;
-+		bv.bv_len -= offset;
-+		bv_buf = bvec_kmap_local(&bv);
- 		if (dir == ITER_DEST)
- 			copied = copy_to_iter(bv_buf, bv.bv_len, uiter);
- 		else
- 			copied = copy_from_iter(bv_buf, bv.bv_len, uiter);
- 
-@@ -938,54 +945,15 @@ static size_t ublk_copy_io_pages(struct ublk_io_iter *data,
- 
- 		done += copied;
- 		if (copied < bv.bv_len)
- 			break;
- 
--		/* advance bio */
--		bio_advance_iter_single(data->bio, &data->iter, copied);
--		if (!data->iter.bi_size) {
--			data->bio = data->bio->bi_next;
--			if (data->bio == NULL)
--				break;
--			data->iter = data->bio->bi_iter;
--		}
-+		offset = 0;
- 	}
- 	return done;
- }
- 
--static bool ublk_advance_io_iter(const struct request *req,
--		struct ublk_io_iter *iter, unsigned int offset)
--{
--	struct bio *bio = req->bio;
--
--	for_each_bio(bio) {
--		if (bio->bi_iter.bi_size > offset) {
--			iter->bio = bio;
--			iter->iter = bio->bi_iter;
--			bio_advance_iter(iter->bio, &iter->iter, offset);
--			return true;
--		}
--		offset -= bio->bi_iter.bi_size;
--	}
--	return false;
--}
--
--/*
-- * Copy data between request pages and io_iter, and 'offset'
-- * is the start point of linear offset of request.
-- */
--static size_t ublk_copy_user_pages(const struct request *req,
--		unsigned offset, struct iov_iter *uiter, int dir)
--{
--	struct ublk_io_iter iter;
--
--	if (!ublk_advance_io_iter(req, &iter, offset))
--		return 0;
--
--	return ublk_copy_io_pages(&iter, uiter, dir);
--}
--
- static inline bool ublk_need_map_req(const struct request *req)
- {
- 	return ublk_rq_has_data(req) && req_op(req) == REQ_OP_WRITE;
- }
- 
--- 
-2.45.2
+        smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
+        if (!smmu)
 
+Probably needs some adjustments to switch places between pdev/dev, but
+the ones I looked at were all OK already..
+
+In the aux case dev is the aux dev, otherwise dev and pdev are the
+same thing. devm related stuff has to dev.
+
+> One of the main benefits from choosing trap and emulate was that it
+> looks transparent from the kernel of point view, so doing such radical
+> changes to adapt to KVM doesn't look right to me, I think the driver
+> should remain as is (a platform driver that thinks it's directly
+> talking to the HW).
+
+I'm not so fixed on this idea, this kvm stuff makes enough meaningful
+changes I don't think we need to sweep it all under the rug completely
+fully transparently. If you need a couple of edits to the probe
+function that's fine in my book.
+
+Jason
 
