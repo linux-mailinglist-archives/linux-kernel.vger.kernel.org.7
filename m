@@ -1,59 +1,55 @@
-Return-Path: <linux-kernel+bounces-889558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05610C3DE71
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:54:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268F4C3DE77
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F133AE6B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:54:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2C5134E902
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342FE3557E4;
-	Thu,  6 Nov 2025 23:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE1B3570B6;
+	Thu,  6 Nov 2025 23:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9Cy1ioi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VU/DJAcj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A39D305977;
-	Thu,  6 Nov 2025 23:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AD23563FA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762473264; cv=none; b=bJo8QvBUdSvCepFUc3HhYpls/ibDDETfNp6TUvPLT7dlW2ID4dQP3K9SX2+jytTlsBH3rSGo/++G27ZfZnJtEFaqRo18wu/n0uyF2JCWFHsPvP9Mr0nG8Z9A13Nnha1uzwzknsDbOYmqcQZ6NXauTScC3zk8wVUAynMkCWMxh0c=
+	t=1762473266; cv=none; b=e5m7YbQnkEhCGBH0cbQaDwU983A6YqybJAGcHvM2RcoWtAoMfMchqV4mfJEllIJruk5w+9QlxdD3ZyRkWhNZz/7rgukzLI7QM7q5WH+9aVZtJ8xJR2hLENbrm4lgqZYprUaFP039vKbvf2SzNY5VqfhvBTjxB8g8uqyAG7pStWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762473264; c=relaxed/simple;
-	bh=nUgrKOEntcoxnLMXZVxWwUI9CbwzMYPoAkwMzotuOOE=;
+	s=arc-20240116; t=1762473266; c=relaxed/simple;
+	bh=17wuiMQ0Wz8tvMq96C3IgMgGNA7iqNHbdsOknaX12ys=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iRdd7MHNywu5tYh62XwNP5hAKSy8M4e63oYo7PvT4C3KqVNwH3OGvLEGcU8DH843V6uqrYaTKBsoGi1F/fePmwbb8xjZvVay1lFGqtDhgM2NAkvjIXOmoln0JXyeDtFt4KWGGxsQuFYwji+gwr4uxc/QLrUR7zz/E4N+9h98KWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9Cy1ioi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E79C116C6;
-	Thu,  6 Nov 2025 23:54:20 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZQ2JudivRpX7u2CP2KlqaR4zJkujKlYSPz+Q7MpO+wJK0lm6yEYHSLNxbL7d8XJhdMwcmOEuwcnQtgIZZRVdkEJn8xMfWeirHYA9dK8VISznHjP1owf2f48C81W8lw0hQAQ1pSvHvMZkgP12qD8SJ90Ff9QQ44fl0xxuwxCyAsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VU/DJAcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07FBC116C6;
+	Thu,  6 Nov 2025 23:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762473264;
-	bh=nUgrKOEntcoxnLMXZVxWwUI9CbwzMYPoAkwMzotuOOE=;
+	s=k20201202; t=1762473265;
+	bh=17wuiMQ0Wz8tvMq96C3IgMgGNA7iqNHbdsOknaX12ys=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=e9Cy1ioiBgg2IZziJsSnPM2e3+VSkoYpu53IVyPpk/ZevsKAMfAKMy/vnAV7iMFvq
-	 zcJDzTr2Rrwb7/f7W5S4Tzgkil55/uSPYDuUtqONeK6kI+jvBl8LLq43BFFBVHdmLL
-	 s/F1uLxE6o0gWJigWC7O0BO8o+/BDngSKtp0WI+jCozdVMlK8cJJOtk5jhmTqwt4eh
-	 8JK5XpeQPd/aVEUtOGtxvU+j/PfpoZI6FtTgs2K/HUR+vVgKxz+ykI7KTJkpxa8H9a
-	 x4VKQs0EwF0Nx/j7jnIRHbLWq682w0lLFnMKLs9CZdZbVmy79Nv12n/X59uLkJNZMs
-	 Pgh+mvfTehB8w==
+	b=VU/DJAcjcUstnUWlQYyck9RmqJ7lkKV0h2tWrxw8Vw2emkfuPIM0h11M6mKAmmxbj
+	 62aTot5CWuZwc7Y6HCStgwSMsbF0ZPLHzq3oCSbdHviPbDoKBk/xSjpGxzSHsGBlXR
+	 5HZPz4w7rEXLO2sAsBE/OLJ0JL2FQvpEwq8b7tjUcyig/DGuFxnFFubD352Ot3R8kk
+	 7awMPPB8AlqBrD62fCMPOenYfYWynkEAsFy6isbjAFdZ9moLmFq3XkSUKHvEIS/daf
+	 orLdxGW+Z42m3rcO8OaZKpu/QQMuwpKXojSGzBw1BP735tw7C0Pvt6j+6kJYd2ua7S
+	 vMNJJto+eXa/w==
 From: Mark Brown <broonie@kernel.org>
-To: linux-mediatek@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, matthias.bgg@gmail.com, lgirdwood@gmail.com, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
- wenst@chromium.org, igor.belwon@mentallysanemainliners.org
-In-Reply-To: <20251027110527.21002-1-angelogioacchino.delregno@collabora.com>
-References: <20251027110527.21002-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: (subset) [PATCH v11 0/9] Add support MT6316/6363/MT6373 PMICs
- regulators and MFD
-Message-Id: <176247325942.2483095.1363987867451171276.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 23:54:19 +0000
+To: Joy Zou <joy.zou@nxp.com>, linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <20251106114628.2302762-1-andriy.shevchenko@linux.intel.com>
+References: <20251106114628.2302762-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] regulator: pf9453: Fix kernel doc for
+ mux_poll()
+Message-Id: <176247326348.2483095.9073583896607784960.b4-ty@kernel.org>
+Date: Thu, 06 Nov 2025 23:54:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,23 +60,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-a6db3
 
-On Mon, 27 Oct 2025 12:05:18 +0100, AngeloGioacchino Del Regno wrote:
-> Changes in v11:
->  - Removed unnecessary #address-cells in all mt6316 bindings
+On Thu, 06 Nov 2025 12:46:28 +0100, Andy Shevchenko wrote:
+> The validator is not happy:
 > 
-> Changes in v10:
->  - Added "struct" prefix to structs kerneldoc
->  - Renamed struct mtk_spmi_pmic_pdata to mtk_spmi_pmic_variant
->  - Added "REG_" to MT6363/73 mfd register definitions to disambiguate
->  - Expanded MTK_SPMI_PMIC_IRQ_GROUP macro parameter names as suggested
->  - Some rewording of comments as suggested, addition of more comments
->  - Refactored IRQ domain handling due to deprecation of function
->    irq_domain_add_tree() to use the new irq_domain_create_tree()
->  - Fixed to use generic_handle_domain_irq_safe() to avoid races
->  - Added support for two interrupt cells in translation
->  - Removed .irq_lock() and .irq_unlock() in favor of lockdep classes
->  - Added support for handling PMICs without IRQ Group register for
->    upcoming MT6685 implementation
+> Warning: drivers/regulator/pf9453-regulator.c:303 This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+> 
+> Update the kernel-doc accordingly.
+> 
 > 
 > [...]
 
@@ -90,14 +76,8 @@ Applied to
 
 Thanks!
 
-[1/9] dt-bindings: regulator: Document MediaTek MT6316 PMIC Regulators
-      commit: 40a7c5db9020079547358f486ef12d57c1a7aa1f
-[2/9] regulator: Add support for MediaTek MT6316 SPMI PMIC Regulators
-      commit: a87a7b3530728fb7477a74c27fc27e060bf5684f
-[3/9] dt-bindings: regulator: Document MediaTek MT6363 PMIC Regulators
-      commit: d0f9f5b7a3356b43f78b37b9cc3671ecc7469356
-[4/9] regulator: Add support for MediaTek MT6363 SPMI PMIC Regulators
-      commit: 3c36965df80801344850388592e95033eceea05b
+[1/1] regulator: pf9453: Fix kernel doc for mux_poll()
+      commit: 6bd1ad97eb790570c167d4de4ca59fbc9c33722a
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
