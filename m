@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-887964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A034EC3975F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:52:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B2FC39762
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7E11887645
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:51:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 500EF4F87C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3CB27F19B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799D02E0B47;
 	Thu,  6 Nov 2025 07:51:24 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcKsVyii"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8D2295516;
-	Thu,  6 Nov 2025 07:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C97014F70
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415484; cv=none; b=Q4oPp1pxTlxLzkbdjmAJItu2kXyDq+8INg0snVuNiV4H2i2N6tEpBu1s5VfiicA1Mi2RmEpUrfe/bYy7j+TpZ3V6tnCBoTb1Nmo48NJJdkpMj0FSoBxs+FN49ctgu9tswOwFJmh3Pk4EYe9FpNsmEgSa33TZ8joYrOi4USFfL7I=
+	t=1762415483; cv=none; b=dUNO1q2tJwAvqO+ZSft2HSLIfDxr1kKdkOYkaJDbDN03tr7PoRBITzBztGYda53a5d6ucVyE9tFUPaQrmSzCAdkKBg/bFwzTwgKqsdj1lmGoC5P4cWfn+Q3GYu0In9RHyZDRvybjv2iOXR8l0wapVzvo09fJjysgEVWb9khi658=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415484; c=relaxed/simple;
-	bh=KvESVpECG/hSqZs6a/6LvTTpH8QiSRhu2VyyX90vh/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KAY6a43gkMzMCGEAi3KveEpO+IEgX9z7X3p/Et1JI6jNNDMxI1ncS+zaRnDgqXobwSMcwV6yr3let7li7ajAZOmVXxjQiEAyjfFdPe0+70GJbn8394/QKYv41wyRDLyDTL43w9++ADvZLiLbxeeB80H+v4Hw7fC51HN3UHMspnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowACnDmlnUwxp5jinAQ--.2074S2;
-	Thu, 06 Nov 2025 15:51:05 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: srinivas.kandagatla@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] ASoC: codecs: va-macro: fix resource leak in probe error path
-Date: Thu,  6 Nov 2025 15:50:54 +0800
-Message-ID: <20251106075055.555-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762415483; c=relaxed/simple;
+	bh=V3okf9oIEIU43qw5xYW1BwiN1gJLrWq2sN3TplwqiZw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lTXxg8kULkM7wRIJb3rcCn4M8HwrbBYtX7vwQHwlf0REgNpZRvqdEG70HWmlVnFPRHz6xwwKenBRhocQRxLdtwuKVNxKIAkdMxOzp4bv+L3YeOGYPLXP2kr1f6xThuJ1BmDsSsJCB5nyzWOtrw8OSRnVA7k6WIRcRUySM+Cl570=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcKsVyii; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640c3940649so912912a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:51:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762415480; x=1763020280; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v7QbmE1T84ff08D3+wx9jlBrqSs8DUW5Q3gCIAzKNPQ=;
+        b=lcKsVyiiD6AOqH2GqfPZQVE1DKIKKDtHcvOKJIU8xNp3Tj4x4yVLE+tj5VMQ1pch39
+         qJ7iJY3YMryBVwfMWQl5Se9i6ksKa75bCsQTXAB7niCDQmgFOzStXJAVEwxUz1rcClge
+         j4XV0U8DjZ2pgWL6lES0F+o+samexitYZUi73camA2v1LpX157rz7ctC2mR4iw9EA9zd
+         OklA/1WJMB3DvDUceh+Ocdrhgf4GfKUPKw4hQQJiXoZJtijkT4+WZOwkI/mj1d1GfAkb
+         A4ihScjaMVTSYEx5bEmoLYqqF8/TtdSaqkVJYQDHcViWBMCl0VmU9IsBjyCyNVeodi6H
+         K07w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762415480; x=1763020280;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v7QbmE1T84ff08D3+wx9jlBrqSs8DUW5Q3gCIAzKNPQ=;
+        b=fQUum5dP485IY6XKffhu34XvlzJgXVRpu5putUgd/14JpmZvs8HBNCEZnwPVTBzRGD
+         Xn3Y32ZSDtBhDGOX6PP8ljRzrT5qazQfc4IMnFjLuTOBjdcxOQ9EzxtWxLQAq4KcgruI
+         femk+N9Z5IgAEp6Hp/YXsWTiDfsEcw8QhUQwyWuSPppUg0yEVsAVCOO/uxag158Or3bw
+         qvNfgOTfh4XiaRyOFPSyq/Mlw8aa9iGjESTXj3GCmNOus6rYtbSLktIBo2auacY2qRke
+         1XJEV+xjLAZFm/qq0lfIejTWMaPFMB8SdY8REHUVJ9XKoEF1o5PjGfeyMLdFr6v03LKI
+         CBMw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Li6XhezIhg8Zersy56XqPBIPRnVDdjrjQ/pzWokWa3uYGY5eqLIQQD1hZX//Zl/YlxDw0dT6gKnK+D0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3hJa3KIWHUKqDi4Qr+E27kwaIDj4VNH2bG+vfYuBrO1qPHfRi
+	PHSGw2K/hpTUFNFqKahJd3bo5Bj/smA/I9Y0CJbidyvnUboyiCzfqfM7ejepzPJNFMV2WltYJTG
+	ndTKSYSm0ON6WPBfV/axNUT6vvHXckZxnckjnPZK1sA==
+X-Gm-Gg: ASbGncv5kPLiCHkGGLT5DKmPdvVXDqTZF3q6aIXPnqM0IMeII6oC+eb4mJ83q5rORp7
+	34hvcUsAagr0Q9Fcg8h/RMFn/PZn8SWTG7Pq3V5Hc7DEvMByIVOBi3vxhB5iOMqaMp614ApoAfm
+	YW/UV3aybeqURhbl1ZUbbmPByG6AUoBF/yO37LV5TESlcvYdj2ru9t0hE7YZjcP9MwziP4tZaTT
+	V9dnpPJh4qNIkSIm9p2XqPIAQG6yzUwA3AiOf41qrqUwM2qtyLJTheNaAhMRQ==
+X-Google-Smtp-Source: AGHT+IH5mMQNAbO3dsRPBZZKprrZKG8gWiaT6H027FsLcjDm/NMQYqk1ZtvdWqQy6Uf2hPguHqWdFrxhl0EoZUCxvTg=
+X-Received: by 2002:a05:6402:20d6:10b0:640:9db5:ba2f with SMTP id
+ 4fb4d7f45d1cf-64105b8ef06mr4773837a12.30.1762415480479; Wed, 05 Nov 2025
+ 23:51:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACnDmlnUwxp5jinAQ--.2074S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruFW5Xr4ruF4fGFyDKrW7Arb_yoWDZrb_C3
-	95Wr48ZFy8WF9xK3yktr48A39avrnxCrW5GF42y393GFyUJr13ZF4UCrn8urW5Wwsaka45
-	WF1DXrW8AFyavjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
-	6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
-	ZFpf9x0JUfrcfUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4SA2kMGc3mDAAAsN
+References: <20251022174309.1180931-2-vincent.guittot@linaro.org> <20251106000053.GA1932421@bhelgaas>
+In-Reply-To: <20251106000053.GA1932421@bhelgaas>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 6 Nov 2025 08:51:08 +0100
+X-Gm-Features: AWmQ_bki5HMad9R_EvGRCt6ZsgIelgkfzutK5gpeBF-eV1fPQRjJw2903OorBCc
+Message-ID: <CAKfTPtBWfuHP2h+7ExJ_mm6zt_DviQTa5KEUwECCzxsLk5=pBg@mail.gmail.com>
+Subject: Re: [PATCH 1/4 v3] dt-bindings: PCI: s32g: Add NXP PCIe controller
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
+	s32@nxp.com, bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, 
+	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com, 
+	bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	cassel@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In the commit referenced by the Fixes tag, clk_hw_get_clk()
-was added in va_macro_probe() to get the fsgen clock,
-but forgot to add the corresponding clk_put() in va_macro_remove().
-This leads to a clock reference leak when the driver is unloaded.
+On Thu, 6 Nov 2025 at 01:00, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> On Wed, Oct 22, 2025 at 07:43:06PM +0200, Vincent Guittot wrote:
+> > Describe the PCIe host controller available on the S32G platforms.
+>
+> > +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
+> > +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
+> > +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
+> > +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
+> > +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
+> > +                  <0x5f 0xffffe000 0x0 0x00002000>;  /* config space */
+>
+> Fix comment alignment.
 
-Add clk_put() call in va_macro_remove() to properly release the clock
-reference obtained in probe.
-
-Fixes: 30097967e056 ("ASoC: codecs: va-macro: use fsgen as clock")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- sound/soc/codecs/lpass-va-macro.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
-index a49551f3fb29..440d0f54aa33 100644
---- a/sound/soc/codecs/lpass-va-macro.c
-+++ b/sound/soc/codecs/lpass-va-macro.c
-@@ -1663,6 +1663,7 @@ static void va_macro_remove(struct platform_device *pdev)
- {
- 	struct va_macro *va = dev_get_drvdata(&pdev->dev);
- 
-+	clk_put(va->fsgen);
- 	if (va->has_npl_clk)
- 		clk_disable_unprepare(va->npl);
- 
--- 
-2.50.1.windows.1
-
+okay
 
