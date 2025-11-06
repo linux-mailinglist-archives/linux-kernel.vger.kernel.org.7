@@ -1,130 +1,94 @@
-Return-Path: <linux-kernel+bounces-888418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D67EC3AC28
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:03:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB09DC3AC73
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 802224FFBC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:57:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DF741AA13FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848A531327C;
-	Thu,  6 Nov 2025 11:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2DA30F925;
+	Thu,  6 Nov 2025 11:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTYUyF6O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="h/ztx85c"
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D141F3054CC;
-	Thu,  6 Nov 2025 11:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CCC2DAFBF;
+	Thu,  6 Nov 2025 11:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762430249; cv=none; b=lyMEXIzzhxNsZwceQemEtVk7BdFbi6c1cnWx6Uspbx8cCRKPXNjnN6w4BR1UFBvmN9U1n0w8qr+vimTnr+keKpnk9erIoEAhcXZfHzmf43nHXYGNgrP6mgrrFm+h9EqBF/eBjmmWY/VeAo5peJvUnsFGBbrhqUDNXr28koo+CDE=
+	t=1762430312; cv=none; b=aGrqv1S8iA9gAqP2OhvuY/9b+b5qgYyV82qMm9uqVbQYvfHVdxSlQ08ti5kNgAlrB+eMNXOiMrW1gWa4mLENgZQ+cFwvAAqLZzZbR1FDcNJ0nYvvGW0aWay6hht0YBdOYU3g6QzfnTqtRFg89wJyGFi6oV2s5iJ4pgGNj+R5LE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762430249; c=relaxed/simple;
-	bh=thdjpoj+CQFQEDmVxt2Zs5fZKs/cKk6AVQwlozuvWJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhLhlF2jH0jr7n5VcE/ug1xA+6CIBwUZuQFJy9x2v9++4o8xe6/mCjBAn4HRVGYvg2jkEXW4ypye+A7k5i0PERRtYMBp9i8WUyeIDFdd/hWx2km8G6wbgzU09kfIHtK8VK2DtM9J7Be4OBgrOcLyDDZEe5U2hpfTY3V0IPPJJO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTYUyF6O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8622BC116C6;
-	Thu,  6 Nov 2025 11:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762430249;
-	bh=thdjpoj+CQFQEDmVxt2Zs5fZKs/cKk6AVQwlozuvWJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qTYUyF6O26+Q2CDV23JgJxKhSKSTHh2mAVe95GYqtnQJhu+HcdHdcJ7fGaAyR11Ty
-	 60/9bUkMq8qpusH7uMNiqf6f5xq4BjOAMO8wPiC2HWIRA3kEH9I0ynn4S9KjGOaf5B
-	 XHlE5wBiXGw4YpwwBuuBDlfHbqVcGiySeCZIDA9zJfF6YVg/2jsZEpV6BXMy8ClUhj
-	 i0Gl0mRj5MEQdiu56W/06HxyJUjFR786LW/nZp+YgSMcxmuiUwiWGKG9GQs0L6AbnQ
-	 IXvrpJd4oZNOtSNBt85SOBWqXCeoLcBi5uG8g8OhhAY0Oo3xxryhLzIcyrgAXLEasC
-	 /RCDto9TluJ/A==
-Date: Thu, 6 Nov 2025 17:27:16 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: zhangsenchuan <zhangsenchuan@eswincomputing.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, will@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/3] PCI: qcom: Check for the presence of a device
- instead of Link up during suspend
-Message-ID: <nhjlanhzndhlbtfohnkypwuzpw6nw43cysjmoam3qv4rrs22hr@ic3hgtfoeb6e>
-References: <20251106061326.8241-1-manivannan.sadhasivam@oss.qualcomm.com>
- <20251106061326.8241-3-manivannan.sadhasivam@oss.qualcomm.com>
- <35086b08.c4e.19a58a7d6bc.Coremail.zhangsenchuan@eswincomputing.com>
+	s=arc-20240116; t=1762430312; c=relaxed/simple;
+	bh=M/uhW6CfAw2MLDz8vTpduubG/uOVFe0jqSk9Ynx3ZjI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ciBRBN35hgbzuVPtQvnFlIV8p1DuDv02lnQ88nI7CeyYlyhQEGyCRM2DoLr3Pg0k3k7BvmUw1Yu28hZ+jXjOp0g8bMtabxuDtMiyuwEltjvP8wVlSMCuLJuchV/uQUzK0TwSHF4qAijKljc7NKu+gzhZTDzdpgX442Xy6UIt1Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=h/ztx85c; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28a5e7ee7;
+	Thu, 6 Nov 2025 19:58:19 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: clm@fb.com
+Cc: dsterba@suse.com,
+	fdmanana@suse.com,
+	neal@gompa.dev,
+	boris@bur.io,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] btrfs: avoid redundant cleanup when device allocation fails
+Date: Thu,  6 Nov 2025 11:58:15 +0000
+Message-Id: <20251106115815.3635405-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <35086b08.c4e.19a58a7d6bc.Coremail.zhangsenchuan@eswincomputing.com>
+X-HM-Tid: 0a9a59082ad503a1kunm26a292ab7a4446
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTR8ZVk9MHx5ITExOGh1MTlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
+	++
+DKIM-Signature: a=rsa-sha256;
+	b=h/ztx85cc6iey7T3aeTLYXjgd89FOu4GzbMicrcUCHMqT1d+eiWnA99m6N0G8875ZMdZZwvA2DaRsa0S+JLFPNcR6bw1l9yuiKzvK0H+J9wVdbppdMXMMX47embKUqOD2+Tlufdu/ftCfqs4DsL/2/cXwMIGwgHjpNEKjNCMQPk=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=uw4dxLTV+p9YbEVcKU4Hy/PdsNRbXcaQFe6PcMz/gCk=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, Nov 06, 2025 at 06:13:05PM +0800, zhangsenchuan wrote:
-> 
-> 
-> 
-> > -----Original Messages-----
-> > From: "Manivannan Sadhasivam" <manivannan.sadhasivam@oss.qualcomm.com>
-> > Send time:Thursday, 06/11/2025 14:13:25
-> > To: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, bhelgaas@google.com
-> > Cc: will@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, linux-arm-msm@vger.kernel.org, zhangsenchuan@eswincomputing.com, "Manivannan Sadhasivam" <manivannan.sadhasivam@oss.qualcomm.com>
-> > Subject: [PATCH 2/3] PCI: qcom: Check for the presence of a device instead of Link up during suspend
-> > 
-> > The suspend handler checks for the PCIe Link up to decide when to turn off
-> > the controller resources. But this check is racy as the PCIe Link can go
-> > down just after this check.
-> > 
-> > So use the newly introduced API, pci_root_ports_have_device() that checks
-> > for the presence of a device under any of the Root Ports to replace the
-> > Link up check.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index 805edbbfe7eb..b2b89e2e4916 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -2018,6 +2018,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
-> >  static int qcom_pcie_suspend_noirq(struct device *dev)
-> >  {
-> >  	struct qcom_pcie *pcie;
-> > +	struct dw_pcie_rp *pp;
-> >  	int ret = 0;
-> >  
-> >  	pcie = dev_get_drvdata(dev);
-> > @@ -2053,8 +2054,9 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
-> >  	 * powerdown state. This will affect the lifetime of the storage devices
-> >  	 * like NVMe.
-> >  	 */
-> > -	if (!dw_pcie_link_up(pcie->pci)) {
-> > -		qcom_pcie_host_deinit(&pcie->pci->pp);
-> > +	pp = &pcie->pci->pp;
-> > +	if (!pci_root_ports_have_device(pp->bridge->bus)) {
-> 
-> I'm a little confused.
-> The pci_root_ports_have_device function can help check if there is any device 
-> available under the Root Ports, if there is a device available, the resource 
-> cannot be released, is it also necessary to release resources when entering 
-> the L2/L3 state?
-> 
+When device allocation fails, the chunk map has not been added to the
+mapping tree, so locking for cleanup is unnecessary. Simply free the
+chunk map as done when adding it to the mapping tree fails.
 
-It is upto the controller driver to decide. Once the link enters L2/L3, the
-device will be in D3Cold state. So the controller can just disable all PCIe
-resources to save power.
+Fixes: bf2e2eb060fa2 ("btrfs: Add self-tests for btrfs_rmap_block")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ fs/btrfs/tests/extent-map-tests.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-But it is not possible to transition all PCIe devices to D3Cold during suspend,
-for instance NVMe. I'm hoping to fix it too in the coming days.
-
-- Mani
-
+diff --git a/fs/btrfs/tests/extent-map-tests.c b/fs/btrfs/tests/extent-map-tests.c
+index 42af6c737c6e..e227cfff1e8d 100644
+--- a/fs/btrfs/tests/extent-map-tests.c
++++ b/fs/btrfs/tests/extent-map-tests.c
+@@ -1036,7 +1036,8 @@ static int test_rmap_block(struct btrfs_fs_info *fs_info,
+ 		if (IS_ERR(dev)) {
+ 			test_err("cannot allocate device");
+ 			ret = PTR_ERR(dev);
+-			goto out;
++			btrfs_free_chunk_map(map);
++			goto out_free;
+ 		}
+ 		map->stripes[i].dev = dev;
+ 		map->stripes[i].physical = test->data_stripe_phys_start[i];
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
