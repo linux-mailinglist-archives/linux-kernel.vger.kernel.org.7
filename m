@@ -1,335 +1,235 @@
-Return-Path: <linux-kernel+bounces-889355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E815C3D5D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:33:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBCAC3D5D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19F754E5913
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A95E1882207
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D1130E0F1;
-	Thu,  6 Nov 2025 20:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B44303C94;
+	Thu,  6 Nov 2025 20:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oydei4R7"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3607E2DBF7C;
-	Thu,  6 Nov 2025 20:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2xx3fpC"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01E32E9EAA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 20:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762461169; cv=none; b=G6eE17H+1y1/6m7YKgMoXwrLNfE4ySa0OzLrvshpnXp9/XVg1F9IZMVT2bFxurUSV0UOJtGtILgCRwHy1Yd4y3Q+13SXZ8aG+qD1E83H7DuBqrUV9LFm6daxFz41hvwHYrVgHIPDeDrQ2668uTIADGFayQfk3lTazsjsisUIxgI=
+	t=1762461194; cv=none; b=f4fi73e8nbXI+JfFmIB8j8aPzH58bcrEa7GQ86XLH7GPZjnd0Iq7pQaRFi2/HoZKEN3/XVnb+KU+9osETu1etwRNkOIjrPA6Qko87pPYdjzxk0Xf/JUAI4Vv9a8OAtb31dQ0ELQKG4gVDCcyN6+hMqh6299s+g2dsEWdI28nKmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762461169; c=relaxed/simple;
-	bh=wK2Q+sR/Kh9KiE0VD5GsDys1VbhdjkcEV3Grw9XO0Ko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HSHCG3dBR3An5QldqVCcA04Ojxa7lMh683beuluSQ/Ue8A/QiXST7zmpN/PxXQ3mEdSypK5CoDntKiOb2Hnu+0i4vIi6mTYCfbKKAk95tjMTeT1xkKlF/vy9MjfIZtbJMTKEXd6WKQVR0alzzpjA7lskGW/jCT4HFnfjV1W5a3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oydei4R7; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.86.49] (c-73-240-88-29.hsd1.or.comcast.net [73.240.88.29])
-	by linux.microsoft.com (Postfix) with ESMTPSA id CB768212038E;
-	Thu,  6 Nov 2025 12:32:46 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CB768212038E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762461167;
-	bh=NmhZbzQTHyHrl2v/TsawGmh/o53psO9Ly+TGU8r+aTY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=oydei4R73PtKCuWhTk7ipjOJ1PXn0eNIhbrFaAHXQewHERTQcP56lfUU6qWP/eLWL
-	 GsT66nECxsyatjw2FRhvgU9df3pB6gnyF8pqY6PAgm990i2A1LBoLAR4M4XwSIzPx4
-	 5Cl7mtHcawkqM6BEkk9eQheDVb85zqY7RfAhXnPA=
-Message-ID: <b36a6508-1b2a-4c87-b3b5-9af0b402dc0b@linux.microsoft.com>
-Date: Thu, 6 Nov 2025 12:32:45 -0800
+	s=arc-20240116; t=1762461194; c=relaxed/simple;
+	bh=cMSQrjZkGQSnP5w1MESAvPDLAzb50CLulWqD9TFCtXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dmAign8tp83M0DTNyDX4LglcDIbmfd5gwiBuyJE2lrSIGjQFuNmMw1ALV3dFWmpgV7odfYwSJ0nZ4a5dYDozV3NOnjyV0JieSSB/DpL/rVOKFKlOLmvztZNnJAbEYXpsX9ku07MPZPKU3Ywqe0uv0KjQvrHbd5H3TZ6bNgDnfNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2xx3fpC; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso65655a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:33:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762461191; x=1763065991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xL+ExJHey77vkVnS/nFKD2Q80J+5rEXtAD2VwaDjjF0=;
+        b=m2xx3fpCijJSYdG+NbzRGq8gyBpeAAMj5JF2vJeSQ9ZcK0J552SpYRTqsleHB1HWRc
+         IOiGD0FZFSl1GN1c+SyqykIQ31iR7QXgRSdWOR7ixCjJS/kSJjWkpq7D27Z5GLeNX0Ca
+         D+sG/sBxd2R16EEBYmPcmlznuNsmJDqvo8I7uaKvo0tYkTGkQtpGWV18nsRE2CEGR6Wl
+         9HA8LbauFgERQezvq1A3AgRXLyAdKkc2nReZy6QH3cc8v1+e6MCJ/GoJYRicYHFXQN56
+         +rhRqdSvK/whlLQ4J1JVF837no9DR1IvWmpTB6QLuNZTpZ+qFtvWggsIZpX10jeGdtkL
+         EhUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762461191; x=1763065991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xL+ExJHey77vkVnS/nFKD2Q80J+5rEXtAD2VwaDjjF0=;
+        b=inydT4Yn4zfMgEJ4mFimbqIyUMjcxgF0+BdMFszeJ5z4pzQDvunuL5wjXOzItAu/s9
+         c4s6W/anI81aTzsyaeyUtg05ouJx1s0BVfnHhVbzbW2C4Sjs+XVYkaWVEfkrv6BAf4X+
+         xyBE+vs5m3khBIzJdMKaF5+N54zBuBWWNBuBJIkMJ+I0RbVM7fXwi465cX4zmKJTRN7k
+         C0+ZMW8SHE77ghOmK79T1BFRnfRCCYoIPYGU3Ou6HVWrl1ujNYMNtOMiUz1VjYfB9S2K
+         9OLb5VgVjsuYvBlZWi/ZPJgZJ5RaMMQSuxW3Aq3Wkx1z0EQ512gR3UbqsQhD3l82zW/V
+         koNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdcAsLBkYpcP9M9j+7CS8QPAlbJlepEORut6CCctTSAD3/ZvoGZpjTqHUMlly+Y0XEaEeP/tz/lsQTsf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzScQLi5q8IT5k9ORcP02Dq2tIaAkpX0dah0tlBqHoo79sWoDVm
+	71vNpLmR4mYw51GBB3luz/p0GyoNTGDxKyycAFReZ0jUFKR/s0cgx+iNrnzPY3dsCUVlU6ZOI2m
+	2wE7LFOsm9ECNTY9gFFrCPbBQ5DEg1MY=
+X-Gm-Gg: ASbGncsuHs3ga4royBU0auz3ap2hTJ3CyzQfopElrrQ2h4n+139GlDz0CsgqiN+IFtu
+	3TatZxPvUTcB+f666Bg7yuoC2dJJFn2r/NgtCT0ZWGyyx+08NMPp8YrPCLs0pgjTtkTICjjnqIs
+	uR6H0yQlWpm9+OEOgsQptP08Uflit0CPagjAWidI8IgrGBs8cO5p00CVfNZpcP20nCww2qJS/ON
+	9+uZSv3QZ6NSflz6++L5JlzEFmHpsfkg13HUyveKZI5EaORft1HND26chK7Tnlp1YPEbnE=
+X-Google-Smtp-Source: AGHT+IETH7TgDjX9EmzND1gh9/bOqYrGX4023/EKkF9DvOk4qobTQ/4/v6JxHRNK5zF87+RCoQSIQaroXmmA31SkP4I=
+X-Received: by 2002:a05:6402:1446:b0:640:947e:70b7 with SMTP id
+ 4fb4d7f45d1cf-6413f059a21mr880436a12.3.1762461190669; Thu, 06 Nov 2025
+ 12:33:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
-To: Tahera Fahimi <taherafahimi@linux.microsoft.com>, zohar@linux.ibm.com,
- roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- code@tyhicks.com
-References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
-Content-Language: en-US
-From: Anirudh Venkataramanan <anirudhve@linux.microsoft.com>
-In-Reply-To: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
+In-Reply-To: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Thu, 6 Nov 2025 12:32:58 -0800
+X-Gm-Features: AWmQ_bnPi8eKWYWNRrzziK5Z4e3l9q9ff39Nc1Vl19617h5U67D-CZcDH7VdLSo
+Message-ID: <CAHbLzkqvXsFfziYU6A_LXfF2UQHkmNHqyT05P+dTav3mi4b0hA@mail.gmail.com>
+Subject: Re: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed
+ text pages
+To: "Garg, Shivank" <shivankg@amd.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, zokeefe@google.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/6/2025 10:14 AM, Tahera Fahimi wrote:
-> Prevent redundant IMA policy rules by checking for duplicates before insertion. This ensures that
-> rules are not re-added when userspace is restarted (using systemd-soft-reboot) without a full system
-> reboot. ima_rule_exists() detects duplicates in both temporary and active rule lists.
+On Thu, Nov 6, 2025 at 7:16=E2=80=AFAM Garg, Shivank <shivankg@amd.com> wro=
+te:
+>
+> Hi All,
+>
+> I've been investigating an issue with madvise(MADV_COLLAPSE) for TEXT pag=
+es
+> when CONFIG_READ_ONLY_THP_FOR_FS=3Dy is enabled, and would like to discus=
+s the
+> current behavior and improvements.
+>
+> Problem:
+> When attempting to collapse read-only file-backed TEXT sections into THPs
+> using madvise(MADV_COLLAPSE), the operation fails with EINVAL if the page=
+s
+> are marked dirty.
+> madvise(aligned_start, aligned_size, MADV_COLLAPSE) -> returns -1 and err=
+no =3D -22
+>
+> Subsequent calls to madvise(MADV_COLLAPSE) succeed because the first madv=
+ise
+> attempt triggers filemap_flush() which initiates async writeback of the d=
+irty folios.
+>
+> Root Cause:
+> The failure occurs in mm/khugepaged.c:collapse_file():
+> } else if (folio_test_dirty(folio)) {
+>     /*
+>      * khugepaged only works on read-only fd,
+>      * so this page is dirty because it hasn't
+>      * been flushed since first write. There
+>      * won't be new dirty pages.
+>      *
+>      * Trigger async flush here and hope the
+>      * writeback is done when khugepaged
+>      * revisits this page.
+>      */
+>     xas_unlock_irq(&xas);
+>     filemap_flush(mapping);
+>     result =3D SCAN_FAIL;
+>     goto xa_unlocked;
+> }
+>
+> Why the text pages are dirty?
 
-I have run into this too. Thanks for proposing a patch!
+I'm not sure how you did the test, but if you ran the program right
+after it was built, it may be possible the background writeback has
+not kicked in yet, then MAD_COLLAPSE saw some dirty folios. This is
+how your reproducer works at least. This is why filemap_flush() was
+added in the first place. Please see commit
+75f360696ce9d8ec8b253452b23b3e24c0689b4b.
 
-FWIW - I am fairly new to the IMA subsystem, so feedback below is mostly 
-structural, with some IMA specific comments.
+> It initially seemed unusual for a read-only text section to be marked as =
+dirty, but
+> this was actually confirmed by /proc/pid/smaps.
+>
+> 55bc90200000-55bc91200000 r-xp 00400000 07:00 133                        =
+/mnt/xfs-mnt/large_binary_thp
+> Size:              16384 kB
+> KernelPageSize:        4 kB
+> MMUPageSize:           4 kB
+> Rss:                 256 kB
+> Pss:                 256 kB
+> Pss_Dirty:           256 kB
+> Shared_Clean:          0 kB
+> Shared_Dirty:          0 kB
+> Private_Clean:         0 kB
+> Private_Dirty:       256 kB
+>
+> /proc/pid/smaps (before calling MADV_COLLAPSE) showing Private_Dirty page=
+s in r-xp mappings.
 
-> 
-> Signed-off-by: Tahera Fahimi <taherafahimi@linux.microsoft.com>
-> ---
->   security/integrity/ima/ima_policy.c | 157 +++++++++++++++++++++++++++-
->   1 file changed, 156 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 164d62832f8ec..3dd902101dbda 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -1953,6 +1953,153 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->   	return result;
->   }
->   
-> +static bool template_has_field(const char *field_id, const struct ima_template_desc *template2)
-> +{
-> +	int j;
+smaps shows private dirty if either the PTE is dirty or the folio is
+dirty. For this case, I don't expect the PTE is dirty.
 
-j is declared in the loop header below too, which is more correct 
-because it keeps the scope of j to be within the loop. So I'd say get 
-rid of the above declaration.
+> This may be due to dynamic linker and relocations that occurred during pr=
+ogram loading.
+>
+> Reproduction using XFS/EXT4:
+>
+> 1. Compile a test binary with madvise(MADV_COLLAPSE), ensuring the load T=
+EXT segment is
+>    2MB-aligned and sized to a multiple of 2MB.
+>   Type           Offset   VirtAddr           PhysAddr           FileSiz  =
+MemSiz   Flg Align
+> LOAD           0x400000 0x0000000000400000 0x0000000000400000 0x1000000 0=
+x1000000 R E 0x200000
+>
+> 2. Create and mount the XFS/EXT4 fs:
+>    dd if=3D/dev/zero of=3D/tmp/xfs-test.img bs=3D1M count=3D1024
+>    losetup -f --show /tmp/xfs-test.img  # output: /dev/loop0
+>    mkfs.xfs -f /dev/loop0
+>    mkdir -p /mnt/xfs-mnt
+>    mount /dev/loop0 /mnt/xfs-mnt
+> 3. Copy the binaries to /mnt/xfs-mnt and execute.
+> 4. Returns -EINVAL on first run, then run successfully on subsequent run.=
+ (100% reproducible)
+> 5. To reproduce again; reboot/kexec and repeat from step 2.
+>
+> Workaround:
+> 1. Manually flush dirty pages before calling madvise(MADV_COLLAPSE):
+>         int fd =3D open("/proc/self/exe", O_RDONLY);
+>         if (fd >=3D 0) {
+>                 fsync(fd);
+>                 close(fd);
+>         }
+>         // Now madvise(MADV_COLLAPSE) succeeds
+> 2. Alternatively, retrying madvise_collapse on EINVAL failure also work.
+>
+> Problems with Current Behavior:
+> 1. Confusing Error Code: The syscall returns EINVAL which typically indic=
+ates invalid arguments
+>    rather than a transient condition that could succeed on retry.
 
-> +
-> +	for (int j = 0; j < template2->num_fields; j++)
-> +		if (strcmp(field_id, template2->fields[j]->field_id) == 0)
-> +			return true;
-I believe the preferred kernel style is to use if (!strcmp(...)).
+Yeah, I agree the return value is confusing. -EAGAIN may be better as
+suggested by others.
 
-> +
-> +	return false;
-> +}
-> +
-> +static bool keyring_has_item(const char *item, const struct ima_rule_opt_list *keyrings)
-> +{
-> +	int j;
-> +
-> +	for (j = 0; j < keyrings->count; j++) {
-> +		if (strcmp(item, keyrings->items[j]) == 0)
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static bool labels_has_item(const char *item, const struct ima_rule_opt_list *labels)
-> +{
-> +	int j;
-> +
-> +	for (j = 0; j < labels->count; j++) {
-> +		if (strcmp(item, labels->items[j]) == 0)
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static bool ima_rules_equal(const struct ima_rule_entry *rule1, const struct ima_rule_entry *rule2)
-> +{
-> +	int i;
+>
+> 2. Non-Transparent Handling: Users are unaware they need to flush dirty p=
+ages manually. Current
+>    madvise_collapse assumes the caller is khugepaged (as per code snippet=
+ comment) which will revisit
+>    the page. However, when called via madvise(MADV_COLLAPSE), the userspa=
+ce program typically don't
+>    retry, making the async flush ineffective. Should we differentiate bet=
+ween madvise and khugepaged
+>    behavior for MADV_COLLAPSE?
 
-i is used further down in this function, and even in all those cases, 
-the scope of i can be limited to the loop body where it's used.
+Maybe MADV_COLLAPSE can have some retry logic?
 
-If you didn't know this already - you can use cppcheck to identify and 
-reduce the scope of variables.
+Thanks,
+Yang
 
-> +
-> +	if (rule1->flags != rule2->flags)
-> +		return false;
-> +
-> +	if (rule1->action != rule2->action)
-> +		return false;
-> +
-> +	if (((rule1->flags & IMA_FUNC) && rule1->func != rule2->func) ||
-> +	    ((rule1->flags & (IMA_MASK | IMA_INMASK)) && rule1->mask != rule2->mask) ||
-> +	    ((rule1->flags & IMA_FSMAGIC) && rule1->fsmagic != rule2->fsmagic) ||
-> +	    ((rule1->flags & IMA_FSUUID) && !uuid_equal(&rule1->fsuuid, &rule2->fsuuid)) ||
-> +	    ((rule1->flags & IMA_UID) && !uid_eq(rule1->uid, rule2->uid)) ||
-> +	    ((rule1->flags & IMA_GID) && !gid_eq(rule1->gid, rule2->gid)) ||
-> +	    ((rule1->flags & IMA_FOWNER) && !uid_eq(rule1->fowner, rule2->fowner)) ||
-> +	    ((rule1->flags & IMA_FGROUP) && !gid_eq(rule1->fgroup, rule2->fgroup)) ||
-> +	    ((rule1->flags & IMA_FSNAME) && (strcmp(rule1->fsname, rule2->fsname) != 0)) ||
-> +	    ((rule1->flags & IMA_PCR) && rule1->pcr != rule2->pcr) ||
-> +	    ((rule1->flags & IMA_VALIDATE_ALGOS) &&
-> +	      rule1->allowed_algos != rule2->allowed_algos) ||
-> +	    ((rule1->flags & IMA_EUID) && !uid_eq(rule1->uid, rule2->uid)) ||
-> +	    ((rule1->flags & IMA_EGID) && !gid_eq(rule1->gid, rule2->gid)))
-> +		return false;
-
-So the goal is to prevent the exact same policy rule from being added, 
-not to update an existing rule, correct? IOW, you could end up with two 
-very similar rules, because the new rule has one thing that's different 
-compared to the existing rule?
-
-I feel that a little bit of commentary around what makes two rules the 
-same would be useful.
-
-> +
-> +	if (!rule1->template && !rule2->template) {
-> +		;
-You're trying to do nothing and continue on. A goto statement would 
-communicate intent better. There are other places below with the same 
-noop structure.
-
-To be fair, I also don't completely understand what you're trying to 
-achieve here, Regardless, this "do nothing inside a conditional" looks 
-weird and I feel like there should be a way to structure your logic 
-without resorting to this.
-
-> +	} else if (!rule1->template || !rule2->template) {
-> +		return false;
-> +	} else if (rule1->template->num_fields != rule2->template->num_fields) {
-> +		return false;
-> +	} else if (rule1->template->num_fields != 0) {
-> +		for (i = 0; i < rule1->template->num_fields; i++) {
-> +			if (!template_has_field(rule1->template->fields[i]->field_id,
-> +						rule2->template))
-> +				return false;
-> +		}
-> +	}
-
-if + return will achieve the same end goals as else if + return, with 
-lesser clutter. I have seen some static analyzers flag this pattern, but 
-I can't remember which one at the moment.
-
-So something like this:
-
-if (!rule1->template && !rule2->template)
-     goto some_target;
-
-if (!rule1->template || !rule2->template)
-     return false;
-
-if (rule1->template->num_fields != rule2->template->num_fields)
-     return false;
-
-if (rule1->template->num_fields != 0) {
-     for (i = 0; i < rule1->template->num_fields; i++) {
-         if (!template_has_field(rule1->template->fields[i]->field_id,
-                                 rule2->template))
-               return false;
-         }
-}
-
-some_target:
-...
-...
-
-> +
-> +	if (rule1->flags & IMA_KEYRINGS) {
-> +		if (!rule1->keyrings && !rule2->keyrings) {
-> +			;
-
-Another if block no-op
-
-> +		} else if (!rule1->keyrings || !rule2->keyrings) {
-> +			return false;
-> +		} else if (rule1->keyrings->count != rule2->keyrings->count) {
-> +			return false;
-> +		} else if (rule1->keyrings->count != 0) {
-
-if (rule1->keyrings->count)
-
-> +			for (i = 0; i < rule1->keyrings->count; i++) {
-
-for (int i,
-
-> +				if (!keyring_has_item(rule1->keyrings->items[i], rule2->keyrings))
-> +					return false;
-> +			}
-> +		}
-> +	}
-> +
-> +	if (rule1->flags & IMA_LABEL) {
-> +		if (!rule1->label && !rule2->label) {
-> +			;
-
-Another if block no-op
-
-> +		} else if (!rule1->label || !rule2->label) {
-> +			return false;
-> +		} else if (rule1->label->count != rule2->label->count) {
-> +			return false;
-> +		} else if (rule1->label->count != 0) {
-> +			for (i = 0; i < rule1->label->count; i++) {
-> +				if (!labels_has_item(rule1->label->items[i], rule2->label))
-> +					return false;
-> +			}
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < MAX_LSM_RULES; i++) {
-
-for (int i,
-
-> +		if (!rule1->lsm[i].rule && !rule2->lsm[i].rule)
-> +			continue;
-> +
-> +		if (!rule1->lsm[i].rule || !rule2->lsm[i].rule)
-> +			return false;
-> +
-> +		if (strcmp(rule1->lsm[i].args_p, rule2->lsm[i].args_p) != 0)
-> +			return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +/**
-> + * ima_rule_exists - check if a rule already exists in the policy
-> + *
-> + * Checking both the active policy and the temporary rules list.
-> + */
-> +static bool ima_rule_exists(struct ima_rule_entry *new_rule)
-> +{
-> +	struct ima_rule_entry *entry;
-> +	struct list_head *ima_rules_tmp;
-> +
-> +	if (!list_empty(&ima_temp_rules)) {
-> +		list_for_each_entry(entry, &ima_temp_rules, list) {
-> +			if (ima_rules_equal(entry, new_rule))
-> +				return true;
-> +		}
-> +	}
-> +
-> +	rcu_read_lock();
-> +	ima_rules_tmp = rcu_dereference(ima_rules);
-> +	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
-> +		if (ima_rules_equal(entry, new_rule)) {
-> +			rcu_read_unlock();
-> +			return true;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	return false;
-> +}
-> +
->   /**
->    * ima_parse_add_rule - add a rule to ima_policy_rules
->    * @rule: ima measurement policy rule
-> @@ -1993,7 +2140,15 @@ ssize_t ima_parse_add_rule(char *rule)
->   		return result;
->   	}
->   
-> -	list_add_tail(&entry->list, &ima_temp_rules);
-> +	if (!ima_rule_exists(entry)) {
-> +		list_add_tail(&entry->list, &ima_temp_rules);
-> +	} else {
-> +		result = -EEXIST;
-Is it necessary to set result? Or can you just pass -EEXIST to the audit 
-call below?
-
-> +		ima_free_rule(entry);
-> +		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
-> +				    NULL, op, "duplicate-policy", result,
-> +				    audit_info);
-> +	}
->   
->   	return len;
->   }
-
+>
+> Would appreciate thoughts on the best approach to address this issue.
+>
+> Thanks,
+> Shivank
+>
 
