@@ -1,61 +1,53 @@
-Return-Path: <linux-kernel+bounces-889209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD52BC3CF7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:55:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCACC3CF7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 650584E25B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:55:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B66474E1BB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3152D061E;
-	Thu,  6 Nov 2025 17:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2DE34CFDF;
+	Thu,  6 Nov 2025 17:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iayiIE5b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D83343D71
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="A9MKVjv0"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D19346A1C;
+	Thu,  6 Nov 2025 17:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451707; cv=none; b=CLedxBkKPqyRVKuHwvNJOpDovk+G4BtPmz0xL1cp7z3OCBGh+kxuj8tLrKqnAw2afK/tR+GpSQJhTeDAf+kIpiwMXbP258nfHIuq+PvDjM03+EguJfR714yp25FJuWNvxSp1A9mHk+zY3dQPXbvYYEqxEo0XRxQlQESN+j0l92g=
+	t=1762451719; cv=none; b=RT5ZRGgyU34/TViRTKB1kWURBj59U7/9Yfdr6biGPsQ9ZTuHaeP3Tk2dZE8bufRpnzm/36wcaZMA4Wo5Xuffbg+FOYctXSslmIm14PYu1AdYJ7WW4oIDGzfR57cUveekrhvKzVkfnNi+LA2OWa7veB0P9zcbqWCRtSKAUa8XjrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451707; c=relaxed/simple;
-	bh=PhIGpK/jHneVvnPo6STSaPmgJcep3TIfXiPVGahcqB0=;
+	s=arc-20240116; t=1762451719; c=relaxed/simple;
+	bh=7KUkVQB8fSg5lNPwuWJRy+7zUz4Nw0l+R3XZZVzbeuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IgFbcaJdgy62rs3w/cLpTvl11fkMbPI7oUkcmFCzXDpYnMeL0xFgHGU9UiwoimvCdO84HnilhfX8MLp2IFwFm9Cb9BCcBCmY4UYpi42zS3BAqWgWbZByJl221RDNq28qiQp50ET2BF2h2/nYhxxVt7WP9vEnnrloO372zbEWRR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iayiIE5b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1318C116B1;
-	Thu,  6 Nov 2025 17:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762451704;
-	bh=PhIGpK/jHneVvnPo6STSaPmgJcep3TIfXiPVGahcqB0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ptQKgbrQhm9F9eFY18s+l6+zfDjsRW1HcmVF+jKr38q4D+yAGNodWeDXtHYW63zhFnfVaQhfMzxt7KN/2CWSjXhpEnYDi2kTnUegwx5VgFvgmTys0FLAcvwN9hrDzkrEFnlzxIpXwIq21QQBD7qiBPqKmiGn+3wAIhGtgq03lRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=A9MKVjv0; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from CPC-beaub-VBQ1L.localdomain (unknown [70.37.26.58])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 578BB201CEF1;
+	Thu,  6 Nov 2025 09:55:17 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 578BB201CEF1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762451717;
+	bh=s8I0sLI/LF0Ojfue7NuHNcANa3hTqbnC59ycXy4XnX4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iayiIE5bo7RA3gPzuQNjdGZiwXt+7T+vexiFW1VT/eACu8cfXkDZWBxBV4fVcX0vr
-	 CZBpTfd+/ObL7qEelhLTxWNrt2ky9g0nvpppTQx3LYC2hcFauAqTglI6VnnX7pKeZc
-	 a6bmCrBybjToHfMyBaOJaED6jrzGPDHTVmkHvan7IUAka29vDn2xcZYB7RLiXhif9T
-	 CpGqFl011Yz8erenKmrUk5WUb+igzqY39NUH90nLLWMsoN1w9O5P2V/N5wAnlmrqGj
-	 G5yAZi7fuw23mfAx7weA0gE86Qc4K51/V0bBC/0SMR7KSv9Av9KzuOuax1C2xi0DU7
-	 umlBabGWfRgcw==
-Date: Thu, 6 Nov 2025 07:55:02 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Calvin Owens <calvin@wbinvd.org>, linux-kernel@vger.kernel.org,
-	Dan Schatzberg <dschatzberg@meta.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH cgroup/for-6.19] cgroup: Fix sleeping from invalid
- context warning on PREEMPT_RT
-Message-ID: <aQzg9kcnCsdRQiB4@slm.duckdns.org>
-References: <20251104181114.489391-1-calvin@wbinvd.org>
- <aQpUY7fEp6_ZqGel@slm.duckdns.org>
- <aQtqXfMfy8SWjS67@mozart.vkv.me>
- <aQufmyZ7X7NdfiCL@slm.duckdns.org>
- <20251106150717.cZuPZnF5@linutronix.de>
- <aQzczJZFiGPOocKb@slm.duckdns.org>
- <20251106174614.2yy65_wM@linutronix.de>
+	b=A9MKVjv0/re99Op2lGwQBwlHYykXKVWUm44eV5x6f3Th6l3WTOIIS4tieMiH6xd/d
+	 rMFAi1VZUh9MNO7uqWUeubsCjYYOWi+o338h9Bdirfrgcen8S6r0OvdbHXcD9mocuE
+	 cLmA35fShoQHUg90uE5VQ4b6wFYPf39uch2s2/PA=
+Date: Thu, 6 Nov 2025 17:55:13 +0000
+From: Beau Belgrave <beaub@linux.microsoft.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] tracing: tprobe-events: Fixes for tprobe events
+Message-ID: <20251106175513.GA174-beaub@linux.microsoft.com>
+References: <176244792552.155515.3285089581362758469.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,33 +56,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251106174614.2yy65_wM@linutronix.de>
+In-Reply-To: <176244792552.155515.3285089581362758469.stgit@devnote2>
 
-Hello,
-
-On Thu, Nov 06, 2025 at 06:46:14PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2025-11-06 07:37:16 [-1000], Tejun Heo wrote:
-> > Will switch to IRQ_WORK_LAZY_INIT.
+On Fri, Nov 07, 2025 at 01:52:05AM +0900, Masami Hiramatsu (Google) wrote:
+> Hi,
 > 
-> Quick question: Since it is not important at all, would it work to have
-> it in task's RCU callback, __put_task_struct()?
+> Beau reported tprobe example in the document does not work on 6.17
+> kernel.
+> 
 
-It doesn't have to run right away but it better run in some definite time
-frame because at this point the task is not visible from userspace otherwise
-(it doesn't have a pid) but are still pinning the cgroup, so we're in this
-limbo state where reading cgroup.procs should return empty (there may be a
-bug here right now. I think the code will try to deref NULL pid pointer) but
-the cgroup is not empty. This window is not really broken in itself because
-cgroup empty state is tracked and notified separately. However, task_struct
-can be pinned and can linger for indefinite amount of time after being dead,
-and that would become an actual problem.
+Thanks! I've applied this series locally and tested this. Everything
+works well in our environment.
 
-So, to add a bit of qualitifier, while it's okay to run it with some amount
-of delay that's not very significant to human perception, we definitely
-don't want to allow delaying it indefinitely.
+> 
+> And found it forgot to set tuser->tpoint before calling
+> tracepoint_user_register() which calls
+> tracepoint_probe_register_prio_may_exist(tuser->tpoint).
+> To fix that, I just moved the tuser->tpoint setting line
+> right before tracepoint_user_register() call [1/2].
+> 
+> I also found another issue when I switched enable and disable[2/2].
+> 
 
-Thanks.
+Thanks! I've validated no bad dmesg, etc. and can delete the tprobe
+without issues after we disable it.
 
--- 
-tejun
+> I hope this report will help someone to do similar debug by tracing.
+> 
+
+I will reference this, it's very useful.
+
+For the series:
+Tested-by: Beau Belgrave <beaub@linux.microsoft.com>
+Reviewed-by: Beau Belgrave <beaub@linux.microsoft.com>
+
+Thanks,
+-Beau
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (Google) (2):
+>       tracing: tprobe-events: Fix to register tracepoint correctly
+>       tracing: tprobe-events: Fix to put tracepoint_user when disable the tprobe
+> 
+> 
+>  kernel/trace/trace_fprobe.c |    7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
