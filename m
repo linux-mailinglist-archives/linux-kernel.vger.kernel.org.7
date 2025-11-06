@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-888764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6568C3BDB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 249DAC3BDBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3698503A1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:42:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 140A2503EC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC7A227B95;
-	Thu,  6 Nov 2025 14:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9478D3431E3;
+	Thu,  6 Nov 2025 14:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PAy1N3a7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ii6JmfXp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ia2TRo7B"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7339D30F538;
-	Thu,  6 Nov 2025 14:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29A533F8BE;
+	Thu,  6 Nov 2025 14:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440145; cv=none; b=SMqH3g//RkF0LePwkgUkyTbKXtuFpnpUEo88nqp5ZxtVFZZFSZ8/s3ufYgGzPBwInuiyMzn+Odjhfi9dxMKbPyj6h9y/buh4SZtQK/SW8YbZpfl9ZhmXVi3vfFRmrTR/mp9b7N7cubisZ3RYRR6IW1SjXyGNBFbuzo5XrA20Kuk=
+	t=1762440157; cv=none; b=W53TO3WAhtNoPCYBOLT5Sszn7ngYmRHpKCpfX2Kwaj+UT/tn28eOanHaWILksol8aoWdm9ag3OheiTXghkyvZiVEuxydSlZ1LhiC/wdXi8JlyKUxK80hAixFSEyTP0JJ0WFIdAIr/QDXQOwjwWg5ukJyPpZK/nnAI8gbihQ4al8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440145; c=relaxed/simple;
-	bh=u3JHp/qpCUvTjf3bCgMmhxbdgh3vpao1Tq40kL7L4U4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EGgEurhi65Yi9/97lw5XhQ5v9Do7FG66aoiIIhSVSahxt/g2wpmK2YhIvy0R+d94gnCdl9gapWlHC0gUEB1IVR+vlUJpSmSJxwWvxvpqbvmtV9+Sna/DJDYQJgR1smU+0IsRDiaG8EVMnp8RcjFDU+mnjSXvoT7L/9ZUCaJU4C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PAy1N3a7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ii6JmfXp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762440140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FOOLV+Wt6cHX8IB56gpRGewt+8/m8I9TnkK1yGUVBrw=;
-	b=PAy1N3a7SmuG/It82kUVWs7XH1XoUuU2LBMSWsQe92MYeMc6fMk99Oh2ED4REz0DfKwJ7e
-	snLOGoEi+h6rxH1AToYSm6dkyPydDkO9dEhJ0bOdYmPxSj+iypgGI75fBIGHPJdOZkuoCe
-	J3ncdAZaHl51xGEEOuBW2HDMRjfxWhiDWeakQoYNgDOIo8S1zvb/OqDN/npoehXCUnH4qV
-	xniuDaI04M6z6lU8oswSbqY6Y1ekuPeEk1+ENq4jwYiWlFalpdYVZ3dEiOgXqfBiPT62Ep
-	/Ty/UZRoQ9t5mouKRmdM0FJr6c4Apvnuk0qFSYyrJLz7Q+xkW6Clx7W9w0lx9A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762440140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FOOLV+Wt6cHX8IB56gpRGewt+8/m8I9TnkK1yGUVBrw=;
-	b=ii6JmfXp0RoYt2PeZHZB0fv0OUb2E/wmb9jj0+DNATMOesrbqgHuWyzipDdk8KyujH9YzS
-	JK0cxBo5oSub6nBw==
-Date: Thu, 06 Nov 2025 15:41:57 +0100
-Subject: [PATCH] ASoC: stm32: dfsdm: don't use %pK through printk
+	s=arc-20240116; t=1762440157; c=relaxed/simple;
+	bh=XCL0KhhrHG5plCqfuuBw0XxZzn9yfR42S6yeDmlCXqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErqAllMMH5uc+mkyxzv28THTse9w2qfiVK3Ic37wMsN4lYYVuQkl7uav6RyMBRBOWWPPpu2/h5rM0J39yVQwSteP8HA7z0QmNIoyo3FA2toij8Yht1KCUiK96vK57rWHkSBbEUfGZQZJZx0bR1KAXOEGFwAUTYD3w//YYIRwQ+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ia2TRo7B; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sJ9c+b+VfFvQuoP2g/4jPNJjSn7A1S3rq8wxhwzlLak=; b=ia2TRo7B6xlRXy2oLByeygzrdf
+	MZZ1WYSLYaf5VRrlQ4b/jipQL8wOKwkJvoXMFCKT07vBziOIe1pwNlMn0SWBRQHiGYc0qwnKT4Eax
+	ZVM5ILcm1EsGvcJLw39QiJbZwGimtuq3ucPJOlMDk9rbKtnyuoXPpFyzqZ87X/tb6etOWPw9sv6ol
+	uFVHMmcGBRuy9OUIDvriMXsHeW9Jqi15ZVGv635bxbVBLnlMxeZZp7Mw2pLf9LxJhyvVW3C8y+i1N
+	InUbt0xRjXuiyK+EpKYytkFr46BToh8nhXKjYlRuXfOGFrRMQwiznbx6yPd5xULO1q6Gby7VZfYIg
+	bIZwEptA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vH1C2-00000004A5h-2uxe;
+	Thu, 06 Nov 2025 14:42:30 +0000
+Date: Thu, 6 Nov 2025 14:42:30 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Florian Weimer <fweimer@redhat.com>,
+	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <aQyz1j7nqXPKTYPT@casper.infradead.org>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+ <lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+ <20251106135212.GA10477@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251106-restricted-pointers-stm-v1-1-7d03eb5020ba@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIALSzDGkC/x3MMQqAMAxA0atIZgNWrYhXEYfaRs1glaSIIN7d4
- viG/x9QEiaFoXhA6GLlI2aYsgC/ubgScsiGuqqtMVWHQpqEfaKA58ExkShq2tHOi2/70LjWW8j
- 1KbTw/Z/H6X0/bulgGmkAAAA=
-X-Change-ID: 20251106-restricted-pointers-stm-5bfc48d3a4c5
-To: Olivier Moysan <olivier.moysan@foss.st.com>, 
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762440134; l=1480;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=u3JHp/qpCUvTjf3bCgMmhxbdgh3vpao1Tq40kL7L4U4=;
- b=JX2/pGtnxIWSvsmEmArg+q9ng4flIkflN4nEGjJUT8CwoyuR9/ggaXsSr1SLyL16fci8pTktn
- zlfGtfCQCGcB4MC6P//HH2Iz7Zt1s9RNoqJx57MVyEwkMl2KPH6djk0
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106135212.GA10477@lst.de>
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+On Thu, Nov 06, 2025 at 02:52:12PM +0100, Christoph Hellwig wrote:
+> On Thu, Nov 06, 2025 at 02:48:12PM +0100, Florian Weimer wrote:
+> > * Hans Holmberg:
+> > 
+> > > We don't support preallocations for CoW inodes and we currently fail
+> > > with -EOPNOTSUPP, but this causes an issue for users of glibc's
+> > > posix_fallocate[1]. If fallocate fails, posix_fallocate falls back on
+> > > writing actual data into the range to try to allocate blocks that way.
+> > > That does not actually gurantee anything for CoW inodes however as we
+> > > write out of place.
+> > 
+> > Why doesn't fallocate trigger the copy instead?  Isn't this what the
+> > user is requesting?
+> 
+> What copy?
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- sound/soc/stm/stm32_adfsdm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index c914d1c4685019ef1fd66ab92d73bd06cf8d14a1..1797a91fea7ae85671ba9991c2f8bfa8c9d1ce92 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -180,7 +180,7 @@ static int stm32_afsdm_pcm_cb(const void *data, size_t size, void *private)
- 		src_size >>= 1;
- 	cur_size = src_size;
- 
--	dev_dbg(rtd->dev, "%s: buff_add :%pK, pos = %d, size = %zu\n",
-+	dev_dbg(rtd->dev, "%s: buff_add :%p, pos = %d, size = %zu\n",
- 		__func__, &pcm_buff[priv->pos], priv->pos, src_size);
- 
- 	if ((priv->pos + src_size) > buff_size) {
-
----
-base-commit: 7ea30958b3054f5e488fa0b33c352723f7ab3a2a
-change-id: 20251106-restricted-pointers-stm-5bfc48d3a4c5
-
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+I believe Florian is thinking of CoW in the sense of "share while read
+only, then you have a mutable block allocation", rather than the
+WAFL (or SMR) sense of "we always put writes in a new location".
 
