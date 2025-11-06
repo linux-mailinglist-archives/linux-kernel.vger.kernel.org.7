@@ -1,229 +1,140 @@
-Return-Path: <linux-kernel+bounces-889077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21F8C3C9E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:56:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA512C3C9FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1CE7188F2C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77EA93527CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61139339717;
-	Thu,  6 Nov 2025 16:56:22 +0000 (UTC)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEE634A78A;
+	Thu,  6 Nov 2025 16:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Na8DiMyd"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED764285CBC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C151347BBE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448181; cv=none; b=lDC0fVF4NHtywW0IJAuES7UlgQIcExNwtdwWKYJskksnKobDc/bb/Ip38dsjmbBkFoNmQusws0YkYixY1aMvKhrcNNWQfHHDMK++Q92H0PwrUdGKTsoE0yY/uVqR2m9roGmxlEt6+QEnoppGzFZW8+7Q6M1hDjxrAtuAad5xH8U=
+	t=1762448186; cv=none; b=iUl3/SElxSG7tKsID8JNWlxAy0dCBlqaMLLojKHOZp9PUMRt6l0HB1CHpQGaRhiiKXG5q8mGp+oy5mrNhXQZD2DnnoX27J1ahnP1V3j00sk2BkpUrWdLkoDSLV05uEL1uVG+zxsRbkbib/5Lv8Csnlr8sMfrJaUHZwp8eVqW6l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448181; c=relaxed/simple;
-	bh=Xj40SOVd3NdTrp2a+VlYBaRTsQy7SgaLV/T8JlG11G0=;
+	s=arc-20240116; t=1762448186; c=relaxed/simple;
+	bh=069UhOXOJgsi1oIjqBENDlkBNgO/tL7N/jC2rM7iMA4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SQG9VHHYdQsM5XLT1YwsYa35sJpAbrJwrSFmpiclCdqwyO9JDl/rBGuPz7KeB22gi0JNWp2s3TU1A1VTEO1amv9nNPswwhUIwUoRcMweTWMwOxDGqRKJqFYVhGmo1GuZVLUZcM0DDgV+xKyEq+Pa4zyh5hcZa57vcjk57N4TV+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640ca678745so2187889a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:56:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448175; x=1763052975;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	 To:Cc:Content-Type; b=rqXxbu5/G2SklQZ1WKdQNWHXykO9meNVjnFYewRdmQIvKMsWjvAReEIm5BSzfHcHYAdz9RcmpJTWMR0t1xJ5zYlpUPd1T/4EIBE+Cws5+1Efww6PkOhrLPLsliNiq1dnrYCDuyMQRt7RJ7s4krcQYOOVYcoRtvQCvLT4m2uTOpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Na8DiMyd; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640f0f82da9so2121043a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:56:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1762448182; x=1763052982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Kv/zSHNSp67g0DzJLnFh7pwO7THLs7Hn+7HBTbFfIPw=;
-        b=Wt25oauwfr5aPU8k0JXPRQuulovvgojILre5mzDAjcYrOa4k7OMiaDgi45Cy8OdxKy
-         Q2uoi0AYKesTpxl58Gj/tEjXFRMzoIXORZZwdbWPmWwjkenxcDowoSIVqAxh4t4nXkFI
-         9qGYvKzcuBASU8TsYwElAEeOmRtUBrsMFCMgZKt6gjhQ8TBmz56XzvWXXcco/c6ziajI
-         e7aJnfdEsx7VaqwdbvkYpefXzpL0WDV8pv1q/GQvOn+sDXSF/C+RhFEtg3jDmNcuvQho
-         I6kSHfFW1pL7XHdwxbUVg0lAzJfE7Kw2M5qCNEBPebqnjRIy02353TK/rerRA8vvGrhS
-         HtRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr5qs+m0P4s4gMlsTibcPZjT2iILhZMXOP6hrddAHsWSZIik/gA1KnF7SpiQbO/FQhOfCf36P9pIJK5WQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcT+CujcUBc2UaRzYZ40sVbb9AjOj9qi9kA969M1kzNFmqTSGL
-	ypvl5OhltjGH0b3LRKJqCuP9SqmyuBgDoEDgnKzA9YMyzip3qj7NAHb4CcH0wexgD0Q=
-X-Gm-Gg: ASbGncvIGIawhvBCVs6tXFLBG4np4veTivnokJUs7ZEoLCbTY9p4h62g+20hb2AlnJZ
-	y2YOk2sISJeeXKc+mjy31ShuwtqKp5eBIwScsqJW2yHXKVDPmRJhxfj0z65b/xBTdoLVFnVkxKw
-	1057rK62nzUrKn8ef6K4sWD/feLMHX9A5VpqVMqPniXD/fJOUjNMvKtXJshNanmTQCrGe4oqd9E
-	byAfNYqeclJBHgwDqef4Bi4HT5PoVU+Rcg8JEexz2gI0Cv9XGgZhEBiCHe/HrSS3jmNPIpBzlNJ
-	tn/X0W61xS0KbX/VABBYGRyZCcW/Z2kdGv4TC+7t6H4RVr1TTczM2efxWdmEg9xpfjTy1Y3G46b
-	m8aych+Yp8qaJO1xz8B158EOMXB/TkLSdK6YL8EjYSTvbHt4cM4isTfocneKg8SgrRoP3WLHFjz
-	ueRSp3aCttGHD2dM84F/yBxlQlH3yxvSeJf2S25w==
-X-Google-Smtp-Source: AGHT+IH6xpQIWhjEqnXiWBhS22DB+03AczbXOqM55O8qBl4Cd60DglZP9RR3mRmQcuu4CyNhE/s7dg==
-X-Received: by 2002:a05:6402:4312:b0:640:c062:8bca with SMTP id 4fb4d7f45d1cf-6413f1f7478mr13790a12.18.1762448174752;
-        Thu, 06 Nov 2025 08:56:14 -0800 (PST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813bedsm2252931a12.10.2025.11.06.08.56.08
+        bh=y1d33Qfkr/UySDlVInSW41vMX+/10XV70RYaxgiV9H4=;
+        b=Na8DiMydQN2WVmieNbNglQINnhzqan47t244XAjhIkPu8H/cHjeHyAgUp//4QJiXWR
+         8HZMFFXfOuYoTd2QzhCOIisa93dHIYpw0tt3iZgfyqdmnLkvfkid2pa8A2lrQMCMbjCN
+         zuCc+GyF9lYHrZh1SVk4XifTtBNZRiXvAzUZQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762448182; x=1763052982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=y1d33Qfkr/UySDlVInSW41vMX+/10XV70RYaxgiV9H4=;
+        b=Qh61he08KFoba5nCuIIcMpVvyjaUMSjNcdQoBkO1DnW1+/dZNwN+ysvKGf8OnP/+BH
+         uw4+IVzG0BL2aQTM/MxEf5LbAHfu98EjnRjDLpGU+4JBq4Cam4fjdTif9rEPJozfd8wL
+         7KROZ98njELPTnXpuGc26PoOqdmoLDVNxidaok5XUoFXjaAioh112cjPAfrRRPo7kbnd
+         3imfmXPvl2dCtHPYmczomqzWlvynKlGICBYalYHhtOvCkJnPhcXtX6/PSPN9+7BDbS1v
+         Pb5dCetHg53Upq15SDFOGw1mwrXBX6ZVIrsxUJr6OINTiyegkCuG5GrPSWDJhMrF/60U
+         6fQg==
+X-Gm-Message-State: AOJu0YzVna3rfsDdcm3YMgtNSlQaoBWPCJjGB/GhdLkT9cdPhQRbe2fJ
+	zp9NJlLv45ZFtPO1Gcu0/AVu/3njzqjxdW2nWU6DBSUM2biwgT1nReBICUmSFl/7RDck097EYgl
+	/FyA=
+X-Gm-Gg: ASbGnctp/q6tgMwlnEe0GR+INHpK0PPCEfIFLnOwunrU5nvNVE7hsTkl4UZR9vr1wZ5
+	Vzy9i/6iW2u3YG/EwPg4xsqS88fqLKo2sZC0Z9UDh2nXB1JyVPsNqFH/dCEWpbaYaNyy+MFWW55
+	wh7dCEeZwPofxUm3cohHfPQ5AA05ZVsfHONTGPxd+vLu9ZlDdiVAbeL/+Yhukr2PswffUpfjzJ3
+	GmRp1ldU+8gTe5dkBG88Xv6yt6xHU1mQ5tLaQd8J4/jeNv305Xl2azTFPD0ngAYjRIXFniTeQC2
+	mRmRJXWR72jbUb8sC+pm7RbPXc1mhdAxJ6BzvtIwH5WEHmSgz28bDO9TWTCBZ/v038DY1JwIzFD
+	BeSHuICoietYilmB3mLKG0GsY2UoRbbVu7JyQxSOO3slV54eJ7+FcPLen5+Wo8YoVC4gVQZw7Jo
+	HfNunJEBZ7u+Wzcm5IxqnK3jQL/UKdLtfS1mAu9Mo=
+X-Google-Smtp-Source: AGHT+IFJ3VQix7tPWRjOC2nHaPrM1agPeTtri+WJU4m2j2aqDdVQvIRjy1m8vP/8H1H1PbxHA+JOjQ==
+X-Received: by 2002:a05:6402:26d2:b0:640:6653:65c1 with SMTP id 4fb4d7f45d1cf-6413f059d91mr48283a12.5.1762448181688;
+        Thu, 06 Nov 2025 08:56:21 -0800 (PST)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f857839sm2331726a12.21.2025.11.06.08.56.15
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 08:56:10 -0800 (PST)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-640c3940649so1720005a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:56:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVh3p0Ucq1U2iodG9PNdpafFNxaA6JV/qwS2zIAKFlDh3SX6o0H4pAcPPF8jY9d3ewC0EkhY4VtafLyjqw=@vger.kernel.org
-X-Received: by 2002:a05:6402:524f:b0:641:3d64:b10d with SMTP id
- 4fb4d7f45d1cf-6413f2399ebmr7718a12.36.1762448168196; Thu, 06 Nov 2025
- 08:56:08 -0800 (PST)
+        Thu, 06 Nov 2025 08:56:15 -0800 (PST)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso797475f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:56:15 -0800 (PST)
+X-Received: by 2002:a5d:5887:0:b0:429:c505:99d0 with SMTP id
+ ffacd0b85a97d-429e32e4484mr7115033f8f.25.1762448175160; Thu, 06 Nov 2025
+ 08:56:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923154707.1089900-1-cosmin-gabriel.tanislav.xa@renesas.com> <CAMuHMdWRCGYLRK_WBmbB0cRP7PHiGPSi3U1jdWSVKaTSweruUw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWRCGYLRK_WBmbB0cRP7PHiGPSi3U1jdWSVKaTSweruUw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Nov 2025 17:55:54 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUn5cd++TeWQvwLhFYQ7_iwwrRT0pdiENVRvOTGbDmGOw@mail.gmail.com>
-X-Gm-Features: AWmQ_bni4h7F77aBUeRJILkTfeTNGn3rlXJkkeh9_4oFRfgsraYOOXpjZIOku4I
-Message-ID: <CAMuHMdUn5cd++TeWQvwLhFYQ7_iwwrRT0pdiENVRvOTGbDmGOw@mail.gmail.com>
-Subject: Re: [PATCH] tty: serial: sh-sci: fix RSCI FIFO overrun handling
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Nam Cao <namcao@linutronix.de>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, stable@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-reneas-soc@vger.kernel.org
+References: <20251101040043.3768848-1-ajye_huang@compal.corp-partner.google.com>
+ <CAD=FV=XqgkgLLOeozooypbwiO-8j0ZNy_GJ1UD2sXL1EKzC=Fw@mail.gmail.com>
+In-Reply-To: <CAD=FV=XqgkgLLOeozooypbwiO-8j0ZNy_GJ1UD2sXL1EKzC=Fw@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 6 Nov 2025 08:56:04 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UoiSAhHOs=HUoGU-kX_ARc_EJP5p7_Ozo7u5vcY33GSg@mail.gmail.com>
+X-Gm-Features: AWmQ_bkJiA0NM5kHBq2AiPq1aBIwz3sEY3uTcdzu4ZMGksAVclFhXHwVsuamfP4
+Message-ID: <CAD=FV=UoiSAhHOs=HUoGU-kX_ARc_EJP5p7_Ozo7u5vcY33GSg@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
+To: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+Cc: linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, jazhan@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CC Biju, linux-renesas-soc
+Hi,
 
-On Thu, 6 Nov 2025 at 17:54, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Mon, Nov 3, 2025 at 8:38=E2=80=AFAM Doug Anderson <dianders@chromium.org=
+> wrote:
 >
-> Hi Cosmin,
+> Hi,
 >
-> On Tue, 23 Sept 2025 at 17:47, Cosmin Tanislav
-> <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> > The receive error handling code is shared between RSCI and all other
-> > SCIF port types, but the RSCI overrun_reg is specified as a memory
-> > offset, while for other SCIF types it is an enum value used to index
-> > into the sci_port_params->regs array, as mentioned above the
-> > sci_serial_in() function.
+> On Fri, Oct 31, 2025 at 9:01=E2=80=AFPM Ajye Huang
+> <ajye_huang@compal.corp-partner.google.com> wrote:
 > >
-> > For RSCI, the overrun_reg is CSR (0x48), causing the sci_getreg() call
-> > inside the sci_handle_fifo_overrun() function to index outside the
-> > bounds of the regs array, which currently has a size of 20, as specified
-> > by SCI_NR_REGS.
+> > The Sharp LQ116M1JW105 reports that it supports 8 bpc modes,
+> > but it will happen display noise in some videos.
+> > So, limit it to 6 bpc modes.
 > >
-> > Because of this, we end up accessing memory outside of RSCI's
-> > rsci_port_params structure, which, when interpreted as a plat_sci_reg,
-> > happens to have a non-zero size, causing the following WARN when
-> > sci_serial_in() is called, as the accidental size does not match the
-> > supported register sizes.
+> > Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+> > ---
+> > changes from v1->v2:
+> > * Change EDID_QUIRK_FORCE_6BPC to BIT(EDID_QUIRK_FORCE_6BPC)
 > >
-> > The existence of the overrun_reg needs to be checked because
-> > SCIx_SH3_SCIF_REGTYPE has overrun_reg set to SCLSR, but SCLSR is not
-> > present in the regs array.
-> >
-> > Avoid calling sci_getreg() for port types which don't use standard
-> > register handling.
-> >
-> > Use the ops->read_reg() and ops->write_reg() functions to properly read
-> > and write registers for RSCI, and change the type of the status variable
-> > to accommodate the 32-bit CSR register.
-> >
-> > sci_getreg() and sci_serial_in() are also called with overrun_reg in the
-> > sci_mpxed_interrupt() interrupt handler, but that code path is not used
-> > for RSCI, as it does not have a muxed interrupt.
-> >
-> > ------------[ cut here ]------------
-> > Invalid register access
-> > WARNING: CPU: 0 PID: 0 at drivers/tty/serial/sh-sci.c:522 sci_serial_in+0x38/0xac
-> > Modules linked in: renesas_usbhs at24 rzt2h_adc industrialio_adc sha256 cfg80211 bluetooth ecdh_generic ecc rfkill fuse drm backlight ipv6
-> > CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc1+ #30 PREEMPT
-> > Hardware name: Renesas RZ/T2H EVK Board based on r9a09g077m44 (DT)
-> > pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > pc : sci_serial_in+0x38/0xac
-> > lr : sci_serial_in+0x38/0xac
-> > sp : ffff800080003e80
-> > x29: ffff800080003e80 x28: ffff800082195b80 x27: 000000000000000d
-> > x26: ffff8000821956d0 x25: 0000000000000000 x24: ffff800082195b80
-> > x23: ffff000180e0d800 x22: 0000000000000010 x21: 0000000000000000
-> > x20: 0000000000000010 x19: ffff000180e72000 x18: 000000000000000a
-> > x17: ffff8002bcee7000 x16: ffff800080000000 x15: 0720072007200720
-> > x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
-> > x11: 0000000000000058 x10: 0000000000000018 x9 : ffff8000821a6a48
-> > x8 : 0000000000057fa8 x7 : 0000000000000406 x6 : ffff8000821fea48
-> > x5 : ffff00033ef88408 x4 : ffff8002bcee7000 x3 : ffff800082195b80
-> > x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff800082195b80
-> > Call trace:
-> >  sci_serial_in+0x38/0xac (P)
-> >  sci_handle_fifo_overrun.isra.0+0x70/0x134
-> >  sci_er_interrupt+0x50/0x39c
-> >  __handle_irq_event_percpu+0x48/0x140
-> >  handle_irq_event+0x44/0xb0
-> >  handle_fasteoi_irq+0xf4/0x1a0
-> >  handle_irq_desc+0x34/0x58
-> >  generic_handle_domain_irq+0x1c/0x28
-> >  gic_handle_irq+0x4c/0x140
-> >  call_on_irq_stack+0x30/0x48
-> >  do_interrupt_handler+0x80/0x84
-> >  el1_interrupt+0x34/0x68
-> >  el1h_64_irq_handler+0x18/0x24
-> >  el1h_64_irq+0x6c/0x70
-> >  default_idle_call+0x28/0x58 (P)
-> >  do_idle+0x1f8/0x250
-> >  cpu_startup_entry+0x34/0x3c
-> >  rest_init+0xd8/0xe0
-> >  console_on_rootfs+0x0/0x6c
-> >  __primary_switched+0x88/0x90
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
-> > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> >  drivers/gpu/drm/drm_edid.c | 3 +++
+> >  1 file changed, 3 insertions(+)
 >
-> Thanks for your patch, which is now commit ef8fef45c74b5a00 ("tty:
-> serial: sh-sci: fix RSCI FIFO overrun handling") in v6.18-rc3.
+> There was some extra testing and summarization on the internal
+> discussion about this problem that cleared up my confusion and I agree
+> that this is the right fix. While the panel does properly link train
+> at 8bpp and generally displays images OK, showing certain images on
+> the screen displays consistent corruption on just this panel (other
+> 8bpp panels are fine). It seems like there's some sort of subtle bug
+> in the panel at 8bpp. Limiting it to 6bpp, which is what the panel was
+> originally tested with, is the right thing to do.
 >
-> > --- a/drivers/tty/serial/sh-sci.c
-> > +++ b/drivers/tty/serial/sh-sci.c
-> > @@ -1014,16 +1014,18 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
-> >         struct sci_port *s = to_sci_port(port);
-> >         const struct plat_sci_reg *reg;
-> >         int copied = 0;
-> > -       u16 status;
-> > +       u32 status;
-> >
-> > -       reg = sci_getreg(port, s->params->overrun_reg);
-> > -       if (!reg->size)
-> > -               return 0;
-> > +       if (s->type != SCI_PORT_RSCI) {
-> > +               reg = sci_getreg(port, s->params->overrun_reg);
-> > +               if (!reg->size)
-> > +                       return 0;
-> > +       }
-> >
-> > -       status = sci_serial_in(port, s->params->overrun_reg);
-> > +       status = s->ops->read_reg(port, s->params->overrun_reg);
-> >         if (status & s->params->overrun_mask) {
-> >                 status &= ~s->params->overrun_mask;
-> > -               sci_serial_out(port, s->params->overrun_reg, status);
-> > +               s->ops->write_reg(port, s->params->overrun_reg, status);
-> >
-> >                 port->icount.overrun++;
-> >
->
-> Ouch, this is really becoming fragile, and thus hard to maintain.
-> See also "[PATCH v2 2/2] serial: sh-sci: Fix deadlock during RSCI FIFO
-> overrun error".
-> Are you sure this is the only place where that can happen?
-> sci_getreg() and sci_serial_{in,out}() are used all over the place.
->
-> [1] https://lore.kernel.org/20251029082101.92156-3-biju.das.jz@bp.renesas.com/
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Gr{oetje,eeting}s,
+Pushed to drm-misc-next:
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[1/1] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
+      commit: f23e40e378a0858da26e8d5a6f09f82ecd95e247
 
