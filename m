@@ -1,94 +1,137 @@
-Return-Path: <linux-kernel+bounces-888777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5373CC3BE44
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:54:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B02C3BE4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6811218949E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469531897299
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1106832861A;
-	Thu,  6 Nov 2025 14:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B1E3446C8;
+	Thu,  6 Nov 2025 14:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cjhr5i5y"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DspfoUWh"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73FA19D07E;
-	Thu,  6 Nov 2025 14:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7632934029C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440579; cv=none; b=Ul7G53OEqlYV0SyVxk1I+3eWijAy5rbVgWy4RR69ZcVVJse3tCH/mkMU4Oby/CnTdIHyB66X6fyjXIDRyOxE5Wgbk9FyVZW2vfOEAASK4A6kSCRotzjUFnyCacvKFUbBBjzAuuBQQh8dWOzQVVIurJBqDJbUynMhIV+4MF9VerA=
+	t=1762440587; cv=none; b=hv4UWAbb793+tCpxoVaixkflvLaAO0It/83dobcVC+m18s0H3/ojngbBUx2P46aDRzDR6qV9fsqT93W9otX6trXXVRTF9AYMe+XbVOEvddi54pOa0Z1u2BKsAUoXxtKh0/RDyJ7aOe+6kkiSeH34Sp2m6sA03lHtjwNqnDUMm4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440579; c=relaxed/simple;
-	bh=Bs6PrusrQ9b6qgDuPufXQAbjKepON/qg7rOLvj4uBL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSaMqTlANRKN+Jk4MvXxLJHqX5LaIMMB2BTypJQn+ojI5Uh5If1VzM9vpst+C2QJLQ1aRKdzcmgPcjS8MxKEKVsSi2krHF5ZGt5Y4QeEv4IORsJ6hwLFvR89A1LbcQQOncqy4K2tQ3dXLWBOVdrbvqWqWaBFHqz7Y18qBjRxf80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Cjhr5i5y; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Bs6PrusrQ9b6qgDuPufXQAbjKepON/qg7rOLvj4uBL8=; b=Cjhr5i5ypTZssQkyOiVs9VQr5k
-	IN/n5VIYkwZfoPwRwFRVbMB8YN0ETLUF/NFBsortsDeAab0F6oQgfPSiTWs4SPQU5WsXmrh8OpVEZ
-	lM733X4vmGEARW3uGBANPUoGZ17x1VxWdElJ9Dj3+Kg+8stgQGOWevFZVLn0duXIz45s+D+AoEAaz
-	XRWOK1fDZihDI4Lx+7/8ho6nTOBlljAMYSyfJ+uu83S4UMgPqdf46QFbAqXwbel0jldiQ9c/0nkMU
-	rG7mC/u49Gu+Kbyu6bLgMvoNrN3keMu1xn9UPxPOAps+k/iZOVIg3Zz8mRaoBolUihKTpLSMZCnCR
-	513/72tQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vH0Qx-00000004Ye3-3gZU;
-	Thu, 06 Nov 2025 13:53:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B268C300230; Thu, 06 Nov 2025 15:49:19 +0100 (CET)
-Date: Thu, 6 Nov 2025 15:49:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Mukesh Rathor <mrathor@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH v10 1/2] Drivers: hv: Export some symbols for mshv_vtl
-Message-ID: <20251106144919.GT3245006@noisy.programming.kicks-ass.net>
-References: <20251029050139.46545-1-namjain@linux.microsoft.com>
- <20251029050139.46545-2-namjain@linux.microsoft.com>
+	s=arc-20240116; t=1762440587; c=relaxed/simple;
+	bh=x3cqipEYJXlgL2yviFdIDPMoX0lSj6NBR8ueUAg2vCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kq/EIXMCMJYA8th8NxSiyh0+kqRBjDwZvUHoMeF0fTrcl8BDftSPP4rvelrs6jkke1b4U8eC6fW5GPPCM4AbTTx6qfeb9stH9Y0NdXzElGLhmADPqkcDVEjWmWfQoObYGKaK1TJR2xB6ANEcugrUZ00ae1KsVnWaulbIF8FqA50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DspfoUWh; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b7277324204so124039866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:49:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762440580; x=1763045380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x3cqipEYJXlgL2yviFdIDPMoX0lSj6NBR8ueUAg2vCg=;
+        b=DspfoUWhahtPHhFdWDegsdcwvsHSQDUoukpSkt4KBUgeq7o9RVBgAwZiEq7JSvPdoF
+         rb5+Z8tcMus4xTlp9rMQgh29MIRse59qQfCiJEyUpkJfSa0NN1qMHfXmk+UUVbbZrfAy
+         JU92y1m+X2iqdv5DF1GvQb/FcxFVvXH9uiJrohC8Jz0JTsHHNCGIck9aceOY77/tca2b
+         V+91M1jCErOP19GbulXXwYQ0OEt+8+aSkn2p1dgJmpz0VMXO8lstub7UecC1mvk28eoj
+         nC8Iii6uRU9RtQpZS0gNtbTiPCrVOpkJLFRXAc2PcR8+wUxY2AyqHoijlA8VSnKE3IqF
+         bklg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762440580; x=1763045380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x3cqipEYJXlgL2yviFdIDPMoX0lSj6NBR8ueUAg2vCg=;
+        b=XRzH/Zii2uqa4fU6Jy9O6AyUrAHdt6iH8Ee6WqpOZJN9pQdLE53iPTPYilqVXHtI8p
+         2rsUWKcGPf0rJCfEF2/oYqJ0h7iF9fCMw+wHiY53OmNP58UJKUhCNweRYCcjMgHFZPl2
+         oe0on5zoQOHinu0k77p1xiMYevWNTjOFraglPuF8J8vh0iv6ZcpouXM+Pf9hQREW4tlM
+         PElfFczotyKiLkPiiBM0/ludOhGhnZrfSUlulFhveUPGg7+IAeiU9b7nlyaGUjdNDPhS
+         lxd34/BHXXIe11l1jLzxhNYSScHFpdBG0lB+VdDsjaeKBlS+IlmhzaklQVf75gt7U2al
+         GDFg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/DPJvfSoosxaqqoQ3jnmWedkmGqFXY+S0Wyp8+dcWZGDkBbYdVDcanugyiuvIfPmjlCLHkcfUa502AIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziDeExvp0TMce+puycwwq/cpCadgmA1UticFPbQsH27xs5gqH/
+	pi+TXvI7FkF6rX6hxeoPc1gmBM7S663O6mV4ffieeBKtx73+/GoswgYm+2CDDLfCENyee7SGSCR
+	NwbyAbTdItj8tE5GhnD1pZs/Xxz1OkeW2KtDB
+X-Gm-Gg: ASbGncsRjQV3RoIJKTAsIpTvOML65wwco9ZSUts4IccEed2J+rSm9oH0KDDsdrV+EoF
+	sZUpvgl3FYY31lWjYBftXWBYsRAwGIQ34/Eb2GM1vM24bqXSek/EsYjc84/lcDj4TtB/RA0eyzk
+	tQEUyt6XIQrz3H57rjLMSd/gXuCQ6Jl6CTWUCqg119vsOoqqqIMH99aIRDO877jziyrbVGlIA/t
+	3c/XeuAh4oUnIwVc1YpA3oiCcqjfe8EY+wUiewOL29TidYb1LcsDrPy5Jp+PP7EHUnJmCoxapTo
+	iFF8TW1uk5GlNuNJDUo8RNWFCw==
+X-Google-Smtp-Source: AGHT+IGTkbZJGRchGTkQauVj9fkvo01scuDDcRqu/thxmiYqRRhXCxyAX7NNBPJ6BxbxjvhqOiymHXZQFXN5z82w8MQ=
+X-Received: by 2002:a17:906:f58e:b0:b50:697e:ba3 with SMTP id
+ a640c23a62f3a-b7265608c08mr761114666b.63.1762440579515; Thu, 06 Nov 2025
+ 06:49:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029050139.46545-2-namjain@linux.microsoft.com>
+References: <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+ <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local> <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+ <CAGudoHGXeg+eBsJRwZwr6snSzOBkWM0G+tVb23zCAhhuWR5UXQ@mail.gmail.com>
+ <20251106111429.GCaQyDFWjbN8PjqxUW@fat_crate.local> <CAGudoHGWL6gLjmo3m6uCt9ueHL9rGCdw_jz9FLvgu_3=3A-BrA@mail.gmail.com>
+ <20251106131030.GDaQyeRiAVoIh_23mg@fat_crate.local> <CAGudoHG1P61Nd7gMriCSF=g=gHxESPBPNmhHjtOQvG8HhpW0rg@mail.gmail.com>
+ <20251106133649.GEaQykcT0XXJ_SDE4P@fat_crate.local>
+In-Reply-To: <20251106133649.GEaQykcT0XXJ_SDE4P@fat_crate.local>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 6 Nov 2025 15:49:25 +0100
+X-Gm-Features: AWmQ_bmx6eYJ_i1PPLlx42piXDe7pXDP9_APoR1EKtbmzECfxNFgWpRPEoJy1m4
+Message-ID: <CAGudoHF7O-q4AENo-jdZymr+U8AGfQBcz7hjbi-kTg=MSOECXg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	"the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	tglx@linutronix.de, pfalcato@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 05:01:38AM +0000, Naman Jain wrote:
-> MSHV_VTL driver is going to be introduced, which is supposed to
-> provide interface for Virtual Machine Monitors (VMMs) to control
-> Virtual Trust Level (VTL). Export the symbols needed
-> to make it work (vmbus_isr, hv_context and hv_post_message).
+On Thu, Nov 6, 2025 at 2:37=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrote=
+:
+>
+> On Thu, Nov 06, 2025 at 02:19:06PM +0100, Mateusz Guzik wrote:
+> > Then, as I pointed out, you should be protesting the patching of
+> > USER_PTR_MAX as it came with no benchmarks
+>
+> That came in as a security fix. I'd say correctness before performance. A=
+nd if
+> anyone finds a better and faster fix and can prove it, I'm all ears.
+>
 
-Please consider using EXPORT_SYMBOL_FOR_MODULES()
+Perhaps I failed to state my point clearly.
 
-> +EXPORT_SYMBOL_GPL(hv_context);
-> +EXPORT_SYMBOL_GPL(hv_post_message);
-> +EXPORT_SYMBOL_GPL(vmbus_isr);
+The position you are describing above does not line up with your
+behavior concerning the use of runtime-const machinery for
+USER_PTR_MAX.
+
+It is purely an optimization and it has nothing to do with fixing the
+problem the commit introducing it was aiming to solve. You accept it
+without a benchmark. Later when a bug was identified you did some
+testing to make sure it works. I think it that made sense. However,
+per what you are describing above I would expect you would be
+questioning whether this is warranted in the first place.
+
+kmem is probably used about as often as user access (if not more so).
+To my reading you rejected the idea of patching up some of its memory
+accesses without a benchmark from the get go, which is quite a
+different stance and I find myself confused about the discrepancy.
+
+I have not tried to write patches to optimize these. There is a
+threshold of complexity/ugliness where I would drop the idea myself.
+But in a hypothetical case where they turn out fine, I don't
+understand what's up with the insistence on benchmarks for this
+particular thing, especially in light of your position on
+USER_PTR_MAX. Per what I described previously, this would be hard to
+arrange anyway even if someone genuinely tried.
 
