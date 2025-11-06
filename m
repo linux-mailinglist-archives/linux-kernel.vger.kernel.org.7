@@ -1,402 +1,224 @@
-Return-Path: <linux-kernel+bounces-887536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FA5C38790
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:26:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5CEC38799
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FE144EC496
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:26:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DC83AC99E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ACC1A9FBA;
-	Thu,  6 Nov 2025 00:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7833A1D88B4;
+	Thu,  6 Nov 2025 00:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLdvknL5"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EwsAW4ce"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010033.outbound.protection.outlook.com [52.101.56.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D849F4D8CE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762388773; cv=none; b=NukI4bNfUup1NAc+xGKUnAvZ9fMTvQDw0bK3mwI0oMUqyqFch2Twsl79s4a7gC59QSOe4k168c/JNALrOjeXo5u4CotDw6gP1ks3utnjaJ3wTFX+T+bdVWUeq9h9Y87T7Ez/SlsGjo8joMIP/is8dKEtVUkad6KlSg0dBr6aNDo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762388773; c=relaxed/simple;
-	bh=4MYN7EAgWnSODODG6A19x6ijHGlK8gmMv8zjON/zh+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NcPv8a453jfWD3HO+H477Te3aBI0WTFxjNl1EC8bUybyNT/BhoB/YBSE2WsnpvpoPg8cw0beW/qTWTVcxYrpS0joemXvoKdeZF74PbLK1K7K/yAIQJGoJv/Qxgv0C/NvABM+575iLXykFlJyi4eDDVIcn6vP7iQXHfY04EX/Ru0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLdvknL5; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-781014f4e12so3915787b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:26:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762388771; x=1762993571; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fj6rW30AFi0w9W9uK7Qpyv8PnHs6M2XJTUrrQLC3IC8=;
-        b=BLdvknL5PQxwSWGcKz//ajzKsjybP2gL0i6pb0u1PauO8nW3YppEtUE3j//YjRXYus
-         4pDmvrKEyzOZZsLnLf4njfKClfuJfPqaCbjEGura/QDOi1LL+OfLBqUB3lYEICU+yUTQ
-         M+Itm4Q2I5eyAA0fNHGth3JaW4EWzn92QciUT4x/qjh07sIKJfrc6fzpLeo3iCXw8wN4
-         CqulfAGsQ8FjYzWCqJ06CqSI8YR2MZdTt4uzsRbpZRYmWnBWAuO7kFox9UNadWvMCQRM
-         oxTiHAjuv/EhV0LlCZ44vanOG7ZYH1j8QcLOPSu7fxlu+vx6MOGaZYRaBmkRQPXgkFFR
-         /MAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762388771; x=1762993571;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fj6rW30AFi0w9W9uK7Qpyv8PnHs6M2XJTUrrQLC3IC8=;
-        b=rLFBNfSlvk6bIAOe3E5Xx0gMsAifvM8m8BBdEaB423WO/VD6D2V5OfFRto0PmI9Fo2
-         wSNXrWvX3RDh/U3PEhcNhizC+ZHI8fJ4l+f2HG7ltYmQajc3da+8M3xHwjwXcBTQJLZ+
-         FvDBpBI7kA9nmRSHlfSDQlgmVGewh+ePNDpVkErjpThBTXqCoMbECkI9vS22/F8pEaf/
-         zaLtDAphkz0fOpyhERWTdtEDCDFW9JhJLbSljrCkAQTOaKeFO70D8HEUCFjzdpeqNmPO
-         5/8T5r9UT3ke9buC8mupcM9ScWYnG3TNJFEmdkemahZ5u2LCDyzAtNxSktl2Lu+H6u1F
-         a8Og==
-X-Forwarded-Encrypted: i=1; AJvYcCXbLSVPE/i59PMtr6E9KFJBP8P66nepP91hfmKC35KmzqYiRvmH3MEst6zvxrTREsdDB2jXWf/3huV/t64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPyhyfzprmhqPdLl8g4oq+yL1lWj3HGq1uJD9RFz2Oe9HJD09s
-	rx1wh8uYBSEOqu6bF+0NeS1err57HHwVmQ7E/f8f1WDMuFFRiowGNsR7
-X-Gm-Gg: ASbGncuxudlDWI7c01hkHUZDjwKoDuj04WvKuX0ieXfFPJWAGLI5Yc/pneHtLylGbXY
-	a8fkuAHs2o5RLKEktc5kyv/ERFk3TfoTZMJmQwPX8rHem4Igein2FhYGKqmDhsMfKSC8B3jPGZZ
-	N1FXEMJjmzURaUAlvrvreKhrnE71T4wDvtOB0wJmMWf8LoMhYfOUqzttuum4PK36fB9UIEiBHBd
-	pFKd7L/uVA9tzUPqD4simvM836oWqMAN9lwGrk+rpCKUoaVuFPVlhbpD/2rJvJIrpytwWxoNM7q
-	5bdtNjYhkXxrWcpcrwfWSI0Baq13VRYs6fusHVlXcwoR1yMzdA9o8taJgbcm4XGgSkAjMBdHUml
-	DNBoGn8vXaY1kjCeDErs05RDH4Pew3UTudMPY+VO/Q2K+IYWA2Wd1+DokPwSsoLghxptAH0KkiN
-	az9OApoENk/A==
-X-Google-Smtp-Source: AGHT+IFS2iWAxEnztB5To7sq/L7ysBy9qfC2JiggfaKdL+MGbkE7IAtmPDihj9rg7WJDwBFUgndIyQ==
-X-Received: by 2002:a05:690c:8d14:b0:784:8b82:98d2 with SMTP id 00721157ae682-786a4213583mr42199497b3.70.1762388770706;
-        Wed, 05 Nov 2025 16:26:10 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:74::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b159b666sm3400747b3.39.2025.11.05.16.26.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 16:26:10 -0800 (PST)
-From: Daniel Zahka <daniel.zahka@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shuah Khan <shuah@kernel.org>,
-	Boris Pismenny <borisp@nvidia.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH net-next v3 1/5] psp: report basic stats from the core
-Date: Wed,  5 Nov 2025 16:26:02 -0800
-Message-ID: <20251106002608.1578518-2-daniel.zahka@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251106002608.1578518-1-daniel.zahka@gmail.com>
-References: <20251106002608.1578518-1-daniel.zahka@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936C418D65C;
+	Thu,  6 Nov 2025 00:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762388774; cv=fail; b=dYeCUVFUSs/mGy0h8K/t4Cvyk7cNgrPuP0q9XX3TCowmHSylt4mRyXlV2UiS9eIrvZoID1Osw1+hoVwdwy6bu4nRZRJp0B9D0qPLUKrqGPXs7YdA+TbGWmOxKie5qn5dE1r9KzjiKr+ELkAohre0KIfx0WW6fz0qB/cGWKb5d5I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762388774; c=relaxed/simple;
+	bh=XKfztE5fbLSJ5XQTkgHi81iQoQ2SKrT0KX2xyC4gz7U=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=rmbutkM/PJlVsqynnS5sWdCLotyc1RSWaLkfkXh1k7zDbM/g9dofmRYZwfJao3GPmERRaRddMP6f61HifHg8iCFb4MhVUDybtO2V6YxOMYN0YQrZwB9Br/jtEuP+D7fonJxGs+iWye9nI1HUBWlGhsYHUfhj9snnXmsIg1sta4I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EwsAW4ce; arc=fail smtp.client-ip=52.101.56.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ytVDC50D36Pvt7qghBrZP0KWQMMzRjfcjWkIWcTnM91bOrgiTg4IqBKBGHpjE4SZJWWVBAlU+Tt1O8bAf3gUHWa7jD6rr38XMqmQVneAopnrGssE2ri0aK9VaSRrBNpTWCmABp8NiK7lWTWG6DwS7leh8QpOFi7FFFmwTBeA+mW2+ZkZ3XVDDva22qB3+FPnbcOuQuxWTic7PVHtaPopgEL4JNIgxGrFU7hN42R56AJFEVwu4pHi9GZXi3bEhTMgp6Lm7sycHtfavS1v6gcbERH3XNwpiD9LMgnfrDS1lUVr5O1Z5uehpK8WrjmwgPygTAXgA9ruoB+diGhi/xS9gQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DFe/F96PftlRh1tvRlA4Vy3OZ9sMBqIlcfrZEPr44v4=;
+ b=lHCH77Qyx2Oxx3+8yTfEKO4P1Nes2jcOMf7HUGjfU7bvjuCI3Bj2QjYtqE/Hu01FWSeUcEu9HjOwr3BFcIqHxZJcg3czSmlGn/V4rnSmWaSkCLL94k3eCES/ZDq2iiwnAtm2NLARuJNrptjaJ2g0HB61R31fAKQka8xTXI0JN7aUz2h32fKBJuVmIcw4ZJSlJO/NarVFapEyJgbmdhoy2uYZ7CR8jgIGw7fZL5iBy7O1W9Ltf0npkP2ZN/QisfIwPBREdFUcNTUQcBiXkL3KXRyzsKegLWKEUo97W5bDDD/UenIEYRS/WrfMp9S45UjYfPRxYwIXd26sv2xLdHh6vQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DFe/F96PftlRh1tvRlA4Vy3OZ9sMBqIlcfrZEPr44v4=;
+ b=EwsAW4ceK2lZhxh3PvHlDg9G8K1yBq2CKC24GJcjFsF/huUeWETwZs80kkmwxR0Ajour+IpXqLHKIYY1tyWyAHSidIfO2A6GyOuK646T1AbqmaLvwFQlNh+stOoJF0vnk7N0IgnTgwJbHWhpVbasgKK9W4+uOBj2sgkNP3BTf7fRVlQ+9reFG3N0LKZgfbLahcNLPyVLrBZYXG2hWyqahroIIw9UZp4YqsM3GjI74Sr/Hfz+6PVJBIJKD2RyGMKvBIJ7MJlZcFDbuRK1eIYU0VDOF34rvpi4Hwis+iBUC4B/HReO+bhz/ZgXJ9lhH+4yPog4jpAZvHWVjt+n/RrKZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SJ2PR12MB7848.namprd12.prod.outlook.com (2603:10b6:a03:4ca::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
+ 2025 00:26:08 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
+ 00:26:08 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Nov 2025 09:26:03 +0900
+Message-Id: <DE16OCTBYT7G.3FMDZ8CPMGJKM@nvidia.com>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, <nouveau@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v2 05/12] nova-core: gsp: Add support for checking if
+ GSP reloaded
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Lyude Paul" <lyude@redhat.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <dakr@kernel.org>, <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+ <20251102235920.3784592-6-joelagnelf@nvidia.com>
+ <8cc10b6ec1fce03aa41eae76dc48a6a27a58d7d9.camel@redhat.com>
+In-Reply-To: <8cc10b6ec1fce03aa41eae76dc48a6a27a58d7d9.camel@redhat.com>
+X-ClientProxiedBy: TYCP286CA0299.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c8::19) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ2PR12MB7848:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdd5900f-7b3e-4a6b-d4fb-08de1ccb14ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cXhJZEV0YUVaTEszY0JHRnpSdTFFZ2NuL2RPR2JYQk5ZWTlaY0tVWHoyV0U4?=
+ =?utf-8?B?cGV3anErcjNUZzl3eHV3bk4wR014YzB6VXB6Tm81QlhNQUtnL0Q0NFQxQmVn?=
+ =?utf-8?B?TlRKREZPNzIzam5jYkxHNkM2eHRXRWV6UTFhdWpXeXpPN3VhdUpDalpWdUdw?=
+ =?utf-8?B?aHRma0FaMW5kL2ZNRzhFZUlwcXZ5NVkxaWJVVklCV2FZdy9ZYW9HYlBTbmFS?=
+ =?utf-8?B?WDVNdHdUYXJETEtYQ0xweHhFR0hiUmZJVHM2N1RpUndCN3lLUkVvdlBFNG1K?=
+ =?utf-8?B?WXMvVVp0MHlCWVMxUmkzbmdVOU9wQzBhRG9YbFlmSVA0bkxqZDI2bnZMb1Vo?=
+ =?utf-8?B?eFlOaldqb0tzV0VWcHdKN3I2MVk5ckdjMnYrRi9xbGk2MDNhMjIzZ1JIMGtK?=
+ =?utf-8?B?T1JHQkVSNkVuOEpxbXV3OWVKY0JkSGhVTW8zVk9JR0FBNWRHc3REZm9hNWE3?=
+ =?utf-8?B?QzF2VGQ0c3Q0bzFwdXc0ME4wOThndjRjNkRoSTgxOVlwNzkxV2trUlBWWDU1?=
+ =?utf-8?B?Y1dpQ2M3M1I4VTh1V0phWVlWZUR0QlNmS2M1R0FKQ1BGTnl3T1pQY25WTGU2?=
+ =?utf-8?B?VWVXWmw4QlhJOEIyZTZSNDdOcXAwcVZTandCcVFaVUtzRmhYbnU5b00vMUkw?=
+ =?utf-8?B?NEZqL1ZYdWpmR2w0UGxxd2l1OU9KUVJhR2x1WnRpNHdyVmV4MThuK2FFRU9Y?=
+ =?utf-8?B?V2Z0WFROMzQ1UlNERzUxU1hVYytFYkRFMDI5TThyTExER0RwMGl3MUVDV0c4?=
+ =?utf-8?B?TGdQeXYxTnc2eGZ6TGYybHdFaDVuUDMwU3BwZzhuazBndEI3M28wWFhabkNW?=
+ =?utf-8?B?bjUyRmRRZm50cnlNb2NSWmEydHJXRVNVakhLN2Vqa1RGVWh0NjhtRXNmai9Y?=
+ =?utf-8?B?NG0zMy9LVW9kM1F0L3QzSjAxOXdQY09qOGVLdFYxR0JXS2k5WWFyT3BLYy95?=
+ =?utf-8?B?WFFXR2Ztd1EyaVNIeTdwczJiUURyMHB1SFVvRWNKd1owaHZTSHkrN0hvTndH?=
+ =?utf-8?B?aVliVkY4b2RxTHJDai82QXlEa3BuQVJCeEFMR0wrWkpkd1IzVy9LcUoxQU5h?=
+ =?utf-8?B?Q2IwUnIrVjRkZXNLaDlBTFdrTFNSbGdlNXFuMXNHVWJ1SE9FVkNpNCtDbjlS?=
+ =?utf-8?B?aWJxN0ZBb2Z6bzBZYmFqU2NlczBFMUJiWmhiV2F2ei94bWsxd1RxQk1IbzFz?=
+ =?utf-8?B?NzBSZjdFUzF0Wk92d1pKd0pkUDcwSldhMXF6d1hneTFPQ2g2YzVTVkJuQndx?=
+ =?utf-8?B?ZHM4M1JlVGdLQU9nb0NLZXhhMUNPaThKaVNJOGs5bzA1S1NrU1ZEVFRCeGVJ?=
+ =?utf-8?B?WHQ0ak1qUk9ITTk0emI2REJwTUJDVjRZL0QxMklETTZWZHJmSko0QVBqL2lC?=
+ =?utf-8?B?ZGlJNFRKSjA4TnV3bFdrTFMzM0M0bENhYUdPNjhyTTR0NTdhNTFZNnNzUzFL?=
+ =?utf-8?B?WStDeThOKzQwS2NyQmJmakhSNVcyKzBhSzlnVkNWZmF4NkFYTEsvSnlTcmFE?=
+ =?utf-8?B?K1NXbFRPcVE1UlZWOWdWbWZYaWNmR0hnOVhsc01pRUZUNFNiNlVMQldoWEl0?=
+ =?utf-8?B?cVBQQXNObXdmYStXTnVYQWZITUJmR3hPayt0VGxZUFI4MEhxTW5adi94Z0xN?=
+ =?utf-8?B?aTFGSEw5R2tBS0syMENZMlY2UzJkZlpWVTlzUk5YWlhKcnlJeVRJTHNOWnBh?=
+ =?utf-8?B?Y1JpUDcxSHNOeFFGN0JJNVM5OUpPa2FkT1pnWVU1dFVRWWpDRTNHV0FkRmtt?=
+ =?utf-8?B?TisrRW9nSWlhckVDRFRwVHNSNDFHZzdlSy92MW5hWVJLKzJ2TXdZSUxtMWk1?=
+ =?utf-8?B?ZmpJQjhnMVYyRDk2WUJHbHNYN2hFU1E2YXRBRXRNVVJySTZPYnYxRTlya3FB?=
+ =?utf-8?B?eFd4OElkSHNoWHRYRXBLTjMzUGZIUzhCeVNZSFhRT3JHaHFOd29LTG9tTmI2?=
+ =?utf-8?Q?TRe0op93fqEEfhiZJqY/PbIyIOMZEaYx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OTVtTTU0YWRpYUV1TzIyUjBjaGU0ZzhQK2VuTDIvVEJyOXFBa0NCVG5DY1hK?=
+ =?utf-8?B?N0VOZURKNXBXVmNsV2lyb3R3SUVZQjZSem1MRkNhb0lrUTBXT1pPYjRoSFBD?=
+ =?utf-8?B?bmpMbjltbmVYNHRORThoTG9hbWVsMXVxbFdVdEptUXpzMnMzQWF5STlUeUZ6?=
+ =?utf-8?B?T05hRDRHaGZkS0lYWVhHMk02Yk8xT1JQZHlTd0xiZWxoYlBkb0xTZWlaR0tV?=
+ =?utf-8?B?bVhFYTcvRHcrZ3NHcjRwK25XdjZmWjAwSURabTAxWjFPK1Q0eFhYZVI4QW9K?=
+ =?utf-8?B?Y2lmcm9LOWJrd0tqUktSZ1g4RDRkdDF2V2pMczhqejFXbzk5NE1jME56dWVM?=
+ =?utf-8?B?UWZTb3RIWkFPRlRXMWw3ZWhqYUx2V3czQlVlOHhRTDdBUmZoYk9ZQVFjOEFa?=
+ =?utf-8?B?N05wUitOekxqcDl3WTFqSEVaNENYYUtmTWd0MHFPTjBTcGxWV3hrNGRMUE96?=
+ =?utf-8?B?U2ptcTRyNTZpMXpUZHdkOHg5cHg0QUhFUnNxM204MnRHREc1bFcyQUhTMEVU?=
+ =?utf-8?B?d2t1TkJFRnVaN2tFZlFhSDZ0UzcrQWZQUXNSQmhpbmJVK2kwTmFlWTNxVzl6?=
+ =?utf-8?B?SGpPSXU3N1RibGdxdkMyNGtLNXJtY1g5cWtVbWpmWjJ6RWR2d0c4SDBiMUF3?=
+ =?utf-8?B?MC82cExMRnZEamI2RmpnMUlZaTlpcEdUdzdGVG42NnljSE5kNjltRFpXMG1r?=
+ =?utf-8?B?WlN3aThTZis3R1B3Qms3TlpQV0wrdDFGcDk2NWRhVmJndEtSTWlUZEVBNUN6?=
+ =?utf-8?B?dDZuaWhyWnFwaG11OXcvZk45WTVZM1VqUUVzM1Zua25CR3FBR1pYQ1FJK1ZO?=
+ =?utf-8?B?KzhDT1djV01zOThBUWpxRkNQMXF1MkhwM3JCMkhiZWp6OHozTDhoNUJOd3dV?=
+ =?utf-8?B?QUtJNkcwVnpEWDVMQ1NBUExZYzNpaXZYNSthQi9NTjFOR040UWhyLzFWaUZC?=
+ =?utf-8?B?cVFCWmpSWU9QeWI2NXhla1p4RjBsSjhpa1lmVUxEWDRFaUhVZk5PVHcyb2pN?=
+ =?utf-8?B?VUVtUEs5WFkvQnVyWFcvQU15R2o3QkNubXg4a2R3eXM4SDdrNGpXVURpM3k5?=
+ =?utf-8?B?b1RmaENaT0drcWZ5cHgwTDlSRStxNE92cHJua3paWmVWOEx2RVEvZnFTUjkz?=
+ =?utf-8?B?Qzl1M09iRnNXUnE2SVFoa3R3cXI5VjJnSDNQb1R4aHdIZzUxNXlBdTJyaU45?=
+ =?utf-8?B?RmhjdHhOV2VNbFdWbmI2U3Nad0p4eGwwdmhyZnFYQXRDaFU1cnlBNWRaUUdR?=
+ =?utf-8?B?V3ZjVG1BM2FtRyt6ZWdoWGkzc3pnQ0x5MVBSZkVLQW9zSjdaMExqTWV1cjJr?=
+ =?utf-8?B?anVLS1BsRCtGSHdQRWo3Q2FUQXlOVWxCMHNnUFpGL0tFSFdYM2ZvTGUrbVdH?=
+ =?utf-8?B?VmNIYXZ4NWpXY3VnVlhzUVBMRkNJUWtFK1BNQWwzTG92ekdmWG9hcG5BWUtn?=
+ =?utf-8?B?NHlCYW93Y3lFTGZuWk8xZkVCcURHVUxkbkFtR1NpL0dWQUVQRkNPb2xXVmp0?=
+ =?utf-8?B?T0ExTXFPL01ocXpkT1J5ZW5hMWlvSGRla1pISnpuaDRqaFUvOWFueVZIZjY4?=
+ =?utf-8?B?NTYwdjVHRHlrWHFTbENucTA2OENrUXBXUW50NmsrUkhOQ3JUMW90SUF5Y1hu?=
+ =?utf-8?B?ODYrcUdtaFhHYkJwL21JQjBielBESFNYUzVCQllva0V3TlJXMHh3U3ZrdDZ0?=
+ =?utf-8?B?blEzUStITkxSSDNIVkVraGFQSG1WbFdqaFFlTUlVUHlxT3Jnd0h3aU8yOWRI?=
+ =?utf-8?B?YVNmb2xtT2R3dUp6Y2xBdTBhMU9qUHp5MVFvTG9NMndnaWxJa0xHWmNhMFdY?=
+ =?utf-8?B?T1QrUkI0Z3lTdXBHcXFuc2duN1VmcWJrczB5VHVzMHlQOSticHV4OG1hSHhB?=
+ =?utf-8?B?U1lDZjNadDRhZnRjWUlLcENkT0FWM0VpT09nSWdFbU9aWTJvYzByTHUrcEVa?=
+ =?utf-8?B?cVJaSDMzTSt2aWw0aHhDNFRNUWVrRHM2WGswV1o1VVEweUZ0cnJNdHFRMzZX?=
+ =?utf-8?B?MEh1ZWg2cWN3NGRjNVMzbGhDOHhROTdkQUQrVkUwckpveTBzd3Jyem1scjc0?=
+ =?utf-8?B?VFhoV2NJNURiKy9Qd1JQWnp3M1VsaVdvSXlMbVQ3ODBwYnJWVHhmNjlHTGNt?=
+ =?utf-8?B?b2tDK1EvcWNJZEd2ZGQ2RXdDK1A2Yzl2OCs2T3ZCMVF3WjFWWFdzN2NZYm12?=
+ =?utf-8?Q?/g9HvQSMQAQHUwknsrWCpaMg4dSS4zh47DKCVEW3pQ0B?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdd5900f-7b3e-4a6b-d4fb-08de1ccb14ad
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 00:26:08.6987
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U65k1qt+Pd6iHvKSxlJmS056Jf7AH7MNDdgM5KlupYHfIhut9oBd75RA9O3KcPoSf0p1/qGFfC6QJs5icxjmkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7848
 
-From: Jakub Kicinski <kuba@kernel.org>
+On Thu Nov 6, 2025 at 8:18 AM JST, Lyude Paul wrote:
+> Minor comments:
+>
+> On Sun, 2025-11-02 at 18:59 -0500, Joel Fernandes wrote:
+>> During the sequencer process, we need to check if GSP was successfully
+>> reloaded. Add functionality to check for the same.
+>>=20
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>>  drivers/gpu/nova-core/falcon/gsp.rs | 18 ++++++++++++++++++
+>>  drivers/gpu/nova-core/regs.rs       |  6 ++++++
+>>  2 files changed, 24 insertions(+)
+>>=20
+>> diff --git a/drivers/gpu/nova-core/falcon/gsp.rs b/drivers/gpu/nova-core=
+/falcon/gsp.rs
+>> index f17599cb49fa..e0c0b18ec5bf 100644
+>> --- a/drivers/gpu/nova-core/falcon/gsp.rs
+>> +++ b/drivers/gpu/nova-core/falcon/gsp.rs
+>> @@ -1,5 +1,11 @@
+>>  // SPDX-License-Identifier: GPL-2.0
+>> =20
+>> +use kernel::{
+>> +    io::poll::read_poll_timeout,
+>> +    prelude::*,
+>> +    time::Delta, //
+>
+> Looks like a wild // got loose!
 
-Track and report stats common to all psp devices from the core. A
-'stale-event' is when the core marks the rx state of an active
-psp_assoc as incapable of authenticating psp encapsulated data.
+It's a bit confusing at first but this is to conform with the new rules
+for imports. :)
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Daniel Zahka <daniel.zahka@gmail.com>
----
+https://docs.kernel.org/rust/coding-guidelines.html#imports
 
-Notes:
-    v2:
-    - don't return skb->len from psp_nl_get_stats_dumpit() on success and
-      EMSGSIZE
-
- Documentation/netlink/specs/psp.yaml | 40 +++++++++++++++
- include/net/psp/types.h              |  9 ++++
- include/uapi/linux/psp.h             | 10 ++++
- net/psp/psp-nl-gen.c                 | 19 +++++++
- net/psp/psp-nl-gen.h                 |  2 +
- net/psp/psp_nl.c                     | 74 ++++++++++++++++++++++++++++
- net/psp/psp_sock.c                   |  4 +-
- 7 files changed, 157 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/netlink/specs/psp.yaml b/Documentation/netlink/specs/psp.yaml
-index 944429e5c9a8..914148221384 100644
---- a/Documentation/netlink/specs/psp.yaml
-+++ b/Documentation/netlink/specs/psp.yaml
-@@ -76,6 +76,28 @@ attribute-sets:
-         name: spi
-         doc: Security Parameters Index (SPI) of the association.
-         type: u32
-+  -
-+    name: stats
-+    attributes:
-+      -
-+        name: dev-id
-+        doc: PSP device ID.
-+        type: u32
-+        checks:
-+          min: 1
-+      -
-+        name: key-rotations
-+        type: uint
-+        doc: |
-+          Number of key rotations during the lifetime of the device.
-+          Kernel statistic.
-+      -
-+        name: stale-events
-+        type: uint
-+        doc: |
-+          Number of times a socket's Rx got shut down due to using
-+          a key which went stale (fully rotated out).
-+          Kernel statistic.
- 
- operations:
-   list:
-@@ -177,6 +199,24 @@ operations:
-         pre: psp-assoc-device-get-locked
-         post: psp-device-unlock
- 
-+    -
-+      name: get-stats
-+      doc: Get device statistics.
-+      attribute-set: stats
-+      do:
-+        request:
-+          attributes:
-+            - dev-id
-+        reply: &stats-all
-+          attributes:
-+            - dev-id
-+            - key-rotations
-+            - stale-events
-+        pre: psp-device-get-locked
-+        post: psp-device-unlock
-+      dump:
-+        reply: *stats-all
-+
- mcast-groups:
-   list:
-     -
-diff --git a/include/net/psp/types.h b/include/net/psp/types.h
-index 31cee64b7c86..5b0ccaac3882 100644
---- a/include/net/psp/types.h
-+++ b/include/net/psp/types.h
-@@ -59,6 +59,10 @@ struct psp_dev_config {
-  *			device key
-  * @stale_assocs:	associations which use a rotated out key
-  *
-+ * @stats:	statistics maintained by the core
-+ * @stats.rotations:	See stats attr key-rotations
-+ * @stats.stales:	See stats attr stale-events
-+ *
-  * @rcu:	RCU head for freeing the structure
-  */
- struct psp_dev {
-@@ -81,6 +85,11 @@ struct psp_dev {
- 	struct list_head prev_assocs;
- 	struct list_head stale_assocs;
- 
-+	struct {
-+		unsigned long rotations;
-+		unsigned long stales;
-+	} stats;
-+
- 	struct rcu_head rcu;
- };
- 
-diff --git a/include/uapi/linux/psp.h b/include/uapi/linux/psp.h
-index 607c42c39ba5..31592760ad79 100644
---- a/include/uapi/linux/psp.h
-+++ b/include/uapi/linux/psp.h
-@@ -45,6 +45,15 @@ enum {
- 	PSP_A_KEYS_MAX = (__PSP_A_KEYS_MAX - 1)
- };
- 
-+enum {
-+	PSP_A_STATS_DEV_ID = 1,
-+	PSP_A_STATS_KEY_ROTATIONS,
-+	PSP_A_STATS_STALE_EVENTS,
-+
-+	__PSP_A_STATS_MAX,
-+	PSP_A_STATS_MAX = (__PSP_A_STATS_MAX - 1)
-+};
-+
- enum {
- 	PSP_CMD_DEV_GET = 1,
- 	PSP_CMD_DEV_ADD_NTF,
-@@ -55,6 +64,7 @@ enum {
- 	PSP_CMD_KEY_ROTATE_NTF,
- 	PSP_CMD_RX_ASSOC,
- 	PSP_CMD_TX_ASSOC,
-+	PSP_CMD_GET_STATS,
- 
- 	__PSP_CMD_MAX,
- 	PSP_CMD_MAX = (__PSP_CMD_MAX - 1)
-diff --git a/net/psp/psp-nl-gen.c b/net/psp/psp-nl-gen.c
-index 9fdd6f831803..73f8b06d66f0 100644
---- a/net/psp/psp-nl-gen.c
-+++ b/net/psp/psp-nl-gen.c
-@@ -47,6 +47,11 @@ static const struct nla_policy psp_tx_assoc_nl_policy[PSP_A_ASSOC_SOCK_FD + 1] =
- 	[PSP_A_ASSOC_SOCK_FD] = { .type = NLA_U32, },
- };
- 
-+/* PSP_CMD_GET_STATS - do */
-+static const struct nla_policy psp_get_stats_nl_policy[PSP_A_STATS_DEV_ID + 1] = {
-+	[PSP_A_STATS_DEV_ID] = NLA_POLICY_MIN(NLA_U32, 1),
-+};
-+
- /* Ops table for psp */
- static const struct genl_split_ops psp_nl_ops[] = {
- 	{
-@@ -99,6 +104,20 @@ static const struct genl_split_ops psp_nl_ops[] = {
- 		.maxattr	= PSP_A_ASSOC_SOCK_FD,
- 		.flags		= GENL_CMD_CAP_DO,
- 	},
-+	{
-+		.cmd		= PSP_CMD_GET_STATS,
-+		.pre_doit	= psp_device_get_locked,
-+		.doit		= psp_nl_get_stats_doit,
-+		.post_doit	= psp_device_unlock,
-+		.policy		= psp_get_stats_nl_policy,
-+		.maxattr	= PSP_A_STATS_DEV_ID,
-+		.flags		= GENL_CMD_CAP_DO,
-+	},
-+	{
-+		.cmd	= PSP_CMD_GET_STATS,
-+		.dumpit	= psp_nl_get_stats_dumpit,
-+		.flags	= GENL_CMD_CAP_DUMP,
-+	},
- };
- 
- static const struct genl_multicast_group psp_nl_mcgrps[] = {
-diff --git a/net/psp/psp-nl-gen.h b/net/psp/psp-nl-gen.h
-index 25268ed11fb5..5bc3b5d5a53e 100644
---- a/net/psp/psp-nl-gen.h
-+++ b/net/psp/psp-nl-gen.h
-@@ -28,6 +28,8 @@ int psp_nl_dev_set_doit(struct sk_buff *skb, struct genl_info *info);
- int psp_nl_key_rotate_doit(struct sk_buff *skb, struct genl_info *info);
- int psp_nl_rx_assoc_doit(struct sk_buff *skb, struct genl_info *info);
- int psp_nl_tx_assoc_doit(struct sk_buff *skb, struct genl_info *info);
-+int psp_nl_get_stats_doit(struct sk_buff *skb, struct genl_info *info);
-+int psp_nl_get_stats_dumpit(struct sk_buff *skb, struct netlink_callback *cb);
- 
- enum {
- 	PSP_NLGRP_MGMT,
-diff --git a/net/psp/psp_nl.c b/net/psp/psp_nl.c
-index 8aaca62744c3..f990cccbe99c 100644
---- a/net/psp/psp_nl.c
-+++ b/net/psp/psp_nl.c
-@@ -262,6 +262,7 @@ int psp_nl_key_rotate_doit(struct sk_buff *skb, struct genl_info *info)
- 		     psd->generation & ~PSP_GEN_VALID_MASK);
- 
- 	psp_assocs_key_rotated(psd);
-+	psd->stats.rotations++;
- 
- 	nlmsg_end(ntf, (struct nlmsghdr *)ntf->data);
- 	genlmsg_multicast_netns(&psp_nl_family, dev_net(psd->main_netdev), ntf,
-@@ -503,3 +504,76 @@ int psp_nl_tx_assoc_doit(struct sk_buff *skb, struct genl_info *info)
- 	nlmsg_free(rsp);
- 	return err;
- }
-+
-+static int
-+psp_nl_stats_fill(struct psp_dev *psd, struct sk_buff *rsp,
-+		  const struct genl_info *info)
-+{
-+	void *hdr;
-+
-+	hdr = genlmsg_iput(rsp, info);
-+	if (!hdr)
-+		return -EMSGSIZE;
-+
-+	if (nla_put_u32(rsp, PSP_A_STATS_DEV_ID, psd->id) ||
-+	    nla_put_uint(rsp, PSP_A_STATS_KEY_ROTATIONS,
-+			 psd->stats.rotations) ||
-+	    nla_put_uint(rsp, PSP_A_STATS_STALE_EVENTS, psd->stats.stales))
-+		goto err_cancel_msg;
-+
-+	genlmsg_end(rsp, hdr);
-+	return 0;
-+
-+err_cancel_msg:
-+	genlmsg_cancel(rsp, hdr);
-+	return -EMSGSIZE;
-+}
-+
-+int psp_nl_get_stats_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct psp_dev *psd = info->user_ptr[0];
-+	struct sk_buff *rsp;
-+	int err;
-+
-+	rsp = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
-+	if (!rsp)
-+		return -ENOMEM;
-+
-+	err = psp_nl_stats_fill(psd, rsp, info);
-+	if (err)
-+		goto err_free_msg;
-+
-+	return genlmsg_reply(rsp, info);
-+
-+err_free_msg:
-+	nlmsg_free(rsp);
-+	return err;
-+}
-+
-+static int
-+psp_nl_stats_get_dumpit_one(struct sk_buff *rsp, struct netlink_callback *cb,
-+			    struct psp_dev *psd)
-+{
-+	if (psp_dev_check_access(psd, sock_net(rsp->sk)))
-+		return 0;
-+
-+	return psp_nl_stats_fill(psd, rsp, genl_info_dump(cb));
-+}
-+
-+int psp_nl_get_stats_dumpit(struct sk_buff *rsp, struct netlink_callback *cb)
-+{
-+	struct psp_dev *psd;
-+	int err = 0;
-+
-+	mutex_lock(&psp_devs_lock);
-+	xa_for_each_start(&psp_devs, cb->args[0], psd, cb->args[0]) {
-+		mutex_lock(&psd->lock);
-+		err = psp_nl_stats_get_dumpit_one(rsp, cb, psd);
-+		mutex_unlock(&psd->lock);
-+		if (err)
-+			break;
-+	}
-+	mutex_unlock(&psp_devs_lock);
-+
-+	return err;
-+}
-diff --git a/net/psp/psp_sock.c b/net/psp/psp_sock.c
-index a931d825d1cc..f785672b7df6 100644
---- a/net/psp/psp_sock.c
-+++ b/net/psp/psp_sock.c
-@@ -253,8 +253,10 @@ void psp_assocs_key_rotated(struct psp_dev *psd)
- 	/* Mark the stale associations as invalid, they will no longer
- 	 * be able to Rx any traffic.
- 	 */
--	list_for_each_entry_safe(pas, next, &psd->prev_assocs, assocs_list)
-+	list_for_each_entry_safe(pas, next, &psd->prev_assocs, assocs_list) {
- 		pas->generation |= ~PSP_GEN_VALID_MASK;
-+		psd->stats.stales++;
-+	}
- 	list_splice_init(&psd->prev_assocs, &psd->stale_assocs);
- 	list_splice_init(&psd->active_assocs, &psd->prev_assocs);
- 
--- 
-2.47.3
-
+Thanks for the reviews!
 
