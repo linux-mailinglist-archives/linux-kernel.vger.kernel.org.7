@@ -1,184 +1,170 @@
-Return-Path: <linux-kernel+bounces-888847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11DAC3C0D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:31:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEB4C3C0DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6581AA4D68
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:29:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329DC1AA72B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F1D1EEA5D;
-	Thu,  6 Nov 2025 15:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UcltzmXL"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750022550A4;
+	Thu,  6 Nov 2025 15:28:11 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E08F2877EA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393311EDA2C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762442866; cv=none; b=VFnnNzCLCurKiEs9wwmt51wCb/Tm3h3ggPjHgSOQkFF5lE+X9RMP7VxUlCLzJ1DDdswxWD7cGUDiOVFvh+0kcXJTgXFhbP7gbMpQxriw/KAYlni4Hdh158SHVKwtIJfJ9/dSqSVMKNd3yHXzQZ2y0X4lTdfNa/jKr0adGt9zSfk=
+	t=1762442890; cv=none; b=BkaMJgYo8cBUOB+2kHkf0jkYXNolbSiAw1dwYojeKAeywOVH0F4v1SH+rAcrgcu3JMrkn6CAfzqjmQuYmMuGokaa3H6X25Sik2rgEMLOZ47bUtn6utp1caBSRLYn3MgEkdGR2fqcV2gRrO/cd0dEpHWWpQuX334MIFtKsppkE+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762442866; c=relaxed/simple;
-	bh=oW9tvfSaR+x1UFogeZoBERZOmVcHYvyFEYruvk2oe6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LUKe1wzK/pn6dCoRdxnl9OlHKNCGGqb3v2azcomXeej2mabnY8V6mJFClLxiby+aYC5G8W+6vRZh2ODu0AtHKNwOd8OwGOXky0rPEPvOiatDWbvf9xTZCFz7L5kkrR+WEUjRP9Kax6gErBAxW3xHS1qzxL/CLqfb9Oz/Y6ehsSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UcltzmXL; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4271234b49cso116513f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:27:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762442863; x=1763047663; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYN+3T29vDPQnHZypbeGR2Gd6Av+zqDSewkz4T8yjNs=;
-        b=UcltzmXLStgO1hGRNJtN1S/sndhf3Ba19BZnOoaq6cMqkQcLd0yh+ZVYEdYEd9mVrB
-         C4p/qbs2SY5zWYlQf3P1jqVhckmHQFlhuqtjWe1Shk3I2jY9rKrbm2QLHThMUFiknRpr
-         qHoTOzQCSO6UovDocbCluU0343pZOALQL6DotVminqbKJtB6/YXHbeGQ1FM6ANb4PNA+
-         o+VFr5lLLTVyOdZiAycEQMCgraWZO+NvyvVMLlfNHISuOLSffMYt+s9rlNDQk9+aaxjw
-         pEmwg+o6d9wU9OH5MlYpD0gb63+P5JLeXq9WGXm0C1oFwz+/3xVr1hva+j8THtzh0UP0
-         izdQ==
+	s=arc-20240116; t=1762442890; c=relaxed/simple;
+	bh=0EOen5BEeElBzeTo3WVz5nzsuBg8PeF20mfivseVamA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mKoLVZZZvh/vq8kTLotO0qAwqvUN1mvZVQknNX6O2DltlZS7UcAoGPFFHDPhVxyJvw64T51uXpY+4zNfMxhl8no/z7rJ/rfI4Ik+eum/dymOZmUw1Srzi9IW1V5ElwpcFgF1eN1LKjRvU5JVB8h+80fviHOmRwzQJlN93e/2I2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-94880a46eaeso153711339f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:28:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762442863; x=1763047663;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYN+3T29vDPQnHZypbeGR2Gd6Av+zqDSewkz4T8yjNs=;
-        b=WGeGjUYPxZa30cuEKht11lHZ9X55EcAOLbXECAjMsNBjYF+Gszj5BWwQtAovl4uT7y
-         8uLOc+LyYGCZpoGoABKWusJnN6N3yjvNK/UQMTBHWicl2GzDMRnsMMPCx0bN0mnGaUv5
-         GkViu7c33Te4md9I5aI9nQpzuvocDoYqRhnflgf94uIBggQ5KWJbMfR+5FYdrLY/ENLH
-         d9vhKRCkHKY9ATnssnMxSkBC2VmLQypyUCSrzcWMDu3wErfOmGW/CFT/Tmkw01i5CBN8
-         j2GHERRWeWHtDeLQapDyuTW73oti5eBJ/bX8yyC3R68C056XfBC1XC8FEjG0cgSJ6TvE
-         6C6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVoyMCUVI6jnHa8EYT1spoJg+n3xJg9HWRD5F1+Qy5S0EnecHhfgCUi00/95h6dds09xkKFr48cGO58d3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynnyG9EvwHEs6ENBHtyp1cvxZfBACL3aQOTqcrWF/Lpq0RMS9m
-	CZjHqKTwUxh/ePYz3avzTJXU95r9eHwqd2hrIuP+zxuAqaL0IpI3m/o1
-X-Gm-Gg: ASbGncvXjsDQEG02w2PM+qMi6lqAIagIxauhhkdWifR7RIqQeUJwApEzoFN6j1rMAV9
-	QzHVZ0KxwdC0/By8d7VzVbK6JGgxQHSCcZ/4IrGAcYpPddVkn8chhk26wCIAs9JEmmyInAKeB+q
-	bfa+4nE+gqbIuee1ge1X5K45D+qJmDwL6VWv4zFWa58INWcbMoee+c7RpNE5VZxBAwDOVCCp064
-	It8PPeALIRBSAXgkHf0qEWduwH9vmp4iqj3bmkBa1qHz8Y7inX4KsxpRKSvqdD4hRDiZWuCNyVm
-	uzQ/rF+A3D38301pTJIzYVYe8rQmtEZvr1iZpejmcemag9fTne1B5+4HGvpg767ySLAZBvcd8XX
-	fcoGkUM/aoAMQDHM9sIgxecBFgoqiTdtWtlC5+RvoDTVuQXkmuHpFt50llOtvx6+W/ixTEQ==
-X-Google-Smtp-Source: AGHT+IFHmcjtoJWxn3PX8fbkmyn1EIfTbGFv4nNriBxGgz2uXAa8bfekUcn3LVX7XQvTnLy9gtQ3ww==
-X-Received: by 2002:a05:600c:358d:b0:477:598d:65e7 with SMTP id 5b1f17b1804b1-4775ce1e88emr40913285e9.4.1762442862460;
-        Thu, 06 Nov 2025 07:27:42 -0800 (PST)
-Received: from skbuf ([2a02:2f04:d406:ee00:dfee:13dd:e044:2156])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce329a4sm115564565e9.14.2025.11.06.07.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 07:27:41 -0800 (PST)
-Date: Thu, 6 Nov 2025 17:27:38 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-Cc: "daniel@makrotopia.org" <daniel@makrotopia.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"lxu@maxlinear.com" <lxu@maxlinear.com>,
-	"john@phrozen.org" <john@phrozen.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"yweng@maxlinear.com" <yweng@maxlinear.com>,
-	"bxu@maxlinear.com" <bxu@maxlinear.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"fchan@maxlinear.com" <fchan@maxlinear.com>,
-	"ajayaraman@maxlinear.com" <ajayaraman@maxlinear.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"hauke@hauke-m.de" <hauke@hauke-m.de>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"jpovazanec@maxlinear.com" <jpovazanec@maxlinear.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Subject: Re: [PATCH net-next v7 12/12] net: dsa: add driver for MaxLinear
- GSW1xx switch family
-Message-ID: <20251106152738.gynuzxztm7by5krl@skbuf>
-References: <cover.1762170107.git.daniel@makrotopia.org>
- <b567ec1b4beb08fd37abf18b280c56d5d8253c26.1762170107.git.daniel@makrotopia.org>
- <8f36e6218221bb9dad6aabe4989ee4fc279581ce.camel@siemens.com>
+        d=1e100.net; s=20230601; t=1762442884; x=1763047684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YZMDOcpZaDUoDgmi5ie879VxEFvQRQ7HOEUUjk1eDIA=;
+        b=hH1BO41dJ15eWuAkWnOxDrgpah4L/1SZEloX62fTWm1ODOhWnMs/mRBep3S3BT7n+r
+         2FLTeFOk3tFYgMW79aHrLYFuP58gwmX74DCQp/A4Hy7n0d9sT7XWKevthb+desp5iPMd
+         YVXOZzGAGXNfMtfed/uKb/rVp6cGObT9+CP5Lfwng1TMqYpgRgl9RWknDA4+6OTdQ903
+         uHrHVnUSL+hAFwzmV2OxXgDByJRUvvxr+54mctRQ0Cz/p3VS/VGetWzk2AG2IaQic2sH
+         8ZtTD6MytmxaY/ok3NtvbRnMNBNMmrYy9RTtKHV9WLjRlmucR8uZCx27hjo39CbE0Xj2
+         0FZg==
+X-Gm-Message-State: AOJu0Yw4/efKLrSRFuu32NiHCSbJZulxCkGyw+f8CoUPbDDpiPzHILZ9
+	k643DTjqdlwOIhzJvTSHNZkhS8N/2TOteuSxABbqIaGCcIEMkw6HhIr33IfDSzrQuvcNFsBb2sx
+	pvLB9OIEXgkG0LCsn5JYXGROmAWv/FooOGjyxDb6vc/DgrqBYzzVF4ab3INg=
+X-Google-Smtp-Source: AGHT+IFHJEyfLyfvE3NcldFF8UR0sg+GAbQu1Q465ziL4xUQrLe7BYVIJUWOMX0ybqv6s63d1EkY8ARR3gq+VlGy0fh7fc1aNJFI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f36e6218221bb9dad6aabe4989ee4fc279581ce.camel@siemens.com>
+X-Received: by 2002:a05:6602:2dcb:b0:948:3ec6:7806 with SMTP id
+ ca18e2360f4ac-94869cbf6bdmr1085517739f.2.1762442884339; Thu, 06 Nov 2025
+ 07:28:04 -0800 (PST)
+Date: Thu, 06 Nov 2025 07:28:04 -0800
+In-Reply-To: <CAPrAcgOWmK1FLk8r0LszmPO3ysPi4G+EJw=YcSg3o6Ozy1wGbw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690cbe84.050a0220.3d0d33.0162.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in handle_tx (2)
+From: syzbot <syzbot+827272712bd6d12c79a4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viswanathiyyappan@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 04, 2025 at 08:03:07AM +0000, Sverdlin, Alexander wrote:
-> The remaining failing test cases are:
-> TEST: VLAN over vlan_filtering=1 bridged port: Unicast IPv4 to unknown MAC address   [FAIL]
->         reception succeeded, but should have failed
-> TEST: VLAN over vlan_filtering=1 bridged port: Unicast IPv4 to unknown MAC address, allmulti   [FAIL]
->         reception succeeded, but should have failed
-> 
-> So far I didn't notice any problems with untagged read-word IP traffic over
-> GSW145 ports.
-> 
-> Do you have a suggestion what could I check further regarding the failing
-> test cases? As I understood, all of them pass on your side?
+Hello,
 
-These failures mean that the test thinks the port implements IFF_UNICAST_FLT,
-yet it doesn't drop unregistered traffic.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: rcu detected stall in corrupted
 
-	[ $no_unicast_flt = true ] && should_receive=true || should_receive=false
-	check_rcv $rcv_if_name "Unicast IPv4 to unknown MAC address" \
-		"$smac > $UNKNOWN_UC_ADDR1, ethertype IPv4 (0x0800)" \
-		$should_receive "$test_name"
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	3-....: (10499 ticks this GP) idle=2da4/1/0x4000000000000000 softirq=16891/16891 fqs=4445
+rcu: 	         hardirqs   softirqs   csw/system
+rcu: 	 number:     5252          0            0
+rcu: 	cputime:      219          0        52189   ==> 52490(ms)
+rcu: 	(t=10500 jiffies g=13101 q=1869 ncpus=4)
+Sending NMI from CPU 3 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 1419 Comm: aoe_tx0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:uart_port_deref drivers/tty/serial/serial_core.c:74 [inline]
+RIP: 0010:uart_port_unlock_deref drivers/tty/serial/serial_core.c:92 [inline]
+RIP: 0010:uart_port_unlock_deref drivers/tty/serial/serial_core.c:88 [inline]
+RIP: 0010:uart_write+0x4ff/0xb30 drivers/tty/serial/serial_core.c:626
+Code: 00 0f 85 e3 05 00 00 48 8b 85 08 01 00 00 be 04 00 00 00 48 8d 98 9c 03 00 00 48 89 df e8 99 61 01 fd f0 ff 0b 0f 94 c3 31 ff <89> de e8 da c7 98 fc 84 db 0f 84 4a fe ff ff e8 ed cc 98 fc 4c 89
+RSP: 0018:ffffc90006f3f980 EFLAGS: 00000246
+RAX: 0000000000000001 RBX: ffff888105518f00 RCX: ffffffff8523e2e7
+RDX: ffffed1020aa31f1 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffffffff9ab86620 R08: 0000000000000001 R09: ffffed1020aa31f0
+R10: ffff888105518f87 R11: 0000000000000001 R12: ffffffff9ab86728
+R13: 0000000000000003 R14: 0000000000000001 R15: 0000000000000003
+FS:  0000000000000000(0000) GS:ffff8880d6e58000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055f58c1ec300 CR3: 000000000df82000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ handle_tx+0x204/0x630 drivers/net/caif/caif_serial.c:222
+ __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5257 [inline]
+ xmit_one net/core/dev.c:3845 [inline]
+ dev_hard_start_xmit+0x97/0x740 net/core/dev.c:3861
+ __dev_queue_xmit+0xa46/0x4490 net/core/dev.c:4763
+ dev_queue_xmit include/linux/netdevice.h:3365 [inline]
+ tx+0xcc/0x190 drivers/block/aoe/aoenet.c:62
+ kthread+0x1e4/0x3e0 drivers/block/aoe/aoecmd.c:1241
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+CPU: 3 UID: 0 PID: 54 Comm: kworker/3:1 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events ser_release
+RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
+Code: 17 59 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa eb 07 0f 00 2d 03 06 16 00 fb f4 <e9> 3c 0a 03 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
+RSP: 0018:ffffc90000a7f688 EFLAGS: 00000293
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000002
+RDX: ffff88802179a480 RSI: ffffffff816b3141 RDI: ffffffff8bd06840
+RBP: ffff88802bf8e540 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff905ff2d7 R11: 0000000000000001 R12: 0000000000000003
+R13: 0000000000000003 R14: ffff88806a93b280 R15: ffffed10057f1ca8
+FS:  0000000000000000(0000) GS:ffff8880d7158000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0cc637e286 CR3: 00000000288be000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ kvm_wait arch/x86/kernel/kvm.c:1080 [inline]
+ kvm_wait+0x186/0x1f0 arch/x86/kernel/kvm.c:1062
+ pv_wait arch/x86/include/asm/paravirt.h:569 [inline]
+ pv_wait_head_or_lock kernel/locking/qspinlock_paravirt.h:466 [inline]
+ __pv_queued_spin_lock_slowpath+0x4e1/0xcf0 kernel/locking/qspinlock.c:325
+ pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:557 [inline]
+ queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:51 [inline]
+ queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+ do_raw_spin_lock+0x20e/0x2b0 kernel/locking/spinlock_debug.c:116
+ spin_lock include/linux/spinlock.h:351 [inline]
+ __netif_tx_lock include/linux/netdevice.h:4685 [inline]
+ netif_freeze_queues+0xdf/0x1e0 net/sched/sch_generic.c:461
+ netif_tx_lock net/sched/sch_generic.c:470 [inline]
+ netif_tx_lock_bh include/linux/netdevice.h:4770 [inline]
+ netdev_watchdog_down net/sched/sch_generic.c:570 [inline]
+ dev_deactivate_many+0x243/0xd50 net/sched/sch_generic.c:1370
+ __dev_close_many+0x150/0x760 net/core/dev.c:1739
+ netif_close_many+0x233/0x630 net/core/dev.c:1780
+ netif_close net/core/dev.c:1797 [inline]
+ netif_close+0x17f/0x230 net/core/dev.c:1791
+ dev_close+0xaa/0x240 net/core/dev_api.c:220
+ ser_release+0x184/0x340 drivers/net/caif/caif_serial.c:295
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
+ process_scheduled_works kernel/workqueue.c:3346 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-But DSA doesn't report IFF_UNICAST_FLT for this switch, because it doesn't fulfill
-the dsa_switch_supports_uc_filtering() requirements. So should_receive should have
-been true, and the question becomes why does this code snippet set no_unicast_flt=false:
 
-vlan_over_bridged_port()
-{
-	local no_unicast_flt=true
-	local vlan_filtering=$1
-	local skip_ptp=false
+Tested on:
 
-	# br_manage_promisc() will not force a single vlan_filtering port to
-	# promiscuous mode, so we should still expect unicast filtering to take
-	# place if the device can do it.
-	if [ $(has_unicast_flt $h2) = yes ] && [ $vlan_filtering = 1 ]; then
-		no_unicast_flt=false
-	fi
+commit:         dc77806c Merge tag 'rust-fixes-6.18' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10625bcd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f009a9a8d50667
+dashboard link: https://syzkaller.appspot.com/bug?extid=827272712bd6d12c79a4
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16c25bcd980000
 
-Because IFF_UNICAST_FLT is not a UAPI-visible property, has_unicast_flt() does
-an indirect check: it creates a macvlan upper with a different MAC address than
-the physical interface's, and this results in a dev_uc_add() in the kernel.
-If the unicast address is non-empty but the device doesn't have IFF_UNICAST_FLT,
-__dev_set_rx_mode() makes the interface promiscuous, which has_unicast_flt()
-then tests.
-
-Something along this path is going wrong, because $(has_unicast_flt $h2)
-returns yes, so $h2 didn't become promiscuous when adding the macvlan upper.
-
-Could it be that $h2 needs to be up for has_unicast_flt() to work, and it's not?
-I'm looking at __dev_set_rx_mode() in the kernel:
-
-	/* dev_open will call this function so the list will stay sane. */
-	if (!(dev->flags&IFF_UP))
-		return;
-
-	... the code below is skipped
-
-	if (!(dev->priv_flags & IFF_UNICAST_FLT)) {
-		/* Unicast addresses changes may only happen under the rtnl,
-		 * therefore calling __dev_set_promiscuity here is safe.
-		 */
-		if (!netdev_uc_empty(dev) && !dev->uc_promisc) {
-			__dev_set_promiscuity(dev, 1, false);
-			dev->uc_promisc = true;
-		} else if (netdev_uc_empty(dev) && dev->uc_promisc) {
-			__dev_set_promiscuity(dev, -1, false);
-			dev->uc_promisc = false;
-		}
-	}
 
