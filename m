@@ -1,172 +1,145 @@
-Return-Path: <linux-kernel+bounces-888926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B825FC3C433
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:09:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CD5C3C4C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3DF9234A98F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:09:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28395503796
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5CB34A3CB;
-	Thu,  6 Nov 2025 16:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E6834B198;
+	Thu,  6 Nov 2025 16:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jlpSd2oO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Age+i2ve"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48646302CD0;
-	Thu,  6 Nov 2025 16:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A88F33DEF3;
+	Thu,  6 Nov 2025 16:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445333; cv=none; b=tgNmyL5bByQeZEKzBewrZ3d1+UIWzOV4OIdE1D7aNQpDLUKwyyty79gvYliH1RpOpYr/wfxjxUEAsd4vUihnRUaMqumhTFd2Ixjn8Q/d4Tp5oPVR9DkyvXkaIQWxqH3G3U3uHtFs0QFvOkkIm1geqaHp0ksPXRS78tbBunDdAm4=
+	t=1762445355; cv=none; b=PoXIdET8Oznm2xSkvIUw4Wnn4nx5/B7CiMJy0+ZlLAommG1gGsgsfzZTCxBe1WV/YTUgMMPyAX92Z3zFuZUrVF7XrnvYL9uzrmvSidiKyshci47Mi6RdqtWsd//6X0L6NGOTgNe3F4A8/06FYBiBbqe7fZ2Jp3iefAFxcstzGnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445333; c=relaxed/simple;
-	bh=BxSiubnDJFoi3hF0gZEV1dDowKtMOnRvt3PDCt/YgRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVDuktOEjau/zvPRHJUSf41hyi4OacpvccYWbIeDnk71P8DgsgBfuit369aDlGZI7MlVQ2FaVlzfniuxzrpyWbyAFPp/e+Bech877/sLvpzVyV14uVCgkEa7cqOv91WXvQxGxNp3rcxIrk3lDagrmYq490A0RBBo7FdGAVkcyNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jlpSd2oO; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762445331; x=1793981331;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BxSiubnDJFoi3hF0gZEV1dDowKtMOnRvt3PDCt/YgRc=;
-  b=jlpSd2oOR5wZlMbTql+TSqjVWomKBBKMFkf1/VdgcqMXuz273YF6XP6X
-   +hPmSHg9qpLxrHinF0rWesen27BrXf3Q/KirEanRteCqzFck4Wk/gny19
-   sh2CkJ9tzG9UCuYUcXj3ael/zNDeKJe4eUJslJ4Qudtrf7J6PJzGx8SYI
-   Fx/q/sKACbeesblHGGowKuUmu9z/wknoGpL8oDx1Bib1SRanJAAUVLfx7
-   R81tD6r1n/xHs/oeQ86a+ovpfwSlt6PkWqHSJXDx8ajSIYOiy0u2hV1Q0
-   jEDx68lju7PZcMkaZ4AvvqSpAX+mT/9MQf6pF3JW+oSZdgHOyRl+wSe6l
-   w==;
-X-CSE-ConnectionGUID: ejueZuzTRHOLyplIDnJ0GA==
-X-CSE-MsgGUID: TSwY/vFASaOIYPLsG/HSyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="52154280"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="52154280"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:08:49 -0800
-X-CSE-ConnectionGUID: csRhl/YrR3mh6V3vjCg1UA==
-X-CSE-MsgGUID: aB5X0TIERP63avd4sWT1og==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="187454619"
-Received: from abityuts-desk.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.224])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:08:39 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vH2XJ-00000006BqD-4AI9;
-	Thu, 06 Nov 2025 18:08:33 +0200
-Date: Thu, 6 Nov 2025 18:08:33 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org, qat-linux@intel.com,
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 12/26] bitfield: Add less-checking __FIELD_{GET,PREP}()
-Message-ID: <aQzIAd91tlR3o9hu@smile.fi.intel.com>
-References: <cover.1762435376.git.geert+renesas@glider.be>
- <cfc32f8530d5c0d4a7fb33c482a4bf549f26ec24.1762435376.git.geert+renesas@glider.be>
- <aQy0T2vUINze_6_q@smile.fi.intel.com>
- <aQzGY4AKiMQpuL0R@yury>
+	s=arc-20240116; t=1762445355; c=relaxed/simple;
+	bh=CUoxdL2hu9SjwD8on3W0rrXhbdYozJabVNtQ81qFKaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DmAtCvexiWSYH8FYKOoLatKW9zUeAOzozXJetCzbT9+MulGcfxxT/M8U2aN6UlBOdHj00F2pcShhA3g9fCQau/ZJqsdbQK6TYjET/X7L6frjP0+teExiRMHmYGqufLYcTNhvDLBP88pXII8s1oDq+jiwARvzgLVg+2eA3G+3+Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Age+i2ve; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A68oc4A030782;
+	Thu, 6 Nov 2025 16:09:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=kBkC7zrPOewXW/Pk0CVDrxMn8x8sMd++XtEVOn85z
+	Q8=; b=Age+i2vePvB+LSLLLbPL22On/jr3dDndzvp0l0zg+j4ybFKYUSEqOOFT8
+	rFNvgnVaqDypYIqjbDZ+8PfzNUViKkd/3CeLqeanToAOHGQfblNpmpN+1GvqM2h2
+	1HmS/iHc0J37uOF4Yx5Yghw00W/QZFi9+QaCTRw8j9iPW2XyzIYgqc6klp4z8JpI
+	OfLNVzDMxGpAbcU95Y4lXoLWwu0kvVisI8v2b3roxqOAOVm+R+C7zBv8DFb4Vv5R
+	hyjiujyLjGbVSXGYU/uHmnvLbGwJslC/JYx/2zhCIflxUQ3gb2qEzmrtT/EpoI7n
+	uVHIQIwsSkjqf+D5WkUP0mwV9AQig==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vur6gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 16:09:03 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A6G5juR007347;
+	Thu, 6 Nov 2025 16:09:02 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59vur6gj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 16:09:02 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6Eddvg027371;
+	Thu, 6 Nov 2025 16:09:01 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5vwypfgj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 16:09:01 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6G8v4h32113122
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Nov 2025 16:08:57 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 59DE220043;
+	Thu,  6 Nov 2025 16:08:57 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65D9820040;
+	Thu,  6 Nov 2025 16:08:56 +0000 (GMT)
+Received: from li-26e6d1cc-3485-11b2-a85c-83dbc1845c5e.ibm.com.com (unknown [9.111.24.158])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  6 Nov 2025 16:08:56 +0000 (GMT)
+From: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Juergen Christ <jchrist@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+Subject: [PATCH 0/2] s390/fpu: Fix kmsan false-positive report
+Date: Thu,  6 Nov 2025 17:08:44 +0100
+Message-ID: <20251106160845.1334274-2-aleksei.nikiforov@linux.ibm.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQzGY4AKiMQpuL0R@yury>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: JOWFrIeWMqn245vgRdby_F5E58YycLMN
+X-Proofpoint-GUID: RJ6XjdSFawZ2LFKDN-n-5Vl7DDYv_MyV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX1ELoPqIfaNGt
+ pAGzcEvZn/IFCkh4ow9Wt7zqiZLP3CvoGPoEwl7ACHl0M5ihGA8+jBbE1F9O5mP34x/ZxB59+Hv
+ wGII6SGUw1pp8AyxgFjzqUgev8DzvHk6HXlnRqqv/1hIJlCAvPxVUG7a18lAgtrV+FZkovdbu8z
+ +Zm9Ywgkn4KJ72fqd0/dT5ypV12/sFlm5OYRbqorr+KF9jh28OJbCRzujL7BanbQi02FAYYTRkT
+ 7qX/geCOAyFBHeYH581bkuHLB7Mq6avMqfhliGyeHLcoPMONQEXOOf/l4YHr6ooOMInFyaekoi6
+ U/Pt3mXlAN8xAmMZXjmIVfgzRE4U5gSD+hlVeXtlX26SOoYRpNclm8/fxTYnTrGyL9DiKdjb7id
+ +yBQJcQIc9/mAcdEnuQphbZQQ9z2sA==
+X-Authority-Analysis: v=2.4 cv=U6qfzOru c=1 sm=1 tr=0 ts=690cc81f cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VIxkIzLlmwRAJRPTlxkA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ clxscore=1011 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511010021
 
-On Thu, Nov 06, 2025 at 11:01:39AM -0500, Yury Norov wrote:
-> On Thu, Nov 06, 2025 at 04:44:31PM +0200, Andy Shevchenko wrote:
-> > On Thu, Nov 06, 2025 at 02:34:00PM +0100, Geert Uytterhoeven wrote:
-> > > The BUILD_BUG_ON_MSG() check against "~0ull" works only with "unsigned
-> > > (long) long" _mask types.  For constant masks, that condition is usually
-> > > met, as GENMASK() yields an UL value.  The few places where the
-> > > constant mask is stored in an intermediate variable were fixed by
-> > > changing the variable type to u64 (see e.g. [1] and [2]).
-> > > 
-> > > However, for non-constant masks, smaller unsigned types should be valid,
-> > > too, but currently lead to "result of comparison of constant
-> > > 18446744073709551615 with expression of type ... is always
-> > > false"-warnings with clang and W=1.
-> > > 
-> > > Hence refactor the __BF_FIELD_CHECK() helper, and factor out
-> > > __FIELD_{GET,PREP}().  The later lack the single problematic check, but
-> > > are otherwise identical to FIELD_{GET,PREP}(), and are intended to be
-> > > used in the fully non-const variants later.
-> > > 
-> > > [1] commit 5c667d5a5a3ec166 ("clk: sp7021: Adjust width of _m in
-> > >     HWM_FIELD_PREP()")
-> > > [2] commit cfd6fb45cfaf46fa ("crypto: ccree - avoid out-of-range
-> > >     warnings from clang")
-> > 
-> > 
-> > Also can be made as
-> > 
-> > Link: https://git.kernel.org/torvalds/c/5c667d5a5a3ec166 [1]
-> > 
-> > The positive effect that one may click that on Git Web.
-> > Ideally, of course, would be an additional parses on Git Web kernel.org uses to
-> > parse that standard "commit ...()" notation to add the respective HREF link.
-> 
-> Those flying over Atlantic or cruising cross Caribbean would disagree. :)
+A false-positive kmsan report is detected when running ping command.
 
-They won't. The purpose of these Links is described in the above commit message.
-Even they read the commit message before clicking.
+An inline assembly instruction 'vstl' can write varied amount of bytes
+depending on value of one of arguments. clang generates kmsan write helper
+call depending on inline assembly constraints. Constraints are evaluated
+compile-time, but value of argument is known only at runtime.
+
+Due to this, clang cannot generate kmsan write helper call with correct
+size and a kmsan helper is implemented and called to correct this and
+remove false-positive report.
+
+Aleksei Nikiforov (2):
+  instrumented.h: Add function instrument_write_after
+  s390/fpu: Fix kmsan in fpu_vstl function
+
+ arch/s390/include/asm/fpu-insn.h |  2 ++
+ include/linux/instrumented.h     | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.7
 
 
