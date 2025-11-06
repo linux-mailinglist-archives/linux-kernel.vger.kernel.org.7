@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-889069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A189CC3CA66
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:58:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D78C3CA5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B3F5503811
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:53:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 458B7503E01
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB83285CBC;
-	Thu,  6 Nov 2025 16:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B4D34C990;
+	Thu,  6 Nov 2025 16:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kea55saz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IDwIMILt"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071FE33CEBD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503D532B997
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448007; cv=none; b=jiXJ0qx9Tyd+8A2YKuIgBWH5T5Yczlgzpo0o4a8tNcMP6tG1F2AD+cHdQTrafsFhd7PJ2BWkauuRa619WxI3jnp1Ag8sG8zur2A6h18UTX/QSb24wnedy381YF1eZjgEhBAIPYDshUpctamqdI1CwLFQ5gYUA7b4xRcqa4xz3us=
+	t=1762448011; cv=none; b=YkFyy8ExMAWD2XMGxfAMhl8jYMiJRvzRIdMV8EY0H3DZaXRIYqXhC1Xc7t3C8mkLYBCapqS3R5QVsvdzbWSAgzLc7WoHW9maIbiPstVtGftBkThsAYW9S8CGZURPT9B8lCDj6TNV4g7+1LLQiYijqXQsmSsdccNoal/h43M1jpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448007; c=relaxed/simple;
-	bh=pS1lFCWx5tuvC5+eu474zjoAAD+SpYjnhcsbSqP//f8=;
+	s=arc-20240116; t=1762448011; c=relaxed/simple;
+	bh=xcI3fxWr3wsaBdkMdmkh8A2alUjJf+s4H+Q9lIEQ9jg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PgiKYF3vGOq7CV+tUOtZdwoAbjv9hvdtTYcWGtGqPn69cwHPaYyAnlMagmAEWCwX7LEitOn37bdCeg7TbVO4xG5kd0u5BESWZZzKw6UZ8o+kLEGNYyGym3BuWOUo1fCWw873CLg2Py+Zjoekn73FFmaSRm2eV7idpSr0R4lQTV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kea55saz; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=Cs6dJkvBDtcILA8nfdBZOy/YJAinGC+XuK36+cHveJV531Miv86IEQ2tPBReiOaZ1Yj5aXIDT61GvBpJAa/VX37O8VWmwjrPOuswrfIBJ9OFWcEXnC+ykv8m/CiTcprj2/rHtwXa4Z8UMRUQvnutLyib2dckjl038OpGdmHFb94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IDwIMILt; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762448005;
+	s=mimecast20190719; t=1762448008;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XeA958fGMLqZccrumOoOPagI0ws0mF6lRuKP6lhDsH4=;
-	b=Kea55sazMMacLPrv1qwtiL44dwgthx5s/4OpdlL9z5d74xxFDOTSjh7r+52VfL+P08vXLm
-	m2HLJHBe7MiTrEbWQUNNDiYV86rJWYoZG1oWBoe6RI0giZ73H2UY5wwmKyHLi1V4b4L+ME
-	flUlsNa4MavqUd7kZcLQBL6lEZ4mSLQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=so0OXNKYddzfc7/g5QVtuwqh5H9GBtOvc8rrxcPEA+U=;
+	b=IDwIMILtCo+FTlm83MRQEnAVW1RFLA541xJXRqqEklw3bQnsAac3fPeSFJOQo7XjrKtoma
+	q5B0bOczeDUoqhBGa+pv7nNLUlcdFDfLNXlgoMMI/3vXREDu0ccgsW6gzDkyXpMiae+cvI
+	2V6eNMSd3wCfSnIjXq1wIOtCuQKyl2w=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-BDqGrPTGOpecwmde_szCIQ-1; Thu,
- 06 Nov 2025 11:53:21 -0500
-X-MC-Unique: BDqGrPTGOpecwmde_szCIQ-1
-X-Mimecast-MFC-AGG-ID: BDqGrPTGOpecwmde_szCIQ_1762448000
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-639-aE-lWsyyMai9jL-XEYDmLg-1; Thu,
+ 06 Nov 2025 11:53:25 -0500
+X-MC-Unique: aE-lWsyyMai9jL-XEYDmLg-1
+X-Mimecast-MFC-AGG-ID: aE-lWsyyMai9jL-XEYDmLg_1762448004
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F06E81801235;
-	Thu,  6 Nov 2025 16:53:19 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CD50B195609F;
+	Thu,  6 Nov 2025 16:53:23 +0000 (UTC)
 Received: from wsxc.redhat.com (unknown [10.96.134.113])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 27DCC18004D8;
-	Thu,  6 Nov 2025 16:53:15 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 746E31800584;
+	Thu,  6 Nov 2025 16:53:20 +0000 (UTC)
 From: Ricardo Robaina <rrobaina@redhat.com>
 To: audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -67,9 +67,9 @@ Cc: paul@paul-moore.com,
 	pablo@netfilter.org,
 	kadlec@netfilter.org,
 	Ricardo Robaina <rrobaina@redhat.com>
-Subject: [PATCH v5 1/2] audit: add audit_log_packet_ip4 and audit_log_packet_ip6 helper functions
-Date: Thu,  6 Nov 2025 13:53:04 -0300
-Message-ID: <acd8109245882afd78cdf2805a2344c20fef1a08.1762434837.git.rrobaina@redhat.com>
+Subject: [PATCH v5 2/2] audit: include source and destination ports to NETFILTER_PKT
+Date: Thu,  6 Nov 2025 13:53:05 -0300
+Message-ID: <b44ec08fbb011bc73ad2760676e0bbfda2ca9585.1762434837.git.rrobaina@redhat.com>
 In-Reply-To: <cover.1762434837.git.rrobaina@redhat.com>
 References: <cover.1762434837.git.rrobaina@redhat.com>
 Precedence: bulk
@@ -81,248 +81,151 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Netfilter code (net/netfilter/nft_log.c and net/netfilter/xt_AUDIT.c)
-have to be kept in sync. Both source files had duplicated versions of
-audit_ip4() and audit_ip6() functions, which can result in lack of
-consistency and/or duplicated work.
+NETFILTER_PKT records show both source and destination
+addresses, in addition to the associated networking protocol.
+However, it lacks the ports information, which is often
+valuable for troubleshooting.
 
-This patch adds two helper functions in audit.c that can be called by
-netfilter code commonly, aiming to improve maintainability and
-consistency.
+This patch adds both source and destination port numbers,
+'sport' and 'dport' respectively, to TCP, UDP, UDP-Lite and
+SCTP-related NETFILTER_PKT records.
+
+ $ TESTS="netfilter_pkt" make -e test &> /dev/null
+ $ ausearch -i -ts recent |grep NETFILTER_PKT
+ type=NETFILTER_PKT ... proto=icmp
+ type=NETFILTER_PKT ... proto=ipv6-icmp
+ type=NETFILTER_PKT ... proto=udp sport=46333 dport=42424
+ type=NETFILTER_PKT ... proto=udp sport=35953 dport=42424
+ type=NETFILTER_PKT ... proto=tcp sport=50314 dport=42424
+ type=NETFILTER_PKT ... proto=tcp sport=57346 dport=42424
+
+Link: https://github.com/linux-audit/audit-kernel/issues/162
 
 Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
 ---
- include/linux/audit.h    | 12 +++++++++++
- kernel/audit.c           | 39 ++++++++++++++++++++++++++++++++++++
- net/netfilter/nft_log.c  | 43 ++++------------------------------------
- net/netfilter/xt_AUDIT.c | 43 ++++------------------------------------
- 4 files changed, 59 insertions(+), 78 deletions(-)
+ kernel/audit.c | 83 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 79 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 536f8ee8da81..0f16ced08fdb 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -195,6 +195,8 @@ extern int audit_log_subj_ctx(struct audit_buffer *ab, struct lsm_prop *prop);
- extern int audit_log_obj_ctx(struct audit_buffer *ab, struct lsm_prop *prop);
- extern int audit_log_task_context(struct audit_buffer *ab);
- extern void audit_log_task_info(struct audit_buffer *ab);
-+extern bool audit_log_packet_ip4(struct audit_buffer *ab, struct sk_buff *skb);
-+extern bool audit_log_packet_ip6(struct audit_buffer *ab, struct sk_buff *skb);
- 
- extern int		    audit_update_lsm_rules(void);
- 
-@@ -272,6 +274,16 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
- static inline void audit_log_task_info(struct audit_buffer *ab)
- { }
- 
-+static inline bool audit_log_packet_ip4(struct audit_buffer *ab, struct sk_buff *skb)
-+{
-+	return false;
-+}
-+
-+static inline bool audit_log_packet_ip6(struct audit_buffer *ab, struct sk_buff *skb)
-+{
-+	return false;
-+}
-+
- static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
- {
- 	return INVALID_UID;
 diff --git a/kernel/audit.c b/kernel/audit.c
-index 26a332ffb1b8..09764003db74 100644
+index 09764003db74..71dcadf12c99 100644
 --- a/kernel/audit.c
 +++ b/kernel/audit.c
-@@ -58,6 +58,8 @@
- #include <linux/freezer.h>
- #include <linux/pid_namespace.h>
+@@ -60,6 +60,7 @@
  #include <net/netns/generic.h>
-+#include <net/ip.h>
-+#include <net/ipv6.h>
+ #include <net/ip.h>
+ #include <net/ipv6.h>
++#include <linux/sctp.h>
  
  #include "audit.h"
  
-@@ -2538,6 +2540,43 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
- 	audit_log_end(ab);
+@@ -2544,13 +2545,50 @@ bool audit_log_packet_ip4(struct audit_buffer *ab, struct sk_buff *skb)
+ {
+ 	struct iphdr _iph;
+ 	const struct iphdr *ih;
++	struct tcphdr _tcph;
++	const struct tcphdr *th;
++	struct udphdr _udph;
++	const struct udphdr *uh;
++	struct sctphdr _sctph;
++	const struct sctphdr *sh;
+ 
+ 	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_iph), &_iph);
+ 	if (!ih)
+ 		return false;
+ 
+-	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
+-			 &ih->saddr, &ih->daddr, ih->protocol);
++	switch (ih->protocol) {
++	case IPPROTO_TCP:
++		th = skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_tcph), &_tcph);
++		if (!th)
++			return false;
++
++		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu sport=%hu dport=%hu",
++				 &ih->saddr, &ih->daddr, ih->protocol,
++				 ntohs(th->source), ntohs(th->dest));
++		break;
++	case IPPROTO_UDP:
++	case IPPROTO_UDPLITE:
++		uh = skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_udph), &_udph);
++		if (!uh)
++			return false;
++
++		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu sport=%hu dport=%hu",
++				 &ih->saddr, &ih->daddr, ih->protocol,
++				 ntohs(uh->source), ntohs(uh->dest));
++		break;
++	case IPPROTO_SCTP:
++		sh = skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_sctph), &_sctph);
++		if (!sh)
++			return false;
++
++		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu sport=%hu dport=%hu",
++				 &ih->saddr, &ih->daddr, ih->protocol,
++				 ntohs(sh->source), ntohs(sh->dest));
++		break;
++	default:
++		audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
++				 &ih->saddr, &ih->daddr, ih->protocol);
++	}
+ 
+ 	return true;
  }
+@@ -2562,6 +2600,12 @@ bool audit_log_packet_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+ 	const struct ipv6hdr *ih;
+ 	u8 nexthdr;
+ 	__be16 frag_off;
++	struct tcphdr _tcph;
++	const struct tcphdr *th;
++	struct udphdr _udph;
++	const struct udphdr *uh;
++	struct sctphdr _sctph;
++	const struct sctphdr *sh;
  
-+bool audit_log_packet_ip4(struct audit_buffer *ab, struct sk_buff *skb)
-+{
-+	struct iphdr _iph;
-+	const struct iphdr *ih;
-+
-+	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_iph), &_iph);
-+	if (!ih)
-+		return false;
-+
-+	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
-+			 &ih->saddr, &ih->daddr, ih->protocol);
-+
-+	return true;
-+}
-+EXPORT_SYMBOL(audit_log_packet_ip4);
-+
-+bool audit_log_packet_ip6(struct audit_buffer *ab, struct sk_buff *skb)
-+{
-+	struct ipv6hdr _ip6h;
-+	const struct ipv6hdr *ih;
-+	u8 nexthdr;
-+	__be16 frag_off;
-+
-+	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_ip6h), &_ip6h);
-+	if (!ih)
-+		return false;
-+
-+	nexthdr = ih->nexthdr;
-+	ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h), &nexthdr, &frag_off);
-+
-+	audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
-+			 &ih->saddr, &ih->daddr, nexthdr);
-+
-+	return true;
-+}
-+EXPORT_SYMBOL(audit_log_packet_ip6);
-+
- /**
-  * audit_set_loginuid - set current task's loginuid
-  * @loginuid: loginuid value
-diff --git a/net/netfilter/nft_log.c b/net/netfilter/nft_log.c
-index e35588137995..f53fb4222134 100644
---- a/net/netfilter/nft_log.c
-+++ b/net/netfilter/nft_log.c
-@@ -26,41 +26,6 @@ struct nft_log {
- 	char			*prefix;
- };
+ 	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_ip6h), &_ip6h);
+ 	if (!ih)
+@@ -2570,8 +2614,39 @@ bool audit_log_packet_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+ 	nexthdr = ih->nexthdr;
+ 	ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h), &nexthdr, &frag_off);
  
--static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
--{
--	struct iphdr _iph;
--	const struct iphdr *ih;
--
--	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_iph), &_iph);
--	if (!ih)
--		return false;
--
--	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
--			 &ih->saddr, &ih->daddr, ih->protocol);
--
--	return true;
--}
--
--static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
--{
--	struct ipv6hdr _ip6h;
--	const struct ipv6hdr *ih;
--	u8 nexthdr;
--	__be16 frag_off;
--
--	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_ip6h), &_ip6h);
--	if (!ih)
--		return false;
--
--	nexthdr = ih->nexthdr;
--	ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h), &nexthdr, &frag_off);
--
 -	audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
 -			 &ih->saddr, &ih->daddr, nexthdr);
--
--	return true;
--}
--
- static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
- {
- 	struct sk_buff *skb = pkt->skb;
-@@ -80,18 +45,18 @@ static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
- 	case NFPROTO_BRIDGE:
- 		switch (eth_hdr(skb)->h_proto) {
- 		case htons(ETH_P_IP):
--			fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-+			fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
- 			break;
- 		case htons(ETH_P_IPV6):
--			fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-+			fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
- 			break;
- 		}
- 		break;
- 	case NFPROTO_IPV4:
--		fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-+		fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
- 		break;
- 	case NFPROTO_IPV6:
--		fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-+		fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
- 		break;
- 	}
++	switch (nexthdr) {
++	case IPPROTO_TCP:
++		th = skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_tcph), &_tcph);
++		if (!th)
++			return false;
++
++		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu sport=%hu dport=%hu",
++				 &ih->saddr, &ih->daddr, nexthdr,
++				 ntohs(th->source), ntohs(th->dest));
++		break;
++	case IPPROTO_UDP:
++	case IPPROTO_UDPLITE:
++		uh = skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_udph), &_udph);
++		if (!uh)
++			return false;
++
++		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu sport=%hu dport=%hu",
++				 &ih->saddr, &ih->daddr, nexthdr,
++				 ntohs(uh->source), ntohs(uh->dest));
++		break;
++	case IPPROTO_SCTP:
++		sh = skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_sctph), &_sctph);
++		if (!sh)
++			return false;
++
++		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu sport=%hu dport=%hu",
++				 &ih->saddr, &ih->daddr, nexthdr,
++				 ntohs(sh->source), ntohs(sh->dest));
++		break;
++	default:
++		audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
++				 &ih->saddr, &ih->daddr, nexthdr);
++	}
  
-diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-index b6a015aee0ce..28cdd6435d56 100644
---- a/net/netfilter/xt_AUDIT.c
-+++ b/net/netfilter/xt_AUDIT.c
-@@ -28,41 +28,6 @@ MODULE_ALIAS("ip6t_AUDIT");
- MODULE_ALIAS("ebt_AUDIT");
- MODULE_ALIAS("arpt_AUDIT");
- 
--static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
--{
--	struct iphdr _iph;
--	const struct iphdr *ih;
--
--	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_iph), &_iph);
--	if (!ih)
--		return false;
--
--	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
--			 &ih->saddr, &ih->daddr, ih->protocol);
--
--	return true;
--}
--
--static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
--{
--	struct ipv6hdr _ip6h;
--	const struct ipv6hdr *ih;
--	u8 nexthdr;
--	__be16 frag_off;
--
--	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_ip6h), &_ip6h);
--	if (!ih)
--		return false;
--
--	nexthdr = ih->nexthdr;
--	ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h), &nexthdr, &frag_off);
--
--	audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
--			 &ih->saddr, &ih->daddr, nexthdr);
--
--	return true;
--}
--
- static unsigned int
- audit_tg(struct sk_buff *skb, const struct xt_action_param *par)
- {
-@@ -81,18 +46,18 @@ audit_tg(struct sk_buff *skb, const struct xt_action_param *par)
- 	case NFPROTO_BRIDGE:
- 		switch (eth_hdr(skb)->h_proto) {
- 		case htons(ETH_P_IP):
--			fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-+			fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
- 			break;
- 		case htons(ETH_P_IPV6):
--			fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-+			fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
- 			break;
- 		}
- 		break;
- 	case NFPROTO_IPV4:
--		fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-+		fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
- 		break;
- 	case NFPROTO_IPV6:
--		fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-+		fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
- 		break;
- 	}
- 
+ 	return true;
+ }
 -- 
 2.51.1
 
