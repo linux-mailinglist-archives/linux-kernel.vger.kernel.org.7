@@ -1,293 +1,138 @@
-Return-Path: <linux-kernel+bounces-888628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05522C3B850
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:00:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D888FC3B73F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF0C2463416
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:45:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EC84505277
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E54E336EDD;
-	Thu,  6 Nov 2025 13:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FACA30BBA2;
+	Thu,  6 Nov 2025 13:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEK1O99U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pj9jE7yo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6535C346FA9;
-	Thu,  6 Nov 2025 13:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18FC1E2614;
+	Thu,  6 Nov 2025 13:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762436333; cv=none; b=YXkIs2Xd8/O0MnxpJt3iMF2N6/HBW7mMjFZzQFNRbRgHj3ulqvg2RDf6BuOp6IW6m7TWmyUJkip1UMuwJn9US28tVW0HgOUTDBE/ZCdMt7t5P4CCOC0SsZfwzlEupfFIycv7DzMo/4GKj7ojm7CUj92iwuNDC6TIhrAPhKKJSXo=
+	t=1762436387; cv=none; b=FF+iPK92bPZT+6bQHzQAk2KEwYiVnhmSuWNyhTzDyEt9CWlwZ3bRvs4qeIeZi1r8u3nFiU9LBRD+WYeCsZ0dWIq8d1K5d35GxX3vguYW27kCL1WT0bdly226HBCcOFAt98QRuov7dYewJ2SyBhzFv+YxU8WlN/rTfZbSlHsA59k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762436333; c=relaxed/simple;
-	bh=PUbGlGve1OY97wLizHOn9zCbOJdRe7DMrLqxKa0Ve94=;
+	s=arc-20240116; t=1762436387; c=relaxed/simple;
+	bh=lvN082Tgo45NxAv9qOCzujCY0L4Wp+Q7wkeySWpj1K0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KACtr0x43tUm6TthvCi5lZ1zaL2i3SiLxSGcDEYuJ+rPT6sDqufJmqr2HZqRO+P6zMsGrfIa1TErkKp+Kyk9XYzZt+oKQ2LGjo73i5q+NXl+kcQw7WEI8S+du6PPT/wPnVkxd2bxbdpbUoUCURwJFA9RpSpSSdW6dUYTydAF3kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEK1O99U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1262C4AF09;
-	Thu,  6 Nov 2025 13:38:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxRnyVh1+NhNVYAFWtOaUwrtpoTPLXr96dVLxQaF2Dnv/qOeOfSnkqPkTNBWejR3x8uscK9aMpKFH1lIS+HfjbkwGqqgRdgvSu1hhnMW1Hw29eWruSx3R7skRt2Z9zEN5d4f4cRBpgSGBeH1HJzFkj7UAnelzMBYU0FR13o8djY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pj9jE7yo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FADC4CEF7;
+	Thu,  6 Nov 2025 13:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762436332;
-	bh=PUbGlGve1OY97wLizHOn9zCbOJdRe7DMrLqxKa0Ve94=;
+	s=k20201202; t=1762436387;
+	bh=lvN082Tgo45NxAv9qOCzujCY0L4Wp+Q7wkeySWpj1K0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IEK1O99UrYtzBgNj3leFq0xzeFnUTs+Wd/5V2vC2h4AAkZkC09mDodC0bs0CNkslV
-	 09F8yVn85/8hVzA1OEddy/q77khoj6MGwp0uaRGbCxI9OP8toQiOviKmxq5GaHdNGT
-	 cj59IXeNwpvmMx+uhaGk4/jfQnXiYsio+9pC3/VSqd/rJUfdyLjG2T/HBSF2yByFY+
-	 YZ4wPKCMKna2oQdPlwOrWAuDaW6EMB789JPavli82X5zkgAdB9GjLtfCpvaumHv0Yf
-	 LOjnk3AN0BxNrhLSkZMpTLxrIVqCAZQEbGzSVThgvGjzsIroJFozMtllAoYjtdWvji
-	 Uk0SFBzGVxNFQ==
-Date: Thu, 6 Nov 2025 13:38:48 +0000
-From: Lee Jones <lee@kernel.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Subject: Re: [PATCH v3 2/4] mfd: tqmx86: refactor I2C setup
-Message-ID: <20251106133848.GL8064@google.com>
-References: <bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
- <999718e052b5e600813cefc3ec19ba3028afa034.1761123080.git.matthias.schiffer@ew.tq-group.com>
+	b=Pj9jE7yoInr9BCWfLJ0Y8+K6jrgVmgkwml63N4WoByHVsIr4RWQ7jaDOc81VdNYJ8
+	 iTSCutwFS0KKGPYd8MgmLbSZozfDICTrA/EwOxswYw32R5r2FcMvYuyqLSnKlg09GK
+	 ZGqwqyOq5eWuvrCT8KWgRiq/B2qmCmSO815iikAweI9cxudRZAg/pcDZnnUrPzQRrs
+	 cN2lwF4mGeI/cbxWZtf3kduZfEEOnF+HlI1wbjFN0rVAlsEKu9W/Nk6ryO+lT+57Vi
+	 zzU+PGx4Sd+6r49nkGvK51PgNHObALx0PSlYhCn8Qq3ZiZYk2NFEy6IKxYmHxQusBf
+	 Wc8wnQM0TuucA==
+Date: Thu, 6 Nov 2025 13:39:44 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Nick Alcock <nick.alcock@oracle.com>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-s390@vger.kernel.org, Aishwarya.TCV@arm.com,
+	Ryan.Roberts@arm.com
+Subject: Re: [PATCH v4 23/35] vdso/datastore: Map pages through struct page
+Message-ID: <aQylIPCo1sEnJF4F@finisterre.sirena.org.uk>
+References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
+ <20251014-vdso-sparc64-generic-2-v4-23-e0607bf49dea@linutronix.de>
+ <aQjJNmwniQwwjeBR@finisterre.sirena.org.uk>
+ <CGME20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287@eucas1p2.samsung.com>
+ <e7f05748-a11c-47eb-b1fa-cdc9dc6d05e0@samsung.com>
+ <aQyig5TNkw2YJm19@finisterre.sirena.org.uk>
+ <20251106142956-d6251eba-c696-4a2f-a3e3-af461530d932@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EYbPhjGrYVw8SR92"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <999718e052b5e600813cefc3ec19ba3028afa034.1761123080.git.matthias.schiffer@ew.tq-group.com>
+In-Reply-To: <20251106142956-d6251eba-c696-4a2f-a3e3-af461530d932@linutronix.de>
+X-Cookie: If in doubt, mumble.
 
-On Wed, 22 Oct 2025, Matthias Schiffer wrote:
 
-> Preparation for supporting the second I2C controller, and detecting both
-> ocores and machxo2 controllers.
-> 
-> - Avoid the confusing "soft" I2C controller term - just call it the
->   ocores I2C
-> - All non-const parts of the MFD cell are moved from global variables
->   into new functions tqmx86_setup_i2c_ocores() and tqmx86_setup_i2c()
-> - Define TQMX86_REG_I2C_DETECT relative to I2C base register
-> 
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
-> 
-> v2: no changes
-> v3: no changes
-> 
->  drivers/mfd/tqmx86.c | 130 ++++++++++++++++++++++++-------------------
->  1 file changed, 74 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-> index 1cba3b67b0fb9..3c6f158bf1a45 100644
-> --- a/drivers/mfd/tqmx86.c
-> +++ b/drivers/mfd/tqmx86.c
-> @@ -18,7 +18,7 @@
->  
->  #define TQMX86_IOBASE	0x180
->  #define TQMX86_IOSIZE	0x20
-> -#define TQMX86_IOBASE_I2C	0x1a0
-> +#define TQMX86_IOBASE_I2C1	0x1a0
->  #define TQMX86_IOSIZE_I2C	0xa
->  #define TQMX86_IOBASE_WATCHDOG	0x18b
->  #define TQMX86_IOSIZE_WATCHDOG	0x2
-> @@ -54,8 +54,8 @@
->  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
->  #define TQMX86_REG_SAUC		0x17
->  
-> -#define TQMX86_REG_I2C_DETECT	0x1a7
-> -#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
-> +#define TQMX86_REG_I2C_DETECT	0x7
-> +#define TQMX86_REG_I2C_DETECT_OCORES	0xa5
->  
->  static uint gpio_irq;
->  module_param(gpio_irq, uint, 0);
-> @@ -65,17 +65,6 @@ static uint i2c1_irq;
->  module_param(i2c1_irq, uint, 0);
->  MODULE_PARM_DESC(i2c1_irq, "I2C1 IRQ number (valid parameters: 7, 9, 12)");
->  
-> -enum tqmx86_i2c1_resource_type {
-> -	TQMX86_I2C1_IO,
-> -	TQMX86_I2C1_IRQ,
-> -};
-> -
-> -static struct resource tqmx_i2c_soft_resources[] = {
-> -	[TQMX86_I2C1_IO] = DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-> -	/* Placeholder for IRQ resource */
-> -	[TQMX86_I2C1_IRQ] = {},
-> -};
-> -
->  static const struct resource tqmx_watchdog_resources[] = {
->  	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
->  };
-> @@ -91,28 +80,13 @@ static struct resource tqmx_gpio_resources[] = {
->  	[TQMX86_GPIO_IRQ] = {},
->  };
->  
-> -static struct i2c_board_info tqmx86_i2c_devices[] = {
-> +static const struct i2c_board_info tqmx86_i2c1_devices[] = {
->  	{
->  		/* 4K EEPROM at 0x50 */
->  		I2C_BOARD_INFO("24c32", 0x50),
->  	},
->  };
->  
-> -static struct ocores_i2c_platform_data ocores_platform_data = {
-> -	.num_devices = ARRAY_SIZE(tqmx86_i2c_devices),
-> -	.devices = tqmx86_i2c_devices,
-> -};
-> -
-> -static const struct mfd_cell tqmx86_i2c_soft_dev[] = {
-> -	{
-> -		.name = "ocores-i2c",
-> -		.platform_data = &ocores_platform_data,
-> -		.pdata_size = sizeof(ocores_platform_data),
-> -		.resources = tqmx_i2c_soft_resources,
-> -		.num_resources = ARRAY_SIZE(tqmx_i2c_soft_resources),
-> -	},
-> -};
-> -
->  static const struct mfd_cell tqmx86_devs[] = {
->  	{
->  		.name = "tqmx86-wdt",
-> @@ -238,13 +212,74 @@ static int tqmx86_setup_irq(struct device *dev, const char *label, u8 irq,
->  	return 0;
->  }
->  
-> +static int tqmx86_setup_i2c(struct device *dev, const char *name,
-> +			    unsigned long i2c_base, const void *platform_data,
-> +			    size_t pdata_size, u8 irq)
-> +{
-> +	const struct resource resources[] = {
-> +		DEFINE_RES_IO(i2c_base, TQMX86_IOSIZE_I2C),
-> +		irq ? DEFINE_RES_IRQ(irq) : (struct resource) {},
-> +	};
-> +	const struct mfd_cell i2c_dev = {
-> +		.name = name,
-> +		.platform_data = platform_data,
-> +		.pdata_size = pdata_size,
-> +		.resources = resources,
-> +		.num_resources = ARRAY_SIZE(resources),
-> +	};
+--EYbPhjGrYVw8SR92
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No, please don't do it this way.
+On Thu, Nov 06, 2025 at 02:32:56PM +0100, Thomas Wei=DFschuh wrote:
+> On Thu, Nov 06, 2025 at 01:28:35PM +0000, Mark Brown wrote:
 
-Keep as much information as you can in easy to read, easy to reference,
-easy to find, easy to follow, etc static data.  If you have to add a
-couple more static structs above, sobeit, but all of this parameter
-passing through abstracted functions is a regression in readability and
-maintainability IMHO.
+> > Given that this issue is very disruptive to userspace it's causing us to
+> > miss huge amounts of test coverage for -next, would it be possible to
+> > drop these patches until we resolve the issue?
 
-> +	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, &i2c_dev, 1,
-> +				    NULL, 0, NULL);
-> +
-> +}
-> +
-> +static int tqmx86_setup_i2c_ocores(struct device *dev, const char *label,
-> +				   unsigned long i2c_base, int clock_khz, u8 irq,
-> +				   const struct i2c_board_info *devices,
-> +				   size_t num_devices)
-> +{
-> +	const struct ocores_i2c_platform_data platform_data = {
-> +		.clock_khz = clock_khz,
-> +		.num_devices = num_devices,
-> +		.devices = devices,
-> +	};
-> +
-> +	return tqmx86_setup_i2c(dev, "ocores-i2c", i2c_base, &platform_data,
-> +				sizeof(platform_data), irq);
-> +}
-> +
-> +static int tqmx86_detect_i2c(struct device *dev, const char *label,
-> +			     unsigned long i2c_base, int clock_khz, u8 irq,
-> +			     const struct i2c_board_info *devices,
-> +			     size_t num_devices, void __iomem *io_base,
-> +			     u8 irq_reg_shift)
-> +{
-> +	u8 i2c_det;
-> +
-> +	if (tqmx86_setup_irq(dev, label, irq, io_base, irq_reg_shift))
-> +		irq = 0;
-> +
-> +	/*
-> +	 * The I2C_DETECT register is in the range assigned to the I2C driver
-> +	 * later, so we don't extend TQMX86_IOSIZE. Use inb() for this one-off
-> +	 * access instead of ioport_map + unmap.
-> +	 */
-> +	i2c_det = inb(i2c_base + TQMX86_REG_I2C_DETECT);
-> +
-> +	if (i2c_det == TQMX86_REG_I2C_DETECT_OCORES)
-> +		return tqmx86_setup_i2c_ocores(dev, label, i2c_base, clock_khz,
-> +					       irq, devices, num_devices);
-> +
-> +	return 0;
-> +}
-> +
->  static int tqmx86_probe(struct platform_device *pdev)
->  {
-> -	u8 board_id, sauc, rev, i2c_det;
-> +	u8 board_id, sauc, rev;
->  	struct device *dev = &pdev->dev;
->  	const char *board_name;
->  	void __iomem *io_base;
-> -	int err;
-> +	int err, clock_khz;
->  
->  	io_base = devm_ioport_map(dev, TQMX86_IOBASE, TQMX86_IOSIZE);
->  	if (!io_base)
-> @@ -259,13 +294,6 @@ static int tqmx86_probe(struct platform_device *pdev)
->  		 "Found %s - Board ID %d, PCB Revision %d, PLD Revision %d\n",
->  		 board_name, board_id, rev >> 4, rev & 0xf);
->  
-> -	/*
-> -	 * The I2C_DETECT register is in the range assigned to the I2C driver
-> -	 * later, so we don't extend TQMX86_IOSIZE. Use inb() for this one-off
-> -	 * access instead of ioport_map + unmap.
-> -	 */
-> -	i2c_det = inb(TQMX86_REG_I2C_DETECT);
-> -
->  	if (gpio_irq) {
->  		err = tqmx86_setup_irq(dev, "GPIO", gpio_irq, io_base,
->  				       TQMX86_REG_IO_EXT_INT_GPIO_SHIFT);
-> @@ -273,23 +301,13 @@ static int tqmx86_probe(struct platform_device *pdev)
->  			tqmx_gpio_resources[TQMX86_GPIO_IRQ] = DEFINE_RES_IRQ(gpio_irq);
->  	}
->  
-> -	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
-> -
-> -	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
-> -		if (i2c1_irq) {
-> -			err = tqmx86_setup_irq(dev, "I2C1", i2c1_irq, io_base,
-> -					       TQMX86_REG_IO_EXT_INT_I2C1_SHIFT);
-> -			if (!err)
-> -				tqmx_i2c_soft_resources[TQMX86_I2C1_IRQ] = DEFINE_RES_IRQ(i2c1_irq);
-> -		}
-> -
-> -		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-> -					   tqmx86_i2c_soft_dev,
-> -					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
-> -					   NULL, 0, NULL);
-> -		if (err)
-> -			return err;
-> -	}
-> +	clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
-> +
-> +	err = tqmx86_detect_i2c(dev, "I2C1", TQMX86_IOBASE_I2C1, clock_khz, i2c1_irq,
-> +				tqmx86_i2c1_devices, ARRAY_SIZE(tqmx86_i2c1_devices),
-> +				io_base, TQMX86_REG_IO_EXT_INT_I2C1_SHIFT);
-> +	if (err)
-> +		return err;
->  
->  	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
->  				    tqmx86_devs,
-> -- 
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> https://www.tq-group.com/
+> This issue and the observed panics should be fixed in v5 of the series:
+> https://lore.kernel.org/lkml/20251106-vdso-sparc64-generic-2-v5-0-97ff2b6=
+542f7@linutronix.de/
 
--- 
-Lee Jones [李琼斯]
+> I'll ping tglx directly.
+
+Ah, fantastic - I wasn't aware of the new version.
+
+--EYbPhjGrYVw8SR92
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkMpSAACgkQJNaLcl1U
+h9ApqAf8DFWNLEwpnWuEpnrOTVfL+iVYzK6YSgBge+QboC8tTBNFnMnnQ5Ht92aC
+QaU0hO+PO0XJiyMXzjXfT5JgDO8ovlQIUShX3kjD7MF/MuSGdEAbRUEzoFj4d170
+GN1BVZ8iAysXN0NytDNcZImpsxwVva2BtBFzYouhWlcDg2eRPWhzd6tvmJY3b0ZI
+qn9eJOHvYiqh6I4jaF/7mI11G/JYp3x3738trx8FMvZxgxL6y0O0MQ8lETGJTaao
+EwYoM4wyzL8dDJ0r4bYy7pGAiIKFQXpASY1pInXJQ/NVO4fcAC7E47S0u5odZz1h
+lhDgGOw14KG8UFp0J4rBQQRfSWDhCA==
+=oxel
+-----END PGP SIGNATURE-----
+
+--EYbPhjGrYVw8SR92--
 
