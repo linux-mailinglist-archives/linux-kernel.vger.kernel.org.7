@@ -1,146 +1,251 @@
-Return-Path: <linux-kernel+bounces-888162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2B7C39FFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:03:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A4FC3A10A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE09A188F846
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:02:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A2215010BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF80630C628;
-	Thu,  6 Nov 2025 10:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D9330DEB1;
+	Thu,  6 Nov 2025 10:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEAu6+aR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rNvfheX1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DOWu3kEq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEB7225760
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5232E284A;
+	Thu,  6 Nov 2025 10:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762423285; cv=none; b=Sy6NUKITXmNGP49Xl+ErVE6XaWngWb/B7trJRUoO4j8ezlxuucr56IvSY8Ihf17akK41dq2a0NuSOvqZ2bP/uZ4g+wNyAjnrdHq82e1wlDEOERiTAaEThM7FijqMbkUZXIjl8zcKTrBhT/QFlYrkG9WHwawwlkF1RG0cuU9Gzd8=
+	t=1762423337; cv=none; b=fqhSDgZrnnAHW/jCaLdM18Xe4ZsNkFcIXUIhEsTdTItOnAreVucoHpwzuuUzZdjNZL+UBHsO4J+xfVF97Z5TFXvYRkg3kphK5ZCl7AzR8Uve1/uo6C/ngrf9iH35gPQk34yH0uuJ96rIBfM/egZvgD/TwqcrxEVuPKJsQdovtvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762423285; c=relaxed/simple;
-	bh=iesv8rC4QL3CIngwo4NyosSS6ta4t5WL2Exyy3yA59w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FxtVVbyBM4sgMFJaOkPtnsjrmYOE+CJ8EIf+q8sEyjzcaqh2NkOnj0hFDjZ1vZqGU8DTXNordh1yV/u8qQhZdS5W0V2E93na7mSjPCHb6oq8gDwSdnWLNrD956XzfMzvDVi/9uTaGeT87Rtp0AIjSfYfnnj5+5sDbKmb0iWsD/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEAu6+aR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53586C4AF09;
-	Thu,  6 Nov 2025 10:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762423284;
-	bh=iesv8rC4QL3CIngwo4NyosSS6ta4t5WL2Exyy3yA59w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fEAu6+aRo3d5d8m/ufEdiQ9WpLry8x99RB9cJihQTwfgbp2i5L3HqpCsuP9B9mRK1
-	 zTOKLwgeHpWHHE0BD36pWhDu7aktyGUsbedSntOskcbGOuW3pUqFaVXj6zSCAgraZ/
-	 ZJ+qJGLf9SRH9rgph2nn7KV8fzB03B2ZG0RSOmFUSWO05RMmIYXI4oPP9QcxNU/SSx
-	 UO+09a3UNwkW7dXkZ7+3hmsWWCiYVzRym8aK1kGnzIQW6M+1M6/oUPFbtavKwmKyiP
-	 ++sOVeS+c3yKZLlOCl8CTRcwPyoHrtTPA7xLizpV+AI/LpNiQgSfm1fdAAsqHv6dAr
-	 B4AVLpt7gsNfA==
-Message-ID: <5c7c607e-079e-4650-be8d-6a1210730b57@kernel.org>
-Date: Thu, 6 Nov 2025 11:01:19 +0100
+	s=arc-20240116; t=1762423337; c=relaxed/simple;
+	bh=6fe5s/8WXt8LDR1x1k083tpK7z5zoUWlL2PJcCJcAEw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hlQECERhiE2Cui3mRRe5G16jrgMLfiNJTXPJKVA59wX/vWQ/pD9s/MM/t7pQOZQCgTcQMnhRCMMuXCS36KKjOvXKB29jNljs0XyOHVwe+Hu/Ha39MqOj6v7SyD5uK/HPivo1q2Zs5/dd895nuMQ5KqJO8Oim9cIUnMGCDOjkL0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rNvfheX1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DOWu3kEq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762423329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/Xf1oeyZG1ZKuwhbZo2PyJCzRemXmJJv42128shNqao=;
+	b=rNvfheX1EV1aGgCBXYREO1AE3dBkrvMh7lQkLkDVFLIbsHNNwskDM3tD4J+isZ6YJM1Fc8
+	yV7QTeJIm00gwhP9xT4Doc37juDV2L8xyl2yCMSV31xfF2XSRrj/upGwE/PC5/NYy4D+KZ
+	T3dlhyrUOF4xiwQKVCi1rnDlWXFn3Pywsay6obbIH3o6VarXQgLohrx2qse6GEjEf851XP
+	9zs0xWU7nYJDuphFpfs59n4p/++mn00jz76DkvXPFGC1mO9YJJz3hDOkPZNq8s/g1rfeiO
+	gUVj8Qq3jGOgOsrf3W6L8uSPvKWapWZZ7c8kuixCJv4XYaC53rvdX09bJBL6oA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762423329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/Xf1oeyZG1ZKuwhbZo2PyJCzRemXmJJv42128shNqao=;
+	b=DOWu3kEqoRIllLk+F51f/k3q3NnyXpuXoJyXij8n9lLnQZxlfacIga6q8FDbG4UyRy8Exc
+	dXeOolc1PDMyWVBw==
+Subject: [PATCH v5 00/34] sparc64: vdso: Switch to the generic vDSO library
+Date: Thu, 06 Nov 2025 11:01:53 +0100
+Message-Id: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] hugetlb: add memory-hotplug notifier to only allocate for
- online nodes
-To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "open list:HUGETLB SUBSYSTEM" <linux-mm@kvack.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-References: <20251106085645.13607-1-swarajgaikwad1925@gmail.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251106085645.13607-1-swarajgaikwad1925@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABJyDGkC/3XPTYoCMRAF4KtI1hNJKr/tynvILDpJRQNDWhINi
+ vTdJy3MCGIvX8H7ivcgFUvCSnabBynYUk1T7kF9bYg/jfmINIWeCTBQzADQFupE63ksXkt6xNz
+ rngIFFQGZsjiAJ718LhjT7Qkfvns+pXqZyv35p/Hl+kfKNbJxyigKo0fhAsjA9z8pXy9lyum2D
+ UgWtsGLslytUtApp2K0TBsQ0nyixIsauFmlRKeENoPjzltE+4mS/xRnfH2gXAYyzYyLcgg4vlP
+ zPP8C9gA4QKEBAAA=
+X-Change-ID: 20250722-vdso-sparc64-generic-2-25f2e058e92c
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
+ John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Shannon Nelson <sln@onemain.com>
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Arnd Bergmann <arnd@kernel.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762423327; l=7494;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=6fe5s/8WXt8LDR1x1k083tpK7z5zoUWlL2PJcCJcAEw=;
+ b=rCuKSMr6iJrvIuN8HAr9NkC+5G1piq0o1jjz4q0RyKSUW0yPa4W0eF4Ciut3f9pmozkQphTjR
+ 6O/EemPcZ2GAsAcXeyi0kkML8xnkho/tNgVP3ZMddFBB/oPyCJw0Zd4
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 06.11.25 09:56, Swaraj Gaikwad wrote:
-> This patch is a RFC on a proposed change to the hugetlb cgroup subsystem’s
-> css allocation function.
-> 
-> The existing hugetlb_cgroup_css_alloc() uses for_each_node() to allocate
-> nodeinfo for all nodes, including those which are not online yet
-> (or never will be). This can waste considerable memory on large-node systems.
-> The documentation already lists this as a TODO.
+The generic vDSO provides a lot common functionality shared between
+different architectures. SPARC is the last architecture not using it,
+preventing some necessary code cleanup.
 
-We're talking about the
+Make use of the generic infrastructure.
 
-kzalloc_node(sizeof(struct hugetlb_cgroup_per_node), GFP_KERNEL, node_to_alloc);
+Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
+https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org/
 
-$ pahole mm/hugetlb_cgroup.o
+SPARC64 can not map .bss into userspace, so the vDSO datapages are
+switched over to be allocated dynamically. This requires changes to the
+s390 and random subsystem vDSO initialization as preparation.
+The random subsystem changes in turn require some cleanup of the vDSO
+headers to not end up as ugly #ifdef mess.
 
-struct hugetlb_cgroup_per_node {
-         long unsigned int          usage[2];             /*     0    16 */
+Tested on a Niagara T4 and QEMU.
 
-         /* size: 16, cachelines: 1, members: 1 */
-         /* last cacheline: 16 bytes */
-};
+This has a semantic conflict with my series "vdso: Reject absolute
+relocations during build" [0]. The last patch of this series expects all
+users of the generic vDSO library to use the vdsocheck tool.
+This is not the case (yet) for SPARC64. I do have the patches for the
+integration, the specifics will depend on which series is applied first.
 
-16 bytes on x86_64. So nobody should care here.
+Based on v6.18-rc1.
 
-Of course, it depends on HUGE_MAX_HSTATE.
+[0] https://lore.kernel.org/lkml/20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de/
 
-IIRC only HUGE_MAX_HSTATE goes crazy on that with effectively 15 entries.
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v5:
+- Merge the patches for 'struct page' mapping and dynamic allocation
+- Zero out newly-allocated data pages
+- Pick up review tags
+- Link to v4: https://lore.kernel.org/r/20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de
 
-15*8 ~128 bytes.
+Changes in v4:
+- Rebase on v6.18-rc1.
+- Keep inclusion of asm/clocksource.h from linux/clocksource.h
+- Reword description of "s390/time: Set up vDSO datapage later"
+- Link to v3: https://lore.kernel.org/r/20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de
 
-So with 1024 nodes we would be allocating 128 KiB.
+Changes in v3:
+- Allocate vDSO data pages dynamically (and lots of preparations for that)
+- Drop clock_getres()
+- Fix 32bit clock_gettime() syscall fallback
+- Link to v2: https://lore.kernel.org/r/20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de
 
+Changes in v2:
+- Rebase on v6.17-rc1
+- Drop RFC state
+- Fix typo in commit message
+- Drop duplicate 'select GENERIC_TIME_VSYSCALL'
+- Merge "sparc64: time: Remove architecture-specific clocksource data" into the
+  main conversion patch. It violated the check in __clocksource_register_scale()
+- Link to v1: https://lore.kernel.org/r/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de
 
-And given that this is for each cgroup (right?) I assume it can add up.
+---
+Arnd Bergmann (1):
+      clocksource: remove ARCH_CLOCKSOURCE_DATA
 
-> 
-> Proposed Change:
->      Introduce a memory hotplug notifier that listens for MEM_ONLINE
->      events. When a node becomes online, we call the same allocation function
->      but insted of for_each_node(),using for_each_online_node(). This means
->      memory is only allocated for nodes which are online, thus reducing waste.
+Thomas Weißschuh (33):
+      selftests: vDSO: vdso_test_correctness: Handle different tv_usec types
+      arm64: vDSO: getrandom: Explicitly include asm/alternative.h
+      arm64: vDSO: gettimeofday: Explicitly include vdso/clocksource.h
+      arm64: vDSO: compat_gettimeofday: Add explicit includes
+      ARM: vdso: gettimeofday: Add explicit includes
+      powerpc/vdso/gettimeofday: Explicitly include vdso/time32.h
+      powerpc/vdso: Explicitly include asm/cputable.h and asm/feature-fixups.h
+      LoongArch: vDSO: Explicitly include asm/vdso/vdso.h
+      MIPS: vdso: Add include guard to asm/vdso/vdso.h
+      MIPS: vdso: Explicitly include asm/vdso/vdso.h
+      random: vDSO: Add explicit includes
+      vdso/gettimeofday: Add explicit includes
+      vdso/helpers: Explicitly include vdso/processor.h
+      vdso/datapage: Remove inclusion of gettimeofday.h
+      vdso/datapage: Trim down unnecessary includes
+      random: vDSO: trim vDSO includes
+      random: vDSO: remove ifdeffery
+      random: vDSO: split out datapage update into helper functions
+      random: vDSO: only access vDSO datapage after random_init()
+      s390/time: Set up vDSO datapage later
+      vdso/datastore: Reduce scope of some variables in vvar_fault()
+      vdso/datastore: Drop inclusion of linux/mmap_lock.h
+      vdso/datastore: Allocate data pages dynamically
+      sparc64: vdso: Link with -z noexecstack
+      sparc64: vdso: Remove obsolete "fake section table" reservation
+      sparc64: vdso: Replace code patching with runtime conditional
+      sparc64: vdso: Move hardware counter read into header
+      sparc64: vdso: Move syscall fallbacks into header
+      sparc64: vdso: Introduce vdso/processor.h
+      sparc64: vdso: Switch to the generic vDSO library
+      sparc64: vdso2c: Drop sym_vvar_start handling
+      sparc64: vdso2c: Remove symbol handling
+      sparc64: vdso: Implement clock_gettime64()
 
-We have a NODE_ADDING_FIRST_MEMORY now, I'd assume that is more suitable?
+ arch/arm/include/asm/vdso/gettimeofday.h           |   2 +
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h  |   3 +
+ arch/arm64/include/asm/vdso/gettimeofday.h         |   2 +
+ arch/arm64/kernel/vdso/vgetrandom.c                |   2 +
+ arch/loongarch/kernel/process.c                    |   1 +
+ arch/loongarch/kernel/vdso.c                       |   1 +
+ arch/mips/include/asm/vdso/vdso.h                  |   5 +
+ arch/mips/kernel/vdso.c                            |   1 +
+ arch/powerpc/include/asm/vdso/gettimeofday.h       |   1 +
+ arch/powerpc/include/asm/vdso/processor.h          |   3 +
+ arch/s390/kernel/time.c                            |   4 +-
+ arch/sparc/Kconfig                                 |   3 +-
+ arch/sparc/include/asm/clocksource.h               |   9 -
+ arch/sparc/include/asm/processor.h                 |   3 +
+ arch/sparc/include/asm/processor_32.h              |   2 -
+ arch/sparc/include/asm/processor_64.h              |  25 --
+ arch/sparc/include/asm/vdso.h                      |   2 -
+ arch/sparc/include/asm/vdso/clocksource.h          |  10 +
+ arch/sparc/include/asm/vdso/gettimeofday.h         | 184 ++++++++++
+ arch/sparc/include/asm/vdso/processor.h            |  41 +++
+ arch/sparc/include/asm/vdso/vsyscall.h             |  10 +
+ arch/sparc/include/asm/vvar.h                      |  75 ----
+ arch/sparc/kernel/Makefile                         |   1 -
+ arch/sparc/kernel/time_64.c                        |   6 +-
+ arch/sparc/kernel/vdso.c                           |  69 ----
+ arch/sparc/vdso/Makefile                           |   8 +-
+ arch/sparc/vdso/vclock_gettime.c                   | 380 ++-------------------
+ arch/sparc/vdso/vdso-layout.lds.S                  |  26 +-
+ arch/sparc/vdso/vdso.lds.S                         |   2 -
+ arch/sparc/vdso/vdso2c.c                           |  24 --
+ arch/sparc/vdso/vdso2c.h                           |  45 +--
+ arch/sparc/vdso/vdso32/vdso32.lds.S                |   4 +-
+ arch/sparc/vdso/vma.c                              | 274 +--------------
+ drivers/char/random.c                              |  71 ++--
+ include/linux/clocksource.h                        |   6 +-
+ include/linux/vdso_datastore.h                     |   6 +
+ include/vdso/datapage.h                            |  23 +-
+ include/vdso/helpers.h                             |   1 +
+ init/main.c                                        |   2 +
+ kernel/time/Kconfig                                |   4 -
+ lib/vdso/datastore.c                               |  74 ++--
+ lib/vdso/getrandom.c                               |   3 +
+ lib/vdso/gettimeofday.c                            |  17 +
+ .../testing/selftests/vDSO/vdso_test_correctness.c |   8 +-
+ 44 files changed, 449 insertions(+), 994 deletions(-)
+---
+base-commit: 28b1ac5ccd8d4900a8f53f0e6e84d517a7ccc71f
+change-id: 20250722-vdso-sparc64-generic-2-25f2e058e92c
 
-> 
-> Feedback Requested:
->      - Where in the codebase (which file or section) is it most appropriate to
->        implement and register the memory hotplug notifier for this subsystem?
-
-I'd assume you would have to register in hugetlb_cgroup_css_alloc() and
-free in hugetlb_cgroup_css_free().
-
->      - Are there best practices or patterns for handling the notifier lifecycle,
->        especially for unregistering during cgroup or subsystem teardown?
-
-Not that I can think of some :)
-
->      - What are the standard methods or tools to test memory hotplug scenarios
->        for cgroups? Are there ways to reliably trigger node online/offline events
->        in a development environment?
-
-You can use QEMU to hotplug memory (pc-dimm device) to a CPU+memory-less node and
-to then remove it again. If you disable automatic memory onlining, you should be able to
-trigger this multiple times without any issues.
-
->      - Are there existing test cases or utilities in the kernel tree that would help
->        to verify correct behavior of this change?
-
-Don't think so.
-
->      - Any suggestions for implementation improvements or cleaner API usage?
-
-I'd assume you'd want to look into NODE_ADDING_FIRST_MEMORY.
-
+Best regards,
 -- 
-Cheers
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-David
 
