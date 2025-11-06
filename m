@@ -1,113 +1,204 @@
-Return-Path: <linux-kernel+bounces-887553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D83C3881D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:42:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BA1C38829
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:43:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97713B0AA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E1818C6576
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1E71ACEAF;
-	Thu,  6 Nov 2025 00:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883E11C3F0C;
+	Thu,  6 Nov 2025 00:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jxYZZLVR"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RLKBBfiU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31FC86353
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2173D86353;
+	Thu,  6 Nov 2025 00:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762389725; cv=none; b=qZ3PB72LbwRO4Y9zyD09Ps31X6PKxg8kLq6Ml+S57QJSk5FsRtbVKU6/f0PfJta4+i1xksiD/Qth9J1aq41KLCpssM1ySHfK+L8YlOE5MYPZXtnMorRP1tTi9MmiAE2fxK9jd3zsa7aAkd2qTCBlPVGq4X8F3e+UxmrPxqzl6TU=
+	t=1762389815; cv=none; b=mQ61BT/KF1c8mB7PdGTbems2BxuGfO4t9/1P8RLdujjxkV0unZiybh6CumR0hiFPIgEVCo1YBiT1BotNt63jcSCxSCuysX6Ak64gr21WI+2FLCpER55KygmB6qSGEhdzr3onkZx2UicZHZEoItv0fUoPkg/tyWO2Sr2bakS4S4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762389725; c=relaxed/simple;
-	bh=IlSwVwT1VuvzUynUU4Xj+hFZKWXPHeFJ1t0CgyLYuU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUdD8NeK/dtlp+JYc+1akG9QJiPlEt5gviWR/+bc3CRBr2wue8BJ+yzTvwBIo1u10M8XDb1IGEz677gOPAoBMVb6M3xgERUKH5NCZXiEfql/5s7AbFHWOjetramkAGm1EmF5k8T5mLtLJODO0CEom//gijkM21c6xvB8oEmlo68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jxYZZLVR; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-77f67ba775aso568124b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:42:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762389723; x=1762994523; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlSwVwT1VuvzUynUU4Xj+hFZKWXPHeFJ1t0CgyLYuU8=;
-        b=jxYZZLVRmKD+A/1jnQUWCe+E+/WBS48P+l5h9b7jghDKwZkyINezQhB/k2bxPDpl2A
-         ueM92wOHyvjh/Hf0zfaU99gs/2RwMuGhoEvXSQ2uUXqEv/cE0GuVzlI41baY7+kh1nRR
-         Oq4xQfi8Y+4tmuvyxE2CFmilTWQdV2ERTMjT13C6fitbHMYjcRxJaxb8S3YkbOGN97/R
-         uEnV1gZjzqeRECL8sbVabcpLstDsGeOW3i1abup15/srQikrAyoChfJ7GCV4qntBtMTq
-         /4Uc7sIXMkTMW1m8BYzIv/HvzUN9/0CY19+KqNr+eDWoK3MyinE1x3Xh8kI+pI/QGhDd
-         gEbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762389723; x=1762994523;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IlSwVwT1VuvzUynUU4Xj+hFZKWXPHeFJ1t0CgyLYuU8=;
-        b=Yl5WP19jWyv5ou/T4WXaxB47s6neclS/L74yHHaTCJOVXq3mFmO5Na0JCRsLZgEWz2
-         JeiijI8dvooqB1qkK/LKwZLNsIyJ4+EevMP3hWK/WT1prsYGbDJqYnD8agDauwNkasJ2
-         E0+jVGJbrjTXPKB79LwkZ93hY8LdobkvEGoLNmII5bPrgKiz1ROnZFf5pLRh+xV+2cM3
-         xT3n8Q+HrD3oHBv0GP1uxx4JyoVLh2cDs/CSN0W237QzBGJ+cfQxL2B3Whje1X0816l7
-         kaQYtMOuu3xCOxXSXDG40ztphDeFVjudLZJqFATVimYhI/JJTxH1qdCTzxWij9Xquc64
-         SH2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX1YgvomT7IVVJIU5tQ7q/EIIXm5oMWyfPWC3ucspsnwXD3WN0iRNtgVadmQqEIM/NxP0+wK0iF0ahQges=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyi88+m0G0h8TVWNBjL8RexqsEguXTrQq3NoVAHRPepres8DWd
-	7lDIjM9jhC8HrjcUd4Vu1Kyy23CvadjhDN2GsiXtcXY+09EscNDa7xxDuRoDJeo6XA==
-X-Gm-Gg: ASbGncspzX+Cqs/k0DVuuau/RO7nEuJiRRE5zDeyMYdqLgY2rrSOGjTs5yRlcP+jQV5
-	hklMA35qmgUJkUdITcdpYLVaMPrLtfOdfMl/w8CaGVxZDpR0slWqAjLSjLTouziKW8PqxydDbH8
-	gdrjD6+r5jCTWUo5ECrQGCBTZmpO29+yRlyt1u4Zd2UOtsacuofWr8Knh8xUS4TUlIXNZObWZTY
-	T1IkyXOrRthnwOkR9chmsimOQvHIx1VgDsZNYx8UoVfkWn1xy9Bv0m5ZLiSCIc/lqd444XM9xcx
-	CyvTRO/8/piDawNsCjGqOHH3Ek/lYhajPBo8NMEujtB92tvwr18/XotY4E94t09E36gt3MpHUAw
-	zQvU5/C+dobigwq3oMb99Eg90+Mi/aO/Ce5GpSkjzfuMP/hOWbmd1pcjPZAji2iXTXOkYF6hKB9
-	8bwrojlChGid8lUHztBE0Hd7Xqvlx/sg8Whz0a5C5XycFkQyo5ME+j
-X-Google-Smtp-Source: AGHT+IH41on4jpXBOi5c2bKsIC6xn61T+UyJ69pWDeAn3RI973fXQ7iyPYS01mgsWNu4I+diNqvKWQ==
-X-Received: by 2002:a05:6a20:3d11:b0:33e:eb7a:4476 with SMTP id adf61e73a8af0-34f84dfc120mr6673105637.23.1762389722735;
-        Wed, 05 Nov 2025 16:42:02 -0800 (PST)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f8e750c1sm539201a12.1.2025.11.05.16.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 16:42:01 -0800 (PST)
-Date: Thu, 6 Nov 2025 00:41:57 +0000
-From: David Matlack <dmatlack@google.com>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Alex Williamson <alex@shazbot.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] vfio: selftests: Export vfio_pci_device functions
-Message-ID: <aQvu1c8Hb8i-JxXd@google.com>
-References: <20251104003536.3601931-1-rananta@google.com>
- <20251104003536.3601931-3-rananta@google.com>
+	s=arc-20240116; t=1762389815; c=relaxed/simple;
+	bh=Vw+NXVMMLvx7GYQX2udxY2m29ubF82y+gjKTEuYazrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=e2fHtytIXH0Qds/Q7BYHUQDZknRLmjumBP1OzQLdSgC7Fx04nmuILOpNv8PVCWceb6CSXRddwl1zWWZ2uT+kJ9zNZIxaeHcBez7HZZePROjobNszmO7cWYAI9Rdcif4A92ElJF6vSGiw7jCLK4ADVaOb+79xBqypOBdhv0ied0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RLKBBfiU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762389810;
+	bh=57C4tkfHlpV4d6fIuWPqL1GqquhB4VyxQX03V8H/CXE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RLKBBfiUee31wtMl7wFiYek4c+uppXApiVjHCPMLUutEIVIYml+prW5clVCCSHH0b
+	 FamOd6wuDQzjbS/UGnM+TorFzXyZ1LtBeYop/WzdykHnyKhtfhlZbejaVN82tSCgOs
+	 pIuenKBXSZgS/y1HbqM0Iou3axGi95YPWzq8LxaupWSd6EIws51fYwiVha3UepHTPa
+	 Ef3p3A5vZqwbgwl9nykIrWF3CmRLSpRE5X8m4RpBfT92jbbbKqMQW04L9mL80WThAL
+	 cvgG/Re7Ny8saZknNvnLpnd8v0Vxr8yE2eiHICZ8ZuF+pRp71d5eHyUGHtUspGlSrC
+	 6kS6ZrnH7naYg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d23Mj1xzsz4w9R;
+	Thu, 06 Nov 2025 11:43:28 +1100 (AEDT)
+Date: Thu, 6 Nov 2025 11:43:28 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+ <johan.hedberg@gmail.com>, David Miller <davem@davemloft.net>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Kees Cook <kees@kernel.org>, Luiz Augusto von Dentz
+ <luiz.von.dentz@intel.com>, Networking <netdev@vger.kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the bluetooth tree with the net-next
+ tree
+Message-ID: <20251106114328.3d7631f2@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104003536.3601931-3-rananta@google.com>
+Content-Type: multipart/signed; boundary="Sig_/wzlOOAyHFixIc1R.aON+uz/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
-> Refactor and make the functions called under device initialization
-> public. A later patch adds a test that calls these functions to validate
-> the UAPI of SR-IOV devices. Opportunistically, to test the success
-> and failure cases of the UAPI, split the functions dealing with
-> VFIO_GROUP_GET_DEVICE_FD and VFIO_DEVICE_BIND_IOMMUFD into a core
-> function and another one that asserts the ioctl. The former will be
-> used for testing the SR-IOV UAPI, hence only export these.
+--Sig_/wzlOOAyHFixIc1R.aON+uz/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have a series that separates the IOMMU initialization and fields from
-struct vfio_pci_device. I suspect that will make what you are trying to
-do a lot easier.
+Hi all,
 
-https://lore.kernel.org/kvm/20251008232531.1152035-1-dmatlack@google.com/
+Today's linux-next merge of the bluetooth tree got a conflict in:
 
-Can you take a look at it and see if it would simplifying things for
-you? Reviews would be very appreciated if so :)
+  net/bluetooth/iso.c
+
+between commit:
+
+  0e50474fa514 ("net: Convert proto_ops bind() callbacks to use sockaddr_un=
+sized")
+
+from the net-next tree and commit:
+
+  8cd02d23dd8d ("Bluetooth: ISO: Add support to bind to trigger PAST")
+
+from the bluetooth tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/bluetooth/iso.c
+index 243505b89733,74ec7d125c88..000000000000
+--- a/net/bluetooth/iso.c
++++ b/net/bluetooth/iso.c
+@@@ -1022,7 -1034,78 +1034,78 @@@ done
+  	return err;
+  }
+ =20
++ static struct hci_dev *iso_conn_get_hdev(struct iso_conn *conn)
++ {
++ 	struct hci_dev *hdev =3D NULL;
++=20
++ 	iso_conn_lock(conn);
++ 	if (conn->hcon)
++ 		hdev =3D hci_dev_hold(conn->hcon->hdev);
++ 	iso_conn_unlock(conn);
++=20
++ 	return hdev;
++ }
++=20
++ /* Must be called on the locked socket. */
++ static int iso_sock_rebind_bc(struct sock *sk, struct sockaddr_iso *sa,
++ 			      int addr_len)
++ {
++ 	struct hci_dev *hdev;
++ 	struct hci_conn *bis;
++ 	int err;
++=20
++ 	if (sk->sk_type !=3D SOCK_SEQPACKET || !iso_pi(sk)->conn)
++ 		return -EINVAL;
++=20
++ 	/* Check if it is really a Broadcast address being requested */
++ 	if (addr_len !=3D sizeof(*sa) + sizeof(*sa->iso_bc))
++ 		return -EINVAL;
++=20
++ 	/* Check if the address hasn't changed then perhaps only the number of
++ 	 * bis has changed.
++ 	 */
++ 	if (!bacmp(&iso_pi(sk)->dst, &sa->iso_bc->bc_bdaddr) ||
++ 	    !bacmp(&sa->iso_bc->bc_bdaddr, BDADDR_ANY))
++ 		return iso_sock_rebind_bis(sk, sa, addr_len);
++=20
++ 	/* Check if the address type is of LE type */
++ 	if (!bdaddr_type_is_le(sa->iso_bc->bc_bdaddr_type))
++ 		return -EINVAL;
++=20
++ 	hdev =3D iso_conn_get_hdev(iso_pi(sk)->conn);
++ 	if (!hdev)
++ 		return -EINVAL;
++=20
++ 	bis =3D iso_pi(sk)->conn->hcon;
++=20
++ 	/* Release the socket before lookups since that requires hci_dev_lock
++ 	 * which shall not be acquired while holding sock_lock for proper
++ 	 * ordering.
++ 	 */
++ 	release_sock(sk);
++ 	hci_dev_lock(bis->hdev);
++ 	lock_sock(sk);
++=20
++ 	if (!iso_pi(sk)->conn || iso_pi(sk)->conn->hcon !=3D bis) {
++ 		/* raced with iso_conn_del() or iso_disconn_sock() */
++ 		err =3D -ENOTCONN;
++ 		goto unlock;
++ 	}
++=20
++ 	BT_DBG("sk %p %pMR type %u", sk, &sa->iso_bc->bc_bdaddr,
++ 	       sa->iso_bc->bc_bdaddr_type);
++=20
++ 	err =3D hci_past_bis(bis, &sa->iso_bc->bc_bdaddr,
++ 			   le_addr_type(sa->iso_bc->bc_bdaddr_type));
++=20
++ unlock:
++ 	hci_dev_unlock(hdev);
++ 	hci_dev_put(hdev);
++=20
++ 	return err;
++ }
++=20
+ -static int iso_sock_bind(struct socket *sock, struct sockaddr *addr,
+ +static int iso_sock_bind(struct socket *sock, struct sockaddr_unsized *ad=
+dr,
+  			 int addr_len)
+  {
+  	struct sockaddr_iso *sa =3D (struct sockaddr_iso *)addr;
+
+--Sig_/wzlOOAyHFixIc1R.aON+uz/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkL7zAACgkQAVBC80lX
+0GwUnQgAm9TUujJYKN+uSbMs0oWj+7GmnL8JUMZ+5Jr/Nsfg3MgE+E/K3lcm4WcQ
+TWV6AMsqxxN8OjmP0W3Yh6w3FerO0lWet8Zbd1CXoPgoJBLNJKEF3YaZUVPXcvwK
+RQncqtX8nd/f9yuzxZKxoXZ3O0Qfhqrn7S2kDkngaua6MSElwSj9pG7fgN2ctZ3Z
+BKPhpfy1tWQ1yDgeqgqVYTpo0/u7Wrq86aSS+n52W18cpthY6uKTRA6dRZ9sIcS4
+bM1n3rfFKwNBki2G+oBX1kVJiKQ7ApiNwnT4M5jQMgp7KM4UTyuOXNHtLsy2y3GY
+iHMPdwqYtVRbdz6fUCBTc6WtxEKHzQ==
+=ZYXF
+-----END PGP SIGNATURE-----
+
+--Sig_/wzlOOAyHFixIc1R.aON+uz/--
 
