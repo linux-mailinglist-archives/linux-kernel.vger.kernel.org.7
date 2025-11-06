@@ -1,134 +1,221 @@
-Return-Path: <linux-kernel+bounces-888572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63253C3B396
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE34C3B3BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:34:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE937425157
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBB142644C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A964330326;
-	Thu,  6 Nov 2025 13:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB9F30C636;
+	Thu,  6 Nov 2025 13:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mXPWslVu"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLn4Xw07"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEB7329396
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD6B30EF98
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762435162; cv=none; b=TZoytXAXXP5hoG8VYUrvH5W833deovBSBqObb4plQwVdHEBQkU/LxXrN/ihsTSOAiWzDNpRg1wpDmvfYU50j2yYAl/GM75GM8sQY9dmtBMWlNtv/nFc9BpI8N41T+VJTvdOHRTL/h1E5xhflpSG5x+hl8e7L+boLeSbQLqVAg9I=
+	t=1762435219; cv=none; b=DLeXDzECCUNJzKmeHOluiwd3pQ+g7PcKhOSb7958S2mvjjrUWmzu+rXxueqekzxLs/Wc0uAfzsC/Qi1foWyIldqMFJuN0ZnpUXwz+4K6W7F9tbLHn1kaBWDuoefpfGqO8rT8bnBVSbQ52Ia8oHuhTZARXJL+TZBuU7e8T7y/n8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762435162; c=relaxed/simple;
-	bh=DeEJsga8X2O3ZMGaj85I+rgHyhM9Q10HpKR+YWn5rS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y2pS03D5sIQrcRUgumJNAKFmjvtbBN2i24wKF8vTw8T4+OPBuCvAJ699kcwWzqwxkZn+dGtzFb5NAptwiIVjo+KlJ6WILi+nf2Jv6Zo7KEW9MooSpMc3d3Nmvgq0nJ3XL8LW1YQaahWdNZFl8++slaoOz2VnDYgziIVN8xNTRFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mXPWslVu; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1762435219; c=relaxed/simple;
+	bh=tv3AVTVmIt2vysAhe5TEh7aE7ZY74H9lF+4YJG18wYQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=etnUd6LOZVJsqmE+Uln9a/q5gEthlXKf2CnARLzvSHOx0Zsodj2LGpZT7N9/2072aOlIIMDt9A2v5ZoX2vAJeiMXAgD6vqM9V/0xjKIpPLvxXJ41aijLynFyU9kNH6vTtJdZi+za0rDt3pQBTQPPwlGSdYcfW76wuwZgbmqpEPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLn4Xw07; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso1599079a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:19:20 -0800 (PST)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33db8fde85cso898165a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:20:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762435159; x=1763039959; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DeEJsga8X2O3ZMGaj85I+rgHyhM9Q10HpKR+YWn5rS8=;
-        b=mXPWslVuBQVVKJHqjsCQ90hn2UIUrTPyaL6lzw1gKGOqWAmH2gIiR3Y0kNYyy0hE3V
-         ueHEoPjqeKiElyWfcGkhqWZLXhDi82p4WX48Zl6fK+3pmwnaYks3RTfiMtUwB9hwXwEd
-         8O5jopzFO8RWZBwhUI/qlN372IwPFoujdgVFdqjAEXBZ+ZXMD2JySdbEUEL2ZTxO7x2p
-         yTfhv0UW4oNKrQ/eeuw77xm8pPjLb5aWb6/c/tS8OHg0n15paU/+z0JTlSFzRDK1yE4d
-         wJZJ5byPQJIVVreXQPBx5vOSaB/GEjfKJtgq7NbanZpn1rIHOn061OPJOZl7m2dBC22b
-         bzUA==
+        d=gmail.com; s=20230601; t=1762435217; x=1763040017; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W1r7+S0h8xTWpDvAe8XotCuljIjCSiWr7Nuoeij6IPg=;
+        b=YLn4Xw075bMpoI5fTw4rGpn5pgYiqzaG2Gmqf+XzXqxpnsB2WEnljobPxzpN2MsKuW
+         oSv1p4P3ssKToZ4Luy9vWTdbzxFIO+DnpORPVn+zfoIkbnlKuIMdoRqyLE4/VGxY4xPh
+         SN+c3mwrcBFC3u8tudjgBYX16sOm3OjKvDpEXPsDPW1TvyEU/gVKJxbG6YOt+BmGwfze
+         hl2gwgK8w/dzrsRDa1mE6Zgg/Je5CCifKXzYJRA0KBgTuiw3sycsacdaZQqoVF1M0+JO
+         KIXuujMng4+lbQGdwUQJngWmcIpr7bugf3SndOCupnKdoajnzJfo73FV3ILimzIjB1u+
+         HdtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762435159; x=1763039959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DeEJsga8X2O3ZMGaj85I+rgHyhM9Q10HpKR+YWn5rS8=;
-        b=gK04AXqji8hu+Vyc4v6sK+lCd97/TuoC30FI9IKsIU+TPmGpsE4UeYAbQbovwc+Bdi
-         39aKYH7J/eFcyyXNwpV9PfYqdJhUIE8ahJRfJEtsTNva3qVoWpQzKtd0QHzBr8qpMZ/w
-         knOwtre2cRyCfG5wxBWGJaRsDdaxrL8676PLNhdRGdca0FZm3zdSKLC66Rl4EmSogViO
-         hhtSRAjFUAJDjgQMArN03fG878dOulH1Lol0ma2iLJ2D8iBwLSUSaXlIzdeNbnbdWRzm
-         PrM/GxhwEPSW1DUHXi4lrL094gBADhpcMJZwgf3UpsqtZ0+TkEzqR052F1dBUwY6RmJn
-         m0dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPct41Wdok/RCMJ3jvne82bsjPAoM38QDQmhDFewB1LlyISuzuvvhd6ccBjDT6sAJGiTx1AUyjmNlAq48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG3/tHGLyOpETBiQTaiYP9GdzXpX/w6Yi8tHMhdB8zFqBOv7l1
-	dY82+CeNmOvd4OQ+BN7dSCDxd0HnKsOqB6/YjO2uDSjm2nvTMvp/OhtOUarb42OM0P5RBDCNUKe
-	As7Cb6q6tuD/Fyn7O/3j6+H6kjIz36sE=
-X-Gm-Gg: ASbGncvNJxZnvzU6tUJgtoyI+RPOjk/pmJLuVntL1z+GXRTSpOZa4vYaLT7Ew30uBZM
-	Rp4SivwM5Dt7lNZW6EpRLrUMLa1htRZd3VoBuSg1fj+fposbuNpn8fAISFl1vllqN7dUiqcs43b
-	5aJc6ofW9xCZgus5DOVBGkHuZE1PRAjEuk3qK0HdPr0/yMiBt61u6wIZPSOldjIwqYLt/9lACz2
-	WF6Iq/m8PGaW+VAo5ve2aP8telSAnko0K3oY2YWAqsxNEwF1hifCRL0BedL/Pn5DrBQvzM34cQ6
-	gceRmiwoCi8ALX72X97LTheqhA==
-X-Google-Smtp-Source: AGHT+IGxs+sian8Sm9s90Hy3ND6mTfZ+z8i6/WtEjUDe9ivLlS1ryoHlAEFf7rvbGl8JcDIgKKkxWD6QKWjAKZ8vedY=
-X-Received: by 2002:a05:6402:1d50:b0:640:c807:6af8 with SMTP id
- 4fb4d7f45d1cf-64105a582f8mr6791886a12.30.1762435158807; Thu, 06 Nov 2025
- 05:19:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762435217; x=1763040017;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W1r7+S0h8xTWpDvAe8XotCuljIjCSiWr7Nuoeij6IPg=;
+        b=O8JQFb4QCNmPppy4Hec3E0SabbT3avyuf32BZjI/NLnl+o693YVfbtgOAaj2JURNFl
+         TpMtPk5emVUsuD0Bnvl0NtChK0HVquyteM53dDIrsdig2SZeP8WfRoJrCK/NEkhFOUYh
+         GCTGXe5c4vf2kd6Lq7H513cnU8Eov3B6sZN2HmVm+jsddCEWrVDFA65e+H+khtIbDI8S
+         1YYWMRm3jZ8N8ZFC2BrwsR6iSTKPESlUWhWlDcBpOeYJ0Vf0Jy1QQTPnkIsB6xRjZGk/
+         fOYp7ezUOGN8adhE6h8eEbKCnZhizM2dehW/DPd/5CfP5pXD7gOzlHIfWDW9Qox1grci
+         94/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUhdh7NQna9+mlIEqAnFmuWhpROjTgmXYECQDh4SbSFpPjmNnTF58rpruaLeF6sDsaMo13WNTClRa6yKBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHQt9lwJmmpDDSeES9jDlhcS2TandhXFRZ1iEEis+oNqmPvkjd
+	3EuRRdcZUWQzc9MMVPV+cYk3HBMQZoy7XjBT7amsgzN8YxhCRmdx5OSjULwAf9dYkdk=
+X-Gm-Gg: ASbGnctq0Yd8IS7ITZKzDPd8jVq4Zby6xXYCvsTNsr5qbgxshdfbjejAArht8o+hEnn
+	zAH10BwYVQwJcXL/vhAwqDDqjX0DrtMZ1+3OFrIymT3CfK0a1NUvofPwG+7KBJsAx/u7Wq2Qdd/
+	0oWrJbe+IXQFWYrLH0Y4E3ka83jvYUGMnxOCyWYwqueB4SnIcZ+Jd7La/99USMArdD6eCiQCiik
+	Zv62enjxxqKSVL7rbtEGLGvu0XyZrAuaislTXp4bfellugaBq22HbS9Sdmh5XPI27oIGwQRKIp8
+	EUwjaQcGr2PHmS6tDKFDxCFCK02WdEn50FBv5j4jDmAtarC9hI+EthHU0JbAh29Bj73TKe7VErs
+	FHsQ11tmAyGQDd7U/S9DkkFoyLZ7nFoO037L4QSQXr4LGD6kIXfXhwpylD1KcXlhy9Iviwm3h5a
+	7oqSM0xAqzk4lZCzbM
+X-Google-Smtp-Source: AGHT+IFpaP6rgxqF8/pAWzB5X0NgBhsVtsp7Okxs1TLVp4Q0wHxl4Ka8sazuzSDOhtnd7I+ifYyDzg==
+X-Received: by 2002:a17:90b:1844:b0:32d:e780:e9d5 with SMTP id 98e67ed59e1d1-341a6db6c07mr7878274a91.22.1762435216708;
+        Thu, 06 Nov 2025 05:20:16 -0800 (PST)
+Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d3e0b0b2sm1914869a91.21.2025.11.06.05.20.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 05:20:15 -0800 (PST)
+From: Donglin Peng <dolinux.peng@gmail.com>
+To: ast@kernel.org
+Cc: eddyz87@gmail.com,
+	andrii.nakryiko@gmail.com,
+	zhangxiaoqin@xiaomi.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Donglin Peng <dolinux.peng@gmail.com>
+Subject: [PATCH v5 0/7] BTF performance optimizations with permutation and binary search
+Date: Thu,  6 Nov 2025 21:19:49 +0800
+Message-Id: <20251106131956.1222864-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
- <20251031174220.43458-1-mjguzik@gmail.com> <20251031174220.43458-2-mjguzik@gmail.com>
- <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
- <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local> <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
- <CAGudoHGXeg+eBsJRwZwr6snSzOBkWM0G+tVb23zCAhhuWR5UXQ@mail.gmail.com>
- <20251106111429.GCaQyDFWjbN8PjqxUW@fat_crate.local> <CAGudoHGWL6gLjmo3m6uCt9ueHL9rGCdw_jz9FLvgu_3=3A-BrA@mail.gmail.com>
- <20251106131030.GDaQyeRiAVoIh_23mg@fat_crate.local>
-In-Reply-To: <20251106131030.GDaQyeRiAVoIh_23mg@fat_crate.local>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 6 Nov 2025 14:19:06 +0100
-X-Gm-Features: AWmQ_bmyw0pNYHXADFAd6fmPUn7Fnskg_NMC8tjfXErLEc176QKVF8M0jsu-KY4
-Message-ID: <CAGudoHG1P61Nd7gMriCSF=g=gHxESPBPNmhHjtOQvG8HhpW0rg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
- wrong USER_PTR_MAX in modules
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	"the arch/x86 maintainers" <x86@kernel.org>, brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	tglx@linutronix.de, pfalcato@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 6, 2025 at 2:10=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrote=
-:
->
-> On Thu, Nov 06, 2025 at 01:06:06PM +0100, Mateusz Guzik wrote:
-> > I don't know what are you trying to say here.
-> >
-> > Are you protesting the notion that reducing cache footprint of the
-> > memory allocator is a good idea, or perhaps are you claiming these
-> > vars are too problematic to warrant the effort, or something else?
->
-> I'm saying all work which does not change the code in a trivial way shoul=
-d
-> have numbers to back it up. As in: "this change X shows this perf improve=
-ment
-> Y with the benchmark Z."
->
-> Because code uglification better have a fair justification.
->
-> Not just random "oh yeah, it would be better to have this." If the change=
-s are
-> trivial, sure. But the runtime const thing was added for a very narrow ca=
-se,
-> AFAIR, and it wasn't supposed to have a widespread use. And it ain't that
-> trivial, codewise.
->
-> IOW, no non-trivial changes which become a burden to maintainers without
-> a really good reason for them. This has been the guiding principle for
-> non-trivial perf optimizations in Linux. AFAIR at least.
->
-> But hey, what do I know...
+This patch series introduces significant performance improvements (~1785x) for BTF
+type lookups by implementing type permutation and binary search optimizations.
 
-Then, as I pointed out, you should be protesting the patching of
-USER_PTR_MAX as it came with no benchmarks and also resulted in a
-regression.
+## Overview
+
+The series addresses the performance limitations of linear search in large
+BTF instances by:
+
+1. Adding BTF permutation support - Allows rearranging BTF types
+2. Implementing binary search optimization - Dramatically improves lookup
+   performance for sorted BTF types
+
+## Key Changes
+
+### Patch 1: libbpf: Extract BTF type remapping logic into helper function
+- Refactors existing code to eliminate duplication
+- Improves modularity and maintainability
+- Prepares foundation for permutation functionality
+
+### Patch 2: libbpf: Add BTF permutation support for type reordering
+- Introduces `btf__permute()` API for in-place type rearrangement
+- Handles both main BTF and extension data
+- Maintains type reference consistency after permutation
+
+### Patch 3: libbpf: Optimize type lookup with binary search for sorted BTF
+- Implements binary search algorithm for sorted BTF instances
+- Maintains linear search fallback for compatibility
+
+### Patch 4: libbpf: Implement lazy sorting validation for binary search optimization
+- Adds on-demand sorting verification
+- Caches results for efficient repeated lookups
+
+### Patch 5: btf: Optimize type lookup with binary search
+- Ports binary search optimization to kernel-side BTF implementation
+- Maintains full backward compatibility
+
+### Patch 6: btf: Add lazy sorting validation for binary search
+- Implements kernel-side lazy sorting detection
+- Mirrors user-space implementation for consistency
+
+### Patch 7: selftests/bpf: Add test cases for btf__permute functionality
+- Validates both base BTF and split BTF scenarios
+
+## Performance Impact Analysis
+
+Repo: https://github.com/pengdonglin137/btf_sort_test
+
+### 1. Sorting Validation Overhead
+Test Environment: Local KVM virtual machine
+Results:
+- Total BTF types: 143,467
+- Sorting validation time: 1.451 ms
+
+*Note: This represents the maximum observed overhead during initial BTF loading.*
+
+### 2. Lookup Performance Comparison
+Test Case: Locate all 58,718 named types in vmlinux BTF
+Methodology:
+./vmtest.sh -- ./test_progs -t btf_permute/perf -v
+
+Results:
+| Condition          | Lookup Time | Improvement  |
+|--------------------|-------------|--------------|
+| Unsorted (Linear)  | 16,666.5 ms | Baseline     |
+| Sorted (Binary)    |      9.3 ms | 1785x faster |
+
+Analysis:
+The binary search implementation reduces lookup time from 16.7 seconds to 9.3 milliseconds,
+achieving a **1785x** speedup for large-scale type queries.
+
+## Changelog
+v5:
+- Refactor binary search implementation for improved efficiency
+  (Thanks to Andrii and Eduard)
+- Extend btf__permute interface with 'ids_sz' parameter to support
+  type dropping feature (suggested by Andrii). Plan subsequent reimplementation of
+  id_map version for comparative analysis with current sequence interface
+- Add comprehensive test coverage for type dropping functionality
+- Enhance function comment clarity and accuracy
+
+v4:
+https://lore.kernel.org/all/20251104134033.344807-1-dolinux.peng@gmail.com/
+- Abstracted btf_dedup_remap_types logic into a helper function (suggested by Eduard).
+- Removed btf_sort.c and implemented sorting separately for libbpf and kernel (suggested by Andrii).
+- Added test cases for both base BTF and split BTF scenarios (suggested by Eduard).
+- Added validation for name-only sorting of types (suggested by Andrii)
+- Refactored btf__permute implementation to reduce complexity (suggested by Andrii)
+- Add doc comments for btf__permute (suggested by Andrii)
+
+v3:
+https://lore.kernel.org/all/20251027135423.3098490-1-dolinux.peng@gmail.com/
+- Remove sorting logic from libbpf and provide a generic btf__permute() interface (suggested
+  by Andrii)
+- Omitted the search direction patch to avoid conflicts with base BTF (suggested by Eduard).
+- Include btf_sort.c directly in btf.c to reduce function call overhead
+
+v2:
+https://lore.kernel.org/all/20251020093941.548058-1-dolinux.peng@gmail.com/
+- Moved sorting to the build phase to reduce overhead (suggested by Alexei).
+- Integrated sorting into btf_dedup_compact_and_sort_types (suggested by Eduard).
+- Added sorting checks during BTF parsing.
+- Consolidated common logic into btf_sort.c for sharing (suggested by Alan).
+
+v1:
+https://lore.kernel.org/all/20251013131537.1927035-1-dolinux.peng@gmail.com/
+
+Donglin Peng (7):
+  libbpf: Extract BTF type remapping logic into helper function
+  libbpf: Add BTF permutation support for type reordering
+  libbpf: Optimize type lookup with binary search for sorted BTF
+  libbpf: Implement lazy sorting validation for binary search
+    optimization
+  btf: Optimize type lookup with binary search
+  btf: Add lazy sorting validation for binary search
+  selftests/bpf: Add test cases for btf__permute functionality
+
+ kernel/bpf/btf.c                              | 181 ++++++-
+ tools/lib/bpf/btf.c                           | 449 +++++++++++++++---
+ tools/lib/bpf/btf.h                           |  31 ++
+ tools/lib/bpf/libbpf.map                      |   1 +
+ .../selftests/bpf/prog_tests/btf_permute.c    | 279 +++++++++++
+ 5 files changed, 878 insertions(+), 63 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/btf_permute.c
+
+-- 
+2.34.1
+
 
