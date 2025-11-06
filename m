@@ -1,142 +1,162 @@
-Return-Path: <linux-kernel+bounces-887826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853F4C392D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:35:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89B1C392E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EDED3B5C8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2669D1A20509
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2802D876C;
-	Thu,  6 Nov 2025 05:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5312D94BA;
+	Thu,  6 Nov 2025 05:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E81LWkWL"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="QtcLfTc/"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19E812B94
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB02E2D5A07;
+	Thu,  6 Nov 2025 05:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762407320; cv=none; b=TLH6BqEHNx83IdtaVbVtxdxn/LHcbk41Pp8ad0su+5Ql7MPQt+m3sPcJEv2PWw3HVrDp2AW7EPOZZ3gFyb80RpNsjXvGy7tkOT8Bpi1REGgHE/4c2gdg6On7c3shN6KfaVVCR82134zpXuGZHUTx0+e6N7iNpfonwOZIPtVkAEM=
+	t=1762407604; cv=none; b=KQLwXNL36sI1tTqkIOG7VzwL5eKjn+kNX9A5RDgBeJbUHijzNTACBNulqV0OHtqqcPFBQXYFw1GYkdA8Lhfvz6Ucf9AYUwQTrfweEFX3lRdTMV+u2MUmFO6qaFk8DpjlfG0v0qzVL2rMqDsy9xn4iL/bgCiGdMFXSZbnn0PzRuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762407320; c=relaxed/simple;
-	bh=jW8Ecmr5jd9+ijYWXvVMEEtpHOAriPwFDiD3dWIebtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IQUR/WO+8rc1eWI2QK5KqFUcF2iKxNZwEcGTuX+B8OQtu8BjZl9YFbPrql/04lRfeXyOCvlusSgi1nJZ7WyY+AS9x4h5NriSG+go3RLiaEzEb1oLUC0B//4whON5ZCgpaxiH8S8vwryBeoRN0TFmgPgpVMng6CiQ+OMPqVFZ2E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E81LWkWL; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7af603c06easo712456b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 21:35:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762407318; x=1763012118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xqu+odkC5y2EUQD3P72UD8nqz7ztmWCfwzT6Wx3nK2g=;
-        b=E81LWkWLvL/I8cJ/R/PgetxwBlzhMuyDLiFT8Q1Ph20irxQUVXuwc+pEsUuQy+p53t
-         Qtz04OzhDE7HEsTAj6edqOgDRxU9caPzs5omrkH+maLrowcY7Di+ZLyyQnSKBY7RIhS5
-         u9BAxoAa8FFxzaxghsAbcTyZ5RfXvoalgMFu73Buq2m70SqakCtn7M9FhJc7Tcd96hjv
-         zx/iiVYlNHkgZ52L3kFdnwX80mz3n1RPpQQYaiYy1IvWyqSoIyV8RGfISvmx9jf/DAlq
-         oi7omQkx2WSiBIkpRb3IhedztVF32Gcw1eAlfVAqTiY6JbpM1Q5Za8PP4MjftM5WNNxE
-         GcTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762407318; x=1763012118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xqu+odkC5y2EUQD3P72UD8nqz7ztmWCfwzT6Wx3nK2g=;
-        b=wY7kzsGx8vwvMEL3Sb04J+C4PliTKlgshXa1k+NkSB8OyqntU6E8B52yFFMBo0a7Zv
-         +d2GTXk+Bjc9dQkb1ih5zun9Ab+M2egszBamaF9YtoOjngVTG7TGr2vkvutuEMEKnj8I
-         JdQmiMkYwMsbge7bwWf2glXTyADW3kxr7NVjv76ZGc91qOB/gTBQajITZ4rQPM0p6Z1f
-         3eVCzJBLb8NbwgQj5e1aKAyyfSu0wTRiS69U5KMyElrSK0j8ezlQtPz+LjBzDIupgmyo
-         o8nD0f7PFeOa/txB99kkjaoB4KrVoIzxeNJ3Vtz8TxytEZ9MbGBFIVccST9dgaXYlEB1
-         Cxtw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0BTuHc1Y/qPgl2QwoHPv81WHN3Ek93ynQHK979v8QYMv0OQAZg/ZkMiDBzC9J+ECVlk+2z1aiL0ujrLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGW4yLSeMqoRM311+YLXQ+zBv5+ute41gcMX6qiNY8EkDjyTSG
-	YLE4mqS5yn4G/3Lnpob2UKrB8n7+ky5Bd3RmFAGgx7P/oCaFYL8NAApo
-X-Gm-Gg: ASbGncvsFwKr9AdCTKRIX0kC9curlnBds7xf5iTggvVWfUYDL60ylckkW6BvsgPYCpt
-	BKYPD5LTcGwdBwZM6wFpz9LYbvStaqstW5G+7cnZtJpW14Py+DRjVRRdVUA82+4sB2vFEq1PKl9
-	oMtbjzXb1ArvH0gncKy5mG5m8kqnRQMHQYhXtt7Mp5VwcpJOdet2Oc4H89L5EdtoA45P1vG+Syb
-	VRHYLBgMhmxHyEWf/+2uVblwdv1R0ext834Q29+L5758TEPUuNfbIkMB86DPkYw3SFBS//FZHgX
-	Qq+ZsKNr/YBcmHRjRLLheD4hJf2J8fcsjE14S0w2VHSpj0H64U8YqU9ZUBLdUiZYdZGZ/W7YU3N
-	/zL3sdhrQRjeOva5himlnfO1dP0od2kA6mMTbL0DGl23ArD6QmCYV4jAksUbSikSK1kOGAMwn9L
-	S6K7drxKLuuYHPNUJcLa7C
-X-Google-Smtp-Source: AGHT+IHdEFv9Zor3bc4Bu4OwuhNr0f57kycevNnexdIDViJx433B1mm7bsY0xFtLkvh/PAGC6U94nQ==
-X-Received: by 2002:a05:6a00:1818:b0:7a9:7887:f0fa with SMTP id d2e1a72fcca58-7af6f5e1aebmr2587605b3a.1.1762407317929;
-        Wed, 05 Nov 2025 21:35:17 -0800 (PST)
-Received: from [192.168.4.196] ([73.222.117.172])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af82af1907sm1290495b3a.62.2025.11.05.21.35.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 21:35:17 -0800 (PST)
-Message-ID: <c704e7d9-5bc9-43e6-98cf-d28c592b0f3b@gmail.com>
-Date: Wed, 5 Nov 2025 21:35:14 -0800
+	s=arc-20240116; t=1762407604; c=relaxed/simple;
+	bh=I9IGPVE+YBI/dRlj6+eZuJWgl/DvSxlpz5FiBKVomuM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXALPhqSXmWPZ6Z1/FyNf7ZbT09vJOzBkn/aBSHS4V+CFw7juWEjBd7tYw26BGpApf6eI4mLzsl4lrc7cOGNGponP5X+RCuaErNov7fYfebADmQXoISwch7scSSCOhouucNfTMv5iA3RUDm2DNnNaFvYtPgkn19gTIEsYwGXDOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=QtcLfTc/; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762407514;
+	bh=P1Rz7vX4LUWb0KmLFM3Q/aK5/FfNA1LnBQcP6+5neyY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=QtcLfTc/E1qrc5LEdEIAjAU1o6kjEqxYhbxTDsnXEiAHd2/HTs+bUf6Xi2PBXywbw
+	 lC+r5MKSRuBozC9alCktQ6v+eMxiHFdAb77XhPhUxDyRQe5SWNZipstuHBu46izRVZ
+	 UMQ98xrvckxrNT52sD5Jf2pmFGbJd/LgM5SaRmOY=
+X-QQ-mid: zesmtpgz7t1762407512t3ee89d79
+X-QQ-Originating-IP: 3VST9Ej0v63tRCSDrHmfzPvPOG/iqybQz5oibi7AIA8=
+Received: from = ( [183.48.244.176])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 06 Nov 2025 13:38:30 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8810434806403676206
+EX-QQ-RecipientCnt: 10
+Date: Thu, 6 Nov 2025 13:38:30 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH] i2c: spacemit: fix detect issue
+Message-ID: <0E2B2679F0650AE1+aQw0VgKNbcFqDH33@kernel.org>
+References: <20251103-fix-k1-detect-failure-v1-1-bb07a8d7de7c@linux.spacemit.com>
+ <aQvTMM0S16gOdiAN@aurel32.net>
+ <12878F9DA586AA19+aQv0bKwLTzw_kJOq@kernel.org>
+ <aQwzYrmv5TAIuqTh@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-To: Leon Huang Fu <leon.huangfu@shopee.com>, shakeel.butt@linux.dev
-Cc: akpm@linux-foundation.org, cgroups@vger.kernel.org, corbet@lwn.net,
- hannes@cmpxchg.org, jack@suse.cz, joel.granados@kernel.org,
- kyle.meyer@hpe.com, lance.yang@linux.dev, laoar.shao@gmail.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- mclapinski@google.com, mhocko@kernel.org, muchun.song@linux.dev,
- roman.gushchin@linux.dev, yosry.ahmed@linux.dev
-References: <6kh6hle2xp75hrtikasequ7qvfyginz7pyttltx6pkli26iir5@oqjmglatjg22>
- <20251106033045.41607-1-leon.huangfu@shopee.com>
-Content-Language: en-US
-From: JP Kobryn <inwardvessel@gmail.com>
-In-Reply-To: <20251106033045.41607-1-leon.huangfu@shopee.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQwzYrmv5TAIuqTh@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: M8JnMGwRo1mQ/DUTij+F6rLmMw5PkZZKwrJ1NOFPlZPP9FxgJS6cuZKf
+	aSUqtmnEk1MOzt087podP1fmhCXAu1SzJM3wFcz5Zk0Bn/LNBVRWl6E5Xbc7W8I3J0jG2pU
+	CFj2i+SVqOFLJBiQjyjyZgeRxN+DA8PLFPQtM07d+LFpsUqfzQWmpHFOBY+w89rNvBJaC8a
+	xPyNcO27CskSM7y0PN1MIIYeiick8WD7GlEgkRaGZ45DuE4hc9MLQXcY1qBJmNWKg6DcNSH
+	P+KatW4iLof/sQBs0VCX0jY22GHZUGc+Hjv87O82iIpugNwkTWw5G/Vn+ql2IeIK8eAbxO1
+	zgSV6EWtvXAphULcR4+TxmcCye88oepdDgwbon00UepVuVUQMug/cfKMm3/WICIe/8cMqkg
+	whD6cIcZ+Et0eswC37cJdzuFb4y6/0zyAMQ8L2jElQhTvp16+0OF9r4ra62Orlt25qcX98A
+	okGjPvOxcB6/mCRx4b2pt9HQm2ALv50SwtsoemVjNOrPClBY2LsG6ty/Z/elh4apXlz7H50
+	GpS0jjV+eqAri/o2GFMqZOpvJ04TOEmkf47OYhlKMzZIWEY00iI45KEFc7ABczA1Y3mYub1
+	ZBe5kLOKl/1c/fApbHK1RL2wVonTHLq8Xq2y5UuqOO4GMfUs8m2/OU6ifdr9B1qMfU3kZ9o
+	MFC2J6OBQ7am2ATXl6XUcFLgE3qYyuEzOejsNDwnol9QVsDO/8bazsdvDA2OBD7Dkk7dMFM
+	KRgJcIwUCRipoWx/HHdu7wL67NL5SjAMzGnVDDW8esqnLU0VPgv8wnfGYGuxYHU5TfXyi/T
+	/nfVhUS0TawLPTd9y5fQbCMXAfTPASZEfcjKOJ0WQby6M1fOVlzrEoFw38AcjvxBR0hmzF+
+	CKeN37R1NK87Y9HbnZmx1wFYuorNQ/qUNcBWKFmDaiudVy/9oGF2KLnYVqpbL6QAv/GGezm
+	tVrEJEsS+d/6frQt3i9nLKXOX6a3k1018VPiCF6dxUTEI7nHHAujranXDqmxMHleRyfWy1U
+	tqNQZV2YfS1nmcnoIh2zdfBwmOmkE8k0y9mOvuGpHp9nAmuU4wk4HArVrPOX7UV61mgp3ct
+	gGROr8bFGihDgSQkHQJrwY=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On 11/5/25 7:30 PM, Leon Huang Fu wrote:
-> On Thu, Nov 6, 2025 at 9:19 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
->>
->> +Yosry, JP
->>
->> On Wed, Nov 05, 2025 at 03:49:16PM +0800, Leon Huang Fu wrote:
->>> On high-core count systems, memory cgroup statistics can become stale
->>> due to per-CPU caching and deferred aggregation. Monitoring tools and
->>> management applications sometimes need guaranteed up-to-date statistics
->>> at specific points in time to make accurate decisions.
->>
->> Can you explain a bit more on your environment where you are seeing
->> stale stats? More specifically, how often the management applications
->> are reading the memcg stats and if these applications are reading memcg
->> stats for each nodes of the cgroup tree.
->>
->> We force flush all the memcg stats at root level every 2 seconds but it
->> seems like that is not enough for your case. I am fine with an explicit
->> way for users to flush the memcg stats. In that way only users who want
->> to has to pay for the flush cost.
->>
+On Thu, Nov 06, 2025 at 06:34:26AM +0100, Aurelien Jarno wrote:
+> Hi,
 > 
-> Thanks for the feedback. I encountered this issue while running the LTP
-> memcontrol02 test case [1] on a 256-core server with the 6.6.y kernel on XFS,
-> where it consistently failed.
+> On 2025-11-06 09:05, Troy Mitchell wrote:
+> > On Wed, Nov 05, 2025 at 11:44:00PM +0100, Aurelien Jarno wrote:
+> > > Hi,
+> > > 
+> > > On 2025-11-03 15:06, Troy Mitchell wrote:
+> > [...]
+> > > >  	if (i2c->status & (SPACEMIT_SR_BED | SPACEMIT_SR_ALD)) {
+> > > >  		spacemit_i2c_reset(i2c);
+> > > > -		return -EAGAIN;
+> > > > +		if (i2c->status & SPACEMIT_SR_ALD)
+> > > > +			return -EAGAIN;
+> > > >  	}
+> > > 
+> > > This makes the resulting code, while correct, complex to understand as 
+> > > it is now two really different errors, as you explained well in the 
+> > > commit message.
+> > > 
+> > > I therefore suggest to organize the code as:
+> > > 
+> > > 	/* Arbitration Loss Detected */
+> > > 	if (i2c->status & SPACEMIT_SR_ALD) {
+> > > 		spacemit_i2c_reset(i2c);
+> > > 		return -EAGAIN;
+> > > 	}
+> > > 
+> > > 	/* Bus Error No ACK/NAK */
+> > > 	if (i2c->status & SPACEMIT_SR_BED) {
+> > > 		spacemit_i2c_reset(i2c);
+> > > 	}
+> > Thanks. I'll fix it in the next version.
+> > > 
+> > > 
+> > > >  	return i2c->status & SPACEMIT_SR_ACKNAK ? -ENXIO : -EIO;
+> > > > @@ -491,6 +492,8 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
+> > > >  
+> > > >  	spacemit_i2c_init(i2c);
+> > > >  
+> > > > +	spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK);
+> > > > +
+> > > 
+> > > This sounds good to start the transfer with a clean interrupt state. I 
+> > > just wonder if it should be moved to spacemit_i2c_init(), ie where the 
+> > > corresponding interrupts are enabled.
+> > Uh, We can move it actually. But is it essentail?
 > 
-> I was aware that Yosry had improved the memory statistics refresh mechanism
-> in "mm: memcg: subtree stats flushing and thresholds" [2], so I attempted to
-> backport that patchset to 6.6.y [3]. However, even on the 6.15.0-061500-generic
-> kernel with those improvements, the test still fails intermittently on XFS.
+> For me ensuring that the interrupt status is in a clean state after 
+> enabling the interrupt is part of the initialization.
+Yes, I agree that.
+> Furthermore if 
+> spacemit_i2c_init() has to be called from another place, it's very 
+> likely that it's also needed to get interrupt status in a clean state.
+Why we need to call init() in other place?
+Could you give me a cese?
+
+                    - Troy
+> 
+> Regards
+> Aurelien
+> 
+> -- 
+> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+> aurelien@aurel32.net                     http://aurel32.net
 > 
 
-I'm not against this change, but it might be worth testing on a 6.16 or
-later kernel. There were some changes that could affect your
-measurements. One is that flushing was isolated to individual subsystems
-[0] and the other is that updating stats became lockless [1].
-
-[0] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/kernel/cgroup/rstat.c?h=v6.18-rc4&id=5da3bfa029d6809e192d112f39fca4dbe0137aaf
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/kernel/cgroup/rstat.c?h=v6.18-rc4&id=36df6e3dbd7e7b074e55fec080012184e2fa3a46
 
