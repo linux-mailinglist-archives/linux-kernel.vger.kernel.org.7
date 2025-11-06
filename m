@@ -1,105 +1,141 @@
-Return-Path: <linux-kernel+bounces-888287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4A8C3A67D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:57:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979C8C3A695
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AF9F501767
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:52:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74B30502184
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0F42EDD4D;
-	Thu,  6 Nov 2025 10:51:52 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029952EFDA4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F79D2E8E09;
+	Thu,  6 Nov 2025 10:51:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76CA30C356;
+	Thu,  6 Nov 2025 10:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762426312; cv=none; b=QWsx7JJ0SSOG0C11HcnT4HPQwSLsrmyyxc4rhtjZ8+F4r4q5ozJp0V4R2y0LB8Haoj6G4pcDljvoNwACn5mF4Joa/aDClD0rLBr0bVlZqgNxa28A2kJOnsMCS/9wEovzt29BQDfPw54IiiL4CWMMn5yxgqdLqNBk8G85nEBNTPc=
+	t=1762426316; cv=none; b=majU8GvOJryZixUwIEYXB5qF2x66llBbWkavSdssXTQKz0Tlq+mk0u/Y3r2z92/WCLBjcmxAjwQcghTfLD60H7/zGc7qPuWwxfgti8Z4U+KD+9+5U4KQ8cSCccSs6txmaHtFT+ahQr/F13CwX6fqhtY1fUvrcF2QerFTrrc7Y6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762426312; c=relaxed/simple;
-	bh=X3Kcq41e22aVvFcL+aCsb9T1Yc89cQd1pHhT/wWGrgE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HqblE/kCN2wZiXKAq2IwU1EiWny3APoXlT8jCeApb6iy5l6TnBrAmbzebJYTck0nMDduxxPrYc2EjYMgfYbFpknH9s2/5amHtK86O2ZIZafJPBwvIQSMT4rKk4O7GTaDxZGRbuDNYzBXLdwDQjszK6rlsKbc0D4ROVq92lRGgMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGxaS-00027b-CG; Thu, 06 Nov 2025 11:51:28 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGxaS-007LZm-0V;
-	Thu, 06 Nov 2025 11:51:28 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGxaS-000000004Pb-0Gcb;
-	Thu, 06 Nov 2025 11:51:28 +0100
-Message-ID: <9506997c56808cc9fd58fe0d384976421d6c9bfc.camel@pengutronix.de>
-Subject: Re: [PATCH v2 5/7] reset: eyeq: drop device_set_of_node_from_dev()
- done by parent
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: =?ISO-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir
- Kondratiev <vladimir.kondratiev@mobileye.com>, =?ISO-8859-1?Q?Gr=E9gory?=
- Clement	 <gregory.clement@bootlin.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,  Kishon Vijay Abraham
- I	 <kishon@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd	 <sboyd@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-clk@vger.kernel.org, =?ISO-8859-1?Q?Beno=EEt?= Monin	
- <benoit.monin@bootlin.com>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>,  Tawfik Bayouk
- <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Jerome Brunet	 <jbrunet@baylibre.com>
-Date: Thu, 06 Nov 2025 11:51:27 +0100
-In-Reply-To: <20251101-macb-phy-v2-5-c1519eef16d3@bootlin.com>
-References: <20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com>
-	 <20251101-macb-phy-v2-5-c1519eef16d3@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762426316; c=relaxed/simple;
+	bh=7/yXcDBWrPx8eFpLNq2UyvRDFcii55Di7HjBeaVPjxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m0xzybE/VHQsxNuXkbVaTvFFY8w4Oee6Csm8rq/K59FaSe7QB8AVaCoXBmy/pz96SffEpGM8Iv3YWjGwSxDoSs+W2HAz/IPo4NvEOW042SBq0MJ63UGCeQdWwn4G7DI5GXrvIeCJxHrTj1MCyLMzfxDWWIymmemjIkvtgjLl5Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20A081596;
+	Thu,  6 Nov 2025 02:51:45 -0800 (PST)
+Received: from [10.1.34.75] (unknown [10.1.34.75])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6866A3F63F;
+	Thu,  6 Nov 2025 02:51:46 -0800 (PST)
+Message-ID: <48a4ecb5-3412-4d3f-9e43-535f8bee505f@arm.com>
+Date: Thu, 6 Nov 2025 10:51:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
+To: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-8-kevin.brodsky@arm.com>
+ <87ms5050g0.ritesh.list@gmail.com>
+ <50d1b63a-88d7-4484-82c0-3bde96e3207d-agordeev@linux.ibm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <50d1b63a-88d7-4484-82c0-3bde96e3207d-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sa, 2025-11-01 at 09:53 +0100, Th=C3=A9o Lebrun wrote:
-> Our parent driver (clk-eyeq) now does the
-> 	device_set_of_node_from_dev(dev, dev->parent)
-> call through the newly introduced devm_auxiliary_device_create() helper.
->=20
-> Doing it again in the reset-eyeq probe would be redundant.
-> Drop both the WARN_ON() and the device_set_of_node_from_dev() call.
-> Also fix the following comment that talks about "our newfound OF node".
->=20
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On 05/11/2025 16:12, Alexander Gordeev wrote:
+> On Wed, Nov 05, 2025 at 02:19:03PM +0530, Ritesh Harjani wrote:
+>>> + * in_lazy_mmu_mode() can be used to check whether the lazy MMU mode is
+>>> + * currently enabled.
+>>>   */
+>>>  #ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>>>  static inline void lazy_mmu_mode_enable(void)
+>>>  {
+>>> -	arch_enter_lazy_mmu_mode();
+>>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>>> +
+>>> +	VM_WARN_ON_ONCE(state->nesting_level == U8_MAX);
+>>> +	/* enable() must not be called while paused */
+>>> +	VM_WARN_ON(state->nesting_level > 0 && !state->active);
+>>> +
+>>> +	if (state->nesting_level++ == 0) {
+>>> +		state->active = true;
+>>> +		arch_enter_lazy_mmu_mode();
+>>> +	}
+>>>  }
+>> Some architectures disables preemption in their
+>> arch_enter_lazy_mmu_mode(). So shouldn't the state->active = true should
+>> happen after arch_enter_lazy_mmu_mode() has disabled preemption()? i.e.
+> Do you have some scenario in mind that could cause an issue?
+> IOW, what could go wrong if the process is scheduled to another
+> CPU before preempt_disable() is called?
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+I'm not sure I understand the issue either.
 
-and
+>>   static inline void lazy_mmu_mode_enable(void)
+>>   {
+>>  -	arch_enter_lazy_mmu_mode();
+>>  +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>>  +
+>>  +	VM_WARN_ON_ONCE(state->nesting_level == U8_MAX);
+>>  +	/* enable() must not be called while paused */
+>>  +	VM_WARN_ON(state->nesting_level > 0 && !state->active);
+>>  +
+>>  +	if (state->nesting_level++ == 0) {
+>>  +		arch_enter_lazy_mmu_mode();
+>>  +		state->active = true;
+>>  +	}
+>>   }
+>>
+>> ... I think it make more sense to enable the state after the arch_**
+>> call right.
+> But then in_lazy_mmu_mode() would return false if called from
+> arch_enter_lazy_mmu_mode(). Not big problem, but still..
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+The ordering of nesting_level/active was the way you expected in v3, but
+the conclusion of the discussion with David H [1] is that it doesn't
+really matter so I simplified the ordering in v4 - the arch hooks
+shouldn't call in_lazy_mmu_mode() or inspect lazy_mmu_state.
+arch_enter()/arch_leave() shouldn't need it anyway since they're called
+once per outer section (not in nested sections). arch_flush() could
+potentially do something different when nested, but that seems unlikely.
 
-to be merged via the clk tree together with patch 3.
+- Kevin
 
-regards
-Philipp
+[1]
+https://lore.kernel.org/all/af4414b6-617c-4dc8-bddc-3ea00d1f6f3b@redhat.com/
+
 
