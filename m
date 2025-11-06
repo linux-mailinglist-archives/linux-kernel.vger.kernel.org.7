@@ -1,76 +1,92 @@
-Return-Path: <linux-kernel+bounces-888812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9702C3BFBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:16:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD76C3BFC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E7B562A35
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89225621D59
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4F0342C88;
-	Thu,  6 Nov 2025 15:08:36 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DDD8248B;
+	Thu,  6 Nov 2025 15:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NszMuadl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FC730101B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EF130101B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762441715; cv=none; b=fBqQ+BL7yxtQ6BYoLGUsI2qJQWVKiRT3GJOwD3FV6xRBYlWBJDpfTmBNSV5QTYY4pQtFCcc5/1KI4tePaNtqqD/cGzGuI+an/f0+bFZowxZVBwVJzfe9lbu7CYhEEE9x7axJrPNm/130sjdDZUM8rWPaFqgArmARs0iM7ONCZzE=
+	t=1762441724; cv=none; b=iMwrn37ZjPbXGH0lYh0iy1LBNmj8JD5WcRag+q4KqE4O02IeQqffLggk2ZdLkcFiXkX2zFYIcttkVbzlZTYW4UrZ5hsHdrc6/15tSh+C7mrmUMImD5IGGYpk5ja3rDfp4Di3XJOFHRXbz8abECoQRpvt1ypYWgy9tfGOi7Q5UuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762441715; c=relaxed/simple;
-	bh=Zld3DkMTs+vJ5Ts4TpMbY0eaRnKgv3f/ScNnAbIIwEU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Nbv2b2J2IDIGkzArWxEKRCwSdI1HZw7u9z/4eq6hBF19r1NE/wAdJAmFApM+X8JOcVsPYSnda3G9ONu7y7vAI2jtu6K1G2yjVQEJAFxlwsfV+pVJpnT6iRtvxvHRrWBwWVW4JWY7iEEXFvaxr9rXLjroqEKH3tweAaznqxpAQmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9487df8723aso39801739f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:08:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762441712; x=1763046512;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zld3DkMTs+vJ5Ts4TpMbY0eaRnKgv3f/ScNnAbIIwEU=;
-        b=SINClbEOnNOVaVXFU6XSlU2t/t5mVYANd7fDfnsKruQnAXhjmVGbEprzDtYrK3Jt1z
-         X7n8Bw/Xr2z5fSEC/mW7Nb+WlbDK2fASvR5IupgP8MaFKf5nHcIwu4Bb1irfvNukaOhg
-         CUrfvzGJKK8r+Mkp+7mG1czbPZmMMZhIo6uiV8mWWhdjdMuLidWhwjAq0OqCVwAyM+l7
-         Snv7z98L4mfRD1ZCwPF8ll2FlFMTPVdFksK1QNw7LG1MoNiAhZtQYKDSM6qJ7FbduEel
-         fpmRXgddWGD7EiqmoPQyx1QxNcpiV7T8mcdKyw98hPZK3cyF8HU+jPwAfzeh1eNdfTD1
-         19uQ==
-X-Gm-Message-State: AOJu0YwqYi4rQK7Zr0jh29nOsYzw5g8NirTjyYm63vZsAqZnmnZvvz42
-	pIFvu8OpiBfC3ELIAhNX7WLJI6U7N2BYzd1If+iyICWmjVZrQAGhrISktzEcMu9pYTu5Jt3wg1w
-	uE224kFi7NFxH+wQXRDoJBUDYU6L5Yt6v2fJ3GejIIc5vXkS6PS1I69KBs4k=
-X-Google-Smtp-Source: AGHT+IHhsqW1c9zYzJx2ZoTzNVe2NSyOx0rM6+UwZC/VimMGW4k9h5iGMzRRYVyU0mGxMIdfPO++dHl1kocZIeHHioVWHIQTANoE
+	s=arc-20240116; t=1762441724; c=relaxed/simple;
+	bh=rNAf3KxIFx4HCZ9jSGewhPICZXrRrFkkjUtvj8RezTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUWggi1jY2Jr1/Vm0UNYnNf54QP6SOZkay09DJQp7N8MtYhHjiM6rni6wDfwrUsXQjupbSme7ivuoEaYxKUlRMMRWEExa5GDnu+rRl4DipEo1zyWefFmnC2ASxXmyt8RaW19s4+6Sjy28jbnj7bcoIFOBzvJZcKKh7E6FvPfpDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NszMuadl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F5DC4CEFB;
+	Thu,  6 Nov 2025 15:08:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762441723;
+	bh=rNAf3KxIFx4HCZ9jSGewhPICZXrRrFkkjUtvj8RezTU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NszMuadl/ZZy2+zvi189zAvT2zXscp//Tvr3RZmiqo21rG/wZb1+bzPUshLId6UkO
+	 +3WXYbITD8p61t+9fEfJp07g/OUk2WzsM2ulblYugH4Prqgu74KnUq+CFXl2eD57tc
+	 2n6c0gCtaY9SLEdnAssKG//ubanrl2GRznN9QgMPW0cxJEh7+PRlTxdliK6eWRUQs3
+	 7jzHxSQGib5eTfKQuXI3lFkCyoL6TJ+A+szs9hZDDj6F6OTc9wYHtTRJqBvtOEtNY+
+	 cEq7iYevr66ToAABu9CWEjb7LjK7URmGE2XUZ7OATJDPgigm0IXfSfRjzH0owie4YT
+	 gRdfffFWX1qzw==
+Date: Thu, 6 Nov 2025 15:08:40 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH] regmap: sdw-mbq: Reorder regmap_mbq_context struct for
+ better packing
+Message-ID: <aQy5-DYrGLPCTxnG@finisterre.sirena.org.uk>
+References: <20251106145402.1077903-1-ckeepax@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:26c2:b0:93e:8bec:6a87 with SMTP id
- ca18e2360f4ac-94869cbfb0dmr1069016339f.1.1762441712477; Thu, 06 Nov 2025
- 07:08:32 -0800 (PST)
-Date: Thu, 06 Nov 2025 07:08:32 -0800
-In-Reply-To: <000000000000a4a7550611e234f5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690cb9f0.050a0220.3d0d33.0160.GAE@google.com>
-Subject: Forwarded: KASAN: slab-use-after-free Read in handle_tx (2) Inbox
-From: syzbot <syzbot+827272712bd6d12c79a4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f11U51Y5d4R4IR95"
+Content-Disposition: inline
+In-Reply-To: <20251106145402.1077903-1-ckeepax@opensource.cirrus.com>
+X-Cookie: If in doubt, mumble.
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
+--f11U51Y5d4R4IR95
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Subject: KASAN: slab-use-after-free Read in handle_tx (2) Inbox
-Author: viswanathiyyappan@gmail.com
+On Thu, Nov 06, 2025 at 02:54:02PM +0000, Charles Keepax wrote:
 
-#syz test
+> Reduce the packing by reordering the regmap_mbq_context structure.
+
+Surely increase/improve the packing?  Usually I'd expect a patch like
+this to quote some data showing the improvement (eg, pahole output or
+structure size).
+
+--f11U51Y5d4R4IR95
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkMufcACgkQJNaLcl1U
+h9C7Twf/Q7yI53UXZmHcssExZJXj58XG44JOQloLQ6SrJD8nGqnuzXrfm2MGOvZk
+T1zGwSLf0bpmE1q21/g6j1fWAoggQbchkpfIRheCq3Xbk4uz7Hqk2y8g2/V1XYQc
+wrAOOjrDuYLiX4QwspNXI8I9N2BmtBwL9zF/pYgokalR8hR7iY0YW+O7YJJxtYkJ
+ykqujXczfbu9mhx5F8xj4WfdowgT5zCosXfjg9GUFjKct1OPI5m9+8NYz/bWKTXt
+yQLIh7pnKHropIpvWPlTSVDQuVbcHmbr+a9cH5b3rQVirDYsRg1qwwINXRnbLXJX
+qc5PaDWt7Mq0JiktL1PjvDngrw4sSw==
+=wrxh
+-----END PGP SIGNATURE-----
+
+--f11U51Y5d4R4IR95--
 
