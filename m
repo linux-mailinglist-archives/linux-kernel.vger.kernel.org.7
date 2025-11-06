@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-888867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54935C3C256
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:46:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA355C3C1F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D53863B3149
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:41:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1222318804D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6ED2E0407;
-	Thu,  6 Nov 2025 15:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E8B311C19;
+	Thu,  6 Nov 2025 15:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxdYm7jM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROv2tQx6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288F529D295;
-	Thu,  6 Nov 2025 15:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E8430DEAC;
+	Thu,  6 Nov 2025 15:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762443646; cv=none; b=h9orXzjs4GIOLJcG5Ao+lFsbHMi+noiCnGa8JrsLyND7WHtDwJXohBFE7nJdfIsaLI7CuNTAdYD9YREi7BzUxC1+L6ZGtc5DF5g2xxzV46q4yL1rjm1NM8hSOu5wlA2tFIdH0kn3MglddppHXaD406BjjQcu9aiuzaLZXEMEZac=
+	t=1762443649; cv=none; b=o9SwnjftPe8h2vgdtZsa3PXvRom+yfCC06102GGuZN5n2WDJRd30XGE4Lenhg4l+Q3nEHMuQTuq+1aFjBTXJKMVWaWHbV9Llpgr+fkwpvrW+QFVAWxKxYZDAwO/l7dOGAgRSAOlOP68P0wX+7vuni98eB+9GZEyPhvJ6IS5Uii8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762443646; c=relaxed/simple;
-	bh=Y6N7IJM2Oj/jWNX8r/1XtlsxcJDtxIZrO+3M+nZOCMg=;
+	s=arc-20240116; t=1762443649; c=relaxed/simple;
+	bh=YGE4EOLmfH7vfh1pwP2cTRQBwZGH0RMMN2pj1n78lgw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=eDeKJx2Jl88JUOGPSKxcWDywxtdlG9LPqM2Bk3aDN04+RO9vSNcYH8GO+jlx9ZTTytRTpyHA8ghMC3KHE3rnMvcaoNpAbAJ1U0oioEssdZ0dSeR5VwgDVK9fzYamablGSQH/gSV7SvkDHblR0DVdlMOGkk4+QWDoJ9rpqw/ZvB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxdYm7jM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 068FEC116C6;
-	Thu,  6 Nov 2025 15:40:46 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=IQyAZ580XqLJ9N0hXEoREEKeeNPbT9sWEOgKs7YWVsc/vl4ZK2drfuovA3krnY5dQvqZpW9AjT1K57KMH8ISVmP/13qP7p8Qain9GDWvMS+hMfRcRtAV0F4i51VG2nJMzeg5m9F5CpruVPHiOMrMaBOfcJqXFFyJMz5u7bcXdVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROv2tQx6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D20C7C16AAE;
+	Thu,  6 Nov 2025 15:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762443646;
-	bh=Y6N7IJM2Oj/jWNX8r/1XtlsxcJDtxIZrO+3M+nZOCMg=;
+	s=k20201202; t=1762443648;
+	bh=YGE4EOLmfH7vfh1pwP2cTRQBwZGH0RMMN2pj1n78lgw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kxdYm7jMdIXfmP4x6akdKEi8P7cGzhI0Xf05xXw5KTwGZq0JWdHKmUOOscFqwrsdJ
-	 D6G8mO+akEHsVB9Ceg1ktwlwkWJxVxz/9ytbRqAJRgF7iS0NtN97HNyqIW4NH6lxeB
-	 t+GsfAFKjmCk+cva2NTfnXAePAY/4HzkI24lJUaVuCt/+bvvjz8/251OgNL/pKAWPc
-	 JnPQHfZeeDvt6biRTnrZYUAln+XYHcvGY0F3yo7JjeM9xkGs/0aFcP50hEsmkwL6K2
-	 NMHwk3mSAVQ9OliVrTzYNAdUlVy5yYKpgjULamUSVctMkDWnDcl/VXucY13m2UcK7b
-	 PxUuWWuqxQWWA==
+	b=ROv2tQx6Mlt4YnSeY34+q161YAdyCgPtadrzp/mGyI8WzQ/+6QlTGQMeuEdPZ7orN
+	 bFPxVX7usEIOkz1XQUvM+lESJKwkvNesEvo3EMOTof8dCnwytt0onXnKIy7q5CviGu
+	 sHNYqg7+g7vZ8YegRCW9r/dVp5FI31m4jbashwss3McQFkjrUKEjN5pUWuqke1gYyZ
+	 Txl3LkyQLG3nrLVKc2Llr2TuqmuPZxUNZAuwbe3TlQk1tS71Ar9gOfU3bNSiB7NjVz
+	 1YGqIkKH7+o2Ffokr0sHtgHKxrTo+iWX88JTkQFAUApr3fVab71dxYVc3eNQwwHusx
+	 VkXeC/m+QmPbQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D9F39EF947;
-	Thu,  6 Nov 2025 15:40:20 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE3B39EF947;
+	Thu,  6 Nov 2025 15:40:22 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] selftests/vsock: avoid false-positives when
- checking dmesg
+Subject: Re: [PATCH net] lan966x: Fix sleeping in atomic context
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176244361874.255671.14441717354801229577.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Nov 2025 15:40:18 +0000
-References: <20251105-vsock-vmtest-dmesg-fix-v2-1-1a042a14892c@meta.com>
-In-Reply-To: <20251105-vsock-vmtest-dmesg-fix-v2-1-1a042a14892c@meta.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: sgarzare@redhat.com, shuah@kernel.org, kuba@kernel.org,
- virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- bobbyeshleman@meta.com, horms@kernel.org
+ <176244362174.255671.6125982381201101043.git-patchwork-notify@kernel.org>
+Date: Thu, 06 Nov 2025 15:40:21 +0000
+References: <20251105074955.1766792-1-horatiu.vultur@microchip.com>
+In-Reply-To: <20251105074955.1766792-1-horatiu.vultur@microchip.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: UNGLinuxDriver@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 05 Nov 2025 07:59:19 -0800 you wrote:
-> From: Bobby Eshleman <bobbyeshleman@meta.com>
+On Wed, 5 Nov 2025 08:49:55 +0100 you wrote:
+> The following warning was seen when we try to connect using ssh to the device.
 > 
-> Sometimes VMs will have some intermittent dmesg warnings that are
-> unrelated to vsock. Change the dmesg parsing to filter on strings
-> containing 'vsock' to avoid false positive failures that are unrelated
-> to vsock. The downside is that it is possible for some vsock related
-> warnings to not contain the substring 'vsock', so those will be missed.
+> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:575
+> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 104, name: dropbear
+> preempt_count: 1, expected: 0
+> INFO: lockdep is turned off.
+> CPU: 0 UID: 0 PID: 104 Comm: dropbear Tainted: G        W           6.18.0-rc2-00399-g6f1ab1b109b9-dirty #530 NONE
+> Tainted: [W]=WARN
+> Hardware name: Generic DT based system
+> Call trace:
+>  unwind_backtrace from show_stack+0x10/0x14
+>  show_stack from dump_stack_lvl+0x7c/0xac
+>  dump_stack_lvl from __might_resched+0x16c/0x2b0
+>  __might_resched from __mutex_lock+0x64/0xd34
+>  __mutex_lock from mutex_lock_nested+0x1c/0x24
+>  mutex_lock_nested from lan966x_stats_get+0x5c/0x558
+>  lan966x_stats_get from dev_get_stats+0x40/0x43c
+>  dev_get_stats from dev_seq_printf_stats+0x3c/0x184
+>  dev_seq_printf_stats from dev_seq_show+0x10/0x30
+>  dev_seq_show from seq_read_iter+0x350/0x4ec
+>  seq_read_iter from seq_read+0xfc/0x194
+>  seq_read from proc_reg_read+0xac/0x100
+>  proc_reg_read from vfs_read+0xb0/0x2b0
+>  vfs_read from ksys_read+0x6c/0xec
+>  ksys_read from ret_fast_syscall+0x0/0x1c
+> Exception stack(0xf0b11fa8 to 0xf0b11ff0)
+> 1fa0:                   00000001 00001000 00000008 be9048d8 00001000 00000001
+> 1fc0: 00000001 00001000 00000008 00000003 be905920 0000001e 00000000 00000001
+> 1fe0: 0005404c be9048c0 00018684 b6ec2cd8
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] selftests/vsock: avoid false-positives when checking dmesg
-    https://git.kernel.org/netdev/net/c/3534e03e0ec2
+  - [net] lan966x: Fix sleeping in atomic context
+    https://git.kernel.org/netdev/net/c/0216721ce712
 
 You are awesome, thank you!
 -- 
