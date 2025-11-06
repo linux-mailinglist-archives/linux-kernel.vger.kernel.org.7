@@ -1,90 +1,187 @@
-Return-Path: <linux-kernel+bounces-889150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C39C3CDAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:31:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2747C3CDB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51827420F5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9AF73A480A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1075C34F46C;
-	Thu,  6 Nov 2025 17:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D722D34DCE1;
+	Thu,  6 Nov 2025 17:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgU6LJL0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="De37bFg5"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5966A34F248;
-	Thu,  6 Nov 2025 17:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F1B34DCE2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449958; cv=none; b=dwUzK/zeksmiXvGYZyQZLg0J1rERKK5Gp9SS9Jy6SCdkhcaLv3/QXPGu6zypQduvQVdLoXToxQUsPgwZHxI7oqobfrM0RstLB8aQ1Rt7ioZyUBmDCBNlCuQsvtrvG8ElLr4k7kwbtnndtYgFAuITk8PaQh6slUL7qL5miSvvVC0=
+	t=1762450037; cv=none; b=XlMzioUQfoB+UyJ8zdoOnYjf25YJymBQk4mJL5dOFP3PFhtlkIpcuOAFo61VcatRKO72gOaLTB/AsyF4eXxlKmnz55nkDnd68G+ar+EsT3GjIunhrUw0t++kjQt7dGwev1j/ppUqdtHL/DFvvAezx4ywMYUGtlIYdFhlgQeLso8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449958; c=relaxed/simple;
-	bh=ScwVdgvdng90WoLSpbFsZHNRiDkbdTNyqhdv18rYXuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KvxdYJaQsTeu2nUqTT79PLxmBdDD6MP7oBmjMTtXOu/3W7tuKh2ZXBsZuEC8f/AR3VqrtOMyM1Q/ps04c1BJiQwujTGxl85s2CgrwXEG2ufVTbV6LMilYdC6FhTvxxqj/cOuLFKCHoEcsU5vLBaI+Ezxr1CZr6Cf23vYpK/eSh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgU6LJL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FFDC4CEFB;
-	Thu,  6 Nov 2025 17:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762449957;
-	bh=ScwVdgvdng90WoLSpbFsZHNRiDkbdTNyqhdv18rYXuI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EgU6LJL0G2zSlzLPyZ3ReiCQaQvhcXD5AmFPX04imUz7VfL/5IC2ZJLmXHPAZdmp3
-	 gsVWUm8t28MMbb0QwKq1SXLEbM3MtLa/s4fLAnmJMWRjLYHXc+Hggp14crp49XD7uO
-	 nkYl6mSNF4IbhJhrB5XaqvYlCWK640HYgrP6F0GZcjU+gEqz82y95AYuxA8JT4qVjt
-	 kMTGYc2FST9p5Xtq3VRGUh+ZZeYV46Qp0unBEgPd76ByWsB3ofS6h6P6XO0z73MMKm
-	 MJnxU3gcg4I0HiJXe+oZ5KzGeugZvHQwjuiNxyTcT3xsayvVkRl79JZ9CQfaRvcBUr
-	 JnFu6RZaH3Wqw==
-Date: Thu, 6 Nov 2025 17:25:53 +0000
-From: Conor Dooley <conor@kernel.org>
-To: akemnade@kernel.org
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: mfd: twl: enable power button also
- for twl603x
-Message-ID: <20251106-smartly-backfield-e3aee602c162@spud>
-References: <20251106-twl6030-button-v4-0-fdf1aa6e1e9a@kernel.org>
- <20251106-twl6030-button-v4-1-fdf1aa6e1e9a@kernel.org>
+	s=arc-20240116; t=1762450037; c=relaxed/simple;
+	bh=E/de/IhKUA6FWGeDbVpUjdlEQCPj4LmdhwlxDbKUK0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t4rg9Vcb9b/fJE7ZIColu1ov4SPyXzjJKi2wVSXI/xl5YGmy2nadqy91O/DRSh/jrubf8x8LpgBDg6IEXqYxYn/dyP6Sp941ftJMYReFVItvPLUs4mtyS3nT99KwouHqKuxWNQDivN8PGGwN1/dHuVY0BbXY/sMyKUmuCAiTDog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=De37bFg5; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 91F4C4E41575;
+	Thu,  6 Nov 2025 17:27:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 61047606EE;
+	Thu,  6 Nov 2025 17:27:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AB9F711850A25;
+	Thu,  6 Nov 2025 18:27:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762450031; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=L7wB1lZ5txcUr4iAspNHzbN9ocWksvAKNiYdtfUQSRY=;
+	b=De37bFg5nXjHVt5PtG7igKZacMY7eZxOEeIM5ReagP9ltX/KcdCirfEBuW3CAOVV8PhAmr
+	re77BJT3MRK0nzrGQnUkUdGFtrgaAI7735n0cvZrUs7uu5PcAI2yAngvuHxGNqlRpLMNkE
+	3zKsBW8jR/R96vfe3eEJwMolUUEiOuaUW1sPTgO5tc4PwjVEJGR2ykuz20sTNoLnrgYf6v
+	Bav53813xZpuoYOq0ou4ahqhDC00KJM9PLpmyYobi5LZp09qadxPv0OQXaD0mfAOvhFtyS
+	vK0AdM1BiaoI4OlcdVznQQX7J/XEfb861ci2XvU1ag3nDYePjfhY9cME85qNwg==
+Date: Thu, 6 Nov 2025 18:27:08 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mbrugger@suse.com,
+ guillaume.gardet@arm.com, tiwai@suse.com, Lizhi Hou <lizhi.hou@amd.com>,
+ Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] PCI: of: Downgrade error message on missing of_root
+ node
+Message-ID: <20251106182708.03cfb6c6@bootlin.com>
+In-Reply-To: <aQy9C8315Gu5F5No@apocalypse>
+References: <955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com>
+	<20251106002345.GA1934302@bhelgaas>
+	<aQyApy8lcadd-1se@apocalypse>
+	<20251106131854.0f0aa8b7@bootlin.com>
+	<aQy9C8315Gu5F5No@apocalypse>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uECYSKdxnXD7ywxL"
-Content-Disposition: inline
-In-Reply-To: <20251106-twl6030-button-v4-1-fdf1aa6e1e9a@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Andrea,
 
---uECYSKdxnXD7ywxL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
++ CC Rob
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+On Thu, 6 Nov 2025 16:21:47 +0100
+Andrea della Porta <andrea.porta@suse.com> wrote:
 
---uECYSKdxnXD7ywxL
-Content-Type: application/pgp-signature; name="signature.asc"
+> Hi Herve,
+> 
+> On 13:18 Thu 06 Nov     , Herve Codina wrote:
+> > Hi, Andrea, Bjorn,
+> > 
+> > On Thu, 6 Nov 2025 12:04:07 +0100
+> > Andrea della Porta <andrea.porta@suse.com> wrote:
+> >   
+> > > [+cc Herve]
+> > > 
+> > > Hi Bjorn,
+> > > 
+> > > On 18:23 Wed 05 Nov     , Bjorn Helgaas wrote:  
+> > > > [+cc Lizhi]
+> > > > 
+> > > > On Wed, Nov 05, 2025 at 07:33:40PM +0100, Andrea della Porta wrote:    
+> > > > > When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error message
+> > > > > is generated if no 'of_root' node is defined.
+> > > > > 
+> > > > > On DT-based systems, this cannot happen as a root DT node is
+> > > > > always present. On ACPI-based systems, this is not a true error
+> > > > > because a DT is not used.
+> > > > > 
+> > > > > Downgrade the pr_err() to pr_info() and reword the message text
+> > > > > to be less context specific.    
+> > > > 
+> > > > of_pci_make_host_bridge_node() is called in the very generic
+> > > > pci_register_host_bridge() path.  Does that mean every boot of a
+> > > > kernel with CONFIG_PCI_DYNAMIC_OF_NODES on a non-DT system will see
+> > > > this message?    
+> > > 
+> > > This is the case, indeed. That's why downgrading to info seems sensible.
+> > >   
+> > > > 
+> > > > This message seems like something that will generate user questions.
+> > > > Or is this really an error, and we were supposed to have created
+> > > > of_root somewhere but it failed?  If so, I would expect a message
+> > > > where the of_root creation failed.    
+> > > 
+> > > Not really an error per se: on ACPI system we usually don't have DT, so
+> > > this message just warns you that there will be no pci nodes created on it.
+> > > Which, again, should be of no importance on ACPI.  
+> > 
+> > I my last understanding, all architecture (even x86) have the DT root node
+> > set. This node is empty on architectures that don't use DT to describe
+> > hardware at boot (ACPI for instance).  
+> 
+> This does not seem to be the case for all arch, see below.
+> 
+> > 
+> > This DT node is needed for PCI board that will be described by a DT overlay.
+> > LAN966x for instance.
+> > 
+> > On v6.18-rc1 kernel, I successfully used my LAN966x board on a ACPI system.
+> > This means that of_root DT node was present on my system.
+> >   
+> > > 
+> > > The only scenario in which this message is actually an error would be on
+> > > ACPI system that use DT as a complement to make runtime overlay work,  
+> > 
+> > It is an error also if you use a PCI board that needs PCI DT nodes
+> > (CONFIG_PCI_DYNAMIC_OF_NODES) Lan966x for instance.  
+> 
+> Yes, I was referring exactly to that.
+> 
+> >   
+> > > i.e. the overlay approach for RP1 on RPi5 with ACPI fw. AFAIK this fw is
+> > > more a PoC that something really widespread and currntly the overlay
+> > > approach is in stand-by anyway (meaning no one will use it unless some
+> > > major changes will be made to make it work). But there may be other
+> > > situations in which this scenario could arise, I'm thinking about Bootlin's
+> > > LAN966x driver which also uses runtime overlay to describe thw hw.
+> > > On ACPI system the root DT node is not created because unflatten_device_tree()
+> > > is not called.  
+> > 
+> > I am not so sure.
+> > My LAN966x board is working on a x86 ACPI system.  
+> 
+> Indeed it depends on the architecture. On x86 an empty DT node is created,
+> provided you have CONFIG_OF_EARLY_FLATTREE defined (which I guess you have,
+> even if it's not in default config).
 
------BEGIN PGP SIGNATURE-----
+Indeed, I have CONFIG_OF_EARLY_FLATTREE = y.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQzaIAAKCRB4tDGHoIJi
-0svcAQC/DuPcwBfhvpbkg+X4cYMYLcgFbzJYFdDoPCPVQaAQSAD/U/66saScGfgZ
-DoU9xtpqPUf0AVp8I5ufIgeyWQDSjgs=
-=yrc1
------END PGP SIGNATURE-----
+> 
+> On arm64, ACPI and DT are mutually exclusive, unless the DT is basically empty
+> (i.e. only root node and chosen node). The DT root node is not automatically
+> created if not provided at boot, though. This reinforces my idea of providing
+> the only root node DT on arm as well, but I'm not entirely sure about 
+> possible side effects.
+> 
 
---uECYSKdxnXD7ywxL--
+Isn't it possible to have the same kind of operations on ARM64 ACPI and on x86?
+
+In order to have CONFIG_PCI_DYNAMIC_OF_NODES working on ACPI, we need a DT
+node, even empty.
+
+ARM64 ACPI without an empty DT node means that no PCI boards using a DT
+description will work on this system.
+
+Best regards,
+Hervé
 
