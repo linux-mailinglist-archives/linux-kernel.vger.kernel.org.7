@@ -1,219 +1,231 @@
-Return-Path: <linux-kernel+bounces-888142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FCEC39F30
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:57:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B7CC39FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FE9C4F8FBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25CB423D5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEF62836A0;
-	Thu,  6 Nov 2025 09:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B0D30E854;
+	Thu,  6 Nov 2025 09:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0x/BQ3K";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="foejwH2X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="UniFuA9y";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="a6dyPszk"
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7433219A8A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422569; cv=none; b=Z6dRgq4TakqZ5GVfAHzaQBoJnEZ8/jfOKNCnHt8kzKhTFU2jKOtslEntEnZFBBqNVzthKsyhMtRTreJwmFJhqAj9vGrgpNoCC33/6o4tWbc7vnT2BZAbc48hNUzDIJnWiNwOtqLQ+cHMW57mZVeI5wkYLpFfhA+0T4cm6NvPSB8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422569; c=relaxed/simple;
-	bh=2sMhzj5ZSerndxu5LUketJQ9VpoNWNO3E0MuBLF1XRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=onUuaGmhMpSHqQS5dDYmNkvVUR6Nh0oHSiWE2aA6OTw6W3nhMp2uQgYqq+nY3ZvgwuR+QsBlxUVpMQrP3G9R8zFDdafCR1C+RMdqODygYHf2a77N5hcokDw90k/QpTXd5n5ygTCGdQd/sP/tVVNSQ6B3ebbRg178/oEp+VNGvl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0x/BQ3K; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=foejwH2X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762422566;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=97/v+8IzcwHBddy9YosW9MdJRIYiAAxaDT3Ms1fX0hI=;
-	b=F0x/BQ3KT1JnuYg7QLGSjzImBWE2ThsmU+s1N8VygJDY5wy0Ltkxw1ecAq9u9LcCnlY5l6
-	//JgNFz234nwLHZlzg2Md4QdoHbxCMVxkIkeCG7PlfbgVXWZcfDHH4MosmZjvB1nljRMRl
-	1b+Ae3arHyhisvPtsdnHMtqHZnV3fKY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-458-SpBHU_TxPMef3ZbYix-zwg-1; Thu, 06 Nov 2025 04:49:25 -0500
-X-MC-Unique: SpBHU_TxPMef3ZbYix-zwg-1
-X-Mimecast-MFC-AGG-ID: SpBHU_TxPMef3ZbYix-zwg_1762422564
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-429c5f1e9faso594843f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:49:25 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A7F2D24B3;
+	Thu,  6 Nov 2025 09:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.141.245
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762422623; cv=fail; b=uYrFX25sS4vnGGjkZwGVjoasuGE8XbYM6Y7PA4/Ye3Lp/6/cZA+5uT2aBHaSteokKYrsKCEXeKHZV7iZFL9xFdKKtURZAg4DYgGD5BjDoDSPcYvmNbFSme745R6VX6AfaqzOt9w3AfL1abAzbSpVTUSPcd7sviKtX+iw1Bv65QA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762422623; c=relaxed/simple;
+	bh=/1tUw3rWMyH86SU+qXlPidOsYdSfC+as0nVfQDaXSJk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kmoquZtb1AfqhWwXPQHPvE+IhqbchNE+x09tVwaOhTYk2L2GUCmz8FigdYmEQP5B5tsEb8mnff9MIteYy0L8G/gOVPBW1WvLO306BMf/BU8/v1FDSSspCSW8gwEoI43hbv+3/wxgVX6A+BJ+OMbDNKAC6TzqsnmCO3WYs/hriF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=UniFuA9y; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=a6dyPszk; arc=fail smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1762422620; x=1793958620;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=/1tUw3rWMyH86SU+qXlPidOsYdSfC+as0nVfQDaXSJk=;
+  b=UniFuA9yfqlblZiz8fyqX++LVJ1jE1HRYaYy/kfSJX9/TR60u12tGr9m
+   FDnKvqDjYunNR5FdS8GDWMzNeUMLvdzoJ4gYUA24nkSDJCLW8kLLTV9Dh
+   w+vwycDIunBmFDLqm/N8SmVD3trMfybaBAgEMKsMO4kBepW5CBvV/+HIB
+   CwBUErEL4tj/9BOXQ3NGPoA1NdVkzkhF7R9z6Yv+QBt3lYgvhjKHCAKS5
+   yrBCiPJukqYjNbNm1K+TH1LUd4QGXxp+aM5NPF8yIBXHT9RrkYoAjnItL
+   VcwIV1bGe0MZN7xv5pIg0L2Utw8/Hd54jLJH1lBvXPa1bDULNWseMEl26
+   Q==;
+X-CSE-ConnectionGUID: Di3CEQcDTaKO9rtOD04D0g==
+X-CSE-MsgGUID: vHLqIsIKTo6FkjAqwriHRg==
+X-IronPort-AV: E=Sophos;i="6.19,284,1754928000"; 
+   d="scan'208";a="134569218"
+Received: from mail-northcentralusazon11010068.outbound.protection.outlook.com (HELO CH1PR05CU001.outbound.protection.outlook.com) ([52.101.193.68])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Nov 2025 17:50:12 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H80ug1lbjjV3kdf4FGyQs/DBqoxR6Ij3gJ0VMijm5E2gJWngpUqJnnyMdupOd9KfXRtzhdyNNUg2cfu14GcmI3krqBcnNBkSNIXCIFnGoghKgvLDR7za3ly+JBbmOIOeGSiPT8EqC6U1Yg8H/Wdr/sdyMA9QADTUBy2tkYemYJbOSDKccC27oNHUyuckDFbEroLxTnJucIVDLv3iyj26Saxj7C1JAoVy2wbTREEXCMKThjwzPcD03PTNWoxPKD54l4DUFsks2KjTIZy//T5NV0F5h31E4z2i8fbyOhEFm4Z4/TOgmZhYciAWjbON2aNutsEnUTI4kTMDo3T0C0GVTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/1tUw3rWMyH86SU+qXlPidOsYdSfC+as0nVfQDaXSJk=;
+ b=yCyfezsruekLZxh1D2xuDsdxInR9iWiGXI70Lt2WfL3g5pObXcNT+L7EZWkGN/KxwB48VQh5cagqWV8AzeFKaWa7TB652qGAVZ44Ckb1hy0r2H6V/fuqasMBJMWIvrMyoquJBSIsjIEyeLudq9hxLuFHtiTem0gVlX77NGzObVrLTRUTcNDJ+iawnlANn4Y7kL5Dl1jSo48hrsxgpndXPV1Z4IYhWPxbp3uInzAmPVgdJkuayp3JFTS4rJS6CMc8/fUOZMxivZW9T1M6w46tO2vjrW4d3zyV+yeKK0SRKSbPY85GeNSlNdMykOgBZSPF807FgxLcgPZwyiqa7IUOaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762422564; x=1763027364; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=97/v+8IzcwHBddy9YosW9MdJRIYiAAxaDT3Ms1fX0hI=;
-        b=foejwH2Xm//K0A+CLgfmsWCH0eg6ePOAZoil5CN2qaTwtCC9SfFE+OqgPTDRxYzesx
-         BclzFSm9vEGCf1enhroYxQecezL+A/yL4FSrT7RFOhcMQ5lxxli8KTlPGxeO0jD2X/Ti
-         luwMcpmgPnpAELwZNWkbxV1ddQgKodkHeBKIhCH9HTi/mP4jhg0tihhBt/bn+lY/H/cN
-         t1jtELGAHlt0RggNSBnlvtp0yI4BKpYN6bXE+8pvehOsaMOQGMPLqVmBvHuV++n7psvM
-         g2I6WAMtfR2r4TC8SY/IRwiA3wAYyBlvg1ZXU+TS401EyMSBP1N+m0sE4YmZCJpVgGxN
-         lE0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762422564; x=1763027364;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=97/v+8IzcwHBddy9YosW9MdJRIYiAAxaDT3Ms1fX0hI=;
-        b=LRd2neXv1ZwjINXJWe0HQnYRnbw+BPDeN1hvai6UMsFnANED1pUeExCV4XDGrb3Jei
-         NNTk5cxgH+2y7nBX9TqzuUayXQmpa9yqyynZsCKGFy2KgxMmudk8ZpgN25NBjm8WXPyT
-         HoHq6dj3892I8HXT9tlWbDOdO6CetzIKDJkqGaHiI857VjLXDiDlbp2rzw3HbF6bjV27
-         FNUE/V0x2ihTL9/slumV2SEUnZBWfUVVxmSr6Ak0hhnZXWa27BRIV+rEnNoO4kcnnWsS
-         5+SLTKm7MCnuTVIMW8h1tVD4ShNH1/NLhi7dhbbA5ajwA8O3QEgAlOmk2+B0dvflPt+J
-         eQIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWB08JWfYg97a+xf+GzAJS0E4tKUD9fbXz9/4B4+h80LiRTnuQJJEHDo6XUby6ufO9qzpLX9FaYi/KHZ1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcHT1iKDqFDOF4bon7OQvHCwxWvZV4rJdxLP4La1Y3Hq9JXvHy
-	TZvsfG2jgsrsiAYxvMwua0PGJRy+jst51jzuX8La7kGDJMMDBTL3ros7jPGpEyZz+uYio+V+UQd
-	6XlVdAwnm9OeeRfKnTNX9kauIPvsyLJK+usiKeZ5VLYOVEGV3orSOp3FLHoF7LQGOaw==
-X-Gm-Gg: ASbGncvCfGsRPbGKU323ekNFsLUBfv7GwgYq1I92vcGSMkcIRUZciO0Pm0pZSagtpD1
-	gZdLfCWpjqXTpmmewYaL5251cRZ8w/0j5Kw3mxY+YoborHb8Uza3q0sxwmxhjNvrycJ9KJJxOse
-	NuTnZkzv8bRibeLPzuqw2syxc2Vlo+X2B+Cil/6zrVmlXnxJLqqY2yUqJ/dX0LK3SLo+zV26e0r
-	nnhihcQSy+KbvGI0jxjDSjLPqB/IAyvEPpknPjB8Lx+W1rftvzCxTy8IAWWJYjHoxO3iPh/4MNq
-	dTxWq9X0Fojj+0Dm2AIMcpQvTu1Lm72J4iif9tfXAQ7/NROzuuRDWM0UimIB4xtGbTTAIP5KzkH
-	vUOAzuB+RVWVTbVyttrfsucBk9HIF2g==
-X-Received: by 2002:a05:6000:310a:b0:429:c8f6:5873 with SMTP id ffacd0b85a97d-429e32edf7bmr6285264f8f.22.1762422564007;
-        Thu, 06 Nov 2025 01:49:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHL0R8EQ/PK5EAoW8oq2GeV1D9YmMWfZAWeWYzx+9WjjcHM87V/eC7FnOSgRGl6YpJ+tkE4pA==
-X-Received: by 2002:a05:6000:310a:b0:429:c8f6:5873 with SMTP id ffacd0b85a97d-429e32edf7bmr6285230f8f.22.1762422563539;
-        Thu, 06 Nov 2025 01:49:23 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.129.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb403854sm3942693f8f.5.2025.11.06.01.49.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 01:49:22 -0800 (PST)
-Date: Thu, 6 Nov 2025 10:49:20 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] sched/deadline: Add support to initialize and
- remove dl_server bandwidth
-Message-ID: <aQxvIBIwOCDDu60b@jlelli-thinkpadt14gen4.remote.csb>
-References: <20251029191111.167537-1-arighi@nvidia.com>
- <20251029191111.167537-5-arighi@nvidia.com>
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/1tUw3rWMyH86SU+qXlPidOsYdSfC+as0nVfQDaXSJk=;
+ b=a6dyPszkNESZ+KcJpUdu8zJjO87/X3EbF4GF5fvvnWjdsFWDbhae08OkbrzXnPZwlPrOurE/YNtJbSB8lxpxAOwMTwJfinKe2lD6SJkuYVjjkOoSd7Tju2Ea20PitO/ECCXhdro+JGT01pSaAOTif5YDuWLVfJnBLw0FiBkPViA=
+Received: from SA0PR04MB7418.namprd04.prod.outlook.com (2603:10b6:806:e7::18)
+ by BL0PR04MB6530.namprd04.prod.outlook.com (2603:10b6:208:1c3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 09:50:11 +0000
+Received: from SA0PR04MB7418.namprd04.prod.outlook.com
+ ([fe80::17f4:5aba:f655:afe9]) by SA0PR04MB7418.namprd04.prod.outlook.com
+ ([fe80::17f4:5aba:f655:afe9%3]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
+ 09:50:10 +0000
+From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To: "Darrick J. Wong" <djwong@kernel.org>, hch <hch@lst.de>
+CC: Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>, Dave Chinner
+	<david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>, Christian Brauner
+	<brauner@kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: fall back from direct to buffered I/O when stable writes are
+ required
+Thread-Topic: fall back from direct to buffered I/O when stable writes are
+ required
+Thread-Index:
+ AQHcSKPxSP/c6QxZZUWcGwHr2pcVwLTajPwAgAA2BwCAAJLJAIAA5a8AgAAxYoCAAA3QgIAEWfoAgAASvoCAAk+MAIAA8/EAgAB+dYCAAMrbAA==
+Date: Thu, 6 Nov 2025 09:50:10 +0000
+Message-ID: <9530fca4-418d-4415-b365-cad04a06449b@wdc.com>
+References: <aQNJ4iQ8vOiBQEW2@dread.disaster.area>
+ <20251030143324.GA31550@lst.de> <aQPyVtkvTg4W1nyz@dread.disaster.area>
+ <20251031130050.GA15719@lst.de> <aQTcb-0VtWLx6ghD@kbusch-mbp>
+ <20251031164701.GA27481@lst.de>
+ <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj>
+ <20251103122111.GA17600@lst.de> <20251104233824.GO196370@frogsfrogsfrogs>
+ <20251105141130.GB22325@lst.de> <20251105214407.GN196362@frogsfrogsfrogs>
+In-Reply-To: <20251105214407.GN196362@frogsfrogsfrogs>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA0PR04MB7418:EE_|BL0PR04MB6530:EE_
+x-ms-office365-filtering-correlation-id: da76491c-07a1-4731-2681-08de1d19e062
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|366016|1800799024|10070799003|7416014|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dHRzN3lJSXozdnBua29aWkc3ZTJ2MXBnd1g0TGg4QkdxeTVRbzVoanFUUWlL?=
+ =?utf-8?B?QXRFZTlwOHFEcmJBNEdrK2tpdkl1Q0JGeHRzc3NKVnZRYzRTNkhVUno4bDRR?=
+ =?utf-8?B?UXBNOU94ek4xekFLVlg5bnlmbWI2NW11b3pVbjdxY2FaaEJrOGlLN09PQU9Z?=
+ =?utf-8?B?d3VIdzBUK2EvS3FGNyt6UHYrOFlZMU1tS0xBaE81S2dTTnY3Nk5ldThJL3B1?=
+ =?utf-8?B?cUd3VFpEZ2xRVElGWnVNN2M1R2gwN01MSTEzQU8vdWxxdUY0YXlhc29mYUFo?=
+ =?utf-8?B?VGwrM3VMZVlubUpwNjlLbkNyakxNak5CTUptQU40bE5TUUU0R0QydUplaVN6?=
+ =?utf-8?B?OTJtS3lZWVphR0JFZEVaeFV0UEEwRVNwNDdKZGxPZUJwcTVUaUNmU0RnNm03?=
+ =?utf-8?B?dCtHUXZteWY5K1pwSnlncC9aR2pHMHBIYmdoUFJtU2IzbEdHOEQ3QmFTTS9Y?=
+ =?utf-8?B?VG5ONFBpMDdGSUovUG9NZkRIYnprTGVWZldpdlJuaTE5eE5pQjJHOWdVbGxi?=
+ =?utf-8?B?SGtieElkNjFrQ3JjejZYZnJWUGhoQ3hQdGFZZk9wOWFGSXNHUGQ2UHdnTHNK?=
+ =?utf-8?B?SmVKbXNvcnNUNVUxU0JJSnZOYnlrQ2FCenBKSXAybGNsMmphOWF3azF3RzJR?=
+ =?utf-8?B?V3VLWWxoSTdRRjVWMGVRUGV3QjYvNzdsTTZCNFRZVjBmUkNNdENITDJuS0Ra?=
+ =?utf-8?B?eXB5OU5SZU0zcUhETVdIZnpmM1IxRXEyMGpuNTVERFZIbzRjcEROQU80WCtu?=
+ =?utf-8?B?b1pmOUpIZVRjRC9GeURVV2JvVFZQTkR3Vy8vblJ5cU1admF5UGZpTk1XcWht?=
+ =?utf-8?B?MkEzVzV1L1R4VHVLNlMyZUlPNnFTS3VwVUpIQ2tFS01zUzhKRDNGNFB5NlVI?=
+ =?utf-8?B?ZEY2OSsrbHh4NHBtVmlCV24vSXlNbXUxN2xWZS9zOGZCL1ZkaWtjT2ZKZWM5?=
+ =?utf-8?B?dkJJK1hLcU5VS3lXOXh4aWs5ZEp3djhsWHNqNDNjbVdYNHhZK3RZdWRWQ0dr?=
+ =?utf-8?B?U3JzOWdVWTlodU9pMW10T0pDbkhLaHpWZHNpNGlla2EyQ0hUZkhJa29zaVQ5?=
+ =?utf-8?B?OUx5cnlRYVZVYW1wU0pEdUd3aWNRU1U3dC9JL3gzQ2c0NThnY2NxYm02S3N5?=
+ =?utf-8?B?K0pHZ0JIYUxBdVA3MEQ4SzEybXpYWTVpMzNzNjJtbHRVb20xVXF3eS9heFh2?=
+ =?utf-8?B?YWVTR1JHSFhjZmpMM0ZDTkhUakMwSUhxUnZjWkFNUC9FUm96Qm1YbUlKWWpo?=
+ =?utf-8?B?WFBMYWtRVFhCUWQyTHMydVRoUVRPQU82UHpVSVRXRnQ3a3MrUEtxRFR5SnB0?=
+ =?utf-8?B?ZU8yNWlmWXF2MnZMNHRPai93K2k3dzFRbVpPK1VGbmMvQko5Qjh0NGJ2cUhN?=
+ =?utf-8?B?ZkU0OGFTcXlLN09VSzloZ0dRSGlQYjlMTVZFVzNNWTNWSWdnN29aQjlsM0Vl?=
+ =?utf-8?B?UVhmek9hQW5xck5VMzBvbTdNUU5qcGw1aU1nbksrQkhGaTFTa2l2dGgxWkJi?=
+ =?utf-8?B?Y2JRaWtRZWZvdDlldmRMTXN5QnpOOUNqOElmejNTWG01NVR3U3FPQVlzdE0x?=
+ =?utf-8?B?bWYzdHF5aFk5blBqekdFdUt4am1PdlJsSHNkUERVNFVMSDJWYUJJbHo4SUsw?=
+ =?utf-8?B?Z3N2RWtBYlVtYkNNNHg0U0pvWlZ1cnVsbDR4djE0eFcxbXZCTi9Sc2dvZWVz?=
+ =?utf-8?B?WndIblRKVm1ERlBxM0VENmJyMmxsS3E1cC9uUHhLbm5nNm5MNFowWjI1Y29M?=
+ =?utf-8?B?SnV5U3FtaDkzNlNMWmVMSUFPQjF0SmhFTVFOYkRvdjFsaHlDTDQra1ZiU0NL?=
+ =?utf-8?B?TWhIRm9sVTFPSUdjZG8zOFM3V01zWjB2dHpBRXdtMS9wd29TY2orL0Y3cVBR?=
+ =?utf-8?B?YzNicFB2bGdtVTJXQmYrQXFqc3AxT1oxSkdZMXdkNVpuY0FwUUJwVFBxSGo1?=
+ =?utf-8?B?dmpZbFNPTDB4bW1FajIzSC9DUzZXbGdnK3E3bUMzR0NsS2M2MzhHRU1laXdl?=
+ =?utf-8?B?b2NQMHNPR0ltV0REOFpOMzFJRTM3UjJWVkl5TGYyV0x6SStNQUxTdURJSFRk?=
+ =?utf-8?Q?K27cNX?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR04MB7418.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(10070799003)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?THRQSEt1cjN6bTlBWklDckFtanlmT1BSRGtpcWdSb0dnazFGUWV1ZkwrdDBo?=
+ =?utf-8?B?dGw5Wld2WXJwNmhxSmpnZEdaUGFWZXJYejNPeHdYdmVTblRtd0MrUXdhVnRv?=
+ =?utf-8?B?OEpSTFZWZjc4VFZkaGxkbkxHTmNKRmc3MUx0RERLdDF6aW9KcmxxV0F3OGky?=
+ =?utf-8?B?RlJZdFdGQ0NsTkZXN3hoRXUvTERpMG8zcTlJeHhtRVB3Z2psOFIzRVNUc0ZK?=
+ =?utf-8?B?a3lrOG9wNWh2ZitPa25vWXM4b3VkZElJYkhZT1FSb3FIS3g1Si9ock1yc3pi?=
+ =?utf-8?B?bUg3TU56OVA5L0xIN3djc29iMVdBRkY3M1kza2dUb2E0Wi8zdkEvZ3ExUWYr?=
+ =?utf-8?B?RGVLZ3Z5MjJJZnVDQy9HQko2dm9qUDZnaVFyY2kwN3pXWnZkMnJhZXFOaDBL?=
+ =?utf-8?B?alErWFhVelJ0eDNvblgzclhzRWYxNWsrOEZpUXFQRXlyWTlFRy9QM095RWI2?=
+ =?utf-8?B?Nm5DZWo5c3RTUG5iNjlhRSs3MTlSb1FZUy9JNCswb2NGYXY4Z3UrSGJnQTZI?=
+ =?utf-8?B?b3FJUzFrK0dFWjNPL1g4WDQxazUzbVEzQnl3ZmhtK0k0dlYyRVpPRTZuYS9r?=
+ =?utf-8?B?N3J2azFkOW9mZEZ0MGVMMFpPdFVDTlIweGFoV0hwWmdGUnAyRVRNbUNUdk5p?=
+ =?utf-8?B?c05YZ0pMbWp3eThtUHZIeGh2REhKdzJQME0rS2NIblFhbERwempPSFpXL1Vn?=
+ =?utf-8?B?WFYvVnVLaXJjTS9neGU3ZS9aVTJPUFBJeGw1ZU02WitTdFJDN0xNOVNRMXJS?=
+ =?utf-8?B?ODhMa1lsMXkyV1YwUnpVcCs4aVNvUjc3ZFRHWWl1M2h2U20rdklMRXFDenUw?=
+ =?utf-8?B?VTBGVWNQNkhXRnR3ZXVQVDB4SWJDQk9kSmowNGtuTzlBZkxnVThjWWVjajgz?=
+ =?utf-8?B?czRON3M5TStpS3pzRU90cTVvNGJSYkVjSTFOSktxam56TXp4Szk3a0x1RVE0?=
+ =?utf-8?B?V0RDU1lTamlnMWpRZk5YK2daUEkzRGFCMGpOaEZiT0dlK3F6b1M1WndnZi85?=
+ =?utf-8?B?ZWRNMTdlcG1lRG1OK1NweU44eGQzdDdZWldOcUVNakpMbVZPZlBWWS9xS2p3?=
+ =?utf-8?B?QnBVLzJaSVJvVWJ5OHRVL1NJbkFxRDJNTHpEQ01JdkdNMDRLRmZIbmp2Q3Q5?=
+ =?utf-8?B?RStHTkJOUWFUMXJIZlZSUTNJYXF1TTI0YWRqdzRxZ3V5elRUYWlVWDNCaFRv?=
+ =?utf-8?B?VVpxWlhIeVBKVjM3SHJzY2t1cEtJYlVuQWFEbkNnVktNVTdFblE1eFNmNmRB?=
+ =?utf-8?B?ZWU2bzMzVWplNHNCNXMxaGVqcFlXYlFQdFZYZkhUdVdieUVTK1RqMFViL3BM?=
+ =?utf-8?B?NlJjSHdIbXFSMHJmbWZEUTlNTmNWS05iQnNYNXhMbkgyZXBWck80b3VtWVJR?=
+ =?utf-8?B?MmNxUjZBNFc2Y090V1dhTS9Nc0NCMlprMU56VWVWSWZRTXZNNkVrSnRDYjRk?=
+ =?utf-8?B?LzdoUzMzd1FpWUc0d2tEbkNwVzRRTkU2S1lRVDZ5NmtlSi91WE5GdzdyMk5E?=
+ =?utf-8?B?YUNhVHd0aGZEYUFkTzBVQzIxcTNycUJNVXU4cnF5cVJqUzJMUk5HOXBNQlFQ?=
+ =?utf-8?B?M005UzVFbFZYcmFvYzAwOVlMbk1ESG1SQXNuVndRV3BaNDdTRXRyOVM4OUxX?=
+ =?utf-8?B?V0ZxRFNGVHN1Uit2YXc3V1Btd2xQKzRlRUdBK0ZIUmdpSzdkV0EyZEduYVND?=
+ =?utf-8?B?R0lvNUdxQTdRamh0anhGTklHWHNYaUVLNDZBdU92cHFKN1ZFMVhxVEY4UDc2?=
+ =?utf-8?B?d2lORFQxcEFzbkw2ZDZXVWJEZ1ZyVm9JWTg2V3BjUkhsT0lNNEh6QVdRUW5q?=
+ =?utf-8?B?SDFQOWJHWnlzQ2p1eDVFNmoraWpkTWNVWE9uTWJqQ003Vno4akR6M1JKS2hj?=
+ =?utf-8?B?WGJIblJVN3RTc3FXOW8rdVBYdkxBa0NqTVpxSGo3UmlzSHlndkowU2F2MFhX?=
+ =?utf-8?B?KzdhRmZpOHZPSkNob21oUER6YWlDdXZ6RWtQV2NDZlJHMlJOS01aQVBIblBz?=
+ =?utf-8?B?Y2piNEV3VmNuSEZ0VFd3YWJ1T3pmNFhHU3BMamdrV2dSUUNpb3VuejJHcThW?=
+ =?utf-8?B?TmVGem9rYWFwdmxaWkpvUWlITHpJamREUVVQR1lBaTRrSWxMdlU1L0lLNm5J?=
+ =?utf-8?B?cXYwV2JXcitIVFNzRVhOTWJSdmhXZjQxb3JZejZRRVBtYnZqVHJZd0RlVERP?=
+ =?utf-8?B?RVRmSy9mOW1YSjhjTXpPMmVXYVp1c3FYcUpCVG1xUFFhWlBrOElUMWEwNHRO?=
+ =?utf-8?B?SERqWEpCSXpMMDJwMFJpYlRsdERnPT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <96CA13F1DB4D5F4EBFA6D542612657EC@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029191111.167537-5-arighi@nvidia.com>
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	6VOU2o3GbETn84IVHFcetJ+lHy3PPLA9KAUcZzUwyegzTXP/a2IkRSbivehbsD1JNyNWB5f7yqFfuns8gfVyuHCP09CKr69o8hXmneX3bwfeJ24XcpaHyURU+4NN2dykrJIuen5VfHWiMrcr+nRzKVXPRvPgUGCVB7EbW6CdMElYEj78ZQqSINr0xedH6hWKtWIVtUxKG1F+IqtcAOPhpHCidhg7+8wXTH441CBfUVTMfiKnUrDUoLBRMoc2Hq9sUtPIYmHcU/JWGzwT+Xhv+NuwCNukWnBYutW65TZFTkg78Kn5tYaOOgrPNnpS12V6qSrDLGRSkHfEX72GNcD3grzXYBqJ3aGvUvkOoFWZIA2pPfWCB2Qz944VkuchLvcdj+pbbxhZUOIYuccIR0LxsM3LXHq1u/QNi8Iayspy+aT9u1CIpwd4AJjRDXpv5IAsNOkBeL9L2KU8VSXx2tDaLIVLkwphFJ3BgSw25Teyiod7V5Ia6Ea2AWiWc/wzIKrd2bnzurIemeWJiCkhQhUv9gmpMqZXE1xXBNXsGBnvCSvptefKQFUX86n04StzmwVZ6oPVUB1f1/Zq+EsgiuO94YFXuHwiOVP3oKOIFSEi9it4S7pCFa4E4g/tXwA6gG7j
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR04MB7418.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da76491c-07a1-4731-2681-08de1d19e062
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2025 09:50:10.8607
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vHnZ6ykjGfTbVPYKinOoHGHiwwyxxVeMvo0wCTAWrfsaJ3+n9LTrVWNviUQ+HfBCzN0kgmIoJ+u0ajuz13oTg4GY4rf+SDBDeaiYvvBDk18=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR04MB6530
 
-Hi,
-
-On 29/10/25 20:08, Andrea Righi wrote:
-> During switching from sched_ext to fair tasks and vice-versa, we need
-> support for intializing and removing the bandwidth contribution of
-> either DL server.
-
-My first and more general/design question is do we strictly need this
-automagic bandwidth management. We seem to agree [1] that we want to
-move towards explicit dl-server(s) and tasks bandwidth handling, so we
-might want to consider leaving the burden completely to whomever might
-be configuring the system.
-
-> Add support for handling these transitions.
-
-Anyway, if we still want to do this :) ...
-
-> Moreover, remove references specific to the fair server, in preparation
-> for adding the ext server.
-> 
-> v2: - wait for inactive_task_timer to fire before removing the bandwidth
->       reservation (Juri Lelli)
->     - add WARN_ON_ONCE(!cpus) sanity check in dl_server_apply_params()
->       (Andrea Righi)
-> 
-> Co-developed-by: Joel Fernandes <joelagnelf@nvidia.com>
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> ---
-
-...
-
-> +/**
-> + * dl_server_remove_params - Remove bandwidth reservation for a DL server
-> + * @dl_se: The DL server entity to remove bandwidth for
-> + *
-> + * This function removes the bandwidth reservation for a DL server entity,
-> + * cleaning up all bandwidth accounting and server state.
-> + *
-> + * Returns: 0 on success, negative error code on failure
-> + */
-> +int dl_server_remove_params(struct sched_dl_entity *dl_se,
-> +			    struct rq *rq, struct rq_flags *rf)
-> +{
-> +	if (!dl_se->dl_server)
-> +		return 0; /* Already disabled */
-> +
-> +	/*
-> +	 * First dequeue if still queued. It should not be queued since
-> +	 * we call this only after the last dl_server_stop().
-> +	 */
-> +	if (WARN_ON_ONCE(on_dl_rq(dl_se)))
-> +		dequeue_dl_entity(dl_se, DEQUEUE_SLEEP);
-> +
-> +	if (hrtimer_try_to_cancel(&dl_se->inactive_timer) == -1) {
-> +		rq_unlock_irqrestore(rq, rf);
-
-This seems racy. I fear the moment we release the rq lock something can
-slip in and the server(s) state might change?
-
-> +
-> +		hrtimer_cancel(&dl_se->inactive_timer);
-
-I am not sure we actually need to force cancel the timer (but still
-contradicting myself every time I go back at staring at code :). The way
-I believe this should work 'in theory' is
-
- - we remove a server (either automagic or user sets runtime to 0 -
-   which is probably to fix/look at in current implementation as well
-   btw)
- - current bandwidth is retained and only freed (and server reset) at
-   0-lag (when inactive_timer fires)
- - if server is activated back before 0-lag it will use it's current
-   parameters
- - after 0-lag it's a new instance with new parameters
-
-In inactive_timer() we have this behavior for simple tasks, but we skip
-__dl_sub() etc for servers (since we clear it up immediately).
-
-In all this I essentially fear that if we clear parameters immediately
-one could be able to trick the system by quickly disabling/enabling a
-dl-server to let fair/scx tasks execute more than what requested (as
-each new enable will be seen as a new instance). But, again, I wasn't
-yet able to demonstrate this and I am still uncomfortably uncertain.
-Please Peter and others keep me honest.
-
-Also, server parameters changes are root only, so maybe not a big deal?
-For scx automagic as well?
-
-Thanks!
-Juri
-
-1 - https://lore.kernel.org/lkml/aQiE1ULtInJS6X4R@jlelli-thinkpadt14gen4.remote.csb/
-
+T24gMTEvNS8yNSAxMDo0NCBQTSwgRGFycmljayBKLiBXb25nIHdyb3RlOg0KPiBKdXN0IG91dCBv
+ZiBjdXJpb3NpdHkgLS0gaXMgcWVtdSBpdHNlbGYgbXV0YXRpbmcgdGhlIGJ1ZmZlcnMgdGhhdCBp
+dCBpcw0KPiBwYXNzaW5nIGRvd24gdG8gdGhlIGxvd2VyIGxldmVscyB2aWEgZGlvPyAgT3IgaXMg
+aXQgYSBwcm9ncmFtIGluIHRoZQ0KPiBndWVzdCB0aGF0J3MgbXV0YXRpbmcgYnVmZmVycyB0aGF0
+IGFyZSBzdWJtaXR0ZWQgZm9yIGRpbywgd2hpY2ggdGhlbiBnZXQNCj4gemVyb2NvcGllZCBhbGwg
+dGhlIHdheSBkb3duIHRvIHRoZSBoeXBlcnZpc29yPw0KDQpJZiBteSBtZW1vcnkgc2VydmVzIG1l
+IHJpZ2h0IGl0IGlzIHRoZSBndWVzdCAob3IgYXQgbGVhc3QgY2FuIGJlKS4gSSANCnJlbWVtYmVy
+IGEgYnVnIHJlcG9ydCBvbiBidHJmcyB3aGVyZSBhIFdpbmRvd3MgZ3Vlc3QgaGFkIG1lc3NlZCB1
+cCANCmNoZWNrc3VtcyBiZWNhdXNlIG9mIG1vZGlmeWluZyBpbmZsaWdodCBJL08uDQoNCg==
 
