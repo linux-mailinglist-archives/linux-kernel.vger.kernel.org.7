@@ -1,357 +1,92 @@
-Return-Path: <linux-kernel+bounces-887639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B118C38C6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:59:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00839C38C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49F01A25774
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:59:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B0B1A20386
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07786238149;
-	Thu,  6 Nov 2025 01:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pmMGN/gk";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Nk1nEqwJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B4624677B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5952233711;
+	Thu,  6 Nov 2025 02:00:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8DA17C21E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 02:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394277; cv=none; b=NNnQeXjqXenFhclk9J9/uH200aXMtWXfDnlCFzYOmYY8wTXHjQ44HqCRM77iuxBznQcPFMmzmOXj8paU958qHO4W2RkUpRjqoXxA32VdYxRkq0GeUdKR+LuW4JcPPQ31sDtxndYeU9Mo2TaDXRr7+yNJBC8cVnzuQxCq4oUNyzU=
+	t=1762394403; cv=none; b=t88phaLNZsuON4jtAAJMX0sD1B5q51E7k6sjn6AqsYjZ93ZTr/eNN8NbnBd/iH+t3NTyekZMMO5nPxh5h43h0xp/5N09zd9Nh1L30+Pug6IZ2pi4C7eocWiqfFfP4/i8+2TK7H2OQb3lwd1tY+fQ4dxb5AI3pTTw2VV14FrZ95Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394277; c=relaxed/simple;
-	bh=7VSD4rZhCzv8NdJ8v+27nAr+/WtZ4IGwF8g9oS/Ek8Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BchHEjwza6vckaNGj3qLhr2XzuXsJMCnPXALAZjWL/ycz4RK7dWWjUgNDeaDF5+mIj1nL0ruG4IzHITaPZhrd7aFkIbZpAeRPC53TTk4yaSJS4uYOdZ2SIb4j04kvexf+PdEXYH5GGBX1udwtJBxgI1mdj3HYhF0QsyGy91Tt0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pmMGN/gk; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Nk1nEqwJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5KFUVZ1726802
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 01:57:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5MkKiRXBbE3lf0Fpqo1FQcvBm1IsA+kYRCJdRWEmlHo=; b=pmMGN/gkSNpeK88B
-	kSQ/dL8SCuBFIM4feuq6o+y+nqZgxbKLExhojQBusMKDXaH/msiicV3GsqDEmnaZ
-	bz0VBHNmt02aOq9cJUAf6gfMIZ6mM5z2CuX2PUf7OwC4yyJA34MBVilSLPBKG30L
-	mbVsvvg9WIXYrigR0YobO5EyGsy0Lqny0hiHnWTtOqh/tuYRAorxilbSrnNoDUCK
-	JjvwBlvrUsxRN7KNSb4b/n/XKFzuyuQbFr9GS+jj1vM/ZbpffgQjrcAjjnJ1Cj8j
-	cykZGTLQevxIGR3rUSxVQBix0L0hICGZuz1tlgG8hAH9Vvv7Rp5hMy30dPUoE4m5
-	TWm7EQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a82mt2xc1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:57:54 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-286a252bfbfso11960865ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:57:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762394274; x=1762999074; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5MkKiRXBbE3lf0Fpqo1FQcvBm1IsA+kYRCJdRWEmlHo=;
-        b=Nk1nEqwJcnY0wNxfxrEkSgQLlwMZTz2eooBs0wkGkepPr/u+9p1ruGWPSMBgYbS/S1
-         oaNiUHD0+xjTFqspQxGexYsnKxZJ7503KnX9d8vigFmQKwHW/8yjYPxYA8eDrY9kEcP9
-         5swOUv9xyAx/mkPCpHrOfZJfyOeOvf2pE87Pmqtg4+yny5i/NK6RhZjlpzc1fywz9JFU
-         NRQrcQkRx2V3i5F2FoCBuO+T6mvhPI0auWHHGV14X8ZI8jsz8MQXwABrTXCsxlL9VxVk
-         HSH0sOtszRRh1KTx1VXssl00x34msKY1UYgWj/8z5cqcITOcf5IWCG8ylrmfVw9LPiBe
-         SI6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762394274; x=1762999074;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5MkKiRXBbE3lf0Fpqo1FQcvBm1IsA+kYRCJdRWEmlHo=;
-        b=tdf7yw04r5cCOEZ2j/0nJUmDNE6ZyXmXUjtHLwDvljjizXQHL8sLVCITyTnkV0hOBU
-         zdlo4ZWhzFmzqcIYuy8CWbuGR+9LfD19RH5BMOSQ+zFeDwa2zsPaejR7ReuhYZGREngZ
-         GOmySVVirQVsGVuZFo2WkCJ550ubXjcgByc1oc1M3uJIXps3HumIuJeJIimIUmeC/2wV
-         MzuhRaHY/FNDvvABu34pRJT/kcy1jq1f5Gf1x/1pYY+JIl7EkZDXJXwz6H2jItPz/us4
-         hI9E54nYlDPXKrs2mExdvSshtCYq1L0gpmUjllVc24TDJ4f8tVYwbiufShyOoP0MVtBy
-         3knw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2H0K2F8zZn0xSjiFZhDlPp7Xf1d1g4untfGqUqZVZeN3mXzcl9aeiG8RhxCSW5N5L9Hrn3JlqCHUnCeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhfevO6awuKjJNvB6Ev4xHPARERpHJ5TQ59+GcWYHbgdKA4dAD
-	HW+VOzIoxcEHJRC6T24sx9uqok8lnWOj9ZH01rnBRS4wU+yPBb9TKvEI7GC2bqutVD2xoJHjhre
-	3ZtWFlhNf0KPJheduG8k6FlJXncn0NOr/bVTanOy7ofrJ3hCYXaMRDrF2OwwCiZWEQX8=
-X-Gm-Gg: ASbGncu5+OlPNRlmGfAHXRP4xynPiEGoYlFX021L0We1O/fu1wqT5egmsaSEApmSo2+
-	ZUGJ/GY1DeBY4w4d2sZJ95rEr/vj3hwODkAno10aHExeJay8/v7kvBqSquT47sIxGNZQkgKma5d
-	5nZvfx4w6Tyjb/ZRwdQxLve2N8Vc+X61lm8ZVukiseTPtJBYXPrVB/q5KcPVxh12quZ4rVhQ3jo
-	7un1HL4GPv2CYSY/CesLw/C6toRjv+YPQIPMY9RUZq37YEb95f5R/qUZEWmsIz0ATPHc+PJe/v3
-	ke0v3/MVKuUMecECv4aMNs9xNbo8a5osbihcxnnjT1BFqRbj2mOYkNnUkAjzkimlGb6sOJ1B6og
-	WCtK8Oxe3D4ugaqb//3K0nYIprIgSoOIsaMSm/CggdvXxI5x7iuJazfd4oNA10w==
-X-Received: by 2002:a17:903:41ca:b0:26a:8171:dafa with SMTP id d9443c01a7336-2962ada5a6dmr73325905ad.21.1762394274076;
-        Wed, 05 Nov 2025 17:57:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHg3zuB8jhhHQtF3i/xJOL1T6MX0TBIHHOix2P4rEMcbSwlF46A8Upq6h35Ggl2Yj74pIMVyA==
-X-Received: by 2002:a17:903:41ca:b0:26a:8171:dafa with SMTP id d9443c01a7336-2962ada5a6dmr73325515ad.21.1762394273606;
-        Wed, 05 Nov 2025 17:57:53 -0800 (PST)
-Received: from jiegan-gv.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c93e5dsm9115725ad.81.2025.11.05.17.57.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 17:57:53 -0800 (PST)
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-Date: Thu, 06 Nov 2025 09:57:26 +0800
-Subject: [PATCH v2 2/2] arm64: dts: qcom: hamoa: enable ETR and CTCU
- devices
+	s=arc-20240116; t=1762394403; c=relaxed/simple;
+	bh=uJ1oAMyLnWN/071VpfSW2SjsKJHUByvb60uN57wMAfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V6owylV+qeThxqx/7CJN6NwPlQGAv6wle1V5MgT/P17FDqH52X5D3qk9oFFIBgIj9zDnJD9t+t+kfYlxj42ovc9g6kq1Qqs4HinayApRxMoRKQ4tGG5Pi1jp43tBrAsrHlzpXHuW6nxCdskJCvf4YpF9kDDfDn80viIXBxJZSSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6C3B168F;
+	Wed,  5 Nov 2025 17:59:52 -0800 (PST)
+Received: from [10.163.73.244] (unknown [10.163.73.244])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB8833F66E;
+	Wed,  5 Nov 2025 17:59:58 -0800 (PST)
+Message-ID: <044a6526-d6e8-4ae0-9279-8cc42bff5aa0@arm.com>
+Date: Thu, 6 Nov 2025 07:29:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Add a fallback stub for pgd_page_paddr()
+To: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, ryan.roberts@arm.com,
+ Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org
+References: <20251014110633.304961-1-anshuman.khandual@arm.com>
+ <aQoORmgliayA0s_a@willie-the-truck>
+ <e660e033-6300-4deb-b034-4d26746d8d01@arm.com>
+ <aQuDdE_Tj3di7q3P@willie-the-truck>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <aQuDdE_Tj3di7q3P@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-enable-etr-and-ctcu-for-hamoa-v2-2-cdb3a18753aa@oss.qualcomm.com>
-References: <20251106-enable-etr-and-ctcu-for-hamoa-v2-0-cdb3a18753aa@oss.qualcomm.com>
-In-Reply-To: <20251106-enable-etr-and-ctcu-for-hamoa-v2-0-cdb3a18753aa@oss.qualcomm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-        Mao Jinlong <jinlong.mao@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jie Gan <jie.gan@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762394259; l=4204;
- i=jie.gan@oss.qualcomm.com; s=20250909; h=from:subject:message-id;
- bh=7VSD4rZhCzv8NdJ8v+27nAr+/WtZ4IGwF8g9oS/Ek8Q=;
- b=ZuaD9B46ChHvo6NySqR+CnBN7j1JzBkdCBeITt/n2oe7oA7RO5Gxz8SOPXD6rMdjZkEJLQbQO
- K3zkrTeM4kXBgrhlRXADkWVzxiIJy9RD+vFpE7aCw8KwdYKbKSsyCBe
-X-Developer-Key: i=jie.gan@oss.qualcomm.com; a=ed25519;
- pk=3LxxUZRPCNkvPDlWOvXfJNqNO4SfGdy3eghMb8puHuk=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDAxNSBTYWx0ZWRfX/0Ok3d2T3unw
- F5iQ2hMcFiK0g9spzpFHKOfmUhNs6sgo9yGKVEpr7myEQIdxH4GWnIrvWZfVClK1f8VoY2JBeaC
- fewJloXpVHpPK28MM8n65ywacceAFP4tu0KQDlKv4x+zOT3zpGpZt9EVsGBnBJIXKqjyzX/U/5R
- Smn6GPJ09LKhKGJ88VPlRgmg2Xee5DynUWZOR+r1jLfa2M6Brt1p0h/4Cr5XOlb6yCtSiKh+6Uv
- X/paYVtdpefdl7co0DYLg/qBVTRgRtQLB1KLZXxDNXGG83UZ+bho0ZgxQXoL78kDsHyaAqfSyBG
- aqFv+wIW9tQLwBtqsv3KL6ueFvrnV6Hosd69MH8zF0rhkfsLCM4ko5AWCsbiu5ugTZVxIamxWmF
- uIOwd9oPNwoZPvE6JMSRexwrICxzzg==
-X-Proofpoint-GUID: 6WPODeo95KIp4Yqja-nZW3jKXFKPVWLm
-X-Authority-Analysis: v=2.4 cv=LLtrgZW9 c=1 sm=1 tr=0 ts=690c00a2 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=kFQAvpsttJVeTngcj60A:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-ORIG-GUID: 6WPODeo95KIp4Yqja-nZW3jKXFKPVWLm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_09,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 adultscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060015
 
-Embedded Trace Router(ETR) is working as a DDR memory sink to collect
-tracing data from source device.
 
-The CTCU serves as the control unit for the ETR device, managing its
-behavior to determine how trace data is collected.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/hamoa.dtsi | 160 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 159 insertions(+), 1 deletion(-)
+On 05/11/25 10:33 PM, Will Deacon wrote:
+> On Wed, Nov 05, 2025 at 08:24:40AM +0530, Anshuman Khandual wrote:
+>> On 04/11/25 8:01 PM, Will Deacon wrote:
+>>> On Tue, Oct 14, 2025 at 12:06:33PM +0100, Anshuman Khandual wrote:
+>>>> Add a fallback stub for pgd_page_paddr() when (PGTBALE_LEVELS <= 4) which
+>>>
+>>> typo
+>>
+>> Sure will change - s/Add/Adds
+>>>
+>>>> helps in intercepting any unintended usage and which is also in line with
+>>>> existing stubs for similar [pud|p4d]_page_paddr() helpers.
+>>>
+>>> Are you saying the kernel compiles in this case without your patch? Which
+>>> definition of pgd_page_paddr() does it end up using?
+>>
+>> Kernel compiles for PGTBALE_LEVELS <= 4 just fine without this patch as both
+>> its current users p4d_offset_phys() and p4d_offset_lockless() are wrapped in
+>> with PGTBALE_LEVELS > 4.
+> 
+> Ok, but your patch is trying to catch broken users of the macro, right?
 
-diff --git a/arch/arm64/boot/dts/qcom/hamoa.dtsi b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-index a17900eacb20..3b90133da4e7 100644
---- a/arch/arm64/boot/dts/qcom/hamoa.dtsi
-+++ b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-@@ -6713,6 +6713,35 @@ data-pins {
- 			};
- 		};
- 
-+		ctcu@10001000 {
-+			compatible = "qcom,hamoa-ctcu", "qcom,sa8775p-ctcu";
-+			reg = <0x0 0x10001000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb";
-+
-+			in-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					ctcu_in0: endpoint {
-+						remote-endpoint = <&etr0_out>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					ctcu_in1: endpoint {
-+						remote-endpoint = <&etr1_out>;
-+					};
-+				};
-+			};
-+		};
-+
- 		stm@10002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x0 0x10002000 0x0 0x1000>,
-@@ -6927,6 +6956,122 @@ qdss_funnel_out: endpoint {
- 			};
- 		};
- 
-+		replicator@10046000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x10046000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port {
-+					qdss_rep_in: endpoint {
-+						remote-endpoint = <&swao_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					qdss_rep_out0: endpoint {
-+						remote-endpoint = <&etr_rep_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr: tmc@10048000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x10048000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04e0 0x0>;
-+
-+			arm,scatter-gather;
-+
-+			in-ports {
-+				port {
-+					etr0_in: endpoint {
-+						remote-endpoint = <&etr_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					etr0_out: endpoint {
-+						remote-endpoint = <&ctcu_in0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		replicator@1004e000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x1004e000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port {
-+					etr_rep_in: endpoint {
-+						remote-endpoint = <&qdss_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					etr_rep_out0: endpoint {
-+						remote-endpoint = <&etr0_in>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					etr_rep_out1: endpoint {
-+						remote-endpoint = <&etr1_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc_etr1: tmc@1004f000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x1004f000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x0500 0x0>;
-+
-+			arm,scatter-gather;
-+			arm,buffer-size = <0x400000>;
-+
-+			in-ports {
-+				port {
-+					etr1_in: endpoint {
-+						remote-endpoint = <&etr_rep_out1>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					etr1_out: endpoint {
-+						remote-endpoint = <&ctcu_in1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		tpdm@10800000 {
- 			compatible = "qcom,coresight-tpdm", "arm,primecell";
- 			reg = <0x0 0x10800000 0x0 0x1000>;
-@@ -7240,7 +7385,20 @@ swao_rep_in: endpoint {
- 			};
- 
- 			out-ports {
--				port {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					swao_rep_out0: endpoint {
-+						remote-endpoint = <&qdss_rep_in>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
- 					swao_rep_out1: endpoint {
- 						remote-endpoint = <&eud_in>;
- 					};
+Right but there are no broken users at present because all the users are
+wrapped inside #ifdef PGTBALE_LEVELS > 4.
 
--- 
-2.34.1
+> So my question is, would such a user compile today? If not, then your
+> patch is pointless.
 
+The point is this macro is not visible outside #ifdef PGTBALE_LEVELS > 4
+where as similar ones such as p4d_page_paddr() and pud_page_paddr() are
+always visible via their respective fallback stubs, when PGTABLE_LEVELS
+are lower.
 
