@@ -1,108 +1,113 @@
-Return-Path: <linux-kernel+bounces-889321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0277CC3D473
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F7DC3D482
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 000B64E4587
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:50:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA2DD4E1926
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66B8350A11;
-	Thu,  6 Nov 2025 19:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AC1350A28;
+	Thu,  6 Nov 2025 19:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0S5PF1s7"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ku8tjLpZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0858F1D516C;
-	Thu,  6 Nov 2025 19:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53542301002;
+	Thu,  6 Nov 2025 19:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762458619; cv=none; b=lyvuiuaJ7+A0OCU7lnEwoaH+1Ggu0iqu4Jor+UfE59pTnsbI6I38KMlPedWSw812j9sI89P8qioWCuI2EawpwJX07p/HacwZ1bZhR1qOWeqP4pDd1iBV7wWSNmqV9t/E+ys8Je2AhBwWle8L0g1BDmYEH7R8Pwetyz2+eTG0qHQ=
+	t=1762458705; cv=none; b=BPxGFUDuzEXuBXY4wRlG+MwVxI309RmjSQqpD8sbEkAVYMNaJsUPLAgMradSKpdzC2NVPEpVz032pUUHBApvhEZrBvhktXjPlXCV9+/gSw0+QCIJx+qhsLCOR6oqTYoL5QSCgS54j73xEuaFbQPXNB3SuRiYW81OCtSD3lUyLzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762458619; c=relaxed/simple;
-	bh=e6MGKfjRHLnKxUpXaJe/vSW7BmU3T7nlGRAaC6kqrsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a6jy9bH4olPlq/W6f6Lu+OC/L4bb2qf+oNXHbrmHI4ztUuIeL0+cdoYYhF++IPsKvRZ4xPgapQhC0MZB1eIvGfszQZGdOYKNpfYkliWel/cfYE0UDwP+MoKUR1bpRtTJv9i2wLzodcvPgrhlBKiojZAPGn8NcaszA56S3jw5Ibs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0S5PF1s7; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=TZQw23ttLoTVA2bBH5a8WLwflYyR1wSU2x8Igu6ImY8=; b=0S5PF1s7Z3+3+S6pQIKmCqY0jP
-	drS+pA0q9aVjtmISaobTvzTl1jkOZSfzgOc92RcJr0DRdkWda9yrlj0uSCAAF0rOy8SFZ6Wk+v498
-	GrwMCgA0Gf+XAwNNlx54m4zqyFG/N7iMaEW/G6riJ7FFy3GWOwUV9g7sQybKR0y9Kt5gUcIhw2gpK
-	ezbUCFqCKnkr7z4pC/vUOfLdfx7HR+Dj3EP21Gmv54rSN/gEygFVeTQjMtzVLJ+COODhPItpH40Ac
-	aLZabhu3/6JZ+AyPJlobFEVROiucfiI7QysjlT2LBC6b1c6f3mb7jfWjLZ5wUhhxLYtaPCUITJpJM
-	p/UkTvCw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vH5zn-0000000GBF5-3TGi;
-	Thu, 06 Nov 2025 19:50:11 +0000
-Message-ID: <55391dad-339b-47f8-8996-afe337b238e0@infradead.org>
-Date: Thu, 6 Nov 2025 11:50:11 -0800
+	s=arc-20240116; t=1762458705; c=relaxed/simple;
+	bh=j1nqThs17GwNA3HQ/A0bAO+y61WfI0vCdvNcpIIVI0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7cQhNMep1ydZX3Kp8LjjBYKQT6HTWfTCZMpAKRrwTk0yYjv4aDybcAmGLSW1+k0W0u/s10aFg9ZWajeWwLwA2pDA+/iXKWpzDfwpDXLsy9OPz0a8Yd09rBAjvbhKAcTFR2Oy2X+5OeyuXMAO8Wi3yB4PkAvst40YaugSfloqNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ku8tjLpZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C217C113D0;
+	Thu,  6 Nov 2025 19:51:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762458705;
+	bh=j1nqThs17GwNA3HQ/A0bAO+y61WfI0vCdvNcpIIVI0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ku8tjLpZn9OPHJbydRU7gLzhb71B7VOxwwhTuM+6D49u01Eypvvg5berXffNnTRSM
+	 XrvByyKlFst/3LSbp27p2/zQTcMTdDrYl4b+8xn1WxRhCiyaYKUNFTXq+/CE+jvFw4
+	 AJiRpUk0rWqEE8JaKHOLf6HK/bR+JzQSEDHrY5VZjS1JJ5Bgt51BtyNB8Zku7hhS0v
+	 EIOT8kLgmaxP243njyF+UaPfj2OK1T1gvGRNrLREalCh4xbj9SjvFjLmfFX7MfuEDB
+	 IhzJl2nZkQ7dHakk2z7neV839/0V+BGXiItOON8gu6ZCq6pxoFVz+YM5/wU/mHZ8w7
+	 x9Mojx8MuyjZQ==
+Date: Thu, 6 Nov 2025 11:51:42 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Harald Freudenberger <freude@linux.ibm.com>
+Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] SHA-3 library
+Message-ID: <20251106195142.GB3318@quark>
+References: <20251026055032.1413733-1-ebiggers@kernel.org>
+ <20251103173404.GE1735@sol>
+ <4188d18bfcc8a64941c5ebd8de10ede2@linux.ibm.com>
+ <20251106043340.GC1650@sol>
+ <20251106072233.GA117499@sol>
+ <55ec60661fb672bdd0696a3bd92e21bd@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] drivers/iommu: Add page_ext for
- IOMMU_DEBUG_PAGEALLOC
-To: Mostafa Saleh <smostafa@google.com>, linux-mm@kvack.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: corbet@lwn.net, joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
- akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
- mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- rppt@kernel.org, Qinxin Xia <xiaqinxin@huawei.com>
-References: <20251106163953.1971067-1-smostafa@google.com>
- <20251106163953.1971067-2-smostafa@google.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251106163953.1971067-2-smostafa@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55ec60661fb672bdd0696a3bd92e21bd@linux.ibm.com>
 
+On Thu, Nov 06, 2025 at 09:54:59AM +0100, Harald Freudenberger wrote:
+> > Also, I'm wondering what your plan to add support for these instructions
+> > to QEMU is?  The status quo, where only people with an s390 mainframe
+> > can test this code, isn't sustainable.
+> > 
+> > I already have s390 in my testing matrix; I run the crypto and CRC tests
+> > on all architectures with optimized crypto or CRC code.  But most of the
+> > s390 optimized crypto code isn't actually being executed.
+> > 
+> > - Eric
+> 
+> Well, there are no plans. However, there has been a decision some while ago
+> that "we" may support this in the future. But as there are currently no
+> human resources available and working there I suspect a qemu CPACF support
+> in general will not come soon.
 
+Great to hear that you might have someone work on this in the future.
+It should be noted that this is a significant gap that puts s390 behind
+all the major architectures (x86_64, arm64, arm32, riscv, etc.) and
+makes it much more likely that s390 specific bugs be introduced.
 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 70d29b14d851..6b5e9a2d936a 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -383,4 +383,19 @@ config SPRD_IOMMU
->  
->  	  Say Y here if you want to use the multimedia devices listed above.
->  
-> +config IOMMU_DEBUG_PAGEALLOC
-> +	bool "Debug page memory allocations against IOMMU"
-> +	depends on DEBUG_PAGEALLOC && IOMMU_API && PAGE_EXTENSION
-> +	help
-> +	  This config checks that a page is freed(unmapped) or mapped by the
-> +	  kernel is not mapped in any IOMMU domain. It can help with debugging
-> +	  use-after-free or out-of-bound maps from drivers doing DMA through
-> +	  the IOMMU API.
-> +	  This santaizer can have false-negative cases where some problems
+We need to have higher standards for cryptography code.
 
-	       sanitizer
+As I've mentioned before, I don't plan to accept code that uses new
+instructions without QEMU support.  The SHA-{1,2,3} code is allowed only
+because the instructions were already being used by arch/s390/crypto/.
 
-> +	  won't be detected.
-> +	  Expect overhead when enabling this and enabling the kernel command
-> +	  line iommu.debug_pagealloc.
-> +
-> +	  If unsure, say N here.
-> +
->  endif # IOMMU_SUPPORT
+I see that Jason actually added support for CPACF_*_SHA_512 to QEMU a
+few years ago
+(https://github.com/qemu/qemu/commit/9f17bfdab422887807cbd5260ed6b0b6e54ddb33).
+So clearly it's possible to support these instructions in QEMU.
+Someone just needs to add support for the other SHA algorithms.
 
+> Please note also that this is really an implementation of crypto
+> algorithms then and as such it needs to apply to some regulations with
+> regards of the EAR of the US Bureau of Industry and Security...
 
--- 
-~Randy
+Like Linux, QEMU is an open source project, published publicly, and
+which already contains many cryptographic algorithms.  Check out
+https://www.linuxfoundation.org/resources/publications/understanding-us-export-controls-with-open-source-projects
 
+- Eric
 
