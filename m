@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-887963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B2FC39762
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:52:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D937C39768
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 500EF4F87C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F61A43365
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799D02E0B47;
-	Thu,  6 Nov 2025 07:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D792E7BDD;
+	Thu,  6 Nov 2025 07:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcKsVyii"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f8VJ+nfa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C97014F70
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA31D2DFF1D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415483; cv=none; b=dUNO1q2tJwAvqO+ZSft2HSLIfDxr1kKdkOYkaJDbDN03tr7PoRBITzBztGYda53a5d6ucVyE9tFUPaQrmSzCAdkKBg/bFwzTwgKqsdj1lmGoC5P4cWfn+Q3GYu0In9RHyZDRvybjv2iOXR8l0wapVzvo09fJjysgEVWb9khi658=
+	t=1762415493; cv=none; b=AHPJ/wy3XjyaLulPz5U6mm9UJ5IyKPK2H8Czs6lESjmDXAe/IAfablhntfJcwDLcgp+uVVKwGP3Hek2dLd3D+Ne88T/VyoxWUKcdN5DkjFPdgvPcEgQ15uv/Cnv03Px7DQB4A7gjJ4Z/uvGL21mPAjohUnZc07eBJMTnLB0bksk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415483; c=relaxed/simple;
-	bh=V3okf9oIEIU43qw5xYW1BwiN1gJLrWq2sN3TplwqiZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lTXxg8kULkM7wRIJb3rcCn4M8HwrbBYtX7vwQHwlf0REgNpZRvqdEG70HWmlVnFPRHz6xwwKenBRhocQRxLdtwuKVNxKIAkdMxOzp4bv+L3YeOGYPLXP2kr1f6xThuJ1BmDsSsJCB5nyzWOtrw8OSRnVA7k6WIRcRUySM+Cl570=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcKsVyii; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640c3940649so912912a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:51:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762415480; x=1763020280; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v7QbmE1T84ff08D3+wx9jlBrqSs8DUW5Q3gCIAzKNPQ=;
-        b=lcKsVyiiD6AOqH2GqfPZQVE1DKIKKDtHcvOKJIU8xNp3Tj4x4yVLE+tj5VMQ1pch39
-         qJ7iJY3YMryBVwfMWQl5Se9i6ksKa75bCsQTXAB7niCDQmgFOzStXJAVEwxUz1rcClge
-         j4XV0U8DjZ2pgWL6lES0F+o+samexitYZUi73camA2v1LpX157rz7ctC2mR4iw9EA9zd
-         OklA/1WJMB3DvDUceh+Ocdrhgf4GfKUPKw4hQQJiXoZJtijkT4+WZOwkI/mj1d1GfAkb
-         A4ihScjaMVTSYEx5bEmoLYqqF8/TtdSaqkVJYQDHcViWBMCl0VmU9IsBjyCyNVeodi6H
-         K07w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762415480; x=1763020280;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v7QbmE1T84ff08D3+wx9jlBrqSs8DUW5Q3gCIAzKNPQ=;
-        b=fQUum5dP485IY6XKffhu34XvlzJgXVRpu5putUgd/14JpmZvs8HBNCEZnwPVTBzRGD
-         Xn3Y32ZSDtBhDGOX6PP8ljRzrT5qazQfc4IMnFjLuTOBjdcxOQ9EzxtWxLQAq4KcgruI
-         femk+N9Z5IgAEp6Hp/YXsWTiDfsEcw8QhUQwyWuSPppUg0yEVsAVCOO/uxag158Or3bw
-         qvNfgOTfh4XiaRyOFPSyq/Mlw8aa9iGjESTXj3GCmNOus6rYtbSLktIBo2auacY2qRke
-         1XJEV+xjLAZFm/qq0lfIejTWMaPFMB8SdY8REHUVJ9XKoEF1o5PjGfeyMLdFr6v03LKI
-         CBMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Li6XhezIhg8Zersy56XqPBIPRnVDdjrjQ/pzWokWa3uYGY5eqLIQQD1hZX//Zl/YlxDw0dT6gKnK+D0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3hJa3KIWHUKqDi4Qr+E27kwaIDj4VNH2bG+vfYuBrO1qPHfRi
-	PHSGw2K/hpTUFNFqKahJd3bo5Bj/smA/I9Y0CJbidyvnUboyiCzfqfM7ejepzPJNFMV2WltYJTG
-	ndTKSYSm0ON6WPBfV/axNUT6vvHXckZxnckjnPZK1sA==
-X-Gm-Gg: ASbGncv5kPLiCHkGGLT5DKmPdvVXDqTZF3q6aIXPnqM0IMeII6oC+eb4mJ83q5rORp7
-	34hvcUsAagr0Q9Fcg8h/RMFn/PZn8SWTG7Pq3V5Hc7DEvMByIVOBi3vxhB5iOMqaMp614ApoAfm
-	YW/UV3aybeqURhbl1ZUbbmPByG6AUoBF/yO37LV5TESlcvYdj2ru9t0hE7YZjcP9MwziP4tZaTT
-	V9dnpPJh4qNIkSIm9p2XqPIAQG6yzUwA3AiOf41qrqUwM2qtyLJTheNaAhMRQ==
-X-Google-Smtp-Source: AGHT+IH5mMQNAbO3dsRPBZZKprrZKG8gWiaT6H027FsLcjDm/NMQYqk1ZtvdWqQy6Uf2hPguHqWdFrxhl0EoZUCxvTg=
-X-Received: by 2002:a05:6402:20d6:10b0:640:9db5:ba2f with SMTP id
- 4fb4d7f45d1cf-64105b8ef06mr4773837a12.30.1762415480479; Wed, 05 Nov 2025
- 23:51:20 -0800 (PST)
+	s=arc-20240116; t=1762415493; c=relaxed/simple;
+	bh=K65aaEqq/YB61r4p7ihT0ItAeEpKgQgbAjU3OugTSoM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EFd9UsRoO29ecsAxp46sptJ25jb61fcNXjZA/aXmU/weJE6cQ4rt2DNKpbrubznJGXNtsWH0VA+MVc3Hs6z4f7++0YcIUAmrtPS7GdhWxWYVkJAEh6HzM6glyvBo+NLufMfCzH75xPEmGCl/cmah+C/e7734Pja3MKG28qG3zME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f8VJ+nfa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762415490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p/narQH7oBzjR+CHzap2CS6luEPNI9uaK+xgrYacn+w=;
+	b=f8VJ+nfaVlZo6E6oiajGdSYmRwVZts0co/zxkRoICNDQcEI5deoCMTxw2FinT0yQ/V9Wxb
+	i3pq7tdIc8N1TWa2YFlI2jk8JXeyGxETj/hJztQqFVIIvS3+vSlzWZnuVdho7Zhh7zAdPS
+	G3yVlIrq1dY/b8mrfZXnuWjujgvgBHI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-53-ecT11MeyOWeocyapa6M-Fg-1; Thu,
+ 06 Nov 2025 02:51:27 -0500
+X-MC-Unique: ecT11MeyOWeocyapa6M-Fg-1
+X-Mimecast-MFC-AGG-ID: ecT11MeyOWeocyapa6M-Fg_1762415486
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4019F180047F;
+	Thu,  6 Nov 2025 07:51:26 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.98])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C20C18002B6;
+	Thu,  6 Nov 2025 07:51:24 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Indu Bhagat <indu.bhagat@oracle.com>
+Cc: Fangrui Song <maskray@sourceware.org>,
+  linux-toolchains@vger.kernel.org,  linux-perf-users@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: Concerns about SFrame viability for userspace stack walking
+In-Reply-To: <9c11b765-66df-46f3-b4ea-a0c7f52dac35@oracle.com> (Indu Bhagat's
+	message of "Wed, 5 Nov 2025 16:44:24 -0800")
+References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
+	<2d713719-709d-4b46-8234-2dfe948b836a@oracle.com>
+	<CAN30aBGEpwA+ZROXufqBL6MHM70oWTtNpGSioCMhxT8yS2t-Pg@mail.gmail.com>
+	<9c11b765-66df-46f3-b4ea-a0c7f52dac35@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Date: Thu, 06 Nov 2025 08:51:22 +0100
+Message-ID: <lhuikfniop1.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022174309.1180931-2-vincent.guittot@linaro.org> <20251106000053.GA1932421@bhelgaas>
-In-Reply-To: <20251106000053.GA1932421@bhelgaas>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 6 Nov 2025 08:51:08 +0100
-X-Gm-Features: AWmQ_bki5HMad9R_EvGRCt6ZsgIelgkfzutK5gpeBF-eV1fPQRjJw2903OorBCc
-Message-ID: <CAKfTPtBWfuHP2h+7ExJ_mm6zt_DviQTa5KEUwECCzxsLk5=pBg@mail.gmail.com>
-Subject: Re: [PATCH 1/4 v3] dt-bindings: PCI: s32g: Add NXP PCIe controller
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
-	s32@nxp.com, bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, 
-	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com, 
-	bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	cassel@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 6 Nov 2025 at 01:00, Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Wed, Oct 22, 2025 at 07:43:06PM +0200, Vincent Guittot wrote:
-> > Describe the PCIe host controller available on the S32G platforms.
->
-> > +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
-> > +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
-> > +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
-> > +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
-> > +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
-> > +                  <0x5f 0xffffe000 0x0 0x00002000>;  /* config space */
->
-> Fix comment alignment.
+* Indu Bhagat:
 
-okay
+> PLT stubs may use stack (push to stack). As per the document "A null
+> frame (MODE = 8) is the simplest possible frame, with no allocated
+> stack of either kind (hence no saved registers)".  So null frame can
+> be used for PLT only if the functions invoking the PLT stub were using
+> an RBP-based frame.  Isnt it ?
+
+I think I said this before, but I don't think new toolchain features
+need to support lazy binding.  Without lazy bindings, the PLT stubs do
+not change the stack pointer or frame pointer and just make a tail call.
+
+Do you see a need for continued support of lazy binding?
+
+Thanks,
+Florian
+
 
