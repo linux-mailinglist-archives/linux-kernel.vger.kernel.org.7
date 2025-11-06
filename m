@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-888318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F09EC3A7CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 389DCC3A786
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5EA3BE606
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD4C1A475C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CF52E2EF9;
-	Thu,  6 Nov 2025 11:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571FE2ED844;
+	Thu,  6 Nov 2025 11:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hdhsf/6h"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1SFhVMm"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED23261B8F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA8A2D9EEA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427399; cv=none; b=sqS7CAjiN2Dcc9vRp8M98LJLuwq9tKYC9PPJoHmZzFcpQjqtcacAP0o0l1YrRaKNNKL1/e2KDLs1DHBzLC4gJrw6SneOVLwj2V7X6yOEtIVI6kbHaD4tTgQNMCkMjMCLGZB8H/kKkH5kB3Nu7NT9ioEip5LMJ/d5UMCcqbqKNmY=
+	t=1762427438; cv=none; b=O1DdgofrbTvFhqoLmdut10SVs5PLRMamJ2tUZdfnDyOy/taEV1QejthrVUeUix7ud0paT+iXHC6lHN+Sdoyoyta9DgaGKwbVcyJDVZwY9KnQK2AsNfXGV2l7wPEFJgioM9UMVHIgoOYc8kvgpr/UY4hPpv96tBkn+q7PU6OeH1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427399; c=relaxed/simple;
-	bh=tCy8VqKGG7CXvtSa8wxpteUDjxac13mnYPBFpl4pMo0=;
+	s=arc-20240116; t=1762427438; c=relaxed/simple;
+	bh=2HOJE+HVsVq4jDi0RFJp+8lGPaPymLnBxCpDhoqIT6Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VM4fK1/H+2jYc/AmcYR+37Gj3IzwejFda5oktdIcBs7odLbuZjzGAMBwwWweutjpo6wpqWvdKgda+3VVmnIlFSYUhhTaipazpKsUZYagPY1BUTGe0TGinW0rErmudkbfWCNQSgDycLvUFzpDXO60XgGbvWzk/LH1JQi8Xh2pfy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hdhsf/6h; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RDYkIHMMLGYhCdnLDe34F4CZJjKtUlSQdL0+EHv7sF0=; b=Hdhsf/6hjbVGkg8ij6s5Ft6v8V
-	N6n4/1AvEJIDJiK6fdFEaLAZOU+USYTrC9k2fYZo67O/5I370CbR/WEfiEbPyy1jmHWLC5/GTPFT9
-	CUTvixH/hgibKt7AW+5wN8IWMau+XuVomb8qN+eWxItGiUwUVsfCcEN9GgkVccwr5oCHViNQBKgIJ
-	3ubhimQ/rwftE4Ll7mhqKlKyjEgR6OoneCIyNlg9EgNMpeydDy994o3v4qp4gMHAG/oW5pGAyvO8F
-	ruXCQ9KyLz4V/G5Qt+a1Tfu2xSuz6qaKKVikgfwkETZYAsWvLaQ0CJEei4UzIkIoqs3ZqDp9Qj/20
-	ioDJGv6A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGx0R-000000045oi-1EZ1;
-	Thu, 06 Nov 2025 10:14:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C8D0330049A; Thu, 06 Nov 2025 12:09:43 +0100 (CET)
-Date: Thu, 6 Nov 2025 12:09:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Fernand Sieber <sieberf@amazon.com>, mingo@redhat.com,
-	linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, dwmw@amazon.co.uk,
-	jschoenh@amazon.de, liuyuxua@amazon.com
-Subject: Re: [PATCH] sched: Optimize core cookie matching check
-Message-ID: <20251106110943.GP3245006@noisy.programming.kicks-ass.net>
-References: <20251105152538.470586-1-sieberf@amazon.com>
- <f7169de1-76f4-4bde-8d9a-cc62b7e3157a@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJdHEi4JKp9zLhIhyBtHyCrEe1egpYn+unAeheBtpcaimpfo6N/QfayP0QAmh8qh0v0mxd5x1IK3tMkESz/mdrQNONdBHGDfLZguJE4pvm4TXNcAWpMoliDVWPG1x+qBUcOJW8oDzXVyZ1cxbKKUl8DxIC+YHALH0oKqgaHLBq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1SFhVMm; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640f4b6836bso1405029a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:10:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762427435; x=1763032235; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2HOJE+HVsVq4jDi0RFJp+8lGPaPymLnBxCpDhoqIT6Q=;
+        b=m1SFhVMmac9yBKFzexdaGJugKMrS3f/YSgJ28D0duZ5cUldc2Dasj6NkCLEA0udMVj
+         Y4Ekb1kBgyW5kyxoFC2zvg822dtF19YIbD6SB3PDDZzIYC51MKactgy6MlLzv9apdDYV
+         1HjVYizlhr3USF99gmiL32T0koaEOin81xJDhlHp6X27mfjox5hBHMv59y1suF6DI+TF
+         60FNcDyejT7FSgBlIQwp9f9adS3nOhte4efrJ9N3HafZqY4axxg1X9G5gpHUyIEJk+eT
+         GWj2Z3phVhLBBVGcGOGqP/i07mWBmPVpJER1ASRWVpwnuZxUGU/GNf7Ex/D+k7xC0X5g
+         sWDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762427435; x=1763032235;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2HOJE+HVsVq4jDi0RFJp+8lGPaPymLnBxCpDhoqIT6Q=;
+        b=JKK5BXwi6Jn6LyoomNy9vMbDSFcl8XyGnsseMQg5l/NnCaroCx8SLp9y0bCEcZn0Pf
+         2Rt+1K4xgH/LnUg1JXQxPd9qw7ExUz0SXVpsUzaHepoIPCFQVQwj7QRsMhQznSrtWblF
+         fEFQQPsu6eZuZ0V2GZ0C3nlJrV5fFs6kWqTc+fPpQBqgn/FpHyVHKdeTpR+Oej69e+5T
+         0NaC5/1uG1UVCgHdI8Tq9GCZTzuXHUJoldA42z35fzSWI7hPrFZuP3nE9PaA7xNF64h3
+         oiQG6lQSAyLFlAYgJ/n0AUB17nUtnqNCIAqxfOWWDW5EWx1erc7lD4IrBg9DWyGwswtX
+         otVA==
+X-Gm-Message-State: AOJu0YxhQrVnQJH5OjbGaPg3W4H4PpWUGVKKPKdgHPh3OI+oWbZBpChz
+	EWgPEAodLkwWYEsT/AGM9LsLUtKv4ek6QZuhPJQxBzCNUaW4QZWzbWK3
+X-Gm-Gg: ASbGncsyulH47sJN2+Oy/rGcR5EKleAOPcnrluy5A0THsamiE8fJm0qbTx4brpPH9+p
+	O2DUo9mGIIQ1/FpyZ8YOcnKhvrrRu3tyYEVXL2VoPtQOeYtuvAXZFjvEKB/ik9LYDT9wvPjlxKV
+	yQiWvT4w5Oq9KHpKxNSe/nXQVdNFtImr4/vlDrSUTBAkf4O2qBmpgfD5D3TcqY5Z/1PDhPctxT9
+	ztLHCFm8iZZLFMfbTEmeqwBmCtdnX7ZRW7Tl2Hk68bgbju4rHpBEXvNoipzHtAqh+sUL0TXsiZn
+	pso7E636HqldPjVNoOvCtqP0xwJwqFaK40IeeON/IBGorse5r5no0dvKBHRn/n4198J/zMO6cHH
+	lFn1CORzCPMg6cSZVAjpj9KgP+/+OMubpkO6v+Mbn1OMpr3HiUIzSbLDMhffV63hV4ZZW8lNTzs
+	zm
+X-Google-Smtp-Source: AGHT+IGaxhluR1EdJp1LK95NPfDa80lJF7xKFLk2zAG333TwyEnCysl7N+wlyZkybqLt0nbS4usvag==
+X-Received: by 2002:a05:6402:40c1:b0:63c:2e3:6cb with SMTP id 4fb4d7f45d1cf-64105a578f4mr6255036a12.26.1762427435349;
+        Thu, 06 Nov 2025 03:10:35 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e0cesm1578811a12.33.2025.11.06.03.10.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 03:10:34 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 09CA5420A685; Thu, 06 Nov 2025 18:10:26 +0700 (WIB)
+Date: Thu, 6 Nov 2025 18:10:26 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux RISC-V <linux-riscv@lists.infradead.org>
+Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Remove Albert Ou from riscv
+Message-ID: <aQyCIoipfejuaONp@archie.me>
+References: <20251031112702.41271-2-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fZuX68Rtq6BKZVir"
 Content-Disposition: inline
-In-Reply-To: <f7169de1-76f4-4bde-8d9a-cc62b7e3157a@amd.com>
+In-Reply-To: <20251031112702.41271-2-bagasdotme@gmail.com>
 
-On Wed, Nov 05, 2025 at 10:04:01PM +0530, K Prateek Nayak wrote:
-> Hello Fernand,
-> 
-> On 11/5/2025 8:55 PM, Fernand Sieber wrote:
-> > Early return true if the core cookie matches. This avoids the SMT mask
-> > loop to check for an idle core, which might be more expensive on wide
-> > platforms.
-> > 
-> > Signed-off-by: Fernand Sieber <sieberf@amazon.com>
-> > ---
-> >  kernel/sched/sched.h | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> > index adfb6e3409d7..381cd561e99b 100644
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -1432,6 +1432,9 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
-> >  	if (!sched_core_enabled(rq))
-> >  		return true;
-> >  
-> > +	if (rq->core->core_cookie == p->core_cookie)
-> > +		return true;
-> 
-> nit. We can use sched_cpu_cookie_match(rq, p) to check for the
-> above two conditions. but even this is good.
-> 
-> Apart from that, I think this optimization makes sense.
-> 
-> > +
-> >  	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
-> >  		if (!available_idle_cpu(cpu)) {
-> >  			idle_core = false;
-> > @@ -1443,7 +1446,7 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
-> >  	 * A CPU in an idle core is always the best choice for tasks with
-> >  	 * cookies.
-> >  	 */
-> > -	return idle_core || rq->core->core_cookie == p->core_cookie;
-> > +	return idle_core;
-> 
-> Peter, do we care about checking the core_cookie again before
-> returning just in case the task cookie was selected between the
-> check above an here?
 
-I don't think it really matters, but someone what runs this stuff would
-probably know better than me ;-)
+--fZuX68Rtq6BKZVir
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> If not, then this looks good to me. Feel free to include:
-> 
-> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+On Fri, Oct 31, 2025 at 06:27:03PM +0700, Bagas Sanjaya wrote:
+> From: Charlie Jenkins <charlie@rivosinc.com>
+>=20
+> Albert is not an active maintainer (he only posted on LKML three times
+> in 2019 [1]) and his inbox rejects all emails. Remove him from the
+> maintainer's list to put an end to everybody who interacts with the
+> riscv linux mailing list from getting spammed with rejection emails.
+=20
+review ping
 
-Thanks all!
+--fZuX68Rtq6BKZVir
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaQyCHwAKCRD2uYlJVVFO
+o5FvAP4kSjGOvT4bALDy0P/jnLCWzceZqua2ANQSbtHWsEukQQD/YV69wA7u3yzr
+jL/3ST0vq9rRs7f0XoYiCac68VBUMgo=
+=CRee
+-----END PGP SIGNATURE-----
+
+--fZuX68Rtq6BKZVir--
 
