@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-889120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F24EC3CC44
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:16:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C323C3CC69
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:18:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C27874EB206
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:11:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A0D3BDEA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB9834D900;
-	Thu,  6 Nov 2025 17:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="n3jgQyNj"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE2134DB69;
+	Thu,  6 Nov 2025 17:11:55 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734D22264D3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A5233A01E;
+	Thu,  6 Nov 2025 17:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449109; cv=none; b=JeBhqDEWyas7ixe04/aleTpzbdZaqiRJ2SGeVpr/5UBj3Y5Ywef539zDk4IloSw6Kkn/QnbJw4NpDqXU2w2V270n1gqaEjtCMnqiJ/GL7Yg0kpnAhuSid/yBmk6E79GX1j1euJgWXvXprCDqdg3Hzlk21D6le/Stcd6p/EiR49U=
+	t=1762449114; cv=none; b=qMr7TcprMFVI/LF9JKyuW4U+WgFGtjZDGfnvR+ng0bQIKeZMNwLg4n7P97hopy3fObmSicUL2A0hB7ckn//leLucqGBsV3Uf8oaPC1Jk58fv7Nl/dTUbvxWgKFv+tdFXQ3DGX+Ms56mnarf6FSD73yzaGgYDaPhBWj9ehOFXr0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449109; c=relaxed/simple;
-	bh=pBncupXbWkCVN1fOd+MWv1n3EGow7Y78ZsUbGG2oPVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XavdEedKhfSh0Qh4GYy5fPizTMRYfJTX6T+bn2y6UgjdMmziBDaeg6HpzIhlXxXISKh2CjBJWMuOlU0yTrAJdbmUa9gg/Z0Ez+C+3/cgeYI+nuWxnmk4EcRuuU5DSaSTygwxcqlGgLv+avoaXNEVQInyG10k6UIC1EP855dEf7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=n3jgQyNj; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87a092251eeso28611996d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762449106; x=1763053906; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aKXFhe1XgNsEqIm7n3PyjdJL5U3TbOb6yB6jqMWUHW0=;
-        b=n3jgQyNjKBrhEYmKfs/HF2geSjgYhKEq/bvuMz+VOrujjHOqwIquqimWN0g+HE9GkX
-         g7dmaS/0I1VcZDwOhuzZ0E3s5jszR4aejv/zhci+5kjtZtUSDfgGLxTqvNV9wNtwkgJg
-         6c9UswPNUOIZVbs3MFqSmpIuVfRf/GqLVnhfCIi8kEDITV4xJUZU/Gk8hyDWxDBQeb1Q
-         TF3fuiUrV247AzlODSNdJnDB6KUl7bt75G73tPjEtWNk1CY+o+PSVjVPKoBBsusmYdKo
-         5TsdrLz12KzkYH0lCQyZROfKzU44EOxioSd/znx5IlpYFdiuUNkIFgBdp0QuPvzYk12P
-         omgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762449106; x=1763053906;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aKXFhe1XgNsEqIm7n3PyjdJL5U3TbOb6yB6jqMWUHW0=;
-        b=QwZpcxBUXIYyILhNPJF1URtjbLxd08bGZ+LrU1Nlpqg0lX4j+H7j+o8CQjomQVLlvD
-         ukGtrsg9i27ZAuWdR8OaQUqeH2dGbnRtBrQtOvwGoSbOid4XnQqJ3kfLp1cSmj8y/8HB
-         gQGSrHeDN9f9PJE2eIAEP3PqVb3FgbfXZ2vLZ1luowwH+Z71KpogGC5PgavfpM/LeJXS
-         X5zn0MIi64cEz6uThZTJZc3r0ivZ1+E7pGXo4hfXarFEYwtwkBnrgh39fK4jsEtdPy5C
-         +uPg160mB8+FIUl1piycsh8CpmRwbfx32tiUh8dOVEqKqJMY9Sv8INcRgFEn6/gzYipi
-         HzsA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2vocoPLrU8+i/Zhvps9INZo50FohFl9Q7fCwGqnA5XhtEjtz1xBLbz2q8O2Qx0bcA1mnqmGKSR2nC8Qs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7gG2wicI1rqtImpKPFH87+9SjU4kQPJ0pvjObgC0zc1Hd551f
-	whEIEitGrYqS7o5rwXO+PZVOkRtT3dFQXjjHaRweRqFxhUO80B+8m02YedayTm42Xic=
-X-Gm-Gg: ASbGncufr65IrzfBc6s1/lS2zkgB4ZiZDU/aqoNI0QDVCvVHXtuzDEyVDV1mJJSHcIJ
-	6VhmCI8Lh+PHqv2G01iM5qdlGGaHYxeaBEo0uk181Ii0wnNUpRVvYGT0CpOj4A3sBBRRh1gKssE
-	TP0Yxdx8Vk9Ry4g4wuIrLQoSQKix3fToOnWavuFUDHVvh5ovF4Z0HyJKTqZR3D9730HeAbr+Nbn
-	xptK2zmvBv7AoVkDitbN7irgOuxb7wr8DmoyE6MNWgg3A/T9E4Siyuk9S3oQK9tX+yNPzqILhbD
-	83Rp9uT7qfBruNaKwBPedLoj7WMuF1usP77a/qTz3EXvrWZu1IaBEoeAsiV8ub6MVfhgbHm7V5B
-	tR1DDbAtWCIfHLtPj3dYY5Yj7X3VcjO5Bh8ZmVlEnSQCKl7eBxM7wCcZ+tjHNF4WiYG/an16mea
-	+hHxKGWC1URnE1Lg/PLVqITuDZseeDhVTVKOPwbf1AhVTULnBnkDgJDEeCoq4=
-X-Google-Smtp-Source: AGHT+IGtpHAhkhHyR6o5AHtiwz5cY+ehhjfBP8n5EpJqyPwP3g9GbLdMDu/RgBohpPPk3DUjCzmC2Q==
-X-Received: by 2002:a05:6214:62e:b0:880:53a8:404d with SMTP id 6a1803df08f44-88082834ec4mr51601596d6.3.1762449106390;
-        Thu, 06 Nov 2025 09:11:46 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880829ca35csm22268686d6.35.2025.11.06.09.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 09:11:45 -0800 (PST)
-Date: Thu, 6 Nov 2025 12:11:42 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
-	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
-	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
-	lukas@wunner.de, Benjamin.Cheatham@amd.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND v13 17/25] cxl: Introduce cxl_pci_drv_bound() to check
- for bound driver
-Message-ID: <aQzWzp4DdSqTj9Hc@gourry-fedora-PF4VCD3F>
-References: <20251104170305.4163840-1-terry.bowman@amd.com>
- <20251104170305.4163840-18-terry.bowman@amd.com>
- <aQuOiK8S31w44pYR@gourry-fedora-PF4VCD3F>
- <aQufg2Nfq8YqkwHl@gourry-fedora-PF4VCD3F>
- <aQvO-eBboCOhRDOO@gourry-fedora-PF4VCD3F>
+	s=arc-20240116; t=1762449114; c=relaxed/simple;
+	bh=xIVqNeX2vQl98nDZX5EYVxD9pnztau4qp782rYVbNtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BmEyxbPELh5hD6r+n3Mkwa7v05zk8gy+iwmbgcnWpmTs73U02Y/HHXJtZ0Vj/PwuBmTtSrkipZZYXK9PcDod4Ar94lEu08+/qx1yc1mgWQVnXHi23ozHAtE6jDxkPqhRunxEIOVIrq2OdedKuLLdS8Fibdv6WShT+Yh/N1W6Bhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id EBE89C01EB;
+	Thu,  6 Nov 2025 17:11:50 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 38AEC2002A;
+	Thu,  6 Nov 2025 17:11:49 +0000 (UTC)
+Date: Thu, 6 Nov 2025 12:11:48 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] tracing: Hide __NR_utimensat and _NR_mq_timedsend when
+ not defined
+Message-ID: <20251106121148.20d14b47@gandalf.local.home>
+In-Reply-To: <20251107020104.fd7f43772d3b0ce5b28474bd@kernel.org>
+References: <20251104205310.00a1db9a@batman.local.home>
+	<20251107020104.fd7f43772d3b0ce5b28474bd@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQvO-eBboCOhRDOO@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 38AEC2002A
+X-Stat-Signature: tc3dfsinbeej7xia6t4co15p1naaqhkk
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+Y4Y/6tu+DGQCEsDJC1TYzwtpYv6c9FZs=
+X-HE-Tag: 1762449109-524249
+X-HE-Meta: U2FsdGVkX18yUNTfi/XCuHrwoNB8TpxA1IiQdoGKKgdzAChU4cDd81UqIgT22DEGvrf00b+XNFp571FAhQ0tqKTZMKfBfkF/mnoF4ZqD9hgb71cxoIh9maQwJCrFoOisbiK4WZFZEWKT4CM6SKgkc/7xiB7tXU3fYVMY02fCCHcUui06Mierywqc3XnCzt113S2hGGOuZwMN1i2ZUc7KoAskZDPgxM7E4/Z3YCJB3SwESk0vr7CiCrH6NXv/1yraK3eFo57Tiedmk+COIVlse5Ymt1kQoMNcVmdUYSuAEl/i1BBtHuN0pJy7nZP70ADJr7tCboMaIaIa2einbyvRUiUDGq7ItZh5DXahxSoAVM+PElVZw6BZWfep5fQ2ZZqmGUenekTa4QUKfHFSw48gyg==
 
-On Wed, Nov 05, 2025 at 05:26:01PM -0500, Gregory Price wrote:
-> On Wed, Nov 05, 2025 at 02:03:31PM -0500, Gregory Price wrote:
-> > On Wed, Nov 05, 2025 at 12:51:04PM -0500, Gregory Price wrote:
-> > > 
-> > > [    2.697094] cxl_core 0000:0d:00.0: BAR 0 [mem 0xfe800000-0xfe80ffff 64bit]: not claimed; can't enable device
-> > > [    2.697098] cxl_core 0000:0d:00.0: probe with driver cxl_core failed with error -22
-> > > 
-> > > Probe order issue when CXL drivers are built-in maybe?
-> > > 
+On Fri, 7 Nov 2025 02:01:04 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> On Tue, 4 Nov 2025 20:53:10 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > From: Steven Rostedt <rostedt@goodmis.org>
 > > 
+> > Some architectures (riscv-32) do not define __NR_utimensat and
+> > _NR_mq_timedsend, and fails to build when they are used.
+> > 
+> > Hide them in "ifdef"s.  
 > 
-> moving it back but leaving the function seemed to work for me, i don't
-> know what the implication of this is though (i.e. it's unclear to me
-> why you moved it from point a to point b in the first place).
+> (I wonder we can expect that other __NR_* also defined on every
+> architecture?)
+> Anyway, this looks good to me.
+
+I built every arch when I did the first update. It just happened that my
+scripts to build riscv-32 was actually building riscv-64 :-p
+
+So it's now all tested.
+
 > 
-> (only tested this on QEMU)
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
 
-also tested on Zen5 systems and others.  Seems stable to me.
+Thanks!
 
-~Gregory
+-- Steve
 
