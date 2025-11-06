@@ -1,225 +1,145 @@
-Return-Path: <linux-kernel+bounces-888800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4B5C3BF51
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:08:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD96C3BF58
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984465681DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A37623690
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAA52E8B64;
-	Thu,  6 Nov 2025 15:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E951DA60D;
+	Thu,  6 Nov 2025 15:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="GDYgoEl4"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AKcTWIKL"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4F819D07E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FD119D07E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762441266; cv=none; b=V8S6wOZDPaIM9cRkjG71+OnbrLAwFFCm1mZWstTvC6PsaWvFndMV1KfAlXhjwwVYtz72L7FHoQJjLYTBETWwPRgvWh9SFUvXvLOax9UByB4jH7ilcYDOly9m8ij6K2a2NC21PmI1iQk610udWk2Tflts7AfKt8XVAokMyGwNdXU=
+	t=1762441293; cv=none; b=Xo90V7QCsYQmmqLvwCzi8c1QDhgg4YgzCvJ2g7XRs2iiL+Z8RobFREmxvgPddUDZzTTExkhI6wFgiJK4TJ0e4ZtEzeFeIlTEVAF9p5XHEDlU8S7zG6PRXMh23cGjIcV2kKCeGl6/Ih5JSyvBvrna/4MDiAINPA0WQGkLiRSm/Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762441266; c=relaxed/simple;
-	bh=vOLSZCP+9mJjD/w5bHEK4PSG6JNi4Vvac0nQEDaz1Qc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kVa/cb33vSzLRJ6PXrKaG5Sdo2Zs/RXran8NZJqvY9qwqGLRz/0nc+QdXJXR0bHc2LeWSC6OP0hCimN6zi9Gyu21d7NgxgxYcpKvnPGlQpQEJlFJ7tKmGcn5fEoFrxeAXwdqF6QCBVsbqPuGecvT75dbukNg+R7TlrE/T181fJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=GDYgoEl4; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1762441258; x=1762700458;
-	bh=N20bsF88qmtxzuIu4gZ0s1r8sTe/QYH+2BKK9mK/6ww=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=GDYgoEl4LngLY9+ZW1gVaKIEyG1SHIh1SrAsD0+vRBpdfjCgYfaPLDAPwJfY3+yzw
-	 FM3YmOlNxdYCwvJIbRt5N+t44b4i6tycDlu2qT+b9CTSO2CW3ZuVk4ODp1LRjvE+zq
-	 U6/rFnbBoh6thQdjr+7rJvDv8h1HYgsLNqtsX7U/Z+hlsF5GCWKAjXB1dzGUj8uGhh
-	 Z9hvn1NzeQJfGZMeqGeoKSj/c8khdplqqaypqby7h+36/mTHSXYtuOq4GYSm8VSr17
-	 Wm6KvSW8MZ4R139G/SiBRC0gjQ5eTyQXUndhuv6XFYXclR1d11kW1EM+NN+7EeIvxE
-	 JzF/g66ef3xhg==
-Date: Thu, 06 Nov 2025 15:00:48 +0000
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-From: =?utf-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <m.wieczorretman@pm.me>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, Marco Elver <elver@google.com>, stable@vger.kernel.org, Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 1/2] kasan: Unpoison pcpu chunks with base address tag
-Message-ID: <v75jgljobtrc6d7plw2x5caloipqkclfhh6w3quylarqrzczkk@5blzaptwme4l>
-In-Reply-To: <00818656-41d0-4ebd-8a82-ad6922586ac4@lucifer.local>
-References: <cover.1762267022.git.m.wieczorretman@pm.me> <821677dd824d003cc5b7a77891db4723e23518ea.1762267022.git.m.wieczorretman@pm.me> <00818656-41d0-4ebd-8a82-ad6922586ac4@lucifer.local>
-Feedback-ID: 164464600:user:proton
-X-Pm-Message-ID: 321924270825e08940ed773dce8975504f8a0244
+	s=arc-20240116; t=1762441293; c=relaxed/simple;
+	bh=jCvKBBp1W8WUva/81K4STHxtNMngHkCbAjdRsMt0xxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RQesYVJMKdkd9Sb74UxHRMn+xQ0D2EkjwVx531zRgW5mRaN47M6Jgnxe/Bn3YJQEQ669Nf1iEHHmKUsOe502MufRTJwJbcw1le4IJZSnxUykafSkZF6mv9CASXJo6XCf5pkr1XbjyBsNhH7TGTplX5auzstnoSf1MPq0KQgfSHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AKcTWIKL; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-429ce7e79f8so811827f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:01:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762441289; x=1763046089; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9q33Ehb0aqC9B6A5x4aRuL8tc8kDojsM4ivTH96hSK0=;
+        b=AKcTWIKL8taTgyiA28I/KI32jtfMPYTLhw5BOlq6emgUsdDby6xXCYM4ReCHuhnnVP
+         ZEfkzJf+yBJtX0Z0mUcnSTnEmjyh9KkzrZwj5U23L+dPnke50LMkgHY2UOL4hzfTYOT7
+         VaoFqRJioQEtgoGMr/bIIPLvBaYWNTaRP2v6mklc7fKEp2t3hPI7+ASji68Y6UJQO1ed
+         r/Tx66DiswG6m3McHjtX1rLK6ZaRdXdx0Lp6JwuNV34NH7iOcKVBP+qV1ivwobIqGSUO
+         /JZd+lVTnD1B3B2jOElrt9j+j1Zkm3ugV7gOrbopr9A0T7zx7q+3pn90VLqxQoci4stc
+         5D2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762441289; x=1763046089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9q33Ehb0aqC9B6A5x4aRuL8tc8kDojsM4ivTH96hSK0=;
+        b=BCY4Tnmh66LnolfRKdOGxJbx6p6RiI1H/jjBKclexAHnUrni4duIt0iCYvRPyA6fXd
+         lQiWDsfQTrta/a7BrEf7zft8VmHQRaFpWOm6f67du16XoqTFuqQTlyT7gfDrOfHk14OX
+         xawhcBEZHW5sddPDyMEWbF6STx7IwCBsgLgJXhTnp2Iz+/YYRau5dLKxO71Y6L68dVvn
+         F9d17SJpCI3fALS86wnCZ2ywXIobiLmQ9Iwuxy2HvmAvJBkfHVsuvR7dLY0FyC3iorHF
+         uvEX8IMpHUba+WkBqjFj408psxQBovn6ES/WcGnz4CDqYQ6OWL0TfPJr/r7iMPoIHB6O
+         0YrQ==
+X-Gm-Message-State: AOJu0YwArBeXTnaXGuxkgL6lh5sS7B7CukaGTQ8MnYFr9N3FLWv1U6mm
+	/HVc4/d9SWYxh/KG0D3SPPSx+HfVaXKYE2P0dZlpRc7HdIohWWztpTeQW+wiDr02tGtExVOu0Ng
+	9pzUm
+X-Gm-Gg: ASbGnctWAQknqsrJJnd6B9sGFqtXrv3TVGndg8VKY0CwOgnqIDK+yJnku8vFLXsJ3Xg
+	dIkINTcbGekcrb9IOgJTwJ30h++tFFpl4sfBQYF0Ou6egeRnWnjpQWi6lP5jnulOMqb8p1jrvUL
+	w8FB4vLtBHuEPYKzn/LdC4cZp77TUD/H+RPlQwOVefygTIwF8mqgFdFvhrxUTG64gQclD/3EqBm
+	jrFU7qSZ8UtBRZEOqCQp7kellcGlM9RbtRmrxUOGIabVmU5Ak04pAquR9t+K+Ublj+d0WvZIRZa
+	o6GMgP6bneCSh//foPtHPrNsxhvZexhCgEK+EoUVotYCvfUAphiOtSKfRtZtY3Fmwyu+wuli1lR
+	U+t9BqPa7mjIeLUp9bYiU27h2G4lfVD4C6VOAzUzWbsXNa8MSVmOVoXrro54Cs9eiVewbLK7bo8
+	NXG63QzV5O0tTEeHe8DlU5UJ4=
+X-Google-Smtp-Source: AGHT+IEsFeQ6pFu7U+/BG5InY/YZgal1+DD+B2PUI/gvSc13hYUekISQ1y5DPHswsv/q41vwvjXBTg==
+X-Received: by 2002:a05:6000:2410:b0:429:c965:af5 with SMTP id ffacd0b85a97d-429e32c9e17mr7078839f8f.10.1762441288471;
+        Thu, 06 Nov 2025 07:01:28 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb49c394sm5784038f8f.41.2025.11.06.07.01.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 07:01:28 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	Christian Konig <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH v2] drm/sched: Replace use of system_wq with system_percpu_wq
+Date: Thu,  6 Nov 2025 16:01:21 +0100
+Message-ID: <20251106150121.256367-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-As Andrey noticed I'll have to rework this function to be a proper
-refactor of the previous thing.
+In the general workqueue implementation, if a user enqueues a work item
+using schedule_delayed_work() the used wq is "system_wq" (per-cpu wq)
+while queue_delayed_work() use WORK_CPU_UNBOUND (used when a cpu is not
+specified). The same applies to schedule_work() that is using system_wq
+and queue_work(), that makes use again of WORK_CPU_UNBOUND.
 
-This solution seems okay, after noticing the issue I was thinking about
-adding a new file for vmalloc code that is shared between different
-KASAN modes. But I'll have to add different mode code in here too
-anyway. So it's probably okay to keep this function behind the ifdef, I
-see shadow.c and hw-tags.c doing something similar too.
+This lack of consistency cannot be addressed without refactoring the API.
+For more details see the Link tag below.
 
-On 2025-11-05 at 22:00:41 +0000, Lorenzo Stoakes wrote:
->Hi,
->
->This patch is breaking the build for mm-new with KASAN enabled:
->
->mm/kasan/common.c:587:6: error: no previous prototype for =E2=80=98__kasan=
-_unpoison_vmap_areas=E2=80=99 [-Werror=3Dmissing-prototypes]
->  587 | void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vm=
-s)
->
->Looks to be because CONFIG_KASAN_VMALLOC is not set in my configuration, s=
-o you
->probably need to do:
->
->#ifdef CONFIG_KASAN_VMALLOC
->void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
->{
->=09int area;
->
->=09for (area =3D 0 ; area < nr_vms ; area++) {
->=09=09kasan_poison(vms[area]->addr, vms[area]->size,
->=09=09=09     arch_kasan_get_tag(vms[area]->addr), false);
->=09}
->}
->#endif
->
->That fixes the build for me.
->
->Andrew - can we maybe apply this just to fix the build as a work around un=
-til
->Maciej has a chance to see if he agrees with this fix?
->
->Thanks, Lorenzo
->
->On Tue, Nov 04, 2025 at 02:49:08PM +0000, Maciej Wieczor-Retman wrote:
->> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
->>
->> A KASAN tag mismatch, possibly causing a kernel panic, can be observed
->> on systems with a tag-based KASAN enabled and with multiple NUMA nodes.
->> It was reported on arm64 and reproduced on x86. It can be explained in
->> the following points:
->>
->> =091. There can be more than one virtual memory chunk.
->> =092. Chunk's base address has a tag.
->> =093. The base address points at the first chunk and thus inherits
->> =09   the tag of the first chunk.
->> =094. The subsequent chunks will be accessed with the tag from the
->> =09   first chunk.
->> =095. Thus, the subsequent chunks need to have their tag set to
->> =09   match that of the first chunk.
->>
->> Refactor code by moving it into a helper in preparation for the actual
->> fix.
->>
->> Fixes: 1d96320f8d53 ("kasan, vmalloc: add vmalloc tagging for SW_TAGS")
->> Cc: <stable@vger.kernel.org> # 6.1+
->> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
->> Tested-by: Baoquan He <bhe@redhat.com>
->> ---
->> Changelog v1 (after splitting of from the KASAN series):
->> - Rewrite first paragraph of the patch message to point at the user
->>   impact of the issue.
->> - Move helper to common.c so it can be compiled in all KASAN modes.
->>
->>  include/linux/kasan.h | 10 ++++++++++
->>  mm/kasan/common.c     | 11 +++++++++++
->>  mm/vmalloc.c          |  4 +---
->>  3 files changed, 22 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
->> index d12e1a5f5a9a..b00849ea8ffd 100644
->> --- a/include/linux/kasan.h
->> +++ b/include/linux/kasan.h
->> @@ -614,6 +614,13 @@ static __always_inline void kasan_poison_vmalloc(co=
-nst void *start,
->>  =09=09__kasan_poison_vmalloc(start, size);
->>  }
->>
->> +void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms);
->> +static __always_inline void kasan_unpoison_vmap_areas(struct vm_struct =
-**vms, int nr_vms)
->> +{
->> +=09if (kasan_enabled())
->> +=09=09__kasan_unpoison_vmap_areas(vms, nr_vms);
->> +}
->> +
->>  #else /* CONFIG_KASAN_VMALLOC */
->>
->>  static inline void kasan_populate_early_vm_area_shadow(void *start,
->> @@ -638,6 +645,9 @@ static inline void *kasan_unpoison_vmalloc(const voi=
-d *start,
->>  static inline void kasan_poison_vmalloc(const void *start, unsigned lon=
-g size)
->>  { }
->>
->> +static inline void kasan_unpoison_vmap_areas(struct vm_struct **vms, in=
-t nr_vms)
->> +{ }
->> +
->>  #endif /* CONFIG_KASAN_VMALLOC */
->>
->>  #if (defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)) &&=
- \
->> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
->> index d4c14359feaf..c63544a98c24 100644
->> --- a/mm/kasan/common.c
->> +++ b/mm/kasan/common.c
->> @@ -28,6 +28,7 @@
->>  #include <linux/string.h>
->>  #include <linux/types.h>
->>  #include <linux/bug.h>
->> +#include <linux/vmalloc.h>
->>
->>  #include "kasan.h"
->>  #include "../slab.h"
->> @@ -582,3 +583,13 @@ bool __kasan_check_byte(const void *address, unsign=
-ed long ip)
->>  =09}
->>  =09return true;
->>  }
->> +
->> +void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
->> +{
->> +=09int area;
->> +
->> +=09for (area =3D 0 ; area < nr_vms ; area++) {
->> +=09=09kasan_poison(vms[area]->addr, vms[area]->size,
->> +=09=09=09     arch_kasan_get_tag(vms[area]->addr), false);
->> +=09}
->> +}
->> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->> index 798b2ed21e46..934c8bfbcebf 100644
->> --- a/mm/vmalloc.c
->> +++ b/mm/vmalloc.c
->> @@ -4870,9 +4870,7 @@ struct vm_struct **pcpu_get_vm_areas(const unsigne=
-d long *offsets,
->>  =09 * With hardware tag-based KASAN, marking is skipped for
->>  =09 * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
->>  =09 */
->> -=09for (area =3D 0; area < nr_vms; area++)
->> -=09=09vms[area]->addr =3D kasan_unpoison_vmalloc(vms[area]->addr,
->> -=09=09=09=09vms[area]->size, KASAN_VMALLOC_PROT_NORMAL);
->> +=09kasan_unpoison_vmap_areas(vms, nr_vms);
->>
->>  =09kfree(vas);
->>  =09return vms;
->> --
->> 2.51.0
->>
->>
->>
+This continues the effort to refactor worqueue APIs, which has begun
+with the change introducing new workqueues and a new alloc_workqueue flag:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+Use the successor of system_wq, system_percpu_wq, for the scheduler's
+default timeout_wq. system_wq will be removed in a few release cycles.
+
+Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index c39f0245e3a9..13192e99637a 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -1315,7 +1315,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched, const struct drm_sched_init_
+ 	sched->name = args->name;
+ 	sched->timeout = args->timeout;
+ 	sched->hang_limit = args->hang_limit;
+-	sched->timeout_wq = args->timeout_wq ? args->timeout_wq : system_wq;
++	sched->timeout_wq = args->timeout_wq ? args->timeout_wq : system_percpu_wq;
+ 	sched->score = args->score ? args->score : &sched->_score;
+ 	sched->dev = args->dev;
+ 
+-- 
+2.51.1
 
 
