@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-888153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8E9C39FE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:02:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C43C39F4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83CA427CCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EBD91884FCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB01D2E284A;
-	Thu,  6 Nov 2025 09:54:42 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5B02BCF4C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C66F30DD06;
+	Thu,  6 Nov 2025 09:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DeHZwXIl"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADAA2DE200
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422882; cv=none; b=knoL35mBnnQq48AnQBRcBKp1mro/g9FyM9eRf5V66Lz/PYtZ0MMBkC8kC2Vf03cdSJ/Bnpud/yuOBTcy+FLRDws7hzNgwuiytm2a6JSflKr6XzvlikKqmC2TijdKIYCnYe7i1bcldA0qSv6V+xs15OzyITkDkwwwQxn7UeTm+XI=
+	t=1762422950; cv=none; b=mVUT8vjCHh1/WNwn0UN7jHEvq8AaVnxnqO3/OI0UtxogAPz5/RkEdr8vVxE2qT10HW9ViiTV7AbYqQQlHRnDB2bMF1xPl/lylO9+6itufujVYbVor/9EZbQr5vp2RpGqgGmlGbwDtxfLs6w31lGB68vqWB23GZJOM6z84lnk6eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422882; c=relaxed/simple;
-	bh=9qjHSty0byUHU5tZYNvEbUSL79HOCA8d/vcmVI7Wd3w=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gQddqDnVmR23zXpPJGUZ9r4uIP6vaxbUDXNGe4awAzMXexOlNdVVRFGtBqHe/p7yCHsZP80aEzS/Q90V4NVgIW5fRjRu7fZAfhZKoBOeCWVbnHKSS7owpztAOgNRkSnqYBL8ukTwSkQB87ucreFQQtU3XsU76GqtStUESfWCsWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8CxHvBccAxp3qQfAA--.2901S3;
-	Thu, 06 Nov 2025 17:54:36 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by front1 (Coremail) with SMTP id qMiowJBxjcFZcAxpkYEpAQ--.5449S3;
-	Thu, 06 Nov 2025 17:54:35 +0800 (CST)
-Subject: Re: [PATCH] Loongarch:Make pte/pmd_modify can set _PAGE_MODIFIED
-To: Bibo Mao <maobibo@loongson.cn>, chenhuacai@kernel.org, kernel@xen0n.name,
- akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
- linmag7@gmail.com, thuth@redhat.com, apopple@nvidia.com
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- Liupu Wang <wangliupu@loongson.cn>
-References: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
- <48f8f2d8-e6e0-ec2a-7323-11551c66dac2@loongson.cn>
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Message-ID: <721fdf6e-61c4-2e31-c584-04d8380f2952@loongson.cn>
-Date: Thu, 6 Nov 2025 17:53:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1762422950; c=relaxed/simple;
+	bh=lGb+rCNSnJ/Re9I074l78vjpp6/yu6/7U6mL2e+8rjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JsGfbnZ1nJHX88ko1Zxp7EqSLuwl94leqTXDlk+zUdel/ykSpKCOEXOeA6KClUefE7m0MOYKeE2qpEi62E+xGo+BntpNWju1q7i/IYEzus77sKNGy1QZnsg1aD5cTiNHzazQQGgE417L4a+I+tHLAkPa78QYAgTwjjhkACsB+eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DeHZwXIl; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2953b321f99so8757705ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:55:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762422948; x=1763027748; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sx3MpVj7PiHTaRtB2+AQXnkYRvNzs0/kE3anQ6IOaeM=;
+        b=DeHZwXIlOAQIZ4IYN0+ls86e4UlJ0pQ/AJlt+cSbeVJ7vEAtxKCq7cKJ7GjTgJD9h5
+         HKK08f04i+iB8Yj3X58iYIiAnKwOoiS1cWccJlln6STUByWjrmIfYUBMxMbI0rTRHEIS
+         BH9P2R/6EePvfMC0AKE1F0saP/KAEkG43owBXowWkLgV/KiqysTUUk926Fg0LUZVmytO
+         VWayLjKTxISmBgBjxtajeI62BBHnYXFNETGwv473Nz2wt4cPYPEX/cI/bI0yN936IoCg
+         deX5AdMpe5qCDxhl1P+ITLp8FQFh8Epf0c/zcxOEDiTpmeV+uRBzSOd/qbClOtoCE26d
+         lMCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762422948; x=1763027748;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sx3MpVj7PiHTaRtB2+AQXnkYRvNzs0/kE3anQ6IOaeM=;
+        b=SGxNf9/NenhrK0ENAv4B7N1ddpLnZkv1uOoKAOPbl22gE/54ZgiCDnSsnHiEbA8Z3U
+         ePxs31F9mRGw3d6c892xrDOqS4adOvo2y6DL71q1WqY2kceSdKlDep9BhVW+zbpR0Ndj
+         5Opg5YSPk75CjpA7zLb1SeiimnZwVQbmF5834AsKIWlXYKGeJRjJ6HaTfUyIHRA0WP+P
+         rKFEpePxJe1LbmfBZLxXP4WnI3U0NEkw+cOFKALgAv7U/4e3hfQruez3E1Dz7AmsKTAm
+         Qujk/MvHI6XDOpUCXwjWL0s/FGd6MsoKT3uDBAdYHXeB/E/6I+HvV/iyLojV6EQ2P3O+
+         JGJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8BDn6/FgKPeXE/PVCD/DMPlkKeamBRfLsXHkjyw5nzZkEHufb/46N1pdPu3iYGozVprXQ7XbeVRPBmZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrXo1TVtFGBIzBaQmV8d9xMdKvd5S7TOX+3OMJ/hUcwzvsvLnq
+	ACmzvceVTMoJKLiZMVcZdEa7zRfKm79hS/kiSOsp+0M5jBgPx7+TM4AN
+X-Gm-Gg: ASbGncvhEYX7v/gt8ZnNG4MhcYproapKBRs/huEMFed8dVaHJhMkT9sQnk0B7fviPpY
+	Rzv0atWs2q3PK1FfPjjnLSAQQfJEft1kXK86gO945GvkjYhE9WWk7RZ/Qkfy+e5b45PkcCZmhmO
+	CfOV0hKnfH+ToLjntWNFAYBsIHyo0wbGjYFjyY2msmxkYQfM6xrRUp646a6BxR2aPcz20WSJDVL
+	CLlbzJ6CyGj43C5H7h/7Q28aDw/+sJj1yzzF/1ZTgKxUqMrreZUe5gmXbSg31XxLHZ7Q0TrT7Eb
+	XOIgjFMc0n5l4Rs3qgK4YR3KBVCc2BJpHvPgK/9K3us9LRqTIwfZEiuMazRmWNHIbzuS9HMfchw
+	1LQi53TFUxfHwh23B6r7SAgsosySobloXF2uzPYUODgOh3jQWDMWVGfwF1cEUxlIBka4UmwSrID
+	Y055/8QbYgNWZhIfuiUS4=
+X-Google-Smtp-Source: AGHT+IGLWpaeqUyOqwgdTGI+r36lnGa7tydw0O2a7A+GFy9ENF5YsdFbKzmv4BnmJ82XJw5jO5gf6w==
+X-Received: by 2002:a17:902:d48c:b0:294:ccc6:ccfd with SMTP id d9443c01a7336-2962ad1bdffmr91436475ad.24.1762422947738;
+        Thu, 06 Nov 2025 01:55:47 -0800 (PST)
+Received: from fedora ([103.120.31.122])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ca1eb7sm23046285ad.89.2025.11.06.01.55.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 01:55:46 -0800 (PST)
+From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+To: linux-kselftest@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Subject: [PATCH v2] selftests/user_events: Fix type cast for write_index packed member in perf_test
+Date: Thu,  6 Nov 2025 15:25:32 +0530
+Message-ID: <20251106095532.15185-1-ankitkhushwaha.linux@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <48f8f2d8-e6e0-ec2a-7323-11551c66dac2@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowJBxjcFZcAxpkYEpAQ--.5449S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxWFW3GFWUGFyxJw1fJw1kZwc_yoW5KF1kpF
-	1kAFyUZFWUtrn7JayUJr17Xry5Aw47J3WDJr1DJF1UJryUtryjqr1UXrn09r15Jr48Xr1U
-	Jr1UXrs8ZF47JrbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVW8ZVWrXwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
 
+Accessing 'reg.write_index' directly triggers a -Waddress-of-packed-member
+warning due to potential unaligned pointer access:
 
-在 2025/11/6 下午3:07, Bibo Mao 写道:
->
->
-> On 2025/11/4 下午3:30, Tianyang Zhang wrote:
->> In the current pte_modify operation, _PAGE_DIRTY might be cleared. Since
->> the hardware-page-walk does not have a predefined _PAGE_MODIFIED flag,
->> this could lead to loss of valid data in certain scenarios.
->>
->> The new modification involves checking whether the original PTE has the
->> _PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, ensuring
->> that the pte_dirty interface can return accurate information.
->>
->> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
->> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
->> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
->> ---
->>   arch/loongarch/include/asm/pgtable.h | 17 +++++++++++++----
->>   1 file changed, 13 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/loongarch/include/asm/pgtable.h 
->> b/arch/loongarch/include/asm/pgtable.h
->> index bd128696e96d..106abfa5183b 100644
->> --- a/arch/loongarch/include/asm/pgtable.h
->> +++ b/arch/loongarch/include/asm/pgtable.h
->> @@ -424,8 +424,13 @@ static inline unsigned long 
->> pte_accessible(struct mm_struct *mm, pte_t a)
->>     static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->>   {
->> -    return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->> -             (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->> +    unsigned long val = (pte_val(pte) & _PAGE_CHG_MASK) |
->> +             (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
->> +
->> +    if (pte_val(pte) & _PAGE_DIRTY)
->> +        val |= _PAGE_MODIFIED;
-> Since ptep_get_and_clear() is not atomic operation on LoongArch like 
-> other architectures, considering this scenery with HW PTW enabled:
->     CPU 0:                         CPU1
->                              old_pte = ptep_modify_prot_start();
->                                   old_pte = ptep_get(ptep);
->
->     write(buf);
-> *HW will set _PAGE_DIRTY bit*
->                                   pte_clear(mm, address, ptep);
-> ^^^^^^^^^^ For CPU1, bit _PAGE_DIRTY is no set in old_pte, _PAGE_DIRTY 
-> will be lost also. ^^^^^^^^^^^
->                              pte = pte_modify(old_pte,)
->                              ptep_modify_prot_commit(.., pte)
+perf_test.c:239:38: warning: taking address of packed member 'write_index'
+of class or structure 'user_reg' may result in an unaligned pointer value
+[-Waddress-of-packed-member]
+  239 |         ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
+      |                                             ^~~~~~~~~~~~~~~
 
-There does appear to be an issue here. It seems we should use 
-`__HAVE_ARCH_PTEP_GET_AND_CLEAR` and implement ptep_get_and_clear via 
-`atomic_xchg`.
+Since write(2) works with any alignment. Casting '&reg.write_index'
+explicitly to 'void *' to suppress this warning.
 
-However, I believe this change should be submitted in a new patch.
+Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+---
+Changelog:
+v2:
+- typecast '&reg.write_index' to 'void *' & remove use of memcpy as
+ suggested by Andrew.
 
-Thanks
+v1: https://lore.kernel.org/linux-kselftest/20251027113439.36059-1-ankitkhushwaha.linux@gmail.com/
 
-Tianyang
+---
+ tools/testing/selftests/user_events/perf_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Regards
-> Bibo Mao
->> +
->> +    return __pte(val);
->>   }
->>     extern void __update_tlb(struct vm_area_struct *vma,
->> @@ -547,9 +552,13 @@ static inline struct page *pmd_page(pmd_t pmd)
->>     static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->>   {
->> -    pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->> +    unsigned long val = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->>                   (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
->> -    return pmd;
->> +
->> +    if (pmd_val(pmd) & _PAGE_DIRTY)
->> +        val |= _PAGE_MODIFIED;
->> +
->> +    return __pmd(val);
->>   }
->>     static inline pmd_t pmd_mkinvalid(pmd_t pmd)
->>
+diff --git a/tools/testing/selftests/user_events/perf_test.c b/tools/testing/selftests/user_events/perf_test.c
+index 201459d8094d..cafec0e52eb3 100644
+--- a/tools/testing/selftests/user_events/perf_test.c
++++ b/tools/testing/selftests/user_events/perf_test.c
+@@ -236,7 +236,7 @@ TEST_F(user, perf_empty_events) {
+ 	ASSERT_EQ(1 << reg.enable_bit, self->check);
+
+ 	/* Ensure write shows up at correct offset */
+-	ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
++	ASSERT_NE(-1, write(self->data_fd, (void *)&reg.write_index,
+ 						sizeof(reg.write_index)));
+ 	val = (void *)(((char *)perf_page) + perf_page->data_offset);
+ 	ASSERT_EQ(PERF_RECORD_SAMPLE, *val);
+--
+2.51.0
 
 
