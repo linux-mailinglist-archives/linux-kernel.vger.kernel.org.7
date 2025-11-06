@@ -1,280 +1,200 @@
-Return-Path: <linux-kernel+bounces-889278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA199C3D234
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:06:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21532C3D249
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B60E3B0A6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93654188DCA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1309132B997;
-	Thu,  6 Nov 2025 19:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E27E86353;
+	Thu,  6 Nov 2025 19:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FQtfPdRB"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="endXWJF9"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C182D246BC7;
-	Thu,  6 Nov 2025 19:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8C033291D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 19:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762455963; cv=none; b=fjKKmAlhBQJECN6JtGhy4JAK43OxJgPzc3TSzS2I9/BpAmv+RZMYEwvDGoiaAWHq2qXoNXUMHy3aGB+3NtRA8F1HQhU2jkI1r2KfdZBb3ReRzBY70/V/rllRYOtT7Vn03Ae5HnDDwEKKDzmm4yfHQAlfXynOH+5RPyCp+B6uFaA=
+	t=1762456091; cv=none; b=cEX/KMjdWnxqYKuO8uavVqP4AL+qTPHP9AKvOL8NDI/oMttN8bWs0LZcB1xxpxtBI7d7EmLgRmWOArUn0cmrspLUPfaCIGObFAO8ySgUV5SG7jr4lZI7dgsuhetAMeKInnc8BTxKGMoEAHicfAacTH2+Iy76J4nH372Ag2dCAjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762455963; c=relaxed/simple;
-	bh=EGr5ADH3WdxhvthOZ0dh2EE7Glu6ClTmA+bHRUkMJjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hiOXA6cC4PLCSmOXPh6cIp3xtCxikj47VF+PLCv7R45ZyqN4cceirHMHVo9xFwHBDGGDJz7qAu87KFM+ABVUGf7lyoMYd8DoidezuGoq4tz15xWGOlXIPEmf8tEK7x/DuLqhWZ5FsaAQpXLwzMJZo5CohtgYGsJeFuw66OTp+FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FQtfPdRB; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=VTVwOrLx1UbE0Vl3BjsmOsYDPFhlnrm5D/cBlveQU0c=; b=FQtfPdRBFzpQkercfXOel4CHob
-	PBuWKc3onbvnRWQTgjNel017mgzQ6E+kJ208LhMfDe66dPD/pSKlOr7DK+fIgfNm9h+iMNAefwM89
-	qBlj12ogwElccciqMkbAl4fnSQUM7sOdPJJRtpGO3maEG+KF8n0wzoX6VwyCvfuurGFc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vH5Is-00D9Ej-Cl; Thu, 06 Nov 2025 20:05:50 +0100
-Date: Thu, 6 Nov 2025 20:05:50 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Message-ID: <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
+	s=arc-20240116; t=1762456091; c=relaxed/simple;
+	bh=0/jEOxtSFPK0PmIemOfKHGwBErRDUi05GZgJASgkD0U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SJCF43RAN45xxDIgdOQjlZvUi2i1yJ2MWLjQOm+CIQZOuD8UBNqoyR8A04JKlJKZTvP3Xpn2SSYdbPS1JJ8ixRDgYeL8xCxY80Gyh1N5clXvFe+7FI1qEhRFwr2CVpCh1lqymTbhTjFU5uvRvlF7BG/6hsuMmKDQqBPmJqoI4kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=endXWJF9; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b70b338426fso22728266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 11:08:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762456088; x=1763060888; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOmMRtW5FXW0MAi6xEIHqEbujsChcuuW9+3rNb6Efhc=;
+        b=endXWJF9xcQC0qfiou69PkWTY5x/2hS9s+O8kGB9yyZM1joqCEym2VuuBtyKZqVd/R
+         OcgjZ5LvV4mRGsdCN6hH3Rg1IhcYkkKYAxEKwGe5y1e08bDlbQPPuyEZ6s3IOH+bjDg5
+         7zG22JJVIZwDcBrHbWVsZmLgTAT1MjkhiRReAn01JsrEOKPFKLzol5pbaaTWaWkBZwLU
+         0AI9Lkd6GVjq90NCTejZ2zq6xM0RXRRZ7VDWpnG9hDXUbqwLypBG+YzHmwEN5o9m6ElY
+         ow2PPt66IzX+Xu/Weqvx0/UTGPm9hvUx2QzoQQcq8xxzbRAdlhGzt+fHv2c3Zy+Cjho9
+         TmvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762456088; x=1763060888;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TOmMRtW5FXW0MAi6xEIHqEbujsChcuuW9+3rNb6Efhc=;
+        b=O8sxZq5ZiW6BmtGGfneHB3d/9em9vNCY0YZwMhsNakXBCRYW0l43ecBBwTkcoM6I+s
+         ZmyRyC5qnY9acycD1NcDY7GVqsCCIgjNg5zUAtjPDaMLzsfcHjPv/mFujCN2Ri21w7+B
+         3svoZGEW0ay60kAO8fq+QMxC6BKu9lE2+WrAsWBRuCoK70i1aGjzpFAw1mBBp0Pi6M+T
+         W0PT79tiQ8hyPY9+gqtYFPu+Wt7ka7WDB9DmO2oYHCZLIc2zaz4GRPraTWPR1B4fPQe2
+         csJ4xf8WDf2hhVZ74R44RgUG50XMH1z7P3PXqVC2F34Atbwm5Aq63cjmeGZf7vEZ1yRJ
+         Xxzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJx6DE01x9cSWlKV61JwUMvrwJ8CIZISn9avmxha3NcTyksHOtJ+kfVhy7z9WGUVKtmX+O2mGERgidyTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr5mbTciXCiIO7hXblU1XLJ+LehjCzSLROOU4sNyIgxs/UW71Q
+	E0TZ8akfIE125Jzp+VoaVR5skmf/1JOOqH8K2U8mfvE0NtTrCvslTCpW3XFUfeGsbTo=
+X-Gm-Gg: ASbGncsId3uqB2gkWG+LHcyYkiO1hFgXpQJkWEo6DSSdbNqelzwqk0wbOd+KwqKnW76
+	IJDYIK0F7bvWW4ViwRZQw5B2A0bvM50QMCO3PN3+e51ZkxRa5RVl1h7MrOOgUxDKP8q6McjCONL
+	R0HZEFXCkXpAAmHeI8S3s/OVw8sky2gfRvMmrhs1TawdtET6kOJzjYBeA6sNT7KWy6te9iDoUhy
+	EoReFN/USsKnBTjW9rlbfIJPnPfMAyX7kwJifBH0i7EdvD8jgWlyHlhpyvhosI0QYYj42n6Df5S
+	K6ewfR4mYPvE/E4MyLiBMtfByoQGO0+KzVeDmn945E3L85WklHLNZ6M5seJ5KrRINcLJTKNBN1y
+	/mWcqjqlZMJIjApvJgTJRtIL2z2h2trCDHx9LgAcjO5VIv5mwsP/lmYoGmZbfK4qWIUlRG3XQmz
+	W000M2yP9Xj310EwVbNrPr77UQFow=
+X-Google-Smtp-Source: AGHT+IFGWzZTlk6Pep5z9JJh/2iQFwbYfqTOhkd0VSyzz3YH59510NL660TZKF8rj5tPeiZrlMyDNQ==
+X-Received: by 2002:a17:907:3f24:b0:b65:c8b8:144f with SMTP id a640c23a62f3a-b72c0996c95mr16124866b.6.1762456087865;
+        Thu, 06 Nov 2025 11:08:07 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa2510esm26739566b.72.2025.11.06.11.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 11:08:07 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/13] of: Add wrappers to match root node with OF device
+ ID tables
+Date: Thu, 06 Nov 2025 20:07:07 +0100
+Message-Id: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104203315.85706-4-shenwei.wang@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANzxDGkC/yWMMQqAMAwAvyKZDbQSi/gVcYiaagartCKC+HeLL
+ gc33N2QJKokaIsbopyadAtZbFnAuHCYBXXKDpWpamuNw4Fw87jyMS4/NQhOfDASOxq8IddYgtz
+ vUbxe37vrn+cFIRAvI2sAAAA=
+X-Change-ID: 20251106-b4-of-match-matchine-data-4a64bf046814
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2925;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=0/jEOxtSFPK0PmIemOfKHGwBErRDUi05GZgJASgkD0U=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpDPIG5LkF6rev9ukV/+9Qtp68gNcluS7tTEY5b
+ xPa3VIbKtCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaQzyBgAKCRDBN2bmhouD
+ 12G3D/9mfBQ7HGLDU/SZRXrLmtiPXCTDREluXdWUYAg8kpONNNEE75+x3up7wKYhs7S49bz7J27
+ LN8BPJka1h7vYjEBYECOIAX9bwtTdR1QgpU+tJJRaN37ZNfdhdTG0SRuIbUpU5ONVnCTVbD+yzf
+ 7zBhrdKxAlht4mclM1I6Gnv97bmFqpGq/Pp5p4YJBGUrlBvuzoL8u9W9CA+xxXjW93uVjGixBu8
+ omyiKyhRMdLgPamka6AttrpGLvvpFJVQChi30yQdAEQVdbp+zHnz4jkteGLGPjH6jy4+PLURMgC
+ 9FJfaviKGJDnBQYR1Vd/kpu9tnP/tW69frilBMHYt5kyIHvL5H31PJaQ+iBNmpavlBaLTjuylT+
+ 5sTnNNeO2R2ewpIY2kWOYuIrjiGSYc+zeHjf8l/zFKVa3zpvFMpjcomXpu0vHESDLc9qBRt8EG5
+ oRhuhAqACjuTy33Nt3xExzTEAmOENK7qDzWl2xWbiFO1sLRbMA2auneH6jgY+Vb9yIqwNUv2zJA
+ /jZShiOwmSnJMha7tiydbA6xvwNQhNMBW1Rs5WJzcEmzRwCWNGTqmhZHOSAQsES3xDV/pFdvbJY
+ 81lzvN3L/XYxoZ0HV75pW19zvzOuwUG+sbhLwIDHO5mlCNQ4qN/lssv+82nTDl+i971szhjo8Kd
+ Jzhgda147d1CC0A==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Tue, Nov 04, 2025 at 02:33:13PM -0600, Shenwei Wang wrote:
-> Describes the gpio rpmsg transport protocol over the rpmsg bus between
-> the cores.
-> 
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> ---
->  Documentation/staging/gpio-rpmsg.rst | 202 +++++++++++++++++++++++++++
->  Documentation/staging/index.rst      |   1 +
->  2 files changed, 203 insertions(+)
->  create mode 100644 Documentation/staging/gpio-rpmsg.rst
-> 
-> diff --git a/Documentation/staging/gpio-rpmsg.rst b/Documentation/staging/gpio-rpmsg.rst
-> new file mode 100644
-> index 000000000000..ad6207a3093f
-> --- /dev/null
-> +++ b/Documentation/staging/gpio-rpmsg.rst
-> @@ -0,0 +1,202 @@
-> +.. SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +GPIO RPMSG Protocol
-> +===================
-> +
-> +The GPIO RPMSG transport protocol is used for communication and interaction
-> +with GPIO controllers located on remote cores on the RPMSG bus.
-> +
-> +Message Format
-> +--------------
-> +
-> +The RPMSG message consists of a 14-byte packet with the following layout:
-> +
-> +.. code-block:: none
-> +
-> +   +-----+------+------+-----+-----+------------+-----+-----+-----+----+
-> +   |0x00 |0x01  |0x02  |0x03 |0x04 |0x05..0x09  |0x0A |0x0B |0x0C |0x0D|
-> +   |cate |major |minor |type |cmd  |reserved[5] |line |port |  data    |
-> +   +-----+------+------+-----+-----+------------+-----+-----+-----+----+
-> +
-> +- **Cate (Category field)**: Indicates the category of the message, such as GPIO, I2C, PMIC, AUDIO, etc.
+Dependency/merging
+==================
+All patches depend on the first patch, thus everything could go via
+Rob's tree with people's acks.
 
-We know it is a GPIO message, this document is titled "GPIO RPMSG
-Protocol". So i don't see the need for cate. I can however understand
-that your device does support multiple functions, but to make this
-generic, it would be better if each function had its own channel.
+Description
+===========
+Several drivers duplicate same code for getting reference to the root
+node, matching it against 'struct of_device_id' table and getting out
+the match data from the table entry.
 
-> +
-> +  Defined categories:
-> +
-> +  - 1: RPMSG_LIFECYCLE
-> +  - 2: RPMSG_PMIC
-> +  - 3: RPMSG_AUDIO
-> +  - 4: RPMSG_KEY
-> +  - 5: RPMSG_GPIO
-> +  - 6: RPMSG_RTC
-> +  - 7: RPMSG_SENSOR
-> +  - 8: RPMSG_AUTO
-> +  - 9: RPMSG_CATEGORY
-> +  - A: RPMSG_PWM
-> +  - B: RPMSG_UART
-> +
-> +- **Major**: Major version number.
-> +
-> +- **Minor**: Minor version number.
+There is a of_machine_compatible_match() wrapper but it takes array of
+strings, which is not suitable for many drivers since they want the
+driver data associated with each compatible.
 
-What is the purpose of Major and Minor? What values are valid. What
-should happen if an invalid value is passed?
+Add two wrappers, similar to existing of_device_get_match_data():
+1. of_machine_device_match() doing only matching against 'struct
+   of_device_id' and returning bool.
+2. of_machine_get_match_data() doing the matching and returning
+   associated driver data for found compatible.
 
-What you should think about is, if you gave this specification to
-somebody else, could they implement it? 
+Best regards,
+Krzysztof
 
-> +
-> +- **Type (Message Type)**: For the GPIO category, can be one of:
-> +
-> +  - 0: GPIO_RPMSG_SETUP
-> +  - 1: GPIO_RPMSG_REPLY
-> +  - 2: GPIO_RPMSG_NOTIFY
+---
+Krzysztof Kozlowski (13):
+      of: Add wrappers to match root node with OF device ID tables
+      cpufreq: dt-platdev: Simplify with of_machine_get_match_data()
+      cpufreq: mediatek: Simplify with of_machine_get_match_data()
+      cpufreq: sun50i: Simplify with of_machine_device_match()
+      cpufreq: ti: Simplify with of_machine_device_match()
+      cpuidle: big_little: Simplify with of_machine_device_match()
+      firmware: qcom: scm: Simplify with of_machine_device_match()
+      irqchip/atmel-aic: Simplify with of_machine_get_match_data()
+      platform: surface: Simplify with of_machine_get_match_data()
+      powercap: dtpm: Simplify with of_machine_get_match_data()
+      soc: qcom: Simplify with of_machine_get_match_data()
+      soc: qcom: ubwc: Simplify with of_machine_get_match_data()
+      soc: tegra: Simplify with of_machine_device_match()
 
-Is _SETUP always from Linux to the firmware? Is a setup always
-followed by a _REPLY? Do you need to wait for the _REPLY before
-sending the next _SETUP? If there is no _REPLY within X seconds, should
-Linux retry? Can an _NOTIFY arrive between a _SETUP and a _REPLY?
+ drivers/cpufreq/cpufreq-dt-platdev.c               | 15 ++-----
+ drivers/cpufreq/mediatek-cpufreq.c                 | 12 +-----
+ drivers/cpufreq/sun50i-cpufreq-nvmem.c             | 11 +----
+ drivers/cpufreq/ti-cpufreq.c                       | 13 +-----
+ drivers/cpuidle/cpuidle-big_little.c               | 11 +----
+ drivers/firmware/qcom/qcom_scm.c                   | 17 +-------
+ drivers/irqchip/irq-atmel-aic-common.c             | 15 ++-----
+ drivers/of/base.c                                  | 47 ++++++++++++++++++++++
+ .../platform/surface/surface_aggregator_registry.c | 13 +-----
+ drivers/powercap/dtpm.c                            | 16 +-------
+ drivers/soc/qcom/qcom_pd_mapper.c                  | 17 +-------
+ drivers/soc/qcom/ubwc_config.c                     | 14 ++-----
+ drivers/soc/tegra/common.c                         | 12 +-----
+ include/linux/of.h                                 | 13 ++++++
+ 14 files changed, 82 insertions(+), 144 deletions(-)
+---
+base-commit: e5efebeef746a24f45b98dbdfcf334285848b32a
+change-id: 20251106-b4-of-match-matchine-data-4a64bf046814
 
-> +
-> +- **Cmd**: Command code, used for GPIO_RPMSG_SETUP messages.
-> +
-> +- **reserved[5]**: Reserved bytes.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Why are these in the middle. It is more normal to have reserved bytes
-at the end.
-
-You should also specify these bytes should be set to 0. If you don't
-it will be hard to use them in the future, because they will contain
-42, or some other random values.
-
-Is there a relationship between major:minor and reserved?
-
-> +
-> +- **line**: The GPIO line index.
-> +
-> +- **port**: The GPIO controller index.
-
-data? 
-
-> +GPIO Commands
-> +-------------
-
-This is a GPIO specification, so i would only expect GPIO commands...
-
-> +
-> +Commands are specified in the **Cmd** field for **GPIO_RPMSG_SETUP** (Type=0) messages.
-> +
-> +GPIO_RPMSG_INPUT_INIT (Cmd=0)
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x0D|
-> +   | 5   | 1   | 0   | 0   | 0   |  0        |line |port | val | wk |
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +
-> +- **val**: Interrupt trigger type.
-> +
-> +  - 0: Interrupt disabled
-> +  - 1: Rising edge trigger
-> +  - 2: Falling edge trigger
-> +  - 3: Both edge trigger
-> +  - 4: Low level trigger
-> +  - 5: High level trigger
-> +
-> +- **wk**: Wakeup enable.
-> +
-> +  - 0: Disable wakeup from GPIO
-> +  - 1: Enable wakeup from GPIO
-
-What do you mean by wakeup? 
-
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x0D|
-> +   | 5   | 1   | 0   | 1   | 1   |  0        |line |port | err | 0  |
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +
-> +- **err**: Error code from the remote core.
-> +
-> +  - 0: Success
-> +  - 1: General error (early remote software only returns this unclassified error)
-> +  - 2: Not supported
-> +  - 3: Resource not available
-> +  - 4: Resource busy
-> +  - 5: Parameter error
-
-It would be good to give some examples of when these should be used.
-
-Say the hardware does not support both edges. Is that 2? Why would a
-resource be busy? How is busy different to not available?
-
-> +
-> +GPIO_RPMSG_OUTPUT_INIT (Cmd=1)
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x0D|
-> +   | 5   | 1   | 0   | 0   | 1   |  0        |line |port | val | 0  |
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +
-> +- **val**: Output level.
-> +
-> +  - 0: Low
-> +  - 1: High
-
-Maybe make a comment about the order. Some GPIO controllers suffer from
-glitches when you swap them from input to output. While it is an
-input, you first need to set the output value, and then configure the
-pin for output. 
-
-> +Notification Message
-> +--------------------
-> +
-> +Notifications are sent with **Type=2 (GPIO_RPMSG_NOTIFY)**:
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x0D|
-> +   | 5   | 1   | 0   | 2   | 0   |  0        |line |port | 0   | 0  |
-> +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
-> +
-> +- **line**: The GPIO line index.
-> +- **port**: The GPIO controller index.
-
-There is no need to acknowledge the notification? How do level
-interrupts work?
-
-	Andrew
 
