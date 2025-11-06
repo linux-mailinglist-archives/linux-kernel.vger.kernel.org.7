@@ -1,142 +1,154 @@
-Return-Path: <linux-kernel+bounces-888457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D147EC3AE01
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:25:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93037C3AE04
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B8C4617CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:19:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB38464600
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2DF32AAB9;
-	Thu,  6 Nov 2025 12:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDDE32AAAA;
+	Thu,  6 Nov 2025 12:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkfG1NtP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mT6it3kh"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E4A329E6D;
-	Thu,  6 Nov 2025 12:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258B32721F;
+	Thu,  6 Nov 2025 12:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762431532; cv=none; b=KHqb4kt0XFMgUzo3VsEoRy0SIYW+ZfqmynAk8rXK41i7N7DiMMkKJUekhD9N58r2rYPIaTTGaeV2b8979lTFEQ+KeYLF8UE7IxNy5jnvuzM6RhKFLRCoGSCDZJ7ci4wi8aW9r7jnOf5ck0r4UXW1b5dJbWlhOATQXbKNjee+Sqk=
+	t=1762431544; cv=none; b=g57aoGq9jrZh4BKv30Vpdxq7i1oNvzz5S8vzSGpiDSG44LOmWCbmZEQNN8wCaJRZuSpW0qp1FSQK4m3A/wCLnyh4OiePzlhdU/Rw/SV009XpdklSMND8pPr5TUgSr+17M1r0UT3ZRrKt6Px/fubJiivFhdBYjIkXdzmh9vg1p6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762431532; c=relaxed/simple;
-	bh=El9bKN26LbgMPEUYCZefdz4i7O2fm1eve+qk9Xcw6FA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PiX2mC63G5Tuj1Ji1zaSbBeM++SAyiFaR8Q1NVkuCJ+Y4+4HRnWlYdvwoYr4mtPnAeanvRiGkeUcThaxYCiUamfCv9frTGG3uQuxAP2f9yFxk9exq78w8YkYt383cj0+IOz+W6/qn4CLg/5p8g1F4Ge6hVScfs0k7Ikz+8gEg08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkfG1NtP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F170C116C6;
-	Thu,  6 Nov 2025 12:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762431531;
-	bh=El9bKN26LbgMPEUYCZefdz4i7O2fm1eve+qk9Xcw6FA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pkfG1NtPcIOC2fXQ5r5rTurLqYirGgI7kRpy9z9VC+uHmgqs4Z25/NyP5Fn1CeJ8o
-	 rE5Leovk4wX35Rd2bC1ruEpXHOtBIapUvqVmktlks8UGXiwB+EsSwXXpW79eu3Us16
-	 02cpEJ8fIhL3HslgP34XX5kydHeYWzWQ2rO3wu2pqYWIxe4VEEqZwlf3NfxkvEuDrT
-	 gZ0PbR34U7oe7wh+09oaqRKUmkZp7p4TH+wG+sy+HAg0kL9fAzpB8jXtQPGMW5E0Vu
-	 mISUtQhSHHpDoxpEY97ZQ/EOhbU+TKjZQ98XGoYBeqHOWIYH8YldWyGlNdtTYum8Du
-	 AC4Wgt7xP14kw==
-Message-ID: <09148e20-03e9-44fb-a45c-3038909cde06@kernel.org>
-Date: Thu, 6 Nov 2025 13:18:48 +0100
+	s=arc-20240116; t=1762431544; c=relaxed/simple;
+	bh=3Qo9p504br6E8O5em7NlOnt/ylpumOzEneV4yrVVLjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X4m0K8xwmx9lg+nGSIF462Bs4ACYLPYpEYIHMVqf8xE14oFT9M+lFMLE5pBSr3Q0eN4x6vP9O3rhSQLOKWNixAnSyKyuGBRp4yzUyTNoVjtGHH8mLbDc4Is+beRy9xGWHjCot3DHFhVXoPmL7ic3QnpAVsoVyu7jhYKgA0fD/NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mT6it3kh; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 3C8081A18F6;
+	Thu,  6 Nov 2025 12:18:59 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0A1AC6068C;
+	Thu,  6 Nov 2025 12:18:59 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9A68D11850E1E;
+	Thu,  6 Nov 2025 13:18:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762431538; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=cD98W/fulZnWO52DCEQXKVY0Q7L/B0fTZwxSO/g6/ks=;
+	b=mT6it3khmPmj+SW8y4XCmEenlxW8ADsCI7pdOqSWhWAlsp0KWUGISl0tLEHO+vaawiAIKL
+	Bx62OsSZi/AuZVCcFu+6uUNe/FRTCHvtJeGXqiq+4x3YamxHy+UqgNINUhvdvNUlquUD+6
+	Na8TYVzaKGqE46qDZScRXBHP85QZvzfUbiRAhe5ZCuiNn9HT/sAhmahYkbuRGnRvahhx/L
+	ql1rwOqpha22E3yIbwMzm6UjJC0AjuVVsRrCSWu8BPMczCD6UxTtxMHWAHrpYG2uIGVXe6
+	HytfFbuDzAUVTGpQERS4mbVIt4EEzgT8kYAOVR12twTP1hbOm+vdIaDPcDBBGA==
+Date: Thu, 6 Nov 2025 13:18:54 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mbrugger@suse.com,
+ guillaume.gardet@arm.com, tiwai@suse.com, Lizhi Hou <lizhi.hou@amd.com>
+Subject: Re: [PATCH v2] PCI: of: Downgrade error message on missing of_root
+ node
+Message-ID: <20251106131854.0f0aa8b7@bootlin.com>
+In-Reply-To: <aQyApy8lcadd-1se@apocalypse>
+References: <955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com>
+	<20251106002345.GA1934302@bhelgaas>
+	<aQyApy8lcadd-1se@apocalypse>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mux: Add description for enable GPIO
-To: Tapio Reijonen <tapio.reijonen@vaisala.com>
-Cc: Peter Rosin <peda@axentia.se>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251105-add-external-mux-enable-gpio-v1-0-e59cba6f9e47@vaisala.com>
- <20251105-add-external-mux-enable-gpio-v1-1-e59cba6f9e47@vaisala.com>
- <20251106-imported-bull-of-storm-8c19fc@kuoka>
- <62a77b8c-6721-45b3-878a-f90f859bfbfe@vaisala.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <62a77b8c-6721-45b3-878a-f90f859bfbfe@vaisala.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 06/11/2025 12:55, Tapio Reijonen wrote:
-> Hi,
+Hi, Andrea, Bjorn,
+
+On Thu, 6 Nov 2025 12:04:07 +0100
+Andrea della Porta <andrea.porta@suse.com> wrote:
+
+> [+cc Herve]
 > 
-> On 11/6/25 11:08, Krzysztof Kozlowski wrote:
->> On Wed, Nov 05, 2025 at 02:49:12PM +0000, Tapio Reijonen wrote:
->>> Add description for enabling GPIO-controlled multiplexer
->>> GPIO pins, according to the state of the mux idle state.
->>
->> You basically repeated binding. Please explain here which GPIO this is,
->> e.g. give concrete device example.
->>
-> Here is the example:
->      mux: mux-controller {
->          compatible = "gpio-mux";
->          #mux-control-cells = <0>;
+> Hi Bjorn,
 > 
->          mux-gpios =
->              <&gpio4 22 GPIO_ACTIVE_HIGH>,
->              <&gpio2 18 GPIO_ACTIVE_HIGH>,
->              <&gpio2 13 GPIO_ACTIVE_HIGH>,
->              <&gpio2 17 GPIO_ACTIVE_HIGH>;
->          idle-state = <MUX_IDLE_DISCONNECT>;
->          /* BUS_EN */
->          enable-gpios = <&gpio4 27 GPIO_ACTIVE_LOW>;
+> On 18:23 Wed 05 Nov     , Bjorn Helgaas wrote:
+> > [+cc Lizhi]
+> > 
+> > On Wed, Nov 05, 2025 at 07:33:40PM +0100, Andrea della Porta wrote:  
+> > > When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error message
+> > > is generated if no 'of_root' node is defined.
+> > > 
+> > > On DT-based systems, this cannot happen as a root DT node is
+> > > always present. On ACPI-based systems, this is not a true error
+> > > because a DT is not used.
+> > > 
+> > > Downgrade the pr_err() to pr_info() and reword the message text
+> > > to be less context specific.  
+> > 
+> > of_pci_make_host_bridge_node() is called in the very generic
+> > pci_register_host_bridge() path.  Does that mean every boot of a
+> > kernel with CONFIG_PCI_DYNAMIC_OF_NODES on a non-DT system will see
+> > this message?  
+> 
+> This is the case, indeed. That's why downgrading to info seems sensible.
+> 
+> > 
+> > This message seems like something that will generate user questions.
+> > Or is this really an error, and we were supposed to have created
+> > of_root somewhere but it failed?  If so, I would expect a message
+> > where the of_root creation failed.  
+> 
+> Not really an error per se: on ACPI system we usually don't have DT, so
+> this message just warns you that there will be no pci nodes created on it.
+> Which, again, should be of no importance on ACPI.
 
+I my last understanding, all architecture (even x86) have the DT root node
+set. This node is empty on architectures that don't use DT to describe
+hardware at boot (ACPI for instance).
 
-I meant real device, so I can look at datasheet and understand how/why
-you do it. This also is supposed to be in the commit msg.
+This DT node is needed for PCI board that will be described by a DT overlay.
+LAN966x for instance.
+
+On v6.18-rc1 kernel, I successfully used my LAN966x board on a ACPI system.
+This means that of_root DT node was present on my system.
+
+> 
+> The only scenario in which this message is actually an error would be on
+> ACPI system that use DT as a complement to make runtime overlay work,
+
+It is an error also if you use a PCI board that needs PCI DT nodes
+(CONFIG_PCI_DYNAMIC_OF_NODES) Lan966x for instance.
+
+> i.e. the overlay approach for RP1 on RPi5 with ACPI fw. AFAIK this fw is
+> more a PoC that something really widespread and currntly the overlay
+> approach is in stand-by anyway (meaning no one will use it unless some
+> major changes will be made to make it work). But there may be other
+> situations in which this scenario could arise, I'm thinking about Bootlin's
+> LAN966x driver which also uses runtime overlay to describe thw hw.
+> On ACPI system the root DT node is not created because unflatten_device_tree()
+> is not called.
+
+I am not so sure.
+My LAN966x board is working on a x86 ACPI system.
+
+I think, that if you don't want the kernel log, just set 
+  CONFIG_PCI_DYNAMIC_OF_NODES = n
+
+With CONFIG_PCI_DYNAMIC_OF_NODES = y, we need to create some nodes
+and if cannot succeed to attach them to a DT tree, it is an error.
+IMHO, pr_err() in that case is legit.
+
 
 Best regards,
-Krzysztof
+Hervé
 
