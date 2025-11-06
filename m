@@ -1,468 +1,101 @@
-Return-Path: <linux-kernel+bounces-889074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE51C3C9A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:55:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F908C3C9B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0854B18834FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7C81891603
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49DE226D02;
-	Thu,  6 Nov 2025 16:55:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7028B322C7B;
-	Thu,  6 Nov 2025 16:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89705346762;
+	Thu,  6 Nov 2025 16:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCUCqgz9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FEB285CBC;
+	Thu,  6 Nov 2025 16:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448140; cv=none; b=Pniq7y7zFbL9V2yuqXmD3IHJ9eo3zRFBEZ9yQLmV/f3mSsrejOJHa8fU97MGNC9ZSbFI8wej6F1t9a8BoSgjXK+4WQv6ik4PwYXISdgO0BXxjoWN702VQx54yphusszYnabSmZaAE9k/4Pg0B2JLUcJj43aOnwxKAVe54CchvG8=
+	t=1762448153; cv=none; b=H0ZIV7tNj0M8XPvoGWiAH0c2lDxJgTMXiV3FhSh8lGSX8BxLoadwj/Z+6f3XxiAPKq92jJw+JG8uPmQ2GKHYrINB5vkcu4ztxLmoUOTjsG8+u4qXLBU4GHCd0TeMlMRcXEDR1D9A5b1IMoJJGfmZpTSW+NR5DzPdl/5qCtqwpA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448140; c=relaxed/simple;
-	bh=EWvftsdprc8NsVbNDEw/7VR/Xy7cqCGHjIUYZ5+zXE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EdP4H/MlF8KggVRwZnAB2tyaVMfPUkht5+h3llgvfLVGhX19Tjjq0gynT0wAI5DfB+XXeAjhvhn49U/b+2e+9vglp7bEcSt8c5CYlZAYbWnupirhp6knWAvPTzqrn0koH0fpj7OX18gIJTC6RbD97H8mQkf0Ip2+H4zaJgznDis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2CEA1596;
-	Thu,  6 Nov 2025 08:55:29 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04D2B3F694;
-	Thu,  6 Nov 2025 08:55:32 -0800 (PST)
-Message-ID: <54e8aa78-27bc-4375-95ef-374d79758762@arm.com>
-Date: Thu, 6 Nov 2025 16:55:31 +0000
+	s=arc-20240116; t=1762448153; c=relaxed/simple;
+	bh=INKkQZKXRvoEmqr56OZfn85xTxcnjEuZr06CrINjP9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SNpz4QQjlfA/pXAcfp8485/4lZQ/iGbFgK9osqQoV9NJxdO2B2MFE7Oi2KPJflrqnlAINi/0/8OBlq6FxsOTCIL7bz5eZR3VzOYRaP5aMJ+TOhvbuoKdrSt9cDnmkSEYTQrR4e8vzes35vm7DR3OE3f5sOkNd1hh0jurYJP20VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCUCqgz9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D242FC16AAE;
+	Thu,  6 Nov 2025 16:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762448152;
+	bh=INKkQZKXRvoEmqr56OZfn85xTxcnjEuZr06CrINjP9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oCUCqgz9oWWuCpVclbbG53qqmAEteEcTdkFeRqvQroyYKhiHf3z7u6AqdAEi6hrEg
+	 StHrV3mHiauNqRF0X3i2vwoYPNJ1dM7xUNnypZpe2MhYscpZZBmNhbXdl8ntQqtFgT
+	 ZcsTgQ3Ze1UxPoZM1NyfMR4/0obP8BrDDOp5fRmQgLc74/LcwYBYSzeZcXe6TekX0/
+	 ZKp8EcnC4VRfuawjVB7Avwhhzl9v5/YOOfYfFrGllmVe3GgsDaL5oeMx8vbvN0JxmH
+	 jNGYiytGccA8KUOwQp8u6asNv64vsd/JLCLswZKCF5HEOTjK6gFIsfaccRcEe4TjIt
+	 BZY+TPvUm1FWw==
+Date: Thu, 6 Nov 2025 16:55:48 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	han.xu@nxp.com, dlan@gentoo.org, Frank.li@nxp.com,
+	guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 1/9] dt-bindings: spi: fsl-qspi: support SpacemiT K1
+Message-ID: <aQzTFODaYaevp0v-@finisterre.sirena.org.uk>
+References: <20251027133008.360237-1-elder@riscstar.com>
+ <20251027133008.360237-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/29] ACPI / MPAM: Parse the MPAM table
-To: Jonathan Cameron <jonathan.cameron@huawei.com>,
- James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
- Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
- Gavin Shan <gshan@redhat.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
- <20251017185645.26604-7-james.morse@arm.com>
- <20251024171350.00005451@huawei.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251024171350.00005451@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2o85NyMik87PQrJf"
+Content-Disposition: inline
+In-Reply-To: <20251027133008.360237-2-elder@riscstar.com>
+X-Cookie: If in doubt, mumble.
 
-Hi Jonathan,
 
-On 10/24/25 17:13, Jonathan Cameron wrote:
-> On Fri, 17 Oct 2025 18:56:22 +0000
-> James Morse <james.morse@arm.com> wrote:
-> 
->> Add code to parse the arm64 specific MPAM table, looking up the cache
->> level from the PPTT and feeding the end result into the MPAM driver.
->>
->> This happens in two stages. Platform devices are created first for the
->> MSC devices. Once the driver probes it calls acpi_mpam_parse_resources()
->> to discover the RIS entries the MSC contains.
->>
->> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
->> the MPAM driver with optional discovered data about the RIS entries.
->>
->> CC: Carl Worth <carl@os.amperecomputing.com>
->> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
->> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
->>
-> Hi James,
-> 
-> Various comments inline.  One challenge with this is that a few
-> very generic things (the acpi table DEFINE_FREE() stuff and the
-> platform device put equivalent) aren't obvious enough that I'd expect
-> those concerned to necessarily notice them.  I'd break those out
-> as precursor patches, or narrow what they do to not be generic.
+--2o85NyMik87PQrJf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I've moved these both to separate patches.
+On Mon, Oct 27, 2025 at 08:29:59AM -0500, Alex Elder wrote:
+> Add the SpacemiT K1 SoC QSPI IP to the list of supported hardware.  This
+> is the first non-Freescale device represented here.  It has a nearly
+> identidal register set, and this binding correctly describes the hardware.
 
-> 
-> 
->> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
->> new file mode 100644
->> index 000000000000..59712397025d
->> --- /dev/null
->> +++ b/drivers/acpi/arm64/mpam.c
->> @@ -0,0 +1,377 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (C) 2025 Arm Ltd.
->> +
->> +/* Parse the MPAM ACPI table feeding the discovered nodes into the driver */
->> +
->> +#define pr_fmt(fmt) "ACPI MPAM: " fmt
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/arm_mpam.h>
->> +#include <linux/bits.h>
->> +#include <linux/cpu.h>
->> +#include <linux/cpumask.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include <acpi/processor.h>
->> +
->> +/*
->> + * Flags for acpi_table_mpam_msc.*_interrupt_flags.
->> + * See 2.1.1 Interrupt Flags, Table 5, of DEN0065B_MPAM_ACPI_3.0-bet.
-> 
-> This needs to ultimately end up in ACPICA.  Perhaps fine to have it here
-> for now. Maybe can't happen until this isn't a beta? I'm not sure on
-> policy around that.
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-I've kept it here for the moment.
+--2o85NyMik87PQrJf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
->> + */
->> +#define ACPI_MPAM_MSC_IRQ_MODE                              BIT(0)
->> +#define ACPI_MPAM_MSC_IRQ_TYPE_MASK                         GENMASK(2, 1)
->> +#define ACPI_MPAM_MSC_IRQ_TYPE_WIRED                        0
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_MASK                BIT(3)
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR           0
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR_CONTAINER 1
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_VALID                    BIT(4)
->> +
->> +/*
->> + * Encodings for the MSC node body interface type field.
->> + * See 2.1 MPAM MSC node, Table 4 of DEN0065B_MPAM_ACPI_3.0-bet.
->> + */
->> +#define ACPI_MPAM_MSC_IFACE_MMIO   0x00
->> +#define ACPI_MPAM_MSC_IFACE_PCC    0x0a
->> +
-> 
->> +static bool acpi_mpam_register_irq(struct platform_device *pdev, int intid,
->> +				   u32 flags, int *irq)
-> Given irq value of 0 is invalid, could just return the irq from this.
-> Or even return error codes for what went wrong given negative irqs are invalid
-> as well.
-> 
->> +{
->> +	u32 int_type;
->> +	int sense;
->> +
->> +	if (!intid)
->> +		return false;
->> +
->> +	if (_is_ppi_partition(flags))
->> +		return false;
->> +
->> +	sense = FIELD_GET(ACPI_MPAM_MSC_IRQ_MODE, flags);
-> 
-> Given it's one bit that indicates 1 if edge, I'd call this edge (which
-> inherently doesn't mean level).  Sense as a term I think can incorporate
-> this and rising/falling high/low.  It's parse to acpi_register_gsi()
-> which calls it trigger so that would work as well.
+-----BEGIN PGP SIGNATURE-----
 
-I've gone with 'trigger'.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkM0xMACgkQJNaLcl1U
+h9C9ygf/asts4SaYlQ8kFs/PjZGM6Z5eh7AXfCSNgZMDEWxBB50XugwxeAM3zXmv
+NQsKsvHvhBmKGsZFerQcA273D6wh2mzw+Y95N69tHKfokmk8NE5UF3uCgv/HUwNM
+oRx/E5weS5meAoTeuCrkvduSTnoBimeYrJtzV4IvvrgbbMBQ+9fpBn70yAk30p1N
+9wCaF/aVNynUW0Cclof9tFQ4RckouUEKdkuvt9CXV8bGpZdNevCV4J7RVoFN/Njs
+Bui0PLDSesJmuRMyOSUVATZDqzG9Qf9baMUB2hptWaXlHVcXaOc8nLyfwPoYOR/c
+yNI0CT15fzoNFqlhEecigMQfInXKhQ==
+=d0As
+-----END PGP SIGNATURE-----
 
-> 
->> +	int_type = FIELD_GET(ACPI_MPAM_MSC_IRQ_TYPE_MASK, flags);
->> +	if (int_type != ACPI_MPAM_MSC_IRQ_TYPE_WIRED)
->> +		return false;
->> +
->> +	*irq = acpi_register_gsi(&pdev->dev, intid, sense, ACPI_ACTIVE_HIGH);
->> +	if (*irq <= 0) {
->> +		pr_err_once("Failed to register interrupt 0x%x with ACPI\n",
->> +			    intid);
->> +		return false;
->> +	}
->> +
->> +	return true;
->> +}
->> +
->> +static void acpi_mpam_parse_irqs(struct platform_device *pdev,
->> +				 struct acpi_mpam_msc_node *tbl_msc,
->> +				 struct resource *res, int *res_idx)
->> +{
->> +	u32 flags, intid;
->> +	int irq;
->> +
->> +	intid = tbl_msc->overflow_interrupt;
->> +	flags = tbl_msc->overflow_interrupt_flags;
->> +	if (acpi_mpam_register_irq(pdev, intid, flags, &irq))
->> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "overflow");
->> +
->> +	intid = tbl_msc->error_interrupt;
->> +	flags = tbl_msc->error_interrupt_flags;
->> +	if (acpi_mpam_register_irq(pdev, intid, flags, &irq))
->> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "error");
->> +}
->> +
-> 
-> 
-> This function has a bit of a dual use to it. I think it needs some documentation
-> to explain under what conditions acpi_id is set.
-> 
->> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
->> +				     struct platform_device *pdev,
->> +				     u32 *acpi_id)
->> +{
->> +	char hid[sizeof(tbl_msc->hardware_id_linked_device) + 1] = { 0 };
->> +	bool acpi_id_valid = false;
->> +	struct acpi_device *buddy;
->> +	char uid[11];
->> +	int err;
->> +
->> +	memcpy(hid, &tbl_msc->hardware_id_linked_device,
->> +	       sizeof(tbl_msc->hardware_id_linked_device));
->> +
->> +	if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
->> +		*acpi_id = tbl_msc->instance_id_linked_device;
->> +		acpi_id_valid = true;
->> +	}
->> +
->> +	err = snprintf(uid, sizeof(uid), "%u",
->> +		       tbl_msc->instance_id_linked_device);
->> +	if (err >= sizeof(uid)) {
-> 
-> The err naming is a bit confusing as it's not an error code. Could call it
-> something like len or just avoid having a local variable at all.
-
-Changed to 'len'.
-
-> 
-> 	if (snprintf(uid, sizeof(uid), "%u",
-> 		     tbl_msc->instance_id_linked_device) >= sizeof(uid))
->> +		pr_debug("Failed to convert uid of device for power management.");
->> +		return acpi_id_valid;
->> +	}
->> +
->> +	buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
->> +	if (buddy)
->> +		device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
->> +
->> +	return acpi_id_valid;
->> +}
-> 
->> +
->> +static struct platform_device * __init acpi_mpam_parse_msc(struct acpi_mpam_msc_node *tbl_msc)
->> +{
->> +	struct platform_device *pdev __free(platform_device_put) = platform_device_alloc("mpam_msc", tbl_msc->identifier);
-> That's too long. Format as
-> 	struct platform_device *pdev __free(platform_device_put) =
-> 		platform_device_alloc("mpam_msc", tbl_msc->identifier);
-> 
->> +	int next_res = 0, next_prop = 0, err;
-> 
-> ...
-> 
->> +
->> +static int __init acpi_mpam_parse(void)
->> +{
->> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
->> +	char *table_end, *table_offset = (char *)(table + 1);
->> +	struct acpi_mpam_msc_node *tbl_msc;
->> +	struct platform_device *pdev;
->> +
->> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
-> Check acpi_disabled || !system_supports_mpam() before
-> 
-> 	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
-> 	
-> 	if (IS_ERR(table))
-> 		return 0;
-> 
-> That way we aren't relying on acpi_get_table_ret() doing the right thing if acpi_disabled == true
-> which seems gragile even though it is fine today
-> 
-> Declaring stuff using __free() inline is fine (commonly done).
-> 
->> +		return 0;
->> +
-> 
-> ...
-> 
->> +int acpi_mpam_count_msc(void)
->> +{
->> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
->> +	char *table_end, *table_offset = (char *)(table + 1);
->> +	struct acpi_mpam_msc_node *tbl_msc;
->> +	int count = 0;
->> +
->> +	if (IS_ERR(table))
-> Why fewer things to guard on in here than in the parse function?
-> I guess this may only be called in circumstances where we know those
-> other reasons not to carry on aren't true, but still seem odd.
-> 
->> +		return 0;
->> +
->> +	if (table->revision < 1)
->> +		return 0;
->> +
->> +	table_end = (char *)table + table->length;
->> +
->> +	while (table_offset < table_end) {
->> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
->> +		if (!tbl_msc->mmio_size)
-> 
-> Bit marginal on how much we protect against garbage, but perhaps
-> check the length is long enough to get here. Or can you just
-> do the length checks first?
-
-This check is for disable/not present mscs and was added in the latest
-revision of the mpam acpi.
-
-> 
->> +			continue;
-> 
-> Infinite loop?  table_offset isn't updated so this
-> keeps checking the same value. Similar to funciton above, I'd
-> do the table_offset update before check this (and modify
-> the appropriate checks below).
-
-Good spot. I've moved this after the table_offset increment.
-
-> 
->> +
->> +		if (tbl_msc->length < sizeof(*tbl_msc))
->> +			return -EINVAL;
->> +		if (tbl_msc->length > table_end - table_offset)
->> +			return -EINVAL;
->> +		table_offset += tbl_msc->length;
->> +
->> +		count++;
->> +	}
->> +
->> +	return count;
->> +}
->  
->> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
->> index a9dbacabdf89..9d66421f68ff 100644
->> --- a/include/linux/acpi.h
->> +++ b/include/linux/acpi.h
->> @@ -8,6 +8,7 @@
->>  #ifndef _LINUX_ACPI_H
->>  #define _LINUX_ACPI_H
->>  
->> +#include <linux/cleanup.h>
->>  #include <linux/errno.h>
->>  #include <linux/ioport.h>	/* for struct resource */
->>  #include <linux/resource_ext.h>
->> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
->>  void acpi_table_init_complete (void);
->>  int acpi_table_init (void);
->>  
->> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
-> I wonder if it's worth instance being a variable.  11 instances of 1, 52 instances of 0
-> (almost nothing else).  Maybe just about worth it...
-> 
-> Whilst I like the general nature of this I wonder if smoother
-> to merge acpi_get_table_mpam() that does this first and then
-> look at generalizing when it's not on the critical path for this
-> patch set?  If ACPI folk are fine with this I don't mind it being
-> in here though as generally useful to have.
-> (I may well be arguing with earlier me on this :)
-> 
->> +{
->> +	struct acpi_table_header *table;
->> +	int status = acpi_get_table(signature, instance, &table);
->> +
->> +	if (ACPI_FAILURE(status))
->> +		return ERR_PTR(-ENOENT);
->> +	return table;
->> +}
->> +DEFINE_FREE(acpi_table, struct acpi_table_header *, if (!IS_ERR(_T)) acpi_put_table(_T))
-> 
-> Ben raised earlier comment on checking for NULL as well to let the compiler optimize
-> things better.
-> 
->> +
->>  int acpi_table_parse(char *id, acpi_tbl_table_handler handler);
->>  int __init_or_acpilib acpi_table_parse_entries(char *id,
->>  		unsigned long table_size, int entry_id,
->> diff --git a/include/linux/arm_mpam.h b/include/linux/arm_mpam.h
->> new file mode 100644
->> index 000000000000..3d6c39c667c3
->> --- /dev/null
->> +++ b/include/linux/arm_mpam.h
->> @@ -0,0 +1,48 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* Copyright (C) 2025 Arm Ltd. */
->> +
->> +#ifndef __LINUX_ARM_MPAM_H
->> +#define __LINUX_ARM_MPAM_H
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/types.h>
-> 
-> ...
-> 
->> +enum mpam_class_types {
->> +	MPAM_CLASS_CACHE,       /* Well known caches, e.g. L2 */
-> 
-> Curious comment.  As opposed to the lesser known l5?   I get
-> what you mean about not including the weird like memory-side caches
-> but TLBs are also well known caches so I'd just go with
-> /* Caches, e.g. l2, l3 */
-> or something like that.
-> 
->> +	MPAM_CLASS_MEMORY,      /* Main memory */
->> +	MPAM_CLASS_UNKNOWN,     /* Everything else, e.g. SMMU */
->> +};
->> +
->> +#ifdef CONFIG_ACPI_MPAM
->> +/* Parse the ACPI description of resources entries for this MSC. */
-> 
-> I'd push more detailed documentation down along side the implementation
-> rather than having it here.  The function name and parameters make this fairly
-> obvious anyway.
-> 
->> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
->> +			      struct acpi_mpam_msc_node *tbl_msc);
->> +
->> +int acpi_mpam_count_msc(void);
->> +#else
-> 
->> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
->> index 074754c23d33..23a30ada2d4c 100644
->> --- a/include/linux/platform_device.h
->> +++ b/include/linux/platform_device.h
->> @@ -232,6 +232,7 @@ extern int platform_device_add_data(struct platform_device *pdev,
->>  extern int platform_device_add(struct platform_device *pdev);
->>  extern void platform_device_del(struct platform_device *pdev);
->>  extern void platform_device_put(struct platform_device *pdev);
->> +DEFINE_FREE(platform_device_put, struct platform_device *, if (_T) platform_device_put(_T))
-> 
-> I'd break this out as a separate precursor patch mostly so people notice it.
-> Likely will get some review from folk who aren't going to spot it down here.
-> They may well tell you to not have it as a separate patch but at least you'll
-> be sure it was noticed!
-> 
-> Jonathan
-> 
->>  
->>  struct platform_driver {
->>  	int (*probe)(struct platform_device *);
-> 
-> 
-
-Thanks,
-
-Ben
-
+--2o85NyMik87PQrJf--
 
