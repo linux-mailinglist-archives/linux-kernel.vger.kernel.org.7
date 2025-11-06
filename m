@@ -1,108 +1,132 @@
-Return-Path: <linux-kernel+bounces-888310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A0CC3A7AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:12:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC200C3A7B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D26FD4FEB1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:07:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 808B34FF6E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF3D30C601;
-	Thu,  6 Nov 2025 11:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780CD30CD85;
+	Thu,  6 Nov 2025 11:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rV5Pn6gn"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFsaGLaa"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8422E7F02
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AD32E7F27
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427244; cv=none; b=lFNW/QXOjTaiuCmqcg78uG4n2hpbYkwQloBA8/rRLTv554hHbiqY0uq0kN5xbYnmHU3i5sFv5C1NSjfvjHExCpsMcGX367qX8q4ty5x1C4UYwLBVL5eeib5XtEqOrTgcdOApaeMAbMHiKlv3D0lCoHj2zOmrRGffVFjZ2xYU6Co=
+	t=1762427285; cv=none; b=uksLh+fOVYt44008A6LF99mA5TQOuRpkfI0yR+KFb6Yd3NhjLyh1JvsPb32HCgRgzDvHtIQ/LMlmn/p2WL9G3ABC9ltmceN44Sy/Hvt1dz/E/t1n3PTtv5rw9AKY1zNm6tqxpNMcIcEbQYo+blCAX5NGJy4EAi7y6tYDwhOpLoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427244; c=relaxed/simple;
-	bh=H0ZdH+nx0rZ/pZHZK3BneUY8rwzBPM85uI4MwicRmNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=doPwROdwT2VtkER5Qysqx+QEZvhoD6SA+nXkUpaG0tcbE4bw1a8QaPBnoQoGJEK9XRK5WT8D61lpPpN8JIUxH7RTwI7BhvxWZK2n6PBH66kSWEE7qOgxV8FMd/hJ9Tey9m90e/CS08rCpyoRVIugcFKCCHC/5jMktzEt2qFtPGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rV5Pn6gn; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ecf30c734eso6574641cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:07:22 -0800 (PST)
+	s=arc-20240116; t=1762427285; c=relaxed/simple;
+	bh=iflFF8uGA+JQqg5PeOnkh0xBZA/LPV6uIzaa7UsyVRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KG+NHAqxsRMSrM5/L/YbSMqeQopZzKEjUL2teiwaLYnkhEyY91/uRC1atzTTKKryA7JbMlcHIKB+ZTX5srMH4VnxPXmFSmzT+MtSzsf7kYAQ2Ga78ZLl0WbphKtO618S7PWvAkRz+vMEbfMaIywyX1jUSXK0EV7Ii4/22M0gQAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFsaGLaa; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47117f92e32so6523945e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:08:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762427242; x=1763032042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H0ZdH+nx0rZ/pZHZK3BneUY8rwzBPM85uI4MwicRmNo=;
-        b=rV5Pn6gnT4Q7LcRnxkiij/NfBeYHxoIeJFZvjPdYZUl/9A/r/UheF6pJy3tAPg/Lcq
-         33KUW+jTduemo+byS1u9gzcFcE47vluC7J4wpHj9xJN0Jf0rztnsXdUhdN0OPQMorYBv
-         dHFB6elLRqCx9DdXigCdSnwlgLlK3O/qYfZW5ajj/OC3YIsUvQ2/Zz8apKIlKcQR7x9L
-         uoNc8Kst/W1h4u9GUsXR3LPM61K5fY/U3JrxvbcFEGgTD/9ZHdaYY+LWGpVHLZb/vIem
-         VGAyqQe2QDKqZ6zwcnZpz5lRCJIq8TQ10NbpjgRyyZa6oMgloCB6sIKiy6qmUGMmgPa1
-         Lo8g==
+        d=gmail.com; s=20230601; t=1762427281; x=1763032081; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KemrrCvE16IUsPvIdPc7ZklZCJchRhA/4dXIse7pcqc=;
+        b=lFsaGLaav2Wzq+kdJsJU1Wb4wW+hsZE5/nqsyi2eb0dBlUw0xGSjTlzzn4Sa1cJnLz
+         qOyyIeD4YWjmrVzmwvu8aLSvJiCrNWiWtPu3V2gOXZd2hOq/2CFDkuqVKsyHc8xWaV+2
+         UnIEinVpCzCm1HQ4R8dAMK+BQyH5QFyCxuMW0Wu90+6fKHiCDqa85zysgdJoHRrOgGTY
+         4TuJETudPaQ70g6dro3pDcNu6mNd5AGjgpMzdSEf+ANdVpng/0xQwNfcTBWXI4fgmKma
+         Gx1wfD/x+CU3EW9C3Q90NaljRbG7J9kS+1tSE2oTZqfxywlZzb1JbKbJFTSXG8MyWUxe
+         SNhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762427242; x=1763032042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H0ZdH+nx0rZ/pZHZK3BneUY8rwzBPM85uI4MwicRmNo=;
-        b=ZglFYwrjEHGW4zzywtS9cRAoFbztzXIWjA+hb2eio2AcKHVsCJhZcSMw6droAiVd+Y
-         3ZKaQAG0PJWYU7XFM/0WDi5Lq2ES9h4hXK5ASeoTPZZL6sXFSCwuVhTIsl6IwzJrrdVC
-         0jz4x1iwJmEIYQEP+RmaJOstrbRhUq20tBJ0VrFd2v64svEd6FPFEp5bCxO4fWZDp+rx
-         CcMisoIbU0wtjisqr0LT5i+ZTNsiHAAeyIRTH0PQw83IFxTgVDh2oDxEsIl7VZxUeMaj
-         mAluAWl7VmEk0Gi6m3yZPYz3lpXyMkjX4D27XI+h9lPYMThWcnEheoGJO1vr9oa+UuFU
-         GVXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW36kFRpZXLuMcHc7+aRO892SHqeTR1sBG1nKH/rTNNB4KJAQP0MtdZX3UNXs1e1WDLb7OqZFV2fZ/p2y8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPHz1Qak3zCX4txylxHUO55xXkBH73OT+8I83vy/kk6wFVgtU8
-	U+MfA/ATQKARZeSROCvYqxGlVcnkkLALzDLCixNuedp8Sl7Nmg82ORVYK8ktdVJMukNjwtuRell
-	DRNbSpuMR+qow80S6B5gQ4eBR/esKQ6rYVsx/n1CT
-X-Gm-Gg: ASbGncsHpFK1+0dciN9Ew9V7KBfa+Is0UUqvOiuk+YOCvQYPSAPuT+MrtfK2m7jBOXZ
-	zbtbVg4zQlpeinB1t560DK+h/th5s1EtakH078llNh31vBUnAOgNugdf+eFde0iHn/0gQb1IC6L
-	+Yes6JvHgNrCcp6IvI0t5knkQI6gbvShIGWQWjSrtA16Srmx8OAuNI3sTq78Qt+fKTgt/isRO7D
-	HH7qjAR9cXknS1A3qhtF0wZzlufS9o7feMCl8aLJcLX+cOo3cTVUDd8B3cGyrj6XF3sgjo=
-X-Google-Smtp-Source: AGHT+IFsyvu6ZTz0rAtb4IsdFmSi8tGXLk/9EUNnH5UQ3mMWlgq52v7rMBO/1u5TYQrjkJOaQBFPj5cYnlhEX0kYgZ4=
-X-Received: by 2002:ac8:7d8b:0:b0:4ec:f940:4e65 with SMTP id
- d75a77b69052e-4ed725e7ba3mr63858621cf.51.1762427241397; Thu, 06 Nov 2025
- 03:07:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762427281; x=1763032081;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KemrrCvE16IUsPvIdPc7ZklZCJchRhA/4dXIse7pcqc=;
+        b=bLDvshp7HJmvGTiWMpAC91+3XPlRVW0Eq0WsYoRqxk/LiR7Om4l9T1+iaYsOzT0jcD
+         MjemR9Q7m+FCtYcO0JIZ9nMrKt9pi5UAO+dYC4MVcG6iFOGiYkUh9Lm9voXd9eyFboXF
+         nqRMXkC4GzAgeCSRnmTfbXm6fyI9AT0o2RnDD6O15KBffGQwJ1rDwccejr3pAerrCpXs
+         X743k3Zohu5hJAeuKd1J1jx8I82DtBeNmyssI2lmViQi7j8LRq02W9RWwYLQus4Z7loK
+         APehEs7E8ueGBVNpI/b66A3hxWhquSD52opC1p6kzUMpW7kistodVZFdBusbODr+0K37
+         JWUg==
+X-Gm-Message-State: AOJu0Yx+dUoErRyx0+32JoPqWPl4c0iZH2QDN0iOQjUzx4epE7G0bGgt
+	kKUBbVGNdMICsBsXn5kGtlrmSbtPORXnnjPSny0ADC/OC/3XLKdZZYfI
+X-Gm-Gg: ASbGncuYaukjjFqg+IMFRkbJS1iZLzitnrAdnYi/venq2ZFlsn3CyVxGs3dnH6KRIIs
+	oJJkFVgxkXrAGbfytUh57fbPpLrlo7/6Hb9YQTWO9zXZjsRbyqKbsbT2JxQm9bKGMC+vucPfYxb
+	6BXnOXDzoWXw0bw+u0ZQLV4PWYpMU1/8y8xvoN6kzGmzzJlRMM67k6mKKnbfMJZdh6U4/2xPkH2
+	Q8J0qCLQD5aQqqvPkQUVNkQZdn2JjJYJNbekXZp4klUXhWZr08JY7JstF72PIBDnNWxTkZccy04
+	nitvDVvLbeC18RzMz3kds71tagSc+1ZGBy8yobZzCwLpApZPv6G50/4FECHjiXJTtZax0NFCrCl
+	ofjTDQJBQZOFljCRxQynBdU/6e0RcVg7Jr+u5JhDlpH5mK04Mm5ZvcxWR0K8WabLB8bz2XyuqoD
+	KvVzAIWWUfus1SPK3C7sgQs1FhoU89vHAXansITxK8FfjhZ5FLES4=
+X-Google-Smtp-Source: AGHT+IG/WPvgkkz5ima282cKyz2di1ByWQE6/QNBfZEdI+atynO653MZ5MMOXdVnpoH97C2BXp1trA==
+X-Received: by 2002:a05:6000:250a:b0:426:ee44:6d9 with SMTP id ffacd0b85a97d-429e32e3595mr5318368f8f.21.1762427280858;
+        Thu, 06 Nov 2025 03:08:00 -0800 (PST)
+Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb403849sm4648357f8f.1.2025.11.06.03.07.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 03:08:00 -0800 (PST)
+Message-ID: <785c9d27-23e7-4ecf-ad2e-202ba506f2e0@gmail.com>
+Date: Thu, 6 Nov 2025 11:07:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
- <20251104161327.41004-2-simon.schippers@tu-dortmund.de> <CANn89iL6MjvOc8qEQpeQJPLX0Y3X0HmqNcmgHL4RzfcijPim5w@mail.gmail.com>
- <66d22955-bb20-44cf-8ad3-743ae272fec7@tu-dortmund.de> <CANn89i+oGnt=Gpo1hZh+8uaEoK3mKLQY-gszzHWC+A2enXa7Tw@mail.gmail.com>
- <be77736d-6fde-4f48-b774-f7067a826656@tu-dortmund.de> <CANn89iJVW-_qLbUehhJNJO70PRuw1SZVQX0towgZ4K-JvsPKkw@mail.gmail.com>
- <c01c12a8-c19c-4b9f-94d1-2a106e65a074@tu-dortmund.de> <CANn89iJpXwmvg0MOvLo8+hVAhaMTL_1_62Afk_6dG1ZEL3tORQ@mail.gmail.com>
- <9ebd72d0-5ae9-4844-b0be-5629c52e6df8@tu-dortmund.de> <64a963ed-400e-4bd2-a4e3-6357f3480367@tu-dortmund.de>
- <CANn89iKt+OYAfQoZxkqO+gECRx_oAecCRTVcf1Kumtpc9u+n0w@mail.gmail.com>
-In-Reply-To: <CANn89iKt+OYAfQoZxkqO+gECRx_oAecCRTVcf1Kumtpc9u+n0w@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 6 Nov 2025 03:07:09 -0800
-X-Gm-Features: AWmQ_bm5Kc1656Fqyva8wNAL1lgqqHH7XdmS84y-uVKeorIZqI78IoRwP5JyG48
-Message-ID: <CANn89iKpsVStgFLNzx8Nv3C-qRZdY9R7_Rh1mWWxf4MN-oTAYg@mail.gmail.com>
-Subject: Re: [PATCH net-next v1 1/1] usbnet: Add support for Byte Queue Limits (BQL)
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
+ page pool for net_iov not page-backed
+To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+ brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+ usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+ almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
+ linux-rdma@vger.kernel.org, sfr@canb.auug.org.au, dw@davidwei.uk,
+ ap420073@gmail.com, dtatulea@nvidia.com
+References: <20251103075108.26437-1-byungchul@sk.com>
+ <20251103075108.26437-2-byungchul@sk.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20251103075108.26437-2-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 6, 2025 at 2:40=E2=80=AFAM Eric Dumazet <edumazet@google.com> w=
-rote:
->
-> >
-> > I compiled it with CONFIG_PROVE_LOCKING and ran iperf3 TCP tests on my
-> > USB2 to Gbit Ethernet adapter I had at hand. dmesg shows no lockdep
-> > warnings. What else should I test?
->
-> That should be fine, please send a V2
+On 11/3/25 07:51, Byungchul Park wrote:
+> Currently, the condition 'page->pp_magic == PP_SIGNATURE' is used to
+> determine if a page belongs to a page pool.  However, with the planned
+> removal of ->pp_magic, we will instead leverage the page_type in struct
+> page, such as PGTY_netpp, for this purpose.
+> 
+> That works for page-backed network memory.  However, for net_iov not
+> page-backed, the identification cannot be based on the page_type.
+> Instead, nmdesc->pp can be used to see if it belongs to a page pool, by
+> making sure nmdesc->pp is NULL otherwise.
+> 
+> For net_iov not page-backed, initialize it using nmdesc->pp = NULL in
+> net_devmem_bind_dmabuf() and using kvmalloc_array(__GFP_ZERO) in
+> io_zcrx_create_area() so that netmem_is_pp() can check if nmdesc->pp is
+> !NULL to confirm its usage as page pool.
 
-BW, no need for a cover letter when sending a single patch.
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+
+-- 
+Pavel Begunkov
+
 
