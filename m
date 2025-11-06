@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-888097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9864FC39D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30136C39D6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7593BDC29
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0203BC01B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FA82E54A0;
-	Thu,  6 Nov 2025 09:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998E5303CBB;
+	Thu,  6 Nov 2025 09:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qx1MDcnr"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+xqXbxm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37DA35965
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3E3286D55;
+	Thu,  6 Nov 2025 09:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762421710; cv=none; b=gaLKU++zMM2awczhSjJVgVYhNZ22uxEdUhbp/RAc26tYhH3aps6XVnq2Sez7EurTvS8qVqNt62SsxEaKNHU7nnhOmC95V5dxwkiuQTCXXv2CdlrJd7zc0xLez6vOxNt/fc+NBHQOL+z/ZphnGJ+zxiiIKtcHNwdqhK9oLtInmPo=
+	t=1762421770; cv=none; b=AQTVtTkZvsSN+9ZF1kQNIRoY8++JOYIEY6IuiTgJjNWh6QGEScyP/I2V274Y8DvVjrkEehaM8QRWh/FyhwbGqKoB3sW4BMqV2I1vkr4dQtp1+E3op53SC26bAqgMv5BxHhfRr1plYVubB7iq+USiAvPlXDvsuSSAqXfuz4Hfv5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762421710; c=relaxed/simple;
-	bh=qEmhvJ0+ukIwFOZA8ME1ha5DyXFo9s7/Arup1Wg1aF8=;
+	s=arc-20240116; t=1762421770; c=relaxed/simple;
+	bh=Toqy0lKEohSNoSfFWjUFFL6GdfH+5truG1nkMtppQZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXxXzHRLE1d1JUjvSTM3Jkn3WmMgDbNzSM7Y0GaoHW22vBsLWoJU2ocPLL0QaEJkOMmhEpCfdok8ueT7XnRmjUKIpV9WX5XfMlUiUyPDEdLlIFlhbWYwx2RpYCBLdeaPWtPFDf7pPSG+G9MyF9L8eNOir+fuSXOxw+FFcfe/BD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qx1MDcnr; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eQGd6Ve9TxX74YCdLm04W/lnilUX+GeVs4HRiQ0wIYA=; b=Qx1MDcnrOTnwHCTv4gJ+Kp57Yu
-	eSrNvnorzSw22w3tADCSKkJlTq737IXVAt/QybkqGW0qlv1ma3r05CFdOP+4X5bsmtqaET96vlAy4
-	GvDR8yOpwpXDeCiCmMR5lej1BevHZtyRwynmXKrkg+3SRX+QUnIqb+YHuXSJabLGrYRE+aHgsg/x4
-	WMDA3aujbH1CoMrVF7HD9p3K/+nCyLc7J4MzbHZtC00viqsyjvbQZhcOsOEJp2Djfu9/OJpEIINyh
-	reJcnXZXovM5pESghbR0hrqmnDQjfvvYKgX6IxUrP69r1s9IbjMIAtbnP0HzqV4XBdWQD7lvpPyYV
-	rrzCcYSg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGwOU-0000000G7dm-3FpZ;
-	Thu, 06 Nov 2025 09:35:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AD62830049A; Thu, 06 Nov 2025 10:35:02 +0100 (CET)
-Date: Thu, 6 Nov 2025 10:35:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] vmlinux.lds: Fix TEXT_MAIN to include .text.start and
- friends
-Message-ID: <20251106093502.GS4067720@noisy.programming.kicks-ass.net>
-References: <5c4ca80e52958da289f92157430d2a31d29109d3.1762322973.git.jpoimboe@kernel.org>
- <2fm4yxe6nr6khoyjmo7r7v4u4zxwygz3wch2vb5yolo2tqjsx7@s27lvvoe6x3j>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oV09vWh7VNBu0aoQQwhFoAlxDdaB1xMf8P3e48JPXx3pwJnAehJXql6lOrAPY1WojN6MZjpnY0cJhJ36P22MH/wdudx6XyqhdIxKnnN92gtoSVLiDJYmgNaK5qJVv7tWwrtr/2pzTRwUWiDpIvZUQf+E6ld4N9pqnH5pmY24AJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+xqXbxm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B1DC4CEF7;
+	Thu,  6 Nov 2025 09:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762421769;
+	bh=Toqy0lKEohSNoSfFWjUFFL6GdfH+5truG1nkMtppQZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O+xqXbxmhje9PKO4r4kC5DzuJSUy7ZKdpoZP5dm9YbLP3no4UkysZfcytuEjnrrfb
+	 5QZaB9M0CVIgIDsncBVTmxGj/nqYDTqDXvSPycArX3faqc9H/qyHCJYZRMk/N2Wz+O
+	 ZXULGdO9KRde+AXEllK0hgKM9YlyQlTHg1LfEi4EdmZzDeBPhKogzMO2u7fqsC+CIk
+	 iAFTeXvY+GzfABCLSzQTi9klc47ocuefQAsxyKynA/gQc2tofmQ069ZJ71ejC28hnq
+	 lKRX2tVQAkmFdX4uGEDQeySxoiZaMcM4mo+xn5aMND1G9zDz4N/tOVNdefvaiSQ2qu
+	 2Z/Q71GfuFKKQ==
+Date: Thu, 6 Nov 2025 10:36:06 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-pwm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] pwm: rzg2l-gpt: Reinitialize cache value
+Message-ID: <ct7zlhhexzjsogtthsmhejm37idby3pphljzzdarylkcupmblg@gripvo3dxzqq>
+References: <20250915163637.3572-1-biju.das.jz@bp.renesas.com>
+ <20250915163637.3572-2-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="or25wqcocuvjykyk"
 Content-Disposition: inline
-In-Reply-To: <2fm4yxe6nr6khoyjmo7r7v4u4zxwygz3wch2vb5yolo2tqjsx7@s27lvvoe6x3j>
+In-Reply-To: <20250915163637.3572-2-biju.das.jz@bp.renesas.com>
 
-On Wed, Nov 05, 2025 at 10:55:19PM -0800, Josh Poimboeuf wrote:
-> On Tue, Nov 04, 2025 at 10:11:42PM -0800, Josh Poimboeuf wrote:
-> > Since commit 6568f14cb5ae ("vmlinux.lds: Exclude .text.startup and
-> > .text.exit from TEXT_MAIN"), the TEXT_MAIN macro uses a series of
-> > patterns to prevent the .text.startup[.*] and .text.exit[.*] sections
-> > from getting linked into vmlinux runtime .text.
-> > 
-> > That commit is a tad too aggressive: it also inadvertently filters out
-> > valid runtime text sections like .text.start and
-> > .text.start.constprop.0, which can be generated for a function named
-> > start() when -ffunction-sections is enabled.
-> > 
-> > As a result, those sections become orphans when building with
-> > CONFIG_LD_DEAD_CODE_DATA_ELIMINATION for arm:
-> > 
-> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/usb/host/sl811-hcd.o' being placed in section `.text.start.constprop.0'
-> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/media/dvb-frontends/drxk_hard.o' being placed in section `.text.start.constprop.0'
-> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start' from `drivers/media/dvb-frontends/stv0910.o' being placed in section `.text.start'
-> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/media/pci/ddbridge/ddbridge-sx8.o' being placed in section `.text.start.constprop.0'
-> > 
-> > Fix that by explicitly adding the partial "substring" sections (.text.s,
-> > .text.st, .text.sta, etc) and their cloned derivatives.
-> > 
-> > While this unfortunately means that TEXT_MAIN continues to grow, these
-> > changes are ultimately necessary for proper support of
-> > -ffunction-sections.
-> > 
-> > Fixes: 6568f14cb5ae ("vmlinux.lds: Exclude .text.startup and .text.exit from TEXT_MAIN")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202511040812.DFGedJiy-lkp@intel.com/
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> > ---
-> > For tip/objtool/core.
-> 
-> Nack.
-> 
-> There are still some additional headaches that need fixing.
 
-Hah, good thing I was otherwise pre-occupied yesterday.
+--or25wqcocuvjykyk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/2] pwm: rzg2l-gpt: Reinitialize cache value
+MIME-Version: 1.0
 
-I'll await a new version then!
+On Mon, Sep 15, 2025 at 05:36:30PM +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> Reinitialize the cache value to 0 during disable().
+>=20
+> Fixes: 061f087f5d0b ("pwm: Add support for RZ/G2L GPT")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v3:
+>  * New patch.
+> ---
+>  drivers/pwm/pwm-rzg2l-gpt.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
+> index 360c8bf3b190..b2452e50d618 100644
+> --- a/drivers/pwm/pwm-rzg2l-gpt.c
+> +++ b/drivers/pwm/pwm-rzg2l-gpt.c
+> @@ -190,8 +190,10 @@ static void rzg2l_gpt_disable(struct rzg2l_gpt_chip =
+*rzg2l_gpt,
+>  	/* Stop count, Output low on GTIOCx pin when counting stops */
+>  	rzg2l_gpt->channel_enable_count[ch]--;
+> =20
+> -	if (!rzg2l_gpt->channel_enable_count[ch])
+> +	if (!rzg2l_gpt->channel_enable_count[ch]) {
+>  		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), RZG2L_GTCR_CST, 0);
+> +		rzg2l_gpt->period_ticks[ch] =3D 0;
+> +	}
+
+A code comment and/or a more verbose commit log would be very welcome.
+
+>  	/* Disable pin output */
+>  	rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTIOR(ch), RZG2L_GTIOR_OxE(sub_ch), 0=
+);
+
+Best regards
+Uwe
+
+--or25wqcocuvjykyk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkMbAQACgkQj4D7WH0S
+/k5+rggAlRnnHOXN5Cyw8ayTcICgtQSHgkNtrg/M4WN0498MLEqAHdcv1roeEPsd
+m1x47NRM+vGIf2oMvY0IZsLsbAg8EG6oKLa7C3THrvw9BsKFve//pta+YG4I1C3K
+KEMD9mphHFew0BQiB226JLY5viehPw4vQsoQjKV0Z7aRA1gwm9c6kv8xRK5LYmnE
+j6xdciMlATGTNXfTV4ad+jW+8rpHlgXU7Yjq4OH0ED6oFfan5t80pSJ/7kmPvyOb
+qLzBd+LPfnfGXlXbfnDRUMThzzPq2KuQqMHwx3SDt3w+KQiWUnfbNB23HXtS5N1P
+EBsJ6qucUih8ZNIiKfb1lPSrPuWrqg==
+=7Iko
+-----END PGP SIGNATURE-----
+
+--or25wqcocuvjykyk--
 
