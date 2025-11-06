@@ -1,218 +1,170 @@
-Return-Path: <linux-kernel+bounces-887699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45995C38E83
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:44:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9094EC38E8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0DB3A3FEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DCFB1885CAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95C7233735;
-	Thu,  6 Nov 2025 02:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEAD23EABC;
+	Thu,  6 Nov 2025 02:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z8WweTmX"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010065.outbound.protection.outlook.com [52.101.46.65])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="xgwHqogv"
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E75B23EABB;
-	Thu,  6 Nov 2025 02:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762396875; cv=fail; b=gT/M3GbtGmF3d13GmbkCboQojsXWWP/XlxDxKpNZuRqBzvKUQoZAW6ehbXHM/DkN7PmWZU+TBzcaV/wOB/J4Om/bwfG7H9MaH+6x9nLOQ/dVcK0bGWAJA2CQ58K0hI4bdZ5eQ5eQdNOJ7xeN3kA7K6l65jjRvWv/Krko740oCIc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762396875; c=relaxed/simple;
-	bh=GJgURzD84RZ/ds8zqAXd09PLXQdTL45BK5+/7qAoR+8=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=oUGyNi6WBJ0poHkPiutHEYZzyQ0kqI6UD/cApQjtFdCQhf9Fdd951kqT87nT8nFoeHNLi8eEcWK6obJrd/+2lz6EfDlZCO8Ppjq8c61hnhim0F8JT4CiD/DmW7EYjRNiadmdytcyGzLV29BQ6TpU84Wwlv4Dh77nhGU/lo3jO70=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z8WweTmX; arc=fail smtp.client-ip=52.101.46.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wG1EgAxMe1aZUCj9ueikG1XWc1Ny8kw9UzrTA9EJKwGrn8lRBFDmq0ZApRo9a1i4wOMYG02qRis6SVd/gEqpRzpP+B5gvH24FBrpA9QxIsaS/kYv3ySW8wyOt7pzsiih6BLKZ47zHZ5IWRSU97CDN7sla81Va5b7La9KHPaRVMo2/aIBPEgDFdM8gOr7h09f+WRijp1czis3B/nfiCTcUQHNrzJpGJOkqyJZY+kqd+Ptg1NLM7zZtv16ZjVBz7YiForcEhZt8LXoRCwu4O6+UdCgi0rp9TNUSVFMpwmRr8plh7WAnmo4fww9BgkX1Q6+sFBT0CMvLyd0feIo+p9FPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XgpTM4UUJG9Mo1/w7ZqOqGqIm+b+j/aIs5b7qof7XUc=;
- b=LVCBiJqG2CiDt5u09m/9iVknO/vkYdR2k7B7lIp2r7W/NWmbZdvf8/rZKbm+sw2b4o2e8YXGtRkXeoPDcjrgww/2qNHgnCojGxqo7M6bur5toD4g+wRonKaGcNXqvASxBdhZ1QFI4ia7yD7B7PyON6NxTktY24Es5nvzf1YizuwRJR7BKNw33lmKRcY/ozlL66msrxo0NYK8i7lpSnUyYXhRFOXZCtnduCs8yFIVlTUq2E+JgkiWqalO/yfDEgkT7767h0+FfBb9BaJpBjML+t0R6SUjbYJCzTOGdOj2FqB9VZnhRxooWHzObecWmcHCPrUxu2SLEyxtL2LDeg84SA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XgpTM4UUJG9Mo1/w7ZqOqGqIm+b+j/aIs5b7qof7XUc=;
- b=Z8WweTmXbHeGgP/ZCh3xGSdJMDv6ztFecEvxMMyKkxmsY2RQkp4i5jWY9dQ8gn0DVi7aClBeTQUNsLsAlNj/B4nDHrrXxZ06kBr3BjHyPNgdA5wwqWxptxWEgY/YGsUupv8lNjz4DirLmgar4gke2cF4pp16X/pRf4NSEtF0cAfzMwaiCZ3PIhVZ+cfeQ6Tvt5KhIKhbmZR+BzwIQFiF1X0eyU/ergPnF3KqdLfiAe9v2PjxnAHZDVC0NtC4q4Oe0JAfvtI5ckMxMWSrBp6Zm9MIJn+KC7W/7/Nu9ZM/8UNtM1jxn4clbn+ARq5q3IMZ/eE8frPeUkzOGWXug6a0Tg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CH3PR12MB8330.namprd12.prod.outlook.com (2603:10b6:610:12c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Thu, 6 Nov
- 2025 02:41:11 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
- 02:41:11 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Thu, 06 Nov 2025 11:40:56 +0900
-Subject: [PATCH v3 3/3] net: phy: select RUST_FW_LOADER_ABSTRACTIONS
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-b4-select-rust-fw-v3-3-771172257755@nvidia.com>
-References: <20251106-b4-select-rust-fw-v3-0-771172257755@nvidia.com>
-In-Reply-To: <20251106-b4-select-rust-fw-v3-0-771172257755@nvidia.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, 
- Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Trevor Gross <tmgross@umich.edu>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.3
-X-ClientProxiedBy: TY4PR01CA0035.jpnprd01.prod.outlook.com
- (2603:1096:405:2bd::17) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73BD245022;
+	Thu,  6 Nov 2025 02:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762397065; cv=none; b=jVAUobPwiNXMSq/inXJgO5s7i1RXgMDaThNmDIZMlTzC6Cp9cxTO6Tu8Ouu16ZVMCP/YyZ81Kjh31MgMzx/soQqajpMuGwg6IkSj8IlX4RH5+VA0oomsJBKVt31xqUpsY73sTR0NEUdhYy8eD89dm6tmGVlzPyqvXykdSUlrYbI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762397065; c=relaxed/simple;
+	bh=IcASH1qtY0SIFs42x0ctyhoiDa7gsdtJ7fmK5+xGdLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XP/9O3Rc7jjHDHwJgkHyD8UpCVGjHECQB8mzFQBfhe2kzsZ2+ezqEL011YMElXif/kM9yFjZE4JsaMUX39mC8kD0mQhEFoESEhQ6x+WjpWbdGiaT5y4bh3dewl504GqQu80YtJze7RadhPD7yeoG687Mkat1OmazTPqqL+9IkfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=xgwHqogv; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=SmiGeerJpItekeBrZ0vp8zm0YzZ1kocpU6u3YhL4BMc=;
+	b=xgwHqogvKdjdSjQOEiNXt3yMJngtWo0Y3iXn2mRqv7EpqxcVd312T/rdqLXC8B4Ld5dCDQJdA
+	X16AvLmzek4Fl5/+heqACTw+WUdIqjjuNZrTxJVMbinUXaT0bUyaJ/Ii3lrIm7lg+Ev+H+0MyZb
+	Uq/4Xu/yXujZiDi+0Wfnd1s=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d261908K0z1prKm;
+	Thu,  6 Nov 2025 10:42:37 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4B608140276;
+	Thu,  6 Nov 2025 10:44:13 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 6 Nov
+ 2025 10:44:12 +0800
+Message-ID: <242f4438-d84d-46a6-86fe-8629c7e028cf@huawei.com>
+Date: Thu, 6 Nov 2025 10:44:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB8330:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39ca58f4-51e2-468a-fb4a-08de1cddf275
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|10070799003|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bWszRXZveWpRL1YrcHhER0hCMDVMTnFGQldlUWEvTDAyd3Q5YVdrbkw4Nm9J?=
- =?utf-8?B?bjB6YXZIWG9lMXNXUTZ5aXFubjlLbXB6bXMzYkxSOHJqeVFmNVRuQytOL3Zx?=
- =?utf-8?B?a3htUTMwMzZTTXZjbzlVUTZJamw4RjVpcUNtMTkvMVFqV3BySkZUckttYlVa?=
- =?utf-8?B?aDlObzdPTUpVdkJWbVB3ZFZpL2V2K05CY3FCQVZkMUtIMlVaNmpPemFHWXll?=
- =?utf-8?B?VGJmcC9Dak1IYmlvTlFsbGFubnc3TlpVQ3JXZkIrckpzNVltU3V3aEtMK3V2?=
- =?utf-8?B?dkZFdU9TMHl0QU01eDlhd1l6U3RTRnRKckU1dFBBS1F4UU9pSDFMSHdob0Jn?=
- =?utf-8?B?LzJNblhObmc1RUczYVpQYnhYOEIwWTJQK3ZiL0JoWUg4ZkN5Y0tDLzhEeEx2?=
- =?utf-8?B?aGhkUkRZSlNMcEtFZSt4UlllZFRiY1FXU1VoSGx5NFFBbjBmWGc4b21vbkdm?=
- =?utf-8?B?dzlXc0hYWUtCQ09XK3UrNUdWSlpLK2hyQUhGcm1uUit5M3ovSEtJRmh4YWkx?=
- =?utf-8?B?T2h0VEtEaklxSnZqMVV0WnA0TTlnak9ucjlPYTlQQnFJUHNwRG9GTTA5ZW03?=
- =?utf-8?B?NUJSbWhLRXBiWHE3WjhHZFZiRTE2bzJOWXYvWE9aSzd6UmY5Q3FMTFdXSGQz?=
- =?utf-8?B?cEJtbkw1TWpwRlQwS0FjNWorRzA5Z01DWW45Ym9FMktYVkhlb0FDYytleFpr?=
- =?utf-8?B?UjAraEIrVm9GREJrNmJwRXJSbjVkWG4rYUxHT3JIQng1SGVFbVNZQk1aUW83?=
- =?utf-8?B?UmNTWnhrbjlLQjNVbjhYZTFpRHl2Z3I2T3JpMFZGeklFWVd3eHhWWm91SW9K?=
- =?utf-8?B?cFhKT2RaRVAxbG8vTzgxVWZoczlFSG1LdlM3R1hrWUc2M1IzS1UySDBDMUV2?=
- =?utf-8?B?cXR2RTNjb1RhN1pIaFQ5b3VYM2xtcm1INEljWndPL1hyR1ZiUVI5eDNHMGRH?=
- =?utf-8?B?eEMvVHlpMGgzNlMxTTNKTEpZU3NqNlp1em4vaEprS3g3UlBkenFjMUtUWGxK?=
- =?utf-8?B?dUp5MVJJRDJBZjNCakFsMVUyY2dGeG1mbVZ0Vmd5MmJpOUtXaE1jZEwxY0Z5?=
- =?utf-8?B?TG5TYW1GQTJ1M05SSVZRdWpwdTlBcmxFdGREMjhxa1VvT1h0d1ZNWFNYNHdj?=
- =?utf-8?B?SlN0NWpPWnFBd0ZWTzNRdlhPTVJnOFRkdW1nZ2JaeEZVclNHNk9ITUM5eUlL?=
- =?utf-8?B?OFpLbjM1c2h3VUkwYXh4WUM4bjZGVGpyYjFuK3NJcHdEZjBkRTVBM0RibzdT?=
- =?utf-8?B?MFBGWFJIYStmWmxNMTc1ckdDaStReEROS1RXaUZaa1lCeVZsYUxZOUpjNFMr?=
- =?utf-8?B?UitFTnlWRytjRGlPOStIWG1WL0ZLQTZjSjllMm9KVXBKOExyOEZORERpd2xz?=
- =?utf-8?B?ck84VE9CQjZycVRQbi9YMU1qTmdEWTh3TTRaNjloSWhBdjcxSlNZaDZUK0dz?=
- =?utf-8?B?c0IrODJ0aTd2cXoxUXdiMnpOY0Jna1hsTy9jVnNDWWJMWEtLR2tCUzd1NGVl?=
- =?utf-8?B?TkNURDNYaHdTLzlVMS90K0FVTFdlYjFkNWNaQWdXVUZUUTU4TVpCdk9pNXdD?=
- =?utf-8?B?WFJEZ0NLSFBjVDJEbExlR1FSUEx4SlRQam1yQUxBcG5FRE55SHhyR1poaFp6?=
- =?utf-8?B?VkdRQU9VcDcwemNReUpreUV6dDlRK0QvN2FITCtmWE1DMjV3RVFtTXlFM1hQ?=
- =?utf-8?B?TW1zTW4zNjlvOWMrNHdwemlXR3RHVmZxRXR4bnRNeGJLTnladmVrMmZ0eTk3?=
- =?utf-8?B?VDA4NXBwUGpMcHhyYlVJSlFwakZ3WFZFZHJpZENNeG11UEdkaUZDTDBuZG8y?=
- =?utf-8?B?TjB1OVBxRjNPK2FpY2ZTT2JZRHRzSHVRRXArQk9nSS9kWmtLMEFkSjRmSFJQ?=
- =?utf-8?B?ejdkU2RBTXFHb2N5aXh6OEN5RlVDbDE4NlNEa1FVeDM0Y2RQSk5maWI2UHNF?=
- =?utf-8?B?Ty9kcmNyWk02cTlYVXFHS0RWaGpUeGIwWjd5SzdZYm5UUTRPa2tpS25WMHBn?=
- =?utf-8?Q?F1bYNNIVYuCYKhhdgmjyVKO52YTCZ4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(10070799003)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkZoUFh1b1lZSkNHUnh4MmpnRk1aL3Ewa2Myd0dRL3h4bjhVSVkxa09PaDFV?=
- =?utf-8?B?Y3UvU3JjdnF0czIrWXYzQTR6andDNjNON0w1RUttRmdFTVNkckRHU012ajgr?=
- =?utf-8?B?VXhNUlZZU0hKZHlITm56MFZOb1dUVDdrZnFMeVdUNTBQOU9ReDErQkdxWkQz?=
- =?utf-8?B?Y1ZWaVpHRHZIRHFNSllDVXFpUFVvdVIxZjdhSDBIV0ZQZmJ3dHVjT2lKUzV2?=
- =?utf-8?B?dHprMVVTUjNGMkhOaElLNWgrZk10OHloT3hUWlF1cmU2bzZzUHNpUGJFTEZU?=
- =?utf-8?B?czE5bHJuL0Z5MEhXb2VWZVI2TlNPRHNncGFiK2N1b3h0ZHA4SXB1akRlYW5O?=
- =?utf-8?B?ZmNhdWkvMFVLNGwrcHh0M0VsY25UdGNOMnYvTzF1UGpFVjJnRlhwUVd1QnlU?=
- =?utf-8?B?UmtlYngrNDZEQ3k0OFBVVFJ4dGpBam5HUDkvUnR5NGhEUmJtZDVrN0FHN2Fi?=
- =?utf-8?B?azJ1UnB0YU1FS01hZXZReXFvKzROMmMwNVlhbytqOUhLODZtVlNjZkpvTVUr?=
- =?utf-8?B?VTBMVlVLNDFzU21FWmdobFBYL0NzSjdLY2lGeHFUSjhBbkNOVkZhMVNNYmUz?=
- =?utf-8?B?cXJZNHJ6bE5WYW1Ub3hlM2hkMVJRUUpoQ0hNb2lLNzIyMGVxRVEwVlpTRUIx?=
- =?utf-8?B?NXFoQnE2dXlVeGRyTTkraVV2UThQMk9DRlFRUGJFazRNYUZSQTA4bXB1MVBM?=
- =?utf-8?B?WlpReWFmRHNObWxsMUNhNldVaE1iL0NGSXN2dnVvdFNuNjlDNi9QS2NYSlJj?=
- =?utf-8?B?NWZmUzFpWUJMOERqa0ZyR2lIMFpBcnl2WWxSdFc5WTc0WXQyL1Q4VjVldyt2?=
- =?utf-8?B?blNHUFZVeHY3Q2FZWlVPS2dFbXBHQkRlTXhBdloyd01NQlR4aUJsMHBoUGVK?=
- =?utf-8?B?TUNvb1RpLzA5MUNEcnRIQ2MrZmsxbE9JTGF5UUhnNUhiOG9KTk1wUDF2R0U2?=
- =?utf-8?B?bUtKYlMzb2xGelJMREh4OTBIRnpzRHl2UkxlWjk2dXNUMWtBOFh2UUJiY1Jh?=
- =?utf-8?B?TTJrNWxDL01wbVVaWnhjcFFyYld1VHRtc3dGZ2tPZzlNWmI1QmpjQzRVMGla?=
- =?utf-8?B?QzJtSEtrR2kxOTRjMmhMMWpVbThiMGZnMUFXeGFpUjdUeCtaelM4SEFiQ2R4?=
- =?utf-8?B?SUoxY2J0aTlEOW5VVi8zUlg0VUNac3VaRzBMU2V1YkdueFA5U2NiZmYwYmd0?=
- =?utf-8?B?bHczT1VGa2RSVUpiRDRROUx5V1BUeEcrK1Fmcm0veFpJZTBXT1d1bktMVVlu?=
- =?utf-8?B?MFlORE10bDlRU0M4RXFyakg2dnFCd1AxYXZPQTZta0R0UERnMXVRVU5rRTh6?=
- =?utf-8?B?cXdDbjRuK1JENXErKzVpSFhtN0tCanhKUlBPT2QzRk1hYlRRcm9pWGtCcG1W?=
- =?utf-8?B?MWJKREpHcG13dTN5OGVzOG1saXlmQVdGanY2M0ZjRWY4c2tNNmV5Zm1Ja0VG?=
- =?utf-8?B?N0hhWWhtYmU3WDZpYjhKWmdDY2JqSzdkWVphalptUFpJR0hCc0VFdENEckhv?=
- =?utf-8?B?UU5rNFF6WjE3VTRVTWxaamlLM3drdVAwRUJoRWF1U1pOVjdIWVlEUWlkVGsv?=
- =?utf-8?B?dnkrV3c1WnFiVGxNcU9BTC9KaTRpeWJVTWhhVUwydDFlQnNsdk1GdjI2b3lI?=
- =?utf-8?B?VDNzVnRlZ043YTJIOVpvOFBWUytkVzhjT3k0UzhRK2dtKzdwTjF0ZHNLdzlx?=
- =?utf-8?B?ZWtPZGN0dVZzeWhLR1ovRjFRK2duQkozbzFLbHZDNXRlaFRLc1FHOEFqMVVV?=
- =?utf-8?B?ZXhZclRzMDFXTTdtVVd3ZzFQR21wWTZwdU5acGR6WHJEVG5qTUc3bUw4eFJT?=
- =?utf-8?B?V1RxWG5ZRW9VbnBrL2NTd2lpKy8wbTIzRU83WllsVUZSamk0b0tPd1RKT3lB?=
- =?utf-8?B?em8zcncyMUlBcHBiVmhpYXVLQVNnSXVacndkeGlMcjNrTWtDZWoyVm91UlhZ?=
- =?utf-8?B?djBtT2pNaWJST2RQOW9DRFJLWm8rM3BUalNPd0pnTllzOUJjSkxYaFlNdnNm?=
- =?utf-8?B?VmtBeUg0bTRBY1V3QlRLR2lRaXJ1VzcrSFZNbW9iMlpRTFpiVWNhTjgyWVI2?=
- =?utf-8?B?M3NJeWx0Z0c0SGRXajFvbUhHOFg2RjBRLzNyZEJLZlpxdHI0ZzNpd0N6Z0Vj?=
- =?utf-8?B?UWF2Tm1wdFlUc1hmNWlWNDZ3dkpxcjg1SGRWdHJ2RmVsMko3NXdqL2ZjaTVp?=
- =?utf-8?Q?ColBxerLh2ysX5d6nykzb5bVbSmEsHwNZ6YdbzXS8qSP?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39ca58f4-51e2-468a-fb4a-08de1cddf275
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 02:41:11.7027
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: K5XBAbuoX1EfzSDr2JVeV4ewrlRIWYu5QRh0aCp6X2+bTIVLrsYiEQlEE9mLPBQa0jBGjMnug9C9iroaqBtSzA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8330
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 25/25] ext4: enable block size larger than page size
+Content-Language: en-GB
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	<libaokun1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-26-libaokun@huaweicloud.com>
+ <yp4gorgjhh6c3qeopjabmknimeifhnpbz63irrrtjpplatnk4k@ycofoucc4ry3>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <yp4gorgjhh6c3qeopjabmknimeifhnpbz63irrrtjpplatnk4k@ycofoucc4ry3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-The use of firmware_loader is an implementations detail of the driver,
-so it should be enabled along with it. The non-Rust option FW_LOADER is
-typically selected rather than depended on, let's make the Rust
-abstraction behave the same.
+On 2025-11-05 18:14, Jan Kara wrote:
+> On Sat 25-10-25 11:22:21, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Since block device (See commit 3c20917120ce ("block/bdev: enable large
+>> folio support for large logical block sizes")) and page cache (See commit
+>> ab95d23bab220ef8 ("filemap: allocate mapping_min_order folios in the page
+>> cache")) has the ability to have a minimum order when allocating folio,
+>> and ext4 has supported large folio in commit 7ac67301e82f ("ext4: enable
+>> large folio for regular file"), now add support for block_size > PAGE_SIZE
+>> in ext4.
+>>
+>> set_blocksize() -> bdev_validate_blocksize() already validates the block
+>> size, so ext4_load_super() does not need to perform additional checks.
+>>
+>> Here we only need to enable large folio by default when s_min_folio_order
+>> is greater than 0 and add the FS_LBS bit to fs_flags.
+>>
+>> In addition, mark this feature as experimental.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> ...
+>
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 04f9380d4211..ba6cf05860ae 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -5146,6 +5146,9 @@ static bool ext4_should_enable_large_folio(struct inode *inode)
+>>  	if (!ext4_test_mount_flag(sb, EXT4_MF_LARGE_FOLIO))
+>>  		return false;
+>>  
+>> +	if (EXT4_SB(sb)->s_min_folio_order)
+>> +		return true;
+>> +
+> But now files with data journalling flag enabled will get large folios
+> possibly significantly greater that blocksize. I don't think there's a
+> fundamental reason why data journalling doesn't work with large folios, the
+> only thing that's likely going to break is that credit estimates will go
+> through the roof if there are too many blocks per folio. But that can be
+> handled by setting max folio order to be equal to min folio order when
+> journalling data for the inode.
+>
+> It is a bit scary to be modifying max folio order in
+> ext4_change_inode_journal_flag() but I guess less scary than setting new
+> aops and if we prune the whole page cache before touching the order and
+> inode flag, we should be safe (famous last words ;).
+>
+Good point! This looks feasible.
 
-Fixes: fd3eaad826da ("net: phy: add Applied Micro QT2025 PHY driver")
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/net/phy/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We just need to adjust the folio order range based on the journal data,
+and in ext4_inode_journal_mode only ignore the inode’s journal data flag
+when max_order > min_order.
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 98700d069191..d4987fc6b26c 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -132,7 +132,7 @@ config ADIN1100_PHY
- config AMCC_QT2025_PHY
- 	tristate "AMCC QT2025 PHY"
- 	depends on RUST_PHYLIB_ABSTRACTIONS
--	depends on RUST_FW_LOADER_ABSTRACTIONS
-+	select RUST_FW_LOADER_ABSTRACTIONS
- 	help
- 	  Adds support for the Applied Micro Circuits Corporation QT2025 PHY.
- 
+I’ll make the adaptation and run some tests.
+Thank you for your review!
 
--- 
-2.51.2
+
+Cheers,
+Baokun
+
+>
+>>  	if (!S_ISREG(inode->i_mode))
+>>  		return false;
+>>  	if (ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index fdc006a973aa..4c0bd79bdf68 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -5053,6 +5053,9 @@ static int ext4_check_large_folio(struct super_block *sb)
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> +	if (sb->s_blocksize > PAGE_SIZE)
+>> +		ext4_msg(sb, KERN_NOTICE, "EXPERIMENTAL bs(%lu) > ps(%lu) enabled.",
+>> +			 sb->s_blocksize, PAGE_SIZE);
+>>  	return 0;
+>>  }
+>>  
+>> @@ -7432,7 +7435,8 @@ static struct file_system_type ext4_fs_type = {
+>>  	.init_fs_context	= ext4_init_fs_context,
+>>  	.parameters		= ext4_param_specs,
+>>  	.kill_sb		= ext4_kill_sb,
+>> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+>> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
+>> +				  FS_LBS,
+>>  };
+>>  MODULE_ALIAS_FS("ext4");
+>>  
+>> -- 
+>> 2.46.1
+>>
 
 
