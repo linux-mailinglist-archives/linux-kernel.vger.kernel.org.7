@@ -1,191 +1,168 @@
-Return-Path: <linux-kernel+bounces-888088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AAEC39D16
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:30:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E91C39D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:31:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCDA44E7737
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 307EE188FDAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33A330C36D;
-	Thu,  6 Nov 2025 09:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AF42D6E53;
+	Thu,  6 Nov 2025 09:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LHD90CAO"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WCLHVOIL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28B030BF7B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7447935965;
+	Thu,  6 Nov 2025 09:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762421411; cv=none; b=ux8EpWoSo8NMH1D2W3uIvZ3hgOrl7syIHsn78DGY0N0/ygkWDrJgIgSSJgAfqXNTEnEcNhU6hG0B5jd17//WpfmQK9vB0IprN5Viw8RZQvzDiCUJjeLodm+3RhMUquUYNfC3sT+w4++UEL8/veRwe108FRJEAgwfU7M6aAyJYOQ=
+	t=1762421479; cv=none; b=h3TemJJ04vUJsjJBW9rr2jzPJFNXsnHOjIiNZNk3ZXAttDbPh0yRHe7/jjEoHBZwLO/RcsDmVY27rtDh34m355TyrdOHkxzXCDS+rtTgeUAFwP5GBkxKHGfuAPwOPEYvu0fDGz+QTs98lYT2So/vtRrdTdDUEE9XdvNNmsqrndI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762421411; c=relaxed/simple;
-	bh=5Q70uNZgvXMnG+FcWTm2thBI5YWNuANk3UsX8UcykQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQRhn/wPi8ExBw8bZ5X5e0i5X/XBwwhFGQyLDFYW1ynqS4y0BMSuHnbdE8CQXUUmeRYroVUilM5RDEDfxWkZAwpevvi+cmrVY+ANTXEjtw5Ch1+vyA+cZ/AC/p6n3kJ0CQQ9131thfpxXNtkXyVKEhPO1KUveaxdHU19h+FXUOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LHD90CAO; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Z4MczQLnGpbhKtlh5ALVW+kByWj5MWmj7cgNf4sxqp8=; b=LHD90CAO3edTfbPh6pxHU4cTUu
-	EinH0K2GaUMU/XKVWaysK3lnoiJ9l5hZ4urWkL6YwcUI6rauumxRaqXkD4LzA6pv2nbD8r5yNdPgH
-	7MVgG+CZ40f0XTQakHCI2tmgOH2rMSlD2nOQshhNgK+bfhcHinFbF3sqPIbplQJyN8ai2ltYv8qBz
-	waxqx+Snwltd/LmfS4yjSF0Bs4DnIPjeiyBdLacGJD3OozwArpOm+Jw0lC1O6qfmNo+PoEtRA71oN
-	/eT77mBoQpw0zq6kGO3LXWVmS5foFse2la1Wq+qgfEgGdnHkxmn7x/p7wSggZs8ciuaCOQA9TeNFF
-	Pj8y1KEg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGvRS-00000003sQs-00NQ;
-	Thu, 06 Nov 2025 08:34:19 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 66B6F300265; Thu, 06 Nov 2025 10:29:29 +0100 (CET)
-Date: Thu, 6 Nov 2025 10:29:29 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v2 0/6] futex: Use RCU-based per-CPU reference counting
-Message-ID: <20251106092929.GR4067720@noisy.programming.kicks-ass.net>
-References: <20250710110011.384614-1-bigeasy@linutronix.de>
- <e0f58203-22ef-44c0-9f7b-b15c6007249b@linux.ibm.com>
- <20250715163134.pM1J2XO9@linutronix.de>
- <88edcfdf-2253-4563-a895-6e8bb1625800@linux.ibm.com>
- <20250716142946.GD905792@noisy.programming.kicks-ass.net>
- <ae8c6fd5-cc9c-44f3-a489-0346873f4be5@linux.ibm.com>
+	s=arc-20240116; t=1762421479; c=relaxed/simple;
+	bh=8tuXIJaRQj67Wuzt3GQJZZ9j955PqstWCmEb3K0qaJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u3iv8DRqH4soJ0A2JumoCW1zWlrHn/lw9r1TR/CyO+pcOvrzy+WSmuKBxvVW/C/TPgu73swQBaG4vcIKuCHgRcHKs0iKe1XZqIaJTeWpidqqe25zKa740SZooxmZibV3DueBzoA7lmYWLdE74GSa6CQBoFnCzJwoVqQtjssaNUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WCLHVOIL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A690r6q2797652;
+	Thu, 6 Nov 2025 09:31:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	E1ifgCrzhtp1+j9Pung6ohTcRTZrJt0ve1KAMLyjOMk=; b=WCLHVOILHMO6EOWz
+	K4oqoEaEdpNkA3DQqiwiXVQQkXZZuR0thIYFQHxfbK1wy9C+m2mZrccMOFD1pT+1
+	V5+2C2TiW/Ih7/84J7eTtGPfk72oaXvCCKpo7lizjbEj5urcb7woCax/sc20T5gZ
+	M+91LCFgY7G+0vNUKHLIVn6KDo4tYdikqzTe5PsGlbWpDebjkyLfiKy2MQ+t9Ila
+	wKmCZYsw3CcqvuH3ZFGiyObSrs/UgsIsYr2oTslwduN/ZYeZN4poo6a2xg0j7Ktt
+	SWHtCBHzf9q36hFEcdsJQ8TlXeZXEfQYHn+G2MKuOey6E3ZOpq4gfIhROX7C+66U
+	EPFY/A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8hyts7h3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 09:31:14 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A69VEqA020470
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Nov 2025 09:31:14 GMT
+Received: from [10.204.78.32] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 6 Nov
+ 2025 01:31:10 -0800
+Message-ID: <c6ef0324-c932-4c80-8252-97dd3ee255d3@quicinc.com>
+Date: Thu, 6 Nov 2025 15:01:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae8c6fd5-cc9c-44f3-a489-0346873f4be5@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot' function
+ for hpd gpio
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_riteshk@quicinc.com>, <quic_rajeevny@quicinc.com>,
+        <quic_vproddut@quicinc.com>
+References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
+ <nzg7auudxocxnpnjsc2emot7sgh5azvucl72jqzgqsp4jhzint@hykb2xyx66uh>
+Content-Language: en-US
+From: Amit Singh <quic_amitsi@quicinc.com>
+In-Reply-To: <nzg7auudxocxnpnjsc2emot7sgh5azvucl72jqzgqsp4jhzint@hykb2xyx66uh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: e0rMN5I_0VamN8TIDerrPR0BN_k2Hq8v
+X-Proofpoint-ORIG-GUID: e0rMN5I_0VamN8TIDerrPR0BN_k2Hq8v
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA3NiBTYWx0ZWRfX8Qz6ZiMVY6Zd
+ R+RKR3EgmKNmdheHITTOGKMjZFXvYhV/aFKvNwTfEMpJPDjSpaEox8nQP7puL6jT5qF7gyN/EtN
+ eZtdwoxMpHxc/resGTxcCrAzxu6Ek/YvfoQOM28wBl746XstcJ7PpKw/8BA7z3c6ckO0cHk4xTe
+ uFnEs8xGgVYDl9UUa4q5qo5eIm8B9A7qG3YSP6FBivdCoc0jZHjKGs2GNrHQO1JhjFOZ+pxalQm
+ eWW4YRQ7zJlNKba6R+x0LibxxDmx8MwFIVIQCQd5+Q0Bq0vu117PkFEu5t2x7bLQ0YmI46A59LZ
+ cQZjQ35xbNlK5ZKHEgTkdNLPd+OkL5+9zMtFLsPVNrnRatBc2uRwDJMfFJhME2PL2LYGjcMhUvX
+ I+FhGpkqkT3taIJZ5D38M3lBI+3PBQ==
+X-Authority-Analysis: v=2.4 cv=X+Rf6WTe c=1 sm=1 tr=0 ts=690c6ae2 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=X2bJkxrq0LOtwHL-icMA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ clxscore=1015 malwarescore=0 adultscore=0 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060076
 
-On Wed, Jul 16, 2025 at 11:51:46PM +0530, Shrikanth Hegde wrote:
 
-> > Anyway, I think we can improve both. Does the below help?
-> > 
-> > 
-> > ---
-> > diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-> > index d9bb5567af0c..8c41d050bd1f 100644
-> > --- a/kernel/futex/core.c
-> > +++ b/kernel/futex/core.c
-> > @@ -1680,10 +1680,10 @@ static bool futex_ref_get(struct futex_private_hash *fph)
-> >   {
-> >   	struct mm_struct *mm = fph->mm;
-> > -	guard(rcu)();
-> > +	guard(preempt)();
-> > -	if (smp_load_acquire(&fph->state) == FR_PERCPU) {
-> > -		this_cpu_inc(*mm->futex_ref);
-> > +	if (READ_ONCE(fph->state) == FR_PERCPU) {
-> > +		__this_cpu_inc(*mm->futex_ref);
-> >   		return true;
-> >   	}
-> > @@ -1694,10 +1694,10 @@ static bool futex_ref_put(struct futex_private_hash *fph)
-> >   {
-> >   	struct mm_struct *mm = fph->mm;
-> > -	guard(rcu)();
-> > +	guard(preempt)();
-> > -	if (smp_load_acquire(&fph->state) == FR_PERCPU) {
-> > -		this_cpu_dec(*mm->futex_ref);
-> > +	if (READ_ONCE(fph->state) == FR_PERCPU) {
-> > +		__this_cpu_dec(*mm->futex_ref);
-> >   		return false;
-> >   	}
+
+On 11/2/2025 12:29 AM, Bjorn Andersson wrote:
+> On Fri, Oct 31, 2025 at 02:27:39PM +0530, Amit Singh wrote:
+>> Currently, hpd gpio is configured as a general-purpose gpio, which does
+>> not support interrupt generation. This change removes the generic
+>> hpd-gpios property and assigns the edp_hot function to the pin,
+>> enabling proper irq support.
+>>
 > 
-> Yes. It helps. It improves "-b 512" numbers by at-least 5%.
+> No, it replaces the use of display-connector for hotplug detect with the
+> DP-controller's internal HPD logic.
+> 
+> There might be good reasons to do so, but you need to describe them.
+> 
+> I'm guessing that there are still some issues in the DP driver's logic
+> for handling of external HPD? This should be addressed by fixing that
+> logic in the DP driver, to ensure that this (display-connector +
+> hpd-gpios) works, and then you should send this patch again explaining
+> why the internal HPD hardware does a better job.
+> 
+> Regards,
+> Bjorn
 
-While talking with Sebastian about this work, I realized this patch was
-never committed. So I've written it up like so, and will commit to
-tip/locking/urgent soonish.
+Thanks for the feedback and clarification.
 
----
-Subject: futex: Optimize per-cpu reference counting
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed, 16 Jul 2025 16:29:46 +0200
+We observed a specific use case where using the GPIO-based external HPD
+handling via display-connector leads to a functional issue.
+When the DisplayPort cable is already connected and the display is active,
+and we perform a system reboot, the display does not come up automatically
+after boot with the current configuration (using hpd-gpios).
+This happens because we do not receive a connect event post boot —
+the GPIO-based HPD path does not generate an interrupt in this scenario,
+as the line remains high and no edge event is triggered.
 
-Shrikanth noted that the per-cpu reference counter was still some 10%
-slower than the old immutable option (which removes the reference
-counting entirely).
+However, when we configure the pin with the edp_hot function and use the
+internal HPD logic of the DP controller, the controller correctly detects
+the HPD state after reboot. The internal HPD block generates the necessary
+interrupt, and the display comes up automatically without requiring a
+replug event.
 
-Further optimize the per-cpu reference counter by:
+This behavior aligns with other Qualcomm reference platforms where,
+if the controller’s internal HPD is available, it is preferred over
+the external GPIO path. Using the internal HPD provides more reliable
+detection and keeps the configuration consistent across platforms.
+So, this change ensures:
+1. The display recovers correctly after reboot when the cable
+remains connected.
+2. We leverage the controller’s native HPD interrupt capability for
+better reliability.
+3. We maintain consistency with other DP-enabled Qualcomm boards that
+use internal HPD.
+4. edp_hot follows the Source device behavior upon HPD pulse
+Detection [VESA DP standard v1.4 section 5.1.4].
 
- - switching from RCU to preempt;
- - using __this_cpu_*() since we now have preempt disabled;
- - switching from smp_load_acquire() to READ_ONCE().
+I’ll add these details to the commit message in the next revision.
 
-This is all safe because disabling preemption inhibits the RCU grace
-period exactly like rcu_read_lock().
-
-Having preemption disabled allows using __this_cpu_*() provided the
-only access to the variable is in task context -- which is the case
-here.
-
-Furthermore, since we know changing fph->state to FR_ATOMIC demands a
-full RCU grace period we can rely on the implied smp_mb() from that to
-replace the acquire barrier().
-
-This is very similar to the percpu_down_read_internal() fast-path.
-
-The reason this is significant for PowerPC is that it uses the generic
-this_cpu_*() implementation which relies on local_irq_disable() (the
-x86 implementation relies on it being a single memop instruction to be
-IRQ-safe). Switching to preempt_disable() and __this_cpu*() avoids
-this IRQ state swizzling. Also, PowerPC needs LWSYNC for the ACQUIRE
-barrier, not having to use explicit barriers safes a bunch.
-
-Combined this reduces the performance gap by half, down to some 5%.
-
-Reported-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-Tested-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/futex/core.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -1680,10 +1680,10 @@ static bool futex_ref_get(struct futex_p
- {
- 	struct mm_struct *mm = fph->mm;
- 
--	guard(rcu)();
-+	guard(preempt)();
- 
--	if (smp_load_acquire(&fph->state) == FR_PERCPU) {
--		this_cpu_inc(*mm->futex_ref);
-+	if (READ_ONCE(fph->state) == FR_PERCPU) {
-+		__this_cpu_inc(*mm->futex_ref);
- 		return true;
- 	}
- 
-@@ -1694,10 +1694,10 @@ static bool futex_ref_put(struct futex_p
- {
- 	struct mm_struct *mm = fph->mm;
- 
--	guard(rcu)();
-+	guard(preempt)();
- 
--	if (smp_load_acquire(&fph->state) == FR_PERCPU) {
--		this_cpu_dec(*mm->futex_ref);
-+	if (READ_ONCE(fph->state) == FR_PERCPU) {
-+		__this_cpu_dec(*mm->futex_ref);
- 		return false;
- 	}
- 
+Thanks,
+Amit
 
