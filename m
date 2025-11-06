@@ -1,186 +1,110 @@
-Return-Path: <linux-kernel+bounces-888096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C3AC39D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:35:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9864FC39D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2562F3BBC9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7593BDC29
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EC92E54A0;
-	Thu,  6 Nov 2025 09:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FA82E54A0;
+	Thu,  6 Nov 2025 09:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qCsqc/gN"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qx1MDcnr"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEC1266B66
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37DA35965
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762421696; cv=none; b=QCGvX8nxLUgrN3sYBxEQmPhIb/EBwtBOITcCwl9D0iGFGlhmLKyhVYD77VD84r/VC8WxbyJXe4NlW6sDHLIZFJ1J8YMIuudpJNBbVk0J0xS71Z1j4O+9Cm7GGeSfykxq1H5M9Sj+gLkWMhBLDhjmeKmCD3q3vH2JiuBe+OBZy10=
+	t=1762421710; cv=none; b=gaLKU++zMM2awczhSjJVgVYhNZ22uxEdUhbp/RAc26tYhH3aps6XVnq2Sez7EurTvS8qVqNt62SsxEaKNHU7nnhOmC95V5dxwkiuQTCXXv2CdlrJd7zc0xLez6vOxNt/fc+NBHQOL+z/ZphnGJ+zxiiIKtcHNwdqhK9oLtInmPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762421696; c=relaxed/simple;
-	bh=BcSUbe1FLBVvgu0toOxV5tGQeQD6E+zZ+WL5+xBbXLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QL5biua+IBsO9QRXvxJD2b96AOVwrl7eDl+sZEaCgPx0aDVPVEP4/twVinVl6tPx56um89JfEj8UnD7tpsF8vx0XKftQY94FtX88W7b3aQtTvS3yoyyTvZTRyVtmpjHZ70HMmMR0Iwaq6sd9trRZDmGajyOQ9bGrUEfzBQ7/UTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qCsqc/gN; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 11986C0FA83;
-	Thu,  6 Nov 2025 09:34:28 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 163646068C;
-	Thu,  6 Nov 2025 09:34:49 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4297F118507A6;
-	Thu,  6 Nov 2025 10:34:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762421688; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=T0xdNB7d2ITgGZMXcwNGx6G80Kkw5PtD6gU/B/S5C+E=;
-	b=qCsqc/gN6+CJQIhyqUhRuKmvHVWW73kdVRuBPWDjLGyVVNrrkq9NY7ruBwVBZFI+D+II+i
-	23nBi9N0azUpFtZEYIKo08gyRnEegXJrGHtFQ05a5f83mbu057iiMeTun3PkR73asIjZCg
-	tF/pLrFeb5CpVKduAxcSew6kbrDcJTod7C/housywQOlJicWNJEwbhHsVdBZtHmNqjZchr
-	x7nFyWYHENN5gAIdcTvnr7ZZkOcf+DU8bEN31bEYSZPG2ZWJ9ttro6x1CM47u7MobhxZwY
-	+KnOpupTw5ecWG0qI2vN9yLRi9MOAUNuuny+8npjeN8h4uqaLIeyjyQLNK4vNA==
-Date: Thu, 6 Nov 2025 10:34:43 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Andrew Davis <afd@ti.com>
-Cc: <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Bajjuri
- Praneeth <praneeth@ti.com>, Ramamoorthy Shree <s-ramamoorthy@ti.com>,
- <thomas.petazzoni@bootlin.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman
- <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
- <tony@atomide.com>, Lee Jones <lee@kernel.org>
-Subject: Re: [PATCH] mfd: tps65219: Implement LOCK register handling for
- TPS65214
-Message-ID: <20251106103443.607c8276@kmaincent-XPS-13-7390>
-In-Reply-To: <cadef564-3ef2-435a-9611-ac007f32c10d@ti.com>
-References: <20251105174735.1465461-1-kory.maincent@bootlin.com>
-	<cadef564-3ef2-435a-9611-ac007f32c10d@ti.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762421710; c=relaxed/simple;
+	bh=qEmhvJ0+ukIwFOZA8ME1ha5DyXFo9s7/Arup1Wg1aF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MXxXzHRLE1d1JUjvSTM3Jkn3WmMgDbNzSM7Y0GaoHW22vBsLWoJU2ocPLL0QaEJkOMmhEpCfdok8ueT7XnRmjUKIpV9WX5XfMlUiUyPDEdLlIFlhbWYwx2RpYCBLdeaPWtPFDf7pPSG+G9MyF9L8eNOir+fuSXOxw+FFcfe/BD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qx1MDcnr; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eQGd6Ve9TxX74YCdLm04W/lnilUX+GeVs4HRiQ0wIYA=; b=Qx1MDcnrOTnwHCTv4gJ+Kp57Yu
+	eSrNvnorzSw22w3tADCSKkJlTq737IXVAt/QybkqGW0qlv1ma3r05CFdOP+4X5bsmtqaET96vlAy4
+	GvDR8yOpwpXDeCiCmMR5lej1BevHZtyRwynmXKrkg+3SRX+QUnIqb+YHuXSJabLGrYRE+aHgsg/x4
+	WMDA3aujbH1CoMrVF7HD9p3K/+nCyLc7J4MzbHZtC00viqsyjvbQZhcOsOEJp2Djfu9/OJpEIINyh
+	reJcnXZXovM5pESghbR0hrqmnDQjfvvYKgX6IxUrP69r1s9IbjMIAtbnP0HzqV4XBdWQD7lvpPyYV
+	rrzCcYSg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGwOU-0000000G7dm-3FpZ;
+	Thu, 06 Nov 2025 09:35:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AD62830049A; Thu, 06 Nov 2025 10:35:02 +0100 (CET)
+Date: Thu, 6 Nov 2025 10:35:02 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] vmlinux.lds: Fix TEXT_MAIN to include .text.start and
+ friends
+Message-ID: <20251106093502.GS4067720@noisy.programming.kicks-ass.net>
+References: <5c4ca80e52958da289f92157430d2a31d29109d3.1762322973.git.jpoimboe@kernel.org>
+ <2fm4yxe6nr6khoyjmo7r7v4u4zxwygz3wch2vb5yolo2tqjsx7@s27lvvoe6x3j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2fm4yxe6nr6khoyjmo7r7v4u4zxwygz3wch2vb5yolo2tqjsx7@s27lvvoe6x3j>
 
-On Wed, 5 Nov 2025 14:52:21 -0600
-Andrew Davis <afd@ti.com> wrote:
-
-> On 11/5/25 11:47 AM, Kory Maincent wrote:
-> > From: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>
-> >=20
-> > The TPS65214 PMIC variant has a LOCK_REG register that prevents writes =
-to
-> > nearly all registers.
-> >=20
-> > Implement custom regmap operations that automatically unlock before wri=
-tes
-> > and re-lock afterwards for TPS65214, while leaving other chip variants
-> > unaffected.
-> >=20
-> > The implementation follows the regmap-i2c design pattern.
-> >=20
-> > Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
+On Wed, Nov 05, 2025 at 10:55:19PM -0800, Josh Poimboeuf wrote:
+> On Tue, Nov 04, 2025 at 10:11:42PM -0800, Josh Poimboeuf wrote:
+> > Since commit 6568f14cb5ae ("vmlinux.lds: Exclude .text.startup and
+> > .text.exit from TEXT_MAIN"), the TEXT_MAIN macro uses a series of
+> > patterns to prevent the .text.startup[.*] and .text.exit[.*] sections
+> > from getting linked into vmlinux runtime .text.
+> > 
+> > That commit is a tad too aggressive: it also inadvertently filters out
+> > valid runtime text sections like .text.start and
+> > .text.start.constprop.0, which can be generated for a function named
+> > start() when -ffunction-sections is enabled.
+> > 
+> > As a result, those sections become orphans when building with
+> > CONFIG_LD_DEAD_CODE_DATA_ELIMINATION for arm:
+> > 
+> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/usb/host/sl811-hcd.o' being placed in section `.text.start.constprop.0'
+> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/media/dvb-frontends/drxk_hard.o' being placed in section `.text.start.constprop.0'
+> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start' from `drivers/media/dvb-frontends/stv0910.o' being placed in section `.text.start'
+> >   arm-linux-gnueabi-ld: warning: orphan section `.text.start.constprop.0' from `drivers/media/pci/ddbridge/ddbridge-sx8.o' being placed in section `.text.start.constprop.0'
+> > 
+> > Fix that by explicitly adding the partial "substring" sections (.text.s,
+> > .text.st, .text.sta, etc) and their cloned derivatives.
+> > 
+> > While this unfortunately means that TEXT_MAIN continues to grow, these
+> > changes are ultimately necessary for proper support of
+> > -ffunction-sections.
+> > 
+> > Fixes: 6568f14cb5ae ("vmlinux.lds: Exclude .text.startup and .text.exit from TEXT_MAIN")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202511040812.DFGedJiy-lkp@intel.com/
+> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 > > ---
-> >   drivers/mfd/tps65219.c       | 53 +++++++++++++++++++++++++++++++++++-
-> >   include/linux/mfd/tps65219.h |  3 ++
-> >   2 files changed, 55 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/mfd/tps65219.c b/drivers/mfd/tps65219.c
-> > index 65a952555218d..1d8a06afb1048 100644
-> > --- a/drivers/mfd/tps65219.c
-> > +++ b/drivers/mfd/tps65219.c
-> > @@ -473,6 +473,55 @@ static const struct tps65219_chip_data
-> > chip_info_table[] =3D { },
-> >   };
-> >  =20
-> > +static int tps65219_reg_write(void *context, unsigned int reg, unsigned
-> > int val) +{
-> > +	struct i2c_client *i2c =3D context;
-> > +	struct tps65219 *tps;
-> > +	int ret;
-> > +
-> > +	if (val > 0xff || reg > 0xff)
-> > +		return -EINVAL;
-> > +
-> > +	tps =3D i2c_get_clientdata(i2c);
-> > +	if (tps->chip_id =3D=3D TPS65214) {
-> > +		ret =3D i2c_smbus_write_byte_data(i2c, TPS65214_REG_LOCK,
-> > +						TPS65214_LOCK_ACCESS_CMD);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	ret =3D i2c_smbus_write_byte_data(i2c, reg, val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (tps->chip_id =3D=3D TPS65214)
-> > +		return i2c_smbus_write_byte_data(i2c, TPS65214_REG_LOCK,
-> > 0); +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tps65219_reg_read(void *context, unsigned int reg, unsigned=
- int
-> > *val) +{
-> > +	struct i2c_client *i2c =3D context;
-> > +	int ret;
-> > +
-> > +	if (reg > 0xff)
-> > +		return -EINVAL;
-> > +
-> > +	ret =3D i2c_smbus_read_byte_data(i2c, reg);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	*val =3D ret;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct regmap_bus tps65219_regmap_bus =3D {
-> > +	.reg_write =3D tps65219_reg_write,
-> > +	.reg_read =3D tps65219_reg_read,
-> > +};
-> > +
-> >   static int tps65219_probe(struct i2c_client *client)
-> >   {
-> >   	struct tps65219 *tps;
-> > @@ -490,8 +539,10 @@ static int tps65219_probe(struct i2c_client *clien=
-t)
-> >   	tps->dev =3D &client->dev;
-> >   	chip_id =3D (uintptr_t)i2c_get_match_data(client);
-> >   	pmic =3D &chip_info_table[chip_id];
-> > +	tps->chip_id =3D chip_id;
-> >  =20
-> > -	tps->regmap =3D devm_regmap_init_i2c(client,
-> > &tps65219_regmap_config);
-> > +	tps->regmap =3D devm_regmap_init(&client->dev, &tps65219_regmap_bus,
-> > client,
-> > +				       &tps65219_regmap_config); =20
->=20
-> Why not do the (tps->chip_id =3D=3D TPS65214) check here and only setup t=
-he
-> special regmap_bus for the TPS65214. Then you don't need to do the checks
-> every time reg_write is called.
+> > For tip/objtool/core.
+> 
+> Nack.
+> 
+> There are still some additional headaches that need fixing.
 
-Yes indeed that's a better idea!
+Hah, good thing I was otherwise pre-occupied yesterday.
 
-Thanks,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+I'll await a new version then!
 
