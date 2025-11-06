@@ -1,305 +1,546 @@
-Return-Path: <linux-kernel+bounces-887743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6047BC38FAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:33:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640C6C38FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2653A3AA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5771C189A22F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E5219CCFC;
-	Thu,  6 Nov 2025 03:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75EE2D2497;
+	Thu,  6 Nov 2025 03:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lE15MsFJ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GC4lwx8Z"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="lDgfoTcG"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751F72D9499
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCB62C3261
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762399868; cv=none; b=MQe0livvc39fIMxlFmF4mUtNYg+oapKcwk0WWNRK0FY96YxILRumrtB1GrtEKgdCA5CS1eR8mT/pb+hruGRyfMZ6r9gFrOGdblHLUvB+J2aQ2v2jrD7ZNIEd3JWLtzjKfeS5N8cXjfXSqnINKzbQFK8fqhlLZyGpj2f1dopEP8s=
+	t=1762399856; cv=none; b=seYuYeT3w6+D7XSJk1Jv4/zV4L5GyLEei1XU74RUHJUDGPvhmsGUoTiTedQVFMw7SimJncziYyDLEJgXhYPdwcSFfZRzqpJrnAUTISIdln7gMhM1V5sVCA6V/oWjIoAviMg9YdReyX/zM7br3X7cFyzhp9WjE2mMZpQWKtPJIT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762399868; c=relaxed/simple;
-	bh=JQ5iyKLsbTvW1G+rebQp49wNfxcQrPn+UClBYzR7ixg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qLfY61ntf0OLbUdKWuDeN/KuCHah5+4zvJnifJXCBFmfy6135XB0MBZDPWFJTHVqd91MO0skdKKmbcEk4yBgip6nqvEVshOrq3pvBc4p380O2oZCaAw52DzD8C6GaJ3ZapooxACugW1Syi9Zf1px7mIIfsB2BgkADSSd5d7Nrl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lE15MsFJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GC4lwx8Z; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5N5RmH2148087
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 03:31:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ugBW9Cv+1k8WLRXW2Hz0UY8b2KE1oQhBmaVaCghLSSQ=; b=lE15MsFJH0de2+tr
-	dozC6uE9hzSyTIw17JCuh67gDjrzYK0JTxdYak7Haa56x5QDJ8a+q5Gyf09GEjvm
-	LH7PrG26vUyJbp1jwrDGszkMlXSbg8G84a4EZ18lhf2t/V8HheJ43gV2N6JJuRB/
-	RWg7W6Ugvnr24uxQ7HOmYG0MUQ8WCp4d4bc1TU61InaX3MSitt1p1tI3vxGQHBV+
-	+UfM+RiQZTGavn/xjhK3Dsd8K2klWLFAzglVcOL92ytjR3O0WLOVdAuc8tFlMsjy
-	hXSqhMUhlXU4oTh1jy5ADQC5BbCl7AFWYwl84tFcaWlZaRa3UdZVCuVhBMlfci9L
-	bOoXBA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8fxvrmaf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:31:05 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b522037281bso331038a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:31:05 -0800 (PST)
+	s=arc-20240116; t=1762399856; c=relaxed/simple;
+	bh=d1g8ydiJWl6KjcwImL2cCAUc1WKS01GAFRGdz38s5AQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sKwtmuSio6bktY+JFMD1tZN4bBjj5FdT1WJUNlFgiMoctBRfTssfukWZIWgVTS+snurgeGLtMK1nBvpniLos7g/gejIIl5y6J0Ykez4LMyqF+VeIGzDVdYwKicjE63ZM6H2Y3ZEKKee4YDoyonMxV2ETLuPQVqsJTmdNKy14GoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=lDgfoTcG; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33b5a3e8ae2so1298382a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:30:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762399863; x=1763004663; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ugBW9Cv+1k8WLRXW2Hz0UY8b2KE1oQhBmaVaCghLSSQ=;
-        b=GC4lwx8ZcDTCYNk4INMLfJYHlzXel37W/sNH82QxGalHnoCCrOpmTKhenllEwrXd1g
-         rmUr2OSVjmmOZMFs65GtsTroyNTR7lAT01dDxdfI6pTcp/BjnQzHlHM5oMpkVkMJyoR9
-         +vXva9N5UAaIpNhlstbLFMwtYohMFXXxnnna/dIFhANXDrTRCWis2ddRYi625RVjcocJ
-         33ya2D3iSQS6AEBd+SCbF+3PvG7yITB0QQu4bxjCmLnOKPO96SYrla4UE/CSGQkioWRX
-         rKHVFBQ30VT8z3NFg1RzGfYpVcYPi6ZCOgk/MyOfmoG0wxP8LCRzmkpVwMDQh/HHJllq
-         +m4A==
+        d=shopee.com; s=shopee.com; t=1762399853; x=1763004653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RNM1MgLcHWEpaTBbCLnta7C99WnzqNME1CrFjvq8FrU=;
+        b=lDgfoTcGj+DI3x4QL+F/F+mCkXDK6aD1utwISK150dMHhvCoxgDFxIP52lETbAaZ3l
+         /tArvEZU04eed1uMSAgSABjGk++QK/ZXb2I7dMXwVWsqxONmnL6hd9k7JTWzVnSrvTrE
+         GLhPTMA9z8YxpqFCHa1rdXMvxUzfv05AezYs3WrT1LX69C7tdpquEZiRLg1BCz0nmbOf
+         eydXarVUIMqXt5E5OEolz84REpzJplcoS+bFPahsNL8dhljny+//u+aIkjv7VgzxGdpm
+         57DifDs5F5zSotvlC2MbCkKA02Igxpvhiy33RVHv2/CzIz9X1ov8pnekL8wbtax3YvBN
+         hNOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762399863; x=1763004663;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ugBW9Cv+1k8WLRXW2Hz0UY8b2KE1oQhBmaVaCghLSSQ=;
-        b=mK+jIzxbUGh7Bc6VR7yJm6V7Sdam+9Klbev/opYGbWitGZ5+WYHcAAq5Cju4deYLaB
-         q23bpYHGBMvNdWtY+3jI5+kS3YCR5wOC7P/2RZf0q0Nne21AYQzeg435GlilcdpU3dBT
-         yi5mZMq7NkbmpRKt8JgV2dQQ2XHp0gioUQZ62kjULWweUL9y8DyI1byg6cCBYfn+gZqK
-         YJwy8vbIcWy1ESVJrg5koCV1N4IJr2fe97vGDoogOa4v/r2M3e5BrkeIr9jEf42BnJYM
-         h4i40WTPh2PuvwyHFNj9KTJfbHKe256DE5w0wSCYBekdVfM17q5PBmGdgDvIi7LLY9Gr
-         yUhw==
-X-Forwarded-Encrypted: i=1; AJvYcCW36MC/Ceax25/RmYJMK0BQUeGKYS3p3n5pU/x3q744fBF8isPwxAucq+k1KW3ctzrUsqE0Zhdv1GyteAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHUrsyaAnOIIFlX/zOHDlTvi1DdoBFTvcFMrPY1asxkkvAc3Qy
-	zgO3W2rWowmjCBDsoiWuFxHaKIsnYSjchtTzSVlLVfbFKwVNjHnelHTa/khxvp+F5/aerOToFdH
-	+mh2/NPmXRKE1RkBqRR/GEcQFLmePvB+mo6SmZq9LvHd4gjw/+NKU9UBsDUwCzb1NtWk=
-X-Gm-Gg: ASbGncs3xWWczYUaZXucqu2CdHuqihQQMMcXxUTBTevow6nxwYWLMLfL0mQZTYmUD86
-	jDlEKf8+1gJh1Mf46e950ek0p88HBja9px14KOVFl49LW9ewDI5p+c8NE0hj3hvXKMvNR+dn4d6
-	JUmhWSvvtEixARjYFQAANOXaxeNEfJb7DhapXANLyi3V4MlDW9IrptLvVfzWg30leoqZBcvaVDS
-	KzqeP4U2Up61U7/plz7t3mDaL5wC93RnfEhOMPeRVo/o+S4kkpx29cHDH7QnJjU12HN8StTux7o
-	priUAvHBDTKr1bfmjxKs+ByZfnBs3lzgFjMxznyjSuOKOcBQZ4JRhJhKFNG4D20dCLyR72Vfsih
-	lsDsUYlNf7q08UupJfsqZGWcJ7jd/g8ttZw2QS8tHGFw3DwYvi3w3HzNyjHsg6ZCCU9VzXNvTUA
-	==
-X-Received: by 2002:a17:903:2286:b0:295:54cb:16ac with SMTP id d9443c01a7336-2962ad1bc4dmr75095485ad.18.1762399863482;
-        Wed, 05 Nov 2025 19:31:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG0ANBdoE+euT8S2x1s+JWx4g+Ehlkq6HJ9gp+SG6qkEmCDxZ8JU5K3mDejLGnk1hCVFvAxhQ==
-X-Received: by 2002:a17:903:2286:b0:295:54cb:16ac with SMTP id d9443c01a7336-2962ad1bc4dmr75094935ad.18.1762399862951;
-        Wed, 05 Nov 2025 19:31:02 -0800 (PST)
-Received: from WANGAOW-LAB01.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651cd0060sm10361925ad.108.2025.11.05.19.30.59
+        d=1e100.net; s=20230601; t=1762399853; x=1763004653;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RNM1MgLcHWEpaTBbCLnta7C99WnzqNME1CrFjvq8FrU=;
+        b=w4w1/58K5+fMHpjL9uCYYMQHYa/AHXTcWxNu1HEooKThy3v0mjLYw02bBx7nsa07AN
+         EZ/tkrGxiFaB3JaqC8aP+XBpadvW0XMmBO/XliFTzWVDBM8lBaCfCxaeLGbyQUyumm6T
+         ffLlBk4hn6BZwvbFl6t5TVaR382+YIw1kiSgORFzEfE3jwI6BtnmalTkgjp0qjAmPG2B
+         pCjGsh2QgvvZLrALbEXHUrZtRg4PfzXpwf2lxEIPkrL3Fod4UH9VUlpj7WLJILxD/4B2
+         5Djb6HaN6M6cLr+wtDU+FhXqpoCGgpyr5gWsPyjwB8yJhR9EcQ8uDu3/Nv3V9p2G/Mqm
+         kYHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdo5HcCPkRH3UmJ3MJbuJLJ4E5rvahkWiMQT/OdNUI+PXQd103sZ5OZkfDBl36qjQ4NLwUWz3UwRD1Pts=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw248detNME37qMit9xQ5IgKIuQipnQxlYze7il666wt1/eQok4
+	WQrWr/vuE75VKfJPzvtCWxAZWRQwNMUG/GhaMbnHPwm6qxfgKPLs+WLIh6qqQHGfpX0=
+X-Gm-Gg: ASbGncuSEn3luKumXIKaDVRfs6bGFeD+hUDxji+k4SoEc81zdAuF+OdmzAFps9NTd0T
+	KYkouHMfeorlwnemWI9LY8mkVdpOXm4zbslmcjZbWZeP8zrZJFs2EZbi4rEPR6QKdYFTSfRXuBd
+	T/POLXOv5PpK4/HT4FEx2txPDAOS4W63VblHQygNLhHgz+NanoMXlUXMMDoI76deNAVsKSg/pkY
+	zLuYyk7rddEMUkXspRTrpvS5d3kemxx94ZBxbifjdPVjkcawlqgqX9OOnb8T1SfPR4QO9N7LhJE
+	k0FKRvZgopWszqztByVLgg08vxebFnTga3bVofny98muQ5o5ruLB+/RAMFr691eP3n89vEed3mN
+	9lNO0LtWR3XhmIsG8mfw0/8plfmjnbLpzdX7BznzzgQpP2P9jXBoh9ipv2cWtd0JXhkfmwwr0xt
+	8N5aJ1RPBAvdhBxg==
+X-Google-Smtp-Source: AGHT+IGs3l7sTKPjK4BxzxoB8dGFRJGxiJ/b+4pm0w/YxL5LnyVyRhr4bJJbufT0LQgr9Sm10ohs0A==
+X-Received: by 2002:a17:90b:3d4c:b0:341:88c5:d58 with SMTP id 98e67ed59e1d1-341cd150316mr2074007a91.13.1762399853479;
+        Wed, 05 Nov 2025 19:30:53 -0800 (PST)
+Received: from .shopee.com ([122.11.166.8])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a69b698asm4663896a91.21.2025.11.05.19.30.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 19:31:02 -0800 (PST)
-From: Wangao Wang <wangao.wang@oss.qualcomm.com>
-Date: Thu, 06 Nov 2025 11:30:38 +0800
-Subject: [PATCH v4 6/6] media: qcom: iris: Add intra refresh support for
- encoder
+        Wed, 05 Nov 2025 19:30:52 -0800 (PST)
+From: Leon Huang Fu <leon.huangfu@shopee.com>
+To: shakeel.butt@linux.dev
+Cc: akpm@linux-foundation.org,
+	cgroups@vger.kernel.org,
+	corbet@lwn.net,
+	hannes@cmpxchg.org,
+	inwardvessel@gmail.com,
+	jack@suse.cz,
+	joel.granados@kernel.org,
+	kyle.meyer@hpe.com,
+	lance.yang@linux.dev,
+	laoar.shao@gmail.com,
+	leon.huangfu@shopee.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mclapinski@google.com,
+	mhocko@kernel.org,
+	muchun.song@linux.dev,
+	roman.gushchin@linux.dev,
+	yosry.ahmed@linux.dev
+Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
+Date: Thu,  6 Nov 2025 11:30:45 +0800
+Message-ID: <20251106033045.41607-1-leon.huangfu@shopee.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <6kh6hle2xp75hrtikasequ7qvfyginz7pyttltx6pkli26iir5@oqjmglatjg22>
+References: <6kh6hle2xp75hrtikasequ7qvfyginz7pyttltx6pkli26iir5@oqjmglatjg22>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-iris_encoder_enhancements-v4-6-5d6cff963f1b@oss.qualcomm.com>
-References: <20251106-iris_encoder_enhancements-v4-0-5d6cff963f1b@oss.qualcomm.com>
-In-Reply-To: <20251106-iris_encoder_enhancements-v4-0-5d6cff963f1b@oss.qualcomm.com>
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wangao Wang <wangao.wang@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>, quic_qiweil@quicinc.com,
-        quic_renjiang@quicinc.com
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762399836; l=6329;
- i=wangao.wang@oss.qualcomm.com; s=20251021; h=from:subject:message-id;
- bh=JQ5iyKLsbTvW1G+rebQp49wNfxcQrPn+UClBYzR7ixg=;
- b=7vwksZhemnsCeknghGDmXoxZn/Ky4K1aWqGHAsIPT1HV2CAm7LDG6lS2b7v3UpdGpQBWO/JyH
- WDCodetoDFkBALBJUkXIsJInQsN/gbqb5VLD52X0i3iWr8lmSwzG21h
-X-Developer-Key: i=wangao.wang@oss.qualcomm.com; a=ed25519;
- pk=bUPgYblBUAsoPyGfssbNR7ZXUSGF8v1VF4FJzSO6/aA=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDAyNiBTYWx0ZWRfX2dfFzdDeHOed
- mXsNLaAQuhg5F3WNO3bchPtiEe6uSFmEEDs4PSwikhpbbcALpkYtFYCOh/ykcjvJpnuOvcWaIoD
- tO6U1vd8RM7AyUCSQp2XJL2dgChxfHYrDUZXEaTS2dDcnzKKh3APBzjerkVWMNBkwm6ct/sZAVs
- 3BsMtVlZgKdwY6ZSEforXawZvX0qW2LbLS7rRKdM4/fMzWb1DHWRPnNzt0qyhT9fRY6i0zY+LkN
- hC7h1lm7NuNFxQLbAFXLqyUB1FgrZMkCAKUJrpLEkaOBtJ2T9KiNHkSoVNlL+90PQic4TNtg2NZ
- wEY+OCpg6vaDpWuinIXBK9miwHWVuCzWEvBX1Z7EN2Cv1f1T0PpnoIgwofoB2A7fIwzgQkRt7y3
- S3seO8osDU6kHp5M7utMOghRNxeoyg==
-X-Proofpoint-ORIG-GUID: iLoDrxwRIt9BkHC8ovWURNDJaEMzYDES
-X-Authority-Analysis: v=2.4 cv=OZSVzxTY c=1 sm=1 tr=0 ts=690c1679 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=-vM60OG-bLC5KXgFrusA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: iLoDrxwRIt9BkHC8ovWURNDJaEMzYDES
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_09,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 clxscore=1015 spamscore=0 impostorscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060026
+Content-Transfer-Encoding: 8bit
 
-Add support for V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD and
-V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE controls.
+On Thu, Nov 6, 2025 at 9:19 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>
+> +Yosry, JP
+>
+> On Wed, Nov 05, 2025 at 03:49:16PM +0800, Leon Huang Fu wrote:
+> > On high-core count systems, memory cgroup statistics can become stale
+> > due to per-CPU caching and deferred aggregation. Monitoring tools and
+> > management applications sometimes need guaranteed up-to-date statistics
+> > at specific points in time to make accurate decisions.
+>
+> Can you explain a bit more on your environment where you are seeing
+> stale stats? More specifically, how often the management applications
+> are reading the memcg stats and if these applications are reading memcg
+> stats for each nodes of the cgroup tree.
+>
+> We force flush all the memcg stats at root level every 2 seconds but it
+> seems like that is not enough for your case. I am fine with an explicit
+> way for users to flush the memcg stats. In that way only users who want
+> to has to pay for the flush cost.
+>
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
+Thanks for the feedback. I encountered this issue while running the LTP
+memcontrol02 test case [1] on a 256-core server with the 6.6.y kernel on XFS,
+where it consistently failed.
+
+I was aware that Yosry had improved the memory statistics refresh mechanism
+in "mm: memcg: subtree stats flushing and thresholds" [2], so I attempted to
+backport that patchset to 6.6.y [3]. However, even on the 6.15.0-061500-generic
+kernel with those improvements, the test still fails intermittently on XFS.
+
+I've created a simplified reproducer that mirrors the LTP test behavior. The
+test allocates 50 MiB of page cache and then verifies that memory.current and
+memory.stat's "file" field are approximately equal (within 5% tolerance).
+
+The failure pattern looks like:
+
+  After alloc: memory.current=52690944, memory.stat.file=48496640, size=52428800
+  Checks: current>=size=OK, file>0=OK, current~=file(5%)=FAIL
+
+Here's the reproducer code and test script (attached below for reference).
+
+To reproduce on XFS:
+  sudo ./run.sh --xfs
+  for i in {1..100}; do sudo ./run.sh --run; echo "==="; sleep 0.1; done
+  sudo ./run.sh --cleanup
+
+The test fails sporadically, typically a few times out of 100 runs, confirming
+that the improved flush isn't sufficient for this workload pattern.
+
+I agree that providing an explicit flush mechanism allows users who need
+guaranteed accuracy to pay the cost only when necessary, rather than imposing
+more aggressive global flushing on all users.
+
+Thanks,
+Leon
+
 ---
- drivers/media/platform/qcom/iris/iris_ctrls.c      | 33 ++++++++++++++++++++++
- drivers/media/platform/qcom/iris/iris_ctrls.h      |  1 +
- .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  2 ++
- .../platform/qcom/iris/iris_platform_common.h      |  2 ++
- .../media/platform/qcom/iris/iris_platform_gen2.c  | 19 +++++++++++++
- 5 files changed, 57 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
-index 8f74c12f2f41f23d75424819c707aff61ea61b33..14891569247318aaa7b2009b737f077d1cb45095 100644
---- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-+++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-@@ -104,6 +104,10 @@ static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
- 		return HFLIP;
- 	case V4L2_CID_VFLIP:
- 		return VFLIP;
-+	case V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE:
-+		return IR_TYPE;
-+	case V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD:
-+		return IR_PERIOD;
- 	default:
- 		return INST_FW_CAP_MAX;
- 	}
-@@ -197,6 +201,10 @@ static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
- 		return V4L2_CID_HFLIP;
- 	case VFLIP:
- 		return V4L2_CID_VFLIP;
-+	case IR_TYPE:
-+		return V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE;
-+	case IR_PERIOD:
-+		return V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD;
- 	default:
- 		return 0;
- 	}
-@@ -944,6 +952,31 @@ int iris_set_flip(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
- 					     &hfi_val, sizeof(u32));
- }
- 
-+int iris_set_ir_period(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
-+{
-+	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-+	struct vb2_queue *q = v4l2_m2m_get_dst_vq(inst->m2m_ctx);
-+	u32 ir_period = inst->fw_caps[cap_id].value;
-+	u32 ir_type = 0;
-+
-+	if (inst->fw_caps[IR_TYPE].value ==
-+			V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM) {
-+		if (vb2_is_streaming(q))
-+			return 0;
-+		ir_type = HFI_PROP_IR_RANDOM_PERIOD;
-+	} else if (inst->fw_caps[IR_TYPE].value ==
-+			V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_CYCLIC) {
-+		ir_type = HFI_PROP_IR_CYCLIC_PERIOD;
-+	} else
-+		return -EINVAL;
-+
-+	return hfi_ops->session_set_property(inst, ir_type,
-+					     HFI_HOST_FLAGS_NONE,
-+					     iris_get_port_info(inst, cap_id),
-+					     HFI_PAYLOAD_U32,
-+					     &ir_period, sizeof(u32));
-+}
-+
- int iris_set_properties(struct iris_inst *inst, u32 plane)
- {
- 	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.h b/drivers/media/platform/qcom/iris/iris_ctrls.h
-index 355a592049f3fcc715a1b9df44b4d1398b052653..9518803577bc39f5c1339a49878dd0c3e8f510ad 100644
---- a/drivers/media/platform/qcom/iris/iris_ctrls.h
-+++ b/drivers/media/platform/qcom/iris/iris_ctrls.h
-@@ -34,6 +34,7 @@ int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
- int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
- int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
- int iris_set_flip(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
-+int iris_set_ir_period(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
- int iris_set_properties(struct iris_inst *inst, u32 plane);
- 
- #endif
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-index 0f92468dca91cbb2ca9b451ebce255180066b3a4..9e8fdddf2aef439e7f133c9bb2fafa6d95062b02 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-@@ -70,6 +70,7 @@ enum hfi_rate_control {
- #define HFI_PROP_QP_PACKED			0x0300012e
- #define HFI_PROP_MIN_QP_PACKED			0x0300012f
- #define HFI_PROP_MAX_QP_PACKED			0x03000130
-+#define HFI_PROP_IR_RANDOM_PERIOD		0x03000131
- #define HFI_PROP_TOTAL_BITRATE			0x0300013b
- #define HFI_PROP_MAX_GOP_FRAMES			0x03000146
- #define HFI_PROP_MAX_B_FRAMES			0x03000147
-@@ -108,6 +109,7 @@ enum hfi_flip {
- #define HFI_PROP_BUFFER_MARK			0x0300016c
- #define HFI_PROP_RAW_RESOLUTION		0x03000178
- #define HFI_PROP_TOTAL_PEAK_BITRATE		0x0300017C
-+#define HFI_PROP_IR_CYCLIC_PERIOD		0x0300017E
- #define HFI_PROP_COMV_BUFFER_COUNT		0x03000193
- #define HFI_PROP_END				0x03FFFFFF
- 
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-index 284d6bde6d6bcdf70016646d1c92e6ae7f067efc..30b98e769ad34c2b63dd63e7714bfeaa5b4f162c 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-+++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-@@ -143,6 +143,8 @@ enum platform_inst_fw_cap_type {
- 	ROTATION,
- 	HFLIP,
- 	VFLIP,
-+	IR_TYPE,
-+	IR_PERIOD,
- 	INST_FW_CAP_MAX,
- };
- 
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-index e74bdd00a4bb2f457ec9352e0acaebc820dae235..ce54aac766e2bf76fa2de64c884724ca63f05dcb 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-@@ -620,6 +620,25 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
- 			CAP_FLAG_DYNAMIC_ALLOWED,
- 		.set = iris_set_flip,
- 	},
-+	{
-+		.cap_id = IR_TYPE,
-+		.min = V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM,
-+		.max = V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_CYCLIC,
-+		.step_or_mask = BIT(V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM) |
-+			BIT(V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_CYCLIC),
-+		.value = V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM,
-+		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
-+	},
-+	{
-+		.cap_id = IR_PERIOD,
-+		.min = 0,
-+		.max = INT_MAX,
-+		.step_or_mask = 1,
-+		.value = 0,
-+		.flags = CAP_FLAG_OUTPUT_PORT |
-+			CAP_FLAG_DYNAMIC_ALLOWED,
-+		.set = iris_set_ir_period,
-+	},
- };
- 
- static struct platform_inst_caps platform_inst_cap_sm8550 = {
+Links:
+[1] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/controllers/memcg/memcontrol02.c
+[2] https://lore.kernel.org/all/20231129032154.3710765-1-yosryahmed@google.com/
+[3] https://lore.kernel.org/linux-mm/20251103075135.20254-1-leon.huangfu@shopee.com/
 
--- 
-2.43.0
+---
 
+Reproducer code (pagecache_50m_demo.c):
+
+#define _GNU_SOURCE
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+static int write_str(const char *path, const char *s) {
+    int fd = open(path, O_WRONLY | O_CLOEXEC);
+    if (fd < 0) { perror(path); return -1; }
+    ssize_t w = write(fd, s, strlen(s));
+    if (w != (ssize_t)strlen(s)) { perror("write"); close(fd); return -1; }
+    close(fd);
+    return 0;
+}
+
+static long read_long_file(const char *path) {
+    FILE *f = fopen(path, "re");
+    if (!f) { perror(path); return -1; }
+    long v = -1;
+    if (fscanf(f, "%ld", &v) != 1) v = -1;
+    fclose(f);
+    return v;
+}
+
+static long read_stat_field_bytes(const char *path, const char *key) {
+    FILE *f = fopen(path, "re");
+    if (!f) { perror(path); return -1; }
+    char *line = NULL; size_t n = 0; long val = -1;
+    while (getline(&line, &n, f) > 0) {
+        if (strncmp(line, key, strlen(key)) == 0) {
+            char *p = line + strlen(key);
+            while (*p == ' ' || *p == '\t') p++;
+            val = strtoll(p, NULL, 10);
+            break;
+        }
+    }
+    free(line);
+    fclose(f);
+    return val;
+}
+
+static int make_memcg_child(char *cg, size_t cg_sz) {
+    const char *root = "/sys/fs/cgroup";
+    int n = snprintf(cg, cg_sz, "%s/memcg_demo_%d", root, getpid());
+    if (n < 0 || n >= (int)cg_sz) {
+        fprintf(stderr, "cg path too long\n"); return -1;
+    }
+    if (mkdir(cg, 0755) && errno != EEXIST) { perror("mkdir cg"); return -1; }
+
+    // best-effort enable memory controller on parent
+    char parent[PATH_MAX];
+    strncpy(parent, cg, sizeof(parent));
+    parent[sizeof(parent)-1] = '\0';
+    char *s = strrchr(parent, '/');
+    if (s && s != parent) {
+        *s = '\0';
+        char stc[PATH_MAX];
+        n = snprintf(stc, sizeof(stc), "%s/cgroup.subtree_control", parent);
+        if (n >= 0 && n < (int)sizeof(stc)) (void)write_str(stc, "+memory");
+    }
+
+    char procs[PATH_MAX];
+    n = snprintf(procs, sizeof(procs), "%s/cgroup.procs", cg);
+    if (n < 0 || n >= (int)sizeof(procs)) { fprintf(stderr, "path too long\n"); return -1; }
+    char pidbuf[32]; snprintf(pidbuf, sizeof(pidbuf), "%d", getpid());
+    if (write_str(procs, pidbuf) < 0) return -1;
+    return 0;
+}
+
+/* Exact mirror of LTP alloc_pagecache() behavior */
+static inline void alloc_pagecache_exact(const int fd, size_t size)
+{
+    char buf[BUFSIZ];
+    size_t i;
+
+    if (lseek(fd, 0, SEEK_END) == (off_t)-1) {
+        perror("lseek"); exit(1);
+    }
+    for (i = 0; i < size; i += sizeof(buf)) {
+        ssize_t w = write(fd, buf, sizeof(buf));
+        if (w < 0) { perror("write"); exit(1); }
+        if ((size_t)w != sizeof(buf)) { fprintf(stderr, "short write\n"); exit(1); }
+    }
+}
+
+static bool approx_equal(long a, long b, double tol_frac) {
+    long diff = labs(a - b);
+    long lim = (long)((double)b * tol_frac);
+    return diff <= lim;
+}
+
+int main(int argc, char **argv) {
+    const char *mnt = (argc >= 2) ? argv[1] : ".";
+    char cg[PATH_MAX];
+    if (make_memcg_child(cg, sizeof(cg)) < 0) {
+        fprintf(stderr, "Failed to setup memcg (need root? cgroup v2?)\n");
+        return 1;
+    }
+    printf("Created cg %s\n", cg);
+
+    char p_current[PATH_MAX], p_stat[PATH_MAX];
+    int n = snprintf(p_current, sizeof(p_current), "%s/memory.current", cg);
+    if (n < 0 || n >= (int)sizeof(p_current)) { fprintf(stderr, "path too long\n"); return 1; }
+    n = snprintf(p_stat, sizeof(p_stat), "%s/memory.stat", cg);
+    if (n < 0 || n >= (int)sizeof(p_stat)) { fprintf(stderr, "path too long\n"); return 1; }
+
+    char filepath[PATH_MAX];
+    n = snprintf(filepath, sizeof(filepath), "%s/tmpfile", mnt);
+    if (n < 0 || n >= (int)sizeof(filepath)) { fprintf(stderr, "file path too long\n"); return 1; }
+
+    int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, 0600);
+    if (fd < 0) { perror("open tmpfile"); return 1; }
+
+    long current = read_long_file(p_current);
+    printf("Created temp file: memory.current=%ld\n", current);
+
+    const size_t size = 50UL * 1024 * 1024; // 50 MiB
+    alloc_pagecache_exact(fd, size);
+
+    // No fsyncs; small wait to reduce XFS timing flakiness
+    //fsync(fd);
+    //usleep(2200000);
+
+    current = read_long_file(p_current);
+    long file_bytes = read_stat_field_bytes(p_stat, "file");
+    printf("After alloc: memory.current=%ld, memory.stat.file=%ld, size=%zu\n",
+           current, file_bytes, size);
+
+    bool ge_size = (current >= (long)size);
+    bool file_pos = (file_bytes > 0);
+
+    // Approximate LTP's values_close(..., file_to_all_error) with 5% tolerance
+    double tol = 0.05;
+    bool approx = approx_equal(current, file_bytes, tol);
+
+    printf("Checks: current>=size=%s, file>0=%s, current~=file(%.0f%%)=%s\n",
+           ge_size ? "OK" : "FAIL",
+           file_pos ? "OK" : "FAIL",
+           tol * 100,
+           approx ? "OK" : "FAIL");
+
+    close(fd);
+    return (ge_size && file_pos && approx) ? 0 : 2;
+}
+
+Build: gcc -O2 -Wall pagecache_50m_demo.c -o pagecache_50m_demo
+
+Test runner (run.sh):
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Config (overridable via env)
+SIZE_MB="${SIZE_MB:-500}"
+IMG="${IMG:-/var/tmp/pagecache_demo.img}"
+MNT="${MNT:-/mnt/pagecache_demo}"
+DEMO_BIN="${DEMO_BIN:-./pagecache_50m_demo}"
+STATE="${STATE:-/var/tmp/pagecache_demo.state}" # stores LOOP + FS type
+
+usage() {
+  echo "Usage:"
+  echo "  sudo $0 --ext4         Prepare ext4 loopback FS and mount it at \$MNT"
+  echo "  sudo $0 --xfs          Prepare xfs  loopback FS and mount it at \$MNT"
+  echo "  sudo $0 --btrfs        Prepare btrfs loopback FS and mount it at \$MNT"
+  echo "  sudo $0 --tmpfs        Prepare tmpfs mount at \$MNT (no image/loop)"
+  echo "  sudo $0 --run          Run demo on mounted \$MNT"
+  echo "  sudo $0 --cleanup      Unmount and remove loop/image/state"
+  echo
+  echo "Env overrides:"
+  echo "  SIZE_MB (default 256), IMG, MNT, DEMO_BIN, STATE"
+}
+
+need_root() {
+  if [[ ${EUID:-$(id -u)} -ne 0 ]]; then
+    echo "Please run as root (sudo)"
+    exit 1
+  fi
+}
+
+have_cmd() { command -v "$1" > /dev/null 2>&1; }
+
+save_state() {
+  local loop="${1:-}" fstype="$2"
+  printf 'LOOP=%q\nFSTYPE=%q\nIMG=%q\nMNT=%q\n' "$loop" "$fstype" "$IMG" "$MNT" > "$STATE"
+}
+
+load_state() {
+  if [[ ! -f "$STATE" ]]; then
+    echo "State not found: $STATE. Run --ext4/--xfs/--btrfs/--tmpfs first."
+    exit 1
+  fi
+  # shellcheck disable=SC1090
+  . "$STATE"
+  : "${FSTYPE:?}" "${IMG:?}" "${MNT:?}"
+  # LOOP may be empty for tmpfs
+}
+
+cleanup_mount() {
+  set +e
+  if mountpoint -q "$MNT"; then
+    umount "$MNT" || umount -l "$MNT"
+  fi
+  if [[ -n "${LOOP:-}" ]] && [[ -b "${LOOP:-}" ]]; then
+    losetup -d "$LOOP" 2> /dev/null || true
+  else
+    # Detach any loop using IMG as fallback
+    if [[ -f "$IMG" ]]; then
+      if losetup -j "$IMG" | grep -q .; then
+        losetup -j "$IMG" | awk -F: '{print $1}' | xargs -r -n1 losetup -d
+      fi
+    fi
+  fi
+  rmdir "$MNT" 2> /dev/null || true
+  set -e
+}
+
+cleanup_all() {
+  echo "[*] Cleaning up..."
+  if [[ -f "$STATE" ]]; then
+    load_state || true
+  fi
+  cleanup_mount
+  # For tmpfs there is no image; for others remove image
+  if [[ "${FSTYPE:-}" != "tmpfs" ]]; then
+    rm -f "$IMG"
+  fi
+  rm -f "$STATE"
+  rmdir /sys/fs/cgroup/memcg_demo_* || true
+  echo "[*] Done."
+}
+
+make_image() {
+  echo "[*] Creating sparse image: $IMG (${SIZE_MB} MiB)"
+  dd if=/dev/zero of="$IMG" bs=1M count=0 seek="$SIZE_MB" status=none
+}
+
+attach_loop() {
+  # stdout returns loop device path only
+  losetup -fP --show "$IMG"
+}
+
+ensure_loop_ready() {
+  local dev="$1"
+  if [[ -z "$dev" ]]; then
+    echo "Failed to get loop device for $IMG"
+    exit 1
+  fi
+  # udev settle
+  for _ in {1..10}; do
+    [[ -b "$dev" ]] && return 0
+    sleep 0.1
+  done
+  echo "Loop device is not a block device: $dev"
+  exit 1
+}
+
+mkfs_ext4() {
+  have_cmd mkfs.ext4 || {
+    echo "mkfs.ext4 not found"
+    exit 1
+  }
+  echo "[*] Making ext4 on $1"
+  mkfs.ext4 -F -q "$1"
+}
+
+mkfs_xfs() {
+  have_cmd mkfs.xfs || {
+    echo "mkfs.xfs not found (install xfsprogs)"
+    exit 1
+  }
+  echo "[*] Making xfs on $1"
+  mkfs.xfs -f -q "$1"
+}
+
+mkfs_btrfs() {
+  have_cmd mkfs.btrfs || {
+    echo "mkfs.btrfs not found (install btrfs-progs)"
+    exit 1
+  }
+  echo "[*] Making btrfs on $1"
+  mkfs.btrfs -f -q "$1"
+}
+
+mount_fs_dev() {
+  mkdir -p "$MNT"
+  echo "[*] Mounting $1 at $MNT"
+  mount "$1" "$MNT"
+  df -h "$MNT" || true
+}
+
+prepare_fs_loop() {
+  need_root
+  local fstype="$1" # ext4 | xfs | btrfs
+
+  rm -f "$STATE"
+  if mountpoint -q "$MNT" || losetup -j "$IMG" | grep -q . || [[ -f "$IMG" ]]; then
+    echo "[*] Previous environment detected, cleaning first..."
+    cleanup_all
+  fi
+
+  make_image
+  local loop
+  loop="$(attach_loop)"
+  ensure_loop_ready "$loop"
+
+  case "$fstype" in
+    ext4) mkfs_ext4 "$loop" ;;
+    xfs) mkfs_xfs "$loop" ;;
+    btrfs) mkfs_btrfs "$loop" ;;
+    *)
+      echo "Unknown fs: $fstype"
+      exit 1
+      ;;
+  esac
+
+  mount_fs_dev "$loop"
+  save_state "$loop" "$fstype"
+  echo "[*] Prepared $fstype at $MNT (loop=$loop)"
+}
+
+prepare_tmpfs() {
+  need_root
+  rm -f "$STATE"
+  if mountpoint -q "$MNT"; then
+    echo "[*] Unmounting previous $MNT..."
+    umount "$MNT" || umount -l "$MNT"
+  fi
+  mkdir -p "$MNT"
+  echo "[*] Mounting tmpfs at $MNT (size=${SIZE_MB}m)"
+  mount -t tmpfs -o "size=${SIZE_MB}m" tmpfs "$MNT"
+  df -h "$MNT" || true
+  save_state "" "tmpfs"
+  echo "[*] Prepared tmpfs at $MNT"
+}
+
+run_demo() {
+  need_root
+  load_state
+  if ! mountpoint -q "$MNT"; then
+    echo "Mount point not mounted: $MNT. Did you run --$FSTYPE first?"
+    exit 1
+  fi
+  if [[ ! -x "$DEMO_BIN" ]]; then
+    echo "Demo binary not found or not executable: $DEMO_BIN"
+    exit 1
+  fi
+  echo "[*] Running demo on $MNT: $DEMO_BIN $MNT"
+  "$DEMO_BIN" "$MNT"
+}
+
+case "${1:-}" in
+  --ext4) prepare_fs_loop ext4 ;;
+  --xfs) prepare_fs_loop xfs ;;
+  --btrfs) prepare_fs_loop btrfs ;;
+  --tmpfs) prepare_tmpfs ;;
+  --run) run_demo ;;
+  --cleanup) cleanup_all ;;
+  *)
+    usage
+    exit 1
+    ;;
+esac
 
