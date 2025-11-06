@@ -1,197 +1,211 @@
-Return-Path: <linux-kernel+bounces-887761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535C8C39042
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:45:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BED3C3907E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78641899077
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:45:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5F09C34FFD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51C12BFC8F;
-	Thu,  6 Nov 2025 03:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A962566D9;
+	Thu,  6 Nov 2025 03:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="I6EoVb+t"
-Received: from sg-1-17.ptr.blmpb.com (sg-1-17.ptr.blmpb.com [118.26.132.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YzXG7iVN"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010044.outbound.protection.outlook.com [52.101.201.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6096427AC4D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762400704; cv=none; b=mLdjtmkfJJ4KLACkF5OGUJTTuxHtV9WRYinpuovVsiWy/xi+c+DlV10Sg8BHzWnV94ESlBloOJW2qf+QbXA2785k2yu9SEUcEiba3yz/efvMqOEhuYL2Ypb66g9DsqaSqrnCECogjO/gRaal/x4qen06frXjofl5cd2Ne9Qyb90=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762400704; c=relaxed/simple;
-	bh=Do+sv32JRcqdfksgmI5pdC8DcgydpqdBgIxqCojJvc4=;
-	h=Cc:From:Mime-Version:Content-Type:To:Subject:Date:In-Reply-To:
-	 Message-Id:References; b=G/uNDxxr765YZvSfxnzbL6ZS/3p0MyDeZfNDfT+tBLpKsypGXd4qFGaHvjf8ncxEb8MdhpLxgvgu3684JHB+pyOo26wi4T1qzLO+I/d0a7Qt1nejkE/tXiPRgzrdNzqe5benLMoGM5E/bmI5zTqBZY3O7ex3OGOdIa7Ktu0q/m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=I6EoVb+t; arc=none smtp.client-ip=118.26.132.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1762400696;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=EiW9nRHb8Mbz7qGQdlY2Kw3uUegK7QOWWArHXK3yj70=;
- b=I6EoVb+tqogX+QqsIKVz9yjRExPq8/IAr/KauQblSIO4r8ZA1DQVO7lFsUnlmRrApQu5va
- wdTY7irJZG+QrUwQ1kL4voYaI1ESewX9DvHeXTDaqFD9TWaiZsAYi2VrfClmFe+D4UI7XX
- +Iq55N8oHDNdcIsGEC4XSCBeNoUikbHnnDhSeoO8N8ifkhr4Z8WIX4P92kkd5jGyZ9aHmK
- ORWViumUtMUW5VOfLeY2U81mzJCCbTtERgNVPqTvX9TchuS+ld2XFxxcT1Tr3LPP4eMXv0
- OFMWqAny1lNt8Z1v88l7Jt48XYFB7EfSqL28GzBotGEEObigX2s81yyzqU6THw==
-Cc: <corbet@lwn.net>, <song@kernel.org>, <hare@suse.de>, 
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-raid@vger.kernel.org>, <yangerkun@huawei.com>, 
-	<yi.zhang@huawei.com>
-From: "Yu Kuai" <yukuai@fnnas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7926F18EAB;
+	Thu,  6 Nov 2025 03:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762401286; cv=fail; b=mDmBOaHKxuiOi65sHKvsfbaH3PbwyzGjWnQFYNI6DTFL8fxccOcXVTi3PlpyEXZ86zGcCl30Q1ev/Ic+j72rd8b1QufCGMM6lwTMNqKh1MsicDyiitqcKUxu3Ivzk83rzCaZiLiKH2j3V3UAv3LtsG7P1aUt2tNrwuYzoe6P9rE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762401286; c=relaxed/simple;
+	bh=liQc8QcPPICwDiL1Jzd/emw3X+z9kagW/mattor4M8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lEb8zW6k9wMngCNpBVx0rL3wXxjckaOH0RUUEZzppdo0XPPn9uuRA3tCEpJDDUBlg90cp4QTmcFTvEEKijGFCdcXqsFoV/Xno5U2O7sg9h0jqqzO/KMyzfPRloYiiGaznHeTADfF3Bm9eJ4waQqeBwNfeMLefZBoAl2ah8W8gvk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YzXG7iVN; arc=fail smtp.client-ip=52.101.201.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cKMlU7bz5NI5EJI0uU7Yxg4JwxVoF1bB1VGPvV1/wOfUD6H54Btjvb0FmU84ECWBf8qiUHMnF6pplvXK2PXuTtL0GNhl4Wl846O2JSXfV+1k3CzoaISLZwb2eznvPTLGtxJzGnO5tVcUwfrqf4p3ysb6m48oRWwyeTOEw50V+ovZYLQE2hsutDivn1FK389epU/V32uMEeJiK5I5iinZDEGyFZ7Mxd8KngbuJtntepbxNIac/xQy62kti4KWdFeNy0k489bYAOXaveX3t1kDI35j2K/yMn+FYCwiQoxfw5GGXxiY/xMmEHc61ewkc85dE6HX5QiVY3g89Edvt0gPfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DsoBdgCzbheLXfW8zYxWRiRXpA8nHTIGkCrl/7/Hnk4=;
+ b=ikV5YrZr6kPnn6K6wHYVKO/cHtLWFuJ4HjpSft+CCYrqs1OIIgY/fTxsu/UG2FupKJ2NdCd/bIyM5R5B4FAZe3suHsLxTcbotYEJjevOIK6o2YCAoRmRgPbJGmc8pGAHsVF204sL+t+QRcGBleAyqwKxOf0a6b96LhISePW4fca4a6sjJSqxHk7Ap1xmBrKjfzUqosOznGCsDTv3E44mzilmsnZgiDyb54yBlmdm/Yz+smQbs4VXvv3gEtjNPwyKn3HD7KbGMDw5Pyv8WNL2+5HczcxjZokgBzwYv2If4j5c5E5vBDhWuNBUbfewtJeYSF92xV/xTeCNrG831zhURw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DsoBdgCzbheLXfW8zYxWRiRXpA8nHTIGkCrl/7/Hnk4=;
+ b=YzXG7iVN8Qm5MUqCzkRAmiu39635IYyaMpE1p+TeMG0F1lEnuLkcgcpLGgxj8RjyQfkkoprvRAP4uKyDQMSIeS5y0u3y+np0CoJfPwBCaNjRAEMB/mCMjyGvhsXF6xTpk5pzBNqu3N45vARV1HZV/sifP0aMs188eZJ8Gd2YNhbzmsYNluIPAW4pC1aOb/hWvHfvhvnGrfo2Y1m4NKxDXC4eBN9Bt4ZKnJ/8JjtB6uAqEIelcPUQq6cOhXdGH7y2JVFEPAGBLN6N63ZeDV4kyXLfndI/vNnW3RsLQER8XIDowb7Va15YFaLSyOh9zFJG2whNUCWG7ycs1W/0vbrnEw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by CY5PR12MB6622.namprd12.prod.outlook.com (2603:10b6:930:42::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
+ 2025 03:54:38 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
+ 03:54:38 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Edwin Peer <epeer@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	nouveau@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 0/6] gpu: nova-core: Hopper/Blackwell prerequisites
+Date: Wed,  5 Nov 2025 19:54:29 -0800
+Message-ID: <20251106035435.619949-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.51.2
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR03CA0021.namprd03.prod.outlook.com
+ (2603:10b6:a02:a8::34) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 06 Nov 2025 11:44:53 +0800
-Content-Type: text/plain; charset=UTF-8
-X-Lms-Return-Path: <lba+2690c19b6+3e32cb+vger.kernel.org+yukuai@fnnas.com>
-To: "Xiao Ni" <xni@redhat.com>, "Li Nan" <linan666@huaweicloud.com>
-Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
-Date: Thu, 6 Nov 2025 11:44:51 +0800
-In-Reply-To: <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
-X-Original-From: Yu Kuai <yukuai@fnnas.com>
-Reply-To: yukuai@fnnas.com
-Message-Id: <2c1ab8fc-99ac-44fd-892c-2eeedb9581f4@fnnas.com>
-Content-Transfer-Encoding: quoted-printable
-References: <20251103125757.1405796-1-linan666@huaweicloud.com> <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com> <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com> <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CY5PR12MB6622:EE_
+X-MS-Office365-Filtering-Correlation-Id: 351ac62c-b9c7-44a1-7bcf-08de1ce834f3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1Kh7/n5bJOvxMwYXb/3FuxG+w4mb5I8/zEvlCqm2P19N0L1aYUirUVCtkJXR?=
+ =?us-ascii?Q?2SPWwPnHQxoO+3oa4Dq+vvjY4IOnzjqBS/WFG0cDoz5ky1CwdWJLLC7WqsRS?=
+ =?us-ascii?Q?386UIB49e7xSEIa0dIUj18dFDoww/lkHIKJqEbPHqZKue0NnaRBFvGY1SUcP?=
+ =?us-ascii?Q?YV8FDI2zRWcK3dT+8vo+wkolWSkAse9qchLvAxLhf61VbMXlOKD/xPgrWtWq?=
+ =?us-ascii?Q?oOYG74sJSasbIpN/ov7pj8xcVck59pI9VJ5ylgH8ev51KTulri59g9L+pRv2?=
+ =?us-ascii?Q?LDfPNFdpLEHnoHBF+wfgsv8tBVd4u0/M1B87pxBF6R1YEdzEzVlbtkyI8pTH?=
+ =?us-ascii?Q?A0wPqkBW+9DrscOzwYBpsxzVeAZj93udusiDAs2QYxJngqLZOu0PVcUfJu+r?=
+ =?us-ascii?Q?9V0lSHH04NMLHfvt8txzcPE94SB3YiR2oeBoPw75/GfhMutjPwH73qaDoMQv?=
+ =?us-ascii?Q?YXuwGbLsgZrNN7fiIJ+XQ9Lypko2bYBfNgx7vgGfiVLWdC28R9BuxZWM8nSQ?=
+ =?us-ascii?Q?74VvSjhyxxzhX+A20EVt9Ww8ZVjjrSR7dlv8KHWsJwZhN0BiJqRKerAddCCn?=
+ =?us-ascii?Q?1amo0r1c2z9sR0znXzv8nEzqvDoVIPo0lSxsoVOcHhk5apJmKI4cs53oa+QL?=
+ =?us-ascii?Q?IKX6M/d856qZTiOYvtCfCOREp8/oo84l4jiFzzPiQ6q0+oxClubkkcJmCGFe?=
+ =?us-ascii?Q?pgHVZK+Ylsdqc/hFDBXxatSEDk1AxTGkXBIUq4MniLbelervRWnQeyDQrV4R?=
+ =?us-ascii?Q?94ukWiex6/tKhOYkseaVnn2m7UsVpNPJRGL9ASyMFgkO9Zs+BfTA1sQjaU3a?=
+ =?us-ascii?Q?mXyjl9e6f/yLTjf2YRKQB93twK0rX9UY7lmF0V9MEkgXvcURGV43bP5EFw8f?=
+ =?us-ascii?Q?N3pBxlwEVs0h8B9HJdQkSGK4gdkraDvblq6yTrH7F8IkMitgrpr1/Sqsyrcq?=
+ =?us-ascii?Q?HG53ILDaUipbHBGFe3zuthXBUe+rRGpqMYgNss9DR8cHSUKIN5586VZuO9Yg?=
+ =?us-ascii?Q?wmWBLrTIK4wm74J9txQKmqD6FJ2M6Oo0IBZ4B6Fis90S425WzC5NzNm+OGmb?=
+ =?us-ascii?Q?diZGr8jIoD/o6E/8EQWXOqB8F6IhuX/KJCJrsaQFls33BdrYsgFZEYX3JMeu?=
+ =?us-ascii?Q?p6h+6eL8qqWhsfRcK7n+5Dz4NLMxbE6Ngon4k98U3NQCmMRsdgSlV9DcFHfk?=
+ =?us-ascii?Q?rlKXKoOkKtOce57gnJ83ROB+bIDg7HxjdBAIzkdYf7MPazVZR04XmaY49RRm?=
+ =?us-ascii?Q?AA0vuV42UJvvj5TqasuvFJx8oAY9eamyxzu01VjbpYtkpX24EeJiMtQ7iA4X?=
+ =?us-ascii?Q?wtxNHV8SZq4XF4/UlVdBBV+2ihl3BFBw8JsRUGFJbO93euZf8YPnYlIwj8IJ?=
+ =?us-ascii?Q?Mdk5L9f6MwTCbAjQQVy9M2rPqGzXW/R5XWJ6+21SktbguKH87bXanrcldWW3?=
+ =?us-ascii?Q?BstprEYXi3mVNijXqL5lGEmxtaHkuLCr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VbH2dLKqbDKF8n0Mylb7oP8WncqS9rH1oAVC9mWsZrlhbNNwcjsqKhNIVSQA?=
+ =?us-ascii?Q?Cul8cr81PzvsD2GTvEyA/XD6XqHSWsHY7I3SV8q4QHe4S/Nq7/ClDxf0XYgA?=
+ =?us-ascii?Q?nMjhC4J4iYiVWz6D98hQoeVBb8we/TtjjdXCtPNNZNqQx9KjcMT7pf4MKq+/?=
+ =?us-ascii?Q?XvcHCtizGIiYPd2BS08b4IM9h7N/moj5qfZ9NbaxOgajI2XA0Vfbi72LRYAz?=
+ =?us-ascii?Q?Ahua3b1wHRbL0sOhkB/5AE4XSgHjdgT7vPQiJbASkShjmOpXKwMCBnPcheuZ?=
+ =?us-ascii?Q?li6xgrnew/nB9lQEPgB5e/5bjFQv8gURuIQJCKMFP9H732hbs5D2IH6Zysxe?=
+ =?us-ascii?Q?7GOZOMoXwVAhuic/tYLAs3cGRyO/NOwfJImrOz/gNEt+IciXlphF+bpmoY6p?=
+ =?us-ascii?Q?0EXILj249uzrGKp5QVhtcjx5A7MIkmy0JBjZqsPqyOJBLvRJ3y9dHfs3/liy?=
+ =?us-ascii?Q?zLAokWSQfQMJ0dXyVtchwTwIbokUfSrjeX3ES9Lxw4yUtnlkAWHybYwTXymb?=
+ =?us-ascii?Q?eqdMnkRFrfP27akpVrp+illPqpkH8V/qEsFZ/hSkoP9kjfL9arpzPSfrbA72?=
+ =?us-ascii?Q?T2I45cPPDYEk4BKpc+byLJu9zwtPRvfK0JJKREGpGrkNe4PhTi6/T0a94a/s?=
+ =?us-ascii?Q?odACagm4mIffs8AiPaSmeQ235VbQ0/e6eX1O8wiG/QET06YPUb9RGudoRhvP?=
+ =?us-ascii?Q?KbSHtn+HxNTmUDGBY+Bb0IjQqylOEwh04q2XJkhOTwlYB64JHnhc9Ln8MVc3?=
+ =?us-ascii?Q?cMjQVk4JmlKmgddBOby32JuJE1eEPfXMjWaR89rlv1Lop1EP78h67zTO6uXr?=
+ =?us-ascii?Q?R0q15ZuaJS4qCQHAKkHa/3MMea5GR5YNhVZ6jSRZZrzq5Xgu8BD/uQV8Ffzt?=
+ =?us-ascii?Q?HvFvpVIrVdAjKdwrCeanGutFvHRCdT9LxggzB6NbGlc1hEVq5QfInu4S0LEO?=
+ =?us-ascii?Q?4hNSpekrorrtJPHb975839MLFI7Epp13zQbk7wZTFjITOQRNVJPX8Ygrag1i?=
+ =?us-ascii?Q?OTUO/kyGH/2wU8ZCwfELOh1cHS7ILVsQIl7yYzFcA4h5COodm2ftWLMQYCWE?=
+ =?us-ascii?Q?EsOmKkbl4W8BjZr8HmrncTfjLNHX+euHHbDPa0hhVKpCzovuOtZn5/gCH7nh?=
+ =?us-ascii?Q?luhDHRxNyzDX8A6gxjOAdqK2nzqIVlJ/qcQzbfHwmJf220wuQiltqH5xFq0m?=
+ =?us-ascii?Q?WAgpuRJSHj5n+c8pma5oDGLaKsPwUsBJRbUpISVX0bkXdqIVKoVvqhFKSyVk?=
+ =?us-ascii?Q?PY/ReEvfISiNi6oWTYTNY9zIecf0oYWvym9VrLc+N2SzTev6huiD13+VXUw5?=
+ =?us-ascii?Q?cIsx8AJeKGwpdmZaatLgDslH37Bi7D1Rf2OX/VxbUUnPCStubbJHDh2hL7SL?=
+ =?us-ascii?Q?4i4R5HrONx5F5J+eQHHP/hN8i3kOcoReKilG9Q86/FaF3JWp1hY23Mvo7ZAo?=
+ =?us-ascii?Q?FtSnLFznn9RWzdD9hHA0KdMPfk28t2C5UAUnoELV6JDvzJdRXicKw3s2zmWe?=
+ =?us-ascii?Q?ZNO3EeJvCo62vWQJNZC6IMYDOb9rlY+bn3ihIFDnGyXiBGPf6Bg1MwGgQHUM?=
+ =?us-ascii?Q?TWYVvGL/XlNv7mX2LnpIkKZYlwLPm/iKy1l9/+js?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 351ac62c-b9c7-44a1-7bcf-08de1ce834f3
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 03:54:38.1126
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BR/iMl5mfW0d5u49wirOhJaLIv5VXrUzM50k0s+VQ90f+ziAPSTjvuXWqt0onz5pmiCHL1GmS8cVgOgdbtnDAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6622
 
-Hi,
+I've based these Hopper/Blackwell prerequisites on top of Joel's and
+Alex's changes, and also on top of my recent boot0/boot42 changes.
 
-=E5=9C=A8 2025/11/4 15:17, Xiao Ni =E5=86=99=E9=81=93:
-> On Tue, Nov 4, 2025 at 10:52=E2=80=AFAM Li Nan <linan666@huaweicloud.com>=
- wrote:
->>
->>
->> =E5=9C=A8 2025/11/4 9:47, Xiao Ni =E5=86=99=E9=81=93:
->>> On Mon, Nov 3, 2025 at 9:06=E2=80=AFPM <linan666@huaweicloud.com> wrote=
-:
->>>> From: Li Nan <linan122@huawei.com>
->>>>
->>>> Raid checks if pad3 is zero when loading superblock from disk. Arrays
->>>> created with new features may fail to assemble on old kernels as pad3
->>>> is used.
->>>>
->>>> Add module parameter check_new_feature to bypass this check.
->>>>
->>>> Signed-off-by: Li Nan <linan122@huawei.com>
->>>> ---
->>>>    drivers/md/md.c | 12 +++++++++---
->>>>    1 file changed, 9 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>>> index dffc6a482181..5921fb245bfa 100644
->>>> --- a/drivers/md/md.c
->>>> +++ b/drivers/md/md.c
->>>> @@ -339,6 +339,7 @@ static int start_readonly;
->>>>     */
->>>>    static bool create_on_open =3D true;
->>>>    static bool legacy_async_del_gendisk =3D true;
->>>> +static bool check_new_feature =3D true;
->>>>
->>>>    /*
->>>>     * We have a system wide 'event count' that is incremented
->>>> @@ -1850,9 +1851,13 @@ static int super_1_load(struct md_rdev *rdev, s=
-truct md_rdev *refdev, int minor_
->>>>           }
->>>>           if (sb->pad0 ||
->>>>               sb->pad3[0] ||
->>>> -           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb-=
->pad3[1])))
->>>> -               /* Some padding is non-zero, might be a new feature */
->>>> -               return -EINVAL;
->>>> +           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb-=
->pad3[1]))) {
->>>> +               pr_warn("Some padding is non-zero on %pg, might be a n=
-ew feature\n",
->>>> +                       rdev->bdev);
->>>> +               if (check_new_feature)
->>>> +                       return -EINVAL;
->>>> +               pr_warn("check_new_feature is disabled, data corruptio=
-n possible\n");
->>>> +       }
->>>>
->>>>           rdev->preferred_minor =3D 0xffff;
->>>>           rdev->data_offset =3D le64_to_cpu(sb->data_offset);
->>>> @@ -10704,6 +10709,7 @@ module_param(start_dirty_degraded, int, S_IRUG=
-O|S_IWUSR);
->>>>    module_param_call(new_array, add_named_array, NULL, NULL, S_IWUSR);
->>>>    module_param(create_on_open, bool, S_IRUSR|S_IWUSR);
->>>>    module_param(legacy_async_del_gendisk, bool, 0600);
->>>> +module_param(check_new_feature, bool, 0600);
->>>>
->>>>    MODULE_LICENSE("GPL");
->>>>    MODULE_DESCRIPTION("MD RAID framework");
->>>> --
->>>> 2.39.2
->>>>
->>> Hi
->>>
->>> Thanks for finding this problem in time. The default of this kernel
->>> module is true. I don't think people can check new kernel modules
->>> after updating to a new kernel. They will find the array can't
->>> assemble and report bugs. You already use pad3, is it good to remove
->>> the check about pad3 directly here?
->>>
->>> By the way, have you run the regression tests?
->>>
->>> Regards
->>> Xiao
->>>
->>>
->>> .
->> Hi Xiao.
->>
->> Thanks for your review.
->>
->> Deleting this check directly is risky. For example, in configurable LBS:
->> if user sets LBS to 4K, the LBS of a RAID array assembled on old kernel
->> becomes 512. Forcing use of this array then risks data loss -- the
->> original issue this feature want to solve.
-> You're right, we can't delete the check.
-> For the old kernel, the array which has specified logical size can't
-> be assembled. This patch still can't fix this problem, because it is
-> an old kernel and this patch is for a new kernel, right?
-> For existing arrays, they don't have such problems. They can be
-> assembled after updating to a new kernel.
-> So, do we need this patch?
+This makes it easier for both Timur Tabi to post his Turing support
+(which he's about ready to do), and for me to post the actual
+Hopper/Blackwell support, without generating conflicts.
 
-There is a use case for us that user may create the array with old kernel, =
-and
-then if something bad happened in the system(may not be related to the arra=
-y),
-user may update to mainline releases and later switch back to our release. =
-We
-want a solution that user can still use the array in this case.
+Testing: This works as expected on Ampere and Blackwell (bare metal),
+on my local test machine.
 
->
->> Future features may also have similar risks, so instead of deleting this
->> check directly, I chose to add a module parameter to give users a choice=
-.
->> What do you think?
-> Maybe we can add a feature bit to avoid the kernel parameter. This
-> feature bit can be set when specifying logical block size.
+Here's a working branch, with my patches, if you would like to apply
+locally:
 
-The situation still stand, for unknown feature bit, we'd better to forbid
-assembling the array to prevent data loss by default.
+    https://github.com/johnhubbard/linux/tree/nova-core-blackwell-prereqs-v0
 
-Thanks,
-Kuai
+John Hubbard (6):
+  gpu: nova-core: print FB sizes, along with ranges
+  gpu: nova-core: Hopper: basic GPU identification
+  gpu: nova-core: Blackwell: basic GPU identification
+  gpu: nova-core: factor .fwsignature* selection into a new
+    get_gsp_sigs_section()
+  gpu: nova-core: regs.rs: clean up chipset(), architecture()
+  gpu: nova-core: use gpu::Architecture instead of long lists of GPUs
 
->
-> Regards
-> Xiao
->> --
->> Thanks,
->> Nan
->>
+ drivers/gpu/nova-core/falcon/hal.rs   | 14 ++++++++----
+ drivers/gpu/nova-core/fb.rs           | 33 ++++++++++++++++++++++++++-
+ drivers/gpu/nova-core/fb/hal.rs       | 19 +++++++++------
+ drivers/gpu/nova-core/firmware/gsp.rs | 30 ++++++++++++++++++++----
+ drivers/gpu/nova-core/gpu.rs          | 22 ++++++++++++++++++
+ drivers/gpu/nova-core/gsp/boot.rs     |  2 +-
+ drivers/gpu/nova-core/regs.rs         | 29 +++++++++++------------
+ 7 files changed, 115 insertions(+), 34 deletions(-)
+
+
+base-commit: 7f6c212713e07e714bdf29d1158e21c3965917f2
+-- 
+2.51.2
+
 
