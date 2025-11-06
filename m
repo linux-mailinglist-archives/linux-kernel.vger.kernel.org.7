@@ -1,218 +1,156 @@
-Return-Path: <linux-kernel+bounces-887727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F21C38F5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E488C38F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8C814E54FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:26:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B7F54E478A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614D12BE652;
-	Thu,  6 Nov 2025 03:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB67A2BE65E;
+	Thu,  6 Nov 2025 03:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CMFffhgH"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vOy/b4V2"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A26241663
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C438F7D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762399597; cv=none; b=mn47NLPisq9ZUL/PEVkJ8Mi6iQiwZVbisyUfzi0/jslZav1bP91HRbgR/KjBK36ecxeObOkosEcb3w8CN8h5UJXvPtly3UmNc6pHiAwbM0w61XuGYNbW+3Q3qkJdpZp2MQuzyI6eoLNLIkbtTnU7MxiZBOZq5G5MkUB27NjAbvE=
+	t=1762399705; cv=none; b=gFarQCoJEMaN716vAdvVDi3AoM9YyMm/15JLoQY0rMvu/WVJexE9yY7+7+80toCQ9oS1e25y8njkUkihKm7kED8U0J6i7szDlIaP8+Z51tqA1vTahxCZfmTBTxGjNeaDG1uyLhA3BSPIf96awmxXCjOjLeDrvr0bdONt/iV/tAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762399597; c=relaxed/simple;
-	bh=fTj20aGtZ+6F5GDEijyEoHOupVnVzZxg6fD8bO30o+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T9MT1l2FFeCeMHyehY+DlrlYpSPFLZX64n1ZzkCv7fzF7PNwybBgDsYLTi5tg8qtALCsjKg0aXw9UzpRPHXDSZCrrrcureQSXuADrdgLXXaDbRV/ilDaxbG2hUZPV0hY1I1SCOtI5tAOxlJu57vI7qn+MdzViv7jELoIHgbwpDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CMFffhgH; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-594476f218fso360486e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:26:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762399594; x=1763004394; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3xpFecSad0Q8rQWlUdeL6GhfjlE0oFfhv5tERAh3/A0=;
-        b=CMFffhgHCBEiaS3ZcYQr+tD+ArxAefxkmIF9QCJnwC27bPtI56nI6Rj1UGLHB5n+IZ
-         6kIGSdE7h3pwmU2Xgudp7+VX/b2DiIn9Bulkm5ulqjpPuCSLNoonRzWA+ko/jzabhVqq
-         LPkvTrhyMFib+wogpkNSPqfNs3HYdwGnSocw2jdo9AP9A8/jcZpf57JG54LNcyNiovHz
-         KEuPGWNo9i0revstAH/CwNDFYwPs5jjZyd+Y+bPdQ68a1ahfDCjQKW/cqnwrwRb0bu0C
-         3CP0IUmc/4GgcrwzXDyxUTgpqudyn0/pKA+ctYgIa1x18HH+zgQj64TguEwmtv77MFG6
-         oPfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762399594; x=1763004394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3xpFecSad0Q8rQWlUdeL6GhfjlE0oFfhv5tERAh3/A0=;
-        b=Of3kx5Cw06zhQP4u7uFtrISYyi1Mnx4MOQSfdANqhsJ7qlAhomGrdazqjf5fYDBh2U
-         PYUnsbWrM0NchzgJGbnqBkEuIAXKN0V7LlKJ4sjE/nmebCcTRwB5wna+JJsMAy/gigqR
-         9qGddEQ83aUrxBio+JLcJGUOIblVHqPzThJiIQsfckYniiW66MVB8ygDugpVVaV9sM3p
-         4P/cGNph5e45zFod5fUpsgy/OM+NUSba5tV5ySn+VyBAinuYAeMbTea+QLXR6mBi/W5r
-         65S54l4tOFA9hDC9otYWRcuZvGecgpNFffHIIuw01cguSB8D8VDKlmPYnc3JI/cb1kwo
-         E3QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpDZo0GUpsGsQ5YBjgQpKLIy6eTiucDbevAY4aX2PKuB850cfknMGp9tvBqiUt69aC78VB/iPciJMEA1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNfKjIss6wYnoggUUPmwlDDjeIKyGNi9CAglan23ySmOcaiXgp
-	gFZJnMb4f1UFBKXnplZMkuQMxRx3EU8L8Ccp0fo4t1jLfcAUjOcJ1vhYQ8VukZnr/HqBWIdfFp6
-	Xbv8XhkNnhFmKsz6yq9BTJja78iC+B4zEp2StgSpL1A==
-X-Gm-Gg: ASbGncu/3/IU1KerHQpdozOXQM/0symY+h84kVHvcQE6jhgGgKj+PgvQW4aikEM0pSC
-	r0Elnvsvl0xE+6eTkMJzBK5gmqjXLLqSXTBp5UByDtR2YllXDfkjpuV2hVt1/ar1upArzvxOoIM
-	xhMBuCUR05YnyDTs5TE6tq6Ka6xjBKxh/krihBvCVjCGFsgyWwneRqoXTz+L14yw3WMvRNrXUCD
-	FEVQBX3YdpOO3XvbTm3OTY1mywCyTeMwa4zCJ6NSbMiAtDp1967hVAm578EeCSUufqzEyuxthmK
-	yZTzyAiSgbmWwe3aNmE=
-X-Google-Smtp-Source: AGHT+IGYMoT2xV8jUqZNsDpRBewBTbv4+kgQPDV4kSS9LjY++Ln8kzXqYWY2rpk78RI7qVA9AFP5RMpBDQ0EOStji+4=
-X-Received: by 2002:a05:6512:39d3:b0:594:29c8:9ae5 with SMTP id
- 2adb3069b0e04-5943d8043damr2098109e87.53.1762399593422; Wed, 05 Nov 2025
- 19:26:33 -0800 (PST)
+	s=arc-20240116; t=1762399705; c=relaxed/simple;
+	bh=ygGhAEsm/DgacE9ed4AT5iPZd8bo6QYT56nuwSGU6ak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=cuU8OzfR3XE3S2q7ObIetwSobmv15PT8aizkE9CCaj9KYkl8Nia/CdIRQxFA6wAS1y3Cl6xPDpuhEzF6Pm042Fn9wU5PU/3z9TT1RVagsCpnoxcZxtyXovo9jrfopKtkuopl/N5vNHJVfIxJTcYbfWdqVAiESUfRTFzCg9TFa2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vOy/b4V2; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <572e1211-79e2-4b8e-b36f-4eeca125427c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762399700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VOHOPn4QCB15dSJZ7+b8x1PMPq/q4Gg0i4DM3Y+iQWc=;
+	b=vOy/b4V28O0kz32IbysxSJJGwYOJAQFtdJAvPF+QqykarGcP4qtCC7agZFjeRpUfzbk4Mw
+	Zaq+gh5G7rtgtoyKyh3q2mykyC9CiymWWpu1Y9tNdsXPPxulntTDXtaW+XIfs/7mIa+voG
+	+T+N/4zUOrHqIt2ZL5IIa6u9D2mKNTA=
+Date: Thu, 6 Nov 2025 11:28:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105201415.227144-1-hoyeon.lee@suse.com> <CAADnVQK7Qa5v=fkQtnx_A2OiXDDrWZAYY6qGi8ruVn_dOXmrUw@mail.gmail.com>
- <b3f13550169288578796548f12619e5e972c0636.camel@gmail.com>
- <CAADnVQJVYDbOCuJnf9jZWdFya7-PfFfPv2=d2M=75aA+VGGayg@mail.gmail.com>
- <8541c5bb758bc06e8c865aaa4f95456ac3238321.camel@gmail.com> <CAADnVQL91xsujXt4GWjgCYC+PdBC-2ZH6GqefXws_YHiL7B7Sg@mail.gmail.com>
-In-Reply-To: <CAADnVQL91xsujXt4GWjgCYC+PdBC-2ZH6GqefXws_YHiL7B7Sg@mail.gmail.com>
-From: Hoyeon Lee <hoyeon.lee@suse.com>
-Date: Thu, 6 Nov 2025 12:26:08 +0900
-X-Gm-Features: AWmQ_bmR0XThGmCNnGWDRtAQwF2L1nWrxoFXbdmlSZGFMImtnXeNaIqn1ePhIVQ
-Message-ID: <CAK7-dKa=2RkU2uyPBjagkdMtMbZJ1aN+=b9U1tFzmdcJAbBWmw@mail.gmail.com>
-Subject: Re: [bpf-next] selftests/bpf: refactor snprintf_btf test to use bpf_strncmp
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/3] hung_task: Add hung_task_sys_info sysctl to dump sys
+ info on task-hung
+To: Feng Tang <feng.tang@linux.alibaba.com>
+References: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
+ <20251106023032.25875-3-feng.tang@linux.alibaba.com>
+Content-Language: en-US
+Cc: paulmck@kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Lance Yang <ioworker0@gmail.com>,
+ Petr Mladek <pmladek@suse.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20251106023032.25875-3-feng.tang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Nov 6, 2025 at 8:43=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Wed, Nov 5, 2025 at 3:38=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.co=
-m> wrote:
-> >
-> > On Wed, 2025-11-05 at 15:33 -0800, Alexei Starovoitov wrote:
-> > > On Wed, Nov 5, 2025 at 2:52=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
-l.com> wrote:
-> > > >
-> > > > On Wed, 2025-11-05 at 14:45 -0800, Alexei Starovoitov wrote:
-> > > > > On Wed, Nov 5, 2025 at 12:14=E2=80=AFPM Hoyeon Lee <hoyeon.lee@su=
-se.com> wrote:
-> > > > > >
-> > > > > > The netif_receive_skb BPF program used in snprintf_btf test sti=
-ll uses
-> > > > > > a custom __strncmp. This is unnecessary as the bpf_strncmp help=
-er is
-> > > > > > available and provides the same functionality.
-> > > > > >
-> > > > > > This commit refactors the test to use the bpf_strncmp helper, r=
-emoving
-> > > > > > the redundant custom implementation.
-> > > > > >
-> > > > > > Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
-> > > > > > ---
-> > > > > >  .../selftests/bpf/progs/netif_receive_skb.c       | 15 +------=
---------
-> > > > > >  1 file changed, 1 insertion(+), 14 deletions(-)
-> > > > > >
-> > > > > > diff --git a/tools/testing/selftests/bpf/progs/netif_receive_sk=
-b.c b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > > > > > index 9e067dcbf607..186b8c82b9e6 100644
-> > > > > > --- a/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > > > > > +++ b/tools/testing/selftests/bpf/progs/netif_receive_skb.c
-> > > > > > @@ -31,19 +31,6 @@ struct {
-> > > > > >         __type(value, char[STRSIZE]);
-> > > > > >  } strdata SEC(".maps");
-> > > > > >
-> > > > > > -static int __strncmp(const void *m1, const void *m2, size_t le=
-n)
-> > > > > > -{
-> > > > > > -       const unsigned char *s1 =3D m1;
-> > > > > > -       const unsigned char *s2 =3D m2;
-> > > > > > -       int i, delta =3D 0;
-> > > > > > -
-> > > > > > -       for (i =3D 0; i < len; i++) {
-> > > > > > -               delta =3D s1[i] - s2[i];
-> > > > > > -               if (delta || s1[i] =3D=3D 0 || s2[i] =3D=3D 0)
-> > > > > > -                       break;
-> > > > > > -       }
-> > > > > > -       return delta;
-> > > > > > -}
-> > > > > >
-> > > > > >  #if __has_builtin(__builtin_btf_type_id)
-> > > > > >  #define        TEST_BTF(_str, _type, _flags, _expected, ...)  =
-                 \
-> > > > > > @@ -69,7 +56,7 @@ static int __strncmp(const void *m1, const vo=
-id *m2, size_t len)
-> > > > > >                                        &_ptr, sizeof(_ptr), _hf=
-lags);   \
-> > > > > >                 if (ret)                                       =
-         \
-> > > > > >                         break;                                 =
-         \
-> > > > > > -               _cmp =3D __strncmp(_str, _expectedval, EXPECTED=
-_STRSIZE); \
-> > > > > > +               _cmp =3D bpf_strncmp(_str, EXPECTED_STRSIZE, _e=
-xpectedval); \
-> > > > >
-> > > > > Though it's equivalent, the point of the test is to be heavy
-> > > > > for the verifier with open coded __strncmp().
-> > > > >
-> > > > > pw-bot: cr
-> > > >
-> > > > I double checked that before acking, the test was added as a part o=
-f [1].
-> > > > So it seems to be focused on bpf_snprintf_btf(), not on scalability=
-.
-> > > > And it's not that heavy in terms of instructions budget:
-> > > >
-> > > > File                     Program                  Verdict  Insns  S=
-tates
-> > > > -----------------------  -----------------------  -------  -----  -=
------
-> > > > netif_receive_skb.bpf.o  trace_netif_receive_skb  success  18152   =
-  629
-> > >
-> > > Is this before or after?
-> > > What is the % decrease in insn_processed?
-> > > I'd like to better understand the impact of the change.
-> >
-> > That's before, after the change it is as follows:
-> >
-> > File                     Program                  Verdict  Insns  State=
-s
-> > -----------------------  -----------------------  -------  -----  -----=
--
-> > netif_receive_skb.bpf.o  trace_netif_receive_skb  success   4353     23=
-5
-> > -----------------------  -----------------------  -------  -----  -----=
--
-> >
-> > So, the overall impact is 18K -> 4K instructions processed.
->
-> It's large enough impact for the verifier.
-> I agree that the test was mainly focusing on testing
-> bpf_snprintf_btf(), but it has a nice side effect by testing
-> bounded loops too.
-> I prefer to keep it as-is.
 
-Thanks for the clarification.
 
-Removing the open-coded __strncmp would drop the bounded-loop
-coverage that this test currently provides (as a side effect),
-and that stress on the verifier is still valuable.
+On 2025/11/6 10:30, Feng Tang wrote:
+> When task-hung happens, developers may need different kinds of system
+> information (call-stacks, memory info, locks, etc.) to help debugging.
+> 
+> Add 'hung_task_sys_info' sysctl knob to take human readable string like
+> "tasks,mem,timers,locks,ftrace,...", and when task-hung happens, all
+> requested information will be dumped. (refer kernel/sys_info.c for more
+> details).
+> 
+> Meanwhile, the newly introduced sys_info() call is used to unify some
+> existing info-dumping knobs.
 
-I'll drop this patch.
-Thank you all for the discussion and review.
+Thanks! Just one nit below.
+
+> 
+> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> ---
+>   Documentation/admin-guide/sysctl/kernel.rst |  5 +++
+>   kernel/hung_task.c                          | 39 +++++++++++++++------
+>   2 files changed, 33 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index a397eeccaea7..45b4408dad31 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -422,6 +422,11 @@ the system boot.
+>   
+>   This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
+>   
+> +hung_task_sys_info
+> +==================
+> +A comma separated list of extra system information to be dumped when
+> +hung task is detected, for example, "tasks,mem,timers,locks,...".
+> +Refer 'panic_sys_info' section below for more details.
+>   
+>   hung_task_timeout_secs
+>   ======================
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 84b4b049faa5..102be5a8e75a 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -24,6 +24,7 @@
+>   #include <linux/sched/sysctl.h>
+>   #include <linux/hung_task.h>
+>   #include <linux/rwsem.h>
+> +#include <linux/sys_info.h>
+>   
+>   #include <trace/events/sched.h>
+>   
+> @@ -60,12 +61,23 @@ static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
+>   static int __read_mostly sysctl_hung_task_warnings = 10;
+>   
+>   static int __read_mostly did_panic;
+> -static bool hung_task_show_lock;
+>   static bool hung_task_call_panic;
+> -static bool hung_task_show_all_bt;
+>   
+>   static struct task_struct *watchdog_task;
+>   
+> +/*
+> + * A bitmask to control what kinds of system info to be printed when
+> + * a hung task is detected, it could be task, memory, lock etc. Refer
+> + * include/linux/sys_info.h for detailed bit definition.
+> + */
+> +static unsigned long hung_task_si_mask;
+> +
+> +/*
+> + * There are several sysctl knobs, and this serves as the runtime
+> + * effective sys_info knob
+> + */
+
+Nit: let's make the comment for cur_si_mask even more explicit.
++/*
++ * The effective sys_info mask for the current detection cycle. It
++ * aggregates the base hung_task_si_mask and any flags triggered
++ * by other conditions within this cycle. It is cleared after use.
++ */
+> +static unsigned long cur_si_mask;
+
+That makes its lifecycle (aggregate, use, and clear) super obvious ;)
+
+With that, LGTM!
+
+Reviewed-by: Lance Yang <lance.yang@linux.dev>
+
+[...]
 
