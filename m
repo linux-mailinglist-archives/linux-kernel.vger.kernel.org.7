@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-887655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E38C38D08
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:10:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED9CC38CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131231A25E77
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:09:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61F424F0CD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C88822ACEF;
-	Thu,  6 Nov 2025 02:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DD11DF27D;
+	Thu,  6 Nov 2025 02:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="mgXdmeso"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="aT6HNn7A"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204EB258EE9;
-	Thu,  6 Nov 2025 02:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7444F23EABB;
+	Thu,  6 Nov 2025 02:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394890; cv=none; b=coITuUXHa7LBpp2gJf3QcJiF3ZFv4azZXOJTk33HyZo6XqY3ec0nkAtFFctS3K2KxypfcfMi05OVzelzAGG/jSqLQHtw6gLWqUH1dokVIwPees+LUH98Ki0FkvsjfRRd+7EwQDPuBAsHCEEJyLBpzy88VhR48zwgWHfhh/hmRzw=
+	t=1762394883; cv=none; b=Gs6PIoFsjAyiRY538BeE+rCzURGk3mn4G8DxRQfHv5MWmQs1IHoAlr9KEp3D/uV6vC1EefPJ07SmzruNqhtKq6B6gwvtBACyOFoE66hMBljdv0FiIJ4Wh7cN6Vs7TFEaL3aggehSj2gyK9zDWCqdYws6/Mm2xGZkArCSxd9cee0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394890; c=relaxed/simple;
-	bh=SkugNnl5xO5VKbwb4R4GzfSYXCPRBx4T3UXJ7+ap1yY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=J01JX1CbbZKa4taapPuIrRo1pkN/bMK+25HoWkR/3UGW7ERiKWH4TlbwhPi1nrwjy1979wwgl1+3Id9fTYYBb+SH6rKozk1oZbV5G6BEV50A9A7tJC8Dybl6+75a8I4nWzJ4ol4P5kFCzqalGJBXpvCnEPb6OX/HHi2Hj5KUNyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=mgXdmeso; arc=none smtp.client-ip=54.206.16.166
+	s=arc-20240116; t=1762394883; c=relaxed/simple;
+	bh=CzhCSVMqdqCvofIE7g3YgZB8+RrSRdOA/MSmDbM4do0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=j07RJE7ltZEw2AkIZJDpwAkYib4ovJcCxocgtRaq7L1gd+zU+DkLRS4SWmqX/PEmR2iYvFrBQ0SvRLYvItiFn3+MqUjaOkYvaP3BGBhCTPMzTD4uDu6ohI+9yOaDYDs/JDkYyWvrJqHkK6kEpDdr0HacODlUoYqRV/wrLlgmFP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=aT6HNn7A; arc=none smtp.client-ip=54.243.244.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1762394824;
-	bh=dlreJtu1yTZc+3gYynIBMms0O05/ZWzTxS4Cx5D33aA=;
+	s=altu2504; t=1762394827;
+	bh=jCvXR+xtHN8zNeI9HyrNbgQst6B5lB1aewkYCgwCIvc=;
 	h=From:To:Subject:Date:Message-Id;
-	b=mgXdmeso8Y5CzbeGvBmSoXVkikF7UGQcM84Tgan7qgPzmmW5dZ2AayaqkzPABuvcj
-	 Sw0YQ/4oFGPupfSoH/7+R1fjjirkVkkatHIC/+rHqisQ6xy5FHm0xaSs+iH7V4kzZM
-	 BLLZwqnUyRgbauDhXfoS789uQ1kwyR33o+qAFZ+Q=
-X-QQ-mid: esmtpgz15t1762394822t3dff838e
-X-QQ-Originating-IP: otWT7nKKGfQI+mkYDiDkRHYGEnaihLiw+FDQpRrNMKw=
+	b=aT6HNn7Ar4rrBQwhjXx0ZCBET91eMNEjO8q4eQPbqrjD3GlpfgDrgwaeJerqVG5kn
+	 2VpG64pSlgxE5tc3RCR5081kCQvtRcEy0W89l6PKjsAP8mmr7gaOaZ1xc5qMqNWZR0
+	 pDA1+bC5I/8csPo0PI/P2WFtOXOxYfVCNvgyAInI=
+X-QQ-mid: esmtpgz15t1762394826t5cc258c4
+X-QQ-Originating-IP: SeeXlzF1dnwv3Vr5Y8FlyYCG69HSWnlfwjiW2HttmNM=
 Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 06 Nov 2025 10:07:00 +0800 (CST)
+	id ; Thu, 06 Nov 2025 10:07:03 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8019224694940531236
+X-BIZMAIL-ID: 10135614962610030786
 From: Chaoyi Chen <kernel@airkyi.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
@@ -66,32 +66,33 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-phy@lists.infradead.org,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Subject: [PATCH 5/9] drm/panel: ilitek-ili9881d: Add support for Wanchanglong W552946AAA panel
-Date: Thu,  6 Nov 2025 10:06:28 +0800
-Message-Id: <20251106020632.92-6-kernel@airkyi.com>
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Hongming Zou <hongming.zou@rock-chips.com>
+Subject: [PATCH 6/9] phy: rockchip: inno-dsidphy: Add support for rk3506
+Date: Thu,  6 Nov 2025 10:06:29 +0800
+Message-Id: <20251106020632.92-7-kernel@airkyi.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251106020632.92-1-kernel@airkyi.com>
 References: <20251106020632.92-1-kernel@airkyi.com>
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:airkyi.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: MoEtoil6yR/CNkuu9v3dTG2uI1VNp0vJRpos/NRJ08iueGeCH8On6t1v
-	1B6f4wE9hQWLOZsoyLM61e6wF/KEFCyMnVckGv/kjzkh4ol4IyqGspWLHzyXcxZ8xJpMA4q
-	rRF2UrpD/fHm9dj2oC7lopTbEm4vFChxKzxHI3kPPkY0D3d9hH6xnB6BmPVoeDNAJl5IFYe
-	PkRp/FI1ZJzZ0himjZxKYNSN0JZ3rPiT2BKhHLRAHGPecS5d8bUMWyJwMUTOFxlJQTqMXS/
-	obbP6ogRYE6drvCPSVSttz2G+yXT5mhKDgDBQPyFuT6S8RUhU+JzXWFBrwc44/Pf9fJzauv
-	vgHzvA0v/R9FBdjRP8MdljRMCxb+H77f6w4/OxcV7iz4C7SUeCaTitetshWoix7NHvjBIzR
-	7fhdpd0Q7FxSWQdQdExt8kHncAjqO12F0G3JvF9JXijhN/OZxjFxicFdXgZL23Ts6AjElHU
-	XfCf9y/xbGAzw9/LhZ6MxpXW0dJEO53fCyPpUdgfGpipLpAyb507LmYNItgWQqEA32o5317
-	/weBCgoCwRX8wQTr5DFA4dS6p8xoR4d1UfUaOowSamfNKjuaaBlqnWJVx1POm/Yfo8S8Vjv
-	499fow0OfgsM8kFPNuGx1u2Enxw13rhBVpxe1EWfRImi377kjzEWxS6Eg9bXOS93BwPDxXs
-	3VGa8bF9JvlgT6hZcyZSDlGShl97sRzJ3q/Cteh35XVlbyNZKPQK3daONV6c/foL5jyU0mf
-	CFpqkKwrRhEkLwKC/UqSwvuwwpZR08soBB8Fz6iwMW1I2j/mhhULUYUSupWOrwwMaoB0kxU
-	40Wohe/Np03jvYODzIkXRhVfbPH7JpGeK5Wn5eYzkJwuE+OetPagRqFPCQdIsMDAr0dv6n4
-	LPDq2w2Cg/jw74zuD1pRlt5CubY5mebluS1SIoDpb28jabShF8MnUD+9BTp2WTYtH/Zw8Se
-	9703iPKaIHCmmo4/poeteSeG0O3Fbwas/LU9aIB9oZn9bhvtXEf6tQNCvOv8kL6kXxkocgp
-	K+XBXCAw==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: NsKw77UaNFtDdX5qudBkf8iJyIWz6OVV8/QTysgzrECpPkS1KjAEl6P4
+	/MCOfW/JI1n1fhndzaEDAR6fMxWIOst+HRGFFdjjl5OSIKwTA35GdbfAPs6kTb6wE51c+MH
+	UoW4K4gbv8SL7CoXYqQWeUTAvCoa91x+7D9/eW3fEEHYi63+WWRDee2FcHuMYOOKz92mlaB
+	tf5i7NFzCfT6Ei4GJyqom4vkszQvPdMTlL4LevMSFRL51D3yVSyhuxCm2N+nQiFDDRXIEI1
+	s3IRmlmH4l4E6pbPQbKp/lNpYtDoaC17V7n/ge/7jVaPYLH7M87BhpGBLxkF3xdfi/JI4OU
+	OVhZ/s1PdR0qqdsLmvUiAJ/riEahV/zdgi5n1BZfT8GXDbqvVF3BgSBij2K/BtETlmRzfag
+	ranxeRV0wu/v4E8RyTWcktkBtrb3+UxTxV/TYISiLgWlRvhnrmhONIVxgOL/sJMXF/QQKQo
+	lm95ePRW3NQ0xO9GnVsQerO0IeBFpycfIACossIXuOarehN/9ttlKiTaajCTR41jcHSDrhd
+	tDHKK9T3MbTRVCjv8CPsv1/WlVnq8SZIgRES0srWMIBo14ZoU6cayyliAH21ixajHj2YmKm
+	uLaBOuUFKMaupymOIdkYfP4AgWwj8hanhONec/rp+I07Wl5Nx8F5zqXDm3aa/ldCtseDHPm
+	Hx553mL9J+KRmFSy7InXfs91OQRH7dep3AKcTWNa43Ybh4Fhz4+2MRgZDgvs0C0/MaVsCHw
+	icurMSNFOVHTu6i4TC8ZAeFP/D+1CahpSwwoyPoQj1AMB2OoslDuFbvPvECL92KXEdFYf9s
+	4rv11V4A9hdcloOx+KZ/h6BRNwvqoHvYLsz8g0NiCBcoNCYyD5BNOaEwTi7ypvhCryFCOGQ
+	pT6vj01N0ZLXBQljVQIe56w/jvcof2y9azaxOR4nR7XuuxHYqhfQ3p5pM8aENCBAFOloKgw
+	h0Z5xH31Xl+gVW0hiUdtpavVazfuU+lDq9bfgkekY3FEKF8nnDklOK5go+AzLi5SwTfBpgo
+	wCvBWLskLcq3hh5Ycfsza0k6CcMCOKU4pR5nfJUQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
 X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -101,276 +102,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-W552946AAA is a panel by Wanchanglong. This panel utilizes the
-Ilitek ILI9881D controller.
+For MIPI mode, the inno-dsidphy found on RK3506 supports up to 2 lanes
+and a maximum data rate of 1.5GHz.
 
-W552946AAA is similar to W552946ABA, but the W552946AAA only
-uses 2 lanes.
-
-Tested on rk3506g-evb1-v10.
-
+Signed-off-by: Hongming Zou <hongming.zou@rock-chips.com>
 Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 ---
- drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 225 ++++++++++++++++++
- 1 file changed, 225 insertions(+)
+ .../phy/rockchip/phy-rockchip-inno-dsidphy.c  | 91 ++++++++++++++++++-
+ 1 file changed, 88 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-index ad4993b2f92a..9b3e9450808d 100644
---- a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-@@ -820,6 +820,204 @@ static const struct ili9881c_instr tl050hdv35_init[] = {
- 	ILI9881C_COMMAND_INSTR(0xd3, 0x39),
+diff --git a/drivers/phy/rockchip/phy-rockchip-inno-dsidphy.c b/drivers/phy/rockchip/phy-rockchip-inno-dsidphy.c
+index d5b1a4e2f7d3..30d5e5ddff4a 100644
+--- a/drivers/phy/rockchip/phy-rockchip-inno-dsidphy.c
++++ b/drivers/phy/rockchip/phy-rockchip-inno-dsidphy.c
+@@ -99,10 +99,30 @@
+ #define VOD_MID_RANGE				0x3
+ #define VOD_BIG_RANGE				0x7
+ #define VOD_MAX_RANGE				0xf
++/* Analog Register Part: reg18 */
++#define LANE0_PRE_EMPHASIS_ENABLE_MASK		BIT(6)
++#define LANE0_PRE_EMPHASIS_ENABLE		BIT(6)
++#define LANE0_PRE_EMPHASIS_DISABLE		0
++#define LANE1_PRE_EMPHASIS_ENABLE_MASK		BIT(5)
++#define LANE1_PRE_EMPHASIS_ENABLE		BIT(5)
++#define LANE1_PRE_EMPHASIS_DISABLE		0
++/* Analog Register Part: reg19 */
++#define PRE_EMPHASIS_RANGE_SET_MASK		GENMASK(7, 6)
++#define PRE_EMPHASIS_RANGE_SET(x)		UPDATE(x, 7, 6)
+ /* Analog Register Part: reg1E */
+ #define PLL_MODE_SEL_MASK			GENMASK(6, 5)
+ #define PLL_MODE_SEL_LVDS_MODE			0
+ #define PLL_MODE_SEL_MIPI_MODE			BIT(5)
++/* Analog Register Part: reg20 */
++#define LANE0_PRE_EMPHASIS_RANGE_SET_MASK	GENMASK(7, 6)
++#define LANE0_PRE_EMPHASIS_RANGE_SET(x)		UPDATE(x, 7, 6)
++/* Analog Register Part: reg21 */
++#define LANE1_PRE_EMPHASIS_RANGE_SET_MASK	GENMASK(7, 6)
++#define LANE1_PRE_EMPHASIS_RANGE_SET(x)		UPDATE(x, 7, 6)
++#define PRE_EMPHASIS_MIN_RANGE			0x0
++#define PRE_EMPHASIS_MID_RANGE			0x1
++#define PRE_EMPHASIS_MAX_RANGE			0x2
++#define PRE_EMPHASIS_RESERVED_RANGE		0x3
+ /* Digital Register Part: reg00 */
+ #define REG_DIG_RSTN_MASK			BIT(0)
+ #define REG_DIG_RSTN_NORMAL			BIT(0)
+@@ -193,6 +213,7 @@
+ 
+ enum phy_max_rate {
+ 	MAX_1GHZ,
++	MAX_1_5GHZ,
+ 	MAX_2_5GHZ,
  };
  
-+static const struct ili9881c_instr w552946aaa_init[] = {
-+	ILI9881C_SWITCH_PAGE_INSTR(3),
-+	ILI9881C_COMMAND_INSTR(0x01, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x02, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x03, 0x53),
-+	ILI9881C_COMMAND_INSTR(0x04, 0x53),
-+	ILI9881C_COMMAND_INSTR(0x05, 0x13),
-+	ILI9881C_COMMAND_INSTR(0x06, 0x04),
-+	ILI9881C_COMMAND_INSTR(0x07, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x08, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x09, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x0a, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x0b, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x0c, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x0d, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x0e, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x0f, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x10, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x11, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x12, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x13, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x14, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x15, 0x08),
-+	ILI9881C_COMMAND_INSTR(0x16, 0x10),
-+	ILI9881C_COMMAND_INSTR(0x17, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x18, 0x08),
-+	ILI9881C_COMMAND_INSTR(0x19, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x1a, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x1b, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x1c, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x1d, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x1e, 0xc0),
-+	ILI9881C_COMMAND_INSTR(0x1f, 0x80),
-+	ILI9881C_COMMAND_INSTR(0x20, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x21, 0x09),
-+	ILI9881C_COMMAND_INSTR(0x22, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x23, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x24, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x25, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x26, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x27, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x28, 0x55),
-+	ILI9881C_COMMAND_INSTR(0x29, 0x03),
-+	ILI9881C_COMMAND_INSTR(0x2a, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x2b, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x2c, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x2d, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x2e, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x2f, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x30, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x31, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x32, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x33, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x34, 0x04),
-+	ILI9881C_COMMAND_INSTR(0x35, 0x05),
-+	ILI9881C_COMMAND_INSTR(0x36, 0x05),
-+	ILI9881C_COMMAND_INSTR(0x37, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x38, 0x3c),
-+	ILI9881C_COMMAND_INSTR(0x39, 0x35),
-+	ILI9881C_COMMAND_INSTR(0x3a, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x3b, 0x40),
-+	ILI9881C_COMMAND_INSTR(0x3c, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x3d, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x3e, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x3f, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x40, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x41, 0x88),
-+	ILI9881C_COMMAND_INSTR(0x42, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x43, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x44, 0x1f),
-+	ILI9881C_COMMAND_INSTR(0x50, 0x01),
-+	ILI9881C_COMMAND_INSTR(0x51, 0x23),
-+	ILI9881C_COMMAND_INSTR(0x52, 0x45),
-+	ILI9881C_COMMAND_INSTR(0x53, 0x67),
-+	ILI9881C_COMMAND_INSTR(0x54, 0x89),
-+	ILI9881C_COMMAND_INSTR(0x55, 0xab),
-+	ILI9881C_COMMAND_INSTR(0x56, 0x01),
-+	ILI9881C_COMMAND_INSTR(0x57, 0x23),
-+	ILI9881C_COMMAND_INSTR(0x58, 0x45),
-+	ILI9881C_COMMAND_INSTR(0x59, 0x67),
-+	ILI9881C_COMMAND_INSTR(0x5a, 0x89),
-+	ILI9881C_COMMAND_INSTR(0x5b, 0xab),
-+	ILI9881C_COMMAND_INSTR(0x5c, 0xcd),
-+	ILI9881C_COMMAND_INSTR(0x5d, 0xef),
-+	ILI9881C_COMMAND_INSTR(0x5e, 0x03),
-+	ILI9881C_COMMAND_INSTR(0x5f, 0x14),
-+	ILI9881C_COMMAND_INSTR(0x60, 0x15),
-+	ILI9881C_COMMAND_INSTR(0x61, 0x0c),
-+	ILI9881C_COMMAND_INSTR(0x62, 0x0d),
-+	ILI9881C_COMMAND_INSTR(0x63, 0x0e),
-+	ILI9881C_COMMAND_INSTR(0x64, 0x0f),
-+	ILI9881C_COMMAND_INSTR(0x65, 0x10),
-+	ILI9881C_COMMAND_INSTR(0x66, 0x11),
-+	ILI9881C_COMMAND_INSTR(0x67, 0x08),
-+	ILI9881C_COMMAND_INSTR(0x68, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x69, 0x0a),
-+	ILI9881C_COMMAND_INSTR(0x6a, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x6b, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x6c, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x6d, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x6e, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x6f, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x70, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x71, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x72, 0x06),
-+	ILI9881C_COMMAND_INSTR(0x73, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x74, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x75, 0x14),
-+	ILI9881C_COMMAND_INSTR(0x76, 0x15),
-+	ILI9881C_COMMAND_INSTR(0x77, 0x0f),
-+	ILI9881C_COMMAND_INSTR(0x78, 0x0e),
-+	ILI9881C_COMMAND_INSTR(0x79, 0x0d),
-+	ILI9881C_COMMAND_INSTR(0x7a, 0x0c),
-+	ILI9881C_COMMAND_INSTR(0x7b, 0x11),
-+	ILI9881C_COMMAND_INSTR(0x7c, 0x10),
-+	ILI9881C_COMMAND_INSTR(0x7d, 0x06),
-+	ILI9881C_COMMAND_INSTR(0x7e, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x7f, 0x0a),
-+	ILI9881C_COMMAND_INSTR(0x80, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x81, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x82, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x83, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x84, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x85, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x86, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x87, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x88, 0x08),
-+	ILI9881C_COMMAND_INSTR(0x89, 0x02),
-+	ILI9881C_COMMAND_INSTR(0x8a, 0x02),
-+	ILI9881C_SWITCH_PAGE_INSTR(4),
-+	ILI9881C_COMMAND_INSTR(0x00, 0x80),
-+	ILI9881C_COMMAND_INSTR(0x70, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x71, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x66, 0xfe),
-+	ILI9881C_COMMAND_INSTR(0x82, 0x15),
-+	ILI9881C_COMMAND_INSTR(0x84, 0x15),
-+	ILI9881C_COMMAND_INSTR(0x85, 0x15),
-+	ILI9881C_COMMAND_INSTR(0x3a, 0x24),
-+	ILI9881C_COMMAND_INSTR(0x32, 0xac),
-+	ILI9881C_COMMAND_INSTR(0x8c, 0x80),
-+	ILI9881C_COMMAND_INSTR(0x3c, 0xf5),
-+	ILI9881C_COMMAND_INSTR(0x88, 0x33),
-+	ILI9881C_SWITCH_PAGE_INSTR(1),
-+	ILI9881C_COMMAND_INSTR(0x22, 0x0a),
-+	ILI9881C_COMMAND_INSTR(0x31, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x53, 0x78),
-+	ILI9881C_COMMAND_INSTR(0x55, 0x7b),
-+	ILI9881C_COMMAND_INSTR(0x60, 0x20),
-+	ILI9881C_COMMAND_INSTR(0x61, 0x00),
-+	ILI9881C_COMMAND_INSTR(0x62, 0x0d),
-+	ILI9881C_COMMAND_INSTR(0x63, 0x00),
-+	ILI9881C_COMMAND_INSTR(0xa0, 0x00),
-+	ILI9881C_COMMAND_INSTR(0xa1, 0x10),
-+	ILI9881C_COMMAND_INSTR(0xa2, 0x1c),
-+	ILI9881C_COMMAND_INSTR(0xa3, 0x13),
-+	ILI9881C_COMMAND_INSTR(0xa4, 0x15),
-+	ILI9881C_COMMAND_INSTR(0xa5, 0x26),
-+	ILI9881C_COMMAND_INSTR(0xa6, 0x1a),
-+	ILI9881C_COMMAND_INSTR(0xa7, 0x1d),
-+	ILI9881C_COMMAND_INSTR(0xa8, 0x67),
-+	ILI9881C_COMMAND_INSTR(0xa9, 0x1c),
-+	ILI9881C_COMMAND_INSTR(0xaa, 0x29),
-+	ILI9881C_COMMAND_INSTR(0xab, 0x5b),
-+	ILI9881C_COMMAND_INSTR(0xac, 0x26),
-+	ILI9881C_COMMAND_INSTR(0xad, 0x28),
-+	ILI9881C_COMMAND_INSTR(0xae, 0x5c),
-+	ILI9881C_COMMAND_INSTR(0xaf, 0x30),
-+	ILI9881C_COMMAND_INSTR(0xb0, 0x31),
-+	ILI9881C_COMMAND_INSTR(0xb1, 0x32),
-+	ILI9881C_COMMAND_INSTR(0xb2, 0x00),
-+	ILI9881C_COMMAND_INSTR(0xb1, 0x2e),
-+	ILI9881C_COMMAND_INSTR(0xb2, 0x32),
-+	ILI9881C_COMMAND_INSTR(0xb3, 0x00),
-+	ILI9881C_COMMAND_INSTR(0xb6, 0x02),
-+	ILI9881C_COMMAND_INSTR(0xb7, 0x03),
-+	ILI9881C_COMMAND_INSTR(0xc0, 0x00),
-+	ILI9881C_COMMAND_INSTR(0xc1, 0x10),
-+	ILI9881C_COMMAND_INSTR(0xc2, 0x1c),
-+	ILI9881C_COMMAND_INSTR(0xc3, 0x13),
-+	ILI9881C_COMMAND_INSTR(0xc4, 0x15),
-+	ILI9881C_COMMAND_INSTR(0xc5, 0x26),
-+	ILI9881C_COMMAND_INSTR(0xc6, 0x1a),
-+	ILI9881C_COMMAND_INSTR(0xc7, 0x1d),
-+	ILI9881C_COMMAND_INSTR(0xc8, 0x67),
-+	ILI9881C_COMMAND_INSTR(0xc9, 0x1c),
-+	ILI9881C_COMMAND_INSTR(0xca, 0x29),
-+	ILI9881C_COMMAND_INSTR(0xcb, 0x5b),
-+	ILI9881C_COMMAND_INSTR(0xcc, 0x26),
-+	ILI9881C_COMMAND_INSTR(0xcd, 0x28),
-+	ILI9881C_COMMAND_INSTR(0xce, 0x5c),
-+	ILI9881C_COMMAND_INSTR(0xcf, 0x30),
-+	ILI9881C_COMMAND_INSTR(0xd0, 0x31),
-+	ILI9881C_COMMAND_INSTR(0xd1, 0x2e),
-+	ILI9881C_COMMAND_INSTR(0xd2, 0x32),
-+	ILI9881C_COMMAND_INSTR(0xd3, 0x00),
-+	ILI9881C_SWITCH_PAGE_INSTR(0),
-+};
-+
- static const struct ili9881c_instr w552946ab_init[] = {
- 	ILI9881C_SWITCH_PAGE_INSTR(3),
- 	ILI9881C_COMMAND_INSTR(0x01, 0x00),
-@@ -1772,6 +1970,23 @@ static const struct drm_display_mode tl050hdv35_default_mode = {
- 	.height_mm	= 110,
+@@ -200,6 +221,7 @@ struct inno_video_phy_plat_data {
+ 	const struct inno_mipi_dphy_timing *inno_mipi_dphy_timing_table;
+ 	const unsigned int num_timings;
+ 	enum phy_max_rate max_rate;
++	unsigned int max_lanes;
  };
  
-+static const struct drm_display_mode w552946aaa_default_mode = {
-+	.clock		= 65000,
-+
-+	.hdisplay	= 720,
-+	.hsync_start	= 720 + 52,
-+	.hsync_end	= 720 + 52 + 8,
-+	.htotal		= 720 + 52 + 8 + 48,
-+
-+	.vdisplay	= 1280,
-+	.vsync_start	= 1280 + 16,
-+	.vsync_end	= 1280 + 16 + 6,
-+	.vtotal		= 1280 + 16 + 6 + 15,
-+
-+	.width_mm	= 68,
-+	.height_mm	= 121,
-+};
-+
- static const struct drm_display_mode w552946aba_default_mode = {
- 	.clock		= 64000,
- 
-@@ -1983,6 +2198,15 @@ static const struct ili9881c_desc tl050hdv35_desc = {
- 	.default_address_mode = 0x03,
+ struct inno_dsidphy {
+@@ -258,6 +280,24 @@ struct inno_mipi_dphy_timing inno_mipi_dphy_timing_table_max_1ghz[] = {
+ 	{1000000000, 0x0, 0x09, 0x20, 0x09, 0x27},
  };
  
-+static const struct ili9881c_desc w552946aaa_desc = {
-+	.init = w552946aaa_init,
-+	.init_length = ARRAY_SIZE(w552946aaa_init),
-+	.mode = &w552946aaa_default_mode,
-+	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+		      MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
-+	.lanes = 2,
++static const
++struct inno_mipi_dphy_timing inno_mipi_dphy_timing_table_max_1_5ghz[] = {
++	{ 110, 0x02, 0x7f, 0x16, 0x02, 0x02},
++	{ 150, 0x02, 0x7f, 0x16, 0x03, 0x02},
++	{ 200, 0x02, 0x7f, 0x17, 0x04, 0x02},
++	{ 250, 0x02, 0x7f, 0x17, 0x05, 0x04},
++	{ 300, 0x02, 0x7f, 0x18, 0x06, 0x04},
++	{ 400, 0x03, 0x7e, 0x19, 0x07, 0x04},
++	{ 500, 0x03, 0x7c, 0x1b, 0x07, 0x08},
++	{ 600, 0x03, 0x70, 0x1d, 0x08, 0x10},
++	{ 700, 0x05, 0x40, 0x1e, 0x08, 0x30},
++	{ 800, 0x05, 0x02, 0x1f, 0x09, 0x30},
++	{1000, 0x05, 0x08, 0x20, 0x09, 0x30},
++	{1200, 0x06, 0x03, 0x32, 0x14, 0x0f},
++	{1400, 0x09, 0x03, 0x32, 0x14, 0x0f},
++	{1500, 0x0d, 0x42, 0x36, 0x0e, 0x0f},
 +};
 +
- static const struct ili9881c_desc w552946aba_desc = {
- 	.init = w552946ab_init,
- 	.init_length = ARRAY_SIZE(w552946ab_init),
-@@ -2023,6 +2247,7 @@ static const struct of_device_id ili9881c_of_match[] = {
- 	{ .compatible = "feixin,k101-im2byl02", .data = &k101_im2byl02_desc },
- 	{ .compatible = "startek,kd050hdfia020", .data = &kd050hdfia020_desc },
- 	{ .compatible = "tdo,tl050hdv35", .data = &tl050hdv35_desc },
-+	{ .compatible = "wanchanglong,w552946aaa", .data = &w552946aaa_desc },
- 	{ .compatible = "wanchanglong,w552946aba", .data = &w552946aba_desc },
- 	{ .compatible = "ampire,am8001280g", .data = &am8001280g_desc },
- 	{ .compatible = "raspberrypi,dsi-7inch", &rpi_7inch_desc },
+ static const
+ struct inno_mipi_dphy_timing inno_mipi_dphy_timing_table_max_2_5ghz[] = {
+ 	{ 110000000, 0x02, 0x7f, 0x16, 0x02, 0x02},
+@@ -372,6 +412,7 @@ static void inno_dsidphy_mipi_mode_enable(struct inno_dsidphy *inno)
+ 	u32 hs_exit, clk_post, clk_pre, wakeup, lpx, ta_go, ta_sure, ta_wait;
+ 	u32 hs_prepare, hs_trail, hs_zero, clk_lane_hs_zero, data_lane_hs_zero;
+ 	unsigned int i;
++	u32 val;
+ 
+ 	timings = inno->pdata->inno_mipi_dphy_timing_table;
+ 
+@@ -393,6 +434,23 @@ static void inno_dsidphy_mipi_mode_enable(struct inno_dsidphy *inno)
+ 		phy_update_bits(inno, REGISTER_PART_ANALOG, 0x0b,
+ 				CLOCK_LANE_VOD_RANGE_SET_MASK,
+ 				CLOCK_LANE_VOD_RANGE_SET(VOD_MAX_RANGE));
++	} else if (inno->pdata->max_rate == MAX_1_5GHZ) {
++		phy_update_bits(inno, REGISTER_PART_ANALOG, 0x18,
++				LANE0_PRE_EMPHASIS_ENABLE_MASK, LANE0_PRE_EMPHASIS_ENABLE);
++		phy_update_bits(inno, REGISTER_PART_ANALOG, 0x18,
++				LANE1_PRE_EMPHASIS_ENABLE_MASK, LANE1_PRE_EMPHASIS_ENABLE);
++		phy_update_bits(inno, REGISTER_PART_ANALOG, 0x19,
++				PRE_EMPHASIS_RANGE_SET_MASK,
++				PRE_EMPHASIS_RANGE_SET(PRE_EMPHASIS_MID_RANGE));
++		phy_update_bits(inno, REGISTER_PART_ANALOG, 0x1a,
++				LANE0_PRE_EMPHASIS_RANGE_SET_MASK,
++				LANE0_PRE_EMPHASIS_RANGE_SET(PRE_EMPHASIS_MID_RANGE));
++		phy_update_bits(inno, REGISTER_PART_ANALOG, 0x1b,
++				LANE1_PRE_EMPHASIS_RANGE_SET_MASK,
++				LANE1_PRE_EMPHASIS_RANGE_SET(PRE_EMPHASIS_MID_RANGE));
++		phy_update_bits(inno, REGISTER_PART_ANALOG, 0x0b,
++				CLOCK_LANE_VOD_RANGE_SET_MASK,
++				CLOCK_LANE_VOD_RANGE_SET(VOD_MAX_RANGE));
+ 	}
+ 	/* Enable PLL and LDO */
+ 	phy_update_bits(inno, REGISTER_PART_ANALOG, 0x01,
+@@ -518,10 +576,25 @@ static void inno_dsidphy_mipi_mode_enable(struct inno_dsidphy *inno)
+ 				T_TA_WAIT_CNT(ta_wait));
+ 	}
+ 
+-	/* Enable all lanes on analog part */
++	/* Enable lanes on analog part */
++	switch (inno->pdata->max_lanes) {
++	case 1:
++		val =  LANE_EN_0;
++		break;
++	case 2:
++		val =  LANE_EN_0 | LANE_EN_1;
++		break;
++	case 3:
++		val = LANE_EN_0 | LANE_EN_1 | LANE_EN_2;
++		break;
++	case 4:
++	default:
++		val = LANE_EN_0 | LANE_EN_1 | LANE_EN_2 | LANE_EN_3;
++		break;
++	}
++
+ 	phy_update_bits(inno, REGISTER_PART_ANALOG, 0x00,
+-			LANE_EN_MASK, LANE_EN_CK | LANE_EN_3 | LANE_EN_2 |
+-			LANE_EN_1 | LANE_EN_0);
++			LANE_EN_MASK, LANE_EN_CK | val);
+ }
+ 
+ static void inno_dsidphy_lvds_mode_enable(struct inno_dsidphy *inno)
+@@ -680,12 +753,21 @@ static const struct inno_video_phy_plat_data max_1ghz_video_phy_plat_data = {
+ 	.inno_mipi_dphy_timing_table = inno_mipi_dphy_timing_table_max_1ghz,
+ 	.num_timings = ARRAY_SIZE(inno_mipi_dphy_timing_table_max_1ghz),
+ 	.max_rate = MAX_1GHZ,
++	.max_lanes = 4,
++};
++
++static const struct inno_video_phy_plat_data max_1_5ghz_video_phy_plat_data = {
++	.inno_mipi_dphy_timing_table = inno_mipi_dphy_timing_table_max_1_5ghz,
++	.num_timings = ARRAY_SIZE(inno_mipi_dphy_timing_table_max_1_5ghz),
++	.max_rate = MAX_1_5GHZ,
++	.max_lanes = 2,
+ };
+ 
+ static const struct inno_video_phy_plat_data max_2_5ghz_video_phy_plat_data = {
+ 	.inno_mipi_dphy_timing_table = inno_mipi_dphy_timing_table_max_2_5ghz,
+ 	.num_timings = ARRAY_SIZE(inno_mipi_dphy_timing_table_max_2_5ghz),
+ 	.max_rate = MAX_2_5GHZ,
++	.max_lanes = 4,
+ };
+ 
+ static int inno_dsidphy_probe(struct platform_device *pdev)
+@@ -767,6 +849,9 @@ static const struct of_device_id inno_dsidphy_of_match[] = {
+ 	}, {
+ 		.compatible = "rockchip,rk3368-dsi-dphy",
+ 		.data = &max_1ghz_video_phy_plat_data,
++	}, {
++		.compatible = "rockchip,rk3506-dsi-dphy",
++		.data = &max_1_5ghz_video_phy_plat_data,
+ 	}, {
+ 		.compatible = "rockchip,rk3568-dsi-dphy",
+ 		.data = &max_2_5ghz_video_phy_plat_data,
 -- 
 2.51.1
 
