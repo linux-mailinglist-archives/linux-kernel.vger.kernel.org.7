@@ -1,99 +1,62 @@
-Return-Path: <linux-kernel+bounces-888707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6886CC3BB7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:26:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA85DC3BB91
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EA21B20A4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:24:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 015134E5C53
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B490342C96;
-	Thu,  6 Nov 2025 14:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D3831D371;
+	Thu,  6 Nov 2025 14:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z1cc9OOq";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MX8E8WqG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="otBIPjaF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD2C342148
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F27D30EF8F;
+	Thu,  6 Nov 2025 14:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762438743; cv=none; b=NzFPkxRpcEgy/7zn8MKrihn+gKYHkHKgN0bBJd/528eqr3bJFuHDizwjFZ7xT90a5NgnFCxXzFoxt9RwfM4mta2EZzm9cl1C2sPuCCXMea4TCKaroYf+TTHqXKcuWHuDIvdqFOO0jnZ7MSCRGVIFm0ZYHkrgBJCi07hdotsr9kc=
+	t=1762438750; cv=none; b=X46eHII+B4dIbQhEYpGZ4urJDKfCuyRE3+QmhYGVZAwZwoLz5hyAgxYTsWOu2nqnm1AUF7JnP1R0MmM7+NRmb901/UBuixMfchWyxRP8oc3NgOJd8Yh3cgb1kFFheoh4QdRAB7X3QWpflByW9BYPf8sJFnYZMJ87d7/K24Keimk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762438743; c=relaxed/simple;
-	bh=ecXPWFAbT2zz2E6hGr3lsgOC2vwHjsIE0/qnPxMclIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ldQAypdzTreG0lodVScQyKAi5XLFNXUwEAcUiNY6GskOrJ6R90pBN5HhlXVh8ayGZRl3kqCBr3ZSwa/KFh3etvCwyi7e/m/kbXhz6SFZrowqdsrOhA8hoE3ae0HXYFx2+uo+2Up7X7nAB+oUCs3SQc4+WEzFaH3Ake3hmRoUD5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z1cc9OOq; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MX8E8WqG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762438740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2558/5DuSGeHTSysEKVn43dBQXRVp9ibyTXm/MgXyNU=;
-	b=Z1cc9OOqo23nTkSiBS9XnJMGHjMCY1/vTmvAMXYs/zowtj+c7gkztKUO8Jzmqsf1zqHxAC
-	Hug9JlxEZ103/dgg7Jk9x/JZIKgrOUH8DwKk/lRV7qZHgTPHutR6m0ytFZA3oYveblHJmy
-	yvLI+Y4KFZquNDXHQ+5nu0fzys+nTAI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-494-TBBYtv5rMt-ys9MLhZkoCg-1; Thu, 06 Nov 2025 09:18:59 -0500
-X-MC-Unique: TBBYtv5rMt-ys9MLhZkoCg-1
-X-Mimecast-MFC-AGG-ID: TBBYtv5rMt-ys9MLhZkoCg_1762438738
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-477212937eeso6273675e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:18:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762438738; x=1763043538; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2558/5DuSGeHTSysEKVn43dBQXRVp9ibyTXm/MgXyNU=;
-        b=MX8E8WqGP2A//cTJpXEtpNVFwQeSFR9cfCKP3ixLcaqQhj3ezDsbRJ+E1PUiK+jA3o
-         Oyt9bhYwgaIXTI8irjV40OVI0IBHK0n/SFaYq6iSouNrrgNDrRLHD+cCa+w8POzDx4cw
-         d70ZIgh1phTfn0Qorcr4Kqy9lVDHfJGFP8AbX0I9cS1tBadZfDoPo6jDgQxWQRTebLsf
-         sVBZiE2eIoMlK0SmmS91IHNHCBX1hvUM4bK6+1QJxWnG69qb+uZefR9tdVYF+DUlmykK
-         KZAe2R2etXJ06Oi0lUQ6i619ANnow7W1p1wjpVw0uyngyaJ4+Ad/+lMks3bY0mVgxnph
-         DjjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762438738; x=1763043538;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2558/5DuSGeHTSysEKVn43dBQXRVp9ibyTXm/MgXyNU=;
-        b=t1Me53m4gBywbYsdZL2TPbgPABYabrLH+SU4XmVGP3DS37Tfy8rro/+ALsbUP+j2ZO
-         TRANEQOyiQhclnehEBBzXuIk7EI9BZkr3eyHjCESBgH5EgdbtC0kXmtT3apt72dpGljR
-         YRr211ZgJbOpB5hd5haRE67wdFlokhOVscePnjAiEaMa2kvvFKHdBR4ZQJlW2ayTr2Oz
-         BXZ1r3cSRIevKmpbAjp1t5CNHs6vf7f+qnX9LmVmBjC0NwuwYQi5ejoS1gARQWv25Red
-         ljXlO0P78qiSgYv8tmKMOiUwM/rKUQqp0+PpALaOELJAKCxCy51Nj0Ngbo+qytWoijyC
-         gwig==
-X-Forwarded-Encrypted: i=1; AJvYcCUTHWkSD7o+Tr/opJIIbUCl3HIuSxIni0VQVI+fupf5sej4jQ8YxFO3h8CTCgsV3SxGZNU/tX8eKWLM5Q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqCrFi+qC6AqGW5h8S/Equ37XFboaQHpKeZc/QazOy/0k15N7v
-	/gIV1tnxAUyXsFM08LyOLloSuhS/jOc2nbIWAp4ZkrOdHqy11+s9l7EQAu2DzGnpRqu4qT7uLw2
-	JayaxewYXLQl35oCfd6iuLgmsFAn2C1MJiCYTktb+ZeSq4gTHVGeQh3Lmza4M1JZ1pg==
-X-Gm-Gg: ASbGncuexg1HMWvCm3h/zn2WXvymmCTPI9jOxxBkzbvwKbo4jZKv5MTVUaUoyc+P1u1
-	MIB8k/4ovRmxZIpl3KBL/435QbqSgOFwBIUfzeaI38rPhmAh8Cn4Hf9JTNTvnyhqyh6oTDhGUWG
-	FuER4Z0UgOhGYeHhzqg4qN/+TBjabiNt0KagkTtfuVjZ5akJvVj3M4yu1gwM+GiWWS2DVM3ailn
-	0pnA2xj2Awx2CIBweOEaw6SgGq/KOsKAhaSyFwmCFYUGl+/0YaJj2rfq8Q59fHU6mcMDm/CMbq4
-	aVwQPjaf1Jr1SV9T/NFe9pdforOo6mheMAH+jAdU9NEj/qLIMKR/jgumc2V9YZo2VpOP2SuoYwn
-	o/A==
-X-Received: by 2002:a05:600c:1552:b0:475:dd8d:2f52 with SMTP id 5b1f17b1804b1-4775ce3f136mr88569365e9.32.1762438738011;
-        Thu, 06 Nov 2025 06:18:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFn0NuCZ5fprkStyYtobcANdwvR7UeicN84jVnofOHneho0o5wIY1CsG7J8Q2tZQ79l336p/Q==
-X-Received: by 2002:a05:600c:1552:b0:475:dd8d:2f52 with SMTP id 5b1f17b1804b1-4775ce3f136mr88568195e9.32.1762438736530;
-        Thu, 06 Nov 2025 06:18:56 -0800 (PST)
-Received: from [192.168.88.32] ([212.105.155.83])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb403849sm5669190f8f.1.2025.11.06.06.18.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 06:18:56 -0800 (PST)
-Message-ID: <d9b8ec8a-f541-4356-8c42-e29adced59c0@redhat.com>
-Date: Thu, 6 Nov 2025 15:18:54 +0100
+	s=arc-20240116; t=1762438750; c=relaxed/simple;
+	bh=xeNaC0f2NZK0/hHTlDUwQ4kSxndyb7w5Ep+As9A8308=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UBJQrr9jPoEP0vQMv8fd2mTmhkiz1C7PkK6u/pKHdoO3YJjaIEol969DpCjBzWtKFisRiFPc8l7+lzRTcPi8HmNzuXNFcovfzXiTgLSbiwke/0Q/LNFfimKDFD43S92pWt9M8+0HpY+a8fOKsIfuVgWByKVyaxARS6+TJwc5J8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=otBIPjaF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A691D482389835;
+	Thu, 6 Nov 2025 14:19:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QZ10Ag4gjfnxqE0SHZIEWVP/xy51PCcDJPNPWfm+s3M=; b=otBIPjaFbn4G2Fv/
+	JgonaUmjGEB0J0ArM5qD9qu7Yh4KY27CGfcmiSJFel4FDB1uwPniA+gr6Pl0hJvX
+	SBAHJ0BZLLiVbcdUk5dkbU002iVfO1Ci+LXWodWuaO0WdjlIiWQXo44A0IcKQJ/y
+	hwJ0CgZuuZm4Cets7WbFWkpUNLRm20D86hobBWcwGygKjSHOQBVzRGDA9DMpgCUD
+	sa2MTnSBTczRbrh7/7SDjdfnZ1DBILS7DDeSUsXteMQgK2XvkAI3H8/nZcImUyiS
+	RTnpzMmKusiB2DyY6hkoUBA3/haQtz+2v5ZN17Fj55v+60nplm6WFd43uQzfcWpU
+	t3kGnQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8h9ut4pg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 14:19:05 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A6EJ4In013643
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Nov 2025 14:19:04 GMT
+Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 6 Nov
+ 2025 06:19:01 -0800
+Message-ID: <000027d7-279c-4c3a-b438-5af5b657578d@quicinc.com>
+Date: Thu, 6 Nov 2025 22:18:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,108 +64,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] ppp: enable TX scatter-gather
-To: Qingfang Deng <dqfext@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, linux-ppp@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251103031501.404141-1-dqfext@gmail.com>
+Subject: Re: [PATCH v3 1/1] Bluetooth: btusb: add default nvm file
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>
+CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
+        <quic_chezhou@quicinc.com>
+References: <20251104112441.2667316-1-quic_shuaz@quicinc.com>
+ <20251104112441.2667316-2-quic_shuaz@quicinc.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20251103031501.404141-1-dqfext@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+In-Reply-To: <20251104112441.2667316-2-quic_shuaz@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=R5UO2NRX c=1 sm=1 tr=0 ts=690cae59 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=7vm6EOYB4fWX4Y2RDsUA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 6pcs3dpxy3JDAuJ26T0eHaHZxKkC1v2A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDExMyBTYWx0ZWRfX8HGeGLw9mfco
+ m09p0NEoj5k9RuuMQrsujDRFeuHIlsNvGX9Ai1DjNEvTshWrD5ZpY5kiVhPAZBlxSkdmUzPm/qW
+ xqYyXy8wNf78NEXG+FW7ZkSvHnmNwB3C/EeVHXCL8AvzS7+y7/XQT1GhKArH5AJv0KQUOr+esrj
+ myidjfsK2CzsTNpPBSnKaIJQj2dmfLyBHsk70K5pJXufBW0jBiowJe6Q3CoTd3TuRFQYtljFUZv
+ va0+V9j8UfTuddxaOaKqgPC7Fx4/rn0Jfz6nccFRQagMfLWlJWELdCizivdbi5u+B+b6r+VrP8G
+ DXFzJpih8CcVHMue5BgJiDnMDz5sHOZrx/k2HpDPgji8fUfhrtEB4fAq2LDJpFsnmtsiCxfUETX
+ m+d8MZ6zaTw24oY0WCxVFvhrWtr9Yw==
+X-Proofpoint-GUID: 6pcs3dpxy3JDAuJ26T0eHaHZxKkC1v2A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 phishscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511060113
 
-On 11/3/25 4:15 AM, Qingfang Deng wrote:
-> When chan->direct_xmit is true, and no compressors are in use, PPP
-> prepends its header to a skb, and calls dev_queue_xmit directly. In this
-> mode the skb does not need to be linearized.
-> Enable NETIF_F_SG and NETIF_F_FRAGLIST, and add
-> ppp_update_dev_features() to conditionally disable them if a linear skb
-> is required. This is required to support PPPoE GSO.
+Dear Luiz
 
-It's unclear to me why IFF_NO_QUEUE is necessary to avoid the
-linearization.
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+On 11/4/2025 7:24 PM, Shuai Zhang wrote:
+> If no NVM file matches the board_id, load the default NVM file.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
 > ---
-> v1 -> v2:
->  Changes dev->features under the TX spinlock to avoid races.
->  - https://lore.kernel.org/netdev/20250912095928.1532113-1-dqfext@gmail.com/
+>  drivers/bluetooth/btusb.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
 > 
->  drivers/net/ppp/ppp_generic.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-> index 854e1a95d29a..389542f0af5f 100644
-> --- a/drivers/net/ppp/ppp_generic.c
-> +++ b/drivers/net/ppp/ppp_generic.c
-> @@ -498,6 +498,17 @@ static ssize_t ppp_read(struct file *file, char __user *buf,
->  	return ret;
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index dcbff7641..020dbb0ab 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
 >  }
 >  
-> +static void ppp_update_dev_features(struct ppp *ppp)
-> +{
-> +	struct net_device *dev = ppp->dev;
-> +
-> +	if (!(dev->priv_flags & IFF_NO_QUEUE) || ppp->xc_state ||
-> +	    ppp->flags & (SC_COMP_TCP | SC_CCP_UP))
-> +		dev->features &= ~(NETIF_F_SG | NETIF_F_FRAGLIST);
-> +	else
-> +		dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST;
-> +}
-> +
->  static bool ppp_check_packet(struct sk_buff *skb, size_t count)
+>  static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+> -					const struct qca_version *ver)
+> +					const struct qca_version *ver,
+> +					u16 board_id)
 >  {
->  	/* LCP packets must include LCP header which 4 bytes long:
-> @@ -824,6 +835,7 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  	case PPPIOCSFLAGS:
->  		if (get_user(val, p))
->  			break;
-> +		rtnl_lock();
->  		ppp_lock(ppp);
->  		cflags = ppp->flags & ~val;
->  #ifdef CONFIG_PPP_MULTILINK
-> @@ -834,6 +846,12 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  		ppp_unlock(ppp);
->  		if (cflags & SC_CCP_OPEN)
->  			ppp_ccp_closed(ppp);
-> +
-> +		ppp_xmit_lock(ppp);
-> +		ppp_update_dev_features(ppp);
-> +		ppp_xmit_unlock(ppp);
-> +		netdev_update_features(ppp->dev);
-> +		rtnl_unlock();
->  		err = 0;
->  		break;
+>  	u32 rom_version = le32_to_cpu(ver->rom_version);
+>  	const char *variant, *fw_subdir;
+>  	int len;
+> -	u16 board_id;
 >  
-> @@ -1650,6 +1668,8 @@ static void ppp_setup(struct net_device *dev)
->  	dev->flags = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
->  	dev->priv_destructor = ppp_dev_priv_destructor;
->  	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
-> +	dev->features = NETIF_F_SG | NETIF_F_FRAGLIST;
-> +	dev->hw_features = dev->features;
->  	netif_keep_dst(dev);
->  }
+>  	fw_subdir = qca_get_fw_subdirectory(ver);
+> -	board_id = qca_extract_board_id(ver);
 >  
-> @@ -3112,13 +3132,17 @@ ppp_set_compress(struct ppp *ppp, struct ppp_option_data *data)
->  	if (data->transmit) {
->  		state = cp->comp_alloc(ccp_option, data->length);
->  		if (state) {
-> +			rtnl_lock();
->  			ppp_xmit_lock(ppp);
->  			ppp->xstate &= ~SC_COMP_RUN;
->  			ocomp = ppp->xcomp;
->  			ostate = ppp->xc_state;
->  			ppp->xcomp = cp;
->  			ppp->xc_state = state;
-> +			ppp_update_dev_features(ppp);
->  			ppp_xmit_unlock(ppp);
-> +			netdev_update_features(ppp->dev);
-> +			rtnl_unlock();
+>  	switch (le32_to_cpu(ver->ram_version)) {
+>  	case WCN6855_2_0_RAM_VERSION_GF:
+> @@ -3517,14 +3516,14 @@ static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+>  
+>  static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
+>  				    struct qca_version *ver,
+> -				    const struct qca_device_info *info)
+> +				    const struct qca_device_info *info,
+> +				    u16 board_id)
+>  {
+>  	const struct firmware *fw;
+>  	char fwname[80];
+>  	int err;
+>  
+> -	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
+> -
+> +	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
+>  	err = request_firmware(&fw, fwname, &hdev->dev);
+>  	if (err) {
+>  		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
+> @@ -3606,10 +3605,19 @@ static int btusb_setup_qca(struct hci_dev *hdev)
+>  	btdata->qca_dump.controller_id = le32_to_cpu(ver.rom_version);
+>  
+>  	if (!(status & QCA_SYSCFG_UPDATED)) {
+> -		err = btusb_setup_qca_load_nvm(hdev, &ver, info);
+> -		if (err < 0)
+> -			return err;
+> +		u16 board_id = qca_extract_board_id(&ver);
+>  
+> +		err = btusb_setup_qca_load_nvm(hdev, &ver, info, board_id);
+> +		if (err < 0) {
+> +			//if the board id is not 0, try to load the defalut nvm file
+> +			if (err == -ENOENT && board_id != 0) {
+> +				err = btusb_setup_qca_load_nvm(hdev, &ver, info, 0);
+> +				if (err < 0)
+> +					return err;
+> +			} else {
+> +				return err;
+> +			}
+> +		}
+>  		/* WCN6855 2.1 and later will reset to apply firmware downloaded here, so
+>  		 * wait ~100ms for reset Done then go ahead, otherwise, it maybe
+>  		 * cause potential enable failure.
 
-Instead of dynamically changing the features, what about always exposing
-SG and FRAGLIST and linearize the skb as need for compression's sake?
+Please let me know if there are any updates or if modifications are needed.
+Thank you!
 
-/P
-
+Best regards,
+Shuai
 
