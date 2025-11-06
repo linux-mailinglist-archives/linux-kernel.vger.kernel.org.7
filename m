@@ -1,189 +1,115 @@
-Return-Path: <linux-kernel+bounces-888049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B7BC39B2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:00:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E308DC39B3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A9554EF2C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A08618C7575
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E462FE04C;
-	Thu,  6 Nov 2025 09:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9860309DCD;
+	Thu,  6 Nov 2025 09:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QPXnUDcL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRmM3Hmh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1D4239E9E;
-	Thu,  6 Nov 2025 09:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0300C2A1C7;
+	Thu,  6 Nov 2025 09:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762419620; cv=none; b=Gv+uryxlLlT7MC5IDIxMFpDpP30Jh38PXXv7FjNnUbOj55LkM2Xj6IO0Y4IYAAsr3CE1UfcIbDT+6cbrbBcuEV3BYVHPCCBKc/pkPyvR4y3hOW4DZwKhGWqhZimR5Qd8Z0WL1TK/e8VhuIVtFdpynwid8iVvUKsapFdVJ8ZC3/8=
+	t=1762419642; cv=none; b=jOxSO/9cW7aG7k3IvhxNYE6u2nRaXPEp8/OtEUa1W7p8SSZamKqBENNRcdEjPUjdS1HRw9J/XsvAUdgSpkKf3iJzLmibDdy3e5Gch761rqL6mLgPORg9UElGpEdV0R4kNEP4ytjtU2PYvLvKNkZJdIzihP6Ap0icFjU0Q6cdNfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762419620; c=relaxed/simple;
-	bh=dDyHvtX05p1WbayGiNH5360z2meP1cpRfl9zSAmCDQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nraQBUdRW6hbjk0gDZhKhqjCfMBoz+UZ5uPKjmpB6qruwIrqHLBBjv9DFTBM1hvsfOuKNZvV7VSLqaOsbZvV99WKwWhbJkzRNdQyfc4m2ZehD5PBDHK40JfMq1gTa57FLyV57rY8hM11xs1XOm9ncVlAannpGc9GmZykdhBdwjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QPXnUDcL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762419616;
-	bh=dDyHvtX05p1WbayGiNH5360z2meP1cpRfl9zSAmCDQM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QPXnUDcLPa0qRTSblPIwFChQTByXlh5eKkZ1xMoI7Wf/kfRrGSl3Joeb0HDUlK6Iw
-	 bDvhN6ZIwnWJODJ+lJHjPf3F13eRtDHwYOgOe1uylSardsA5m/qHoSnhRcoFyYNfGZ
-	 0u4xYuDrjXC4XfciO/UYuis3ZxhCedroAqK4HBdjEWacA9EHn2/T92VMKtfbRNlIYU
-	 7fcHagvJTpwyVeYxJlffF5owE3Vq93nwQCoCkPv0ch6CM29VlsEIkrBp3MTN/4etjZ
-	 6nb2EKpFnGsgtMmqDIOA+kbKNl67LSVxIQhJ2dHjAUIZKNOE6stebJTGWHo0HVkFcR
-	 mZ1OoXE6qqE8Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DE6A317E1345;
-	Thu,  6 Nov 2025 10:00:15 +0100 (CET)
-Message-ID: <c760da37-1d13-4440-9457-afef83649db8@collabora.com>
-Date: Thu, 6 Nov 2025 10:00:15 +0100
+	s=arc-20240116; t=1762419642; c=relaxed/simple;
+	bh=tVUjwWb1CfWgeIFxeXGVCyzPXpJMgM4oRKMCYqPVFbY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YXFfJFPcETnEyRSQeNcINF0L7iQFaOKe+D7Qv9TQSk0bUQXhwGVUajm9nQhvE3QzXAFoR4/CY6wSNzTdsH2vbH3WQznHbEgE+a9UdsS1U53kpFZDPJeBESwO7k/YPYOMy/c4GmucLS3PH+maDmRltAyuKYEanphoofC/J5owpWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRmM3Hmh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F41A0C16AAE;
+	Thu,  6 Nov 2025 09:00:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762419641;
+	bh=tVUjwWb1CfWgeIFxeXGVCyzPXpJMgM4oRKMCYqPVFbY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=VRmM3HmhKTac01dyBAFzh10jmu3qUT/qNnzzwmY36iyIFGwMG4rJiaqvImFhgkeUi
+	 lr3AjCmqYu5g+SLprrcP0MF19A2K1QZYUVu1htQ675EIZMXyerJiItqeyK0Lk28iOC
+	 kCNB4z43SEwl0gNmqwqC7znVk48z8soyUFTPqIzBTMO6CqNWN64jCa6AzF1VN6RF5S
+	 lX6SD1BM1Re+pfvKZDJtKo7iF8C8ge2p/GzqkiTT1pe7URoSQmjFmkPy5CUzDPYnlI
+	 9ot5mFFN+7Bf0YaEVmLCmSoicYV1/tOnrT3Kp0rTmbMRexadJcDx5pDxjp7O+B2XNA
+	 UN3Unp/xUv/5Q==
+From: akemnade@kernel.org
+Subject: [PATCH v4 0/3] mfd: twl603x: add power button
+Date: Thu, 06 Nov 2025 10:00:24 +0100
+Message-Id: <20251106-twl6030-button-v4-0-fdf1aa6e1e9a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: mediatek-gen3: Ignore link up timeout
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Ryder Lee
- <ryder.lee@mediatek.com>, Jianjun Wang <jianjun.wang@mediatek.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251105062815.966716-1-wenst@chromium.org>
- <7250ae04-866f-489c-b1b6-b8a3d8200529@collabora.com>
- <CAGXv+5EwiL_-ozRARH2UBm5znHi1egBoCjmELN=17hvFF_oeoQ@mail.gmail.com>
- <3e1ffe72-b6a4-45cc-a053-190077818f19@collabora.com>
- <CAGXv+5GAyt6U710En_k=fq-CPrq_H6rmc=kpBNw4yXjj8qL2cw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5GAyt6U710En_k=fq-CPrq_H6rmc=kpBNw4yXjj8qL2cw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKhjDGkC/3XNTQ6CMBCG4auQrq2Z/kJdeQ/jgsIIjYSaFlFDu
+ LuFjRri8pvkeWciEYPDSA7ZRAKOLjrfpyF3Ganasm+QujptwoErBhzo8Og0CKD2Pgy+p4Woc2U
+ saEBNEroFvLjnGjyd025dHHx4rf2RLde/qZFRoEag1FKWlcnl8Yqhx27vQ0OW1si/vNh6njwYr
+ UQNquSWbbz4eAZq48Xy34ocLbdgCvPj53l+Azwsb84tAQAA
+X-Change-ID: 20251020-twl6030-button-83d759b060e6
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-omap@vger.kernel.org, 
+ Andreas Kemnade <akemnade@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1399; i=akemnade@kernel.org;
+ h=from:subject:message-id; bh=tVUjwWb1CfWgeIFxeXGVCyzPXpJMgM4oRKMCYqPVFbY=;
+ b=owGbwMvMwCUm/rzkS6lq2x3G02pJDJk8yevfr0tz7k/xWmUalsD2oHdqTW280alJl/Z+Pr5ba
+ tVx86nVHaUsDGJcDLJiiiy/rBXcPqk8yw2eGmEPM4eVCWQIAxenAEyE5zfDX7FrqtrWOWXVecz3
+ cr8F77p0KODwz+siS+akfZIwLdtgOJ2RoeVadI/eojXbv94W8LhyuKGmeyGj6bGq52b6LN589/3
+ PcAIA
+X-Developer-Key: i=akemnade@kernel.org; a=openpgp;
+ fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
 
-Il 06/11/25 06:52, Chen-Yu Tsai ha scritto:
-> On Wed, Nov 5, 2025 at 7:32 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 05/11/25 10:21, Chen-Yu Tsai ha scritto:
->>> On Wed, Nov 5, 2025 at 4:45 PM AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>
->>>> Il 05/11/25 07:28, Chen-Yu Tsai ha scritto:
->>>>> As mentioned in commit 886a9c134755 ("PCI: dwc: Move link handling into
->>>>> common code") come up later" in the code, it is possible for link up to
->>>>> occur later:
->>>>>
->>>>>      Let's standardize this to succeed as there are usecases where devices
->>>>>      (and the link) appear later even without hotplug. For example, a
->>>>>      reconfigured FPGA device.
->>>>>
->>>>> Another case for this is the new PCIe power control stuff. The power
->>>>> control mechanism only gets triggered in the PCI core after the driver
->>>>> calls into pci_host_probe(). The power control framework then triggers
->>>>> a bus rescan. In most driver implementations, this sequence happens
->>>>> after link training. If the driver errors out when link training times
->>>>> out, it will never get to the point where the device gets turned on.
->>>>>
->>>>> Ignore the link up timeout, and lower the error message down to a
->>>>> warning.
->>>>>
->>>>> This makes PCIe devices that have not-always-on power rails work.
->>>>> However there may be some reversal of PCIe power sequencing, since now
->>>>> the PERST# and clocks are enabled in the driver, while the power is
->>>>> applied afterwards.
->>>>>
->>>>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>>>
->>>> Ok, that's sensible.
->>>>
->>>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>>
->>>>> ---
->>>>> The change works to get my PCIe WiFi device working, but I wonder if
->>>>> the driver should expose more fine grained controls for the link clock
->>>>> and PERST# (when it is owned by the controller and not just a GPIO) to
->>>>> the power control framework. This applies not just to this driver.
->>>>>
->>>>> The PCI standard says that PERST# should hold the device in reset until
->>>>> the power rails are valid or stable, i.e. at their designated voltages.
->>>>
->>>> I completely agree with all of the above - and I can imagine multiple PCI-Express
->>>> controller drivers doing the same as what's being done in MTK Gen3.
->>>>
->>>> This means that the boot process may get slowed down by the port startup sequence
->>>> on multiple PCI-Express controllers (again not just MediaTek) and it's something
->>>> that must be resolved in some way... with the fastest course of action imo being
->>>> giving controller drivers knowledge of whether there's any device that is expected
->>>> to be powered off at that time (in order to at least avoid all those waits that
->>>> are expected to fail).
->>>
->>> That also requires some refactoring, since all the drivers _wait_ for link
->>> up before going into the PCI core, which does the actual child node parsing.
->>>
->>> I would like some input from Bartosz, who introduced the PCI power control
->>> framework, and Manivannan, who added slot power control.
->>>
->>>> P.S.: Chen-Yu, did you check if the same applies to the MTK previous gen driver?
->>>>          Could you please check and eventually send a commit to do the same there?
->>>
->>> My quick survey last week indicated that all the drivers except for the
->>> dwc family error out if link up timed out.
->>>
->>> I don't have any hardware for the older generation though. And it looks
->>> like for the previous gen, the driver performs even worse, since it can
->>> support multiple slots, and each slot is brought up sequentially. A slot
->>> is discarded if link up times out. And the whole driver errors out if no
->>> slots are working.
->>>
->>
->> Hey, that's bold.
->>
->> If only one driver (DWC) is working okay, there's something wrong that must be
->> fixed before that behavior change goes upstream (which it already did, ugh).
-> 
-> To be fair one only runs into it if they convert over to the PCI slot power
-> description in the device tree, and their hardware isn't DWC based. This
-> is pretty new.
-> 
+Like the TWL4030, the TWL603x also has a power button feature,
+so extend the TWL4030 power button driver to support TWL603x.
 
-That changes a lot of things then - I thought it was a regression, but it's not.
+Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
+---
+Changes in v4:
+- reorder includes
+- use register numbers in struct initializers directly
+- Link to v3: https://patch.msgid.link/20251105-twl6030-button-v3-0-9b37eb2b0989@kernel.org
 
->> This needs attention from both Bartosz and Mani really-right-now.
->>
->> I'm not sure about possible good solutions, and unfortunately I don't really have
->> any time to explore, so I'm not spitting any words on that - leaving this to both
->> Bartosz and Mani as that's also the right thing to do anyway.
-> 
-> Mani mentioned [1] that work towards moving the pwrctrl stuff into drivers
-> is almost complete. So I think we're covered.
-> 
+Changes in v3:
+- static definition of chipdata
+- stricter rules in common part of binding
+- Link to v2: https://lore.kernel.org/r/20251030-twl6030-button-v2-0-09653d05a2b1@kernel.org
 
-We're covered. Yes.
+Changes in v2:
+- integrate driver into existing TWL4030 driver
+- improve commit messages
+- Link to v1: https://lore.kernel.org/r/20251020-twl6030-button-v1-0-93e4644ac974@kernel.org
 
-Cheers,
-Angelo
+---
+Andreas Kemnade (3):
+      dt-bindings: mfd: twl: enable power button also for twl603x
+      Input: twl4030 - add TWL603x power button
+      ARM: dts: ti/omap: omap4-epson-embt2ws: add powerbutton
 
-> ChenYu
-> 
-> [1] https://lore.kernel.org/all/rz6ajnl7l25hfl2u7lloywtw7sq7smhb63hg76wjslyuwyjb7a@fhuafuino5kv/
+ Documentation/devicetree/bindings/mfd/ti,twl.yaml | 40 +++++++++++++---
+ arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts |  5 ++
+ drivers/input/misc/twl4030-pwrbutton.c            | 58 +++++++++++++++++++++--
+ 3 files changed, 93 insertions(+), 10 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251020-twl6030-button-83d759b060e6
 
+Best regards,
+--  
+Andreas Kemnade <akemnade@kernel.org>
 
 
