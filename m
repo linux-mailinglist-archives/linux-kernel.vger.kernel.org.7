@@ -1,158 +1,147 @@
-Return-Path: <linux-kernel+bounces-887836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D597BC39313
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C02C39307
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:50:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DBF83B6FFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:54:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97E93B815B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B162D8773;
-	Thu,  6 Nov 2025 05:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0622B2D7DE8;
+	Thu,  6 Nov 2025 05:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lo6Yx/mK"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9QWCuL3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A4D2D5410
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD2D1AA7BF;
+	Thu,  6 Nov 2025 05:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762408467; cv=none; b=I9SgZ8Se6hjUvizmwhxkwwEkHAQrXtPva5mJO3+MWHVpqd6BgrJodSXIMx529sqRWp3J956yCz9tyMnVV1cgv7xRncNgP7izBD9ayo4xTmnvQ7prVS10Sp4rTspC6PSH4W47OldP7GkfQK6jO9HPtqFPjm5Uy301CSuOs3Dh9aE=
+	t=1762408221; cv=none; b=hywQJbPqaZp24sbORS3FFrIhkIR0nAumPLfPC57Y4/FbmHIFnXoA+YdvqVAVMmwOtn8+JnxyFFuJ72gpjOE4Bzkji4QdaM6kCtZgn/ukcFPJCfuh6TCT4gYISQTWGq6iaZbc8ocrE838JbVU4NhL38krYFr2nonu9FO1h+dKhao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762408467; c=relaxed/simple;
-	bh=dSWBBBWYKlfD6DTf/xJCvME7WLo0qUOU7g3Zr51S4jY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iMh+MhWQmBfF4Be+hZ2qQv9i1aCSGunp9zY1cyHilC6bTCAHUrdg+ZuMIHeOhw5nZHOKCXRnfXvqxXzUqvuAyhDzQzT4ObichqSJjyJglvNW2ao1YCDCAYNOXRB4zGlAIDbahSrk+Qf0VGMNJ+a+KhHLtOjpp42BFPnDA6FOqJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lo6Yx/mK; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2952048eb88so7909945ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 21:54:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762408465; x=1763013265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CeNNU3zakAOXs/yWODz5gzeTeAq5p633IpP2qw5Jk7I=;
-        b=Lo6Yx/mKE4u8puQtm9CMpLCpUA7sdKDE7aGj4iEwAlXdj6IMZvVUWkN7g4HZpraO5i
-         EKrvq+gavZmXF8u4ccBdQLIQBUTtzthqFJfqaGkStzsVDeobroZdxgSAMplJLU08bQ+S
-         ovdaqGIUkFn7kCO7OpYdXg1RyJV+IU+KJAZqtaYxFyarKZbZAmnXtQUG5KpAjalvSRkH
-         G51Nn5IL8dXBT495Mf25NRasRfZVVp5nLLB4xbnU9LCOadHUP0dMnvd5ulGPyf+T1cJs
-         0ByPxPqnS2AMr5T3lguFDWNTcAleHWod6QPOtknhWTUDqkCFX6mgaip7baLkP9jVvm63
-         l+gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762408465; x=1763013265;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CeNNU3zakAOXs/yWODz5gzeTeAq5p633IpP2qw5Jk7I=;
-        b=qVpQffCsXKbrvA/AhQkgfjxtezq35aNsYG3VmVfHGVXLbeP9S+xaxrM2nHCAXFqMoz
-         itLAqInwnlkZNgzedg2gSf3AaCLeveA+4cd+GPz6jPMOWBYCX7mvcAI+g9qLmN+TYO0H
-         33m0Yi+xN/o3rfUMO49Cm8daxfF4VmZ92WD7pQujnyJg+wuVlQsQgmhJtJU/cJj9ws/G
-         3YMam+Cg1/HLpkmICotau3jlXMijJuf3iMqS3HBSMUEM0T+fnl6L9WHdPGMh5CS9FOM3
-         hfQw4RUZlzjxdP9+QYtbFJ1udAXLluFUX1G44PjRFC/T7RferSb3CoqLgrd28HUxjW3f
-         88GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWt5f7Jo+vsopIaZVV/TsKMpBLm+MpFYD7cDWCXS/bHoYcHysvW8pu83zx2s9rwt7jh6+inHNlYWthcgkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTR36Pfh3P0UuGvVTDvYRR+yaWjW3oIb6LsBBQeF8c0BYqDGo0
-	Jujs8EAvhNPxU2y8B2itQ5mEgW8xMitn5Zyq+4KVJJhT1l8kP6/o+T+R
-X-Gm-Gg: ASbGncvM1zrPqzARVXZMdxCNfdTUZSUzI9dd1gJMDZLatR/XvRYXjySOH4xElRWt0nJ
-	WE5l5FkeXrYQPkhdt+HQYc6DFxCRwKm8OX3nEiHFA69hQoUqQlG2k71PqU2exLBdoyT3hdv7MNl
-	2/9SfZta9mT3JhlRFebD+OoERj9fVG6nPyef4DhHSLu4R10LVQwzDNTg5+6Nb5Q/z11J64kROJk
-	qxV1wkRyMvuyp2n/H+32g9aBe/PorzGl9IkA6HYXnSC6T2lCgLJ7q41dBBtZnbYP9HPZv3CLxDv
-	iFevZiZdzfR3g/ZogCIY3aU0vsb7HlhinW3wyMbqAzROpUmSOVxLZqqnU+8JN8RCToPKYl8Qudo
-	HnBWoesYHeEaDrQDPzCkoEdz9lDligxbICY821WZXji8a4wLuNIcTXmMcpihY8L5Znc7px/LCI1
-	Vrgd0r5zP7W6M0MAISNcQtuGM=
-X-Google-Smtp-Source: AGHT+IH+TDqjcsT4LgnsJNDYdaPUbOW4zaulnASJiwtAFqEUZlSphmRmwHYwXI4vF3z+DMqsOeG7SQ==
-X-Received: by 2002:a17:902:f550:b0:295:9db1:ff3b with SMTP id d9443c01a7336-2962ad0c562mr89323605ad.6.1762408464968;
-        Wed, 05 Nov 2025 21:54:24 -0800 (PST)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651cc6595sm14513195ad.98.2025.11.05.21.54.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 21:54:24 -0800 (PST)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 071F7802F6;
-	Thu,  6 Nov 2025 13:57:21 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: richard@nod.at,
-	chengzhihao1@huawei.com,
-	miquel.raynal@bootlin.com,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH 1/1] mtd: ubi: skip programming unused bits in ubi headers
-Date: Thu,  6 Nov 2025 13:49:40 +0800
-Message-Id: <20251106054940.2728641-2-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251106054940.2728641-1-linchengming884@gmail.com>
-References: <20251106054940.2728641-1-linchengming884@gmail.com>
+	s=arc-20240116; t=1762408221; c=relaxed/simple;
+	bh=gXgFm0nmB0YJ5yu1Fa9yesgn0tHuol5VteV6hWKXbtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQG1GrHP1Y3MbGDqRVUxilkzcXx2Xfie2KFFsz9vYf9PbPp7DMAtXJX2NlW7FxMQw9OFiCRR/R+gXuQw+qQCDCcllIGgVZ3f4vW964wXxXd2ZPhYsgPsVK/rnAyRbobsr3RXCUtgjAJ0RQzRNwfxiRlqQOALz5j0sXUoAgL4Vbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9QWCuL3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5A1C4CEF7;
+	Thu,  6 Nov 2025 05:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762408220;
+	bh=gXgFm0nmB0YJ5yu1Fa9yesgn0tHuol5VteV6hWKXbtU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V9QWCuL3sJU5c1A7rBLayKmIjalVa9RTC7+SvjXo7j3b47f+rVt63Xi5ew6bw3WVf
+	 ezfkuqmOLqaPb1SXyxB+p0A/MlmV8rtGi2ozdErE3WlFJA0npklQCwWX7DnLPpjXXU
+	 rPqBNjGew61aVohh3JIq/OkzWKKypytCUS7ovqZeT8xlsih0FB5OOF27znyzltb8pt
+	 Y2EoVf3KCqo8u6ADK7guUbhGeR2LhbaI0GHkBzwubtCdgQntTwHOSgDnBqGhHJyqVJ
+	 dgMHElY4qCOh7218LSWOr+A/AAJumrtOCdyt0PBDybUiR7Mnw1WlpBX+OXMU7NV2Lu
+	 ABk5pQgZOvrhw==
+Date: Wed, 5 Nov 2025 21:50:18 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] perf test: Add test that command line period
+ overrides sysfs/json values
+Message-ID: <aQw3GqjU4GRLfjIF@google.com>
+References: <20251029222638.816100-1-irogers@google.com>
+ <20251029222638.816100-2-irogers@google.com>
+ <aQl06yRnXvdBEkJ4@google.com>
+ <CAP-5=fWtixi8ykDp_BO1nz_yj_1wZfUUWrCVb+6WbVE7vON6Eg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWtixi8ykDp_BO1nz_yj_1wZfUUWrCVb+6WbVE7vON6Eg@mail.gmail.com>
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+On Mon, Nov 03, 2025 at 09:22:00PM -0800, Ian Rogers wrote:
+> On Mon, Nov 3, 2025 at 7:37 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Wed, Oct 29, 2025 at 03:26:38PM -0700, Ian Rogers wrote:
+> > > The behavior of weak terms is subtle, add a test that they aren't
+> > > accidentally broken.
+> > >
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/perf/tests/shell/record_weak_term.sh | 25 ++++++++++++++++++++++
+> > >  1 file changed, 25 insertions(+)
+> > >  create mode 100755 tools/perf/tests/shell/record_weak_term.sh
+> > >
+> > > diff --git a/tools/perf/tests/shell/record_weak_term.sh b/tools/perf/tests/shell/record_weak_term.sh
+> > > new file mode 100755
+> > > index 000000000000..7b747b383796
+> > > --- /dev/null
+> > > +++ b/tools/perf/tests/shell/record_weak_term.sh
+> > > @@ -0,0 +1,25 @@
+> > > +#!/bin/bash
+> > > +# record weak terms
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +# Test that command line options override weak terms from sysfs or inbuilt json.
+> > > +set -e
+> > > +
+> > > +shelldir=$(dirname "$0")
+> > > +# shellcheck source=lib/setup_python.sh
+> > > +. "${shelldir}"/lib/setup_python.sh
+> > > +
+> > > +
+> > > +event=$(perf list --json | $PYTHON -c "import json,sys; next((print(e['EventName']) for e in json.load(sys.stdin) if e.get('Encoding') and 'period=' in e.get('Encoding')))")
+> >
+> > This line is too long
+> 
+> Is there a good way to split such a line?
 
-This patch prevents unnecessary programming of bits in ec_hdr and
-vid_hdr that are not used or read during normal UBI operation. These
-unused bits are typcially already set to 1 in erased flash and do not
-need to be explicitly programmed to 0 if they are not used.
+Wouldn't this work?
 
-Programming such unused areas offers no functional benefit and may
-result in unnecessary flash wear, reducing the overall lifetime of the
-device. By skipping these writes, we preserve the flash state as much as
-possible and minimize wear caused by redundant operations.
+  event=$(perf list --json | python -c '
+  import sys, json
+  for e in json.load(sys.stdin):
+    if e.get("Encoding") and "period=" in e.get("Encoding"):
+      print(e["EventName"])')
 
-This change ensures that only necessary fields are written when preparing
-UBI headers, improving flash efficiency without affecting functionality.
+> 
+> > and needs some explanation like what's like the original text and what it does.
+> 
+> I thought that was covered in the "if" below:
 
-Additionally, the Kioxia TC58NVG1S3HTA00 datasheet (page 63) also notes
-that continuous program/erase cycling with a high percentage of '0' bits
-in the data pattern can accelerate block endurance degradation.
-This further supports avoiding large 0x00 patterns.
+Yeah, but I think it's useful to have an example JSON text.
 
-Link: https://europe.kioxia.com/content/dam/kioxia/newidr/productinfo/datasheet/201910/DST_TC58NVG1S3HTA00-TDE_EN_31442.pdf
+Thanks,
+Namhyung
 
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/ubi/io.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/mtd/ubi/io.c b/drivers/mtd/ubi/io.c
-index a4999bce4..c21242a14 100644
---- a/drivers/mtd/ubi/io.c
-+++ b/drivers/mtd/ubi/io.c
-@@ -868,6 +868,8 @@ int ubi_io_write_ec_hdr(struct ubi_device *ubi, int pnum,
- 		return -EROFS;
- 	}
- 
-+	memset((char *)ec_hdr + UBI_EC_HDR_SIZE, 0xFF, ubi->ec_hdr_alsize - UBI_EC_HDR_SIZE);
-+
- 	err = ubi_io_write(ubi, ec_hdr, pnum, 0, ubi->ec_hdr_alsize);
- 	return err;
- }
-@@ -1150,6 +1152,11 @@ int ubi_io_write_vid_hdr(struct ubi_device *ubi, int pnum,
- 		return -EROFS;
- 	}
- 
-+	if (ubi->vid_hdr_shift)
-+		memset((char *)p, 0xFF, ubi->vid_hdr_alsize - UBI_VID_HDR_SIZE);
-+	else
-+		memset((char *)p + UBI_VID_HDR_SIZE, 0xFF, ubi->vid_hdr_alsize - UBI_VID_HDR_SIZE);
-+
- 	err = ubi_io_write(ubi, p, pnum, ubi->vid_hdr_aloffset,
- 			   ubi->vid_hdr_alsize);
- 	return err;
--- 
-2.25.1
-
+> 
+> > > +if [[ "$?" != "0" ]]
+> > > +then
+> > > +  echo "No sysfs/json events with inbuilt period."
+> > > +  exit 2
+> > > +fi
+> 
+> Thanks,
+> Ian
+> 
+> > > +
+> > > +if ! perf record -c 1000 -vv -e "$event" -o /dev/null true 2>&1 | \
+> > > +  grep -q -F '{ sample_period, sample_freq }   1000'
+> > > +then
+> > > +  echo "Unexpected verbose output and sample period"
+> > > +  exit 1
+> > > +fi
+> > > +exit 0
+> > > --
+> > > 2.51.1.851.g4ebd6896fd-goog
+> > >
 
