@@ -1,137 +1,190 @@
-Return-Path: <linux-kernel+bounces-889453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7898C3D989
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:28:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129EEC3D9B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 922383A78FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C111890E5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC5E3328F9;
-	Thu,  6 Nov 2025 22:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WB+F/SQY"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4B92FBDFA;
+	Thu,  6 Nov 2025 22:30:32 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9544F3346B3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC207199949
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762468130; cv=none; b=S5QJ6GgF4qvfp5WQjM5ClRmbqaG5ox0+Qe6Ot5HaUoVHftsQz2vYVywjcGrw7P1Kk875PfJ2BUubshRCuCZmoz1FWUNLCJm4D0HagAg+veD36T4ingSzOrt5gglB2wZoZ4+jN7K1vUuKyU/x2TseGGBx73Cn2lyBhwX6ATWjYes=
+	t=1762468231; cv=none; b=e5tOrihQLSZL5tb//AdUpXc7sPLrFbsaTKjQlrtRgUG4tVwnZDfimdZq7atW/ZZZG0dTdyyno3opU63L4vVtWs3BU4u60o23kMHtBax2jJVrhF/KbTpyfRz8aF3ecxLKC7CCUvi7YyYSzXPCPA+8q5lQVY0rA4ZjFn2CkE0ERQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762468130; c=relaxed/simple;
-	bh=4JTu03iX6vFDrPqW0GxtDjNlpHZuyhsfQKG/6UtvK4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LkXjrcmWHuhyQLQN9odXrpau1a+eaDC4Gd3VdO7obh4hhSlt3H8RgajdYe9U/joxt96+0tJmRRcq7ZRQ9uu40BYqkolB3o1NnTCn6ICDqpeAPLA2No7DJM4tRy2hG9WjDiaHwIVOYCBk3CiI8LbSU+2SW57zA+jj892FvldaIyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WB+F/SQY; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-94884c52a03so5849839f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:28:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1762468127; x=1763072927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6Ilnf9YNYEmJ0X/Bm5CjqVXNP0HKW5OPjipOTd8WS6M=;
-        b=WB+F/SQYXW4hmM6oPiGFcayhyQzlaJmxbldJM/t59/yjh7wBd4EhM+p9TNgp/N3yh8
-         kIMwbTA6Sj26fV73eF14Yebm83dT2X2RNPOdEAQNFhtyjMVY/zBvpL70UGMyGMxMgcPH
-         ytchO+Q1W/pM5zVk7mxHPx19xA/zxwKNJTFcE=
+	s=arc-20240116; t=1762468231; c=relaxed/simple;
+	bh=aoqPzFm7oDwFwoc7LASh6+cxqVFFNRpQUn4XqSIeZsw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=apxetZYrrJ/Y+O6yfRi2HYpCainG/FZ3ckt5T4cTFQckqoDbhfodpPseUXMfY61eU8SjKc+M9YS+vOOxq55Vtfplrn+fvTbym1uCoHPUM6qspSLfhajOPyzr9UBPLH31DtsHNVjx3z2e9qnPL+8XWQmftXRpFM81r+9ZCl/KqrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4332ad10c91so5211735ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:30:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762468127; x=1763072927;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Ilnf9YNYEmJ0X/Bm5CjqVXNP0HKW5OPjipOTd8WS6M=;
-        b=shORHH1Rk1zO9JbPI3vEoK26Dzxg1KD2Vejvig6Ozd/PDk0bez03JwBOw+nEvCPrEp
-         ku/OuOLBVuV/pcfXxp2wrIbN2KPSWUN5tdxD7mB+RmMqA0XGLjTEPsnpVfue1D/SuXo9
-         vhxaWq3umCKOLWwB3f3qeqq1TLkn6YLYQy5sXRcUt/uMxczMSAjTSfTwYixKlLQYa5b5
-         AAzR6saVJrUdJkPgtl5+wwb1kpIvo/Vlp8Mw2TjmdWaVcRaJW16RsdC/04Yd+KCtGFtz
-         RFLxpcb6Up9kN2S9ghmb3DNKpuJbnVq4jGWv/ChnvhtWsqanpwfePY4WHKjznaJvF/Rp
-         dOQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVliHYIHIFK/VUR8MmFazix1gg0f66tWw3e0NztS0uOFxVckue3p4AwlNGx6dRcDuf4utFKtZYFwOCr+U0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIusGqXsK/n8W0nenP19oiDOUwubXfYs9tR8MkZqrlZetAqhnO
-	4fmfFBjblggC1pb3/jSwPeP7U0ebFOEbVlksHUMJF9Y3BipLXRBr3xNJ6xZA1LCf1Tw=
-X-Gm-Gg: ASbGncsMwFZq36N4/UUshvF0yIwVZFMIEBF4sQ9bYIRT54886QKY1zrJAruKlPVRE5I
-	XxToLIsnhG9FYlusAqYiil0I+DeEJYlcC5m6l1opGpb4S7cOPXRBs0vmHMYvH9qhzkRT+3e/0PM
-	ykr/Cidz63d/IanAS0BeWyyfsEkPeUgzwfYkUJSRJnGNm9ZllqlZPeH1yloQNbu9PbOR2L1Rtdq
-	ld/Zh/vOl2yb5h51H94a+pjW1MtF25H4Iz2yFF7G0lYSp+GExmb7flo0LXdpXbKufnDlLan/shF
-	TNpvtwtfyrh+xNB7GUqNJV3FX/qI3G/FB/QjiktZ7c70VmWF4jNEZaFga37xUKs2pJXwqY4Fz8N
-	mxJYZhe4rj1d7PNt6vfFjMYqI8GQOJpINbepr/VcRbQS2xc1ow/klRlqL+Cdi9gy9CFBgJy5gQJ
-	9KZJMCC1yRLa6qWzUBbi8NPOc=
-X-Google-Smtp-Source: AGHT+IGJhK5ac0+9nCUlURCUKRMOk9Pshm81p9z0cIwy8e2oj0giXJGWDnsGxvYGWJlHAfrDjfabsA==
-X-Received: by 2002:a05:6e02:370c:b0:431:d726:9efd with SMTP id e9e14a558f8ab-4335f3cfb5dmr16442495ab.12.1762468126775;
-        Thu, 06 Nov 2025 14:28:46 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4334f42cad7sm15817345ab.4.2025.11.06.14.28.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 14:28:46 -0800 (PST)
-Message-ID: <0c7f307c-9de5-4d67-b9da-e728d43e00b6@linuxfoundation.org>
-Date: Thu, 6 Nov 2025 15:28:44 -0700
+        d=1e100.net; s=20230601; t=1762468229; x=1763073029;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M9i4whal81/zcSAHBrOH8La+Wz6AFlPsYwQERm7FWms=;
+        b=Jlfz62SEcd6x37sYDVE8+Plxu68ZojBtMxMyJujOYh4Yxp2lTgf9WYyE6XtpOCTHaW
+         8veA34bQJ3ocJ+Kzw4C89H0gyif8hupYkjVX9Hrb4kTpL/02hV+4yxYuOIVg/2X9QW6L
+         8hdReDqGZVpvzaC4gpuNSGcQo9+i7o6rCo02OxHVrVVKCrl0RCQNznwMhQC6Pp4BBWw9
+         Fc1NSpO2eqEinQV4//UqsFlAumEvq65LYTrD9ZB4iJgfbXWrg5lHawV1nkF+B0F++pnX
+         aJiI3G+RWA78wP6snCjcrHa8W0ZG3XILQ5UenBe/3WywUq8Wv7xJMmbWdidkspuzn8LT
+         hAsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvkrf5jhE6odP+Td5bnye22PSpkmKTlKoD5amoAW14xs/EAkvo1fyP9HXffnzJiVEPN/jbSE82m/TVmZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+14qzyxKOiMa1WLdH4EeUbYjr7iN350S1oeLE+jot09xzlq/y
+	Jc+p9kt199ODjm4eeB6t3H5pV8jSNaahb7D73eyidF3h6d6BtrfD7dLa6gjJj0MNEWdtMv4W9MC
+	RTHJQWW73+mR9M728FMLY1xVUuZoaRT9fsnCl94kCD5SXwLyl8QnYYerPN2o=
+X-Google-Smtp-Source: AGHT+IH5uw/iIj2y/V+P1SCd4V3iW16EXYXodigyiDNJPk+hbLfxZatAWtBsRRM4fNFj+ssVTx5tKZKEMYQ2Fz3AzQBLKa1C0Bj2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: fsl: fsl_ssi: Replace deprecated strcpy() with
- strscpy()
-To: hariconscious@gmail.com, shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com,
- festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: khalid@kernel.org, shuah@kernel.org, david.hunter.linux@gmail.com,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20251105052113.39999-3-hariconscious@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20251105052113.39999-3-hariconscious@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1546:b0:433:150:bacf with SMTP id
+ e9e14a558f8ab-4335f5928c2mr16471755ab.26.1762468229031; Thu, 06 Nov 2025
+ 14:30:29 -0800 (PST)
+Date: Thu, 06 Nov 2025 14:30:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690d2185.a70a0220.22f260.000e.GAE@google.com>
+Subject: [syzbot] [sctp?] BUG: corrupted list in sctp_destroy_sock
+From: syzbot <syzbot+ba535cb417f106327741@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
+	linux-sctp@vger.kernel.org, lucien.xin@gmail.com, marcelo.leitner@gmail.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/4/25 22:21, hariconscious@gmail.com wrote:
-> From: HariKrishna Sagala <hariconscious@gmail.com>
-> 
-> strcpy() is deprecated,use strscpy() instead.
-> No functional changes intended.
-> Link: https://github.com/KSPP/linux/issues/88
-> 
-> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
-> ---
-> This patch replaces strcpy() call with the strscpy() API.
-> strscpy() is preferred over strcpy()/strncpy() as per the
-> kernel documentation.
+Hello,
 
-Which kernel documentation and can you add why strscpy() ie
-better than strcpy() instead saying "as per the kernel documentation."
-> 
-> Thank you.
-> 
->   sound/soc/fsl/fsl_ssi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
-> index 320108bebf30..b2e1da1781ae 100644
-> --- a/sound/soc/fsl/fsl_ssi.c
-> +++ b/sound/soc/fsl/fsl_ssi.c
-> @@ -1447,7 +1447,7 @@ static int fsl_ssi_probe_from_dt(struct fsl_ssi *ssi)
->   			dev_err(dev, "failed to get SSI index property\n");
->   			return -EINVAL;
->   		}
-> -		strcpy(ssi->card_name, "ac97-codec");
-> +		strscpy(ssi->card_name, "ac97-codec");
->   	} else if (!of_property_read_bool(np, "fsl,ssi-asynchronous")) {
->   		/*
->   		 * In synchronous mode, STCK and STFS ports are used by RX
-> 
-> base-commit: 284922f4c563aa3a8558a00f2a05722133237fe8
+syzbot found the following issue on:
 
-thanks,
--- Shuah
+HEAD commit:    1a2352ad82b5 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1110fe7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=810aeb811fb1cca1
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba535cb417f106327741
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ff9704580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11372bcd980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1ba55bd42dcf/disk-1a2352ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/57da62b6c7d2/vmlinux-1a2352ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7d8bb5da864a/bzImage-1a2352ad.xz
+
+The issue was bisected to:
+
+commit 16942cf4d3e31b6246b7d000dd823f7b0b38bf8c
+Author: Kuniyuki Iwashima <kuniyu@google.com>
+Date:   Thu Oct 23 23:16:54 2025 +0000
+
+    sctp: Use sk_clone() in sctp_accept().
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1634e32f980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1534e32f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1134e32f980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ba535cb417f106327741@syzkaller.appspotmail.com
+Fixes: 16942cf4d3e3 ("sctp: Use sk_clone() in sctp_accept().")
+
+ slab net_namespace start ffff88803347c900 pointer offset 4344 size 9088
+list_del corruption. prev->next should be ffff8880799e9148, but was ffff8880799e8808. (prev=ffff88803347d9f8)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:64!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 6008 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:__list_del_entry_valid_or_report+0x15a/0x190 lib/list_debug.c:62
+Code: e8 7b 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 7c ee 92 fd 49 8b 17 48 c7 c7 80 0a bf 8b 48 89 de 4c 89 f9 e8 07 c6 94 fc 90 <0f> 0b 4c 89 f7 e8 4c 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 4d
+RSP: 0018:ffffc90003067ad8 EFLAGS: 00010246
+RAX: 000000000000006d RBX: ffff8880799e9148 RCX: b056988859ee6e00
+RDX: 0000000000000000 RSI: 0000000000000202 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffc90003067807 R09: 1ffff9200060cf00
+R10: dffffc0000000000 R11: fffff5200060cf01 R12: 1ffff1100668fb3f
+R13: dffffc0000000000 R14: ffff88803347d9f8 R15: ffff88803347d9f8
+FS:  00005555823e5500(0000) GS:ffff88812613e000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000480 CR3: 00000000741ce000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:132 [inline]
+ __list_del_entry include/linux/list.h:223 [inline]
+ list_del include/linux/list.h:237 [inline]
+ sctp_destroy_sock+0xb4/0x370 net/sctp/socket.c:5163
+ sk_common_release+0x75/0x310 net/core/sock.c:3961
+ sctp_close+0x77e/0x900 net/sctp/socket.c:1550
+ inet_release+0x144/0x190 net/ipv4/af_inet.c:437
+ __sock_release net/socket.c:662 [inline]
+ sock_close+0xc3/0x240 net/socket.c:1455
+ __fput+0x44c/0xa70 fs/file_table.c:468
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3890b8efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd5dc3b8a8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 0000000000015724 RCX: 00007f3890b8efc9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000001 R09: 000000055dc3bb9f
+R10: 0000001b2ec20000 R11: 0000000000000246 R12: 00007f3890de5fac
+R13: 00007f3890de5fa0 R14: ffffffffffffffff R15: 0000000000000003
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0x15a/0x190 lib/list_debug.c:62
+Code: e8 7b 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 7c ee 92 fd 49 8b 17 48 c7 c7 80 0a bf 8b 48 89 de 4c 89 f9 e8 07 c6 94 fc 90 <0f> 0b 4c 89 f7 e8 4c 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 4d
+RSP: 0018:ffffc90003067ad8 EFLAGS: 00010246
+RAX: 000000000000006d RBX: ffff8880799e9148 RCX: b056988859ee6e00
+RDX: 0000000000000000 RSI: 0000000000000202 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffc90003067807 R09: 1ffff9200060cf00
+R10: dffffc0000000000 R11: fffff5200060cf01 R12: 1ffff1100668fb3f
+R13: dffffc0000000000 R14: ffff88803347d9f8 R15: ffff88803347d9f8
+FS:  00005555823e5500(0000) GS:ffff88812613e000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000480 CR3: 00000000741ce000 CR4: 00000000003526f0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
