@@ -1,190 +1,130 @@
-Return-Path: <linux-kernel+bounces-888417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB552C3AC49
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:05:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D67EC3AC28
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7028E1AA58A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:57:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 802224FFBC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523C03191A4;
-	Thu,  6 Nov 2025 11:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848A531327C;
+	Thu,  6 Nov 2025 11:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOAX6D83"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTYUyF6O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D412D8379
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D141F3054CC;
+	Thu,  6 Nov 2025 11:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762430181; cv=none; b=CoWY0KcSG76v4hy7NrSGfEq8LtvTr6kti+3uZ4q1Q0fsRvJ/0dL8jr13eC6F8P78oKKzV8SzubmvJdKDrx6P0AieCfAWb/LgdShibvXJdUgkZBGCWUxLKwMXndBvt6TqPT4uyUicvJp3mopqtyV4UQ2ACzGqZuc+EqxmvrYMDF4=
+	t=1762430249; cv=none; b=lyMEXIzzhxNsZwceQemEtVk7BdFbi6c1cnWx6Uspbx8cCRKPXNjnN6w4BR1UFBvmN9U1n0w8qr+vimTnr+keKpnk9erIoEAhcXZfHzmf43nHXYGNgrP6mgrrFm+h9EqBF/eBjmmWY/VeAo5peJvUnsFGBbrhqUDNXr28koo+CDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762430181; c=relaxed/simple;
-	bh=F5ah8MsnK3Z9znouBMKy+zHLSoJBwjNa27W+pmH6JFY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LjnfLjucEKqQ7BPJfyp4JBgX03ZixwZSvcmck94Npb//SpA1lpN0XjbhDGWTdoEAFb7p6FlBWqlTzUTrqNi2wSQgqK5sYkV2AssQgnX1VNysw54HnZ7WbymzSF/PsYeCefbF/RY3REKoDRB4HnPmBNPx5i0H2v2ps6YDsI7aOao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOAX6D83; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7a1603a098eso563173b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:56:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762430179; x=1763034979; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNpcXHGc/4OOByDk3Xi+rklLjzHFy8Vk5vFGZ7I57lE=;
-        b=dOAX6D833vsJj457zNJu0vLzK6iIzbzazjs6i30oiu6LagC9kcB5mOjq6+prtGzY2x
-         ELku25DIxYDXi0vHZduZsz2tbEct4gYpppv3EAhpvTBCfE+Rt+qwuQvW7kfusC5O8T0S
-         OFcepC1TW0V4epixtjgBnPkXzgx73pt7bpwvQ0OaIQ9ixwNDcqF7b+i7l7XF/GCUflyN
-         rjVVJmrS9ImWpMK9YCfQZ55Kh4BGE3AeX2Mtl07dQ6N9SO96pXzA7WQwaxhoisJS7HiA
-         jXibqUsz/8fDQfnRahsesqH6WqR90E8J2G70IB3Y3Zter8I8MO4mvYYMdfIECKdJFhEJ
-         1Geg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762430179; x=1763034979;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uNpcXHGc/4OOByDk3Xi+rklLjzHFy8Vk5vFGZ7I57lE=;
-        b=d8DTPoAET4l5GRD3qCOTwhHhY3U8AIaWBSYC2qeMocVEm0kFi//rG8CG10ELEs4ZzH
-         apcZ/PGD7vTV0cIVDTSTAkdgshs4GBswMGsHB9rKRblRTTTaTvA7qY6JWr44ezh0rfvp
-         0WHMhDiBq4adUkDGCWLOYRsmiE2lRD1VqrVD+Gl+u6mTBDds+0rZka7b3kb0HKIdmFGY
-         PS5ZZjTp26t11MHQh847stf3jC+B5iPf9lMuVbcTVwUk3SnPViZQJIViuVXgaXaEVgt6
-         C4S9qkThEGXIWluHfjrYKDZgbeF3QauU9wUgmiOFfHJNpQTXz68q7QMtsNTzetyxFKkQ
-         AW/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWolvyHNhLPW0T55FT2pBEv/IA2R3dJ+uROjMFhvKlK212f23Znv41mSUZcpuXI1Kz4BZD2IXtf90DVdiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0KJecJuE7IvFERwSLAin+v3OIz4tsVZ8zHmfOzN2sW27K+Xzg
-	rmxxjM2t1PbTpafQU7DZXKQdncy01OzOXZPPZNWXsSlbti2LyrETY2Ii
-X-Gm-Gg: ASbGnctvmUzdkOe4QSYnGSKQAK2FPWImukCah/vGUE73I6r9oo++G4mBA088eSvyH/b
-	f4yzgaYkRWmwEy0PlyuNJDD3SZBid0iokdk2YN9fApDdKSRdrQ8488d4RFB+Q/gbc9P7zkgfHsg
-	AhgpELkgCBXByWAkU8798wadcHWKXgckQWR+9kEVTgOOBPMOsWUFLTyhaZauVNU/MoaqJNu5k2z
-	X7Uod+GzxdisxOCKC495Ya5ue9C1nrN7ZGMpizAb1dEz9qqf4bT0CTqQ258i34q8AKNU478uGuO
-	kKcZj4qw7En3vb+GM/FovWdWziQd9CPda+pfb/MNgcqTyLCfHrPKgj4RP6hWubR7THW/IMwZIG3
-	Jmpp0u8YvWNVrDy3f3B7yn3z10aIVFEItYscebzpqf03v8VWv1YiOi7bbs2h16uKK+W/JtwZyj2
-	Y/bmyyDz9/3yg=
-X-Google-Smtp-Source: AGHT+IFZTfSSmOqsnzyenxwbnVCwSP1cwq60iDyw7m55VKi4EtHZ+78miYEWY5PRHYIS5Aaap/hNxQ==
-X-Received: by 2002:a05:6a00:230b:b0:7a2:81fe:b742 with SMTP id d2e1a72fcca58-7ae1d63f297mr9571953b3a.12.1762430179016;
-        Thu, 06 Nov 2025 03:56:19 -0800 (PST)
-Received: from aheev.home ([2401:4900:88f4:f6c4:5041:b658:601d:5d75])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af7c4115a9sm2648580b3a.0.2025.11.06.03.56.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 03:56:18 -0800 (PST)
-From: Ally Heev <allyheev@gmail.com>
-Date: Thu, 06 Nov 2025 17:25:48 +0530
-Subject: [PATCH v3] net: ethernet: fix uninitialized pointers with free
- attribute
+	s=arc-20240116; t=1762430249; c=relaxed/simple;
+	bh=thdjpoj+CQFQEDmVxt2Zs5fZKs/cKk6AVQwlozuvWJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nhLhlF2jH0jr7n5VcE/ug1xA+6CIBwUZuQFJy9x2v9++4o8xe6/mCjBAn4HRVGYvg2jkEXW4ypye+A7k5i0PERRtYMBp9i8WUyeIDFdd/hWx2km8G6wbgzU09kfIHtK8VK2DtM9J7Be4OBgrOcLyDDZEe5U2hpfTY3V0IPPJJO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTYUyF6O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8622BC116C6;
+	Thu,  6 Nov 2025 11:57:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762430249;
+	bh=thdjpoj+CQFQEDmVxt2Zs5fZKs/cKk6AVQwlozuvWJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qTYUyF6O26+Q2CDV23JgJxKhSKSTHh2mAVe95GYqtnQJhu+HcdHdcJ7fGaAyR11Ty
+	 60/9bUkMq8qpusH7uMNiqf6f5xq4BjOAMO8wPiC2HWIRA3kEH9I0ynn4S9KjGOaf5B
+	 XHlE5wBiXGw4YpwwBuuBDlfHbqVcGiySeCZIDA9zJfF6YVg/2jsZEpV6BXMy8ClUhj
+	 i0Gl0mRj5MEQdiu56W/06HxyJUjFR786LW/nZp+YgSMcxmuiUwiWGKG9GQs0L6AbnQ
+	 IXvrpJd4oZNOtSNBt85SOBWqXCeoLcBi5uG8g8OhhAY0Oo3xxryhLzIcyrgAXLEasC
+	 /RCDto9TluJ/A==
+Date: Thu, 6 Nov 2025 17:27:16 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: zhangsenchuan <zhangsenchuan@eswincomputing.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, will@kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/3] PCI: qcom: Check for the presence of a device
+ instead of Link up during suspend
+Message-ID: <nhjlanhzndhlbtfohnkypwuzpw6nw43cysjmoam3qv4rrs22hr@ic3hgtfoeb6e>
+References: <20251106061326.8241-1-manivannan.sadhasivam@oss.qualcomm.com>
+ <20251106061326.8241-3-manivannan.sadhasivam@oss.qualcomm.com>
+ <35086b08.c4e.19a58a7d6bc.Coremail.zhangsenchuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-aheev-uninitialized-free-attr-net-ethernet-v3-1-ef2220f4f476@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAMOMDGkC/52NsQ6CMBRFf4V09pkWaCFO/odxaOkDXgLFlNqoh
- H+3MLHqds8dzlnYjJ5wZpdsYR4jzTS5BMUpY02vXYdANjHLeS6F4BJ0jxjh6chRID3QBy20HhF
- 0CB4cBsDQo99GZQVXWGpTtBVLwofHll577HZP3NMcJv/e21Fs71+ZKEBAq1DXpTG2kvzajZqGc
- zONbMvE/KhWP6nzpOZlbTVvpFVGHdXrun4B25jupz8BAAA=
-X-Change-ID: 20251105-aheev-uninitialized-free-attr-net-ethernet-7d106e4ab3f7
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- "K. Y. Srinivasan" <kys@microsoft.com>, 
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
- Dexuan Cui <decui@microsoft.com>
-Cc: Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
- Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3128; i=allyheev@gmail.com;
- h=from:subject:message-id; bh=F5ah8MsnK3Z9znouBMKy+zHLSoJBwjNa27W+pmH6JFY=;
- b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDJ5ei7Ny4nVWfJeUGdH1rezCw5x/ljgOH9Tku3f6Bfbb
- 3n5zI/b0lHKwiDGxSArpsjCKCrlp7dJakLc4aRvMHNYmUCGMHBxCsBErjxk+Gdsc+VJcu2UZ76Z
- Mq++hx007zi/87TXp1fBFSw28svXBskzMuz7vfxP6VEnIc2bpmJMT+PsuSRftbJyfHZ00HG+I+d
- Szg8A
-X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
- fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35086b08.c4e.19a58a7d6bc.Coremail.zhangsenchuan@eswincomputing.com>
 
-Uninitialized pointers with `__free` attribute can cause undefined
-behavior as the memory assigned randomly to the pointer is freed
-automatically when the pointer goes out of scope.
+On Thu, Nov 06, 2025 at 06:13:05PM +0800, zhangsenchuan wrote:
+> 
+> 
+> 
+> > -----Original Messages-----
+> > From: "Manivannan Sadhasivam" <manivannan.sadhasivam@oss.qualcomm.com>
+> > Send time:Thursday, 06/11/2025 14:13:25
+> > To: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, bhelgaas@google.com
+> > Cc: will@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, linux-arm-msm@vger.kernel.org, zhangsenchuan@eswincomputing.com, "Manivannan Sadhasivam" <manivannan.sadhasivam@oss.qualcomm.com>
+> > Subject: [PATCH 2/3] PCI: qcom: Check for the presence of a device instead of Link up during suspend
+> > 
+> > The suspend handler checks for the PCIe Link up to decide when to turn off
+> > the controller resources. But this check is racy as the PCIe Link can go
+> > down just after this check.
+> > 
+> > So use the newly introduced API, pci_root_ports_have_device() that checks
+> > for the presence of a device under any of the Root Ports to replace the
+> > Link up check.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index 805edbbfe7eb..b2b89e2e4916 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -2018,6 +2018,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+> >  static int qcom_pcie_suspend_noirq(struct device *dev)
+> >  {
+> >  	struct qcom_pcie *pcie;
+> > +	struct dw_pcie_rp *pp;
+> >  	int ret = 0;
+> >  
+> >  	pcie = dev_get_drvdata(dev);
+> > @@ -2053,8 +2054,9 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+> >  	 * powerdown state. This will affect the lifetime of the storage devices
+> >  	 * like NVMe.
+> >  	 */
+> > -	if (!dw_pcie_link_up(pcie->pci)) {
+> > -		qcom_pcie_host_deinit(&pcie->pci->pp);
+> > +	pp = &pcie->pci->pp;
+> > +	if (!pci_root_ports_have_device(pp->bridge->bus)) {
+> 
+> I'm a little confused.
+> The pci_root_ports_have_device function can help check if there is any device 
+> available under the Root Ports, if there is a device available, the resource 
+> cannot be released, is it also necessary to release resources when entering 
+> the L2/L3 state?
+> 
 
-It is better to initialize and assign pointers with `__free`
-attribute in one statement to ensure proper scope-based cleanup.
+It is upto the controller driver to decide. Once the link enters L2/L3, the
+device will be in D3Cold state. So the controller can just disable all PCIe
+resources to save power.
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-Signed-off-by: Ally Heev <allyheev@gmail.com>
----
-Changes in v3:
-- fixed style issues
-- Link to v2: https://lore.kernel.org/r/20251106-aheev-uninitialized-free-attr-net-ethernet-v2-1-048da0c5d6b6@gmail.com
+But it is not possible to transition all PCIe devices to D3Cold during suspend,
+for instance NVMe. I'm hoping to fix it too in the coming days.
 
-Changes in v2:
-- fixed non-pointer initialization to NULL
-- NOTE: drop v1
-- Link to v1: https://lore.kernel.org/r/20251105-aheev-uninitialized-free-attr-net-ethernet-v1-1-f6ea84bbd750@gmail.com
----
- drivers/net/ethernet/intel/ice/ice_flow.c       | 5 +++--
- drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+- Mani
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_flow.c b/drivers/net/ethernet/intel/ice/ice_flow.c
-index 6d5c939dc8a515c252cd2b77d155b69fa264ee92..3590dacf3ee57879b3809d715e40bb290e40c4aa 100644
---- a/drivers/net/ethernet/intel/ice/ice_flow.c
-+++ b/drivers/net/ethernet/intel/ice/ice_flow.c
-@@ -1573,12 +1573,13 @@ ice_flow_set_parser_prof(struct ice_hw *hw, u16 dest_vsi, u16 fdir_vsi,
- 			 struct ice_parser_profile *prof, enum ice_block blk)
- {
- 	u64 id = find_first_bit(prof->ptypes, ICE_FLOW_PTYPE_MAX);
--	struct ice_flow_prof_params *params __free(kfree);
- 	u8 fv_words = hw->blk[blk].es.fvw;
- 	int status;
- 	int i, idx;
- 
--	params = kzalloc(sizeof(*params), GFP_KERNEL);
-+	struct ice_flow_prof_params *params __free(kfree) =
-+		kzalloc(sizeof(*params), GFP_KERNEL);
-+
- 	if (!params)
- 		return -ENOMEM;
- 
-diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-index cbb5fa30f5a0ec778c1ee30470da3ca21cc1af24..368138715cd55cd1dadc686931cdda51c7a5130d 100644
---- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-+++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-@@ -1012,7 +1012,6 @@ static int idpf_send_get_caps_msg(struct idpf_adapter *adapter)
-  */
- static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
- {
--	struct virtchnl2_get_lan_memory_regions *rcvd_regions __free(kfree);
- 	struct idpf_vc_xn_params xn_params = {
- 		.vc_op = VIRTCHNL2_OP_GET_LAN_MEMORY_REGIONS,
- 		.recv_buf.iov_len = IDPF_CTLQ_MAX_BUF_LEN,
-@@ -1023,7 +1022,9 @@ static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
- 	ssize_t reply_sz;
- 	int err = 0;
- 
--	rcvd_regions = kzalloc(IDPF_CTLQ_MAX_BUF_LEN, GFP_KERNEL);
-+	struct virtchnl2_get_lan_memory_regions *rcvd_regions __free(kfree) =
-+		kzalloc(IDPF_CTLQ_MAX_BUF_LEN, GFP_KERNEL);
-+
- 	if (!rcvd_regions)
- 		return -ENOMEM;
- 
-
----
-base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-change-id: 20251105-aheev-uninitialized-free-attr-net-ethernet-7d106e4ab3f7
-
-Best regards,
 -- 
-Ally Heev <allyheev@gmail.com>
-
+மணிவண்ணன் சதாசிவம்
 
