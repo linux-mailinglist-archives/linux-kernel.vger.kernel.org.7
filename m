@@ -1,122 +1,153 @@
-Return-Path: <linux-kernel+bounces-887606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A0FC38B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:24:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F608C38B60
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44DA64E5A29
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:24:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CD63434E6BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548C8222582;
-	Thu,  6 Nov 2025 01:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B05E1F4174;
+	Thu,  6 Nov 2025 01:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hnWn1rcW"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BJ0kRpaG"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9171B221543
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DAC1465B4
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762392279; cv=none; b=o37/kMLA0LBO/C4hDD88w98mXkW810QId4yYZsBku+KMWd1y4OsMBMbUQNUg+z5UW/5yx9aYSLnD2Epsrsho16v0+DMI1q5bh+am1Vl5uhwB74VEnFYcALEksNAeLqI7aWuZwQR9wASEO1Hkmx7u6PJA2NvQCgVR32pUo4/gB7U=
+	t=1762392798; cv=none; b=PdsTs+gI2ay3s/cRy/d+ST2AmhRFYfcS5gCKxyLaQe0N7qZGYKPN3hYLYFWyVovyR5ZmhMa4VV5IaxaLMR+HkHHDq4j0F5ulz98FOT3LF8VgBo62R16KhnrLAqgG4OP64yjtVy5uAUo5k6d5TDQkjTqDq/WsenxDTN+fqzlXxSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762392279; c=relaxed/simple;
-	bh=YuqAP9iw5m0k8yqDCbNn6GdbDJxLVkg7prdjTg/+whc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Qk67BS3QFlgndxeuvM4QPe1aybNNr6Uz2sE79EC2fJfUe/hdnKqvBZiWjSJFCNgK7Nk+yyzS+P1ZohWcr8YxNGCTGbd1IzSAM4IO6xMXtxn/iObbATz57r4XkXxBUs9Kblem+gUPyrQ8dvosgIxgJl1gf1tvMgHMeB+QtXtGkSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hnWn1rcW; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-8801f4e308dso4970376d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:24:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762392276; x=1762997076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ciojNVrmV7+Z0WHPv+m6AyJCXXR4qy2RoeHAXQm3Zwg=;
-        b=hnWn1rcWiEvK+/8nGBH4voib+NAhkQMsQwYHlxXZhCot0+xsfB+pR/bZN2DmSjxBx1
-         cs9XbK7vCiqpeJG0kW+Natq/4emg2wySJpLdmcIA8JE8JD2MTAo4K7OkIPc9yGoJnaTu
-         kR5u+bt3LK1aiXklebnSquDuV6Oal+KAKtmoAPHZAL2JoB7JqhGylKelb9u1ZRVvuOPC
-         rsSOdYxCEZf03cZMp8Omn2wqMDcO/a4lEUoL87udBflbnvcZYxnDSW9i3j/Qhrucko+D
-         cGwacZZR2/srFAtxqWNMej7Z8h1Qhi4uYzlwJa39rapMpYGzefpzvFvhoyjFX3Vfdp7z
-         gSSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762392276; x=1762997076;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ciojNVrmV7+Z0WHPv+m6AyJCXXR4qy2RoeHAXQm3Zwg=;
-        b=ezoATdhuiPd2ED7KYdD5/tEOCMJ7/xlmc6kUqR9UHLHwtmIJrTqPvazod1ky1ypy6t
-         mIV07sKgiVwYjJolTPRvgLkhHOwBKmprFO6o99hopy1envYl6y3YSZ0aZ84jg9dgqpCQ
-         8PBiL5M/McRaF6xFKYWzvgbCxgk2au9dU82vg9V33dU0RR2ZUr2CuhVE7QPykVth6PtI
-         NiBzzsWDArVpdBiV0UeaMZpAc4r8UgdPksSqYgZ8IxwFkxlCKItTxl1MaKULF6VOCX3P
-         NWOdtvcO5fiCg59f1ycg1s8bG4ZpxxS8Y0/3fe6UxJE89ylgGkiMnWbTv+lTO4+jClAh
-         12Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWapQHwg+bpuhkFE3ohDt6EZsK9nviY5HLrsqPmZb/N5Gt3jyZadElBZUal1ddXa6UTGDrUVzySO4gj/Ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTDlhn4DBoEKjMRuJk9n8rNcui1QHx4dwWF6X9LyuDKl/3Lijm
-	UA0P+63A2+wDOyL1G8hFeYfsoqXG1emwfx2tUs2QK/FWxl6yLi0oEh8A7zICb40UjA8=
-X-Gm-Gg: ASbGncv9UBAjBawIiRXYIphuTPaRfIeeJA0/fMg6d+2SpEal4Qk7Ov+MXUqoVeQeIy0
-	+uhQxibkLjA4JZ9tLnoPcUjjBNEBwTbiNau2mMm4rIp/+m9QjjF3h4i4qtbpaET3Lg2p4JcFNBR
-	p3TxH00rl5MNGQfTmEHDDubQH2Ngur0Isdz2fXhNClmNGtWuCRHPIEv0lLD57LZGIwCahuEDdJ3
-	Ep5lOVqrhEt0hatgKFl45Z9efxqYA3mj0aL+p/l3JSlV9pX3dwcyrNnJc2IJbx3ooUCONhCGkFi
-	CVyN/xj9mJeSsktLk5vZLoH+1Wju1Q6T/3bD69rigrBtLj7WJZLw/3TNFYyOeLAaQvzz5TpzqK/
-	/cS28F6JHQfiCqYJZb6bWz4FmYe9v6NWOPMScaFCp7eMm2P08hZpzD/HnsB1wAqgT2EMhzts=
-X-Google-Smtp-Source: AGHT+IGW8dMBI8W38mAKSfcpKPv42jStcm1Jq3Lm9nyg1mPUQx9NVElx9coA94cKj7jGyUgQKJ01ow==
-X-Received: by 2002:a05:6214:20c6:b0:880:638f:1a1e with SMTP id 6a1803df08f44-88071188e82mr86814876d6.46.1762392276316;
-        Wed, 05 Nov 2025 17:24:36 -0800 (PST)
-Received: from [127.0.0.1] ([216.235.231.34])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8808290ca3csm9180786d6.25.2025.11.05.17.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 17:24:35 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shankari Anand <shankari.ak0208@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-In-Reply-To: <20251012142012.166230-1-shankari.ak0208@gmail.com>
-References: <20251012142012.166230-1-shankari.ak0208@gmail.com>
-Subject: Re: [PATCH v2] rust: block: update ARef and AlwaysRefCounted
- imports from sync::aref
-Message-Id: <176239227492.265257.9458847625438366848.b4-ty@kernel.dk>
-Date: Wed, 05 Nov 2025 18:24:34 -0700
+	s=arc-20240116; t=1762392798; c=relaxed/simple;
+	bh=2QuG6z1/rX6cN1Zwg4rkkpz8v7h9o+cglIUTpxNjK8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=OmGRNVczFyScSrTPkAMg0c6S319dcsym/iFdHzXKNFxujUZtU1NgU5R2UUDhjkKv5hodnWUE04blkZraF+lgkziLJMA+3nW+WMUHSHiIsVKRyqJXfM8rV3d7ZuUksRxGTYCfHNney501GKqHybsIRj8XcRKyvq2JI6h0F8BLgSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BJ0kRpaG; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251106012703epoutp047def70fa3f264a718d1b98ca0cf894ba~1RpJorsX21563715637epoutp04M
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:27:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251106012703epoutp047def70fa3f264a718d1b98ca0cf894ba~1RpJorsX21563715637epoutp04M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762392423;
+	bh=FUmPilvOX+860M4bzKodyhpSFYaspyR5h6f6riBEbMg=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=BJ0kRpaGDgG7Lhoz7ehFqfFAMowIADGeausXXzM6EszgTvY+S/sRM2EDJ0rj67D32
+	 ZlkXA+T22IkBJDq/Jb3nbiItuxtgI/MxViohp+a1gxL1aBn0vXx8+NkMYE3v24y7n2
+	 AmRNn4w8mBP7I+4UPn9cD9nndllyZjnIQyMDdn2g=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
+	20251106012703epcas1p38bb48af303ebac1b9f1f0cd404085bb3~1RpJGzaUA1524715247epcas1p3J;
+	Thu,  6 Nov 2025 01:27:03 +0000 (GMT)
+Received: from epcas1p1.samsung.com (unknown [182.195.38.120]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4d24Ky6qBGz6B9m8; Thu,  6 Nov
+	2025 01:27:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2~1RpIXZe5L2455324553epcas1p2S;
+	Thu,  6 Nov 2025 01:27:02 +0000 (GMT)
+Received: from sh043lee-960XFH.. (unknown [10.253.98.183]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251106012702epsmtip23c64dda0ebc1fbc067d751b212d778ba~1RpIS1VKq1062010620epsmtip2G;
+	Thu,  6 Nov 2025 01:27:02 +0000 (GMT)
+From: Seunghui Lee <sh043.lee@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	martin.petersen@oracle.com, peter.wang@mediatek.com, beanhuo@micron.com,
+	adrian.hunter@intel.com, storage.sec@samsung.com
+Cc: Seunghui Lee <sh043.lee@samsung.com>
+Subject: [PATCH] UFS: Make TM command timeout configurable from host side
+Date: Thu,  6 Nov 2025 10:26:54 +0900
+Message-ID: <20251106012654.4094-1-sh043.lee@samsung.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2
+References: <CGME20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2@epcas1p2.samsung.com>
 
+Currently, UFS driver uses hardcoded TM_CMD_TIMEOUT (100ms) for all
+Task Management commands, which may not be optimal for different UFS
+devices and use cases.
 
-On Sun, 12 Oct 2025 19:50:12 +0530, Shankari Anand wrote:
-> Update call sites in the block subsystem to import `ARef` and
-> `AlwaysRefCounted` from `sync::aref` instead of `types`.
-> 
-> This aligns with the ongoing effort to move `ARef` and
-> `AlwaysRefCounted` to sync.
-> 
-> 
-> [...]
+This patch adds a configurable tm_cmd_timeout field to ufs_hba structure
+and uses it instead of the hardcoded constant. The default value remains
+TM_CMD_TIMEOUT to maintain backward compatibility.
 
-Applied, thanks!
+[   90.372004] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: ufshcd_abort: Device abort task at tag 9
+[   90.372025] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: UPIU[9] - issue time 80324520 us
+[   90.372037] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: UPIU[9] - complete time 0 us
+[   90.372049] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: UPIU[9] - Transfer Request Descriptor phys@0x28120
+[   90.372085] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: UPIU[9] - Request UPIU phys@0xb400
+[   90.372121] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: UPIU[9] - Response UPIU phys@0xb600
+[   90.372180] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: UPIU[9] - PRDT - 2 entries  phys@0xb800
+[   90.372193] [1:  kworker/u16:1:   10] ufshcd-qcom 1d84000.ufshc: ufshcd_abort: skipping abort
+[   90.514494] [0:      scsi_eh_0:  209] ufshcd-qcom 1d84000.ufshc: __ufshcd_issue_tm_cmd: task management cmd 0x08 timed-out
 
-[1/1] rust: block: update ARef and AlwaysRefCounted imports from sync::aref
-      commit: ba13710ddd1f47884701213a3b6a5e470f6bc81e
+Signed-off-by: Seunghui Lee <sh043.lee@samsung.com>
+---
+ drivers/ufs/core/ufshcd.c | 3 ++-
+ include/ufs/ufshcd.h      | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 9ca27de4767a..6099504ffc35 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -7252,7 +7252,7 @@ static int __ufshcd_issue_tm_cmd(struct ufs_hba *hba,
+ 
+ 	/* wait until the task management command is completed */
+ 	err = wait_for_completion_io_timeout(&wait,
+-			msecs_to_jiffies(TM_CMD_TIMEOUT));
++			msecs_to_jiffies(hba->tm_cmd_timeout));
+ 	if (!err) {
+ 		ufshcd_add_tm_upiu_trace(hba, task_tag, UFS_TM_ERR);
+ 		dev_err(hba->dev, "%s: task management cmd 0x%.2x timed-out\n",
+@@ -10565,6 +10565,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 	hba->dev = dev;
+ 	hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
+ 	hba->nop_out_timeout = NOP_OUT_TIMEOUT;
++	hba->tm_cmd_timeout = TM_CMD_TIMEOUT;
+ 	ufshcd_set_sg_entry_size(hba, sizeof(struct ufshcd_sg_entry));
+ 	INIT_LIST_HEAD(&hba->clk_list_head);
+ 	spin_lock_init(&hba->outstanding_lock);
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index 9425cfd9d00e..aed792eb9e16 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -884,6 +884,7 @@ enum ufshcd_mcq_opr {
+  * @dev_cmd: ufs device management command information
+  * @last_dme_cmd_tstamp: time stamp of the last completed DME command
+  * @nop_out_timeout: NOP OUT timeout value
++ * @tm_cmd_timeout: TM CMD timeout value
+  * @dev_info: information about the UFS device
+  * @auto_bkops_enabled: to track whether bkops is enabled in device
+  * @vreg_info: UFS device voltage regulator information
+@@ -1042,6 +1043,7 @@ struct ufs_hba {
+ 	struct ufs_dev_cmd dev_cmd;
+ 	ktime_t last_dme_cmd_tstamp;
+ 	int nop_out_timeout;
++	int tm_cmd_timeout;
+ 
+ 	/* Keeps information of the UFS device connected to this host */
+ 	struct ufs_dev_info dev_info;
 -- 
-Jens Axboe
-
-
+2.43.0
 
 
