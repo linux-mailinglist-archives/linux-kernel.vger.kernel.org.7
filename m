@@ -1,210 +1,101 @@
-Return-Path: <linux-kernel+bounces-888904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18314C3C364
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:00:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF6BC3C3AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89B2F1B24287
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:00:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98EAA4F499E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B98347FE1;
-	Thu,  6 Nov 2025 15:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C31533E345;
+	Thu,  6 Nov 2025 15:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r+GiE/jM"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013048.outbound.protection.outlook.com [40.107.201.48])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9xd2BTo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B11D343210;
-	Thu,  6 Nov 2025 15:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444797; cv=fail; b=oTRj7Wsj/6FMIRVoN2MbqRaN9xLe0w48xggFMtDiK5nCmXfxu4TuUd3tcTJ8aa2qXbH8usg3WzEghkWF64dD6iGivNKcNr3/TzIftmmWoRzhbbuTVI+QXVZRUnGS8MsPAoh/PWQjA7WAHAQOHvH9zs01aNRjSRRVzL1OdgM9em4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444797; c=relaxed/simple;
-	bh=W160jdRgIqT0b8YxUu7UpjEGhpb6Hr1zexXBoOkvkKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QWpGGRY8Lf1rFnaXdWJugms7geJcfUtqolTAk/HEOmESMj2MVYFYCngyD8PDTpowvyyUQQmA7rlkN2MwwspXvW6hy+PcitZCKTHbZe+sO4YPLJt/ABGM/l8KgqdpcxfFTEb8Rs35axQ6dYOk8poQOfsXJfomIK4jE/KwP3PGKQg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r+GiE/jM; arc=fail smtp.client-ip=40.107.201.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KdfkAX61atwxYPfqNx1Npkfhl7byCevvf8PE4hR4uZXIpZPkd342wyjlGdjYuVgVspQIQcM8ZeU9/X+1Nl7Q4zq9zPCe0nd4bF0r5BPy4Jee3jfSqlZ3nsQOv7kjPOu303ZNcgJICAgGke0khOrtj3eVuKooXRiLkInY1RrxbBhMZhNPE0W04EQfkHpvuX8reYJ+qksNLt3C1f5PKB234VkxIWh8Eu97psendqIzH+WaBMHnKIggrFiicGTJlqttI073pRtfV5WWBFrzmRUY/rXrYHnZHRZDm0y9Hn6fKJVkJW6B8MfeCANxAsm3PQUAjiafRMBGJqG+x24ncSFgmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sg69QKx7lRwARxxDSLC8xGQfma654ZBWmuVPBwiPdSI=;
- b=DvP705IqFKotCfRJ8Sy0/NnCb5jNOAcQExLv09i/6rDX05nBfAXxnbjp4YQ+4Vr5LFS4fbubOAxrjBHElMLlU7JkApPI6hQ4LJWoBH1BQbg1vm98Ad2Y0lxO9BEWgPfWrUxS+cJmJw9BR1uWVZmerV1E38hS8Sod5MBoqc2aDT1l7bkJtLdqiDu2AwhCTODON68paX0kYF0yWi3j3zUrYVEuLLixnfgBrtc5HZDJfDAbSrPBh9QPgvtwfQUxQ2Kb0GWsNRnrCNUpcwT8wrIMvCRq145GNKfYlWvVoy3eO2QvU/VKOoQJ5JGuBztTUJu9iiD1pYXqaCR12KEaPWyXbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sg69QKx7lRwARxxDSLC8xGQfma654ZBWmuVPBwiPdSI=;
- b=r+GiE/jMbd7o2jvylmU1L0pqNZRB5LUSStwWtKSJzEmZFSoZaJ5vm6hVLzzflVqNwJwzSGFSDiMlsnH1TVkpqjz7Uwp1kRbha1ROukhGesmFc8M3MHKLcHXrUgYgJR6J/25/HmPKjAddxl56jJMqTmuyRenV9GNLMOUy9g+TijMEagR9bN6/c/pUoDxqCe0yMfGRL7xJ03a0pk5Lb7ivojLM6loRv1Q9s8SzlJ8YWvtFSTUgLGUdVg237MqnZKE201ZHTH0cekVkzclAjMtm61bb+QLbWQ5zbcn1LO4Tp57NGGoYsXO1xZZVxwg6g4dgzN6RfAnZCMKARLAKiZieWA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.10; Thu, 6 Nov
- 2025 15:59:53 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 15:59:52 +0000
-Date: Thu, 6 Nov 2025 11:59:51 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v6 2/2] platform/chrome: cros_ec_chardev: Consume
- cros_ec_device via revocable
-Message-ID: <20251106155951.GC1732817@nvidia.com>
-References: <20251106152602.11814-1-tzungbi@kernel.org>
- <20251106152602.11814-3-tzungbi@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106152602.11814-3-tzungbi@kernel.org>
-X-ClientProxiedBy: BN9PR03CA0891.namprd03.prod.outlook.com
- (2603:10b6:408:13c::26) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C443C217F2E;
+	Thu,  6 Nov 2025 15:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762444794; cv=none; b=WCYVuKYb495fa1v87/7kgbmhMRXL0NBGRvdGDU1Xv2Ll0logsSUISbrG+k4MoLX1MZSJAe+Q3Y8oPJAQsSQNXnusld4hVZLHQy0FmHbxDh6Li+y3TDdRjUoObvJNSwAO80EpuaHAD848fNEyJIwze3arDHDjGx0pqU+83ugLLmo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762444794; c=relaxed/simple;
+	bh=4TgorRHksvljH1YyBF/SSZyBPVzPnDsdVKYVlo5RHo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6ozILwdDufL7PVVTQ3LtIOF/QXhadr32QgVm+Y3fH0twRQtojpop/TRqQGErbuS7vT72x7Q7+bLiCwxQGsQk7woaMhysSf1ENCKWwaw3vLwTXeu+CRkqcYEhiBvAve1EtcaSo7Y8u9gh7281jTqY/fI3+I0ecJCQRKUAXlYYFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9xd2BTo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B92C4CEFB;
+	Thu,  6 Nov 2025 15:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762444794;
+	bh=4TgorRHksvljH1YyBF/SSZyBPVzPnDsdVKYVlo5RHo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B9xd2BToJapqh+OpvYoBzdbEbx+duiGcEfThO9M6dBFqh9qe9RttyRmIVxAfytTvh
+	 TEwVpNU/vXk8ObF2I4PxvNUa2Xnpm9af/vixDpp0Ej0oycz69w9d6oO9LfJ44bswpn
+	 cVKbVBx89gKikCBY3VgR7tD3TIAJVMYJPIkxPwtqbLOuIk7yWaU1tWUgQ6OkYOjGa4
+	 Y+7dxa1TL+uLQAs/o5TKsmVuJr2tYZMcn/A7Lct/LpZLjWQ94VH5qCW5m8NoLO4o4N
+	 9rpp8BHIUezWH4qdFxWpHcZaVx2jr+VvaPFqlJ/KAXQFc9GdKaem3uZ9HEine1GzaP
+	 lGDw2P7FWY/cg==
+Date: Thu, 6 Nov 2025 15:59:51 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ASoC: codecs: va-macro: fix resource leak in probe
+ error path
+Message-ID: <aQzF9zOQcsupLKhT@finisterre.sirena.org.uk>
+References: <20251106075055.555-1-vulab@iscas.ac.cn>
+ <20251106143114.729-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH8PR12MB7277:EE_
-X-MS-Office365-Filtering-Correlation-Id: 359e2239-caa0-40df-c24c-08de1d4d8551
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+aOzndZrhIth1Ky00kjOzPSVEHrHKsDCEIhBayA/pzJauwRP8VmMtofl0S9G?=
- =?us-ascii?Q?7rwVmGpBZe3hsZVEa5yoDhKZo4HDDNNJOg/nSRO6Mi5O2awdeu8q+CmYv7N+?=
- =?us-ascii?Q?oI7UuAQo9rI2du3ohr5Jbq4EkpgBt4JeFipW52TuEoCrAmHesvF7mae/Wg8O?=
- =?us-ascii?Q?+YLdp0pHz5DF+17mSK3qxFXnRqe1q2AWEbaY5spE4f49/XHrapp1U51AcU+7?=
- =?us-ascii?Q?w/Blw4Bw/ec0nUs3dgch8D0Q4PSnAV75x21pruBXvTfeoZXVdFZgqYt+FunH?=
- =?us-ascii?Q?KnYAwq7wbA06kEqyb9OYbMN7GYJSFvUlQPyN+DytYMJJqje8RV5TpPT6Uc/7?=
- =?us-ascii?Q?G5pCHd5Duqx9/WdeUmFH+yXj2t39GTtwipXiVOQyV1bU/C41PDvNheeNkjqd?=
- =?us-ascii?Q?P7oLN3M5pVBab7JFDSDc2sosWDf/p1dTmQ4E1pq7JAk5zzcAnn9xVFebKMjF?=
- =?us-ascii?Q?uTVUj/E5DREXKsxQI81SPNxiyV3Xb1fYlWeVLzNKnVZYkYw6CBAJMLaLeUql?=
- =?us-ascii?Q?VFz8f6qOUOwI5LbBPH4GzhZv4XRgk5fL/vA9TT6N3UyNEAKsdlldrmxgCBoS?=
- =?us-ascii?Q?+1kQWmvlun5gf3ikJjTYAC2+HMpmigXw6MuLFohxufCm2TDGSnOiWJUALxyy?=
- =?us-ascii?Q?cQwpESGXxXN3uFhFZCe2f4e5EQszXdJoYPcb6ASgyAk7rTawihgq6t4Ln8xt?=
- =?us-ascii?Q?62624K5jzXJvGGVio5hUcjSpNhvhbR9+gcbPr7pCGY6Oz85aUftQnuCI9LLp?=
- =?us-ascii?Q?S2zYM+lrebfpsqraZYdyVtXzP7Rf01XWEVzRgsEx/K7M2tMmfQp8tRQlHEkB?=
- =?us-ascii?Q?hXDNTE99DJguQvWUwprPK4FOwi4GONqHc/qRJ3C34FFh+8DuZ6j3qoxUFHxe?=
- =?us-ascii?Q?p+XDWdzkJgH1pRed5KmEdQUxireFFl0M85/93Trr+0Yo5Ka+HaIK/5Yw2V77?=
- =?us-ascii?Q?mQZ7OL3CWaiV3vrqd4k7qSmbsiLwa1DhdHaDieW8L51tWNyuxmk8npMQiChj?=
- =?us-ascii?Q?aE4LPBVAQPQ7Q9NBwSNNT0xt17c4OAC1kUOPe71X6dt0PO6COoBA7pdMuGm0?=
- =?us-ascii?Q?UXWRPBL0FZHfwVfhZp8vqz5ulKGXTm1n6nurlPodrZpa7CLPF3bM1VNvi6qZ?=
- =?us-ascii?Q?9Fr30CIftx27iKDiTls0xDKZWIglMCzxOHet0tYEI2HSjjXLn7jxfXhyJUkp?=
- =?us-ascii?Q?ae+N4uOrAa/40/IwOfDad4mJy1TOcEQDI2snVRk0m3mzlMWuKq87X2by6wri?=
- =?us-ascii?Q?8Ww61pePLculbRJsuIRfeD5V8K8uheo0qC9pPJjxQu0l1QkL9i2ZijhymEKP?=
- =?us-ascii?Q?QeHSk1JqzzzS1PbIfQLha/k+qi3GMzHYxcyO3CszmOMbYl/FJayCx6ORAwga?=
- =?us-ascii?Q?bksVe4J+Go1PfN2BNG20O/nCs2sB6+YNE3GoKkZxxE0tkMnx0efNmXQsC45R?=
- =?us-ascii?Q?y2hSnc9CTZyHmTltw0EAs9QF2jNtz0Tm?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JAcaSMhGs4rNCntVOTjpyVh/BJf5PCaR9a9G2XjD78Xw6GG+H8Yh5wIZfJ3i?=
- =?us-ascii?Q?zoJPD5z5gGwBT+vMjkTokYcK0QqhV9p7hT4bKMTnFVThjGBeYCnZuH8ouLQS?=
- =?us-ascii?Q?flHUHtURxcZKlwZifQVd7HD9l2VoPBb2Jze7duk00cveCK2bLZraQ1ffm9FK?=
- =?us-ascii?Q?1H5kYBFd8+WD6hLmKF3wgV2yUse9WEtm6XtveDA4bOhbguYTqxPOYRhN4W+w?=
- =?us-ascii?Q?BCha1mmLQfiWX1lR0RhYy/EOILF+e7F/PAziftI/ytHvpHovYK7auqo1rzHf?=
- =?us-ascii?Q?9vQNXmGDWAqCwNRe/gx+HDebYBm2wbvFP2kn2cDIDBR/JLI81JrnHw2pu40o?=
- =?us-ascii?Q?arN8RbuO+zc/6xITa5kJF2ndqr7QQp4VKhrAYgxNWVeDPKLtMjx1+buZDP0k?=
- =?us-ascii?Q?8tuXuUY4o3hk+KliZgajG/fGlscZkW0x4FrzDUJR12dLv80t7By8IaoHSoI6?=
- =?us-ascii?Q?iwdJz7rsSCJY8MwU0GDEqHWZMii9qApIDMCIehDsXnWlD1usQRuMpn/YfbOi?=
- =?us-ascii?Q?Mx6Scl+NAuGR3INu8VYd66L4zZAxdLoDaYftX2/ULONTvA9+l3151hfA0Cck?=
- =?us-ascii?Q?qB5GIrWsiqC8ObeEIe+skAeQiWmvB5shz10Z5XzQFoW5GuvB+K2XGAkvgjMv?=
- =?us-ascii?Q?+EgodzlL0OZuDpncDrbWdUil3S8X8tOv4Vn/yRcNfC9G9Ca5GsznlXYosO8P?=
- =?us-ascii?Q?mITOPhrKu9rkrgma7/SfY66x4kHUxXTgoNsbFg+Xow4C4f6G1vCcQoQjcj7L?=
- =?us-ascii?Q?isVXMd+bHcx1iANX43qKEcmsgp35jyH8a/jjFD88fVGFkJPdGwNmFQzrgr7P?=
- =?us-ascii?Q?waC/o0ApXWKKdlHx44l0sZ43wXhAv5Uw45/Gc8hq9LJwZBqO3ule8eXaBVPU?=
- =?us-ascii?Q?rKyXFAkYFdjNQtg0YjNQRAkLoji2KtBq7JnjJXv7NKUO6+E8AtLxXY2aAzOQ?=
- =?us-ascii?Q?by++ori3Rt3mKIxGJESR55Jp7i+iPu3nEz3G+7whoW3uYoHlm8xE3WnQjvu6?=
- =?us-ascii?Q?pkcOHvnD3gUFed6KyBhXRvmY9T34YzZvAoxwApS/Bur5Z3iFt1XQpQdersiY?=
- =?us-ascii?Q?Sm9tOmFrEHA6o95QuVHBVmTHUGN3xFEAHyjW6OnRBJnU5Uner8zU7rcBwTTY?=
- =?us-ascii?Q?AzCYd8+uc3XPfOOwLS9Bm5D6RDcPvyjW/TO/SqKg1dd6tc7y32GcHUixPBOS?=
- =?us-ascii?Q?wzY9MvdB69fM3lZleN9VF53oIuxZGo8oNaX33zS+MpuqNqwtuvYcRYCUoY9E?=
- =?us-ascii?Q?+zJv54PzwjQdf7amE7LY1VRO6/70QPWLvryt6MGVD2DH8cxoVNPOtriy9DeU?=
- =?us-ascii?Q?kO8PuucCLXTB4R/w0nuSyZRmXEnVGgUaNX46PAWEKWLfd1yQE3Q2d5Jkp96l?=
- =?us-ascii?Q?tUCG1jx9r8z3R+iWYxAKDXAHzg6vSrhCJuGHnNUSehK7OVxYsOqYN4XqkE9h?=
- =?us-ascii?Q?o7TEJifHRQqx3nQmxsel3DbWF3eRcVXaSItssdymG5EhyJOJA7LpshL/ws8c?=
- =?us-ascii?Q?4xdcZ2Z6Xm8TIWxDkWfqnQJ9gGfx7Wj1eoC2pF5+Mw/MuBvfV7MEgyDy9L3s?=
- =?us-ascii?Q?6Yg7mhM+IdtEGB6gdN8=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 359e2239-caa0-40df-c24c-08de1d4d8551
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 15:59:52.1174
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3JmYybxQtaK0WfkL+ZV+mMGpxzfD3ZDyuXcVRJmNJkNtTYzY9uOIY9K6E2K8WWe2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7277
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ncTIgGJpmcgHvRwK"
+Content-Disposition: inline
+In-Reply-To: <20251106143114.729-1-vulab@iscas.ac.cn>
+X-Cookie: If in doubt, mumble.
 
-On Thu, Nov 06, 2025 at 11:26:02PM +0800, Tzung-Bi Shih wrote:
-> @@ -166,7 +181,12 @@ static int cros_ec_chardev_open(struct inode *inode, struct file *filp)
->  	if (!priv)
->  		return -ENOMEM;
->  
-> -	priv->ec_dev = ec_dev;
-> +	priv->ec_dev_rev = revocable_alloc(ec_dev->revocable_provider);
-> +	if (!priv->ec_dev_rev) {
-> +		ret = -ENOMEM;
-> +		goto free_priv;
-> +	}
 
-The lifecyle of ec_dev->ec_dev->revocable_provider memory is
-controlled by dev:
+--ncTIgGJpmcgHvRwK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-+       ec_dev->revocable_provider = devm_revocable_provider_alloc(dev, ec_dev);
+On Thu, Nov 06, 2025 at 10:31:14PM +0800, Haotian Zhang wrote:
+> In the commit referenced by the Fixes tag, clk_hw_get_clk()
+> was added in va_macro_probe() to get the fsgen clock,
+> but forgot to add the corresponding clk_put() in va_macro_remove().
+> This leads to a clock reference leak when the driver is unloaded.
 
-Under the lifecycle of some other driver.
+Please don't send new patches in reply to old patches or serieses, this
+makes it harder for both people and tools to understand what is going
+on - it can bury things in mailboxes and make it difficult to keep track
+of what current patches are, both for the new patches and the old ones.
 
-The above only works because misc calls open under the misc_mtx so it
-open has "sync" behavior during misc_unregister, and other rules
-ensure that ec_dev is valid during the full lifecycle of this driver.
+--ncTIgGJpmcgHvRwK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So, I think this cross-driver design an abusive use of the revocable
-idea.
+-----BEGIN PGP SIGNATURE-----
 
-It should not be allocated by the parent driver, it should be fully
-contained to this driver alone and used only to synchronize the
-fops. This would make it clear that the ec_dev pointer must be valid
-during the *entire* lifecycle of this driver.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkMxfYACgkQJNaLcl1U
+h9ABIgf/QhXusdY6vysmdYD/HzBhHJsXVfkgw/cwMG4rRx7S0WBkTgyXjWt4c/To
+bG2vWTt/VdPhpShF3OL0FqWzzOJ5QZrjdmHsiEXLMhupdTwNDDWND3U0G+6gmr0j
+stSGjf6OzXB3mphvxz1YrWwRGjYiBntQxHIAFZXVGjAbyR/21vGYSLe/KWHf4lcy
+ILvnstYfVlidzgXFbNyUOZuGEsrYYPV8bnZkEGb2kjhSctTzimIHjU7zujSb284K
+mwk6gUd6yoFBhNwyjRLVfgweorhrgNIG6dThaH7gUTowpcqSVRaqvhBzBgrbYqvT
+MHsAX6RoLUx4QXBA/RO468l4r7bYVw==
+=AByG
+-----END PGP SIGNATURE-----
 
-What you have here by putting the providing in another driver is too
-magic and obfuscates what the actual lifetime rules are while
-providing a giant foot gun for someone to think that just because it
-is marked revocable it is fully safe to touch revocable_provider at
-any time.
-
-Broadly I think embedding a revocable in the memory that it is trying
-to protect is probably an anti-pattern as you must somehow already
-have a valid pointer to thing to get the revocable in the first place.
-This severely muddies the whole notion of when it can actually be
-revoked nor not.
-
-Jason
+--ncTIgGJpmcgHvRwK--
 
