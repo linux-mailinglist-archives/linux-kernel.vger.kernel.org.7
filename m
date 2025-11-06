@@ -1,126 +1,219 @@
-Return-Path: <linux-kernel+bounces-887806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91806C39216
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9682BC3921E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAB3189D6D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A66189D9F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8295D2C21DC;
-	Thu,  6 Nov 2025 05:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871CC2C11CF;
+	Thu,  6 Nov 2025 05:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PGWl50ho"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VzQM6QJL"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB1628695
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B4934D38E;
+	Thu,  6 Nov 2025 05:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762405397; cv=none; b=oLrr2nDlrcfXROmWn9OdswIA7rNGx9kz5Ly4aceiNTmFacJRWwk8TXDzphO3IQSi2j4Amt4g5eFFNfYLIw/8RnzidWibQ8tptoTlN6hiGMgm6bxZP14E5d8i56Y8Q0y86wsubpUMtU+IOHx4XViSsX+oTDkCLtT71KskNA+jvy0=
+	t=1762405459; cv=none; b=I8V/hXVU/04uVnVTp6JCQIbXI7IWHBbOPOPjKT6FaEddixFW8K4FEgGPyHZ9MX7YtCLEdNIPG4+uE7Wu1DR/9ZaoDns3/WcsHH1ZLweFf9+NRN0XwucsEi8x/RQRmzycIgQLbV8NSBEw47kZReg9FoA2h3RZUgCCyPGLvg5f56M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762405397; c=relaxed/simple;
-	bh=EvcrG3dDGncaL739yj1nMubM8EpRLHOh2MgJIi094OU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UNFJ6+S8rljtqc+1Wxz7RdZ1Xvr/W92mTv68q4N/Pl+AAjRw3FZ3xc13Gx7PzCdX/lAa5uhRhMWkvhUYM2MrZEZnoY8/J+yqm8aBtIfFzxARCt6rtQFdgShlIojFGbZ2b4qm0usym5RD405UljVaci8oqS+tFYqLlOrRwE2kwo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PGWl50ho; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b6329b6e3b0so1088695a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 21:03:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762405396; x=1763010196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EvcrG3dDGncaL739yj1nMubM8EpRLHOh2MgJIi094OU=;
-        b=PGWl50hoLXqBoiz5k1atMyyqYuxDFlIS1xqH1F1J7gY02ih/OBBCBbhcvlYqi+HefP
-         oWpLWMyyrWX9p6Y2ySWM9aXcrQbffegzleeczde/KQaGTy7EhDfzjHxAABTXb9ZdXd/q
-         v0h7p7A91LykxCMuOHRDuiomxd6mzJGtdFQZIXy5PYgY/3jAZSh0xWd/x546CZWzLHHa
-         KAsg/rqDirONtZeGvmkU0KO7z4Zn9AW5vVprMtaXR4FPbbMrZpYEAOnKvlWIJkhAXalF
-         u9aNTH5LOGd6YkpgQbEW/cpFz9hGMbYKJL+8DHQFYl5ikYGjOWIKVWGMD7W/7o95CVkm
-         XfVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762405396; x=1763010196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EvcrG3dDGncaL739yj1nMubM8EpRLHOh2MgJIi094OU=;
-        b=mS5QaydEgByp+F2/NILVJrdk2tPWCVigmAWNBca5QgYGUGLKf7gcLGnMbfGtiXhg95
-         CyDW6ZvUavab+sA9hQ9GVU0CYdOXIb9SZfnZ6v71LbYQ2+fKv6KEfzJBJPN2h5pLuDdv
-         UlCudjZxDtTsZtW4zqC6HcwWfutq0HzZsKHpgATzm3PdeWCVLlGxJXsmZnrangvd5iK8
-         L4p6M4txaJZ4ZGmsqVJNDAQNeVV8hEdNFkpfk4XAktuMSZMBw/6+qMgrex5ADBlFyUhd
-         GG8g+A/zu69ChAtdR9u3WNaqu9V4KlJjB+Yl9NZz0KD4YI8IhyQhQ5ecyDqYezmbL1Yp
-         j81Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWiyrZWDV8MDaFv2w+IWSNjSqCRG6TkuS/9O1VHj6ZlzwOh5crlyw6TqNhNMRrtiC1WkT89d/sn+OMele8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJfStrU2Ej2aR8DDVCkRGfH+Zi36EtXPHKr51W8J3uSVzr+b2k
-	K5Ng2wAzZuhxHWURNSeLR4RrGnIC0nnerJdoWyHZbQO4x5y9H9sRhRBcNLI31DXjib7xsD4mUE+
-	nFBSM1K5vDqexi1rreQ1lPjUWEDL5lhY=
-X-Gm-Gg: ASbGncuGTwEPr3uYGT5OUl2MfqEwvI/4+zU3IvrowybNwUam22xd0NFh6bYt4kX8RGz
-	eKFE7H6rfP27FmmkccVkWPmYIBC7SvresfFCeFS3FG8P7jrXRru4UKAxnoGEgdIFDSnGfVoDRvy
-	WenTaUIK/740LrmCFHdKAEQ/ZD5ksFsZhvM6KNpMlkKbuVpnSNwIVIL06Zt9n+0Uh02ffnn0H9+
-	JKLYc+diKcB434RHuaoj0AQ8T/4lIwDu/0qjjCQQMpgukNMBARQ/bltnA5Uoh6H5AR1Vy9ocAII
-	W42Wyl8nOLziyWkkEfM=
-X-Google-Smtp-Source: AGHT+IHrzZ1/4Im3y8/huzYUwmXZhSlgvoJLEyQxj5Zo/aAIeNAwDkLVT9KBvnRTTtAYY599LBT0I1aztN6PiD0fTwc=
-X-Received: by 2002:a17:902:f601:b0:290:ad7a:bb50 with SMTP id
- d9443c01a7336-29651a60c70mr19004155ad.27.1762405395674; Wed, 05 Nov 2025
- 21:03:15 -0800 (PST)
+	s=arc-20240116; t=1762405459; c=relaxed/simple;
+	bh=9MFTHhTyAuIXmNt1lnMnlfUeqBBv+PebUZL4ozVF4tg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LPpIwXHm1pO4sbQZ4qppIxYMfFp6hlOfwShsmtyWuM9fCCturmEG1yvlUtYBIQNuNTIENZBE9Dt9r0n8P7IqPlixbR+W+xL11PHSgoh+kc2OWCAcqKB0rN+s2W5vFk7FL2waong37MSfCtLgma9qi0aiuElD0IuG4fKGKTfnVGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VzQM6QJL; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1762405447; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ayrBHiC5YJYK4R+BfF6m9SthRISNQab5BiTJkkGwV8Q=;
+	b=VzQM6QJLTpKYPkMWL1mWwbq3Jucf5d9Mp6cbimom7J9GUZSGJZwNyg1mycwEZtNqu1lpua8DOzT1mi2jF6Ww4n/xlLP4JM12GVAxJkwbtaB7/ejcHZ2i29l2s8i4MdQxP/Rd28pzjtolnkC9nk1ZluJjJLzSJuSLu4a0a4b7BK8=
+Received: from 30.246.177.186(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WroMjBT_1762405446 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 06 Nov 2025 13:04:07 +0800
+Message-ID: <d49c1287-6a55-4eff-a908-b8a878bdd08a@linux.alibaba.com>
+Date: Thu, 6 Nov 2025 13:04:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101052651.6197-1-opensource206@gmail.com> <959ac74b-a8b7-4d4e-9d34-3b3d971f9f8a@linuxfoundation.org>
-In-Reply-To: <959ac74b-a8b7-4d4e-9d34-3b3d971f9f8a@linuxfoundation.org>
-From: opensource india <opensource206@gmail.com>
-Date: Thu, 6 Nov 2025 10:33:04 +0530
-X-Gm-Features: AWmQ_bmtfdYLunGxnebB2YzfbIByDDfiElXZmfRrWBesyRCRzuiHt6fwI6_gKWU
-Message-ID: <CAKPKb8-nFzqgh+k3aBxUvZ8g28usiAt5BEdFDQysVnCk3S+sEg@mail.gmail.com>
-Subject: Re: [PATCH] media: vimc: add RGB/YUV input entity implementation
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: kieran.bingham@ideasonboard.com, mchehab@kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: APEI: GHES: Improve ghes_notify_nmi() status check
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Borislav Petkov <bp@alien8.de>,
+ Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+ Andi Kleen <andi.kleen@intel.com>
+References: <20251103230547.8715-1-tony.luck@intel.com>
+ <4ecbe3d3-71f0-47e9-8fad-35b16689d1fa@linux.alibaba.com>
+ <aQwDd-Nhgxpkdrcb@agluck-desk3>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <aQwDd-Nhgxpkdrcb@agluck-desk3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Shuah,
 
-On Wed, Nov 5, 2025 at 10:43=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> On 10/31/25 23:26, Pavan Bobba wrote:
-> > Introduce a new vimc-input entity to simulate a color frame source in t=
-he
-> > Virtual Media Controller (VIMC) pipeline. This entity outputs RGB888 fr=
-ames
-> > and allows testing of pipelines that start from a pre-processed RGB/YUV
-> > source instead of a raw Bayer sensor.
-> >
-> > The patch adds vimc-input.c with basic pad operations for format
-> > enumeration, get/set, and stream enable/disable handlers. The entity is
-> > registered in the VIMC core configuration, replacing the previous tempo=
-rary
-> > use of vimc-sensor. Frame generation is not yet implemented and remains=
- a
-> > TODO for future work.
-> >
-> > This change enables link validation and format negotiation for the
-> > RGB/YUV input path, paving the way for software frame injection and
-> > test-pattern generation.
-> >
-> > Signed-off-by: Pavan Bobba <opensource206@gmail.com>
->
-> I see 4 patches - are they dependent then gerenrate a sries
-> with cover letter explaining the changes you are making.
->
-> thanks,
-> -- Shuah
 
-even though all 4 patches are part of vimc driver,
-these are independent patches
+在 2025/11/6 10:09, Luck, Tony 写道:
+> On Thu, Nov 06, 2025 at 09:46:33AM +0800, Shuai Xue wrote:
+>>
+>>
+>> 在 2025/11/4 07:05, Tony Luck 写道:
+>>> ghes_notify_nmi() is called for every NMI and must check whether the NMI was
+>>> generated because an error was signalled by platform firmware.
+>>>
+>>> This check is very expensive as for each registered GHES NMI source it reads
+>>> from the acpi generic address attached to this error source to get the physical
+>>> address of the acpi_hest_generic_status block.  It then checks the "block_status"
+>>> to see if an error was logged.
+>>>
+>>> The ACPI/APEI code must create virtual mappings for each of those physical
+>>> addresses, and tear them down afterwards. On an Icelake system this takes around
+>>> 15,000 TSC cycles. Enough to disturb efforts to profile system performance.
+>>
+>> Hi, Tony
+>>
+>> Interesting.
+>>
+>> If I understand correctly, you mean ghes_peek_estatus() and
+>> ghes_clear_estatus().
+>>
+>> I conducted performance testing on our system (ARM v8) and found the
+>> following average costs:
+>>
+>> - ghes_peek_estatus(): 8,138.3 ns (21,160 cycles)
+>> - ghes_clear_estatus(): 2,038.3 ns (5,300 cycles)
+> 
+> ARM doesn't use the NMI path (HAVE_ACPI_APEI_NMI is only set on X86).
+> But maybe you are looking at ghes_notify_sea() which seems similar?
+
+Yes. It is measured in ghes_notify_sea().
+
+>>
+>>>
+>>> If that were not bad enough, there are some atomic accesses in the code path
+>>> that will cause cache line bounces between CPUs. A problem that gets worse as
+>>> the core count increases.
+>>
+>> Could you elaborate on which specific atomic accesses you're referring to?
+> 
+> ghes_notify_nmi() starts with code to ensure only one CPU executes the
+> GHES NMI path.
+> 
+> 	if (!atomic_add_unless(&ghes_in_nmi, 1, 1))
+> 		return ret;
+> 
+> Looks like an optimization to avoid having a bunch of CPUs queue up
+> waiting for this spinllock:
+> 
+> 	raw_spin_lock(&ghes_notify_lock_nmi);
+> 
+> when the first one to get it will find and handle the logged error.
+
+If an NMI issued, at last one status block is active. I don't see how
+the code path is different.
+
+>>
+>>>
+>>> But BIOS changes neither the acpi generic address nor the physical address of
+>>> the acpi_hest_generic_status block. So this walk can be done once when the NMI is
+>>> registered to save the virtual address (unmapping if the NMI is ever unregistered).
+>>> The "block_status" can be checked directly in the NMI handler. This can be done
+>>> without any atomic accesses.
+>>>
+>>> Resulting time to check that there is not an error record is around 900 cycles.
+>>>
+>>> Reported-by: Andi Kleen <andi.kleen@intel.com>
+>>> Signed-off-by: Tony Luck <tony.luck@intel.com>
+>>>
+>>> ---
+>>> N.B. I only talked to an Intel BIOS expert about this. GHES code is shared by
+>>> other architectures, so it would be wise to get confirmation on whether this
+>>> assumption applies to all, or is Intel (or X86) specific.
+>>
+>> The assumption is "BIOS changes neither the acpi generic address nor the
+>> physical address of the acpi_hest_generic_status block."?
+>>
+>> I've consulted with our BIOS experts from both ARM and RISC-V platform
+>> teams, and they confirmed that error status blocks are reserved at boot
+>> time and remain unchanged during runtime.
+> 
+> Thanks. Good to have this confirmation.
+> 
+>>> ---
+>>>    include/acpi/ghes.h      |  1 +
+>>>    drivers/acpi/apei/ghes.c | 39 ++++++++++++++++++++++++++++++++++++---
+>>>    2 files changed, 37 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
+>>> index ebd21b05fe6e..58655d313a1f 100644
+>>> --- a/include/acpi/ghes.h
+>>> +++ b/include/acpi/ghes.h
+>>> @@ -29,6 +29,7 @@ struct ghes {
+>>>    	};
+>>>    	struct device *dev;
+>>>    	struct list_head elist;
+>>> +	void __iomem *error_status_vaddr;
+>>>    };
+>>>    struct ghes_estatus_node {
+>>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>>> index 97ee19f2cae0..62713b612865 100644
+>>> --- a/drivers/acpi/apei/ghes.c
+>>> +++ b/drivers/acpi/apei/ghes.c
+>>> @@ -1425,7 +1425,21 @@ static LIST_HEAD(ghes_nmi);
+>>>    static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
+>>>    {
+>>>    	static DEFINE_RAW_SPINLOCK(ghes_notify_lock_nmi);
+>>> +	bool active_error = false;
+>>>    	int ret = NMI_DONE;
+>>> +	struct ghes *ghes;
+>>> +
+>>> +	rcu_read_lock();
+>>> +	list_for_each_entry_rcu(ghes, &ghes_nmi, list) {
+>>> +		if (ghes->error_status_vaddr && readl(ghes->error_status_vaddr)) {
+>>> +			active_error = true;
+>>> +			break;
+>>> +		}
+>>> +	}
+>>> +	rcu_read_unlock();
+>>> +
+>>> +	if (!active_error)
+>>> +		return ret;
+>>
+>> Shoud we put active_error into struct ghes? If we know it is active, we
+>> do not need to call __ghes_peek_estatus() to estatus->block_status().
+> 
+> That might be a useful addition. I was primarily concerned in fixing the
+> "no erroor" case that happens at a very high rate while profiling the
+> system with "perf". 
+
+Do you mean you see "NMI received for unknown reason" when profiling with
+"perf"? And the unknown error is handled by ghes_notify_nmi().
+
+I see some unknown NMI in production in Intel platform, but I did not
+figure out how it happend. Can you help to explain it?
+
+> But skipping (or just removing?
+> __ghes_peek_estatus()) if you have already confirmed that there is
+> a logged error would be good.
+> 
+> If you can use the same technique for ghes_notify_sea() then it would be
+> sensible to move the code I added to ghes_nmi_add() to ghes_new() to
+> save the virtual address for every type of GHES notification.
+
+Sure, I'd like to add it for ghes_notify_sea().
+
+Thanks.
+Shuai
+
 
