@@ -1,76 +1,87 @@
-Return-Path: <linux-kernel+bounces-888068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8134DC39C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:09:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA58C39C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:11:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2037B189C2A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:10:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8D143BF373
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D1430B532;
-	Thu,  6 Nov 2025 09:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C5630B52B;
+	Thu,  6 Nov 2025 09:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fe4pQVrs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UDleE+c/"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2C8309DCD;
-	Thu,  6 Nov 2025 09:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B84D309EED
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762420175; cv=none; b=OigQARNaUF1seaFQ0doFX3Z0gAYD5fWTY+09isqOhh6xOBiBsDjUPl5w6iiU+JGK75aMeu3pwRDpicGArvHTo+fFnyLDEGDipUrRhk28avTqML88L/+h8D38nyXdmVFEBQlxRn9ZYoivUsP42WRCzqtVECEGW72tCu3lwGWTs3s=
+	t=1762420187; cv=none; b=VkfkZdtmCYWzlySm+p1nPIdEVJy+FemaqiOUmQkL81OapvkVf0R54CYPthI0cBFMQj9aAF39Hkm2oLCCZUjlx0BBGYuC5hVKsoYMXj+RafRxux67DfJ+P0AWWwmIPz/IMVDLC4PH+kfqn14ft89NZXoKKUe6id1jllLvKfgYS5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762420175; c=relaxed/simple;
-	bh=1xoEFGyLdYCbzgR/mVDatimumQJnCI1/RQddMt9KI0M=;
+	s=arc-20240116; t=1762420187; c=relaxed/simple;
+	bh=A+fJ6C2TyRkaYZ6e4caNNMAApswGydyjEpobUyAnKjg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=io5gvqzYB7Pdw9WuWA93E70+wE1TXY4lMjG9i1SQqODKIfKksL5ouavCPM/HHcWYBsXMWY5dOOvkFK/kgjUlLj4gxIPBc4P+PWy8yaB36P5eZpsCEKwMilE0UKbKitYYzKQEM7zwXIfzPFuImpfejr/xPsD002Bcjma6urPTsog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fe4pQVrs; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762420174; x=1793956174;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1xoEFGyLdYCbzgR/mVDatimumQJnCI1/RQddMt9KI0M=;
-  b=fe4pQVrsIzESqanmhiwe4OGTvixqgjaHfV62/HXZUfirC158fCbO4y9v
-   iAOeP3orC1qy86xZd8Y+zEKKwFIrFUw3w2x44AyByopesbCwOy+kwFPbo
-   tK+jlghgTpyLGKxxf1OTR4dIXxesdOGPLKwed/OcZYDXx1fMdMZyOnAPB
-   UZofGfmHM/gHsk+ef6f1EycESJVt5ljHqCmtWRibwY8kxssE1pODYggou
-   v8IYSnScG9E4j9xWWCCwYP1J9SI1sKb9A/dbP0rxkP1VXnza+vx8WnAWu
-   OxyDSfP3Lk0B0wkbpMKHFztQEUBpHGhjbrRpGYFXXRpuAfY0qPvxmgwub
-   w==;
-X-CSE-ConnectionGUID: Wew85tWLQ3Kt1CmgleZyyw==
-X-CSE-MsgGUID: Fv59igFNS8+rqGwO0eQccg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64702402"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="64702402"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 01:09:33 -0800
-X-CSE-ConnectionGUID: t4cXAYLeQBygry4nYTjgYQ==
-X-CSE-MsgGUID: 4YSN0rZrTeuWgvw94vin8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="186958588"
-Received: from jjgreens-desk21.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.229])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 01:09:31 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vGvzh-000000062aI-44dw;
-	Thu, 06 Nov 2025 11:09:25 +0200
-Date: Thu, 6 Nov 2025 11:09:25 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, error27@gmail.com, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] iio: trigger: Fix error handling in viio_trigger_alloc
-Message-ID: <aQxlxTiq59zynioS@smile.fi.intel.com>
-References: <20251106082923.32688-1-make24@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8CTGGFW/RaK0xgrKH+JVmFNtSG5SeqdKOPw2DpMEkLD1geRSPnFHQqSx7mvYalHtjpLSHOjU92DBM6feEyUgkX+UDySlAW03R7bENJKkpDsqd9ehZLKMkQdDFXdiWubKt3BgcqSyAsk7CuIkgPSzOfav7KizynQrccGvfDlnS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UDleE+c/; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3c2db014easo131448566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762420183; x=1763024983; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRMNgmont7IgVwl9qnGUPPyEimnvNx1oY9lAMYcS58E=;
+        b=UDleE+c/DF3ba6HBZzGAA6CT93kTVkBdXftGuG1zFhJKxLCoeYT2SkLIH3Wtq293VG
+         Xwz0y6tzZDyL1gd+cJ9/b8NwkIycZkLMppsE6w7EAHnaNvkhjYIlP3t8Lr84J5ZMJ80w
+         iqQrkOTP8Qx8sUkWY0RG/VKsIM0nPXoEESuPBjoOmecyqgqD9o5owzTbJYNY3Y294ro2
+         2+BEWsYieSWqKPxZqPi7wMkYknb+Yig11q4et9oI/Rrnc6wBsqXmh33yLxer3KQWEWiT
+         IrHO/OBm6UHkzYVSr8qR+ho2lpJLc9MNHzWTIPqRcWxzF8bPNMT7ONT/IEKENRXCQT+i
+         2O4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762420183; x=1763024983;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VRMNgmont7IgVwl9qnGUPPyEimnvNx1oY9lAMYcS58E=;
+        b=Z+yeqz2HGUrGRIFo06yzA8UY/meRyvl0vU8LHDBiU3IxqG6cjwP6Z4WC/FIhFhCwso
+         PZD699M1PMYdtKKLTRYWxyB6Z/HfzoolLUY0Xy06y9vJV0vp8bQpOMfIz+PB0pCJwAlQ
+         Br6khRZ5g2RQUpcp/zWsoM/3UBe93/PwF16tGta4K1GMCcgHMIbFSahJd0GrVz/Icp+q
+         qgcNziciutaJin56+Y1GWu71jeOSimTRy2xtW3AH49uwTJ9HPLsb+0PZes6sWJbq1iEC
+         q2s0tBzizNkcHTQ2tzEmUQlmQ1Q1ItGIyYwmEb8fvoPTJ5SrbscQZ7yoM22X4oL8CZUG
+         1O8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWqiV61s0nYbjhQHknkzePy49UYHeccqQer97mBNWUGRS/fdXHPcxJFn8XgYEmSCwWmKkj4Oc8CTbQWqkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY4Wsqxj6i/Th5Dufwem+ukwR6quYH98cwNCCYVj874kcsg9Qb
+	g/otNfgDBgqa4jWdXMPnSzjr4V9QjNzglWKpMe1rDkvxenCc2HOAyxW0FLSFREwKblKsxhzJCda
+	yW/+e
+X-Gm-Gg: ASbGncsHbJunK9HYucPlKcEbWAPsveqT8jXOuKSl1gYw/yy9uoJfyRFdVyGZWbeSAb0
+	/dHAa4BYFTQHt3y9GnAFIzoEyeq0PqqGfut8vjkyvddWWvsxA0PYCUw4uR8rBP8Ty8jO2p16Cor
+	eSIHIR7jnhqu5Oaswj/TzshgK5j1irnrVnUFEQ5M6Pf4bfqFs7z71YzBuvCeH9HupM710sPpsOb
+	4y1U3ZgdOk9wp5kq1MYpBBROjYYfvMAp0ylge2HUSvh4TkYkwC03ZyRNg2AmsJEmK6qQRHRhohK
+	bYpuV5kcn0AIdYslMhi6HL1DQBM/Fgwp8dWs8Y1rs24+fSHKfym0KYLFoYns5nzarUeSbvCFhf1
+	PVzP1pAZ1wrwXV06Rx5GA4QMkysNdo296ecBW37TuPFY9yVcrnAXTmEKtCNkDU0VSERN0UgmcgC
+	8zfSdSJsrmiXjw2Q==
+X-Google-Smtp-Source: AGHT+IGWIwUJw8AUjr0vFraqyyD//Jj1PNVLmvlu/ItjX+PaA6mUvXXTfUULBc/crgWlJQF5efqxRA==
+X-Received: by 2002:a17:906:7944:b0:b3f:f822:2d9b with SMTP id a640c23a62f3a-b72651557b5mr720415266b.9.1762420183629;
+        Thu, 06 Nov 2025 01:09:43 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7289334101sm170946766b.11.2025.11.06.01.09.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 01:09:43 -0800 (PST)
+Date: Thu, 6 Nov 2025 10:09:42 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Robert Dinse <nanook@eskimo.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: Folio Related Stability Crashes in 6.17.5 and 6.17.6
+Message-ID: <aQxl1sXTvhIB753a@tiehlicka>
+References: <b964df0f-45e3-4fea-a84d-852869b49502@eskimo.com>
+ <aQxX1HdOnVZJAERp@tiehlicka>
+ <41d1cb48-7711-690e-c9a2-978e0f96f5d6@eskimo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,49 +90,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251106082923.32688-1-make24@iscas.ac.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <41d1cb48-7711-690e-c9a2-978e0f96f5d6@eskimo.com>
 
-On Thu, Nov 06, 2025 at 04:29:23PM +0800, Ma Ke wrote:
-> viio_trigger_alloc() initializes the device with device_initialize()
-> but uses kfree() directly in error paths, which bypasses the device's
-> release callback iio_trig_release(). This could lead to memory leaks
-> and inconsistent device state.
+On Thu 06-11-25 00:24:36, Robert Dinse wrote:
 > 
-> Additionally, the current error handling has the following issues:
-> 1. Potential double-free of IRQ descriptors when kvasprintf fails.
+>      I am installing 6.17.7 presently, I was a little resident to install
+> the current tree on a critical machine.  If need be I will.  Also, I do have
+> a crash dump on the last failure if that would be of any help.
 
-kvasprintf()
-
-> 2. The release function may attempt to free negative subirq_base.
-> 3. Missing mutex_destroy in release function.
-
-mutex_destroy()
-
-> Fix these issues by:
-> 1. Replacing kfree(trig) with put_device(&trig->dev) in error paths.
-> 2. Setting subirq_base to 0 after freeing IRQ descriptors in error
-> path to prevent double-free in release callback.
-> 3. Modifying release function to properly handle negative subirq_base.
-> 4. Adding missing mutex_destroy().
-> 
-> Found by code review.
-
-This is better now, but giving a nature of the issue and the fix I would really
-appreciate some CIs and syzkaller (or alike) fuzzers to go with this first.
-
-...
-
->  free_descs:
->  	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
-> +	trig->subirq_base = 0;
-
-Why not getting rid of this label and accompanied code altogether?
+Understood, I am not sure who is going to be willing to debug this on
+top of stable tree if it is not clear whether this is a problem in
+vanila tree as well.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Michal Hocko
+SUSE Labs
 
