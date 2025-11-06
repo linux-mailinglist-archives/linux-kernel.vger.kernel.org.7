@@ -1,198 +1,230 @@
-Return-Path: <linux-kernel+bounces-889266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E9EC3D1DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:52:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EFEC3D1E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96C894E2076
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:52:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 839094E1B9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3992225409;
-	Thu,  6 Nov 2025 18:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D9E3502AE;
+	Thu,  6 Nov 2025 18:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Un6Udkl9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXbsOCC7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977232DA753
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5606D34CFC0;
+	Thu,  6 Nov 2025 18:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762455157; cv=none; b=tKcvXm+nxgVvbtTvYVruqEp+DIrFDZnXM/tcL/P3Id+GnQmxVd2jaaQGwD0X458gCJ2Q/6w/ELWngRa4qPG1T/pfUlsDQIPkaV/xouwWzGT0nqrj2a7UTt2I/H93ScZuiN1DA51fxH24DATQoanjHV6LXEl/sfN3qCqcFHsQVc0=
+	t=1762455173; cv=none; b=LSJUtTDpe1hRIx1GYUQCzjZLasLBM8o/1Ync8X61V6eX1GYZUYVASJc5ydW12b+yRDTFe0LHey4qaRmr+/Aol29HaPABFqRMYNCwK2jrM2z2+wC+91aj8phL63oStQJnpVhxiwbiU2dyBVVCdehLuKBHNbfVyE0VoZaplrK55Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762455157; c=relaxed/simple;
-	bh=Vhex5Ut99ffwKZRQwM9+PV8YYESi/K28Zl0R13YgM1M=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=tU+iVxkBzoWb592DOD4/dDqe3ZthPfeuIGorCyGAb1bcBGbss1vn8Mv8mdKQW/QCTkPaC9PnfYmUzMRLipzPqyNiHCGCgRKrvdv4FRmDeXo3MI7ik2ShGQkIYk/E7CgTsHjzD+8Pzk7pa3G+TfC1sqgIFIRgYZXxweSV9C3Z26Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Un6Udkl9; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762455156; x=1793991156;
-  h=date:from:to:cc:subject:message-id;
-  bh=Vhex5Ut99ffwKZRQwM9+PV8YYESi/K28Zl0R13YgM1M=;
-  b=Un6Udkl9UWhKmOiJLzICEVH59LWegSdBBb2OaMowVEfLmqf0VWtcq+I6
-   Mbr0Kp7cRHb1KC7M8rcgRyUjnmkRGA/Gw1S+5n9jpfSftbMAadERtSvMJ
-   EFsjKNgIRaHN9P9+j7KP7CXxI6i7+QmvWvXzT6Usw2xqBKa4lmVEubwN6
-   uPC6yi6QfuMyVjSO3SyLWIIrL1KjvOJuEToLlnE4ezcmF6gyqIM/+xmAS
-   vJCXy+LW62DRWg9dA80DDud5TvhfbHhK0SGwslRRDdWH1bhs1gbVvhUPL
-   QPF4DLNemH/fHxg4KAfVlQVyjcuTREapFEIyGxHPeqVeVgfJihmZaEboB
-   Q==;
-X-CSE-ConnectionGUID: IAZQQ3AHTNm+gm69VbPbHQ==
-X-CSE-MsgGUID: EyP2gP+XTAmOlj6dvpkpzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75956787"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="75956787"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 10:52:35 -0800
-X-CSE-ConnectionGUID: 8vKuAZ73QzysOEy+OiD3Aw==
-X-CSE-MsgGUID: ZG90HbQGSLyVEUgnmbBIBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="218494975"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 06 Nov 2025 10:52:33 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vH55z-000UGe-1n;
-	Thu, 06 Nov 2025 18:52:31 +0000
-Date: Fri, 07 Nov 2025 02:52:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:tip/urgent] BUILD SUCCESS
- ee3ad4d055896a19512b654547c8d1e1f3edf088
-Message-ID: <202511070225.4veMYi3d-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762455173; c=relaxed/simple;
+	bh=gdBHIuyO6YAVPPQfpte3nOsRwKm35zovfxtH21xO544=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEn7uXRRwtTMribYZa/BdX7FAh+1P2BlCkWW+/s1lF592+7dryRSJpUmU/4xpTtoR0aFBmAQeOqZWB5CS9HvRXihSxXpNR1V88tBkxxV0mC70ckDScb+AHVIvFvGZ4EOFVQlTRtqvwfkquWOVDdwvyqgkWWXIrfDWBWKSd+6krc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXbsOCC7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47201C116B1;
+	Thu,  6 Nov 2025 18:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762455172;
+	bh=gdBHIuyO6YAVPPQfpte3nOsRwKm35zovfxtH21xO544=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RXbsOCC7G4EBRbo+awbk8SLjpcL+Y/ewg/k/CaTr5Y07wTcEBiYH+9IfhGoB9mmIY
+	 vdQXOkKQFeBg56mCS6m2Agxfm/kGeZT0DyLbbl3d2WI+sFDx/sCV/ihW/Gs36BvWWX
+	 L8EaHQrkQNARFYSLcoSXnvifVPCf6VP8LfBAZNw0lT4yqLoBpiS8PTuqtdsojy2B0H
+	 HEIWS4xTsDUhGETPhfhxr3mtXwVu1YG35VRFzxx2NRIckDr8JoxQLpuQ/l9BpF2ADZ
+	 3l1PWXPl1jxI947wfgQCqyrmB4N8zlz0tvmkdd20LKV1AX+S+hq66FkydoT47DdO+A
+	 e09GK0gIR0wNw==
+Date: Thu, 6 Nov 2025 10:52:49 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Chen, Zide" <zide.chen@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	thomas.falcon@intel.com, dapeng1.mi@linux.intel.com,
+	xudong.hao@intel.com
+Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
+Message-ID: <aQzugcpRvOcPEEro@google.com>
+References: <20251022220802.1335131-1-zide.chen@intel.com>
+ <aPrktlANBHFtV52B@google.com>
+ <576a7d2b-0a82-4738-8b86-507e4d841524@intel.com>
+ <aP1ucJiJYBavTHV7@google.com>
+ <e10d671a-eb89-4e06-a1eb-e2f12ee41d70@intel.com>
+ <aQl3qfyTdAb68l1l@google.com>
+ <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
-branch HEAD: ee3ad4d055896a19512b654547c8d1e1f3edf088  Merge branch into tip/master: 'x86/urgent'
+On Tue, Nov 04, 2025 at 11:10:44AM -0800, Chen, Zide wrote:
+> 
+> 
+> On 11/3/2025 7:48 PM, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > Sorry for the delay.
+> > 
+> > On Mon, Oct 27, 2025 at 11:56:52AM -0700, Chen, Zide wrote:
+> >>
+> >>
+> >> On 10/25/2025 5:42 PM, Namhyung Kim wrote:
+> >>> On Fri, Oct 24, 2025 at 11:03:17AM -0700, Chen, Zide wrote:
+> >>>>
+> >>>>
+> >>>> On 10/23/2025 7:30 PM, Namhyung Kim wrote:
+> >>>>> Hello,
+> >>>>>
+> >>>>> On Wed, Oct 22, 2025 at 03:08:02PM -0700, Zide Chen wrote:
+> >>>>>> Commit c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
+> >>>>>> unconditionally called the precise_ip fallback and moved it after the
+> >>>>>> missing-feature checks so that it could handle EINVAL as well.
+> >>>>>>
+> >>>>>> However, this introduced an issue: after disabling missing features,
+> >>>>>> the event could fail to open, which makes the subsequent precise_ip
+> >>>>>> fallback useless since it will always fail.
+> >>>>>>
+> >>>>>> For example, run the following command on Intel SPR:
+> >>>>>>
+> >>>>>> $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+> >>>>>>
+> >>>>>> Opening the event "cpu/mem-loads,ldlat=3/PS" returns EINVAL when
+> >>>>>> precise_ip == 3. It then sets attr.inherit = false, which triggers a
+> >>>>>
+> >>>>> I'm curious about this part.  Why the kernel set 'inherit = false'?  IOW
+> >>>>> how did the leader event (mem-loads-aux) succeed with inherit = true
+> >>>>> then?
+> >>>>
+> >>>> Initially, the inherit = true for both the group leader
+> >>>> (cpu/mem-loads-aux/S) and the event in question (cpu/mem-loads,ldlat=3/PS).
+> >>>>
+> >>>> When the second event fails with EINVAL, the current logic calls
+> >>>> evsel__detect_missing_features() first. Since this is a PERF_SAMPLE_READ
+> >>>> event, the inherit attribute falls back to false, according to the
+> >>>> fallback order implemented in evsel__detect_missing_features().
+> >>>
+> >>> Right, that means the kernel doesn't support PERF_SAMPLE_READ with
+> >>> inherit = true.  How did the first event succeed to open then?
+> >>
+> >> The perf tool sets PERF_SAMPLE_TID for Inherit + PERF_SAMPLE_READ
+> >> events, as implemented in commit 90035d3cd876 ("tools/perf: Allow
+> >> inherit + PERF_SAMPLE_READ when opening event").
+> >>
+> >> Meanwhile, commit 7e8b255650fc ("perf: Support PERF_SAMPLE_READ with
+> >> inherit") rejects a perf event if has_inherit_and_sample_read(attr) is
+> >> true and PERF_SAMPLE_TID is not set in attr->sample_type.
+> >>
+> >> Therefore, the first event succeeded, while the one opened in
+> >> evsel__detect_missing_features() which doesn't have PERF_SAMPLE_TID failed.
+> > 
+> > Why does the first succeed and the second fail?  Don't they have the
+> > same SAMPLE_READ and SAMPLE_TID + inherit flags?
+> 
+> Sorry, my previous reply wasn’t entirely accurate. The first event
+> (cpu/mem-loads-aux/S) succeeds because it’s not a precise event
+> (precise_ip == 0).
 
-elapsed time: 1850m
+I'm not sure how it matters.  I've tested the same command line on SPR
+and got this message.  It says it failed to open because of inherit and
+SAMPE_READ.  It didn't have precise_ip too.
 
-configs tested: 106
-configs skipped: 3
+  $ perf record -e cpu/mem-loads-aux/S -vv true |& less
+  ...
+  ------------------------------------------------------------
+  perf_event_attr:
+    type                             4 (cpu)
+    size                             136
+    config                           0x8203 (mem-loads-aux)
+    { sample_period, sample_freq }   4000
+    sample_type                      IP|TID|TIME|READ|ID|PERIOD
+    read_format                      ID|LOST
+    disabled                         1
+    inherit                          1
+    mmap                             1
+    comm                             1
+    freq                             1
+    enable_on_exec                   1
+    task                             1
+    sample_id_all                    1
+    mmap2                            1
+    comm_exec                        1
+    ksymbol                          1
+    bpf_event                        1
+  ------------------------------------------------------------
+  sys_perf_event_open: pid 1161023  cpu 0  group_fd -1  flags 0x8
+  sys_perf_event_open failed, error -22
+  Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+  ...
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+And it fell back to no-inherit and succeeded.  I've also found that it
+worked even with precise_ip = 3.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                   randconfig-001-20251106    gcc-12.5.0
-arc                   randconfig-002-20251106    gcc-8.5.0
-arm                               allnoconfig    clang-22
-arm                          exynos_defconfig    clang-22
-arm                         lpc18xx_defconfig    clang-22
-arm                   randconfig-001-20251106    gcc-11.5.0
-arm                   randconfig-002-20251106    clang-22
-arm                   randconfig-003-20251106    gcc-10.5.0
-arm                   randconfig-004-20251106    gcc-8.5.0
-arm                        spear3xx_defconfig    clang-17
-arm64                             allnoconfig    gcc-15.1.0
-arm64                            allyesconfig    clang-22
-arm64                 randconfig-001-20251106    gcc-11.5.0
-arm64                 randconfig-002-20251106    clang-19
-arm64                 randconfig-003-20251106    gcc-14.3.0
-arm64                 randconfig-004-20251106    gcc-15.1.0
-csky                             allmodconfig    gcc-15.1.0
-csky                              allnoconfig    gcc-15.1.0
-csky                             allyesconfig    gcc-15.1.0
-csky                  randconfig-001-20251106    gcc-12.5.0
-csky                  randconfig-002-20251106    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20251105    clang-22
-hexagon               randconfig-002-20251105    clang-20
-i386                              allnoconfig    gcc-14
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                        allyesconfig    clang-22
-loongarch             randconfig-001-20251105    clang-18
-loongarch             randconfig-002-20251105    clang-20
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-mips                             allmodconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                             allyesconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                 randconfig-001-20251105    gcc-9.5.0
-nios2                 randconfig-002-20251105    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                randconfig-001-20251106    gcc-10.5.0
-parisc                randconfig-002-20251106    gcc-10.5.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                 mpc834x_itx_defconfig    clang-16
-powerpc               randconfig-001-20251106    gcc-14.3.0
-powerpc               randconfig-002-20251106    clang-22
-powerpc64             randconfig-002-20251106    gcc-8.5.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20251105    gcc-8.5.0
-riscv                 randconfig-002-20251105    clang-18
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20251105    gcc-8.5.0
-s390                  randconfig-002-20251105    gcc-14.3.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20251105    gcc-10.5.0
-sh                    randconfig-002-20251105    gcc-11.5.0
-sh                          rsk7264_defconfig    gcc-15.1.0
-sh                        sh7757lcr_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20251106    gcc-15.1.0
-sparc                 randconfig-002-20251106    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251106    gcc-13.4.0
-sparc64               randconfig-002-20251106    clang-20
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251106    gcc-14
-um                    randconfig-002-20251106    clang-22
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251106    gcc-12
-x86_64      buildonly-randconfig-002-20251106    gcc-14
-x86_64      buildonly-randconfig-003-20251106    gcc-14
-x86_64      buildonly-randconfig-004-20251106    gcc-14
-x86_64      buildonly-randconfig-005-20251106    clang-20
-x86_64      buildonly-randconfig-006-20251106    clang-20
-x86_64                              defconfig    gcc-14
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                  audio_kc705_defconfig    gcc-15.1.0
-xtensa                randconfig-001-20251106    gcc-9.5.0
-xtensa                randconfig-002-20251106    gcc-8.5.0
+  $ perf record -e cpu/mem-loads-aux/PS -vv true |& less
+  ...
+  sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8
+  sys_perf_event_open failed, error -22
+  Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+  ------------------------------------------------------------
+  perf_event_attr:
+    type                             4 (cpu)
+    size                             136
+    config                           0x8203 (mem-loads-aux)
+    { sample_period, sample_freq }   4000
+    sample_type                      IP|TID|TIME|READ|ID|PERIOD
+    read_format                      ID|LOST
+    disabled                         1
+    mmap                             1
+    comm                             1
+    freq                             1
+    enable_on_exec                   1
+    task                             1
+    precise_ip                       3         <<<---- here
+    sample_id_all                    1
+    mmap2                            1
+    comm_exec                        1
+    ksymbol                          1
+    bpf_event                        1
+  ------------------------------------------------------------
+  sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8 = 4
+  ...
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+And it works fine on my machine.
+
+  $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}' ls
+  ...
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.033 MB perf.data (6 samples) ]
+
+> 
+> The second event fails with -EINVAL because, on some platforms, events
+> with precise_ip = 3 must be scheduled on fixed counter 0, and it fails
+> if it happens that this counter is unavailable.
+> 
+> In the current code, the first fallback attempt (inherit = 0) also fails
+> because the inherit attribute differs from that of the group leader
+> (first event).
+
+So I don't understand this.  Either the first event failed due to
+inherit set or the second event should succeed with inherit.  Maybe
+there's an unknown bug or something.
+
+Thanks,
+namhyung
+
 
