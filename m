@@ -1,230 +1,77 @@
-Return-Path: <linux-kernel+bounces-889267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EFEC3D1E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:53:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9E7C3D1E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 839094E1B9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044EB188D10D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D9E3502AE;
-	Thu,  6 Nov 2025 18:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXbsOCC7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2743B34F481;
+	Thu,  6 Nov 2025 18:58:00 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5606D34CFC0;
-	Thu,  6 Nov 2025 18:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CC922A817
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762455173; cv=none; b=LSJUtTDpe1hRIx1GYUQCzjZLasLBM8o/1Ync8X61V6eX1GYZUYVASJc5ydW12b+yRDTFe0LHey4qaRmr+/Aol29HaPABFqRMYNCwK2jrM2z2+wC+91aj8phL63oStQJnpVhxiwbiU2dyBVVCdehLuKBHNbfVyE0VoZaplrK55Xo=
+	t=1762455479; cv=none; b=H2L0NviwB/Ae9m6+yl97k74N0Yn2cjW1F88s3xczr8EYeCuHpT1Y/HTMlqADdQdcI3D+4c2YzMB39ndH1JUY0BCHgC7l2+vdl241rqtb/cIC4v99sGLb1rwLucIRez+hi87dEwzmGVfWIfWPP9AXhSM/x3IyfuIApX395FmBukg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762455173; c=relaxed/simple;
-	bh=gdBHIuyO6YAVPPQfpte3nOsRwKm35zovfxtH21xO544=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEn7uXRRwtTMribYZa/BdX7FAh+1P2BlCkWW+/s1lF592+7dryRSJpUmU/4xpTtoR0aFBmAQeOqZWB5CS9HvRXihSxXpNR1V88tBkxxV0mC70ckDScb+AHVIvFvGZ4EOFVQlTRtqvwfkquWOVDdwvyqgkWWXIrfDWBWKSd+6krc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXbsOCC7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47201C116B1;
-	Thu,  6 Nov 2025 18:52:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762455172;
-	bh=gdBHIuyO6YAVPPQfpte3nOsRwKm35zovfxtH21xO544=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RXbsOCC7G4EBRbo+awbk8SLjpcL+Y/ewg/k/CaTr5Y07wTcEBiYH+9IfhGoB9mmIY
-	 vdQXOkKQFeBg56mCS6m2Agxfm/kGeZT0DyLbbl3d2WI+sFDx/sCV/ihW/Gs36BvWWX
-	 L8EaHQrkQNARFYSLcoSXnvifVPCf6VP8LfBAZNw0lT4yqLoBpiS8PTuqtdsojy2B0H
-	 HEIWS4xTsDUhGETPhfhxr3mtXwVu1YG35VRFzxx2NRIckDr8JoxQLpuQ/l9BpF2ADZ
-	 3l1PWXPl1jxI947wfgQCqyrmB4N8zlz0tvmkdd20LKV1AX+S+hq66FkydoT47DdO+A
-	 e09GK0gIR0wNw==
-Date: Thu, 6 Nov 2025 10:52:49 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Chen, Zide" <zide.chen@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	thomas.falcon@intel.com, dapeng1.mi@linux.intel.com,
-	xudong.hao@intel.com
-Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
-Message-ID: <aQzugcpRvOcPEEro@google.com>
-References: <20251022220802.1335131-1-zide.chen@intel.com>
- <aPrktlANBHFtV52B@google.com>
- <576a7d2b-0a82-4738-8b86-507e4d841524@intel.com>
- <aP1ucJiJYBavTHV7@google.com>
- <e10d671a-eb89-4e06-a1eb-e2f12ee41d70@intel.com>
- <aQl3qfyTdAb68l1l@google.com>
- <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
+	s=arc-20240116; t=1762455479; c=relaxed/simple;
+	bh=Ieq1ck0qvm3ZmRsGLSRgTwo5ZTOdLuFi0WGVB/YIMwQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hX9w5vc4uKSr8Rom9pUuJmhgAXJim4WR8W7uqveBywidKuVLbt/kbK0W3gnFHUeESGedNv7jr9EBOGUjzH7UHmrJOpXEAbXf8uTJ/wMRtRr/ftFysb/rh73KV4x7lEbGWPyxDMx/6Eqh5xPnpFx3ny3v+ldU8IZwubthcpAZ/kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9486e1db3d9so21640039f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:57:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762455477; x=1763060277;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OV9FnEIMn3tAb3e2Fleb7GR+066UTYm6BepX40jlcc8=;
+        b=aJOCNlwnNNvzV4I9xvNEEwxS8osLlSbviagvOnE1/KBrJSMMIKdH0B4y8a8pxbk2iB
+         8ID84hrUql88AoqQ+iIdCxiMeCXW6a4BDrDcI1GPq0viJ7x13+CYPR6NSB/i+M1My8y3
+         lzYyA3HOTkrBizI8/4mnZHeIw8EiX4R9FYisw5b9KSw4uBqxkd0MlwIyCyhgVnDfSalu
+         5USHdlh6eUuTQsQNLJtZ/cCdNktgPlDcMgFIwY7JMuyEY3XH/9bX45E+O6uSEwyVJ/XP
+         cSAFPdUH2xeBD+lMKox1X9Lv9z2yD3nb5sYNxr1MDNBb5L8mClWD5ijMxw92J46+7H7e
+         Qw6Q==
+X-Gm-Message-State: AOJu0YzS4XgauubCRcV2VAJ76TBtZSSQyF6KxNxfyMl8tHmdNb7fY6Sx
+	CDFxiqSx2UL0ftUGQo/3m/+px1vbM/Lv4tYvqLVwt9Q7MMMvPQPaSc0jIMujDD7vQz2PTJJLnEW
+	7WmnmWLxar4+DT/qxDl5oeU46kA8ddhxC1NzMGISOCEWmZg8eI+2ASC85LIs=
+X-Google-Smtp-Source: AGHT+IHYvm+IA9B8uJb2848rdlYpmmi9HgguAl02D2vOmcAOoAj1r+1nGXvKspg549CZw7vc0LjMxjR3W+bATIf4lUb8xLsFNvuA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
+X-Received: by 2002:a05:6602:3420:b0:941:a80:7ae1 with SMTP id
+ ca18e2360f4ac-94889087ce3mr74445939f.14.1762455477465; Thu, 06 Nov 2025
+ 10:57:57 -0800 (PST)
+Date: Thu, 06 Nov 2025 10:57:57 -0800
+In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690cefb5.a70a0220.22f260.0004.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 04, 2025 at 11:10:44AM -0800, Chen, Zide wrote:
-> 
-> 
-> On 11/3/2025 7:48 PM, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > Sorry for the delay.
-> > 
-> > On Mon, Oct 27, 2025 at 11:56:52AM -0700, Chen, Zide wrote:
-> >>
-> >>
-> >> On 10/25/2025 5:42 PM, Namhyung Kim wrote:
-> >>> On Fri, Oct 24, 2025 at 11:03:17AM -0700, Chen, Zide wrote:
-> >>>>
-> >>>>
-> >>>> On 10/23/2025 7:30 PM, Namhyung Kim wrote:
-> >>>>> Hello,
-> >>>>>
-> >>>>> On Wed, Oct 22, 2025 at 03:08:02PM -0700, Zide Chen wrote:
-> >>>>>> Commit c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
-> >>>>>> unconditionally called the precise_ip fallback and moved it after the
-> >>>>>> missing-feature checks so that it could handle EINVAL as well.
-> >>>>>>
-> >>>>>> However, this introduced an issue: after disabling missing features,
-> >>>>>> the event could fail to open, which makes the subsequent precise_ip
-> >>>>>> fallback useless since it will always fail.
-> >>>>>>
-> >>>>>> For example, run the following command on Intel SPR:
-> >>>>>>
-> >>>>>> $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
-> >>>>>>
-> >>>>>> Opening the event "cpu/mem-loads,ldlat=3/PS" returns EINVAL when
-> >>>>>> precise_ip == 3. It then sets attr.inherit = false, which triggers a
-> >>>>>
-> >>>>> I'm curious about this part.  Why the kernel set 'inherit = false'?  IOW
-> >>>>> how did the leader event (mem-loads-aux) succeed with inherit = true
-> >>>>> then?
-> >>>>
-> >>>> Initially, the inherit = true for both the group leader
-> >>>> (cpu/mem-loads-aux/S) and the event in question (cpu/mem-loads,ldlat=3/PS).
-> >>>>
-> >>>> When the second event fails with EINVAL, the current logic calls
-> >>>> evsel__detect_missing_features() first. Since this is a PERF_SAMPLE_READ
-> >>>> event, the inherit attribute falls back to false, according to the
-> >>>> fallback order implemented in evsel__detect_missing_features().
-> >>>
-> >>> Right, that means the kernel doesn't support PERF_SAMPLE_READ with
-> >>> inherit = true.  How did the first event succeed to open then?
-> >>
-> >> The perf tool sets PERF_SAMPLE_TID for Inherit + PERF_SAMPLE_READ
-> >> events, as implemented in commit 90035d3cd876 ("tools/perf: Allow
-> >> inherit + PERF_SAMPLE_READ when opening event").
-> >>
-> >> Meanwhile, commit 7e8b255650fc ("perf: Support PERF_SAMPLE_READ with
-> >> inherit") rejects a perf event if has_inherit_and_sample_read(attr) is
-> >> true and PERF_SAMPLE_TID is not set in attr->sample_type.
-> >>
-> >> Therefore, the first event succeeded, while the one opened in
-> >> evsel__detect_missing_features() which doesn't have PERF_SAMPLE_TID failed.
-> > 
-> > Why does the first succeed and the second fail?  Don't they have the
-> > same SAMPLE_READ and SAMPLE_TID + inherit flags?
-> 
-> Sorry, my previous reply wasn’t entirely accurate. The first event
-> (cpu/mem-loads-aux/S) succeeds because it’s not a precise event
-> (precise_ip == 0).
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I'm not sure how it matters.  I've tested the same command line on SPR
-and got this message.  It says it failed to open because of inherit and
-SAMPE_READ.  It didn't have precise_ip too.
+***
 
-  $ perf record -e cpu/mem-loads-aux/S -vv true |& less
-  ...
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             4 (cpu)
-    size                             136
-    config                           0x8203 (mem-loads-aux)
-    { sample_period, sample_freq }   4000
-    sample_type                      IP|TID|TIME|READ|ID|PERIOD
-    read_format                      ID|LOST
-    disabled                         1
-    inherit                          1
-    mmap                             1
-    comm                             1
-    freq                             1
-    enable_on_exec                   1
-    task                             1
-    sample_id_all                    1
-    mmap2                            1
-    comm_exec                        1
-    ksymbol                          1
-    bpf_event                        1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid 1161023  cpu 0  group_fd -1  flags 0x8
-  sys_perf_event_open failed, error -22
-  Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
-  ...
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+Author: yanjun.zhu@linux.dev
 
-And it fell back to no-inherit and succeeded.  I've also found that it
-worked even with precise_ip = 3.
-
-  $ perf record -e cpu/mem-loads-aux/PS -vv true |& less
-  ...
-  sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8
-  sys_perf_event_open failed, error -22
-  Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             4 (cpu)
-    size                             136
-    config                           0x8203 (mem-loads-aux)
-    { sample_period, sample_freq }   4000
-    sample_type                      IP|TID|TIME|READ|ID|PERIOD
-    read_format                      ID|LOST
-    disabled                         1
-    mmap                             1
-    comm                             1
-    freq                             1
-    enable_on_exec                   1
-    task                             1
-    precise_ip                       3         <<<---- here
-    sample_id_all                    1
-    mmap2                            1
-    comm_exec                        1
-    ksymbol                          1
-    bpf_event                        1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8 = 4
-  ...
-
-And it works fine on my machine.
-
-  $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}' ls
-  ...
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.033 MB perf.data (6 samples) ]
-
-> 
-> The second event fails with -EINVAL because, on some platforms, events
-> with precise_ip = 3 must be scheduled on fixed counter 0, and it fails
-> if it happens that this counter is unavailable.
-> 
-> In the current code, the first fallback attempt (inherit = 0) also fails
-> because the inherit attribute differs from that of the group leader
-> (first event).
-
-So I don't understand this.  Either the first event failed due to
-inherit set or the second event should succeed with inherit.  Maybe
-there's an unknown bug or something.
-
-Thanks,
-namhyung
-
+#syz test: https://github.com/zhuyj/linux.git 
+v6.17_fix_gid_table_release_one
 
