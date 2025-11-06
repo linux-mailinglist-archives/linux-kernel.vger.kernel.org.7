@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-889410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAADC3D7F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:28:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BBFC3D802
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59F823AB479
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:28:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38FB54E4EA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1838306D3D;
-	Thu,  6 Nov 2025 21:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30E3306D3D;
+	Thu,  6 Nov 2025 21:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbUOsWsl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EB4I/SS2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB322C11F7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DFD2DF14A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762464486; cv=none; b=F2SpRrfV0d+usHkpG0TczqvFSFEsRxXPDMrrkyC09oFcCFxdNunP1QDQnpjfTNt/KBltepdZJskAmCJwybJUzBW4tIyHuZFPWMysKJ6Dgv326Dor4ouVlti3b9rbB5z6ffi3D6WjQ3heeEkzYp9AvY71wJQH8rZZcVN+JQTUZDA=
+	t=1762464563; cv=none; b=CDLpLK0SeJl5q+oneYzHrr1h7QR8g5tpCupix5E2+vxg8EEHnSIpYtR9EulfRFdUDjQb3q92M4dKyk/HXppvpdxewOewFtFRpgA1Zjz0aoB4hG8lG6HJL7MxkgQWpRTiisV3i2Zd0LjX3I3KS+OY22x9q1dCVCVGJGZ4WDLb/7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762464486; c=relaxed/simple;
-	bh=K0MBA/NDjuYhSJlc9XQF6LJrAQaSHSLl0UPjoCj5H8A=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MpoMQttl6/vRN7UJ/MdmLHrZAO/3J+irL2o1gDWo8d1xK4ElpeHU4/FKF6pN1gXz15/xopz1DH3O/gAGBEdF+xJ3Jrprj7F4KLhCDuHHn7nOOdXZ72EDUnkRRT3p8n5B+94HboopcE8oRmcNJPWL1RMnX0N+eJ0SytQek7i1y9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbUOsWsl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E565AC116B1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762464485;
-	bh=K0MBA/NDjuYhSJlc9XQF6LJrAQaSHSLl0UPjoCj5H8A=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ZbUOsWslDgugyGr+2L60nMe2KRy1Y6Vv5n5qT9wHgQkTqi6gED/OFMrwyZi2+6XvG
-	 JPIYi134LUawbNLQipF4AeBO+v9g8CVRjBmzBZWr9Yc6ZWoCdozq7xq7gsupu9Ikro
-	 b26SFwdsgjoZMgGppxdATsfC+1aH5a2pUvW6N2SNakluoAHs4TN/fglSfn10xpYWY2
-	 Gq5BrzoNPdvnYKzuhGff8l8Mc72SXqBVjdiWu3i3dhfo+4YZ4T1JMBSBOhjJG6BUgo
-	 lHj9wZo8HVACOQ4OC8HlctLxTRY3QlAwnCaUSw0jMY+8Mt5kiSfHjxGFn8+6UA1JBk
-	 xGLedD/LbIDNA==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-44fba97bfa0so36365b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:28:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWsSMUZFFyBib7Z+k8jGmFTep7p4dMLvqY6FgjFOKzMmLEEeq5LNesRNeOvoMaKhfb/92C6nAAEvn0Ghkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySHU/E3wlA+NvyfuLKVeQ/AXtBRthiqAVgYDwuSIxHOX5cuDcB
-	hnbA+NgI4znArsWWEPRwXMjdQ5IFsGM/mBKhFwhVklzZDR3EPNxHD3mb7eWdj3uJ+do0EKNTaAd
-	b3dsDd5abJm22vtfoL/5EHZOcU6pJCqI=
-X-Google-Smtp-Source: AGHT+IF7dXr2RjLUY6C1fn8TVkoQlFIs4Kvq8HgR0agdfLt+A1tmPiUwMKNIMRKDuTeki2c06C7v7pnTpBbzrMNIFWE=
-X-Received: by 2002:a05:6808:4f2a:b0:44d:c03e:657a with SMTP id
- 5614622812f47-45015cf2fc2mr529707b6e.7.1762464485311; Thu, 06 Nov 2025
- 13:28:05 -0800 (PST)
+	s=arc-20240116; t=1762464563; c=relaxed/simple;
+	bh=fmMPx+nIE9R0eDvKMK0buO9dC4R4qwFjkjuZ9muvTuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JPrdTbi7dFyeJS0agODj2PjN95U/gaG6caoWxXZWVCItJgQUk68N/QSmDw5gbBQtnCvWgAAA9AllHYQWnxgxKCa4xorVetKSibGXjcO+OFPomMmkPWCtLDbg2IfdwUXeQ6szT876/Te2Zls/Vfokksm/gYm875eEVqLyjZOg0XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EB4I/SS2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762464560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bfwhX0idL+jcT4fehCnbdNH5+2W0J91n2IFBGm3eZ6c=;
+	b=EB4I/SS2HQOHNlA6VzIfesqrhMk7WHiqMgi/daeESRsG1Imi+/iCFIivoQMoKj03OkG8+w
+	oAgLSrOnes430o2/5KeD75Z9l+7Y+pj+wBc8ABSA7oyJHbjEPZHSxvfNtrGO0uoV2WyHm2
+	Rf/F6iUyoc3+tOn60CHp+KIAdok79jM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-iBqmsrqeMyW0bHI0o7um3Q-1; Thu,
+ 06 Nov 2025 16:29:16 -0500
+X-MC-Unique: iBqmsrqeMyW0bHI0o7um3Q-1
+X-Mimecast-MFC-AGG-ID: iBqmsrqeMyW0bHI0o7um3Q_1762464555
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C4A801956063;
+	Thu,  6 Nov 2025 21:29:14 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.65.101])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8F25819560A7;
+	Thu,  6 Nov 2025 21:29:13 +0000 (UTC)
+From: Luiz Capitulino <luizcap@redhat.com>
+To: david@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: ryan.roberts@arm.com,
+	akpm@linux-foundation.org,
+	lorenzo.stoakes@oracle.com
+Subject: [RFC 00/10] mm: thp: always enable mTHP support
+Date: Thu,  6 Nov 2025 16:28:47 -0500
+Message-ID: <cover.1762464515.git.luizcap@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 6 Nov 2025 22:27:54 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0heXyzAAP5mH-kP9iS9yGJ-ceGFUJG5m-FL-rMMWx4eJg@mail.gmail.com>
-X-Gm-Features: AWmQ_bmo8bBBfH4_s2z-itlUMPz6AjaSxaBC6mGyOgstB6XZR-N0AaE5S4zWuOw
-Message-ID: <CAJZ5v0heXyzAAP5mH-kP9iS9yGJ-ceGFUJG5m-FL-rMMWx4eJg@mail.gmail.com>
-Subject: [GIT PULL] ACPI fixes for v6.18-rc5
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Linus,
+Today, if an architecture implements has_transparent_hugepage() and the CPU
+lacks support for PMD-sized pages, the THP code disables all THP, including
+mTHP support. In addition, the kernel lacks a well defined API to check for
+PMD-sized page support. It currently relies on has_transparent_hugepage()
+and thp_disabled_by_hw(), but they are not well defined and are tied to
+THP support.
 
-Please pull from the tag
+This series addresses both issues by introducing a new well defined API
+to query PMD-sized page support: pgtable_has_pmd_leaves(). Using this
+new helper, we ensure that mTHP remains enabled even when the
+architecture or CPU doesn't support PMD-sized pages.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.18-rc5
+An important detail is that we need to do the same refactoring for
+has_transparent_pud_hugepage(). I actually have patches for this one
+too, I'm not including them here because I want to get some initial
+feedback on the general approach first (and maybe it's better to
+do that in a separate series).
 
-with top-most commit 771e8f483583728cd2ef164f7c2256c4bf2adf4c
+Thanks to David Hildenbrand for suggesting this improvement and for
+providing guidance (all bugs and misconcentpions are mine).
 
- Merge branches 'acpi-cppc' and 'acpi-docs'
+Luiz Capitulino (10):
+  docs: tmpfs: remove implementation detail reference
+  mm: introduce pgtable_has_pmd_leaves()
+  drivers: dax: use pgtable_has_pmd_leaves()
+  drivers: i915 selftest: use pgtable_has_pmd_leaves()
+  drivers: nvdimm: use pgtable_has_pmd_leaves()
+  mm: debug_vm_pgtable: use pgtable_has_pmd_leaves()
+  treewide: rename has_transparent_hugepage() to arch_has_pmd_leaves()
+  mm: replace thp_disabled_by_hw() with pgtable_has_pmd_leaves()
+  mm: thp: always enable mTHP support
+  mm: thp: x86: cleanup PSE feature bit usage
 
-on top of commit 6146a0f1dfae5d37442a9ddcba012add260bceb0
+ Documentation/filesystems/tmpfs.rst           |  5 ++---
+ arch/mips/include/asm/pgtable.h               |  4 ++--
+ arch/mips/mm/tlb-r4k.c                        |  4 ++--
+ arch/powerpc/include/asm/book3s/64/hash-4k.h  |  2 +-
+ arch/powerpc/include/asm/book3s/64/hash-64k.h |  2 +-
+ arch/powerpc/include/asm/book3s/64/pgtable.h  | 10 +++++-----
+ arch/powerpc/include/asm/book3s/64/radix.h    |  2 +-
+ arch/powerpc/mm/book3s64/hash_pgtable.c       |  4 ++--
+ arch/s390/include/asm/pgtable.h               |  4 ++--
+ arch/x86/include/asm/pgtable.h                |  6 ------
+ arch/x86/include/asm/pgtable_32.h             |  6 ++++++
+ drivers/dax/dax-private.h                     |  2 +-
+ .../gpu/drm/i915/gem/selftests/huge_pages.c   |  2 +-
+ drivers/nvdimm/pfn_devs.c                     |  4 ++--
+ include/linux/huge_mm.h                       |  7 -------
+ include/linux/pgtable.h                       | 14 +++++++++++--
+ mm/debug_vm_pgtable.c                         | 20 +++++++++----------
+ mm/huge_memory.c                              | 13 ++++++------
+ mm/memory.c                                   | 12 ++++++++++-
+ mm/shmem.c                                    |  8 ++++----
+ 20 files changed, 72 insertions(+), 59 deletions(-)
 
- Linux 6.18-rc4
+-- 
+2.51.1
 
-to receive ACPI support fixes for 6.18-rc5.
-
-These fix a coding mistake in the ACPI Smart Battery Subsystem (SBS)
-driver and two documentation issues:
-
- - Fix computation of the battery->present value in acpi_battery_read()
-   to work when battery->id is not zero (Dan Carpenter)
-
- - Fix comment typo in the ACPI CPPC library (Chu Guangqing)
-
- - Fix I2C device references in two ASL examples in the firmware guide
-   that were broken by a previous update (Jonas Gorski)
-
-Thanks!
-
-
----------------
-
-Chu Guangqing (1):
-      ACPI: CPPC: Fix typo in a comment
-
-Dan Carpenter (1):
-      ACPI: SBS: Fix present test in acpi_battery_read()
-
-Jonas Gorski (1):
-      Documentation: ACPI: i2c-muxes: fix I2C device references
-
----------------
-
- Documentation/firmware-guide/acpi/i2c-muxes.rst | 8 ++++----
- drivers/acpi/cppc_acpi.c                        | 2 +-
- drivers/acpi/sbs.c                              | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
 
