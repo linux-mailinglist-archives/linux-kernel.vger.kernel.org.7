@@ -1,228 +1,97 @@
-Return-Path: <linux-kernel+bounces-888769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD6CC3BDC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E46C3BDD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D211898EC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA95118870C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24F3396FA;
-	Thu,  6 Nov 2025 14:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F09A3469E3;
+	Thu,  6 Nov 2025 14:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iIYqVCVW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cJfUt/5W";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iIYqVCVW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cJfUt/5W"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="DlZ9/6P3"
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769B9345750
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB403451CC;
+	Thu,  6 Nov 2025 14:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440314; cv=none; b=oyW5spdXcAjo8Xodsg4qoE/cgotsGSaYI7yMVF1IHe7kEjCyqn8wRrEUas+VyYQAl9bjM0d8T7YtoyAwIUs6x7FgZnQd4/J3l8+x+I/5G+3w+adLfR189gu9hrUXUsNvnsMmBOzZdlKKaoKnaPPMLdKd4nOiozJMC6MC+NkAkkk=
+	t=1762440328; cv=none; b=TNTgGXHp4vVV/ITw+FiE6+I92PBzly/TTH0kGS0Mt1TJA75OIZsiFBVQSeYvG+lubNGIq7NpIEDGeVxBK7FbwMIu63Q34+AyU5pZc+dxLLPW1rnNBl0GWEenIynREY3pZOXSNcgNeF1wlZRmh6DLDWSm4MBANHuVhi6OuLThmyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440314; c=relaxed/simple;
-	bh=rHiQpD6Dguyzhqco5a71e3ZBXppCumTrPP+N3kV916Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oi6gTpcEaXMT9Lp+MkVJu+ESWw5gK674GsVXPHtNMMZkk3ueCnH1S4hEOZxTY2zcMhygv0B5CZnpusHuXwBpuHmhMrzc818fAqC1924ms1bXnjrzuem9pATGNlB2NF5B1IEbGXsh9rNfVUW5IUUV/sUnXBJ+zeiLWELkEMYa/TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iIYqVCVW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cJfUt/5W; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iIYqVCVW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cJfUt/5W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B3741F747;
-	Thu,  6 Nov 2025 14:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762440309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nKYZuLb6Nw7zZ6Jj1iayriDsnFotAsi2YnGGy/qZxaE=;
-	b=iIYqVCVW8trouxIau1Jb2p19gyPQLsOzO1T9vdE53k93FoKMpvRHjpW790I82MgSqiM7l5
-	lV9viSF/+SuKgoSxNvpQGlp+lA/4cEM1bu/0spHHY+6hnOEqgK7M3qH1WUoEoJCwdWdEaY
-	GELOWUe6yFpgvaxfGc5iPNviJy8PonQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762440309;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nKYZuLb6Nw7zZ6Jj1iayriDsnFotAsi2YnGGy/qZxaE=;
-	b=cJfUt/5WY9dWjKauNGghYkyh6CE1i/Bw1taOd7vAPymyisRI4Wv7MWMPFElfXjs27hvHWq
-	FGCwOCOTNY6308CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762440309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nKYZuLb6Nw7zZ6Jj1iayriDsnFotAsi2YnGGy/qZxaE=;
-	b=iIYqVCVW8trouxIau1Jb2p19gyPQLsOzO1T9vdE53k93FoKMpvRHjpW790I82MgSqiM7l5
-	lV9viSF/+SuKgoSxNvpQGlp+lA/4cEM1bu/0spHHY+6hnOEqgK7M3qH1WUoEoJCwdWdEaY
-	GELOWUe6yFpgvaxfGc5iPNviJy8PonQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762440309;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nKYZuLb6Nw7zZ6Jj1iayriDsnFotAsi2YnGGy/qZxaE=;
-	b=cJfUt/5WY9dWjKauNGghYkyh6CE1i/Bw1taOd7vAPymyisRI4Wv7MWMPFElfXjs27hvHWq
-	FGCwOCOTNY6308CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52D9C13A31;
-	Thu,  6 Nov 2025 14:45:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cLPwEHS0DGnJVQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 06 Nov 2025 14:45:08 +0000
-Date: Thu, 6 Nov 2025 14:45:06 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH v2 2/5] mm: add atomic VMA flags, use VM_MAYBE_GUARD as
- such
-Message-ID: <y6a4qchmj7jnaogx6u5a3i6lni7v54lj25ipwb7tdtakcudakr@vm6vt7eumxax>
-References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
- <94935cf140e3279c234b39e0d976c4718c547c73.1762422915.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1762440328; c=relaxed/simple;
+	bh=SLO8XAogt0p729SfzU22YkQQYIdKzpqYUaujwFZtnVM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kbKpAbfue9AehfeGr1yd2CkjTxboKb2ZXJbeb1oMpP2lsiNVVDXyHXowmdEtFRgFZCD49Gvpq5YXg5OZD/MPowK1V7MT0tN0WBZBRb3abkQS7yWrjkr7K5A+XQPCIyZfUDNOwuNeoXS5sg7XkPNx6l1IusIzIBxWPynAcwO5q10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=DlZ9/6P3; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [221.228.238.82])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28a8ce3b9;
+	Thu, 6 Nov 2025 22:45:19 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: chuck.lever@oracle.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	kernel-tls-handshake@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] net/handshake: Fix memory leak in tls_handshake_accept()
+Date: Thu,  6 Nov 2025 14:45:11 +0000
+Message-Id: <20251106144511.3859535-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94935cf140e3279c234b39e0d976c4718c547c73.1762422915.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,redhat.com,oracle.com,suse.cz,kernel.org,google.com,suse.com,goodmis.org,efficios.com,vger.kernel.org,kvack.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a59a10f4403a1kunmd877133e7b53ae
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTEkaVhkdQ0tNTBlOS04dQlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJSUpVSUlDVUlIQ1VDSVlXWRYaDxIVHRRZQVlLVUtVS1VLWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=DlZ9/6P39YXgRBCKj/eN1c64gHzSaYNZ98eMYYeRuIN2U04fHOJfsinKq/JtEGEqfWQYzooLP875v2rzex5eeTYjtlg2mnkGqPqHkdIXsr6+FXB63rmTgnqUlfsj+18b4U5UOEM894SuN5P08CGroqXt1iHFwipnwyclqRa955Y=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=h0YUkunlqJUAnhC/gNJ/0mAwbV93Almf7qIwemX0/vQ=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, Nov 06, 2025 at 10:46:13AM +0000, Lorenzo Stoakes wrote:
-> This patch adds the ability to atomically set VMA flags with only the mmap
-> read/VMA read lock held.
-> 
-> As this could be hugely problematic for VMA flags in general given that all
-> other accesses are non-atomic and serialised by the mmap/VMA locks, we
-> implement this with a strict allow-list - that is, only designated flags
-> are allowed to do this.
-> 
-> We make VM_MAYBE_GUARD one of these flags, and then set it under the mmap
-> read flag upon guard region installation.
-> 
-> The places where this flag is used currently and matter are:
-> 
-> * VMA merge - performed under mmap/VMA write lock, therefore excluding
->   racing writes.
-> 
-> * /proc/$pid/smaps - can race the write, however this isn't meaningful as
->   the flag write is performed at the point of the guard region being
->   established, and thus an smaps reader can't reasonably expect to avoid
->   races. Due to atomicity, a reader will observe either the flag being set
->   or not. Therefore consistency will be maintained.
-> 
-> In all other cases the flag being set is irrelevant and atomicity
-> guarantees other flags will be read correctly.
+In tls_handshake_accept(), a netlink message is allocated using
+genlmsg_new(). In the error handling path, genlmsg_cancel() is called
+to cancel the message construction, but the message itself is not freed.
+This leads to a memory leak.
 
-Probably important to write down that the only reason why this doesn't make
-KCSAN have a small stroke is that we are only changing one bit. i.e we can
-only have one bit of atomic flags before annotating every reader.
+Fix this by calling nlmsg_free() in the error path after genlmsg_cancel()
+to release the allocated memory.
 
-(Source: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/kcsan/permissive.h#n51)
+Fixes: 2fd5532044a89 ("net/handshake: Add a kernel API for requesting a TLSv1.3 handshake")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ net/handshake/tlshd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> We additionally update madvise_guard_install() to ensure that
-> anon_vma_prepare() is set for anonymous VMAs to maintain consistency with
-> the assumption that any anonymous VMA with page tables will have an
-> anon_vma set, and any with an anon_vma unset will not have page tables
-> established.
-
-Isn't that what we already had? Or do you mean "*only* set for anonymous VMAs"?
-
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-With the nits below and above addressed:
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
-
-> ---
->  include/linux/mm.h | 23 +++++++++++++++++++++++
->  mm/madvise.c       | 22 ++++++++++++++--------
->  2 files changed, 37 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 2a5516bff75a..2ea65c646212 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -518,6 +518,9 @@ extern unsigned int kobjsize(const void *objp);
->  /* This mask represents all the VMA flag bits used by mlock */
->  #define VM_LOCKED_MASK	(VM_LOCKED | VM_LOCKONFAULT)
->  
-> +/* These flags can be updated atomically via VMA/mmap read lock. */
-> +#define VM_ATOMIC_SET_ALLOWED VM_MAYBE_GUARD
-> +
->  /* Arch-specific flags to clear when updating VM flags on protection change */
->  #ifndef VM_ARCH_CLEAR
->  # define VM_ARCH_CLEAR	VM_NONE
-> @@ -860,6 +863,26 @@ static inline void vm_flags_mod(struct vm_area_struct *vma,
->  	__vm_flags_mod(vma, set, clear);
->  }
->  
-> +/*
-> + * Set VMA flag atomically. Requires only VMA/mmap read lock. Only specific
-> + * valid flags are allowed to do this.
-> + */
-> +static inline void vma_flag_set_atomic(struct vm_area_struct *vma,
-> +				       int bit)
-> +{
-> +	const vm_flags_t mask = BIT(bit);
-> +
-> +	/* mmap read lock/VMA read lock must be held. */
-> +	if (!rwsem_is_locked(&vma->vm_mm->mmap_lock))
-> +		vma_assert_locked(vma);
-> +
-> +	/* Only specific flags are permitted */
-> +	if (WARN_ON_ONCE(!(mask & VM_ATOMIC_SET_ALLOWED)))
-> +		return;
-
-VM_WARN_ON_ONCE?
-
+diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
+index 081093dfd553..8f9532a15f43 100644
+--- a/net/handshake/tlshd.c
++++ b/net/handshake/tlshd.c
+@@ -259,6 +259,7 @@ static int tls_handshake_accept(struct handshake_req *req,
+ 
+ out_cancel:
+ 	genlmsg_cancel(msg, hdr);
++	nlmsg_free(msg);
+ out:
+ 	return ret;
+ }
 -- 
-Pedro
+2.34.1
+
 
