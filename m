@@ -1,186 +1,263 @@
-Return-Path: <linux-kernel+bounces-888907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5B5C3C3DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:05:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DAFC3C3EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E8DE4F8D4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:01:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A9064FAE88
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FFE3093DB;
-	Thu,  6 Nov 2025 16:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9715A333452;
+	Thu,  6 Nov 2025 16:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqFUfg9s"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NA7EG4Nj"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA43233DEF3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52FE2EB860
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444905; cv=none; b=j9p31YERFYF4oPEVkVBeBAC3APx0XTnpXyN+mets0Kz+8mZlx02VxRzvFi8pexKc29Wi0Cij1teaTiJmPRp6vkXalkM+gWGc6ISHU4xawWLX123irDHlMSbf6FIRkIqO1WUy45Fh08G0Z2lqKiXBK0CsRn6tsWjlFEt2sf6Zvgc=
+	t=1762444934; cv=none; b=OeXOR4LtwKqKiWFT+8zDsQVQi2Tp/hSZM/Om6eo4/DlwDv2RWVhGkJm5QiF8iz55KO6iivZRE7scA8fK04YfTxrYy1UUSO4St1hcvd+OyGt+uEGt1wRDNCCRmpwif7sePWY9YyzDXOGJqhCOZ/nIr9/Mz0NXeBk5QfgAutDIqoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444905; c=relaxed/simple;
-	bh=T9dOCjt5CSMA8b/M7JLaYkgOskmgR2ygjFafGQfTcfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twlt5HwSJ9G2l8vXgd6GcrhuOhROH2bMTCw9XitKhHnj0s5u6+dlwpISe0HWH8Tc1igJokyLmxKgVmzVBqQMChpM9jLr4niNjdG/xFPrcJfo1iQ2e+DSV7xa3dlLNxHVcu9X7Y2hcJ8R/fDWuECeUw5FvjQiuqNGNA5K4+fxAKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqFUfg9s; arc=none smtp.client-ip=209.85.128.173
+	s=arc-20240116; t=1762444934; c=relaxed/simple;
+	bh=oTIkHrAGc+PJG6lIC9MbDF4ws+gdVwa9wYkQ8yopGNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sbOzUY/rNqxKrXw3x+hPMUTcluPpRPAIj4uYog+V4d9eRRX4+bioXtUkQuJyHSTxc7zvigNiDbSeZPOhD1CNNHVXbcphj+2aFAShqMJx9y5lzjFB0ZFYNmigCbzpkngFfK//Kxh3kHGX4BELIrWkBFyC9iCda6515vjweoWrSVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NA7EG4Nj; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7864cef1976so32906777b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:01:43 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1730254a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:02:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762444902; x=1763049702; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uDqvdpSXd7EVG4K3GSPuN1+lwa+x8rxJ7aM50JiFwXE=;
-        b=TqFUfg9sdXxypsXTeE5BSr5Qkw8tO2/cIJTGInEFiTFfU5cxawi9hpV918beskopTK
-         /6SnOKWCg0fYbXrnhClN6h/ZIDJ4hKq5K80QFj6VxjsZGVVErM0AHnnIBpSHYHq1r1pS
-         8Yxk9b6xcmhTp/sTdYFZaoEoARZJ8pcFux2xGerbAVMQqtK8XqjLNHMhF4PzVwrtHAdm
-         R+CiwBInxL+6ZNI3IyjxHEyzQQMDawko9u6NiKv8LZfJbo+iN8UPF14mSG3wTNjFoQoz
-         v26N7sZ2QU8jlslhMel0AWHK42O5moBUO2mtG/6vNATPQxCZ2Y2TIM2PntMcOdpJXv3F
-         /zpw==
+        d=gmail.com; s=20230601; t=1762444930; x=1763049730; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=44vNGM2NsIAugsSY4yeMEiLRHsHSPV8cmDAjt250+bg=;
+        b=NA7EG4NjUKIuLEhQyH6jdwyfPCgYox1h5Qs2tMjwsflA8hq617z8KLwCKw9Fxqxexu
+         0tcZOLT8JMGoh+8e0iRkWqeSQvjFXR7XMxZoRyg4qhxGOWBjUu+Gzl1rMGiQ0Ze4GXuG
+         Xz2ULS2EzyvCPZh1kV+F1Sf0Ypv/hgT938xiFGN5EmQUjt8CIOHi2+eeFdvZYK3HUlyg
+         T79IOSt1p7BrYT/3akzQy6y1kYTYU6z0vIYd1NLfpQLodxtXE74S8a/cUzs19K53VSru
+         Xti62hbHY0FjN3BTUXi7UhB21ciIL3QOWcOlriiWHAPgSVp66vEHn7IRRLzhVMQEI8JF
+         j8tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762444902; x=1763049702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uDqvdpSXd7EVG4K3GSPuN1+lwa+x8rxJ7aM50JiFwXE=;
-        b=SQjxBYCKvKbPJrUoAxZQkibMaogAvZ7UWWg5VXENCWfcbZ+sz1b6blI0LsIWCuDeXb
-         3lTmUPSjwsAEKYRTi6dIC2CjXnS3nt+ZxJ0mi+ubQK+QKahg4fQJnT878kY+UsDzAW6b
-         xPaVLYd+ldQq2LTmApYC5DotpvEzA/9xon3T+c3ny7lcYA1W59epL2GUwjPkfrL0CuqK
-         Iu/5seOs2UMEQbHf3Z/jAZcKxa9GaTp3ER1MSe3HMfNmf1KihLoi5SEeke10gtGS4nQn
-         XVrI1nmMaWmE8m/ggRRrkKtQduRf6nDOyfhSU/iNBnIa1vZN1jykUKWSCIow4vMfBa+K
-         nzPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKODHOQmRuhpRewUV4b2nQyd69AOBm7BnMnXSIIf5nbErSFzkEzjrAOMSXLzTasF/44/FVB+mH5gye3s4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze2z9isGc+IRYDGWbJHVAE7vGCwX7VPa2Fm8nEZh5IXB59Lmas
-	7pbeDKD2/0L/qsLQrG9tj7ZIasi6aWZf6cJ7kM7YQ4U2tyxuCIZzZVq8
-X-Gm-Gg: ASbGncthzsjhRyduRg16FFp+IbXQrxbNYFGo6DW4SFWAHYIFfBMiG9Z/sPu/gUfeZqr
-	EwvzSG1pIS6lm8bkeu9TrBaAFy5m3+Skp7U2XzXKS5uM41/BlDFcDR1d3MgXVhUZkTN29mU6tHF
-	L0XzjTlJZQBq+h/AgKs45E6UUq/H83sPgfM9z08GvXZZW0IcotU8xEiZ4eQd8z7qs6KRY696wyo
-	2RBiD6eAuN2vGbyp9kweJ15rmqInmj+dWpVHOSfRkk8Uag3yTN19gzy3WSS+/DR2cSuTOE7ipyI
-	MrbgIuPKUBHfIZNj7jS5prIgsmiMHgh23I5j/1Pdo2a0spd4GJfD7D3sH9DnV/N6d8EGa0lCBQq
-	BNEmcOn/uN3YDCw+4kW3Zy38ugNlFnytl+DKOcOswJr/pTEchn9ouOrYuf8Pi32oKtSjRp+M9Vu
-	Swxf3DG1wZd2Q5FxmD4UJtjVmNX6Zs+qYe
-X-Google-Smtp-Source: AGHT+IHH1OiCGEbzPId419SmPeowjgjZvd2uwuBPgu14uOeMTfnhF3EzyBaZ3Vf1fe9K5qAqRN9gOQ==
-X-Received: by 2002:a05:690e:2405:b0:63f:b1fd:3850 with SMTP id 956f58d0204a3-640c3b56ae5mr33952d50.33.1762444901924;
-        Thu, 06 Nov 2025 08:01:41 -0800 (PST)
-Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b15d6379sm9121887b3.45.2025.11.06.08.01.40
+        d=1e100.net; s=20230601; t=1762444930; x=1763049730;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=44vNGM2NsIAugsSY4yeMEiLRHsHSPV8cmDAjt250+bg=;
+        b=CeJe0O83lN6RLqdorw61r7KIs6e3MS+1nFDoL1lPmes2Ec6iOJbCijnedDk+5h4vY6
+         LAcYeNXjuO/DWM7veFBa+i/tnIsxQPoerF9ddV4O9YAw2kzN9VhbIlOZ0KmcYXwv3ahL
+         jn9y32U8M0i4L/cLbRnl6CKrS7WyzCdtDwsu4D+7vDU0qWD494Gissn1hxRki3/GLsnW
+         wUU9V2TOLUnqJh51wGPTykg5T9QhSf35JJoEXNr5BfmALqnC7hjdr3zxcS43/6eOTM6c
+         MX6h0oXMo7xeRX2yCcexNOJhupXeuUKb4fcFEPdAt5lKNGOMoTUMpwvbzvcE5GD2+PwK
+         bejw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDE/buHh3ws+Thg5upHxIQHuPrn7Jj7iIDGdmgoj+yyNPS2GOtyjM2z1K4uncwUxqvSO5yAlursq+anB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLeWM/1gAsJxmuiTbVvgtQuvrk6WiIkzYCa7zuV7X8XzI+Clgc
+	KPcXUJutBLgh1gS6mmQsCdcvieppZuLpoHzpYPKQ50vZ46xSotIFJsIY
+X-Gm-Gg: ASbGncutyqjqR8thi3ANemdzvVMXvUbEBc98LMe/Wuy/8Lk8FNk/3Y01XR+sWUCnjk8
+	Fx0ZGxupXrPaoa0FsPuH+xktqrItdnoEWt5u5nR1ka0rbbe5UsP8KLolTHDMAksyg9GX/dF5EIv
+	0MKSkyPUFtGK0vy+yQTi1UfHCI9BQixNBWJe3FQe+oD5NA19xaX5kbnrwqiz+JqzN0uA6IoBqNO
+	Pl1aiBiqCXaBMyv+ZEqV6Mn52jcQ2CGPkRd5LAaUtTYLCDouuTA5+56QQgeHpU5M978ld38nN/0
+	uwScReKvDR1/FYoLTSBfHRSP7oUu8CmQGJ8bFiakZEfE+CNxwM9p00ySKHuqVGVT/38NR6o6EYU
+	kTHlzI26HLRLTjEAxr9p5mohL5BHyfqb973zp96ul4rWHfH9Et0I/SkwuFcZ/Qx0/C1OFdMtWiq
+	vMjxwPsArGwSiPF1W3s5i5J09ePTA=
+X-Google-Smtp-Source: AGHT+IHhiwaS86Qf05ow+2ljmxHHVJaS1EqN2g3gDNvTqSg2n0SjpaidlCNbWm4msNcpmzg8Mzjszg==
+X-Received: by 2002:a05:6402:5189:b0:641:1f6c:bccf with SMTP id 4fb4d7f45d1cf-6411f6cbe71mr3204075a12.16.1762444929652;
+        Thu, 06 Nov 2025 08:02:09 -0800 (PST)
+Received: from NB-6746.corp.yadro.com ([188.243.183.84])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f862cd7sm2230000a12.30.2025.11.06.08.02.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:01:40 -0800 (PST)
-Date: Thu, 6 Nov 2025 11:01:39 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org, qat-linux@intel.com,
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 12/26] bitfield: Add less-checking __FIELD_{GET,PREP}()
-Message-ID: <aQzGY4AKiMQpuL0R@yury>
-References: <cover.1762435376.git.geert+renesas@glider.be>
- <cfc32f8530d5c0d4a7fb33c482a4bf549f26ec24.1762435376.git.geert+renesas@glider.be>
- <aQy0T2vUINze_6_q@smile.fi.intel.com>
+        Thu, 06 Nov 2025 08:02:09 -0800 (PST)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: Artem Shimko <a.shimko.dev@gmail.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] i2c: designware: Replace magic numbers with named constants
+Date: Thu,  6 Nov 2025 19:02:05 +0300
+Message-ID: <20251106160206.2617785-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQy0T2vUINze_6_q@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 06, 2025 at 04:44:31PM +0200, Andy Shevchenko wrote:
-> On Thu, Nov 06, 2025 at 02:34:00PM +0100, Geert Uytterhoeven wrote:
-> > The BUILD_BUG_ON_MSG() check against "~0ull" works only with "unsigned
-> > (long) long" _mask types.  For constant masks, that condition is usually
-> > met, as GENMASK() yields an UL value.  The few places where the
-> > constant mask is stored in an intermediate variable were fixed by
-> > changing the variable type to u64 (see e.g. [1] and [2]).
-> > 
-> > However, for non-constant masks, smaller unsigned types should be valid,
-> > too, but currently lead to "result of comparison of constant
-> > 18446744073709551615 with expression of type ... is always
-> > false"-warnings with clang and W=1.
-> > 
-> > Hence refactor the __BF_FIELD_CHECK() helper, and factor out
-> > __FIELD_{GET,PREP}().  The later lack the single problematic check, but
-> > are otherwise identical to FIELD_{GET,PREP}(), and are intended to be
-> > used in the fully non-const variants later.
-> > 
-> > [1] commit 5c667d5a5a3ec166 ("clk: sp7021: Adjust width of _m in
-> >     HWM_FIELD_PREP()")
-> > [2] commit cfd6fb45cfaf46fa ("crypto: ccree - avoid out-of-range
-> >     warnings from clang")
-> 
-> 
-> Also can be made as
-> 
-> Link: https://git.kernel.org/torvalds/c/5c667d5a5a3ec166 [1]
-> 
-> The positive effect that one may click that on Git Web.
-> Ideally, of course, would be an additional parses on Git Web kernel.org uses to
-> parse that standard "commit ...()" notation to add the respective HREF link.
+Replace various magic numbers with properly named constants to improve
+code readability and maintainability. This includes constants for
+register access, timing adjustments, timeouts, FIFO parameters,
+and default values.
 
-Those flying over Atlantic or cruising cross Caribbean would disagree. :)
+The change makes the code more self-documenting without altering any
+functionality.
+
+Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+---
+
+Hello maintainers and reviewers,
+
+Fix replaces magic numbers throughout the DesignWare I2C driver with named 
+constants to improve code readability and maintainability.
+
+The change introduces constants for register access, timing adjustments, 
+timeouts, FIFO parameters, and default values, all properly documented 
+with comments.
+
+No functional changes.
+
+Thank you for your consideration.
+--
+Best regards,
+Artem Shimko
+
+ChangeLog:
+  v1:
+    * https://lore.kernel.org/all/20251105161845.2535367-1-a.shimko.dev@gmail.com/T/#u
+  v2:
+    * Move register-related constants to i2c-designware-core.h
+    * Remove unnecessary comments to reduce clutter  
+    * Keep only essential timeouts and default parameters in .c file
+    * Use FIELD_GET() for FIFO depth extraction as suggested
+
+ drivers/i2c/busses/i2c-designware-common.c | 32 ++++++++++++++--------
+ drivers/i2c/busses/i2c-designware-core.h   | 13 +++++++++
+ 2 files changed, 34 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index 5b1e8f74c4ac..1aa10e712712 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -34,6 +34,14 @@
  
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> ...
-> 
-> > +	BUILD_BUG_ON_MSG(__bf_cast_unsigned(mask, mask) >		\
-> > +			 __bf_cast_unsigned(reg, ~0ull),		\
-> > +			 pfx "type of reg too small for mask")
-> 
-> Perhaps we may convert this (and others?) to static_assert():s at some point?
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
+ #include "i2c-designware-core.h"
+ 
++#define DW_IC_DEFAULT_BUS_CAPACITANCE_PF	100
++
++#define DW_IC_ABORT_TIMEOUT_US			10
++#define DW_IC_ABORT_TOTAL_TIMEOUT_US		100
++
++#define DW_IC_BUSY_POLL_TIMEOUT_US		1100
++#define DW_IC_BUSY_TOTAL_TIMEOUT_US		20000
++
+ static const char *const abort_sources[] = {
+ 	[ABRT_7B_ADDR_NOACK] =
+ 		"slave address not acknowledged (7bit mode)",
+@@ -106,7 +114,7 @@ static int dw_reg_read_word(void *context, unsigned int reg, unsigned int *val)
+ 	struct dw_i2c_dev *dev = context;
+ 
+ 	*val = readw(dev->base + reg) |
+-		(readw(dev->base + reg + 2) << 16);
++		(readw(dev->base + reg + DW_IC_REG_STEP_BYTES) << DW_IC_REG_WORD_SHIFT);
+ 
+ 	return 0;
+ }
+@@ -116,7 +124,7 @@ static int dw_reg_write_word(void *context, unsigned int reg, unsigned int val)
+ 	struct dw_i2c_dev *dev = context;
+ 
+ 	writew(val, dev->base + reg);
+-	writew(val >> 16, dev->base + reg + 2);
++	writew(val >> DW_IC_REG_WORD_SHIFT, dev->base + reg + DW_IC_REG_STEP_BYTES);
+ 
+ 	return 0;
+ }
+@@ -165,7 +173,7 @@ int i2c_dw_init_regmap(struct dw_i2c_dev *dev)
+ 	if (reg == swab32(DW_IC_COMP_TYPE_VALUE)) {
+ 		map_cfg.reg_read = dw_reg_read_swab;
+ 		map_cfg.reg_write = dw_reg_write_swab;
+-	} else if (reg == (DW_IC_COMP_TYPE_VALUE & 0x0000ffff)) {
++	} else if (reg == lower_16_bits(DW_IC_COMP_TYPE_VALUE)) {
+ 		map_cfg.reg_read = dw_reg_read_word;
+ 		map_cfg.reg_write = dw_reg_write_word;
+ 	} else if (reg != DW_IC_COMP_TYPE_VALUE) {
+@@ -384,7 +392,7 @@ int i2c_dw_fw_parse_and_configure(struct dw_i2c_dev *dev)
+ 	i2c_parse_fw_timings(device, t, false);
+ 
+ 	if (device_property_read_u32(device, "snps,bus-capacitance-pf", &dev->bus_capacitance_pF))
+-		dev->bus_capacitance_pF = 100;
++		dev->bus_capacitance_pF = DW_IC_DEFAULT_BUS_CAPACITANCE_PF;
+ 
+ 	dev->clk_freq_optimized = device_property_read_bool(device, "snps,clk-freq-optimized");
+ 
+@@ -539,8 +547,9 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ 
+ 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+ 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+-					       !(enable & DW_IC_ENABLE_ABORT), 10,
+-					       100);
++					       !(enable & DW_IC_ENABLE_ABORT),
++					       DW_IC_ABORT_TIMEOUT_US,
++					       DW_IC_ABORT_TOTAL_TIMEOUT_US);
+ 		if (ret)
+ 			dev_err(dev->dev, "timeout while trying to abort current transfer\n");
+ 	}
+@@ -552,7 +561,7 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ 		 * in that case this test reads zero and exits the loop.
+ 		 */
+ 		regmap_read(dev->map, DW_IC_ENABLE_STATUS, &status);
+-		if ((status & 1) == 0)
++		if (!(status & 1))
+ 			return;
+ 
+ 		/*
+@@ -635,7 +644,8 @@ int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
+ 
+ 	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+ 				       !(status & DW_IC_STATUS_ACTIVITY),
+-				       1100, 20000);
++				       DW_IC_BUSY_POLL_TIMEOUT_US,
++				       DW_IC_BUSY_TOTAL_TIMEOUT_US);
+ 	if (ret) {
+ 		dev_warn(dev->dev, "timeout waiting for bus ready\n");
+ 
+@@ -699,12 +709,12 @@ int i2c_dw_set_fifo_size(struct dw_i2c_dev *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	tx_fifo_depth = ((param >> 16) & 0xff) + 1;
+-	rx_fifo_depth = ((param >> 8)  & 0xff) + 1;
++	tx_fifo_depth = FIELD_GET(DW_IC_FIFO_TX_FIELD, param) + 1;
++	rx_fifo_depth = FIELD_GET(DW_IC_FIFO_RX_FIELD, param) + 1;
+ 	if (!dev->tx_fifo_depth) {
+ 		dev->tx_fifo_depth = tx_fifo_depth;
+ 		dev->rx_fifo_depth = rx_fifo_depth;
+-	} else if (tx_fifo_depth >= 2) {
++	} else if (tx_fifo_depth >= DW_IC_FIFO_MIN_DEPTH) {
+ 		dev->tx_fifo_depth = min_t(u32, dev->tx_fifo_depth,
+ 				tx_fifo_depth);
+ 		dev->rx_fifo_depth = min_t(u32, dev->rx_fifo_depth,
+diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+index 347843b4f5dd..a699953bf5ae 100644
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@ -41,6 +41,19 @@
+ #define DW_IC_DATA_CMD_DAT			GENMASK(7, 0)
+ #define DW_IC_DATA_CMD_FIRST_DATA_BYTE		BIT(11)
+ 
++/*
++ * Register access parameters
++ */
++#define DW_IC_REG_STEP_BYTES			2
++#define DW_IC_REG_WORD_SHIFT			16
++
++/*
++ * FIFO depth configuration
++ */
++#define DW_IC_FIFO_TX_FIELD			GENMASK(23, 16)
++#define DW_IC_FIFO_RX_FIELD			GENMASK(15, 8)
++#define DW_IC_FIFO_MIN_DEPTH			2
++
+ /*
+  * Registers offset
+  */
+-- 
+2.43.0
+
 
