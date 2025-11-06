@@ -1,84 +1,54 @@
-Return-Path: <linux-kernel+bounces-887688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C3BC38E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:34:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B4BC38DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E006B4EEB90
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9F2189A5A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3507B1DF751;
-	Thu,  6 Nov 2025 02:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF1E248867;
+	Thu,  6 Nov 2025 02:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="iBXxYJTc"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RR9+1MAW"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CC781724;
-	Thu,  6 Nov 2025 02:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB7E1D5CEA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 02:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762396430; cv=none; b=glt33eDQ5lB+1NE6fgtqyGgk59yKDdtydJFgmuegTAQlPJ2R0dhv4TeYlAVKKMpVENb5SihsBiCW/TaIJ485EAnJLVq4JWARK6JpMwzX2wiuiCdMkf1LqDc9JIA78YFm6yV1o8W+7xjbvCbX6MGxmaDpweGId3JFfVJnKv6frbE=
+	t=1762396244; cv=none; b=JTS260daoVU85K0OmmMasn/MA0Fz5yYumJI2ExE6yJXQ8WMj/GK5PclrwEc8rYRN62W26rEdgwG2g2uOQOmELQ1m6Kj5ssvU7QrO2Mkkvc2DV1ESNSH+5R9NPWnyqdSnFQGJXBqHYAW36O9BY0S3ALN/VaeotlBTIKwnCrhT2xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762396430; c=relaxed/simple;
-	bh=+NQXZBSYOQISbrzspNQhqIW6vWYSbWXcNEH2AXfRTeg=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=cV8qQyXml9DcrE1JT44dpy2mHXxb3obq0nBBD4nLkch3rJkHH7EJY5qK/oMbCKItGwCjKISdGnIglDUs8LV0RzxQlaasiLFcs2dyf4F0K9lPxiNJf8J834rhfnNT4cEzZkZT6iVoddDvAJCS7xak4JpXMqk6ZRvYiz66UaZHCPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=iBXxYJTc; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1762396116;
-	bh=+sn4rWDbaRXab2FydeaqMlsDRUX96FTNA0Hi4iwrBR4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iBXxYJTceLo1Wf9glKNPyOy1MgUSOw+Z2ZiwKFD3ZmFLhviwAeJcQ99kA7FfOMruu
-	 31z+uqAT8CRJm45JmKQICG7ehnYlwx0oxk5bWDD51nIbzdiDj5T3UGQzhT89rN/BRv
-	 bLEqSxKsquWDuKFcUmIiY0c1dLFdHIjgFlbQ6EcQ=
-Received: from meizu-Precision-3660.meizu.com ([14.21.33.152])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 7219A68A; Thu, 06 Nov 2025 10:28:33 +0800
-X-QQ-mid: xmsmtpt1762396113t601gxnym
-Message-ID: <tencent_4045D6DC43E374AEA3E78479385F205D4008@qq.com>
-X-QQ-XMAILINFO: NWMjIPXM0fdCT1+I/1CYrF6DG9jOllEpOv+iqMAJ7eN6IE0/BEhrtRt3kc0vhK
-	 ssrMwg3CLFRtkFZkvvA6QZm8xDXaBayrN4UnYO8X85dYcN+hMocRQU7dWYZy2QhHbn4LDr3vtCUA
-	 Uw+Jy33swxco7versuKpRglNKowIHxlifhiXk/fbyCgUevkv0P74qMBNw9mpjX7KQTmxY0xAYlzO
-	 hu78GWvOnebdxyfbmebTc6wWWuw0GkHyYPpyy91vsEIXHmqp/9VUOF8J90jQV73wAj+gzVk97fN8
-	 7maOCd6qAvtdDcRDEhRx2f05qjRGF3LIT/gcTyamxqgH5kdiZHhcuHUDRz3rsRjvP2z4eZp6RILg
-	 KpsbPFBANHRh0F+dldwdPBSlMdw/s9et3FnxVA5yGd+rdiZDHZZRiHvoH+LPxXMtay7A9RkUFAzN
-	 8W/bz7wK+RF9tUwf2MbvdMG00+BcYTEoO+crtg2SdNaIQ2YJjleJQSHKob30P1djM9lk+eWI4EK4
-	 tHnd5oqhZTfp6Ujji/Qt6LLM1WpiHEOJb7lG0hh04pAmrSP7e16ouF+8qnCmkoo+eS46rN7P78SJ
-	 vdXannnBYQflhk6Ue7rf9HY0KPCwFfhuXMuewjONpI1Bn5AogeN/LDhtA7trjU5ClD6Z+tKt+epV
-	 YDSDVusL2Iou9IB+a7peBn0iPqz4cJZHHjNHg9I92LdYOuopEh6RvU7IDy+wr7LZ6tAAazN99n7m
-	 a+CCtqj6pkDeXs+iOOc7c3QEN+ilxmh/TuPRWN5FvlLb5uB41eEh4/UgKijftESOHixpyeR58sFT
-	 ShcjvWc02SVJoVSB5gSS+WCP+hnTGWnmszsOb4y5nhvbtk42ZoINEEF0pFlI50Xm/kyxbmVztkxN
-	 eotcRqh1reHi9QYrvH+zOEN80evHNeSDWI9tIPqAnLEOmFuftMqfoyvIMyP6tjV48UVm/D6NfVAF
-	 bFpff7AB3KSWWfwajtp5pXj1cbFgp3a4bghKel6muUMd1G5RQ8eEtCrUFd4KkPE4dp3hTykU6MB0
-	 C2sCURcLT0g4rLnG5hB3u9JY8ShWl1mPoSBb0GE+O++prCzVlypBBXTUylxnqXG8cFVdVbcJ67kX
-	 TpwWPcAki7ZQWs5+I1+IEscMmgqn1Gb3RmVx1OI+8HB/yYJDvPD8YKvb+Wd+q38k2A8XSAamI7MW
-	 n2ycxWHXSOaQKw+1WNVNIx+EoQR0Sbsil1ulo=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Yuwen Chen <ywen.chen@foxmail.com>
-To: axboe@kernel.dk
-Cc: akpm@linux-foundation.org,
-	bgeffon@google.com,
-	licayy@outlook.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	liumartin@google.com,
-	minchan@kernel.org,
-	richardycc@google.com,
-	senozhatsky@chromium.org,
-	ywen.chen@foxmail.com
-Subject: Re: [PATCH v3] zram: Implement multi-page write-back
-Date: Thu,  6 Nov 2025 10:28:33 +0800
-X-OQ-MSGID: <20251106022833.2729849-1-ywen.chen@foxmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <83d64478-d53c-441f-b5b4-55b5f1530a03@kernel.dk>
-References: <83d64478-d53c-441f-b5b4-55b5f1530a03@kernel.dk>
+	s=arc-20240116; t=1762396244; c=relaxed/simple;
+	bh=0Glg55zCL04NOSi6wuQx8R/AzjwcVknE7Xbo4YvNn0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F9u2q4Qv2nGepwm85xR9Kwkv/A4QtwRMymuXDFdwTYyV3P6LvXHDcObPGMLxFfTBmB3qefP7wU1gTD5rFPcSvLkMsN8NJETuiHV8aszbJVmcx0UQljEo79Ot/PGY7aQyDNS1RWTmp1oO2KVE0DvV0Gkzk0L42CYAUYrw4ecscfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RR9+1MAW; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1762396234; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=qpFDpW9RXzUX0r2Rcpo/UZqbkY5cNU9mKGkbxvOLKpU=;
+	b=RR9+1MAW/xB8B5eH/QtC6cYr5GYAERhwXILOZBdc6AqDfDnTfiTo73IwThH82LPcT6q3dh3aiRNUVq2OAAE6epTDWZRo0J53TGadDO5dB4iwSTLq92JvbxvMOibsJm7POQqXM/TAlID2tIOtK7oxld1d8YGiQAHTJGS5GQg7k+k=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wrne7ZP_1762396233 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 06 Nov 2025 10:30:33 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	paulmck@kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org
+Cc: Feng Tang <feng.tang@linux.alibaba.com>
+Subject: [PATCH 0/3] Enable hung_task and lockup cases to dump system info on demand  
+Date: Thu,  6 Nov 2025 10:30:29 +0800
+Message-Id: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,37 +57,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On 11/5/25 08:25 AM, Jens Axboe wrote:
-> Please either finish the patch before sending it out, or take your
-> time before posting again. Sending 3 versions in one day will just
-> make people ignore you.
+When working on kernel stability issues: panic, task-hung and soft/hard
+lockup are frequently met. And to debug them, user may need lots of
+system information at that time, like task call stacks, lock info,
+memory info, ftrace dump, etc. 
 
-> This commit message is in dire need of some actual performance
-> results. This is a change for better performance, no? If so, you
-> should have some clear numbers in there describing where it's
-> better, and where it's worse (if appropriate).
+panic case already uses sys_info()  for this purpose, and has a
+'panic_sys_info' sysctl(also support cmdline setup) interface to take
+human readable string like "tasks,mem,timers,locks,ftrace,..."  to
+control what kinds of information is needed. Which is also helpful
+to debug task-hung and lockup cases.
 
-Thank you very much for your reply. The description of the patch has
-been revised. This time, performance test data has been added,
-showing an approximate increase of 1000%. Please help review
-version v4. Thank you again!
+So this patchset introduce the similar sys_info sysctl interface for
+task-hung and lockup cases.
 
-The QEMU parameters used for this test data are as follows:
-sudo qemu-system-x86_64 \
-        -M pc \
-        -smp 8 \
-        -m 2G \
-        -kernel /boot/vmlinuz-`uname -r` \
-        -hda system.img \
-        -hdb zram_writeback.img \
-        -append "root=/dev/sda rw init=/linuxrc console=ttyAMA0 console=ttyS0" \
-        -virtfs local,path=`pwd`/../,mount_tag=hostshare,security_model=passthrough \
-        -nographic
+Please be noted, this is mainly for debugging and the info dumping
+could be intrusive, like dumping call stack for all tasks when system
+has huge number of tasks, similarly for ftrace dump (we may add
+tracing_stop() and tracing_start() around it)
 
-The approximate configuration of the host is as follows:
-Kernel: x86_64 Linux 6.8.0-50-generic
-CPU   : 12th Gen Intel Core i7-12700K @ 20x 4.9GHz
-MEM   : 64G
-DISK  : PC801 NVMe SK hynix 1TB
+Locally these have been used in our bug chasing for stablility issues
+and was helpful.
+
+Andrew suggested a global sys_info knob, and one thought for this is 
+to have something in sys_info.c:
+
+	unsigned long gloabl_si_mask;
+
+	void sys_info(unsigned long si_mask)
+	{
+		if (!si_mask)
+			__sys_info(gloabl_si_mask);
+		else
+			__sys_info(si_mask);
+	}
+
+to let caller decide whether to use its own option or the gloabl one.
+
+Please help to review, thanks!
+
+Feng Tang (3):
+  docs: panic: correct some sys_ifo names in sysctl doc
+  hung_task: Add hung_task_sys_info sysctl to dump sys info on task-hung
+  watchdog: add lockup_sys_info sysctl to dump sys info on system lockup
+
+ Documentation/admin-guide/sysctl/kernel.rst | 14 ++++++--
+ kernel/hung_task.c                          | 39 +++++++++++++++------
+ kernel/watchdog.c                           | 21 ++++++++++-
+ 3 files changed, 60 insertions(+), 14 deletions(-)
+
+-- 
+2.43.5
 
 
