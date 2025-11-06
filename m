@@ -1,102 +1,109 @@
-Return-Path: <linux-kernel+bounces-888340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88605C3A8DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:25:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE75C3A808
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0564C4FEEEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36213BAE09
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9522030DD1B;
-	Thu,  6 Nov 2025 11:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEB22EDD70;
+	Thu,  6 Nov 2025 11:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="YBjhiNdi"
-Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CdLmX5m+"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071D02E0916
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E29630C622;
+	Thu,  6 Nov 2025 11:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428074; cv=none; b=gGE7CcngMWaHaSsy76IUPo7TstIHOaRj01vP3Nxn/LwJoBIdMWrHkVeOOyd9wr8Cv891wJ3EMIQ+GYkWpY3rpY0fIVPGj24tFGo7uaP/WHtqemDhI5b3DxxnqAV2QJSpjXmUpHKnvn1qcl400rsyUt8VN4zIW1tPOT2npR+ZeHY=
+	t=1762427691; cv=none; b=WThw8y0khD63WI7wujYRfuW6Ru9HBQQKAJlhqUxWo3luEjCtDTiBkmEhcGrgC260ZvbLRLrHZXADJBaBCGItG1gE5KCmiecK4/vVA4iN2kiByDuingheMZTSZNwZsTUBf+vUxJ3v58zK377cf6gEuM08JfnbBuzzpCn799Oda/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428074; c=relaxed/simple;
-	bh=xGnMUKs+a16xWoar+O1Exr6sx95PE8I4R712yC0kWhI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ejOfS0SB8G/9kFu4/J8meexwj+j5+Y8qExmZNK07/2/zvpUsZTZaTs4ojFX/QKe1n2RkyOiGDWM7uMlY4Twl7yj2ADAIW1otbfI9BP+lljn68oL6ic2I3BmALzHEKyx5QD6nQvGIXPslgFYRUnN6ftlo+Nfv48tFaWhtzV78ssE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=YBjhiNdi; arc=none smtp.client-ip=51.81.35.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
-	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id 4CD30224A3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:14:09 +0000 (UTC)
-Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.66.161])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id 81DA126344
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:14:00 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay3.mymailcheap.com (Postfix) with ESMTPS id 36D643E917;
-	Thu,  6 Nov 2025 11:13:53 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 531B140178;
-	Thu,  6 Nov 2025 11:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1762427631; bh=xGnMUKs+a16xWoar+O1Exr6sx95PE8I4R712yC0kWhI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YBjhiNdiuVLW2CQXTAinJ1VIejMNqxROO8nnng8nb2eFTT7OvGtBqq2CPSMkt0kDC
-	 VrgTyCiWBgo1acsmGfAX+EaovZYHF2U2/rj2matPu0yUQRTeJVP5SAZHjTBVdkfB0o
-	 0IZdJWf+HGX2X0GFjy+iTW8JyLu7NyCWS1K7CBJQ=
-Received: from avenger-ThinkPad-T14-Gen-4 (unknown [114.247.186.99])
+	s=arc-20240116; t=1762427691; c=relaxed/simple;
+	bh=bYywurBjYiPTQ/uMEOza3zXaJRw6XGwDWtd1DH1Ws7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3aooc4B+o8chwvTohWhWX/z5362bpvfjBomflli42t6qKQMRMtoUdhI1WGXUNWux9VMq1XSxo48hi+nwg7uY57DLa/oOjtEAJcUXNQWISHH/IFYKzinSeTOOre7tOEfBKwceX3d0BOT/XXknmrqgfbZy/r8ZsB1VC04vvKu9OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CdLmX5m+; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 36AD540E00DE;
+	Thu,  6 Nov 2025 11:14:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8kpSLCUmPsvb; Thu,  6 Nov 2025 11:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762427681; bh=qDCZJajK14UB/WrJEvM7bIOYetebJavQOoVjcO4lFvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CdLmX5m+lI5DEXIMPbgDRIEOlvByEsidFDAzueKYVMe+vrOevOjlgGwKCbM2h2Vrd
+	 xtP7hVBx2QY9Du1JUZs6T4DxljrzIF+UFVCI7FR8boUFB4KNbX+Gte4oNIxWut16zk
+	 fFhIgBT7XBwYijsSQathtXlYvN+wUCGNCFYIsDN9u15RX0chB0/XtaJM5atGH6y90Y
+	 6lMH1BhpNyw4G2ySjVJh4qNTNBetITjheb2Pt2UbEuPP6k8d4BdgPwHsBoU5N5xeN0
+	 VBnXjqwQS9GLZhTJdODiOX2pCPHp2bfNKa8lEX9wpllVVcX6qhnru135XeQU7Yacb3
+	 xr9VQwbtlWX+1t5eOFvZQGu1bVV2xsx0LXUI5RXP0r2PG0X7HaXGi7d+GNkTRyVveS
+	 K7hIO9nHTaGuh92nmrYWxzuYe/pak8Z1GJ8pgr6lwIagB7Vq3FV1SnAnKxZryCQsep
+	 WoK5rxzOUxvJ9jXoUbyRyQOTPEx6EM3v9p0O3fWvEVEoNma/MTm87of3TKqgSrHUNm
+	 FT657P+rsANwg71m0+M5XmpG6Ft7y/V1YTcr2HSGQWY5dX8C4fIe8P9fjLXi32Sv55
+	 TVZjER15StF7HLNLBCo3dvqLkptGrpSorvQPzVn2etJDjr81j/tq0O0pKsUR+HRHFs
+	 FYRdhX0FuZIYsyBokuv6S1CI=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 64CED40594;
-	Thu,  6 Nov 2025 11:13:47 +0000 (UTC)
-From: WangYuli <wangyuli@aosc.io>
-To: guanwentao@uniontech.com
-Cc: Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	niecheng1@uniontech.com,
-	vbabka@suse.cz,
-	zhanjun@uniontech.com,
-	WangYuli <wangyuli@aosc.io>
-Subject: Re: [PATCH] mm: cleanup vma_iter_bulk_alloc
-Date: Thu,  6 Nov 2025 19:13:32 +0800
-Message-ID: <20251106111332.809322-1-wangyuli@aosc.io>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251106063424.3381872-1-guanwentao@uniontech.com>
-References: <20251106063424.3381872-1-guanwentao@uniontech.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 4770A40E019F;
+	Thu,  6 Nov 2025 11:14:31 +0000 (UTC)
+Date: Thu, 6 Nov 2025 12:14:29 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	the arch/x86 maintainers <x86@kernel.org>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+Message-ID: <20251106111429.GCaQyDFWjbN8PjqxUW@fat_crate.local>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+ <20251031174220.43458-1-mjguzik@gmail.com>
+ <20251031174220.43458-2-mjguzik@gmail.com>
+ <CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+ <20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local>
+ <20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+ <CAGudoHGXeg+eBsJRwZwr6snSzOBkWM0G+tVb23zCAhhuWR5UXQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 531B140178
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Spamd-Result: default: False [1.40 / 10.00];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ONE(0.00)[1];
-	SINGLE_SHORT_PART(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[wangyuli.aosc.io:server fail];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Rspamd-Action: no action
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAGudoHGXeg+eBsJRwZwr6snSzOBkWM0G+tVb23zCAhhuWR5UXQ@mail.gmail.com>
 
-Reviewed-by: WangYuli <wangyuli@aosc.io>
+On Wed, Nov 05, 2025 at 09:50:51PM +0100, Mateusz Guzik wrote:
+> For unrelated reasons I disassembled kmem_cache_free and the following
+> goodies popped up:
+> sub    0x18e033f(%rip),%rax        # ffffffff82f944d0 <page_offset_base>
+> [..]
+> add    0x18e031d(%rip),%rax        # ffffffff82f944c0 <vmemmap_base>
+> [..]
+> mov    0x2189e19(%rip),%rax        # ffffffff8383e010 <__pi_phys_base>
+> 
+> These are definitely worthwhile to get rid of.
 
+Says which semi-respectable benchmark?
+
+If none, why bother?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
