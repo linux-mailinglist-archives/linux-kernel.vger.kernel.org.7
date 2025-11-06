@@ -1,60 +1,89 @@
-Return-Path: <linux-kernel+bounces-887521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07860C386E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39296C386EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 319144E7C09
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:01:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60F064EEDB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AF62C11CA;
-	Thu,  6 Nov 2025 00:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E0713B284;
+	Thu,  6 Nov 2025 00:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxzfXxvY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xlx6srgX"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B0B28E5;
-	Thu,  6 Nov 2025 00:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0A428E5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762387255; cv=none; b=tslizQsCG+fg+gRZVOEm3lWetuqOaSTWUj/ByViW5Wu7P2IuzPT6d2lGXD3544SrNM4wu3sP57z5UnWHATqkpkKYv2QqeR/gKboLufKRBCgC+ezVbGDCmqWA35Sq7KOX/t45ABTPRyKP0oKlNTfVzureqPaQkM2Nov5gVm027QI=
+	t=1762387295; cv=none; b=Aj764hOCuLTyaFy1zDu7tdjBJSuksCGCD7Hh5jNe3PZA9P5kA2uE7/nSTTYE3gVc0TqKDynDLJv3OAKsb7gKciczXcv6lyQrNvv99p2T+8ut+tnqeqxZlAhI6YXNRQ/OZVg3b75CFbj5L1xhoozK2DxY+DKbrs1fWhIqddHaPps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762387255; c=relaxed/simple;
-	bh=5IK5qZfBjMO/Z5358IGhBKuigXyQuAzqcpc4dXrDunc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rL+kgMfQmf7fWSOmKv3cuDvAJ3i/2DFw1w5k5j8QslRBuUGkEPk/hBcz59HTrL7ucc+WrBz4cluH6T3BxiHS9tZ4wmCg4x2k/UBJrf8FEvHSXMsVx4A5Zs5Bxaelq9u1YLwkg4TfNtpGo29tbj1ijNZOJVNu8ON/DEpwEwdW+sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxzfXxvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E245C4CEFB;
-	Thu,  6 Nov 2025 00:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762387254;
-	bh=5IK5qZfBjMO/Z5358IGhBKuigXyQuAzqcpc4dXrDunc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YxzfXxvYcR3RlTH0HKRVAzhkpjaPTcY/o1R3VVPf0UDf9p98OQn6a8kwF2rBRUg/Z
-	 HDFXzEPvIQuJGaVqj5zZTOsjyoaMkE4Rbw4EbNNXBjD4BpATBd/1kEVBd2HWlNXfmt
-	 550GLlqGovaCwYjgyHDcJE/P9Y/tTxnkaERkmJC0QStvxFv5jt32c886hIvOHSg24e
-	 J1BpC/EMdz0I1adY1GhrxAjp3KbGRgWy0GukHujC4+/tlXgPedslb2LZY5sHSGpbiM
-	 z7jDzyZ1Kp6BkWE4LdzL3eH9Kcp8o5n+nSQ8VYHUUcBjbdk54ZX5Y0rmKQOphcqb71
-	 nLB0vd/F7h05A==
-Date: Wed, 5 Nov 2025 18:00:53 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: chester62515@gmail.com, mbrugger@suse.com,
-	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, bhelgaas@google.com,
-	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com,
-	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com,
-	bogdan.hamciuc@nxp.com, Frank.li@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, cassel@kernel.org
-Subject: Re: [PATCH 1/4 v3] dt-bindings: PCI: s32g: Add NXP PCIe controller
-Message-ID: <20251106000053.GA1932421@bhelgaas>
+	s=arc-20240116; t=1762387295; c=relaxed/simple;
+	bh=IJpNmGCqomd5vPrThOxk8bXJzEiTqgNJywW3jA2ng9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbmN3Ams5oa9OtlDfNpqvnRAIpP78b1z88BQyceo58IGdKlz3IAbpwkBH6swc/9P9aHU7kspNSOB1E6W8XC0/MQXBaHZw+gIhBUtN3jccWsolgA4Rmt0smSLnKSAiKdp2oB7iP+tko3mpqzidMvbdZoS93drVTeFTadAiQ17iYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xlx6srgX; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7aab061e7cbso574565b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:01:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762387293; x=1762992093; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+j9mh4om2Lo/eeZHz47ynRZd+sYb7QQJYZHiwixfAI=;
+        b=Xlx6srgXuyXl3zaJXO294ebhFDLkatxa6OzCbBskjFiCig1oW3QcpIYOUkKy3vpHZP
+         tnmdKNizkzKwPya+Gum1/HeijDy1A5PYLQOdQl07PVW2NAhSeLqZXekbhtmPMb1t/lH+
+         JU/gDdHw0vnSycFtC1o1U8obwcbEPH0s9s+YcMc+uleL4j1jvwOfB3PA1JU4QR1KtwoR
+         3Mc3ejP9wWzTDbeEBxvfbXi9COhylPXJIhv6b5xM69rnqRUKZx5zfxQp83jOTvo7Br3a
+         9a6sUICmu5DlzZymeGu8bvgmz85a1rVdaTuhAyDi5OEm/9EkmcfgzO/LfkhwnyykMNHk
+         OqHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762387293; x=1762992093;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M+j9mh4om2Lo/eeZHz47ynRZd+sYb7QQJYZHiwixfAI=;
+        b=FdtETvw59GyzkfYOajq8gi8fax2VT8J79xs78snkwVYuusXajcGIzlEv/gvF4Nqsb1
+         lvCcIU5DqEXlj5zVQlj7b1dhjVQWO+8sV73j9JEsQ2V4pe3TItFNjmYSMm8dnuVLu0MX
+         IRJFGj5euWWQXxMicrTMNltiJhUeHY1B/D1sefec/y8NbZH3UgMzwG6z7EQSm+h9C4bl
+         b3DMYxXzKThaex7aR7doP+HeIoJ1CqEN6FDhb2k/NTz9Wl36RbJDm0GybraU9qpQcSu3
+         9kUp/fC9e2E+Fn6TS9Cf919+MgLXQD5BkovBYhlbVdnSDhaFphBqj+bzqBzgJkffRrkr
+         6NDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfvDZ9H85peYlj2DSIQKdzZEgfUpoMmWkxYef36cP/GwOgVeXTo0cTouw1x+spCL5pdJBN31Cv7a3RmA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2fBornCH8/iK7uLq76r+2Pm/ZPbWjJd+IRW9Gij4+0+8xqqky
+	qor44T3uf9pIKFu9szIrP7sVcJRo0kOK84tJfS6gSgy/G/SBNhml52f39QlSqKmfQQ==
+X-Gm-Gg: ASbGncsJqiOev7hOloXweoAsnzd0gaqz5gC0l7Ai28k7casFTpY5kuVYZr179QSMcU2
+	ZP/0AyaZTiSlDjNxwqM36kb0UN4eN99/RV/CZCNXhBYXrxji9MuiKd2F3oapvvvAKpoppnPJVwA
+	P90TJO5x4EL7jfNcQB4YXH2/X8vJn9HVO6B3ltgtDeSA/NB28xi52Uyrzy9Uql+pOZXQiHW7rmd
+	DlgSNsGinoklBFI746jH4ThUsbxXZHlETVf2wXJbzXib8vD3g6fW6I3uQVQ0RTs2K/WZk2DkIyQ
+	hiZW7Bo9pwT2FFCKJtMPpk3DShD6U1PpgGW/QeR4/hJWTortj8SAN1xeEaSMwExBlTI9VEFgtC0
+	M7yVXhdk+wp25wbJHYNrfOxM22oDqI96f698qpTWchTCt/W3vflLENAzJPF3/PS8mAgdeiMRErK
+	fvLOz4xbjmQJAlKVYJQqmuaoHdY6WOYo5i1ZV9YfltX/GWUsLLOS11
+X-Google-Smtp-Source: AGHT+IFZn0wKXKfe4nQzbawEz5PMGpfdeosAv1u2jDFwGrH5HD8pmPBonB38N8KxSgxtY7ZfrXxzxg==
+X-Received: by 2002:a05:6a00:98f:b0:7ad:1e4:bef0 with SMTP id d2e1a72fcca58-7ae1cd59fe0mr6150438b3a.4.1762387293044;
+        Wed, 05 Nov 2025 16:01:33 -0800 (PST)
+Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af82603dd3sm595170b3a.53.2025.11.05.16.01.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 16:01:31 -0800 (PST)
+Date: Thu, 6 Nov 2025 00:01:27 +0000
+From: David Matlack <dmatlack@google.com>
+To: Raghavendra Rao Ananta <rananta@google.com>
+Cc: Alex Williamson <alex@shazbot.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] vfio: selftests: Add helper to set/override a
+ vf_token
+Message-ID: <aQvlVzljJhKQQ2ji@google.com>
+References: <20251104003536.3601931-1-rananta@google.com>
+ <20251104003536.3601931-4-rananta@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,17 +92,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022174309.1180931-2-vincent.guittot@linaro.org>
+In-Reply-To: <20251104003536.3601931-4-rananta@google.com>
 
-On Wed, Oct 22, 2025 at 07:43:06PM +0200, Vincent Guittot wrote:
-> Describe the PCIe host controller available on the S32G platforms.
+On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
+> Not only at init, but a vf_token can also be set via the
+> VFIO_DEVICE_FEATURE ioctl, by setting the
+> VFIO_DEVICE_FEATURE_PCI_VF_TOKEN flag. Add an API to utilize this
+> functionality from the test code.
 
-> +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
-> +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
-> +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
-> +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
-> +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
-> +                  <0x5f 0xffffe000 0x0 0x00002000>;  /* config space */
+Say what the commit does first. Then add context (e.g.  compare/contrast
+to other ways of setting the VF token).
 
-Fix comment alignment.
+Also please add a sentence about how this will be used in a subsequent
+commit, since there are no callers in this commit.
+
+> +void vfio_device_set_vf_token(int fd, const char *vf_token)
+> +{
+> +	uuid_t token_uuid = {0};
+> +
+> +	VFIO_ASSERT_NOT_NULL(vf_token, "vf_token is NULL");
+
+nit: The help message here is not needed. It will be very obvious that
+vf_token is NULL if this assert fires :)
 
