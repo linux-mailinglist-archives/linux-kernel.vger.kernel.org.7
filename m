@@ -1,252 +1,156 @@
-Return-Path: <linux-kernel+bounces-889304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503ABC3D3B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:25:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3CDC3D3BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F2A94E41D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91A23A31AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6AC350D41;
-	Thu,  6 Nov 2025 19:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AF434DCE0;
+	Thu,  6 Nov 2025 19:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="S3cPsn13"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013060.outbound.protection.outlook.com [40.107.159.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCkS6zvL"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAD934F265;
-	Thu,  6 Nov 2025 19:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762457116; cv=fail; b=JaqJi8DCly+kH01a3cqMCFzKJawOcktfVuO23X0BSiIYtGdL0mIDqzBcWnsFpK8GJheHl5RKUUONrR6xyz6DxGrL7GggsA0OOq53GGFLJczxxEyCTSGABV/3J4mYIkKu/Ya2pVY+ZiryJCjKt8JkRTIPEAubXJetKBzfu7FPF8E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762457116; c=relaxed/simple;
-	bh=xr9LqKBoVLfuHXlM7W1KfGhgMs0R1auRFFeXtPwPK8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GNH8bx4TOLE7avTiLbv8QpgZeTot7JEduB7xfRUABa/6s18QWLmYZ99oMs09X80R5+Y7KkYj2xkfCkXXnHIzTjE7KV6vDUbvO3mUzn195FrpwW0HPWc9B7q/K7ztGRfu5aJwDBAMhmVAyrPmlQNxqiueTJbTEqMf/yWHozk5whI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=S3cPsn13; arc=fail smtp.client-ip=40.107.159.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q9qySICGH/GOjQfK9UIClglP/wSP+BmMZR7sp3ILBQ0zTz03KSBmKyNfc0uMDFg3G2fFDA8jbNVlcNJbiSBPSrPudahvjQv+/HWc6fpsBoXCU4buL7ikv10yHSKpo6GlW2OcbAfU8XIY60D6pOpTW09MlP/DSPS3h1k3XWI+cTulqQKi5lRYBTei6Pj/2CRgDlIYCIFBJth0XkcGaSIv0GZDmbUSgztmezjHLfLVpT6Cek58yDHlz5ILoYOXcPPecExPebFqyD/O5DIr/IvLegMVR2VZssW5WVuEhGzQNvtk5tZEd7/N1rzihhWYuc7cLYVrp4k58xtXa14gThQVTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qhIFThudr+VyNoRDp1KNErZlm0B7ALBfjudKfLqtTbc=;
- b=dceVKQZsaraNVh0hiw2laZXlwh+aFpp3x0fJ5Qdiey9YdCXkTiFCGj+QN7AIfjWJdl1wucLGo335TVK2rf/fpnCTpUP/1tqpOCJbgVrK9Xzq2VuG0nOwaHykOD5HUO9NCcC8PBNTVaAbTjMyTEAm3cEsV0kcbtgAKTqGJzla4lDISSxb3HzpCT7/IiHvsEViabuPnjJ0MgCnaST8n8I49NTJmG6szeUoizS4D+PVeXt0Nj8WzQSyxmx2K5YQ6t1GNhuvAcOhoXbLoeUc3f0LXoCO8mJ3GhXioNRsnUZJbWhXAFuw42vKSuo3Qr8/iMRAqgw/DqV4KN9xvQfIcJW3+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qhIFThudr+VyNoRDp1KNErZlm0B7ALBfjudKfLqtTbc=;
- b=S3cPsn13dpFEzdvIURgkObgw6R+P7dasVae08eGena9s1LDnLieZ+3AySGZgxbV9hKjM4jE01G6+O8lgkiz7+5cjFO9/oq+hEb3+ImxheGOcUSvmdqnk4Pftl6sgezV2ve0nE/CuMQc5JwglW+Gs/ZWS5aH174HEVik06T0u3yJzAtZ9g054TMF/7B0HBXxsoTquyCaDVmAZ4nIcvqzXq+nK88/gZKg/JP6Ccf6tAQu9/xs+3mSICAa/76AZpxhhzAnrxpD+171UgFXZtsTCnu1+5XySN0jHmnIlkUQMJfnzRCu5pQzFWQUOq+9+YBV2vRFE431hROq83gs/DztQ8w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by AM9PR04MB8714.eurprd04.prod.outlook.com (2603:10a6:20b:43d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
- 2025 19:25:09 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 19:25:09 +0000
-Date: Thu, 6 Nov 2025 14:25:01 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: Greg Ungerer <gerg@linux-m68k.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] m68k: coldfire: Add RNG support for MCF54418
-Message-ID: <aQz2DZ4fm4BrHytj@lizhi-Precision-Tower-5810>
-References: <20251106-m5441x-add-rng-support-v1-1-ee8230910d17@yoseli.org>
- <aQzHO6Ty+l1Bwt6N@lizhi-Precision-Tower-5810>
- <4689159.LvFx2qVVIh@jeanmichel-ms7b89>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4689159.LvFx2qVVIh@jeanmichel-ms7b89>
-X-ClientProxiedBy: SJ0PR03CA0022.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::27) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EED3043AD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 19:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762457211; cv=none; b=TsHB2QRKesgQK1wkgS6MEYD6ET2R3uMjqfB7Mt2UTpI8vOqDFTO2JxCmEkxVQ8Ky/Rryq05L2Nd5By/DXawjoKijuEO5pC8zB0tGfk3j8p/t0ew8y0XzCJheRtCfwTOD5g3JxKgvguF6lJfLLEAyDCX4joj+iRX2Hveyo+t3iKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762457211; c=relaxed/simple;
+	bh=zhh/X5ttMMoRznprN3Pz/B2WPFekQliTvZqswOSYzbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=je7bIYsGGdkkNQ/CFM5aD9xI8MTK+JeXb7AwbgHciT+6G5+Ao421RGNUU2JuSrRJ0MAo3iR5iVRNyliRby820e9JhGkV37gSVCohmoMpj/HgJ21mLunSmuy+HnXGrkQf4rrVMrqWWPr433kJl//qxCN7vr5KcnfT3LSvLthpuZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCkS6zvL; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477563bcbbcso6874205e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 11:26:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762457208; x=1763062008; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DwyTwhLa5pqI0LdPc0d68jU8z9uOUnUkIeBJpd4iCgA=;
+        b=fCkS6zvLozMKxaICvOFxpBjGqvR+qapBL8rc1tWbACPmZSgHktpSBnolXRtnnXQo40
+         /KypNPPMRtXhJJk4rXmphRs9XYQffye5DyU82FK/Gfpq5WhJewbSlw3Mz50hbioAJT2L
+         l2KdrlFt/q4Rlsx3tgY40N1lLNmkzeLXTYIM3e91rB+tJUr/kQ6uhjBV0JGL1cT/ZOL0
+         cMPzI0WFTfo/R8xD8CFRWaDrNZb5l6RWlcxN4Yv/8ze+FySzzqslWNo4Y0PT/J+o/IUO
+         jS6/O682u/dA75+Bb0jsuQ1Wx9mZo3tW+I947hgl3J39ebBgNWaCVaOq3W2yqTC5ADga
+         NL/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762457208; x=1763062008;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DwyTwhLa5pqI0LdPc0d68jU8z9uOUnUkIeBJpd4iCgA=;
+        b=WGvmilrF6PAjuzBZxzHKywcgdxnK0vsJzBgnXRLz9vPAG4x7dKjfyFIhCCnkX683p/
+         fxsHgiVVm7ithlgbr2V556MYubvOHeUDr1FEKKVqDsblvvWey3Ef06bTju8ll8GRCJiv
+         fGSp9z+ZCMtgbkj3pC2BHKsladLtXlML1eAqsWlCAOMOuN8fAjxBF0b+G4mxTxfiFqQj
+         KfIkjl2/5fw2PtO/2aC1gyAyJtONMYWO7YOn7z1yq/YMrz71cxoMvuZwRqBrI3t64GDc
+         MfxJi7ArQTi+WseIiOg5+9IwNhFW6PChImXSyBkm88zeiyPjFQVfEYKFt/MAnuXWlRDt
+         +zsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEAHK8ODZtAMVFgO+rxTLsE77w4g5dq8N3zZsOyDug+yvPnaxC4eQAF27uusmqyulP1Z7nIHMU++tCIpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3kffKcL/M1GJTmNYbBfy4B0dlJ4NkL2uBk7Uj+HfiwHXk3V1y
+	IwsfpnSRPRGXBS10E/DJ2+BVEQmsdDbzIS2YV/7hwsETXR6rkvE1MXP0
+X-Gm-Gg: ASbGncu0ebN+jMhd1+vnPTSsfnUUh63c/amGAOOiIfmyQIh9TiQEdO0BeWEEvWUqiOE
+	g7DvFLutHaQJxTD9opm9Guq5sh0awJbDMBpHl1KwmQz0UjmrpjfkY/fsnoZThOVe6Fl4ZIregfU
+	AGBO6jaAG+WvINJN4PxS/NX4n91wftr6TR/pOMiUrx/2k2BiHw1rHTokMKG6miG0bd5zbCWpRZd
+	CVyrK2Maj9hSnMhLSlfrwsQnQuI2RLJdRq0wKrmDGXzbUe1QXh4bXoB6MnGkzVrFxwjN9UKThMl
+	VMZ0v7uVtdNvyQ8v58tuCG/yMja1DR5pQJaEUzLV4SGpKLbkGrLD0kNd68Sn/SrFDiITj7id3Vu
+	Rz5EXq2BTIXMq/ifUc1DJIU4UPUrPzZmymcmplZxEJpzcOcoJ7whMJLR5159jXujGkiVLFPPeeC
+	BwCuudyomT0g2o9c0djHdxiWEtX+0y/0APuoCJ2ExK7Rzs2HtslZ876TyAhCRdoBM=
+X-Google-Smtp-Source: AGHT+IGTla4CePH0L3Rk9O7fjkJCLGeVLWduj8m7JXKWo79RsNtzdF/PeL5Glnk4Exnt93SYvgt/zA==
+X-Received: by 2002:a7b:cc91:0:b0:477:1622:7f78 with SMTP id 5b1f17b1804b1-4776bd0e80emr3032665e9.40.1762457207689;
+        Thu, 06 Nov 2025 11:26:47 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477640fb6besm22490075e9.9.2025.11.06.11.26.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 11:26:47 -0800 (PST)
+Date: Thu, 6 Nov 2025 19:26:45 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>, Linus Torvalds
+ <torvalds@linux-foundation.org>, "the arch/x86 maintainers"
+ <x86@kernel.org>, brauner@kernel.org, viro@zeniv.linux.org.uk,
+ jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ tglx@linutronix.de, pfalcato@suse.de
+Subject: Re: [PATCH 1/3] x86: fix access_ok() and valid_user_address() using
+ wrong USER_PTR_MAX in modules
+Message-ID: <20251106192645.4108a505@pumpkin>
+In-Reply-To: <CAGudoHG1P61Nd7gMriCSF=g=gHxESPBPNmhHjtOQvG8HhpW0rg@mail.gmail.com>
+References: <CAHk-=wjRA8G9eOPWa_Njz4NAk3gZNvdt0WAHZfn3iXfcVsmpcA@mail.gmail.com>
+	<20251031174220.43458-1-mjguzik@gmail.com>
+	<20251031174220.43458-2-mjguzik@gmail.com>
+	<CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com>
+	<20251104102544.GBaQnUqFF9nxxsGCP7@fat_crate.local>
+	<20251104161359.GDaQomRwYqr0hbYitC@fat_crate.local>
+	<CAGudoHGXeg+eBsJRwZwr6snSzOBkWM0G+tVb23zCAhhuWR5UXQ@mail.gmail.com>
+	<20251106111429.GCaQyDFWjbN8PjqxUW@fat_crate.local>
+	<CAGudoHGWL6gLjmo3m6uCt9ueHL9rGCdw_jz9FLvgu_3=3A-BrA@mail.gmail.com>
+	<20251106131030.GDaQyeRiAVoIh_23mg@fat_crate.local>
+	<CAGudoHG1P61Nd7gMriCSF=g=gHxESPBPNmhHjtOQvG8HhpW0rg@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM9PR04MB8714:EE_
-X-MS-Office365-Filtering-Correlation-Id: af4a7c41-e120-48d2-e4e6-08de1d6a332a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|52116014|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?clErc2lUZWZLaWlSWUxMd2VtOEpseVVQeVJkMllnVUdwUmtvTDhkVFFaWE1z?=
- =?utf-8?B?RlRUVk1FdWZlQVNteWl5NEVKaXFoSVdVZlYzNmFlV3I5UFp4amVjLzUwSkNX?=
- =?utf-8?B?c2RBZXZsNEU4S3pBZmYzK0llVUZUSFlMc2QrWVRyZ0ZnczhnMGE1aVZKdk5v?=
- =?utf-8?B?d24wdDBSMU5pRk9WWDVBWG96ZGVUL2k1M1J6RVV4MS9OYVp6THY0cEVSK1JZ?=
- =?utf-8?B?NUIrcU1pQmRIRWpFMkJPZEdmcFhjTnpTNWVZK0cwU0pqeWFJSUM3bjdqYU9N?=
- =?utf-8?B?TytBZHZ6TS9uU3BKU21qNU5vcXo1cWQ3MFcxNFVaVnpQaGFrMmF2aWlpUDdh?=
- =?utf-8?B?YUlyYlhjdElKRnRvZDBFLzRTY3ZMcVc1S0lqblk2bmx1YllPbk9kOG9rRys5?=
- =?utf-8?B?SnNHQTY1cHZ5cGRyKzZiSC84dEdDQVhnUWhGUzF6bmc3ZUJtZWZWZHFVazJ3?=
- =?utf-8?B?OGJTYzNlaW4zTnlHMnZRZkh6LzErc0IySDNoNFRwSnZxRU5jcHl3N1QxQ3Za?=
- =?utf-8?B?SmY1ZEViUTRvRnYwVzZIVTVZZUJkelA3NVZCOEo3VE9zQ2lpc3pjOTVIR0tX?=
- =?utf-8?B?dWdtcG5WZWE5RGFoeTl0YVZXeEgzaG5BdG1oV3JBOUFnaDlDSGl6dktiTUVU?=
- =?utf-8?B?cTlPWFlkWFl0NjVkcy9aaHp4N0FUNDJ4dkZZTWdoR0RTK2R6SDRVNGd2TUJm?=
- =?utf-8?B?RUwwNTJoN0JOR3JCcEovb2VmcmhFakxobEpDR2d6M2xKazhTQkduV3RDS2d5?=
- =?utf-8?B?RFN2dkozRGNOek5CbkRXODB0UG4yNmNRVDkvSWdkZ29aVnlPUE40Umlib0hj?=
- =?utf-8?B?UGU0c0dqWFpZbm5GUHpSNjRPSUJEYkxOY2lVTlJmcmNyM3hJZXE1WmVDMkVC?=
- =?utf-8?B?WU5rL3VIbVlQeVRNSVN5MGZoVUNBRGkxZE11amhjWlNNZWxST1ptYUlSdEFH?=
- =?utf-8?B?T01IUVN0Q2xCQTJ5ejJWc1BCWUJzL3oxOHpITENkZksvb2ptakJ6VXZGUE9L?=
- =?utf-8?B?NnZvWGRBdU16ekJEd01jT25BM09sbyszUnRXaTVVZGN1M0FEam1FREZqby9m?=
- =?utf-8?B?L3FkRlJGazRDdk9ZRERrT1lIM1lMOUM1Tk8wSE5IdjlJSk4xOGowdDN1TnJR?=
- =?utf-8?B?Vjg4MCtHOEk0TC9JZkRpdnFCQ1pHRURxQ09qYU9yMGdROThqdFB6WlQwdkhn?=
- =?utf-8?B?bm1ZVTQvdXZJaE9UZmM2Vm80VElvVjFhQW9PdGFkZGpmeS82b3dNSmVBTWVG?=
- =?utf-8?B?a3MvTjdsZXFtZytOdVhucTVqc1pyS1RVdzNqWmw5cmRKUmJGanRMREw4R0dM?=
- =?utf-8?B?eDM1TjcvNG5jcVJlUWJIZUJVcW1MdzI0Q1A2SUduYWFVQ1Vxd1hGSHgrT2ZT?=
- =?utf-8?B?bnlpdHNQV2JFdm84ZVl5UFNaYkRCR2lCaWlRV0djakE4RXcvT2loZzVmdlNs?=
- =?utf-8?B?UnBCb2hzTUppTnd0VzlLSjdROVVOTm55eDdzQXVJaGhjREN6WHd6cTNwdTZn?=
- =?utf-8?B?Z3JpMTFzaFY3MThuNkdWUlJROFFlQlVhOE9tdkZHaWd0NklNWHl6TkhaRHY2?=
- =?utf-8?B?UjI1WDlPL3hKWFl0d3U4eDA5Zm8yNzZzQitsaTZ2UVFTQnFRUGsvb2x5M1RK?=
- =?utf-8?B?WGdUaUxhQmg0WUtPajBPRHdReGoxKzJ1b3k1RUp2aUR6bmJFVTV6Nitmak9P?=
- =?utf-8?B?SU4veFM0WEpkUTVaQVV4MExPODBmT3BHdzEzTWNRZVBLZEFBM3BjTGhiUTJF?=
- =?utf-8?B?eldBNFU2SVZFQ0I2TWZ6WWVSSTk1aklJcVRUbldXeXBqdG4wRzVLcFlGRFBC?=
- =?utf-8?B?T2kzTXNJcmNxUlFYeXR4NkxZTVJaOTkxcEtVTDNOWEI0R0hqdkNMeEVJOXlI?=
- =?utf-8?B?eDc0Vm1PU2ZQQkxBMGxLRDY2NjhIaEdjTXhoUGI3eWlHVzNGTk9kdWR3V1RI?=
- =?utf-8?B?eTA5S1c1Wkp2WlNiand4T2NWYkRrNzVlMWJJV3BHUFpFeVhleUgrSHhXb3dm?=
- =?utf-8?B?d1BmRWFQQlNtV0dUcXVmdzZVN1NFcWxSTnpoUUROTkt2VjJDR1M0YWR6OFd5?=
- =?utf-8?Q?XPIJY9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(52116014)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bW53S3JJVmJaTVArRzl3T2lhZUY2UzlDbTlmUUxKeDc0d1NYV1V3VXJyV3h1?=
- =?utf-8?B?YW1BVzdQNXNtVnZKMlVvbXp6R0FIMFlNM3crazlzZEYyTFFid2ptWStXMnhM?=
- =?utf-8?B?UUNad2Qzbm9Ndnoxd3Z4Vk85T3JhWWpXWGgxU0Y5VFpxb09SUmpXdW9LczI4?=
- =?utf-8?B?V0xMTmhxSlJ3M1Z2QmVkNXd0L2N6Skt4d3RhVit6U2tlakp6elZ5M1lzWVhM?=
- =?utf-8?B?bE9SRG5lV0hyenhmRkZzSGo0RlZQd3doM1dCRTlRTWtNVXZhRGZiL3NkYVBG?=
- =?utf-8?B?VHA1b0FCUk1VYXQwc202cnpRV2RPWCsxRXp2cTFtNG4vU1FtZHA2d0NhcERj?=
- =?utf-8?B?OWsxQWJTUnNpSnNVUkhVL09INHJocm9WUlpBa0drUkh2MEl5RWJscnJtb295?=
- =?utf-8?B?SWRMaE5NWmdkNWNZTm02YjNYVkNGZTd3YlVOcE9Sb1l3TmMvTjM1NGc5b1Ux?=
- =?utf-8?B?OGcvcW9xS2VKK3JsSm1UWmdmRit6YjJqTHdxbkhxakJsZFhZM09Pa3BiN25i?=
- =?utf-8?B?OVFpb1J6Q3pEU0lSelBmOGd1WXpvbmJ1bURCclNpeTJ1V0Rta2pVTlVON1hu?=
- =?utf-8?B?RFhKcDRzdjNmL00yT2d5Ti9uaUFwK0pHQkZ0SnNENDh1a1NvNGhyejRDQVBO?=
- =?utf-8?B?dGZHZHprZEZBZjZ6QjNjK1ZvS1NjTE1tQThuSC8vdmdHWGRiV2NicTRRT3hq?=
- =?utf-8?B?Q3Ftenl5b1ZoY1lnNndaMFJJNjkyUmh1MHV3L1ZkbHVaRHhlbkYya3g2QXFU?=
- =?utf-8?B?WExMUndydVoycGdzMFRVeUpmSWkyWlRxbE5TeitWdmMrempCN0JScTNYRXJX?=
- =?utf-8?B?ZzAzSWxpRW5aVHA1N1pOdGkwOGNNazFaTkg0VVR0VVhTRXVYWjg1ZVBVblJk?=
- =?utf-8?B?dHZTdFdlZUhrYXV4ZDFVb0ZyUU1IT2RuRnlSRm1PUkZTeVo2QmFFeWlScUhy?=
- =?utf-8?B?ZTlwZ0tXL2NRcGc4czYzUUxSVU9rc0ExdGd1R3F1UzRyOWZjcjBmVjlwQ3pG?=
- =?utf-8?B?VmtBaGliQzNpTG5HaVRyeFdBL3dLUkI4cjFkL01ZVDRGckZXYTljajVmWk5D?=
- =?utf-8?B?SmgzT1VFai8wdmR1TllkQjVKaE1qRmJnRWw5MEQ3Q0w0SW9FdUtpZ0tGcFdi?=
- =?utf-8?B?RXRpK3NaTTRuN1ErRjJqQmxoc3REVjJrbjFkVDFOcmF3RHZQSTlma2dlWGVm?=
- =?utf-8?B?MHNRMWNqY05ER01MZkJWNlNEYnQrNlZXY2VGdG1MTU9YWHQ2Z21zQ0tocnV2?=
- =?utf-8?B?cUcxWGxuNHo4eExJbFNlc0JoTlE5YU53ZFRXaGdNZXdkczNnaCs2alNFTUI2?=
- =?utf-8?B?UDlaYUtYYWdRTGlkeDcrUDZVMjVJWnFnWXovVG5xTnNtc1hLbmVQK2JVMXNV?=
- =?utf-8?B?cUhraklxcXgydnBHV1FWS1F1T1RydHlMTVk5TXFvMXU2UkpkWDRoTFZmU2RW?=
- =?utf-8?B?YnQyRWcvc25vSjdZZVNQY0pxRG92eGN4NWMrQTdUM1cyWHJEQjJhWHNkK2JL?=
- =?utf-8?B?N2RIMDYwdlNsYlhCV2pDTlhaNFVEOFZlOWV1eTFUMG5VVnNBRis0UFdCZmpi?=
- =?utf-8?B?VFBtYm9XL2kycUp0YmFJVC9iWVZBOXMzYityc1ZQMHhteE1lRkNDTXdZdmJS?=
- =?utf-8?B?eWRWc3NMOHRZOWJ4d05iOGkwUU5EeFBSWHVta0dvNzlEMVVWbFFISEJBUmpT?=
- =?utf-8?B?cnJ5ZURHQ1o2UGQ0d0JPSWlDbHUraUYxdngzdUIrNE1ycmpGNTNsQlE1RDBn?=
- =?utf-8?B?RFNCN0R2RjF0WHZuL0Z6dkQ3V0dxNjlKbzZvdTgybVdBZlBEcGxhc3VNNXZ3?=
- =?utf-8?B?UGJiVnI0NkFENjlpNkJYSGUyWFU4SmFnRGpCQ3RibFhlSm9lb1BVUWYyVWNQ?=
- =?utf-8?B?YmZNdFkzWHEzeWFtdUdxQWdhZFkzZWRzcnZSU3NOUGFEZTRiN3kwc2ZldU5J?=
- =?utf-8?B?QytlZkpmMzhWT2FIeFNkUGZnWTFDRkZuVm9vZ2ZmWWVOZ2lBOXE2d0kvVW9G?=
- =?utf-8?B?T1VUaDNVbGhUd1d4K3ZMWWJscm5yQUZtMFh0eWZqV2FmQUJKYUFQdjZjU3JS?=
- =?utf-8?B?NWxZL1dFN2k4OEZGZG5ic01wM3VKTWpLMmk3ampKZjdGNENDQnUzS3VQK2g1?=
- =?utf-8?Q?qlY0=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af4a7c41-e120-48d2-e4e6-08de1d6a332a
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 19:25:09.7416
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vfw0Fp83+MkjBV9n0AR2Js2oUq8o9Rm9F35/Ep5P7sKQ4ocVwJ9EL7kmxTFHXTlq/LYxq2ORTmvk709qNZ5Btw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8714
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 07:16:17PM +0100, Jean-Michel Hautbois wrote:
-> Hi Frank,
->
-> Le jeudi 6 novembre 2025, 17:05:15 heure normale d’Europe centrale Frank Li a
-> écrit :
-> > On Thu, Nov 06, 2025 at 08:10:08AM +0100, Jean-Michel Hautbois wrote:
-> > > Add platform device support for the MCF54418 RNGB hardware with clock
-> > > enabled at platform initialization.
-> > >
-> > > The imx-rngc driver now uses devm_clk_get_optional() to support both
-> > > Coldfire (always-on clock) and i.MX platforms (managed clock).
-> > >
-> > > Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> > > ---
-> > >
-> > >  arch/m68k/coldfire/device.c       | 28 ++++++++++++++++++++++++++++
-> > >  arch/m68k/coldfire/m5441x.c       |  2 +-
-> > >  arch/m68k/include/asm/m5441xsim.h |  9 +++++++++
-> > >  drivers/char/hw_random/Kconfig    |  3 ++-
-> > >  drivers/char/hw_random/imx-rngc.c |  9 ++++++++-
-> > >  5 files changed, 48 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
-> > > index
-> > > b6958ec2a220cf91a78a14fc7fa18749451412f7..9d8f844e319a98f0afb79cceb544c2d
-> > > 3029482a4 100644 --- a/arch/m68k/coldfire/device.c
-> > > +++ b/arch/m68k/coldfire/device.c
-> > > @@ -622,6 +622,31 @@ static struct platform_device mcf_flexcan0 = {
-> > >
-> > >  };
-> > >  #endif /* MCFFLEXCAN_SIZE */
-> > >
-> > > +#ifdef MCF_RNG_BASE
-> > > +/*
-> > > + * Random Number Generator (RNG) - only on MCF54418
-> > > + */
-> > > +static struct resource mcf_rng_resource[] = {
-> >
-> > const?
->
-> Why not, but I wanted to be consistent with all the other structures in this
-> file.
+On Thu, 6 Nov 2025 14:19:06 +0100
+Mateusz Guzik <mjguzik@gmail.com> wrote:
 
-You can add new patch before this one, which just add const.
+> On Thu, Nov 6, 2025 at 2:10=E2=80=AFPM Borislav Petkov <bp@alien8.de> wro=
+te:
+> >
+> > On Thu, Nov 06, 2025 at 01:06:06PM +0100, Mateusz Guzik wrote: =20
+> > > I don't know what are you trying to say here.
+> > >
+> > > Are you protesting the notion that reducing cache footprint of the
+> > > memory allocator is a good idea, or perhaps are you claiming these
+> > > vars are too problematic to warrant the effort, or something else? =20
+> >
+> > I'm saying all work which does not change the code in a trivial way sho=
+uld
+> > have numbers to back it up. As in: "this change X shows this perf impro=
+vement
+> > Y with the benchmark Z."
+> >
+> > Because code uglification better have a fair justification.
+> >
+> > Not just random "oh yeah, it would be better to have this." If the chan=
+ges are
+> > trivial, sure. But the runtime const thing was added for a very narrow =
+case,
+> > AFAIR, and it wasn't supposed to have a widespread use. And it ain't th=
+at
+> > trivial, codewise.
+> >
+> > IOW, no non-trivial changes which become a burden to maintainers without
+> > a really good reason for them. This has been the guiding principle for
+> > non-trivial perf optimizations in Linux. AFAIR at least.
+> >
+> > But hey, what do I know... =20
+>=20
+> Then, as I pointed out, you should be protesting the patching of
+> USER_PTR_MAX as it came with no benchmarks and also resulted in a
+> regression.
+>=20
 
-Frank
->
-> JM
->
-> > Frank
-> >
-> > > +	{
-> > > +		.start = MCF_RNG_BASE,
-> > > +		.end   = MCF_RNG_BASE + MCF_RNG_SIZE - 1,
-> > > +		.flags = IORESOURCE_MEM,
-> > > +	},
-> > > +	{
-> > > +		.start = MCF_IRQ_RNG,
-> > > +		.end   = MCF_IRQ_RNG,
-> > > +		.flags = IORESOURCE_IRQ,
-> > > +	},
-> > > +};
-> >
-> > ...
->
->
->
->
+IIRC it was a definite performance improvement for a specific workload
+(compiling kernels) on a system where the relatively small d-cache
+caused significant overhead reading the value from memory.
+
+Look at the patch author for more info.
+
+	David
 
