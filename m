@@ -1,172 +1,228 @@
-Return-Path: <linux-kernel+bounces-888672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D7AC3BA13
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:17:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EAEC3B933
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F1F42731D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:07:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1931235068F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D93833BBD5;
-	Thu,  6 Nov 2025 14:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8D72E2DF2;
+	Thu,  6 Nov 2025 14:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QQvZ+d5A";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="crdGjc9H"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dI/fvh56"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010035.outbound.protection.outlook.com [52.101.85.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8B530E836
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762438066; cv=none; b=EwsrGSYt8XfzyJNY+kzX1RPTKwuqlL+WJcbe07qPdjeKfgA/LnYsPrQ5K/Jt/vJTKBGX6bK8WM6uph/Uo0/0k6t04TCrg79LfIJZJ3Qr1pZA3ScwDebr0Kley4JYFKwvxO5Ka3TDseFGakoh8pvBmVXqTj5R/TCtgIoAhEVGrNY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762438066; c=relaxed/simple;
-	bh=SOccKiy5Rdbr6pq6sB0mWtUflMzLr3rVH64LwrFeOVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IvmC/N83fqq6fyBZmxBakHm6+7wAThqSoEzCzrOhrhcyR2KxGwKz3u4dRT9h4UQ9ciQBdeakPUHMWRf02uuglKbhmWadu0T8vV7dqIz4VNkUegjGuOEiraeufRHjB7xrZDJmVYDMOrcpYbWY/fjgM2QDy0ahfmX51h5qik2o/Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QQvZ+d5A; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=crdGjc9H; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A68c2Ji2326856
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 14:07:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zlBnzVB5nxzy+Z7vwR/dqDEVVZyIcEzuFRGM+j8huts=; b=QQvZ+d5AIl179X7G
-	oNgzd+fA/TENVGJ6bfTJwJZJ2yI0qR6nhARxOCIwxPl4eTZu/+OvD6EYlwjMt4mb
-	0lSfkkyv7HTPsm+GAcwHINSubnm0wC9DdsNRaHJ/b7buC1badIHer5IQo0THbteL
-	ZRup+VGq/Q5Uftg76iR8Ex583V3FIXh0UeKpkcF6YEKnHOAH2ZIcul8oMf9kej5E
-	v7yLps1O5kXDHyZphCBXtBc6Hrpf423CHqwjkh93na6EK1hyS06PldPIkOENV0Xh
-	RDA0BdingP6TbQwmPkGXi6sYApeIg7SxcqSpxDR0t0o8bloYfL18abGs39KWqXTZ
-	eTS6ew==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8h0v23uk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:07:43 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-342701608e2so597769a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:07:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762438063; x=1763042863; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zlBnzVB5nxzy+Z7vwR/dqDEVVZyIcEzuFRGM+j8huts=;
-        b=crdGjc9HnTa+VhBHLl6fkq3p69JScJaWrIyXbqpGD3cikY9LhXxEeTU0RQ2iISBSxb
-         w9mo21SWpmFZva0uLXopf+1pMnDluY3+s4WaYiP5+LpMkjbZZapH/wSBhOWpsbRpE/kD
-         mO1Y9UYJRi1JIKYu/S9RbvoIibPxSSrnLBH7VnXXAHBZMHA/iYaxocs9xL2RUNN4g/BL
-         GC/iYbwHuOeQxRr2q1Lvstgo8fMfY5H9i+je+C7KkUIZBeHg7n83L7Ydw8StETtQjRfz
-         kZtP1CSbtMYUkroAlCkLvAe2lcCqLHq+af7E33ACMN779H1L5MSlKPgqHQg2t8yDQ9+S
-         GDxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762438063; x=1763042863;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zlBnzVB5nxzy+Z7vwR/dqDEVVZyIcEzuFRGM+j8huts=;
-        b=R+v3OJLfcDirM4JxGag4/XD7Qtc7LOKPOUlQOn8UdCgMcJWzIdgmBwIFT1mvEXhEjj
-         uEkoIhUHpGWKT+Uz2SUqqi3+CgfkPP8JnEYCHpITvWoOz7LmEls+NX0IYF4rB0BFXvgT
-         uFdmbF4LnQQcqh9G1nK6gjN7tNngncy+auWTT681S5fY3eeB/dANg4y4gBYwXSbo0ndf
-         d7TC+6i8IpsraaPZn+3zk/vKqeTaOLItjOzcs33F0KwwzGhJ7SPTfsMofQAAVDCQ/gCi
-         2WYjx4CXUlJ9abfDT7f97Y1cOhCAeRSDqoO+zgFHK1AvwDoYxs+7pWzMFFqTB4GF+Tfp
-         fhqA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1YixF0eAENjWgx/5t7XIQIJ35CthBchrsSNbQiwAkt85rU63DJMye1/AwCXM0lLMdSs52XaH59dMaDz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzntXXIMwjum+EHBQC++NxfpCuxHfd4AQTo8eE2BJSJv0z7vaBx
-	DMRkkL7BZ5UMfjBh47viHtB75b1rAFFsZBY8Dq+W0M+7PK/h5quEwRwQlWwMhlX5A5vSg6FpZpc
-	VAupNFhyevev8ZpeJu4mECMOahs/j5qrXeZDAK+JHCyRjNuzUzu7mAXj4++znstNgV+s=
-X-Gm-Gg: ASbGncvi0q4h5lb5nXmqyQme+yRTKU8ndmsKA1mq7zCH5MCGpxTifuo4XMokpRSYbkX
-	0s/leu9+IC0EiMdvhpCnDOQwgO3IenjzH+ifUNpN4AJrsPn1HTroEGpA/P9tcZ0tu3S+tQq/kaD
-	glMtlf3VQXU+oMxab6RlAo864+uHsRL4ydBL98fMQ/nzZdUD+nsowwH5TVJrhPNlND+7Jwnqrw/
-	CXImOi89HQ22CzW1/W4q6slg+qq0wW/PFN9tLxCyQ1ih86iqwPD8JzuTM8XxwGo7E6ewHSDzhn9
-	/TodoZYjRtTxA4cjgIq4G/BqjFjJWN0S+wMJ8ri+D6ApdSJXya5elG+ItucP06km7K4XP4XEPfH
-	9FTYJWg3w0tsY00+JkaKSV2F6E4yNa4ggBQ==
-X-Received: by 2002:a17:90b:4b83:b0:340:ff89:8b63 with SMTP id 98e67ed59e1d1-341a6dd839cmr7917842a91.22.1762438062802;
-        Thu, 06 Nov 2025 06:07:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFb5xADXggWF7dRNeF7sG95acRl1JztjRAlFJmaO2OvQU/vqH3pUikfwbJOHiUbUbKUov+t3Q==
-X-Received: by 2002:a17:90b:4b83:b0:340:ff89:8b63 with SMTP id 98e67ed59e1d1-341a6dd839cmr7917764a91.22.1762438062062;
-        Thu, 06 Nov 2025 06:07:42 -0800 (PST)
-Received: from [192.168.29.63] ([49.43.224.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d0daabd1sm1131993a91.8.2025.11.06.06.07.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 06:07:41 -0800 (PST)
-Message-ID: <96c49d08-10dd-4a82-a6ec-345701b771d6@oss.qualcomm.com>
-Date: Thu, 6 Nov 2025 19:37:32 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC21339B20;
+	Thu,  6 Nov 2025 14:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762438074; cv=fail; b=MW6OAqlIH/mcm+qXWjzawoDpnqoWZ7MJ6STUS0c/8yH1hBhdc4mJQ8Q9SPFG7cmXD4KaOqFnyPQGiqQaIzQi7CUbLuOqoZhFCJF/UsEbIiJEfVxSMij88CzGeCSqcuExbb4Xw/GF68hJX4hY3ZuLsF+4BvSZPaXxrph7OwZ2PFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762438074; c=relaxed/simple;
+	bh=x8ChqIFBtNtGBkPsj5Ezm1fqVaaA9vk3D6FSUYk9+F4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dYI1tZdxSPoTiv6btxXmqBwJ1gsHrxTudYAX4c5VcoYtqHU9D14SlhpVrIv+S6va3TOqZKkRoHBGjn+3TJBwALDKNjvVL8xU3bG5feYLEnZ04qQ3iIktmxvd+84S3JL+I6slca93KNOxqb7m9x+c1izlPrLrhqksgkPk8KZhQTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dI/fvh56; arc=fail smtp.client-ip=52.101.85.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jYT8VyymX+908on7omvV3o9lQJw4OFM50oZwLz4n3lm0v1dYfBP62UW2eAqoaM/xKdE+4EzV8sGNm23nR5XRPOSPKJ7z8zciaOrD9Sii91Ang2rHSvrogpGzkwvT2ePgDgWGH6M+MWlfQPzInq83+k4MJ1CHPedOp9AGeUJyF4O8VPwtROGZXfvUP5aGjKgNH+SEzmEOxkJt3Wfn3zac41CJTCt3erjwvPb2C2G8MifbH9rkVkjpkJQnghVOvJ1awvcmbGSh4Es65spSeYUhXjLzUl/uG3bPrfwvnEiMvvLLQbHDAHzeYu5rjT1njwFpPPpRof6oZgT2hyLaA175tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u4EbhKCiWxuD5zYdGwwRvzVhNkdpoX6nvdzcVFONdsQ=;
+ b=RWnxZ9FBs07GB1Accj8qfALC2/ILaWR4SrVUJSZYJ5UqnPd8f7o8SEuEOF4tMB30oEfvt22cmgmg+dlvhj6j8lGjnc1QQn5CmYvGKb0C0Sgna/jkJYHfG0TTACbdjd9lXro6Jv/vhxpx6NOX1JXmIiWBvQRIH7t4mROUA2QR6pKj3INHriJUR4Hln0GFynIfyOMYjNp6H2q1ABiD7SQKpdzFi2dDiJVr9O5CsR0rpA0nzgcnwBViqRfFm3cMTxa6V9tvL+/To1v9Fbks+qqe54aSWDwOYThswuT4cgn9PxxsKzhC05ZNXu07vrbyqtRocxMvd25c79DUhF3WtYtOdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u4EbhKCiWxuD5zYdGwwRvzVhNkdpoX6nvdzcVFONdsQ=;
+ b=dI/fvh56euI78xySEH4flrkFR3VBjcYHqfEKseun8yxI2TcI7ZSSm6twLZWu6R9wN3Cak6FDqvE84SO/3B7k39l6/hivPXjtbIWJSRSAq+Q7Yf80nkbRR0942JSmL/M5aYEohDmC6DTlMEyttoag2qneXpj58TrAfxvpkgl9JEJ2oWRKQ51TuE7Lg/rus/Ii61h0pIhLZpPyqsif64nno+9Hy+hunN5Jh7XnH6VZNSPTEWxZS7n8fBN2vwODCGxUGC+AtzGjGK2F8hVLQCWXTHhu42sWvTjS1F+6Mo4x94xrQbI3DuWFerTFU3e33K1iDSFznqapusZo5aEGw0W3ZQ==
+Received: from DS7PR11MB6102.namprd11.prod.outlook.com (2603:10b6:8:85::18) by
+ SN7PR11MB6750.namprd11.prod.outlook.com (2603:10b6:806:266::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 14:07:49 +0000
+Received: from DS7PR11MB6102.namprd11.prod.outlook.com
+ ([fe80::5cb3:77bf:ac73:f559]) by DS7PR11MB6102.namprd11.prod.outlook.com
+ ([fe80::5cb3:77bf:ac73:f559%4]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
+ 14:07:48 +0000
+From: <Divya.Koppera@microchip.com>
+To: <Horatiu.Vultur@microchip.com>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<Horatiu.Vultur@microchip.com>
+Subject: RE: [PATCH net] net: phy: micrel: lan8814 fix reset of the QSGMII
+ interface
+Thread-Topic: [PATCH net] net: phy: micrel: lan8814 fix reset of the QSGMII
+ interface
+Thread-Index: AQHcTvzsV5ZWzyHBhkikJvRFurJrobTlryIA
+Date: Thu, 6 Nov 2025 14:07:47 +0000
+Message-ID:
+ <DS7PR11MB61021B86D4A1146873712160E2C2A@DS7PR11MB6102.namprd11.prod.outlook.com>
+References: <20251106090637.2030625-1-horatiu.vultur@microchip.com>
+In-Reply-To: <20251106090637.2030625-1-horatiu.vultur@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS7PR11MB6102:EE_|SN7PR11MB6750:EE_
+x-ms-office365-filtering-correlation-id: 531fa8c2-044b-464e-3ccd-08de1d3ddd43
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|38070700021|7053199007;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?OlxWXHBKs1ZylGLncPmiOUTW6rMKuPvJCU85QLEvZCvvYy56BX3Oy5QDukOH?=
+ =?us-ascii?Q?u4cFbWVXkgae4b2MNn2pI4lIeIfC+IyichOJSQz1rvKW7SPoaFxXvaJjKLkl?=
+ =?us-ascii?Q?E0r3AwgLE/kzVZ/Td4G9j0s86OTZmd+xMVwcSnuKyywVtGA23hs9VDz0qRA4?=
+ =?us-ascii?Q?MVHRSxpHaIFdGJZafNtUYa5kZQepj7XulPnstUeW1jVHf4YiDpskzJ1RbB2w?=
+ =?us-ascii?Q?O3GuSUsTU6t4VZ83n3iK7rAgc2x+uCuQt5xMu1Q9jjNLoSFhuJ4sNyZ4x/uN?=
+ =?us-ascii?Q?2bx2x8GA24dR13LFgGl6Ho9Tnhjbyl6MRKKN0PrQ+OKOLGqlYQNPkS8cy+yM?=
+ =?us-ascii?Q?FB5BQ5zRFlyLd+NKhRs+JsEZ7WIQBLZHZv3R8TkZTtyUox6DmOd9eZ134oR6?=
+ =?us-ascii?Q?zB7S/cAl40mkFwVrnmR1xiRQ3cLSTLV1SzKXo85Z7BofbaFaKiSryDiwoiMX?=
+ =?us-ascii?Q?8d4sczzU7BqoL0D7dHawMWY3ir3D/bVdDmnJ6CJd4L4xP9tXVsXzOHcJPHNx?=
+ =?us-ascii?Q?OZcqabRSHyvOqewhqrHS2oMPxtqVbgTrnMiCRXcdJWrnw0neMN0FInUfiwtL?=
+ =?us-ascii?Q?F41OPlrDXscCYY9LibcjyV/81BN9N7XccWBDimmGC5AgQHJAFK+uJ0aqRpym?=
+ =?us-ascii?Q?TFxGRtKZwbThuaugoC/H3QvkltgqMU36ZEUBOlR/HSEsw9yWgrEDcH8U24mw?=
+ =?us-ascii?Q?+H5L9ZfqFzkBJKPeJu/MFuqksGpO7qjzW04cHCDDjXPgjtNJk9JmHL8SWSZc?=
+ =?us-ascii?Q?6n6AyTNmmMXwMmpa7rDwRp8sH/ueFV2dDwG2TdESjcDs1Fzsc5BIKQjZnv4U?=
+ =?us-ascii?Q?zpfoQPmKeCVe6J8+ywjqEDrZsk1bHRx6fJr3GUpiZKc3TIoyrC2UPhFx8bij?=
+ =?us-ascii?Q?7lkFPrWJu666qeqdjg7gcguJAUsq4aN8WVd6hY3hkc45J+j5taOkPeW9oSkB?=
+ =?us-ascii?Q?bFinsDS+taODLRwk+lIo425Uv4F2pPaYnk7BDS1e20PcgKlhVCGJDpKG49dI?=
+ =?us-ascii?Q?p6XHNqDDvA1+bLxxzymEOAUsi0cLBZFrfCtPrNryzEBVeNcJFCkAfTT6UA1e?=
+ =?us-ascii?Q?PBbLUtoT/2r/UDq/b9r2aQN52Ft/GLCX/szRKSdi3pWHkPD2bIw/4gaA3JF2?=
+ =?us-ascii?Q?LBtKwZC7YCNXJ13V/gw2gWOCN98iUljrtFeiA2O2kRY2aiCu4SFiFW27h3eC?=
+ =?us-ascii?Q?9Oljo2nUBO5swcaetBlY+saX1/W4E8B+pSEF97pKpfcbcp2zvvJg6ITRuqKb?=
+ =?us-ascii?Q?dZp7aIQWZXKO7WkyASI8tz+9TrTWhiGdsBJ9z4hcr8ZeXhnVL8PF147jTN+Y?=
+ =?us-ascii?Q?DxA4piiANcYpGuofe1lGmWsOmHnsk+d/AoO7Nyrv8O97Uv5nDNeCLcV3sqp8?=
+ =?us-ascii?Q?nURlMxz5o3lJ+zOhQOFb+T+J92Q3rNfiqom+mD1crQHuy+IEJluG0ymuwS/8?=
+ =?us-ascii?Q?R/L0rshGrjoRg9xpiyIwwkzBnMFKeqxtTCoahUY2oZke5/JDSSrm9EYzAFMp?=
+ =?us-ascii?Q?SUYgOdg7q88rwZN7qyUVdUuyahZcvB9Qgoa0?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB6102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?t4Aaokz/HOPNYNLQmcCVkfOrARi7gHZLpkPhtMMqniBvEz2IeRGib5kraT/V?=
+ =?us-ascii?Q?3yjYULFEJsALJ8S5CBMnYVn8gxDs19wxHTiFWtCB8HXFCx07NeNEHIEF9udf?=
+ =?us-ascii?Q?e7Fwpi9dUchIWjbf1pws5W8b9kwCO10Fn9m0jistUNSfdp4c5AB7ALnIBHjN?=
+ =?us-ascii?Q?5Vo7y71eDPnX/bwGoCPonhQJOIHO7KpQ/4n4qEDQWIfh7WyIU8LZBrrqQS+z?=
+ =?us-ascii?Q?ceCEgRLgk2JsjS7j980Qd9oCBzFFJxhIxKJmAVEqE7Fv6PZOioi3QSzs6cGw?=
+ =?us-ascii?Q?pJwCwMX4KvnrFcAzt0Xs3fFcqhyM2sBrvVXuC0VP2wF0+6DwdvS/+aCZ9uJ0?=
+ =?us-ascii?Q?VkhWdGavL/ubj7V1P4JVt70grIRHXTTIWvO2UFjUgt/k/sYv9/hjPDez6d6e?=
+ =?us-ascii?Q?NKHWEP3aOyxwsJIXHra659TqKLlgMn953zyXiD6QXeXV6ti4okdT5K0DktK8?=
+ =?us-ascii?Q?SRbjLEcCj9tkleXGNoaOfL6umItlap5DRW3B+l7l15eqzFFQZJnpM/tOZmEj?=
+ =?us-ascii?Q?OjZBMX5b7QqxdYsurfl9VPnGfukkOsn6+hl2ntfjC2rmxeIbQ5X+KDUUZOtw?=
+ =?us-ascii?Q?fEYGQ8ixhN6n0yqruJKN1krqcODWNXaaclnAFa9ZF1x3bWH/38Og5564OcXs?=
+ =?us-ascii?Q?edOW3B/KomjD7IJOK3RqYedhbKUML9EOEbPwS6/jZm1RzVP2a8dkVYg7dltv?=
+ =?us-ascii?Q?6quidI7AANs3yhbbP6ysm+pVScXhgMiU/VexkLQ7KkLP099ePaEi2Di4hHkq?=
+ =?us-ascii?Q?cWRvNMRi/nruOdGj+3/8qR14N+WnQN23N9ofgnFmNko4tzdYG04OR0f9HUxK?=
+ =?us-ascii?Q?K44YE6qytiByE7/4NW5vrbJey/pf9Y0jwBYtPxfE/SjDkU4C4LvJkvjJPISn?=
+ =?us-ascii?Q?EE1ZBkbcAtMoHht9NN0jzppLO5oEaKsF8nJ5pYfnQz9DLxgMzsXqq03wFaUs?=
+ =?us-ascii?Q?CzL3sesKjbDLwNw8iQq/Uvh9HUwhv5oknlxDN2efyNA6QOD+Lbe0ZXJckfWZ?=
+ =?us-ascii?Q?ygmQCiyu44GTN8yq8c/1R8DH5iUVi30PxjNuNisuieOh/OZmYdSzRaRWAZ9I?=
+ =?us-ascii?Q?LWKf5z92kPZ2D4TD5btGTmTw5LSIkox7ncWY+mqGWBYSCt2iByCr8ijL0ODW?=
+ =?us-ascii?Q?txG+lmWUXTOMrh0cZC0Ktbu1Ss1Aza4pOYKWtG997Lk+xbJVZKr08lHZFwYR?=
+ =?us-ascii?Q?PNUjEc8eqp0XpwqyRRWj9S5Nn4gDl+AEiNPy5IauYkcLciUleL4whZHg+3Wy?=
+ =?us-ascii?Q?XH/YGRB1tzMDjg1dh392aiHfXjqBDYLuuRUW6wtTvJFnXHqJXbkbRjyOaYu1?=
+ =?us-ascii?Q?F4DgVtbHawHeSQMN/avD+Esb/JfdhwNZXdNWAm7ZJXBeGyyPpctvlwDfaySJ?=
+ =?us-ascii?Q?ygjjivXFSID+Mdni357BNTITKfD7TqDbyB9cX20jCoczu1D8Q1rvkBBIBpnS?=
+ =?us-ascii?Q?CPKPg++aUMRvb9tWHijEjHyrefUXcWEZaHNBNVfLIDwHj+syqX2IkrgHbXZC?=
+ =?us-ascii?Q?I77LbpjH1lTuaWd6BIsdXBmX4O/SXctqBYmiUPkpFo4Y/02mdg0N/pZhx6yn?=
+ =?us-ascii?Q?eHNQXryEU/KTYMr6XfpoGXfmCjv5p7s7ueR3rn4V?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] schemas: pci: Document PCIe T_POWER_ON
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: andersson@kernel.org, robh@kernel.org, manivannan.sadhasivam@linaro.org,
-        krzk@kernel.org, helgaas@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, lpieralisi@kernel.org, kw@linux.com,
-        conor+dt@kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree-spec@vger.kernel.org,
-        quic_vbadigan@quicinc.com
-References: <20251106113951.844312-1-krishna.chundru@oss.qualcomm.com>
- <7v5bmbke37qy7e5qns7j7sjlcutdu53nbutgfo6tn47qkojxjy@phwcchh5gs5q>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <7v5bmbke37qy7e5qns7j7sjlcutdu53nbutgfo6tn47qkojxjy@phwcchh5gs5q>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: PJgplKdXPCQFEhVZckEIwMhveTwoY8Vb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDExMiBTYWx0ZWRfXx2rYvbaNmBik
- ZdXK6tCtBjGnIXo+RgvV1RennK4jiHI3UAcXk4d2YBoXTMgPjQUZiLXkbd8HZgmNDmmGqGb5X5j
- 0IGDkt344mkM/46fp3a+mGkRroXYAkUafk4WNNdEPEF1/Flk201on8p7M40jv6vmz0SEWSx9Kcc
- zzWOA4Rye3Ey9pwm5Zf7SZCqlM4eZkHJT1Im8kwu2fTsACvMj+tBhrfKQXLNVq+IhMk+ZAiLcD1
- VJkMWVQSQitG39XYK0/eistsD8vT5E/bfxHLpWnoaLGaF8a8MeZnes0sUwRZoWKMPr1YpPydP1g
- +P4bTAOWDcmfZR05FT82RIAAtcV/r34dmHwQ/wcDmlxUSwCpCW4hL8yNCYDM5JpItUZ+3xP7FFB
- pZGM2647zIu+D+v9BoR3D3YgIC/mXg==
-X-Proofpoint-GUID: PJgplKdXPCQFEhVZckEIwMhveTwoY8Vb
-X-Authority-Analysis: v=2.4 cv=PoyergM3 c=1 sm=1 tr=0 ts=690cabaf cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=1uN4TIezCBQZsvcDmGHwSQ==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=0lSf4L86Ka8fYzTnLDIA:9 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060112
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB6102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 531fa8c2-044b-464e-3ccd-08de1d3ddd43
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2025 14:07:47.3979
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CL5CVisTbRgaM4t5GIHwDncBftyhLEgFGIXXJgCfWSrvLdIKTuFhM4xu8cD5A4NcvIU76P6Pj+H9PKcjV1GdUBnE/RuEQAU6AEsl3lxAfl4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6750
 
 
-On 11/6/2025 6:08 PM, Manivannan Sadhasivam wrote:
-> On Thu, Nov 06, 2025 at 05:09:51PM +0530, Krishna Chaitanya Chundru wrote:
->>  From PCIe r6, sec 5.5.4 & sec 5.5.5 T POWER_ON is the minimum amount
-> T_POWER_ON
->
-> You should provide reference to the Table 5-11, where T_POWER_ON is described
-Actually 5.5.5 section has only table 5-11 which describes this, I will 
-add the Table 5-11
-reference also in next patch.
->> of time
-> "(in us)"
->
->> that each component must wait in L1.2.Exit after sampling CLKREQ#
->> asserted before actively driving the interface to ensure no device is ever
->> actively driving into an unpowered component and these values are based on
->> the components and AC coupling capacitors used in the connection linking
->> the two components.
->>
->> Certain controllers may need to program this before enumeration, such
->> controllers can use this property to program it.
->>
-> I'd remove this statement and just mention that this property should be used to
-> indicate the T_POWER_ON for each Root Port.
-ack.
 
-- Krishna Chaitanya.
-> - Mani
->
+> -----Original Message-----
+> From: Horatiu Vultur <horatiu.vultur@microchip.com>
+> Sent: Thursday, November 6, 2025 2:37 PM
+> To: andrew@lunn.ch; hkallweit1@gmail.com; linux@armlinux.org.uk;
+> davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> pabeni@redhat.com; Divya Koppera - I30481
+> <Divya.Koppera@microchip.com>
+> Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Horatiu Vultur =
+-
+> M31836 <Horatiu.Vultur@microchip.com>
+> Subject: [PATCH net] net: phy: micrel: lan8814 fix reset of the QSGMII
+> interface
+>=20
+> The lan8814 is a quad-phy and it is using QSGMII towards the MAC.
+> The problem is that everytime when one of the ports is configured then th=
+e
+> PCS is reseted for all the PHYs. Meaning that the other ports can loose t=
+raffic
+> until the link is establish again.
+> To fix this, do the reset one time for the entire PHY package.
+>=20
+> Fixes: ece19502834d ("net: phy: micrel: 1588 support for LAN8814 phy")
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> ---
+>  drivers/net/phy/micrel.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c index
+> 6a1a424e3b30f..01c87c9b77020 100644
+> --- a/drivers/net/phy/micrel.c
+> +++ b/drivers/net/phy/micrel.c
+> @@ -4380,12 +4380,6 @@ static int lan8814_config_init(struct phy_device
+> *phydev)  {
+>  	struct kszphy_priv *lan8814 =3D phydev->priv;
+>=20
+> -	/* Reset the PHY */
+> -	lanphy_modify_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
+> -			       LAN8814_QSGMII_SOFT_RESET,
+> -			       LAN8814_QSGMII_SOFT_RESET_BIT,
+> -			       LAN8814_QSGMII_SOFT_RESET_BIT);
+> -
+>  	/* Disable ANEG with QSGMII PCS Host side */
+>  	lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
+>  			       LAN8814_QSGMII_PCS1G_ANEG_CONFIG, @@ -
+> 4471,6 +4465,12 @@ static int lan8814_probe(struct phy_device *phydev)
+>  			      addr, sizeof(struct lan8814_shared_priv));
+>=20
+>  	if (phy_package_init_once(phydev)) {
+> +		/* Reset the PHY */
+> +		lanphy_modify_page_reg(phydev,
+> LAN8814_PAGE_COMMON_REGS,
+> +				       LAN8814_QSGMII_SOFT_RESET,
+> +				       LAN8814_QSGMII_SOFT_RESET_BIT,
+> +				       LAN8814_QSGMII_SOFT_RESET_BIT);
+> +
+>  		err =3D lan8814_release_coma_mode(phydev);
+>  		if (err)
+>  			return err;
+> --
+> 2.34.1
+Reviewed-by: Divya Koppera <Divya.Koppera@microchip.com >
+
 
