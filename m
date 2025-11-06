@@ -1,120 +1,300 @@
-Return-Path: <linux-kernel+bounces-888568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5F1C3B2C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:20:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F950C3B2C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A5501AA2F4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:14:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD57B4FEC62
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BCF32C951;
-	Thu,  6 Nov 2025 13:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA038248B;
+	Thu,  6 Nov 2025 13:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvdn8hxM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZpjrzR5S";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="R/7tQpoR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF238D531;
-	Thu,  6 Nov 2025 13:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AA82AD04
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762434864; cv=none; b=jaJuumaAHhAoIe4up/6eLSwFNkMmTchDSN7wtwhwqXrD9X4VpLbi9p8U3unwZX7Lg9opbhus/700MIMj6A8EneAlPEeF4smoBuCkIpi2XPNTcvUhvyNp/RPEyPLaaZPEwcsr7QzIsPnnzTyRNee8AkvHUW1HGBwZnfU70/vX9O8=
+	t=1762434938; cv=none; b=maDa5k3PrjxEJ05g121zhsMn4sFvXblxMKJ39KLZXLDsJryVfptntKV4WWVc/kh8xhwQEv6OnnvRZA9e3ixPcRAf5fRn1P63oBisO0IDzvZRN5kG18oNkGZOjCYMKiZD4tCoJSHFMz8g1ItL0I5I4HluCJY67sUSW4nrHajr9Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762434864; c=relaxed/simple;
-	bh=bR/+/R+baLpO5FuzBWsOS1XGaMj5gHO48nzAAZPjp9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNTmXnNGeH4uLEP69W9KaJzza2So1UIBohI+Xf2QZVxJnvwmLCf/hyAP7aEvOeBSl3IE/4NWv86soNWPPppofmKxpiqrld1q1Wz09aJ9rbCbQ3GpzYs8IXVyq6FTKWw7XpP1Man9fHyhqusjhThXpMaH7S+KS94XsOupjOf2Xdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvdn8hxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B3CC4CEF7;
-	Thu,  6 Nov 2025 13:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762434864;
-	bh=bR/+/R+baLpO5FuzBWsOS1XGaMj5gHO48nzAAZPjp9I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bvdn8hxMm67rfm2smrfCSJPimMsivBNyPtDOYdJ27Jkaf1AnxDYMxFqmJKL3h4Kb6
-	 1oxEyVaZ9p9GXNqy3+ZC6GPxzBC360h8aUBfKGIk8sATn4RuVytH2frz56Gna04ykP
-	 OdNUPg9GQhFuZjwkf67PRk3C8odrlH2Rt1JVVfHe49jia6e3sKPwkTM/nLmxzH+nQj
-	 YnKeuqf5Bo3w0JUXfRzG3/CDhYPYtrPUnwW4R51EQ+gAkZFoQVUF9RK1lNDEm1z1mT
-	 oBQg3OpPK2cSfG1bEdeHXG+0QNfSHBkoge6y8MGX4SWAUw/hS4jbYq+KsvrIgsc4Q7
-	 sjtXjFed+hKRg==
-Date: Thu, 6 Nov 2025 15:14:19 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Gerd Bayer <gbayer@linux.ibm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Jay Cornwall <Jay.Cornwall@amd.com>,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Alexander Schmidt <alexs@linux.ibm.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] ib/mlx5: Request PCIe AtomicOps enabled for all
- 3 sizes
-Message-ID: <20251106131419.GC15456@unreal>
-References: <20251105-mlxatomics-v1-0-10c71649e08d@linux.ibm.com>
- <20251105-mlxatomics-v1-2-10c71649e08d@linux.ibm.com>
- <20251106101917.GB15456@unreal>
- <ec44c1ceab176c0a4c6447f966da8b7061958ffe.camel@linux.ibm.com>
+	s=arc-20240116; t=1762434938; c=relaxed/simple;
+	bh=BiZqzMBevU8msCFO5nB5qb+GqBePwXQWkozVPa9VEkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=APsmgza+kADw9nFRiQMdfWcxlRKBvGbNULhTOFXA6tMZcn7IfCbcElIZXcWCy3gjepSqX5hGj/7QaPPPCclAcVRLo20EVbJKAG2cBwhSgs0nAGQOmH3TVChGNmCuGA28ZWJtng8hz/+45vX4o/lBaaGsLI+GLVSNwwAk9xICtHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZpjrzR5S; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=R/7tQpoR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762434935;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vOTU/WjqME9wpuzOdb6Og4gQN4XcI7w/UopK/h4SWBU=;
+	b=ZpjrzR5Slig9CyD5kk3QdpiuJS3qWNl3GVzKfjFtD87d3CV410EgndIUPlUOZOnUjpx/7J
+	0vE971yp9KvVMlJUWCc0rGKu1H8KXQEDoiFhOLBm4l2J9ZD387lIhxoswmN0d4JQ8wOrnK
+	OdpXDgm9tmvzRas+iQCFAD/GIQVv1tw=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-Pnymx4DGPXSZJcgg8ZXVXg-1; Thu, 06 Nov 2025 08:15:34 -0500
+X-MC-Unique: Pnymx4DGPXSZJcgg8ZXVXg-1
+X-Mimecast-MFC-AGG-ID: Pnymx4DGPXSZJcgg8ZXVXg_1762434934
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-786a0fe77d9so5266357b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:15:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762434934; x=1763039734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOTU/WjqME9wpuzOdb6Og4gQN4XcI7w/UopK/h4SWBU=;
+        b=R/7tQpoRdalaxJHic+tTdDRLnm4xJVwI2Xo87yrRipRGRyojjxkA8WrQpGA0zP+EAf
+         dKk/RqWqXck/IwTO2JOQsVCDznxUOAfudsAtNj5XDKrJfrfXxBmZiZK42kcQhoAeDF5T
+         8r2ri9o6NNIlNuj4b6qtWVzbb9crfN2m2epGC9ZDngI5e4Ah1+6xYDxUfZerM6lsO1yB
+         3wjCGgFuzJUw5HUR2c5ez3G0OljbWijnvGDAgKThhZX9aDESdLZke38MPgYiKtt0vWoa
+         V69B2+O2aoRrkWidZBlujjxl5nI8ZT812yejkzhDK1O6A1QoSlGhxZraOH+4+o4bxvfv
+         KT3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762434934; x=1763039734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vOTU/WjqME9wpuzOdb6Og4gQN4XcI7w/UopK/h4SWBU=;
+        b=fCVIEVfHk+K5ELd48wxhnpRd0QVq+V8mWWT9jkw7R1G/mQpl0INIi6bpXrAr4AAiR+
+         3dHHmpfRBwE2H46G0auL+ICrFbpe5QBaYUwL9oKeyNQwFuQVZDjzZH11ggge4U34yqq5
+         Lw4VP76ZY0dOjDOtP0KHU7FZ7lW/xPVN/kTgVpLfu9JjcYIyJBxs2oKIi8bhCqPc3Sdw
+         3pz+bwwM4pMkjE0PEUTnhYfk3HohDubbFfBDprWi6CL7p86SBGnlJkXPSAJWmMpDnfxm
+         NuPSSlU11CZG0bccFc0DOarla0YJhuI0sR1BA0zpHAe+wJ5lj1KNR50pnED/rRmQZHit
+         kImQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG9zJ+lBskGi1xRz9Zd5MBzV6hzfqNEpLaagx7naN/DjUJ2Y14fqYI9EwTO1LoK3io9aKW8wZRrZdILgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx3vI8V+paEPZLqIvcLSmpEemlIwE8dPySixWfDAjTeNlwlkPb
+	fuw1HZSN5gATpTdMPwqXcbbCK63aC/G8frBIJsSpl8fLmKRoVYRxgzg3alXhVpjCm4TU0FQHoU/
+	Uemu/7NHe4Vl1nvki1n/Ak4tdHOQvfJ/+JJ4WFRmlHiOdM6WVGBqF4pGX8o6P/g60JXtgR370eo
+	DMdRGyGTq8KrsR65XRVbvDhfPS+w9Dhjn7Hg3+0DPo
+X-Gm-Gg: ASbGncsEhlic3l3wIisgNc43bn9tOyXfC64QfWBita5PftR6ChNt06eHYmVkLUI/N1z
+	9GWi9TsOdxC5DIU1YeHq+a2Gr/Q0tkpGlHRxatkQykNsmAZwxB8/SErm2YDRHwXokU0Hn1fewAN
+	zjN0NRdSwlG8JybFkA94tDMDcaOXl9ygrrxoTrT5UTe2KvJCYz2FhFY0uI
+X-Received: by 2002:a05:690c:2c03:b0:784:a2f3:85bf with SMTP id 00721157ae682-786a41ea673mr70789587b3.58.1762434933672;
+        Thu, 06 Nov 2025 05:15:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGVo4Oz4xoqitm3NbY8Hy/MkEeK7IYUW5ZGbL0j9AkgtFVqIj4TVyFclW/ZdGgUeRRe6jeLpUZIJklp01doVpQ=
+X-Received: by 2002:a05:690c:2c03:b0:784:a2f3:85bf with SMTP id
+ 00721157ae682-786a41ea673mr70789237b3.58.1762434933106; Thu, 06 Nov 2025
+ 05:15:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec44c1ceab176c0a4c6447f966da8b7061958ffe.camel@linux.ibm.com>
+References: <20251103125757.1405796-1-linan666@huaweicloud.com>
+ <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com>
+ <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com> <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
+ <2c1ab8fc-99ac-44fd-892c-2eeedb9581f4@fnnas.com> <CALTww289ZzZP5TmD5qezaYZV0Mnb90abqMqR=OnAzRz3NkmhQQ@mail.gmail.com>
+ <5396ce6f-ba67-4f5e-86dc-3c9aebb6dc20@fnnas.com>
+In-Reply-To: <5396ce6f-ba67-4f5e-86dc-3c9aebb6dc20@fnnas.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Thu, 6 Nov 2025 21:15:20 +0800
+X-Gm-Features: AWmQ_bnRuB74FXKgXzaMZD2Cc5BM10Be30QDd4KNaH4-k9UIl2C0Xd4nmwtnZsY
+Message-ID: <CALTww2_MHcXCOjeOPha0+LHNiu8O_9P4jVYP=K5-ea951omfMw@mail.gmail.com>
+Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
+To: yukuai@fnnas.com
+Cc: Li Nan <linan666@huaweicloud.com>, corbet@lwn.net, song@kernel.org, hare@suse.de, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 01:16:18PM +0100, Gerd Bayer wrote:
-> On Thu, 2025-11-06 at 12:19 +0200, Leon Romanovsky wrote:
-> > On Wed, Nov 05, 2025 at 06:55:14PM +0100, Gerd Bayer wrote:
-> > > Pass fully populated capability bit-mask requesting support for all 3
-> > > sizes of AtomicOps at once when attempting to enable AtomicOps for PCI
-> > > function.
-> > > 
-> > > When called individually, pci_enable_atomic_ops_to_root() may enable the
-> > > device to send requests as soon as one size is supported. According to
-> > > PCIe Spec 7.0 Section 6.15.3.1 support of 32-bit and 64-bit AtomicOps
-> > > completer capabilities are tied together for root-ports. Only the
-> > > 128-bit/CAS completer capabilities is an optional feature, but still we
-> > > might end up end up enabling AtomicOps despite 128-bit/CAS is not
-> > > supported at the root-port.
-> > > 
-> > > Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
-> > > ---
-> > >  drivers/infiniband/hw/mlx5/data_direct.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/infiniband/hw/mlx5/data_direct.c b/drivers/infiniband/hw/mlx5/data_direct.c
-> > > index b81ac5709b56f6ac0d9f60572ce7144258fa2794..112185be53f1ccc6a797e129f24432bdc86008ae 100644
-> > > --- a/drivers/infiniband/hw/mlx5/data_direct.c
-> > > +++ b/drivers/infiniband/hw/mlx5/data_direct.c
-> > > @@ -179,9 +179,9 @@ static int mlx5_data_direct_probe(struct pci_dev *pdev, const struct pci_device_
-> > >  	if (err)
-> > >  		goto err_disable;
-> > >  
-> > > -	if (pci_enable_atomic_ops_to_root(pdev, PCI_EXP_DEVCAP2_ATOMIC_COMP32) &&
-> > > -	    pci_enable_atomic_ops_to_root(pdev, PCI_EXP_DEVCAP2_ATOMIC_COMP64) &&
-> > > -	    pci_enable_atomic_ops_to_root(pdev, PCI_EXP_DEVCAP2_ATOMIC_COMP128))
-> > > +	if (pci_enable_atomic_ops_to_root(pdev, PCI_EXP_DEVCAP2_ATOMIC_COMP32 |
-> > > +						PCI_EXP_DEVCAP2_ATOMIC_COMP64 |
-> > > +						PCI_EXP_DEVCAP2_ATOMIC_COMP128))
-> > 
-> > I would expect some new define which combines all together, with some
-> > comment why it exists:
-> > #define PCI_ATOMIC_COMP_v7  PCI_EXP_DEVCAP2_ATOMIC_COMP32 | PCI_EXP_DEVCAP2_ATOMIC_COMP64 | PCI_EXP_DEVCAP2_ATOMIC_COMP128
-> 
-> I see your point. I don't understand the _v7
+On Thu, Nov 6, 2025 at 8:49=E2=80=AFPM Yu Kuai <yukuai@fnnas.com> wrote:
+>
+> Hi,
+>
+> =E5=9C=A8 2025/11/6 20:35, Xiao Ni =E5=86=99=E9=81=93:
+> > On Thu, Nov 6, 2025 at 11:45=E2=80=AFAM Yu Kuai <yukuai@fnnas.com> wrot=
+e:
+> >> Hi,
+> >>
+> >> =E5=9C=A8 2025/11/4 15:17, Xiao Ni =E5=86=99=E9=81=93:
+> >>> On Tue, Nov 4, 2025 at 10:52=E2=80=AFAM Li Nan <linan666@huaweicloud.=
+com> wrote:
+> >>>>
+> >>>> =E5=9C=A8 2025/11/4 9:47, Xiao Ni =E5=86=99=E9=81=93:
+> >>>>> On Mon, Nov 3, 2025 at 9:06=E2=80=AFPM <linan666@huaweicloud.com> w=
+rote:
+> >>>>>> From: Li Nan <linan122@huawei.com>
+> >>>>>>
+> >>>>>> Raid checks if pad3 is zero when loading superblock from disk. Arr=
+ays
+> >>>>>> created with new features may fail to assemble on old kernels as p=
+ad3
+> >>>>>> is used.
+> >>>>>>
+> >>>>>> Add module parameter check_new_feature to bypass this check.
+> >>>>>>
+> >>>>>> Signed-off-by: Li Nan <linan122@huawei.com>
+> >>>>>> ---
+> >>>>>>     drivers/md/md.c | 12 +++++++++---
+> >>>>>>     1 file changed, 9 insertions(+), 3 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> >>>>>> index dffc6a482181..5921fb245bfa 100644
+> >>>>>> --- a/drivers/md/md.c
+> >>>>>> +++ b/drivers/md/md.c
+> >>>>>> @@ -339,6 +339,7 @@ static int start_readonly;
+> >>>>>>      */
+> >>>>>>     static bool create_on_open =3D true;
+> >>>>>>     static bool legacy_async_del_gendisk =3D true;
+> >>>>>> +static bool check_new_feature =3D true;
+> >>>>>>
+> >>>>>>     /*
+> >>>>>>      * We have a system wide 'event count' that is incremented
+> >>>>>> @@ -1850,9 +1851,13 @@ static int super_1_load(struct md_rdev *rde=
+v, struct md_rdev *refdev, int minor_
+> >>>>>>            }
+> >>>>>>            if (sb->pad0 ||
+> >>>>>>                sb->pad3[0] ||
+> >>>>>> -           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof=
+(sb->pad3[1])))
+> >>>>>> -               /* Some padding is non-zero, might be a new featur=
+e */
+> >>>>>> -               return -EINVAL;
+> >>>>>> +           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof=
+(sb->pad3[1]))) {
+> >>>>>> +               pr_warn("Some padding is non-zero on %pg, might be=
+ a new feature\n",
+> >>>>>> +                       rdev->bdev);
+> >>>>>> +               if (check_new_feature)
+> >>>>>> +                       return -EINVAL;
+> >>>>>> +               pr_warn("check_new_feature is disabled, data corru=
+ption possible\n");
+> >>>>>> +       }
+> >>>>>>
+> >>>>>>            rdev->preferred_minor =3D 0xffff;
+> >>>>>>            rdev->data_offset =3D le64_to_cpu(sb->data_offset);
+> >>>>>> @@ -10704,6 +10709,7 @@ module_param(start_dirty_degraded, int, S_=
+IRUGO|S_IWUSR);
+> >>>>>>     module_param_call(new_array, add_named_array, NULL, NULL, S_IW=
+USR);
+> >>>>>>     module_param(create_on_open, bool, S_IRUSR|S_IWUSR);
+> >>>>>>     module_param(legacy_async_del_gendisk, bool, 0600);
+> >>>>>> +module_param(check_new_feature, bool, 0600);
+> >>>>>>
+> >>>>>>     MODULE_LICENSE("GPL");
+> >>>>>>     MODULE_DESCRIPTION("MD RAID framework");
+> >>>>>> --
+> >>>>>> 2.39.2
+> >>>>>>
+> >>>>> Hi
+> >>>>>
+> >>>>> Thanks for finding this problem in time. The default of this kernel
+> >>>>> module is true. I don't think people can check new kernel modules
+> >>>>> after updating to a new kernel. They will find the array can't
+> >>>>> assemble and report bugs. You already use pad3, is it good to remov=
+e
+> >>>>> the check about pad3 directly here?
+> >>>>>
+> >>>>> By the way, have you run the regression tests?
+> >>>>>
+> >>>>> Regards
+> >>>>> Xiao
+> >>>>>
+> >>>>>
+> >>>>> .
+> >>>> Hi Xiao.
+> >>>>
+> >>>> Thanks for your review.
+> >>>>
+> >>>> Deleting this check directly is risky. For example, in configurable =
+LBS:
+> >>>> if user sets LBS to 4K, the LBS of a RAID array assembled on old ker=
+nel
+> >>>> becomes 512. Forcing use of this array then risks data loss -- the
+> >>>> original issue this feature want to solve.
+> >>> You're right, we can't delete the check.
+> >>> For the old kernel, the array which has specified logical size can't
+> >>> be assembled. This patch still can't fix this problem, because it is
+> >>> an old kernel and this patch is for a new kernel, right?
+> >>> For existing arrays, they don't have such problems. They can be
+> >>> assembled after updating to a new kernel.
+> >>> So, do we need this patch?
+> >> There is a use case for us that user may create the array with old ker=
+nel, and
+> >> then if something bad happened in the system(may not be related to the=
+ array),
+> >> user may update to mainline releases and later switch back to our rele=
+ase. We
+> >> want a solution that user can still use the array in this case.
+> > Hi all
+> >
+> > Let me check if I understand right:
+> > 1. a machine with an old kernel has problems
+> > 2. update to new kernel which has new feature
+> > 3. create an array with new kernel
+> > 4. switch back to the old kernel, so assemble fails because sb->pad3
+> > is used and not zero.
+> >
+> > The old kernel is right to do so. This should be expected, right?
+>
+> Not quite what I mean, for example
+> 1. old kernel create an array md0;
+> 2. something bad happened(not related to md0), for example, file system f=
+rom other device crashed, or another array can't assembled;
+> 3. user might update to new kernel and try to copy data, however, md0 wil=
+l be assembled and sb->pad3 will be set;
+> 4. user switch back to old kernel, the md0 assemble failed and can't not =
+be used in old kernel anymore.
 
-v7 - > PCI spec *v7.0*
+In patch05, the commit says this:
 
-But it was just suggestion.
+Future mdadm should support setting LBS via metadata field during RAID
+creation and the new sysfs. Though the kernel allows runtime LBS changes,
+users should avoid modifying it after creating partitions or filesystems
+to prevent compatibility issues.
 
-Thanks
+So it only can specify logical block size when creating an array. In
+the case you mentioned above, in step3, the array will be assembled in
+new kernel and the sb->pad3 will not be set, right?
+
+Regards
+Xiao
+
+>
+> >
+> >>>> Future features may also have similar risks, so instead of deleting =
+this
+> >>>> check directly, I chose to add a module parameter to give users a ch=
+oice.
+> >>>> What do you think?
+> >>> Maybe we can add a feature bit to avoid the kernel parameter. This
+> >>> feature bit can be set when specifying logical block size.
+> >> The situation still stand, for unknown feature bit, we'd better to for=
+bid
+> >> assembling the array to prevent data loss by default.
+> > If I understand correctly, the old kernel already refuses to assemble i=
+t.
+>
+> The problem is that if array is created from old kernel, and user still
+> want to use it in the old kernel, then the user can't assemble this array
+> in new kernel. However, this is real use case for us :(
+>
+> > Regards
+> > Xiao
+> >
+> >> Thanks,
+> >> Kuai
+> >>
+> >>> Regards
+> >>> Xiao
+> >>>> --
+> >>>> Thanks,
+> >>>> Nan
+> >>>>
+>
+
 
