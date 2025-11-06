@@ -1,105 +1,91 @@
-Return-Path: <linux-kernel+bounces-889108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452DAC3CBF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:12:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43B6C3CC11
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:14:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A8B04F80E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:07:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B06874EE510
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F1534D900;
-	Thu,  6 Nov 2025 17:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CACA34D917;
+	Thu,  6 Nov 2025 17:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="xCljxPQP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jusofg/7"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AHu8QXwK"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F271D18E1F;
-	Thu,  6 Nov 2025 17:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D8B34403F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448869; cv=none; b=JDGH2sXXVbQNhuIiB16cpV0vJWnIrfTob49F/X5fGAh85yUVy66aljPBeAbD/jXEMZyv6DBXSk8AHOtN2MHPluNlNRuy7ISX085spwJwXnlAbZZd1ezza6J/lo8ZH+k6P60nXgVj2RHthZ5x3/Q0+GCEMFrwfgfcCWgmQNme/MQ=
+	t=1762448904; cv=none; b=Qi6r/WKje9IPusl0kRVydljke8NJ3vkXxrKcTVqIEooNilJK2J9i9pq20eED5HpzM3EGE7CaE9rQMG87bzVBxOKu4vA0Bv3q8JTcTKtBsJ7XCka1StQRHc7GVXpxpgXWgT13lzQzPmqTRjOBYyf9sCSKV7SUDenCTprPXDclI9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448869; c=relaxed/simple;
-	bh=h1058CZvmcEAuS48xVbeNUx2rGhH6qDGWSw72hhAycE=;
+	s=arc-20240116; t=1762448904; c=relaxed/simple;
+	bh=zOTaZMQBfTdrgEtVmwzmnPcqWwD6jnNQXB9lToGTo9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDklGOmDTV5sAbigTSJnYwSxUVbaU/6OMzPkzC7BI8rJZ9w2D20n0FlaL5ZR0C4bzcr1eHVgcmPfUVATHHdlN50KAR/uspVpbAKkI6xqBqkxrVj3k6dUg8NcgZQqVFnL+m07d4GwoUUz15Tqi06ao7PFp4mfl2LcqdbmSpaJqy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=xCljxPQP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jusofg/7; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id E337FEC00D3;
-	Thu,  6 Nov 2025 12:07:44 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Thu, 06 Nov 2025 12:07:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1762448864; x=
-	1762535264; bh=yl1ymtp/RyH/pP2ToBzXQ5l7JFAI5bU3TI9lUfWo91A=; b=x
-	CljxPQPmtP8HCoH/NjGaVIVMNq40uKF5CnEUWR+EitSz1d+B4/g3S8zhJfQHIWA+
-	6iU0o5ZXunwfy/84RLbKUUrsEcLujEgPZM5iZHleB74I3wOE/8LEtOvUFL+4DQHo
-	jmz4VNAORiGA71vxMZHOKQwwxSvJGqxf3Xi/9qI1U9xUpsTJUzOa8SxM5Bdl4cLe
-	k0QEvxu5dPVgk1ZvBmdjdzgIcHimaVDh8w9A0VFdIieYc76utpm2AFpNbGQoALTH
-	3XU4IVf2AdussfRLgsYAtGDggvr6Bpa/H7ykYydHdRn3+8F9/u17wlMuyCy+07wM
-	vIP014n42f9TIRKdQXXTA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762448864; x=1762535264; bh=yl1ymtp/RyH/pP2ToBzXQ5l7JFAI5bU3TI9
-	lUfWo91A=; b=jusofg/7lKzEacMBsWUoUMmQPTeySJsx67J4JKfF3P9cCvt3C9N
-	9oELAS2tuc5FtWQ1hf2VseMKNEJOfMOBFDkN5YkhF7jIEVZiib0JB8F5cd/vbRLQ
-	MtR6dqC4DMA5gSd4bXey5rj0TaBbqpnbQLkDhStMcb2Z9idMUETKy0Npgi/tr5qt
-	GPuN5DiNxxrCMKIokfYVE+WTKyYVZeO4YmwDrUzqsVKi8Bls4dZ33bN7xUjzrssw
-	6T30dVCp7NCOE2KaDkJ4Z+rLfOPJCUHr4HfphD/emZNYr1TTJc3fZCj/iOGiMbKA
-	kwT5mNVVmgoNpAr7OiItosxw3Cflx+OrbNA==
-X-ME-Sender: <xms:3tUMaa31a3QL0xjs96vK7V1WrPyMK_4OzESfcBZfConYhKkrv1nAxQ>
-    <xme:3tUMadh710VVUnPPGcuhFHlDYJLCy-XpqayVRm0AL-jkoxLJq7ccNjRZNbshOJuyV
-    Kl3fy61_4Mjn_ow49sCUjHO90XUpYPI6nir9iDrNMoaE4V5hWp3ng>
-X-ME-Received: <xmr:3tUMaSo7BzJccg1Ktt7ED5k6kzT1nLRNgXpX0yMK3GcyVLc28ERFukfZxE-B>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeejfeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
-    dttdejnecuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghs
-    hihsnhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuieduge
-    dtfefhkeegteehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedt
-    necurfgrrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvth
-    dpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegt
-    lhhfjedttdefkeefsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdp
-    rhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephh
-    gvrhgsvghrthesghhonhguohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtphhtthhopehk
-    uhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:3tUMaYO8hRnaUS-kr4eiWQPPvyG-yj7EuVNHrDE528RBxclT3P5ROQ>
-    <xmx:3tUMaW0AvoI92bPUXANQYHOQaDGLzSX86dVHh_P8Qmz30t02b0XWOA>
-    <xmx:3tUMaep7d_1FF6Tvm79ZI186rLqoby6DhKgH9Trpoxyjo_x31gi1Sw>
-    <xmx:3tUMaYeGPYHBPH-W5IGtGo0P17-8c3vUnX7EjDtbWCnVriaAPfGNdA>
-    <xmx:4NUMaeW3MTksGZ5dmESMcOQ3Vhc0_TAFhPABpul8o8TAnWegavp2DYuK>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Nov 2025 12:07:42 -0500 (EST)
-Date: Thu, 6 Nov 2025 18:07:40 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: clingfei <clf700383@gmail.com>
-Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com,
-	herbert@gondor.apana.org.au, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, steffen.klassert@secunet.com, eadavis@qq.com,
-	ssrane_b23@ee.vjti.ac.in,
-	syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCHSET IPSec 0/3] net: key: Fix address family validation and
- integer overflow in set_ipsecrequest
-Message-ID: <aQzV3KHoF4Kk6DGF@krikkit>
-References: <20251106135658.866481-1-1599101385@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d8xGV7Oh/3EdkEy15BdAcZp7QKnL0XbAPQbhBEDwPQMDBE9OoOqs/frJtSuWPibzXvso8ca/Jk+BNqZWDwVSSjyf0H5sFRsuqdaQR3coAjlAZr5Rd6s9BEQv3WM47XiFqegn+U8Q8o7el7axCpsWZPm07vHXEAS1j60GcTnLCwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AHu8QXwK; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-294fe7c2e69so13470275ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762448901; x=1763053701; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=igZsw+VHb3F2oODDk3y9EP32fa29hnEO+2WLrYTePMw=;
+        b=AHu8QXwKjw38HXggmTzxfM6q5ZnxGTf1J6l2ocB4GWHtW+d8eTJQuugBfIjDcQQTio
+         mewiGqy6TDesgSV+XPibsfXbn9GxKOtFAK6W6Y0lMytt8wuE5ZuXKGju/Aj+R65Uh3/g
+         qpFJoAQOS/BZ6IhPvjMThCTwtZRiCu3X2XOLPBh4Tf6QhHoib39IfJZvCc5q8tBYlWGp
+         Cw8UiLWtE9X4diz+vSqSDwFgZJd2qDyvAmzT+J2hG+mYOQIVt2ZA8Jlbze1GxrjjAbwK
+         0pFDc8QkobPkug4JiwfpuPcqgIRWpWa9reou7+tLThJv9jNRqNc6D8xvpsY1U4/XtqQQ
+         Qg0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762448901; x=1763053701;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=igZsw+VHb3F2oODDk3y9EP32fa29hnEO+2WLrYTePMw=;
+        b=lGNlJ9HnMNeSmgOq1VQ2xf0mtVuLBHiKv0OlcvxKGmklTNg93+gZsbrvI1o4efqMG7
+         JA9PdQHPACIQDzs1yLErDh7kaSIeRnicbJycPwsycjWkP/PFBo+8UKz5gSHcldCVFOT2
+         NxGHuFLEwpRmAQGxdVEy5ihVE0OmakH4xnW7WiLcJSF8VVik7GLrNZp0MZ7SQ6Xp3z1Z
+         doFANCUgcBmWR8JWM4UomhJ0FhVyd6MaUhvSoy+AbtGNbF+s4SH8E0jYa0m9YmClTmXG
+         YLhm7u04xKVrSnysmm15taCA/9O25/Cl6530Rbl6yIwwQLMpWXP7b5USI9IZcOtDFv6v
+         4IwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIpRWbDGYnnmNqOq8FAcgJZ80IAP6vQEalOCyBa/BPnljHwgP34+sIMrNdd6Pw9SLj3mOk9QJvT3AfLQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6MXYjoJgrH75jSh46wkQKDgI41w5W+Ku/qSqorJGsBwZpREOO
+	bSAfFA0HT1iSZH+Cqh65ybjHImvmXOKOmNlSsfVaUFoOmh5Va71fBUU+BYfDnVojSg==
+X-Gm-Gg: ASbGncs3Jjw1GeXzChQvS4pP/lwd8fy4G+7/iOM3SM2FRzUcGOYPvVdMY6dtmCEJHxl
+	xOjB+W8fXjWcpqySVs92Mv+UFeoVtGYI8I1h4xMtDegyk5Og2IR7/Yi7zcFHduBMWbz3O9GqUlW
+	E4+eJ3Y8Wy8Eftgpl4TVLN36LZLIVnONFU8AH9He5nzAumdnUe5qMvMJD8hLvc4jiwYoJpRJeoE
+	7aYuv2zTX+Z+I1YAqpmdY57cdLWVO3Wx9XJmrHdiJaIq3Tn2pIgS18xKRASqynnoFcyEyah2UsN
+	azIKKG6mKSfv/sDSFplNgg2FcPKdH6kRTJXkIcpvjrCY6LDmlYzIjylU8bIwzFKky7X0s+DIJgF
+	WOZq/xEYiWMi7R9upJ0OvWysW+r98RYCRtXemSUyW6kOmMwUfkKkP0KEER4ud4I1/XxFVn3QHVz
+	euV3HLooeg0WmxAcI4LVzfUe/imFNrrvJzTztdhm52cx/9GCILyBrj
+X-Google-Smtp-Source: AGHT+IFxnLQXa2QzBiKv9F+tRewohN2WBdVZFUDy9IUDgCpSgm1P/pWA5GujKa6Og8jVcirUq0QX6Q==
+X-Received: by 2002:a17:902:e786:b0:295:570d:116e with SMTP id d9443c01a7336-297c045433bmr2165605ad.41.1762448900878;
+        Thu, 06 Nov 2025 09:08:20 -0800 (PST)
+Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650968235sm34095635ad.16.2025.11.06.09.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 09:08:20 -0800 (PST)
+Date: Thu, 6 Nov 2025 17:08:15 +0000
+From: David Matlack <dmatlack@google.com>
+To: Raghavendra Rao Ananta <rananta@google.com>
+Cc: Alex Williamson <alex@shazbot.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] vfio: selftests: Export vfio_pci_device functions
+Message-ID: <aQzV_2DXwxNSQxVK@google.com>
+References: <20251104003536.3601931-1-rananta@google.com>
+ <20251104003536.3601931-3-rananta@google.com>
+ <aQvu1c8Hb8i-JxXd@google.com>
+ <CAJHc60ztBSSm4SUxxeJ-YULhdYuCHSprtns0xt_WVJPvgmtsBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,44 +94,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251106135658.866481-1-1599101385@qq.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJHc60ztBSSm4SUxxeJ-YULhdYuCHSprtns0xt_WVJPvgmtsBA@mail.gmail.com>
 
-2025-11-06, 21:56:55 +0800, clingfei wrote:
-> From: Cheng Lingfei <clf700383@gmail.com>
-> 
-> Hi,
-> 
-> This patchset addresses a security issue in the PF_KEYv2 implementation where
-> improper address family validation could lead to integer overflows and buffer
-> calculation errors in the set_ipsecrequest() function.
-> 
-> The core problem stems from two interrelated issues:
-> 
-> 1. The `family` parameter in set_ipsecrequest() is declared as u8 but receives
->    a 16-bit value, causing truncation of the upper byte.
-> 
-> 2. pfkey_sockaddr_len() returns 0 for unsupported address families, but the
->    calling code doesn't properly validate this return value before using it in
->    size calculations, leading to potential integer overflows.
-> 
-> The patchset is structured as follows:
-> 
-> Patch 1/3: Corrects the type of the family argument from u8 to u16 to prevent
->            truncation of 16-bit address family values.
-> 
-> Patch 2/3: Adds proper validation for the return value of pfkey_sockaddr_len()
->            to catch unsupported address families early.
-> 
-> Patch 3/3: Enhances the error handling to ensure zero-length allocations are
->            properly rejected and adds appropriate error returns.
-> 
-> This series fixes the original issue introduced in:
-> Fixes: 14ad6ed30a10 ("net: allow small head cache usage with large MAX_SKB_FRAGS values")
+On 2025-11-06 10:13 PM, Raghavendra Rao Ananta wrote:
+> On Thu, Nov 6, 2025 at 6:12 AM David Matlack <dmatlack@google.com> wrote:
+> >
+> > On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
+> > > Refactor and make the functions called under device initialization
+> > > public. A later patch adds a test that calls these functions to validate
+> > > the UAPI of SR-IOV devices. Opportunistically, to test the success
+> > > and failure cases of the UAPI, split the functions dealing with
+> > > VFIO_GROUP_GET_DEVICE_FD and VFIO_DEVICE_BIND_IOMMUFD into a core
+> > > function and another one that asserts the ioctl. The former will be
+> > > used for testing the SR-IOV UAPI, hence only export these.
+> >
+> > I have a series that separates the IOMMU initialization and fields from
+> > struct vfio_pci_device. I suspect that will make what you are trying to
+> > do a lot easier.
+> >
+> > https://lore.kernel.org/kvm/20251008232531.1152035-1-dmatlack@google.com/
+> >
+> Nice! I'll take a look at it. By the way, how do we normally deal with
+> dependencies among series? Do we simply mention it in the
+> cover-letter?
 
-This doesn't seem right. It looks more like a mismatch between the
-size computation done before allocating the skb and the space actually
-needed, and commit 14ad6ed30a10 made the pre-existing bug more visible.
+What I usually do is:
 
--- 
-Sabrina
+ - Mention in the cover letter that this series applies on top of
+   another series, and provide a lore link to the exact series version
+   it's on top of.
+
+ - Upload your series (with the dependent series) somewhere pulic like
+   GitHub so that it's easy for reviewers to check out your code without
+   having to apply multiple different series of patches. Include a link
+   to this in your cover letter too.
+
+See this series from Vipin for an example of doing this:
+
+  https://lore.kernel.org/kvm/20251018000713.677779-1-vipinsh@google.com/
+
+> > Can you take a look at it and see if it would simplifying things for
+> > you? Reviews would be very appreciated if so :)
+> Absolutely! Sorry, I have it on my TODO list to review the changes,
+> but didn't get a chance. I'll get to it soon. Thanks for the reminder
+> :)
+
+Thanks!
 
