@@ -1,464 +1,86 @@
-Return-Path: <linux-kernel+bounces-888337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCECC3A898
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:23:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495ABC3A8DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEFB8502A04
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF934462EB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D941330DECB;
-	Thu,  6 Nov 2025 11:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C581F2F0686;
+	Thu,  6 Nov 2025 11:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YVkhcLEl"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bvia0hXf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72442737FC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA612E0413;
+	Thu,  6 Nov 2025 11:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427881; cv=none; b=QsJXwUCLOXlmk+z8dqhGxYZgxlcrqRb1MhLjft3gOehGlJECkD6moEZuxI48KMND00GQ5OG2u+jAmnR4hRGPB1gFsPFDSDUuLYnTL3Dm+GFLeo2rcbCERCXZmFid9H4oy+NPrL8x1Qje0cMdhslzmHUiuTt3bpaFCJ7fw3mnt1I=
+	t=1762427943; cv=none; b=hEXSr6czCGWFygpFVefXjnRFhRQWEAW0j6l+1RhnB+plgWFQzHbMAJgXDW92Pq5LomNH9M0Jj7BJe9agvxgSPXOyvqcjMTj0+FTaStJp68mRJbOnKLHSxD4kLoonbpe7FEdNXikI5uID9/p8UV5/XjC7BTYJ/fsraBDLrWpxfIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427881; c=relaxed/simple;
-	bh=K84s2xGV07jop8JeMABVK9h5M1rEmDnzEaA/z7/hDlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TBjSsoX7gXHdC9zlVWJRPlMfKoECf5gAXWp01uxc1HedQ637azY7v61pIJOskKA0forYbXKWUYkw2DU2oeWEt1kVoYDf+0BneqVcAGynkhYwxoMbz9vb3dJZZVGBPemBZJdzAxxBYQlaYOzVdtgJ0UQpFy01FfIo14lGr+eZu2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YVkhcLEl; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ovrIzeLzKTwB0YmhUO3sBjHjfNksWQ8tXALLMThthGE=; b=YVkhcLEln7S2vi6pjbMCFIfw1L
-	No+IaP+6HBtkOHl1GkS7oznm2Hzi7RaD0cns1cImATvRwNyr2LqRGQFEOjixv64zVroAwwgguTwVs
-	KgTHyegG9TuyoAkcajKLu0IBZBk8g5ANTzyIS3tXLPJxfbiutwV8+xwA/sv3BPJM/KPx9E4Mck0s9
-	KwsuTOhd56nTwPm27nNf1CXDQ2ueHUkxdqO22Geo0KThQ4BaU9Fy7qh3oUtUfjrR9pjpLJm8wCytl
-	1S3mjYyJ5UGQGijygNf/oc0Pu6roAwBALQ+iC+ZRmS9h+RBjrltmciJwWrStHzJXhuAvgv0Eg+w2M
-	kamyH5bw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGxzo-00000000RpB-2dyo;
-	Thu, 06 Nov 2025 11:17:42 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6A6DF3007B5; Thu, 06 Nov 2025 12:17:41 +0100 (CET)
-Date: Thu, 6 Nov 2025 12:17:41 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Zicheng Qu <quzicheng@huawei.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	wulibin163@126.com, tanghui20@huawei.com, zhangqiao22@huawei.com,
-	judy.chenhui@huawei.com
-Subject: Re: [PATCH EEVDF NULL deref] sched/eevdf: Fix NULL deref when
- avg_vruntime nears overflow
-Message-ID: <20251106111741.GC4068168@noisy.programming.kicks-ass.net>
-References: <20251103130441.1013188-1-quzicheng@huawei.com>
- <20251103202611.GE3245006@noisy.programming.kicks-ass.net>
- <7cdcc98e-990e-4408-ba75-57dd0229316e@huawei.com>
- <20251105123954.GM3245006@noisy.programming.kicks-ass.net>
- <20251106111603.GB4068168@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1762427943; c=relaxed/simple;
+	bh=uImHPwXYfgO1OsgDjUhpotL5RTPQMGjlax5/2LxDgoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D34FjS4d4UQO8J8i2M4u7ChGjQZd+UeN+y22Qqm70CNtYx/m4yD71s9OC+NPbXe/ig6UunYPLjv13wwZ/6fhvwlf2qSimkO/yq2wJTN5LfewagdtrHgH8J6xL/VCn2fNMT3arCYRVdfrtL73qXfD4Vi0KKskoqroTt14QB50/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bvia0hXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C2BC116C6;
+	Thu,  6 Nov 2025 11:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762427942;
+	bh=uImHPwXYfgO1OsgDjUhpotL5RTPQMGjlax5/2LxDgoM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Bvia0hXfwFamS3dGiFgQBaoMMG5MmqEThD5KdGn9o8KcIojUqXbnUEfhwSP3SDXCd
+	 PczjxFlmYVUgjZVjsEhx3x0/M+Jvun0vI8752K6yBV/jqR/WxMxR/q8cR3srOo+pRI
+	 dyV9en4CtAGWtl777bKKjxwTivN8Go+7/3LZRyvUVsonZO5OyY8k32H72oNsWAUqAL
+	 zg/Uhu66tqP0Uyugrk5R9z8FjVKfJAwBDxMxcmDjE68w7b4OmppwUofAM7OQReutkd
+	 OT2YA4Bg7/J5ZOPNvxfZrJ8lQcygIWTaqe7KANgdrbEXRfVyBMyaU0zMLV+4P2RwSu
+	 HC0A5l+qjwJNA==
+Message-ID: <fc051006-5cb2-49e1-bb27-7839837439cd@kernel.org>
+Date: Thu, 6 Nov 2025 12:18:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106111603.GB4068168@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest/mm: fix pointer comparison in mremap_test
+To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20251106104917.39890-1-ankitkhushwaha.linux@gmail.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251106104917.39890-1-ankitkhushwaha.linux@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 12:16:03PM +0100, Peter Zijlstra wrote:
-> On Wed, Nov 05, 2025 at 01:39:54PM +0100, Peter Zijlstra wrote:
+On 06.11.25 11:49, Ankit Khushwaha wrote:
+> Pointer arthemitic with 'void * addr' and 'unsigned long long dest_alignment'
+> triggers following warning:
 > 
-> > > As for the zero_vruntime patch, after applying it, we have not
-> > > observed any crashes over than 24 hours.
-> > 
-> > Excellent, I'll go think about the SCHED_CORE case and make it a proper
-> > patch then.
+> mremap_test.c:1035:31: warning: pointer comparison always evaluates to
+> false [-Wtautological-compare]
+>   1035 |                 if (addr + c.dest_alignment < addr) {
+>        |                                             ^
 > 
-> ---
+> typecasting 'addr' to 'unsigned long long' to fix pointer comparison.
 
+With which compiler are you seeing this?
 
-Subject: sched/eevdf: Fix min_vruntime vs avg_vruntime
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed, 2 Apr 2025 20:07:34 +0200
+-- 
+Cheers
 
-Basically, from the constraint that the sum of lag is zero, you can
-infer that the 0-lag point is the weighted average of the individual
-vruntime, which is what we're trying to compute:
-
-        \Sum w_i * v_i
-  avg = --------------
-           \Sum w_i
-
-Now, since vruntime takes the whole u64 (worse, it wraps), this
-multiplication term in the numerator is not something we can compute;
-instead we do the min_vruntime (v0 henceforth) thing like:
-
-  v_i = (v_i - v0) + v0
-
-This does two things:
- - it keeps the key: (v_i - v0) 'small';
- - it creates a relative 0-point in the modular space.
-
-If you do that subtitution and work it all out, you end up with:
-
-        \Sum w_i * (v_i - v0)
-  avg = --------------------- + v0
-              \Sum w_i
-
-Since you cannot very well track a ratio like that (and not suffer
-terrible numerical problems) we simpy track the numerator and
-denominator individually and only perform the division when strictly
-needed.
-
-Notably, the numerator lives in cfs_rq->avg_vruntime and the denominator
-lives in cfs_rq->avg_load.
-
-The one extra 'funny' is that these numbers track the entities in the
-tree, and current is typically outside of the tree, so avg_vruntime()
-adds current when needed before doing the division.
-
-(vruntime_eligible() elides the division by cross-wise multiplication)
-
-Anyway, as mentioned above, we currently use the CFS era min_vruntime
-for this purpose. However, this thing can only move forward, while the
-above avg can in fact move backward (when a non-eligible task leaves,
-the average becomes smaller), this can cause trouble when through
-happenstance (or construction) these values drift far enough apart to
-wreck the game.
-
-Replace cfs_rq::min_vruntime with cfs_rq::zero_vruntime which is kept
-near/at avg_vruntime, following its motion.
-
-The down-side is that this requires computing the avg more often.
-
-Fixes: 147f3efaa241 ("sched/fair: Implement an EEVDF-like scheduling policy")
-Reported-by: Zicheng Qu <quzicheng@huawei.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://patch.msgid.link/20250402180734.GX5880@noisy.programming.kicks-ass.net
-Cc: stable@vger.kernel.org
----
- kernel/sched/debug.c |    8 +--
- kernel/sched/fair.c  |  114 +++++++++++----------------------------------------
- kernel/sched/sched.h |    4 -
- 3 files changed, 31 insertions(+), 95 deletions(-)
-
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -796,7 +796,7 @@ static void print_rq(struct seq_file *m,
- 
- void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- {
--	s64 left_vruntime = -1, min_vruntime, right_vruntime = -1, left_deadline = -1, spread;
-+	s64 left_vruntime = -1, zero_vruntime, right_vruntime = -1, left_deadline = -1, spread;
- 	struct sched_entity *last, *first, *root;
- 	struct rq *rq = cpu_rq(cpu);
- 	unsigned long flags;
-@@ -819,15 +819,15 @@ void print_cfs_rq(struct seq_file *m, in
- 	last = __pick_last_entity(cfs_rq);
- 	if (last)
- 		right_vruntime = last->vruntime;
--	min_vruntime = cfs_rq->min_vruntime;
-+	zero_vruntime = cfs_rq->zero_vruntime;
- 	raw_spin_rq_unlock_irqrestore(rq, flags);
- 
- 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_deadline",
- 			SPLIT_NS(left_deadline));
- 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "left_vruntime",
- 			SPLIT_NS(left_vruntime));
--	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "min_vruntime",
--			SPLIT_NS(min_vruntime));
-+	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "zero_vruntime",
-+			SPLIT_NS(zero_vruntime));
- 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "avg_vruntime",
- 			SPLIT_NS(avg_vruntime(cfs_rq)));
- 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "right_vruntime",
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -554,7 +554,7 @@ static inline bool entity_before(const s
- 
- static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
--	return (s64)(se->vruntime - cfs_rq->min_vruntime);
-+	return (s64)(se->vruntime - cfs_rq->zero_vruntime);
- }
- 
- #define __node_2_se(node) \
-@@ -606,13 +606,13 @@ static inline s64 entity_key(struct cfs_
-  *
-  * Which we track using:
-  *
-- *                    v0 := cfs_rq->min_vruntime
-+ *                    v0 := cfs_rq->zero_vruntime
-  * \Sum (v_i - v0) * w_i := cfs_rq->avg_vruntime
-  *              \Sum w_i := cfs_rq->avg_load
-  *
-- * Since min_vruntime is a monotonic increasing variable that closely tracks
-- * the per-task service, these deltas: (v_i - v), will be in the order of the
-- * maximal (virtual) lag induced in the system due to quantisation.
-+ * Since zero_vruntime closely tracks the per-task service, these
-+ * deltas: (v_i - v), will be in the order of the maximal (virtual) lag
-+ * induced in the system due to quantisation.
-  *
-  * Also, we use scale_load_down() to reduce the size.
-  *
-@@ -671,7 +671,7 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
- 		avg = div_s64(avg, load);
- 	}
- 
--	return cfs_rq->min_vruntime + avg;
-+	return cfs_rq->zero_vruntime + avg;
- }
- 
- /*
-@@ -732,7 +732,7 @@ static int vruntime_eligible(struct cfs_
- 		load += weight;
- 	}
- 
--	return avg >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
-+	return avg >= (s64)(vruntime - cfs_rq->zero_vruntime) * load;
- }
- 
- int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
-@@ -740,42 +740,14 @@ int entity_eligible(struct cfs_rq *cfs_r
- 	return vruntime_eligible(cfs_rq, se->vruntime);
- }
- 
--static u64 __update_min_vruntime(struct cfs_rq *cfs_rq, u64 vruntime)
-+static void update_zero_vruntime(struct cfs_rq *cfs_rq)
- {
--	u64 min_vruntime = cfs_rq->min_vruntime;
--	/*
--	 * open coded max_vruntime() to allow updating avg_vruntime
--	 */
--	s64 delta = (s64)(vruntime - min_vruntime);
--	if (delta > 0) {
--		avg_vruntime_update(cfs_rq, delta);
--		min_vruntime = vruntime;
--	}
--	return min_vruntime;
--}
--
--static void update_min_vruntime(struct cfs_rq *cfs_rq)
--{
--	struct sched_entity *se = __pick_root_entity(cfs_rq);
--	struct sched_entity *curr = cfs_rq->curr;
--	u64 vruntime = cfs_rq->min_vruntime;
-+	u64 vruntime = avg_vruntime(cfs_rq);
-+	s64 delta = (s64)(vruntime - cfs_rq->zero_vruntime);
- 
--	if (curr) {
--		if (curr->on_rq)
--			vruntime = curr->vruntime;
--		else
--			curr = NULL;
--	}
--
--	if (se) {
--		if (!curr)
--			vruntime = se->min_vruntime;
--		else
--			vruntime = min_vruntime(vruntime, se->min_vruntime);
--	}
-+	avg_vruntime_update(cfs_rq, delta);
- 
--	/* ensure we never gain time by being placed backwards. */
--	cfs_rq->min_vruntime = __update_min_vruntime(cfs_rq, vruntime);
-+	cfs_rq->zero_vruntime = vruntime;
- }
- 
- static inline u64 cfs_rq_min_slice(struct cfs_rq *cfs_rq)
-@@ -848,6 +820,7 @@ RB_DECLARE_CALLBACKS(static, min_vruntim
- static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
- 	avg_vruntime_add(cfs_rq, se);
-+	update_zero_vruntime(cfs_rq);
- 	se->min_vruntime = se->vruntime;
- 	se->min_slice = se->slice;
- 	rb_add_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
-@@ -859,6 +832,7 @@ static void __dequeue_entity(struct cfs_
- 	rb_erase_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
- 				  &min_vruntime_cb);
- 	avg_vruntime_sub(cfs_rq, se);
-+	update_zero_vruntime(cfs_rq);
- }
- 
- struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq)
-@@ -1226,7 +1200,6 @@ static void update_curr(struct cfs_rq *c
- 
- 	curr->vruntime += calc_delta_fair(delta_exec, curr);
- 	resched = update_deadline(cfs_rq, curr);
--	update_min_vruntime(cfs_rq);
- 
- 	if (entity_is_task(curr)) {
- 		/*
-@@ -3808,15 +3781,6 @@ static void reweight_entity(struct cfs_r
- 		if (!curr)
- 			__enqueue_entity(cfs_rq, se);
- 		cfs_rq->nr_queued++;
--
--		/*
--		 * The entity's vruntime has been adjusted, so let's check
--		 * whether the rq-wide min_vruntime needs updated too. Since
--		 * the calculations above require stable min_vruntime rather
--		 * than up-to-date one, we do the update at the end of the
--		 * reweight process.
--		 */
--		update_min_vruntime(cfs_rq);
- 	}
- }
- 
-@@ -5429,15 +5393,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
- 
- 	update_cfs_group(se);
- 
--	/*
--	 * Now advance min_vruntime if @se was the entity holding it back,
--	 * except when: DEQUEUE_SAVE && !DEQUEUE_MOVE, in this case we'll be
--	 * put back on, and if we advance min_vruntime, we'll be placed back
--	 * further than we started -- i.e. we'll be penalized.
--	 */
--	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
--		update_min_vruntime(cfs_rq);
--
- 	if (flags & DEQUEUE_DELAYED)
- 		finish_delayed_dequeue_entity(se);
- 
-@@ -9015,7 +8970,6 @@ static void yield_task_fair(struct rq *r
- 	if (entity_eligible(cfs_rq, se)) {
- 		se->vruntime = se->deadline;
- 		se->deadline += calc_delta_fair(se->slice, se);
--		update_min_vruntime(cfs_rq);
- 	}
- }
- 
-@@ -13078,23 +13032,6 @@ static inline void task_tick_core(struct
-  * Which shows that S and s_i transform alike (which makes perfect sense
-  * given that S is basically the (weighted) average of s_i).
-  *
-- * Then:
-- *
-- *   x -> s_min := min{s_i}                                   (8)
-- *
-- * to obtain:
-- *
-- *               \Sum_i w_i (s_i - s_min)
-- *   S = s_min + ------------------------                     (9)
-- *                     \Sum_i w_i
-- *
-- * Which already looks familiar, and is the basis for our current
-- * approximation:
-- *
-- *   S ~= s_min                                              (10)
-- *
-- * Now, obviously, (10) is absolute crap :-), but it sorta works.
-- *
-  * So the thing to remember is that the above is strictly UP. It is
-  * possible to generalize to multiple runqueues -- however it gets really
-  * yuck when you have to add affinity support, as illustrated by our very
-@@ -13116,23 +13053,23 @@ static inline void task_tick_core(struct
-  * Let, for our runqueue 'k':
-  *
-  *   T_k = \Sum_i w_i s_i
-- *   W_k = \Sum_i w_i      ; for all i of k                  (11)
-+ *   W_k = \Sum_i w_i      ; for all i of k                  (8)
-  *
-  * Then we can write (6) like:
-  *
-  *         T_k
-- *   S_k = ---                                               (12)
-+ *   S_k = ---                                               (9)
-  *         W_k
-  *
-  * From which immediately follows that:
-  *
-  *           T_k + T_l
-- *   S_k+l = ---------                                       (13)
-+ *   S_k+l = ---------                                       (10)
-  *           W_k + W_l
-  *
-  * On which we can define a combined lag:
-  *
-- *   lag_k+l(i) := S_k+l - s_i                               (14)
-+ *   lag_k+l(i) := S_k+l - s_i                               (11)
-  *
-  * And that gives us the tools to compare tasks across a combined runqueue.
-  *
-@@ -13143,7 +13080,7 @@ static inline void task_tick_core(struct
-  *     using (7); this only requires storing single 'time'-stamps.
-  *
-  *  b) when comparing tasks between 2 runqueues of which one is forced-idle,
-- *     compare the combined lag, per (14).
-+ *     compare the combined lag, per (11).
-  *
-  * Now, of course cgroups (I so hate them) make this more interesting in
-  * that a) seems to suggest we need to iterate all cgroup on a CPU at such
-@@ -13191,12 +13128,11 @@ static inline void task_tick_core(struct
-  * every tick. This limits the observed divergence due to the work
-  * conservancy.
-  *
-- * On top of that, we can improve upon things by moving away from our
-- * horrible (10) hack and moving to (9) and employing (13) here.
-+ * On top of that, we can improve upon things by employing (10) here.
-  */
- 
- /*
-- * se_fi_update - Update the cfs_rq->min_vruntime_fi in a CFS hierarchy if needed.
-+ * se_fi_update - Update the cfs_rq->zero_vruntime_fi in a CFS hierarchy if needed.
-  */
- static void se_fi_update(const struct sched_entity *se, unsigned int fi_seq,
- 			 bool forceidle)
-@@ -13210,7 +13146,7 @@ static void se_fi_update(const struct sc
- 			cfs_rq->forceidle_seq = fi_seq;
- 		}
- 
--		cfs_rq->min_vruntime_fi = cfs_rq->min_vruntime;
-+		cfs_rq->zero_vruntime_fi = cfs_rq->zero_vruntime;
- 	}
- }
- 
-@@ -13263,11 +13199,11 @@ bool cfs_prio_less(const struct task_str
- 
- 	/*
- 	 * Find delta after normalizing se's vruntime with its cfs_rq's
--	 * min_vruntime_fi, which would have been updated in prior calls
-+	 * zero_vruntime_fi, which would have been updated in prior calls
- 	 * to se_fi_update().
- 	 */
- 	delta = (s64)(sea->vruntime - seb->vruntime) +
--		(s64)(cfs_rqb->min_vruntime_fi - cfs_rqa->min_vruntime_fi);
-+		(s64)(cfs_rqb->zero_vruntime_fi - cfs_rqa->zero_vruntime_fi);
- 
- 	return delta > 0;
- }
-@@ -13513,7 +13449,7 @@ static void set_next_task_fair(struct rq
- void init_cfs_rq(struct cfs_rq *cfs_rq)
- {
- 	cfs_rq->tasks_timeline = RB_ROOT_CACHED;
--	cfs_rq->min_vruntime = (u64)(-(1LL << 20));
-+	cfs_rq->zero_vruntime = (u64)(-(1LL << 20));
- 	raw_spin_lock_init(&cfs_rq->removed.lock);
- }
- 
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -681,10 +681,10 @@ struct cfs_rq {
- 	s64			avg_vruntime;
- 	u64			avg_load;
- 
--	u64			min_vruntime;
-+	u64			zero_vruntime;
- #ifdef CONFIG_SCHED_CORE
- 	unsigned int		forceidle_seq;
--	u64			min_vruntime_fi;
-+	u64			zero_vruntime_fi;
- #endif
- 
- 	struct rb_root_cached	tasks_timeline;
+David
 
