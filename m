@@ -1,216 +1,234 @@
-Return-Path: <linux-kernel+bounces-889046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A02C5C3C8C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:45:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8431CC3C958
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB78C1889F79
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A443B55AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EF534E759;
-	Thu,  6 Nov 2025 16:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C1A303C85;
+	Thu,  6 Nov 2025 16:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k3WylvHt"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NWFQNtTB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Hk+XRX9v";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NWFQNtTB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Hk+XRX9v"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E6E34BA53
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC6A308F25
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447217; cv=none; b=h6js9MffG+U8pCF8n1tUEdDLLvJwCFHNdmrJIQAT8qhJ/niMl55rK9S4utzyoc9LZg9RvHoHXG6OSbvwA6J8GuzodVmtFalGZZso5HwX/3MUU6WoFxzoVaY1e40Vm4q59Sc+yCRByIvNDFQ4Fgy3Ri+U/8s3gGF5bM3yc+MdLbY=
+	t=1762447272; cv=none; b=kS/NFuS7BnCtcTTTdwxyE5T1w7sdfx6QeXhIqgVkD3vsnnZxwG7f0TttWQuB9CO7EKmMyHffVyo3SyLjK8Q+X5f217Pfn3ymSN69RAtnfd3GFOY4DyWZHaib7WNNU9eLNovrq7AMvie8laPcnhBZaiSzN6Dk4q/GliHLkaC0nlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447217; c=relaxed/simple;
-	bh=QPnuTeoHkJAdsy3GLHh3OinUFPR46uTzV5UBwbwi06c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GVXCpeMKPXBSma3D0UPGuhxNwKbL4X1kc2HhQJ38FMWWI5VW/l52DA7eJiVvDzvEXIz7ianbfGjhC+uEg66isqvtP6dqXPleA+B22aVq/52711F2bzeqgna0YYrm6Xn6GIs9RDj5tIKFoHECJlBJU19s9V6FTVngKE481KENt7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k3WylvHt; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-429f0907e13so517475f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:40:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762447212; x=1763052012; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NM/GZbyZiL8bh5z49/8PTeWfbgNSwSL55H6jI2E+lmQ=;
-        b=k3WylvHth50gK6qApAeHkMJsGWajNky8dUpWySaoNpFfHI1c87KNlb6NqJqH/qO22q
-         fEH2hziWn1rIzGcSi37TvguDB0dp4dVQdo/VjlnK+xHDKT7hRJhjgG6uq3+L1iSSTDT3
-         L1yy5UksmzIIgMxXPirJvMZkPTEVwqZQIYTyGAd0ryveWarhmdOUxQ8vUZwO7qXWMbzS
-         7UNKMEdJ+IefjJSh+UiQuyT962HOePlcP12VKOsn0jigriqeW8zQ32oSRxGlJNLu+QSO
-         /511l4eQNRGKr/eT0UcML+jV2OP8k3dOOUiT5dELd/1cDN9ki5ZN4JFne6yJOG8t2xD5
-         PRpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762447212; x=1763052012;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NM/GZbyZiL8bh5z49/8PTeWfbgNSwSL55H6jI2E+lmQ=;
-        b=vIRjgBr9vt7MX4sOOilXr1uiqhbihezQPZYl8k22d36NLjuynV4w2+CWZSQ4U3WeY+
-         We39Y+AemNI6yDM8CMqinkZfFDW02W6lgewm/HNi1wCanR3zysZ+NseqklOsF5q6Wyz2
-         XvO4OkF8Tfp1H6IUlBz5e+IEIXJ2mcDTD7Scv5Y/7f099sVjczXMcl5orJ6ymVYixSFP
-         xpyPiBtzrLAdR+f4StXKj0IWiYpekjDRK9KQVcDUB/ZDD9P5g/KuRSMxRchWQfFPqGQe
-         pv0jJPuEfvOaZNGkzF4Lo1LDPl9iXnRgd3rjtlh4+pkVRi0VynohRBLSN/N39NEC6v4M
-         jr+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUWSzfPVJmNh74B9fR5Rr/mLbPqVAMnYiZ0IyCSqU4Do6dBCUCa356MwX9IXNFpXA7g42hKVmU2nL4uB9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEj/D8SYW01HdaRSCeLocbLIXefTykVV5elB8mEOAJInnrANe7
-	u2LaYrHZUZOpnOS0/9jdmfDlytlI9nGRw57vr9IDg0Lh50hJ25pRX4F/9KBZdskv5hNrCJe4+aJ
-	oEmC+7v916cc8yA==
-X-Google-Smtp-Source: AGHT+IFXE6Qsd8iIgYNiQDlI0sqI8FtMmoIupsqXvZU2YQ+mpshBBiH57cinC3fDVEftkTGmawxtksFJp1JKIw==
-X-Received: from wrsy17.prod.google.com ([2002:a5d:4ad1:0:b0:429:dc18:dd64])
- (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5f87:0:b0:429:b7cd:47ff with SMTP id ffacd0b85a97d-429e33083c8mr6867222f8f.40.1762447212631;
- Thu, 06 Nov 2025 08:40:12 -0800 (PST)
-Date: Thu,  6 Nov 2025 16:39:53 +0000
-In-Reply-To: <20251106163953.1971067-1-smostafa@google.com>
+	s=arc-20240116; t=1762447272; c=relaxed/simple;
+	bh=bShgRUXmwIigTJi4rYrvdghECfsg69LUPFjEV76bnpg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QS412mqE6mjn/sbPb3vf6cr4lsouB9v8HhoyuQsVFv+wpoYXkz4dvn84t584YqxuHGsBtYF7g0INWQ0UHX4d0bzTR5a/3JXPIslJK3WEpiRwKk3mzmmIiqJ5xoiQwjSySguxc73yEwiKx9j/4fd0VEAXRiD2P3JoE/wl4S+SgFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NWFQNtTB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Hk+XRX9v; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NWFQNtTB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Hk+XRX9v; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8F53C2118C;
+	Thu,  6 Nov 2025 16:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762447268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
+	b=NWFQNtTB5ZTr+rlMV3LGfORGmHDL9FpXPsi+AjE7NER/O/B/J4WYeKQ5cK4N6Kw1+N6elB
+	v7pYiP8HqYZFt6/P7wy01f2dIudL1gO2zqTiM+1i2nOUVO4hX+THnZAChNFPPtERAIS/3f
+	LBLmq8MEdB4DJ95qUCuiM9jEXgyIosM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762447268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
+	b=Hk+XRX9vm2Xrmv9ErrVak0XjuWcgYd62AkaRAFuKBYL7O6HyuJwc7JM+JPxpGsDa2A2j/f
+	54jk5HXMk6U9n9Bw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762447268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
+	b=NWFQNtTB5ZTr+rlMV3LGfORGmHDL9FpXPsi+AjE7NER/O/B/J4WYeKQ5cK4N6Kw1+N6elB
+	v7pYiP8HqYZFt6/P7wy01f2dIudL1gO2zqTiM+1i2nOUVO4hX+THnZAChNFPPtERAIS/3f
+	LBLmq8MEdB4DJ95qUCuiM9jEXgyIosM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762447268;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
+	b=Hk+XRX9vm2Xrmv9ErrVak0XjuWcgYd62AkaRAFuKBYL7O6HyuJwc7JM+JPxpGsDa2A2j/f
+	54jk5HXMk6U9n9Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 458F813A31;
+	Thu,  6 Nov 2025 16:41:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hN+0D6TPDGnPSQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 06 Nov 2025 16:41:08 +0000
+Date: Thu, 06 Nov 2025 17:41:07 +0100
+Message-ID: <87h5v7ru58.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <tiwai@suse.de>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>,
+	<perex@perex.cz>,
+	<syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>,
+	<tiwai@suse.com>
+Subject: Re: [PATCH] ALSA: usb-audio: Prevent urb from writing out of bounds
+In-Reply-To: <20251106143506.720545-1-lizhi.xu@windriver.com>
+References: <87v7jnfkio.wl-tiwai@suse.de>
+	<20251106143506.720545-1-lizhi.xu@windriver.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251106163953.1971067-1-smostafa@google.com>
-X-Mailer: git-send-email 2.51.2.1026.g39e6a42477-goog
-Message-ID: <20251106163953.1971067-5-smostafa@google.com>
-Subject: [PATCH v2 4/4] drivers/iommu-debug-pagealloc: Check mapped/unmapped
- kernel memory
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-mm@kvack.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Cc: corbet@lwn.net, joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
-	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com, mhocko@suse.com, 
-	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	Mostafa Saleh <smostafa@google.com>, Qinxin Xia <xiaqinxin@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[bfd77469c8966de076f7];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -1.80
+X-Spam-Level: 
 
-Now, as the page_ext holds count of IOMMU mappings, we can use it to
-assert that any page allocated/freed is indeed not in the IOMMU.
+On Thu, 06 Nov 2025 15:35:06 +0100,
+Lizhi Xu wrote:
+> 
+> On Thu, 06 Nov 2025 12:49:51 +0100, Takashi Iwai wrote:
+> > > > > The calculation rule for the actual data length written to the URB's
+> > > > > transfer buffer differs from that used to allocate the URB's transfer
+> > > > > buffer, and in this problem, the value used during allocation is smaller.
+> > > > >
+> > > > > This ultimately leads to write out-of-bounds errors when writing data to
+> > > > > the transfer buffer.
+> > > > >
+> > > > > To prevent out-of-bounds writes to the transfer buffer, a check between
+> > > > > the size of the bytes to be written and the size of the allocated bytes
+> > > > > should be added before performing the write operation.
+> > > > >
+> > > > > When the written bytes are too large, -EPIPE is returned instead of
+> > > > > -EAGAIN, because returning -EAGAIN might result in push back to ready
+> > > > > list again.
+> > > > >
+> > > > > Based on the context of calculating the bytes to be written here, both
+> > > > > copy_to_urb() and copy_to_urb_quirk() require a check for the size of
+> > > > > the bytes to be written before execution.
+> > > > >
+> > > > > syzbot reported:
+> > > > > BUG: KASAN: slab-out-of-bounds in copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
+> > > > > Write of size 264 at addr ffff88801107b400 by task syz.0.17/5461
+> > > > >
+> > > > > Call Trace:
+> > > > >  copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
+> > > > >  prepare_playback_urb+0x953/0x13d0 sound/usb/pcm.c:1611
+> > > > >
+> > > > > Reported-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
+> > > > > Closes: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
+> > > > > Tested-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
+> > > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > > >
+> > > > I'm afraid that this doesn't address the root cause at all.
+> > > > The description above sounds plausible, but not pointing to "why".
+> > > >
+> > > > The bytes is frames * stride, so the question is why a too large
+> > > > frames is calculated.  I couldn't have time to check the details, but
+> > > > there should be rather some weird condition / parameters to trigger
+> > > > this, and we should check that at first.
+> > > During debugging, I discovered that the value of ep->packsize[0] is 22,
+> > > which causes the counts calculated by
+> > > counts = snd_usb_endpoint_next_packet_size(ep, ctx, i, avail);
+> > > to be 22, resulting in a frames value of 22 * 6 = 132;
+> > > Meanwhile, the stride value is 2, which ultimately results in
+> > > bytes = frames * stride = 132 * 2 = 264;
+> > > @@ -1241,6 +1252,10 @@ static int data_ep_set_params(struct snd_usb_endpoint *ep)
+> > > 	u->buffer_size = maxsize * u->packets;
+> > > 	...
+> > > 	u->urb->transfer_buffer =
+> > >                 usb_alloc_coherent(chip->dev, u->buffer_size,
+> > >                                    GFP_KERNEL, &u->urb->transfer_dma);
+> > >
+> > > Here, when calculating u->buffer_size = maxsize * u->packets;
+> > > maxsize = 9, packets = 6, which results in only 54 bytes allocated to
+> > > transfer_buffer;
+> > 
+> > Hm, so the problem is rather the calculation of the buffer size.
+> > The size sounds extremely small.  Which parameters (rates, formats,
+> > etc) are used for achieving this?
+> rates: 22050
+> format: 2
+> channels: 1
+> /////////////////////////////
+> stride: 2
+> packets: 6
+> data interval: 0
+> frame_bits: 16
+> > 
+> > The calculation of u->buffer_size is a bit complex, as maxsize is
+> > adjusted in many different ways.  Is it limited due to wMaxPacketSize
+> > setup?
+> Yes, it's because the value of ep->maxpacksize is 9 that the maxsize
+> value is 9.
 
-The sanitizer doesn=E2=80=99t protect against mapping/unmapping during this
-period. However, that=E2=80=99s less harmful as the page is not used by the
-kernel.
+OK, then a fix like below would work?
 
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
-Tested-by: Qinxin Xia <xiaqinxin@huawei.com>
----
- drivers/iommu/iommu-debug-pagealloc.c | 19 +++++++++++++++++++
- include/linux/iommu-debug-pagealloc.h | 12 ++++++++++++
- include/linux/mm.h                    |  5 +++++
- 3 files changed, 36 insertions(+)
 
-diff --git a/drivers/iommu/iommu-debug-pagealloc.c b/drivers/iommu/iommu-de=
-bug-pagealloc.c
-index 0e14104b971c..5b26c84d3a0e 100644
---- a/drivers/iommu/iommu-debug-pagealloc.c
-+++ b/drivers/iommu/iommu-debug-pagealloc.c
-@@ -71,6 +71,25 @@ static size_t iommu_debug_page_size(struct iommu_domain =
-*domain)
- 	return 1UL << __ffs(domain->pgsize_bitmap);
- }
-=20
-+static unsigned int iommu_debug_page_count(unsigned long phys)
-+{
-+	unsigned int ref;
-+	struct page_ext *page_ext =3D get_iommu_page_ext(phys);
-+	struct iommu_debug_metadate *d =3D get_iommu_data(page_ext);
-+
-+	ref =3D atomic_read(&d->ref);
-+	page_ext_put(page_ext);
-+	return ref;
-+}
-+
-+void __iommu_debug_check_unmapped(const struct page *page, int numpages)
-+{
-+	while (numpages--) {
-+		WARN_ON(iommu_debug_page_count(page_to_phys(page)));
-+		page++;
+thanks,
+
+Takashi
+
+--- a/sound/usb/endpoint.c
++++ b/sound/usb/endpoint.c
+@@ -1362,6 +1362,11 @@ int snd_usb_endpoint_set_params(struct snd_usb_audio *chip,
+ 	ep->sample_rem = ep->cur_rate % ep->pps;
+ 	ep->packsize[0] = ep->cur_rate / ep->pps;
+ 	ep->packsize[1] = (ep->cur_rate + (ep->pps - 1)) / ep->pps;
++	if (ep->packsize[1] > ep->maxpacksize) {
++		usb_audio_dbg(chip, "Too small maxpacksize %u for rate %u / pps %u\n",
++			      ep->maxpacksize, ep->cur_rate, ep->pps);
++		return -EINVAL;
 +	}
-+}
-+
- void __iommu_debug_map(struct iommu_domain *domain, phys_addr_t phys, size=
-_t size)
- {
- 	size_t off;
-diff --git a/include/linux/iommu-debug-pagealloc.h b/include/linux/iommu-de=
-bug-pagealloc.h
-index 180446d6d86f..84110e4ecfaa 100644
---- a/include/linux/iommu-debug-pagealloc.h
-+++ b/include/linux/iommu-debug-pagealloc.h
-@@ -22,6 +22,7 @@ void __iommu_debug_unmap(struct iommu_domain *domain, uns=
-igned long iova,
- 			 size_t size);
- void __iommu_debug_remap(struct iommu_domain *domain, unsigned long iova,
- 			 size_t size);
-+void __iommu_debug_check_unmapped(const struct page *page, int numpages);
-=20
- static inline void iommu_debug_map(struct iommu_domain *domain,
- 				   phys_addr_t phys, size_t size)
-@@ -44,6 +45,12 @@ static inline void iommu_debug_remap(struct iommu_domain=
- *domain,
- 		__iommu_debug_remap(domain, iova, size);
- }
-=20
-+static inline void iommu_debug_check_unmapped(const struct page *page, int=
- numpages)
-+{
-+	if (static_branch_unlikely(&iommu_debug_initialized))
-+		__iommu_debug_check_unmapped(page, numpages);
-+}
-+
- void iommu_debug_init(void);
-=20
- #else
-@@ -66,6 +73,11 @@ static inline void iommu_debug_init(void)
- {
- }
-=20
-+static inline void iommu_debug_check_unmapped(const struct page *page,
-+					      int numpages)
-+{
-+}
-+
- #endif /* CONFIG_IOMMU_DEBUG_PAGEALLOC */
-=20
- #endif /* __LINUX_IOMMU_DEBUG_PAGEALLOC_H */
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d16b33bacc32..895a60a49120 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -36,6 +36,7 @@
- #include <linux/rcuwait.h>
- #include <linux/bitmap.h>
- #include <linux/bitops.h>
-+#include <linux/iommu-debug-pagealloc.h>
-=20
- struct mempolicy;
- struct anon_vma;
-@@ -3811,12 +3812,16 @@ extern void __kernel_map_pages(struct page *page, i=
-nt numpages, int enable);
- #ifdef CONFIG_DEBUG_PAGEALLOC
- static inline void debug_pagealloc_map_pages(struct page *page, int numpag=
-es)
- {
-+	iommu_debug_check_unmapped(page, numpages);
-+
- 	if (debug_pagealloc_enabled_static())
- 		__kernel_map_pages(page, numpages, 1);
- }
-=20
- static inline void debug_pagealloc_unmap_pages(struct page *page, int nump=
-ages)
- {
-+	iommu_debug_check_unmapped(page, numpages);
-+
- 	if (debug_pagealloc_enabled_static())
- 		__kernel_map_pages(page, numpages, 0);
- }
---=20
-2.51.2.1026.g39e6a42477-goog
-
+ 
+ 	/* calculate the frequency in 16.16 format */
+ 	ep->freqm = ep->freqn;
 
