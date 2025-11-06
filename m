@@ -1,156 +1,124 @@
-Return-Path: <linux-kernel+bounces-888380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48906C3A9E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8CAC3A9EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B244C1A43728
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:38:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 689C21A43451
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BA03101C0;
-	Thu,  6 Nov 2025 11:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9175F30F92F;
+	Thu,  6 Nov 2025 11:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfHVcgmp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o1GL4jP2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tb9oEDm9"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B250930F932;
-	Thu,  6 Nov 2025 11:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D99530CDBA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428986; cv=none; b=Oq+421zOYex+kN926bZ9WTD0MIDMMOkq/hW9p0HP3zIz0KTb/KsSEekLF0gUvRHPqVur7Wv/m4WtyhPHcAQ5QwA3i/FKIkkUgiOOLYj3oNnnDwigQfSdPGcsK0gJ8zzdiw/W8NzLHqd3RVC3F/kt4VYavnaR+PudrDHwlvbLN/c=
+	t=1762429059; cv=none; b=GQldA2g8LQm5rL2fdR6eTG2pN41tpFRUnSOnAO7HblZya2Rz2EmohnuarxRWr31Ma5WmxzqOzU+qvkDi6AvOaBG5FH24yBkThh/pd4YRwqm+8DzqRiiIg5UpPLyZF95wHQ7vf0U5d4nr47GIq+fJE6k2h2eHofPcUAZvGT419/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428986; c=relaxed/simple;
-	bh=yL1dKuTwJbqWHWFM/S4JLHnPEsgFEplZUtp9/v+jbis=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GtcBUIZj8z4AD4cnaOSJlNaHpMOClzhGnY81mL9ArGJhMcG1l80bbI50/0QPpPfomcZdL4tt7uwEx+mslIfTY6sDcxTY+sadCb0ipHFZRyFYKwIAD+KZWBZAvpIKgBncFGINU9/hwWZTITYf+9gW1jyBxegkr8V+dZkjXyjq1So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfHVcgmp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o1GL4jP2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762428982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3OFVSDhbG36SsIf5lzC388elLqvaZZTmYLAdGi/UGDg=;
-	b=VfHVcgmpJH3uTfDhchkD4wuvXiCeO6Y0cgIqWhodPDv0n2WVyYSiJgJJpsP+TuMeWHGFhk
-	awrfiT1E4sgpQl/J9FkfBBes3xk5bIN19ceahwVKoZUp77RiupUePOYXKRjfWcOOZNzJyI
-	nEGwsjZJXoedyhMd+JsaSo0915zq3oA0kUISJHkpjhjfUhWqF7la7YqWpyki7iPmNWmakE
-	1xhtxvITVT9bFAfdxm0ZQDDm4fTBoi6xT7qZeJDMw7135L0MoVUU7nVX9ZV0r7kk20V5Hd
-	8BnaSJ/s1Q5JnQT8KCr/Flgxrv/goYiQYt5i7ji3eoWtF4DinD6WOF+xYK6ieQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762428982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3OFVSDhbG36SsIf5lzC388elLqvaZZTmYLAdGi/UGDg=;
-	b=o1GL4jP2YCiTuyko5Z4t0WrMdYgexNYHQsUuVxE4kxErQm/WLMPqalMwDn0asv1C6ScxeV
-	1J3sSKVoaU//4sBA==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, syzbot
- <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
- "amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
- brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-In-Reply-To: <87bjlgqmk5.fsf@jogness.linutronix.de>
-References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
- <69096836.a70a0220.88fb8.0006.GAE@google.com>
- <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
- <aQpFLJM96uRpO4S-@pathway.suse.cz> <87ldkk34yj.fsf@jogness.linutronix.de>
- <aQuABK25fdBVTGZc@pathway.suse.cz> <87bjlgqmk5.fsf@jogness.linutronix.de>
-Date: Thu, 06 Nov 2025 12:42:21 +0106
-Message-ID: <87tsz7iea2.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762429059; c=relaxed/simple;
+	bh=ialkjfXPUU6X8FC+SzJ3KVgS8vsqr4ixyFVj95i+7Cs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rk7rSfq31sdSqmMjfMKzSfpoXFai6Uenhdm+DQ+3SdQ3NboBgvkh11oB6OTN+irbHgsh0TTjMHRq1nKkCJDtmAo2y8paBeY1jRe4ZAkiY4OmNUMkxAXbDu/wMjudfGRK8nPkGqgdj1ayb2LKvd0cmqEaz/AgWfMnn+X+vnEomtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tb9oEDm9; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-793021f348fso744114b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762429057; x=1763033857; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hjvib5l1jl7c+bMGrAcG+xXz8naE9IfiWdK2rk+q+nw=;
+        b=Tb9oEDm9IhdqBTLycnasxJIJ6/EAwEdCYWRvMOgasSMXyaKUTRHGT2u9lDnUbrAKDc
+         N8y4RxA3jxPoCwwy3svCZaQYjLgCxv2Pqjq0BZk8AOQ3AxZ1DJXke917Yo2RvxvlIPh3
+         0AgWF7t8KNuepM9mdyjmUWsE50BwQ0A72SS726c8ic3MzI/0qdCbDfa5t9KRIKpyeeCs
+         0IVio3UOI30ZHTBO368EwknFZuaAslf3C5HC9bn0B2SVt3Qt9saxJkGx9mtn5NrQPfzz
+         IWnp4ZOfqIZK6z1wLfFl5g8ZM6db9KIKvjbNfYkKkust97YI/SmmT14g4dNvnM9eDSm1
+         faLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762429057; x=1763033857;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hjvib5l1jl7c+bMGrAcG+xXz8naE9IfiWdK2rk+q+nw=;
+        b=MPtxSf0dnTG+jCXwYnGcITx+NLko38qJm0SZc5w/2n2v79Co/h0FM/njE7qMet1qVi
+         5wI5lt1HbN+qklipYJdoKH5vPNrdK0daNKiZWpxg9cfV/Qy49wZ3DTC+i9xlmx2LxOO9
+         2wrE4Su3Bc7K8amAin94swEfL9NZxCANbCMghLNuAlFwKN3ZffxCRW0ilYWdXOo+pfiR
+         K1pyaVe26Ls5tX/6PuFi5DWmnkooUwqH3kfdmr2oJSA7MEjbYTSzsbG0IqL9/A1uJMjf
+         3lC1FSnJptnQGSO5ZcxUBsHTAnFtZOd1nN2LOh/aJwI/D2EwLfFZ3XjMaRE2z/1d6XJm
+         cIpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrYEAmnvcTLvB9VCLS2fqLo5RpHO8qkrEFVb1EAyJfJCcjqn7t5Nqz3EpxvJPDLzMX2z12arzCToWIMtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGC7xN0HeQcmVRP1bdpmqhK5RfKzu2BA4cvMgytz0O9oFRva2v
+	zBB+wiy1gzH6gb/gXiymncU9MmIYjpdgmuOkirFSFJHr8XPon4G2MWR8geDbkHOv
+X-Gm-Gg: ASbGncsQSbl3Jwwu1p6mzBRv1rn76fXvQs9JuMcusQp1pFvv0b1M+slXPH846hLw4yR
+	2ixKquD6zqPbMKHOHlSAQJgrVBInYid52yzKsTqRg/JiBP6By94HD9ibSDbHT7RdCBSAM66pkcl
+	h7eOXRAiTbVxeud7oyCJhqxWlzefQgC0UVeSa0D6KMGRZOMXeNfU52xvHDbWDJ98mXbK71Mkyqw
+	WlRLlR6I+IIEQgXVNdpOahdTH4VqeXrLj3wIlWc8xDq7pPE4IwhUMlpXc2a5zaLbvRI3lXy5hWH
+	qezZi8Eg1BMT1JTghB9pjP3E5tkuTmOa+nZAR95QLuWNliCYEBJokyBcoYSOmRIsa9T8atzfKDC
+	YGHLfHKM9Z5nOrY49yRC8pnxLR6H8jaFXtCPrJLQC57/by67KMOzAfm1USrjhjhQp9ulwPUAfCx
+	VQOgSChcXJB58fmzynTlt9/bSv9eL4IJbzkA0mG1E9QQaXoGt1
+X-Google-Smtp-Source: AGHT+IE49q3UoW4OFpWbNglvInQNVRlN+yhDQFQFunxA5RskR8zFPZ2d8CXgzPfWY0cjgsF/X3MOtg==
+X-Received: by 2002:a05:6a00:4601:b0:7a2:74e5:a4a4 with SMTP id d2e1a72fcca58-7ae1eda0949mr8034636b3a.19.1762429057535;
+        Thu, 06 Nov 2025 03:37:37 -0800 (PST)
+Received: from ?IPv6:2401:4900:88f4:f6c4:5041:b658:601d:5d75? ([2401:4900:88f4:f6c4:5041:b658:601d:5d75])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af826f9520sm2452518b3a.56.2025.11.06.03.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 03:37:37 -0800 (PST)
+Message-ID: <f3c89a9182387cd0df012726fc30841aae8d330d.camel@gmail.com>
+Subject: Re: [Intel-wired-lan] [PATCH v2] net: ethernet: fix uninitialized
+ pointers with free attr
+From: ally heev <allyheev@gmail.com>
+To: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>, "Nguyen, Anthony
+ L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+ <przemyslaw.kitszel@intel.com>,  Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet	
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni	
+ <pabeni@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang	
+ <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, "Cui, Dexuan"	
+ <decui@microsoft.com>
+Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, 
+ "netdev@vger.kernel.org"
+	 <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
+	 <linux-hyperv@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Date: Thu, 06 Nov 2025 17:07:29 +0530
+In-Reply-To: <DS4PPF7551E6552E6053CC02144D0987191E5C2A@DS4PPF7551E6552.namprd11.prod.outlook.com>
+References: 
+	<20251106-aheev-uninitialized-free-attr-net-ethernet-v2-1-048da0c5d6b6@gmail.com>
+	 <DS4PPF7551E6552E6053CC02144D0987191E5C2A@DS4PPF7551E6552.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-On 2025-11-05, John Ogness <john.ogness@linutronix.de> wrote:
->> Another question is whether this is the only problem caused the patch.
->
-> This comparison is quite special. It caught my attention while combing
-> through the code.
+On Thu, 2025-11-06 at 10:18 +0000, Loktionov, Aleksandr wrote:
+[..]
+> Code style:
+> The new declaration + initializer is good, but please ensure both hunks s=
+tay within ~80 columns in drivers/net/*.
+> Wrapping like this is fine:
+>=20
+> struct ice_flow_prof_params *params __free(kfree) =3D
+>         kzalloc(sizeof(*params), GFP_KERNEL);
 
-The reason that this comparison is special is because it is the only one
-that does not take wrapping into account. I did it that way originally
-because it is AND with a wrap check. But this is an ugly special
-case. It should use the same wrap check as the other 3 cases in
-nbcon.c. If it had, the bug would not have happened.
+I ran checkpatch with `$max_line_length` set to 80. It didn't throw any err=
+ors/warnings
 
-I always considered these wrap checks to be non-obvious and
-error-prone. So what if we create a nice helper function to simplify and
-unify the wrap checks? Something like this:
+Regards,
+Ally
 
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index 839f504db6d30..8499ee642c31d 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -390,6 +390,17 @@ static unsigned int to_blk_size(unsigned int size)
- 	return size;
- }
- 
-+/*
-+ * Check if @lpos1 is before @lpos2. This takes ringbuffer wrapping
-+ * into account. If @lpos1 is more than a full wrap before @lpos2,
-+ * it is considered to be after @lpos2.
-+ */
-+static bool lpos1_before_lpos2(struct prb_data_ring *data_ring,
-+			       unsigned long lpos1, unsigned long lpos2)
-+{
-+	return lpos2 - lpos1 - 1 < DATA_SIZE(data_ring);
-+}
-+
- /*
-  * Sanity checker for reserve size. The ringbuffer code assumes that a data
-  * block does not exceed the maximum possible size that could fit within the
-@@ -577,7 +588,7 @@ static bool data_make_reusable(struct printk_ringbuffer *rb,
- 	unsigned long id;
- 
- 	/* Loop until @lpos_begin has advanced to or beyond @lpos_end. */
--	while ((lpos_end - lpos_begin) - 1 < DATA_SIZE(data_ring)) {
-+	while (lpos1_before_lpos2(data_ring, lpos_begin, lpos_end)) {
- 		blk = to_block(data_ring, lpos_begin);
- 
- 		/*
-@@ -668,7 +679,7 @@ static bool data_push_tail(struct printk_ringbuffer *rb, unsigned long lpos)
- 	 * sees the new tail lpos, any descriptor states that transitioned to
- 	 * the reusable state must already be visible.
- 	 */
--	while ((lpos - tail_lpos) - 1 < DATA_SIZE(data_ring)) {
-+	while (lpos1_before_lpos2(data_ring, tail_lpos, lpos)) {
- 		/*
- 		 * Make all descriptors reusable that are associated with
- 		 * data blocks before @lpos.
-@@ -1149,7 +1160,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
- 	next_lpos = get_next_lpos(data_ring, blk_lpos->begin, size);
- 
- 	/* If the data block does not increase, there is nothing to do. */
--	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
-+	if (!lpos1_before_lpos2(data_ring, head_lpos, next_lpos)) {
- 		if (wrapped)
- 			blk = to_block(data_ring, 0);
- 		else
-@@ -1262,7 +1273,7 @@ static const char *get_data(struct prb_data_ring *data_ring,
- 
- 	/* Regular data block: @begin less than @next and in same wrap. */
- 	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
--	    blk_lpos->begin < blk_lpos->next) {
-+	    lpos1_before_lpos2(data_ring, blk_lpos->begin, blk_lpos->next)) {
- 		db = to_block(data_ring, blk_lpos->begin);
- 		*data_size = blk_lpos->next - blk_lpos->begin;
- 
-This change also fixes the issue. Thoughts?
-
-John
 
