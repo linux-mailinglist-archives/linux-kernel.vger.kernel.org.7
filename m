@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-888497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67689C3B026
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:55:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D73C3B04D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:57:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A5344FC5D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0824C46796B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B264331A46;
-	Thu,  6 Nov 2025 12:49:09 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2994D32D0D4;
+	Thu,  6 Nov 2025 12:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MltggMR4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB4232B9AF;
-	Thu,  6 Nov 2025 12:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF5332B9AF;
+	Thu,  6 Nov 2025 12:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433349; cv=none; b=WTNnhhWYr3nYvzeZ8nHL4xIyRn0W41alKesWwvmtF4Db3VYyeqG/dNr2ePonEQJ/mStkoQ/ynkmUN3pIQMgfyxH3RHsyRk0dYD+dCRsEOmE5wV134uj5lOSATj+8gP70+82XRFxw1wABn4JoxAginnHS5MrWP9b8fJ0DuwI+BUQ=
+	t=1762433352; cv=none; b=Mfay81Y58tOx7nLv+GjcVW3XeAtoDIkbSwt5k2beH0aaZnSu4NVmGCdv9uuCDjQlfZe3+fdHXz2atIDdjqGLmwVU/B1XMo/JjAKb2UC4J7ODgIDdxFpP5mrJ0n4wDraFGSR0GPwVG7jca7RwGsgPlDwBtUzRCrs0CgKRO5t6emc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433349; c=relaxed/simple;
-	bh=AAcmMA1g/UsJicNcMiuPDIq1WYbpJDVtTTqPRl9ZtDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7w7Ycv3OED4e+Ym+Z2f8VW6woPCFmOLT+vYqte5fhgZ9ao7vMYqorax03khLVNGfUjunpn1SGGDQFXGUgeULY6fh72u4SNrLsGqPzCos4jtJ6lwOmrg230IfIN2Okhh8rhWEDi7HuldckXFmIpM3CSJPAcrvRYtorZk8sDzeZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C090B227A87; Thu,  6 Nov 2025 13:49:00 +0100 (CET)
-Date: Thu, 6 Nov 2025 13:49:00 +0100
-From: hch <hch@lst.de>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, hch <hch@lst.de>,
-	Jan Kara <jack@suse.cz>, Keith Busch <kbusch@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <20251106124900.GA6144@lst.de>
-References: <aQPyVtkvTg4W1nyz@dread.disaster.area> <20251031130050.GA15719@lst.de> <aQTcb-0VtWLx6ghD@kbusch-mbp> <20251031164701.GA27481@lst.de> <kpk2od2fuqofdoneqse2l3gvn7wbqx3y4vckmnvl6gc2jcaw4m@hsxqmxshckpj> <20251103122111.GA17600@lst.de> <20251104233824.GO196370@frogsfrogsfrogs> <20251105141130.GB22325@lst.de> <20251105214407.GN196362@frogsfrogsfrogs> <9530fca4-418d-4415-b365-cad04a06449b@wdc.com>
+	s=arc-20240116; t=1762433352; c=relaxed/simple;
+	bh=QDQywIaKu2zH70eH1xnpg06B3uDNQURKWA3m7AA4ORE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SGZMrGxpw1nML246rUz7CZR8mBg0yfeHHU0Ihy1k2Rsp9eBxEmsssTthVRAZM1U5BSWGzj287EjTBD8xnlGraPHejulJhdnAetlDmUJEAgWD9D7kEs+56SHUYOVgZNgss/8jt8Av4lRgKVtEW+OO3KiZJgJKXL6ZU8HuNZgEgT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MltggMR4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A704C4CEF7;
+	Thu,  6 Nov 2025 12:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762433350;
+	bh=QDQywIaKu2zH70eH1xnpg06B3uDNQURKWA3m7AA4ORE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MltggMR4vgtGdsLCj/gzb+sebtOBZR1wBC5RNGodC7rZMnaW1LlzNzBlVF0UtlYhw
+	 Hv24uyvt5gq3Vbmxb66vBHEagw27oe/WocgXKDu+VOtEqJdfOdOsJYUsHcIBmN1yVi
+	 69rU+AgyMEIn4r7MFRty35ln9cXRd+TlqApp1o8gjz6TFKzUeI7XMRvCXuAB9rgBCO
+	 zyEYoyK0pa5Fst9R8GH4aaB4jqC7HzCGd/BDdDuCKdGlYoNUPf14lJk1bF05CUFklE
+	 v47JpFVmU4EPxXqNQdt8VPEsNItfl4LzSAEWuj7TVLck/rMK9zyd4XYfsKB8ny8V5S
+	 GQWhAx7BB2v2Q==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan Murphy <dmurphy@ti.com>, 
+ Christian Hitz <christian@klarinett.li>
+Cc: Christian Hitz <christian.hitz@bbv.ch>, stable@vger.kernel.org, 
+ Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251022063305.972190-1-christian@klarinett.li>
+References: <20251022063305.972190-1-christian@klarinett.li>
+Subject: Re: (subset) [PATCH v2] leds: leds-lp50xx: LP5009 supports 3
+ modules for a total of 9 LEDs
+Message-Id: <176243334879.1816120.5182924763211452993.b4-ty@kernel.org>
+Date: Thu, 06 Nov 2025 12:49:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9530fca4-418d-4415-b365-cad04a06449b@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-52d38
 
-On Thu, Nov 06, 2025 at 09:50:10AM +0000, Johannes Thumshirn wrote:
-> On 11/5/25 10:44 PM, Darrick J. Wong wrote:
-> > Just out of curiosity -- is qemu itself mutating the buffers that it is
-> > passing down to the lower levels via dio?  Or is it a program in the
-> > guest that's mutating buffers that are submitted for dio, which then get
-> > zerocopied all the way down to the hypervisor?
+On Wed, 22 Oct 2025 08:33:04 +0200, Christian Hitz wrote:
+> LP5009 supports 9 LED outputs that are grouped into 3 modules.
 > 
-> If my memory serves me right it is the guest (or at least can be). I 
-> remember a bug report on btrfs where a Windows guest had messed up 
-> checksums because of modifying inflight I/O.
+> Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
+> 
+> 
 
-qemu passes I/O through, so yes it is guest controller.  Windows is most
-famous, but the Linux swap code can trigger it easily too.
+Applied, thanks!
+
+[1/1] leds: leds-lp50xx: LP5009 supports 3 modules for a total of 9 LEDs
+      commit: 5246e3673eeeccb4f5bf4f42375dd495d465ac15
+
+--
+Lee Jones [李琼斯]
 
 
