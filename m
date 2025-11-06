@@ -1,160 +1,163 @@
-Return-Path: <linux-kernel+bounces-888776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237F1C3BE26
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:53:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8482AC3BEC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A7B1B25A6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA6B560461
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3657F342CA5;
-	Thu,  6 Nov 2025 14:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P8Sv5o1K"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68359346E69;
+	Thu,  6 Nov 2025 14:54:42 +0000 (UTC)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AA918D65C;
-	Thu,  6 Nov 2025 14:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16022346A0E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440485; cv=none; b=VHv5FitHW5aKdlGp/6CqAqMI7p/Gj02lqyfeQMfV638mgfWKlS2j5tFKaBR823vYlJSLxgZWAYTRNx4i66MtBYo+avvHQWw0ATTv2wUmetREXYhyj4L0T4mUlyG3EAs1mJdvHbHHIiym8UgDQBYS5Fx4DpXcmQU+dACOCvCcF8Y=
+	t=1762440881; cv=none; b=G4k7/QaURQeIeLfHJTLxv7qE7Z3TxhR+Rg71bSa4/YDk5V4FokHvv4wY+JiDObMKlbCrNpwne1436tvrHpIa73wOYBvIwCkmr5uVfbkAeNi8VQwRqE+ZZDPIAy46y5b29HWSjEo28MtxSQ867+nLJkgThZy2Ue9TFZ0Kt4d+q6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440485; c=relaxed/simple;
-	bh=NVoG3xWPvFWyuV2+Q1vbOfMzlKfY/nHbZuN7h+LhVCE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e5xsVCy1ieytesySBK3/4Y8iKrdgrPXFewBpeXQJbi0Ea0LCIyHo3c7Gj3yzuCl6idcoeooOtGWAFX4ThGVKlugSde5q6lykiaG6+FZ+sB4bGzaN/KuCDhiSgbxy5kCeSV3B0fkAoZ4d32d4fLqV1tplwoRSgzHMid/9OECmIMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P8Sv5o1K; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762440482;
-	bh=NVoG3xWPvFWyuV2+Q1vbOfMzlKfY/nHbZuN7h+LhVCE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=P8Sv5o1Kb09LlCaWkB+QK7hoSOb16P0TO5TFjuDulBvhJRcJkGPowf8PaKnBxRJdG
-	 V2YobvLU02bh8dJcu0Gf+dMocbbQOKJbRyczUiBFfL90h+f5yEVW7yqOTCXU/vVGGv
-	 5adodBHM5VC44k3x8MBmzUTIuIr+YHZc4LjF1SkRrgzv4zOhQlclVxVrLxlLe4rOUL
-	 8bS8LeSNZM64HoNojXzX2AlyOJ8PESU304M5KdQ8DnTiMKWA8wHAAKxZQNkP8YcEZK
-	 Jr7FHovQBnYRLW7uNCLuJacBtpE99T2SR12WKzNvMqpAXs4GmGHTYXMTX6JMjPGD0I
-	 FISUbrf33E2lw==
-Received: from [IPv6:2606:6d00:11:ef24::c41] (unknown [IPv6:2606:6d00:11:ef24::c41])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9746D17E0CA1;
-	Thu,  6 Nov 2025 15:47:59 +0100 (CET)
-Message-ID: <b5daa900a1af6f379d5fb9757d2712102ca0fc51.camel@collabora.com>
-Subject: Re: [PATCH v5 6/8] media: mediatek: vcodec: fix media device node
- number
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Kyrie Wu <kyrie.wu@mediatek.com>, Tiffany Lin
- <tiffany.lin@mediatek.com>,  Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger	
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Hans Verkuil
- <hverkuil@xs4all.nl>,  Nathan Hebert <nhebert@chromium.org>, Arnd Bergmann
- <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>,  George Sun
- <george.sun@mediatek.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-mediatek@lists.infradead.org,
- Yilong Zhou <yilong.zhou@mediatek.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
-	 <andrzejtp2010@gmail.com>
-Date: Thu, 06 Nov 2025 09:47:58 -0500
-In-Reply-To: <20251106061323.2193-7-kyrie.wu@mediatek.com>
-References: <20251106061323.2193-1-kyrie.wu@mediatek.com>
-	 <20251106061323.2193-7-kyrie.wu@mediatek.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-dw0k1cyaTR4cTZonInhf"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762440881; c=relaxed/simple;
+	bh=HaefBq/9gx/xpe6H9SR+jXE6I2U49/Bi4dkyZMOckp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p4sVZbTP2pLAJv9TnpVSxO47djKt3jySnWH8u32VM4olW62OL2m0v94ps/vHECS+xqAASpQv6jtS1TaE/n6eiUkkiK+HmUOJRHrcY34j2O7zTtR+oup8Z7b7z8hcA705j1ZW6jf1L/FrGzKJaI/7ls9y8Dm6ogbifhea799vzUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-59431cce798so1164215e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:54:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762440878; x=1763045678;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZxZVtMOHoNocoyXPFvfejRTHivuCeFc8a9lYqiVNw1Y=;
+        b=mVBCDcpbf0mimpiMyiGUnEETWHilIdEpg0VIDxlYlkrnI4auwnXvzoONWseE00yD+e
+         zFRCnOkjAIRj7EF14M/NExQOm+Fiv1KaNylPhGLhE9/57qNiriCHwh2w3rwJOBAEPaIm
+         c+pDFxP9a+wdoKp9f1TwVR8GtePRPMerSWOUXhgKFzGXUWZaM424rPuctXnctO+UdI/u
+         XZ+thtqwIQ8wTOGfIABXwkJJF6zyENDoT166V9vb9+d4nQXTv7h8miRK1GzSmbzfR0yJ
+         P0E8R1o/NuLRve8wGYsLYDtEpPNBK3Wfr9QrLXWMTJxINc5LG49GWFVjRw9CONNdJb4n
+         Negw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEdnr8cK3jzn66IMN+j8uqcVqGLaZjxOba7KXjW7vytNd8NDfCRMMlqp937wzK3Lmm9sFw6CtJe+I2Z9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5tgbnyVktqJeYyCwBjucomPUnzo0764g0AHYS0/Zu6oA2+tc9
+	vyGJekQRobD10CvkoYGhQDHMdyuYXM899GuKHc0XA1TmkcvJpyXdmPmEwC1h9Yp6aEY=
+X-Gm-Gg: ASbGncsHL/qM6h6BONGEi0/91YG1h6Z4d+VgUI8p9ibtBhmukcgGkSY98lQGR71F4fz
+	Z43qofIkFt+BDQibuzD0gf2F1sIcLgMxHp+yK6GxSel9mzo1Yz3JBzZi85ky6M9vRwdAyW8Nkri
+	mwmOSIxC93t7jKGQOVulrMno98AbmNIRX7ILefXJ7iVziqF4mG2dnkeOKWzpaTxaynrGrf6tQzh
+	xaR+kuZeoN+iKLCEd2lIv6FDjuXUtd3IZEx5c63ZFOSI1vOC4Mt3OZoaD9nuOtWMjdezQPLRivF
+	eo0oVCfJ/Uu3vbj6O1rb9FcE3wQYv9NBvvWU4y9wc6vzLzQZc688HzM9Ksk1EF4+8acvsrV2LVr
+	OF2apOi6B0yDfRmytY2LR2PEFGDx9YuDK+tz6tdAIAxXGuabkaao7nYVnkHHsI1iPr3Ej62lIcR
+	Z8kbBv/ygGvMPwkkHhN2PKT7V80UiuGTvMeHqCDA==
+X-Google-Smtp-Source: AGHT+IG6EWMpOunInV+41Q8+/9N7BdS/1f5bGEzAI5VL1qKsdhbwPx81YmWAEREZxFzuXY5AePZfbQ==
+X-Received: by 2002:a05:6512:3ca0:b0:592:fc68:5b9e with SMTP id 2adb3069b0e04-5943d751fb7mr2401508e87.19.1762440877541;
+        Thu, 06 Nov 2025 06:54:37 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a0344ffsm773610e87.47.2025.11.06.06.54.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 06:54:35 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-59431cce798so1164061e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:54:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWZZMzFBgmgGTjDc6eKgPZGo8ivSTGOIh6JM6eA0hubA6Hz3S3SBgNgL/ZXDcGf4aNreviKDJfs06rXx0Q=@vger.kernel.org
+X-Received: by 2002:a05:6402:1ed5:b0:640:b643:f3c5 with SMTP id
+ 4fb4d7f45d1cf-641058cf323mr7301623a12.16.1762440555932; Thu, 06 Nov 2025
+ 06:49:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-dw0k1cyaTR4cTZonInhf
+References: <cover.1762435376.git.geert+renesas@glider.be> <cfc32f8530d5c0d4a7fb33c482a4bf549f26ec24.1762435376.git.geert+renesas@glider.be>
+ <aQy0T2vUINze_6_q@smile.fi.intel.com>
+In-Reply-To: <aQy0T2vUINze_6_q@smile.fi.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Nov 2025 15:49:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXVUJq36GvNUQE8FnHsX+=1jG4GOJ_034r=fgr_Rw4Djg@mail.gmail.com>
+X-Gm-Features: AWmQ_bnZOzLGAFcWzxKh1EIKjH4MNs7moeVCtN8xGb6mN65nYBliBYrABdUBf0M
+Message-ID: <CAMuHMdXVUJq36GvNUQE8FnHsX+=1jG4GOJ_034r=fgr_Rw4Djg@mail.gmail.com>
+Subject: Re: [PATCH v6 12/26] bitfield: Add less-checking __FIELD_{GET,PREP}()
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Andy,
 
-fix -> Fix
+On Thu, 6 Nov 2025 at 15:44, Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+> On Thu, Nov 06, 2025 at 02:34:00PM +0100, Geert Uytterhoeven wrote:
+> > The BUILD_BUG_ON_MSG() check against "~0ull" works only with "unsigned
+> > (long) long" _mask types.  For constant masks, that condition is usually
+> > met, as GENMASK() yields an UL value.  The few places where the
+> > constant mask is stored in an intermediate variable were fixed by
+> > changing the variable type to u64 (see e.g. [1] and [2]).
+> >
+> > However, for non-constant masks, smaller unsigned types should be valid,
+> > too, but currently lead to "result of comparison of constant
+> > 18446744073709551615 with expression of type ... is always
+> > false"-warnings with clang and W=1.
+> >
+> > Hence refactor the __BF_FIELD_CHECK() helper, and factor out
+> > __FIELD_{GET,PREP}().  The later lack the single problematic check, but
+> > are otherwise identical to FIELD_{GET,PREP}(), and are intended to be
+> > used in the fully non-const variants later.
+> >
+> > [1] commit 5c667d5a5a3ec166 ("clk: sp7021: Adjust width of _m in
+> >     HWM_FIELD_PREP()")
+> > [2] commit cfd6fb45cfaf46fa ("crypto: ccree - avoid out-of-range
+> >     warnings from clang")
+>
+> Also can be made as
+>
+> Link: https://git.kernel.org/torvalds/c/5c667d5a5a3ec166 [1]
 
-Le jeudi 06 novembre 2025 =C3=A0 14:13 +0800, Kyrie Wu a =C3=A9crit=C2=A0:
-> change media register device node number to a correct value
+Nooooh... torvalds might click on it, and complain ;-)
 
-You already say that in the subject, the description should explain why vfd=
-_dec-
->minor was wrong.
+> > +     BUILD_BUG_ON_MSG(__bf_cast_unsigned(mask, mask) >               \
+> > +                      __bf_cast_unsigned(reg, ~0ull),                \
+> > +                      pfx "type of reg too small for mask")
+>
+> Perhaps we may convert this (and others?) to static_assert():s at some point?
 
-Nicolas
-=09
+Nick tried that before, without success:
+https://lore.kernel.org/all/CAKwvOdm_prtk1UQNJQGidZm44Lk582S3p=of0y46+rVjnSgXJg@mail.gmail.com
 
->=20
-> Fixes: 41f03c673cb7b ("media: mediatek: vcodec: replace pr_* with dev_* f=
-or
-> v4l2 debug message")
->=20
-> Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
-> ---
-> =C2=A0.../platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 3 ++-
-> =C2=A01 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git
-> a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c
-> b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c
-> index fca60e81e3c7..f3e49597602a 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c
-> @@ -516,7 +516,8 @@ static int mtk_vcodec_probe(struct platform_device *p=
-dev)
-> =C2=A0			goto err_media_reg;
-> =C2=A0		}
-> =C2=A0
-> -		dev_dbg(&pdev->dev, "media registered as /dev/media%d",
-> vfd_dec->minor);
-> +		dev_dbg(&pdev->dev, "media registered as /dev/media%d",
-> +			dev->mdev_dec.devnode->minor);
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	mtk_vcodec_dbgfs_init(dev, false);
+Gr{oetje,eeting}s,
 
---=-dw0k1cyaTR4cTZonInhf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQy1HgAKCRDZQZRRKWBy
-9BVgAQC+iAI0ZqnWQqu2KvJUTK7prLEhAUHzmKwd9pG9Nx+E7AEAo7bjfYGdm8u7
-z40OWyl6fz38vMuFu2rqg/NIamcIKwQ=
-=vTvd
------END PGP SIGNATURE-----
-
---=-dw0k1cyaTR4cTZonInhf--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
