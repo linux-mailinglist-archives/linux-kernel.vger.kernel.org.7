@@ -1,101 +1,105 @@
-Return-Path: <linux-kernel+bounces-888342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D925C3A904
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:28:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81DDDC3A8CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96FA463355
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:22:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A46904FD7C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C43D30DEC8;
-	Thu,  6 Nov 2025 11:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dFXgyogD"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391AE30CDB7;
+	Thu,  6 Nov 2025 11:20:45 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D634430BF66;
-	Thu,  6 Nov 2025 11:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03262E0916;
+	Thu,  6 Nov 2025 11:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428125; cv=none; b=XMuhpbkDujyrshbVSgYY47bakgDQpPlgcEHxPcXAW5EkoLumUdZ1i/dte1Ex/nG5BpQks+9IWqJuwET5M7l4uMQRaC0Rsq/vrBO6AsNoS9fWvISpo5LMRPbfKo1TKwnha0GUpfl4ob6qVeR6hxKh/7PP24ArjHUSLo1BqT4CTAQ=
+	t=1762428044; cv=none; b=txEFShJmubvWGDQ2s5X+V9gTR14SPRoINmSl8kSItG9lU297ludXBbyecI7d/xkn8JjcEQZYqR4KbTD8whhj+diz9HW69yTEGLqWC9LGKEt13iIK/5lcGGNSZ6Tw3pCZB1ibh5VUerspwIPhQmJdYo4cIZC0tuU8IwNOXLA0Xuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428125; c=relaxed/simple;
-	bh=NdLfAVUeT/ytNabjs6xqCGDoi9eV7GZq2NHkn8N7lpw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uSlAl6gBxljChr9IeiTZbpbXLubxhEhxjNIVFY6G6xx6p2fNZiCAXEJ9ChOQQ3lY5ZCLS8/dkYJ6ELarPOOuRCJo0AaNSSAVHf5+EeYuQZUYcblIXmHdVjEjZPI3Py1AP7QM7MvsxEb5Km+9/IC/3a3BObQC6LiU20tqIVuzpAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dFXgyogD; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=GG
-	Jr17qKdc34PltHTdQzC51mfe8l8hdR3MCBbmWEcEo=; b=dFXgyogDuJiUNiQwLH
-	wEQ/wPeTzeXzM7jw6V/9ZDadcQUG+b2m1m4w84Nr07f8RsNcHjilqBB6Ilu5Yriq
-	9fYquEEQokg/hMD1xUXK1sze/BJ8hc466s0ADqJd4o3sqE5Qt6+5AKl9TsOaN7l2
-	bxsj54J11wALcl9VpOngMy1tI=
-Received: from ubuntu.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3d6+dhAxpkL8BCA--.11322S2;
-	Thu, 06 Nov 2025 19:21:02 +0800 (CST)
-From: Hang Shu <m18080292938@163.com>
-To: ojeda@kernel.org
-Cc: Hang Shu <hangshu847@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Hang Shu <m18080292938@163.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: correct documentation comment for rbtree cursor peek_next method
-Date: Thu,  6 Nov 2025 11:20:14 +0000
-Message-ID: <20251106112015.214867-1-m18080292938@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762428044; c=relaxed/simple;
+	bh=WiqShaaYOzXuSzUIhdMstXRb84zZxZUFhLhi/kXZ6jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RO5bdgCbAsKD4EhRK2B4+Sn5/aj96/8OGkzY6JRJPoCDJEzuGtKASWQ3ZPz27almey1SOuTdRqabYf4o4G1z2VsERiwu+/0EQYRh+QH+LICS4c941Y72LbYUoAOv0Dwns3k0nf/Jgw/6Xeujwx8IupMWBkl6CtZGZISpnzp/jmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5A6BKPPq045333;
+	Thu, 6 Nov 2025 20:20:25 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5A6BKOvk045326
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 6 Nov 2025 20:20:24 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <bd67b517-fde6-4f88-be0a-d8164f3c9a72@I-love.SAKURA.ne.jp>
+Date: Thu, 6 Nov 2025 20:20:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3d6+dhAxpkL8BCA--.11322S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr18GryfKFW5ArWftry3CFg_yoWfJwb_WF
-	n0qF18Aa48uF4qvasxArs3AryIgr4fGr4Fkw17KrWUKryUCF4UJrn5ur90q3s3W3yIgrZr
-	Zr1Sg3WDKr17JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMPfHUUUUUU==
-X-CM-SenderInfo: bpryimqqszjmity6il2tof0z/1tbiPQL9kWkMgeMtigABsy
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] padata: use different lock_class_key for padata_list lock
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: syzbot <syzbot+bd936ccd4339cea66e6b@syzkaller.appspotmail.com>,
+        daniel.m.jordan@oracle.com, linux-kernel@vger.kernel.org,
+        steffen.klassert@secunet.com, linux-crypto@vger.kernel.org
+References: <6860c5d3.a00a0220.c1739.0009.GAE@google.com>
+ <68c34150.050a0220.3c6139.0045.GAE@google.com>
+ <5823185b-55c6-416b-a85c-1191a045caf8@I-love.SAKURA.ne.jp>
+ <aQxqTiUUrDmF5M_X@gondor.apana.org.au>
+ <60778a1e-c29d-4d41-8272-9e635d9ff427@I-love.SAKURA.ne.jp>
+ <aQxufVwZWwRfEaHG@gondor.apana.org.au>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <aQxufVwZWwRfEaHG@gondor.apana.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
 
-From: Hang Shu <hangshu847@gmail.com>
+syzbot is reporting possibility of deadlock due to calling spin_lock_init()
+in __padata_list_init() from both padata_init_reorder_list() and
+padata_init_squeues(). This is a false positive, for reorder->lock is never
+the same as squeue->serial.lock.
 
-The peek_next method's doc comment incorrectly stated it accesses the
-"previous" node when it actually accesses the next node. This commit
-fixes the documentation to accurately reflect the method's behavior.
-
-Signed-off-by: Hang Shu <hangshu847@gmail.com>
+Reported-by: syzbot+bd936ccd4339cea66e6b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=bd936ccd4339cea66e6b
+Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- rust/kernel/rbtree.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/padata.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index b8fe6be6f..9e178dacd 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -835,7 +835,7 @@ pub fn peek_prev(&self) -> Option<(&K, &V)> {
-         self.peek(Direction::Prev)
-     }
+diff --git a/kernel/padata.c b/kernel/padata.c
+index f4def028c48c..465d25020e1e 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -529,12 +529,14 @@ static void padata_init_squeues(struct parallel_data *pd)
+ /* Initialize per-CPU reorder lists */
+ static void padata_init_reorder_list(struct parallel_data *pd)
+ {
++	static struct lock_class_key padata_list_key;
+ 	int cpu;
+ 	struct padata_list *list;
  
--    /// Access the previous node without moving the cursor.
-+    /// Access the next node without moving the cursor.
-     pub fn peek_next(&self) -> Option<(&K, &V)> {
-         self.peek(Direction::Next)
-     }
+ 	for_each_cpu(cpu, pd->cpumask.pcpu) {
+ 		list = per_cpu_ptr(pd->reorder_list, cpu);
+ 		__padata_list_init(list);
++		lockdep_set_class(&list->lock, &padata_list_key);
+ 	}
+ }
+ 
 -- 
-2.43.0
+2.47.3
+
 
 
