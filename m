@@ -1,211 +1,352 @@
-Return-Path: <linux-kernel+bounces-888059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCEEC39BB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:04:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960DDC39BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D04494F8871
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10AC3B1942
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F346430ACEA;
-	Thu,  6 Nov 2025 09:03:20 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D34309F1C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23FB30AAC7;
+	Thu,  6 Nov 2025 09:05:25 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5D4309F08
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762419800; cv=none; b=NuNsKPA8FOVjTb0QsCwH+K0Jyy7c5IufFZdFWlz9IUvqoRUI9VHD8WxElkETs9/Je2LNZsh/pYJIR71MqU/lFVHND977EdF8QjRkerWvHPMPYkK+qRBZwK5i1nkQWrjAMpik7HjlwWxNHop/EC6NtTlhEfduIHgg5jj4UjYdXG0=
+	t=1762419923; cv=none; b=rsO7Y2a+ZO+d5UYFpvpV5QmKaDzfWNqxgUAzNE06i4Ywv3dfyL0dV7G7ly2v35YrebRqJ+U/bjLecL0FHKSY50+HeC9taaltCssy5uh2Q27FJjfqPfUlHjsS5+UiZ06YpFZMD/okvR90EpRGMAjgbBkCR2L4Ub2ubztbFzX2wYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762419800; c=relaxed/simple;
-	bh=3BiETXl/7KYiMgO2xmY43yE1EckvGSBZswtZukHv/ok=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Va4DdzCxBr+a6R3fkuBKqUnKo9E0dev6Vi8aYMg8dZpYcVZ+9XM+8KPI4KxpeG8d8whzO44/YvAQY+me6eY2WpXJWibr4tjlLOqxoLvyb4iLaIevi4XhvkJ6KkUVsKwvxblCm7nAlwLEe0RNjAaIXI/ufMQjvmjiNRnwiAp1Aqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4330bc0373bso863285ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:03:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762419798; x=1763024598;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NM+vtYwd4Q/5mXYOusRezwQD6kU0yTjiwGI1zHoa56s=;
-        b=uDyHp4B/lFKg/6ir7tzJkzQapaJyE5YACLIDhFYcYsW1p7MIIOfJc74MC0lgSIkPZX
-         IfTBcTkcahj8AlGHH4ZWHDX1/+OfiuiQSoFmxaAj54TC8A34YhEOcbzOpLiTWUPm1BYj
-         lqacBozZFDJsleWIuWg09lMy5023xXlN5aE/vE8Abt+CmTbSc2+P/04IiNMTwR9cgzM4
-         kpRnIt3K6zepn5BemVb8HRnYMFJobAmuaBmeU0e2IoWyCakKe+XxPz0/2pr3h3lGjbpp
-         sw6z9W3mxcSbTGMBE1XcvokgJnDd9r8x7Nx9le2Dh+flY4Fc+qdokOEQRJwkp1fU8Uyd
-         RqCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIMCYrCDJsX3KFzn1sdpI39pT262yp0JkBCr86/y8hRkqLNgb7EOFwtFKOlcxiN63Q/ghc9al+Ntdqkpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOLxqQaM+Q0/wKmOerqcz97ppmdAeHbURHcrTkaV4AHbv9JDhm
-	iLRo1nGcpgpPAP3ugdCiFaWF9f3AXG/qIV0Ygr8f6BwwBXB4cA2xu/rUjd25QnUSw9etwjXQAb2
-	nOZXwxEHC8kYbW73VmGixLbu+1wF0ARbtwlwmzDcmEi6EMoZgzik1+Yx5zhM=
-X-Google-Smtp-Source: AGHT+IHYw6BpNjU970LvwCOmCC6rnyZOB0LxuLx4sUOzoknP7LuxVppDcrNAehHNomEHUHqlUyTcseQg9qNPR0QWUuXPYjfjkyEz
+	s=arc-20240116; t=1762419923; c=relaxed/simple;
+	bh=fOrGbqpVhsXQS19PTcdOeLM3ZbT5vwpqP5L8P523PPQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=oFOlwkIPN0AvoD/OXrSmPNgUjMhRfEbNtWxWlJht86/A3HfLTiJwPadOeCnrA52EN8vk5KrK29oJQux8o+FP/9wOyPtx/un2kBy4oNqxSUtaoR7ZTSibEa9gehSIY2oGMVJDgwJeR0JDvO+taUwVBdHFFbcURw7h3IGRGIU9DVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Bx1tDOZAxpXKEfAA--.3130S3;
+	Thu, 06 Nov 2025 17:05:18 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJBxC8HKZAxplHcpAQ--.20539S3;
+	Thu, 06 Nov 2025 17:05:16 +0800 (CST)
+Subject: Re: [PATCH] Loongarch:Make pte/pmd_modify can set _PAGE_MODIFIED
+To: Tianyang Zhang <zhangtianyang@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: kernel@xen0n.name, akpm@linux-foundation.org, willy@infradead.org,
+ david@redhat.com, linmag7@gmail.com, thuth@redhat.com, apopple@nvidia.com,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Liupu Wang <wangliupu@loongson.cn>
+References: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
+ <CAAhV-H5JnmJqTZ1GnhcgODtjL5FLy8x5HNRJxs6us=gzcFon5Q@mail.gmail.com>
+ <95e6f0a6-fd6c-a85f-5983-5a37eaf960a2@loongson.cn>
+ <CAAhV-H4WrphWQqW7HoeD7xSvRuHV1KBt7jgESQU7N-y1HrSVVw@mail.gmail.com>
+ <b839a6a6-3791-ba73-baff-e860aa879bbc@loongson.cn>
+ <833f6790-f1bf-d089-84cf-9f55e1c9866f@loongson.cn>
+ <e035d888-a7a6-0f46-fdc1-92331cc12a93@loongson.cn>
+ <0d774995-c35c-60d2-32b8-91b32663b0c9@loongson.cn>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <7fa3a535-9b72-4538-a161-7e2940e61f3e@loongson.cn>
+Date: Thu, 6 Nov 2025 17:02:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c08:b0:433:2cdf:6457 with SMTP id
- e9e14a558f8ab-4334079054fmr85278665ab.12.1762419797969; Thu, 06 Nov 2025
- 01:03:17 -0800 (PST)
-Date: Thu, 06 Nov 2025 01:03:17 -0800
-In-Reply-To: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690c6455.050a0220.3d0d33.0119.GAE@google.com>
-Subject: [syzbot ci] Re: ipvlan: support mac-nat mode
-From: syzbot ci <syzbot+cia97091be86436383@syzkaller.appspotmail.com>
-To: andrew@lunn.ch, andrey.bokhanko@huawei.com, corbet@lwn.net, 
-	davem@davemloft.net, edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, skorodumov.dmitry@huawei.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot ci has tested the following series
-
-[v3] ipvlan: support mac-nat mode
-https://lore.kernel.org/all/20251105161450.1730216-1-skorodumov.dmitry@huawei.com
-* [PATCH net-next 01/14] ipvlan: Preparation to support mac-nat
-* [PATCH net-next 02/14] ipvlan: Send mcasts out directly in ipvlan_xmit_mode_l2()
-* [PATCH net-next 03/14] ipvlan: Handle rx mcast-ip and unicast eth
-* [PATCH net-next 04/14] ipvlan: Added some kind of MAC NAT
-* [PATCH net-next 05/14] ipvlan: Forget all IP when device goes down
-* [PATCH net-next 06/14] ipvlan: Support GSO for port -> ipvlan
-* [PATCH net-next 07/14] ipvlan: Support IPv6 for learnable l2-bridge
-* [PATCH net-next 08/14] ipvlan: Make the addrs_lock be per port
-* [PATCH net-next 09/14] ipvlan: Take addr_lock in ipvlan_open()
-* [PATCH net-next 10/14] ipvlan: Don't allow children to use IPs of main
-* [PATCH net-next 11/14] ipvlan: const-specifier for functions that use iaddr
-* [PATCH net-next 12/14] ipvlan: Common code from v6/v4 validator_event
-* [PATCH net-next 13/14] ipvlan: common code to handle ipv6/ipv4 address events
-* [PATCH net-next 14/14] ipvlan: Ignore PACKET_LOOPBACK in handle_mode_l2()
-
-and found the following issue:
-WARNING: suspicious RCU usage in ipvlan_init
-
-Full report is available here:
-https://ci.syzbot.org/series/349ca33e-4ae2-4720-9a69-17a2a9e17107
-
-***
-
-WARNING: suspicious RCU usage in ipvlan_init
-
-tree:      net-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
-base:      01cc760632b875c4ad0d8fec0b0c01896b8a36d4
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/d6598a0d-2fcb-499d-95fc-30c5096555dc/config
-
-batman_adv: batadv0: Not using interface batadv_slave_1 (retrying later): interface not active
-hsr_slave_0: entered promiscuous mode
-hsr_slave_1: entered promiscuous mode
-=============================
-WARNING: suspicious RCU usage
-syzkaller #0 Not tainted
------------------------------
-./include/linux/inetdevice.h:239 suspicious rcu_dereference_check() usage!
-
-other info that might help us debug this:
+In-Reply-To: <0d774995-c35c-60d2-32b8-91b32663b0c9@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxC8HKZAxplHcpAQ--.20539S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWfJFy5ZrW7JF15XFWDtFy3KFX_yoWDKF47pr
+	1kJFyUAFW5Jr1xJFy0qF17Xryjyr47J3WUXr1DJF1UJr1Dtryjqr1UXrn09r1rJr48Jr1U
+	Jr1UJr43ZF4UJwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
 
 
-rcu_scheduler_active = 2, debug_locks = 1
-2 locks held by syz-executor/6496:
- #0: ffffffff8ea2f980 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250
- #1: ffffffff8f2cb3c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8e9/0x1c80
 
-stack backtrace:
-CPU: 1 UID: 0 PID: 6496 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250
- lockdep_rcu_suspicious+0x140/0x1d0
- ipvlan_init+0xff2/0x1260
- register_netdevice+0x6bf/0x1ae0
- ipvlan_link_new+0x57a/0xc70
- rtnl_newlink_create+0x310/0xb00
- rtnl_newlink+0x16e4/0x1c80
- rtnetlink_rcv_msg+0x7cf/0xb70
- netlink_rcv_skb+0x208/0x470
- netlink_unicast+0x82f/0x9e0
- netlink_sendmsg+0x805/0xb30
- __sock_sendmsg+0x21c/0x270
- __sys_sendto+0x3bd/0x520
- __x64_sys_sendto+0xde/0x100
- do_syscall_64+0xfa/0xfa0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f114c590e03
-Code: 64 89 02 48 c7 c0 ff ff ff ff eb b7 66 2e 0f 1f 84 00 00 00 00 00 90 80 3d 61 77 22 00 00 41 89 ca 74 14 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 75 c3 0f 1f 40 00 55 48 83 ec 30 44 89 4c 24
-RSP: 002b:00007ffecaf08958 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f114d314620 RCX: 00007f114c590e03
-RDX: 0000000000000058 RSI: 00007f114d314670 RDI: 0000000000000003
-RBP: 0000000000000001 R08: 00007ffecaf08974 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f114d314670 R15: 0000000000000000
- </TASK>
+On 2025/11/6 下午4:50, Tianyang Zhang wrote:
+> 
+> 在 2025/11/6 上午10:10, Bibo Mao 写道:
+>>
+>>
+>> On 2025/11/6 上午9:55, Tianyang Zhang wrote:
+>>> Hi ,Bibao
+>>>
+>>> 在 2025/11/5 上午9:18, Bibo Mao 写道:
+>>>>
+>>>>
+>>>> On 2025/11/5 上午9:07, Huacai Chen wrote:
+>>>>> On Wed, Nov 5, 2025 at 8:57 AM Tianyang Zhang 
+>>>>> <zhangtianyang@loongson.cn> wrote:
+>>>>>>
+>>>>>> Hi, Huacai
+>>>>>>
+>>>>>> 在 2025/11/4 下午4:00, Huacai Chen 写道:
+>>>>>>> Hi, Tianyang,
+>>>>>>>
+>>>>>>> The subject line can be:
+>>>>>>> LoongArch: Let {pte,pmd}_modify() record the status of 
+>>>>>>> _PAGE_DIRTY (If
+>>>>>>> I'm right in the later comments).
+>>>>>> Ok. I got it
+>>>>>>>
+>>>>>>> On Tue, Nov 4, 2025 at 3:30 PM Tianyang Zhang 
+>>>>>>> <zhangtianyang@loongson.cn> wrote:
+>>>>>>>> In the current pte_modify operation, _PAGE_DIRTY might be 
+>>>>>>>> cleared. Since
+>>>>>>>> the hardware-page-walk does not have a predefined _PAGE_MODIFIED 
+>>>>>>>> flag,
+>>>>>>>> this could lead to loss of valid data in certain scenarios.
+>>>>>>>>
+>>>>>>>> The new modification involves checking whether the original PTE 
+>>>>>>>> has the
+>>>>>>>> _PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, 
+>>>>>>>> ensuring
+>>>>>>>> that the pte_dirty interface can return accurate information.
+>>>>>>> The description may be wrong here. Because pte_dirty() returns
+>>>>>>> pte_val(pte) & (_PAGE_DIRTY | _PAGE_MODIFIED).
+>>>>>>> If _PAGE_DIRTY isn't lost, pte_dirty() is always right, no matter
+>>>>>>> whether there is or isn't _PAGE_MODIFIED.
+>>>>>>>
+>>>>>>> I think the real reason is we need to set _PAGE_MODIFIED in
+>>>>>>> pte/pmd_modify to record the status of _PAGE_DIRTY, so that we can
+>>>>>>> recover _PAGE_DIRTY afterwards, such as in pte/pmd_mkwrite().
+>>>>>> Ok, I will adjust the description
+>>>>> After some thinking, your original description may be right. Without
+>>>>> this patch the scenario maybe like this:
+>>>>> The pte is dirty _PAGE_DIRTY but without _PAGE_MODIFIED, after
+>>>>> pte_modify() we lose _PAGE_DIRTY, then pte_dirty() returns false. So
+>>>>> we need _PAGE_MODIFIED to record _PAGE_DIRTY here.
+>>>> In theory pte_modify() is to modify RWX attribute. I think that it 
+>>>> is a tricky to remove _PAGE_DIRTY and add _PAGE_MODIFIED with HW PTW 
+>>>> system.
+>>>>
+>>>> Also _PAGE_ACCESSED is lost with pte_modify() API, is there any 
+>>>> influence with HW PTW system, or wait until possible problems coming 
+>>>> out.
+>>>
+>>> static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>> {
+>>>          return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>>>                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>>> }
+>>> In my understand, During the  pte_modify process, it is essential to 
+>>> ensure that specific bits are inherited from the original PTE rather 
+>>> than simply replaced(as set_pte),
+>>>
+>>> this guarantees the coherent operation of the memory management system.
+>>>
+>>> Since _PAGE_CHG_MASK explicitly requires preserving pte_modified, and 
+>> The problem is how _PAGE_CHG_MASK should be defined, do you check with 
+>> other architectures?
+> 
+> Under mainstream architectures(like ARM64/X86 ), if the pte_modify 
+> interface clears the hard-dirty flag, it will set the soft-dirty flag 
+> through some mechanism.
+> 
+> Thus, at least from the perspective of PAGE_DIRTY logic, this approach 
+> is right.
+> 
+>>> there is an inherent correlation between pte_dirty and pte_modified, 
+>>> these attributes must be evaluated and handled accordingly.
+>>>
+>>> The pte_valid attribute, being a hardware property, is inherently the 
+>>> target of modification in the pte_modify interface. Therefore, it is 
+>>> reasonable not to preserve it.
+>> On HW PTW system, _PAGE_PRESENT will control whether trigger page 
+>> fault rather than pte_valid/_PAGE_ACCESSED. For simple, do you think 
+>> the following code is ok or not ?
+> 
+> "On HW PTW system, _PAGE_PRESENT will control whether trigger page fault 
+> rather than pte_valid/_PAGE_ACCESSED"
+> 
+> Yes, indeed, in many cases, PAGE_PRESENT is precisely the cleanup target 
+> of pte_modify.
+Ok, I have no any question more :) Just do it.
 
-=============================
-WARNING: suspicious RCU usage
-syzkaller #0 Not tainted
------------------------------
-drivers/net/ipvlan/ipvlan_main.c:238 suspicious rcu_dereference_check() usage!
+Regards
+Bibo Mao
+> 
+>>
+>>  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>  {
+>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>> +       unsigned long mask = _PAGE_CHG_MASK;
+>> +
+>> +       if (cpu_has_ptw)
+>> +               mask |= _PAGE_DIRTY | _PAGE_ACCESSED;
+>> +       return __pte((pte_val(pte) & mask) |
+>> +                    (pgprot_val(newprot) & ~mask));
+>>  }
+>>
+> This modification is inappropriate.
+> 
+> Firstly, _PAGE_ACCESSED(bit 0, as _PAGE_PRESENT) and _PAGE_DIRTY bits 
+> are inherently the targets of pte_modify operations. Some 
+> sub-memory-system like numa_balance precisely rely on
+> 
+> clearing these bits to trigger hardware exceptions and complete 
+> subsequent processes, this appears to be unrelated to hardware-ptw
+> 
+> And, under hardware-ptw scenarios, the WRITE=0 && DIRTY=1 condition 
+> should never occur, therefore, we cannot preserve the DIRTY bit in advance.
+> 
+> Thanks
+> 
+> Tianyang
+> 
+>> Regards
+>> Bibo Mao
+>>
+>>>
+>>> Thanks
+>>>
+>>> Tianyang
+>>>
+>>>>
+>>>> Regards
+>>>> Bibo Mao
+>>>>>
+>>>>> But the description also needs to be updated.
+>>>>>
+>>>>>>>
+>>>>>>>> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
+>>>>>>>> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
+>>>>>>>> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+>>>>>>>> ---
+>>>>>>>>    arch/loongarch/include/asm/pgtable.h | 17 +++++++++++++----
+>>>>>>>>    1 file changed, 13 insertions(+), 4 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h 
+>>>>>>>> b/arch/loongarch/include/asm/pgtable.h
+>>>>>>>> index bd128696e96d..106abfa5183b 100644
+>>>>>>>> --- a/arch/loongarch/include/asm/pgtable.h
+>>>>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
+>>>>>>>> @@ -424,8 +424,13 @@ static inline unsigned long 
+>>>>>>>> pte_accessible(struct mm_struct *mm, pte_t a)
+>>>>>>>>
+>>>>>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>>>>>>>    {
+>>>>>>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>>>>>>>> +       unsigned long val = (pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>>>> +                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
+>>>>>>>> +
+>>>>>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
+>>>>>>>> +               val |= _PAGE_MODIFIED;
+>>>>>>>> +
+>>>>>>>> +       return __pte(val);
+>>>>>>>>    }
+>>>>>>>>
+>>>>>>>>    extern void __update_tlb(struct vm_area_struct *vma,
+>>>>>>>> @@ -547,9 +552,13 @@ static inline struct page *pmd_page(pmd_t pmd)
+>>>>>>>>
+>>>>>>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+>>>>>>>>    {
+>>>>>>>> -       pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+>>>>>>>> +       unsigned long val = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+>>>>>>>>                                   (pgprot_val(newprot) & 
+>>>>>>>> ~_HPAGE_CHG_MASK);
+>>>>>>>> -       return pmd;
+>>>>>>>> +
+>>>>>>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
+>>>>>>>> +               val |= _PAGE_MODIFIED;
+>>>>>>>> +
+>>>>>>>> +       return __pmd(val);
+>>>>>>>>    }
+>>>>>>> A minimal modification can be:
+>>>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h
+>>>>>>> b/arch/loongarch/include/asm/pgtable.h
+>>>>>>> index 1f20e9280062..907ece0199e0 100644
+>>>>>>> --- a/arch/loongarch/include/asm/pgtable.h
+>>>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
+>>>>>>> @@ -448,8 +448,13 @@ static inline unsigned long 
+>>>>>>> pte_accessible(struct
+>>>>>>> mm_struct *mm, pte_t a)
+>>>>>>>
+>>>>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>>>>>>    {
+>>>>>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>>>>>>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
+>>>>>>> +
+>>>>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
+>>>>>>> +               pte_val(pte) |= _PAGE_MODIFIED;
+>>>>>>> +
+>>>>>>> +       return pte;
+>>>>>>>    }
+>>>>>>
+>>>>>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
+>>>>>>
+>>>>>> After this step, _PAGE_DIRTY may have already disappeared,
+>>>>>> If no new variables are added, they can be modified in follow way:
+>>>>>>
+>>>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>>>>>    {
+>>>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
+>>>>>> +               pte_val(pte) |= _PAGE_MODIFIED;
+>>>>>> +
+>>>>>>          return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>>           (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>>>>>>
+>>>>>>    }
+>>>>> OK, it makes sense.
+>>>>>
+>>>>> Huacai
+>>>>>>
+>>>>>>>
+>>>>>>>    extern void __update_tlb(struct vm_area_struct *vma,
+>>>>>>> @@ -583,7 +588,11 @@ static inline struct page *pmd_page(pmd_t pmd)
+>>>>>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+>>>>>>>    {
+>>>>>>>           pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+>>>>>>> -                               (pgprot_val(newprot) & 
+>>>>>>> ~_HPAGE_CHG_MASK);
+>>>>>>> +                       (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
+>>>>>>> +
+>>>>>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
+>>>>>>> +               pmd_val(pmd) |= _PAGE_MODIFIED;
+>>>>>>> +
+>>>>>>>           return pmd;
+>>>>>>>    }
+>>>>>>>
+>>>>>>> You needn't define a new variable.
+>>>>>>>
+>>>>>>>
+>>>>>>> Huacai
+>>>>>>>
+>>>>>>>>    static inline pmd_t pmd_mkinvalid(pmd_t pmd)
+>>>>>>>> -- 
+>>>>>>>> 2.41.0
+>>>>>>>>
+>>>>>>>>
+>>>>>> Thanks
+>>>>>>
+>>>>>> Tianyang
+>>>>>>
+> 
 
-other info that might help us debug this:
-
-
-rcu_scheduler_active = 2, debug_locks = 1
-2 locks held by syz-executor/6496:
- #0: ffffffff8ea2f980 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250
- #1: ffffffff8f2cb3c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8e9/0x1c80
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6496 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250
- lockdep_rcu_suspicious+0x140/0x1d0
- ipvlan_init+0x1025/0x1260
- register_netdevice+0x6bf/0x1ae0
- ipvlan_link_new+0x57a/0xc70
- rtnl_newlink_create+0x310/0xb00
- rtnl_newlink+0x16e4/0x1c80
- rtnetlink_rcv_msg+0x7cf/0xb70
- netlink_rcv_skb+0x208/0x470
- netlink_unicast+0x82f/0x9e0
- netlink_sendmsg+0x805/0xb30
- __sock_sendmsg+0x21c/0x270
- __sys_sendto+0x3bd/0x520
- __x64_sys_sendto+0xde/0x100
- do_syscall_64+0xfa/0xfa0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f114c590e03
-Code: 64 89 02 48 c7 c0 ff ff ff ff eb b7 66 2e 0f 1f 84 00 00 00 00 00 90 80 3d 61 77 22 00 00 41 89 ca 74 14 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 75 c3 0f 1f 40 00 55 48 83 ec 30 44 89 4c 24
-RSP: 002b:00007ffecaf08958 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f114d314620 RCX: 00007f114c590e03
-RDX: 0000000000000058 RSI: 00007f114d314670 RDI: 0000000000000003
-RBP: 0000000000000001 R08: 00007ffecaf08974 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f114d314670 R15: 0000000000000000
- </TASK>
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
