@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-889039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A95CC3C919
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:50:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73ADEC3C82D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E5966262F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:40:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D3CCB352297
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE3234D928;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21E034D4D8;
 	Thu,  6 Nov 2025 16:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cggS6yMr"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M7tFu/oH"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D6B287518;
-	Thu,  6 Nov 2025 16:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD302284665
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447089; cv=none; b=jx8I8yG1SA+S4kjVBcvbVdCiVerwM0OOynWNdW+io0BPiT61O9Oytr0orILNY67G10B4B4GZWY88YFRIL6PgY9XycTqDeTaqDcxkeff16sxen6SEQ2s0wLWoMmGEgaJ0q7MnXzWrvJRB29V3Ey/v+rmoGevGwP8xKBmPId7OiSc=
+	t=1762447089; cv=none; b=KcVWCldilu9KYcVKnE9a+xYlt1vjk6/DmrSnT5cP9zaz+t66AAVNbKlhM6QFFungi982nA2VHehithKtlb5pYLfWkbltVq7nirNhKKSwbLon9HPQLE7PPYcubd59u5ZuTAYmAHywUx8S7MUXSufvBptcMeOWYB1vK5ddMYcl0X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762447089; c=relaxed/simple;
-	bh=CYIeQD9b+y6VN8RgJNGj9LBi97jbwyv1eQ0qXrEMlOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qAu/9ndSh9E6zKLdIIcnxeh/UTCQhpVyHFbEQJmx0B+ndiOHfdQOjzBAu3IzHJaBY6LqosrDvxb3k2P35bHEd7QRpzO3zAJMNRdCJzOGESQSyEniqKpwU7tT8sBl1WdpokVqvhHtsa35eXw6aX3U/1WLo7w+p/KIcyvfwLHphNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com; spf=pass smtp.mailfrom=de.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cggS6yMr; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=de.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A66bKov028252;
-	Thu, 6 Nov 2025 16:38:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=aU1pQI
-	WYInYxmXTeOholEs4c9kD1dhRu52+eRPTQThA=; b=cggS6yMrztjhEWNqWCzhPS
-	YJnsXzdiws1TBdUgkn71FyVDiTYzmNv2EpmMFqKA1VAJ0ZadAnIZ/Rpyf5506p8t
-	qLtGSNrzm0CO+ozx+XZS3sDrpeyd7/fnOIn12XZ4IBx1BD0dPQyz9D3QrAbN/QlW
-	ijrWAJpXIzoB4og9zHDBgLH0n7Khd1XIzsqAZBqawNRl/begn5HSZG41LLtE5XGU
-	vheUMcbacGkCo9Ebvmn9Ps9L5bXpPa4LW9Bzyc9m6rwmka00CKidtV9cRCfUYuHK
-	ZgFGSw58fyTABtA8zDX4JMd8bizGJ5vobLS7iTqJPuWDXwieoILFGhooRpVnMh3w
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q98bun-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 16:38:03 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6FHqDv018784;
-	Thu, 6 Nov 2025 16:38:02 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5whnpf21-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 16:38:02 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6Gbw6G57082284
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Nov 2025 16:37:58 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B78B52004B;
-	Thu,  6 Nov 2025 16:37:58 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F75220040;
-	Thu,  6 Nov 2025 16:37:58 +0000 (GMT)
-Received: from [9.155.199.94] (unknown [9.155.199.94])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  6 Nov 2025 16:37:58 +0000 (GMT)
-Message-ID: <95a76871-771a-4fac-9771-c9e1f4a888ea@de.ibm.com>
-Date: Thu, 6 Nov 2025 17:37:57 +0100
+	bh=uHCaSN1HJj7TSyL9maP/C6AySyYk+ApX2MMQbZ4ZLlY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mzEzH++ArJ2h2l0QRfjb9I9/ZlU5yixPgqMw57PV+ozyxddVz3Ty/7znWbU4iKITeglnK8CsYlQlqbXpemI1/bc0tzqkYGQXIk783rrkAzpqGRNmrhyXBZzU/KWi30VyRY6as3O+B6dhoDOmmxwgmllkbjFeWODDyWJUCBWFUYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M7tFu/oH; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4775ae77516so14083245e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:38:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762447085; x=1763051885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIW3cS3n8yzrCh58jhXvAPIZMTRPbdX12tJ5K0TKoIs=;
+        b=M7tFu/oHqJFxzsnQB1EhtPdFbC5mxz7T/M1vlTmt4nJXIAyiafQmrrosOuXJZruzzA
+         p4YVwZQTPuWq5N+M9pU2soWvV9p5nmdbWVq2Eix8WT7r8jKHmaXgOeM4uxZ4ZBcib15r
+         +a+2EintvnpNwtezciOhUVo2WKyGAMNYFaE6R50v89iO+aHihjcZiKIoGEdcixYnkwj8
+         rc78FbPScwlbxJcC2VrIi7u5Tmc+vSDzlklTZH32xOQ9rkjgauE5d+CqvYmu4aSHY38G
+         DaXzW22xiymbGLf1/0nZlQ0T1nHRSW8SkG8vOWNnpmnmjgPFAgzjFkbfOp+KpBC2Pjql
+         y5qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762447085; x=1763051885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BIW3cS3n8yzrCh58jhXvAPIZMTRPbdX12tJ5K0TKoIs=;
+        b=SqlZ7i8MGINfwnD2ht8iDfEBbBdA02WOE4sHNVh9CiW1xHa+AZ5BDO3BCL65l8xyiC
+         vvxhAoAuVorRu9oPXp8GUfJH9X0wngzGxvJQvtMBSV0jkCRDxhslr8Tiv1Igs5U9GnoM
+         dDEjeeAOnmNB83LeJ/8K6HfH/nvFaHDxBukG7Wuj4+nnqbGeDKhGQgPBidRpjtdRR+2l
+         9iPo1dgmc1PqqEfW8adWIxnXsnWE6vEofbgx3fUVh3YE8JXIXqWy3KEf75HCCcDz6oAr
+         BROuqNscF3DawVcQcq1lTMIaNFoDA0zM+4/nx0stYLRTsvUElIamwNIEGMd6rG7ZOITw
+         2E6Q==
+X-Gm-Message-State: AOJu0YxxmdSKeGNI7DQK00+NmMQAvJDhGpk9ubjXnnIOFHXETp1PQXzy
+	I+ICYeYFQg1k2+epjZ1if5KulDI9db2C7Ini5lGTMAwWdS1c4P2c56tR9BL2aE1gqin7r4eHctq
+	ivC4j
+X-Gm-Gg: ASbGncs33FNaBKY/QvQwulBIEkTYynoPyqmplbrGrpQjEQEWP8idN/y7nL0v2lrOtHx
+	IdH5h9l72n7ktA2UvZXJvYml4+NAQMsS664/EMZDXPI3FgRZe3MihTx60I6PryB20nsgd1m5Dwv
+	j4XgokNkRYOi/GzYY0P6EGF2w7dTfNvvFjwlwIXhdcj7X7saak9n7gzSfv6CJgcM8YsRCWajqWb
+	KR63ccFbAas6qiyLfs3XoDSaOu4FDp1wPTDXXQJSZXO1BcFEKjmc4LyRs+6wi62W7YXMlXqiY5n
+	aUd3MxLEzvVjITWzS5+rmtrf19lcw/nMaVwu5KnntoStCVp/0TkkSAhATzBh7l1ZUsLA8KdpvNI
+	v1e5F6ykCqFpdUgfW9LaiQGH2D3a1W51e2mmyLAddAsSL3u66bgNWH8jSD7yEm22LP/R7ExIjw+
+	0BXEAq3a85yjowEcu48KpnHu0=
+X-Google-Smtp-Source: AGHT+IEjgkNrSWOVJ0pFSgXHlp3nXPxcUMJ0BCl/+QeBwIyxvF9R3B+0c4btthob/ZR/dpqpdOq8fw==
+X-Received: by 2002:a05:600c:310c:b0:45d:f83b:96aa with SMTP id 5b1f17b1804b1-4775cdac841mr68114705e9.7.1762447084572;
+        Thu, 06 Nov 2025 08:38:04 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625e88fasm72581015e9.15.2025.11.06.08.38.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 08:38:04 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: [PATCH] crypto: atmel-i2c - add WQ_PERCPU to alloc_workqueue users
+Date: Thu,  6 Nov 2025 17:37:58 +0100
+Message-ID: <20251106163758.340886-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 21/23] KVM: s390: Enable 1M pages for gmap
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, frankja@linux.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, seiden@linux.ibm.com, schlameuss@linux.ibm.com,
-        hca@linux.ibm.com, svens@linux.ibm.com, agordeev@linux.ibm.com,
-        gor@linux.ibm.com, david@redhat.com, gerald.schaefer@linux.ibm.com
-References: <20251106161117.350395-1-imbrenda@linux.ibm.com>
- <20251106161117.350395-22-imbrenda@linux.ibm.com>
- <5dd6e694-8cf9-4b1c-ae83-088b6bd22a17@de.ibm.com>
- <20251106173650.31907261@p-imbrenda>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-In-Reply-To: <20251106173650.31907261@p-imbrenda>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=StmdKfO0 c=1 sm=1 tr=0 ts=690cceeb cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=5sJ8VKY1vcdsYsRJmOUA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: Dxoqecpu3TmIX9REChJRyfO3QtVplp-3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAxOCBTYWx0ZWRfX3LmNWjF9h0IQ
- EGv+27rIKyfOfjobr7eDaySxCX8Vicm6hHee4KW+Ke9HukAqpi+/rOJpJVrLmOmaEALiVBxi6BF
- mJ/82fD072gWkhQ9rfxEb/7HU5ui7lgEsPxzpVYjGyvGktLG7HiPYB1lIC9FjXoIIEVv4KiHwEP
- wdN6Hjt7J7jLIQ0QS8cMYmd/8toGfvcrddeQiiavtx02fjdNT49FTCdnO+PmLp40GyZmHZN+rkM
- J/f/8SqADtWPn1QsOUwMcXJ0X6l+eDoYYONC0jBUHHzVtu1Su4IbW3UIjLuI8P4+d9P3I1JYoGA
- bAnUIvlpa6A1CNbekzNcPN0ZapiXcFd5iAZxHOArQNEVqgXO7kuXubrsRDxFyceJYg/Sq7+YHWO
- TwvmxLya2R3NPTVhjDz2uJ5rlbwRRg==
-X-Proofpoint-GUID: Dxoqecpu3TmIX9REChJRyfO3QtVplp-3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010018
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-Am 06.11.25 um 17:36 schrieb Claudio Imbrenda:
-> On Thu, 6 Nov 2025 17:22:33 +0100
-> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
-> 
->> Am 06.11.25 um 17:11 schrieb Claudio Imbrenda:
->>> While userspace is allowed to have pages of any size, the new gmap
->>> would always use 4k pages to back the guest.
->>>
->>> Enable 1M pages for gmap.
->>>
->>> This allows 1M pages to be used to back a guest when userspace is using
->>> 1M pages for the corresponding addresses (e.g. THP or hugetlbfs).
->>>
->>> Remove the limitation that disallowed having nested guests and
->>> hugepages at the same time.
->>
->> Nice. This might allow us to enable hpage=1 as new default as soon as
->> things stabilize.
->>
->> We would also be able to use 2GB huge pages for the qemu mapping?
-> 
-> yes, but I don't think that userspace can have 2G THPs right now
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-Not THP, but hugetlbfs.
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/crypto/atmel-i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/atmel-i2c.c b/drivers/crypto/atmel-i2c.c
+index a895e4289efa..9688d116d07e 100644
+--- a/drivers/crypto/atmel-i2c.c
++++ b/drivers/crypto/atmel-i2c.c
+@@ -402,7 +402,7 @@ EXPORT_SYMBOL(atmel_i2c_probe);
+ 
+ static int __init atmel_i2c_init(void)
+ {
+-	atmel_wq = alloc_workqueue("atmel_wq", 0, 0);
++	atmel_wq = alloc_workqueue("atmel_wq", WQ_PERCPU, 0);
+ 	return atmel_wq ? 0 : -ENOMEM;
+ }
+ 
+-- 
+2.51.1
 
 
