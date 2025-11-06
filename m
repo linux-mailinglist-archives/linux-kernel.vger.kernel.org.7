@@ -1,69 +1,60 @@
-Return-Path: <linux-kernel+bounces-887979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6265C39801
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:04:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306B2C39816
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745301892572
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:04:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CF3FB34FFA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462BD3009C7;
-	Thu,  6 Nov 2025 08:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5833002DF;
+	Thu,  6 Nov 2025 08:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvHF5V12"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpxDrKHA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A0B288C25;
-	Thu,  6 Nov 2025 08:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6E12FA0F6;
+	Thu,  6 Nov 2025 08:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762416247; cv=none; b=n53Gn9PbhxAyEhgW7n+TOnc2PuAsbsb4hswg3MhcuKvt8Cc3K1cB7BLVeg1HAxpdgAh/0jSHUIAGFQuKmmMMDaogspITJqO/2UhXCqnnNQ2BCvOTRUe414ZURaXg8Krr4iDfe3NXXIlg0mLi/+mtoBAb17vK66pNJPaDaHFIyXo=
+	t=1762416340; cv=none; b=u+UtK0QkDWH9KuMY/6tNNfxV1u2GXZGrn3Prpi3XDJfykJWPNGdWkULhfQwYGXEi1p7tNqW+bOCoMEr7avMvoE3MtIMc4brc8YFQygp2wUPaWUlhot8ebroWa/wvp+r+0A+uwMik3fKwzYzkQCfhG3iGUTnef8VD9APAtGGQi1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762416247; c=relaxed/simple;
-	bh=ccHkm5qtYzT6iKa2MpQExMHciYd9ipIA4PEh7rQnhmM=;
+	s=arc-20240116; t=1762416340; c=relaxed/simple;
+	bh=qpxsOFgQa/w4T51ERTogrIXKELvgZXJGgArc9ROXHMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j47mOUvD5tqvVVb6ld6LetIuZPz8nmzt5FscL3kEZIVM0lBrhaTEem69u2Eu3n45WuG9UvgNlMrjsal6KoyPsm3Z/547tvHWb51mIy2cZwX2ZHbye/QAfHUJOOS6XgCataU6vMbpRUqTnTOjHtwMsQ/QNkUHSqfWMej30HKmo5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvHF5V12; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA2CC4CEFB;
-	Thu,  6 Nov 2025 08:04:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EaCNoDxdi4H2wcOLIvPIxvAxf+TfGdxWkj/n3LCxkfyqSL0I5m2EM6SjVSWKBd2znMazFrPapwy8/9c/85N52KOdbJr/yJGhiCxapJ42XSO5vzwW/1v2uO7Sg+P15Y50Ku5htV/xQgXD5bh914mJ4H5KJ6iItZK0SQuxP0KKmpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpxDrKHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56432C4CEF7;
+	Thu,  6 Nov 2025 08:05:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762416247;
-	bh=ccHkm5qtYzT6iKa2MpQExMHciYd9ipIA4PEh7rQnhmM=;
+	s=k20201202; t=1762416339;
+	bh=qpxsOFgQa/w4T51ERTogrIXKELvgZXJGgArc9ROXHMw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NvHF5V12wKqbRMiQh9lD2BGO6IANaZaFz4LZfCAwGDwOjoG5QFOJu38rdjOPjw8mV
-	 haXxY/iWnRM8GboXg478oHWJpF2vHWZzLbOfM/2L2YdtzCSYDa4Tf4zv/kcfmniEiY
-	 d/I6gdIPiAsnEkbIkqaIrnWxY1RTzRJCXPgrWt3P5VaSdknfiowbmC+SZQevCd/ldP
-	 blDmJLIhXIIJ4mtoBiVRN9A8X3tPOBUdfcXS/Ag+iQHm1J1rmKsbODJ6dnTxLw4NVG
-	 Hq8vSt7CDeRJKm8OSn6K2RRO36AAkqGww9DdqxAFgro75BPf3L6XHde6ydlik4vGXv
-	 Skifuqv+5A5tg==
-Date: Thu, 6 Nov 2025 09:04:04 +0100
+	b=EpxDrKHAnz1DlGIbNm/BpmF1dkcSJwFBI24HpxSmBzIb7+KMeSX0gmcTq+2F3aV/O
+	 3QafZZ7ra4v/q8XDtfVSbofDqKoV1QP1WkvCSzym0Ny+hHqWaJBXIY3KS3AjU+wwCJ
+	 uXck37w3I0Cwk6Axur0tYuxL+sqgW8gAS8pv6YdwibM/K0ug5YlRqFDmcBUA4QRw4d
+	 Cs3Nnv3GgEGD8OxGIkdVl0iBfnccoSZ1G1zxjR+dbT2m6EmTMIgJe9Qv/cC2D6deVx
+	 d2e8uPUkSZsZd72gTswoe9yNKMP38DaIKe3WACrmUNs0HAe6xlQvDapncMq3wAY4M6
+	 i8lCzeaRb0Yxg==
+Date: Thu, 6 Nov 2025 09:05:37 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sjoerd Simons <sjoerd@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, 
+To: Georg Gottleuber <ggo@tuxedocomputers.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Jianjun Wang <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>, kernel@collabora.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org, netdev@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>, 
-	Bryan Hinton <bryan@bryanhinton.com>
-Subject: Re: [PATCH v3 08/13] dt-bindings: net: mediatek,net: Correct
- bindings for MT7981
-Message-ID: <20251106-unbiased-warping-earthworm-f4f66c@kuoka>
-References: <20251105-openwrt-one-network-v3-0-008e2cab38d1@collabora.com>
- <20251105-openwrt-one-network-v3-8-008e2cab38d1@collabora.com>
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ettore Chimenti <ettore.chimenti@linaro.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	stefan.schmidt@linaro.org, stephan.gerhold@linaro.org, wse@tuxedocomputers.com, 
+	cs@tuxedo.de
+Subject: Re: [PATCH v2 1/7] dt-bindings: vendor-prefixes: Add ASL Xiamen
+ Technology
+Message-ID: <20251106-lemon-kittiwake-of-freedom-dfcfdf@kuoka>
+References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
+ <20251105154107.148187-2-ggo@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,44 +63,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251105-openwrt-one-network-v3-8-008e2cab38d1@collabora.com>
+In-Reply-To: <20251105154107.148187-2-ggo@tuxedocomputers.com>
 
-On Wed, Nov 05, 2025 at 10:18:03PM +0100, Sjoerd Simons wrote:
-> Different SoCs can have different numbers of Wireless Ethernet
-> Dispatch (WED) units, specifically the MT7981 only has a single WED.
-> Furthermore the MT7981 uses infracfg for PHY switching. Adjust bindings
-> to match both aspects.
+On Wed, Nov 05, 2025 at 04:41:01PM +0100, Georg Gottleuber wrote:
+> From: Ettore Chimenti <ettore.chimenti@linaro.org>
 > 
-> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
-> ---
-> V2 -> V3: Only update MT7981 constraints rather then defaults
-> V1 -> V2: Only overwrite constraints that are different from the default
-> ---
->  Documentation/devicetree/bindings/net/mediatek,net.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> ASL Xiamen Technology Co. Ltd. is a Chinese high-speed interface and
+> display system chip design company. Adding it to the vendor prefixes.
 > 
-> diff --git a/Documentation/devicetree/bindings/net/mediatek,net.yaml b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-> index b45f67f92e80d..c49871438efc7 100644
-> --- a/Documentation/devicetree/bindings/net/mediatek,net.yaml
-> +++ b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-> @@ -338,12 +338,14 @@ allOf:
->              - const: netsys0
->              - const: netsys1
->  
-> -        mediatek,infracfg: false
-> -
->          mediatek,sgmiisys:
->            minItems: 2
->            maxItems: 2
->  
-> +        mediatek,wed:
-> +          minItems: 1
+> Link: https://www.asl-tek.com/
+> 
+> Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index f1d1882009ba..278cb879781f 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -176,6 +176,8 @@ patternProperties:
+>      description: All Sensors Corporation
+>    "^asix,.*":
+>      description: ASIX Electronics Corporation
+> +  "^asl,.*":
 
-Drop, 1 mis already minimum.
-
-Anyway, this does not match top-level schema which said minItems 2. You
-need to keep these consistent among all variants and top-level.
-
+So the prefix is asl-tek, like its domain.
 
 Best regards,
 Krzysztof
