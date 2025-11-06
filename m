@@ -1,181 +1,170 @@
-Return-Path: <linux-kernel+bounces-888815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB577C3BFEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:19:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEAAC3BF8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:12:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27D53B538F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:12:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6A2A2346D44
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94757346E63;
-	Thu,  6 Nov 2025 15:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015EA33CEBB;
+	Thu,  6 Nov 2025 15:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PXkxbyWh"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kl1oOA3+"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16883451B5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1E12264AA;
+	Thu,  6 Nov 2025 15:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762441916; cv=none; b=CV3iQTB3/7fVDjx3LV3zHty34B/LRCmKLcK4cZHvUxpF1DD9+dETq6hTr36OGaEdqlNlpoK0Los9r6msODgt63WUr04N8B1AqF8P8qjyy+C2d7A6tDUWZ9tY0vyWf8E/kubZx6YnMUXdd88UVmM6jJq0MKcP6Szh84dPivE7eEM=
+	t=1762441960; cv=none; b=OIjsFoW0qMB4VwoGP1eMGCz+jwrKvoClJhHnVoZ/zCfiY7WNI0vAWtTk053feHYb/+xDPrZt2qnMYCwoJsyl8sClsiqNJDaRkJillH/hlNRgu3K1KLVtr438sae7BsvHbvRtt4VjpsWx8PvizoXUMVv7wXzZRbbk+hfTto1uiLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762441916; c=relaxed/simple;
-	bh=hAieD+WWGuTSffxpUcA1q/dR4SZs7rb61R1Dr5YIuDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KICmNTQB2sxDpIxuf7VjXNq+slQtGe1gSFF4BkJi6MMorTk05/DXXjNMaEPjDpTSyVOkX6DN/FI5xSwvjAEckoEkIXpV/Dj9KnOCybgZiyL746mi6fVPu+lqeyQCbsnrRq3Ig5bDIFNqBHbhCLEo4qWDglZE4ooyjC2R3XuYPyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PXkxbyWh; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso1832790a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:11:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762441913; x=1763046713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pr4I1+TpJGoh524IlcwOT6D1N8KANUmHgdXy9dFIgyI=;
-        b=PXkxbyWheDzGXpFSxHx0NLUXMmrf6DnoSBG3msqPfLV0Y7dF1eIBp+j2Q26n/HMwJQ
-         Uf0j1ykIZoWKj0D1UopoNF/K7E5SttimR3Tjo7yS9ktRQXf7WjZeN69QV4JGDIwAPNYV
-         4Pv1a+1kB8UMzG0FdCaOixci51/DVW3dNFZEW4QZoExa1ZDrnSVUC88G08QqUfjvTOvp
-         NvUC+CMf/2PY4gcYwr8Xesqk7d07ge3aSx6L6bL5wRvVsdKw13AwNSTJ0uT3pKmEl+A4
-         vVUCJcyKidJeCpadMCwsRQO2As55hGmWh5CcG6XsplgBd+OrZVyCvkdJ9j2PjyhG+14n
-         ehkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762441913; x=1763046713;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pr4I1+TpJGoh524IlcwOT6D1N8KANUmHgdXy9dFIgyI=;
-        b=ty/C/61NYnvCxNlFJ08oAOxu9Dabw5DXwL/eKd9HC326MeTuh24T6nDj/+Jm5t1j/X
-         PUjFoxpfKTf8RSvXzc0gsoy2j70UZQASSzjrUJ5np9wY/mZmX8aCM6t4pgGhDqWI+23A
-         p2oeC//SQadX9I+LvbH9asKepX/GJyAo1w9VOs+w0wGjghEI6T8gcefbT3cZvYC8GHPW
-         VdTckDsT2xlB/kmTRs39UdEr4inslY1WTmiOy9kTKa7EcxITzW/6Jv1ACQz+uRZA/QZv
-         g6S1LjyWAOHxpuNl5I8levtzkyIQF6mqBHiVe0g7Qzo1VjTcqPQM74bSkDwh+RLaoSMt
-         OprQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWh4MDnCTfMbRn9NnFjiKG6uZ5mAEoRmJQCMEa4fbqI//4/jtQwtf6dmS821QHjH0IpvECk5Q9oC8Sggu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9RY5HkEIlJ+whnJW3FHh9aK7pRNgwK/4YpkMspoRk6nnrMyPv
-	YdyYFZzrs+IZGaOmWlUqs8m7XklqyFRlgCPEm4aGQohG2IgX5Mh4EA66kr5XASD0z0A=
-X-Gm-Gg: ASbGncv7xz51eYhkPEJ0zgBi73Dx2WlEXSbdcehoc7toCS4YAQ3mrlSSaG6JDPBZ8dz
-	rU/RKeRBUHYcxhNMNuBA7hQZgXDhqUVjv1QRTlcxmoWQf8J+Pri2gonvCz+vu6ZueJAPB7IinPw
-	wg7BYu4y2RjGILbk+AV+IISex1e+mwBPqJ0nm2PcFm55D3aCFcPky2ha02opcozt6pSn4lhm3K5
-	/hJrwc5IhlAfXLpamLaNgsSVggzcpXkIGdp3eUbRMBZiKPDG6ur6CcIn11QM5TIU4PuW5y9oQmU
-	LoxhZMzWOM85HZBqNvHRcQdM/747NAMRFB4gTsVWF4nP8M23Fq8m7bKxOkMQNzoklMn9kK/o2Pq
-	m9jXcA8Fu3r3Z2Rhj+pV56ktlJENxdeXK+DgXIuav+0e5jSP1oJ7aIctYe5MaqOjttf7NtmNzmp
-	Ax9AhL2LoFgXIZ
-X-Google-Smtp-Source: AGHT+IHwC37XRyFfnN+/f5wSqrpQAP6dIioKEyvZ5pTh5YK+WFVy/VWvB0JDs0KxKTLiDxdgzCtNxQ==
-X-Received: by 2002:a05:6402:1d50:b0:640:c807:6af8 with SMTP id 4fb4d7f45d1cf-64105a582f8mr7170150a12.30.1762441912914;
-        Thu, 06 Nov 2025 07:11:52 -0800 (PST)
-Received: from localhost ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f8578ecsm2022840a12.19.2025.11.06.07.11.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 07:11:52 -0800 (PST)
-Date: Thu, 6 Nov 2025 18:11:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Bobby Eshleman <bobbyeshleman@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Mina Almasry <almasrymina@google.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v6 3/6] net: devmem: prepare for autorelease rx
- token management
-Message-ID: <95223e0d-e0a4-4bff-b3a8-babe7a8a093c@suswa.mountain>
+	s=arc-20240116; t=1762441960; c=relaxed/simple;
+	bh=ZqTQV3AAnHYA/oUDdKUAT1b0EJmy55jt+tfGBG0LfPE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u7skGZRoBdvVJs0kefhbPb53lq/Tc22wu6TSMj1MALdFaDicgzU7R5Aw2yoo70KxyoU8R4kqTQwvkA3xHtpSdXQCfLvxKTwSFfLwaGMpQvUeubFs1d3nibjWWicVul2C9zAlbkZXiSawI7UKAJ161O2SteobI8CyOxN6WdjaM1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kl1oOA3+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=lyCh1ZlcjefenIZUQFrFmr0r3PD2d4ftPbKmRbzDNC4=; b=kl1oOA3+CX1g8DU509Zj9JRdx5
+	a6yyxcQbiu2005B7Jzcok/WJE2D2WmDTBNuUsBRNbZmSLyttnhKjdSazViKuFXxPllf5DJhTPnQl1
+	8Xosc5Nzai5pPwUvTbzFZnQq3UzjueGjSm5YO5FCVJ8UyqH96BSK9w21+3n+bMd4IopV0qZpvhonO
+	wZgqaYd9gmHCWTLXOM+4qnyNdKzfFt3pS0Fy1klJvFWpX8sDXSViutvM5ZDr9/vtYXM1cjbd8bIL5
+	nZgx5T6/V1uX7gv8dkv5DsDB85idFk1JcgV+8wgkuFo6wiDpzMicpDSrB+0XPtGN06vTz/D2azhvZ
+	TKpN2ktg==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vH1eq-0033Nf-Le; Thu, 06 Nov 2025 16:12:16 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>,  "Darrick J. Wong"
+ <djwong@kernel.org>,  Bernd Schubert <bernd@bsbernd.com>,  "Theodore Ts'o"
+ <tytso@mit.edu>,  Miklos Szeredi <miklos@szeredi.hu>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Kevin Chen
+ <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+In-Reply-To: <CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
+	(Amir Goldstein's message of "Thu, 6 Nov 2025 11:13:01 +0100")
+References: <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
+	<20250912145857.GQ8117@frogsfrogsfrogs>
+	<CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
+	<2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+	<CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+	<20250916025341.GO1587915@frogsfrogsfrogs>
+	<CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+	<87ldkm6n5o.fsf@wotan.olymp>
+	<CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+	<7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
+	<20251105224245.GP196362@frogsfrogsfrogs>
+	<d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
+	<CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
+Date: Thu, 06 Nov 2025 15:12:16 +0000
+Message-ID: <874ir7qjov.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3@meta.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bobby,
+On Thu, Nov 06 2025, Amir Goldstein wrote:
 
-kernel test robot noticed the following build warnings:
+> [...]
+>
+>> >>> fuse_entry_out was extended once and fuse_reply_entry()
+>> >>> sends the size of the struct.
+>> >>
+>> >> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
+>
+> Sorry, I meant to say that the reply size is variable.
+> The size is obviously determined at init time.
+>
+>> >>
+>> >>> However fuse_reply_create() sends it with fuse_open_out
+>> >>> appended and fuse_add_direntry_plus() does not seem to write
+>> >>> record size at all, so server and client will need to agree on the
+>> >>> size of fuse_entry_out and this would need to be backward compat.
+>> >>> If both server and client declare support for FUSE_LOOKUP_HANDLE
+>> >>> it should be fine (?).
+>> >>
+>> >> If max_handle size becomes a value in fuse_init_out, server and
+>> >> client would use it? I think appended fuse_open_out could just
+>> >> follow the dynamic actual size of the handle - code that
+>> >> serializes/deserializes the response has to look up the actual
+>> >> handle size then. For example I wouldn't know what to put in
+>> >> for any of the example/passthrough* file systems as handle size -
+>> >> would need to be 128B, but the actual size will be typically
+>> >> much smaller.
+>> >
+>> > name_to_handle_at ?
+>> >
+>> > I guess the problem here is that technically speaking filesystems could
+>> > have variable sized handles depending on the file.  Sometimes you enco=
+de
+>> > just the ino/gen of the child file, but other times you might know the
+>> > parent and put that in the handle too.
+>>
+>> Yeah, I don't think it would be reliable for *all* file systems to use
+>> name_to_handle_at on startup on some example file/directory. At least
+>> not without knowing all the details of the underlying passthrough file
+>> system.
+>>
+>
+> Maybe it's not a world-wide general solution, but it is a practical one.
+>
+> My fuse_passthrough library knows how to detect xfs and ext4 and
+> knows about the size of their file handles.
+> https://github.com/amir73il/libfuse/blob/fuse_passthrough/passthrough/fus=
+e_passthrough.cpp#L645
+>
+> A server could optimize for max_handle_size if it knows it or use
+> MAX_HANDLE_SZ if it doesn't.
+>
+> Keep in mind that for the sake of restarting fuse servers (title of this =
+thread)
+> file handles do not need to be the actual filesystem file handles.
+> Server can use its own pid as generation and then all inodes get
+> auto invalidated on server restart.
+>
+> Not invalidating file handles on server restart, because the file handles
+> are persistent file handles is an optimization.
+>
+> LOOKUP_HANDLE still needs to provide the inode+gen of the parent
+> which LOOKUP currently does not.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bobby-Eshleman/net-devmem-rename-tx_vec-to-vec-in-dmabuf-binding/20251105-092703
-base:   255d75ef029f33f75fcf5015052b7302486f7ad2
-patch link:    https://lore.kernel.org/r/20251104-scratch-bobbyeshleman-devmem-tcp-token-upstream-v6-3-ea98cf4d40b3%40meta.com
-patch subject: [PATCH net-next v6 3/6] net: devmem: prepare for autorelease rx token management
-config: openrisc-randconfig-r073-20251105 (https://download.01.org/0day-ci/archive/20251106/202511060119.MAzcsLoN-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 10.5.0
+One additional complication I just realised is that FUSE_LOOKUP already
+uses up all the 3 in_args.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202511060119.MAzcsLoN-lkp@intel.com/
+So, my initial plan of having FUSE_LOOKUP_HANDLE using a similar structure
+to FUSE_LOOKUP, with the additional parent handle passed to the server
+through the in_args needs a different solution.
 
-New smatch warnings:
-net/core/sock.c:1107 sock_devmem_dontneed_manual_release() error: uninitialized symbol 'ret'.
+(Anyway, I'll need to read through the whole thread(s) again to better
+digest all the information.)
 
-vim +/ret +1107 net/core/sock.c
+Cheers,
+--=20
+Lu=C3=ADs
 
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1086  static noinline_for_stack int
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1087  sock_devmem_dontneed_manual_release(struct sock *sk, struct dmabuf_token *tokens,
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1088  				    unsigned int num_tokens)
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1089  {
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1090  	struct net_iov *niov;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1091  	unsigned int i, j;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1092  	netmem_ref netmem;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1093  	unsigned int token;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1094  	int num_frags = 0;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1095  	int ret;
 
-ret needs to be = 0;
-
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1096  
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1097  	if (!sk->sk_devmem_info.binding)
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1098  		return -EINVAL;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1099  
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1100  	for (i = 0; i < num_tokens; i++) {
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1101  		for (j = 0; j < tokens[i].token_count; j++) {
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1102  			token = tokens[i].token_start + j;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1103  			if (token >= sk->sk_devmem_info.binding->dmabuf->size / PAGE_SIZE)
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1104  				break;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1105  
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1106  			if (++num_frags > MAX_DONTNEED_FRAGS)
-45aa39492cf4dd Bobby Eshleman 2025-11-04 @1107  				return ret;
-
-Uninitialized.  It's always a good idea to test code with
-CONFIG_INIT_STACK_ALL_PATTERN.
-
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1108  
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1109  			niov = sk->sk_devmem_info.binding->vec[token];
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1110  			if (atomic_dec_and_test(&niov->uref)) {
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1111  				netmem = net_iov_to_netmem(niov);
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1112  				WARN_ON_ONCE(!napi_pp_put_page(netmem));
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1113  			}
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1114  			ret++;
-
-Uninitialized.
-
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1115  		}
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1116  	}
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1117  
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1118  	atomic_sub(ret, &sk->sk_devmem_info.outstanding_urefs);
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1119  
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1120  	return ret;
-45aa39492cf4dd Bobby Eshleman 2025-11-04  1121  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+>
+> I did not understand why Darrick's suggestion of a flag that ino+gen
+> suffice is any different then max_handle_size =3D 12 and using the
+> standard FILEID_INO64_GEN in that case?
+>
+> Thanks,
+> Amir.
 
