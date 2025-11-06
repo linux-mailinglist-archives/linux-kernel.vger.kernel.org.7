@@ -1,355 +1,97 @@
-Return-Path: <linux-kernel+bounces-888504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6873AC3B056
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:57:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9497DC3B0AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD5AF4FF668
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 467801AA4142
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE586330318;
-	Thu,  6 Nov 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TK4TDp25";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xuIGh3Nh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE96F32C927;
-	Thu,  6 Nov 2025 12:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E672D332EC9;
+	Thu,  6 Nov 2025 12:53:22 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2305E31A810;
+	Thu,  6 Nov 2025 12:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433582; cv=none; b=nRbxRGsvYWfo6cYb09KfH0OFATaA9NGrEe2DYt52OjU1KZ/c2onieXKInFC5/QMfXij/CKgOHno0EkWdLnXODdReRc7vtjjS4los5r3kv3rGgxz4qWuoj2qDCYvTwc+FVPbVEUsE+SpTygAIOPG1YtvN/V4Qqx5wwlM6dIiqc8M=
+	t=1762433602; cv=none; b=OrFcFFja98o5lkyiKB6NfPLHv90DY1x7SxXueb5SX00GGImvzJ3WnGxy1m13Q0G4K7WP4yODYYjbbTu+6JXiEvCqk7q0SCg7i78q/IKExsbWOuhxpTgcMygCEUxXlv6f/488UHXYXlqfBU3qDlvTo+GPthXQOv2guE7GQ9HNdvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433582; c=relaxed/simple;
-	bh=L9ZzRq+34GWixMEzHhYo+imq2foHTnNNftImhU2AINM=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=M8q7UVF/f1A9KhkgHZhkQV2UHw0AJc0sOHhMEni2nHErlMIs7MByE4YmoT698xV9snjzo9CMlg5gRZhdT9RT8Jqv8claGr2BGK6+b/3vmxSxfo0FCh3aaRRGvwcuKyUqYjD4GhpyCq4776whv/xJNpS47yLOKfg3tLJcu9EwVAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TK4TDp25; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xuIGh3Nh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 06 Nov 2025 12:52:54 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762433576;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=V4+wwWARy/AMPlRxr6ggcP9lTCzspS/BMHHLGBKhO64=;
-	b=TK4TDp25kQQSVSqiEkjlFPsS59mmNlOf9s9YT7Gjd2/USvB3CFkoJr9QPd9OxHLR1hjX5W
-	8YvZj6JsKqGLsffzLv6EgLCn94dtQ5QHMuZ+PrjkPnkz5GvTgzjWo+zdA/h/I38LozEKUo
-	+bJEoWPrrGZeWfJy9YtskaobqyU/3ec9jKDhhZrCwRfRb1aACunEQRArp4/RDpMV2GQY60
-	9PbADLGTyYtUErGUDWdkcusGXPynNcPxr83CzrfU+3gGRJwByRq0XIeZZxHOhWE3yHOb5K
-	mOOR+x8+qKdtDL7emlwzNE/0w3v6UsliaWJH0RBje9Rn0ob09FPitrx0VBrUTA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762433576;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=V4+wwWARy/AMPlRxr6ggcP9lTCzspS/BMHHLGBKhO64=;
-	b=xuIGh3NhZ+dBPL/WOdpNkoXepk0D+KPlaHGpGH7mdS+oE5KOBCK3q8bD3DGX3CQT0wAXIx
-	gUzz20mNtCyKU/Aw==
-From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce/amd: Enable interrupt vectors once per-CPU on
- SMCA systems
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1762433602; c=relaxed/simple;
+	bh=WTVcx2KLxkIz8uaXTCSQ2TLKErp2R1ohNeaYXev727E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kDwgO41vQ6UgnfhFLfsSDVxTTZucMvySzWRtYwv8D5dKHy49WmMHiXoRt2GYLoPXe+rbiiGpZt2ze9q+31P/tEVuqn/loQeU4u0UehDUKmXksHpyQiwX+iS5vdV9D5qWx6ZmRoIPrDCOf5zOhmzTXvbDthcIFK/gBnkfMtO+5Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: WXpibZ6/SbaEOQVH1JovGg==
+X-CSE-MsgGUID: +jBFCvyYTSShP8cvR+ngsA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 21:53:12 +0900
+Received: from localhost.localdomain (unknown [10.226.92.193])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A942841A6E43;
+	Thu,  6 Nov 2025 21:53:09 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	stable@kernel.org
+Subject: [PATCH] dmaengine: sh: rz-dmac: Fix rz_dmac_terminate_all()
+Date: Thu,  6 Nov 2025 12:52:54 +0000
+Message-ID: <20251106125256.122133-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176243357470.2601451.5972569206284327356.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the ras/core branch of tip:
+After audio full duplex testing, playing the recorded file contains a few
+playback frames for the first time. The rz_dmac_terminate_all() does not
+reset all the hardware descriptors queued previously, leading to the wrong
+descriptor being picked up during the next DMA transfer. Fix this issue by
+resetting all descriptor headers for a channel in rz_dmac_terminate_all()
+as rz_dmac_lmdesc_recycle() points to the proper descriptor header filled
+by the rz_dmac_prepare_descs_for_slave_sg().
 
-Commit-ID:     134b1eabe6d9df8873bd018c9465994db8bff945
-Gitweb:        https://git.kernel.org/tip/134b1eabe6d9df8873bd018c9465994db8b=
-ff945
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Tue, 04 Nov 2025 14:55:40=20
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 05 Nov 2025 16:51:27 +01:00
-
-x86/mce/amd: Enable interrupt vectors once per-CPU on SMCA systems
-
-Scalable MCA systems have a per-CPU register that gives the APIC LVT offset
-for the thresholding and deferred error interrupts.
-
-Currently, this register is read once to set up the deferred error interrupt
-and then read again for each thresholding block. Furthermore, the APIC LVT
-registers are configured each time, but they only need to be configured once
-per-CPU.
-
-Move the APIC LVT setup to the early part of CPU init, so that the registers
-are set up once. Also, this ensures that the kernel is ready to service the
-interrupts before the individual error sources (each MCA bank) are enabled.
-
-Apply this change only to SMCA systems to avoid breaking any legacy behavior.
-The deferred error interrupt is technically advertised by the SUCCOR feature.
-However, this was first made available on SMCA systems.  Therefore, only set
-up the deferred error interrupt on SMCA systems and simplify the code.
-
-Guidance from hardware designers is that the LVT offsets provided from the
-platform should be used. The kernel should not try to enforce specific values.
-However, the kernel should check that an LVT offset is not reused for multiple
-sources.
-
-Therefore, remove the extra checking and value enforcement from the MCE code.
-The "reuse/conflict" case is already handled in setup_APIC_eilvt().
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Link: https://lore.kernel.org/20251104-wip-mca-updates-v8-0-66c8eacf67b9@amd.=
-com
+Cc: stable@kernel.org
+Fixes: 5000d37042a6 ("dmaengine: sh: Add DMAC driver for RZ/G2L SoC")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/x86/kernel/cpu/mce/amd.c | 121 ++++++++++++++-------------------
- 1 file changed, 53 insertions(+), 68 deletions(-)
+ drivers/dma/sh/rz-dmac.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index d9f9ee7..117165c 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -43,9 +43,6 @@
- /* Deferred error settings */
- #define MSR_CU_DEF_ERR		0xC0000410
- #define MASK_DEF_LVTOFF		0x000000F0
--#define MASK_DEF_INT_TYPE	0x00000006
--#define DEF_LVT_OFF		0x2
--#define DEF_INT_TYPE_APIC	0x2
-=20
- /* Scalable MCA: */
-=20
-@@ -57,6 +54,10 @@ static bool thresholding_irq_en;
- struct mce_amd_cpu_data {
- 	mce_banks_t     thr_intr_banks;
- 	mce_banks_t     dfr_intr_banks;
-+
-+	u32		thr_intr_en: 1,
-+			dfr_intr_en: 1,
-+			__resv: 30;
- };
-=20
- static DEFINE_PER_CPU_READ_MOSTLY(struct mce_amd_cpu_data, mce_amd_data);
-@@ -271,6 +272,7 @@ void (*deferred_error_int_vector)(void) =3D default_defer=
-red_error_interrupt;
-=20
- static void smca_configure(unsigned int bank, unsigned int cpu)
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index 1f687b08d6b8..3087bbd11d59 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -557,11 +557,16 @@ rz_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ static int rz_dmac_terminate_all(struct dma_chan *chan)
  {
-+	struct mce_amd_cpu_data *data =3D this_cpu_ptr(&mce_amd_data);
- 	u8 *bank_counts =3D this_cpu_ptr(smca_bank_counts);
- 	const struct smca_hwid *s_hwid;
- 	unsigned int i, hwid_mcatype;
-@@ -301,8 +303,8 @@ static void smca_configure(unsigned int bank, unsigned in=
-t cpu)
- 		 * APIC based interrupt. First, check that no interrupt has been
- 		 * set.
- 		 */
--		if ((low & BIT(5)) && !((high >> 5) & 0x3)) {
--			__set_bit(bank, this_cpu_ptr(&mce_amd_data)->dfr_intr_banks);
-+		if ((low & BIT(5)) && !((high >> 5) & 0x3) && data->dfr_intr_en) {
-+			__set_bit(bank, data->dfr_intr_banks);
- 			high |=3D BIT(5);
- 		}
-=20
-@@ -377,6 +379,14 @@ static bool lvt_off_valid(struct threshold_block *b, int=
- apic, u32 lo, u32 hi)
- {
- 	int msr =3D (hi & MASK_LVTOFF_HI) >> 20;
-=20
-+	/*
-+	 * On SMCA CPUs, LVT offset is programmed at a different MSR, and
-+	 * the BIOS provides the value. The original field where LVT offset
-+	 * was set is reserved. Return early here:
-+	 */
-+	if (mce_flags.smca)
-+		return false;
+ 	struct rz_dmac_chan *channel = to_rz_dmac_chan(chan);
++	struct rz_lmdesc *lmdesc = channel->lmdesc.base;
+ 	unsigned long flags;
++	unsigned int i;
+ 	LIST_HEAD(head);
+ 
+ 	rz_dmac_disable_hw(channel);
+ 	spin_lock_irqsave(&channel->vc.lock, flags);
++	for (i = 0; i < DMAC_NR_LMDESC; i++)
++		lmdesc[i].header = 0;
 +
- 	if (apic < 0) {
- 		pr_err(FW_BUG "cpu %d, failed to setup threshold interrupt "
- 		       "for bank %d, block %d (MSR%08X=3D0x%x%08x)\n", b->cpu,
-@@ -385,14 +395,6 @@ static bool lvt_off_valid(struct threshold_block *b, int=
- apic, u32 lo, u32 hi)
- 	}
-=20
- 	if (apic !=3D msr) {
--		/*
--		 * On SMCA CPUs, LVT offset is programmed at a different MSR, and
--		 * the BIOS provides the value. The original field where LVT offset
--		 * was set is reserved. Return early here:
--		 */
--		if (mce_flags.smca)
--			return false;
--
- 		pr_err(FW_BUG "cpu %d, invalid threshold interrupt offset %d "
- 		       "for bank %d, block %d (MSR%08X=3D0x%x%08x)\n",
- 		       b->cpu, apic, b->bank, b->block, b->address, hi, lo);
-@@ -473,41 +475,6 @@ static int setup_APIC_mce_threshold(int reserved, int ne=
-w)
- 	return reserved;
- }
-=20
--static int setup_APIC_deferred_error(int reserved, int new)
--{
--	if (reserved < 0 && !setup_APIC_eilvt(new, DEFERRED_ERROR_VECTOR,
--					      APIC_EILVT_MSG_FIX, 0))
--		return new;
--
--	return reserved;
--}
--
--static void deferred_error_interrupt_enable(struct cpuinfo_x86 *c)
--{
--	u32 low =3D 0, high =3D 0;
--	int def_offset =3D -1, def_new;
--
--	if (rdmsr_safe(MSR_CU_DEF_ERR, &low, &high))
--		return;
--
--	def_new =3D (low & MASK_DEF_LVTOFF) >> 4;
--	if (!(low & MASK_DEF_LVTOFF)) {
--		pr_err(FW_BUG "Your BIOS is not setting up LVT offset 0x2 for deferred err=
-or IRQs correctly.\n");
--		def_new =3D DEF_LVT_OFF;
--		low =3D (low & ~MASK_DEF_LVTOFF) | (DEF_LVT_OFF << 4);
--	}
--
--	def_offset =3D setup_APIC_deferred_error(def_offset, def_new);
--	if ((def_offset =3D=3D def_new) &&
--	    (deferred_error_int_vector !=3D amd_deferred_error_interrupt))
--		deferred_error_int_vector =3D amd_deferred_error_interrupt;
--
--	if (!mce_flags.smca)
--		low =3D (low & ~MASK_DEF_INT_TYPE) | DEF_INT_TYPE_APIC;
--
--	wrmsr(MSR_CU_DEF_ERR, low, high);
--}
--
- static u32 get_block_address(u32 current_addr, u32 low, u32 high,
- 			     unsigned int bank, unsigned int block,
- 			     unsigned int cpu)
-@@ -543,12 +510,10 @@ static u32 get_block_address(u32 current_addr, u32 low,=
- u32 high,
- 	return addr;
- }
-=20
--static int
--prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
--			int offset, u32 misc_high)
-+static int prepare_threshold_block(unsigned int bank, unsigned int block, u3=
-2 addr,
-+				   int offset, u32 misc_high)
- {
- 	unsigned int cpu =3D smp_processor_id();
--	u32 smca_low, smca_high;
- 	struct threshold_block b;
- 	int new;
-=20
-@@ -568,18 +533,10 @@ prepare_threshold_block(unsigned int bank, unsigned int=
- block, u32 addr,
- 	__set_bit(bank, this_cpu_ptr(&mce_amd_data)->thr_intr_banks);
- 	b.interrupt_enable =3D 1;
-=20
--	if (!mce_flags.smca) {
--		new =3D (misc_high & MASK_LVTOFF_HI) >> 20;
--		goto set_offset;
--	}
--
--	/* Gather LVT offset for thresholding: */
--	if (rdmsr_safe(MSR_CU_DEF_ERR, &smca_low, &smca_high))
--		goto out;
--
--	new =3D (smca_low & SMCA_THR_LVT_OFF) >> 12;
-+	if (mce_flags.smca)
-+		goto done;
-=20
--set_offset:
-+	new =3D (misc_high & MASK_LVTOFF_HI) >> 20;
- 	offset =3D setup_APIC_mce_threshold(offset, new);
- 	if (offset =3D=3D new)
- 		thresholding_irq_en =3D true;
-@@ -587,7 +544,6 @@ set_offset:
- done:
- 	mce_threshold_block_init(&b, offset);
-=20
--out:
- 	return offset;
- }
-=20
-@@ -678,6 +634,32 @@ static void amd_apply_cpu_quirks(struct cpuinfo_x86 *c)
- 		mce_banks[0].ctl =3D 0;
- }
-=20
-+/*
-+ * Enable the APIC LVT interrupt vectors once per-CPU. This should be done b=
-efore hardware is
-+ * ready to send interrupts.
-+ *
-+ * Individual error sources are enabled later during per-bank init.
-+ */
-+static void smca_enable_interrupt_vectors(void)
-+{
-+	struct mce_amd_cpu_data *data =3D this_cpu_ptr(&mce_amd_data);
-+	u64 mca_intr_cfg, offset;
-+
-+	if (!mce_flags.smca || !mce_flags.succor)
-+		return;
-+
-+	if (rdmsrq_safe(MSR_CU_DEF_ERR, &mca_intr_cfg))
-+		return;
-+
-+	offset =3D (mca_intr_cfg & SMCA_THR_LVT_OFF) >> 12;
-+	if (!setup_APIC_eilvt(offset, THRESHOLD_APIC_VECTOR, APIC_EILVT_MSG_FIX, 0))
-+		data->thr_intr_en =3D 1;
-+
-+	offset =3D (mca_intr_cfg & MASK_DEF_LVTOFF) >> 4;
-+	if (!setup_APIC_eilvt(offset, DEFERRED_ERROR_VECTOR, APIC_EILVT_MSG_FIX, 0))
-+		data->dfr_intr_en =3D 1;
-+}
-+
- /* cpu init entry point, called from mce.c with preempt off */
- void mce_amd_feature_init(struct cpuinfo_x86 *c)
- {
-@@ -689,10 +671,16 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
-=20
- 	mce_flags.amd_threshold	 =3D 1;
-=20
-+	smca_enable_interrupt_vectors();
-+
- 	for (bank =3D 0; bank < this_cpu_read(mce_num_banks); ++bank) {
--		if (mce_flags.smca)
-+		if (mce_flags.smca) {
- 			smca_configure(bank, cpu);
-=20
-+			if (!this_cpu_ptr(&mce_amd_data)->thr_intr_en)
-+				continue;
-+		}
-+
- 		disable_err_thresholding(c, bank);
-=20
- 		for (block =3D 0; block < NR_BLOCKS; ++block) {
-@@ -713,9 +701,6 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
- 			offset =3D prepare_threshold_block(bank, block, address, offset, high);
- 		}
- 	}
--
--	if (mce_flags.succor)
--		deferred_error_interrupt_enable(c);
- }
-=20
- void smca_bsp_init(void)
+ 	list_splice_tail_init(&channel->ld_active, &channel->ld_free);
+ 	list_splice_tail_init(&channel->ld_queue, &channel->ld_free);
+ 	vchan_get_all_descriptors(&channel->vc, &head);
+-- 
+2.43.0
+
 
