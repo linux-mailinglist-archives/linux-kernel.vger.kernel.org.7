@@ -1,78 +1,141 @@
-Return-Path: <linux-kernel+bounces-889124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BC4C3CC9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:20:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 944B8C3CC90
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B944215EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:14:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 651FD4F25EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052F734DB69;
-	Thu,  6 Nov 2025 17:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BDF34E75B;
+	Thu,  6 Nov 2025 17:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c84W3GkV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eA/qHfi9"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6442E7F22;
-	Thu,  6 Nov 2025 17:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC0C34E75A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449256; cv=none; b=WNkd83OScKNQc7N3M67wxhXrFLW1jTMXxCAiKvBLfoWxh1TVQZ5R4Vp6RAuPeUMoKLWnrJefT8GjkCV3w6aKYYsz88LoAyvN0GqMy2aaso+NAEtlY06V//5gV8ZjK+nUU0by7GWnfn0SprMoJWlTlHIW1EHtJibxZZddlgWyuJE=
+	t=1762449357; cv=none; b=amrKckfXknywNMvMVgx3smMKrm6UOFq7cr8oELcA2cTMr78XgcjWVAW/DkAW14OuY2GjralsF9VyuHle732a1BkUBnPwIGj0CPcRUms2iQi95GpjHItkzpye3AkG8BdebMUHnz/w3lTMKaRj49Sl0UIoTG+uKBAVDSrG9MpbGOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449256; c=relaxed/simple;
-	bh=EqB7RdqWp9d1/ZPOg8KzZ+wKzAyj/zzi7GOHdzU1J5g=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jI4xRvPkeMhGSrF8NGNwqMNqFgzb4LofU55lpgWIN+Fwjl8wa9x/rOLuiQoV1+HAsEDAWBUW3LhCH/eDOR8qvuZ42SYM73XzPPTq3O95972FmGuVFiQXD+ZQGH7W2YB/hpoc+uCG+BX7KH9bYq3+Uqxp4cWOyRdCko7jcqZK3fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c84W3GkV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3313C116B1;
-	Thu,  6 Nov 2025 17:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762449254;
-	bh=EqB7RdqWp9d1/ZPOg8KzZ+wKzAyj/zzi7GOHdzU1J5g=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=c84W3GkVsdv1X5HNtl2JVh0RXv6i7sA1RWjgqMMFMVcRjsBHPbnQ6nTsCn+tInj3H
-	 ux8RH4tiQyfLFjTGCamQRbCuGuIFwxlJhoRHTCS0k7lfXHW8Nr3RVmu87H5sGvLepa
-	 UPmhaNFWm7Pen456kRg70U+6OqLpFo2C+Hz+U9XVzeoUyPG0agpv7BtkR/En0huL9O
-	 gHbf6AWxjwQTA6EBZy2MpaED7m76iH2AiMcDU0ka8wbZ6YuEjwjz497bRSVb3d78C6
-	 K+3qD1YRKtxsOoBD4AlEmT5IdXQIX3/7B43Gei403iSJSfx7yJDfl8GPDVnl1hMCw6
-	 vAzzIukh+WRDA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF8139EF956;
-	Thu,  6 Nov 2025 17:13:48 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.18-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251106163413.4144149-1-kuba@kernel.org>
-References: <20251106163413.4144149-1-kuba@kernel.org>
-X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251106163413.4144149-1-kuba@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.18-rc5
-X-PR-Tracked-Commit-Id: 3534e03e0ec2e00908765549828a69df5ebefb91
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c2c2ccfd4ba72718266a56f3ecc34c989cb5b7a0
-Message-Id: <176244922759.295084.13837638295083326105.pr-tracker-bot@kernel.org>
-Date: Thu, 06 Nov 2025 17:13:47 +0000
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
+	s=arc-20240116; t=1762449357; c=relaxed/simple;
+	bh=H2cS17IPARzauQUtP+qWzfi7eoIsYAbWRbTvkXZaQTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l/A8vjherB2TA3RCO0W32O+3o+jzV3tBRIDw5AIlhZr7oi+fUKClTF8b4WW4C5eYnD/5Mtr6YhjHwYaFyHoRdGhvccRWnMGga+xjG/bzlt2SW/2wMwckqFHNBNQrVKd+lcU3VHxAhRm4X09DOW7fRXCCLOXU7YG8eB9bBoSwFv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eA/qHfi9; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429b7ba208eso760296f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:15:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762449354; x=1763054154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=blWgJL5IxiaRL16DgffEZwhTofGP5Amd3llZBVcR6wg=;
+        b=eA/qHfi9Jq8NpptxUxpaAL7fU1dAuDBcsbsYZjsECV0pqx5Alx9HVq42E76RtZeRJQ
+         OO59BPCfggs0+XIopTU2CYLQwj7gQLpbdUWBoIg4wwnAA7HfxFY6hoajg6hnU0BnEWoF
+         FAqs1CRyqchrplgrrRg9SJ1/npAMxe8Ln9wYlH8ecZzhadjCXkpT+1hsCfcTT9JZPkYW
+         piug8OOONU7UjG6Z2VoeWMeLMfrGjDDSg0f5C7oUU4XhwQ+lHLojTWSg7gaP07+JJ7My
+         Z2uxjqUO6DT7dNC1bI4LyrXE2mmVAfnJ10V9vNcDJVJVJBmZHhTUznpC/en67AVtf7/i
+         mWaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762449354; x=1763054154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=blWgJL5IxiaRL16DgffEZwhTofGP5Amd3llZBVcR6wg=;
+        b=UJP6NpYkd5k1UNsi39uXfiCPH6E/fSYHqc+tVmeqD1c9RG8jxp9X5gJ+4/Diwd63oj
+         RojCLk66vYfcG17bOpF1HbGngIXZl0O6Rtc2rU3ECflqGmNM/TaAnPgFNkkhKCmW4e5Q
+         dAff7gQ7tArtAXlAeicDMq/2vFo6nTwiYvK5joJuy66e0CiKiUDUaqqmsyo2qqiC/qQq
+         iIrKv5p++mXQ0jAn7E0r6yM6cUQIvgKx6GTPMfvDNJiIn3AR/VSspxBzp6mkcyIwRscl
+         eB724+eStHpuv8QcbySGjL1J6Q913Krka8yFg9RZa0XYMZo2uTSQdJ/xp5vf6bkjP1Xp
+         2imw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOjRXKMWYbFfldBmUG1cdh9tWuDqYU/WcFq4JNmxfMnT6wG5rdjRFcvwGpk+ufGGEHUSFh4570ZuJnyBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNZyw6rj3KNKwioyUWwu2JVRCwbqZ7s/+Jqqos1NJIjfBBnOa1
+	ck9IE0cCJCRTZ0noSh7MYZscZPgdYMIJPwxpoLXKOS4SbgtuLPdvZv0s17ZLQm4UAoCyIPfufzQ
+	m338ShqgTK+TtGFov3uz6iAJEldhamLc=
+X-Gm-Gg: ASbGncsdftXfGTxKhsw27F8jELodd9eCHe1HFFMMJaPOVMEv7agyqBt1K7hDg8MPswW
+	ci5zeEvipegfsJklIapfAyCb+DzX2vGkfaDm761ASJUDFpeDPPNG2pKtuY6ZawctGKQ+dCPcKL8
+	G1TsVMU8t8WbbKiGK3LcWcskwuLa0hu5r6C7qyHHnKnIVHbZulLhVvjyNcjwFNdS5Mn4DXYcsDm
+	+3HnccX57nXASddZpiAbnZaUaEeRWKHfEy8XtA0+iTm2atnK9y2RV2SknjwWiQffrTy2MFhjOHn
+	7Bzsje8aJT8=
+X-Google-Smtp-Source: AGHT+IEkK0dq7MPy5gKtDs3GydYbk6HCGOnP+RQCC45EaWNnFendOZxIEe/PmbwzRNoV29lOxJ6e1gwjudaVlKrYwUg=
+X-Received: by 2002:a05:6000:402b:b0:401:5ad1:682 with SMTP id
+ ffacd0b85a97d-429e32e3662mr6502221f8f.14.1762449353513; Thu, 06 Nov 2025
+ 09:15:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251106052628.349117-1-skb99@linux.ibm.com>
+In-Reply-To: <20251106052628.349117-1-skb99@linux.ibm.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 6 Nov 2025 09:15:39 -0800
+X-Gm-Features: AWmQ_bmSdrU6gIkuTnrWchxD2V9GU7o86PagWBY2wUCtwzPV40XsTw0vi6aljfo
+Message-ID: <CAADnVQL3njbb3ANFkDWYRC-EHqAqWSwYs4OSUeKiw4XOYa+UNQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] selftests/bpf: Fix htab_update/reenter_update
+ selftest failure
+To: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Cc: bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Hari Bathini <hbathini@linux.ibm.com>, sachinpb@linux.ibm.com, 
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>, Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Thu,  6 Nov 2025 08:34:13 -0800:
+On Wed, Nov 5, 2025 at 9:26=E2=80=AFPM Saket Kumar Bhaskar <skb99@linux.ibm=
+.com> wrote:
+>
+> Since commit 31158ad02ddb ("rqspinlock: Add deadlock detection and recove=
+ry")
+> the updated path on re-entrancy now reports deadlock via
+> -EDEADLK instead of the previous -EBUSY.
+>
+> The selftest is updated to align with expected errno
+> with the kernel=E2=80=99s current behavior.
+>
+> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+> ---
+>  tools/testing/selftests/bpf/prog_tests/htab_update.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/htab_update.c b/tools=
+/testing/selftests/bpf/prog_tests/htab_update.c
+> index 2bc85f4814f4..98d52bb1446f 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/htab_update.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/htab_update.c
+> @@ -40,7 +40,7 @@ static void test_reenter_update(void)
+>         if (!ASSERT_OK(err, "add element"))
+>                 goto out;
+>
+> -       ASSERT_EQ(skel->bss->update_err, -EBUSY, "no reentrancy");
+> +       ASSERT_EQ(skel->bss->update_err, -EDEADLK, "no reentrancy");
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.18-rc5
+Makes sense, but looks like the test was broken for quite some time.
+It fails with
+        /* lookup_elem_raw() may be inlined and find_kernel_btf_id()
+will return -ESRCH */
+        bpf_program__set_autoload(skel->progs.lookup_elem_raw, true);
+        err =3D htab_update__load(skel);
+        if (!ASSERT_TRUE(!err || err =3D=3D -ESRCH, "htab_update__load") ||=
+ err)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c2c2ccfd4ba72718266a56f3ecc34c989cb5b7a0
+before reaching deadlk check.
+Pls make it more robust.
+__pcpu_freelist_pop() might be better alternative then lookup_elem_raw().
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+pw-bot: cr
 
