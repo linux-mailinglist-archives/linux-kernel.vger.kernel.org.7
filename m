@@ -1,342 +1,231 @@
-Return-Path: <linux-kernel+bounces-888043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D50DC39A9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:52:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F369C39A5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 589364F7826
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 182DF3B6019
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ED93090FB;
-	Thu,  6 Nov 2025 08:51:21 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600693090CF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 08:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA5C3090FD;
+	Thu,  6 Nov 2025 08:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K4jEMhK0";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aFiqkJ36"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50CC308F35
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 08:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762419080; cv=none; b=A/xvvQAqs/5JmKgN5pzwa5b1Xq1dYKtmHUSKmv6ZGCVmEROWQEgR6HepajWP0/Bwwssfhck9bdklwW3VEH+fo9En60/hu5p3SzJRkhG4XQ3lbg05xIptkNw2gDjroQPmbR9aA3z7M0AQZ1tYjlE1XT2mMygrE+0pbJIIBktSobM=
+	t=1762419039; cv=none; b=CJUGGznfmLIcgvyQNxUnyAgMIPY0Cocett2d2AQw0GyT2rKWNqEA5fFE7aL+nXYm9QYv5GzwxeNWw1K6MCfpWnzT20unsJ9viHHFpni4dnTQC5wdwKvmHXOi2OYCCpHwoNAGaC+NBk9q9yaKaS5dLop3DmqjyEW5m3u3bGfSsOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762419080; c=relaxed/simple;
-	bh=FbTYt8k7jYIDQ6g0T2I8J7Ur0WGr1y91BIqahOkjXFA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aEKp9WJfEYAVvkjhSW2E1658lKWVpxBD3PhcDjsB8E+wZIE4M2/NzdRRc19kgWuxuuV3F7fmpPI+5bhsy/q6QmcTjwJ5cmLwD+ac42RDr9TdxVMWBpAcZXhzanEkR873vTFI8hlsz4Zz02AccmB21tfmb6X4ug7mg0NSaBxoPMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8CxbNKDYQxpc6AfAA--.3592S3;
-	Thu, 06 Nov 2025 16:51:15 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by front1 (Coremail) with SMTP id qMiowJBxzsF_YQxpfHQpAQ--.30613S3;
-	Thu, 06 Nov 2025 16:51:13 +0800 (CST)
-Subject: Re: [PATCH] Loongarch:Make pte/pmd_modify can set _PAGE_MODIFIED
-To: Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Cc: kernel@xen0n.name, akpm@linux-foundation.org, willy@infradead.org,
- david@redhat.com, linmag7@gmail.com, thuth@redhat.com, apopple@nvidia.com,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- Liupu Wang <wangliupu@loongson.cn>
-References: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
- <CAAhV-H5JnmJqTZ1GnhcgODtjL5FLy8x5HNRJxs6us=gzcFon5Q@mail.gmail.com>
- <95e6f0a6-fd6c-a85f-5983-5a37eaf960a2@loongson.cn>
- <CAAhV-H4WrphWQqW7HoeD7xSvRuHV1KBt7jgESQU7N-y1HrSVVw@mail.gmail.com>
- <b839a6a6-3791-ba73-baff-e860aa879bbc@loongson.cn>
- <833f6790-f1bf-d089-84cf-9f55e1c9866f@loongson.cn>
- <e035d888-a7a6-0f46-fdc1-92331cc12a93@loongson.cn>
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Message-ID: <0d774995-c35c-60d2-32b8-91b32663b0c9@loongson.cn>
-Date: Thu, 6 Nov 2025 16:50:18 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1762419039; c=relaxed/simple;
+	bh=WVvDeGr64D4pcQGgTdXKzhsbEzPiYrr/sAxjT7B5tN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bnwuEBnQhYMc8bUTP9pxsqTDQ400v6BwVtzYlm3Nd5jpYMTAon9RmI7Vx+/P7NO4DCSPOhrSWjG8M/utyILDedP9t8f7nYT1EtjpmNKO6MQQsoymZQoWV7MSTUAVuPEphNlX9+G0QB/EYtksQD/E3Nd3bRkSYuwuW3ZLQ8/srLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K4jEMhK0; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aFiqkJ36; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A68c3mu2389043
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 08:50:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jzv1yTzt2RufxPXCysYd/nddVUqtY3l4eZc0BE4yJU0=; b=K4jEMhK0ebWBshQy
+	pZBFpZDAIk/RKKd33BpRIi6ZgkStwJMuCJtG7GnCss++wpf/ac6bEIu88OVWZdTI
+	3IhgyrjFU288bKdeE7S/wE9FyZR8xAEBGCJ6hdXTsyT0DSxC1XOvQGpjOACAcezs
+	+EE0o1jQj8u47jlgPERUqaGnoEn8jCuj27tXytJCg0yWx7oFRE1tBpN+xoK9/S9G
+	W5wbtReFqiuaqRjiDQU6Q//Dpu5WvEJih3CGa8FXSB+j83gwTgZ2ed4DRRxccCaS
+	ikZjxKM//XV4tNqHpXh9dIGKu5fW38LSydKIOCAwqFZVFlYdaW12S47zd1GKIJFs
+	aoBLtA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8h9us7wa-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:50:36 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-ba433d88288so595165a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 00:50:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762419035; x=1763023835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jzv1yTzt2RufxPXCysYd/nddVUqtY3l4eZc0BE4yJU0=;
+        b=aFiqkJ36N+7pY/aLdfLsuZcO942DgAljNMvdt9SawAFinvlSJrY10TV/g1PdMT5Su4
+         I8oY0feNEc17H+y90mGlxidWF72jw3ubyrn662FEBiTivtL9xfZcFWue4XGOdmJKlheD
+         FGV6UZZM7zdRc2ZvwrrfIUwcu545avAJjgCn/cos5t0dmkdEIS3bi3+cAututWzd83Vl
+         D2r27CPjwie8iFaEEhNvYeh2yhU02gd47EpKF/Uoqg6W9HzHRDg9+YHo9awcnoNBAfiF
+         a/0keWWdL6ai1UubFJCM90wlUkdahFzMH2xFYZvpF1+i/jKzqtPCnBy9WMWyvsIWyT9C
+         wfKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762419035; x=1763023835;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jzv1yTzt2RufxPXCysYd/nddVUqtY3l4eZc0BE4yJU0=;
+        b=SlboFRVQooxocfVczAnBK6+c/03yqA/04sMCWsa29z0UK/k5AA7dnX0mfAN2lWJPPN
+         nV6SlnKT7Kb82XtpOQnZEOZA6DWBI3Bfx68/tnPqss2HPHpMbOsas+36gy0kn/rh4BQO
+         i3B2y9MSCpg1Q7pLnn1SMBB2mPWa/wgm9ttABQasqBt9sciGoTX3ypgmySHtHuNX2c+W
+         6zIsVGU4xrFoIsETmChTzjsYkHuu3jG000HtXmr/ZzysgQz1xrg6pbtJT+YoU10aUmko
+         5sF8QeTrm+mK+LpyrqSOEzmFg8+7eYKliOHuXWGwRVi6ZDquKKcsHNFeJKOSr2GfNrdR
+         i+mA==
+X-Gm-Message-State: AOJu0YzkYi1iVy9Da+ComeSq2EaSNMqy1JPAjFzFvJORViAf3vbfC98Q
+	GVhdKJIsI19nwbJPknGaYHlquAHaJmj/4dqB8BopD7+QUVwo+OqWIEw0MlnxBFSlZs3SSI2v0Iq
+	/VxNhz8iOgDSxwIPw4XNbQgO0+oQhwhzNXAawWqy3DT6jgEC2WMSn4aJTeV3ErlCMeMs=
+X-Gm-Gg: ASbGncuGhCrl6RvYsj0D7a+GbiXSyUjUNohiRnd76HKSP7W1azgK3vZzo5Q+Ywho6aJ
+	truXv5ZZHaA5KbsKUwzM9YviE/Y+QvnXe5J87agBAxlOPSXP7uSUmuqC0kJ+0U6IZYuujIx1aon
+	adVW+G3ox+jS0JQpCK4TCiMM7EGMrMhPH/orj+D0yssiFfBFP5BFvxFFZ4M020UaTNMDUnjq6cl
+	eSheUIrataGpu4UnLr6njDviecCa4a0HKvU4QNy/+tbx9cNCmNJFz5gMyLwtSv8KtNI4b+zkDIt
+	jB4PCKrTDUr89PIM37bHOnl89ZyD4C80SXb/tis1GRPt0IUEufLtx1zKP+DjJVhxf02IDxi+jp8
+	uQzVN+sYeT2NbK0FdcymwwlM5HKV57RPy1jd17H955l626uf5mE60FXvpSwrsKtfhITjvEHZY
+X-Received: by 2002:a05:6a20:2589:b0:340:c6cd:545b with SMTP id adf61e73a8af0-34f8601d2dbmr8310898637.44.1762419035256;
+        Thu, 06 Nov 2025 00:50:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF9WA8Q9OBOvy+W03mWMWpuJqtsAQ6hbgML/ovXeLVnmjdSHkr68hNbqJUMCMAf7GNeaTowtg==
+X-Received: by 2002:a05:6a20:2589:b0:340:c6cd:545b with SMTP id adf61e73a8af0-34f8601d2dbmr8310866637.44.1762419034647;
+        Thu, 06 Nov 2025 00:50:34 -0800 (PST)
+Received: from [10.133.33.172] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f9ed21desm1841412a12.11.2025.11.06.00.50.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 00:50:34 -0800 (PST)
+Message-ID: <2cc29c2e-a066-4c49-99dd-872cc2f5f326@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 16:50:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e035d888-a7a6-0f46-fdc1-92331cc12a93@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH ath-next v3 0/6] wifi: ath11k: Add single shot/periodic
+ CFR capture support
+To: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>, jjohnson@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        ath11k@lists.infradead.org
+References: <20251105172226.3182968-1-yu.zhang@oss.qualcomm.com>
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 Content-Language: en-US
-X-CM-TRANSID:qMiowJBxzsF_YQxpfHQpAQ--.30613S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWfJFyruF4kZFyfGw4rGr47ZFc_yoWDZr17pr
-	1kJFyUZFW5tr1xJFy0qF17Xry2yr47J3WUXr1DJF1UJw1Dtryjqr1UXrn09r1rJr48Jr1U
-	Xr1UJr43ZF4UJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
+In-Reply-To: <20251105172226.3182968-1-yu.zhang@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=R5UO2NRX c=1 sm=1 tr=0 ts=690c615c cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=W4cqpq0YkI6qXs7jkP8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: vQpZndzxaSd7CNpKhVp5DN_8SkWfmcZH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA3MCBTYWx0ZWRfXy0thPKSbNfzz
+ COoHs/i5d/UQdUFe4l6tKFMHuGp8yRnnL17+46y9anF4qK9ZDeyLIV+lxNjCOMJKFaoGkIDqsBN
+ C705DB9Y7RGoNfNdYxS1uo0+5dDw6y8Y6LqOkCOIpadeVYWJufy1nf29hFfiqmdMgc11zUJ6ey/
+ 6bo6hkW7HZnt0DXcyNNw72NH90Rtf7gMRhELjflAWVWwye888yrr0FtN10Z2LGtbLX1gODC0Yq2
+ /X101mhQqFTuW6oFhsKPkeAEwS6u7GOCASridksqEM3rCbL83z82/5RN5KZcUGJHXAGmGvYxRJV
+ 6+gOw46bFZj0mdW7bsJBb852dG6BbetH76sQqKDJdWHM/R2qzOFibOFETS24wHqD8Ue8CkUcw8g
+ JzKWm04jhWBTOyboTP2D+0HMjnu+vg==
+X-Proofpoint-GUID: vQpZndzxaSd7CNpKhVp5DN_8SkWfmcZH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_01,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 phishscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511060070
 
 
-在 2025/11/6 上午10:10, Bibo Mao 写道:
->
->
-> On 2025/11/6 上午9:55, Tianyang Zhang wrote:
->> Hi ,Bibao
->>
->> 在 2025/11/5 上午9:18, Bibo Mao 写道:
->>>
->>>
->>> On 2025/11/5 上午9:07, Huacai Chen wrote:
->>>> On Wed, Nov 5, 2025 at 8:57 AM Tianyang Zhang 
->>>> <zhangtianyang@loongson.cn> wrote:
->>>>>
->>>>> Hi, Huacai
->>>>>
->>>>> 在 2025/11/4 下午4:00, Huacai Chen 写道:
->>>>>> Hi, Tianyang,
->>>>>>
->>>>>> The subject line can be:
->>>>>> LoongArch: Let {pte,pmd}_modify() record the status of 
->>>>>> _PAGE_DIRTY (If
->>>>>> I'm right in the later comments).
->>>>> Ok. I got it
->>>>>>
->>>>>> On Tue, Nov 4, 2025 at 3:30 PM Tianyang Zhang 
->>>>>> <zhangtianyang@loongson.cn> wrote:
->>>>>>> In the current pte_modify operation, _PAGE_DIRTY might be 
->>>>>>> cleared. Since
->>>>>>> the hardware-page-walk does not have a predefined _PAGE_MODIFIED 
->>>>>>> flag,
->>>>>>> this could lead to loss of valid data in certain scenarios.
->>>>>>>
->>>>>>> The new modification involves checking whether the original PTE 
->>>>>>> has the
->>>>>>> _PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, 
->>>>>>> ensuring
->>>>>>> that the pte_dirty interface can return accurate information.
->>>>>> The description may be wrong here. Because pte_dirty() returns
->>>>>> pte_val(pte) & (_PAGE_DIRTY | _PAGE_MODIFIED).
->>>>>> If _PAGE_DIRTY isn't lost, pte_dirty() is always right, no matter
->>>>>> whether there is or isn't _PAGE_MODIFIED.
->>>>>>
->>>>>> I think the real reason is we need to set _PAGE_MODIFIED in
->>>>>> pte/pmd_modify to record the status of _PAGE_DIRTY, so that we can
->>>>>> recover _PAGE_DIRTY afterwards, such as in pte/pmd_mkwrite().
->>>>> Ok, I will adjust the description
->>>> After some thinking, your original description may be right. Without
->>>> this patch the scenario maybe like this:
->>>> The pte is dirty _PAGE_DIRTY but without _PAGE_MODIFIED, after
->>>> pte_modify() we lose _PAGE_DIRTY, then pte_dirty() returns false. So
->>>> we need _PAGE_MODIFIED to record _PAGE_DIRTY here.
->>> In theory pte_modify() is to modify RWX attribute. I think that it 
->>> is a tricky to remove _PAGE_DIRTY and add _PAGE_MODIFIED with HW PTW 
->>> system.
->>>
->>> Also _PAGE_ACCESSED is lost with pte_modify() API, is there any 
->>> influence with HW PTW system, or wait until possible problems coming 
->>> out.
->>
->> static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->> {
->>          return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->>                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->> }
->> In my understand, During the  pte_modify process, it is essential to 
->> ensure that specific bits are inherited from the original PTE rather 
->> than simply replaced(as set_pte),
->>
->> this guarantees the coherent operation of the memory management system.
->>
->> Since _PAGE_CHG_MASK explicitly requires preserving pte_modified, and 
-> The problem is how _PAGE_CHG_MASK should be defined, do you check with 
-> other architectures?
 
-Under mainstream architectures(like ARM64/X86 ), if the pte_modify 
-interface clears the hard-dirty flag, it will set the soft-dirty flag 
-through some mechanism.
+On 11/6/2025 1:22 AM, Yu Zhang(Yuriy) wrote:
+> To enable/disable cfr feature use command,
+> 
+> echo <val> > /sys/kernel/debug/ieee80211/phyX/ath11k/enable_cfr
+> 
+> where, val: 0 to disable CFR and 1 to enable CFR.
+> 
+> To enable CFR capture for associated peers,
+> 
+> echo "<val> <bw> <periodicity> <method>"
+>  >
+> /sys/kernel/debug/ieee80211/phyX/netdev\:wlanx/stations/<mac>/cfr_capture
+> 
+> val: 0 - stop CFR capture
+>      1 - start CFR capture
+> bw: CFR capture bandwidth
+>      0 - 20MHZ
+>      1 - 40MHZ
+>      2 - 80MHZ
+> Periodicity: Periodicity at which hardware is expceted to collect CFR
+> dump.
+>      0 - single shot capture.
+>      non zero - for Periodic captures (value should be multiple of 10
+> ms)
+> method: Method used by hardware to collect the CFR dump.
+>      0 - from the ACKs of QOS NULL packets.
+> 
+> To enable CFR capture for unassociated clients,
+> 
+> echo “<mac address> <val> <periodicity>”
+>  > /sys/kernel/debug/ieee80211/phyX/ath11k/cfr_unassoc
+> 
+> Mac address: mac address of the client.
+> Val: 0 - start CFR capture
+>      1 – stop CFR capture
+> Periodicity: Periodicity at which hardware is expceted to collect CFR
+> dump.
+>      0 - single shot capture.
+>      non zero - for Periodic captures (value should be multiple of 10
+> ms)
+> 
+> To collect the cfr dump,
+> cat /sys/kernel/debug/ieee80211/phy0/ath11k/cfr_capture0 > /tmp/cfr.bin
+> 
+> Previous link:
+> https://lore.kernel.org/all/1645005922-7252-1-git-send-email-quic_vnaralas@quicinc.com/
+> 
+> Signed-off-by: Yu Zhang(Yuriy) <yu.zhang@oss.qualcomm.com>
+> 
+> ---
+> Changes in v3:
+>  - Update related comments. 
+> Changes in v2:
+>  - Update related comments. 
+> ---
+> 
+> Venkateswara Naralasetty (6):
+>   wifi: ath11k: Add initialization and deinitialization sequence for CFR
+>     module
+>   wifi: ath11k: Register debugfs for CFR configuration
+>   wifi: ath11k: Add support unassociated client CFR
+>   wifi: ath11k: Register relayfs entries for CFR dump
+>   wifi: ath11k: Register DBR event handler for CFR data
+>   wifi: ath11k: Register handler for CFR capture event
+> 
+>  drivers/net/wireless/ath/ath11k/Kconfig       |   11 +
+>  drivers/net/wireless/ath/ath11k/Makefile      |    1 +
+>  drivers/net/wireless/ath/ath11k/cfr.c         | 1007 +++++++++++++++++
+>  drivers/net/wireless/ath/ath11k/cfr.h         |  302 +++++
+>  drivers/net/wireless/ath/ath11k/core.c        |   41 +-
+>  drivers/net/wireless/ath/ath11k/core.h        |   19 +-
+>  drivers/net/wireless/ath/ath11k/dbring.c      |   50 +-
+>  drivers/net/wireless/ath/ath11k/dbring.h      |    8 +-
+>  drivers/net/wireless/ath/ath11k/debug.h       |    8 +-
+>  drivers/net/wireless/ath/ath11k/debugfs_sta.c |  143 ++-
+>  drivers/net/wireless/ath/ath11k/hal.c         |    3 +-
+>  drivers/net/wireless/ath/ath11k/hw.h          |    5 +-
+>  drivers/net/wireless/ath/ath11k/mac.c         |   17 +-
+>  drivers/net/wireless/ath/ath11k/wmi.c         |  147 ++-
+>  drivers/net/wireless/ath/ath11k/wmi.h         |   97 +-
+>  15 files changed, 1833 insertions(+), 26 deletions(-)
+>  create mode 100644 drivers/net/wireless/ath/ath11k/cfr.c
+>  create mode 100644 drivers/net/wireless/ath/ath11k/cfr.h
+> 
+> 
+> base-commit: 059ca8fd692b67a77fb89e9d4e8f57cf08e32b08
 
-Thus, at least from the perspective of PAGE_DIRTY logic, this approach 
-is right.
-
->> there is an inherent correlation between pte_dirty and pte_modified, 
->> these attributes must be evaluated and handled accordingly.
->>
->> The pte_valid attribute, being a hardware property, is inherently the 
->> target of modification in the pte_modify interface. Therefore, it is 
->> reasonable not to preserve it.
-> On HW PTW system, _PAGE_PRESENT will control whether trigger page 
-> fault rather than pte_valid/_PAGE_ACCESSED. For simple, do you think 
-> the following code is ok or not ?
-
-"On HW PTW system, _PAGE_PRESENT will control whether trigger page fault 
-rather than pte_valid/_PAGE_ACCESSED"
-
-Yes, indeed, in many cases, PAGE_PRESENT is precisely the cleanup target 
-of pte_modify.
-
->
->  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->  {
-> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
-> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
-> +       unsigned long mask = _PAGE_CHG_MASK;
-> +
-> +       if (cpu_has_ptw)
-> +               mask |= _PAGE_DIRTY | _PAGE_ACCESSED;
-> +       return __pte((pte_val(pte) & mask) |
-> +                    (pgprot_val(newprot) & ~mask));
->  }
->
-This modification is inappropriate.
-
-Firstly, _PAGE_ACCESSED(bit 0, as _PAGE_PRESENT) and _PAGE_DIRTY bits 
-are inherently the targets of pte_modify operations. Some 
-sub-memory-system like numa_balance precisely rely on
-
-clearing these bits to trigger hardware exceptions and complete 
-subsequent processes, this appears to be unrelated to hardware-ptw
-
-And, under hardware-ptw scenarios, the WRITE=0 && DIRTY=1 condition 
-should never occur, therefore, we cannot preserve the DIRTY bit in advance.
-
-Thanks
-
-Tianyang
-
-> Regards
-> Bibo Mao
->
->>
->> Thanks
->>
->> Tianyang
->>
->>>
->>> Regards
->>> Bibo Mao
->>>>
->>>> But the description also needs to be updated.
->>>>
->>>>>>
->>>>>>> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
->>>>>>> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
->>>>>>> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
->>>>>>> ---
->>>>>>>    arch/loongarch/include/asm/pgtable.h | 17 +++++++++++++----
->>>>>>>    1 file changed, 13 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h 
->>>>>>> b/arch/loongarch/include/asm/pgtable.h
->>>>>>> index bd128696e96d..106abfa5183b 100644
->>>>>>> --- a/arch/loongarch/include/asm/pgtable.h
->>>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
->>>>>>> @@ -424,8 +424,13 @@ static inline unsigned long 
->>>>>>> pte_accessible(struct mm_struct *mm, pte_t a)
->>>>>>>
->>>>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->>>>>>>    {
->>>>>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->>>>>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->>>>>>> +       unsigned long val = (pte_val(pte) & _PAGE_CHG_MASK) |
->>>>>>> +                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
->>>>>>> +
->>>>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
->>>>>>> +               val |= _PAGE_MODIFIED;
->>>>>>> +
->>>>>>> +       return __pte(val);
->>>>>>>    }
->>>>>>>
->>>>>>>    extern void __update_tlb(struct vm_area_struct *vma,
->>>>>>> @@ -547,9 +552,13 @@ static inline struct page *pmd_page(pmd_t pmd)
->>>>>>>
->>>>>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->>>>>>>    {
->>>>>>> -       pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->>>>>>> +       unsigned long val = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->>>>>>>                                   (pgprot_val(newprot) & 
->>>>>>> ~_HPAGE_CHG_MASK);
->>>>>>> -       return pmd;
->>>>>>> +
->>>>>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
->>>>>>> +               val |= _PAGE_MODIFIED;
->>>>>>> +
->>>>>>> +       return __pmd(val);
->>>>>>>    }
->>>>>> A minimal modification can be:
->>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h
->>>>>> b/arch/loongarch/include/asm/pgtable.h
->>>>>> index 1f20e9280062..907ece0199e0 100644
->>>>>> --- a/arch/loongarch/include/asm/pgtable.h
->>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
->>>>>> @@ -448,8 +448,13 @@ static inline unsigned long 
->>>>>> pte_accessible(struct
->>>>>> mm_struct *mm, pte_t a)
->>>>>>
->>>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->>>>>>    {
->>>>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->>>>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->>>>>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
->>>>>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
->>>>>> +
->>>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
->>>>>> +               pte_val(pte) |= _PAGE_MODIFIED;
->>>>>> +
->>>>>> +       return pte;
->>>>>>    }
->>>>>
->>>>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
->>>>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
->>>>>
->>>>> After this step, _PAGE_DIRTY may have already disappeared,
->>>>> If no new variables are added, they can be modified in follow way:
->>>>>
->>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->>>>>    {
->>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
->>>>> +               pte_val(pte) |= _PAGE_MODIFIED;
->>>>> +
->>>>>          return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->>>>>           (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->>>>>
->>>>>    }
->>>> OK, it makes sense.
->>>>
->>>> Huacai
->>>>>
->>>>>>
->>>>>>    extern void __update_tlb(struct vm_area_struct *vma,
->>>>>> @@ -583,7 +588,11 @@ static inline struct page *pmd_page(pmd_t pmd)
->>>>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->>>>>>    {
->>>>>>           pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->>>>>> -                               (pgprot_val(newprot) & 
->>>>>> ~_HPAGE_CHG_MASK);
->>>>>> +                       (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
->>>>>> +
->>>>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
->>>>>> +               pmd_val(pmd) |= _PAGE_MODIFIED;
->>>>>> +
->>>>>>           return pmd;
->>>>>>    }
->>>>>>
->>>>>> You needn't define a new variable.
->>>>>>
->>>>>>
->>>>>> Huacai
->>>>>>
->>>>>>>    static inline pmd_t pmd_mkinvalid(pmd_t pmd)
->>>>>>> -- 
->>>>>>> 2.41.0
->>>>>>>
->>>>>>>
->>>>> Thanks
->>>>>
->>>>> Tianyang
->>>>>
+Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 
 
