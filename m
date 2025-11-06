@@ -1,177 +1,129 @@
-Return-Path: <linux-kernel+bounces-888017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2E1C39963
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:29:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D4FC3996C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:29:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9FEEB4E262D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:29:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 639464EC405
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7AE30217B;
-	Thu,  6 Nov 2025 08:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dR1kJ7Qs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB6E302178;
+	Thu,  6 Nov 2025 08:29:51 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E168D302174;
-	Thu,  6 Nov 2025 08:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE2B302142;
+	Thu,  6 Nov 2025 08:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762417754; cv=none; b=d+/i1H8RL4o4l2YJL30ojH5xbhj4fQnL2Y6kjuxwfX7HW56hSAqtR11Yd9xMVOqGmQYjE1l9vdP6Z0TWms5sRLQpHRACwSw4xafR0i/hDA38QF0Wda4xryV4iDv2QHCuucnv8BsQaOHSumOn8mfSiXeAonVlKjEz6uoFFAb8V4E=
+	t=1762417791; cv=none; b=NBvyQEjL9/kSMA5X97wF9oi4smhzTEZvuNKZqp3bKpu+pkwJW9VPc65o8sEc+QZTiFyFsuAwZqVtU4iw19w8XsUqtmYDNFGEYQun3j8o68N93sukagYhNi3ObB3ORvC1USpGvsGorAqnDM4AA0JMktlvJG1XkQh4FxXse9DLsuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762417754; c=relaxed/simple;
-	bh=wzbpmt9DYjDnOYsbKZsscaSDP3dQXL8FPtmzZlZYQ54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fggoKAJ6C7N2OlLQ6cUnRIS5g/xFhuKAMdqPHXG4KaMbazo/FNtLu0zw/4KQQL1WelWP4slY0yXDhUNpVc1OLI75N3TPGA2aCC3n58rNsg/GPEHNWEyyNkWg/ObKAWnO710U2xhb3kWiBppedCrlryTaPI/zst/v2TcDyRqvUMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dR1kJ7Qs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A66RXmI1938890;
-	Thu, 6 Nov 2025 08:29:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ftdAUJ1zoIYS6ZwSplDb8Q4d/5w7ZpnVJCEZRLJ60xY=; b=dR1kJ7QskziBRs+j
-	vTxdNn8yHcE6FSGAWiD7GxvXRPol3+8SGy07W4mdFhY/jaJ68VWAXoJBxjOTDmhf
-	pgR/QwArMmExgK84pjJZ+Bgm79DDZLc+hg2M0z5FcrrHArGtV4aaamFFonN7rDeP
-	+BGrXn+oWeIpvglIPXAXqVfU+454s54YCtWWotlDhQ/fJxiq9filghCWKhMUpRHe
-	P2u7kHCmnH8ESsG1CkMNFkYAg/FjlwlV3aKvaDItflx4uhFt2jXhWOiPwf6LI6W+
-	DwsCiOl8y848EkF0ecZpiIf5XvAmqNFWyAzzjJ1yxhTgn/RPNhdWGmyty9sVrpNd
-	eX41WQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8apgtbsu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 08:29:09 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A68T8mD022667
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Nov 2025 08:29:08 GMT
-Received: from [10.204.78.32] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 6 Nov
- 2025 00:29:04 -0800
-Message-ID: <3ddb78d0-5afd-4ba7-a0a2-bfd5ae3696c4@quicinc.com>
-Date: Thu, 6 Nov 2025 13:59:01 +0530
+	s=arc-20240116; t=1762417791; c=relaxed/simple;
+	bh=UxbC1vicz9GSMfWV81A0ecke1oaKM6VqkOqImVMc98w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=WAFO+gfiBmjsGd5os09G+aSQkP72s/j+rzyWv6ZhV4SR1mReg41OY6SxJLBiwUtZYmLDw/khlyvR7OWXJ90By9MTuy0bI3Y3IWl52Nw8S5lA1GH6a+jbnFZReUqyv/J7bidQo+8e0eV8stpUMWhQc5ZrJ7WsXVLA6/2Ag2In7Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-03 (Coremail) with SMTP id rQCowAC3NOxkXAxpmp61AQ--.43240S2;
+	Thu, 06 Nov 2025 16:29:32 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	error27@gmail.com,
+	andriy.shevchenko@intel.com
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] iio: trigger: Fix error handling in viio_trigger_alloc
+Date: Thu,  6 Nov 2025 16:29:23 +0800
+Message-Id: <20251106082923.32688-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:rQCowAC3NOxkXAxpmp61AQ--.43240S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFWkCF1kGF18ZryxKFy3Jwb_yoW8CFWfpa
+	n7ZayqkryDJF1kXw47Z3W8ZryfGa1rKa15KF48A3sI93y5XryrKFyIyrWjyw18Jry8XF42
+	qasrXa45Cr1DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14
+	v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
+	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
+	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeYLvDUUU
+	U
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot' function
- for hpd gpio
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_riteshk@quicinc.com>,
-        <quic_rajeevny@quicinc.com>, <quic_vproddut@quicinc.com>
-References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
- <a6fbpfulyhbnfoy2d6wf7hl6de3z34gxcu6f4lby7ncsyu3f2g@q6qcvdid7bko>
-Content-Language: en-US
-From: Amit Singh <quic_amitsi@quicinc.com>
-In-Reply-To: <a6fbpfulyhbnfoy2d6wf7hl6de3z34gxcu6f4lby7ncsyu3f2g@q6qcvdid7bko>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA2OCBTYWx0ZWRfX/KnLMD9fo9j7
- 1MIVKhBPcGqPEBLQPbPBpQkx3+gyAq8vcSPjA/4d3QASVfAbwg9BBCjzccdh4N1ASXbf3NM2xR8
- Yd86MP41f3lTLOnWzH2gQ1oOwneHLSXrzVE1TrqmVloPvtt4/F+ixDdgmK+JfBGCsAEiy9r4BSH
- yNYgqjBF9bVU49MJZwiQZkkq6D4at9COUNTG0AP7Kzf1ifGMR9hMUR5H+NOVNJM2i4XLwBoIxeN
- gJMmpQu9WmWbpXHqf80ZrcWdoNU+PmScVBVkcqjIjVk0/a1H4ExbCdMj6c+5NRCSrnkEkW7fAUD
- BU2uc4DQSwVmlHSwWnNsunVjaiNellNciqN+2XHtQ3b0X1LjHkNdDEBKsNfo+CnfYVmK32/JAT7
- Rk5bksEfi+25/PUJNBhRzKlkzS7mIw==
-X-Authority-Analysis: v=2.4 cv=LoCfC3dc c=1 sm=1 tr=0 ts=690c5c55 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=02aoYn3nmM_QT12xQSUA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: xKLl7KWg8PVDPyz-YzkWZXtHBKZ5XPRE
-X-Proofpoint-ORIG-GUID: xKLl7KWg8PVDPyz-YzkWZXtHBKZ5XPRE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1015 malwarescore=0
- suspectscore=0 spamscore=0 phishscore=0 impostorscore=0 bulkscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060068
 
+viio_trigger_alloc() initializes the device with device_initialize()
+but uses kfree() directly in error paths, which bypasses the device's
+release callback iio_trig_release(). This could lead to memory leaks
+and inconsistent device state.
 
+Additionally, the current error handling has the following issues:
+1. Potential double-free of IRQ descriptors when kvasprintf fails.
+2. The release function may attempt to free negative subirq_base.
+3. Missing mutex_destroy in release function.
 
-On 11/1/2025 2:48 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 31, 2025 at 02:27:39PM +0530, Amit Singh wrote:
->> Currently, hpd gpio is configured as a general-purpose gpio, which does
-> 
-> HPD, GPIO
+Fix these issues by:
+1. Replacing kfree(trig) with put_device(&trig->dev) in error paths.
+2. Setting subirq_base to 0 after freeing IRQ descriptors in error
+path to prevent double-free in release callback.
+3. Modifying release function to properly handle negative subirq_base.
+4. Adding missing mutex_destroy().
 
-Sure, will update in next version.
+Found by code review.
 
-> 
->> not support interrupt generation.
-> 
-> This is not true. GPIOs support interrupt generation.
+Cc: stable@vger.kernel.org
+Fixes: 2c99f1a09da3 ("iio: trigger: clean up viio_trigger_alloc()")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the patch, thanks for developer's suggestions.
+---
+ drivers/iio/industrialio-trigger.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Will update the commit message.
-
-> 
->> This change removes the generic
-> 
-> Documentation/process/submitting-patches.rst, see the paragraph around
-> "This patch" words.
-
-Sure, will follow the guidelines. 
-
-> 
->> hpd-gpios property and assigns the edp_hot function to the pin,
->> enabling proper irq support.
-> 
-> What for?
-
-I'll update more details in the commit message.
-
-> 
->>
->> Fixes: 756efb7cb7293 ("arm64: dts: qcom: qcs6490-rb3gen2: Add DP output")
->> Signed-off-by: Amit Singh <quic_amitsi@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> index c146161e4bb4..caa0b6784df3 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> @@ -49,8 +49,6 @@ dp-connector {
->>  		label = "DP";
->>  		type = "mini";
->>  
->> -		hpd-gpios = <&tlmm 60 GPIO_ACTIVE_HIGH>;
->> -
->>  		port {
->>  			dp_connector_in: endpoint {
->>  				remote-endpoint = <&mdss_edp_out>;
->> @@ -1420,7 +1418,6 @@ &wifi {
->>  /* PINCTRL - ADDITIONS TO NODES IN PARENT DEVICE TREE FILES */
->>  
->>  &edp_hot_plug_det {
->> -	function = "gpio";
->>  	bias-disable;
->>  };
->>  
->> -- 
->> 2.34.1
->>
-> 
+diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
+index 54416a384232..9f6d30a244d9 100644
+--- a/drivers/iio/industrialio-trigger.c
++++ b/drivers/iio/industrialio-trigger.c
+@@ -524,6 +524,7 @@ static void iio_trig_release(struct device *device)
+ 			       CONFIG_IIO_CONSUMERS_PER_TRIGGER);
+ 	}
+ 	kfree(trig->name);
++	mutex_destroy(&trig->pool_lock);
+ 	kfree(trig);
+ }
+ 
+@@ -596,8 +597,9 @@ struct iio_trigger *viio_trigger_alloc(struct device *parent,
+ 
+ free_descs:
+ 	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
++	trig->subirq_base = 0;
+ free_trig:
+-	kfree(trig);
++	put_device(&trig->dev);
+ 	return NULL;
+ }
+ 
+-- 
+2.17.1
 
 
