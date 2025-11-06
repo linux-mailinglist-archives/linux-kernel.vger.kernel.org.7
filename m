@@ -1,316 +1,134 @@
-Return-Path: <linux-kernel+bounces-888871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A03C3C21A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:43:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB3AC3C22F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61CA1AA7905
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:44:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FC1D4E855C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ADA30B513;
-	Thu,  6 Nov 2025 15:43:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C2D2C325F;
-	Thu,  6 Nov 2025 15:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606F6325492;
+	Thu,  6 Nov 2025 15:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Oj2hIZ0f"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6121E5205
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762443822; cv=none; b=sJMvyvy9EIaF76XFL2Q9mk3Kn2oJ03E0UGpWZAqJZ0oGvfASIK4s9BmC+5SZtL0fRxfrfBWd1EMNgmz1/o9wXfc03DtmG/w7TqP5XoHq9Qq5qtXiLr7inXkp2Yv3Kn+OV2Mxj2G2y3z6KH1HnTEzEEru7rFJZyQOJ2LTnusWOEU=
+	t=1762443901; cv=none; b=maQJMfD189Klo+9ISou9WuCvn6NR48+9RN+yQvvakhM99W+PDAXiH+WZ2Gwhc1HReDhIXJK0cUpVaJ0GRzn/rBtOTjJdPj3Qvtr1fUab7HYvtWNJLovPqPcFCuQvZMYAZmkLLXt1lUqSws7hr6CN4+1G0F84/xxltmTl9Sb6tdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762443822; c=relaxed/simple;
-	bh=u9lSO4Mr6aFj9g//25s+/bQDWVpz6LqFQTtnpI45oyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hty5/RbqXxF2VbPjQGLm7l/s3+24E1/x3FRJruDcTW1+zZwD/C7PDQzIje1ynwyiZ8SAJOSNowlJ1VT6Rfv8TDkkenelu7VdQHyHR0eJ97zty4cCBcd/KGckIMb26E3fFSdSvoj7OXlu7VYHqKrOlhhuTJ6v+L25c0OSVz2NKvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 378B715A1;
-	Thu,  6 Nov 2025 07:43:26 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69DAE3F694;
-	Thu,  6 Nov 2025 07:43:29 -0800 (PST)
-Message-ID: <9dbc4e1a-d614-4427-a7e8-066a3e29055e@arm.com>
-Date: Thu, 6 Nov 2025 15:43:28 +0000
+	s=arc-20240116; t=1762443901; c=relaxed/simple;
+	bh=m5IGuc219hR91E6jxj726r30nxaBrIgbepoJBLfYMuU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nfw9r+Y09do9yPak30NIj4YDuVNyXB1jRTz8avGNlBe74/tjBOD37pDzVtWuP1WiSztKUwuMovuVCW9XxJD8RsJNaRCHjp4NnnO/2EuJKDM00//Geuisraicyz+ZL8CMLbDL32bA7BN7lYMrEphaVaS3Vuy/lJQ95yVmCHl5ngg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Oj2hIZ0f; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4774f41628bso11520705e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:44:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762443897; x=1763048697; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aT/t6a4KBrR+Dsl/bounBEPokvpfPwhEHbEcRC2FxNM=;
+        b=Oj2hIZ0ffij1IL671TsaxYfCizRNi4PiWHj2CGlxxuWJkg+bS43UlUlghY5QHuovEv
+         UDyHqUBtbmoKFbK8ypGY2KvCQxzcgTlPEPfDry9L0xL3mf7kSw9s02eedusFOuDvNe3N
+         pS1EReXYleAsf8LN9d8Fks0/GyEQ7f0upAajCat0ce24YsJftUeTs8eaav7e8Ie8Ts7C
+         0K1BNqBJ0q/3VoWyqXZ8AQboWsl/SAf4XVU2n1RbWl+IVKpBREku8ik69NSRxxZ4fmfI
+         xfKECQ4ZHfEtipb0IdGYQDNNqrGlpG5ejKs421LehU4TonSneUIqfLRT+0QZJQjBvgj2
+         vYYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762443897; x=1763048697;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aT/t6a4KBrR+Dsl/bounBEPokvpfPwhEHbEcRC2FxNM=;
+        b=Qr3A3DtBramVvi9Le8YuUEe31UwY4wnuo/vtaS72s0QsmO8flAy2LqTiwv9YwD5VpS
+         rEbTSAZWNXjxCfuPnOLdhq68vwuuzsZW0yXiM2OEIQbQj2S1gY6jQZOgLkBlnGVfKpg3
+         U7z2HkiNpbM7rxfp+FbpUzIS0/071o8nCpgnted5cXadBlq+2SvMDj3kvJkAITaGrGnf
+         M0vMKnXfmRr9zO9Y5jkRbdNMGqyB9IetGhtDElCP2961xEprVRPAHZqNkpi76jAcCXT2
+         42R6rSfe148uVQJzmWujme2cct1PuEOcvMkcHKcSmuOctwF1scFQ03Rc3Ux0jW6x76Pz
+         Q/wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3afUjrA31GdHjMPcQrgBC7/DiRgH6eoyFaaOXnrMvr/2nNBxs3TLBSatiEGhZkKNZGpr/OfWyroRldbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6IY3c2V0ECdzFqmPN+yyDV9gL2lUAhOd4SXvRSeWXMFTtNWgP
+	/Fpq81ZILIgGfh5tt55i7zgmcx6P5d7DwWVUDRqiTZg8kx0XzUXF8xh4OCSQvq9QfJPvw3xZ4Sd
+	vhiCawA8=
+X-Gm-Gg: ASbGncuXE5ZIU387gR+X5jy8vn2X2xHjjqL7enmPaHfUQH0/9KsGMNKt4L2QhVGtr7Q
+	hjrdqN6pxo+uXutxcuPExNW6TuiSf8L13tVNM4cNUUMxMkSxLzELF1nqPlFqT4BzcEXorx5P9HC
+	x3S1V25pwCLbp0LXijwtYLHP+HQ/J60VJHEFof9OJoGdwX9a/UG9wvmHyeZwsTUPXuADUgEGi0C
+	VIj591iXRd4rhXQ3MMdIPjZ8vPr5tPl5Ho1fPFsHNMI7V9d3EaDO+WnsN7XE4wjMSQoepda/wK1
+	L1msZPrEKQaoYtqV31TsemCng9iWavjYtIThh2UenbLK+p0EBrpQR4L+SmnltJlnz1hlZO31IZ3
+	1txaVDBt1GFYkELH+MpQQO2sh8mzuDEO6qpx1KgwiGyqaS28/ieVIbqR2OzcoiA2PDm9EVp1VW9
+	2I41qe
+X-Google-Smtp-Source: AGHT+IE9fxs4rMTAf1h1yPirBF6DFkbLD1LQP4bNnKenkfRTYH5bQ38vhZIY+6TZBwAkKcgCf4p+PQ==
+X-Received: by 2002:a05:600c:1988:b0:477:6373:ce7c with SMTP id 5b1f17b1804b1-4776ba75d9bmr501805e9.3.1762443896962;
+        Thu, 06 Nov 2025 07:44:56 -0800 (PST)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:d9de:4038:a78:acab])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e66b1fsm20621705e9.1.2025.11.06.07.44.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 07:44:56 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/3] dmengine: qcom: bam_dma: some driver refactoring
+Date: Thu, 06 Nov 2025 16:44:49 +0100
+Message-Id: <20251106-qcom-bam-dma-refactor-v1-0-0e2baaf3d81a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 26/29] arm_mpam: Use long MBWU counters if supported
-To: Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, dfustini@baylibre.com,
- amitsinght@marvell.com, David Hildenbrand <david@redhat.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
- Gavin Shan <gshan@redhat.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
- <20251017185645.26604-27-james.morse@arm.com>
- <CALPaoCgO+NW9Hnb0x-eL7oR-Yj75V14hOW=LxAEYUEeK9SMCUA@mail.gmail.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <CALPaoCgO+NW9Hnb0x-eL7oR-Yj75V14hOW=LxAEYUEeK9SMCUA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHHCDGkC/x2MSQqAMBDAviJzdsC2bvgV8dBl1DnUaisiiH+3e
+ AwheSBRZEowFA9Eujhx2DKIsgC76m0hZJcZZCUbIaoWDxs8Gu3ReY2RZm3PELE2qpVdY3qrHOR
+ 2z4bv/ztO7/sBAnI09mcAAAA=
+X-Change-ID: 20251106-qcom-bam-dma-refactor-4b36275b8c3d
+To: Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=703;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=m5IGuc219hR91E6jxj726r30nxaBrIgbepoJBLfYMuU=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpDMJzgNgQRm8qx7/pmdbGI2+JW/uD2olQMBTY5
+ 5r3mhZZLh6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQzCcwAKCRARpy6gFHHX
+ cjIHEACCwHmB0cdbopPZxqv/VaUmPRQSXbSe9fvcixEcfilOkHFTELwlKm2in6/WaykAMQUY61X
+ vvllhAECOdGGOnfLcF8Wm/Yaixt6eJWJ9m9lsANmehPCtkBbYtUg2HkfF/rLV2C576YjerxfrJD
+ 2+fLZwOtBOMjk9kziEbUWWE8fptx3JFFew9OWF5dS2eVVPT7Tg9yDCnFo+L8dUlFxLoqaE/EmVy
+ EY/l5wGDSi5Le0YODuc4qSlwfwGY6CGQRFiEpzfMHAmNE9c8Iq0vqrmlG14IowjNHFSlmyJ1UCe
+ 9NPOJmTWBc8zFxdBq2ZITP4Hiv2zF4Fmefjyfs8N43+5+HWZIr4K0vm94Mcgr7IEObiq58bKMuT
+ g9aOO3aVBiRJga9jI9RCOEbJZoJWlZ06KWbTQl9v/Q2aNXFoZA2NYlXhC8bGH68jh84BG7nvrVQ
+ LPCSzu9LGLiVAdoEz0J/6nIUwBzXzXiHr0pDAyv11s/6X7Pr0edUjmtLyn8h9QX+kdHTX/0vLrE
+ LpR8hH65KFRLnml+1Jc9wLmJ+r4LwXAJvP8XyUMla0J/HkzAgO+1s9dx4cBlI4fW7cZusADRas8
+ XEaJaf0h9RkOwd4HrhK2GML4dVtV20ePtHpRAEBCcoQY8/YKmljFaAz7Un1rO6evOlfu6OvsgNZ
+ KPkdJ4aCFCPKTyg==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Peter,
+Here are some changes I figured would be nice to have while working on
+the BAM locking feature.
 
-On 11/6/25 15:18, Peter Newman wrote:
-> Hi James,
-> 
-> On Fri, Oct 17, 2025 at 8:59 PM James Morse <james.morse@arm.com> wrote:
->>
->> From: Rohit Mathew <rohit.mathew@arm.com>
->>
->> Now that the larger counter sizes are probed, make use of them.
->>
->> Callers of mpam_msmon_read() may not know (or care!) about the different
->> counter sizes. Allow them to specify mpam_feat_msmon_mbwu and have the
->> driver pick the counter to use.
->>
->> Only 32bit accesses to the MSC are required to be supported by the
->> spec, but these registers are 64bits. The lower half may overflow
->> into the higher half between two 32bit reads. To avoid this, use
->> a helper that reads the top half multiple times to check for overflow.
->>
->> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
->> [morse: merged multiple patches from Rohit, added explicit counter selection ]
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
->> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
->> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> ---
->> Changes since v2:
->>  * Removed mpam_feat_msmon_mbwu as a top-level bit for explicit 31bit counter
->>    selection.
->>  * Allow callers of mpam_msmon_read() to specify mpam_feat_msmon_mbwu and have
->>    the driver pick a supported counter size.
->>  * Rephrased commit message.
->>
->> Changes since v1:
->>  * Only clear OFLOW_STATUS_L on MBWU counters.
->>
->> Changes since RFC:
->>  * Commit message wrangling.
->>  * Refer to 31 bit counters as opposed to 32 bit (registers).
->> ---
->>  drivers/resctrl/mpam_devices.c | 134 ++++++++++++++++++++++++++++-----
->>  1 file changed, 116 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> index f4d07234ce10..c207a6d2832c 100644
->> --- a/drivers/resctrl/mpam_devices.c
->> +++ b/drivers/resctrl/mpam_devices.c
->> @@ -897,6 +897,48 @@ struct mon_read {
->>         int                             err;
->>  };
->>
->> +static bool mpam_ris_has_mbwu_long_counter(struct mpam_msc_ris *ris)
->> +{
->> +       return (mpam_has_feature(mpam_feat_msmon_mbwu_63counter, &ris->props) ||
->> +               mpam_has_feature(mpam_feat_msmon_mbwu_44counter, &ris->props));
->> +}
->> +
->> +static u64 mpam_msc_read_mbwu_l(struct mpam_msc *msc)
->> +{
->> +       int retry = 3;
->> +       u32 mbwu_l_low;
->> +       u64 mbwu_l_high1, mbwu_l_high2;
->> +
->> +       mpam_mon_sel_lock_held(msc);
->> +
->> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
->> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
->> +
->> +       mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
->> +       do {
->> +               mbwu_l_high1 = mbwu_l_high2;
->> +               mbwu_l_low = __mpam_read_reg(msc, MSMON_MBWU_L);
->> +               mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
->> +
->> +               retry--;
->> +       } while (mbwu_l_high1 != mbwu_l_high2 && retry > 0);
->> +
->> +       if (mbwu_l_high1 == mbwu_l_high2)
->> +               return (mbwu_l_high1 << 32) | mbwu_l_low;
->> +       return MSMON___NRDY_L;
->> +}
->> +
->> +static void mpam_msc_zero_mbwu_l(struct mpam_msc *msc)
->> +{
->> +       mpam_mon_sel_lock_held(msc);
->> +
->> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
->> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
->> +
->> +       __mpam_write_reg(msc, MSMON_MBWU_L, 0);
->> +       __mpam_write_reg(msc, MSMON_MBWU_L + 4, 0);
->> +}
->> +
->>  static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>                                    u32 *flt_val)
->>  {
->> @@ -924,7 +966,9 @@ static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>                                                ctx->csu_exclude_clean);
->>
->>                 break;
->> -       case mpam_feat_msmon_mbwu:
->> +       case mpam_feat_msmon_mbwu_31counter:
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +       case mpam_feat_msmon_mbwu_63counter:
->>                 *ctl_val |= MSMON_CFG_MBWU_CTL_TYPE_MBWU;
->>
->>                 if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw, &m->ris->props))
->> @@ -946,7 +990,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_CSU_CTL);
->>                 *flt_val = mpam_read_monsel_reg(msc, CFG_CSU_FLT);
->>                 return;
->> -       case mpam_feat_msmon_mbwu:
->> +       case mpam_feat_msmon_mbwu_31counter:
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +       case mpam_feat_msmon_mbwu_63counter:
->>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
->>                 *flt_val = mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
->>                 return;
->> @@ -959,6 +1005,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>  static void clean_msmon_ctl_val(u32 *cur_ctl)
->>  {
->>         *cur_ctl &= ~MSMON_CFG_x_CTL_OFLOW_STATUS;
->> +
->> +       if (FIELD_GET(MSMON_CFG_x_CTL_TYPE, *cur_ctl) == MSMON_CFG_MBWU_CTL_TYPE_MBWU)
->> +               *cur_ctl &= ~MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L;
->>  }
->>
->>  static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->> @@ -978,10 +1027,15 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->>                 mpam_write_monsel_reg(msc, CSU, 0);
->>                 mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
->>                 break;
->> -       case mpam_feat_msmon_mbwu:
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +       case mpam_feat_msmon_mbwu_63counter:
->> +               mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
->> +               fallthrough;
->> +       case mpam_feat_msmon_mbwu_31counter:
->>                 mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
->>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
->>                 mpam_write_monsel_reg(msc, MBWU, 0);
->> +
->>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
->>
->>                 mbwu_state = &m->ris->mbwu_state[m->ctx->mon];
->> @@ -993,10 +1047,19 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->>         }
->>  }
->>
->> -static u64 mpam_msmon_overflow_val(struct mpam_msc_ris *ris)
->> +static u64 mpam_msmon_overflow_val(enum mpam_device_features type)
->>  {
->> -       /* TODO: scaling, and long counters */
->> -       return GENMASK_ULL(30, 0);
->> +       /* TODO: implement scaling counters */
->> +       switch (type) {
->> +       case mpam_feat_msmon_mbwu_63counter:
->> +               return GENMASK_ULL(62, 0);
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +               return GENMASK_ULL(43, 0);
->> +       case mpam_feat_msmon_mbwu_31counter:
->> +               return GENMASK_ULL(30, 0);
->> +       default:
->> +               return 0;
->> +       }
->>  }
->>
->>  /* Call with MSC lock held */
->> @@ -1037,11 +1100,24 @@ static void __ris_msmon_read(void *arg)
->>                         nrdy = now & MSMON___NRDY;
->>                 now = FIELD_GET(MSMON___VALUE, now);
->>                 break;
->> -       case mpam_feat_msmon_mbwu:
->> -               now = mpam_read_monsel_reg(msc, MBWU);
->> -               if (mpam_has_feature(mpam_feat_msmon_mbwu_hw_nrdy, rprops))
->> -                       nrdy = now & MSMON___NRDY;
->> -               now = FIELD_GET(MSMON___VALUE, now);
->> +       case mpam_feat_msmon_mbwu_31counter:
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +       case mpam_feat_msmon_mbwu_63counter:
-> 
-> Should you check for one of these three features instead of
-> mpam_feat_msmon_mbwu further up in this function when checking for
-> reset_on_next_read?
-> 
-> -       if (m->type == mpam_feat_msmon_mbwu) {
-> +       switch (m->type) {
-> +       case mpam_feat_msmon_mbwu_31counter:
-> +       case mpam_feat_msmon_mbwu_44counter:
-> +       case mpam_feat_msmon_mbwu_63counter:
->                 mbwu_state = &ris->mbwu_state[ctx->mon];
->                 if (mbwu_state) {
->                         reset_on_next_read = mbwu_state->reset_on_next_read;
->                         mbwu_state->reset_on_next_read = false;
->                 }
-> +               break;
-> +       default:
-> +               break;
->         }
-> 
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (3):
+      dmaengine: qcom: bam_dma: order includes alphabetically
+      dmaengine: qcom: bam_dma: use lock guards
+      dmaengine: qcom: bam_dma: convert tasklet to a workqueue
 
-Yes, this looks like a correct change to me.
+ drivers/dma/qcom/bam_dma.c | 184 +++++++++++++++++++++------------------------
+ 1 file changed, 85 insertions(+), 99 deletions(-)
+---
+base-commit: 0297a4fa6f372fd3ed8fe9b4d49b96ff8708ac71
+change-id: 20251106-qcom-bam-dma-refactor-4b36275b8c3d
 
-[...]
->>  int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
->>                     enum mpam_device_features type, u64 *val)
->>  {
->>         int err;
->>         struct mon_read arg;
->>         u64 wait_jiffies = 0;
->> -       struct mpam_props *cprops = &comp->class->props;
->> +       struct mpam_class *class = comp->class;
->> +       struct mpam_props *cprops = &class->props;
->>
->>         might_sleep();
->>
->> @@ -1129,9 +1218,12 @@ int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
->>         };
->>         *val = 0;
->>
->> +       if (type == mpam_feat_msmon_mbwu)
->> +               type = mpam_msmon_choose_counter(class);
-> 
-> `type` was already recorded in arg->type, so the result of this lookup
-> will be ignored on the first call to _msmon_read()
-> 
-> If mpam_feat_msmon_mbwu can somehow still result in -EBUSY, then the
-> repeat call may use the right type.
-
-Good spot. I think we can just move the 'if' further up. I'll make these
-changes when I do the repost for James.
-
-> 
-> Thanks,
-> -Peter
-
-Thanks,
-
-Ben
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
