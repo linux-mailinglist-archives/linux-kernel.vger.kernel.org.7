@@ -1,296 +1,217 @@
-Return-Path: <linux-kernel+bounces-889441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF9CC3D8F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:15:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50225C3D91C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:16:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5D0188EEC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09043AB430
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8099730BF6A;
-	Thu,  6 Nov 2025 22:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAFF30C343;
+	Thu,  6 Nov 2025 22:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="DQa171+o"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZI9UJQ8x"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA393191D3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D4323EAAE;
+	Thu,  6 Nov 2025 22:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762467309; cv=none; b=U7xJn+L1C3SsVDmC5hZ+y+snfp3I7T793go0ptiRiWxLTzP/SdrgqH/sCQgMff0kX62Y9GAHWMXE62cUpdWrqfrM+ctgArlghAAaFq+v8YbMItg7fiqLGTAj3fDuB4BULpFc3BLqAaXHTML8w7dVzD82fI1v9lqxQpSad06vsv0=
+	t=1762467369; cv=none; b=Key3+CKfq2tFvKFOQvJZFvbiyoCPmMf3nRvYRulKMsGnRl52mLPSnwyRzaOO61qKqo3d0ylCWJ0EfO9XlwJLZEB+GPQGG3p5f2MBn6WZtiRUY0I+k6Vv0aVmMhZSZbnZamiQac1irP5/5PE5jB4fIhs+mGVv7dqGUQ1ZGF9FnTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762467309; c=relaxed/simple;
-	bh=HUyJsMoU7vKGcC46di7f4HcprOlRD7DP810v6feRbK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rqz6F9ZLccpAm/i+MPkcf2y8BYeYKLoqEDzbRCqpmfrkRx3YFy9ka5eADpgYtmOFAyWoQR55C4Cpv/4bgL7PIw4BLF0ex0KKlVFBBESQGXMZ/vzqa0V9somY/cLExfxEJR5JJz/IGfGhWUpuGDOXpdbCYlSDdyuyId7wGmzNbwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=DQa171+o; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so188218a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:15:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762467305; x=1763072105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f81U5/79UyOAGW6VXn6pxFacbUSlx5ZrI8Z3RpSpADo=;
-        b=DQa171+oqiFSwEqXEMz7yD5bNcI0AwFa1dT1I45YMfpbCBVR99nsAXkDzq6kULs9ij
-         IJt+Dcili1OjoVCNpEmEHnXYAvhpWX1YTdQGhUur/pD4dsqwoXa4R30WZnVHhc+dUoaa
-         P59L3LnRzJrDFdi7WBNVViMH2HLFLT9s03otzU3cGAJ6CS8NolO8tMeAoF94IuTaWZou
-         PJ54suuUy7p6CtlNiuCvBRvyGn4Lx0qsTjs9E4u+BpqCWx0Hm7uxx9LTfkDLEK2Tnx50
-         vgUHHA2m+z7FnpJjH7j7zBrYiAyPg3UwDGRtpXl2WZwjyeOXAyNgfJSDIgU89ImtXRWk
-         ZX4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762467305; x=1763072105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=f81U5/79UyOAGW6VXn6pxFacbUSlx5ZrI8Z3RpSpADo=;
-        b=Nlsz2MNLQtGBssXRglmw8HksPtSg9Ci+1g6GKLfz4tYPgpp7Qwrsktp9Nnc87By63b
-         QyFVz/iZBW1bMXIbB7bkWn3LYZdMF+DqdWZLkz//kS3txgXn59f0ox/+aqGyqOQ9d8BG
-         /23jBBQ21tWsXB+QrFN2ibAjsDQPaRVdlkd7yHLeT67lSf3vzgo1IF1pTv4hKs4w2tIO
-         l7HTY08fGYsVkMec6Gm3/HDwSykt2qZQSMs7GFqqfzdHA0QZwFN0R2ixhOEBdX+DoTRf
-         WiC50OabmSejtuVzs6k76JCIGRF+ZPRAl/XVnRrqPkgCfAJHawyDNC/yNnKktouRlcan
-         TIKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcWzwKxkUA+FtpoUqz5sPyTzmjYMDxhUCVA/cwovvuP5PmomOLMVAcgtzGMoAR2IcAW6JuNsoUrSydxTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyid3eJezeWOxvEeARX0NvmxKHGQuWHshhli18BgFWorPmesuju
-	c8mLP7KUsNyM9uUW1qT+OONmoTwZ9ZFR+UsoK4vbKFvixDRV60oUY279/p1YlwWGiu6Bgv5wnDq
-	uD197gkJ00nznMKRecZb5v+ud81Pp/ajOthxTZrD+iA==
-X-Gm-Gg: ASbGncvcEaQKW1zOVAlncB8D8WnRYbtJsC+sklyiTUk3NLNDzqgLYsGY/RNtjUj4vH2
-	2x0csM3EbL0Yoh/wnGh24DkXy/CI25BpEDUX37pugQACQCf8bjdmbKE7Qu63XOKNJef5bCSc1da
-	HPtka0a0onYINOlDMOL0qI+EXz42vLW3Ts6jb9Y1KQb4yh0ck8w0z99hEgtI5oSdad5L3jqAxLa
-	1yE3gTOX93s6or4T4B8acNua25+TU5gC2hnLzkCMKCOD6bDSGaqEWqujNzkZTcNyvjt
-X-Google-Smtp-Source: AGHT+IFMNxw/R1yQ2ypKv/nek+CS+Dt0g6lco0tSe4JF0aLBw9GdvNDeY3wOMxlums/5C8vWYWYunbR1HZth+5+nSYU=
-X-Received: by 2002:a05:6402:3590:b0:638:74dc:cf78 with SMTP id
- 4fb4d7f45d1cf-6413f08ef69mr1005608a12.34.1762467305387; Thu, 06 Nov 2025
- 14:15:05 -0800 (PST)
+	s=arc-20240116; t=1762467369; c=relaxed/simple;
+	bh=ZIk+AfMZgAYMOTCCjanRLeMZrq0PnmwmS8zTdHALF7Q=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=TgkPCY4OrzsPnav3G9S9taHg82oIsJhrWQorTIO2tsRnlBZh81DRFN6quvMw5ike8hVf2ISczETFhxxouDpzoiTNPwx+jt5g+vJfG1kuz3U0gj/iMd8uGwV66GdQqB0yECazutkN8I7/V2D4deVNIFZsjUsjDu3YI/xdpcrK2/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZI9UJQ8x; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6Gd0Go028252;
+	Thu, 6 Nov 2025 22:15:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SiPPBV
+	1cKgzYnuAXoEe9S7za3I6Ag2LuDK3mBAh6v2c=; b=ZI9UJQ8xkEowH1xZwMTkeH
+	s4orfbGA1qB1DbcGbpIRSfARKmTd3LkeFN9wJFRo+HwCi+DNvN+YE4QY2zkXAeO7
+	kn2LZAUy2ZwCG3hdW/Z3ySTg09op+JqHEBWpoJ/5JnMSpK+6ybVNsw/U1c3NGu0Q
+	BEGvHXc5EdCxVdQgbzOPYIDOWOyOHZ8hoNiGJYBjr3z9y5+VKlAva7mqSwwlXZXB
+	2exp2zBFuH6j4CcQsCO2du/YNf8BPPk+lG7l9Dx4RkywLw7Xc7uUejfDPcmD6u01
+	PxPMNFri0NWuXuxhdfK7cybqODNZAs09L1qvWM64dhVw1GY1glbPYiTKfnuNGceQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q99qur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 22:15:38 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A6MFcAE022146;
+	Thu, 6 Nov 2025 22:15:38 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q99qum-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 22:15:38 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6IdLFM009822;
+	Thu, 6 Nov 2025 22:15:36 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5x1kqpx3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 22:15:36 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6MFZuu29164178
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Nov 2025 22:15:36 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D275658053;
+	Thu,  6 Nov 2025 22:15:35 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D6D158043;
+	Thu,  6 Nov 2025 22:15:34 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.50.42])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  6 Nov 2025 22:15:34 +0000 (GMT)
+Message-ID: <b9eb78105115a00731b3677a5f3a39d5dde4d2ec.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] lsm,ima: new LSM hook
+ security_kernel_module_read_file to access decompressed kernel module
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>,
+        James
+ Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Luis
+ Chamberlain	 <mcgrof@kernel.org>,
+        Petr Pavlu <petr.pavlu@suse.com>, Daniel
+ Gomez	 <da.gomez@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Roberto Sassu	 <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MODULE SUPPORT"
+ <linux-modules@vger.kernel.org>
+In-Reply-To: <d24wnmefebnheerigmh6ts5yskkutz726l6a2f6g5s3s5fhhrv@osaactobwb5g>
+References: <20250928030358.3873311-1-coxu@redhat.com>
+	 <20251031074016.1975356-1-coxu@redhat.com>
+	 <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
+	 <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
+	 <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
+	 <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
+	 <84a0e1785c7f0ff816b3246be49012092ae12126.camel@linux.ibm.com>
+	 <d24wnmefebnheerigmh6ts5yskkutz726l6a2f6g5s3s5fhhrv@osaactobwb5g>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 06 Nov 2025 17:15:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101142325.1326536-3-pasha.tatashin@soleen.com>
- <202511061629.e242724-lkp@intel.com> <CA+CK2bCUWuK4fmuz5Us_mS1ByGy5SjaedVEquj1WxN8JUPsJaw@mail.gmail.com>
-In-Reply-To: <CA+CK2bCUWuK4fmuz5Us_mS1ByGy5SjaedVEquj1WxN8JUPsJaw@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 6 Nov 2025 17:14:28 -0500
-X-Gm-Features: AWmQ_bkf90cd7vGfxxwFQfOgh84qLMbCwawCMq5n9jVWpcK7oaXbMt6knSHxPMQ
-Message-ID: <CA+CK2bCSv99byZ-mc8bdoqfbp7qZTS9anky6oh=5ptg=MWPgxA@mail.gmail.com>
-Subject: Re: [PATCH v9 2/9] kho: drop notifiers
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, kexec@lists.infradead.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
-	brauner@kernel.org, corbet@lwn.net, graf@amazon.com, jgg@ziepe.ca, 
-	linux-kselftest@vger.kernel.org, masahiroy@kernel.org, ojeda@kernel.org, 
-	pratyush@kernel.org, rdunlap@infradead.org, rppt@kernel.org, tj@kernel.org, 
-	yanjun.zhu@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=StmdKfO0 c=1 sm=1 tr=0 ts=690d1e0a cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=NEAV23lmAAAA:8 a=hO0pNDKWLz_cAJWU_XQA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 2TcC7SZcOWEAivhxNgOLpr4EkIUjPptU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAxOCBTYWx0ZWRfX7dnqnmt6YAZs
+ 6vIe70aDIPD3i5Vz/yAe1lGDTPhsoeJFv4LKWysYZcaqB5AhZ0LpuOdbYqvShctUCJ1NU/miBxp
+ V7tTIyHWxKxfH11I+HI5VpNCtFMOKcI+kAoc+gMOlbdf1sVDtgEsGsTOY9mGv1yX5FFbPNqH01A
+ W6Z6l0FaXeBvhksyzAACTWu/Co2I5lwNY1AWvYG6IpNZGndY4j9VLLmCD8tkWek5cBtCdkwJpUP
+ dhb7ET6FBhySgLKqVqFvduSKPXcVd5hNFfcByYDJza/5xkz4wMCvd8qMiIuZickBI49+sgdDRAQ
+ 9XPglZ/3FXQgdX3tPDTapAykC0CWXUF5FEzRmbF4Ek3euo4KMdwVlwW/v9ceQWT6V7QyLoOnwT7
+ 6KtuygcfsqsqGNBMG/JnJxDFYqpBkA==
+X-Proofpoint-GUID: 2sSP0p4LOwrW01N-WrnspT1BYGzsKbWK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 phishscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010018
 
-On Thu, Nov 6, 2025 at 4:46=E2=80=AFPM Pasha Tatashin <pasha.tatashin@solee=
-n.com> wrote:
->
-> The bug is in lib/test_kho.c, when KHO is not enabled, it should not
-> run KHO commands, there is a function to test that: kho_is_enabled().
-> So, KHO is disabled and kho_add_subtree() which calles add debugfs
-> entry, and the list is not initialized, because KHO is disabled. The
-> fix is:
+On Thu, 2025-11-06 at 21:29 +0800, Coiby Xu wrote:
+> On Wed, Nov 05, 2025 at 03:47:25PM -0500, Mimi Zohar wrote:
+> > On Wed, 2025-11-05 at 08:18 +0800, Coiby Xu wrote:
+> [...]
+> >=20
+> > Hi Coiby,
+> >=20
+> > Based on the conversation with Paul, there is no reason to remove the e=
+xisting
+> > security_kernel_post_read_file() call.
+> >=20
+> > The changes are similar to the 2nd link, but a bit different.
+> > - Define a single enumeration named READING_MODULE_COMPRESSED.
+> >=20
+> > - In module/main.c add a new security_kernel_post_read_file() call imme=
+diately
+> > after decompressing the kernel module.  Like a previous version of this=
+ patch,
+> > call kernel_read_file() with either READING_MODULE or READING_MODULE_CO=
+MPRESSED
+> > based on MODULE_INIT_COMPRESSED_FILE.
+> >=20
+> > - In ima_post_read_file() defer verifying the signature when the enumer=
+ation is
+> > READING_MODULE_COMPRESSED.  (No need for a new function ima_read_kernel=
+_module.)
+>=20
+> Hi Mimi,
+>=20
+> Thanks for summarizing your conversation with Paul! I can confirm Paul's
+> approach works
+> https://github.com/coiby/linux/tree/in_kernel_decompression_ima_no_lsm_ho=
+ok_paul
+>=20
+> While testing the patch today, I realized there is another
+> issue/challenge introduced by in-kernel module decompression. IMA
+> appraisal is to verify the digest of compressed kernel module but
+> currently the passed buffer is uncompressed module. When IMA uses
+> uncompressed module data to calculate the digest, xattr signature
+> verification will fail. If we always make IMA read the original kernel
+> module data again to calculate the digest, does it look like a
+> quick-and-dirty fix? If we can assume people won't load kernel module so
+> often, the performance impact is negligible. Otherwise we may have to
+> introduce a new LSM hook so IMA can access uncompressed and original
+> module data one time.
 
-Sent it as a patch:
-https://lore.kernel.org/all/20251106220635.2608494-1-pasha.tatashin@soleen.=
-com
+ima_collect_measurement() stores the file hash info in the iint and uses th=
+at
+information to verify the signature as stored in the security xattr.=20
+Decompressing the kernel module shouldn't affect the xattr signature
+verification.
 
->
-> diff --git a/lib/test_kho.c b/lib/test_kho.c
-> index 025ea251a186..85b60d87a50a 100644
-> --- a/lib/test_kho.c
-> +++ b/lib/test_kho.c
-> @@ -315,6 +315,9 @@ static int __init kho_test_init(void)
->         phys_addr_t fdt_phys;
->         int err;
->
-> +       if (!kho_is_enabled())
-> +               return 0;
-> +
->         err =3D kho_retrieve_subtree(KHO_TEST_FDT, &fdt_phys);
->         if (!err)
->                 return kho_test_restore(fdt_phys);
->
-> On Thu, Nov 6, 2025 at 3:41=E2=80=AFAM kernel test robot <oliver.sang@int=
-el.com> wrote:
-> >
-> >
-> >
-> > Hello,
-> >
-> > kernel test robot noticed "WARNING:at_kernel/kexec_handover.c:#kho_add_=
-subtree" on:
-> >
-> > commit: e44a700c561d1e892a8d0829d557e221604a7b93 ("[PATCH v9 2/9] kho: =
-drop notifiers")
-> > url: https://github.com/intel-lab-lkp/linux/commits/Pasha-Tatashin/kho-=
-make-debugfs-interface-optional/20251101-222610
-> > patch link: https://lore.kernel.org/all/20251101142325.1326536-3-pasha.=
-tatashin@soleen.com/
-> > patch subject: [PATCH v9 2/9] kho: drop notifiers
-> >
-> > in testcase: boot
-> >
-> > config: x86_64-randconfig-001-20251015
-> > compiler: gcc-14
-> > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m=
- 16G
-> >
-> > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> >
-> >
-> > +--------------------------------------------------------+------------+=
-------------+
-> > |                                                        | 93e4b3b2e9 |=
- e44a700c56 |
-> > +--------------------------------------------------------+------------+=
-------------+
-> > | WARNING:at_kernel/kexec_handover.c:#kho_add_subtree    | 0          |=
- 8          |
-> > | RIP:kho_add_subtree                                    | 0          |=
- 8          |
-> > +--------------------------------------------------------+------------+=
-------------+
-> >
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > | Closes: https://lore.kernel.org/oe-lkp/202511061629.e242724-lkp@intel=
-.com
-> >
-> >
-> > [   13.620111][    T1] ------------[ cut here ]------------
-> > [   13.620739][    T1] WARNING: CPU: 1 PID: 1 at kernel/kexec_handover.=
-c:704 kho_add_subtree (kernel/kexec_handover.c:704)
-> > [   13.621665][    T1] Modules linked in:
-> > [   13.622090][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted=
- 6.18.0-rc3-00211-ge44a700c561d #1 VOLUNTARY
-> > [   13.623073][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, =
-1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> > [   13.624054][    T1] RIP: 0010:kho_add_subtree (kernel/kexec_handover=
-.c:704)
-> > [   13.624596][    T1] Code: c7 38 b4 ac 85 31 ed e8 01 1c 00 00 48 c7 =
-c7 70 5a ca 86 85 c0 89 c3 40 0f 95 c5 31 c9 31 d2 89 ee e8 37 b5 0a 00 85 =
-db 74 02 <0f> 0b b9 01 00 00 00 31 d2 89 ee 48 c7 c7 40 5a ca 86 e8 1c b5 0=
-a
-> > All code
-> > =3D=3D=3D=3D=3D=3D=3D=3D
-> >    0:   c7 38 b4 ac 85          xbegin 0xffffffff85acb43d,(bad)
-> >    5:   31 ed                   xor    %ebp,%ebp
-> >    7:   e8 01 1c 00 00          call   0x1c0d
-> >    c:   48 c7 c7 70 5a ca 86    mov    $0xffffffff86ca5a70,%rdi
-> >   13:   85 c0                   test   %eax,%eax
-> >   15:   89 c3                   mov    %eax,%ebx
-> >   17:   40 0f 95 c5             setne  %bpl
-> >   1b:   31 c9                   xor    %ecx,%ecx
-> >   1d:   31 d2                   xor    %edx,%edx
-> >   1f:   89 ee                   mov    %ebp,%esi
-> >   21:   e8 37 b5 0a 00          call   0xab55d
-> >   26:   85 db                   test   %ebx,%ebx
-> >   28:   74 02                   je     0x2c
-> >   2a:*  0f 0b                   ud2             <-- trapping instructio=
-n
-> >   2c:   b9 01 00 00 00          mov    $0x1,%ecx
-> >   31:   31 d2                   xor    %edx,%edx
-> >   33:   89 ee                   mov    %ebp,%esi
-> >   35:   48 c7 c7 40 5a ca 86    mov    $0xffffffff86ca5a40,%rdi
-> >   3c:   e8                      .byte 0xe8
-> >   3d:   1c b5                   sbb    $0xb5,%al
-> >   3f:   0a                      .byte 0xa
-> >
-> > Code starting with the faulting instruction
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >    0:   0f 0b                   ud2
-> >    2:   b9 01 00 00 00          mov    $0x1,%ecx
-> >    7:   31 d2                   xor    %edx,%edx
-> >    9:   89 ee                   mov    %ebp,%esi
-> >    b:   48 c7 c7 40 5a ca 86    mov    $0xffffffff86ca5a40,%rdi
-> >   12:   e8                      .byte 0xe8
-> >   13:   1c b5                   sbb    $0xb5,%al
-> >   15:   0a                      .byte 0xa
-> > [   13.626370][    T1] RSP: 0018:ffffc9000001fca0 EFLAGS: 00010286
-> > [   13.626951][    T1] RAX: dffffc0000000000 RBX: 00000000ffffffff RCX:=
- 0000000000000000
-> > [   13.627737][    T1] RDX: 1ffffffff0d94b52 RSI: 0000000000000001 RDI:=
- ffffffff86ca5a90
-> > [   13.628523][    T1] RBP: 0000000000000001 R08: 0000000000000008 R09:=
- fffffbfff0dfac4c
-> > [   13.629330][    T1] R10: 0000000000000000 R11: ffffffff86fd6267 R12:=
- ffff888133ee2000
-> > [   13.630101][    T1] R13: ffffffff85acb340 R14: ffff888117a5f988 R15:=
- dffffc0000000000
-> > [   13.630869][    T1] FS:  0000000000000000(0000) GS:ffff888426ea0000(=
-0000) knlGS:0000000000000000
-> > [   13.631727][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
-3
-> > [   13.632370][    T1] CR2: 00007f586df260ac CR3: 00000000054ea000 CR4:=
- 00000000000406f0
-> > [   13.633154][    T1] Call Trace:
-> > [   13.633506][    T1]  <TASK>
-> > [   13.633833][    T1]  kho_test_prepare_fdt+0x145/0x180
-> > [   13.634446][    T1]  ? kho_test_save_data+0x210/0x210
-> > [   13.635097][    T1]  ? csum_partial (lib/checksum.c:123)
-> > [   13.635546][    T1]  kho_test_init (lib/test_kho.c:177 lib/test_kho.=
-c:284)
-> > [   13.636018][    T1]  ? vmalloc_test_init (lib/test_kho.c:271)
-> > [   13.636508][    T1]  ? add_device_randomness (drivers/char/random.c:=
-944)
-> > [   13.637485][    T1]  ? mix_pool_bytes (drivers/char/random.c:944)
-> > [   13.637955][    T1]  ? trace_initcall_start (include/trace/events/in=
-itcall.h:27 (discriminator 3))
-> > [   13.638498][    T1]  ? vmalloc_test_init (lib/test_kho.c:271)
-> > [   13.638989][    T1]  do_one_initcall (init/main.c:1284)
-> > [   13.639477][    T1]  ? trace_initcall_start (init/main.c:1274)
-> > [   13.639998][    T1]  ? parse_one (kernel/params.c:143)
-> > [   13.640455][    T1]  ? kasan_save_track (mm/kasan/common.c:69 (discr=
-iminator 1) mm/kasan/common.c:78 (discriminator 1))
-> > [   13.640948][    T1]  ? __kmalloc_noprof (mm/slub.c:5659)
-> > [   13.641465][    T1]  do_initcalls (init/main.c:1344 (discriminator 3=
-) init/main.c:1361 (discriminator 3))
-> > [   13.641924][    T1]  kernel_init_freeable (init/main.c:1595)
-> > [   13.642441][    T1]  ? rest_init (init/main.c:1475)
-> > [   13.642891][    T1]  kernel_init (init/main.c:1485)
-> > [   13.643345][    T1]  ? rest_init (init/main.c:1475)
-> > [   13.643788][    T1]  ret_from_fork (arch/x86/kernel/process.c:164)
-> > [   13.644256][    T1]  ? rest_init (init/main.c:1475)
-> > [   13.644703][    T1]  ret_from_fork_asm (arch/x86/entry/entry_64.S:25=
-5)
-> > [   13.645213][    T1]  </TASK>
-> > [   13.645540][    T1] irq event stamp: 132025
-> > [   13.645971][    T1] hardirqs last  enabled at (132035): __up_console=
-_sem (arch/x86/include/asm/irqflags.h:26 arch/x86/include/asm/irqflags.h:10=
-9 arch/x86/include/asm/irqflags.h:151 kernel/printk/printk.c:345)
-> > [   13.646887][    T1] hardirqs last disabled at (132046): __up_console=
-_sem (kernel/printk/printk.c:343 (discriminator 3))
-> > [   13.648253][    T1] softirqs last  enabled at (131286): handle_softi=
-rqs (kernel/softirq.c:469 (discriminator 1) kernel/softirq.c:650 (discrimin=
-ator 1))
-> > [   13.649690][    T1] softirqs last disabled at (131281): __irq_exit_r=
-cu (kernel/softirq.c:496 kernel/softirq.c:723)
-> > [   13.651128][    T1] ---[ end trace 0000000000000000 ]---
-> >
-> >
-> > The kernel config and materials to reproduce are available at:
-> > https://download.01.org/0day-ci/archive/20251106/202511061629.e242724-l=
-kp@intel.com
-> >
-> >
-> >
-> > --
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
-> >
+The patch with a few minor changes looks good:
+
+- READDING_MODULE_CHECK -> READING_MODULE_CHECK
+- Fix the enumeration name in ima_main.c
+- scripts/checkpatch.pl code/comment line length has been relaxed to 100 ch=
+ars,
+but the section "Breaking long lines and strings" in
+Documentation/process/coding-style.rst still recommends 80 characters.
+
+There are cases where it is necessary to go over the 80 char line limit for
+readability, but in general both Roberto and I prefer, as much as possible,=
+ to
+limit the line length to 80 char.  To detect where/when the line limit is
+greater than 80 chars, use the scripts/checkpatch.pl "--max-line-length=3D8=
+0"
+option.
+
+After fixing the patch, please post it to linux-integrity mailing list.
+
+--=20
+thanks,
+
+Mimi
 
