@@ -1,92 +1,264 @@
-Return-Path: <linux-kernel+bounces-887932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F48C3964E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:26:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0BBC3964B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33E9C4E5559
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:24:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23EBC4FB005
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464912DE700;
-	Thu,  6 Nov 2025 07:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775CF2E0410;
+	Thu,  6 Nov 2025 07:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="AJkES2eG"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1ru3bnl6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BsryQK1I";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hkkosBGu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B0kfOKCP"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC2F2DE1FE;
-	Thu,  6 Nov 2025 07:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73DA2DC79A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762413844; cv=none; b=p2HVsiEpuVYQwkl9O7DhmS1oByrJn5yzd+u/lmv9YlV5J8Hg1i42rzpmMlrI7ChqJd1B42Hm2pYGPBMQ5TXmMhdW5st66XqPilXa3PEF5rjgcbbwAB9CDQ499ubAGbC6WHcHtJTfW59O7qGxHLGyfk7gZK/Hwhxt7rD58/difNk=
+	t=1762413830; cv=none; b=UW3Gtv27TGoTdSIge9WdXveOD7U3CS4dZ6WdfrXbbIONkE8oOAldhWILmeED7R8cBCIhz/EQsYFqhGH62n8iV+pyKlkcmpCEF8JfhES9qYbyi9wp+eRxgZve2amV53nnGwuIokigANbuA/GTqSqRvjrC4yO9pYnWclIoo1Ds6yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762413844; c=relaxed/simple;
-	bh=wljagbX7AqpVKaYlbJPff7lxG2b1Pk3LOJIK8dwwGQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R353mc5SS4pL3r/VOOZpGQUbUj8ujzyjetu2/4u/GYBMO0o9qXB0N+8UpCufmGkWruC0+Wo//HmF22CqXQDWRrKFOoHZwSRgpO/26Fc4O5Xkj20wv3+WHONQA12xBwiuIW7QGSekONqR+Q0Uv+P6qiVwr0TQYQ0jnX4AwIYEmDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=AJkES2eG; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=s7u2FYxwfy2t8ftGqfABpZj4gxjeyyVbnshkaKWkvIk=; 
-	b=AJkES2eGD+adJ8MfnR59+CqYOaXWNzovy7j21moDxkd6XzqlGwg6S4wkWAcQ9TYdGxzenzETakO
-	qv6PP3vvx07F2R2WWnT9QDYLg11UKE7o9EHDrpZf/CTjzXI3qnKS2yMm+pjzrNgW3CHINp82MAbaR
-	V+Ips7sy7Z7TSuAYPRUT/hJM+YZL84epN6SCnMojxguyq5VhdgtQBvUMtfezOdLuxUIXQR84Qk8lM
-	Vm2NiYDZ0zJpbNP5l1FNEMcYDp5s+rbAwNzmXj/q8fhAeuPs2sx5wX9Bu27gSJB1DiSDNDzblbYKV
-	LiCU3mXUlEuw9PLXzQVVpE54ocZfFBfuGkOg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vGuLR-000rq7-0C;
-	Thu, 06 Nov 2025 15:23:46 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 06 Nov 2025 15:23:45 +0800
-Date: Thu, 6 Nov 2025 15:23:45 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Srujana Challa <schalla@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sai Krishna <saikrishnag@marvell.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: octeontx2 - Replace deprecated strcpy in
- cpt_ucode_load_fw
-Message-ID: <aQxNAY1yzAgtE-lY@gondor.apana.org.au>
-References: <20251101140445.2226-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762413830; c=relaxed/simple;
+	bh=PpCYZiESS+NYFao5qNfGpf2j/tTFJn3MrA5HeQxrUNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jkl/scQJzWHsItgCgycXYMZeSMx93X+XnLHJ3VcwmdThBLrxQe/BOOS7ZXpdIPTq8sadc97BV6MXmbVCFZMPOUyzTS7hVyJAlEBUWXIsWFkJ4SrfYj8hdHf874ey3G9c2xHP3aOFJXAd/MvIi+QmKUJe7bz33IHWtwgVY36UCZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1ru3bnl6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BsryQK1I; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hkkosBGu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B0kfOKCP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D7F59211C4;
+	Thu,  6 Nov 2025 07:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762413826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
+	b=1ru3bnl6zTaJQ22XU2gMsGWTpkp+gmHjZZ2t57pZnLSE0QjP0E4B1zcCm8TnUwYyfhG/ep
+	OpbTc6WwNFKkMjtP4c8sXl6Ym+xAaFBERP40zXBQU74CT247gS/19DU9MnjP+otQHreMVI
+	vs/S4A7gDgq3TAGLaO4pVQsRsSPNGmQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762413826;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
+	b=BsryQK1I2wVpamBuHrtZ31BKHFAtMHf9K/Tl5yuw8v+MxsMLHcCbufG/28Lw2pHrIHXDzD
+	PfSNFhbLG5sCPrAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hkkosBGu;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=B0kfOKCP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762413825; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
+	b=hkkosBGuczAqLSXJr+/wi6QitrxxQFm0+AGDbamyv1Hy6AxZBklElEY7Ezgt4Bnt4z7fyQ
+	qfBeJRVDWzYhbvr4amFFMTne3KNKcgx/e35xjXNT7ApSqUpDfqFPGM7/uSklQc27gFJD6Y
+	yfvk/tclGtIKrrMi5bXpX6Z0o90D4hg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762413825;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
+	b=B0kfOKCPU7tEewGxnfh3t5a/1LSwMFkJ2xB7BBlodeWGgw+J1Dj5HeNkwMa/qS9L6oRqlV
+	QFQkN5b/C9x5+NDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B68C9139A9;
+	Thu,  6 Nov 2025 07:23:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AZ9yKwFNDGk8GAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 06 Nov 2025 07:23:45 +0000
+Message-ID: <2d4356a4-a0c1-423a-bd40-af1f8a28fd84@suse.cz>
+Date: Thu, 6 Nov 2025 08:23:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251101140445.2226-1-thorsten.blum@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] slab: move kfence_alloc() out of internal bulk alloc
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Alexei Starovoitov <ast@kernel.org>,
+ linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+ bpf <bpf@vger.kernel.org>, kasan-dev <kasan-dev@googlegroups.com>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>
+References: <20251105-sheaves-cleanups-v1-0-b8218e1ac7ef@suse.cz>
+ <20251105-sheaves-cleanups-v1-2-b8218e1ac7ef@suse.cz>
+ <CAADnVQJY_iZ5a1_GbZ7HUot7tMwpxFyABEdrRU3tcMWPnVyGjg@mail.gmail.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAADnVQJY_iZ5a1_GbZ7HUot7tMwpxFyABEdrRU3tcMWPnVyGjg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D7F59211C4
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-On Sat, Nov 01, 2025 at 03:04:42PM +0100, Thorsten Blum wrote:
-> strcpy() is deprecated; use the safer strscpy() instead.
+On 11/6/25 03:39, Alexei Starovoitov wrote:
+> On Wed, Nov 5, 2025 at 1:05 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> SLUB's internal bulk allocation __kmem_cache_alloc_bulk() can currently
+>> allocate some objects from KFENCE, i.e. when refilling a sheaf. It works
+>> but it's conceptually the wrong layer, as KFENCE allocations should only
+>> happen when objects are actually handed out from slab to its users.
+>>
+>> Currently for sheaf-enabled caches, slab_alloc_node() can return KFENCE
+>> object via kfence_alloc(), but also via alloc_from_pcs() when a sheaf
+>> was refilled with KFENCE objects. Continuing like this would also
+>> complicate the upcoming sheaf refill changes.
+>>
+>> Thus remove KFENCE allocation from __kmem_cache_alloc_bulk() and move it
+>> to the places that return slab objects to users. slab_alloc_node() is
+>> already covered (see above). Add kfence_alloc() to
+>> kmem_cache_alloc_from_sheaf() to handle KFENCE allocations from
+>> prefilled sheafs, with a comment that the caller should not expect the
+>> sheaf size to decrease after every allocation because of this
+>> possibility.
+>>
+>> For kmem_cache_alloc_bulk() implement a different strategy to handle
+>> KFENCE upfront and rely on internal batched operations afterwards.
+>> Assume there will be at most once KFENCE allocation per bulk allocation
+>> and then assign its index in the array of objects randomly.
+>>
+>> Cc: Alexander Potapenko <glider@google.com>
+>> Cc: Marco Elver <elver@google.com>
+>> Cc: Dmitry Vyukov <dvyukov@google.com>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>>  mm/slub.c | 44 ++++++++++++++++++++++++++++++++++++--------
+>>  1 file changed, 36 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index 074abe8e79f8..0237a329d4e5 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -5540,6 +5540,9 @@ int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
+>>   *
+>>   * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUNT
+>>   * memcg charging is forced over limit if necessary, to avoid failure.
+>> + *
+>> + * It is possible that the allocation comes from kfence and then the sheaf
+>> + * size is not decreased.
+>>   */
+>>  void *
+>>  kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
+>> @@ -5551,7 +5554,10 @@ kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
+>>         if (sheaf->size == 0)
+>>                 goto out;
+>>
+>> -       ret = sheaf->objects[--sheaf->size];
+>> +       ret = kfence_alloc(s, s->object_size, gfp);
+>> +
+>> +       if (likely(!ret))
+>> +               ret = sheaf->objects[--sheaf->size];
 > 
-> The destination buffer is only zero-initialized for the first iteration
-> and since strscpy() guarantees its NUL termination anyway, remove
-> zero-initializing 'eng_type'.
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> Judging by this direction you plan to add it to kmalloc/alloc_from_pcs too?
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+No, kmem_cache_alloc_from_sheaf() is a new API for use cases like maple
+tree, it's different from the internal alloc_from_pcs() caching.
+
+> If so it will break sheaves+kmalloc_nolock approach in
+> your prior patch set, since kfence_alloc() is not trylock-ed.
+> Or this will stay kmem_cache specific?
+
+I rechecked the result of the full RFC and kfence_alloc() didn't appear in
+kmalloc_nolock() path. I would say this patch moved it rather in the
+opposite direction, away from internal layers that could end up in
+kmalloc_nolock() path when kmalloc caches have sheaves.
 
