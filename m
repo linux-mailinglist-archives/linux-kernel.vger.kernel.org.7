@@ -1,59 +1,66 @@
-Return-Path: <linux-kernel+bounces-889086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82371C3CA8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C87C3CABE
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8BBD1894EE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18CA51887164
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0B3343D8C;
-	Thu,  6 Nov 2025 16:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D70B343D8C;
+	Thu,  6 Nov 2025 17:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQiUFSZO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9EEW1+M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB80D2E7F2C;
-	Thu,  6 Nov 2025 16:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9087C2BEFFD;
+	Thu,  6 Nov 2025 17:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448353; cv=none; b=uOXquqRPCGwgmzNgKNZiYVtMGeQGYEtdHBChIpLhObI+vOJ8ps3mZJ7ASOymRpoLlBhUpzDWwmz0QYi7I6mLhChdvJb0ZhsZ6sQFMXsiSbgb/UnLHXoXf7ChJTCERlmpx0DIe5yLIyzdL/I5bRjgm5Uw9LGaEKGlXgZS+DT7GDU=
+	t=1762448490; cv=none; b=aSWWphdOGEQAiXHsb+oB/uEbWOl8r0pPV7v0yVl8RCdgYQO6nTcfQHM0PlCmGAMdNJRLOgvUdyhSnbGcaziBlSUlxmS9TSJcSMkvaECHibdTvE8ues+OF1ss/5Oubr4g8EzmmPgQV8YYIUg0xzj7/WVsD8GHoIl8D2kLENgwkVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448353; c=relaxed/simple;
-	bh=snXPP2sPZlmwx9IoETc7vmai7mDjCry6M8ACC/gwYNI=;
+	s=arc-20240116; t=1762448490; c=relaxed/simple;
+	bh=J7xO/f4kJLNRCPcotB9OeBJW6lh9aFBrk8x0FbgwUjs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XdQbnrToNzbDYDo+WAo81tsABlyA9bpjgWbN1KvNOGpfxCGjVKi4Af3yBeBCiDI1e3T25n4Nii3kUGG+gXcndnEvoJl3BHS3BOLkG9PV6/IkPWSvK2F4eUs54UVaLgeTHL6uxhWId4XMoN/UUf1uclvwnOYsDCzapQa4m//BTZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQiUFSZO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DA6C116C6;
-	Thu,  6 Nov 2025 16:59:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=UOKpXSJSLPz+gZ0ATG+BnbfGtewWfmy5avSgPhLYp9elESST3U+qmnuOgXTvm2Qg2FNBKkR2p2z5uWWWF5j42gxY9pxkIHvMXNROev0D1UJjHbV68NkZx4GZiJbVTVJmMy2wIwaHiphHdZhLbac6py9cCv4Ve/Eqrt0VHHlcqZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9EEW1+M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54163C116C6;
+	Thu,  6 Nov 2025 17:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762448352;
-	bh=snXPP2sPZlmwx9IoETc7vmai7mDjCry6M8ACC/gwYNI=;
+	s=k20201202; t=1762448490;
+	bh=J7xO/f4kJLNRCPcotB9OeBJW6lh9aFBrk8x0FbgwUjs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RQiUFSZO7/QYncXJmZBRx8p0ksrpFY9UIbQeVlQC51Vea6u2Z6tiP4bxPv7CPT9Jw
-	 4jFx3C1xwNnfOoaWobWvvu3bNHIzzdIBefPkAgLg/lc6z5MLZ4huiiK1ozZO1/r0Ce
-	 Rl+NanvmpPu2eNPtLh+p8+HRbAWJ9MRlKz9rTYptV9vpnfwztVmxBsQxq5WNFEwEBZ
-	 dc9tVrfNnh3jFKmFLyNYje3sZrNpPtKf480rykGJ2DBlBQKTC7wyiGldPmrbD4G3T3
-	 27nTDDSbhrH1qttQJ3Mf/xHGQv5xyufINHRjqsZrGFem6x2EBtJXXuAd3qZ5/8Xbr9
-	 TIwh4Irf+32vA==
+	b=E9EEW1+M0I62A5N5SNnFRx5LP7H5lCHyXtKMkd4bao/9oqiX63Q+8rDhHCWb8NaFz
+	 fJwPtvNDqGCPxNhYg3IRTBdqPz4ucMFEkPqqdkbr9vhbAvBd19oVXP9lRY7lOuZT64
+	 vva7cLHfh/jw+NUvCo+OM4w0VNChD0G3AYuLQ5ikfvEgI46sff6iYYH+0ugbpopD9R
+	 FCCpms3e7ccYv3KTxGIbineLPvrPwGMC456/Wx+CRr5QpZkCGIENzp+/8SWqCW853r
+	 tj0wtC2gPPc9s0fKNv6B4A0YjygtUNm2gZS3aCFpgnBtEkyuoVwFDcH55g/ganIYvs
+	 QlYY0ZXqe3hAA==
 From: Lee Jones <lee@kernel.org>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
- Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: Pengutronix <kernel@pengutronix.de>, linux-pwm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250731-blpwm-v1-1-0171fd31bff9@pengutronix.de>
-References: <20250731-blpwm-v1-1-0171fd31bff9@pengutronix.de>
-Subject: Re: (subset) [PATCH] backlight: pwm_bl: apply the initial
- backlight state with sane defaults
-Message-Id: <176244834994.1961871.13787969990090168625.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 16:59:09 +0000
+To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ linux-pm@vger.kernel.org, Stanimir Varbanov <svarbanov@suse.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ Willow Cunningham <willow.e.cunningham@gmail.com>, 
+ Stefan Wahren <wahrenst@gmx.net>, Saenz Julienne <nsaenz@kernel.org>, 
+ Andrea della Porta <andrea.porta@suse.com>, 
+ Phil Elwell <phil@raspberrypi.com>, 
+ Jonathan Bell <jonathan@raspberrypi.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>
+In-Reply-To: <20250917063233.1270-4-svarbanov@suse.de>
+References: <20250917063233.1270-4-svarbanov@suse.de>
+Subject: Re: (subset) [PATCH 3/4] mfd: bcm2835-pm: Add support for BCM2712
+Message-Id: <176244848608.1964097.10492891348357972327.b4-ty@kernel.org>
+Date: Thu, 06 Nov 2025 17:01:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,21 +71,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-52d38
 
-On Thu, 31 Jul 2025 10:47:18 +0200, Michael Grzeschik wrote:
-> Currently when calling pwm_apply_might_sleep in the probe routine
-> the pwm will be configured with an not fully defined state.
+On Wed, 17 Sep 2025 09:32:32 +0300, Stanimir Varbanov wrote:
+> The BCM2712 SoC has PM block but lacks the "asb" and "rpivid_asb"
+> register spaces, and doesn't need clock(s).  Add a compatible
+> string for bcm2712 to allow probe of bcm2835-wdt and
+> bcm2835-power drivers.
 > 
-> The duty_cycle is not yet set in that moment. There is a final
-> backlight_update_status call that will have a properly setup state.
-> However this change in the backlight can create a short flicker if the
-> backlight was already preinitialised.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] backlight: pwm_bl: apply the initial backlight state with sane defaults
-      commit: c596a53cb0c607ccff34aac30ada774aa28b7dc0
+[3/4] mfd: bcm2835-pm: Add support for BCM2712
+      commit: 30ed024fb0768e9353f21d1d9e6960b7028acdfa
 
 --
 Lee Jones [李琼斯]
