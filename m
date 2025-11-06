@@ -1,141 +1,83 @@
-Return-Path: <linux-kernel+bounces-889158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C065C3CDBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:32:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D45FC3CCEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:25:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE96A4FE040
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:28:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25E1F4E7891
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C39A34F484;
-	Thu,  6 Nov 2025 17:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OYJ1GXgf"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0838534B66F;
+	Thu,  6 Nov 2025 17:19:43 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E88A34FF5D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24B823507C;
+	Thu,  6 Nov 2025 17:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762450092; cv=none; b=OyeGakZVjfkfSb0nNt87YebI7DyYpLnZz8SNibCvLogpJN+BobYIQfiyYeio2/zwMkZ9tn9LMlZ0Zs6GCMMjUoXHJVB9K36OnEutTFAS/91B1o7xC6jwxRAruMNft13pXky2r6PKBAzYEA54ia/Q8XYWgkF61QBTWwkJ+x8J5wU=
+	t=1762449582; cv=none; b=MBPihq3JlRCXh8SfJSbbjczEWJCMK5fyBP72mKBF83MxWzXjH9aMPkl05O3lgauFBeXVIXarVlfKYsnSqhK3PC4KawzIkn22WhPssJmbhEG6f/fcX6TOmLWkAn4t7V5uhSQoCebmfKU9QvygAPrpn4QSaDjNpQ4X3OEDsXBIdR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762450092; c=relaxed/simple;
-	bh=sngSJFzH0gflKDa+8Iim+lbvqosTBty+UDJw/IjLKlk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ol6NvFtgLZ9g8/HeDEDWr0ZBTARsLcsOEYoFz1Ej5oKQgnisl9YDEP/D18kRpFsTI4DG/CxsIhui16mNAGKeh5JQFmpG2jVsEmuEaUjWgIOlbf5TbEYLRzJR3sMymBkB4dsU+g1g/qjDjMz4kXyiuYnrBjbGPcDTMQA/aiImoOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OYJ1GXgf; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251106172002epoutp01029086d4eaa54bf42701a116a4631f29~1epNC55ma0345603456epoutp01p
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:20:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251106172002epoutp01029086d4eaa54bf42701a116a4631f29~1epNC55ma0345603456epoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762449602;
-	bh=GMxbGaHTegvxzjmrCuxMyXkM1amJUDVoE5ZIXTzbZNE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=OYJ1GXgfV/XZM6ojtZSaI/3vG020gvqa7gJISvsW8Z2xJwsaN2nIoU2D582IRZA0o
-	 3qlBInMo1MbRvN7mEJspmxW45nJxNVQQCjtRRybuZ+DgyuLKQjGTEuzDqqyzhse9sJ
-	 utOjWzduvIZmewRbGl1E3fbsDQo3vqYzXkyHR8RY=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251106172001epcas5p1dda439ff0736d2ad8b7b1fe79939d39c~1epMgioyt1461914619epcas5p1R;
-	Thu,  6 Nov 2025 17:20:01 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4d2TTX3cTNz6B9m4; Thu,  6 Nov
-	2025 17:20:00 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251106171959epcas5p1bfa773e26cfc783e69ddcb7ffca54190~1epLEgwkF1620916209epcas5p10;
-	Thu,  6 Nov 2025 17:19:59 +0000 (GMT)
-Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251106171954epsmtip2bfb46d347a900a171b074f453dd1a3cf~1epFsVcSg0814108141epsmtip2f;
-	Thu,  6 Nov 2025 17:19:54 +0000 (GMT)
-From: "Faraz Ata" <faraz.ata@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Andi Shyti'"
-	<andi.shyti@kernel.org>
-Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>, <linux-i2c@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>,
-	<pritam.sutar@samsung.com>
-In-Reply-To: <7ba31fb7-8f1b-4277-a3cf-649a76c7dda5@kernel.org>
-Subject: RE: [PATCH v2] arm64: dts: exynosautov920: Add DT node for all I2C
- ports
-Date: Thu, 6 Nov 2025 22:49:03 +0530
-Message-ID: <000001dc4f41$948cb470$bda61d50$@samsung.com>
+	s=arc-20240116; t=1762449582; c=relaxed/simple;
+	bh=d3/7MWMIPt2qklFTqM8v59G1zedbNsNB/RD8Zl6VbQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kFDA8lcbfmn/1W9TpdT6cMG5kFY+tYtErtMbKliXJ/pMGC3hzdLRWGv2fZq1BBb++fRvsSJkoGtCynfkwM0roF5cdEYYDE2698giJYS2B3ud1F4aqU/gUQi2OtF2UZpsljKu5enTOc4lrOZHwpE4Rx1Rko4EHVny0Q8cph5CzQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id CF9D91DFA6C;
+	Thu,  6 Nov 2025 17:19:38 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id A4EF22000F;
+	Thu,  6 Nov 2025 17:19:36 +0000 (UTC)
+Date: Thu, 6 Nov 2025 12:19:35 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kernel test robot <lkp@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Linux Memory Management List
+ <linux-mm@kvack.org>
+Subject: Re: [PATCH 3/5] tracing: Have tracer option be instance specific
+Message-ID: <20251106121935.3efdb61c@gandalf.local.home>
+In-Reply-To: <202511062223.ocoUvCBI-lkp@intel.com>
+References: <20251105161935.545400234@kernel.org>
+	<202511062223.ocoUvCBI-lkp@intel.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFOiGH9IZBP/MALtVgmdgdp0NuXDgFMvpOsAcCx1FYC93HaobXRSjbA
-Content-Language: en-us
-X-CMS-MailID: 20251106171959epcas5p1bfa773e26cfc783e69ddcb7ffca54190
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251014111455epcas5p30731028365023e101dad3b9ba1f90bec
-References: <CGME20251014111455epcas5p30731028365023e101dad3b9ba1f90bec@epcas5p3.samsung.com>
-	<20251014112338.2023223-1-faraz.ata@samsung.com>
-	<2knbzksxobg2kl3aexuiwluctgafgzxblsqc5q5rcikuruuegr@cqlizryhhx4s>
-	<7ba31fb7-8f1b-4277-a3cf-649a76c7dda5@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: fk9grwiihqoq53jhdokau8byn1wkbaed
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: A4EF22000F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18uWTdcXlyyoR3VMGpvOa0DxYvE6ud2xdM=
+X-HE-Tag: 1762449576-625784
+X-HE-Meta: U2FsdGVkX19ic/j+PnEM6rRsH3Typqk/8ymi/MDdxNp8zsI3g+yMWgsZVaBQhf/K8fSYw2rd+yY0fFCTOxTViutoUoQtmMoFHS7xQU4XtqKWPFcx2W/HTggJMu4c6XaVdg3YbK/6OskY/q/vONW0/S6wJKPHMatZH4c9kj0fjQIutME7kacdU+xjve0cNnl4RLuSurolzS0Wq63NEyQe1Aunq9N2OWWFaIxqf5IkEzpkXOlsNS7u6CLxxVWILPwPmkep0PwEq4Xk4vmXV30cJ0rwrLpkDSXhq2n0ooWXOIDLt5y9cc2SpwUIBNgPM6o4JeQsLrz7RkmVe02ZJy52EsXr7rXvkwhI
 
-HI  Krzysztof
+On Thu, 6 Nov 2025 22:38:04 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Thursday, October 30, 2025 9:11 PM
-> To: Andi Shyti <andi.shyti=40kernel.org>; Faraz Ata <faraz.ata=40samsung.=
-com>
-> Cc: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> alim.akhtar=40samsung.com; linux-i2c=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
-> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> pritam.sutar=40samsung.com
-> Subject: Re: =5BPATCH v2=5D arm64: dts: exynosautov920: Add DT node for a=
-ll I2C
-> ports
->=20
-> On 30/10/2025 16:34, Andi Shyti wrote:
-> > Hi Faraz,
-> >
-> > On Tue, Oct 14, 2025 at 04:53:38PM +0530, Faraz Ata wrote:
-> >> Universal Serial Interface (USI) supports three serial protocol like
-> >> uart, i2c and spi. ExynosAutov920 has 18 instances of USI.
-> >> Add i2c nodes for all the instances.
-> >>
-> >> Signed-off-by: Faraz Ata <faraz.ata=40samsung.com>
-> >
-> > what happened to patch 1/1?
->=20
-> Different patchset, no?
+> All error/warnings (new ones prefixed by >>):
+> 
+>    kernel/trace/trace.c: In function 'run_tracer_selftest':
+> >> kernel/trace/trace.c:2174:30: error: 'type' redeclared as different kind of symbol  
+>     2174 |         struct trace_tracer *type = tracers->trace;
+>          |                              ^~~~
+>    kernel/trace/trace.c:2171:47: note: previous definition of '
 
-In order to address your below comment=20
-https://lore.kernel.org/all/000001dc39a2=242cf5e570=2486e1b050=24=40samsung=
-.com/
+Yeah, I caught this last night during my more thorough tests. Silly me
+turned off selftests to make a bisect go faster and never turned it back
+on. :-p
 
-I added the lore link to dt binding in v2=20
-https://lore.kernel.org/all/176044840242.3094524.6549941972513295895.robh=
-=40kernel.org/
-
-Please suggest if anything else need to be done  and via which tree this pa=
-tch set will go
->=20
-> Best regards,
-> Krzysztof
-
+-- Steve
 
