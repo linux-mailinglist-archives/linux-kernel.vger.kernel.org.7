@@ -1,130 +1,158 @@
-Return-Path: <linux-kernel+bounces-887882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7069C394CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:44:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D082FC394D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4700C3BAE8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:44:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8A73B9330
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645082D97A6;
-	Thu,  6 Nov 2025 06:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA592D9EF3;
+	Thu,  6 Nov 2025 06:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NMo8tMeb";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rf/ieGbi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnQbW4nc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9382D2495
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E6C2D8781
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762411469; cv=none; b=BjH4nFypmKSEExF6Yp8SpnAHqxXspBqAAG1asPszHcrZ4PKWay1gNrrLxD8TmEB8f0N/BtuQvKNc6jac5enkK/l2Ajd77AXu7ejH9sSIa2Kz5fSjfC148qr5rFOulv1f5B+JaBMWbyIXyeBsQLScYmJiXdi59P+Kk1ntUQRRYNI=
+	t=1762411481; cv=none; b=lg/qm55w0AlkUM+ypnS5LFesb+Pggjq94lIFnPvz35GLAx66dEmURO6a6RhD+Gsg418Ul2h+4Y1wjdQetw7rsmeLOiBXHLTY2v4Hlv17CdJRWg/xhLdQuCVY1Q+x82uKjnydTv0WlfwZAMuF/Jc9SsdzPQSq/5uwohrH2BZFsA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762411469; c=relaxed/simple;
-	bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oEPfLS+ircwbnkAdmglLc4rSMJGRkkmS96G97ZMeX6lzlUGsfzBKauaveY5Qbhkvck78LOXgqdu/2cbLtog0uEWFf0X7w+876FTEFUMI8nZuZtRd8Pt9ROtEyez0/FVS/svv5idNflwKexRUNULx6wKQFvVppY+L0gzgHBttml8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NMo8tMeb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rf/ieGbi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762411467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
-	b=NMo8tMebznrIXPcxz+m0hZVP8rg4QGAww3BvCktWevADVnxbcfWTJ/t7cPl6Xd64Tfa/K0
-	vOYpGzZ+uXbdvmOnrJLVbKCmoUc1SmwOvDIOTndtwl7/PlRhwdLLwEQcImi0y1y6aO6sl5
-	c34fSfldk0gIwADK3Y/njOAdcgC6860=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-158-3QYwmLVkM_yLrALlBnFDqA-1; Thu, 06 Nov 2025 01:44:24 -0500
-X-MC-Unique: 3QYwmLVkM_yLrALlBnFDqA-1
-X-Mimecast-MFC-AGG-ID: 3QYwmLVkM_yLrALlBnFDqA_1762411464
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-294a938fa37so2533175ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 22:44:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762411464; x=1763016264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
-        b=Rf/ieGbiIfUV6cWiIuuG9tS/vFBFNZXFEznC4BtcQEW5WRiIOMbrIFmeKpEkqsxLdh
-         cMAwI8pISayqFTvSogz3Pv99Xz8JcIT/4nYRKslFubeZNbyXtRtV2fDlxIiXCP0Qse2j
-         QlXV9yNoWDeN/Xh58RGVz0du+8fJML8PK1ZT5QWmK1hBHvp1Lnk1UIx20Q7hPf0sZP3L
-         3+/t2eRWMCH5iDxKvaTymJfS3Ti70KRwvOM6Ap5iHeN2gwT8LE7r4sy6jUzgUWigOCtS
-         HYNTikkrz0XSMYS0drOtlu1qE/cM7LVWpV2hisI6IkkZORBezXBK42XSwubVcUAhkvp3
-         guJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762411464; x=1763016264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
-        b=V+3GBO+O4iQFz8PNvJJhEFwTmW6s6cYZJ968HPQN4uk/kjlh40XsjnomKHQxxRdXcT
-         QBfDWu6oHA5VmOg89ISbd4ZwRPUPWHwfjX6Jvh1vgkqMZlxvCc61ia24RLCtjaN5iomQ
-         ZClXvNsoQPEVn5HCqGxQjOGLScq6KcY0AxP/BwqBZxoU3iB7Zq2X9MlkYnQ3YM4SSf+v
-         9ErftWfdInFg8W7i2L5ILH54vdzTKYiHfbQSA/lLMoih/tGszUAFUb+PHU4XLv2kteLH
-         BwqgdvNglRVJtLfOuHZEK9hEkp7cQ3u/uc+dmBJE69ohzjze4kh+MT1cEhYrW0HJNICM
-         uVtA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+cIr8BtgBuORfT5iTYVMm2gy2MRC8C+ONwYNPExeiR3NRXitWv2KsO+w7oWw+JATAd8b5iM/NOC8PB8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUNiok9DfWqUcm7sgtBplHKl8NtGE+/vnrTJJQfXPeCZe0dbIl
-	2cRZcBCv3vvDhvwvhG7+JglDdjmmAdxjGo7QTz+NFUdC6Goi1llBm14FQyxUC5s0boWc7XgfSnA
-	RrdDhxMvoEjOlZjCitYmbd/5CrPCNaPaLNHAP6grbecRqxmKNRESz22TxAry40wFD2Su+fL1A+c
-	lX8WLlm9mcAjDYM+zwTulhVIVI1BzwKCh46u9mjHre
-X-Gm-Gg: ASbGncvSy20n8nSLwbC+sN89jRYRw8owSVl+DM1Ic9Lm4inchzOP16ryCa0I8M9oNDw
-	mKfkSruGWFXI4wqgetixy7jeeSmbghNjzx3ehGFvUroPL3e4PaRIhWw6VCKZBM6jx4eYXsmtY2L
-	FKYwvhr+3Pij1MCJ5rQpfPpMRgwuNHKTULE/bKgFzJnApPRx0Z66vC6bSC
-X-Received: by 2002:a17:903:1b63:b0:28e:7567:3c4b with SMTP id d9443c01a7336-2962ad1ef5amr84646365ad.16.1762411463891;
-        Wed, 05 Nov 2025 22:44:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFmNZkWVFrgyX6IG8QwdVbXXabDAgmhxboOVYqMKs84MfgEvO2GkEnqgYjqE4lmrXZf+XuZQPTBJ4U9ZXyvnqU=
-X-Received: by 2002:a17:903:1b63:b0:28e:7567:3c4b with SMTP id
- d9443c01a7336-2962ad1ef5amr84646045ad.16.1762411463463; Wed, 05 Nov 2025
- 22:44:23 -0800 (PST)
+	s=arc-20240116; t=1762411481; c=relaxed/simple;
+	bh=ZiKKOJ05KAu/YBIRZGdhy0ZwdJrprSmfpvaH3VMvPz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LkZxI8pK483kEtC6gbYCULFCaVAicrS6RvuNgPIY5W9m+/IFL/5CUUZXcY/HeBVwMJIgqJIiPjy9wizkkeA3N3fghH9M2KBLKYnzNEAZejZT9skLDWOZ/1GJEBd7ZXxEvwXBlrEKF9pgfHqCKlTKqUVJzGKHixboDcC6OfsRQ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qnQbW4nc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C43C4CEF7;
+	Thu,  6 Nov 2025 06:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762411481;
+	bh=ZiKKOJ05KAu/YBIRZGdhy0ZwdJrprSmfpvaH3VMvPz0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qnQbW4nc56UGrXYhNa5+GH9pyRlUxqdl3KwlMIur+x9pATNYccXvMn4KecebUevlH
+	 2O9h0FP+c/9Ayv691bzxXcm6CpElUnp+fL1la7/+gPCZvLFfxeIE0bEAqiar+Gm7YL
+	 7iS5LBfPs2bHC3laeLUXoLV2ZbXxFaigyQS7KqLOSwLxgFfURTI8nvdlZ5wvyPMZTv
+	 P+oWQvNTWTLSSrR7i/e/tCPl8hAu4lCwQF6FHhaWW5CyAXr17Oc/95SDNdwlPwNikm
+	 D8QlHdy86Ll474lnIJV5gwF+wEh9ZbkBGgWO58ELmxTwyMcjLslkZEVfPZi/VPmNvO
+	 Oqt1dnd0Gv+Yg==
+Message-ID: <f8c0f152-cd70-4a25-a52d-e1692c6dbc28@kernel.org>
+Date: Thu, 6 Nov 2025 07:44:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029033559.83145-1-hsukrut3@gmail.com>
-In-Reply-To: <20251029033559.83145-1-hsukrut3@gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 6 Nov 2025 14:44:12 +0800
-X-Gm-Features: AWmQ_blG6rCuODjNHXnzSBsblyAMCOBCmeR3DLx53_79KRl2HplNxsN72I3qYKo
-Message-ID: <CACGkMEs=xB3nZZMaQC6m15Gm+K9fiS68twD4vOgQid-B0BQ8Qw@mail.gmail.com>
-Subject: Re: [PATCH] virtio: document @vaddr in virtqueue_map_free_coherent
- kernel-doc comment
-To: Sukrut Heroorkar <hsukrut3@gmail.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
-	shuah@kernel.org, david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/irq: Precompute nr_legacy_irqs() for performance
+ optimization
+To: ray <veidongray@qq.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org
+References: <tencent_59CE737B39C37282F84B9CF7765A6C1D8006@qq.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <tencent_59CE737B39C37282F84B9CF7765A6C1D8006@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 11:36=E2=80=AFAM Sukrut Heroorkar <hsukrut3@gmail.c=
-om> wrote:
->
-> Building with W=3D1 reports:
-> Warning: drivers/virtio/virtio_ring.c:3174 function parameter 'vaddr'
-> not described in 'virtqueue_map_free_coherent'
->
-> The @vaddr parameter was introduced when virtqueue_map_free_coherent
-> was added in order to provide map operations to virtio device, but it
-> was never documented. Document @vaddr to silence this warning.
->
-> Fixes: bee8c7c24b73 ("virtio: introduce map ops in virtio core")
-> Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+Hi,
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+On 01. 11. 25, 12:26, ray wrote:
+> Precompute the return value of nr_legacy_irqs() in init_ISA_irqs(),
+> init_IRQ(), and native_init_IRQ() functions to avoid repeated function
+> calls in loops, improving performance.
+> 
+> Changes made:
+> - Precompute nr_legacy_irqs() return value in three functions
+> - Use local variables instead of function calls in loops
+> - Maintain original logic unchanged
+> 
+> Signed-off-by: ray <veidongray@qq.com>
 
-Thanks
+Is this how you sign legal documents?
+
+> index 6ab9eac64670..bb7cbf99f65c 100644
+> --- a/arch/x86/kernel/irqinit.c
+> +++ b/arch/x86/kernel/irqinit.c
+
+...
+> @@ -66,7 +66,9 @@ void __init init_ISA_irqs(void)
+>   
+>   	legacy_pic->init(0);
+>   
+> -	for (i = 0; i < nr_legacy_irqs(); i++) {
+> +	nr_legacy = nr_legacy_irqs();
+> +
+> +	for (i = 0; i < nr_legacy; i++) {
+
+nr_legacy_irqs() is a static inline, so this was not a call per se. 
+Instead, this resolves to 2 memory reads. Is the change worth it at all, 
+provided these are NOT a fast path?
+
+> @@ -106,7 +112,9 @@ void __init native_init_IRQ(void)
+>   
+>   	lapic_assign_system_vectors();
+>   
+> -	if (!acpi_ioapic && !of_ioapic && nr_legacy_irqs()) {
+> +	nr_legacy = nr_legacy_irqs();
+> +
+> +	if (!acpi_ioapic && !of_ioapic && nr_legacy) {
+
+What's the added value in here at all?
+
+thanks,
+-- 
+js
+suse labs
 
 
