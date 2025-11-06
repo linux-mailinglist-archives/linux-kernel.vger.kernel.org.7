@@ -1,72 +1,93 @@
-Return-Path: <linux-kernel+bounces-888747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A7FC3BCF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:40:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83FBC3BD24
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2DC1888735
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:37:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4F8A503EC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B80633FE33;
-	Thu,  6 Nov 2025 14:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC3B32E74C;
+	Thu,  6 Nov 2025 14:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="COi4CY7i"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OeRC5w/9"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E1033EAEC;
-	Thu,  6 Nov 2025 14:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CE522DFA4
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439722; cv=none; b=rj4PB8nswD7UoFuxW7VkVboMgpnSM51PYLW+RPoHBduIIQ9+DZd4zNc6gCQ/3CpGLK4Wnsrs+X7Cpk7oYBB7GoyuQjcdP6zm3KjChkPZKMaw1K1/NMF+9TOejGX3L2xmjOM62urxMgWVr8g4EcXVKvVO4J2L2U20UDd040c6wCI=
+	t=1762439792; cv=none; b=hCiPUkpFW94MJlvh1dCt7DsKWv7KZIFSh6LIDI6EgoRZQc+cI7TttdRKn+hmm68v6kiIZK1NyGJ/GaLYSDzYl9YqgaoUoHQS82Dm0FkFeGmJORuQ2cTVV3Z8a0GQC4dFCG1dcDNXQNF0YBeTVbPpbTP8DdL34ijPAq+vA+S0ZsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439722; c=relaxed/simple;
-	bh=57fdUNIOFbvLlfOS1BtY/XcfitZ1Mmlbw0An1LdVwsc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dmeAooON5o6f8/odICDW4TvOdiZIy50jVlqC25dv03p40rl6d7+e5nA3378bnAd6nzpnw7DWy3kdKm2Dvd5YG0WdNWH7H0UGBTsMuYZyOhvEQAJkhnOL74I7Zm31LI2gNtlaLhdN01WtlTVlX1CmmM/y9iF+1HGcsI0QkfJ915E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=COi4CY7i; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6ANcRb832900;
-	Thu, 6 Nov 2025 14:35:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=e07CdbUuMcpazLb8YhQmHovdkB5Hk9FWCovi1Xt6lxo=; b=
-	COi4CY7iNZ88TwEGpvl1OYck5Abb9osB0f86G0ENPdaFddufFNOWFDScpfeEdqJs
-	I3hx6jWuORtApbhN8IkgTKUPp2ZP+sCuSOz6OLwOSZRKguAresDS9KhBflroElXY
-	DeYLFsUsUE18bgRLCn82cW2p8qQwF/GwX47xkf4ubUWYEzSWJHHCqYFpTdDz+MOv
-	aSeATxjX3CN28jUOGS1OvhZuNZiULx5GGJUlRFAQQvA2XtGin6pePDMi+IBSY6PU
-	KTJIwf/8HjnstO5rYGZltUAHmbJdktqBFJx8e8DAUPxpMoW/zxz/ALAlXa4bWbMi
-	GLO41785bC57CaY1fX1Low==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a8b4csqb5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 06 Nov 2025 14:35:09 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Thu, 6 Nov 2025 06:35:09 -0800
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Thu, 6 Nov 2025 06:35:06 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <tiwai@suse.de>
-CC: <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <perex@perex.cz>,
-        <syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <tiwai@suse.com>
-Subject: Re: [PATCH] ALSA: usb-audio: Prevent urb from writing out of bounds
-Date: Thu, 6 Nov 2025 22:35:06 +0800
-Message-ID: <20251106143506.720545-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1762439792; c=relaxed/simple;
+	bh=cgh3Vak6zP+Xb4sZcHY+bd8yHXC0q2hAbj8FIzk6Pjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E6s3jRsZrhPlh+Rx2uTpDPon4S/45w8uEVshKU0kRWiPU1LMRDFMWzEvpQ5/J/d7LRa7L8LBsGlCyl34V842qaq8sl6mOEBYptVJHxZ2f+YxQM6qprxJFI65GvPJQLEKL7QpeDlnv3oMIhtQ+you8GmbIuzLg3ymllhxcYB3/Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OeRC5w/9; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4711810948aso7547035e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:36:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1762439789; x=1763044589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2hlP/g32u7s3LyR5M2MyElNtRyiD5b8iMgapRQ0QHFA=;
+        b=OeRC5w/9lfQiCXJrya4rOHkKGsGvk/D+X8yLEphrLRzQdHkfEAvYxT3+d9IsqUFDYF
+         Rtj269jeyix9RWmIzVExzsK3GdjUhlLcZDDkwSPeKbP/lF1wj69CGUSHm2xmxUFpL1r8
+         G2jrK2xyqHdNw+9r5HM/aXD3ljmvRllIPcz4gxBeosd1hvbi4i5FPkLRFI3pDr39nHvC
+         0FGraEP4C3/jr8W5VBIt6zvTFh8yNISDswYENK2DUqTloN/7OitMMyGCbSmWT0NQm+1v
+         2NESm6vk4peLIf3pgi/NK90HEOVyekkfDIgeQWgIbgXO/9CEpnMvhx0Z9/rqfyBEcqUm
+         E6sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762439789; x=1763044589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2hlP/g32u7s3LyR5M2MyElNtRyiD5b8iMgapRQ0QHFA=;
+        b=ND9Nx6sSPRrJ4EQ1US5wl+wNFZQTmVjiLoOx3emJo1q29ZK6Gnj9edRfY4BRIodYf+
+         qxSwZKXQlLmzCB+URrcE3WNEzmhDepp+IJZ80U3qXLU5Q7EzEGuLJ4WFLmO9Ji3nkknW
+         Y/kvOPaIbAmasbjE8ZKbLR871Ydh+bFoXGadtUeJjFH07rJyjEj4Rfevg8rcuzgqueSD
+         PaRG7xUfXMqBcMrJkUM1sdxlsqZ0aRLljomWyuJ+k+ZukrU4QbvLcSpJkGOgtlLyz38E
+         /7aI25TFjC+9Atb3a8JbcjlfZgD/xAMZ/P2Vy9BOvAxSeTgALX4isiYIflb4C5cT/+AS
+         kovA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbCHJlZ1hmGSFd3HxcYbTHgdVZUX42PouCZm4upKJ2Bbo4qZjMB+eAzq04EvfU5MK8qKJbjhmt4jaCoHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx8JCBq/OGUrygDECAdj3cW2lQ5mTpJxszNav+xfMI/+xqXSMu
+	Mpu/zjezRMzOXhdIXcvXYf/Ek44EI8FWxGeKXyk4Wprr0YpP0sK2uJV6n6dtP8eQ1m8=
+X-Gm-Gg: ASbGncvkLKnrYdLiKuIABUe2vG0prtg2Kb8JaLG3Z6Arc99zrjTEVdhmPx3+gBzsj6y
+	uRxuExM8q/hGyU78kqDcn50OBJKU4J+SAFZKXp0/c9ZgXf19BpAojh3d1I5tEHMeI92PxM3ieTu
+	oTcsO7HU5IBBQTu850hAnY9+sR0H5wSTUQyEdr4MKbHX5W4wupKPZGFhShBqLcdwmX2tiUA7HGH
+	exIbbb/VYkax/Q8Z11ms3ffWirn4CERIC4gVZT+vKdklSeAmAAT34VqcdJJn8qwjEIaHEAj1L9y
+	0EKP4yf4sGUt/LuZ1oo6jsVUegU8hvKMQysOdZwvuGRfLCrcWgM+9IuYYnFtx+2NGNi01xkgHlo
+	sZJZ1dJha7Oqm64woBlFFmGGIZaUwaUOwTTVewnLynR+Pyq57+3oHSLc0XDP3Zi3lPBGtXsXflo
+	Cx1SA/FgYIYFIHhCsSzji32MejXODvLPCm5V9eClwB
+X-Google-Smtp-Source: AGHT+IH0S/6NocUvBBvhVFlXalk6vfmsVEte/Abd8sUlhELu8RQVK9rbCvig9oqcdCFDI4RBgNCyBg==
+X-Received: by 2002:a05:600c:37c6:b0:46e:37fc:def0 with SMTP id 5b1f17b1804b1-4775cdbf0eamr51383005e9.9.1762439788723;
+        Thu, 06 Nov 2025 06:36:28 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce2cde0sm112185495e9.15.2025.11.06.06.36.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 06:36:28 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: stern@rowland.harvard.edu,
+	gregkh@linuxfoundation.org,
+	p.zabel@pengutronix.de,
+	yoshihiro.shimoda.uh@renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	kuninori.morimoto.gx@renesas.com,
+	geert+renesas@glider.be
+Cc: claudiu.beznea@tuxon.dev,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/4] usb: host: renesas: Handle reset signals on suspend/resume
+Date: Thu,  6 Nov 2025 16:36:21 +0200
+Message-ID: <20251106143625.3050119-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <87v7jnfkio.wl-tiwai@suse.de>
-References: <87v7jnfkio.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,107 +95,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Qq1t3bSpdbfWqxKO3wd3QNfd3NF2t7iW
-X-Proofpoint-GUID: Qq1t3bSpdbfWqxKO3wd3QNfd3NF2t7iW
-X-Authority-Analysis: v=2.4 cv=M6hA6iws c=1 sm=1 tr=0 ts=690cb21e cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
- a=t7CeM3EgAAAA:8 a=v4leo8fFWbreTTM7-MYA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=poXaRoVlC6wW9_mwW8W4:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDExNSBTYWx0ZWRfX+W8jDiDDJPzN
- ObOoa72l+ngVAUrrLIEab8d1WsSfYGTD816wxadtAX3UG0lN35J1G0sVYFDeQYrFPIcvYZzwaZ3
- z1GVH7VLNMxJuWE6u7NqEy4aG3Qxlv+LVQk4j8kY3nI2narM9Qz31RnAzacUU/wIjOSFUjeKqFs
- UMhqLZeKloo17zjzjs+UzEe7B7YvLURXSs3CbR+ihocwzxJmwqwHvsUcFwGJL+qxlCAEKXfw8xp
- YxB87vk5AJBDWsW+3YlqlZ96ZCvxkzOhZ0+yevuXICGCKJjTOxzI1QMFqEW9HVRrEAdSykKObDm
- PpbQYslrRDy1vhghCS20bfTxCBcx1OfHGKGe7a35ARr7g/I8hL45N0soVi6ooBHZ/LfklTZdB9H
- OVRU0p8JDHaxrGwivck6NblGfowpgg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 spamscore=0 suspectscore=0 bulkscore=0 phishscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060115
 
-On Thu, 06 Nov 2025 12:49:51 +0100, Takashi Iwai wrote:
-> > > > The calculation rule for the actual data length written to the URB's
-> > > > transfer buffer differs from that used to allocate the URB's transfer
-> > > > buffer, and in this problem, the value used during allocation is smaller.
-> > > >
-> > > > This ultimately leads to write out-of-bounds errors when writing data to
-> > > > the transfer buffer.
-> > > >
-> > > > To prevent out-of-bounds writes to the transfer buffer, a check between
-> > > > the size of the bytes to be written and the size of the allocated bytes
-> > > > should be added before performing the write operation.
-> > > >
-> > > > When the written bytes are too large, -EPIPE is returned instead of
-> > > > -EAGAIN, because returning -EAGAIN might result in push back to ready
-> > > > list again.
-> > > >
-> > > > Based on the context of calculating the bytes to be written here, both
-> > > > copy_to_urb() and copy_to_urb_quirk() require a check for the size of
-> > > > the bytes to be written before execution.
-> > > >
-> > > > syzbot reported:
-> > > > BUG: KASAN: slab-out-of-bounds in copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
-> > > > Write of size 264 at addr ffff88801107b400 by task syz.0.17/5461
-> > > >
-> > > > Call Trace:
-> > > >  copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
-> > > >  prepare_playback_urb+0x953/0x13d0 sound/usb/pcm.c:1611
-> > > >
-> > > > Reported-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-> > > > Closes: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
-> > > > Tested-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-> > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > >
-> > > I'm afraid that this doesn't address the root cause at all.
-> > > The description above sounds plausible, but not pointing to "why".
-> > >
-> > > The bytes is frames * stride, so the question is why a too large
-> > > frames is calculated.  I couldn't have time to check the details, but
-> > > there should be rather some weird condition / parameters to trigger
-> > > this, and we should check that at first.
-> > During debugging, I discovered that the value of ep->packsize[0] is 22,
-> > which causes the counts calculated by
-> > counts = snd_usb_endpoint_next_packet_size(ep, ctx, i, avail);
-> > to be 22, resulting in a frames value of 22 * 6 = 132;
-> > Meanwhile, the stride value is 2, which ultimately results in
-> > bytes = frames * stride = 132 * 2 = 264;
-> > @@ -1241,6 +1252,10 @@ static int data_ep_set_params(struct snd_usb_endpoint *ep)
-> > 	u->buffer_size = maxsize * u->packets;
-> > 	...
-> > 	u->urb->transfer_buffer =
-> >                 usb_alloc_coherent(chip->dev, u->buffer_size,
-> >                                    GFP_KERNEL, &u->urb->transfer_dma);
-> >
-> > Here, when calculating u->buffer_size = maxsize * u->packets;
-> > maxsize = 9, packets = 6, which results in only 54 bytes allocated to
-> > transfer_buffer;
-> 
-> Hm, so the problem is rather the calculation of the buffer size.
-> The size sounds extremely small.  Which parameters (rates, formats,
-> etc) are used for achieving this?
-rates: 22050
-format: 2
-channels: 1
-/////////////////////////////
-stride: 2
-packets: 6
-data interval: 0
-frame_bits: 16
-> 
-> The calculation of u->buffer_size is a bit complex, as maxsize is
-> adjusted in many different ways.  Is it limited due to wMaxPacketSize
-> setup?
-Yes, it's because the value of ep->maxpacksize is 9 that the maxsize
-value is 9.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-BR,
-Lizhi
+Hi,
+
+This series adds handling of reset signals during suspend and resume.
+This is necessary for the Renesas RZ/G3S SoC, which has a power-saving
+mode that turns off power to most SoC components (including USB).
+The reset signals need to be configured accordingly during
+suspend and resume.
+
+In addition, a cleanup patch (1/4) has been included.
+
+Thank you,
+Claudiu
+
+Claudiu Beznea (4):
+  usb: host: Do not check priv->clks[clk]
+  usb: host: ehci-platform: Call reset assert/deassert on suspend/resume
+  usb: host: ohci-platform: Call reset assert/deassert on suspend/resume
+  usb: renesas_usbhs: Assert/de-assert reset signal on suspend/resume
+
+ drivers/usb/host/ehci-platform.c   | 25 +++++++++++++++++----
+ drivers/usb/host/ohci-platform.c   | 24 ++++++++++++++++----
+ drivers/usb/renesas_usbhs/common.c | 35 ++++++++++++++++++++++--------
+ 3 files changed, 67 insertions(+), 17 deletions(-)
+
+-- 
+2.43.0
+
 
