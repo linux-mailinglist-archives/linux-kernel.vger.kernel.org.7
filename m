@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-888905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31943C3C3C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:03:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929CCC3C379
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1744950087F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:00:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3577C1B242E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A82533A023;
-	Thu,  6 Nov 2025 16:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E9132E6BD;
+	Thu,  6 Nov 2025 16:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQYtabMx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cKt71C+B"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39DA32C92B;
-	Thu,  6 Nov 2025 15:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3243093DB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444801; cv=none; b=jGWpN8TVwit0sZEQClRIu70Bq9O93SOxRiYQ47RvTrZsgSB+1W3r5Z6RqQP1Ekcv44lJsqmKaOGU7Yx1fxudaHfElI9Sd/wlaVX2j2v4y6k1KyBvpEN4gyhYgXdrdtOUP2Dwpbm8SCrkW4LIGMBaZZDWjz1qkZJPFb/bYn5mBg4=
+	t=1762444871; cv=none; b=ROXA+0MXvQEddOLI4DHyOhE+QAg6Hz5JqvMikPZV987HczBI7vHwMynALSQmNsXwFQYwq4j95Znlt082L7EBlKMkpsKopY96yNdmrNmIzf4hK+YBQIMcTy3dsX4qh+R8n/XZi4MuyvWs85B73lj53gtjgMn4tTCpMxkX+WRUEXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444801; c=relaxed/simple;
-	bh=kMevgBC3784Ru3EW9QJAXWDvODDi8xcAADr0sE14jHI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MN1Lprqt2lOFNBKdy6b0Ee1cbjFXDaGy4LWR987xBDAWx+17xT8CLBm8oxU0PL83h860yEMXuEzLm2+NDzFVJAHVxUg+Bl8UbHTE50joCv5SP0leu3ylKIr10lPJ5u2vR1fORZfOykheX/eq7EClDNqjuL3tB2Iw7v8OyJeZrDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQYtabMx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64129C116B1;
-	Thu,  6 Nov 2025 15:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762444799;
-	bh=kMevgBC3784Ru3EW9QJAXWDvODDi8xcAADr0sE14jHI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FQYtabMxQzNGwYpM1TktPaQ1EAJDPPduPQ2aWZqE/uG8noq7yWaBvbyTV2QIiDySb
-	 jmOgs9AOzFCBVLnzpMS8E0OaNRDRY7pj8Ju4kNh0wcmvWmhH3lyGpS3jvMgzgICo4N
-	 rzMuaWseYumZ+dMId44VqDVFGidHBM85erlClvmHC4kGSt5tY300GOzhKzzeqoKZDo
-	 91ie2XrHhy+OHzWl8ImmccbeCDu+Z1FFArrN3r9iOFkh8OmGRzr0ImYHEn2GKeYK9U
-	 z95X92OQw+Ujq2FATT+HOAR9qkHVlHnuxSAc3RLJN+7zI35PHHYIdnkldqLfxU37y2
-	 w0zVc/JsJT8ZQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Richard
- Weinberger <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,
-  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Steam Lin
- <STLin2@winbond.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  stable@vger.kernel.org
-Subject: Re: [PATCH 0/6] Hello,
-In-Reply-To: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
- (Miquel
-	Raynal's message of "Wed, 05 Nov 2025 18:26:59 +0100")
-References: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
-Date: Thu, 06 Nov 2025 16:59:56 +0100
-Message-ID: <mafs0h5v7b18j.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762444871; c=relaxed/simple;
+	bh=aH1cPDzqPQPdxMq2LyoHulcUQRewRxHiOCE9FrWhmxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vsw5Ov/4lrQLkefTrb0OgzKpq5NsUe9YRIYeEkm1SjO82FcRnCSRa9hSHeG3O4D+bGh00JmikfxRQWRxaLfo0TsAjvlGYJKkZ26Tgic3Bad0jhrY2ISsZcGoU4jTnuSzVPwcIxHUXiS2VbkdC9buYECb+OsUFgy4ONg2jPVlYyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cKt71C+B; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762444870; x=1793980870;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aH1cPDzqPQPdxMq2LyoHulcUQRewRxHiOCE9FrWhmxE=;
+  b=cKt71C+BxiKnzjY5vRbPGf+cNCII22vkaXZZHls33xjeea0um00XQkk9
+   dpNNCPks+kxXx8p626QD1P16QMc7p3cIOE1iqrczXyBeoysdkSbEiurOS
+   Xdl2Rtz+lfBiVgZnac/J33guOWV4qhfoDOBrs33R/hzn0Qa/4+vf4ZP+s
+   ndIRcy8P9OK9UvrjTUUJ6gxRbKXLacPwx4uvi4l+ohH3PC1Zcn8LFpAMl
+   gEdhKGR89BA5yltieziqDDnXGGJG3Ewnk46MvB4V5//WiPQFLxnikMO2b
+   8GEr0si8lEud0rUXWmGVvvOd2hlwSOOMwj3tAgGwwo8qvS84ogH0a48op
+   g==;
+X-CSE-ConnectionGUID: yiMQax+cR4qu/qH67Wcu3A==
+X-CSE-MsgGUID: kgfDtcRWTOySIh+giR/Knw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64622542"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="64622542"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:01:09 -0800
+X-CSE-ConnectionGUID: eCncds+MS8KzrkFBpAnuAA==
+X-CSE-MsgGUID: AZyPZWebRy+Ih1rpoWvkYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="188509309"
+Received: from abityuts-desk.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.224])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:01:07 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vH2Q4-00000006Bjk-0DMb;
+	Thu, 06 Nov 2025 18:01:04 +0200
+Date: Thu, 6 Nov 2025 18:01:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v1 1/1] compiler_types: Warn about unused static inline
+ functions on second
+Message-ID: <aQzGP8Z-mvSS9w7C@smile.fi.intel.com>
+References: <20251106105000.2103276-1-andriy.shevchenko@linux.intel.com>
+ <20251106151649.GA1693433@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106151649.GA1693433@ax162>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 05 2025, Miquel Raynal wrote:
+On Thu, Nov 06, 2025 at 08:16:49AM -0700, Nathan Chancellor wrote:
+> On Thu, Nov 06, 2025 at 11:50:00AM +0100, Andy Shevchenko wrote:
 
-> Here is a series adding support for 6 Winbond SPI NOR chips. Describing
-> these chips is needed otherwise the block protection feature is not
-> available. Everything else looks fine otherwise.
->
-> In practice I am only adding 6 very similar IDs but I split the commits
-> because the amount of meta data to show proof that all the chips have
-> been tested and work is pretty big.
->
-> As the commits simply add an ID, I am Cc'ing stable with the hope to
-> get these backported to LTS kernels as allowed by the stable rules (see
-> link below, but I hope I am doing this right).
->
-> Link: https://elixir.bootlin.com/linux/v6.17.7/source/Documentation/proce=
-ss/stable-kernel-rules.rst#L15
->
-> Thanks,
-> Miqu=C3=A8l
->
-> ---
-> Miquel Raynal (6):
->       mtd: spi-nor: winbond: Add support for W25Q01NWxxIQ chips
->       mtd: spi-nor: winbond: Add support for W25Q01NWxxIM chips
->       mtd: spi-nor: winbond: Add support for W25Q02NWxxIM chips
->       mtd: spi-nor: winbond: Add support for W25H512NWxxAM chips
->       mtd: spi-nor: winbond: Add support for W25H01NWxxAM chips
->       mtd: spi-nor: winbond: Add support for W25H02NWxxAM chips
->
->  drivers/mtd/spi-nor/winbond.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> ---
-> base-commit: 479ba7fc704936b74a91ee352fe113d6391d562f
-> change-id: 20251105-winbond-v6-18-rc1-spi-nor-7f78cb2785d6
->
-> Best regards,
+...
 
-Applied to spi-nor/next. Thanks!
+> >   * for W=1 build. This will allow clang to find unused functions. Remove the
+> >   * __inline_maybe_unused entirely after fixing most of -Wunused-function warnings.
 
---=20
-Regards,
-Pratyush Yadav
+> The comment should be updated to W=2 instead of W=1
+
+Granted.
+
+> and we should
+> probably drop the sentence about removing __inline_maybe_unused entirely
+> since people such as Peter will never want this behavior by default. I
+> do not mind doing it myself if I take it.
+
+But future is uncertain, it might be that GCC also gains this and it won't
+confuse anyway as it might become a truth (no more such warnings in the code)
+at some point.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
