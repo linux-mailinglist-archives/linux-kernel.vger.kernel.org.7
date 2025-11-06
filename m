@@ -1,87 +1,60 @@
-Return-Path: <linux-kernel+bounces-888820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB8DC3C051
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:23:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED881C3BFCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F59565301
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:16:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 283ED341A7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354A9224B0D;
-	Thu,  6 Nov 2025 15:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3064024DCF9;
+	Thu,  6 Nov 2025 15:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zfjtctJI"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUcwcZL3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FD71DE2A7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F7424503C;
+	Thu,  6 Nov 2025 15:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762442172; cv=none; b=HCCkLje8X0Hd4RzSgvvqiQc9I/I5JjRzpsLVD8KrGA0FaG5TSTDgATFeeCCvCUDzY1DbZUbMK5rgMwRCSK7kgXQ1lIvn/2ScJKlRrfM/05MxUEOWOvb15MY3W6H0Xxo4BH7AXSdaBA4+XzKtMSPeg/tsvFfY3aaA9k+LCrm721U=
+	t=1762442214; cv=none; b=plLR8CeK4LPT9Kj55m3qQ65hBLxHVDCtXLYS77bHxmW5nxDQnTpHzy6DTfYmee/kARvK4C0MpKbNLXPsx7yNu6t9JmXu24EBK17e014ZSLYWgAuXSKJoD3atnbvw5wzC3uHnKh2tNKPoKuzWl+aU8yShIQN73k90zn5f+9/f3vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762442172; c=relaxed/simple;
-	bh=41zrFfEL2l2XQ63gU+qhrRtQA3Ib9OhNjrgYj07OAIA=;
+	s=arc-20240116; t=1762442214; c=relaxed/simple;
+	bh=sw93HzZvGu9P1i+iQOU+54K5NF/ISfg6R9D40V3YXfc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkFcvzmZSZyMvz045EJ0rITLxpexwh0xgie7ey3RPIYYX5qjE0b7E4utWSW6+0WCqdz4rc9lS3sjaAaBVbq5Mslp5IEaNKX5oWiyXKZYykF7GpTPb39KbFvI32+0Y+kFKGY6kEOZfh9wY0pXwjM6VgdHaquh3uQGbY/VGF1ZR4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zfjtctJI; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b710601e659so212399866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:16:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762442168; x=1763046968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u14FmWvrKmKOUArfGYUhEF2EQY6v0Fb3SsmeCkhwUFM=;
-        b=zfjtctJIwwNY5wZF9bcH90FsR/wdhHbdAIAETM1W6yZxKXSf0Ugqsh5mlgRRdt95Pq
-         lVkM34/AWkPAstaf89flf17ltRQshX9HCwTF3evDDbtHU06x/d0IIgNZcKOlC0FYrWCP
-         h3E0XKPSKi/yWRsVFjh3+L94FxR3367k0hsrauv70lT+0lEIriQMWR2nQEWUL8ks2mwE
-         QsiFXUh+RKg4l9yH0CzemEHFEGCr1UgKXP60aHcvXrOE2MLgYNfKIoNM1v6qieW5LuyP
-         6DMBtToEkmAbU26GToNIjviMcZr2xz2dcFaqB8zrSnFoFyf0BqfLY+CmEdc1DnsskPS7
-         pnvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762442168; x=1763046968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u14FmWvrKmKOUArfGYUhEF2EQY6v0Fb3SsmeCkhwUFM=;
-        b=RwQxxqtchKqjbZy1xv4EKBVBkoaGB61A29wvHWQkqfGRWcY3wCjYIYUm/oJOqGvgPH
-         YNuvS/bhCyznuqXn2eeiGelNmefk6H9pFPflp51zH++k5BVim5cT/0AFQxQZ7xCcHczi
-         mSrdbpSFIQXw3ic5eL96U/JTwp1awaLFzQuoANZGLpFHZBwTQ/uEyx/aP7Y7LjTnXQG9
-         4c47GAt70ikt18eX7twaOzxx1SKSOlypiBPA2cW1fzct8lt8gNYZ2LeTTAdOQsRW54Y9
-         pl61jBL03JBq+tqOj7GdtOs/JqYdy7Kzbu7gNaQZ3Zo9tXFoI4y/PwWLJ/tS7v/4wJ2z
-         TCAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWc8g7cyAYpcteosBEdE4VIy/+I00GxhC7QRJOibShP6Y5mWSpP8vaWrMEwauUjL5gF3+9OgQyjZsVTvSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlKlTE5jEqW159WurDJgFFNf+izqzVgHbhzwxAZpZeatTMxFr2
-	MU2u3d9/qaAxn7WGWJqGPoY1lc4BrcOD1HeR0BAoSfh/kY7ttiRh5zFvdhs6mZcIelk=
-X-Gm-Gg: ASbGncsnSpdXEC2WwZrM8T2cV3dZSzCAKJzVvH1Z4l5C7imTSubqfOwPfruzuLv3r2d
-	0OvCHx2mBNJKeU8UMlYaKXYUlzz8qEORvPocQtR9xtMDwQ3Vy2UfQaVTg9ETpUL/bu70PWAE/aN
-	MYc2GlH/HhFdVVyklG4FcpQmD37RQsjcJd9gB99e0ly4j7I7+U9ChEgmk7WrqrTUP3Di85RpX0I
-	I/hdC+Dv34/8YJA4wtUW/0b+gxI4XxfjwmI2OSt/jGsD3RRHyQzN4sKY1uajemBYMEKKhi8Dq02
-	A1+li6vvOU94Im2GKFl6m5nOaMP6wuDNLM5sIGcCNhufHdPB9FcKsrzW318IPockjX+ockGUR9j
-	LVto3cTjclAQ+WjjjjkA2R2N2G7A6Sy00auTYPT8nTYpC2JOkLH/aHacwQsOBu3C92F/Q19Nq8e
-	ydZepFB9hqL8cW
-X-Google-Smtp-Source: AGHT+IEf7wBLuEfCRt4j+/RlzPZKjUAiSvKjoVNYNm2utzq6YqdxRCDzqeo4lC5zRpb3wTnkArDt4w==
-X-Received: by 2002:a17:906:f59b:b0:b71:51b:bd4c with SMTP id a640c23a62f3a-b726554bb96mr724343966b.50.1762442168333;
-        Thu, 06 Nov 2025 07:16:08 -0800 (PST)
-Received: from localhost ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b728937cc60sm236069866b.16.2025.11.06.07.16.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 07:16:07 -0800 (PST)
-Date: Thu, 6 Nov 2025 18:16:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, error27@gmail.com, andriy.shevchenko@intel.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] iio: trigger: Fix error handling in viio_trigger_alloc
-Message-ID: <74993472-4845-42d5-8b50-8fa8dc5b42fa@suswa.mountain>
-References: <20251106082923.32688-1-make24@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dT3RHeGS+EQO9RcFphPoys6RUwsu4KIW8oMpv0HGqUN4hqjPGMQZPHbJcT1wMGj/RUupI2qnfJgN6iMnWOjIFKesnHRYTVTRnXlMLdQdnzoKt9IUA5nwClT/ig0HimTkhdhya0iA96GC4KaJkNi24eLpJDQ+F0Reryd2cpYipmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUcwcZL3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07EB9C4CEF7;
+	Thu,  6 Nov 2025 15:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762442214;
+	bh=sw93HzZvGu9P1i+iQOU+54K5NF/ISfg6R9D40V3YXfc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZUcwcZL3xdgNqTG2JKegG2i9bvCC7qx27pVk4iM2U0mOsxRAUb2Te8uKsG16fqjeU
+	 7M5hgdsWscDuM1ETvQUCfUuyACaaFDnHc2WNebaSqF8Yq48iyr/FVSriDwpBfrvoqc
+	 LuEe7KhDiLkJCjdIZ6+zEf/G4dyZsDPuxG0DWAfKgjlOcSYOfemyPBZcaaf4AWFwra
+	 c3rZ0QWJ5h0VywyhwmscOtJtJo2WV7WE8Zy2YYiQQzfTXjK0Vq9tLxpzlTzywwrdez
+	 LwBp/kSXtMvaJtXwUmkanATfH9HT+h/vzC3n/Jk2v3EO8Oi/g+b86ckfDJA7t6qUei
+	 Hmx2yIije53bQ==
+Date: Thu, 6 Nov 2025 08:16:49 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v1 1/1] compiler_types: Warn about unused static inline
+ functions on second
+Message-ID: <20251106151649.GA1693433@ax162>
+References: <20251106105000.2103276-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,45 +63,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251106082923.32688-1-make24@iscas.ac.cn>
+In-Reply-To: <20251106105000.2103276-1-andriy.shevchenko@linux.intel.com>
 
-On Thu, Nov 06, 2025 at 04:29:23PM +0800, Ma Ke wrote:
-> ---
-> Changes in v2:
-> - modified the patch, thanks for developer's suggestions.
-> ---
->  drivers/iio/industrialio-trigger.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+On Thu, Nov 06, 2025 at 11:50:00AM +0100, Andy Shevchenko wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
 > 
-> diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
-> index 54416a384232..9f6d30a244d9 100644
-> --- a/drivers/iio/industrialio-trigger.c
-> +++ b/drivers/iio/industrialio-trigger.c
-> @@ -524,6 +524,7 @@ static void iio_trig_release(struct device *device)
->  			       CONFIG_IIO_CONSUMERS_PER_TRIGGER);
->  	}
->  	kfree(trig->name);
-> +	mutex_destroy(&trig->pool_lock);
->  	kfree(trig);
->  }
->  
-> @@ -596,8 +597,9 @@ struct iio_trigger *viio_trigger_alloc(struct device *parent,
->  
->  free_descs:
->  	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
-> +	trig->subirq_base = 0;
+> Per Nathan, clang catches unused "static inline" functions in C files since
+> commit 6863f5643dd7 ("kbuild: allow Clang to find unused static inline
+> functions for W=1 build").
+> 
+> Linus said:
+> 
+> > So I entirely ignore W=1 issues, because I think so many of the extra
+> > warnings are bogus.
+> >
+> > But if this one in particular is causing more problems than most -
+> > some teams do seem to use W=1 as part of their test builds - it's fine
+> > to send me a patch that just moves bad warnings to W=2.
+> >
+> > And if anybody uses W=2 for their test builds, that's THEIR problem..
+> 
+> Here is the change to bump the warning from W=1 to W=2.
+> 
+> Fixes: 6863f5643dd7 ("kbuild: allow Clang to find unused static inline functions for W=1 build")
+> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-This doesn't work.  Do it before the goto.
+I can take this as a fix via kbuild or Linus can apply it directly
+but...
 
-regards,
-dan carpenter
+> ---
+>  include/linux/compiler_types.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 59288a2c1ad2..575a03643fa1 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -253,7 +253,7 @@ struct ftrace_likely_data {
+>   * for W=1 build. This will allow clang to find unused functions. Remove the
+>   * __inline_maybe_unused entirely after fixing most of -Wunused-function warnings.
+>   */
 
->  free_trig:
-> -	kfree(trig);
-> +	put_device(&trig->dev);
->  	return NULL;
->  }
->  
+The comment should be updated to W=2 instead of W=1 and we should
+probably drop the sentence about removing __inline_maybe_unused entirely
+since people such as Peter will never want this behavior by default. I
+do not mind doing it myself if I take it.
+
+> -#ifdef KBUILD_EXTRA_WARN1
+> +#ifdef KBUILD_EXTRA_WARN2
+>  #define __inline_maybe_unused
+>  #else
+>  #define __inline_maybe_unused __maybe_unused
 > -- 
-> 2.17.1
+> 2.50.1
+> 
 
