@@ -1,217 +1,257 @@
-Return-Path: <linux-kernel+bounces-888690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F59C3BAFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:22:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DC7C3BB07
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE65856763B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:15:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93A53B8D86
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DA733E349;
-	Thu,  6 Nov 2025 14:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34046335067;
+	Thu,  6 Nov 2025 14:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mkG20Q9e"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013068.outbound.protection.outlook.com [40.93.196.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCbgfcJJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E8722D9E9;
-	Thu,  6 Nov 2025 14:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762438487; cv=fail; b=EU1JW+69jjiqIqrys4pOt4F9HNGVMusVsp8eecd4e5za3woE2aN/b89vZf4zVUZEp/D5kxL+8cTzHW42qOC2g/rezgT1Abj1ZJwO9WyT+UQGCzLod072SMs9++rCOAYTuKwCXribGXjwPtM9cwHV2FgyAkD6ApEOM8hctBBW9EE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762438487; c=relaxed/simple;
-	bh=qFR1Ynpqvs2lZBzjvNbXmS3iG0vzVxReLp5Te97cLGg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y11PWCa0va6Nx5Oz6GPTeSuHyVdAaDOCE5diCPKzehx7FhqZpbo0R4/5Kq6cZBd9Lh22jN0LxeIkeIZ7Jd4TKvXgCPM8KuoD7XTjqVYy7KyWTReqCrDZgG4AW+iAI/SUa+8YanrI2880AV1NBXgTNE7pJe8puLzSJEd8As3t84k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mkG20Q9e; arc=fail smtp.client-ip=40.93.196.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nB8PsKlX5r8sBYYNrUbCBdlRsQNrFwjKxob70vP+1+vWHuTQDjDK2Y8fB6GHXfCMa20+rEdUzsMbNekLqG76y0xER6ckoznh28UbNm9Y7M8TBDCyhDMFOX0DygHsAPAqZ/9T2RsbQsHnBUJ4vuZrYoVlD3vWnzPLGWFHVsmSiQHsfVKnRlzOT5MVYQDi3eML1Ja28qAXTsKzeO/LvLEI+MMueKPn0GZ1Zyj/mFMTS1qBYwsE2MCZ9nOnG9ix/BdY68TZaHf/vLjZNzJYfFszENYBmv2RidMF7bL7y2+ezxp9TM2gze12r/e40bILCnrMKvxlsY+4J7XoAI21i0dwjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tFUs7Ota9L4cwc79Oi3PPZkPmDN/FQtnSA5mYZ1rR7c=;
- b=s8Evr5QBOJAwt0I3dLI6nnNdCcG9SOTY/WXeO2GfJhz9A6tAiRprx/gJ361EBMxih8Kq9BXzM2desmfhyMDSlQBwviPmTL9m8i4yhtGItAMSAgmJqtC6lHHbN1/zTdYBMf0+6cfWNagh9CTtSTQJttCDryqU1fcZg/lB5jsw3BLu316WvIvo8YdPn3vzwXrrkfGiSeXDJcEFrcZELbAMU0/Hd9YMU9K1sEEkOXUvbVsRujDcTD7IXR9M/g7sRQKM5/QPd9KrgxPVz6fSAF6Znc0OW/cYmH5ZNbAVrDhmSfwPm4S+MHNHW7wuAkOVXR/usmZohMw6LoGg85ROj7woZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tFUs7Ota9L4cwc79Oi3PPZkPmDN/FQtnSA5mYZ1rR7c=;
- b=mkG20Q9e2YJ7V7m4MLRaH1/G3M5M7k/wfcaDylc0VxPP150N4i7zhXnuTN1zfpprF67bqqzIsMUBLVIPpucvZh31MhfDEUJgCFpYqE5ODm1WAMe8iiWSmC5MELu58BlhyH/O3QsFKkpQIaAtOGEtmPP/Vzfyk495Q666Uu8muefXg6+Z4SgGi13y+liSRz0hcq5qMxQVDlfdVBh6iSBDUg6xX6okC/fSxdvZht9ESBRMU6RVOoWWqIjNIFsNpDc0sC69XRNiGDGyIwZXfKla9v1Lt9vKz5jF4DhFLXUOOXbTTZOGdAS6dhhUTzrwI9fBYhPZ5aF8aWabgLj99N6GHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SA5PPF8ECEC29A9.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
- 2025 14:14:42 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
- 14:14:42 +0000
-Message-ID: <69e8bac6-a02b-4949-a36e-4be2d882440f@nvidia.com>
-Date: Thu, 6 Nov 2025 14:14:37 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/13] memory: tegra186-emc: Simplify and handle
- deferred probe with dev_err_probe()
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- Aaron Kling <webgeek1234@gmail.com>
-References: <20250911-memory-tegra-cleanup-v2-0-d08022ff2f85@linaro.org>
- <20250911-memory-tegra-cleanup-v2-8-d08022ff2f85@linaro.org>
- <4ba8a1ec-fa17-4564-a174-0b8e8eada061@nvidia.com>
- <1db683cc-ffce-48da-ad2f-e25ed901ce00@kernel.org>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <1db683cc-ffce-48da-ad2f-e25ed901ce00@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P123CA0039.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:2fe::19) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260B91DA60D;
+	Thu,  6 Nov 2025 14:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762438625; cv=none; b=fVPgsjjN1zRSZuxNZa7fhoiZ+p9uUw5/zJtXzj/i2Oc5tToDGxf0h/wGI69cj6bd1uKwqddhnhlZY84l8jUkX3QyB0FoYbEXwcTkOK/5jqTocxdrO/o4uSZPptnWANZWRaVM5qP4uUsDzUKAW8QcpWqIpYe01ozi0Mi6v94HJmg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762438625; c=relaxed/simple;
+	bh=ZavZy68UqW1iEHt3XxoVBWkpiyDI0Ett9ka52Qq65eI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FQSA7mjtT+o7FngsUXcxFaXeG1RGmcxoU2hXq6Py6dF4NUYn33NjkLS48XI8ohAExfVQP4dHXW1z+RIsDrXddEI+uCIPICpXrPjkkwH1E7eYizsCQSyQCzJow6uP37Lh1ienigHRvE40F3jM8KZyiTql5kAIcMAmYKX3xfGkWMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCbgfcJJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03904C116C6;
+	Thu,  6 Nov 2025 14:17:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762438624;
+	bh=ZavZy68UqW1iEHt3XxoVBWkpiyDI0Ett9ka52Qq65eI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nCbgfcJJVAgp+47hn67gndUHr6jEkmDHYevSsgdB5u5pebS46j/IfiyAve50aSXBu
+	 aE2CpvHtBtgp9TYWeQB60v7v8aRp13S181ShG8FUfQm0nstDguR221Vb7BHMPQbpIs
+	 egK4YhZbKb2yklQGRma1CORzcRTPN2v4cpKPf/hy5ca1rFZywrLH5IPrUHSmWl4qQv
+	 +l2Zjq3BoFBbOZCfoc90fijvuepqQT7tFLnc1Nz76CuWE2FH8bdQraHWWHdp/0/bcB
+	 gRpfVwIYMmpMY+6eqM7EkWVLT6tUZ34cKVrMY7m/bLt3v6xx0uKDgyPb7fgUXscM6r
+	 5e5y+vSnehUtw==
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex@shazbot.org>
+Cc: Krishnakant Jaju <kjaju@nvidia.com>,
+	Matt Ochs <mochs@nvidia.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Alex Mastro <amastro@fb.com>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>
+Subject: [PATCH v7 00/11] vfio/pci: Allow MMIO regions to be exported through dma-buf
+Date: Thu,  6 Nov 2025 16:16:45 +0200
+Message-ID: <20251106-dmabuf-vfio-v7-0-2503bf390699@nvidia.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA5PPF8ECEC29A9:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9c7aa30-a597-4f50-9019-08de1d3ed477
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|10070799003|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RzJmTko0OEZ6R2NwUGxHaHNnUXR3QnR0U3VtbXpHOFBOcVc1MS9TK1JmNTZS?=
- =?utf-8?B?YjJLQlBSRmxMZGdpOUYwZFFFOHRSeUd4eWdmY3I1UmdTRDJTb3N5TmV5UUor?=
- =?utf-8?B?YTVRYTNEOXlWUEZpN2tlSmZKRnR5b2M5a3hnQWk2cG1zZ2FML00vMXBEZmVs?=
- =?utf-8?B?OGJGNWR5clI2bXltdTJxTXFLbWNrMUY2SzJ5T1ZML2dvOUNPT2E0SlIrSVF5?=
- =?utf-8?B?ZkF5dXZqYnRLQXRyTWt6ODcvZ2RqVGhsbDV4blFNeGZueTc2WC83R05GUGpr?=
- =?utf-8?B?dkgxR2I5WXlocjlMWDEwMFR4a0VSZGM4bis0UElzU2ZjQ2prRlhYY0grVGNV?=
- =?utf-8?B?L1JzU2VzVEJXL1lqREFDQlpDOWpsZFk2ZDdsNVErNG9UNGh4OU1MS1oyVXNR?=
- =?utf-8?B?bjRmOUJvaS9Jdk9RRE1peXdaN05XS1NHV1pMRVEyeEdQKzMvdHJyNWduQUha?=
- =?utf-8?B?T0prU1NMd29Ja20yVWpZanVFWDZUa0Z6S0h3VFpMbzl2OEx0d1BSRm1XWXND?=
- =?utf-8?B?ZzVGWW1Ec08xU3R3VzU5YWdTbmdPcE5pQWtXZmdZa0lkZURKSFlNL3kxWm5O?=
- =?utf-8?B?TWNuanFoYkY0aEEvdG1jN2I0T0w5emZEMkw2NWRLMTZTTkE1TVAzb2JYTWNu?=
- =?utf-8?B?cmFYQXlGVVptcTFCMUNWYTVRNjJwS004dmg0WFhNbklUVjVMcmxHb0c5Um13?=
- =?utf-8?B?SU5jc3dtNnpjUDdSYXo1cHpFVnVqQnJwMVg2dEdMVlQzYk9uVlJYMThEcWsy?=
- =?utf-8?B?R3FOdDNYYkJucGdHUTJhM2hpUFZrVThrdTJtbFFFbFlNNFgyTmdYZi9xRG5V?=
- =?utf-8?B?Vk40Vm9DSTZkV1Fjb05tNHNoaDJQWjBZRno5bkEra0tnMmR1SGtWRzZtekU2?=
- =?utf-8?B?RkVxYjAwSkxrRkxqWWhpT1hhZUxhOEtEeTQxdDdHM01wZ2haZC9aL0ZGenhT?=
- =?utf-8?B?VVN1VXlSRkpnUDRCU29iR2h5QktQb3BQK2tLeXdmSDJmdHV0UmJhWXJJSDNr?=
- =?utf-8?B?Q2pEN21LNmlRajA0T0JRR1BZYmhvWjhFYUQxWjlUcWt3eFk5bHlqUTVLN2J6?=
- =?utf-8?B?aFdRN2JwMElaTFdTNkxxNHI5NUpISUxNVlRBMGZzaFRnUm9mWU4rY3duak1F?=
- =?utf-8?B?Y2FUVEd1OWxKRmp3dDZpdElJSXovT1krVWtTeEdaT1Y2ejhRdXFRRXhFZExT?=
- =?utf-8?B?T0o3WVE5MVovdWpCMGVnYnYvSFhaOHZKaWNwd0tiRm9na3JyUURlSDIzU2N0?=
- =?utf-8?B?T0pmWlVJTzl3TElBaUpmL2REWXFTL2o3UG05bkxEb2hza3I4d2w3clFna3NY?=
- =?utf-8?B?aW1pNTZyS3RFWm5BdzVxd3ZkWjNQaG4zTEgrNFlOYWtLcnYxZ3RGdXkvZThu?=
- =?utf-8?B?cHFNaDdCSWVYMm5TOGk4aDFObTdPUnN6eHFidm01U3dPU0d2bWpBZCtjRGRk?=
- =?utf-8?B?cnEvMS80YVBZWUg4TjRYTDNxdXc4MFJob2RVQXRHWEJyWklRdld5akdYa2gz?=
- =?utf-8?B?c3hQbVJTMzdaT3hTbUJzUFRvV2Q3ekJDdzZ5WVJUcjlRNm9kUCsySzNzWkNM?=
- =?utf-8?B?aE5GUUl1NTNoZjRZSUhjeDZWV0JJTHlNMjBRdjg1aVVBc3YweVpDellpUnp5?=
- =?utf-8?B?WGxZeVRwWnFYNXJscmR2bGNmMFZuS05SMTdhQlpub01Qb1ZtdHBLZDB1N0lV?=
- =?utf-8?B?TEs4R1JwUFFhT3lKdFZDSXFHR3ZVR0hHOVBmK3hlcWZacEs1ZlIxOFcycDdM?=
- =?utf-8?B?Q3NDU2VmeVRFTVU2eW1GSDJvTFFEeCtDMHdkdnRyT0lOLzlXL2k4dnp6TFFx?=
- =?utf-8?B?QWVXdlZZK1RhSlBoVTFMcS9ubE9mNGU4Nm9tNnM0T3NhZkt6dFdic3hxcUR4?=
- =?utf-8?B?NmcxeHUxNTltdGdiNFB6aHNKQmI3c3p2ZWJ1MDBxVjVMNis5QnpYVS9vZlBM?=
- =?utf-8?Q?EibQkCE4Js3Ok1t0w9QRp0FUpEShFGin?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MndpRVZmbVl2TC8xZVdmM1gzc1k1bDNHN3lxMTJ3eVdLbGVqRlJQVGZqb1BN?=
- =?utf-8?B?aE90WGFIL29Pd0hlS0JRdGdFd0l3MC80K1dsSElNY1Q0ZVZNeGtUVm84blRz?=
- =?utf-8?B?aGduWVh1TG5UYzdGZjZpTFRiUmxYa0FrR3VZU054R2xGSjlFWFhIeGtJRTl5?=
- =?utf-8?B?ZUVETS9jN0dJakFQSkNyZTd0VUhpRlFvb3ArWFBDcjZlaSt5UGM5ZzFNN0E2?=
- =?utf-8?B?c2JQUXcrNFdabzkwRXhRMnZ4WmlwcDdWRDhxZ1o3SjB2NGpkb0tENXdQL1du?=
- =?utf-8?B?Z0xpd2RwSThQbUNqOTZHTm43SSszMHMwblg1SWczR3F0ZWo5dExyOGlXOTdw?=
- =?utf-8?B?ZHFyb0pwOUxBcGRzZW0vdlJIcnhaY29vOURvZUhPbDY5Qk42cm8wTnNtSFpQ?=
- =?utf-8?B?MVAra2ZFeXJXWkxZN0FBTlBsRWg2c2JpSThIc3BZMUJYY1hhVGNNK1N0b0lQ?=
- =?utf-8?B?dEhwSlVDZVg2Ymdhc3pmVnFoUVVFWXVZYmZlS05GQ3h5MUlUSXp5TTBXL1dP?=
- =?utf-8?B?dEV0OHdtUStEMmU5WTVRZmNHV1orN04rQUUwZ2dvSURZTnlzOHQ2MHdCMmZ4?=
- =?utf-8?B?c1Fpc1BIeWY1U2ZnbVFnNXpVYnMvNVAvbWYwMkgyTUo3RVZIMUl4ekpPTTNa?=
- =?utf-8?B?TFdSbHVzNFJCbS9nQU85c29DeUtjeXVHWC9GemNYUkNtQnlqRmY2V3BDKy9V?=
- =?utf-8?B?dUpwN3NRcVdMdEUxS0R5OENSd3FpNkVkT3lDOWF1dk8wQ2VLK3FFNjdmSk94?=
- =?utf-8?B?bkE3aVNtdmU1eDMvMURDL3NwVjBPNDFJUXJtbS9KMDFSV1JyK3NlMU0yeU5O?=
- =?utf-8?B?Q3AzYzZHNlorb0dkSWVHaXVoTGdUcXdnSHRNTUhnSmVxdTBJR1BxVWdMVXk5?=
- =?utf-8?B?VkpDeEZDKzlqcWtyMWxmYVdOZnNPSDIzYWpzZ3NVdndyb1RhbTVjaDNnRjI0?=
- =?utf-8?B?WXRaRVBmaHpFTUVzbU9pYUJocmkwYTYzSk9xUEtGbmxncXpaYXRnYnYvS0g1?=
- =?utf-8?B?Y3VOcDJBajJUUFlpcmZNOWhOWW9ORkdpOG55SFlidVJVR1VuL1Q0TkRPRTJq?=
- =?utf-8?B?RlBpSThnM2sraGhDa2VoaHIxU3VlVTZYU1lMSnBrRmFmMzQvVGdiaFMvU3FO?=
- =?utf-8?B?N09GeU9yL2loN1RyQm5CaklISWVSUGJ2emJPNlA0LzlHVVVmU0VmSEN1MFBW?=
- =?utf-8?B?OHdWaHcyc29KbWNLRGxFQSt0VEZud2NIdVpTN3lKZEhtcXhVWWJkYitvTW9K?=
- =?utf-8?B?RzNuV2JjeDBiQWdhZTVSS3lsSHM2dHJXcW9iUno5YXpDS05ybmlJeHZjY1pn?=
- =?utf-8?B?RFdvTDlSMzQ3NVhNSHNidFdOWWZNaFN2UmNyUlVlTVlmYUFlRURyT3BnbGlr?=
- =?utf-8?B?cCtBQ01sUEpBcmRSNERZbUF2ZWRiR2FmUFhIMUVGU1FZU2EzbVZUYzZxMkEv?=
- =?utf-8?B?QUFjbGxITURMdkxLWk50TGszYm1YbFlNRjhGR2d3dmtvcHBZb2lER3FVNVpL?=
- =?utf-8?B?MGY5RVFELzBnSmdZS0t0bHl1Sk1PK0RHWlRCZmY0WVhHSU5ZRDMxSWYvTUFW?=
- =?utf-8?B?eExKa09hRWxSbGJyQjBiZ1F3ZSswSDJWckVBL3pPYjZFTVpyK0xaQWZRVFRV?=
- =?utf-8?B?cnB4dmNSelNMazYvNVBZejJpN3BuR3h3MkNERVFEUjErZ3IycmRoRllJWVh3?=
- =?utf-8?B?RXlsTkl1ekJGbFUzS2dQTHhIQWF2dXE3b2tMd3ZsWkFlWUYyWitZMVZnL2tn?=
- =?utf-8?B?dnVvbHJNSWVnaGZTVHRsSDVaMVhJR0pOa0x1ay9FYmZJelZOMlJweWQ2S3l6?=
- =?utf-8?B?a2JQRFAwMDRSM2FuMlQwcTZjL0F6c2xFZ0IzVjdpSi9Pamh1T2k5VkFpV0JB?=
- =?utf-8?B?Z3pMNkZGQ21oSndWM0dadGRtOTJkM0I2bU42azJGSVBmRWlBY0NHRklPN2lX?=
- =?utf-8?B?YW9MWG5lOWxvSzBybHRqSEpiSVhsMGlIcDgyMlJuMHpkMEtiTHpyeUJXdHJW?=
- =?utf-8?B?M1JXQisrbVcxL3YwZ2F1UVlXNWlSNGpXMmRjdVdadUl1aVArY2VrempvOVcx?=
- =?utf-8?B?T0JZa05qMjArSTdRaUpGbHhaVVFuUGZISlVGSUFuZVJjSkc3Mkp5SkYxNk5D?=
- =?utf-8?B?ZDVZWHRCV0Q1bktZOFBockk3Z3k3NHlpd2NqaGM4V3E2ZlBSYmRrSHFkcUpZ?=
- =?utf-8?Q?iIqlWZeRl+R+NCWSDIZaN4AJp3Ucrs2y4DZrDIkLV9zm?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9c7aa30-a597-4f50-9019-08de1d3ed477
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 14:14:42.5255
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nBbiWsGnWOX5Zgzjw4kL2wwODs+1p83ccjAAGcE9vlpBTzpQBU2xv/NEQJTEG0ib8I89ezaN8psXCKk74jUTlA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF8ECEC29A9
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251016-dmabuf-vfio-6cef732adf5a
+X-Mailer: b4 0.15-dev-3ae27
+Content-Transfer-Encoding: quoted-printable
 
-
-On 06/11/2025 12:13, Krzysztof Kozlowski wrote:
-> On 06/11/2025 13:04, Jon Hunter wrote:
->>> @@ -319,14 +318,13 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->>>    
->>>    	emc->bpmp = tegra_bpmp_get(&pdev->dev);
->>>    	if (IS_ERR(emc->bpmp))
->>> -		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp), "failed to get BPMP\n");
->>> +		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp),
->>> +				     "failed to get BPMP\n");
->>>    
->>>    	emc->clk = devm_clk_get(&pdev->dev, "emc");
->>> -	if (IS_ERR(emc->clk)) {
->>> -		err = PTR_ERR(emc->clk);
->>> -		dev_err(&pdev->dev, "failed to get EMC clock: %d\n", err);
->>> -		goto put_bpmp;
->>> -	}
->>> +	if (IS_ERR(emc->clk))
->>> +		return dev_err_probe(&pdev->dev, PTR_ERR(emc->clk),
->>> +				     "failed to get EMC clock\n");
->>
->> I see now that we dropped a 'put_bpmp' here and we should not have. I
->> see this is in -next, do you want fix up or I can send a patch?
-> 
-> 
-> Indeed, thanks for noticing this. Please send a patch with Fixes tag.
-> Will you also take a look at other patches from this patchset, if I did
-> not make same mistake?
-
-Yes I will send a patch. All the others look good.
-
-Thanks
-Jon
-
--- 
-nvpublic
-
+Changelog:=0D
+v7:=0D
+ * Dropped restore_revoke flag and added vfio_pci_dma_buf_move=0D
+   to reverse loop.=0D
+ * Fixed spelling errors in documentation patch.=0D
+ * Rebased on top of v6.18-rc3.=0D
+ * Added include to stddef.h to vfio.h, to keep uapi header file independen=
+t.=0D
+v6: https://patch.msgid.link/20251102-dmabuf-vfio-v6-0-d773cff0db9f@nvidia.=
+com=0D
+ * Fixed wrong error check from pcim_p2pdma_init().=0D
+ * Documented pcim_p2pdma_provider() function.=0D
+ * Improved commit messages.=0D
+ * Added VFIO DMA-BUF selftest, not sent yet.=0D
+ * Added __counted_by(nr_ranges) annotation to struct vfio_device_feature_d=
+ma_buf.=0D
+ * Fixed error unwind when dma_buf_fd() fails.=0D
+ * Document latest changes to p2pmem.=0D
+ * Removed EXPORT_SYMBOL_GPL from pci_p2pdma_map_type.=0D
+ * Moved DMA mapping logic to DMA-BUF.=0D
+ * Removed types patch to avoid dependencies between subsystems.=0D
+ * Moved vfio_pci_dma_buf_move() in err_undo block.=0D
+ * Added nvgrace patch.=0D
+v5: https://lore.kernel.org/all/cover.1760368250.git.leon@kernel.org=0D
+ * Rebased on top of v6.18-rc1.=0D
+ * Added more validation logic to make sure that DMA-BUF length doesn't=0D
+   overflow in various scenarios.=0D
+ * Hide kernel config from the users.=0D
+ * Fixed type conversion issue. DMA ranges are exposed with u64 length,=0D
+   but DMA-BUF uses "unsigned int" as a length for SG entries.=0D
+ * Added check to prevent from VFIO drivers which reports BAR size=0D
+   different from PCI, do not use DMA-BUF functionality.=0D
+v4: https://lore.kernel.org/all/cover.1759070796.git.leon@kernel.org=0D
+ * Split pcim_p2pdma_provider() to two functions, one that initializes=0D
+   array of providers and another to return right provider pointer.=0D
+v3: https://lore.kernel.org/all/cover.1758804980.git.leon@kernel.org=0D
+ * Changed pcim_p2pdma_enable() to be pcim_p2pdma_provider().=0D
+ * Cache provider in vfio_pci_dma_buf struct instead of BAR index.=0D
+ * Removed misleading comment from pcim_p2pdma_provider().=0D
+ * Moved MMIO check to be in pcim_p2pdma_provider().=0D
+v2: https://lore.kernel.org/all/cover.1757589589.git.leon@kernel.org/=0D
+ * Added extra patch which adds new CONFIG, so next patches can reuse=0D
+ * it.=0D
+ * Squashed "PCI/P2PDMA: Remove redundant bus_offset from map state"=0D
+   into the other patch.=0D
+ * Fixed revoke calls to be aligned with true->false semantics.=0D
+ * Extended p2pdma_providers to be per-BAR and not global to whole=0D
+ * device.=0D
+ * Fixed possible race between dmabuf states and revoke.=0D
+ * Moved revoke to PCI BAR zap block.=0D
+v1: https://lore.kernel.org/all/cover.1754311439.git.leon@kernel.org=0D
+ * Changed commit messages.=0D
+ * Reused DMA_ATTR_MMIO attribute.=0D
+ * Returned support for multiple DMA ranges per-dMABUF.=0D
+v0: https://lore.kernel.org/all/cover.1753274085.git.leonro@nvidia.com=0D
+=0D
+---------------------------------------------------------------------------=
+=0D
+Based on "[PATCH v6 00/16] dma-mapping: migrate to physical address-based A=
+PI"=0D
+https://lore.kernel.org/all/cover.1757423202.git.leonro@nvidia.com/ series.=
+=0D
+---------------------------------------------------------------------------=
+=0D
+=0D
+This series extends the VFIO PCI subsystem to support exporting MMIO=0D
+regions from PCI device BARs as dma-buf objects, enabling safe sharing of=0D
+non-struct page memory with controlled lifetime management. This allows RDM=
+A=0D
+and other subsystems to import dma-buf FDs and build them into memory regio=
+ns=0D
+for PCI P2P operations.=0D
+=0D
+The series supports a use case for SPDK where a NVMe device will be=0D
+owned by SPDK through VFIO but interacting with a RDMA device. The RDMA=0D
+device may directly access the NVMe CMB or directly manipulate the NVMe=0D
+device's doorbell using PCI P2P.=0D
+=0D
+However, as a general mechanism, it can support many other scenarios with=0D
+VFIO. This dmabuf approach can be usable by iommufd as well for generic=0D
+and safe P2P mappings.=0D
+=0D
+In addition to the SPDK use-case mentioned above, the capability added=0D
+in this patch series can also be useful when a buffer (located in device=0D
+memory such as VRAM) needs to be shared between any two dGPU devices or=0D
+instances (assuming one of them is bound to VFIO PCI) as long as they=0D
+are P2P DMA compatible.=0D
+=0D
+The implementation provides a revocable attachment mechanism using dma-buf=
+=0D
+move operations. MMIO regions are normally pinned as BARs don't change=0D
+physical addresses, but access is revoked when the VFIO device is closed=0D
+or a PCI reset is issued. This ensures kernel self-defense against=0D
+potentially hostile userspace.=0D
+=0D
+The series includes significant refactoring of the PCI P2PDMA subsystem=0D
+to separate core P2P functionality from memory allocation features,=0D
+making it more modular and suitable for VFIO use cases that don't need=0D
+struct page support.=0D
+=0D
+-----------------------------------------------------------------------=0D
+The series is based originally on=0D
+https://lore.kernel.org/all/20250307052248.405803-1-vivek.kasireddy@intel.c=
+om/=0D
+but heavily rewritten to be based on DMA physical API.=0D
+-----------------------------------------------------------------------=0D
+The WIP branch can be found here:=0D
+https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/log/?h=
+=3Ddmabuf-vfio-v7=0D
+=0D
+Thanks=0D
+=0D
+---=0D
+Jason Gunthorpe (2):=0D
+      PCI/P2PDMA: Document DMABUF model=0D
+      vfio/nvgrace: Support get_dmabuf_phys=0D
+=0D
+Leon Romanovsky (7):=0D
+      PCI/P2PDMA: Separate the mmap() support from the core logic=0D
+      PCI/P2PDMA: Simplify bus address mapping API=0D
+      PCI/P2PDMA: Refactor to separate core P2P functionality from memory a=
+llocation=0D
+      PCI/P2PDMA: Provide an access to pci_p2pdma_map_type() function=0D
+      dma-buf: provide phys_vec to scatter-gather mapping routine=0D
+      vfio/pci: Enable peer-to-peer DMA transactions by default=0D
+      vfio/pci: Add dma-buf export support for MMIO regions=0D
+=0D
+Vivek Kasireddy (2):=0D
+      vfio: Export vfio device get and put registration helpers=0D
+      vfio/pci: Share the core device pointer while invoking feature functi=
+ons=0D
+=0D
+ Documentation/driver-api/pci/p2pdma.rst |  95 +++++++---=0D
+ block/blk-mq-dma.c                      |   2 +-=0D
+ drivers/dma-buf/dma-buf.c               | 235 ++++++++++++++++++++++++=0D
+ drivers/iommu/dma-iommu.c               |   4 +-=0D
+ drivers/pci/p2pdma.c                    | 182 +++++++++++++-----=0D
+ drivers/vfio/pci/Kconfig                |   3 +=0D
+ drivers/vfio/pci/Makefile               |   1 +=0D
+ drivers/vfio/pci/nvgrace-gpu/main.c     |  56 ++++++=0D
+ drivers/vfio/pci/vfio_pci.c             |   5 +=0D
+ drivers/vfio/pci/vfio_pci_config.c      |  22 ++-=0D
+ drivers/vfio/pci/vfio_pci_core.c        |  53 ++++--=0D
+ drivers/vfio/pci/vfio_pci_dmabuf.c      | 315 ++++++++++++++++++++++++++++=
+++++=0D
+ drivers/vfio/pci/vfio_pci_priv.h        |  23 +++=0D
+ drivers/vfio/vfio_main.c                |   2 +=0D
+ include/linux/dma-buf.h                 |  18 ++=0D
+ include/linux/pci-p2pdma.h              | 120 +++++++-----=0D
+ include/linux/vfio.h                    |   2 +=0D
+ include/linux/vfio_pci_core.h           |  42 +++++=0D
+ include/uapi/linux/vfio.h               |  28 +++=0D
+ kernel/dma/direct.c                     |   4 +-=0D
+ mm/hmm.c                                |   2 +-=0D
+ 21 files changed, 1074 insertions(+), 140 deletions(-)=0D
+---=0D
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa=0D
+change-id: 20251016-dmabuf-vfio-6cef732adf5a=0D
+=0D
+Best regards,=0D
+--  =0D
+Leon Romanovsky <leonro@nvidia.com>=0D
+=0D
 
