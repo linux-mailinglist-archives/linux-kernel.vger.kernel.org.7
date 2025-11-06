@@ -1,138 +1,283 @@
-Return-Path: <linux-kernel+bounces-888631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D888FC3B73F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:52:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5BDC3B7FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:58:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EC84505277
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D94B2622D63
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FACA30BBA2;
-	Thu,  6 Nov 2025 13:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3D43396FA;
+	Thu,  6 Nov 2025 13:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pj9jE7yo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcxSMNO9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18FC1E2614;
-	Thu,  6 Nov 2025 13:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D539533890E;
+	Thu,  6 Nov 2025 13:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762436387; cv=none; b=FF+iPK92bPZT+6bQHzQAk2KEwYiVnhmSuWNyhTzDyEt9CWlwZ3bRvs4qeIeZi1r8u3nFiU9LBRD+WYeCsZ0dWIq8d1K5d35GxX3vguYW27kCL1WT0bdly226HBCcOFAt98QRuov7dYewJ2SyBhzFv+YxU8WlN/rTfZbSlHsA59k=
+	t=1762436403; cv=none; b=JEmGDtbKV3OWAbgPZkIERRDSCXa0Ng5EV4OrMHUt8zXNOJZh2Rm2sxPb4PkiZ3YbdQ99JZFjWGnON40rAkq8It95wN6shgeFAAAASWtnhjwRnIykCoBJitWN3n4vJIcvycNOwAk0N73ATS2vDcN9jI4coaG9Ysig8a37sRuksBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762436387; c=relaxed/simple;
-	bh=lvN082Tgo45NxAv9qOCzujCY0L4Wp+Q7wkeySWpj1K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxRnyVh1+NhNVYAFWtOaUwrtpoTPLXr96dVLxQaF2Dnv/qOeOfSnkqPkTNBWejR3x8uscK9aMpKFH1lIS+HfjbkwGqqgRdgvSu1hhnMW1Hw29eWruSx3R7skRt2Z9zEN5d4f4cRBpgSGBeH1HJzFkj7UAnelzMBYU0FR13o8djY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pj9jE7yo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FADC4CEF7;
-	Thu,  6 Nov 2025 13:39:47 +0000 (UTC)
+	s=arc-20240116; t=1762436403; c=relaxed/simple;
+	bh=0c32xygNFMHuAdkgTiAseuURvj7uxZ0qyUH2dXpbt90=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=AwUPquSVknD67vmldht4Gby+SGG/jir44LxQ2vW+srvO/nuDUDw0+KpN268LAWRkO5jcqkQKdBDO7LrEmPkz3Co2Uf22IbCjFqVTyNrijSc/t7JgCdltyAsTc1p9VVsa7f/Mq/wxuXnP5C+mPiGva2zsm73GrjpmvEBhE7uHBqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcxSMNO9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB51C116C6;
+	Thu,  6 Nov 2025 13:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762436387;
-	bh=lvN082Tgo45NxAv9qOCzujCY0L4Wp+Q7wkeySWpj1K0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pj9jE7yoInr9BCWfLJ0Y8+K6jrgVmgkwml63N4WoByHVsIr4RWQ7jaDOc81VdNYJ8
-	 iTSCutwFS0KKGPYd8MgmLbSZozfDICTrA/EwOxswYw32R5r2FcMvYuyqLSnKlg09GK
-	 ZGqwqyOq5eWuvrCT8KWgRiq/B2qmCmSO815iikAweI9cxudRZAg/pcDZnnUrPzQRrs
-	 cN2lwF4mGeI/cbxWZtf3kduZfEEOnF+HlI1wbjFN0rVAlsEKu9W/Nk6ryO+lT+57Vi
-	 zzU+PGx4Sd+6r49nkGvK51PgNHObALx0PSlYhCn8Qq3ZiZYk2NFEy6IKxYmHxQusBf
-	 Wc8wnQM0TuucA==
-Date: Thu, 6 Nov 2025 13:39:44 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Nick Alcock <nick.alcock@oracle.com>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org, Aishwarya.TCV@arm.com,
-	Ryan.Roberts@arm.com
-Subject: Re: [PATCH v4 23/35] vdso/datastore: Map pages through struct page
-Message-ID: <aQylIPCo1sEnJF4F@finisterre.sirena.org.uk>
-References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
- <20251014-vdso-sparc64-generic-2-v4-23-e0607bf49dea@linutronix.de>
- <aQjJNmwniQwwjeBR@finisterre.sirena.org.uk>
- <CGME20251104084442eucas1p2af1bd88393f4d6a532df1cd41f32a287@eucas1p2.samsung.com>
- <e7f05748-a11c-47eb-b1fa-cdc9dc6d05e0@samsung.com>
- <aQyig5TNkw2YJm19@finisterre.sirena.org.uk>
- <20251106142956-d6251eba-c696-4a2f-a3e3-af461530d932@linutronix.de>
+	s=k20201202; t=1762436402;
+	bh=0c32xygNFMHuAdkgTiAseuURvj7uxZ0qyUH2dXpbt90=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=DcxSMNO98vqeBcDuF8H+OKTwmQGN5eZRQ/HjAoiWQjAcrU1ZLnx+eNI+cN+oWchtb
+	 /ut4/fEQr9Q+q0GF9CaY8X7jgRaA1smmWXd/kOvNVRrpO8PM1MgDT6DVqFtk92hv/P
+	 TUplzIEf3Zur1Wv0yzY9Mh2dne4bivEI2MM5n6K5hju9cVSiUlUU7/AHHQkmoGuTmz
+	 +Zo+oubWSdposInHLWuMMNDFBsNN6qafC2YgvcubzjfRh2Ye9QJcsrYERcM+d+Ar9Y
+	 h5XgChffr9V9FfGmnh3irMc6fDheelYR52WXPGWTV7YqKbK5qCA35h17d3Tfs4wvp+
+	 SOpp4qsbJ6D4A==
+Content-Type: multipart/mixed; boundary="===============7991617120707915876=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EYbPhjGrYVw8SR92"
-Content-Disposition: inline
-In-Reply-To: <20251106142956-d6251eba-c696-4a2f-a3e3-af461530d932@linutronix.de>
-X-Cookie: If in doubt, mumble.
+Message-Id: <20ace4a32dae5b4dcac499d8cb78ac5cab73d75a69b07b67113b7fbbb6e5ef45@mail.kernel.org>
+In-Reply-To: <20251106131956.1222864-4-dolinux.peng@gmail.com>
+References: <20251106131956.1222864-4-dolinux.peng@gmail.com>
+Subject: Re: [PATCH v5 3/7] libbpf: Optimize type lookup with binary search for sorted BTF
+From: bot+bpf-ci@kernel.org
+To: dolinux.peng@gmail.com,ast@kernel.org
+Cc: eddyz87@gmail.com,andrii.nakryiko@gmail.com,zhangxiaoqin@xiaomi.com,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,dolinux.peng@gmail.com,alan.maguire@oracle.com,song@kernel.org,pengdonglin@xiaomi.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Thu,  6 Nov 2025 13:40:02 +0000 (UTC)
+
+--===============7991617120707915876==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> index 97451a929..30be62ee2 100644
+> --- a/tools/lib/bpf/btf.c
+> +++ b/tools/lib/bpf/btf.c
+> @@ -26,6 +26,10 @@
+>
+>  #define BTF_MAX_NR_TYPES 0x7fffffffU
+>  #define BTF_MAX_STR_OFFSET 0x7fffffffU
+> +/*
+> + * sort verification occurs lazily upon first btf_find_type_by_name_kind() call
+> + */
+> +#define BTF_NEED_SORT_CHECK ((__u32)-1)
+
+[ ... ]
+
+> @@ -92,6 +96,16 @@ struct btf {
+>  	 *   - for split BTF counts number of types added on top of base BTF.
+>  	 */
+>  	__u32 nr_types;
+> +	/* number of sorted and named types in this BTF instance:
+> +	 *   - doesn't include special [0] void type;
+> +	 *   - for split BTF counts number of sorted and named types added on
+> +	 *     top of base BTF.
+> +	 *   - BTF_NEED_SORT_CHECK value indicates sort validation will be performed
+> +	 *     on first call to btf_find_type_by_name_kind.
+> +	 *   - zero value indicates applied sorting check with unsorted BTF or no
+> +	 *     named types.
+> +	 */
+> +	__u32 nr_sorted_types;
+
+[ ... ]
+
+> @@ -897,44 +911,126 @@ int btf__resolve_type(const struct btf *btf, __u32 type_id)
+>  	return type_id;
+>  }
+>
+> -__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
+> +/* Performs binary search within specified type ID range to find the leftmost
+> + * BTF type matching the given name. The search assumes types are sorted by
+> + * name in lexicographical order within the specified range.
+> + *
+> + * Return: Type ID of leftmost matching type, or -ENOENT if not found
+> + */
+> +static __s32 btf_find_type_by_name_bsearch(const struct btf *btf, const char *name,
+> +						__s32 start_id, __s32 end_id)
+>  {
+> -	__u32 i, nr_types = btf__type_cnt(btf);
+> +	const struct btf_type *t;
+> +	const char *tname;
+> +	__s32 l, r, m, lmost = -ENOENT;
+> +	int ret;
+> +
+> +	l = start_id;
+> +	r = end_id;
+> +	while (l <= r) {
+> +		m = l + (r - l) / 2;
+> +		t = btf_type_by_id(btf, m);
+> +		tname = btf__str_by_offset(btf, t->name_off);
+> +		ret = strcmp(tname, name);
+>                      ^^^^^^
+
+Can strcmp receive a NULL tname here? Anonymous types have name_off=0,
+and btf__str_by_offset() can return NULL for invalid offsets. The old
+btf__find_by_name() checked "if (name && !strcmp(...))" before calling
+strcmp.
+
+> +		if (ret < 0) {
+> +			l = m + 1;
+> +		} else {
+> +			if (ret == 0)
+> +				lmost = m;
+> +			r = m - 1;
+> +		}
+> +	}
+> +
+> +	return lmost;
+> +}
+> +
+> +/* Searches for a BTF type by name and optionally by kind. The function first
+> + * checks if the search should start from the base BTF (if @start_id is before
+> + * current BTF's start_id). If types are sorted, it uses binary search to find
+> + * the leftmost matching type and then verifies the kind. For unsorted types,
+> + * it falls back to linear search through all types.
+> + *
+> + * The function handles split BTF scenarios by recursively searching in base
+> + * BTFs when necessary. When @kind is -1, only the name matching is performed.
+> + *
+> + * Return: Type ID of matching type on success, -ENOENT if not found
+> + */
+> +static __s32 btf_find_type_by_name_kind(const struct btf *btf, int start_id,
+> +				   const char *type_name, __u32 kind)
+> +{
+> +	const struct btf_type *t;
+> +	const char *tname;
+> +	int err = -ENOENT;
+> +
+> +	if (start_id < btf->start_id) {
+> +		err = btf_find_type_by_name_kind(btf->base_btf, start_id,
+> +			type_name, kind);
+> +		if (err > 0)
+> +			goto out;
+> +		start_id = btf->start_id;
+> +	}
+> +
+> +	if (btf->nr_sorted_types != BTF_NEED_SORT_CHECK) {
+
+Where is nr_sorted_types updated from BTF_NEED_SORT_CHECK? I only see
+three assignments in the entire file:
+
+  btf_new_empty():             btf->nr_sorted_types = BTF_NEED_SORT_CHECK;
+  btf_new():                   btf->nr_sorted_types = BTF_NEED_SORT_CHECK;
+  btf_invalidate_raw_data():   btf->nr_sorted_types = BTF_NEED_SORT_CHECK;
+
+The comment claims "sort verification occurs lazily upon first
+btf_find_type_by_name_kind() call" but this function never updates
+nr_sorted_types. Does this mean the binary search path never executes?
+
+> +		/* binary search */
+> +		__s32 end_id;
+> +		bool skip_first;
+> +		int ret;
+> +
+> +		end_id = btf->start_id + btf->nr_sorted_types - 1;
+> +		ret = btf_find_type_by_name_bsearch(btf, type_name, start_id, end_id);
+> +		if (ret < 0)
+> +			goto out;
+> +		if (kind == -1)
+> +			return ret;
+> +		skip_first = true;
+> +		do {
+> +			t = btf_type_by_id(btf, ret);
+> +			if (BTF_INFO_KIND(t->info) != kind) {
+> +				if (skip_first) {
+> +					skip_first = false;
+> +					continue;
+> +				}
+> +			} else if (skip_first) {
+> +				return ret;
+> +			}
+> +			tname = btf__str_by_offset(btf, t->name_off);
+> +			if (!strcmp(tname, type_name))
+>                              ^^^^^^
+
+Same NULL dereference concern here - tname isn't checked before strcmp.
+
+> +				return ret;
+> +			else
+> +				break;
+> +		} while (++ret <= end_id);
+> +	} else {
+> +		/* linear search */
+> +		__u32 i, total;
+>
+> -	if (!strcmp(type_name, "void"))
+> -		return 0;
+> -
+> -	for (i = 1; i < nr_types; i++) {
+> -		const struct btf_type *t = btf__type_by_id(btf, i);
+> -		const char *name = btf__name_by_offset(btf, t->name_off);
+> -
+> -		if (name && !strcmp(type_name, name))
+> -			return i;
+> +		total = btf__type_cnt(btf);
+> +		for (i = start_id; i < total; i++) {
+> +			t = btf_type_by_id(btf, i);
+> +			if (kind != -1 && btf_kind(t) != kind)
+> +				continue;
+> +			tname = btf__str_by_offset(btf, t->name_off);
+> +			if (tname && !strcmp(tname, type_name))
+> +				return i;
+> +		}
+>  	}
+>
+> -	return libbpf_err(-ENOENT);
+> +out:
+> +	return err;
+>  }
+
+[ ... ]
+
+> @@ -1006,6 +1102,7 @@ static struct btf *btf_new_empty(struct btf *base_btf)
+>  	btf->fd = -1;
+>  	btf->ptr_sz = sizeof(void *);
+>  	btf->swapped_endian = false;
+> +	btf->nr_sorted_types = BTF_NEED_SORT_CHECK;
+>
+>  	if (base_btf) {
+>  		btf->base_btf = base_btf;
+
+[ ... ]
+
+> @@ -1057,6 +1154,7 @@ static struct btf *btf_new(const void *data, __u32 size, struct btf *base_btf, b
+>  	btf->start_id = 1;
+>  	btf->start_str_off = 0;
+>  	btf->fd = -1;
+> +	btf->nr_sorted_types = BTF_NEED_SORT_CHECK;
+>
+>  	if (base_btf) {
+>  		btf->base_btf = base_btf;
+
+[ ... ]
+
+> @@ -1715,6 +1813,7 @@ static void btf_invalidate_raw_data(struct btf *btf)
+>  		free(btf->raw_data_swapped);
+>  		btf->raw_data_swapped = NULL;
+>  	}
+> +	btf->nr_sorted_types = BTF_NEED_SORT_CHECK;
+>  }
+
+[ ... ]
 
 
---EYbPhjGrYVw8SR92
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
 
-On Thu, Nov 06, 2025 at 02:32:56PM +0100, Thomas Wei=DFschuh wrote:
-> On Thu, Nov 06, 2025 at 01:28:35PM +0000, Mark Brown wrote:
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19137195500
 
-> > Given that this issue is very disruptive to userspace it's causing us to
-> > miss huge amounts of test coverage for -next, would it be possible to
-> > drop these patches until we resolve the issue?
-
-> This issue and the observed panics should be fixed in v5 of the series:
-> https://lore.kernel.org/lkml/20251106-vdso-sparc64-generic-2-v5-0-97ff2b6=
-542f7@linutronix.de/
-
-> I'll ping tglx directly.
-
-Ah, fantastic - I wasn't aware of the new version.
-
---EYbPhjGrYVw8SR92
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkMpSAACgkQJNaLcl1U
-h9ApqAf8DFWNLEwpnWuEpnrOTVfL+iVYzK6YSgBge+QboC8tTBNFnMnnQ5Ht92aC
-QaU0hO+PO0XJiyMXzjXfT5JgDO8ovlQIUShX3kjD7MF/MuSGdEAbRUEzoFj4d170
-GN1BVZ8iAysXN0NytDNcZImpsxwVva2BtBFzYouhWlcDg2eRPWhzd6tvmJY3b0ZI
-qn9eJOHvYiqh6I4jaF/7mI11G/JYp3x3738trx8FMvZxgxL6y0O0MQ8lETGJTaao
-EwYoM4wyzL8dDJ0r4bYy7pGAiIKFQXpASY1pInXJQ/NVO4fcAC7E47S0u5odZz1h
-lhDgGOw14KG8UFp0J4rBQQRfSWDhCA==
-=oxel
------END PGP SIGNATURE-----
-
---EYbPhjGrYVw8SR92--
+--===============7991617120707915876==--
 
