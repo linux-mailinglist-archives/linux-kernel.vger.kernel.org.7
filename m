@@ -1,89 +1,58 @@
-Return-Path: <linux-kernel+bounces-889273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CECC3D20C
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A34BC3D20D
 	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:00:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18D6E4E1E3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:00:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1043B5836
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AED8354AE0;
-	Thu,  6 Nov 2025 19:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499B53502B3;
+	Thu,  6 Nov 2025 19:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igzo+dvL"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2zHWdml"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E60350D4E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7E72DD5F3;
+	Thu,  6 Nov 2025 19:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762455600; cv=none; b=t7OSEToekQRoCS+BCFJxz0OpQVZnP4uxxepZHdBvS+C33TuSf06Qww7IIXZTKEr/ulH7uxygO0i53dUprKpfFBsFdvP3tNOUTeaYGbsB7XASLfZORbq+M8nzV3y1+/+WrgfbMGMTrlPC9iFnop2+SQKAANnGCNt7dlS+MsFYRMo=
+	t=1762455626; cv=none; b=n+M58PBuxn+s5ayhAf/NcRjEUmu/07LdqzKXQALg+IN9A8uQHCFZ/07vamDeV/OlAypftkJ1osFOh/v08YRr9ENrXJYQA3aasErisCe38HOOpPQzLKnt24rpbCU+f8/ndZz9z3H0GYYfoL8KhErW4hqHKBScKElKYmTKkNoGjV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762455600; c=relaxed/simple;
-	bh=cMn6KjmzT4TvlXfOcgI4FvDupMo6AkFL6UGvUtlsZls=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bHqmg4NF6kVngA2IdPxwHMbo5L2ka3nJSRu0bhvrR2teSP767NqxncShVPYDFnlfMwrCPysLTNux0g0095mUJtvRE2zjbchni6AfTdTqdP6m/puPip3T5JfoSkH2Gqpo13U5BGWJpEMafBS2XgF1KjXemDPdOxzjL8ztuuUf68I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igzo+dvL; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7b0246b27b2so853928b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:59:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762455598; x=1763060398; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p+FK0gOC1mhwN3V0gqoVshsVD11fIkYoJIfW9hejE3Q=;
-        b=igzo+dvLRwAjAX7hhu3Q1B6xU6vznzc7WZLG3901QlcWtUEyHI1u+BwgsRSQB5vVRj
-         bgNkrAJRV9mUV8aLoGE0ALVs00ONElmnXltMyGDSkLroPMDjAsY6OF2fuUs3/fT/mDov
-         rcLQBV9Lqr++mfMWFzp06CHFL8r95bEuLCrb7lON4RBf/hxLfKrfILlAarHn8UeSTYgN
-         vGtI1JDsB7hUkpqpOYBhf1EQbv+NOwOjnj1jJWQMe5H+FDvW77KPTAGGp88gYghao7CK
-         Q2LhWYQ4u/IocWgj9eGsSofPm5hHzKpuv7xb2dy/anBnEl70EqWhf+Lqe+TNvbQBR6Bj
-         xqsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762455598; x=1763060398;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=p+FK0gOC1mhwN3V0gqoVshsVD11fIkYoJIfW9hejE3Q=;
-        b=DRkkL2u589xOk9Ih5zquUC/0PZpTpbWOSXFoh9qPRkuCxQqf4fhIHf4ApLeKgnAiLl
-         dzJSIDXuHX59vAmoa+2HfMZRZdJLwAq3E6zpd5odE4y9ZiXQTXee1XwFquVpw/laDDN1
-         AVws/zgfPypFDLSAYLZnotwSEmnFzYyQItnDgwmGGXYxfNMNw2NHrJcuznMu/uRKPXUL
-         dxL5FK2PmP2nl5UYqecIx5965TwxSceZi5GjoSAXjm+jEyVHAkqaeX0FuAnbyZtu+QWf
-         1Qs8MBs1cKco6Zp42XQ72NqVWjOjC5kMNHh48u5bdPnwSDLUKXpcuSxCJ23CesfxyLy5
-         oX8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXLcYpDpGVrrqAuN+lZFhGPUZCmak+3e+gYEji/alEvXDS9LfXiDQR3Fb2hNFuysDGjmm9n3Svs1nCuB+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY2NBxLGNux8NZHvOGHXcL+XySpOJSTPZQX3z4g7n7csNLu+si
-	d7Mzm/X6cE3cvlng1abPM40ECGRE4cRRD3a1u0t3BM1utemTWlk7hnsw
-X-Gm-Gg: ASbGncujySKJAgol+nAz41alb/X3vJcbWyQwtpzT18Fb+2Kr9qZPTyDJ1TU50E4BkXu
-	OLxFau3do0yY5miEB4cIFoWrxFNCpyxl86CdWrWOvKw1tO1Hd+kd5SMwH+lPHAT0CaCUKRBwPhs
-	BGT5ffSryQPd77nFKndwFVpld7GLELRVpMJOBi0WySiyhbGcnS78aPi8J3uT3JHS2V0jheef4PF
-	Qe7/ZIIzld+LXlrYX9qDdYdACHIBcqyp8Vr+2e1Juq3AON4uCheDHJVsCXDbU12713T10Yzsj3C
-	dck4F2h/okGAkQZ3TunE6Z6HZftGchMBXfN2C1bP1YyKAQQqGzrowOgDv/DkPtocealrg03GUVC
-	SVaDGS7Wu/zKOP6ylvHdOPKrY8ZVlh49p2bZJl5iJ1iICqY+uiCcKYtgYvg==
-X-Google-Smtp-Source: AGHT+IHagJSVNCT4R+KJ4Gcu1Y5auKiZ70Unu5mjvH9cLJ9bPgg5yTxEK4O18UgoksnzXKb2DtQKBA==
-X-Received: by 2002:a17:902:e945:b0:27e:ec72:f6d with SMTP id d9443c01a7336-297c03a0676mr7775115ad.11.1762455598382;
-        Thu, 06 Nov 2025 10:59:58 -0800 (PST)
-Received: from ryzen ([2601:644:8000:8e26::ea0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c92cddsm36647815ad.83.2025.11.06.10.59.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 10:59:57 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-fpga@vger.kernel.org
-Cc: Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] fpga: stratix10-soc: add COMPILE_TEST support
-Date: Thu,  6 Nov 2025 10:59:38 -0800
-Message-ID: <20251106185938.6419-3-rosenp@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251106185938.6419-1-rosenp@gmail.com>
-References: <20251106185938.6419-1-rosenp@gmail.com>
+	s=arc-20240116; t=1762455626; c=relaxed/simple;
+	bh=sW3D/DUO6/EhIkY8q0f6Kkg/PnTPkA07mZ2Ez9rrBdc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I9H27vY/+hxbTnhoINzDP2fpfIxIiANyu+s8e3KNnT+1el/owjF1kXHCaJg0A1DI99IUPdC/g/PxdLcuZ4g1KzVNeK4lxfnEX1Y6zCTb0N/AVPeZvGKTheMwHN5hugIgfg9EAWpRmwHvyvgt5IDLtCIuAtJUH3nuXzxe+DT/pV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2zHWdml; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FFDC116B1;
+	Thu,  6 Nov 2025 19:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762455626;
+	bh=sW3D/DUO6/EhIkY8q0f6Kkg/PnTPkA07mZ2Ez9rrBdc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=u2zHWdml42KH0K55TUrZUBwO2N64NjE1KEHTrNNutncMKoqkwQGRTBtrTc5ndCKIh
+	 g6e209jA0sqQ7f6xF23hMdwXz70cjf/Jy3DTEPOAYL8zqEM5e6ZoTeHOwPhped16rg
+	 rTdm8Ejg5Q/pZfYElvUzswmCy8SFtuExJa+61RzE8GBv1UYhNAa3iffAY7rSlGD52N
+	 tpFqUOKv2hzBLEQhbBXMu2OrQWbpUKAOeQw2BaYn8NWQBSBSJuKumMVk2y3FtvfbYa
+	 uI5lQgmVLk9CWoidJioFJAwL7xq58ixvlTNW0o1hkA+b9BJXwx/n1Y6V/qEE+wjHV+
+	 nkfrRju3pMLcg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2] perf record: Make sure to update build-ID cache
+Date: Thu,  6 Nov 2025 11:00:23 -0800
+Message-ID: <20251106190023.1772629-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,27 +61,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow the buildbots to find compilation issues.
+Recent change on enabling --buildid-mmap by default brought an issue
+with build-id handling.  With build-ID in MMAP2 records, we don't need
+to save the build-ID table in the header of a perf data file.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+But the actual file contents still need to be cached in the debug
+directory for annotation etc.  Split the build-ID header processing and
+caching and make sure perf record to save hit DSOs in the build-ID cache
+by moving perf_session__cache_build_ids() to the end of the record__
+finish_output().
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- drivers/fpga/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* fixed commit log  (Ian)
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 311313f3b282..f2e2776acdd5 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -60,7 +60,7 @@ config FPGA_MGR_ZYNQ_FPGA
+ tools/perf/builtin-record.c | 30 +++++++++++++++---------------
+ tools/perf/util/header.c    |  1 -
+ 2 files changed, 15 insertions(+), 16 deletions(-)
+
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index ffb94a8339b03ec2..fe10bb7f35cbea05 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1890,15 +1890,14 @@ record__finish_output(struct record *rec)
+ 	}
  
- config FPGA_MGR_STRATIX10_SOC
- 	tristate "Intel Stratix10 SoC FPGA Manager"
--	depends on (ARCH_INTEL_SOCFPGA && INTEL_STRATIX10_SERVICE)
-+	depends on (ARCH_INTEL_SOCFPGA && INTEL_STRATIX10_SERVICE) || COMPILE_TEST
- 	help
- 	  FPGA manager driver support for the Intel Stratix10 SoC.
+ 	/* Buildid scanning disabled or build ID in kernel and synthesized map events. */
+-	if (!rec->no_buildid) {
++	if (!rec->no_buildid || !rec->no_buildid_cache) {
+ 		process_buildids(rec);
  
+ 		if (rec->buildid_all)
+ 			perf_session__dsos_hit_all(rec->session);
+ 	}
+ 	perf_session__write_header(rec->session, rec->evlist, fd, true);
+-
+-	return;
++	perf_session__cache_build_ids(rec->session);
+ }
+ 
+ static int record__synthesize_workload(struct record *rec, bool tail)
+@@ -3083,7 +3082,7 @@ static int perf_record_config(const char *var, const char *value, void *cb)
+ 		else if (!strcmp(value, "no-cache"))
+ 			rec->no_buildid_cache = true;
+ 		else if (!strcmp(value, "skip"))
+-			rec->no_buildid = true;
++			rec->no_buildid = rec->no_buildid_cache = true;
+ 		else if (!strcmp(value, "mmap"))
+ 			rec->buildid_mmap = true;
+ 		else if (!strcmp(value, "no-mmap"))
+@@ -4192,24 +4191,25 @@ int cmd_record(int argc, const char **argv)
+ 		record.opts.record_switch_events = true;
+ 	}
+ 
+-	if (!rec->buildid_mmap) {
+-		pr_debug("Disabling build id in synthesized mmap2 events.\n");
+-		symbol_conf.no_buildid_mmap2 = true;
+-	} else if (rec->buildid_mmap_set) {
+-		/*
+-		 * Explicitly passing --buildid-mmap disables buildid processing
+-		 * and cache generation.
+-		 */
+-		rec->no_buildid = true;
+-	}
+ 	if (rec->buildid_mmap && !perf_can_record_build_id()) {
+ 		pr_warning("Missing support for build id in kernel mmap events.\n"
+ 			   "Disable this warning with --no-buildid-mmap\n");
+ 		rec->buildid_mmap = false;
+ 	}
++
+ 	if (rec->buildid_mmap) {
+ 		/* Enable perf_event_attr::build_id bit. */
+ 		rec->opts.build_id = true;
++		/* Disable build-ID table in the header. */
++		rec->no_buildid = true;
++	} else {
++		pr_debug("Disabling build id in synthesized mmap2 events.\n");
++		symbol_conf.no_buildid_mmap2 = true;
++	}
++
++	if (rec->no_buildid_set && rec->no_buildid) {
++		/* -B implies -N for historic reasons. */
++		rec->no_buildid_cache = true;
+ 	}
+ 
+ 	if (rec->opts.record_cgroup && !perf_can_record_cgroup()) {
+@@ -4306,7 +4306,7 @@ int cmd_record(int argc, const char **argv)
+ 
+ 	err = -ENOMEM;
+ 
+-	if (rec->no_buildid_cache || rec->no_buildid) {
++	if (rec->no_buildid_cache) {
+ 		disable_buildid_cache();
+ 	} else if (rec->switch_output.enabled) {
+ 		/*
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 4f2a6e10ed5cc0bd..4de7ca16b5522c47 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -335,7 +335,6 @@ static int write_build_id(struct feat_fd *ff,
+ 		pr_debug("failed to write buildid table\n");
+ 		return err;
+ 	}
+-	perf_session__cache_build_ids(session);
+ 
+ 	return 0;
+ }
 -- 
-2.51.2
+2.51.2.1041.gc1ab5b90ca-goog
 
 
