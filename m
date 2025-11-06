@@ -1,364 +1,191 @@
-Return-Path: <linux-kernel+bounces-887878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98972C39494
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:42:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012E4C3949A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3488B3B5568
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:42:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E6919E04E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9412B2D9EE2;
-	Thu,  6 Nov 2025 06:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050F82D9EE2;
+	Thu,  6 Nov 2025 06:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="igPW6I0e"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X4JsPhNv"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012044.outbound.protection.outlook.com [52.101.53.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB10F2D73A4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762411348; cv=none; b=fsqWMDZc0LkWMTw6vnobVrL8Wi+I+qaXTKygOlj52nqyZ5DiWU9VN5scJe+PF3IwqsyZgYFiGP1Zjo+AyGc+je0rpz3s8OSFwWlg6bomTg4jCLzv1jKg3e2wg5e4miDWEqLG5eiGf5ZEgzUx+C1f2F4GfXm7/eEQz5UUZzCRv2c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762411348; c=relaxed/simple;
-	bh=AeSCdyni83k4yUuA+0559bO8HAwzStYb9FVIwXJwHyQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IahT5bVPwNIfHbiNzepDO4hKrqMTaTFKueNZVwbmPUn4OfKy0YjXMaidJGb9xzIf1HsTUSZSI1XrFWBKzi6HMQXmSy2TO/v+4Gop3fgLuFnlXw1aGCLYxxQfr+2uV5ECoSWoJJMZi0Cq0JZqm3bNXNBGBW3uqTE4eH5fHyzaT0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=igPW6I0e; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-294f3105435so83265ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 22:42:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762411346; x=1763016146; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dvO8RyImdodmU0WiqheiYuh6o925qsAYhxVdO/bn8JE=;
-        b=igPW6I0eFrTFhOGUdBc+zPi18hWM07zWK8Z2j3Tlw8IsXt+wtAV/7QnjHzKKEh8ecO
-         8cY62/OEpKVexuGsKL75HQWC/eOkoawLQ0np6DHqeZEkV5CZtyLxYpEokg3sw+XSlwff
-         BEVfgwtQLtfgVnIqFlxFX9QZ4ENCRx8auMzJXmJyKCRSFM7ZqkjHmfJse3Xl783A6HW5
-         5+mBoWX7pfKTpvhsuCspPn3E8CgPo5AuYFJcXC2yFQ06+ekH+5wg1i7oGr9UMRDvNr+M
-         Ri/Kxv+GJpHqOixQM5FlSkFfwAXgiQ9HQEy3CT6/loEVFIy6RuDEddHodlJ5UrudYFUe
-         iYvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762411346; x=1763016146;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dvO8RyImdodmU0WiqheiYuh6o925qsAYhxVdO/bn8JE=;
-        b=BQai16y5YFPpSvP7KSsu9FFG1GHim8qdKZQpBrqE0QLCLHObfj811JxZici3keVApD
-         m5113PTI9aQNB5tollmmwVQyYiDdmTWG1qAmymMcAdbOUSk/2z5ZZO6hz7tx8TSND3MF
-         99BIsZ2EumZlhF6S2WQLLxaId0jPvLqlSNsbb0mm5/FPjsM0EJ7yvaq+gHMNwC7CzJA+
-         Ohi7NCY/q+1wAclwLu3yGtNkHe3Q2oBZHoRMzbC7TB5AD7EpcFVIYpn5NuA6c7OOMyUM
-         RGLFVICHOuL6KAGwDd3TCVUbP+zy1TvIu6DDMbPtcYq53Ahg0JK+uBQLySFCOzyCskwJ
-         4wgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoBQTzDPaPwkciX1pf0Yl7fX1hXyFeu/NpX6d/qcsLAvsNk76qMOpgsHtyC+2+EfwpOoO13svDCv493x0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWMqywV5Huvm16WIl0RwiKqlqEhdFDBNMuTuB4m/3Gw+v2JjTw
-	imaMrd9yo1CD6pIf+tOQVQjTYoSGVlohwtxyoCajmKrzhmylZWuRgWzvEClYEQXaccqbYdjyb41
-	GG+y2pgnWvzK3EFAWGxUapS5ohDho/Uy/FvjOEwzd
-X-Gm-Gg: ASbGnctzV50CJNeagrmPoksqfL6jwXbMxz/41ijV/o6b+OZKlnSZnj2TIntPIk33wEK
-	J3T2S6Sl+z6bN1y1rre95j8Cu5n5mF1FYipm3njUF7mKfbVWI6PTzlmmz5D8prrb/i1sagsz5B3
-	re/8tWncpuLNyisvC51GnXcAT2YrLoX53S5jDuWj1f8cVS/n+mPHhrkMsRQnVF/kNl7D/To1kqj
-	+TPfCF8kbqaGa8Rz5bUW9J+VD6Ovzzu+DCgY7RqNlchTNlUGhDCq7Dz9Fug
-X-Google-Smtp-Source: AGHT+IHC+tliRZizWFcSYLcf5QMiPn7Oq+hZB4RN/+YM9E3o/Jahu+vLtbbDG6NA9xu77vW5B1wRahXndakIa0XJHko=
-X-Received: by 2002:a17:902:f818:b0:26d:72f8:8cfa with SMTP id
- d9443c01a7336-2965b1dba42mr1678855ad.13.1762411345890; Wed, 05 Nov 2025
- 22:42:25 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45C62D2495;
+	Thu,  6 Nov 2025 06:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762411358; cv=fail; b=FvzyGsAxD5Dx35PuTdO5/rHMBzOdLopfE6ubRtXxMB34+8vhzSfkTCgNAAZNkS5xZhA49Espbvm2LokHXpn0qqKsq2zG6lLAoJ7j5a1Ia8nNV/7oQc34ptOra5c3LZs/Nz5d6hdUM7JMtPTHGxEJJjojX+1l29g4hac1F/AXNsA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762411358; c=relaxed/simple;
+	bh=vmmqoe2mw5Wm1ZdR6j0Ofsdigx/rpX/t7dWGQraHwKo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YtFVuE5+VznCFt7sXb9sV94cNyy8P+fJHDVIeUOZQ3Kkm0zT8NbF831WYctA0oaSsUxQuDmkA6o5kUIf4LGghZfphTLOgQnhL0sQAAS/dX8VB8E7mlLZqcocVDBEkEjZsipUtMM4a6mIu4fX4hmAx1RBmhUswez2zqy3X/Fzsi4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X4JsPhNv; arc=fail smtp.client-ip=52.101.53.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Lg0/t/8l1uV5DdMvatCzpovRHQES5CNc4YWMvL+lmOLomA+zGpsoiSLX+D75HRAn2bhaF0XqzSGngWujbcpqcxGVS0xrAOgZOOQB3CIzRE4bmrSuoCuMYZSVumL/adacPGMtrd3n12j0kZapA5ues55lai1VMW+pjbtdFkkn06B/nX6Gu0AW+dx50978Nj508YQ2Vz8ci4Hw9Na17Fc4wJh1FkAMrs/XLlw2h3uO04v+9+1gSd3/AesBFUQ8iviN8ohqDr5SpjOUqNNd0V4GFA6y8o6Q3ha+kLUJUkJleM1lfcPDJBxxrduJ8kGgjU388xe25WP5RhKTPh6lIdZVdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vmmqoe2mw5Wm1ZdR6j0Ofsdigx/rpX/t7dWGQraHwKo=;
+ b=UaF1l3g8Olf7ntaeflsyBIRLOBFi16mRNBI9kauVD4bg8po3Dg46rR6mtEmuRhgT1WFDPtFnUvPFcgMoIOo9gU5AdYo5F0kh6RAAI464oL6fBK44XghHO0DBI/JQhFFrJ0qGk3/1x5FltdWC2WK32x/gn0wIp+AjQ5InOgfzdMDC+cWHc9iEQS0UHaq7C/VYV7sn3s/N+ZV/wRKv5gJZrjaPVMyl8UZCBGjiecJhjA5erLYo2wLHSj2v2Ip6x94Joo0yxvqmPgjlilliu4ExoU+8ueAqNqB8lgh1EM3uDzrXYlciF73tuJliHXd9EilElAN9n5RybCWezNDNUjExDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vmmqoe2mw5Wm1ZdR6j0Ofsdigx/rpX/t7dWGQraHwKo=;
+ b=X4JsPhNvSyakOPdPdZFo/vbwLDh10l36BatUg2fb8Zs8QVFu7xyObs+ayV4UZja1SLoe7MwlUnAo97rO7voLKIYMK9t16XT5fpk93eqrk9nYCtp8Hv5iZt+PFQt8Bo4LWAZKqvOhiC0f731DHhRGn3F4H0ILLANzWH9fRm72pBYrJbKl2KBiDqvAOxQ4GurLuq2Eih1tcxEEEasACLUSfmm5P7bVzS9D7UOlj4LFF23XquhgsAQx1TF2ICSQro9IMDQccEFVFbpLaUK1COwAgDxidNTonVBALbZwmR+cGRgvevWIcFEjma576L2T8tqGeWMEgTejBOuCfXEU/J+TQA==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by CY8PR12MB7313.namprd12.prod.outlook.com (2603:10b6:930:53::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 06:42:33 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9275.015; Thu, 6 Nov 2025
+ 06:42:32 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Shi Hao <i.shihao.999@gmail.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>
+CC: "inux-scsi@vger.kernel.org" <inux-scsi@vger.kernel.org>,
+	"target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] target: substitute kmap() with kmap_local_page()
+Thread-Topic: [PATCH] target: substitute kmap() with kmap_local_page()
+Thread-Index: AQHcSwMBQwNZZvAcM0+wgg6WAQCVgLTlOwgA
+Date: Thu, 6 Nov 2025 06:42:32 +0000
+Message-ID: <df283f3a-5463-4696-a067-3a4a30498d6e@nvidia.com>
+References: <20251101074137.98988-1-i.shihao.999@gmail.com>
+In-Reply-To: <20251101074137.98988-1-i.shihao.999@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|CY8PR12MB7313:EE_
+x-ms-office365-filtering-correlation-id: 9baca1d0-4c0c-4775-14df-08de1cffaa06
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|10070799003|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?eG9NaDl0amlYSG83RHY3VGtKUnNZd2RvcG1tRU1JY2VkMXB0cTErTnFmbVpi?=
+ =?utf-8?B?NDJpVTYzQk9jU29nYkhYYVRDdDl1REZiOUlCckR4MW40bG1waVdXNE9ORWIv?=
+ =?utf-8?B?TVJKM3JZWkkwUFJUek5vaUU3S0ppUzNGSTY3QXFHcUc3ZXIvSzIzZDJvRnN4?=
+ =?utf-8?B?b213U3U2M3ZrcnZhUGN3N0UwZitWYmsrQk9MZi9meEZ0MFJVODA0K2Vyc1VX?=
+ =?utf-8?B?NHVyT1dBa1VEOXNqWXVJVXFNOUZyRXVnQ2hmT2gyMmV6bDlGdXlkNE9UQ0F6?=
+ =?utf-8?B?dG9mK1A0M0d0cmFKTlRMS3dZSDhXNUg4eWEvaUlHbE10c3RDNTRrREJhZkxz?=
+ =?utf-8?B?Y3ovdEpDemRyUjZkUlM4WFhGZ1p3Q3dibllWU05VVWFLa1RvWisyTk5JMmpx?=
+ =?utf-8?B?MUJINnJRNDVqaW9MZGRYeW5FQWRKMnRhQ2JqU2NISWV3NVZib0ZCN0dWRm85?=
+ =?utf-8?B?bFpwRVhVNXJ0YkZLZ1NrZ3gxYUs5S3crQllxdHZGYUdDQkJ1L0JkUDIvcEx1?=
+ =?utf-8?B?MlU2cXA3cStNR2hYVzRJa3ZQQkFuS3MvOHRmK05vQ25GY21xV3M5dGJMcVNM?=
+ =?utf-8?B?TU03WTNVQnZja0xwcjR1KzJlZlVoMmlabXlxUlczQVdHSjY5V3crTzNzL1R2?=
+ =?utf-8?B?WW00MWFiTng1Qy9ZMFV3NGdpS0VVaVpwS0FMazhkeE50Wk9OaFlpV1FYZXph?=
+ =?utf-8?B?YjZ5OUgvQVh2RjFJb3M5UXphdW5yQ0lmdVY1MjNDZ1VTc2hwL2YrTythY2Ju?=
+ =?utf-8?B?a29LUldRaGM2MVZMSXV3VDJEazkzWUEzWmJZaXF6M0hsTnNKd3hDa3REakVx?=
+ =?utf-8?B?aVRLUU1nQktmai8xaFVjRFJiNzdwRHJvRTJtdW53am1Uc0xia25idlI3SE9I?=
+ =?utf-8?B?WXdUYVJ5VzJ3Y3pBdmFJdGppQmNBT3lXL3JXdVluUEN1RjJWbGVMS3lzZTVD?=
+ =?utf-8?B?aG8zUUZUWlJicXFLUGlZUHFRdUhQbmE5SjFRMTBPTUxHNDB2LzlMakYzemht?=
+ =?utf-8?B?ZDJic1U3UVdTL3RXd1FZaExlVWFwWi9SM0s3RnlwUU8wWWpiQU1FTHFTZTdi?=
+ =?utf-8?B?KytnTmN3VVBCRkNDV3RnWHNlM2l1YWoweEVIY2tiazlQOXBWY3BEL1g1eTVi?=
+ =?utf-8?B?cE55d3p5b284SjNZV25OT2o5KzUvZzM4NGR1OHB1dXd4Ui9zQlRHN2UwUE1s?=
+ =?utf-8?B?akZOcjJmb2FrQkxGSWluUFFINlQyUnFWeUQweS9pOFRucjhCd3A4N0p3Y0FM?=
+ =?utf-8?B?K05wNkM1YkJBMG9sR1czWmhHVFdmY3NzQ2hWSURkNkVxUXdMSmNZRTVnc3dS?=
+ =?utf-8?B?cHhkeTBLL1pOQlQyeU03aCtOZlNtQVlMWXVYd1pwR2ZNc1ZQZC80UEhXbVpi?=
+ =?utf-8?B?R0p5Q1M4UUhsdmtReFEyL0VLMEhWWFBFN2RZWTVDRGQ2TlVyK1dHdE11N0d5?=
+ =?utf-8?B?U28yWWtxNWczeXZBQ2hYRjlkd0dEbUgyYitwUXlyNWRtYXFQOU5FVU9IUEVl?=
+ =?utf-8?B?VlFOL3BZQ1liWFVIR3ZCT2NsQUxOTStFUWNPUkNhcUNudFJHRjNXQklCMzMz?=
+ =?utf-8?B?TUl1VzJ2czFYUkZqa0JHM0dpTlBDMmV0ZE1hdkx4M0xCQzRVZ0NqSWRBU3BB?=
+ =?utf-8?B?RjR0OXFKLy8zaTU4a0tqY00yb2RaNm4xSTNMZS9Sa3FPZUg4THQ1SStldkxq?=
+ =?utf-8?B?YnkyZHAxY3daTjFlK2dZMUhCNHVqYjdmTDNmQTE1S0VsMTh0VWY4KzZNcDM5?=
+ =?utf-8?B?MFNnektBZEV3aThRRkNkZG52S3R2NFYvRjFCWkV1N2pZbGp2VmMrOVhWai8z?=
+ =?utf-8?B?L1hBeXNQUHdUN0xIVXJoVkEva04wenhXZWdYSjNmZDQ2NjB1L1llK1FRQ2VO?=
+ =?utf-8?B?OXc4QjdBbTlGcWRadUw4aGRQNlllSlFPSWhuUE1adTlaNjJxYXZOakFFWTRY?=
+ =?utf-8?B?aWNZdXVFOWhHWm9hdk5hRkpySGlvd0h5TG42LzJvTU9pRzdTMktKb0pjTmlk?=
+ =?utf-8?B?Nm1ma3NucW5CTDZaakhEL0duT3BKMHRPMm9EUGpzSS8zRHYwS0d4bWZoaStX?=
+ =?utf-8?Q?qQ4Mwt?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?SDdWMXUvdzdkNDhOMDNleVlEdzdjZGZIcFVManZEZXZHaTNzMXgzdVM2UzNC?=
+ =?utf-8?B?UVRmYlVadzJLNGNVUDVMYld3NHFZWWdhczBSOWZ5UmxMbTR2NHBXVWVzQVlH?=
+ =?utf-8?B?SlYzckowRkhxaVhtMThoVmFmdTEzcEswUjY4T1RLTzBjL00yME1tN1dwK1Fj?=
+ =?utf-8?B?ejJtRVd6b0lZSkdpMWxBZmU4Qnl0eWE5bmJGVXZBTEljOHpUTHhDdjFmNFlw?=
+ =?utf-8?B?T2tHV3l2MUZ5ckE0NmNwQkhmUmNWNUFIVG5FTnJhTWNBMUhxNkhYSkQ4bEND?=
+ =?utf-8?B?cHZnTjd1Y1VENHlSY1NsOXdEMm9icjRXVDlRbTJwYjhDN3FZRDFaaUlqUk5l?=
+ =?utf-8?B?VmhQdmppSFJSN3pSclJiVnZ2S2hPejVMN1Y4QUdLL2I1a2xjamlNRUMyaTlx?=
+ =?utf-8?B?bHE0VlI1ZGxTcnpjMjlEd1hSRlR6c0xuMEV3R3Nia0t1MXgzNUU0MS9hT1Jv?=
+ =?utf-8?B?TytabFFyK2ZGdG9WRm81a0tBdU5HcEN5QkNoMnFIazdNKytUeHI1RDJDNUZG?=
+ =?utf-8?B?RlZKSUtTaWs3dTJOWnk5SEJzSTNhM09rMW5YRVg4ZWZxNEFLTllKYlM2c1lI?=
+ =?utf-8?B?ZlFsaE8rTTAvSEo5aGlOUmFoZkNZS2RrQU5Ud3JWdTFQVWdqM3h1UG95a1lN?=
+ =?utf-8?B?azloSGoxelpEb3NTVWxKaVd0bnRQRU1Dc1ZmbEQrZ0R4WFg3djRzb0c3Tzha?=
+ =?utf-8?B?eU5lMkRnTHZpYjk3bHgzUWNVUGJwUlczdVpqVmx4YkNQLzZPU2pjVUxRWjhM?=
+ =?utf-8?B?dXpSOWoySnQ5YVBDamZZSFQ5aXJ3U3VrQXQxdTZISjJpM01MWTYySHFNMDE2?=
+ =?utf-8?B?UkpIU0dKZGZpejZzU0xKV29UaUQxU2pNeHJZeXZna0M0M0xJdGtzc0ZzbEtG?=
+ =?utf-8?B?YVlJZ2RyNWRLUkxRNlFiOVdZVHQ5WlZuYjlPenk3TzFPd3RxVnMwSkg0Q3FW?=
+ =?utf-8?B?YVZrVHl1MXhKMkdoaGRINm02c2NpQTAwcXNtN0F4NTRhaUhhanpPSW1QaWJN?=
+ =?utf-8?B?QWF6c3FzUTRzcUl5cnAxNHhaK3NWdTVTRlpvVDdyOEl4VllVclBVS2d2QXRS?=
+ =?utf-8?B?c3VuODhuUzdSb093d3lUUGNocWNFdCtRTGFsOUpXclk3b09kdXA2YTJCZ1pQ?=
+ =?utf-8?B?c3dlQnd0M1ExeXdvOVdhUzZNVEtjY2YyMHBhcm5TeHkyTjNrdWRWMytWb2lJ?=
+ =?utf-8?B?Y0VXbG5zcWlndTdsOFFUYkJobHg1MlBUU055b3RUT0YxVFM4MVRWd0tRYkc2?=
+ =?utf-8?B?SG5DaTlOZEJvd05KdUR2SDhPbk1FRWxtZkVqVWk4SUNTM0NKam1FREV0T2NG?=
+ =?utf-8?B?dXdJbTVzWlFjbXVpemVVRXlLc011cmNtbFAxYlhlYlFGNjNXVk13UEJrbjVD?=
+ =?utf-8?B?c0lReTlXb0JNaUQ0TTg2dnEyaCtjaklsZjJabk91eFE0Q3FtMUlUM3R2NVlm?=
+ =?utf-8?B?TFVVK1A1UkhxNzZSYTVTdkFGRlNzQ2MwUDlLa21vckV4T0RFYW5FNVUxNmpN?=
+ =?utf-8?B?ZVh0TGtrdlhlZEFZVXBtUXpSUUc1UUI2a3pCaWx2c01uS0hIRUtiWURKRUJa?=
+ =?utf-8?B?dTRGM2FQdUUyR2Z2WUx4aU8zN2NFZi9RL3BMSGdDbUtWSmcvTFJaU0JUdlZy?=
+ =?utf-8?B?WDBHSEpDMTllcmtVM0NaSnRYcVc0VHVtWjQvYlV0RXRnbGZ5Z3Z3UVBkeElQ?=
+ =?utf-8?B?OFU5emNZMjR1NFRtOUcyVSs1alUyL1A4WDFDTGQvVTFRTytsaWRQbUZsaFVv?=
+ =?utf-8?B?NjBoNkplWlppcDYwbHFaeXpqU3I3ZUdBTzRQMHhJbmpxT3BiRktNOStEdkZm?=
+ =?utf-8?B?MC8wRmpuUnQ4cnpQckZkWDBsWDZLMWR0eGVML3ozVDlTQkFXdWZ5V1pzdS9R?=
+ =?utf-8?B?VlJXRkh5QzVKNWtWdjRHTW8vd25rVmdGb3ZsSGFKZ0craGdmeXVMc2dlQVQ2?=
+ =?utf-8?B?VUVDeXoxVVZuS3BJV2kzT2UyU0VOWnhpTlpNOGZCby9aMWltVUpKamt0UFdl?=
+ =?utf-8?B?cVdENVd5MXk4TjhvaUprblZRdkhpSDgxREJleVVwR3FMdmhzVTdlZGg3YTlD?=
+ =?utf-8?B?cUl5ekhRTmRneGpqOTRNd2RnL2lqWlQvR2VKTW1IN2d4RkNuWkNjZ1U4bU1n?=
+ =?utf-8?B?SnhEeDFaYW52Sm9QOGpvSEdEOWhadGZCVVp1TmpPMURGZzcvbVVIUmF0dTlt?=
+ =?utf-8?Q?It7mUeU1P4lOd17ASgZvkDVjehAdlw1rRt1/nazLiJXx?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5D2E3DCA5CD42F4FB35965C04310F0C2@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024175857.808401-1-irogers@google.com> <20251024175857.808401-6-irogers@google.com>
- <aQmGfLVKk0UFGAyd@google.com> <CAP-5=fXmT-1io1k1O5d2QMken9aJmGTiuDEz2f-7k8-n=GCWtA@mail.gmail.com>
- <aQw6Jje7bSpywGqq@google.com>
-In-Reply-To: <aQw6Jje7bSpywGqq@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 5 Nov 2025 22:42:13 -0800
-X-Gm-Features: AWmQ_bk_ICs-PvZxmDtwMA5i1WiR0FyuaXdsrA9bzvplc08ela5Gm4UCfQidVCU
-Message-ID: <CAP-5=fV666tSv+3=6t-UobtGuzvw4g2oQZZScCX-P7oqDz+4Rg@mail.gmail.com>
-Subject: Re: [PATCH v1 05/22] perf metricgroup: Add care to picking the evsel
- for displaying a metric
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9baca1d0-4c0c-4775-14df-08de1cffaa06
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2025 06:42:32.7771
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jiiQHSt3Uh+PMjOUawXrowMIaYZpe1HY0eXBdcnGghw2mR+bdTBUS9OM8hPeB/P0cuHIRMqZTcz+B9jWxkW0kA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7313
 
-On Wed, Nov 5, 2025 at 10:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Mon, Nov 03, 2025 at 09:28:44PM -0800, Ian Rogers wrote:
-> > On Mon, Nov 3, 2025 at 8:52=E2=80=AFPM Namhyung Kim <namhyung@kernel.or=
-g> wrote:
-> > >
-> > > On Fri, Oct 24, 2025 at 10:58:40AM -0700, Ian Rogers wrote:
-> > > > Rather than using the first evsel in the matched events, try to fin=
-d
-> > > > the least shared non-tool evsel. The aim is to pick the first evsel
-> > > > that typifies the metric within the list of metrics.
-> > > >
-> > > > This addresses an issue where Default metric group metrics may lose
-> > > > their counter value due to how the stat displaying hides counters f=
-or
-> > > > default event/metric output.
-> > >
-> > > Do you have a command line example to show impact of this change?
-> >
-> > You can just run a Topdown metricgroup on Intel to see differences,
->
-> Ok, before this change.
->
->   $ perf stat -M topdownL1 true
->
->    Performance counter stats for 'true':
->
->            7,754,275      TOPDOWN.SLOTS                    #     37.1 %  =
-tma_backend_bound
->                                                     #     38.7 %  tma_fro=
-ntend_bound
->                                                     #      8.8 %  tma_bad=
-_speculation
->                                                     #     15.3 %  tma_ret=
-iring
->            1,185,947      topdown-retiring
->            3,010,483      topdown-fe-bound
->            2,828,029      topdown-be-bound
->              729,814      topdown-bad-spec
->                9,987      INT_MISC.CLEARS_COUNT
->              221,405      IDQ.MS_UOPS
->                6,352      INT_MISC.UOP_DROPPING
->            1,212,644      UOPS_RETIRED.SLOTS
->              119,895      UOPS_DECODED.DEC0
->               60,975      cpu/UOPS_DECODED.DEC0,cmask=3D1/
->            1,639,442      UOPS_ISSUED.ANY
->              820,982      IDQ.MITE_UOPS
->
->          0.001172956 seconds time elapsed
->
->          0.001269000 seconds user
->          0.000000000 seconds sys
->
->
-> And with this change, it does look better.
->
->   $ perf stat -M topdownL1 true
->
->    Performance counter stats for 'true':
->
->            7,977,430      TOPDOWN.SLOTS
->            1,188,793      topdown-retiring
->            3,159,687      topdown-fe-bound
->            2,940,699      topdown-be-bound
->              688,248      topdown-bad-spec
->                9,749      INT_MISC.CLEARS_COUNT            #     37.5 %  =
-tma_backend_bound
->                                                     #      8.1 %  tma_bad=
-_speculation
->              219,145      IDQ.MS_UOPS                      #     14.9 %  =
-tma_retiring
->                6,188      INT_MISC.UOP_DROPPING            #     39.5 %  =
-tma_frontend_bound
->            1,205,712      UOPS_RETIRED.SLOTS
->              117,505      UOPS_DECODED.DEC0
->               59,891      cpu/UOPS_DECODED.DEC0,cmask=3D1/
->            1,625,232      UOPS_ISSUED.ANY
->              805,560      IDQ.MITE_UOPS
->
->          0.001629344 seconds time elapsed
->
->          0.001672000 seconds user
->          0.000000000 seconds sys
->
-> > but they are minor. The main impact is on the Default legacy metrics
-> > as those have a counter then a metric, but without this change you get
-> > everything grouped on the cpu-clock event and the formatting gets broke=
-n.
->
-> Do you mean with other changes in this series?  I don't see any
-> differences in the output just after this patch..
->
-> Before:
->
->   $ perf stat -a true
->
->    Performance counter stats for 'system wide':
->
->           19,078,719      cpu-clock                        #    7.256 CPU=
-s utilized
->                   94      context-switches                 #    4.927 K/s=
-ec
->                   14      cpu-migrations                   #  733.802 /se=
-c
->                   61      page-faults                      #    3.197 K/s=
-ec
->           43,304,957      instructions                     #    1.10  ins=
-n per cycle
->           39,281,107      cycles                           #    2.059 GHz
->            5,012,071      branches                         #  262.705 M/s=
-ec
->              128,358      branch-misses                    #    2.56% of =
-all branches
->    #     24.4 %  tma_retiring
->    #     33.7 %  tma_backend_bound
->                                                     #      5.9 %  tma_bad=
-_speculation
->    #     36.0 %  tma_frontend_bound
->
->          0.002629534 seconds time elapsed
->
-> After:
->
->   $ perf stat -a true
->
->    Performance counter stats for 'system wide':
->
->            6,201,661      cpu-clock                        #    3.692 CPU=
-s utilized
->                   24      context-switches                 #    3.870 K/s=
-ec
->                    7      cpu-migrations                   #    1.129 K/s=
-ec
->                   60      page-faults                      #    9.675 K/s=
-ec
->           11,458,681      instructions                     #    1.07  ins=
-n per cycle
->           10,704,978      cycles                           #    1.726 GHz
->            2,457,704      branches                         #  396.298 M/s=
-ec
->               54,553      branch-misses                    #    2.22% of =
-all branches
->    #     21.4 %  tma_retiring
->    #     36.1 %  tma_backend_bound
->                                                     #     10.2 %  tma_bad=
-_speculation
->    #     32.3 %  tma_frontend_bound
->
->          0.001679679 seconds time elapsed
-
-These are the hardcoded metrics that aren't impacted by my changes to
-the json metric's behavior. Patch 8 will add json for the legacy
-metrics.
-
-Thanks,
-Ian
-
-> Thanks,
-> Namhyung
->
->
-> > As --metric-only is popular when looking at a group of events
-> > and the Default legacy metrics are added in subsequent changes it
-> > didn't seem right to include the output (it either shows broken things
-> > keeping to be somewhat broken or output from later patches).
-> >
-> > Thanks,
-> > Ian
-> >
-> > > Thanks,
-> > > Namhyung
-> > >
-> > > >
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > > ---
-> > > >  tools/perf/util/metricgroup.c | 48 +++++++++++++++++++++++++++++++=
-+++-
-> > > >  1 file changed, 47 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metric=
-group.c
-> > > > index 48936e517803..76092ee26761 100644
-> > > > --- a/tools/perf/util/metricgroup.c
-> > > > +++ b/tools/perf/util/metricgroup.c
-> > > > @@ -1323,6 +1323,51 @@ static int parse_ids(bool metric_no_merge, b=
-ool fake_pmu,
-> > > >       return ret;
-> > > >  }
-> > > >
-> > > > +/* How many times will a given evsel be used in a set of metrics? =
-*/
-> > > > +static int count_uses(struct list_head *metric_list, struct evsel =
-*evsel)
-> > > > +{
-> > > > +     const char *metric_id =3D evsel__metric_id(evsel);
-> > > > +     struct metric *m;
-> > > > +     int uses =3D 0;
-> > > > +
-> > > > +     list_for_each_entry(m, metric_list, nd) {
-> > > > +             if (hashmap__find(m->pctx->ids, metric_id, NULL))
-> > > > +                     uses++;
-> > > > +     }
-> > > > +     return uses;
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * Select the evsel that stat-display will use to trigger shadow/m=
-etric
-> > > > + * printing. Pick the least shared non-tool evsel, encouraging met=
-rics to be
-> > > > + * with a hardware counter that is specific to them.
-> > > > + */
-> > > > +static struct evsel *pick_display_evsel(struct list_head *metric_l=
-ist,
-> > > > +                                     struct evsel **metric_events)
-> > > > +{
-> > > > +     struct evsel *selected =3D metric_events[0];
-> > > > +     size_t selected_uses;
-> > > > +     bool selected_is_tool;
-> > > > +
-> > > > +     if (!selected)
-> > > > +             return NULL;
-> > > > +
-> > > > +     selected_uses =3D count_uses(metric_list, selected);
-> > > > +     selected_is_tool =3D evsel__is_tool(selected);
-> > > > +     for (int i =3D 1; metric_events[i]; i++) {
-> > > > +             struct evsel *candidate =3D metric_events[i];
-> > > > +             size_t candidate_uses =3D count_uses(metric_list, can=
-didate);
-> > > > +
-> > > > +             if ((selected_is_tool && !evsel__is_tool(candidate)) =
-||
-> > > > +                 (candidate_uses < selected_uses)) {
-> > > > +                     selected =3D candidate;
-> > > > +                     selected_uses =3D candidate_uses;
-> > > > +                     selected_is_tool =3D evsel__is_tool(selected)=
-;
-> > > > +             }
-> > > > +     }
-> > > > +     return selected;
-> > > > +}
-> > > > +
-> > > >  static int parse_groups(struct evlist *perf_evlist,
-> > > >                       const char *pmu, const char *str,
-> > > >                       bool metric_no_group,
-> > > > @@ -1430,7 +1475,8 @@ static int parse_groups(struct evlist *perf_e=
-vlist,
-> > > >                       goto out;
-> > > >               }
-> > > >
-> > > > -             me =3D metricgroup__lookup(&perf_evlist->metric_event=
-s, metric_events[0],
-> > > > +             me =3D metricgroup__lookup(&perf_evlist->metric_event=
-s,
-> > > > +                                      pick_display_evsel(&metric_l=
-ist, metric_events),
-> > > >                                        /*create=3D*/true);
-> > > >
-> > > >               expr =3D malloc(sizeof(struct metric_expr));
-> > > > --
-> > > > 2.51.1.821.gb6fe4d2222-goog
-> > > >
+T24gMTEvMS8yNSAwMDo0MSwgU2hpIEhhbyB3cm90ZToNCj4gVGhlcmUgd2FzIGEgc2luZ2xlIHVz
+ZSBvZiBrbWFwKCkgd2hpY2ggY291bGQgYmUgcmVwbGFjZWQgd2l0aA0KPiBrbWFwX2xvY2FsX3Bh
+Z2UoKSBmb3IgYmV0dGVyIENQVSBjb250ZW50aW9uIGFuZCBjYWNoZSBsb2NhbGl0eS4NCj4ga21h
+cF9sb2NhbF9wYWdlKCkgZW5zdXJlcyBub24tc2xlZXBpbmcgb3BlcmF0aW9uIGFuZCBwcm92aWRl
+cw0KPiBiZXR0ZXIgbXVsdGktY29yZSBDUFUgc2NhbGFiaWxpdHkgY29tcGFyZWQgdG8ga21hcCgp
+Lg0KPiBDb252ZXJ0IGttYXAoKSB0byBrbWFwX2xvY2FsX3BhZ2UoKSBmb2xsb3dpbmcgbW9kZXJu
+IGtlcm5lbA0KPiBjb2RpbmcgcHJhY3RpY2VzLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBTaGkgSGFv
+PGkuc2hpaGFvLjk5OUBnbWFpbC5jb20+DQo+IC0tLQ0KDQoNCkxvb2tzIGdvb2QuDQoNClJldmll
+d2VkLWJ5OiBDaGFpdGFueWEgS3Vsa2FybmkgPGtjaEBudmlkaWEuY29tPg0KDQotY2sNCg0KDQo=
 
