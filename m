@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-889066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E19C3CA7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:58:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B49CC3C96A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9933B3A5E6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BBFB1895A5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8886B34CFCC;
-	Thu,  6 Nov 2025 16:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3EE27F724;
+	Thu,  6 Nov 2025 16:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FB++twEG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnxosHox"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF468340DA6;
-	Thu,  6 Nov 2025 16:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E86C334C24;
+	Thu,  6 Nov 2025 16:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447948; cv=none; b=sTjRDKSqd+ac5jEnD9T4MJ9lI2/45avYnzsAXjSOfwv0/c4CSMgYgJlU/Diqx1iViPz3aRQS68ZPxpsbQzLW2OIOk5u5QlhARO0NtzC6OTj6Mub+WoY+rs+pASfU+0lTui2ZdXXYyJGmrJnVoQqfd9rS3bYKVioAp2uuCmMZQSc=
+	t=1762447975; cv=none; b=TGhHtlrTIVQHgMo2WZ4jcwvUxx6zdHxVNqjgcOAUAp2ARcjD32ljQB1VWgpVRhUZ2qVdy+OBTpYXBDhyJc1zhcOMKJ+AiUBGPJ85fjh2lDaHZXnp1967PEeBJ+MgRYUYKJRELoIexhRAJqVvHJUwmcuHgDpf7ndO5vLhPwmmvcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447948; c=relaxed/simple;
-	bh=weAJhuC10feYNFY9qthmfAnotjPTt4YAJNN9S5QOm8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P3ZgpBUjxf+BW9EpAjgOOBP6CnGscUzlNQ/MEYLmvNOk/9tOaVeLPAMUbqiRF8wvxM81DNJeQ7gwMr7Lule7G2uD55VGbQILSF4gLA19mvGqBzzhYx/ivs8JxD+B5T+EQ9sKqOpa2yh+MyyRAL6dbg98vs066vcB3FH9QJQdU8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FB++twEG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 095FBC4CEF7;
-	Thu,  6 Nov 2025 16:52:26 +0000 (UTC)
+	s=arc-20240116; t=1762447975; c=relaxed/simple;
+	bh=dIyMUhdYzSO4klL+M2Wm/feXCZVTk+vDwb5pQv1QcSc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Cx+DxV5W7s+r4+U2HfIAYHyuKhtS7D8+WkaLeYXS9bmO3HxurHqRpQoAUQRhJjhEiY4Vx2e6rKoSfb2QxQh6QoDfaM4ZwG9HGFO3SsTnD3UZVlFLbM/jNJT/rCT84wmv1NlAxw9Ogogmdx6tChVl5OvlAYH7IBCRLprsOteyZLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnxosHox; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0087BC4CEF7;
+	Thu,  6 Nov 2025 16:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762447948;
-	bh=weAJhuC10feYNFY9qthmfAnotjPTt4YAJNN9S5QOm8A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FB++twEG02v+nfF4QL6n85ODQ4n+KyfojrKIciWLD3sdv3+w8WtswouXkw3K63Ewq
-	 0kKzVRZn2wtumnviRWCasm2NVBJXSDnsBd7K49dV28brz7tKD3hdrGTngnDnircnGv
-	 JCqaf9EZUtVsO4a36/kRvMaeDUMmQbbz8X6iswcPWbkCuaitZ7vO4B9umBh/tGdmFt
-	 h+dX5bKy3FUiESKkn/D9q6ZPUJcgTH2HMtycnj7+rjUKgAj2e5CSvzW/I22iONe8kN
-	 IbQ3IGhhXKMXyF8kxSP2RiBFpKOheDfMSlzjl/DCD+6CnCYf7HrbHZZarhdCe1O2i+
-	 9t8euNK/dptpg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH 2/2] tracing: tprobe-events: Fix to put tracepoint_user when disable the tprobe
-Date: Fri,  7 Nov 2025 01:52:24 +0900
-Message-ID: <176244794466.155515.3971904050506100243.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <176244792552.155515.3285089581362758469.stgit@devnote2>
-References: <176244792552.155515.3285089581362758469.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=k20201202; t=1762447974;
+	bh=dIyMUhdYzSO4klL+M2Wm/feXCZVTk+vDwb5pQv1QcSc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jnxosHoxmtBQd7FCskiWs8SjJVKHWAiEZk9jDINuiwGhS8XNOHwBdbgweuqYGfwNL
+	 aFOeDwu2F8XZN9hx2vUS96NNzUMAkRP1bU/cJ2paueKkMVOvE7CFv2VX8REs9EHaf6
+	 MXRqzdPtzLHShM2DN00yjVCLvrwf8MoLS4I640uTRE5Q09Vc4NfXZS3X5+7c9Kc37w
+	 bnoAWt3okBsH8oWFwzTBjAr/7asS3mCkBAhUwLRdnauPEJpwfjympSrkYe9wFJkO1h
+	 hP8Gd+QNUcJ1431MS0+T0L6c/1EDn4jGeiYjfLUwdENGzmi7CsBa5cdGI7VsSs/Qhd
+	 2r/l2pMcXhdvQ==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20251028-cros_ec-leds-no-colors-v1-1-ebe13a02022a@weissschuh.net>
+References: <20251028-cros_ec-leds-no-colors-v1-1-ebe13a02022a@weissschuh.net>
+Subject: Re: (subset) [PATCH] leds: leds-cros_ec: Skip LEDs without color
+ components
+Message-Id: <176244797270.1955851.7712074891056264221.b4-ty@kernel.org>
+Date: Thu, 06 Nov 2025 16:52:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,36 +60,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-52d38
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Tue, 28 Oct 2025 16:31:03 +0100, Thomas Weißschuh wrote:
+> A user reports that on their Lenovo Corsola Magneton with EC firmware
+> steelix-15194.270.0 the driver probe fails with EINVAL. It turns out
+> that the power LED does not contain any color components as indicated
+> by the following "ectool led power query" output:
+> 
+> Brightness range for LED 1:
+>         red     : 0x0
+>         green   : 0x0
+>         blue    : 0x0
+>         yellow  : 0x0
+>         white   : 0x0
+>         amber   : 0x0
+> 
+> [...]
 
-__unregister_trace_fprobe() checks tf->tuser to put it when removing
-tprobe. However, disable_trace_fprobe() does not use it and only calls
-unregister_fprobe(). Thus it forgets to disable tracepoint_user.
+Applied, thanks!
 
-If the trace_fprobe has tuser, put it for unregistering the tracepoint
-callbacks when disabling tprobe correctly.
+[1/1] leds: leds-cros_ec: Skip LEDs without color components
+      commit: 4dbf066d965cd3299fb396f1375d10423c9c625c
 
-Fixes: 2867495dea86 ("tracing: tprobe-events: Register tracepoint when enable tprobe event")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/trace_fprobe.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index d4e78d1ace12..62420eec677f 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -1512,6 +1512,10 @@ static int disable_trace_fprobe(struct trace_event_call *call,
- 	if (!trace_probe_is_enabled(tp)) {
- 		list_for_each_entry(tf, trace_probe_probe_list(tp), tp.list) {
- 			unregister_fprobe(&tf->fp);
-+			if (tf->tuser) {
-+				tracepoint_user_put(tf->tuser);
-+				tf->tuser = NULL;
-+			}
- 		}
- 	}
- 
+--
+Lee Jones [李琼斯]
 
 
