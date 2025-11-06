@@ -1,113 +1,139 @@
-Return-Path: <linux-kernel+bounces-889201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AE4C3CEEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:47:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90486C3CF30
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:49:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670091887AAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:48:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D4044E4AB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AFA2D7D2A;
-	Thu,  6 Nov 2025 17:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515CE347FC7;
+	Thu,  6 Nov 2025 17:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbWiZrWj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9FnDBrL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788E9302CB9;
-	Thu,  6 Nov 2025 17:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8187E2BDC00;
+	Thu,  6 Nov 2025 17:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451237; cv=none; b=drq8903pPRW/pgS6F5FAdFH276ZXLgCOlelRp69aX6GfI/yj1Wv8dMLd32I6IMROyTq+u/s6dhwNL2AIplukecIa1W++NxTo2TZTeATb4pNBen2p4aDrLrP7Xb3F674H51YARLE0O1M5k2B9lLYGpQ1iU/QextGRC2lQEgcHAi4=
+	t=1762451281; cv=none; b=cIuYrpJ6V7DF4klTPvS6nNtXPg37ClSoqLRyEosaKOtvImkmaRq8pFPF3XhcV9k1rBEF7dnfTeHo+M+3UpL3m7qIblQGE2sL7gQzTjKK62paL5XFvpu44XXI94+h4HyN4M5RLa32weK0baR/+LVOQq2mH1dQ3nwKzr/+CYCJ1us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451237; c=relaxed/simple;
-	bh=/LEeDzLJRYE2r2N+metFxjEYaagZ6NINjIeF5iQDh4E=;
+	s=arc-20240116; t=1762451281; c=relaxed/simple;
+	bh=13WsgUGoeK4bC41loapHpdur+Ccm2Mdg30VVAbVHLjg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmmkcpprDauzejmHiyBUEpWfFz/fCfmFqqJoJ31zCHOb0rbVUXTRFm6CHJ0Fh3idwYg0vQrer1S8PdTY4fafd0oAygf0iIiE70qzXzhxr0o1ZWKtRReJChUfcZIOz4eobY+7K5WMM4VAAWiIs2+q8c5fcL9rfvoEdacRNHML5zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbWiZrWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5050C4CEFB;
-	Thu,  6 Nov 2025 17:47:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHFUOeI6jbaFkxwF2R+T5pOHUnQ2VfIyqK3KVXXE0dS+fpFCIWgGxnKirXPoDWQlSQhGFHbt6B8J4zvCGLNeD8ppRdTuk+p5qfuVPpuf4IluDYgFsfNi7gevcsHVzUACEBYcN+a0J+HHChB/USHqhnZOrSgRNU5Al+RTbWPRRtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9FnDBrL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD86C116C6;
+	Thu,  6 Nov 2025 17:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762451237;
-	bh=/LEeDzLJRYE2r2N+metFxjEYaagZ6NINjIeF5iQDh4E=;
+	s=k20201202; t=1762451281;
+	bh=13WsgUGoeK4bC41loapHpdur+Ccm2Mdg30VVAbVHLjg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FbWiZrWjAwQ6I/4uXUNy2SVW0oZBNutX4rTh4Sv/ER7EgCbYnMOjJTGKnfKtET44w
-	 lH+5mPM56eRoU65ukFWBa1WtJl7EvncewcNuIy0GgXNceDG9iIH9Equ0Vp2sVuBy0T
-	 HAKnJXchXg+unQaMsZn7hc+gFv18re2ZjOY7Hz4CCjTOwD+g1Vl6HPyrR6fFgxpeDU
-	 Jd4lHUJ1qkmTsyAkxVC5Gjv3jcunRGcelFKTpM+Iz8M/Dh4wSkiJw23eXlU+dShyYT
-	 eMqHzQUI9B+fXWOw+JMUu4UPgN+PzMKtCssl0gegsaiSf9hZgJmWa2dCFgfx4tuOEz
-	 n14czvuH4gMUw==
-Date: Thu, 6 Nov 2025 17:47:12 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jonas Jelonek <jelonek.jonas@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Richard <thomas.richard@bootlin.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: gpio: add gpio-line-mux controller
-Message-ID: <20251106-handgrip-snoring-8e584fc97d3d@spud>
-References: <20251105163610.610793-1-jelonek.jonas@gmail.com>
- <20251105163610.610793-2-jelonek.jonas@gmail.com>
+	b=Z9FnDBrLQxnVZ8j0S6dXWmgDdhzRapTlDLeZphuGquMG48Y0ehHhp+zTZ1t5KXHbE
+	 txcGrmgh0jjFrb2R7Z4I4+T/u5lzxWz5dX1+SmKtEgYTcAlIG9Z7mJs448ffRsunb/
+	 NKjfdgOv8bmEebgrBMp3h9vh4pR0Pq8RkV/w1GvjFyMBhyadJ/0oXUr1y1nJ50U0ub
+	 aJnzIoOLRuwk0h/lQKZix1kH9a4jtd/PFlGQeCzBFejhXmzM34PXGVkA6w+0UTpxmg
+	 kZW7+JyfWA+DtE0VoLbWXC2bDxthopkWbymWnjEda4G9uauXq3ZbYJQm9H/atPuoWh
+	 K90fOO5tmdSWQ==
+Date: Thu, 6 Nov 2025 10:47:52 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-efi@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] kbuild: Add '-fms-extensions' to areas with dedicated
+ CFLAGS
+Message-ID: <20251106174752.GA2440428@ax162>
+References: <20251101-kbuild-ms-extensions-dedicated-cflags-v1-1-38004aba524b@kernel.org>
+ <20251105-amnesie-eisig-277559b69bae@brauner>
+ <20251105193931.GA2480016@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DJbGYoscspRqwJeE"
-Content-Disposition: inline
-In-Reply-To: <20251105163610.610793-2-jelonek.jonas@gmail.com>
-
-
---DJbGYoscspRqwJeE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251105193931.GA2480016@ax162>
 
-On Wed, Nov 05, 2025 at 04:36:09PM +0000, Jonas Jelonek wrote:
-> Add dt-schema for a gpio-line-mux controller which exposes virtual
-> GPIOs for a shared GPIO controlled by a multiplexer, e.g. a gpio-mux.
->=20
-> The gpio-line-mux controller is a gpio-controller, thus has mostly the
-> same semantics. However, it requires a mux-control to be specified upon
-> which it will operate.
->=20
-> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+On Wed, Nov 05, 2025 at 12:39:31PM -0700, Nathan Chancellor wrote:
+> I was planning to make it stable tomorrow to give folks time to chime in
+> at the beginning of the week. I have your tag and Ard's to add. After
+> that, we will just have to rely on the link to this submission for
+> follow ups.
 
-> +  muxed-gpios:
+Alright, this should be the final result. If there are any other Acks
+that come in later, they will just have to be recorded here. If there
+are any follow up fixes needed, I will apply them on top and update the
+tag but the branch will not be rebased.
 
-v5: - renamed "shared" to "muxed" to avoid confusion with Bartosz' work
-    - dropped Reviewed-by of Krzysztof due to binding change
+Cheers,
+Nathan
 
-FWIW, I wouldn't bother dropping the tag for something this simple.
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-> +    maxItems: 1
-> +    description:
-> +      GPIO which is the '1' in 1-to-many and is shared by the virtual GP=
-IOs
-> +      and controlled via the mux.
+are available in the Git repository at:
 
---DJbGYoscspRqwJeE
-Content-Type: application/pgp-signature; name="signature.asc"
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git tags/kbuild-ms-extensions-6.19
 
------BEGIN PGP SIGNATURE-----
+for you to fetch changes up to 5ff8ad3909524ad55297a434f87c238224825bf4:
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQzfIAAKCRB4tDGHoIJi
-0q0LAP9I7LAPO3ZNVR4Unc/5FmdRcCuhCG/uXxOh4N0mkZ+x/gEAos+sUM9xMU8C
-THuRavzXcJBYcMPueVZ+FTgnvSJJDwE=
-=GLU/
------END PGP SIGNATURE-----
+  kbuild: Add '-fms-extensions' to areas with dedicated CFLAGS (2025-10-30 21:26:28 -0400)
 
---DJbGYoscspRqwJeE--
+----------------------------------------------------------------
+Shared branch between Kbuild and other trees for enabling '-fms-extensions' for 6.19
+
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+
+----------------------------------------------------------------
+Nathan Chancellor (2):
+      jfs: Rename _inline to avoid conflict with clang's '-fms-extensions'
+      kbuild: Add '-fms-extensions' to areas with dedicated CFLAGS
+
+Rasmus Villemoes (1):
+      Kbuild: enable -fms-extensions
+
+ Makefile                              | 3 +++
+ arch/arm64/kernel/vdso32/Makefile     | 3 ++-
+ arch/loongarch/vdso/Makefile          | 2 +-
+ arch/parisc/boot/compressed/Makefile  | 2 +-
+ arch/powerpc/boot/Makefile            | 3 ++-
+ arch/s390/Makefile                    | 3 ++-
+ arch/s390/purgatory/Makefile          | 3 ++-
+ arch/x86/Makefile                     | 4 +++-
+ arch/x86/boot/compressed/Makefile     | 7 +++++--
+ drivers/firmware/efi/libstub/Makefile | 4 ++--
+ fs/jfs/jfs_incore.h                   | 6 +++---
+ scripts/Makefile.extrawarn            | 4 +++-
+ 12 files changed, 29 insertions(+), 15 deletions(-)
 
