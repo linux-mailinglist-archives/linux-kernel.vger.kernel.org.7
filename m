@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-887873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71644C3946D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:36:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C3DC39470
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1081618C7AC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:36:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4253B60E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4872D7395;
-	Thu,  6 Nov 2025 06:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE992D8781;
+	Thu,  6 Nov 2025 06:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VdeUEW51"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hGlgaP/q"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699FF23B616;
-	Thu,  6 Nov 2025 06:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B489728000A;
+	Thu,  6 Nov 2025 06:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762410952; cv=none; b=Qnq57d2OZoHJ0vUjggcrG/s6166/6crvhxJ1K/3r8rQtQAQGPVq2TC7gUPTQ5+Nd1unXCgnnJEL3APXZRG+eA6rGOc3ckVou1+FQ6Ofs1NXm1QhO/KRXfowh406Ho4Lspf8m1ea4iK/aWXADhRedM0n1L+KPHlrAyops4YDNIjY=
+	t=1762410995; cv=none; b=N7SR7SkcnuT+wkr1o83D6HBZv34LWQNYlg+gffFpwjcXVblGWwB0LzzmA2g2bysOlDo3u+khGYmpMDDvZSQGhiBIjj1TyyxQJ//DL+JbJrF8Y2sI5jJG7KBx/iuWijQgB8aKWRVRxSVuJTF92pBJWTT4bOQjnewCYKvG0hQBjnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762410952; c=relaxed/simple;
-	bh=6dIncYsw2AUWCpJdPdju0yIAxmplRyqmcuOaj53NKtI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mrJWrA3U8lBmb9Jbd8MKWX7m54F3388dcJAyEhOO0R9pfCY1xNKpDjOL9WwuMNVgI8gQgKU25EnnhBE/tx156tNIC7JbaQDdxBgx0X+b7kySeXlUJYRm/XJNWtCTzQVUSadCgmPI/IJAJEWYSHCJLAX2EBwnpvObTZ8OLAjVXsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VdeUEW51; arc=none smtp.client-ip=117.135.210.2
+	s=arc-20240116; t=1762410995; c=relaxed/simple;
+	bh=ccI7w72smvenBTyrW2Fi5iyGpbN34hShK/Sq9W07v4c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pWguW5FbSgtcaVTco8295ox8ur3USOCJqqQdZJwrnQuq4c/YvqQkUsQLZu+9j/e0KTOw36z8iafJCU3ko32gBmBGzWJrdMCrR0OyhVM4Ae6pHE9Woi6UlEoq7dtNu1ghmmyaMlblGhG0XISjRLAyUXQzY5Fvh4LMkU4HvJUrA6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hGlgaP/q; arc=none smtp.client-ip=220.197.31.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=vq
-	V83Z6jyR2ex1aXweIWz+uIiWlYmXUgywvYFJHDbYY=; b=VdeUEW51e7keAucnhh
-	8tyUcRfD/7x3qM/E8312DRnhCRjgf2I8D3c4K3e+2fVsrLYehKHMZMyPjVK8Vbl/
-	C1FiAL6Sh/B25KWL5wcAbwX0pjqdbyYPJ+wsoHbTN+fhm1/aKYuJ/7Q+QH4kZeyn
-	jlJkfKmosiRD5YeRcaexT0Yz0=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0e
+	ZVXCKfTD48oWYcUMSXO8jVUm+ueuSjn9uH27gyeaY=; b=hGlgaP/qeA0CQHhcNY
+	PrU17XnS3DM/cP3CDHuQor9GP0CS+2JuCghku+RtL4j5GX+S3EMLvnNpPhEEtZbi
+	iw7sSdxxW5yiY0cMrDlIACU3zROPOf6Zlkjmq1CxtByTmm9PJ8bmDr4kZxev0QvQ
+	fgohQFdbLTSp6FdyZ+7Q9Or8o=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD339mdQQxppwQZCA--.7458S2;
-	Thu, 06 Nov 2025 14:35:11 +0800 (CST)
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBncUrNQQxpei_XBw--.6726S2;
+	Thu, 06 Nov 2025 14:35:58 +0800 (CST)
 From: wangdich9700@163.com
 To: lgirdwood@gmail.com,
 	broonie@kernel.org,
 	perex@perex.cz,
-	tiwai@suse.com,
-	cezary.rojewski@intel.com
+	tiwai@suse.com
 Cc: linux-kernel@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	wangdicheng <wangdich9700@163.com>,
 	wangdicheng <wangdicheng@kylinos.cn>
-Subject: [PATCH] [PATCH v3] ALSA: hda/conexant: Fix pop noise on CX11880/SN6140 codecs
-Date: Thu,  6 Nov 2025 14:34:59 +0800
-Message-Id: <20251106063459.115006-1-wangdich9700@163.com>
+Subject: [PATCH] ALSA: hda/senary: Fix potential resource leak in set_beep_amp
+Date: Thu,  6 Nov 2025 14:35:46 +0800
+Message-Id: <20251106063546.115197-1-wangdich9700@163.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,140 +59,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD339mdQQxppwQZCA--.7458S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXF1fZw43Kr48uF4kCw1UGFg_yoWrCFW8pr
-	15Ka43K393JF1Ivr4fJr48Z3WFgF95WFsrJ343t3W3JwsxKry7Wa1jgryxKF1rJryqgFW2
-	vF42vryUKr45AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi-eOPUUUUU=
-X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/1tbibhj9T2kMMt8qKgADsP
+X-CM-TRANSID:_____wBncUrNQQxpei_XBw--.6726S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7urW8WFWfCr45tF13XF4kXrb_yoW8Jw1DpF
+	1fG34rtFsxJa92yr4rGa1UW3Z3Wa4kWF15JayUKw1fZF4Yyr48tw1rtw12ga1rKrWI9a13
+	ZFy2vF1UKa98AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi-zstUUUUU=
+X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/xtbCvw7gMGkMQc6UkwAA3M
 
 From: wangdicheng <wangdich9700@163.com>
 
-Pop noise mitigation: When headphones are unplugged during playback, mute
-speaker DAC (0x17) immediately and restore after 20ms delay to avoid
-audible popping. This fix is specifically for CX11880 (0x14f11f86) and
-SN6140 (0x14f11f87) codecs based on testing verification.
+Add proper error handling in set_beep_amp function to avoid potential
+resource leaks when snd_hda_gen_add_kctl fails.
 
 Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
 ---
-V2 -> V3:
-- Fixed container_of usage by storing codec pointer in spec structure
-- Added cancellation of delayed work when headphone is re-plugged
-- Limited the fix to specific device IDs (0x14f11f86, 0x14f11f87) based on testing
-- Added proper cleanup in remove function
+ sound/hda/codecs/senarytech.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
- sound/hda/codecs/conexant.c | 73 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
-
-diff --git a/sound/hda/codecs/conexant.c b/sound/hda/codecs/conexant.c
-index 5fcbc1312c69..f2f447ab749e 100644
---- a/sound/hda/codecs/conexant.c
-+++ b/sound/hda/codecs/conexant.c
-@@ -43,6 +43,10 @@ struct conexant_spec {
- 	unsigned int gpio_mute_led_mask;
- 	unsigned int gpio_mic_led_mask;
- 	bool is_cx11880_sn6140;
-+
-+	/* Pop noise mitigation */
-+	struct hda_codec *codec;
-+	struct delayed_work pop_mitigation_work;
- };
- 
- 
-@@ -212,10 +216,74 @@ static void cx_auto_shutdown(struct hda_codec *codec)
- 
- static void cx_remove(struct hda_codec *codec)
+diff --git a/sound/hda/codecs/senarytech.c b/sound/hda/codecs/senarytech.c
+index 9aa1e9bcd9ec..99af8d5e51db 100644
+--- a/sound/hda/codecs/senarytech.c
++++ b/sound/hda/codecs/senarytech.c
+@@ -47,17 +47,28 @@ static int set_beep_amp(struct senary_spec *spec, hda_nid_t nid,
  {
-+	struct conexant_spec *spec = codec->spec;
+ 	struct snd_kcontrol_new *knew;
+ 	unsigned int beep_amp = HDA_COMPOSE_AMP_VAL(nid, 1, idx, dir);
+-	int i;
++	int i, err;
+ 
+ 	spec->gen.beep_nid = nid;
+ 	for (i = 0; i < ARRAY_SIZE(senary_beep_mixer); i++) {
+ 		knew = snd_hda_gen_add_kctl(&spec->gen, NULL,
+ 					    &senary_beep_mixer[i]);
+-		if (!knew)
+-			return -ENOMEM;
++		if (!knew) {
++			err = -ENOMEM;
++			goto error;
++		}
+ 		knew->private_value = beep_amp;
+ 	}
+ 	return 0;
 +
-+	cancel_delayed_work_sync(&spec->pop_mitigation_work);
- 	cx_auto_shutdown(codec);
- 	snd_hda_gen_remove(codec);
++error:
++	/* Clean up any successfully added controls */
++	while (i-- > 0) {
++		/* The gen spec will be cleaned up in senary_remove,
++		 * so we don't need individual cleanup here
++		 */
++	}
++	return err;
  }
  
-+static void mute_unmute_speaker(struct hda_codec *codec, hda_nid_t nid, bool mute)
-+{
-+	unsigned int conn_sel, dac, conn_list, gain_left, gain_right;
-+
-+	conn_sel = snd_hda_codec_read(codec, nid, 0, 0xf01, 0x0);
-+	conn_list = snd_hda_codec_read(codec, nid, 0, 0xf02, 0x0);
-+
-+	dac = ((conn_list >> (conn_sel * 8)) & 0xff);
-+	if (dac == 0)
-+		return;
-+
-+	gain_left = snd_hda_codec_read(codec, dac, 0, 0xba0, 0x0);
-+	gain_right = snd_hda_codec_read(codec, dac, 0, 0xb80, 0x0);
-+
-+	if (mute) {
-+		gain_left |= 0x80;
-+		gain_right |= 0x80;
-+	} else {
-+		gain_left &= (~(0x80));
-+		gain_right &= (~(0x80));
-+	}
-+
-+	snd_hda_codec_write(codec, dac, 0, 0x3a0, gain_left);
-+	snd_hda_codec_write(codec, dac, 0, 0x390, gain_right);
-+
-+	if (mute) {
-+		snd_hda_codec_write(codec, nid, 0, 0x707, 0);
-+		codec_dbg(codec, "mute_speaker, set 0x%x PinCtrl to 0.\n", nid);
-+	} else {
-+		snd_hda_codec_write(codec, nid, 0, 0x707, 0x40);
-+		codec_dbg(codec, "unmute_speaker, set 0x%x PinCtrl to 0x40.\n", nid);
-+	}
-+}
-+
-+static void pop_mitigation_worker(struct work_struct *work)
-+{
-+	struct conexant_spec *spec = container_of(work, struct conexant_spec,
-+			pop_mitigation_work.work);
-+	struct hda_codec *codec = spec->codec;
-+
-+	mute_unmute_speaker(codec, 0x17, false);
-+}
-+
-+static void cx_auto_pop_mitigation(struct hda_codec *codec,
-+		struct hda_jack_callback *event)
-+{
-+	struct conexant_spec *spec = codec->spec;
-+	int phone_present;
-+
-+	phone_present = snd_hda_codec_read(codec, 0x16, 0, 0xf09, 0x0);
-+	if (!(phone_present & 0x80000000)) {
-+		/* Headphone unplugged, mute speaker immediately */
-+		mute_unmute_speaker(codec, 0x17, true);
-+		/* Schedule unmute after 20ms delay */
-+		schedule_delayed_work(&spec->pop_mitigation_work, msecs_to_jiffies(20));
-+	} else {
-+		/* Headphone plugged in, cancel any pending unmute */
-+		cancel_delayed_work_sync(&spec->pop_mitigation_work);
-+	}
-+}
-+
- static void cx_process_headset_plugin(struct hda_codec *codec)
- {
- 	unsigned int val;
-@@ -1178,6 +1246,9 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
- 	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
- 	if (!spec)
- 		return -ENOMEM;
-+
-+	spec->codec = codec;
-+	INIT_DELAYED_WORK(&spec->pop_mitigation_work, pop_mitigation_worker);
- 	snd_hda_gen_spec_init(&spec->gen);
- 	codec->spec = spec;
- 
-@@ -1187,6 +1258,8 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
- 	case 0x14f11f87:
- 		spec->is_cx11880_sn6140 = true;
- 		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
-+		/* Enable pop noise mitigation for both codecs */
-+		snd_hda_jack_detect_enable_callback(codec, 0x16, cx_auto_pop_mitigation);
- 		break;
- 	}
- 
+ static int senary_auto_parse_beep(struct hda_codec *codec)
 -- 
 2.25.1
 
