@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-888321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C04C3A7EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:16:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10EBC3A802
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:17:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91737500D51
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:12:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AE8B503496
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3720303CAB;
-	Thu,  6 Nov 2025 11:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FE130CDBF;
+	Thu,  6 Nov 2025 11:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qkc8phe+"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MeDLRnLO"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA3E2ED844;
-	Thu,  6 Nov 2025 11:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15F930BF67
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427525; cv=none; b=r5+MKoS3EaNeVfMHWOuFA6bx4p5Q0ahO3UTOGu4nn98L/q0IhyyeE/3CR3XdzXnivXRl2am3v1sttHDZ9l7l4xEB8+Xyxk+qcexmPjBrr88o2+wmcudbv9MD51CKV4JX6qJjnJUVVyktNrGDn5ygBxzg/eomTr+d+5vdyWvCXjo=
+	t=1762427543; cv=none; b=Lwu1JMuwktusxYbrba9yWF/OCQFo3/WPN4eCkOCuFjVirLnjNZSZDpeRJgJaamyCbYBw1nd+IEHSCJQ0Ikawtciu8zLFJlOAfP8HKzLOaEBVymq9/FKYm7vgqWMLbZL3YFClbxlik1m6SDwApO8nssi4ertgc+IwspBEzHKNFR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427525; c=relaxed/simple;
-	bh=czyXdXXWmjg/tiDY4PXrh0q7V74xDEYo+JnmysKfTHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvyJJOw4TtxoIQ1laTd2lvWhX9tmZ6XMXPUskMwg9Lt2bWmFqv/zcUovn3NvdPEnU+LYNB7b2BSV6/DOCAJI0WsR9gC3VMCIhA26WnrasHvBOIJmq2tN9MCBVQRyU3bVAbP+iZS+ilZAyPg925cERjn1McxEiVdYtkM4UmxB2oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Qkc8phe+; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 090F340E0191;
-	Thu,  6 Nov 2025 11:12:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id elOWLK4SqfN0; Thu,  6 Nov 2025 11:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762427514; bh=Goi2t3N7o7mLy6ON+glL1xS2AHi8Qhe2u0pKZJ0kxxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qkc8phe+0uIsqLfrlH0nhpXxdZ22YSC9KpK8/au5bMzVDOG2jFAt2WeUKtq20ZUao
-	 Bt29JShk9i5F7Ziw1uUfxxoNx590jdd0q80Jy0c6r6JKfDB+GSvsXIIeOSo/8Xd2wn
-	 3cYAO5eWTgUxO/7bAorEZOr/RzsfuDFM8Ec+TKesRqhsXS/l2w3AZuflOTHyAJiWza
-	 zhcZLLuxDQzAgamAPk5ckdET+4Cmw0vohWqme7gHjSGFvEaR/dzZVW0x8pjhz6T50y
-	 dk1njnl4orHsBZ1Gg5tGO7RcwCDzpOgcXtKKPCXClxq4LimIzB6VdXt5bE1L/L+bQU
-	 x3R0VuzqvJkFdLM+VMkvpG4DzBLuiJxAuQFWCfZ9JJM/CpAdwEyCaYfzL1wll6tJK/
-	 U9J+0vPl26pcsixAZ7PVlQ87Ej4pHTK+TlmMPwj9fqcFF5GvcNrWIdeH7bg+TRFkXQ
-	 m1I76yu2Q8spJ25YLPl74qXmRSOuyhV2CF6AY6ZW093Cra15R3t78QlsOmKx9KTic0
-	 gbz7SdFSxuzUAJWexzejy19xSv7RswekFyZussDYtgAI0YdHy2OweIpx6ytBhU5FWE
-	 cpT3dO7MPQ+bp7aGrxa+s7zd3edW2XPV0R+3ACCeRFrU4DMvc1N2m+/3hMUkKnWF9B
-	 B1eRCB/NK+j/tWx4cB0tAXas=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 295A640E015B;
-	Thu,  6 Nov 2025 11:11:45 +0000 (UTC)
-Date: Thu, 6 Nov 2025 12:11:37 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>, Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH] RAS/CEC: replace use of system_wq with system_percpu_wq
-Message-ID: <20251106111137.GBaQyCaXz4RBMNsULJ@fat_crate.local>
-References: <20251105160819.302988-1-marco.crivellari@suse.com>
- <20251105162932.GAaQt7bON4FtSmxQ3Z@fat_crate.local>
- <CAAofZF4fBbFtiKxde2M2ikK4k-LqYVRoavPbNVh-XFiQPmfGvw@mail.gmail.com>
- <20251105210800.GCaQu8sKCjZ9Xcq8-n@fat_crate.local>
- <CAAofZF4Sdk0REJFearcrB5_MLLQZWaNpecUPV0+BOiNcvmTaWA@mail.gmail.com>
- <20251106104921.GAaQx9MWLfhyqHNDYK@fat_crate.local>
- <CAAofZF7cz_F9qgr7WqbORwH5iMuAO9f0SkWRQxQ4ns4o2X_xJA@mail.gmail.com>
+	s=arc-20240116; t=1762427543; c=relaxed/simple;
+	bh=k39p6ctwzumtM930CezhirQ3llb81chzlkpbZXG+C1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ALVpsRbd7HvUhIjSlz4s3Mr5dmKeDdbkN0lkSkdLD8EthZmMqtS8+9kQ8CfZb95ysT9FhNCh7BNAQN9zgHnq1o4c/ev0TJ6NPP0hYP8UEn89nalzx4KGy/AzDodqchjIG++Ugx0gzTnj9YGC8o0WTDuYHt++9Hc3yC6tJCfoAiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MeDLRnLO; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b719ca8cb8dso174385266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:12:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762427540; x=1763032340; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2yrvTjvjO1pUk8F3CcXiYPOz5oOf/FwysOOSOBS5mvM=;
+        b=MeDLRnLOZKCKc364E71cyWH1QjArtOK7QVwNri34wdiwWhxx9WjH3MRp3m2vde1Qp4
+         fd08NF8dSBmmvCCX+TzfLktxLHqNpra7+FAc+W+o8wyJhYgo7vVdbLQTACZRrJ1l0pVb
+         qhmOBpqSCvdvEqjsPOvxrMiUHkDbC6ydbAvD5xKESvzu34QqJ+500RJYy42rZKoK2DV3
+         AIY3HYW12tdjF/ls1FXza8fqRL8riQvQiuQPXakEfC82LlFdcrWd/H6NJvzXm6Vga3xk
+         0C3aKUTNPoItMCBqJE1kvWi8BpUOu5lsK3niAGgU7uBZ5eSbDcS9z2v1nZNAt1aBcP+T
+         d7GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762427540; x=1763032340;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2yrvTjvjO1pUk8F3CcXiYPOz5oOf/FwysOOSOBS5mvM=;
+        b=Yns2ZMgDsCAay9mFIg62TWg80lXSrVf+tBGHAsYTQtVqX7/12cUNsUOAlf1Qkh72PS
+         UA46GtQXMUF0lndhahu3G15NxE36YZYhCQZTz7R1zVvEMGAWNk9P20zbvXgnpCfP3CKD
+         3bQC2U+v2tyKLSMqHpQe9phvseJVIds/wkFdgZmpiOqArWJgvEhxB/KsSr7r2tKZQ75N
+         oKK/HLJmB+x9+AX8yCWJMeRzfSRV4bzax69RB7+OuZQ7838O+hI6HAdLVeG/2FFiNN7j
+         qaocpcvuEjuQM9zW01B1Pd57/wzJUtB2WXIyQp8hkI+fhs/4repkoUNaDm8lHq/rZYT6
+         Sldg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTgx2ocjzI7o5HsQZMZLKB0+szrcpLCnf7x22CqRxRoJSUs2LtF6HgoMVJAduVpHRWO1SB2ckEefRi4EU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPUPTHy8CGeLQfCk1EE5nbmiOOV5RNhHsiSL4peIzl7OZTs8j/
+	mzQRTBUJmB2uTei0eFCrUM7lGo1SiELJI+j/Tbv/7RKqEIgmzs6VT9IyNFL2ynhoTjp/LdFsV7/
+	slrrCjI8cT6Op1fYRrUm+gEB7tPVh2mDBPE3XACX81g==
+X-Gm-Gg: ASbGnctO6foO8tNpAICki4/oiUHq/M1YA4eZdIe3h60qfDgge08nuotg1VXnq8BGdtJ
+	Io9ZsyP/SG7HSBB0T4T/fd8EjilRemtpaLmIFvXp1nYsYfYBe6ofW6biO8o84QvnxJ7LRDWnVwK
+	CSEjAR+Who1WewBao51XukKFunV1202oxNN7bacO2y/1J32jOxOEX7YIF751ubSbbjjpOAWCkpF
+	5aISzsxThPUHlISFO0mZEHOWpw7lbrIgRSC/4B2DLvF/AS2qHvXsZ97McYWAg==
+X-Google-Smtp-Source: AGHT+IHUgEAII+KCZtG9kG3bTwp715Xxrh6yTyMBInhVCP+K/K/WKOOQZr1KOXhWjo8wScgSJ9aNwT8ZjsYf4IzDF4A=
+X-Received: by 2002:a17:906:9fc4:b0:b47:de64:df1e with SMTP id
+ a640c23a62f3a-b7265195d0cmr835459466b.4.1762427540227; Thu, 06 Nov 2025
+ 03:12:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAAofZF7cz_F9qgr7WqbORwH5iMuAO9f0SkWRQxQ4ns4o2X_xJA@mail.gmail.com>
+References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
+ <20251105154107.148187-2-ggo@tuxedocomputers.com> <20251106-lemon-kittiwake-of-freedom-dfcfdf@kuoka>
+In-Reply-To: <20251106-lemon-kittiwake-of-freedom-dfcfdf@kuoka>
+From: Ettore Chimenti <ettore.chimenti@linaro.org>
+Date: Thu, 6 Nov 2025 12:12:09 +0100
+X-Gm-Features: AWmQ_bk0LxY3qjnahgz6ixNPKz7DJgXQRgCibkCqf95T14Y4Ienoc9DL3NvbRxs
+Message-ID: <CACBDSOW=_dudXh_+rHSOpbShKewKSr+va5+1Ng0hJRyC2vp==Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: vendor-prefixes: Add ASL Xiamen Technology
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Georg Gottleuber <ggo@tuxedocomputers.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Srinivas Kandagatla <srini@kernel.org>, stefan.schmidt@linaro.org, stephan.gerhold@linaro.org, 
+	wse@tuxedocomputers.com, cs@tuxedo.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 06, 2025 at 12:03:51PM +0100, Marco Crivellari wrote:
-> I was torn between "replace" and "rename", because there is a new workqueue,
-> not only a rename of the old one, because for now it is still existing. :-)
+On Thu, 6 Nov 2025 at 09:05, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Wed, Nov 05, 2025 at 04:41:01PM +0100, Georg Gottleuber wrote:
+> > From: Ettore Chimenti <ettore.chimenti@linaro.org>
+> >
+> > ASL Xiamen Technology Co. Ltd. is a Chinese high-speed interface and
+> > display system chip design company. Adding it to the vendor prefixes.
+> >
+> > Link: https://www.asl-tek.com/
+> >
+> > Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > index f1d1882009ba..278cb879781f 100644
+> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> > @@ -176,6 +176,8 @@ patternProperties:
+> >      description: All Sensors Corporation
+> >    "^asix,.*":
+> >      description: ASIX Electronics Corporation
+> > +  "^asl,.*":
+>
+> So the prefix is asl-tek, like its domain.
 
-You can also say:
+Ack. Fixing in v3.
 
-"Switch to using system_percpu_wq because system_wq is going away as part of
-a workqueue restructuring."
+Best Regards,
+Ettore
 
-Now it is perfectly clear what's going on.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+> Best regards,
+> Krzysztof
+>
 
