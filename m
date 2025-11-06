@@ -1,63 +1,54 @@
-Return-Path: <linux-kernel+bounces-889322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F7DC3D482
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:51:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD49C3D485
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA2DD4E1926
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72C03AABA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AC1350A28;
-	Thu,  6 Nov 2025 19:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7757333C52F;
+	Thu,  6 Nov 2025 19:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ku8tjLpZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ingrHSmF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53542301002;
-	Thu,  6 Nov 2025 19:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D523A335579
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 19:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762458705; cv=none; b=BPxGFUDuzEXuBXY4wRlG+MwVxI309RmjSQqpD8sbEkAVYMNaJsUPLAgMradSKpdzC2NVPEpVz032pUUHBApvhEZrBvhktXjPlXCV9+/gSw0+QCIJx+qhsLCOR6oqTYoL5QSCgS54j73xEuaFbQPXNB3SuRiYW81OCtSD3lUyLzo=
+	t=1762458780; cv=none; b=FzW12uKr4KJXtbWMmSDkXp4PSIQ7SoCLkwHuidV1XH5Uq2HQOnbPsHEWo8cbKdP1J+TzwIZDhHcEXbz3g6UEWOBJJwRgrA70asjdOVI0TSLRXmDC08DmXQpx8KQfnP8UBgSyC2lX82xJEoElmQSXC524OlmNUS3kwvzeyhPx/0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762458705; c=relaxed/simple;
-	bh=j1nqThs17GwNA3HQ/A0bAO+y61WfI0vCdvNcpIIVI0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7cQhNMep1ydZX3Kp8LjjBYKQT6HTWfTCZMpAKRrwTk0yYjv4aDybcAmGLSW1+k0W0u/s10aFg9ZWajeWwLwA2pDA+/iXKWpzDfwpDXLsy9OPz0a8Yd09rBAjvbhKAcTFR2Oy2X+5OeyuXMAO8Wi3yB4PkAvst40YaugSfloqNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ku8tjLpZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C217C113D0;
-	Thu,  6 Nov 2025 19:51:44 +0000 (UTC)
+	s=arc-20240116; t=1762458780; c=relaxed/simple;
+	bh=LEc3qfdVdjVz9IyqB3XMgs/uQh5RA+S5fjbzAhxa+jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GnRpd4h2FDzilgqFU+tgf9YGs+w8JdctW/JAuerYK9ot6pAvsYN/OF9PTS4gYCiQTWTPU2m7PPRHCwseBTNaXDplAjqfzAI9kDy52jXk5WiFv/zp1GJDFoAvTPlRV1PuIFWAxuBfjfJFfAfEf+68x2wz83ZD2AVJaQOoG2UB+pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ingrHSmF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFB1C4CEFB;
+	Thu,  6 Nov 2025 19:52:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762458705;
-	bh=j1nqThs17GwNA3HQ/A0bAO+y61WfI0vCdvNcpIIVI0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ku8tjLpZn9OPHJbydRU7gLzhb71B7VOxwwhTuM+6D49u01Eypvvg5berXffNnTRSM
-	 XrvByyKlFst/3LSbp27p2/zQTcMTdDrYl4b+8xn1WxRhCiyaYKUNFTXq+/CE+jvFw4
-	 AJiRpUk0rWqEE8JaKHOLf6HK/bR+JzQSEDHrY5VZjS1JJ5Bgt51BtyNB8Zku7hhS0v
-	 EIOT8kLgmaxP243njyF+UaPfj2OK1T1gvGRNrLREalCh4xbj9SjvFjLmfFX7MfuEDB
-	 IhzJl2nZkQ7dHakk2z7neV839/0V+BGXiItOON8gu6ZCq6pxoFVz+YM5/wU/mHZ8w7
-	 x9Mojx8MuyjZQ==
-Date: Thu, 6 Nov 2025 11:51:42 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Harald Freudenberger <freude@linux.ibm.com>
-Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] SHA-3 library
-Message-ID: <20251106195142.GB3318@quark>
-References: <20251026055032.1413733-1-ebiggers@kernel.org>
- <20251103173404.GE1735@sol>
- <4188d18bfcc8a64941c5ebd8de10ede2@linux.ibm.com>
- <20251106043340.GC1650@sol>
- <20251106072233.GA117499@sol>
- <55ec60661fb672bdd0696a3bd92e21bd@linux.ibm.com>
+	s=k20201202; t=1762458779;
+	bh=LEc3qfdVdjVz9IyqB3XMgs/uQh5RA+S5fjbzAhxa+jk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ingrHSmFCfnLGCJI0m+JfxoEglCoxY386305dk7k6tCkI5LfpEbQ1I1JzOESTs7Ba
+	 4Ql+Kpt/V+k1E11LRsGb8Ov2TEN/5CrmkjEO3vrudmSqzu1rLAPbykdj9JvxuPSVLp
+	 fe8RkM0mFGzgav9C1Ni71KXI4jtRLeRvrhsYbbzBrGgqfARJjxwSO+5+UOznBXdAcn
+	 tZmfy/h9a1v3X3yiMUekn25paF+xUpCEVNR5iJMBM6G1h7Ree18PaaDhAMa8CExGcY
+	 ZrWjMNqbEHQ42E/spaBVPgAdBg6NKhLF5lQ6quBAoiyOUIGZKqWLwRfIUO6GNwXdTk
+	 WlZJhpW3vWG3g==
+Date: Thu, 6 Nov 2025 11:52:58 -0800
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Subject: [GIT PULL] hardening fixes for v6.18-rc5
+Message-ID: <202511061151.CB031555D@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,48 +57,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <55ec60661fb672bdd0696a3bd92e21bd@linux.ibm.com>
 
-On Thu, Nov 06, 2025 at 09:54:59AM +0100, Harald Freudenberger wrote:
-> > Also, I'm wondering what your plan to add support for these instructions
-> > to QEMU is?  The status quo, where only people with an s390 mainframe
-> > can test this code, isn't sustainable.
-> > 
-> > I already have s390 in my testing matrix; I run the crypto and CRC tests
-> > on all architectures with optimized crypto or CRC code.  But most of the
-> > s390 optimized crypto code isn't actually being executed.
-> > 
-> > - Eric
-> 
-> Well, there are no plans. However, there has been a decision some while ago
-> that "we" may support this in the future. But as there are currently no
-> human resources available and working there I suspect a qemu CPACF support
-> in general will not come soon.
+Hi Linus,
 
-Great to hear that you might have someone work on this in the future.
-It should be noted that this is a significant gap that puts s390 behind
-all the major architectures (x86_64, arm64, arm32, riscv, etc.) and
-makes it much more likely that s390 specific bugs be introduced.
+Please pull these hardening fixes for v6.18-rc5. This is a work-around
+for a (now fixed) corner case in the arm32 build with Clang KCFI
+enabled.
 
-We need to have higher standards for cryptography code.
+Thanks!
 
-As I've mentioned before, I don't plan to accept code that uses new
-instructions without QEMU support.  The SHA-{1,2,3} code is allowed only
-because the instructions were already being used by arch/s390/crypto/.
+-Kees
 
-I see that Jason actually added support for CPACF_*_SHA_512 to QEMU a
-few years ago
-(https://github.com/qemu/qemu/commit/9f17bfdab422887807cbd5260ed6b0b6e54ddb33).
-So clearly it's possible to support these instructions in QEMU.
-Someone just needs to add support for the other SHA algorithms.
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
 
-> Please note also that this is really an implementation of crypto
-> algorithms then and as such it needs to apply to some regulations with
-> regards of the EAR of the US Bureau of Industry and Security...
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
 
-Like Linux, QEMU is an open source project, published publicly, and
-which already contains many cryptographic algorithms.  Check out
-https://www.linuxfoundation.org/resources/publications/understanding-us-export-controls-with-open-source-projects
+are available in the Git repository at:
 
-- Eric
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.18-rc5
+
+for you to fetch changes up to c57f5fee54dfc83ee1d7f70f7beb9410b8466e9e:
+
+  libeth: xdp: Disable generic kCFI pass for libeth_xdp_tx_xmit_bulk() (2025-10-29 20:04:55 -0700)
+
+----------------------------------------------------------------
+hardening fixes for v6.18-rc5
+
+- Introduce __nocfi_generic for arm32 Clang (Nathan Chancellor)
+
+----------------------------------------------------------------
+Nathan Chancellor (3):
+      compiler_types: Introduce __nocfi_generic
+      ARM: Select ARCH_USES_CFI_GENERIC_LLVM_PASS
+      libeth: xdp: Disable generic kCFI pass for libeth_xdp_tx_xmit_bulk()
+
+ arch/Kconfig                   | 7 +++++++
+ arch/arm/Kconfig               | 2 ++
+ include/linux/compiler_types.h | 6 ++++++
+ include/net/libeth/xdp.h       | 2 +-
+ 4 files changed, 16 insertions(+), 1 deletion(-)
+
+-- 
+Kees Cook
 
