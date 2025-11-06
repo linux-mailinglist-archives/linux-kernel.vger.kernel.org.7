@@ -1,159 +1,186 @@
-Return-Path: <linux-kernel+bounces-888355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4F3C3A949
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:31:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02271C3ABE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D2A71A4512E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EFF1AA21F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885F62F1FDF;
-	Thu,  6 Nov 2025 11:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F+WACv3a"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9F72F4A04
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AB43271EF;
+	Thu,  6 Nov 2025 11:50:41 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDBE31690D;
+	Thu,  6 Nov 2025 11:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428685; cv=none; b=ikitxTjQvc31v/jSE17J/XtzTCsoE4ANPfe4ho+YAI8ey+rbgjP02o/dkpXwiwSXsLjlxp/zbgBY7X36E8p1qC7vEqCZ2XsqCKMgEFeEYD2B47JF/VzGeqWOUL79VrdZdg/XuMYu+I0qLiIpNokM6JAzMcPsO3I7W0kSWKcH9IA=
+	t=1762429841; cv=none; b=ciogZjCB+PvRB5TBMZ1NmIAXZYpRdhImeWeKMNqi9Kuc7vg6PHiA3Je0qeE+sfTeTFuJVOw+qPpFVa70yYLLIGe5Bgazq136uKIol/kN3oB2FsmTkNoX53/vDBS2Cw3bqPuf1D1G6z++fYHEuvwQW0b2fNG5TVGPlYSGfx9J4Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428685; c=relaxed/simple;
-	bh=H2DNmj95Fq8i7FycREunk7PBoQpmQkeo+jtVILW881w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oIjVtYIY43tocr+Ec/TqaZ6XYsnyk+r/m2bHWr1yPU6/thchlxjRExnAbaDoNAyirWNlIrNAAjdzUKFVnnk7GBs6iADoOJh5HQjz386OdegXi1e3VrszrfudWTbBWLcTXmJPpojNDLuNYvqW6CF1aWE5Y85mxKPcMG9zaxWJJfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F+WACv3a; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-4500b2ec59eso136716b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:31:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762428682; x=1763033482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XGk+iMMQZ2vEJTeI4z0/vF9e1THhn3jOf857E98Hpp8=;
-        b=F+WACv3aHOAbFPaMYobgxpYvtN4TzeXD9fjvhbwrw1W6sajKCLNJx1sKHxeQfUz5el
-         BMPioE1Y0Sv5LIN/11mUpmKYubuKeXWSrWONRW1jr0cAaWWrRACmFSk+yyRJ8fMxIIJF
-         D9P59f8lhw0Fy+7UCHk+NhiXTZmS/9nxtvzbMJ2IOFkvT5DV3121V2rVjxvCwQlpk/yt
-         c/WF3dNJyeYUwVgtzFbuza9mXi1q27XGbq1fhtevx1vmQz7BUYbPM+UgQ69o2kko99MB
-         iX2z+2qQ/IihIzcyZlwMI5se+Una4XVPf8EXrhtS14H5DFo66We6j6EDRywSPebiJwsQ
-         L3Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762428682; x=1763033482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XGk+iMMQZ2vEJTeI4z0/vF9e1THhn3jOf857E98Hpp8=;
-        b=H2Pnq7hNy/+Li+AUqAUfyyty4sf6t6IfyDm/vTgTMXHPCKbkN/iwF8NFYvMWQ/LjNM
-         qs7Hq1nWTXVHLt5Vl1E+yYWz9AjkvIFWNvjzSw7RGkaxEnZBdDpU3LJZoEwtK5GR9PRZ
-         NRVSPQbRXYa/ig1UA6SJrZ6+NDB4A2HHwtUJiMZqt5qU2HIZ1MxFItH7ocbqI2mLnP7O
-         XOPJKBdSmDfgS39Tf/rs6jHp5dMRYVprlFJkDAfuc7jBmHeNdKj9f0m7G9cWoMLsRh5C
-         eTox5xjVwxzBygiAeWm/2vtDPcPX1/BqRV+8Nhe7hfkRoVxHiw8zK27AtYNY4Hkr9zZZ
-         9YEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeuUnI71TxF9/lUayvp3EuDdzjwN5KHs/GAxnXNAVDVEfi4lKlGIUSxutmojhCj+wVqhxzUxu+x1fhogI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyseNMAWe9T0XTa/cWktlzOoNhvpkEbRVTvxskHWaTXvIv7eH/v
-	GYxOr/7yuw8OalFBDmc8/L7idHS7bMu6L17MqN+NqN5f547FLr79BvgqC3ywYamxHypztxzxT5W
-	I8yDssRVmKlvrkNUMcD/H2gPIDa2zepYY6sG7SV+QwawUi2ODooD2GE4=
-X-Gm-Gg: ASbGncvr72mFkpmwoV+Ri+OlkNzfbCt2milKmqD72XzaRIqmXRDBODSE5c6S3rieDCE
-	KY01aPzS1egFUi1vSDj4Cszno2vU5vuQWAi1aTPyzZL7Y3f1KuJRQRzFkGUJf/rM5fJD9Wou8r0
-	ieqvRz+IqbEy57JdBXLN6vk9Hq07smeo9N/YY+WWG60RgmkuvXxUG8jThJ3nnrQ41Lnl8fjA021
-	qA85vFbPe0OCd3JbqAG+ZJwmKonozdDm6eU+AJn/zbcr7QRwPgX7UhekkXwgg==
-X-Google-Smtp-Source: AGHT+IHkj4o/NOZHcWbw6giq3vF7bwqq0UNMoWmtnanbMAE/Exe7GRD/6wvB3w0v773txVFEKCGg/5jZY7nBpsA1L1k=
-X-Received: by 2002:a05:6808:2448:b0:43f:5f02:2f30 with SMTP id
- 5614622812f47-44fffbb8abbmr1722155b6e.4.1762428682039; Thu, 06 Nov 2025
- 03:31:22 -0800 (PST)
+	s=arc-20240116; t=1762429841; c=relaxed/simple;
+	bh=2jZ+xzmq5Is/HiK11WD2Oq0DGl6cQ84EV8xTG8t9Azo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KLXH8hlaH97MWY2JimdDyT5kkSFjQGrsBYzoXXakLo37xGZgfwOKt/E5UPACAixTWFvNIz/lr+CfYtDOI3psBKaLBSKgij6EddDGE3WNk87uxdaNEDDBR7tR/T/o2HNfm+l3UUlAIBFcFkKHMbmM9mz3S/t8RtrNXPn2LE349dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d2KmD3Svwz9sS7;
+	Thu,  6 Nov 2025 12:32:12 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id cCTQDw47kCCS; Thu,  6 Nov 2025 12:32:12 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d2KmD2Sndz9sRy;
+	Thu,  6 Nov 2025 12:32:12 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3EAEC8B77E;
+	Thu,  6 Nov 2025 12:32:12 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id N6iiMNbKWsaO; Thu,  6 Nov 2025 12:32:12 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5EA078B773;
+	Thu,  6 Nov 2025 12:32:11 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Andre Almeida" <andrealmeid@igalia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v4 00/10] powerpc: Implement masked user access
+Date: Thu,  6 Nov 2025 12:31:18 +0100
+Message-ID: <cover.1762427933.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106102008.1310234-1-yangzhao@kylinos.cn>
-In-Reply-To: <20251106102008.1310234-1-yangzhao@kylinos.cn>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 6 Nov 2025 12:31:10 +0100
-X-Gm-Features: AWmQ_bnTe3Bqx-0i6NqDlTVTxcKF21ZI3fkaw2jHTg947odKhfSyeYi5j-a1WhM
-Message-ID: <CAHUa44FAUyQNBKmzugu-_gv_Jy_AftZqq=RSbKUnK1QQbL8Z9A@mail.gmail.com>
-Subject: Re: [PATCH] tee: fix illegal pointer dereference in tee_shm_put()
-To: yangzhao <yangzhao@kylinos.cn>
-Cc: op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
-	Sumit Garg <sumit.garg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4465; i=christophe.leroy@csgroup.eu; h=from:subject:message-id; bh=2jZ+xzmq5Is/HiK11WD2Oq0DGl6cQ84EV8xTG8t9Azo=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWTytHN/S4vin/Hzpl7wRhb5xCN8od1HtvyfJfLSOF9kp 8O0eVHMHaUsDGJcDLJiiizH/3PvmtH1JTV/6i59mDmsTCBDGLg4BWAiamcYGZ7NOrnD3taXp3nd 1gyPk5Vf7Ft5llTklwqsn7iE5yj35GSG/0Vbenl2sTbdsy5O2hbwfIanX7P+9ynZaclCBwSSnrd 8ZgYA
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This is a rebase on top of commit 6ec821f050e2 (tag: core-scoped-uaccess)
+from tip tree.
 
-On Thu, Nov 6, 2025 at 11:20=E2=80=AFAM yangzhao <yangzhao@kylinos.cn> wrot=
-e:
->
-> In tee_shm_put(), there is not only the NULL pointer dereference,
-> but also the illegal pointer dereference.
->
-> shutdown() --->
->     __optee_disable_shm_cache -->
->         shm =3D reg_pair_to_ptr(...);
->         tee_shm_free(shm); -->
->             tee_shm_put(shm); //crash: shm->ctx maybe NULL pointer or ill=
-egal pointer
->
-> Check whether the pointer is NULL and whether the pointer address is vali=
-d.
->
-> This issue occurs when rich world uses the 6.x version of the kernel and
-> optee secure world uses a lower version (such as version 3.2), and it is
-> highly likely to trigger a kernel panic when conducting hibernate tests.
+Thomas, Peter, could you please take non-powerpc patches (1, 2, 3)
+in tip tree for v6.19, then Maddy will take powerpc patches (4-10)
+into powerpc-next for v6.20.
 
-It sounds like the root of the problem is in the TEE rather than in
-the kernel. How about fixing the TEE to avoid supplying garbage
-pointers?
+Masked user access avoids the address/size verification by access_ok().
+Allthough its main purpose is to skip the speculation in the
+verification of user address and size hence avoid the need of spec
+mitigation, it also has the advantage to reduce the amount of
+instructions needed so it also benefits to platforms that don't
+need speculation mitigation, especially when the size of the copy is
+not know at build time.
 
->
-> Fixes: e4a718a3a47e ("tee: fix NULL pointer dereference in tee_shm_put")
-> Signed-off-by: yangzhao <yangzhao@kylinos.cn>
-> ---
->  drivers/tee/tee_shm.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> index 4a47de4bb2e5..de01d16409c1 100644
-> --- a/drivers/tee/tee_shm.c
-> +++ b/drivers/tee/tee_shm.c
-> @@ -722,7 +722,14 @@ void tee_shm_put(struct tee_shm *shm)
->         struct tee_device *teedev;
->         bool do_release =3D false;
->
-> -       if (!shm || !shm->ctx || !shm->ctx->teedev)
-> +       /* checking pointer */
-> +       if (IS_ERR_OR_NULL(shm) || !virt_addr_valid(shm))
+Patches 1,2,4 are cleaning up some redundant barrier_nospec()
+introduced by commit 74e19ef0ff80 ("uaccess: Add speculation barrier
+to copy_from_user()"). To do that, a speculation barrier is added to
+copy_from_user_iter() so that the barrier in powerpc raw_copy_from_user()
+which is redundant with the one in copy_from_user() can be removed. To
+avoid impacting x86, copy_from_user_iter() is first converted to using
+masked user access.
 
-The IS_ERR_OR_NULL() check might make sense, but the virt_addr_valid()
-does not. virt_addr_valid() might catch a few garbage pointers, but
-the real problem is that someone is supplying garbage pointers.
+Patch 3 replaces wrong calls to masked_user_access_begin() with calls
+to masked_user_read_access_begin() and masked_user_write_access_begin()
+to match with user_read_access_end() and user_write_access_end().
 
-> +               return;
-> +
-> +       if (IS_ERR_OR_NULL(shm->ctx) || !virt_addr_valid(shm->ctx))
-> +               return;
-> +
-> +       if (IS_ERR_OR_NULL(shm->ctx->teedev) || !virt_addr_valid(shm->ctx=
-->teedev))
->                 return;
+Patches 5,6,7 are cleaning up powerpc uaccess functions.
 
-shm->ctx or shm->ctx->teedev should never be an ERR pointer. The
-virt_addr_valid() test doesn't make sense.
+Patches 8 and 9 prepare powerpc/32 for the necessary gap at the top
+of userspace.
 
-Cheers,
-Jens
+Last patch implements masked user access.
 
->
->         teedev =3D shm->ctx->teedev;
-> --
-> 2.25.1
->
+Changes in v4:
+- Rebased on top of commit 6ec821f050e2 (tag: core-scoped-uaccess) from tip tree
+- Patch 3: Simplified as masked_user_read_access_begin() and masked_user_write_access_begin() are already there.
+- Patch 10: Simplified mask_user_address_simple() as suggested by Gabriel.
+
+Changes in v3:
+- Rebased on top of v6.18-rc1
+- Patch 3: Impact on recently modified net/core/scm.c
+- Patch 10: Rewrite mask_user_address_simple() for a smaller result on powerpc64, suggested by Gabriel
+
+Changes in v2:
+- Converted copy_from_user_iter() to using masked user access.
+- Cleaned up powerpc uaccess function to minimise code duplication
+when adding masked user access
+- Automated TASK_SIZE calculation to minimise use of BUILD_BUG_ON()
+- Tried to make some commit messages more clean based on feedback from
+version 1 of the series.
+
+Christophe Leroy (10):
+  iter: Avoid barrier_nospec() in copy_from_user_iter()
+  uaccess: Add speculation barrier to copy_from_user_iter()
+  uaccess: Use masked_user_{read/write}_access_begin when required
+  powerpc/uaccess: Move barrier_nospec() out of
+    allow_read_{from/write}_user()
+  powerpc/uaccess: Remove unused size and from parameters from
+    allow_access_user()
+  powerpc/uaccess: Remove
+    {allow/prevent}_{read/write/read_write}_{from/to/}_user()
+  powerpc/uaccess: Refactor user_{read/write/}_access_begin()
+  powerpc/32s: Fix segments setup when TASK_SIZE is not a multiple of
+    256M
+  powerpc/32: Automatically adapt TASK_SIZE based on constraints
+  powerpc/uaccess: Implement masked user access
+
+ arch/powerpc/Kconfig                          |   3 +-
+ arch/powerpc/include/asm/barrier.h            |   2 +-
+ arch/powerpc/include/asm/book3s/32/kup.h      |   3 +-
+ arch/powerpc/include/asm/book3s/32/mmu-hash.h |   5 +-
+ arch/powerpc/include/asm/book3s/32/pgtable.h  |   4 -
+ arch/powerpc/include/asm/book3s/64/kup.h      |   6 +-
+ arch/powerpc/include/asm/kup.h                |  52 +------
+ arch/powerpc/include/asm/nohash/32/kup-8xx.h  |   3 +-
+ arch/powerpc/include/asm/nohash/32/mmu-8xx.h  |   4 -
+ arch/powerpc/include/asm/nohash/kup-booke.h   |   3 +-
+ arch/powerpc/include/asm/task_size_32.h       |  28 +++-
+ arch/powerpc/include/asm/uaccess.h            | 132 +++++++++++++-----
+ arch/powerpc/kernel/asm-offsets.c             |   2 +-
+ arch/powerpc/kernel/head_book3s_32.S          |   6 +-
+ arch/powerpc/mm/book3s32/mmu.c                |   4 +-
+ arch/powerpc/mm/mem.c                         |   2 -
+ arch/powerpc/mm/nohash/8xx.c                  |   2 -
+ arch/powerpc/mm/ptdump/segment_regs.c         |   2 +-
+ lib/iov_iter.c                                |  22 ++-
+ lib/strncpy_from_user.c                       |   2 +-
+ lib/strnlen_user.c                            |   2 +-
+ net/core/scm.c                                |   2 +-
+ 22 files changed, 161 insertions(+), 130 deletions(-)
+
+-- 
+2.49.0
+
 
