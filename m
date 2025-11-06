@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-888745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3FA6C3BCD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9104C3BCD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2171B2335F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4AE1AA3F12
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9910B345CCE;
-	Thu,  6 Nov 2025 14:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115E5345CD6;
+	Thu,  6 Nov 2025 14:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OwSx66OX"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="aXJF+Ob7"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF0B345CA3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB88C345CB7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439627; cv=none; b=Fw0dUs3gwpahA4jfINONwTlihyQztPYN/junXm+Qn4GLaTajshlnFHw452Vx7bJMnzS7VTFEhquWCNsGQlpkkT0A8blOw8FCqEcKfssLIiphvCOpQfN0XaIPtxV75nfIKzmlteJ+1hz9i4GsTGT+r2VJi5Sxa1YFNz64GnNg0uw=
+	t=1762439628; cv=none; b=tM7xuY/L/qdiuz0ON069qnG/qGCDFuZ9f1alc29FH8OI1xqbaa/D/sDjMrVmjnQxfPJH+G3sSw0ts2178ctwV5sueUUBYJJxEqwuU9uhSSD0WizLG3aDWkFYN6xJ0nTi1pTa8wFQ7x5IHr+GLt/wcMI4Ci4zIQ8auB4FaXjxTd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439627; c=relaxed/simple;
-	bh=hEEq3L/ae0gzj3WOpTnXOnr4UtTzIJ6EJy/sUAFo6Ao=;
+	s=arc-20240116; t=1762439628; c=relaxed/simple;
+	bh=z2GOCEOnAx9dkquP8SXwErYfO6hYTMVFav1I4Zw5hag=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N8aEkHovxD/JUBMyK9NbnQMaIOJR72YGYtdSYVRTXTydUcCzTOHFZ0+xjd29OKRkM3jln/nTGNSSTXioW1CK3W3xPhEZsXm2flsK/3xlOYJ557fqGwWxfW5W5Od+g5MWTbB8W2HZ0jTitrPRFQbnFABU+bJNHlKOIixx2vjeKYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OwSx66OX; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=tMm7jJWlSaAvSAKEEye0Ii3QAc3Y7x7OJOkLWfIbG7u9bI6EP8qNAHOKgwbRzsQPySCuyd/kJokR7djC9zsjtCX0vlsvpZ8u8+g/w3QPRN1qhTKE//WGs+vTxPty22Lr4i3wipuZGJ8461Jo2ridG/18jok0uPI+NkdttV8hmT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=aXJF+Ob7; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4775ae5684fso5648645e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:33:44 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso8353905e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:33:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762439623; x=1763044423; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1762439624; x=1763044424; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xRcWCjtMlDilsyvDCHSRbviA39Wwxv3mD4ityVRjVRs=;
-        b=OwSx66OXXlLrGcWhuoOoB2voImus+qS3NzEXEyxNNZ/EJgnxpEX/lft7HS7LjNn6vt
-         b2ZEd6emmxeyUzzpAMz6Z5h3ESPvict9FNkHyiQFljCeyZ7PbZZBFoFQAOnPYvHi0zVf
-         l5jMnXb4EzpFMiQ0zf9MpK0Op3MtQ4Vbr/txKpdBg9BEEHeWhddht+KRG8ALwLifSsQk
-         MMUs3uHx1XtL0S0Z9Ks28MQX1uSM4UrYpsuPFLm/WFh7y14QAEoJxYCIe/Ue/uKxszWl
-         usbiGv+DZ/mHHeLAyKIj+RpiQ1vMZuFrv6p1im4wPYfWdAASPRfgcSRjd8Zke03XlkYo
-         I+fA==
+        bh=V3IgvEQIjogJMzucfOGmuNQecQ5evfCfXzAa1sQFsLM=;
+        b=aXJF+Ob7EYYhQs7R7mIDIV2RlAmeZ0OUdtxNkuH71DQ3d6ObuLE4JCohcBCsgvmJ8Q
+         uzS6hQ0XiF4SyN/XLOlFl/yyU78pdcV36NLncCR3/NBprLRr8O7x1abLyBBZYtHwmG4Z
+         XOFYHrKQpy2FrhTsfTI+GcS3/Vur/Xm7JuyXmf9nnnT7QC16v5pbc7HMqef3Jdtd9Omd
+         X3VyaLyOzhnSWr2Y6cmQKV2cdgSqbXsvtbVMQ8rEMEB8X0oKAdYr/EBt+55X+QmV1BpJ
+         R6jOS1h4KgzvmAqZeaJnL4YMpzW4XupsbFPWg+PXfIDCbapnMX4pEY9S2l+Mw54ac/XM
+         UUGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762439623; x=1763044423;
+        d=1e100.net; s=20230601; t=1762439624; x=1763044424;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xRcWCjtMlDilsyvDCHSRbviA39Wwxv3mD4ityVRjVRs=;
-        b=ZGFEyFgvGiiSzXTxA/G6iZ0vfBI3n3mPAFlDYIK+htyre4VPHEB4BicpVtndzKjiHs
-         uVYREeE+qxyzbFfjs7HyBKnUTSxzR2qBAptNk/sSDxuupuJH4z6hIjFXz3TQdaNCoSfk
-         x1Ye0sy9Iz7pAp7qypFpJASPbbDrhapgWBKo7xPItc4NeU8q38a8GUlWjXDZZdyUevPj
-         8A+H7fvnX3TmdWMC9m0gx5BiL/MugV7r88xUQMnkITXpAUvsmSooyvU6vEHagXlFCoZo
-         wXDizy1iaAl42+P0wK26o3uYORC+PlyMMZwPQVSR/uGMCCgwedM7Z25KvqiVd9JY3AJb
-         n5Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpnxGLFM1W3GpXS+Am0NKM83UOOX3PdIfekzjDGDod6A4I91qeDmYnro838TkNr6DuWbMjUewXyY3R6BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm+P72WwpX4Y03Po/46WD7k398zJdOXminbk9Ryf0U80AgfFbJ
-	do200qc3dk24n8QQwHZhqMOnyLnn7XE9xnekeJ9Fh5HCORP9M6pkKUaYylQdOXP/U+U=
-X-Gm-Gg: ASbGncsSRONVP3IbFebZpBU9JEpaSJUk8xLKavBdYQn0Ef4d1P0mfhzZlUyTPBDyrHA
-	5uKIF7hI9ramOAHE8u73lzAUVjwB6oBXnRRPkooMeWxz+lvfl2KtuJO5cKmfEJlacHp0oCl9scP
-	u971MWzdkVNP/k6YPwvK6NKBQNDbX3q5WoA3xUYAa0g5vKSKwT5SeqVO0vm/9AFdLpyHE07Xwhk
-	BQ3/VT0fuabv5ssQVcEmJtGdJgnxWbqH+7/c87XcuGmT7CzldUY73sX5WMIKwtze24Awd3AayJJ
-	MyFoaepUpQdtnR9ygOCB8sII5GGW5BuF1G4sCu/fi8n4gw3sWbBnxf6cSYaoxrTyD3qIlpUm6Jg
-	H40p/tOO1UX3fem8h+nrUTrvMdC4XqX1rGYgU7wRWMcGHtT14tvShqKnjJ6UlNqs01ElTxRs0m9
-	eEEK2ufPUsV/ifoYOcm9D8rpvfxXi/cg==
-X-Google-Smtp-Source: AGHT+IFjOZpe3RBTW3YYsSQc4NlYdBXBAEieg3vjxoeBZFVhu0BwVjWkzVC4rsJ6iid+BIBeXNryvA==
-X-Received: by 2002:a05:600c:828a:b0:477:e66:4077 with SMTP id 5b1f17b1804b1-4775ce2bceamr65761525e9.29.1762439620830;
-        Thu, 06 Nov 2025 06:33:40 -0800 (PST)
+        bh=V3IgvEQIjogJMzucfOGmuNQecQ5evfCfXzAa1sQFsLM=;
+        b=SwZQnZCSLAqzOMFxKGUpzaMx+FZ1NngkYN3a37ojf6e0nsV0j98OqDgUW/CjVk1TZ5
+         yrGUtQ6/anxgrXxQo+KPqvMX3I7VXOCsU8AoFncAhs6Ng/BdLElW5wjzYIoLrapz2QWt
+         tLkOl7/1FhgLQNttMLZSUCRwVNd7T05SxXL/Jd92993QtTUdFZIZN9JyLYK+ZeGpeZ57
+         alBHavH7SERjv2K8INv/0qxvOIk1pgqCL7oAdjPV30CY+ymfSrpPvP1bN7L2tZ7hDfBA
+         zunhiTdHbfZZOqBjqwj1SXGyxvA835+1QyqP6DmixtNSsvFGfvR0R3yPymZSsf8z8nq9
+         FiFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoJSuDKqX184UciLpqKA5zVlQVbQC2340ikxRWSRizr2ceIGgbu+SsyXQlXcXBNJKw/jg69yHpeEiNUfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp5DJl0l9REJdi/LgQkr047e48YQ/wG8r1/OzB2H2qEfR+r2wR
+	xHaQ0G/0bCoXfEM/HdVSG1Pzzf5KI9AIKQwuWP6E5xsE5Marrn3mhcscguz2OVqZscs=
+X-Gm-Gg: ASbGnct4Cx7H1yxfDKXn82XgtXjEc/zRsoD5TbQEaddTNLNiCJx7H7jmoEvUJQnRVHh
+	q3BBr8XfJSEDPJ/aeS72CJsmc5UItX8P23z6S/ZCWdetYFI24H7tthUAxkUuLe/MxReJpUPbI/5
+	11Fk4nDTgZ2bDeX+zbnVNNInze5F2R8zefF4NGRcbzg9nObhc/y35CPpDm2HmBuIbHSujXokQOx
+	/akK3qI1/HgSiJtwfnNDh0zg65LBvTwPfxxP2MH/pG9VX72rfvRyjFoTpusPMfMI4YajEhbfiU/
+	F61cD1jeCyUxMjo1WfrPz+vqJE92wxc72/7PEy3qcUWLHF7Mt4sxF8WyjW6u/st9WLXVSO2TRHt
+	W4Up3OcaTE8Z7iqHMsx5mLQoCZQPsxDuOPlX8dhfbqHeYOE1vYGsrVyUS5Lce3/KtDWg6X0Ac4I
+	WmPis1GrBabxk0c/JCzZp6DlP/KmzWf1DChl8UNUSy
+X-Google-Smtp-Source: AGHT+IEnd0KVbCubO7pySQ4P5IiZ1ER4hHEn7mesMiVdofrqd1TkOsvZkySnJp/aB+1oHXM+Li+8iQ==
+X-Received: by 2002:a05:600c:530d:b0:46d:5189:3583 with SMTP id 5b1f17b1804b1-4775cd39de3mr70324795e9.0.1762439624219;
+        Thu, 06 Nov 2025 06:33:44 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477622661c4sm50001595e9.0.2025.11.06.06.33.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477622661c4sm50001595e9.0.2025.11.06.06.33.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 06:33:40 -0800 (PST)
+        Thu, 06 Nov 2025 06:33:43 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: p.zabel@pengutronix.de
@@ -80,9 +80,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 1/2] reset: rzg2l-usbphy-ctrl: Propagate the return value of regmap_field_update_bits()
-Date: Thu,  6 Nov 2025 16:33:26 +0200
-Message-ID: <20251106143327.3049052-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 2/2] reset: rzg2l-usbphy-ctrl: Add suspend/resume support
+Date: Thu,  6 Nov 2025 16:33:27 +0200
+Message-ID: <20251106143327.3049052-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106143327.3049052-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251106143327.3049052-1-claudiu.beznea.uj@bp.renesas.com>
@@ -96,55 +96,186 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Propagate the return value of regmap_field_update_bits() to avoid losing
-any possible error. With this, the return type of
-rzg2l_usbphy_ctrl_set_pwrrdy() was updated accordingly.
+The RZ/G2L USBPHY control driver is also used on the RZ/G3S SoC.
+The RZ/G3S SoC supports a power-saving mode in which power to most USB
+components (including the USBPHY control block) is turned off. Because of
+this, the USBPHY control block needs to be reconfigured when returning
+from power-saving mode.
+
+Add suspend/resume support to handle runtime suspend/resume of the device,
+assert/deassert the reset signal, and reinitialize the USBPHY control
+block.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c | 94 +++++++++++++++++++++----
+ 1 file changed, 79 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-index 4ecb9acb2641..9ce0c1f5d465 100644
+index 9ce0c1f5d465..8ba65839f6e4 100644
 --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
 +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -117,13 +117,13 @@ static const struct regmap_config rzg2l_usb_regconf = {
- 	.max_register = 1,
+@@ -36,6 +36,7 @@ struct rzg2l_usbphy_ctrl_priv {
+ 	struct reset_control *rstc;
+ 	void __iomem *base;
+ 	struct platform_device *vdev;
++	struct regmap_field *pwrrdy;
+ 
+ 	spinlock_t lock;
  };
- 
--static void rzg2l_usbphy_ctrl_set_pwrrdy(struct regmap_field *pwrrdy,
--					 bool power_on)
-+static int rzg2l_usbphy_ctrl_set_pwrrdy(struct regmap_field *pwrrdy,
-+					bool power_on)
- {
- 	u32 val = power_on ? 0 : 1;
- 
- 	/* The initialization path guarantees that the mask is 1 bit long. */
--	regmap_field_update_bits(pwrrdy, 1, val);
-+	return regmap_field_update_bits(pwrrdy, 1, val);
+@@ -92,6 +93,19 @@ static int rzg2l_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
+ 	return !!(readl(priv->base + RESET) & port_mask);
  }
  
- static void rzg2l_usbphy_ctrl_pwrrdy_off(void *data)
-@@ -138,6 +138,7 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
++/* put pll and phy into reset state */
++static void rzg2l_usbphy_ctrl_init(struct rzg2l_usbphy_ctrl_priv *priv)
++{
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	val = readl(priv->base + RESET);
++	val |= RESET_SEL_PLLRESET | RESET_PLLRESET | PHY_RESET_PORT2 | PHY_RESET_PORT1;
++	writel(val, priv->base + RESET);
++	spin_unlock_irqrestore(&priv->lock, flags);
++}
++
+ #define RZG2L_USBPHY_CTRL_PWRRDY	1
+ 
+ static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
+@@ -131,9 +145,9 @@ static void rzg2l_usbphy_ctrl_pwrrdy_off(void *data)
+ 	rzg2l_usbphy_ctrl_set_pwrrdy(data, false);
+ }
+ 
+-static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
++static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
++					 struct rzg2l_usbphy_ctrl_priv *priv)
+ {
+-	struct regmap_field *pwrrdy;
+ 	struct reg_field field;
  	struct regmap *regmap;
  	const int *data;
- 	u32 args[2];
+@@ -158,15 +172,15 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
+ 	field.lsb = __ffs(args[1]);
+ 	field.msb = __fls(args[1]);
+ 
+-	pwrrdy = devm_regmap_field_alloc(dev, regmap, field);
+-	if (IS_ERR(pwrrdy))
+-		return PTR_ERR(pwrrdy);
++	priv->pwrrdy = devm_regmap_field_alloc(dev, regmap, field);
++	if (IS_ERR(priv->pwrrdy))
++		return PTR_ERR(priv->pwrrdy);
+ 
+ 	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
+ 	if (ret)
+ 		return ret;
+ 
+-	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, pwrrdy);
++	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, priv->pwrrdy);
+ }
+ 
+ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+@@ -175,9 +189,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ 	struct rzg2l_usbphy_ctrl_priv *priv;
+ 	struct platform_device *vdev;
+ 	struct regmap *regmap;
+-	unsigned long flags;
+ 	int error;
+-	u32 val;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -191,7 +203,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	error = rzg2l_usbphy_ctrl_pwrrdy_init(dev);
++	error = rzg2l_usbphy_ctrl_pwrrdy_init(dev, priv);
+ 	if (error)
+ 		return error;
+ 
+@@ -214,12 +226,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ 		goto err_pm_disable_reset_deassert;
+ 	}
+ 
+-	/* put pll and phy into reset state */
+-	spin_lock_irqsave(&priv->lock, flags);
+-	val = readl(priv->base + RESET);
+-	val |= RESET_SEL_PLLRESET | RESET_PLLRESET | PHY_RESET_PORT2 | PHY_RESET_PORT1;
+-	writel(val, priv->base + RESET);
+-	spin_unlock_irqrestore(&priv->lock, flags);
++	rzg2l_usbphy_ctrl_init(priv);
+ 
+ 	priv->rcdev.ops = &rzg2l_usbphy_ctrl_reset_ops;
+ 	priv->rcdev.of_reset_n_cells = 1;
+@@ -266,10 +273,67 @@ static void rzg2l_usbphy_ctrl_remove(struct platform_device *pdev)
+ 	reset_control_assert(priv->rstc);
+ }
+ 
++static int rzg2l_usbphy_ctrl_suspend(struct device *dev)
++{
++	struct rzg2l_usbphy_ctrl_priv *priv = dev_get_drvdata(dev);
 +	int ret;
- 
- 	data = device_get_match_data(dev);
- 	if ((uintptr_t)data != RZG2L_USBPHY_CTRL_PWRRDY)
-@@ -161,7 +162,9 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
- 	if (IS_ERR(pwrrdy))
- 		return PTR_ERR(pwrrdy);
- 
--	rzg2l_usbphy_ctrl_set_pwrrdy(pwrrdy, true);
++
++	pm_runtime_put(dev);
++
++	ret = reset_control_assert(priv->rstc);
++	if (ret)
++		goto rpm_resume;
++
++	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, false);
++	if (ret)
++		goto reset_deassert;
++
++	return 0;
++
++reset_deassert:
++	reset_control_deassert(priv->rstc);
++rpm_resume:
++	pm_runtime_resume_and_get(dev);
++	return ret;
++}
++
++static int rzg2l_usbphy_ctrl_resume(struct device *dev)
++{
++	struct rzg2l_usbphy_ctrl_priv *priv = dev_get_drvdata(dev);
++	int ret;
++
 +	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
 +	if (ret)
 +		return ret;
- 
- 	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, pwrrdy);
- }
++
++	ret = reset_control_deassert(priv->rstc);
++	if (ret)
++		goto pwrrdy_off;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		goto reset_assert;
++
++	rzg2l_usbphy_ctrl_init(priv);
++
++	return 0;
++
++reset_assert:
++	reset_control_assert(priv->rstc);
++pwrrdy_off:
++	rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, false);
++	return ret;
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(rzg2l_usbphy_ctrl_pm_ops,
++				rzg2l_usbphy_ctrl_suspend,
++				rzg2l_usbphy_ctrl_resume);
++
+ static struct platform_driver rzg2l_usbphy_ctrl_driver = {
+ 	.driver = {
+ 		.name		= "rzg2l_usbphy_ctrl",
+ 		.of_match_table	= rzg2l_usbphy_ctrl_match_table,
++		.pm		= pm_ptr(&rzg2l_usbphy_ctrl_pm_ops),
+ 	},
+ 	.probe	= rzg2l_usbphy_ctrl_probe,
+ 	.remove = rzg2l_usbphy_ctrl_remove,
 -- 
 2.43.0
 
