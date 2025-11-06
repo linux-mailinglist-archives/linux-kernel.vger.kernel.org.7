@@ -1,157 +1,197 @@
-Return-Path: <linux-kernel+bounces-889352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D732DC3D5AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:28:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CA9C3D5A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:28:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF62E4E345E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:28:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B02D84E41BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6194F2FB98A;
-	Thu,  6 Nov 2025 20:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FC9254855;
+	Thu,  6 Nov 2025 20:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmhIkOBZ"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QhSRhCqA"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E0F2FB62C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 20:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F412FB978
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 20:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762460930; cv=none; b=Xhv2npz/Rm6RH5EHj0qcjY3XWKIeYdWW5tt7JhZvEFdYirJY/eO4L6+eoJjHiYc3NLvqPpKW8p9f5Ol1jlSDyWsWJtpf0VgyNkPq5iu4n48sqBDkPybvdk9nZAVMFfsYNh+CzrA1BzhBmljF/pVNa2LmtoLmOj+GzdNrl/ttBZo=
+	t=1762460902; cv=none; b=ZtCg0ZA7OZwZBypsliKli/ZK2eYV2QzVODzem7171XTxSm3RvcQSqzMjtvlqIPuBpDpQC19ZLmXuLmbRZyJOZf9wBVEQO6MqeZiikakkQCFcwqvYu2uvXYNIiYKvp/xnQjSHJbJvMlaYfCi3k6inkkVMl4QrO6fj3Mn9ukMKtQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762460930; c=relaxed/simple;
-	bh=B4MV3a78BmAOsDcZT7VlxQ8YoFXZlfgiZoml033GCjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ji7rFbi2YEC6ohGMxsTorYW32D7cLuvYNICpWIGwXMaAR9nybk+UrSYpGOyc4EGqBZ/VDGB0rFKwCHjnJSdp4r8kPpY0RZM60hcXOw9FvZ3ngUWlgHEvZui4hPobFS4eIqc1QzLmhTwTD5jiAOm+olGGsUQ16WoEuZ63YvoE+VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmhIkOBZ; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso27495f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:28:48 -0800 (PST)
+	s=arc-20240116; t=1762460902; c=relaxed/simple;
+	bh=s7JjaxVRGzDmcHhI8AEluXZzJ9B2Oblzutc30b370MQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jUfcsuHNUgdQwCoENs8pZTMpzHVfTpfVFlb1Aq0lv+J9mQzdIvk0u+96bSMojErYl5NrHTbJR33zWU8nekGsSivoQ5/nmf6ICcK2N+e9VFD+03/slfDOHuID/xIbsTuAi+BfaDg2rPKLH9DbG6KVvdWU7dH/WsCJ1Hc7drTDAQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QhSRhCqA; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-297b35951b7so691135ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:28:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762460927; x=1763065727; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HhPIfP8De21bOH+Y4KvdOsnM2WwwWLHXmrn7DnA7LPU=;
-        b=MmhIkOBZTphXlxRYnteH2IhD6m4pob6tyZFMEchoQJHTNdGPmbEm0YtQj6VGvGf930
-         upZri9Z6wA8do06fVQYkp17XzkFuCRmyb+5qiQHXO/1lrGcJgqWqNYz0cuSbdHcqn8A1
-         xMDY3+oFgIZGDVvciWn2NejZ4Ito54ThOmH/6LgJYW8UcMMi/QSJUcXFzSYEOCg/oOoT
-         62OUYlG4m96HyB4CdBbBkkSgPMz8uoWo80yaCgEYSWFgzAXl/Tlm9UVnH7fiEaOeaaV7
-         jdCYedRzMVm1JyUKgM2iEVh8KKcIV5jPMIuWWG0TIWiM7UW7f5QjJlmAP+op6u4GsL9S
-         JqZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762460927; x=1763065727;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1762460900; x=1763065700; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HhPIfP8De21bOH+Y4KvdOsnM2WwwWLHXmrn7DnA7LPU=;
-        b=TdgABKq5wKAh/EfdmLEO5xDUOEHreb6uWvmhVhG5soiAsgvK5YETn1PGMu4ruSJPlz
-         Xn3Qk9gNe320kkV3P2rg7JrpozjQ04Vk3qOvUwq81O1wMqP5InX6/aFAlKGU3H+p0Nl5
-         i0qlBBn5TwdaQxoCJyy0jJyKZmSzOm9fRmj6WZ6tWOFvk7QGHKEFVhIz2Xaq6tlHYN6n
-         NxpVqF1OahJsTjOWn0+tnosOpzmzOehgkpbMJ0e+JDulLX/XA/sbE1sQxTHhr0FTXpZL
-         iKKf386GhJ5p936/5LTWbDjFBNA8jR0yQH6xbNtsdEckLjRfF1pywQImIAI5h/sZAFtB
-         Uikw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzn8ty+K7UYcmJFk/8S23nfhHP3KFYG/VkEK+lvKJ57TIXipnogo0S9prtCtT8EwP1SgA1x7NIdC3gLyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPQ8zqPzDjeXfEMTwhyvghdaJ12hO4TFRis9E7VZb30bCcMtzq
-	6Jv6cJ8nWdOu3PPnSWCCRmkOlrb+t3JeJfXiKhztcx0GtyTk6etu8vJU
-X-Gm-Gg: ASbGncto1wWU3ww0OYo7H8Q+1y+vgOXfGWuF1z5JAIltacTMLtXM+b9IBsVbHkJOXUV
-	EbD/7p7YX6K6bGrFVUnOrLePtpH/WHSw3s57jxk+ZsNYXpfr1K7AbGymvsfH3Urq5NTCbiCQhP0
-	8Y9TFKDnCNp0GnFclXxEzk9gRiotCfE+WW+Oqj37YP8CHv0FFQkyYpXDA9kPBAsXnIrUSvvXyO1
-	lxjOICX/a/rUvl2/YsB7GVDh+0QTFrLdK9/rTBQY4iCZya2ea5Gm1lDY0QWXc3l9NBEta8h54KB
-	R7GKyn+OjJj8gfPlt1J/7FJkmzXPaDCDQoJv7eDU/w2Vsc0jy7TMLurIbT0BYMV+AWpqKQwmGei
-	EQ5uxcLsAHgc+Eh/HGygtktC1h8h2mvlcK9oKa58tH/4QKtBmVJ76ZoPngnvlRdafgZR1mfZn+l
-	PpLO2zRtU18AB8bipSVuKbz0QSB9Ya4OOESuWBv1KSKA==
-X-Google-Smtp-Source: AGHT+IGi4oopRGqO7VlJNFJdPy+Tg07BkrBGU2k4ZbWfn30X2KSeolXIbSvjfrVYP9WC+iZ49D20iw==
-X-Received: by 2002:a05:6000:4103:b0:429:c774:dbfc with SMTP id ffacd0b85a97d-42adc68837fmr419498f8f.12.1762460927240;
-        Thu, 06 Nov 2025 12:28:47 -0800 (PST)
-Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([78.208.193.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63e13csm1001842f8f.19.2025.11.06.12.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 12:28:45 -0800 (PST)
-Date: Thu, 6 Nov 2025 21:28:07 +0100
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: mpl3115: add threshold events support
-Message-ID: <20251106202748.zuysikmqfy3mfacd@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-References: <20251105095615.4310-1-apokusinski01@gmail.com>
- <20251105095615.4310-3-apokusinski01@gmail.com>
- <aQtsXcf_rHVdwqeZ@smile.fi.intel.com>
+        bh=ZxRs1KoaK6oa9YoLLml5ndaynCe6AptiJDUeJAShw+Q=;
+        b=QhSRhCqAQybhfb84d+D/iYde7Xd4pBTWC8/pqhaxQ5MeIIeAnsvbFkr8vKS/Ivoh8u
+         17s495a3t+0osgQUOn6CCaDQ4Y7T8kzJJo8QbE9Jz/YrdH+DHB9CqVrk5HsKHrsRMDEF
+         +j98xGq4LgpJdAEGYUD3/YSS8o3vQtSeHGB6WbzJeG1cO1GTLnAUmIKGYauaze5G5Emu
+         xvDy3f95dQzpdDMiGVYTLm11juYrm+VFytnYH4ZQTbp0JvsicQc3+R4Merkp9hVoS4cH
+         b6VFYiJpG53qCIEMxlqrNDHxYMI5mYjiIEKP3TQi+Pl6+he2nVIB5hmAQl+Wx9kbzoGp
+         NCUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762460900; x=1763065700;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxRs1KoaK6oa9YoLLml5ndaynCe6AptiJDUeJAShw+Q=;
+        b=ISwTJ2GaHDjgkuM//o2rKTsTiwOZVpu8PWscBaEBhqouiMIHtjqUhs/eBbYyLn3RlW
+         mVjjnfr9caCBj7+fXSqih8Qm25W3z6Hg3W8GU22YkT70EQDrJXrCObQozmJ+bueuxTev
+         nvuyhbBL67ZfCxWz976snlgO6klXOnB6ZouogoGvC+1CAfIoGxGTcR1OLg15iF9B2lgg
+         1rn1x79PSP1aeobV+gY7lyV/ZvUizqBraoZ0FGrrA5AsO0B13CBDyl8GBrDqT5d1X0qQ
+         VBXtLgL39NDjoS1gD2Nv0zIReoW/dVfW6+KgObe5yO0VzFoFC5T8vub8PhcjhsvAV06t
+         hqiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ5aG9Fc9LYxpZWTDto8xpgKQ+Y9g1kPkoTY0Zs/v1u8jOkIvOi7qU0NhaxXv2NdEWyalvug/hgFCan2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIrj2G95yTkIGdQcUtiv6VaURriKSSGyOd2chD2fmTtGQhVgXV
+	SIxBQhvDP6fhfpq6IYD8AoDbaRVvzvsES43jQ8Z5DtRzOQ6+OonPaxXAlf+k/aOf9q6iq2kZBV0
+	JWMKS5A==
+X-Google-Smtp-Source: AGHT+IHqjGQP8UTZTtMj2QcFhyHlRrBeBJkjlHeG4vrwg6qhQSWRJzq8rRdwN0zz5xgPPNrid06QN7Ln1Go=
+X-Received: from plcr13.prod.google.com ([2002:a17:903:14d:b0:295:16a7:a285])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5cd:b0:248:ff5a:b768
+ with SMTP id d9443c01a7336-297c03ab6c0mr9484105ad.10.1762460899942; Thu, 06
+ Nov 2025 12:28:19 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu,  6 Nov 2025 12:28:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQtsXcf_rHVdwqeZ@smile.fi.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251106202811.211002-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Enforce use of EXPORT_SYMBOL_FOR_KVM_INTERNAL
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 05, 2025 at 05:25:17PM +0200, Andy Shevchenko wrote:
-> On Wed, Nov 05, 2025 at 10:56:14AM +0100, Antoni Pokusinski wrote:
-> > static irqreturn_t mpl3115_interrupt_handler(int irq, void *private)
-> 
-> >  	struct iio_dev *indio_dev = private;
-> >  	struct mpl3115_data *data = iio_priv(indio_dev);
-> >  	int ret;
-> > +	u8 val_press[3];
-> > +	__be16 val_temp;
-> 
-> s/_temp/$SOMETHING meaningful/ ?
-> 
-In this case I'd leave the "val_temp". We have "val_press" and
-"val_temp" here so imo it indicates quite clearly that this variable
-stores a temperature measurement.
+Add a (gnarly) inline "script" in the Makefile to fail the build if there
+is EXPORT_SYMBOL_GPL or EXPORT_SYMBOL usage in virt/kvm or arch/x86/kvm
+beyond the known-good/expected exports for other modules.  Remembering to
+use EXPORT_SYMBOL_FOR_KVM_INTERNAL is surprisingly difficult, and hoping
+to detect "bad" exports via code review is not a robust long-term strategy.
 
-The cases with "tmp" that you pointed out can be a bit confusing indeed, so
-I'm going to replace them with something more meaningful (e.g.
-"tmp" -> "press_tgt" in read_thresh() )  
+Jump through a pile of hoops to coerce make into printing a human-friendly
+error message, with the offending files+lines cleanly separated.
 
-> >  	ret = i2c_smbus_read_byte_data(data->client, MPL3115_INT_SOURCE);
-> >  	if (ret < 0)
-> >  		return IRQ_HANDLED;
-> >  
-> > -	if (!(ret & MPL3115_INT_SRC_DRDY))
-> > +	if (!(ret & (MPL3115_INT_SRC_TTH | MPL3115_INT_SRC_PTH |
-> > +		     MPL3115_INT_SRC_DRDY)))
-> >  		return IRQ_NONE;
-> >  
-> > -	iio_trigger_poll_nested(data->drdy_trig);
-> > +	if (ret & MPL3115_INT_SRC_DRDY)
-> > +		iio_trigger_poll_nested(data->drdy_trig);
-> > +
-> > +	if (ret & MPL3115_INT_SRC_PTH) {
-> > +		iio_push_event(indio_dev,
-> > +			       IIO_UNMOD_EVENT_CODE(IIO_PRESSURE, 0,
-> > +						    IIO_EV_TYPE_THRESH,
-> > +						    IIO_EV_DIR_RISING),
-> > +						    iio_get_time_ns(indio_dev));
-> > +
-> > +		/* Reset the SRC_PTH bit in INT_SOURCE */
-> > +		i2c_smbus_read_i2c_block_data(data->client,
-> > +					      MPL3115_OUT_PRESS,
-> > +					      sizeof(val_press), val_press);
-> > +	}
-> > +
-> > +	if (ret & MPL3115_INT_SRC_TTH) {
-> > +		iio_push_event(indio_dev,
-> > +			       IIO_UNMOD_EVENT_CODE(IIO_TEMP, 0,
-> > +						    IIO_EV_TYPE_THRESH,
-> > +						    IIO_EV_DIR_RISING),
-> > +						    iio_get_time_ns(indio_dev));
-> > +
-> > +		/* Reset the SRC_TTH bit in INT_SOURCE */
-> > +		i2c_smbus_read_i2c_block_data(data->client,
-> > +					      MPL3115_OUT_TEMP,
-> > +					      2, (u8 *)&val_temp);
+E.g. where <srctree> is the resolution of $(srctree), i.e. '.' for in-tree
+builds, and the absolute path for out-of-tree-builds:
 
-Kind regards,
-Antoni
+  <srctree>/arch/x86/kvm/Makefile:97: *** ERROR ***
+  found 2 unwanted occurrences of EXPORT_SYMBOL_GPL:
+    <srctree>/arch/x86/kvm/x86.c:686:EXPORT_SYMBOL_GPL(__kvm_set_user_return_msr);
+    <srctree>/arch/x86/kvm/x86.c:703:EXPORT_SYMBOL_GPL(kvm_set_user_return_msr);
+  in directories:
+    <srctree>/arch/x86/kvm
+    <srctree>/virt/kvm
+  Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not EXPORT_SYMBOL_GPL.  Stop.
+
+and
+
+  <srctree>/arch/x86/kvm/Makefile:98: *** ERROR ***
+  found 1 unwanted occurrences of EXPORT_SYMBOL:
+    <srctree>/arch/x86/kvm/x86.c:709:EXPORT_SYMBOL(kvm_get_user_return_msr);
+  in directories:
+    <srctree>/arch/x86/kvm
+    <srctree>/virt/kvm
+  Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not EXPORT_SYMBOL.  Stop.
+
+Put the enforcement in x86's Makefile even though the rule itself applies
+to virt/kvm, as putting the enforcement in virt/kvm/Makefile.kvm would
+effectively require exempting every architecture except x86.  PPC is the
+only other architecture with sub-modules, and PPC hasn't been switched to
+use EXPORT_SYMBOL_FOR_KVM_INTERNAL (and given its nearly-orphaned state,
+likely never will).  And for KVM architectures without sub-modules, that
+means that, barring truly spurious exports, the exports are intended for
+non-KVM usage and thus shouldn't be using EXPORT_SYMBOL_FOR_KVM_INTERNAL.
+
+Cc: Chao Gao <chao.gao@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/Makefile | 56 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+index c4b8950c7abe..357138ac5cc6 100644
+--- a/arch/x86/kvm/Makefile
++++ b/arch/x86/kvm/Makefile
+@@ -47,3 +47,59 @@ $(obj)/kvm-asm-offsets.h: $(obj)/kvm-asm-offsets.s FORCE
+ 
+ targets += kvm-asm-offsets.s
+ clean-files += kvm-asm-offsets.h
++
++
++# Fail the build if there is unexpected EXPORT_SYMBOL_GPL (or EXPORT_SYMBOL)
++# usage.  All KVM-internal exports should use EXPORT_SYMBOL_FOR_KVM_INTERNAL.
++# Only a handful of exports intended for other modules (VFIO, KVMGT) should
++# use EXPORT_SYMBOL_GPL, and EXPORT_SYMBOL should never be used.
++ifdef CONFIG_KVM_X86
++define newline
++
++
++endef
++
++# Search recursively for whole words and print line numbers.  Filter out the
++# allowed set of exports, i.e. those that are intended for external usage.
++exports_grep_trailer := --include='*.[ch]' -nrw $(srctree)/virt/kvm $(srctree)/arch/x86/kvm | \
++			grep -v -e kvm_page_track_register_notifier \
++				-e kvm_page_track_unregister_notifier \
++				-e kvm_write_track_add_gfn \
++				-e kvm_write_track_remove_gfn \
++				-e kvm_get_kvm \
++				-e kvm_get_kvm_safe \
++				-e kvm_put_kvm
++
++# Force grep to emit a goofy group separator that can in turn be replaced with
++# the above newline macro (newlines in Make are a nightmare).  Note, grep only
++# prints the group separator when N lines of context are requested via -C,
++# a.k.a. --NUM.  Simply request zero lines.  Print the separator only after
++# filtering out expected exports to avoid extra newlines in the error message.
++define get_kvm_exports
++$(shell grep "$(1)" -C0 $(exports_grep_trailer) | grep "$(1)" -C0 --group-separator="AAAA")
++endef
++
++define check_kvm_exports
++nr_kvm_exports := $(shell grep "$(1)" $(exports_grep_trailer) | wc -l)
++
++ifneq (0,$$(nr_kvm_exports))
++$$(error ERROR ***\
++$$(newline)found $$(nr_kvm_exports) unwanted occurrences of $(1):\
++$$(newline)  $(subst AAAA,$$(newline) ,$(call get_kvm_exports,$(1)))\
++$$(newline)in directories:\
++$$(newline)  $(srctree)/arch/x86/kvm\
++$$(newline)  $(srctree)/virt/kvm\
++$$(newline)Use EXPORT_SYMBOL_FOR_KVM_INTERNAL, not $(1))
++endif # nr_kvm_exports != expected
++undefine exports_advice
++undefine nr_kvm_exports
++endef # check_kvm_exports
++
++$(eval $(call check_kvm_exports,EXPORT_SYMBOL_GPL))
++$(eval $(call check_kvm_exports,EXPORT_SYMBOL))
++
++undefine check_kvm_exports
++undefine get_kvm_exports
++undefine exports_grep_trailer
++undefine newline
++endif # CONFIG_KVM_X86
+
+base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
 
 
