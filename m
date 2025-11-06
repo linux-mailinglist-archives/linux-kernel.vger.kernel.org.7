@@ -1,76 +1,127 @@
-Return-Path: <linux-kernel+bounces-888066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF49C39C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:10:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8134DC39C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:09:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A0E3BFA8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2037B189C2A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFD330B502;
-	Thu,  6 Nov 2025 09:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D1430B532;
+	Thu,  6 Nov 2025 09:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W528h3Oq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fe4pQVrs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7591C3093CB;
-	Thu,  6 Nov 2025 09:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2C8309DCD;
+	Thu,  6 Nov 2025 09:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762420098; cv=none; b=DCnVbFjopdpCG5RSiuqgZV5QWiM4tHrfoPVGPUsOuZQSaJpIDZxYSyl58a2eB2pKjC8j6m55iWq7eGPGbcbNF2+7Z7xiQ8Wh1Pynije8YFQgrTxZ52mLIJ4mYa/j18DZjlCQEtlald7UxHzVYn1pLcUGq+sliR9kz5Y5hDfLdv4=
+	t=1762420175; cv=none; b=OigQARNaUF1seaFQ0doFX3Z0gAYD5fWTY+09isqOhh6xOBiBsDjUPl5w6iiU+JGK75aMeu3pwRDpicGArvHTo+fFnyLDEGDipUrRhk28avTqML88L/+h8D38nyXdmVFEBQlxRn9ZYoivUsP42WRCzqtVECEGW72tCu3lwGWTs3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762420098; c=relaxed/simple;
-	bh=rk1PT9PwR2eCejiCdlRuPwCQCGds36SuO0Ti60jsH8I=;
+	s=arc-20240116; t=1762420175; c=relaxed/simple;
+	bh=1xoEFGyLdYCbzgR/mVDatimumQJnCI1/RQddMt9KI0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQWvg38Or2miLR6gjADm2uTNKWOxwy+mVKOBmE96mAFh+bceH5kU6KcdjIpfwTZvmT13zoj9hqG+4+ybyen8a5Q1KMhpRSnFOvSAncDfflbeuUteFFkAHjQuRZ4ebD0gRXfZNoWzZaK/IcaBMhHU3yUxxjujK7EXG8pVex8qiqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W528h3Oq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F34C4CEFB;
-	Thu,  6 Nov 2025 09:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762420098;
-	bh=rk1PT9PwR2eCejiCdlRuPwCQCGds36SuO0Ti60jsH8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W528h3Oqa4FXXHxfeqgTjFq2ulEARUCNwCEd0LEuxnwodMkXGJvS78/fwTeQ19iD4
-	 4ZkNH+7NGh68H2saSQARfnXNV020vdnBY7oOJxoKm1mdQlFtzCc6IjU4S1u2OUceXd
-	 rXzJO8M4t8be4b5SPbRn18zDHzeT5HqMMpE2IQFIZ5O93oyySpBNQc5/sdo2kB5iBU
-	 ggZ182CxjPIstotj2YI9VjrZP+LrkbgWNX2jEXn0oetB7s2jDiYGjzFAXldA6uov57
-	 fM5qZ0Qlbf4YYQZxPkvoDX/Pz1vCureUkICvOH/IOoWkD/8UJntakIMT/6Xl8IX3MG
-	 8mCphn+pU4hkg==
-Date: Thu, 6 Nov 2025 10:08:16 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Tapio Reijonen <tapio.reijonen@vaisala.com>
-Cc: Peter Rosin <peda@axentia.se>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: mux: Add description for enable GPIO
-Message-ID: <20251106-imported-bull-of-storm-8c19fc@kuoka>
-References: <20251105-add-external-mux-enable-gpio-v1-0-e59cba6f9e47@vaisala.com>
- <20251105-add-external-mux-enable-gpio-v1-1-e59cba6f9e47@vaisala.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=io5gvqzYB7Pdw9WuWA93E70+wE1TXY4lMjG9i1SQqODKIfKksL5ouavCPM/HHcWYBsXMWY5dOOvkFK/kgjUlLj4gxIPBc4P+PWy8yaB36P5eZpsCEKwMilE0UKbKitYYzKQEM7zwXIfzPFuImpfejr/xPsD002Bcjma6urPTsog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fe4pQVrs; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762420174; x=1793956174;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1xoEFGyLdYCbzgR/mVDatimumQJnCI1/RQddMt9KI0M=;
+  b=fe4pQVrsIzESqanmhiwe4OGTvixqgjaHfV62/HXZUfirC158fCbO4y9v
+   iAOeP3orC1qy86xZd8Y+zEKKwFIrFUw3w2x44AyByopesbCwOy+kwFPbo
+   tK+jlghgTpyLGKxxf1OTR4dIXxesdOGPLKwed/OcZYDXx1fMdMZyOnAPB
+   UZofGfmHM/gHsk+ef6f1EycESJVt5ljHqCmtWRibwY8kxssE1pODYggou
+   v8IYSnScG9E4j9xWWCCwYP1J9SI1sKb9A/dbP0rxkP1VXnza+vx8WnAWu
+   OxyDSfP3Lk0B0wkbpMKHFztQEUBpHGhjbrRpGYFXXRpuAfY0qPvxmgwub
+   w==;
+X-CSE-ConnectionGUID: Wew85tWLQ3Kt1CmgleZyyw==
+X-CSE-MsgGUID: Fv59igFNS8+rqGwO0eQccg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64702402"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="64702402"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 01:09:33 -0800
+X-CSE-ConnectionGUID: t4cXAYLeQBygry4nYTjgYQ==
+X-CSE-MsgGUID: 4YSN0rZrTeuWgvw94vin8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="186958588"
+Received: from jjgreens-desk21.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.229])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 01:09:31 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vGvzh-000000062aI-44dw;
+	Thu, 06 Nov 2025 11:09:25 +0200
+Date: Thu, 6 Nov 2025 11:09:25 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, error27@gmail.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] iio: trigger: Fix error handling in viio_trigger_alloc
+Message-ID: <aQxlxTiq59zynioS@smile.fi.intel.com>
+References: <20251106082923.32688-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105-add-external-mux-enable-gpio-v1-1-e59cba6f9e47@vaisala.com>
+In-Reply-To: <20251106082923.32688-1-make24@iscas.ac.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 05, 2025 at 02:49:12PM +0000, Tapio Reijonen wrote:
-> Add description for enabling GPIO-controlled multiplexer
-> GPIO pins, according to the state of the mux idle state.
+On Thu, Nov 06, 2025 at 04:29:23PM +0800, Ma Ke wrote:
+> viio_trigger_alloc() initializes the device with device_initialize()
+> but uses kfree() directly in error paths, which bypasses the device's
+> release callback iio_trig_release(). This could lead to memory leaks
+> and inconsistent device state.
+> 
+> Additionally, the current error handling has the following issues:
+> 1. Potential double-free of IRQ descriptors when kvasprintf fails.
 
-You basically repeated binding. Please explain here which GPIO this is,
-e.g. give concrete device example.
+kvasprintf()
 
-subject prefix - missing gpio-mux:. You are not adding enable GPIO to
-entire/all mux bindings.
+> 2. The release function may attempt to free negative subirq_base.
+> 3. Missing mutex_destroy in release function.
 
-Best regards,
-Krzysztof
+mutex_destroy()
+
+> Fix these issues by:
+> 1. Replacing kfree(trig) with put_device(&trig->dev) in error paths.
+> 2. Setting subirq_base to 0 after freeing IRQ descriptors in error
+> path to prevent double-free in release callback.
+> 3. Modifying release function to properly handle negative subirq_base.
+> 4. Adding missing mutex_destroy().
+> 
+> Found by code review.
+
+This is better now, but giving a nature of the issue and the fix I would really
+appreciate some CIs and syzkaller (or alike) fuzzers to go with this first.
+
+...
+
+>  free_descs:
+>  	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
+> +	trig->subirq_base = 0;
+
+Why not getting rid of this label and accompanied code altogether?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
