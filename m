@@ -1,152 +1,195 @@
-Return-Path: <linux-kernel+bounces-888023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE3AC39990
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:33:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F980C399A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6728534ED3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:33:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6D2F4E31EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D409D308F25;
-	Thu,  6 Nov 2025 08:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0F0308F28;
+	Thu,  6 Nov 2025 08:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="SSFUhgpk"
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="k5Y1HNQz"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011060.outbound.protection.outlook.com [40.93.194.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BCA26F29C;
-	Thu,  6 Nov 2025 08:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762418008; cv=none; b=Z6ltu82JOzTj9nyRYJGb/2RrBg+eAolOq+v7GMX/ExdJJyV+6p7MI1SFF3LoQWOMtQ+tvtCLhKClFaMpITBqeUsTiImwueVw7v0CVl7YJcYi+cVEWizjPNbQKt1s2Hu5OCp5Y1FPV55HIy2EzKLsFs0SDsHNu+N37BwD4BwAej8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762418008; c=relaxed/simple;
-	bh=w59sk8vcSHzKV622h6OWGLWzimTJs7Vur6YmdxuYSzc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aLXt2DYva1nfjr/6Ji+ekqocsyFda9C0R6yMqcZvjhRezXQ044jkTxYAPZZWyIpsq0x6l1mzfSL1Qm9dLYbFXf/luI3QPWR4gExAhMoouKYQYGIcPabUL+VnrbCf5JMn5ylqegKTFxABBDBjdT5sijyqBSBKb2OHA6cBm2uCzB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=SSFUhgpk; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A641HDM013424;
-	Thu, 6 Nov 2025 00:33:04 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=O487AN9Qnntu1rGtxcf6wGG9afoKi8Zn4oa0oCHUyBQ=; b=
-	SSFUhgpkt6akM9PeJrwxJplk2V8Vc+bzU01qBgjcklN+xi95WRmTRlQ+OFf5uGWc
-	L3gZiV+gvEUxuHsbqQRAyjhlh6x/1psWXD5m7Or3IhF1JCrBsoAK3bGYc18D4x+9
-	0/h0iTxH5Ap7s2Gc/J46dn3m75N2jSwpb2ARQJ8wabTDw0eZGQDh3UgdOIZasfhD
-	HwXaZhU1+C7xjgJxUKQA6VB2qP3TfT0zsryTJ542lhR0dvbm1XsjXWcwE7MLHmG6
-	Tv/+dS+qSTxW0S6PP0b8riOMQyuLKzYb8s5c+7ASs7QU2iceHfoG6Wpx9m5zPL+q
-	M2pN3InnXfvSTG8Lyzzrew==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a7wd7j7wy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 06 Nov 2025 00:33:04 -0800 (PST)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.61; Thu, 6 Nov 2025 00:33:03 -0800
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
- 15.1.2507.61 via Frontend Transport; Thu, 6 Nov 2025 00:33:01 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <perex@perex.cz>,
-        <syzkaller-bugs@googlegroups.com>, <tiwai@suse.com>
-Subject: [PATCH] ALSA: usb-audio: Prevent urb from writing out of bounds
-Date: Thu, 6 Nov 2025 16:33:00 +0800
-Message-ID: <20251106083300.2947700-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <690b6b46.050a0220.3d0d33.0054.GAE@google.com>
-References: <690b6b46.050a0220.3d0d33.0054.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C405A3081C8
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 08:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762418232; cv=fail; b=TGT8bSd120JymW2eOOH7YdcIepMkIl/+YEv98RQoiuNvS+6B3gRpymANMiP7SVQDkmGNoCQbpjajx8TV2cfdza3K2ac8WtcBP1obkEWae01yRdXOrOuSqvydH9bIfbKhEMZsGh2C4JwCbJ84dSvDtH7ZQtxAbE+W5VQ7gp1chUg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762418232; c=relaxed/simple;
+	bh=3lXWbkoz7nM0zbJT6AQK8xUy+82Ph45Rv6qLhxnpNg0=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LM46L9c+rkUi+sHcn8cDzYbXQ9yxLbe2sN35+UperLsM/1tyTq41jxolsQ6Eyc62EB5JmWkYeyFeMuQ1hfV2Ey0wW6u54q0/Heqf9Gb/dZ7VRQRT5HByaMDBhnWQdH41UjX9zVyLYkbtORyn61JAA23huqemktAQU/j+9vJpyG4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=k5Y1HNQz; arc=fail smtp.client-ip=40.93.194.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wz9dGnYROKsU7AJ+/8zW6nZZnETStST/RxcjQv3Q0gYB5F/ULAH3T52uiiz0mUYA2sN9zTuAxcqXAy/f/wwl2qTKtiKKktiL2MlfctIMvvQUGGDt8iUs/74KkOt2sM1sDl/wTXcXNZRwf4qk/xIQ+ZhnGTrsXTWWH7hyN6XUNBBl9Ax48ZM7EGaoLAKVgoSy84Nms4gAq0DEtzHEdUHsBWDlSyXza46Ba0AasRl8mwLQQXkh2wMgbM45IWRsQJdy8seyNeCITDhBAToQcsge7WrFx28tmnQLAeDrprCZzjIM0PL9lh6/zoTJr5V0ArPW4oUsBEPQJIIKoCUmmOnadw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ohmJnkI2sOkBBDvooqQHj9KjWHOETSElXSkHPcpFOTs=;
+ b=CSI/XzIUu8wOd8vn5tXAlorVLJ1Rm/tUugouNZsksh4fdbmWuuIvL3uwxbC9kH6P1aMTAXYeMX95fPoWpGmO61KtAD3nPMQes9jqX8nS0S60GdmHwvqAG3L3iXsfppt2jiYFRfivghbvBUyW2iBNb63O3zKKfYmIy/8PZrkXgAgoCb+Z4BIUNa/LY9nfXhbg6VM7LbgI08pOv74hO3O/c3xw66upegeJI9PAidvk6hpYDUbd9t0VU5BGh8kb1UDLELP8EEiTR4YmP2eY9+TsfYozAAtA80fDjZ1Wr+FHOrwTYJzMkLwc2fEqkLU4vfBcuDzfhQzPGVpS+q+0W0+nEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ohmJnkI2sOkBBDvooqQHj9KjWHOETSElXSkHPcpFOTs=;
+ b=k5Y1HNQzLCAvxF4LdPC4B0eDqu8TvxiRNfSQ1F9Y6Nzd1dQmYK4UuUfqocDPZQ8k+NB5MRKxhD9mc6xZ8dUVY3qtFRNvfZqYbZxg3Hw5ofTfDUQeUKo8FyEwKKoau3rYApVi7ZzPq59LBVCPXvmWLM1AcmT6a+RqOcj7Q/zmh2soYRM0kfPl/EmVbtpH3xb/h+t0dR0ENuIRRbOWoztVb57nbKxqfcima5TXP6DFqLWaei+e2IAq8QwYzpkBvUYrWKByQcC7H1h1aHBDiH5ml5kKUHOqhG47CvpgMNwFEPKpATdDYS/C/+zACAKDQ9mjywG7WTmqNzedlJlqQHntAQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
+ by PH0PR03MB6429.namprd03.prod.outlook.com (2603:10b6:510:b4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 08:37:06 +0000
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
+ 08:37:05 +0000
+From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+To: Dinh Nguyen <dinguyen@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Richard Gong <richard.gong@intel.com>,
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+Subject: [PATCH 1/1] firmware: stratix10-svc: stop kernel thread once service is completed
+Date: Thu,  6 Nov 2025 16:37:00 +0800
+Message-ID: <eadf3b34e55bb7edcae9c149fb321115dd859cf6.1762416980.git.khairul.anuar.romli@altera.com>
+X-Mailer: git-send-email 2.43.7
+In-Reply-To: <cover.1762416980.git.khairul.anuar.romli@altera.com>
+References: <cover.1762416980.git.khairul.anuar.romli@altera.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR05CA0006.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::11) To MN2PR03MB4927.namprd03.prod.outlook.com
+ (2603:10b6:208:1a8::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 7VqEdDCi-EMUYwmD1IBhPhKufOly51CO
-X-Authority-Analysis: v=2.4 cv=Dacaa/tW c=1 sm=1 tr=0 ts=690c5d40 cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
- a=t7CeM3EgAAAA:8 a=xYGITZzX9cmXqUHkxiYA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=poXaRoVlC6wW9_mwW8W4:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
-X-Proofpoint-ORIG-GUID: 7VqEdDCi-EMUYwmD1IBhPhKufOly51CO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA2OSBTYWx0ZWRfXwfczWpc44ZQv
- xn3h25peCqXDgINhlwn0XE1bq3v7TX7pBZEF23K+td8XBOEopZKrUUndLrK9E7WlLbJ0CVBgPgs
- QlVZFQ6B9DilixuYvtIvAqDzqu80hwd3MBhARoUIwj3D0KLY6Cal1BD1e2K40kmpWAAlsiEeSx/
- +ND8PCNtvfuOW+teoG/Yk6mrxd/MTCUOfD3Xuf91swKQQytCB6sn3+/fs9dYjs1CS52WgwhIGFE
- f4ZpWl5KToW5FnBAhONxQaL9U2wi+8oUPpeBbNeP4LRpucPIxz+RE6wyfJNIE2TiX5lwxGu+rqN
- r2b4Vzz3XoAwLlc2LNpzz5+cSRs/8prT+QBUwuzJuMm5vI0E1XaTCPUkBNKV4TnjKGItGe0RnbL
- T6xUr/WjdyU5lvGHgvkWl/P0S161gw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
- clxscore=1011 phishscore=0 adultscore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060069
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH0PR03MB6429:EE_
+X-MS-Office365-Filtering-Correlation-Id: e810659c-8b30-41af-71a2-08de1d0faa27
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Qv7wlEclFIxp7bai36jswD5rD6Jf7QXgAVxkiQTfnAlJ4/eWVvx0+onmcnQn?=
+ =?us-ascii?Q?vMUO4aNQUvHEJALrZykyYCe5fNrFnONKp+y0d9Eh5DU0UNGDCAFBwjaKTFFm?=
+ =?us-ascii?Q?UlDI1zM/ggKTcZzavnlGV2r68POFOqOUlIVyhX0PBW64xsTfd/9aOX89m9Te?=
+ =?us-ascii?Q?hiC3vt3OQsSjCjUFQEd1wZMiUx401edDx/jayw1Kb7OeY3IJL+mIFM+0HIif?=
+ =?us-ascii?Q?hhQaOW2Zr1MxZye5jGeuycG9AmnrHITzaB5RgJMmJc79sGe1sKMvryEfSjH+?=
+ =?us-ascii?Q?l3SMgkZwZoLuzJLwQDiBxpKGcmbX93ef7VJr6mdK7Kb6ToZccqVkzW7wmcf2?=
+ =?us-ascii?Q?ZncmCzhHK9ovQg3WeR90RHxGi2TspfU5/oUUq2+WWT5Fx01wLKrxIIN89a5I?=
+ =?us-ascii?Q?iHJvaxfDlHQxISQ4EB+erZmhi34gKg4khGjdEwDSfLf/N4TBzmY1NlwbtkeQ?=
+ =?us-ascii?Q?2xbS2uy7HJwDVWQoiX/2Z6nAcMqa4pFVjPDDs7dX3LGif0n3gCuGNNPIMPGA?=
+ =?us-ascii?Q?3VV9nSj6e+/3fpHrmAKL+xaY1FBWuDsZioZk5Ehtar831/c4ZxIjqQekpjj1?=
+ =?us-ascii?Q?ALxdve8DQSi0d13XweNG0mSiQmazOFddwn66FuAC1KGCHAh36np53t+3ONQh?=
+ =?us-ascii?Q?hcN92u6SbVcAHRNul3dXl6mYN9axtf3eQNMhb2G64G4aqZjPvoDgbSU9tfXs?=
+ =?us-ascii?Q?UC1G6zUeur26i+OwMYc555nDOFuu3zker9V9bls1wkST3CwR1UK/0CJWcEFx?=
+ =?us-ascii?Q?SutltKhUR7470FAkXI9whLGqQdcEdyvhibTnYH2MHLgntKNSTZI+CzhMadTk?=
+ =?us-ascii?Q?DVyZ5pLzVUxDWnKR1f+/DBP0tqy8/waalza1jafMS1WoVf9mghlYWWKI/Cd4?=
+ =?us-ascii?Q?X/zCOlR6UPfRc4qiTGISOKiR/ZmU1BYdbR2zN6Vqv8Bl2K52QXWKLvZbXDmy?=
+ =?us-ascii?Q?g/3aDd9s1Iaj91Sh3E4vHEo65hWmofcVgFCmbwHvZNDKJZqHoeMTOAiPnAQS?=
+ =?us-ascii?Q?+hG5JZs4oFaEoKUTC0FwT04lBQD0wMURCVzJe2zszW7/rIc4o9Y/ywdJCs+V?=
+ =?us-ascii?Q?ZEeWXbCfz41nJbwO7/hUQCzJaEM6N23NvpN7QI1PGzCf9hx8zjJtNa8IarU+?=
+ =?us-ascii?Q?NBw6i7gVts189SsYO6vhcDGyu2rV52Hc5q6DhCAIe/p1thvQhpQUtl2NraH4?=
+ =?us-ascii?Q?HTtDb+UBed3ncDVyyDLxjcnTXJYh5yJZfQHUTEn0mgN+mjDvOddkLX27DUaT?=
+ =?us-ascii?Q?7Gvf3J1EVBdecexp+pMCvn7Rr/y8K/qSEQoB9e2vXaZt+DbkjO2eySCES4Ra?=
+ =?us-ascii?Q?lXvOt3x2edCWYx7gKOHS9bN6oZhmwPEmM+/GqN/g+NAZKWg5mc1gySp+OqiF?=
+ =?us-ascii?Q?39MtzPSUwquyzV0V7UJjstlAqk1Gb0CYsIVNLKlEmXTPHoJp02dcacpfMaqw?=
+ =?us-ascii?Q?OYMFewqgPXyD0MBJFcCuLWKUDOONfCZA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?237kI2s3txIAYfY20bQu0iWxzEF0ORQ/+RCzysDlAv0tYoSCaUv9v9wB/a6l?=
+ =?us-ascii?Q?MdkP8aGxg6d0yKikAfRFuwNvrj4vmTllmU+3AHSxh+8IknYXKrUiKVtxKF1J?=
+ =?us-ascii?Q?qUqN4CeqPdNTsuVfsTdP5c9XzoBMGJtLyOhiBsX3X9RI5Rr6iiCiFxO1Magg?=
+ =?us-ascii?Q?SscIArb+GL9DTOIr8k+bQbiQhmD1ssxqDzYHq9xaqelfy5ViZ+89G8oTDaQ3?=
+ =?us-ascii?Q?WZx9+Mv0EAg9LY9mvgnfJM3BR3tyWH8wtFyYbyeGl2kIVlIGs59V/UrRuV8G?=
+ =?us-ascii?Q?XYRSBtd/oDAxXJnix3psiFLmTfMxQEvZZQ02VGmiOymQmA2Ngaacc+7Ak8GA?=
+ =?us-ascii?Q?GW8qd6CNdx1u+62ucTbTcWVyoBrHIjL86OuC/Htq99q0/HGVXpZyOtshqaoC?=
+ =?us-ascii?Q?DwZdkqFys3chuKnN5ny6DEazktYt04BuLp6RflQPYy7+R1V1fAJFD5zNTYaO?=
+ =?us-ascii?Q?Sg2b7LZ6LBqvJo/dQwJSLdH6AIxoPHLpcHLRZCt8mqeurEPox+h9tbRf6fK6?=
+ =?us-ascii?Q?KQfJtzEhir4+waLAO1zogTsq2elkBezygQCwaPuC7Xw/cw7OXx9RZChcJQq0?=
+ =?us-ascii?Q?+UwMNpeAfxAdwVj2QOvMsP6Gmhv/BOAcyxDbUo2iJZ9xisptpgtCER04SrZe?=
+ =?us-ascii?Q?13PQ9qm8R49H9HKpUs/3L3itILme6W14ythDx0IpYjqRfD3IFB4mbiJGrMZ7?=
+ =?us-ascii?Q?TYSnCTGW0EqNAtvy2Gvpqa6KgJIG3TbUlrxWzvH2IRHT4HgDizBfCgrUyQtM?=
+ =?us-ascii?Q?s6clmMncj8pJ/pWnQFVb2qfNMEcCEqqV4IG1SXY7HDTpUv3nUZ2PfOzsC7OD?=
+ =?us-ascii?Q?0SgJ0LgSuvSXwSC86vOypCX916ttl/C9oTAvs2TrCmf4qKuaCKCAHLZmyiLs?=
+ =?us-ascii?Q?cjqhW3UJipQlC4pKhTKtB/vNDDrZTsk9C1RZlBF2ExHEV4JCTC/c07GdZUQY?=
+ =?us-ascii?Q?VMMeqiodBUkKgx6Ey6cDfMQUHNa9hFibN4NETuw3Jk8DirTZX2Y+u4bh5tQx?=
+ =?us-ascii?Q?HUhTQli10Z5dQ+2+yBrISkeeZsKUv1ZX4yaPYbN00AX1r1UJCSYBOnO6jH9r?=
+ =?us-ascii?Q?KjpWZDgkhbpQGi3jRrWtqCMzyzouSA9edW1PLW2/Pl+q2Ac4GfRV6X2ch/0S?=
+ =?us-ascii?Q?i1InX7Clb+XaNqbAXqwniRPy2QGZ0slahFOjKME1kEcrKejFEwHWsae5lx/E?=
+ =?us-ascii?Q?+f293XfAWZmuSfdFBOBAvO5fmVdkn9p6myQzo5wMo+/l6b3zH7BeFGTdqFfp?=
+ =?us-ascii?Q?29u3hfuhN26YPNn4ks18zVgRDbB92jJH1OSusNvQVPeDBEdxrl4PRyNVLA69?=
+ =?us-ascii?Q?iq3QSk7Hdsl6wDr1fxj63XVOd5rjGTUy2J2aQGXmnK7a3DQevtwFLPRXZJvQ?=
+ =?us-ascii?Q?YiXONWrs50jeaIs2nIcXcTDRcvIi9BkWn5Vlha6RV57y5OoKp2v2DDHLxBer?=
+ =?us-ascii?Q?RB+6xW8eFHP0XN5gz9Cm1ySkFFhuXYOq1zjWdUBb5RjWJT0KuUkSGUEM7Y0d?=
+ =?us-ascii?Q?WmPon0TxFOT+/hIURZyuAAmj3x3hAGj0TNx16Zl5j7X+DoMsctYPBax1VaU1?=
+ =?us-ascii?Q?S1+zUtP2iWfxuutInD56BhxQo/byFkkZdhIF8a3IZfhTLTGqiYwFj2WLZpyw?=
+ =?us-ascii?Q?mw=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e810659c-8b30-41af-71a2-08de1d0faa27
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 08:37:05.6120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZQxj3esgWpl+qpq+MosBOQMYUAS1cUTO+MqLhO7M5uLXD0fNwai0Kw3aAzJxwVxB8AxeVx+AQPvA+SMtbhG2Xx0D1CzeTjzY9RBLl8wqibM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB6429
 
-The calculation rule for the actual data length written to the URB's
-transfer buffer differs from that used to allocate the URB's transfer
-buffer, and in this problem, the value used during allocation is smaller.
+This patch resolves a customer-reported issue where the Stratix10 SVC
+service layer caused maximum CPU utilization. The original logic only
+stopped the thread if it was running and there was one or fewer active
+clients. This overly restrictive condition prevented the thread from
+stopping even when the application was active, leading to unnecessary CPU
+consumption.
 
-This ultimately leads to write out-of-bounds errors when writing data to
-the transfer buffer.
+The updated logic now stops the thread whenever it is running, regardless
+of the number of active clients, ensuring better resource management and
+resolving the performance issue.
 
-To prevent out-of-bounds writes to the transfer buffer, a check between
-the size of the bytes to be written and the size of the allocated bytes
-should be added before performing the write operation.
-
-When the written bytes are too large, -EPIPE is returned instead of
--EAGAIN, because returning -EAGAIN might result in push back to ready
-list again.
-
-Based on the context of calculating the bytes to be written here, both
-copy_to_urb() and copy_to_urb_quirk() require a check for the size of
-the bytes to be written before execution.
-
-syzbot reported:
-BUG: KASAN: slab-out-of-bounds in copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
-Write of size 264 at addr ffff88801107b400 by task syz.0.17/5461
-
-Call Trace:
- copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
- prepare_playback_urb+0x953/0x13d0 sound/usb/pcm.c:1611
-
-Reported-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
-Tested-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Fixes: 7ca5ce896524 ("firmware: add Intel Stratix10 service layer driver")
+Cc: stable@vger.kernel.org # 5.4+
+Signed-off-by: Richard Gong <richard.gong@intel.com>
+Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
 ---
- sound/usb/pcm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/firmware/stratix10-svc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
-index 54d01dfd820f..a4c0ea685b8a 100644
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -1606,6 +1606,9 @@ static int prepare_playback_urb(struct snd_usb_substream *subs,
- 				    subs->cur_audiofmt->dsd_bitrev)) {
- 			fill_playback_urb_dsd_bitrev(subs, urb, bytes);
- 		} else {
-+			if (bytes > ctx->buffer_size)
-+				return -EPIPE;
-+
- 			/* usual PCM */
- 			if (!subs->tx_length_quirk)
- 				copy_to_urb(subs, urb, 0, stride, bytes);
+diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+index e3f990d888d7..ec39522711ea 100644
+--- a/drivers/firmware/stratix10-svc.c
++++ b/drivers/firmware/stratix10-svc.c
+@@ -1040,8 +1040,8 @@ EXPORT_SYMBOL_GPL(stratix10_svc_send);
+  */
+ void stratix10_svc_done(struct stratix10_svc_chan *chan)
+ {
+-	/* stop thread when thread is running AND only one active client */
+-	if (chan->ctrl->task && chan->ctrl->num_active_client <= 1) {
++	/* stop thread when thread is running */
++	if (chan->ctrl->task) {
+ 		pr_debug("svc_smc_hvc_shm_thread is stopped\n");
+ 		kthread_stop(chan->ctrl->task);
+ 		chan->ctrl->task = NULL;
 -- 
-2.43.0
+2.43.7
 
 
