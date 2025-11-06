@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-889394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C6BC3D73A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:05:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2ADC3D731
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7201891AD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D37E3B7186
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878E0305E09;
-	Thu,  6 Nov 2025 21:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F413C304BA0;
+	Thu,  6 Nov 2025 21:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNOLYOZI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHZMFbAD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51770303CA1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45438303CA0
 	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762463038; cv=none; b=LkX6Sl7OaZWHq7wVAw3jJf9X4PfZHOpjb8bkU4IHeFFZoM7yXuGCPc7/lOZ6hbKM4apvdquUf+2n4PhvNqJzqTs5D/CT3O5O00H2rgzV996yp6dY9i/17mKxyOgtZ7fV3s9JoqzBbuqOPpZmETwMC9MDqS4yJNE5ZNBzoF8HPOk=
+	t=1762463038; cv=none; b=E+7t74wRsAOGQE3UPoa3peI03BRPFCZA8DJ5p883yw+bY/SBJ53IxM4NUx/DvyhsHJbqaMx2W1RrSPRfj+CcjOt2B2hq5bhPTp8BqSjHtys1ThmDIqOwl0wmuhJWRiV6Gnk+GA+IQGuvZEFPmuV872rLH7RIoqMVphxs4Co5KII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762463038; c=relaxed/simple;
-	bh=voCNL6Frp/bCeX0n8ab8z3IJn8JPD5gDRgf0KDYYEA4=;
+	bh=tJVTfvIahPAX1PxDS/vCqXJD0uo0I5JkC53Sw22Tl1Q=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ONZK2nsCCYMeBTFuF4rEhCcA3ovh1Vrere/RrumH3c71apZHf/kamJP9aO1GhnOg7x0X+UStZMkZCp8/Rx+Ck98SMIjaJZoDrGIHxoTtVxMenrFG1KTcj2l1UeQ9PukyQpAplIJKKWVMxeICAL736aH63o06YJE49zshcLfH1s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNOLYOZI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D5CC2BC86;
-	Thu,  6 Nov 2025 21:03:57 +0000 (UTC)
+	 Content-Type; b=EGLUCwmfn9m9Cmqd/07Z5H9tS8MizOqsKY7NUaMysHf093TFn1DbefNZE2P4yZXVJX8pE0Vw5dFWlcOucugzfYUj73mLbiV/MFUBxAJCwLZX3Co+dl7mxkYjdUyEyRFlOdKtOd9MLZHa7Zxcx87adToT15+DIde4Y3sQWJ7JcEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHZMFbAD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2049BC116C6;
+	Thu,  6 Nov 2025 21:03:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762463037;
-	bh=voCNL6Frp/bCeX0n8ab8z3IJn8JPD5gDRgf0KDYYEA4=;
+	s=k20201202; t=1762463038;
+	bh=tJVTfvIahPAX1PxDS/vCqXJD0uo0I5JkC53Sw22Tl1Q=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=MNOLYOZIxSABILKahp2sC4pu7ujQbMQLEUaNJbj34g/5wHvDsva3bW6Eua3Q/WyRL
-	 y/Ctgs1651DZVDAuzbf1jiGMvvYSXaaGcGhiXDo6ZPsLCrSZ8IFMg/2e6ZShip3NFQ
-	 lwTGffGa7acnKCy2Fap7ivfSir/Bn8i8yWVGd9qxHUeYf5QU6AZZF4VFSfVGhJ9uXb
-	 cdSFZ/DPVhAJmUZDZW+bTDW8PYmy0XdY13ClhaSkemO7N9+1gvlesRLtgQl/FKM9Mt
-	 rsLrQzbMssdLiFOIClMM49fGNGF0s3SsK28jyP7PnzPbBi6lrHL7HFXoZ3FdBK+hC7
-	 F3Cr6jEqZk71A==
+	b=bHZMFbADskIWZrWLOWxe+rUPX2YIoi/AfJF55ev9WpZRnZHJ59mDWieIhw2K5CGpI
+	 NwnJKMddLqURIQ75lIKZIyK54hukWk+2z2VRY+VFn0xFY3msBYQpNnrtdsvfnnLehN
+	 Tv5nRYzyawXBmVNJHwtGpz7aAfL1C3hqs0hPu6hCNYwBrLhVHk6ml94UcEyASAp+Po
+	 iHH1iQjV5AVEvlYkgzzeYQZT8KHJqGVkjrRTAHU+kTMd8mk7Ro7by1cYlHosyftUdw
+	 vaFnPUVyIZWlORTkm2ttq38IsbbuaCfGegkqk/qh4qcEAFF0iUxLI2MTJqCAOoP77x
+	 4vUxM5yEEmA9w==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vH79B-000000008Cq-2h6Y;
+	id 1vH79B-000000008DK-3OAE;
 	Thu, 06 Nov 2025 16:03:57 -0500
-Message-ID: <20251106210357.498967804@kernel.org>
+Message-ID: <20251106210357.662018725@kernel.org>
 User-Agent: quilt/0.68
-Date: Thu, 06 Nov 2025 16:03:35 -0500
+Date: Thu, 06 Nov 2025 16:03:36 -0500
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 4/7] tracing: Remove dummy options and flags
+Subject: [for-next][PATCH 5/7] tracing: Have add_tracer_options() error pass up to callers
 References: <20251106210331.537317097@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,122 +65,186 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-When a tracer does not define their own flags, dummy options and flags are
-used so that the values are always valid. There's not that many locations
-that reference these values so having dummy versions just complicates the
-code. Remove the dummy values and just check for NULL when appropriate.
+The function add_tracer_options() can fail, but currently it is ignored.
+Pass the status of add_tracer_options() up to adding a new tracer as well
+as when an instance is created. Have the instance creation fail if the
+add_tracer_options() fail.
+
+Only print a warning for the top level instance, like it does with other
+failures.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://patch.msgid.link/20251105161935.206093132@kernel.org
+Link: https://patch.msgid.link/20251105161935.375299297@kernel.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 48 +++++++++++++++-----------------------------
- 1 file changed, 16 insertions(+), 32 deletions(-)
+ kernel/trace/trace.c | 55 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 21 deletions(-)
 
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 0e822db5d9e4..afeaa9a164e9 100644
+index afeaa9a164e9..ed929d331e1d 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -94,17 +94,6 @@ static bool tracepoint_printk_stop_on_boot __initdata;
- static bool traceoff_after_boot __initdata;
- static DEFINE_STATIC_KEY_FALSE(tracepoint_printk_key);
+@@ -2302,7 +2302,7 @@ static inline int do_run_tracer_selftest(struct tracer *type)
+ }
+ #endif /* CONFIG_FTRACE_STARTUP_TEST */
  
--/* For tracers that don't implement custom flags */
--static struct tracer_opt dummy_tracer_opt[] = {
--	{ }
--};
--
--static int
--dummy_set_flag(struct trace_array *tr, u32 old_flags, u32 bit, int set)
--{
--	return 0;
--}
--
- /*
-  * To prevent the comm cache from being overwritten when no
-  * tracing is active, only save the comm when a trace event
-@@ -2356,23 +2345,9 @@ int __init register_tracer(struct tracer *type)
- 		}
- 	}
+-static void add_tracer_options(struct trace_array *tr, struct tracer *t);
++static int add_tracer_options(struct trace_array *tr, struct tracer *t);
  
--	if (!type->set_flag)
--		type->set_flag = &dummy_set_flag;
--	if (!type->flags) {
--		/*allocate a dummy tracer_flags*/
--		type->flags = kmalloc(sizeof(*type->flags), GFP_KERNEL);
--		if (!type->flags) {
--			ret = -ENOMEM;
--			goto out;
--		}
--		type->flags->val = 0;
--		type->flags->opts = dummy_tracer_opt;
--	} else
--		if (!type->flags->opts)
--			type->flags->opts = dummy_tracer_opt;
--
- 	/* store the tracer for __set_tracer_option */
--	type->flags->trace = type;
-+	if (type->flags)
-+		type->flags->trace = type;
+ static void __init apply_trace_boot_options(void);
  
- 	ret = do_run_tracer_selftest(type);
+@@ -2353,9 +2353,14 @@ int __init register_tracer(struct tracer *type)
  	if (ret < 0)
-@@ -5159,14 +5134,12 @@ static int tracing_trace_options_show(struct seq_file *m, void *v)
+ 		goto out;
+ 
++	ret = add_tracer_options(&global_trace, type);
++	if (ret < 0) {
++		pr_warn("Failed to create tracer options for %s\n", type->name);
++		goto out;
++	}
++
+ 	type->next = trace_types;
+ 	trace_types = type;
+-	add_tracer_options(&global_trace, type);
+ 
+  out:
+ 	mutex_unlock(&trace_types_lock);
+@@ -6221,7 +6226,7 @@ int tracing_update_buffers(struct trace_array *tr)
+ 
+ struct trace_option_dentry;
+ 
+-static void
++static int
+ create_trace_option_files(struct trace_array *tr, struct tracer *tracer);
+ 
+ /*
+@@ -6243,17 +6248,17 @@ static void tracing_set_nop(struct trace_array *tr)
+ 
+ static bool tracer_options_updated;
+ 
+-static void add_tracer_options(struct trace_array *tr, struct tracer *t)
++static int add_tracer_options(struct trace_array *tr, struct tracer *t)
  {
- 	struct tracer_opt *trace_opts;
- 	struct trace_array *tr = m->private;
-+	struct tracer *trace;
- 	u32 tracer_flags;
+ 	/* Only enable if the directory has been created already. */
+ 	if (!tr->dir && !(tr->flags & TRACE_ARRAY_FL_GLOBAL))
+-		return;
++		return 0;
+ 
+ 	/* Only create trace option files after update_tracer_options finish */
+ 	if (!tracer_options_updated)
+-		return;
++		return 0;
+ 
+-	create_trace_option_files(tr, t);
++	return create_trace_option_files(tr, t);
+ }
+ 
+ int tracing_set_tracer(struct trace_array *tr, const char *buf)
+@@ -9585,7 +9590,7 @@ create_trace_option_file(struct trace_array *tr,
+ 
+ }
+ 
+-static void
++static int
+ create_trace_option_files(struct trace_array *tr, struct tracer *tracer)
+ {
+ 	struct trace_option_dentry *topts;
+@@ -9596,24 +9601,24 @@ create_trace_option_files(struct trace_array *tr, struct tracer *tracer)
  	int i;
  
- 	guard(mutex)(&trace_types_lock);
+ 	if (!tracer)
+-		return;
++		return 0;
  
--	tracer_flags = tr->current_trace->flags->val;
--	trace_opts = tr->current_trace->flags->opts;
--
- 	for (i = 0; trace_options[i]; i++) {
- 		if (tr->trace_flags & (1ULL << i))
- 			seq_printf(m, "%s\n", trace_options[i]);
-@@ -5174,6 +5147,13 @@ static int tracing_trace_options_show(struct seq_file *m, void *v)
- 			seq_printf(m, "no%s\n", trace_options[i]);
+ 	flags = tracer->flags;
+ 
+ 	if (!flags || !flags->opts)
+-		return;
++		return 0;
+ 
+ 	/*
+ 	 * If this is an instance, only create flags for tracers
+ 	 * the instance may have.
+ 	 */
+ 	if (!trace_ok_for_array(tracer, tr))
+-		return;
++		return 0;
+ 
+ 	for (i = 0; i < tr->nr_topts; i++) {
+ 		/* Make sure there's no duplicate flags. */
+ 		if (WARN_ON_ONCE(tr->topts[i].tracer->flags == tracer->flags))
+-			return;
++			return -EINVAL;
  	}
  
-+	trace = tr->current_trace;
-+	if (!trace->flags || !trace->flags->opts)
+ 	opts = flags->opts;
+@@ -9623,13 +9628,13 @@ create_trace_option_files(struct trace_array *tr, struct tracer *tracer)
+ 
+ 	topts = kcalloc(cnt + 1, sizeof(*topts), GFP_KERNEL);
+ 	if (!topts)
+-		return;
 +		return 0;
-+
-+	tracer_flags = tr->current_trace->flags->val;
-+	trace_opts = tr->current_trace->flags->opts;
-+
- 	for (i = 0; trace_opts[i].name; i++) {
- 		if (tracer_flags & trace_opts[i].bit)
- 			seq_printf(m, "%s\n", trace_opts[i].name);
-@@ -5189,9 +5169,10 @@ static int __set_tracer_option(struct trace_array *tr,
- 			       struct tracer_opt *opts, int neg)
+ 
+ 	tr_topts = krealloc(tr->topts, sizeof(*tr->topts) * (tr->nr_topts + 1),
+ 			    GFP_KERNEL);
+ 	if (!tr_topts) {
+ 		kfree(topts);
+-		return;
++		return -ENOMEM;
+ 	}
+ 
+ 	tr->topts = tr_topts;
+@@ -9644,6 +9649,7 @@ create_trace_option_files(struct trace_array *tr, struct tracer *tracer)
+ 			  "Failed to create trace option: %s",
+ 			  opts[cnt].name);
+ 	}
++	return 0;
+ }
+ 
+ static struct dentry *
+@@ -10094,15 +10100,18 @@ static void init_trace_flags_index(struct trace_array *tr)
+ 		tr->trace_flags_index[i] = i;
+ }
+ 
+-static void __update_tracer_options(struct trace_array *tr)
++static int __update_tracer_options(struct trace_array *tr)
  {
- 	struct tracer *trace = tracer_flags->trace;
--	int ret;
+ 	struct tracer *t;
 +	int ret = 0;
- 
--	ret = trace->set_flag(tr, tracer_flags->val, opts->bit, !neg);
-+	if (trace->set_flag)
-+		ret = trace->set_flag(tr, tracer_flags->val, opts->bit, !neg);
- 	if (ret)
- 		return ret;
- 
-@@ -5210,6 +5191,9 @@ static int set_tracer_option(struct trace_array *tr, char *cmp, int neg)
- 	struct tracer_opt *opts = NULL;
- 	int i;
- 
-+	if (!tracer_flags || !tracer_flags->opts)
-+		return 0;
 +
- 	for (i = 0; tracer_flags->opts[i].name; i++) {
- 		opts = &tracer_flags->opts[i];
++	for (t = trace_types; t && !ret; t = t->next)
++		ret = add_tracer_options(tr, t);
  
+-	for (t = trace_types; t; t = t->next)
+-		add_tracer_options(tr, t);
++	return ret;
+ }
+ 
+-static void update_tracer_options(struct trace_array *tr)
++static __init void update_tracer_options(struct trace_array *tr)
+ {
+ 	guard(mutex)(&trace_types_lock);
+ 	tracer_options_updated = true;
+@@ -10151,9 +10160,13 @@ static int trace_array_create_dir(struct trace_array *tr)
+ 	}
+ 
+ 	init_tracer_tracefs(tr, tr->dir);
+-	__update_tracer_options(tr);
+-
+-	return ret;
++	ret = __update_tracer_options(tr);
++	if (ret) {
++		event_trace_del_tracer(tr);
++		tracefs_remove(tr->dir);
++		return ret;
++	}
++	return 0;
+ }
+ 
+ static struct trace_array *
 -- 
 2.51.0
 
