@@ -1,103 +1,121 @@
-Return-Path: <linux-kernel+bounces-889561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB56C3DE86
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:55:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C938C3DE8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:56:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1628D188D757
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:55:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBBFB4E2070
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C911E35471E;
-	Thu,  6 Nov 2025 23:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DA5354ACB;
+	Thu,  6 Nov 2025 23:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czVbaEl1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j2wvssLd"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA7B357702;
-	Thu,  6 Nov 2025 23:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FFF34FF54
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762473275; cv=none; b=lDlCJNJQsCJlWRMCSE8P0pvIusfu/7QGj2uXU7CCWbrMqxeeYzb8z/080gaQm6aBESO48pegUOf7mRTbH6sRg9x3ZEZo+slnqHuJdCMrh7+qjypWYlfBq8+5sGYGVvSzlQkwua/b0rqyogdaIy7vnRoJnZ2IQdw8JdDytXpsq3I=
+	t=1762473374; cv=none; b=Y5347o9XdnHHBskSxw8wWg2cRi1IoTJX89HbF1eARv5ki2rohhvhpvjsX206pfPe1UBWzSwvQgxBrJVWHhTeX7S8seamh4cNc35aMNNWCrxttgCFjSwG3ghwVMu1k6xZhY06PZH/PYHiFMMYfthTkdTzVobXK8pS5Q9/HxCe1BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762473275; c=relaxed/simple;
-	bh=vacWDoP23+KxKASrx7w9Nsp0tGfB2QguzpyvMEsdfY0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A7yf/dYzpXlcs0ZHwMz3uplEdv/9uWgtR3gLTFRUe4CHPOLrUPFI836en5bKSS2ObXyDhFyWmoZnoJ6CS427aEfeGRyxg9QK25j2fkKorKyBkyJAIKkPz8y23+7XKmVYlmgNhgWxsNQDcLzPRYIf2ntQLav2tS4s20LH83TOaic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czVbaEl1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 453E6C113D0;
-	Thu,  6 Nov 2025 23:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762473274;
-	bh=vacWDoP23+KxKASrx7w9Nsp0tGfB2QguzpyvMEsdfY0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=czVbaEl1cdTwLn5JGM1WjRnyLDcWhzrZxliIBEs5C63XByratweg7kp/XwWDXbkpE
-	 Lk7qI/hHnI7e5ASO6JWJ66I66+/3LXofbXPmO9W5OabHAxUTxuxQGCfp5I5P/oDgKs
-	 SmekLxjueUZTpohjAgvQcl/Lo8yp0KJ3q4hEJPqdorr/1qosw+GZiDDW3eQja0thKv
-	 YtXl8/yAOpmYichNsZ7XxpRcg3MEnAS0NsRSMYr02v9Wpip1wZGvdGBRSbrAXmYQWb
-	 0I9EEkKo970N372vaePr6TXuMOjO35ovZ6hODCgzy67OlghzAfkZvVfEYCHdz1OzCe
-	 rNfRiAlsgeSFQ==
-From: Mark Brown <broonie@kernel.org>
-To: frank.li@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
- kernel@pengutronix.de, festevam@gmail.com, carlos.song@nxp.com
-Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251024055320.408482-1-carlos.song@nxp.com>
-References: <20251024055320.408482-1-carlos.song@nxp.com>
-Subject: Re: [PATCH] spi: imx: keep dma request disabled before dma
- transfer setup
-Message-Id: <176247327113.2483158.8547481870212835167.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 23:54:31 +0000
+	s=arc-20240116; t=1762473374; c=relaxed/simple;
+	bh=et7QnWbxo9CCaBu8sHpUQXNVSyg1OXgkY7ZnpcVDxhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cMhocvFS69EE7IHiGybVMrBEp1SNwG+78o1AYtA22G73AYkXm5oMbFr3TPx0L8BaFdEf8npEYdNj8Ov+Sw33x4JDGkXJjS+xE7ou0OeT0YV0mLw/iS0AqwLWRi/OcekDy9HXP6acnD8ngQwwFw0DEeM7adcFXx3kmXWYV4wHhLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j2wvssLd; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Nov 2025 15:55:59 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762473370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wGQCjkfCEjQXXmAAtqWjaaeJ29j6gKbahZ5m7Q+7IDo=;
+	b=j2wvssLdIAJwGLdiSwv+8Cm3wGBQ0K/g96eIbosBcuZ8GgxR82zGjOHEXkd+yZw5aS+ehK
+	VukZps16+SNYzrm3jTCBoYtnZyn9poIBDqK1gzU4tv9o6Q6wUuLAwGm7RzxhKWcvGfwah8
+	nTekdmNAQVjsqGbIn5SxwPqdIE/HBlY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Leon Huang Fu <leon.huangfu@shopee.com>
+Cc: akpm@linux-foundation.org, cgroups@vger.kernel.org, corbet@lwn.net, 
+	hannes@cmpxchg.org, inwardvessel@gmail.com, jack@suse.cz, joel.granados@kernel.org, 
+	kyle.meyer@hpe.com, lance.yang@linux.dev, laoar.shao@gmail.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mclapinski@google.com, mhocko@kernel.org, muchun.song@linux.dev, 
+	roman.gushchin@linux.dev, yosry.ahmed@linux.dev
+Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
+Message-ID: <blygjeudtqyxk7bhw5ycveofo4e322nycxyvupdnzq3eg7qtpo@cya4bifb2dlk>
+References: <6kh6hle2xp75hrtikasequ7qvfyginz7pyttltx6pkli26iir5@oqjmglatjg22>
+ <20251106033045.41607-1-leon.huangfu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a6db3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106033045.41607-1-leon.huangfu@shopee.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 24 Oct 2025 13:53:20 +0800, carlos.song@nxp.com wrote:
-> Since sdma hardware configure postpone to transfer phase, have to disable
-> dma request before dma transfer setup because there is a hardware
-> limitation on sdma event enable(ENBLn) as below:
+On Thu, Nov 06, 2025 at 11:30:45AM +0800, Leon Huang Fu wrote:
+> On Thu, Nov 6, 2025 at 9:19 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > +Yosry, JP
+> >
+> > On Wed, Nov 05, 2025 at 03:49:16PM +0800, Leon Huang Fu wrote:
+> > > On high-core count systems, memory cgroup statistics can become stale
+> > > due to per-CPU caching and deferred aggregation. Monitoring tools and
+> > > management applications sometimes need guaranteed up-to-date statistics
+> > > at specific points in time to make accurate decisions.
+> >
+> > Can you explain a bit more on your environment where you are seeing
+> > stale stats? More specifically, how often the management applications
+> > are reading the memcg stats and if these applications are reading memcg
+> > stats for each nodes of the cgroup tree.
+> >
+> > We force flush all the memcg stats at root level every 2 seconds but it
+> > seems like that is not enough for your case. I am fine with an explicit
+> > way for users to flush the memcg stats. In that way only users who want
+> > to has to pay for the flush cost.
+> >
 > 
-> "It is thus essential for the Arm platform to program them before any DMA
->  request is triggered to the SDMA, otherwise an unpredictable combination
->  of channels may be started."
+> Thanks for the feedback. I encountered this issue while running the LTP
+> memcontrol02 test case [1] on a 256-core server with the 6.6.y kernel on XFS,
+> where it consistently failed.
 > 
-> [...]
+> I was aware that Yosry had improved the memory statistics refresh mechanism
+> in "mm: memcg: subtree stats flushing and thresholds" [2], so I attempted to
+> backport that patchset to 6.6.y [3]. However, even on the 6.15.0-061500-generic
+> kernel with those improvements, the test still fails intermittently on XFS.
+> 
+> I've created a simplified reproducer that mirrors the LTP test behavior. The
+> test allocates 50 MiB of page cache and then verifies that memory.current and
+> memory.stat's "file" field are approximately equal (within 5% tolerance).
+> 
+> The failure pattern looks like:
+> 
+>   After alloc: memory.current=52690944, memory.stat.file=48496640, size=52428800
+>   Checks: current>=size=OK, file>0=OK, current~=file(5%)=FAIL
+> 
+> Here's the reproducer code and test script (attached below for reference).
+> 
+> To reproduce on XFS:
+>   sudo ./run.sh --xfs
+>   for i in {1..100}; do sudo ./run.sh --run; echo "==="; sleep 0.1; done
+>   sudo ./run.sh --cleanup
+> 
+> The test fails sporadically, typically a few times out of 100 runs, confirming
+> that the improved flush isn't sufficient for this workload pattern.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: imx: keep dma request disabled before dma transfer setup
-      commit: 86d57d9c07d54e8cb385ffe800930816ccdba0c1
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+I was hoping that you have a real world workload/scenario which is
+facing this issue. For the test a simple 'sleep 2' would be enough.
+Anyways that is not an argument against adding an inteface for flushing.
 
 
