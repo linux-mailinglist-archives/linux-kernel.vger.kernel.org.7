@@ -1,247 +1,324 @@
-Return-Path: <linux-kernel+bounces-889189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0100AC3CED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:47:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825F4C3CEBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43BC3AFD4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:45:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B02864E2F36
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC61D34FF6D;
-	Thu,  6 Nov 2025 17:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5E734FF58;
+	Thu,  6 Nov 2025 17:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LQQ5kOPO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f7yUxENe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ED334F246;
-	Thu,  6 Nov 2025 17:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B1534F490
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451085; cv=none; b=qeoBQuj8h/CJucHovB/4zZh9cLmu5bvNebFgOia3OUPFlcqU6BtS534ShllMoUhuC5lO8t/nFd3RuNE5BCXLUFZt96qJQnDC4FCB/aXUpYHjwWTTC9nRGm9Bm21cVvlwTcFrbzdGF5dqzVUCx1ZG+/J1tJ0FVeduxLh/APmKGkg=
+	t=1762451112; cv=none; b=i4L/nY1N9prAmTGspOf3JGUB/GqZKM6tfIdGTAsWZKYf6Nn01gwBfBX5y2noIPTHyHIJFZFFH+G4HqSRV6aqSKpwMI44RrLn9NUnN3lkNsJEfEILCzuLmJ5omxUnjoiPpzCAzCWwwhzymK2LSzW7iW8I3E1iRffArX95sNMfBL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451085; c=relaxed/simple;
-	bh=VfLMnWVZDg6b+wtxUN7DNTsuv1mesxfWQJqFSKOfyKM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KAbhEGe+GqhTA8yVV6CD1WpUkhYnCXgcxdQW334UD5KD0OO8WCyGvEajcif1dGMfx0+A9bFfvN8ed4pmzzn/VCr1hY6VNKsPSLidl04b+d8S6UKN8whyl4Y2nNAb7cxlptMTNELW9P1xq6iXTfZnMGuNp8F46kAAuVVwbruHOGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LQQ5kOPO; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762451083; x=1793987083;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=VfLMnWVZDg6b+wtxUN7DNTsuv1mesxfWQJqFSKOfyKM=;
-  b=LQQ5kOPOkk6E9QeEOpLX0Yt+DSN3sn+yBSWsuf+BLNbyPNzO22kKg0iR
-   6wl+Q+J7p08FJ1oRnqBL4l/hFOxzXXSldOocc1YyWfFh0jO9jx2xkJToc
-   heqM6JLc+4AjyV64f8qenZSGdEfyOmbdYAFiGZei1lBO6nFj3QRa8rOWS
-   czk8uz/zuQLPHeXwLF+VVcYIhOS3c6u+mOBU6paMPc0bfy5JRDpns+7pJ
-   3oQOrcBMgR0/FVG92Lrt8bTubdvhMMlH4meH7JOdjNGeZokhgRwCkVOSS
-   k/ZsXT2motXKSSMdLhno9u6wbSbfD3vGDfWi2m0IW1rwOAWkKDL7CW7tX
-   A==;
-X-CSE-ConnectionGUID: Si/qL2JAQW+sSUCVo8870Q==
-X-CSE-MsgGUID: rIDJ2LFDT868tKhdfbUEkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="82002160"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="82002160"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 09:44:42 -0800
-X-CSE-ConnectionGUID: IVchUY7wSMS80ui52sSxaA==
-X-CSE-MsgGUID: D28/gahHSPKuJiii/5ATmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="187074453"
-Received: from spandruv-desk2.jf.intel.com ([10.88.27.176])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 09:44:42 -0800
-Message-ID: <851e605992395b78490a97e7a6d771eb0c232848.camel@linux.intel.com>
-Subject: Re: [REGRESSION] Intel Turbo Boost stuck disabled on some Clevo
- machines (was: [PATCH] cpufreq: intel_pstate: Unchecked MSR aceess in
- legacy mode)
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, 	mmikowski@kfocus.org
-Date: Thu, 06 Nov 2025 09:44:41 -0800
-In-Reply-To: <20251106113137.5b83bb3f@kf-m2g5>
-References: <20250429210711.255185-1-srinivas.pandruvada@linux.intel.com>
-		<CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
-		<20250910113650.54eafc2b@kf-m2g5>
-		<dda1d8d23407623c99e2f22e60ada1872bca98fe.camel@linux.intel.com>
-		<20250910153329.10dcef9d@kf-m2g5>
-		<db92b8a310d88214e2045a73d3da6d0ffe8606f7.camel@linux.intel.com>
-	 <20251106113137.5b83bb3f@kf-m2g5>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762451112; c=relaxed/simple;
+	bh=ffNg72JjlFH4BvAYZWSxk48ILVTij36r3dT9OUADfoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rWaytSvqg989MsJfiRLszO6K0/YbzTK+87sewTE5KnU3o5RPkJIlYbbDf+gC/GzmfmEcPZ9hYH3f873+TskH4MX9TaBDyb/hM701aCp9GVsXzYSHlmiZ7T0NeL3ZJM+qiO4KjM7yB6OpbctUL8o7Mafb5z38YB6YVPWVTHmlWa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f7yUxENe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762451109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BEkNLyO2sIdqTr7tYvIFogiBy7iPJgUOJQEahlHRhPo=;
+	b=f7yUxENexQiWYzOzcI6Od16KwKO7dplf9Ya9JbHbr1WvnnYpvhdxEKAl3ofk+q68onKYbf
+	KdZDmDk6d/mYpzdb3rH4Zhr3UjzXiXM77o7nm8DnWvLrevte295X7xI0do7M0KQLNue7CN
+	SB4yK1pj3L0r50XXdWO4606mA2xLPlg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-125-GNU5-JzNMKyyJ1dXOEPLPA-1; Thu,
+ 06 Nov 2025 12:45:07 -0500
+X-MC-Unique: GNU5-JzNMKyyJ1dXOEPLPA-1
+X-Mimecast-MFC-AGG-ID: GNU5-JzNMKyyJ1dXOEPLPA_1762451104
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0FD5918002E7;
+	Thu,  6 Nov 2025 17:45:04 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.6])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F35371800361;
+	Thu,  6 Nov 2025 17:44:59 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: David Howells <dhowells@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Stephan Mueller <smueller@chronox.de>,
+	Lukas Wunner <lukas@wunner.de>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	linux-crypto@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/8] lib/crypto: Add ML-DSA signing
+Date: Thu,  6 Nov 2025 17:44:44 +0000
+Message-ID: <20251106174456.31818-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 2025-11-06 at 11:31 -0600, Aaron Rainbolt wrote:
-> On Thu, 06 Nov 2025 07:23:14 -0800
-> srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
->=20
-> > Hi Aaron,
-> >=20
-> > On Wed, 2025-09-10 at 15:33 -0500, Aaron Rainbolt wrote:
-> > > On Wed, 10 Sep 2025 10:15:00 -0700
-> > > srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
-> > > =C2=A0=20
-> > > > On Wed, 2025-09-10 at 11:36 -0500, Aaron Rainbolt wrote:=C2=A0=20
-> > > > > On Wed, 30 Apr 2025 16:29:09 +0200
-> > > > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> > > > > =C2=A0=C2=A0=C2=A0=20
-> > > > > > On Tue, Apr 29, 2025 at 11:07=E2=80=AFPM Srinivas Pandruvada
-> > > > > > <srinivas.pandruvada@linux.intel.com> wrote:=C2=A0=C2=A0=C2=A0=
-=20
-> > > > > > >=20
-> > > > > > > When turbo mode is unavailable on a Skylake-X system,
-> > > > > > > executing
-> > > > > > > the
-> > > > > > > command:
-> > > > > > > "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"
-> > > > > > > results in an unchecked MSR access error: WRMSR to 0x199
-> > > > > > > (attempted to write 0x0000000100001300).=C2=A0=20
-> > Please try the attached patch, if this address this issue.
->=20
-> I can confirm that this patch does resolve the issue when applied to
-> Kubuntu Focus's 6.14 kernel. CPU frequencies are available that
-> require
-> turbo boost, and `cat /sys/devices/system/cpu/intel_pstate` returns
-> `0`. The logs from `dmesg` also indicate that turbo was disabled
-> earlier in boot, but the warnings about turbo being disabled stop
-> appearing later on, even when manipulating the `no_turbo` file:
+Hi Herbert, Eric, et al.,
 
-Thanks for test. I am waiting for some other reporters from Suse to
-confirm.
-I will add your tested by tag.
+Building on the SHA-3 lib-crypto patches now in Eric's tree, here's a set of
+patches does the following:
 
+ (1) Add SHAKE-256 crypto_sig support, generating 32-byte fixed output.  The
+     XOF features aren't available through this.  SHAKE-128 crypto_sig support
+     isn't required for ML-DSA, so I haven't implemented that at this time.
 
-- Srinivas
+ (2) Add ML-DSA signature verification code, extracted from Stephan Mueller's
+     Leancrypto project.  It is accessed through crypto_sig.
 
->=20
-> [=C2=A0=C2=A0 25.893012] intel_pstate: Turbo is disabled
-> [=C2=A0=C2=A0 25.893019] intel_pstate: Turbo disabled by BIOS or unavaila=
-ble on
-> processor
-> [=C2=A0=C2=A0 25.950587] NET: Registered PF_QIPCRTR protocol family
-> [=C2=A0=C2=A0 26.599013] Realtek Internal NBASE-T PHY r8169-0-6c00:00: at=
-tached
-> PHY driver (mii_bus:phy_addr=3Dr8169-0-6c00:00, irq=3DMAC)
-> [=C2=A0=C2=A0 26.725959] ACPI BIOS Error (bug): Could not resolve symbol
-> [\_TZ.ETMD], AE_NOT_FOUND (20240827/psargs-332)
->=20
-> [=C2=A0=C2=A0 26.725976] No Local Variables are initialized for Method [_=
-OSC]
->=20
-> [=C2=A0=C2=A0 26.725978] Initialized Arguments for Method [_OSC]:=C2=A0 (=
-4 arguments
-> defined for method invocation)
-> [=C2=A0=C2=A0 26.725979]=C2=A0=C2=A0 Arg0:=C2=A0=C2=A0 0000000030ddf166 <=
-Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Buffer(16)
-> 5D A8 3B B2 B7 C8 42 35
-> [=C2=A0=C2=A0 26.725991]=C2=A0=C2=A0 Arg1:=C2=A0=C2=A0 0000000002bd3ac4 <=
-Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Integer
-> 0000000000000001
-> [=C2=A0=C2=A0 26.725996]=C2=A0=C2=A0 Arg2:=C2=A0=C2=A0 0000000033eb047e <=
-Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Integer
-> 0000000000000002
-> [=C2=A0=C2=A0 26.725999]=C2=A0=C2=A0 Arg3:=C2=A0=C2=A0 00000000de6cf5f1 <=
-Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Buffer(8)
-> 00 00 00 00 05 00 00 00
->=20
-> [=C2=A0=C2=A0 26.726010] ACPI Error: Aborting method \_SB.IETM._OSC due t=
-o
-> previous error (AE_NOT_FOUND) (20240827/psparse-529)
-> [=C2=A0=C2=A0 26.726056] Consider using thermal netlink events interface
-> [=C2=A0=C2=A0 26.769209] r8169 0000:6c:00.0 enp108s0: Link is Down
-> [=C2=A0=C2=A0 26.857318] zram0: detected capacity change from 0 to 195035=
-136
-> [=C2=A0=C2=A0 26.864390] vboxdrv: Found 32 processor cores/threads
-> [=C2=A0=C2=A0 26.873227] Adding 97517564k swap on /dev/zram0.=C2=A0 Prior=
-ity:-2
-> extents:1 across:97517564k SS
-> [=C2=A0=C2=A0 26.880588] vboxdrv: TSC mode is Invariant, tentative freque=
-ncy
-> 2419194640 Hz
-> [=C2=A0=C2=A0 26.880592] vboxdrv: Successfully loaded version 7.2.4 r1709=
-95
-> (interface 0x00340001)
-> [=C2=A0=C2=A0 26.895725] intel_pstate: Turbo is disabled
-> [=C2=A0=C2=A0 26.895730] intel_pstate: Turbo disabled by BIOS or unavaila=
-ble on
-> processor
-> [=C2=A0=C2=A0 26.943715] iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION:=
- 0x20
-> [=C2=A0=C2=A0 26.943746] iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION=
-: 0x1f
-> [=C2=A0=C2=A0 26.943755] iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
-> [=C2=A0=C2=A0 26.943765] iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x0
-> [=C2=A0=C2=A0 26.944901] iwlwifi 0000:00:14.3: RFIm is deactivated, reaso=
-n =3D 5
-> [=C2=A0=C2=A0 27.045437] iwlwifi 0000:00:14.3: Registered PHC clock: iwlw=
-ifi-
-> PTP, with index: 0
-> [=C2=A0=C2=A0 27.098590] VBoxNetFlt: Successfully started.
-> [=C2=A0=C2=A0 27.101687] VBoxNetAdp: Successfully started.
-> [=C2=A0=C2=A0 27.153602] bridge: filtering via arp/ip/ip6tables is no lon=
-ger
-> available by default. Update your scripts to load br_netfilter if you
-> need this.
-> [=C2=A0=C2=A0 27.851014] loop14: detected capacity change from 0 to 8
-> [=C2=A0=C2=A0 27.895706] r8169 0000:6c:00.0: invalid VPD tag 0xff (size 0=
-) at
-> offset 0; assume missing optional EEPROM
-> [=C2=A0=C2=A0 28.898015] intel_pstate: Turbo is disabled
-> [=C2=A0=C2=A0 28.898021] intel_pstate: Turbo disabled by BIOS or unavaila=
-ble on
-> processor
-> [=C2=A0=C2=A0 31.900781] intel_pstate: Turbo is disabled
-> [=C2=A0=C2=A0 31.900788] intel_pstate: Turbo disabled by BIOS or unavaila=
-ble on
-> processor
-> [=C2=A0=C2=A0 33.959448] Bluetooth: RFCOMM TTY layer initialized
-> [=C2=A0=C2=A0 33.959456] Bluetooth: RFCOMM socket layer initialized
-> [=C2=A0=C2=A0 33.959462] Bluetooth: RFCOMM ver 1.11
-> [=C2=A0=C2=A0 36.903768] intel_pstate: Turbo is disabled
-> [=C2=A0=C2=A0 36.903777] intel_pstate: Turbo disabled by BIOS or unavaila=
-ble on
-> processor
-> [=C2=A0=C2=A0 38.054345] systemd-journald[883]:
-> /var/log/journal/a9e8e3d2041547169b107e1e1a23f2ce/user-1000.journal:
-> Journal file uses a different sequence number ID, rotating.
-> [=C2=A0=C2=A0 39.799560] warning: `kded5' uses wireless extensions which =
-will
-> stop working for Wi-Fi 7 hardware; use nl80211
-> [=C2=A0=C2=A0 40.884365] wlp0s20f3: authenticate with 18:ee:86:8b:16:a2 (=
-local
-> address=3D98:bd:80:8a:e9:27)
-> [=C2=A0=C2=A0 40.885147] wlp0s20f3: send auth to 18:ee:86:8b:16:a2 (try 1=
-/3)
-> [=C2=A0=C2=A0 40.968595] wlp0s20f3: authenticate with 18:ee:86:8b:16:a2 (=
-local
-> address=3D98:bd:80:8a:e9:27)
-> [=C2=A0=C2=A0 40.968603] wlp0s20f3: send auth to 18:ee:86:8b:16:a2 (try 1=
-/3)
-> [=C2=A0=C2=A0 40.980941] wlp0s20f3: authenticated
-> [=C2=A0=C2=A0 40.981904] wlp0s20f3: associate with 18:ee:86:8b:16:a2 (try=
- 1/3)
-> [=C2=A0=C2=A0 41.042933] wlp0s20f3: RX AssocResp from 18:ee:86:8b:16:a2
-> (capab=3D0x1431 status=3D0 aid=3D14)
-> [=C2=A0=C2=A0 41.046917] wlp0s20f3: associated
->=20
-> If you post the patch, I'm happy to add a `Tested-by` tag for it.
-> Thank you for your help!
->=20
-> > Thanks,
-> > Srinivas
->=20
+ (3) Add a kunit test in three installments (due to size) to add some
+     testing for the three different levels of ML-DSA (44, 65 and 87).
+
+ (4) Modify PKCS#7 support to allow kernel module signatures to carry
+     authenticatedAttributes as OpenSSL refuses to let them be opted out of
+     for ML-DSA (CMS_NOATTR).  This adds an extra digest calculation to the
+     process.
+
+ (5) Modify PKCS#7 to pass the authenticatedAttributes directly to the
+     ML-DSA algorithm rather than passing over a digest as is done with RSA
+     as ML-DSA wants to do its own hashing and will add other stuff into
+     the hash.  We could use hashML-DSA or an external mu instead, but they
+     aren't standardised for CMS yet.
+
+ (6) Add support to the PKCS#7 and X.509 parsers for ML-DSA.
+
+ (7) Modify sign-file to handle OpenSSL not permitting CMS_NOATTR with
+     ML-DSA.
+
+ (8) Allow SHA-3 algorithms, including SHAKE256, to be used for the message
+     digest and add ML-DSA to the choice of algorithm with which to sign.
+
+With that, ML-DSA signing appears to work.
+
+This is based on Eric's libcrypto-next branch.
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-pqc
+
+David
+
+Changes
+=======
+ver #7)
+ - Rebased on Eric's tree as that now contains all the necessary SHA-3
+   infrastructure and drop the SHA-3 patches from here.
+ - Added a minimal patch to provide shake256 support for crypto_sig.
+ - Got rid of the memory allocation wrappers.
+ - Removed the ML-DSA keypair generation code and the signing code, leaving
+   only the signature verification code.
+ - Removed the secret key handling code.
+ - Removed the secret keys from the kunit tests and the signing testing.
+ - Removed some unused bits from the ML-DSA code.
+ - Downgraded the kdoc comments to ordinary comments, but keep the markup
+   for easier comparison to Leancrypto.
+
+ver #6)
+ - Added a patch to make the jitterentropy RNG use lib/sha3.
+ - Added back the crypto/sha3_generic changes.
+ - Added ML-DSA implementation (still needs more cleanup).
+ - Added kunit test for ML-DSA.
+ - Modified PKCS#7 to accommodate ML-DSA.
+ - Modified PKCS#7 and X.509 to allow ML-DSA to be specified and used.
+ - Modified sign-file to not use CMS_NOATTR with ML-DSA.
+ - Allowed SHA3 and SHAKE* algorithms for module signing default.
+ - Allowed ML-DSA-{44,65,87} to be selected as the module signing default.
+
+ver #5)
+ - Fix gen-hash-testvecs.py to correctly handle algo names that contain a
+   dash.
+ - Fix gen-hash-testvecs.py to not generate HMAC for SHA3-* or SHAKE* as
+   these don't currently have HMAC variants implemented.
+ - Fix algo names to be correct.
+ - Fix kunit module description as it now tests all SHA3 variants.
+
+ver #4)
+ - Fix a couple of arm64 build problems.
+ - Doc fixes:
+   - Fix the description of the algorithm to be closer to the NIST spec's
+     terminology.
+   - Don't talk of finialising the context for XOFs.
+   - Don't say "Return: None".
+   - Declare the "Context" to be "Any context" and make no mention of the
+     fact that it might use the FPU.
+   - Change "initialise" to "initialize".
+   - Don't warn that the context is relatively large for stack use.
+ - Use size_t for size parameters/variables.
+ - Make the module_exit unconditional.
+ - Dropped the crypto/ dir-affecting patches for the moment.
+
+ver #3)
+ - Renamed conflicting arm64 functions.
+ - Made a separate wrapper API for each algorithm in the family.
+ - Removed sha3_init(), sha3_reinit() and sha3_final().
+ - Removed sha3_ctx::digest_size.
+ - Renamed sha3_ctx::partial to sha3_ctx::absorb_offset.
+ - Refer to the output of SHAKE* as "output" not "digest".
+ - Moved the Iota transform into the one-round function.
+ - Made sha3_update() warn if called after sha3_squeeze().
+ - Simplified the module-load test to not do update after squeeze.
+ - Added Return: and Context: kdoc statements and expanded the kdoc
+   headers.
+ - Added an API description document.
+ - Overhauled the kunit tests.
+   - Only have one kunit test.
+   - Only call the general hash tester on one algo.
+   - Add separate simple cursory checks for the other algos.
+   - Add resqueezing tests.
+   - Add some NIST example tests.
+ - Changed crypto/sha3_generic to use this
+ - Added SHAKE128/256 to crypto/sha3_generic and crypto/testmgr
+ - Folded struct sha3_state into struct sha3_ctx.
+
+ver #2)
+  - Simplify the endianness handling.
+  - Rename sha3_final() to sha3_squeeze() and don't clear the context at the
+    end as it's permitted to continue calling sha3_final() to extract
+    continuations of the digest (needed by ML-DSA).
+  - Don't reapply the end marker to the hash state in continuation
+    sha3_squeeze() unless sha3_update() gets called again (needed by
+    ML-DSA).
+  - Give sha3_squeeze() the amount of digest to produce as a parameter
+    rather than using ctx->digest_size and don't return the amount digested.
+  - Reimplement sha3_final() as a wrapper around sha3_squeeze() that
+    extracts ctx->digest_size amount of digest and then zeroes out the
+    context.  The latter is necessary to avoid upsetting
+    hash-test-template.h.
+  - Provide a sha3_reinit() function to clear the state, but to leave the
+    parameters that indicate the hash properties unaffected, allowing for
+    reuse.
+  - Provide a sha3_set_digestsize() function to change the size of the
+    digest to be extracted by sha3_final().  sha3_squeeze() takes a
+    parameter for this instead.
+  - Don't pass the digest size as a parameter to shake128/256_init() but
+    rather default to 128/256 bits as per the function name.
+  - Provide a sha3_clear() function to zero out the context.
+
+David Howells (8):
+  crypto: Add support for shake256 through crypto_shash
+  crypto: Add ML-DSA/Dilithium verify support
+  crypto: Add ML-DSA-44 pure rejection test vectors as a kunit test
+  crypto: Add ML-DSA-65 pure rejection test vectors as a kunit test
+  crypto: Add ML-DSA-87 pure rejection test vectors as a kunit test
+  pkcs7: Allow the signing algo to calculate the digest itself
+  pkcs7, x509: Add ML-DSA support
+  modsign: Enable ML-DSA module signing
+
+ Documentation/admin-guide/module-signing.rst  |   15 +-
+ certs/Kconfig                                 |   24 +
+ certs/Makefile                                |    3 +
+ crypto/Kconfig                                |    1 +
+ crypto/Makefile                               |    1 +
+ crypto/asymmetric_keys/pkcs7_parser.c         |   19 +-
+ crypto/asymmetric_keys/pkcs7_verify.c         |   52 +-
+ crypto/asymmetric_keys/public_key.c           |    7 +
+ crypto/asymmetric_keys/x509_cert_parser.c     |   24 +
+ crypto/ml_dsa/Kconfig                         |   32 +
+ crypto/ml_dsa/Makefile                        |   20 +
+ crypto/ml_dsa/dilithium.h                     |  547 ++
+ crypto/ml_dsa/dilithium_44.c                  |   33 +
+ crypto/ml_dsa/dilithium_44.h                  |  282 +
+ crypto/ml_dsa/dilithium_65.c                  |   33 +
+ crypto/ml_dsa/dilithium_65.h                  |  282 +
+ crypto/ml_dsa/dilithium_87.c                  |   33 +
+ crypto/ml_dsa/dilithium_87.h                  |  282 +
+ crypto/ml_dsa/dilithium_api.c                 |  429 ++
+ crypto/ml_dsa/dilithium_debug.h               |   49 +
+ crypto/ml_dsa/dilithium_ntt.c                 |   89 +
+ crypto/ml_dsa/dilithium_ntt.h                 |   35 +
+ crypto/ml_dsa/dilithium_pack.h                |  119 +
+ crypto/ml_dsa/dilithium_poly.c                |  377 +
+ crypto/ml_dsa/dilithium_poly.h                |  181 +
+ crypto/ml_dsa/dilithium_poly_c.h              |  141 +
+ crypto/ml_dsa/dilithium_poly_common.h         |   35 +
+ crypto/ml_dsa/dilithium_polyvec.h             |  343 +
+ crypto/ml_dsa/dilithium_polyvec_c.h           |   81 +
+ .../dilithium_pure_rejection_vectors_44.h     |  489 ++
+ .../dilithium_pure_rejection_vectors_65.h     | 4741 ++++++++++++
+ .../dilithium_pure_rejection_vectors_87.h     | 6456 +++++++++++++++++
+ crypto/ml_dsa/dilithium_reduce.h              |   85 +
+ crypto/ml_dsa/dilithium_rounding.c            |  128 +
+ crypto/ml_dsa/dilithium_selftest.c            |  142 +
+ crypto/ml_dsa/dilithium_service_helpers.h     |   99 +
+ crypto/ml_dsa/dilithium_sig.c                 |  334 +
+ crypto/ml_dsa/dilithium_signature_c.c         |  102 +
+ crypto/ml_dsa/dilithium_signature_c.h         |   37 +
+ crypto/ml_dsa/dilithium_signature_helper.c    |   97 +
+ crypto/ml_dsa/dilithium_signature_impl.h      |  370 +
+ crypto/ml_dsa/dilithium_type.h                |  102 +
+ crypto/ml_dsa/dilithium_zetas.c               |   67 +
+ crypto/ml_dsa/signature_domain_separation.c   |  203 +
+ crypto/ml_dsa/signature_domain_separation.h   |   30 +
+ crypto/sha3.c                                 |   42 +
+ include/crypto/public_key.h                   |    1 +
+ include/linux/oid_registry.h                  |    5 +
+ kernel/module/Kconfig                         |    5 +
+ scripts/sign-file.c                           |   26 +-
+ 50 files changed, 17094 insertions(+), 36 deletions(-)
+ create mode 100644 crypto/ml_dsa/Kconfig
+ create mode 100644 crypto/ml_dsa/Makefile
+ create mode 100644 crypto/ml_dsa/dilithium.h
+ create mode 100644 crypto/ml_dsa/dilithium_44.c
+ create mode 100644 crypto/ml_dsa/dilithium_44.h
+ create mode 100644 crypto/ml_dsa/dilithium_65.c
+ create mode 100644 crypto/ml_dsa/dilithium_65.h
+ create mode 100644 crypto/ml_dsa/dilithium_87.c
+ create mode 100644 crypto/ml_dsa/dilithium_87.h
+ create mode 100644 crypto/ml_dsa/dilithium_api.c
+ create mode 100644 crypto/ml_dsa/dilithium_debug.h
+ create mode 100644 crypto/ml_dsa/dilithium_ntt.c
+ create mode 100644 crypto/ml_dsa/dilithium_ntt.h
+ create mode 100644 crypto/ml_dsa/dilithium_pack.h
+ create mode 100644 crypto/ml_dsa/dilithium_poly.c
+ create mode 100644 crypto/ml_dsa/dilithium_poly.h
+ create mode 100644 crypto/ml_dsa/dilithium_poly_c.h
+ create mode 100644 crypto/ml_dsa/dilithium_poly_common.h
+ create mode 100644 crypto/ml_dsa/dilithium_polyvec.h
+ create mode 100644 crypto/ml_dsa/dilithium_polyvec_c.h
+ create mode 100644 crypto/ml_dsa/dilithium_pure_rejection_vectors_44.h
+ create mode 100644 crypto/ml_dsa/dilithium_pure_rejection_vectors_65.h
+ create mode 100644 crypto/ml_dsa/dilithium_pure_rejection_vectors_87.h
+ create mode 100644 crypto/ml_dsa/dilithium_reduce.h
+ create mode 100644 crypto/ml_dsa/dilithium_rounding.c
+ create mode 100644 crypto/ml_dsa/dilithium_selftest.c
+ create mode 100644 crypto/ml_dsa/dilithium_service_helpers.h
+ create mode 100644 crypto/ml_dsa/dilithium_sig.c
+ create mode 100644 crypto/ml_dsa/dilithium_signature_c.c
+ create mode 100644 crypto/ml_dsa/dilithium_signature_c.h
+ create mode 100644 crypto/ml_dsa/dilithium_signature_helper.c
+ create mode 100644 crypto/ml_dsa/dilithium_signature_impl.h
+ create mode 100644 crypto/ml_dsa/dilithium_type.h
+ create mode 100644 crypto/ml_dsa/dilithium_zetas.c
+ create mode 100644 crypto/ml_dsa/signature_domain_separation.c
+ create mode 100644 crypto/ml_dsa/signature_domain_separation.h
+
 
