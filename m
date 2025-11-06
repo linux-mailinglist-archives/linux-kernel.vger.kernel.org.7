@@ -1,179 +1,269 @@
-Return-Path: <linux-kernel+bounces-889530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4288C3DD7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:28:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C73A0C3DD01
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DB4F4E975B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:28:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65D154ED92D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9991351FB7;
-	Thu,  6 Nov 2025 23:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABBC3570B1;
+	Thu,  6 Nov 2025 23:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M0/4RRD7";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCTfgydq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iMZOy2vj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B203570C1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D567C3563C2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762471641; cv=none; b=AhadtP+cgCUHOBesNdXOd0MzjycnTE0MnZUZnaRPEi1RfMY6lDkr1L22O//3TRiheEQKBprLa9RiSRRd0pGYPOzKn1IFVb/ozawnjmLsXpgY+pQ8KcXptRJi44Z+lYmSH9ws7BaAR1ffsspnLI8zOp+I0ZrZ3QZ62OUcojTLtxs=
+	t=1762471228; cv=none; b=Z60T3vhKzqTHarrZbZy4ISsctf5iUeFCKABh3K8iTNZzXtnHARPithZEALExgZ0PEbRdcW5coD0szMf1/T1HqfW9KhqOzgX+rKVqv2ncXVExjbP1tsz1dKBaQyjaHZgNCQ8Pfzv7m4cddZBz0BjenIJAYEMX6Zwj7rIcBRgbP0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762471641; c=relaxed/simple;
-	bh=9iXptdlJzmQYbdsB4jJh8DRjbxMfRMBdZBM5EQuFpPo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k66QRO09sHMFIzwlRO0lbNHh/UkSAbtsrI+LTv25U666+Fmaq2PdRZ34v54m0q9k6CsLfICFUFW9zvc+pBimEDamz3porKiwoNcnE3Ua8riMvDFf8E6NK2bIdH1qigTQTvQoueVOka1NXbsejMZfELz1R7/0KB85bmnrB9nck5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M0/4RRD7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCTfgydq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762471638;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9L/sBg5p+zCSkuU8Rgk43t0p2SpxKRb70QYldBV7fzA=;
-	b=M0/4RRD73TOjOC/srL/Zti/d6viNCFQvtfaa9Xoq7aGJau98zKpF8t6uqpZMsdzPrL4fGF
-	HsGKd0baB9Gi2GuPLRf3mLgnNEUHQYnmhEUUgAwjGsOFY81lI8RvEnxKBKpDwO0kXh6gUX
-	5/PKn77fFbON30fUt9NrWZQaUhZGec8=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-4dOn_i7mOuiVqmyChtaPHw-1; Thu, 06 Nov 2025 18:27:17 -0500
-X-MC-Unique: 4dOn_i7mOuiVqmyChtaPHw-1
-X-Mimecast-MFC-AGG-ID: 4dOn_i7mOuiVqmyChtaPHw_1762471637
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8804dd4acafso9004076d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:27:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762471637; x=1763076437; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9L/sBg5p+zCSkuU8Rgk43t0p2SpxKRb70QYldBV7fzA=;
-        b=hCTfgydqWcpYYbxDd0JnTTJLuObO8lAvPKpDfWwnE/KMASe71mBMCgsnGPjWHot2Q9
-         X7wap079XUmaubDxACq8p8jF7Rn4sXYZRkhZyMBEKuYs8L7w70sB9Yh992yU+HW21Jdz
-         /FP3NSp/6/JHMNAu9RuIrGSqVdKCkZnmzF+0Sz0xhOxFXJv3J9aDKMGSC1BaoqkpBn0a
-         gAS7JJVcaQSuZUM4heXfun3SYqgyuxK2bCCL0BiBxUZGnSRE88NNsSDrDgNzSKLRpyVx
-         iGd4OJAFwaGJ60j0B7ne8Y01hrubU86lB56HxBYepkRJn/INxrU6INqPVXktExH7u++B
-         C6Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762471637; x=1763076437;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9L/sBg5p+zCSkuU8Rgk43t0p2SpxKRb70QYldBV7fzA=;
-        b=ONxbTIzLOYZwMYBa8T8OPypj/s5POdRF88FubKsDhzNj5c12nV4S2BbelsD+oRkxcn
-         DEDNn5qJl0uWlWllk11k2vsqSRjhSufAOaVuqwiynO5PqiJrKZxVdzDf/Lf79SKtNnjh
-         Y+p/joqL/j0zqNLLbuk7DWI2SPl0u5AWBcHNoyJ1Yz2veEpj96DndH8ghgGJ6x9ajcSF
-         f3tBmsdxN7LaLcHbcz5Sa36JEBZH5hWPSVPlcu4JwX9P58SA9EoTUQgugXjI59qT24DU
-         Zfu0RhTKZGrimcY5970PWh5RSeCJoq2JlL8fL4wP5eHhXK50b7STbiumv3v7kwWeT1Sp
-         upLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYk1dW5zMHxcYXFEAH6u1m/fBtuuar/8+glhQcd4DFDJ3/NnrX5fPbKxm6RCyhru+EjzYzfpjRShNSliM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1cW3ZDVaewAKkVTIlWCLCz4Ko5Wsf8BUWclSlBg4lCNc6DLQi
-	co/NpWGiS5deo1oe2cCldkbpVjFaTnrKIsCEwmKHLvF690ZlBg0PF68cjXMC2ItFsMV31Ak7eyo
-	bAefgo4SRGUf1MgXO7iVnZU7dMq8wnCOSFvePmmYb1qC4BO9VzVLTesEo1QdF4GCjAw==
-X-Gm-Gg: ASbGncuKu4PP654KAifQYbVhxQVjCgWFFxjJL9zXXuAkj2yZIP7c3dFNjvdIIVgSyOT
-	WD2uXmr1Cv+bAS2maiTnOMwmM/fbICj4YrUD1tZXJ5SOlfVQT0L0V/9RKQbh5HBY7+xpvic5L8/
-	L6mRTMm+a5fCI77w1x1krAdZUq/JOl0DCqDl+4wNUZQ0JbUQrrdpBA7hNz5mtKwJuDekiCLSO0C
-	uACNWT+rGKz8AeIR1ABuQEFScSVPd9DDNrYRfgQXb/8ELPGXRuPUgP6bbQZaqboLeAbRRYH6dIF
-	+7MQr7GWLM5GKXAB+qoV0tvHZn/g9uhylXKxFRaRhDquwICGH5DowDPXA8RnE/hEwPPyhBCQccX
-	l4bfnVNCVABxAvgSj8GwJD9IZsaNoj8kCab9PnmkIbw==
-X-Received: by 2002:a05:6214:810f:b0:882:2b58:af05 with SMTP id 6a1803df08f44-8822b58af3fmr5877116d6.48.1762471637086;
-        Thu, 06 Nov 2025 15:27:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG1XCrROxUSSUDeHa7EYXOjY7BlUSEU+1KN5k26BLJ97420LzOY9XBUmBbdolqjriVUn6gaKw==
-X-Received: by 2002:a05:6214:810f:b0:882:2b58:af05 with SMTP id 6a1803df08f44-8822b58af3fmr5876876d6.48.1762471636685;
-        Thu, 06 Nov 2025 15:27:16 -0800 (PST)
-Received: from [10.197.115.224] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88082a3aa91sm27389196d6.56.2025.11.06.15.27.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 15:27:15 -0800 (PST)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 06 Nov 2025 18:25:55 -0500
-Subject: [PATCH v2 RESEND 9/9] phy: ti: phy-j721e-wiz: convert from
- round_rate() to determine_rate()
+	s=arc-20240116; t=1762471228; c=relaxed/simple;
+	bh=T3RJFoH+nuwdeanLQGJHH7JSy/tIyQuVHHfys3kvoXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d/iC1RKQBP1Tbb5mRmwN0FWjgG7S6VCTP74dNkbpKwmO0D1v5mIwR5S7QXNKJxVA54u25HheYWo19JN2SpIPWPfkVPfBueN2Lxo0kxbo2Cp3ttcaiVyOIbGiozMCRA4NaG+aRkLxc7zVNXdcFdeB1pZxegHSAx0aq7+KO6e2mxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iMZOy2vj; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762471226; x=1794007226;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=T3RJFoH+nuwdeanLQGJHH7JSy/tIyQuVHHfys3kvoXo=;
+  b=iMZOy2vjDZNkF7Esasa5AjusGXXpsSv3bdFh+8xgx4LfyDacXoecDy1s
+   DmMyGEWGv5OAPa9Ff6NgVyF6dfVkdKh3B7eNwYjIrJXtpKd/afgPbGBLP
+   NyKrqIJLrDtlkdXU+i812YHK8XDIHxPDgxOc+P8PzDjfAkFb/MuGVHnVg
+   94b3VG6sUgsSexjUxUNzGtBvFdA2vhRxa4fATema/spk8y/N+gCp0WUOy
+   JpAeyoMLHQ634TROPYp/SoDUVTJcPLI8WWgnxAepD2YFq1iOPe3w4OW8q
+   +se10eEBmF83juKML/777O8KGLRV1jnaAptBz/KuXoIaA/U7/BGXl0hmr
+   A==;
+X-CSE-ConnectionGUID: 7T3Y8mfxRQ6MiYe+4xoYVQ==
+X-CSE-MsgGUID: u9EhERobQoCa6zJNPz1rvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="75311748"
+X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
+   d="scan'208";a="75311748"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 15:20:25 -0800
+X-CSE-ConnectionGUID: R1GT/0trQUGRMNFJE+V8qg==
+X-CSE-MsgGUID: jc4BtH3iSmibiBonSf/5Qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
+   d="scan'208";a="191988067"
+Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
+  by orviesa003.jf.intel.com with ESMTP; 06 Nov 2025 15:20:25 -0800
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Doug Nelson <doug.nelson@intel.com>,
+	Mohini Narkhede <mohini.narkhede@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: [PATCH v3] sched/fair: Skip sched_balance_running cmpxchg when balance is not due
+Date: Thu,  6 Nov 2025 15:27:02 -0800
+Message-Id: <52fcd1e8582a6b014a70f0ce7795ce0d88cd63a8.1762470554.git.tim.c.chen@linux.intel.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-phy-clk-route-rate-v2-resend-v1-9-e2058963bfb1@redhat.com>
-References: <20251106-phy-clk-route-rate-v2-resend-v1-0-e2058963bfb1@redhat.com>
-In-Reply-To: <20251106-phy-clk-route-rate-v2-resend-v1-0-e2058963bfb1@redhat.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Chunfeng Yun <chunfeng.yun@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1629; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=9iXptdlJzmQYbdsB4jJh8DRjbxMfRMBdZBM5EQuFpPo=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ59RbO/3Cz6ImvwxqVjjs9Zh9cXkt4xi/3tFVrrZvCq
- FzoYa7RUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwETctzMyrN97Xj/FqOTyx8Oe
- BVe/fe0KOWr9ZnGj8AlvNc/C2uUJqxn+p125kiPwTLJszq/Ph01tT7ZsTxc15DEN4BHV5fj7Yrc
- TLwA=
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Transfer-Encoding: 8bit
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
+The NUMA sched domain sets the SD_SERIALIZE flag by default, allowing
+only one NUMA load balancing operation to run system-wide at a time.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
+Currently, each sched group leader directly under NUMA domain attempts
+to acquire the global sched_balance_running flag via cmpxchg() before
+checking whether load balancing is due or whether it is the designated
+load balancer for that NUMA domain. On systems with a large number
+of cores, this causes significant cache contention on the shared
+sched_balance_running flag.
+
+This patch reduces unnecessary cmpxchg() operations by first checking
+that the balancer is the designated leader for a NUMA domain from
+should_we_balance(), and the balance interval has expired before
+trying to acquire sched_balance_running to load balance a NUMA
+domain.
+
+On a 2-socket Granite Rapids system with sub-NUMA clustering enabled,
+running an OLTP workload, 7.8% of total CPU cycles were previously spent
+in sched_balance_domain() contending on sched_balance_running before
+this change.
+
+         : 104              static __always_inline int arch_atomic_cmpxchg(atomic_t *v, int old, int new)
+         : 105              {
+         : 106              return arch_cmpxchg(&v->counter, old, new);
+    0.00 :   ffffffff81326e6c:       xor    %eax,%eax
+    0.00 :   ffffffff81326e6e:       mov    $0x1,%ecx
+    0.00 :   ffffffff81326e73:       lock cmpxchg %ecx,0x2394195(%rip)        # ffffffff836bb010 <sched_balance_running>
+         : 110              sched_balance_domains():
+         : 12234            if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+   99.39 :   ffffffff81326e7b:       test   %eax,%eax
+    0.00 :   ffffffff81326e7d:       jne    ffffffff81326e99 <sched_balance_domains+0x209>
+         : 12238            if (time_after_eq(jiffies, sd->last_balance + interval)) {
+    0.00 :   ffffffff81326e7f:       mov    0x14e2b3a(%rip),%rax        # ffffffff828099c0 <jiffies_64>
+    0.00 :   ffffffff81326e86:       sub    0x48(%r14),%rax
+    0.00 :   ffffffff81326e8a:       cmp    %rdx,%rax
+
+After applying this fix, sched_balance_domain() is gone from the profile
+and there is a 5% throughput improvement.
+
+Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+
 ---
- drivers/phy/ti/phy-j721e-wiz.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+v3:
+1. Move check balance time to after should_we_balance()
+link to v2: https://lore.kernel.org/lkml/248b775fc9030989c829d4061f6f85ae33dabe45.1761682932.git.tim.c.chen@linux.intel.com/
 
-diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
-index a8b440c6c46bb0c754845655f9c2c0ba6b435b8d..cbc98d4dec74560e6403fb899ebe2bb916440f45 100644
---- a/drivers/phy/ti/phy-j721e-wiz.c
-+++ b/drivers/phy/ti/phy-j721e-wiz.c
-@@ -934,12 +934,15 @@ static unsigned long wiz_clk_div_recalc_rate(struct clk_hw *hw,
- 	return divider_recalc_rate(hw, parent_rate, val, div->table, 0x0, 2);
+v2:
+1. Rearrange the patch to get rid of an indent level per Peter's
+   suggestion.
+2. Updated the data from new run by OLTP team.
+
+link to v1: https://lore.kernel.org/lkml/e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com/
+
+---
+ kernel/sched/fair.c | 56 ++++++++++++++++++++++++---------------------
+ 1 file changed, 30 insertions(+), 26 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 25970dbbb279..c3bbff9b582d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11732,6 +11732,21 @@ static void update_lb_imbalance_stat(struct lb_env *env, struct sched_domain *sd
+ 	}
  }
  
--static long wiz_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
--				   unsigned long *prate)
-+static int wiz_clk_div_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
- {
- 	struct wiz_clk_divider *div = to_wiz_clk_div(hw);
- 
--	return divider_round_rate(hw, rate, prate, div->table, 2, 0x0);
-+	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
-+				       div->table, 2, 0x0);
++/*
++ * This flag serializes load-balancing passes over large domains
++ * (above the NODE topology level) - only one load-balancing instance
++ * may run at a time, to reduce overhead on very large systems with
++ * lots of CPUs and large NUMA distances.
++ *
++ * - Note that load-balancing passes triggered while another one
++ *   is executing are skipped and not re-tried.
++ *
++ * - Also note that this does not serialize rebalance_domains()
++ *   execution, as non-SD_SERIALIZE domains will still be
++ *   load-balanced in parallel.
++ */
++static atomic_t sched_balance_running = ATOMIC_INIT(0);
 +
-+	return 0;
+ /*
+  * Check this_cpu to ensure it is balanced within domain. Attempt to move
+  * tasks if there is an imbalance.
+@@ -11757,6 +11772,7 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+ 		.fbq_type	= all,
+ 		.tasks		= LIST_HEAD_INIT(env.tasks),
+ 	};
++	int need_unlock = false;
+ 
+ 	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
+ 
+@@ -11768,6 +11784,13 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+ 		goto out_balanced;
+ 	}
+ 
++	if (idle != CPU_NEWLY_IDLE && (sd->flags & SD_SERIALIZE)) {
++		if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1)) {
++			goto out_balanced;
++		}
++		need_unlock = true;
++	}
++
+ 	group = sched_balance_find_src_group(&env);
+ 	if (!group) {
+ 		schedstat_inc(sd->lb_nobusyg[idle]);
+@@ -11892,6 +11915,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+ 			if (!cpumask_subset(cpus, env.dst_grpmask)) {
+ 				env.loop = 0;
+ 				env.loop_break = SCHED_NR_MIGRATE_BREAK;
++				if (need_unlock)
++					atomic_set_release(&sched_balance_running, 0);
++
+ 				goto redo;
+ 			}
+ 			goto out_all_pinned;
+@@ -12008,6 +12034,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+ 	    sd->balance_interval < sd->max_interval)
+ 		sd->balance_interval *= 2;
+ out:
++	if (need_unlock)
++		atomic_set_release(&sched_balance_running, 0);
++
+ 	return ld_moved;
  }
  
- static int wiz_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -958,7 +961,7 @@ static int wiz_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -12132,21 +12161,6 @@ static int active_load_balance_cpu_stop(void *data)
+ 	return 0;
+ }
  
- static const struct clk_ops wiz_clk_div_ops = {
- 	.recalc_rate = wiz_clk_div_recalc_rate,
--	.round_rate = wiz_clk_div_round_rate,
-+	.determine_rate = wiz_clk_div_determine_rate,
- 	.set_rate = wiz_clk_div_set_rate,
- };
+-/*
+- * This flag serializes load-balancing passes over large domains
+- * (above the NODE topology level) - only one load-balancing instance
+- * may run at a time, to reduce overhead on very large systems with
+- * lots of CPUs and large NUMA distances.
+- *
+- * - Note that load-balancing passes triggered while another one
+- *   is executing are skipped and not re-tried.
+- *
+- * - Also note that this does not serialize rebalance_domains()
+- *   execution, as non-SD_SERIALIZE domains will still be
+- *   load-balanced in parallel.
+- */
+-static atomic_t sched_balance_running = ATOMIC_INIT(0);
+-
+ /*
+  * Scale the max sched_balance_rq interval with the number of CPUs in the system.
+  * This trades load-balance latency on larger machines for less cross talk.
+@@ -12202,7 +12216,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 	/* Earliest time when we have to do rebalance again */
+ 	unsigned long next_balance = jiffies + 60*HZ;
+ 	int update_next_balance = 0;
+-	int need_serialize, need_decay = 0;
++	int need_decay = 0;
+ 	u64 max_cost = 0;
  
-
+ 	rcu_read_lock();
+@@ -12226,13 +12240,6 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 		}
+ 
+ 		interval = get_sd_balance_interval(sd, busy);
+-
+-		need_serialize = sd->flags & SD_SERIALIZE;
+-		if (need_serialize) {
+-			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+-				goto out;
+-		}
+-
+ 		if (time_after_eq(jiffies, sd->last_balance + interval)) {
+ 			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+ 				/*
+@@ -12246,9 +12253,6 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 			sd->last_balance = jiffies;
+ 			interval = get_sd_balance_interval(sd, busy);
+ 		}
+-		if (need_serialize)
+-			atomic_set_release(&sched_balance_running, 0);
+-out:
+ 		if (time_after(next_balance, sd->last_balance + interval)) {
+ 			next_balance = sd->last_balance + interval;
+ 			update_next_balance = 1;
 -- 
-2.51.0
+2.32.0
 
 
