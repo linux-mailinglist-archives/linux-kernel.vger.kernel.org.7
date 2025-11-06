@@ -1,113 +1,290 @@
-Return-Path: <linux-kernel+bounces-887841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8BFFC3932E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:02:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDCDC39334
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 315F44EA151
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:02:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4103BA8FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69B82DA746;
-	Thu,  6 Nov 2025 06:02:00 +0000 (UTC)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C732DA753;
+	Thu,  6 Nov 2025 06:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ept7tZwu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4806B2C0F78
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8EF2BE03E;
+	Thu,  6 Nov 2025 06:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762408920; cv=none; b=uU7l+oI5z9BZ9xNKdH2oUbnmLPJf8e32SOcEJPuBW5Sk6rYNDMJzZ64I+y77RM9DpX4Spz5xz53uxfCfU1wHcbW8Ft6tMnTy2yQ7ZbRkfGeW/OJS+y0fu9w+N41WEjXFnwxbTdbINyiPe9vZC5k4e2LW/QfgCD+X65se7JQch0E=
+	t=1762409001; cv=none; b=TDFzuKCpxnVgSPxaqTgfhJ2Uo+L72q0/65TW3ckKBr2yjfTs1zl6HCpu7rCdtw3nqS9ExS+uiWBkK2085vYSjHYsohUHSRmkRJ8X0J+sscfnJwMB9ylzqPI1v+9Xsr6SX5k9oSWeJO2UetnoGJh/XNmjjoXt1ojScQpRDH5IU3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762408920; c=relaxed/simple;
-	bh=/EMy/K4xOqVd/TJc3X5qTwSIeGII2QmhmiESeAGTuis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=idGp413CEzG9fwyu/mEF1DFz0FSLxg3PpZtSIm1cZgc1KkDu6z7xmZzHVbfKKJGCN1YgouhHtVU2C62I4H9eLERD+jX/XPVVnYCH6NsaLQLtv0Ds8nn0yPddU5Fv5KEY3wcASL7qMZ0KTeSMNY3ByMfHU5UwKljsJK2zLNGF7GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37a34702a20so4889621fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 22:01:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762408915; x=1763013715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/EMy/K4xOqVd/TJc3X5qTwSIeGII2QmhmiESeAGTuis=;
-        b=Ht+PxDCrmdjSilDnn95mmxf2O0NIt0msu3fi40g6VTFvkzvM9PzqnXC8bPoVeWH1dM
-         48Nm37IIu2ZhjMxq0wEDR5ELTZuhTd2rM3sWrWlFL9I4HR2ta9yrNYqes+2oli4VLmor
-         I4oRoKfzURuyAKlVSpl19l/b6yjoaCrgJ+au6t0Uvft0v/rLRaknaWktfONm3MccJAio
-         cnEKt0fU+xa8Ybo4Tvb83hH/q/F4rZ2UK3sOGpd7zcdA3k725HayK5oZeZayoGIgYGST
-         vplVhmRSPTJgNI3CdOWdgZgMmkQBivgtDBSuNMisglroj5Q1LgScqHabV3VUOiXc/bTF
-         Ua2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXBFgv4JuQ/iC4juVcDZ6UftWqb57X4//skkNEjZPepjlKtBLUYz0+fYagiUaV5t/kPyw742BEgMZhwIBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQoPyR0RIjueWWG2++CfXWPzy1ARD93yMpnJxmfb7SeSqVSxCT
-	em89ZhIqpjiycotbjn0Ej80VOKUVakfQI8HC6gYIpcVyAkxMA/pH5+sqtippng==
-X-Gm-Gg: ASbGncvO3hMTSwFZN+5RioROvijz5YjPTWseDx18zswz6kCwMqR7HOQhlacKeSRYHMP
-	+dNsO75hODHIFuqf/slCCjRDdP9ir2pNAXC+sSgde2OkKe1T06nqwd45CHHuTq0pAMfXzFNHJjs
-	xIz0jL/vXb4LMcPbjaFSMWhsu+UUxtvvu9ekwxvwLnLT9x1rj/K/CwPASsKu+h8/e/3i+lY+MlZ
-	w1e3/+yP1HTPEIwSdWJjae9r0cAcj3LfWJt63jMqBaaVNoJ8igSoQu4if7uXN12jQVlYRlghRyi
-	9ne6H3oI5MH2IzL5JHJr3XPz4j8owhIGpJxF/u4/vtaYnJCiqusFQiIN+M2NQnfx0glqlODaWtH
-	nO8j/alb68Dh190MOmhSYKMnwsThfwDinKsGjmXdGoUjP+S3ail+MkDdc5lF6DARo3NoyfYftEj
-	ZQGJR9rjYwGhNVruo839K+PavGO2LCTUPAfkIURM75h/U=
-X-Google-Smtp-Source: AGHT+IHE/07rzmTGH6JswtR4smnI4AlQ5WOgF2aPnNGFd/nIdotgJVWRqDw0HmMXjbrT2+NgzpXMCQ==
-X-Received: by 2002:a2e:b8d0:0:b0:37a:4bbf:7962 with SMTP id 38308e7fff4ca-37a51475b27mr17121961fa.26.1762408915062;
-        Wed, 05 Nov 2025 22:01:55 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a5f0fd8c2sm3708081fa.48.2025.11.05.22.01.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 22:01:54 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-37a2dcc52aeso5486371fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 22:01:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXbQwhX4asuegtv4ifjD0uKBmykJry7iAeTF8FJplvCng6CU2RO0pD/tNnRgs+k6tygwWCc/utDzDiqTnk=@vger.kernel.org
-X-Received: by 2002:a05:651c:908:b0:37a:2d72:6119 with SMTP id
- 38308e7fff4ca-37a51406a51mr16362171fa.21.1762408914469; Wed, 05 Nov 2025
- 22:01:54 -0800 (PST)
+	s=arc-20240116; t=1762409001; c=relaxed/simple;
+	bh=wf6dbf59RvL8cRrubFJD2UL2fLyYX4BL9MrVrSZpUd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6DLPGMgjbSx96d4Pr09CEEknFWyZVcy7G3LrZrnYVyKBbCendnFbHclzmQfKs7oigWahsUHQECDIZrb19qxxrHh7IkhniWTjf3YdsU5Wcpw26Vyh07UtB7SZUrjx7b8YPu3+CKsl6DHvMByPHmXwD304o5RbvypYpan5gubGBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ept7tZwu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D06DCC4CEF7;
+	Thu,  6 Nov 2025 06:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762409000;
+	bh=wf6dbf59RvL8cRrubFJD2UL2fLyYX4BL9MrVrSZpUd4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ept7tZwuFYEniBbZ8GYtbfTKKO4SZgJnuNqfjetRzDcjIj6LfnhLeDZaDSwoizG1e
+	 1yB3wJnY+31OBGMpXu8ChMXEnIcVipDggSlmL7TsTlfvv0rCcAabRrSMzZ0j6OCVGj
+	 HuKQfNF3juB95LPYqMhQ40ktIDdG/Wpfs3Yk/PSpJbS2lgeWIkcihaIOnYeOxytPc8
+	 cZpVy+1eavKsddDciWDJinrfBufvXrURZIS8R7ouWYr0pj3+PoafJLAsj61SuRHZ8X
+	 lSPfpc/NoJBQjSqzd92GXtjzv46h+rHCrQyr7VY5YKkW9qg/1a9wgzZkhtrFbcO4bJ
+	 QdPmuOjCFAObQ==
+Date: Wed, 5 Nov 2025 22:03:18 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Sumanth Korikkar <sumanthk@linux.ibm.com>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Levi Yun <yeoreum.yun@arm.com>,
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 05/22] perf metricgroup: Add care to picking the evsel
+ for displaying a metric
+Message-ID: <aQw6Jje7bSpywGqq@google.com>
+References: <20251024175857.808401-1-irogers@google.com>
+ <20251024175857.808401-6-irogers@google.com>
+ <aQmGfLVKk0UFGAyd@google.com>
+ <CAP-5=fXmT-1io1k1O5d2QMken9aJmGTiuDEz2f-7k8-n=GCWtA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704154149.3464461-1-paulk@sys-base.io> <aKhFPRP8ILNkKAvy@shepard>
-In-Reply-To: <aKhFPRP8ILNkKAvy@shepard>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 6 Nov 2025 14:01:41 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66=Ppqw+_fpAsRYd_4OBOhbHkk7RetfEXbYmvQ_+hoe7g@mail.gmail.com>
-X-Gm-Features: AWmQ_blhZqLqx77LWLcKS7_dqP43aeZsGzE4L69w_GDVHcl80KjzuIFGb-55rnE
-Message-ID: <CAGb2v66=Ppqw+_fpAsRYd_4OBOhbHkk7RetfEXbYmvQ_+hoe7g@mail.gmail.com>
-Subject: Re: [PATCH] drm/sun4i: Cleanup v3s mixer config fields ordering and indentation
-To: Paul Kocialkowski <paulk@sys-base.io>, Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Samuel Holland <samuel@sholland.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXmT-1io1k1O5d2QMken9aJmGTiuDEz2f-7k8-n=GCWtA@mail.gmail.com>
 
-On Fri, Aug 22, 2025 at 6:24=E2=80=AFPM Paul Kocialkowski <paulk@sys-base.i=
-o> wrote:
->
-> Hi,
->
-> On Fri 04 Jul 25, 17:41, Paul Kocialkowski wrote:
-> > The v3s mixer config definition is a bit messy. Tidy it up.
-> > No function change is intended.
->
-> This patch didn't make it in the previous cycle.
-> Would it be possible to pick it up this time?
+On Mon, Nov 03, 2025 at 09:28:44PM -0800, Ian Rogers wrote:
+> On Mon, Nov 3, 2025 at 8:52 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Fri, Oct 24, 2025 at 10:58:40AM -0700, Ian Rogers wrote:
+> > > Rather than using the first evsel in the matched events, try to find
+> > > the least shared non-tool evsel. The aim is to pick the first evsel
+> > > that typifies the metric within the list of metrics.
+> > >
+> > > This addresses an issue where Default metric group metrics may lose
+> > > their counter value due to how the stat displaying hides counters for
+> > > default event/metric output.
+> >
+> > Do you have a command line example to show impact of this change?
+> 
+> You can just run a Topdown metricgroup on Intel to see differences,
 
-I guess this is going to conflict with Jernej's refactoring / cleanup
-series.
+Ok, before this change.
 
-And, I think v3s is not the only one that has fields in a different order.
-Might we clean this up after all the refactoring?
+  $ perf stat -M topdownL1 true
+  
+   Performance counter stats for 'true':
+  
+           7,754,275      TOPDOWN.SLOTS                    #     37.1 %  tma_backend_bound      
+                                                    #     38.7 %  tma_frontend_bound     
+                                                    #      8.8 %  tma_bad_speculation    
+                                                    #     15.3 %  tma_retiring           
+           1,185,947      topdown-retiring                                                      
+           3,010,483      topdown-fe-bound                                                      
+           2,828,029      topdown-be-bound                                                      
+             729,814      topdown-bad-spec                                                      
+               9,987      INT_MISC.CLEARS_COUNT                                                 
+             221,405      IDQ.MS_UOPS                                                           
+               6,352      INT_MISC.UOP_DROPPING                                                 
+           1,212,644      UOPS_RETIRED.SLOTS                                                    
+             119,895      UOPS_DECODED.DEC0                                                     
+              60,975      cpu/UOPS_DECODED.DEC0,cmask=1/                                        
+           1,639,442      UOPS_ISSUED.ANY                                                       
+             820,982      IDQ.MITE_UOPS                                                         
+  
+         0.001172956 seconds time elapsed
+  
+         0.001269000 seconds user
+         0.000000000 seconds sys
 
 
-ChenYu
+And with this change, it does look better.
+
+  $ perf stat -M topdownL1 true
+  
+   Performance counter stats for 'true':
+  
+           7,977,430      TOPDOWN.SLOTS                                                         
+           1,188,793      topdown-retiring                                                      
+           3,159,687      topdown-fe-bound                                                      
+           2,940,699      topdown-be-bound                                                      
+             688,248      topdown-bad-spec                                                      
+               9,749      INT_MISC.CLEARS_COUNT            #     37.5 %  tma_backend_bound      
+                                                    #      8.1 %  tma_bad_speculation    
+             219,145      IDQ.MS_UOPS                      #     14.9 %  tma_retiring           
+               6,188      INT_MISC.UOP_DROPPING            #     39.5 %  tma_frontend_bound     
+           1,205,712      UOPS_RETIRED.SLOTS                                                    
+             117,505      UOPS_DECODED.DEC0                                                     
+              59,891      cpu/UOPS_DECODED.DEC0,cmask=1/                                        
+           1,625,232      UOPS_ISSUED.ANY                                                       
+             805,560      IDQ.MITE_UOPS                                                         
+  
+         0.001629344 seconds time elapsed
+  
+         0.001672000 seconds user
+         0.000000000 seconds sys
+
+> but they are minor. The main impact is on the Default legacy metrics
+> as those have a counter then a metric, but without this change you get
+> everything grouped on the cpu-clock event and the formatting gets broken.
+
+Do you mean with other changes in this series?  I don't see any
+differences in the output just after this patch..
+
+Before:
+
+  $ perf stat -a true
+  
+   Performance counter stats for 'system wide':
+  
+          19,078,719      cpu-clock                        #    7.256 CPUs utilized             
+                  94      context-switches                 #    4.927 K/sec                     
+                  14      cpu-migrations                   #  733.802 /sec                      
+                  61      page-faults                      #    3.197 K/sec                     
+          43,304,957      instructions                     #    1.10  insn per cycle            
+          39,281,107      cycles                           #    2.059 GHz                       
+           5,012,071      branches                         #  262.705 M/sec                     
+             128,358      branch-misses                    #    2.56% of all branches           
+   #     24.4 %  tma_retiring           
+   #     33.7 %  tma_backend_bound      
+                                                    #      5.9 %  tma_bad_speculation    
+   #     36.0 %  tma_frontend_bound     
+  
+         0.002629534 seconds time elapsed
+  
+After:
+  
+  $ perf stat -a true
+  
+   Performance counter stats for 'system wide':
+  
+           6,201,661      cpu-clock                        #    3.692 CPUs utilized             
+                  24      context-switches                 #    3.870 K/sec                     
+                   7      cpu-migrations                   #    1.129 K/sec                     
+                  60      page-faults                      #    9.675 K/sec                     
+          11,458,681      instructions                     #    1.07  insn per cycle            
+          10,704,978      cycles                           #    1.726 GHz                       
+           2,457,704      branches                         #  396.298 M/sec                     
+              54,553      branch-misses                    #    2.22% of all branches           
+   #     21.4 %  tma_retiring           
+   #     36.1 %  tma_backend_bound      
+                                                    #     10.2 %  tma_bad_speculation    
+   #     32.3 %  tma_frontend_bound     
+  
+         0.001679679 seconds time elapsed
+  
+Thanks,
+Namhyung
+
+
+> As --metric-only is popular when looking at a group of events
+> and the Default legacy metrics are added in subsequent changes it
+> didn't seem right to include the output (it either shows broken things
+> keeping to be somewhat broken or output from later patches).
+> 
+> Thanks,
+> Ian
+> 
+> > Thanks,
+> > Namhyung
+> >
+> > >
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/perf/util/metricgroup.c | 48 ++++++++++++++++++++++++++++++++++-
+> > >  1 file changed, 47 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+> > > index 48936e517803..76092ee26761 100644
+> > > --- a/tools/perf/util/metricgroup.c
+> > > +++ b/tools/perf/util/metricgroup.c
+> > > @@ -1323,6 +1323,51 @@ static int parse_ids(bool metric_no_merge, bool fake_pmu,
+> > >       return ret;
+> > >  }
+> > >
+> > > +/* How many times will a given evsel be used in a set of metrics? */
+> > > +static int count_uses(struct list_head *metric_list, struct evsel *evsel)
+> > > +{
+> > > +     const char *metric_id = evsel__metric_id(evsel);
+> > > +     struct metric *m;
+> > > +     int uses = 0;
+> > > +
+> > > +     list_for_each_entry(m, metric_list, nd) {
+> > > +             if (hashmap__find(m->pctx->ids, metric_id, NULL))
+> > > +                     uses++;
+> > > +     }
+> > > +     return uses;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Select the evsel that stat-display will use to trigger shadow/metric
+> > > + * printing. Pick the least shared non-tool evsel, encouraging metrics to be
+> > > + * with a hardware counter that is specific to them.
+> > > + */
+> > > +static struct evsel *pick_display_evsel(struct list_head *metric_list,
+> > > +                                     struct evsel **metric_events)
+> > > +{
+> > > +     struct evsel *selected = metric_events[0];
+> > > +     size_t selected_uses;
+> > > +     bool selected_is_tool;
+> > > +
+> > > +     if (!selected)
+> > > +             return NULL;
+> > > +
+> > > +     selected_uses = count_uses(metric_list, selected);
+> > > +     selected_is_tool = evsel__is_tool(selected);
+> > > +     for (int i = 1; metric_events[i]; i++) {
+> > > +             struct evsel *candidate = metric_events[i];
+> > > +             size_t candidate_uses = count_uses(metric_list, candidate);
+> > > +
+> > > +             if ((selected_is_tool && !evsel__is_tool(candidate)) ||
+> > > +                 (candidate_uses < selected_uses)) {
+> > > +                     selected = candidate;
+> > > +                     selected_uses = candidate_uses;
+> > > +                     selected_is_tool = evsel__is_tool(selected);
+> > > +             }
+> > > +     }
+> > > +     return selected;
+> > > +}
+> > > +
+> > >  static int parse_groups(struct evlist *perf_evlist,
+> > >                       const char *pmu, const char *str,
+> > >                       bool metric_no_group,
+> > > @@ -1430,7 +1475,8 @@ static int parse_groups(struct evlist *perf_evlist,
+> > >                       goto out;
+> > >               }
+> > >
+> > > -             me = metricgroup__lookup(&perf_evlist->metric_events, metric_events[0],
+> > > +             me = metricgroup__lookup(&perf_evlist->metric_events,
+> > > +                                      pick_display_evsel(&metric_list, metric_events),
+> > >                                        /*create=*/true);
+> > >
+> > >               expr = malloc(sizeof(struct metric_expr));
+> > > --
+> > > 2.51.1.821.gb6fe4d2222-goog
+> > >
 
