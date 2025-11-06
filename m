@@ -1,134 +1,134 @@
-Return-Path: <linux-kernel+bounces-888405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072A4C3ABBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:57:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3557C3AC04
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61F931AA0881
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C441AA378E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE8D31B119;
-	Thu,  6 Nov 2025 11:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D33318146;
+	Thu,  6 Nov 2025 11:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYWmk6Er"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G1Ajto9R"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7DC31B836
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC743101DC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762429828; cv=none; b=FCIlme06enNaS0CFoAEsUaIVX5vY10dGOInhArkcJkZX7zX2R9BJJOmZKC9ZgZfTU9Ri3xpzlXlEbmcd6SEmD1jT7SbZVeh4errE4hdunkxdR7VxhIc3+ipZg1n2gqwhjkNX0aXRESvkBKZCkKe3DPfFvTdj29TIKcjyLGpKuK0=
+	t=1762429861; cv=none; b=h9P1nZJ7aJOcr4jcSE2P7jKZmMar/vsec8ELd64kt0d7LJcEcPR+Oip4alJbBkD2vR9rU6pU+VIFxsLRxfLjLK3ibUTQq4LEwC9Utn6MKekdD1cekI3Dpitzlv/PNbulVsCvkcRCI3lYy5WWTAyrOK3T73169OxvN4YoIT07WrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762429828; c=relaxed/simple;
-	bh=idiaX/gWz3AMWpxv7MKcRO9NN2Bi6JEpnyrix7xEc9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UEoQg5DaF9bfkYAaf20DD2AZw1mFSJAz6ISEs6VdEtJER/Tqrc+weOtKFWgMVlNBCwuna33GdMVVEcD+p13bPjpxFkIwLz79g6XcAMEy3EfbmkmzQI9mbAs0NtD9ZdVkQCsQKwJjRRri1wdIGxUJAF3/reSh7wScZXVh4SF+wrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYWmk6Er; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-4298b865f84so443806f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:50:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762429825; x=1763034625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RWRuUfqKu50X0ukGeF0JwsNbtHz7uehy/BvMEtKBGMQ=;
-        b=eYWmk6Erz8RKOmlsBZOwlOBYWd8yshM5lYg4s2fshznyXO3Ufd/3L8CEccmLi6oUGL
-         ioHip9kEgGqynyrSsJFhjS3Hl8IOzgzMQGaxSxKDmRmwqBh9KYNFerJ1M+l9iwm949fT
-         /XHlDcUfc0rbdO5zNTKUGk5kCy2USR5j/d8Mz1WVgjdGaf1B8qRK7IzXbL28Bg/ww6nh
-         RvbtzuAS/EV7kcQUlYS9o48N9qGwlA/OztbqdN52Rp2fSMtFaMQs5NVGqTKKUyckq7H2
-         bekfN5/WRAMXEyee5U0SN6ye3q09OMo46s229mcBgVkmv8TQtfiOaX3hKIqhKAkPELol
-         lgVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762429825; x=1763034625;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RWRuUfqKu50X0ukGeF0JwsNbtHz7uehy/BvMEtKBGMQ=;
-        b=gv/CercFFj6vz8/vpAERiZOWB34mwSingr7gG6cFY6xxhdPigLDbVT2gjbaN6XqLLb
-         axC9Yc3ubfwu1bi0kqarHXzK/tS6y3g8lVtvOH9NzXecY0gfGewoUy9kKecXoLQmsujp
-         TEOtGrfUm7NHcISZU2WqfGj8tiy6hfX9kQUs9avxhxL99RhJg7NwVQSNfvE1sT7weQrC
-         TwuaC5fV4ReYbnGtdeyqkdcu0c6EQRFZ/AKG+Qk0KtVukLrkHj+NcsDnAfb1fZjgsHb9
-         UIPQf/2nqGBU1/M9Z/SxDqrRCVM+4vvwUIqIdJln++vHTkuGp+R1o1E9GT7twDuLoKW2
-         NyXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhl8OjKA9kgEFuAlUXus+A2UpoI/I3KqiExgBWWIAKmHzYywWsaTm/RhqsAmu77NlQmthPZ7Is7K9Mtes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZe38EngeyQbd6bOtuW09od9sho3Qz2bL3MOEZazlsWppBRIj6
-	AyDRwm4hOP5Dlxi9onJW4LBCXdDkvmRv3MtUKUP1pahyezvuPYqE/nHv
-X-Gm-Gg: ASbGncs+5vNQoBigztzCvDn4CIs0QLRoRGAjFXxvxIQGY9lHxADPZIeN2ERXvKDQV3h
-	5HCx7rAMeneSD+EpwYF0sAsi9ldAxJqPCE70p4GgUh6MmPGjyjpp7sj6gdWRGkNH7gkdCifO2OQ
-	yD061lVc8rqTAQrPZjPyzKMVlyUlp8NDeO0EINTHkW/6bDlelBKh0vvxoIW7PZd4D70uEQ8Dgr5
-	oq/t+XhFHPD9XSFmNgtAjrRJWu4i7OJc9PpaIcsQg4oZW03stYFoXQfSSX5vKEjP++uNM+kG6rt
-	91TWZ515mNoDLs/NNHy0q8Hq9p+Tqcya2lC02AZHR6movZTyzXFyFNazBd65M2pBIHLY3AKIctP
-	E9uWwTSQN9TxLSvqjFKJe3sh1mh4CVJZCYxRTqQgEx1ClvgEY93X5N7eQdOWrORLK8Hj0Ab5vWn
-	FDxH/TGAz1elOejNwbt90qc3zAsGxjtg5gytM07rHh3CTD50fC
-X-Google-Smtp-Source: AGHT+IHfD5rSpu+N9VmerWwWNiplM719kFbGUdnkOgjVG0Ga6zoKscXvQpcnXkl1EBCkaYNnHd+oyA==
-X-Received: by 2002:a05:6000:2210:b0:429:c66c:5bc9 with SMTP id ffacd0b85a97d-429e32edf3emr6986855f8f.27.1762429824508;
-        Thu, 06 Nov 2025 03:50:24 -0800 (PST)
-Received: from cachyos-x8664 (202.red-80-28-106.staticip.rima-tde.net. [80.28.106.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429ebdab56bsm4212052f8f.36.2025.11.06.03.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 03:50:24 -0800 (PST)
-From: Marcos Vega <marcosmola2@gmail.com>
-To: ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marcos Vega <marcosmola2@gmail.com>
-Subject: [PATCH] platform/x86: hp-wmi: Add Omen MAX 16-ah0xx fan support and thermal profile
-Date: Thu,  6 Nov 2025 12:50:17 +0100
-Message-ID: <20251106115017.77782-1-marcosmola2@gmail.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762429861; c=relaxed/simple;
+	bh=3NISYrab/MBXdbWKNAmUFFIUSebju6G5kH2bghjCBXs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gIMSv2+fiTH+ADtS/uMBfhGN2OQZx3FwTzjWRZl5VpuhMTHh+dvdr5OcUKo8bxsEky7mgZrkgn5H82U/NRjOWUpma3B1v2+evhx1JjTT/0uiYXWVSMbVurfG+/WPuydrXe1EsXvctoNRNyBZ2oVvkk0fwSCRm8C6gqnh/ribdKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G1Ajto9R; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 290F214001D6;
+	Thu,  6 Nov 2025 06:50:57 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Thu, 06 Nov 2025 06:50:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762429857; x=1762516257; bh=hhpk6fTlqp/j4PTFIYbnE1NZ1PyPGfcYM9f
+	GDcyzk+0=; b=G1Ajto9RwBMqq/SUC0v5M94XTt0Avvr01b38aA+oTKroecQZU+2
+	2Bq3HBlQl0WocCr9e2PQht2XIxPJ7PYKeBrhdJBYOw9By3mIG/wgYEWimqNGjt+I
+	BEe0H6o0iyY33HD+0i0gNuFkBSLFHi4Xt7X/q/notCEPWyQ2DldLhTL890lch2qm
+	3A/MTraUzYF6yPTOPpcDnN9LIN8/NL4eRoP5dSxj6tbmRwJTxWksLVM6RFPrVLkZ
+	yHxDPZ15UnDRpEdds2e71+NMM90TfkhMbCK7YU7rNeAxMvT3AVQ71XJHcgeFlDuL
+	Z5xCp35TAXqGryXJR/LGeXHC6gVRMgo22KQ==
+X-ME-Sender: <xms:nosMabhEHUf6c3cJ-3fHyG6uAMNkZRVf-kLwPMBG1B04edU4h6TThg>
+    <xme:nosMaegxQeL6DiEPkNTX8LVKGomFHk-jGSf5rBVdYhW1DkmbzXw7KoY5GyfBRDRtr
+    lMqam3gMVvOK0YTPzde7Mz4U7XONX55wlmNt1My0fHJZ9wyPwnXn-k>
+X-ME-Received: <xmr:nosMaZG6YrPzPdnUC3d55Dsy4x-UONLE8uHoat7CIDloousscl37a6NLDbbSsiGuYN4Jxoaq5ggg72Ydjn7zZHwDP4R8ltH9EU4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeijedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehmtderredttdejnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelfeeklefggfetkedukeevfffgvdeuheetffekledtfeejteelieejteehgeel
+    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduvddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghrohihse
+    gtshhgrhhouhhprdgvuhdprhgtphhtthhopehushgvrhhmheejseihrghhohhordgtohhm
+    pdhrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrghdprhgtphhtthhopehmph
+    gvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehnphhighhgihhnsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpth
+    htohepsggvnhhhsehkvghrnhgvlhdrtghrrghshhhinhhgrdhorhhgpdhrtghpthhtohep
+    lhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:nosMabAB_t1bGxV6bAdxgJoOu0LW9zq53SYSFQ85o1YR6z4NQsL-Bg>
+    <xmx:nosMafC62GKoaSwwqCagyjnw9AGjwdDHdXeMNKgE_F36sf-MpBGqPg>
+    <xmx:nosMaZMrQeFXP0hvzam01KuUy6esyWIiGhy2yUhhEvlVOKC63d4H6w>
+    <xmx:nosMaTPt4OJ7QQ3yobIYFvpbIOPzxaVaUMf4WTmzQ7U3JOR2B-ndOA>
+    <xmx:oYsMaUiEX6bcvaWKiRi9b79AUyiP0wavSNvldCxbrtqhA8MF4Pz5iYwQ>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Nov 2025 06:50:51 -0500 (EST)
+Date: Thu, 6 Nov 2025 22:50:27 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+cc: Stan Johnson <userm57@yahoo.com>, 
+    "Dr. David Alan Gilbert" <linux@treblig.org>, mpe@ellerman.id.au, 
+    npiggin@gmail.com, sam@ravnborg.org, benh@kernel.crashing.org, 
+    linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+    rdunlap@infradead.org, Cedar Maxwell <cedarmaxwell@mac.com>, 
+    "maddy@linux.ibm.com" <maddy@linux.ibm.com>
+Subject: Re: [PATCH v4] powerpc: Use shared font data
+In-Reply-To: <994bea8c-7b28-4aae-a6b3-e4f33731cb29@csgroup.eu>
+Message-ID: <b4737133-a33c-f4d1-cc4b-0c0b70c45635@linux-m68k.org>
+References: <20230825142754.1487900-1-linux@treblig.org> <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com> <aQeQYNANzlTqJZdR@gallifrey> <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org> <aQgJ95Y3pA-8GdbP@gallifrey> <3cc3d311-35b0-42f1-b20f-ed59391bb8e0@csgroup.eu>
+ <ead4ef3f-9f8c-a98e-b48d-f052bc9492d0@linux-m68k.org> <994bea8c-7b28-4aae-a6b3-e4f33731cb29@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary=-146381177450487057176242982735
 
-New HP Omen laptops follow the same WMI thermal profile as Victus 16-r1000 and 16-s1000.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Add DMI board 8D41 to omen_thermal_profile_boards as well as victus_s_thermal_profile_boards.
+---146381177450487057176242982735
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Tested on: HP Omen MAX 16-ah0xx (8D41)
-Result:
-* RPMs can be read
-* echo 0 | sudo tee /sys/devices/platform/hp-wmi/hwmon/*/pwm1_enable allows the fans to run on max RPM.
 
-Signed-off-by: Marcos Vega <marcosmola2@gmail.com>
----
- drivers/platform/x86/hp/hp-wmi.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On Thu, 6 Nov 2025, Christophe Leroy wrote:
 
-diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
-index 8b3533d6ba09..270af91dc7d0 100644
---- a/drivers/platform/x86/hp/hp-wmi.c
-+++ b/drivers/platform/x86/hp/hp-wmi.c
-@@ -68,7 +68,7 @@ static const char * const omen_thermal_profile_boards[] = {
- 	"874A", "8603", "8604", "8748", "886B", "886C", "878A", "878B", "878C",
- 	"88C8", "88CB", "8786", "8787", "8788", "88D1", "88D2", "88F4", "88FD",
- 	"88F5", "88F6", "88F7", "88FE", "88FF", "8900", "8901", "8902", "8912",
--	"8917", "8918", "8949", "894A", "89EB", "8BAD", "8A42", "8A15"
-+	"8917", "8918", "8949", "894A", "89EB", "8BAD", "8A42", "8A15", "8D41"
- };
- 
- /* DMI Board names of Omen laptops that are specifically set to be thermal
-@@ -92,9 +92,10 @@ static const char * const victus_thermal_profile_boards[] = {
- 	"8A25"
- };
- 
--/* DMI Board names of Victus 16-r1000 and Victus 16-s1000 laptops */
-+/* DMI Board names of Victus 16-r1000 and Victus 16-s1000 laptops, as well
-+   as some Omen boards using this profile */
- static const char * const victus_s_thermal_profile_boards[] = {
--	"8C99", "8C9C"
-+	"8C99", "8C9C", "8D41"
- };
- 
- enum hp_wmi_radio {
--- 
-2.51.2
+> Le 06/11/2025 =C3=A0 05:11, Finn Thain a =C3=A9crit=C2=A0:
+> >=20
+> > On Wed, 5 Nov 2025, Christophe Leroy wrote:
+> >=20
+> >> 1/ Either build font_sun8x16.o with -fPIC
+> >> ...
+> >>
+> >> 2/ Or add a PTRRELOC:
+> >> ...
+> >=20
+> > Thanks for your help with this, Christophe.
+> >=20
+> > I fixed up the whitespace problems and forwarded those patches to Stan,
+> > along with instructions for applying them. He tells me that patch 2 fix=
+ed
+> > the hang. Patch 1 did not.
+>=20
+> Fine. Then let's use PTRRELOC.
+>=20
+> Will you or David submit the patch ?
+>=20
 
+OK, I'll submit the patch.
+---146381177450487057176242982735--
 
