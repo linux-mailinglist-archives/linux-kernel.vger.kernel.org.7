@@ -1,273 +1,348 @@
-Return-Path: <linux-kernel+bounces-888454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4C0C3ADEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:23:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD631C3AD8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 111C24FB935
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:17:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 51D6D344595
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C71329373;
-	Thu,  6 Nov 2025 12:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26751288B1;
+	Thu,  6 Nov 2025 12:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eaOEXvAk"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010064.outbound.protection.outlook.com [52.101.201.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gDQV/Edl";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="dQwB00cY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F1330E0C0
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762431413; cv=fail; b=m4aOAUMDD29j7zk7yBsG2cZMj0r2xFUcG5ihyKWCZ3Kh0h2wJqK3Cn6JaG8TGokxosKw2EAF/uouu9HYyLbJPYRi7kzlVpKyrILYSp4jPbQ1zJ/P8tnfKE1x4YzZwIHYKtS6KSGrqQoo3KzJis9jEOiL89UKRDLMsTGkLTxuFD4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762431413; c=relaxed/simple;
-	bh=gFRLqeUMBQbIY49CVnYj6jkIgE/mISPJJdh0VmIhVCA=;
-	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=kJ5VOtOLVMr/Mo0bWhr/xvR0jUaribTSm3Kr0wax0cWnHL6Q/5uZLvbuvAI/BQpUBER+NDSOe0N3Sanrvk3dUWs4h0VJHdltkj5rEcd2zmf3QBE097tELlGAKpYGPU7XECwmMKSikD6Rzaqou7857pifMYcgkEL+ZbsysqsOwjM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eaOEXvAk; arc=fail smtp.client-ip=52.101.201.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WNUW4mUQoULdKGx2+1S7fY4um/fGXvd2qrq0EMnS2eRLLfpQGNAvrVanH+24DjjnBdUzaobUY3BWkCWBM4ZnBXb5k7XcZlauCAeG7nsP+Qg/2rRPNdb4q0eHfbgbOtL1tLwb9unhoaknO/Nug/YapyK8K8Ra0vprWSUI9ParJndDS9w2z55itZDkewUXWnDTjLArGLdxk1fV0AX8hqj5DGkw21meDj7nOxfggsDSncsmdvcvLTXn4pWLCZR0TUrSN4L3rx0/q56hElYWdeqTllIgoE498utNHZVvl6ImRmy/d4CRNFTMvwTBrP/9IsSCdv7wq580GDYBRX2KeuxDrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L2KyRbNg/UZpRQZmzIPKui2hiGQQh4NCHD5QoP7Funk=;
- b=GqECWppSfoqMHt3Q68LcZ/iLAFDPpFlq4T78upbZ8QRolZ5a/rFewbNw4A3gJ5Pw9+74bDhXZ/CBnibJYP4q44CtcZZ5ntuaVZBRcPHiDAE5F+TSUhYJDe9ABlVguV1hTkSBmbjrPHaxxa3xlhN/qhIfREt1LIP7hUKTV6Z2XLmIkC8wR8Ee5mTbMA1hU17ObugxtBodZ+bOYJoBhL3woPbFQ2bDoMIqJOxyFypkiywO3pH2eorMSLfDKHh26X2vlfGpPfJZ7X9GDWWPkLZ79pTeOjvgcmDaLrMExgF0Ztl4QiLMESbGM+2wjVl+eEi5Qjr4+Ao6cHLSpbjJVPjr8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L2KyRbNg/UZpRQZmzIPKui2hiGQQh4NCHD5QoP7Funk=;
- b=eaOEXvAksKWtVYzpc9+LyXar1iEmGdj0p9ILP4dLi8StWvSz5W7Qq15iUXA/1tLKLDbDJBcbqSKbWgaihtaV+pWevfYwHQHSCb+YCa5ZrWres1NpK0nJnNemd4tUTmpxOf30eJBQnthFL7f9/juS5vnsf8fPvu6LM0oE/we8zi8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ0PR12MB7458.namprd12.prod.outlook.com (2603:10b6:a03:48d::13)
- by MN0PR12MB6224.namprd12.prod.outlook.com (2603:10b6:208:3c0::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Thu, 6 Nov
- 2025 12:16:48 +0000
-Received: from SJ0PR12MB7458.namprd12.prod.outlook.com
- ([fe80::83e7:e6cf:26ed:2f3d]) by SJ0PR12MB7458.namprd12.prod.outlook.com
- ([fe80::83e7:e6cf:26ed:2f3d%6]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
- 12:16:48 +0000
-Message-ID: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
-Date: Thu, 6 Nov 2025 17:46:39 +0530
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: "Garg, Shivank" <shivankg@amd.com>
-Subject: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed text
- pages
-To: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- zokeefe@google.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, shivankg@amd.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0053.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:274::14) To SJ0PR12MB7458.namprd12.prod.outlook.com
- (2603:10b6:a03:48d::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A4D79DA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762431437; cv=none; b=Dy/OYkF7wQlbqzKf4V7phXT6bYjIbmgX+Uo0fK4cRtauW6IId70B9CJCGa8NyhJghOSF1Z4icFPPbVDht6FGJ2tNnV+p9SVHsjEobgLzAt/089vDl3IOVtHIHk3XBMAJMfEPM/QJPlJocJRC4kVX4ACfZf6UTKsHXmuYXvjzOqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762431437; c=relaxed/simple;
+	bh=a9Z4HB79a/IvUhKRcQedmxdVkUVlRTqTGttwGU9vVRQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VkRYzXRzd139USF7jBH6L5MDB4L1x2tgR1L9/ziYDaTSwPsSaNrlkcHbjvhSGxmBXyqSXjT+KTj2dDVdMlrUVEJN6P3IBqiYdMOOZviApfMc54v/lL3+ckKOK5V3gH02LY/e5SzTDp2xtO5csgT/vJOk4AaudmhHsO++qJZSrk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gDQV/Edl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=dQwB00cY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A68DRIh2165156
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 12:17:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=gNvmCJ0hrdNJ/9zdjaCrkfGY
+	VdoeuP9Y/SBDObi2LCM=; b=gDQV/Edl2ZgDxe6dhgFYWDLZG28wb5c1VGrHAh+R
+	1PC7QB7edlWtyn+Xu9Ifd/eFaBRVue653TzMdWcCNCoyBcBkokdy8lvWjEoSshGf
+	D/mVJkcKdaPbF2dDOc9zc4cpzXCOsICzMq9/CzkIVkzLV+r+z/UIzNfYF+l5Z35S
+	FSAHA2tcw1SpdjqNWeK2IEvnsksy8Zmuzz4CDgjhI/IQ7X54rKJncJkTfe9Qt8NH
+	ZOo7EId1Z4l7AWaN2+hzRyBnENv6jbkwTcelMRkJB83a2QDVlE83kT1vR7r9dugJ
+	/TJGXVqm0WfBaGkeP3vQ7WYLhucX6u/Is1OJoed1UNBezQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8g6esx4q-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:17:12 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-294fb13f80cso4415455ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:17:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762431432; x=1763036232; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gNvmCJ0hrdNJ/9zdjaCrkfGYVdoeuP9Y/SBDObi2LCM=;
+        b=dQwB00cYhyGRNhjxWeHZKz0TkX940hDPrkd6cVXEjU9HMBtL0c9SQhn4gtr/W4dXdi
+         Jbln4/VV0/mMq5lkw5Qz+lfkCp4cd9xf+zaUxewSjn7If6yXlYy7Iixd/4TJO464cdWN
+         wVQWm6smqwKp9uTUmMKqWszP500abu4Oy+i9GkAd2p15CnjojswKzTuCVJh15Em4iFFf
+         fRHsJNof0aBK/UstkrpPsUKWRFrjOknn7UtdDLSryg7+l3jYTZnPAw3CMgj0OKDWlife
+         JNd3e2YJ+76nbUC1eRxWzKawfGly1+9Dbw1I343/VqlVYZT+i+bCp4KX7P+rlx374rQk
+         5B3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762431432; x=1763036232;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gNvmCJ0hrdNJ/9zdjaCrkfGYVdoeuP9Y/SBDObi2LCM=;
+        b=ZotR7TpiwDZyg/2yWniBgAltc6Bd+qCWq30mP34Wov4ODFivfI37tjbLtdIhcZ+RzI
+         00v++NNUy9w++AsfND5XQ4U1Njmc7HV8ENGMFXI4HsdtykjUoF4EOtpaS5umYQ0qHL4n
+         /0cDMWKNLW9olaGw3uHjJ5dEe7iA6Z8hq1BcB+V/KkV4+QdZmbnS+dRAUr7uIIQ2ZlZk
+         qXROR+uwUsh2xV2yS0k/vUzbCT2A77EyalZlHm29PcZhepYb1X3fVaV92yUavq/sKq2i
+         awzNKXrc3F/ItjfhNfC2m007dVHw61wACf4TIdBMMN18YCq9UOWH2gK65sv9kpQtHCXp
+         Mdbg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5tMmLqcfooW9xPgt1JRsxKZYRuquuanx8b18not89WE5UjFIZsYOB8/iSzsMf0ZWpwvsW8ut4otlPV1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIO8PV9R3QeaDe9+28Q2+7+rBbuNDzC+Q+ACFZdLQ1/qWVOGPW
+	FNU3bV18RXeeaE0Sx/2jPeqFMwiBYRXbaRZLPE9S0bEd1Fmr+X6bkWcBDRL4ebk63qb9BTi63/N
+	cz/RwpnuIKGTAXQJ5mBmdP3fSWeYAbfsZvZWZ9dOjislnyMONSlnMBFit+DhqzospAP2VqWL+U1
+	6jFSdvpTBfbHtdPIOeUCo3fHfNIZGMW9UDbCaDpHQe8Q==
+X-Gm-Gg: ASbGnctOV9Xw9Y8q19qpNUzdmmirT93TVf1ZAwnJOYRmnTaZW/pMI0dabb1tJ6FdwPz
+	m0iFNxiadTQO/FwGUrWSK+8TzndiskLRBihRgHsOXNUuIKG7csITdTU+VfH9ixj+xds/q+vNcNV
+	fSPhrYe6lER6l0zAjiJJZU+ewTT9Kpv8eAJxOSIievzq02Tt6NC8fyEtPp3o08vDT9WEmAXIZCR
+	/hSak6ya/LTww==
+X-Received: by 2002:a17:903:1ce:b0:290:7e29:f59f with SMTP id d9443c01a7336-2962ad3d72fmr86648075ad.27.1762431431427;
+        Thu, 06 Nov 2025 04:17:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGTXH8NGkIDg7Ywz6RX10UIWewqyu96hZrjWXSo9nV+y7WP4ZxR0xQhes+p81qNvau23TvKRF0R0V1UeWn9oko=
+X-Received: by 2002:a17:903:1ce:b0:290:7e29:f59f with SMTP id
+ d9443c01a7336-2962ad3d72fmr86647725ad.27.1762431430643; Thu, 06 Nov 2025
+ 04:17:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR12MB7458:EE_|MN0PR12MB6224:EE_
-X-MS-Office365-Filtering-Correlation-Id: dddb249f-c7d8-4b21-c536-08de1d2e5bf6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SFgxQStLcWdZOXU4dTFCSTE4bldMNmFxa1IzSEdYd21oUTFvb2JOcnpYOUhV?=
- =?utf-8?B?ellhakVFOUhHVkxWTmVtYkk1dlNpSmYybGk0czVFemhUZVVsUjh1aXlHaW8w?=
- =?utf-8?B?OVF0MDJzWlFScGFOL3Q2RFdBQXptWkN0RkhyTVl1ODJBbVF2bHFleVo0SW1U?=
- =?utf-8?B?eERIbXFxYThwc012Zi8zWGY3RUZ3b0w2aXlMQXJyRXk1WnZPN3VXVU1xT3pj?=
- =?utf-8?B?anYxYmo4STllQTU2SkVNKzMwS2NNVWZKTDFUa3NvRnJqNHFlS0pkenk1ZHVH?=
- =?utf-8?B?ZTk1Ty9LbWZjcjVDUkhadkIwOVpreFJDTnpFNnYrQ1pLL0RCT0JnYzl4WmpC?=
- =?utf-8?B?WXhmTnE3NjgzV0U1TVgrZmtJUlZ1VE43dnhML25lVUVjeGFxMWN1RGh1NWg0?=
- =?utf-8?B?M24wWnR5Zm1hNmxOZHBYdnIyQjl4Q3NtZzVKVXVXVnBSeWExaXI5S3BMR0hU?=
- =?utf-8?B?Y2NyQlpwa1NsVFFQdzJEeDEzZUlRS3BGZis1OHVldGhCVjIzd2pscXdFVWVr?=
- =?utf-8?B?UkJVR2kxeWMrVGZ0RGFRUXIzRlhwZ1czdDk2QnNGVnZwY1V4U0xKWENBaXdZ?=
- =?utf-8?B?SDUyeHJDUW5jVm1FWXgzRVoreXJNSnJnYlVhL3ZhSEtxNUMvZlpBMWZJdElF?=
- =?utf-8?B?K1MyaXJxZGh6VTN5anhheFFnUGdRYXh2cktFWVpERGZOYWtBanhLbVZJYkpG?=
- =?utf-8?B?bUljckxsSkJia1pLZmpvSEtlSXNnK3NSdHNMdHNxcjVoQnpsNWdWdFJGQXhx?=
- =?utf-8?B?UnhrcmdDdXNYUkVTRmEyYkV6U0g4RU9CTDAxa0FBSDRhR0JnS29zWDRTVEdC?=
- =?utf-8?B?OFh3bG5oUlFPaXQ3aVBtMm9yQytXK1hjZDV3SnBVdlhTTHY2VGpGODhndUpi?=
- =?utf-8?B?QWwybXRhWGdTemRjMGh3OU10dnBXMjgxS3I4dXpmYytHOWIwanNTQk9jMTgy?=
- =?utf-8?B?RHBuaWR6ZUdZbW1CWHowK001SStUL2Q3MGY3YnRKOG9WcUEyU2h0Ny9iQkph?=
- =?utf-8?B?WDdha1kvSlVBZ0pUU0QvYitPc3J3eUt5cERiNXIxY0pCUm5UK2UzUC84TmFI?=
- =?utf-8?B?a3dONHl5Qm5yQ21YRHhoMGpJNkUrcEw5ajVWRmR4ZzBWQTR2V0VUVWpma2Zm?=
- =?utf-8?B?YlJGZWQxMW5yRmw2SzJWOXJDd0RSYm83MGwzSEpld0FWNVVFZWJoSkxLVnVB?=
- =?utf-8?B?Z29vMTFiUTFXRHJ6UGFpUnR4ZG5GMDRyNjFkd2JlOXFYSzg2OHI5MXlHeVBY?=
- =?utf-8?B?Y050VDV5bCtxbzJNWkovaFJ0bWs1OEwyME1LQWc1M2M1MU4yUHlYM2hDYTE1?=
- =?utf-8?B?cDIrbDZXSUsrQ1U3Y1haV1Y0dzhzUjBCWEFWdDhxbkJ1eDFSMmRsL3BaMnRt?=
- =?utf-8?B?eEVHMlA3amRiQ2RVSUw4ZnpEUzZtbjRYWG5uOXk1UHphZXN2TlQ3QTJzRWNJ?=
- =?utf-8?B?d2tiVStSekd0R3VmdUZpK2R4V1AxMjdzT3dQT3VUWkV0KzRHdGgwdCs0SEJQ?=
- =?utf-8?B?ZHUvSjh1UFNoS0MwNmhtY3ZKMlhLZlowQmRNK2FSaCs4eGlzS1J2WEdoWTZN?=
- =?utf-8?B?UzhQallWOEE3VGw4dUNzT3VaVVluSnc4eUU0aWJGN1ltVzNUalFNNmM3UlJP?=
- =?utf-8?B?U1dBWmx5a2c1TVFaNVZOdzU2NUIzaHFQanh0Z2kxc2lqKzZ3bDlZUEZ2cGx6?=
- =?utf-8?B?ZkQveGUvQXZKbTNYTkV0eUpBYlVBcHEranhJYTVreDFyWnVHKzhEZjVJQ09m?=
- =?utf-8?B?Vng4SUhsUjhLdkJwYnZFeWNidmZCdGI4c01JMmVKc1E3ZFVWa0l0cTNxTEV2?=
- =?utf-8?B?NTNUVytQdCtDdWxBSC8wZVZ6Y041eWZPbDBlWGV2TVBzSHd5M3ZsQUcxTVhy?=
- =?utf-8?B?dUNPSDdDZG4vVTZJSlRHT2tkNCtGRFh0V1B6MnBFdElSYTZXZHp0Yk1hUlVn?=
- =?utf-8?B?REdnUFA3am5Mcm01Wnp5VEJtcTJvVURpS3NpQ2Q1OXFHK0c1dmcyM2xGbzJL?=
- =?utf-8?Q?rrAScez810vttRP+2m83Ea64TWWaBM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB7458.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q2dYYVVET2xOL2pZMmd2Undkb1ZZSGFOOENYbjVLa3NDK3JVK0I5ckZsV3dl?=
- =?utf-8?B?UkJoTkViUUpvN3pEYUVLelJLSzcxVzN0dHhBUmMzTVJvVzVORmQxYUkvMmtE?=
- =?utf-8?B?amFSRG1LSG9VZkdOenhqdlZYTExaWFVlWW8vZEdUeS9WK2txeXVxb2kydWRK?=
- =?utf-8?B?VE9SMzNibXVpY1BaMFNlY21wWHN5MVNhM1VRL3pqTjZkYWR1bFJDWUUwaG5x?=
- =?utf-8?B?TzhnUGhqV0s2YW1qRmFtdFNZbmVhUlRNQ0ppczZMejNOdmRLRVZKbHlOWTdK?=
- =?utf-8?B?SXV0M2thWnptQ0RnOWdxNUpSbm8rVWJ6MlBRNDdNRm1ZREJTeWZqY3EyclFy?=
- =?utf-8?B?SFd0ek1LdHgyTG14dFByZExBeVBweTlINzRlRFJKRFlEeWRYcE16R1J6TzVQ?=
- =?utf-8?B?YmRtWGNxRXo1T0dqdm9SOXc2bmVadmFodVJHMXpjOWpQalNHdXNnMkxIVnpM?=
- =?utf-8?B?RHRUMGF1L3FaT0VPTzczQk40K2lXWWp0aEN0UmhoVk5NYkZJdDNMY1NCT2JB?=
- =?utf-8?B?MTdwaHQzYkNxaXZiNGh5QWtBWW1Wblk4b3RWdWlhOUx2RkxHcXl3RTJMaU52?=
- =?utf-8?B?MFA2MHM0Zm51MFRHaFJWUm43R3VaVXZqdHk5dUN4c3JYVG51SlIxU1NRRGxu?=
- =?utf-8?B?T2JRbjUvZG5JNHhDRVFIcXFlS3pwL0JSMS8rWjhKREV6cUVVUk1YeHZ0L1lr?=
- =?utf-8?B?aklCN2s4NFpMejBlRXhFaTFYWi9CR09sZ0c0VGhOVjh4bG56RDdlY2FOYUFI?=
- =?utf-8?B?cUZHMldyck93U0h5ZmwrcHhnRWdMeG1kY0pJM3BTeVlJalBITThtYTRoSDJw?=
- =?utf-8?B?VDBkRVdNUUdMbDJBMm5JZU5FazVueUZQMStNb2oyWUdORjJKcTcvK2JMNmFk?=
- =?utf-8?B?MktPZUpiNk9JT011OWNlc2pLcVRBM1g5bGpiYnU4d1NZeHN2ZGNwRHlvUzBP?=
- =?utf-8?B?V0N2dGR4eUFrek9MRkxZMEJydnZaR2h1TUNOQUpNRXlpZTRYcFNPeDVCYXNG?=
- =?utf-8?B?VTlSdEp0STFDYW92VEhJOGl2bWNWcEQrTm9PaSt2bFFNdm1rbURNTlJ2bUpz?=
- =?utf-8?B?TWcvaEg4K29XMGo1NFFLbkw5NkVpa3U5dWQ1YjMyM3p2bVg2RjUrRFdqaG9s?=
- =?utf-8?B?NVY4VWt6K3JqcWYzZzh5UWxJcEhqbEg1TWNGUXNDamxJLzZhc0F6dC9KcmJw?=
- =?utf-8?B?QVhCRTBUUWMrVC9tODJpTGVMdzlrVEhVRmdGQWd0U3lWMU1WLy85WEFsa1Z1?=
- =?utf-8?B?YTFJWFN6WlZKSUtCeHVPYnQxalVXLysrdWRVL3lnQVlrdThZYS9Qc0xkRUxn?=
- =?utf-8?B?Q2R6TFpPbUdvd0VWOVdJa3RwOTIvaE5CNTBGcStrcHNGalZiV01HNFVyb1Zz?=
- =?utf-8?B?QTB2aUowdUxrdytWV3ZLUlhGUnJEZzAyMVU0OXpCSkhkMTkyQmNadXdsSS9G?=
- =?utf-8?B?NFp3WkFlVWtoVGhTVUJRSkZYd1RCYUVZcGpTYytSOGZqODdOYTFNQVM2akZB?=
- =?utf-8?B?N24zT2d6UFh1SFZsUVlmUERjamlVckZwaUU2d0x2aldNbEpBeDZxamorZnN5?=
- =?utf-8?B?bkkvaEh1Y1QrTFFJcXpNTDZhOE1YUktmMjZyU0VTWjZUUmFka1hkcG5TdllP?=
- =?utf-8?B?TTM2U2lCK3dJdVhJa01mODcvSXZsdU8yT0YwSXVnOG5jNUc4MjhwOGlPWnR2?=
- =?utf-8?B?dS8rYWZMU296UkhGckppUkswdjlsOW45eUZYNE1IUjlZTjZ4ZW9XWWErVlRN?=
- =?utf-8?B?blJvY2M3eXFEV0ZQT0NEVlZNdjgzMmZTMklrRVk4NkhVWDczZ2VHaU5oZHlk?=
- =?utf-8?B?dDl5MFFiM1JYRDZTTk5FdWVybzlLT2tkbUROdUFudEFqK1lGVzJrQjFVZDRN?=
- =?utf-8?B?ZkIxVFhlcHdSeEF6L3pvMG01VkMrOThRVnBhcWtLQmRPSnRHVkFQaDNKMlJs?=
- =?utf-8?B?QVBjQVlzVVJId01nQ1R2WkZjaENqd3ZYZWNKZW9pVEZqQkhianR0QWJEZnA0?=
- =?utf-8?B?dWY2cXdIUzlFSWFubTY5Mzhpd0NQZGZzWEswa3I3dzZ1bUhXMWU3N0xwVFJz?=
- =?utf-8?B?MnhOL0FYTkJMWUp1cFZXQ0NKRzhkMy9wNmF5MWFFOWVvZC9HOUZlLzYwSDk4?=
- =?utf-8?Q?R6leI+uwdk+MY2rPv6Y/JKa9P?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dddb249f-c7d8-4b21-c536-08de1d2e5bf6
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB7458.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 12:16:48.2876
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VIze/f0foDf4Hknftu+SeCDrtgFuhpJz1nQ0tLgu927OxhuAzSmlR5FluAaCNQDWkqjsHdRG0zzneVkVyezSOw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6224
+References: <20251007054528.2900905-1-suraj.kandpal@intel.com>
+ <20251007054528.2900905-2-suraj.kandpal@intel.com> <aQjDejhzGRYJT614@e110455-lin.cambridge.arm.com>
+ <DM3PPF208195D8D5DDD56AA88E006E66AD9E3C4A@DM3PPF208195D8D.namprd11.prod.outlook.com>
+ <aQoIBroBqQc3B-RD@e110455-lin.cambridge.arm.com> <CAO9ioeX2qEyjwi9LsnUh-cRv88iaRcdZtFr_yidf55A9_ZbLWw@mail.gmail.com>
+ <aQyApokLttxf9spU@e110455-lin.cambridge.arm.com>
+In-Reply-To: <aQyApokLttxf9spU@e110455-lin.cambridge.arm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 14:17:02 +0200
+X-Gm-Features: AWmQ_bmmb7qkmOjV1MvJBVbTKPSje7kfBu1HmXRF-M95TYAq_55qEAFRaKc2Oxc
+Message-ID: <CAO9ioeUwt2aR5y9FkMPOKz-4dPO8pUvxeEYUqGrGVZWaUHYw-g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] drm: writeback: Refactor drm_writeback_connector structure
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: "Kandpal, Suraj" <suraj.kandpal@intel.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+        "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>,
+        "Murthy, Arun R" <arun.r.murthy@intel.com>,
+        "Shankar, Uma" <uma.shankar@intel.com>,
+        "Nikula, Jani" <jani.nikula@intel.com>,
+        "harry.wentland@amd.com" <harry.wentland@amd.com>,
+        "siqueira@igalia.com" <siqueira@igalia.com>,
+        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>,
+        "airlied@gmail.com" <airlied@gmail.com>,
+        "simona@ffwll.ch" <simona@ffwll.ch>,
+        "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
+        "abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "marijn.suijten@somainline.org" <marijn.suijten@somainline.org>,
+        "laurent.pinchart+renesas@ideasonboard.com" <laurent.pinchart+renesas@ideasonboard.com>,
+        "mcanal@igalia.com" <mcanal@igalia.com>,
+        "dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>,
+        "tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>,
+        "kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>,
+        "louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA5NyBTYWx0ZWRfX2FhVP0YFwiYx
+ JTMctpWHT6/D/RT0TQaujCrl3HyedaY9LkymcQXRixEW0kEuShEbV1G/ZLec/H/ZtoO0MQh7Wf7
+ kefiAwgmwpU2PNs/nvydjomQfUfW/HlENOpul1dGVxSwrqw+j8rbuWKI54iHqO8jDQNQWfyQdsB
+ c1FDug3O5ZWM7ZX7qLfUR1K217dtoPMDN8UOKRW4hbiaKP2b2Kuh3CbWXrn2l8Pkp43D1+0/fWf
+ Nq7QUzbortpqACfCC5E+NP1UefDvNfDybCCWAdCiOVZjQOX3sHA83GIDdGhK39QnfgQZHG4W3We
+ YbfRtL2RNqX3DrOCcphZu+Gstq4au1x3ML+wAtc/0aGfTJa++NG4INjgYWoVtT9JLAxXBxfm3xL
+ 1hcL4fLojP4h3PDCl1jy31CxCQ5GUA==
+X-Authority-Analysis: v=2.4 cv=D5FK6/Rj c=1 sm=1 tr=0 ts=690c91c8 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=7CQSdrXTAAAA:8 a=QyXUC8HyAAAA:8
+ a=_xLGP-AJQIWHLRMqBqIA:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+ a=a-qgeE7W1pNrGK8U0ZQC:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-GUID: hn9Co24LJpAex-Aq_UMEG5yiz6BwQ1vf
+X-Proofpoint-ORIG-GUID: hn9Co24LJpAex-Aq_UMEG5yiz6BwQ1vf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 spamscore=0 phishscore=0 suspectscore=0 impostorscore=0
+ adultscore=0 priorityscore=1501 clxscore=1015 lowpriorityscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511060097
 
-Hi All,
+On Thu, 6 Nov 2025 at 13:04, Liviu Dudau <liviu.dudau@arm.com> wrote:
+>
+> On Wed, Nov 05, 2025 at 02:39:15AM +0200, Dmitry Baryshkov wrote:
+> > On Tue, 4 Nov 2025 at 16:05, Liviu Dudau <liviu.dudau@arm.com> wrote:
+> > >
+> > > On Tue, Nov 04, 2025 at 05:11:25AM +0000, Kandpal, Suraj wrote:
+> > > > > Subject: Re: [PATCH v2 1/7] drm: writeback: Refactor
+> > > > > drm_writeback_connector structure
+> > > > >
+> > > > > On Tue, Oct 07, 2025 at 11:15:23AM +0530, Suraj Kandpal wrote:
+> > > > > > Some drivers cannot work with the current design where the connector
+> > > > > > is embedded within the drm_writeback_connector such as Intel and some
+> > > > > > drivers that can get it working end up adding a lot of checks all
+> > > > > > around the code to check if it's a writeback conenctor or not, this is
+> > > > > > due to the limitation of inheritance in C.
+> > > > > > To solve this move the drm_writeback_connector within the
+> > > > > > drm_connector and remove the drm_connector base which was in
+> > > > > > drm_writeback_connector. Make this drm_writeback_connector a union
+> > > > > > with hdmi connector to save memory and since a connector can never be
+> > > > > > both writeback and hdmi it should serve us well.
+> > > > > > Do all other required modifications that come with these changes along
+> > > > > > with addition of new function which returns the drm_connector when
+> > > > > > drm_writeback_connector is present.
+> > > > > > Modify drivers using the drm_writeback_connector to allow them to use
+> > > > > > this connector without breaking them.
+> > > > > > The drivers modified here are amd, komeda, mali, vc4, vkms, rcar_du,
+> > > > > > msm
+> > > > > >
+> > > > > > Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
+> > > > > > ---
+> > > > > > V1 -> V2: Use &connector->writeback, make commit message imperative
+> > > > > > (Dmitry)
+> > > > > > ---
+> > > > > >  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  6 +-
+> > > > > > .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 +-
+> > > > > > .../drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c  |  8 +--
+> > > > > > .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  6 +-
+> > > > > >  .../gpu/drm/arm/display/komeda/komeda_kms.h   |  6 +-
+> > > > > >  .../arm/display/komeda/komeda_wb_connector.c  |  8 +--
+> > > > > >  drivers/gpu/drm/arm/malidp_crtc.c             |  2 +-
+> > > > > >  drivers/gpu/drm/arm/malidp_drv.h              |  2 +-
+> > > > > >  drivers/gpu/drm/arm/malidp_hw.c               |  6 +-
+> > > > > >  drivers/gpu/drm/arm/malidp_mw.c               |  8 +--
+> > > > > >  drivers/gpu/drm/drm_atomic_uapi.c             |  2 +-
+> > > > > >  drivers/gpu/drm/drm_writeback.c               | 35 ++++++----
+> > > > >
+> > > > > For the komeda and malidp drivers, as well as for the drm_writeback.c
+> > > > > changes:
+> > > > >
+> > > > > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> > > > >
+> > > > >
+> > > > > [snip]
+> > > > >
+> > > > >
+> > > > > > diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+> > > > > > index 8f34f4b8183d..1b090e6bddc1 100644
+> > > > > > --- a/include/drm/drm_connector.h
+> > > > > > +++ b/include/drm/drm_connector.h
+> > > > > > @@ -1882,6 +1882,61 @@ struct drm_connector_cec {
+> > > > > >   void *data;
+> > > > > >  };
+> > > > > >
+> > > > > > +/**
+> > > > > > + * struct drm_writeback_connector - DRM writeback connector  */
+> > > > > > +struct drm_writeback_connector {
+> > > > > > + /**
+> > > > > > +  * @pixel_formats_blob_ptr:
+> > > > > > +  *
+> > > > > > +  * DRM blob property data for the pixel formats list on writeback
+> > > > > > +  * connectors
+> > > > > > +  * See also drm_writeback_connector_init()
+> > > > > > +  */
+> > > > > > + struct drm_property_blob *pixel_formats_blob_ptr;
+> > > > > > +
+> > > > > > + /** @job_lock: Protects job_queue */
+> > > > > > + spinlock_t job_lock;
+> > > > > > +
+> > > > > > + /**
+> > > > > > +  * @job_queue:
+> > > > > > +  *
+> > > > > > +  * Holds a list of a connector's writeback jobs; the last item is the
+> > > > > > +  * most recent. The first item may be either waiting for the hardware
+> > > > > > +  * to begin writing, or currently being written.
+> > > > > > +  *
+> > > > > > +  * See also: drm_writeback_queue_job() and
+> > > > > > +  * drm_writeback_signal_completion()
+> > > > > > +  */
+> > > > > > + struct list_head job_queue;
+> > > > > > +
+> > > > > > + /**
+> > > > > > +  * @fence_context:
+> > > > > > +  *
+> > > > > > +  * timeline context used for fence operations.
+> > > > > > +  */
+> > > > > > + unsigned int fence_context;
+> > > > > > + /**
+> > > > > > +  * @fence_lock:
+> > > > > > +  *
+> > > > > > +  * spinlock to protect the fences in the fence_context.
+> > > > > > +  */
+> > > > > > + spinlock_t fence_lock;
+> > > > > > + /**
+> > > > > > +  * @fence_seqno:
+> > > > > > +  *
+> > > > > > +  * Seqno variable used as monotonic counter for the fences
+> > > > > > +  * created on the connector's timeline.
+> > > > > > +  */
+> > > > > > + unsigned long fence_seqno;
+> > > > > > + /**
+> > > > > > +  * @timeline_name:
+> > > > > > +  *
+> > > > > > +  * The name of the connector's fence timeline.
+> > > > > > +  */
+> > > > > > + char timeline_name[32];
+> > > > > > +};
+> > > > > > +
+> > > > > >  /**
+> > > > > >   * struct drm_connector - central DRM connector control structure
+> > > > > >   *
+> > > > > > @@ -2291,10 +2346,16 @@ struct drm_connector {
+> > > > > >    */
+> > > > > >   struct llist_node free_node;
+> > > > > >
+> > > > > > - /**
+> > > > > > -  * @hdmi: HDMI-related variable and properties.
+> > > > > > -  */
+> > > > > > - struct drm_connector_hdmi hdmi;
+> > > > > > + union {
+> > > > >
+> > > > > This is a surprising choice. Before this patch one had to have a separate
+> > > > > writeback connector besides the HDMI connector. Going forward it looks like
+> > > > > you still need two connectors, one that uses the writeback member and one
+> > > > > that uses the hdmi one. Is that intended?
+> > > > >
+> > > > > I was expecting that you're going to declare the writeback member next to the
+> > > > > hdmi, without overlap. If you do that, then you also don't need to move the
+> > > > > struct drm_writeback declaration from the header file and it should be enough
+> > > > > to include the drm_writeback.h file.
+> > > >
+> > > > Hi,
+> > > > Thanks for the review
+> > > > The reason for this came from the discussion on previous patches and was suggested by Dmitry.
+> > > > The idea is that a connector can never be both an HDMI and writeback connector at the same time
+> > > > Hence we save space if we pack them together.
+> > >
+> > > Hmm, but you can still have all the CEC and HDMI codecs data in that connector,
+> > > which feels strange.  Also, what's the issue with having a connector that has
+> > > both a valid HDMI state and an associated writeback at the same time (i.e.
+> > > don't use the union)? Writing back the memory the output that goes to HDMI is
+> > > valid, right?
+> >
+> > Writing back to memory requires a separate connector (with separate
+> > setup). The CRTC should also support outputting data to both HDMI
+> > _and_ Writeback connectors at the same time (aka cloning). Not all
+> > configurations are possible, writeback requires additional bandwidth,
+> > etc., etc.
+> >
+> > >
+> > > Maybe that is not something that you considered, but with this patch (without union)
+> > > we can drop the need to have a separate connector just for writeback. We're breaking
+> > > user space compatibility, true, but it feels like a good change to be able to
+> > > attach a writeback to any connector and get its output. The drivers that don't support
+> > > that can reject the commit that attaches the writeback to the existing connector.
+> >
+> > Well... No. It's not how it is being handled in the (existing)
+> > hardware. Nor does it make it easier to handle resources for the
+> > writeback.
+>
+> Which (existing) hardware? Komeda can do it mainly because it doesn't have an HDMI connector,
+> but an output that can be cloned to writeback while it is being sent out on a bus to an encoder.
+> You have to remember that writeback is a connector because we didn't have a better concept for
+> it. It doesn't have to be a separate connector from an HDMI or eDP or DP.
 
-I've been investigating an issue with madvise(MADV_COLLAPSE) for TEXT pages
-when CONFIG_READ_ONLY_THP_FOR_FS=y is enabled, and would like to discuss the
-current behavior and improvements.
+drm/msm. It requires a separate setup for the Writeback, which is
+described as an encoder. As such, we need a separate connector for the
+writeback.
 
-Problem:
-When attempting to collapse read-only file-backed TEXT sections into THPs
-using madvise(MADV_COLLAPSE), the operation fails with EINVAL if the pages
-are marked dirty.
-madvise(aligned_start, aligned_size, MADV_COLLAPSE) -> returns -1 and errno = -22
-
-Subsequent calls to madvise(MADV_COLLAPSE) succeed because the first madvise 
-attempt triggers filemap_flush() which initiates async writeback of the dirty folios.
-
-Root Cause:
-The failure occurs in mm/khugepaged.c:collapse_file():
-} else if (folio_test_dirty(folio)) {
-    /*
-     * khugepaged only works on read-only fd,
-     * so this page is dirty because it hasn't
-     * been flushed since first write. There
-     * won't be new dirty pages.
-     *
-     * Trigger async flush here and hope the
-     * writeback is done when khugepaged
-     * revisits this page.
-     */
-    xas_unlock_irq(&xas);
-    filemap_flush(mapping);
-    result = SCAN_FAIL;
-    goto xa_unlocked;
-}
-
-Why the text pages are dirty?
-It initially seemed unusual for a read-only text section to be marked as dirty, but
-this was actually confirmed by /proc/pid/smaps.
-
-55bc90200000-55bc91200000 r-xp 00400000 07:00 133                        /mnt/xfs-mnt/large_binary_thp
-Size:              16384 kB
-KernelPageSize:        4 kB
-MMUPageSize:           4 kB
-Rss:                 256 kB
-Pss:                 256 kB
-Pss_Dirty:           256 kB
-Shared_Clean:          0 kB
-Shared_Dirty:          0 kB
-Private_Clean:         0 kB
-Private_Dirty:       256 kB
-
-/proc/pid/smaps (before calling MADV_COLLAPSE) showing Private_Dirty pages in r-xp mappings.
-This may be due to dynamic linker and relocations that occurred during program loading.
-
-Reproduction using XFS/EXT4:
-
-1. Compile a test binary with madvise(MADV_COLLAPSE), ensuring the load TEXT segment is
-   2MB-aligned and sized to a multiple of 2MB. 
-  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
-LOAD           0x400000 0x0000000000400000 0x0000000000400000 0x1000000 0x1000000 R E 0x200000
-
-2. Create and mount the XFS/EXT4 fs:
-   dd if=/dev/zero of=/tmp/xfs-test.img bs=1M count=1024
-   losetup -f --show /tmp/xfs-test.img  # output: /dev/loop0
-   mkfs.xfs -f /dev/loop0
-   mkdir -p /mnt/xfs-mnt
-   mount /dev/loop0 /mnt/xfs-mnt
-3. Copy the binaries to /mnt/xfs-mnt and execute.
-4. Returns -EINVAL on first run, then run successfully on subsequent run. (100% reproducible)
-5. To reproduce again; reboot/kexec and repeat from step 2. 
-
-Workaround:
-1. Manually flush dirty pages before calling madvise(MADV_COLLAPSE):
-	int fd = open("/proc/self/exe", O_RDONLY);
-	if (fd >= 0) {
-		fsync(fd);
-		close(fd);
-	}
-	// Now madvise(MADV_COLLAPSE) succeeds
-2. Alternatively, retrying madvise_collapse on EINVAL failure also work.
-
-Problems with Current Behavior:
-1. Confusing Error Code: The syscall returns EINVAL which typically indicates invalid arguments
-   rather than a transient condition that could succeed on retry.
-
-2. Non-Transparent Handling: Users are unaware they need to flush dirty pages manually. Current
-   madvise_collapse assumes the caller is khugepaged (as per code snippet comment) which will revisit
-   the page. However, when called via madvise(MADV_COLLAPSE), the userspace program typically don't
-   retry, making the async flush ineffective. Should we differentiate between madvise and khugepaged
-   behavior for MADV_COLLAPSE?
-
-Would appreciate thoughts on the best approach to address this issue.
-
-Thanks,
-Shivank
+-- 
+With best wishes
+Dmitry
 
