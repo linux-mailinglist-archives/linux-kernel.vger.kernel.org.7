@@ -1,264 +1,302 @@
-Return-Path: <linux-kernel+bounces-887931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0BBC3964B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:25:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75375C39651
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23EBC4FB005
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:23:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35A0E4F3BB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775CF2E0410;
-	Thu,  6 Nov 2025 07:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14EE2E03E4;
+	Thu,  6 Nov 2025 07:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1ru3bnl6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BsryQK1I";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hkkosBGu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B0kfOKCP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JTBw+Llg"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011027.outbound.protection.outlook.com [52.101.62.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73DA2DC79A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762413830; cv=none; b=UW3Gtv27TGoTdSIge9WdXveOD7U3CS4dZ6WdfrXbbIONkE8oOAldhWILmeED7R8cBCIhz/EQsYFqhGH62n8iV+pyKlkcmpCEF8JfhES9qYbyi9wp+eRxgZve2amV53nnGwuIokigANbuA/GTqSqRvjrC4yO9pYnWclIoo1Ds6yQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762413830; c=relaxed/simple;
-	bh=PpCYZiESS+NYFao5qNfGpf2j/tTFJn3MrA5HeQxrUNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jkl/scQJzWHsItgCgycXYMZeSMx93X+XnLHJ3VcwmdThBLrxQe/BOOS7ZXpdIPTq8sadc97BV6MXmbVCFZMPOUyzTS7hVyJAlEBUWXIsWFkJ4SrfYj8hdHf874ey3G9c2xHP3aOFJXAd/MvIi+QmKUJe7bz33IHWtwgVY36UCZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1ru3bnl6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BsryQK1I; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hkkosBGu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B0kfOKCP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D7F59211C4;
-	Thu,  6 Nov 2025 07:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762413826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
-	b=1ru3bnl6zTaJQ22XU2gMsGWTpkp+gmHjZZ2t57pZnLSE0QjP0E4B1zcCm8TnUwYyfhG/ep
-	OpbTc6WwNFKkMjtP4c8sXl6Ym+xAaFBERP40zXBQU74CT247gS/19DU9MnjP+otQHreMVI
-	vs/S4A7gDgq3TAGLaO4pVQsRsSPNGmQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762413826;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
-	b=BsryQK1I2wVpamBuHrtZ31BKHFAtMHf9K/Tl5yuw8v+MxsMLHcCbufG/28Lw2pHrIHXDzD
-	PfSNFhbLG5sCPrAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hkkosBGu;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=B0kfOKCP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762413825; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
-	b=hkkosBGuczAqLSXJr+/wi6QitrxxQFm0+AGDbamyv1Hy6AxZBklElEY7Ezgt4Bnt4z7fyQ
-	qfBeJRVDWzYhbvr4amFFMTne3KNKcgx/e35xjXNT7ApSqUpDfqFPGM7/uSklQc27gFJD6Y
-	yfvk/tclGtIKrrMi5bXpX6Z0o90D4hg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762413825;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7KuTnD+Lrz4fdyLGJ4uF39ab38gWiaLaVToVQMrbw5E=;
-	b=B0kfOKCPU7tEewGxnfh3t5a/1LSwMFkJ2xB7BBlodeWGgw+J1Dj5HeNkwMa/qS9L6oRqlV
-	QFQkN5b/C9x5+NDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B68C9139A9;
-	Thu,  6 Nov 2025 07:23:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AZ9yKwFNDGk8GAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 06 Nov 2025 07:23:45 +0000
-Message-ID: <2d4356a4-a0c1-423a-bd40-af1f8a28fd84@suse.cz>
-Date: Thu, 6 Nov 2025 08:23:45 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04CE2E11AB;
+	Thu,  6 Nov 2025 07:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762413849; cv=fail; b=Tz+fGyzTDXUFw8/REBO351BJ9emB0C2kgd4kOc/HohMYcvcsmzHbkuobNql1eSPc9K/v//dzgsODWBxSXFQH/VuM0a6BkjJ/kJgP7Yjk2vSW6Jzac3w20sQ+0jztlJ41krG7GE85z+WPC/srZdV6dfIqOzp23x50QWLM/KrskLA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762413849; c=relaxed/simple;
+	bh=ci1yv5zNaVZsoDDw/WPS3fOIxzQZQKTcox25K0rjbeQ=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=RLiiak2p3GzxnMEOB7pTqtu0/pZl2DqoM3mNU81BU2jJVd9g2tYZTYvI3QcsyhIY1Z7Ab+P1MsrGTJwvKhhTriHuwrVwaDwdhq7gyd+N645wz8aOcOBAam6AXPTnI/gJaY1w1bmcfP8ZsE9Jn5Rlkc6smgkOrIwyom+Cx9adoBM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JTBw+Llg; arc=fail smtp.client-ip=52.101.62.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RJ2PbyOFMCc2xOjSSZ6Ib3QUt4RqJRb0NU6W1yfyCs3tvQgVi7d2h5IHQMuVHfBHjTD/gwRxdu4IF32vWtLGrSJxZlBxiImTb/IO+cB8qkrKoTBKlxtPQWVCQMT6IGKrXMcsPVNNMe9t324WDXvn42ISmLEfrRQlN0UpohNmSv09+YFDQiPv4BUjRoYqb4zWNikqRCF/stNyMLI0v1kYH5i2F2vX3W9LzkFhjTaaKNWe4vjPQ+r9d0omFgrgISkpT6eStFzbZY9RjBuJkkLkjhmhhqBG9OlBWv63veCa8XjQVYdOWbLeHDwV6InB4bVtIKrvoOkbI0MQ5VGj0CLs8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bXEgMTn2UH4dLlo21Q7q/gvWJxC6Ufg5qEbF/Q5VcS8=;
+ b=jsi3K2Wb9wKJEhvpvo0prWMobRSbF7Oou9Gp5NFTAll2HOsCNM9nyV9nM74s2+u0SqDqDT2rvsuE016H0QEiqQoR/vTnjcfzRzt0KJb3/8bDs48NynFKrpMPJaYRjyXH77Jty6PL0lVFiHxO3bRD2izJWbOUkR4ZbGUNkGya+72SWAKCEsRuTz1xNmHzDI1agOltvyMTUl+suGht7Pd3knFUL8IRH8FwmYkUmbZ2y7FpCC7qWl0CnJmD3KdvKfX6MhOGpcI22zPAMt6RbzkmQbUvKp1zsuwww+McqZ24hTEJIvn9iKwP14joxv6FKsIqJV53tz9AcpGorrcxBC4s9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bXEgMTn2UH4dLlo21Q7q/gvWJxC6Ufg5qEbF/Q5VcS8=;
+ b=JTBw+LlgCA9Tj1PiGvagInT/IilK0AjuteBzO/7A60NiL8diCylHuhJ4RfcuMAf16b671YlxFuRi2lTYrawWODvoBqskmwwTpPnEEHaAq0aW/+yuIJQx5D6lRH+LNhsblsHZpgpfnMHRkrMbc1MfQAfLyuOSUMW/Rp0pp5DqGPVFzlEaS0j/i7Yrc6CvVQvdD39uwEK+tWpjxbp0rdUnTPSFWUsq3MuQQl5/PR08A0niSDzu+0oppWCza7FhHfSu580sSli2DIEdqjMHLqaBcZxDA50wTqtjUglHYl4r8d9J37LKRzLiwBJGcggqkeZLVek90GKCrUhwIxlxEMpRHg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 07:24:05 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
+ 07:24:05 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Nov 2025 16:24:01 +0900
+Message-Id: <DE1FKDK4YMH2.31M2ZHUOKEC1I@nvidia.com>
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Edwin Peer" <epeer@nvidia.com>, "Zhi Wang"
+ <zhiw@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v5 3/3] gpu: nova-core: add boot42 support for next-gen
+ GPUs
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "John Hubbard" <jhubbard@nvidia.com>, "Danilo Krummrich"
+ <dakr@kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251106012754.139713-1-jhubbard@nvidia.com>
+ <20251106012754.139713-4-jhubbard@nvidia.com>
+In-Reply-To: <20251106012754.139713-4-jhubbard@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0037.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29d::12) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] slab: move kfence_alloc() out of internal bulk alloc
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Alexei Starovoitov <ast@kernel.org>,
- linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
- bpf <bpf@vger.kernel.org>, kasan-dev <kasan-dev@googlegroups.com>,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>
-References: <20251105-sheaves-cleanups-v1-0-b8218e1ac7ef@suse.cz>
- <20251105-sheaves-cleanups-v1-2-b8218e1ac7ef@suse.cz>
- <CAADnVQJY_iZ5a1_GbZ7HUot7tMwpxFyABEdrRU3tcMWPnVyGjg@mail.gmail.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAADnVQJY_iZ5a1_GbZ7HUot7tMwpxFyABEdrRU3tcMWPnVyGjg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: D7F59211C4
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:mid,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DM6PR12MB4202:EE_
+X-MS-Office365-Filtering-Correlation-Id: 80060af2-ab2d-44e8-c1a9-08de1d05774e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bWx4OG1DUGhEekFtWG5zTDBtNkN3TkJReTNFNWZpaytZQmlyZTlxSDVXeE5j?=
+ =?utf-8?B?SjhPeFBDSFpMakFQbktRVy9jbENXYStJdnNpVytESU5pcVkxbHBzVTdqT3Bi?=
+ =?utf-8?B?RnVJbXo2TU53TGdWbk1Cdk51cGhiR3BlZ3Y5U1FjT2VQVGJpb0NHaFZ4b3JE?=
+ =?utf-8?B?cnVpOXBPNDJDWmNXc3R1WGJDZllibkZqNVRrOUhGYWs1SUVQWUFFWklTVlJL?=
+ =?utf-8?B?SDIrM21IbFprQjBma0NKZEV3MjdFaUtBZU5HdDhhSnM1MnhETDFoRE9OeTZx?=
+ =?utf-8?B?YXVuVUxQT1ZoTlgyUFFLRzR6M21tU2NvUFdoOFJKNXZ5WlBWSk5DK2dLMzNx?=
+ =?utf-8?B?bG5TRTJUZVZneURqOU5hL2FzYXZzbFBIUXZYV3RLTHZTZ2JRMjljZFluL2py?=
+ =?utf-8?B?cWd4NEdFMGo0em9uUy9BYTh5OUlXQXNmM3o5MWFVa0pUL1Yza243a0hBUkpm?=
+ =?utf-8?B?MEx5QkZieFNpNjBYNUwrRkZNY2tIVDlOQTl2dmxvTWo0MXBRdGg4OXJMdktw?=
+ =?utf-8?B?Z3R0SW0wWTV0aUNqWU1yTzQ3WTc5K0xDZG9ORW5lUlVZL2hkNmFuMjIzWm9Y?=
+ =?utf-8?B?NFlaMEQzSDhVOXlrSXZldEtZc1JOajk3TXdQaG9zMXZIaEpVdEh0bWM1NnBB?=
+ =?utf-8?B?dGtRYURmcno1TDF2d0NVbWRNeGlxRi8wbElmb1BIeGVCYzNNYllabHVIclBa?=
+ =?utf-8?B?c3g3VnZpTjFnWEFaZjR6Mi9Sd3Viak1YUnNrb3dJZ21DTmo4bWVwYkxaUHpE?=
+ =?utf-8?B?R1BEbDZkbzVNSk1WeFJhaFlxV1dTK2VTTzE0RVRYR1FPMklvT3VRNk1OWmZK?=
+ =?utf-8?B?bGV4YmgrVGpueXpKUEJGczFRaE0xbVE3OGdOejZ0UDZIVFBhVkVBQmttb2Fh?=
+ =?utf-8?B?ZWtsSFNQMHloN1ZUUmZWZDdrZytqaFo0R0FPQ0dIbk5WRmxQSWx4WFMrNWw3?=
+ =?utf-8?B?RC81eTdncCtrV2NkeGl2d0J3MUoxeDBzQ2pKYzBaWHhIQ3N2NEtVRzZVaFNt?=
+ =?utf-8?B?a2l2c3k0amg2bzlKMnhTeHl4VG1sMmttYkJFc3lCME5uVXdvZkVycVF3N090?=
+ =?utf-8?B?ZlJYL1Yyc0xtUkFVR1c4ZnFkNWNreWlEUmxuTUllV3BRYlRqYkZkaFdnaXRV?=
+ =?utf-8?B?RTRZd0RpRVFxREE2QUZRaDZ3NmxId1hab2JqUjJZb3BhTXEydm5ucytCVmJx?=
+ =?utf-8?B?Wm9OUjZtUEtoQUkyOVBkR0EwK05iRW44bklLbndUUEJaYmNBSDRQdm5xMGhj?=
+ =?utf-8?B?Z0JOQWNjNWx5Q2QxallDMU8rc2NHSXF5OWtEUDBQdVQ5TXpJZEZOaUx6M0h1?=
+ =?utf-8?B?ZDBBWnAzQmZLc05KaUttSkRtZHNyRTJ1UTJOZXJJSzRCUHlrdWtydmtCNkVK?=
+ =?utf-8?B?aVZMWlplVWRWYnFZbEMzZkllYi84RURNQ1AzOEozdDcxMmh5ZUpkYXpoYjgv?=
+ =?utf-8?B?QWl1WS9scC9OQ3Z4T2M3MnF3K1pOczVnNUY5ZWlncTZWOHV2T2NocDludXNj?=
+ =?utf-8?B?K2J2NVNJbFNXQlhCNWMzUVE1akZNMktzcEorc3FkYlk4NnRKbHdIYS94ZWN3?=
+ =?utf-8?B?M0lmTktCMiswQXNNS01DbDg2SjM2YWV2c3FVNGdJZXJSejRiTHEva0JPVW5v?=
+ =?utf-8?B?Z25wT21pcEV0Z3lkWlhyN2piMlR6clluMDYxN1R0engzWllEUzA2V0NLZzJQ?=
+ =?utf-8?B?dXkyZTQyMGxKSkJOekM2SjlNMFlBR2tjc29BbTRVQzI4bFJLVDlDcStINE55?=
+ =?utf-8?B?VU9kdERJTWRNTW9adUxDcmxKU0w2NWlkT1ZiY0w4YVFYbkpwaFprMEdKMWc0?=
+ =?utf-8?B?SlBTL3Mwb1k2cHZCa0V5ZEFEbjJreThRVFB2TXRSMzBCVVFGUDJzSmh6NWRv?=
+ =?utf-8?B?L3gwQTdoZVVSSHdCNDVRWWlYQkg3cjA5anhBVVRlSHJKZzEwTlNPQ1pOWlpK?=
+ =?utf-8?Q?wvc0+7Wbz461QgujqLpd9o1syW7VpDT3?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TDBUajNKM2pzbzFXcDRCUEtDdkF1OGsvZmRveUQzYW9teWdKRnFHRStSM0VH?=
+ =?utf-8?B?S011M3JLL1B6TmpxTjV6cDRKR05pWVFZd0thWEpWN2dOdkZPOHZpa1VZMGlu?=
+ =?utf-8?B?MUJob2Y3RElRZ1V6M2NEUk5KZjZPVHB3UGtUUWZ2bnhDb0k4aWR1TkF6aUJk?=
+ =?utf-8?B?d05IcWJyUTFubjZWTGlIS3VnR0t4djFXZmxCRHlEd09nb0c0dk1XYy9VR2JW?=
+ =?utf-8?B?MEpGMGFnNG9wZlUyMUJqYnNhVWZsbmVVaExEVmFMd25RazlnVk82emhtL05B?=
+ =?utf-8?B?UG44ak1Nb1g4RmRIakhMdkVEVzVsZjQwcWtjRGg3ekhuaWxORnlEcEwxV2NK?=
+ =?utf-8?B?VGlkajBLMVN3bmVLb0llL2tjZi9ZRkdxSjlObm1TYjgzbGJEcGJjRmxnRk93?=
+ =?utf-8?B?RTlORVpKN1FXdkUyVW5zWk9VQkRXdXg0U3J5VGdTY2szYUFyVEliSUhtT3Bm?=
+ =?utf-8?B?VFprcURnTVJoNDFLTzBET216YnNlWUtPQ0diWXVUdDU0UjJjN0xDblhhcFB6?=
+ =?utf-8?B?SjlBK201ZkJud2NNTzJHM1NqNzE1eW1Cc2haUEpYbTN6R0VwZ0RUTUd1T2F6?=
+ =?utf-8?B?aFd2U0ZLSlRWeTFORzA4WGpmYmZBdWhmWEpsekxwamdJWmkxaUtIK0FnT3Ew?=
+ =?utf-8?B?MkVBZnFxYy9PUjV0d0RObkJ6djB5QXUzOEFNdXozdmVyNTJhR3diVXVPRkF3?=
+ =?utf-8?B?SU9RdDZHMEtObzMzMUNzZVEvbnpBVnFGcXFOM1VJalJWK2xucWV6dVREU2xj?=
+ =?utf-8?B?UHg3RUw4akJLTE5YV0R2aVovYzJKckVjMVQzb2NNZXduaDNDWWZMeXhXS2oy?=
+ =?utf-8?B?QWxFVmNkTGIvV1VNdDBIejdadGVxUVloVjdNcGZsSWV6dFR5OUFhN2lZR0U3?=
+ =?utf-8?B?Uk1zYU1lZ09vTWdhbnJFcXhXZWVMazI5Z0ZvVkJPMHFjMlgrc1JTTXJRaWMz?=
+ =?utf-8?B?eUtaQ0VXVzVENTNqU2p4MXNoYldkWU9CajdGSVE0NDVRWEE1Z01UdEJLaXJx?=
+ =?utf-8?B?VGNydzI0RXN6K245eTlDZk9LNDBKR0JKOGR6dEhVVVFvQ1R4SzcvVWlTRlVJ?=
+ =?utf-8?B?N3FPNHJlL0tJSnU5UnNOTFpkZmtnbnhqaHBwMDRFcEVsWDd2TlRNb2xDNDNI?=
+ =?utf-8?B?SVVCSVdBV3Vob3pCdUJDYmwycjlKWlBtc1M5S1UyRDJNbDJ5dXBCNVgzV0ox?=
+ =?utf-8?B?YWtvZHpJWHg2ZURUQlY5djFJRUhJUSt6RUpoS2xEcG9rd2M5b0p4eTNZTmda?=
+ =?utf-8?B?aENycXQxbVZJaHRyZFFHclVCZmx4ekx3eHpxbTZxVWM1MTZYanVxRXVraVVq?=
+ =?utf-8?B?OFJJWW5ES1ZReWlvUHJ5LzRsWGN4cVpDUi9xTUhQT3BlcGxTTkg3aUpzdWJI?=
+ =?utf-8?B?SWNpbXJiRy92eHlXQVpKdk82ZUE0eURCc0FoUFpEOGt5c3Vrc05hWTQwZ3Uy?=
+ =?utf-8?B?V08vZkFnZCsxL1NQcU8rWGFIYzJJN0dxVHFIQmU1c1RPNjVPQWc5Z29xQ2lr?=
+ =?utf-8?B?RlU3blp2dHlrTGdiKytQa2dOWTJBL3NVa2dXYnpQcjlwajc1MUhFaXFtYTdU?=
+ =?utf-8?B?Nm1CUy9GSTBXRWhNWGdGRkNOTEVkbWlhQk1reDhnL3NVUG5ETFFlSFQ5NHkr?=
+ =?utf-8?B?anZETUNBcFNOTy9BVDd5NXZzbU1HME52elJRTVN6Q0ZreUFwMGlrWFoyZ1Fv?=
+ =?utf-8?B?V3dsWGthTmh0N3pLV0ozNkV1TmJRcks3cWViaXRTbmg3ZGtQUzJQUnREUjA0?=
+ =?utf-8?B?THQ0dFBaaFFuZVA1NWZ3ZWF0SHZ2c01QUE1SaHhLQUQ3d1pmbjZpVkpYakZS?=
+ =?utf-8?B?bGJ0ZVU1WnVzTVNmNTZCWSt2Q0lWYWE2aFpyU1MvNnNzTzdtK1c3cnpSaFN5?=
+ =?utf-8?B?Tzlpa1JCSXBEZ0JPV0orYkdRdU5xUm5Ha25qSHV3UDZkYW04d2E5SGRiUzlr?=
+ =?utf-8?B?Ly8vb2E2UjhvMFQyV1pGZ2pHWGNQNlVwTDJaZWtJVU1QUldxckIzRmphaHJs?=
+ =?utf-8?B?Q3ZHMnkwZEt1LzJPSFZDMlZvNjdJMnJYeFVmOWJGK3M3U3dpZXB2TmRLSVRq?=
+ =?utf-8?B?cWo3V1BIcExjc0JpWi9wU0Z0cWNUbEQ5Q1hPWWZCbWpjUUg2UzJ6VFUyaG05?=
+ =?utf-8?B?K2l4c2hWQlU4V1ZHYUFyWU5OQWJ4Ym9yNmpDWG01dkV2T3dZN3hTOWtCTmNi?=
+ =?utf-8?Q?XzXYkiKR9bgP8tXIgjEZrodyeChokb7aFGKgYjMIYXer?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80060af2-ab2d-44e8-c1a9-08de1d05774e
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 07:24:04.9363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oEvO/pKPaUGyfsj8LlUfXfq3f+mndXARM004AKNzAPCc9N6gZDnxhEj9ys/tKhhQxxJYT7pijJcL7ox2d2UZ3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4202
 
-On 11/6/25 03:39, Alexei Starovoitov wrote:
-> On Wed, Nov 5, 2025 at 1:05 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> SLUB's internal bulk allocation __kmem_cache_alloc_bulk() can currently
->> allocate some objects from KFENCE, i.e. when refilling a sheaf. It works
->> but it's conceptually the wrong layer, as KFENCE allocations should only
->> happen when objects are actually handed out from slab to its users.
->>
->> Currently for sheaf-enabled caches, slab_alloc_node() can return KFENCE
->> object via kfence_alloc(), but also via alloc_from_pcs() when a sheaf
->> was refilled with KFENCE objects. Continuing like this would also
->> complicate the upcoming sheaf refill changes.
->>
->> Thus remove KFENCE allocation from __kmem_cache_alloc_bulk() and move it
->> to the places that return slab objects to users. slab_alloc_node() is
->> already covered (see above). Add kfence_alloc() to
->> kmem_cache_alloc_from_sheaf() to handle KFENCE allocations from
->> prefilled sheafs, with a comment that the caller should not expect the
->> sheaf size to decrease after every allocation because of this
->> possibility.
->>
->> For kmem_cache_alloc_bulk() implement a different strategy to handle
->> KFENCE upfront and rely on internal batched operations afterwards.
->> Assume there will be at most once KFENCE allocation per bulk allocation
->> and then assign its index in the array of objects randomly.
->>
->> Cc: Alexander Potapenko <glider@google.com>
->> Cc: Marco Elver <elver@google.com>
->> Cc: Dmitry Vyukov <dvyukov@google.com>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
->>  mm/slub.c | 44 ++++++++++++++++++++++++++++++++++++--------
->>  1 file changed, 36 insertions(+), 8 deletions(-)
->>
->> diff --git a/mm/slub.c b/mm/slub.c
->> index 074abe8e79f8..0237a329d4e5 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -5540,6 +5540,9 @@ int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
->>   *
->>   * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUNT
->>   * memcg charging is forced over limit if necessary, to avoid failure.
->> + *
->> + * It is possible that the allocation comes from kfence and then the sheaf
->> + * size is not decreased.
->>   */
->>  void *
->>  kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
->> @@ -5551,7 +5554,10 @@ kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
->>         if (sheaf->size == 0)
->>                 goto out;
->>
->> -       ret = sheaf->objects[--sheaf->size];
->> +       ret = kfence_alloc(s, s->object_size, gfp);
->> +
->> +       if (likely(!ret))
->> +               ret = sheaf->objects[--sheaf->size];
-> 
-> Judging by this direction you plan to add it to kmalloc/alloc_from_pcs too?
+On Thu Nov 6, 2025 at 10:27 AM JST, John Hubbard wrote:
+> NVIDIA GPUs are moving away from using NV_PMC_BOOT_0 to contain
+> architecture and revision details, and will instead use NV_PMC_BOOT_42
+> in the future. NV_PMC_BOOT_0 will contain a specific set of values
+> that will mean "go read NV_PMC_BOOT_42 instead".
+>
+> Change the selection logic in Nova so that it will claim Turing and
+> later GPUs. This will work for the foreseeable future, without any
+> further code changes here, because all NVIDIA GPUs are considered, from
+> the oldest supported on Linux (NV04), through the future GPUs.
+>
+> Add some comment documentation to explain, chronologically, how boot0
+> and boot42 change with the GPU eras, and how that affects the selection
+> logic.
+>
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: Timur Tabi <ttabi@nvidia.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  drivers/gpu/nova-core/gpu.rs  | 38 ++++++++++++++++++++++++++++++++++-
+>  drivers/gpu/nova-core/regs.rs | 33 ++++++++++++++++++++++++++++++
+>  2 files changed, 70 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+> index 27b8926977da..8d2bad0e27d1 100644
+> --- a/drivers/gpu/nova-core/gpu.rs
+> +++ b/drivers/gpu/nova-core/gpu.rs
+> @@ -154,6 +154,17 @@ fn try_from(boot0: regs::NV_PMC_BOOT_0) -> Result<Se=
+lf> {
+>      }
+>  }
+> =20
+> +impl TryFrom<regs::NV_PMC_BOOT_42> for Spec {
+> +    type Error =3D Error;
+> +
+> +    fn try_from(boot42: regs::NV_PMC_BOOT_42) -> Result<Self> {
+> +        Ok(Self {
+> +            chipset: boot42.chipset()?,
+> +            revision: boot42.revision(),
+> +        })
+> +    }
+> +}
+> +
+>  impl fmt::Display for Revision {
+>      fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>          write!(f, "{:x}.{:x}", self.major, self.minor)
+> @@ -169,9 +180,34 @@ pub(crate) struct Spec {
+> =20
+>  impl Spec {
+>      fn new(bar: &Bar0) -> Result<Spec> {
+> +        // Some brief notes about boot0 and boot42, in chronological ord=
+er:
+> +        //
+> +        // NV04 through Volta:
+> +        //
+> +        //    Not supported by Nova. boot0 is necessary and sufficient t=
+o identify these GPUs.
+> +        //    boot42 may not even exist on some of these GPUs.
+> +        //
+> +        // Turing through Blackwell:
+> +        //
+> +        //     Supported by both Nouveau and Nova. boot0 is still necess=
+ary and sufficient to
+> +        //     identify these GPUs. boot42 exists on these GPUs but we d=
+on't need to use it.
+> +        //
+> +        // Rubin:
+> +        //
+> +        //     Only supported by Nova. Need to use boot42 to fully ident=
+ify these GPUs.
+> +        //
+> +        // "Future" (after Rubin) GPUs:
+> +        //
+> +        //    Only supported by Nova. NV_PMC_BOOT's ARCH_0 (bits 28:24) =
+will be zeroed out, and
+> +        //    ARCH_1 (bit 8:8) will be set to 1, which will mean, "refer=
+ to NV_PMC_BOOT_42".
 
-No, kmem_cache_alloc_from_sheaf() is a new API for use cases like maple
-tree, it's different from the internal alloc_from_pcs() caching.
+From the code it looks like Rubin and "Future" GPUs are handled exactly
+the same - do we need two paragraphs to describe them, or can we just
+have one for "Rubing and future GPUs"?
 
-> If so it will break sheaves+kmalloc_nolock approach in
-> your prior patch set, since kfence_alloc() is not trylock-ed.
-> Or this will stay kmem_cache specific?
+> +
+>          let boot0 =3D regs::NV_PMC_BOOT_0::read(bar);
+> =20
+> -        Spec::try_from(boot0)
+> +        if boot0.use_boot42_instead() {
+> +            Spec::try_from(regs::NV_PMC_BOOT_42::read(bar))
+> +        } else {
+> +            Spec::try_from(boot0)
+> +        }
+>      }
+>  }
+> =20
+> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.r=
+s
+> index 207b865335af..8b5ff3858210 100644
+> --- a/drivers/gpu/nova-core/regs.rs
+> +++ b/drivers/gpu/nova-core/regs.rs
+> @@ -25,6 +25,13 @@
+>  });
+> =20
+>  impl NV_PMC_BOOT_0 {
+> +    pub(crate) fn use_boot42_instead(self) -> bool {
+> +        // "Future" GPUs (some time after Rubin) will set `architecture_=
+0`
+> +        // to 0, and `architecture_1` to 1, and put the architecture det=
+ails in
+> +        // boot42 instead.
 
-I rechecked the result of the full RFC and kfence_alloc() didn't appear in
-kmalloc_nolock() path. I would say this patch moved it rather in the
-opposite direction, away from internal layers that could end up in
-kmalloc_nolock() path when kmalloc caches have sheaves.
+If this is "some time after Rubin", how do we infer that we must use
+boot42 for Rubin, as the previous comment suggests?
+
 
