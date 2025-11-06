@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-889346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBE9C3D567
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:20:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55691C3D580
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE42A3A9994
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:20:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D19D53513A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0162F533B;
-	Thu,  6 Nov 2025 20:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C012F7ACC;
+	Thu,  6 Nov 2025 20:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7VOAnlQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VpjqOZeo"
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477E82DCBFC;
-	Thu,  6 Nov 2025 20:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B512F7AAD;
+	Thu,  6 Nov 2025 20:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762460447; cv=none; b=uyg5TlRa3UQyyJi1xw3JUmQJEuqvaa4VojNdS3Vum+rA7px7mhBTHaBxLg3qErq6JLSdDywRK1PtAArkeLnIRSIPe2TzJZVndpt+1tNyAeTvcVE7Il44a+aSRZjN4lXf+RddTkuHVsW7mg++YlYZtmocBiq9j5F2rn7/apW3MXs=
+	t=1762460799; cv=none; b=dq8VNRR6LLazgZoincjTeqMB+kSU8o9e81AkPEP1e5cy38KtJ8XYdj7MjvMWa8YiIFIzF7UnVUr0CuDknx7ytSeuM+c0wUzQM5JFBU52z1H9KwVlGhnfARw2fkVgutjfk9dRLPwKYXRtn2fOEtV4pmM7p9v+m/GS1WndSafZIsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762460447; c=relaxed/simple;
-	bh=Z60oqG/trZOnlMB27pz31Xi3T492ivADnsjWB3ntlXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDe6RDtRbfoeuRvj6ue3jt1xDt0AnbWvqPe1fiqzzyW1rR2XN9N9kd9gIOwobQ93tnyoNPGfhImo4rXQjmlt6ntyTzKjkyaeLWP0LAeU36eAb6IzNoNpW7WP25eF8b5Yccm0dLJ5rk6vu62u2MvC78QmAlIexA+1pOVOH2YFqFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7VOAnlQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE5BC4CEF7;
-	Thu,  6 Nov 2025 20:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762460447;
-	bh=Z60oqG/trZOnlMB27pz31Xi3T492ivADnsjWB3ntlXw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E7VOAnlQUb1djiDJEw698HSqpoys+qRwdb9foEuadBU1ywhhUquMFKie1es6DmJpk
-	 NOLmLz/42QEPKe0OtcfYzdvFhuY2BYc7IsIMco4FYz7H+3iD5ukkGZ95lo1MP46rAR
-	 kUHb5jDy3oLjrLI2cpRhgF4V4lAkzPDn/mwxmYlpN4Wk7pVyUNpQkrbsdIgei2SFpQ
-	 7XHgkIwbJrIlpfBDVdk7uxIBYygksEANsYU1+e8rzZxeui8iQa0xTEjlpVr+L16XuU
-	 cdhtDFTyHuNjV2Gt8eUltMRIaFEs4UyOSGIsDGLLBlLzonsAervG8BCV126QIsas6/
-	 ZTl0WISB4Hv6w==
-Date: Thu, 6 Nov 2025 14:24:33 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>, 
-	Das Srinagesh <quic_gurus@quicinc.com>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
- compatible
-Message-ID: <c2o4iouc6sm7frcq64jmvxopv3eqvrjxievwwhiwqw6ptwfok3@4qmpfy4yij4m>
-References: <20251102-knp-soc-binding-v3-0-11255ec4a535@oss.qualcomm.com>
- <20251102-knp-soc-binding-v3-1-11255ec4a535@oss.qualcomm.com>
- <20251104-glaring-rebel-pillbug-a467ca@kuoka>
- <790ca394-cee2-412b-97d8-c6416b843010@oss.qualcomm.com>
- <b6717831-1840-4b9a-aade-ab2248e3f75d@kernel.org>
- <9ee07db9-508e-4c08-8f79-6ccfd9b646ab@oss.qualcomm.com>
- <6af33c1b-5b95-4efc-b429-5bfb9ee7caeb@kernel.org>
- <8cf870a8-706d-4514-a87a-a69b64521ab5@oss.qualcomm.com>
- <f539b21b-cfe8-4055-9620-4d5d8d108098@kernel.org>
- <9d80b581-5d3f-4b95-91e7-c73c113b0976@oss.qualcomm.com>
+	s=arc-20240116; t=1762460799; c=relaxed/simple;
+	bh=XZAtY+Rd14/2cybaJxKcM5kD5I/W2njZtjsegKIfEcA=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=cMi8chAi/oAeeV642RFdexq8CJ4/0Mgrcg8VJYvHhLbTK5iytFA0mIgm7K/4Mj+tsH62edLXx6zxWoP/TcnemS3wD3VWV3+C82mblVdVo7RQlfLlGhwjom6/7FHQC7C+ynysDJIxzf0cS0/O9H70GgqkOqD8zsjljKR0nCWPrkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VpjqOZeo; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id H6XrvyPdL8BgRH6XrvECBk; Thu, 06 Nov 2025 21:25:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1762460725;
+	bh=NQMjb3iEHPYWazi+q361lmQ6S9XwgUIL/XHW25HFaI8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=VpjqOZeo7T+Xk9AVJm9oZCR/KNJFfABW2xmLNx2EosNbSObH5FLDZFdRP8JxJPrnw
+	 zdhH+CRI2IqrVFVYWtbnjoLnZQsYkrOQrXNN3hdUu69AlzNvFSKZNI/pdRsSisFS/V
+	 nJouBMLdPT5WHZ6k/ZZt3mfONtIhqdCEo+11DbuFvxUzvemZCzEL6aumNyeyv9Wq/O
+	 14VfheJAGE+KYIF7mr67smSQa4OBQwDyJaxtkDOTLBd+AXpNYfsFw1W901XHJkFVNq
+	 ppXUxW1RHmgJgCcPoJcaS/YnYTKbWcBAY+JyNO7c71pElGQuJdRRl9U4QlfBuqCWYn
+	 tPvBDAX5ZsLhw==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 06 Nov 2025 21:25:25 +0100
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <bc9074b9-27b5-4a31-ab85-ef7fcc309523@wanadoo.fr>
+Date: Thu, 6 Nov 2025 21:25:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d80b581-5d3f-4b95-91e7-c73c113b0976@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] clk: en7523: generalize register clocks function
+References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
+ <20251106195935.1767696-3-ansuelsmth@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251106195935.1767696-3-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 03:58:27PM +0100, Konrad Dybcio wrote:
-> On 11/4/25 3:52 PM, Krzysztof Kozlowski wrote:
-> > On 04/11/2025 15:38, Konrad Dybcio wrote:
-> >> On 11/4/25 3:37 PM, Krzysztof Kozlowski wrote:
-> >>> On 04/11/2025 15:35, Konrad Dybcio wrote:
-> >>>> On 11/4/25 3:26 PM, Krzysztof Kozlowski wrote:
-> >>>>> This I got, but nothing here explains why you need generic compatible.
-> >>>>> To re-iterate: there was no generic compatible before, now there is.
-> >>>>> Writing bindings and numerous reviews from DT maintainers ask not to use
-> >>>>> generic compatibles.
-> >>>>
-> >>>> OK so let's not worry about a generic compatible. IMEM exists since
-> >>>> MSM8974 and it only had major hw updates with SM8550. They don't
-> >>>> impact the software interface though, so qcom,msm8974-imem is OK.
-> >>>>
-> >>>> There's a separate control/status register address space for each
-> >>>> instance of this IP (usually far apart from the actual SRAM pool),
-> >>>> which Linux doesn't have to care about.
-> >>>
-> >>> Just use qcom,kaanapali-imem - that's the first device here without syscons.
-> >>
-> >> So we don't want to move the existing ones over?
-> > 
-> > This was never discussed and this patch did not do it. You cannot move
-> > them, that's ABI.
+Le 06/11/2025 à 20:59, Christian Marangi a écrit :
+> Generalize register clocks function for Airoha EN7523 and EN7581 clocks
+> driver. The same logic is applied for both clock hence code can be
+> reduced and simplified by putting the base_clocks struct in the soc_data
+> and passing that to a generic register clocks function.
 > 
-> I see, I implicitly assumed this would be a sweeping change.
+> While at it rework some function to return error and use devm variant
+> for clk_hw_regiser.
 > 
-> So should the Kaanapali submitters simply send a version of this
-> patch with:
-> 
-> - oneOf:
->   - const: qcom,kaanapali-imem
->   - items:
->     # existing big list
-> 
-> ?
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>   drivers/clk/clk-en7523.c | 148 +++++++++++++++++----------------------
+>   1 file changed, 66 insertions(+), 82 deletions(-)
 
-We have 33 cases of "this is just a generic Qualcomm IMEM block", could
-we just make it "qcom,imem" until there's actually a sign that it's not
-a platform-independent block?
+...
 
-Regards,
-Bjorn
+> +static int en75xx_register_clocks(struct device *dev,
+> +				  const struct en_clk_soc_data *soc_data,
+> +				  struct clk_hw_onecell_data *clk_data,
+> +				  struct regmap *map, struct regmap *clk_map)
+> +{
+> +	struct clk_hw *hw;
+> +	u32 rate;
+> +	int i;
+> +
+> +	for (i = 0; i < soc_data->num_clocks - 1; i++) {
+> +		const struct en_clk_desc *desc = &soc_data->base_clks[i];
+> +		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
+> +		int err;
+> +
+> +		err = regmap_read(map, desc->base_reg, &val);
+> +		if (err) {
+> +			pr_err("Failed reading fixed clk rate %s: %d\n",
 
-> 
-> I'm not a huge fan of using kaanapali as the fallback-going-forward
-> since it's literally the newest platform on the shelves (or perhaps
-> not even on the shelves yet..) so it's going to look funny when
-> someone comes up with support for another 2013 soc.. but perhaps
-> that's just how things are supposed to be
-> 
-> Konrad
+Would it be better to use dev_err()? (here and in other places)
+
+> +			       desc->name, err);
+> +			return err;
+> +		}
+> +		rate = en7523_get_base_rate(desc, val);
+> +
+> +		err = regmap_read(map, reg, &val);
+> +		if (err) {
+> +			pr_err("Failed reading fixed clk div %s: %d\n",
+> +			       desc->name, err);
+> +			return err;
+> +		}
+> +		rate /= en7523_get_div(desc, val);
+> +
+> +		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
+
+I think that the issue was already there before, but should we have a 
+corresponding clk_hw_unregister_fixed_rate() somewhere in this driver?
+
+I've not seen any.
+
+Or use devm_clk_hw_register_fixed_rate()?
+
+> +		if (IS_ERR(hw)) {
+> +			pr_err("Failed to register clk %s: %ld\n",
+> +			       desc->name, PTR_ERR(hw));
+> +			return PTR_ERR(hw);
+> +		}
+> +
+> +		clk_data->hws[desc->id] = hw;
+> +	}
+> +
+> +	hw = en7523_register_pcie_clk(dev, clk_map);
+> +	if (IS_ERR(hw))
+> +		return PTR_ERR(hw);
+> +
+> +	clk_data->hws[EN7523_CLK_PCIE] = hw;
+> +
+> +	return 0;
+> +}
+> +
+>   static int en7581_pci_is_enabled(struct clk_hw *hw)
+>   {
+>   	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+
+...
+
+CJ
 
