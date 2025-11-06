@@ -1,235 +1,215 @@
-Return-Path: <linux-kernel+bounces-889071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0934EC3C985
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:54:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478E3C3CAAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:01:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D87F188FC3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D083B4B02
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7EF284665;
-	Thu,  6 Nov 2025 16:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MSnSg7qw"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24796285CBC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7093376A5;
+	Thu,  6 Nov 2025 16:54:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5996D34BA20
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448087; cv=none; b=ZswIwyRnaRspfn2i24mgrh3wLmy1KZPy+rZ6emDB/7SbIo8xbs2ZIi2XbqCRSUC6kKkD6pyftifFgL3O8+ZVyG6LNi3o56HzgZ/E601D66g5TSXwlU6sTkQcBmQVI1t83ugbSknohmd3ZdKGD+JF2uc5ri6vFRBi0Acd0gg1ViU=
+	t=1762448097; cv=none; b=MAk0C3aWBDaSz/dpuTTFUeJQUSPcI1YAd4zzu5I2OJIgEUVmtgoMk5MP9F2zDCoWyq4uepCzNKP1BxiUSA81AnGq8O8TVovpA8KjbFl36I+MKvPapBP2PdVXkWYiochOJHNqKKsqlTrAUj2vpgELgeGAxYSj18i+DDPpyX8qdIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448087; c=relaxed/simple;
-	bh=+er897VeBk4n/vRglajwaZ5PSzwLJpIHytxIjwJ2hFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LxswUqrBjMr3HVb5Ccyoy0InSJ5g2Wt1nWV/bRMziaV2DFo4tfGL+4U40sZ/bLm0kJ6YfR0Gf+hxhj+jcJRy7JRE4yyLx2BVS831FtGQXVMjfNn3gMkpL9BmLq/pPjoOcdxUFleaBX8eWmb6yATxzERHbzDE9ZyVaNqDOQ/MaTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MSnSg7qw; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47754e0a13bso86545e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:54:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762448083; x=1763052883; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qy5jSwN7S6PcN2+UAQhcACOnAgI06MV590m9VcIejho=;
-        b=MSnSg7qw4+vQ9qYhCVauQnT/UVXc5vcjiEBq2BE23Gps9eXOjPcFGAN5gEX46Pu+OB
-         yzPlgBKxHdDo0ikAXK+0yJ6tDqoT4a4oZ3//F+NM0ANbw1dW+cGhJfe9Dgbww/iWl5Ga
-         7IvAAgzpbSGV+PVfEzFTq+UTw4jmYX7dvblwCcGGd0mzB2lVP76vrIKzo/u9LE+oqzKu
-         WzM5LRvmqlTdrfG7KfQ6C6fgCdafBkyrQRtGTfhHZ4S/jyNCxb0pUmlzq5UxqJMOfQKs
-         ZTe32zNxRzNPyOvvReX86U7mKlUYjVDrbfGWSIEtAyHgIzUmVZF3s03ruyalYqbJdsK4
-         3DDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448083; x=1763052883;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qy5jSwN7S6PcN2+UAQhcACOnAgI06MV590m9VcIejho=;
-        b=wxIEGP09hbZvolc0OCUGfTodhlJ2v2GPRrOr7jN0Jca1y7oneFKBXlCG47LdnOW93x
-         SB1iGmMPDJMr9gQTT1cTqrJFR8VyvyXv7x6SWZymXLXmKT+QCq56td9ru5WJbNH+7ZOk
-         ztnKQyeHXanCtBtCbUFYGaZzvgYUgyb9z/gjoqmoOvcVKpz2p47V8qKou4XimCgXzvOv
-         S/fK5e9IEdRVjZT4segmijsGN/h7koW50rd9gT5h39aKdKLPsvhUpRaNxGIa6KlY9FW3
-         9mlWmnf8nyzuyvv4++bqraEovFH+AH13JG2MadCKT15Z7jhOcdG4kpvuDLGc4iTKljBJ
-         fhbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBAlHeoL+65B0cxxcBe6Gfw5CyU52NW9L6znrmk6vlHgeCHayctSRsl76s5i1NoIDVH0HrFuzxzh0yanU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOcz5GGksH51mgYEsSAuCIMeyhbRoIfaGTCMJMxawZqezdOF0w
-	h5ywHIdkOpuuu/hTs31kAFrZZATR4iMsKkMwNpvB9NYfiqfYkW+XPdgAV5O4q/dyEg==
-X-Gm-Gg: ASbGncuWSR5Fsj9rXb4ry3CbKg6JIWrqyD5VcVWLks8P9oiYP7xNof6lyUBovY03ibr
-	mwCg/suh+70aSrY5J1MWpel3htR/NdBcgtgiCTiiY8eqtSINQh87LqJtwV/0q+NoJIyIyIOK9/d
-	fb9phF9FTK3bX7FHlFoC17ugG2K4s1TLjdNiBG/B5czTIrhr8DDuyKqM4jR+iSFM/eBzv1lQ6yv
-	AldkmInoQgLmeAPl9duDk3olBqzm2aT3RwUouheQjNFCafSVRem1vk5Mr1uRFFxMg32nLXBmuq6
-	Yen1xPFLKMkUnMgmkcuMzAPv+IFtQ6Tz1oW0BQyLd96IHgstijYMk6kXemdDEqOJrtPZKhk5HND
-	L9tfrbvvoX0ManfkV/1lQ5ZX8PqToUEosuwve4mZrXIFo6SgrShzzG9BkhqSq4Bxu3WTwJNza5e
-	jUQWWdFewAHstySnGvJjLllPdHHNtsyO5ULgdhamMtu7ZHi0ildyPPA/+RH8OV
-X-Google-Smtp-Source: AGHT+IH9Sel42fS+BYooq+9ScS2mxKoFKXpJsaK/tHTCGPR8SBDeDrXp6AvREwD204lt8g8KrZ9JGg==
-X-Received: by 2002:a05:600c:c10f:b0:477:1afe:b962 with SMTP id 5b1f17b1804b1-4776410ec16mr2231445e9.1.1762448083254;
-        Thu, 06 Nov 2025 08:54:43 -0800 (PST)
-Received: from google.com (54.140.140.34.bc.googleusercontent.com. [34.140.140.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce210a7sm120476545e9.12.2025.11.06.08.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:54:42 -0800 (PST)
-Date: Thu, 6 Nov 2025 16:54:38 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
- mode
-Message-ID: <aQzSzhcndQ3Ry0a2@google.com>
-References: <20250819215156.2494305-16-smostafa@google.com>
- <aMQmA9cLaeYWG5_C@willie-the-truck>
- <aNKwROPzDCWgJBGQ@google.com>
- <20250923173806.GF2547959@ziepe.ca>
- <aNppE9A3PDiDg_1W@google.com>
- <20251002151308.GG3195829@ziepe.ca>
- <aQt9-kTCe8TpuyVq@google.com>
- <20251105171208.GN1204670@ziepe.ca>
- <aQyBIohAuxNHV-XI@google.com>
- <20251106132331.GU1204670@ziepe.ca>
+	s=arc-20240116; t=1762448097; c=relaxed/simple;
+	bh=FbJB2CacN1SnW23rA1cwgAD5eJ8EyM8yiTtGvzA/qdQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q3So8p/saHbyDjWYsfr7/D0s86xhkoZ/90nugMPgO/meegxKKRoAekC03WSPj/U9I6kwGZkRHmAnVXeJEi7AwiJJvZbu8VkyFsh0xbWkvhwFN3zpbpyyvFNWojqxBPKZroMC464dqdwiXU0eNxy+JUExwALXIl+7f+sAYDE587E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7FEB1596;
+	Thu,  6 Nov 2025 08:54:46 -0800 (PST)
+Received: from [10.1.30.195] (XHFQ2J9959.cambridge.arm.com [10.1.30.195])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E7ED3F694;
+	Thu,  6 Nov 2025 08:54:51 -0800 (PST)
+Message-ID: <bd10dd8a-8cdc-404e-8259-4d65ca9a650d@arm.com>
+Date: Thu, 6 Nov 2025 16:54:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v4 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+Content-Language: en-GB
+To: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
+ Huang Ying <ying.huang@linux.alibaba.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Barry Song <baohua@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Yang Shi <yang@os.amperecomputing.com>,
+ "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ Yin Fengwei <fengwei_yin@linux.alibaba.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20251104095516.7912-1-ying.huang@linux.alibaba.com>
+ <20251104095516.7912-3-ying.huang@linux.alibaba.com>
+ <2b9fa85b-54ff-415c-9163-461e28b6d660@gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <2b9fa85b-54ff-415c-9163-461e28b6d660@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251106132331.GU1204670@ziepe.ca>
 
-On Thu, Nov 06, 2025 at 09:23:31AM -0400, Jason Gunthorpe wrote:
-> On Thu, Nov 06, 2025 at 11:06:11AM +0000, Mostafa Saleh wrote:
-> > Thanks for the explanation, I had a closer look, and indeed I was
-> > confused, iommu_init_device() was failing because of .probe_device().
-> > Because of device_set_node(), now both devices have the same fwnode,
-> > so bus_find_device_by_fwnode() from arm_smmu_get_by_fwnode() was returning
-> > the wrong device.
-> > 
-> > driver_find_device_by_fwnode() seems to work, but that makes me question
-> > the reliability of this approach.
+On 06/11/2025 09:47, David Hildenbrand (Red Hat) wrote:
+> On 04.11.25 10:55, Huang Ying wrote:
+>> A multi-thread customer workload with large memory footprint uses
+>> fork()/exec() to run some external programs every tens seconds.  When
+>> running the workload on an arm64 server machine, it's observed that
+>> quite some CPU cycles are spent in the TLB flushing functions.  While
+>> running the workload on the x86_64 server machine, it's not.  This
+>> causes the performance on arm64 to be much worse than that on x86_64.
+>>
+>> During the workload running, after fork()/exec() write-protects all
+>> pages in the parent process, memory writing in the parent process
+>> will cause a write protection fault.  Then the page fault handler
+>> will make the PTE/PDE writable if the page can be reused, which is
+>> almost always true in the workload.  On arm64, to avoid the write
+>> protection fault on other CPUs, the page fault handler flushes the TLB
+>> globally with TLBI broadcast after changing the PTE/PDE.  However, this
+>> isn't always necessary.  Firstly, it's safe to leave some stale
+>> read-only TLB entries as long as they will be flushed finally.
+>> Secondly, it's quite possible that the original read-only PTE/PDEs
+>> aren't cached in remote TLB at all if the memory footprint is large.
+>> In fact, on x86_64, the page fault handler doesn't flush the remote
+>> TLB in this situation, which benefits the performance a lot.
+>>
+>> To improve the performance on arm64, make the write protection fault
+>> handler flush the TLB locally instead of globally via TLBI broadcast
+>> after making the PTE/PDE writable.  If there are stale read-only TLB
+>> entries in the remote CPUs, the page fault handler on these CPUs will
+>> regard the page fault as spurious and flush the stale TLB entries.
+>>
+>> To test the patchset, make the usemem.c from
+>> vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-
+>> scalability.git).
+>> support calling fork()/exec() periodically.  To mimic the behavior of
+>> the customer workload, run usemem with 4 threads, access 100GB memory,
+>> and call fork()/exec() every 40 seconds.  Test results show that with
+>> the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
+>> flush functions reduces from ~50.5% to ~0.3% in perf profile.
+>>
 > 
-> Yeah, this stuff is nasty. See the discussion here.
+> All makes sense to me.
 > 
-> https://lore.kernel.org/linux-iommu/0d5d4d02-eb78-43dc-8784-83c0760099f7@arm.com/
+> Some smaller comments below.
 > 
-> riscv doesn't search, so maybe ARM should follow it's technique:
+> [...]
 > 
-> static struct iommu_device *riscv_iommu_probe_device(struct device *dev)
-> {
->         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
->         struct riscv_iommu_device *iommu;
->         struct riscv_iommu_info *info;
->         struct riscv_iommu_dc *dc;
->         u64 tc;
->         int i;
+>> +
+>> +static inline void local_flush_tlb_page_nonotify(
+>> +    struct vm_area_struct *vma, unsigned long uaddr)
 > 
->         if (!fwspec || !fwspec->iommu_fwnode->dev || !fwspec->num_ids)
->                 return ERR_PTR(-ENODEV);
+> NIT: "struct vm_area_struct *vma" fits onto the previous line.
 > 
->         iommu = dev_get_drvdata(fwspec->iommu_fwnode->dev);
->         if (!iommu)
->                 return ERR_PTR(-ENODEV);
+>> +{
+>> +    __local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
+>> +    dsb(nsh);
+>> +}
+>> +
+>> +static inline void local_flush_tlb_page(struct vm_area_struct *vma,
+>> +                    unsigned long uaddr)
+>> +{
+>> +    __local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
+>> +    mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, uaddr & PAGE_MASK,
+>> +                        (uaddr & PAGE_MASK) + PAGE_SIZE);
+>> +    dsb(nsh);
+>> +}
+>> +
+>>   static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
+>>                          unsigned long uaddr)
+>>   {
+>> @@ -472,6 +512,22 @@ static inline void __flush_tlb_range(struct
+>> vm_area_struct *vma,
+>>       dsb(ish);
+>>   }
+>>   +static inline void local_flush_tlb_contpte(struct vm_area_struct *vma,
+>> +                       unsigned long addr)
+>> +{
+>> +    unsigned long asid;
+>> +
+>> +    addr = round_down(addr, CONT_PTE_SIZE);
+>> +
+>> +    dsb(nshst);
+>> +    asid = ASID(vma->vm_mm);
+>> +    __flush_tlb_range_op(vale1, addr, CONT_PTES, PAGE_SIZE, asid,
+>> +                 3, true, lpa2_is_enabled());
+>> +    mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, addr,
+>> +                            addr + CONT_PTE_SIZE);
+>> +    dsb(nsh);
+>> +}
+>> +
+>>   static inline void flush_tlb_range(struct vm_area_struct *vma,
+>>                      unsigned long start, unsigned long end)
+>>   {
+>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+>> index c0557945939c..589bcf878938 100644
+>> --- a/arch/arm64/mm/contpte.c
+>> +++ b/arch/arm64/mm/contpte.c
+>> @@ -622,8 +622,7 @@ int contpte_ptep_set_access_flags(struct vm_area_struct *vma,
+>>               __ptep_set_access_flags(vma, addr, ptep, entry, 0);
+>>             if (dirty)
+>> -            __flush_tlb_range(vma, start_addr, addr,
+>> -                            PAGE_SIZE, true, 3);
+>> +            local_flush_tlb_contpte(vma, start_addr);
 > 
-> It would make it reliable..
+> In this case, we now flush a bigger range than we used to, no?
 
-That makes sense, and it will address the problem Robin was solving also:
-https://lore.kernel.org/r/6d7ce1dc31873abdb75c895fb8bd2097cce098b4.1733406914.git.robin.murphy@arm.com
+I don't believe so, no; we are still flushing the same contpte region (i.e. 64K
+for 4K base page config).
 
 > 
-> > > > 2- Check if KVM is initialised from the SMMUv3 driver,
-> > > >    if not -EPROBE_DEFER (as Will suggested), that will guarded by the
-> > > >    KVM driver macro and cmdline to enable protected mode.
-> > > 
-> > > SMMUv3 driver shouldn't even be bound until KVM is ready and it is an
-> > > actual working driver? Do this by not creating the struct device until
-> > > it is ready.
-> > > 
-> > > Also Greg will not like if you use platform devices here, use an aux
-> > > device..
-> > 
-> > But I am not sure if it is possible with built-in drivers to delay
-> > the binding.
-> 
-> You should never be delaying binding, you should be delaying creating
-> the device that will be bound.
-> 
-> pkvm claims the platform device.
-> 
-> pkvm completes its initialization and then creates an aux device
-> 
-> smmu driver binds the aux device and grabs the real platform_device
-> 
-> smmu driver grabs the resources it needs from the parent, including
-> the of node. No duplication.
-> 
-> Seems straightforward to me.
+> Probably I am missing something (should this change be explained in more detail
+> in the cover letter), but I'm wondering why this contpte handling wasn't
+> required before on this level.
 
-Maybe I am misunderstanding this, but that looks really intrusive to me,
-at the moment arm-smmuv-3.c is a platform driver, and rely on the
-platform bus to understand the device (platform_get_resource...)
+The previous __flush_tlb_range() API was flushing the same region. But that API
+broadcasts. We decided not to just create a local version of that API because it
+is more complex than it needs to be for this use case.
 
-You are suggesting to change that so it can also bind to AUX devices, then
-change the “arm_smmu_device_probe” function to understand that and possibly
-parse info from the parent device?
-
-One of the main benefits from choosing trap and emulate was that it
-looks transparent from the kernel of point view, so doing such radical
-changes to adapt to KVM doesn't look right to me, I think the driver
-should remain as is (a platform driver that thinks it's directly
-talking to the HW).
-The only thing we need to do is to make the SMMUs available after
-KVM is up (at device_sync initcall).
-
-> 
-> > Also, I had to use platform devices for this, as the KVM driver binds
-> > to the actual SMMUv3 nodes, and then duplicates them so the SMMUv3
-> > driver can bind to the duplicate nodes, where the KVM devices are the
-> > parent, but this approach seems complicated, besides the problems
-> > mentioned above.
-> 
-> I don't think you need to do this this, you can use aux device and the
-> fwspec things all search the iommu_devices_list to find the
-> iommu_driver. You don't need to duplicate anything.
-> 
-> Create the aux driver when the emulated smmu is ready to go.
-
-See my point above.
-
-> 
-> > That works for me. And if we want to back the KVM driver with device I was
-> > thinking we can rely on impl_ops, that has 2 benefits:
-> 
-> > 1- The SMMUv3 devices can be the parent instead of KVM.
-> > 2- The KVM devices can be faux/aux as they are not coming from FW and
-> >    don't need to be on the platform bus.
-> 
-> IMHO this is backwards. The kvm driver should be probing first, the
-> smmu driver should come later once kvm is ready to go.
-
-Agree.
-
->  
-> > Besides this approach and the one in this patch, I don't see a simple way
-> > of achieving this without adding extra support in the driver model/platform
-> > bus to express such dependency.
-> 
-> You shouldn't need anything like this.
-
-Agree.
+The whole (arm64-private) TLB flush interface is creeking and needs some
+refactoring, which I'm planning to do as a follow up to this.
 
 Thanks,
-Mostafa
+Ryan
 
 > 
-> Jason
+>>       } else {
+>>           __contpte_try_unfold(vma->vm_mm, addr, ptep, orig_pte);
+>>           __ptep_set_access_flags(vma, addr, ptep, entry, dirty);
+>> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+>> index d816ff44faff..22f54f5afe3f 100644
+>> --- a/arch/arm64/mm/fault.c
+>> +++ b/arch/arm64/mm/fault.c
+>> @@ -235,7 +235,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
+>>         /* Invalidate a stale read-only entry */
+> 
+> I would expand this comment to also explain how remote TLBs are handled very
+> briefly -> flush_tlb_fix_spurious_fault().
+> 
+>>       if (dirty)
+>> -        flush_tlb_page(vma, address);
+>> +        local_flush_tlb_page(vma, address);
+>>       return 1;
+>>   }
+>>   
+> 
+
 
