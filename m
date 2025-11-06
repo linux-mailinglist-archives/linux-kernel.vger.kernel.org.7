@@ -1,114 +1,714 @@
-Return-Path: <linux-kernel+bounces-888464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62090C3AE4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:30:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7E7C3AE60
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97131A46BA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:30:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E49DC4E02DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D5D32B9A0;
-	Thu,  6 Nov 2025 12:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7360932AADC;
+	Thu,  6 Nov 2025 12:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnewM3NA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W+F7gcQd";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MtKAeFXz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B56632ABD1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDF931BCB7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762432213; cv=none; b=T+Q7+qpP9bKhDNKxHcBrIanMF9y5mTTenQkFvIyrMbfCNEJpkDrDBzN69U+rpBY9Sqgoa2ogNgX6rEpb+PA7fCwcJ3wB3M+wmYsFkVzgIw9IQF8p91iRH0WWc9hEcz192IRhHvObkEI7MfxM7os0YMHgUcnpgNVnP0kJm4Q48Hk=
+	t=1762432292; cv=none; b=nBiBADggjm9QhMNIMBGRwNX1HpWiR7EB6tuTZwAGIPl6/zvm67vGWEAeNtBX3hb4nBPqhdbSfeUkYRuzufO1sLk/R59olUOiKhGkGSI0emQ4NN9bul8sFdc3eP+DahIottql2oZVc0DUzrz1o93TojAQqxCjzJ/PazvGvnpIcLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762432213; c=relaxed/simple;
-	bh=Zxv238Sh/My5WupzWXJ5MQHjYqFRMOz2qFcj9KoIvAM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iUlnl4S/yU8v+SBrcxIS4YFs2GGUwhLouB4vfW067R59R5XPVCmeAPDjZo+LHoUP30CoH5kPlmCqG5FLJ3B6k+x+B2Ka2AlwnnJic8EUVqTShkhkyuehNjvVUHP7o2ya/xiv9Q+BaNmhvpLVBvN6nPuBweeT3fsYaxhtgzMibAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnewM3NA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E11C4AF09
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762432211;
-	bh=Zxv238Sh/My5WupzWXJ5MQHjYqFRMOz2qFcj9KoIvAM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RnewM3NAGeeXi664eFAadOd4km/YPRZtGTojr0Pg9xCttOSHiw4fSKBASbO1fzUQD
-	 lifL3pV5ToV+FPoG4dUqB3AjHBvuNq8fJsWqPljVSetD/BfC1g3k7gYrHjbBC6SDOl
-	 SOiyvCIXNy/pt5DuugplRBlsFKoS6ax02f3euQhMjxPa3DBQASdDblU5u6vszoOlGc
-	 CWJggJXToH2wxdqrXjcmy1LJL0iNQRe8ydQRdav2Ks4jlTxoOaPaybvCWMW7jdA2XN
-	 9AWR0jWZAw5Bdc5nZQ74W8DyzeHSv0j1HR2caIeNJ774TcrEISu5SoTzVYA3J/UGtW
-	 Ooc8qWpUf14pA==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e9d633b78so155288266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:30:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWzLKP0mzdGJYqhQjiQOb5H2CXdpnYTtzX1EnXSox9ZzgWssuIzT1i+bFhIG+qtHAgVVCJXercv+GD8uqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytU/4uqmhnS+Z/eMSDY2iv7BoA3rImVutxR42lbKvluoW4fCvu
-	eUUmTsePaaqGCX/V8BOi9xyIjXkKXl3W16UcMFpwKoPv2uAjoSL2GgxHF9xC53VEGfb5nK8r+zu
-	MOe+kKcfp6CzVih0NtGBGbKPnMtEYs+0=
-X-Google-Smtp-Source: AGHT+IGQEaG1Jr8KNRKTKhKSGldPg2aCZWHEsSxhESBypSgE7Lwo8wgnhpm146x+RnaEjQknFnpLfsOoNAnq23QHBTU=
-X-Received: by 2002:a17:907:d20:b0:b07:87f1:fc42 with SMTP id
- a640c23a62f3a-b7289537134mr356096166b.16.1762432210334; Thu, 06 Nov 2025
- 04:30:10 -0800 (PST)
+	s=arc-20240116; t=1762432292; c=relaxed/simple;
+	bh=K60Mo+s7dbIJsbciyBo42EThKakFnYo7BZE4xOdOnCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VqDakCmHGvLsnnF6ISzlhp3buEM0YtOhdwiSIi8PsXQVvZL/WFPoGS52k+JJNvaLeqlp1vuPo4yauVn8vmu1JGBC+kcpl5Y9y0iurN/GRDverwppIvEDTKsdUgdiC3xIOyPBLbCk/j+cjwwpBIiIUfzEu470cg0Nr4p5WX29svw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W+F7gcQd; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MtKAeFXz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6ASp6R3748991
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 12:31:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qjj+QBaDInsXfXxbUNAL4B1lu0Uvbge8gSGkcg+9kCY=; b=W+F7gcQdrvMjRLYx
+	QCER3VX9iIbnJ5gbWy3k5MtDQ2jiy4MKmn1NBq8c8/negwia1AHsloxufa4tcO86
+	N1nn6ftXl8/jBYEdqQp9PjyMpza+3WQkWOjyFBIlfrBneNbxc30tx3WvbxWdgTKi
+	MfkhHxzFqMJQTNQm8+yAfDhiQapcgrTOMEzF9BoYvmqjMObZg0c1sVI6r0EBE/yZ
+	wtgKqzFb1bWTmfV5Sr2rFkmv5t1zFB9h/8j/Pngs+wRkjUC+w5sZkbDv4vdo2VAG
+	bp5WI7/st/85U+yQ4DhHD/h7uRgk6DRZ/pXhLNSaLeJvrG3ZgXEmaIbsM5TDVb/L
+	Sy5CiA==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8sy6g9n0-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:31:28 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7aff2f41d18so1740910b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:31:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762432287; x=1763037087; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qjj+QBaDInsXfXxbUNAL4B1lu0Uvbge8gSGkcg+9kCY=;
+        b=MtKAeFXz5jxhPVmFsLFZ5syta2iYw0W+XqGTFT0odkJjK1loMGbF/V+PUk0CrO39/n
+         KMzSatltCKbphDdeCHuDetB67mYdOCq4bAP3cuJPw3mbXA1oD+4hQoNY0NUoHRCVBUl8
+         APhrBP/ZRixHM9F8KTRZBD3DikmbxiS7lfY26HkuKCWnRXJvH2cOSgKf5S92dS20C07F
+         5qehw0VypkaPzqnGmTochXYmEPeVKXcCh5XOTSL+qyaZFVu4Se9/7VzR/xn0YbIcZI1n
+         mufTbpvWiY6qSG2wmDo5FvTW9anhMHgCZWrlIDeVXM8HwSv8Hyk/R8HWSptbkuOy9mQl
+         grDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762432287; x=1763037087;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qjj+QBaDInsXfXxbUNAL4B1lu0Uvbge8gSGkcg+9kCY=;
+        b=DXjG4Y0nlCRuQSFL3RU7oiVTiwvZayII8xTkHLkAFpbNY8g2o9Vi77bd+9Paz4Epji
+         3tBezBGnQMpVn/uxhTovUf8toey1hZgFZ0jBJuTIlTwD2NhSllardEyAiIscsMe0e7ql
+         YWJgfht5miwwu0CUlg8c5Bs1XNT0b42t22AL/vWVL+oH3p9Ohu25E1iwXvsxFhjqHj9s
+         GEzmnVZF3tZ56Vh85qLtMIcjOCW/c6bJrck1e4TycDLTNW6Nx369Nq60U4VbSUQ9PQ4Y
+         /IT+G3HGBFGThID97m4pzM/PU7W2zsLUVSwLzawero4rtUsENC/ruHOV1HCIpDYDkCw/
+         sjgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHP6TT74rwpctxhXYN2ejH7nAHYbWPE5RG6Ly+Z8drOsH51VngdaB02YZz3YREST0xg+UmvFTzyMOBnV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy5sEqkKCarfSS5E/pPc2p3l6toAp77k7DyqpDI6TFK+K3lamK
+	DaCTjbyxNdohS0LZhSWBDvtVxrXNLDX+dmjDzRt/Rjo09oIb15fgrfDVrdGPmZ9TNIWG/IUaktf
+	vgX3PpPzOHPXRAihd93rm9BpLw90IfcwpjdoH+5wf/B58Acv8rMD+0NO1V/Rx/OJVDpM=
+X-Gm-Gg: ASbGncvZH30XFUHOMI97SBsgfceEs7W99JxZcTsFPsirjKgt10ZW9SkZ/WVBntGgSKW
+	9rS6UeiLam+3zm10J7yFkjc/H0FWe8FNU43zNyLp4b8jQwG6P/ZTeIAtuVDddVaepNZIwprgLT3
+	cVe9V1PZonpS+/5k9e/reBre01qFsGOPc4pZVH1TNvCm0Aq+OWFgzQWoV5x9oYqHeetxDEF4njk
+	svDLGPQQkzbJ35H6x87GEqC6URuQdyOUL4TSpwq/fWADTRfZdrGpyrWPrbXxzmlV7RQ0sVRLu91
+	61++3HIo7eT68TGuOyoQjobovqGFxGJdwb0oRUMc52zZnxC1zAt3pnxidK9Z9TL/uPszTK5K7jB
+	1rI4swW7SDWq6T/P/p45fLqUSmALqKreDmPV51hlNvv0n1b2huIOHhDCNcG0f9ijUXhkjfIU=
+X-Received: by 2002:a05:6a00:2d06:b0:793:11fc:783f with SMTP id d2e1a72fcca58-7ae1f88d49emr8765899b3a.29.1762432287197;
+        Thu, 06 Nov 2025 04:31:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG75PqOaLkYAniMFlBOQLbATtdKixQY+QD+kP+iUj4dsUvm4BQRvME30Q2HB7LbSA6fruzZFg==
+X-Received: by 2002:a05:6a00:2d06:b0:793:11fc:783f with SMTP id d2e1a72fcca58-7ae1f88d49emr8765848b3a.29.1762432286426;
+        Thu, 06 Nov 2025 04:31:26 -0800 (PST)
+Received: from [10.133.33.147] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af825fbc63sm2695815b3a.49.2025.11.06.04.31.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 04:31:25 -0800 (PST)
+Message-ID: <d28a3fa6-f092-4186-afd7-8005aecbfc38@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 20:31:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930091702.2610357-1-maobibo@loongson.cn>
-In-Reply-To: <20250930091702.2610357-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 6 Nov 2025 20:30:08 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7bo0d4qO695nJ+t5p3Bf2Ogzmeas1wKE2beKmdRvLpng@mail.gmail.com>
-X-Gm-Features: AWmQ_bmB66uKwtpDAnzIJNSSEa0MWJtWtXfudDySosiSwEl973K_bVHQ36bASy0
-Message-ID: <CAAhV-H7bo0d4qO695nJ+t5p3Bf2Ogzmeas1wKE2beKmdRvLpng@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: KVM: Set page with write privilege if dirty
- track disabled
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/5] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+To: Shenwei Wang <shenwei.wang@nxp.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-imx@nxp.com, Andrew Lunn <andrew@lunn.ch>,
+        zhongqiu.han@oss.qualcomm.com
+References: <20251104203315.85706-1-shenwei.wang@nxp.com>
+ <20251104203315.85706-5-shenwei.wang@nxp.com>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20251104203315.85706-5-shenwei.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=690c9520 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=8AirrxEcAAAA:8 a=uyWvSDY7ZH1JoBaCOfwA:9
+ a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22 a=ST-jHhOKWsTCqRlWije3:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA5OCBTYWx0ZWRfX4mvpZ5C5teql
+ nOYEndFEugRGsig3VHPrqYA+gt1cQ1+tJPq5nYDLLbYGiAwKcy2OhE5Y+VtMs/17JOzncZ4qB6x
+ Q4KYE6Gg8sR9xIIlthkhuOy/83ic3ssQDh77sMf+e3tz6pFGpXT6zCZjTMKTzlMrRAN2CElL3xe
+ p3l3H3Z1U433+flJt8t8K4uxe3P64oztuFyUnGjnBdsMjQXLLb+0mvCWHgH0dEdJnYpLE/T6MyB
+ dh0yMKuf60/MYGXdFiC7WjBDAsZ+PCkWNqcv+Nhu4zyDigiEE/lMnLtdZaHdsH9fE75XxDaU+Zd
+ oAr6B5KzI9tBSFxCfCJRRIv2E4bDhHZ+EfGOi1k2mfUXX05P2eUaQvNtPtW4oVsprKeRKvCEWdJ
+ /mAjd9XD3EcmUGoIXw6Gxy7RZ1vKWA==
+X-Proofpoint-ORIG-GUID: qSFf3ZIcbYaznxsu0_uXGaSzrUz0EZw6
+X-Proofpoint-GUID: qSFf3ZIcbYaznxsu0_uXGaSzrUz0EZw6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060098
 
-Applied, thanks.
-
-Huacai
-
-On Tue, Sep 30, 2025 at 5:17=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> With secondary MMU page table, if there is read page fault, page write
-> privilege will not set even if it is writable from master MMU page
-> table. This logic only works if dirty tracking is enabled, page table
-> can be set as page_write if dirty tracking is disabled.
->
-> It reduces extra page fault on secondary MMU page table if VM finishes
-> migration, where master MMU page table is ready and secondary MMU page
-> is fresh.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+On 11/5/2025 4:33 AM, Shenwei Wang wrote:
+> On i.MX SoCs, the system may include two processors:
+> 	- An MCU running an RTOS
+> 	- An MPU running Linux
+> 
+> These processors communicate via the RPMSG protocol.
+> The driver implements the standard GPIO interface, allowing
+> the Linux side to control GPIO controllers which reside in
+> the remote processor via RPMSG protocol.
+> 
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
 > ---
->  arch/loongarch/kvm/mmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-> index 7c8143e79c12..a7fa458e3360 100644
-> --- a/arch/loongarch/kvm/mmu.c
-> +++ b/arch/loongarch/kvm/mmu.c
-> @@ -857,7 +857,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsign=
-ed long gpa, bool write)
->
->         if (writeable) {
->                 prot_bits =3D kvm_pte_mkwriteable(prot_bits);
-> -               if (write)
-> +               if (write || !kvm_slot_dirty_track_enabled(memslot))
->                         prot_bits =3D kvm_pte_mkdirty(prot_bits);
->         }
->
->
-> base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+>   drivers/gpio/Kconfig          |  17 ++
+>   drivers/gpio/Makefile         |   1 +
+>   drivers/gpio/gpio-imx-rpmsg.c | 475 ++++++++++++++++++++++++++++++++++
+>   3 files changed, 493 insertions(+)
+>   create mode 100644 drivers/gpio/gpio-imx-rpmsg.c
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index a437fe652dbc..97eda94b0ba1 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1847,6 +1847,23 @@ config GPIO_SODAVILLE
+> 
+>   endmenu
+> 
+> +menu "RPMSG GPIO drivers"
+> +	depends on RPMSG
+> +
+> +config GPIO_IMX_RPMSG
+> +	tristate "NXP i.MX SoC RPMSG GPIO support"
+> +	depends on IMX_REMOTEPROC
+> +	select GPIOLIB_IRQCHIP
+> +	default IMX_REMOTEPROC
+> +	help
+> +	  Say yes here to support the RPMSG GPIO functions on i.MX SoC based
+> +	  platform.  Currently supported devices: i.MX7ULP, i.MX8ULP, i.MX8x,
+> +	  and i.MX9x.
+> +
+> +	  If unsure, say N.
+> +
+> +endmenu
+> +
+>   menu "SPI GPIO expanders"
+>   	depends on SPI_MASTER
+> 
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index 379f55e9ed1e..e01465c03431 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_I8255)		+= gpio-i8255.o
+>   obj-$(CONFIG_GPIO_ICH)			+= gpio-ich.o
+>   obj-$(CONFIG_GPIO_IDIO_16)		+= gpio-idio-16.o
+>   obj-$(CONFIG_GPIO_IDT3243X)		+= gpio-idt3243x.o
+> +obj-$(CONFIG_GPIO_IMX_RPMSG)		+= gpio-imx-rpmsg.o
+>   obj-$(CONFIG_GPIO_IMX_SCU)		+= gpio-imx-scu.o
+>   obj-$(CONFIG_GPIO_IT87)			+= gpio-it87.o
+>   obj-$(CONFIG_GPIO_IXP4XX)		+= gpio-ixp4xx.o
+> diff --git a/drivers/gpio/gpio-imx-rpmsg.c b/drivers/gpio/gpio-imx-rpmsg.c
+> new file mode 100644
+> index 000000000000..888c3fdeaa04
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-imx-rpmsg.c
+> @@ -0,0 +1,475 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2025 NXP
+> + *
+> + * The driver exports a standard gpiochip interface to control
+> + * the GPIO controllers via RPMSG on a remote processor.
+> + */
+> +
+> +#include <linux/completion.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/init.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/rpmsg.h>
+> +#include <linux/rpmsg/imx_rpmsg.h>
+> +
+> +#define IMX_RPMSG_GPIO_PER_PORT	32
+> +#define RPMSG_TIMEOUT	1000
+> +
+> +enum gpio_input_trigger_type {
+> +	GPIO_RPMSG_TRI_IGNORE,
+> +	GPIO_RPMSG_TRI_RISING,
+> +	GPIO_RPMSG_TRI_FALLING,
+> +	GPIO_RPMSG_TRI_BOTH_EDGE,
+> +	GPIO_RPMSG_TRI_LOW_LEVEL,
+> +	GPIO_RPMSG_TRI_HIGH_LEVEL,
+> +};
+> +
+> +enum gpio_rpmsg_header_type {
+> +	GPIO_RPMSG_SETUP,
+> +	GPIO_RPMSG_REPLY,
+> +	GPIO_RPMSG_NOTIFY,
+> +};
+> +
+> +enum gpio_rpmsg_header_cmd {
+> +	GPIO_RPMSG_INPUT_INIT,
+> +	GPIO_RPMSG_OUTPUT_INIT,
+> +	GPIO_RPMSG_INPUT_GET,
+> +	GPIO_RPMSG_DIRECTION_GET,
+> +};
+> +
+> +struct gpio_rpmsg_data {
+> +	struct imx_rpmsg_head header;
+> +	u8 pin_idx;
+> +	u8 port_idx;
+> +	union {
+> +		u8 event;
+> +		u8 retcode;
+> +		u8 value;
+> +	} out;
+> +	union {
+> +		u8 wakeup;
+> +		u8 value;
+> +	} in;
+> +} __packed __aligned(8);
+> +
+> +struct imx_rpmsg_gpio_pin {
+> +	u8 irq_shutdown;
+> +	u8 irq_unmask;
+> +	u8 irq_mask;
+> +	u32 irq_wake_enable;
+> +	u32 irq_type;
+> +	struct gpio_rpmsg_data msg;
+> +};
+> +
+> +struct imx_gpio_rpmsg_info {
+> +	struct rpmsg_device *rpdev;
+> +	struct gpio_rpmsg_data *notify_msg;
+> +	struct gpio_rpmsg_data *reply_msg;
+> +	struct completion cmd_complete;
+> +	struct mutex lock;
+> +	void **port_store;
+> +};
+> +
+> +struct imx_rpmsg_gpio_port {
+> +	struct gpio_chip gc;
+> +	struct imx_rpmsg_gpio_pin gpio_pins[IMX_RPMSG_GPIO_PER_PORT];
+> +	struct imx_gpio_rpmsg_info info;
+> +	int idx;
+> +};
+> +
+
+Hello Shenwei,
+I'd like to go over a few aspects of this patch.
+
+
+> +static int gpio_send_message(struct imx_rpmsg_gpio_port *port,
+> +			     struct gpio_rpmsg_data *msg,
+> +			     bool sync)
+> +{
+> +	struct imx_gpio_rpmsg_info *info = &port->info;
+> +	int err;
+> +
+> +	if (!info->rpdev) {
+> +		dev_dbg(&info->rpdev->dev,
+
+1.NULL pointer dereference here.
+
+> +			"rpmsg channel doesn't exist, is remote core ready?\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	reinit_completion(&info->cmd_complete);
+> +	err = rpmsg_send(info->rpdev->ept, (void *)msg,
+> +			 sizeof(struct gpio_rpmsg_data));
+> +	if (err) {
+> +		dev_err(&info->rpdev->dev, "rpmsg_send failed: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	if (sync) {
+> +		err = wait_for_completion_timeout(&info->cmd_complete,
+> +						  msecs_to_jiffies(RPMSG_TIMEOUT));
+> +		if (!err) {
+> +			dev_err(&info->rpdev->dev, "rpmsg_send timeout!\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +
+> +		if (info->reply_msg->out.retcode != 0) {
+> +			dev_err(&info->rpdev->dev, "remote core replies an error: %d!\n",
+> +				info->reply_msg->out.retcode);
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* copy the reply message */
+> +		memcpy(&port->gpio_pins[info->reply_msg->pin_idx].msg,
+> +		       info->reply_msg, sizeof(*info->reply_msg));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct gpio_rpmsg_data *gpio_setup_msg_header(struct imx_rpmsg_gpio_port *port,
+> +						     unsigned int offset,
+> +						     u8 cmd)
+> +{
+> +	struct gpio_rpmsg_data *msg = &port->gpio_pins[offset].msg;
+> +
+> +	memset(msg, 0, sizeof(struct gpio_rpmsg_data));
+> +	msg->header.cate = IMX_RPMSG_GPIO;
+> +	msg->header.major = IMX_RMPSG_MAJOR;
+> +	msg->header.minor = IMX_RMPSG_MINOR;
+> +	msg->header.type = GPIO_RPMSG_SETUP;
+> +	msg->header.cmd = cmd;
+> +	msg->pin_idx = offset;
+> +	msg->port_idx = port->idx;
+> +
+> +	return msg;
+> +};
+> +
+> +static int imx_rpmsg_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = gpiochip_get_data(gc);
+> +	struct gpio_rpmsg_data *msg = NULL;
+> +	int ret;
+> +
+> +	guard(mutex)(&port->info.lock);
+> +
+> +	msg = gpio_setup_msg_header(port, gpio, GPIO_RPMSG_INPUT_GET);
+> +
+> +	ret = gpio_send_message(port, msg, true);
+> +	if (!ret)
+> +		ret = !!port->gpio_pins[gpio].msg.in.value;
+> +
+> +	return ret;
+> +}
+> +
+> +static int imx_rpmsg_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = gpiochip_get_data(gc);
+> +	struct gpio_rpmsg_data *msg = NULL;
+> +	int ret;
+> +
+> +	guard(mutex)(&port->info.lock);
+> +
+> +	msg = gpio_setup_msg_header(port, gpio, GPIO_RPMSG_DIRECTION_GET);
+> +
+> +	ret = gpio_send_message(port, msg, true);
+> +	if (!ret)
+> +		ret = !!port->gpio_pins[gpio].msg.in.value;
+> +
+> +	return ret;
+> +}
+> +
+> +static int imx_rpmsg_gpio_direction_input(struct gpio_chip *gc,
+> +					  unsigned int gpio)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = gpiochip_get_data(gc);
+> +	struct gpio_rpmsg_data *msg = NULL;
+> +
+> +	guard(mutex)(&port->info.lock);
+> +
+> +	msg = gpio_setup_msg_header(port, gpio, GPIO_RPMSG_INPUT_INIT);
+> +
+> +	return gpio_send_message(port, msg, true);
+> +}
+> +
+> +static int imx_rpmsg_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = gpiochip_get_data(gc);
+> +	struct gpio_rpmsg_data *msg = NULL;
+> +
+> +	guard(mutex)(&port->info.lock);
+> +
+> +	msg = gpio_setup_msg_header(port, gpio, GPIO_RPMSG_OUTPUT_INIT);
+> +	msg->out.value = val;
+> +
+> +	return gpio_send_message(port, msg, true);
+> +}
+> +
+> +static int imx_rpmsg_gpio_direction_output(struct gpio_chip *gc,
+> +					unsigned int gpio, int val)
+> +{
+> +
+> +	return imx_rpmsg_gpio_set(gc, gpio, val);
+> +}
+> +
+> +static int imx_rpmsg_irq_set_type(struct irq_data *d, u32 type)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +	u32 gpio_idx = d->hwirq;
+> +	int edge = 0;
+> +	int ret = 0;
+> +
+> +	switch (type) {
+> +	case IRQ_TYPE_EDGE_RISING:
+> +		edge = GPIO_RPMSG_TRI_RISING;
+> +		break;
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +		edge = GPIO_RPMSG_TRI_FALLING;
+> +		break;
+> +	case IRQ_TYPE_EDGE_BOTH:
+> +		edge = GPIO_RPMSG_TRI_BOTH_EDGE;
+> +		break;
+> +	case IRQ_TYPE_LEVEL_LOW:
+> +		edge = GPIO_RPMSG_TRI_LOW_LEVEL;
+> +		break;
+> +	case IRQ_TYPE_LEVEL_HIGH:
+> +		edge = GPIO_RPMSG_TRI_HIGH_LEVEL;
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		break;
+> +	}
+> +
+> +	port->gpio_pins[gpio_idx].irq_type = edge;
+> +
+> +	return ret;
+> +}
+> +
+> +static int imx_rpmsg_irq_set_wake(struct irq_data *d, u32 enable)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +	u32 gpio_idx = d->hwirq;
+> +
+> +	port->gpio_pins[gpio_idx].irq_wake_enable = enable;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * This function will be called at:
+> + *  - one interrupt setup.
+> + *  - the end of one interrupt happened
+> + * The gpio over rpmsg driver will not write the real register, so save
+> + * all infos before this function and then send all infos to M core in this
+> + * step.
+> + */
+> +static void imx_rpmsg_unmask_irq(struct irq_data *d)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +	u32 gpio_idx = d->hwirq;
+> +
+> +	port->gpio_pins[gpio_idx].irq_unmask = 1;
+> +}
+> +
+> +static void imx_rpmsg_mask_irq(struct irq_data *d)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +	u32 gpio_idx = d->hwirq;
+> +	/*
+> +	 * No need to implement the callback at A core side.
+> +	 * M core will mask interrupt after a interrupt occurred, and then
+> +	 * sends a notify to A core.
+> +	 * After A core dealt with the notify, A core will send a rpmsg to
+> +	 * M core to unmask this interrupt again.
+> +	 */
+> +	port->gpio_pins[gpio_idx].irq_mask = 1;
+> +}
+> +
+> +static void imx_rpmsg_irq_shutdown(struct irq_data *d)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +	u32 gpio_idx = d->hwirq;
+> +
+> +	port->gpio_pins[gpio_idx].irq_shutdown = 1;
+> +}
+> +
+> +static void imx_rpmsg_irq_bus_lock(struct irq_data *d)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +
+> +	mutex_lock(&port->info.lock);
+> +}
+> +
+> +static void imx_rpmsg_irq_bus_sync_unlock(struct irq_data *d)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = irq_data_get_irq_chip_data(d);
+> +	struct gpio_rpmsg_data *msg = NULL;
+> +	u32 gpio_idx = d->hwirq;
+> +
+> +	if (port == NULL) {
+> +		mutex_unlock(&port->info.lock);
+> +		return;
+> +	}
+> +
+
+2.Unlocking port->info.lock when port is NULL will crash due to a NULL
+pointer dereference. Please fix the logic as well.> +	/*
+> +	 * For mask irq, do nothing here.
+> +	 * M core will mask interrupt after a interrupt occurred, and then
+> +	 * sends a notify to A core.
+> +	 * After A core dealt with the notify, A core will send a rpmsg to
+> +	 * M core to unmask this interrupt again.
+> +	 */
+> +
+> +	if (port->gpio_pins[gpio_idx].irq_mask && !port->gpio_pins[gpio_idx].irq_unmask) {
+> +		port->gpio_pins[gpio_idx].irq_mask = 0;
+> +		mutex_unlock(&port->info.lock);
+> +		return;
+> +	}
+> +
+> +	msg = gpio_setup_msg_header(port, gpio_idx, GPIO_RPMSG_INPUT_INIT);
+> +
+> +	if (port->gpio_pins[gpio_idx].irq_shutdown) {
+> +		msg->out.event = GPIO_RPMSG_TRI_IGNORE;
+> +		msg->in.wakeup = 0;
+> +		port->gpio_pins[gpio_idx].irq_shutdown = 0;
+> +	} else {
+> +		 /* if not set irq type, then use low level as trigger type */
+> +		msg->out.event = port->gpio_pins[gpio_idx].irq_type;
+> +		if (!msg->out.event)
+> +			msg->out.event = GPIO_RPMSG_TRI_LOW_LEVEL;
+> +		if (port->gpio_pins[gpio_idx].irq_unmask) {
+> +			msg->in.wakeup = 0;
+> +			port->gpio_pins[gpio_idx].irq_unmask = 0;
+> +		} else /* irq set wake */
+> +			msg->in.wakeup = port->gpio_pins[gpio_idx].irq_wake_enable;
+> +	}
+> +
+> +	gpio_send_message(port, msg, false);
+> +	mutex_unlock(&port->info.lock);
+> +}
+> +
+> +static const struct irq_chip imx_rpmsg_irq_chip = {
+> +	.irq_mask = imx_rpmsg_mask_irq,
+> +	.irq_unmask = imx_rpmsg_unmask_irq,
+> +	.irq_set_wake = imx_rpmsg_irq_set_wake,
+> +	.irq_set_type = imx_rpmsg_irq_set_type,
+> +	.irq_shutdown = imx_rpmsg_irq_shutdown,
+> +	.irq_bus_lock = imx_rpmsg_irq_bus_lock,
+> +	.irq_bus_sync_unlock = imx_rpmsg_irq_bus_sync_unlock,
+> +	.flags = IRQCHIP_IMMUTABLE,
+> +};
+> +
+> +static int imx_rpmsg_gpio_callback(struct rpmsg_device *rpdev,
+> +	void *data, int len, void *priv, u32 src)
+> +{
+> +	struct gpio_rpmsg_data *msg = (struct gpio_rpmsg_data *)data;
+> +	struct imx_rpmsg_gpio_port *port = NULL;
+> +	struct imx_rpmsg_driver_data *drvdata;
+> +
+> +	drvdata = dev_get_drvdata(&rpdev->dev);
+> +	if (msg)
+> +		port = drvdata->channel_devices[msg->port_idx];
+> +
+> +	if (!port)
+> +		return -ENODEV;
+> +
+> +	if (msg->header.type == GPIO_RPMSG_REPLY) {
+> +		port->info.reply_msg = msg;
+> +		complete(&port->info.cmd_complete);
+> +	} else if (msg->header.type == GPIO_RPMSG_NOTIFY) {
+> +		port->info.notify_msg = msg;
+> +		generic_handle_domain_irq_safe(port->gc.irq.domain, msg->pin_idx);
+> +	} else
+> +		dev_err(&rpdev->dev, "wrong command type!\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static void imx_rpmsg_gpio_remove_action(void *data)
+> +{
+> +	struct imx_rpmsg_gpio_port *port = data;
+> +
+> +	port->info.port_store[port->idx] = NULL;
+> +}
+> +
+> +static int imx_rpmsg_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct imx_rpmsg_driver_data *pltdata = pdev->dev.platform_data;
+> +	struct imx_rpmsg_gpio_port *port;
+> +	struct gpio_irq_chip *girq;
+> +	struct gpio_chip *gc;
+> +	int ret;
+> +
+> +	if (!pltdata)
+> +		return -EPROBE_DEFER;
+> +
+> +	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	ret = device_property_read_u32(&pdev->dev, "reg", &port->idx);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (port->idx > MAX_DEV_PER_CHANNEL)
+> +		return -EINVAL;
+> +
+> +	ret = devm_mutex_init(&pdev->dev, &port->info.lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	init_completion(&port->info.cmd_complete);
+> +	port->info.rpdev = pltdata->rpdev;
+> +	port->info.port_store = pltdata->channel_devices;
+> +	port->info.port_store[port->idx] = port;
+> +	if (!pltdata->rx_callback)
+> +		pltdata->rx_callback = imx_rpmsg_gpio_callback;
+> +
+> +	gc = &port->gc;
+> +	gc->owner = THIS_MODULE;
+> +	gc->parent = &pdev->dev;
+> +	gc->label = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s-gpio%d",
+> +				   pltdata->rproc_name, port->idx);
+> +	gc->ngpio = IMX_RPMSG_GPIO_PER_PORT;
+> +	gc->base = -1;
+> +
+> +	gc->direction_input = imx_rpmsg_gpio_direction_input;
+> +	gc->direction_output = imx_rpmsg_gpio_direction_output;
+> +	gc->get_direction = imx_rpmsg_gpio_get_direction;
+> +	gc->get = imx_rpmsg_gpio_get;
+> +	gc->set = imx_rpmsg_gpio_set;
+> +
+> +	platform_set_drvdata(pdev, port);
+> +	girq = &gc->irq;
+> +	gpio_irq_chip_set_chip(girq, &imx_rpmsg_irq_chip);
+> +	girq->parent_handler = NULL;
+> +	girq->num_parents = 0;
+> +	girq->parents = NULL;
+> +	girq->chip->name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s-gpio%d",
+> +					  pltdata->rproc_name, port->idx);
+> +
+> +	ret = devm_add_action_or_reset(&pdev->dev, imx_rpmsg_gpio_remove_action, port);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_gpiochip_add_data(&pdev->dev, gc, port);
+> +}
+> +
+> +static const struct of_device_id imx_rpmsg_gpio_dt_ids[] = {
+> +	{ .compatible = "fsl,imx-rpmsg-gpio" },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static struct platform_driver imx_rpmsg_gpio_driver = {
+> +	.driver	= {
+> +		.name = "gpio-imx-rpmsg",
+> +		.of_match_table = imx_rpmsg_gpio_dt_ids,
+> +	},
+> +	.probe = imx_rpmsg_gpio_probe,
+> +};
+> +
+> +module_platform_driver(imx_rpmsg_gpio_driver);
+> +
+> +MODULE_AUTHOR("Shenwei Wang <shenwei.wang@nxp.com>");
+> +MODULE_DESCRIPTION("NXP i.MX SoC rpmsg gpio driver");
+> +MODULE_LICENSE("GPL");
 > --
-> 2.39.3
->
+> 2.43.0
+> 
+> 
+
+
+-- 
+Thx and BRs,
+Zhongqiu Han
 
