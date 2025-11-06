@@ -1,154 +1,89 @@
-Return-Path: <linux-kernel+bounces-888296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9973C3A6EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:02:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A59FC3A726
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F03750067F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED433A647E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5344F2EAB64;
-	Thu,  6 Nov 2025 10:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613DD2ECD3A;
+	Thu,  6 Nov 2025 10:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="W5/Qs/oX"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o3gmFzIt"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EED12EC0A2;
-	Thu,  6 Nov 2025 10:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7AF2E7F02
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762426603; cv=none; b=pIB9SAcv/d1AUQbrIIaaMLlMxpoGJFp9oPt1iA97DIrkVnNTjmy6HyvYgOXWsaZnCZLGJwHbKyH4cmV0U3Ymf8DbLjpDbGtG66YNJGSczN9Wy099DuEZEcB/73NORZPXjWEHRpqgTs81s3BAzNIl/wIwl69QYUuV/yOxGstFq1E=
+	t=1762426667; cv=none; b=knQlFdPWPrWP9+5xA+5HAcpguPWhkEvl4NaLzKygDZL6iFl/UMyw8l+UL4eZVe1w/OEV+mdDTh9SPQY8KKR/lNUC4koq+rXC2RkbqATigiAg664lvOngAbuo/ICAyrGsnaAscqUted7+sVwB+T4GL3Z8GC2kmYH/D/AimpUZbzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762426603; c=relaxed/simple;
-	bh=RukcUnKlRoNtQxLiKl16/SbwhE8SWCOndgBDJ6iW4cE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SglHJzNRUqKiX/GJjQQArdblUiVPkXOE/488iCwKji1H67WCMW0o/DKp+Ar9ez81eAywWRbxJYawFxvqhQ+rEnCoukLsaQ51Qq9xSNdr5iND+08A0dhe2R81EIX0hxz+fTUZenTqFU6FFOTGwKSuIxYlhEV8jXDKntA909mF6h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=W5/Qs/oX; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 5D0DB53410B9;
-	Thu, 06 Nov 2025 11:56:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1762426591;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M6TJ+y8n0+W2tHwP/l0zUNS6VkiUpIJHZH8Skmh0Qgg=;
-	b=W5/Qs/oXtJY5OEYePcLvW5bkv2EFTjQEW9aB/i7EKouKeW1+2yjkUBrVeXeQO4z8cgf1Lt
-	d/3TtM5M8LdmjNYA8o10xySwP73kAnFKtDuwgqWUGofqQ1iyUcdA/HGwzQUzO8NtbXAigq
-	2dZhNOqBuy0usQ7MCvmg1iuC6Qlvdkg=
-Message-ID: <f61b9148-3551-4670-86b7-8842592a38a4@ixit.cz>
-Date: Thu, 6 Nov 2025 11:56:31 +0100
+	s=arc-20240116; t=1762426667; c=relaxed/simple;
+	bh=Pl/TCYsk7V6WSn1n4LeDxsgZRuuIxN4Rhgs2WV8q2j0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MePXJoub0I6zzA7bHxkH0IozDVSow3Ibt1v/sFeN2ROlxkj8Rxf549AFEOP3zW5f/zl3MdFgs32uViyS+Kp4lIlkdj8PzSyzW+g/LRUZxJOdNyiOtcWbFN+feRpblSXPWuZ1f3C+qNCB85x8ZiD1DC++24/Wn8OFEQWWkwJL5I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o3gmFzIt; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=b0m6PFCBA0tdiO6/JLX6FEs3Znbw0AJruUg5H+BCkQY=; b=o3gmFzItLW0iv/YXWFDoC1U4YV
+	QRRavoElVArMXQTxR2z5TzTnIfrbS1sDvixU+GbqqQFcXLa4jJYHgHblAP1kV/JmuW86oPASGWIEl
+	YAJZDzLr9MELf65iTPjI+mY30tzvilWjq4DgC0AHJ4p3HJWILWGqZtLTb/m1IxZLFewuctybSZ80z
+	1QuQEN8tf7N9l6lqbwaJbbhL837/uMauf5GQEz8UIddNyOeasYgLzVSbLLJH/0qChyaBrqER8frd8
+	RnbW4jzq4YQc+cyl7Rw2Xozi4VtXhV20rxozNhrP3DB7/i9Me8NlHh4NilWsPRe2gXFKO45GzH5gn
+	Kbfs+/XA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGwoh-000000044QJ-1bEa;
+	Thu, 06 Nov 2025 10:02:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3F142300265; Thu, 06 Nov 2025 11:57:35 +0100 (CET)
+Date: Thu, 6 Nov 2025 11:57:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	dwmw@amazon.co.uk, jschoenh@amazon.de, liuyuxua@amazon.com
+Subject: Re: [PATCH] sched: Proxy yields to donor tasks
+Message-ID: <20251106105735.GO3245006@noisy.programming.kicks-ass.net>
+References: <20251106104022.195157-1-sieberf@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: panel: s6e3fc2x01: Sort and remove
- unnecessary properties
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251106-dt-s6e3fc2x01-v1-1-0479f2d8b53f@ixit.cz>
- <530695ab-109a-4dd4-968b-e8624c53238d@kernel.org>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <530695ab-109a-4dd4-968b-e8624c53238d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106104022.195157-1-sieberf@amazon.com>
 
-On 06/11/2025 11:46, Krzysztof Kozlowski wrote:
-> On 06/11/2025 11:36, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> Properties are now sorted, reset-gpio and port property dropped.
-> 
-> You need to explain why. Sorting is kind of obvious, but dropping
-> property is not.
-> 
-> "... because they are already accepted here as part of panel-common and
-> usage of unevaluatedProperties.".
-> 
-> Or just "because they are redundant." if you think reason for redundancy
-> is obvious.
+On Thu, Nov 06, 2025 at 12:40:10PM +0200, Fernand Sieber wrote:
+> When executing a task in proxy context, handle yields as if they were
+> requested by the donor task.
 
-Yeah, I fight with this a bit, when I get suggestion from reviewer 
-implying something needs to be changed, my brain auto-magically assumes 
-everyone understand why.
+I'll modify this to say it matches the traditional PI semantics.
 
-I'll try to switch to the mind of "regular commit reader" and think 
-about it for next messages.
-
-Version 2 sent, thanks!>
->>
->> Fixes: 986f28f3a71e ("dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC with panel")
+> This avoids scenario like proxy task yielding, pick next task selecting the
+> same previous blocked donor, running the proxy task again, etc.
 > 
-> No issue/bug to fix here, it's just style. Please drop.
-> 
-> Best regards,
-> Krzysztof
--- 
-David Heidelberg
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
 
+Thanks, I'll add:
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202510211205.1e0f5223-lkp@intel.com
+
+Also, for now proxy and ext are mutually exclusive, but yeah, might as
+convert that one now too. At some point someone will have to go through
+all that.
 
