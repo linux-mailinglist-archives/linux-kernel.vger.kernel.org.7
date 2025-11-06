@@ -1,228 +1,395 @@
-Return-Path: <linux-kernel+bounces-889138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FCEC3CD14
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:26:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E62C3CC84
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A05661E42
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:18:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68CA188A130
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC0934EF04;
-	Thu,  6 Nov 2025 17:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75E22C15B1;
+	Thu,  6 Nov 2025 17:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="qj9FSAf3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iyk5qLZf"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Q7SoGknL";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Hnf/7SSG"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2919034DCD7;
-	Thu,  6 Nov 2025 17:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449451; cv=none; b=o2CaWk832ideUgCysX8FEpDtfbDM4afccNuQina7k4ESKGEei9OhDzFacS3i2ltiy0drire//78C+N0KYIQfMYBDFYwGmDoAwFlPHKtamCkNDklYWxulZrwiGVj3zaTYQwtv6OsywN2DLEwN2pWuh9f5QTrGZXZnR4WeuMXh/9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449451; c=relaxed/simple;
-	bh=WYEDEGjne8eaWsfWa3xh/Jt/BKN+KQCVMJvsmRYg1Wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLUdzlYo8w32ZhcGSdrQ7xKBN/trEzoMWWJ2Aak+uxU+Z8Wn8pAl1FN1Fr+B4rQoOokfdka/sSiDT30aB6vCyFm3tqeiLDRXBgq29jlLAefYuLNye2Cfh/wwdcXZxXgSvphf2/y1o2OaM4olo5xnrhWLiGl+sI7fAoZNJuZKlJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=qj9FSAf3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iyk5qLZf; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0EEA7EC021B;
-	Thu,  6 Nov 2025 12:17:28 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Thu, 06 Nov 2025 12:17:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1762449448; x=
-	1762535848; bh=hcyh73KxGvxdueRyyktekXhmIJOjbNzwiZamSSUNi1E=; b=q
-	j9FSAf33HxhkBka3yKeVuKidAQB4y/KjYctbCQkQoR2/xVH30e4+ul6QuYU/7a4x
-	AfEnsSo8CeIzqC6+sIQdqWEK0dVnYLnelbnoJWQX1+w4prYyd5WoXEP6QEP0lsqp
-	johTlmaZjLcmgYY+rw3n3cMth+ER84voHQCvT4GxIjM0Fi7jmr4DhMLVWfjbMNn9
-	NMGrrzf5DTISBNlkT1pylM/NjbmnxP5Q/vRMiNxfDzMdyH98sjveKMsCx/QuIvWJ
-	AjFlQ59KJGtIVdkA6KLDIkbKMgG8QdG4bSzxUQ+uMzvjK/Ww1Gm6bcUrRH33qd3/
-	LvVaYBI16PdVwGvxE5aLQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762449448; x=1762535848; bh=hcyh73KxGvxdueRyyktekXhmIJOjbNzwiZa
-	mSSUNi1E=; b=iyk5qLZf5y6GLtqFkUUrV8dARKTOO4qaVbNbYo2J03rZuA04ADm
-	ewNf7SxgQCnAzA3d/q5XpTdG+WRLisSRozX/fBCXk7Gb/5dm5Vswovxm4ubWz6Rj
-	O8sQO1nk6Hhl5D0kDPltJ3ePmZMePQUyvS9iUks+uEzwG5ZIkk/yAjSF+gBgHe6r
-	p3KaligVz0PVn430vlt3aPB205+ovNGHireuofbuDI7h4jH9n0SOYGIgDwWXrUWI
-	PbCoDW8q01PUtsb4CQ3geJgEAkXUvQjmdTCYHW+o/suqEfKEA1fSdABqxbCnL2Vm
-	vmgfk1dxzqGZu1QSiZqBVBFC3TyUwEeg9zQ==
-X-ME-Sender: <xms:J9gMabVb5KcuH3a5WjYHRk19_x-RgOW59rLhpaaWEKn9rLzU0O6XMA>
-    <xme:J9gMaUAdJlu0uSeFZWU7m5n6GqkmZm5FLj6chDAb1-Cplk0Ks2fOTtkUgEsEB8X3n
-    zSNrZ8E8kRnZMw4_PWCuw5IoqzsyGtpetb4DznFb1B2npWVBeEdslk>
-X-ME-Received: <xmr:J9gMaXJkZeW57X0IfKqGdJpYuT-kvBfsa0M6r-kYNtTo8TeX4fXmhOeEcItb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeejfeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
-    dttdejnecuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghs
-    hihsnhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeefledtueeivdelvefhvddtle
-    euveeugedtteekvedtteeljeeugedvffeklefgvdenucffohhmrghinhepkhgvrhhnvghl
-    rdhorhhgpdhshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgr
-    ihhlrdhnvghtpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtoheptghlfhejtddtfeekfeesghhmrghilhdrtghomhdprhgtphhtthhopehhohhr
-    mhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofh
-    htrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgt
-    phhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtg
-    hpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhk
-    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughh
-    rghtrdgtohhm
-X-ME-Proxy: <xmx:J9gMaSsAFJDXerDKT4Zmgyq0Xt05D13g00BgXb1jgt35r8-eny6glw>
-    <xmx:J9gMafW--dxRd_jnXjpimYNitMrLr5Yf5GPqHnFt5KbXRnxDQ-8v3g>
-    <xmx:J9gMadLLdasKnR3S4F0tbuB7y-2cuS6F9VHZirrqSr-2Xl_EWqTbpQ>
-    <xmx:J9gMaU_8L-xmwDz1Wq90QJfHyT3a3a87SRKQY0CnbNacVFEnX_Leog>
-    <xmx:KNgMaS3irnaQyzs176GJdiQHShJD1Asxh8mS6_OTgyEagU9Ggc-2kVsh>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Nov 2025 12:17:26 -0500 (EST)
-Date: Thu, 6 Nov 2025 18:17:25 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: clingfei <clf700383@gmail.com>
-Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com,
-	herbert@gondor.apana.org.au, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, steffen.klassert@secunet.com, eadavis@qq.com,
-	ssrane_b23@ee.vjti.ac.in,
-	syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH 3/3] net: key: Validate address family in
- set_ipsecrequest()
-Message-ID: <aQzYJX1pDMksNLO9@krikkit>
-References: <20251106135658.866481-1-1599101385@qq.com>
- <20251106135658.866481-4-1599101385@qq.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AB134E748
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762449489; cv=fail; b=GeWFQObZhW2ubdM/J93+eTby/q4wM8JiLpScZaHDr9QFuj5uh1mYck/C18v5na2zJPN+HJowWmwlHXjaCK5uQmo5TH0Tz7GEhyO43ejXCEhpWMRhYHRtiDr1DAouK/F51icJ5s6i1yob3vDyLrheNUxo2MoowWTywQfYjoJFaFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762449489; c=relaxed/simple;
+	bh=01Uc5BoPF9bEKWSe+Z32WLPgtaRJbXyDt6O8ORRmNrM=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hiv/xWn7n5eZU3djcHKxwM6CCam4oOjdVqI4A9r5OmHzkDI/UBpxmexINAOw1Y4+zYi1cPH5JfdKbXLchK0t/wAXEDjYHEXTnivCdeNNVXMHIsskyI1G0s3uLlPeqyfvtnLDxbtIktHYaoI2D/METB+Q+Aj1hBX5F1OaWbboIQE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Q7SoGknL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Hnf/7SSG; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6CvRBT030458;
+	Thu, 6 Nov 2025 17:17:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=WA18n6hpiOwGdaxqfc
+	jKpte5ppcAr/xjmDA6FtseNG8=; b=Q7SoGknLRJ/uODkefM1Ulgk21Nq+7kyGfs
+	iv/vkCMZsS9L2swpDyvWe4cLxMHqrRW6x4Qh9kxRavH19gU7sajGz6wvLYl38OvV
+	6/SpQG0s9nY19SAphQVLVDj7lt4gq227m7v8JzsQ6j9CrYTu+ab04sYpxevMoR+G
+	JIwIKmWGj0/tnIvd/04Pv4gvSRlQHTHpEDdtzlP8PdxHrx9nPq11Caa8tjAS3UOM
+	f8GG3FtUbyG7bI5hMHk0sMa+m8rybDo5l1tlRommycO4O3GZxUOkmvlmJO9yxsQD
+	rbsc7124sByy8E1YWC0ILTeYrrquqh2HkRQPWrm19+PnRUTqCQIQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8anjjh52-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Nov 2025 17:17:45 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6HHaHY002685;
+	Thu, 6 Nov 2025 17:17:44 GMT
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011053.outbound.protection.outlook.com [40.93.194.53])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ng9acj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 06 Nov 2025 17:17:44 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HNgI0K9VtN5K/051bQ2Pb/Z1Ohv/MFbc2j3r+75+olbXT4UPqo0o3V9FUv6a/lN4L69ZqqnW+mtsRPYf3soVXFSYfZqkY/UoodTRZk18LUjaFgScdLhJpVtv8noZEBO4EV0PFUIlonh3TdFIlEFQFRR4bOqW/FnPk589wUImls9910H+f2jwI1fVI5T11toeD545DInAY75nDR3P9t8np9GuIogvqNetfmac0Pfhmq6RVZW1obEyLDQENhTGCAz5hnCgLFHFM+omMbBSTOx6tQdU1eQjFs+Yz9E25zT3AipaUEVtaO0lEUZfudUSi9PVwmApW1Pf0wpEQj+ANiQFaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WA18n6hpiOwGdaxqfcjKpte5ppcAr/xjmDA6FtseNG8=;
+ b=V7FPdBC/xirzy445TkNkO8lGsuvGqwkrmC/Pccb2OyQfKxZT0Nh/SJk7WN74rbABtmkmK0jfhgmCABGweRPGnwB8Lwv8bh78BhUI6BX7iK9VtzyExsceYDK7ZaFNiFKo9+I8SuAsYlpBHvnUgyVlJSs/nWEvw7nhQaxhY6/hbBnl7d7gE5ZoRwS7YAcKVgY+ZlSQlMuwHFuf/sy9qKVa9Xa4v/VzfXTqBtcT94pGlBlO+Z3PYj5fjXmVj2O6nYvB+CBmkzqGCALE8qaMZOa2JGwrVjl/sM3di2BxAp7RFa6F3235IxksyZzZcQGdEuiv8/tndZP+jBLCZkEGbfa7sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WA18n6hpiOwGdaxqfcjKpte5ppcAr/xjmDA6FtseNG8=;
+ b=Hnf/7SSG1mtokS3bfFuNAStwnd/ukt+EDYXsPRYVuG7fpNI4BGJ/5ObPPL09UTyU1UA2GPlQMZ7o3N2ffjAUWREWgjSjTHvYgyLvKEmTd9eqFpKzxbStv5SPscbY1kuDdvLfr71Q3MQgg9ZbxNjt8yKJFlsVxyKQsqn7IBMYAAs=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DS0PR10MB7271.namprd10.prod.outlook.com (2603:10b6:8:f6::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.12; Thu, 6 Nov 2025 17:17:41 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.9275.015; Thu, 6 Nov 2025
+ 17:17:41 +0000
+Date: Thu, 6 Nov 2025 17:17:38 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        "Garg, Shivank" <shivankg@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
+        Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        zokeefe@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed
+ text pages
+Message-ID: <43a8c8a6-388b-4c73-9a62-ee57dfb9ba5a@lucifer.local>
+References: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
+ <8bc796e2-f652-4c12-a347-7b778ae7f899@arm.com>
+ <ozkb6mcxuymlz7tm4vcnqf266gd4ruiik2zal2koo5ffprgxfk@35godtyix2cf>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ozkb6mcxuymlz7tm4vcnqf266gd4ruiik2zal2koo5ffprgxfk@35godtyix2cf>
+X-ClientProxiedBy: LO4P265CA0110.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c3::14) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251106135658.866481-4-1599101385@qq.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7271:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd2f1bb4-8ca5-447d-5904-08de1d586474
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yFnZtVQVVZdFK7EZjzjmfJRuOTUBlKRDxLM1mU4uJlOIuvJC/6WPX1qVCqcl?=
+ =?us-ascii?Q?nuFm8iMcE23OFCCcqazzi9FAVbATtIdgp1XcPVyWL3EcL5VjS263KwLrplos?=
+ =?us-ascii?Q?fG4nZZy2qSUq6z03VdH734QZKB3zuEpmdP+YXWRBsdZyRrCv5znNBhpRIcGu?=
+ =?us-ascii?Q?hElvJ9j4VGBkC3BFYoX3X1+MLkh+GmZFdCeCT/dz8SgJkbSUtZ70MMdsV4/Y?=
+ =?us-ascii?Q?r1OoWG3sC9do7D2qK+WlYhsySCVxXu67et+OCD3Q1FIkGcVJL6giRY9mnKyZ?=
+ =?us-ascii?Q?VXXG7EppBZWBoMNNaRqjejH1lDn80sUaTVOGvlr5aIw226j/Fw0rXwJ2ny+8?=
+ =?us-ascii?Q?G1v4A6gZy49mrU9yuutntTL4v9zGQ7Sae9EsDup/XNYjW3E6LJUvj74os+u9?=
+ =?us-ascii?Q?4hCDj2SDBDJuPuKYSnFCKgcy/vc6fbVnMbPb13PMSSkPWYrGghGZjkt10nYV?=
+ =?us-ascii?Q?HCvEIyGEL/wPEfgyrAvoMzgYAlnYlVEqAbnEvYPoS4tTkrVtQ/ll4f+1umhk?=
+ =?us-ascii?Q?Om86zzSr3x+TLYOMCH4WdqHMp72ewJGELRyPGjdRBSAj1Re3WSZH+kDABZqv?=
+ =?us-ascii?Q?nyCEqbjJOnmwdzccikpJyFkaVkjLDxYlexrap95CCHjB30XtOXhAHUBL8jF9?=
+ =?us-ascii?Q?PqWg/9rEfD9HhfD5m+LHarTSp6JkU7WJrE/VaIRVhlVGRQalHv0qM+bp7G3+?=
+ =?us-ascii?Q?DHIkZb1L12HgD3gBese51eXT5NuNIhFrby0qtTPMWTpuGGEsgc5VnezE4Z5r?=
+ =?us-ascii?Q?sdqkt9tFmmpP1cUTbypLLCwBl3hH393LGScyBjtcEyUg15vxOYP7SSROiin3?=
+ =?us-ascii?Q?JGLwlfaW/Om4mb41Bud/TP7rdXqgM6kqYxtBN8d4Kt+EPrftNA6gAx0g0GzP?=
+ =?us-ascii?Q?jIiff56no0ORFjxLRv+PRoxqXloXvCIU3mBhWYtoJkHSHowoFlsXOwSYfaAZ?=
+ =?us-ascii?Q?ea+FfEbkwiAW0v05qkUg1Ch7A1Ba6uhLOvZTs1pBUW6U3QVzMKji32kCBE4D?=
+ =?us-ascii?Q?/G5vXy3Ghdkx6J2Lrl66UTSAr4KpJUUOPSg2tjQoyO58pjbv0B+4T6DF/daO?=
+ =?us-ascii?Q?QrAidyAOe9sSnY8jFM6guVfW0oTz9I1lCjkIlx8FiP+vlTtgd1X5whdFbNd6?=
+ =?us-ascii?Q?/sy2LVQ42aiBgR+QgkRqfIKMho2h68nuAMdTtZkgiWbPHwG2aVw+az5X7uIh?=
+ =?us-ascii?Q?Q9zkjrYS2kw3cXhiB3se5eQiQWM5ggy3lKY2pXOzKcH5wvknB1xO18J51AtI?=
+ =?us-ascii?Q?mJwsWMgaVh6uQsSmxsgn0rUB7Zx+N6Gd8XQ9KLd68YgpLA64cj2vODD4U3NN?=
+ =?us-ascii?Q?jlL79WtGBIcqY67+i+sQY0QEHvWHm4UOrWPw/p0bs3f7lIp7oAMmWjdvW9WI?=
+ =?us-ascii?Q?gUGYriLFmyUOPvpzneYBroVQJkzfINFxke5oJ1M4iQPEcepHP8CIn4tLA0bx?=
+ =?us-ascii?Q?+gAimKec4gKJmY3pOGSjxBm2hT+xzwysDFdXVbDH50KnwwV51pZ0OFL1DqeU?=
+ =?us-ascii?Q?hLhNMPYiEJW0/yA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?EP1G7qySE3Va3MPnZyGwN/z540peECgbqeB8wZ0xrEtMLW8EDTgh+t0t/7rD?=
+ =?us-ascii?Q?PO6pEH0TKo5N7Qbog6KaRTYbliOcgMBfABflr2ED57bvunhDp8vvssNv74ZR?=
+ =?us-ascii?Q?prtsa7RHT58JSV64k0BtDDLb6wSXDtAt/r2bN0Rtxt8PjNyMkEYfOD09Repz?=
+ =?us-ascii?Q?0GikG+LH/dXmN7/FcPPVKOjYdNkC/6ywfv8w4DFeLcEQXRzozbcT4KuodGpL?=
+ =?us-ascii?Q?B2FQlx1xCFxlB29ylvdqgjxO+4VeCzcc5pWNAC9+LqrUMgtr40A4KgLUWrTC?=
+ =?us-ascii?Q?QvwGH9pDTG4uCZ+E648Po35vjlVCIfUxoiaQgZL+GkY1o2jwK8rgDBKi2sxb?=
+ =?us-ascii?Q?uHF52aE72c65YFoqdsCdmP5IuCSeJYdC4vKVdVh+RY6dk3QipFxQ4gzM6HzL?=
+ =?us-ascii?Q?mf7W2aOIWyYdzoYaIAFJv9nYFDG1uevIRe3XCScNkp2WEqsMNpaRFFqkBsWn?=
+ =?us-ascii?Q?rTf+1Moumkjyaicc7S9Boo6/SKh9xhMsVztytfPSFM6arfzs1yfd/EZx330d?=
+ =?us-ascii?Q?PNvPqO/4BZbP5VoEjk0XILgI0FyUAZehinRAHLN1kxWPCyKIR7uaxHC43HJs?=
+ =?us-ascii?Q?4n1ZI31S/vQKokVTAEEDLyqeuHSzWySGi8QoOCa3u/V8TWn2lAtT9rZT45jn?=
+ =?us-ascii?Q?W5oy9lasiUy6hBD8oMT6m5v0GxC2ypGdj2wir0Y82C2ZeZjmvDlQuLPLLh17?=
+ =?us-ascii?Q?fL7/JPHqh876bMHJRRIn/AdilIQC4efBan1aqzNL8n9xY9VAfKA46e680ugT?=
+ =?us-ascii?Q?sawL9WBoz65xU+syQpM538IYJpe8JeE+W0hQk8eFLmUEaFPVv3qCoiBNITRl?=
+ =?us-ascii?Q?xe2j4W36SS7mzVpgW8ASB6Hy8/NJ3P1etB7VhlRalEVGhH3rhSNNycRVXFZU?=
+ =?us-ascii?Q?SfNPWGK1iBBsSTwG9Tfzt7IPGe4oFW6J+MxqkHa0/5CsY9+9g69XKOJDZEOf?=
+ =?us-ascii?Q?UvEZyscquu/Kh8w8r7BfFcquno/kUfnloRyqdZz9qWjMeRsW3hX8ljvXYZSx?=
+ =?us-ascii?Q?rXUuDIw3e+r3JNLHONTjOJhsRyngOMlzihGrenvE0K12nMcLoCzfhRnenDel?=
+ =?us-ascii?Q?RozquZT08wLCuAuOJwY0hsN0uvfrGI2X3MuxHIEunal55eATybuKOAZ0s+K9?=
+ =?us-ascii?Q?miEBcZJ81aevlL705ReZ3fjWj9NdgVKoSTQXPdw0mjcOJ8LYyFJ6l6WYvsD0?=
+ =?us-ascii?Q?C0c1NlgX7Dh11iONEG4eoELllKbqvvQcUARw8AFPuKK28oT7NKNO1DSRXPNH?=
+ =?us-ascii?Q?r0bsUqUCzBc3D06MoTZb8sG7fRbN9EDl3pvVehmzPavZSwts+hWzzklxoOFQ?=
+ =?us-ascii?Q?1w9uEBGE/JIl0mnJPikd1nmu2pn0k1blyxQ+RKdRTK23Duxf4Azu2/ZgYo6u?=
+ =?us-ascii?Q?QMWU2ZiqAlldkN53oPfE+4dcF++qieOKNacMqptrilQ22xRH9ojzLLaKqCSQ?=
+ =?us-ascii?Q?jyxS5Owba9GrAel3UP0txHiLlo9tknm7XnYjGCkXEF1vqxyqd5+AV9UXxjzU?=
+ =?us-ascii?Q?dcMZu/tVfm0cEAwUMTo3r3L0RAkrRbra8SWNSfOubJr349WJ4AN38SIWzeEv?=
+ =?us-ascii?Q?rMgtt1mDRzaS3dUTiOoGyxFD+PHh/cjY+rToTTrQGSFLxfCsGAtewVPtO9bv?=
+ =?us-ascii?Q?0g=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	EDETqGTOVnYxmWs2bX0NLSOsvDSBuroDZgJspq6zSJ0kmnSOR1QhkgxcS3GOde5UqqMXQhZkX0v+lPohdMoYD6neM5avrqPTRTUxBWF2gVavjjfNVPxY+cvzniua43lZlCznLMyKiuHMOkuoWdgo6OWINZD04rztEyhqQMewBmJjcSyq72y1pyvJmT/bab3dHGJqVWujUK0gEX9iNuCTe0xstIhQ25l3wG9TZPgIsL/5y296q96lPHxe0ib//t1oW0rf+ibLuLronVmowjkWY+bee1f4NiTst76ytb6fRiCDGwzrDv0ZXktjV18Ljgd6zsJLBNfg5QjvutnRyyho/fT3ZIJbSerGiYCwiioXymG9jBZb6dvOr9I3rZAVplV9Sp/IrO+/jlPys9TcD5wtJMqrrOEs61ykZLgYN4hffD0DYKf9IaDi2ZT5x2SGQ/Nd/5r3dbqa7C7ID3sP7FjpI/13DiCHGZwnVW2RR95NGqLKYV6vGY10wht89TRmm6moKXkoqFwFKGWldo7POlaZCE6wlelCouOtEYezf4e8T/BVSuq723kHxiFIn6xm6xeW/J3unJFI9Eewi+9upOIOlsSecHcum/Ow4e8eQ/kFeYA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd2f1bb4-8ca5-447d-5904-08de1d586474
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 17:17:41.4556
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ICOiIFE8Ud8WI96ROTk+LR6HO/RH+VaFfc+B9Zgg3PISaOIm0/B2u6yGiTvhi3UkEqP8VE7DweKll60FXp4NTHzAoGXTGD/ud3VnCyf/feg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7271
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511060138
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEzMyBTYWx0ZWRfX30crbED0q7ap
+ mcyY3Xkq0C5dut5jNNIb8RYb1Qa8coHC5pyMrBwXS8/9+AzQruGbuTET3K2XeWILSJ4wBOA2hj4
+ ZfaOqdK5NqhggWgVj4BiSBGukjBiLQMrSLtCN4SwOHOz6+vMFm5KsicUxHwWykiaIZ9bCNXVnWv
+ myApcsUetWga0z3I54rtuInVLdHd3f/qBYpMxFx/q+d9OoFIZWZ2S3cSHlW/FZxiungKTXuGNja
+ fgecTaFqmeSIUFYyeFX9Ss319BXO1mVgoqxM2/SFpu9/SdnyB2RnrYeqy51x0w9CwAya/lCixMW
+ wGGul8GfFHvO3NVzFkbTpBqR6zFIEDvF5q5omLZ1rG/w2KkWLilGDWos2syh5LN5WDsO5z019+M
+ OaqckUaTs2tvNAOLA2aZtHqJMTcW2RPAB10XSlGipvfK+wLP96U=
+X-Authority-Analysis: v=2.4 cv=dfqNHHXe c=1 sm=1 tr=0 ts=690cd839 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=7CQSdrXTAAAA:8 a=jOkseGbcl4iAh8OUpOgA:9 a=CjuIK1q_8ugA:10
+ a=a-qgeE7W1pNrGK8U0ZQC:22 cc=ntf awl=host:13634
+X-Proofpoint-GUID: PnA-HQkK8i8pn3TSLonoWpXaQiAGjMfs
+X-Proofpoint-ORIG-GUID: PnA-HQkK8i8pn3TSLonoWpXaQiAGjMfs
 
-note: There are a few issues with the format of this patch, and the
-subject prefix should be "[PATCH ipsec n/3]" for all the patches in
-the series. But I'm also not sure if this is the right way to fix this
-syzbot report.
+On Thu, Nov 06, 2025 at 11:55:05AM -0500, Liam R. Howlett wrote:
+> * Ryan Roberts <ryan.roberts@arm.com> [251106 11:33]:
+> > On 06/11/2025 12:16, Garg, Shivank wrote:
+> > > Hi All,
+> > >
+> > > I've been investigating an issue with madvise(MADV_COLLAPSE) for TEXT pages
+> > > when CONFIG_READ_ONLY_THP_FOR_FS=y is enabled, and would like to discuss the
+> > > current behavior and improvements.
+> > >
+> > > Problem:
+> > > When attempting to collapse read-only file-backed TEXT sections into THPs
+> > > using madvise(MADV_COLLAPSE), the operation fails with EINVAL if the pages
+> > > are marked dirty.
+> > > madvise(aligned_start, aligned_size, MADV_COLLAPSE) -> returns -1 and errno = -22
+> > >
+> > > Subsequent calls to madvise(MADV_COLLAPSE) succeed because the first madvise
+> > > attempt triggers filemap_flush() which initiates async writeback of the dirty folios.
+> > >
+> > > Root Cause:
+> > > The failure occurs in mm/khugepaged.c:collapse_file():
+> > > } else if (folio_test_dirty(folio)) {
+> > >     /*
+> > >      * khugepaged only works on read-only fd,
+> > >      * so this page is dirty because it hasn't
+> > >      * been flushed since first write. There
+> > >      * won't be new dirty pages.
+> > >      *
+> > >      * Trigger async flush here and hope the
+> > >      * writeback is done when khugepaged
+> > >      * revisits this page.
+> > >      */
+> > >     xas_unlock_irq(&xas);
+> > >     filemap_flush(mapping);
+> > >     result = SCAN_FAIL;
+> > >     goto xa_unlocked;
+> > > }
+> > >
+> > > Why the text pages are dirty?
+> >
+> > This is the real question to to answer, I think...
+>
+> Agree with Ryan here, let's stop things from being marked dirty if they
+> are not.
 
+Hmm I wonder if we have some broken assumptions in khugepaged for MAP_PRIVATE
+mappings.
 
-2025-11-06, 21:56:58 +0800, clingfei wrote:
-> From: SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>
+collapse_single_pmd()
+-> collapse_scan_file() if not vma_is_anonymous() (it won't be)
+-> collapse_file()
+-> the snippet above.
 
+But that could be running on an anon folio...
 
-From here:
+Yup given it's CONFIG_READY_ONLY_THP_FOR_FS that is strange. We are confounding
+expectations here surely?
 
-> Hi syzbot,
-> 
-> Please test the following patch.
-> 
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-> 
-> Thanks,
-> Shaurya Rane
-> 
-> From 123c5ac9ba261681b58a6217409c94722fde4249 Mon Sep 17 00:00:00 2001
-> From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-> Date: Sun, 19 Oct 2025 23:18:30 +0530
-> Subject: [PATCH] net: key: Validate address family in set_ipsecrequest()
+Presumably it's because these are MAP_PRIVATE mappings, so this is an anon folio
+but then collapse_file() goes into the snippet above and gets very confused.
 
-to here should be removed.
+Do we need to add a folio_test_anon() here?
 
+Unless I'm missing something... (very possible, am only glancing over the code
+here)
 
-> syzbot reported a kernel BUG in set_ipsecrequest() due to an
-> skb_over_panic when processing XFRM_MSG_MIGRATE messages.
-> 
-> The root cause is that set_ipsecrequest() does not validate the
-> address family parameter before using it to calculate buffer sizes.
-> When an unsupported family value (such as 0) is passed,
-> pfkey_sockaddr_len() returns 0, leading to incorrect size calculations.
-> 
-> In pfkey_send_migrate(), the buffer size is calculated based on
-> pfkey_sockaddr_pair_size(), which uses pfkey_sockaddr_len(). When
-> family=0, this returns 0, so only sizeof(struct sadb_x_ipsecrequest)
-> (16 bytes) is allocated per entry. However, set_ipsecrequest() is
-> called multiple times in a loop (once for old_family, once for
-> new_family, for each migration bundle), repeatedly calling skb_put_zero()
-> with 16 bytes each time.
+>
+> >
+> > What architecture are you running on?
+> >
+> >
+> > > It initially seemed unusual for a read-only text section to be marked as dirty, but
+> > > this was actually confirmed by /proc/pid/smaps.
+> > >
+> > > 55bc90200000-55bc91200000 r-xp 00400000 07:00 133                        /mnt/xfs-mnt/large_binary_thp
+> > > Size:              16384 kB
+> > > KernelPageSize:        4 kB
+> > > MMUPageSize:           4 kB
+> > > Rss:                 256 kB
+> > > Pss:                 256 kB
+> > > Pss_Dirty:           256 kB
+> > > Shared_Clean:          0 kB
+> > > Shared_Dirty:          0 kB
+> > > Private_Clean:         0 kB
+> > > Private_Dirty:       256 kB
+> > >
+> > > /proc/pid/smaps (before calling MADV_COLLAPSE) showing Private_Dirty pages in r-xp mappings.
+> > > This may be due to dynamic linker and relocations that occurred during program loading.
+> >
+> > On arm64 at least, I wouldn't expect the text to be modified. Relocations should
+> > be handled in data. But given you have private dirty pages here, they must have
+> > been cow'ed and are therefore anonymous? In which case, where is writeback
+> > actually going?
 
-So the root of the problem is a mismatch between allocation size and
-the actual size needed. Unexpected families are not good, sure, but
-would not cause a panic if the sizes were handled correctly.
+Well ther won't be any right? I mean it's fairly normal to modify these
+MAP_PRIVATE mapping isn't it for relocations etc.?
 
-OTOH, for this old code which is being deprecated, maybe it doesn't
-matter to fix it "properly". (but see below)
+You clipped the Anonymous line here, could you share it?
 
+> >
+> > >
+> > > Reproduction using XFS/EXT4:
+> > >
+> > > 1. Compile a test binary with madvise(MADV_COLLAPSE), ensuring the load TEXT segment is
+> > >    2MB-aligned and sized to a multiple of 2MB.
+> > >   Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+> > > LOAD           0x400000 0x0000000000400000 0x0000000000400000 0x1000000 0x1000000 R E 0x200000
+> > >
+> > > 2. Create and mount the XFS/EXT4 fs:
+> > >    dd if=/dev/zero of=/tmp/xfs-test.img bs=1M count=1024
+> > >    losetup -f --show /tmp/xfs-test.img  # output: /dev/loop0
+> > >    mkfs.xfs -f /dev/loop0
+> > >    mkdir -p /mnt/xfs-mnt
+> > >    mount /dev/loop0 /mnt/xfs-mnt
+> > > 3. Copy the binaries to /mnt/xfs-mnt and execute.
+> > > 4. Returns -EINVAL on first run, then run successfully on subsequent run. (100% reproducible)
+> > > 5. To reproduce again; reboot/kexec and repeat from step 2.
+> > >
+> > > Workaround:
+> > > 1. Manually flush dirty pages before calling madvise(MADV_COLLAPSE):
+> > > 	int fd = open("/proc/self/exe", O_RDONLY);
+> > > 	if (fd >= 0) {
+> > > 		fsync(fd);
+> > > 		close(fd);
+> > > 	}
 
-> This causes the tail pointer to exceed the end pointer of the skb,
-> triggering skb_over_panic:
->   tail: 0x188 (392 bytes)
->   end:  0x180 (384 bytes)
-> 
-> Fix this by validating that pfkey_sockaddr_len() returns a non-zero
-> value before proceeding with buffer operations. This ensures proper
-> size calculations and prevents buffer overflow. Checking socklen
-> instead of just family==0 provides comprehensive validation for all
-> unsupported address families.
-> 
-> Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
-> Fixes: 08de61beab8a ("[PFKEYV2]: Extension for dynamic update of
-> endpoint address(es)")
-> Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-> ---
->  net/key/af_key.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/key/af_key.c b/net/key/af_key.c
-> index cfda15a5aa4d..93c20a31e03d 100644
-> --- a/net/key/af_key.c
-> +++ b/net/key/af_key.c
-> @@ -3529,7 +3529,11 @@ static int set_ipsecrequest(struct sk_buff *skb,
->  	if (!family)
->  		return -EINVAL;
->  
-> -	size_req = sizeof(struct sadb_x_ipsecrequest) +
-> +    /* Reject invalid/unsupported address families */
+Are you literally madvise()'ing the text portion of the executable?
 
-Steffen, AFAICT the whole migrate code has no family
-validation. Shouldn't we check {old,new}_family to be one of
-{AF_INET,AF_INET6} in xfrm_migrate_check? This should take care of the
-problems that this series tries to address, and avoid having objects
-installed in the kernel with unexpected families (which would match
-what validate_tmpl does).
+It's strange this would make a difference in that case hmm...
 
+> > > 	// Now madvise(MADV_COLLAPSE) succeeds
+> > > 2. Alternatively, retrying madvise_collapse on EINVAL failure also work.
 
-Looking quickly at xfrm_migrate_state_find, it also seems to compare
-addresses without checking that both addresses are of the same
-family. That seems a bit wrong, but changing the behavior of that old
-code is maybe too risky.
+Hmm that's strange.
 
+> > >
+> > > Problems with Current Behavior:
+> > > 1. Confusing Error Code: The syscall returns EINVAL which typically indicates invalid arguments
+> > >    rather than a transient condition that could succeed on retry.
+>
+> This is also an issue though.  Reading the documentation on my system,
+> EINVAL with collapse has two meanings:
+>         EINVAL addr is not page-aligned or length is negative.
+>         EINVAL advice is not a valid.
+> Neither are right here.
+>
+> EAGAIN seems to make sense, but the documentation would need to be
+> changed too:
+>         EAGAIN A kernel resource was temporarily unavailable.
 
+I think these documented error codes are a total fantasy anyway in general for
+all system calls, and it'd be silly to try to list every single possible failure
+case in the man page. I really wish we didn't even try but there's horrible
+inconsistencies and missing entries for _tonnes_ of system calls.
 
-> +    if (!socklen)
-> +        return -EINVAL;
-> +
-> +    size_req = sizeof(struct sadb_x_ipsecrequest) +
+So not sure if it's worth updating.
 
-nit: tabs should be used, not spaces
+But obviously be good to have more information than less...
 
->  		   pfkey_sockaddr_pair_size(family);
->  
->  	rq = skb_put_zero(skb, size_req);
+>
+> > >
+> > > 2. Non-Transparent Handling: Users are unaware they need to flush dirty pages manually. Current
+> > >    madvise_collapse assumes the caller is khugepaged (as per code snippet comment) which will revisit
+> > >    the page. However, when called via madvise(MADV_COLLAPSE), the userspace program typically don't
+> > >    retry, making the async flush ineffective. Should we differentiate between madvise and khugepaged
+> > >    behavior for MADV_COLLAPSE?
+>
+> The collapse documentation states that it works on the existing state of
+> the system memory, so it is doing what it says but the EINVAL return on
+> dirty pages is not documented, afaict?
 
--- 
-Sabrina
+It'd be good to document that this will fail if there are dirty pages yes.
+
+>
+> > >
+> > > Would appreciate thoughts on the best approach to address this issue.
+> > >
+> > > Thanks,
+> > > Shivank
+> >
+
+Cheers, Lorenzo
 
