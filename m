@@ -1,109 +1,151 @@
-Return-Path: <linux-kernel+bounces-887867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8241BC39443
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:23:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5ACC3944F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E371C34EFCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:23:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88EB1891B63
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA8A2DC763;
-	Thu,  6 Nov 2025 06:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FED2DCBE6;
+	Thu,  6 Nov 2025 06:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="ibpe+onl"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRJJ1H4J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853DA2D8781;
-	Thu,  6 Nov 2025 06:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C69D2C235D;
+	Thu,  6 Nov 2025 06:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762410177; cv=none; b=RktcE6qPeVmZEzQ75sAbTYftZrRNJwrUwrkW7AvyfqDqRnOE7btTQJ68iewLozyRBlloOtMeDoVmKsdHuZNQnFDIAra7C7T44gVPsz7sOwPMfQphNX7op7F2WpEbH+LI5dCHyGqCW6XvE5HuIzpa5dyHsMtswbVEU4Zvh8lHlF4=
+	t=1762410281; cv=none; b=f/XFpDHz6XstVk96n/CJ+H0+Gqa8KHRlDJ7BrVtS/XSwa76BuvMd56g6SZ7M6lqG8POGvknbp2ljyODYSlh8Ojabf9ccNHk1GwMBP9oKESdh6jh+bm+3iybrpzplfDRlx2Qds5dWrGYiMEnEaScyWF4M7p9GS2EZtAWJk+j0Gtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762410177; c=relaxed/simple;
-	bh=xw7cqzusGQJsABm+W0f5HlstnoboV0cr2n79VliFK6U=;
+	s=arc-20240116; t=1762410281; c=relaxed/simple;
+	bh=27Pe8FUEHZhfluKmwcfeGnyxW6smtWLMLoJyzAni44c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cADb7jQsjAWLZPqwVZ0FoIlMe9/6LJAzAfwSrhhY0JHuhBLheU6OuhKfSOW69hUJGv35ykpD7wWwLvmm71TNzua58pddwa2ywnureEqGCttAyEx5+08QRjpiSuJqqTchaj1WIMJTqukABObEKNl6au/9080qQcq2oa5siEUnHqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=ibpe+onl; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=sDXhdK1CrbJ4L/kNRm/vTNBIYUze39ACTflvTXNHGks=; 
-	b=ibpe+onlf3no9I/LLycJ9n+5Gf8jYrEGBWqM4gw8r70M5BI8ezYVozvj9wJVszNn3uxuotpxGKB
-	KzpTifdHGxflzDx+ydCj8um2wNj5861dgLmvO7H1ZwJmGVeCvce5bI6DwnYYNoYDW/3V6GKIcUR5C
-	gHeQ5oXOwKwLA7YQ5BoNl28EzOcZG4N5tJknM5sX99swwZYom1seD7TKMDQsZ1K2MjC2XH2uh12TD
-	svpWse0Oic2TmAgEpKBtvIMtrq/1lpJaysG/66e+JlAr8wvJ5GnLYHzUZLpWWkSzE3HkOwj661zjp
-	n+ohadMSrkjtq2au/Ws/i8a5yvskvGO7Hndg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vGtOU-000r41-1A;
-	Thu, 06 Nov 2025 14:22:51 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 06 Nov 2025 14:22:50 +0800
-Date: Thu, 6 Nov 2025 14:22:50 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Ruud.Derwig@synopsys.com,
-	manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com,
-	Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
-Subject: Re: [PATCH v8 2/4] crypto: spacc - Add SPAcc ahash support
-Message-ID: <aQw-ugxNqclAqDkg@gondor.apana.org.au>
-References: <20251031044803.400524-1-pavitrakumarm@vayavyalabs.com>
- <20251031044803.400524-3-pavitrakumarm@vayavyalabs.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJzJ1yTq5GC3BKp6eRIjmSF7t5dyzjQ/YMLj25rjUQuO9AfNCSY7Vn5mRuQiynM37YB8m/Ioh8mMFHTI5iZKzTb3ga9CjGyThxXBBkP8OidaW77C8/bc9vouZMJLJBsSkTelsNiIk3qdFBrRUsqGpXBkGieWRCGbn6i1XsUs/GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRJJ1H4J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 519A4C4CEF7;
+	Thu,  6 Nov 2025 06:24:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762410281;
+	bh=27Pe8FUEHZhfluKmwcfeGnyxW6smtWLMLoJyzAni44c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fRJJ1H4J3GeszBfV1hToQ3FtuV2IZEsEKV/wI2DSAElwJWUkObr/RtpW4V6AYAP7j
+	 kzclCPXk+of9CsLTi2sSUCxjJBEAp546g7hVvQ5QLnmvK1fDLHtlC6tjVFdArJ7gGS
+	 2h6x1fEGQtiQXr6udYxVlomrcH9shBfv2Q2TR65zqezowcDzPVs1L4B+f2/0aZ7poF
+	 3lnYtSrjmzPzmz9HEpOO6+Jsma6kar+0PT7QVz2y1MTlYYiwQXrrDRWqjYv8evl2Fz
+	 z118nreIhF0LaUS2a8xKhbsBrpnuKsHH1kXUf+LcthYry1Qt7DOczlxwYgaHUWUzy2
+	 /5Snmb3l/In7g==
+Date: Thu, 6 Nov 2025 11:54:18 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, chester62515@gmail.com, 
+	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, 
+	bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com, 
+	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, cassel@kernel.org, 
+	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Minghuan Lian <minghuan.Lian@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>, 
+	Christian Bruel <christian.bruel@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 3/4 v3] PCI: s32g: Add initial PCIe support (RC)
+Message-ID: <vrgjkulv22hzbx65olh3zpyqxq6dr7d5mepngjwgc3gudjoxwo@ll7xc2teya2s>
+References: <CAKfTPtCtHquxtK=Zx2WSNm15MmqeUXO8XXi8FkS4EpuP80PP7g@mail.gmail.com>
+ <20251106000531.GA1930429@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251031044803.400524-3-pavitrakumarm@vayavyalabs.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251106000531.GA1930429@bhelgaas>
 
-On Fri, Oct 31, 2025 at 10:18:01AM +0530, Pavitrakumar Managutte wrote:
->
-> +static int spacc_hash_init_tfm(struct crypto_ahash *tfm)
-> +{
-> +	const struct spacc_alg *salg = container_of(crypto_ahash_alg(tfm),
-> +						    struct spacc_alg,
-> +						    alg.hash.base);
-> +	struct spacc_crypto_ctx *tctx = crypto_ahash_ctx(tfm);
-> +
-> +	tctx->handle    = -1;
-> +	tctx->ctx_valid = false;
-> +	tctx->dev       = get_device(salg->dev);
-> +
-> +	tctx->fb.hash = crypto_alloc_ahash(crypto_ahash_alg_name(tfm), 0,
-> +			CRYPTO_ALG_NEED_FALLBACK);
-> +	if (IS_ERR(tctx->fb.hash)) {
-> +		dev_err(tctx->dev, "SPAcc ahash fallback tfm is NULL!\n");
-> +		put_device(tctx->dev);
-> +		return PTR_ERR(tctx->fb.hash);
-> +	}
-> +
-> +	crypto_ahash_set_statesize(tfm,
-> +			crypto_ahash_statesize(tctx->fb.hash));
-> +
-> +	crypto_ahash_set_reqsize(tfm,
-> +			sizeof(struct spacc_crypto_reqctx) +
-> +			crypto_ahash_reqsize(tctx->fb.hash));
+On Wed, Nov 05, 2025 at 06:05:31PM -0600, Bjorn Helgaas wrote:
+> [+cc imx6, layerscape, stm32 maintainers for possible suspend bug]
+> 
+> On Fri, Oct 24, 2025 at 08:50:46AM +0200, Vincent Guittot wrote:
+> > On Wed, 22 Oct 2025 at 21:04, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > On Wed, Oct 22, 2025 at 07:43:08PM +0200, Vincent Guittot wrote:
+> > > > Add initial support of the PCIe controller for S32G Soc family. Only
+> > > > host mode is supported.
+> 
+> > > > +static void s32g_init_pcie_controller(struct s32g_pcie *s32g_pp)
+> > > > +{
+> > > > ...
+> > > > +     /*
+> > > > +      * Make sure we use the coherency defaults (just in case the settings
+> > > > +      * have been changed from their reset values)
+> > > > +      */
+> > > > +     s32g_pcie_reset_mstr_ace(pci, memblock_start_of_DRAM());
+> > >
+> > > This seems sketchy and no other driver uses memblock_start_of_DRAM().
+> > > Shouldn't a physical memory address like this come from devicetree
+> > > somehow?
+> > 
+> > I was using DT but has been asked to not use it and was proposed to
+> > use memblock_start_of_DRAM() instead
+> 
+> Can you point me to that conversation?
+> 
+> > > > +     s32g_pp->ctrl_base = devm_platform_ioremap_resource_byname(pdev, "ctrl");
+> > > > +     if (IS_ERR(s32g_pp->ctrl_base))
+> > > > +             return PTR_ERR(s32g_pp->ctrl_base);
+> > >
+> > > This looks like the first DWC driver that uses a "ctrl" resource.  Is
+> > > this something unique to s32g, or do other drivers have something
+> > > similar but use a different name?
+> > 
+> > AFAICT this seems to be s32g specific in the RM
+> 
+> It does look like there's very little consistency in reg-names across
+> drivers, so I guess it's fine.
+> 
+> > > > +static int s32g_pcie_suspend_noirq(struct device *dev)
+> > > > +{
+> > > > +     struct s32g_pcie *s32g_pp = dev_get_drvdata(dev);
+> > > > +     struct dw_pcie *pci = &s32g_pp->pci;
+> > > > +
+> > > > +     if (!dw_pcie_link_up(pci))
+> > > > +             return 0;
+> > >
+> > > Does something bad happen if you omit the link up check and the link
+> > > is not up when we get here?  The check is racy (the link could go down
+> > > between dw_pcie_link_up() and dw_pcie_suspend_noirq()), so it's not
+> > > completely reliable.
+> > >
+> > > If you have to check, please add a comment about why this driver needs
+> > > it when no other driver does.
+> > 
+> > dw_pcie_suspend_noirq returns an error and the suspend fails
+> 
+> The implication is that *every* user of dw_pcie_suspend_noirq() would
+> have to check for the link being up.  There are only three existing
+> callers:
+> 
+>   imx_pcie_suspend_noirq()
+>   ls_pcie_suspend_noirq()
+>   stm32_pcie_suspend_noirq()
+> 
+> but none of them checks for the link being up.
+> 
 
-Please stop using dynamic statesize/reqsize values as they are
-being phased out.
+If no devices are attached to the bus, then there is no need to broadcast
+PME_Turn_Off and wait for L2/L3. I've just sent out a series that fixes it [1].
+Hopefully, this will allow Vincent to use dw_pcie_{suspend/resume}_noirq() APIs.
 
-The API now provides a fallback directly that can be used with
-a stack request.  Grep for aspeed_ahash_fallback to see an example
-of that being used.
+- Mani
 
-Thanks,
+[1] https://lore.kernel.org/linux-pci/20251106061326.8241-1-manivannan.sadhasivam@oss.qualcomm.com/
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+மணிவண்ணன் சதாசிவம்
 
