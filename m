@@ -1,201 +1,186 @@
-Return-Path: <linux-kernel+bounces-888264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8092FC3A59C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:49:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265AEC3A590
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A33E3AD094
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:46:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54C9A4F3699
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF662E7F02;
-	Thu,  6 Nov 2025 10:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83B52E8B84;
+	Thu,  6 Nov 2025 10:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPC8C40F"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PTi36yJx"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C892BE7DD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E751F2E7F02
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762425959; cv=none; b=ILTIkmdIQdcWsj40KSI2IJEDTTNNAQDpPX2woz1uG1PiKmNzr17zTwd3Q47tapKDTTpRSn63mlq8mkR1LZqODUU0RVMLRu5diDJY+bEQi8nRv+SO2HyW4gcW4PglYOpaz6d4iiOiVy2rB0AuEZOoaAABjDZC4XG3m2mFze0KPC0=
+	t=1762425981; cv=none; b=bAG2RgFT9avJdkTpuIXg+nvsQdDr6gr0RE589024Y9C++zo+aWO5QK5fZEah4asHJqlFp5aAe45Nl/p2UFexQMQb3GbRIT5PBOK1/hm7lZlbT6ANKWBqUlJjyD3QrO/nGc/JtHIAk9pITXeL3/cZ9w2ns5q6sAv/wx5wS3NnNbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762425959; c=relaxed/simple;
-	bh=j1+M3emMe9tqmPSbKCgIoXD49IQZIb4FHliGCLpUH2s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=E1ArrFwooOPROoAAfQnsHgr1S75cxaCr/3h68/OXqtqFP8zcltM/CpHyx9V65gg5Rlqj7pOVv2R+D7fWdAYxUznvow0d+kao2Xi2rNQew0gCVlx3E33cZEL923oPalCMB4Myoll3lB5B9LIGOsRKDqNcaOI617/mmhboGEU+7dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPC8C40F; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-341d07c020fso750607a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:45:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762425957; x=1763030757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bU7AjJowjDZcDckJUJRmtF/yOybguMZZsthXphjlG7M=;
-        b=dPC8C40FSF/2NU67d8uEdc/lJIsnEun9IWGqKUw3aMl2FucG7j8kNYX1dtolirV9Py
-         oEzWU6dYkAkiuduU3A0VtR5YQjqEuWi/I9A+Cnlsp8v1JB9QYlAanhCl7XvmgNm8YIPT
-         OfH+dQXcFv4gLiGaz5HgT45Ut6z3UddYUxzX13MSPNgAqpmEb6HiKFfAex9Uk3Q+DHyL
-         kVzMkIxUzXIzcUqbN1n1tJ3UauIcj0YALBZmvi5rTImpETp+k4zJjSh/wjDM+Y1Xw0ZL
-         a30Hrp7/Ek8Z14RSDBQedZStuA7vEv1juObUfZGbAowxbqYGP2ND3CrC/GTd5B5kgilg
-         D9Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762425957; x=1763030757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bU7AjJowjDZcDckJUJRmtF/yOybguMZZsthXphjlG7M=;
-        b=QlMOlihXrIQ6+3ruKA5B4daqJtn4gw8FuS7mEXaxwwR2W3xgHSHz6n4ez23AZnyyz0
-         8eLiVYQhBoKiRsD2mr+xg1peJ3EacurAHq/h7O5TgAZj730DwTfSTDwXZd2wNiE4hSIZ
-         VJc7HuhPOIEBgAh0NW+E/ILcMIl8///gquG7FhohGmKCokVLkwwcHVkv/sUXjyQTqHxu
-         pNKY/ygBiery9rlAdIQOPJwSFHY+C+Mz88/B5QCAfYvVB3559nZnAD2LH97vuHSCYNbK
-         UYMrR9dX0Zv23oMNlpmBvDJ36x20inPX/FT4UxBLGewEv+2ELb//fVpzQsms4doAaiFZ
-         zMaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyJswb7EPqVIyuJPQ/bliHNrgKDjaXMpJ7NXxWSKuf6bJDSEgt0zd401K+eSH8voYWqIn0qrfeJ8yea5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcJJplUcrLUOExP5A6q+QBBo+xWEV84IxcAO1vGeZpLUIVI/CK
-	t8TXfBGl6I/nLtjLmxN46pxCwAzFRWBCuB0wPr1mfYm42hfwY3NN2CqA
-X-Gm-Gg: ASbGncuoqrNjnd5fGSm9xJMaEunqn3v3NkzD77W3QrXlfdTUNqRZ8gEDsXSg6tV23Bw
-	ASBsL4oQ3sXcBygS1iIcR8GwI9OcTxQNbhHCZv4naaRL0gn5HDJyUiugqKeJJ7u1GyI8bK2+LYy
-	Vl+eOjizgBjWwh3s4jY4UOW7q1F5T4TDhWukodMQqrssEX0dHg3HvUlmbCu9PNrC8+YK+26gj4k
-	wsXk+hV1lat7m9Hmq9A1fDjszXxXuyLSGCFNWRQjoJESvXA1r7lQOjtUI586witkwr71dxscEDc
-	yFwRxEsrbA8rU76I4FNuosLKYcA9dXWQj3QyVxjymOHW04xS5JQnqNtcxqumYhFgt4FOjHtgk0r
-	iUNN2BG9saHlNlJRutwb9xiOMQAw+QEMeadUZqMjIbHbxnwH3GoDHjYfwQawuPcNBsmzQwtsAWH
-	MZc+EvuQ/mgreMT+QTcQa7oPQM46gsJxhhI6FklduHTjid9OHBy7xSbWhdnRUiq8P0IrgWEZw=
-X-Google-Smtp-Source: AGHT+IGYrXhINDrTOE+vTAyq/Tkw8JbEf+DgYAklG0E/QFs01OgyfTt1FyK/cKOnyNVyajgOy73KAg==
-X-Received: by 2002:a17:902:dad1:b0:295:8da5:c634 with SMTP id d9443c01a7336-2962ad835bemr73847405ad.9.1762425956833;
-        Thu, 06 Nov 2025 02:45:56 -0800 (PST)
-Received: from JF.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5c72esm24199615ad.33.2025.11.06.02.45.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 02:45:56 -0800 (PST)
-From: Jeff Lin <jefflin994697@gmail.com>
-To: jdelvare@suse.com,
-	linux@roeck-us.net
-Cc: Mariel.Tinaco@analog.com,
-	andriy.shevchenko@linux.intel.com,
-	cedricjustine.encarnacion@analog.com,
-	chiang.brian@inventec.com,
-	grantpeltier93@gmail.com,
-	gregkh@linuxfoundation.org,
-	jbrunet@baylibre.com,
-	johnerasmusmari.geronimo@analog.com,
-	kimseer.paller@analog.com,
-	krzysztof.kozlowski@linaro.org,
-	leo.yang.sy0@gmail.com,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ninad@linux.ibm.com,
-	nuno.sa@analog.com,
-	peterz@infradead.org,
-	thorsten.blum@linux.dev,
-	tzungbi@kernel.org,
-	william@wkennington.com,
-	Jeff Lin <jefflin994697@gmail.com>
-Subject: [PATCH v2] drivers/hwmon/pmbus: Add support for raa229141 in isl68137
-Date: Thu,  6 Nov 2025 18:45:19 +0800
-Message-Id: <20251106104519.2014853-1-jefflin994697@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762425981; c=relaxed/simple;
+	bh=UN/GKU9hvJMbqnzmKkd4b7NQH6hyTg2EHZG2w73sYZg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XlCKuCg8ljAVdeUW/cQjYlzRUB81nDTq2ZhCpQmzNNv6VNIPNd574GupvR24E+EY9S24QPpum7fyhkjO4ZNfs9p9p/5gAOMelRvPKlcULYkrPlRgoZ9Taob18bTuDtxqgGrbsarP94mj2gMEC6HR6S1d84z9e85RqCVEqF2H5EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PTi36yJx; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 4832C1A18F3;
+	Thu,  6 Nov 2025 10:46:15 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1AF806068C;
+	Thu,  6 Nov 2025 10:46:15 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C9129118507EA;
+	Thu,  6 Nov 2025 11:46:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762425974; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=ykf8AdWKUdwglXfy0yT79Zz6cgk7FWiBvEcU7ZTGEKg=;
+	b=PTi36yJxC/EF3MvdGN6SHwZ4omaZLcP+h6NMtpL/W2BM6P5PgoRt2rlThsaf1N9wgGD2qW
+	Kew/PVlIZB5xij1CQj33zJxPg/z/oMpRem+mrGZyFmn4AWDxOTtTCnfgLObkO9jpfYxJA0
+	yVQgJ4S6Oa9ARyAXqtFr2GCrrt3U18+pBlpPeVEGdeouED4zsY81qsqEAPE/v1meZ9KlPR
+	zBPMlFbBg/yGZDIowSGnHKbr1DqHiNFwh7R9LTHFq7prc3hTccO4X3wngChfS2YFb186BD
+	1779kjAa0/dKsUQUuFtVlocfOT3xLsYkwdVpT9ZovAf4bJuOrAeQT94ULQrj2g==
+From: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+Date: Thu, 06 Nov 2025 11:46:04 +0100
+Subject: [PATCH] scsi: ufs: core: fix hid sysfs group update
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251106-scsi-ufs-core-fix-sysfs-update-hid-group-v1-1-1262037d6c97@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAGt8DGkC/x3NSwrDMAxF0a0EjSuw3Tr9bCV0EGwl0SQ2Uh1aQ
+ vZekeGBy3s7KAmTwqvbQWhj5bIa/KWDtIzrTMjZDMGF6L3rUZMytkkxFSGc+Iv6U2OrefwQLpx
+ xltIqxvvTRxeut4cjsLkqZPV5NbyP4w8U8rnhegAAAA==
+X-Change-ID: 20251106-scsi-ufs-core-fix-sysfs-update-hid-group-57915023480e
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Daniel Lee <chullee@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, Udit Kumar <u-kumar1@ti.com>, 
+ Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>, 
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-The RAA229141A is a digital dual output multiphase (X+Y ≤ 12) PWM
-controller designed to be compliant with Intel VR13, VR13.HC, VR14 and
-VR14.Cloud specifications, targeting VCORE and auxiliary rails.
+Without UFSHCD_QUIRK_SKIP_PH_CONFIGURATION, the UFS core fails to create
+sysfs groups due to a pre-existing hid group.
 
-The RAA229141A supports the Intel SVID interface along with PMBus V1.3
-specifications, making it ideal for controlling the microprocessor core and
-system rails in Intel VR13, VR13.HC, VR14 and VR14.Cloud platforms.
+[    3.431670] Call trace:
+[    3.431673]  show_stack+0x18/0x24 (C)
+[    3.431682]  dump_stack_lvl+0x74/0x8c
+[    3.431691]  dump_stack+0x18/0x24
+[    3.431696]  sysfs_warn_dup+0x64/0x80
+[    3.431704]  internal_create_group+0x450/0x46c
+[    3.431709]  internal_create_groups+0x50/0xd0
+[    3.431714]  sysfs_create_groups+0x18/0x24
+[    3.431719]  ufs_sysfs_add_nodes+0x24/0x68
+[    3.431725]  ufshcd_init+0xb3c/0xef0
+[    3.431730]  ufshcd_pltfrm_init+0x514/0x7ec
+[    3.431735]  cdns_ufs_pltfrm_probe+0x3c/0x80
+[    3.431740]  platform_probe+0x5c/0x98
+[    3.431745]  really_probe+0xbc/0x2a8
+[    3.431749]  __driver_probe_device+0x78/0x12c
+[    3.431752]  driver_probe_device+0xd8/0x15c
+[    3.431756]  __device_attach_driver+0xb8/0x134
+[    3.431760]  bus_for_each_drv+0x88/0xe8
+[    3.431763]  __device_attach+0xa0/0x190
+[    3.431766]  device_initial_probe+0x14/0x20
+[    3.431769]  bus_probe_device+0xac/0xb0
+[    3.431773]  device_add+0x5d4/0x7a4
+[    3.431779]  of_device_add+0x44/0x60
+[    3.431785]  of_platform_device_create_pdata+0x8c/0x120
+[    3.431789]  of_platform_bus_create+0x158/0x39c
+[    3.431794]  of_platform_populate+0x74/0x108
+[    3.431798]  ti_j721e_ufs_probe+0xd8/0x1c0
+[    3.431803]  platform_probe+0x5c/0x98
+[    3.431807]  really_probe+0xbc/0x2a8
+[    3.431811]  __driver_probe_device+0x78/0x12c
+[    3.431814]  driver_probe_device+0xd8/0x15c
+[    3.431818]  __device_attach_driver+0xb8/0x134
+[    3.431821]  bus_for_each_drv+0x88/0xe8
+[    3.431824]  __device_attach+0xa0/0x190
+[    3.431828]  device_initial_probe+0x14/0x20
+[    3.431831]  bus_probe_device+0xac/0xb0
+[    3.431834]  deferred_probe_work_func+0x88/0xc0
+[    3.431838]  process_one_work+0x148/0x28c
+[    3.431844]  worker_thread+0x2d0/0x3d8
+[    3.431848]  kthread+0x12c/0x204
+[    3.431855]  ret_from_fork+0x10/0x20
+[    3.432030] cdns-ufshcd 4e84000.ufs: ufs_sysfs_add_nodes: sysfs groups creation failed (err = -17)
 
-Signed-off-by: Jeff Lin <jefflin994697@gmail.com>
+The issue occurs because, without UFSHCD_QUIRK_SKIP_PH_CONFIGURATION, the
+hid group is updated before sysfs groups creation. The sysfs_update_group()
+function silently creates missing group, the subsequent call to
+ufs_sysfs_add_nodes() fails when it attempts to create the already-existing
+hid group.
+
+Without UFSHCD_QUIRK_SKIP_PH_CONFIGURATION:
+  ufshcd_init
+    ufshcd_device_params_init
+      ufs_get_device_desc
+        sysfs_update_group
+    ufs_sysfs_add_nodes
+
+With UFSHCD_QUIRK_SKIP_PH_CONFIGURATION:
+  ufshcd_init
+    ufs_sysfs_add_nodes
+
+Move the sysfs_update_group() call in ufshcd_device_init() after
+ufshcd_device_params_init() to ensure hid group is updated once all groups
+were created.
+
+Fixes: bb7663dec67b ("scsi: ufs: sysfs: Make HID attributes visible")
+Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
 ---
-v1 -> v2:
-- Modify subject and description for the requirements
-- Remove CONFIG_SENSORS_RAA229141 in Kconfig
-- Remove the part for multifunction pin in v1 patchset
-- Rename function raa_dmpvr2_2rail_isys to raa_dmpvr2_2rail_pmbus
-- Link to v1: https://lore.kernel.org/all/20250926014552.1625950-1-jefflin994697@gmail.com/
+Issue found on a TI J784S4 EVM board. Testing confirms the issue is fixed
+on my platform. However, I was unable to verify if HID attributes are
+visible when the feature is supported.
 ---
- Documentation/hwmon/isl68137.rst | 10 ++++++++++
- drivers/hwmon/pmbus/isl68137.c   | 14 ++++++++++++++
- 2 files changed, 24 insertions(+)
+ drivers/ufs/core/ufshcd.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/hwmon/isl68137.rst b/Documentation/hwmon/isl68137.rst
-index 5bc029c98383..e77f582c2850 100644
---- a/Documentation/hwmon/isl68137.rst
-+++ b/Documentation/hwmon/isl68137.rst
-@@ -414,6 +414,16 @@ Supported chips:
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 9ca27de4767a..94bcb75ea2f8 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -8503,8 +8503,6 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
+ 				DEVICE_DESC_PARAM_EXT_UFS_FEATURE_SUP) &
+ 				UFS_DEV_HID_SUPPORT;
  
-       Publicly available (after August 2020 launch) at the Renesas website
+-	sysfs_update_group(&hba->dev->kobj, &ufs_sysfs_hid_group);
+-
+ 	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
  
-+  * Renesas RAA229141
+ 	err = ufshcd_read_string_desc(hba, model_index,
+@@ -9033,6 +9031,9 @@ static int ufshcd_device_init(struct ufs_hba *hba, bool init_dev_params)
+ 		ret = ufshcd_device_params_init(hba);
+ 		if (ret)
+ 			return ret;
 +
-+    Prefix: 'raa229141'
++		sysfs_update_group(&hba->dev->kobj, &ufs_sysfs_hid_group);
 +
-+    Addresses scanned: -
-+
-+    Datasheet:
-+
-+      Provided by Renesas upon request and NDA
-+
- Authors:
-       - Maxim Sloyko <maxims@google.com>
-       - Robert Lippert <rlippert@google.com>
-diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
-index 6bba9b50c51b..97b61836f53a 100644
---- a/drivers/hwmon/pmbus/isl68137.c
-+++ b/drivers/hwmon/pmbus/isl68137.c
-@@ -65,6 +65,7 @@ enum chips {
- 	raa228246,
- 	raa229001,
- 	raa229004,
-+	raa229141,
- 	raa229621,
- };
- 
-@@ -73,6 +74,7 @@ enum variants {
- 	raa_dmpvr2_1rail,
- 	raa_dmpvr2_2rail,
- 	raa_dmpvr2_2rail_nontc,
-+	raa_dmpvr2_2rail_pmbus,
- 	raa_dmpvr2_3rail,
- 	raa_dmpvr2_hv,
- };
-@@ -399,6 +401,17 @@ static int isl68137_probe(struct i2c_client *client)
- 		info->read_word_data = raa_dmpvr2_read_word_data;
- 		info->write_word_data = raa_dmpvr2_write_word_data;
- 		break;
-+	case raa_dmpvr2_2rail_pmbus:
-+		info->format[PSC_VOLTAGE_IN] = linear,
-+		info->format[PSC_VOLTAGE_OUT] = linear,
-+		info->format[PSC_CURRENT_IN] = linear;
-+		info->format[PSC_CURRENT_OUT] = linear;
-+		info->format[PSC_POWER] = linear;
-+		info->format[PSC_TEMPERATURE] = linear;
-+		info->pages = 2;
-+		info->read_word_data = raa_dmpvr2_read_word_data;
-+		info->write_word_data = raa_dmpvr2_write_word_data;
-+		break;
- 	case raa_dmpvr2_3rail:
- 		info->read_word_data = raa_dmpvr2_read_word_data;
- 		info->write_word_data = raa_dmpvr2_write_word_data;
-@@ -469,6 +482,7 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
- 	{"raa228246", raa_dmpvr2_2rail_nontc},
- 	{"raa229001", raa_dmpvr2_2rail},
- 	{"raa229004", raa_dmpvr2_2rail},
-+	{"raa229141", raa_dmpvr2_2rail_pmbus},
- 	{"raa229621", raa_dmpvr2_2rail},
- 	{}
- };
+ 		if (is_mcq_supported(hba) &&
+ 		    hba->quirks & UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH) {
+ 			ufshcd_config_mcq(hba);
+
+---
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+change-id: 20251106-scsi-ufs-core-fix-sysfs-update-hid-group-57915023480e
+
+Best regards,
 -- 
-2.34.1
+Thomas Richard (TI.com) <thomas.richard@bootlin.com>
 
 
