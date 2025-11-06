@@ -1,195 +1,142 @@
-Return-Path: <linux-kernel+bounces-888456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B69EC3ADF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:24:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D147EC3AE01
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2D384FE419
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B8C4617CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104EE329E7B;
-	Thu,  6 Nov 2025 12:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2DF32AAB9;
+	Thu,  6 Nov 2025 12:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TDStMgLl";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gxzkpfjP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkfG1NtP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C100B329C67
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E4A329E6D;
+	Thu,  6 Nov 2025 12:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762431485; cv=none; b=CWmhjw7lVt44MpOJdtHp/Iwj6Y9xZgDqWqLIkpAm+4qZFTVS8VF1qEjzh+9eOolz6q17Od44M2GAJyPwA8bI02hWA7duZFaATNHJzAg6vFwr36mO9KhTuAxJ3U3j29jLgFywF1tj7ASf0yr3j3ttpktyZ1I0Edlzj2G8JpH98yk=
+	t=1762431532; cv=none; b=KHqb4kt0XFMgUzo3VsEoRy0SIYW+ZfqmynAk8rXK41i7N7DiMMkKJUekhD9N58r2rYPIaTTGaeV2b8979lTFEQ+KeYLF8UE7IxNy5jnvuzM6RhKFLRCoGSCDZJ7ci4wi8aW9r7jnOf5ck0r4UXW1b5dJbWlhOATQXbKNjee+Sqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762431485; c=relaxed/simple;
-	bh=oToZbDseNMfvJIhLItkpjSWR/yz5mGiMVe5afItbn8s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uJW+sMfzkWSkPpyDZkYQXBUi1BTy7NOc6VxoA83WD7dvyZk6zyQjm0v9JRilO7Hj++YViMHhobN5FEnE12DJ9VTBmMcPt41DtEDlwANdvWTOfLf0LWZi2O/S7RpaEnOKHILdBa4m99+Ysf0SZCEHyxX6LK8hp12r6iZgLVLXn/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TDStMgLl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gxzkpfjP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A690YkB2326629
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 12:18:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s+sbWdVZxbSXBuB8qlQ234qciN5uD2hvXJOICtWjjjY=; b=TDStMgLllqhnA2fY
-	p3mr9kc45QrJYSK9ISf+wYBb2KTg08C9/7UDcx8pQ6FJtoBvPir8Z1W3PW44sVLT
-	szFG+gF8uk2tRCzuPQobJgm6wJ0IJ3FupnlafDGaelYLFe6C/WwaJhT6sQl/B9Wg
-	0mAuZEqCwoRCIskhPAgdZUueJOxZxzBsKqRd4GScEWJrUtWmXzWW9IJArsk4a/E9
-	cl5S7XudoQr/307tA2LaCTKCRfMXeI4Orx5JuSXK8+2QECEFh38GD6WCLKBi6Unu
-	uQji6BWBddqc1qixhmjYiAqMO6422cUZct0mwAyF0EESMqf0qxpk9RNzVHCufOO+
-	JObNlQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8h0v1tmq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:18:02 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3416dc5754fso1367764a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:18:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762431482; x=1763036282; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s+sbWdVZxbSXBuB8qlQ234qciN5uD2hvXJOICtWjjjY=;
-        b=gxzkpfjP7Kz2+9izIArPAjQqKJmcFWlzaTKxB5j60U7VcVm7Xve9qXDlBMMJp/C829
-         FDKo27RHITSvQhkYgPx8wxoazPQ6IaK/H0dtU5Tu5R3/7AWO9KavCTh2mH9phIeMCKkW
-         PP7oy8yWSEDkF6LzlHj3WvtNoB3MAMQTWE4KrY3hnfWbOfAFhDv0vRyGFlNtTcxoqkQ8
-         ED8YbGCb//bEjyyMDxqce3j8cuigghW9lrzx/qfIScCrNS9FE/t6Q28xd6AoPfXVVPKM
-         Q9Mbb5XM5gVsP4Ds8ai7ABecNJV/30R1p3tx4OpWeXEA+I2H6MLMg/tacS6fjpRT8aMi
-         e/FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762431482; x=1763036282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s+sbWdVZxbSXBuB8qlQ234qciN5uD2hvXJOICtWjjjY=;
-        b=PGqKLEAZOCA2MgHDv1URZpfd9iN5pvNgfYqbSXTx11mGYcCW0fYnHCdd7ZOI+Hk6In
-         ndnu6afzM3HUJV9MTq+nCPQDYWL7FZ9zSQFyTsvgFNbJAiI3aHlpMwvlbg2LdZivOy5I
-         fPL6dPi09iMnWJUs0CQe4/dVKfuK/HA0DsRcW9vGdAd1HuJefRHvcFsIPjBEqJaIsmXi
-         OUx8acLjAMUWjCIN4SJMr4k4i1po5pwgAb54ABF1Uvq+ApT37NSk747YLzN8aJenhafY
-         M/GdjCMCIdZIpdGB+uGeuy6+MSFOAbvNzdzFEwAFQvxovnKs4986al1Xp5Til08/4YJp
-         2+3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXyg22rWVyvVS6MnfK1vF3UL0ezDCN6Yn8zD9l3nxNtZn04qy4YoAnsDjMvxteTmuuYxpVb2I4ocDPsWaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMe4xk2F9rdb2AJxwzmF6nJqaiiBr2YMro1UUAm0/hxSU9+cOj
-	8EXn7TUImiOc+7v1jZrxyZfCibcsxF5kWMnn+a7N/jWHTzsHgyWSHE8GYmtvLiorQhp9E8UENEu
-	o4ztVWLGQrGOWOs55XN+KP4voB2Xjwg0n8v815oSnG5F2RqB24sIP/ZSHVORbhvbXYit68o/bVc
-	h2RR1BiZLqdUrio7bai6g5decknCE/Gxs2EmtqOk/2yQ==
-X-Gm-Gg: ASbGncu3ZCpb1Xd9geAw2SHrD3pU5ugQCwrxm+h6XtZqHNprw/aeAhDwdYhmPc2NiY3
-	zetOFSGSZaCiXpPI5GGAV4Zu7PJ457SzW/QZvOgzu5VDHVMwlrylWNJbIO6mnVbTC4KANBhyxHc
-	JT7wezfaVaa5gCx2Yd0w6rm+YlpcOdk47q/GJguR4VlghZeuFQ4q1cXte7NmqpGufSIdlNI3B9G
-	YCeLJV6mD0b5A==
-X-Received: by 2002:a17:90b:528f:b0:341:8ac6:2244 with SMTP id 98e67ed59e1d1-341a6c49285mr8076205a91.9.1762431481625;
-        Thu, 06 Nov 2025 04:18:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFFSFcWsr/qgEDWu3lthSFDZ1a/v10OQXi58l3atHWQqjv5x9HFWjYicVnBYQGrSoLVqewLhyNP3VG5MGWKDco=
-X-Received: by 2002:a17:90b:528f:b0:341:8ac6:2244 with SMTP id
- 98e67ed59e1d1-341a6c49285mr8076169a91.9.1762431481093; Thu, 06 Nov 2025
- 04:18:01 -0800 (PST)
+	s=arc-20240116; t=1762431532; c=relaxed/simple;
+	bh=El9bKN26LbgMPEUYCZefdz4i7O2fm1eve+qk9Xcw6FA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PiX2mC63G5Tuj1Ji1zaSbBeM++SAyiFaR8Q1NVkuCJ+Y4+4HRnWlYdvwoYr4mtPnAeanvRiGkeUcThaxYCiUamfCv9frTGG3uQuxAP2f9yFxk9exq78w8YkYt383cj0+IOz+W6/qn4CLg/5p8g1F4Ge6hVScfs0k7Ikz+8gEg08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkfG1NtP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F170C116C6;
+	Thu,  6 Nov 2025 12:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762431531;
+	bh=El9bKN26LbgMPEUYCZefdz4i7O2fm1eve+qk9Xcw6FA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pkfG1NtPcIOC2fXQ5r5rTurLqYirGgI7kRpy9z9VC+uHmgqs4Z25/NyP5Fn1CeJ8o
+	 rE5Leovk4wX35Rd2bC1ruEpXHOtBIapUvqVmktlks8UGXiwB+EsSwXXpW79eu3Us16
+	 02cpEJ8fIhL3HslgP34XX5kydHeYWzWQ2rO3wu2pqYWIxe4VEEqZwlf3NfxkvEuDrT
+	 gZ0PbR34U7oe7wh+09oaqRKUmkZp7p4TH+wG+sy+HAg0kL9fAzpB8jXtQPGMW5E0Vu
+	 mISUtQhSHHpDoxpEY97ZQ/EOhbU+TKjZQ98XGoYBeqHOWIYH8YldWyGlNdtTYum8Du
+	 AC4Wgt7xP14kw==
+Message-ID: <09148e20-03e9-44fb-a45c-3038909cde06@kernel.org>
+Date: Thu, 6 Nov 2025 13:18:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104125126.1006400-1-tessolveupstream@gmail.com>
- <xq4jidiffovpg3armhlzrzxloug4irumlycyyvmfaugajbtq4t@cutuj5736ayo>
- <58afe57b-68e8-4de3-841a-df3dbf04ee64@gmail.com> <7tk2hd5qursarvomuwe7yt574vmjixh23zz3iw6nzpzm6x7jlj@7q2vlik3t2h6>
- <9d5de3b8-29d0-4202-a361-4bcbfa166755@gmail.com>
-In-Reply-To: <9d5de3b8-29d0-4202-a361-4bcbfa166755@gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Thu, 6 Nov 2025 14:17:53 +0200
-X-Gm-Features: AWmQ_ble-cjeiMkSHhNt34FmGUhPaaaR5971I0ICOxNQpnlOkD3tg_OOxVHdMvc
-Message-ID: <CAO9ioeX0ha31ouOEN2HqJdq8TY4B_Y87UxeBBgeuC0X_inQjSQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] Add Qualcomm Technologies, Inc. Talos EVK SMARC support
-To: Tessolve Upstream <tessolveupstream@gmail.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: cxOgU1Pz7HKOJcfshSC6oYJvwfRMUAQF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA5NyBTYWx0ZWRfX+V817vSCzaik
- 3Taync9MYt2poyTMaVKFtStWgDYmBWIE1fTPPuKqDavVmdNy/CiHmwIJ4tDY5JBGP2SVYEj4NXj
- 2b74pwebViBqn9KaAK0TxWwGsUWxVaURag9OE/o0wpVQfeRXADUzFJv42xAIdnvDW9Js0wcpscc
- iTSguzJ40z3g9jOV0dDgsp6+0D5LTz+fdsQ7vsq/5GLlo+3tSujC0L0H6haPrgcePeIC5u/KP3R
- HOZsM/xKwsnYZsCvfH7+P7iloman3e+YEz7zrFdOF8A/Ye9PdulNqMgPkFSWNv9tceXPRPNehW/
- udr3mMZbAMbRATuScFE32KTB+Cu2AYhcadnVJ7WFZ42iDQt69j4bOTQk9fCT1qyd98BonnXKZ4k
- amE52u4AmelJnqqQT/Iv8XCxdIbitQ==
-X-Proofpoint-GUID: cxOgU1Pz7HKOJcfshSC6oYJvwfRMUAQF
-X-Authority-Analysis: v=2.4 cv=PoyergM3 c=1 sm=1 tr=0 ts=690c91fa cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8
- a=fp6pfEYeF8mCZpjmTfIA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060097
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: mux: Add description for enable GPIO
+To: Tapio Reijonen <tapio.reijonen@vaisala.com>
+Cc: Peter Rosin <peda@axentia.se>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251105-add-external-mux-enable-gpio-v1-0-e59cba6f9e47@vaisala.com>
+ <20251105-add-external-mux-enable-gpio-v1-1-e59cba6f9e47@vaisala.com>
+ <20251106-imported-bull-of-storm-8c19fc@kuoka>
+ <62a77b8c-6721-45b3-878a-f90f859bfbfe@vaisala.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <62a77b8c-6721-45b3-878a-f90f859bfbfe@vaisala.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 6 Nov 2025 at 11:03, Tessolve Upstream
-<tessolveupstream@gmail.com> wrote:
->
->
->
-> On 05/11/25 20:23, Dmitry Baryshkov wrote:
-> > On Wed, Nov 05, 2025 at 06:27:42PM +0530, Tessolve Upstream wrote:
-> >>
-> >>
-> >> On 05/11/25 06:35, Dmitry Baryshkov wrote:
-> >>> On Tue, Nov 04, 2025 at 06:21:24PM +0530, Sudarshan Shetty wrote:
-> >>>> Hi all,
-> >>>>
-> >>>> This patch series adds device tree binding and board support for the
-> >>>> Qualcomm Technologies, Inc. Talos EVK SMARC platform based on the
-> >>>> QCS615 SoC.
-> >>>>
-> >>>> The first patch introduces the DT binding entry for the Talos EVK
-> >>>> SMARC board, and the second patch adds the corresponding DTS
-> >>>> files for the platform.
-> >>>>
-> >>>> Note:
-> >>>> USB(usb_1_dwc3) supports host-only mode based on the switch SW1 on
-> >>>> the SoM, which is purely a hardware controlled as USB-ID and USB-VBU=
-S
-> >>>> is not connected the switching cannot be handled from SW.
-> >>>> Hence from SW Host-only mode is supported on Linux boot up.
-> >>>>
-> >>>> Changes in v5:
-> >>>>  - Updated commit message. (suggested by Krzysztof)
-> >>>>  - Introduced generic node name for can, dp, hdmi-bridge. (suggested=
- by
-> >>>>    Krzysztof)
-> >>>>  - Introduced talos-evk-cb.dtsi, which has common carrier board
-> >>>>    interfaces.
-> >>>
-> >>> Common between what?
-> >>
-> >> Introduced talos-evk-cb.dtsi to define carrier board=E2=80=93specific =
-interfaces
-> >> common to both HDMI and LVDS top-level DTS variants.
-> >
-> > Are those two different carrier boards? Is it a single carrier board
-> > with mezzanines? With extension boards? With a DIP switch?
-
-Thank you for describing this in the cover letter and in the commit
-message in the nextt revision.
-
->
-> It=E2=80=99s a single carrier board.
-> HDMI and LVDS share the same DSI interface, and only one can be active at
-> a time depending on a DIP switch.
-> >
->
+On 06/11/2025 12:55, Tapio Reijonen wrote:
+> Hi,
+> 
+> On 11/6/25 11:08, Krzysztof Kozlowski wrote:
+>> On Wed, Nov 05, 2025 at 02:49:12PM +0000, Tapio Reijonen wrote:
+>>> Add description for enabling GPIO-controlled multiplexer
+>>> GPIO pins, according to the state of the mux idle state.
+>>
+>> You basically repeated binding. Please explain here which GPIO this is,
+>> e.g. give concrete device example.
+>>
+> Here is the example:
+>      mux: mux-controller {
+>          compatible = "gpio-mux";
+>          #mux-control-cells = <0>;
+> 
+>          mux-gpios =
+>              <&gpio4 22 GPIO_ACTIVE_HIGH>,
+>              <&gpio2 18 GPIO_ACTIVE_HIGH>,
+>              <&gpio2 13 GPIO_ACTIVE_HIGH>,
+>              <&gpio2 17 GPIO_ACTIVE_HIGH>;
+>          idle-state = <MUX_IDLE_DISCONNECT>;
+>          /* BUS_EN */
+>          enable-gpios = <&gpio4 27 GPIO_ACTIVE_LOW>;
 
 
---=20
-With best wishes
-Dmitry
+I meant real device, so I can look at datasheet and understand how/why
+you do it. This also is supposed to be in the commit msg.
+
+Best regards,
+Krzysztof
 
