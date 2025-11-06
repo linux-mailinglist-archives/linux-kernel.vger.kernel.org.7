@@ -1,162 +1,212 @@
-Return-Path: <linux-kernel+bounces-888177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8B0C3A101
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:07:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64921C3A1DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BA6D1A447DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:04:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52FFD502DBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E814310774;
-	Thu,  6 Nov 2025 10:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA95313524;
+	Thu,  6 Nov 2025 10:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Koq81XN4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NebslIGC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2WoqG/Ps";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r1ZJn/Ke";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G5PSDi1/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VDj28k4H"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352D630E844;
-	Thu,  6 Nov 2025 10:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F26130F7EE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762423343; cv=none; b=G1PK14TbkYONDTNJS+ynd2Qqh9f0IJeBU8t1U5HKtu6eeS6SEbCgbKcNzOveNk6oD8UAmxGFS09WKNDvTUERW4w1Jze4RwQyqNS/jknEHDjh1gtIjhjpXE3k3DmhpvjUJMSOOXxgWD/PIcwhE6TR9WbLUj2whd051EQ+Y9+RFLs=
+	t=1762423345; cv=none; b=ABhUdgMNGwiIFe/BzgvclJug1IUwx10tBu5SmSY2GhDPX1nSWrPqKiUazAKYjpmt7im+EQHz+876a1CBv/R5BDnsv09bTZTw8lPeWBb035T/PLXjXuUYZDnNdPMZipy7SWvUSdq0nDof/vaaDrsJvVIvAF97Rof+IeBtS2n1HNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762423343; c=relaxed/simple;
-	bh=4Cu28HtGZeNZ2tWXY+8GZcEypzFGKNdtzWDHnoy4D9o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NZ+OcOYhVjJ7FSPnmHAWfE7/yhura4buW09Gnhgo4tpmnHlqlCCY834P2OtZjEZVhlNhnynX7HoHpz8Xrv3Me6cuKYeyKSF+UIFVY1+IWEpZnca5btOEVS9ewRgK1eDMkmmFFoluLk59Bsag5cWiPCRfLlvPM47MqOcHQ0pSWsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Koq81XN4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NebslIGC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762423337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1762423345; c=relaxed/simple;
+	bh=9ZQn3Mz4Bsl3vtRlfOjP7aq3hwjqIkhB3KLkp3lT3Mw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WPqre4D31oGAjENio6Uq7u370MV9CxvmZGy0AsrBzve6H2DJJqGEevL/U48Ob1NtuGY9NQFqT6W714ipI9yTr77ZMMJlbqmSr0CnZiWPFeFYS8RKrxnA7XacPzLa9waepFxAOMOcsqs8JDqCZPQ+rRHCX/vqo1oFhE99zSHYFCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2WoqG/Ps; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r1ZJn/Ke; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G5PSDi1/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VDj28k4H; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6E0721F393;
+	Thu,  6 Nov 2025 10:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762423334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L+bQGGgEleKR6qKcL7e+IzIL4DEdxuTbcX+pJZvo9tw=;
-	b=Koq81XN4V8ajlEgOf1GpsEXnRwjdINGxTEzarRe+pvGWi3AxnBOuWGx7BKVC5ZsknjofI/
-	//bs8dPiQLq8cy47ZPN5f8O3DChhE/qUhNoKVj1WulDSr0P3aSE2cU9bPXX8KuNlHdhPwn
-	9YtIo/CkMnnC4iHzy75BZCDSDZJdol823RZJKpBAR7lxwQvMEhU0xn1DiJTbO6mCnvlwCc
-	x1ocowmXLfAngvQWItIQNKrol6CYme1w71LKP7se2xcMLvA+NjfSjFo2vg9TG+lk7IxvEj
-	6/U8GMGYP+bR42PNCl8GAk/Bq4flCRBXp9dlF+NKeAHv6VjBLUZgHEFzYFBLIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762423337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	bh=VM/DHgU+8v7UtiujNpPprWigWOD/5K0rxkxM+oWHKL4=;
+	b=2WoqG/PsYCk865209nFd+hKy51PC+wQsT6gImARcj0qVYxX6Lx1YRHNZM8jcer6bdh/uoq
+	smcm8F6FSCxhjXwbgpi6NIO+/sBldw2ugFjDZJR2diecCEHkXlX59rqYQLZtuP48hkmvO5
+	mGU3c8cZNyMgrrnoi9LFhPzPZ5FAt+U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762423334;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L+bQGGgEleKR6qKcL7e+IzIL4DEdxuTbcX+pJZvo9tw=;
-	b=NebslIGCP/0XBY+t6xRTaJURoXZKSjWZFHf8pSrAWZ3The6aG2X+Qt9lmqbkSzAXevxSQX
-	nu3akSQUYoAcRQCw==
-Date: Thu, 06 Nov 2025 11:02:07 +0100
-Subject: [PATCH v5 14/34] vdso/datapage: Remove inclusion of gettimeofday.h
+	bh=VM/DHgU+8v7UtiujNpPprWigWOD/5K0rxkxM+oWHKL4=;
+	b=r1ZJn/KeWdvrIyfwd4piQcVKCREkU2XwKUhErWlPzWfNYX2Z74FeaMMl+Kebr9UXB4WLPr
+	LsIMTRSAq5/qHhCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="G5PSDi1/";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VDj28k4H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762423329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VM/DHgU+8v7UtiujNpPprWigWOD/5K0rxkxM+oWHKL4=;
+	b=G5PSDi1/Z6f9Czj5XhFbXN0IZuwA+t1BSNULzV7p1bOT/L/DNRqu4i5xjWZ5yVBqLNlyxs
+	i6vrczMUp0/2p0oSct53zyckF86xHcWjGtNEeS0YuVrXn5v7oFJC8M3ngzYNQtGmDyHjxV
+	8HV2z6KGCahtl6y1LArENGsNPLI/cC8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762423329;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VM/DHgU+8v7UtiujNpPprWigWOD/5K0rxkxM+oWHKL4=;
+	b=VDj28k4HeexNGzUQfWZzecA3YYgqikHX2pGR56wHlbvddd28DWQNXXKNnMkrVgAaOVnDwH
+	BA0IMeN8dYO86hAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 329D913A31;
+	Thu,  6 Nov 2025 10:02:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +V3hCiFyDGl2NwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 06 Nov 2025 10:02:09 +0000
+Date: Thu, 06 Nov 2025 11:02:08 +0100
+Message-ID: <87a50zh42n.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>,
+	<perex@perex.cz>,
+	<syzkaller-bugs@googlegroups.com>,
+	<tiwai@suse.com>
+Subject: Re: [PATCH] ALSA: usb-audio: Prevent urb from writing out of bounds
+In-Reply-To: <20251106083300.2947700-1-lizhi.xu@windriver.com>
+References: <690b6b46.050a0220.3d0d33.0054.GAE@google.com>
+	<20251106083300.2947700-1-lizhi.xu@windriver.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251106-vdso-sparc64-generic-2-v5-14-97ff2b6542f7@linutronix.de>
-References: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
-In-Reply-To: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
- John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
- "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, Shannon Nelson <sln@onemain.com>
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
- linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762423327; l=1995;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=4Cu28HtGZeNZ2tWXY+8GZcEypzFGKNdtzWDHnoy4D9o=;
- b=wgfZC8v12n5R65IRKOFb/E4l4M/8XCUDoIsKPpV04GCQ82zd29+fO6qo2g7MRa/a7nzUf2+c7
- F09BjOCS+zkBhCF0FslbeiK0EA0nAZIK7R42CgRjbARl3mrrIE55iOg
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 6E0721F393
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[bfd77469c8966de076f7];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -2.01
 
-vdso/datapage.h is useful without pulling in the architecture-specific
-gettimeofday() helpers.
+On Thu, 06 Nov 2025 09:33:00 +0100,
+Lizhi Xu wrote:
+> 
+> The calculation rule for the actual data length written to the URB's
+> transfer buffer differs from that used to allocate the URB's transfer
+> buffer, and in this problem, the value used during allocation is smaller.
+> 
+> This ultimately leads to write out-of-bounds errors when writing data to
+> the transfer buffer.
+> 
+> To prevent out-of-bounds writes to the transfer buffer, a check between
+> the size of the bytes to be written and the size of the allocated bytes
+> should be added before performing the write operation.
+> 
+> When the written bytes are too large, -EPIPE is returned instead of
+> -EAGAIN, because returning -EAGAIN might result in push back to ready
+> list again.
+> 
+> Based on the context of calculating the bytes to be written here, both
+> copy_to_urb() and copy_to_urb_quirk() require a check for the size of
+> the bytes to be written before execution.
+> 
+> syzbot reported:
+> BUG: KASAN: slab-out-of-bounds in copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
+> Write of size 264 at addr ffff88801107b400 by task syz.0.17/5461
+> 
+> Call Trace:
+>  copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
+>  prepare_playback_urb+0x953/0x13d0 sound/usb/pcm.c:1611
+> 
+> Reported-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
+> Tested-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 
-Move the include to the only users which needs it.
+I'm afraid that this doesn't address the root cause at all.
+The description above sounds plausible, but not pointing to "why".
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Tested-by: Andreas Larsson <andreas@gaisler.com>
-Reviewed-by: Andreas Larsson <andreas@gaisler.com>
----
- include/vdso/datapage.h | 11 -----------
- lib/vdso/gettimeofday.c | 11 +++++++++++
- 2 files changed, 11 insertions(+), 11 deletions(-)
+The bytes is frames * stride, so the question is why a too large
+frames is calculated.  I couldn't have time to check the details, but
+there should be rather some weird condition / parameters to trigger
+this, and we should check that at first.
 
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index 23c39b96190fdfc2f31bf76a8614d69a3a98017c..752856b36a3abf82b849451e5d5233b1067b86f2 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -184,17 +184,6 @@ enum vdso_pages {
- 	VDSO_NR_PAGES
- };
- 
--/*
-- * The generic vDSO implementation requires that gettimeofday.h
-- * provides:
-- * - __arch_get_hw_counter(): to get the hw counter based on the
-- *   clock_mode.
-- * - gettimeofday_fallback(): fallback for gettimeofday.
-- * - clock_gettime_fallback(): fallback for clock_gettime.
-- * - clock_getres_fallback(): fallback for clock_getres.
-- */
--#include <asm/vdso/gettimeofday.h>
--
- #else /* !__ASSEMBLY__ */
- 
- #ifdef CONFIG_VDSO_GETRANDOM
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index 7b3fbae85544c2f2f6b9abd5437f130706fb6ec6..9dddf6c23913e87a62bdaa50c5e32d2951c92760 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -12,6 +12,17 @@
- #include <vdso/time32.h>
- #include <vdso/time64.h>
- 
-+/*
-+ * The generic vDSO implementation requires that gettimeofday.h
-+ * provides:
-+ * - __arch_get_hw_counter(): to get the hw counter based on the
-+ *   clock_mode.
-+ * - gettimeofday_fallback(): fallback for gettimeofday.
-+ * - clock_gettime_fallback(): fallback for clock_gettime.
-+ * - clock_getres_fallback(): fallback for clock_getres.
-+ */
-+#include <asm/vdso/gettimeofday.h>
-+
- /* Bring in default accessors */
- #include <vdso/vsyscall.h>
- 
 
--- 
-2.51.0
+thanks,
 
+Takashi
+
+
+> ---
+>  sound/usb/pcm.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+> index 54d01dfd820f..a4c0ea685b8a 100644
+> --- a/sound/usb/pcm.c
+> +++ b/sound/usb/pcm.c
+> @@ -1606,6 +1606,9 @@ static int prepare_playback_urb(struct snd_usb_substream *subs,
+>  				    subs->cur_audiofmt->dsd_bitrev)) {
+>  			fill_playback_urb_dsd_bitrev(subs, urb, bytes);
+>  		} else {
+> +			if (bytes > ctx->buffer_size)
+> +				return -EPIPE;
+> +
+>  			/* usual PCM */
+>  			if (!subs->tx_length_quirk)
+>  				copy_to_urb(subs, urb, 0, stride, bytes);
+> -- 
+> 2.43.0
+> 
 
