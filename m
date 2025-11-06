@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-888361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAEE2C3AA2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:41:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B13C3A96D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:33:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB1D3B4EC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:33:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C6BB6340281
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C452F3C07;
-	Thu,  6 Nov 2025 11:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120352F5319;
+	Thu,  6 Nov 2025 11:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UmvrOMB1"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tadpRn1X"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EB82DF716
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6182F1FDF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428805; cv=none; b=hhVdQUMidFXQ6j0qKDVD9G3TcfRcRwFx33Xp90q7xsima6vh1b1y0pMtF5YBI6RmsOzZeszobCYdvvrVJK2Lqwln7snBlnk9nKMp2YkERdnZ5Ox9YpZANf1FhI+Aht+QWAp8XhnOfq8AHVJ5XkhToVPHquD3D/7Z2IeJuewCn2U=
+	t=1762428813; cv=none; b=CVthf5m3kjhS8/leZHUA+z89n5vJQ8n5aiZSObgHhCvHUg+HItYd+5aSn+jJt9GmV61Zf2P6Ss3/7t4EASGIsZkW2McwEfA2dSj12Mjj3btu2PFTiWkd8bknGHjtTfPhTFy4Ov10mY0HeliaF5NX/mEuBgSgGrqfUAjc5Ztl4wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428805; c=relaxed/simple;
-	bh=tkR+GnRDtqKSwAHuMAm5xpZ63WHRMWHzSvfOCt3qkeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9rx/cvzjkUp7KB5UPTWmm0kTywq1FbtKNgWaLsw1C16jWF2rI/kRGvnalFwTpR5Jaha9ig5cXGAPVfvdW+6r2wCBK16NjQNHWbSj5oMz3/0uFKCClN8COg3AYB6WvUQoHecGbtMAZK9eNJ0z4wq1S/sDMxCBM59ptsv67bYHzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UmvrOMB1; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-33be037cf73so1000891a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:33:23 -0800 (PST)
+	s=arc-20240116; t=1762428813; c=relaxed/simple;
+	bh=kskZfrnUVk0ZLO8Nc1tGxz/XbFYwKP6SavvJ3620Jng=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Bsova0z2K28woJ4At3LeIvYT7AKJr8qBKdV7JTI8iBeClMiPUHcXxdoNxXawQ1+ChjjGi+poEHPmFf2crVLbaJ1qjRQlg0tCEQL4BceIa0cdpyTXKi+dnKbteLeV6Fx+YPvJv+nJf3RI4JFlUd2JsZI33bv+1WQegJXQFPktEyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tadpRn1X; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-477632ce314so4111775e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:33:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1762428803; x=1763033603; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ij/rVy4GziBMq3uULEB/2DhQCV4nm5H8hheAM8nrkI=;
-        b=UmvrOMB1XT5iWPhswOdcWDt4HEzZa5Vkx9WHbF0frT5f5pzRmrLN2GWRBKGWz52yZI
-         wqQckTptBqCk5+f/f+95mTzsQPU2C/h2M4WgOvFKo7YkjS+6DZbEb0JpLULr6N8EqnE0
-         H94TEDji4Cc9viKmep9ZNrBfc5d2q00ONodzp7pm/ALBBF6jxLAyCJxSCxIhROz7+EBp
-         xsKhEyffuGM3gFGAxAT+BQWeiX05wTk6fllH2uNcCN8eYac59hLV9TZzswPliVGFc+Aj
-         aDtfaA7jSsx4piAl9MD7d3L1LIvS/9CLJhi0iCBjJQVClpzSiS204O563tt+51VDb2yH
-         7Png==
+        d=google.com; s=20230601; t=1762428810; x=1763033610; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T3LzpMnnz4ipgzn0EHBlLJPC1ABo5o2dTp81SvHFFqg=;
+        b=tadpRn1XWHoPMOqYMF3sUTrI4iaQvp0g4JtdUKnUw31NP4ubyIBnsa00OoFjUMG/ei
+         kPYgj1wWgiRuwG8J3tWGeWQXk6Lp94Gm0Lb3TOIOa7N72m88uvdGRAdW9y5kVtKCBxSf
+         ZkMTBqlRtJ0SC61eBk5cPBxlVtoJVcloC2ZmZIcGVOjRe0ANR5odzXSUAcW/X0s4L1Gb
+         UyH712PULN3R3iNw50LKw8JMUvEFdTtV2sjRT1txPvSUp3bJFfHXdFXa648pyMRm4t6g
+         bB/JPmw18STGo2jaWY9xyy/MCd70RIccm2WcPkuAwAlV1HnoAzVj1I0kj+V6towenFVO
+         VIcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762428803; x=1763033603;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ij/rVy4GziBMq3uULEB/2DhQCV4nm5H8hheAM8nrkI=;
-        b=DpmbBVIbEa91gpjxf5DR6n310KMl6kGUw2Vj2Bi0jliaac3XPnO7RdDTHn8rZ9E2tv
-         7Fruj4mjKR++oaiALeMyyXugYFYXC5mKBjnQSpW5VzE00EcPZUv7ktgUMlwlZJfTlqY/
-         yUl91l+8f3jirnS7RUvwGXWC50JbMh3hhMkM3zz11z0RhfT4fN0qoR6jc8Hd2NKhDTuj
-         Q75yIl2cK3la6TYgDfeztP6kbikCntYALdOWywtUdT3EPKpwfZdAgPZVA0NuMpMPJ738
-         D7B3rHb4YbnFznQ6pzfHk3nWRrMATw4slKjSenp2X9AP8Ncsz6ZUhdg19f+RUMq4yKx2
-         AGMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdoZnj+N7gttWlpP/V+jADzHcWCl2w4n3YaFrYLdALgpV/4HTd0Jy74pGVmhPlS6RsmfrEy24M9oPK5vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNeXCENxH7m3b2KXidS+WvqJXnD6HFXJO8L8WknPwtH+nILxEh
-	C3A4Cf0EloPdImDqiElRtuo8J5+C1SKCD2c6h2doRQ8jUi44pEt96EMOzNCkC85urg==
-X-Gm-Gg: ASbGncsF8IoLpFWk3oiH5QaWCALe69938P8EmbEsh2XB12QeK0c/nq6tlk4lDv8pXxv
-	OvC5d5r5+UKuQSXZ2MCpcde296lMBob/JucJ46bGvOHHz5nVClf8BsjbGAca/FtljdDQeI55dDp
-	oKudTIhmQk2XK4Us5sLDuxuS7qW4yLilVpxn+itIODc1YQAdvBDVTyjJGnGaRzd5KheVSrYdeEO
-	/GLuzU9gEF++jlw5nswtE8Av00jm9YPYzxU2d671uljw7tVB0khkuCc8nPe0POMWEFSa2iE33p4
-	w1/F+plmAVR1WtYGQ+T4nIi95EUb04jDzq8y1/Ip6n/6PstmLBV76Iwy9EuhWBBUle8DZBP5MsF
-	BFRXThI6KHmf9zpv6xZRM0LeGBsRRSCj32mwRm2vt7oR6TGmzQpkQlyzcFf3o77qjo3oK9m/0Nc
-	lfnSdGMgEWSM2/lX7R+e//xUGaHpvz8+o=
-X-Google-Smtp-Source: AGHT+IEiAJMBgqtthto2j9GFXwiPZEtaYsWnKLnAoaxjbeeaon3+saFFVOVfdUtlulDdFlp+CcxI3w==
-X-Received: by 2002:a17:902:ce0a:b0:295:5dbe:f629 with SMTP id d9443c01a7336-2962ad069acmr75069665ad.8.1762428802934;
-        Thu, 06 Nov 2025 03:33:22 -0800 (PST)
-Received: from bytedance ([61.213.176.58])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096839asm25812805ad.13.2025.11.06.03.33.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 03:33:22 -0800 (PST)
-Date: Thu, 6 Nov 2025 19:33:13 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Benjamin Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Hao Jia <jiahao.kernel@gmail.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v3] sched/fair: Prevent cfs_rq from being unthrottled
- with zero runtime_remaining
-Message-ID: <20251106113313.GB471@bytedance>
-References: <20251030032755.560-1-ziqianlu@bytedance.com>
- <xm26346sjh47.fsf@google.com>
- <20251106112500.GA471@bytedance>
- <20251106112721.GS3245006@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1762428810; x=1763033610;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T3LzpMnnz4ipgzn0EHBlLJPC1ABo5o2dTp81SvHFFqg=;
+        b=VfWKl5FRnttKFUGqdGwylAuoUiBdDZIdNqrEqOh7BcwnVAMZ/mmCbRK4QA7ybYH9nC
+         of0Q/J85nOGwxsLgw0mSSTrhTYylzgZqd071DDCsspkLiqbqgVuqjhc2SJrrGq69eYEk
+         GNQO6bf12hMlSx06vSq69Q7nV5KTrTPTYDIShssWY14vzjYpty4k4aCcWupz2qNkFOEt
+         NMFYWBYX3dWnBmhF6tCjhVocHN5WDp37J4tWOpTFiJ87j7xJmFGakiwpkqNlMPygIKz2
+         kheCLJ4nZDF+uW0o2xLbGAqn0Hvmo4CbUtJxzn05f7U1RR3HxHYauL8mu0n0bibZjJn6
+         Bfdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVl6M7f/qDJPo1m9tAp4BCkP3IrhfC/rpmqDIofnfIADOBZgN9Qig/kijpNRzZAhl8ZD2cfAl9Ewh5JFbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsx0W2Dsj6MWlxDslo2bDR1Cmvd5nhmn+wiZ+zgVdK2h5+6cQQ
+	1APJ15EFCWaxrf2DuQsDemtS6p8jvNu1YAITEO5ALZMwcTp3N9iv4YxifrFFgKlLj2QnVKwnTEo
+	XlNWw+Uj9ebHODb9KWQ==
+X-Google-Smtp-Source: AGHT+IHssTkDeOS2zrZoGKuLejZwLW0/HkLFxDa/KU2PrRZn+M5vKIDi/+Iwwc4V/ot2KZc7tJmUxQLHbnhZN1E=
+X-Received: from wrbl18.prod.google.com ([2002:adf:a392:0:b0:429:c7d9:2f9])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2c07:b0:429:66bf:1475 with SMTP id ffacd0b85a97d-429e32c6cb6mr5721285f8f.3.1762428810181;
+ Thu, 06 Nov 2025 03:33:30 -0800 (PST)
+Date: Thu, 6 Nov 2025 11:33:29 +0000
+In-Reply-To: <DE1IJMY33LSW.2X8N4PYXFITVB@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106112721.GS3245006@noisy.programming.kicks-ass.net>
+Mime-Version: 1.0
+References: <20251103190655.2326191-1-dakr@kernel.org> <DE1IJMY33LSW.2X8N4PYXFITVB@kernel.org>
+Message-ID: <aQyHiezb9Dqsyx1G@google.com>
+Subject: Re: [PATCH 1/2] rust: dma: make use of start_ptr() and start_ptr_mut()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: abdiel.janulgue@gmail.com, daniel.almeida@collabora.com, 
+	robin.murphy@arm.com, a.hindborg@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Nov 06, 2025 at 12:27:21PM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 06, 2025 at 07:25:00PM +0800, Aaron Lu wrote:
-> > On Wed, Nov 05, 2025 at 01:37:28PM -0800, Benjamin Segall wrote:
-> > ... ...
-> > > Reviewed-By: Benjamin Segall <bsegall@google.com>
-> > 
-> > Thank you Ben.
-> > 
-> > Hi Peter,
-> > 
-> > Do you have any other comments about this patch? Or do I need to send an
-> > updated version with all the tags collected? Thanks.
+On Thu, Nov 06, 2025 at 10:44:06AM +0100, Danilo Krummrich wrote:
+> On Mon Nov 3, 2025 at 8:06 PM CET, Danilo Krummrich wrote:
+> > @@ -576,7 +580,7 @@ pub fn item_from_index(&self, offset: usize) -> Result<*mut T> {
+> >          // and we've just checked that the range and index is within bounds.
+> >          // - `offset` can't overflow since it is smaller than `self.count` and we've checked
+> >          // that `self.count` won't overflow early in the constructor.
+> > -        Ok(unsafe { self.cpu_addr.add(offset) })
+> > +        Ok(unsafe { self.start_ptr().cast_mut().add(offset) })
 > 
-> I can tag the whole thread (esc-t) and pipe the whole lot through b4 to
-> easily do so -- in fact I just did :-)
-
-Cool, thanks for taking care of this.
-
+> In this specific case start_ptr().cast_mut() is indeed a bit odd, I will use the
+> following hunk instead and keep the raw access.
 > 
-> This was meant to go in sched/urgent, right?
+> @@ -576,7 +580,7 @@ pub fn item_from_index(&self, offset: usize) -> Result<*mut T> {
+>          // and we've just checked that the range and index is within bounds.
+>          // - `offset` can't overflow since it is smaller than `self.count` and we've checked
+>          // that `self.count` won't overflow early in the constructor.
+> -        Ok(unsafe { self.cpu_addr.add(offset) })
+> +        Ok(unsafe { self.cpu_addr.get().add(offset) })
 
-Right, it's a fix for the current kernel.
+Assuming you got rid of all cast_mut() instances:
+
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
