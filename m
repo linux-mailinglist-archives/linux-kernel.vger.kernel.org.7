@@ -1,329 +1,221 @@
-Return-Path: <linux-kernel+bounces-887748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FF0C38FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:34:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA5EC38FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25DE13B76EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:34:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1977A4F707E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0782D2E03E3;
-	Thu,  6 Nov 2025 03:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314E42C11C7;
+	Thu,  6 Nov 2025 03:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FChjaTs3"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012013.outbound.protection.outlook.com [52.101.66.13])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZsgkFQzV";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LVDzCZBC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DB41DF254;
-	Thu,  6 Nov 2025 03:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762399890; cv=fail; b=Z1/YhNSYL0zfL8ui4yv289A3v3V+ZPUU3oOp5ZyvXFSV6DMW/EI7ZU3ZndfCfUD21AbriK69zjRoGoHHfL0Y2cRs7yp9sFI2OlBVNVSkEaMAXAfbP7LVxphpcxEvVKVIYxBJYg1MYrztPje/f568oxqVGPDpyYw298AmmdHL8UY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762399890; c=relaxed/simple;
-	bh=/GQNWAxnuzz/Fvi6TX7zQgT+OJeyV8GsV7UaS2Mf/OU=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=WNg6reOBG7+Bk88EVCePCU9iD9GZc57Z/GkQJltI99tlZnTLQkjTY7lTjvFSJl8qk2n73Z4989Fiq8SCsVb4Wd48ZZJfTgFvUHrd32So14lCDUd1qpI2mtiOx0iEe2VTmYQ3y9QpanrUEc86olwqSp3DzDbqcZYObat3hgqupWo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FChjaTs3; arc=fail smtp.client-ip=52.101.66.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=boWJnHSYtMedrYg4/ZUyDu0QBOX50JqCeZTvs71QFe/IMkgx+lLQ70tSFhRaa9BogIgT+HrOuauojdkap8mQuJndJHh4eahQN33ibRhMeLHFzlghZmxRvRJwR2ROkqVAUNR+dnwzeYVQ3p2nt/W9LX/k9RgqEs24yaOphKsgomKxiP/JOMiFmzdgusr7DnSfuXUE5LSqsq59xI6hcb0cGLQq82xzc1Z0xXoQJWXvp1NOW6ioggAfti1z/6liGQzrSuI2wqt4O7QKMkklVobmM2CMa9nE41VlYAeBNM603jHNmVD81eCImiQj6but4oE1/LXaSpmeesKjuwZujkCLhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cb/doVVYTQ8i+xe3Rwic4xjXgD/ntRjJ5EgKDxyw2DI=;
- b=r+4pVPD1teN22H3J6lf3L3G6NvmpZyRwPsOEudPh3eOYvH0ROcLu1n+SCPYg/H5ti2DuzXiL0dceAw7wNc0UYRGqQniASU3tSOO6qGNPeq/uAWwyGB62f8brpWvmTOQlYU+Olq8UaSEldqssZUGOLpPnZaxgKw6fLuMbcQhDyNZG9l+n0vR0834B4FG/E7856vw5XSXo85DFYyKODH/ATgGx51gYnwnYNM5yfSygNjVJ/XsfPuy7swh0VSCTjva81nFVFsg0GLpba4BisL254W1dCY6VCnMoFeSM9C0GuN9QmFpFUSb7IC/H3JqcZzaTPK3fj34eNzE1UBBCBagO7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cb/doVVYTQ8i+xe3Rwic4xjXgD/ntRjJ5EgKDxyw2DI=;
- b=FChjaTs3ithO34KW0enQD7e6jloQNWbic24P2mYZGcKO/P6uUiqJFZqwf/VsaRDnBDbNPIGYQRWcib7laYETzm2gxStmpgBOIsnQuByzPfhVDXawYIXdtcbR8U+5Urhtgp1Ix7uS1JP5qH0HmBrCNJGBfOfod4m2RtKPsmGfjX9gW8BEX9mBiKwawdNsa8GeaKJRKIB+Xm0C1EEG5/cpoSc7rUJxlBseoAnv8wrtE8kpIwHAZZYKVbFVmujZhImGqqOQp7TSnw3JrN2fZbir1VflkVOFWuAbM4Q2TRfdlXyD3eCYk65QVZwcr+jj6NNj5Mphdp6JAplpxuXz4Q2FIw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI1PR04MB6813.eurprd04.prod.outlook.com (2603:10a6:803:13c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
- 2025 03:31:25 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
- 03:31:25 +0000
-From: Peng Fan <peng.fan@nxp.com>
-Date: Thu, 06 Nov 2025 11:30:33 +0800
-Subject: [PATCH 07/11] remoteproc: imx_dsp_rproc: Move imx_dsp_rproc_dcfg
- closer to imx_dsp_rproc_of_match
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-imx-dsp-2025-11-06-v1-7-46028bc3459a@nxp.com>
-References: <20251106-imx-dsp-2025-11-06-v1-0-46028bc3459a@nxp.com>
-In-Reply-To: <20251106-imx-dsp-2025-11-06-v1-0-46028bc3459a@nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>, 
- Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762399839; l=4866;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=/GQNWAxnuzz/Fvi6TX7zQgT+OJeyV8GsV7UaS2Mf/OU=;
- b=ohBKyWX02wGIC3D5lTYf4pNuQvBtoBpFn2T6pKo6yV8GHY5I+zP2sL6jLGEQN+LJk2RIPmXsT
- 9JaUwDZJ9UCAz3+PrRgSudm1LF+vbiRGYvX6hKSJA14mFOH/xX1hPhG
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SG2P153CA0028.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::15)
- To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E722C0F78
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762399851; cv=none; b=DBI3EBSocDgT9rLZJXi8DGYqlgWlIOJqqBvCXizFjLLD/1aIuhdPVvn+5CfP9a5jTJlgHrYKdrJYkOgtH76VNJu6OsECnaiWGqfxW8UXbLnQKmB9B9Tpl0vaXco0xQ+9cZGWm2dBauGTKGI8/lNAW701J9tlLYhnE+ycrXA+9HE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762399851; c=relaxed/simple;
+	bh=qJb7NKtP7BXOcePFVLUH4KlNlOEuEnolQugxAYnTO7c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GJFHNkQAnhwGH5IonR7yAPPlSQ1eM93LnGZHRqVkG2YwysBSC3Sq6NRE0B/dgsvHNd692PWzM1tjsi5eagxbSU+YUCBSoXV74MoWSlwp6wVPwrR0eDJg/GkKz1Nvjweq9+Uc+CT9+dEvIgAC6tHM/i02YhV2mvfr+Qfa5/gqxYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZsgkFQzV; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LVDzCZBC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5KFAR31656876
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 03:30:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OvPKp/XZNM2PzOQ7/u/SpcYLmO4fMzfvUCxKd6PJgI8=; b=ZsgkFQzVmth4pPMJ
+	e3c4LOduI3mQbqUFCP9tQJ7VyplHKRGU4JaYzN40auyfTI4fvnj3dLschWW1rS6i
+	DrCexryDJTJn2cZQRsGAmMYoo4GiGqXaorNIigMCqZqdW4LGkOZXIc/6S+KaaHMl
+	snoP5+9Z5Se1wOI8BzZ/NS8hkeErR8Kfh1ORXBM5IogLaKQqFbWp2HuXBY0g5nAF
+	Nk1pWxPtU/f7lbemtiGHVcUb+zN2IQ9IkmtV6K0qtyaLdk0XhjbYME7iHl6bt8EW
+	RlvA0DmBumSC2hxDcj40Lg8q2ZoCTksUvoTMDQ9Mk6WaDfCOUwsv8QsGPXzOjtfZ
+	I3R/5A==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8831a6se-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:30:48 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-29555415c09so6691065ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:30:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762399848; x=1763004648; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OvPKp/XZNM2PzOQ7/u/SpcYLmO4fMzfvUCxKd6PJgI8=;
+        b=LVDzCZBC0gZPjcMAfxDDp+c3cKIGIW0u+hBESGAPlkawDXwPMopnylq8wqBsXZuluM
+         vjJAbWGS3Je7iuYY6EGRoQDk7YE3RdT+o39H2CNYRRTOPBSgJyOfoD7iJxDZfiABud18
+         tYZVPQCNnh8vAzqNSGmCQQSeMSv7kjA/uG7xdEDslr8LSy4RCzzO7DKpa694mKmCiC3K
+         +VUDJPKrwqTMxrXaqn8y9TndxNJaWJSOm/PLkyXGelhYpMZ4HVH6Ozwe60Txqpz+SBe4
+         6iNVqT8mpxWjUcZiERFzAfX0qg8va7nrcSYaVUe7MtUOkLglmVMWX9+/CncraVvwhzdf
+         Pqng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762399848; x=1763004648;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OvPKp/XZNM2PzOQ7/u/SpcYLmO4fMzfvUCxKd6PJgI8=;
+        b=uSlwqEE49KVre1rozpv4FzDsDHUhlsxyPTMcM4oOS9OraWGCyWondqnznrXVpf5jen
+         OqOav6P9Rua8LYNAuCm0CNtuD5s9MwmQVAlXBIBi9TQztxJMtm3VNL57+hYO3mgrlFOs
+         x7HcL7rYUO4nUF5kCFL4SoAeygGWIjLbnrLY2wOBnPDY0n7AbQJYTB7goQQFHI0p2Azk
+         EsPeuBZ5mEe5GnWMcfq/T0PnUs+xlsFUqPZJplCnVl7Ht6cIwJxR78mGiRvn7Yp7Qzwf
+         G786IveK2/Y22ls7kScvLdd3yrTnpp5rbRlL7Yi+cZwAjXco4RmPfzyZD2AzZZcfKHuS
+         VJ3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVDGdjDIZNrVhdMDt3QxRshR8NavXuuM/j0+cJoeot8iIKUiyA2M/fUYDXfv1A4P8SxlU0mjcwAVYXvWcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWxzuMmqjheBuP6T7TX+UCHK4ba3nARvMn+J+kEeid1mjXIYpP
+	maXBWZdYeLMh+Le/0TVGUnUWWMCjmRoWflGZvvm5i/DMEDI7OGFcS7tK3WNu3JczpG2s1E2Fij6
+	7TTESS8CBko++dQKYWuqJ+sm3bYnHjbrNMkbxkqV5CfB8kXM6f2uGyzCFVqJLm3e6NOA=
+X-Gm-Gg: ASbGncthd+l2YusvTcqwYtiBel4u9zMqqiPsYuqjjrBobwHDreK2EndYFMqvhGfVauk
+	V1d6IG3CdsYtK8hrfV5R8aKuDK/uUyE67JgjN3UHEnLkTE8X8OndT5UnC0hcThJ10tjWrJpxuV6
+	wrdpPGimBTnbr2b8qnEBHBnaxY59kYnBZ+EfKrv8SCLSNoNdoNYNqSncN8XC6Bhk1F2mR6+czmd
+	67Ai/vlAxZkCG3eN0m2GmdeFs/XPri5CaNWF2NSIMWUeGcjKQk8GJGD941u47jLjbYKpeAVzfVb
+	JOJEsMO/bVzmPGU1gt41x+IVMFdFrGvpGv1mPDuG25yiQunv9LnC93nJDVHKyU9D6AtmMqPuTne
+	t/brZTJuKxnRQaU5M9jNk8En1To5dgwz5+g7/X4xUvavhx021noLVTgTRhLhkuvwxIw5+WvN+7A
+	==
+X-Received: by 2002:a17:903:1b6f:b0:295:5132:1aa5 with SMTP id d9443c01a7336-2962ae9ae81mr75418855ad.55.1762399848177;
+        Wed, 05 Nov 2025 19:30:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEv2NP3ANxlqrvF/FIb5iVXRiT3DT25+JxcO10XbpL3VFfkhhp2sKCiW4RWCuurF5kPljO4oA==
+X-Received: by 2002:a17:903:1b6f:b0:295:5132:1aa5 with SMTP id d9443c01a7336-2962ae9ae81mr75418435ad.55.1762399847641;
+        Wed, 05 Nov 2025 19:30:47 -0800 (PST)
+Received: from WANGAOW-LAB01.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651cd0060sm10361925ad.108.2025.11.05.19.30.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 19:30:47 -0800 (PST)
+From: Wangao Wang <wangao.wang@oss.qualcomm.com>
+Date: Thu, 06 Nov 2025 11:30:34 +0800
+Subject: [PATCH v4 2/6] media: qcom: iris: Improve crop_offset handling for
+ encoder
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI1PR04MB6813:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25ea594a-86d7-4a37-98b3-08de1ce4f6a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|19092799006|366016|7416014|376014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N0NXRSszUHp5YjNEckFMZ1JzcDNGQWJnbWI5UW51RmhmT1RDVWR6bS9HcG93?=
- =?utf-8?B?elphdlNZdkFhNGg0ais3MU10SWxiLzFaS2tFbHd1V1VTK0R5RmF6T1dzU3hn?=
- =?utf-8?B?YUFFRU8vU0hkN3JtdzNlbm9MT0Y0bEdMa21XK1pMSUF2bWVjS1dXYzBiT3Jk?=
- =?utf-8?B?dytFbkRlcllqVTVhbWxrT1dOeDdQaW5qeEVhQlUwMG5RR0hOR1E5ZnI3UGF0?=
- =?utf-8?B?UTJVU2tTcUJSNS84MTM0WnZFam9LQ05BakJEUE1jdmFDa09UTm5SNTB6VmZk?=
- =?utf-8?B?eld1ZjFrcGNVdUVtK2RnODA3N0R4NkZCdFc5UzEvMWNjVUxCTWRYTHlFa2Fs?=
- =?utf-8?B?bzhnWE8xVW44WWVXUG80cm5keTlWWU0wcE83WlRtdWZqeDJYTTc3SFdVWk4v?=
- =?utf-8?B?Q1hSNWhFdjV1MHhmZ1lEcktoU0hsVTBReTJKa2RmLzAwRUJ3WmErSEtKY2Vp?=
- =?utf-8?B?dGpBV2dpVWlXM1hkTWwvR2dQaUNBSG1tZXNGaG5sbVpXQmNPejhqbUlNTzdq?=
- =?utf-8?B?K212b2NaR3V0a2NPYi9oSzAxTXhlc0lKaE83MXdtRWRjUkRLWnRXQUhEbm5z?=
- =?utf-8?B?TVllL2VRQlczdno5S3kvRndiRXNLT3RWV0szenE1dmpEaEw4LytrYW5qbHVB?=
- =?utf-8?B?cVVEMTFvUW9ETmJJYWJwMVVOekRaTmpmOThoaVMrR0hoWnZYRENqVVJOVXhs?=
- =?utf-8?B?MjVXWHNpbGF2ZmF4Ynh4Mk1BdldVcmFxYUg2RTRmUTgxb3orK0NyUU5lZEg1?=
- =?utf-8?B?WkFzV0lqcG94QTV4cktkRmtWV0I3bGhSa2w3Ym1wYWRLUG1aWUZmYnd5WFRj?=
- =?utf-8?B?N2Zpdkg3NUl3OFZtRG4xY2tId1ErWVhXeEE2SUd4a2RqUmxpQ1JLVDl2TWJj?=
- =?utf-8?B?SWFmdU1HeVhOSHU5WUE3VUQ4SzJvVmZIQUxhc3VzZjJDaEpyZVMvY1Zxa0d5?=
- =?utf-8?B?SjVqZmlmY0U0WUYxaWRpTDZJaXpmcE03enNnMllURGxYdVQyRjMrSGpmQUgx?=
- =?utf-8?B?WkRWcmZ1ZTJiVmJpZEpHM1phWnYxbkExakU5NTVWRmtMYVJ6RlZvMlQwSXZw?=
- =?utf-8?B?UGd0anhaTU5vaC93QWVlZ1dxcUhCZHRkdUNNZ28xbEF6dHBOT3I0QkpOeWVk?=
- =?utf-8?B?TFN0TU9ET2hhQ1o5U1kyTUsvQmF5OGNQbWdnSDNLMWszTFNJWWRldE5Hei9k?=
- =?utf-8?B?cVJKMlVzUkNTNGtvTkVQVk5YdFE4LytMSkZCZCtQT1pnTzdNcUFhM2VNd3pn?=
- =?utf-8?B?TnBLMmJXbm04bm9zY0dGako1Y1BxQ0hpdFRObjJvd0VwRmZXRFBmM3lCQS8y?=
- =?utf-8?B?N2FFY3lVcHpNL0RuUEpORkdnTTcwdmREdldaWkwzKzRXT0RKL0V3Y2JvWGdm?=
- =?utf-8?B?MUFweG5OaXVKZDErMXY3a20zeXZEcmU2OUJWL2taZ3VMbG5sd0Zua1lXUGZK?=
- =?utf-8?B?YUw0VnJLWEZ4UTdDS3M5RXVwdUVKL1BnOXgrSUNTZTAyVjNEQXFMT2xxV3la?=
- =?utf-8?B?SWtYRXh0WkNhc1FWb2tDLzVwMmtENERZNFJUaTVmQ2JMTGlmZWZZbzZRT2Vp?=
- =?utf-8?B?eEJrRE5FNjR4T2RJMTk3RE1PeGRnQTlsN1puWi9sR1FoZUFnYzFrcjBXbWll?=
- =?utf-8?B?ekhjdVVWLzBHckdCYTlZNDZnY1FTbXQ3QmMrWXpqQzJQaFVreHhtNjQrK0Nh?=
- =?utf-8?B?Q21VZXRFRXBwdE1RT2JJcmt2dVJ5aVdXakdvVHF4clNmUlN1T05PVGVNTlY1?=
- =?utf-8?B?bkd3dmtKRTJudGdzOTNPZzg4amsvdXYvN1AwdUhyTkVJVTVhZGZFQ1JqMThT?=
- =?utf-8?B?UkxGL2Z0RWQ4QlU3dlFDYzN2OEFrTVp2YlFzTUswakRETEpYNS9NN2xXVlBQ?=
- =?utf-8?B?WFo2VlprdnpmdjFFT3ZZcE50NWJqdG9WalNMQkZnM29hWWxVTHUzYk4rOWMz?=
- =?utf-8?B?b1VSVzIxeTlBRm1EZjJiQm5kSjIyS01zYS9KS1lzOGZ1THBZOUw5b3IvaStH?=
- =?utf-8?B?L2QramZ5SWx4WWMrUXl5ZlZ5ZHVYWnorOHpzajZqUzJmVytJYnltQ202YWt6?=
- =?utf-8?B?dVFWblJvK3ZkUkxwclVwWkZhM3BzMHArNmt2dz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(366016)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?KzZwUFNPUU9IdXo5QnY2MXkvTThQcm5IMk5VL0szR0tIbms3andJUTZ5aUVV?=
- =?utf-8?B?bWxHbTZsUCsvWkZhMCtNQ2hTUXU4b0MvZkJYOFZnamdVMks4YldLS2pLdWp2?=
- =?utf-8?B?UXJCYmJlRy9DUGRDMkpDSWhlQWlhNURyckh5U0pRZG9uSyt6QTg2RXpibTNy?=
- =?utf-8?B?TTNsZlpVc2w1cW9VR3ZQZjZhbGxFVDVON0lvbTJaZkdsVzZRL1hMRjdIT3NN?=
- =?utf-8?B?WXFRRUxBdjE4MzVrOHBiZlkrdHZtRzFJcVp4T3BIQnY0d2NobGN2aEIrUkRw?=
- =?utf-8?B?SVVYMWdoeGNRaGFCSWF4SCtGcEd2K1EreTh5QUhZUk00VDhJMWtYWVR2RU9G?=
- =?utf-8?B?aFVYeVZsMVdJNWdVeUtoaUlTejN3aFd1d1o4YlNTcjllWWFXOUxWNG5HdGJ5?=
- =?utf-8?B?YzE4OW9SdFFsTHJzZ01xS2toWEhuTmZTQU11c3JIWno5QVl4eWd5ZnlYSVV0?=
- =?utf-8?B?KzhUT0lHK3hEKzVQSGlxVW1BSjZNYTVycmtCQzBaejNKN20yM29namVNRlB4?=
- =?utf-8?B?dFBuQjNyREIvWTAvRVlLWGoyTUoxOWwrak96dUphUzZIMTkxeEp6N3ZHVW1O?=
- =?utf-8?B?MDAxWTdYZDFleWJqWWF0ODZGS2x4aVpIL0M2WTNpdVZFMTQxKzJlKzhjbkRa?=
- =?utf-8?B?Y3Rnd3BqeXVjYlVSWEFMSVhpZVQrbnp2VmxSSGFNbElLbmFydzdDM2tWcmxN?=
- =?utf-8?B?YU40aUg0RkcxNHptMzVibGZXekRSU2pRVjY3ZDBXcHlhZFljRUJXOE9Gekxs?=
- =?utf-8?B?NS9qM0NBVEYxNGYrSWZBTnpwZmorQkZwck5rZmprbXg3ZmRNdGxTRHpjT3R0?=
- =?utf-8?B?TkltcE9sNmd0SnVpMDVvcFZNWlI5NHplbmNuWHNjZnF3R0lMVHJ2OTF3VjBJ?=
- =?utf-8?B?VTBiVjBWZFZNR3FxOXRhaEQ0VW5wK1J3ZXE3UjVJZXAzVHFPSTdpMHZvUUV1?=
- =?utf-8?B?TXVMVS9DZ2g0MHFpamhxL0MyYlRnaXNQMHc3TjYzbFdUdnpTVzJMVGlXVDRj?=
- =?utf-8?B?b1BPbW95bEl5QkhQV3YramNocmljQ2t6VjlJNTlyTkFNQVFpUlNZbExVcERv?=
- =?utf-8?B?OEJIYkxCU3ZscXdWOGZkR3lYekRFaXA1MjhrL3ZZVVdVZnhSbm1La2s2R3ly?=
- =?utf-8?B?dzZ6WEZRYWRLVVJCeEw1WnFFQ3N4Qm1RZUpselVtOGY5dGgrY1dtZjdmazZo?=
- =?utf-8?B?T1lUYWVqQTlmVHdTOVdMMFNzcFBTZFZ1SHpWNFRua0dGN01FTlBQTHFUUEZ1?=
- =?utf-8?B?MG5UNExCRi92SUtocC91ZlJ4N2NhZUZZTUdIRmVFSnBDa2g2RUREZmtmenFO?=
- =?utf-8?B?aGxkQXdEaldneG9qZEl3RExDTlllQTJ3Skx1RDFzZkdqTXRNelRjU2dwWHZ4?=
- =?utf-8?B?WU5aRGVVdW9RWHZqVXprbjNkNVNHWXFsdjVNamQ4bWRHZUsvVElzdFFOSmJR?=
- =?utf-8?B?UG90cVF5OGYwLzB3L3p4WWRuS1pEclkwR0tiajAzTDEyQjlOYUhmK0JVNklT?=
- =?utf-8?B?aVNHdWprZFdkOURrbHVkZGRxTGo4VmdwaVR3MzRUbmM4UjFzMHdrWmZWa3NL?=
- =?utf-8?B?MENFV3ZQOWRlcTFmaVhYS1J4V0xyU1pFeEs0S1FibWpZRXBQRHY2K0kvemxF?=
- =?utf-8?B?alJXelBlT0VyUUM1UFpka3FpQVJKODVHV0xmam9UQitDRjUyYTlOYmVWM1lh?=
- =?utf-8?B?OE1zT3loWmp5Y21CTXFIdUkxTGpTMFlTQjRvN0hNcTFseEh1UWladldIVHBQ?=
- =?utf-8?B?d3V6YjNacWJsVmx4UStiMmUzT3g2Y2h2aWwxMlhHUnpEVXhBOG9KVmpMeXpq?=
- =?utf-8?B?YWxaU3J1VlZtbHpGbFZvMjdoR1QzL1ZGaHRKUHdneUlmem5iNDA0cWVVdzNu?=
- =?utf-8?B?ZmtYS3VxZ0lWcm9qVkxnTTE0UTdwYVpiQ2VqcFo5b1QwU1NZM010U1hBTDJj?=
- =?utf-8?B?bS96b2NTY21HZi9pcHNMZmNkdmNsd0pvcTVLN01EWXZ1TFQ1RS9aS1d0YlY4?=
- =?utf-8?B?dzNtWTVJemZpV0dXSFRJSGdTT083SDZCd0dwWGIzOTNjN2ROZUh6VEsybWlG?=
- =?utf-8?B?bEpvR0E0VUh6ajhkd0VOcHNKSWZQTFNlcUFoREhwdktCcjRWQVBkbWp3MEFB?=
- =?utf-8?Q?/2n3druuTssajbpCSgsOzDhq0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25ea594a-86d7-4a37-98b3-08de1ce4f6a3
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 03:31:25.1548
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oPRJk8w+FKuM4BI5CiQ5Rid2f8ECVRznFJN2ov/UYUOqDWo1tte9nBCqD83Yaku+ATFqPnE5g15B9ByHSDEaxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6813
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251106-iris_encoder_enhancements-v4-2-5d6cff963f1b@oss.qualcomm.com>
+References: <20251106-iris_encoder_enhancements-v4-0-5d6cff963f1b@oss.qualcomm.com>
+In-Reply-To: <20251106-iris_encoder_enhancements-v4-0-5d6cff963f1b@oss.qualcomm.com>
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Wangao Wang <wangao.wang@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>, quic_qiweil@quicinc.com,
+        quic_renjiang@quicinc.com
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762399836; l=2880;
+ i=wangao.wang@oss.qualcomm.com; s=20251021; h=from:subject:message-id;
+ bh=qJb7NKtP7BXOcePFVLUH4KlNlOEuEnolQugxAYnTO7c=;
+ b=2F6gp3sW6wOu+3Uds/IHQam6HdnLR0lRJdvIzRoHsFpQui/qgQ4rWcpsu89ySa/C81Irt0yKc
+ GjmXJC+lqF8Dc7asip64hLvk+T4KewN78GMDVeXHsIlIk402wLffpIT
+X-Developer-Key: i=wangao.wang@oss.qualcomm.com; a=ed25519;
+ pk=bUPgYblBUAsoPyGfssbNR7ZXUSGF8v1VF4FJzSO6/aA=
+X-Proofpoint-ORIG-GUID: vfA8pKTrIm1uvCrPaNxUy-kvm_4Y684O
+X-Proofpoint-GUID: vfA8pKTrIm1uvCrPaNxUy-kvm_4Y684O
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDAyNiBTYWx0ZWRfX+ncwFThIEXnJ
+ ZHMnZ3ha5f8Bm0/wcxCvOrefm2cMoBcbu1nerbGq+oA29v7pNxejZIbB26hqgf3qfTqCdmlXXLw
+ HSCsNwP2fh2nixUdyanQXaWt+k6HzJDWRBRiNn77B09zjTwlbEFBzj6Ai3ZUYbGk5qFY02lKPjC
+ leaCFSNPWRw35U/GmtUPhDeOAJSPLLLvHPd0gF1h3EcTonZbEa+T87pF2fNgO0l1XAqalNvwWq+
+ fZ2LVzolS3knQtyMs5KirO/g5GtS6xODm1H8xigq/7ixyRw8If4roSlUKM37fQ58FKKPx4u+FBD
+ cQH+D81TONMI/P1nds6g7x7Lwm7MjqcwG+9HWxXMYDUSQrCWMlThydSp4iPRyCxZ0dmsb9PPMM9
+ pnOjCls+OqoEzZNJnvfMv3vWqrE7YA==
+X-Authority-Analysis: v=2.4 cv=Mdhhep/f c=1 sm=1 tr=0 ts=690c1668 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=ZGEL9ByRZDbVprvkw1YA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_09,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511060026
 
-Move the imx_dsp_rproc_dcfg structure definitions closer to
-imx_dsp_rproc_of_match to prepare for adding start/stop/detect_mode ops for
-each i.MX variant.
+The setting of HFI_PROP_CROP_OFFSETS for the OUTPUT port is correct,
+but on the CAPTURE port it is used to inform the firmware about the
+ROI, so crop_offset needs to be handled accordingly.
 
-Avoids the need to declare function prototypes such as
-'static int imx_dsp_rproc_mbox_init(struct imx_dsp_rproc *priv)' at the
-beginning of the file, improving code organization and readability.
-
-No functional changes.
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
 ---
- drivers/remoteproc/imx_dsp_rproc.c | 100 ++++++++++++++++++-------------------
- 1 file changed, 50 insertions(+), 50 deletions(-)
+ .../media/platform/qcom/iris/iris_hfi_gen2_command.c   | 18 ++++++++++++++----
+ drivers/media/platform/qcom/iris/iris_venc.c           |  4 ++--
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 833b1bd4019614157f0bedf09bd348caab802eef..f28d25cab3f1d89e5cde37a04b528870a59abeed 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -261,56 +261,6 @@ static int imx8ulp_dsp_reset(struct imx_dsp_rproc *priv)
- 	return 0;
- }
+diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+index aaa79dfe2db281bb77be7274233f093b0086b5d4..69034e1ea8eb64440646776a40dcc657453916db 100644
+--- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
++++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+@@ -215,8 +215,11 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
+ 	u32 port = iris_hfi_gen2_get_port(inst, plane);
+ 	u32 bottom_offset, right_offset;
+ 	u32 left_offset, top_offset;
++	u32 codec_align;
+ 	u32 payload[2];
  
--/* Specific configuration for i.MX8MP */
--static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp = {
--	.att		= imx_dsp_rproc_att_imx8mp,
--	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
--	.method		= IMX_RPROC_RESET_CONTROLLER,
--};
--
--static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp = {
--	.dcfg		= &dsp_rproc_cfg_imx8mp,
--	.reset          = imx8mp_dsp_reset,
--};
--
--/* Specific configuration for i.MX8ULP */
--static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8ulp = {
--	.src_reg	= IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
--	.src_mask	= IMX8ULP_SYSCTRL0_DSP_STALL,
--	.src_start	= 0,
--	.src_stop	= IMX8ULP_SYSCTRL0_DSP_STALL,
--	.att		= imx_dsp_rproc_att_imx8ulp,
--	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8ulp),
--	.method		= IMX_RPROC_MMIO,
--};
--
--static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8ulp = {
--	.dcfg		= &dsp_rproc_cfg_imx8ulp,
--	.reset          = imx8ulp_dsp_reset,
--};
--
--/* Specific configuration for i.MX8QXP */
--static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8qxp = {
--	.att		= imx_dsp_rproc_att_imx8qxp,
--	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8qxp),
--	.method		= IMX_RPROC_SCU_API,
--};
--
--static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8qxp = {
--	.dcfg		= &dsp_rproc_cfg_imx8qxp,
--};
--
--/* Specific configuration for i.MX8QM */
--static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8qm = {
--	.att		= imx_dsp_rproc_att_imx8qm,
--	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8qm),
--	.method		= IMX_RPROC_SCU_API,
--};
--
--static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8qm = {
--	.dcfg		= &dsp_rproc_cfg_imx8qm,
--};
--
- static int imx_dsp_rproc_ready(struct rproc *rproc)
- {
- 	struct imx_dsp_rproc *priv = rproc->priv;
-@@ -1351,6 +1301,56 @@ static const struct dev_pm_ops imx_dsp_rproc_pm_ops = {
- 	RUNTIME_PM_OPS(imx_dsp_runtime_suspend, imx_dsp_runtime_resume, NULL)
- };
++	codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
++
+ 	if (inst->domain == DECODER) {
+ 		if (V4L2_TYPE_IS_OUTPUT(plane)) {
+ 			bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
+@@ -230,10 +233,17 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
+ 			top_offset = inst->compose.top;
+ 		}
+ 	} else {
+-		bottom_offset = (inst->fmt_dst->fmt.pix_mp.height - inst->enc_raw_height);
+-		right_offset = (inst->fmt_dst->fmt.pix_mp.width - inst->enc_raw_width);
+-		left_offset = inst->crop.left;
+-		top_offset = inst->crop.top;
++		if (V4L2_TYPE_IS_OUTPUT(plane)) {
++			bottom_offset = (inst->enc_raw_height - inst->crop.height);
++			right_offset = (inst->enc_raw_width - inst->crop.width);
++			left_offset = inst->crop.left;
++			top_offset = inst->crop.top;
++		} else {
++			bottom_offset = (inst->fmt_dst->fmt.pix_mp.height - inst->enc_raw_height);
++			right_offset = (inst->fmt_dst->fmt.pix_mp.width - inst->enc_raw_width);
++			left_offset = 0;
++			top_offset = 0;
++		}
+ 	}
  
-+/* Specific configuration for i.MX8MP */
-+static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp = {
-+	.att		= imx_dsp_rproc_att_imx8mp,
-+	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8mp),
-+	.method		= IMX_RPROC_RESET_CONTROLLER,
-+};
-+
-+static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp = {
-+	.dcfg		= &dsp_rproc_cfg_imx8mp,
-+	.reset          = imx8mp_dsp_reset,
-+};
-+
-+/* Specific configuration for i.MX8ULP */
-+static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8ulp = {
-+	.src_reg	= IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
-+	.src_mask	= IMX8ULP_SYSCTRL0_DSP_STALL,
-+	.src_start	= 0,
-+	.src_stop	= IMX8ULP_SYSCTRL0_DSP_STALL,
-+	.att		= imx_dsp_rproc_att_imx8ulp,
-+	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8ulp),
-+	.method		= IMX_RPROC_MMIO,
-+};
-+
-+static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8ulp = {
-+	.dcfg		= &dsp_rproc_cfg_imx8ulp,
-+	.reset          = imx8ulp_dsp_reset,
-+};
-+
-+/* Specific configuration for i.MX8QXP */
-+static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8qxp = {
-+	.att		= imx_dsp_rproc_att_imx8qxp,
-+	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8qxp),
-+	.method		= IMX_RPROC_SCU_API,
-+};
-+
-+static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8qxp = {
-+	.dcfg		= &dsp_rproc_cfg_imx8qxp,
-+};
-+
-+/* Specific configuration for i.MX8QM */
-+static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8qm = {
-+	.att		= imx_dsp_rproc_att_imx8qm,
-+	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8qm),
-+	.method		= IMX_RPROC_SCU_API,
-+};
-+
-+static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8qm = {
-+	.dcfg		= &dsp_rproc_cfg_imx8qm,
-+};
-+
- static const struct of_device_id imx_dsp_rproc_of_match[] = {
- 	{ .compatible = "fsl,imx8qxp-hifi4", .data = &imx_dsp_rproc_cfg_imx8qxp },
- 	{ .compatible = "fsl,imx8qm-hifi4",  .data = &imx_dsp_rproc_cfg_imx8qm },
+ 	payload[0] = FIELD_PREP(GENMASK(31, 16), left_offset) | top_offset;
+diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
+index 50a3eb975a2523abf1c2df128a66a762a1ed35c6..7ad747d2272f029e69a56572a188a032f898a3fb 100644
+--- a/drivers/media/platform/qcom/iris/iris_venc.c
++++ b/drivers/media/platform/qcom/iris/iris_venc.c
+@@ -62,8 +62,8 @@ int iris_venc_inst_init(struct iris_inst *inst)
+ 
+ 	inst->crop.left = 0;
+ 	inst->crop.top = 0;
+-	inst->crop.width = f->fmt.pix_mp.width;
+-	inst->crop.height = f->fmt.pix_mp.height;
++	inst->crop.width = DEFAULT_WIDTH;
++	inst->crop.height = DEFAULT_HEIGHT;
+ 
+ 	inst->operating_rate = DEFAULT_FPS;
+ 	inst->frame_rate = DEFAULT_FPS;
 
 -- 
-2.37.1
+2.43.0
 
 
