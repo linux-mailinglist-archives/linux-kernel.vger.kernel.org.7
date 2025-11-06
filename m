@@ -1,199 +1,371 @@
-Return-Path: <linux-kernel+bounces-888646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A42C3B7CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:57:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CDEC3B83F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F13885082E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:49:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DD9A4F45C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAAF302168;
-	Thu,  6 Nov 2025 13:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3AC302CBF;
+	Thu,  6 Nov 2025 13:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YMFdkvHk"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazhn15010016.outbound.protection.outlook.com [52.102.139.16])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="eJx1eDFW"
+Received: from mx-relay13-hz2.antispameurope.com (mx-relay13-hz2.antispameurope.com [83.246.65.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D503F30215F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.139.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C6D302CC6
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=83.246.65.99
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762436960; cv=fail; b=sU4XbFjy8wFHYF8/rAR3d12YjElfMTRU5VN8qUkX0uSVrYTgL3XF1LEhgJFyiXYqPw4DrIumc2fCaBr4HHZW3O0N/owncYb1r4b4V9QmZyIPui8toHYnlCurrlYVkRpxAaJDxHT+Cz7olzisD/4U0Y2prMiJTpgwNDOQ5IjUFAo=
+	t=1762437089; cv=pass; b=LirzXc4dnx1AyRDK7jX/hgWXyhPZga9mOnoVT3RsArWnvLUfZ6vBI2TK3r6HbDnf3kGr1fcwABgE7tuGE12hLoOJPwFH5WunyfFbj+5r6IdKB/u4wHNGHZctS7xF4NYOzMASBMD3tnuMMg2FzvDRL+C7pHCKgIaMe8F7SJT29eI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762436960; c=relaxed/simple;
-	bh=c/uEWT1vD5XEYZ6mx3ebebGYScfOSbPopJdgMEoA5UU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1iFvqZ6MoDewiwiNXXsF9Q3Be2poywFn+wxdGOcmq8L5tucQrsUP5l2k+KBJrnIJQCr47i0hjImZczImA1goxsQjqy4PYgyfjeykPObZvyxGpPXtLwDtVci0DgEeIXT4nGAzbDoOwLWlOn5nDvc1wNjNxkviGLU0bnE/6VFNmQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YMFdkvHk; arc=fail smtp.client-ip=52.102.139.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WM8KA46xYEKQIy8Gid/b+NLePs49CA6GLbXhySXQd8pRMZaEEbMNaN7VzPYjoIXDOGI0DTB3TtA88lHMsBSTVRDFlTACOOMQBbWbkkuxsOR62+SaD7usP4Rzy91DVdenlaFiV8OtUKl6NfskWsb/RJ+bgqBKtxjchVqUjGxxUG8txdcmf/7aNEh1K1fcKxiTwkA8qaMGluXAY9e/dXRuRLNhT8JyF8ZrAKllR4N7qn0Io/6SBTaDhDksX6devHQgYUSX4CXeWLOy3eJmeYGySIQc0r23Svbk1XeLef8+AGTmnUdpqswIf9e01U2Df6IttDSikmKrlQOfauKgPvYw9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=58vrfhXX7bWYkImndvSweELPzaHPdaMGJ2fp41SAblE=;
- b=cNewRTU7fftyQQ0LunG1Lik4vHGKFxpLSUYpBA/a5PQT8l6e962oN9jynFQDM0RGg+SlvFQ8aew3CJX3DQKcVXbBZJnuUbVFuRA0CuuogKTclfY3qdlrb+8+W/dbHRNSuex8o9RiWwLIIX9kVZXhG6AF2KGKEKhBqwwMvHjXy0yVxTYn1jbxn6ETZJDAmA5PIejkIyVzaZoIVNMa/60TzqQg+iCGRuAGHmmzIpJ0FWwSu0HUd+bX3q9OW+mq/FvrswNz8V0JLmfVT0ccvITG0Ukycn3dV1JdTWQWsU5lent5gl6T35J6HqCFpF1WOoKkBpgTOH5a2771Kge7iMs1Vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=58vrfhXX7bWYkImndvSweELPzaHPdaMGJ2fp41SAblE=;
- b=YMFdkvHkqf05NWWPt7VrAXPkYpU8w8/O8rATzwsjgxBReae7pyYI5oPdKSPuyQi2M6HQu5/qfeYVWnmj1V24TaCS/i2Dh3sqpuyKw7B0AWvul9EZGYFtyQmFXyginSGGJXaBFrwuXKVm3xs1DZaoi2WF2dqs6AjXu6O37PREIuo=
-Received: from LV3P220CA0021.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:234::13)
- by PH5PR10MB997735.namprd10.prod.outlook.com (2603:10b6:510:34d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
- 2025 13:49:17 +0000
-Received: from BN1PEPF0000468D.namprd05.prod.outlook.com
- (2603:10b6:408:234:cafe::26) by LV3P220CA0021.outlook.office365.com
- (2603:10b6:408:234::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.9 via Frontend Transport; Thu, 6
- Nov 2025 13:49:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- BN1PEPF0000468D.mail.protection.outlook.com (10.167.243.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 13:49:16 +0000
-Received: from DLEE212.ent.ti.com (157.170.170.114) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 07:49:11 -0600
-Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE212.ent.ti.com
- (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 07:49:11 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
- (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 6 Nov 2025 07:49:11 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A6DnBNf1304724;
-	Thu, 6 Nov 2025 07:49:11 -0600
-Date: Thu, 6 Nov 2025 07:49:11 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Md Shofiqul Islam <shofiqtest@gmail.com>
-CC: <ssantosh@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] soc: ti: knav_qmss_queue: free resources in remove
- callback
-Message-ID: <20251106134911.nfe2fwqodeehir6y@disorder>
-References: <20251105013049.45646-1-shofiqtest@gmail.com>
+	s=arc-20240116; t=1762437089; c=relaxed/simple;
+	bh=ng+tlkTa9/IGpedkQ9xdMe0MFEG5OEYbeJQ/H5hkQyU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MEZ0xTKdNx38Cysj98D2RVE11i7wnROsUY2+fXwvmUu4028peyecjhqDcFROAyXFp/V83cEB3I9nPqQJPoS+6g5oIePSsIDH6wmaNgldgzH6utsp1GZRgKICMTkEHY1Rqi42mRrnRfYdqwF/8Hs/ZYGVbYTUfurryhVjMQ1XO14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=eJx1eDFW; arc=pass smtp.client-ip=83.246.65.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate13-hz2.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com
+ smtp.helo=hmail-p-smtp01-out03-hz1.hornetsecurity.com; dmarc=pass
+ header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=wDPCS0sIToSANB5h1HYj6fRXoRaMfslIE6mv/majMnI=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1762437074;
+ b=rR2YJ+GnY7L/70WZEh+vdYAyveGxEOkzcmzl1El1Itk0nWCm9p//7xjVEMoAzvZopU/1jBr0
+ YlslDWFu3vgRNiMhcAJIK70QnQ8LtE6g8vTVgl0OE/GnQTXHb5kfBduzm7jAxoEaMfCvP+w1aMX
+ drlhwbFi9S7INCYoFsO+NzGjYGdfXGpqQ2CML6B1iVpsS3ekGZ5V+T8S5mYPt808AFhngb23K4D
+ maRHcbgCtlBeaN8AaXWoMySHPee8z7qdpb7aq/ENpm6wWS0Iy4W3DHTVQABxRO32RnEVkgOcCWn
+ tfxToetpGGMDC/K3WtKmpWv9/kyMjKu18raa37VlRli9Q==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1762437074;
+ b=s/Cn8ISM7cDQINdcJ5guoM3x6zzYJRW1d98Ci2P5VAYdKbNGmjRlD6QRZyg2zxeLnHZ/JT0D
+ 4as++fzmnuMFVKHj4XbFjZanaDHSc9OsXKDVxBj++ozCdVDjXPFD/dghHqxyBz0ZMjkDTHtOKaH
+ G91uRTvtnhQZ0CtG85lf8i8FuGMSkDabxG8PPIdq8hDYTb9wEh/HxvwRSs0rfvAQHfLj0r0lUVt
+ mjNlLy7s/hfMviFIu0aZ/NFy7aPKXzSGk9Y0bea6ixUworjTu/OQwXw5DxhHHOS1DrESaKsczzJ
+ FBNsCTYVOA+ZqU/0HAmXoUlhTj+i1lFifLjw3SHsiiI3w==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay13-hz2.antispameurope.com;
+ Thu, 06 Nov 2025 14:51:13 +0100
+Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
+	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 4CD51CC0CCF;
+	Thu,  6 Nov 2025 14:51:05 +0100 (CET)
+Message-ID: <eb1b752b3584d27e4d5e38544e54d7d1b5faf4ab.camel@ew.tq-group.com>
+Subject: Re: [PATCH v3 2/4] mfd: tqmx86: refactor I2C setup
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Date: Thu, 06 Nov 2025 14:51:04 +0100
+In-Reply-To: <20251106133848.GL8064@google.com>
+References: 
+	<bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
+	 <999718e052b5e600813cefc3ec19ba3028afa034.1761123080.git.matthias.schiffer@ew.tq-group.com>
+	 <20251106133848.GL8064@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251105013049.45646-1-shofiqtest@gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000468D:EE_|PH5PR10MB997735:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77f41903-07f8-42c8-f992-08de1d3b4720
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|34020700016|36860700013|12100799066;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5X2L1Qlb3dt575wFylXeqtFf7tT6wMZu2YkKmqAVZAc8AxzifvFHOKIKquJp?=
- =?us-ascii?Q?7EdXXLQVY/zbk/iAPIIPjQpUr/d/jhzYeSWdffXHu5gsKrQ+L+4N81lKAmae?=
- =?us-ascii?Q?5G+jvF0cqT31LvEz4z/OmE1j/Jb0/EYtzmRPnwBVZN2MLhjm3YDjrih8aeqf?=
- =?us-ascii?Q?HHDeJ+eRJwCVR1K/8z0L64dHkdCCXU3j6uWxcVFHdoZJyGj7RFha/LlA0iKn?=
- =?us-ascii?Q?TXoLdN7iU78spFvxqH0aYaxi+VxIEyjf6vtpxxGH7GFWpDQNu8otC/NUz50/?=
- =?us-ascii?Q?0xKELPG8ey2dxeLlxGmwxqBRobZhj0SUcTG99fyk2G1h3y2Y+raqVVR+c2F+?=
- =?us-ascii?Q?ayFyrd0ymo5+ZJZfW3oTRJfkkj7x+XiAcl+SOSjMtCc+rigcmu1cIPx3FPHt?=
- =?us-ascii?Q?WodUUkjNaNCpg1NPY1w8XMVjXuA3Qa+JsxwmJ+/T4w3HJ4Ys37RBr02w7/Db?=
- =?us-ascii?Q?gMPnw6zFk0UYur+d3zQsnVQ9SZssWR4VI/SlDblWj9eJQLmAf6o4X5z5dDOk?=
- =?us-ascii?Q?t3j4yWLwgd3nmSNUUuSzXbsyJUZXkWt+fzwFPhrzHTiwcTDKYDl3Fa3mENKx?=
- =?us-ascii?Q?QpcnSp9F2ZwLMcDbFcXjX6ndJkouNQlflEXmMU85lm9CCRzTxCSTcbEufOdE?=
- =?us-ascii?Q?duyzbjYk0sVhgTQZ9XBPA7+qm9LoDr1436sxdowLI0nOYnsXvxDuGgYs/40u?=
- =?us-ascii?Q?BRDRYx2W9iUQug3HMSA8z7hPg/fEtB3G2TsMToBDKaonTjHrFogMuObz9Exx?=
- =?us-ascii?Q?NH0tKwVq4zIfm1tB8hmUd/nMSNUJnvIX6GniF6qtXrypYKZ5KxZvdpEv96nP?=
- =?us-ascii?Q?2Cv0NBN3FNwQyEbUfyKyqyw4lFbjMztdjwQTMvClIRqsZ17XHd54rLpTmM/M?=
- =?us-ascii?Q?w3+TOXlAWSeG/HKj1gSwGzp/InjSib/ynJfAKSnIkCcw7L3A+5iAIGMCWkzR?=
- =?us-ascii?Q?YVKofBWMeNZ11pyFj4AayWnE+c8OOEEzIv8KR5OjOKlHg1E+PKTB8HDNSSQx?=
- =?us-ascii?Q?mju7ba9Ko+P1Kwzw4EKSqtFXqML4tHMqFqDmu7X1tW5CO0otxdYXEqofaJMJ?=
- =?us-ascii?Q?8w5Uel4jCpzWmcncEu7YZx6yYxvh/gSNsCs+sEdCnb7oxAc/UNE0xts82KOT?=
- =?us-ascii?Q?zwfkJ1aPnbP2GVkYWxNWOUcmDTFiL8VNe1eaZ+9t9vnrUpEa6gjRgvEuRe2q?=
- =?us-ascii?Q?I6e3uIcWxu/HYxK+VG7wQnA/H69xQ6d9q5LgLZrN4EWmfzK35kQHGdz7KT4w?=
- =?us-ascii?Q?WHQckzzCJvbrYOKCuP92UP3EUWhcrevDmVgElWpxg/Hz1DhHD+HaKOKfTHlv?=
- =?us-ascii?Q?0aeCZIWGvpTSR0pj6bk9sLQUMmy9w9rqRKo9w6nDpiQHFR8BtjA+9CJWd0Lg?=
- =?us-ascii?Q?H/9r+2jPUtmAyn7Ql7PmRtywNKUQCoH0O9lmHEoqt/5Gcz6sXMx5Qu0ZbVZr?=
- =?us-ascii?Q?ly30fm610pJZnA9jbArs18PlOKX9WhnXkunV+piIjjNaKbQcnhZQ3+0I7qvC?=
- =?us-ascii?Q?W/ZMWBwvlY3E2BrkoTycgfTN91JT9/jtViEwH3YX0a1nQE21ow2z5nj15g3M?=
- =?us-ascii?Q?KMtzWEwI8o9RrK0a2ys=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(34020700016)(36860700013)(12100799066);DIR:OUT;SFP:1501;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 13:49:16.5575
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77f41903-07f8-42c8-f992-08de1d3b4720
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000468D.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH5PR10MB997735
+X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay13-hz2.antispameurope.com with 4d2NrT4tHbz3sbdL
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:a0068ae271c376fdad0f6208d39548df
+X-cloud-security:scantime:1.917
+DKIM-Signature: a=rsa-sha256;
+ bh=wDPCS0sIToSANB5h1HYj6fRXoRaMfslIE6mv/majMnI=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1762437073; v=1;
+ b=eJx1eDFW9ScxyqLTxmL7D2T2fT44ES7iY51oF0b9haCyN6z146/Q3f0L9ejbcvAy4zVfTSgw
+ YuVdXLQgkGxZ883YA6yv6svTPS2bSTAbnG/cO1JwJDI8wnQOQKdjgjMTBnmDd9vEq9cqzij9S+s
+ Lv+Ic7vY4J9/HqzUBsT+6yjiAsKr7j57SHwYJU4so1b+GBqJOUR7kPkyedoex7RaG/njU8857tM
+ tNW+JSlPBCxStmlXXr49SwZ/gIgDJPQybGZf7pEieo0Nqstfhl/JNh/CsxpxJ4/NtrGZvGMUpmk
+ /1MX5VbckMAbwe7IWcO8xDKTBz4kcnQjT8OwUZBXzEoZQ==
 
-On 03:30-20251105, Md Shofiqul Islam wrote:
-> Implement the TODO in knav_queue_remove() by stopping PDSPs and
-> freeing queue regions and queue ranges before disabling runtime PM,
-> mirroring the allocations performed in the probe path.
-> 
-> This ensures resources are released on driver unbind and avoids
-> leaking queue/region state.
-> 
-> Signed-off-by: Md Shofiqul Islam <shofiqtest@gmail.com>
-> ---
->  drivers/soc/ti/knav_qmss_queue.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-> index 6e56e7609ccd..1e5f3e9faa99 100644
-> --- a/drivers/soc/ti/knav_qmss_queue.c
-> +++ b/drivers/soc/ti/knav_qmss_queue.c
-> @@ -1884,9 +1884,14 @@ static int knav_queue_probe(struct platform_device *pdev)
->  
->  static void knav_queue_remove(struct platform_device *pdev)
->  {
-> -	/* TODO: Free resources */
-> -	pm_runtime_put_sync(&pdev->dev);
-> -	pm_runtime_disable(&pdev->dev);
-> +    struct knav_device *kdev = platform_get_drvdata(pdev);
-> +
-> +    knav_queue_stop_pdsps(kdev);
-> +    knav_queue_free_regions(kdev);
-> +    knav_free_queue_ranges(kdev);
-> +
-> +    pm_runtime_put_sync(&pdev->dev);
-> +    pm_runtime_disable(&pdev->dev);
->  }
->  
->  static struct platform_driver keystone_qmss_driver = {
-> -- 
-> 2.51.1
-> 
+On Thu, 2025-11-06 at 13:38 +0000, Lee Jones wrote:
+> On Wed, 22 Oct 2025, Matthias Schiffer wrote:
+>=20
+> > Preparation for supporting the second I2C controller, and detecting bot=
+h
+> > ocores and machxo2 controllers.
+> >=20
+> > - Avoid the confusing "soft" I2C controller term - just call it the
+> >   ocores I2C
+> > - All non-const parts of the MFD cell are moved from global variables
+> >   into new functions tqmx86_setup_i2c_ocores() and tqmx86_setup_i2c()
+> > - Define TQMX86_REG_I2C_DETECT relative to I2C base register
+> >=20
+> > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > ---
+> >=20
+> > v2: no changes
+> > v3: no changes
+> >=20
+> >  drivers/mfd/tqmx86.c | 130 ++++++++++++++++++++++++-------------------
+> >  1 file changed, 74 insertions(+), 56 deletions(-)
+> >=20
+> > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> > index 1cba3b67b0fb9..3c6f158bf1a45 100644
+> > --- a/drivers/mfd/tqmx86.c
+> > +++ b/drivers/mfd/tqmx86.c
+> > @@ -18,7 +18,7 @@
+> > =20
+> >  #define TQMX86_IOBASE	0x180
+> >  #define TQMX86_IOSIZE	0x20
+> > -#define TQMX86_IOBASE_I2C	0x1a0
+> > +#define TQMX86_IOBASE_I2C1	0x1a0
+> >  #define TQMX86_IOSIZE_I2C	0xa
+> >  #define TQMX86_IOBASE_WATCHDOG	0x18b
+> >  #define TQMX86_IOSIZE_WATCHDOG	0x2
+> > @@ -54,8 +54,8 @@
+> >  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
+> >  #define TQMX86_REG_SAUC		0x17
+> > =20
+> > -#define TQMX86_REG_I2C_DETECT	0x1a7
+> > -#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
+> > +#define TQMX86_REG_I2C_DETECT	0x7
+> > +#define TQMX86_REG_I2C_DETECT_OCORES	0xa5
+> > =20
+> >  static uint gpio_irq;
+> >  module_param(gpio_irq, uint, 0);
+> > @@ -65,17 +65,6 @@ static uint i2c1_irq;
+> >  module_param(i2c1_irq, uint, 0);
+> >  MODULE_PARM_DESC(i2c1_irq, "I2C1 IRQ number (valid parameters: 7, 9, 1=
+2)");
+> > =20
+> > -enum tqmx86_i2c1_resource_type {
+> > -	TQMX86_I2C1_IO,
+> > -	TQMX86_I2C1_IRQ,
+> > -};
+> > -
+> > -static struct resource tqmx_i2c_soft_resources[] =3D {
+> > -	[TQMX86_I2C1_IO] =3D DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I=
+2C),
+> > -	/* Placeholder for IRQ resource */
+> > -	[TQMX86_I2C1_IRQ] =3D {},
+> > -};
+> > -
+> >  static const struct resource tqmx_watchdog_resources[] =3D {
+> >  	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
+> >  };
+> > @@ -91,28 +80,13 @@ static struct resource tqmx_gpio_resources[] =3D {
+> >  	[TQMX86_GPIO_IRQ] =3D {},
+> >  };
+> > =20
+> > -static struct i2c_board_info tqmx86_i2c_devices[] =3D {
+> > +static const struct i2c_board_info tqmx86_i2c1_devices[] =3D {
+> >  	{
+> >  		/* 4K EEPROM at 0x50 */
+> >  		I2C_BOARD_INFO("24c32", 0x50),
+> >  	},
+> >  };
+> > =20
+> > -static struct ocores_i2c_platform_data ocores_platform_data =3D {
+> > -	.num_devices =3D ARRAY_SIZE(tqmx86_i2c_devices),
+> > -	.devices =3D tqmx86_i2c_devices,
+> > -};
+> > -
+> > -static const struct mfd_cell tqmx86_i2c_soft_dev[] =3D {
+> > -	{
+> > -		.name =3D "ocores-i2c",
+> > -		.platform_data =3D &ocores_platform_data,
+> > -		.pdata_size =3D sizeof(ocores_platform_data),
+> > -		.resources =3D tqmx_i2c_soft_resources,
+> > -		.num_resources =3D ARRAY_SIZE(tqmx_i2c_soft_resources),
+> > -	},
+> > -};
+> > -
+> >  static const struct mfd_cell tqmx86_devs[] =3D {
+> >  	{
+> >  		.name =3D "tqmx86-wdt",
+> > @@ -238,13 +212,74 @@ static int tqmx86_setup_irq(struct device *dev, c=
+onst char *label, u8 irq,
+> >  	return 0;
+> >  }
+> > =20
+> > +static int tqmx86_setup_i2c(struct device *dev, const char *name,
+> > +			    unsigned long i2c_base, const void *platform_data,
+> > +			    size_t pdata_size, u8 irq)
+> > +{
+> > +	const struct resource resources[] =3D {
+> > +		DEFINE_RES_IO(i2c_base, TQMX86_IOSIZE_I2C),
+> > +		irq ? DEFINE_RES_IRQ(irq) : (struct resource) {},
+> > +	};
+> > +	const struct mfd_cell i2c_dev =3D {
+> > +		.name =3D name,
+> > +		.platform_data =3D platform_data,
+> > +		.pdata_size =3D pdata_size,
+> > +		.resources =3D resources,
+> > +		.num_resources =3D ARRAY_SIZE(resources),
+> > +	};
+>=20
+> No, please don't do it this way.
+>=20
+> Keep as much information as you can in easy to read, easy to reference,
+> easy to find, easy to follow, etc static data.  If you have to add a
+> couple more static structs above, sobeit, but all of this parameter
+> passing through abstracted functions is a regression in readability and
+> maintainability IMHO.
 
-Please follow linux coding conventions about usage of tabs - this should
-be exposed by running checkpatch.pl --strict on the patch.
+Hmm, my reasoning for this change was that non-const static data always fee=
+ls
+yucky (and it can't be const because of the dynamic irq field); but course =
+you
+could argue that it's fine for a platform driver because there can only be =
+a
+single instance.
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+Maybe have a const static at the toplevel, and copy that to a stack variabl=
+e to
+fill in the resources?
+
+Best,
+Matthias
+
+
+
+>=20
+> > +	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, &i2c_dev, 1,
+> > +				    NULL, 0, NULL);
+> > +
+> > +}
+> > +
+> > +static int tqmx86_setup_i2c_ocores(struct device *dev, const char *lab=
+el,
+> > +				   unsigned long i2c_base, int clock_khz, u8 irq,
+> > +				   const struct i2c_board_info *devices,
+> > +				   size_t num_devices)
+> > +{
+> > +	const struct ocores_i2c_platform_data platform_data =3D {
+> > +		.clock_khz =3D clock_khz,
+> > +		.num_devices =3D num_devices,
+> > +		.devices =3D devices,
+> > +	};
+> > +
+> > +	return tqmx86_setup_i2c(dev, "ocores-i2c", i2c_base, &platform_data,
+> > +				sizeof(platform_data), irq);
+> > +}
+> > +
+> > +static int tqmx86_detect_i2c(struct device *dev, const char *label,
+> > +			     unsigned long i2c_base, int clock_khz, u8 irq,
+> > +			     const struct i2c_board_info *devices,
+> > +			     size_t num_devices, void __iomem *io_base,
+> > +			     u8 irq_reg_shift)
+> > +{
+> > +	u8 i2c_det;
+> > +
+> > +	if (tqmx86_setup_irq(dev, label, irq, io_base, irq_reg_shift))
+> > +		irq =3D 0;
+> > +
+> > +	/*
+> > +	 * The I2C_DETECT register is in the range assigned to the I2C driver
+> > +	 * later, so we don't extend TQMX86_IOSIZE. Use inb() for this one-of=
+f
+> > +	 * access instead of ioport_map + unmap.
+> > +	 */
+> > +	i2c_det =3D inb(i2c_base + TQMX86_REG_I2C_DETECT);
+> > +
+> > +	if (i2c_det =3D=3D TQMX86_REG_I2C_DETECT_OCORES)
+> > +		return tqmx86_setup_i2c_ocores(dev, label, i2c_base, clock_khz,
+> > +					       irq, devices, num_devices);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int tqmx86_probe(struct platform_device *pdev)
+> >  {
+> > -	u8 board_id, sauc, rev, i2c_det;
+> > +	u8 board_id, sauc, rev;
+> >  	struct device *dev =3D &pdev->dev;
+> >  	const char *board_name;
+> >  	void __iomem *io_base;
+> > -	int err;
+> > +	int err, clock_khz;
+> > =20
+> >  	io_base =3D devm_ioport_map(dev, TQMX86_IOBASE, TQMX86_IOSIZE);
+> >  	if (!io_base)
+> > @@ -259,13 +294,6 @@ static int tqmx86_probe(struct platform_device *pd=
+ev)
+> >  		 "Found %s - Board ID %d, PCB Revision %d, PLD Revision %d\n",
+> >  		 board_name, board_id, rev >> 4, rev & 0xf);
+> > =20
+> > -	/*
+> > -	 * The I2C_DETECT register is in the range assigned to the I2C driver
+> > -	 * later, so we don't extend TQMX86_IOSIZE. Use inb() for this one-of=
+f
+> > -	 * access instead of ioport_map + unmap.
+> > -	 */
+> > -	i2c_det =3D inb(TQMX86_REG_I2C_DETECT);
+> > -
+> >  	if (gpio_irq) {
+> >  		err =3D tqmx86_setup_irq(dev, "GPIO", gpio_irq, io_base,
+> >  				       TQMX86_REG_IO_EXT_INT_GPIO_SHIFT);
+> > @@ -273,23 +301,13 @@ static int tqmx86_probe(struct platform_device *p=
+dev)
+> >  			tqmx_gpio_resources[TQMX86_GPIO_IRQ] =3D DEFINE_RES_IRQ(gpio_irq);
+> >  	}
+> > =20
+> > -	ocores_platform_data.clock_khz =3D tqmx86_board_id_to_clk_rate(dev, b=
+oard_id);
+> > -
+> > -	if (i2c_det =3D=3D TQMX86_REG_I2C_DETECT_SOFT) {
+> > -		if (i2c1_irq) {
+> > -			err =3D tqmx86_setup_irq(dev, "I2C1", i2c1_irq, io_base,
+> > -					       TQMX86_REG_IO_EXT_INT_I2C1_SHIFT);
+> > -			if (!err)
+> > -				tqmx_i2c_soft_resources[TQMX86_I2C1_IRQ] =3D DEFINE_RES_IRQ(i2c1_i=
+rq);
+> > -		}
+> > -
+> > -		err =3D devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+> > -					   tqmx86_i2c_soft_dev,
+> > -					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
+> > -					   NULL, 0, NULL);
+> > -		if (err)
+> > -			return err;
+> > -	}
+> > +	clock_khz =3D tqmx86_board_id_to_clk_rate(dev, board_id);
+> > +
+> > +	err =3D tqmx86_detect_i2c(dev, "I2C1", TQMX86_IOBASE_I2C1, clock_khz,=
+ i2c1_irq,
+> > +				tqmx86_i2c1_devices, ARRAY_SIZE(tqmx86_i2c1_devices),
+> > +				io_base, TQMX86_REG_IO_EXT_INT_I2C1_SHIFT);
+> > +	if (err)
+> > +		return err;
+> > =20
+> >  	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+> >  				    tqmx86_devs,
+> > --=20
+> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
+Germany
+> > Amtsgericht M=C3=BCnchen, HRB 105018
+> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
+ Schneider
+> > https://www.tq-group.com/
+>=20
+
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
