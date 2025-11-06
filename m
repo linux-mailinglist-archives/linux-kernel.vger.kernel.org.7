@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-889504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F329CC3DC96
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:19:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98ACEC3DC99
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A1854E8326
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:19:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FE8C4E85F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE41F358D01;
-	Thu,  6 Nov 2025 23:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BDC358D13;
+	Thu,  6 Nov 2025 23:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XNjDytRv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h6nyTnCv"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A89357A3E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45F13587A0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470957; cv=none; b=Q0apQvEY111ZXMAdILjvGI3TDpOsScooBlaKYcyNfNbnBgLDR5puFYwowc9eAEfa9HLTbPwlq0hMt96tth0vWGDizOdGCHcDIWK2aGerV0sAHWbRLiFKerJO4fZQBCdBEzaDpVHIjEvJCsWTXB9kzLZ0aXt47HhEkmXLG5JtwQ8=
+	t=1762470958; cv=none; b=hYx1+19s91IfEJgHd+zmh515dH9JuQokg1/b94kwWwCxqfyFK7yurw7gEts1EG65qc7tzKq86N6OiB+Pm6O20MhqYeWtKh9xSZNB1oP5PMfd/+dFqCapcfH1nWme7e6xv7bgBiGebEVp4wuyiZLFI9dvqP9ZPa7Y3J04gbcNzHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470957; c=relaxed/simple;
-	bh=cZF5rXK0ot4f5Ll54hzIMYMkIxY+GXfM/HIllfqaohs=;
+	s=arc-20240116; t=1762470958; c=relaxed/simple;
+	bh=wGLT+L2StwVsEe33LwLx0HGkrBzzAAKBmqSQyKDCyvs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=kbFDDOxRSNhNJoKuW6AvFd0TrJxsxRvyTL/JWYmgXopCGvWEcSHzORrrJEDVtajDHmSYJZS/2m1X4KB6Sgc6/WNwbOxYhWJ+/qULJWLNKwvkWh7cflRI4W5QNp4gq/ZCrvoX/DT/JBxjz+ypvIxSVJNuzYcXf2cPyx1Dgi2O9dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XNjDytRv; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=rrH3+jElvQrDN6GLRcaBnqj+RROR9WXMOtjUsv7Z9LfHoo6h2oxoYZFhz+ZWcjBnGJJntlvgyzW8y0CakGYjP1otQ26qrQbpdlys2c4O2P0Ut7UR17v+Nt1FFe3u534tIWPwog17bOW/hg3VaDNZ0nlysxjqWDAPExUBlHVsUR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h6nyTnCv; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29555415c09so2106105ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:15:54 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29557f43d56so1817775ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762470954; x=1763075754; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762470956; x=1763075756; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CJrFojSq6nlkAfypEMFi1zUKz5050bK3dx0VztPcSL4=;
-        b=XNjDytRvdIKQ2VhEU4fJnQwqaJJY68nxei2eOgGweRFnFVTvjfIAsp0Z47m0GEEB1Q
-         qch9Evp0eNOsDjraG27QTG4RxYLz9Z8TED7sNJS4gSXM1syq3FiRvlUn1bpcL482wKJC
-         nXp/DZSldUBFxh+us4j4cqqnH62jf0ykIskTSG6K3jnb9yMiKEzcAg7h7MEvTc3tJlMA
-         vKNk6tJdlsLP5fHrQ9CIHZ+sKsyIEKTAsGowLbdyxvxu5buJsnfqUuZwjQiqSJUV/039
-         C9eG9HmXwmlru9lt9pN6WquTjVGlawCj2yNUUIOBRBUonkdiTI9xpnA2W0eZNum1FJN1
-         jwkA==
+        bh=tCfti0BVw0vE3q2qzPNg4k5C/1/WEypOlA1+Gx0M6jE=;
+        b=h6nyTnCvUyO7zMt39mTS6lJ5EHKjrM77FkGhyjiCZozRufDj/skZyffzMS+u8W/ctI
+         8H5y94w541z4QVl/eGH9qFxFukqI+zeN7dY69n8uBhXe4STJboCRjJRFB/ilINSKptIf
+         WnQAVloqLd7GrzWP/NSexXkqelrV04/FJmKWfYdYe0pwBf8bJDEvq/ZiJnt98tdFx4oz
+         7ouzgSu2Vj46IYmseeHa8+kig25lqOpUJvL32+ihGROOHme4HkfnvsAI8tLPErLvb427
+         mAqSUvjeFXE09GzRkJ1VGjK+gSKb8a4LtTB/68sWlqgJVrDrBk1ve/Gu/B6qo+rqPWHs
+         uvwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762470954; x=1763075754;
+        d=1e100.net; s=20230601; t=1762470956; x=1763075756;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJrFojSq6nlkAfypEMFi1zUKz5050bK3dx0VztPcSL4=;
-        b=WDULxjsNB9vmQMp1pumMphRg1Gc3i1TzdXTKxZh8bMyMSIlLX9LjH4phA9OpBr/DJB
-         juvP2BHZhT3+9lx6G17flroy96m6dgTU4w8r3QMYczPrKGJBwsJZ51jvCy5Na7n+4YA1
-         rM+wQlzIRbAAaZoD4Sc4OQnZfCwZ0ePTyILAxEBmG09nZVubnIihhKOjdG6X42rWL3EO
-         PyEQcEhenqNPwD2vE8AH7Zt/J3b3BDWGDCNEhN7aO3QAyZzfIGGRRNKJX/5aKkx7UrZP
-         ZSnC7psin4tMg1YI/ajy0YALo09arb21B0EHiWq8QlWWOmUjNO1g+sGQI5krIkn5FT/h
-         b4Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+o+5FUP62/goNutnWZO74uzjtWvuQ2Z185it33Kyu/y0aN8DWy7NwANmF0BY84kjXoO96wRGdJgVVT/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwizdWT/z7TMZUKPhOyC/DKVu/s6dfznim1j5itC7X2Y80xtMZ6
-	3xsIb2+thQ1V0LsBTbBwuXw0HdpVehfyeLdIcdCL9gnWDtCUHp8IArBd592DpHl1V2V+BcfqVn8
-	hDPq5rQI5Qw==
-X-Google-Smtp-Source: AGHT+IHjH/Lc/zZixsXrrpT72ayLrbkOIrsLtdVoMrbt/bO0u2fvW5pbTn9CqdlIJUS6Wb5uI4ddoJtrc/nT
-X-Received: from dlbcf37.prod.google.com ([2002:a05:7022:45a5:b0:119:b185:ea6c])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f8e:b0:272:c95c:866
- with SMTP id d9443c01a7336-297c03ab3f3mr17315715ad.20.1762470954099; Thu, 06
- Nov 2025 15:15:54 -0800 (PST)
-Date: Thu,  6 Nov 2025 15:14:58 -0800
+        bh=tCfti0BVw0vE3q2qzPNg4k5C/1/WEypOlA1+Gx0M6jE=;
+        b=GrUQMg69xZF1a1z9r+w0ThwiqIrGXcxA/TgXYdVMZr6mZm6QSlPvr5UO2HPvXAO0TU
+         pz9yf50K/Rnz/gASRNn3UXyK8LRqFXLQJjhP/mfjvts+h8RnD6HCEve7zdf2KkCUR7bt
+         tV4pQBMIGoHVKXGL2zJt2yEm2uNZeQ2IZADRDAu/jAa1GsATcKMLe5gDivv5LYo8gKW3
+         gOmb3zLi0VP2Lx6SVzhWvSyUFAms7GXhl/HuEKQ3Kj9PrJ3PXtGc8rCTcGO7XfPPUixm
+         HjAyX8B+Riu/+KvNGcdEGSE5r0aGD7pEa1bfyVq+wNiWPCXpWSOtHeC/67mptjRriORO
+         wO+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2nWDYBHXX1NPISFi1dyjc5r+8hSCbBRgvWkaU8yZDXNtIljqiwtfJa87LD0AWVU3522SYjzc6Be/LdzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0OHH+Ja0F9CSQDUbW9WQA8RTYtK+Zu8lO8BXLJdKWbDSd2Ner
+	O/SUxkg5cOcZcE7NJyj+rx73C4EyDuL3jhueIv6DMSmWp+X4MYfb17W2ZXoG6VtKzXvAfM3AJNI
+	UMGZOcTjbiQ==
+X-Google-Smtp-Source: AGHT+IEAe+z9vLAwWmr5BuHAiJUh/HgPekXCgVSRIg+YHIscSbYSC4zYjJFfyYeEO+z/ZH5JVzEa7KJNnPwG
+X-Received: from dlj34.prod.google.com ([2002:a05:7022:522:b0:119:b185:ea69])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a90:b0:269:aba0:f0a7
+ with SMTP id d9443c01a7336-297c03866fdmr14660265ad.2.1762470956029; Thu, 06
+ Nov 2025 15:15:56 -0800 (PST)
+Date: Thu,  6 Nov 2025 15:14:59 -0800
 In-Reply-To: <20251106231508.448793-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251106231508.448793-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251106231508.448793-9-irogers@google.com>
-Subject: [PATCH v2 08/18] perf stat: Fix default metricgroup display on hybrid
+Message-ID: <20251106231508.448793-10-irogers@google.com>
+Subject: [PATCH v2 09/18] perf stat: Sort default events/metrics
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,60 +90,128 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The logic to skip output of a default metric line was firing on
-Alderlake and not displaying 'TopdownL1 (cpu_atom)'. Remove the
-need_full_name check as it is equivalent to the different PMU test in
-the cases we care about, merge the 'if's and flip the evsel of the PMU
-test. The 'if' is now basically saying, if the output matches the last
-printed output then skip the output.
+To improve the readability of default events/metrics, sort the evsels
+after the Default metric groups have be parsed.
 
 Before:
 ```
-             TopdownL1 (cpu_core)                 #     11.3 %  tma_bad_speculation
-                                                  #     24.3 %  tma_frontend_bound
-             TopdownL1 (cpu_core)                 #     33.9 %  tma_backend_bound
-                                                  #     30.6 %  tma_retiring
-                                                  #     42.2 %  tma_backend_bound
-                                                  #     25.0 %  tma_frontend_bound       (49.81%)
-                                                  #     12.8 %  tma_bad_speculation
-                                                  #     20.0 %  tma_retiring             (59.46%)
+$ perf stat -a sleep 1
+ Performance counter stats for 'system wide':
+
+            21,194      context-switches                 #    752.1 cs/sec  cs_per_second
+             TopdownL1 (cpu_core)                 #      9.4 %  tma_bad_speculation
+                                                  #     25.0 %  tma_frontend_bound
+                                                  #     37.0 %  tma_backend_bound
+                                                  #     28.7 %  tma_retiring
+             6,371      page-faults                      #    226.1 faults/sec  page_faults_per_second
+       734,456,525      cpu_atom/cpu-cycles/             #      0.0 GHz  cycles_frequency       (49.77%)
+     1,679,085,181      cpu_core/cpu-cycles/             #      0.1 GHz  cycles_frequency
+             TopdownL1 (cpu_atom)                 #     19.2 %  tma_bad_speculation
+                                                  #     15.1 %  tma_retiring             (50.15%)
+                                                  #     32.9 %  tma_backend_bound
+                                                  #     32.9 %  tma_frontend_bound       (50.34%)
+        86,758,824      cpu_atom/branches/               #      3.1 K/sec  branch_frequency     (60.26%)
+       524,281,539      cpu_core/branches/               #     18.6 K/sec  branch_frequency
+             1,458      cpu-migrations                   #     51.7 migrations/sec  migrations_per_second
+    28,178,124,975      cpu-clock                        #     28.0 CPUs  CPUs_utilized
+       776,037,182      cpu_atom/cpu-cycles/             #      0.6 instructions  insn_per_cycle  (60.18%)
+     1,679,168,140      cpu_core/cpu-cycles/             #      1.8 instructions  insn_per_cycle
+         4,045,615      cpu_atom/branches-misses/        #      5.3 %  branch_miss_rate         (49.65%)
+         6,656,795      cpu_core/branches-misses/        #      1.3 %  branch_miss_rate
+
+       1.007340329 seconds time elapsed
+
 ```
 After:
 ```
-             TopdownL1 (cpu_core)                 #      8.3 %  tma_bad_speculation
-                                                  #     43.7 %  tma_frontend_bound
-                                                  #     30.7 %  tma_backend_bound
-                                                  #     17.2 %  tma_retiring
-             TopdownL1 (cpu_atom)                 #     31.9 %  tma_backend_bound
-                                                  #     37.6 %  tma_frontend_bound       (49.66%)
-                                                  #     18.0 %  tma_bad_speculation
-                                                  #     12.6 %  tma_retiring             (59.58%)
+$ perf stat -a sleep 1
+
+ Performance counter stats for 'system wide':
+
+            25,701      context-switches                 #    911.8 cs/sec  cs_per_second
+    28,187,404,943      cpu-clock                        #     28.0 CPUs  CPUs_utilized
+             2,053      cpu-migrations                   #     72.8 migrations/sec  migrations_per_second
+            12,390      page-faults                      #    439.6 faults/sec  page_faults_per_second
+       592,082,798      cpu_core/branches/               #     21.0 K/sec  branch_frequency
+         7,762,204      cpu_core/branches-misses/        #      1.3 %  branch_miss_rate
+     1,925,833,804      cpu_core/cpu-cycles/             #      0.1 GHz  cycles_frequency
+     1,925,848,650      cpu_core/cpu-cycles/             #      1.7 instructions  insn_per_cycle
+        95,449,119      cpu_atom/branches/               #      3.4 K/sec  branch_frequency     (59.78%)
+         4,278,932      cpu_atom/branches-misses/        #      4.3 %  branch_miss_rate         (50.26%)
+       980,441,753      cpu_atom/cpu-cycles/             #      0.0 GHz  cycles_frequency       (50.34%)
+     1,091,626,599      cpu_atom/cpu-cycles/             #      0.6 instructions  insn_per_cycle  (50.37%)
+             TopdownL1 (cpu_core)                 #      9.1 %  tma_bad_speculation
+                                                  #     27.3 %  tma_frontend_bound
+                                                  #     35.7 %  tma_backend_bound
+                                                  #     27.9 %  tma_retiring
+             TopdownL1 (cpu_atom)                 #     31.1 %  tma_backend_bound
+                                                  #     34.3 %  tma_frontend_bound       (49.74%)
+                                                  #     24.1 %  tma_bad_speculation
+                                                  #     10.5 %  tma_retiring             (59.57%)
 ```
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/stat-shadow.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ tools/perf/builtin-stat.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index afbc49e8cb31..c1547128c396 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -256,11 +256,9 @@ static void perf_stat__print_metricgroup_header(struct perf_stat_config *config,
- 	 * event. Only align with other metics from
- 	 * different metric events.
- 	 */
--	if (last_name && !strcmp(last_name, name)) {
--		if (!need_full_name || last_pmu != evsel->pmu) {
--			out->print_metricgroup_header(config, ctxp, NULL);
--			return;
--		}
-+	if (last_name && !strcmp(last_name, name) && last_pmu == evsel->pmu) {
-+		out->print_metricgroup_header(config, ctxp, NULL);
-+		return;
- 	}
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 0ac3c8906668..bd48448bd085 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -74,6 +74,7 @@
+ #include "util/intel-tpebs.h"
+ #include "asm/bug.h"
  
- 	if (need_full_name && evsel->pmu)
++#include <linux/list_sort.h>
+ #include <linux/time64.h>
+ #include <linux/zalloc.h>
+ #include <api/fs/fs.h>
+@@ -1857,6 +1858,35 @@ static int perf_stat_init_aggr_mode_file(struct perf_stat *st)
+ 	return 0;
+ }
+ 
++static int default_evlist_evsel_cmp(void *priv __maybe_unused,
++				    const struct list_head *l,
++				    const struct list_head *r)
++{
++	const struct perf_evsel *lhs_core = container_of(l, struct perf_evsel, node);
++	const struct evsel *lhs = container_of(lhs_core, struct evsel, core);
++	const struct perf_evsel *rhs_core = container_of(r, struct perf_evsel, node);
++	const struct evsel *rhs = container_of(rhs_core, struct evsel, core);
++
++	if (evsel__leader(lhs) == evsel__leader(rhs)) {
++		/* Within the same group, respect the original order. */
++		return lhs_core->idx - rhs_core->idx;
++	}
++
++	/* Sort default metrics evsels first, and default show events before those. */
++	if (lhs->default_metricgroup != rhs->default_metricgroup)
++		return lhs->default_metricgroup ? -1 : 1;
++
++	if (lhs->default_show_events != rhs->default_show_events)
++		return lhs->default_show_events ? -1 : 1;
++
++	/* Sort by PMU type (prefers legacy types first). */
++	if (lhs->pmu != rhs->pmu)
++		return lhs->pmu->type - rhs->pmu->type;
++
++	/* Sort by name. */
++	return strcmp(evsel__name((struct evsel *)lhs), evsel__name((struct evsel *)rhs));
++}
++
+ /*
+  * Add default events, if there were no attributes specified or
+  * if -d/--detailed, -d -d or -d -d -d is used:
+@@ -2023,6 +2053,8 @@ static int add_default_events(void)
+ 							&metric_evlist->metric_events);
+ 			evlist__delete(metric_evlist);
+ 		}
++		list_sort(/*priv=*/NULL, &evlist->core.entries, default_evlist_evsel_cmp);
++
+ 	}
+ out:
+ 	if (!ret) {
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
