@@ -1,145 +1,162 @@
-Return-Path: <linux-kernel+bounces-889236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C67FC3D0AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD10BC3D0B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50A73B7761
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5703B8E45
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879692DC334;
-	Thu,  6 Nov 2025 18:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF43303A10;
+	Thu,  6 Nov 2025 18:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="UAurMIDh"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="ZZI0A6kl"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFC12D877D;
-	Thu,  6 Nov 2025 18:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4713719CCFC;
+	Thu,  6 Nov 2025 18:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452998; cv=none; b=RiMgXdJAqFcGlUmbgDnqP5x65uiq262w+Lmt4RIpwK0bd6AE/WFqsX32Csv4WF14nkMuUISY+WRtxCl1mU5COqYsoldA7pbSxb4U6XsTf5rQvGcgt32f+ize4oi6iGgstG/rFWqHk4iVAudPFgkEyMxsiHl6ZRpeyN+pNT4iZGU=
+	t=1762453041; cv=none; b=A8YC/y84Z/2YZ4o/orsVthdraADm+lhGbMVasLtGUhTlRvLtpq01PC8y8zmPbvUjYYWToYWN5AdSmHbiCUcz8liM+kGDMpZjppre8ncQNMun5BoLn8g4aL9FqTPe+tgaonsZN46FwqKXj6Jv6AYlZNkS2sIKoyrm8CvlmsEWVfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452998; c=relaxed/simple;
-	bh=WilPTc4l6SbkcmoD6H9/XVoLeq69nGoaUqu2FKouRnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GLKSjm/docvYoBj0JQrlp5WBjxjqVbLd95+XoLILAdFEOtrv9tlkcf5m68acONLirMtkVGAbDvprQrP4Gcc7D6ZHUehlme/K5OZWuk0qKnprWsfGNt7vJtmmlR9ZUO+sYM9m/cwaTnEEFDq0/fLy73eiikQmPtN0stYAO0b80U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=pass smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=UAurMIDh; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 055C04447C;
-	Thu,  6 Nov 2025 18:16:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1762452989;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IbaUwN97vGeANThuFDgulgsFTpORSyAqqWAycmMvn0Q=;
-	b=UAurMIDhvSirMkEYhH8XOdIrF0QaJtlbdslpce4O9SGmzZ/RKVM2eyy3koQ1nl05Ga1WZP
-	MIIwfeUBRdE4R7HtdNQgD57Z4zaSOcFfy76RbFos318PSt9gCCOHdXeT1e6e5LB2nBJaY5
-	kJXkGISsNkt9PJKtrBDT/Tx0VhibOWRh4auHXKLPA90bT2s7UzHj0wpVY0I8P+vTQ5s7hj
-	NIyGIKu2Hj5jB9mUJ0LU5oE8qRFon9ywu8lkYFg9UgTtm7vwwFR0z5q4c3E8s81VgjVZ68
-	dyfbk+1hPIPAUNuMSq9bPGb6asMguUHhfTTRJXxiGnA/qEm0HkKKA3TKKcUu7A==
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Greg Ungerer <gerg@linux-m68k.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-m68k@lists.linux-m68k.org,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] m68k: coldfire: Add RNG support for MCF54418
-Date: Thu, 06 Nov 2025 19:16:17 +0100
-Message-ID: <4689159.LvFx2qVVIh@jeanmichel-ms7b89>
-In-Reply-To: <aQzHO6Ty+l1Bwt6N@lizhi-Precision-Tower-5810>
-References:
- <20251106-m5441x-add-rng-support-v1-1-ee8230910d17@yoseli.org>
- <aQzHO6Ty+l1Bwt6N@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1762453041; c=relaxed/simple;
+	bh=90/P2km+N/HE+yoO3nEDIaTfmdLy55aPIqUiyAKxzwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uJuQDtcmwoQflegPmclmd8nZwE+hkVKVA/yS4ICafh0sf2cv2WkrbquGXMFbz/QpxuO6ZuSpESXN69pnNS15xhGkSJwzisAOr199j8CBcXMogVQG4wPQaokpEkLzFGgU8BiPHvVwfff8/AdxQQZD52m3PDqAft7ZpgGt3nJBRK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=ZZI0A6kl; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=yhLVE3WqZbAmQWYaSUimEUdVgYXmhd0JHFmuEZay51c=; b=ZZI0A6klrxnPS3iH/iWsrA5fcU
+	7l9gA6gmjDcNasJU8yz9uC8yg3bNDHlddwR9KeRWYBkOHZFsgjB2F6vkuozYVfP3E2j/QxiP8RV0L
+	VvWn7mNNC5q0Q48cV7SG9Wdgv4iZyKm/vWu6hl6NUggsGGEBjdi3uc7YcaOCkDeQCxccgiCvL13aT
+	lfAiWCGeNayXGM6a3TDKTLReKWlMDJteGbcDGV5mCwlKAc90pFRbItc25Opub21yAbfK4aL9F4wLH
+	p85GWTscZzTmZwIlv6jvGSfuLyokHbF1HhzSA1NWnm3aTviYwSGhZasg1wF5mCMvr5uQrVYPLLxqC
+	xxx0aEhg==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1vH4Xc-0000000BmAz-2u8W;
+	Thu, 06 Nov 2025 19:17:00 +0100
+Date: Thu, 6 Nov 2025 19:17:00 +0100
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH] i2c: spacemit: fix detect issue
+Message-ID: <aQzmHB2FaPFS4qwj@aurel32.net>
+Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+References: <20251103-fix-k1-detect-failure-v1-1-bb07a8d7de7c@linux.spacemit.com>
+ <aQvTMM0S16gOdiAN@aurel32.net>
+ <12878F9DA586AA19+aQv0bKwLTzw_kJOq@kernel.org>
+ <aQwzYrmv5TAIuqTh@aurel32.net>
+ <0E2B2679F0650AE1+aQw0VgKNbcFqDH33@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeejgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtqhertddttdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnhepffevhfduvdeludeugfdtleduuedvhfeuvdevgfeiieefieevteektdettdeifeetnecukfhppedvrgdtudemvgdtrgemudeileemjedugedtmedvrgegtdemfhefrggrmeejudejvgemudefsgdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmeduieelmeejudegtdemvdgrgedtmehffegrrgemjedujegvmedufegsvddphhgvlhhopehjvggrnhhmihgthhgvlhdqmhhsjegskeelrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrghdpnhgspghrtghpthhtohepudegpdhrtghpthhtohephfhrrghnkhdrlhhisehngihprdgtohhmpdhrtghpthhtohepghgvrhhgsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnu
- higqdhmieekkhdrohhrghdprhgtphhtthhopeholhhivhhirgesshgvlhgvnhhitgdrtghomhdprhgtphhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+In-Reply-To: <0E2B2679F0650AE1+aQw0VgKNbcFqDH33@kernel.org>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-Hi Frank,
+Hi,
 
-Le jeudi 6 novembre 2025, 17:05:15 heure normale d=E2=80=99Europe centrale =
-=46rank Li a=20
-=C3=A9crit :
-> On Thu, Nov 06, 2025 at 08:10:08AM +0100, Jean-Michel Hautbois wrote:
-> > Add platform device support for the MCF54418 RNGB hardware with clock
-> > enabled at platform initialization.
+On 2025-11-06 13:38, Troy Mitchell wrote:
+> On Thu, Nov 06, 2025 at 06:34:26AM +0100, Aurelien Jarno wrote:
+> > Hi,
 > >=20
-> > The imx-rngc driver now uses devm_clk_get_optional() to support both
-> > Coldfire (always-on clock) and i.MX platforms (managed clock).
+> > On 2025-11-06 09:05, Troy Mitchell wrote:
+> > > On Wed, Nov 05, 2025 at 11:44:00PM +0100, Aurelien Jarno wrote:
+> > > > Hi,
+> > > >=20
+> > > > On 2025-11-03 15:06, Troy Mitchell wrote:
+> > > [...]
+> > > > >  	if (i2c->status & (SPACEMIT_SR_BED | SPACEMIT_SR_ALD)) {
+> > > > >  		spacemit_i2c_reset(i2c);
+> > > > > -		return -EAGAIN;
+> > > > > +		if (i2c->status & SPACEMIT_SR_ALD)
+> > > > > +			return -EAGAIN;
+> > > > >  	}
+> > > >=20
+> > > > This makes the resulting code, while correct, complex to understand=
+ as=20
+> > > > it is now two really different errors, as you explained well in the=
+=20
+> > > > commit message.
+> > > >=20
+> > > > I therefore suggest to organize the code as:
+> > > >=20
+> > > > 	/* Arbitration Loss Detected */
+> > > > 	if (i2c->status & SPACEMIT_SR_ALD) {
+> > > > 		spacemit_i2c_reset(i2c);
+> > > > 		return -EAGAIN;
+> > > > 	}
+> > > >=20
+> > > > 	/* Bus Error No ACK/NAK */
+> > > > 	if (i2c->status & SPACEMIT_SR_BED) {
+> > > > 		spacemit_i2c_reset(i2c);
+> > > > 	}
+> > > Thanks. I'll fix it in the next version.
+> > > >=20
+> > > >=20
+> > > > >  	return i2c->status & SPACEMIT_SR_ACKNAK ? -ENXIO : -EIO;
+> > > > > @@ -491,6 +492,8 @@ static int spacemit_i2c_xfer(struct i2c_adapt=
+er *adapt, struct i2c_msg *msgs, in
+> > > > > =20
+> > > > >  	spacemit_i2c_init(i2c);
+> > > > > =20
+> > > > > +	spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK=
+);
+> > > > > +
+> > > >=20
+> > > > This sounds good to start the transfer with a clean interrupt state=
+=2E I=20
+> > > > just wonder if it should be moved to spacemit_i2c_init(), ie where =
+the=20
+> > > > corresponding interrupts are enabled.
+> > > Uh, We can move it actually. But is it essentail?
 > >=20
-> > Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> > ---
-> >=20
-> >  arch/m68k/coldfire/device.c       | 28 ++++++++++++++++++++++++++++
-> >  arch/m68k/coldfire/m5441x.c       |  2 +-
-> >  arch/m68k/include/asm/m5441xsim.h |  9 +++++++++
-> >  drivers/char/hw_random/Kconfig    |  3 ++-
-> >  drivers/char/hw_random/imx-rngc.c |  9 ++++++++-
-> >  5 files changed, 48 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
-> > index
-> > b6958ec2a220cf91a78a14fc7fa18749451412f7..9d8f844e319a98f0afb79cceb544c=
-2d
-> > 3029482a4 100644 --- a/arch/m68k/coldfire/device.c
-> > +++ b/arch/m68k/coldfire/device.c
-> > @@ -622,6 +622,31 @@ static struct platform_device mcf_flexcan0 =3D {
-> >=20
-> >  };
-> >  #endif /* MCFFLEXCAN_SIZE */
-> >=20
-> > +#ifdef MCF_RNG_BASE
-> > +/*
-> > + * Random Number Generator (RNG) - only on MCF54418
-> > + */
-> > +static struct resource mcf_rng_resource[] =3D {
->=20
-> const?
+> > For me ensuring that the interrupt status is in a clean state after=20
+> > enabling the interrupt is part of the initialization.
+> Yes, I agree that.
+> > Furthermore if=20
+> > spacemit_i2c_init() has to be called from another place, it's very=20
+> > likely that it's also needed to get interrupt status in a clean state.
+> Why we need to call init() in other place?
+> Could you give me a cese?
 
-Why not, but I wanted to be consistent with all the other structures in thi=
-s=20
-file.
+Currently there is no need to do that. However if the driver is extended=20
+(e.g. to add new features) and spacemit_i2c_init() needs to be called=20
+=66rom another place, it is likely that a reset of the interrupt status=20
+should also be included. Therefore it's better to just include it=20
+directly in spacemit_i2c_init().
 
-JM
+Regards
+Aurelien
 
-> Frank
->=20
-> > +	{
-> > +		.start =3D MCF_RNG_BASE,
-> > +		.end   =3D MCF_RNG_BASE + MCF_RNG_SIZE - 1,
-> > +		.flags =3D IORESOURCE_MEM,
-> > +	},
-> > +	{
-> > +		.start =3D MCF_IRQ_RNG,
-> > +		.end   =3D MCF_IRQ_RNG,
-> > +		.flags =3D IORESOURCE_IRQ,
-> > +	},
-> > +};
->=20
-> ...
-
-
-
-
+--=20
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
