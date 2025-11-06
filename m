@@ -1,165 +1,208 @@
-Return-Path: <linux-kernel+bounces-888705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0065BC3BB6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:25:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6886CC3BB7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640971AA84C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EA21B20A4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760382E7F1C;
-	Thu,  6 Nov 2025 14:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B490342C96;
+	Thu,  6 Nov 2025 14:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ylPbjCkI"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z1cc9OOq";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MX8E8WqG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B2226FDA9
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD2C342148
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762438721; cv=none; b=bbrWcvTb2TwkJHkadt7yCZyQ0fCDND3h5cbOyu0vkwmS2FnKh08/lGfvI8/ZpZIoIyROC8gE3n4jsdF9hyTblOYDKWHLWSIXzbwoiGv/y6/cmwVh16Tf0ugwB2xs8vH6DHV/VF2/leKBcRf+ijhMSA9XXQLvmf+zaHRX3fm9Oak=
+	t=1762438743; cv=none; b=NzFPkxRpcEgy/7zn8MKrihn+gKYHkHKgN0bBJd/528eqr3bJFuHDizwjFZ7xT90a5NgnFCxXzFoxt9RwfM4mta2EZzm9cl1C2sPuCCXMea4TCKaroYf+TTHqXKcuWHuDIvdqFOO0jnZ7MSCRGVIFm0ZYHkrgBJCi07hdotsr9kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762438721; c=relaxed/simple;
-	bh=nbU9VTJQs8QIjbledFSiiMZSbQur1NbRbjuGKQHQDy8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nObNi9lL3vO4LmqRG6tmmUiA9x6TG2HCTNYEiexiOITgZTuqtjro6rIxqgNkyxKQQBbAn8Uw+5VWCNs0EFvF4eED80tTBoS2gC4ef5DMajXqUTM9t762bamX15327y3fRt6+0Wk/47AtrdG5id4h9qCPPAWw0WnXeEnrK/qWTHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ylPbjCkI; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-59431cce798so1113164e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:18:39 -0800 (PST)
+	s=arc-20240116; t=1762438743; c=relaxed/simple;
+	bh=ecXPWFAbT2zz2E6hGr3lsgOC2vwHjsIE0/qnPxMclIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ldQAypdzTreG0lodVScQyKAi5XLFNXUwEAcUiNY6GskOrJ6R90pBN5HhlXVh8ayGZRl3kqCBr3ZSwa/KFh3etvCwyi7e/m/kbXhz6SFZrowqdsrOhA8hoE3ae0HXYFx2+uo+2Up7X7nAB+oUCs3SQc4+WEzFaH3Ake3hmRoUD5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z1cc9OOq; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MX8E8WqG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762438740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2558/5DuSGeHTSysEKVn43dBQXRVp9ibyTXm/MgXyNU=;
+	b=Z1cc9OOqo23nTkSiBS9XnJMGHjMCY1/vTmvAMXYs/zowtj+c7gkztKUO8Jzmqsf1zqHxAC
+	Hug9JlxEZ103/dgg7Jk9x/JZIKgrOUH8DwKk/lRV7qZHgTPHutR6m0ytFZA3oYveblHJmy
+	yvLI+Y4KFZquNDXHQ+5nu0fzys+nTAI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-494-TBBYtv5rMt-ys9MLhZkoCg-1; Thu, 06 Nov 2025 09:18:59 -0500
+X-MC-Unique: TBBYtv5rMt-ys9MLhZkoCg-1
+X-Mimecast-MFC-AGG-ID: TBBYtv5rMt-ys9MLhZkoCg_1762438738
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-477212937eeso6273675e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:18:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762438718; x=1763043518; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3UYCyFD4Bb6aFEIHyNbsrjvvwW06LJgyiNw5ci5l6Zw=;
-        b=ylPbjCkI66k6A0ncr7t2GiAUCQ1ie8tF/WRaSRAUevrkVrQ24Ri7Xcl4uOUtoiuNxi
-         IVgRLe592zxyH3sRldeCZa3Yi7HUGqXdQpM17/VDz+WUB5m7qLwt10DRKW0coCYubewU
-         j6n++SkNpwUZDfaUUy47xt43vdZQnQ2g45PTl/nRxo58Bpv7CDoi7XkYf4xjBs1McUlL
-         Y31DJ9kimin2sEHEl2u1QHsaCRfFhyasBnExqo3wW74oKnHrj2gSfaNU3gE6yZ48A/7f
-         kCMCMfBvjWUl2KSdLsFbaShNFRzOAsaOb4nesmJlR2xaLRJVMuME6Z+ziiieUn17EWUN
-         /RjQ==
+        d=redhat.com; s=google; t=1762438738; x=1763043538; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2558/5DuSGeHTSysEKVn43dBQXRVp9ibyTXm/MgXyNU=;
+        b=MX8E8WqGP2A//cTJpXEtpNVFwQeSFR9cfCKP3ixLcaqQhj3ezDsbRJ+E1PUiK+jA3o
+         Oyt9bhYwgaIXTI8irjV40OVI0IBHK0n/SFaYq6iSouNrrgNDrRLHD+cCa+w8POzDx4cw
+         d70ZIgh1phTfn0Qorcr4Kqy9lVDHfJGFP8AbX0I9cS1tBadZfDoPo6jDgQxWQRTebLsf
+         sVBZiE2eIoMlK0SmmS91IHNHCBX1hvUM4bK6+1QJxWnG69qb+uZefR9tdVYF+DUlmykK
+         KZAe2R2etXJ06Oi0lUQ6i619ANnow7W1p1wjpVw0uyngyaJ4+Ad/+lMks3bY0mVgxnph
+         DjjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762438718; x=1763043518;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3UYCyFD4Bb6aFEIHyNbsrjvvwW06LJgyiNw5ci5l6Zw=;
-        b=ZsqaYYMn0RaBMaDpIVkxiOahXqge+KihuOaE3V4bTO84MgJAlUdrGhl5sr7ZLaHSfO
-         0AYRUoRV3h5EdGkzZhw3Jv1QsamYt/alfi48szI74Jolk/IsIHPwi3k1eSe40RKgWXas
-         QpMthFLS8W6ZIARNyQkZXUwuhsQBIOgGG/zjCFd2Ic3TATvQWcv6Kfp3tR1ZK91CiAlj
-         7r/ZTiBtkneO/bnOcFeJEeHnQ9RcpZnfUQtkALMaHL5NWhGOaIILDBLYyhtgbHC2ZQcX
-         TtABfLrjFZ+jsSfFSm4gCO2Mk6quknlL1dZCLhCsjj70myVG0CZrWCL1YQ5//fWr6uZh
-         ys4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXylCYfTPqQueapmF9ciguh2eMVWT1awlbld+VRj7G/SEWDkqQKMIHoXk0v2CL+iNbpVhUNjIJKnAzP5J4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbqbYQVxut37k22BGSud9R7G1eMnNQYolhNuZ4IFqXsOSHorkY
-	JuZA8TWjyBN+cg2dRpQQxc97vBQWBN/b+INVjEGObMmjBaxARGnreeZ9YjUMPWBbfD9xa6IhgVY
-	YpAVuwy2o2+FrkwL2ZMsRBaEsHhUr9mBy3VsJ3Q29cw==
-X-Gm-Gg: ASbGncvvpqizMFtYRipHPXiXy5ZkVxpFK+32EfdBEpAWIHoItQD+98cs9Oxyj1RnD9w
-	enLRYn9yPFq43a6oDPWA4s7yRgSkFhhPbY4J3wcBGnC4pCbVFIlSXwUXfbIrln8r1RhQN82v3Xz
-	jX/0aHmo4T1YlNhb00y6P7uo0pRS47mex9JqAB+WXU9+UCjIHwpf3tyDCtHw4MK027HKnFhvFjM
-	uz4qTs8P4m54LjuBvlcLe2eY2WQUXaxlgKGSJ7NTErUONOUgX7GHAAeUhj9cHkFX+CI5WlxiP8d
-	8yZCSnykuHW8QA4=
-X-Google-Smtp-Source: AGHT+IHdQJZPunwUY3ZHIE+wSItRDRGbaVjfDZ3bclHs8LsxocMfrUMoNk7HzUzk835mq0tyKBc5gXkBG+W/siXqRXk=
-X-Received: by 2002:a05:6512:61b1:b0:594:34b9:a817 with SMTP id
- 2adb3069b0e04-5943d7c01acmr2183793e87.33.1762438718011; Thu, 06 Nov 2025
- 06:18:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762438738; x=1763043538;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2558/5DuSGeHTSysEKVn43dBQXRVp9ibyTXm/MgXyNU=;
+        b=t1Me53m4gBywbYsdZL2TPbgPABYabrLH+SU4XmVGP3DS37Tfy8rro/+ALsbUP+j2ZO
+         TRANEQOyiQhclnehEBBzXuIk7EI9BZkr3eyHjCESBgH5EgdbtC0kXmtT3apt72dpGljR
+         YRr211ZgJbOpB5hd5haRE67wdFlokhOVscePnjAiEaMa2kvvFKHdBR4ZQJlW2ayTr2Oz
+         BXZ1r3cSRIevKmpbAjp1t5CNHs6vf7f+qnX9LmVmBjC0NwuwYQi5ejoS1gARQWv25Red
+         ljXlO0P78qiSgYv8tmKMOiUwM/rKUQqp0+PpALaOELJAKCxCy51Nj0Ngbo+qytWoijyC
+         gwig==
+X-Forwarded-Encrypted: i=1; AJvYcCUTHWkSD7o+Tr/opJIIbUCl3HIuSxIni0VQVI+fupf5sej4jQ8YxFO3h8CTCgsV3SxGZNU/tX8eKWLM5Q4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqCrFi+qC6AqGW5h8S/Equ37XFboaQHpKeZc/QazOy/0k15N7v
+	/gIV1tnxAUyXsFM08LyOLloSuhS/jOc2nbIWAp4ZkrOdHqy11+s9l7EQAu2DzGnpRqu4qT7uLw2
+	JayaxewYXLQl35oCfd6iuLgmsFAn2C1MJiCYTktb+ZeSq4gTHVGeQh3Lmza4M1JZ1pg==
+X-Gm-Gg: ASbGncuexg1HMWvCm3h/zn2WXvymmCTPI9jOxxBkzbvwKbo4jZKv5MTVUaUoyc+P1u1
+	MIB8k/4ovRmxZIpl3KBL/435QbqSgOFwBIUfzeaI38rPhmAh8Cn4Hf9JTNTvnyhqyh6oTDhGUWG
+	FuER4Z0UgOhGYeHhzqg4qN/+TBjabiNt0KagkTtfuVjZ5akJvVj3M4yu1gwM+GiWWS2DVM3ailn
+	0pnA2xj2Awx2CIBweOEaw6SgGq/KOsKAhaSyFwmCFYUGl+/0YaJj2rfq8Q59fHU6mcMDm/CMbq4
+	aVwQPjaf1Jr1SV9T/NFe9pdforOo6mheMAH+jAdU9NEj/qLIMKR/jgumc2V9YZo2VpOP2SuoYwn
+	o/A==
+X-Received: by 2002:a05:600c:1552:b0:475:dd8d:2f52 with SMTP id 5b1f17b1804b1-4775ce3f136mr88569365e9.32.1762438738011;
+        Thu, 06 Nov 2025 06:18:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFn0NuCZ5fprkStyYtobcANdwvR7UeicN84jVnofOHneho0o5wIY1CsG7J8Q2tZQ79l336p/Q==
+X-Received: by 2002:a05:600c:1552:b0:475:dd8d:2f52 with SMTP id 5b1f17b1804b1-4775ce3f136mr88568195e9.32.1762438736530;
+        Thu, 06 Nov 2025 06:18:56 -0800 (PST)
+Received: from [192.168.88.32] ([212.105.155.83])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb403849sm5669190f8f.1.2025.11.06.06.18.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 06:18:56 -0800 (PST)
+Message-ID: <d9b8ec8a-f541-4356-8c42-e29adced59c0@redhat.com>
+Date: Thu, 6 Nov 2025 15:18:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105-reset-gpios-swnodes-v5-0-1f67499a8287@linaro.org>
- <20251105-reset-gpios-swnodes-v5-8-1f67499a8287@linaro.org> <aQta01b_PyeHirxu@smile.fi.intel.com>
-In-Reply-To: <aQta01b_PyeHirxu@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 6 Nov 2025 15:18:26 +0100
-X-Gm-Features: AWmQ_bm4y26DefF3te9d8PCRfESO6EycvWadxioNhhdZRQkv54SvcFlwZN3U2B4
-Message-ID: <CAMRc=MfgPsf78pPTD2zNYkjp6QYO2xFnzN-niEaVn7nkjnUB5A@mail.gmail.com>
-Subject: Re: [PATCH v5 8/8] reset: gpio: use software nodes to setup the GPIO lookup
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] ppp: enable TX scatter-gather
+To: Qingfang Deng <dqfext@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, linux-ppp@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251103031501.404141-1-dqfext@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251103031501.404141-1-dqfext@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 5, 2025 at 3:10=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Wed, Nov 05, 2025 at 09:47:39AM +0100, Bartosz Golaszewski wrote:
-> >
-> > GPIO machine lookup is a nice mechanism for associating GPIOs with
-> > consumers if we don't know what kind of device the GPIO provider is or
-> > when it will become available. However in the case of the reset-gpio, w=
-e
-> > are already holding a reference to the device and so can reference its
-> > firmware node. Let's setup a software node that references the relevant
-> > GPIO and attach it to the auxiliary device we're creating.
->
-> ...
->
-> >  static int __reset_add_reset_gpio_device(const struct of_phandle_args =
-*args)
-> >  {
-> > +     struct property_entry properties[] =3D { {}, {} };
->
-> It's an interesting way of saying this?
->
+On 11/3/25 4:15 AM, Qingfang Deng wrote:
+> When chan->direct_xmit is true, and no compressors are in use, PPP
+> prepends its header to a skb, and calls dev_queue_xmit directly. In this
+> mode the skb does not need to be linearized.
+> Enable NETIF_F_SG and NETIF_F_FRAGLIST, and add
+> ppp_update_dev_features() to conditionally disable them if a linear skb
+> is required. This is required to support PPPoE GSO.
 
-I hope this is the final round of nit-picking...
+It's unclear to me why IFF_NO_QUEUE is necessary to avoid the
+linearization.
+> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+> ---
+> v1 -> v2:
+>  Changes dev->features under the TX spinlock to avoid races.
+>  - https://lore.kernel.org/netdev/20250912095928.1532113-1-dqfext@gmail.com/
+> 
+>  drivers/net/ppp/ppp_generic.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+> index 854e1a95d29a..389542f0af5f 100644
+> --- a/drivers/net/ppp/ppp_generic.c
+> +++ b/drivers/net/ppp/ppp_generic.c
+> @@ -498,6 +498,17 @@ static ssize_t ppp_read(struct file *file, char __user *buf,
+>  	return ret;
+>  }
+>  
+> +static void ppp_update_dev_features(struct ppp *ppp)
+> +{
+> +	struct net_device *dev = ppp->dev;
+> +
+> +	if (!(dev->priv_flags & IFF_NO_QUEUE) || ppp->xc_state ||
+> +	    ppp->flags & (SC_COMP_TCP | SC_CCP_UP))
+> +		dev->features &= ~(NETIF_F_SG | NETIF_F_FRAGLIST);
+> +	else
+> +		dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST;
+> +}
+> +
+>  static bool ppp_check_packet(struct sk_buff *skb, size_t count)
+>  {
+>  	/* LCP packets must include LCP header which 4 bytes long:
+> @@ -824,6 +835,7 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  	case PPPIOCSFLAGS:
+>  		if (get_user(val, p))
+>  			break;
+> +		rtnl_lock();
+>  		ppp_lock(ppp);
+>  		cflags = ppp->flags & ~val;
+>  #ifdef CONFIG_PPP_MULTILINK
+> @@ -834,6 +846,12 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  		ppp_unlock(ppp);
+>  		if (cflags & SC_CCP_OPEN)
+>  			ppp_ccp_closed(ppp);
+> +
+> +		ppp_xmit_lock(ppp);
+> +		ppp_update_dev_features(ppp);
+> +		ppp_xmit_unlock(ppp);
+> +		netdev_update_features(ppp->dev);
+> +		rtnl_unlock();
+>  		err = 0;
+>  		break;
+>  
+> @@ -1650,6 +1668,8 @@ static void ppp_setup(struct net_device *dev)
+>  	dev->flags = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
+>  	dev->priv_destructor = ppp_dev_priv_destructor;
+>  	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
+> +	dev->features = NETIF_F_SG | NETIF_F_FRAGLIST;
+> +	dev->hw_features = dev->features;
+>  	netif_keep_dst(dev);
+>  }
+>  
+> @@ -3112,13 +3132,17 @@ ppp_set_compress(struct ppp *ppp, struct ppp_option_data *data)
+>  	if (data->transmit) {
+>  		state = cp->comp_alloc(ccp_option, data->length);
+>  		if (state) {
+> +			rtnl_lock();
+>  			ppp_xmit_lock(ppp);
+>  			ppp->xstate &= ~SC_COMP_RUN;
+>  			ocomp = ppp->xcomp;
+>  			ostate = ppp->xc_state;
+>  			ppp->xcomp = cp;
+>  			ppp->xc_state = state;
+> +			ppp_update_dev_features(ppp);
+>  			ppp_xmit_unlock(ppp);
+> +			netdev_update_features(ppp->dev);
+> +			rtnl_unlock();
 
->         struct property_entry properties[2] =3D { };
->
-> >       struct reset_gpio_lookup *rgpio_dev;
-> > +     unsigned int offset, of_flags;
-> > +     struct device *parent;
-> > +     int id, ret, lflags;
->
-> I assumed that lflags shouldn't be signed. And IIRC they are unsigned lon=
-g
-> elsewhere (yes, just confirmed).
->
+Instead of dynamically changing the features, what about always exposing
+SG and FRAGLIST and linearize the skb as need for compression's sake?
 
-It doesn't really matter that much here but whatever. I do plan on
-tackling the duplication of machine and OF flags at some point though.
+/P
 
-> ...
->
-> > +     rgpio_dev->swnode =3D fwnode_create_software_node(properties, NUL=
-L);
-> > +     if (IS_ERR(rgpio_dev->swnode)) {
-> > +             ret =3D PTR_ERR(rgpio_dev->swnode);
-> > +             goto err_put_of_node;
-> > +     }
->
-> Can save 1 LoC?
->
-
-Oh come on...
-
-Bart
-
->         rgpio_dev->swnode =3D fwnode_create_software_node(properties, NUL=
-L);
->         ret =3D PTR_ERR_OR_ZERO(rgpio_dev->swnode);
->         if (ret)
->                 goto err_put_of_node;
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
 
