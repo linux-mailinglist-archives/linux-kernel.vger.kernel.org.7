@@ -1,127 +1,530 @@
-Return-Path: <linux-kernel+bounces-889082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC6CC3CA54
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:57:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C69FC3CB27
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEAFD189CFC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E823BD613
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1E2340A6D;
-	Thu,  6 Nov 2025 16:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1DB34887B;
+	Thu,  6 Nov 2025 16:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzBP2mjo"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BEczX6MQ"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B0430F955
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F6329370
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448256; cv=none; b=ZMKpBgYVOQh4KeyeusjHwoLuHgsdbBHSmdJC64nKqSrUcmUPNK2u6JT6dUrz5eBLoDShTsWYEE1RVcxMOvxkwOSd+/bKTRByXcYYmF+7tqXetSLKvEJJqh3fD5ifByttLtJOpzpO180FjOfRsgF/C/VMtLCmjaYOMeC79xHlIP0=
+	t=1762448253; cv=none; b=Ze2srfUHeWDNZcaHK8EyMm6pRmcRgcgDM8YPZesr7WSHgdbag2CbL1ktWqskZNQcUctE95GMbAEefMnHUSd+BdooKUBUU0td5cvSl2e+MkPgmQjcaqn7hCLBIp2TuM49hS0BxL1JqYl8PEuje5uKrDfroD4MFzc0QZ4XuEgRq1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448256; c=relaxed/simple;
-	bh=hBDgCtgFgAJQ+dFgpCAhZa6Nwb6Otzu4vBYt89g6zhg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bdc6wJJfelWatPYGnMvaQXBExaifgKPCtcdIYxKTxBvJbztnAyUfbDJ0CXkizIiy40tHk4Nkei9jJdUzY249T8f2Ql4ycr3G2H/zznZkqkCLoyRO0Li7OLTJALBMalvEf6rkqkduQ2BZNRxXa5kyoYhqdpRv17SVyXvf8QEwxJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzBP2mjo; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4298b49f103so506583f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:57:34 -0800 (PST)
+	s=arc-20240116; t=1762448253; c=relaxed/simple;
+	bh=UxI515hK70Mh2FvdMOyXfCdzhOLlb7GWLgr+G4tmYfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bLE2nO9i9GpCg/R34GvE4fVxrWkK5yDgUDDMQ/FkpIbceV/5VoV1VMtNU5TUxAQKFfuCCS5mAVUD2x+bva53zxx5bUpvzv3LkkdpuyXhQe3LHt+t/ZzkH/J1UiY4kCJlTb68E4Rue/KGO1MAf5QVZ/gNE7+P8RgIRblMFjpXSeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BEczX6MQ; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-4500b2ec59eso299709b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:57:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762448253; x=1763053053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43X08dmID9sHRRXmcYSgNQdluMQg9kQE7si7yBN+Lnw=;
-        b=YzBP2mjoYJlN+ibY9A1ZN+YiX938uhrqDxm4UkvB4ICKAcjE0UBtG71OBZwOO0fm81
-         /m9lJ6D+E71KXVUR0xltwsxwPu4mJyQmbUEYf9AEsKjBXe6UgyFqo+Jg0LIBoAV+7pCg
-         VuRyfhqYcyeka3I8J3jzpyh6BfqfZHqbZ9VuoSZMpUrmUxgnYPkkCLk0MStmp68sU/ml
-         BGvjaMSSOYzBvKauKDzAJW7h6kFgFte2SPVB5Fo3boQS9lnvLvJofxRG3eZFOkgnhY0q
-         qD/6BzbXunpquYgnCyNSy2H3Es5ImYHkezlEDHdhwxTuACaS0QLwPLKuKHVt888rYW3X
-         CItA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762448249; x=1763053049; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/EMELjj+bjUiWeG3JaqK5gLcQCsmLkvwHXIrpyQe7VQ=;
+        b=BEczX6MQZxhb2S1YZ76ZMu2RNrfmBKzhdWPSF06xReNjYsiCiwgYPACXVCIo4FeP2D
+         2c0ss+4pwJPgDrZm+rRNI5iUmxZqo3PVIj5zgKC3vqayij0RrENlqVS5rUgMO9c26ecr
+         V13h9e0EQHzjLFZqNU8QCeEZe5bRYlhOvSjTojv11m7Jp9z/WjkpgJYij+h7eH+VjXoE
+         eQa5rvH+RX/kd1B7YFDzfYOLOS+UF9qwClvE1dOxgnQrsvNA4XuyuhXgRPKXXy/GOcow
+         o6wpuHal1o4tMCHlk1ATCzqqFkGcUuWXlTaOXpIl0BMz3tC+mycEdRClxATkXf6LVikW
+         fhqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448253; x=1763053053;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=43X08dmID9sHRRXmcYSgNQdluMQg9kQE7si7yBN+Lnw=;
-        b=Fhu1Hd5MtBp1JKBLiwrY2oDeaHcrxF2xVYS3S75+RlGcKYM1EtGGHak6O0m6+HKjdv
-         PnIk3/Jce7VU09jx0+/s05nmzCFs7sDWfze93EnOuxoqcMdaiuaPH+BnMcvb3fqnadsG
-         kyogBgmE8py6xE7LhpDWvrjIJQnKIOsetV2wMpypB4E/OKRCu5JL8OxHE91fOvPjQ7nK
-         nmhYstTa/kr7/eUJbw9ETVbDrPy151DGtfnfiQfS0//zkqgb4KCQA6GZecZhIfUZ88A/
-         rcMKLvRjeM/BLYXWRxjzfVm4qNK93yhn0kxFeZGgU4R7eVmR3JPOcyDQVDNOiV7yvAPt
-         d3XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJcM9re5CgFZLiKIJyoFWw/TfXWwauHx5Un08Rbzg2V+h4aoG04nxUbfhDD4i1dK8+2g1Y17CYKWVraVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIqVwFW44u3M9qG4X9KqTHp2ati8dCBmxAnHLYNsZsx0QzXA4T
-	WTNxKlBON/FWb6PliEBlJ1ZgN0fXa/0XawhBbHQKhAtAlptmzUIvTDA+
-X-Gm-Gg: ASbGncsSVHVtiG5EY3FfGosNy5J/CLTsIOq71xAeaFR1jtIhqSfgxGKUX/NdIvy4/Yh
-	Dl3X1sEXoTRdAPgl8rwTkYcY6ZVqFQZlDMLuauD5UVfgDrpU3ZM4C3rWm0XiFLm6EKIiXFUmO84
-	0xmMSm3DBpwNdWeec1ECq4z2yRITv0bsMN/0GbuNo7J53Ht+MCOH/XnvKt4777mOPkv4TBP8rPG
-	31+VAnqtHs0PsRpJ1Jvuh2NnBdW2x/UNLAOVX7z9TCGESTZQs+kxgorhtMOskH8gqIbqkkSbhjU
-	3QHKj3A5P88zq7DGR6NwDgFJ+1cKgLR8cNnpiATvhjWSa42RA5WWH6smFIRvcnDX4L3l9QYqPoq
-	dViAXcwfDcIcWA6/11EKV+smr4TKqfx9P9pQxLt2ipm3n2JWOKIfKrcHGIUjNo30vuQWdYO7MW8
-	M/emsbYXfaKFpVRQCl9i0=
-X-Google-Smtp-Source: AGHT+IFS3q2CQsG6hf1nqt/xuzgOKYXHnA+wB0Q9tXjzEjx/qrI7jVB+0ubmL/kqbQM56u/55k8zCg==
-X-Received: by 2002:a05:6000:4013:b0:429:d3c9:b889 with SMTP id ffacd0b85a97d-429e32c81d5mr6488088f8f.1.1762448252844;
-        Thu, 06 Nov 2025 08:57:32 -0800 (PST)
-Received: from cachyos-x8664.ujaen.es ([150.214.100.106])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675cbefsm80306f8f.27.2025.11.06.08.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:57:32 -0800 (PST)
-From: Marcos Vega <marcosmola2@gmail.com>
-To: ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marcos Vega <marcosmola2@gmail.com>
-Subject: [PATCH v2] [PATCH v2] platform/x86: hp-wmi: Fixed Omen MAX 16-ah0xx board name
-Date: Thu,  6 Nov 2025 17:56:57 +0100
-Message-ID: <20251106165657.23241-1-marcosmola2@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <81699228-710c-144c-0909-1fe5be0604ca@linux.intel.com>
-References: <81699228-710c-144c-0909-1fe5be0604ca@linux.intel.com>
+        d=1e100.net; s=20230601; t=1762448249; x=1763053049;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/EMELjj+bjUiWeG3JaqK5gLcQCsmLkvwHXIrpyQe7VQ=;
+        b=SYKWz/4UOw6BVwPpeqgBD1PKQJYz54h/+p4rlsgfUO20Xnxqd6CdpivnTyb3cIvL2S
+         2Nol27jTUet1BK0y5RNf5ZO34esWKZg/e7rApsUcT4s2QSPLxAlxwDVK5HYzlMxPH5Um
+         Qv5PlC+eBzCNBsr1Iw8CVzG/OcRgqEr5r2YBZTu2LajiHICLZbjl43dU4tnMbXDnaE9m
+         u1MezTg/ro2mlxVDFdam4/WgnfhJ51SIaj/xRqlPZ8WXAyPAXYqe/870OIlZxvBRzHlD
+         mIcNFyJipQc+4p21tclFzMsbDQuAiQqtKl0jbgT4x7jsBpLTmrGoYp2s7Ji2txTtNDzc
+         S0Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFoYXZBExlHcDWA0I1/4JxF256fNZzQOadurVw7mOWn6WSck7zhXKLpdtQIX6b2JX4WvUA83to0Oq0SyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPCdtZMketKBZAt19nBdOerUApcRQb9yZDLLB7vZPabsbkEwkv
+	kRDuDxCSQ40ARCVYpUxXbFi9dVhZ2bfX5KbbyvH4nZqoi21Yl+I4F5068Kn1VpUUds8=
+X-Gm-Gg: ASbGncuMA4x7xH8zOuDJynHwruVLooaShqT2WLlC894hzlXfq3QPvTXmW4YYQ+UBM7u
+	RfSXIzFm+jKmMxzfib3w1AjCNfPYXGpvBQwKOYj1t8XX+VloNwMOQAOjg97tbOup30tnxgVz8Dn
+	gublWYcRikowFsCzEu+Hicu5GCLYJeZyJXXcvMUx710n5CIVfUIgdz6IeXR0NnXVTImHHsZaljg
+	Q3IS1cBk5gyLziRicEJg2UFWIC8Pgm0E1vkPmKxQF1zWdmGm6l+sYK2t0SfevaRgeLRzPHZysiP
+	Z0W9yopCm9vZUukZLeHFuxwnInS0GGjB5wqKUA6Kov1SRfS/5VJhWcefTf3IuOhnMNTf9ZGHLSw
+	mjSsy4d1RxOxjtCO7NJzVouCSMVO9rtYTV+CTyWw4DSKJ468EbZRQ4l/wRZhhuknN+kQ7L/Ug5Q
+	KxKiX9rttm1PnJVJtt7GbHsw5apHEA0sGGzopXwaY2MBHE1OTydefgGWjhgcaw
+X-Google-Smtp-Source: AGHT+IHzlR0HgKCTXqcdpQoc31zxWf5TD937J0hAbm3u4u+SCCRMsue1l7rnFqxUozkh0bMEpEoNyQ==
+X-Received: by 2002:a05:6808:6f92:b0:438:273f:d09f with SMTP id 5614622812f47-4501475fe87mr189416b6e.5.1762448248844;
+        Thu, 06 Nov 2025 08:57:28 -0800 (PST)
+Received: from ?IPV6:2600:8803:e7e4:500:149c:d223:50dd:7f45? ([2600:8803:e7e4:500:149c:d223:50dd:7f45])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4500280856fsm985247b6e.24.2025.11.06.08.57.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 08:57:27 -0800 (PST)
+Message-ID: <5c618c00-f7f1-4260-8970-7c493d50315e@baylibre.com>
+Date: Thu, 6 Nov 2025 10:57:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] iio: adc: Add TI ADS131M0x ADC driver
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: David Jander <david@protonic.nl>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+References: <20251105143814.1807444-1-o.rempel@pengutronix.de>
+ <20251105143814.1807444-3-o.rempel@pengutronix.de>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20251105143814.1807444-3-o.rempel@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-You are totally right, after more thorough testing, I realised I had made a mistake,
-board 8D41 must only go on victus_s_thermal_profile_boards.
+On 11/5/25 8:38 AM, Oleksij Rempel wrote:
+> From: David Jander <david@protonic.nl>
+> 
+> Add a new IIO ADC driver for Texas Instruments ADS131M0x devices
+> (ADS131M02/03/04/06/08). These are 24-bit, up to 64 kSPS, simultaneous-
+> sampling delta-sigma ADCs accessed via SPI.
+> 
+> Highlights:
+> - Supports 2/3/4/6/8-channel variants with per-channel RAW and SCALE.
+> - Implements device-required full-duplex fixed-frame transfers.
+> - Handles both input and output CRC; uses a non-reflected CCITT (0x1021)
+>   implementation because the generic crc_ccitt helper is incompatible.
+> 
+> Note: Despite the almost identical name, this hardware is not
+> compatible with the ADS131E0x series handled by
+> drivers/iio/adc/ti-ads131e08.c.
+> 
+> Signed-off-by: David Jander <david@protonic.nl>
+> Co-developed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/iio/adc/Kconfig        |  10 +
+>  drivers/iio/adc/Makefile       |   1 +
+>  drivers/iio/adc/ti-ads131m0x.c | 886 +++++++++++++++++++++++++++++++++
+>  3 files changed, 897 insertions(+)
+>  create mode 100644 drivers/iio/adc/ti-ads131m0x.c
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 58a14e6833f6..c17f8914358c 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -1691,6 +1691,16 @@ config TI_ADS131E08
+>  	  This driver can also be built as a module. If so, the module will be
+>  	  called ti-ads131e08.
+>  
+> +config TI_ADS131M0X
+> +	tristate "Texas Instruments ADS131M0x"
+> +	depends on SPI && COMMON_CLK
+> +	help
+> +	  Say yes here to get support for Texas Instruments ADS131M02, ADS131M03,
+> +	  ADS131M04, ADS131M06 and ADS131M08 chips.
+> +
+> +	  This driver can also be built as a module. If so, the module will be
+> +	  called ti-ads131m0x.
+> +
+>  config TI_ADS7138
+>  	tristate "Texas Instruments ADS7128 and ADS7138 ADC driver"
+>  	depends on I2C
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index d008f78dc010..c23dae3ddcc7 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -147,6 +147,7 @@ obj-$(CONFIG_TI_ADS1119) += ti-ads1119.o
+>  obj-$(CONFIG_TI_ADS124S08) += ti-ads124s08.o
+>  obj-$(CONFIG_TI_ADS1298) += ti-ads1298.o
+>  obj-$(CONFIG_TI_ADS131E08) += ti-ads131e08.o
+> +obj-$(CONFIG_TI_ADS131M0X) += ti-ads131m0x.o
 
-I send the correct commit in hopes to fix this.
-This is my first time contributing to the kernel, ¡thank you for your patience!
+No x in the name please. As in my other review, I would make it ads131m02.
 
-Signed-off-by: Marcos Vega <marcosmola2@gmail.com>
----
- drivers/platform/x86/hp/hp-wmi.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+>  obj-$(CONFIG_TI_ADS7138) += ti-ads7138.o
+>  obj-$(CONFIG_TI_ADS7924) += ti-ads7924.o
+>  obj-$(CONFIG_TI_ADS7950) += ti-ads7950.o
+> diff --git a/drivers/iio/adc/ti-ads131m0x.c b/drivers/iio/adc/ti-ads131m0x.c
+> new file mode 100644
+> index 000000000000..d40aacc129ba
+> --- /dev/null
+> +++ b/drivers/iio/adc/ti-ads131m0x.c
+> @@ -0,0 +1,886 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Driver for Texas Instruments ADS131M0x family ADC chips.
+> + *
+> + * Copyright (C) 2024 Protonic Holland
+> + * Copyright (C) 2025 Oleksij Rempel <kernel@pengutronix.de>, Pengutronix
+> + *
+> + * Primary Datasheet Reference (used for citations):
+> + * ADS131M08 8-Channel, Simultaneously-Sampling, 24-Bit, Delta-Sigma ADC
+> + * Document SBAS950B, Revised February 2021
+> + * https://www.ti.com/lit/ds/symlink/ads131m08.pdf
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/property.h>
+> +#include <linux/spi/spi.h>
+> +
+> +/* Max channels supported by the largest variant in the family (ADS131M08) */
+> +#define ADS131M_MAX_CHANNELS		8
+> +
+> +/* ADS131M08 tolerates up to 25 MHz SCLK.
+> + */
+> +#define ADS131M_MAX_SCLK_HZ		25000000
 
-diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
-index 8b3533d6ba09..7a3cad80f0b5 100644
---- a/drivers/platform/x86/hp/hp-wmi.c
-+++ b/drivers/platform/x86/hp/hp-wmi.c
-@@ -92,9 +92,10 @@ static const char * const victus_thermal_profile_boards[] = {
- 	"8A25"
- };
- 
--/* DMI Board names of Victus 16-r1000 and Victus 16-s1000 laptops */
-+/* DMI Board names of Victus 16-r1000 and Victus 16-s1000 laptops, as well
-+   as some Omen boards using this profile */
- static const char * const victus_s_thermal_profile_boards[] = {
--	"8C99", "8C9C"
-+	"8C99", "8C9C", "8D41"
- };
- 
- enum hp_wmi_radio {
--- 
-2.51.2
+25 * MEGA, but this should rather be in the devicetree bindings
+as spi-max-frequency.
 
+> +
+> +/* Section 6.7, t_REGACQ (min time after reset) is 5us */
+> +#define ADS131M_RESET_DELAY_US		10
+Why not make this 5 instead of 10?
+
+> +
+> +/*
+> + * SPI Frame word count calculation.
+> + * Frame = N channel words + 1 response word + 1 CRC word.
+> + * Word size depends on WLENGTH bits in MODE register (Default 24-bit).
+> + */
+> +#define ADS131M_FRAME_WSIZE(nch)	(nch + 2)
+> +/*
+> + * SPI Frame byte size calculation.
+> + * Assumes default word size of 24 bits (3 bytes).
+> + */
+> +#define ADS131M_FRAME_BSIZE(nch)	(ADS131M_FRAME_WSIZE(nch) * 3)
+
+Would be easier to understand at the call site if we spell out
+WORD_SIZE and BYTE_SIZE.
+
+> +/*
+> + * Index calculation for the start byte of channel 'x' data within the RX buffer.
+> + * Assumes 24-bit words (3 bytes per word).
+> + * The received frame starts with the response word (e.g., STATUS register
+> + * content when NULL command was sent), followed by data for channels 0 to N-1,
+> + * and finally the output CRC word.
+> + * Response = index 0..2, Chan0 = index 3..5, Chan1 = index 6..8, ...
+> + * Index for ChanX = 3 (response) + x * 3 (channel data size).
+> + */
+> +#define ADS131M_CHANNEL_INDEX(x)	(x * 3 + 3)
+> +
+> +#define ADS131M_CMD_NULL		0x0000
+> +#define ADS131M_CMD_RESET		0x0011
+> +
+> +#define ADS131M_CMD_RREG(a, n) \
+> +	(0xa000 | ((u16)(a & 0x1f) << 7) | (u16)(n & 0x7f))
+> +#define ADS131M_CMD_WREG(a, n) \
+> +	(0x6000 | ((u16)(a & 0x1f) << 7) | (u16)(n & 0x7f))
+> +
+> +/*  STATUS Register (0x01h) bit definitions */
+> +#define ADS131M_STATUS_CRC_ERR		BIT(12) /* Input CRC Error */
+> +
+> +#define ADS131M_REG_MODE		0x02
+> +#define ADS131M_MODE_RX_CRC_EN		BIT(12) /* Enable Input CRC */
+> +#define ADS131M_MODE_CRC_TYPE_ANSI	BIT(11) /* 0=CCITT, 1=ANSI */
+> +#define ADS131M_MODE_RESET_FLAG		BIT(10)
+> +
+> +struct ads131m_configuration {
+> +	const struct iio_chan_spec	*channels;
+> +	u8				num_channels;
+> +	u16				reset_ack;
+> +};
+> +
+> +enum ads131m_device_id {
+> +	ADS131M08_ID,
+> +	ADS131M06_ID,
+> +	ADS131M04_ID,
+> +	ADS131M03_ID,
+> +	ADS131M02_ID,
+> +};
+> +
+> +struct ads131m_priv {
+> +	struct spi_device *spi;
+> +	struct clk *clk;
+> +	struct mutex lock;
+> +	u8 num_channels;
+> +	const struct ads131m_configuration *config;
+> +	u8 tx_buffer[ADS131M_FRAME_BSIZE(ADS131M_MAX_CHANNELS)]
+> +		__aligned(IIO_DMA_MINALIGN);
+> +	u8 rx_buffer[ADS131M_FRAME_BSIZE(ADS131M_MAX_CHANNELS)]
+> +		__aligned(IIO_DMA_MINALIGN);
+
+The second __aligned(IIO_DMA_MINALIGN) is not needed. And everything
+below here needs to be move above the first __aligned(IIO_DMA_MINALIGN)
+Othewise the items below can be corrupted.
+
+> +	struct spi_transfer xfer[1];
+
+Not much sense in an array with length one. Can drop [1].
+
+> +	struct spi_message msg;
+> +	unsigned int gain[ADS131M_MAX_CHANNELS];
+
+It looks like this is never assigned (always all 0s). Maybe we should
+save it for a later patch that implements variable gain?
+
+> +};
+> +
+...
+
+> +static int ads131m_check_status_crc_err(struct ads131m_priv *priv)
+> +{
+> +	int ret;
+> +	u16 status;
+> +
+> +	ret = ads131m_rx_frame_unlocked(priv);
+> +	if (ret < 0) {
+> +		dev_err(&priv->spi->dev, "SPI error on STATUS read for CRC check\n");
+> +		return ret;
+> +	}
+> +
+> +	status = get_unaligned_be16(&priv->rx_buffer[0]);
+> +	if (status & ADS131M_STATUS_CRC_ERR) {
+> +		dev_err(&priv->spi->dev, "Previous input CRC error, STATUS=0x%04x\n",
+> +			status);
+
+Should this be rate-limited? If things get really bad, we could get an
+error on every xfer which could flood the logs.
+
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +/**
+> + * ads131m_rmw_reg - Reads, modifies, and writes a single register.
+
+Any reason we couldn't turn the read/write into a regmap and avoid
+implementing extras like this?
+
+> + * @priv: Device private data structure.
+> + * @reg: The 8-bit register address.
+> + * @clear: Bitmask of bits to clear.
+> + * @set: Bitmask of bits to set.
+> + *
+> + * This function performs an atomic read-modify-write operation on a register.
+> + * It reads the register, applies the clear and set masks, and writes
+> + * the new value back if it has changed.
+> + *
+> + * Context: This function handles its own mutex locking
+> + *
+> + * Return: 0 on success, or a negative error code.
+> + */
+
+...
+
+> +static int ads131m_read_raw(struct iio_dev *indio_dev,
+> +			   struct iio_chan_spec const *channel, int *val,
+> +			   int *val2, long mask)
+> +{
+> +	struct ads131m_priv *priv = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = ads131m_adc_read(priv, channel->channel, val);
+> +		if (ret)
+> +			return ret;
+> +		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		/*
+> +		 * Scale = (Vref / Gain) / 2^(Resolution - 1)
+> +		 * Vref = 1.2V (1200mV) [DS, 8.3.4], Resolution = 24 bits
+> +		 * LSB = (1.2V / Gain) / 2^23
+> +		 *
+> +		 * Using IIO_VAL_FRACTIONAL_LOG2, the unit is millivolts.
+> +		 * Scale = val * 2^(-val2)
+> +		 * Scale = 1200 * 2^-(23 + log2(Gain))
+
+I would write it as vref_mv / 2^(23 + log2(gain)). The multiplication
+by negative exponent is a bit subtile when we are talking about a
+fractional value.
+
+> +		 *
+> +		 * priv->gain[] stores log2(Gain) (e.g., 0 for Gain=1).
+> +		 */
+> +		*val = 1200; /* 1.2Vref, in millivolts */
+> +		*val2 = 23 + priv->gain[channel->channel];
+
+s/gain/gain_log2/ for the variable name to make it obious
+what kind of value it holds.
+
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+...
+
+> +/**
+> + * ads131m_hw_init - Initialize the ADC hardware.
+> + * @priv: Device private data structure.
+> + *
+> + * This function performs the hardware-specific initialization sequence:
+> + * 1. Enables the main clock.
+> + * 2. Issues a software RESET command to clear FIFOs and defaults.
+> + * 3. Configures the MODE register to clear RESET, set CCITT CRC,
+> + * and enable Input CRC checking.
+> + *
+> + * Return: 0 on success, or a negative error code.
+> + */
+> +static int ads131m_hw_init(struct ads131m_priv *priv)
+> +{
+> +	struct spi_device *spi = priv->spi;
+> +	u16 clear_mask, set_mask;
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(priv->clk);
+> +	if (ret) {
+> +		dev_err(&spi->dev, "clk enable failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +	ret = devm_add_action_or_reset(&spi->dev, ads131m_clk_disable_unprepare,
+> +				       priv->clk);
+> +	if (ret) {
+> +		clk_disable_unprepare(priv->clk);
+> +		return ret;
+> +	}
+> +
+
+Would be trivial to implement optional gpio hardware reset here as well.
+
+> +	/*
+> +	 * Issue a software RESET to ensure device is in a known state.
+> +	 * This clears the 2-deep FIFO and resets all registers to default.
+> +	 */
+> +	ret = ads131m_soft_reset(priv);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * The RESET command sets all registers to default, which means:
+> +	 * 1. The RESET bit (Bit 10) in MODE is set to '1'.
+> +	 * 2. The CRC_TYPE bit (Bit 11) in MODE is '0' (CCITT).
+> +	 * 3. The RX_CRC_EN bit (Bit 12) in MODE is '0' (Disabled).
+> +	 *
+> +	 * We must:
+> +	 * 1. Clear the RESET bit.
+> +	 * 2. Enable Input CRC (RX_CRC_EN).
+> +	 * 3. Explicitly clear the ANSI CRC bit (for certainty).
+> +	 */
+> +	clear_mask = ADS131M_MODE_CRC_TYPE_ANSI | ADS131M_MODE_RESET_FLAG;
+> +	set_mask = ADS131M_MODE_RX_CRC_EN;
+> +
+> +	ret = ads131m_rmw_reg(priv, ADS131M_REG_MODE, clear_mask, set_mask);
+> +	if (ret < 0) {
+> +		dev_err(&spi->dev, "Failed to configure MODE register\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ads131m_probe(struct spi_device *spi)
+> +{
+> +	const struct ads131m_configuration *config;
+> +	struct iio_dev *indio_dev;
+> +	struct ads131m_priv *priv;
+> +	int ret;
+> +
+> +	spi->mode = SPI_MODE_1;
+> +	spi->bits_per_word = 8;
+> +
+> +	if (!spi->max_speed_hz || spi->max_speed_hz > ADS131M_MAX_SCLK_HZ)
+> +		spi->max_speed_hz = ADS131M_MAX_SCLK_HZ;
+> +
+> +	ret = spi_setup(spi);
+
+As Jonathan mentioned, we should be able to avoid calling spi_setup()
+here completly.
+
+> +	if (ret < 0) {
+> +		dev_err(&spi->dev, "Error in spi setup\n");
+> +		return ret;
+> +	}
+> +
+> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*priv));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	priv = iio_priv(indio_dev);
+> +	priv->spi = spi;
+> +
+> +	indio_dev->name = spi_get_device_id(spi)->name;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &ads131m_info;
+> +
+> +	config = device_get_match_data(&spi->dev);
+> +	if (!config) {
+> +		const struct spi_device_id *id;
+> +
+> +		id = spi_get_device_id(spi);
+> +		if (!id)
+> +			return -ENODEV;
+> +
+> +		config = (const void *)id->driver_data;
+> +	}
+> +	priv->config = config;
+> +
+> +	indio_dev->channels = config->channels;
+> +	indio_dev->num_channels = config->num_channels;
+> +	priv->num_channels = config->num_channels;
+
+We already have priv->config->num_channels, so this extra copy seems
+unnecessary.
+
+> +
+> +	/* Get the external clock source connected to the CLKIN pin */
+> +	priv->clk = devm_clk_get(&spi->dev, NULL);
+> +	if (IS_ERR(priv->clk)) {
+> +		ret = PTR_ERR(priv->clk);
+> +		dev_err(&spi->dev, "clk get failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	mutex_init(&priv->lock);
+> +	/* Setup the reusable SPI message structure */
+> +	ads131m_prepare_message(priv);
+> +
+> +	/*
+> +	 * Perform all hardware-specific initialization.
+> +	 */
+> +	ret = ads131m_hw_init(priv);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return devm_iio_device_register(&spi->dev, indio_dev);
+> +}
+> +
+...
 
