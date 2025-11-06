@@ -1,227 +1,422 @@
-Return-Path: <linux-kernel+bounces-889301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27029C3D39E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:22:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57544C3D3A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:23:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8B33ACC79
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D443B22DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95EC3502AE;
-	Thu,  6 Nov 2025 19:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1A835028B;
+	Thu,  6 Nov 2025 19:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9NObgKd"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="R3+u57qU"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013010.outbound.protection.outlook.com [40.107.159.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CEE34D907
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 19:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762456936; cv=none; b=hcj2USNlE5G4qx4lRWCjCazAhkTYgJLqHRMPJ+wSP1GnY/c1tGnraL20N51xsMjh9/znBCIWvqCIMek9BjOGnNWYnF/GpVjGBes4FFmgSptTHfWuRfJmTKRMCdwvWC9+IAqi3lHuV8yTeYO57USLT6KZunud758v0AD01v+NZ9U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762456936; c=relaxed/simple;
-	bh=Qd/DAK6OT+mphCRDnwifNLpl2LfGN62CDZiwf3ZZ5CU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dsr/loHBigXmIcF4Lz9m+pYS8hlt3XVb1pvt427qrVAMAyNSIU0ftaDJ//wWgjboQw0Evtv0/Y+m3x6BW1dZRSccridqVPvRRf1OsBFj2L+IFEYPPpak+0VDUOGvOQkGClWj/cNR5Uc+kh8DP9zRfSqti4brtRyZtluPpvsVd44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9NObgKd; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-427007b1fe5so856004f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 11:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762456932; x=1763061732; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TARNetY/7a0+kYWYr0yLvbYebuOPI2tOv2M0+ltQxfA=;
-        b=S9NObgKdxnw2knt6wFKvM0yu2efhQZH6GOc+YlFyWtpNF7lvkncCN8O2GLohc24CvL
-         rruNCnDfPoI4VW9VrAx1OL9dNZcJ7T+p6qrieH1vJS+qk/yPfOBymn2exZv6DbmbP9Bc
-         ps3fm8B6L6w3MjIseSM6rF/9WMELw2Uc1OjxW7oTveNBasQURP8wf4aQvJOPOLfxM/iv
-         +qOizeD7UlDC+EXBJWmkJ0muDZAcPoJL+x6FteAC6mB2gbJ6QoOYPWWn7d2UK0mKR8t8
-         74jqLjRNK//VCXVcnglNU5xZ0CfxQmxEnLrPROb5hneXvb86CrUvQGT9XTxfn5T78zi7
-         tonw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762456932; x=1763061732;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TARNetY/7a0+kYWYr0yLvbYebuOPI2tOv2M0+ltQxfA=;
-        b=VQTIYCAHzi4jwsfMCEWCCtqkiywuh47gx/8Bkd+CWRgJQVsHk0Gr1Y3Z3s1PZMNV83
-         SVYSFvfsowowrAqvUCSxAdWhUDzRNfQwmOyUBb87hfubHxSeSW+TQ1U0hRQFGl/kjX3K
-         secl2nz+9aOtiqG6muMqyCzz0Nsq+WmWqlZqvpFG4vbGdoY9VlSopQIqvOpAcpBL7ZlE
-         b2U6MuHM/ynn5CJkgEPrINXcNzJW3OZrhbBi+cgquLLxbh6l8c3X+3RCmXtVL0UzQGR+
-         x2V/rNJW9Ar/U3dsuS8RrMi38zX1NNbEmZ2i7dr3dBfmJe7Qm1RfHdPhtZM2z1Vo4i/n
-         aZGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMnu2p9JcS3hZYmFRdR4YsUh++5Jh4uyWkuXEUTE2qhoaJRf9r5Y7Xwc78Tu1gLbXECuSennvoVh1S9H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgpPIuHFCE6QeTqbFYJvHUw9YWOOjLbG0M2pvSghBj6BYhS2n2
-	SVDcT6KpVths6oT+ilJaj0rz4EOlGGcxAydrvnJjWAH7n4MfJvI6AsOv
-X-Gm-Gg: ASbGncsTctJLDJhhYFglaPDmqLPoO/aIrsnZsGrL/GTlKnyc0KzTGKlRBaL09X4s2t6
-	qAr32dcdQEiJ2KZPApBuYNtAmDLEBm0APQcdAxnya5dQOSmHoUfn8bdWJnYFj78xj4OlfQPh6n1
-	O0VEYRbm3tjbZ7LKoZ3MVnBa/qfQiowhOtoip8AQbFTQfB8leqz82WTEdcPfgzlsch1uDek4in4
-	Dn3KZb/Q29FJfiTLVHxRnyO8Z0Lis7PQI8AFv9gzGcQPjM4DvGmXOpfsp3CD204IfwfBFVotpBg
-	KIp2FgTfab4LOpyALu//r2jlvHD1FK6Udr1Y8xBYL0a/meEI4bMT+t65VtQOzTEL1/YDvz1+Uad
-	rONYRhPaOzU9T6tZsZCg3qvPsdXN+a+0L4JAmyQPWkyunzWkyHesuAFcY4nDR90k0jAkV3e/psZ
-	4tLAQGL2Ldi5fioZJKbp1XFkMKrtldwLnHM3kq7MTwvgsmq0G31h2m
-X-Google-Smtp-Source: AGHT+IF0zk1oUWx1cX2TrjwxiRfGz7OlqtiKsuQpEdmlJOBBFKKufGqeju6Ue4zxLppOIjOWOiCuwQ==
-X-Received: by 2002:a05:6000:230c:b0:429:d436:f142 with SMTP id ffacd0b85a97d-42aefb490ccmr237515f8f.57.1762456932207;
-        Thu, 06 Nov 2025 11:22:12 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b28asm764140f8f.6.2025.11.06.11.22.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 11:22:11 -0800 (PST)
-Date: Thu, 6 Nov 2025 19:22:10 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Chuck Lever <cel@kernel.org>
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, David Laight <David.Laight@ACULAB.COM>, Linux
- NFS Mailing List <linux-nfs@vger.kernel.org>, Linux List Kernel Mailing
- <linux-kernel@vger.kernel.org>, speedcracker@hotmail.com
-Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
- greater than high limit total_avail/scale_factor
-Message-ID: <20251106192210.1b6a3ca0@pumpkin>
-In-Reply-To: <37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>
-References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
-	<37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5959D34D4D4;
+	Thu,  6 Nov 2025 19:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762456949; cv=fail; b=blCl5ZpJousCqtpm8t/RqCRTtzciMQGfTMuyWSn8FfRO+RrCFu/uohNryBr1kAYYdLzD6Y4/7abdYLwAk0Ay+T7hlB9uyuVDd8wifDDd837c0pVx0wprf1igmfl3FAZ7ao2tepuEGMMkwJ3lKRtUINpXfGMyEd3N8tk1IqUr+FE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762456949; c=relaxed/simple;
+	bh=w+Pfkj/Jkj+M7PlpiAi8HRkuGxSptvvdPKoZ1wOMzIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=llhQovhPW3mrsVn5W+rOjpqNoZPKBcwkLCA0HNYKqnQLz1OM79kGlIA0TeVwLxVspRVZvqU072U9q5Fyvj/nQ5OS934e8T8xjcflo1dGYOWy7Ky2+WWf+11MBNe+lI9WRZSl2xLRb7wdR2Gk0fawS8ykUNia3B/hgPFC3zefGmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=R3+u57qU; arc=fail smtp.client-ip=40.107.159.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ewleQ6svnrdLI3cCM/mEa6k0jX5x1fU/+NZ+ZtTnzTE5UhE/xhPcgF3VY7iK2JYTAvb9m9Xh4OOP9NqCVfhvg9oUxzMa2MHyIbl0FuRoy1K9MdUT2UNXs+4fNyoZ618BDgZtF+yiC/11PiXcKho39pbC5OR3l8I39GQO4n62cC019sQViM+c9/D2WkwGueoLBG1pU8rU4S+dvtx43ALXWbm3dNC9RCiNQCRyhl3KTMlWAx8NXZJe4Xeqz4Wh2iMhRj1rr3HuUMItW1zjtRfLw09J3FBoKLzyHwHLMQojgfgYudHbYiVRYU2rNI8w+ypCg15bXBkrMBXNZ7IYXNDRfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ktrbxpOtMmlm9rGP/38C+L6coQdpnPpLgQ/9hMoRB0g=;
+ b=xxMAgMgIlUIdG6TvV3PhOm8tSPqbfk3KCYkT47ZSRwfSP4/nH6tQVqP10FeDx5dJWFKrIBV3y00dxmv2qeCMwGDBSVlAlOI7mmWTj3nT/jmcMrTU9mWXOk3epeG52QMJeuiYHl9DwUgL+nNbPd3SQMDTmFg8UjaTBCwm4J6WQtJImhPKVE23a6rhscXgU7h1QfV0rH/E74XQMG8LkWJN1MvZnMvujNQlhN6bLDrxeMYExlj0GWhJzu9gkB5/4Zf2XmE31UPpexn57zccN4qUHFrN6PXmEDB5TuJAxNMQCqidxV2eJZh6C6Ursk2UXQW3vAfg8iTNEtorI3vpf11nVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ktrbxpOtMmlm9rGP/38C+L6coQdpnPpLgQ/9hMoRB0g=;
+ b=R3+u57qUtgsS2HeMwiYg4bGYG51kB1r1JB3SLJy1NdpQF+nkIsVIyyPDhj125pWD1rdq0YyYOmIju27wgc3Jb+sNNBAmYd0cwEIW1tXEy1c54R+sQz/I+GaHmD3cCSMvXClbaWsBY8R+YErpRhYe6d5nRscaUHV9SxXxD0akdQSPBgi9iRXkuBCVQ1JXWTWg+qkRI7XOANDB09UkUiuNTdP0Q7jhx50U8tj20TgjduCSUKvJAG1203XHY1mHCi6OEAiXnqdMiCHK7U5FoxFYPnNAtUxHuydukHI/ngXr0dBuzeRQybBUHjeb1olIkPIP3v4MszM5tP1Ca2ZMHnwOoQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AM9PR04MB8825.eurprd04.prod.outlook.com (2603:10a6:20b:408::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 19:22:22 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
+ 19:22:20 +0000
+Date: Thu, 6 Nov 2025 14:22:10 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Support Opensource <support.opensource@diasemi.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Wensheng Wang <wenswang@yeah.net>,
+	Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	Vasileios Amoiridis <vassilisamir@gmail.com>,
+	Dixit Parmar <dixitparmar19@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: mfd: Convert dlg,da9052-i2c.txt to yaml
+ format
+Message-ID: <aQz1Yt9lk+roRq9z@lizhi-Precision-Tower-5810>
+References: <20251106013358.421809-1-Frank.Li@nxp.com>
+ <20251106-hull-petri-42878717ee85@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106-hull-petri-42878717ee85@spud>
+X-ClientProxiedBy: BY3PR05CA0005.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::10) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM9PR04MB8825:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4837a1b-9fd0-426c-b17a-08de1d69ce29
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?n7gl/LTtNlZSVSKKKlKVNlVaxynPhIau7yx72PJqItlNLpLTFrvZjGMKIohd?=
+ =?us-ascii?Q?gvKrQDVr6ysRGGt6A85Gys4BhfbImyEMV4XNgZrrOx3wfF/fMegM3cEyJDLC?=
+ =?us-ascii?Q?hmNRl7SUxiHtE3Q2gcjf7rTrWW749mrzuO3Erubqx5pclIY7I03Zir9cfbNH?=
+ =?us-ascii?Q?gz//taTbYZo18mEQJKTlifbLRg6e2BmcEMPdNhwegTnG7Cv77TzDAvGD6418?=
+ =?us-ascii?Q?BCHkFSY7gsTvAg80O2CxtVUIKfPLsnCsdyoUmRLVeTjlJJUXC98QhP6/dO/7?=
+ =?us-ascii?Q?MiAm2yKD1hV++EKinbFXW62AYs+J+ZvIfF7mJy4Qm9dLKJq9Ac8/9q06cqDt?=
+ =?us-ascii?Q?3daDVKFMRBryeXrQbnKTlerhKIwt+O4RGF6wGURtqgBFw3dpB1KWF78jlt1D?=
+ =?us-ascii?Q?lDsmbQFNl+cbI3LB5pNWnEUa4E0aINodzo0uur4vmzYFMW5As/bIjkRNgi2A?=
+ =?us-ascii?Q?XCLmVj/wXN/fe5bE+/ppDxMiobnnEjjsFWXYQ4xmakbqcZFm4nwnDfjWR63p?=
+ =?us-ascii?Q?WIOAcbCyzJwlSRd+ioBYKYnB/HpPfsjeSiz4gZDAve0H6jEAzdgQHTxkRiSR?=
+ =?us-ascii?Q?GOALLEnzjD3Hvo+UNStxTAySP6St5V6x99PBNiTSMUy5oIBZ0i7zHIqyT3qR?=
+ =?us-ascii?Q?XJiilKY3uTLX15hVxuzZLbfi/7qMQwa/P5Je24IdIfySP1tvoe6Yn/nvd4WM?=
+ =?us-ascii?Q?DGJp7zrCY6Ud6wyE682lhhCwx+PvmCFEGENRf6xBKbBDHiuEdPItZI67ZWli?=
+ =?us-ascii?Q?4sMmC+8QIeU/MX4Lq1gkob8q1foatFvupdWtedv8bIHN7d74baNlpmerOxiU?=
+ =?us-ascii?Q?5K3qcfhHxEtElnsU0/5mAPTJ6HUR8ldQdnkYQXLPKlg+HSQtuc19zmXGNtmi?=
+ =?us-ascii?Q?e/yMbe1PihRqGsFsuHdRxcWGHqmoUZPGt0P05rUs1DNSdkIQJx99LK7MgWF/?=
+ =?us-ascii?Q?bW6By1TAzjLdYYYG74IdfFnhCw9EzGlFY1mUmMyqvAY0rJZIRooGxrKX6kop?=
+ =?us-ascii?Q?AqsBl7RPeXd6qARokpqy+uFoOXmUvC+HFS/k5YAOPnAOU254eNoQuzpaGFJq?=
+ =?us-ascii?Q?pXVyzkvkJezOesQ5Yftw0qlBpkVYWL9fB0/MniQiexhv2fqMG8mqus79A/sB?=
+ =?us-ascii?Q?EUSubr8bRkOAzpGgupWcwvZAClmH2g21YPi0yS5tGUuzf89DJiJ1Xx8LMfsN?=
+ =?us-ascii?Q?R8eppsddlUUveVpj4ojA/tClw1imH57vvtJnPbhL/66AIRXJ7CqdKYNUkVOq?=
+ =?us-ascii?Q?HQbYTiUfVFdl96S0WSDAoLAkrVTdjRncv8Sy/0jWwJr+sBNbvKiR6IHlbm5o?=
+ =?us-ascii?Q?sz535wpKlKH8Du8wASlSMPBG6APuhdyWzwygJVoOdTFclhdwQJJ6HCHogJJ7?=
+ =?us-ascii?Q?qe2faHttKKTjcKpCjBk9j1X/rAa68zr6O9xvA/4PANpkyuC4N+Hxw10FHoDp?=
+ =?us-ascii?Q?5CNghd0zZDxqoCSbfZsJ8AhovjZrwd21h6YqGeqXdP9UFuByXJA3Mg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ip5xnCKZoYYvKNJI6LOSRaoX1DXnxTCiMB83BDiu3QvIva3/wJv7NMhVX2Tw?=
+ =?us-ascii?Q?5HZcgAfG3Q9Hc00jWJ41Wb6V6EGP5Chv7jdGFNKEYpOmhqAz488rireEXsbI?=
+ =?us-ascii?Q?hjMqO2Kkc4T6lSjfEYx+N9Oz0XtLFKS/NXu814LJUWe33UAk8t6Dpe1UjYXR?=
+ =?us-ascii?Q?iTmfMfn6TU7yId42kIT3sWKZDTrDHJjMbMLHohaErLT7OcIWvJx7cJC+NmQm?=
+ =?us-ascii?Q?Wi2AAbqzdiQPOIEMAOTNZYFXhzuJNFZUsDroxSbqtCPL9rb6CJnEpDcGL7tG?=
+ =?us-ascii?Q?f+lCJTHnaiD4YLzmavBNxOxgou/gi/zZn3rQe37iCczU7ofblkmfNSw2b6uC?=
+ =?us-ascii?Q?vl4F1rfguBxxQ/O1kLSrz0e4xOSsWOfHqa+6ZyCXj/fhLWS6s8mi9WGk054g?=
+ =?us-ascii?Q?8vwqAcsWxMdzSSlTtjjtXBmJcP8qWRTRLcoTCTNSj26KvOCbweg8py8J6YZU?=
+ =?us-ascii?Q?KbvFffjrrAeYvpjPGQKSvThwFUmFTl9fLPoh4Rs1Akw7Qgb1FN6da/UvktKS?=
+ =?us-ascii?Q?udPIQsundQj551f9TeL++8pXRTo8vqPScASqCoyWo+GroJNOEFE7f++9llly?=
+ =?us-ascii?Q?BjSe0LKPR84LJ0salMfiQ/WiDH85TiQxNSSrV3q3J0nhk/vUQJoymXZFoq1q?=
+ =?us-ascii?Q?/2DA2etGKeIUlatnZXD7n36YowJ4B/yt4LWB4Rif5LYoAD/DcDvoRkwamKcf?=
+ =?us-ascii?Q?w2kbuvEKkd1NSTgg0/jFRH7/yXQplwe6wVfKFnZ2NvtSd+15v4KurCFUaF8u?=
+ =?us-ascii?Q?8j8OI2padYGqnSAXUMkBqIsmTzMpj6PEk6EyAqnS0TyT9abVf9fNEfCOperJ?=
+ =?us-ascii?Q?1KpUYV4r/dLM4DGqZFuEzk+SgvnXNW1xHd4NRRk+zpidjfh+Atb44gFDLDTo?=
+ =?us-ascii?Q?xKtnJu85WTmeXehetJTVCY3bCD9BogIGSfbs2L/B8UblGO5oEAwQn/d4dIXR?=
+ =?us-ascii?Q?0eXwLjH5W0ZRb6tzklLXnimjLh5fdV4QrZ7YEZ4XSD4rUOjUVOnFxUHf13G5?=
+ =?us-ascii?Q?/PatVr6GFizYqcd2RLfyMxYAY27nWIqd8yawesNaIHb2cGgK4pfil8DTEhtO?=
+ =?us-ascii?Q?KNmRRlkjFfvxMVS8eSAmzGOxoFB+o1C+To3NlTRb7tBUSq3YfmkjZa4dhRQt?=
+ =?us-ascii?Q?EnkTnWWWrEBjD71jRBWcCnvVt/G0JT6C908AJjcljsRp2vYnvT8lTiUXn181?=
+ =?us-ascii?Q?itqXfmwzbAz9Y0cDF7yY5qHMtkxBAtDW4pcYK4ub5QsgkrCV0SJBBDlwwIem?=
+ =?us-ascii?Q?rDobNF7BLjxUog3u5ISgopDvNoWzDsgZ2EKa2qrX8Jucsf8NmrkKUjaJLafw?=
+ =?us-ascii?Q?TsYn/o8PFsM3baot6ecpeBHfLe66YGjgMPHsq2fO/cdfbrKN+ZIs+do/IN4t?=
+ =?us-ascii?Q?+IN6h8wvcBbt2mCXSJWcXkz6EadlrYXVQu1AeTqvKlJoM4YZkJIfPljIQuQA?=
+ =?us-ascii?Q?CQ9HXFszBF7QgpMDSuiWpQ8F7jZ/ceDoDab5rXTemYwC6ggjYHbnanxz0niX?=
+ =?us-ascii?Q?OEv5nWIWc4lCsoo+qe8ya9wwhRFy1l7r2IjbHcU+jIlN5a6NXnKAzwl0jhyM?=
+ =?us-ascii?Q?dN8APf4eAv9TeJfjikrB51QmZhUqcyaMrRn8Q8rG?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4837a1b-9fd0-426c-b17a-08de1d69ce29
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 19:22:20.7454
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rx2H8sNsHMvfXkUzHtyxeMfSPg02RmBKHkQGpN10DGkGOj525gGrrQqIQmeKsjL8/mDHam1WB8dETq5s8qf7mw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8825
 
-On Thu, 6 Nov 2025 09:33:28 -0500
-Chuck Lever <cel@kernel.org> wrote:
+On Thu, Nov 06, 2025 at 05:39:47PM +0000, Conor Dooley wrote:
+> On Wed, Nov 05, 2025 at 08:33:56PM -0500, Frank Li wrote:
+> > Convert dlg,da9052-i2c.txt to yaml format.
+> > Additional changes:
+> > - compatible string fallback to dlg,da9052 to align existing dts files.
+> > - Add interrupts property.
+> > - Add ref to /schemas/spi/spi-peripheral-props.yaml#
+> >
+> > Remove dlg,da9053 from trivial-devices.yaml.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  .../devicetree/bindings/mfd/da9052-i2c.txt    | 67 -------------
+> >  .../devicetree/bindings/mfd/dlg,da9052.yaml   | 93 +++++++++++++++++++
+> >  .../devicetree/bindings/trivial-devices.yaml  |  2 -
+> >  3 files changed, 93 insertions(+), 69 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/mfd/da9052-i2c.txt
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/dlg,da9052.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/da9052-i2c.txt b/Documentation/devicetree/bindings/mfd/da9052-i2c.txt
+> > deleted file mode 100644
+> > index 07c69c0c6624c..0000000000000
+> > --- a/Documentation/devicetree/bindings/mfd/da9052-i2c.txt
+> > +++ /dev/null
+> > @@ -1,67 +0,0 @@
+> > -* Dialog DA9052/53 Power Management Integrated Circuit (PMIC)
+> > -
+> > -Required properties:
+> > -- compatible : Should be "dlg,da9052", "dlg,da9053-aa",
+> > -			 "dlg,da9053-ab", or "dlg,da9053-bb"
+> > -
+> > -Optional properties:
+> > -- dlg,tsi-as-adc : Boolean, if set the X+, X-, Y+, Y- touchscreen
+> > -                    input lines are used as general purpose analogue
+> > -					input.
+> > -- tsiref-supply: Phandle to the regulator, which provides the reference
+> > -                 voltage for the TSIREF pin. Must be provided when the
+> > -			     touchscreen pins are used for ADC purposes.
+> > -
+> > -Sub-nodes:
+> > -- regulators : Contain the regulator nodes. The DA9052/53 regulators are
+> > -  bound using their names as listed below:
+> > -
+> > -    buck1     : regulator BUCK CORE
+> > -    buck2     : regulator BUCK PRO
+> > -    buck3     : regulator BUCK MEM
+> > -    buck4     : regulator BUCK PERI
+> > -    ldo1      : regulator LDO1
+> > -    ldo2      : regulator LDO2
+> > -    ldo3      : regulator LDO3
+> > -    ldo4      : regulator LDO4
+> > -    ldo5      : regulator LDO5
+> > -    ldo6      : regulator LDO6
+> > -    ldo7      : regulator LDO7
+> > -    ldo8      : regulator LDO8
+> > -    ldo9      : regulator LDO9
+> > -    ldo10     : regulator LDO10
+> > -
+> > -  The bindings details of individual regulator device can be found in:
+> > -  Documentation/devicetree/bindings/regulator/regulator.txt
+> > -
+> > -Examples:
+> > -
+> > -i2c@63fc8000 { /* I2C1 */
+> > -
+> > -	pmic: dialog@48 {
+> > -		compatible = "dlg,da9053-aa";
+> > -		reg = <0x48>;
+> > -
+> > -		regulators {
+> > -			buck1 {
+> > -				regulator-min-microvolt = <500000>;
+> > -				regulator-max-microvolt = <2075000>;
+> > -			};
+> > -
+> > -			buck2 {
+> > -				regulator-min-microvolt = <500000>;
+> > -				regulator-max-microvolt = <2075000>;
+> > -			};
+> > -
+> > -			buck3 {
+> > -				regulator-min-microvolt = <925000>;
+> > -				regulator-max-microvolt = <2500000>;
+> > -			};
+> > -
+> > -			buck4 {
+> > -				regulator-min-microvolt = <925000>;
+> > -				regulator-max-microvolt = <2500000>;
+> > -			};
+> > -		};
+> > -	};
+> > -};
+> > diff --git a/Documentation/devicetree/bindings/mfd/dlg,da9052.yaml b/Documentation/devicetree/bindings/mfd/dlg,da9052.yaml
+> > new file mode 100644
+> > index 0000000000000..4ecd498864e4e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/dlg,da9052.yaml
+> > @@ -0,0 +1,93 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/dlg,da9052.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Dialog DA9052/53 Power Management Integrated Circuit (PMIC)
+> > +
+> > +maintainers:
+> > +  - Frank Li <Frank.Li@nxp.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - dlg,da9053
+>
+> Should this actually exist? It was never in any drivers etc at all, and
+> as far as I can tell any users use the -XX suffixed ones. Probably this
+> is the only compatible that /should/ have been used, but it might be
+> pointless to add now.
 
-> FYI
-> 
-> https://bugzilla.kernel.org/show_bug.cgi?id=220745
+A old dts arch/arm/boot/dts/nxp/imx/imx53-smd.dts use "dlg,da9053", "dlg,da9052"
 
-Ugg - that code is horrid.
-It seems to have got deleted since, but it is:
+>
+> > +              - dlg,da9053-aa
+> > +              - dlg,da9053-ab
+> > +              - dlg,da9053-bb
+>
+> The driver also has a bc, I think that should be added.
+>
+> > +          - const: dlg,da9052
+>
+> Is this actually a correct fallback?
+> I know it is being used, but looking at the drivers I see things like:
+> 	/* Select the appropriate current limit range */
+> 	if (regulator->da9052->chip_id == DA9052)
+> 		row = 0;
+> 	else if (offset == 0)
+> 		row = 1;
+> in both the battery and regulator drivers.
+> Might actually be the devicetrees are wrong here?
 
-	u32 slotsize = slot_bytes(ca);
-	u32 num = ca->maxreqs;
-	unsigned long avail, total_avail;
-	unsigned int scale_factor;
+Ideally, not fallback to dlg,da9052, but need update old dts file to clean
+up warning.
 
-	spin_lock(&nfsd_drc_lock);
-	if (nfsd_drc_max_mem > nfsd_drc_mem_used)
-		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-	else
-		/* We have handed out more space than we chose in
-		 * set_max_drc() to allow.  That isn't really a
-		 * problem as long as that doesn't make us think we
-		 * have lots more due to integer overflow.
-		 */
-		total_avail = 0;
-	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
-	/*
-	 * Never use more than a fraction of the remaining memory,
-	 * unless it's the only way to give this client a slot.
-	 * The chosen fraction is either 1/8 or 1/number of threads,
-	 * whichever is smaller.  This ensures there are adequate
-	 * slots to support multiple clients per thread.
-	 * Give the client one slot even if that would require
-	 * over-allocation--it is better than failure.
-	 */
-	scale_factor = max_t(unsigned int, 8, nn->nfsd_serv->sv_nrthreads);
+If you prefer this way, I can remove fallback and update dts files.
 
-	avail = clamp_t(unsigned long, avail, slotsize,
-			total_avail/scale_factor);
-	num = min_t(int, num, avail / slotsize);
-	num = max_t(int, num, 1);
+>
+> > +      - enum:
+> > +          - dlg,da9052
+> > +          - dlg,da9053-aa # Just for match existed old platform
+>
+> Could you just change that one old platform using it?
 
-Lets rework it a bit...
-	if (nfsd_drc_max_mem > nfsd_drc_mem_used) {
-		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-		avail = min(NFSD_MAX_MEM_PER_SESSION, total_avail);
-		avail = clamp(avail, n + sizeof(xxx), total_avail/8)
-	} else {
-		total_avail = 0;
-		avail = 0;
-		avail = clamp(0, n + sizeof(xxx), 0);
-	}
+Yes
 
-Neither of those clamp() are sane at all - should be clamp(val, lo, hi)
-with 'lo <= hi' otherwise the result is dependant on the order of the
-comparisons.
-The compiler sees the second one and rightly bleats.
-I can't even guess what the code is actually trying to calculate!
+Frank
 
-Maybe looking at where the code came from, or the current version might help.
-
-It MIGHT be that the 'lo' of slotsize was an attempt to ensure that
-the following 'avail / slotsize' was as least one.
-Some software archaeology might show that the 'num = max(num, 1)' was added
-because the code above didn't work.
-In that case the clamp can be clamp(avail, 0, total_avail/scale_factor)
-which is just min(avail, total_avail/scale_factor).
-
-The person who rewrote it between 6.1 and 6.18 might now more.
-
-	David
-	
-> 
-> 
-> -------- Forwarded Message --------
-> Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit
-> slotsize greater than high limit total_avail/scale_factor
-> Date: Thu, 06 Nov 2025 07:29:25 -0500
-> From: Jeff Layton <jlayton@kernel.org>
-> To: Mike-SPC via Bugspray Bot <bugbot@kernel.org>, cel@kernel.org,
-> neilb@ownmail.net, trondmy@kernel.org, linux-nfs@vger.kernel.org,
-> anna@kernel.org, neilb@brown.name
-> 
-> On Thu, 2025-11-06 at 11:30 +0000, Mike-SPC via Bugspray Bot wrote:
-> > Mike-SPC writes via Kernel.org Bugzilla:
-> > 
-> > (In reply to Bugspray Bot from comment #5)  
-> > > Chuck Lever <cel@kernel.org> replies to comment #4:
-> > > 
-> > > On 11/5/25 7:25 AM, Mike-SPC via Bugspray Bot wrote:  
-> > > > Mike-SPC writes via Kernel.org Bugzilla:
-> > > >   
-> > > > > Have you found a 6.1.y kernel for which the build doesn't fail?  
-> > > > 
-> > > > Yes. Compiling Version 6.1.155 works without problems.
-> > > > Versions >= 6.1.156 aren't.  
-> > > 
-> > > My analysis yesterday suggests that, because the nfs4state.c code hasn't
-> > > changed, it's probably something elsewhere that introduced this problem.
-> > > As we can't reproduce the issue, can you use "git bisect" between
-> > > v6.1.155 and v6.1.156 to find the culprit commit?
-> > > 
-> > > (via https://msgid.link/ab235dbe-7949-4208-a21a-2cdd50347152@kernel.org)  
-> > 
-> > 
-> > Yes, your analysis is right (thanks for it).
-> > After some investigation, the issue appears to be caused by changes introduced in
-> > include/linux/minmax.h.
-> > 
-> > I verified this by replacing minmax.h in 6.1.156 with the version from 6.1.155,
-> > and the kernel then compiles successfully.
-> > 
-> > The relevant section in the 6.1.156 changelog (https://cdn.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.1.156) shows several modifications to minmax.h (notably around __clamp_once() and the use of
-> > BUILD_BUG_ON_MSG(statically_true(ulo > uhi), ...)), which seem to trigger a compile-time assertion when building NFSD.
-> > 
-> > Replacing the updated header with the previous one resolves the issue, so this appears
-> > to be a regression introduced by the new clamp() logic.
-> > 
-> > Could you please advise who is the right person or mailing list to report this issue to
-> > (minmax.h maintainers, kernel core, or stable tree)?
-> >   
-> 
-> I'd let all 3 know, and I'd include the author of the patches that you
-> suspect are the problem. They'll probably want to revise the one that's
-> a problem.
-> 
+> Otherwise, conversion looks okay to me.
+>
+> pw-bot: changes-requested
+>
 > Cheers,
+> Conor.
+>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  dlg,tsi-as-adc:
+> > +    type: boolean
+> > +    description:
+> > +      if set the X+, X-, Y+, Y- touchscreen input lines are used as general
+> > +      purpose analogue input.
+> > +
+> > +  tsiref-supply:
+> > +    description: The reference voltage for the TSIREF pin.
+> > +
+> > +  regulators:
+> > +    type: object
+> > +    additionalProperties: false
+> > +
+> > +    patternProperties:
+> > +      "^(ldo([1-9]|10)|buck[1-4])$":
+> > +        type: object
+> > +        $ref: /schemas/regulator/regulator.yaml#
+> > +        unevaluatedProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - regulators
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        pmic@48 {
+> > +            compatible = "dlg,da9053-aa";
+> > +            reg = <0x48>;
+> > +
+> > +            regulators {
+> > +                buck1 {
+> > +                    regulator-min-microvolt = <500000>;
+> > +                    regulator-max-microvolt = <2075000>;
+> > +                };
+> > +
+> > +                buck2 {
+> > +                    regulator-min-microvolt = <500000>;
+> > +                    regulator-max-microvolt = <2075000>;
+> > +                };
+> > +
+> > +                buck3 {
+> > +                    regulator-min-microvolt = <925000>;
+> > +                    regulator-max-microvolt = <2500000>;
+> > +                };
+> > +
+> > +                buck4 {
+> > +                    regulator-min-microvolt = <925000>;
+> > +                    regulator-max-microvolt = <2500000>;
+> > +                };
+> > +            };
+> > +        };
+> > +    };
+> > diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> > index 2eff6f274302a..17b72a8028e08 100644
+> > --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> > +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> > @@ -103,8 +103,6 @@ properties:
+> >            - dfrobot,sen0322
+> >              # DH electronics GmbH on-board CPLD trivial SPI device
+> >            - dh,dhcom-board
+> > -            # DA9053: flexible system level PMIC with multicore support
+> > -          - dlg,da9053
+> >              # DMARD05: 3-axis I2C Accelerometer
+> >            - domintech,dmard05
+> >              # DMARD06: 3-axis I2C Accelerometer
+> > --
+> > 2.34.1
+> >
+
 
 
