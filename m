@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-887831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2654C392F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:43:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C64C392FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5A41892D0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:44:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFF73B7935
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC082D8DAF;
-	Thu,  6 Nov 2025 05:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D462D5944;
+	Thu,  6 Nov 2025 05:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="diBtKmOO"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="jwMybd2v"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696A31DA0E1;
-	Thu,  6 Nov 2025 05:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179E91D88B4
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762407807; cv=none; b=JciO2/tggxWrxoVT7IrP9bk+rGLPAvelu56CC0TeD1WbmWEwTJAfts+JVaXIBJy3/YOI4jucjr3JWz2h/qF1vhE1MeLxNtsgHxcdXTLwaVWo+urh4uB88LD9w7MFV7Ly8oklvkUuv7WGMWJMPt2e4e+qWkoQdXNeRefCs4rDDdQ=
+	t=1762408085; cv=none; b=ftzCUoJ7NJeYBXaU5NbqZuHvj0lM2yYwex752mKQApx7VaUAt5RUhneTYnU2q7vDL8/mR56qfioIBz01JTNrVUmyhXy8RilRAjKdJGOBfUQf3gBguRaLEHK2Ppkm7/a24j1thEQTUCwZEiA5EAokEyv6zzfqMegfjRQz6ldeteg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762407807; c=relaxed/simple;
-	bh=IRz8h562wSyhlKiLkotdbe1JRyxWwbByQXFrXoKtXAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XjMwOu7mjJWOecXGHvhl8OpzD/f9hVWhT5565Ry3zHTyaupUBZ+kjBZLzuWhRPpI/08jaBONe47H3tFQ+fxdXb+P81PByp8+IJ/k0siXynMmVOLZI3Gwwt+S2x6N8e/Vbekqh6H+2CQ7pGvxXKPdNTRtWZ8/e/KgX+fD0aFFzsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=diBtKmOO; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=tnuTdmyZf/K5fOvBdjRN3vDsCs15r8xoQKwyX1lPsGs=; b=diBtKmOOQnA2iUnAtwXQpCu7IE
-	1yeRcIQ/Qb5+8QBcZw+4os9zQwX4IhkOaWUnSY74z9ncyw7qss1DMC0v0IR8aXwVAgH/RZ5JN4XEE
-	JNaxvCvBfBDFnJpXKBITGH8IQHFY1mG8xPBZg/B2YqKHWAac7vFBY3zz+ZeWH68X5dIDb76M6mIFu
-	6JNKErCROqoYYl1GzbyazpsDYBMBTiB6NmPIf/VPXLbPnM3CnV/xJ+D5Uv1NxFnJpS5jsOMmUczv4
-	HIYh8Sj5VD0KE0dOMEhAL+Lnjnyo49VVEF48CJq7y7GgvihRhuUXYzUv5lhoATU0YMIsWUGXLtnti
-	a/8ifdMQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vGsmH-0000000EtlV-3DmJ;
-	Thu, 06 Nov 2025 05:43:21 +0000
-Message-ID: <41d848b0-58e9-4fed-8efa-d24ab5d30221@infradead.org>
-Date: Wed, 5 Nov 2025 21:43:19 -0800
+	s=arc-20240116; t=1762408085; c=relaxed/simple;
+	bh=8XRNkDGcev4wjXeN5rtSeb2UjJZSMlpIuFc4FifvGkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yw2sEMP2GHHyRb6kABCS+YakBERYGeS+PFXmyAPSI8Zb4ANcQ2Rb0jpn1vGbWegPBv3ewmSuMN0CvQn+mPc/ZjsyDa17SObV/mzikAGExV4HVpEiuL4dvy2+PoLuNFvDWvnF+WVL45wa3X74fnSvAO+SfXLHlAL/kqOMMzCx5Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=jwMybd2v; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-433261f2045so4921855ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 21:48:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1762408083; x=1763012883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3uoew2SarmiylnjDmk3L9GFoWwHK51enAJRQNH2IHjc=;
+        b=jwMybd2vspIS0ixUv3Vji9As6RoIfO1BG8XcrHsra78OiMmKRs9+XZlyJhcpGjHtHZ
+         CiiRoFnrBAtxS1+vxsfzyp2fWM4XudwlvK5fnbsBk8QrH2oyoFxot17LbLQw0QJ6BgVa
+         WDZQfdUA69kP8YnaWCDx8kLtz6vW6FsDJgTOk/h030PMWqPnYFt6vJEMCQfgOct7aXbe
+         EomTu4ruux8PhFNHcNc5bNH6nyVcJVOcIs7Q/JW1UsYZGnGmMXsn/xMJ0hBicLdgGLTo
+         CcP1C9+DH4wYOWnXd57nBwt/+svRR205yDq9z76DLHoNV3MaO1LD5UvW11ZXwB4mseJK
+         3ejg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762408083; x=1763012883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3uoew2SarmiylnjDmk3L9GFoWwHK51enAJRQNH2IHjc=;
+        b=Lf+tFSBXk2y6z2QPRawCMzRTzHofRGK9qRCUkqg3UwLkcIxPhqK7yhC/EmumQTTwjW
+         u6eKwXxCxSrbvVgPBSqi5ErTWDgoraE995CCc47FBF3IcvNBtjioBV4fWMJzXqlNt5v3
+         3LmIcBHHEQHxXOP7+agBWkrq/a+nkwrarDIDK7ADtcE+8fh7jEgdIjQ5F0Xhzfp30Zvo
+         2Pvb2wJV52YOTSv1+Lc6sxmx0dmm1sPvfOMq1s6uDFefYgbgLqnLePqgmKEcWNqUmnw0
+         z9cQOM2EtEsppwMV9sQa5TBvt0iefvsBUbbKcOKrx6VVRdMMYnu7gy1/vB/F1zZVKnTW
+         R4TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRrquIHlL16sdeBFqVC0GLnvZYlIqW3OLTaDAkbQLAkj40Y15fMg96qB/Ov/3bxvMrUc4FPlLouLJ71Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo0sYrf23OogvUr4CE1E6jo1L0jwg68hWPeybNSi6Q7Q0sKkkW
+	gThkRxmyM4JGeEuEsQS1FjUDGhcO5Vb/wvnhtdN/M7mlCBBmsqQ2J7lXHs4AyhBrw0r7r0DHek0
+	VEZ43RzJL2KiM2p+HGXE+15Iisxy3eOEmmwgncTxR3Q==
+X-Gm-Gg: ASbGnct6yCr8dK0gRWK0teTVcnhRiEBmEVJD8mfHzixV5AdzfoIVDz0OUwgw+LaX5G7
+	wgs9sXGqvHR1TKjsqc9y4d3dkkYJh/MnUaDVxbXTdl2uR2tCrswcVxum3DmvNGxIcJeOLSGfE2Z
+	HT7BZiwbRw8aSphMFG5M4rDkhJsl/kYcUQS8rtmesXrTMQKqruukthgyGeOKEClxUQRWWZE/IeK
+	RWHzB9dPdojVyrxb6KFvDrL15K/crvcdsWq16aeG289296LlRNxF6WDqYmBNQ==
+X-Google-Smtp-Source: AGHT+IFbNEYpDbiUd8mOqCap1mJWhYJV/tTSDvIy+00/QF2eXniMKHHbQXm4twuBcloi6qoxWYJp8gwaXR8SH9byI/k=
+X-Received: by 2002:a05:6e02:240b:b0:433:23f0:1ebf with SMTP id
+ e9e14a558f8ab-43340779d13mr96165935ab.9.1762408083096; Wed, 05 Nov 2025
+ 21:48:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the libcrypto tree
-To: Eric Biggers <ebiggers@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Ard Biesheuvel <ardb@kernel.org>,
- David Howells <dhowells@redhat.com>,
- Linux Crypto List <linux-crypto@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20251106143623.06b23d57@canb.auug.org.au>
- <20251106035521.GA1650@sol>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251106035521.GA1650@sol>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250923053851.32863-1-xiangwencheng@lanxincomputing.com>
+In-Reply-To: <20250923053851.32863-1-xiangwencheng@lanxincomputing.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 6 Nov 2025 11:17:51 +0530
+X-Gm-Features: AWmQ_bllfHXAxLhpsO6n51JY0CLvNreW7JWG-sL9GnCN1uB2qpTsPmrk7YdRxzE
+Message-ID: <CAAhSdy0OSCxo2oPYEhWjUJbOfx3HJ7Ak4KoVv4fi3ukKm6dRCg@mail.gmail.com>
+Subject: Re: [PATCH v2] RISC-V: KVM: Introduce KVM_EXIT_FAIL_ENTRY_NO_VSFILE
+To: BillXiang <xiangwencheng@lanxincomputing.com>
+Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, atish.patra@linux.dev, ajones@ventanamicro.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 23, 2025 at 11:09=E2=80=AFAM BillXiang
+<xiangwencheng@lanxincomputing.com> wrote:
+>
+> Currently, we return CSR_HSTATUS as hardware_entry_failure_reason when
+> kvm_riscv_aia_alloc_hgei failed in KVM_DEV_RISCV_AIA_MODE_HWACCEL
+> mode, which is vague so it is better to return a well defined value
+> KVM_EXIT_FAIL_ENTRY_NO_VSFILE provided via uapi/asm/kvm.h.
+>
+> Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
 
+LGTM.
 
-On 11/5/25 7:55 PM, Eric Biggers wrote:
-> On Thu, Nov 06, 2025 at 02:36:23PM +1100, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the libcrypto tree, today's linux-next build (htmldocs)
->> produced this warning:
->>
->> WARNING: /home/sfr/kernels/next/next/include/crypto/sha3.h:74 This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
->>  * Zeroize a sha3_ctx.  This is already called by sha3_final().  Call this
->>
->> Introduced by commit
->>
->>   58873ecf091b ("lib/crypto: sha3: Add SHA-3 support")
-> 
-> Thanks.  Do you know if there's an easy way to find these ahead of time?
-> I usually run './scripts/kernel-doc -v -none ${filename}' to catch
-> kerneldoc issues.  I did run it on include/crypto/sha3.h, but for some
-> reason it doesn't detect this issue.
-> 
-> 'make htmldocs' doesn't find it either, but does generate a bunch of
-> unrelated warnings.  I may be missing an option to make it even more
-> verbose.  Either way, it's also slow to run.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-Try -Wall, although it may give you more warnings than you care to know about.
-You can separately enable these (which are set by -Wall):
+Queued this for Linux-6.19
 
-There are also:
-  -Wreturn, --wreturn   Warns about the lack of a return markup on functions.
-  -Wshort-desc, -Wshort-description, --wshort-desc
-                        Warns if initial short description is missing
+Thanks,
+Anup
 
-I don't get anything useful from -v unless I am debugging the script.
-
--- 
-~Randy
-
+> ---
+>  arch/riscv/include/uapi/asm/kvm.h | 2 ++
+>  arch/riscv/kvm/aia_imsic.c        | 2 +-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
+asm/kvm.h
+> index ef27d4289da1..068d4d9cff7b 100644
+> --- a/arch/riscv/include/uapi/asm/kvm.h
+> +++ b/arch/riscv/include/uapi/asm/kvm.h
+> @@ -23,6 +23,8 @@
+>  #define KVM_INTERRUPT_SET      -1U
+>  #define KVM_INTERRUPT_UNSET    -2U
+>
+> +#define KVM_EXIT_FAIL_ENTRY_NO_VSFILE  (1ULL << 0)
+> +
+>  /* for KVM_GET_REGS and KVM_SET_REGS */
+>  struct kvm_regs {
+>  };
+> diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
+> index fda0346f0ea1..937963fb46c5 100644
+> --- a/arch/riscv/kvm/aia_imsic.c
+> +++ b/arch/riscv/kvm/aia_imsic.c
+> @@ -802,7 +802,7 @@ int kvm_riscv_vcpu_aia_imsic_update(struct kvm_vcpu *=
+vcpu)
+>                 /* For HW acceleration mode, we can't continue */
+>                 if (kvm->arch.aia.mode =3D=3D KVM_DEV_RISCV_AIA_MODE_HWAC=
+CEL) {
+>                         run->fail_entry.hardware_entry_failure_reason =3D
+> -                                                               CSR_HSTAT=
+US;
+> +                                                               KVM_EXIT_=
+FAIL_ENTRY_NO_VSFILE;
+>                         run->fail_entry.cpu =3D vcpu->cpu;
+>                         run->exit_reason =3D KVM_EXIT_FAIL_ENTRY;
+>                         return 0;
+> --
+> 2.43.0
 
