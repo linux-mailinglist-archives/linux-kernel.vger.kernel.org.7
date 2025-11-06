@@ -1,86 +1,92 @@
-Return-Path: <linux-kernel+bounces-889116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0169BC3CC29
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:15:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6825C3CC32
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF0494E6988
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:09:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 97A2F4EDEFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507B434DB54;
-	Thu,  6 Nov 2025 17:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7Gwrhbt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9834134D928;
+	Thu,  6 Nov 2025 17:10:19 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16A432D0E3;
-	Thu,  6 Nov 2025 17:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3C3242D84;
+	Thu,  6 Nov 2025 17:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448977; cv=none; b=OzpZ4tO9Ny0wjvYzb6R6zyst1094q4ibZBsSrqHnZfTdMHsUl+I71Xw8HvQ3sgMtimoDJ/9SDS7LY8eNrCJKWCQQNDnH3Gi6AV91QApg8hkfXRT83LIAB7REsU/aDIDZxlZOoWsLyiTI4Ie77tTtUygdaG4hLfFvmp1/OkmNlgU=
+	t=1762449019; cv=none; b=KpzoCrEut02460JsGDRWUDqxQ91q54616P0e0NwYzGqNi1V7UdKpbrOvN5jbLrtOGiGZ6S59HQfAxxc4kDW11LOCR1DfS+xhTjQLcsqBuLmPSqEeSeiQ3wNemMi2eB6CaFWGkmy2AW0UQo9ekYdI8XzgfipkjnzDr7RU7lbo8oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448977; c=relaxed/simple;
-	bh=n3rKBJFqHLj8j8SKcpaSVVC9o3fpjgUcWalYVNmrkJ0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=I3xzoR03wMLsjyokjiG2j0J3NzCYXHvblXFfXP19rkZfKHRqjCUxy54CWTkCeR+SFsfNn+9U13IpZLB/cZOuUBluSDYOOcZnpA9v2ub/oyMT9egRoahXLG+YAKva63HFZBy7lTb+Z4kOObZirm7AeTvZyzpH0f2qmGtubYTecUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7Gwrhbt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42566C116B1;
-	Thu,  6 Nov 2025 17:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762448977;
-	bh=n3rKBJFqHLj8j8SKcpaSVVC9o3fpjgUcWalYVNmrkJ0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=H7GwrhbtKhfAPbNhENaSpfpBIv7liICagz7GfXKpZCviP+uAVhmTl+Tqfr0euERgf
-	 8E6s9n3mPbrBQaYYeX///+24h+zUZrK5su9Xfc2upHJesnfxrC5kFOkn4dtVuDtnvX
-	 0FNIGAGMJAQrZv4ovenYy2kSGlcAwUve1mvn9fAMn29U2LYJYMwEjVfRb/dl+k2PUz
-	 iw4su63D65sKYpz+SXYHo0MX9nwd6+HTgRCdt3BJmY7MILnHxyku1OX2+g5gFDLff9
-	 4UK5Tozsc0qqO6E+/tp6tDNKNBc1/cKrQaRbWSAFswZKEVK3N7iJZED1gZNsayaQun
-	 Pl2BguQu1MtJw==
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nicolas Schier <nsc@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Cc: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>, 
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>, 
- Samir M <samir@linux.ibm.com>, 
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <20251105-kbuild-fix-builtin-modinfo-for-kmod-v1-1-b419d8ad4606@kernel.org>
-References: <20251105-kbuild-fix-builtin-modinfo-for-kmod-v1-1-b419d8ad4606@kernel.org>
-Subject: Re: [PATCH] kbuild: Strip trailing padding bytes from
- modules.builtin.modinfo
-Message-Id: <176244897498.1698854.1509769597718225621.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 10:09:34 -0700
+	s=arc-20240116; t=1762449019; c=relaxed/simple;
+	bh=5ucxmab8Lnmq1UWSzk6BYjvOan85ga1kRoY9hCZvgTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S8vtTtm/7eZb5WgEfcT3/ZFmRHMFCm8gqUZ/isi0SK/RWuIMGEnxZqRTDur1H1UbslpfCDWuU8zj0ZYpRU8uY4fihsZU3swWk4vtOWKx7gZFVXdorldq4iV0YDo7pPnIMB1loKiBTuhmz21OvBBgZao93qj4qnIv5sud3CVLG2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 6BD19535C5;
+	Thu,  6 Nov 2025 17:10:08 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 76FB020029;
+	Thu,  6 Nov 2025 17:10:06 +0000 (UTC)
+Date: Thu, 6 Nov 2025 12:10:05 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
+ Siewior <bigeasy@linutronix.de>, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
+ __DO_TRACE_CALL() with SRCU-fast
+Message-ID: <20251106121005.76087677@gandalf.local.home>
+In-Reply-To: <522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+	<20251105203216.2701005-10-paulmck@kernel.org>
+	<20251106110230.08e877ff@batman.local.home>
+	<522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
+X-Rspamd-Queue-Id: 76FB020029
+X-Stat-Signature: g9ewkjshygs6urjbmnzwhwe413z4pszx
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19lvO1dk902l+gpXe7PJIH/wgh8D4MBBBI=
+X-HE-Tag: 1762449006-740227
+X-HE-Meta: U2FsdGVkX195THmePf1i2pCYkYQF/PnTwlzGgMWbfGrHan8pKMbnvuQeaBh6mU2eSLIL0ZV1fgCFYt9ainwuzOgvvvpplR9QX85CjoZY609kzMbskj3jq7OeFdzSlOwHUSONfwHe2caR8qAyEIQrc46kskBfu2RKN8R/bxIGIL+dicleTaPuU/Cp/bAvjCEjVRfoqZkY25NVT7aiRX+Bwo+nHsx3Z56IGLptAf40JYyenFgtVSbqYXpyYMjzi1UQ56Jc9PBvJHiSBYR4I9ADSFtKI+pS5npU9hWNXL77gYuvOMMt9Ie2BYLVTNzKDHyH6qTqIdqxA+ws6MXguvZ1w627PipE42cI
 
+On Thu, 6 Nov 2025 09:01:30 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-On Wed, 05 Nov 2025 15:30:27 -0700, Nathan Chancellor wrote:
-> After commit d50f21091358 ("kbuild: align modinfo section for Secureboot
-> Authenticode EDK2 compat"), running modules_install with certain
-> versions of kmod (such as 29.1 in Ubuntu Jammy) in certain
-> configurations may fail with:
+> On Thu, Nov 06, 2025 at 11:02:30AM -0500, Steven Rostedt wrote:
+> > On Wed,  5 Nov 2025 12:32:10 -0800
+> > "Paul E. McKenney" <paulmck@kernel.org> wrote:  
+> > > 
+> > > The current commit can be thought of as an approximate revert of that
+> > > commit, with some compensating additions of preemption disabling pointed
+> > > out by Steven Rostedt (thank you, Steven!).  This preemption disabling  
+> >   
+> > > uses guard(preempt_notrace)(), and while in the area a couple of other
+> > > use cases were also converted to guards.  
+> > 
+> > Actually, please don't do any conversions. That code is unrelated to
+> > this work and I may be touching it. I don't need unneeded conflicts.  
 > 
->   depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname prefix
-> 
-> [...]
+> OK, thank you for letting me know.  Should I set up for the merge window
+> after this coming one (of course applying your feedback below), or will
+> you be making this safe for PREEMPT_RT as part of your work?
 
-Applied, thanks!
+Just don't convert the open coded preempt_disable() to a guard(). That's
+the code I plan on touching. The rest is fine (with my suggestions ;-)
 
-[1/1] kbuild: Strip trailing padding bytes from modules.builtin.modinfo
-      https://git.kernel.org/kbuild/c/a26a6c93edfee
-
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+-- Steve
 
