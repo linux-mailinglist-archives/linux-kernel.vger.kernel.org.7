@@ -1,141 +1,122 @@
-Return-Path: <linux-kernel+bounces-887888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84971C394EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:58:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585ECC39500
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:00:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89AE64E29E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62844189B642
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3577926E143;
-	Thu,  6 Nov 2025 06:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0FF284686;
+	Thu,  6 Nov 2025 07:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hymehJ8d"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="jHmmCysV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FqbMGEzp"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37674264619
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059BD26E143;
+	Thu,  6 Nov 2025 07:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762412300; cv=none; b=AAmqAcKrvmJlQgj141E8yDO2q30IOQmfta+ERoUJkUxwagOFIrkbo3OXLpGYmdfAiK209imKfHjTakyIcGP0ze4ultSk1VkDFfJlKu3W690MIJ7huZOj9XDBxAzwP3NFliob1LZwUxJZH+mFbFP4wT6zJpEN7NUVXurNrY1oGd0=
+	t=1762412434; cv=none; b=A9bjV6rafV3YC47GhZtTHQ0DdEr0YNbhOqThzzjQq8r23cyfUnha6C652F1UmfDxpB5hqzyO0VM8X99SXGGoRV+x+fmutg/VqIbPc/0dc1Pxta71YK64ti7pZyZPaix6d8+EFdmPwUDKftKvq64PAxFnUSgvjwXTuutaiG8GVek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762412300; c=relaxed/simple;
-	bh=3USn+kAKMYwPb5j0sZCxRjClOwX15xPhtud3sUz3LSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pxmK+hNevsZwk43neFTMOwvI03noslhCBZTfMjWasonvUCoC8itt0Vlp9Kc6Q+md0uQNt8/ITFVJ8UhnES9ghV0wiSEEcAjLkyV6U1excZQRb5ck93LvNAXVaoO506svvYSklb0NVM3toHzAMQ9+xYyNoQbPQP+GL+JkfDltwM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hymehJ8d; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-340bb45e37cso109217a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 22:58:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762412298; x=1763017098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QkT3tsOZsMZ2+dYyU7EN69OYqrA2oFR+3YWlk36uRQo=;
-        b=hymehJ8dpblQda1a2LtR7j75brDh4th8OHJceoKb3SDzOW2NmIXcrOXxDyyDXe6b3O
-         6Q0HjEAY4jIcXt1RkyaQLRA/Msvt/KghIBKx8nl+/noxkTdY7TMeL9qxUy6V8AHOXJpO
-         LUJxD5zHq7WIVjF9TkoHi2CF1gJBT6gkLzQJikh8jHofEhDSyfVkhvlo53JmbA47rynt
-         /pkPLBVZC4BGe7DXo+DQzuKIFkCloZ5W8QIDMnZpdePR/CO1x3Ap5yjlnPBTjxZHeHkx
-         AUSwKZGt3L85kK/B7OQL4dkHzOStjuf45LCxxGNIOafXaUzX4rvvYXdfdNdMubCMwPT0
-         /Flw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762412298; x=1763017098;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QkT3tsOZsMZ2+dYyU7EN69OYqrA2oFR+3YWlk36uRQo=;
-        b=XhcHEz1xmJsumzsj/d573a0dIsYk+Yg7m1bAxrSnx4xQ79OkAqhjDE+oMVfaMjDW9w
-         n+bDuT27fquMcqmyRB+yoWlDMP29slBh1ZYnTSkfVp6ZtEO/3FfYkYGPXYkM0G6T7x6U
-         yWIjythx82PBzveQMW3cJKepGG/y+xMHo3OltpB/PfAy1G7LMZ/nADVNvAnWk0KnCkGY
-         0grgoi5NSOeNl2Xw3v+zxo/Ks3aDSnVWdyjgjUzRzPJs0tglSJLoCmwLESdt1Zv+AOty
-         /SGXvbRBrpu0FRZrO8fLxL1nUvN+1LWmV8iwPLUWljswkXGnQ3UpqFHV0kpI7N2JAlJg
-         SjkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaVV+Qbx4rchIHypJ/1/r04jEhSFXK3wsSHIJ7L3wMDPu0Vh+s3iB24aIOw/O370p2A9FqB0Cb7zXTR7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybMeWScnR7WDS1ltqwdSZO1hQ7KwxTNXX6xNaAd6E3nJk4oSSG
-	257Nf89sU2IEDpSxIdJ74LsWAJV14wqWEqbrdgIesnP0zWRaqMxe9QNM
-X-Gm-Gg: ASbGnctD7kmi/DJ1MTGB5LtKl1iwpgzFPxpShfnU1pPgwm2qxetZAs+bE5/STuHzKCe
-	RKCthp0AP+3lFzhbP3GaTSdTXhNGlZ3E2j50XgFcIzSggqLfJjrwuOCgYergNpUmtZXr6KT/NHi
-	DI2IVxO0JG5MOHH7aLJ/qDn/Dp6xHHRXKowaZvmfJU2qXP67cPZRZYSll8EFJLxBSkcXa282F1F
-	1cOii/2lK06ncq2H9jdG3wTFKczFxnbjO96cAUf9gWBAMoqhZ02Pw6qfcxFHUzA4M3eBRD9VmmU
-	LUWFTzIICeVbflYWSXVk/G6+l+3lrRhDT85HgDHTNtwFnSOGw/I28T2M64dBi2iOeRch+Vw0Q5Z
-	2AzsQvFoLYdP9zg8b6h4QgHQZsIU6wq0KHkgcXDt0tsf3UshD8veTnvD8HoIG0d3yz6QqaQ4bGo
-	U66kFowcOONHkMV8IUkc+1o0r+tyUWS0Lb0Oqb9nd+81zw2OsxbMMFJvWrxjzKK30GX+Nx8yvs
-X-Google-Smtp-Source: AGHT+IErOrBaCNdpSi7aBofzbjzItcvk/RGTQTtnd70szwBznVi23Y1OUlurbOHADjEnQEG0jggTrw==
-X-Received: by 2002:a17:90b:1e0f:b0:341:abd4:b9f5 with SMTP id 98e67ed59e1d1-341abd4c08emr4244793a91.6.1762412298444;
-        Wed, 05 Nov 2025 22:58:18 -0800 (PST)
-Received: from poi.localdomain (KD118158218050.ppp-bb.dion.ne.jp. [118.158.218.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d3e0b0b2sm702504a91.21.2025.11.05.22.58.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 22:58:17 -0800 (PST)
-From: Qianchang Zhao <pioooooooooip@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	linux-cifs@vger.kernel.org
-Cc: Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Qianchang Zhao <pioooooooooip@gmail.com>,
-	Zhitong Liu <liuzhitong1993@gmail.com>
-Subject: [PATCH v2] ksmbd: clear 'encrypted' on encrypt_resp() failure to send plaintext error
-Date: Thu,  6 Nov 2025 15:58:04 +0900
-Message-Id: <20251106065804.363242-1-pioooooooooip@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251104141214.345175-1-pioooooooooip@gmail.com>
-References: <20251104141214.345175-1-pioooooooooip@gmail.com>
+	s=arc-20240116; t=1762412434; c=relaxed/simple;
+	bh=pKiWkDv6VADt7bq/kISjURvOA8sX2B4Nz9WreXI6EMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hF4hk2x/BG1Vanx4gI8RUnUsO0InmAG2fjQutduSlE1j5wWSx61y7KWPl8DeEP9i5At+LQNt0B5e6Q8ug1mhdhQUPir7ObFghjtto1fKtzgIM1rteVjxcIxxW9gwrAqhSsNatRyru0Z43sIt5n+WBwyS7DGWDS8I1pc/+8f5X34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=jHmmCysV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FqbMGEzp; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C6C007A0128;
+	Thu,  6 Nov 2025 02:00:30 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 06 Nov 2025 02:00:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1762412430;
+	 x=1762498830; bh=GwRElYD2FSG7uhsv4FneILWkGowEuJCdg6lJXamnFqE=; b=
+	jHmmCysV1QogYOpqU7/yXaI5SlXEvxNho/JEoISCt1jjhcKsYX0RQXLJnNwxnThM
+	zNr5dPCi/uTumjuegBjP7NI5//mzGT9b27/DZpplogyP4sjqj6D4CCKHgtcsKxMo
+	Utcd1SVV50oqMQLo+hkny9nwA/nAzsOsauX9DXgDWTss72yNmMDYSUd7pOsHG4Xz
+	wvVbdKIcLBgqOG7f2FhBmxiLfBch33dVY0agG02AdJWjFCNi8pky54k7Cfnit6OO
+	6zMIgdHE10IJRsSsn+BKuQYg7B9yyh0Dh9Z87/g2fJtP8Q+tkA2RYXULaEz3MTON
+	ueac46Z2TMJZrJ8znTtYvA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762412430; x=
+	1762498830; bh=GwRElYD2FSG7uhsv4FneILWkGowEuJCdg6lJXamnFqE=; b=F
+	qbMGEzpwJZy84Blxz5SiMpo7KNJ0vIpdp+jPo9O1vjBJXSaHw/nmW1qrpi675EvJ
+	7juVrE9MllcGJ/TsX39sq0K25ril41q9UfVTpWi521ErzsiAkE8DF76i1DiZtNX2
+	6iVAbnOOs2fBqyGsxolYVNuWh6rRF7l7vWuEGYBYDQi3oKjfgwMbpwXaT7XNFaWs
+	ZC+LD3YDbGfxF8A3Yz5Jn4SILX3SjbFOcWcmXVhmzgl75n7VQqnEofawpidyF2cX
+	KcCwy5BooQJe0eyski89QzYkrwyJTZFtelyRtyI5+Kj9rbOmH7/9vo5NyVXF+Eav
+	CuEySACMEsXqMTFvL7yog==
+X-ME-Sender: <xms:jUcMafVVhlwMJoD3Xjp_CKkfKs6yQseRR_jJBMkfx7n4PV9wf3taNg>
+    <xme:jUcMaYBt6turtNCE1ff6hjjB2mJ9LSMqlkvEP9iuE1Z9oOHM2VcvkoTpLyxt_VyPA
+    LevsdoibNCdCeqHfxWLGPqp5i566vCSHULMsXW8kNEyZh6y>
+X-ME-Received: <xmr:jUcMacGbOPywTWtnn1KYpvnQCLx6zpaIOnPX4cU0x0jAjNm0sUmEaLtr_nhU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeiudefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtugfgjgesthekre
+    dttddtjeenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheq
+    necuggftrfgrthhtvghrnhepgfekffeifeeiveekleetjedvtedvtdeludfgvdfhteejje
+    eiudeltdefffefvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeekpdhmoh
+    guvgepshhmthhpohhuthdprhgtphhtthhopehludiirghoseiijhhurdgvughurdgtnhdp
+    rhgtphhtthhopehsvggtuhhrihhthieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqvgigthegsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:jUcMaR6ewatpE_vovAEOs3Qryb8c2GzsQbeG3W3YMeCUC4dWblHZJw>
+    <xmx:jUcMaal_zVCxJgApyTQIJgCy8b3kDlJ3v47qrHwVverUkKFQxHctYQ>
+    <xmx:jUcMaU4ycnYRlD0rEvG3Huw51qBnQEFNhuEJNXPlFIvP4Gum5OBK5A>
+    <xmx:jUcMaTRX12fydXc8_odmkqh94WKLd88crt3XTBDjRecUROwhfiU8Fw>
+    <xmx:jkcMaZ5r1e0CCHWt0EIvWAipFKzxFKZ_6jLw2hQq5xzkt_jB-Nmz09fr>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Nov 2025 02:00:28 -0500 (EST)
+Date: Thu, 6 Nov 2025 16:00:25 +0900
+From: Greg KH <greg@kroah.com>
+To: =?utf-8?B?56ug5oC/6LS6?= <l1zao@zju.edu.cn>
+Cc: security@kernel.org, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [SECURITY] ext4: KASAN use-after-free and Oops in
+ ext4_xattr_set_entry with crafted ext4 image
+Message-ID: <2025110632-fondue-chewer-2e20@gregkh>
+References: <dd5c923.1fc4a.19a5475534a.Coremail.l1zao@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <dd5c923.1fc4a.19a5475534a.Coremail.l1zao@zju.edu.cn>
 
-When encrypt_resp() fails in the send path, we set STATUS_DATA_ERROR but
-leave work->encrypted true. The send path then still assumes a valid
-transform buffer and tries to build/send an encrypted reply.
+On Wed, Nov 05, 2025 at 10:39:26PM +0800, 章怿贺 wrote:
+> A local unprivileged user who can mount a crafted ext4 filesystem image and call lsetxattr() on a file inside that filesystem can trigger:
 
-Clear work->encrypted on failure to force a plaintext error reply.
-The transform buffer (if allocated) is released by ksmbd_free_work_struct(),
-so no explicit kvfree(tr_buf) is needed.
+Note, if you can do this, all bets are off as has been explained many
+times on this list :)
 
-Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
-Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
+The real question is, does fsck catch this issue before mounting the
+filesystem?  If not, can you send a patch to fix that?
 
----
-v2:
-  - Drop explicit kvfree(tr_buf); it is freed in ksmbd_free_work_struct().
-  - Keep only 'work->encrypted = false' and update the commit message.
+Also, do you have a patch to fix this issue so that you get the credit
+for fixing it?  As you have a reproducer, you seem to have an easy way
+to test this :)
 
- fs/smb/server/server.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+thanks,
 
-diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-index 40420544c..a7444a78f 100644
---- a/fs/smb/server/server.c
-+++ b/fs/smb/server/server.c
-@@ -244,8 +244,10 @@ static void __handle_ksmbd_work(struct ksmbd_work *work,
- 	if (work->sess && work->sess->enc && work->encrypted &&
- 	    conn->ops->encrypt_resp) {
- 		rc = conn->ops->encrypt_resp(work);
--		if (rc < 0)
-+		if (rc < 0) {
- 			conn->ops->set_rsp_status(work, STATUS_DATA_ERROR);
-+			work->encrypted = false;
-+		}
- 	}
- 	if (work->sess)
- 		ksmbd_user_session_put(work->sess);
--- 
-2.34.1
-
+greg k-h
 
