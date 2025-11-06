@@ -1,218 +1,248 @@
-Return-Path: <linux-kernel+bounces-888228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA38C3A3DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:28:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD63C3A424
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 643664FAF8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:22:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2663B9289
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60642475D0;
-	Thu,  6 Nov 2025 10:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786512C031B;
+	Thu,  6 Nov 2025 10:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xRPLceBY"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012048.outbound.protection.outlook.com [40.107.200.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="D6vT9roT"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8758426B08F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762424517; cv=fail; b=tG6LeGzS1lSgtFK5ftVIF23FaGmav33p025PSu1EWsVfwHpI1GFfTWF1xnMSdLNOWri9BwS8wF5sAsvIHFmDC/2bbMS6rQ/qvj2BITSx9M+KTuct3kNKWmrQ6QEF86CADPFdFMfebhy5KWmfCCtCJDV3Hc/wFKXmLqBb87ii0Q4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762424517; c=relaxed/simple;
-	bh=azWRBOrFvatSeqVqdSLqGsvXqypoicJIvrdmKcdG5n0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mvfyK3JQBm7STCD1a3mHtZ9rlbBaNwFr95ziNc0o4THXJRFgQCRlyCGtil3f9CK6N/56+NKtqIzyLp/HKonQgf8HEtjMb/6Yrf3QQp/Le4LQIYAtULIF9v2KXA4sXnJrIBQOc3sVn5ptGtrX2RQc5uRWfdP2vmh5edVV3JVfVjI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xRPLceBY; arc=fail smtp.client-ip=40.107.200.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xcr5JxZFiCBYrfpDxUavHp64JL3QR/Xj5z7j99vOEBmfHkWqO2jrQq+XqGH0zLjZszTt4aWrd7w0Xyjx3kKy8bkP7coTD1pqS0eoVO7NmGM5sC4Gnu/5Esn616EUfT2TgHFbT2MTMNaxSO1NE83QoQce5Tibn5EJ4YhePyps2I0cgTIQALGxwKgweJ3uB4nbcq3y1nhXuMfqoziCXG8l56mDwnX2uDJ/gdl3O4C4G4GIjQEFrp2YepqT3/QI1sZIqOCheRCWxn+hFZsmWFJCuCOu/xiIEfM10Q19C8xUQz6wAvLmhqOhtM6IlBwRPC0xDd9TUw9JAhlDaQhysfMhiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w/Do9GHSa/EyruZ6DFAbwjbN1kYLLAE9mIZnBKHJ+kQ=;
- b=YzTTKPx4OtC2WGYaeiUG1hlktp2pcCjMZAAYMqwodvGsupig0IuBf5pUK5yL63MHMlhDQTrLtJV8nZoa5xkYrRHKDSAuGA1HWdrKSlVZ5rNb/V7aVBiRUMM1InVwnFJO+2PDRZ9UArnwm6a1J6GhWrHY4Gr3q+V9e9Dc0exWJM3WNV5iIwBdBZSpo5VRaJdRnbzlE3sBTayZwwb6gxhm5EvXs+7938yRkpBoDDhI40wQsTV37u0VeBF0xbHAywzCIMQE32FXYM9ZxtrbhLLdQhtp7kDpsgHnuxikc6yKMjNlxJxx8nfOFY1wHMrnBm2UrzLtdPv0uPgR8JhpPAd0Gg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w/Do9GHSa/EyruZ6DFAbwjbN1kYLLAE9mIZnBKHJ+kQ=;
- b=xRPLceBYdNAsPMiD+4aPktoxLC1MPdSgHB3eFDX01+e8GzSI7ZBfCgUT/yB2FwebdQerYjQiaF2MDdJvhvxJIJSdiYO+1q5rOApdxoiwawYpxdrPG6GUSKHzIRnPN6ZlAJCTunyHAFz8u5OmLccyCniscJ39+9zTEe9dK02Pil4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SN7PR12MB8771.namprd12.prod.outlook.com (2603:10b6:806:32a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
- 2025 10:21:52 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
- 10:21:52 +0000
-Message-ID: <a3830a0e-5491-4bb7-8685-3427f4874d95@amd.com>
-Date: Thu, 6 Nov 2025 11:21:47 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] drm/amdgpu: jump to the correct label on failure
-To: Tvrtko Ursulin <tursulin@ursulin.net>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251106093933.18859-1-pierre-eric.pelloux-prayer@amd.com>
- <20251106093933.18859-2-pierre-eric.pelloux-prayer@amd.com>
- <63ce6781-439d-4425-a3e9-f1d233a5abea@ursulin.net>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <63ce6781-439d-4425-a3e9-f1d233a5abea@ursulin.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BN1PR14CA0013.namprd14.prod.outlook.com
- (2603:10b6:408:e3::18) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B664D26B08F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762424586; cv=none; b=lI1Ekyg8EmUDBJzc/jfCXHkvjeDt09a0oPlaBhEM5pXcoLGaSBA8plQkBJZiZvc2OtOsiHlpSusH8FsoBfh5/xT9I+h50wbv7WfvmimQ5SLtYAmD+axkDMbOoX/fVZEA/+yta3DtDGXoHPqG1WIcK/rhibxu41f+hw1eYh2v/Go=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762424586; c=relaxed/simple;
+	bh=3VcIWGEidVBc6S38LPZkC6VXAiK5JHVOsJryEifSV+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qrmhEvh6i71QyN6HpdydkbHx/rktUTc9hu+PNU1GscgG/qsN6hPKs0gCkRY6pprpiHMcmm5sTOrE0wUQdq912AltLXKUliJqz+DEUxW+lmR7MYF2OdlazWG5GFe/EDbp7UUE1/M3vXmMHBlFrsMewUbMl2CDOLMsD2t1etVvUmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=D6vT9roT; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47112a73785so4734665e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:23:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ursulin.net; s=google; t=1762424583; x=1763029383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VgOP42kyVIF+OaMBMLYClO2LZ5oQJ3Uk17eUAjkdIvg=;
+        b=D6vT9roTI1x4BCZBOD5YYJIg2jxQvudynP6jXxH364wrYpgCx9TZKSNBB7G2n9L4QU
+         WtgVz5etJGoA2zQi1lP4rciBxqU73YirVEZigbY8xwJLYvTJTRpzHGY3Q47wF8uDjiYP
+         GVwfNEfVazH8DtOYKJuy711MpZ7IkubaIKOxRetoJ6XjKuRTs1GWUSbQ2rop5dU3Leq3
+         y4LHQ5PZ/56zWgFDaYaH6rS9Aqr4AIcoaiakngieEUFGZ9Kte9wKZTZ8heNOhOn32M1D
+         Zpq9T2SamBW8kBuZpQjBIghUNwhob+WtTW4jJp38oA2JSx1nP6tcVX7e2zRAi3BtEppE
+         4Exg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762424583; x=1763029383;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VgOP42kyVIF+OaMBMLYClO2LZ5oQJ3Uk17eUAjkdIvg=;
+        b=HV+jDhGJstiOGs/CXUjM64fW4doWVeOE2qpQAjbmzZR1Y0oQgp5Toec5vrfT2riJXc
+         ZhpTiqpk6U9ME24uMO8B0WxCjEu5A7OCen9V1HgdILwZHtS3WmD6baI/LiyLigRH9bSp
+         hmRTwggkEJS3T2/hkTNh2ZtZg6KwgPzUCombe9Mt8Bj3Pf3k1LcC7cPUvpDqvjwxRhgp
+         zNj9wVf6qybdlmtNg5Gty0ySAw5kqdXXTYaGzxwGUrGaBVBKn+PoMVUoX4ntiR6m8JN3
+         Ah/x07Q1fALpDSV+dyTPBxVREViMWKGmn2yPTNJhAhic0foV+OY+H6cwR7JTlILnvGBY
+         s1iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVa8aOvKh0Z6tzDzkw1c/h6aFhrJ1qXVkbfEqiWaISR//RQ45Z8EL6dadtL4EI/XWRrTU5VPioigKNaB0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyea0pVO4AHMMbi5ltnqkjll6JieJ8eX9d0Blef9/FgG3FyQ2F0
+	vQRqaS5q+ebNA6SsAHtIcXFelNZpVhPrrhNU+zpLd5C2dqgq6MYDUPUQn//L0yJhijQ=
+X-Gm-Gg: ASbGncuJLsTFq5GWdirQjCOIJWloL9Y4wMGaCEYyFjm0UPqsw42oTRVgERrirGMh8bV
+	oMV4/TrQm0Rap4DnX5ab+91RCJQ4F/Pq0tgocz6xMGegYfC9keai11UxxtNtrbcW0NQOoQIsvn5
+	AQkGz06HlP3XXq5xCRyROcB4DExc12QJSmwADyIU6zHqSqQv+uCmWuc+zzy62NQ6B8nT6Y1kf1p
+	d9hbRAjmitZN1HbEBxCuVK6AqcVgdzAXZEd3F0nIarHJO3pUEKPJnfQ4IdELilS5/b00qy5V7pA
+	zGmnE2H5ors7/I0kiClNTok7q1MDl3MWs2H07xnRzy+5f+aBmxZgbcZhMwwgorePCqH7acKCYmo
+	5S4JdUpMmDo6Kn7jnMGEnNSnewYXTFJBt63mGDxzk2rHn0+hSve2A/Nxp8QlVdu4SdE5yaJDQvP
+	rJAYnZxqWcWNzNfLRS0ln/lTi2E+8=
+X-Google-Smtp-Source: AGHT+IEtpJZ2x8DlPogW4WdO8xvm2uRzmqJs0tYIUZ3boZRuyGklclD2npgr2Aq/2sPhN6v4NkYQGw==
+X-Received: by 2002:a05:600c:1e1e:b0:476:6ef6:e28c with SMTP id 5b1f17b1804b1-4775ce23c7amr41354635e9.38.1762424582943;
+        Thu, 06 Nov 2025 02:23:02 -0800 (PST)
+Received: from [192.168.0.101] ([90.240.106.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc552sm106633505e9.6.2025.11.06.02.23.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 02:23:02 -0800 (PST)
+Message-ID: <6a7159d5-fb5c-44b5-ba90-2dcd02b59097@ursulin.net>
+Date: Thu, 6 Nov 2025 10:23:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SN7PR12MB8771:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a28f03c-bd02-48df-facf-08de1d1e4daa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MHRpdFo4TW9MNExFcnNwVFBjSkIzczRUVUR6aDRpdVluM2g0Q1lzSjF2OEFE?=
- =?utf-8?B?MCtOTFNwYWVsQXpCa0NyYUJlVkZ4MHRDN3BYelVDd0dMQllWQTA2WWRYRmZj?=
- =?utf-8?B?cUpNcndyRVFlckYxRXhzM1ZDWGRWcFNIWjdRcUlMWVhuM0tPL21qcUFLbXJF?=
- =?utf-8?B?dW5yOWx6LzNtd2dySlp6bzZVRkVmeWhhQUFFUFJNZk5VakJkdEF0R3Q4QjVQ?=
- =?utf-8?B?d0R3d0FyU0VoVDBBcjVZN3ZZYU9IWW1qd290WW9XTGZtY1FkRnovY1dqMVJF?=
- =?utf-8?B?eWRNUGRmaER5dDEwalo0MUQzdGJpTGNDc2xKM0plYWQweC93OVAwaWhMSEVF?=
- =?utf-8?B?bGtYbEE4TWJTaFMzcHZOVndLT2NRYWdnUVlmNTBLa0ZUemN0QjJod04wc0l3?=
- =?utf-8?B?RG9CbUFsb29pY3k4RE9GcDlmQzZYLzNTWTRHU3prRHpWSGZyL3dPR1ZYQWN6?=
- =?utf-8?B?RE1oY09lUUswaVJ6eXlrQk1kREEwTVdRbDZiVG8yMkoxTEFQUkhpYVNyNjBy?=
- =?utf-8?B?TUZBWkM5MFREQ1dwUU1BK29uR0N3cmtpbTFLRy81MVA5bG4xdTZ0R09PNlpL?=
- =?utf-8?B?ZWU5KzcxdnJNQTJab3A1b3VOTHVWTC9DdlNzRHBOYnI2cVRobUw5VEZCUDYy?=
- =?utf-8?B?Zm1NQmI3bXF6dEtJZ1Nsb1kzZWRjNHA1aTNlem0zOXowQWZiRnkvajdPMDBt?=
- =?utf-8?B?ZHkvK2lFWlBkUWtsN213VGpseVlZanRIbml2c25qRDdLTTRmbW1QcDhOMVNB?=
- =?utf-8?B?RG1lSUxsYTVodm5jSlljTkt0WmNsbjZXR1hDUy83VWZacXRFa09aWkViV0tB?=
- =?utf-8?B?aFRRem1xRm96OHRrVkJMQ0Exc0ZQdjBwVVZSTngyVFI5VmhrSHlaZ085cHdN?=
- =?utf-8?B?TE4vdlN1a2hsUWdQTTdHcDFjZTEyM2xOLzNJWVF2a3AwTDNTb2xseTFNNFU2?=
- =?utf-8?B?M1hUYW4xQk9xZER6WFFxRG9xK0pQZHZnL2xWQVB1cmxrNHc5UXUxdzUrMkk0?=
- =?utf-8?B?dXM4anVVZmRuYkx0elM1d2NyMmJPM1hOVEN0OHFoWkYzWVM1cWpRNlNMOEZt?=
- =?utf-8?B?L2toeFJVWUk5ZDlXN1huNlJIK3lCcHZkZU9WUGNja2FGTS8xNUZaTVVhU284?=
- =?utf-8?B?MWtOSlgzQS9iTk5FVS9uWDIreXlHMmMyL25aYjdGM3VBVGsxeGRSaEc3R2FV?=
- =?utf-8?B?ZWRxL1NKU3VYM1NxL3ZLMGxzVk16MGlXZjNyZHErSkgyZ3hVT3QvbFZRMUE3?=
- =?utf-8?B?anB2OHZwdVZBRjNaeWtTVUpRNUVEM09nS2tYQUlPemVMT1BxVytiRzFqRUxS?=
- =?utf-8?B?Ykd5Tks3NnRVVjRXK1JRWHl0S0E0VkMwM1pVM2YxM1NqWHRZa1UrelcwanFh?=
- =?utf-8?B?ZmFPMUxjVWNaRVdIdTRlekYrZVFLSGdkNFJVd2MxQytHQmIwdHhSMGJIUDhh?=
- =?utf-8?B?QmxaVEo4dDc3UWg3STVXdFJPOGNYYXZqTVZOSmVvNUFPYWp6YjJ3MU53RnZn?=
- =?utf-8?B?aUUrQW1OamdjU1NWNFplSTdRVmdmQXozenU4YVcwaWl0ZmRGNzRMcSswdGRi?=
- =?utf-8?B?NHNUaTM1azB4am5QbFV3cDFJT213Tm1HcCtwd052cHZKbm10dDZ4cmlXRlpa?=
- =?utf-8?B?d3R6Q3FGRE1hcUw5NHh5bzR3NXQ4S2NndXhWcjU2MDJLdGdkQnlXMjhLRndM?=
- =?utf-8?B?Z3NMZTQ4dnFLaDlZandhdEtHNkh6NG1zbURKZHBXWmF1bW9HREJxREh6UWNq?=
- =?utf-8?B?K2VORU54RHVPTmViZStxNWNzRE01NE01ZVFtSW0zaUFFVmhKb0ZHZkd1L1N3?=
- =?utf-8?B?VmJVeEVmU2owTUpmOFd4ZmdPK05JZU5jNGorZnZsUmx2UHNTUk1TY3RLcXd4?=
- =?utf-8?B?S3NaVkJwdHNTa3NtZDl5N1JWcnFJSWRLeWZCdnBlbDFGMUtwZzVjUEpFeDJo?=
- =?utf-8?Q?naDAmT7+t/zvAWOOkAlfE89aBmdfDS6i?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ak5lWGd4REgyUHhYdjBsRzZMR3htQlo4bFV0RXFoa0NWY0JacU5EWWdEOW00?=
- =?utf-8?B?WnZ0YVNOaU0xY3BpTE1vKytDRUx6UTl4NW41QWF0VlR4eTUzZ2o5dDZUMEdp?=
- =?utf-8?B?T2dwWTJ2UlRGa0JheENCVWVIVnM0T1dkSktMUGFaS3FQeEZXaklyWXozRWFs?=
- =?utf-8?B?T1g4SEoxWHNmZXNhbld2Q0RNeXJlWHg1NFIxdVZsWTNIanZ1K1NDWlowMmFm?=
- =?utf-8?B?VGkrNTNJdS8vbDQ0NzVRRFdSYXhDRldVOTAxaEwrRUplc1o2NmJ6VXB2Y3VY?=
- =?utf-8?B?RnBDS2dPSmxWVDR6bjN6dTVXY0tqdjFGMkxjMTArcVRKU1R1S2xjbk9XbTBw?=
- =?utf-8?B?MlV6Wm16NExZZ2lBQ2NTVUp5QkUzVlcvZ0VPUDdLdC9idWxHYXRzN09ObXVU?=
- =?utf-8?B?bm5Nd3IwVVZNcklJMDZTTVVVVllVNDR1dUgyRkhTdi9sUGg5TElQRVAyNkMz?=
- =?utf-8?B?YVFIM0hsWFRaVDBTckhPTFVIRkFxcnd5MTczOHJENTdYd1J6aGNpb000ODVr?=
- =?utf-8?B?Ymt3SzVtQlF4Zmw0aU9weExXZzU4QU4xVXZHUk1UWFZLMkxSL1hyQnVHWXlt?=
- =?utf-8?B?SnVnYmRpMU40d25YaTFIOTROY2tHa3RDNUdjYlRBakZJNVJnU2hyMWxWc0VU?=
- =?utf-8?B?SHhhTndBbzYvSnhKV0lNUS9mNHp0bVl0bVdhQ0pQTmFwaTZRMkszNnlEUUov?=
- =?utf-8?B?ckd0OUNQWUpJL0RxWHhsTThPRTNlSkpyQ0JXTjBaVFRXbHZFNVNlR01jVVU0?=
- =?utf-8?B?Y1FSL0Q0K2NSL0oxTkl3M3RBUWRxVitSajJqRS9YalMxUkV3TCszZE8wbXhO?=
- =?utf-8?B?S2FLWEVjbnFYcFVWL1NjUEttOGt4ZmJNRHZTN3owMkJFK1RNVmJZeGVIK29B?=
- =?utf-8?B?ekZZeVBKWitGbjFiWkNPdTZ4bWtydEJHTGtMZkROL1Y1VllSeUx2QkEwRUdG?=
- =?utf-8?B?Nmt6OWtmelZYeHhlYzhrZ2hSMURYU1dtOWw5dG5MN0pvWGJZTDcraUtKd1VP?=
- =?utf-8?B?K3FjKzl3ekx1TWVhM1NyeGRYNWJwdURFdDdJMkJCS1J6OE8rVXNDOHdDSmlU?=
- =?utf-8?B?Zm5sMndlbTdQbDdRQXZsT2NWYk44dHUrQjJZWXFBYVJqWHVNNVpDdXhlMTND?=
- =?utf-8?B?WDlPMjB2QkV2K3gyUzkwTXN0UVZOTCt6eUpwNi85NndZVktyYXlNMXhSd3lS?=
- =?utf-8?B?bTd5MGdnUkxEQ1luQXkvVHkvZzRuQ0tKSTNhalU4RjRTWXRVTjlpeVdtdUFE?=
- =?utf-8?B?RUtDRWJ6TTNZRW9yM3BKVDFwSmRhTzFtemg1TzdDOXpSTWRuQWJxNFVQK01k?=
- =?utf-8?B?N3hML1loeXpjalo3OHlBdVFVcXJWVHRDcElCWjR4ZVg1ZFBEVEt0SFBDbmU4?=
- =?utf-8?B?ZTlKbTFSOThaR0xkbVYzc01aQ3ZjOW9wOFNNS2Rubk1GeDJscUg0QkdqbEg3?=
- =?utf-8?B?N3VDUWxlcHk0eDVKRGNGcjlZNWtKY3NtRUhCWnhuRHJHR0E1NDBZS2xKekNy?=
- =?utf-8?B?Vk1VOXlDZTF6ME5oVFpwTG5Ma2hoa0JEdVl3OG13UGxYRVFTd2tTNEVEeE5t?=
- =?utf-8?B?KytHSG5ONGRuWUdGQWlMZDNLUi9kQ0tnMWxoc2c4M1ZXRVdRSnlrUklvcmZm?=
- =?utf-8?B?MFhUYndIVXkzQ2tHT2NzZnJmQW4wdVdpcGQ3Sk5tblNvZVhYdWs4dFhDQUll?=
- =?utf-8?B?WmxaaGlSMUordlV5Zy8yVmRsQW9PR2VuVG12dkdMd2l0eXBrWWZZUWRPdlBF?=
- =?utf-8?B?ZFgzNjFxNjVVRU5XWExSUVR5NnZPSUZpQlBKMEo4T0kxRmFiaTcrQTJVb0Rm?=
- =?utf-8?B?aTVOdEpwa2w5Sy9mZk5JUDlTMzdKOWlXanAwR2hWNkpkb2Jka3kwUm5xdVVU?=
- =?utf-8?B?eTh2TG0weTZzRTBKV0VHTmJmMUFSYUJqTkUwWFhzaERxZVd5TXpkYkpwckQx?=
- =?utf-8?B?Nmoxb0pvTTlIWTFuQm9OMmNQQ0xhTW1NUWI0aDE2RjFqU3c5cVI0eHBNVmZG?=
- =?utf-8?B?eEsvR0pxcExIenhQK3hFVmtlcFQyRnl4VzhNbU9yTHpEaytqMUhsY3NIMTJP?=
- =?utf-8?B?b2VPVUY0dy95N2FtOVNoTWJPdW5Zb2V4RHNWeHloOTFLNFl0UFdFZXE1NElZ?=
- =?utf-8?Q?yd7EdWG/dYJZzHz/X4ZOlxCcU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a28f03c-bd02-48df-facf-08de1d1e4daa
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 10:21:52.4155
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gOG+HMsJChDl8ImcPK8Gwo6ncvLHzaiEM4SBeh6d+ZoyZA7bcbDInGzdDKaPOxs3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8771
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] drm/amdgpu: increment sched score on entity
+ selection
+To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251106093933.18859-1-pierre-eric.pelloux-prayer@amd.com>
+ <20251106093933.18859-3-pierre-eric.pelloux-prayer@amd.com>
+ <9e5abc5f-1948-4b18-8485-6540f84cdfd8@ursulin.net>
+ <a87d491d-e0ff-4bf6-bce8-6d2935271e6b@damsy.net>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <a87d491d-e0ff-4bf6-bce8-6d2935271e6b@damsy.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 11/6/25 10:56, Tvrtko Ursulin wrote:
+
+On 06/11/2025 10:10, Pierre-Eric Pelloux-Prayer wrote:
 > 
-> On 06/11/2025 09:39, Pierre-Eric Pelloux-Prayer wrote:
->> drm_sched_entity_init wasn't called yet, so the only thing to
->> do is to release allocated memory.
->> This doesn't fix any bug since entity is zero allocated and
->> drm_sched_entity_fini does nothing in this case.
+> 
+> Le 06/11/2025 à 11:00, Tvrtko Ursulin a écrit :
 >>
->> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
->> ---
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>> On 06/11/2025 09:39, Pierre-Eric Pelloux-Prayer wrote:
+>>> For hw engines that can't load balance jobs, entities are
+>>> "statically" load balanced: on their first submit, they select
+>>> the best scheduler based on its score.
+>>> The score is made up of 2 parts:
+>>> * the job queue depth (how much jobs are executing/waiting)
+>>> * the number of entities assigned
+>>>
+>>> The second part is only relevant for the static load balance:
+>>> it's a way to consider how many entities are attached to this
+>>> scheduler, knowing that if they ever submit jobs they will go
+>>> to this one.
+>>>
+>>> For rings that can load balance jobs freely, idle entities
+>>> aren't a concern and shouldn't impact the scheduler's decisions.
+>>>
+>>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux- 
+>>> prayer@amd.com>
+>>> ---
+>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 21 ++++++++++++++++-----
+>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h |  1 +
+>>>   2 files changed, 17 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/ 
+>>> drm/amd/ amdgpu/amdgpu_ctx.c
+>>> index afedea02188d..953c81c928c1 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>>> @@ -209,6 +209,7 @@ static int amdgpu_ctx_init_entity(struct 
+>>> amdgpu_ctx *ctx, u32 hw_ip,
+>>>       struct amdgpu_ctx_entity *entity;
+>>>       enum drm_sched_priority drm_prio;
+>>>       unsigned int hw_prio, num_scheds;
+>>> +    struct amdgpu_ring *aring;
+>>>       int32_t ctx_prio;
+>>>       int r;
+>>> @@ -239,11 +240,13 @@ static int amdgpu_ctx_init_entity(struct 
+>>> amdgpu_ctx *ctx, u32 hw_ip,
+>>>               goto error_free_entity;
+>>>       }
+>>> -    /* disable load balance if the hw engine retains context among 
+>>> dependent jobs */
+>>> -    if (hw_ip == AMDGPU_HW_IP_VCN_ENC ||
+>>> -        hw_ip == AMDGPU_HW_IP_VCN_DEC ||
+>>> -        hw_ip == AMDGPU_HW_IP_UVD_ENC ||
+>>> -        hw_ip == AMDGPU_HW_IP_UVD) {
+>>> +    sched = scheds[0];
+>>> +    aring = container_of(sched, struct amdgpu_ring, sched);
+>>> +
+>>> +    if (aring->funcs->engine_retains_context) {
+>>> +        /* Disable load balancing between multiple schedulers if the hw
+>>> +         * engine retains context among dependent jobs.
+>>> +         */
+>>>           sched = drm_sched_pick_best(scheds, num_scheds);
+>>>           scheds = &sched;
+>>>           num_scheds = 1;
+>>> @@ -258,6 +261,11 @@ static int amdgpu_ctx_init_entity(struct 
+>>> amdgpu_ctx *ctx, u32 hw_ip,
+>>>       if (cmpxchg(&ctx->entities[hw_ip][ring], NULL, entity))
+>>>           goto cleanup_entity;
+>>> +    if (aring->funcs->engine_retains_context) {
+>>> +        entity->sched_score = sched->score;
+>>> +        atomic_inc(entity->sched_score);
 >>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
->> index f5d5c45ddc0d..afedea02188d 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
->> @@ -236,7 +236,7 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, u32 hw_ip,
->>           r = amdgpu_xcp_select_scheds(adev, hw_ip, hw_prio, fpriv,
->>                           &num_scheds, &scheds);
->>           if (r)
->> -            goto cleanup_entity;
->> +            goto error_free_entity;
->>       }
->>         /* disable load balance if the hw engine retains context among dependent jobs */
+>> Maybe you missed it, in the last round I asked this:
 > 
-> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-
-Acked-by: Christian König <christian.koenig@amd.com>
-
-Since this is still a fix please push it to amd-staging-drm-next independent of the remaining patch set.
-
-Thanks,
-Christian.
-
+> I missed it, sorry.
 > 
-> Regards,
+>>
+>> """
+>> Here is would always be sched->score == aring->sched_score, right?
 > 
-> Tvrtko
+> Yes because drm_sched_init is called with args.score = ring->sched_score
 > 
+>>
+>> If so it would probably be good to either add that assert, or even to 
+>> just fetch it from there. Otherwise it can look potentially concerning 
+>> to be fishing out the pointer from scheduler internals.
+>>
+>> The rest looks good to me.
+>> """
+>>
+>> Because grabbing a pointer from drm_sched->score and storing it in AMD 
+>> entity can look scary, since sched->score can be scheduler owned.
+>>
+>> Hence I was suggesting to either fish it out from aring->sched_score. 
+>> If it is true that they are always the same atomic_t at this point.
+> 
+> I used sched->score, because aring->sched_score is not the one we want 
+> (the existing aring points to scheds[0], not the selected sched). But I 
+> can change the code to:
+> 
+> if (aring->funcs->engine_retains_context) {
+>     aring = container_of(sched, struct amdgpu_ring, sched)
+>     entity->sched_score = aring->sched_score;
+>     atomic_inc(entity->sched_score);
+> }
+> 
+> If it's preferred.
+
+For me it is, yes. Because it removes any doubt on who owns the atomic_t 
+pointed to. And it also isolates the driver from any changes in DRM 
+scheduler structures.
+
+With that:
+
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+
+Regards,
+
+Tvrtko
+
+>>> +    }
+>>> +
+>>>       return 0;
+>>>   cleanup_entity:
+>>> @@ -514,6 +522,9 @@ static void amdgpu_ctx_do_release(struct kref *ref)
+>>>               if (!ctx->entities[i][j])
+>>>                   continue;
+>>> +            if (ctx->entities[i][j]->sched_score)
+>>> +                atomic_dec(ctx->entities[i][j]->sched_score);
+>>> +
+>>>               drm_sched_entity_destroy(&ctx->entities[i][j]->entity);
+>>>           }
+>>>       }
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h b/drivers/gpu/ 
+>>> drm/amd/ amdgpu/amdgpu_ctx.h
+>>> index 090dfe86f75b..f7b44f96f374 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>>> @@ -39,6 +39,7 @@ struct amdgpu_ctx_entity {
+>>>       uint32_t        hw_ip;
+>>>       uint64_t        sequence;
+>>>       struct drm_sched_entity    entity;
+>>> +    atomic_t        *sched_score;
+>>>       struct dma_fence    *fences[];
+>>>   };
 
 
