@@ -1,663 +1,287 @@
-Return-Path: <linux-kernel+bounces-888896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018F5C3C39D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:02:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7F6C3C349
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:58:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2603B95D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1717318892A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7262F34BA20;
-	Thu,  6 Nov 2025 15:57:09 +0000 (UTC)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFC02F5B;
+	Thu,  6 Nov 2025 15:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DMRvk+RG"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013068.outbound.protection.outlook.com [40.107.159.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C0234B419
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444628; cv=none; b=TkMq3Qqb8/28XTBWYKiFH6bRh0ZJWc0d9PoJe7MUKKQxruT1hLKKmYyTQASKdNJo59LsiWFOrOxc2AJcQ9J31uA6Y09bMiZo4tqFvewKJ0epw8jWGZyFnaUsn1XaOcH4/r79L5wMM9fvLe9v9K/nUSwXkZ+oG7a8NyhQy7plW8M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444628; c=relaxed/simple;
-	bh=riLG+8CE+ZLTAsF0M5Qu4D4n/g26WyOIIMnezE1bYmc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RGKi4Scy29Xualk4DiEVMmeT+gjux+D2JZGXTOKg/cNw+wDz0gBkNf0iTwTcGPEqT3pxNUEc7zn5nn6xhLBmV/2vsTB1JIsAKEKrp2upLD980+fOJtdd+vfMSQrZeu56itbMnsRSC+D6tmQcKvJj3Gk21FAAhg/rI9nfA4Ple5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-376466f1280so17706491fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:57:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762444623; x=1763049423;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=neWwPHJjlP8lL+LKe++GXl7ysjF/AD9AWuwMNEAE82c=;
-        b=nKu6gWQkheiFxHbnIVJk5nFn/WS8JZlEOuH8dhpLL4ZQMYpr0lh7ZGlgNSMOs4b9HA
-         lh0kVa97UGdmJ0afUDfK8tL8CWpJs0WN/NlCT2So9qWN4C9rllsXPMDL4pXYUV97T7c3
-         Dggfh5nfgqPf5eSG7M/S4XlmpAXxQDTv2UOVEvB4NRXpHqxg35qQ9QXkDPt2r9kYzEBZ
-         aAx5WHUxRms8c0K/PTzAo1XpmuHupbQlezJ1rm8Xabz4vfaSZ2dDTYUZigDAA9CbA0Y7
-         Y3vfHa46WgebAN1B9d1Kb7q1gIOOBQvyN44DifzjB61H7Te5v8K/jZk1PeEg6entfS8/
-         aZ9w==
-X-Gm-Message-State: AOJu0YwN5aGXdZRom+FbuI0dRJRmPiULOywo0aF1sAKDkncPB/04dOBs
-	p2HRa53y0margjC1hL3L5Ceii04eQWnXg4nV7vV3LArIj54+7pwMbD69
-X-Gm-Gg: ASbGncuTocNlky+oUoZH1nASeYgMN27MrQ/6nW9BDRwfxa5GpR3m8fP8RyWIcG7GGqa
-	GpkhNZ0st0SAfRDCgcytmblw22mbjtjX5enUieMzSetcknZ4NgWTG4Ca8tDaLMQfncC7UPkeDyL
-	HBCHEs8bDMLK+2V+y/t1jbbr1Q2/hQEykX291IGhJWN3DaPYT5bujFjlnafY9XH0jPGMBDq1Jvf
-	l5UXPGofYDbInHTEW106e2OO9VyC88EUDTIpUsVH8hplLSflsXZp8zyjq19+6Pvwvw3fIY47RqL
-	Bwdwzqq1uSeBQkHwxUkRgeMQvZd8uNiojDw1m0W2Xet/Efu/Itkx9Q2+ZSSlD0RsBNi49o5SF4W
-	w3kTFNBSEuTN9i2NTsr+EeAZdAKDbFBxzB+lXg+GX9l4A+Eu3uj9xf7yQTp8+plnxow==
-X-Google-Smtp-Source: AGHT+IF6WygoSGls7tGyC883SZPo3l7YGtTLuGVtlsbK4ovPiNkFLyZ8lI8z3tkwsIHb69dnBkzvfQ==
-X-Received: by 2002:a05:6512:63d1:10b0:594:5236:2846 with SMTP id 2adb3069b0e04-59452362a85mr488154e87.11.1762444622195;
-        Thu, 06 Nov 2025 07:57:02 -0800 (PST)
-Received: from localhost ([2a03:2880:30ff:9::])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a013bf9sm817677e87.4.2025.11.06.07.57.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 07:57:01 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Thu, 06 Nov 2025 07:56:50 -0800
-Subject: [PATCH net v9 4/4] selftest: netcons: add test for netconsole over
- bonded interfaces
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612962874ED;
+	Thu,  6 Nov 2025 15:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762444696; cv=fail; b=TTY3+FwP0bQC8DFqhaDmA2zO6SpkjsX0EVrbfmyGaabFGAY76yMLR11xuF/I9gf74g0K6MdwLCXZsb+aKjtbC/nh7Gs/4tfZL/fCeCyW+XT5vBlVU7rES0WeWzKAVETHZWKa1jBmp5P3rcOPwAcXASnkB/qNPmB4X+lxAlUTA0k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762444696; c=relaxed/simple;
+	bh=nLU6oH8Pgf459t7d+Ef4K2nnfXPlxKNAtDVB9r25YZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Vkp8feBnRxu2vM6BhisW132psSY5/uC+Ss0+ECaGSi1n0fEeSaPnCvmOYwukFuwCUQblFBl85ysjnikhgysEENe6kxmwjBzEbsBV9faUV1VkzBdrKoEc5YuC/OcO/QJXZQ8DEaPeZ6rAaqIChQJUeBUrPY3UxUpRz9WjknvF2w0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DMRvk+RG; arc=fail smtp.client-ip=40.107.159.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cUM6iFQU3j7Fhd+cROMhAmt9Fj3z3GPuREGFSjlC3582/duuxybKIpKXT8oEJUIADdlOyCMdzVhlMGZTyxFltExauHOLk58J/zYLPVHckfxP94lS43WnOjVQysqtuTLAesy08y20oNt1exOtjORVq3lh6FFJFP+fXoyalYt88rLlHLobQgEE7W/v2KUdPA26A+xbEYEkCzgxTrS9htUKfbkSCAOlGDHe9U53dHL4qMqTUskCOZAxf0GGO+OTMeQOrA0YmXYuCQAnGqer1CjBas189NTsbCzhTTWQWsOqifdT2yICTUSlxkPfJzhwVFVpgaceumNb2Du2t4NethP4+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BXAxixt9GM7maY9WiyNJ807ZjQvjfYIYPaHuIp98CD8=;
+ b=LjmIv8X/IDJsoPe10Tfq+/5r9tPjgAmR+7GeZG0s35kzJ0w+wqPFbiDOd5h5IOHedHKS34Ne/V5FG0zemMZRNHXsv+IrRNBvuoMLDRdPvdPFax2TfC3nC5um6xZX8Qj9u8GmYry2bCIQejSXjl338AwZtkMFgWFc9Yl+pJxN00Uy8wospiPcf7Ek0A9x58lB+iIQIW/JbB5hQeC+WfGYf8+Z/jgo+9P6+oAg7Q3lStGWAeP/Z9F4Z0g/VMUKpIzhgznz9xnqAmNKSeaWwwMdsw1yT3GEcxvbE78aQ5wJfoANEw9ju4fBVeEYWRfRVhFbtNXuqIZl8UEyQs0EDD2eYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BXAxixt9GM7maY9WiyNJ807ZjQvjfYIYPaHuIp98CD8=;
+ b=DMRvk+RGRKSx4TRAeIBJpzgqCjQ4wh3L9v4Lhil6Wpx8HaRUP15VrzZB/Va+ka/tIZijwQSe569hqcIW/k+a/m6ZJfWzlIttOhJ2qLC5+kxyc8LdcoYm375ZNQLFKd/6DdFwRfoQff5rSmp7Z0Ub6/N4VSIehHEWztx8domX89rc+alNdXFJmAJzAXzAqtRYW8O9pPCw/qnRaksfeqnOX0TzLtMsfJmzUI7MBivcQPb6Yp+DHjf+iE8ENeQ+++B7XyCIYnrZsDHcuetxb/dHAekfZVkeEekeHefbIfwihoIWpS9EZSgfu6BkUD8ZScxj31rnrZRvZiDFdEXGlUA63Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AM7PR04MB6950.eurprd04.prod.outlook.com (2603:10a6:20b:105::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 15:58:10 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
+ 15:58:10 +0000
+Date: Thu, 6 Nov 2025 10:58:00 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Rui Miguel Silva <rmfrfs@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Alice Yuan <alice.yuan@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Robert Chiras <robert.chiras@nxp.com>,
+	Zhipeng Wang <zhipeng.wang_1@nxp.com>,
+	Hans Verkuil <hans@jjverkuil.nl>,
+	Sakari Ailus <sakari.ailus@iki.fi>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v4 0/5] media: imx8qxp: add parallel camera support
+Message-ID: <aQzFiEOQvtZjHIsr@lizhi-Precision-Tower-5810>
+References: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
+ <20250805010822.GC24627@pendragon.ideasonboard.com>
+ <aLbcpEZXm5G1Onq7@lizhi-Precision-Tower-5810>
+ <20250902123920.GM13448@pendragon.ideasonboard.com>
+ <aLhJDXnz9HPGrWcp@lizhi-Precision-Tower-5810>
+ <aQuDSROHLGHIhtlh@lizhi-Precision-Tower-5810>
+ <20251105171928.GB6046@pendragon.ideasonboard.com>
+ <aQul/VGG8e3MJxhx@lizhi-Precision-Tower-5810>
+ <DE1JMG95RZME.2YSV10RI9AME4@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DE1JMG95RZME.2YSV10RI9AME4@gmail.com>
+X-ClientProxiedBy: PH7P221CA0064.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:510:328::18) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-netconsole_torture-v9-4-f73cd147c13c@debian.org>
-References: <20251106-netconsole_torture-v9-0-f73cd147c13c@debian.org>
-In-Reply-To: <20251106-netconsole_torture-v9-0-f73cd147c13c@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
- david decotigny <decot@googlers.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, 
- calvin@wbinvd.org, kernel-team@meta.com, calvin@wbinvd.org, 
- jv@jvosburgh.net, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19770; i=leitao@debian.org;
- h=from:subject:message-id; bh=riLG+8CE+ZLTAsF0M5Qu4D4n/g26WyOIIMnezE1bYmc=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpDMVGJMV5ahhuCjD5ZyYZgURKhUraKC0ITNw8N
- dtIGgEfiLGJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaQzFRgAKCRA1o5Of/Hh3
- baHlEACmckGORCzvTcQ0hKIAq2JQ3hKt+buJZrmFKCIvEUHsX7IDkeH3hotNxrT0Gm4U6Y13JaB
- tvdu24ky7uFeZrXJ7RyziYiBgQJPSanp4xgFsTn1KUG5ojyailGkqPcpArvCywZNuC041tyenta
- FtnAZC13RDyb5npAYd62YOaK5DTMJVbik0MhSgAfFyw9vsE6o41QhKo8V0bFI96nKJis2NZsc7n
- gpXJhUntnnGGFNPZrbqb9YMA9RXYO93CH3VpjherqViR+BTa/fdIINR6lFApBQxARN0aj4Z7ubS
- F40m4o5tXvqSEn9maXoVT3OHc/4MrAGNbWzqgBf9leaSNrNDyX2WkS6d8iBkvLGhkbB17M3NXtU
- XWaq1dPIiNNEGwxEI0ZOlVz0jHav4uak6bJ/2OJyViA6xiq+VKCZeiJjR++suL6iBCm9K0I+3rF
- sp/7c38LJVWW5Zf9+Ozg8Wa9PJsNrPxQp9268VayXBs1gy1Ky5bLc47o1sOgKL9gtxfASJPxo8d
- ae4Wni2qC1WxuX0+5bVGhiMiRRHjDBtUpT51gLnNrb2D01BHBpubkC7P3cW0USf7ZnAjUcJNYVb
- N0/X30BW7uJS3Gl3re6XFAZsRqYq7U4tGcD7fcRxaO3TvmIWR1vJQgDpgVAKJi2J5Oto9NoCMCY
- eqJLZUhfOq4fY+w==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM7PR04MB6950:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa88fa88-c183-4ec5-079c-08de1d4d48cd
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?tSJu5Uamk0/q4Gov6av7nCcjbITiuHg0X383kC7yIp2JF3WzGidkB+I4pNfS?=
+ =?us-ascii?Q?W7Mod7tViTYXgb/rloFfYJ2T7vrT/wKHC2tEL935spfWbzdrsmtAd9T8aQij?=
+ =?us-ascii?Q?33BrKgbAUFxD0hUoVoKTuJ0AI6ZmnUk0FKSJzj7et7QEbHvjfSVwDsMx7oL+?=
+ =?us-ascii?Q?9abnSexwnS8maLyVbr10NuIVB7oBOHCFMr4dqVLrLxuOT/m9cNMkHue+HVAP?=
+ =?us-ascii?Q?bOKWCeNFrVq4FKa7wx7VIEzKGP52D67KfLHJ40t16fZvCA/ix928ijO8ohTM?=
+ =?us-ascii?Q?wBEjCHMedOfqOztEfCAbV4JTM6vElBvNV0WWBN5zKYisGdLfGiPpm1vScA3t?=
+ =?us-ascii?Q?qBNpwx8TFGpMqp8Guf5WgZuS5sHS3mA65Pb8ZcSSpfsNFRJ48UFt+2UHWBkT?=
+ =?us-ascii?Q?XlOAM0ZddXv2vWapVPzaraZC1sWArJ/VkCV+Tqv9pOkZlzvWLJif/bhuZi59?=
+ =?us-ascii?Q?yk0/a1CoUWXbJVPFt2uWOEywx+/2Zp4eWfrxq3Bzd6JofQ1bPKiivdAUDGY5?=
+ =?us-ascii?Q?V8XyBNMK6PtUdmjEieIsQlB5usYPI0l7M+1+Ga7TvI7L5mNkEOxui5WaPKNa?=
+ =?us-ascii?Q?/gOEaHdtJDryMJSBy+68T74shFdPe7uV0WXmhz1J0u+U7cEuRUersQRcU2Rc?=
+ =?us-ascii?Q?EjX20RRhgaVJVVliZ4g2gd9DDD50zLGxclMlA6E1PK39HRTX0vOVaCOkYmLo?=
+ =?us-ascii?Q?VYkY/fgH/E78nZDQxJzjgZDxnKEYhM4dbpJ4BG/oYAJxqVH5sAoPMfkZAtUa?=
+ =?us-ascii?Q?9kMClmJ8xKYc+Z/UJcuX7QXdgwcDgkem6OSxpR3bJ4BeluWVK/4AT2/fbCZP?=
+ =?us-ascii?Q?CIb//GKh9n5J+Vnqd6VI8v83n0s5TAb+tIYrVDEJ1M8jsLCirG5IHYeOAylF?=
+ =?us-ascii?Q?mje0EuBdPTs/aWUtn6vujArh5OYHwgwAIDJVQij49TVioY2eTWWoxGrk/J+w?=
+ =?us-ascii?Q?jPv6viE2GFRyesQFt6nsm+PK4miiqOd2RkkliyyXx/JP8vZeBRzvP1QGIXJV?=
+ =?us-ascii?Q?QI233wdWwsz8vZYqivUsYb/MswPctB86Pp/3PBnjS7+aQv6wJ9bR6DgDHReT?=
+ =?us-ascii?Q?Y+7TA+97lrWvV8pPdViKnfFiGNSvKzzktx0pI+3rc8KDuurD+ojv4uHeR6+5?=
+ =?us-ascii?Q?4HYxwSNCgS6XZTdqnw/hjTPvG+JLWPiGPB/W3rxstASK8MbUnXRGdAMqM4pM?=
+ =?us-ascii?Q?SIbGfRnpFGpLCSnTwcgncY4vZtazMZ5wvBMQs5iBrkTARH+S3vDnvV9Lar8R?=
+ =?us-ascii?Q?sAeqla2bbCwwqMuOkGlb2LkDuI0dHyiUtemsFbayanFBTED7Tp/MwoPMRsj9?=
+ =?us-ascii?Q?p5PlGpdGlVF90yVYDJ8Iwb0/iBSSuYYFiD6+wGpKkTwfE5CqWOyxcCdR2ww8?=
+ =?us-ascii?Q?cX2a3ASkepBL0SnaSjHAcQGXBbezf0aXsfb6r83aBehZoxVrLFES2EVJD2fx?=
+ =?us-ascii?Q?KwD6WHtz1nYrUtTri9d7dLiv5/jWuGDGfhIXTyW1mUu1ZLuDW7ge2qJ9Zr2X?=
+ =?us-ascii?Q?MO+GHgj6FyPzdIfR2d8mfthEwrA01Il9PAHg?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?HwB8JS9bBFaZO0LHMZlo0NXNvBVxCEDlBukCgGTAx9VQPzKAkiDB0gC19Ysn?=
+ =?us-ascii?Q?StIbLQVNMXOYpoddDI+b11k1xYb7Oi6n2sqYdWPfx36ZTxKYd8efGKL0mAn2?=
+ =?us-ascii?Q?v2QdiUGX07nCh9mB8uhzAt+678vPztjxU0k5IluMTerSsZwB4W2vwHgGvDZ2?=
+ =?us-ascii?Q?GFbw1Ongg8HkLoo63wVSL56vcZBtkgXF18WuwRkxcaxyHWXfiKjjayQAHk0S?=
+ =?us-ascii?Q?SVTRQy4F8l+Bg9eDjJzSY64oNrHZPn9Phy+K0OYt0GhitbOFn46YRrkGYBOc?=
+ =?us-ascii?Q?7Zw/MSWC0zrs89Z0q/EFjCLsQrfGMlLmWwtnMRAr4o572XXw0QxdG+A2Vlxk?=
+ =?us-ascii?Q?ObKt9vDo6VKFPCPWIag3HmyGfNenNdpiFy4VUROTsWOTfmfVD2+A77wubwrn?=
+ =?us-ascii?Q?ab6+cZL9SxwiasTuQM7u0E9qQUuTOewQ5iUUyoAFNFK9YC8cZ9pHu9YunYfW?=
+ =?us-ascii?Q?01MyFjp3s1breJZQUyU5rK3PsLD7XwA9g5xLydvr2LYeWaetW8vHdIHhhwcK?=
+ =?us-ascii?Q?8nz2LaVx19d166aStaHOPIMpmCFLTQOR88okRXBUNNa09/ooF/OzwzxeibbS?=
+ =?us-ascii?Q?h8IkpwSiAuqp/5BQMmUoYo/suysA2Da6/PCRSpl7FEHMle5KcAvwsacquPRk?=
+ =?us-ascii?Q?BMF29tqhOMqOiVpFKAqnrKlsSW3SIPg+RbWvKszrP1GrvRLQjIa8J5vECRiN?=
+ =?us-ascii?Q?atngg+4hlwkxT7x056QnwHgkZWTacdmb9UZxFEs67Tt5WEnGLIT2IK8TU73T?=
+ =?us-ascii?Q?TacCBu4L0KrQAsqUFEQ3c6hLtGImbhIIDFEbT7zo0adCvW/5QoOu8UAs0882?=
+ =?us-ascii?Q?Cu+sfg3wtudbKvAfP6UTBCFvOdM3xQxy16x6PUnyN5tBhBBEh4cdP0QzLvpY?=
+ =?us-ascii?Q?AAdLWuCgEu/4PiUelUl9IKxvDZR49gTxQ9dr3nDTn3B/G3YPb2sQz334/iK6?=
+ =?us-ascii?Q?NrJb4Wo5gxcdlfk/i9Yc4GPsZXHmC6Wzn992ZkZ3D3xRgthAM1uFWLrsIzpJ?=
+ =?us-ascii?Q?EiBg8/SVbv9fIIEROb9MBLTy1zkX2shlqW20d6S9hRUVDc55GQDTjVRqF8K3?=
+ =?us-ascii?Q?8mfd4Lh7c6ZuJ9xVUILQlw5TbGy475dvJk/7KMSroxxXZeN9gQ4xH6pylQxx?=
+ =?us-ascii?Q?SLRboBuLT6arsE1ucqyAgIAVWKBK6GY4KSTcoaryD3JOw6i1gKWcj1/tzCeG?=
+ =?us-ascii?Q?4kytw8EDIEb3Yo4PxQ9gJzy0AfM31M9cHRf2QORSHP7t3XEhUhN854E13SU2?=
+ =?us-ascii?Q?CsGL1bw+0Ki6UXedULDuvjNHEJLaFnTSCSga3XJGIYoZcf8gge6pj6A+x9vy?=
+ =?us-ascii?Q?vj+O5DlvE3OzwDN/SDxVDeisibOWIv+Y/gHmrbFo2cRLrDRr957xWaPDYCH4?=
+ =?us-ascii?Q?rikxCMvf4QwOP/CnMaQSwQGxVH6+KvQotck8iAl1kYhs5CueSDTE4bkVtKgk?=
+ =?us-ascii?Q?eU2Vhgp3Nuq2uNIk/QF//scl2CQR6cBJXdmLD5dpXjeqGyLs+FRzHCO+lytX?=
+ =?us-ascii?Q?VNcou0qm+CLT5qAXyWSOX1GNPboFpk10sA47Nq6l/a0cm05YmFkhwFZ1bMnU?=
+ =?us-ascii?Q?KcLg0h6Nmbt2CCIJYvabFleQXaSv+QQsdqB7Z1X7?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa88fa88-c183-4ec5-079c-08de1d4d48cd
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 15:58:10.5668
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: L6LwQzwR1VPu/vgD5cCgUb32ngstnMly1m2xJKxtflA5/p1p0UYB6G4L/RwW1ut7X3wFMVMmr1D34aIPVwn7WQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6950
 
-This patch adds a selftest that verifies netconsole functionality
-over bonded network interfaces using netdevsim. It sets up two bonded
-interfaces acting as transmit (TX) and receive (RX) ends, placed in
-separate network namespaces. The test sends kernel log messages and
-verifies that they are properly received on the bonded RX interfaces
-with both IPv4 and IPv6, and using basic and extended netconsole
-formats.
+On Thu, Nov 06, 2025 at 10:34:48AM +0000, Rui Miguel Silva wrote:
+> On Wed Nov 5, 2025 at 7:31 PM WET, Frank Li wrote:
+>
+> > On Wed, Nov 05, 2025 at 07:19:28PM +0200, Laurent Pinchart wrote:
+> >> Hi Frank,
+> >>
+> >> On Wed, Nov 05, 2025 at 12:03:05PM -0500, Frank Li wrote:
+> >> > On Wed, Sep 03, 2025 at 09:56:29AM -0400, Frank Li wrote:
+> >> > > On Tue, Sep 02, 2025 at 02:39:20PM +0200, Laurent Pinchart wrote:
+> >> > > > On Tue, Sep 02, 2025 at 08:01:40AM -0400, Frank Li wrote:
+> >> > > > > On Tue, Aug 05, 2025 at 04:08:22AM +0300, Laurent Pinchart wrote:
+> >> > > > > > Hi Frank,
+> >> > > > > >
+> >> > > > > > Thank you for the patches.
+> >> > > > > >
+> >> > > > > > I've quite busy these days, and I don't believe I will have time to
+> >> > > > > > review this series before coming back from OSS Europe at the beginning
+> >> > > > > > of September. Let's see if anyone on CC could volunteer.
+> >> > > > >
+> >> > > > > Laurent Pincha
+> >> > > > > 	I hope you have good time at OSS.
+> >> > > > >
+> >> > > > > 	Do you have chance to review this patch?
+> >> > > >
+> >> > > > I'm going through my mail backlog, which is really big at the moment.
+> >> > >
+> >> > > Understand.
+> >> > >
+> >> > > > I'd like someone else to volunteer to review this series. It won't scale
+> >> > > > if I have to review all NXP media patches in my spare time :-/
+> >> > >
+> >> > > Yes, but none volunteer review this in passed months. Expecially key
+> >> > > reviewer. I am reviewing i3c patches. but Not familiar v4l system yet. It
+> >> > > need scalable solution. I can help filter some common and simple problem
+> >> > > from beginning.
+> >> >
+> >> > Laurent Pinchart:
+> >> >
+> >> > 	Do you have chance to check this serise? this one should be related simple.
+> >> > 	This one sent at 7/29. Still not any volunteer to review it.
+> >>
+> >> I'm afraid I won't have time to review this for the time being. My spare
+> >> time is already exhausted by all the other drivers I maintain upstream.
+> >>
+> >> > 	How do we move forward?
+> >>
+> >> I think this is a question for the subsystem maintainers. Hans, Mauro ?
+> >
+> > Mauro Carvalho Chehab and Hans Verkuil:
+> >
+> > 	Laurent provided great help about review and land i.MX related
+> > patches in past, who are quite famillar with i.MX chips. But he is quite
+> > busy. So the whole reviews cycles takes quite long time and offten cross
+> > some merge windows.
+> >
+> > 	In pull requests for 6.19:
+> > https://lore.kernel.org/all/4989c563-47f4-478c-80c4-41f7e98597e4@kernel.org/
+> > only 10 patches, and 4 patches is trivial clean up.
+> >
+> > 	In reviewing patch queue, there are
+> > 	1: media: nxp: imx8-isi: Add ISI support for i.MX95
+> > 	   https://lore.kernel.org/imx/20251105-isi_imx95-v3-0-3987533cca1c@nxp.com/T/#t
+> > 	   This one already review, but I am not sure if it capture 6.19 cycle because
+> > PULL-request already sent.
+> >
+> > 	2: Add MIPI CSI-2 support for i.MX8ULP
+> > 	   https://lore.kernel.org/imx/20251023-csi2_imx8ulp-v7-0-5ecb081ce79b@nxp.com/
+> >
+> > 	3: media: add imx93 mipi/controller csi support
+> > 	   https://lore.kernel.org/imx/20250821-95_cam-v3-0-c9286fbb34b9@nxp.com/
+> > 	   This one is quite big, but first 10 patches is simple trivial cleanup patches.
+> > 	   I post at 8/27, but get first feedback around 10/27, I am not
+> > 	   sure if missing somethings.
+> >
+> > 	4: This series, laurent already said no time review it.
+> >
+> > 	5: ap1302 sensor patches
+> >            https://lore.kernel.org/imx/20250811-ap1302-v4-0-80cc41b91662@nxp.com/
+> >            binding already ACK, most maintainer want to pick binding with
+> > 	   driver together, but not an feedback since 8/11.
+> >
+> > 	I jump into and help do some review.
+> >
+> > 	The questions is how to move forward pending patches, like [3], [4],
+> > [5]. How to keep good community channel to avoid long time pending?
+>
+> Sorry, but like Laurent I am really without spare cycles to go over the
+> patch series that have arrived in media (also I do not have any hw anymore).
+> So, Frank or maybe Laurent knows someone that would like to be add also as
+> maintainer of this drivers for me would be great, that would also help to
+> avoid such bottlenecks.
 
-This patchset aims to test a long-standing netpoll subsystem where
-netpoll has multiple users. (in this case netconsole and bonding). A
-similar selftest has been discussed in [1] and [2].
+If there are not other candidate, I can help maintain it although I am more
+familar with dt binding, i3c and dmaengine. I can start from simple patches
+and we have test team to help cover testing on the real hardware.
 
-This test also tries to enable bonding and netpoll in different order,
-just to guarantee that all the possibilities are exercised.
-
-Link: https://lore.kernel.org/all/20250905-netconsole_torture-v3-0-875c7febd316@debian.org/ [1]
-Link: https://lore.kernel.org/lkml/96b940137a50e5c387687bb4f57de8b0435a653f.1404857349.git.decot@googlers.com/ [2]
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- .../testing/selftests/drivers/net/bonding/Makefile |   2 +
- tools/testing/selftests/drivers/net/bonding/config |   4 +
- .../drivers/net/bonding/netcons_over_bonding.sh    | 361 +++++++++++++++++++++
- .../selftests/drivers/net/lib/sh/lib_netcons.sh    |  56 +++-
- 4 files changed, 416 insertions(+), 7 deletions(-)
-
-diff --git a/tools/testing/selftests/drivers/net/bonding/Makefile b/tools/testing/selftests/drivers/net/bonding/Makefile
-index 402d4ee84f2e8..6c5c60adb5e85 100644
---- a/tools/testing/selftests/drivers/net/bonding/Makefile
-+++ b/tools/testing/selftests/drivers/net/bonding/Makefile
-@@ -14,6 +14,7 @@ TEST_PROGS := \
- 	dev_addr_lists.sh \
- 	mode-1-recovery-updelay.sh \
- 	mode-2-recovery-updelay.sh \
-+	netcons_over_bonding.sh \
- # end of TEST_PROGS
- 
- TEST_FILES := \
-@@ -24,6 +25,7 @@ TEST_FILES := \
- 
- TEST_INCLUDES := \
- 	../../../net/lib.sh \
-+	../lib/sh/lib_netcons.sh \
- 	../../../net/forwarding/lib.sh \
- # end of TEST_INCLUDES
- 
-diff --git a/tools/testing/selftests/drivers/net/bonding/config b/tools/testing/selftests/drivers/net/bonding/config
-index 6bb290abd48bf..9914943762234 100644
---- a/tools/testing/selftests/drivers/net/bonding/config
-+++ b/tools/testing/selftests/drivers/net/bonding/config
-@@ -1,5 +1,6 @@
- CONFIG_BONDING=y
- CONFIG_BRIDGE=y
-+CONFIG_CONFIGFS_FS=y
- CONFIG_DUMMY=y
- CONFIG_INET_ESP=y
- CONFIG_INET_ESP_OFFLOAD=y
-@@ -9,6 +10,9 @@ CONFIG_MACVLAN=y
- CONFIG_NET_ACT_GACT=y
- CONFIG_NET_CLS_FLOWER=y
- CONFIG_NET_CLS_MATCHALL=m
-+CONFIG_NETCONSOLE=m
-+CONFIG_NETCONSOLE_DYNAMIC=y
-+CONFIG_NETCONSOLE_EXTENDED_LOG=y
- CONFIG_NETDEVSIM=m
- CONFIG_NET_SCH_INGRESS=y
- CONFIG_NLMON=y
-diff --git a/tools/testing/selftests/drivers/net/bonding/netcons_over_bonding.sh b/tools/testing/selftests/drivers/net/bonding/netcons_over_bonding.sh
-new file mode 100755
-index 0000000000000..477cc9379500a
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/bonding/netcons_over_bonding.sh
-@@ -0,0 +1,361 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# This selftest exercises trying to have multiple netpoll users at the same
-+# time.
-+#
-+# This selftest has multiple smalls test inside, and the goal is to
-+# get interfaces with bonding and netconsole in different orders in order
-+# to catch any possible issue.
-+#
-+# The main test composes of four interfaces being created using netdevsim; two
-+# of them are bonded to serve as the netconsole's transmit interface. The
-+# remaining two interfaces are similarly bonded and assigned to a separate
-+# network namespace, which acts as the receive interface, where socat monitors
-+# for incoming messages.
-+#
-+# A netconsole message is then sent to ensure it is properly received across
-+# this configuration.
-+#
-+# Later, run a few other tests, to make sure that bonding and netconsole
-+# cannot coexist.
-+#
-+# The test's objective is to exercise netpoll usage when managed simultaneously
-+# by multiple subsystems (netconsole and bonding).
-+#
-+# Author: Breno Leitao <leitao@debian.org>
-+
-+set -euo pipefail
-+
-+SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-+
-+source "${SCRIPTDIR}"/../lib/sh/lib_netcons.sh
-+
-+modprobe netdevsim 2> /dev/null || true
-+modprobe netconsole 2> /dev/null || true
-+modprobe bonding 2> /dev/null || true
-+modprobe veth 2> /dev/null || true
-+
-+# The content of kmsg will be save to the following file
-+OUTPUT_FILE="/tmp/${TARGET}"
-+
-+# Check for basic system dependency and exit if not found
-+check_for_dependencies
-+# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
-+echo "6 5" > /proc/sys/kernel/printk
-+# Remove the namespace, interfaces and netconsole target on exit
-+trap cleanup_bond EXIT
-+
-+FORMAT="extended"
-+IP_VERSION="ipv4"
-+VETH0="veth"$(( RANDOM % 256))
-+VETH1="veth"$((256 +  RANDOM % 256))
-+TXNS=""
-+RXNS=""
-+
-+# Create "bond_tx_XX" and "bond_rx_XX" interfaces, and set DSTIF and SRCIF with
-+# the bonding interfaces
-+function setup_bonding_ifaces() {
-+	local RAND=$(( RANDOM % 100 ))
-+	BOND_TX_MAIN_IF="bond_tx_$RAND"
-+	BOND_RX_MAIN_IF="bond_rx_$RAND"
-+
-+	# Setup TX
-+	if ! ip -n "${TXNS}" link add "${BOND_TX_MAIN_IF}" type bond mode balance-rr
-+	then
-+		echo "Failed to create bond TX interface. Is CONFIG_BONDING set?" >&2
-+		# only clean nsim ifaces and namespace. Nothing else has been
-+		# initialized
-+		cleanup_bond_nsim
-+		trap - EXIT
-+		exit "${ksft_skip}"
-+	fi
-+
-+	# create_netdevsim() got the interface up, but it needs to be down
-+	# before being enslaved.
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX1_SLAVE_IF}" down
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX2_SLAVE_IF}" down
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX1_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX2_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX_MAIN_IF}" up
-+
-+	# Setup RX
-+	ip -n "${RXNS}" \
-+		link add "${BOND_RX_MAIN_IF}" type bond mode balance-rr
-+	ip -n "${RXNS}" \
-+		link set "${BOND_RX1_SLAVE_IF}" down
-+	ip -n "${RXNS}" \
-+		link set "${BOND_RX2_SLAVE_IF}" down
-+	ip -n "${RXNS}" \
-+		link set "${BOND_RX1_SLAVE_IF}" master "${BOND_RX_MAIN_IF}"
-+	ip -n "${RXNS}" \
-+		link set "${BOND_RX2_SLAVE_IF}" master "${BOND_RX_MAIN_IF}"
-+	ip -n "${RXNS}" \
-+		link set "${BOND_RX_MAIN_IF}" up
-+
-+	export DSTIF="${BOND_RX_MAIN_IF}"
-+	export SRCIF="${BOND_TX_MAIN_IF}"
-+}
-+
-+# Create 4 netdevsim interfaces. Two of them will be bound to TX bonding iface
-+# and the other two will be bond to the RX interface (on the other namespace)
-+function create_ifaces_bond() {
-+	BOND_TX1_SLAVE_IF=$(create_netdevsim "${NSIM_BOND_TX_1}" "${TXNS}")
-+	BOND_TX2_SLAVE_IF=$(create_netdevsim "${NSIM_BOND_TX_2}" "${TXNS}")
-+	BOND_RX1_SLAVE_IF=$(create_netdevsim "${NSIM_BOND_RX_1}" "${RXNS}")
-+	BOND_RX2_SLAVE_IF=$(create_netdevsim "${NSIM_BOND_RX_2}" "${RXNS}")
-+}
-+
-+# netdevsim link BOND_TX to BOND_RX interfaces
-+function link_ifaces_bond() {
-+	local BOND_TX1_SLAVE_IFIDX
-+	local BOND_TX2_SLAVE_IFIDX
-+	local BOND_RX1_SLAVE_IFIDX
-+	local BOND_RX2_SLAVE_IFIDX
-+	local TXNS_FD
-+	local RXNS_FD
-+
-+	BOND_TX1_SLAVE_IFIDX=$(ip netns exec "${TXNS}" \
-+				cat /sys/class/net/"$BOND_TX1_SLAVE_IF"/ifindex)
-+	BOND_TX2_SLAVE_IFIDX=$(ip netns exec "${TXNS}" \
-+				cat /sys/class/net/"$BOND_TX2_SLAVE_IF"/ifindex)
-+	BOND_RX1_SLAVE_IFIDX=$(ip netns exec "${RXNS}" \
-+				cat /sys/class/net/"$BOND_RX1_SLAVE_IF"/ifindex)
-+	BOND_RX2_SLAVE_IFIDX=$(ip netns exec "${RXNS}" \
-+				cat /sys/class/net/"$BOND_RX2_SLAVE_IF"/ifindex)
-+
-+	exec {TXNS_FD}</var/run/netns/"${TXNS}"
-+	exec {RXNS_FD}</var/run/netns/"${RXNS}"
-+
-+	# Linking TX ifaces to the RX ones (on the other namespace)
-+	echo "${TXNS_FD}:$BOND_TX1_SLAVE_IFIDX $RXNS_FD:$BOND_RX1_SLAVE_IFIDX"  \
-+		> "$NSIM_DEV_SYS_LINK"
-+	echo "${TXNS_FD}:$BOND_TX2_SLAVE_IFIDX $RXNS_FD:$BOND_RX2_SLAVE_IFIDX"  \
-+		> "$NSIM_DEV_SYS_LINK"
-+
-+	exec {TXNS_FD}<&-
-+	exec {RXNS_FD}<&-
-+}
-+
-+function create_all_ifaces() {
-+	# setup_ns function is coming from lib.sh
-+	setup_ns TXNS RXNS
-+	export NAMESPACE="${RXNS}"
-+
-+	# Create two interfaces for RX and two for TX
-+	create_ifaces_bond
-+	# Link netlink ifaces
-+	link_ifaces_bond
-+}
-+
-+# configure DSTIF and SRCIF IPs
-+function configure_ifaces_ips() {
-+	local IP_VERSION=${1:-"ipv4"}
-+	select_ipv4_or_ipv6 "${IP_VERSION}"
-+
-+	ip -n "${RXNS}" addr add "${DSTIP}"/24 dev "${DSTIF}"
-+	ip -n "${RXNS}" link set "${DSTIF}" up
-+
-+	ip -n "${TXNS}" addr add "${SRCIP}"/24 dev "${SRCIF}"
-+	ip -n "${TXNS}" link set "${SRCIF}" up
-+}
-+
-+function test_enable_netpoll_on_enslaved_iface() {
-+	echo 0 > "${NETCONS_PATH}"/enabled
-+
-+	# At this stage, BOND_TX1_SLAVE_IF is enslaved to BOND_TX_MAIN_IF, and
-+	# linked to BOND_RX1_SLAVE_IF inside the namespace.
-+	echo "${BOND_TX1_SLAVE_IF}" > "${NETCONS_PATH}"/dev_name
-+
-+	# This should fail with the following message in dmesg:
-+	# netpoll: netconsole: ethX is a slave device, aborting
-+	set +e
-+	enable_netcons_ns 2> /dev/null
-+	set -e
-+
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 1 ]]
-+	then
-+		echo "test failed: Bonding and netpoll cannot co-exists." >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+function test_delete_bond_and_reenable_target() {
-+	ip -n "${TXNS}" \
-+		link delete "${BOND_TX_MAIN_IF}" type bond
-+
-+	# BOND_TX1_SLAVE_IF is not attached to a bond interface anymore
-+	# netpoll can be plugged in there
-+	echo "${BOND_TX1_SLAVE_IF}" > "${NETCONS_PATH}"/dev_name
-+
-+	# this should work, since the interface is not enslaved
-+	enable_netcons_ns
-+
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 0 ]]
-+	then
-+		echo "test failed: Unable to start netpoll on an unbond iface." >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+# Send a netconsole message to the netconsole target
-+function test_send_netcons_msg_through_bond_iface() {
-+	# Listen for netconsole port inside the namespace and
-+	# destination interface
-+	listen_port_and_save_to "${OUTPUT_FILE}" "${IP_VERSION}" &
-+	# Wait for socat to start and listen to the port.
-+	wait_for_port "${RXNS}" "${PORT}" "${IP_VERSION}"
-+	# Send the message
-+	echo "${MSG}: ${TARGET}" > /dev/kmsg
-+	# Wait until socat saves the file to disk
-+	busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
-+	# Make sure the message was received in the dst part
-+	# and exit
-+	validate_result "${OUTPUT_FILE}" "${FORMAT}"
-+	# kill socat in case it is still running
-+	pkill_socat
-+}
-+
-+# BOND_TX1_SLAVE_IF has netconsole enabled on it, bind it to BOND_TX_MAIN_IF.
-+# Given BOND_TX_MAIN_IF was deleted, recreate it first
-+function test_enslave_netcons_enabled_iface {
-+	# netconsole got disabled while the interface was down
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 0 ]]
-+	then
-+		echo "test failed: netconsole expected to be enabled against BOND_TX1_SLAVE_IF" >&2
-+		exit "${ksft_fail}"
-+	fi
-+
-+	# recreate the bonding iface. it got deleted by previous
-+	# test (test_delete_bond_and_reenable_target)
-+	ip -n "${TXNS}" \
-+		link add "${BOND_TX_MAIN_IF}" type bond mode balance-rr
-+
-+	# sub-interface need to be down before attaching to bonding
-+	# This will also disable netconsole.
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX1_SLAVE_IF}" down
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX1_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX_MAIN_IF}" up
-+
-+	# netconsole got disabled while the interface was down
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 1 ]]
-+	then
-+		echo "test failed: Device is part of a bond iface, cannot have netcons enabled" >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+# Get netconsole enabled on a bonding interface and attach a second
-+# sub-interface.
-+function test_enslave_iface_to_bond {
-+	# BOND_TX_MAIN_IF has only BOND_TX1_SLAVE_IF right now
-+	echo "${BOND_TX_MAIN_IF}" > "${NETCONS_PATH}"/dev_name
-+	enable_netcons_ns
-+
-+	# netcons is attached to bond0 and BOND_TX1_SLAVE_IF is
-+	# part of BOND_TX_MAIN_IF. Attach BOND_TX2_SLAVE_IF to BOND_TX_MAIN_IF.
-+	ip -n "${TXNS}" \
-+		link set "${BOND_TX2_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 0 ]]
-+	then
-+		echo "test failed: Netconsole should be enabled on bonding interface. Failed" >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+function test_enslave_iff_disabled_netpoll_iface {
-+	local ret
-+
-+	# Create two interfaces. veth interfaces it known to have
-+	# IFF_DISABLE_NETPOLL set
-+	if ! ip link add "${VETH0}" type veth peer name "${VETH1}"
-+	then
-+		echo "Failed to create veth TX interface. Is CONFIG_VETH set?" >&2
-+		exit "${ksft_skip}"
-+	fi
-+	set +e
-+	# This will print RTNETLINK answers: Device or resource busy
-+	ip link set "${VETH0}" master "${BOND_TX_MAIN_IF}" 2> /dev/null
-+	ret=$?
-+	set -e
-+	if [[ $ret -eq 0 ]]
-+	then
-+		echo "test failed: veth interface could not be enslaved"
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+# Given that netconsole picks the current net namespace, we need to enable it
-+# from inside the TXNS namespace
-+function enable_netcons_ns() {
-+	ip netns exec "${TXNS}" sh -c \
-+		"mount -t configfs configfs /sys/kernel/config && echo 1 > $NETCONS_PATH/enabled"
-+}
-+
-+####################
-+# Tests start here #
-+####################
-+
-+# Create regular interfaces using netdevsim and link them
-+create_all_ifaces
-+
-+# Setup the bonding interfaces
-+# BOND_RX_MAIN_IF has BOND_RX{1,2}_SLAVE_IF
-+# BOND_TX_MAIN_IF has BOND_TX{1,2}_SLAVE_IF
-+setup_bonding_ifaces
-+
-+# Configure the ips as BOND_RX1_SLAVE_IF and BOND_TX1_SLAVE_IF
-+configure_ifaces_ips "${IP_VERSION}"
-+
-+_create_dynamic_target "${FORMAT}" "${NETCONS_PATH}"
-+enable_netcons_ns
-+set_user_data
-+
-+# Test #1 : Create an bonding interface and attach netpoll into
-+# the bonding interface. Netconsole/netpoll should work on
-+# the bonding interface.
-+test_send_netcons_msg_through_bond_iface
-+echo "test #1: netpoll on bonding interface worked. Test passed" >&2
-+
-+# Test #2: Attach netpoll to an enslaved interface
-+# Try to attach netpoll to an enslaved sub-interface (while still being part of
-+# a bonding interface), which shouldn't be allowed
-+test_enable_netpoll_on_enslaved_iface
-+echo "test #2: netpoll correctly rejected enslaved interface (expected behavior). Test passed." >&2
-+
-+# Test #3: Unplug the sub-interface from bond and enable netconsole
-+# Detach the interface from a bonding interface and attach netpoll again
-+test_delete_bond_and_reenable_target
-+echo "test #3: Able to attach to an unbound interface. Test passed." >&2
-+
-+# Test #4: Enslave a sub-interface that had netconsole enabled
-+# Try to enslave an interface that has netconsole/netpoll enabled.
-+# Previous test has netconsole enabled in BOND_TX1_SLAVE_IF, try to enslave it
-+test_enslave_netcons_enabled_iface
-+echo "test #4: Enslaving an interface with netpoll attached. Test passed." >&2
-+
-+# Test #5: Enslave a sub-interface to a bonding interface
-+# Enslave an interface to a bond interface that has netpoll attached
-+# At this stage, BOND_TX_MAIN_IF is created and BOND_TX1_SLAVE_IF is part of
-+# it. Netconsole is currently disabled
-+test_enslave_iface_to_bond
-+echo "test #5: Enslaving an interface to bond+netpoll. Test passed." >&2
-+
-+# Test #6: Enslave a IFF_DISABLE_NETPOLL sub-interface to a bonding interface
-+# At this stage, BOND_TX_MAIN_IF has both sub interface and netconsole is
-+# enabled. This test will try to enslave an a veth (IFF_DISABLE_NETPOLL) interface
-+# and it should fail, with netpoll: veth0 doesn't support polling
-+test_enslave_iff_disabled_netpoll_iface
-+echo "test #6: Enslaving IFF_DISABLE_NETPOLL ifaces to bond iface is not supported. Test passed." >&2
-+
-+cleanup_bond
-+trap - EXIT
-+exit "${EXIT_STATUS}"
-diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-index 9b5ef8074440c..09553ecd50e39 100644
---- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-+++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-@@ -11,9 +11,11 @@ set -euo pipefail
- LIBDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
- 
- SRCIF="" # to be populated later
-+SRCIP="" # to be populated later
- SRCIP4="192.0.2.1"
- SRCIP6="fc00::1"
- DSTIF="" # to be populated later
-+DSTIP="" # to be populated later
- DSTIP4="192.0.2.2"
- DSTIP6="fc00::2"
- 
-@@ -28,17 +30,23 @@ NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
- # NAMESPACE will be populated by setup_ns with a random value
- NAMESPACE=""
- 
--# IDs for netdevsim
-+# IDs for netdevsim. We either use NSIM_DEV_{1,2}_ID for standard test
-+# or NSIM_BOND_{T,R}X_{1,2} for the bonding tests. Not both at the
-+# same time.
- NSIM_DEV_1_ID=$((256 + RANDOM % 256))
- NSIM_DEV_2_ID=$((512 + RANDOM % 256))
-+NSIM_BOND_TX_1=$((768 + RANDOM % 256))
-+NSIM_BOND_TX_2=$((1024 + RANDOM % 256))
-+NSIM_BOND_RX_1=$((1280 + RANDOM % 256))
-+NSIM_BOND_RX_2=$((1536 + RANDOM % 256))
- NSIM_DEV_SYS_NEW="/sys/bus/netdevsim/new_device"
-+NSIM_DEV_SYS_LINK="/sys/bus/netdevsim/link_device"
- 
- # Used to create and delete namespaces
- source "${LIBDIR}"/../../../../net/lib.sh
- 
- # Create netdevsim interfaces
- create_ifaces() {
--
- 	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_NEW"
- 	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_NEW"
- 	udevadm settle 2> /dev/null || true
-@@ -137,15 +145,17 @@ function _create_dynamic_target() {
- 	then
- 		echo 1 > "${NCPATH}"/extended
- 	fi
-+}
- 
-+function create_and_enable_dynamic_target() {
-+	_create_dynamic_target "${FORMAT}" "${NCPATH}"
- 	echo 1 > "${NCPATH}"/enabled
--
- }
- 
- function create_dynamic_target() {
- 	local FORMAT=${1:-"extended"}
- 	local NCPATH=${2:-"$NETCONS_PATH"}
--	_create_dynamic_target "${FORMAT}" "${NCPATH}"
-+	create_and_enable_dynamic_target "${FORMAT}" "${NCPATH}"
- 
- 	# This will make sure that the kernel was able to
- 	# load the netconsole driver configuration. The console message
-@@ -181,7 +191,6 @@ function disable_release_append() {
- 
- function do_cleanup() {
- 	local NSIM_DEV_SYS_DEL="/sys/bus/netdevsim/del_device"
--
- 	# Delete netdevsim devices
- 	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_DEL"
- 	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_DEL"
-@@ -193,14 +202,26 @@ function do_cleanup() {
- 	echo "${DEFAULT_PRINTK_VALUES}" > /proc/sys/kernel/printk
- }
- 
--function cleanup() {
-+function cleanup_netcons() {
- 	# delete netconsole dynamic reconfiguration
--	echo 0 > "${NETCONS_PATH}"/enabled
-+	# do not fail if the target is already disabled
-+	if [[ ! -d "${NETCONS_PATH}" ]]
-+	then
-+		# in some cases this is called before netcons path is created
-+		return
-+	fi
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) != 0 ]]
-+	then
-+		echo 0 > "${NETCONS_PATH}"/enabled || true
-+	fi
- 	# Remove all the keys that got created during the selftest
- 	find "${NETCONS_PATH}/userdata/" -mindepth 1 -type d -delete
- 	# Remove the configfs entry
- 	rmdir "${NETCONS_PATH}"
-+}
- 
-+function cleanup() {
-+	cleanup_netcons
- 	do_cleanup
- }
- 
-@@ -377,3 +398,24 @@ function wait_for_port() {
- 	# more frequently on IPv6
- 	sleep 1
- }
-+
-+# Clean up netdevsim ifaces created for bonding test
-+function cleanup_bond_nsim() {
-+	ip -n "${TXNS}" \
-+		link delete "${BOND_TX_MAIN_IF}" type bond || true
-+	ip -n "${RXNS}" \
-+		link delete "${BOND_RX_MAIN_IF}" type bond || true
-+
-+	cleanup_netdevsim "$NSIM_BOND_TX_1"
-+	cleanup_netdevsim "$NSIM_BOND_TX_2"
-+	cleanup_netdevsim "$NSIM_BOND_RX_1"
-+	cleanup_netdevsim "$NSIM_BOND_RX_2"
-+}
-+
-+# cleanup tests that use bonding interfaces
-+function cleanup_bond() {
-+	cleanup_netcons
-+	cleanup_bond_nsim
-+	cleanup_all_ns
-+	ip link delete "${VETH0}" || true
-+}
-
--- 
-2.47.3
-
+Frank
+>
+> Thanks in advance,
+> Cheers,
+>     Rui
+> >
+> > Best regards
+> > Frank Li
 
