@@ -1,51 +1,57 @@
-Return-Path: <linux-kernel+bounces-888419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB09DC3AC73
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:06:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEDDAC3AD31
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:13:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DF741AA13FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:59:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6B7461DB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2DA30F925;
-	Thu,  6 Nov 2025 11:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="h/ztx85c"
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71AA2BCF4C;
+	Thu,  6 Nov 2025 12:08:06 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CCC2DAFBF;
-	Thu,  6 Nov 2025 11:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007923254B5;
+	Thu,  6 Nov 2025 12:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762430312; cv=none; b=aGrqv1S8iA9gAqP2OhvuY/9b+b5qgYyV82qMm9uqVbQYvfHVdxSlQ08ti5kNgAlrB+eMNXOiMrW1gWa4mLENgZQ+cFwvAAqLZzZbR1FDcNJ0nYvvGW0aWay6hht0YBdOYU3g6QzfnTqtRFg89wJyGFi6oV2s5iJ4pgGNj+R5LE4=
+	t=1762430886; cv=none; b=NG11iArE+uKRu6M00tk2czOAGsBo1FyK5zP71gg9rgf+uNSouGBF/NlC3H+NTSd2iJrLYVyBRjvH5HhSJuEWEqYlxJwLSrOyNmqla+SJYgt3TFgcIFUV8+DUWACjR8UVcxeV/qhlR5MAe08UWrZCrQEPbzd182nfXjjB+AteXNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762430312; c=relaxed/simple;
-	bh=M/uhW6CfAw2MLDz8vTpduubG/uOVFe0jqSk9Ynx3ZjI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ciBRBN35hgbzuVPtQvnFlIV8p1DuDv02lnQ88nI7CeyYlyhQEGyCRM2DoLr3Pg0k3k7BvmUw1Yu28hZ+jXjOp0g8bMtabxuDtMiyuwEltjvP8wVlSMCuLJuchV/uQUzK0TwSHF4qAijKljc7NKu+gzhZTDzdpgX442Xy6UIt1Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=h/ztx85c; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28a5e7ee7;
-	Thu, 6 Nov 2025 19:58:19 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: clm@fb.com
-Cc: dsterba@suse.com,
-	fdmanana@suse.com,
-	neal@gompa.dev,
-	boris@bur.io,
-	linux-btrfs@vger.kernel.org,
+	s=arc-20240116; t=1762430886; c=relaxed/simple;
+	bh=ZM8fa5s1lZ6qjJgcgbaq2tubODL1edU9BFjlRgTvU1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kiDahfvUmuUzktjTQoQdDCC2f7QQqK0RGR/2dcmBQhc1Fa+VvN0DtKl8OEwYjvlqWrtEeI+7cGSKBGDokrj8y6jpFNCFG2nvLkw1AReZ0Yz51U5LBAaVkycGJNQUGodkQCcrZ7TL+WTLANnkwn8F3/I20TAzzI+BiJb89XsfzwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d2LYC1myBzYQts6;
+	Thu,  6 Nov 2025 20:07:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 8E01F1A1CD4;
+	Thu,  6 Nov 2025 20:08:01 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.87.129])
+	by APP2 (Coremail) with SMTP id Syh0CgCH3UWfjwxpEbabCw--.33933S4;
+	Thu, 06 Nov 2025 20:07:59 +0800 (CST)
+From: linan666@huaweicloud.com
+To: song@kernel.org,
+	yukuai@fnnas.com,
+	neil@brown.name,
+	namhyung@gmail.com
+Cc: linux-raid@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] btrfs: avoid redundant cleanup when device allocation fails
-Date: Thu,  6 Nov 2025 11:58:15 +0000
-Message-Id: <20251106115815.3635405-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	xni@redhat.com,
+	k@mgml.me,
+	linan666@huaweicloud.com,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com
+Subject: [PATCH v2 00/11] cleanup and bugfix of sync
+Date: Thu,  6 Nov 2025 19:59:24 +0800
+Message-Id: <20251106115935.2148714-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,42 +59,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a59082ad503a1kunm26a292ab7a4446
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTR8ZVk9MHx5ITExOGh1MTlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
-	++
-DKIM-Signature: a=rsa-sha256;
-	b=h/ztx85cc6iey7T3aeTLYXjgd89FOu4GzbMicrcUCHMqT1d+eiWnA99m6N0G8875ZMdZZwvA2DaRsa0S+JLFPNcR6bw1l9yuiKzvK0H+J9wVdbppdMXMMX47embKUqOD2+Tlufdu/ftCfqs4DsL/2/cXwMIGwgHjpNEKjNCMQPk=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=uw4dxLTV+p9YbEVcKU4Hy/PdsNRbXcaQFe6PcMz/gCk=;
-	h=date:mime-version:subject:message-id:from;
+X-CM-TRANSID:Syh0CgCH3UWfjwxpEbabCw--.33933S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFW8WFW5Wr1fCF13Ww43GFg_yoW8GFyUp3
+	yfKry3Zw48CrW7Zr9xJFyUZayrC34xta42kr17t3ykXF15ZFWUGF4UXa18WFyDXry3Ka42
+	qr1UGFZxGF18Ja7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJV
+	WxJr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI
+	0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JV
+	WxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUooGQ
+	DUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-When device allocation fails, the chunk map has not been added to the
-mapping tree, so locking for cleanup is unnecessary. Simply free the
-chunk map as done when adding it to the mapping tree fails.
+From: Li Nan <linan122@huawei.com>
 
-Fixes: bf2e2eb060fa2 ("btrfs: Add self-tests for btrfs_rmap_block")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- fs/btrfs/tests/extent-map-tests.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v2:
+ - patch 1, 4, 8: new patches
+ - patch 3: new cleanup patch for future fix, Link:
+   https://lore.kernel.org/all/8136b746-50c9-51eb-483b-f2661e86d3eb@huaweicloud.com/
+ - patch 5: do not change return value of narrow_write_error()
+ - patch 6: add comment of removing MD_RECOVERY_INTR
 
-diff --git a/fs/btrfs/tests/extent-map-tests.c b/fs/btrfs/tests/extent-map-tests.c
-index 42af6c737c6e..e227cfff1e8d 100644
---- a/fs/btrfs/tests/extent-map-tests.c
-+++ b/fs/btrfs/tests/extent-map-tests.c
-@@ -1036,7 +1036,8 @@ static int test_rmap_block(struct btrfs_fs_info *fs_info,
- 		if (IS_ERR(dev)) {
- 			test_err("cannot allocate device");
- 			ret = PTR_ERR(dev);
--			goto out;
-+			btrfs_free_chunk_map(map);
-+			goto out_free;
- 		}
- 		map->stripes[i].dev = dev;
- 		map->stripes[i].physical = test->data_stripe_phys_start[i];
+Li Nan (11):
+  md/raid1: simplify uptodate handling in end_sync_write
+  md: factor error handling out of md_done_sync into helper
+  md/raid1,raid10: return actual write status in narrow_write_error
+  md/raid1,raid10: support narrow_write_error when badblocks is disabled
+  md: mark rdev Faulty when badblocks setting fails
+  md: remove MD_RECOVERY_ERROR handling and simplify resync_offset
+    update
+  md: factor out sync completion update into helper
+  md: move finish_reshape to md_finish_sync()
+  md/raid10: fix any_working flag handling in raid10_sync_request
+  md/raid10: cleanup skip handling in raid10_sync_request
+  md: remove recovery_disabled
+
+ drivers/md/md.h     |  11 +--
+ drivers/md/raid1.h  |   5 --
+ drivers/md/raid10.h |   5 --
+ drivers/md/raid5.h  |   1 -
+ drivers/md/md.c     | 138 +++++++++++++++++------------------
+ drivers/md/raid1.c  |  77 +++++++++-----------
+ drivers/md/raid10.c | 171 ++++++++++++++------------------------------
+ drivers/md/raid5.c  |  40 ++++-------
+ 8 files changed, 174 insertions(+), 274 deletions(-)
+
 -- 
-2.34.1
+2.39.2
 
 
