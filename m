@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-888830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E0CC3C04E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:23:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B1BC3C0AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CEAAB4E1C38
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:23:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4D5B3B89D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C5E26F2A7;
-	Thu,  6 Nov 2025 15:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E76626F2A7;
+	Thu,  6 Nov 2025 15:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fjgpfyVn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4EqVSek"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349781EEA5D;
-	Thu,  6 Nov 2025 15:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAAB26B0AE;
+	Thu,  6 Nov 2025 15:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762442597; cv=none; b=mdAuTuE6pRpYtr+9rhFcNQ2ziLWqlX6GPJcvrEsQvPcyPE3ArVB9VSL2glbmzGOgzgROsOX/lUtbDBgSNylebO/dzCA7Fg41v3w3pkjawYG3M5UDJ92v4pGAGcz08/aS5tTKzu3b8yBwYHFMe1JmVhz+gl9Z3tzTPN5v0dzGf+E=
+	t=1762442624; cv=none; b=mL/3g8xyn1VtQnqgDWvHyAjDnJLR3TGzDUYZDcD/Ia9qf/A6YGO35/Y1qX6it6AlrIV73t3Dc4qB4YSqh1mDdojl8lcn+yesgib038xLbEsiibSeuMGG3/ZOspa62bahlLPGkVL3WY3j97JdwUHvRRuFNNwR5Og5iq1JwLV0M3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762442597; c=relaxed/simple;
-	bh=8rLgUPOR8E20yMDM0k3KiaiNTkBo2G8LCQ43Qy2tGr0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BwCAyAcsG8I0EZYO2MDVLg895dvHcnqwplMcpxUbl1yft3Jyw3ZRdxMBo6ey4ahbk7pv+QlcFM7VrxIpAnoLc7gEmf5pZf9cOCQyuvCgy86SSywgc+/KDDfT1xjFW9k3O7qQCFIK+8WW2rADH8I5MMSlqnKLs/y3FJFQT61cwi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fjgpfyVn; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762442595; x=1793978595;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version;
-  bh=8rLgUPOR8E20yMDM0k3KiaiNTkBo2G8LCQ43Qy2tGr0=;
-  b=fjgpfyVnH58Qn+mr4e7R54K85g/UEW1sfSwo2Y2ghnaQiWgm7tTOTAG6
-   blHDOOgsuXFto66/Vy2qZz0/lY9KNVbATUI+GVTSv0w56kTo8nd/nZFq1
-   OcqJepw/BPbxKUZBNPX0h7PyDS9jbhyESlJosqnmHfE/QYtGhJl9Tn9UT
-   lxjjOApFgc4dYCCxEgf2iGk+DcdfTHWjgW4vfBp8bRpmxiFEdmKv4xY+N
-   t6THs+HrT7YIgdjFRHJ6pJonwmNqWHqtXQd6DNaEpxG3BATZE5lTHVVvR
-   OlUtn84B91wNo2aCunJl8yaLc4r5sqr9lzl2H7UGP9opsBPlCAOxaW3LB
-   g==;
-X-CSE-ConnectionGUID: P11XMnkRTfOQqs2J6FK1yg==
-X-CSE-MsgGUID: 3zk2MINYQVSkeLR8NCnykQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68419838"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208,223";a="68419838"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 07:23:14 -0800
-X-CSE-ConnectionGUID: GVB1ZkyuTUSZtamOqDBi4w==
-X-CSE-MsgGUID: tivEWLwMRBWUdH7AlB1K/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208,223";a="187941968"
-Received: from spandruv-desk2.jf.intel.com ([10.88.27.176])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 07:23:15 -0800
-Message-ID: <db92b8a310d88214e2045a73d3da6d0ffe8606f7.camel@linux.intel.com>
-Subject: Re: [REGRESSION] Intel Turbo Boost stuck disabled on some Clevo
- machines (was: [PATCH] cpufreq: intel_pstate: Unchecked MSR aceess in
- legacy mode)
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, 	mmikowski@kfocus.org
-Date: Thu, 06 Nov 2025 07:23:14 -0800
-In-Reply-To: <20250910153329.10dcef9d@kf-m2g5>
-References: <20250429210711.255185-1-srinivas.pandruvada@linux.intel.com>
-		<CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
-		<20250910113650.54eafc2b@kf-m2g5>
-		<dda1d8d23407623c99e2f22e60ada1872bca98fe.camel@linux.intel.com>
-	 <20250910153329.10dcef9d@kf-m2g5>
-Content-Type: multipart/mixed; boundary="=-v2j8C3jhV+V4YO2nDGiS"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762442624; c=relaxed/simple;
+	bh=zIUMeT7hGiOlHf1WB7lre3GGJ2Wo/h4bJ7uQ111gxz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouDZ0ICojYAchtPepd9MSXAlKZmd64lPdDM2UEGkFTviweCs19dYAkjXB6bWdtSXEVuReZVEvH+YemBt2pxuchshv5qmlQwX8IbS6B5LC9DcP5/ua/p0SCecz2P/lEpxNl2I7ErxBqzGIBGwz4l0T3u/mczUfZnWF6+VNC/8XGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4EqVSek; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63191C4CEF7;
+	Thu,  6 Nov 2025 15:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762442623;
+	bh=zIUMeT7hGiOlHf1WB7lre3GGJ2Wo/h4bJ7uQ111gxz8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=r4EqVSekQVZrKHPjcwfGG7/Ey9EdpX4dJi33im2Oz6p6lnFJSC/nvA/B31t7rRfQ1
+	 HBIcx9i2iueDZ89qaGtd3F7LdG3Ozc6ReX17V6b79fxrjwQIgEvJ8bCjC/Zv0pbkw+
+	 KD36Zzb4mQcxGXXMPT/GmYePR8udGHyZ6kAITmTX6Y2a34coJktspJBf/qumyeDc4s
+	 KEYRYEExSZ3Lo/if3dn1LUtfbsRO0zuqSGeaevgUyFb77+PN3A92x7cQ/eZ1K7iY0V
+	 MVEKEDDIiBFC8hW1qaR25os7KMhmvJ0F8eYW71BIHbWEkZpWz22/bZrrhvtCg3gLVe
+	 fu3jG3KwVA81g==
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	tzungbi@kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH v6 0/3] drivers/base: Introduce revocable
+Date: Thu,  6 Nov 2025 23:23:27 +0800
+Message-ID: <20251106152330.11733-1-tzungbi@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---=-v2j8C3jhV+V4YO2nDGiS
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The series is separated from [1] to show the independency and compare
+potential use cases easier.  This is the revocable core part.  Use cases
+are in other series.
 
-Hi Aaron,
+The 1st patch introduces the revocable which is an implementation of ideas
+from the talk [2].
 
-On Wed, 2025-09-10 at 15:33 -0500, Aaron Rainbolt wrote:
-> On Wed, 10 Sep 2025 10:15:00 -0700
-> srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
->=20
-> > On Wed, 2025-09-10 at 11:36 -0500, Aaron Rainbolt wrote:
-> > > On Wed, 30 Apr 2025 16:29:09 +0200
-> > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> > > =C2=A0=20
-> > > > On Tue, Apr 29, 2025 at 11:07=E2=80=AFPM Srinivas Pandruvada
-> > > > <srinivas.pandruvada@linux.intel.com> wrote:=C2=A0=20
-> > > > >=20
-> > > > > When turbo mode is unavailable on a Skylake-X system,
-> > > > > executing
-> > > > > the
-> > > > > command:
-> > > > > "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"
-> > > > > results in an unchecked MSR access error: WRMSR to 0x199
-> > > > > (attempted to write 0x0000000100001300).
-Please try the attached patch, if this address this issue.
+The 2nd and 3rd patches add test cases for revocable in Kunit and selftest.
 
-Thanks,
-Srinivas
+[1] https://lore.kernel.org/chrome-platform/20251016054204.1523139-1-tzungbi@kernel.org
+[2] https://lpc.events/event/17/contributions/1627/
 
---=-v2j8C3jhV+V4YO2nDGiS
-Content-Disposition: attachment;
-	filename*0=0001-cpufreq-intel_pstate-Reevaluate-IDA-presence-on-no_t.pat;
-	filename*1=ch
-Content-Type: text/x-patch;
-	name="0001-cpufreq-intel_pstate-Reevaluate-IDA-presence-on-no_t.patch";
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+v6:
+- Rebase onto next-20251106.
+- Separate revocable core and use cases.
 
-RnJvbSA0MDVkMjdlODcxZjdiYzg1YTc4NmY4NDg3N2EzNWRhNTRjODEzYjM5IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTcmluaXZhcyBQYW5kcnV2YWRhIDxzcmluaXZhcy5wYW5kcnV2
-YWRhQGxpbnV4LmludGVsLmNvbT4KRGF0ZTogV2VkLCA1IE5vdiAyMDI1IDA5OjU3OjAzIC0wODAw
-ClN1YmplY3Q6IFtQQVRDSF0gY3B1ZnJlcTogaW50ZWxfcHN0YXRlOiBSZWV2YWx1YXRlIElEQSBw
-cmVzZW5jZSBvbiBub190dXJibwogYXR0cmlidXRlIGNoYW5nZQoKSWYgaGFyZHdhcmUgZGlzYWJs
-ZWQgSURBIChJbnRlbCBEeW5hbWljIEFjY2VsZXJhdGlvbiB0ZWNobm9sb2d5KSBmZWF0dXJlCmJl
-Zm9yZSBPUyBib290LCB0dXJibyBtb2RlIHN1cHBvcnQgd2lsbCBiZSBkaXNhYmxlZCBwZXJtYW5l
-bnRseS4gSW4gdGhpcwpjYXNlIENQVUlELjA2SDogRUFYWzFdIHJlcG9ydHMgMCBhbmQgYXR0cmli
-dXRlCiIvc3lzL2RldmljZXMvc3lzdGVtL2NwdS9pbnRlbF9wc3RhdGUvbm9fdHVyYm8iIHdpbGwg
-c2hvdyAiMSIgYW5kIHN0YXR1cwpjYW4ndCBiZSBjaGFuZ2VkIHRvICIwIi4KCldoZW4gbm9fdHVy
-Ym8gaXMgd3JpdHRlbiB3aXRoIDAsIGluIHRoaXMgY2FzZSBldmFsdWF0ZSBDUFVJRC4wNkg6IEVB
-WFsxXQphZ2Fpbi4gSWYgdGhlIGZlYXR1cmUgc3RhdHVzIGlzIGNoYW5nZWQgdG8gMSBwb3N0IE9T
-IGJvb3QgdGhlbiBhbGxvdyB0bwplbmFibGUgdHVyYm8gbW9kZS4KClNpZ25lZC1vZmYtYnk6IFNy
-aW5pdmFzIFBhbmRydXZhZGEgPHNyaW5pdmFzLnBhbmRydXZhZGFAbGludXguaW50ZWwuY29tPgot
-LS0KIGRyaXZlcnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUuYyB8IDcgKysrKysrLQogMSBmaWxlIGNo
-YW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUuYyBiL2RyaXZlcnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUu
-YwppbmRleCA0M2U4NDdlOWY3NDEuLjBlYzQ1YTYxMGI0NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9j
-cHVmcmVxL2ludGVsX3BzdGF0ZS5jCisrKyBiL2RyaXZlcnMvY3B1ZnJlcS9pbnRlbF9wc3RhdGUu
-YwpAQCAtNTk2LDEwICs1OTYsMTUgQEAgc3RhdGljIHZvaWQgaW50ZWxfcHN0YXRlX2h5YnJpZF9o
-d3BfYWRqdXN0KHN0cnVjdCBjcHVkYXRhICpjcHUpCiAKIHN0YXRpYyBib29sIHR1cmJvX2lzX2Rp
-c2FibGVkKHZvaWQpCiB7CisJdW5zaWduZWQgaW50IGVheCwgZWJ4LCBlY3gsIGVkeDsKIAl1NjQg
-bWlzY19lbjsKIAotCWlmICghY3B1X2ZlYXR1cmVfZW5hYmxlZChYODZfRkVBVFVSRV9JREEpKQor
-CWVheCA9IDA7CisJY3B1aWQoNiwgJmVheCwgJmVieCwgJmVjeCwgJmVkeCk7CisJaWYgKCEoZWF4
-ICYgQklUKDEpKSkgeworCQlwcl9pbmZvKCJUdXJibyBpcyBkaXNhYmxlZFxuIik7CiAJCXJldHVy
-biB0cnVlOworCX0KIAogCXJkbXNybChNU1JfSUEzMl9NSVNDX0VOQUJMRSwgbWlzY19lbik7CiAK
-LS0gCjIuNDMuMAoK
+v5: https://lore.kernel.org/chrome-platform/20251016054204.1523139-1-tzungbi@kernel.org
+- Rebase onto next-20251015.
+- Add more context about the PoC.
+- Support multiple revocable providers in the PoC.
 
+v4: https://lore.kernel.org/chrome-platform/20250923075302.591026-1-tzungbi@kernel.org
+- Rebase onto next-20250922.
+- Remove the 5th patch from v3.
+- Add fops replacement PoC in 5th - 7th patches.
 
---=-v2j8C3jhV+V4YO2nDGiS--
+v3: https://lore.kernel.org/chrome-platform/20250912081718.3827390-1-tzungbi@kernel.org
+- Rebase onto https://lore.kernel.org/chrome-platform/20250828083601.856083-1-tzungbi@kernel.org
+  and next-20250912.
+- The 4th patch changed accordingly.
+
+v2: https://lore.kernel.org/chrome-platform/20250820081645.847919-1-tzungbi@kernel.org
+- Rename "ref_proxy" -> "revocable".
+- Add test cases in Kunit and selftest.
+
+v1: https://lore.kernel.org/chrome-platform/20250814091020.1302888-1-tzungbi@kernel.org
+
+Tzung-Bi Shih (3):
+  revocable: Revocable resource management
+  revocable: Add Kunit test cases
+  selftests: revocable: Add kselftest cases
+
+ .../driver-api/driver-model/index.rst         |   1 +
+ .../driver-api/driver-model/revocable.rst     | 112 +++++++++
+ MAINTAINERS                                   |   9 +
+ drivers/base/Kconfig                          |   8 +
+ drivers/base/Makefile                         |   5 +-
+ drivers/base/revocable.c                      | 234 ++++++++++++++++++
+ drivers/base/revocable_test.c                 | 139 +++++++++++
+ include/linux/revocable.h                     |  69 ++++++
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/drivers/base/revocable/Makefile |   7 +
+ .../drivers/base/revocable/revocable_test.c   | 136 ++++++++++
+ .../drivers/base/revocable/test-revocable.sh  |  39 +++
+ .../base/revocable/test_modules/Makefile      |  10 +
+ .../revocable/test_modules/revocable_test.c   | 195 +++++++++++++++
+ 14 files changed, 964 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/driver-api/driver-model/revocable.rst
+ create mode 100644 drivers/base/revocable.c
+ create mode 100644 drivers/base/revocable_test.c
+ create mode 100644 include/linux/revocable.h
+ create mode 100644 tools/testing/selftests/drivers/base/revocable/Makefile
+ create mode 100644 tools/testing/selftests/drivers/base/revocable/revocable_test.c
+ create mode 100755 tools/testing/selftests/drivers/base/revocable/test-revocable.sh
+ create mode 100644 tools/testing/selftests/drivers/base/revocable/test_modules/Makefile
+ create mode 100644 tools/testing/selftests/drivers/base/revocable/test_modules/revocable_test.c
+
+-- 
+2.48.1
+
 
