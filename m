@@ -1,109 +1,195 @@
-Return-Path: <linux-kernel+bounces-889210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCACC3CF7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:55:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C874EC3CF84
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:57:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B66474E1BB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78BBD1885D8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2DE34CFDF;
-	Thu,  6 Nov 2025 17:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C05934F27F;
+	Thu,  6 Nov 2025 17:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="A9MKVjv0"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D19346A1C;
-	Thu,  6 Nov 2025 17:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="mPAVZlkL"
+Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C529E34A3BC;
+	Thu,  6 Nov 2025 17:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451719; cv=none; b=RT5ZRGgyU34/TViRTKB1kWURBj59U7/9Yfdr6biGPsQ9ZTuHaeP3Tk2dZE8bufRpnzm/36wcaZMA4Wo5Xuffbg+FOYctXSslmIm14PYu1AdYJ7WW4oIDGzfR57cUveekrhvKzVkfnNi+LA2OWa7veB0P9zcbqWCRtSKAUa8XjrU=
+	t=1762451800; cv=none; b=jOU8nT5QIs4hYOb7NMXnr4cbqthPPDVGgMlGl9DQ+cE/qAVNh6rVmrsSAu0ekn0Dc9aUnY1rPLSJ77zu6+EgItKuaYgSNWLRJ00ra/5Kr53/77SyTUvRIhdHcrF7VhzcvBBjvE4LFaEfQ/0c0OdzFygMJQzRHex0mKPVGwYBcBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451719; c=relaxed/simple;
-	bh=7KUkVQB8fSg5lNPwuWJRy+7zUz4Nw0l+R3XZZVzbeuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptQKgbrQhm9F9eFY18s+l6+zfDjsRW1HcmVF+jKr38q4D+yAGNodWeDXtHYW63zhFnfVaQhfMzxt7KN/2CWSjXhpEnYDi2kTnUegwx5VgFvgmTys0FLAcvwN9hrDzkrEFnlzxIpXwIq21QQBD7qiBPqKmiGn+3wAIhGtgq03lRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=A9MKVjv0; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from CPC-beaub-VBQ1L.localdomain (unknown [70.37.26.58])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 578BB201CEF1;
-	Thu,  6 Nov 2025 09:55:17 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 578BB201CEF1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762451717;
-	bh=s8I0sLI/LF0Ojfue7NuHNcANa3hTqbnC59ycXy4XnX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A9MKVjv0/re99Op2lGwQBwlHYykXKVWUm44eV5x6f3Th6l3WTOIIS4tieMiH6xd/d
-	 rMFAi1VZUh9MNO7uqWUeubsCjYYOWi+o338h9Bdirfrgcen8S6r0OvdbHXcD9mocuE
-	 cLmA35fShoQHUg90uE5VQ4b6wFYPf39uch2s2/PA=
-Date: Thu, 6 Nov 2025 17:55:13 +0000
-From: Beau Belgrave <beaub@linux.microsoft.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] tracing: tprobe-events: Fixes for tprobe events
-Message-ID: <20251106175513.GA174-beaub@linux.microsoft.com>
-References: <176244792552.155515.3285089581362758469.stgit@devnote2>
+	s=arc-20240116; t=1762451800; c=relaxed/simple;
+	bh=nQ57i8dH7Nm/uXtna/JxiKIX3iH6HAa/JKy4WzkSbYA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O9/U7QSY5g3C+5lmCvbFvx5rlRLFwrYYzayaXUPkMnyG649E408zBG04jnxM8AGP9vXFP7IKgGvCi3o5ptJjnqxVHiLc8hpA/KYxNi1ZRTSUjmyeU7nNwBpTMMXE+8HRuu98/TjJDD4L4OEPvyiTVE3stUl3r5gsUTjWIL9d5cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=mPAVZlkL; arc=none smtp.client-ip=129.217.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
+Received: from simon-Latitude-5450.. (tmo-072-112.customers.d1-online.com [80.187.72.112])
+	(authenticated bits=0)
+	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 5A6HuOKm024412
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 6 Nov 2025 18:56:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
+	s=unimail; t=1762451789;
+	bh=nQ57i8dH7Nm/uXtna/JxiKIX3iH6HAa/JKy4WzkSbYA=;
+	h=From:To:Cc:Subject:Date;
+	b=mPAVZlkLy9neHrsgaiPqcP4KJnzvbNPBMW7/zCUaY4cPa7nOl/4TrnykF4Yyjwl5/
+	 Xn3rLcL5zNJ9YlFkxpaE2iFxnLnXzXXYN9trzFedLByoj3cV8Ct7U6QDWN1j7L73aG
+	 ygGuWk/+/aA6+tQCQKzXVeegBz/K+P+Ry+tMpCuY=
+From: Simon Schippers <simon.schippers@tu-dortmund.de>
+To: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        dnlplm@gmail.com, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Simon Schippers <simon.schippers@tu-dortmund.de>
+Subject: [PATCH net-next v2] usbnet: Add support for Byte Queue Limits (BQL)
+Date: Thu,  6 Nov 2025 18:56:15 +0100
+Message-ID: <20251106175615.26948-1-simon.schippers@tu-dortmund.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176244792552.155515.3285089581362758469.stgit@devnote2>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 07, 2025 at 01:52:05AM +0900, Masami Hiramatsu (Google) wrote:
-> Hi,
-> 
-> Beau reported tprobe example in the document does not work on 6.17
-> kernel.
-> 
+In the current implementation, usbnet uses a fixed tx_qlen of:
 
-Thanks! I've applied this series locally and tested this. Everything
-works well in our environment.
+USB2: 60 * 1518 bytes = 91.08 KB
+USB3: 60 * 5 * 1518 bytes = 454.80 KB
 
-> 
-> And found it forgot to set tuser->tpoint before calling
-> tracepoint_user_register() which calls
-> tracepoint_probe_register_prio_may_exist(tuser->tpoint).
-> To fix that, I just moved the tuser->tpoint setting line
-> right before tracepoint_user_register() call [1/2].
-> 
-> I also found another issue when I switched enable and disable[2/2].
-> 
+Such large transmit queues can be problematic, especially for cellular
+modems. For example, with a typical celluar link speed of 10 Mbit/s, a
+fully occupied USB3 transmit queue results in:
 
-Thanks! I've validated no bad dmesg, etc. and can delete the tprobe
-without issues after we disable it.
+454.80 KB / (10 Mbit/s / 8 bit/byte) = 363.84 ms
 
-> I hope this report will help someone to do similar debug by tracing.
-> 
+of additional latency.
 
-I will reference this, it's very useful.
+This patch adds support for Byte Queue Limits (BQL) [1] to dynamically
+manage the transmit queue size and reduce latency without sacrificing
+throughput.
 
-For the series:
-Tested-by: Beau Belgrave <beaub@linux.microsoft.com>
-Reviewed-by: Beau Belgrave <beaub@linux.microsoft.com>
+Testing was performed on various devices using the usbnet driver for
+packet transmission:
 
-Thanks,
--Beau
-> Thank you,
-> 
-> ---
-> 
-> Masami Hiramatsu (Google) (2):
->       tracing: tprobe-events: Fix to register tracepoint correctly
->       tracing: tprobe-events: Fix to put tracepoint_user when disable the tprobe
-> 
-> 
->  kernel/trace/trace_fprobe.c |    7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+- DELOCK 66045: USB3 to 2.5 GbE adapter (ax88179_178a)
+- DELOCK 61969: USB2 to 1 GbE adapter (asix)
+- Quectel RM520: 5G modem (qmi_wwan)
+- USB2 Android tethering (cdc_ncm)
+
+No performance degradation was observed for iperf3 TCP or UDP traffic,
+while latency for a prioritized ping application was significantly
+reduced. For example, using the USB3 to 2.5 GbE adapter, which was fully
+utilized by iperf3 UDP traffic, the prioritized ping was improved from
+1.6 ms to 0.6 ms. With the same setup but with a 100 Mbit/s Ethernet
+connection, the prioritized ping was improved from 35 ms to 5 ms.
+
+[1] https://lwn.net/Articles/469652/
+
+Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+---
+v1 -> v2:
+Add a new spinlock to ensure netdev_completed_queue() is not executed
+concurrently by process context usbnet_bh_work() and the timer
+dev->delay.
+- https://lore.kernel.org/netdev/20251104161327.41004-1-simon.schippers@tu-dortmund.de/
+
+ drivers/net/usb/usbnet.c   | 11 +++++++++++
+ include/linux/usb/usbnet.h |  2 ++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index f3087fb62f4f..3d10cf791c51 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -831,6 +831,7 @@ int usbnet_stop(struct net_device *net)
+ 
+ 	clear_bit(EVENT_DEV_OPEN, &dev->flags);
+ 	netif_stop_queue (net);
++	netdev_reset_queue(net);
+ 
+ 	netif_info(dev, ifdown, dev->net,
+ 		   "stop stats: rx/tx %lu/%lu, errs %lu/%lu\n",
+@@ -939,6 +940,7 @@ int usbnet_open(struct net_device *net)
+ 	}
+ 
+ 	set_bit(EVENT_DEV_OPEN, &dev->flags);
++	netdev_reset_queue(net);
+ 	netif_start_queue (net);
+ 	netif_info(dev, ifup, dev->net,
+ 		   "open: enable queueing (rx %d, tx %d) mtu %d %s framing\n",
+@@ -1500,6 +1502,7 @@ netdev_tx_t usbnet_start_xmit(struct sk_buff *skb, struct net_device *net)
+ 	case 0:
+ 		netif_trans_update(net);
+ 		__usbnet_queue_skb(&dev->txq, skb, tx_start);
++		netdev_sent_queue(net, skb->len);
+ 		if (dev->txq.qlen >= TX_QLEN (dev))
+ 			netif_stop_queue (net);
+ 	}
+@@ -1563,6 +1566,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
+ static void usbnet_bh(struct timer_list *t)
+ {
+ 	struct usbnet		*dev = timer_container_of(dev, t, delay);
++	unsigned int bytes_compl = 0, pkts_compl = 0;
+ 	struct sk_buff		*skb;
+ 	struct skb_data		*entry;
+ 
+@@ -1574,6 +1578,8 @@ static void usbnet_bh(struct timer_list *t)
+ 				usb_free_skb(skb);
+ 			continue;
+ 		case tx_done:
++			bytes_compl += skb->len;
++			pkts_compl++;
+ 			kfree(entry->urb->sg);
+ 			fallthrough;
+ 		case rx_cleanup:
+@@ -1584,6 +1590,10 @@ static void usbnet_bh(struct timer_list *t)
+ 		}
+ 	}
+ 
++	spin_lock_bh(&dev->bql_spinlock);
++	netdev_completed_queue(dev->net, pkts_compl, bytes_compl);
++	spin_unlock_bh(&dev->bql_spinlock);
++
+ 	/* restart RX again after disabling due to high error rate */
+ 	clear_bit(EVENT_RX_KILL, &dev->flags);
+ 
+@@ -1755,6 +1765,7 @@ usbnet_probe(struct usb_interface *udev, const struct usb_device_id *prod)
+ 	skb_queue_head_init (&dev->txq);
+ 	skb_queue_head_init (&dev->done);
+ 	skb_queue_head_init(&dev->rxq_pause);
++	spin_lock_init(&dev->bql_spinlock);
+ 	INIT_WORK(&dev->bh_work, usbnet_bh_work);
+ 	INIT_WORK (&dev->kevent, usbnet_deferred_kevent);
+ 	init_usb_anchor(&dev->deferred);
+diff --git a/include/linux/usb/usbnet.h b/include/linux/usb/usbnet.h
+index a2d54122823d..2945923a8a95 100644
+--- a/include/linux/usb/usbnet.h
++++ b/include/linux/usb/usbnet.h
+@@ -14,6 +14,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/types.h>
+ #include <linux/usb.h>
++#include <linux/spinlock.h>
+ 
+ /* interface from usbnet core to each USB networking link we handle */
+ struct usbnet {
+@@ -59,6 +60,7 @@ struct usbnet {
+ 	struct mutex		interrupt_mutex;
+ 	struct usb_anchor	deferred;
+ 	struct work_struct	bh_work;
++	spinlock_t		bql_spinlock;
+ 
+ 	struct work_struct	kevent;
+ 	unsigned long		flags;
+-- 
+2.43.0
+
 
