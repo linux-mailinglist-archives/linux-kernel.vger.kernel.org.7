@@ -1,129 +1,250 @@
-Return-Path: <linux-kernel+bounces-889185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E64C3CEA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:45:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A7BC3CEB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8763B0AE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B9783B6B54
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531E834DCEE;
-	Thu,  6 Nov 2025 17:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPnTsvEg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12AF336EF7;
-	Thu,  6 Nov 2025 17:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B08336EF7;
+	Thu,  6 Nov 2025 17:43:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D3334F48A;
+	Thu,  6 Nov 2025 17:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451005; cv=none; b=i2ptX8VKDSS/hC1GHLZISMi2BzPM1f2uycyMPe9cSAfCNJ4oR5f5sTpYwFQ9Bn482dNZgj/5ihaapD/3DvLw3vrWsiGdyJeXStY3Ms9RdUYCf6IdYfSNtpcOWqfjPJEsbHiujtBtbbsbsga25ij6hWsRXCRBFOnLiDcq4M7tWMw=
+	t=1762451010; cv=none; b=AEHoyoJtNTVzHm+xFIHnz/YG7DCc489L5TpYqz6Q8Szglu9aAS4mT8p9i5spY0SKrLb3J/0z/nK5y2pcccuTg4JHJPxM6Bjvpl17wJiAsJWAUoZPSSGBBVUujxW5QTdNmvOKa7DztcM3FhR8ciETWTAhLFcGMpF3pRu4KR1ZxBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451005; c=relaxed/simple;
-	bh=RYg6fgvglOEUOS0tGf68vRf9+3J6E84/lSBqd1aI1sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g19H69yCvtMrNbCFQ4uGOFXb9gaKxXuWQdSkUgxxqUiYvrltkNhfhFH/XGJFMhiPwg5Z+q6l2NvM7ntl61k7k/w5ta8zdOepGc2kRcXWaQRAdK+dXwRUs1ilqArFS5/SFlzaTNCSb1L8JwbN8nCTUsQNd5D8DcvBIqOaDSiFOMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPnTsvEg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1992C116B1;
-	Thu,  6 Nov 2025 17:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762451005;
-	bh=RYg6fgvglOEUOS0tGf68vRf9+3J6E84/lSBqd1aI1sk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hPnTsvEgCJHP5uPcj0x5eVXQi3cMNZ3Qh0DH6GuT2Brcz4OAEObzwAJFdboPG/gLX
-	 8GSHcYXT4Noef9AFiK1iBJDo8YlryvJdp0kxSD1sV2+gROS0x+l6Lv7F7TbTkhL6ll
-	 KJyhAn7zGvRZpQpU2xOXGt1lI7N4mwWaaZzdb6T4ypEaPz+apFQ4Gau8pm2iDkkGrb
-	 XhCb5DKYZfYBditTwh/GpFgDqFcLaEjy4sNqxMPOu4QHrVDxwInnT7D4LzblzB4sMm
-	 zopAbMSwiK5hI/KA/AIeAN/EUF3QskeLr+5n66PxysHmlJ3EacoVgpy/0lUsbcaFtb
-	 mxPaP5xiSPlEw==
-Date: Thu, 6 Nov 2025 17:43:19 +0000
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	AngeloGioacchino Del Regno <angelogiocchino.delregno@collabora.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: mt7988: allow gpio-hogs
-Message-ID: <20251106-strewn-carport-a33a8b812794@spud>
-References: <20251105195007.199229-1-linux@fw-web.de>
- <20251105195007.199229-2-linux@fw-web.de>
- <5DB7D99D-A30D-42A1-8E3E-B0204A1E6E6D@public-files.de>
- <1af7077b-42a3-4efe-a8cb-6117136c8f2a@collabora.com>
+	s=arc-20240116; t=1762451010; c=relaxed/simple;
+	bh=Q09AZfXnE2IlWG3aSISViBE3O2obYPok81oMVsOQdZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JUjnD5NwFQqrfibtXnDnwbFyRJQdFJprp3EIpbAuDpyQUyQUQujFsNoJHZxwdMPRAN772nzeOi/OMt5mA4HD9k8BQyfivoLc+NoaX75/WFGcqw3ueP4ZW0vh1khSePiPhTiexk5IUn1d4XB9RCmlgF1L81qFxLLWX5CLEDgwBb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A36A1596;
+	Thu,  6 Nov 2025 09:43:19 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3888C3F694;
+	Thu,  6 Nov 2025 09:43:22 -0800 (PST)
+Message-ID: <8fada9f2-7aca-44e7-adc9-3d0e7a363baf@arm.com>
+Date: Thu, 6 Nov 2025 17:43:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kxHVsfn4TTebUpw9"
-Content-Disposition: inline
-In-Reply-To: <1af7077b-42a3-4efe-a8cb-6117136c8f2a@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/29] arm_mpam: Add the class and component structures
+ for firmware described ris
+To: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
+ Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-9-james.morse@arm.com>
+ <20251024174712.000051b6@huawei.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251024174712.000051b6@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Jonathan,
 
---kxHVsfn4TTebUpw9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/24/25 17:47, Jonathan Cameron wrote:
+> n Fri, 17 Oct 2025 18:56:24 +0000
+> James Morse <james.morse@arm.com> wrote:
+> 
+>> An MSC is a container of resources, each identified by their RIS index.
+>> Some RIS are described by firmware to provide their position in the system.
+>> Others are discovered when the driver probes the hardware.
+>>
+>> To configure a resource it needs to be found by its class, e.g. 'L2'.
+>> There are two kinds of grouping, a class is a set of components, which
+>> are visible to user-space as there are likely to be multiple instances
+>> of the L2 cache. (e.g. one per cluster or package)
+>>
+>> Add support for creating and destroying structures to allow a hierarchy
+>> of resources to be created.
+>>
+>> CC: Ben Horgan <ben.horgan@arm.com>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+> A few minor things inline.  Mostly code ordering related to make
+> it easier to review!
+> 
+>> ---
+>>  drivers/resctrl/mpam_devices.c  | 390 +++++++++++++++++++++++++++++++-
+>>  drivers/resctrl/mpam_internal.h |  93 ++++++++
+>>  include/linux/arm_mpam.h        |   8 +-
+>>  3 files changed, 483 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> index d18eeec95f79..8685e50f08c6 100644
+>> --- a/drivers/resctrl/mpam_devices.c
+>> +++ b/drivers/resctrl/mpam_devices.c
+>> @@ -30,7 +30,7 @@
+>>  static DEFINE_MUTEX(mpam_list_lock);
+>>  static LIST_HEAD(mpam_all_msc);
+>>  
+>> -static struct srcu_struct mpam_srcu;
+>> +struct srcu_struct mpam_srcu;
+> 
+> Meh. Others may be fussier about this but I'd rather you just
+> added the extern when this was first introduced and didn't
+> have this churn here.
 
-On Thu, Nov 06, 2025 at 10:01:41AM +0100, AngeloGioacchino Del Regno wrote:
-> Il 05/11/25 21:01, Frank Wunderlich ha scritto:
-> > Am 5. November 2025 20:50:01 MEZ schrieb Frank Wunderlich <linux@fw-web=
-=2Ede>:
-> > > From: Frank Wunderlich <frank-w@public-files.de>
-> > >=20
-> > > Allow gpio-hogs in pinctrl node for switching pcie on Bananapi R4 Pro.
-> > >=20
-> > > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > > Reviewed-by: AngeloGioacchino Del Regno <angelogiocchino.delregno@col=
-labora.com>
-> >=20
-> > Seems Angelos RB tag is missing "a" in "Gioacchino" in email
-> >=20
-> > Got error:
-> > said: 550 5.1.1 User does not exist -
-> > <angelogiocchino.delregno@collabora.com> (in reply to RCPT TO command)
-> >=20
-> > maybe this can be fixed while applying?
-> >=20
-> > regards Frank
->=20
-> Eh, have I typoed my own name?
->=20
-> So cool. Lol
->=20
-> Just in case it's needed:
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+I've dropped the static earlier now.
 
-I have a vim macro to a) save my hands typing lots of tags b) make sure
-I don't typo. ;)
+> 
+> 
+>> +static void mpam_vmsc_destroy(struct mpam_vmsc *vmsc)
+>> +{
+>> +	struct mpam_component *comp = vmsc->comp;
+>> +
+>> +	lockdep_assert_held(&mpam_list_lock);
+>> +
+>> +	list_del_rcu(&vmsc->comp_list);
+>> +	add_to_garbage(vmsc);
+>> +
+>> +	if (list_empty(&comp->vmsc))
+>> +		mpam_comp_destroy(comp);
+>> +}
+>> +
+>> +static void mpam_ris_destroy(struct mpam_msc_ris *ris)
+> I'd rather see the create / destroy next to each other if possible.
+> Makes it easier to check this unwinds the creat path.
 
+I've done this.
 
---kxHVsfn4TTebUpw9
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+>> +{
+>> +	struct mpam_vmsc *vmsc = ris->vmsc;
+>> +	struct mpam_msc *msc = vmsc->msc;
+>> +	struct mpam_component *comp = vmsc->comp;
+>> +	struct mpam_class *class = comp->class;
+>> +
+>> +	lockdep_assert_held(&mpam_list_lock);
+>> +
+>> +	/*
+>> +	 * It is assumed affinities don't overlap. If they do the class becomes
+>> +	 * unusable immediately.
+>> +	 */
+>> +	cpumask_andnot(&comp->affinity, &comp->affinity, &ris->affinity);
+>> +	cpumask_andnot(&class->affinity, &class->affinity, &ris->affinity);
+>> +	clear_bit(ris->ris_idx, &msc->ris_idxs);
+>> +	list_del_rcu(&ris->vmsc_list);
+>> +	list_del_rcu(&ris->msc_list);
+> Can you reorder these so that they are reverse of what happens in create path?
+> Makes not real difference other than slightly easier to check everything is done.
+> Right now I'm failing to spot where this was added to ris->msc_list in the
+> create path.
 
------BEGIN PGP SIGNATURE-----
+Yes, it is cleaner like that.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQzeNwAKCRB4tDGHoIJi
-0sEBAQDh3ELz8Pk02klEc4eajrCSPIBQRJI5YYEM84+8jup61wD/TIDv3g+lbIbM
-UpPplLaIvc9wo+kbqV2fcUYFO7jELAY=
-=yvxB
------END PGP SIGNATURE-----
+> 
+> 
+>> +	add_to_garbage(ris);
+>> +
+>> +	if (list_empty(&vmsc->ris))
+>> +		mpam_vmsc_destroy(vmsc);
+>> +}
+>> +
+> 
+>> +
+>> +/*
+>> + * The cacheinfo structures are only populated when CPUs are online.
+>> + * This helper walks the device tree to include offline CPUs too.
+> 
+> Comment stale?  It does walk a tree of devices but I'm not sure that's
+> what people will read device tree as meaning.
 
---kxHVsfn4TTebUpw9--
+Dropped.
+
+> 
+>> + */
+>> +int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>> +				   cpumask_t *affinity)
+>> +{
+>> +	return acpi_pptt_get_cpumask_from_cache_id(cache_id, affinity);
+>> +}
+> 
+>> +
+>> +static int mpam_ris_create_locked(struct mpam_msc *msc, u8 ris_idx,
+>> +				  enum mpam_class_types type, u8 class_id,
+>> +				  int component_id)
+>> +{
+> ...
+> 
+>> +	ris = devm_kzalloc(&msc->pdev->dev, sizeof(*ris), GFP_KERNEL);
+>> +	if (!ris)
+>> +		return -ENOMEM;
+>> +	init_garbage(&ris->garbage);
+>> +	ris->garbage.pdev = pdev;
+> I wonder if it's cleaner to just pass the pdev (sometimes null) in
+> as a parameter to init_garbage()
+
+Maybe... but I've left it as is for now.
+
+>> +
+>> +	class = mpam_class_find(class_id, type);
+>> +	if (IS_ERR(class))
+>> +		return PTR_ERR(class);
+> 
+> 
+> 
+>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+>> index 6ac75f3613c3..1a5d96660382 100644
+>> --- a/drivers/resctrl/mpam_internal.h
+>> +++ b/drivers/resctrl/mpam_internal.h
+> 
+>> +/*
+>> + * Structures protected by SRCU may not be freed for a surprising amount of
+>> + * time (especially if perf is running). To ensure the MPAM error interrupt can
+>> + * tear down all the structures, build a list of objects that can be gargbage
+> 
+> Spell check.  garbage
+
+Ack.
+
+> 
+>> + * collected once synchronize_srcu() has returned.
+>> + * If pdev is non-NULL, use devm_kfree().
+>> + */
+>> +struct mpam_garbage {
+>> +	/* member of mpam_garbage */
+>> +	struct llist_node	llist;
+>> +
+>> +	void			*to_free;
+>> +	struct platform_device	*pdev;
+>> +};
+> 
+
+Thanks,
+
+Ben
+
 
