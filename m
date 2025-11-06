@@ -1,250 +1,253 @@
-Return-Path: <linux-kernel+bounces-888725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49BEC3BBC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:29:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10BBC3BC91
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:36:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1D33F350DFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:29:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602C4422E3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2439533DEEC;
-	Thu,  6 Nov 2025 14:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D2C339B43;
+	Thu,  6 Nov 2025 14:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xGxtWHQ2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D0OaQQNg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xGxtWHQ2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="D0OaQQNg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="X6YkEiQJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6474C33CEA4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8449A2343B6;
+	Thu,  6 Nov 2025 14:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439283; cv=none; b=t9D6sIEaoAsq0HVdYv3ITOfp16g1Th6gLZGKpjtPpuGqVq+UoXKMRbiL84dcbn+GlKAiWEM9Im0GKACYpMxfdiKmMs/wq8GiOz2Hto4jsmZp9t/z3FOJ1FwWxSXVV2VXk5juChz0/BEyRASuD4RY3T2Idzi/90avp77y7SKkyc0=
+	t=1762439359; cv=none; b=Yh/6lCGcdi4r1rvrKG6HoyL+OqOll/JK7s1XTu1KK6E29ISYK/tGD4oXbjFClySyJGqiI4EY8Ys2tsysyMm+bzt5EAufjFi25HjWVB0qxuVe06KHigLECBXWAaidg91DMJ/Gzw8gLB+fZcXeCIqmjBhH7hj2ldaPDW1Kd+dwUS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439283; c=relaxed/simple;
-	bh=7Ik3D23qX2Te9Og+pHzngPjiFiZuQx+DsxyLl2EIkyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKgTaZrARkfXyJOaAkpHbjwfoWsNs8tkAN2+DeVShFSeKXpV5qDOkkY+sqaI5ZIc/9jNZRWslYVA7Ez+aL/nQqG8mImSOKCBmg24G2pCQft8NOkf1vVTxz4cDfj+LDBvS0RDnOJvJrjhYFxf4xJ9/wBSwcMPUjydKJydXF3Y6uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xGxtWHQ2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D0OaQQNg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xGxtWHQ2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=D0OaQQNg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1762439359; c=relaxed/simple;
+	bh=V144ITPhJaheSq6B4sSkjanob0iMvCwByWKwZnn8vVw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AE5YWjgUspXpbdHRKhiJK7xxuS4lM7hizPloU2aMoz6DTsMpqct3/8BjlkVRArt6MCkzfIZId7mihlTh3nTPyliNpIA/DfKkJnpMObIAD2PeaDBFACSMPNzUi9ehCMl8QwAO7T4MFeM/HNugZMdJZJad+4/dEZZzhXpEGjVT7Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=X6YkEiQJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762439355;
+	bh=V144ITPhJaheSq6B4sSkjanob0iMvCwByWKwZnn8vVw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=X6YkEiQJfoguC+wfJWLl+scVfOt+2BoboFhF58RJ+alMJ4GUR2Vdx+lDly6tm4VgK
+	 rHtU0GhiHNskumXYJWcQX2/Jbplhmlhypv1gfS6bN/C7/Yt14dYC7hobmYOvLtRpo1
+	 JhR+GbWromFuLorTVZBoD1aYamepfJ9KllMKxykYjEBIQApOBSR9GrE5jZe9uspPsF
+	 0ho/FgxfUIOVmnsXByjnP4zw7lWO58a2Z0p8a8vPC8aOdLl4veltCZWSnBX8hO/fgL
+	 gpBGlhRehaozRgIDWekWlXmK5ew/BhN4K+5y9bakveGYamaP6xcbWhbLYSZ4ooHud/
+	 El0bRpp2Loakg==
+Received: from [IPv6:2606:6d00:11:ef24::c41] (unknown [IPv6:2606:6d00:11:ef24::c41])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7D94D211FA;
-	Thu,  6 Nov 2025 14:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762439279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AuuUdnWkxyCHK93yhogM0GpeOIixS0TwW2AXgBsT1zU=;
-	b=xGxtWHQ2uld6xSLMvFvEFTNRtGmbFTMDR/KhcZ9qZDr1mc8KvPcrTDk+GRTNohsm7UXX/0
-	YaA4GOzFlmslU95Kd+zOAKXA+ih6Hi7LcFx8oaTxoQ0TzbzvlrneHF0JWXbVYttyaU0ozB
-	qCeKTANYWIxZ278NEITvmfyADVdY5Uc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762439279;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AuuUdnWkxyCHK93yhogM0GpeOIixS0TwW2AXgBsT1zU=;
-	b=D0OaQQNgQZcmZpSNShYML4vLRxJdK8LQSYg3Qw52p082UUP7rVVlVjMejAyNWlZrAcblz7
-	sKc8jk20pNLiL/CA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xGxtWHQ2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=D0OaQQNg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762439279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AuuUdnWkxyCHK93yhogM0GpeOIixS0TwW2AXgBsT1zU=;
-	b=xGxtWHQ2uld6xSLMvFvEFTNRtGmbFTMDR/KhcZ9qZDr1mc8KvPcrTDk+GRTNohsm7UXX/0
-	YaA4GOzFlmslU95Kd+zOAKXA+ih6Hi7LcFx8oaTxoQ0TzbzvlrneHF0JWXbVYttyaU0ozB
-	qCeKTANYWIxZ278NEITvmfyADVdY5Uc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762439279;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AuuUdnWkxyCHK93yhogM0GpeOIixS0TwW2AXgBsT1zU=;
-	b=D0OaQQNgQZcmZpSNShYML4vLRxJdK8LQSYg3Qw52p082UUP7rVVlVjMejAyNWlZrAcblz7
-	sKc8jk20pNLiL/CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38E6513A31;
-	Thu,  6 Nov 2025 14:27:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1yZSCm6wDGlERQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 06 Nov 2025 14:27:58 +0000
-Date: Thu, 6 Nov 2025 14:27:56 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH v2 1/5] mm: introduce VM_MAYBE_GUARD and make visible in
- /proc/$pid/smaps
-Message-ID: <yja2mhwa4bzatbthjjq5rolqlkfgcbmppic3caaiwi6jc63rbc@cims6rqnotvj>
-References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
- <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3E43E17E0E63;
+	Thu,  6 Nov 2025 15:29:13 +0100 (CET)
+Message-ID: <5834fe661f38462d65795a20b5a4f9d2a12d3b35.camel@collabora.com>
+Subject: Re: [PATCH v5 4/8] media: mediatek: vcodec: Add single core VP9
+ decoding support for MT8189
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Kyrie Wu <kyrie.wu@mediatek.com>, Tiffany Lin
+ <tiffany.lin@mediatek.com>,  Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab	
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger	
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
+ <angelogioacchino.delregno@collabora.com>, Hans Verkuil
+ <hverkuil@xs4all.nl>,  Nathan Hebert <nhebert@chromium.org>, Arnd Bergmann
+ <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>,  George Sun
+ <george.sun@mediatek.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-mediatek@lists.infradead.org,
+ Yilong Zhou <yilong.zhou@mediatek.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
+	 <andrzejtp2010@gmail.com>
+Date: Thu, 06 Nov 2025 09:29:12 -0500
+In-Reply-To: <20251106061323.2193-5-kyrie.wu@mediatek.com>
+References: <20251106061323.2193-1-kyrie.wu@mediatek.com>
+	 <20251106061323.2193-5-kyrie.wu@mediatek.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-wlcyIPJc95NX9hPSGVRO"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7D94D211FA
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUBJECT_HAS_CURRENCY(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,redhat.com,oracle.com,suse.cz,kernel.org,google.com,suse.com,goodmis.org,efficios.com,vger.kernel.org,kvack.org,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
 
-On Thu, Nov 06, 2025 at 10:46:12AM +0000, Lorenzo Stoakes wrote:
-> Currently, if a user needs to determine if guard regions are present in a
-> range, they have to scan all VMAs (or have knowledge of which ones might
-> have guard regions).
-> 
-> Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
-> pagemap") and the related commit a516403787e0 ("fs/proc: extend the
-> PAGEMAP_SCAN ioctl to report guard regions"), users can use either
-> /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
-> operation at a virtual address level.
-> 
-> This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
-> that guard regions exist in ranges.
-> 
-> This patch remedies the situation by establishing a new VMA flag,
-> VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
-> uncertain because we cannot reasonably determine whether a
-> MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
-> additionally VMAs may change across merge/split).
-> 
-> We utilise 0x800 for this flag which makes it available to 32-bit
-> architectures also, a flag that was previously used by VM_DENYWRITE, which
-> was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
-> bee reused yet.
-> 
-> We also update the smaps logic and documentation to identify these VMAs.
-> 
-> Another major use of this functionality is that we can use it to identify
-> that we ought to copy page tables on fork.
-> 
-> We do not actually implement usage of this flag in mm/madvise.c yet as we
-> need to allow some VMA flags to be applied atomically under mmap/VMA read
-> lock in order to avoid the need to acquire a write lock for this purpose.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+--=-wlcyIPJc95NX9hPSGVRO
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le jeudi 06 novembre 2025 =C3=A0 14:13 +0800, Kyrie Wu a =C3=A9crit=C2=A0:
+> 1. add config to support 4K prob size;
+> 2. Previously, calling vdec_vp9_slice_setup_single_from_src_to_dst
+> with v4l2_m2m_next_src_buf to obtain both buffers resulted in -EINVAL,
+> interrupting the decoding process. To resolve this,
+> the interface should be updated to set both src and dst buffers
+> for metadata configuration.
+
+Please avoid using bullets in commit messages. Everyone will assume that if=
+ you
+have two bullets, you should have two patches. And I think they would be ri=
+ght
+for this patch.
+
+>=20
+> Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
 > ---
->  Documentation/filesystems/proc.rst | 1 +
->  fs/proc/task_mmu.c                 | 1 +
->  include/linux/mm.h                 | 3 +++
->  include/trace/events/mmflags.h     | 1 +
->  mm/memory.c                        | 4 ++++
->  tools/testing/vma/vma_internal.h   | 3 +++
->  6 files changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 0b86a8022fa1..b8a423ca590a 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -591,6 +591,7 @@ encoded manner. The codes are the following:
->      sl    sealed
->      lf    lock on fault pages
->      dp    always lazily freeable mapping
-> +    gu    maybe contains guard regions (if not set, definitely doesn't)
->      ==    =======================================
-
-The nittiest
-of nits:     =============================================================
-
-
->  
->  Note that there is no guarantee that every flag and associated mnemonic will
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 8a9894aefbca..a420dcf9ffbb 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1147,6 +1147,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->  		[ilog2(VM_MAYSHARE)]	= "ms",
->  		[ilog2(VM_GROWSDOWN)]	= "gd",
->  		[ilog2(VM_PFNMAP)]	= "pf",
-> +		[ilog2(VM_MAYBE_GUARD)]	= "gu",
->  		[ilog2(VM_LOCKED)]	= "lo",
->  		[ilog2(VM_IO)]		= "io",
->  		[ilog2(VM_SEQ_READ)]	= "sr",
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 6e5ca5287e21..2a5516bff75a 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -271,6 +271,8 @@ extern struct rw_semaphore nommu_region_sem;
->  extern unsigned int kobjsize(const void *objp);
->  #endif
->  
-> +#define VM_MAYBE_GUARD_BIT 11
+> =C2=A0.../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 43 ++++++++++++++--=
+---
+> =C2=A01 file changed, 32 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9=
+_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp=
+9_req_lat_if.c
+> index fa0f406f7726..d966914db4b9 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> @@ -23,6 +23,7 @@
+> =C2=A0
+> =C2=A0#define VP9_TILE_BUF_SIZE 4096
+> =C2=A0#define VP9_PROB_BUF_SIZE 2560
+> +#define VP9_PROB_BUF_4K_SIZE 3840
+> =C2=A0#define VP9_COUNTS_BUF_SIZE 16384
+> =C2=A0
+> =C2=A0#define HDR_FLAG(x) (!!((hdr)->flags & V4L2_VP9_FRAME_FLAG_##x))
+> @@ -542,6 +543,23 @@ static int vdec_vp9_slice_init_default_frame_ctx(str=
+uct vdec_vp9_slice_instance
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+> +static size_t mtk_vcodec_get_vp9_prob_size(enum mtk_vcodec_dec_chip_name=
+ chip_name)
+> +{
+> +	size_t prob_size;
 > +
->  /*
->   * vm_flags in vm_area_struct, see mm_types.h.
->   * When changing, update also include/trace/events/mmflags.h
-> @@ -296,6 +298,7 @@ extern unsigned int kobjsize(const void *objp);
->  #define VM_UFFD_MISSING	0
->  #endif /* CONFIG_MMU */
->  #define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
-> +#define VM_MAYBE_GUARD	BIT(VM_MAYBE_GUARD_BIT)	/* The VMA maybe contains guard regions. */
+> +	switch (chip_name) {
+> +	case MTK_VDEC_MT8189:
+> +	case MTK_VDEC_MT8196:
+> +		prob_size =3D VP9_PROB_BUF_4K_SIZE;
+> +		break;
+> +	default:
+> +		prob_size =3D VP9_PROB_BUF_SIZE;
+> +		break;
+> +	}
+> +
+> +	return prob_size;
+> +}
 
-Don't we also need an adjustment on the rust side for this BIT()? Like we
-for f04aad36a07c ("mm/ksm: fix flag-dropping behavior in ksm_madvise").
+This is another example of something that could be in the static compatible
+data.
 
-In any case:
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+> +
+> =C2=A0static int vdec_vp9_slice_alloc_working_buffer(struct vdec_vp9_slic=
+e_instance *instance,
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct vdec_vp9_slice_vsi=
+ *vsi)
+> =C2=A0{
+> @@ -616,7 +634,9 @@ static int vdec_vp9_slice_alloc_working_buffer(struct=
+ vdec_vp9_slice_instance *i
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	if (!instance->prob.va) {
+> -		instance->prob.size =3D VP9_PROB_BUF_SIZE;
+> +		instance->prob.size =3D
+> +			mtk_vcodec_get_vp9_prob_size(ctx->dev->chip_name);
+> +
+> =C2=A0		if (mtk_vcodec_mem_alloc(ctx, &instance->prob))
+> =C2=A0			goto err;
+> =C2=A0	}
+> @@ -696,21 +716,22 @@ static int vdec_vp9_slice_tile_offset(int idx, int =
+mi_num, int tile_log2)
+> =C2=A0	return min(offset, mi_num);
+> =C2=A0}
+> =C2=A0
+> -static
+> -int vdec_vp9_slice_setup_single_from_src_to_dst(struct vdec_vp9_slice_in=
+stance *instance)
+> +static int vdec_vp9_slice_setup_single_from_src_to_dst(struct vdec_vp9_s=
+lice_instance *instance,
+> +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mtk_vcodec_mem *bs,
+> +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct vdec_fb *fb)
+> =C2=A0{
+> -	struct vb2_v4l2_buffer *src;
+> -	struct vb2_v4l2_buffer *dst;
+> +	struct mtk_video_dec_buf *src_buf_info;
+> +	struct mtk_video_dec_buf *dst_buf_info;
+> =C2=A0
+> -	src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
+> -	if (!src)
+> +	src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_buffer);
+> +	if (!src_buf_info)
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> -	dst =3D v4l2_m2m_next_dst_buf(instance->ctx->m2m_ctx);
+> -	if (!dst)
+> +	dst_buf_info =3D container_of(fb, struct mtk_video_dec_buf, frame_buffe=
+r);
+> +	if (!dst_buf_info)
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> -	v4l2_m2m_buf_copy_metadata(src, dst, true);
+> +	v4l2_m2m_buf_copy_metadata(&src_buf_info->m2m_buf.vb, &dst_buf_info->m2=
+m_buf.vb, true);
+> =C2=A0
+> =C2=A0	return 0;
+> =C2=A0}
+> @@ -1800,7 +1821,7 @@ static int vdec_vp9_slice_setup_single(struct vdec_=
+vp9_slice_instance *instance,
+> =C2=A0	struct vdec_vp9_slice_vsi *vsi =3D &pfc->vsi;
+> =C2=A0	int ret;
+> =C2=A0
+> -	ret =3D vdec_vp9_slice_setup_single_from_src_to_dst(instance);
+> +	ret =3D vdec_vp9_slice_setup_single_from_src_to_dst(instance, bs, fb);
 
--- 
-Pedro
+I don't see a direct correlation betwen the buffer size change and this cha=
+nge.
+Please split. Changes looks good, the commit message isn't very clear thoug=
+h.
+
+Nicolas
+
+> =C2=A0	if (ret)
+> =C2=A0		goto err;
+> =C2=A0
+
+--=-wlcyIPJc95NX9hPSGVRO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQywuAAKCRDZQZRRKWBy
+9K5IAQCXlmAAzl+iCuLAYIlMe0L1aV3/vtGJvQ4QmLxUy0BkRgEA89XXHgOE2Ewx
+OrW4Z94rpraxJcv92KTX7rtrXRkmkw4=
+=qhRy
+-----END PGP SIGNATURE-----
+
+--=-wlcyIPJc95NX9hPSGVRO--
 
