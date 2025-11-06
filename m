@@ -1,169 +1,186 @@
-Return-Path: <linux-kernel+bounces-889245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6F9C3D0F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:21:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A81C3D0FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592481887791
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648244229A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5BE34D91A;
-	Thu,  6 Nov 2025 18:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AE9350A22;
+	Thu,  6 Nov 2025 18:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Oh7bW9Vi"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zcavtd7Y"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54B3335064
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57FF340A6D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762453305; cv=none; b=kf3Ny7QLo30bqmyz9eExbMdC20f4f2I0xL5vTpakCmuqkW5xO0sUwFmvIw7nvSsbjhtLYedNNXRqsssikdjYDw36NisN8kr7qu1vZViQf8colMMnn4mGCZjuH/4b6V4GicwcvOptmavQLXCU+g7USUh/FtXH1Bi1FDL4v8dGYlk=
+	t=1762453312; cv=none; b=J7Rdo/3MIVucogciNwm6DGyRa9FvE45NNVhe+r9XvaVkcZ9iBAJxKV4QHkIpMzdxLG2gok98TnrdiZQJXf6sl7seAtJYX0vdQCOTNDi6Ki0H95u+UShy/ABDTL+vRos2iME1SP466nYD+ZlLQX4N2aj75pHEg2sMdRBw/njtAHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762453305; c=relaxed/simple;
-	bh=S6IGYBBDmC8dLHoMGr9C7EQYKSCOuNtAEg+rHyPaHQs=;
+	s=arc-20240116; t=1762453312; c=relaxed/simple;
+	bh=bZMDLkWBrmbdYLYFA2VFE2c6sfmRdlnRtJrZ9LvTSoA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cAqj6nwwJ9ibGVzps35C98vamEqbSR1wXCKvvOO66R8mzZjRK1R6F5qQr0KlTw1YxMLkcXn9bUJv/zyLFcES25mIRMCp5HpVlPuSZerWK+aH7vslGGObNDdRpIUA+IubHmltbl2Lki/dT4cq5TlGLVNU/o2jNSy53tu4GWqc2xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Oh7bW9Vi; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso1416313b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:21:43 -0800 (PST)
+	 To:Cc:Content-Type; b=H1yZU4guiidLmtU4F0xwOAAdB+DwDYsrHeEgbvCiPjd2Iz2QMRHj3YpfhS9mO8U7IMojHo/o8cFZroMW0qCp95Q5L9uv+9hQ4zhR6eU1167X8+clpgXaN0OzaPb3Gcnju2txyqDhihhg0f8Q+YCdP9+Er/1mrEq0kV+nOjToMno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zcavtd7Y; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-37a33f49018so11744541fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:21:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1762453303; x=1763058103; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762453309; x=1763058109; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n/uY7+JVbofrnb0xY1CmpLxlpuZ3PWjT1kJgbc7DbmI=;
-        b=Oh7bW9ViFccIi63sPtFlz2BeEa2kGVFs+3Hz3seNAq0WeGbZKpLgUCJlN1L+uSEV5a
-         UMhk/oLZpN9DHGvKP4tRVY/3zcGAiVUaBQuzjTzrG9kjwJ2EAZat8t3a7qSG9CW9owOt
-         fAXAFeVn2sCqQSMfUfydJ/tP00M9q8cr4IMZk=
+        bh=nwtVDVrMx/Rn+GuGE/wxX6jR74kQlxj/0QcuG/d2Bqc=;
+        b=Zcavtd7Y/cZ9z52inn8JMt66hpuSIJpVF9oMeRoGh5Z6acae3J60cj2S5HG3xEsoDw
+         2N4Qeqqdq3+eAid0Pq5fudDKUKZxv778w0WR0rkhnhKiZam8SFDPcJ/L5FHu9Hhb9B8x
+         JknDsYbVgOprYUP9uWUufUEJ5AwRCNWOoytcBwak3/i8p/yeqxSXkEzRCjKV2ZHvCeJB
+         mzJJMCew+FXJIzsfeJkDc2m6zBgTknJ8jixUJBV/U3dnWSUoQI3+Y97ZxH4sOkP7Fk+3
+         /Yb0Etua50Dae/FHb8RMaVIaChia4ZxdPdGgpffeKWcXE4J1fA2UgpDJsFbPM2adgWgm
+         jzGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762453303; x=1763058103;
+        d=1e100.net; s=20230601; t=1762453309; x=1763058109;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=n/uY7+JVbofrnb0xY1CmpLxlpuZ3PWjT1kJgbc7DbmI=;
-        b=qRj7Wn4i9LWe+Z25b/zd8SEReVOXnmOOxafz/fB2tEo5lCA0CEUPZ9oC1X6gsvbY+M
-         kc/f/OzlL8LTvPiJMoafjwKKiT+s/TCE7Isgmgy+kcv5NfCuj43gtAQoi8a88hwrHkpJ
-         KHvnxt52kdi+ylodpEl/Jjo524Mm+R8cE/btrdb6x9+YbhgZnP0Qe/xzs4qrqlM1CDAN
-         s9U2wIx/7eizspiOe1GpZwOqsReec70V5wansnLyVck8o7XzVN7ssdxAnCPJiygJQu3S
-         TeFV4NCiipmSmJcg+MXY+9HMy9ld86lMXC/GlYY7rWYblG8w6MCxyU1lls8pathqvuYD
-         qspQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/kgYX1rkhUf7ZqXGfBCFQMq6gA+oLaDn9UWburPEzvGXrpO3AeF5V4g4sPmvE1Mb0AOki0W1rvPE+KKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe1u89DxB0RY4jI9fQQ7Twibh0Tv2gPTOhxBHOMPTqb4ZQp4lg
-	KpRxvr5LQEEbfhM+d8OLJkXQMKX1Xgp2TNSoorsCRFtimt1RgxADf6dzX8OLlmU+Qtv4/Fse01U
-	E3tGdgJPeVQMIi5WwHEnVUH+Q9xhAK+6X0O9kyyxF
-X-Gm-Gg: ASbGncttptgIRvFq1KGMczsk/EMcHAgbOpkz4DP5V7WlL89Anqw/S/Nq84KGCE4lUKv
-	NREy7JsKmf/7pd0yF9FGJI+VlL4J/Xi6x2i3SNgoM4wTNC/mJy5vwdJNV6DF69p2tOVPNIsVWNw
-	dEe4AqYrR4TF+fYBB710gLCVE+7lahPrgkZt6ThSokqAFE/0FT5SX64o1DpOng8+6AFmBGnFkdn
-	ZqWPQruJX4u1VcvmPvpgtFoPA0GfTWi5H1VOtWZiOLtKD7xHGXLX6FC68fUI0ygUrVZ
-X-Google-Smtp-Source: AGHT+IGqr3GmrXIMcT/NyfIZvvWpHhArzhPvNJ5PgGeULQ7OBJzK+zQVZZdpfuZs1qI8AKKejbsmymnq/rMFCO95DZE=
-X-Received: by 2002:a05:6a20:12c3:b0:2ca:1b5:9d45 with SMTP id
- adf61e73a8af0-35229758ca4mr749053637.32.1762453303097; Thu, 06 Nov 2025
- 10:21:43 -0800 (PST)
+        bh=nwtVDVrMx/Rn+GuGE/wxX6jR74kQlxj/0QcuG/d2Bqc=;
+        b=mk7X+MNhrR2lxz8O7rGS2zmS/DbyKzXpDAar6jOayCw+zJl+7eQlt8ex3SSntzWTP6
+         QFYScVMdFkqiMguU67qJws4cJPyoCxu7KfDuL56QObaCdf3Xx8enKbpy8ahzzqgBOZVh
+         cCUsq8fmyzte6EIMhDlFIAtI6oWPVzkmS+dHTxbE2D8++XbzyUtk2FogamNL7ELoDUrF
+         vj2Hqy0ZG1kuGBRdAK32ynWHNAvkVh1s2eB5RkYHUWU/fPRs9jDeUqSbiN2R84TdDhh+
+         WL+eRrKLcmK29cQzDjKiPXNTXWrQYhXvLQRPbwl2qQJnhNbAxMc7rYpyY/eE8tzIsnMp
+         F35g==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ4wX1FP5uF1H3pDjgyP9ufBiBJFgipT6vKOoydhESX1EGEZ6i6c/pU7yAXBuD1yT9Y7wvlz1sCig4nyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfjsGcvizl+s3nxiG7R/bfZKqN2D3HaWPp3tQjgHbii+I4zCEL
+	PrDKuw8aCAmveqn75Fo1V5wc7uQwe1gMkQezpmpaGEOhenWcG7I+oSayPks5HfpWtUT9Jk3xM4E
+	v+9nDEzNjUiIahmINZx0Fqj7F4G1bowE=
+X-Gm-Gg: ASbGnctftweHThplXWKR/7Y7YUhieuCZo5KSUzBLMnMRQYWPNbsR8ao8FQLy8us2qCe
+	Hw75btguu46hrnFSAszJYt/fdLvp2v64a4p88CK7CXeU2JWIqCl5n6M8Tnqnc70ghUd0BHuJ2ek
+	fjvQg6VCQ4CVaMm3yrsnnto4XOwqcMEvo/hz2LEHaVFL41lhbT6FJPtTh/F23xOJRXaqPuA/WYT
+	CvYqcO4V8qEI0isAHTSPYCKszFUVrVqD/Gt4ud8L8wBSJwLshBKMQNhdPSxsOoWwm2Cz9k=
+X-Google-Smtp-Source: AGHT+IHF5RwYH8gt4GCJWiK/G06LNrMY3PdiIXrG7Ku8svSMWflEzeTj+ENwRoyrfUM+AuNPJJIs1vHSqi6JoGj5Ysk=
+X-Received: by 2002:a2e:a607:0:b0:37a:4e47:915b with SMTP id
+ 38308e7fff4ca-37a7334412emr667921fa.48.1762453308554; Thu, 06 Nov 2025
+ 10:21:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013203331.398517-1-jthies@google.com> <20251013203331.398517-2-jthies@google.com>
- <aQzaq2ord0gK-gaL@google.com>
-In-Reply-To: <aQzaq2ord0gK-gaL@google.com>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Thu, 6 Nov 2025 10:21:31 -0800
-X-Gm-Features: AWmQ_bmyZu1_dP_yzvFdUPfiLQKow1ew3PcvaAsktAKcPqiJMFh5m_duCsqHJ_M
-Message-ID: <CANFp7mWXyUNbOAzLkT59gSrtPidLafxsrsK0vdn4_JP5uuxd-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: chrome: Add cros-ec-ucsi
- compatibility to typec binding
-To: Benson Leung <bleung@google.com>
-Cc: Jameson Thies <jthies@google.com>, dmitry.baryshkov@oss.qualcomm.com, 
-	akuchynski@chromium.org, krzk+dt@kernel.org, robh@kernel.org, 
-	bleung@chromium.org, heikki.krogerus@linux.intel.com, ukaszb@chromium.org, 
-	tzungbi@kernel.org, devicetree@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251106011330.75571-1-seanjc@google.com>
+In-Reply-To: <20251106011330.75571-1-seanjc@google.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 6 Nov 2025 19:21:35 +0100
+X-Gm-Features: AWmQ_bnyEkW1gPb2ZC8cWbijU12uJDKPE2JAIp1UJKq9oVwCIxM8w0lBgehtRY0
+Message-ID: <CAFULd4Z=PKeyzaER51CE7Zm4a-yeiru=HcBFx8E4J5hx3io=Tw@mail.gmail.com>
+Subject: Re: [PATCH] KVM: SVM: Ensure SPEC_CTRL[63:32] is context switched
+ between guest and host
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 6, 2025 at 9:28=E2=80=AFAM Benson Leung <bleung@google.com> wro=
-te:
+On Thu, Nov 6, 2025 at 2:13=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
 >
-> Hi Jameson,
+> From: Uros Bizjak <ubizjak@gmail.com>
 >
-> On Mon, Oct 13, 2025 at 08:33:25PM +0000, Jameson Thies wrote:
-> > Chrome OS devices with discrete power delivery controllers (PDCs) allow
-> > the host to read port status and control port behavior through a USB
-> > Type-C Connector System Software (UCSI) interface with the embedded
-> > controller (EC). This uses a separate interface driver than other
-> > Chrome OS devices with a Type-C port manager in the EC FW. Those use
-> > a host command interface supported by cros-ec-typec. Add a cros-ec-ucsi
-> > compatibility string to the existing cros-ec-typec binding.
-> >
-> > Additionally, update maintainer list to reflect cros-ec-ucsi and
-> > cros-ec-typec driver maintainers.
-> >
-> > Signed-off-by: Jameson Thies <jthies@google.com>
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> SPEC_CTRL is an MSR, i.e. a 64-bit value, but the VMRUN assembly code
+> assumes bits 63:32 are always zero.  The bug is _currently_ benign becaus=
+e
+> neither KVM nor the kernel support setting any of bits 63:32, but it's
+> still a bug that needs to be fixed.
 >
-> Reviewed-by: Benson Leung <bleung@chromium.org>
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Co-developed-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/svm/vmenter.S | 44 +++++++++++++++++++++++++++++++-------
+>  1 file changed, 36 insertions(+), 8 deletions(-)
 >
-> > ---
-> >  .../bindings/chrome/google,cros-ec-typec.yaml | 19 +++++++++++++++----
-> >  1 file changed, 15 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-ty=
-pec.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.ya=
-ml
-> > index 9f9816fbecbc..fd1a459879bd 100644
-> > --- a/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yam=
-l
-> > +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yam=
-l
-> > @@ -8,17 +8,28 @@ title: Google Chrome OS EC(Embedded Controller) Type =
-C port driver.
-> >
-> >  maintainers:
-> >    - Benson Leung <bleung@chromium.org>
-> > -  - Prashant Malani <pmalani@chromium.org>
-> > +  - Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > +  - Andrei Kuchynski <akuchynski@chromium.org>
-> > +  - =C5=81ukasz Bartosik <ukaszb@chromium.org>
-> > +  - Jameson Thies <jthies@google.com>
-> >
-> >  description:
-> >    Chrome OS devices have an Embedded Controller(EC) which has access t=
-o
-> >    Type C port state. This node is intended to allow the host to read a=
-nd
-> > -  control the Type C ports. The node for this device should be under a
-> > -  cros-ec node like google,cros-ec-spi.
-> > +  control the Type C ports. This binding is compatible with both the
-> > +  cros-ec-typec and cros-ec-ucsi drivers. The cros-ec-typec driver
-> > +  supports the host command interface used by the Chrome OS EC with a
-> > +  built-in Type-C port manager and external Type-C Port Controller
-> > +  (TCPC). The cros-ec-ucsi driver supports the USB Type-C Connector
-> > +  System Software (UCSI) interface used by the Chrome OS EC when the
-> > +  platform has a separate power delivery controller (PDC). The node fo=
-r
-> > +  this device should be under a cros-ec node like google,cros-ec-spi.
-> >
-> >  properties:
-> >    compatible:
-> > -    const: google,cros-ec-typec
-> > +    enum:
-> > +      - google,cros-ec-typec
-> > +      - google,cros-ec-ucsi
-> >
-> >    '#address-cells':
-> >      const: 1
-> > --
-> > 2.51.0.858.gf9c4a03a3a-goog
-> >
+> diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
+> index 235c4af6b692..53f45f5b611f 100644
+> --- a/arch/x86/kvm/svm/vmenter.S
+> +++ b/arch/x86/kvm/svm/vmenter.S
+> @@ -52,11 +52,23 @@
+>          * there must not be any returns or indirect branches between thi=
+s code
+>          * and vmentry.
+>          */
+> -       movl SVM_spec_ctrl(%_ASM_DI), %eax
+> -       cmp PER_CPU_VAR(x86_spec_ctrl_current), %eax
+> +#ifdef CONFIG_X86_64
+> +       mov SVM_spec_ctrl(%rdi), %rdx
+> +       cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
+>         je 801b
+> +       movl %edx, %eax
+> +       shr $32, %rdx
+> +#else
+> +       mov SVM_spec_ctrl(%edi), %eax
+> +       mov PER_CPU_VAR(x86_spec_ctrl_current), %ecx
+> +       xor %eax, %ecx
+> +       mov SVM_spec_ctrl + 4(%edi), %edx
+> +       mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %esi
+> +       xor %edx, %esi
+> +       or %esi, %ecx
+> +       je 801b
+> +#endif
+>         mov $MSR_IA32_SPEC_CTRL, %ecx
+> -       xor %edx, %edx
+>         wrmsr
+>         jmp 801b
+>  .endm
+> @@ -81,13 +93,26 @@
+>         jnz 998f
+>         rdmsr
+>         movl %eax, SVM_spec_ctrl(%_ASM_DI)
+> +       movl %edx, SVM_spec_ctrl + 4(%_ASM_DI)
+>  998:
+> -
+>         /* Now restore the host value of the MSR if different from the gu=
+est's.  */
+> -       movl PER_CPU_VAR(x86_spec_ctrl_current), %eax
+> -       cmp SVM_spec_ctrl(%_ASM_DI), %eax
+> +#ifdef CONFIG_X86_64
+> +       mov SVM_spec_ctrl(%rdi), %rdx
+> +       cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
+>         je 901b
+> -       xor %edx, %edx
+> +       mov PER_CPU_VAR(x86_spec_ctrl_current), %rdx
+> +       movl %edx, %eax
+> +       shr $32, %rdx
 
-Reviewed-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+The above code can be written as:
+
+mov PER_CPU_VAR(x86_spec_ctrl_current), %rdx
+cmp SVM_spec_ctrl(%rdi), %rdx
+je 901b
+movl %edx, %eax
+shr $32, %rdx
+
+The improved code will save a memory read from x86_spec_ctrl_current.
+
+> +#else
+> +       mov SVM_spec_ctrl(%edi), %esi
+> +       mov PER_CPU_VAR(x86_spec_ctrl_current), %eax
+
+Can the above two instructions be swapped, just to be consistent with
+x86_64 code?
+
+> +       xor %eax, %esi
+
+> +       mov SVM_spec_ctrl + 4(%edi), %edi
+> +       mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %edx
+
+... and the above two insns.
+
+Uros.
 
