@@ -1,124 +1,77 @@
-Return-Path: <linux-kernel+bounces-889446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F724C3D94A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E1EC3D956
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7AED04E6703
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:21:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0ACDE4E70FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2026E30BB94;
-	Thu,  6 Nov 2025 22:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87631325731;
+	Thu,  6 Nov 2025 22:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVp1GdWZ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cquHx+uV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB833064A3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D912326ED29;
+	Thu,  6 Nov 2025 22:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762467668; cv=none; b=FW2oF2YZRzdHp1eWqY4Y+u8LYPcQA2NL8YKqPhwDdwnGDHj1NVwnTavuVxErkZ94sWxDY89OPeLwGncEIDBk/dYZBs+u9eFqiaSAcdi2ru8ET0Fhw4Vh6sI6IUlhSaeIr6EQHxQK3aXdcBbNXNbEVCj/8XDBes+6e51/PdFa/nI=
+	t=1762467727; cv=none; b=BYLyDDqmfbMlVcGBVTW30x4ApTBr5Eb26066vjKMAmmtLqOqq8z8BTj15cRPZrTXzCLueJnw8cmF7S0fS/EjzWfMqSZUZDS5yaHn4gPhYiAPoBMLgOmI3liLws5Ed57jRbkQr73Kz2TNUMa7sCbE9hR1cUh2RzYyWORgy/IXbjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762467668; c=relaxed/simple;
-	bh=/ygoso68qxAo+I1gPqHR/S2bVV2Aj+Lzf1IsI2FGUc0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HnyzuSImqxwekGJA+RdNzKzqrGX4Abndxhb/aZOfrebGNcn1NqQeQZQns0msNrePPEDnAUsfRg8UHCrpfepb3cf11+mR51EuwpdqlEkTg5Y79lsgcuF++3bT/kn5V05sRBJvOm8mHeCloRoLvCWvw7SzoxufOPV0tN8j2rUGamA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVp1GdWZ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b6d402422c2so22311966b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:21:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762467665; x=1763072465; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ygoso68qxAo+I1gPqHR/S2bVV2Aj+Lzf1IsI2FGUc0=;
-        b=nVp1GdWZQSoLCTtWBPI/wQW40cdUNt6zcXDRIdPzHfJOBfxXz4i6nG2tb+khDun3en
-         GSA/UGRIBiZFarKPMvQWbZrs/y1FL5A3jxVyWHvo8Oh0mP+G0GOEFqjnPHEpnqwzScia
-         Mol9ViPXk6slEs6GTB9KIYAEhPj091PrlNcc7jxfMspExOGixUVV2vDuCiirCM852WTX
-         1k4j8Hcdp0jC+mGDc3nGomiLviDMxbC5UBBltJYJmxweAFkUybUs8mhiEL26lIJVyEMR
-         thLL5SXSrVYFMUUcWVHIIbhjCttk5WNo82l7U8//In6FBJTwVvy5zJaFKBqGvdJ9d6Ej
-         wBHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762467665; x=1763072465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/ygoso68qxAo+I1gPqHR/S2bVV2Aj+Lzf1IsI2FGUc0=;
-        b=X4LkYokcwrTMgxEWgz7kRPl7pSvTVyK4OlHwj2T01ennwRjZ6gVJeWNY0zYuOEScl8
-         c8dXS5advVkJHTBu5/O2iMWz1VUnHZLIO/VpX537EQwkeVkq7AgD7gzrmfFQCRGdIzXC
-         gXqEPjmdOI5s7J03USkESduZiPOQwMUCkpLN8aWPWhARU/y5Q5cinsuGxUZpX5g7wQ1j
-         NN28M/5FjAKY6wY4PjVVzcLAb+zDEBrIMDAd2lP8URMSfd8OJPLSH3vdkRYNi+Zeabns
-         r8vObcMCE40OKVUZKIj8A3DVQVE41oUgqPcgummuLFIDEG1XkKVNIVgSNgYTnicSk6qj
-         3LzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTUPXpMarJJSl4IBRVof0G5MYboSgh9whUaukQWnc8apRvq1lYFGt42a+m1YQz8fbfPH7gGHeshm9FjkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUIkSZfFR0/Ui37V4r5ud2mtMmgJWTw75LO5jEsvMAigB7xJVa
-	iuD9RRxWs7IEyEGVFfzbZmI/WHQgccfz9R618rpttQGvGmOyVX3uw+ZQSOPGhSwghBHQtB0TpMb
-	5JX5+OYrzQIW9jSuY/VeusbpUSLZUngo=
-X-Gm-Gg: ASbGnctD7yUm6IuohMZ9pjy1U6EcM0cs675IFqQpk0pBKgG7fB+uGZ+hyvjZqY+uCHM
-	glL7bEtgYnAvDl3rUTuuxwibCkCvIeAokrVrYoON610Hcty7IhbrsF0O2byjG35h2Q2Xhe3XqoP
-	UMNerCSqGboJOvtcjKZ7RazWFqLfWBx9/VWQU6hJwN/Uq74Uxt28c9DEstxbeJgiMfXAI1Z+zoY
-	5OOLTNyhidxnj5RwQpo4MvjhXWFIxG+Xzpqg4Z4zK4eELKia8WHRCaRD74sOX4Ixcl6dcHe6eUp
-	SoZa55I=
-X-Google-Smtp-Source: AGHT+IG+TIAJ8IOua7l1mEprD2KTfqDGE+T9uMgK3wmEihVKudTfZaDUPZk/PP9mSw+jigEdELh8riemQen7Kc2izxY=
-X-Received: by 2002:a17:907:60cd:b0:b70:68d7:ac0c with SMTP id
- a640c23a62f3a-b72c0ad942bmr82880966b.42.1762467665046; Thu, 06 Nov 2025
- 14:21:05 -0800 (PST)
+	s=arc-20240116; t=1762467727; c=relaxed/simple;
+	bh=p3L6FERv2ep+nENXovBzYWn++aCR71MS9mNcjMlGX74=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=URNqB+tUl1Vdz5UBBWJzOiBYmdY6fJeOC5766zA/c8+euefxhIcEL4IBPkVfUuOXbcpsrRkox0hSbmEgpXkQJMDyxcSnkNhj0BPMQ+Chps0obZy5C6qWmJVnuhvyliy7ATOiXd/624JZcHHZTBkVaTPjI+76sKZc497cY3w1qFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cquHx+uV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB45C4CEF7;
+	Thu,  6 Nov 2025 22:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762467726;
+	bh=p3L6FERv2ep+nENXovBzYWn++aCR71MS9mNcjMlGX74=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cquHx+uVsXtOEKKVhs22vbVpF+FHBjeX8+ILIm9PWBAUamao6w78QgZ1RRuKMzMiI
+	 Ep4Snw7cPrCuAw6xuWGmq21p0/S/SnYgcPbAYiRzBeanh5YgUhoiX9BVFmPPRXUO9V
+	 f1e5p+S5zmsajhV1HYoQUbYt70UNmzyB85EwuNV01xt7LKX/CVdF5UGni7UYxW7iSM
+	 Lpdwe2MAi3v55fejWYm/j059MMYCir+g0wmbrDr+vAVyGtjZkTIby/GWXpb6X5eedC
+	 8OCLYRZ4HhHta7qxRapAUb9hBD3qgZMO+vWAzIVmabL666I1uOu01Nn8hnm/O4NVDf
+	 rkp69DsqyVWgw==
+Date: Thu, 6 Nov 2025 14:22:04 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Nate Karstens <nate.karstens@garmin.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+ <jacob.e.keller@intel.com>, <john.fastabend@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <linux@treblig.org>, <mrpre@163.com>,
+ <nate.karstens@gmail.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+ <sd@queasysnail.net>, <stable@vger.kernel.org>, <tom@quantonium.net>
+Subject: Re: [PATCH net v2] strparser: Fix signed/unsigned mismatch bug
+Message-ID: <20251106142204.2e5f2227@kernel.org>
+In-Reply-To: <20251106165117.1774787-1-nate.karstens@garmin.com>
+References: <20251106163623.1772347-1-nate.karstens@garmin.com>
+	<20251106165117.1774787-1-nate.karstens@garmin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024034701.1673459-1-danisjiang@gmail.com>
-In-Reply-To: <20251024034701.1673459-1-danisjiang@gmail.com>
-From: Magnus Lindholm <linmag7@gmail.com>
-Date: Thu, 6 Nov 2025 23:20:53 +0100
-X-Gm-Features: AWmQ_bkDYJ3Fr-1arvEyDEO1bXJ01gqbCdu39kZW9fG-2HstgXs4j71OYjmvDxQ
-Message-ID: <CA+=Fv5REZNSH584Sy2cA2-iKqfRzV64=d4_nwOCT5vtH+1jX4Q@mail.gmail.com>
-Subject: Re: [PATCH] agp/alpha: fix out-of-bounds write with negative pg_start
-To: Yuhao Jiang <danisjiang@gmail.com>
-Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	David Airlie <airlied@redhat.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 24, 2025 at 5:48=E2=80=AFAM Yuhao Jiang <danisjiang@gmail.com> =
-wrote:
->
-> The code contains an out-of-bounds write vulnerability due to insufficien=
-t
-> bounds validation. Negative pg_start values and integer overflow in
-> pg_start+pg_count can bypass the existing bounds check.
->
-> For example, pg_start=3D-1 with page_count=3D1 produces a sum of 0, passi=
-ng
-> the check `(pg_start + page_count) > num_entries`, but later writes to
-> ptes[-1]. Similarly, pg_start=3DLONG_MAX-5 with pg_count=3D10 overflows,
-> bypassing the check.
+On Thu, 6 Nov 2025 10:51:17 -0600 Nate Karstens wrote:
+> CONFIDENTIALITY NOTICE: This email and any attachments are for the
+> sole use of the intended recipient(s) and contain information that
+> may be Garmin confidential and/or Garmin legally privileged. If you
+> have received this email in error, please notify the sender by reply
+> email and delete the message. Any disclosure, copying, distribution
+> or use of this communication (including attachments) by someone other
+> than the intended recipient is prohibited. Thank you.
 
-I guess the bounds checking in the AGP code for Alpha has some limitations
-as to how it's implemented. I spent some time looking at how bounds checkin=
-g
-in alpha_core_agp_insert_memory() is done on other architectures and I see
-some of the same issues in for, example parisc_agp_insert_memory() as well
-as amd64_insert_memory(), which even has a /* FIXME: could wrap */ line at
-its bounds checking code. I guess even agp_generic_insert_memory() has
-similar limitations. I'm wondering if this is the case, because at some
-point, it was determined that this will never become a real problem and no
-need to mess with old code that isn't really that broken, or just that no o=
-ne
-ever got around to fixing it properly?
+This notice prevents us from doing anything with the patch.
 
-If it needs fixing, should we try to fix it for all arch's that have
-similar limitations?
-
-Magnus
+Also please do _not_ send the patches in reply to existing threads.
 
