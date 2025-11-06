@@ -1,238 +1,239 @@
-Return-Path: <linux-kernel+bounces-888307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F4EC3A729
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:05:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57679C3AB0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60052350D5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C746461D74
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8212E8E09;
-	Thu,  6 Nov 2025 11:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8558530F954;
+	Thu,  6 Nov 2025 11:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FwQWzCFc"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010005.outbound.protection.outlook.com [52.101.193.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lc7SU816"
+Received: from mail-lf1-f66.google.com (mail-lf1-f66.google.com [209.85.167.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB2E280035;
-	Thu,  6 Nov 2025 11:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427110; cv=fail; b=Q/kXNZ6C2e3gsKhlwlsvC5TuXUPyv2gPxCCqN7OmHfTuAYoiuDqeHHB2Z5AI6MQtNYvcWGyQJteYqUyHul0KE/84CXasZuVbe0PTE6UXVco59pT54CxWkbizLaGKYzZIA3Cq44HNbZmqoVJa+2JS+hSAC8yGltNtI4uRq/jjnk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427110; c=relaxed/simple;
-	bh=472wV1dTQOjdpCNB4LTKjzjRbhYXsBy/VjNyRwpmJi8=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
-	 In-Reply-To:MIME-Version; b=Kd2wRmmeq8VjQB1qB6PmV0uu+i1+1zrE368+0cfQsfFicHpq5RKLGKp6OQXI6vaePuklsCRAnAXRhm1NePpULAtOe1HLpdNgKToseg4KIB/98UDDjoBCkRqFELU7aG1YloISJRtPBh3GpDPJa47dz8CVdylKS/J7wi7lHUqMeIg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FwQWzCFc; arc=fail smtp.client-ip=52.101.193.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tr7sd9/Uzep7IXVVJBI/7OtYHmgEUwgYOaZowAlPcle86+fdkaCpinUJfi9rnDmMLm96GXRTlDPBdTdeLJjGtqUB+MF3UAP2DYnFRCVio9P7tu4zE9cWYNwU+48mKXW3TosT6NvJEK2tfFytOUhblS8e/S+y0qt80ttQgNfSemmsRycYQ2/+RUZ+cGvECA4A8kNleZFVFlQHhtbcsnjS5ZgwyBbbC7HKrMdf4DniJLOg28m8BIIGaMmfzrLr3TNjJ0DecE/SwyvraOl4EOnRjn3Qt4mr58JAyVMJq4EFO2yHN4bboVaoUPpa/L90jIrwSRZb58Leho0NXnv6+Rg/xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w9okCbxZyNqH4PsvFjLAgQUg5KVdNTc86QedodBEp0E=;
- b=Vk9TbN2s0600O9Eh+O0afvvDRSIHwyFHL9ens4B5lw7zK+R1DnazkPQZgaLeYrOq6wgZ5yxwomWVU/3+BP8AiwPP+R+Lt7ygXLZo0mr5/S8EO/GeYnFck1CeuLueNTHG9a0Q6atLvL7FCKc9N1XZrWn9OzGBIe/bcXmtv4nXsgA9lQVUqIZpGkRoLKmpaGLB9qxqE/cMPbR8lfWGzkmIFb4R0s0Ptuk/P5nGGtNEdGjxb3qgHXNKM4eUm6VCHgKG/I4oBkpaxUBOef4dYItwNEHVZaUfFI7cq9l2AJmqGPXlJnRyMdKNmVslUu9nPUwpr9RUbrkFJ03/1oH2nfFT1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w9okCbxZyNqH4PsvFjLAgQUg5KVdNTc86QedodBEp0E=;
- b=FwQWzCFc06qSCD31mEYCcIv2sg5zrKPUdZKJqQKgUq1DropEOQFnCrvRHHtA1JH0+IjSXeKo/1OpsKcjhFZh1gp5M/+PwMMJjtXWcpC+hu3LDFTRbvz7oJvL1GoQxU7p/5+Tb2YcvL6HW5xdowPoyvVuUPxocJphVQRxC6JYBKHkees3BDg+0oAZk47HIAVMDV6L1fEGPaj0c5182wceMVM7+oIplcMbGdPu1wRVKgfa7VpwYe9Ap3ywumK7hEYo5qwLCZnqTWz2WLUKL8C/isgiUG1iku/4uEaFfTZdY3UyzPlZOncuiVns/tpxQ46RJvzh+Tq9DsE6xtYdwhcMhw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SA1PR12MB8641.namprd12.prod.outlook.com (2603:10b6:806:388::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
- 2025 11:05:05 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
- 11:05:05 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 06 Nov 2025 20:05:00 +0900
-Message-Id: <DE1K9KGIQ0HF.1FIL2C2XHT6YT@nvidia.com>
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Alice Ryhl" <aliceryhl@google.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Joel Fernandes" <joelagnelf@nvidia.com>, "Yury Norov"
- <yury.norov@gmail.com>, "Jesung Yang" <y.j3ms.n@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor
- Gross" <tmgross@umich.edu>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3 1/4] rust: add num module and Integer trait
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251106-bounded_ints-v3-0-47104986a5c3@nvidia.com>
- <20251106-bounded_ints-v3-1-47104986a5c3@nvidia.com>
- <aQxuXd0-EycU7p65@google.com>
-In-Reply-To: <aQxuXd0-EycU7p65@google.com>
-X-ClientProxiedBy: TYCP286CA0100.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b4::7) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98FC30EF6B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762429236; cv=none; b=gofHCMuy2o2ACIn46TPq//olVyGZIftzU8/SpQaFDEh5DKW/Ri57YxwHbM+52Fj3ggeaxKeb1atSqzV4PU5nZ047ioBAJU+dCQUf23BBUsj7ALz9a1Xjlc8zo0LFsOehOcUjtUOUA5xIT2Nkle7nCm+tDEcY9BZtO7DHvaeE95g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762429236; c=relaxed/simple;
+	bh=TzurPXqNIRG9Vp4q5fCO9veienfpprMj+IL3IWQmZSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KEJK9cgwcb4XSedNe+88LLObCOiuWTkuaaUEWvEv9u2LQoQ0fw2Wsd74WMAiXvJFwadthdIzhd4yxKN639A6dMCh0NeTzl400ZTbfBW13xnVBypFzSeQVi96pPP227dSOCrJal3xPj4wN3ucUPUqNEO95YS7D+RnweoNock2t34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lc7SU816; arc=none smtp.client-ip=209.85.167.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f66.google.com with SMTP id 2adb3069b0e04-594259bc5f1so628653e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:40:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762429233; x=1763034033; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v34V6UOuAW4algEbYefyR7s7Tf+M59sk/X8aCBcGIPc=;
+        b=Lc7SU816zRdZ+zxqjLEPPfbSF+UrTfxLKOWwP1MJhSCa52AWbkhb+4buoy2xUTrQ+n
+         L6oxTciq2q9F270fwbtPU1SsVmcjPba/lnloss0byHzuP99lf/PqXwM9G6ZaU5qYgf9J
+         lGPE+Svydo8aIQzZkmzhqf8spGw2VSjDbdXZE+pb41fGMk9hnG4ZhFs9RRUk94mwJKj7
+         nLUu9buLjXBD7FYbq5wlC/6/Jz5ha2pC50PZhcaJPz0FaJS7to0BMfolg2cn5xbgkfgv
+         pQmACEy1jMXwRZnZILoWAiNxYtdj5mqJ6wuw6TYD2NB3j7t4sHdKZTKPKiw6WxJAgor6
+         reHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762429233; x=1763034033;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v34V6UOuAW4algEbYefyR7s7Tf+M59sk/X8aCBcGIPc=;
+        b=jtp8FOrUvepYjcLWw629ZuzWR6TASMMTWzn5ObDRdy26eilaPCiLzPNGrEsakbXTD5
+         s9vQIJHlSHZyBoHz4Aiymf4DlKr6Z9KYCZwFbJNYtxn32Q3JBBct8a5KmasLykb8qCRE
+         xofbrFCUpt52g2J4WhYBmrhzcB9CWIA07qVA7zJmCFydJFFOUQ89IuBsrKQqw9DbtTpN
+         meZDsFPJ9Asm18/VxCWH97zOPcjuZiwME+FR+CuYxoF9XbrhLSXtD1hSjSdj5fk2+PDw
+         fCRKaez8pSnh+hGpfKwlsnLXBito+H4u02VNC+geEC30j0lREhA/ACdBda+8BP0gyOEh
+         iEpA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Ill7TWXkVqwtAkkb2YhyIKUAN8nLQQSIwqesvwAuLBrhuXVGE/j36ys2m7nLX0cytmhw+g1EW07UrvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3mGcWSNyM5eW22zPuHcwYE+MupAcNhOQ2Uvzj0cEJF+9mJRLP
+	ayY1L3S1EeCg1EnV9jD7dkD1E6SFlMEUck29N7urlMNZfsvL3dxaA/ukXPG/Oxse
+X-Gm-Gg: ASbGncvEBiikQ3SoA3ut1WquR86EHpvZk5GTXJTYF40kjEWMtoi2o7W0uYzM8WEQu9h
+	upwKWnV+hyQfA3v7r2yf6tsL9qkAVmrpk+FDsDqiVwqWMeAbzEWfizIkXILBQfgKh6QOYwBF7ox
+	X2vZMF/QQHqKcNKlslGU9+dHK1YV+7nbDLUO1CcmmTs/5+Uv4uqBbmG2XQ6N88vJytRtsV7loWw
+	8CJ6do0uOYEDbQSxf1rt8C4G+uBZyox8LB8dhwDky4rAuQLwBwG40iX+3GisLbtDe5i0dUf4Cke
+	JNjhyCv57g4wnVFVxGgdkd8Mif2CPf0Vz7tOsgv+qOBTK6nJG13bxL8f6mygXDBAvSDUUKLELl+
+	WajOSSc6YNXh2cOp9fQGOHxLuXpf19kRa9hfFVCc/yoxFQSN9fWy91TUYPlMcZIhH32SHH3Ofa2
+	TEAc3c2riRjAzkonkERJshzL6DfjCzTDHlqVKydJ3Ikmow7URFvu6E6Jgc1CtEN15fwxfRWjhWU
+	/SbvZfBHYXxJgqk2ahYo7GOHekmhK4=
+X-Google-Smtp-Source: AGHT+IGIIzFUbwr8Yw2DpY4lrZQbFJ3COc7ijCkphFraNz8s3Ec0LQ/U2ePs+7AxsxoZH31PQrgUNQ==
+X-Received: by 2002:a05:600c:46ce:b0:477:1af2:f40a with SMTP id 5b1f17b1804b1-4775cdc9053mr58862025e9.17.1762422432751;
+        Thu, 06 Nov 2025 01:47:12 -0800 (PST)
+Received: from ?IPV6:2003:d8:2f30:b00:cea9:dee:d607:41d? (p200300d82f300b00cea90deed607041d.dip0.t-ipconnect.de. [2003:d8:2f30:b00:cea9:dee:d607:41d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce32653sm97818805e9.13.2025.11.06.01.47.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 01:47:12 -0800 (PST)
+Message-ID: <2b9fa85b-54ff-415c-9163-461e28b6d660@gmail.com>
+Date: Thu, 6 Nov 2025 10:47:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB8641:EE_
-X-MS-Office365-Filtering-Correlation-Id: 626bc908-9854-4fe6-dd91-08de1d24570f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QWRDdGt2Ylg0bktLb0VGRHRSdTIvaGNCNGJ6Z3E4aGhmVTk1b1ZQY3JsMHJ0?=
- =?utf-8?B?ekcrcGF5cEk4MVM5MWdlRjFOZzRDcEtORFBUczRLNjlWNlJKZitnVTFjVURi?=
- =?utf-8?B?cExOQ2kwbXBjQ1MzbjlBKytKVGU3RHdITlhYS3VDSDRUS1plRXpLRGtJVkUx?=
- =?utf-8?B?M2RFbUQyb2xKNWMrV0daemFBaUtKYXRCK3B1NDBiWVNUQXVUcmpTWk5WTS9Z?=
- =?utf-8?B?dXpobFJ0TmU2ajFPZlhpMGRNRjBJQVpqaEllYld5MTFydFMzZllEVit1WEtn?=
- =?utf-8?B?dkR1M2VUT0ViRDBFZVp5UHdrQW5kQmpwMldWOWtId0hYYWNkL3RNbnU1ZWk3?=
- =?utf-8?B?Nzg2bzNVVUVZd1Jod2tybzdKVGNsRWZjNFVaSlBzM0xVZ0NBR1pQR253UHdu?=
- =?utf-8?B?dkl5ODBhdkZMeGMzRVVYTHRmeldBUjVhVHk2Q0dOQkxWUHpEMXIzSkp3bUxl?=
- =?utf-8?B?dGpwZVc1UXdpbGN3TFNCcHdEa2tObHdLVWZZSmE3UEV4VXFnVlRud09rUFdP?=
- =?utf-8?B?TE9RS1ZlK0tVNC90MldiT0tmUFR2d2tSOEphOUJ6b2hhOElmRHhRNXViY0RJ?=
- =?utf-8?B?ZGY5OHRKZVRtSXNVSG42eU1FQm13aTQ1N2ZJZkt4T1B6ejQvYnlkM1JtK2NW?=
- =?utf-8?B?d01VcEZqRmhveGlJT3cwdUg0NXprdG1ybnlUUkZHam5WMzFsUUdGeURaUkR1?=
- =?utf-8?B?K3JQR3lQWkdjYjZCQ2k3Y0FtL0MrdUo5dHNaZFRsL2VIdUxFOGVlNmNJOCtj?=
- =?utf-8?B?SVpOVk83T3lHMmVGTkFuc0ZTSmdmamVwWjgvb0w1SkFXRmFSTHRDblBkUVBB?=
- =?utf-8?B?bC9BQ0dZVENmWUs3VVUrYldUMUNMN1Y0MkZ3d1BFcU1BRmw5Qk5yR3IwZ0o4?=
- =?utf-8?B?TDdXN3lUZWcyUlJuK1FqQWwvMVFqT1pqL2l3eDQ3TlJUM2theCtPV2VPYWsz?=
- =?utf-8?B?NUJiOFQvWlFoUjNXdWNDd3Q3RVU1MFBUUy8zb3ZLVitjMXg1WkVlTmhsTDNF?=
- =?utf-8?B?OUUrSmg1Y1NhK09lUlJ2MTlzSENiQkJ2NjdzNHBTL1NCcTllbldZQjJRRllC?=
- =?utf-8?B?VEZIOTdTb2h2dSs4MFJNRldkVTE5UUdvS1h4a0FnOVl5YUptV09lU2dHblYr?=
- =?utf-8?B?Qk9EbmQrT2xFc3VZMTRHaWlzdHdFOGRoUlNsUFppNmVPK3hLdkhsdHZ0Nklk?=
- =?utf-8?B?STMxR2tybktDbGlGdzJLdUNYK0VPeHNEVlpUUFdZaWdWV0FreFhvVXcyTGti?=
- =?utf-8?B?L0pNaEo2N2gxUytZZ0FxczFWSVFVSzE3YUtnNFk5QnQ3N0FTSmxMd2pjNUV0?=
- =?utf-8?B?T3h0dTRXR1ZMU3RULzkwcjc4bXo3WUVEUDF4dmNEbTRwZEVhTGxVcVB3OEt0?=
- =?utf-8?B?SDUvRWNVZ3pWcTBqWkdZeVNjd3JDUVRlaDZ5cnpibUVSNEc4Z0VNelZtK0xr?=
- =?utf-8?B?UkRwZktYSXNTY2pOT1NzZTdRTE1mOUFGcENiSFVwUWpNTVFqcTJsUUJwWW9Z?=
- =?utf-8?B?U1RZbDZZd0lLL1pCME83VkhSOGJ2MVRWeDA1RktlYkduU3VlTlZySEQ4amR2?=
- =?utf-8?B?S3dKTnlUSmZ1N2IrQW5tQjNVb0dkWGdRQ0E3OWJxcjUzNklaTkpVcmhzRTYz?=
- =?utf-8?B?U0RjTUhYUzNBY1pyR1NBRkIwYUsrTW1IZGJrNkFvczVwaXlRMjduRHRlRER6?=
- =?utf-8?B?Z09rOGFjNTNZbzRPckdONnhzenhXdHNidlhxNWN4UWxoUHRIMVZQY0gySWQr?=
- =?utf-8?B?ZUp3UURpak94TDY4bGUvaS9yeG1JdnByR2ErRlJDWXJDN0phSFdIR2NQNVlM?=
- =?utf-8?B?V0t3cStoVUU0Y2lVSXU4alBsRC92RVdWd2U0bDJDcVB1Yy95VjBVZ2ZmV1ds?=
- =?utf-8?B?YjVyTjFXQ1hBNnZlNjVOOUZzL2t4cUpsdkllVUJmaUNEcVF4bWNCY2Z3b1cw?=
- =?utf-8?Q?vDrPiiP5HDV/YFN/rn6NOWd3Hcc0dGRH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UGJhUktrMTB1TW0xSnNKS0hVQkRhVEZSdmdtNGZHRFErc0ZqMk9QUUgwZWpq?=
- =?utf-8?B?QXFEZVNtT2hrenJKM1FZaFZyRUZvcG9DZHhPR3BIUHFodHNRUjc4Z1RxMjZ1?=
- =?utf-8?B?Szl0ZXpzWlZDR3dXSXBzY3dpaEhoNFp3djFMSzRLYlMrZ0ZueTFvbThwKzc3?=
- =?utf-8?B?bmp6b2FxZ1F2eFRaZW5haXcxTStKY1k0VVhnRVdHTmNYN3JWUlRIM3Z6eS93?=
- =?utf-8?B?MXExZFJ0cFRQYStTNzlIOGVNdE96eXFWaHpkRS9xTENGNVY1cGdGQWZVUnpn?=
- =?utf-8?B?Njgvb1BYVzZ5MWVKd2lKdUNvM3NTREFURGFtVmNlL2ZmTEhuL01qeFJjQ2I0?=
- =?utf-8?B?ZUZUR0NQaTRENHBJMGxweFZ5dWExeUh0TldHeUFoMHFub2REc0dDOHdUNys1?=
- =?utf-8?B?TEg3bEZ4cGZvekI4cVRDdzUxNXNhKzNsRmFCS2JmeGt5ZUJjeCt1QVp0WDZT?=
- =?utf-8?B?UjNPN3J5UWJIZ09tWUE1V0U1VTVFNmJDVkR4QjdueDNWUlRveFp4WWJvUEtD?=
- =?utf-8?B?bnFRNUxaYjJ6OTFDdE5XUW0xUGcza21KRTdjM3J0K3BVOW9hVkEwOHJmaEly?=
- =?utf-8?B?REhQeEZoMFNtUSt5WGgwcU1PVldHOFpuV2ovbkVqT0Jla3RCOWJMMGdjT04z?=
- =?utf-8?B?aXlsSHplN1YwMGd1VjNsV0w2KzNlWU9DcFNCbG05N210dUNlQlAwZW1NMkJ1?=
- =?utf-8?B?ZUV4bTA0ZEpMNHBoTWdVRERUS1ZtUE1TeVdqWjREUlYrMEZvWVBnaGFNdjJs?=
- =?utf-8?B?alA4QjN2cUNmVmpTNlZSNFlXYXMzZDZVUnI5T2Q4S1lTcy9yQlp2TGZUb3di?=
- =?utf-8?B?aUtqb1Y5L3gwejhQdHlJRmJjQmxLVEFVSE1vQXdEc3VGR3JVc2hZemlxbUs3?=
- =?utf-8?B?RmludkdxT0pmMTBzYlAvMklrcEJkS05GR0V1WHh5SHpndGx6d3A3aWYvUnZV?=
- =?utf-8?B?eTdkbVRvMmdmUTgvSWJ0aWJVTFlhU2VlUHhBWEdaQVNaUmdxVnVEM09CNzhF?=
- =?utf-8?B?UmZBQllyeHlvZ0pWTGpjbXBFenVlOUZmRlFnamtDR2Z4WkIvcDBFSy9rNXFT?=
- =?utf-8?B?TW9yVGlHRUtucXFWVnhJanlqemd0UjZYdi9Cb1JvZ2NpcXNBd2RrS01XdDA3?=
- =?utf-8?B?MklrZis5UFZVS1JTcDhBcUpndFlDa0pMKzlqRFkxaXNzblhDeG9yNU93Wmh5?=
- =?utf-8?B?UnVubUxYMkZ3MVhQS3NHWkRia243K0d0bGlSM2xGSEMzdDYvckRHenNwWmFy?=
- =?utf-8?B?TWQyeGxWcitmaW1WWm5GTHJzWC9SSzgrU1dKcEIrakpyZDVKcEJmQlVySmlh?=
- =?utf-8?B?OUtXbXExcHkwSzVsRDNKcGl3SEpZM1Nram9VR2ZRa3lZeWJqUVB3RjdVUkt6?=
- =?utf-8?B?dDhCTldGclJIQ1pVblpyeWxtTTc1bUpBaFArM0F2R0dXWWVVenpSa3dFbkNO?=
- =?utf-8?B?cHR5N0ZiT2sxWGg3b3ZkczBUdEt3N3FscCtXek1qNmpJOU1lZEdybU5IM0Yv?=
- =?utf-8?B?OEdHRlo5b3FrV29LcnlMdWtHcW1YNWpORHQ4WGMycGxrZXdZN3lGSmlWV0xQ?=
- =?utf-8?B?bTloeUxBNEU1enpzeEJjeXprR1dqNFBGRnYvRldwbkt3QTQwZ2FBUUw1TDdG?=
- =?utf-8?B?S2htUkMzeXBHY0k5NXp4QlFkcEtEL1pRdzFSVHFwb0ZTMy9pNTVtOVN0ODhv?=
- =?utf-8?B?MHZBZ3FzSUZDLzJ4UkIwMkxrdXNNcFF1c3krYWREYWFxaVY0K2QxK2R1b3hy?=
- =?utf-8?B?TGNadkVPR2FnTEh0dEtBUVBKWU1KMS82Rkl5cXU2dStVTWEvTFhxOTNVaWJl?=
- =?utf-8?B?RHVwalJuaVQ5L0JvY0RVRElTa3dmSysxUHZuK2trU1pDYmo0enQrQURnTGtj?=
- =?utf-8?B?SGpUWi9wRUxzd3pXaEE1dXFldnh5SkZqeU9BMGFnbHNBSGJRTFVpSGk2NitM?=
- =?utf-8?B?Y0kxeXRvdndLbmxndFF3azNWcHJ2akExMGJRQVRqbzBBT0Q0U2FFREdIN1FY?=
- =?utf-8?B?MzFzcUhVY09xNmVsVU9GVk9hTVNUZmJCN2lEYTV3dUxqSVA0Q1l1cUJNZ21B?=
- =?utf-8?B?UlIvWUZIcHFFOEU0Q0tvODNFSTRBZEdqbUFKSGdqOGNvc3RZRDFxNWd3TmtB?=
- =?utf-8?B?Mm1mTVRRQVBzUFFoUnB4TkJIWlJSbG5jZ0hvbGhqWHFGYStRQmN6akE3cFlr?=
- =?utf-8?Q?Vb8Yvf8jP3lfCiZcX9DGLXNsD0eIXqgDbNUxtrnRI32S?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 626bc908-9854-4fe6-dd91-08de1d24570f
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 11:05:05.4823
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3H4lAjUMkbU8PngcRAKZQtBdTEDUb9M/ifXDsGaMo7IbZ8MYJOlAj8St+K4PyfaRt1/sKbHhyh6zSlPVcBf+7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8641
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v4 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+To: Huang Ying <ying.huang@linux.alibaba.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Yang Shi <yang@os.amperecomputing.com>,
+ "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ Yin Fengwei <fengwei_yin@linux.alibaba.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20251104095516.7912-1-ying.huang@linux.alibaba.com>
+ <20251104095516.7912-3-ying.huang@linux.alibaba.com>
+From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20251104095516.7912-3-ying.huang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu Nov 6, 2025 at 6:46 PM JST, Alice Ryhl wrote:
-> On Thu, Nov 06, 2025 at 04:07:13PM +0900, Alexandre Courbot wrote:
->> Introduce the `num` module, which will provide numerical extensions and
->> utilities for the kernel.
->>=20
->> For now, introduce the `Integer` trait, which is implemented for all
->> primitive integer types to provides their core properties to generic
->> code.
->>=20
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->>  rust/kernel/lib.rs |  1 +
->>  rust/kernel/num.rs | 76 +++++++++++++++++++++++++++++++++++++++++++++++=
-+++++++
->>  2 files changed, 77 insertions(+)
->>=20
->> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->> index 3dd7bebe7888..235d0d8b1eff 100644
->> --- a/rust/kernel/lib.rs
->> +++ b/rust/kernel/lib.rs
->> @@ -109,6 +109,7 @@
->>  pub mod mm;
->>  #[cfg(CONFIG_NET)]
->>  pub mod net;
->> +pub mod num;
->>  pub mod of;
->>  #[cfg(CONFIG_PM_OPP)]
->>  pub mod opp;
->> diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
->> new file mode 100644
->> index 000000000000..3f85e50b8632
->> --- /dev/null
->> +++ b/rust/kernel/num.rs
->> @@ -0,0 +1,76 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Additional numerical features for the kernel.
->> +
->> +use core::ops;
->> +
->> +/// Designates unsigned primitive types.
->> +pub struct Unsigned(());
->> +
->> +/// Designates signed primitive types.
->> +pub struct Signed(());
->
-> Since these types are not intended to be constructed, I would suggest
-> using enums so that they can't be constructed:
->
-> 	pub enum Unsigned {}
-> 	pub enum Signed {}
+On 04.11.25 10:55, Huang Ying wrote:
+> A multi-thread customer workload with large memory footprint uses
+> fork()/exec() to run some external programs every tens seconds.  When
+> running the workload on an arm64 server machine, it's observed that
+> quite some CPU cycles are spent in the TLB flushing functions.  While
+> running the workload on the x86_64 server machine, it's not.  This
+> causes the performance on arm64 to be much worse than that on x86_64.
+> 
+> During the workload running, after fork()/exec() write-protects all
+> pages in the parent process, memory writing in the parent process
+> will cause a write protection fault.  Then the page fault handler
+> will make the PTE/PDE writable if the page can be reused, which is
+> almost always true in the workload.  On arm64, to avoid the write
+> protection fault on other CPUs, the page fault handler flushes the TLB
+> globally with TLBI broadcast after changing the PTE/PDE.  However, this
+> isn't always necessary.  Firstly, it's safe to leave some stale
+> read-only TLB entries as long as they will be flushed finally.
+> Secondly, it's quite possible that the original read-only PTE/PDEs
+> aren't cached in remote TLB at all if the memory footprint is large.
+> In fact, on x86_64, the page fault handler doesn't flush the remote
+> TLB in this situation, which benefits the performance a lot.
+> 
+> To improve the performance on arm64, make the write protection fault
+> handler flush the TLB locally instead of globally via TLBI broadcast
+> after making the PTE/PDE writable.  If there are stale read-only TLB
+> entries in the remote CPUs, the page fault handler on these CPUs will
+> regard the page fault as spurious and flush the stale TLB entries.
+> 
+> To test the patchset, make the usemem.c from
+> vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git).
+> support calling fork()/exec() periodically.  To mimic the behavior of
+> the customer workload, run usemem with 4 threads, access 100GB memory,
+> and call fork()/exec() every 40 seconds.  Test results show that with
+> the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
+> flush functions reduces from ~50.5% to ~0.3% in perf profile.
+> 
 
-Ah, of course - I thought about having a private `()` to forbid
-construction outside of the module, but the empty enum prevents them
-from being instantiated from the module as well! Will apply, thanks!
+All makes sense to me.
+
+Some smaller comments below.
+
+[...]
+
+> +
+> +static inline void local_flush_tlb_page_nonotify(
+> +	struct vm_area_struct *vma, unsigned long uaddr)
+
+NIT: "struct vm_area_struct *vma" fits onto the previous line.
+
+> +{
+> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
+> +	dsb(nsh);
+> +}
+> +
+> +static inline void local_flush_tlb_page(struct vm_area_struct *vma,
+> +					unsigned long uaddr)
+> +{
+> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
+> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, uaddr & PAGE_MASK,
+> +						(uaddr & PAGE_MASK) + PAGE_SIZE);
+> +	dsb(nsh);
+> +}
+> +
+>   static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
+>   					   unsigned long uaddr)
+>   {
+> @@ -472,6 +512,22 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
+>   	dsb(ish);
+>   }
+>   
+> +static inline void local_flush_tlb_contpte(struct vm_area_struct *vma,
+> +					   unsigned long addr)
+> +{
+> +	unsigned long asid;
+> +
+> +	addr = round_down(addr, CONT_PTE_SIZE);
+> +
+> +	dsb(nshst);
+> +	asid = ASID(vma->vm_mm);
+> +	__flush_tlb_range_op(vale1, addr, CONT_PTES, PAGE_SIZE, asid,
+> +			     3, true, lpa2_is_enabled());
+> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, addr,
+> +						    addr + CONT_PTE_SIZE);
+> +	dsb(nsh);
+> +}
+> +
+>   static inline void flush_tlb_range(struct vm_area_struct *vma,
+>   				   unsigned long start, unsigned long end)
+>   {
+> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+> index c0557945939c..589bcf878938 100644
+> --- a/arch/arm64/mm/contpte.c
+> +++ b/arch/arm64/mm/contpte.c
+> @@ -622,8 +622,7 @@ int contpte_ptep_set_access_flags(struct vm_area_struct *vma,
+>   			__ptep_set_access_flags(vma, addr, ptep, entry, 0);
+>   
+>   		if (dirty)
+> -			__flush_tlb_range(vma, start_addr, addr,
+> -							PAGE_SIZE, true, 3);
+> +			local_flush_tlb_contpte(vma, start_addr);
+
+In this case, we now flush a bigger range than we used to, no?
+
+Probably I am missing something (should this change be explained in more 
+detail in the cover letter), but I'm wondering why this contpte handling 
+wasn't required before on this level.
+
+>   	} else {
+>   		__contpte_try_unfold(vma->vm_mm, addr, ptep, orig_pte);
+>   		__ptep_set_access_flags(vma, addr, ptep, entry, dirty);
+> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> index d816ff44faff..22f54f5afe3f 100644
+> --- a/arch/arm64/mm/fault.c
+> +++ b/arch/arm64/mm/fault.c
+> @@ -235,7 +235,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
+>   
+>   	/* Invalidate a stale read-only entry */
+
+I would expand this comment to also explain how remote TLBs are handled 
+very briefly -> flush_tlb_fix_spurious_fault().
+
+>   	if (dirty)
+> -		flush_tlb_page(vma, address);
+> +		local_flush_tlb_page(vma, address);
+>   	return 1;
+>   }
+>   
+
 
