@@ -1,109 +1,156 @@
-Return-Path: <linux-kernel+bounces-888379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 619E3C3AA30
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:41:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48906C3A9E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:37:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5427A4FDCA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:37:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B244C1A43728
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9B42F5319;
-	Thu,  6 Nov 2025 11:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BA03101C0;
+	Thu,  6 Nov 2025 11:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kHdyJ48e"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfHVcgmp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o1GL4jP2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752302F5330;
-	Thu,  6 Nov 2025 11:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B250930F932;
+	Thu,  6 Nov 2025 11:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428901; cv=none; b=sBZ3umZ9BpWBmuybdzqqrCtH6MDbwLio7MHrBjuF+80lnclqJwP3TJhiksOdLJbeU5wIL4gZyhzAO+6eisLqWabaq0J0C7Kj+qZ22ZXKbwJ9B2WEjcRVuzmb6cnlbw8x0TsPTOtxP85IXRyEFzIKhrHYqZuDIYDSsj1m4r3jaZM=
+	t=1762428986; cv=none; b=Oq+421zOYex+kN926bZ9WTD0MIDMMOkq/hW9p0HP3zIz0KTb/KsSEekLF0gUvRHPqVur7Wv/m4WtyhPHcAQ5QwA3i/FKIkkUgiOOLYj3oNnnDwigQfSdPGcsK0gJ8zzdiw/W8NzLHqd3RVC3F/kt4VYavnaR+PudrDHwlvbLN/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428901; c=relaxed/simple;
-	bh=FZ+xQhevs4W6MojfQXMJAFD8Dy6zfGeKkSvuojK3q0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PLalTA8TU6NfBVHB7VBTIjJh60sZ7oZcG0TtNI9PjEgH2KvGnMKHuEonOmtInqFA9DmRPDKFVzMwbGbGU6bEsBAN7LGy+S6iK4jcaDL/eGrYridvEyUT7Ogl9ZROA3SIkwQt5ku5VNwg7jC1p9jAO0Qnz90GiPdpDEKPPF7VTa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kHdyJ48e; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9189940E0191;
-	Thu,  6 Nov 2025 11:34:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ZrgZyW1OZZM8; Thu,  6 Nov 2025 11:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762428890; bh=BMtzBSnJBOm8d3+HVK2n5RalBifjQWJOzmJjLIuA8n4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kHdyJ48euVXrbvL5GmyvXxjubv1k7H/0LpvojnfbQ6Zu762M5u2vQVXjbisW051xA
-	 DtOld8kil5i5xRNaQmbX83yrhf8HRaMcVJHGjkvlOnuh5v172JhV80hOPjulkK7d+A
-	 mxZXnSJOTl37mqCwo3DhxvVI+92vtmcOB+G0yx1j9e4cfasxoU7vxzVsUiU6vgWt7J
-	 az/rg2AsCGInvwhT8BClqoaaqifIBICHbniRPeFXVGNdztqXjjJdG5dRAjghXA5izH
-	 T7+0jfndFGsANY4+2sNOsICqvBcoZrytCOnYSaO12QlM2swz609HLskCUx8mDhElh4
-	 aPXPM2O+1H37CtyKcBYOBhtEpvtZZFa4n9BeryrTzsSVJDICuBVL4kX6T3Usn4GcpW
-	 sV2NxVUnHBs0CSAzFl9QajDp05E4JEwRUzkS151vNxtMv/0L00n2TYfvMCJJvV2PDR
-	 0QTmAQeH1Kz+a7StJ63IcomnAFWzatr8isiTw/mzQu4sL3H1VmVpaiKgPQ/vwcuqCo
-	 k0GTXpjePq2X/lo2KG9zog5itUfwFdcQ/r+8dGN0ZdyFuNZA9Zlob7tMoEXsLfuRuJ
-	 S0RVhLNHZdnVtEW51YUjO9bGxRjzWEGnydzwOM4DFPZduE7QpMY5wOepeAhqRevAG9
-	 SBUgBbp5TSml+t1DH7ENTPi8=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 197E440E00DE;
-	Thu,  6 Nov 2025 11:34:43 +0000 (UTC)
-Date: Thu, 6 Nov 2025 12:34:36 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: tony.luck@intel.com
-Cc: Ma Ke <make24@iscas.ac.cn>, jbaron@akamai.com, qiuxu.zhuo@intel.com,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH v3] EDAC/ie31200: Fix error handling in
- ie31200_register_mci
-Message-ID: <20251106113436.GAaQyHzGJfszVtHNU0@fat_crate.local>
-References: <20251106084735.35017-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1762428986; c=relaxed/simple;
+	bh=yL1dKuTwJbqWHWFM/S4JLHnPEsgFEplZUtp9/v+jbis=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GtcBUIZj8z4AD4cnaOSJlNaHpMOClzhGnY81mL9ArGJhMcG1l80bbI50/0QPpPfomcZdL4tt7uwEx+mslIfTY6sDcxTY+sadCb0ipHFZRyFYKwIAD+KZWBZAvpIKgBncFGINU9/hwWZTITYf+9gW1jyBxegkr8V+dZkjXyjq1So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfHVcgmp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o1GL4jP2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762428982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3OFVSDhbG36SsIf5lzC388elLqvaZZTmYLAdGi/UGDg=;
+	b=VfHVcgmpJH3uTfDhchkD4wuvXiCeO6Y0cgIqWhodPDv0n2WVyYSiJgJJpsP+TuMeWHGFhk
+	awrfiT1E4sgpQl/J9FkfBBes3xk5bIN19ceahwVKoZUp77RiupUePOYXKRjfWcOOZNzJyI
+	nEGwsjZJXoedyhMd+JsaSo0915zq3oA0kUISJHkpjhjfUhWqF7la7YqWpyki7iPmNWmakE
+	1xhtxvITVT9bFAfdxm0ZQDDm4fTBoi6xT7qZeJDMw7135L0MoVUU7nVX9ZV0r7kk20V5Hd
+	8BnaSJ/s1Q5JnQT8KCr/Flgxrv/goYiQYt5i7ji3eoWtF4DinD6WOF+xYK6ieQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762428982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3OFVSDhbG36SsIf5lzC388elLqvaZZTmYLAdGi/UGDg=;
+	b=o1GL4jP2YCiTuyko5Z4t0WrMdYgexNYHQsUuVxE4kxErQm/WLMPqalMwDn0asv1C6ScxeV
+	1J3sSKVoaU//4sBA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, syzbot
+ <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
+ "amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
+ brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
+In-Reply-To: <87bjlgqmk5.fsf@jogness.linutronix.de>
+References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
+ <69096836.a70a0220.88fb8.0006.GAE@google.com>
+ <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
+ <aQpFLJM96uRpO4S-@pathway.suse.cz> <87ldkk34yj.fsf@jogness.linutronix.de>
+ <aQuABK25fdBVTGZc@pathway.suse.cz> <87bjlgqmk5.fsf@jogness.linutronix.de>
+Date: Thu, 06 Nov 2025 12:42:21 +0106
+Message-ID: <87tsz7iea2.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251106084735.35017-1-make24@iscas.ac.cn>
+Content-Type: text/plain
 
-On Thu, Nov 06, 2025 at 04:47:35PM +0800, Ma Ke wrote:
-> ie31200_register_mci() calls device_initialize() for priv->dev
-> unconditionally. However, in the error path, put_device() is not
-> called, leading to an imbalance. Similarly, in the unload path,
-> put_device() is missing.
-> 
-> Although edac_mc_free() eventually frees the memory, it does not
-> release the device initialized by device_initialize(). For code
-> readability and proper pairing of device_initialize()/put_device(),
-> add put_device() calls in both error and unload paths.
-> 
-> Found by code review.
-> 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v3:
-> - moved put_device() from fail_free to fail_unmap to avoid using uninitialized priv variable when window allocation fails.
+On 2025-11-05, John Ogness <john.ogness@linutronix.de> wrote:
+>> Another question is whether this is the only problem caused the patch.
+>
+> This comparison is quite special. It caught my attention while combing
+> through the code.
 
-Zapped v2 from the tree for the time being.
+The reason that this comparison is special is because it is the only one
+that does not take wrapping into account. I did it that way originally
+because it is AND with a wrap check. But this is an ugly special
+case. It should use the same wrap check as the other 3 cases in
+nbcon.c. If it had, the bug would not have happened.
 
-> Changes in v2:
-> - modified the patch, thanks for developer's suggestions;
-> - removed Fixes line.
+I always considered these wrap checks to be non-obvious and
+error-prone. So what if we create a nice helper function to simplify and
+unify the wrap checks? Something like this:
 
--- 
-Regards/Gruss,
-    Boris.
+diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+index 839f504db6d30..8499ee642c31d 100644
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -390,6 +390,17 @@ static unsigned int to_blk_size(unsigned int size)
+ 	return size;
+ }
+ 
++/*
++ * Check if @lpos1 is before @lpos2. This takes ringbuffer wrapping
++ * into account. If @lpos1 is more than a full wrap before @lpos2,
++ * it is considered to be after @lpos2.
++ */
++static bool lpos1_before_lpos2(struct prb_data_ring *data_ring,
++			       unsigned long lpos1, unsigned long lpos2)
++{
++	return lpos2 - lpos1 - 1 < DATA_SIZE(data_ring);
++}
++
+ /*
+  * Sanity checker for reserve size. The ringbuffer code assumes that a data
+  * block does not exceed the maximum possible size that could fit within the
+@@ -577,7 +588,7 @@ static bool data_make_reusable(struct printk_ringbuffer *rb,
+ 	unsigned long id;
+ 
+ 	/* Loop until @lpos_begin has advanced to or beyond @lpos_end. */
+-	while ((lpos_end - lpos_begin) - 1 < DATA_SIZE(data_ring)) {
++	while (lpos1_before_lpos2(data_ring, lpos_begin, lpos_end)) {
+ 		blk = to_block(data_ring, lpos_begin);
+ 
+ 		/*
+@@ -668,7 +679,7 @@ static bool data_push_tail(struct printk_ringbuffer *rb, unsigned long lpos)
+ 	 * sees the new tail lpos, any descriptor states that transitioned to
+ 	 * the reusable state must already be visible.
+ 	 */
+-	while ((lpos - tail_lpos) - 1 < DATA_SIZE(data_ring)) {
++	while (lpos1_before_lpos2(data_ring, tail_lpos, lpos)) {
+ 		/*
+ 		 * Make all descriptors reusable that are associated with
+ 		 * data blocks before @lpos.
+@@ -1149,7 +1160,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
+ 	next_lpos = get_next_lpos(data_ring, blk_lpos->begin, size);
+ 
+ 	/* If the data block does not increase, there is nothing to do. */
+-	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
++	if (!lpos1_before_lpos2(data_ring, head_lpos, next_lpos)) {
+ 		if (wrapped)
+ 			blk = to_block(data_ring, 0);
+ 		else
+@@ -1262,7 +1273,7 @@ static const char *get_data(struct prb_data_ring *data_ring,
+ 
+ 	/* Regular data block: @begin less than @next and in same wrap. */
+ 	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
+-	    blk_lpos->begin < blk_lpos->next) {
++	    lpos1_before_lpos2(data_ring, blk_lpos->begin, blk_lpos->next)) {
+ 		db = to_block(data_ring, blk_lpos->begin);
+ 		*data_size = blk_lpos->next - blk_lpos->begin;
+ 
+This change also fixes the issue. Thoughts?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+John
 
