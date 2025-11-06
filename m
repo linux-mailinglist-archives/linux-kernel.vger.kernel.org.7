@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-889506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052A7C3DC9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD95C3DCA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD7994E8868
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:19:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F17D4E8687
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4828F3590AC;
-	Thu,  6 Nov 2025 23:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011BD359FB1;
+	Thu,  6 Nov 2025 23:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WGDz71ku"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MvbgYCNX"
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6E42E0922
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73319358D22
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470960; cv=none; b=KTJUXJqIbRKs4q19xYPAazIAnQYlhTuDq+6zey7LS8cOLHwqUOJniQsw2Ck1ZR+ecvU80QFkecz7A/qs68nbY7e2BhwDMVvfaYKCQYkPChREU9tk1LM9Xw5YwiD/w1wWpX5szhPA9JruAPA32paeJ4Fqwy7dHyPFFNpZ3BpPGZY=
+	t=1762470962; cv=none; b=RIq2DGyB80igx5qDe/k406V2O6sG1uKBU0SQ1NmDJV3yFojcE2GS1bg1MLpiJvQ7O3E9hQDtgh4O3f8UYegn/VYMXxkWiHlMh8u8g3OrCdf46dnJGTgAjunoLtSN3nVPVVUW8oWjrjZaO0WpbF51aIQtX+Yw5RpL1dcORfD5beM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470960; c=relaxed/simple;
-	bh=3kfszh9GvrFi8Y4HcNCDpFFabOoNANjoDq9+KWDc9ZY=;
+	s=arc-20240116; t=1762470962; c=relaxed/simple;
+	bh=vsAC+bALI30qElPFV06AjAurdz8WlWhRwpAQxUMz2cg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=fRxUoyLu4FapRfngX7IRpCGKA8wA2QKuxmnKPCJ7G9zaaAAhUk/4Hy70VejoZO7cg42jbYQSoSRaIVn59ouOt8/mv8af433videhcDG/FGeFbsFUmFXOYEatK3NhQ9Zb+e2SOzHcjOrgfqJeXg1qbTWd8pa479fhan94Uk9s7Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WGDz71ku; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=bLlz2fYvP4rrogOC2SaHDQkPk/4erEXRWGnqfJcz7F5p5cIHhQE3CtaZ02NYP5WdLni9daZr2H0E3RuHrHnfiYJPCLOkRy2KwyZBvnLRVnKhVlA45UVR8a6707NLgPxZCQC3jnwhqF1NNNVRCYRLTB44T0Y4TVx5wAk/HQoQ8fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MvbgYCNX; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-29557f43d56so1818085ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:15:58 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2930e2e8e7fso1949375ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:16:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762470958; x=1763075758; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762470960; x=1763075760; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=blAae1b4UuHw+1SOJAzDhtKVe5EnHpicO6Ta+cSn2vM=;
-        b=WGDz71ku5MjqA/ubNhzpLSQQneU2FkyuzlIzECa9P7HSKKkGl0deojofTB193Lqy16
-         RGXNK0rq2NhBfjkpPJPVkZv18FUeHjfNGn64Nt5KM37dCRl3deBRzOvlPsJc3A6ESSe3
-         gvlx50YL2TnwnBV21uUpURzLmmDlEytKsl87PkuSEyAYk3bqz26ETXjPexDiD/fZMT7T
-         RXFZM4/kAXg0CQVmDNLYmzRwYuUixNw/LS5858YFn3UMx+zOuuR7owfpsI/xZpnP+cKo
-         8mW+vB2SWkbeEFg9HeMJAnLzq1kvdRFyqonuAnxrkior1NONlaUmgtH8o5ysGL2I/2AB
-         gRXA==
+        bh=ScLENsyYSFxSsSXeHlp0LDfphHjWjgXO0/fUWwSEsxM=;
+        b=MvbgYCNXDgx6Kez59C5aClvU6tiGpApTI4UK9WJEE8bE11buT/K3A9GSB6z2MMLcWI
+         XP2uj20eENuvWWaOkN9Rm8ahGTVQxXs36dLVp+BkGV1Rf6Pckbv2sqFYzwbz65+ej8bz
+         XZH0ZcorUrFmcmBOB6DtA9bYgrS22K30rs6IJj0MkwL4+bYw6vc5J7lXtYLej3KbMnED
+         H7s7wIax7lEphBxryMNMxdBeN7CdZANKeX/2x0TGqYTkKTClglepRJc/ojeiVPr27sq1
+         eqh+47W/6KUrP3g93oXwPpoX9ZpNs8UzUY5GyMdoNPPQvQ67+kNpzhK4M1172DKAEA5V
+         r7wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762470958; x=1763075758;
+        d=1e100.net; s=20230601; t=1762470960; x=1763075760;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=blAae1b4UuHw+1SOJAzDhtKVe5EnHpicO6Ta+cSn2vM=;
-        b=ngR93PyCzYrEZJP+OQnqnlGFtYRRZu6Ei+G/AnUhand7GyMAEwo0i3KppWXLZc9U6l
-         0M0kUSbyLUKpvTWdOzaLrm/0FTcggsRCJ4qRgA/YMF46uvLzkbJ/fel0YJ3FH6BuHomB
-         bw/4RZwHEtWqN/S/iMMpBT9V/gZF6fOHLyYOOgG+uIk5X2OVnvONkdq0WQ0PostjJYxJ
-         DBXNvqZJItweINk+pVUpIj7Tkjtn76fl/ATihMZPy0IsO2Xl2l9INoIDiQgFDnllWjnG
-         4FFTDuZzIOfw6PZIUW2qJS6kA6SUBFPpciCZfyS17JQHrzMVuOx1HiCdvuXLU7FJ4lfW
-         g4GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXl4FqWgL9nFuQbYD30GdXukdlbYzjSjDZgws5oUCnvrIAdxpTZqWLTQ/YbW56PUC4JtOKGqmwVzztF+iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5n/w3fOh9hZ6g9yerFDIdVO7KGbI394uRU0C+Dg+kPo4GtuE8
-	h+M1QYOfAw41JKF0WtvairLR+a5eLDrBrmMcL6XagSnrT5QDqlg46+pOcfpYsAqZN/v1RHfvx0W
-	4jHSe0QvD2A==
-X-Google-Smtp-Source: AGHT+IGusCIzgTLNZfY2mSSQ1Usvy6ejq0IMq2fUL4lvimGrlWfdC7717TTTc5KiNRvFZvcE483VuMJlifRr
-X-Received: from plof10.prod.google.com ([2002:a17:902:860a:b0:290:9ee0:e8cb])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e78e:b0:294:fcae:826
- with SMTP id d9443c01a7336-297c0478227mr15537655ad.59.1762470957691; Thu, 06
- Nov 2025 15:15:57 -0800 (PST)
-Date: Thu,  6 Nov 2025 15:15:00 -0800
+        bh=ScLENsyYSFxSsSXeHlp0LDfphHjWjgXO0/fUWwSEsxM=;
+        b=mztfP/r/Efm6YS/hapFL7hdorE4Td7qy+VlEoODYXyfK04n26KNvixC+xLRAF1V9Cx
+         EwhnS8gwY/xY2jNpoDcnH9h9M/RO6SU2VRbLMb5GZxb67OyaZBDMcA9Va4TA7dkMRXk4
+         aa+2UhWK+JkcXzW+PnDO2uNnmfS1waLp0/INq5DR8fSgezdvKJKnKbrJDAwG+hbj9AWz
+         ZjtTSbRsn90mtADnSQH4WRiNKdQ1upwiSfhstWqnbBr1usN/ah2BQ5b6K3icFvKqqHd4
+         xizeqGfi1JL6EMSXNEZYH5qrVjykL8vcVP/IMtiL78bw+n86Qmd2eyF8ej9L7Bmuazp3
+         oJ/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW7ljOezDM8Mmthku8ggIPFBaWQtxnqthpn9h9648W5kFUkfX3/OVHzF/7eRe6RvfXWarMqxk0xPgGGA9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ogJIsOl6YH+3Fj7ALnrm4sX1l3O/rdLlTUTMncRDXMB21gps
+	/EIQl7eyMnN7GOnCo30nJLlfK/6snUyATFfpFizCyuOSIQFUY1NimmjzzyyBpBJ95+DBaUG5Glg
+	cnvgdeeiSkg==
+X-Google-Smtp-Source: AGHT+IF7+Q0cPmYHz5/abpijevA/om0VtU1+3MKAlA1OEDRxVqteWbaXmduw+smzYLuvecGGWKpEaTo9uj7A
+X-Received: from dlai18.prod.google.com ([2002:a05:701b:2712:b0:119:49ca:6b9c])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce82:b0:295:5a06:308d
+ with SMTP id d9443c01a7336-297c03a84a8mr14347725ad.14.1762470959559; Thu, 06
+ Nov 2025 15:15:59 -0800 (PST)
+Date: Thu,  6 Nov 2025 15:15:01 -0800
 In-Reply-To: <20251106231508.448793-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251106231508.448793-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251106231508.448793-11-irogers@google.com>
-Subject: [PATCH v2 10/18] perf stat: Remove "unit" workarounds for metric-only
+Message-ID: <20251106231508.448793-12-irogers@google.com>
+Subject: [PATCH v2 11/18] perf test stat+json: Improve metric-only testing
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,118 +90,54 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Remove code that tested the "unit" as in KB/sec for certain hard coded
-metric values and did workarounds.
+When testing metric-only, pass a metric to perf rather than expecting
+a hard coded metric value to be generated.
+
+Remove keys that were really metric-only units and instead don't
+expect metric only to have a matching json key as it encodes metrics
+as {"metric_name", "metric_value"}.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/stat-display.c | 47 ++++++----------------------------
- 1 file changed, 8 insertions(+), 39 deletions(-)
+ tools/perf/tests/shell/lib/perf_json_output_lint.py | 4 ++--
+ tools/perf/tests/shell/stat+json_output.sh          | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index eabeab5e6614..b3596f9f5cdd 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -592,42 +592,18 @@ static void print_metricgroup_header_std(struct perf_stat_config *config,
- 	fprintf(config->output, "%*s", MGROUP_LEN - n - 1, "");
+diff --git a/tools/perf/tests/shell/lib/perf_json_output_lint.py b/tools/perf/tests/shell/lib/perf_json_output_lint.py
+index c6750ef06c0f..1369baaa0361 100644
+--- a/tools/perf/tests/shell/lib/perf_json_output_lint.py
++++ b/tools/perf/tests/shell/lib/perf_json_output_lint.py
+@@ -65,8 +65,6 @@ def check_json_output(expected_items):
+       'socket': lambda x: True,
+       'thread': lambda x: True,
+       'unit': lambda x: True,
+-      'insn per cycle': lambda x: isfloat(x),
+-      'GHz': lambda x: True,  # FIXME: it seems unintended for --metric-only
+   }
+   input = '[\n' + ','.join(Lines) + '\n]'
+   for item in json.loads(input):
+@@ -88,6 +86,8 @@ def check_json_output(expected_items):
+                            f' in \'{item}\'')
+     for key, value in item.items():
+       if key not in checks:
++        if args.metric_only:
++          continue
+         raise RuntimeError(f'Unexpected key: key={key} value={value}')
+       if not checks[key](value):
+         raise RuntimeError(f'Check failed for: key={key} value={value}')
+diff --git a/tools/perf/tests/shell/stat+json_output.sh b/tools/perf/tests/shell/stat+json_output.sh
+index 98fb65274ac4..85d1ad7186c6 100755
+--- a/tools/perf/tests/shell/stat+json_output.sh
++++ b/tools/perf/tests/shell/stat+json_output.sh
+@@ -181,7 +181,7 @@ check_metric_only()
+ 		echo "[Skip] CPU-measurement counter facility not installed"
+ 		return
+ 	fi
+-	perf stat -j --metric-only -e instructions,cycles -o "${stat_output}" true
++	perf stat -j --metric-only -M page_faults_per_second -o "${stat_output}" true
+ 	$PYTHON $pythonchecker --metric-only --file "${stat_output}"
+ 	echo "[Success]"
  }
- 
--/* Filter out some columns that don't work well in metrics only mode */
--
--static bool valid_only_metric(const char *unit)
--{
--	if (!unit)
--		return false;
--	if (strstr(unit, "/sec") ||
--	    strstr(unit, "CPUs utilized"))
--		return false;
--	return true;
--}
--
--static const char *fixunit(char *buf, struct evsel *evsel,
--			   const char *unit)
--{
--	if (!strncmp(unit, "of all", 6)) {
--		snprintf(buf, 1024, "%s %s", evsel__name(evsel),
--			 unit);
--		return buf;
--	}
--	return unit;
--}
--
- static void print_metric_only(struct perf_stat_config *config,
- 			      void *ctx, enum metric_threshold_classify thresh,
- 			      const char *fmt, const char *unit, double val)
- {
- 	struct outstate *os = ctx;
- 	FILE *out = os->fh;
--	char buf[1024], str[1024];
-+	char str[1024];
- 	unsigned mlen = config->metric_only_len;
- 	const char *color = metric_threshold_classify__color(thresh);
- 
--	if (!valid_only_metric(unit))
--		return;
--	unit = fixunit(buf, os->evsel, unit);
-+	if (!unit)
-+		unit = "";
- 	if (mlen < strlen(unit))
- 		mlen = strlen(unit) + 1;
- 
-@@ -643,16 +619,15 @@ static void print_metric_only_csv(struct perf_stat_config *config __maybe_unused
- 				  void *ctx,
- 				  enum metric_threshold_classify thresh __maybe_unused,
- 				  const char *fmt,
--				  const char *unit, double val)
-+				  const char *unit __maybe_unused, double val)
- {
- 	struct outstate *os = ctx;
- 	FILE *out = os->fh;
- 	char buf[64], *vals, *ends;
--	char tbuf[1024];
- 
--	if (!valid_only_metric(unit))
-+	if (!unit)
- 		return;
--	unit = fixunit(tbuf, os->evsel, unit);
-+
- 	snprintf(buf, sizeof(buf), fmt ?: "", val);
- 	ends = vals = skip_spaces(buf);
- 	while (isdigit(*ends) || *ends == '.')
-@@ -670,13 +645,9 @@ static void print_metric_only_json(struct perf_stat_config *config __maybe_unuse
- {
- 	struct outstate *os = ctx;
- 	char buf[64], *ends;
--	char tbuf[1024];
- 	const char *vals;
- 
--	if (!valid_only_metric(unit))
--		return;
--	unit = fixunit(tbuf, os->evsel, unit);
--	if (!unit[0])
-+	if (!unit || !unit[0])
- 		return;
- 	snprintf(buf, sizeof(buf), fmt ?: "", val);
- 	vals = ends = skip_spaces(buf);
-@@ -695,7 +666,6 @@ static void print_metric_header(struct perf_stat_config *config,
- 				const char *unit, double val __maybe_unused)
- {
- 	struct outstate *os = ctx;
--	char tbuf[1024];
- 
- 	/* In case of iostat, print metric header for first root port only */
- 	if (config->iostat_run &&
-@@ -705,9 +675,8 @@ static void print_metric_header(struct perf_stat_config *config,
- 	if (os->evsel->cgrp != os->cgrp)
- 		return;
- 
--	if (!valid_only_metric(unit))
-+	if (!unit)
- 		return;
--	unit = fixunit(tbuf, os->evsel, unit);
- 
- 	if (config->json_output)
- 		return;
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
