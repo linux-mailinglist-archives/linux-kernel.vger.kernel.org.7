@@ -1,81 +1,66 @@
-Return-Path: <linux-kernel+bounces-888836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D524FC3C075
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:26:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C156C3C0DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:32:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FB541AA219D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4873B19C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3654727280F;
-	Thu,  6 Nov 2025 15:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04D2737EB;
+	Thu,  6 Nov 2025 15:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pgAu75m5"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8XVxY9S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D291EEA5D;
-	Thu,  6 Nov 2025 15:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03A526D4F6;
+	Thu,  6 Nov 2025 15:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762442755; cv=none; b=F1+MLUw4EOM4dTGFeqRb9MWrtNG6pMQN6PfLNKim5dDOnZpt3AZLtmk5BzLoXYx5osi9IgOP+EOPDlUa4g/P4snvIoB+sIm9oTHWrLf/ugsMREUIBiUXjvAg57QtZMJmb8H9h3IkatLDAbPXCslqAAAcSRu/VTS9z3uoA9KjkiQ=
+	t=1762442781; cv=none; b=BF/WrRChlDB45AF15tltXACDpQmsKXaWOoDtMIKt9qHF7PgtmhgBU6GiXeqrk6uVtd5/+vfqbx8Jjh+scRMquFyQvHIr1A2uBhTtwY2ktTnWp1NCgR1pOPlguDHEK2ihf8I4eVW2+MrOzq+dzyYYkT/7JXryAOD4f3CM1itgL6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762442755; c=relaxed/simple;
-	bh=6iOjcSAxs3NxY9p5Z8vOb47o67EQ2so0Ix8yDCMTguI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qh2KfO0U3exbJJSI5K0H9CC7hoHC6Rt/dC9BKHKhgOGDg7D62nwoDtzjXUxiyRqAhvh10j3oBWLL6QkCBnneLXXBcU2eb2Qz4dL1mXHa7Dz5GEKGBpdjXypDkVy9wUO7tsOYH0JKT1bc0KneJbl8anYNm8AW/jqb5S/4L2VVUqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pgAu75m5; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6FF8iF009215;
-	Thu, 6 Nov 2025 15:25:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=mtsa329fUtQbDlBUnISqk9oEEDR1m5/u3hkXhk6pG
-	Zs=; b=pgAu75m5IL45mlIeS1eY+G9JVK/VDS9W4kK01MCGGiR1lxnnqQf0fnbSm
-	kZW8tAKFpxzZkgu9XSnCUoyzK1Sj69wkwfDQuMqmnX5PQ9lk3FDF7DizDzqOWD6O
-	v9D3m/3CoAjd+6Xlxn3E3gS/iCHCncsQg9MwuvN71v1hpg1+wtFmnqq+bRNcfuia
-	daQBjZA0GAayQmZhQ5RhyvOZKbbaNVARwfmT5zb1p/ccUs2KRrXDk/z72U5K19by
-	xOM0CAo+GrxR6r1H7gh0rN2a+frmCExz9qz0UCoRU5rLcEy3cNRLtImjp6aSipm4
-	yPT2jgJIJcV/8RhWHlBp9yFVswSog==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q97y9b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 15:25:51 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6CdwoS012875;
-	Thu, 6 Nov 2025 15:25:50 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5y825udp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 15:25:50 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6FPkh454657462
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Nov 2025 15:25:46 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 82B5020043;
-	Thu,  6 Nov 2025 15:25:46 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1BBB820040;
-	Thu,  6 Nov 2025 15:25:46 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.155.209.42])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  6 Nov 2025 15:25:46 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: linux-s390@vger.kernel.org, borntraeger@de.ibm.com, frankja@linux.ibm.com,
-        mhartmay@linux.ibm.com, nrb@linux.ibm.com, nsg@linux.ibm.com,
-        seiden@linux.ibm.com, gra@linux.ibm.com, schlameuss@linux.ibm.com,
-        hca@linux.ibm.com, svens@linux.ibm.com, agordeev@linux.ibm.com,
-        gor@linux.ibm.com, ggala@linux.ibm.com, david@redhat.com
-Subject: [PATCH v1 1/1] KVM: s390: Fix gmap_helper_zap_one_page() again
-Date: Thu,  6 Nov 2025 16:25:45 +0100
-Message-ID: <20251106152545.338188-1-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762442781; c=relaxed/simple;
+	bh=Bg5TNBLbU4fqYCTkqedh59J1G/6Od+ePdvYH6FmWM3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IjKZr7ufDspZX4l2d86hrsMz5Y0Pm0Io5FmPWtGh8lyGJEOC7CXCu6c/Adk6OQRc0RHu7EEwtoUPPl1m23IfcmwWeA6pQXoE1SvtFiDyO15Qvbq6lQVEj+f+GYs2JLUuw81Lkal9BD/jV6e3vcdhfwkxrJoZ+shwar19qysGNTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8XVxY9S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEECC4AF09;
+	Thu,  6 Nov 2025 15:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762442780;
+	bh=Bg5TNBLbU4fqYCTkqedh59J1G/6Od+ePdvYH6FmWM3g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=S8XVxY9SqNl3msPDUb/ZE+zP68w38SZZjfP9QpfkJm3p07m3KK5gDd2gOZn2WvZiI
+	 7EeOSUWIOGef9abRdjNOinbbN98pxLZpj3EX0ARScT5qbEA3OaTh0vwRpqSW8YhuU/
+	 5ruOXxifBK714xYcf0tKDYqYPcI99VveWWr8pkQn4qi3qMkwUL/zQHR24LKYE8R+73
+	 uEg16afT4O3RXR5bjnnZoKZYzT8T/xN8CPfeJ5ies4pA+/d7T8kR0IJjw2QjRUXtNK
+	 2eiHwvHSvpvASClQmfuWRu+575qVrIHzwV0e+X1hqIjZD6oYa8jhz5Ywi9mcqOt0Bg
+	 nPl4QFIL1nS9Q==
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	tzungbi@kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH v6 0/2] platform/chrome: Fix an UAF via revocable primitive APIs
+Date: Thu,  6 Nov 2025 23:26:00 +0800
+Message-ID: <20251106152602.11814-1-tzungbi@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,70 +68,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=StmdKfO0 c=1 sm=1 tr=0 ts=690cbdff cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8
- a=hc2NwQUhtlEWUF91VgoA:9
-X-Proofpoint-ORIG-GUID: PPbXzuvdWZmfUfVvDHg_xbUhVffvJ9Qq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAxOCBTYWx0ZWRfX/ouv/e8mabm4
- +nrjP7XCRoqBndZr4vqYW21w/zxq9maqd+c8/AXH1LbDl54gZ8jhgXUH2VPEg2hqbQmzob9V1Ji
- /kLqiIPRuzBh0b01VOEZ+mtgXPANFMdxLcuvZDYXT2DH9NfweC1xlHBqW433cNsIKlhrTbe4rnG
- ohneebLB2xTKSVRu3NOqE52NV0X3/+tmAahiPkcYBvj2ltQZDLzTLoXLOE8a8w5xl+MnJuQFOiD
- G9RLxg6UHtMEpehMYLbvdg9WenE33k637fQ1FlFpmKYLxi+at1amleYts1CxJeTj957wpymFrt3
- Zl+oJx3tz4EbfqlkGgnGi1aa1tXgbUMUTFQjTxXz01bfVRa7WzKoFhEdfSxTceYn7a1DOcST0C+
- TsMhe3UHHHmJJyxqXm+RZxEklzV1GQ==
-X-Proofpoint-GUID: PPbXzuvdWZmfUfVvDHg_xbUhVffvJ9Qq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010018
 
-A few checks were missing in gmap_helper_zap_one_page(), which can lead
-to memory corruption in the guest under specific circumstances.
+The series is separated from [1] to show the independency and compare
+potential use cases easier.  This use case uses the primitive revocable
+APIs directly.  It relies on the revocable core part [2].
 
-Add the missing checks.
+It tries to fix an UAF in the fops of cros_ec_chardev after the
+underlying protocol device has gone by using revocable.
 
-Fixes: 5deafa27d9ae ("KVM: s390: Fix to clear PTE when discarding a swapped page")
-Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
----
- arch/s390/mm/gmap_helpers.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+The file operations make sure the resources are available when using them.
 
-diff --git a/arch/s390/mm/gmap_helpers.c b/arch/s390/mm/gmap_helpers.c
-index d4c3c36855e2..38a2d82cd88a 100644
---- a/arch/s390/mm/gmap_helpers.c
-+++ b/arch/s390/mm/gmap_helpers.c
-@@ -47,6 +47,7 @@ static void ptep_zap_swap_entry(struct mm_struct *mm, swp_entry_t entry)
- void gmap_helper_zap_one_page(struct mm_struct *mm, unsigned long vmaddr)
- {
- 	struct vm_area_struct *vma;
-+	unsigned long pgstev;
- 	spinlock_t *ptl;
- 	pgste_t pgste;
- 	pte_t *ptep;
-@@ -65,9 +66,13 @@ void gmap_helper_zap_one_page(struct mm_struct *mm, unsigned long vmaddr)
- 	if (pte_swap(*ptep)) {
- 		preempt_disable();
- 		pgste = pgste_get_lock(ptep);
-+		pgstev = pgste_val(pgste);
- 
--		ptep_zap_swap_entry(mm, pte_to_swp_entry(*ptep));
--		pte_clear(mm, vmaddr, ptep);
-+		if ((pgstev & _PGSTE_GPS_USAGE_MASK) == _PGSTE_GPS_USAGE_UNUSED ||
-+		    (pgstev & _PGSTE_GPS_ZERO)) {
-+			ptep_zap_swap_entry(mm, pte_to_swp_entry(*ptep));
-+			pte_clear(mm, vmaddr, ptep);
-+		}
- 
- 		pgste_set_unlock(ptep, pgste);
- 		preempt_enable();
+Even though it has the finest grain for accessing the resources, it makes
+the user code verbose.  Per feedback from the community, I'm looking for
+some subsystem level helpers so that user code can be simlper.
+
+The 1st patch converts existing protocol devices to resource providers
+of cros_ec_device.
+
+The 2nd patch converts cros_ec_chardev to a resource consumer of
+cros_ec_device to fix the UAF.
+
+[1] https://lore.kernel.org/chrome-platform/20251016054204.1523139-1-tzungbi@kernel.org
+[2] https://lore.kernel.org/chrome-platform/20251106152330.11733-1-tzungbi@kernel.org/
+
+v6:
+- New, separated from an existing series.
+
+Tzung-Bi Shih (2):
+  platform/chrome: Protect cros_ec_device lifecycle with revocable
+  platform/chrome: cros_ec_chardev: Consume cros_ec_device via revocable
+
+ drivers/platform/chrome/cros_ec.c           |  5 ++
+ drivers/platform/chrome/cros_ec_chardev.c   | 71 ++++++++++++++++-----
+ include/linux/platform_data/cros_ec_proto.h |  4 ++
+ 3 files changed, 65 insertions(+), 15 deletions(-)
+
 -- 
-2.51.1
+2.48.1
 
 
