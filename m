@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-887881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89796C394B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:44:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7069C394CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 756984E02BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4700C3BAE8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581D62DCF4E;
-	Thu,  6 Nov 2025 06:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645082D97A6;
+	Thu,  6 Nov 2025 06:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="bkOiMRlJ"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NMo8tMeb";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rf/ieGbi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55C12D94A0;
-	Thu,  6 Nov 2025 06:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9382D2495
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762411435; cv=none; b=Mc9hnMou9k0FN5PtZVSOmFA8l8/CxgN9hy8W1v2T91v9Yt6EBYHHNAdyUGXWf/LpTu1IyuPD+5VrBd/DJ8w50FRyRxklExZBCk3zMLttxC8L3ImDTe7cyUo7BenROWGlcFSS+jOXfgK1cCa82aV4vAK52G+L45Eqd9DsABK1ZoM=
+	t=1762411469; cv=none; b=BjH4nFypmKSEExF6Yp8SpnAHqxXspBqAAG1asPszHcrZ4PKWay1gNrrLxD8TmEB8f0N/BtuQvKNc6jac5enkK/l2Ajd77AXu7ejH9sSIa2Kz5fSjfC148qr5rFOulv1f5B+JaBMWbyIXyeBsQLScYmJiXdi59P+Kk1ntUQRRYNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762411435; c=relaxed/simple;
-	bh=sdPpKOlMPpXJsrKDL8C0oXR8rtqNi0ifslHvd8W+2Rs=;
-	h=From:To:CC:Subject:In-Reply-To:References:Message-ID:Date:
-	 MIME-Version:Content-Type; b=qawk3goR5mgq0gcxPPLMH2PfkRZHUnI6zc4Y+Pj2Zr6MTK9nN1k0AaLpbodxenbuxXsccv299hpB5Qb3Vi/SLATMkTuM7Xaa8WdLa/ZxJHecjZt2wcMLzuoKvQAMfdNLHtTW5PTWKP4MC3g9zJjf8SHO0dPFrewp/7WSlSAgcrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=bkOiMRlJ; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A66hTwwD2549481, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1762411409; bh=YBrxlmxk+vHX2vriF2/SroLVFj748EX7es43zrBBaFA=;
-	h=From:To:CC:Subject:In-Reply-To:References:Message-ID:Date:
-	 MIME-Version:Content-Type;
-	b=bkOiMRlJI0Bo7lyFFALOInHN3KcsRgq8K/Uaa3BU84E5QrX7i0AfLxTlVWqMfVDfX
-	 ISviunOiytLcjMSpnLbf1wFq58P54KiZCBLkaApA5J5m7yNJ5QC9mcoJ0psz2EqmTh
-	 jCEgkUWjSmFr+32T88L77hxXeqUENe1PZ0EmV/OMq+lIz/5bULfh2//uJ6ugynbOsv
-	 Mb3YBBq7tmk21pf/JlOYVEJzqQKPPuRAZ5pIQCth1ecX+XABqYmm3GYqttxuKk2PwK
-	 o+WNw2/4GMoLIVkc4hrIkcMSKYFsqMpB+2snKjXTapTOOpt7IIorXILHS82kq8mbKl
-	 9UpnCyx5Rx3MQ==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A66hTwwD2549481
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Nov 2025 14:43:29 +0800
-Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Thu, 6 Nov 2025 14:43:30 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTKEXHMBS03.realtek.com.tw
- (10.21.1.53) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27 via Frontend
- Transport; Thu, 6 Nov 2025 14:43:25 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>, Ping-Ke Shih <pkshih@realtek.com>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>
-CC: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Zong-Zhe Yang
-	<kevin_yang@realtek.com>,
-        Po-Hao Huang <phhuang@realtek.com>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH rtw-next v5 01/10] wifi: rtw89: usb: use common error path for skbs in rtw89_usb_rx_handler()
-In-Reply-To: <20251104135720.321110-2-pchelkin@ispras.ru>
-References: <20251104135720.321110-1-pchelkin@ispras.ru> <20251104135720.321110-2-pchelkin@ispras.ru>
-Message-ID: <f1367d69-307f-4c44-889b-7e4cfe7fcfe0@RTKEXHMBS03.realtek.com.tw>
-Date: Thu, 6 Nov 2025 14:43:25 +0800
+	s=arc-20240116; t=1762411469; c=relaxed/simple;
+	bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oEPfLS+ircwbnkAdmglLc4rSMJGRkkmS96G97ZMeX6lzlUGsfzBKauaveY5Qbhkvck78LOXgqdu/2cbLtog0uEWFf0X7w+876FTEFUMI8nZuZtRd8Pt9ROtEyez0/FVS/svv5idNflwKexRUNULx6wKQFvVppY+L0gzgHBttml8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NMo8tMeb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rf/ieGbi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762411467;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
+	b=NMo8tMebznrIXPcxz+m0hZVP8rg4QGAww3BvCktWevADVnxbcfWTJ/t7cPl6Xd64Tfa/K0
+	vOYpGzZ+uXbdvmOnrJLVbKCmoUc1SmwOvDIOTndtwl7/PlRhwdLLwEQcImi0y1y6aO6sl5
+	c34fSfldk0gIwADK3Y/njOAdcgC6860=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-158-3QYwmLVkM_yLrALlBnFDqA-1; Thu, 06 Nov 2025 01:44:24 -0500
+X-MC-Unique: 3QYwmLVkM_yLrALlBnFDqA-1
+X-Mimecast-MFC-AGG-ID: 3QYwmLVkM_yLrALlBnFDqA_1762411464
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-294a938fa37so2533175ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 22:44:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762411464; x=1763016264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
+        b=Rf/ieGbiIfUV6cWiIuuG9tS/vFBFNZXFEznC4BtcQEW5WRiIOMbrIFmeKpEkqsxLdh
+         cMAwI8pISayqFTvSogz3Pv99Xz8JcIT/4nYRKslFubeZNbyXtRtV2fDlxIiXCP0Qse2j
+         QlXV9yNoWDeN/Xh58RGVz0du+8fJML8PK1ZT5QWmK1hBHvp1Lnk1UIx20Q7hPf0sZP3L
+         3+/t2eRWMCH5iDxKvaTymJfS3Ti70KRwvOM6Ap5iHeN2gwT8LE7r4sy6jUzgUWigOCtS
+         HYNTikkrz0XSMYS0drOtlu1qE/cM7LVWpV2hisI6IkkZORBezXBK42XSwubVcUAhkvp3
+         guJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762411464; x=1763016264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4aOwbplGzocz2ayqjqOgyLj5sAO0MgzGCQLCTpyfFfM=;
+        b=V+3GBO+O4iQFz8PNvJJhEFwTmW6s6cYZJ968HPQN4uk/kjlh40XsjnomKHQxxRdXcT
+         QBfDWu6oHA5VmOg89ISbd4ZwRPUPWHwfjX6Jvh1vgkqMZlxvCc61ia24RLCtjaN5iomQ
+         ZClXvNsoQPEVn5HCqGxQjOGLScq6KcY0AxP/BwqBZxoU3iB7Zq2X9MlkYnQ3YM4SSf+v
+         9ErftWfdInFg8W7i2L5ILH54vdzTKYiHfbQSA/lLMoih/tGszUAFUb+PHU4XLv2kteLH
+         BwqgdvNglRVJtLfOuHZEK9hEkp7cQ3u/uc+dmBJE69ohzjze4kh+MT1cEhYrW0HJNICM
+         uVtA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+cIr8BtgBuORfT5iTYVMm2gy2MRC8C+ONwYNPExeiR3NRXitWv2KsO+w7oWw+JATAd8b5iM/NOC8PB8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUNiok9DfWqUcm7sgtBplHKl8NtGE+/vnrTJJQfXPeCZe0dbIl
+	2cRZcBCv3vvDhvwvhG7+JglDdjmmAdxjGo7QTz+NFUdC6Goi1llBm14FQyxUC5s0boWc7XgfSnA
+	RrdDhxMvoEjOlZjCitYmbd/5CrPCNaPaLNHAP6grbecRqxmKNRESz22TxAry40wFD2Su+fL1A+c
+	lX8WLlm9mcAjDYM+zwTulhVIVI1BzwKCh46u9mjHre
+X-Gm-Gg: ASbGncvSy20n8nSLwbC+sN89jRYRw8owSVl+DM1Ic9Lm4inchzOP16ryCa0I8M9oNDw
+	mKfkSruGWFXI4wqgetixy7jeeSmbghNjzx3ehGFvUroPL3e4PaRIhWw6VCKZBM6jx4eYXsmtY2L
+	FKYwvhr+3Pij1MCJ5rQpfPpMRgwuNHKTULE/bKgFzJnApPRx0Z66vC6bSC
+X-Received: by 2002:a17:903:1b63:b0:28e:7567:3c4b with SMTP id d9443c01a7336-2962ad1ef5amr84646365ad.16.1762411463891;
+        Wed, 05 Nov 2025 22:44:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFmNZkWVFrgyX6IG8QwdVbXXabDAgmhxboOVYqMKs84MfgEvO2GkEnqgYjqE4lmrXZf+XuZQPTBJ4U9ZXyvnqU=
+X-Received: by 2002:a17:903:1b63:b0:28e:7567:3c4b with SMTP id
+ d9443c01a7336-2962ad1ef5amr84646045ad.16.1762411463463; Wed, 05 Nov 2025
+ 22:44:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20251029033559.83145-1-hsukrut3@gmail.com>
+In-Reply-To: <20251029033559.83145-1-hsukrut3@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 6 Nov 2025 14:44:12 +0800
+X-Gm-Features: AWmQ_blG6rCuODjNHXnzSBsblyAMCOBCmeR3DLx53_79KRl2HplNxsN72I3qYKo
+Message-ID: <CACGkMEs=xB3nZZMaQC6m15Gm+K9fiS68twD4vOgQid-B0BQ8Qw@mail.gmail.com>
+Subject: Re: [PATCH] virtio: document @vaddr in virtqueue_map_free_coherent
+ kernel-doc comment
+To: Sukrut Heroorkar <hsukrut3@gmail.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
+	shuah@kernel.org, david.hunter.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+On Wed, Oct 29, 2025 at 11:36=E2=80=AFAM Sukrut Heroorkar <hsukrut3@gmail.c=
+om> wrote:
+>
+> Building with W=3D1 reports:
+> Warning: drivers/virtio/virtio_ring.c:3174 function parameter 'vaddr'
+> not described in 'virtqueue_map_free_coherent'
+>
+> The @vaddr parameter was introduced when virtqueue_map_free_coherent
+> was added in order to provide map operations to virtio device, but it
+> was never documented. Document @vaddr to silence this warning.
+>
+> Fixes: bee8c7c24b73 ("virtio: introduce map ops in virtio core")
+> Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
 
-> Allow adding rx_skb to rx_free_queue for later reuse on the common error
-> handling path, otherwise free it.
-> 
-> Found by Linux Verification Center (linuxtesting.org).
-> 
-> Fixes: 2135c28be6a8 ("wifi: rtw89: Add usb.{c,h}")
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-10 patch(es) applied to rtw-next branch of rtw.git, thanks.
-
-28a45575289f wifi: rtw89: usb: use common error path for skbs in rtw89_usb_rx_handler()
-7543818e97d5 wifi: rtw89: usb: fix leak in rtw89_usb_write_port()
-45a6a88f011f wifi: rtw89: usb: use ieee80211_free_txskb() where appropriate
-8986bafb0945 wifi: rtw89: refine rtw89_core_tx_wait_complete()
-c33c6a1b6f72 wifi: rtw89: implement C2H TX report handler
-21b946104087 wifi: rtw89: fill TX descriptor of FWCMD in shortcut
-26a42d804aa8 wifi: rtw89: usb: anchor TX URBs
-816e849ef83a wifi: rtw89: handle IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
-cc7070e41786 wifi: rtw89: provide TX reports for management frames
-d5da3d9fb05f wifi: rtw89: process TX wait skbs for USB via C2H handler
-
----
-https://github.com/pkshih/rtw.git
+Thanks
 
 
