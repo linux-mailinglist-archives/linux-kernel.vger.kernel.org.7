@@ -1,85 +1,443 @@
-Return-Path: <linux-kernel+bounces-888500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B881C3B050
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:57:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383EAC3B0C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2D8188B312
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A730F1AA667F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103E333343E;
-	Thu,  6 Nov 2025 12:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5445032E756;
+	Thu,  6 Nov 2025 12:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8BE+70C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNq3pZ0w"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638CF32D0DE;
-	Thu,  6 Nov 2025 12:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8751DF27D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433442; cv=none; b=k4rjmhWJjf9/O1H8uvVwwYrFVliNt97qE19c+tp0BZ5oXiZal3g5VaH6mKp/P01qDDkHAhDo0xZvdUrh7veySfpdL5ukybkasKNBGYLUMHco0znBPEg2StA0WEq8RVUJkFU567e4hQo35VYOaTUNyJCTPq1dRwKulRn0P6isuIc=
+	t=1762433619; cv=none; b=WkCvBIf7j7NeH3CN923wx9ussgjqPaajs6oXclyLgX56rsYmgu4DKUvIF2RXP+3DnBjMHzMBQoxya83H53aPbeZC8cshLn7NpbgTAuMMiGyr7Q1EhHj3/Ahad1Xr8maJh7hMvXFLEpTsJLXR+QtP1liUk11xwyawio0Kw4CgoTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433442; c=relaxed/simple;
-	bh=ZJITJKyGzvg/Bl/cEsY/MW5qg/xMM97d7Kko/dTB22g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Lydtf/BchyyBHB7iuk/Ab9XPUxhkQ0hLhj24wH+SonUAE6hy4un5Z+zVi1DUchhr8+Ci1Jc9w3mbk14g63ZjeaEiQ06aOASSgPYhIYWocK3vz/UTXlXPoGbrHeppqiDc6H+0rVkn90ey3khdMf9fxdyoRZUrZkMtTMvjvuIaF5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8BE+70C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 330E2C116D0;
-	Thu,  6 Nov 2025 12:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762433442;
-	bh=ZJITJKyGzvg/Bl/cEsY/MW5qg/xMM97d7Kko/dTB22g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=r8BE+70CChFWGFGO+2+PvYTsUjK0yMtsaOC2FI2llufqmm11Y08eV0PHlebGVlniW
-	 QZiX+hPnHRHrT8MyNfp8IR87fPFIW9qqo+U7VFjDdIz0WfWcYnxV2h25Cs2jDBQrCZ
-	 ROH8djJ1XvFyurLjFEYzjrSG3MUGjCP+CSzRLKT4DvhVczzPWd7bfpLZMQXugbCHCa
-	 nQWRA6/4InXbqXKU/1bB4xFfdi2hWR+GJrqyZD3epNpzAjq/+OnHspDcGNkeMCKW7Z
-	 pUmF7HsQXIL0ji8THdKvYSpOhLl1/dbygmzk6pXRmccC/L9hZU3lIWfHcJNKV37zY3
-	 S0Djwyrj+3RGQ==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Cc: praneeth@ti.com, m-leonard@ti.com, rklein@nvidia.com, jm@ti.com, 
- khilman@baylibre.com, kory.maincent@bootlin.com, 
- thomas.petazzoni@bootlin.com
-In-Reply-To: <20251021182716.292652-1-s-ramamoorthy@ti.com>
-References: <20251021182716.292652-1-s-ramamoorthy@ti.com>
-Subject: Re: (subset) [PATCH v1] dt-bindings: mfd: tps65910: make interrupt
- properties optional
-Message-Id: <176243343893.1817816.13036179647177001559.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 12:50:38 +0000
+	s=arc-20240116; t=1762433619; c=relaxed/simple;
+	bh=mqcLHuIOKBxEIMBJ9EP2N0puM0OznEHB96+ELPogj1o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QPMtlF2FT8TxkV5VS98GJ+yJhkEj5CsFFDvp2TmAHrzAMPndOYfU2MehiUHU9e804lwEfUr4q9xk6xoSA4RqWVjrmQpyfdSnJLeX0lDSH/idVE74Tq1MoAAH+7ZqtVkvlAp/p+ELYaxkPidRR6DoeH1S9IAqIzT+ozxPQZGKnqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNq3pZ0w; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47721743fd0so4385135e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:53:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762433616; x=1763038416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RK/kn9Jj54ERS05YbdoYWf7TWVDvEMNPzpPqyUsPGzs=;
+        b=hNq3pZ0wJ1inhTGZzWquoWfyGl0W9XVnBj8J6tayc5vKrF5qSppW1UbWQYXjo/cosy
+         KNjh+4yo2W74UJMrboL7n31VTKN4J00hhATlV4zi627GTSpcY1WvXuH3L6gvHJRasIgL
+         NdLtRA+7FPffvdBwxBqY2vFDieAootqQneS5I9ibFbp7x7SiSDgiapvsbaJhW2AqGXK7
+         cgvOdnZIn6gdH19cK0GvxZOv6BdtnPY1mq7LiyOXIIHZImyryi5803uSE7DH36KXh+y0
+         I9kGvx5c1y+5vso+uQpMVDkRsYjB6tQnlDzXkh1HAo7Gb3OhjzC55wBZ4ZF0hY+SojlM
+         HtbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762433616; x=1763038416;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RK/kn9Jj54ERS05YbdoYWf7TWVDvEMNPzpPqyUsPGzs=;
+        b=adg9QyU4T/vm/lfEvlMMrpLYuy04Yn/facATzyjtBl+G6WybIH5gc1a2ibM12hp+Hx
+         SfD5zOactxneSxHZk92gQCmmaAFyYJZATpdpSAMk21nn2Dv2wU2y3LgUh4ZpKJ7+txDt
+         7tu8J8Xb0s9LQFA6p93Y0hpnOU+vjEgGKz2/GwKRFx+geqwABYzwjCi3akUoZzR7APTL
+         Pr/NO5GnUeXqE5ukjO7EN8G1t5VPKTGg0G7POVoV7cUmlNwHiQdcO4cyKWyQ6zKgeV8w
+         o/HZHDyYWabSXd7IGE42wFsobOy5kaARadG0IjUPPQz9Njugh1zBdIAGCBbiYjbf/jWr
+         V81g==
+X-Forwarded-Encrypted: i=1; AJvYcCX6ivzKOcdxj+YOp1NVKNaTglBrqeEuDOztVanowIfx5feeipahH5azLD1rfFklVeKW1/XxfP2by0ED3B4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5z8j1Ls0E1axY1pdz0OAfTLkpYknAMil4hp8MOxuujEG+bwhO
+	CvD0drr8y50ti1I31M0oOhqnC5g6xQcfgPHe5g89J26vUFX2sjVJCTk=
+X-Gm-Gg: ASbGncunaVlVo2DlbY+GNDqKmH7oS59C9uXMKBDr1zS3Io+zsleZdOpXf6vd/KsUKzj
+	tKfQjE69M+Wh9+5hWZFtAxUw169WP/mpzlatolBqDlHynJHIsWcPPimV0Y5v6EZeXaSh57+KkGF
+	3JvGJw2eqfrBiO14hMs4TN1xLr+Cmfstx3cKyIXutI+4LmNStm52/ZvPrk0Qb83Gt1tQw9LzAlo
+	YIVLRc75JCwlXBXvLlrcxhh1H/QfY9ZcO/zmL6N/49l7hON7MFKBIQDTHFbcip2YfbqLgMOM0W6
+	ycmGGQWYsP04tVrcbN+nw9t138VRLBCHcVG4STAmAdJElwq5U5RHZKiTSifA6inecVCPfz42p6z
+	JH8mCV2leMHBsGBXwPdIJ3ntI5yzdqROVS598voKJ/BTwt2IW2ysOnTvrXi24OoO6hiZeZzeBV7
+	UIjxypb8MAUz0Y42UINO1VYMid5CqNJhMszBaYoc9Y20c1jl3Zd0UcpRw=
+X-Google-Smtp-Source: AGHT+IFODUjwTwYhvB7R2o/wgb1BzU9SdaSEPiLfW4YDUAY9dxwV7kb9WzNsGMYEwzbzraG3ZaDDLw==
+X-Received: by 2002:a05:600c:34d6:b0:477:5ad9:6df6 with SMTP id 5b1f17b1804b1-4775cdf54f4mr61131835e9.20.1762433615617;
+        Thu, 06 Nov 2025 04:53:35 -0800 (PST)
+Received: from ast-epyc5.inf.ethz.ch (ast-epyc5.inf.ethz.ch. [129.132.161.180])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40379esm4788856f8f.9.2025.11.06.04.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 04:53:34 -0800 (PST)
+From: Hao Sun <sunhao.th@gmail.com>
+X-Google-Original-From: Hao Sun <hao.sun@inf.ethz.ch>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	john.fastabend@gmail.com,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	linux-kernel@vger.kernel.org,
+	sunhao.th@gmail.com,
+	Hao Sun <hao.sun@inf.ethz.ch>
+Subject: [PATCH RFC 00/17] bpf: Introduce proof-based verifier enhancement
+Date: Thu,  6 Nov 2025 13:52:38 +0100
+Message-Id: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-52d38
 
-On Tue, 21 Oct 2025 13:27:16 -0500, Shree Ramamoorthy wrote:
-> Mark 'interrupts', 'interrupt-controller', and 'interrupt-cells' as
-> optional in the binding schema.
-> 
-> The 'interrupts' property should not be required for the TPS65910 PMIC.
-> On the AM335x-ICEV2 SoC, there is no hardware connection from the PMIC_INT
-> pin to the SoC. Without the 'interrupts' property defined, the PMIC cannot
-> forward interrupts.
-> 
-> [...]
+This patch set (and three follow-up sets) introduces a proof-based, on-demand
+refinement mechanism that increases verifier precision while keeping kernel
+complexity bounded. The kernel performs lightweight symbolic tracking and state
+updates; userspace does the heavy reasoning and returns a proof, which the
+kernel checks.
 
-Applied, thanks!
+The design is named as BCF: eBPF Certificate Framework.
 
-[1/1] dt-bindings: mfd: tps65910: make interrupt properties optional
-      commit: bf55337a6c1b29722b12d126c1b1b64f9c762d00
+Motivation
+----------
+
+The eBPF verifier can reject safe programs due to imprecise techniques used,
+e.g., intervals, that do not track registers relations and over-approximate
+on each step. This leads to rejections from loose bounds and infeasible paths.
+The dataset[1] shows various concrete false rejections. In practice, they
+require non-trivial refactoring and trial-and-error to mitigate, due to the
+gap between bytecode errors and high-level code. Cases inside deep loops and
+long paths are particularly challenging.
+
+With the increasing adoption of eBPF in various subsystems, a more powerful
+verifier is beneficial, to allow more complex extensions to be verified as
+well as being transparent to the user.
+
+The goal is to accept more safe programs without turning the verifier into
+an SMT solver or significantly increasing kernel complexity: leverage
+solver-grade reasoning (500k+ LOC solvers) without trusting it, by
+checking compact proofs in a ~5k LOC in-kernel proof checker.
+
+Key design
+----------
+
+The patch sets introduce proof-based, on-demand verifier state refinement.
+On a blocking check (e.g., potential OOB), the verifier performs on-demand
+refinement:
+
+1. Backtrack the target register to identify the relevant path suffix.
+2. Symbolically track the suffix to collect precise bitvector/boolean
+   expressions for involved registers and the path condition.
+3. Derive a refinement condition (SMT) that, if valid, permits the verifier to
+   continue (e.g., tighten pointer offset or size bounds, or conclude the path
+   is unreachable).
+4. Send the condition to userspace. Userspace proves it and returns a proof.
+5. The kernel checks the proof and resumes analysis with the refined state.
+
+Only lightweight work is in-kernel: suffix tracking and proof checking. The
+NP-hard reasoning remains in userspace. More details can be found in our
+research paper[5] (received the best paper award :).
+
+It's highly recomended to play with the system directly: (1) apply all
+the patches from our repo[4], (2) download the provided disk image,
+and (3) see how the verifier, proof checker, loader, and solver interact
+with each other via loading the example programs provided[6].
+
+Here is a running example:
+
+A simplified load log that hits an infeasible branch; refinement proves the path
+unreachable and pops it (another example is also available in our paper).
+
+The verifier starts:
+```
+0: (85) call bpf_get_prandom_u32#7    ; R0=scalar()
+1: (bc) w1 = w0                       ; R0=scalar() R1=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+2: (c4) w1 s>>= 31                    ; R1=scalar(smin=0,smax=umax=0xffffffff,smin32=-1,smax32=0,var_off=(0x0; 0xffffffff))
+3: (54) w1 &= -134                    ; R1=scalar(smin=0,smax=umax=umax32=0xffffff7a,smax32=0x7fffff7a,var_off=(0x0; 0xffffff7a))
+4: (66) if w1 s> 0xffffffff goto pc+2 ; R1=scalar(smin=umin=umin32=0x80000000,smax=umax=umax32=0xffffff7a,smax32=-134,var_off=(0x80000000; 0x7fffff7a))
+5: (56) if w1 != 0xffffff78 goto pc+1 ; R1=0xffffff78
+6: (bf) r1 = r2
+R2 !read_ok            ; ---> start refinement: prove the path unreachable
+```
+
+Symbolic tracking (on the suffix):
+```
+...
+1: (bc) w1 = w0                 ; w1 = sym
+2: (c4) w1 s>>= 31              ; w1 = (sym s>> 31)
+3: (54) w1 &= -134              ; w1 = (sym s>> 31) & -134
+4: (66) if w1 s> -1 goto pc+2   ; fallthrough c1: w1 s<= -1
+5: (56) if w1 != -136 goto pc+1 ; fallthrough c2: w1 = -136
+6: (bf) r1 = r2
+```
+
+Here, `sym` refers to a 32-bit bitvector, which represents a vector of
+unknown bits (in the same spirit as tnum); however, unlike the verifier,
+the symbolic tracking does not perform any "reasoning": it simply
+records all the computation as is:
+	{src=sym0, dst=sym1} dst op= src {dst = (sym1 op sym0)},
+each calculation is captured as a symbolic expression (in comparison,
+tnum needs to approximate at every step).
+
+For the suffix, the symbolic track just captures the symbolic expression
+for each reg, and for branch conditions, it remembers the condition as
+path constraints (the AND of each taken condition).
+
+For the example above, let t = (sym s>> 31) & -134, which is the associated
+expr to w1. The condition to refute is:
+	 t <= -1 && t == -136
+It does not hold (if t s<= -1, then t must be -134), hence the path is
+unreachable. This condition is sent to user space for a proof.
+
+In user space, the condition is translated into the following SMT formula:
+```
+(set-logic QF_BV)
+(declare-fun v0 () (_ BitVec 64))
+(assert (let ((t20 (bvand (bvashr ((_ extract 31 0) v0) (_ bv31 32)) (_ bv4294967162 32))))
+        (and (bvsle t20 (_ bv4294967295 32)) (= t20 (_ bv4294967160 32)))))
+(check-sat)
+(exit)
+```
+
+cvc5 returns `unsat` and a proof:
+```
+unsat
+(
+; Proof produced: 715 steps, 17244 bytes
+)
+```
+
+Now back to the kernel space, the proof checker checks the proof:
+```
+checking 715 proof steps	; ---> proved received, starting checking:
+(#0 POLY_NORM () ...)
+(#1 POLY_NORM_EQ (@p0) ...)
+(#2 REFL () ...)
+(#3 ACI_NORM () ...)
+(#4 ABSORB () ...)
+(#5 EVALUATE () ...)
+...
+proof accepted            ; Path proved to be unreachable
+```
+
+The verifier pops the path and continues:
+```
+from 5 to 7: R0=scalar() R1=scalar(...)
+; return 0; @ unreachable_arsh.bpf.c:29
+7: (b7) r0 = 0                        ; R0=0
+8: (95) exit
+
+from 4 to 7: safe
+processed 10 insns (limit 1000000) max_states_per_insn 0 total_states 1 peak_states 1 mark_read 0
+```
+
+The proof check is a linear scan and is highly efficient, e.g., for a 8M
+proof, the checker can validate it within 3s.
+
+In summary, the linear time proof check essentially allows the verifier
+to achieve various non-trivial refinements, by using the user space SMT
+solvers but not trust them.
+
+Kernel/userspace interface and workflow
+---------------------------------------
+
+UAPI carries refinement conditions, proofs, and an anon-fd to preserve the
+verifier env across proof requests:
+
+- union bpf_attr: `bcf_buf`, `bcf_buf_size`, `bcf_buf_true_size`, `bcf_fd`,
+  `bcf_flags` (`BCF_F_PROOF_REQUESTED`, `BCF_F_PROOF_PROVIDED`,
+  `BCF_F_PROOF_PATH_UNREACHABLE`).
+- Conditions and proofs are represented as `struct bcf_expr` and `struct
+  bcf_proof_step`.
+
+The condition and proof are DAG, the associated algorithms walk them.
+
+Workflow:
+- Initial verification may request a proof and return `bcf_fd` plus the
+  expression arena and condition.
+- Userspace (bpftool + cvc5) proves the condition and resubmits with
+  `BCF_F_PROOF_PROVIDED` and the proof in `bcf_buf`.
+- Resume: the kernel validates the proof and continues from the saved state.
+
+More on the proof checker
+-------------------------
+
+A proof checker validates that a sequence of proof rule applications
+proves a required goal. Given a goal and a proof (a list of rule
+applications), the checker verifies each rule is applied exactly in its
+permitted form and that the final conclusion matches the requested goal;
+any violation leads to proof rejection. For example, from premises
+`A and B`, the AND_ELIM rule may conclude `A` (or `B`) only; otherwise
+the checker rejects it.
+
+The checker enforces rule validity and goal consistency, enabling
+trustless validation: user space may reason a formula, but the kernel
+only accepts results backed by a proof that checks.
+
+The proof checker introduced in this patch set can also be executed in
+*user space*, with all dependent kernel routines stubbed with their
+user-space counterparts. One can compile and try it with the proofs
+in our repo[6], and see the proof checking process.
+
+Proof checker complexity
+------------------------
+
+The cost/complexity is mostly the checker itself. The proof checker
+as introduced in the previous section is essentially a linear scan of
+the given proof. While our patch sets are a bit huge and the checker
+contains about 5k lines of code, its complexity is much lower than
+the verifier.
+
+Comparisons to the verifier:
+
+The complexity of the verifier is non-linear in the sense that every
+time when one wants to extend the verifier, e.g., adding a field to
+the verifier_state struct, a lot of factors need to be considered:
+(1) the effects of every instruction on this field, (2) its semantics
+for state pruning, (3) liveness/precision potentially kick in, etc.
+
+In comparison, the proof checker is a **linear** combination of a fixed
+set of proof rules:
+    - They are independent of each other:
+    - Adding a new rule does not break other rules;
+    - Understanding one rule does not require understanding other rules.
+The complexity is essentially the sum of the complexity of each rule.
+
+Most rules are relatively straightforward (see boolean rules), while
+only a few require a bit more thinking; these essentially include
+two classes of rules: rewrite and bitblast.
+
+The overall workflow of the checker is just a while loop that scans
+each rule (see apply_rules()), while in comparison, the verifier is
+a DFS over the program's CFG.
+
+The proof checker is quite stable: (1) in theory, it only needs
+to support two rules, resolution and bitblast, to be complete to
+represent any proof; (2) in practice, the checker supports tens
+of other rules to reduce proof size; (3) the supported rules are
+stable and do not require frequent changes, except for some rewrites.
+
+This makes the checker easier to maintain then the verifier.
+Currently supporte 50 rules in total:
+	core   : 14
+	boolean: 33
+	bitvec : 3
+
+Additional benefits
+-------------------
+
+Beyond refinement, the checker can validate other non-trivial facts,
+one potential use is to validate the precomputed loop fixpoints
+(state sets) to simplify the verifier (outlined here; future work).
+
+Current cost of loop analysis: kernel must compute fixpoints at
+loop/join points, causing state explosion and complexity when
+combined with liveness/precision tracking.
+
+Proof-enabled design: User space provides fixpoint in-states for
+loop entries and join points; the kernel validates the provided
+fixpoint instead of compute by itself.
+
+Refined verifier algorithm (single pass):
+- Userspace input:
+  - For each basic block bb, a finite set S_in[bb] describing a fixpoint
+    in-state at bb, i.e., the set of states that can be reached from bb.
+
+1. For each bb, take S_in[bb] as incoming states.
+2. Analayze the bb once per incoming state to compute S_out for
+   each successor (validation phase).
+3. For each edge bb->succ, check inclusion S_out[bb->succ] \in S_in[succ].
+   If non-trivial, i.e., the verifier cannot verify, emit a containment
+   formula G and request a proof; the check then validates the proof.
+4. Accept if all inclusions are validated. This witnesses a state
+   fixpoint; no kernel-side iteration is needed.
+
+This potentially enables smaller state sets computed offline, reducing
+the number of states required to analyze. The wholse analysis is a linear
+scan, no liveness/precision track, and the proof is only basic block-wise.
+
+Correctness and evaluation
+--------------------------
+
+We validated the checker and enhanced verifier on benchmarks: programs[1] and
+formulas[2] with cvc5 proofs. Proof sizes range from 168 bytes to 8.4 MB; the
+largest validate in under ~3 seconds. Sanitizers report no memory errors. With
+this enhancement, 403 of 512 previously rejected programs can be verified. The
+precision is comparable to symbolic-execution-based approaches, while keeping
+kernel complexity low.
+
+Patch set contents (this set)
+-----------------------------
+
+This set adds the initial proof checker and the verifier refinement workflow,
+and it targets `bpf-next`:
+
+  - Patches 1–2: UAPI expression/proof definitions and checker skeleton.
+  - Patch 3: UAPI for condition/proof interaction (`bcf_*` fields and flags).
+  - Patch 4: High-level `bcf_refine()` and backtracking logic.
+  - Patches 5–13: Symbolic tracking (suffix matching, expr arena, MOV/SEXT,
+    scalar/pointer ALU with 32-bit lowering, spill/fill, path constraints) and
+    pruning controls for parent states.
+  - Patch 14: Refinements: path-unreachable and memory-access bound refinement
+    (ptr offset and size tightening, var/var safe-access marking).
+  - Patches 15–16: Preserve env, request proof, resume and check proof.
+  - Patch 17: Enable BCF for privileged users (`bcf.available`).
+
+References
+----------
+
+[1] Benchmark programs: https://github.com/SunHao-0/BCF/tree/main/bcf-progs
+[2] Benchmark proofs: https://github.com/SunHao-0/BCF/tree/main/bcf-proofs
+[3] Early prototype: https://github.com/SunHao-0/BCF/tree/artifact-evaluation
+[4] Current full implementation: https://github.com/SunHao-0/BCF
+[5] SOSP paper: https://dl.acm.org/doi/10.1145/3731569.3764796
+[6] Proof checker: https://github.com/SunHao-0/BCF/tree/main/bcf-checker
+
+Hao Sun (17):
+  bpf: Add BCF expr and proof rule definitions
+  bpf: Add bcf_checker top-level workflow
+  bpf: Add UAPI fields for BCF proof interaction
+  bpf: Add top-level workflow of bcf_refine()
+  bpf: Add top-level workflow of bcf_track()
+  bpf: Add bcf_match_path() to follow the path suffix
+  bpf: Add bcf_expr management and binding
+  bpf: Track mov and signed extension
+  bpf: Track alu operations in bcf_track()
+  bpf: Add bcf_alu() 32bits optimization
+  bpf: Track stack spill/fill in bcf_track()
+  bpf: Track path constraint
+  bpf: Skip state pruning for the parent states
+  bpf: Add mem access bound refinement
+  bpf: Preserve verifier_env and request BCF
+  bpf: Resume verifier env and check proof
+  bpf: Enable bcf for priv users
+
+ .clang-format                  |    2 +
+ include/linux/bcf_checker.h    |   18 +
+ include/linux/bpf.h            |    1 +
+ include/linux/bpf_verifier.h   |   34 +
+ include/uapi/linux/bcf.h       |  197 +++++
+ include/uapi/linux/bpf.h       |   21 +
+ kernel/bpf/Makefile            |    2 +-
+ kernel/bpf/bcf_checker.c       |  440 ++++++++++
+ kernel/bpf/liveness.c          |   15 +
+ kernel/bpf/syscall.c           |   27 +-
+ kernel/bpf/verifier.c          | 1397 +++++++++++++++++++++++++++++++-
+ tools/include/uapi/linux/bpf.h |   21 +
+ 12 files changed, 2143 insertions(+), 32 deletions(-)
+ create mode 100644 include/linux/bcf_checker.h
+ create mode 100644 include/uapi/linux/bcf.h
+ create mode 100644 kernel/bpf/bcf_checker.c
 
 --
-Lee Jones [李琼斯]
+2.34.1
 
 
