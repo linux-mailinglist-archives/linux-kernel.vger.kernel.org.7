@@ -1,301 +1,183 @@
-Return-Path: <linux-kernel+bounces-888230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D62C3A41A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:29:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A25C3A41D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4837218891CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:24:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE8754FE5C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BD52D94AC;
-	Thu,  6 Nov 2025 10:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711B029346F;
+	Thu,  6 Nov 2025 10:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bb8hFQAE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wwWmp2qy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="izEmMzlL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xzf/5/Xo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yk0b7d3p";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YWNIhlgm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C0728726E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DFE2475D0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762424652; cv=none; b=SFA6RGVKfQXskYKM/r8H9QdEZfb29NcTWTHD4tf2GY2Ut1FtXy+2Lk88ghtS1TCXLr0GoIkV1PAYQ+ArVIlucWKevRO3E1qs0DwtBn6Q8Prd/bwdq5uTkbKgg4TXt5HCCqs2RNG0Pb6jEhkmuLeF2uc+LCbKjnYdrfMboZv8q0k=
+	t=1762424692; cv=none; b=RRfg6K5pNZCPDo6RyNR8IhdzO22szUdtWYykjdv3eeIo+AYZJ9KIdw5uBK4wM7eF21sFTdTf+Z1pLuFQ5AZtoJtbHA7TO9IilyRXnApK7M1zhu8yg8ioSN9nqo5JRFR8Q+EVG3owd00MbVcQGA5gLBkglwHnNhG/8hAMEuo09xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762424652; c=relaxed/simple;
-	bh=qavZbl+4d9Auzi5x68FVpqsK2Og3mcO4H6nFIWFrYhE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d+aDFeSbnCF7UkJ3YDBnUsfsedJOt/I112Hs4QT42Swmv6lI+XGf6YAi+fyV5tENACnHh3GCJYJ5RQTpD06r6Zcjgw9FuKjWHPGW5+DdLzzRWSBlmpwqtBoEJ+HtCSq5RdHNb/qW54wib2761aY1eDVsD8fvGUy6+ii0uR96pwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bb8hFQAE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wwWmp2qy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=izEmMzlL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xzf/5/Xo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DD3D31F457;
-	Thu,  6 Nov 2025 10:24:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762424649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
-	b=Bb8hFQAEuSZnXsy25UAs1Y+hk+z0ks/G/sifw2viOzyvExgcyxxYEGm3/afKlEhtWKoBV2
-	F6UK3FYCzscG2CYbGlkD0mWbJChzyjaVGnePMEJZGD0PNOUZ9boeAsZZx8jj6jPKJLWSzV
-	GW5RTMH2Ex2b5uzVgL/m9nD+4Y3ncEY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762424649;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
-	b=wwWmp2qyvkHAne2YQTKe96siCokd5zgk3lJsD4v6ZyEwwxw9RFAFfAx+NH982wSaTH5ssg
-	/KZ8Mf2Z5DHmIIDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762424648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
-	b=izEmMzlLr8p7R9KnNOS2tOsBfnagLWGsm7Vuh0DgtR+Fa+uPN7QQHGnBEr+A0lPkTr28Ed
-	lovcdVuH9BmhrSbHiU8rqLXp2szENMsUKc4r4FRnu/GsSBkJP+9Pmma0tALmiJSEPMEcMA
-	ra28UEhvpC9jCL2v96lkrmrz9eSQ9Us=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762424648;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
-	b=Xzf/5/XoHJMiLaiYgcUq0ksQp8xe9wr/VTd48oxcAL+nVZg7k6yipfyiDr/cO0Gtc4XyET
-	yGeaD5lMImjpH5AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F3B213A31;
-	Thu,  6 Nov 2025 10:24:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TnqQIUh3DGmITQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 06 Nov 2025 10:24:08 +0000
-Date: Thu, 06 Nov 2025 11:24:08 +0100
-Message-ID: <871pmbh31z.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: wangdich9700@163.com
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	cezary.rojewski@intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	wangdicheng <wangdicheng@kylinos.cn>
-Subject: Re: [PATCH] [PATCH v3] ALSA: hda/conexant: Fix pop noise on CX11880/SN6140 codecs
-In-Reply-To: <20251106063459.115006-1-wangdich9700@163.com>
-References: <20251106063459.115006-1-wangdich9700@163.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1762424692; c=relaxed/simple;
+	bh=dUL9GA96UgBhGGpRlyDPakJvLtn7TCQFXMkd8MOLcIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D/ITRjNYaXncyag/Qv3pxLyms2qN+JnSab0WwUNoJAVsxXD0f/C14tPPd5DlxCslzC6lvR/bljW4zLSNvb7OH+Yb78i3ZV2xDpJMnv9oGmHo08M+D0b97+dRfuoRa3gFMAGbCrgE7/BhGAxTxtnaUCVLcazmPZ3E7TpP6WfeFb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yk0b7d3p; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YWNIhlgm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A66t1js3155448
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 10:24:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	T3FPnVd8Ym8aaSbQ+iSIfEc2x9aZ55hFWfCZeM+5Wn0=; b=Yk0b7d3pvO4uD4Dw
+	CEzWzPelUV832HOP55EnjA4bC1zLBdAQy5QaLh0i9oVaEuLwO3aH0EHFuHoqc3+g
+	epx2HLVkOM93EgStASer8I3dzyRPGtUZOfrZA/SKcFWkI1V3xRVeuIizemkB1xio
+	DRGVbZy361ydF9WSy0KybC/KcfFhfLXLMKx1AxDs/zOyvoF1X+tcKQ379UrLMiT0
+	x8+nUImIXvDVcJqsG7R8p6hAHAyIauc6y1YEBr5PwKD8AHMMK6n6ZgLJ4Y7QMbkn
+	G3SIm36pU4xT+4FW2pZ5+7NaDd/2IykrcbsjFesAVxbyQCSFBH8rykMv9LlktUnP
+	SNoFBA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8pu0gkmd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:24:49 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-87ff7511178so741346d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:24:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762424689; x=1763029489; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T3FPnVd8Ym8aaSbQ+iSIfEc2x9aZ55hFWfCZeM+5Wn0=;
+        b=YWNIhlgms6jpM/svfr+zbi20VHBG3TptG50L+lfTA+86l3ngtk++djfKkAeEDdiKtt
+         GxbMeIKgnp9bR7P1gVxIySdoalHeSWY0jQEDGd1t/Imhbw/wa04nFiW2VKL+CD2IXvyn
+         ppmX4h7wqvrJ8yuihSlbrTbKDIUEnlULaQLW6gi0BrzsUGSzRSu2Mqfc9lAbS64hKqxB
+         iLBfhPLR1zY9t8wM3vOJjfdOyaHL0NZb5I/I/kWEspFFJKuwT3m1IW04N6Cl9nlBxIgh
+         3/nl4+k3fl7PEpkppvTL/6qtzzsv2HjHqgs7b6TMiUyxDO4055R96NRYUPkhnudXlA8W
+         jdBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762424689; x=1763029489;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T3FPnVd8Ym8aaSbQ+iSIfEc2x9aZ55hFWfCZeM+5Wn0=;
+        b=ckfqLb0nMX7sUEnQqzA/IsFmKHQXF3bHy/FTn7YUhuovkcULoq8hDUxp0+D19Fp0Ki
+         KAhVRlcFRw67ZJWFj6tI9/s5Pmc2XFo8v4g5fdW0x10+lnySO0LwZZ/A8fhZJ5GjeHAr
+         uTXbFUkZQ9QA2rn4qbMLZTipJWo4VmeLc/UKBTcAmihjYNB7WMWgjSo+qhITe8SP0eg6
+         EqyyJV6qwTvg2mlqAkT8reDa4aSZCG4CVv2SoKw+ZTGGlINg+Vt+Ru+3vTcDv8Y3yeXm
+         1b5LoAAxC/INx90YOoJbrzc1vYpwjvcMAFJf2lv552IWKZuaFoasfE8JwWvg386DkKuE
+         CeAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfx5skCS1zvEsxTNEkSDv5XLbQIfLH1XrrOPiVJo1UDpmbkrctHjED3p1DlUWNb13i1W38/0I/gGqUX9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbBiingRSfOR8Rd9HjUnXIYhSJ1lPE4hPxp/Oh+njNwlfqT91u
+	K5Rv++oIMWCiLvBKP4GFmZ8wug5SKZm32DuHZQcUaP7u2aaqYgJyI8gbXVJsbI2rOKN/wxNgQ9y
+	2RQRVfH1eU/NJZxs5ibCcbxG3PNzD3xSUAYdzTR/3tBkYsdWWcphtbOh3xmFcAHoZEro=
+X-Gm-Gg: ASbGncu+yKWcNomACVbbeovKkpBBXdIrah9nuNjkH5i6iKv7dvUoOGqr/p7ep5OXtgD
+	riUTbs7fu0wVXJQw4J/NdMNPk1ZxT7hcEbJcERRZKAcuC+/GHDTYAB4osV7iTboKzhFXeQm9hae
+	hjj8mYK2BzKB+wDg0H55dMAQYOjGfED40dj0iLhtRnY5uTXTTntAPuL6qoAvSnPJtyhw2bd6T2C
+	t7snsitTUIXwCLGeVJftZvavUI0QVJDOPszcwCy+Aj1biDyYA/ytb+NZe0S3+fO/ZhI7KStO6wc
+	tOTe5DICF31N8GeWhoDj4bnwhd6PZYM9apbhXzza8cwXcpSykV+66J56ESCEsa1mwz5a2aYdJdS
+	7KmNj+WK17iuVp+Ccgnv/BX1wnX8Wg3DPA7/nZ66BDcikXcrXkA/dXwT8
+X-Received: by 2002:a05:6214:e8f:b0:880:6fa4:f55c with SMTP id 6a1803df08f44-8807119c620mr62546866d6.6.1762424689241;
+        Thu, 06 Nov 2025 02:24:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHpTl+eYBXYQhxhYOgBBa23gIVBWM8pYsUUYotO6fUO+xNK+otH2KrRd+c7raZez9sRJ/s6sQ==
+X-Received: by 2002:a05:6214:e8f:b0:880:6fa4:f55c with SMTP id 6a1803df08f44-8807119c620mr62546686d6.6.1762424688668;
+        Thu, 06 Nov 2025 02:24:48 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7289335256sm185975366b.5.2025.11.06.02.24.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 02:24:48 -0800 (PST)
+Message-ID: <e7ff4fa3-7885-48f1-8b0b-66d677147e41@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 11:24:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[163.com];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,perex.cz,suse.com,intel.com,vger.kernel.org,lists.infradead.org,kylinos.cn];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,kylinos.cn:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot' function
+ for hpd gpio
+To: Amit Singh <quic_amitsi@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
+        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com
+References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
+ <1398b513-0948-4775-a71d-dd06ee2296f9@oss.qualcomm.com>
+ <e00ebe76-ba73-42f5-8278-5cc3ee24709d@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <e00ebe76-ba73-42f5-8278-5cc3ee24709d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA4MSBTYWx0ZWRfX70dtiS69CRnm
+ OhLmWroKFDzwQ8hbRTO/kFUYFoRUkOhBmh98LVWkVMfwDsOTXyiZKv8XJONHhsVYFwnjYb3mvx9
+ Q7yq5k0LWMK/FSBLMy7KW/HUAtCkdyms0xWmeGcucW/BgtnbkXLx4qfPnZXxS+TUYuLvef2dAz9
+ Zql1ENRbuZnPiD1OEvcL4M2uM4ywBhxE++46JlflV6m+U3ruh1au0Q4VgLn5uoE62xgMkY12Iey
+ vchM4NpScnHMuHlhjLiIW8CrLHQfsqJE1gYtGa4lphSF9KsZFk8kqXWPc2lxkecb68rdZ1Hpnv2
+ xdXcrKM8Aep9utcbD2565nIXa4w4ZgIZz2XQhoH4OUjdoieLY1qtDj1MOSGig7KghaQi0uvUKg0
+ EeAx/WoPM+iaGLFlIdkxnF7IMZhDuA==
+X-Authority-Analysis: v=2.4 cv=bIYb4f+Z c=1 sm=1 tr=0 ts=690c7771 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=SbLgC22CVVW6PPrUsBoA:9
+ a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: FKAMOcFftMieruJ5nX-ewJSK1S1-AMyx
+X-Proofpoint-GUID: FKAMOcFftMieruJ5nX-ewJSK1S1-AMyx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060081
 
-On Thu, 06 Nov 2025 07:34:59 +0100,
-wangdich9700@163.com wrote:
+On 11/6/25 9:23 AM, Amit Singh wrote:
 > 
-> From: wangdicheng <wangdich9700@163.com>
 > 
-> Pop noise mitigation: When headphones are unplugged during playback, mute
-> speaker DAC (0x17) immediately and restore after 20ms delay to avoid
-> audible popping. This fix is specifically for CX11880 (0x14f11f86) and
-> SN6140 (0x14f11f87) codecs based on testing verification.
+> On 10/31/2025 2:37 PM, Konrad Dybcio wrote:
+>> On 10/31/25 9:57 AM, Amit Singh wrote:
+>>> Currently, hpd gpio is configured as a general-purpose gpio, which does
+>>> not support interrupt generation. This change removes the generic
+>>> hpd-gpios property and assigns the edp_hot function to the pin,
+>>> enabling proper irq support.
+>>>
+>>> Fixes: 756efb7cb7293 ("arm64: dts: qcom: qcs6490-rb3gen2: Add DP output")
+>>> Signed-off-by: Amit Singh <quic_amitsi@quicinc.com>
+>>> ---
+>>>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 3 ---
+>>>  1 file changed, 3 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>> index c146161e4bb4..caa0b6784df3 100644
+>>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>> @@ -49,8 +49,6 @@ dp-connector {
+>>>  		label = "DP";
+>>>  		type = "mini";
+>>>  
+>>> -		hpd-gpios = <&tlmm 60 GPIO_ACTIVE_HIGH>;
+>>
+>> I think this change will take away DRM_BRIDGE_OP_DETECT which is very
+>> much desired to have.. (via display_connector_probe())
+>>
+>> Konrad
 > 
-> Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
-> ---
-> V2 -> V3:
-> - Fixed container_of usage by storing codec pointer in spec structure
-> - Added cancellation of delayed work when headphone is re-plugged
-> - Limited the fix to specific device IDs (0x14f11f86, 0x14f11f87) based on testing
-> - Added proper cleanup in remove function
-
-Thanks for the patch, but unfortunately the patch isn't in a good
-enough shape.
-
-First off, the code change doesn't consider about the runtime PM.
-That is, the work itself might wake up the runtime resume.
-
-The other points are:
-- The patch contains lots of magic numbers that should have been
-  represented with the defined constants.
-- It touches the HD-audio codec verbs directly for pin detections and
-  amps, which should be rather done via the standard helpers --
-  otherwise it will break the whole regmap caches.  This might be
-  intentional, but if so, it must be clearly commented.
-- The work must be synced properly at suspend or similar operations,
-  too.
-- The code assumes the fixed pin definitions without checking the
-  actual pin configurations.  It won't work when the pin config
-  differs.
-
-And, the most important point is that it's better to do the root cause
-analysis again.  Does this happen with the driver's auto-mute feature?
-Or it's triggered by user-space like pulseaudio / pipewire?
-And, if it's drivers' auto-mute, setting spec->gen.auto_mute_via_amp
-has any influence?
-
-
-thanks,
-
-Takashi
-
-
+> Yes, this change will indeed remove DRM_BRIDGE_OP_DETECT.
+> We'll be relying on the internal HPD line (edp_hot) that's directly connected to the DP controller instead.
 > 
->  sound/hda/codecs/conexant.c | 73 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
-> 
-> diff --git a/sound/hda/codecs/conexant.c b/sound/hda/codecs/conexant.c
-> index 5fcbc1312c69..f2f447ab749e 100644
-> --- a/sound/hda/codecs/conexant.c
-> +++ b/sound/hda/codecs/conexant.c
-> @@ -43,6 +43,10 @@ struct conexant_spec {
->  	unsigned int gpio_mute_led_mask;
->  	unsigned int gpio_mic_led_mask;
->  	bool is_cx11880_sn6140;
-> +
-> +	/* Pop noise mitigation */
-> +	struct hda_codec *codec;
-> +	struct delayed_work pop_mitigation_work;
->  };
->  
->  
-> @@ -212,10 +216,74 @@ static void cx_auto_shutdown(struct hda_codec *codec)
->  
->  static void cx_remove(struct hda_codec *codec)
->  {
-> +	struct conexant_spec *spec = codec->spec;
-> +
-> +	cancel_delayed_work_sync(&spec->pop_mitigation_work);
->  	cx_auto_shutdown(codec);
->  	snd_hda_gen_remove(codec);
->  }
->  
-> +static void mute_unmute_speaker(struct hda_codec *codec, hda_nid_t nid, bool mute)
-> +{
-> +	unsigned int conn_sel, dac, conn_list, gain_left, gain_right;
-> +
-> +	conn_sel = snd_hda_codec_read(codec, nid, 0, 0xf01, 0x0);
-> +	conn_list = snd_hda_codec_read(codec, nid, 0, 0xf02, 0x0);
-> +
-> +	dac = ((conn_list >> (conn_sel * 8)) & 0xff);
-> +	if (dac == 0)
-> +		return;
-> +
-> +	gain_left = snd_hda_codec_read(codec, dac, 0, 0xba0, 0x0);
-> +	gain_right = snd_hda_codec_read(codec, dac, 0, 0xb80, 0x0);
-> +
-> +	if (mute) {
-> +		gain_left |= 0x80;
-> +		gain_right |= 0x80;
-> +	} else {
-> +		gain_left &= (~(0x80));
-> +		gain_right &= (~(0x80));
-> +	}
-> +
-> +	snd_hda_codec_write(codec, dac, 0, 0x3a0, gain_left);
-> +	snd_hda_codec_write(codec, dac, 0, 0x390, gain_right);
-> +
-> +	if (mute) {
-> +		snd_hda_codec_write(codec, nid, 0, 0x707, 0);
-> +		codec_dbg(codec, "mute_speaker, set 0x%x PinCtrl to 0.\n", nid);
-> +	} else {
-> +		snd_hda_codec_write(codec, nid, 0, 0x707, 0x40);
-> +		codec_dbg(codec, "unmute_speaker, set 0x%x PinCtrl to 0x40.\n", nid);
-> +	}
-> +}
-> +
-> +static void pop_mitigation_worker(struct work_struct *work)
-> +{
-> +	struct conexant_spec *spec = container_of(work, struct conexant_spec,
-> +			pop_mitigation_work.work);
-> +	struct hda_codec *codec = spec->codec;
-> +
-> +	mute_unmute_speaker(codec, 0x17, false);
-> +}
-> +
-> +static void cx_auto_pop_mitigation(struct hda_codec *codec,
-> +		struct hda_jack_callback *event)
-> +{
-> +	struct conexant_spec *spec = codec->spec;
-> +	int phone_present;
-> +
-> +	phone_present = snd_hda_codec_read(codec, 0x16, 0, 0xf09, 0x0);
-> +	if (!(phone_present & 0x80000000)) {
-> +		/* Headphone unplugged, mute speaker immediately */
-> +		mute_unmute_speaker(codec, 0x17, true);
-> +		/* Schedule unmute after 20ms delay */
-> +		schedule_delayed_work(&spec->pop_mitigation_work, msecs_to_jiffies(20));
-> +	} else {
-> +		/* Headphone plugged in, cancel any pending unmute */
-> +		cancel_delayed_work_sync(&spec->pop_mitigation_work);
-> +	}
-> +}
-> +
->  static void cx_process_headset_plugin(struct hda_codec *codec)
->  {
->  	unsigned int val;
-> @@ -1178,6 +1246,9 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
->  	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
->  	if (!spec)
->  		return -ENOMEM;
-> +
-> +	spec->codec = codec;
-> +	INIT_DELAYED_WORK(&spec->pop_mitigation_work, pop_mitigation_worker);
->  	snd_hda_gen_spec_init(&spec->gen);
->  	codec->spec = spec;
->  
-> @@ -1187,6 +1258,8 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
->  	case 0x14f11f87:
->  		spec->is_cx11880_sn6140 = true;
->  		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
-> +		/* Enable pop noise mitigation for both codecs */
-> +		snd_hda_jack_detect_enable_callback(codec, 0x16, cx_auto_pop_mitigation);
->  		break;
->  	}
->  
-> -- 
-> 2.25.1
-> 
+> Do you foresee any specific issues with this approach?
+
+No, looks like I was overly cautious
+
+Konrad
 
