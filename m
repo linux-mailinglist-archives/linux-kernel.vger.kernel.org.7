@@ -1,236 +1,115 @@
-Return-Path: <linux-kernel+bounces-887865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03AAC3943D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:21:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F05CC39437
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D3EA3BA86D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:21:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76DFC18905DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4342225A2B4;
-	Thu,  6 Nov 2025 06:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE152DC35C;
+	Thu,  6 Nov 2025 06:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KuyG9orG"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWKpKvhJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5C32D73AD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C292D73AD;
+	Thu,  6 Nov 2025 06:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762410082; cv=none; b=N9RUvHMKXlLIHxTaAdyx1XS4HWzL/T4+IAStdDLJaRs1eCndaEneFfynQYI0rXhJIkIb0tNlgdw5BhyPEIsqcdYAsFYvGGXSZTT+TSmX2wOba5cM82+GSngpa25h4kzV5xDXApq3zLacgSR4QAh8bL+lzl4Amf48MCFqPRH0HXA=
+	t=1762410072; cv=none; b=fQ9rXuadsDo+QE0oHCLhhD1oGQ1wOKl5MbcqQq5c5SicjTmihvsdO9X9jp/HF0SL8z8S+oz1qX1swKNdJS2yy/zi8Jwu3j9PbPF2w2cy7g48KpiKDO2seuvbAIPe1AOOPNymyCjttFNXhqcwdbOuaB9/fK0wzycQUg5XZYgj8Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762410082; c=relaxed/simple;
-	bh=abKb5CfZvJNGhEenqOGbu+zmBxdUtT+s+KOcu4Z7NB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxByCrii6kneg6nZ151SjqoMxzTPxFCoCURxeNDkdZVzERAZj7509K9oJo9IIjDIrfp8aaLCuJse1Xvjmfc4UFasLZz1qbEVHvc2KqTBZhMKSNHhqwDye7ncvz+JQofcBiJHNnYvw09AXh9Atj4aZU1irBmbd6bF1pT5JevDGNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KuyG9orG; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <04002253-1edf-4957-a43e-bd6dcc465dcd@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762410068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hL6DGlvfqnJjww1xq+st54rj3XETpUdgjatzms+S4Zc=;
-	b=KuyG9orGa4Ydr/lDvPCFz2F/1SM92tLvWZIahOwcgGy01ifHNmfKDt0Nkq0r6dWMld659a
-	6QqEJEEJtybZFtKtECAjsuiM17hMGgF91Y+y917HJ5bavnEmPCOg6Ey4cy5cQA06gqZJgd
-	YKp038G/Pqw4uz5z6MmOTX+STYPW1qw=
-Date: Wed, 5 Nov 2025 22:20:58 -0800
+	s=arc-20240116; t=1762410072; c=relaxed/simple;
+	bh=vV/ErRejkb+XSOk84LMIbZxiLpkolrasUDAWCHCwpjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JzoI2Sc8Hv8Iu3t4F4xIuZQzC0Z+njW8KzIreuSY30p8MX9dIz0rjZh4BzKZZqjlgmZOAQQLp1V1qEKaeycZ2EwoeHaIzFGQbsgyff1eUZPxeqETzywr+87YNX5ciV4xiwMkRWeHc4b91238B+gUI1IP0nm50B0qwmZHUkeu7gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWKpKvhJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD3DC4CEF7;
+	Thu,  6 Nov 2025 06:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762410070;
+	bh=vV/ErRejkb+XSOk84LMIbZxiLpkolrasUDAWCHCwpjs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iWKpKvhJ4Y/4gqcGrvoldzHnieYvRinLCJ0GrFt/C/EbZaeXhCWrfXLPKaYSHrgeX
+	 Qr1eyHj7jhvYfaW1ts+iDGM6hRZLh6YbR3KNayc83vMaLTxPei7+QELWbkD9sc4P52
+	 fzPf/ZwIzYYfcs1LWhIFvu1vGa5fnbgUIW0195z1J7mdir7pbwvIJheCECu7HF0RuK
+	 A0P7N4goq2qjYZKfs2zKejb9HyBPKxJ0c9vHXiKj/yDS1t2/Wi2/9dyo5RqCTlJUnE
+	 lUxzJZ7ybzEBf6g628cloui/raPz7H3wS1g2D2tY57O4v1fwbO6YvOMZ3+Ad1/X6aJ
+	 OhzW8EHBGHgTQ==
+Date: Thu, 6 Nov 2025 11:51:00 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, mayank.rana@oss.qualcomm.com, 
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH] PCI: qcom: Program correct T_POWER_ON value for L1.2
+ exit timing
+Message-ID: <tecoemfjvcuwrvhiqxla2e7b27tgsmkahrbe2msr6vlh65alvp@vhlklrfasjd5>
+References: <20251104175657.GA1861670@bhelgaas>
+ <e459b4de-52f1-4c20-be84-07efdc9fed93@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v4 2/2] bpf: Hold the perf callchain entry until
- used completely
-Content-Language: en-GB
-To: Tao Chen <chen.dylane@linux.dev>, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20251028162502.3418817-1-chen.dylane@linux.dev>
- <20251028162502.3418817-3-chen.dylane@linux.dev>
- <c352f357-1417-47b5-9d8c-28d99f20f5a6@linux.dev>
- <363717bf-499a-4e47-b2c9-8a6e4105282c@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <363717bf-499a-4e47-b2c9-8a6e4105282c@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <e459b4de-52f1-4c20-be84-07efdc9fed93@oss.qualcomm.com>
 
+On Thu, Nov 06, 2025 at 10:30:44AM +0530, Krishna Chaitanya Chundru wrote:
+> 
+> On 11/4/2025 11:26 PM, Bjorn Helgaas wrote:
+> > On Tue, Nov 04, 2025 at 05:42:45PM +0530, Krishna Chaitanya Chundru wrote:
+> > > The T_POWER_ON indicates the time (in μs) that a Port requires the port
+> > > on the opposite side of Link to wait in L1.2.Exit after sampling CLKREQ#
+> > > asserted before actively driving the interface. This value is used by
+> > > the ASPM driver to compute the LTR_L1.2_THRESHOLD.
+> > > 
+> > > Currently, the root port exposes a T_POWER_ON value of zero in the L1SS
+> > > capability registers, leading to incorrect LTR_L1.2_THRESHOLD calculations.
+> > > This can result in improper L1.2 exit behavior and can trigger AER's.
+> > > 
+> > > To address this, program the T_POWER_ON value to 80us (scale = 1,
+> > > value = 8) in the PCI_L1SS_CAP register during host initialization. This
+> > > ensures that ASPM can take the root port's T_POWER_ON value into account
+> > > while calculating the LTR_L1.2_THRESHOLD value.
+> > I think the question is whether the value depends on the circuit
+> > design of a particular platform (and should therefore come from DT),
+> > or whether it depends solely on the qcom device.
+> Yes it depends on design.
+> > PCIe r7.0, sec 5.5.4, says:
+> > 
+> >    The T_POWER_ON and Common_Mode_Restore_Time fields must be
+> >    programmed to the appropriate values based on the components and AC
+> >    coupling capacitors used in the connection linking the two
+> >    components. The determination of these values is design
+> >    implementation specific.
+> > 
+> > That suggests to me that maybe there should be devicetree properties
+> > related to these.  Obviously these would not be qcom-specific since
+> > this is standard PCIe stuff.
+> 
+> Yes Bjorn these are PCIe stuff only, I can go to Device tree route if we
+> have different values for each target, as of now we are using this same
+> value in all targets as recommended by our HW team. If there is at least one
+> more target or one more vendor who needs to program this we can take
+> devicetree property route.
+> 
+> I am ok to go with devicetree way also if you insists. - Krishna Chaitanya.
+> 
 
+Since this is a PCI generic value, using devicetree property makes sense to me.
 
-On 11/5/25 9:12 PM, Tao Chen wrote:
-> 在 2025/11/6 06:16, Yonghong Song 写道:
->>
->>
->> On 10/28/25 9:25 AM, Tao Chen wrote:
->>> As Alexei noted, get_perf_callchain() return values may be reused
->>> if a task is preempted after the BPF program enters migrate disable
->>> mode. The perf_callchain_entres has a small stack of entries, and
->>> we can reuse it as follows:
->>>
->>> 1. get the perf callchain entry
->>> 2. BPF use...
->>> 3. put the perf callchain entry
->>>
->>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->>> ---
->>>   kernel/bpf/stackmap.c | 61 
->>> ++++++++++++++++++++++++++++++++++---------
->>>   1 file changed, 48 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->>> index e28b35c7e0b..70d38249083 100644
->>> --- a/kernel/bpf/stackmap.c
->>> +++ b/kernel/bpf/stackmap.c
->>> @@ -188,13 +188,12 @@ static void 
->>> stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
->>>   }
->>>   static struct perf_callchain_entry *
->>> -get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
->>> +get_callchain_entry_for_task(int *rctx, struct task_struct *task, 
->>> u32 max_depth)
->>>   {
->>>   #ifdef CONFIG_STACKTRACE
->>>       struct perf_callchain_entry *entry;
->>> -    int rctx;
->>> -    entry = get_callchain_entry(&rctx);
->>> +    entry = get_callchain_entry(rctx);
->>>       if (!entry)
->>>           return NULL;
->>> @@ -216,8 +215,6 @@ get_callchain_entry_for_task(struct task_struct 
->>> *task, u32 max_depth)
->>>               to[i] = (u64)(from[i]);
->>>       }
->>> -    put_callchain_entry(rctx);
->>> -
->>>       return entry;
->>>   #else /* CONFIG_STACKTRACE */
->>>       return NULL;
->>> @@ -297,6 +294,31 @@ static long __bpf_get_stackid(struct bpf_map *map,
->>>       return id;
->>>   }
->>> +static struct perf_callchain_entry *
->>> +bpf_get_perf_callchain(int *rctx, struct pt_regs *regs, bool 
->>> kernel, bool user,
->>> +               int max_stack, bool crosstask)
->>> +{
->>> +    struct perf_callchain_entry_ctx ctx;
->>> +    struct perf_callchain_entry *entry;
->>> +
->>> +    entry = get_callchain_entry(rctx);
->>
->> I think this may not work. Let us say we have two bpf programs
->> both pinned to a particular cpu (migrate disabled but preempt enabled).
->> get_callchain_entry() calls get_recursion_context() to get the
->> buffer for a particulart level.
->>
->> static inline int get_recursion_context(u8 *recursion)
->> {
->>          unsigned char rctx = interrupt_context_level();
->>          if (recursion[rctx])
->>                  return -1;
->>          recursion[rctx]++;
->>          barrier();
->>          return rctx;
->> }
->>
->> It is possible that both tasks (at process level) may
->> reach right before "recursion[rctx]++;".
->> In such cases, both tasks will be able to get
->> buffer and this is not right.
->>
->> To fix this, we either need to have preempt disable
->> in bpf side, or maybe we have some kind of atomic
->> operation (cmpxchg or similar things), or maybe
->> has a preempt disable between if statement and recursion[rctx]++,
->> so only one task can get buffer?
->>
->
-> Thanks to your reminder, can we add preempt disable before and after 
-> get_callchain_entry, avoid affecting the original functions of perf.
+- Mani
 
-Yes, we get two get_callchain_entry() call site:
-   bpf/stackmap.c: entry = get_callchain_entry(&rctx);
-   events/callchain.c:     entry = get_callchain_entry(&rctx);
-We need to have preempt_disable()/preempt_enable() around them.
-
-Another choice maybe adds preempt_disable/enable() for
-get_callchain_entry() and get_perf_callchain() in stackmap.c,
-assuming these two function usage in other places are for
-interrupts (softirq, hardirq and nmi) so they are okay.
-
-But maybe the following is better?
-
-diff --git a/kernel/events/internal.h b/kernel/events/internal.h
-index d9cc57083091..0ccf94315954 100644
---- a/kernel/events/internal.h
-+++ b/kernel/events/internal.h
-@@ -214,12 +214,9 @@ static inline int get_recursion_context(u8 *recursion)
-  {
-         unsigned char rctx = interrupt_context_level();
-  
--       if (recursion[rctx])
-+       if (cmpxchg(&recursion[rctx], 0, 1) != 0)
-                 return -1;
-  
--       recursion[rctx]++;
--       barrier();
--
-         return rctx;
-  }
-
->
-> Regarding multiple task preemption: if the entry is not released via 
-> put_callchain_entry, it appears that perf's buffer does not support 
-> recording the second task, so it returns directly here.
->
->           if (recursion[rctx])
->                   return -1;
->
->>
->>> +    if (unlikely(!entry))
->>> +        return NULL;
->>> +
->>> +    __init_perf_callchain_ctx(&ctx, entry, max_stack, false);
->>> +    if (kernel)
->>> +        __get_perf_callchain_kernel(&ctx, regs);
->>> +    if (user && !crosstask)
->>> +        __get_perf_callchain_user(&ctx, regs);
->>> +
->>> +    return entry;
->>> +}
->>> +
->>> +static void bpf_put_callchain_entry(int rctx)
->>
->> we have bpf_get_perf_callchain(), maybe rename the above
->> to bpf_put_perf_callchain()?
->>
->
-> Ack, thanks.
->
->>> +{
->>> +    put_callchain_entry(rctx);
->>> +}
->>> +
->>
->> [...]
->>
->
->
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
