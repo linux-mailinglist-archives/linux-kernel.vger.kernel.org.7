@@ -1,69 +1,68 @@
-Return-Path: <linux-kernel+bounces-887596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C0EC38AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:14:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C03C38AD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:16:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA90C1887903
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95A953B0D87
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECC91EC01B;
-	Thu,  6 Nov 2025 01:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863CC1F0991;
+	Thu,  6 Nov 2025 01:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ohRlIWGs"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mg6b+Jal"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5865825771
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AA91E32D3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762391615; cv=none; b=S4vE7QUJuWPaH9FDdUtCvhEkX0KV51XglHiavUq8HV+dIlIXIghGllx7R5tJb3nZD140Hj5Y9duyZMF6pOzGtn8XOUHEXWpd2g/A0X2cWe+J/eYT7p73joMreQqGRDz0zioV6ZxtCcdeTc9uB82/efZwJFFjVtlPwRuzqAIJSW4=
+	t=1762391692; cv=none; b=mgZX2koYUofGuAELQxsLuCHV4jQ/ZZweGeOuIJQBmTfXOsUCNp5ubtCkJl4qooJ4b1TeqBurk/um1OmQhXXpesnptdnBy7lc4ObS6oNoFp+tOEOPfMFCPuclAJD9ITe0KILOlzl5arL++YZER0ng/YuXB3xp/7boxC9POvvpSSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762391615; c=relaxed/simple;
-	bh=80Wiat1QmCZkX5CwNMua5eaZtZ21PjI7recyDsW8I40=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Timssz8y9xmxc4WSuJDGlYh1owg5Xez7ZDrGeB+LrB5v932BgrGzkUfOul2fpjAcAE0sHLDaCmg/FrTQTOaYzoryfdKlAe17/m9+Q2rzyiVYnmVNgq2GVwYWYZYbRBEvwXWuIe8oPMoEcDE5gViYgcNRN7OaRDpUIoAfvwpf810=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ohRlIWGs; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1762391692; c=relaxed/simple;
+	bh=GqiSEFjJpS60vknr4o7YkvEXtHCaMxx+InwVSzChCtY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JAfBP545or282kuZDNCuNzhNqw5Ors3901dAbS2+9D3MDXzrEsRwRfRWf0RYeoOP/A5VpQHEW8ai1o8B+k33dMngIq1XIRtN7yAScfWiCaX5fSjX0o45Q4Y09kw0RukTkOVLSTHYlsMZV+yQZBAd3Q1lEJ+cWJiFuIn42LkxZ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mg6b+Jal; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-272b7bdf41fso7062115ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:13:34 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b62da7602a0so372725a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:14:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762391614; x=1762996414; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VqKp0CwGeQO+vX6lyD3ithXWPZSPW6/801NskRBS3pw=;
-        b=ohRlIWGsD8UHC0TfcA8CecUoXLJRfDqXpqQbcw8VLYF869RQNVityCld8eXZR9Qybr
-         hFELxEYK06UYB2xTcztzQXNRz/VkYzdxe4dE3A0DVSJQAv3NyBkZ4z0sf1PC2g9RskQK
-         wi0mFs+xBOenfnb9lp09hY4mV8oiLrVowPiz2ezbFmRO2KiDHbiTJNZDi7hP+08sq1f/
-         JpyL8jVN1zdzXIm/dhmqr69LhRhBTlgOW9ZL7+Q+8vz28HbYh3Ejbdloyr3yUVFfQQPI
-         hyw4ovb+oNfs+jqVy7uCx1YQDE6WKjrTaobUTsLUO8tERoGs5OIkTZq0xzZbtDLsLRuH
-         PWNg==
+        d=google.com; s=20230601; t=1762391690; x=1762996490; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=39ivioua6pnMjSf3oDat2VB6KzK+NMcakhy3huJbtbA=;
+        b=Mg6b+JalVoK55gYj7KWr+vHIEhRFW2jczU3YZQZolgfaOLStelq/+gu4wcgCvewRXm
+         F00O6SsG9rH8E938T3kWelwnzji4ohv5qywMuVeSzwLfC/kzvngQrh34NB7C+PQ++WJP
+         i5zSY88fIhyUaqwc3HzZ56TIywyegbbl7ixUqOAE9nN+SZkqUsP/WnSAvF/50yoSnD/r
+         2KotY7vI62JCNhWUZ25mSoJs/MKvB10jV7JF3OnurzNPSRtdkZB1q/7417zGh9E2yyIm
+         6XKGFNUMmLdrJIh2fcWdcjhX+EYJ5VMJoZDh6uBHr2Mx6BfWTb1xrTBn3NvdVVrVN4kS
+         JIxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762391614; x=1762996414;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqKp0CwGeQO+vX6lyD3ithXWPZSPW6/801NskRBS3pw=;
-        b=YGmcJ+gUWExQU1ahTMSlp7db1Kqgmi1CMzwTwpqAUMDRyoyEhs/0X2EVv1Al4zTT29
-         oC198Ntnto2GBkDkR/sx37c3Xihvkx2GF2McqXkdLaGDqgU4oQMEDMJq1HlUXzG49+74
-         9KIB4YrMTTBfvUjS1KPERB6AXVIAEcag6eV0X3xfhIUHdIRnNTwas3+3640jRlevvKQm
-         7eK7dO7XZGkgT5fRMBFqiNS7gpQVyga4UEgGdL9X2H/m6ZHfxmL23MhYoYIK3lUeaBKJ
-         eLboVtNpslz4jYAyKRZ5ffbr7O60N9Ld3kRhmrRJCPMsYA4Rdhal/OTAOMVH0aqfkL70
-         rApw==
-X-Forwarded-Encrypted: i=1; AJvYcCVK5Mb4Q+zI5LedJnhY0123GWdRYgpa3IO/pcsZ9w8v22/IzBlpOxY0+UP9z3TVNaTvsBIWkK3ulIwFcf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfNOGqrve1knMzWfkU251RgELNk4CKOPBswSPYggu5uzorAP+m
-	dYp0Y+D9+7YN/vvBumg+8AyLrSmZ+bToX/or9kauwAJyZrUI2tIaMq6iTuWGFc4WaWqpcJ1ri4o
-	6o9RNvQ==
-X-Google-Smtp-Source: AGHT+IGZcQoqqRr+4WmRuSJjj17n9/E5KkIA14kwU5ltSuF7hBvooIAUFHJHZmSE4bAa5nn44H0/G6OGRqY=
-X-Received: from plrd7.prod.google.com ([2002:a17:902:aa87:b0:295:70a9:9091])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:da8c:b0:295:5948:f5d8
- with SMTP id d9443c01a7336-2962adb0f2fmr71425915ad.48.1762391613676; Wed, 05
- Nov 2025 17:13:33 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed,  5 Nov 2025 17:13:30 -0800
+        d=1e100.net; s=20230601; t=1762391690; x=1762996490;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=39ivioua6pnMjSf3oDat2VB6KzK+NMcakhy3huJbtbA=;
+        b=X+Zswsuz7RT6ULCMnY5+sTYO9pJZPwGqfnB1hvLmRROriRZ3j/BfCmrZwYN6YWt4lr
+         w4Ou+55ChJnvwEB5hfPLmIrF3gqm7kXFyLKPuRmBxGxNwEzNZf584W1MVDjCpb3lNon9
+         YFGYIMTn7UCGM9TTYWjeCdRbiKuQjtyPycs+nONPnXFV0g/pDvkUsRJQQMUzCu9SWvZn
+         BIEams5MwjrvInpCHdCgKwGB5YYlANEy3e7rzJzesFYPV9Dy2VENHEt8Eak92/PS19O0
+         qGhhWyuzSq+q3bNlHEgsTxnOPXLstBUiPZhhflLVultPuW2kLoteCr5X1u/mBnLrebvd
+         qNXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRrboAZRJqBRPVV1difM+aNG7oXaiYVbIx5FoA1RLb1pOdd0qKfpKoNKW06laeHSSw3vBC31F8IM22NVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQAaFRxLDOA+Tz8cJGt1kd7+ZDGNmWnqNxAxncEluU3DvuHzyv
+	6nq7uGdZAIVN15+zuVoOQ1y3XicxMJHZDE+bw2EJkZz8KuKDc2o3RQQo/psmnK0GScjcc4uNDvB
+	//tWo0A==
+X-Google-Smtp-Source: AGHT+IGHknY9aqu1w+W4IBmjhbnbPVtNg3MS81ewEb5IJ6RCNy2Yl/JqwF6vF+FFSuv2t1tS8YOwfKaj34E=
+X-Received: from dlbqc8.prod.google.com ([2002:a05:7023:a88:b0:119:49ca:6ba4])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d8e:b0:343:68f2:3728
+ with SMTP id adf61e73a8af0-34f83f06e42mr7119443637.15.1762391689940; Wed, 05
+ Nov 2025 17:14:49 -0800 (PST)
+Date: Thu,  6 Nov 2025 01:14:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,106 +70,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251106011330.75571-1-seanjc@google.com>
-Subject: [PATCH] KVM: SVM: Ensure SPEC_CTRL[63:32] is context switched between
- guest and host
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Uros Bizjak <ubizjak@gmail.com>
+Message-ID: <20251106011446.2052583-1-jthies@google.com>
+Subject: [PATCH v3] usb: typec: ucsi: psy: Set max current to zero when disconnected
+From: Jameson Thies <jthies@google.com>
+To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org, 
+	gregkh@linuxfoundation.org, akuchynski@chromium.org, 
+	abhishekpandit@chromium.org, sebastian.reichel@collabora.com, kenny@panix.com, 
+	linux-pm@vger.kernel.org, stable@vger.kernel.org, 
+	Jameson Thies <jthies@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Uros Bizjak <ubizjak@gmail.com>
+The ucsi_psy_get_current_max function defaults to 0.1A when it is not
+clear how much current the partner device can support. But this does
+not check the port is connected, and will report 0.1A max current when
+nothing is connected. Update ucsi_psy_get_current_max to report 0A when
+there is no connection.
 
-SPEC_CTRL is an MSR, i.e. a 64-bit value, but the VMRUN assembly code
-assumes bits 63:32 are always zero.  The bug is _currently_ benign because
-neither KVM nor the kernel support setting any of bits 63:32, but it's
-still a bug that needs to be fixed.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Fixes: af833e7f7db3 ("usb: typec: ucsi: psy: Set current max to 100mA for BC 1.2 and Default")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jameson Thies <jthies@google.com>
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Tested-by: Kenneth R. Crudup <kenny@panix.com>
 ---
- arch/x86/kvm/svm/vmenter.S | 44 +++++++++++++++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
-index 235c4af6b692..53f45f5b611f 100644
---- a/arch/x86/kvm/svm/vmenter.S
-+++ b/arch/x86/kvm/svm/vmenter.S
-@@ -52,11 +52,23 @@
- 	 * there must not be any returns or indirect branches between this code
- 	 * and vmentry.
- 	 */
--	movl SVM_spec_ctrl(%_ASM_DI), %eax
--	cmp PER_CPU_VAR(x86_spec_ctrl_current), %eax
-+#ifdef CONFIG_X86_64
-+	mov SVM_spec_ctrl(%rdi), %rdx
-+	cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
- 	je 801b
-+	movl %edx, %eax
-+	shr $32, %rdx
-+#else
-+	mov SVM_spec_ctrl(%edi), %eax
-+	mov PER_CPU_VAR(x86_spec_ctrl_current), %ecx
-+	xor %eax, %ecx
-+	mov SVM_spec_ctrl + 4(%edi), %edx
-+	mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %esi
-+	xor %edx, %esi
-+	or %esi, %ecx
-+	je 801b
-+#endif
- 	mov $MSR_IA32_SPEC_CTRL, %ecx
--	xor %edx, %edx
- 	wrmsr
- 	jmp 801b
- .endm
-@@ -81,13 +93,26 @@
- 	jnz 998f
- 	rdmsr
- 	movl %eax, SVM_spec_ctrl(%_ASM_DI)
-+	movl %edx, SVM_spec_ctrl + 4(%_ASM_DI)
- 998:
--
- 	/* Now restore the host value of the MSR if different from the guest's.  */
--	movl PER_CPU_VAR(x86_spec_ctrl_current), %eax
--	cmp SVM_spec_ctrl(%_ASM_DI), %eax
-+#ifdef CONFIG_X86_64
-+	mov SVM_spec_ctrl(%rdi), %rdx
-+	cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
- 	je 901b
--	xor %edx, %edx
-+	mov PER_CPU_VAR(x86_spec_ctrl_current), %rdx
-+	movl %edx, %eax
-+	shr $32, %rdx
-+#else
-+	mov SVM_spec_ctrl(%edi), %esi
-+	mov PER_CPU_VAR(x86_spec_ctrl_current), %eax
-+	xor %eax, %esi
-+	mov SVM_spec_ctrl + 4(%edi), %edi
-+	mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %edx
-+	xor %edx, %edi
-+	or %edi, %esi
-+	je 901b
-+#endif
- 	wrmsr
- 	jmp 901b
- .endm
-@@ -211,7 +236,10 @@ SYM_FUNC_START(__svm_vcpu_run)
- 	/* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET! */
- 	FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VMEXIT
- 
--	/* Clobbers RAX, RCX, RDX.  */
-+	/*
-+	 * Clobbers RAX, RCX, RDX (and EDI on 32-bit), consumes RDI (@svm) and
-+	 * RSP (pointer to @spec_ctrl_intercepted).
-+	 */
- 	RESTORE_HOST_SPEC_CTRL
- 
- 	/*
+v3 changes:
+- change log moved under "--"
 
-base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
+v2 changes:
+ - added cc stable tag to commit message
+
+ drivers/usb/typec/ucsi/psy.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
+index 2b0225821502..3abe9370ffaa 100644
+--- a/drivers/usb/typec/ucsi/psy.c
++++ b/drivers/usb/typec/ucsi/psy.c
+@@ -169,6 +169,11 @@ static int ucsi_psy_get_current_max(struct ucsi_connector *con,
+ {
+ 	u32 pdo;
+ 
++	if (!UCSI_CONSTAT(con, CONNECTED)) {
++		val->intval = 0;
++		return 0;
++	}
++
+ 	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
+ 	case UCSI_CONSTAT_PWR_OPMODE_PD:
+ 		if (con->num_pdos > 0) {
+
+base-commit: 18514fd70ea4ca9de137bb3bceeac1bac4bcad75
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
