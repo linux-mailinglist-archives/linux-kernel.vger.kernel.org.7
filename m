@@ -1,177 +1,101 @@
-Return-Path: <linux-kernel+bounces-888662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CFAC3B8F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:05:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1B7C3B939
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55A305031FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4D856808D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DBC335561;
-	Thu,  6 Nov 2025 13:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE02833A023;
+	Thu,  6 Nov 2025 14:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+nzBUd6"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rO6dqYRv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1603303CB2
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F821D9663;
+	Thu,  6 Nov 2025 14:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762437507; cv=none; b=gZSvKr16ju24HFLC6FP3UniUPQ5+plzveG+iKB0swx85kkFeiBNNKZKpPLIzN5iZnYeY7+S19GzRHR4SIcIp4vxg/BXt/Nm6qej9FAEzL+bO7Tlg/7szMw3QUv0Sl+JX8PxiEKkhQJQEUcALWap7FWT3KV/oW6LLoyYSh0iNx+Y=
+	t=1762437658; cv=none; b=hrLTqMfrjrDugdmQaYUTNtIxKIZbD0UlRVhV4Lkc8YvokYpT9oKG3u0MdewZWAI4t0GCnwqMP3lRVdjKZAm+7dfnTo3ugWt/6sR/5AU2UeUpToPwVCnFpa1qKcjlGGvXJTLFNr5AJ7/Lg2j66e3JrkTMe1rTxggDKRcdEXxPOWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762437507; c=relaxed/simple;
-	bh=zrM2PCMHTJ+hS4n00Wujxh07B+51gM7047RGagXqk+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fsnEpGY00SbEbAczKmNE39iPoiuemHRev+bptXZCO8qjwmiYFB+kMNT7JjhIdnXIyV4tMMquBOaXuRsTOk9JCCrNZ8S0zM+KIlW4KEa2brVxa2iSV0DiInS9P57WxG6PR9v6HTwr55eu2gr/Sv9ftdN1oI8Hy2xAENh78PoKbtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+nzBUd6; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-33257e0fb88so196439a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:58:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762437505; x=1763042305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=95xsXqtqpxl4DVLujugvMY+qm/mCPkORVkUJK+NXUMI=;
-        b=O+nzBUd6+r9GxAqI32uBqtQmyEBhnQE3u+EoZ0D/4Wd/HXpWS5t4UorVeRlex5VW8p
-         oJWb6qhWSczZzyJvaCkeso4buVy/8erhpvVZXKJkWrH2Ltozq5LC9L0Ye73Y+K3xO6Zb
-         7NMUs/oktERoFqSIcqHpDIUDZ+THVPIQmNG3IY6hf8RPfHZh6quHEfzGQdTy5gcSBMic
-         GBIkTsONaVYyzXGqG6vEWBVPRLIjHRsCFyh3BHP4s5WCU2BxWWBOzdSDox+jNOdhM6Zs
-         sLlNtywhbnKofX4yOupyZRwEqtONIHYr5SnZIW5rSlmo7HspSgj8+1z9M8TsHBQKa64O
-         kbhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762437505; x=1763042305;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=95xsXqtqpxl4DVLujugvMY+qm/mCPkORVkUJK+NXUMI=;
-        b=s4l/XfYSc5VgIPhcQ5KlrFiL+fMnD0EtkzxFaJHOfaIhIKiPwBomvn11zABn7nXGiO
-         6MestoHq6H3d5tE3zL3Ndz7JRwmlAaKaeMQbAO7/xeKX6rWMEhepbz0bD/iCZJmr7L0l
-         069A3iXw7Hm3NYZec2apyYYGIAWfCe9v5i7Dq0sXJlF+EXKiG0OuVTQo3GwoXVKdDX4q
-         jumYSA1zHh9802yvcFD4AZ7wJh2O0ZhulE4Jz/hpVSBE+3NumFD1f0yDde0j1yqIfSgc
-         DE3bvjSXWTkSEk1lh3hTUhHHp3zVGj0C4hjxQxZeL1lzT+jmKoGHWDBcxUHpBzmf884K
-         3+Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7YMV+tRqIBG4PFihSxBq3Z2EzJxLXVvfJzqp43hdWrxVtzdt/FFvOllpJJEfJxCEt2SY6FL0PVCGlxLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHhgrn5V4kSmDSwZ78ezn/daluWzyhMW6fc29PigQ4wkMrJL2H
-	HPaz/ke/oJmnbDz73Kj9h2esWv6EfYDxrhgEWUthuByEV1rHCtb2ZLQA
-X-Gm-Gg: ASbGncuR+m5VmwwkhZuDhLb5i6EEu1EVAqzcyrhhMKo8RuReG/wAtXHjIo70IY/7keB
-	dzDMU6ffrbZz0UZle8GlVI+FSyIqNvNAoLi+S3C7+ajpubxZki5kpvhgWmOgEbcR9iSlyShAR79
-	D6/PGkLzGcsdWCXN5UzoCZh9pCQAHojfa2m2jrQbCQBxj6NBvo0sK77VcSsvHKrQlr9tjbgvvU0
-	+swDz3OwkECHHCttSrxBbpbrgh8dhaRt13ZjuFw+7mEcJxyqX63+SJYkNhByHYFmehhPNk+kTwC
-	0+UR2+2PrNv+CZAfUBkcTa/W/aElv2flKlDqnkw6iRNIlmy9ARZsVPgyKtD9cHP/XtmEu1eRfxt
-	UpVdMh3ALzchinLzLLWmS9U5euMPnNa4JwBtfAdqNT8XLy5DLorjNeLs4a7ZQ4YnT
-X-Google-Smtp-Source: AGHT+IGIBN1A6WXIAp5cV5s9HGkIYojkGlgq6bso3e+lR+1LOUXP0gknbBO0nEL/1V/95+m6CD5B4Q==
-X-Received: by 2002:a17:90b:4c4f:b0:340:b8f2:24f6 with SMTP id 98e67ed59e1d1-341cf343082mr2159229a91.2.1762437505042;
-        Thu, 06 Nov 2025 05:58:25 -0800 (PST)
-Received: from user.. ([58.206.232.74])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a68bf37bsm6439593a91.7.2025.11.06.05.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 05:58:24 -0800 (PST)
-From: clingfei <clf700383@gmail.com>
-X-Google-Original-From: clingfei <1599101385@qq.com>
-To: horms@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	herbert@gondor.apana.org.au,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	steffen.klassert@secunet.com,
-	eadavis@qq.com,
-	ssrane_b23@ee.vjti.ac.in,
-	syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	clf700383@gmail.com
-Subject: [PATCH 3/3] net: key: Validate address family in set_ipsecrequest()
-Date: Thu,  6 Nov 2025 21:56:58 +0800
-Message-Id: <20251106135658.866481-4-1599101385@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251106135658.866481-1-1599101385@qq.com>
-References: <20251106135658.866481-1-1599101385@qq.com>
+	s=arc-20240116; t=1762437658; c=relaxed/simple;
+	bh=82aafwmRzEUr/9hjLRrQOVgrkwH3sfNcUjGioV/rnbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=boomj657Lf66dhwRY42t+zPffDWaFGcbwOVt8X6eRtU2WtxhZ1M+6pHGndRpieavtojbmSlBhxuIUKzVlinttMqS+DljO+6Z+hRa4CqCSAPUjLlnfi5gxRJgWDp/vSx2tdXKtizvdecTfFsR0PIFtRZbx3sfdXLvw/1bMXCOrnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rO6dqYRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1BFC19421;
+	Thu,  6 Nov 2025 14:00:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762437657;
+	bh=82aafwmRzEUr/9hjLRrQOVgrkwH3sfNcUjGioV/rnbY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rO6dqYRv/qSbLypbprhjvGU7B0ZV5J3JyxSGTKIxOpnVfiv27Ef4zLG/1MXXy4umG
+	 fdkXy0+6ybPH+o0LznPj3bUHtlcjB0U1t9wg+7GEYV6IT7raJA+IU8qixctSJ9CdXs
+	 03Ma18xk4lwm18OFIgbrGQ5KhYECLtihtCxD/j2PCzG+GGyyDeYOsFoNytSiUAve2x
+	 akoqOIxagGuJg+i/J56OGvBK+V32l4BqdmCsBGhmw68ZOt3eCSB9109EUhrv6kyDIY
+	 E7Cxc7wk+C41OdGbVQZX0KP6nlG9CyTZKXgx6cjFQQ4Vgd9lUh0Kg0Itb+xV3VKxVR
+	 rSVzYuOmcPscw==
+Date: Thu, 6 Nov 2025 14:00:50 +0000
+From: Lee Jones <lee@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [GIT PULL] Immutable branch between MFD and HWMON due for the v6.19
+ merge window
+Message-ID: <20251106140050.GQ8064@google.com>
+References: <20251025-macsmc-subdevs-v4-0-374d5c9eba0e@gmail.com>
+ <20251025-macsmc-subdevs-v4-6-374d5c9eba0e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251025-macsmc-subdevs-v4-6-374d5c9eba0e@gmail.com>
 
-From: SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>
+Whoever takes this driver will need to pull the following:
 
-Hi syzbot,
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-Please test the following patch.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+are available in the Git repository at:
 
-Thanks,
-Shaurya Rane
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-hwmon-v6.19
 
-From 123c5ac9ba261681b58a6217409c94722fde4249 Mon Sep 17 00:00:00 2001
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-Date: Sun, 19 Oct 2025 23:18:30 +0530
-Subject: [PATCH] net: key: Validate address family in set_ipsecrequest()
+for you to fetch changes up to b340412a3b22b60b5e19cce8726940c7b5b14439:
 
-syzbot reported a kernel BUG in set_ipsecrequest() due to an
-skb_over_panic when processing XFRM_MSG_MIGRATE messages.
+  mfd: macsmc: Add new __SMC_KEY macro (2025-11-06 13:58:42 +0000)
 
-The root cause is that set_ipsecrequest() does not validate the
-address family parameter before using it to calculate buffer sizes.
-When an unsupported family value (such as 0) is passed,
-pfkey_sockaddr_len() returns 0, leading to incorrect size calculations.
+----------------------------------------------------------------
+Immutable branch between MFD and HWMON due for the v6.19 merge window
 
-In pfkey_send_migrate(), the buffer size is calculated based on
-pfkey_sockaddr_pair_size(), which uses pfkey_sockaddr_len(). When
-family=0, this returns 0, so only sizeof(struct sadb_x_ipsecrequest)
-(16 bytes) is allocated per entry. However, set_ipsecrequest() is
-called multiple times in a loop (once for old_family, once for
-new_family, for each migration bundle), repeatedly calling skb_put_zero()
-with 16 bytes each time.
+----------------------------------------------------------------
+James Calligeros (1):
+      mfd: macsmc: Add new __SMC_KEY macro
 
-This causes the tail pointer to exceed the end pointer of the skb,
-triggering skb_over_panic:
-  tail: 0x188 (392 bytes)
-  end:  0x180 (384 bytes)
-
-Fix this by validating that pfkey_sockaddr_len() returns a non-zero
-value before proceeding with buffer operations. This ensures proper
-size calculations and prevents buffer overflow. Checking socklen
-instead of just family==0 provides comprehensive validation for all
-unsupported address families.
-
-Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
-Fixes: 08de61beab8a ("[PFKEYV2]: Extension for dynamic update of
-endpoint address(es)")
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
----
- net/key/af_key.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index cfda15a5aa4d..93c20a31e03d 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -3529,7 +3529,11 @@ static int set_ipsecrequest(struct sk_buff *skb,
- 	if (!family)
- 		return -EINVAL;
- 
--	size_req = sizeof(struct sadb_x_ipsecrequest) +
-+    /* Reject invalid/unsupported address families */
-+    if (!socklen)
-+        return -EINVAL;
-+
-+    size_req = sizeof(struct sadb_x_ipsecrequest) +
- 		   pfkey_sockaddr_pair_size(family);
- 
- 	rq = skb_put_zero(skb, size_req);
+ include/linux/mfd/macsmc.h | 1 +
+ 1 file changed, 1 insertion(+)
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
 
