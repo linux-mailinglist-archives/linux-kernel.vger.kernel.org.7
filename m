@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-889095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A65C3CAFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:03:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6242FC3CB09
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D394A189FB51
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0AE5188722A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F241B34DB41;
-	Thu,  6 Nov 2025 17:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D7B34D4E8;
+	Thu,  6 Nov 2025 17:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nOFurHju"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AS2ertLK"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC2334D91A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D70333A01E;
+	Thu,  6 Nov 2025 17:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448568; cv=none; b=Xgon2E2f3oMCaIDR1T/8CnIdFhHfkCIwRNyWZ9lxR6sGQ6vofgKbrqis0JkajHKd8Khz2UCBpB2Thd1LwCTOffihgweCbelJe+uZMRDwxgx5Wq2mZNnIfdLuRtYdJm9lK0pZ1Ipe3CZ8O1Qm9XLlMMnEGqIF1fFZPpGOaFiJ/UA=
+	t=1762448641; cv=none; b=BTzFPvhv8b8Zaj/C/q8T1Bc1w4vQKuhnC0q1IauCgHfxdxvvwQBRz/WHyFxUAo4hb5GpUaFsYMzVMF+H3lUN70pToaDBT5jpiU8+ugX1ENnim36J550ngfZVv80wc1PB0MJ0dRIh2HCbuPf+KRFse4PsA8EWV8QiusMXFsCITpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448568; c=relaxed/simple;
-	bh=bmpbnRF3cKHlPN9Xaqa4sxklQfqyLwTGZdaTa34IQvM=;
+	s=arc-20240116; t=1762448641; c=relaxed/simple;
+	bh=PIV/6Y/pFoGKh3xLIPvWgVbT/oGAbekrJwRYLk2dvqo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cJwb9L6fUGaYsHg4RF3c7pmk5t+nGbstMJ/2UYZxHzr0re2L+Jt2Qo5XlnXoA8kulxm6HRW/FJRKJXyfsK6BFuKA7jB9RvK2uo3UJB2JucpczgII0ilJQ5/JyVn5SLy1h6NPIza7XcmQ8LbqktGbw4P602mlLyLyCQhXjtuE9Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nOFurHju; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-34088fbd65aso1226143a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:02:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762448565; x=1763053365; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YPpU0awjnKN/G6+KlazEDar1/1ZBM2a+Pz44QPC0Ujg=;
-        b=nOFurHjuTzW0jfTeH02iB669PpnWqGca+VSjL5Xawhy24YIFlKgN4ZDeCkphWGSbpW
-         y8A0huE1cOAJVEtiAqe+qxFfOPI/3xAr9ZpZfugEIW71U/rdRELKftThDLP/bMke3CPR
-         agarxOKgUyUGSkUBPW8y7eboNpCPIBGv07HtXJI6bT9aybJhFylgLlwobWu0uDeJLbFE
-         p2Bz484i47jg/RqlvITtoX7m4vid689CHH+SM2GXkNsbsuVQYrYlh3jYZBU4k36ALk64
-         2aSl5hH2W9XzEXWuNxygV8f2mf52Z+oDtchEYxV9AhmFagL3m8mtpp0jovFzltywJ0ho
-         MPlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448565; x=1763053365;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YPpU0awjnKN/G6+KlazEDar1/1ZBM2a+Pz44QPC0Ujg=;
-        b=CctUCqQFDti4MGrr7Dyzd3kmvwU6N2Ns+Fd5H+CUYQk4AuhYCZknoLxIccCUFC1qx9
-         36eLQ/gmi9R3CKStKrkHfIvoqec8r7z3yzY+JSV3v3iuDoaaD/9WZDPOeKKVIFCdM4bI
-         26zmuGYixB7WbIAWrBOqbbe1NghHVc4BzqfI/KPnI5GnwzFCyAg5eHG1W3Cp4hB3MSFM
-         88SMN4G5rzERBeLhUMCMJOL2dRZEmNzqk9bikACylvNGhGYWHulMahqWZE/nnN9bDuZ8
-         G+RcpgWF9z/uQZv81emmcn4uwA8CtjZ9CtjNhmROYxuAAkhpb9CSPnv+LE+uKVkBE3MF
-         xTxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE31yaK6FlBYd11JmH65SCKh5Dd33NUagpfFVwBm9YUII5NixHHvrasKhy/uy9ryhHIUZ0tXI0jV/2Yg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwilSuCyDWG8YcunwremFoDzacbEtvq29rTJv/hWioN0M9HEMtA
-	eUGYgsmmjGltrSMkW++mYWF56z6eq4bLtWnyCDmuJg8xhnPByAYJrxWX
-X-Gm-Gg: ASbGncuJaXfE5Tg5H0HAGicIWg+1Y+tiO1b3OBsoB/5hRBIRy65VPp8QhDm2AqMKHc4
-	Ylf8daBmwak3TEJ86fUWvN8OSwkmBXcRlz9WVK4NPssr6B+uVVO454XqiCbd/9CsDiyxVi1+YVG
-	PnRhtXvsiOc7aAOmRlKtAjP5cidVVBui4sVwgq7fzHnKYijAwTlmVSJB4eFjocPr3LgOVrTvAgA
-	vHBzFP54dawZmF214UJN5kBp9Qq2Y+weNQ+sLKa58rtr/wUUZlzK0LB2/vbZm1/vjo8s6AGAPxR
-	/dvWqHGMhGEs/wWUi6M3lHZl3hWCzESdqJKzDA65yJZgJiawQhpk5Ffny8o9PkOtdCrER41d+Ht
-	yhhWk8tc3A0fNMMTpc0bt/WDCAKQES8Dqb+uPvClGKVUHPsU7GXobYK9XZszB9fj3abFw/6ML25
-	Hl1LKVXz1HWCIAOJio6L4R
-X-Google-Smtp-Source: AGHT+IF+6Xuvm4wgSMuStjeXOxmAX8A3ViGGV9aMWlq3E5tLch0rpxg/9QHMKCn3GRSTdg/WUL+Q6Q==
-X-Received: by 2002:a17:90b:2f87:b0:330:6d5e:f17b with SMTP id 98e67ed59e1d1-341a6dc4b6emr10139367a91.21.1762448564481;
-        Thu, 06 Nov 2025 09:02:44 -0800 (PST)
-Received: from [192.168.4.196] ([73.222.117.172])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d0456b34sm3029537a91.3.2025.11.06.09.02.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 09:02:43 -0800 (PST)
-Message-ID: <37aa86c5-2659-4626-a80b-b3d07c2512c9@gmail.com>
-Date: Thu, 6 Nov 2025 09:02:41 -0800
+	 In-Reply-To:Content-Type; b=T8Jj5asjxL1oyb/wBW/lL2jIYPZbZsrvKf6f3jmr+f5neoh+FeGET7It5qjjHGNhYTX809d5+/AE1f5alGbhcBsA1hW4AiEzdxpv2S+2VU9PviQRpUrDLUL6T+pJUOWXk5LjlQGRc/f1yPupMQJ1WgSqwpMq7uHFRfdjOMp9Exk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AS2ertLK; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1762448599; x=1763053399; i=markus.elfring@web.de;
+	bh=QXheh9hmsblQUeoqvF83LlGgbxYzBa1d7bj3+ZyWLqk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=AS2ertLKZANiUHAQ8YQzZSss5XZWLgPoKBPyUk1wOtpN6R7vo4MbbQKQr7LGy+Tk
+	 KbQ0kKK0VDRwvqChSV/hCTu/t//GtttqI5B4JgmGC4q4ny9ZceGcu6V+PJ3YjU/FZ
+	 K/l11heLMU3YvDZr6TvsrEb1pMvwpx6XGMrxttrphlFdG8yQHuC8PU+wrK0RYAvK5
+	 lDEaKKpz+LFZZxvlmm7v7Aq+ZuRkg2LKFZZlMizOIjjLYrMjayI0l7u8fSJROWeZu
+	 nVbppvWzxkbGmhQuKtjGBo3xRdo7l59roYqc2Wy7ATlTIIlKNgtcWqHCpX10MUhBT
+	 URJN/piZbBr/y4aELA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.214]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0qvH-1wBCJG2zC9-00vpux; Thu, 06
+ Nov 2025 18:03:19 +0100
+Message-ID: <77906375-2d34-4861-9e17-1e61dfaaa59f@web.de>
+Date: Thu, 6 Nov 2025 18:03:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,74 +57,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-To: Leon Huang Fu <leon.huangfu@shopee.com>, linux-mm@kvack.org
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org,
- joel.granados@kernel.org, jack@suse.cz, laoar.shao@gmail.com,
- mclapinski@google.com, kyle.meyer@hpe.com, corbet@lwn.net,
- lance.yang@linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20251105074917.94531-1-leon.huangfu@shopee.com>
-Content-Language: en-US
-From: JP Kobryn <inwardvessel@gmail.com>
-In-Reply-To: <20251105074917.94531-1-leon.huangfu@shopee.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [v3] checkpatch: add uninitialized pointer with __free attribute
+ check
+To: Ally Heev <allyheev@gmail.com>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, linux-doc@vger.kernel.org,
+ workflows@vger.kernel.org, Joe Perches <joe@perches.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+ Andy Whitcroft <apw@canonical.com>, Jonathan Corbet <corbet@lwn.net>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ David Hunter <david.hunter.linux@gmail.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Nishanth Menon <nm@ti.com>,
+ Shuah Khan <skhan@linuxfoundation.org>, Stephen Boyd <sboyd@kernel.org>,
+ Viresh Kumar <vireshk@kernel.org>
+References: <CAMuHMdV+12MoAGNHC9kf==Bt0cLuJ39Fs+W61DN67sE_p-u=og@mail.gmail.com>
+ <221c2b9b-4809-48d8-af7d-f290d1c2a7fa@web.de>
+ <67e28fadf4c20433c964d13d96dafe3514457656.camel@gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <67e28fadf4c20433c964d13d96dafe3514457656.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kawVeR+8qwqZq1iisMV9I5yr8L8zOCxulYZUc3scMBcg8GOialJ
+ YIGGIrUhOHosA0ujmF7p7JGi4nT3tSIKKPLNnQDl+kLEJMjVHqxwrf1s2NBaLsPM7TKHcyU
+ uPSpM/5PUKnc/wsxBhuEFb0dTT/hgd9kRkDm9rb8oqkWT4SWZKjS0nrrfUNHFUxoH5OJolC
+ Pet5JJj6LDeAOEmv1B0oQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:eLqBvTDkaNs=;QI7FKJJhhshpBOCCPHwR2jv90ut
+ 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
 
-On 11/4/25 11:49 PM, Leon Huang Fu wrote:
-> On high-core count systems, memory cgroup statistics can become stale
-> due to per-CPU caching and deferred aggregation. Monitoring tools and
-> management applications sometimes need guaranteed up-to-date statistics
-> at specific points in time to make accurate decisions.
-> 
-> This patch adds write handlers to both memory.stat and memory.numa_stat
-> files to allow userspace to explicitly force an immediate flush of
-> memory statistics. When "1" is written to either file, it triggers
-> __mem_cgroup_flush_stats(memcg, true), which unconditionally flushes
-> all pending statistics for the cgroup and its descendants.
-> 
-> The write operation validates the input and only accepts the value "1",
-> returning -EINVAL for any other input.
-> 
-> Usage example:
->    # Force immediate flush before reading critical statistics
->    echo 1 > /sys/fs/cgroup/mygroup/memory.stat
->    cat /sys/fs/cgroup/mygroup/memory.stat
-> 
-> This provides several benefits:
-> 
-> 1. On-demand accuracy: Tools can flush only when needed, avoiding
->     continuous overhead
-> 
-> 2. Targeted flushing: Allows flushing specific cgroups when precision
->     is required for particular workloads
+>> * Do corresponding source code analysis requirements indicate a need
+>>   to perform data processing with other programming interfaces than reg=
+ular expressions?
+>=20
+> not sure about other source code analysis tools, but checkpatch
+> predominantly uses regexes
 
-I'm curious about your use case. Since you mention required precision,
-are you planning on manually flushing before every read?
+Would you become interested to discuss additional software design approach=
+es?
 
-> 
-> 3. Integration flexibility: Monitoring scripts can decide when to pay
->     the flush cost based on their specific accuracy requirements
 
-[...]
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c34029e92bab..d6a5d872fbcb 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4531,6 +4531,17 @@ int memory_stat_show(struct seq_file *m, void *v)
->   	return 0;
->   }
-> 
-> +int memory_stat_write(struct cgroup_subsys_state *css, struct cftype *cft, u64 val)
-> +{
-> +	if (val != 1)
-> +		return -EINVAL;
-> +
-> +	if (css)
-> +		css_rstat_flush(css);
+>> * How do you think about to mention the possibility once more that scop=
+es
+>>   can be reduced for affected local variables?
+>>   https://elixir.bootlin.com/linux/v6.18-rc4/source/include/linux/clean=
+up.h#L142-L146
+>>  ...
+>=20
+> The docstring talks about interdependency issues caused by assigning to
+> `NULL` which are very rare
 
-This is a kfunc. You can do this right now from a bpf program without
-any kernel changes.
+It seems that you interpret a linked information source in a special direc=
+tion.
+Several developers are stumbling on challenges also according to software =
+evolution.
 
+Regards,
+Markus
 
