@@ -1,374 +1,285 @@
-Return-Path: <linux-kernel+bounces-889269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C30C3D1F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:58:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC1CC3D1FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DB334E5D9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:58:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0048C351FDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C221351FB7;
-	Thu,  6 Nov 2025 18:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F31A346768;
+	Thu,  6 Nov 2025 18:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ne6IZX8v";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vLytAN2x"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="g8CRyknn"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF792580E1;
-	Thu,  6 Nov 2025 18:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D5E2C326C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762455489; cv=none; b=JjJceShDAk+M/uhWumEMXZ5q8pq/i1JBJJcIHAxWPtBis8812Ppespy8e9duFBl3cSAQHhX1lV1uViE9wSr3RllksT3fp6bBvvtjWQ+gKBGQ5bOp06o6FXOSoECrd8NRCNTiP/UkM0Oa03EgZyWpPgadHwuC9S9xQDBDZbnTVJk=
+	t=1762455515; cv=none; b=FERf3tgqWs9sQP8rm2fqHtkOVGDDxPfpVA7y5cpA6mStQ8ebCW6d9AiETTKW6a9gazjn2f7tCrVjOGD+7KUD92VERlFrWsDKdR1gjBKJVFcXhd6bf+OkvorH8jvKSbYPKKLGEXxw+u8/RVaajmHhO0VGPtEQ7LV12KVbAsbIr3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762455489; c=relaxed/simple;
-	bh=5KqT4KCJFpxvHex8i6POgBnHb1cAaMrCyZdv0GaCTKs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BNUt30JSnOF62MliD0QPGSunuuhnjMXbv90TgHtpuNfGwBnLFHySzgcYseOmdUO8T646g1Ciz8ck//XcENUcX1n3mqvc1XYAWsQ4nV/GeEJwPAduE67AKfwiGZa8Cu3BCTbfpwfLP2+bya95TXVT54/ieN/Ihz5QTA2Be4CJkhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ne6IZX8v; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vLytAN2x; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762455484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mWMyuixnst/vfm8/10KssX5w/ZtcrBMY+5+JVb+DTU4=;
-	b=ne6IZX8vOnSnujWL7niEpvzOXSwkbcEah8Y0U53yPNBJzsCnhaJP4y0oyqSXCAex0F6mK/
-	pUZQR458x4LZqHJtrWdh0Tjwoincl7rwIbcp+xsG2fTOIKyvFFvlpOUgqDqBhWHTFYftT3
-	40hsQu1De4xpx9phH7rrq1/HymLh7To7CU+VhObqwN7SQFL8lul6BnRJmSSVj5ei/IOK0z
-	uk2TG+ZsmC80NmzoGpwNpjr7NWGdhXQlIoZmdmT3nfpDVaFK22bdLXU2ugCvs6CrQuD4sh
-	R8NKSh1vHrqDeVbiTOEvWQtXu5i7zd6tNdYEpnB+0A7SD1M8VFq/fkNf1EQEMA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762455484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mWMyuixnst/vfm8/10KssX5w/ZtcrBMY+5+JVb+DTU4=;
-	b=vLytAN2x2CKboH6PJj7U+1rQKrlMp/RZLscVdXuAU2IDgMWIofWXa4cxClMN5b51u3N0+p
-	MYm/GF5NvbB1g3Dw==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, syzbot
- <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
- "amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
- brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-In-Reply-To: <aQzLX_y8PvBMiZ9f@pathway.suse.cz>
-References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
- <69096836.a70a0220.88fb8.0006.GAE@google.com>
- <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
- <aQpFLJM96uRpO4S-@pathway.suse.cz> <87ldkk34yj.fsf@jogness.linutronix.de>
- <aQuABK25fdBVTGZc@pathway.suse.cz> <87bjlgqmk5.fsf@jogness.linutronix.de>
- <87tsz7iea2.fsf@jogness.linutronix.de> <aQzLX_y8PvBMiZ9f@pathway.suse.cz>
-Date: Thu, 06 Nov 2025 20:04:03 +0106
-Message-ID: <87h5v73s5g.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1762455515; c=relaxed/simple;
+	bh=RmmyYAmWJEAFj7TB6nmTqnJ+GYGaJ0nRnlvL0FvTNJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+KVVFoNiZoNgG+OErCl1UVPBkApgxuGrr1eSXNRr1zro63tdVUrFMoV58PiiYt71IkzKc7JcvfdUDdnL2ByH1VRZTNl4NPWdgFbdvijRYhIPg8xBxMpbXdjvawVCs27Bqo+5sVhxP3oPWVGi4rlPPmBmecPnlJhSgaLWZkB5cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=g8CRyknn; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-294fe7c2e69so14719685ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:58:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kerneltoast.com; s=google; t=1762455512; x=1763060312; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mOuSugR0vEDHkKd7HQ/z/MU9ajVuAQGybGkQLVZTufY=;
+        b=g8CRyknn1E5/PL1VbmEJi1ApRoiJBaPBWGhv6jnlpJk8gc2oEVF6ecoqQJFPWLNKlM
+         e9lf5iHY2hvnMHoYwUsfI3KqN6bxM/lyiAjL2rDoIJTtqQyq3GfeafYTGoh1RDnDAHtN
+         gJQCyytLERfTfH9W3dUIWf2+6MIsmJL9A7aKnJtnEdFzPr0tIZPsvHmb7loa68n62c98
+         Nps56NTBu4NzxBS9rvNKXx4GRKnB+MbXHUqIvmrDH8OOGhlDLW6pOMn4Sg0hVlXQgDYB
+         qKEK/is7F7KgjiKPpngpCl7O9yuYUovYraPWYhFT8w/HB1l4fcKD/efnzmkKq6xiXlNj
+         o3Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762455512; x=1763060312;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOuSugR0vEDHkKd7HQ/z/MU9ajVuAQGybGkQLVZTufY=;
+        b=q4lFQNqKA1W3W8061v4bdGL65fIc0wtyi4/HKMkpbrYPYzq/ypva1PcuDjmSjKI7DU
+         YLZ00YqPecKdu8n4+otWw3v8ZgT5X3jtTb9bJt2jP3UEH6HWCJv+EZkt/lSuJLO4C9zE
+         1bO1hZLMK4epQd1C//R/0WFvnJ5hO/sLhBaKhLmtuzBHdMJDX/eqFG6/XpcwtDqKr7i4
+         C1Go1TU6jT9iIkIhnfDUqebxWuV4sy0bljKnfyW7+9tH32XsYF923mZfdn48Rd1oPIla
+         tixMc/ja0YpsEZu/Q0mTfRZNWkqV+MfYWZWnGVId/S/MwabyfbQsNW99GIgnwQx8d5Hf
+         Id2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVZSzSGHfvzIF8tLDEJLzYv+ewwaJXlOQ94pUHUN5NNW590yuZPYTz0ieW2tpraC60IjvnuS1E7Rcc923Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiBBJTPpIN/FPrfbNVWFify2EfNnWSMjzPGAfk3IdG21hqGRMI
+	VHbd7THiqt+amu74GVE7cugwE4Q/PHFtrfJob5xZn8nMD8Bk678tlWyCqykOgqbuvOYr
+X-Gm-Gg: ASbGnctZeV4vzaCg87IqnS3P6vAUsDzGxGxFNJrpTd+A+sY5iMqYf1KXMvG6HGmlZhE
+	4ng4e962b+wqPgwXlsuK5ZplVaR7SaBTSs8O7hHnzTe73jEgRT1D164A5dfrCn+53rLLuemFBaZ
+	G+0Xbws2HDRP/KHUHoBbmggFLuub24gnOCxou12j5fZ2J6PnvRL7cqXHJX5QsaJf2OsWdN1uR/z
+	n3p5MM34Qhh4JwWIxkiCxRK0Mur7kAHC6CTturMNBdVlT4TNR5z2hu3jkW2aWkvQ/+5pAb8M8Qc
+	2I+KCvcr+vT4cH9jkaB3bhWxG1AoDpkKQsJf3bjY0EG+xcyF2UNsBj+RTnWRtIe4xN0GZdtJxnI
+	/5mzL8jy8x8wb3f+DiyOous/9KLR/S0YLu2w3PR5CBTcwJ2QLYt98Wy+XPYD+Z8xW+Wc89VYAtM
+	FvOXM=
+X-Google-Smtp-Source: AGHT+IEKN8Omxm27BVM277srluy0q0QA7FdKmsLt1KdRuR58aAFheeoJ4P4lYUWCJp0b+fyErYgSsw==
+X-Received: by 2002:a17:902:e5cc:b0:295:5d0b:e119 with SMTP id d9443c01a7336-297c03cff98mr6731495ad.26.1762455511456;
+        Thu, 06 Nov 2025 10:58:31 -0800 (PST)
+Received: from sultan-box ([142.147.89.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096b801sm36546605ad.7.2025.11.06.10.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 10:58:30 -0800 (PST)
+Date: Thu, 6 Nov 2025 10:58:27 -0800
+From: Sultan Alsawaf <sultan@kerneltoast.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: bin.du@amd.com, pratap.nirujogi@amd.com, amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, alexander.deucher@amd.com,
+	benjamin.chan@amd.com, christian.koenig@amd.com, dantony@amd.com,
+	gjorgji.rosikopulos@amd.com, king.li@amd.com, phil.jawich@amd.com
+Subject: Re: [PATCH] drm/amd/amdgpu: Ensure isp_kernel_buffer_alloc() creates
+ a new BO
+Message-ID: <aQzv00We7FyKAWk7@sultan-box>
+References: <20251105232108.107765-1-sultan@kerneltoast.com>
+ <a6063bc0-4ba1-4cad-9045-5fa31ea4ed7a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a6063bc0-4ba1-4cad-9045-5fa31ea4ed7a@amd.com>
 
-On 2025-11-06, Petr Mladek <pmladek@suse.com> wrote:
->> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
->> index 839f504db6d30..8499ee642c31d 100644
->> --- a/kernel/printk/printk_ringbuffer.c
->> +++ b/kernel/printk/printk_ringbuffer.c
->> @@ -390,6 +390,17 @@ static unsigned int to_blk_size(unsigned int size)
->>  	return size;
->>  }
->>  
->> +/*
->> + * Check if @lpos1 is before @lpos2. This takes ringbuffer wrapping
->> + * into account. If @lpos1 is more than a full wrap before @lpos2,
->> + * it is considered to be after @lpos2.
->
-> The 2nd sentence is a brain teaser ;-)
->
->> + */
->> +static bool lpos1_before_lpos2(struct prb_data_ring *data_ring,
->> +			       unsigned long lpos1, unsigned long lpos2)
->> +{
->> +	return lpos2 - lpos1 - 1 < DATA_SIZE(data_ring);
->> +}
->
-> It would be nice to describe the semantic a more clean way. Sigh,
-> it is not easy. I tried several variants and ended up with:
->
->    + using "lt" instead of "before" because "lower than" is
->      a well known mathematical therm.
+On Thu, Nov 06, 2025 at 12:46:51PM -0600, Mario Limonciello wrote:
+> On 11/5/25 5:21 PM, Sultan Alsawaf wrote:
+> > From: Sultan Alsawaf <sultan@kerneltoast.com>
+> >=20
+> > When the BO pointer provided to amdgpu_bo_create_kernel() points to
+> > non-NULL, amdgpu_bo_create_kernel() takes it as a hint to pin that addr=
+ess
+> > rather than allocate a new BO.
+> >=20
+> > This functionality is never desired for allocating ISP buffers. A new BO
+> > should always be created when isp_kernel_buffer_alloc() is called, per =
+the
+> > description for isp_kernel_buffer_alloc().
+>=20
+> Are you just going off descriptions, or is there a problem with reuse?
 
-I explicitly chose a word other than "less" or "lower" because I was
-concerned people might visualize values. The lpos does not necessarily
-have a lesser or lower value. "Preceeds" would also be a choice of mine.
+I am going based off the ISP4 driver's usage of isp_kernel_buffer_alloc().
 
-When I see "lt" I immediately think "less than" and "<". But I will not
-fight it. I can handle "lt".
+This fixes the following crash I experienced on v5 of the ISP4 patchset:
 
->    + adding "_safe" suffix to make it clear that it is not
->      a simple mathematical comparsion. It takes the wrap
->      into account.
+  [  175.485627] BUG: unable to handle page fault for address: 00007f6b1092=
+e888
+  [  175.485799] #PF: supervisor read access in kernel mode
+  [  175.485840] #PF: error_code(0x0000) - not-present page
+  [  175.485869] PGD 0 P4D 0=20
+  [  175.485889] Oops: Oops: 0000 [#1] SMP
+  [  175.485908] CPU: 15 UID: 1000 PID: 57022 Comm: cheese Tainted: G     U=
+  W           6.17.7 #1 PREEMPT=20
+  [  175.485921] Tainted: [U]=3DUSER, [W]=3DWARN
+  [  175.485933] Hardware name: HP HP ZBook Ultra G1a 14 inch Mobile Workst=
+ation PC/8D01, BIOS X89 Ver. 01.03.00 04/25/2025
+  [  175.485943] RIP: 0010:amdgpu_bo_create_reserved+0xb1/0x1c0 [amdgpu]
+  [  175.485961] Code: 8b 30 44 89 64 24 20 48 89 44 24 28 c7 44 24 30 01 0=
+0 00 00 c7 44 24 1c b8 02 00 00 c6 44 24 08 00 4d 85 f6 0f 84 a9 00 00 00 <=
+49> 8b 86 a8 01 00 00 49 8b be 40 01 00 00 31 f6 48 89 04 24 e8 d6
+  [  175.485976] RSP: 0018:ffff97b14e097ad0 EFLAGS: 00010202
+  [  175.485988] RAX: 0000000000000021 RBX: ffff97b085af04d0 RCX: 000000000=
+0000000
+  [  175.486002] RDX: 0000000000008000 RSI: ffff97b14e097ae0 RDI: ffff97b14=
+e097b20
+  [  175.486012] RBP: ffff97b085af04c8 R08: ffff97b085af04d8 R09: ffff97b08=
+5af04c8
+  [  175.486023] R10: 0000000000ffffff R11: ffff97b085af0560 R12: 000000000=
+0000002
+  [  175.486031] R13: ffff97b085af04d8 R14: 00007f6b1092e6e0 R15: ffff97b0a=
+0f00000
+  [  175.486037] FS:  00007faf60ffe6c0(0000) GS:ffff97cfa7133000(0000) knlG=
+S:0000000000000000
+  [  175.486046] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [  175.486058] CR2: 00007f6b1092e888 CR3: 0000000101c3f000 CR4: 000000000=
+0f50ef0
+  [  175.486067] PKRU: 55555554
+  [  175.486072] Call Trace:
+  [  175.486081]  <TASK>
+  [  175.486092]  ? smu_cmn_send_smc_msg_with_param+0xc0/0x360 [amdgpu]
+  [  175.486102]  amdgpu_bo_create_kernel+0x15/0x70 [amdgpu]
+  [  175.486110]  isp_kernel_buffer_alloc+0x56/0xa0 [amdgpu]
+  [  175.486118]  isp4if_gpu_mem_alloc.isra.0+0x45/0x70 [amd_capture]
+  [  175.486126]  isp4if_start+0x3a/0x320 [amd_capture]
+  [  175.486141]  isp4sd_set_power+0x96/0x1e0 [amd_capture]
+  [  175.486148]  pipeline_pm_power_one+0xf2/0x110 [videodev]
+  [  175.486155]  pipeline_pm_power+0x51/0x90 [videodev]
+  [  175.486161]  v4l2_pipeline_pm_use+0x3b/0x60 [videodev]
+  [  175.486169]  isp4vid_qops_start_streaming+0x22/0x140 [amd_capture]
+  [  175.486176]  ? isp4vid_qops_buffer_queue+0xb1/0x140 [amd_capture]
+  [  175.486185]  vb2_start_streaming+0x79/0x140 [videobuf2_common]
+  [  175.486192]  vb2_core_qbuf+0x3b5/0x480 [videobuf2_common]
+  [  175.486200]  vb2_qbuf+0x98/0x100 [videobuf2_v4l2]
+  [  175.486208]  __video_do_ioctl+0x480/0x4b0 [videodev]
+  [  175.486219]  video_usercopy+0x1e5/0x760 [videodev]
+  [  175.486226]  ? v4l_s_output+0x50/0x50 [videodev]
+  [  175.486237]  v4l2_ioctl+0x45/0x50 [videodev]
+  [  175.486245]  __x64_sys_ioctl+0x77/0xc0
+  [  175.486251]  do_syscall_64+0x48/0xbf0
+  [  175.486260]  entry_SYSCALL_64_after_hwframe+0x50/0x58
+  [  175.486268] RIP: 0033:0x7fb03371674d
+  [  175.486275] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 4=
+5 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <=
+89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+  [  175.486282] RSP: 002b:00007faf60ffc9d0 EFLAGS: 00000246 ORIG_RAX: 0000=
+000000000010
+  [  175.486292] RAX: ffffffffffffffda RBX: 00007fafb40050b0 RCX: 00007fb03=
+371674d
+  [  175.486301] RDX: 00007faf60ffca70 RSI: 00000000c058560f RDI: 000000000=
+000002c
+  [  175.486306] RBP: 00007faf60ffca20 R08: 13455f273d2513b9 R09: 000000000=
+0000210
+  [  175.486313] R10: 0000000000000215 R11: 0000000000000246 R12: 00007faf9=
+801c4b0
+  [  175.486318] R13: 0000000000000001 R14: 00007faf60ffcad0 R15: 000000000=
+0000001
+  [  175.486324]  </TASK>
+  [  175.486330] Modules linked in: ccm hid_sensor_prox hid_sensor_gyro_3d =
+hid_sensor_trigger industrialio_triggered_buffer kfifo_buf hid_sensor_iio_c=
+ommon industrialio hid_sensor_hub rfcomm snd_seq_dummy snd_hrtimer snd_seq =
+snd_seq_device amd_capture videobuf2_memops videobuf2_v4l2 videobuf2_common=
+ videodev mc pinctrl_amdisp i2c_designware_amdisp uhid cmac algif_hash algi=
+f_skcipher af_alg bnep uinput nls_iso8859_1 vfat fat snd_acp_legacy_mach sn=
+d_acp_mach snd_soc_nau8821 snd_acp3x_rn snd_acp70 snd_acp_i2s snd_acp_pdm j=
+oydev snd_soc_dmic snd_acp_pcm mousedev intel_rapl_msr snd_sof_amd_acp70 sn=
+d_sof_amd_acp63 snd_hda_scodec_cs35l56_spi intel_rapl_common snd_ctl_led sn=
+d_sof_amd_vangogh snd_sof_amd_rembrandt snd_hda_codec_alc269 snd_sof_amd_re=
+noir snd_hda_scodec_component snd_sof_amd_acp snd_hda_codec_realtek_lib snd=
+_sof_pci snd_sof_xtensa_dsp snd_hda_codec_generic snd_sof snd_sof_utils snd=
+_pci_ps snd_soc_acpi_amd_match amdgpu snd_amd_sdw_acpi snd_hda_codec_atihdm=
+i soundwire_amd soundwire_generic_allocation snd_hda_codec_hdmi
+  [  175.486373]  soundwire_bus snd_soc_sdca snd_soc_core snd_compress snd_=
+hda_intel ac97_bus snd_pcm_dmaengine mt7925e drm_panel_backlight_quirks amd=
+xcp snd_hda_codec snd_rpl_pci_acp6x mt7925_common btusb drm_buddy cdc_mbim =
+mt792x_lib snd_acp_pci cdc_wdm btrtl drm_exec snd_hda_core snd_amd_acpi_mac=
+h mt76_connac_lib snd_hda_scodec_cs35l56_i2c btintel snd_acp_legacy_common =
+drm_suballoc_helper cdc_ncm snd_intel_dspcfg mt76 snd_hda_scodec_cs35l56 sn=
+d_pci_acp6x cdc_ether drm_ttm_helper btbcm snd_intel_sdw_acpi snd_hda_cirru=
+s_scodec snd_hwdep usbnet ttm snd_pci_acp5x btmtk snd_soc_cs35l56_shared uc=
+si_acpi kvm_amd mac80211 snd_pcm r8152 i2c_algo_bit snd_rn_pci_acp3x typec_=
+ucsi snd_soc_cs_amp_lib libarc4 spd5118 bluetooth mii drm_display_helper sn=
+d_timer cs_dsp kvm typec snd_acp_config hp_wmi snd cfg80211 libphy amdxdna =
+roles cec snd_soc_acpi ecdh_generic sp5100_tco hid_multitouch irqbypass spa=
+rse_keymap rfkill rapl mdio_bus video gpu_sched amd_pmf wmi_bmof snd_pci_ac=
+p3x soundcore amdtee i2c_hid_acpi serial_multi_instantiate
+  [  175.486384]  i2c_hid amd_sfh thunderbolt wireless_hotkey amd_pmc platf=
+orm_profile wmi mac_hid i2c_piix4 i2c_smbus i2c_dev sg crypto_user loop nfn=
+etlink ip_tables x_tables dm_crypt encrypted_keys trusted asn1_encoder tee =
+dm_mod polyval_clmulni ghash_clmulni_intel aesni_intel nvme nvme_core nvme_=
+keyring serio_raw ccp nvme_auth
+  [  175.486394] CR2: 00007f6b1092e888
+  [  175.486402] ---[ end trace 0000000000000000 ]---
+  [  175.486409] RIP: 0010:amdgpu_bo_create_reserved+0xb1/0x1c0 [amdgpu]
+  [  175.486416] Code: 8b 30 44 89 64 24 20 48 89 44 24 28 c7 44 24 30 01 0=
+0 00 00 c7 44 24 1c b8 02 00 00 c6 44 24 08 00 4d 85 f6 0f 84 a9 00 00 00 <=
+49> 8b 86 a8 01 00 00 49 8b be 40 01 00 00 31 f6 48 89 04 24 e8 d6
+  [  175.486422] RSP: 0018:ffff97b14e097ad0 EFLAGS: 00010202
+  [  175.486429] RAX: 0000000000000021 RBX: ffff97b085af04d0 RCX: 000000000=
+0000000
+  [  175.486433] RDX: 0000000000008000 RSI: ffff97b14e097ae0 RDI: ffff97b14=
+e097b20
+  [  175.486439] RBP: ffff97b085af04c8 R08: ffff97b085af04d8 R09: ffff97b08=
+5af04c8
+  [  175.486444] R10: 0000000000ffffff R11: ffff97b085af0560 R12: 000000000=
+0000002
+  [  175.486448] R13: ffff97b085af04d8 R14: 00007f6b1092e6e0 R15: ffff97b0a=
+0f00000
+  [  175.486455] FS:  00007faf60ffe6c0(0000) GS:ffff97cfa7133000(0000) knlG=
+S:0000000000000000
+  [  175.486460] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [  175.486464] CR2: 00007f6b1092e888 CR3: 0000000101c3f000 CR4: 000000000=
+0f50ef0
+  [  175.486470] PKRU: 55555554
 
-I find "_safe" confusing. Especially when you look at the implementation
-you wonder, "what is safe about this?". Especially when comparing it to
-all the complexity of the rest of the code. But I can handle "_safe" if
-it is important for you.
+Admittedly, it's my fault that ISP4 stopped zeroing the BO pointer argument
+(&mem_info->mem_handle) passed to isp_kernel_buffer_alloc() [1]. But since =
+this
+issue slipped past Bin and presumably others who reviewed the code, it
+highlights that isp_kernel_buffer_alloc() is not working as expected in this
+respect, and the description for isp_kernel_buffer_alloc() reinforces this.
 
-> Something like:
->
-> /*
->  * Returns true when @lpos1 is lower than @lpos2 and both values
->  * are comparable.
->  *
->  * It is safe when the compared values are read a lock less way.
->  * One of them must be already overwritten when the difference
->  * is bigger then the data ring buffer size.
+> >=20
+> > Ensure this by zeroing *bo right before the amdgpu_bo_create_kernel() c=
+all.
+> >=20
+> > Fixes: 55d42f616976 ("drm/amd/amdgpu: Add helper functions for isp buff=
+ers")
+> > Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_isp.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_isp.c b/drivers/gpu/drm/=
+amd/amdgpu/amdgpu_isp.c
+> > index 9cddbf50442a..37270c4dab8d 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_isp.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_isp.c
+> > @@ -280,6 +280,8 @@ int isp_kernel_buffer_alloc(struct device *dev, u64=
+ size,
+> >   	if (ret)
+> >   		return ret;
+> > +	/* Ensure *bo is NULL so a new BO will be created */
+> > +	*bo =3D NULL;
+> >   	ret =3D amdgpu_bo_create_kernel(adev,
+> >   				      size,
+> >   				      ISP_MC_ADDR_ALIGN,
+>=20
 
-This makes quite a bit of assumptions about the context and intention of
-the call. I preferred my brain teaser version. But to me it is not worth
-bike-shedding. If this explanation helps you, I am fine with it.
+[1] https://lore.kernel.org/all/aNB0P18ytI1KopWI@sultan-box/
 
->  */
-> static bool lpos1_lt_lpos2_safe(struct prb_data_ring *data_ring,
-> 				unsined long lpos1, unsigned long lpos2)
-> {
-> 	return lpos2 - lpos1 - 1 < DATA_SIZE(data_ring);
-> }
->
->>  /*
->>   * Sanity checker for reserve size. The ringbuffer code assumes that a data
->>   * block does not exceed the maximum possible size that could fit within the
->> @@ -577,7 +588,7 @@ static bool data_make_reusable(struct printk_ringbuffer *rb,
->>  	unsigned long id;
->>  
->>  	/* Loop until @lpos_begin has advanced to or beyond @lpos_end. */
->> -	while ((lpos_end - lpos_begin) - 1 < DATA_SIZE(data_ring)) {
->> +	while (lpos1_before_lpos2(data_ring, lpos_begin, lpos_end)) {
->
-> lpos1_lt_lpos2_safe() fits here.
->
->>  		blk = to_block(data_ring, lpos_begin);
->>  		/*
->> @@ -668,7 +679,7 @@ static bool data_push_tail(struct printk_ringbuffer *rb, unsigned long lpos)
->>  	 * sees the new tail lpos, any descriptor states that transitioned to
->>  	 * the reusable state must already be visible.
->>  	 */
->> -	while ((lpos - tail_lpos) - 1 < DATA_SIZE(data_ring)) {
->> +	while (lpos1_before_lpos2(data_ring, tail_lpos, lpos)) {
->>  		/*
->>  		 * Make all descriptors reusable that are associated with
->>  		 * data blocks before @lpos.
->
-> Same here.
->
->> @@ -1149,7 +1160,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
->>  	next_lpos = get_next_lpos(data_ring, blk_lpos->begin, size);
->>  
->>  	/* If the data block does not increase, there is nothing to do. */
->> -	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
->> +	if (!lpos1_before_lpos2(data_ring, head_lpos, next_lpos)) {
->
-> I think that the original code was correct. And using the "-1" is
-> wrong here.
-
-You have overlooked that I inverted the check. It is no longer checking:
-
-    next_pos <= head_pos
-
-but is instead checking:
-
-    !(head_pos < next_pos)
-
-IOW, if "next has not overtaken head".
-
-> Both data_make_reusable() and data_push_tail() had to use "-1"
-> because it was the "lower than" semantic. But in this case,
-> we do not need to do anything even when "head_lpos == next_lpos"
->
-> By other words, both data_make_reusable() and data_push_tail()
-> needed to make a free space when the position was "lower than".
-> There was enough space when the values were "equal".
->
-> It means that "equal" should be OK in data_realloc(). By other
-> words, data_realloc() should use "le" aka "less or equal"
-> semantic.
->
-> The helper function might be:
->
-> /*
->  * Returns true when @lpos1 is lower or equal than @lpos2 and both
->  * values are comparable.
->  *
->  * It is safe when the compared values are read a lock less way.
->  * One of them must be already overwritten when the difference
->  * is bigger then the data ring buffer size.
->  */
-> static bool lpos1_le_lpos2_safe(struct prb_data_ring *data_ring,
-> 				unsined long lpos1, unsigned long lpos2)
-> {
-> 	return lpos2 - lpos1 < DATA_SIZE(data_ring);
-> }
-
-If you negate lpos1_lt_lpos2_safe() and swap the parameters, there is no
-need for a second helper. That is what I did.
-
->> @@ -1262,7 +1273,7 @@ static const char *get_data(struct prb_data_ring *data_ring,
->>  
->>  	/* Regular data block: @begin less than @next and in same wrap. */
->>  	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
->> -	    blk_lpos->begin < blk_lpos->next) {
->> +	    lpos1_before_lpos2(data_ring, blk_lpos->begin, blk_lpos->next)) {
->
-> Hmm, I think that it is more complicated here.
->
-> The "lower than" semantic is weird here. One would expect that "equal"
-> values, aka "zero size" is perfectly fine.
-
-No, we would _not_ expect that zero size is OK, because we are detecting
-"Regular data blocks", in which case they must _not_ be equal.
-
-> It does not hurt because the "zero size" case is already handled
-> earlier. But still, the "lower than" semantic does not fit here.
-
-Currently we have 3 explicit checks:
-
-1. data-less
-
-2. regular
-
-3. wrapping
-
-But I agree the checks are "relaxed" because we are doing only minimal
-sanity checks on the positions, rather than size validation.
-
-> IMHO, the main motivation for this fix is to make sure that
-> blk_lpos->begin and blk_lpos->next will produce a valid
-> *data_size.
->
-> From this POV, even lpos1_le_lpos2_safe() does not fit here
-> because the data_size must be lower than half of the size
-> of the ring buffer.
-
-Currently we do not do size validation for reading, only for writing. If
-you are arguing that we _should_ perform better size validation on read,
-then I agree this is the place for it.
-
->> 		db = to_block(data_ring, blk_lpos->begin);
->>  		*data_size = blk_lpos->next - blk_lpos->begin;
->
-> I think that we should do the following:
->
-> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-> index 839f504db6d3..78e02711872e 100644
-> --- a/kernel/printk/printk_ringbuffer.c
-> +++ b/kernel/printk/printk_ringbuffer.c
-> @@ -1260,9 +1260,8 @@ static const char *get_data(struct prb_data_ring *data_ring,
->  		return NULL;
->  	}
->  
-> -	/* Regular data block: @begin less than @next and in same wrap. */
-> -	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
-> -	    blk_lpos->begin < blk_lpos->next) {
-> +	/* Regular data block: @begin and @next in same wrap. */
-> +	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next)) {
->  		db = to_block(data_ring, blk_lpos->begin);
->  		*data_size = blk_lpos->next - blk_lpos->begin;
->  
-> @@ -1279,6 +1278,10 @@ static const char *get_data(struct prb_data_ring *data_ring,
->  		return NULL;
->  	}
->  
-> +	/* Double check that the data_size is reasonable. */
-> +	if (WARN_ON_ONCE(!data_check_size(data_ring, *data_size)))
-> +		return NULL;
-> +
->  	/* A valid data block will always be aligned to the ID size. */
->  	if (WARN_ON_ONCE(blk_lpos->begin != ALIGN(blk_lpos->begin, sizeof(db->id))) ||
->  	    WARN_ON_ONCE(blk_lpos->next != ALIGN(blk_lpos->next, sizeof(db->id)))) {
->
-> 1. Just distinguish regular vs. wrapped. vs. invalid block.
->
-> 2. Add sanity check for the "data_size". It might catch some wrong values
->    in both code paths for "regular" and "wrapped" blocks. So, win win.
->
-> How does that sound?
-
-I think it can be made even more simple since we are adding size
-validation:
-
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index b7ab4e75917f0..04bc863eae411 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -1271,23 +1271,15 @@ static const char *get_data(struct prb_data_ring *data_ring,
- 		return NULL;
- 	}
- 
--	/* Regular data block: @begin less than @next and in same wrap. */
--	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
--	    blk_lpos->begin < blk_lpos->next) {
--		db = to_block(data_ring, blk_lpos->begin);
--		*data_size = blk_lpos->next - blk_lpos->begin;
--
--	/* Wrapping data block: @begin is one wrap behind @next. */
--	} else if (!is_blk_wrapped(data_ring,
--				   blk_lpos->begin + DATA_SIZE(data_ring),
--				   blk_lpos->next)) {
-+	/* Wrapping data block description. */
-+	if (is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next)) {
- 		db = to_block(data_ring, 0);
- 		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
- 
--	/* Illegal block description. */
-+	/* Regular data block description. */
- 	} else {
--		WARN_ON_ONCE(1);
--		return NULL;
-+		db = to_block(data_ring, blk_lpos->begin);
-+		*data_size = blk_lpos->next - blk_lpos->begin;
- 	}
- 
- 	/* A valid data block will always be aligned to the ID size. */
-@@ -1300,6 +1292,10 @@ static const char *get_data(struct prb_data_ring *data_ring,
- 	if (WARN_ON_ONCE(*data_size < sizeof(db->id)))
- 		return NULL;
- 
-+	/* Check if the data size is at least legal. */
-+	if (WARN_ON_ONCE(!data_check_size(data_ring, *data_size)))
-+		return NULL;
-+
- 	/* Subtract block ID space from size to reflect data size. */
- 	*data_size -= sizeof(db->id);
- 
-So it ends up looking like this:
-
-	/* Wrapping data block description. */
-	if (is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next)) {
-		db = to_block(data_ring, 0);
-		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
-
-	/* Regular data block description. */
-	} else {
-		db = to_block(data_ring, blk_lpos->begin);
-		*data_size = blk_lpos->next - blk_lpos->begin;
-	}
-...
-	/* Ensure the data size is at least legal. */
-	if (WARN_ON_ONCE(!data_check_size(data_ring, *data_size)))
-		return NULL;
-
-(Note that there is already WARN_ON_ONCE() checks for misaligned lpos
-values and sizes less than sizeof(id).)
-
-How does this sound?
-
-John
+Sultan
 
