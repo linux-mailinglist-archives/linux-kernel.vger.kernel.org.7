@@ -1,164 +1,155 @@
-Return-Path: <linux-kernel+bounces-888246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E20C3A4B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:36:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A18EC3A504
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FAC24F72E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0693AA1BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AED27FB0E;
-	Thu,  6 Nov 2025 10:31:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1925E1E5B78;
-	Thu,  6 Nov 2025 10:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DC02C11EA;
+	Thu,  6 Nov 2025 10:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I89vEoVa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EBXS5erP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918AD3FCC;
+	Thu,  6 Nov 2025 10:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762425117; cv=none; b=Nt15PTJclJwtNpYBRE+by3h+4qanZYiG0pMDrGHQpPflncDYL/OQOiTSkcPTq+Jl263C7rXFgipjsrGTeWQFFNj8pfkZGmeuUAz3MBNXtWhdZjQGm4U0FBMEAlN5dC80luAmbXpSWMTLrbL1QfCeC/4TmAvTEtIHFFhct906MYA=
+	t=1762425176; cv=none; b=lOAq4ovIee6fELiCfyyykLYqZVU1D8KFW8BEJULVYJHm6L8hHQA66aP0vEYjOE3dpdOQGyjr1ptXJLF73szkYE0a2seA0pmZFD0M31mkwl6JJv6F42ef6V0BCIDxp8s9hb/KBj1nMyPls2IkzwEKMWQnlfX+biJeb3IM+sDsIvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762425117; c=relaxed/simple;
-	bh=MwOtJ+XDknjQvh1eKSlSlxJD9OqwTD5oV9YcUA4abG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fObA9RJCI4ES+z/29D4ldajPtavxzUetXerh3LhvrAT2c8kgkGCO9R3Nk+gC0kjUZGza/W7h3r+kn1WInjpsU1JYkM0OyU7MEOEUZ8thmES3LgKHA1GDZDL+8Z9ektgQ5D75nlgaLgY/BnU7SqgcqxkM5y2vXE2CtlWBYPFpxhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87B131596;
-	Thu,  6 Nov 2025 02:31:47 -0800 (PST)
-Received: from [10.1.34.75] (unknown [10.1.34.75])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32C3E3F66E;
-	Thu,  6 Nov 2025 02:31:49 -0800 (PST)
-Message-ID: <0276c749-9418-47ea-85f1-0b0ab93b0225@arm.com>
-Date: Thu, 6 Nov 2025 10:31:46 +0000
+	s=arc-20240116; t=1762425176; c=relaxed/simple;
+	bh=686+WgU1Vima+Hewl156LKzHi6lYO//H6D50PeewlYI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SdFbn982TXSrksG9kOqY43FM8hfsD9usLPvWUrHFpIFHeZxN0uioHOsmqugR9N05MU77xz8fxKsAZdlZzULMUDIZ7s0l5C4ux6whtIXZvjoepe3i+H1+5F88JGG1w28jz+vrFk6G1pzWCoc7w/apRtVtNdqWz2ffSOChvxun9vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I89vEoVa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EBXS5erP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762425172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TXiaP7DLWWBFVuVSTnZiSqijym5UD2pyzWRhAhPoJEo=;
+	b=I89vEoVanJ7s1VE9NlYDYp6g6AyCCElhlmh/nt8BSgpfpJtCeruUvsgzXTEh1q0gk5Fw0I
+	gsDnqUa6WLchOQXeQv1LxPMdnaks2wDOeP5PJNctBpcqvjpDr4z/DjRXfkwnyVMFsOt5Fa
+	xg+mUfsIag1DU+7Xs+9tXCVDeIknjBEl/L9bh82Y5TnVvclv0xA13Mqk89NnuAhdRb6lyQ
+	PU9MkkT9AM/D8cpqUcPfN4T5udLXMCcG5IvElD3fl3jP5vs99O6MnQ76QLco97C4w5uqKy
+	/DtEDnErgqfenIQ3WnZbZV6Pm3qBl6OZ3irGBp7CopxgAqxEiohRzTEXAjhn7w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762425172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TXiaP7DLWWBFVuVSTnZiSqijym5UD2pyzWRhAhPoJEo=;
+	b=EBXS5erPNWGAqqtupE6CiwzmFfzBcWERq9pdBAX6+aQMEgGsjuRrAz9jxUcegIlRDC91SG
+	Niz2tr5TM9DOiwDw==
+Date: Thu, 06 Nov 2025 11:32:39 +0100
+Subject: [PATCH] kunit: Make filter parameters configurable via Kconfig
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/12] powerpc/mm: implement arch_flush_lazy_mmu_mode()
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-4-kevin.brodsky@arm.com>
- <87pl9x41c5.ritesh.list@gmail.com> <87jz044xn4.ritesh.list@gmail.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <87jz044xn4.ritesh.list@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251106-kunit-filter-kconfig-v1-1-d723fb7ac221@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAEZ5DGkC/x3MQQqAIBBA0avErBvQIsmuEi3CZmooLLQikO6et
+ HyL/xNECkIRuiJBoFui7D5DlwW4ZfQzoUzZUKmq0VoZXC8vJ7JsJwVc3e5ZZmTVWtva2rAzkNM
+ jEMvzb/vhfT/Q1Od8ZgAAAA==
+X-Change-ID: 20251106-kunit-filter-kconfig-f08998936fc6
+To: Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762425171; l=2765;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=686+WgU1Vima+Hewl156LKzHi6lYO//H6D50PeewlYI=;
+ b=U/J+W1jfW3gmfJq5X5oZHu/zEzD3WM11KV8TeddzMtErzdFXtSSbLkSR/QZiHEKMBJiC5jaMu
+ jKCwp+ghoLgCH4UpYXo7jdXMDj5idIDCjSvncyJwAF5kjJ4uEy8Ppxp
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 05/11/2025 09:49, Ritesh Harjani (IBM) wrote:
-> Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
->
->> Kevin Brodsky <kevin.brodsky@arm.com> writes:
->>
->>> Upcoming changes to the lazy_mmu API will cause
->>> arch_flush_lazy_mmu_mode() to be called when leaving a nested
->>> lazy_mmu section.
->>>
->>> Move the relevant logic from arch_leave_lazy_mmu_mode() to
->>> arch_flush_lazy_mmu_mode() and have the former call the latter.
->>>
->>> Note: the additional this_cpu_ptr() on the
->>> arch_leave_lazy_mmu_mode() path will be removed in a subsequent
->>> patch.
->>>
->>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->>> ---
->>>  .../powerpc/include/asm/book3s/64/tlbflush-hash.h | 15 +++++++++++----
->>>  1 file changed, 11 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
->>> index 146287d9580f..7704dbe8e88d 100644
->>> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
->>> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
->>> @@ -41,6 +41,16 @@ static inline void arch_enter_lazy_mmu_mode(void)
->>>  	batch->active = 1;
->>>  }
->>>  
->>> +static inline void arch_flush_lazy_mmu_mode(void)
->>> +{
->>> +	struct ppc64_tlb_batch *batch;
->>> +
->>> +	batch = this_cpu_ptr(&ppc64_tlb_batch);
->>> +
->>> +	if (batch->index)
->>> +		__flush_tlb_pending(batch);
->>> +}
->>> +
->> This looks a bit scary since arch_flush_lazy_mmu_mode() is getting
->> called from several of the places in later patches(). 
->>
->> Although I think arch_flush_lazy_mmu_mode() will only always be called
->> in nested lazy mmu case right?
->>
->> Do you think we can add a VM_BUG_ON(radix_enabled()); in above to make
->> sure the above never gets called in radix_enabled() case. 
->>
->> I am still going over the patch series, but while reviewing this I
->> wanted to take your opinion.
->>
->> Ohh wait.. There is no way of knowing the return value from
->> arch_enter_lazy_mmu_mode().. I think you might need a similar check to
->> return from arch_flush_lazy_mmu_mode() too, if radix_enabled() is true.
->>
-> Now that I have gone through this series, it seems plaussible that since
-> lazy mmu mode supports nesting, arch_flush_lazy_mmu_mode() can get
-> called while the lazy mmu is active due to nesting.. 
->
-> That means we should add the radix_enabled() check as I was talking in
-> above i.e. 
->
-> @@ -38,6 +38,9 @@ static inline void arch_flush_lazy_mmu_mode(void)
->  {
->         struct ppc64_tlb_batch *batch;
->
-> +       if (radix_enabled())
-> +               return;
-> +
->         batch = this_cpu_ptr(&ppc64_tlb_batch);
->
->         if (batch->index)
->
-> Correct? Although otherwise also I don't think it should be a problem
-> because batch->index is only valid during hash, but I still think we can
-> add above check so that we don't have to call this_cpu_ptr() to check
-> for batch->index whenever flush is being called.
+Enable the preset of filter parameters from kconfig options, similar to
+how other KUnit configuration parameters are handled already.
+This is useful to run a subset of tests even if the cmdline is not
+readily modifyable.
 
-You're right! I missed this because v3 had an extra patch (13) that
-turned all the lazy_mmu_mode_* into no-ops if radix_enabled(). The
-optimisation didn't seem to be worth the noise so I dropped it, but it
-does mean that arch_flush() will now be called in the nested case
-regardless of radix_enabled().
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ lib/kunit/Kconfig    | 24 ++++++++++++++++++++++++
+ lib/kunit/executor.c |  8 +++++---
+ 2 files changed, 29 insertions(+), 3 deletions(-)
 
-Will fix in v5, thanks!
+diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+index 7a6af361d2fc6276b9667be8c694b0c80e33c1e8..50ecf55d2b9c8a82f2aff7a0b4156bd6179b0a2f 100644
+--- a/lib/kunit/Kconfig
++++ b/lib/kunit/Kconfig
+@@ -93,6 +93,30 @@ config KUNIT_AUTORUN_ENABLED
+ 	  In most cases this should be left as Y. Only if additional opt-in
+ 	  behavior is needed should this be set to N.
+ 
++config KUNIT_DEFAULT_FILTER_GLOB
++	string "Default value of the filter_glob module parameter"
++	help
++	  Sets the default value of kunit.filter_glob. If set to a non-empty
++	  string only matching tests are executed.
++
++	  If unsure, leave empty so all tests are executed.
++
++config KUNIT_DEFAULT_FILTER
++	string "Default value of the filter module parameter"
++	help
++	  Sets the default value of kunit.filter. If set to a non-empty
++	  string only matching tests are executed.
++
++	  If unsure, leave empty so all tests are executed.
++
++config KUNIT_DEFAULT_FILTER_ACTION
++	string "Default value of the filter_action module parameter"
++	help
++	  Sets the default value of kunit.filter_action. If set to a non-empty
++	  string only matching tests are executed.
++
++	  If unsure, leave empty so all tests are executed.
++
+ config KUNIT_DEFAULT_TIMEOUT
+ 	int "Default value of the timeout module parameter"
+ 	default 300
+diff --git a/lib/kunit/executor.c b/lib/kunit/executor.c
+index 0061d4c7e35170634a3c1d1cff7179037fb8ba07..02ff380ab7938cfac2be3f8c0e7630a78961cc3d 100644
+--- a/lib/kunit/executor.c
++++ b/lib/kunit/executor.c
+@@ -45,9 +45,11 @@ bool kunit_autorun(void)
+ 	return autorun_param;
+ }
+ 
+-static char *filter_glob_param;
+-static char *filter_param;
+-static char *filter_action_param;
++#define PARAM_FROM_CONFIG(config) (config[0] ? config : NULL)
++
++static char *filter_glob_param = PARAM_FROM_CONFIG(CONFIG_KUNIT_DEFAULT_FILTER_GLOB);
++static char *filter_param = PARAM_FROM_CONFIG(CONFIG_KUNIT_DEFAULT_FILTER);
++static char *filter_action_param = PARAM_FROM_CONFIG(CONFIG_KUNIT_DEFAULT_FILTER_ACTION);
+ 
+ module_param_named(filter_glob, filter_glob_param, charp, 0600);
+ MODULE_PARM_DESC(filter_glob,
 
-- Kevin
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251106-kunit-filter-kconfig-f08998936fc6
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
