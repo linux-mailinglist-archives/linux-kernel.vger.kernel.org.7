@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-888858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE52C3C0FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:32:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACC7C3C16C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA71D4E4907
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2201AA7A7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D57030DEAC;
-	Thu,  6 Nov 2025 15:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57212BE051;
+	Thu,  6 Nov 2025 15:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arduino.cc header.i=@arduino.cc header.b="JS3CCsCE"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (1024-bit key) header.d=arduino.cc header.i=@arduino.cc header.b="ImI6Ojoi"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927C629E0E9
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469602BE634
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762443092; cv=none; b=lyF9/biTez0lQbJEmFaOeQGFw1hiLXhWYvTtX3s5yDFXPz3n8RThnI3hKI/hxb4mruVonGMCOvyPdTRIh5qf/uYxx9eFjbiKU48F473THyVlgSs5BRBbqzJ1qTiN6CfFBsvCp2qoFTaiP3xj9mCElS/MEH8ZD9nuKPhqlWww3zc=
+	t=1762443094; cv=none; b=f3Aich8FCVyMBJu5iFnad8Vvivuc9hXhbBMYZYRI3SD1OvSyuMb801BoIPq4SgmZaGUIz3abbokBK6VirOvd3NmRluE9l2NrlWiQQP7sU2/uvzvpm6skPox3Z3cHZJpG5yprhW5QLcHBClYLJQ1dj04fTtfvSGpwtvrAwqphxO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762443092; c=relaxed/simple;
-	bh=nFTMiixlNvRzTbq7OpBGOyWd3t8zjaGziikj/c4xkbY=;
+	s=arc-20240116; t=1762443094; c=relaxed/simple;
+	bh=5B4Xn6KMT6bnOoj0Luy4yJVa/EzHk5+WSMQt3P7uD9k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XiUM3d8yaH8zCNYbcjyiy9zAJR+G4VDwHdzK4o0MGjVohzM/I2P59RS9M8gI5mHiI/4PecwIQRx/lxN2jU7tOo8MTxtWDmNf2IPGRlF2S6S4n5v/81v6CZT0n58wzqxAs+cwANJftD/Bh7I/ghIv4PuW9t+rzzuIp3Kkjt5Z0x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arduino.cc; spf=pass smtp.mailfrom=arduino.cc; dkim=pass (1024-bit key) header.d=arduino.cc header.i=@arduino.cc header.b=JS3CCsCE; arc=none smtp.client-ip=209.85.221.42
+	 MIME-Version:Content-Type; b=fE3PtujzDkvGaVNpEujbDL9+iQfCXEx9hYiV+Isil4HXtDJU+rQ1UhOSCsLtD+GUst4BLMSZXK0hBTNDqf9fKxK0uTr6KYqp1rhC8xhSztbBbhAQcc5d8aLaVaQIA7fTv3yOwed4zV2InXePjSC6X8Bb93Y/unoH12nK5UlC25A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arduino.cc; spf=pass smtp.mailfrom=arduino.cc; dkim=pass (1024-bit key) header.d=arduino.cc header.i=@arduino.cc header.b=ImI6Ojoi; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arduino.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arduino.cc
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429cf861327so859004f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:31:28 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-429c7f4f8a2so1203918f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:31:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arduino.cc; s=google; t=1762443087; x=1763047887; darn=vger.kernel.org;
+        d=arduino.cc; s=google; t=1762443088; x=1763047888; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GDJBjo0tk19MxLFIW+Axiq3QKZE3M5MjCU5GisKJEXQ=;
-        b=JS3CCsCErJMWwevyobg0lxKdWUylGvqCGp6BmIqO8HOmVSe4JNASTi+TN+VWD3oPWA
-         vxyJGFCT6jpmj6q19Z465yO5VR2/kbtR4uzr5ui20Jbw9/AnaP6YG0hs8RnZGcnJU8fK
-         OOYP254loNWu7pfHLrKSWlvm21ooFBMYRlvS8=
+        bh=ey5X+0gIhe5Z/c55scS15gTtf6rdR80+WTGhiV8lPvw=;
+        b=ImI6OjoinurSa7SSRGZt5++zOnM8B8emgxFr4IfiNHWDjCxRoYIkyVReapxAV/E92l
+         dxjJkgQ790SLyri9Y9LVWYWFlUtVlq+GYgD5n435os84LMMVxkdQhzfI/rYdwTA+hv0p
+         l8umQZh1DIQDM+OaLUjOyA/ShGR+D5Qgnu6Ug=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762443087; x=1763047887;
+        d=1e100.net; s=20230601; t=1762443088; x=1763047888;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GDJBjo0tk19MxLFIW+Axiq3QKZE3M5MjCU5GisKJEXQ=;
-        b=mA7pWqR5B8xN1c6mqO/fXznSzpj1JOIxmPYRvJWgBJ8kl1a1OTOpfPlgYj8Ps0aM/6
-         uy7qfK5Nu/sypd1jazz1qTB2QTLCE/n7V8QurrCa0jV0lzYbogeYKGvEbwiHE9GUS+JF
-         VTRe2YTkOkDt0832F3q0KuXv4Go34J1CFxjsWzKEG+tmODUgOSWwCd75E1VMP6lehih+
-         2ussRd/bwDPJghXXr9WrnnZ2eMKMBDiLpPG2INMqoE9AkkzTmuH+Fg5IgB8kB11eWa4x
-         8o13DBjebM689S2ZxZChpHbXRGgykb67RCB/9QLMXZ3OzHAsPGNf3RIFgh5vVneDRukd
-         jcpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsl5zBhccFaAP5Z5y6kphKEH8HeqHuxyoV3D8kjUco9AYxs58bRf6mwdVjxxIUQwk7x9Km8v6vaj+M3UM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBL5ziuASdUwxSDDm3h45IirZrMOAjFBDDgoXmMOvQrZVOIypB
-	uz7toUTvkPTg84vFxfJQexRCqbRR2pvPJswNiFiyQFFiy6NK6BHj2Sffipf2iGh9S6k=
-X-Gm-Gg: ASbGncvoxziJ6ZnjqgAKs6Pd+DZVJ186OE8nHvD6KK10+uwH2B9zM6a1kvBh1aphO6Z
-	ctR4R0eXI+bKhZ1lHnOqit5L3du3DOY5LWb0hdRsAoniyqytAAYhfhVqQdqzSMhZ2q99oYHHHE5
-	N9ARg4JB8wQZpRPzf09E26tMrvXXQaPMGM8V1EF/bnDZtljFizzLAj3ZposBSNdpBjVshAG8tir
-	dBNJRNEUPJWZN+oaPNJJ+JMYk30+Wz39jJ3/NDEQpoOysUK0lO9HocBcIFZwCHIRzedZG5C8pee
-	nMUpL0JbvVtIjLp1AK9Orf26//Hdzj8rOKB6K88sCAINl8SZjc7GtlUY2H2bM8Y4RcT3oCcs8fG
-	7uUHh5+oQk77WL72qWy9ApgQmOoVYTJjaPX+dR6Y0pNW5dee2RCnYzt0cs+UjlE7lxRIZBgeRx5
-	/mJeNN+sJzPpw0F2QG3tkeE9BD
-X-Google-Smtp-Source: AGHT+IHCZAr95mKcE9yjFtJyCN1KyzbJ3I4nTiFSTQevwcerBzM8hslgjP0KyUU+ToTYxmAmb25Lmw==
-X-Received: by 2002:a05:6000:310d:b0:429:c5b1:5c63 with SMTP id ffacd0b85a97d-429e3337679mr6689753f8f.61.1762443087151;
-        Thu, 06 Nov 2025 07:31:27 -0800 (PST)
+        bh=ey5X+0gIhe5Z/c55scS15gTtf6rdR80+WTGhiV8lPvw=;
+        b=bA7MlsdIzvTdhLkhUoWimtqRHP8Wj8gOGUUSD6+1AAMpfleqTHvxIngPggzxp0Fd/x
+         lbJpy5gTFBzzNoQBoAvuVsRcOFy+ERNKlDdGTdY4mksC9mmAYbHoQzfqECONEL4hQfJO
+         wZ8KHpVOotBuJarry4zt0hh3Qr6JwOx4bgfnoU4DOQHl0QtzkbtWD/RapaHuAod6GXg+
+         02zcLAS0qnRuzDDuW2hyHEn0ulqNACT7oSrLWoUNpWE4bbu8thumHGC92xrMIqsSzQN1
+         72ED2B1euHGwEerR0b2Gjj9RMrBglmAo9BJcJZOytPjLa7sZIO/sbQ3UpoTPVyNT1lZo
+         5tLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHZD39zqTOMfqYZolOMdcxjJG5nrlTxCZhAxAY7mjC9WARyhrkhtaTUsuBSuOqoZmgVu2wH/2ipWU0omU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9B/1CbEmnPsftRn5uIFuTVcucLNyt/EX9o6J4tw+qIdpIMcrl
+	wwsEe8l32kPH6GLH2hpyWjPMQO4SNhTBxFxj9SJGJsVcqMz+fHWDLsfH4i5cbc1CE4w=
+X-Gm-Gg: ASbGncvEk2KI0dJc2qkOopbxGHMPNr6X/5NLxjgfEC6ZoYYVEREeR76MI4no69G+tmx
+	bl/IdY4/9fqFWLbr5qz+lbg+354mwo3mHuaOGe5O4ISFW8b1XkUOr02oEQQ8bWQr2A27lrVephR
+	mTu2+h9cayhdP1wvMqDB85HLrQpP/uf7aBPn5ePqB62wnXXmmToxXX1sDQF71VKMf4zD4nrYtkF
+	F23ZOxdRt4vwyOQr08N1IayhEgptC2RSnncg5DqGqmZ87PIWsMld646tYtUbC8hbfDccR9mG6l9
+	98ZEILtBLfn4QEyjvFvHp9oMjIoD9FJXopx9yoMjNTgm5jdErbs7xYlGqxm2+RfiUUNsLQtnMqQ
+	xc2yzeZCQDmcKb4SMlHVRRbtPs/BK85pIkEdx8gLyqCPq0DACBOIsUQjulxWXqXV3kK43xryh9J
+	RaUl3sJp6EtGuakuDlu6J4q2xn957ZjMc1BJc=
+X-Google-Smtp-Source: AGHT+IFDtaikcG7OtQDnbnolkjzqwvJpTJE8dT4I0+3TeQn2A4bXFRy6GwuqhOuS6LckO5djP+ZKOw==
+X-Received: by 2002:a05:6000:430e:b0:429:e99a:5891 with SMTP id ffacd0b85a97d-429eb17328bmr3369739f8f.18.1762443088362;
+        Thu, 06 Nov 2025 07:31:28 -0800 (PST)
 Received: from riccardo-work (public.toolboxoffice.it. [213.215.163.27])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb49a079sm5966719f8f.32.2025.11.06.07.31.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb49a079sm5966719f8f.32.2025.11.06.07.31.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 07:31:26 -0800 (PST)
+        Thu, 06 Nov 2025 07:31:27 -0800 (PST)
 From: Riccardo Mereu <r.mereu.kernel@arduino.cc>
 X-Google-Original-From: Riccardo Mereu <r.mereu@arduino.cc>
 To: andersson@kernel.org,
@@ -93,10 +93,11 @@ Cc: linux@roeck-us.net,
 	linux-kernel@vger.kernel.org,
 	linux-spi@vger.kernel.org,
 	mm.facchin@arduino.cc,
+	Riccardo Mereu <r.mereu.kernel@arduino.cc>,
 	Riccardo Mereu <r.mereu@arduino.cc>
-Subject: [PATCH 4/5] arm64: dts: qcom: qcm2290: add uart2 node
-Date: Thu,  6 Nov 2025 16:31:18 +0100
-Message-ID: <20251106153119.266840-5-r.mereu@arduino.cc>
+Subject: [PATCH 5/5] arm64: dts: qcom: unoq: add dts for arduino unoq
+Date: Thu,  6 Nov 2025 16:31:19 +0100
+Message-ID: <20251106153119.266840-6-r.mereu@arduino.cc>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251106153119.266840-1-r.mereu@arduino.cc>
 References: <20251106153119.266840-1-r.mereu@arduino.cc>
@@ -106,58 +107,501 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-uart2 is used in Arduino UnoQ as an interface between microprocessor and
+From: Riccardo Mereu <r.mereu.kernel@arduino.cc>
+
+Arduino UnoQ is a single-board computer combining Qualcomm
+Dragonwing™ QRB2210 microprocessor with STMicroelectronics STM32U585
 microcontroller.
+Support to a simply boot to shell environment includes:
+- UART, I2C, SPI
+- onboard LEDS
+- eMMC
+- WLAN and BT
 
 Signed-off-by: Riccardo Mereu <r.mereu@arduino.cc>
 ---
- arch/arm64/boot/dts/qcom/agatti.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/qrb2210-arduino-imola.dts   | 456 ++++++++++++++++++
+ 2 files changed, 457 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts
 
-diff --git a/arch/arm64/boot/dts/qcom/agatti.dtsi b/arch/arm64/boot/dts/qcom/agatti.dtsi
-index 8bf5c5583fc2..32d58e66f57d 100644
---- a/arch/arm64/boot/dts/qcom/agatti.dtsi
-+++ b/arch/arm64/boot/dts/qcom/agatti.dtsi
-@@ -562,6 +562,13 @@ qup_uart1_default: qup-uart1-default-state {
- 				bias-disable;
- 			};
- 
-+			qup_uart2_default: qup-uart2-default-state {
-+				pins = "gpio6", "gpio7", "gpio71", "gpio80";
-+				function = "qup2";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index 6f34d5ed331c..9f98a7f2cbb4 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -143,6 +143,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-arduino-imola.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= qrb5165-rb5.dtb
+diff --git a/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts b/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts
+new file mode 100644
+index 000000000000..83e7f3e9da76
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts
+@@ -0,0 +1,456 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/*
++ * Copyright (c) 2025, Arduino SA
++ */
 +
- 			qup_uart3_default: qup-uart3-default-state {
- 				pins = "gpio8", "gpio9", "gpio10", "gpio11";
- 				function = "qup3";
-@@ -1315,6 +1322,23 @@ &qup_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
- 				status = "disabled";
- 			};
- 
-+			uart2: serial@4a88000 {
-+                                compatible = "qcom,geni-uart";
-+                                reg = <0x0 0x04a88000 0x0 0x4000>;
-+                                interrupts = <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>;
-+                                clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
-+                                clock-names = "se";
-+                                pinctrl-0 = <&qup_uart2_default>;
-+                                pinctrl-names = "default";
-+                                interconnects = <&qup_virt MASTER_QUP_CORE_0 RPM_ALWAYS_TAG
-+                                                 &qup_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
-+                                                <&bimc MASTER_APPSS_PROC RPM_ALWAYS_TAG
-+                                                 &config_noc MASTER_APPSS_PROC RPM_ALWAYS_TAG>;
-+                                interconnect-names = "qup-core",
-+                                                     "qup-config";
-+                                status = "disabled";
-+                        };
++/dts-v1/;
 +
- 			i2c3: i2c@4a8c000 {
- 				compatible = "qcom,geni-i2c";
- 				reg = <0x0 0x04a8c000 0x0 0x4000>;
++#include <dt-bindings/leds/common.h>
++#include "agatti.dtsi"
++#include "pm4125.dtsi"
++
++/delete-node/ &cont_splash_memory;
++
++/ {
++        model = "Arduino UnoQ";
++        compatible = "arduino,imola", "qcom,qrb2210", "qcom,qcm2290";
++
++        aliases {
++                serial0 = &uart4;
++                serial1 = &uart2;
++                serial2 = &uart3;
++                sdhc1 = &sdhc_1;
++        };
++
++        chosen {
++                stdout-path = "serial0:115200n8";
++        };
++
++        gpio-keys {
++                compatible = "gpio-keys";
++                label = "gpio-keys";
++
++                pinctrl-0 = <&key_volp_n>, <&key_vold_n>;
++                pinctrl-names = "default";
++
++                key-volume-up {
++                        label = "Volume Up";
++                        linux,code = <KEY_VOLUMEUP>;
++                        gpios = <&tlmm 96 GPIO_ACTIVE_LOW>;
++                        debounce-interval = <15>;
++                        linux,can-disable;
++                        wakeup-source;
++                };
++
++                key-volume-down {
++                        label = "Volume Down";
++                        linux,code = <KEY_VOLUMEDOWN>;
++                        gpios = <&tlmm 36 GPIO_ACTIVE_LOW>;
++                        debounce-interval = <15>;
++                        linux,can-disable;
++                        wakeup-source;
++                };
++        };
++
++        leds: leds {
++                compatible = "gpio-leds";
++
++                ledpanic: led-panic {
++                        label = "red:panic";
++                        function = LED_FUNCTION_INDICATOR;
++                        color = <LED_COLOR_ID_RED>;
++                        gpios = <&tlmm 39 GPIO_ACTIVE_HIGH>;
++                        linux,default-trigger = "none";
++                        default-state = "off";
++                        panic-indicator;
++                };
++
++                ledwlan: led-wlan {
++                        label = "green:wlan";
++                        function = LED_FUNCTION_WLAN;
++                        color = <LED_COLOR_ID_GREEN>;
++                        gpios = <&tlmm 40 GPIO_ACTIVE_HIGH>;
++                        linux,default-trigger = "phy0tx";
++                        default-state = "off";
++                };
++
++                ledbt: led-bt {
++                        label = "blue:bt";
++                        function = LED_FUNCTION_BLUETOOTH;
++                        color = <LED_COLOR_ID_BLUE>;
++                        gpios = <&tlmm 47 GPIO_ACTIVE_HIGH>;
++                        linux,default-trigger = "bluetooth-power";
++                        default-state = "off";
++                };
++
++                ledr: led-user-red {
++                        gpios = <&tlmm 41 GPIO_ACTIVE_HIGH>;
++                        color = <LED_COLOR_ID_RED>;
++                };
++
++                ledg: led-user-green {
++                        gpios = <&tlmm 42 GPIO_ACTIVE_HIGH>;
++                        color = <LED_COLOR_ID_GREEN>;
++                };
++
++                ledb: led-user-blue {
++                        gpios = <&tlmm 60 GPIO_ACTIVE_HIGH>;
++                        color = <LED_COLOR_ID_BLUE>;
++                };
++        };
++
++        multi-led {
++                compatible = "leds-group-multicolor";
++                color = <LED_COLOR_ID_RGB>;
++                function = LED_FUNCTION_INDICATOR;
++                leds = <&ledr>, <&ledg>, <&ledb>;
++        };
++
++        /* PM4125 charger out, supplied by VBAT */
++        vph_pwr: regulator-vph-pwr {
++                compatible = "regulator-fixed";
++                regulator-name = "vph_pwr";
++                regulator-min-microvolt = <3700000>;
++                regulator-max-microvolt = <3700000>;
++                regulator-always-on;
++                regulator-boot-on;
++        };
++};
++
++&gpi_dma0 {
++        status = "okay";
++};
++
++&gpu {
++        status = "okay";
++};
++
++&gpu_zap_shader {
++        firmware-name = "qcom/qcm2290/a702_zap.mbn";
++};
++
++&pm4125_vbus {
++        regulator-min-microamp = <500000>;
++        regulator-max-microamp = <500000>;
++
++        status = "okay";
++};
++
++&qupv3_id_0 {
++        status = "okay";
++};
++
++&remoteproc_adsp {
++        firmware-name = "qcom/qcm2290/adsp.mbn";
++
++        status = "okay";
++};
++
++&remoteproc_mpss {
++        firmware-name = "qcom/qcm2290/modem.mbn";
++
++        status = "okay";
++};
++
++&rpm_requests {
++        regulators {
++                compatible = "qcom,rpm-pm2250-regulators";
++                vdd_s3-supply = <&vph_pwr>;
++                vdd_s4-supply = <&vph_pwr>;
++                vdd_l1_l2_l3_l5_l6_l7_l8_l9_l10_l11_l12-supply = <&pm4125_s3>;
++                vdd_l4_l17_l18_l19_l20_l21_l22-supply = <&vph_pwr>;
++                vdd_l13_l14_l15_l16-supply = <&pm4125_s4>;
++
++                pm4125_s3: s3 {
++                        /* 0.4V-1.6625V -> 1.3V (Power tree requirements) */
++                        regulator-min-microvolt = <1352000>;
++                        regulator-max-microvolt = <1352000>;
++                        regulator-boot-on;
++                };
++
++                pm4125_s4: s4 {
++                        /* 1.2V-2.35V -> 2.05V (Power tree requirements) */
++                        regulator-min-microvolt = <2072000>;
++                        regulator-max-microvolt = <2072000>;
++                        regulator-boot-on;
++                };
++
++                pm4125_l2: l2 {
++                        /* LPDDR4X VDD2 */
++                        regulator-min-microvolt = <1136000>;
++                        regulator-max-microvolt = <1136000>;
++                        regulator-always-on;
++                        regulator-boot-on;
++                };
++
++                pm4125_l3: l3 {
++                        /* LPDDR4X VDDQ */
++                        regulator-min-microvolt = <616000>;
++                        regulator-max-microvolt = <616000>;
++                        regulator-always-on;
++                        regulator-boot-on;
++                };
++
++                pm4125_l4: l4 {
++                        /* max = 3.05V -> max = 2.7 to disable 3V signaling (SDHCI2) */
++                        regulator-min-microvolt = <1800000>;
++                        regulator-max-microvolt = <2700000>;
++                        regulator-allow-set-load;
++                };
++
++                pm4125_l5: l5 {
++                        /* CSI/DSI */
++                        regulator-min-microvolt = <1232000>;
++                        regulator-max-microvolt = <1232000>;
++                        regulator-allow-set-load;
++                        regulator-boot-on;
++                };
++
++                pm4125_l6: l6 {
++                        /* DRAM PLL */
++                        regulator-min-microvolt = <928000>;
++                        regulator-max-microvolt = <928000>;
++                        regulator-always-on;
++                        regulator-boot-on;
++                };
++
++                pm4125_l7: l7 {
++                        /* Wi-Fi CX */
++                        regulator-min-microvolt = <664000>;
++                        regulator-max-microvolt = <664000>;
++                };
++
++                pm4125_l10: l10 {
++                        /* Wi-Fi RFA */
++                        regulator-min-microvolt = <1304000>;
++                        regulator-max-microvolt = <1304000>;
++                };
++
++                pm4125_l11: l11 {
++                        /* ANX7625 DVDD1P0V/AVDD1P0V */
++                        regulator-min-microvolt = <1000000>;
++                        regulator-max-microvolt = <1000000>;
++                        regulator-boot-on;
++                        regulator-always-on;
++                };
++
++                pm4125_l12: l12 {
++                        /* USB PHYs */
++                        regulator-min-microvolt = <928000>;
++                        regulator-max-microvolt = <928000>;
++                        regulator-allow-set-load;
++                        regulator-boot-on;
++                };
++
++                pm4125_l13: l13 {
++                        /* USB/QFPROM/PLLs */
++                        regulator-min-microvolt = <1800000>;
++                        regulator-max-microvolt = <1800000>;
++                        regulator-allow-set-load;
++                        regulator-boot-on;
++                };
++
++                pm4125_l14: l14 {
++                        /* SDHCI1 EMMC VCCQ */
++                        regulator-min-microvolt = <1800000>;
++                        regulator-max-microvolt = <1800000>;
++                        regulator-allow-set-load;
++                        /* Broken hardware, never turn it off! */
++                        regulator-always-on;
++                };
++
++                pm4125_l15: l15 {
++                        /* VDDIO */
++                        regulator-min-microvolt = <1800000>;
++                        regulator-max-microvolt = <1800000>;
++                        regulator-allow-set-load;
++                        regulator-always-on;
++                        regulator-boot-on;
++                };
++
++                pm4125_l20: l20 {
++                        /* SDHCI1 EMMC */
++                        regulator-min-microvolt = <2400000>;
++                        regulator-max-microvolt = <3600000>;
++                        regulator-allow-set-load;
++                };
++
++                pm4125_l21: l21 {
++                        /* USB HS */
++                        regulator-min-microvolt = <2960000>;
++                        regulator-max-microvolt = <3300000>;
++                        regulator-allow-set-load;
++                        regulator-boot-on;
++                };
++
++                pm4125_l22: l22 {
++                        /* Wi-Fi VDD */
++                        regulator-min-microvolt = <3312000>;
++                        regulator-max-microvolt = <3312000>;
++                };
++        };
++};
++
++&sdhc_1 {
++        vmmc-supply = <&pm4125_l20>;
++        vqmmc-supply = <&pm4125_l14>;
++        pinctrl-0 = <&sdc1_state_on>;
++        pinctrl-1 = <&sdc1_state_off>;
++        pinctrl-names = "default", "sleep";
++        mmc-hs400-1_8v;
++        mmc-hs200-1_8v;
++        non-removable;
++        supports-cqe;
++        no-sdio;
++        no-sd;
++
++        status = "okay";
++};
++
++&tlmm {
++        spidev_cs: spidev-cs-state {
++                pins = "gpio17";
++                function = "gpio";
++                drive-strength = <16>;
++        };
++
++        jmisc_gpio18: jmisc-gpio18-state {
++                pins = "gpio18";
++                function = "gpio";
++                drive-strength = <2>;
++                bias-pull-down;
++        };
++
++        jmisc_gpio28: jmisc-gpio28-state {
++                pins = "gpio28";
++                function = "gpio";
++                drive-strength = <2>;
++                bias-pull-down;
++        };
++
++        key_vold_n: key-vold-n-state {
++                pins = "gpio36";
++                function = "gpio";
++                bias-pull-up;
++                output-disable;
++        };
++
++        key_volp_n: key-volp-n-state {
++                pins = "gpio96";
++                function = "gpio";
++                bias-pull-up;
++                output-disable;
++        };
++
++        jmisc_gpio98: jmisc-gpio98-state {
++                pins = "gpio98";
++                function = "gpio";
++                drive-strength = <2>;
++                bias-pull-down;
++        };
++
++        jmisc_gpio99: jmisc-gpio99-state {
++                pins = "gpio99";
++                function = "gpio";
++                drive-strength = <2>;
++                bias-pull-down;
++        };
++
++        jmisc_gpio100: jmisc-gpio100-state {
++                pins = "gpio100";
++                function = "gpio";
++                drive-strength = <2>;
++                bias-pull-down;
++        };
++
++        jmisc_gpio101: jmisc-gpio101-state {
++                pins = "gpio101";
++                function = "gpio";
++                drive-strength = <2>;
++                bias-pull-down;
++        };
++};
++
++&i2c0 {
++        clock-frequency = <100000>;
++
++        status = "okay";
++};
++
++&i2c1 {
++        clock-frequency = <100000>;
++
++        status = "okay";
++};
++
++&uart2 {
++        status = "okay";
++};
++
++/* UART connected to Bluetooth */
++&uart3 {
++        status = "okay";
++
++        bluetooth {
++                compatible = "qcom,wcn3988-bt";
++
++                vddio-supply = <&pm4125_l15>;
++                vddxo-supply = <&pm4125_l13>;
++                vddrf-supply = <&pm4125_l10>;
++                vddch0-supply = <&pm4125_l22>;
++                enable-gpios = <&tlmm 87 GPIO_ACTIVE_HIGH>;
++                max-speed = <3000000>;
++        };
++};
++
++/* UART connected to JCTL */
++&uart4 {
++        compatible = "qcom,geni-debug-uart";
++
++        status = "okay";
++};
++
++&spi5 {
++        status = "okay";
++
++        spidev@0 {
++                reg = <0>;
++                compatible = "arduino,mcu";
++                pinctrl-0 = <&spidev_cs>;
++                pinctrl-names = "default";
++        };
++};
++
++&usb {
++        status = "okay";
++};
++
++&usb_hsphy {
++        vdd-supply = <&pm4125_l12>;
++        vdda-pll-supply = <&pm4125_l13>;
++        vdda-phy-dpdm-supply = <&pm4125_l21>;
++
++        status = "okay";
++};
++
++&usb_qmpphy {
++        vdda-phy-supply = <&pm4125_l12>;
++        vdda-pll-supply = <&pm4125_l13>;
++
++        status = "okay";
++};
++
++&wifi {
++        vdd-0.8-cx-mx-supply = <&pm4125_l7>;
++        vdd-1.8-xo-supply = <&pm4125_l13>;
++        vdd-1.3-rfa-supply = <&pm4125_l10>;
++        vdd-3.3-ch0-supply = <&pm4125_l22>;
++        qcom,ath10k-calibration-variant = "Arduino_UnoQ";
++        firmware-name = "qcm2290";
++
++        status = "okay";
++};
++
++&xo_board {
++        clock-frequency = <38400000>;
++};
 -- 
 2.51.2
 
