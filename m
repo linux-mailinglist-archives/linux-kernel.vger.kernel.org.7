@@ -1,83 +1,89 @@
-Return-Path: <linux-kernel+bounces-888118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64707C39E0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:46:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580A5C39E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55001A40944
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B166421BBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2BF30DD06;
-	Thu,  6 Nov 2025 09:44:01 +0000 (UTC)
-Received: from mail.eskimo.com (mail.eskimo.com [66.114.134.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C01230CD9D;
+	Thu,  6 Nov 2025 09:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfkPEZgI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4290130C611
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.114.134.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A680030C61F;
+	Thu,  6 Nov 2025 09:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422240; cv=none; b=Yd0DwltQUHhscCWPUDM+s6iYnzTla/uYWJwajOgQhWPctGNg0KKRyamEzK/WdDUpRxV6qQG7EHIH8JZankLHlauEFX+Dob8Em+TRRUgct4hzj+WXDDLt8K5Ts9oWQfcw64cWtvHSgc4m6hJnoHoRzQ+uYEqbjrEP2y2lQbXMPew=
+	t=1762422252; cv=none; b=AtMl82bifZ4W7x2eggIUoAb5vrgfS3TTvK0Jsvqj7uZxtI7pdaFlWWY+474GTD0uD2ZWciFHI9N9PI276lLlwBXo2F9f63OP2PQ68s8iMoo4/4X4Vxp81W/VMt/qOTleXiR8uaNAZvAanOM+MlhCfTJbqG/WDWn7itqgwC+4vAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422240; c=relaxed/simple;
-	bh=WgmGG4azgf9SNTjggOZV3foJuIf6JXYTefpUY7MRUdY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XdaZcS1XnEMnlgoVIgni52as8B56xnWE2cIFhnVhoHoUXJ9269G84vEXu9Ve9gBQUwmCLk66jMlxOUaspd7c+USSmNpKgwkCElyhsWxdc3EQZ3i2cpcGz93ubxPTp2xQ0W1Kr1CaHZvTixJOXpsC3NF0yaMIfvQyHd18OfavqDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eskimo.com; spf=pass smtp.mailfrom=eskimo.com; arc=none smtp.client-ip=66.114.134.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eskimo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eskimo.com
-Received: from ubuntu.eskimo.com (ubuntu.eskimo.com [IPv6:2001:560:4407:1::106])
-	by mail.eskimo.com (Postfix) with ESMTPS id B94553C2AC3;
-	Thu,  6 Nov 2025 01:43:58 -0800 (PST)
-Date: Thu, 6 Nov 2025 01:43:58 -0800 (PST)
-From: Robert Dinse <nanook@eskimo.com>
-To: Michal Hocko <mhocko@suse.com>
-cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: Folio Related Stability Crashes in 6.17.5 and 6.17.6
-In-Reply-To: <aQxl1sXTvhIB753a@tiehlicka>
-Message-ID: <806cfd1f-df36-5d75-d318-3bc604479bcd@eskimo.com>
-References: <b964df0f-45e3-4fea-a84d-852869b49502@eskimo.com> <aQxX1HdOnVZJAERp@tiehlicka> <41d1cb48-7711-690e-c9a2-978e0f96f5d6@eskimo.com> <aQxl1sXTvhIB753a@tiehlicka>
+	s=arc-20240116; t=1762422252; c=relaxed/simple;
+	bh=diLhr3aX7Cr3ejy3u4Szb56argNLsib/ykfKtLUwPWw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=XmFEVbkqSchFquPtMh4XC4RYtEOtKb2VPSSfCj/5ENRLZ3Z5zXLlz7SJiXjopDnSksHJYuVclDMa8sOyKjUa49A7lxYA5gB+aew9gkboTQJWbOBcCwzjju0Xjt5NIqUjwFSRrfojpEadqRPo40Kr+L/G0AZAiNMrtis0FmkFGA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfkPEZgI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB15C4CEF7;
+	Thu,  6 Nov 2025 09:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762422251;
+	bh=diLhr3aX7Cr3ejy3u4Szb56argNLsib/ykfKtLUwPWw=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=qfkPEZgIe4YJsQkgci/RlAeP91q5VWAc2A3/FJOfsI3tR+uoAviSi+A2vxPxz/ekh
+	 x0pnG/DT0NtFKtEYKoh7BWeXa6Yh6kzEr32wr7jqzDN0SpOIMSMm1C8FIi2yMaS9A+
+	 BxLIC5pPjVG008ccr4+d9GaIul/3+Tmwcd3ER02E5m7ee1qmtpOBhU6YkNUtlMU9+A
+	 etm6UoyL1ImAev0FSJuhUjz7hz2ETp0jjHtuwIHE2JSmhu8WeatNzSUq24uI+VHUlP
+	 cXnZ+YCCzTrtSZOvJud5OYIRKNDWWWK0/onKiNMJVuMkj2Q9tRV5YRtsxLxhYvc/2w
+	 eCa+uSRtgQ1HA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Virus-Scanned: clamav-milter 1.4.3 at mail.eskimo.com
-X-Virus-Status: Clean
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Nov 2025 10:44:06 +0100
+Message-Id: <DE1IJMY33LSW.2X8N4PYXFITVB@kernel.org>
+Subject: Re: [PATCH 1/2] rust: dma: make use of start_ptr() and
+ start_ptr_mut()
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+To: <abdiel.janulgue@gmail.com>, <daniel.almeida@collabora.com>,
+ <robin.murphy@arm.com>, <a.hindborg@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251103190655.2326191-1-dakr@kernel.org>
+In-Reply-To: <20251103190655.2326191-1-dakr@kernel.org>
 
+On Mon Nov 3, 2025 at 8:06 PM CET, Danilo Krummrich wrote:
+> @@ -576,7 +580,7 @@ pub fn item_from_index(&self, offset: usize) -> Resul=
+t<*mut T> {
+>          // and we've just checked that the range and index is within bou=
+nds.
+>          // - `offset` can't overflow since it is smaller than `self.coun=
+t` and we've checked
+>          // that `self.count` won't overflow early in the constructor.
+> -        Ok(unsafe { self.cpu_addr.add(offset) })
+> +        Ok(unsafe { self.start_ptr().cast_mut().add(offset) })
 
-Ok, I will wait and see if this manifests in 6.17.7, if so I will install
-from the git tree to further follow-up.
+In this specific case start_ptr().cast_mut() is indeed a bit odd, I will us=
+e the
+following hunk instead and keep the raw access.
 
--_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
-  Eskimo North Linux Friendly Internet Access, Shell Accounts, and Hosting.
-    Knowledgeable human assistance, not telephone trees or script readers.
-  See our web site: http://www.eskimo.com/ (206) 812-0051 or (800) 246-6874.
-
-On Thu, 6 Nov 2025, Michal Hocko wrote:
-
-> Date: Thu, 6 Nov 2025 10:09:42 +0100
-> From: Michal Hocko <mhocko@suse.com>
-> To: Robert Dinse <nanook@eskimo.com>
-> Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-> Subject: Re: Folio Related Stability Crashes in 6.17.5 and 6.17.6
-> 
-> On Thu 06-11-25 00:24:36, Robert Dinse wrote:
->>
->>      I am installing 6.17.7 presently, I was a little resident to install
->> the current tree on a critical machine.  If need be I will.  Also, I do have
->> a crash dump on the last failure if that would be of any help.
->
-> Understood, I am not sure who is going to be willing to debug this on
-> top of stable tree if it is not clear whether this is a problem in
-> vanila tree as well.
->
-> -- 
-> Michal Hocko
-> SUSE Labs
->
+@@ -576,7 +580,7 @@ pub fn item_from_index(&self, offset: usize) -> Result<=
+*mut T> {
+         // and we've just checked that the range and index is within bound=
+s.
+         // - `offset` can't overflow since it is smaller than `self.count`=
+ and we've checked
+         // that `self.count` won't overflow early in the constructor.
+-        Ok(unsafe { self.cpu_addr.add(offset) })
++        Ok(unsafe { self.cpu_addr.get().add(offset) })
 
