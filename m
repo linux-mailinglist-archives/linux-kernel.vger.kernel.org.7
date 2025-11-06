@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-888062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FDEC39BDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:06:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95001C39C10
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:09:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F895189B684
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:06:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10E524FA56E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2AC30ACF4;
-	Thu,  6 Nov 2025 09:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D1630B532;
+	Thu,  6 Nov 2025 09:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z/7D3Ge/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vUuSQeML"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204AD309F09;
-	Thu,  6 Nov 2025 09:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22D730B502;
+	Thu,  6 Nov 2025 09:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762419960; cv=none; b=GgiXgoU218RWsgQoElrwYvHDMoUvyo4FcMGShzPqlhAPVdDteEuoMN35U+Wma1dS41RCFal/Hik3u/E1/Bh32RdJYcUdHif3R1Bu9x3jXBre6c31ioksk4z9TRYJ3XsuBA1fgrKubvp8r/y4IRi+iEx/8kCTTWeFDGBYq5g8ReM=
+	t=1762420116; cv=none; b=nwcKjV1+SmYrSPUaXIFbgWioFFgqRYn1Ga0XvrafKwHqldbS3euzXJ4w62TXxuLIzLCCYJcWjXefuR9pseNMIpf9GWIL7+L60ihMXslmAZwrywvkRpDpaFYyTDzZtQhfz7LrPoTinr2jedG+AIg7WKe7D5pQJv3lS1MTSIwRfIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762419960; c=relaxed/simple;
-	bh=eD0rL65tW8KTbO/83c/0IXmvaTMOrDt+ULFQsqK82B0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fAQZCJeVPk+HH89ybCT+pZ2aVZQiW0DBzSW5GQkYEqHzSUfKhmR+XkvzA8PVOpWc+IRC/9b8q6+iq73qY5ez4KlHLFQlx2GvNs8WJeZGtYRqPdkXQ4ZDWSH2NtM+tmEwH7V/ez35IFde88q2EbyCL1oKz01/L2uj6Q6fDow45NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z/7D3Ge/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762419957;
-	bh=eD0rL65tW8KTbO/83c/0IXmvaTMOrDt+ULFQsqK82B0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Z/7D3Ge/ggB5syz3wmbUdcRsuAECjEbwHTdaGWylKj2ZdK23tZU2DB6vIiqSZqcAQ
-	 UsjphWouQUYKqrAjPmMCywqjWQkxSINNBgXd1dafQ9Mr7eLhIwulM0AVQkXUl8ZCUf
-	 6wkTsaVhy+BqsG+RtQRIXsCwoVCfGCzk1l6CfwBdq807RfSsODFjYh9p6Yq15lJeov
-	 W2ZW1JmI9Hr22qzLb9Qc+KMAY9HWq3m1/BYg8VEv6AfhbiAOtLoa3dWgKWjCGh65Ew
-	 iHWJ77co8exGRwGYfLc7t1IUot4WHv+uhayC8uKMYBqlamMU5QKlPYd3P/zKVeVGi7
-	 Tu/rEkrz8OSCQ==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C2EB617E1396;
-	Thu,  6 Nov 2025 10:05:56 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Frank Wunderlich <linux@fw-web.de>
-Cc: Frank Wunderlich <frank-w@public-files.de>, 
- Sean Wang <sean.wang@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <20251105195007.199229-1-linux@fw-web.de>
-References: <20251105195007.199229-1-linux@fw-web.de>
-Subject: Re: (subset) [PATCH v2 0/5] Add Bananapi R4 Pro support
-Message-Id: <176241995673.33143.16010766516310474191.b4-ty@collabora.com>
-Date: Thu, 06 Nov 2025 10:05:56 +0100
+	s=arc-20240116; t=1762420116; c=relaxed/simple;
+	bh=iGpmSdSo2yJmtaqehnE/3eeou3gMSExG+9UWDLALvQQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uBNM6uKx+Kss4136Rpu2n5rieFLO+r0UkA+/7Qoj/sTvfD4PS5LtQZwpQAFxldq0YNyG8gSy+FRH9tAonmJNcapF1buUMm69lr1y8vMBLszQbC+O7AbycOYI+s4OGtHqPNh9d6CPx+YKGJVJAEpihTIDS2Dgur0kzHu6hBoUiik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vUuSQeML; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762420114; x=1793956114;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iGpmSdSo2yJmtaqehnE/3eeou3gMSExG+9UWDLALvQQ=;
+  b=vUuSQeMLhbBM4DMqaRN8PIcX2BQBnWEguVGXmg80lMJ5+/q82Lczu7ru
+   x+A3mO9bPtNo/Nnr2qASuVjEFLuJS2R+0bNQA6UtepOdw3q9mzFxR3QtD
+   LVScwyjJWaVvxfCLRLcFDBw3ADz7DB0s/6Njurt1ogAUgHRaC5Q5sGFRL
+   2squLG/FF1SL7lAcKlgjM8pGIBg/bXrpPOUrrW56YXGKIRMVBgHVokYn5
+   RPZQS9Lh7qmHrqVXpfjcjjqFtVBpOfFQ/vG8OHW6rAT3gFkGlrpr+jU4P
+   /SDyvKlisGct4Msa6EFUZ6VaSTB6XJeJvDRutyTGAwCt2YnLBG8vu73bB
+   A==;
+X-CSE-ConnectionGUID: CANT/SDnQx+xGnm7qABWrg==
+X-CSE-MsgGUID: nflLaY7aT0G9AuxRj3jTmw==
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="55143432"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 02:08:33 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Thu, 6 Nov 2025 02:08:15 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 6 Nov 2025 02:08:13 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <Divya.Koppera@microchip.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net] net: phy: micrel: lan8814 fix reset of the QSGMII interface
+Date: Thu, 6 Nov 2025 10:06:37 +0100
+Message-ID: <20251106090637.2030625-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 05 Nov 2025 20:50:00 +0100, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> BananaPi R4 Pro is a MT7988A based board which exists in 2 different
-> hardware versions:
-> 
-> - 4E: 4 GB RAM and using internal 2.5G Phy for WAN-Combo
-> - 8X: 8 GB RAM and 2x Aeonsemi AS21010P 10G phys
-> 
-> [...]
+The lan8814 is a quad-phy and it is using QSGMII towards the MAC.
+The problem is that everytime when one of the ports is configured then
+the PCS is reseted for all the PHYs. Meaning that the other ports can
+loose traffic until the link is establish again.
+To fix this, do the reset one time for the entire PHY package.
 
-Applied to v6.18-next/dts64, thanks!
+Fixes: ece19502834d ("net: phy: micrel: 1588 support for LAN8814 phy")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ drivers/net/phy/micrel.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-[2/5] arm64: dts: mediatek: mt7988: Disable 2.5G phy and enable at board layer
-      commit: 0e5d9e529383688deccce632c713692e53b31cf6
-[3/5] arm64: dts: mediatek: mt7988: Add devicetree for BananaPi R4 Pro
-      commit: f397471a6a8c2b621e1fd06430fc528ab3925422
-[4/5] arm64: dts: mediatek: mt7988a-bpi-r4-pro: Add PCIe overlays
-      commit: dec929e61a42ed5d6717d3ec2b6a7734c2ab825b
-[5/5] arm64: dts: mediatek: mt7988a-bpi-r4pro: Add mmc overlays
-      commit: a58c368067417f3d89b92ccc18fa0bb610b34349
-
-Cheers,
-Angelo
-
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 6a1a424e3b30f..01c87c9b77020 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -4380,12 +4380,6 @@ static int lan8814_config_init(struct phy_device *phydev)
+ {
+ 	struct kszphy_priv *lan8814 = phydev->priv;
+ 
+-	/* Reset the PHY */
+-	lanphy_modify_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
+-			       LAN8814_QSGMII_SOFT_RESET,
+-			       LAN8814_QSGMII_SOFT_RESET_BIT,
+-			       LAN8814_QSGMII_SOFT_RESET_BIT);
+-
+ 	/* Disable ANEG with QSGMII PCS Host side */
+ 	lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
+ 			       LAN8814_QSGMII_PCS1G_ANEG_CONFIG,
+@@ -4471,6 +4465,12 @@ static int lan8814_probe(struct phy_device *phydev)
+ 			      addr, sizeof(struct lan8814_shared_priv));
+ 
+ 	if (phy_package_init_once(phydev)) {
++		/* Reset the PHY */
++		lanphy_modify_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
++				       LAN8814_QSGMII_SOFT_RESET,
++				       LAN8814_QSGMII_SOFT_RESET_BIT,
++				       LAN8814_QSGMII_SOFT_RESET_BIT);
++
+ 		err = lan8814_release_coma_mode(phydev);
+ 		if (err)
+ 			return err;
+-- 
+2.34.1
 
 
