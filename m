@@ -1,109 +1,172 @@
-Return-Path: <linux-kernel+bounces-887602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCCAC38AF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:19:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B89C38B0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227701897956
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BCA3A804A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1FA1F09A5;
-	Thu,  6 Nov 2025 01:19:26 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C131321576E;
+	Thu,  6 Nov 2025 01:20:34 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15251E1E00;
-	Thu,  6 Nov 2025 01:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FACC1FFC48;
+	Thu,  6 Nov 2025 01:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762391966; cv=none; b=lohybUH367X6kiJXas6DkNXGG0qLVfXJTJ1uZUlbxmLTGF9EGyslI1OZozf0elcqR6GntFCvtTnxT7DTVtKQ097Rm18wy6UhOhabJSrQlhb8RQ9XCkHThwkVhkeZN946s11v0qcuYGJ9/AhxXFSUzBLJGp8mwBbi7YBqWuTKqBw=
+	t=1762392034; cv=none; b=sDz/Zg4TnGptDs5wnmnfVCIPve5o9i5+pl+K2Bjy7xaEhWWgcjITqC4rQVsT3obPuxDRIdGhR7TwojtV50xaSL9w9hBVe0SBzNf+9mDNa56v3Eztc273KHLsMEl6KBmvzXDd0e9lGd58qZFrnMYqLo5zADmug76ak/IdxUcAjyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762391966; c=relaxed/simple;
-	bh=nv//fYVhJ0H030NSSLSLbhR3bFrsnMwndEq1rEWpPpc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a1DZyZ6zzbRzQErhABaefoS/lQgh3WVk/h0J4BijilL/8vs8TrI4jHBkp5quHSuRtuecWwUL6pfGH5QQKwp4r5186Bnr0N/okTqerM1+0k7GaXjJ596MZB1f47k1HyzT9fsNguJiiArBTZahiRYgP0ooETGIwhy+o2XLZ+anrnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 9b2363e6baae11f0a38c85956e01ac42-20251106
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:b7872f64-fa0a-4f1b-8ef2-616aae83a5e4,IP:0,UR
-	L:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:a9d874c,CLOUDID:9388afa816217efbcd6081f1f197ec73,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|15|50,EDM:2,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 9b2363e6baae11f0a38c85956e01ac42-20251106
-X-User: luriwen@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <luriwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1600711679; Thu, 06 Nov 2025 09:19:13 +0800
-From: Riwen Lu <luriwen@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@kernel.org,
-	lenb@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riwen Lu <luriwen@kylinos.cn>,
-	xiongxin <xiongxin@kylinos.cn>
-Subject: [PATCH v2] PM: suspend: Make pm_test delay interruptible by wakeup events
-Date: Thu,  6 Nov 2025 09:19:09 +0800
-Message-Id: <20251106011909.2189279-1-luriwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762392034; c=relaxed/simple;
+	bh=1n2WjqKfbwvdH5KOodvEY+wR04CDw4VxYqgsx9+a/sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t7ecrYh1vzSBM4fqZttBvqt4wN3llYDVuUcrUSZ+Cn7XUQ6ju1cHw7uTBOmeWVuTGqyQahcD/sbNYuEAvKHFZmX6mIUKNU9fOyEaYlaQkvAUE+EHo5z+/zGTgUzvZTwzGF6cbvvFI69oXI2bLN14BxwY8UdJBn77ADkdxgduL7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d24BD5gnyzKHMPT;
+	Thu,  6 Nov 2025 09:20:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id C64E91A0CC3;
+	Thu,  6 Nov 2025 09:20:28 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgAHqEDb9wtp6fpnCw--.52284S2;
+	Thu, 06 Nov 2025 09:20:28 +0800 (CST)
+Message-ID: <7742487a-81e0-430f-8c4d-f1a761c2af98@huaweicloud.com>
+Date: Thu, 6 Nov 2025 09:20:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/31] cpuset: Convert boot_hk_cpus to use
+ HK_TYPE_DOMAIN_BOOT
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
+ <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
+ Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-mm@kvack.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org
+References: <20251105210348.35256-1-frederic@kernel.org>
+ <20251105210348.35256-7-frederic@kernel.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251105210348.35256-7-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAHqEDb9wtp6fpnCw--.52284S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WryDGF1kuFW3trWkJFWDArb_yoW8Kw45pr
+	47X3yUKa95JF1rG345J3WqvryFgws7Jr1DC3ZxGw1rXasrCF18ArW09asayFyFv34kur47
+	Zrn8CF4SgF4rArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	EksDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Modify the suspend_test() function to make the test delay can be
-interrupted by wakeup events.
 
-This improves the responsiveness of the system during suspend testing
-when wakeup events occur, allowing the suspend process to proceed
-without waiting for the full test delay to complete when wakeup events
-are detected.
 
-Additionally, using msleep() instead of mdelay() avoids potential soft
-lockup "CPU stuck" issues when long test delays are configured.
+On 2025/11/6 5:03, Frederic Weisbecker wrote:
+> boot_hk_cpus is an ad-hoc copy of HK_TYPE_DOMAIN_BOOT. Remove it and use
+> the official version.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Phil Auld <pauld@redhat.com>
+> ---
+>  kernel/cgroup/cpuset.c | 22 +++++++---------------
+>  1 file changed, 7 insertions(+), 15 deletions(-)
+> 
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 52468d2c178a..8595f1eadf23 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -81,12 +81,6 @@ static cpumask_var_t	subpartitions_cpus;
+>   */
+>  static cpumask_var_t	isolated_cpus;
+>  
+> -/*
+> - * Housekeeping (HK_TYPE_DOMAIN) CPUs at boot
+> - */
+> -static cpumask_var_t	boot_hk_cpus;
+> -static bool		have_boot_isolcpus;
+> -
+>  /* List of remote partition root children */
+>  static struct list_head remote_children;
+>  
+> @@ -1686,15 +1680,16 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+>   * @new_cpus: cpu mask
+>   * Return: true if there is conflict, false otherwise
+>   *
+> - * CPUs outside of boot_hk_cpus, if defined, can only be used in an
+> + * CPUs outside of HK_TYPE_DOMAIN_BOOT, if defined, can only be used in an
+>   * isolated partition.
+>   */
+>  static bool prstate_housekeeping_conflict(int prstate, struct cpumask *new_cpus)
+>  {
+> -	if (!have_boot_isolcpus)
+> +	if (!housekeeping_enabled(HK_TYPE_DOMAIN_BOOT))
+>  		return false;
+>  
+> -	if ((prstate != PRS_ISOLATED) && !cpumask_subset(new_cpus, boot_hk_cpus))
+> +	if ((prstate != PRS_ISOLATED) &&
+> +	    !cpumask_subset(new_cpus, housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT)))
+>  		return true;
+>  
+>  	return false;
+> @@ -3824,12 +3819,9 @@ int __init cpuset_init(void)
+>  
+>  	BUG_ON(!alloc_cpumask_var(&cpus_attach, GFP_KERNEL));
+>  
+> -	have_boot_isolcpus = housekeeping_enabled(HK_TYPE_DOMAIN);
+> -	if (have_boot_isolcpus) {
+> -		BUG_ON(!alloc_cpumask_var(&boot_hk_cpus, GFP_KERNEL));
+> -		cpumask_copy(boot_hk_cpus, housekeeping_cpumask(HK_TYPE_DOMAIN));
+> -		cpumask_andnot(isolated_cpus, cpu_possible_mask, boot_hk_cpus);
+> -	}
+> +	if (housekeeping_enabled(HK_TYPE_DOMAIN_BOOT))
+> +		cpumask_andnot(isolated_cpus, cpu_possible_mask,
+> +			       housekeeping_cpumask(HK_TYPE_DOMAIN_BOOT));
+>  
+>  	return 0;
+>  }
 
-Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
-Signed-off-by: xiongxin <xiongxin@kylinos.cn>
----
- kernel/power/suspend.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Reviewed-by: Chen Ridong <chenridong@huawei.com>
 
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 4bb4686c1c08..a8e80ba8ac2c 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -344,10 +344,14 @@ MODULE_PARM_DESC(pm_test_delay,
- static int suspend_test(int level)
- {
- #ifdef CONFIG_PM_DEBUG
-+	int i;
-+
- 	if (pm_test_level == level) {
- 		pr_info("suspend debug: Waiting for %d second(s).\n",
- 				pm_test_delay);
--		mdelay(pm_test_delay * 1000);
-+		for (i = 0; i < pm_test_delay && !pm_wakeup_pending(); i++)
-+			msleep(1000);
-+
- 		return 1;
- 	}
- #endif /* !CONFIG_PM_DEBUG */
 -- 
-2.25.1
+Best regards,
+Ridong
 
 
