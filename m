@@ -1,105 +1,113 @@
-Return-Path: <linux-kernel+bounces-887782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA99C39114
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 05:13:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27786C390FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 05:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 904954F9438
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 04:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3DAD18C3E16
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 04:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D382C21DC;
-	Thu,  6 Nov 2025 04:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DC72BE7A0;
+	Thu,  6 Nov 2025 04:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qxo/g6Bu"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kuviunJD"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832712C0F69;
-	Thu,  6 Nov 2025 04:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC792586E8
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 04:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762402268; cv=none; b=fmUWjpuOHgW8J8eUdmeaykupqXGfyQ0n4fYf9xgywgDLjuWKUJQTMgheGg9nW6X6BAKZgd32ESZrtJd6g/5oPwuk5tqH/79QHN7I9urpoJBa0l+3Mx8hyeQZbIUI5rRQpawsx3/p1qtNW/Q4pl0Otz8u72tWdTeFqfLh9H4YE9E=
+	t=1762402262; cv=none; b=WBNQzPfu89Okv7C4ZdTy/SKDNF0wIMk1SncXXiU65veFqvbb6xqAhNntZ2Enxoi1sNScbU7MDDN47/U8jHk8K33pt23qXvkAytoQIEbNBvJSgbs3X4qb5TwczyAP0NAPbUG0BTGiLUWRIgzHcVyJfL7KDt6apdSilSw/K8LmuXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762402268; c=relaxed/simple;
-	bh=1tg0dwOIAcFbLHuuiHBqItfTKbUC3lvuBKcP1Y8Wenw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ADBCgrJmye6/jSvGNam7qeLJHoDri2X+KrM7je4eK0PFyEPRpiPhFB5TiBZ5oUkMP63uPTZZ9guz2x21BWCGoM24fHeQZyQ3VLSlWpqJfZyoajIPNulps1ihrpqr4CR7qFehHYfuLfypUaHzFIejVxBRlfLpVpwv8Hsjo8I4wt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qxo/g6Bu; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762402264;
-	bh=dFhmOsuufQIFucHr2acBcL8uU3+hPmDNDhhDUdAw+vA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qxo/g6Bu/w3eeKHcWrDeWnxE3JOes6TvN5PVmF2JZJc7HQrKaeTS88ykb+Acjs8Af
-	 Pq0ZhF7abAUiiqEtkzjluwET+4o91ExdUX0M+pOr/RE99jccTZdj2LXXK/sdLa4d9X
-	 L4ivZkh3HtWSHdKRS3QR9mUqW6n+enQxdYxLo2pZOw609ZGHf9TkelhQ5K769qkqLg
-	 31BiCgcAMCARoko+X7XJdiA0H7xqiw0BRQFgqcLHoOBPuoVM5APSxzHSmSDeUNzGX9
-	 rja55QqVu8pu/we/gpy0Yi6ASa9DZz3yNCprAh1qxpuJCXZov+pp9sS5zopXpGh85x
-	 /MUNxBd9avK9Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d27zD2hnCz4wc4;
-	Thu, 06 Nov 2025 15:11:04 +1100 (AEDT)
-Date: Thu, 6 Nov 2025 15:11:03 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Lyude Paul <lyude@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the drm tree
-Message-ID: <20251106151103.2f1d5e00@canb.auug.org.au>
+	s=arc-20240116; t=1762402262; c=relaxed/simple;
+	bh=qAie94O2NF7ZXj9gzmrVJjDJa9+jsf8pfweonODnjwE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gOx732fXvObyUkMCmjPKNO4NWA6XTewcM7rwVCnIByMRhdL5IGTxVZBOwtydgN2Z4jQ8w/Ct5wSz9Q7Qvuk52MThJa1foYfgcE1fGTD0eS5mp4PwYRYEDdt2Ku6lSNyOpnCV5czx6p0gtNf94nK9Xy/9P1GY6dD/SxzVAwFeC/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kuviunJD; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 6D9EB7A0207;
+	Wed,  5 Nov 2025 23:10:57 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Wed, 05 Nov 2025 23:10:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762402257; x=1762488657; bh=LtvDTjPP3JwYvEGnmbYFBlPCbslew90zymx
+	8tUWNBRw=; b=kuviunJDLBHDtNDEuNo3DdJBAGE8fry6OdAruBHzhhQxvDftnUs
+	JmgBgy45u59QNd8EtWv0t9//xWPCLoRYaHybd5bTZZDDqnt5LFFVTz/a36VboSIC
+	cDkDsIh2d9MZbePek0NMAs7gSKwT7Qvz2lYhYgLdhR5naBWtMYszvpfEdCIGBJjs
+	NcFeq6VHo7ilIaNwtaItHLxg0vjSyCMjbZrVszNNfZLQHOrePc1ZnHMp3mFGXeLY
+	BHGhPg2S4rp7YN9HCMut11Hw/f6Kb+RGf/b8lo5gzA6O5Uy3wsP529i/8YzosiNl
+	qeiUAUKEO+1G/9sjwpijetmUCCQKj8DBKiw==
+X-ME-Sender: <xms:zx8MaXV-OSn5cc_7Fsa1FDjDreNO4ySGdDAYum6qCDqYYtkNjEvZjw>
+    <xme:zx8MabZgJfz8rqEXyQeJMTZxe0V8Ec6XZrnK743QEMgAtf_ToWJnhR20FZbOXyH4D
+    O_-lgvdM5zAFqc66cUX-fE7m__BoHLN2lCHKlLZCG9jZUi6Xsy0mw>
+X-ME-Received: <xmr:zx8Maezq5rRvi0UbVHoh1DLPYbqTjuMzyNri2Mp0nkWprK5bLX2K9cvM4Q3kgOEW41PMekdYDTUBETLXvMQa6PVG37vYe_lmWak>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehjeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghrohihse
+    gtshhgrhhouhhprdgvuhdprhgtphhtthhopehushgvrhhmheejseihrghhohhordgtohhm
+    pdhrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrghdprhgtphhtthhopehmph
+    gvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehnphhighhgihhnsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpth
+    htohepsggvnhhhsehkvghrnhgvlhdrtghrrghshhhinhhgrdhorhhgpdhrtghpthhtohep
+    lhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zx8Mab1LoOmyNFde_jppzQ_-jWPc30J27E-avqBmXxfr1FKEXd4EyA>
+    <xmx:zx8MafmjEnxJTghUfk5PQVn2LigmaITwZ3LVGaX2fc_qFk89nIlJUQ>
+    <xmx:zx8Maa9YzNVgqOJbY-s0JEyTX_txeF3XPcaGagmfItsi5jEKwnv8MA>
+    <xmx:zx8MaVIKnOwZ2W1TRJZwCgBPz34hsoqWuvyyLOuq5v458LC2aDtDuQ>
+    <xmx:0R8MaZ2nEL4yTA_jBJbD5KaAbjjJ-YeE1QNlYE-gj69bjPw2I8EcZ4Ie>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Nov 2025 23:10:52 -0500 (EST)
+Date: Thu, 6 Nov 2025 15:11:04 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, 
+    Stan Johnson <userm57@yahoo.com>
+cc: "Dr. David Alan Gilbert" <linux@treblig.org>, mpe@ellerman.id.au, 
+    npiggin@gmail.com, sam@ravnborg.org, benh@kernel.crashing.org, 
+    linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+    rdunlap@infradead.org, Cedar Maxwell <cedarmaxwell@mac.com>
+Subject: Re: [PATCH v4] powerpc: Use shared font data
+In-Reply-To: <3cc3d311-35b0-42f1-b20f-ed59391bb8e0@csgroup.eu>
+Message-ID: <ead4ef3f-9f8c-a98e-b48d-f052bc9492d0@linux-m68k.org>
+References: <20230825142754.1487900-1-linux@treblig.org> <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com> <aQeQYNANzlTqJZdR@gallifrey> <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org> <aQgJ95Y3pA-8GdbP@gallifrey>
+ <3cc3d311-35b0-42f1-b20f-ed59391bb8e0@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bbdBaA5aOyB_sDIilLsVTRs";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
 
---Sig_/bbdBaA5aOyB_sDIilLsVTRs
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, 5 Nov 2025, Christophe Leroy wrote:
 
-After merging the drm tree, today's linux-next build (htmldocs) produced
-these warnings:
+> 1/ Either build font_sun8x16.o with -fPIC
+> ...
+> 
+> 2/ Or add a PTRRELOC:
+> ...
 
-WARNING: drivers/gpu/drm/drm_gem_shmem_helper.c:104 function parameter 'shm=
-em' ot described in 'drm_gem_shmem_init'
-WARNING: drivers/gpu/drm/drm_gem_shmem_helper.c:104 function parameter 'siz=
-e' not described in 'drm_gem_shmem_init'
+Thanks for your help with this, Christophe.
 
-Introduced by commit
-
-  e3f4bdaf2c5b ("drm/gem/shmem: Extract drm_gem_shmem_init() from drm_gem_s=
-hmem_create()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bbdBaA5aOyB_sDIilLsVTRs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkMH9cACgkQAVBC80lX
-0GzmpQf9HjdhNRZjXpidtT2NggiuOAIxYfU3uPc4TDuMHocL605O232mp/STyuys
-uYMmeUYxG/D3mDVV1T0IGj+9K49Kr4yajUU4dI98ODQETHMCdUZyDFSUoObvWmt4
-3If6aEBeoIkC+W7Dsxve+5+Z4HatWVtXnpJzFZ/cdv8cGG9ll/Dmz2DZOMJjeMGA
-EX2z4zFWz6GQQ1yCk8JIH9x79SN8SCNpGUJcnl6BUHYCXCGz2vFE2GYbf0gwgh4U
-TfuJDRexsPyesh1AZGqlGzraHikvdKqgu628wKJb4EDkGNz1zXQNBcx3eMEU8lxd
-CQWnKsifXzOEFntXeGxK3PByXiC8lw==
-=TGZG
------END PGP SIGNATURE-----
-
---Sig_/bbdBaA5aOyB_sDIilLsVTRs--
+I fixed up the whitespace problems and forwarded those patches to Stan, 
+along with instructions for applying them. He tells me that patch 2 fixed 
+the hang. Patch 1 did not.
 
