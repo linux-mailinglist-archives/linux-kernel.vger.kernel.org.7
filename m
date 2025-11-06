@@ -1,92 +1,202 @@
-Return-Path: <linux-kernel+bounces-888966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2956FC3C659
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:27:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89C2C3C603
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B4154F92A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764191888D0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CFF358D16;
-	Thu,  6 Nov 2025 16:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C632634D4FC;
+	Thu,  6 Nov 2025 16:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeCEa+aD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWx40cys"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B9E358D04;
-	Thu,  6 Nov 2025 16:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CFE34B1B8
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445516; cv=none; b=nQzVVPi6zdyHEXWxyBr3EHgJHQiTnMa+Z4aAjFx2MI8vKWmRyh4dok9ZGzEIKqPBYVOZrM1+AOL8p/TtxARXp6QkLpTntAGGiZkTi4u44mjEqfTmdftPzHv3/NmZUNjy32hyYdXVOnRKUPlaumpsZfJwBUfPxe1PY8Mj9bnjx48=
+	t=1762445533; cv=none; b=F5WWCRzKIqPicM0R18MSE/5/JWqhE2sdTeAxHYZ+WS4cnjP6v92f+29k0fwC7PEaOVDQUn0VS9XqYMTIO57wdShezc/TwJY17nAS11MuH6cVH8ntNiaaUEGXTz2NRw99Wufh7ytKApY58STsgsQ5VTpkQRu62ZR8B2xOGGl/pp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445516; c=relaxed/simple;
-	bh=Wp6NdwsggFSpzb+dFMYQ9X2r0whMaKdMwlJTTWgTI0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnqWHWJLYSrL6V8p3vmuSdQ4g69X/xvPodWLJGrPV7lPeg60F66t8qDl9mytsXLgN+2DuSau7JtBoC457QM/Yvz6F2ucklDE3zL2CAbQkhHETfC939uDMd8tlLA+7mG1EUhTA2XtW6hr/p0YcXRYPmOL0mGnto6hv9Dg5mrXHP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeCEa+aD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D44C4CEF7;
-	Thu,  6 Nov 2025 16:11:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762445515;
-	bh=Wp6NdwsggFSpzb+dFMYQ9X2r0whMaKdMwlJTTWgTI0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OeCEa+aDlWQ5u1cQUfOXi+ERK0SJ33/+W5IPmwxfaVVar2Q74v178OcPqMXqVExMU
-	 IHd6DTxKFMKcitwkI917TFx3tvCTjrW/52zos5eyychIJfljT841HirV5O3ONbWL2a
-	 8V/UXUkDYvJG8KYOHNYbir7F1TILDu7/B7T/kyr8ZFzQxxjnqIqgbd0fnifQ2IMYDy
-	 zl4LDBFHt4ImPFKl0HUvtk/HAkRAmeigzyqxzVV6Vxxik/kmqxXcZGNZxusw5P+m5T
-	 AoVopRgLYb4OpkTxH3cQZRjinOKgbsdQp4X9cSv07CQP8CRx4SRYIZSiTq5W1Sl1uM
-	 2RbeXbAYy0OXQ==
-Date: Thu, 6 Nov 2025 16:11:49 +0000
-From: Lee Jones <lee@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com, lgirdwood@gmail.com,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com, wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: Re: [PATCH v11 0/9] Add support MT6316/6363/MT6373 PMICs regulators
- and MFD
-Message-ID: <20251106161149.GU8064@google.com>
-References: <20251027110527.21002-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1762445533; c=relaxed/simple;
+	bh=NbJj9rTQle2z19HgYJ5MWl9JI99ZIRhaunRQvc4H06g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I1dt+S9pAxON+7OobmdmMZVl0RPhidSPoow7llLEe2efHnNaGKoE8sEZpvWaJlPv47N3QxhdBGQyy5LzO7u2VHn1pKh6mTA2V7/xzNU3PSo+hS92M3lcuUIWvfJ4bZqqodJfXrew3VZGgkm1laV683VVTtLFDIrPik2jgySEo9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWx40cys; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso1958971a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:12:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762445529; x=1763050329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bnzUbhAGhtiikERLfxbbxGU6Jui5/OxYbpanoHjzJwo=;
+        b=dWx40cysVl/PjWtX74P7LT/3vf/rfUuvrRWPBVAmXtkW1uokUJwa7loA4aslq3h9gV
+         gr7y1qks8k92rMof38y5URthUboiM3eprQTDqC4mcwPe6VTtGm3v8R0mgvsdeHlMZrJL
+         M+8syqXoKTEKoBdWLBdjq3IGzjBfYiPb7TO1DSAve7hzJ0XTekgmtPwyw2XAblhFw83B
+         Xj18XuigY4GAp0Cdoej0yYIvsqXkDu0ZrwztbY6X+pMdm06btjlVffBcTLiC+XFf1y/B
+         nGUgrcny1dyWg3BEbNejiaQlxXQXuoWna2ORCYc0h3w7W6NSI0qShl5qO76ggQFdxdv2
+         QylQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762445529; x=1763050329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bnzUbhAGhtiikERLfxbbxGU6Jui5/OxYbpanoHjzJwo=;
+        b=aAjB+rpIBbzv7ncePRjOtsVpUj1n2IjiL4vqqcaAVRsID/q1PodhXPQTs291+SnLuT
+         YNljnAJpiFNQwRaMA+1OWLRn+eaMQW0TrysiuKhbhBfa/Z8zr/wg4CyU4ng+iODzcrln
+         epBaccGFcqWRP6NJMDZRImR1UGblFcE2/ee3qo7NtR35gkzOQISHzCH5DoIfKIu50nI0
+         Tpgm/4PQtDLKBTUaUh3CLYYEgXQdcgNx1AVlW3Q8IosixyKdgaqGcN6QoFQ9yMlk3d2Q
+         L/KtXhyHHok9b9xWO2VImcqaLLjGSoUYikAkydQ2nh9YgVDatY2BWi3qMkwVLLQLqqZ/
+         h9ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWff0fGWK8QmzgYVnUbtt0DYYcdwc8w8ARQSLFFI0lswJO+D5sqjaOSim2CvDcndrXyoYOIkPqR7ddP1ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEspUTHJa/FKTynNH7j56pr/mPyswFLAL9p91Gyu1YpVjQhnkG
+	V0o8H/hgzjEaKsCENG6QTm6sCNWASY5WfkQQNt4CWuNjQmFd3mS40EozeiaVp5oFMEpIWaiuvJA
+	NxtltI+8ms+gRl51v1NON4oguPVn+/XM=
+X-Gm-Gg: ASbGncvUE8Bc9cCCdaT9jLz4U5c1la0b85ouqiw4pPMEnVhVxVs1N/GDaLu82piacjD
+	xEEdzL54uSiR409XvSKZ4cdb5giMJtoAksjfCXIiF6MOxMo3qjGr/p2cotsAKLt7/s0Cf6OZGGX
+	9cLifajs4G2cfW1WIE9XC7XUXydqlfpPtjyc3N/UUQnjC/X4rpu+WwntP3xLRpWw8Cf0rKeXjpW
+	l7hqr3HmZbnypOTJxy92WrF5RBoJpmBM/2ib+4BNaIlhekYM961/IW0x7BYTzYSVZ9xmwmDnjS5
+	jGH5nuoYUwkf9VblM0wo4CAJiZDtEk/03K6D68NJ
+X-Google-Smtp-Source: AGHT+IFu4h93C4tc1A9QoKKyl4nvS7r/OLUFDtq4F1bju/fRPK7xWdltxiKdlUWE8bKunfVG/DxpCyiqg7Afj7IykpM=
+X-Received: by 2002:a05:6402:5251:b0:63c:18e:1dee with SMTP id
+ 4fb4d7f45d1cf-64105a48104mr7659373a12.24.1762445528567; Thu, 06 Nov 2025
+ 08:12:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251027110527.21002-1-angelogioacchino.delregno@collabora.com>
+References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+ <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+ <20250916025341.GO1587915@frogsfrogsfrogs> <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+ <87ldkm6n5o.fsf@wotan.olymp> <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+ <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com> <20251105224245.GP196362@frogsfrogsfrogs>
+ <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com> <CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
+ <20251106154940.GF196391@frogsfrogsfrogs>
+In-Reply-To: <20251106154940.GF196391@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 6 Nov 2025 17:11:56 +0100
+X-Gm-Features: AWmQ_bnkeq4DJh6pYcDoOyVTl77x98taKvxhHR6JnALCqm1GLalcfSIbGgqlyA0
+Message-ID: <CAOQ4uxhaDboSe0T1tb9ArVDFg9SEQCBmSH3YEGJv_fG0kJmu2Q@mail.gmail.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Bernd Schubert <bschubert@ddn.com>, Luis Henriques <luis@igalia.com>, 
+	Bernd Schubert <bernd@bsbernd.com>, "Theodore Ts'o" <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kevin Chen <kchen@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Oct 2025, AngeloGioacchino Del Regno wrote:
+On Thu, Nov 6, 2025 at 4:49=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
+wrote:
+>
+> On Thu, Nov 06, 2025 at 11:13:01AM +0100, Amir Goldstein wrote:
+> > [...]
+> >
+> > > >>> fuse_entry_out was extended once and fuse_reply_entry()
+> > > >>> sends the size of the struct.
+> > > >>
+> > > >> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
+> >
+> > Sorry, I meant to say that the reply size is variable.
+> > The size is obviously determined at init time.
+> >
+> > > >>
+> > > >>> However fuse_reply_create() sends it with fuse_open_out
+> > > >>> appended and fuse_add_direntry_plus() does not seem to write
+> > > >>> record size at all, so server and client will need to agree on th=
+e
+> > > >>> size of fuse_entry_out and this would need to be backward compat.
+> > > >>> If both server and client declare support for FUSE_LOOKUP_HANDLE
+> > > >>> it should be fine (?).
+> > > >>
+> > > >> If max_handle size becomes a value in fuse_init_out, server and
+> > > >> client would use it? I think appended fuse_open_out could just
+> > > >> follow the dynamic actual size of the handle - code that
+> > > >> serializes/deserializes the response has to look up the actual
+> > > >> handle size then. For example I wouldn't know what to put in
+> > > >> for any of the example/passthrough* file systems as handle size -
+> > > >> would need to be 128B, but the actual size will be typically
+> > > >> much smaller.
+> > > >
+> > > > name_to_handle_at ?
+> > > >
+> > > > I guess the problem here is that technically speaking filesystems c=
+ould
+> > > > have variable sized handles depending on the file.  Sometimes you e=
+ncode
+> > > > just the ino/gen of the child file, but other times you might know =
+the
+> > > > parent and put that in the handle too.
+> > >
+> > > Yeah, I don't think it would be reliable for *all* file systems to us=
+e
+> > > name_to_handle_at on startup on some example file/directory. At least
+> > > not without knowing all the details of the underlying passthrough fil=
+e
+> > > system.
+> > >
+> >
+> > Maybe it's not a world-wide general solution, but it is a practical one=
+.
+> >
+> > My fuse_passthrough library knows how to detect xfs and ext4 and
+> > knows about the size of their file handles.
+> > https://github.com/amir73il/libfuse/blob/fuse_passthrough/passthrough/f=
+use_passthrough.cpp#L645
+> >
+> > A server could optimize for max_handle_size if it knows it or use
+> > MAX_HANDLE_SZ if it doesn't.
+> >
+> > Keep in mind that for the sake of restarting fuse servers (title of thi=
+s thread)
+> > file handles do not need to be the actual filesystem file handles.
+> > Server can use its own pid as generation and then all inodes get
+> > auto invalidated on server restart.
+> >
+> > Not invalidating file handles on server restart, because the file handl=
+es
+> > are persistent file handles is an optimization.
+> >
+> > LOOKUP_HANDLE still needs to provide the inode+gen of the parent
+> > which LOOKUP currently does not.
+> >
+> > I did not understand why Darrick's suggestion of a flag that ino+gen
+> > suffice is any different then max_handle_size =3D 12 and using the
+> > standard FILEID_INO64_GEN in that case?
+>
+> Technically speaking, a 12-byte handle could contain anything.  Maybe
+> you have a u32 volumeid, inumber, and generation, whereas the flag that
+> I was mumbling about would specify the handle format as well.
+>
+> Speaking of which: should file handles be exporting volume ids for the
+> filesystem (btrfs) that supports it?
+>
 
-> Changes in v11:
->  - Removed unnecessary #address-cells in all mt6316 bindings
-> 
-> Changes in v10:
->  - Added "struct" prefix to structs kerneldoc
->  - Renamed struct mtk_spmi_pmic_pdata to mtk_spmi_pmic_variant
->  - Added "REG_" to MT6363/73 mfd register definitions to disambiguate
->  - Expanded MTK_SPMI_PMIC_IRQ_GROUP macro parameter names as suggested
->  - Some rewording of comments as suggested, addition of more comments
->  - Refactored IRQ domain handling due to deprecation of function
->    irq_domain_add_tree() to use the new irq_domain_create_tree()
->  - Fixed to use generic_handle_domain_irq_safe() to avoid races
->  - Added support for two interrupt cells in translation
->  - Removed .irq_lock() and .irq_unlock() in favor of lockdep classes
->  - Added support for handling PMICs without IRQ Group register for
->    upcoming MT6685 implementation
+file handles are opaque so the server can put whatever server wants in them
+it does not need to put the native fs file handles (in case of passthrough =
+fs
+or in case of iomap fs).
 
-The MFD part looks okay.
+Take struct ovl_fh for example, the format of file handles that overlayfs
+exports to NFS encapsulates the underlying fs uuid and file handle.
 
-Let me know when you have all the Acks and the set is ready to be merged.
+Note that when exporting such a fuse filesystem to NFS, it is still the
+responsibility of the exporter to specify an explicit fsid identifier in
+/etc/exports for this fuse server type/instance and then the file handles
+generated by this server are expected to be unique in the scope of this
+NFS export. Not sure how much of this is relevant for the use case
+of restarting a fuse server.
 
--- 
-Lee Jones [李琼斯]
+Thanks,
+Amir.
 
