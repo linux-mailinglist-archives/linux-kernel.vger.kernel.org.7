@@ -1,116 +1,177 @@
-Return-Path: <linux-kernel+bounces-889258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E59C3D15C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:37:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CA8C3D174
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEAF2188C88C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:37:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 331EB4E4834
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F03351FAC;
-	Thu,  6 Nov 2025 18:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A3F3321CA;
+	Thu,  6 Nov 2025 18:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rO3Eqy1A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01DE29B8D0;
-	Thu,  6 Nov 2025 18:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="M9tVNfMA"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB0B1F4CB3;
+	Thu,  6 Nov 2025 18:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762454213; cv=none; b=MgzqetbhKGFyQno4IXcWcuUTt0vnCxtzjnoyng7br/yiKkh1AIec+sZ/sOKLgywqxcwBt6jaaNT5POhz8HW+6Y0vxpVDfCOn2TvyKcuTn1OS/ma8pKX4GxMu9VnvffhHt8bS5mDNMw1vvY/mRAniUP3O6lMedkuoYCvsUuhnJ4Q=
+	t=1762454477; cv=none; b=F5l/hReB6T4LxqxonPJZYnG3pvlVxWs4+Vt+UwfexcU6+suXRBJPrgVZQHcokIiH2TQcamr0yLb8H2TaFmQKEYZwxQ3Kvt5cRTQ79HO/ugzhUHy84ZC2rTKU/DES5Xch+GVzjNXnpNpGWjdO0d3ipg9hWerafuRaj8iKBLCQD40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762454213; c=relaxed/simple;
-	bh=WZNwtxVV2uegNUg0XelyPK7YX+WuqMbWLKaUnuqlRTU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A421q0MT/dEQCufR5NcjyPZUOEZMsPNAsQTnsNGzCRH8yBLHu14Gnqy0PJG7GJOZUHwcfd4MBdDRZlsngWDdtkb2ZY1Pu/gDeYqboeYW0AAWtN9NMcrR15wL20E66Wx52EELMmXzjrTFBe1j/hFIDvH/YheZkRlzVgV2xBdQCzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rO3Eqy1A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4714FC4CEF7;
-	Thu,  6 Nov 2025 18:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762454213;
-	bh=WZNwtxVV2uegNUg0XelyPK7YX+WuqMbWLKaUnuqlRTU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rO3Eqy1A5ms4ZtKiqqFF/KKhlZiVemD/ehVK4HQrTdhA0IzDdc+cAYp88fW/XmBLB
-	 qp4PB5+MEOdUSp12T5bQ9tMiGbTJ6gp5IZI9NuTWF0Zy0dd7B6BaGmCXSI3a6jIbwd
-	 MsqSlwEVnS3uFqKEU1qkScx9kRyWwILAgpKKBePTiqd2SKU89MfPLlaN+d/Bt1pYqy
-	 M/ItazlaE/y7tEar6lx6WawE6Eimz9CfmE+9Bd0kTKG8zVhYyZxi2q2i6ZSlHxl8uF
-	 4qAPsRBP/5GZiRTVxABF05VhdqDFtMtP1n6Pnm9igpi06GEeAevhoMWtaQi0UCsC1V
-	 qsKWM/V5adPJg==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	mad skateman <madskateman@gmail.com>,
-	"R . T . Dickinson" <rtd2@xtra.co.nz>,
-	Darren Stevens <darren@stevens-zone.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Lukas Wunner <lukas@wunner.de>,
-	luigi burdo <intermediadc@hotmail.com>,
-	Al <al@datazap.net>,
-	Roland <rol7and@gmx.com>,
-	Hongxing Zhu <hongxing.zhu@nxp.com>,
-	hypexed@yahoo.com.au,
-	linuxppc-dev@lists.ozlabs.org,
-	debian-powerpc@lists.debian.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 2/2] PCI/ASPM: Avoid L0s and L1 on Freescale Root Ports
-Date: Thu,  6 Nov 2025 12:36:39 -0600
-Message-ID: <20251106183643.1963801-3-helgaas@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251106183643.1963801-1-helgaas@kernel.org>
-References: <20251106183643.1963801-1-helgaas@kernel.org>
+	s=arc-20240116; t=1762454477; c=relaxed/simple;
+	bh=vVjIbFYVbF2pWgE63/R68P30jbKSOTUnH4txaahZhCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LpthDa6qR88C4FkoDx2akdyLdus5XrpR9GjiuODXKacia1RXC8ukX1k1SiBDr3gyijyM5LKFAjZJ4QUct2hyF4VU/aKPeYVAgqn50nH6kHmUx7J8UFo3J+MouF4RjsiBR7Y9k7VIGu6zDH8Bwm5ry63W6N9aon/7Rvqe7M8dJ7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=M9tVNfMA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.65.119] (unknown [40.65.108.177])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2D747201DAC8;
+	Thu,  6 Nov 2025 10:41:05 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2D747201DAC8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762454465;
+	bh=GyH50YwfVxJTgWJHbgrAffxp5a5tzVQlYeMZ6mwnNNs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M9tVNfMAnmGgkIinKCTKC4nbzHFscXsK2hcpkjfbjaVzqe61d1UqBRu1CGeOHsGnB
+	 2WXCcVCOC09CFxcKETRG0Z1ac5RoXgSuFpSWSLReVdOjSLlIsLmZqT2CziZrcon10p
+	 byPRpwghSatGHJEK0n134R8eVAZKV4DUid/cldrA=
+Message-ID: <6a5f4ed5-63ae-4760-84c9-7290aaff8bd1@linux.microsoft.com>
+Date: Thu, 6 Nov 2025 10:40:50 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mshv: Allow mappings that overlap in uaddr
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "magnuskulke@linux.microsoft.com" <magnuskulke@linux.microsoft.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "longli@microsoft.com" <longli@microsoft.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+ "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+ "muislam@microsoft.com" <muislam@microsoft.com>
+References: <1762294728-21721-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB41575BE0406D3AB22E1D7DB5D4C2A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB41575BE0406D3AB22E1D7DB5D4C2A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On 11/6/2025 5:38 AM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Tuesday, November 4, 2025 2:19 PM
+>>
+>> Currently the MSHV driver rejects mappings that would overlap in
+>> userspace.
+>>
+>> Some VMMs require the same memory to be mapped to different parts of
+>> the guest's address space, and so working around this restriction is
+>> difficult.
+>>
+>> The hypervisor itself doesn't prohibit mappings that overlap in uaddr,
+>> (really in SPA: system physical addresses), so supporting this in the
+>> driver doesn't require any extra work, only the checks need to be
+>> removed.
+>>
+>> Since no userspace code up until has been able to overlap regions in
+>> userspace, relaxing this constraint can't break any existing code.
+>>
+>> Signed-off-by: Magnus Kulke <magnuskulke@linux.microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>>  drivers/hv/mshv_root_main.c | 19 +------------------
+>>  include/uapi/linux/mshv.h   |  2 +-
+>>  2 files changed, 2 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+>> index 814465a0912d..e5da5f2ab6f7 100644
+>> --- a/drivers/hv/mshv_root_main.c
+>> +++ b/drivers/hv/mshv_root_main.c
+>> @@ -1206,21 +1206,6 @@ mshv_partition_region_by_gfn(struct mshv_partition *partition, u64 gfn)
+>>  	return NULL;
+>>  }
+>>
+>> -static struct mshv_mem_region *
+>> -mshv_partition_region_by_uaddr(struct mshv_partition *partition, u64 uaddr)
+>> -{
+>> -	struct mshv_mem_region *region;
+>> -
+>> -	hlist_for_each_entry(region, &partition->pt_mem_regions, hnode) {
+>> -		if (uaddr >= region->start_uaddr &&
+>> -		    uaddr < region->start_uaddr +
+>> -			    (region->nr_pages << HV_HYP_PAGE_SHIFT))
+>> -			return region;
+>> -	}
+>> -
+>> -	return NULL;
+>> -}
+>> -
+>>  /*
+>>   * NB: caller checks and makes sure mem->size is page aligned
+>>   * Returns: 0 with regionpp updated on success, or -errno
+>> @@ -1235,9 +1220,7 @@ static int mshv_partition_create_region(struct mshv_partition *partition,
+>>
+>>  	/* Reject overlapping regions */
+>>  	if (mshv_partition_region_by_gfn(partition, mem->guest_pfn) ||
+>> -	    mshv_partition_region_by_gfn(partition, mem->guest_pfn + nr_pages - 1) ||
+>> -	    mshv_partition_region_by_uaddr(partition, mem->userspace_addr) ||
+>> -	    mshv_partition_region_by_uaddr(partition, mem->userspace_addr + mem->size - 1))
+>> +	    mshv_partition_region_by_gfn(partition, mem->guest_pfn + nr_pages - 1))
+>>  		return -EEXIST;
+> 
+> This existing code (and after this patch) checks for overlap by seeing if the
+> requested starting and ending GFNs are already in some existing region. But
+> is this really sufficient to detect overlap? Consider this example:
+> 
+> 1. Three regions exist covering these GFNs respectively:  100 thru 199,
+> 300 thru 399, and 500 thru 599.
+> 2. A request is made to create a new region for GFNs 250 thru 449.
+> 
+> This new request would pass the check, but would still overlap. Or is there
+> something that prevents this scenario?
+> 
 
-Christian reported that f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and
-ASPM states for devicetree platforms") broke booting on the A-EON X5000.
+The logic appears wrong to me. I will create a patch to fix it, and amend this
+patch to work with that new logic since it will look a little different. I'll
+post the fix + v2 of this patch as a series.
 
-Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
-Fixes: df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms"
-)
-Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/quirks.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thanks
+Nuno
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 214ed060ca1b..44e780718953 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2525,6 +2525,18 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
-  */
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
- 
-+/*
-+ * Remove ASPM L0s and L1 support from cached copy of Link Capabilities so
-+ * aspm.c won't try to enable them.
-+ */
-+static void quirk_disable_aspm_l0s_l1_cap(struct pci_dev *dev)
-+{
-+	dev->lnkcap &= ~PCI_EXP_LNKCAP_ASPM_L0S;
-+	dev->lnkcap &= ~PCI_EXP_LNKCAP_ASPM_L1;
-+	pci_info(dev, "ASPM: L0s L1 removed from Link Capabilities to work around device defect\n");
-+}
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x0451, quirk_disable_aspm_l0s_l1_cap);
-+
- /*
-  * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
-  * Link bit cleared after starting the link retrain process to allow this
--- 
-2.43.0
+>>
+>>  	region = vzalloc(sizeof(*region) + sizeof(struct page *) * nr_pages);
+>> diff --git a/include/uapi/linux/mshv.h b/include/uapi/linux/mshv.h
+>> index 9091946cba23..b10c8d1cb2ad 100644
+>> --- a/include/uapi/linux/mshv.h
+>> +++ b/include/uapi/linux/mshv.h
+>> @@ -123,7 +123,7 @@ enum {
+>>   * @rsvd: MBZ
+>>   *
+>>   * Map or unmap a region of userspace memory to Guest Physical Addresses (GPA).
+>> - * Mappings can't overlap in GPA space or userspace.
+>> + * Mappings can't overlap in GPA space.
+>>   * To unmap, these fields must match an existing mapping.
+>>   */
+>>  struct mshv_user_mem_region {
+>> --
+>> 2.34.1
+> 
+> I've given my Reviewed-by: narrowly for this patch, since it appears to be
+> correct for what it does. But if the approach for detecting overlap really
+> is faulty, an additional patch is needed that might supersede this one.
+> 
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
 
