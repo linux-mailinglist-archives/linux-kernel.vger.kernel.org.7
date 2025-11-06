@@ -1,213 +1,168 @@
-Return-Path: <linux-kernel+bounces-888242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9602FC3A498
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:34:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5941CC3A47A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:33:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1B005011C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D66DF188562F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97761302CC1;
-	Thu,  6 Nov 2025 10:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EEC28640B;
+	Thu,  6 Nov 2025 10:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sH4Y02Q9"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012065.outbound.protection.outlook.com [52.101.48.65])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S3vTlJ6F"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF9F29346F;
-	Thu,  6 Nov 2025 10:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762424989; cv=fail; b=sQ9PO/IRiHgiM6XJ2wiVWSkui8lfmOooE+EVPyWBsH6qRyMctnwWTlsWHBV8+9XyCOa7kSQIu7myVv5WRorUFVAXu5k//yPkT7jR4vbSzIxipNG4Beh2kGclKKGpTrbAsX3XB0+A1bzCrF3rNpTv45tJa9Yq1mECLvyTuHQa1Jw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762424989; c=relaxed/simple;
-	bh=UAlVehZO/BQ/Gxn53y1vcfvwyawrTeQ7k4WK965Triw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DHzwG+P3Ji8EE770yqeEPDS07acbzp2uBM3K+HZLKg9+6JDPbgwpxN3+0wjWRWEoEZ4BXYF8mJyu+iWOx77UWwYBYY5MCZddivHHhzX0JlZ8qVuck2Uf+wrjVaSp9bLCLVXltto27sE8vsYJDEv1BM50J0B1RFbv46Mxo1yDSh4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sH4Y02Q9; arc=fail smtp.client-ip=52.101.48.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SI5A23IGXAQzk6GDAGvUs9L1gHYOOH84PtoD1ZSWT9rh6WNn0hQC2Bg4R2PKLHuCbGD9uywoB/lFHLEnWkuvuKquAaLx77gMqYxAzRcONxtiEgy3V0gqUAfYHhr3HgU1evynrOpQXyMIyjcMCPvgcuJayAOLhcI1V5HWzOL9CcmgtIIzFN/p2KGnF5+MB1e6VcLiCUcKjCYNq5WFBLaAMAClnWKYSDSwvgDcZhvPNSJ3DJA2s9+CGPGIxZPxs1P368y8UztMqkP0/dokJ3Jhfc5R9ZmMoxM8X+Z4huGc+sD/fq5GxeNiBYpLyVo900fiege7mPIbKodluJcayyADQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ttAQUT9oaBSccgpLNPFsHih6Q/up1j5LBKjPOrlSrGU=;
- b=VfbIILAxF/fw21J1eAT45PEN2CzEVUFqcaCnltq4VOluuvZSyEdaQdph6HJVeU/QYxYsWElFEFJeBXzesgjaRIt1senNX1vJ9fYOyOeATec8tUrAUXNzaX+vW6Lz2pZRVVEM9Sq5HUhSo0O+rJnROKPAqlqlTO++8Al8zLf80ZM4eEz4QVmlliwO9MKjNoyBha1ppYurHwhzZ5DmR4Dz6hB+zK04HLve8QqkEjMO/ndEEp5bUB0YRu4HlHhACX6K5zScud056+ISPuuCm7xKo3B6nT/rN0VqY2hROQgoFgWF8ozVKSB8mrrHbOEa0MtqqF0zyvEsRR+LBcdG/fg/0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ttAQUT9oaBSccgpLNPFsHih6Q/up1j5LBKjPOrlSrGU=;
- b=sH4Y02Q9gLChj3Lrd2jkljpYqQEwC+RWxSYdviCS4Gobfwy4vdyh1MyDibULTWPm3FfzstAgEKMy28E5XddmfkzB75TceDS0VeUgzZ3xW4bIp3y3D+aCxbEov5JV8d3FM1Ri/XwfG3XwlWEswKrBA80NgQDLsLvZXKpDiXIo/utu8CZP8L02+/kg24MSlWp3ADRaIRbUhByLL8VacOUkgvNDBh6HfBUcZcsBG0T/kUAc7rKo8yOAjtdZ5ApuxLrC48GlPk+BlAZLeAPFqqL5wEFEf/nsUD8gihpT3CDMNE94OM8J8NrGrTeDG86740CBtChQUmz9/O+WrZm64eh64Q==
-Received: from BYAPR05CA0070.namprd05.prod.outlook.com (2603:10b6:a03:74::47)
- by IA1PR12MB7734.namprd12.prod.outlook.com (2603:10b6:208:422::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
- 2025 10:29:40 +0000
-Received: from SJ1PEPF00002322.namprd03.prod.outlook.com
- (2603:10b6:a03:74:cafe::3b) by BYAPR05CA0070.outlook.office365.com
- (2603:10b6:a03:74::47) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.5 via Frontend Transport; Thu, 6
- Nov 2025 10:29:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF00002322.mail.protection.outlook.com (10.167.242.84) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 10:29:40 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 02:29:29 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 02:29:29 -0800
-Received: from inno-vm-xubuntu (10.127.8.13) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Thu, 6 Nov
- 2025 02:29:19 -0800
-From: Zhi Wang <zhiw@nvidia.com>
-To: <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <dakr@kernel.org>, <aliceryhl@google.com>, <bhelgaas@google.com>,
-	<kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
-	<boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
-	<lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
-	<markus.probst@posteo.de>, <helgaas@kernel.org>, <cjia@nvidia.com>,
-	<smitra@nvidia.com>, <ankita@nvidia.com>, <aniketa@nvidia.com>,
-	<kwankhede@nvidia.com>, <targupta@nvidia.com>, <acourbot@nvidia.com>,
-	<joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <zhiwang@kernel.org>, "Zhi
- Wang" <zhiw@nvidia.com>
-Subject: [PATCH v5 7/7] sample: rust: pci: add tests for config space routines
-Date: Thu, 6 Nov 2025 12:27:53 +0200
-Message-ID: <20251106102753.2976-8-zhiw@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251106102753.2976-1-zhiw@nvidia.com>
-References: <20251106102753.2976-1-zhiw@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F5427146A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762424905; cv=none; b=KuRYlIPdxvvNPHkzkw29Jg6mCFKOOoTHfy+Jw8lLPZuh0XHSOn/p9Vmkv7rwLcP5AmpegYTaGzeuI4O2XkYX1sVPvmhaFEP3bqGieEOTNRHdTMS6ADEIA+zCJ/41NKpnSGzwUHdexeMG3cuuHffWcyesqVq2whvmjaxEHVa1n9U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762424905; c=relaxed/simple;
+	bh=AVZ5wby1RDzze4ng10kHKDCxhdHqulO0oxGWwRvnIyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XS4+yqLH+PgxELuVMRgopvPXiua39aIFsNxJOLJN7FZdU761yazEAXLoFB0fVMuhYnhDv8Dav6+x/YUJiWnmhH/Mb4XPuQvb1k431N82Ao69YSw3sBNGU2KUGFuZ99QYajetUF5qv9DHbdn1IRl8jZKIjCoD9pSxm+Mxg5Yhzzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S3vTlJ6F; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A5N8VxY007895;
+	Thu, 6 Nov 2025 10:28:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ks5H+V
+	3f1oICR1stDY6x9P0Y6IC/di+AhRqGqfNT63g=; b=S3vTlJ6FUqitBivLh7gBLi
+	HcavO/MZzW76NDJv9UCOfyfhO1RZicNpOYxICX4l9I4K74PK7H1uJhA39ZMZQpMS
+	EnJK7MBgs/haJ3H1flSae+mU/OL2Ul9vFqrADfubt2SvYyIMmS8dAijQviZUcx2V
+	B72GtysY8DVutJkKixAI685w2Iq0WGE++tZzALtaI/s6GG9+dt9riB/EOza8qVs0
+	KxtUDCHDb1hCv+SyrKKcXoTjPyi7ch9tIMRqT18MCIkAnFoviOnf4o2pYUhaP1Wl
+	Vh70Oqyop/gl0UDFSUx30JyXotGhFCieTCeXwz9BRpM/WmnvefDVMZvkqP3qjIjA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mrduap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 10:28:08 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A6AHTbi017098;
+	Thu, 6 Nov 2025 10:28:08 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mrduak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 10:28:08 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A67p3rY018659;
+	Thu, 6 Nov 2025 10:28:07 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5whnmws7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 10:28:07 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6AS6gJ19726888
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Nov 2025 10:28:06 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 58D9C58053;
+	Thu,  6 Nov 2025 10:28:06 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DF25C58043;
+	Thu,  6 Nov 2025 10:28:00 +0000 (GMT)
+Received: from [9.98.110.226] (unknown [9.98.110.226])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  6 Nov 2025 10:28:00 +0000 (GMT)
+Message-ID: <a3059d6c-9e3e-459d-aeb2-ec009c9ab06a@linux.ibm.com>
+Date: Thu, 6 Nov 2025 15:57:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002322:EE_|IA1PR12MB7734:EE_
-X-MS-Office365-Filtering-Correlation-Id: 484bdd1e-b9ec-462c-946f-08de1d1f64b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qtNgyf1s0jxWiWFe8Y/08wUIqvd2wakb5iHLgJa8ydL53IDSQHygDQh7s1TP?=
- =?us-ascii?Q?d2oUmE2ilWjGCqrqOfS0+NCJRXYuvYCw0FuN1oNckfeIjoSL47cGJwWx3dX1?=
- =?us-ascii?Q?L9HlLQmldG1OVVyIjJ522+a4CNDWtKV6ONoukSoXyTTDXOWQn+caGpyd2aOe?=
- =?us-ascii?Q?vOjaO99zQMnat36n2JM2l9hcuQH+gxLBhYM37VyDyhFi/yBZHmXgsiWdC8pO?=
- =?us-ascii?Q?fXMbXi7jHwG6Vn/9n50KcADw6SKKaqD8EC6nGqVCRugDZVrzy67yY6h/eKHh?=
- =?us-ascii?Q?lyaYbroImKFgj1w+grAi1KJoFXGYGm3GT7Ag6lOxJ65nYWID5jVOMSrIt0Qf?=
- =?us-ascii?Q?qS64CfcatXELDbWzyrW9DKZHoTxeHwtYOfiEPFHuC0QcNu0Edlr0KrxJ0Sw0?=
- =?us-ascii?Q?SenG1+FWxR5N+vf59KVn4UnHfH7WRuaDppfITc51HtGPd/ZQvoRHejz37vvl?=
- =?us-ascii?Q?eC+QHUh+RLWbUF0sW04DZpV6uDpyBaeOIfLGcTV50y71ZC7g1SqK2oAVRFJ3?=
- =?us-ascii?Q?1AP78F0raFTeXVlji+QsH6J/0pWj5eA224WqoDzW4JwuLBBmlt8ruSDIM5hm?=
- =?us-ascii?Q?2ZwsgDnAnOOZ3kOuJz0/9RUSj3hxifua/TtJz0SdnKYzJn10ij258BCM5Ldx?=
- =?us-ascii?Q?ECWOGzmP1j6ZOSku9DZZuY66FlDKC9a16AnclDN4lyOosd60LlW/iDROgiPx?=
- =?us-ascii?Q?d86jcH40iu6zMvmJ4NoZTHyeV3oNy/e9rUQTfD67xrjlyLqUqPhdiiUly1QR?=
- =?us-ascii?Q?XRPLHw4dDvDVAa6oj7jlcgAJpLu1lgkDidBeTzJlFH2naH4/gHMVogVGH1H1?=
- =?us-ascii?Q?38kfAwL8X9YuQn/oTjX8znvOs7Pe+ejPKgnlhznKBFDU6fpCEbRYOZnULG9I?=
- =?us-ascii?Q?BHDCjtvtg9W1jb7trAb/9U9WkeuPgfFL3pGIWURkxbWtZEnzzCKZLYPqkQP6?=
- =?us-ascii?Q?zunqZFhCAXyoo5FTbTsVtkswo0uFgqR8NhZ0sY3hmZgk0YwIgAYs9WJuD9gr?=
- =?us-ascii?Q?n7DjHuj7jfEiJ8DFJiEeTOPaLWPmh/bv7I2srxlb66JIs/5av3n0oqe8mn78?=
- =?us-ascii?Q?ZW7Y63OMA2cYLCnHfObOWTOXki7MuZx1M3VfKWBEtlxyJMAQ1QEqOdvteE1E?=
- =?us-ascii?Q?clqDA5di0vfPnHR5D3bI9dN0gGItTDc0Tak53ln1ZNBODflsdrWkKQ7Ck+5L?=
- =?us-ascii?Q?FHmb6bpbEtzVTO+bAfzoxyLCuOn2XE+RzT0Atti0hUmoT18yBxpFo+lwsL58?=
- =?us-ascii?Q?c6rQ06q69JPjHKkcsjl4GRqBBv2adJv1r0aJEU4oseKlsBVh7kmM4KNkpurp?=
- =?us-ascii?Q?YV15ZXneqbnU74ePOka5e6/bl0sZFNaKFLtL3f0wUJn1dvnFeM0eaj81bqdp?=
- =?us-ascii?Q?9YjvBF8Zsj+9A0v+BY1OalOWDCW9FdCQ8cjLrsgFiXac3sdrQ7NTwbksPVNG?=
- =?us-ascii?Q?Q5YGHYJId6WIKU1Lke07D8OtBJ0ZdRl/AqyVwrT2ikJsCF/XOexp7jbCYW2E?=
- =?us-ascii?Q?oaa/ErEoueVKzt1WQofitYuecNvK979FprxWUvxuUUa8ckyc1HDbnuWnPbg0?=
- =?us-ascii?Q?guA15hggGF9IkAgIqK8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 10:29:40.3758
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 484bdd1e-b9ec-462c-946f-08de1d1f64b7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002322.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7734
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: Optimize core cookie matching check
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: kprateek.nayak@amd.com, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, dwmw@amazon.co.uk,
+        jschoenh@amazon.de, liuyuxua@amazon.com,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20251105152538.470586-1-sieberf@amazon.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20251105152538.470586-1-sieberf@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: KNqQWK9pORY5ohE4HGUPOYTgw75yey4U
+X-Authority-Analysis: v=2.4 cv=MKhtWcZl c=1 sm=1 tr=0 ts=690c7838 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=vggBfdFIAAAA:8 a=VnNF1IyMAAAA:8 a=2esi0OvIpO2VS2o9Y34A:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: gbN0qlmO49m8W80iIadARpd2yRbj0jFs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwMSBTYWx0ZWRfXxTRrDRrrDLAg
+ yAUGMP2V/xiFfkSs71JuvSxKwMEMnHgk9cZdT6VS9RX67p/hTpcF6IVFbcDjDPvAT0ZzUoDn9Yu
+ XeVW4w9xzHj1eaixhI79R28zL4/ENXo1pEWr83GgdWOs+MMm6r4xHOx/dyaVsAnaITOvW6efKit
+ MW0HQBonXnypYlGyZIn4XRUTEMidTSgJ7HVeseRPVBaNoCou8SsCoN6n4FtJbopSnq9gDhYBwA3
+ 4tHNb4qUFcq/ujzXX2QCniBOb+01t4SAyPmJMm/OYnMPwns2oR50MIDCIPTPecX7u31VTu9GjHo
+ qz/VHcoLhxtGJAX6yAk6WLMjbk0mvSRoYFbg2lR7gVzqFyX5gs/oOeGPCrz7a6nSSOqk0q0rsiq
+ lcIYyKCrGU4oHbCpA5znBvn0e6q9FA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1011
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010001
 
-Add tests exercising the PCI configuration space helpers.
+Hi Fernand,
 
-Suggested-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Zhi Wang <zhiw@nvidia.com>
----
- samples/rust/rust_driver_pci.rs | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+On 05/11/25 20:55, Fernand Sieber wrote:
+> Early return true if the core cookie matches. This avoids the SMT mask
+> loop to check for an idle core, which might be more expensive on wide
+> platforms.
+> 
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+> ---
+>  kernel/sched/sched.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index adfb6e3409d7..381cd561e99b 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1432,6 +1432,9 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+>  	if (!sched_core_enabled(rq))
+>  		return true;
+>  
+> +	if (rq->core->core_cookie == p->core_cookie)
+> +		return true;
+> +
+>  	for_each_cpu(cpu, cpu_smt_mask(cpu_of(rq))) {
+>  		if (!available_idle_cpu(cpu)) {
+>  			idle_core = false;
+> @@ -1443,7 +1446,7 @@ static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
+>  	 * A CPU in an idle core is always the best choice for tasks with
+>  	 * cookies.
+>  	 */
+> -	return idle_core || rq->core->core_cookie == p->core_cookie;
+> +	return idle_core;
+>  }
 
-diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-index 74b93ca7c338..8f549b2100bc 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -67,6 +67,32 @@ fn testdev(index: &TestIndex, bar: &Bar0) -> Result<u32> {
- 
-         Ok(bar.read32(Regs::COUNT))
-     }
-+
-+    fn config_space(pdev: &pci::Device<Core>) -> Result {
-+        let config = pdev.config_space()?;
-+
-+        // TODO: use the register!() macro for defining PCI configuration space registers once it
-+        // has been move out of nova-core.
-+        dev_info!(
-+            pdev.as_ref(),
-+            "pci-testdev config space read8 rev ID: {:x}\n",
-+            config.read8(0x8)
-+        );
-+
-+        dev_info!(
-+            pdev.as_ref(),
-+            "pci-testdev config space read16 vendor ID: {:x}\n",
-+            config.read16(0)
-+        );
-+
-+        dev_info!(
-+            pdev.as_ref(),
-+            "pci-testdev config space read32 BAR 0: {:x}\n",
-+            config.read32(0x10)
-+        );
-+
-+        Ok(())
-+    }
- }
- 
- impl pci::Driver for SampleDriver {
-@@ -98,6 +124,7 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -> impl PinInit<Self, Er
-                         "pci-testdev data-match count: {}\n",
-                         Self::testdev(info, bar)?
-                     );
-+                    Self::config_space(pdev)?;
-                 },
-                 pdev: pdev.into(),
-             }))
--- 
-2.51.0
+LGTM.
+Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+
+Thanks,
+Madadi Vineeth Reddy
+
+>  
+>  static inline bool sched_group_cookie_match(struct rq *rq,
 
 
