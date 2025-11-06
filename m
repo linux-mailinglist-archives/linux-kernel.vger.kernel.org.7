@@ -1,523 +1,164 @@
-Return-Path: <linux-kernel+bounces-889494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB4BC3DC7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:17:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D68C3DC81
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:18:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9361887A0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:17:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C463318906F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0030F33CE8A;
-	Thu,  6 Nov 2025 23:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Kp6CJwEe"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012044.outbound.protection.outlook.com [52.101.66.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248B93559CD;
+	Thu,  6 Nov 2025 23:14:32 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5FE2F83B8;
-	Thu,  6 Nov 2025 23:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470805; cv=fail; b=F6ckG6NXwveBOSnrJNPW0vd5MHgaAnf1lkF8lb08hZcW4ma9Ig+9+OOCS5isrhH8NYY62kRW0oFRlsCkTbaDoP8y7eX095b0lAAKTtZfhAB/KUXVJUnyMf0/R1gH5lD0wBRfF+gWMK89mMaDSgz55/csO4plkOEuy7S3byqvU2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470805; c=relaxed/simple;
-	bh=dOpeZmj34mntP5jmD2WIiSVhNEo+iOmgxVb7nQNeQzU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dHKjCoUzMcVXXqJyA0Nr4mHk3+jIF+dGq68ltsvW+NNfckyNTOtDiGSXcC1SI/bAJjI0+AondYE3ccSDw1zfy1Ev21vbQKv7w0ekSqHJA5CN6xPlFRHweOnFRwMpIh3OA/Ena/dN60thXf+BdS/LkUavzi2+I0vWYeEYwRdmldw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Kp6CJwEe; arc=fail smtp.client-ip=52.101.66.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xpXRZOswDw7vOdRLNZ4lpF8tHrl0G78eLnB9cK8shOGyLaaE0WeFLQtHTm+Y3buYyaOIIXxw2HElgEAVPdgLTKSSuyoyEej+kzBX//KFLmUg3tQyE96cCaH1nlgk+muT1GLv+CMmYFnOp+Bu76e++qV82V362pNa2U2aI5u3eMUktc/1dvG3AKaHxYiObk8lFKnCWcnMWHvbtZe5/kwELFuouC9+UhnHt9SOrxAxhO4e2VVxB3xtnPrq80a9G1fIf1oe7/lyrzfbBP+Pe3e6YyEFnBKnRrwEA/m3NQMYJYuMAxmUbca2VRQRlhpNHmFGHNzO4zWhXaUBiY2OjdSDYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gGv7ev4drJ72lBCR35riOzYtlufZ1YMl6d8IdNaY3xo=;
- b=ovKLBizwAuoGbCiccOUL+SWwoBbviOBXCsnuPGUBip8dGiUP7A76BE+7FMgJ+Lvn3pyyWF8jz6C3nyWxq8U1deYgsY7Y0yq/ZSIhH8mQS/hRlXP1SBZRzES1YSMkkPEQ2zlM8PASj6p45NK1PXKB70SL2oI40fhPlkWCGvzhamrrgewTXfX8lbO4ZQlCoheNisBrvmcujkAeh2voVlVffecg6Wb6i4JwGlMhEYcrVXxedfayjyolleky488/qxvl9T0PaEvXhHJ8HZ4qEsyQMZqeaBTtRDNTMPHaod2WXX5Rmp4BLrVVRmmQ//B+18lH93K07abiHpcnt1uBVS65KQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gGv7ev4drJ72lBCR35riOzYtlufZ1YMl6d8IdNaY3xo=;
- b=Kp6CJwEeEsjSOLhcNW8ZCfj7y7yMZuIkyxAES+KOzgHDGiTPs/e9wu7x4k67jSkONdiL+2Fyd/CNpNwqE0G5+6mqQidUh5UVMskPYkirhOogJxJ0jKkauP9pKzAht7OysbJUBDRzz8iCk4C5wa3zxCL7ukEhiyGOCFLxhBkbOtELLIC33q9zzPClfCG9VFcJs/7+QpU4SJyOX9EKvNP0/LO7lqyoQU+hCpQD5F9vBYM6wJDSYyVDlKHGYda/3O3M8WjGsh3zNEz6Air20TxYO9X+21fGWZynKjW8wEfFw/OfHWSUvohJIyfmP5kOtIYKbQGpPncZ4AGDcetVPe2cqg==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by PAXPR04MB9075.eurprd04.prod.outlook.com (2603:10a6:102:229::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Thu, 6 Nov
- 2025 23:13:18 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%5]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
- 23:13:18 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Jonathan Corbet
-	<corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Thread-Topic: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Thread-Index: AQHcT3LvIbr9XJVbGkKDlKab1SwwZg==
-Date: Thu, 6 Nov 2025 23:13:18 +0000
-Message-ID:
- <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
- <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
- <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
-In-Reply-To: <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|PAXPR04MB9075:EE_
-x-ms-office365-filtering-correlation-id: e1a946f0-23dd-4c27-bcf7-08de1d8a123d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|19092799006|7416014|376014|366016|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?ERy4P4h+Pp0OKbY6XQVwPTa+nl08u38zXjRUa/+lMr/lzAjyanqnOsYffk/H?=
- =?us-ascii?Q?TpQf7W8E7MCFSCq7qXP2a0i/8HkmY0/asdQ44tzGskLBDztBqWM5MFYxIFaG?=
- =?us-ascii?Q?Arb1T+tkbe44CbOxG6sloLRqHhDbNz9mJcgRp/BX/xvzxHKhzd1Tbm9/L0ms?=
- =?us-ascii?Q?3ktv7J0zi6Xigc2f1Zo5OHO7zPdeIXXXWTCraEYXme1TSexIcWeKovR0XQHw?=
- =?us-ascii?Q?LfyDKcV+w0TCKgoxocsxKC7GJzfmlI0IQYiTiuNWQMB6Tb34KlWaI4Q0Ta0S?=
- =?us-ascii?Q?8UzEyXArfMCczP98hWM1XPT9d5VzxeBK8yRFKVWwKIUZpXmOSZn0vUk3lwJm?=
- =?us-ascii?Q?nAqEy0tl+vr+IBneiVBkzMKMHz1e5qsz4Le/lIkG9z5W9UlLCqRhulwqgkNW?=
- =?us-ascii?Q?aEVJdZRfRpZqkz25HFV1a4RK8p+8vdEWu7Nj5/FjkBTva92i9f32MnFlU/Jt?=
- =?us-ascii?Q?yaQaKn4HbVg+VnA2ggtnb1hDKTedmzy+yzEJ+PQ+shNl1lmkne+IAXvw0mTI?=
- =?us-ascii?Q?HelOhrDs+GKDWSRbOtXjCd5LXKoumPwy+oBahVNZhRLOukYAMOxSzmf6kWLB?=
- =?us-ascii?Q?9ytOobnitXBxP2a/8NQRCgCYsBoEz7SPodLOIcdB3ypNKw0mGus/ddbF7Gnk?=
- =?us-ascii?Q?Jf09R1lkpgayEbfIyTtqw12vCBnHgB+8ZXdyfklNIoZSTPyPn/MYNAe7uw+w?=
- =?us-ascii?Q?KK3x0ehrZFj/g/BGzlzoLqMRN40kepjFN9Ij6gP/fsPhEscr8QQyn8bEzlFs?=
- =?us-ascii?Q?LTa2lJOjLC18FdQNFeq3tbBtA58Mx+eTWMJjwb9g6EqTFfanricwIG5ZUyhw?=
- =?us-ascii?Q?K2QN0esS9SM6Xbhc861Fd5vk0vqNJEiD6sPcsAutivMPy0ePvV2OK9/DXGQ6?=
- =?us-ascii?Q?CX18IdER7dnIx7LbSFCeStxCBvEpcnv8q4k+AiwQmVwT43LkneMks8CsLbOU?=
- =?us-ascii?Q?+gMLno/Z3mYPC8Pz39ZAgAH41iXaJnL+radZq1H62+9USLNqJPgbfhkz3lFv?=
- =?us-ascii?Q?jWlFSnECaA62xyeXexYkFd9k11ZqRB+HBTSbmcCaot/yHi3Rt94XfLLD4JFj?=
- =?us-ascii?Q?uoNYVcC9H4CAmvLsdPtYnrMMKh9iM/4U15pkI3UEL2msK6IkI3vUYu/5e9fv?=
- =?us-ascii?Q?2MiaB8xujtCxXbkzYwgPLUkLeZhkgXaYmZg9M3Y4SdcUyNG3BJ7E3Oi4LECl?=
- =?us-ascii?Q?iKTLspFMtcrhTnlat68tgGl4CWKDAnPTxfwn9OtTg9x9SG3eDiIHpV04Ou1f?=
- =?us-ascii?Q?2Jq7p4Z8bIl9U5yGDCkql54szD0CIUgFASsq9RDXglX23fqVs90lK/lVjUqI?=
- =?us-ascii?Q?cnNcim+iuf69Klf20DYL1aWdnvr0NV5TvjWJ41ZpJNtRMUS574UdAlv4us/i?=
- =?us-ascii?Q?lItTE+4aeJgIu3cx0nT47YM9EIuPuikv/ZK+EAEBQn1EfWkJP0dHlEy5Lfzg?=
- =?us-ascii?Q?zkPuSBSGY+tQAXOLNe95UTz9Zc39reQSYbD5UsHlQTiqqOI0TCDZTkWFo8VO?=
- =?us-ascii?Q?39wo1MHBITCMftbsANB3RMfAbfMz9TO9S+pj?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Xxylu1YiLx38agiJ5ewA5AgA9/BY+7k3T3qK9CwUc0gQtRXfb/z+CbKp1MWY?=
- =?us-ascii?Q?4W6bRzPFZIcu7wgkLex+cYKhTbI2k0dON+OfLpcgWWVKqegbNeucSOE7x3j9?=
- =?us-ascii?Q?uZ2J6WHPbN2NIbUIGFfB0gD6XiovMj6dj//+GlngQPAPwZ0l6X+47HfANZ/i?=
- =?us-ascii?Q?twSaTjpBc+LAgYtEqpXcNxm91dAIVeuwHBK90y+y0yY43OfbuMvpnEtk2nbj?=
- =?us-ascii?Q?Nu7+bAyG/EaKMexwd64YWvVr37jKc0iPYogsD2fHs/0XvmbJu0yuruPTu9VX?=
- =?us-ascii?Q?Erx8mPbPUd/grYORnavZM07BjgRy5YZNg86jNMmDIJNz2jmvbXQDT84E99uJ?=
- =?us-ascii?Q?IPy+sm6+0mdWl0DMdY4n/1PtMJVbZ5sLoYue5UMtfMBX76FCZSFzJHGLvGLF?=
- =?us-ascii?Q?AnY0K31Eh8VGHUUbYNLxr/0HAslYUfSNcvpeUAwD2u9wrj8lmPjVVUXdk6Ro?=
- =?us-ascii?Q?hCSc/crcRSa/acTTXeu7K/Wfde2Bx2sxc81VVQXedxSEuPQxPk9cJEuRFI9m?=
- =?us-ascii?Q?dIV0OmJdcp1VxABh+KkA6Rdp2d3gtXKr5E82ONRk8HAX1y7raXZxlMA38Bn2?=
- =?us-ascii?Q?489KzH3/RJn38Ey8g3IHyOzGvL7305INnTtZ5mEu4eYJX4dxUcZV80wSMriJ?=
- =?us-ascii?Q?nrrCIhKSDuSzB2Dl6A2ImsWGrjeB0hf6rF2IVkntMyrKrlv59wuaXAmXscGF?=
- =?us-ascii?Q?LSN3njFO9sJY6+PkQWtG2DsvwO4D0/wSmX/WzA7chvyhTPYNYHhtYT/deJ4Q?=
- =?us-ascii?Q?35xzqjaZmniifDd0NbSbk6JGVP9UMVah5roFF8QxZw7m3IzMtUbOGt3lzs2E?=
- =?us-ascii?Q?cLdC3qOoMntCTfl2OFHgW43HNN7VYC7G907MBfmOAJ2ekUB9VONTmFNNp4HR?=
- =?us-ascii?Q?kQJ4f95QP76FKLWhpbypiYxg1rpmo5nJxZ8cbTLd9k7g6LdVa5rB4K81gq2q?=
- =?us-ascii?Q?IkJO+8uZayhfnG+MkgsMim/Y8RkEbqMdX113tV1deHMlp4pbz+IiRWmHZLAW?=
- =?us-ascii?Q?tbEeGEQx3iGJLbTLb91Jm8+1sY2gyrSTb79lVtwaUi6oo+eK4nJsLKYVqUAB?=
- =?us-ascii?Q?jiqtGl27yFHRKGCBJcGVDj5YsHSbU3sbs6FFItOoyk+4RnkzqmJ4vLNLC1rF?=
- =?us-ascii?Q?ArTbhQWxp6icxQMCYlRWYdIIHIt83vbah3OWLNDXOzKFIjF8rt7RaLfJjKcM?=
- =?us-ascii?Q?rcx4E+yo9xMNK8rNLOYS/gTOHNamuwju0VP57W6OH8UwHooWbc+V11m7IUW6?=
- =?us-ascii?Q?E1rQPtz9pNFflB2QXXVjkm44XB9HGQtApdQWbxAy8e5oeAi+1WXlr9q/pj9X?=
- =?us-ascii?Q?XNM/aK0c4qxg8wdb4eZZeHQpJOoL3BeerEjzlu8ze7VoSYl706PQSSZOAH2S?=
- =?us-ascii?Q?b+I/md1v38hWo2SoCCTjcg12EOTO55r8KSd619QVa3VhkzOjv87gJXYMNFGq?=
- =?us-ascii?Q?Z9o+xV19Aw7KmkbIcdSOHIEwOj2jHdIoQGPuvF1hCpilSDG93/x3LmqoR4n8?=
- =?us-ascii?Q?Y2dRZgfG8GddDWekNF/QMuDB1IhxtWVZrxJKGdpQCNBtHwXHKreavyXRS2c5?=
- =?us-ascii?Q?GLnQ9qXcz1es/Z1EpRk=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A8024C06A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762470871; cv=none; b=OeZOPOEidgcGNC92iF8txZIB+W4P8N5tRQcF3NA/s7nr58Mr5qxwVjylrGL1/qKujtxFrnS9RbXDnqJWvQzcpPFXtOX6ss3px4YHkijBwVJuACyTMIbjrDDwSCAZtuxMHHLmzNQR9FhPDDb8GpeicrW4r9NN0CJ+jhpoLARMrDg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762470871; c=relaxed/simple;
+	bh=KkuJTcka+8xp0DpDWc4kTontJXbDC9h/mzebBbfDgHM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G9QGfiOwG1VCOaW0pAR+UTus7iKcbIGCbamrTvEnoDmtqJezebrQgYxSOq6xcvdQ7WYOHOHINbKhYzu0sZr83MNoouabsfMNQpdKR+BbQvXiSdjf7/maQ2JmPhRYIoCUSq/j8PidkVSt4wZE0lN8b63zsFcq1KNzFZWzLdFMLtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-43333f50556so4948855ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:14:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762470869; x=1763075669;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fH2h5Xx2k3fHBHPqxx/rP0WBkMwA7jvWWW6DLmqDYEo=;
+        b=dOOsfJt211+fXLJQwwLb2uyjoevrGPc8Gzl/8W292Quvd1mzB9eUf1b2SPRRLuDZ4h
+         Gh+CHIzUuC1vEMQJPxdgKlAbzgPrh80oVXWMO0JgqU9GIDcVkNWkqFnh8vUApbpD7agf
+         r4M5tyZa8cBD7a0hJZ35KG9cjjiD0eBZgLSggukZaz8P98zwKxkiGx5oBnFiN75XnwDI
+         al6XfHy2FEQtGBEegjq3EvB3hyUvXpgSrUawO/W4QclhiJtsnPM8+lMs43icil3EM1jv
+         zoIK1z99oTGXcHdcGMEfhcp6q+xPpWSjqMxZ81hjt133a9BFGcOkcguOr3E8Q7O6bZBQ
+         Z24g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOLc5Koc377/d4i5gV9Azsp1KDxMk1urJDZWSXVjJMsGCsRMSA5Syj9dumwhWS+K+2f2KClUO3MS8pBCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMe8I6EV/c1R+xs7dbMQPv251FtnIAKYuqoixhte3Pu6MLbUvG
+	3GP0XQf/OmW62T8PwRWnWnMZd/O48KonKrnOCMPH4ibu2qouWvpmk4tenu2fN1idFGwN7sWsImg
+	hryerMtmfmIVy50cce/mPmAZ86MolrNL8Fi0F3HvwDqoOMa1TulxZCMMIwlI=
+X-Google-Smtp-Source: AGHT+IF8qjkQWCmR0Q7YUfopt65SrIHO8TnsfPNAO54omAeyphaXJ+kUNh5eIP+SMFGQAE3pdEs5c0FeNBeOKphyQzrSnDG+A80X
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1a946f0-23dd-4c27-bcf7-08de1d8a123d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2025 23:13:18.1708
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jdTDqvZOu3+ZEf7ycZI01ow2fce30ESNIVvoodo/eF5cuDjfRzZtaxHkAo1VaTt0dH3Xwb+e+fyH8LoqtbvBag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9075
+X-Received: by 2002:a05:6e02:349e:b0:433:4fc9:7b3d with SMTP id
+ e9e14a558f8ab-4335f45b01bmr17807845ab.22.1762470869154; Thu, 06 Nov 2025
+ 15:14:29 -0800 (PST)
+Date: Thu, 06 Nov 2025 15:14:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690d2bd5.a70a0220.22f260.000f.GAE@google.com>
+Subject: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
+From: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    c2c2ccfd4ba7 Merge tag 'net-6.18-rc5' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=151be114580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=5216036fc59c43d1ee02
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11062a58580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e19084580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/121c46acc3df/disk-c2c2ccfd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eb0aef8fb7a1/vmlinux-c2c2ccfd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a2bba0757aa5/bzImage-c2c2ccfd.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/03760a9baabf/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=12084532580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): start_clu is invalid cluster(0x400)
+------------[ cut here ]------------
+rtmutex deadlock detected
+WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
+WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
+WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
+Modules linked in:
+CPU: 0 UID: 0 PID: 6071 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
+RIP: 0010:__rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
+RIP: 0010:__rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
+Code: 7c 24 20 dd 4c 8b b4 24 98 00 00 00 0f 85 fd 0a 00 00 48 8b 7c 24 10 e8 4c 50 28 09 90 48 c7 c7 60 fd ea 8a e8 ef 62 e7 ff 90 <0f> 0b 90 90 48 8b 9c 24 80 00 00 00 43 80 3c 3e 00 74 08 4c 89 e7
+RSP: 0018:ffffc90003d87a20 EFLAGS: 00010246
+RAX: 5bae39e042a2bb00 RBX: ffff88802472e4e0 RCX: ffff88802472da00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003d87c10 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101710487b R12: ffff88802472f160
+R13: ffff88802472da18 R14: 1ffff110048e5e2c R15: dffffc0000000000
+FS:  00005555931b8500(0000) GS:ffff888126df9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffefdd79178 CR3: 000000003e14c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ rt_mutex_slowlock+0xb5/0x160 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ rwbase_write_lock+0x14f/0x750 kernel/locking/rwbase_rt.c:244
+ inode_lock include/linux/fs.h:980 [inline]
+ vfs_rmdir+0xf7/0x520 fs/namei.c:4537
+ do_rmdir+0x25f/0x550 fs/namei.c:4603
+ __do_sys_unlinkat fs/namei.c:4777 [inline]
+ __se_sys_unlinkat fs/namei.c:4771 [inline]
+ __x64_sys_unlinkat+0xc2/0xf0 fs/namei.c:4771
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f03a63ff6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd1d6ca228 EFLAGS: 00000246 ORIG_RAX: 0000000000000107
+RAX: ffffffffffffffda RBX: 00007f03a6655fa0 RCX: 00007f03a63ff6c9
+RDX: 0000000000000200 RSI: 0000200000000040 RDI: 0000000000000006
+RBP: 00007f03a6481f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f03a6655fa0 R14: 00007f03a6655fa0 R15: 0000000000000003
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Thursday, November 6, 2025 3:33 PM
-> To: Shenwei Wang <shenwei.wang@nxp.com>
-> Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
-> <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
-> Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
-> Jonathan Corbet <corbet@lwn.net>; Linus Walleij <linus.walleij@linaro.org=
->;
-> Bartosz Golaszewski <brgl@bgdev.pl>; Pengutronix Kernel Team
-> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
-> <peng.fan@nxp.com>; linux-remoteproc@vger.kernel.org;
-> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> Subject: [EXT] Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rp=
-msg bus
-> > > > +
-> > > > +- **Cate (Category field)**: Indicates the category of the
-> > > > +message, such as
-> > > GPIO, I2C, PMIC, AUDIO, etc.
-> > >
-> > > We know it is a GPIO message, this document is titled "GPIO RPMSG
-> > > Protocol". So i don't see the need for cate. I can however
-> > > understand that your device does support multiple functions, but to
-> > > make this generic, it would be better if each function had its own ch=
-annel.
-> > >
-> >
-> > These details are defined in the message header to support multiple
-> > functions. For the GPIO-specific implementation, the header values are
-> > fixed and do not require modification, provided the transport protocol =
-version
-> remains unchanged.
-> >
-> > Then I should remove those unrelated definitions from this document.
-> > Is my understanding correct?
->=20
-> I think we need to know more about your system. Why does cate exist?
-> Why are you mixing different functions onto one channel, rather than havi=
-ng a
-> channel per function?
->=20
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-At the protocol layer, there is no restriction of one function per channel =
-because the=20
-Cate field in the message header is designed to differentiate multiple func=
-tions within=20
-the same channel. This provides flexibility for implementations that need t=
-o support=20
-multiple functionalities over a single communication path.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-However, for a specific implementation, you may choose to enforce a one-fun=
-ction-per-channel=20
-approach by assigning a fixed value to the Cate field.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-> I think you should remove cate from the GPIO protocol.
->=20
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-The original proposal was to use a single transport message header to suppo=
-rt multiple functions.=20
-Removing the Cate field would require significant changes to the current re=
-mote firmware.=20
-Therefore, I recommend keeping this field.
-
-For implementations that do not need to support multiple functions, a fixed=
- value (e.g., 5) can be used=20
-for the Cate field. This approach can run smoothly with the existing system=
- and give the option for systems
-that doesn't want to support multiple functions.=20
-
-> > > > +  Defined categories:
-> > > > +
-> > > > +  - 1: RPMSG_LIFECYCLE
-> > > > +  - 2: RPMSG_PMIC
-> > > > +  - 3: RPMSG_AUDIO
-> > > > +  - 4: RPMSG_KEY
-> > > > +  - 5: RPMSG_GPIO
-> > > > +  - 6: RPMSG_RTC
-> > > > +  - 7: RPMSG_SENSOR
-> > > > +  - 8: RPMSG_AUTO
-> > > > +  - 9: RPMSG_CATEGORY
-> > > > +  - A: RPMSG_PWM
-> > > > +  - B: RPMSG_UART
-> > > > +
-> > > > +- **Major**: Major version number.
-> > > > +
-> > > > +- **Minor**: Minor version number.
-> > >
-> > > What is the purpose of Major and Minor? What values are valid. What
-> > > should happen if an invalid value is passed?
-> > >
-> > > What you should think about is, if you gave this specification to
-> > > somebody else, could they implement it?
-> > >
-> >
-> > Okay. Will change those fields to fixed number and remove the above
-> definitions.
->=20
-> What does not answer my question: What should happen if an invalid value =
-is
-> passed?
->=20
-
-That is an implementation detail of the remote firmware. If it chooses to s=
-upport a=20
-specific protocol version, it can return an error when the version is not s=
-upported.=20
-For example, the existing i.MX remote firmware returns a "not supported" er=
-ror in such cases.
-
-> You must have major:minor for a reason. You expect to change them. Then w=
-hat
-> happens? How should forward/backwards compatibility work? Must version 0:=
-0
-> always be implemented, were as 0:1 is optional?
-> How do you find out if 0:1 is implemented?
->=20
-
-The remote firmware decides how to respond to the protocol version. By defa=
-ult, it=20
-should return a "not supported" error for any unknown version.
-
-> > > > +- **Type (Message Type)**: For the GPIO category, can be one of:
-> > > > +
-> > > > +  - 0: GPIO_RPMSG_SETUP
-> > > > +  - 1: GPIO_RPMSG_REPLY
-> > > > +  - 2: GPIO_RPMSG_NOTIFY
-> > >
-> > > Is _SETUP always from Linux to the firmware? Is a setup always
-> > > followed by a _REPLY? Do you need to wait for the _REPLY before
-> > > sending the next _SETUP? If there is no _REPLY within X seconds,
-> > > should Linux retry? Can an _NOTIFY arrive between a _SETUP and a _REP=
-LY?
-> > >
-> >
-> > Yes, the SETUP message is always sent from Linux to the remote
-> > firmware. Each SETUP corresponds to a single REPLY message. The GPIO
-> > driver serializes messages and determines whether a REPLY is required.
-> > If a REPLY is expected but not received within the timeout period (curr=
-ently 1
-> second in the driver), the driver returns -ETIMEOUT.
->=20
-> You need to specify this in the protocol. Looking at the messages, i don'=
-t see why i
-> could not send off a batch of requests with different line values, and la=
-ter expect
-> a batch of replies with different line values. The linux driver can then =
-match the
-> replies to the request and know they are all answered. The current specif=
-ication
-> allows that.
->=20
-> You really need to forget about your implementation. Look at the specific=
-ation,
-> and think about all the different ways it can be implemented, and conform=
- to the
-> specification. If there is only one possible implementation, your specifi=
-cation is
-> good. If it can be implemented in multiple ways, you need to improve the
-> specification.
->=20
-> > A NOTIFY message can arrive between a SETUP and the REPLY, and the driv=
-er
-> is designed to handle this scenario.
->=20
-> Please state that.
->=20
-> >
-> > > > +
-> > > > +- **Cmd**: Command code, used for GPIO_RPMSG_SETUP messages.
-> > > > +
-> > > > +- **reserved[5]**: Reserved bytes.
-> > >
-> > > Why are these in the middle. It is more normal to have reserved bytes=
- at the
-> end.
-> > >
-> >
-> > The reserved[5] bytes may be used for other type of functions. For GPIO=
-, all
-> should be 0.
->=20
-> We don't care about other functions. This is all about GPIO.
->=20
-> > > You should also specify these bytes should be set to 0. If you don't
-> > > it will be hard to use them in the future, because they will contain
-> > > 42, or some other random values.
-> > >
-> > > Is there a relationship between major:minor and reserved?
-> > >
-> >
-> > No so far. Maybe it could be related if the protocol is updated in the =
-future.
->=20
-> That implies that you cannot look at major:minor and know if the reserved=
- bits
-> are reserved, or have some actual meaning?
->=20
-> Again, think about forward/backwards compatibility. How do you turn a res=
-erved
-> bit into a used bit? Is the specification sufficient to make that possibl=
-e.
->=20
-> > > > +GPIO_RPMSG_INPUT_INIT (Cmd=3D0)
-> > > > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > +
-> > > > +**Request:**
-> > > > +
-> > > > +.. code-block:: none
-> > > > +
-> > > > +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+--=
---+
-> > > > +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x=
-0D|
-> > > > +   | 5   | 1   | 0   | 0   | 0   |  0        |line |port | val | w=
-k |
-> > > > +
-> > > > + +-----+-----+-----+-----+-----+-----------+-----+-----+-----+---
-> > > > + -+
-> > > > +
-> > > > +- **val**: Interrupt trigger type.
-> > > > +
-> > > > +  - 0: Interrupt disabled
-> > > > +  - 1: Rising edge trigger
-> > > > +  - 2: Falling edge trigger
-> > > > +  - 3: Both edge trigger
-> > > > +  - 4: Low level trigger
-> > > > +  - 5: High level trigger
-> > > > +
-> > > > +- **wk**: Wakeup enable.
-> > > > +
-> > > > +  - 0: Disable wakeup from GPIO
-> > > > +  - 1: Enable wakeup from GPIO
-> > >
-> > > What do you mean by wakeup?
-> > >
-> >
-> > The gpio line can be enabled as an wakeup source for the system.
->=20
-> Keep going.....
->=20
-> Does that imply if none of the lines have wakeup enabled, the GPIO contro=
-ller can
-> be suspended when Linux suspends? How does the GPIO controller know it ca=
-n
-> suspend? There is no message for that. How does it know to come out of
-> suspension?
->=20
-
-The power state of the remote GPIO controller is entirely managed by the re=
-mote firmware.=20
-The remote firmware operates as an independent system from Linux, with its =
-own power states=20
-and policies for transitioning between modes. The wakeup field is solely in=
-tended to inform the=20
-remote firmware whether the GPIO line should be used as a wakeup source for=
- the Linux system.
-
-> > > > +Notification Message
-> > > > +--------------------
-> > > > +
-> > > > +Notifications are sent with **Type=3D2 (GPIO_RPMSG_NOTIFY)**:
-> > > > +
-> > > > +.. code-block:: none
-> > > > +
-> > > > +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+--=
---+
-> > > > +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x=
-0D|
-> > > > +   | 5   | 1   | 0   | 2   | 0   |  0        |line |port | 0   | 0=
-  |
-> > > > +
-> > > > + +-----+-----+-----+-----+-----+-----------+-----+-----+-----+---
-> > > > + -+
-> > > > +
-> > > > +- **line**: The GPIO line index.
-> > > > +- **port**: The GPIO controller index.
-> > >
-> > > There is no need to acknowledge the notification? How do level interr=
-upts
-> work?
-> > >
-> >
-> > Currently, there is no need to acknowledge the message, as the
-> > interrupt is managed entirely by the remote firmware. On the Linux
-> > side, a single notification message is received when an interrupt is tr=
-iggered.
->=20
-> At sounds broken.
->=20
-> A level interrupt is not cleared until the level changes. The typical flo=
-w is:
->=20
-> Interrupt fires.
->=20
-> Interrupt is masked
->=20
-> Interrupt handler is called, which reads/write registers in the device wh=
-o pin is
-> connected to the GPIO
->=20
-> Interrupt is unmasked
->=20
-
-The sequences you mentioned above are managed entirely by the remote firmwa=
-re. On the Linux=20
-side, it only receives a notification message when a GPIO line is triggered=
-, which then invokes the=20
-corresponding interrupt handler.
-
-Since the interrupt handling sequences are implemented in the remote firmwa=
-re, the Linux driver=20
-can treat level-triggered and edge-triggered types in the same manner.
-
-Thanks,
-Shenwei
-
->=20
->=20
-> At the unmask point, the interrupt will fire again, if the level is still=
- in the active
-> state. You need this because while reading/writing registers in the devic=
-e,
-> another event can happen, which needs handling. Generally, the interrupt =
-output
-> of a device is an OR of many different sources. You only release the inte=
-rrupt
-> when all sources have been cleared.
->=20
-> So for the protocol, you need to acknowledge the notification after the i=
-nterrupt
-> handler has executed. And that could cause another notification to be
-> immediately sent if the line is still active.
->=20
-> I'm not too sure how edge interrupts should work. If we are still busy in=
- an edge
-> interrupt handler, do we want to know about the next edge?
-> Should edge interrupts be disabled until the previous edge has been handl=
-ed? I'm
-> not too familiar with edge interrupts, most of the device i've handled ar=
-e level.
->=20
->         Andrew
+If you want to undo deduplication, reply with:
+#syz undup
 
