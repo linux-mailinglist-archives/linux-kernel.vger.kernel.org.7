@@ -1,129 +1,224 @@
-Return-Path: <linux-kernel+bounces-888323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10EBC3A802
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:17:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2276EC3A7A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AE8B503496
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:12:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9B197350367
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FE130CDBF;
-	Thu,  6 Nov 2025 11:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FE730CDB5;
+	Thu,  6 Nov 2025 11:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MeDLRnLO"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GgSHYy8f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tmwQdEI3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a+7J0YEo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DQpCF2KO"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15F930BF67
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45692EDD70
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427543; cv=none; b=Lwu1JMuwktusxYbrba9yWF/OCQFo3/WPN4eCkOCuFjVirLnjNZSZDpeRJgJaamyCbYBw1nd+IEHSCJQ0Ikawtciu8zLFJlOAfP8HKzLOaEBVymq9/FKYm7vgqWMLbZL3YFClbxlik1m6SDwApO8nssi4ertgc+IwspBEzHKNFR0=
+	t=1762427536; cv=none; b=fhpvlIEaCeo0GMarz/knlHVXRzllJkjzStrW/gVsyh9Xtj0l/vf9W4PXIAPSzSwSUvrNvOGrRlKSrHKqCruu2zj4EGeLO2HlJYWI38H4evgOi5ftbEVYG3552MRzLkfCpifMxBqa/8r56ECRvCelDzdkI0Y4WOyortVtU91vgv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427543; c=relaxed/simple;
-	bh=k39p6ctwzumtM930CezhirQ3llb81chzlkpbZXG+C1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ALVpsRbd7HvUhIjSlz4s3Mr5dmKeDdbkN0lkSkdLD8EthZmMqtS8+9kQ8CfZb95ysT9FhNCh7BNAQN9zgHnq1o4c/ev0TJ6NPP0hYP8UEn89nalzx4KGy/AzDodqchjIG++Ugx0gzTnj9YGC8o0WTDuYHt++9Hc3yC6tJCfoAiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MeDLRnLO; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b719ca8cb8dso174385266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:12:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762427540; x=1763032340; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2yrvTjvjO1pUk8F3CcXiYPOz5oOf/FwysOOSOBS5mvM=;
-        b=MeDLRnLOZKCKc364E71cyWH1QjArtOK7QVwNri34wdiwWhxx9WjH3MRp3m2vde1Qp4
-         fd08NF8dSBmmvCCX+TzfLktxLHqNpra7+FAc+W+o8wyJhYgo7vVdbLQTACZRrJ1l0pVb
-         qhmOBpqSCvdvEqjsPOvxrMiUHkDbC6ydbAvD5xKESvzu34QqJ+500RJYy42rZKoK2DV3
-         AIY3HYW12tdjF/ls1FXza8fqRL8riQvQiuQPXakEfC82LlFdcrWd/H6NJvzXm6Vga3xk
-         0C3aKUTNPoItMCBqJE1kvWi8BpUOu5lsK3niAGgU7uBZ5eSbDcS9z2v1nZNAt1aBcP+T
-         d7GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762427540; x=1763032340;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2yrvTjvjO1pUk8F3CcXiYPOz5oOf/FwysOOSOBS5mvM=;
-        b=Yns2ZMgDsCAay9mFIg62TWg80lXSrVf+tBGHAsYTQtVqX7/12cUNsUOAlf1Qkh72PS
-         UA46GtQXMUF0lndhahu3G15NxE36YZYhCQZTz7R1zVvEMGAWNk9P20zbvXgnpCfP3CKD
-         3bQC2U+v2tyKLSMqHpQe9phvseJVIds/wkFdgZmpiOqArWJgvEhxB/KsSr7r2tKZQ75N
-         oKK/HLJmB+x9+AX8yCWJMeRzfSRV4bzax69RB7+OuZQ7838O+hI6HAdLVeG/2FFiNN7j
-         qaocpcvuEjuQM9zW01B1Pd57/wzJUtB2WXIyQp8hkI+fhs/4repkoUNaDm8lHq/rZYT6
-         Sldg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTgx2ocjzI7o5HsQZMZLKB0+szrcpLCnf7x22CqRxRoJSUs2LtF6HgoMVJAduVpHRWO1SB2ckEefRi4EU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPUPTHy8CGeLQfCk1EE5nbmiOOV5RNhHsiSL4peIzl7OZTs8j/
-	mzQRTBUJmB2uTei0eFCrUM7lGo1SiELJI+j/Tbv/7RKqEIgmzs6VT9IyNFL2ynhoTjp/LdFsV7/
-	slrrCjI8cT6Op1fYRrUm+gEB7tPVh2mDBPE3XACX81g==
-X-Gm-Gg: ASbGnctO6foO8tNpAICki4/oiUHq/M1YA4eZdIe3h60qfDgge08nuotg1VXnq8BGdtJ
-	Io9ZsyP/SG7HSBB0T4T/fd8EjilRemtpaLmIFvXp1nYsYfYBe6ofW6biO8o84QvnxJ7LRDWnVwK
-	CSEjAR+Who1WewBao51XukKFunV1202oxNN7bacO2y/1J32jOxOEX7YIF751ubSbbjjpOAWCkpF
-	5aISzsxThPUHlISFO0mZEHOWpw7lbrIgRSC/4B2DLvF/AS2qHvXsZ97McYWAg==
-X-Google-Smtp-Source: AGHT+IHUgEAII+KCZtG9kG3bTwp715Xxrh6yTyMBInhVCP+K/K/WKOOQZr1KOXhWjo8wScgSJ9aNwT8ZjsYf4IzDF4A=
-X-Received: by 2002:a17:906:9fc4:b0:b47:de64:df1e with SMTP id
- a640c23a62f3a-b7265195d0cmr835459466b.4.1762427540227; Thu, 06 Nov 2025
- 03:12:20 -0800 (PST)
+	s=arc-20240116; t=1762427536; c=relaxed/simple;
+	bh=kV6+potprc4Ip5GuU+ks74nU8r8xhT8HDUy4mgdZU4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n7MxMy7CL0ilpngRjbmtWphc6sTAg8qEnaj5v8gmmJgWwxAf2pRVgzGVAlg6NC9pNqj0zGvLLnMc1VAf1HYL887xzEYYMGw5awczmTEhEcMVihRboof4Wiiyyl9g+F5kq1RKNVLeoEGoe/acPav6WI3sqnZlMGbQFnTq8xB35gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GgSHYy8f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tmwQdEI3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a+7J0YEo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DQpCF2KO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E63311F46E;
+	Thu,  6 Nov 2025 11:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762427531; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zf1GcIW4R42rh6x07bHB1E92bG+Oe+p3bJUAn89P8Mo=;
+	b=GgSHYy8fCTZeB5Ig84HPSlxMQ6YnIBLfup+s+eizrAXpD6Ctj0D9+5PLZgq5aMVXgEUFIJ
+	Vmua/paBJ9or8VBVJKn13RCy5yxIAlviSa8c2haoRQJJ2HJTIOTTObuaqwV9RFw1GoC7l1
+	ZAezACFgpoi3lS/GRLrffEQUVc0AyNY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762427531;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zf1GcIW4R42rh6x07bHB1E92bG+Oe+p3bJUAn89P8Mo=;
+	b=tmwQdEI3+PGo6Tvr6+g6K6DiLtjrUn86BpHjwhOeMNxuW/izXddxgXg/3hBLb1xuLeD+/R
+	Dz1weXlzm9JJK2Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762427530; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zf1GcIW4R42rh6x07bHB1E92bG+Oe+p3bJUAn89P8Mo=;
+	b=a+7J0YEo5O/6jwnJaCuRXHtqK00xsP6g7Ep+SCdIlGu/Rw2gamKLMDaPRna+BRYeFmXzgx
+	0E6XjhEH7hdNn9UU3d/Sdy7ebRxoGP5Yhgm6ZIhC/X4gC2WW3U80kGauKjTHMg2uVfHPQv
+	xcJzmB+Z1CkT5obTiFaY20r1usYXMPk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762427530;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zf1GcIW4R42rh6x07bHB1E92bG+Oe+p3bJUAn89P8Mo=;
+	b=DQpCF2KOF5LhwneUPnrs97iUc67JVE2y/W1bK6VIfWDw45R8CgELYw/6Cc6/+Tfzw9tHdb
+	A4kz4hd9I5cZnpAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C1CA9139A9;
+	Thu,  6 Nov 2025 11:12:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QKfwLoqCDGl5fQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 06 Nov 2025 11:12:10 +0000
+Message-ID: <30a9baa7-5368-4ef7-9091-80d170cfb5c6@suse.cz>
+Date: Thu, 6 Nov 2025 12:12:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
- <20251105154107.148187-2-ggo@tuxedocomputers.com> <20251106-lemon-kittiwake-of-freedom-dfcfdf@kuoka>
-In-Reply-To: <20251106-lemon-kittiwake-of-freedom-dfcfdf@kuoka>
-From: Ettore Chimenti <ettore.chimenti@linaro.org>
-Date: Thu, 6 Nov 2025 12:12:09 +0100
-X-Gm-Features: AWmQ_bk0LxY3qjnahgz6ixNPKz7DJgXQRgCibkCqf95T14Y4Ienoc9DL3NvbRxs
-Message-ID: <CACBDSOW=_dudXh_+rHSOpbShKewKSr+va5+1Ng0hJRyC2vp==Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: vendor-prefixes: Add ASL Xiamen Technology
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Georg Gottleuber <ggo@tuxedocomputers.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Srinivas Kandagatla <srini@kernel.org>, stefan.schmidt@linaro.org, stephan.gerhold@linaro.org, 
-	wse@tuxedocomputers.com, cs@tuxedo.de
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] mm: introduce VM_MAYBE_GUARD and make visible in
+ /proc/$pid/smaps
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Andrei Vagin <avagin@gmail.com>
+References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
+ <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	SUBJECT_HAS_CURRENCY(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lwn.net,redhat.com,oracle.com,kernel.org,google.com,suse.com,goodmis.org,efficios.com,suse.de,vger.kernel.org,kvack.org,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Thu, 6 Nov 2025 at 09:05, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Wed, Nov 05, 2025 at 04:41:01PM +0100, Georg Gottleuber wrote:
-> > From: Ettore Chimenti <ettore.chimenti@linaro.org>
-> >
-> > ASL Xiamen Technology Co. Ltd. is a Chinese high-speed interface and
-> > display system chip design company. Adding it to the vendor prefixes.
-> >
-> > Link: https://www.asl-tek.com/
-> >
-> > Signed-off-by: Ettore Chimenti <ettore.chimenti@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > index f1d1882009ba..278cb879781f 100644
-> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > @@ -176,6 +176,8 @@ patternProperties:
-> >      description: All Sensors Corporation
-> >    "^asix,.*":
-> >      description: ASIX Electronics Corporation
-> > +  "^asl,.*":
->
-> So the prefix is asl-tek, like its domain.
+On 11/6/25 11:46, Lorenzo Stoakes wrote:
+> Currently, if a user needs to determine if guard regions are present in a
+> range, they have to scan all VMAs (or have knowledge of which ones might
+> have guard regions).
+> 
+> Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
+> pagemap") and the related commit a516403787e0 ("fs/proc: extend the
+> PAGEMAP_SCAN ioctl to report guard regions"), users can use either
+> /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
+> operation at a virtual address level.
+> 
+> This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
+> that guard regions exist in ranges.
+> 
+> This patch remedies the situation by establishing a new VMA flag,
+> VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
+> uncertain because we cannot reasonably determine whether a
+> MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
+> additionally VMAs may change across merge/split).
+> 
+> We utilise 0x800 for this flag which makes it available to 32-bit
+> architectures also, a flag that was previously used by VM_DENYWRITE, which
+> was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
+> bee reused yet.
+> 
+> We also update the smaps logic and documentation to identify these VMAs.
+> 
+> Another major use of this functionality is that we can use it to identify
+> that we ought to copy page tables on fork.
+> 
+> We do not actually implement usage of this flag in mm/madvise.c yet as we
+> need to allow some VMA flags to be applied atomically under mmap/VMA read
+> lock in order to avoid the need to acquire a write lock for this purpose.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Ack. Fixing in v3.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-Best Regards,
-Ettore
-
->
-> Best regards,
-> Krzysztof
->
 
