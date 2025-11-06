@@ -1,190 +1,263 @@
-Return-Path: <linux-kernel+bounces-889455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129EEC3D9B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:30:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F205C3DA2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C111890E5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:31:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23B1F4E3662
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4B92FBDFA;
-	Thu,  6 Nov 2025 22:30:32 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECEC3019A6;
+	Thu,  6 Nov 2025 22:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKKLEWGJ"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC207199949
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2469E2E0934
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762468231; cv=none; b=e5tOrihQLSZL5tb//AdUpXc7sPLrFbsaTKjQlrtRgUG4tVwnZDfimdZq7atW/ZZZG0dTdyyno3opU63L4vVtWs3BU4u60o23kMHtBax2jJVrhF/KbTpyfRz8aF3ecxLKC7CCUvi7YyYSzXPCPA+8q5lQVY0rA4ZjFn2CkE0ERQs=
+	t=1762468746; cv=none; b=TC2bVf7sNvjb61nFzbx0pH6t1Pod5EwQrZ7bvuZwjBu2qypmaDJK7MWEn4YccHhaNMqQ1XDSv1yZmPBfI9IV9o1RH4fKBD6LaWvQ/ZDhBH+LXE78uBv/H5P/9OdjdHx0IHKMRQxxQwKrwgC9+75Fen/YPVlDOAdvy3UHhvJOSO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762468231; c=relaxed/simple;
-	bh=aoqPzFm7oDwFwoc7LASh6+cxqVFFNRpQUn4XqSIeZsw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=apxetZYrrJ/Y+O6yfRi2HYpCainG/FZ3ckt5T4cTFQckqoDbhfodpPseUXMfY61eU8SjKc+M9YS+vOOxq55Vtfplrn+fvTbym1uCoHPUM6qspSLfhajOPyzr9UBPLH31DtsHNVjx3z2e9qnPL+8XWQmftXRpFM81r+9ZCl/KqrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4332ad10c91so5211735ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:30:29 -0800 (PST)
+	s=arc-20240116; t=1762468746; c=relaxed/simple;
+	bh=dQTtWWtvyzc2H7Lp6EdqwIpKqIiuFeQg6mnqpqIuOWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DkMgyMnJvcDvelY2n5BPXi4Y/MPHhDPEbbWNoRLXVtJOB29wdgEK8LDMV0PcJNsHW+uWuDFR4S44S1aICVk6o2eP1tcrbBv+BIcFHWEfxTcqkq7rH+8yWZLx7GuhCsaS/Ev9Ihyviyh0UhdtGxUuQs0vqwHMlxkCAlUuhEa14kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKKLEWGJ; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4710683a644so827045e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:39:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762468742; x=1763073542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MvmO56TQZyZt1WfBUK+dQBCPcTJ2tahvqZ92g11w3Cw=;
+        b=fKKLEWGJ/7fMoXWTubL8X9pvGzmsg4nOFuCC4yeDShjbzkLxFUOfXXvMjHtS0c9UU+
+         MIZpY4fObsWq6nPzeHss4IAfKDKx1FXZsDijTQr2/os0Ct2Bo87h8xBcYOvyJUnNSQgk
+         mjvCNPftz6EtaVJbNqSsGA6icjaq9h2bJY0RW5401PgiJQ7PQuXobqQiz5eeaNkAX7Yt
+         2mqV2pLsqWqG23HuWT0xeAca8WmO/nXGjqn9hiSaZSMic/ZxsGbCRJ5djKwTdooHcMkB
+         jzi9DvjPz8xIIv09bNPOL7yuncRdlH/R7eHL40cM8MMAhanEjX6cqRvMTmO9P1HvtSEY
+         3KGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762468229; x=1763073029;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M9i4whal81/zcSAHBrOH8La+Wz6AFlPsYwQERm7FWms=;
-        b=Jlfz62SEcd6x37sYDVE8+Plxu68ZojBtMxMyJujOYh4Yxp2lTgf9WYyE6XtpOCTHaW
-         8veA34bQJ3ocJ+Kzw4C89H0gyif8hupYkjVX9Hrb4kTpL/02hV+4yxYuOIVg/2X9QW6L
-         8hdReDqGZVpvzaC4gpuNSGcQo9+i7o6rCo02OxHVrVVKCrl0RCQNznwMhQC6Pp4BBWw9
-         Fc1NSpO2eqEinQV4//UqsFlAumEvq65LYTrD9ZB4iJgfbXWrg5lHawV1nkF+B0F++pnX
-         aJiI3G+RWA78wP6snCjcrHa8W0ZG3XILQ5UenBe/3WywUq8Wv7xJMmbWdidkspuzn8LT
-         hAsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvkrf5jhE6odP+Td5bnye22PSpkmKTlKoD5amoAW14xs/EAkvo1fyP9HXffnzJiVEPN/jbSE82m/TVmZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+14qzyxKOiMa1WLdH4EeUbYjr7iN350S1oeLE+jot09xzlq/y
-	Jc+p9kt199ODjm4eeB6t3H5pV8jSNaahb7D73eyidF3h6d6BtrfD7dLa6gjJj0MNEWdtMv4W9MC
-	RTHJQWW73+mR9M728FMLY1xVUuZoaRT9fsnCl94kCD5SXwLyl8QnYYerPN2o=
-X-Google-Smtp-Source: AGHT+IH5uw/iIj2y/V+P1SCd4V3iW16EXYXodigyiDNJPk+hbLfxZatAWtBsRRM4fNFj+ssVTx5tKZKEMYQ2Fz3AzQBLKa1C0Bj2
+        d=1e100.net; s=20230601; t=1762468742; x=1763073542;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=MvmO56TQZyZt1WfBUK+dQBCPcTJ2tahvqZ92g11w3Cw=;
+        b=ZbHke+fw/hcp0HpEZn7kkxH6lzpcu+uqi5IjCsNmUUGJFliK8VGb8KRClG/ooHsgoW
+         X4b6/4jVzzQXC1xRix92F2mAXciAQm/J3UBRrMEj0Pg/MhBPwbd3Yuv3xM7u/rS74SGc
+         ek95QAwKCszJh2wD80yNMpIdl3ilkOFWELPFoqvVdQPSJPRDP5kVA+QnYVPCvUvrbZDi
+         0MexcOc6kzjgH2SNrz/eqasmWyiOEyFgEE0S5EbvaEM5mtGX+xZhrpO4g/G86VW84a8W
+         ZJk94DJwpRXtbMbEW9cY2LMiAZAxAu70KIBVbv4PBkI4DlO1bp8ZQ4cKK7M49TRKaoPs
+         I24g==
+X-Forwarded-Encrypted: i=1; AJvYcCWo2s7NG1Rjy+mFBIBP+hYCexBrPmoAS6cU3zbTq4EMmwo5ljJoXWCykozt5xtdc3jmMVnIfFElFTpuVqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJvT5UFzI96pAFEYFII5Lqk3AGxH6VPY89PPYv3UIpDSVXvJxq
+	eGOPHoR8jxZsjAnO3pxtszhCWq8cDWqsvC46asa+isGnSDXFyEgUcvYP
+X-Gm-Gg: ASbGncsL0zodH5FWsrWWIV02f/NPJfjta4aFUUz7u7Z65tl6oThEcmDUBJJldUoMPk/
+	zbalsOyaZnUT3Za+ncajzDElo5vcL8F+RF1kLaGS6nY+iVRcAnwva4v0MLE8Pmhh5ABjY8qzSY3
+	YJLeq/KKl2UnZxegJ4/QrkeRnA/4fH7JPKMqfGydicaNUGeJH5bAS8QAg6mT1AbKUl6uZkrXhzK
+	zuSJuxgesGXfPZaUcBJ6Vmhst1wqqRHFVHOGDF2S7xPxenu2akOe7Ocuo3uKI+6eNXHI4xwfpZA
+	ixxpXTM+bhni2zIgNjadjmHJB0pQPrQHm0NtOr1svQCf9i0eTU5qrlACD/9l9gaMyuAEB6MHbsF
+	2cfvhPGhQzbkpdg7dGH8jxORE1YgPf6CkpaBlttplUML8D86nIBDda78QOrrac3TCAgRFLM8yTP
+	cMUdreL5Mq1g/rfXUG/kR3HusqTFjGW4Ewn1kWC8u7EJQM1HuG8TzV
+X-Google-Smtp-Source: AGHT+IGp9VK1FmwODmkxmuo6qaCaABfSmuo0fPuPW2x4aPOG29B3ENDgha+amSzqAdhMgYqm+thjug==
+X-Received: by 2002:a05:600c:a319:b0:471:611:c1e2 with SMTP id 5b1f17b1804b1-47761ffd202mr39663995e9.3.1762468742262;
+        Thu, 06 Nov 2025 14:39:02 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe64fd90sm1530134f8f.21.2025.11.06.14.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 14:39:01 -0800 (PST)
+Date: Thu, 6 Nov 2025 22:39:00 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Chuck Lever <cel@kernel.org>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, David Laight <David.Laight@ACULAB.COM>, Linux
+ NFS Mailing List <linux-nfs@vger.kernel.org>, Linux List Kernel Mailing
+ <linux-kernel@vger.kernel.org>, speedcracker@hotmail.com
+Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
+ greater than high limit total_avail/scale_factor
+Message-ID: <20251106223900.3893d7d9@pumpkin>
+In-Reply-To: <8cf5dc85-dee8-4e83-8f83-6b3411dddbee@kernel.org>
+References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
+	<37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>
+	<20251106192210.1b6a3ca0@pumpkin>
+	<8cf5dc85-dee8-4e83-8f83-6b3411dddbee@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1546:b0:433:150:bacf with SMTP id
- e9e14a558f8ab-4335f5928c2mr16471755ab.26.1762468229031; Thu, 06 Nov 2025
- 14:30:29 -0800 (PST)
-Date: Thu, 06 Nov 2025 14:30:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690d2185.a70a0220.22f260.000e.GAE@google.com>
-Subject: [syzbot] [sctp?] BUG: corrupted list in sctp_destroy_sock
-From: syzbot <syzbot+ba535cb417f106327741@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
-	linux-sctp@vger.kernel.org, lucien.xin@gmail.com, marcelo.leitner@gmail.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 6 Nov 2025 14:32:34 -0500
+Chuck Lever <cel@kernel.org> wrote:
 
-syzbot found the following issue on:
+> On 11/6/25 2:22 PM, David Laight wrote:
+> > On Thu, 6 Nov 2025 09:33:28 -0500
+> > Chuck Lever <cel@kernel.org> wrote:
+> >   
+> >> FYI
+> >>
+> >> https://bugzilla.kernel.org/show_bug.cgi?id=220745  
+> > 
+> > Ugg - that code is horrid.
+> > It seems to have got deleted since, but it is:
+> > 
+> > 	u32 slotsize = slot_bytes(ca);
+> > 	u32 num = ca->maxreqs;
+> > 	unsigned long avail, total_avail;
+> > 	unsigned int scale_factor;
+> > 
+> > 	spin_lock(&nfsd_drc_lock);
+> > 	if (nfsd_drc_max_mem > nfsd_drc_mem_used)
+> > 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
+> > 	else
+> > 		/* We have handed out more space than we chose in
+> > 		 * set_max_drc() to allow.  That isn't really a
+> > 		 * problem as long as that doesn't make us think we
+> > 		 * have lots more due to integer overflow.
+> > 		 */
+> > 		total_avail = 0;
+> > 	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
+> > 	/*
+> > 	 * Never use more than a fraction of the remaining memory,
+> > 	 * unless it's the only way to give this client a slot.
+> > 	 * The chosen fraction is either 1/8 or 1/number of threads,
+> > 	 * whichever is smaller.  This ensures there are adequate
+> > 	 * slots to support multiple clients per thread.
+> > 	 * Give the client one slot even if that would require
+> > 	 * over-allocation--it is better than failure.
+> > 	 */
+> > 	scale_factor = max_t(unsigned int, 8, nn->nfsd_serv->sv_nrthreads);
+> > 
+> > 	avail = clamp_t(unsigned long, avail, slotsize,
+> > 			total_avail/scale_factor);
+> > 	num = min_t(int, num, avail / slotsize);
+> > 	num = max_t(int, num, 1);
+> > 
+> > Lets rework it a bit...
+> > 	if (nfsd_drc_max_mem > nfsd_drc_mem_used) {
+> > 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
+> > 		avail = min(NFSD_MAX_MEM_PER_SESSION, total_avail);
+> > 		avail = clamp(avail, n + sizeof(xxx), total_avail/8)
+> > 	} else {
+> > 		total_avail = 0;
+> > 		avail = 0;
+> > 		avail = clamp(0, n + sizeof(xxx), 0);
+> > 	}
+> > 
+> > Neither of those clamp() are sane at all - should be clamp(val, lo, hi)
+> > with 'lo <= hi' otherwise the result is dependant on the order of the
+> > comparisons.
+> > The compiler sees the second one and rightly bleats.
+> > I can't even guess what the code is actually trying to calculate!
+> > 
+> > Maybe looking at where the code came from, or the current version might help.  
+> 
+> The current upstream code is part of a new feature that is not
+> appropriate to backport to LTS kernels. I consider that code out of
+> play.
+> 
+> The compiler error showed up in 6.1.y with the recent minmax.h
+> changes -- there have been no reported problems in any of the LTS
+> kernels until now, including with 32-bit builds.
+> 
+> The usual guidelines about regressions suggest that the most recent
+> backports (ie, minmax.h) are the ones that should be removed or reworked
+> to address the compile breakage. I don't think we should address this by
+> writing special clean-ups to code that wasn't broken before the minmax.h
+> changes. Cleaning that code up is more likely to introduce bugs than
+> reverting the minmax.h changes.
 
-HEAD commit:    1a2352ad82b5 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1110fe7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=810aeb811fb1cca1
-dashboard link: https://syzkaller.appspot.com/bug?extid=ba535cb417f106327741
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ff9704580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11372bcd980000
+No, that code needs fixing. It is broken.....
+The compiler warning/error is completely valid.
+The result of that clamp() has never been well defined.
+It is likely that it always generated the wrong result.
+It might be that a much older version of the function exists
+before someone changed a pair of conditionals to be a call to clamp().
+That old version may well be fine.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1ba55bd42dcf/disk-1a2352ad.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/57da62b6c7d2/vmlinux-1a2352ad.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7d8bb5da864a/bzImage-1a2352ad.xz
+	David
 
-The issue was bisected to:
+> 
+> 
+> > It MIGHT be that the 'lo' of slotsize was an attempt to ensure that
+> > the following 'avail / slotsize' was as least one.
+> > Some software archaeology might show that the 'num = max(num, 1)' was added
+> > because the code above didn't work.
+> > In that case the clamp can be clamp(avail, 0, total_avail/scale_factor)
+> > which is just min(avail, total_avail/scale_factor).
+> > 
+> > The person who rewrote it between 6.1 and 6.18 might now more.
+> > 
+> > 	David
+> > 	  
+> >>
+> >>
+> >> -------- Forwarded Message --------
+> >> Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit
+> >> slotsize greater than high limit total_avail/scale_factor
+> >> Date: Thu, 06 Nov 2025 07:29:25 -0500
+> >> From: Jeff Layton <jlayton@kernel.org>
+> >> To: Mike-SPC via Bugspray Bot <bugbot@kernel.org>, cel@kernel.org,
+> >> neilb@ownmail.net, trondmy@kernel.org, linux-nfs@vger.kernel.org,
+> >> anna@kernel.org, neilb@brown.name
+> >>
+> >> On Thu, 2025-11-06 at 11:30 +0000, Mike-SPC via Bugspray Bot wrote:  
+> >>> Mike-SPC writes via Kernel.org Bugzilla:
+> >>>
+> >>> (In reply to Bugspray Bot from comment #5)    
+> >>>> Chuck Lever <cel@kernel.org> replies to comment #4:
+> >>>>
+> >>>> On 11/5/25 7:25 AM, Mike-SPC via Bugspray Bot wrote:    
+> >>>>> Mike-SPC writes via Kernel.org Bugzilla:
+> >>>>>     
+> >>>>>> Have you found a 6.1.y kernel for which the build doesn't fail?    
+> >>>>>
+> >>>>> Yes. Compiling Version 6.1.155 works without problems.
+> >>>>> Versions >= 6.1.156 aren't.    
+> >>>>
+> >>>> My analysis yesterday suggests that, because the nfs4state.c code hasn't
+> >>>> changed, it's probably something elsewhere that introduced this problem.
+> >>>> As we can't reproduce the issue, can you use "git bisect" between
+> >>>> v6.1.155 and v6.1.156 to find the culprit commit?
+> >>>>
+> >>>> (via https://msgid.link/ab235dbe-7949-4208-a21a-2cdd50347152@kernel.org)    
+> >>>
+> >>>
+> >>> Yes, your analysis is right (thanks for it).
+> >>> After some investigation, the issue appears to be caused by changes introduced in
+> >>> include/linux/minmax.h.
+> >>>
+> >>> I verified this by replacing minmax.h in 6.1.156 with the version from 6.1.155,
+> >>> and the kernel then compiles successfully.
+> >>>
+> >>> The relevant section in the 6.1.156 changelog (https://cdn.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.1.156) shows several modifications to minmax.h (notably around __clamp_once() and the use of
+> >>> BUILD_BUG_ON_MSG(statically_true(ulo > uhi), ...)), which seem to trigger a compile-time assertion when building NFSD.
+> >>>
+> >>> Replacing the updated header with the previous one resolves the issue, so this appears
+> >>> to be a regression introduced by the new clamp() logic.
+> >>>
+> >>> Could you please advise who is the right person or mailing list to report this issue to
+> >>> (minmax.h maintainers, kernel core, or stable tree)?
+> >>>     
+> >>
+> >> I'd let all 3 know, and I'd include the author of the patches that you
+> >> suspect are the problem. They'll probably want to revise the one that's
+> >> a problem.
+> >>
+> >> Cheers,  
+> >   
+> 
+> 
 
-commit 16942cf4d3e31b6246b7d000dd823f7b0b38bf8c
-Author: Kuniyuki Iwashima <kuniyu@google.com>
-Date:   Thu Oct 23 23:16:54 2025 +0000
-
-    sctp: Use sk_clone() in sctp_accept().
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1634e32f980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1534e32f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1134e32f980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ba535cb417f106327741@syzkaller.appspotmail.com
-Fixes: 16942cf4d3e3 ("sctp: Use sk_clone() in sctp_accept().")
-
- slab net_namespace start ffff88803347c900 pointer offset 4344 size 9088
-list_del corruption. prev->next should be ffff8880799e9148, but was ffff8880799e8808. (prev=ffff88803347d9f8)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:64!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6008 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__list_del_entry_valid_or_report+0x15a/0x190 lib/list_debug.c:62
-Code: e8 7b 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 7c ee 92 fd 49 8b 17 48 c7 c7 80 0a bf 8b 48 89 de 4c 89 f9 e8 07 c6 94 fc 90 <0f> 0b 4c 89 f7 e8 4c 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 4d
-RSP: 0018:ffffc90003067ad8 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff8880799e9148 RCX: b056988859ee6e00
-RDX: 0000000000000000 RSI: 0000000000000202 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffc90003067807 R09: 1ffff9200060cf00
-R10: dffffc0000000000 R11: fffff5200060cf01 R12: 1ffff1100668fb3f
-R13: dffffc0000000000 R14: ffff88803347d9f8 R15: ffff88803347d9f8
-FS:  00005555823e5500(0000) GS:ffff88812613e000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000480 CR3: 00000000741ce000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __list_del_entry_valid include/linux/list.h:132 [inline]
- __list_del_entry include/linux/list.h:223 [inline]
- list_del include/linux/list.h:237 [inline]
- sctp_destroy_sock+0xb4/0x370 net/sctp/socket.c:5163
- sk_common_release+0x75/0x310 net/core/sock.c:3961
- sctp_close+0x77e/0x900 net/sctp/socket.c:1550
- inet_release+0x144/0x190 net/ipv4/af_inet.c:437
- __sock_release net/socket.c:662 [inline]
- sock_close+0xc3/0x240 net/socket.c:1455
- __fput+0x44c/0xa70 fs/file_table.c:468
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3890b8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd5dc3b8a8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 0000000000015724 RCX: 00007f3890b8efc9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000001 R09: 000000055dc3bb9f
-R10: 0000001b2ec20000 R11: 0000000000000246 R12: 00007f3890de5fac
-R13: 00007f3890de5fa0 R14: ffffffffffffffff R15: 0000000000000003
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x15a/0x190 lib/list_debug.c:62
-Code: e8 7b 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 7c ee 92 fd 49 8b 17 48 c7 c7 80 0a bf 8b 48 89 de 4c 89 f9 e8 07 c6 94 fc 90 <0f> 0b 4c 89 f7 e8 4c 26 71 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 4d
-RSP: 0018:ffffc90003067ad8 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff8880799e9148 RCX: b056988859ee6e00
-RDX: 0000000000000000 RSI: 0000000000000202 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffc90003067807 R09: 1ffff9200060cf00
-R10: dffffc0000000000 R11: fffff5200060cf01 R12: 1ffff1100668fb3f
-R13: dffffc0000000000 R14: ffff88803347d9f8 R15: ffff88803347d9f8
-FS:  00005555823e5500(0000) GS:ffff88812613e000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000480 CR3: 00000000741ce000 CR4: 00000000003526f0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
