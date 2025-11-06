@@ -1,79 +1,63 @@
-Return-Path: <linux-kernel+bounces-888849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC11C3C0EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:32:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262A4C3C106
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5481AA550B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 004511AA78A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B527627FB2B;
-	Thu,  6 Nov 2025 15:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5AC21B9F6;
+	Thu,  6 Nov 2025 15:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VAUigxDO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="bBH1bLQE"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EF2274B46;
-	Thu,  6 Nov 2025 15:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF7428C00C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762442974; cv=none; b=HtPas3g/N2waq4Slp8LKYmU0GyP+EoZIYfpScSofBakYz6AGbzKBfSFERzo2BJGLzl4JocqG8GFPOjF2NICwBqQopSZ+l0kQhW6kihFTgdPLOhm1Gv3lnKNRMWXx8JYY70f02F0Ty1ST24KF4kS9YWloM0gClUrOLP9OyKXL4AI=
+	t=1762443054; cv=none; b=m5NtAnAck3LGEJ1iIzD7CPLNOi/yB4j0aB3PB4yEW8vfmEAeSpCtCY52Lz6UOhl60xzJW9sH707mQFlb0a14kneMi/zzXgLlJO///PDaQ2Kzs5vhGKrU2EaWpKVIH0UNEqLLCmK37qhLF1XkJWdSFSPxD+zNLDRHFKGCu9EaAwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762442974; c=relaxed/simple;
-	bh=Fy5kb+xSEe8CuLReHJSiSgwCvjIGVD2dswSaWqR9TqU=;
+	s=arc-20240116; t=1762443054; c=relaxed/simple;
+	bh=sHjlHscY64/Hvbw1NPAWD/TdiPthHDgqPypIyEFYHA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IOhQ+JaEJeAgorAD22zuFa5Vb1nh8wOOof/KO63wNSmpL1fBuTzKLs8FUXrusNyHqgR4jmSUb/L8BNwbU1mWjmrP2XK+aA/r0DqqvO7/0gm5RCbfouLfp9iMv+eTUjNgM1xdeJwpsUhTxsB6zftiEsm7sAnYAaadUxSecnzEUfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VAUigxDO; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762442972; x=1793978972;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fy5kb+xSEe8CuLReHJSiSgwCvjIGVD2dswSaWqR9TqU=;
-  b=VAUigxDONSSAJbxzBvT7LYmTDUgr8gucwo2MBR+WtMh63FPGrxujaT1p
-   htgtG4HkDE0ZBC4srRKelBOdqhTjFtXiHVieg3qqnpEePIL58C3KMVXb6
-   KYwW0rwbIvaWweMYeWoc4s/NFQlJvoTowvwZn9tqrlpX3w7qRsR5ZAIBU
-   hgdjOLV5HfYTcGPM5/th8c1VM+K+8vfKFtxFy+hUIbGTX8X6sCt5XAJqJ
-   8G7DdgJ2I71eJ0e7R9F5Tsvk0qk4F0wUJK509N4KO4KOkwg6FqvzeK0L6
-   xwNdeu84roHYlRzIt11SFUgitYIUGMl2qB7uKBVb3pEJ9seI84CdX5O/I
-   A==;
-X-CSE-ConnectionGUID: NnrMhdUBQ6CJ1iZWTBN18Q==
-X-CSE-MsgGUID: 3z8XjBKvTcOQy1+dAHKhbg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64465758"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="64465758"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 07:29:31 -0800
-X-CSE-ConnectionGUID: sZfJMlAgRIG2UQxuqDCZKQ==
-X-CSE-MsgGUID: Sny0jVoXSGuME85WdEfqVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="188502501"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 06 Nov 2025 07:29:28 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vH1vS-000U5A-0r;
-	Thu, 06 Nov 2025 15:29:26 +0000
-Date: Thu, 6 Nov 2025 23:29:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 3/5] tracing: Have tracer option be instance specific
-Message-ID: <202511062257.TSJTBQ2c-lkp@intel.com>
-References: <20251105161935.545400234@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJXa++ffrcz0ssAP3X/Wl6KUISyn3ZRsuZV10HmHYWaiKO0ar0d+nSAMi0G/YWSvyjqkio7CZaDMhCi4pX7L811XSLndEjmdNAOXS/1e/ZTHCsYp1by2+MxFu0ZWXTHMQ9yR6smIIjDWFHAZDgWpX0DF9Y1cQBPyl3VWKdG8QDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=bBH1bLQE; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-124-240.bstnma.fios.verizon.net [173.48.124.240])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5A6FUZIQ029486
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Nov 2025 10:30:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1762443038; bh=+AQXTMZtR4YmtwvPjlKXxXRsmjXZa5xo9JSXfd1YChU=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=bBH1bLQEswT/KqaLbnRYtbxYztWdW/btVF3Re3Tw8yHiSSYA6zKPmABJtjcCf3mzP
+	 OylVLJ3VZFeyhJ+6z0Dyq+X1Hfk4axEaP5TVemCX23nlTdwaEHeQo54TP8/sp4GZ+o
+	 DF5yjskSpA9KwqBZN3XXidptNGeEv6Cnh8ie7FrLZrcGIhBRYU0jF7CdmizFn6tHar
+	 Nw5QDHo7mr9jvKYNpsjMQYFw5BNqPzb+xq8a3lDq/j0JaBr28kD8GI1L+ACKGDdiWl
+	 j8GGzpl6cSoxpDMU79QNTL42SGGZV2i70iAc1kv7I5F1m7fEUpffjJjO3BlosCCyaM
+	 bD+8BTBIqff1w==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 99B3D2E00D9; Thu, 06 Nov 2025 10:30:35 -0500 (EST)
+Date: Thu, 6 Nov 2025 10:30:35 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>,
+        syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com,
+        Ahmet Eray Karadag <eraykrdg1@gmail.com>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: synchronize free block counter when detecting
+ corruption
+Message-ID: <20251106153035.GA3125470@mit.edu>
+References: <20251010073801.5921-1-albinbabuvarghese20@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,91 +66,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105161935.545400234@kernel.org>
+In-Reply-To: <20251010073801.5921-1-albinbabuvarghese20@gmail.com>
 
-Hi Steven,
+On Fri, Oct 10, 2025 at 03:38:00AM -0400, Albin Babu Varghese wrote:
+> When ext4_mb_generate_buddy() detects block group descriptor
+> corruption (free block count mismatch between descriptor and
+> bitmap), it corrects the in-memory group descriptor (grp->bb_free)
+> but does not synchronize the percpu free clusters counter.
 
-kernel test robot noticed the following build errors:
+Actually, we do.  This happens in ext4_mark_group_bitmap_corrupted in
+fs/ext4/super.c.
 
-[auto build test ERROR on trace/for-next]
-[cannot apply to linus/master v6.18-rc4 next-20251106]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+	if (flags & EXT4_GROUP_INFO_BBITMAP_CORRUPT) {
+		ret = ext4_test_and_set_bit(EXT4_GROUP_INFO_BBITMAP_CORRUPT_BIT,
+					    &grp->bb_state);
+		if (!ret)
+			percpu_counter_sub(&sbi->s_freeclusters_counter,
+					   grp->bb_free);
+	}
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Remove-dummy-options-and-flags/20251106-010511
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20251105161935.545400234%40kernel.org
-patch subject: [PATCH 3/5] tracing: Have tracer option be instance specific
-config: i386-buildonly-randconfig-004-20251106 (https://download.01.org/0day-ci/archive/20251106/202511062257.TSJTBQ2c-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251106/202511062257.TSJTBQ2c-lkp@intel.com/reproduce)
+So we've *already* subtracted out the blocks that were in the block
+group which we've busied out.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511062257.TSJTBQ2c-lkp@intel.com/
+> This causes delayed allocation to read stale counter values when
+> checking for available space. The allocator believes space is
+> available based on the stale counter, makes reservation promises,
+> but later fails during writeback when trying to allocate actual
+> blocks from the bitmap. This results in "Delayed block allocation
+> failed" errors and potential system crashes.
 
-All errors (new ones prefixed by >>):
+I suspect there is something else going on with s_freeclusters_counter
+being incorrect, but adding an additional correction to
+s_freeclusters_counter is not the answer.
 
->> kernel/trace/trace.c:2174:23: error: redefinition of 'type' with a different type: 'struct trace_tracer *' vs 'struct tracer *'
-    2174 |         struct trace_tracer *type = tracers->trace;
-         |                              ^
-   kernel/trace/trace.c:2171:47: note: previous definition is here
-    2171 | static int run_tracer_selftest(struct tracer *type)
-         |                                               ^
->> kernel/trace/trace.c:2174:30: error: use of undeclared identifier 'tracers'
-    2174 |         struct trace_tracer *type = tracers->trace;
-         |                                     ^
-   kernel/trace/trace.c:5172:17: warning: variable 'trace' set but not used [-Wunused-but-set-variable]
-    5172 |         struct tracer *trace;
-         |                        ^
-   1 warning and 2 errors generated.
+How is the system crashing?  If we have errors=continue, then we
+really shouldn't let the system crash.  If there is delayed allocation
+failures, the user might lose data, but if the user really cares about
+that, they shouldn't be using errors=continue.
 
-
-vim +2174 kernel/trace/trace.c
-
-  2170	
-  2171	static int run_tracer_selftest(struct tracer *type)
-  2172	{
-  2173		struct trace_array *tr = &global_trace;
-> 2174		struct trace_tracer *type = tracers->trace;
-  2175		struct tracer_flags *saved_flags = tr->current_trace_flags;
-  2176		struct tracer_flags *flags;
-  2177		struct tracer *saved_tracer = tr->current_trace;
-  2178		int ret;
-  2179	
-  2180		if (!type->selftest || tracing_selftest_disabled)
-  2181			return 0;
-  2182	
-  2183		/*
-  2184		 * If a tracer registers early in boot up (before scheduling is
-  2185		 * initialized and such), then do not run its selftests yet.
-  2186		 * Instead, run it a little later in the boot process.
-  2187		 */
-  2188		if (!selftests_can_run)
-  2189			return save_selftest(type);
-  2190	
-  2191		if (!tracing_is_on()) {
-  2192			pr_warn("Selftest for tracer %s skipped due to tracing disabled\n",
-  2193				type->name);
-  2194			return 0;
-  2195		}
-  2196	
-  2197		/*
-  2198		 * Run a selftest on this tracer.
-  2199		 * Here we reset the trace buffer, and set the current
-  2200		 * tracer to be this tracer. The tracer can then run some
-  2201		 * internal tracing to verify that everything is in order.
-  2202		 * If we fail, we do not register this tracer.
-  2203		 */
-  2204		tracing_reset_online_cpus(&tr->array_buffer);
-  2205	
-  2206		tr->current_trace = type;
-  2207		tr->current_trace_flags = type->flags ? : type->default_flags;
-  2208	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+						- Ted
 
