@@ -1,282 +1,129 @@
-Return-Path: <linux-kernel+bounces-888746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9104C3BCD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:39:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4056AC3BCAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4AE1AA3F12
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CAE188BBA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115E5345CD6;
-	Thu,  6 Nov 2025 14:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BF633A015;
+	Thu,  6 Nov 2025 14:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="aXJF+Ob7"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8u3gMiq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB88C345CB7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FAD31A80D;
+	Thu,  6 Nov 2025 14:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439628; cv=none; b=tM7xuY/L/qdiuz0ON069qnG/qGCDFuZ9f1alc29FH8OI1xqbaa/D/sDjMrVmjnQxfPJH+G3sSw0ts2178ctwV5sueUUBYJJxEqwuU9uhSSD0WizLG3aDWkFYN6xJ0nTi1pTa8wFQ7x5IHr+GLt/wcMI4Ci4zIQ8auB4FaXjxTd8=
+	t=1762439610; cv=none; b=VigLvWoFi4D36LBM+zt7Cx/aPLeMs+rAzq/zoSYg3ItO2Or5w4QruSAP7w928pGd3UA5lnO1m15RURX4wkdOfiPYMTJV0hhO6tMD38/E7ZHTeDlBx85v2652JkAtJfasOCj9J8n+FbibTztx2RQBj5xhGlP2yruwPhOn1XdHAF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439628; c=relaxed/simple;
-	bh=z2GOCEOnAx9dkquP8SXwErYfO6hYTMVFav1I4Zw5hag=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tMm7jJWlSaAvSAKEEye0Ii3QAc3Y7x7OJOkLWfIbG7u9bI6EP8qNAHOKgwbRzsQPySCuyd/kJokR7djC9zsjtCX0vlsvpZ8u8+g/w3QPRN1qhTKE//WGs+vTxPty22Lr4i3wipuZGJ8461Jo2ridG/18jok0uPI+NkdttV8hmT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=aXJF+Ob7; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso8353905e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:33:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762439624; x=1763044424; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V3IgvEQIjogJMzucfOGmuNQecQ5evfCfXzAa1sQFsLM=;
-        b=aXJF+Ob7EYYhQs7R7mIDIV2RlAmeZ0OUdtxNkuH71DQ3d6ObuLE4JCohcBCsgvmJ8Q
-         uzS6hQ0XiF4SyN/XLOlFl/yyU78pdcV36NLncCR3/NBprLRr8O7x1abLyBBZYtHwmG4Z
-         XOFYHrKQpy2FrhTsfTI+GcS3/Vur/Xm7JuyXmf9nnnT7QC16v5pbc7HMqef3Jdtd9Omd
-         X3VyaLyOzhnSWr2Y6cmQKV2cdgSqbXsvtbVMQ8rEMEB8X0oKAdYr/EBt+55X+QmV1BpJ
-         R6jOS1h4KgzvmAqZeaJnL4YMpzW4XupsbFPWg+PXfIDCbapnMX4pEY9S2l+Mw54ac/XM
-         UUGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762439624; x=1763044424;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V3IgvEQIjogJMzucfOGmuNQecQ5evfCfXzAa1sQFsLM=;
-        b=SwZQnZCSLAqzOMFxKGUpzaMx+FZ1NngkYN3a37ojf6e0nsV0j98OqDgUW/CjVk1TZ5
-         yrGUtQ6/anxgrXxQo+KPqvMX3I7VXOCsU8AoFncAhs6Ng/BdLElW5wjzYIoLrapz2QWt
-         tLkOl7/1FhgLQNttMLZSUCRwVNd7T05SxXL/Jd92993QtTUdFZIZN9JyLYK+ZeGpeZ57
-         alBHavH7SERjv2K8INv/0qxvOIk1pgqCL7oAdjPV30CY+ymfSrpPvP1bN7L2tZ7hDfBA
-         zunhiTdHbfZZOqBjqwj1SXGyxvA835+1QyqP6DmixtNSsvFGfvR0R3yPymZSsf8z8nq9
-         FiFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoJSuDKqX184UciLpqKA5zVlQVbQC2340ikxRWSRizr2ceIGgbu+SsyXQlXcXBNJKw/jg69yHpeEiNUfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp5DJl0l9REJdi/LgQkr047e48YQ/wG8r1/OzB2H2qEfR+r2wR
-	xHaQ0G/0bCoXfEM/HdVSG1Pzzf5KI9AIKQwuWP6E5xsE5Marrn3mhcscguz2OVqZscs=
-X-Gm-Gg: ASbGnct4Cx7H1yxfDKXn82XgtXjEc/zRsoD5TbQEaddTNLNiCJx7H7jmoEvUJQnRVHh
-	q3BBr8XfJSEDPJ/aeS72CJsmc5UItX8P23z6S/ZCWdetYFI24H7tthUAxkUuLe/MxReJpUPbI/5
-	11Fk4nDTgZ2bDeX+zbnVNNInze5F2R8zefF4NGRcbzg9nObhc/y35CPpDm2HmBuIbHSujXokQOx
-	/akK3qI1/HgSiJtwfnNDh0zg65LBvTwPfxxP2MH/pG9VX72rfvRyjFoTpusPMfMI4YajEhbfiU/
-	F61cD1jeCyUxMjo1WfrPz+vqJE92wxc72/7PEy3qcUWLHF7Mt4sxF8WyjW6u/st9WLXVSO2TRHt
-	W4Up3OcaTE8Z7iqHMsx5mLQoCZQPsxDuOPlX8dhfbqHeYOE1vYGsrVyUS5Lce3/KtDWg6X0Ac4I
-	WmPis1GrBabxk0c/JCzZp6DlP/KmzWf1DChl8UNUSy
-X-Google-Smtp-Source: AGHT+IEnd0KVbCubO7pySQ4P5IiZ1ER4hHEn7mesMiVdofrqd1TkOsvZkySnJp/aB+1oHXM+Li+8iQ==
-X-Received: by 2002:a05:600c:530d:b0:46d:5189:3583 with SMTP id 5b1f17b1804b1-4775cd39de3mr70324795e9.0.1762439624219;
-        Thu, 06 Nov 2025 06:33:44 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477622661c4sm50001595e9.0.2025.11.06.06.33.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 06:33:43 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 2/2] reset: rzg2l-usbphy-ctrl: Add suspend/resume support
-Date: Thu,  6 Nov 2025 16:33:27 +0200
-Message-ID: <20251106143327.3049052-3-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251106143327.3049052-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251106143327.3049052-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1762439610; c=relaxed/simple;
+	bh=0wSHlM09iOhzFBw498LhHwkOc0mjGo5Tmr0ceb2EkkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:References:To:Cc:From:
+	 In-Reply-To:Content-Type; b=M0sBXDZIySaDFCdZs3udkBdBfidqW5z3VVw6xE8rGEoL3M0Xf1YS6YP6a9KT2t2q0+KHwfVCyccDBWpzTzpBuA38EW60EZccbnudiCTxG4ErcQH/qQAgfcQdZndiDeztH1+hZq+7Q87Vr2qo5eruTHD/YemNUMawQI83xIEYe9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8u3gMiq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69460C116D0;
+	Thu,  6 Nov 2025 14:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762439610;
+	bh=0wSHlM09iOhzFBw498LhHwkOc0mjGo5Tmr0ceb2EkkQ=;
+	h=Date:Subject:References:To:Cc:From:In-Reply-To:From;
+	b=U8u3gMiqvXcE1IVfbLOWbXBxDliYkBclkIbFGDvc5MONPdchzOilNcljsqoyDv0hR
+	 JpFKc4yim6QUNcoczIQvUPbIWNt+2xmDspxvTRy6VnWMDFYLZt78gifNCiKPg6D3tD
+	 3sSCfERfI6JAJMfb+SH6Zz0IpQpQYIsRC1eQWcd6IXmcVH+VT3ni9D1iiU5dvLoXJe
+	 Pk+ImE01klQuuCURJ0G2ToPr30+BpZ4Iew2RCXkDLWLDzL4buaPHWSawgTAdfIeF3j
+	 iBbysaiXiwJNxHSAG2qTwxpa3rm5COFBZ2HD0mB1XfvQhz5lRJPAt7rk9QKydaw5v7
+	 GYqlKi1oT/1XQ==
+Message-ID: <37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>
+Date: Thu, 6 Nov 2025 09:33:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Fwd: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
+ greater than high limit total_avail/scale_factor
+References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
+Content-Language: en-US
+To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Laight <David.Laight@ACULAB.COM>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ speedcracker@hotmail.com
+From: Chuck Lever <cel@kernel.org>
+Organization: kernel.org
+In-Reply-To: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
+X-Forwarded-Message-Id: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+FYI
 
-The RZ/G2L USBPHY control driver is also used on the RZ/G3S SoC.
-The RZ/G3S SoC supports a power-saving mode in which power to most USB
-components (including the USBPHY control block) is turned off. Because of
-this, the USBPHY control block needs to be reconfigured when returning
-from power-saving mode.
+https://bugzilla.kernel.org/show_bug.cgi?id=220745
 
-Add suspend/resume support to handle runtime suspend/resume of the device,
-assert/deassert the reset signal, and reinitialize the USBPHY control
-block.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 94 +++++++++++++++++++++----
- 1 file changed, 79 insertions(+), 15 deletions(-)
+-------- Forwarded Message --------
+Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit
+slotsize greater than high limit total_avail/scale_factor
+Date: Thu, 06 Nov 2025 07:29:25 -0500
+From: Jeff Layton <jlayton@kernel.org>
+To: Mike-SPC via Bugspray Bot <bugbot@kernel.org>, cel@kernel.org,
+neilb@ownmail.net, trondmy@kernel.org, linux-nfs@vger.kernel.org,
+anna@kernel.org, neilb@brown.name
 
-diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-index 9ce0c1f5d465..8ba65839f6e4 100644
---- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-+++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -36,6 +36,7 @@ struct rzg2l_usbphy_ctrl_priv {
- 	struct reset_control *rstc;
- 	void __iomem *base;
- 	struct platform_device *vdev;
-+	struct regmap_field *pwrrdy;
- 
- 	spinlock_t lock;
- };
-@@ -92,6 +93,19 @@ static int rzg2l_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
- 	return !!(readl(priv->base + RESET) & port_mask);
- }
- 
-+/* put pll and phy into reset state */
-+static void rzg2l_usbphy_ctrl_init(struct rzg2l_usbphy_ctrl_priv *priv)
-+{
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&priv->lock, flags);
-+	val = readl(priv->base + RESET);
-+	val |= RESET_SEL_PLLRESET | RESET_PLLRESET | PHY_RESET_PORT2 | PHY_RESET_PORT1;
-+	writel(val, priv->base + RESET);
-+	spin_unlock_irqrestore(&priv->lock, flags);
-+}
-+
- #define RZG2L_USBPHY_CTRL_PWRRDY	1
- 
- static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
-@@ -131,9 +145,9 @@ static void rzg2l_usbphy_ctrl_pwrrdy_off(void *data)
- 	rzg2l_usbphy_ctrl_set_pwrrdy(data, false);
- }
- 
--static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
-+static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev,
-+					 struct rzg2l_usbphy_ctrl_priv *priv)
- {
--	struct regmap_field *pwrrdy;
- 	struct reg_field field;
- 	struct regmap *regmap;
- 	const int *data;
-@@ -158,15 +172,15 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
- 	field.lsb = __ffs(args[1]);
- 	field.msb = __fls(args[1]);
- 
--	pwrrdy = devm_regmap_field_alloc(dev, regmap, field);
--	if (IS_ERR(pwrrdy))
--		return PTR_ERR(pwrrdy);
-+	priv->pwrrdy = devm_regmap_field_alloc(dev, regmap, field);
-+	if (IS_ERR(priv->pwrrdy))
-+		return PTR_ERR(priv->pwrrdy);
- 
- 	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
- 	if (ret)
- 		return ret;
- 
--	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, pwrrdy);
-+	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, priv->pwrrdy);
- }
- 
- static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
-@@ -175,9 +189,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
- 	struct rzg2l_usbphy_ctrl_priv *priv;
- 	struct platform_device *vdev;
- 	struct regmap *regmap;
--	unsigned long flags;
- 	int error;
--	u32 val;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -191,7 +203,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
--	error = rzg2l_usbphy_ctrl_pwrrdy_init(dev);
-+	error = rzg2l_usbphy_ctrl_pwrrdy_init(dev, priv);
- 	if (error)
- 		return error;
- 
-@@ -214,12 +226,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
- 		goto err_pm_disable_reset_deassert;
- 	}
- 
--	/* put pll and phy into reset state */
--	spin_lock_irqsave(&priv->lock, flags);
--	val = readl(priv->base + RESET);
--	val |= RESET_SEL_PLLRESET | RESET_PLLRESET | PHY_RESET_PORT2 | PHY_RESET_PORT1;
--	writel(val, priv->base + RESET);
--	spin_unlock_irqrestore(&priv->lock, flags);
-+	rzg2l_usbphy_ctrl_init(priv);
- 
- 	priv->rcdev.ops = &rzg2l_usbphy_ctrl_reset_ops;
- 	priv->rcdev.of_reset_n_cells = 1;
-@@ -266,10 +273,67 @@ static void rzg2l_usbphy_ctrl_remove(struct platform_device *pdev)
- 	reset_control_assert(priv->rstc);
- }
- 
-+static int rzg2l_usbphy_ctrl_suspend(struct device *dev)
-+{
-+	struct rzg2l_usbphy_ctrl_priv *priv = dev_get_drvdata(dev);
-+	int ret;
-+
-+	pm_runtime_put(dev);
-+
-+	ret = reset_control_assert(priv->rstc);
-+	if (ret)
-+		goto rpm_resume;
-+
-+	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, false);
-+	if (ret)
-+		goto reset_deassert;
-+
-+	return 0;
-+
-+reset_deassert:
-+	reset_control_deassert(priv->rstc);
-+rpm_resume:
-+	pm_runtime_resume_and_get(dev);
-+	return ret;
-+}
-+
-+static int rzg2l_usbphy_ctrl_resume(struct device *dev)
-+{
-+	struct rzg2l_usbphy_ctrl_priv *priv = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, true);
-+	if (ret)
-+		return ret;
-+
-+	ret = reset_control_deassert(priv->rstc);
-+	if (ret)
-+		goto pwrrdy_off;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		goto reset_assert;
-+
-+	rzg2l_usbphy_ctrl_init(priv);
-+
-+	return 0;
-+
-+reset_assert:
-+	reset_control_assert(priv->rstc);
-+pwrrdy_off:
-+	rzg2l_usbphy_ctrl_set_pwrrdy(priv->pwrrdy, false);
-+	return ret;
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(rzg2l_usbphy_ctrl_pm_ops,
-+				rzg2l_usbphy_ctrl_suspend,
-+				rzg2l_usbphy_ctrl_resume);
-+
- static struct platform_driver rzg2l_usbphy_ctrl_driver = {
- 	.driver = {
- 		.name		= "rzg2l_usbphy_ctrl",
- 		.of_match_table	= rzg2l_usbphy_ctrl_match_table,
-+		.pm		= pm_ptr(&rzg2l_usbphy_ctrl_pm_ops),
- 	},
- 	.probe	= rzg2l_usbphy_ctrl_probe,
- 	.remove = rzg2l_usbphy_ctrl_remove,
+On Thu, 2025-11-06 at 11:30 +0000, Mike-SPC via Bugspray Bot wrote:
+> Mike-SPC writes via Kernel.org Bugzilla:
+> 
+> (In reply to Bugspray Bot from comment #5)
+> > Chuck Lever <cel@kernel.org> replies to comment #4:
+> > 
+> > On 11/5/25 7:25 AM, Mike-SPC via Bugspray Bot wrote:
+> > > Mike-SPC writes via Kernel.org Bugzilla:
+> > > 
+> > > > Have you found a 6.1.y kernel for which the build doesn't fail?
+> > > 
+> > > Yes. Compiling Version 6.1.155 works without problems.
+> > > Versions >= 6.1.156 aren't.
+> > 
+> > My analysis yesterday suggests that, because the nfs4state.c code hasn't
+> > changed, it's probably something elsewhere that introduced this problem.
+> > As we can't reproduce the issue, can you use "git bisect" between
+> > v6.1.155 and v6.1.156 to find the culprit commit?
+> > 
+> > (via https://msgid.link/ab235dbe-7949-4208-a21a-2cdd50347152@kernel.org)
+> 
+> 
+> Yes, your analysis is right (thanks for it).
+> After some investigation, the issue appears to be caused by changes introduced in
+> include/linux/minmax.h.
+> 
+> I verified this by replacing minmax.h in 6.1.156 with the version from 6.1.155,
+> and the kernel then compiles successfully.
+> 
+> The relevant section in the 6.1.156 changelog (https://cdn.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.1.156) shows several modifications to minmax.h (notably around __clamp_once() and the use of
+> BUILD_BUG_ON_MSG(statically_true(ulo > uhi), ...)), which seem to trigger a compile-time assertion when building NFSD.
+> 
+> Replacing the updated header with the previous one resolves the issue, so this appears
+> to be a regression introduced by the new clamp() logic.
+> 
+> Could you please advise who is the right person or mailing list to report this issue to
+> (minmax.h maintainers, kernel core, or stable tree)?
+> 
+
+I'd let all 3 know, and I'd include the author of the patches that you
+suspect are the problem. They'll probably want to revise the one that's
+a problem.
+
+Cheers,
 -- 
-2.43.0
-
+Jeff Layton <jlayton@kernel.org>
 
