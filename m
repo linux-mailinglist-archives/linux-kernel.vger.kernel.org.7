@@ -1,300 +1,175 @@
-Return-Path: <linux-kernel+bounces-889293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D832DC3D330
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:12:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C326FC3D336
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA71A3A1122
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:11:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 573A73B04D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E407355800;
-	Thu,  6 Nov 2025 19:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E6033DEE7;
+	Thu,  6 Nov 2025 19:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnZeZyr8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C9/zm0D7"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0D533C50D;
-	Thu,  6 Nov 2025 19:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDEC259CBF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 19:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762456132; cv=none; b=c0YS5EDlFl1HpxnpcnEUrMfn8qhunK1rJkN7e/gRr6AzBvz2TyGuA+LcX7YQsHff5YEyMJMAMpmqua62f3nirIEPr8gEk2xZtMRDb7XQyCS857EG6/l9kVghNRAPT8HInnKZPXG1Z/r+mLcCcJzbQo4i2K0G1u+YlBIkH91Ddyw=
+	t=1762456196; cv=none; b=hlqNg2iggxLvd0hLFviVYxlioP+0OnW9vzNzlD2Lwxcaw58Tb0fi4TCiLaCHCjLkNX9q9FiQVBnBmCtv5USAlz/m8NHO/z/JUi/ceztUwT3Pvq9LCRzPAe8KEifTDwdzI0kcCtsGGoIv7ah/QycpX8WgIPP+MdoOPPmIVP9kkmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762456132; c=relaxed/simple;
-	bh=T9zay+12a0voS7iC6ls/mch2JLcJxMY0qU+AWDdJF/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFtKDboBFVkNh/3dyycH7iREf3Lqkm30BLqSg5fnwkW1ANniRtkgNgoNGZONJyvkdVzEEJPPDf4TpqT6wf/iq3xoezKNMuPglLbqKYT8sq6w4YbSWbUiN7VTeGK+ePRNN3D7SSb7Ihopq/ItBvnNZYxlEbkXHSevDHvbQoevKhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnZeZyr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD6ADC113D0;
-	Thu,  6 Nov 2025 19:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762456130;
-	bh=T9zay+12a0voS7iC6ls/mch2JLcJxMY0qU+AWDdJF/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GnZeZyr8lVHtgMwRQG6RU3DlsYh22jGct8VfVTZU82iKlGyofCTWuHrJfDkvkKLaU
-	 P6o3c1vYPD0TttpI6ef+uGXZQma/KY07Q1KIsN6tKy2lMvMD7LmNd1jSBm2+FxnyGe
-	 l7hdJWtIizZnX1OZkHW/0dZewZXl8AMcjwFxU+VeDjZoJgYUY+hEOFsLVG/gc7NW8d
-	 sDfuEc8Qt9PFRbAxQFvQAmrSxKTgHsb7s2BZi144Ey2G+p8hBMPsCZs80AWWG5I4Zr
-	 aMr/9UDRNn0Tuom+uGx+5Kpwtd+W3/JvDZWFQKbz+ovofLQoI1kSJ2qB+6bqarwqZc
-	 h3x7N++z7qkEA==
-Date: Thu, 6 Nov 2025 11:08:45 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Gabriel Marin <gmx@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Athira Rajeev <atrajeev@linux.ibm.com>,
-	Gautam Menghani <gautam@linux.ibm.com>, tanze <tanze@kylinos.cn>,
-	Andi Kleen <ak@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Blake Jones <blakejones@google.com>,
-	Anubhav Shelat <ashelat@redhat.com>, Leo Yan <leo.yan@arm.com>,
-	Chun-Tse Shao <ctshao@google.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] perf tool: Add a delegate_tool that just
- delegates actions to another tool
-Message-ID: <aQzyPf1_vln3WoSL@google.com>
-References: <20251105001103.1296863-1-irogers@google.com>
- <20251105001103.1296863-2-irogers@google.com>
+	s=arc-20240116; t=1762456196; c=relaxed/simple;
+	bh=8YXu0CwsbL1OqkPAFy/EHBELfu62dANcIX0cLPrynzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fHQHi7Kvx+FRrusVDC33AsclBR6GrNsEbQkZB2mVBk+9B8PVngzAOI3ucndZWbPrzqWBNg9fFEZmV55Hh4RKyFOPpzq7JxjjR9Z7ArfmhkKiX2lbTLI+wiItN67fTRWKM05+Z42XdtWSOgFo07pnt2DQTSHzAWZE+cN8F03xcEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C9/zm0D7; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6411f1c4b4fso232177a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 11:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762456193; x=1763060993; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=R9EJ31BMFRtngkVvmruU/yNAGPhyHC0PLxcC8cP7CEo=;
+        b=C9/zm0D7Y7PYcio/tRbT7nsEJQGZVZ3/gqqa95C9H28afxPD2Reip6gYsPO3UaXSX9
+         /2+tQsmLNwAjV8ErwWgkPdC4rqM5YGQqzu/kyTp72Yxl/X8f+SVoR+SfRe5q7PFRH8dT
+         JSIkrn/OsYFNoxBdqFCW+/AL5dc8pS+hdtyza9027rbaGUwlPcHVMgUVD8k6tP+0EKSl
+         T4Ned6t0gqWuPkb36/mep9CaMpAdKG27LomLIu5r8y84GEhnGXMA8ugNDuRLqJDMtJYz
+         74rDgsrD3Pt7emBXcwxj2/uP2VYS53eP+4KsBKZHfLywQMARVyntPFE8j62Bu20zQHxA
+         +gcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762456193; x=1763060993;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R9EJ31BMFRtngkVvmruU/yNAGPhyHC0PLxcC8cP7CEo=;
+        b=jQXISDgr7RrU5NuGEY9qIIpLxx1wdOHU+bkT8atVLhqxsTiL7i1UjycmRfQXH0tfXW
+         Nr8WzdMtJWJ5aMakVQ5uwASQPmZNvWdBJDSFRDUY96xGKIjN9hH9x9OfIW4QixAamM3T
+         79qewFRM49QNo/TPm2uy/jgwlxsePVh6wNUHJp+3lNi9vKd4XhtWXG9h86qly76aVi+k
+         jPofYCixf3BhXx0bfdKGYwWAvMvFbMN6k9gxqlRF83yoAmx68az1wx115IzRl2j/6CPx
+         DSCaI7yIKtzQhQ53/dHfE3wm3DTejbfaf9dE8SJBv9Qwi5B9IctaLL9dUteWDUE4iBWE
+         tk8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVphUhmaVtvlZDwZ/FJHV15UXSPmgzNz4RZRW3D+0ZrGBGvHpiK9/1bSUsSycw727Jwacv70eRiNNWe0dU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjtErRWXdBGvRBBd/9+GRGOBGsMW497L1mEcFyA1oACx4wyC/v
+	eo4XWbd7KkYN4QBL76wM4BHvHVneoo9qY8WXYdoLwUFCRPxEfcuI2oC+cpZ3BWhIuwQ=
+X-Gm-Gg: ASbGncu/oiUfYzFuBF0OwE0C4s1c+2CxwZIgU2It9zn1w8qRmRHI2VI6q+ogEQWTr+c
+	wwz/HpCyVb7cawlfVErdWTYqSgzEJ8g1UAaxaStsOUiSsPh6C/t75oxDB8NBa9IbDgymzVTqwN6
+	0XtgiXjZlymIxfOxVWEPdKDz9QqjygUJ2JibOGUgr6T9SeMXjxg1o11DX26I7NjwREkTWp2sQPl
+	43K2d8Q0IPQI8fsQCG0YpLaUZg13aiHb/P+mo2J0C930hs9gNIxFsBZCQ6hkCWV/RSU1XCdTopv
+	zQt7jHuO6Qifh55TqPfenu+Y/neGj3ApfpHm60Xgs71U35UaG4Tfz+6v3ZVfsvyHjWZ+dgmYZnK
+	ujiFb+NpZHvTm69l2VW2wWYTueDWoZLLWOM4QyPpv1aItdYsirPaNLnrjSwekNLyic5UwG37XiU
+	m5nt4Q2UW0jtWj3OTzmtT6
+X-Google-Smtp-Source: AGHT+IFLScIgFbO18qAgFVJ4C/yYi8kKG+DOMbXda6TV5rCC9yt4KlAUStwtjX1SD2b25R5SQ9YR2Q==
+X-Received: by 2002:a05:6402:2110:b0:640:ed50:c1e4 with SMTP id 4fb4d7f45d1cf-6413f0efb7cmr263574a12.3.1762456193188;
+        Thu, 06 Nov 2025 11:09:53 -0800 (PST)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813e9fsm2419923a12.16.2025.11.06.11.09.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 11:09:51 -0800 (PST)
+Message-ID: <d17ad0cf-eea1-4d72-8b02-2f8172ece8c6@linaro.org>
+Date: Thu, 6 Nov 2025 20:09:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251105001103.1296863-2-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] crypto: artpec6 - Simplify with
+ of_device_get_match_data()
+To: Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Lars Persson <lars.persson@axis.com>, "David S. Miller"
+ <davem@davemloft.net>, Tom Lendacky <thomas.lendacky@amd.com>,
+ John Allen <john.allen@amd.com>, Srujana Challa <schalla@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>
+Cc: linux-crypto@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@axis.com
+References: <20251106-crypto-of-match-v1-0-36b26cd35cff@linaro.org>
+ <20251106-crypto-of-match-v1-3-36b26cd35cff@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20251106-crypto-of-match-v1-3-36b26cd35cff@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 04, 2025 at 04:11:03PM -0800, Ian Rogers wrote:
-> Add an ability to be able to compose perf_tools, by having one perform
-> an action and then calling a delegate. Currently the perf_tools have
-> if-then-elses setting the callback and then if-then-elses within the
-> callback. Understanding the behavior is complex as it is in two places
-> and logic for numerous operations, within things like perf inject, is
-> interwoven. By chaining perf_tools together based on command line
-> options this kind of code can be avoided.
-
-Can you please explain what the actual usecase is?  Do you plan to use
-it for perf inject?
-
-Thanks,
-Namhyung
-
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/tool.c | 171 +++++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/tool.h |   9 +++
->  2 files changed, 180 insertions(+)
-> 
-> diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
-> index c983b526b30d..22a8a4ffe05f 100644
-> --- a/tools/perf/util/tool.c
-> +++ b/tools/perf/util/tool.c
-> @@ -321,3 +321,174 @@ bool perf_tool__compressed_is_stub(const struct perf_tool *tool)
->  {
->  	return tool->compressed == perf_session__process_compressed_event_stub;
->  }
-> +
-> +#define CREATE_DELEGATE_SAMPLE(name) \
-> +	static int delegate_ ## name(const struct perf_tool *tool, \
-> +				     union perf_event *event, \
-> +				     struct perf_sample *sample, \
-> +				     struct evsel *evsel, \
-> +				     struct machine *machine) \
-> +	{								\
-> +		struct delegate_tool *del_tool = container_of(tool, struct delegate_tool, tool); \
-> +		struct perf_tool *delegate = del_tool->delegate;		\
-> +		return delegate->name(delegate, event, sample, evsel, machine);	\
-> +	}
-> +CREATE_DELEGATE_SAMPLE(read);
-> +CREATE_DELEGATE_SAMPLE(sample);
-> +
-> +#define CREATE_DELEGATE_ATTR(name)					\
-> +	static int delegate_ ## name(const struct perf_tool *tool,	\
-> +				union perf_event *event,		\
-> +				struct evlist **pevlist)		\
-> +	{								\
-> +		struct delegate_tool *del_tool = container_of(tool, struct delegate_tool, tool); \
-> +		struct perf_tool *delegate = del_tool->delegate;		\
-> +		return delegate->name(delegate, event, pevlist);	\
-> +	}
-> +CREATE_DELEGATE_ATTR(attr);
-> +CREATE_DELEGATE_ATTR(event_update);
-> +
-> +#define CREATE_DELEGATE_OE(name)				   \
-> +	static int delegate_ ## name(const struct perf_tool *tool, \
-> +				     union perf_event *event,	   \
-> +				     struct ordered_events *oe)	   \
-> +	{								\
-> +		struct delegate_tool *del_tool = container_of(tool, struct delegate_tool, tool); \
-> +		struct perf_tool *delegate = del_tool->delegate;		\
-> +		return delegate->name(delegate, event, oe);	\
-> +	}
-> +CREATE_DELEGATE_OE(finished_round);
-> +
-> +#define CREATE_DELEGATE_OP(name)				   \
-> +	static int delegate_ ## name(const struct perf_tool *tool, \
-> +				     union perf_event *event, \
-> +				     struct perf_sample *sample, \
-> +				     struct machine *machine) \
-> +	{								\
-> +		struct delegate_tool *del_tool = container_of(tool, struct delegate_tool, tool); \
-> +		struct perf_tool *delegate = del_tool->delegate;		\
-> +		return delegate->name(delegate, event, sample, machine); \
-> +	}
-> +CREATE_DELEGATE_OP(aux);
-> +CREATE_DELEGATE_OP(aux_output_hw_id);
-> +CREATE_DELEGATE_OP(bpf);
-> +CREATE_DELEGATE_OP(cgroup);
-> +CREATE_DELEGATE_OP(comm);
-> +CREATE_DELEGATE_OP(context_switch);
-> +CREATE_DELEGATE_OP(exit);
-> +CREATE_DELEGATE_OP(fork);
-> +CREATE_DELEGATE_OP(itrace_start);
-> +CREATE_DELEGATE_OP(ksymbol);
-> +CREATE_DELEGATE_OP(lost);
-> +CREATE_DELEGATE_OP(lost_samples);
-> +CREATE_DELEGATE_OP(mmap);
-> +CREATE_DELEGATE_OP(mmap2);
-> +CREATE_DELEGATE_OP(namespaces);
-> +CREATE_DELEGATE_OP(text_poke);
-> +CREATE_DELEGATE_OP(throttle);
-> +CREATE_DELEGATE_OP(unthrottle);
-> +
-> +#define CREATE_DELEGATE_OP2(name)					\
-> +	static int delegate_ ## name(const struct perf_tool *tool,	\
-> +				     struct perf_session *session,	\
-> +				     union perf_event *event)		\
-> +	{								\
-> +		struct delegate_tool *del_tool = container_of(tool, struct delegate_tool, tool); \
-> +		struct perf_tool *delegate = del_tool->delegate;		\
-> +		return delegate->name(delegate, session, event);	\
-> +	}
-> +CREATE_DELEGATE_OP2(auxtrace_error);
-> +CREATE_DELEGATE_OP2(auxtrace_info);
-> +CREATE_DELEGATE_OP2(bpf_metadata);
-> +CREATE_DELEGATE_OP2(build_id);
-> +CREATE_DELEGATE_OP2(cpu_map);
-> +CREATE_DELEGATE_OP2(feature);
-> +CREATE_DELEGATE_OP2(finished_init);
-> +CREATE_DELEGATE_OP2(id_index);
-> +CREATE_DELEGATE_OP2(stat);
-> +CREATE_DELEGATE_OP2(stat_config);
-> +CREATE_DELEGATE_OP2(stat_round);
-> +CREATE_DELEGATE_OP2(thread_map);
-> +CREATE_DELEGATE_OP2(time_conv);
-> +CREATE_DELEGATE_OP2(tracing_data);
-> +
-> +#define CREATE_DELEGATE_OP3(name)					\
-> +	static s64 delegate_ ## name(const struct perf_tool *tool,	\
-> +				     struct perf_session *session,      \
-> +				     union perf_event *event)           \
-> +	{								\
-> +		struct delegate_tool *del_tool = container_of(tool, struct delegate_tool, tool); \
-> +		struct perf_tool *delegate = del_tool->delegate;	\
-> +		return delegate->name(delegate, session, event);	\
-> +	}
-> +CREATE_DELEGATE_OP3(auxtrace);
-> +
-> +#define CREATE_DELEGATE_OP4(name)					\
-> +	static int delegate_ ## name(const struct perf_tool *tool, \
-> +			struct perf_session *session, \
-> +			union perf_event *event, \
-> +			u64 data, \
-> +			const char *str) \
-> +	{								\
-> +		struct delegate_tool *del_tool = container_of(tool, struct delegate_tool, tool); \
-> +		struct perf_tool *delegate = del_tool->delegate;		\
-> +		return delegate->name(delegate, session, event, data, str);	\
-> +	}
-> +CREATE_DELEGATE_OP4(compressed);
-> +
-> +void delegate_tool__init(struct delegate_tool *tool, struct perf_tool *delegate)
-> +{
-> +	tool->delegate = delegate;
-> +
-> +	tool->tool.ordered_events = delegate->ordered_events;
-> +	tool->tool.ordering_requires_timestamps = delegate->ordering_requires_timestamps;
-> +	tool->tool.namespace_events = delegate->namespace_events;
-> +	tool->tool.cgroup_events = delegate->cgroup_events;
-> +	tool->tool.no_warn = delegate->no_warn;
-> +	tool->tool.show_feat_hdr = delegate->show_feat_hdr;
-> +
-> +	tool->tool.sample = delegate_sample;
-> +	tool->tool.read = delegate_read;
-> +
-> +	tool->tool.mmap = delegate_mmap;
-> +	tool->tool.mmap2 = delegate_mmap2;
-> +	tool->tool.comm = delegate_comm;
-> +	tool->tool.namespaces = delegate_namespaces;
-> +	tool->tool.cgroup = delegate_cgroup;
-> +	tool->tool.fork = delegate_fork;
-> +	tool->tool.exit = delegate_exit;
-> +	tool->tool.lost = delegate_lost;
-> +	tool->tool.lost_samples = delegate_lost_samples;
-> +	tool->tool.aux = delegate_aux;
-> +	tool->tool.itrace_start = delegate_itrace_start;
-> +	tool->tool.aux_output_hw_id = delegate_aux_output_hw_id;
-> +	tool->tool.context_switch = delegate_context_switch;
-> +	tool->tool.throttle = delegate_throttle;
-> +	tool->tool.unthrottle = delegate_unthrottle;
-> +	tool->tool.ksymbol = delegate_ksymbol;
-> +	tool->tool.bpf = delegate_bpf;
-> +	tool->tool.text_poke = delegate_text_poke;
-> +
-> +	tool->tool.attr = delegate_attr;
-> +	tool->tool.event_update = delegate_event_update;
-> +
-> +	tool->tool.tracing_data = delegate_tracing_data;
-> +
-> +	tool->tool.finished_round = delegate_finished_round;
-> +
-> +	tool->tool.build_id = delegate_build_id;
-> +	tool->tool.id_index = delegate_id_index;
-> +	tool->tool.auxtrace_info = delegate_auxtrace_info;
-> +	tool->tool.auxtrace_error = delegate_auxtrace_error;
-> +	tool->tool.time_conv = delegate_time_conv;
-> +	tool->tool.thread_map = delegate_thread_map;
-> +	tool->tool.cpu_map = delegate_cpu_map;
-> +	tool->tool.stat_config = delegate_stat_config;
-> +	tool->tool.stat = delegate_stat;
-> +	tool->tool.stat_round = delegate_stat_round;
-> +	tool->tool.feature = delegate_feature;
-> +	tool->tool.finished_init = delegate_finished_init;
-> +	tool->tool.bpf_metadata = delegate_bpf_metadata;
-> +	tool->tool.compressed = delegate_compressed;
-> +	tool->tool.auxtrace = delegate_auxtrace;
-> +}
-> diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-> index 1f1461808371..88337cee1e3e 100644
-> --- a/tools/perf/util/tool.h
-> +++ b/tools/perf/util/tool.h
-> @@ -102,4 +102,13 @@ int process_event_sample_stub(const struct perf_tool *tool,
->  			      struct evsel *evsel,
->  			      struct machine *machine);
+On 06/11/2025 17:31, Krzysztof Kozlowski wrote:
+>  	struct device *dev = &pdev->dev;
+> @@ -2853,12 +2852,10 @@ static int artpec6_crypto_probe(struct platform_device *pdev)
+>  	if (artpec6_crypto_dev)
+>  		return -ENODEV;
 >  
-> +struct delegate_tool {
-> +	/** @tool: The actual tool that calls the delegate. */
-> +	struct perf_tool tool;
-> +	/** @delegate: The tool that is delegated to. */
-> +	struct perf_tool *delegate;
-> +};
-> +
-> +void delegate_tool__init(struct delegate_tool *tool, struct perf_tool *delegate);
-> +
->  #endif /* __PERF_TOOL_H */
-> -- 
-> 2.51.2.1006.ga50a493c49-goog
-> 
+> -	match = of_match_node(artpec6_crypto_of_match, dev->of_node);
+> -	if (!match)
+> +	variant = of_device_get_match_data(dev);
+
+This needs cast for 32-bit builds like it was before. I will send v2.
+
+> +	if (!variant)
+>  		return -EINVAL;
+>  
+> -	variant = (enum artpec6_crypto_variant)match->data;
+
+
+
+Best regards,
+Krzysztof
 
