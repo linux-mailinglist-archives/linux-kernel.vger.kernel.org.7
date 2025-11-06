@@ -1,91 +1,53 @@
-Return-Path: <linux-kernel+bounces-888728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A23C3BC34
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:32:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8610C3BD00
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF281B208F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B563BCC1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4350D33E36E;
-	Thu,  6 Nov 2025 14:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aQCdVriY"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D3133F8B3;
+	Thu,  6 Nov 2025 14:33:20 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763AC32B997
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F04530C628;
+	Thu,  6 Nov 2025 14:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439366; cv=none; b=jw4LNvo7YHExL+mLPti1PbfBpw/G0yqBAXhqxGxLUGiAz/F0b8TI0DEORXaJlIck1oADaZIfkjQob+2L24mFPGE+MwjwYi4v156+c/qsQxzp+z8KsA8Yp885oP3O8NnqjQeEbYNtIs0qXosuKicfa12+Nbs2CIoKCy8AGfmHLa0=
+	t=1762439600; cv=none; b=DemHbdganjp2Zs8mNaokQw6vlobtnsTKofk77ZXNtVQMbKSHHakQDcByUdcrYP8D0mxSR1t50wXHJFsoTV3krYnyVYC6EhIFyiMTF3gohmubqlv17bAYLEePtTQfE+ecnhHgnTyLu4a6zTIphk7FH62JffF4vxiPrjTRsFVg28c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439366; c=relaxed/simple;
-	bh=d4fHAUv1EuUUWp1Aapmae9ls6LCSo7WvtBtFk+cOU3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ovg7ggyKI+zaXuvFW64O9Tv6PI8q6JkTPT/WvKdxJf9dxnD6dc7JkXjjoPBaABFHITWZWeDTc/WK8ZHG5TQq8D9dL9RCyTWBeS8rMS16Nl4W+WgeuSGXVfzSAerjzYsZZ0uzB6s+Ynvujf/hOg6Sx0eP/cZ6MzDF+/owMFlQcbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aQCdVriY; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4711b95226dso12246535e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:29:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762439362; x=1763044162; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h5YxLYnLmr4nTLx/JN1RCszCEO3k6sNkh+Sh26FPVKc=;
-        b=aQCdVriYX5D2RULFQa1Qo+qO7gIKxoDBl9vG51GTMQNLSGnpClaTjsivjJPk0LMtLb
-         6Wzafd7q4+eMeRmIyjf8JbkmUgZa/XVwCdc6GwllxDAflNsm+fMjCW1Gihuj9WjFcTOn
-         Gs0Txu+DTQiV7VuYKrdBSybooI8x4o8R1ZLmx1FqgZWAsWqD/PVZNlxqShtcBhKSG20k
-         DgcY3abbcRY4+F3mIWTFIoOrLbSsQ6Y0isZgjKNEdjSMOtqTcNCgDfkhmc7TGXexy5lt
-         UHpIcIGKzgRwav/pvj38vgHV4PLrX3ED70kqoxz4soels1xvOawksLsIileC/PAsBmDU
-         2o8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762439362; x=1763044162;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h5YxLYnLmr4nTLx/JN1RCszCEO3k6sNkh+Sh26FPVKc=;
-        b=pZPHwlWsVMAdOm37UwGprzIGZj/+VQYRe4aZ/Itzxgb2VJLuM/M61y7dO3xzySjUDF
-         HsPt90kMmyr6GBhIr/kE3l8jyRg5GjcwHoybkGSAIh1dA1NXXgV9wdBol5zRbSpQpPSq
-         G9SnuyU8D/5nKmnvH7/c53nu0EgQ/cQFOoY/ngE/vGvbf6AfpWjTJHCCnYAURADT89xC
-         lX63EEOlUCrYAIZJqc7bttHlqhhwJxohuqpK99sMhjnFMuL/B9Cfv2+tg+XYpjdFYhiI
-         jOuTJViRN/16Ku6gX/MozDlKHn2/Bp6r6OjsR+rZyCVGGx+lSwb6XX5B+yntIBv7d/nY
-         /Y9w==
-X-Gm-Message-State: AOJu0Yxxb/Hb3vGBxQfBoiHzQnCugca79T6nh8BQPupQocJIDsI76om+
-	Lx4EUUIiIAVcPWmDWnhytvR5/oDwvww0JcVGYNF5jam3Wz3fYhpp6VRZVHUdaYjanXD46zdX5DO
-	KjhJq
-X-Gm-Gg: ASbGncu0Oxgn9TuNylmxPGDMkTkELUMB/Rv7vISyf4XdJ7ZdS6ZbnwPRy+vs383C/OZ
-	tUkx3Z6A2EWfP6kgTSawBkSDDmXiuAIfjqIeJtKbzxU0wR8yJ4J2bkfgRWxFPrpD9/0Y3f3nXuG
-	4174B+XC81jPFWK8oLhrG6ir9r6bcIEDG3F9ynL1odFp9H3Rqdx1CbufaF3CUq+vGdPWLWdI4Y+
-	3Fv9z3VHW81So/p7pSVNigtJnX3IcKl03t6l1fZhzNOiYtSaRC6N4nxIrGxB3SciitcKIXdldLU
-	eRkgmsfnHFFyX100Uqk6Dlyoa+hkdACBxNP6tbkyiwaKXiuhjVCch229AoG2Lw7tsrtMSadmQci
-	MxPukdoqPaBveOWMH6nJ5uslHpOp0ymEEfpU8oFMYgGID3Ve/9ZlC7pDHdAfS04vtTmfIseFo/l
-	cUKpLlfuUuRx6Dp3K92rXgbF4=
-X-Google-Smtp-Source: AGHT+IEMdtJHre6mRIbgK0R5dgFdW0iBUI74M4kEgpZn842elu23QCa0tNFdWBlVBuG81fddtz4Yrg==
-X-Received: by 2002:a05:600c:5251:b0:46e:4704:b01e with SMTP id 5b1f17b1804b1-4775cdbe125mr57505445e9.8.1762439362278;
-        Thu, 06 Nov 2025 06:29:22 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb49c394sm5613736f8f.41.2025.11.06.06.29.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 06:29:21 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
+	s=arc-20240116; t=1762439600; c=relaxed/simple;
+	bh=G4uKJA2lrvILuVDhPt47luiROTWWi5K5T8srrNqElD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZxRmcz7+cqA1RkHZYhMFapiWJYbow1V0wqI7f7PFg+ACahmLX28LbkwqYr2hFdDQIKOtKn+ACpvUC2Tqu84PHoQMISTbSPeJ7vtO5X3Ubfwv2QXxyyGsJ3aRAC/1YQGBbqQwbHVMONfhOKGcITAM7Xlz+YPwMJkq3+EfB15wZds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [114.245.38.183])
+	by APP-01 (Coremail) with SMTP id qwCowAB33GaUsQxpU0awAQ--.2042S2;
+	Thu, 06 Nov 2025 22:32:57 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Srinivas Kandagatla <srini@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v2] regulator: irq_helper: replace use of system_wq with system_dfl_wq
-Date: Thu,  6 Nov 2025 15:29:14 +0100
-Message-ID: <20251106142914.227875-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH v2] ASoC: codecs: va-macro: fix resource leak in probe error path
+Date: Thu,  6 Nov 2025 22:31:14 +0800
+Message-ID: <20251106143114.729-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
+In-Reply-To: <20251106075055.555-1-vulab@iscas.ac.cn>
+References: <20251106075055.555-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,44 +55,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAB33GaUsQxpU0awAQ--.2042S2
+X-Coremail-Antispam: 1UD129KBjvJXoWruFW5Xr4ruF4fGFyDKrW7Arb_yoW8Jry7pF
+	Z8KrWkJa43u3y3Cws8Kw1xGFn2ka4FyF48Xr4xAwnYkr43XF1UAFyIyw4rXa1jgrWv9asx
+	u3yUtFW0qFy5Z3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgwSA2kMrUIxVQABs0
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+In the commit referenced by the Fixes tag, clk_hw_get_clk()
+was added in va_macro_probe() to get the fsgen clock,
+but forgot to add the corresponding clk_put() in va_macro_remove().
+This leads to a clock reference leak when the driver is unloaded.
 
-This lack of consistency cannot be addressed without refactoring the API.
+Switch to devm_clk_hw_get_clk() to automatically manage the
+clock resource.
 
-This continues the effort to refactor worqueue APIs, which has begun
-with the change introducing new workqueues and a new alloc_workqueue flag:
-
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-This specific workload do not benefit from a per-cpu workqueue, so use
-the default unbound workqueue (system_dfl_wq) instead.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Fixes: 30097967e056 ("ASoC: codecs: va-macro: use fsgen as clock")
+Suggested-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 ---
- drivers/regulator/irq_helpers.c | 2 +-
+Changes in v2:
+  -Switch to devm_clk_hw_get_clk() instead.
+---
+ sound/soc/codecs/lpass-va-macro.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_helpers.c
-index 5742faee8071..5b3cfac28667 100644
---- a/drivers/regulator/irq_helpers.c
-+++ b/drivers/regulator/irq_helpers.c
-@@ -146,7 +146,7 @@ static void regulator_notifier_isr_work(struct work_struct *work)
+diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
+index a49551f3fb29..fead5c941f21 100644
+--- a/sound/soc/codecs/lpass-va-macro.c
++++ b/sound/soc/codecs/lpass-va-macro.c
+@@ -1636,7 +1636,7 @@ static int va_macro_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_clkout;
  
- reschedule:
- 	if (!d->high_prio)
--		mod_delayed_work(system_wq, &h->isr_work,
-+		mod_delayed_work(system_dfl_wq, &h->isr_work,
- 				 msecs_to_jiffies(tmo));
- 	else
- 		mod_delayed_work(system_highpri_wq, &h->isr_work,
+-	va->fsgen = clk_hw_get_clk(&va->hw, "fsgen");
++	va->fsgen = devm_clk_hw_get_clk(dev, &va->hw, "fsgen");
+ 	if (IS_ERR(va->fsgen)) {
+ 		ret = PTR_ERR(va->fsgen);
+ 		goto err_clkout;
 -- 
-2.51.1
+2.50.1.windows.1
 
 
