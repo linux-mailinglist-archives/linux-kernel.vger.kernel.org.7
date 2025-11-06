@@ -1,81 +1,123 @@
-Return-Path: <linux-kernel+bounces-887585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A955C38A52
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:04:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4781C38A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF09F4F43FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E00A3AB1F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57BC20E030;
-	Thu,  6 Nov 2025 01:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A679D38DE1;
+	Thu,  6 Nov 2025 01:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L64zd5kh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="N1RHxR5V"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295DE1DDC1D;
-	Thu,  6 Nov 2025 01:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E3D57C9F;
+	Thu,  6 Nov 2025 01:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762390907; cv=none; b=EKA+tgfwkoyOeODBSJ6JCW3u82RDsObZelCs5nIvf6oPfPNv3tvj4yh1O1qovi8EARn0oLokYktnFhZNbPqV+4NjZ46a5AMujFVSSpq4U90H4Kiz7+engMCdDA+VIS8eqxlz4Mi0ySf4XQq39oeLw9n8tSd+VCpb/z61moHrgfo=
+	t=1762390905; cv=none; b=ubZ55TEzlt9j8K97UYpoorZ4devLylv7FgPHqTlOBbOBeMvxvLHvvUP7B/q4uc08uJOEGcTlqGUfgfASxcyJlUB3XQ4fATQQUtqIgu7E2TXgtURbDhYlHQER6Toi2fQt2q7NHzfa36W7DWzsyNtq1u62tev8yJrB5XP3rlvBZ5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762390907; c=relaxed/simple;
-	bh=BzaUGNd0RbQfRICzb5BLazyLO6lbo5kIyph1QuSsSKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p3IG58JgfkIJ6HqP1Yweg39oEtzaLuhpcFUidVE98H+3fE15Mgx6ENf+SwGOsyi4DlKmeH7430e5thRBGuxv6qr81NJcF2TLRbaiKpjuuaghTdUdWU2DCojf4ITAzxvCeg1dBincRGG/xiWJ717cAQnWfpXjX0b1lzA19h9y8yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L64zd5kh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDAEC116D0;
-	Thu,  6 Nov 2025 01:01:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762390906;
-	bh=BzaUGNd0RbQfRICzb5BLazyLO6lbo5kIyph1QuSsSKU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=L64zd5khlFi++wULtreDv4LgQWkCVSKNN9LYdRTnNd2bGDaw+vQkzgdM7k4dFg5Qz
-	 BgHRaSkFOw4IAL1n8SdLYtROGsNngIPPxFd0rURTupinYfZDNk7enQw5b80030bme+
-	 8i0GfEypzZsphe1bmdQVEiCAY4/cE3cvSNCcHcFzyWs0DG/UheKkk+fsCMHGOcr3Rm
-	 UG5bB7Br0+zmsK307tIc2FPTFJ56G0j0EbJ8hYiU9ZQ7JdAbgGQ7oP9tlLJjtS12v+
-	 l/ztkcACBlkRy6eVNjB+K0BNQgb4VXRH57XhWP/oQT4ATErNowWO2LDrbt4O6GAXNl
-	 TGkgoiwtkR7Rw==
-Date: Wed, 5 Nov 2025 17:01:45 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Michael Chan <michael.chan@broadcom.com>
-Cc: Breno Leitao <leitao@debian.org>, Pavan Chebbi
- <pavan.chebbi@broadcom.com>, Michael Chan <mchan@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next] tg3: extract GRXRINGS from .get_rxnfc
-Message-ID: <20251105170145.461c8f11@kernel.org>
-In-Reply-To: <CACKFLim7ruspmqvjr6bNRq5Z_XXVk3vVaLZOons7kMCzsEG23A@mail.gmail.com>
-References: <20251105-grxrings_v1-v1-1-54c2caafa1fd@debian.org>
-	<CACKFLim7ruspmqvjr6bNRq5Z_XXVk3vVaLZOons7kMCzsEG23A@mail.gmail.com>
+	s=arc-20240116; t=1762390905; c=relaxed/simple;
+	bh=qalR+9DmlQsAs3IP1SwoablOTDBE9IfXJzETuc/4s0M=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AD6FUrBATxN+UzGPlkkH2CBU0cYnxNeakmhV4N9Ibyg+TiaCEb32NQscbrScZPZuaZWrpV34h7IiQKjZHyhbD1sdGahL8KlVOz795Cu5MnVilaKlKQQB8dMhrL14vss8cSMND3WY1TaR96x1fgYZUPzouf3GLoEAsXWqktBCOqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=N1RHxR5V; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762390822;
+	bh=3kT/wXXpOECHC7SoUGMt7kZX+LFSbhnovtqEAlsizPY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=N1RHxR5VgrwIuATZpZeh0hUZQJPYuvxXvoCLicfLJhle2/ECrTHKJU0rjbJ3DqBcm
+	 suwKGnx/n1O/s0YTgSDpL1T5WBX6In7PkQxfMdXmKCrVLiThAu4pvFXdHE7fc+iRR4
+	 aexziE0V1pju3QYuLrqzoZLbid7rrbcm3mFbo3lo=
+X-QQ-mid: zesmtpsz4t1762390815t94e38ff7
+X-QQ-Originating-IP: jh7uI1plMvRhjrULDkiB/2I1zCGQl9LYTt+0qWnurlM=
+Received: from = ( [183.48.244.176])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 06 Nov 2025 09:00:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5046835240228934872
+EX-QQ-RecipientCnt: 9
+Date: Thu, 6 Nov 2025 09:00:13 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v4] i2c: spacemit: introduce pio for k1
+Message-ID: <723F1D1C8151FC6E+aQvzHbueB3FgfaU7@kernel.org>
+References: <20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com>
+ <aQvP4HVcpX-MDZBJ@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQvP4HVcpX-MDZBJ@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: NqDbsGEQdAdVWmRY0+uVZ1oy2a7MxfPjSr0Bqs2Ob3JkfXtg8+ca7AJZ
+	PiBCOvKObdKuIytqdC7OM0UWEFuT5Zst37ZDa2GHWR0dEutKgVBNWHkMZeFQkw/opEVyBRk
+	W4yXRJTr9dW7fNL5XSyylS/71ZyARQrzdELIYMXaVX9uJzUQRBexWzSeHrmV4wwEYBNXPLB
+	KMi9bEzd+zZiKEeGy0+XYEHruag9e2YNbWd0XTbtNQSLDJQpobezJAOWx9wj3ssLlBY2d6u
+	uK0FGpfCwcB5CKKfb9orvdWXHcG/qT9GqB2ILzpQqLKi/BJjzSysX4CC0NpvfiU7hhKlo3P
+	EUpbhjbuSh72UUicnuSM7QMHrpto155/nU5lDz59HkS+X36luCrVqbgDclLmvaTlNov2QIv
+	KzbE4NMe2joRDd+i5Skh8b2WQIp+tEmZBJqTd4B8fOPhROtXuJWYF5iNd6WXoIUmPInSWIi
+	ZSsu3UaGKzU+Q3rD5UoKHwaGcyfC4sJy9XJBo6T2rHAP/QJdhcfbqNUPTFWXAvP11WdowQW
+	xpBcluaSA7R5JNV6IwfGtOr/jeTrA3endI4QgR5MJFlXfjriuQCayHZjKXk/dVfwDpbxcNK
+	BDpF7oEQLmmwZaYjJy0fHegpTMppyHv3wCnM4cws5iZaZPTnUN9VLm7YIbxmaidQA1GpLD7
+	t8zJq0WJRRMmmIyWXqcegJgx/+HTV6az1X02EdWPRF69VyFqzqvuXgjgfFwSEjVpW/UuxSq
+	hH0WsWeCeKdd/OZX2jYHgM2nFjtDb9SY8UHqUk3/r6yf3IvfggqzJxI+UBm6Co6bLRmOeGE
+	nIG1qUF9uthzPFNtj0pgdGlLxS+EMGwq3yZxuwnX4K5mx1wy9M5vL+T8s0NBGcUePWWh0SI
+	xvJWi/1N3Qx05psgI9Iu0vU4kHblet5WGKvlon01nrHYx2j2XBgyZBNtee1fSlqS98YW8Rr
+	KCW6Jl9VASmVNF4T5GznHczR7aguCHu/JZ2B0Uah4pAWJkK5y0a8i4tUkn5ewyLtotIOQ4x
+	y+AVLoqdrLAGMRpQav3G9vlpoydBYnIqKhlbiUfwM8XUafnzKtt7ZDmhjcSODEVmGp2djLr
+	Upggly6TeL1
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Wed, 5 Nov 2025 11:05:34 -0800 Michael Chan wrote:
-> The existing code to use num_online_cpus() is actually not correct.
-> This is more correct:
+On Wed, Nov 05, 2025 at 11:29:52PM +0100, Aurelien Jarno wrote:
+> Hi,
 > 
-> return min(netif_get_num_default_rss_queues(), tp->rxq_max);
+> On 2025-10-09 17:59, Troy Mitchell wrote:
+> > This patch introduces I2C PIO functionality for the Spacemit K1 SoC,
+> > enabling the use of I2C in atomic context.
+> > 
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+[...]
+> > +static void spacemit_i2c_err_check(struct spacemit_i2c_dev *i2c);
+> > +static void spacemit_i2c_handle_state(struct spacemit_i2c_dev *i2c);
+> > +
 > 
-> I think when netif_get_num_default_rss_queues() was used to replace
-> num_online_cpus(), tg3_get_rxnfc() was not properly converted.
-
-All true, but perhaps we want to do that change as a follow up?
-Someone may show up later insisting that fewer queues cases 
-a regression for their workload..
-
-The sensitivity to default queue count was why we didn't change most
-of the drivers when netif_get_num_default_rss_queues() got reworked
-to a more sane default than 8.
+> At least for spacemit_i2c_err_check, the forward declaration can be 
+> avoided by moving code, which is anyway probably better done in a 
+> separate patch.
+Maybe I'll handle it later.
+> 
+> Besides this nitpick, this sounds good, so:
+> 
+> Tested-by: Aurelien Jarno <aurelien@aurel32.net>
+> Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
+Thanks!
+> 
+> Regards
+> Aurelien
+> 
+> -- 
+> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+> aurelien@aurel32.net                     http://aurel32.net
+> 
 
