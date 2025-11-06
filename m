@@ -1,51 +1,58 @@
-Return-Path: <linux-kernel+bounces-887721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDB1C38F26
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:14:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309AAC38F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 943194E1B7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:14:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 68D2F34DD82
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2857D21D3CC;
-	Thu,  6 Nov 2025 03:13:59 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32FC347DD;
-	Thu,  6 Nov 2025 03:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077D22BE621;
+	Thu,  6 Nov 2025 03:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="H8oeiFDn"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDAC2BDC3E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762398838; cv=none; b=ani/ZCqh03Iu/4Ht2gAzvLKClhdzdCq0rqbCY4wKVqLTMJdKncfsupNwrZkYbW5tb+z96aUdsTOtzlSZpVUwn4rT0nWipZ6lFgo4/WIhgYwZk38tvTTqGN/4e8n+zY/Xv4Drr1kES+AlNwhIip+6m2GhyTtnqs8Da924kCMcQ44=
+	t=1762399175; cv=none; b=GYyo05hHd0/dA1XMbNUbKF89zbnXu5NK87qPcgX/OdlH7pFjuXQuslsKuGvuXfYo/K9fDOuRt1IFKjmHrjRxo9PnnZ2f/gN+Y/JSRgL0Uy6M+RZOOlq5H2RT01jk6gyyspGh3cdrZ/kjwzTzuSu+W9+etGB/K4l1YGP6mZG1KiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762398838; c=relaxed/simple;
-	bh=8WUsvx5/71QQ9Vr0SEtyYTPNQiuu5YWD7TnNwLyYXXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UuT6GMnMypiqcAiBwCUTjmdWj2Beawy3vAvZCPntOqKDkFZyGWnLIaLzNW1wuvpQjjrrx2sYYfQED6/TJGEiNbco+8+n9CKPB6jR8UebO2YTCGtjpWLKFlvAx5C+8cUDr6l8bd6b5wP97GCxKrBn0RFYCWI20QYpr+1xx2aEotE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee7690c11b50e8-a31bb;
-	Thu, 06 Nov 2025 11:10:45 +0800 (CST)
-X-RM-TRANSID:2ee7690c11b50e8-a31bb
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from FHB-W5100149 (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee2690c11b23c2-40760;
-	Thu, 06 Nov 2025 11:10:45 +0800 (CST)
-X-RM-TRANSID:2ee2690c11b23c2-40760
-From: Zhang Chujun <zhangchujun@cmss.chinamobile.com>
-To: rostedt@goodmis.org
-Cc: linux-trace-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhang Chujun <zhangchujun@cmss.chinamobile.com>
-Subject: [PATCH] tracing: fix incorrcet short option in usage text for --threads
-Date: Thu,  6 Nov 2025 11:10:40 +0800
-Message-ID: <20251106031040.1869-1-zhangchujun@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762399175; c=relaxed/simple;
+	bh=ccI7w72smvenBTyrW2Fi5iyGpbN34hShK/Sq9W07v4c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gfbbSNioHf/4EKW8QAdLPfeBWXSS2nLB3AoQ/qk7I99lr+bfWdsERHkGlNwmnoUT8ZNuTYxasRLdJfRyBR8gLP5gSWJ4pH0tEAEfZQVfJx1C5eUqDtCof1H2cHHOr5PcTaZMa/HuafHrqW6gslZjj6EJvETF6FBr2DbSpejbd4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=H8oeiFDn; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0e
+	ZVXCKfTD48oWYcUMSXO8jVUm+ueuSjn9uH27gyeaY=; b=H8oeiFDnBeh6rPvOm8
+	7A07mMjPdqPcvMHylvyTmsIu2BT3xJ+oRlIM114dDjqcJHt0r2vYxv7Hc8zI0oam
+	9gSN55g+jQNL+M6ZflSGNLkl1O9Fi9BFS4qhN++yDMilIYtljroS2xrbYyvWbgPw
+	CbQD3/TKrIK7EA8fejmPvYtXc=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgBXNueKEwxp3uGrCw--.54468S2;
+	Thu, 06 Nov 2025 11:18:35 +0800 (CST)
+From: wangdich9700@163.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	cezary.rojewski@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	wangdicheng <wangdich9700@163.com>,
+	wangdicheng <wangdicheng@kylinos.cn>
+Subject: [PATCH] ALSA: hda/senary: Fix potential resource leak in set_beep_amp
+Date: Thu,  6 Nov 2025 11:18:33 +0800
+Message-Id: <20251106031833.80303-1-wangdich9700@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,35 +60,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgBXNueKEwxp3uGrCw--.54468S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7urW8WFWfCr45tF13XF4kXrb_yoW8Jw1DpF
+	1fG34rtFsxJa92yr4rGa1UW3Z3Wa4kWF15JayUKw1fZF4Yyr48tw1rtw12ga1rKrWI9a13
+	ZFy2vF1UKa98AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piFApUUUUUU=
+X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/xtbCvwxFlGkME4wdKgAA3v
 
-The help message incorrectly listed '-t' as the short option for
---threads, but the actual getopt_long configuration uses '-e'.
-This mismatch can confuse users and lead to incorrect command-line
-usage. This patch updates the usage string to correctly show:
-	"-e, --threads NRTHR"
-to match the implementation.
+From: wangdicheng <wangdich9700@163.com>
 
-Note: checkpatch.pl reports a false-positive spelling warning on
-'Run', which is intentional.
+Add proper error handling in set_beep_amp function to avoid potential
+resource leaks when snd_hda_gen_add_kctl fails.
 
-Signed-off-by: Zhang Chujun <zhangchujun@cmss.chinamobile.com>
+Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+---
+ sound/hda/codecs/senarytech.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/tools/tracing/latency/latency-collector.c b/tools/tracing/latency/latency-collector.c
-index cf263fe9deaf..ef97916e3873 100644
---- a/tools/tracing/latency/latency-collector.c
-+++ b/tools/tracing/latency/latency-collector.c
-@@ -1725,7 +1725,7 @@ static void show_usage(void)
- "-n, --notrace\t\tIf latency is detected, do not print out the content of\n"
- "\t\t\tthe trace file to standard output\n\n"
+diff --git a/sound/hda/codecs/senarytech.c b/sound/hda/codecs/senarytech.c
+index 9aa1e9bcd9ec..99af8d5e51db 100644
+--- a/sound/hda/codecs/senarytech.c
++++ b/sound/hda/codecs/senarytech.c
+@@ -47,17 +47,28 @@ static int set_beep_amp(struct senary_spec *spec, hda_nid_t nid,
+ {
+ 	struct snd_kcontrol_new *knew;
+ 	unsigned int beep_amp = HDA_COMPOSE_AMP_VAL(nid, 1, idx, dir);
+-	int i;
++	int i, err;
  
--"-t, --threads NRTHR\tRun NRTHR threads for printing. Default is %d.\n\n"
-+"-e, --threads NRTHR\tRun NRTHR threads for printing. Default is %d.\n\n"
+ 	spec->gen.beep_nid = nid;
+ 	for (i = 0; i < ARRAY_SIZE(senary_beep_mixer); i++) {
+ 		knew = snd_hda_gen_add_kctl(&spec->gen, NULL,
+ 					    &senary_beep_mixer[i]);
+-		if (!knew)
+-			return -ENOMEM;
++		if (!knew) {
++			err = -ENOMEM;
++			goto error;
++		}
+ 		knew->private_value = beep_amp;
+ 	}
+ 	return 0;
++
++error:
++	/* Clean up any successfully added controls */
++	while (i-- > 0) {
++		/* The gen spec will be cleaned up in senary_remove,
++		 * so we don't need individual cleanup here
++		 */
++	}
++	return err;
+ }
  
- "-r, --random\t\tArbitrarily sleep a certain amount of time, default\n"
- "\t\t\t%ld ms, before reading the trace file. The\n"
+ static int senary_auto_parse_beep(struct hda_codec *codec)
 -- 
-2.50.1.windows.1
-
-
+2.25.1
 
 
