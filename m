@@ -1,89 +1,102 @@
-Return-Path: <linux-kernel+bounces-888087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0323C39D0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:29:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06442C39F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562D1188F99B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65FBB3B2E6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD8D30BF74;
-	Thu,  6 Nov 2025 09:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="gjKqUnj8"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2080729898B;
-	Thu,  6 Nov 2025 09:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD1C30DED7;
+	Thu,  6 Nov 2025 09:50:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7235A2E6CA6
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762421344; cv=none; b=dc2TZqafcf+Sk8Aa+98A/MT1HjftypRr7lGYPJMT15FoS4IQcBKTfPzCzIx8wpXnxO5MWTKU0vUnkSVOqZm6cM8ESLKBdhSoVrPCVtS/z/fJU+JAMYCbFiJnpio7Q+PU9o31cJ73oaOvV4lDObeFL5v6OeQDkL9D/ADX3xSREO0=
+	t=1762422606; cv=none; b=I8CugEJtWpwqkyjdQ+XP/GQ4AnYSWg3oJQ7AL8AadWm8J/IgrB2ljQyZhnzM8p2epmwCkF1AKlqnQ4WMFcZpzyQg82HVVw3VfOsWjFitQnnk9dCJ3G04p93DU+mw8Bj/1KA48uaXeiTVKNXjkwyAq2fua9RHICO7Vs0JIgJ+dP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762421344; c=relaxed/simple;
-	bh=dGESzB/CV+7hkRnVezqLsXuXTaaTagrPtaeu2/xicPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFQYgntOXQJxbuUHx40gv8OJ7TnR7qfN6auiz6sJmGa4+oqEgNqME4joXGf46u/8zvewbkT9XGsofO6Nh3H0Ox+xXNnHkxlf1KXblMQlUdRuSeLpwqTlTxitgji//4oZFMg+3XaxEdenrQPGtCbbahadQQULQwsdTNWP71Pgbnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=gjKqUnj8; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
-	from:content-type:reply-to; bh=c4IFy0j3APf8RvRvtgravzWgcn5rLG9kiZv9V2rYBBQ=; 
-	b=gjKqUnj8eeniNM9WApQ8skgPnEe4Qup5uy2IKMzHM3cX4UMHGGAOAh7s8guJOsCL3EQsrdP89bX
-	0T/QmjJiiMk9jkdFaSsG0zhSzSyZzKwPoJXF4S1H076tCrjD/Fzwfekcl1qsys4J7iecBUxcOQ2UC
-	Qw6fYsMcrnIH3BNA/+Ai6z7cfqvm1aP92WWRMGgiJGw0fuqzyPwKJJUMSxUbsyheFh6x5f4wRj3H7
-	+FGqRkIu0jdyelvxcjufThbGRyiRE6J9DNH1j/98FbxO4mc8pBBzpHfBi4zwxmId/JJ409NsYSdZd
-	bWjkM5AtKto4gaPvq9omRNRVAEuWP/h3F5Ow==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1vGwIQ-000tGB-34;
-	Thu, 06 Nov 2025 17:28:48 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 06 Nov 2025 17:28:46 +0800
-Date: Thu, 6 Nov 2025 17:28:46 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: syzbot <syzbot+bd936ccd4339cea66e6b@syzkaller.appspotmail.com>,
-	daniel.m.jordan@oracle.com, linux-kernel@vger.kernel.org,
-	steffen.klassert@secunet.com, linux-crypto@vger.kernel.org
-Subject: Re: padata: Is padata_find_next() thread-safe?
-Message-ID: <aQxqTiUUrDmF5M_X@gondor.apana.org.au>
-References: <6860c5d3.a00a0220.c1739.0009.GAE@google.com>
- <68c34150.050a0220.3c6139.0045.GAE@google.com>
- <5823185b-55c6-416b-a85c-1191a045caf8@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1762422606; c=relaxed/simple;
+	bh=bnJDi7GETiYUPS32zPGfoTvP1JsoBPSsJZuoaB5Gr5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZaAVI6WDLEYdsozOHUD6EvsJXmUnNAOaP3+V3byBmqlbWscvdrgmAUA8VSlb1OI+PzsjXaNL0nrhcy4515efdiZSTEUMB9eGofJyeUaVlIFaNsE7rFux0PTN3KQKK41TGt1Gnaxvh7IQOc/ZjSghGhe13M6K/tHSvqLXtUtsYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d2H1v58zTz9sSV;
+	Thu,  6 Nov 2025 10:28:51 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id kAhLEPwwxtXU; Thu,  6 Nov 2025 10:28:51 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d2H1v4Sh9z9sSS;
+	Thu,  6 Nov 2025 10:28:51 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 88B0E8B77B;
+	Thu,  6 Nov 2025 10:28:51 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id pF7VBQ2TqCs8; Thu,  6 Nov 2025 10:28:51 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2177C8B773;
+	Thu,  6 Nov 2025 10:28:51 +0100 (CET)
+Message-ID: <994bea8c-7b28-4aae-a6b3-e4f33731cb29@csgroup.eu>
+Date: Thu, 6 Nov 2025 10:28:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5823185b-55c6-416b-a85c-1191a045caf8@I-love.SAKURA.ne.jp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] powerpc: Use shared font data
+To: Finn Thain <fthain@linux-m68k.org>, Stan Johnson <userm57@yahoo.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: mpe@ellerman.id.au, npiggin@gmail.com, sam@ravnborg.org,
+ benh@kernel.crashing.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+ Cedar Maxwell <cedarmaxwell@mac.com>,
+ "maddy@linux.ibm.com" <maddy@linux.ibm.com>
+References: <20230825142754.1487900-1-linux@treblig.org>
+ <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com> <aQeQYNANzlTqJZdR@gallifrey>
+ <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org>
+ <aQgJ95Y3pA-8GdbP@gallifrey>
+ <3cc3d311-35b0-42f1-b20f-ed59391bb8e0@csgroup.eu>
+ <ead4ef3f-9f8c-a98e-b48d-f052bc9492d0@linux-m68k.org>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <ead4ef3f-9f8c-a98e-b48d-f052bc9492d0@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 08:44:53PM +0900, Tetsuo Handa wrote:
-> syzbot is reporting possibility of recursive locking at
-> https://syzkaller.appspot.com/bug?extid=bd936ccd4339cea66e6b .
-> If this is a false positive report, the fix will be as simple as
 
-Yes it's a false positive as reorder->lock is never the same as
-squeue->serial.lock.
 
-However, they both have the same data type which is why lockdep
-is confused.
+Le 06/11/2025 à 05:11, Finn Thain a écrit :
+> 
+> On Wed, 5 Nov 2025, Christophe Leroy wrote:
+> 
+>> 1/ Either build font_sun8x16.o with -fPIC
+>> ...
+>>
+>> 2/ Or add a PTRRELOC:
+>> ...
+> 
+> Thanks for your help with this, Christophe.
+> 
+> I fixed up the whitespace problems and forwarded those patches to Stan,
+> along with instructions for applying them. He tells me that patch 2 fixed
+> the hang. Patch 1 did not.
 
-Please provide a patch that sets the class for one of them to
-something different.  For example, change the lockdep class for
-reorder->lock using lockdep_set_class and the problem should go
-away.
+Fine. Then let's use PTRRELOC.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Will you or David submit the patch ?
+
+Thanks
+Christophe
 
