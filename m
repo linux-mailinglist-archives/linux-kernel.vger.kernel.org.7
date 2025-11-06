@@ -1,58 +1,100 @@
-Return-Path: <linux-kernel+bounces-889341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8801C3D536
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:08:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1F4C3D51E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743583AEE33
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 940061890F8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C53F34FF49;
-	Thu,  6 Nov 2025 20:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5CE3557E4;
+	Thu,  6 Nov 2025 20:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="b+nKE73g"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPUeQ6Lj"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2EA2727E0;
-	Thu,  6 Nov 2025 20:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEF83451B5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 20:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762459682; cv=none; b=qKYXr9mvIRL2jb+N2JgI2vS6AjPhSZjOKFhBwJoqyPjjYUGqKAMFbR8cYcKc8A5npjmtXZVa6wIqSvVkSbCJAQxFZpZhO7PY/3uwXyYCgWuaVfx80BCCxn0wKhMWKXTiuBZw34/Jjn8febby7IseH7EgV0PSh+nN1498+uQGIC0=
+	t=1762459410; cv=none; b=VddeuxU46DSae60LMoVvrG/PEnWK8cVR5Lk302+t4xGPsRc38Jz4eDVfJXMizvJYqy1SpGQtbioieg7Xv41jx5/YNPqYUu6cusuZYxhX+CIMkvYFmxuDajYtpn9Gk2bmFbuX+ecHQYfBaoSdmsEB3MGZ+OWRYxgCbh6EXDKdhwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762459682; c=relaxed/simple;
-	bh=KxB+63k4fM/J4OVDe9WCNOji+9JfZTtssEwVtG2MB60=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LYHwSfygfdgwU97Z6rVsyO6+2LPxfA/EGJ1sdTxOmazH6Fwyihh+zq+WuinyYVcVz8CpYxxbnMI2kdkH7d+SdVrOr+81GVrjP4OGvitjHA2VFuCyrH5u/2jURIS1n9FBUeMxCF75zqLVnrJUU5pVRHIc2AEamtTSWZAGKxGUtqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=b+nKE73g; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (p50878061.dip0.t-ipconnect.de [80.135.128.97])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 52D8A2FC0057;
-	Thu,  6 Nov 2025 21:07:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762459676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=s5K6G8eO8hwGCWN+eU1ibbTVp/+XevQMvA2PtAxJbBI=;
-	b=b+nKE73gZYroIjKaLqoxQrz/34sqz3bJ0vcoD9f+7bdwgHoAVo0miWqJLSxTpjHggmnK1b
-	Af+szUw6m6pg8tG+OBKveuocZbInKukVbFoekLjvPzCte+XUbv/YSuIPGlvcAsg1mB8HyF
-	anWwVWV0OthOVAk5X4gFcoja5wyL1Ec=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] hid/hid-multitouch: Keep latency normal on deactivate for reactivation gesture
-Date: Thu,  6 Nov 2025 20:59:55 +0100
-Message-ID: <20251106200752.1523111-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1762459410; c=relaxed/simple;
+	bh=d5XB6lXi+SqfD7FMBczFovauT0tkT3Zo89Lydc4vel4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n0bIoMEgDziaVMdXmseRgVHMm8oJRsbuEVD/B9m+k0wZL96mE/iDYN8X4PQy7er9uLcHle4jHHy0N2YIUlM7nlC17yrWBYJoQo2t1+7l6CVX8joYYbFht9m1ygAPJuKVspSbqvZVyzQ58qf8cQhz2ZIxyml08cbW0/I1piAt/bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPUeQ6Lj; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7aca3e4f575so24200b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:03:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762459408; x=1763064208; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ib31VxAF5IlM6SIObcVU8XyhJIAvv4GQL1AJev9y2TI=;
+        b=NPUeQ6LjchlUGFfFA27PRq2PjWlmenTvh/hKkzTPlCdgt+y9vyNZTR9ur9czSJluAk
+         KjfsxNbY+LlfxiEYuFuRnSvy2h7XKSxC31zYIF9aNC2wDxwfIKtcUQHFZpM87GyPlWVJ
+         SIBJ27dcC+wFEBf7axrUxh/R/0k6iFwSXjkTBrsERorG02g+Bsk7PIbaNWbQIPCt1zsZ
+         17rBG3iE5Vo5gank913d8cMYP/dTLyVBvi/HiBv/1ObpZeMeGIjCkzM8yia6v4BYsVBj
+         ZVTOL9OUnmxYqoQ0T385Lz4lxq/Qan8NcCMmig/iq5/3q6idvW8/TaSD0gvPrnsZP/wy
+         jVGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762459408; x=1763064208;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ib31VxAF5IlM6SIObcVU8XyhJIAvv4GQL1AJev9y2TI=;
+        b=uC9U+1L0ETX0Hk16cDvFlP1dt+BSY8nKIKErKkzTsQJL9nBbWQ73viNplwG9x486RD
+         QpNWuzsoWP9kprdvMeES3Le1NacV5ZFL1dzQ2hw8uXwst/I/GhdK+RuX2TwtqgJk4yui
+         s0s48Tv5qRJrloizmMlvIih7GkrnLCQukI9wwzu0qi3PktZxYYx3oHPUZAOwPF6SaiwY
+         tJ5YVxlW/UXQSRFT7BtfhcUDaA96h2Y0UNWnKBVEcXLMRWRVLXFRKCxQ1H5lYOMI73hw
+         VUdZm5C5r94+RnBGqCAdNUImP3Dqaw/NbHmrCgVEjGHaiRn7yih5C34lFdGY24JHI9Xd
+         ZnRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzcPP+AQJiRAItRYwhVtq/Gi9cKQvrgWijRlfHP0dNAYBgqnv5h3qh5cI04g2Hnlk6cxDxcv4TC9GSpts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPNF6+SqCST9KXnLUzDKKOpqGtodjkIMTg3uT+F/ebGWVfFpd2
+	Na4osfPSeaxSotbV+UAnQ3wgQtvlrXmLTW3W30J6mJkK2sGGkvF0N+TT
+X-Gm-Gg: ASbGnctLUQZKNc6EDr3Gr+SU4EA3RjFULcl5L8HrMUxshn+fPoil0lS6UIwlk45CWBW
+	rrC/WlZZRWkzZi4xTrdt78Evl5hjPIW9hYPS7iolTF+AFSFUZjDpeSC6dMHUrwUmn/W28Yz8mnb
+	t9x/fWmNn5XrHKi5FkUEK9qfFX0mcmyGvpldxDJ8pfkopVujWP3FNTpaf5m/IMIBsNhbLABpRWw
+	XlRjypg+TTQuYN3KNS+jKhu1+AWqEJQs68hI2JWKgC33XJLc8NWvs+4V8/+/8RttE4kjhNhcKSF
+	zAeJeg5JGjlaNNmI3v+uTwmaPpIvw2aOzgU8yrUGnODnhJD50k0xm3Ln7D/gxLV8BKjf+rLoLpU
+	ej3eRIaUc57w+onaVFomfIBV7B1E7N9WOk2eQZbPEkI6Ob9u8NbI1yL+PcD2pTSKMM67XuG2/Bz
+	uVZLvFJnjmsZtZIjlbz/QRD+cwdxZol+hK
+X-Google-Smtp-Source: AGHT+IEAyHzkTRkADJLdNmwr0EjaV8PsIqtOruX2xP2Xhx7l7trbwf4bACqzu+hOl3JwuNDTRlMk3Q==
+X-Received: by 2002:a05:6a00:3d4f:b0:7ac:6c3e:e918 with SMTP id d2e1a72fcca58-7b0bbb0a58fmr926453b3a.11.1762459407863;
+        Thu, 06 Nov 2025 12:03:27 -0800 (PST)
+Received: from iku.. ([2401:4900:1c07:5fe8:c1fb:f9bb:4f6d:dc88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0ccb5c674sm360930b3a.59.2025.11.06.12.03.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 12:03:26 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on VSC8541
+Date: Thu,  6 Nov 2025 20:03:09 +0000
+Message-ID: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,84 +104,318 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Uniwill devices have a built in gesture in the touchpad to de- and
-reactivate it by double taping the upper left corner. This gesture stops
-working when latency is set to high, so this patch keeps the latency on
-normal.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-Cc: stable@vger.kernel.org
+Add a minimal LED controller implementation supporting common use cases
+with the 'netdev' trigger.
+
+The driver now defaults to VSC8531_LINK_ACTIVITY at initialization and
+allows users to configure LED behavior through the LED subsystem. Support
+for controlling LED behavior is also added.
+
+The LED Behavior (register 30) bits [0:1] control the combine feature:
+0: Combine enabled (link/activity, duplex/collision)
+1: Combine disabled (link only, duplex only)
+
+This feature is now managed based on the RX/TX rules. If both RX and TX
+are disabled, the combine feature is turned off; otherwise, it remains
+enabled.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-V1->V2: Use a quirk to narrow down the devices this is applied to.
+ drivers/net/phy/mscc/mscc.h      |   4 +
+ drivers/net/phy/mscc/mscc_main.c | 223 ++++++++++++++++++++++++++++++-
+ 2 files changed, 222 insertions(+), 5 deletions(-)
 
-I have three Uniwill devices at hand right now that have at least two
-physically different touchpads, but same Vendor + Product ID combination.
-Maybe the vendor uses this product ID for all i2c connected touchpads, or
-it is used as some kind of subvendor ID to indicate Uniwill?
-
-To be able to really narrow it down to Uniwill only devices I would need to
-check DMI strings, but then I will probably narrow it down to much as I
-only know what we at TUXEDO use there.
-
- drivers/hid/hid-multitouch.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 179dc316b4b51..470f199148057 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -76,6 +76,7 @@ MODULE_LICENSE("GPL");
- #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
- #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
- #define MT_QUIRK_APPLE_TOUCHBAR		BIT(23)
-+#define MT_QUIRK_KEEP_LATENCY_ON_CLOSE	BIT(24)
+diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
+index 2eef5956b9cc..65c9d7bd9315 100644
+--- a/drivers/net/phy/mscc/mscc.h
++++ b/drivers/net/phy/mscc/mscc.h
+@@ -85,6 +85,10 @@ enum rgmii_clock_delay {
+ #define LED_MODE_SEL_MASK(x)		  (GENMASK(3, 0) << LED_MODE_SEL_POS(x))
+ #define LED_MODE_SEL(x, mode)		  (((mode) << LED_MODE_SEL_POS(x)) & LED_MODE_SEL_MASK(x))
  
- #define MT_INPUTMODE_TOUCHSCREEN	0x02
- #define MT_INPUTMODE_TOUCHPAD		0x03
-@@ -229,6 +230,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
- #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
- #define MT_CLS_SMART_TECH			0x0113
- #define MT_CLS_APPLE_TOUCHBAR			0x0114
-+#define MT_CLS_UNIWILL_TOUCHPAD			0x0115
- #define MT_CLS_SIS				0x0457
- 
- #define MT_DEFAULT_MAXCONTACT	10
-@@ -420,6 +422,9 @@ static const struct mt_class mt_classes[] = {
- 			MT_QUIRK_APPLE_TOUCHBAR,
- 		.maxcontacts = 11,
- 	},
-+	{ .name = MT_CLS_UNIWILL_TOUCHPAD,
-+		.quirks = MT_QUIRK_KEEP_LATENCY_ON_CLOSE,
-+	},
- 	{ .name = MT_CLS_SIS,
- 		.quirks = MT_QUIRK_NOT_SEEN_MEANS_UP |
- 			MT_QUIRK_ALWAYS_VALID |
-@@ -1998,7 +2003,12 @@ static void mt_on_hid_hw_open(struct hid_device *hdev)
- 
- static void mt_on_hid_hw_close(struct hid_device *hdev)
- {
--	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
-+	struct mt_device *td = hid_get_drvdata(hdev);
++#define MSCC_PHY_LED_BEHAVIOR		  30
++#define LED_COMBINE_DIS_MASK(x)		  BIT(x)
++#define LED_COMBINE_DIS(x, dis)		  (((dis) ? 1 : 0) << (x))
 +
-+	if (td->mtclass.quirks & MT_QUIRK_KEEP_LATENCY_ON_CLOSE)
-+		mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_NONE);
-+	else
-+		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
+ #define MSCC_EXT_PAGE_CSR_CNTL_17	  17
+ #define MSCC_EXT_PAGE_CSR_CNTL_18	  18
+ 
+diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
+index 8678ebf89cca..0c4e368527b5 100644
+--- a/drivers/net/phy/mscc/mscc_main.c
++++ b/drivers/net/phy/mscc/mscc_main.c
+@@ -173,23 +173,43 @@ static void vsc85xx_get_stats(struct phy_device *phydev,
+ 		data[i] = vsc85xx_get_stat(phydev, i);
  }
  
- /*
-@@ -2375,6 +2385,11 @@ static const struct hid_device_id mt_devices[] = {
- 		MT_USB_DEVICE(USB_VENDOR_ID_UNITEC,
- 			USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19) },
+-static int vsc85xx_led_cntl_set(struct phy_device *phydev,
+-				u8 led_num,
+-				u8 mode)
++static int vsc85xx_led_cntl_set_lock_unlock(struct phy_device *phydev,
++					    u8 led_num,
++					    u8 mode, bool lock)
+ {
+ 	int rc;
+ 	u16 reg_val;
  
-+	/* Uniwill touchpads */
-+	{ .driver_data = MT_CLS_UNIWILL_TOUCHPAD,
-+		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-+			   USB_VENDOR_ID_PIXART, 0x0255) },
+-	mutex_lock(&phydev->lock);
++	if (lock)
++		mutex_lock(&phydev->lock);
+ 	reg_val = phy_read(phydev, MSCC_PHY_LED_MODE_SEL);
+ 	reg_val &= ~LED_MODE_SEL_MASK(led_num);
+ 	reg_val |= LED_MODE_SEL(led_num, (u16)mode);
+ 	rc = phy_write(phydev, MSCC_PHY_LED_MODE_SEL, reg_val);
+-	mutex_unlock(&phydev->lock);
++	if (lock)
++		mutex_unlock(&phydev->lock);
+ 
+ 	return rc;
+ }
+ 
++static int vsc85xx_led_cntl_set(struct phy_device *phydev, u8 led_num,
++				u8 mode)
++{
++	return vsc85xx_led_cntl_set_lock_unlock(phydev, led_num, mode, true);
++}
 +
- 	/* VTL panels */
- 	{ .driver_data = MT_CLS_VTL,
- 		MT_USB_DEVICE(USB_VENDOR_ID_VTL,
++static int vsc8541_led_combine_disable_set(struct phy_device *phydev, u8 led_num,
++					   bool combine_disable)
++{
++	u16 reg_val;
++
++	reg_val = phy_read(phydev, MSCC_PHY_LED_BEHAVIOR);
++	reg_val &= ~LED_COMBINE_DIS_MASK(led_num);
++	reg_val |= LED_COMBINE_DIS(led_num, combine_disable);
++
++	return phy_write(phydev, MSCC_PHY_LED_BEHAVIOR, reg_val);
++}
++
+ static int vsc85xx_mdix_get(struct phy_device *phydev, u8 *mdix)
+ {
+ 	u16 reg_val;
+@@ -2218,6 +2238,174 @@ static int vsc85xx_config_inband(struct phy_device *phydev, unsigned int modes)
+ 				reg_val);
+ }
+ 
++static int vsc8541_led_brightness_set(struct phy_device *phydev,
++				      u8 index, enum led_brightness value)
++{
++	struct vsc8531_private *vsc8531 = phydev->priv;
++
++	if (index >= vsc8531->nleds)
++		return -EINVAL;
++
++	return vsc85xx_led_cntl_set_lock_unlock(phydev, index, value == LED_OFF ?
++				    VSC8531_FORCE_LED_OFF : VSC8531_FORCE_LED_ON, false);
++}
++
++static int vsc8541_led_hw_is_supported(struct phy_device *phydev, u8 index,
++				       unsigned long rules)
++{
++	struct vsc8531_private *vsc8531 = phydev->priv;
++	static const unsigned long supported = BIT(TRIGGER_NETDEV_LINK) |
++					       BIT(TRIGGER_NETDEV_LINK_1000) |
++					       BIT(TRIGGER_NETDEV_LINK_100) |
++					       BIT(TRIGGER_NETDEV_LINK_10) |
++					       BIT(TRIGGER_NETDEV_RX) |
++					       BIT(TRIGGER_NETDEV_TX);
++
++	if (index >= vsc8531->nleds)
++		return -EINVAL;
++
++	if (rules & ~supported)
++		return -EOPNOTSUPP;
++
++	return 0;
++}
++
++static int vsc8541_led_hw_control_get(struct phy_device *phydev, u8 index,
++				      unsigned long *rules)
++{
++	struct vsc8531_private *vsc8531 = phydev->priv;
++	u16 reg;
++
++	if (index >= vsc8531->nleds)
++		return -EINVAL;
++
++	reg = phy_read(phydev, MSCC_PHY_LED_MODE_SEL) & LED_MODE_SEL_MASK(index);
++	reg >>= LED_MODE_SEL_POS(index);
++	switch (reg) {
++	case VSC8531_LINK_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	case VSC8531_LINK_1000_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_LINK_1000) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	case VSC8531_LINK_100_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_LINK_100) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	case VSC8531_LINK_10_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_LINK_10) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	case VSC8531_LINK_100_1000_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_LINK_100) |
++			 BIT(TRIGGER_NETDEV_LINK_1000) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	case VSC8531_LINK_10_1000_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_LINK_10) |
++			 BIT(TRIGGER_NETDEV_LINK_1000) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	case VSC8531_LINK_10_100_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_LINK_10) |
++			 BIT(TRIGGER_NETDEV_LINK_100) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	case VSC8531_ACTIVITY:
++		*rules = BIT(TRIGGER_NETDEV_LINK) |
++			 BIT(TRIGGER_NETDEV_RX) |
++			 BIT(TRIGGER_NETDEV_TX);
++		break;
++
++	default:
++		*rules = 0;
++		break;
++	}
++
++	return 0;
++}
++
++static int vsc8541_led_hw_control_set(struct phy_device *phydev, u8 index,
++				      unsigned long rules)
++{
++	struct vsc8531_private *vsc8531 = phydev->priv;
++	bool combine_disable = false;
++	u16 mode = VSC8531_LINK_ACTIVITY;
++	bool has_rx, has_tx;
++	int ret;
++
++	if (index >= vsc8531->nleds)
++		return -EINVAL;
++
++	if (rules & BIT(TRIGGER_NETDEV_LINK))
++		mode = VSC8531_LINK_ACTIVITY;
++
++	if (rules & BIT(TRIGGER_NETDEV_LINK_10))
++		mode = VSC8531_LINK_10_ACTIVITY;
++
++	if (rules & BIT(TRIGGER_NETDEV_LINK_100))
++		mode = VSC8531_LINK_100_ACTIVITY;
++
++	if (rules & BIT(TRIGGER_NETDEV_LINK_1000))
++		mode = VSC8531_LINK_1000_ACTIVITY;
++
++	if (rules & BIT(TRIGGER_NETDEV_LINK_100) &&
++	    rules & BIT(TRIGGER_NETDEV_LINK_1000))
++		mode = VSC8531_LINK_100_1000_ACTIVITY;
++
++	if (rules & BIT(TRIGGER_NETDEV_LINK_10) &&
++	    rules & BIT(TRIGGER_NETDEV_LINK_1000))
++		mode = VSC8531_LINK_10_1000_ACTIVITY;
++
++	if (rules & BIT(TRIGGER_NETDEV_LINK_10) &&
++	    rules & BIT(TRIGGER_NETDEV_LINK_100))
++		mode = VSC8531_LINK_10_100_ACTIVITY;
++
++	/*
++	 * The VSC8541 PHY provides an option to control LED behavior. By
++	 * default, the LEDx combine function is enabled, meaning the LED
++	 * will be on when there is link/activity or duplex/collision. If
++	 * the combine function is disabled, the LED will be on only for
++	 * link or duplex.
++	 *
++	 * To control this behavior, we check the selected rules. If both
++	 * RX and TX activity are not selected, the LED combine function
++	 * is disabled; otherwise, it remains enabled.
++	 */
++	has_rx = !!(rules & BIT(TRIGGER_NETDEV_RX));
++	has_tx = !!(rules & BIT(TRIGGER_NETDEV_TX));
++	if (!has_rx && !has_tx)
++		combine_disable = true;
++
++	ret = vsc8541_led_combine_disable_set(phydev, index, combine_disable);
++	if (ret < 0)
++		return ret;
++
++	return vsc85xx_led_cntl_set_lock_unlock(phydev, index, mode, false);
++}
++
+ static int vsc8514_probe(struct phy_device *phydev)
+ {
+ 	struct vsc8531_private *vsc8531;
+@@ -2322,6 +2510,7 @@ static int vsc85xx_probe(struct phy_device *phydev)
+ 	int rate_magic;
+ 	u32 default_mode[2] = {VSC8531_LINK_1000_ACTIVITY,
+ 	   VSC8531_LINK_100_ACTIVITY};
++	int phy_id;
+ 
+ 	rate_magic = vsc85xx_edge_rate_magic_get(phydev);
+ 	if (rate_magic < 0)
+@@ -2343,6 +2532,26 @@ static int vsc85xx_probe(struct phy_device *phydev)
+ 	if (!vsc8531->stats)
+ 		return -ENOMEM;
+ 
++	phy_id = phydev->drv->phy_id & phydev->drv->phy_id_mask;
++	if (phy_id == PHY_ID_VSC8541) {
++		struct device_node *np;
++
++		/*
++		 * Check for LED configuration in device tree if available
++		 * or fall back to default `vsc8531,led-x-mode` DT properties.
++		 */
++		np = of_get_child_by_name(phydev->mdio.dev.of_node, "leds");
++		if (np) {
++			of_node_put(np);
++
++			/* default to link activity */
++			for (unsigned int i = 0; i < vsc8531->nleds; i++)
++				vsc8531->leds_mode[i] = VSC8531_LINK_ACTIVITY;
++
++			return 0;
++		}
++	}
++
+ 	return vsc85xx_dt_led_modes_get(phydev, default_mode);
+ }
+ 
+@@ -2548,6 +2757,10 @@ static struct phy_driver vsc85xx_driver[] = {
+ 	.get_sset_count = &vsc85xx_get_sset_count,
+ 	.get_strings    = &vsc85xx_get_strings,
+ 	.get_stats      = &vsc85xx_get_stats,
++	.led_brightness_set = vsc8541_led_brightness_set,
++	.led_hw_is_supported = vsc8541_led_hw_is_supported,
++	.led_hw_control_get = vsc8541_led_hw_control_get,
++	.led_hw_control_set = vsc8541_led_hw_control_set,
+ },
+ {
+ 	.phy_id		= PHY_ID_VSC8552,
 -- 
 2.43.0
 
