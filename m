@@ -1,199 +1,244 @@
-Return-Path: <linux-kernel+bounces-888762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3A5C3BD7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:46:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D610C3BD81
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F43A1883F3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDFF2188D81C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2D3341649;
-	Thu,  6 Nov 2025 14:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCC833F8C0;
+	Thu,  6 Nov 2025 14:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sOZQs6c8"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012050.outbound.protection.outlook.com [52.101.43.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="B9mreEv8"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69D930EF98;
-	Thu,  6 Nov 2025 14:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440091; cv=fail; b=Xt/zXTVyAR7OjEX0WuOh3dCC3lWFUyUhyx4F1+qnNj+KotKH6j7y8pO4aFwvlnxoJrUxwZHwv1x17gRFfRvJJ4J3xlBe0pUsdOmaZN1jqnHUyBjjNgI7cg+0rFeVOXfA/Ytf9cooQvEUvL0XPWLMFpPY0dxjc9e8/OxR/OE4zMw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440091; c=relaxed/simple;
-	bh=aqRhoJT+6KpKV/y610JX1O9owb86bEWwNTORo2cgGCo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QqSS132EwyU5parM81ESCGiUdZxZZbESnNq9bgFIQeeJOmDELNxRSw+nRsdCFvr4rmbjjri7QvhAzj8efN9FxZUZNIQRJD21lXLLc3q1rBO3HG92MmVUOHZKfabFxeMJ04zLvzHYPjGcExzLFKjXOd6LsnUo+lPvRE7DlbZCHTk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sOZQs6c8; arc=fail smtp.client-ip=52.101.43.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P2qnytWh2RJyMlgu6NANdC1JW7GR++nyDrg4Bjitep7TgDtit/cGOp5qi4frf/mvwTLWxZaW1HTQsHToZuAVVR2+zJb4XoiO3LcjabJlaVhQA0j/alaovOcpJKECxfjC0ofkxiLohtmxHPcVgnETD6POTdalZw2+rsMpGC0fscIpo+rbLQj0MLlW0Nr8kvIkJi87FbfEQtSk39InOMxuu1n44K424DFREW7dCAJThfhdjsKEbFt9ojfLQb6eDB8mQB+N35DikpD9gKtaocq8ME+4oIbESP66WE4UAcbuNeMc5oTRyc6m7nlDznBzJDkZuGdZuaqQzSq7p15LP52v7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aqRhoJT+6KpKV/y610JX1O9owb86bEWwNTORo2cgGCo=;
- b=f19/UZsOnkObuqliw6qRzHkeZEaB6LhsbmBC/98sdduTWrbMw8LMxe0R60sDN3lX5FtW8HvBrjaDvw4lUY08JAU5d2/XPVnxJ0xz7liL04ZxyykWBroG+HERCRnPa/a2TyBw3VUd5QioJjnOo0JBjt6YRcksLCmUOrIVHjLP546DzHfo3NC/N+8kKmq7EWCj53JFqmeW2oBEcMNUoxHEF8oiZL84+s6FEIdXaezZrW4Yvef4ZlsMJh9ndDfBnkAGZONpTTsJCVUCbYSjnQb4+2kcScl4WsZUEi/UiAX8ceBwpeIUzbq3/5LKzh++5/UeH4AtpBZcS+/H9LaCDuxo/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aqRhoJT+6KpKV/y610JX1O9owb86bEWwNTORo2cgGCo=;
- b=sOZQs6c83qj74f3sALNgv4d9g3MeOhUEHGAgV6WbJx7j4DSyZPmk8qFa2o3JDrIM1DP7vTY6RVpR59AzyLW1dXEEKw/EXlDNgrhAKmN3SW+SvMzXGmFR/1YbIDKhMtlNvMDUAQmtSG/eeQ3s+hIH7bH/DiaxgVwTgvsHPEL9ofpzFh5rv7Gsqcm8lGEhBulcu9k8zfswBAcY9QY/HugDYRsR8s7LxClB0QaI8yUkthJO4GcgpHnDrt6Y7IGWzzT1Cm8lJ8SHmhgMl4Oomal3BlIx+bhXuPNn363CQQjtHXROArv1dpp8KTF4AVRsAW/rnr2xSrwgagvj8SNh7axdMA==
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
- by MN0PR12MB6294.namprd12.prod.outlook.com (2603:10b6:208:3c1::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
- 2025 14:41:23 +0000
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::d620:1806:4b87:6056]) by CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::d620:1806:4b87:6056%3]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
- 14:41:23 +0000
-From: Timur Tabi <ttabi@nvidia.com>
-To: "dakr@kernel.org" <dakr@kernel.org>, John Hubbard <jhubbard@nvidia.com>
-CC: Alexandre Courbot <acourbot@nvidia.com>, "lossin@kernel.org"
-	<lossin@kernel.org>, "a.hindborg@kernel.org" <a.hindborg@kernel.org>,
-	"boqun.feng@gmail.com" <boqun.feng@gmail.com>, "aliceryhl@google.com"
-	<aliceryhl@google.com>, Zhi Wang <zhiw@nvidia.com>, "simona@ffwll.ch"
-	<simona@ffwll.ch>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
-	"ojeda@kernel.org" <ojeda@kernel.org>, "tmgross@umich.edu"
-	<tmgross@umich.edu>, "nouveau@lists.freedesktop.org"
-	<nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org"
-	<rust-for-linux@vger.kernel.org>, "bjorn3_gh@protonmail.com"
-	<bjorn3_gh@protonmail.com>, Edwin Peer <epeer@nvidia.com>,
-	"airlied@gmail.com" <airlied@gmail.com>, Joel Fernandes
-	<joelagnelf@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"gary@garyguo.net" <gary@garyguo.net>, Alistair Popple <apopple@nvidia.com>
-Subject: Re: [PATCH 6/6] gpu: nova-core: use gpu::Architecture instead of long
- lists of GPUs
-Thread-Topic: [PATCH 6/6] gpu: nova-core: use gpu::Architecture instead of
- long lists of GPUs
-Thread-Index: AQHcTtEWmexrbbR050yKY4uDwLxBM7TluTQA
-Date: Thu, 6 Nov 2025 14:41:22 +0000
-Message-ID: <fc6616d404d8fd04a62bd90fa0f79e2c9d2a17da.camel@nvidia.com>
-References: <20251106035435.619949-1-jhubbard@nvidia.com>
-	 <20251106035435.619949-7-jhubbard@nvidia.com>
-In-Reply-To: <20251106035435.619949-7-jhubbard@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2-4 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|MN0PR12MB6294:EE_
-x-ms-office365-filtering-correlation-id: d99c92c5-b511-4e1d-9ace-08de1d428e92
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TGg2WVIzY2JHUk9Tc2s1M3hTMEhMenpSdzVCYjlkdUtOc0E3TnoyZEpML3FN?=
- =?utf-8?B?ZEMrK3crUkhrM0pLMkhKNU1OcCtpMmZSaE9RS0p1Z2xFdGlsQnozSTJQQ1g3?=
- =?utf-8?B?d1ZPRjNnMVU3YlNzWEdBS0JTN3lZNGxGTzFMVWdPL0cwN2tIWTJRak5CNUN2?=
- =?utf-8?B?dTd4VDJDRjZ6Ui9rbjZjZjVnSEp6VEdKRGZtQmFiVzF0dzhMQTF5OWhONENV?=
- =?utf-8?B?SXorQW02cXBiR3NybmF4U1Rlc3RmZ1kvMEpQSnZEa1A4V2hGZStvazUxT2hv?=
- =?utf-8?B?M2pBbWJReXNPVG5QUmx6SUV3elNhcWh4REFTVkdvSlZ0NHlIbU56S09DODR4?=
- =?utf-8?B?ODRJNXlUOEZjQkhRTjBIeFd5T2Vjb2dBeW44eTV4VUJzUll2d1p5SktSSldX?=
- =?utf-8?B?Rzg5cjljQ3RuREcrWWVEOVFJOTdsZHdOL0poQmlMdFd1QnZDbUxYWjhsQXN3?=
- =?utf-8?B?VWZJZXoyRSsrcm5nL1UzL0VKOVZYa2QrQnFLSURwZm03RGtFZ3I5WWFOQjNT?=
- =?utf-8?B?ZldpZm0vSlFzdDVGVytqVHVLUm9UQzEyMUVXQTJYY0V6ZG1CM1dsVXdJUlU5?=
- =?utf-8?B?c3NJWGhUaTBSaFk2anlzeFR3M1ljUjJmVEl6VEpqanBlbXZtNXFockszaXlD?=
- =?utf-8?B?bXJHUTMwVktjd2xXN01pNnlkNGQ5NnlET3A4VXJaL0ZvSXlhN2c0cXNJNUZP?=
- =?utf-8?B?cWdzdndYZnFHSnYvL0dzYUlIVTh6TEkraEhGUVhlTFM3TVE3S0hkQ3VKMlFx?=
- =?utf-8?B?c0ZwbHQrdXNtWEp2NjhLTFhYZTlMMTI5WTJKMkE5aTFNa1lBSjlBR2F3UUVs?=
- =?utf-8?B?QmJiU2x3NHFlL3lpdjk0cmM5Qkg1ZDV2TVBqM0hwUy9hazIzS0FoRlRIMkl4?=
- =?utf-8?B?RXRJcE40cVFhdkNqWW1WYXRIWHkxa05GNDBTY3hhTThIN3V0WUpUVWZYMnh6?=
- =?utf-8?B?dEM4SGN3SHp5YXErNjB6YStJRkp0R1RnTW9pdFJEbEthOUtvbHJlQ2lBa2VL?=
- =?utf-8?B?eWtJWFAyTUdQa2NHRXk4VnBDQjBuRzFNYnY1d3VUS0Q4ZXdYUkQwZTlmNVJV?=
- =?utf-8?B?TFpKc0dHeEsra2p1SXZ3KzJLMGFITEZYY1IyTTVoYytDQXRIdE1taDRrWHpE?=
- =?utf-8?B?eVp5V0xVenpXVVpzOU0vaU1OUUR5ZHZYeWYrdEt4d0ZraHlram9xK0tEVDV2?=
- =?utf-8?B?MGp3SWdNaEJPMjlKRVk1WG90QUwyTkxUVGNhb0dTVUFUZjBKWTd6US9JOC94?=
- =?utf-8?B?YnQrREJLeUkxSEZJMzV0OG85d0huSi9XTkt2cmd5SW5nV2RhUXFOM2ZNNElR?=
- =?utf-8?B?SGJsOU5Zc0QzcWFkRjZYeG5XWm1kc2ZSWGpIdTZtelVneVFlV01nSTN3VkdM?=
- =?utf-8?B?Q2lzUkhodEpWOUREVHlCejk0U2ZEUzJ4STFHeEV2ckhkSlNEYUR1YkpKWmh2?=
- =?utf-8?B?bk5pRU1Pb2pCQWxSZzBpbFE4RGlTdWVVREw1OU1DR2hQV1J6cWlQZ0xsUGJn?=
- =?utf-8?B?dVY1cmhPQVVoOWc1S1VXMGNuMDhnS0NkRHJDTGNNb2FtVlJjeGswcXd6N3g2?=
- =?utf-8?B?aUVjcG1aa0xyWVVPcU1QVWNpakk1RjdLN3lLa3NNTkVsTEJzSGJKcm9TTFlY?=
- =?utf-8?B?blYxcjM3L3pOTVRuVEU1eWRuSldacHdCaUdlRU9WRjd0T2dOUVp2NnY1WW9K?=
- =?utf-8?B?V0tsS2s2YVhrcVBrOHN0T29OMXR4WWx1cFRNYU5mSVJLNVAwdkxhNjQ1Qmhy?=
- =?utf-8?B?Nld3aFBBUHBuOCtLWDllOWsrQWovQllZbDVGUWxHRFJ2ZjFEcndjK2FVaGZZ?=
- =?utf-8?B?RWtrYWM4UE9odGpLV283dS9paTJNb2JkdENwd2tySXBFQW5iVlhHNXBNV216?=
- =?utf-8?B?QW5BVU44NzRtRzFZSmdaR0FRcE95ZUZqVzhhNHZxY0Z1dERoZ1c3Ymp3bEtz?=
- =?utf-8?B?Tlg0MTdYamNCOTFxV20wZksrWE5sazlNZDBveGxDMGZtTE1lQTdaWWNTUkF4?=
- =?utf-8?B?SmlqbVBWeTBZdjZMbVQ5OCs1L3d0Y2Roa2k1NHM5aUJkZ1kxWlE5TlhzaThL?=
- =?utf-8?Q?GNVRRr?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SDJlQ1J6b1FYVzgzUyszY2RVUmJ4Yk5IMkR6YWxWbGFROXZOd1pzZktlclVJ?=
- =?utf-8?B?L1dST3FrdXhkTjJXL0Rqa3o3OEJZY0hMUDYwM3h0T2labEUxcVZvRk9LVThX?=
- =?utf-8?B?UXFuZ2dWODRGeWxhVDVQS3Q1QkpWSUNCVDg2RU4rVFhLRXpjc3o2M3kySmlI?=
- =?utf-8?B?dmNkVjJHVWN1QktwUDRuMU9qY2lNaERiSWtaTWF5YTZERVcrOVBuWTVrVGhy?=
- =?utf-8?B?ZjU2dlppcnJuYjdZalNPV2tvZWNucW5jeEE0eDJkNWVjUzRlRTNGcC83Q2NV?=
- =?utf-8?B?V1lvZFgvRzVoYnZDcjR5cmZ6OU94S3NHdEZrdTdmbFNjV1JqQXBMVWE3Qm9T?=
- =?utf-8?B?WFFHbTQ0SE12d2FnY1orZ1h2M0kvd1Z4aEZkU0Q3ZFhmQnp6dzJzRE1mVTY1?=
- =?utf-8?B?dzZoN1ZsdlhySmZ1aGxsNSt6V0QwUmJQb1FLeFhFcUl3KzQ1V0xmQllNRDF6?=
- =?utf-8?B?aE1yM0tWVmhLMHpra3ozWWdhV20vL0VwMnk2OXpCdGlsYmJsdXZPMGwwaW1Z?=
- =?utf-8?B?dWEvZzVGTjR2a2xaSGVNZ0owS2dSNGRoV0dDKzhscGxZUWhlaXY2WVErdEps?=
- =?utf-8?B?bmQzNHA1VU1WM25KaUh6aEowUHNJbnVFVnJ0SlFJWlp6bFpRRVkyWEE2K05i?=
- =?utf-8?B?U1dRTDVLZkwwWFBvblluLy9JWUhnbXRlWTltOU1FZUV0TkIwMHQxVy9WbGsz?=
- =?utf-8?B?ZVZDb21VMEZWMi8xbGh2ZHFaTllSclN1eHV5Z3o1WnVEbHRsQ3dJZjMxT0FJ?=
- =?utf-8?B?NkE1aWZBYm5YUlZWVHNDbW9GNjlOZDBOUHdxNS8yenRnQ2Zqd2lJaXpYZmRV?=
- =?utf-8?B?bzdiQmIySDRESVRuckJJNjNkU1ljWjJ5T3JWN2JYYVFwQkNTOThkVlo3L1Jh?=
- =?utf-8?B?ejl1SzA1WmpuRitUbWlLSWF1Vis3SXhWd1VQY1Q2emRGZ2xPWklFWFVZUmo1?=
- =?utf-8?B?ZllPd2w1Tmt6QlNSbjlPWTkraWpra251ditPOFdoVTQ5SExCYkkxRTJ0NURj?=
- =?utf-8?B?Vnc1UElQdUFKc0hPaVRlRHd6bHZLYmdCdGZaUERkUHZwUU9zNGQ4WnVIcnIr?=
- =?utf-8?B?ajJmTXJFRXZaVi9CdTUyZU9mcVBoeFF6SXVOQkpGaFE4cHhPdTd3OTduTEdz?=
- =?utf-8?B?YklYVVhORjUwWWw3QmdvaXJNOU8ySzRHbEZMalpJL0N3c0dGNnFPOG95M2dX?=
- =?utf-8?B?eG1ZSXRnd0xNbkNQczdqdkp4Wi9UUG15alJITXRvNUpxY3A5NzVrNW5MUzdK?=
- =?utf-8?B?MGNMRzIrZFpNdDNlc09hNFZpOTJkUVQxU0lVd0tNcEs5Q00zMTBqZ3RCejVz?=
- =?utf-8?B?bHI0SHRuY0dtMkJZZTVvQk5kSW9QTUxZU0J6WXlpWHFETTMrbjlJbXpRQ3M3?=
- =?utf-8?B?VmNtb2NIekdqZ0NzblVJMDgzK2J5OHNVYnkvMFo2YVlha3FNTjZFMGd2VU9Q?=
- =?utf-8?B?cmpGSCt5ajNNbWJQb0pWWHlXRXhMTWMxUHdGL2RqRytwV2loakIrYndzUitq?=
- =?utf-8?B?MGpOaWJBS09zcjZzcFFGUVNKZzNGWThEMEJGNHBVaFRKSUZDdDJkc05HZ3hU?=
- =?utf-8?B?S05kRjBST3JjU1YvWmFwemNDUEFRTTJkUFRGVU5BWE96c084WlBpc2EwbXkw?=
- =?utf-8?B?MFV1NStKN0d3YlJIbm9RZFUrbHdkL2E0WUU4eVhmQnc3THJSYngvQm9SVUwr?=
- =?utf-8?B?aUJKVFozUUNCcG5kWDg1NVJKWjRjMEpxTkRyaXVYMTlwenFJaURuMlFiNlpJ?=
- =?utf-8?B?SU5JRU84VDBnd1NKNDYzbENlM0hFOUVqNGQ3YkxyV1ZUNFRZU0xjTjI0Q01D?=
- =?utf-8?B?dGM5RHpaZy8rT0hxVitPdVJXT2RUSTdrWDdHVlFONjZqSVR2RU96UGkreG9V?=
- =?utf-8?B?d0plb2RoVFhpaldGR251VzZRUkdLS1JMOThKaW9NVFJwUXBQN0kyVHptV3ZV?=
- =?utf-8?B?WVJJSHBnekUvVnQ1dlZOLzBDVEpQWEU0UTdUN3E2RUs1UnUrelQwTldoZDZC?=
- =?utf-8?B?TGN3aWt1UGlwaW4vc2NHbDNVOENUYnB4ekYyNDZBOTI1dG40QWk2UkMzeUow?=
- =?utf-8?B?NFJRM2dYdVNmMkFtSzRhVDhYY05DMHJwcWVZVmw2a1NCVkwyc0s4RndFQ0hW?=
- =?utf-8?Q?gAHm0r1w9+schTsN5JldHhlEE?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <26F1F1C81F234741BD263CA8582455D0@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA03324B0C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762440115; cv=none; b=OKAxXfKYCIG/srcg8OGojYGdpbRjHFNKEkv1qHBBAn4qQW2qqgecXTKmgbIlcxFPHU6G45889XDAfKchw5NPDbz4cPEZQXQ2xKSFFFbi+LuDqLIMimKX5545eiT0ZHeqdv+vkdA79AGARv/JwC15Ca+y+6BUE2SDkLPJL/VaE3s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762440115; c=relaxed/simple;
+	bh=nMZ4yTau9IX/RJqS/sKxKzs5iuDiWutFuc3LDB4T/ns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HGYsLbmAzfyocoPoIDfkxU0o0zo2InBQolxEU69lZ7VZrOZDQ2cHY8pkjdT8DIvxcfJmg8N+kFRfhAhKO4bRmck+wqvbqBPLX+piU/Vi0TQKKj3yr5f3+aJeJrESv4Yf27LsrvqPIiuRWkan73uAPoi0ocflxIEEdW+jjISxrK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=B9mreEv8; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso678520f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:41:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1762440112; x=1763044912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLvBreGMwkIXqaZtfvc2Qx+LalMucsk2m3rxCN5bCz4=;
+        b=B9mreEv8th95ZjUKHXGnmBhYMZiL2JAgIdnEYUQJs0wrH2+MAaGMpoF9YHxthwzHLV
+         JWx3elomFWenBdhe7/5qw1q3uOlB1cev6EkFoDgJmUBgyekaWMKT3w8g7s5emqDnsXX0
+         k9ZL3ivRvK1/LzHqBGFlGhHI6wmIrmrfTv07Uhz5L27yXZEmzW76AtfFJ8DMViOFDEss
+         Q2TLJuxHDyjRQZ8bFMI7pdk74lzXhw3l7h5Fl/Ofo7jXNjUxsoAHet4z00Y5A4k6zbHE
+         ZjJiaq0qk5CpWAZf7N4E9MIEIZvrLGdUt53rTDriPIh6Sfe9n3M7KHa4c+yEhse2jH1T
+         k3BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762440112; x=1763044912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XLvBreGMwkIXqaZtfvc2Qx+LalMucsk2m3rxCN5bCz4=;
+        b=R2rR0PumxmFSXR6qjZxy0pSSiyZ060lDe+qNrWh6pmiNoHraOT65uJATkckJeNgZOd
+         wr2CHxODM3PSal39A3Y8byXrwm3NgbEL0WRJ2Es0I2q7vhprJhENNVRXJ7t0dzc1YyNo
+         oY7WA3Neyg7nHNEH2OvpkfLBVmKruheBXqBZfV6iLdEqlDj8JCYv5vd05wE5LGWGMkBG
+         8k2hLd+hpzjY5yhrUoPbrtrgxJSEcDmW5x4T4TrOeRXPpS4c/6I3IkNNLCymQc0hlHbH
+         uk2Oqwsh3HT5WRw6lF8HdcthyeFILC4meuYJbfiDmZd/6pZgisvyjZnJjEdfS+Ox/AUs
+         1BXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvfVe/KrSDwSoYDzjMH7350OUyE5amsgj/0sc2eMhYQVSL6HHmbJJU5THabNxSlo9T3Y+ZDeDPyEpLsss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywthuUqipIMOa18loY9rU8FgyRUZn+aOMePSNIaxKHB7ZarcZu
+	claNqIoJu0cFq7t6sl0LEP9n1FXKp6XKqp2SNjVrEVyrsPH41YwpccEWmKWUM06Jgbc=
+X-Gm-Gg: ASbGncv4F3KGPA1cGThM7vDVreIglOtzd2Z1m/OTSfaTQUT7aLvNOjQtQllTTPsLfQV
+	8BS5fMn+FmWZ+01Ws5PHZ1eMkRlQnY1V6+XL6V17EfzrbRNv6F7zVX53g6v0RQ2cs1IXHEn9XZc
+	Dpzy6hY02PnspsnbMO7RtvGBeWw0YygTO3mp7WVs1Z4iTUhiarys2wZGUz4lTl7eP0gRDHPMDRH
+	N/T6A0qXwskUbZW9vWGmzPIlIsMf3sQvJDtmrMkPi5JQc0yuRP64k5YGHajmt27JgReweeAQKBJ
+	BTyBshXPWAYV0aiEI7lT8ceWLCNnpf86WiGMAwIm8dpnBzBImHtpD/6+A389tM1werNueXMDNlO
+	ozNwfT8CRo2PInMWIMaO8hSsWw2cZtxeo5zqGVLSSQ732UHw6t+uDh8DwttwGPWbg3jY6Z7yF8O
+	9YwAY7bjHlQY+B/v1A4wwSkdGmetUDDw==
+X-Google-Smtp-Source: AGHT+IEQIEtoq2huqYNM973Pi0C7dV27dTRh+KYLOlZZJrYRyqy5q0MDFqLHXSPi+tcIpGgwQC9bug==
+X-Received: by 2002:a05:6000:184e:b0:429:bc68:6c95 with SMTP id ffacd0b85a97d-429e330ab3dmr6769606f8f.47.1762440111989;
+        Thu, 06 Nov 2025 06:41:51 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb42a2aasm5369892f8f.21.2025.11.06.06.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 06:41:51 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: yoshihiro.shimoda.uh@renesas.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	p.zabel@pengutronix.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] phy: renesas: rcar-gen3-usb2: Add suspend/resume support
+Date: Thu,  6 Nov 2025 16:41:48 +0200
+Message-ID: <20251106144148.3051962-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d99c92c5-b511-4e1d-9ace-08de1d428e92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2025 14:41:23.0044
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: S8jDPcu0lEXytUhCZX2mwgWh9ebZ5qTcTTYlXONQnRMN5Ub60QqVvztDDyxdT4bubL66GSQM0yw+ZH5684TYcg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6294
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI1LTExLTA1IGF0IDE5OjU0IC0wODAwLCBKb2huIEh1YmJhcmQgd3JvdGU6DQo+
-IC11c2UgY3JhdGU6OmdwdTo6e0FyY2hpdGVjdHVyZSwgQ2hpcHNldH07DQo+ICt1c2UgY3JhdGU6
-OmdwdTo6ew0KPiArwqDCoMKgIEFyY2hpdGVjdHVyZSwNCj4gK8KgwqDCoCBDaGlwc2V0LCAvLw0K
-PiArfTsNCg0KSSBkb24ndCB0aGluayB0aGlzIGNoYW5nZSBzaG91bGQgYmUgcGFydCBvZiB0aGlz
-IHBhdGNoLiAgDQo=
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+The Renesas RZ/G3S supports a power saving mode where power to most of the
+SoC components is turned off. The USB PHY is among these components.
+Because of this the settings applied in driver probe need to be executed
+also on resume path. On suspend path only reset signal need to be asserted.
+Add suspend/resume support.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+
+This patch is built on top of patches 1/7, 2/7 at [1]
+
+[1] https://lore.kernel.org/all/20251023135810.1688415-2-claudiu.beznea.uj@bp.renesas.com
+
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 66 +++++++++++++++++-------
+ 1 file changed, 47 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index a38ead7c8055..3c063e4dea41 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -132,6 +132,7 @@ struct rcar_gen3_chan {
+ 	struct device *dev;	/* platform_device's device */
+ 	const struct rcar_gen3_phy_drv_data *phy_data;
+ 	struct extcon_dev *extcon;
++	struct reset_control *rstc;
+ 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
+ 	struct regulator *vbus;
+ 	struct work_struct work;
+@@ -778,35 +779,24 @@ static void rcar_gen3_reset_assert(void *data)
+ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+ {
+ 	struct device *dev = channel->dev;
+-	struct reset_control *rstc;
+ 	int ret;
+ 	u32 val;
+ 
+-	rstc = devm_reset_control_array_get_shared(dev);
+-	if (IS_ERR(rstc))
+-		return PTR_ERR(rstc);
++	if (!channel->phy_data->init_bus)
++		return 0;
+ 
+ 	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = reset_control_deassert(rstc);
+-	if (ret)
+-		goto rpm_put;
+-
+-	ret = devm_add_action_or_reset(dev, rcar_gen3_reset_assert, rstc);
+-	if (ret)
+-		goto rpm_put;
+-
+ 	val = readl(channel->base + USB2_AHB_BUS_CTR);
+ 	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
+ 	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
+ 	writel(val, channel->base + USB2_AHB_BUS_CTR);
+ 
+-rpm_put:
+ 	pm_runtime_put(dev);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+@@ -846,6 +836,18 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	channel->rstc = devm_reset_control_array_get_optional_shared(dev);
++	if (IS_ERR(channel->rstc))
++		return PTR_ERR(channel->rstc);
++
++	ret = reset_control_deassert(channel->rstc);
++	if (ret)
++		return ret;
++
++	ret = devm_add_action_or_reset(dev, rcar_gen3_reset_assert, channel->rstc);
++	if (ret)
++		return ret;
++
+ 	/*
+ 	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
+ 	 * And then, phy-core will manage runtime pm for this device.
+@@ -861,11 +863,9 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, channel);
+ 	channel->dev = dev;
+ 
+-	if (channel->phy_data->init_bus) {
+-		ret = rcar_gen3_phy_usb2_init_bus(channel);
+-		if (ret)
+-			goto error;
+-	}
++	ret = rcar_gen3_phy_usb2_init_bus(channel);
++	if (ret)
++		goto error;
+ 
+ 	spin_lock_init(&channel->lock);
+ 	for (i = 0; i < NUM_OF_PHYS; i++) {
+@@ -936,10 +936,38 @@ static void rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ };
+ 
++static int rcar_gen3_phy_usb2_suspend(struct device *dev)
++{
++	struct rcar_gen3_chan *channel = dev_get_drvdata(dev);
++
++	return reset_control_assert(channel->rstc);
++}
++
++static int rcar_gen3_phy_usb2_resume(struct device *dev)
++{
++	struct rcar_gen3_chan *channel = dev_get_drvdata(dev);
++	int ret;
++
++	ret = reset_control_deassert(channel->rstc);
++	if (ret)
++		return ret;
++
++	ret = rcar_gen3_phy_usb2_init_bus(channel);
++	if (ret)
++		reset_control_assert(channel->rstc);
++
++	return ret;
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(rcar_gen3_phy_usb2_pm_ops,
++				rcar_gen3_phy_usb2_suspend,
++				rcar_gen3_phy_usb2_resume);
++
+ static struct platform_driver rcar_gen3_phy_usb2_driver = {
+ 	.driver = {
+ 		.name		= "phy_rcar_gen3_usb2",
+ 		.of_match_table	= rcar_gen3_phy_usb2_match_table,
++		.pm		= pm_ptr(&rcar_gen3_phy_usb2_pm_ops),
+ 	},
+ 	.probe	= rcar_gen3_phy_usb2_probe,
+ 	.remove = rcar_gen3_phy_usb2_remove,
+-- 
+2.43.0
+
 
