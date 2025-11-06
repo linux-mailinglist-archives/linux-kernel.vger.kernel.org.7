@@ -1,165 +1,165 @@
-Return-Path: <linux-kernel+bounces-888452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E5FC3AD67
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:16:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A698DC3ADD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3261134B44E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E984E3B25BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC21328608;
-	Thu,  6 Nov 2025 12:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207C0324B09;
+	Thu,  6 Nov 2025 12:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tnWSirdF"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HamTd/yp";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hcGDDnWH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C22B327212
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F183254A7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762431315; cv=none; b=foX8bIRSWpRCu8P7UZq2NtSPVEKaRzf3m4EjTT1ozm7kiw4tGOigwzmD3AD/+FrmEXXaZgJTpfqEp5hYJBLW9IOkzyM+1rEGI5QXOLUOk3x+e84nUJgJODs9cR7+pbmp4TvkVYqZuyRYNqim9pXwHLeDxn525N4Foz13Dt8wUKY=
+	t=1762431296; cv=none; b=I/e1W46TDmzIZC0LGNnvJGerKJTMuf0EtJ82YZfh239fCXPfHcyMvye0AbetP2QYVhXTaoEsmR/9L/9y4Df4sy3q9PAMtjRMl0a6w5WtHuUktNc33YDDwrX/L9gaZ35AyKF8NA0kywYFr0w5aCAGPJ1niSqduuL2BQv2YcqL1Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762431315; c=relaxed/simple;
-	bh=eesYonv8VDWpDiw9NEHAmnwjEfPu25SCd58POVgRTe4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bNY8pqLOWDOaDG2KRXqUkVpxqXhhLgiR0Xd3lSGchRvcDMac2O+LfPUhuwlWcdQjAn+RCM+NfYzL0pAmMzIXKFOAunDqn8rfW79t5lqc5NTeKcvFp6gjsPXh1JKz/nL/ds4+PFTzr7nx+y28Nt5t/WJBRpdM/zeGm42IrS4TM0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tnWSirdF; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762431301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eesYonv8VDWpDiw9NEHAmnwjEfPu25SCd58POVgRTe4=;
-	b=tnWSirdFFSVXM/0R3H3QU2mNgbWL80tcOOVOs8i481KTTl14rVX3G6d67N2+maOdHGRIIx
-	bxVqPvb1fPzBnZjlNde5Sr8T1phS2vyLE/mnE9B+pKq/U0EhlbG+YQAk5hvmlQIiu9/B7l
-	BXPCfJ1/R/BxJgace2+tqyfM5djOovU=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Menglong Dong <menglong8.dong@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Subject:
- Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting for
- x86_64
-Date: Thu, 06 Nov 2025 20:14:46 +0800
-Message-ID: <3660175.iIbC2pHGDl@7950hx>
-In-Reply-To:
- <CAADnVQ+ZuQS_RSFL8ThrDkZwSygX2Rx49LBAcMpiv3y4nnYunQ@mail.gmail.com>
-References:
- <20251026030143.23807-1-dongml2@chinatelecom.cn>
- <CAEf4BzZcrWCyC3DhNoefJsWNUhE46_yu0d3XyJZttQ8sRRpyag@mail.gmail.com>
- <CAADnVQ+ZuQS_RSFL8ThrDkZwSygX2Rx49LBAcMpiv3y4nnYunQ@mail.gmail.com>
+	s=arc-20240116; t=1762431296; c=relaxed/simple;
+	bh=ekKRVsIQk2yTIi2O6W8XgAImjp0Xet2F/XBpm8Quheo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LEbv99U2lJdQt0ZQRinRGB2JbuCM4CZEJnLUREXJ2Vt7tG4ICPY0bmFV3AFopLNBDEt0OSvk+g2s652KZf6VCvAE6Y8sLoKXYSq5AS1WWs8/xOiIPhYMPbWXC2d4agJ0eSaIOx3Wtli9HvN7as+UfidpaHb7f8DTeO5fQrbDADo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HamTd/yp; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hcGDDnWH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6ASkqj3748580
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 12:14:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JLXA08kPYaUwpSm1uwFgestSzsTRbCn2xW73c/Hiq4g=; b=HamTd/ypDv1PDxKs
+	pTU3tAaf9V1Ft9XKoViWk4FUJ5JCFMbLTXfB0UeUVZT0AbcKDYneC1JNm35wfX40
+	1AgbJ9QO3cR3ieqm3NMzddD/eOcfW5UQG4ROgN1CP1YUBoM8VWgAx+LqJ071Zou4
+	1BWV45APvi/ciEblgvYuNgapYbrT9KJFj2qlA1yYSEodUFN5Cj2rkD3SyCN1oLgC
+	pUnGQqwjLrtR2ZshJOF/eOmSmF1tVrGcvCYj4LYAvRUGqMq9aTWzRS84eymC01BQ
+	tulALSEutN2ULunCHNv6PBGYQe84KlvzSsIBy8ingQakUb57Jxt1lHv2G1zcM8XC
+	shr5JQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8sy6g8dk-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 12:14:53 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b184fa3ffbso10360685a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:14:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762431293; x=1763036093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JLXA08kPYaUwpSm1uwFgestSzsTRbCn2xW73c/Hiq4g=;
+        b=hcGDDnWHmZefrNjC53xCdzaHy97XchqWMc75ggWypX5NQY/JsQT1OMKYoTUj8k1Pw3
+         HrvvokPsA6dFmClxhZgTF7utxajfU0sXTj72sQ7Z3cf+nzI2WlT0uT4uXNqrsTwW+gcv
+         v9WqkgdcrAwNzJHUsJtv6hiZ5cBHxkScabDCsGjMCCxaMbmRdC/4Ls0i6CVmfgC/xbhy
+         HbXigdd2I2PvwkrXBnKmyrfaIb0fMlWvebHDtnl5wLVhoJNEgLhIpxbYO564yyfupXEi
+         oR4nTx8gr+Q/t4ndZ9JOFuQTxWNaN0KyIbT2K0e/2XR7yRWvln8orxIR0Vfj+Fhhg9zN
+         5TOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762431293; x=1763036093;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JLXA08kPYaUwpSm1uwFgestSzsTRbCn2xW73c/Hiq4g=;
+        b=H+dmiU1UD1wnBDcOvEiqra8f1XbbbD7Yv1WR6msZrf50X7fYOqCToU6Bg7mZHsnMdU
+         7b8troM3LtWJQ7GP8XBY81wv15THZGzK/GsRsGGKwn4P4bKxIc/StrFuKu6YjYVtCL18
+         w1i+VK8DciMjAyIs1H34ieHve+gx4voSMTZJjJMcDrYF3s/CWDSqTlnfBtBBWNNRdZFt
+         o/HqgqMxE1e/ngc7nAC4SmyRQ7ZgBJ67AuqgTrNDbYz/cTB1Yq/WWnBzOP4Lt0H7k+Ti
+         GmSPMl+QqOmjU9xTLuXmMX91+b3CH5f1tNwmUBFKnCVRDWTzza3iB0Nk8KjWSRSr1OkY
+         koMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcHSlAb4ahmbe64LyVvxWr/nVZ+ONdQpxBJMPU8wuxbxJX0G14fbmrct6HVu5TeMYgxGPJp9ITv+UD+xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw05kmVMFl/KfkYxVHQt9HivMo6azOuyeWncDGf5EJMe2tlmZ/d
+	QE7+t9kYZvEHaB9XyVveTcDtQLZQdxXI424DwFvleD1DXOBQyteWZOvzpjDrri6kRd4tPNE99EJ
+	OCxpQeQ4wBStg8FrL/WL6cz73uZ8DM8z+LDjuHQ5i1VqJvQLeTfhd08NyXZONCW5HnmI=
+X-Gm-Gg: ASbGncvl72Nv+0DbAIu2kWqkoGcs4Zn80XDe2QMqwQNbPKkpuABIBBgWDdN4voA91iN
+	NhvistGr5XeNYKpfjSRdGrZgcISdSGf2EFjGSH+LrC9LjC/itR9jSXRBmEXaci1KaIPZkF3VC4f
+	RcBTKX4IQYBwUXds+378RGKsHHPDRBVEMOwQFxr+9nJHrvwEzI5DKmhX8gsMUyPZ+5XZ4c3sa+8
+	5xSeJiv87qCPpEb0pYZEGkpvzmMl6qbCabAK6DwUluuksf7UiCVOHPmDICLm7n0cqDt3/y3X/FU
+	RG+ElmkhyiWk22ZD/iXGr5LTcPAymKgkntBkxfGvNuyEPLPVgItOoqZgSSRYJkzUx6qIyz+povO
+	yxTYpFnzD8pkLuT4fNJTU/gNGn0qIHxSTwYQKzS0GRM9t484qG4Q+mc3J
+X-Received: by 2002:a05:622a:1190:b0:4e8:9bf5:5ecd with SMTP id d75a77b69052e-4ed7212ab6bmr51316541cf.1.1762431292983;
+        Thu, 06 Nov 2025 04:14:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGbHbT2S5J7YWDZlDRXl3mXy5NvTvkRuByNb/uQnt5fhSTJ+xry+0wZ84KARasofcaWgtF/dA==
+X-Received: by 2002:a05:622a:1190:b0:4e8:9bf5:5ecd with SMTP id d75a77b69052e-4ed7212ab6bmr51316331cf.1.1762431292468;
+        Thu, 06 Nov 2025 04:14:52 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72896c7e39sm202861366b.72.2025.11.06.04.14.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 04:14:51 -0800 (PST)
+Message-ID: <ed1e6e3f-946b-481b-a183-c39771686c10@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 13:14:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] PCI: qcom: Treat PHY as optional for the new
+ binding
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20251106-pci-binding-v2-0-bebe9345fc4b@oss.qualcomm.com>
+ <20251106-pci-binding-v2-2-bebe9345fc4b@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251106-pci-binding-v2-2-bebe9345fc4b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=690c913d cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=kYxvmccDk0iZALW1rmwA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA5NiBTYWx0ZWRfXymDtG7cOKneF
+ OLGIy5BpUI/tFIV+rrVAj6Kcp+gZPYEcFOE38+DfYeE317FvS+BUtPK9JCbyDJcZ0DuU0VaR8lg
+ w0fRgARwSz+vItGQRqE/YDlHG+KIPOhy8uqxVqPK6nQZe5jN3r3LFppNWkvAesovl9Yz3CGHX/j
+ OwPcEtejOHAe+r6IgLAGDt4MZ/e7KhJGuHxA9PaIxAyKzQ8KnnuC+IVVkN4nYNP3F81BjWoSVHG
+ 6M4+xP/Vhbktd5aufBWjy8O+/f2cj9Z5RPBiwdwcS146fNFgBqI/u1stZ1fwOU1BpwxXbbozcIs
+ oOpc2FvdpytCU1wd4GO43uJcllhu6cGqraCHhfukaTec3ncuBxCT3Y8c/mADq61gSVGztQmjSvS
+ GQTrN64+6uvYG66s1Ij39n6sEYpipQ==
+X-Proofpoint-ORIG-GUID: HhVyDGr7Zc6Uus37V-62kGWIWervRTNd
+X-Proofpoint-GUID: HhVyDGr7Zc6Uus37V-62kGWIWervRTNd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060096
 
-On 2025/11/6 06:00, Alexei Starovoitov wrote:
-> On Wed, Nov 5, 2025 at 9:30=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Tue, Nov 4, 2025 at 6:43=E2=80=AFPM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Tue, Nov 4, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-[......]
-> > >
-> > > Instead of all that I have a different suggestion...
-> > >
-> > > how about we introduce this "session" attach type,
-> > > but won't mess with trampoline and whole new session->nr_links.
-> > > Instead the same prog can be added to 'fentry' list
-> > > and 'fexit' list.
-> > > We lose the ability to skip fexit, but I'm still not convinced
-> > > it's necessary.
-> > > The biggest benefit is that it will work for existing JITs and trampo=
-lines.
-> > > No new complex asm will be necessary.
-> > > As far as writable session_cookie ...
-> > > let's add another 8 byte space to bpf_tramp_run_ctx
-> > > and only allow single 'fsession' prog for a given kernel function.
-> > > Again to avoid changing all trampolines.
-> > > This way the feature can be implemented purely in C and no arch
-> > > specific changes.
-> > > It's more limited, but doesn't sound that the use case for multiple
-> > > fsession-s exist. All this is on/off tracing. Not something
-> > > that will be attached 24/7.
-> >
-> > I'd rather not have a feature at all, than have a feature that might
-> > or might not work depending on circumstances I don't control. If
-> > someone happens to be using fsession program on the same kernel
-> > function I happen to be tracing (e.g., with retsnoop), random failure
-> > to attach would be maddening to debug.
->=20
-> fentry won't conflict with fsession. I'm proposing
-> the limit of fsession-s to 1. Due to stack usage there gotta be
+On 11/6/25 12:27 PM, Manivannan Sadhasivam wrote:
+> Some platforms like the old ARM32 IPQ/APQ platforms do not supply the
+> 'phys' property in devicetree. Hence, treat the PHY as optional in
+> qcom_pcie_parse_port(), so that they can work with the new binding model
+> of specifying PERST# in Root Port node.
+> 
+> Fixes: a2fbecdbbb9d ("PCI: qcom: Add support for parsing the new Root Port binding")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
 
-I think Andrii means that the problem is the limiting the fsession to
-1, which can make we attach fail if someone else has already attach
-it.
+Hm, I suppose they must rely on the PHY being pre-programmed then
 
-If we want to limit the stack usage, I think what we should limit is
-the count of the fsession progs that use session cookie, rather the
-count of the fsessions.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-I understand your idea that add the prog to both fentry and fexit list
-instead of introducing a BPF_TRAMP_SESSION in the progs_hlist.
-However, we still have to modify the arch stuff, as we need to store the
-"bpf_fsession_return". What's more, it's a little complex to add a prog
-to both fentry and fexit list, as bpf_tramp_link doesn't support such
-operation.
-
-So I think it's more clear to keep current logic. As Andrii suggested,
-we can reuse the nr_args, and no more room will be used on the
-stack, except the session cookies.
-
-As for the session cookies, how about we limit its number? For example,
-only 4 session cookies are allowed to be used on a target, which
-I think should be enough.
-
-I can remove the "fexit skipping" part to make the trampoline simpler
-if you prefer, which I'm OK, considering the optimization I'm making
-to the origin call in x86_64.
-
-Therefore, the logic won't be complex, just reserve the room for the
-session cookies and the call to invoke_bpf().
-
-Thanks!
-Menglong Dong
-
-> a limit anyway. I say, 32 is really the max. which is 256 bytes
-> for cookies plus all the stack usage for args, nr_args, run_ctx, etc.
-> Total of under 512 is ok.
-> So tooling would have to deal with the limit regardless.
->=20
-
-
-
-
+Konrad
 
