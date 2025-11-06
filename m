@@ -1,181 +1,253 @@
-Return-Path: <linux-kernel+bounces-889231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10214C3D089
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:12:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5480CC3D098
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:14:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AEAD73512D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792CB3B3560
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D31B34DB54;
-	Thu,  6 Nov 2025 18:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7DD34F495;
+	Thu,  6 Nov 2025 18:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qP5LWF/N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73EB2BDC0F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NLyOj7Gv"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BD82BDC0F;
+	Thu,  6 Nov 2025 18:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452757; cv=none; b=S4yGsnA8c69bAQFKwtg8tJKm8ii7oAxsr3APsU5XZxoujmZXPMZgfccqvuukRv16X8wJ6dByXkT4ce8uIDXTqJfL0r5HZLi9CxPuK3MoHJPF76dfAWDUImqJV7wzKa8dhlXBxeK1786Tk5wnIeOvGktyAKewj2jCaAs8aHgtzi4=
+	t=1762452869; cv=none; b=cI6wdCDDiDijNSk+GdqmU7aTMCkHhwG36WBXIltxQGMquZ4Da1UxIvsJ4dNX8Q4lp7IT8rggkoZv+0xB4TyKWPnjCuMsya//QMlP/M34qIFQRAHhUkj7UUpNrCI5gA4p6R5laXCNC9sWSgFAxk305OUgZdMRWTAjnX8JZj/bJhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452757; c=relaxed/simple;
-	bh=j0baMIJpFG/QRZRX1egnx5Da+S9JJD3aqt5kUE57y7Y=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=WwTXpTYRubCh1xIto1xijhbM5jpLPLnXkju6sjzC5JcxU72FrLfmuIhNsNOUJ+LclPt+IKP8E7b2ex3b6NrrTT3ostfFdJBitN3/p8h+DQ0EcCwSgFXIrzrM4/8STGvRRj9dJ87AffbneazGcknyg5/7BSszNXPL5D/xQpfRqEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qP5LWF/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C025C4CEF7;
-	Thu,  6 Nov 2025 18:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762452757;
-	bh=j0baMIJpFG/QRZRX1egnx5Da+S9JJD3aqt5kUE57y7Y=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qP5LWF/Np6Y0caMLbyCKAlAU4re8Ak1DxIsyWiJnlds2+Ote/tq3aD1jUzauf48UX
-	 VjFxOGERZQld7CLFpXtCd0XOcR4IgtZE+8NL4UIo9+rWL47koZOu2CIWlIuvXiQHXj
-	 nmEoJSxxW4jxgR7hso8ZrVfU1QTnpQBcNl2a0ROwsB0kkUVZ0yF8FkPL611vuYPadK
-	 1bUN2uFFct8Yea4zeKJvxtk7j712FYoDJbaaWWRlCtfRhmAFlJS0Mq5oufNPIefhes
-	 QYu0FCAoZUqyrIJ7pI34opcWmtHmRDah0WC8jj07GqRQH447IxGp+0BxfHymCqLCN9
-	 Ge3lTOrFug07Q==
-Date: Thu, 06 Nov 2025 08:12:36 -1000
-Message-ID: <99e1ba732f01b0082d48c6466aea214e@kernel.org>
-From: Tejun Heo <tj@kernel.org>
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, Dan Schatzberg <dschatzberg@meta.com>, Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2 cgroup/for-6.19] cgroup: Fix sleeping from invalid context warning on PREEMPT_RT
+	s=arc-20240116; t=1762452869; c=relaxed/simple;
+	bh=Rs4HASYrAM0Sf7zNBPlpju2YJ9ioL7sAJ0GlirFMSrg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MlHM6QSbvQv43HJ6MPX2bhIuqRD1VRV/ANXPZwL5G9Hef+h7aV+z21UK8JQtklnuCoYII4T61bdOnY7dN7bgOY/7DxdSjaq8LuLno1xkz1SyyO4NkxAnwlDQpNL1W87nClXks00MXW088dPrIK5IDouMhGMmurv8zkSNqRZ0w1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NLyOj7Gv; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from vm-dev.d0aziqou4eyuzblxqhi51nu2sc.xx.internal.cloudapp.net (unknown [4.246.87.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B1A8E20120A5;
+	Thu,  6 Nov 2025 10:14:26 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B1A8E20120A5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762452866;
+	bh=9ZHZH/SSPIW0xIopmwQGpZjmTHcbniRM491Ohy99j0c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NLyOj7Gvf+HUSccF07urcdnhkmmsT8LFVBiEVQbP2kscLDD7R4elb2M/0kIsN+rZz
+	 91iH/jdMZHIzTBFoRdDrtL4iuIrPedkii8jiTJJy7PTt2PkhrgN78gv/tPEIl6sDZ4
+	 /HscuoIbiFTJn3uIoiU2i8jhjff/z68wdvL4WyZs=
+From: Tahera Fahimi <taherafahimi@linux.microsoft.com>
+To: zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	code@tyhicks.com
+Cc: Tahera Fahimi <taherafahimi@linux.microsoft.com>
+Subject: [Patch V1] ima: avoid duplicate policy rules insertions
+Date: Thu,  6 Nov 2025 18:14:04 +0000
+Message-ID: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-cgroup_task_dead() is called from finish_task_switch() which runs with
-preemption disabled and doesn't allow scheduling even on PREEMPT_RT. The
-function needs to acquire css_set_lock which is a regular spinlock that can
-sleep on RT kernels, leading to "sleeping function called from invalid
-context" warnings.
+Prevent redundant IMA policy rules by checking for duplicates before insertion. This ensures that
+rules are not re-added when userspace is restarted (using systemd-soft-reboot) without a full system
+reboot. ima_rule_exists() detects duplicates in both temporary and active rule lists.
 
-css_set_lock is too large in scope to convert to a raw_spinlock. However,
-the unlinking operations don't need to run synchronously - they just need
-to complete after the task is done running.
-
-On PREEMPT_RT, defer the work through irq_work. While the work doesn't need
-to happen immediately, it can't be delayed indefinitely either as the dead
-task pins the cgroup and task_struct can be pinned indefinitely. Use the
-lazy version of irq_work to allow batching and lower impact while ensuring
-timely completion.
-
-v2: Use IRQ_WORK_INIT_LAZY instead of immediate irq_work and add explanation
-    for why the work can't be delayed indefinitely (Sebastian Andrzej Siewior).
-
-Fixes: d245698d727a ("cgroup: Defer task cgroup unlink until after the task is done switching out")
-Reported-by: Calvin Owens <calvin@wbinvd.org>
-Link: https://lore.kernel.org/r/20251104181114.489391-1-calvin@wbinvd.org
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Tahera Fahimi <taherafahimi@linux.microsoft.com>
 ---
- include/linux/sched.h  |    5 +++-
- kernel/cgroup/cgroup.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 58 insertions(+), 2 deletions(-)
+ security/integrity/ima/ima_policy.c | 157 +++++++++++++++++++++++++++-
+ 1 file changed, 156 insertions(+), 1 deletion(-)
 
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1324,7 +1324,10 @@ struct task_struct {
- 	struct css_set __rcu		*cgroups;
- 	/* cg_list protected by css_set_lock and tsk->alloc_lock: */
- 	struct list_head		cg_list;
--#endif
-+#ifdef CONFIG_PREEMPT_RT
-+	struct llist_node		cg_dead_lnode;
-+#endif	/* CONFIG_PREEMPT_RT */
-+#endif	/* CONFIG_CGROUPS */
- #ifdef CONFIG_X86_CPU_RESCTRL
- 	u32				closid;
- 	u32				rmid;
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -290,6 +290,7 @@ static void kill_css(struct cgroup_subsy
- static int cgroup_addrm_files(struct cgroup_subsys_state *css,
- 			      struct cgroup *cgrp, struct cftype cfts[],
- 			      bool is_add);
-+static void cgroup_rt_init(void);
-
- #ifdef CONFIG_DEBUG_CGROUP_REF
- #define CGROUP_REF_FN_ATTRS	noinline
-@@ -6360,6 +6361,7 @@ int __init cgroup_init(void)
- 	BUG_ON(ss_rstat_init(NULL));
-
- 	get_user_ns(init_cgroup_ns.user_ns);
-+	cgroup_rt_init();
-
- 	cgroup_lock();
-
-@@ -6990,7 +6992,7 @@ void cgroup_task_exit(struct task_struct
- 	} while_each_subsys_mask();
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 164d62832f8ec..3dd902101dbda 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1953,6 +1953,153 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 	return result;
  }
-
--void cgroup_task_dead(struct task_struct *tsk)
-+static void do_cgroup_task_dead(struct task_struct *tsk)
- {
- 	struct css_set *cset;
- 	unsigned long flags;
-@@ -7016,6 +7018,57 @@ void cgroup_task_dead(struct task_struct
- 	spin_unlock_irqrestore(&css_set_lock, flags);
- }
-
-+#ifdef CONFIG_PREEMPT_RT
-+/*
-+ * cgroup_task_dead() is called from finish_task_switch() which doesn't allow
-+ * scheduling even in RT. As the task_dead path requires grabbing css_set_lock,
-+ * this lead to sleeping in the invalid context warning bug. css_set_lock is too
-+ * big to become a raw_spinlock. The task_dead path doesn't need to run
-+ * synchronously but can't be delayed indefinitely either as the dead task pins
-+ * the cgroup and task_struct can be pinned indefinitely. Bounce through lazy
-+ * irq_work to allow batching while ensuring timely completion.
+ 
++static bool template_has_field(const char *field_id, const struct ima_template_desc *template2)
++{
++	int j;
++
++	for (int j = 0; j < template2->num_fields; j++)
++		if (strcmp(field_id, template2->fields[j]->field_id) == 0)
++			return true;
++
++	return false;
++}
++
++static bool keyring_has_item(const char *item, const struct ima_rule_opt_list *keyrings)
++{
++	int j;
++
++	for (j = 0; j < keyrings->count; j++) {
++		if (strcmp(item, keyrings->items[j]) == 0)
++			return true;
++	}
++	return false;
++}
++
++static bool labels_has_item(const char *item, const struct ima_rule_opt_list *labels)
++{
++	int j;
++
++	for (j = 0; j < labels->count; j++) {
++		if (strcmp(item, labels->items[j]) == 0)
++			return true;
++	}
++	return false;
++}
++
++static bool ima_rules_equal(const struct ima_rule_entry *rule1, const struct ima_rule_entry *rule2)
++{
++	int i;
++
++	if (rule1->flags != rule2->flags)
++		return false;
++
++	if (rule1->action != rule2->action)
++		return false;
++
++	if (((rule1->flags & IMA_FUNC) && rule1->func != rule2->func) ||
++	    ((rule1->flags & (IMA_MASK | IMA_INMASK)) && rule1->mask != rule2->mask) ||
++	    ((rule1->flags & IMA_FSMAGIC) && rule1->fsmagic != rule2->fsmagic) ||
++	    ((rule1->flags & IMA_FSUUID) && !uuid_equal(&rule1->fsuuid, &rule2->fsuuid)) ||
++	    ((rule1->flags & IMA_UID) && !uid_eq(rule1->uid, rule2->uid)) ||
++	    ((rule1->flags & IMA_GID) && !gid_eq(rule1->gid, rule2->gid)) ||
++	    ((rule1->flags & IMA_FOWNER) && !uid_eq(rule1->fowner, rule2->fowner)) ||
++	    ((rule1->flags & IMA_FGROUP) && !gid_eq(rule1->fgroup, rule2->fgroup)) ||
++	    ((rule1->flags & IMA_FSNAME) && (strcmp(rule1->fsname, rule2->fsname) != 0)) ||
++	    ((rule1->flags & IMA_PCR) && rule1->pcr != rule2->pcr) ||
++	    ((rule1->flags & IMA_VALIDATE_ALGOS) &&
++	      rule1->allowed_algos != rule2->allowed_algos) ||
++	    ((rule1->flags & IMA_EUID) && !uid_eq(rule1->uid, rule2->uid)) ||
++	    ((rule1->flags & IMA_EGID) && !gid_eq(rule1->gid, rule2->gid)))
++		return false;
++
++	if (!rule1->template && !rule2->template) {
++		;
++	} else if (!rule1->template || !rule2->template) {
++		return false;
++	} else if (rule1->template->num_fields != rule2->template->num_fields) {
++		return false;
++	} else if (rule1->template->num_fields != 0) {
++		for (i = 0; i < rule1->template->num_fields; i++) {
++			if (!template_has_field(rule1->template->fields[i]->field_id,
++						rule2->template))
++				return false;
++		}
++	}
++
++	if (rule1->flags & IMA_KEYRINGS) {
++		if (!rule1->keyrings && !rule2->keyrings) {
++			;
++		} else if (!rule1->keyrings || !rule2->keyrings) {
++			return false;
++		} else if (rule1->keyrings->count != rule2->keyrings->count) {
++			return false;
++		} else if (rule1->keyrings->count != 0) {
++			for (i = 0; i < rule1->keyrings->count; i++) {
++				if (!keyring_has_item(rule1->keyrings->items[i], rule2->keyrings))
++					return false;
++			}
++		}
++	}
++
++	if (rule1->flags & IMA_LABEL) {
++		if (!rule1->label && !rule2->label) {
++			;
++		} else if (!rule1->label || !rule2->label) {
++			return false;
++		} else if (rule1->label->count != rule2->label->count) {
++			return false;
++		} else if (rule1->label->count != 0) {
++			for (i = 0; i < rule1->label->count; i++) {
++				if (!labels_has_item(rule1->label->items[i], rule2->label))
++					return false;
++			}
++		}
++	}
++
++	for (i = 0; i < MAX_LSM_RULES; i++) {
++		if (!rule1->lsm[i].rule && !rule2->lsm[i].rule)
++			continue;
++
++		if (!rule1->lsm[i].rule || !rule2->lsm[i].rule)
++			return false;
++
++		if (strcmp(rule1->lsm[i].args_p, rule2->lsm[i].args_p) != 0)
++			return false;
++	}
++
++	return true;
++}
++
++/**
++ * ima_rule_exists - check if a rule already exists in the policy
++ *
++ * Checking both the active policy and the temporary rules list.
 + */
-+static DEFINE_PER_CPU(struct llist_head, cgrp_dead_tasks);
-+static DEFINE_PER_CPU(struct irq_work, cgrp_dead_tasks_iwork);
-+
-+static void cgrp_dead_tasks_iwork_fn(struct irq_work *iwork)
++static bool ima_rule_exists(struct ima_rule_entry *new_rule)
 +{
-+	struct llist_node *lnode;
-+	struct task_struct *task, *next;
++	struct ima_rule_entry *entry;
++	struct list_head *ima_rules_tmp;
 +
-+	lnode = llist_del_all(this_cpu_ptr(&cgrp_dead_tasks));
-+	llist_for_each_entry_safe(task, next, lnode, cg_dead_lnode) {
-+		do_cgroup_task_dead(task);
-+		put_task_struct(task);
++	if (!list_empty(&ima_temp_rules)) {
++		list_for_each_entry(entry, &ima_temp_rules, list) {
++			if (ima_rules_equal(entry, new_rule))
++				return true;
++		}
 +	}
-+}
 +
-+static void __init cgroup_rt_init(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		init_llist_head(per_cpu_ptr(&cgrp_dead_tasks, cpu));
-+		per_cpu(cgrp_dead_tasks_iwork, cpu) =
-+			IRQ_WORK_INIT_LAZY(cgrp_dead_tasks_iwork_fn);
++	rcu_read_lock();
++	ima_rules_tmp = rcu_dereference(ima_rules);
++	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
++		if (ima_rules_equal(entry, new_rule)) {
++			rcu_read_unlock();
++			return true;
++		}
 +	}
++	rcu_read_unlock();
++
++	return false;
 +}
 +
-+void cgroup_task_dead(struct task_struct *task)
-+{
-+	get_task_struct(task);
-+	llist_add(&task->cg_dead_lnode, this_cpu_ptr(&cgrp_dead_tasks));
-+	irq_work_queue(this_cpu_ptr(&cgrp_dead_tasks_iwork));
-+}
-+#else	/* CONFIG_PREEMPT_RT */
-+static void __init cgroup_rt_init(void) {}
-+
-+void cgroup_task_dead(struct task_struct *task)
-+{
-+	do_cgroup_task_dead(task);
-+}
-+#endif	/* CONFIG_PREEMPT_RT */
-+
- void cgroup_task_release(struct task_struct *task)
- {
- 	struct cgroup_subsys *ss;
+ /**
+  * ima_parse_add_rule - add a rule to ima_policy_rules
+  * @rule: ima measurement policy rule
+@@ -1993,7 +2140,15 @@ ssize_t ima_parse_add_rule(char *rule)
+ 		return result;
+ 	}
+ 
+-	list_add_tail(&entry->list, &ima_temp_rules);
++	if (!ima_rule_exists(entry)) {
++		list_add_tail(&entry->list, &ima_temp_rules);
++	} else {
++		result = -EEXIST;
++		ima_free_rule(entry);
++		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
++				    NULL, op, "duplicate-policy", result,
++				    audit_info);
++	}
+ 
+ 	return len;
+ }
+-- 
+2.43.0
+
 
