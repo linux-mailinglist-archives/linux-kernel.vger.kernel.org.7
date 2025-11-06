@@ -1,200 +1,187 @@
-Return-Path: <linux-kernel+bounces-889244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F990C3D0EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:21:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6DAC3D0E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A93420D28
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD493BA00C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E0D33C50D;
-	Thu,  6 Nov 2025 18:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9742DAFA1;
+	Thu,  6 Nov 2025 18:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J4oxJInJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="e0plIv+y"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EBB30E0F6
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC7A29AAFA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762453260; cv=none; b=RnTQCq+WBa3KsNLaOi8rMjLcucvKoEahIMQdT+y6J4z+UVGz1QE3AAaBOot6YOB5K5TE1FVotQyabXa5VJD7xyI/lWCLsj4tI1f08x77JCJcQ4skrnvnZj+5ipMxjXkFUn20e9NMeYL8VZ427el/ley8w9WjxB6c4OnI+gkZYWQ=
+	t=1762453234; cv=none; b=uIsQ8oDM0ijBBKAEXRB4Y14dxa7cdWrLjd+UV5JRVTJYGDQZMBtsl8ocmGkqjPLGBnPF47/hlYYHySFXeNWAwJGcyV3/hUk2K6axNJhMhG3qo1ZCoO6lQs1IShz3OG8lUDHEuP1dHNeZJ3TfS/T9RZP61mbBW34eXzfG3Hr269k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762453260; c=relaxed/simple;
-	bh=+JTTwZLsNnLGqHxQhaLG/xmNHOwhfVyvUXRVhVH4WQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=KnQMSAvqmdUk/gYqAMhKEL5szYXnuL+MVtDc2ZQfECFZMsu827/ucONxJaaML3hiTVK1maXIhrXpbJw+xom9DZP7QfU4PX7HDKs/306HXBS7GRraztdXB0tyG4snTU617jGm+IeoSB92HSTwFZUEAUVi3JLgSHZARJqxKCbnsq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J4oxJInJ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762453259; x=1793989259;
-  h=date:from:to:cc:subject:message-id;
-  bh=+JTTwZLsNnLGqHxQhaLG/xmNHOwhfVyvUXRVhVH4WQ8=;
-  b=J4oxJInJF7stBrkYSHVUVr9vyBb/rAhwaqa8fVOCytNOfy1cMXYiIAB/
-   qauIol3N93Pfu8Qb8GWNs4o4WLw15V9tYDT9443vjAWq28DDWFBT0G+eP
-   RHrPaMY/xcOFaYilArFIqWICc5T+SJHboeLVTlLXtS0iKM31zoexitV0W
-   lKTmYtdr2Y2yNVziPzfm7D3siGm97a9AWQdHRYWQvMGigsIL04tzd2mkf
-   sN9pR4FXSLmJhxQR5Q9Szz4fzYdjmNaKT40Nbh4REUtQ1tw5c4CQsHCzt
-   oBvmcS2e9gCKOWLk+zEhCafNWyNbEW6GuV2vqxlMtTRvBPmEJDeNr1tQR
-   g==;
-X-CSE-ConnectionGUID: BYUuycrkTAKCS4UqHUQCqw==
-X-CSE-MsgGUID: JR5f6ZNkTiWaaxr8/VFVBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64637478"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="64637478"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 10:20:54 -0800
-X-CSE-ConnectionGUID: 7sIZGiIrQ5S6OCxf+QfP9w==
-X-CSE-MsgGUID: 0agj9sNIS9W+Jimq5hsjig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="218487345"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 06 Nov 2025 10:20:53 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vH4bK-000UFg-2a;
-	Thu, 06 Nov 2025 18:20:50 +0000
-Date: Fri, 07 Nov 2025 02:20:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD REGRESSION
- 8411fdb92360d0b4d3337492a25ee2de7fb6c425
-Message-ID: <202511070257.NvkOLRf4-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762453234; c=relaxed/simple;
+	bh=375jKvwYcq0QUXukIrQ1f+N3NOj9DqIX4Aj/+YlX5mk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tYf72TzYSYJ/8do4RrZnCENG/eie+tLHN2fz8/bIdtyqX6iX2+m+jARuRNbPn7gVqW1ry7Qmt7SoVZ3t0Tz4GYe9ZU2W22qRwUjjtOpkGzCI4Raw3r4Z3u09ykMQ1ns0IJ45RQ5IcjUyLk+IUvuuWj8px9id3tE2WHufuz/dqco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=e0plIv+y; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7a59ec9bef4so1589938b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:20:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vjti.ac.in; s=google; t=1762453231; x=1763058031; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ASB8FKtZK1f63TZGwMkE6Mcut8cdvc7Tlq+5U4LNTk=;
+        b=e0plIv+ywDol0GQRnZeP6WMULY+1FxqOwFU8hTwb4f5U0YIR0qzYdG6sDWUhRmXwpl
+         fl6wW2Fm+dLS5dU7YiokNPy87x59rCJzUjZ+3ErRkJV4vTPvQUJFCeX+45tegHPH6OJ2
+         X+hArojOp06aBdWJhNI/QDbOLj9dnKU3M2el4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762453231; x=1763058031;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7ASB8FKtZK1f63TZGwMkE6Mcut8cdvc7Tlq+5U4LNTk=;
+        b=TB4q7+tI0sKcnOQrYZJx89QpSzceAFiW9OEuxEAleNv04WdcZlRTU+UpQ6WeR+M+fa
+         QukBDhO8wZlbNUI4isIsvQ+Un6G6cHeEvR+6bybVz8fUDAov00jIjDwP5r5zLrR+HUTN
+         jkVtJ/CK/6x7xrnVRTCS9y5RK/OG1GP4pdAEpmRfOVgRJKLvKuO7+VOkEDFqJVQ1bHL0
+         u589/hHTlpSbiJvEBIiAoYH9KixZtQl7U2I55pRSKI2y2EFsNKiZvF03RH4ICBPlMnFX
+         GkU6ViZbtO9DB8zVu48teSSXpC6fgVj3aJUL9D2H6Ig8JHVRdtyVyIgJm+OBKuVPUG0I
+         ohyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwWv6vRmu1aGBQO2sPrPypHJPAQjm/tT6CX1YRs+6e7qDKOae9gVEJE0qVlxvrj75GnEEh8Xj+KRE48Q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7WY2CozcY9r52c8KfOYaQLAY6pWlE7VktWXvKaZD7oPGLlPc+
+	ceRwFsxBLi4wYtoFyq4Hy/4vCAmQzjpXasBDn8NuOGXRBgRalv0Zh5Q3ZkrVqdoV3Jo=
+X-Gm-Gg: ASbGnctu06sXQM8isRyZ3MR2kFLAI2/4+b8I/ZcNlrvts0GdjXLaGyV1eJ2+4XyMhc3
+	uKj3J1ejRKDFi1NaFhkgZM/Lk+FWI6Ftz8nqwRoCNkESuR8dFtNw0KZHgsgw/fLtzPuf3C6WO/o
+	4Nkab8Anjc6BGAQgWm1MY6VsrUvmGjVy7gEcJmSDM+0WhGLSQHBbxbZg3IcjL53KusdOwA0wElr
+	adltev55jpCvXDwyMlvTRMp7rD/qz/qY9sG4Ds3NWTcoVnFOJ8cmEdRz9fxZbY75CtCq17wSZ38
+	yT51L7nPigljcMIQUX+3jtXRjkLvX07WF4fwIByZRj6/HFsQax8psgi3JLqSvcsTfE8rDHHSfK1
+	tPmG708E8VBQksGrG7ea1qnKjME2sDjvGzheSu9lzgj1Utp9v7rEa4Ny9YBaimCJF2lYr3VHJed
+	FLVcMaY7YT86P0xzUmJZ+waKnLv4GSyBsDtu2qnOjUVp6XToMM9hSIO7Zmrw==
+X-Google-Smtp-Source: AGHT+IGjsvWizViuKvqU/9ixMSrMVwXUSyqJ0gQDi1Sv/r9iYmMJdX5r5ZgGWH4p4H/sroNO9dU7pw==
+X-Received: by 2002:a17:902:e88b:b0:290:9a74:a8ad with SMTP id d9443c01a7336-297c047f196mr4517675ad.53.1762453230814;
+        Thu, 06 Nov 2025 10:20:30 -0800 (PST)
+Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([110.226.176.248])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ccec88sm35062555ad.107.2025.11.06.10.20.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 10:20:30 -0800 (PST)
+From: ssrane_b23@ee.vjti.ac.in
+X-Google-Original-From: ssranevjti@gmail.com
+To: linux-bluetooth@vger.kernel.org
+Cc: luiz.dentz@gmail.com,
+	marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	pav@iki.fi,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com,
+	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+Subject: [PATCH v2 1/1] Bluetooth: L2CAP: Fix use-after-free in l2cap_unregister_user
+Date: Thu,  6 Nov 2025 23:50:16 +0530
+Message-Id: <20251106182016.26508-1-ssranevjti@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251105142251.101852-1-ssranevjti@gmail.com>
+References: <20251105142251.101852-1-ssranevjti@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 8411fdb92360d0b4d3337492a25ee2de7fb6c425  Merge branch into tip/master: 'x86/sgx'
+From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
 
-Error/Warning (recently discovered and may have been fixed):
+After commit ab4eedb790ca ("Bluetooth: L2CAP: Fix corrupted list in
+hci_chan_del"), l2cap_conn_del() uses conn->lock to protect access to
+conn->users and conn->hchan. However, l2cap_register_user() and
+l2cap_unregister_user() still use hci_dev_lock(), creating a race
+condition where these functions can access conn->users and conn->hchan
+concurrently with l2cap_conn_del().
 
-    https://lore.kernel.org/oe-kbuild-all/202511061929.VZHgI3kd-lkp@intel.com
+This can lead to use-after-free and list corruption bugs, as reported
+by syzbot.
 
-    vmlinux.o: warning: objtool: user_exc_vmm_communication+0x1ba: call to __kasan_check_read() leaves .noinstr.text section
+Fix this by changing l2cap_register_user() and l2cap_unregister_user()
+to use conn->lock instead of hci_dev_lock(), ensuring consistent locking
+for the l2cap_conn structure.
 
-Error/Warning ids grouped by kconfigs:
+Reported-by: syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=14b6d57fb728e27ce23c
+Fixes: ab4eedb790ca ("Bluetooth: L2CAP: Fix corrupted list in hci_chan_del")
 
-recent_errors
-`-- x86_64-allmodconfig
-    `-- vmlinux.o:warning:objtool:user_exc_vmm_communication:call-to-__kasan_check_read()-leaves-.noinstr.text-section
+Changes in v2:
+ - Replaced hci_dev_lock()/unlock() with mutex_lock()/unlock(&conn->lock)
+   in both l2cap_register_user() and l2cap_unregister_user().
+ - Updated comments to match current locking rules.
+ - Removed unnecessary hci_dev_hold()/hci_dev_put() usage.
 
-elapsed time: 1818m
+Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+---
+ net/bluetooth/l2cap_core.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-configs tested: 99
-configs skipped: 2
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index d08320380ad6..29e78801c507 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -1685,17 +1685,15 @@ static void l2cap_info_timeout(struct work_struct *work)
+ 
+ int l2cap_register_user(struct l2cap_conn *conn, struct l2cap_user *user)
+ {
+-	struct hci_dev *hdev = conn->hcon->hdev;
+ 	int ret;
+ 
+ 	/* We need to check whether l2cap_conn is registered. If it is not, we
+-	 * must not register the l2cap_user. l2cap_conn_del() is unregisters
+-	 * l2cap_conn objects, but doesn't provide its own locking. Instead, it
+-	 * relies on the parent hci_conn object to be locked. This itself relies
+-	 * on the hci_dev object to be locked. So we must lock the hci device
+-	 * here, too. */
++	 * must not register the l2cap_user. l2cap_conn_del() unregisters
++	 * l2cap_conn objects under conn->lock, and we use the same lock here
++	 * to protect access to conn->users and conn->hchan.
++	 */
+ 
+-	hci_dev_lock(hdev);
++	mutex_lock(&conn->lock);
+ 
+ 	if (!list_empty(&user->list)) {
+ 		ret = -EINVAL;
+@@ -1716,16 +1714,14 @@ int l2cap_register_user(struct l2cap_conn *conn, struct l2cap_user *user)
+ 	ret = 0;
+ 
+ out_unlock:
+-	hci_dev_unlock(hdev);
++	mutex_unlock(&conn->lock);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(l2cap_register_user);
+ 
+ void l2cap_unregister_user(struct l2cap_conn *conn, struct l2cap_user *user)
+ {
+-	struct hci_dev *hdev = conn->hcon->hdev;
+-
+-	hci_dev_lock(hdev);
++	mutex_lock(&conn->lock);
+ 
+ 	if (list_empty(&user->list))
+ 		goto out_unlock;
+@@ -1734,7 +1730,7 @@ void l2cap_unregister_user(struct l2cap_conn *conn, struct l2cap_user *user)
+ 	user->remove(conn, user);
+ 
+ out_unlock:
+-	hci_dev_unlock(hdev);
++	mutex_unlock(&conn->lock);
+ }
+ EXPORT_SYMBOL(l2cap_unregister_user);
+ 
+-- 
+2.34.1
 
-tested configs:
-alpha                   allnoconfig    gcc-15.1.0
-alpha                  allyesconfig    gcc-15.1.0
-arc                     allnoconfig    gcc-15.1.0
-arc         randconfig-001-20251106    gcc-12.5.0
-arc         randconfig-002-20251106    gcc-8.5.0
-arm                     allnoconfig    clang-22
-arm         milbeaut_m10v_defconfig    clang-19
-arm         randconfig-001-20251106    gcc-11.5.0
-arm         randconfig-002-20251106    clang-22
-arm         randconfig-003-20251106    gcc-10.5.0
-arm         randconfig-004-20251106    gcc-8.5.0
-arm64                   allnoconfig    gcc-15.1.0
-arm64                  allyesconfig    clang-22
-arm64       randconfig-001-20251106    gcc-11.5.0
-arm64       randconfig-002-20251106    clang-19
-arm64       randconfig-003-20251106    gcc-14.3.0
-arm64       randconfig-004-20251106    gcc-15.1.0
-csky                   allmodconfig    gcc-15.1.0
-csky                    allnoconfig    gcc-15.1.0
-csky                   allyesconfig    gcc-15.1.0
-csky        randconfig-001-20251106    gcc-12.5.0
-csky        randconfig-002-20251106    gcc-15.1.0
-hexagon                 allnoconfig    clang-22
-hexagon                allyesconfig    clang-22
-hexagon     randconfig-001-20251105    clang-22
-hexagon     randconfig-002-20251105    clang-20
-i386                    allnoconfig    gcc-14
-loongarch              allmodconfig    clang-19
-loongarch               allnoconfig    clang-22
-loongarch              allyesconfig    clang-22
-loongarch   randconfig-001-20251105    clang-18
-loongarch   randconfig-002-20251105    clang-20
-m68k                   allmodconfig    gcc-15.1.0
-m68k                    allnoconfig    gcc-15.1.0
-m68k                   allyesconfig    gcc-15.1.0
-m68k             m5249evb_defconfig    gcc-15.1.0
-microblaze             allmodconfig    gcc-15.1.0
-microblaze              allnoconfig    gcc-15.1.0
-microblaze             allyesconfig    gcc-15.1.0
-mips                   allmodconfig    gcc-15.1.0
-mips                    allnoconfig    gcc-15.1.0
-mips                   allyesconfig    gcc-15.1.0
-nios2                   allnoconfig    gcc-11.5.0
-nios2       randconfig-001-20251105    gcc-9.5.0
-nios2       randconfig-002-20251105    gcc-8.5.0
-openrisc                allnoconfig    gcc-15.1.0
-parisc                  allnoconfig    gcc-15.1.0
-parisc      randconfig-001-20251106    gcc-10.5.0
-parisc      randconfig-002-20251106    gcc-10.5.0
-powerpc                 allnoconfig    gcc-15.1.0
-powerpc           asp8347_defconfig    clang-22
-powerpc        mpc885_ads_defconfig    clang-22
-powerpc     randconfig-001-20251106    gcc-14.3.0
-powerpc     randconfig-002-20251106    clang-22
-powerpc           taishan_defconfig    clang-17
-powerpc64   randconfig-002-20251106    gcc-8.5.0
-riscv                   allnoconfig    gcc-15.1.0
-riscv       randconfig-001-20251105    gcc-8.5.0
-riscv       randconfig-002-20251105    clang-18
-s390                   allmodconfig    clang-18
-s390                    allnoconfig    clang-22
-s390                   allyesconfig    gcc-15.1.0
-s390        randconfig-001-20251105    gcc-8.5.0
-s390        randconfig-002-20251105    gcc-14.3.0
-sh                     allmodconfig    gcc-15.1.0
-sh                      allnoconfig    gcc-15.1.0
-sh                     allyesconfig    gcc-15.1.0
-sh                        defconfig    gcc-15.1.0
-sh          randconfig-001-20251105    gcc-10.5.0
-sh          randconfig-002-20251105    gcc-11.5.0
-sh                  shmin_defconfig    gcc-15.1.0
-sh                   shx3_defconfig    gcc-15.1.0
-sparc                  allmodconfig    gcc-15.1.0
-sparc                   allnoconfig    gcc-15.1.0
-sparc       randconfig-001-20251106    gcc-15.1.0
-sparc       randconfig-002-20251106    gcc-15.1.0
-sparc             sparc64_defconfig    gcc-15.1.0
-sparc64                   defconfig    clang-20
-sparc64     randconfig-001-20251106    gcc-13.4.0
-sparc64     randconfig-002-20251106    clang-20
-um                     allmodconfig    clang-19
-um                      allnoconfig    clang-22
-um                     allyesconfig    gcc-14
-um                        defconfig    clang-22
-um                   i386_defconfig    gcc-14
-um          randconfig-001-20251106    gcc-14
-um          randconfig-002-20251106    clang-22
-um                 x86_64_defconfig    clang-22
-x86_64                  allnoconfig    clang-20
-x86_64                    defconfig    gcc-14
-x86_64      randconfig-011-20251106    clang-20
-x86_64      randconfig-012-20251106    clang-20
-x86_64      randconfig-013-20251106    clang-20
-x86_64      randconfig-014-20251106    gcc-14
-x86_64      randconfig-015-20251106    gcc-14
-x86_64      randconfig-016-20251106    gcc-12
-xtensa                  allnoconfig    gcc-15.1.0
-xtensa      randconfig-001-20251106    gcc-9.5.0
-xtensa      randconfig-002-20251106    gcc-8.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
