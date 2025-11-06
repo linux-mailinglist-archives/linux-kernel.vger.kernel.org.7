@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-887912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A24BC395B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:14:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399FEC395BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF073B80F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:12:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F6074FADCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6842DE6E5;
-	Thu,  6 Nov 2025 07:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29012DF138;
+	Thu,  6 Nov 2025 07:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SfvhulN8"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tm1g0zS3"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BDD2C11FA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817E02DD60F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762413168; cv=none; b=VQiPllIu9NvJQiR96jkVA9M5b4xGhUR3LR3C4VGKXMB9cAJ9fZnYlzS6YDFNOx1UVMMzrp0vJdI0i+GyBN4Dvs76axKF6e6fosHxlFz1jaUc602lT8SR8NlLPQfwcEt48exA/rg0fqPHyB3xdBTX8L9ff7CrJOsf0z9K0xDbk98=
+	t=1762413169; cv=none; b=p8mjOgEqJPIKBH7RcgltdtTWqlvHlLFd5I+KB0li/oNBX+GNpc0ihbmgCwJjeEB7tpJ4q0T2kHm3+VF5WBGy6A9WUwf7NO7Q0qYPfHqYtsA2a5yGA7wcFZSTgV54UXLntiWit/u3mLZRgkBx1xCJ5tzkmJptiGisC7PRrLMpOVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762413168; c=relaxed/simple;
-	bh=8+UjpKx3squMeS7nyaGruzQoVuSi87GO0yVUBKl3Qyo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=nniwIrLFuiodPSYncHbRaekLbBos0jmUWAXK+D2Vy/XzLQ56zkbuXzmVDRcEtNKwWVGI9QIa0eJhTo4PhBySvaxdtnxc6PfGB0gW98ozfliWzWwVqzatXZ2ebuZfndxzFdveZ0Q9BWb3D9cu4nOOnDcX2KpU3/IlNy9vZPq7as0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SfvhulN8; arc=none smtp.client-ip=209.85.215.202
+	s=arc-20240116; t=1762413169; c=relaxed/simple;
+	bh=0G/j/xJj1qsweoCKMUXKGFzeFo7TvQZ/7fH1qwVBjpI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=XYXvXiQQTnlaTpq7P6ELlvpATDWGLJap+RebkdzVaLDRsElDb+OkpFl7bjjkq76EjIFpZHe6b6SLv+Xqo6lj2SB51P4giMKbVu0KZXknRHOWzBxczmXd4xX4rHJL2ezwRrW8xbWzg+PkpBH57ZVJx/or/F5PIVw17oK3VvNPGik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tm1g0zS3; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b993eb2701bso617613a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:12:46 -0800 (PST)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77f610f7325so641887b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:12:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762413166; x=1763017966; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=v4AmNcR9EOtX+2dOeKak8qyt5fZmS72AO2PYyA6g9WI=;
-        b=SfvhulN8H7Vh0/S420WL5mPYvJIMgvCalOhwBzn6q+tJnr9w7d8TxBgCnd1pkyX+2g
-         fmIHt9VkUMtBHkCZNgYpp90ijcC4tyz/jqFcQawsV/dMRfZMy2um60dpjBQwm9uVNufp
-         2tB4BUaHRGm817tIFJ9eyQdHFqKv7206h/ybU24m18mvL3ec11BoAEwIGIlN2srrVV1M
-         E4lxYbZh33WZVsxkEAWnd/nCdjpmRcbutPTcQrgeUUjYcq10z5kDUGc/CBLaXUkRM3dJ
-         I/m4UngaaccTNCaagXVCwsQtx6DBYL7SNKTz3i8MHHGG8qJ4j7gcasidbeettU6JRLUQ
-         931g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762413166; x=1763017966;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1762413168; x=1763017968; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=v4AmNcR9EOtX+2dOeKak8qyt5fZmS72AO2PYyA6g9WI=;
-        b=XGc73I5qouStWevIfYkN/t/OQlQlzrzUZyaekfuzxWE1JwqRiqAHy2loIwfnUFC5oO
-         eZXwcjF4FkvGkOOFOVA89nxFAwz2yNcaZE+5i46qNbOXAls8cIzmWAcOQkPvNjDbYyWj
-         d9cjYynwOhwJLU4lGqJn+p/ewFiZ428qMNNtoLoVAsNJc8XdC++DoSk1JDWOy6hoXqmy
-         mRm6IZtnCxsSi9woVTP6U3Lz3FDxTiGuSkQktWxloykb0U0XY1FuzS5Ddmz7lhV/Wthd
-         SpFe8pcqAJh6x8BxRQDo2cs3Du+VCqr8u4FhWtViuKyYMtahd3Q4TnMxeLCaZqVfbpSg
-         zO5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWnB2D7mbf4T4APbs+gNazmwqwjv1V1QWpoxRQEhL9c1JTPd6Dh7pNXwCQUHjdCYqIcsX2sF+eR+xqqSLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV+TvQr5cHGZzTQS3XtIzToU8y2ceGyy0etbKGSs4TaACMCcu3
-	3eildvNYoSpQlZFnB6a8BrxN/JNOOFrvjRSSLrfcJwNqx95xjO8B4PLpCACNViaLuRnNnoaXBnn
-	tFEZJneQV9Q==
-X-Google-Smtp-Source: AGHT+IHAS3m5ak0ZRegf6QrMyqscQrZnjpyohHkKP5bd2DSeRdq8p6CNdzksY6FKjWbFLaKHEVFP+yk8y4mc
-X-Received: from dlbqj7.prod.google.com ([2002:a05:7022:ec07:b0:119:49ca:6b88])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d11:b0:246:d43a:3856
- with SMTP id adf61e73a8af0-34f83d0f86fmr7785627637.22.1762413165966; Wed, 05
- Nov 2025 23:12:45 -0800 (PST)
-Date: Wed,  5 Nov 2025 23:12:31 -0800
+        bh=BwL0flbR67e6mq7ibhkhVdiS0tjPyP1QzI5zBDpL9cA=;
+        b=Tm1g0zS3kyL9KV4nrXb9qiUakT+Exbff+YXf6KWQMCKxHDu3nzVQwt3CVW5U8ux7EQ
+         PlQM9nfZaR7Ljrga0Dj0fC/Y6ISV5HOkjJKrvsuc+etoBT2g4g7c/SvfJKrP5/fDOnJ6
+         7DR69nguqOtWzF3LxLDvFBOMUX7TKFg20zt3aRVrp0hd3Ar9soP58FPVqj+urRYdnPxQ
+         1oszwmJzKg+KS7NCLlap4niMQZf4QM9LjRD/UUrlfW+AJKzUX0STfO1P649Z5y5WMGJm
+         T8+MS7Dv1RpV5QRCalZjReNxNYsrD+yZnTs/72cplJG/qYdxq8oDT4AnzWW/Z3jUZ/7Z
+         Orew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762413168; x=1763017968;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BwL0flbR67e6mq7ibhkhVdiS0tjPyP1QzI5zBDpL9cA=;
+        b=guiMgX5ZTTCJJXC1AGDfeCAFmwRzZMx+j2A4ItUr8oHTqEE1yrqQwwm7F2GQ+8xE0K
+         oUVlag4q64UPVXCBIuRyWdq0tbhR9PiqKzEozVsRxy5JbOmWhu6t9q0phRAWiXikYIYQ
+         TFKLG7xIahcvHUzI2uVxGJaBq4y04cdJbJTZZ4Z5Q4Hvmi2riuPEyjL1F9gtuYp5LpmR
+         EFHstL8q5G7+puG8ynxNjDDP2G9FIoyAqKjMPGAFtSUkbKmcH/F661hzSOMc17DY+U4w
+         Mvt+o/+t+f4r+AhuCDlolrWfftorRdUydjXS6uOO0joZWetnUN0RIfbjCjL25oyhPFDb
+         DAww==
+X-Forwarded-Encrypted: i=1; AJvYcCXVmmdwWtT6jOxrFluFKZhOBc3EoEV5RHcnWX8LaRpkYBZOP5KqK6gH8kcQ+mTx9yIdKE8AhPuR5XbmYuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEG9eg7oMnVUO2RQkJXm9V+tkMmx4+NyU4fP6YpcuraKPRexpo
+	KVYb4D2UtnUyucnF1a7SNzDFhGa7+FkTV/hGJyoZGom7xt6ajpx6l629qh5T4ityOeE/NrLYIy8
+	6RmvVJudlog==
+X-Google-Smtp-Source: AGHT+IHBw9KDApkRxNKNSSYbt0DxZex8yR8CkX8/EVYPoFywpOURlzyyxkxht7ZP44EnoM+9po/KDk//aDb0
+X-Received: from dlbrl28.prod.google.com ([2002:a05:7022:f51c:b0:119:78ff:fe15])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:5491:b0:340:cc06:94ee
+ with SMTP id adf61e73a8af0-34f86e13de7mr7541851637.60.1762413167626; Wed, 05
+ Nov 2025 23:12:47 -0800 (PST)
+Date: Wed,  5 Nov 2025 23:12:32 -0800
+In-Reply-To: <20251106071241.141234-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251106071241.141234-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251106071241.141234-1-irogers@google.com>
-Subject: [PATCH v3 0/9] perf stat fixes and improvements
+Message-ID: <20251106071241.141234-2-irogers@google.com>
+Subject: [PATCH v3 1/9] libperf cpumap: Reduce allocations and sorting in intersect
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -84,71 +87,74 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Dapeng Mi <dapeng1.mi@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-A collection of fixes aiming to stabilize and make more reasonable
-measurements/metrics such as memory bandwidth.
+On hybrid platforms the CPU maps are often disjoint. Rather than copy
+CPUs and trim, compute the number of common CPUs, if none early exit,
+otherwise copy in an sorted order. This avoids memory allocation in
+the disjoint case and avoids a second malloc and useless sort in the
+previous trim cases.
 
-Tool events are changed from getting a PMU cpu map of all online CPUs
-to either CPU 0 or all online CPUs. This avoids iterating over useless
-CPUs for events in particular `duration_time`. Fix a bug where
-duration_time didn't correct use the previous raw counts and would
-skip values in interval mode.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/lib/perf/cpumap.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-Change how json metrics handle tool events. Use the counter value
-rather than using shared state with perf stat. A later patch changes
-it so that tool events are read last, so that if reading say memory
-bandwidth counters you don't divide by an earlier read time and exceed
-the theoretical maximum memory bandwidth.
-
-Do some clean up around the shared state in stat-shadow that's no
-longer used. It can be fully removed when the legacy json metrics
-patch series lands:
-https://lore.kernel.org/lkml/20251024175857.808401-1-irogers@google.com/
-
-Change how affinities work with evlist__for_each_cpu. Move the
-affinity code into the iterator to simplify setting it up. Detect when
-affinities will and won't be profitable, for example a tool event and
-a regular perf event (or read group) may face less delay from a single
-IPI for the event read than from a call to sched_setaffinity. Add a
- --no-affinity flag to perf stat to allow affinities to be disabled.
-
-v3: Add affinity clean ups and read tool events last.
-
-v2: Fixed an aggregation index issue:
-https://lore.kernel.org/lkml/20251104234148.3103176-2-irogers@google.com/
-
-v1:
-https://lore.kernel.org/lkml/20251104053449.1208800-1-irogers@google.com/
-
-Ian Rogers (9):
-  libperf cpumap: Reduce allocations and sorting in intersect
-  perf pmu: perf_cpu_map__new_int to avoid parsing a string
-  perf tool_pmu: Use old_count when computing count values for time
-    events
-  perf stat-shadow: Read tool events directly
-  perf stat: Reduce scope of ru_stats
-  perf tool_pmu: More accurately set the cpus for tool events
-  perf evlist: Reduce affinity use and move into iterator, fix no
-    affinity
-  perf stat: Read tool events last
-  perf stat: Add no-affinity flag
-
- tools/lib/perf/cpumap.c                |  29 ++--
- tools/perf/Documentation/perf-stat.txt |   4 +
- tools/perf/builtin-stat.c              | 189 +++++++++++++++----------
- tools/perf/util/config.c               |   1 -
- tools/perf/util/drm_pmu.c              |   2 +-
- tools/perf/util/evlist.c               | 156 ++++++++++++--------
- tools/perf/util/evlist.h               |  27 +++-
- tools/perf/util/hwmon_pmu.c            |   2 +-
- tools/perf/util/parse-events.c         |   9 +-
- tools/perf/util/pmu.c                  |  12 ++
- tools/perf/util/pmu.h                  |   1 +
- tools/perf/util/stat-shadow.c          | 149 +++++++++----------
- tools/perf/util/stat.h                 |  16 ---
- tools/perf/util/tool_pmu.c             |  78 ++++++----
- tools/perf/util/tool_pmu.h             |   1 +
- 15 files changed, 395 insertions(+), 281 deletions(-)
-
+diff --git a/tools/lib/perf/cpumap.c b/tools/lib/perf/cpumap.c
+index b20a5280f2b3..7e88417ba84d 100644
+--- a/tools/lib/perf/cpumap.c
++++ b/tools/lib/perf/cpumap.c
+@@ -453,21 +453,33 @@ int perf_cpu_map__merge(struct perf_cpu_map **orig, struct perf_cpu_map *other)
+ struct perf_cpu_map *perf_cpu_map__intersect(struct perf_cpu_map *orig,
+ 					     struct perf_cpu_map *other)
+ {
+-	struct perf_cpu *tmp_cpus;
+-	int tmp_len;
+ 	int i, j, k;
+-	struct perf_cpu_map *merged = NULL;
++	struct perf_cpu_map *merged;
+ 
+ 	if (perf_cpu_map__is_subset(other, orig))
+ 		return perf_cpu_map__get(orig);
+ 	if (perf_cpu_map__is_subset(orig, other))
+ 		return perf_cpu_map__get(other);
+ 
+-	tmp_len = max(__perf_cpu_map__nr(orig), __perf_cpu_map__nr(other));
+-	tmp_cpus = malloc(tmp_len * sizeof(struct perf_cpu));
+-	if (!tmp_cpus)
++	i = j = k = 0;
++	while (i < __perf_cpu_map__nr(orig) && j < __perf_cpu_map__nr(other)) {
++		if (__perf_cpu_map__cpu(orig, i).cpu < __perf_cpu_map__cpu(other, j).cpu)
++			i++;
++		else if (__perf_cpu_map__cpu(orig, i).cpu > __perf_cpu_map__cpu(other, j).cpu)
++			j++;
++		else { /* CPUs match. */
++			i++;
++			j++;
++			k++;
++		}
++	}
++	if (k == 0) /* Maps are completely disjoint. */
+ 		return NULL;
+ 
++	merged = perf_cpu_map__alloc(k);
++	if (!merged)
++		return NULL;
++	/* Entries are added to merged in sorted order, so no need to sort again. */
+ 	i = j = k = 0;
+ 	while (i < __perf_cpu_map__nr(orig) && j < __perf_cpu_map__nr(other)) {
+ 		if (__perf_cpu_map__cpu(orig, i).cpu < __perf_cpu_map__cpu(other, j).cpu)
+@@ -476,11 +488,8 @@ struct perf_cpu_map *perf_cpu_map__intersect(struct perf_cpu_map *orig,
+ 			j++;
+ 		else {
+ 			j++;
+-			tmp_cpus[k++] = __perf_cpu_map__cpu(orig, i++);
++			RC_CHK_ACCESS(merged)->map[k++] = __perf_cpu_map__cpu(orig, i++);
+ 		}
+ 	}
+-	if (k)
+-		merged = cpu_map__trim_new(k, tmp_cpus);
+-	free(tmp_cpus);
+ 	return merged;
+ }
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
