@@ -1,234 +1,264 @@
-Return-Path: <linux-kernel+bounces-889047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8431CC3C958
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:52:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F7AC3C953
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A443B55AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A3EB4202DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C1A303C85;
-	Thu,  6 Nov 2025 16:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NWFQNtTB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Hk+XRX9v";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NWFQNtTB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Hk+XRX9v"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC6A308F25
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEAC34A3DB;
+	Thu,  6 Nov 2025 16:41:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E80329C41;
+	Thu,  6 Nov 2025 16:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447272; cv=none; b=kS/NFuS7BnCtcTTTdwxyE5T1w7sdfx6QeXhIqgVkD3vsnnZxwG7f0TttWQuB9CO7EKmMyHffVyo3SyLjK8Q+X5f217Pfn3ymSN69RAtnfd3GFOY4DyWZHaib7WNNU9eLNovrq7AMvie8laPcnhBZaiSzN6Dk4q/GliHLkaC0nlA=
+	t=1762447284; cv=none; b=g1oKV+Sk3e6QWTHIZUhFesmMq0Z3S+HJ5c9ikqMhPt3l7E8jJWwBwreZBT4tcswI+rY0I4rHLuIG03DGuJk8wKqsJuTw4Cx4R7sxG05JqkRwu72LKCo0XB+RzmGNQusU4RxCi8zyOMdkVz6AsD7i1VjdKHWzg0Njd5RkENtYpA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447272; c=relaxed/simple;
-	bh=bShgRUXmwIigTJi4rYrvdghECfsg69LUPFjEV76bnpg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QS412mqE6mjn/sbPb3vf6cr4lsouB9v8HhoyuQsVFv+wpoYXkz4dvn84t584YqxuHGsBtYF7g0INWQ0UHX4d0bzTR5a/3JXPIslJK3WEpiRwKk3mzmmIiqJ5xoiQwjSySguxc73yEwiKx9j/4fd0VEAXRiD2P3JoE/wl4S+SgFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NWFQNtTB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Hk+XRX9v; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NWFQNtTB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Hk+XRX9v; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8F53C2118C;
-	Thu,  6 Nov 2025 16:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762447268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
-	b=NWFQNtTB5ZTr+rlMV3LGfORGmHDL9FpXPsi+AjE7NER/O/B/J4WYeKQ5cK4N6Kw1+N6elB
-	v7pYiP8HqYZFt6/P7wy01f2dIudL1gO2zqTiM+1i2nOUVO4hX+THnZAChNFPPtERAIS/3f
-	LBLmq8MEdB4DJ95qUCuiM9jEXgyIosM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762447268;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
-	b=Hk+XRX9vm2Xrmv9ErrVak0XjuWcgYd62AkaRAFuKBYL7O6HyuJwc7JM+JPxpGsDa2A2j/f
-	54jk5HXMk6U9n9Bw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762447268; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
-	b=NWFQNtTB5ZTr+rlMV3LGfORGmHDL9FpXPsi+AjE7NER/O/B/J4WYeKQ5cK4N6Kw1+N6elB
-	v7pYiP8HqYZFt6/P7wy01f2dIudL1gO2zqTiM+1i2nOUVO4hX+THnZAChNFPPtERAIS/3f
-	LBLmq8MEdB4DJ95qUCuiM9jEXgyIosM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762447268;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ezyDHeZJvXEFUvSAJRuRbcS5CcZfuhP+O5ZMX2epjE0=;
-	b=Hk+XRX9vm2Xrmv9ErrVak0XjuWcgYd62AkaRAFuKBYL7O6HyuJwc7JM+JPxpGsDa2A2j/f
-	54jk5HXMk6U9n9Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 458F813A31;
-	Thu,  6 Nov 2025 16:41:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hN+0D6TPDGnPSQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 06 Nov 2025 16:41:08 +0000
-Date: Thu, 06 Nov 2025 17:41:07 +0100
-Message-ID: <87h5v7ru58.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: <tiwai@suse.de>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>,
-	<perex@perex.cz>,
-	<syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>,
-	<tiwai@suse.com>
-Subject: Re: [PATCH] ALSA: usb-audio: Prevent urb from writing out of bounds
-In-Reply-To: <20251106143506.720545-1-lizhi.xu@windriver.com>
-References: <87v7jnfkio.wl-tiwai@suse.de>
-	<20251106143506.720545-1-lizhi.xu@windriver.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1762447284; c=relaxed/simple;
+	bh=4lFGiA8K/kfABjdnawuyfjQPak1ZBQeZWmw3ME/MyJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vj2cZVMqdhsZzpTI1y9cRNs8fwisK8+X7vqqUl8qMtnLSGM/XEwsXMAryOHZAYYXYfSoFNW991iUjjRAqaCFYy9dwtl1m7bwaxOTD7WYmseonhqNHqH8yxiKLE+ScPELa6p9q1NhRxnnJrrYa4TquCvQGVfsUuF2Rm6XYWHQb8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6BDE153B;
+	Thu,  6 Nov 2025 08:41:13 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB86F3F66E;
+	Thu,  6 Nov 2025 08:41:16 -0800 (PST)
+Message-ID: <9e2f912d-2a2e-49ed-b0ab-4286fe94e145@arm.com>
+Date: Thu, 6 Nov 2025 16:41:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[bfd77469c8966de076f7];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -1.80
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 26/29] arm_mpam: Use long MBWU counters if supported
+To: Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, dfustini@baylibre.com,
+ amitsinght@marvell.com, David Hildenbrand <david@redhat.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-27-james.morse@arm.com>
+ <CALPaoCjJXHD+HgFizzvNEvBorbUcJLTngLb7UJy-uMdybhCfrg@mail.gmail.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <CALPaoCjJXHD+HgFizzvNEvBorbUcJLTngLb7UJy-uMdybhCfrg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 06 Nov 2025 15:35:06 +0100,
-Lizhi Xu wrote:
+Hi Peter,
+
+On 11/6/25 16:15, Peter Newman wrote:
+> Hi Ben (and James),
 > 
-> On Thu, 06 Nov 2025 12:49:51 +0100, Takashi Iwai wrote:
-> > > > > The calculation rule for the actual data length written to the URB's
-> > > > > transfer buffer differs from that used to allocate the URB's transfer
-> > > > > buffer, and in this problem, the value used during allocation is smaller.
-> > > > >
-> > > > > This ultimately leads to write out-of-bounds errors when writing data to
-> > > > > the transfer buffer.
-> > > > >
-> > > > > To prevent out-of-bounds writes to the transfer buffer, a check between
-> > > > > the size of the bytes to be written and the size of the allocated bytes
-> > > > > should be added before performing the write operation.
-> > > > >
-> > > > > When the written bytes are too large, -EPIPE is returned instead of
-> > > > > -EAGAIN, because returning -EAGAIN might result in push back to ready
-> > > > > list again.
-> > > > >
-> > > > > Based on the context of calculating the bytes to be written here, both
-> > > > > copy_to_urb() and copy_to_urb_quirk() require a check for the size of
-> > > > > the bytes to be written before execution.
-> > > > >
-> > > > > syzbot reported:
-> > > > > BUG: KASAN: slab-out-of-bounds in copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
-> > > > > Write of size 264 at addr ffff88801107b400 by task syz.0.17/5461
-> > > > >
-> > > > > Call Trace:
-> > > > >  copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
-> > > > >  prepare_playback_urb+0x953/0x13d0 sound/usb/pcm.c:1611
-> > > > >
-> > > > > Reported-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-> > > > > Closes: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
-> > > > > Tested-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
-> > > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > > >
-> > > > I'm afraid that this doesn't address the root cause at all.
-> > > > The description above sounds plausible, but not pointing to "why".
-> > > >
-> > > > The bytes is frames * stride, so the question is why a too large
-> > > > frames is calculated.  I couldn't have time to check the details, but
-> > > > there should be rather some weird condition / parameters to trigger
-> > > > this, and we should check that at first.
-> > > During debugging, I discovered that the value of ep->packsize[0] is 22,
-> > > which causes the counts calculated by
-> > > counts = snd_usb_endpoint_next_packet_size(ep, ctx, i, avail);
-> > > to be 22, resulting in a frames value of 22 * 6 = 132;
-> > > Meanwhile, the stride value is 2, which ultimately results in
-> > > bytes = frames * stride = 132 * 2 = 264;
-> > > @@ -1241,6 +1252,10 @@ static int data_ep_set_params(struct snd_usb_endpoint *ep)
-> > > 	u->buffer_size = maxsize * u->packets;
-> > > 	...
-> > > 	u->urb->transfer_buffer =
-> > >                 usb_alloc_coherent(chip->dev, u->buffer_size,
-> > >                                    GFP_KERNEL, &u->urb->transfer_dma);
-> > >
-> > > Here, when calculating u->buffer_size = maxsize * u->packets;
-> > > maxsize = 9, packets = 6, which results in only 54 bytes allocated to
-> > > transfer_buffer;
-> > 
-> > Hm, so the problem is rather the calculation of the buffer size.
-> > The size sounds extremely small.  Which parameters (rates, formats,
-> > etc) are used for achieving this?
-> rates: 22050
-> format: 2
-> channels: 1
-> /////////////////////////////
-> stride: 2
-> packets: 6
-> data interval: 0
-> frame_bits: 16
-> > 
-> > The calculation of u->buffer_size is a bit complex, as maxsize is
-> > adjusted in many different ways.  Is it limited due to wMaxPacketSize
-> > setup?
-> Yes, it's because the value of ep->maxpacksize is 9 that the maxsize
-> value is 9.
+> On Fri, Oct 17, 2025 at 8:59 PM James Morse <james.morse@arm.com> wrote:
+>>
+>> From: Rohit Mathew <rohit.mathew@arm.com>
+>>
+>> Now that the larger counter sizes are probed, make use of them.
+>>
+>> Callers of mpam_msmon_read() may not know (or care!) about the different
+>> counter sizes. Allow them to specify mpam_feat_msmon_mbwu and have the
+>> driver pick the counter to use.
+>>
+>> Only 32bit accesses to the MSC are required to be supported by the
+>> spec, but these registers are 64bits. The lower half may overflow
+>> into the higher half between two 32bit reads. To avoid this, use
+>> a helper that reads the top half multiple times to check for overflow.
+>>
+>> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
+>> [morse: merged multiple patches from Rohit, added explicit counter selection ]
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+>> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> ---
+>> Changes since v2:
+>>  * Removed mpam_feat_msmon_mbwu as a top-level bit for explicit 31bit counter
+>>    selection.
+>>  * Allow callers of mpam_msmon_read() to specify mpam_feat_msmon_mbwu and have
+>>    the driver pick a supported counter size.
+>>  * Rephrased commit message.
+>>
+>> Changes since v1:
+>>  * Only clear OFLOW_STATUS_L on MBWU counters.
+>>
+>> Changes since RFC:
+>>  * Commit message wrangling.
+>>  * Refer to 31 bit counters as opposed to 32 bit (registers).
+>> ---
+>>  drivers/resctrl/mpam_devices.c | 134 ++++++++++++++++++++++++++++-----
+>>  1 file changed, 116 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> index f4d07234ce10..c207a6d2832c 100644
+>> --- a/drivers/resctrl/mpam_devices.c
+>> +++ b/drivers/resctrl/mpam_devices.c
+>> @@ -897,6 +897,48 @@ struct mon_read {
+>>         int                             err;
+>>  };
+>>
+>> +static bool mpam_ris_has_mbwu_long_counter(struct mpam_msc_ris *ris)
+>> +{
+>> +       return (mpam_has_feature(mpam_feat_msmon_mbwu_63counter, &ris->props) ||
+>> +               mpam_has_feature(mpam_feat_msmon_mbwu_44counter, &ris->props));
+>> +}
+>> +
+>> +static u64 mpam_msc_read_mbwu_l(struct mpam_msc *msc)
+>> +{
+>> +       int retry = 3;
+>> +       u32 mbwu_l_low;
+>> +       u64 mbwu_l_high1, mbwu_l_high2;
+>> +
+>> +       mpam_mon_sel_lock_held(msc);
+>> +
+>> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
+>> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+>> +
+>> +       mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
+>> +       do {
+>> +               mbwu_l_high1 = mbwu_l_high2;
+>> +               mbwu_l_low = __mpam_read_reg(msc, MSMON_MBWU_L);
+>> +               mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
+>> +
+>> +               retry--;
+>> +       } while (mbwu_l_high1 != mbwu_l_high2 && retry > 0);
+>> +
+>> +       if (mbwu_l_high1 == mbwu_l_high2)
+>> +               return (mbwu_l_high1 << 32) | mbwu_l_low;
+>> +       return MSMON___NRDY_L;
+>> +}
+>> +
+>> +static void mpam_msc_zero_mbwu_l(struct mpam_msc *msc)
+>> +{
+>> +       mpam_mon_sel_lock_held(msc);
+>> +
+>> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
+>> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+>> +
+>> +       __mpam_write_reg(msc, MSMON_MBWU_L, 0);
+>> +       __mpam_write_reg(msc, MSMON_MBWU_L + 4, 0);
+>> +}
+>> +
+>>  static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>                                    u32 *flt_val)
+>>  {
+>> @@ -924,7 +966,9 @@ static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>                                                ctx->csu_exclude_clean);
+>>
+>>                 break;
+>> -       case mpam_feat_msmon_mbwu:
+>> +       case mpam_feat_msmon_mbwu_31counter:
+>> +       case mpam_feat_msmon_mbwu_44counter:
+>> +       case mpam_feat_msmon_mbwu_63counter:
+>>                 *ctl_val |= MSMON_CFG_MBWU_CTL_TYPE_MBWU;
+>>
+>>                 if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw, &m->ris->props))
+>> @@ -946,7 +990,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_CSU_CTL);
+>>                 *flt_val = mpam_read_monsel_reg(msc, CFG_CSU_FLT);
+>>                 return;
+>> -       case mpam_feat_msmon_mbwu:
+>> +       case mpam_feat_msmon_mbwu_31counter:
+>> +       case mpam_feat_msmon_mbwu_44counter:
+>> +       case mpam_feat_msmon_mbwu_63counter:
+>>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
+>>                 *flt_val = mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
+>>                 return;
+>> @@ -959,6 +1005,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>>  static void clean_msmon_ctl_val(u32 *cur_ctl)
+>>  {
+>>         *cur_ctl &= ~MSMON_CFG_x_CTL_OFLOW_STATUS;
+>> +
+>> +       if (FIELD_GET(MSMON_CFG_x_CTL_TYPE, *cur_ctl) == MSMON_CFG_MBWU_CTL_TYPE_MBWU)
+>> +               *cur_ctl &= ~MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L;
+>>  }
+>>
+>>  static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+>> @@ -978,10 +1027,15 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+>>                 mpam_write_monsel_reg(msc, CSU, 0);
+>>                 mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+>>                 break;
+>> -       case mpam_feat_msmon_mbwu:
+>> +       case mpam_feat_msmon_mbwu_44counter:
+>> +       case mpam_feat_msmon_mbwu_63counter:
+>> +               mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
+>> +               fallthrough;
+>> +       case mpam_feat_msmon_mbwu_31counter:
+>>                 mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
+>>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+>>                 mpam_write_monsel_reg(msc, MBWU, 0);
+> 
+> The fallthrough above seems to be problematic, assuming the MBWU=0
+> being last for 31-bit was intentional. For long counters, this is
+> zeroing the counter before updating the filter/control registers, but
+> then clearing the 32-bit version of the counter. This fails to clear
+> the NRDY bit on the long counter, which isn't cleared by software
+> anywhere else.
+> 
+> From section 10.3.2 from the MPAM spec shared:
+> 
+>  "On a counting monitor, the NRDY bit remains set until it is reset by
+> software writing it as 0 in the monitor register, or automatically
+> after the monitor is captured in the capture register by a capture
+> event"
+> 
+> If I update the 63-bit case to call
+> mpam_msc_zero_mbwu_l(m->ris->vmsc->msc) after updating the
+> control/filter registers (in addition to the other items I pointed in
+> my last reply), I'm able to read MBWU counts from my hardware through
+> mbm_total_bytes.
+> 
+> Thanks,
+> -Peter
 
-OK, then a fix like below would work?
+Thanks for the testing and flagging the problem. We should do the
+configuration in the same order for all the monitors.
 
+I'll change the case to:
 
-thanks,
+	case mpam_feat_msmon_mbwu_31counter:
+	case mpam_feat_msmon_mbwu_44counter:
+	case mpam_feat_msmon_mbwu_63counter:
+		mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
+		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
 
-Takashi
+		if (m->type == mpam_feat_msmon_mbwu_31counter)
+			mpam_write_monsel_reg(msc, MBWU, 0);
+		else
+			mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
 
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -1362,6 +1362,11 @@ int snd_usb_endpoint_set_params(struct snd_usb_audio *chip,
- 	ep->sample_rem = ep->cur_rate % ep->pps;
- 	ep->packsize[0] = ep->cur_rate / ep->pps;
- 	ep->packsize[1] = (ep->cur_rate + (ep->pps - 1)) / ep->pps;
-+	if (ep->packsize[1] > ep->maxpacksize) {
-+		usb_audio_dbg(chip, "Too small maxpacksize %u for rate %u / pps %u\n",
-+			      ep->maxpacksize, ep->cur_rate, ep->pps);
-+		return -EINVAL;
-+	}
- 
- 	/* calculate the frequency in 16.16 format */
- 	ep->freqm = ep->freqn;
+		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+		break;
+
+Thanks,
+
+Ben
+
 
