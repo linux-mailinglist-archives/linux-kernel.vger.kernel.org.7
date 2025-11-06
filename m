@@ -1,143 +1,93 @@
-Return-Path: <linux-kernel+bounces-888872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021DEC3C2B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:50:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C41C3C2DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E60C3AD2D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:45:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7233B82E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596643093DB;
-	Thu,  6 Nov 2025 15:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CE633A023;
+	Thu,  6 Nov 2025 15:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oyafMGVj"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="VfNx0vpc"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9612A303C94
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B9033A01E;
+	Thu,  6 Nov 2025 15:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762443900; cv=none; b=J0qFXEzoe0APRMIqIwL7ToSovqqvczexIh3aCdzq4dicrs+7lhJ8zn1a+jnTzjMDxh+Xjo3XOZuBJwSLaxM4R/XFvtdeiR0jAAALWf/G7cYzCAaC8bb31PzL1EGeVS5R4ojXn4js/BxqKcsOFpKhTXUHSkwn3vTpd+fGQieQA+Y=
+	t=1762444014; cv=none; b=u50eAs4RoXWnnDaNAJuaPxYTJXY2+QZydpq15sUz/pGv2uLylHyCGjCg2CNi2u62dv+GRBqMsqJYfzZWIci1s++ntEMVUWbsCNe0cb+3FYMtQ+DrOJ7RL3S9Va3yZNHJzS9uknchE6/YdhIjDk8svU13w0wMH5GPJxQOjq+H0/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762443900; c=relaxed/simple;
-	bh=ir86bNXUyXX52mY7hjK0YW1lIK6fPwyN3rKPVErB4Dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D1FM7h2P1u1sc6+NIZk1rltcT+UdqxreUsIcEnU+Jc6xyHIPLX4hKP/8WxP+2Rwgt3S79APyAj9OyFvpQDrBVLXME2G7nTcskKAEJ28WJkjTJtTxNa2BIdKKQKHq9I5tc7iTcVraq4aKIYhue8ikl0gkLexYbEEZ2Sv7hBGPdEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oyafMGVj; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so829624f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:44:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762443897; x=1763048697; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FDBfIt+d555CHw458VAbNG3bfHQEwmpPFewi9LatYFE=;
-        b=oyafMGVj8rfucZtwMDNT7+phmmyZ8dNEZOYEY9Q57QHqZJoyoIJ9OQJpzpssPwAAUY
-         p1cucHLkqadoykScHTYiZZygeQ/2+y+X9FXBBrzheC8maMeT3KaSdcKzfJuIAtFiKMVD
-         9bTv3YnG5FJcmpkd662vPds4xEsAH7Ni3IcYRWHdk2BAh9rtXwffQmy39LFYYprGFkbP
-         NHwOTlJfQ9UI2vyII4ONRiqWKMGAT4G38zP5/ICf0lH6eDc/WqOChblx20cnzIVdMf/s
-         +pkDF7X4DR5yijB/jniXDKERhHa0ItlV6wMuNhqGMXQxnO3rr/fg61KyjIC7zgKqc47F
-         I4wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762443897; x=1763048697;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDBfIt+d555CHw458VAbNG3bfHQEwmpPFewi9LatYFE=;
-        b=YvKDEcoD15NfaDIuAHz/R7/Vcyqr+/3z+HWMTwmd6obmdds5gduHzhsoaQDHQsb/32
-         LDUiweHCP+gIskqjczqsbnOPbatATtq2M7g0632YN4F+uUKbV0j7cZK4uNnCVobRF7bx
-         4u1rtN5/pcCTEMxQOSpsvm03LpsFGnO/uCm5ANx1MzA4z2UDAGV8I032myk2AJ6Sbt4t
-         xGOxynpd4AF+jSh/74cCQO4wDD9F33IsqWQGhNQQzvzEw4ct8CEcsMIeUVGt6ym9qObj
-         Qlz366pAvfIpHJrETHs55+q1yZVZr5Geqp+/HUwLUwKhPhorsJvXJKx3z/LMn4JBDXaM
-         xADQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEdceQ2ElJ0O2KkoDoOr1+Za6++M+b+X1jvAN4O4ECAfGyqtUYXPdY+Ek6OXRi/NRaU5Nfhc+SE8sd2Cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfTSzAnj7kBrG/Jy5SsFIDqbFBMCPXgI7IyjVQ/9Y3kumPc9NL
-	bVhvdTAkNSXughwolGUE4ssUa0m54RefOWVP/bR6QRJHnuKWTbmx35BxQPfq+BUqw4s=
-X-Gm-Gg: ASbGncu4RJAJr+y3VqPSWywyQj1vWYgTgU+lg2ncg5DHk2nLZ2sfVW4599anRCyLIzc
-	Z5DOjfThDeE0/DJh+RHJJSidGm9YBNjhb1DDYKB4NvKivaS7xJ8mNgnHG2PAgNxSvhbTEjuE+EL
-	tHcJapUzZUiG2g+mW/7ZRSnLtBqn77scU1KJ9BgXOFbMkNXQmmv8qSc3ByQoHF7qe6HPVOCZ7iQ
-	yybNRiVtFGAurDhGcH8Vf5uY62sIJzUSZ+zscTRSVLHCdijZcGGrmL+uMj7Ys9n6e49i/+VWR8h
-	Eibx6RNeNUDTMV4vowbxNg29MGV+6xoqJmHRq/sVe0w9B8qvb+Zua+8gFYFdQdd0cCmIxS3dOXZ
-	Navp7ckS9fPZWFpcbBkvLV9Ecs0ARmNQ4rbkoFWLQ2woXPV4xlYz/3bLc5aK/PKgxB9Wm+N+EUZ
-	QP6x6Gk8ID
-X-Google-Smtp-Source: AGHT+IEAc10N1RtkN4NVSk1Zu24SSpZFPG8gHp4xc27V6x28O5IWRTQBVQkr2p/iYh6QAS/I0T8A6w==
-X-Received: by 2002:a05:6000:310a:b0:429:c8f6:5873 with SMTP id ffacd0b85a97d-429e32edf7bmr7715744f8f.22.1762443896966;
-        Thu, 06 Nov 2025 07:44:56 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40375bsm5553906f8f.8.2025.11.06.07.44.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 07:44:56 -0800 (PST)
-Message-ID: <509b427c-5586-4c92-88ad-16bbde7c3f92@tuxon.dev>
-Date: Thu, 6 Nov 2025 17:44:53 +0200
+	s=arc-20240116; t=1762444014; c=relaxed/simple;
+	bh=UFehdYGfL7XplbekhzSPlLyU1zHHpJ5oGfGQnwhxaaU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4Qk1CPvbrzIZSLzvcZbdVng45Ek3V/PVJw3+zGfBTYf8/1xGKDCmKiknhpNxeVyzAErfVdcFgNSOpEA4TIZ+IACIdP4PT3VuyMcNmUmqqDVAb5GcmEInPxvXWrAqZEoBe2Xh8qjwrf0VddSyUXkitmrdnQoBEguQfDECdyi/CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=VfNx0vpc; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (p50878061.dip0.t-ipconnect.de [80.135.128.97])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 805442FC0061;
+	Thu,  6 Nov 2025 16:46:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1762444002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WI7GSSyIf1BAMtDsvNYlDE51rHvHY74b+6plngwjCCY=;
+	b=VfNx0vpcMjs1x42VKXP/F1VFVZwTkf/Ng8RHghI5X8QOa3hTuyLrmxmQNgGnW5+9t3AZBI
+	CYt+jLWeT+WqzN9+oqPqsV41CoRhzAhRff5+/cFO+vG0NpE62JcJ6I70gWPzueqGN+wHTC
+	LhSnOQalOKRM/5CUiHF14KFEw4oSk24=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hid/hid-multitouch: Keep latency normal on deactivate for reactivation gesture
+Date: Thu,  6 Nov 2025 16:45:28 +0100
+Message-ID: <20251106154636.985427-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 14/26] clk: at91: Convert to common field_{get,prep}()
- helpers
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Yury Norov <yury.norov@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Miller
- <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>,
- Alex Elder <elder@ieee.org>, David Laight <david.laight.linux@gmail.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Jason Baron
- <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
- Tony Luck <tony.luck@intel.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Kim Seer Paller <kimseer.paller@analog.com>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Richard Genoud <richard.genoud@bootlin.com>,
- Cosmin Tanislav <demonsingur@gmail.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Jianping Shen <Jianping.Shen@de.bosch.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-edac@vger.kernel.org, qat-linux@intel.com, linux-gpio@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762435376.git.geert+renesas@glider.be>
- <7414c080bbacc3c5be00c0eec4f5cbca386acaf3.1762435376.git.geert+renesas@glider.be>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <7414c080bbacc3c5be00c0eec4f5cbca386acaf3.1762435376.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Uniwill devices have a built in gesture in the touchpad to de- and
+reactivate it by double taping the upper left corner. This gesture stops
+working when latency is set to high, so this patch keeps the latency on
+normal.
 
+Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+---
+Or should I better implement this as a quirk?
 
-On 11/6/25 15:34, Geert Uytterhoeven wrote:
-> Drop the driver-specific field_get() and field_prep() macros, in favor
-> of the globally available variants from <linux/bitfield.h>.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+ drivers/hid/hid-multitouch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 179dc316b4b51..df64cb6c41699 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1998,7 +1998,7 @@ static void mt_on_hid_hw_open(struct hid_device *hdev)
+ 
+ static void mt_on_hid_hw_close(struct hid_device *hdev)
+ {
+-	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
++	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_NONE);
+ }
+ 
+ /*
+-- 
+2.43.0
 
-Acked-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
