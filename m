@@ -1,265 +1,270 @@
-Return-Path: <linux-kernel+bounces-887822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F79FC3929E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:29:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7ACC392A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:30:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548D13BB0D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40ABB3BB438
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC8A2D8782;
-	Thu,  6 Nov 2025 05:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHegBrAd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020287E0E8;
+	Thu,  6 Nov 2025 05:29:34 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046912D7DEA;
-	Thu,  6 Nov 2025 05:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685282D8782
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762406964; cv=none; b=s+ovVBCcNhJtFiPu+SMRuqoofHosuvPOtN3tHqLD36Pu6v56wo2kgTtpwfiDCdPHt+zLNfzuGq57sY3Y9eqhiZmYechVozEv1Y65ZHEWnl/skYJxS0XDE9sWJIcVCXLJly0xDcMbkMl10fYOcTEJna1fK/kZfIJWSMiyUfBF9Ls=
+	t=1762406973; cv=none; b=jidrUs/+uTDhEVpBz+eC3MaxGveNXZt+gEdPI9EV31Gxct6G1uianfDJNAC5aR8h8Wlp0iSWGB0EAMpE1NEsWVwfxDQdl0C61LJNl/N9ioFQzpz+aFniWnU3cikg0ZjX+tOq5g+cVXbBncpqYxNyDS7vnpW8++G+A5r31AATnpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762406964; c=relaxed/simple;
-	bh=SkogPYk4QLHERBeaT4qVGwEzmHQkhK1nc4xnVl1EdPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVjAS+SGeBamu39Wgtn/V7vYegGihcXPoN68lbq9qfn38KpOW0JBiofCmgTR0W9gLh6k+PBR29IIbtUxpfIshS6vrzorZzsnMAEoNX5E5pYIRrZASkUjXnj+tMZSqDEKMdAjdAz407HdjTGELFPAdEtJTNPgibec/3z57+UNtYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHegBrAd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E49C116C6;
-	Thu,  6 Nov 2025 05:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762406962;
-	bh=SkogPYk4QLHERBeaT4qVGwEzmHQkhK1nc4xnVl1EdPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bHegBrAdfErawxZXx4M7QRv7Aze//66m+TtohMSriyskyC1dnpbcNpYLrL4JGhz1x
-	 PLO8bf2s8xuQYBY+my7UlNpFRyvmdf5v7strNJTT6Io0g+4hCJRLnzHxs/DiS/rc41
-	 IIxFNfxITJA/zowoFNzWBJGzEChKy0HlT5CaG2Iq7Mnbc1ksudm0mw4BafRSUK8QcK
-	 xl8wIoP0u5hgU9XgzURyFcTbvgs3UYoqZt7S6iFpwqPZhtc3f17+RmUJt5zwstFPNV
-	 W6GRingAz1iPABVW4jw/un+nx787xlj4YyfUpxDA0GIRXxi+lhJNWHUJFltIKfyE06
-	 JlRGBpMCdinPA==
-Date: Wed, 5 Nov 2025 21:29:20 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	Chun-Tse Shao <ctshao@google.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Levi Yun <yeoreum.yun@arm.com>,
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 00/22] Switch the default perf stat metrics to json
-Message-ID: <aQwyMFRvk0gZg88v@google.com>
-References: <20251024175857.808401-1-irogers@google.com>
- <aQmFV7fqURMXQNHC@google.com>
- <CAP-5=fWv1JtKumMpX7Ck+K4ttXTKW-zDQZYen0MxzV1B7VizaQ@mail.gmail.com>
+	s=arc-20240116; t=1762406973; c=relaxed/simple;
+	bh=q4N/TvbmKbH4/pSotBQ6PGQkxOJDpiHPCrddPFtgQBk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=giPn6NUGQ0C8elRZkXWYtQ3exgQo8ln0PmxhmQet6HUUYMksHQxOX2+gWKWcDPM/wcQGO9yofiHjbUxPt8mtEzyf8hSyqGcl121LXiOG09vV3bR5QTltL5FTMiDMMfV5sqcRQyIFG1wQ4AbiDjTZAisnYC5xmwKD/vMsoo1JWSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-93e8839f138so50833039f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 21:29:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762406970; x=1763011770;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ziOa5I4IMDASLfdKdmP9rsl5ZAcwBOFR9REggp6pSwM=;
+        b=PunoKh5FRL+o40qCuxS5lzVCWzpjzcHSlCAlXRsseD1uUGcpCD7YuflphZWizuZ2VB
+         xoyQ3YTuYyOUVCRicmUSdN8Dz3lfzKaxDnrC2MVw4H9wwlVYBuZrJtl6qLkd6SmLuyFR
+         h9E49TBzhGAmyh4tC5ajsmC27JXBmY97c6ZY318MXhmxN58CJrUK5swFpxNjPmXR0Rie
+         hYg7iKhvWRs4PzCaZJ61RG+XfvbmWv6en2Y/OzZh0uMqEYdlmNt74tvtyQtp1j1XvQ2G
+         zxcEf9nAFS5YSVNa7GZot6w1szBG8KvSlPmoU9DL9dq3A8e2d5B4Lzvhz3Zb/QV+1app
+         xNxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgrjFAXPONTV18rSGfJQvb4swD3bRrsyAmbxFU6e9Fqf1zlZ+U9MHmGHzHZuFKc7PWMa6Pyhhl2l4mX7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe8UpyxjKJGR9WYEp/CFPSfJnQbPnuroZF71v+9arH1/GzIw4D
+	2Vk4py503kwDXqJat79BFkuUnEQ58/lt7wo2AMmZCPDFaqbcLOQQ1LS3j/YRLteazJd3Jgvbvvd
+	5CiqXtgt8aS4SOHf3an7rS25fQvT2VryNBO2F89FAQb258xMpvMUKEohxnk8=
+X-Google-Smtp-Source: AGHT+IHiVZiUW4vywrfksHhhgTN+pdJDs+qJGjlHsOPJ1Khc7PavjHHIkOE/DUCkURY9C70o66V1cSkCXo1ze9SGJTO0UR1s1F+z
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWv1JtKumMpX7Ck+K4ttXTKW-zDQZYen0MxzV1B7VizaQ@mail.gmail.com>
+X-Received: by 2002:a05:6e02:178a:b0:433:3487:ea1c with SMTP id
+ e9e14a558f8ab-433407e2607mr80836845ab.21.1762406970423; Wed, 05 Nov 2025
+ 21:29:30 -0800 (PST)
+Date: Wed, 05 Nov 2025 21:29:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690c323a.050a0220.baf87.007f.GAE@google.com>
+Subject: [syzbot] [tipc?] KASAN: slab-use-after-free Read in tipc_mon_reinit_self
+From: syzbot <syzbot+d7dad7fd4b3921104957@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tipc-discussion@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 03, 2025 at 09:09:14PM -0800, Ian Rogers wrote:
-> On Mon, Nov 3, 2025 at 8:47 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hi Ian,
-> >
-> > On Fri, Oct 24, 2025 at 10:58:35AM -0700, Ian Rogers wrote:
-> > > Prior to this series stat-shadow would produce hard coded metrics if
-> > > certain events appeared in the evlist. This series produces equivalent
-> > > json metrics and cleans up the consequences in tests and display
-> > > output. A before and after of the default display output on a
-> > > tigerlake is:
-> > >
-> > > Before:
-> > > ```
-> > > $ perf stat -a sleep 1
-> > >
-> > >  Performance counter stats for 'system wide':
-> > >
-> > >     16,041,816,418      cpu-clock                        #   15.995 CPUs utilized
-> > >              5,749      context-switches                 #  358.376 /sec
-> > >                121      cpu-migrations                   #    7.543 /sec
-> > >              1,806      page-faults                      #  112.581 /sec
-> > >        825,965,204      instructions                     #    0.70  insn per cycle
-> > >      1,180,799,101      cycles                           #    0.074 GHz
-> > >        168,945,109      branches                         #   10.532 M/sec
-> > >          4,629,567      branch-misses                    #    2.74% of all branches
-> > >  #     30.2 %  tma_backend_bound
-> > >                                                   #      7.8 %  tma_bad_speculation
-> > >                                                   #     47.1 %  tma_frontend_bound
-> > >  #     14.9 %  tma_retiring
-> > > ```
-> > >
-> > > After:
-> > > ```
-> > > $ perf stat -a sleep 1
-> > >
-> > >  Performance counter stats for 'system wide':
-> > >
-> > >              2,890      context-switches                 #    179.9 cs/sec  cs_per_second
-> > >     16,061,923,339      cpu-clock                        #     16.0 CPUs  CPUs_utilized
-> > >                 43      cpu-migrations                   #      2.7 migrations/sec  migrations_per_second
-> > >              5,645      page-faults                      #    351.5 faults/sec  page_faults_per_second
-> > >          5,708,413      branch-misses                    #      1.4 %  branch_miss_rate         (88.83%)
-> > >        429,978,120      branches                         #     26.8 K/sec  branch_frequency     (88.85%)
-> > >      1,626,915,897      cpu-cycles                       #      0.1 GHz  cycles_frequency       (88.84%)
-> > >      2,556,805,534      instructions                     #      1.5 instructions  insn_per_cycle  (88.86%)
-> > >                         TopdownL1                 #     20.1 %  tma_backend_bound
-> > >                                                   #     40.5 %  tma_bad_speculation      (88.90%)
-> > >                                                   #     17.2 %  tma_frontend_bound       (78.05%)
-> > >                                                   #     22.2 %  tma_retiring             (88.89%)
-> > >
-> > >        1.002994394 seconds time elapsed
-> > > ```
-> >
-> > While this looks nicer, I worry about the changes in the output.  And I'm
-> > curious why only the "After" output shows the multiplexing percent.
-> >
-> > >
-> > > Having the metrics in json brings greater uniformity, allows events to
-> > > be shared by metrics, and it also allows descriptions like:
-> > > ```
-> > > $ perf list cs_per_second
-> > > ...
-> > >   cs_per_second
-> > >        [Context switches per CPU second]
-> > > ```
-> > >
-> > > A thorn in the side of doing this work was that the hard coded metrics
-> > > were used by perf script with '-F metric'. This functionality didn't
-> > > work for me (I was testing `perf record -e instructions,cycles` and
-> > > then `perf script -F metric` but saw nothing but empty lines)
-> >
-> > The documentation says:
-> >
-> >         With the metric option perf script can compute metrics for
-> >         sampling periods, similar to perf stat. This requires
-> >         specifying a group with multiple events defining metrics with the :S option
-> >         for perf record. perf will sample on the first event, and
-> >         print computed metrics for all the events in the group. Please note
-> >         that the metric computed is averaged over the whole sampling
-> >         period (since the last sample), not just for the sample point.
-> >
-> > So I guess it should have 'S' modifiers in a group.
-> 
-> Thanks Namhyung. Yes, this is the silly behavior where leader sample
-> events are both treated as an event but then the constituent parts
-> turned into individual events with the period set to the leader sample
-> read counts. Most recently this behavior was disabled by struct
-> perf_tool's dont_split_sample_group in the case of perf inject as it
-> causes events to be processed multiple times. The perf script behavior
-> doesn't rely anywhere on the grouping of the leader sample events and
-> even with it the metric format option doesn't work either - I'll save
-> pasting a screen full of blank lines here.
+Hello,
 
-Right, it seems to be broken at some point.
+syzbot found the following issue on:
 
-> 
-> > > but anyway I decided to fix it to the best of my ability in this
-> > > series. So the script side counters were removed and the regular ones
-> > > associated with the evsel used. The json metrics were all searched
-> > > looking for ones that have a subset of events matching those in the
-> > > perf script session, and all metrics are printed. This is kind of
-> > > weird as the counters are being set by the period of samples, but I
-> > > carried the behavior forward. I suspect there needs to be follow up
-> > > work to make this better, but what is in the series is superior to
-> > > what is currently in the tree. Follow up work could include finding
-> > > metrics for the machine in the perf.data rather than using the host,
-> > > allowing multiple metrics even if the metric ids of the events differ,
-> > > fixing pre-existing `perf stat record/report` issues, etc.
-> > >
-> > > There is a lot of stat tests that, for example, assume '-e
-> > > instructions,cycles' will produce an IPC metric. These things needed
-> > > tidying as now the metric must be explicitly asked for and when doing
-> > > this ones using software events were preferred to increase
-> > > compatibility. As the test updates were numerous they are distinct to
-> > > the patches updating the functionality causing periods in the series
-> > > where not all tests are passing. If this is undesirable the test fixes
-> > > can be squashed into the functionality updates.
-> >
-> > Hmm.. how many of them?  I think it'd better to have the test changes at
-> > the same time so that we can assure test success count after the change.
-> > Can the test changes be squashed into one or two commits?
-> 
-> So the patches are below. The first set are all clean up:
-> 
-> > > Ian Rogers (22):
-> > >   perf evsel: Remove unused metric_events variable
-> > >   perf metricgroup: Update comment on location of metric_event list
-> > >   perf metricgroup: Missed free on error path
-> > >   perf metricgroup: When copy metrics copy default information
-> > >   perf metricgroup: Add care to picking the evsel for displaying a
-> > >     metric
-> > >   perf jevents: Make all tables static
+HEAD commit:    22f20375f5b7 Merge tag 'pci-v6.17-fixes-3' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16799b12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7dad7fd4b3921104957
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-I've applied most of this part to perf-tools-next, will take a look at
-others later.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thanks,
-Namhyung
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6ce5c32a21e3/disk-22f20375.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a84573ca71a7/vmlinux-22f20375.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4d073bc5b8a5/bzImage-22f20375.xz
 
-> 
-> Then there is the addition of the legacy metrics as json:
-> 
-> > >   perf expr: Add #target_cpu literal
-> > >   perf jevents: Add set of common metrics based on default ones
-> > >   perf jevents: Add metric DefaultShowEvents
-> > >   perf stat: Add detail -d,-dd,-ddd metrics
-> 
-> Then there is the change to make perf script metric format work:
-> 
-> > >   perf script: Change metric format to use json metrics
-> 
-> Then there is a clean up patch:
-> 
-> > >   perf stat: Remove hard coded shadow metrics
-> 
-> Then there are fixes to perf stat's already broken output:
-> 
-> > >   perf stat: Fix default metricgroup display on hybrid
-> > >   perf stat: Sort default events/metrics
-> > >   perf stat: Remove "unit" workarounds for metric-only
-> 
-> Then there are 7 patches updating test expectations. Each patch deals
-> with a separate test to make the resolution clear.
-> 
-> > >   perf test stat+json: Improve metric-only testing
-> > >   perf test stat: Ignore failures in Default[234] metricgroups
-> > >   perf test stat: Update std_output testing metric expectations
-> > >   perf test metrics: Update all metrics for possibly failing default
-> > >     metrics
-> > >   perf test stat: Update shadow test to use metrics
-> > >   perf test stat: Update test expectations and events
-> > >   perf test stat csv: Update test expectations and events
-> 
-> The patch "perf jevents: Add set of common metrics based on default
-> ones" most impacts the output but we don't want to verify the default
-> stat output with the hardcoded metrics that are removed in "perf stat:
-> Remove hard coded shadow metrics". Having a test for both hard coded
-> and json metrics in an intermediate state makes little sense and the
-> default output is impacting by the 3 patches fixing it and removing
-> workarounds.
-> 
-> It is possible to squash things together but I think something is lost
-> in doing so, hence presenting it this way.
-> 
-> Thanks,
-> Ian
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d7dad7fd4b3921104957@syzkaller.appspotmail.com
+
+tipc: Node number set to 1331188531
+==================================================================
+BUG: KASAN: slab-use-after-free in __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+BUG: KASAN: slab-use-after-free in _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
+Read of size 1 at addr ffff88805eae1030 by task kworker/0:7/5989
+
+CPU: 0 UID: 0 PID: 5989 Comm: kworker/0:7 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Workqueue: events tipc_net_finalize_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ __kasan_check_byte+0x2a/0x40 mm/kasan/common.c:568
+ kasan_check_byte include/linux/kasan.h:399 [inline]
+ lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5842
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
+ rtlock_slowlock kernel/locking/rtmutex.c:1894 [inline]
+ rwbase_rtmutex_lock_state kernel/locking/spinlock_rt.c:160 [inline]
+ rwbase_write_lock+0xd3/0x7e0 kernel/locking/rwbase_rt.c:244
+ rt_write_lock+0x76/0x110 kernel/locking/spinlock_rt.c:243
+ write_lock_bh include/linux/rwlock_rt.h:99 [inline]
+ tipc_mon_reinit_self+0x79/0x430 net/tipc/monitor.c:718
+ tipc_net_finalize+0x115/0x190 net/tipc/net.c:140
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x439/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 6089:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x1a8/0x320 mm/slub.c:4407
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ tipc_mon_create+0xc3/0x4d0 net/tipc/monitor.c:657
+ tipc_enable_bearer net/tipc/bearer.c:357 [inline]
+ __tipc_nl_bearer_enable+0xe16/0x13f0 net/tipc/bearer.c:1047
+ __tipc_nl_compat_doit net/tipc/netlink_compat.c:371 [inline]
+ tipc_nl_compat_doit+0x3bc/0x5f0 net/tipc/netlink_compat.c:393
+ tipc_nl_compat_handle net/tipc/netlink_compat.c:-1 [inline]
+ tipc_nl_compat_recv+0x83c/0xbe0 net/tipc/netlink_compat.c:1321
+ genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x846/0xa10 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ ____sys_sendmsg+0x508/0x820 net/socket.c:2614
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __x64_sys_sendmsg+0x1a1/0x260 net/socket.c:2703
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6088:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2422 [inline]
+ slab_free mm/slub.c:4695 [inline]
+ kfree+0x195/0x550 mm/slub.c:4894
+ tipc_l2_device_event+0x380/0x650 net/tipc/bearer.c:-1
+ notifier_call_chain+0x1b3/0x3e0 kernel/notifier.c:85
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ unregister_netdevice_many_notify+0x14d7/0x1fe0 net/core/dev.c:12166
+ unregister_netdevice_many net/core/dev.c:12229 [inline]
+ unregister_netdevice_queue+0x33c/0x380 net/core/dev.c:12073
+ unregister_netdevice include/linux/netdevice.h:3385 [inline]
+ __tun_detach+0xe4d/0x1620 drivers/net/tun.c:621
+ tun_detach drivers/net/tun.c:637 [inline]
+ tun_chr_close+0x10d/0x1c0 drivers/net/tun.c:3433
+ __fput+0x458/0xa80 fs/file_table.c:468
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88805eae0000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 4144 bytes inside of
+ freed 8192-byte region [ffff88805eae0000, ffff88805eae2000)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5eae0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x80000000000040(head|node=0|zone=1)
+page_type: f5(slab)
+raw: 0080000000000040 ffff888019842280 ffffea0000f4c000 0000000000000004
+raw: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
+head: 0080000000000040 ffff888019842280 ffffea0000f4c000 0000000000000004
+head: 0000000000000000 0000000000020002 00000000f5000000 0000000000000000
+head: 0080000000000003 ffffea00017ab801 00000000ffffffff 00000000ffffffff
+head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd28c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5852, tgid 5852 (syz-executor), ts 97738776876, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x2119/0x21b0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2660
+ new_slab mm/slub.c:2714 [inline]
+ ___slab_alloc+0x8d1/0xdc0 mm/slub.c:3901
+ __slab_alloc mm/slub.c:3992 [inline]
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ __do_kmalloc_node mm/slub.c:4375 [inline]
+ __kmalloc_node_track_caller_noprof+0x14c/0x450 mm/slub.c:4395
+ kmalloc_reserve+0x136/0x290 net/core/skbuff.c:600
+ __alloc_skb+0x142/0x2d0 net/core/skbuff.c:669
+ alloc_skb include/linux/skbuff.h:1336 [inline]
+ netlink_dump+0x167/0xe90 net/netlink/af_netlink.c:2286
+ __netlink_dump_start+0x5cb/0x7e0 net/netlink/af_netlink.c:2442
+ genl_family_rcv_msg_dumpit+0x1e7/0x2c0 net/netlink/genetlink.c:1076
+ genl_family_rcv_msg net/netlink/genetlink.c:1192 [inline]
+ genl_rcv_msg+0x5da/0x790 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x846/0xa10 net/netlink/af_netlink.c:1346
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88805eae0f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88805eae0f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88805eae1000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff88805eae1080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88805eae1100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
