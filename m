@@ -1,229 +1,205 @@
-Return-Path: <linux-kernel+bounces-887974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B759C397B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:00:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08379C397B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C294B350278
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7323C18C73C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F52FB978;
-	Thu,  6 Nov 2025 07:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D163A2FE041;
+	Thu,  6 Nov 2025 08:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TsAv5npF"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013019.outbound.protection.outlook.com [40.107.201.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IES7uTpy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281982F9DB2;
-	Thu,  6 Nov 2025 07:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415997; cv=fail; b=lokcicLskzWKVbxHiDJMPhiZXWalsFMBHhUOwloOlC7EjFNY7+oXFBcOsmhRiPqWGRMzdgDS5P+WXLG7p9jyQyy8T+oJ9ABAS4pHyD9FG/A4NQVV44rL8jsDdrIrTkdxMHzFcmDNNICVC/p8kmLtdOHjkYp5M5PmBclD1hw582c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415997; c=relaxed/simple;
-	bh=Khft72q/IhZ9Gw0Dy4iwaTARNe/BVQCXCciZcQ5v1GE=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MakONeVWFEaEzAKy6Fmwn5hPCpjZ1rbzeiuELmh1XcBz4STH/HBv/LS8lMaYNq3WA9vEtQECT/VStad5AsYp4qJJEHuqmsQc0P7n5rbwKR21zeqkX4y7eG2tQfI2EjEttC6VLG03jWJn93y+qd3AxIodXNX9Su+OoF1a5XlC+8A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TsAv5npF; arc=fail smtp.client-ip=40.107.201.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qeTLnCmJgY1qfpdExA4RP7QvUdMHk2IqCGrWBfD1vrtyZE9aRkaUKqDZ30oFQ3fiSldjkkXiX86QYJQfZUGw0EWYxu0ORsOAqVk9tB63mBroSH9s6Fwzsy4la1IKkTNKI7PKG4++WnHih5l2yL+qvytSRRRAblCLfNHc67j7jC36Ed1FfU9HOdB1v3Mjj9ls2QTxmqjAfXf14hfWbCTQ9PH5Z/uI3VBiF3aKJuEYa20Vmwmv2yl2fV+bvwHWnCmxhuEpfy663Tc2NzYi3I8Db1/dv3P2qraDxLhOwYSmfXfv+tY6PliZa5zrYVRVpA3fohSkrH1zjKVfkeI91w0lXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LDWlR3B3fAoIIxhkbUg13XKQFFumar+nI/I0JYkn5h0=;
- b=QNuz1KxZ0xsUr+LENZbtMAX+4q9XTrIWKIIEjF8eU4IuFy1cLyL+FC+opRYU06qBqjmnq2raar2MSGfeGxtW+pl5Hs3dmLZfQ1u21Hiu46H08lbPAXPCk22JNn20fe0u1hHBqsFVWomodidnbAdiMDpX9uMV5zGDuW1HGUrnjyh7l5STfkft9jvG3OkL6j0j8QeJtuYBCSXSqn9x3nXFlEZ2zwXj05dDx5hXfC7bMpEVxefTyfUN6kWzCAyJtrCqDtttFwFH4mGGXkGvJRDFLtc1jFagTJ3l+UoWbGvkfibdnoG50tnfcW5G35egYYaxjzwPlOiF9ozuR6llLqeJOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LDWlR3B3fAoIIxhkbUg13XKQFFumar+nI/I0JYkn5h0=;
- b=TsAv5npF1UcJDsMT9F9qg+z7B3mHEUPLQNqxpyMei8s6mr4ut7BCIS8iYjfPhdHRJ5Mqz11KvSR0YjW6NzE+DFKyxdrKulb0ts4J0KQ9fkla7IvEMEaDjiopdfKZ5ZfmS+0JDKcJSDvigeX7EjroBEfNmcn2Zjje+NavEcg+k/6neQVGGeq8gUyxvPhaQs6X3iLuaMnKtwPgUdGHnK9631um/XZcLvyGnYn7dNxtEx6WpZDU9L63pFduLo2WGUHP/YU0Pram8s/8MhABUY6t6SoJcNd9DoDLrxlq5sPAS1yqe667M/R9uS65Vp6+sUmN8vZ/gFjGdoeBckOknKLnmQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SA0PR12MB4493.namprd12.prod.outlook.com (2603:10b6:806:72::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Thu, 6 Nov
- 2025 07:59:52 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
- 07:59:52 +0000
-Message-ID: <4b121269-1efe-4741-b67f-42346b6c5c88@nvidia.com>
-Date: Thu, 6 Nov 2025 07:59:46 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] i2c: tegra: Add logic to support different register
- offsets
-To: Kartik Rajput <kkartik@nvidia.com>, akhilrajeev@nvidia.com,
- andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
- digetx@gmail.com, smangipudi@nvidia.com, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251001153648.667036-1-kkartik@nvidia.com>
- <20251001153648.667036-2-kkartik@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20251001153648.667036-2-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0450.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a9::23) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095562FD7B8;
+	Thu,  6 Nov 2025 08:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762416037; cv=none; b=DIbRklVSyXf84gmqr4SW0+wYqwKtk8iTQ9dXn0dFFPqqYRsFHVWIVndLV7utX4T+Ate7pPeAd7RCRF5uDx15HggToyETWvVd9mlygYn+gy43AqofPBzscMFXzMcmDHO3+SV8jAoyQ0bpskZN1HSN9QOFH+caN2kkbQKXgtocjcQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762416037; c=relaxed/simple;
+	bh=PLqcEO+B1iuZyJH4xuffVGT1SLh3xxFVImhSKds5ULI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cerdlBNt+xOELXe9YeLmP7NHHZ4pT5vsuAChr+XvZGLxHtQPkm1JqeuYTMnvMwFtsSANEZbi2dptCRIYUCccFXuxeE7Lg+1rs6vrvZpG+bQclzwWd3itkE7QsQZpS2wqReh/+0a05BvcgMJ4oCH+C1+c6vF9eB/laakkgo8aqyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IES7uTpy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B5C6C116B1;
+	Thu,  6 Nov 2025 08:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762416036;
+	bh=PLqcEO+B1iuZyJH4xuffVGT1SLh3xxFVImhSKds5ULI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IES7uTpyPEkkRiOUjwLcBpEsMO/CcNeHwg7qBFVlLUwYjAXspO4FsbZ5803f4H2ZX
+	 ye5+3SajpM3RROc/vFVV7Wbqw3U3E5uLIk/b8vyx4GM+XB9nj42xgBZXk6ffFjMkVE
+	 cNixwAF7eXdhI8Lm1x9PNr09vEPKxsxORKLphy0g81x0SJj/zyyn03wAIkBbKjKbrt
+	 UanAVNdqm8WZqqhTOV3FiEBI1QbvWq8975fPGkOJfFiVwSiS9QDklFioT8e+E0iDQ+
+	 NcXZ79xngaNx+pbWLFLS8go/NrLG68kRDAyuYZdoekR5ZjINljH+Q0srwfZThd99et
+	 /NK0JJ4EeSqKg==
+Date: Thu, 6 Nov 2025 13:30:18 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
+	krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com, shradha.t@samsung.com, 
+	thippeswamy.havalige@amd.com, inochiama@gmail.com, fan.ni@samsung.com, cassel@kernel.org, 
+	kishon@kernel.org, 18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH v5 4/4] PCI: keystone: Add support to build as a loadable
+ module
+Message-ID: <grouefwty7ub7xipgxyiph7dumtvoprcdsuq4f6d73pzpqu7pm@rdivadcdcyfy>
+References: <20251029080547.1253757-1-s-vadapalli@ti.com>
+ <20251029080547.1253757-5-s-vadapalli@ti.com>
+ <fkzokskbjklt6atqrpwc46zsjr5ptpuynzhx4kvfurr4h37kae@rwcqljsjvzl6>
+ <d65f44cac2d7fb6c4a139065b304cb4ab790acb3.camel@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA0PR12MB4493:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf59f185-1c5f-466a-ba95-08de1d0a770b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NkgxV1V2ODBaYldRVEpUTFo5bTFKZHZZRVZIUk4xUER0V2NHZTNaQWFzdTUx?=
- =?utf-8?B?TmFBczBUT2kzS2ZLRkdiQitPMU5CWHd1czZnN24zVUIvQXk3ME5zUGQ1ZmxM?=
- =?utf-8?B?L1FDcjBUTUd5RkNxdE9VOEREVkI3RnFjRURaSG9EcldqQlp6RVlOUEphVk0x?=
- =?utf-8?B?dFlPclFFNlRBdWtHZGhjYjZwbzdQOVFFVVNPVEtyY3phdHFNcDJDL0tJM0dF?=
- =?utf-8?B?RmtwWjhSYmVkeVlEdDFXUlNkUVpHVlBHSjhmOHB2UDROS3p6c2ZiKzNLMmVI?=
- =?utf-8?B?OGxBQm9iSUsxRGw4MUQwbHRRNnhxUkplZUFZVFVGVjVsTVgvOGp0eE9pNE5C?=
- =?utf-8?B?RDh0L0U2NEJ6akdUUmNHVkhKT2ZRdlg4bVJzTmhKTS9BSVEzQjV2WmZkR3Bh?=
- =?utf-8?B?b3lsNXBuTTZGV3dDVFhyelpTUGVDaC83R0M2UkNhMDZIem44dVNGekxwV3Fq?=
- =?utf-8?B?ZGVqQTU5ZGIwK29xSzJ0OXpISlpFUWpPUEd6OTBnUlZJMkVHak1UWW1yNmhD?=
- =?utf-8?B?YlJDKzd0V29aWCs3dUdFRllaUkEwU3UzNFk0QWxwZzNYVnd2NTlqYVdYdEFQ?=
- =?utf-8?B?M0JYemMrWStTdW1LeDM5NlF0YlFZa0ZtY2RMSGpWUXlBYWVDeXU4RVUyKzda?=
- =?utf-8?B?andJWUk0K2NaQys1L1cvblBLaXQyVWY3OGRvNFl4OVFFNHBNUE9YREhhK3JX?=
- =?utf-8?B?bk5DSE5KU1hiVXhBdWlCS3ZHMWlPSURLWlpOMDdNUlkydjBxLyt3bUkxK1VS?=
- =?utf-8?B?RnhvNXFuL2VkYytvcG1sSVh2aEMyL2s0QlA4cGlJcXVOcWtOL0tTQ0UyR3py?=
- =?utf-8?B?TUVvNjFnbG5KQXNkK0lUWE1seGJOZ1NaWENMYytUMVVmNzZLVlpwYlpPcCtr?=
- =?utf-8?B?a09lWGZMaERaWDMxcjhYdytBSUFxNzdCREFPeVQ4eUFUU1JIZE00ZlBQN01G?=
- =?utf-8?B?MFZMUDQrWi81NkhIQ1lSb3JOUkZqVEVHZGxudGNpa0doUFBnN0hVQ1QwSzV3?=
- =?utf-8?B?SjE5bFBPZWhjajJaWCt6OTF6WDFjNmlJdzlNbmE1RFdTbzVreHBPWWhXWG9z?=
- =?utf-8?B?OU5RK0grL3pFY2VObEF3TUlPT1l5YTl1cktoU2t2TWZSdWIyemw3MkdWaFJY?=
- =?utf-8?B?azRzZTUxT085TEx1cUJEbE5JT2tSTWlEcWlKaEhPdTNVMHB6aklBUTdSa3ZP?=
- =?utf-8?B?YWprUzVtRTNhTzZxbGJLNXRxeHArTnp1L3Jzd3ZrVUM1MHJidFZQOUIzakpB?=
- =?utf-8?B?Y2lSWWsyVTFENUkwYm1ZYTgwZUsvaFRWamx6eEVtVXdiS2dmdHZXVW1sN21n?=
- =?utf-8?B?ZUM0L2Ezd3dDamJUWlBpcHczTnYyUmNZbFZiRHo3VUwzbDhrSjRFTE82cVRN?=
- =?utf-8?B?VDhMcUt3TzYwZERtM3FqQjZPSEZDSHhSOHcrelhRZlg0eURrV2lscTdZZDdV?=
- =?utf-8?B?ejROWnh3b1BDU3ZsMTQ1dmdVcE9KenlmRDJIS1prZGM3SXc4aXdwaU01aTBw?=
- =?utf-8?B?S0FWWjBQQXVIYTVpYjBZeWdzbVJISThvQS95dXg2ODdEZk1iVmdodGc0cmtz?=
- =?utf-8?B?OURnblhzbUh0ckdadnNzZG53VDFlQlJCZ1Z4d0xiN1BjVnBMWTRxWEZBSmhN?=
- =?utf-8?B?TnhtZVZrd0cyUHdVZW5MSjhJVUVFcUZwelEvZHhoY0lqVmV1TVVwRy83eTlN?=
- =?utf-8?B?QkFQbFBZZEIybnE4S2FmeWM1VlRlT3RpUUF3dXAzN2M1My9vTDNJa1ZYUit1?=
- =?utf-8?B?UUNRNzZ5NVcxWDdUWmdVQXNDS3gvTUlkTmkrdFprbmMyUFVJcVNvdm1LQlBC?=
- =?utf-8?B?TDZ5Sm5hZmw1TnNMeXlKcGlEZVBVY0RHZ3Q3K0M1Z0R3OGhZY2tBYmhYcWRP?=
- =?utf-8?B?cVc0a0psVGZxejVSQ2ppSjBVcng1VHRiNGs4U3QxMWZLT1JMTHQ5TFNpTEpP?=
- =?utf-8?B?Y084Nk96eW5yNE1yZE9qcEs3RzRFcEIyay9wUzl1NGtlemdzcGRYSDFnZkc2?=
- =?utf-8?Q?Ol4LbOTtQFTC04kbd2iqfbSqhJ1hdc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aHVPb3JLem1BZ3hxS3BZdDJLU2R3UW43Q0Q2UlcvSy9qL25GUG0yRWVQNFNj?=
- =?utf-8?B?NDZHZGw2bjZYdWNONEdJZ0RNampaK09aY0RnTzdjZUI1UXNaVityRzdVc2VU?=
- =?utf-8?B?S2EzMW9oWnY2WlY1amlwOHpadTgyZGQvOFJUYzNQbmVQcGhmbjJWNFpteitz?=
- =?utf-8?B?VGNud1o0WndUTEdab1B0R0dMZGNjYzZiV2JMZ0VQQjhOa2IvOXdEaFBHdlJq?=
- =?utf-8?B?eTErNFVVRE13VSt1OERmeFhCUHJHK0lZNEdidGhVQUNadDdrM28xYUZGU2J1?=
- =?utf-8?B?WDRYUjRVRkFPRTQ0WHptVTNmak1XenVwbEZEWE9PV1FYSkNEVmRDZ1J6N3Z5?=
- =?utf-8?B?eW5Jb1pmbkJSeGhNdzJCdlp0TU54dm5XLzg0UnQwSStKUjFmam9JMFJ5TnhR?=
- =?utf-8?B?VU9UcUR0akNoekVmY1BzMm5KajVGTkMvenZaVXR0L3g5NlFjeFhQWVBZdVp0?=
- =?utf-8?B?VXZiejIrRWpzdUphNFhOQ25WdmRrR3IzelJ5cU00RzZ5Y1RnMnFlZWp3QW1F?=
- =?utf-8?B?TVk0WmZrenZjSW1CdW82R0llMlNjc3NST3RGSGowYmdXTW41UEFXR0ZZQUh2?=
- =?utf-8?B?V1dNLzdXVEl4ZElKU2hHeVB5VnVLNEpqUjUyUGZhMUtTVS9WVHI3N0txcjRn?=
- =?utf-8?B?UEhNMkNEV05wdjBsQmdJdVRrTlJnM0JCKzVTdDM0OW9iNERuR1E1RjYrRi9O?=
- =?utf-8?B?VzZuL1lVeHNXU05qZUhYSTZlQU5ncEZQUnN5dVo5K0R5QXJ5aCtGQmZGRWNC?=
- =?utf-8?B?dzl5UEZxYzc4M1pPQ0RhQ3h5RXFFSnJIeGVTdzNyT3dOUkxHWHJBSi9DdFZ0?=
- =?utf-8?B?Y2hnbGJwVFoycGtoUW1WbWJ3L1NGMUFIZlkrOGhqUVdrWlB4dERPdllCRHc1?=
- =?utf-8?B?RW5ZSkpJSTNDc2V3bXpXSmExSWlXVDAwY1BzT25BbEJhOFk0LzN2dzR1MUIw?=
- =?utf-8?B?RzFFc1EyWlFDNjlaQWJzcEswdFlzRE85RmdmMDFkNGVaU1hxbjUxZ1BxOWRu?=
- =?utf-8?B?eTBZRnU5QlNubmQ5a05EZloyTkpPZ05DUXRnMjh3RXdPVDhsTVBKR0NwWW94?=
- =?utf-8?B?WmVabHNhRE1GalVqNXVJbXh6MGZDUlEvcnh6b2NXOWhRUWw5RW9DMjg5Vjh5?=
- =?utf-8?B?OHRvVXZkcVRKa2dIbFI5TVdmV0JFbjhxbnJoRVNGWGcvT01kZ1htdHBDUlZT?=
- =?utf-8?B?Q1VrN2wyalpBbnJnYUYvS2thM05PM3VWSHhBV25KRktIdmZvVitqcE1ZTmdz?=
- =?utf-8?B?TnNzME5EdXFnRVR4eDF6Q09TUnpZbVNvSGc1bi9wMXhvaXl3M01ZUjJoT3lq?=
- =?utf-8?B?Vzk0ekhuQ0JEdFlQNUZCdjJPTmRRdGlzQ1BqWVJ5eHBWeHVVQlFoTWtiVndo?=
- =?utf-8?B?YnlhZXFXeWhpT3p5b21WbDhjSll5ZWtZSlU3MzNyWmZiS0NqbmpmM1NLY08v?=
- =?utf-8?B?NkY1MVVRN1FGWmQwQ3Q0VUVkSDlTcVBLdUlQS3BGVmd6blVYMU05aW9qVytp?=
- =?utf-8?B?RU15c0hpeWVoZTZ4aURsbG9YRUFzNG5UZmFiSWtxNUlWa2VKWFN4Qzk0aGow?=
- =?utf-8?B?Z1dJVUxnME1VcFpKT2dpUFZKYmZlbVFKUjdlaER3QmJjNEVJOTk0cVZHQkNm?=
- =?utf-8?B?bkVzUlVicGQ2SjVzK0RzaWxvTkZNcWtRR3RHME0vbUN0djA3akFCT0QycUky?=
- =?utf-8?B?cDJIVFNPZ2NPeEwwSXZCdEhqWW13bHBPZGVwbDJoOEo1WDNCakttU0JUb2tK?=
- =?utf-8?B?WlVSVDFXdmVxc3JFazdaTnN3MG5iUVhDV2N0M3RwQnRkWXlxS3NoVWxsZzho?=
- =?utf-8?B?NVZ4elYyZjh3Tms5TmN5YVJCN1Nvd1NNeGZVVFNWVTEzdlNjYWhvMGZ1N2Jz?=
- =?utf-8?B?bTMxR2thSXk1eHBXT1ZTTTJsK3RnRWJlNUg4SnFqY01DQm5BbzU4NHJycXFH?=
- =?utf-8?B?cE5aQndieFdUai9XcVlydVcveWkyT1pzOWF2N0JiZHNPMWhpZVM2M0g1a0tq?=
- =?utf-8?B?N0J6Q2ltMWZXVWhnRVVZOGlWeGhPLzlkRlgrbTRJcExFTnJ0RW8zYU5GOVN3?=
- =?utf-8?B?MVpsRjI4V1pwSktmcUtqeTJ2bkhNcjdCMUVDbSt0ajJQaGJsc0hBbkpoeDVz?=
- =?utf-8?B?dGQvc1pzWCt5SXJHSWdraXpROTl6YnhDYUtxZWxmTVltQmhiRkhOaWVjZE1o?=
- =?utf-8?Q?mzOCHCaADiweQKT3AOiwJr3RCztqNko/dBxRPq8VTZ8b?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf59f185-1c5f-466a-ba95-08de1d0a770b
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 07:59:52.0292
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MJRGDL0CEsg7+oGwIZRz2UEQdd8tK5gqtk2ToQgGuGmcmgFsELE/JA3LUKiRRmtxRQWa5YVaPTYOYSWuZuQkMA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4493
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d65f44cac2d7fb6c4a139065b304cb4ab790acb3.camel@ti.com>
 
-
-On 01/10/2025 16:36, Kartik Rajput wrote:
-> Tegra410 use different offsets for existing I2C registers, update
-> the logic to use appropriate offsets per SoC.
+On Thu, Nov 06, 2025 at 12:31:08PM +0530, Siddharth Vadapalli wrote:
+> On Wed, 2025-11-05 at 22:53 +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Oct 29, 2025 at 01:34:52PM +0530, Siddharth Vadapalli wrote:
+> > > The 'pci-keystone.c' driver is the application/glue/wrapper driver for the
+> > > Designware PCIe Controllers on TI SoCs. Now that all of the helper APIs
+> > > that the 'pci-keystone.c' driver depends upon have been exported for use,
+> > > enable support to build the driver as a loadable module.
+> > > 
+> > > Additionally, the functions marked by the '__init' keyword may be invoked:
+> > > a) After a probe deferral
+> > > OR
+> > > b) During a delayed probe - Delay attributed to driver being built as a
+> > >    loadable module
+> > > 
+> > > In both of the cases mentioned above, the '__init' memory will be freed
+> > > before the functions are invoked. This results in an exception of the form:
+> > > 
+> > > 	Unable to handle kernel paging request at virtual address ...
+> > > 	Mem abort info:
+> > > 	...
+> > > 	pc : ks_pcie_host_init+0x0/0x540
+> > > 	lr : dw_pcie_host_init+0x170/0x498
+> > > 	...
+> > > 	ks_pcie_host_init+0x0/0x540 (P)
+> > > 	ks_pcie_probe+0x728/0x84c
+> > > 	platform_probe+0x5c/0x98
+> > > 	really_probe+0xbc/0x29c
+> > > 	__driver_probe_device+0x78/0x12c
+> > > 	driver_probe_device+0xd8/0x15c
+> > > 	...
+> > > 
+> > > To address this, introduce a new function namely 'ks_pcie_init()' to
+> > > register the 'fault handler' while removing the '__init' keyword from
+> > > existing functions.
+> > > 
+> > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> > > ---
+> > > 
+> > > v4:
+> > > https://lore.kernel.org/r/20251022095724.997218-5-s-vadapalli@ti.com/
+> > > Changes since v4:
+> > > - To fix the build error on ARM32 platforms as reported at:
+> > >   https://lore.kernel.org/r/202510281008.jw19XuyP-lkp@intel.com/
+> > >   patch 4 in the series has been updated by introducing a new config
+> > >   named "PCI_KEYSTONE_TRISTATE" which allows building the driver as
+> > >   a loadable module. Additionally, this newly introduced config can
+> > >   be enabled only for non-ARM32 platforms. As a result, ARM32 platforms
+> > >   continue using the existing PCI_KEYSTONE config which is a bool, while
+> > >   ARM64 platforms can use PCI_KEYSTONE_TRISTATE which is a tristate, and
+> > >   can optionally enabled loadable module support being enabled by this
+> > >   series.
+> > > 
+> > > Regards,
+> > > Siddharth.
+> > > 
+> > >  drivers/pci/controller/dwc/Kconfig        | 15 +++--
+> > >  drivers/pci/controller/dwc/Makefile       |  3 +
+> > >  drivers/pci/controller/dwc/pci-keystone.c | 78 +++++++++++++----------
+> > >  3 files changed, 59 insertions(+), 37 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> > > index 349d4657393c..c5bc2f0b1f39 100644
+> > > --- a/drivers/pci/controller/dwc/Kconfig
+> > > +++ b/drivers/pci/controller/dwc/Kconfig
+> > > @@ -482,15 +482,21 @@ config PCI_DRA7XX_EP
+> > >  	  to enable device-specific features PCI_DRA7XX_EP must be selected.
+> > >  	  This uses the DesignWare core.
+> > >  
+> > > +# ARM32 platforms use hook_fault_code() and cannot support loadable module.
+> > >  config PCI_KEYSTONE
+> > >  	bool
+> > >  
+> > > +# On non-ARM32 platforms, loadable module can be supported.
+> > > +config PCI_KEYSTONE_TRISTATE
+> > > +	tristate
+> > > +
+> > >  config PCI_KEYSTONE_HOST
+> > > -	bool "TI Keystone PCIe controller (host mode)"
+> > > +	tristate "TI Keystone PCIe controller (host mode)"
+> > >  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
+> > >  	depends on PCI_MSI
+> > >  	select PCIE_DW_HOST
+> > > -	select PCI_KEYSTONE
+> > > +	select PCI_KEYSTONE if ARM
+> > > +	select PCI_KEYSTONE_TRISTATE if !ARM
+> > 
+> > Wouldn't below change work for you?
+> > 
+> > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> > index 349d4657393c..b1219e7136c9 100644
+> > --- a/drivers/pci/controller/dwc/Kconfig
+> > +++ b/drivers/pci/controller/dwc/Kconfig
+> > @@ -486,8 +486,9 @@ config PCI_KEYSTONE
+> >         bool
+> >  
+> >  config PCI_KEYSTONE_HOST
+> > -       bool "TI Keystone PCIe controller (host mode)"
+> > +       tristate "TI Keystone PCIe controller (host mode)"
 > 
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 499 ++++++++++++++++++++++-----------
->   1 file changed, 334 insertions(+), 165 deletions(-)
+> This doesn't alter the build of the pci-keystone.c driver. From the
+> existing Makefile, we have:
+>  obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone.o
+> implying that it is only CONFIG_PCI_KEYSTONE that determines whether the
+> pci-keystone.c driver is built as a loadable module or a built-in module.
 > 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 038809264526..1e26d67cbd30 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
 
-...
+Ah, I missed the fact that PCI_KEYSTONE_HOST is just used inside the driver and
+not in the Makefile.
 
->   /*
->    * msg_end_type: The bus control which needs to be sent at end of transfer.
->    * @MSG_END_STOP: Send stop pulse.
-> @@ -219,6 +322,9 @@ enum msg_end_type {
->    *		timing settings.
->    * @has_hs_mode_support: Has support for high speed (HS) mode transfers.
->    * @has_mutex: Has mutex register for mutual exclusion with other firmwares or VMs.
-> + * @is_dvc: This instance represents the DVC I2C controller variant.
-> + * @is_vi: This instance represents the VI I2C controller variant.
-> + * @regs: Register offsets for the specific SoC variant.
->    */
->   struct tegra_i2c_hw_feature {
->   	bool has_continue_xfer_support;
-> @@ -247,6 +353,9 @@ struct tegra_i2c_hw_feature {
->   	bool has_interface_timing_reg;
->   	bool has_hs_mode_support;
->   	bool has_mutex;
-> +	bool is_dvc;
-> +	bool is_vi;
-> +	const struct tegra_i2c_regs *regs;
->   };
+> >         depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
+> > +       default y if ARCH_KEYSTONE
+> 
+> The default flag only specifies what should be selected by default, but it
+> doesn't prevent the user from attempting to built it as a loadable module
+> using menuconfig. Building the pci-keystone.c driver as a loadable module
+> (CONFIG_PCI_KEYSTONE set to 'm') will cause build errors for ARM32
+> platforms due to the presence of hook_fault_code() which is __init code.
+> 
+> The Kconfig and Makefile changes made by the patch do the following:
+> 1. Allow building the pci-keystone.c driver as a loadable module for non-
+> ARM32 platforms by introducing the PCI_KEYSTONE_TRISTATE config which is a
+> tristate unlike the existing PCI_KEYSTONE config which is a bool.
+> 2. Associate PCI_KEYSTONE with ARM32 platforms and associate
+> PCI_KEYSTONE_TRISTATE with non-ARM32 platforms to prevent users from
+> building the pci-keystone.c driver as a loadable module for ARM32
+> platforms.
+> 
 
+Ok. I don't have a better solution to this problem. So fine with me.
 
-I think it could be better to have a 'variant' flag for these is_dvc and 
-is_vi variables because they are mutually exclusive.
-
-Jon
+- Mani
 
 -- 
-nvpublic
-
+மணிவண்ணன் சதாசிவம்
 
