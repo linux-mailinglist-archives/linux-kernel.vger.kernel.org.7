@@ -1,131 +1,83 @@
-Return-Path: <linux-kernel+bounces-888116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E96C39E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:46:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64707C39E0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 914EB4FAC1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55001A40944
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C34830CD89;
-	Thu,  6 Nov 2025 09:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QGElTyZ7"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2BF30DD06;
+	Thu,  6 Nov 2025 09:44:01 +0000 (UTC)
+Received: from mail.eskimo.com (mail.eskimo.com [66.114.134.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1768730C600
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4290130C611
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.114.134.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422171; cv=none; b=iEkKqjQTRGGHRCDIK1klonXmBWil5I1672/Bf9DHv4oPFQvrXdV5bpkPlzrHwrZr+V+sAvGiMgYTkdsx1hXDQEuUlnbgbstowRWRWjtIqBV4LncU7j29jAjxjKZytk6Yuvk4QfwLN3Eb2irmw2biFSkrHbGsLzXWQuXUIKDPP3k=
+	t=1762422240; cv=none; b=Yd0DwltQUHhscCWPUDM+s6iYnzTla/uYWJwajOgQhWPctGNg0KKRyamEzK/WdDUpRxV6qQG7EHIH8JZankLHlauEFX+Dob8Em+TRRUgct4hzj+WXDDLt8K5Ts9oWQfcw64cWtvHSgc4m6hJnoHoRzQ+uYEqbjrEP2y2lQbXMPew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422171; c=relaxed/simple;
-	bh=N416tpXvw0KYsqy3uUZXQ0WPvEPn4bYRp4orgR7uxcM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vBE6zYVmTFJBHkWKk0HEv7D0shPcPt1RFwgpbstmJGCGmcwGmuSJneKvKE2t+bwWVcqT+YZmo8eeIqbzksMSpL9sEU/fQ6MNeyeAvQOTZPXsIEkfsDNK2l1/XUIK1GiZAf+AeStpZWk25SGPU36qEYCvg2EZeI4qp1eqWM/OXA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QGElTyZ7; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 617191A18F0;
-	Thu,  6 Nov 2025 09:42:47 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3542C6068C;
-	Thu,  6 Nov 2025 09:42:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8394C118507F7;
-	Thu,  6 Nov 2025 10:42:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762422166; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=UoA5yeXDlSLb4wP5rb80Vsu85I6/UlttUcKFiCCB8PA=;
-	b=QGElTyZ7ZYPk5gqinZxVAJirdPRqKBaIS56/7xRz3u37FzRjQVpKSAEh1GbfDeRpsGqMOC
-	60NBhArlN8GuOTmoQ9Qn137j13Bm8FllVK5YUEZGcYgsV+3VjktGcfiWryQSWIm9vaMPNP
-	rx+JFWIrW3WJvtquJi+L7zRoUZteFAxWWUpgc52duFCWjsNzKeCzdf1NB2HgeFVGGP/74t
-	0dg6yiSOrIaMNQlK8Az2oeYTmPlT4fNo6gKYvicG5Xvija8nFxxzxXc8clOFkdpsPIG/zQ
-	C3uncyAE31sZh75pgTyoJGZXxouHQDEA81zjsdNi9iJRiJS7TzGoKYVkdhBGXw==
-From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jarkko Nikula <jarkko.nikula@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v2 1/5] dt-bindings: i2c: dw: Add Mobileye I2C controllers
-Date: Thu, 06 Nov 2025 10:42:40 +0100
-Message-ID: <5005364.OV4Wx5bFTl@benoit.monin>
-In-Reply-To: <20251031-segment-chance-40ba410eb55a@spud>
-References:
- <20251031-i2c-dw-v2-0-90416874fcc0@bootlin.com>
- <20251031-i2c-dw-v2-1-90416874fcc0@bootlin.com>
- <20251031-segment-chance-40ba410eb55a@spud>
+	s=arc-20240116; t=1762422240; c=relaxed/simple;
+	bh=WgmGG4azgf9SNTjggOZV3foJuIf6JXYTefpUY7MRUdY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XdaZcS1XnEMnlgoVIgni52as8B56xnWE2cIFhnVhoHoUXJ9269G84vEXu9Ve9gBQUwmCLk66jMlxOUaspd7c+USSmNpKgwkCElyhsWxdc3EQZ3i2cpcGz93ubxPTp2xQ0W1Kr1CaHZvTixJOXpsC3NF0yaMIfvQyHd18OfavqDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eskimo.com; spf=pass smtp.mailfrom=eskimo.com; arc=none smtp.client-ip=66.114.134.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=eskimo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eskimo.com
+Received: from ubuntu.eskimo.com (ubuntu.eskimo.com [IPv6:2001:560:4407:1::106])
+	by mail.eskimo.com (Postfix) with ESMTPS id B94553C2AC3;
+	Thu,  6 Nov 2025 01:43:58 -0800 (PST)
+Date: Thu, 6 Nov 2025 01:43:58 -0800 (PST)
+From: Robert Dinse <nanook@eskimo.com>
+To: Michal Hocko <mhocko@suse.com>
+cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: Folio Related Stability Crashes in 6.17.5 and 6.17.6
+In-Reply-To: <aQxl1sXTvhIB753a@tiehlicka>
+Message-ID: <806cfd1f-df36-5d75-d318-3bc604479bcd@eskimo.com>
+References: <b964df0f-45e3-4fea-a84d-852869b49502@eskimo.com> <aQxX1HdOnVZJAERp@tiehlicka> <41d1cb48-7711-690e-c9a2-978e0f96f5d6@eskimo.com> <aQxl1sXTvhIB753a@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Last-TLS-Session-Version: TLSv1.3
-
-Hi Conor,
-
-On Friday, 31 October 2025 at 15:58:49 CET, Conor Dooley wrote:
-> On Fri, Oct 31, 2025 at 03:35:39PM +0100, Beno=C3=AEt Monin wrote:
-> > Add compatible string for the I2C controllers present in Mobileye
-> > Eyeq6Lplus SoC. The same controllers are also present in the EyeQ7H.
->=20
-> Then where is the compatible for the q7h?
->=20
-I had both entries in version 1 of the patch but Krzysztof told me to
-avoid creating duplicated entries. Should I just drop the EyeQ7H
-mention in the commit message?
-
-> pw-bot: changes-requested
->=20
-> >=20
-> > Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
-> > ---
-> >  Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.=
-yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-> > index d904191bb0c6..bc84631f28d1 100644
-> > --- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-> > +++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-> > @@ -36,6 +36,7 @@ properties:
-> >          const: baikal,bt1-sys-i2c
-> >        - items:
-> >            - enum:
-> > +              - mobileye,eyeq6lplus-i2c
-> >                - mscc,ocelot-i2c
-> >                - sophgo,sg2044-i2c
-> >                - thead,th1520-i2c
-> >=20
->=20
-
-Best regards,
-=2D-=20
-Beno=C3=AEt Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Virus-Scanned: clamav-milter 1.4.3 at mail.eskimo.com
+X-Virus-Status: Clean
 
 
+Ok, I will wait and see if this manifests in 6.17.7, if so I will install
+from the git tree to further follow-up.
 
+-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-
+  Eskimo North Linux Friendly Internet Access, Shell Accounts, and Hosting.
+    Knowledgeable human assistance, not telephone trees or script readers.
+  See our web site: http://www.eskimo.com/ (206) 812-0051 or (800) 246-6874.
+
+On Thu, 6 Nov 2025, Michal Hocko wrote:
+
+> Date: Thu, 6 Nov 2025 10:09:42 +0100
+> From: Michal Hocko <mhocko@suse.com>
+> To: Robert Dinse <nanook@eskimo.com>
+> Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+> Subject: Re: Folio Related Stability Crashes in 6.17.5 and 6.17.6
+> 
+> On Thu 06-11-25 00:24:36, Robert Dinse wrote:
+>>
+>>      I am installing 6.17.7 presently, I was a little resident to install
+>> the current tree on a critical machine.  If need be I will.  Also, I do have
+>> a crash dump on the last failure if that would be of any help.
+>
+> Understood, I am not sure who is going to be willing to debug this on
+> top of stable tree if it is not clear whether this is a problem in
+> vanila tree as well.
+>
+> -- 
+> Michal Hocko
+> SUSE Labs
+>
 
