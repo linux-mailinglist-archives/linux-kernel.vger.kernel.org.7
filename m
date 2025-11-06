@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-888903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF6BC3C3AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:02:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31943C3C3C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98EAA4F499E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:00:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1744950087F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C31533E345;
-	Thu,  6 Nov 2025 15:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A82533A023;
+	Thu,  6 Nov 2025 16:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9xd2BTo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQYtabMx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C443C217F2E;
-	Thu,  6 Nov 2025 15:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39DA32C92B;
+	Thu,  6 Nov 2025 15:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444794; cv=none; b=WCYVuKYb495fa1v87/7kgbmhMRXL0NBGRvdGDU1Xv2Ll0logsSUISbrG+k4MoLX1MZSJAe+Q3Y8oPJAQsSQNXnusld4hVZLHQy0FmHbxDh6Li+y3TDdRjUoObvJNSwAO80EpuaHAD848fNEyJIwze3arDHDjGx0pqU+83ugLLmo=
+	t=1762444801; cv=none; b=jGWpN8TVwit0sZEQClRIu70Bq9O93SOxRiYQ47RvTrZsgSB+1W3r5Z6RqQP1Ekcv44lJsqmKaOGU7Yx1fxudaHfElI9Sd/wlaVX2j2v4y6k1KyBvpEN4gyhYgXdrdtOUP2Dwpbm8SCrkW4LIGMBaZZDWjz1qkZJPFb/bYn5mBg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444794; c=relaxed/simple;
-	bh=4TgorRHksvljH1YyBF/SSZyBPVzPnDsdVKYVlo5RHo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6ozILwdDufL7PVVTQ3LtIOF/QXhadr32QgVm+Y3fH0twRQtojpop/TRqQGErbuS7vT72x7Q7+bLiCwxQGsQk7woaMhysSf1ENCKWwaw3vLwTXeu+CRkqcYEhiBvAve1EtcaSo7Y8u9gh7281jTqY/fI3+I0ecJCQRKUAXlYYFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9xd2BTo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B92C4CEFB;
-	Thu,  6 Nov 2025 15:59:53 +0000 (UTC)
+	s=arc-20240116; t=1762444801; c=relaxed/simple;
+	bh=kMevgBC3784Ru3EW9QJAXWDvODDi8xcAADr0sE14jHI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MN1Lprqt2lOFNBKdy6b0Ee1cbjFXDaGy4LWR987xBDAWx+17xT8CLBm8oxU0PL83h860yEMXuEzLm2+NDzFVJAHVxUg+Bl8UbHTE50joCv5SP0leu3ylKIr10lPJ5u2vR1fORZfOykheX/eq7EClDNqjuL3tB2Iw7v8OyJeZrDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQYtabMx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64129C116B1;
+	Thu,  6 Nov 2025 15:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762444794;
-	bh=4TgorRHksvljH1YyBF/SSZyBPVzPnDsdVKYVlo5RHo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B9xd2BToJapqh+OpvYoBzdbEbx+duiGcEfThO9M6dBFqh9qe9RttyRmIVxAfytTvh
-	 TEwVpNU/vXk8ObF2I4PxvNUa2Xnpm9af/vixDpp0Ej0oycz69w9d6oO9LfJ44bswpn
-	 cVKbVBx89gKikCBY3VgR7tD3TIAJVMYJPIkxPwtqbLOuIk7yWaU1tWUgQ6OkYOjGa4
-	 Y+7dxa1TL+uLQAs/o5TKsmVuJr2tYZMcn/A7Lct/LpZLjWQ94VH5qCW5m8NoLO4o4N
-	 9rpp8BHIUezWH4qdFxWpHcZaVx2jr+VvaPFqlJ/KAXQFc9GdKaem3uZ9HEine1GzaP
-	 lGDw2P7FWY/cg==
-Date: Thu, 6 Nov 2025 15:59:51 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: codecs: va-macro: fix resource leak in probe
- error path
-Message-ID: <aQzF9zOQcsupLKhT@finisterre.sirena.org.uk>
-References: <20251106075055.555-1-vulab@iscas.ac.cn>
- <20251106143114.729-1-vulab@iscas.ac.cn>
+	s=k20201202; t=1762444799;
+	bh=kMevgBC3784Ru3EW9QJAXWDvODDi8xcAADr0sE14jHI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FQYtabMxQzNGwYpM1TktPaQ1EAJDPPduPQ2aWZqE/uG8noq7yWaBvbyTV2QIiDySb
+	 jmOgs9AOzFCBVLnzpMS8E0OaNRDRY7pj8Ju4kNh0wcmvWmhH3lyGpS3jvMgzgICo4N
+	 rzMuaWseYumZ+dMId44VqDVFGidHBM85erlClvmHC4kGSt5tY300GOzhKzzeqoKZDo
+	 91ie2XrHhy+OHzWl8ImmccbeCDu+Z1FFArrN3r9iOFkh8OmGRzr0ImYHEn2GKeYK9U
+	 z95X92OQw+Ujq2FATT+HOAR9qkHVlHnuxSAc3RLJN+7zI35PHHYIdnkldqLfxU37y2
+	 w0zVc/JsJT8ZQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Richard
+ Weinberger <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Steam Lin
+ <STLin2@winbond.com>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  stable@vger.kernel.org
+Subject: Re: [PATCH 0/6] Hello,
+In-Reply-To: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
+ (Miquel
+	Raynal's message of "Wed, 05 Nov 2025 18:26:59 +0100")
+References: <20251105-winbond-v6-18-rc1-spi-nor-v1-0-42cc9fb46e1b@bootlin.com>
+Date: Thu, 06 Nov 2025 16:59:56 +0100
+Message-ID: <mafs0h5v7b18j.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ncTIgGJpmcgHvRwK"
-Content-Disposition: inline
-In-Reply-To: <20251106143114.729-1-vulab@iscas.ac.cn>
-X-Cookie: If in doubt, mumble.
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 05 2025, Miquel Raynal wrote:
 
---ncTIgGJpmcgHvRwK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Here is a series adding support for 6 Winbond SPI NOR chips. Describing
+> these chips is needed otherwise the block protection feature is not
+> available. Everything else looks fine otherwise.
+>
+> In practice I am only adding 6 very similar IDs but I split the commits
+> because the amount of meta data to show proof that all the chips have
+> been tested and work is pretty big.
+>
+> As the commits simply add an ID, I am Cc'ing stable with the hope to
+> get these backported to LTS kernels as allowed by the stable rules (see
+> link below, but I hope I am doing this right).
+>
+> Link: https://elixir.bootlin.com/linux/v6.17.7/source/Documentation/proce=
+ss/stable-kernel-rules.rst#L15
+>
+> Thanks,
+> Miqu=C3=A8l
+>
+> ---
+> Miquel Raynal (6):
+>       mtd: spi-nor: winbond: Add support for W25Q01NWxxIQ chips
+>       mtd: spi-nor: winbond: Add support for W25Q01NWxxIM chips
+>       mtd: spi-nor: winbond: Add support for W25Q02NWxxIM chips
+>       mtd: spi-nor: winbond: Add support for W25H512NWxxAM chips
+>       mtd: spi-nor: winbond: Add support for W25H01NWxxAM chips
+>       mtd: spi-nor: winbond: Add support for W25H02NWxxAM chips
+>
+>  drivers/mtd/spi-nor/winbond.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> ---
+> base-commit: 479ba7fc704936b74a91ee352fe113d6391d562f
+> change-id: 20251105-winbond-v6-18-rc1-spi-nor-7f78cb2785d6
+>
+> Best regards,
 
-On Thu, Nov 06, 2025 at 10:31:14PM +0800, Haotian Zhang wrote:
-> In the commit referenced by the Fixes tag, clk_hw_get_clk()
-> was added in va_macro_probe() to get the fsgen clock,
-> but forgot to add the corresponding clk_put() in va_macro_remove().
-> This leads to a clock reference leak when the driver is unloaded.
+Applied to spi-nor/next. Thanks!
 
-Please don't send new patches in reply to old patches or serieses, this
-makes it harder for both people and tools to understand what is going
-on - it can bury things in mailboxes and make it difficult to keep track
-of what current patches are, both for the new patches and the old ones.
-
---ncTIgGJpmcgHvRwK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkMxfYACgkQJNaLcl1U
-h9ABIgf/QhXusdY6vysmdYD/HzBhHJsXVfkgw/cwMG4rRx7S0WBkTgyXjWt4c/To
-bG2vWTt/VdPhpShF3OL0FqWzzOJ5QZrjdmHsiEXLMhupdTwNDDWND3U0G+6gmr0j
-stSGjf6OzXB3mphvxz1YrWwRGjYiBntQxHIAFZXVGjAbyR/21vGYSLe/KWHf4lcy
-ILvnstYfVlidzgXFbNyUOZuGEsrYYPV8bnZkEGb2kjhSctTzimIHjU7zujSb284K
-mwk6gUd6yoFBhNwyjRLVfgweorhrgNIG6dThaH7gUTowpcqSVRaqvhBzBgrbYqvT
-MHsAX6RoLUx4QXBA/RO468l4r7bYVw==
-=AByG
------END PGP SIGNATURE-----
-
---ncTIgGJpmcgHvRwK--
+--=20
+Regards,
+Pratyush Yadav
 
