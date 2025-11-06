@@ -1,99 +1,71 @@
-Return-Path: <linux-kernel+bounces-887966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D937C39768
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:53:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACE2C39765
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F61A43365
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7A11A43C1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D792E7BDD;
-	Thu,  6 Nov 2025 07:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6F22E6CC0;
+	Thu,  6 Nov 2025 07:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f8VJ+nfa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o017u+az"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA31D2DFF1D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BBB14F70;
+	Thu,  6 Nov 2025 07:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415493; cv=none; b=AHPJ/wy3XjyaLulPz5U6mm9UJ5IyKPK2H8Czs6lESjmDXAe/IAfablhntfJcwDLcgp+uVVKwGP3Hek2dLd3D+Ne88T/VyoxWUKcdN5DkjFPdgvPcEgQ15uv/Cnv03Px7DQB4A7gjJ4Z/uvGL21mPAjohUnZc07eBJMTnLB0bksk=
+	t=1762415492; cv=none; b=nYaq8HT/P6BGinqdWPY+ebkrlFTegOd6nMNuZWuz7yqEw8q4Vg634JV6Uj23FhMJY+j58OlRqS+1oghwpJkcJkOTsjpRnkfpj1G26tm36DEpJhKxxsa3Qp5iR1zEZwdN7St95Yqjh/Gud3UPL11YzzMXfNMEUGILrqjE7qq8ykQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415493; c=relaxed/simple;
-	bh=K65aaEqq/YB61r4p7ihT0ItAeEpKgQgbAjU3OugTSoM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EFd9UsRoO29ecsAxp46sptJ25jb61fcNXjZA/aXmU/weJE6cQ4rt2DNKpbrubznJGXNtsWH0VA+MVc3Hs6z4f7++0YcIUAmrtPS7GdhWxWYVkJAEh6HzM6glyvBo+NLufMfCzH75xPEmGCl/cmah+C/e7734Pja3MKG28qG3zME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f8VJ+nfa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762415490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p/narQH7oBzjR+CHzap2CS6luEPNI9uaK+xgrYacn+w=;
-	b=f8VJ+nfaVlZo6E6oiajGdSYmRwVZts0co/zxkRoICNDQcEI5deoCMTxw2FinT0yQ/V9Wxb
-	i3pq7tdIc8N1TWa2YFlI2jk8JXeyGxETj/hJztQqFVIIvS3+vSlzWZnuVdho7Zhh7zAdPS
-	G3yVlIrq1dY/b8mrfZXnuWjujgvgBHI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-53-ecT11MeyOWeocyapa6M-Fg-1; Thu,
- 06 Nov 2025 02:51:27 -0500
-X-MC-Unique: ecT11MeyOWeocyapa6M-Fg-1
-X-Mimecast-MFC-AGG-ID: ecT11MeyOWeocyapa6M-Fg_1762415486
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4019F180047F;
-	Thu,  6 Nov 2025 07:51:26 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.98])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C20C18002B6;
-	Thu,  6 Nov 2025 07:51:24 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Indu Bhagat <indu.bhagat@oracle.com>
-Cc: Fangrui Song <maskray@sourceware.org>,
-  linux-toolchains@vger.kernel.org,  linux-perf-users@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: Concerns about SFrame viability for userspace stack walking
-In-Reply-To: <9c11b765-66df-46f3-b4ea-a0c7f52dac35@oracle.com> (Indu Bhagat's
-	message of "Wed, 5 Nov 2025 16:44:24 -0800")
-References: <3xd4fqvwflefvsjjoagytoi3y3sf7lxqjremhe2zo5tounihe4@3ftafgryadsr>
-	<2d713719-709d-4b46-8234-2dfe948b836a@oracle.com>
-	<CAN30aBGEpwA+ZROXufqBL6MHM70oWTtNpGSioCMhxT8yS2t-Pg@mail.gmail.com>
-	<9c11b765-66df-46f3-b4ea-a0c7f52dac35@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Thu, 06 Nov 2025 08:51:22 +0100
-Message-ID: <lhuikfniop1.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1762415492; c=relaxed/simple;
+	bh=rqZkEZn5/jiwO3tbD9RTfheGonmzs7WwxaaW7BtTwps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWu/748OWtUpbD+kXH6j72Gf3CcdWI85AAuj8GXfbXxOAa3sHb79Z1vtGgyF1rX4uQs4q5ffO0bC8O0vLJbAgCRUsMfuVE2q0Ff49l0iUhsie/CGBO/Gxq/LgfE99Sv27S/jwGScNbdxr+vWIC28Q/9v16AH3gdbXSYiDEdqOtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o017u+az; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F092BC4CEFB;
+	Thu,  6 Nov 2025 07:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762415491;
+	bh=rqZkEZn5/jiwO3tbD9RTfheGonmzs7WwxaaW7BtTwps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o017u+azAiJb/EgMQxQQ30bKaSwafwfR3nJf3NpDGY7TWbEufGoF3Q7mcnDX5A1m3
+	 bh+xJjf/Ixk2daTAnSuBGROVTc55joEx9STaabe5Y6e0jyJ2E6SSv1uUzyadqmclkr
+	 5ozEgIz6iT5Ak0c+6SSuQPo8FolamCW26CJ7swFY=
+Date: Thu, 6 Nov 2025 16:51:28 +0900
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Clint George <clintbgeorge@gmail.com>
+Cc: arnd@arndb.de, linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org, khalid@kernel.org,
+	david.hunter.linux@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hangcheck-timer: use pr_crit and fix coding style
+Message-ID: <2025110649-elves-steadying-a4d0@gregkh>
+References: <20251105140541.9658-1-clintbgeorge@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105140541.9658-1-clintbgeorge@gmail.com>
 
-* Indu Bhagat:
+On Wed, Nov 05, 2025 at 07:35:41PM +0530, Clint George wrote:
+> Fix coding style issues and improve logging in hangcheck-timer such as replace printk(KERN_CRIT ...) to pr_crit(...) where applicable and replace non-standard %Ld with %lld in debug prints and use proper pr_debug/pr_crit for kernel logging.
 
-> PLT stubs may use stack (push to stack). As per the document "A null
-> frame (MODE = 8) is the simplest possible frame, with no allocated
-> stack of either kind (hence no saved registers)".  So null frame can
-> be used for PLT only if the functions invoking the PLT stub were using
-> an RBP-based frame.  Isnt it ?
+Please wrap changelog comments at 72 columns.
 
-I think I said this before, but I don't think new toolchain features
-need to support lazy binding.  Without lazy bindings, the PLT stubs do
-not change the stack pointer or frame pointer and just make a tail call.
+Also, please split this up into "one patch per logical thing", as you
+shouldn't be mixing them into one change.
 
-Do you see a need for continued support of lazy binding?
 
-Thanks,
-Florian
+thanks,
 
+greg k-h
 
