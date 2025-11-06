@@ -1,216 +1,133 @@
-Return-Path: <linux-kernel+bounces-888880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB19C3C28F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B0BC3C29E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:48:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F6FA4E788D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:47:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7B884E274D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B06284674;
-	Thu,  6 Nov 2025 15:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021B6334370;
+	Thu,  6 Nov 2025 15:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kuBDtcHE"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011028.outbound.protection.outlook.com [40.93.194.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vnxDit2v"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC8F2BE621;
-	Thu,  6 Nov 2025 15:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444042; cv=fail; b=GfKGAQeYAzeIcUFNfNhzJFehzcqb9IDZiXUPvOJjYW2KsyvxvaBFqJfklWenpX+0Q1sEMrHitKU68qrI1MaO2nKorzA0lH8pHLdlXu0zxp1usyCjXUCAn5pEtIEoD/wWzsD+a/YmqOW3GpMQZL4cjjeCCGo57Ht/BGVtH+ZERV0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444042; c=relaxed/simple;
-	bh=JGAm145/RArNI0ZfVtx+lo1QLAAzYy3VI9xSmihBujU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G5w1IDiTcDW+nSPaDq3CL6gmJgW8NLUmMvxLLauFsioYG7LY0Gqd6qYFe3oq2cM0UFjyuhMIn8sGDHrAfqsC32tw/4/JxtZ8QFGUrX703jAWZfp3QGkD8/bk1FjQj1UOngiUoZfaUiLOM48a8hYOx7O8SwyCN1rL0i56sAXeCk4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kuBDtcHE; arc=fail smtp.client-ip=40.93.194.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZwKaIWXaoa3X0sjlKe1QWqwRLQvzpK3rbYa0B4PActnFS6tIa0tzqe/ZQCWnTrItJngdEIu+2FE1iT5r36eqMHyaZW8dEkUcYtEowmO9q3ZdfJZUNWw7NvFUlnrICMhNXsVHMLMDzRjgATNr24Wp+ZoBK6mdJRRfW5TW/U9lEVEoSPRkuNSi/UX8/DtdhBOX/yNq2XK2xhtGyvyJh2MJEBW3d2dupAnW7wntFToA10adOWxlr6G/xPRJ/uAw4hWtmvdBwND/dIf+ZYIUmLcuPJWNCsDCZPHe5ScqhFipI0SXZmxzhXYRuPlEVCcwFJgzccXRHVWef02SSeovkc5LOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wRc6YuIlo5aH1HDx3hyBmzDL32tFRf1VyosEUb+EQkQ=;
- b=w+j+8OSWZOAJICCQxq1X8ilC03Mao2qdCacihAvGyLd/OwmemffCOi7KtJrORsAx+KQW35dVnCyQiLvU34kNTnxwHPTMBhVOEDsOuYDxnGlyoGwNxCVWRrSen7jrn1nTKydAUgedkV9gsqy6ySGUamZcLmTHJVCqg1w5C2eQYmHIuex52+zP4zy8ibPEm+QlYXHXL/Ujkn08H4BX41Qn3V0/Wr8wE0/8Cknac5EbfxbRd8zEGozHVplvzdpD2x0r2nM2ZlvxyQQkJiP0qVCFCWnPlFWE8nCxaN9NMy5MHLAban5EqzOcP0AdYJJ26lL8tt4WSf9oKkJPGrfDlKwpug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wRc6YuIlo5aH1HDx3hyBmzDL32tFRf1VyosEUb+EQkQ=;
- b=kuBDtcHEAAkQ2BrcNeYo3h5Sbm4GF3X/1uN9G4B6Jzecmoi1QFUUgLrtLXq9vcGDc2J/DB4hl88j7s6hwYS0NcsefEVXHaJG0K545qX8kfxkyE5QCG18u4adnbBjCQU3PNuRvRs/FqxI3CxAeAFpTKVzOsXBoJneO3V3UCAV1BuBc6Q7kZkMkXUDuW9MOgV3yAIziiKkGkbb/epe0hUj7S+Q+5tJsyg4YWmHM76WCKWeDe/mF+o6ixkESVCEV+8/Bp0SvmolLdJpduXkd1SL7Jigk51ma9+Pc3etugb6lj55nwCBT7JG8iZSeMqLachDccJcotG7k45nWnYCZwjebg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by IA1PR12MB7541.namprd12.prod.outlook.com (2603:10b6:208:42f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
- 2025 15:47:17 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 15:47:17 +0000
-Date: Thu, 6 Nov 2025 11:47:15 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v6 1/3] revocable: Add fops replacement
-Message-ID: <20251106154715.GB1732817@nvidia.com>
-References: <20251106152712.11850-1-tzungbi@kernel.org>
- <20251106152712.11850-2-tzungbi@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106152712.11850-2-tzungbi@kernel.org>
-X-ClientProxiedBy: MN2PR01CA0063.prod.exchangelabs.com (2603:10b6:208:23f::32)
- To MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31ADB231A23
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762444114; cv=none; b=ltC+ytIE88mE9ApzNX6EqxlBcf3QbpxQzBG2mNeb1DOBy1nih9i8UZUf2UAF7fOoIy7u2U4p4QHz1M9ZnXCiA7CkyvmOoJ1Y+Z9RMJWwATXJtSKENF2A/GjuObMooi2KrN2oBiurlJUUF04x6MuD85bPw1GKHXaOIKYrGwHXdKw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762444114; c=relaxed/simple;
+	bh=IzsySpkujMcR4WoEBmC55L6jaGwoKuDh9CSfvagLBlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YLe7O341TkQAdxf1lG2dCtXE2blWBKR7/BnguqqW760vUgcUrp+mSLOXLuUvMHkHSMbakBuEe7ScVsuayYL9FkR+626kiENWdMmkxQuOlWmtvr+wRdZ+0Ok+A4JC/aVx3TVi0pblfW1TJ5tLnnF5K817LIe+Sw3+xcvdEhvTsuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vnxDit2v; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7afc154e411so580103b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:48:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762444112; x=1763048912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=97N5NFxuu/uCytVCp353kHzM6K2Dbd7TnX+o0fzl0i0=;
+        b=vnxDit2vauZQMJwZ2ytrCOVucQuUZyaX3P9jn9+sZGDLDkFHL61/EcEYrZunmkgqPo
+         sfmeGvdn4+APinTvn5Z4sHdp2F4XCh2kLIdd3q3Y/SojuLAwfTkakZjYJbfoQBY4YtWj
+         R19eO6GqGUfkTjzt1gSwoUa7YkVeEgPGQ+krmgF6Gp+3ndvjQtHECwBLOjSpNMAI4sS7
+         O7k7L8OFkp8JZ8qsp1J1j3/IeRk9OnEy5O0zd6Y4j9Ko+cc+fOaPuiOYPx1g4yJbk03t
+         /05SY0vuqfiu2h4ppZBoBLeNa6F0uYpZXZQdwudojfoC9s3gU/aIwdaOkMs8E0+xaoD9
+         rc5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762444112; x=1763048912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=97N5NFxuu/uCytVCp353kHzM6K2Dbd7TnX+o0fzl0i0=;
+        b=L4dyFIR43YfzyAw3ORebCt9doeJs5n41N0LH8Wst45fKZpC/kFcadx+wEomKus/9B/
+         fewvMNp3m08WAo0gob8neFeG1GyCh6pPyRRHrt+CdHIiRtrpj9ZgkbOR3WvZD9OJQZ4t
+         qwPM3fas8PIhQinZRilSj7/J4xIm6hWnvBf4DBOLgSUQIZQH7SF3W47clx4FpdGNVmcT
+         YB2KLGjH+8cflPvYAFtFq5B1OZiAI3Hwg5nx6jybSmtMXpT7CL8901JpWRGkgJbHsVlD
+         cIqRPIhF+vmmMjgU9BlFwJa4bZcA4QRZuqovCZFK8yrjW18zcNaEul5tKLOAcqdikLI6
+         OpNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDeT+8QFWDA7aY1Wj+XjyBRbBhknERW2HjpXJJptPUvhJVqH/huGdTIsPZyW0PM0cCQ37p8zYDNc96i5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypqaPRP6f23XjWiAoxA9zo1DbV52sBqttPBxz4RbLt9C3eYPoW
+	a3RBfHWEufQEA4kCqdu02HxIf44PFhlxgXI91KZV719ix0MyHQ5SNZ7GacNnmmO/yp9iM8A3UU5
+	uen+4ipN3UCmqD4UdCK7CEtPQ9JMC9SMSG0heCaMa/A==
+X-Gm-Gg: ASbGncs4T470WhsMoOaJjqQcHtQsN2QzrMCSxSfo8chqjsK8bbupnhOaFf7cK9KhTyi
+	nuE3pqX+xXtPbkjRYP4GeFOkCILe3LhmWNIyHZ1LxbMcvHZ0IjZX8q5U9cH7M842IYpCKHoEzA/
+	w4eWSajApmSGoAygr8OAJX1dPbthtnxceYRCqPv6dK6oONV1DRodw48PxaX1Wef3uq+r2txxJTx
+	ot2FIGGOK7WRBL50a+gAUFPky+Xg6Nox/EZXgE/YMzGm8rwDxcdTnuHlmrEXvDm3xpUkYP1z6p+
+	jWp+Tt3ojyR8A7p7DifuJtt8CA==
+X-Google-Smtp-Source: AGHT+IGkyMxFIxYqEfsxkoeH8/+bnCDt9rf3tx5Zv59yWcveQKoUxGPzEJY1muHMLt5mGF2Rg9TIu+z/TPDNf8xk2Uk=
+X-Received: by 2002:a05:6a20:7488:b0:34f:ec32:6a4b with SMTP id
+ adf61e73a8af0-35229d68476mr26916637.32.1762444112518; Thu, 06 Nov 2025
+ 07:48:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|IA1PR12MB7541:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74689851-bf93-4f3d-4eb4-08de1d4bc360
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YEMaBU+V1kk8gEga9W2PXNuOmnwpafjWPZN5N8nq1M14VpHpSmd13M5P8A+y?=
- =?us-ascii?Q?jkm8rDUCkiKKE5rBr0MTpcETWGFiEAYEN7IDjCpjMvux+8R3ALInpIqZvDXb?=
- =?us-ascii?Q?WsjpPdzynhPhmencjWvVX42nWoR5aX0UUVLDAlHXqMQsNzavXS7NywQfddNM?=
- =?us-ascii?Q?rbDki5/uIg5CaleI20ijtgpO8lveAr5hC8qvCmklA1CG3fia/CTsX/r6aw4A?=
- =?us-ascii?Q?2Dikz//nfoWgrrfEcA2I9W1hqhc/ZHszKatNy7ApHnMZc8DKKMD76rA1Is4J?=
- =?us-ascii?Q?4RdPdfGnZEiI0U+0lRTLuWjFRTkW59aMrEgzEfD6K2jQh4fDPU9gzzjHOL5R?=
- =?us-ascii?Q?gb6Z6YnhgtPGr2sT9E40gpKeWBka96IVTJilzlTnRbMP5slpsJdoY9XNtowI?=
- =?us-ascii?Q?0ZAaxvLBb3xD7S4c+mxR7R/kpYKMYIH639FZuy0lCb20mo4hmNuZTyIihDc7?=
- =?us-ascii?Q?xWrYboxd0PL8aNSRtWUuC7CSayrcXciC9xUlJSrQ3UX+6Gc77Pc++y0GzGT+?=
- =?us-ascii?Q?H6TxeSI2D1dJnqlaLnd5K4lld/JIxF3iomZSkYXpBBs8wRS/evYpNHjjY8LE?=
- =?us-ascii?Q?o8UVybSRNv9U9c4ql3snf7wpsjG6y4fA6EEBrcV20CDz9lpnm3vwdNEvsrzJ?=
- =?us-ascii?Q?2yfscCtyi2AvDlZxckTqNd56Ec6PUUrEWs8EXZAYubmr8Q4Ff0gTQGuGT9hZ?=
- =?us-ascii?Q?4AUt8cG+Ip6jS/uJUZ2jCnIGAstswuW1pMUWsWQFK5CIKj5hAH++HuA7fTyD?=
- =?us-ascii?Q?4UCAC9xbebVJhhX1NaMp9xuVPghqa+KkANzlUlWZK0HwmQZqEz+8KzyqDwmw?=
- =?us-ascii?Q?oxcXJHF3Rmc9CZnRQgm2ZKx+Cgi3xD432vFyUN3veCrxKS3Y00Y++cKOuusx?=
- =?us-ascii?Q?K63GQSIVhGGerH/OhCDPqAllxMBxzCFuhTFhJLXOCi6aL3PBPy355PLdIUP6?=
- =?us-ascii?Q?KpRLjndV8+fCbaw5N36wktbv2ZKfVaAq3t2+6puwgnmMhw3kN2IRN88ILCzz?=
- =?us-ascii?Q?ThRlDSec/xPJyiRz7tjxuntfUS9cS4SDaMaPIGuGTkXsG6gdL0GFK+0qdrdL?=
- =?us-ascii?Q?IfyBIoMZ1sqMBqgFhb5QSz2RU3Mr1c4tGzLNgnPmTttOAQqioKYDwqL+LZkU?=
- =?us-ascii?Q?56dlI5hugHHPnJ05j13weYbrmlX6tyBjoJBg43A1CbSbFktYbpPAeTE0FttW?=
- =?us-ascii?Q?dC0k54K7LW7UJvZEVNGuB1/956Vxz+B01ihtxeSXjNMo9qsNAySdkbC25GXw?=
- =?us-ascii?Q?d4+SvKTd0oymm3YOUWwbqul65P/jFNb1rQPAaiy7rASE8Gj4dVQTwbihhOug?=
- =?us-ascii?Q?QBkfjXEO+xu4D0qGqv7vonCX13RR1KoZcbYGS5/vxsQoaK9yB/mE6BiQd4Tx?=
- =?us-ascii?Q?mHss3cVW/rnF6XHrkARQ4Mwg/m1ECX42zh8W2cHEv9qL31QVMEu9sELtSaBH?=
- =?us-ascii?Q?e4kUMBJkryVpXEjZpPsv5iI0M8R14n9U?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KTNPkiLxFVHvRlgeWtJqFkqPGf4uPG6KjKnBvJ6svRJAdWdPP/aKsI5vhehE?=
- =?us-ascii?Q?TVMYepYGFT9Elv1U54SKdmpfvd5pm2xtv4B9DgUNmImum7qVzobK2z+r6iFX?=
- =?us-ascii?Q?idQjUY3E0/1zbeFQu9ewQ+F4FvvbpTm4C5QIHg0s2IYsvekTXzzrbQ4DK1jc?=
- =?us-ascii?Q?w3QqxNkVt2j0QfPEpjIsRCBgJ7C+oUYagQkJ0VkeYgxJsHrl3BRIswOyej83?=
- =?us-ascii?Q?CmI3jbBqMquBPELWDIU3kFVYsULg95VgIqwoqIZPXhLMEWuDSop4w1nXTpyb?=
- =?us-ascii?Q?IkZWg+8UM6My+eZNNf8rYVb5W7oQAlc+6jyproeV+qxHbkHUV0sRKBhocJNh?=
- =?us-ascii?Q?9p54doDprc2t710SANufDhBy/nFEZyFQyQhcvS5AAOJHM2J1j9G8LH0D64Z+?=
- =?us-ascii?Q?kzO+fNo0Eg0EJEj+On6KelUaIrAoMVDmH73sA1Z4W4FUHDxVscoY/5xZLBDY?=
- =?us-ascii?Q?5y1EBHG0typvatHqP3OP9qt1eG6uOe0xVeNxHXsRkBWMRkmpa7wto9v/2tnZ?=
- =?us-ascii?Q?RGQqwO3tlRjjwVGYmROCcfK7PKHAbmBIGLwCByYS8o9yjlv27Bv77JGcFoqT?=
- =?us-ascii?Q?9uu7pET5bNFG4DADMLpJ/NIzvTN49hLtrbZ3yoyHw3OAu9BT9PMZFWdr1he0?=
- =?us-ascii?Q?xR0SqsJrTGd5Ub6gpY/WvnqaMZdrlniOUsI4KX/FLM1shSTWDte3qj2isI5t?=
- =?us-ascii?Q?/sIDXMqzTMtpZHBl6naTm0x49NT3pK9UT7Df7F8d+bWF2lGzEG0OgYrp7xhp?=
- =?us-ascii?Q?FVK9x7hUgMynDDdjisZU9s3eLkOFfFd3b+QZj6ViEYnElq73YAsgNSVqT47Y?=
- =?us-ascii?Q?MArC2I6NzAEejVuzLwqCwVnMG+Ho6U1Qlvn4SYZhS3NPaTe9C7Fr8nSxBpdA?=
- =?us-ascii?Q?Qiik7jZ6l6nOHWnSLUcUT4tfFsV5MInQB0SowDy7GXdCBU5CyiOLk4cqHhFH?=
- =?us-ascii?Q?VXZeBwy1K25IPhSWNY9Bxe/cSqW9bVc9Y2LDTfUX5Dq6njftCIW+4fagVoNR?=
- =?us-ascii?Q?mPu3UW7hCZQe+NoFy5cANUpIHpNlciWKBw995s1x2sMmDQ/AkQk0F+srb+P6?=
- =?us-ascii?Q?HQ+Kq3RfBaaFuEspA5ehK0btnzuj6LutKKwB3bDLLQBrcMX6TOfuhMUGikjg?=
- =?us-ascii?Q?KZ3Io2QiGIhbmUVKINr2TQ292QOoYRxBmBff3ZuIhs9dfPGOYUV+W9UE7jB5?=
- =?us-ascii?Q?Uo/VvxYvLXtqRSPucR6XfwyRYgYWQiRbb2E+i3Z/0I6Z/Cz/ufXu1oZ/WRDF?=
- =?us-ascii?Q?2QxGRzDFHaMtIiyz3acK9uxKnPO9yETD96dJE5/5EUpfUHQJ250a69J6TPr6?=
- =?us-ascii?Q?OEJ9/DMLVlyeNc0Vv6Ws6LOpOVMBnu4j498fxvMhfyReFjo5/rbgXuDpGY/C?=
- =?us-ascii?Q?7eC+qeqi+voxsDpsgX3pWtEcXMhga3KOgKECyYfyZs18WzFoZm68PIcEYSAo?=
- =?us-ascii?Q?dcqgu1RNtXjUrayUflGcmp3V20F0gpIRpf43+TOHFOWLAK4fM0/ATMCuEvPR?=
- =?us-ascii?Q?3iUkDvl5VlK8yfxqWnI9bqpI7a9RmyKsVodl7YBP3asvhvt7QP7XvYjZeKY7?=
- =?us-ascii?Q?ahhb+/LnfqfR3gbJJz4=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74689851-bf93-4f3d-4eb4-08de1d4bc360
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 15:47:17.2333
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8IzCT6DEif4V95K1NxZKqcGHwOpA3fzC7S5WgQLvTxxcM/p14ZNxupltu807xnSB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7541
+References: <20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com>
+ <20251105-pci-m2-v1-4-84b5f1f1e5e8@oss.qualcomm.com> <CAMRc=McB4Zk8WuSPL=7+7kX4RJbdFBNReWZyiFnH8vfVx3DxAg@mail.gmail.com>
+ <tc2r2mme4wtre7vb7xj22vz55pks4fbdabyl62mgutyhcjxnlx@qn4jvx3jqhie>
+ <CAMRc=McDYL_B+hFtLekevtB2XpUkaMN1dsDNeefvR+ppj4whFg@mail.gmail.com> <5wbwpr7ivnvpttacyl7b5fsexfda2uvoqau7yaaxuavskka4z6@vvntbnakzrjb>
+In-Reply-To: <5wbwpr7ivnvpttacyl7b5fsexfda2uvoqau7yaaxuavskka4z6@vvntbnakzrjb>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 6 Nov 2025 16:48:18 +0100
+X-Gm-Features: AWmQ_bkhQdbMkrAQ_h-vWt-L8tplAxdm964sVXmj6JsL9Vun-srDl-nRdBMs44k
+Message-ID: <CAMRc=MfCQgMd-7QczbnRuBAvXnhJ5QyUzRswECfKC3NbQ=rArg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] power: sequencing: Add the Power Sequencing driver
+ for the PCIe M.2 connectors
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 11:27:10PM +0800, Tzung-Bi Shih wrote:
-> +/*
-> + * Recover the private_data to its original one.
-> + */
-> +static struct fops_replacement *_recover_private_data(struct file *filp)
-> +{
-> +	struct fops_replacement *fr = filp->private_data;
-> +
-> +	filp->private_data = fr->orig_private_data;
-> +	return fr;
-> +}
-> +
-> +/*
-> + * Replace the private_data to fops_replacement.
-> + */
-> +static void _replace_private_data(struct fops_replacement *fr)
-> +{
-> +	fr->filp->private_data = fr;
-> +}
+On Thu, Nov 6, 2025 at 3:32=E2=80=AFPM Manivannan Sadhasivam <mani@kernel.o=
+rg> wrote:
+>
+> >
+> > To answer your question: sure, there is nothing wrong with having a
+> > default match callback but first: I'd like to see more than one user
+> > before we generalize it, and second: it still needs some logic. What
+> > is the relationship between the firmware nodes of dev and pwrseq here
+> > exactly?
+> >
+>
+> The 'dev' belongs to the PCIe Root Port node where the graph port is defi=
+ned:
+>
+> &pcie6_port0 {
+>         ...
+>         port {
+>                 pcie6a_port0_ep: endpoint {
+>                         remote-endpoint =3D <&m2_pcie_ep>;
+>                 };
+>         };
+> };
+>
+> So I have to do remote-endpoint lookup from the pwrseq and compare the of=
+_node
+> of the parent with 'dev->of_node', I believe. If so, this looks like a co=
+mmon
+> pattern.
+>
 
-This switching of private_data isn't reasonable, it breaks too much
-stuff. I think I showed a better idea in my sketch.
+Sounds right. I would still keep it in this driver until we have at
+least a second user that wants to do the same thing.
 
-I still think this is a bad use case of revocable, we don't need to
-obfuscate very simple locks in *core* kernel code like this. I'd rather
-see you propose this series without using it.
-
-> +static int fs_revocable_release(struct inode *inode, struct file *filp)
-> +{
-> +	struct fops_replacement *fr = _recover_private_data(filp);
-> +	int ret = 0;
-> +	void *any;
-> +
-> +	filp->f_op = fr->orig_fops;
-> +
-> +	if (!fr->orig_fops->release)
-> +		goto leave;
-> +
-> +	REVOCABLE_TRY_ACCESS_SCOPED(fr->rev, any) {
-> +		if (!any) {
-> +			ret = -ENODEV;
-> +			goto leave;
-> +		}
-> +
-> +		ret = fr->orig_fops->release(inode, filp);
-> +	}
-
-This probably doesn't work out, is likely to make a memory leak.
-It will be hard for the owning driver to free its per-file memory
-without access to release.
-
-Jason
+Bartosz
 
