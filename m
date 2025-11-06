@@ -1,69 +1,76 @@
-Return-Path: <linux-kernel+bounces-887844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085A9C3937C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:09:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4911BC39379
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79B23A894A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:07:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 448044FA346
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3CC2DA76A;
-	Thu,  6 Nov 2025 06:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280992DAFDD;
+	Thu,  6 Nov 2025 06:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="aEPXtmTb"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012050.outbound.protection.outlook.com [52.101.66.50])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="qqUgUOi/"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011006.outbound.protection.outlook.com [40.107.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6E123D7DF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E73823D7DF;
+	Thu,  6 Nov 2025 06:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.6
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762409255; cv=fail; b=gWAMQ+zPiWIGl/NipSQKck/o5q33vKr3NOZW7y4uJcPZ9mux5EPCv6Av5ajqb5uBMrJtARQ29c7h9WdoUt5qti2zPp0mlIapr4QmJKzBQy8iEGXa5dl2eDSseARDmb8W4NlyxWMKW/Lba87TUzIeRNA53uLA4osRozso+4EEm34=
+	t=1762409280; cv=fail; b=ODuQTAfRZdAeQM7mWo68fZbuQSrQkWZ47F+r9sGycRTtEUj+R+3gRgFw8+sSAEXDD/pG7I1E5ADi2oFPwZwOOAAnG0QWfO6edLHsm9yggekXwpvjkVg1TH/6Z117mAxJMTxKnOcCUcxKHpQ6ppZsBgHMZKA8NT8ZkmMobXJJtQE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762409255; c=relaxed/simple;
-	bh=whcycEuEamkHM/3CSQcos/B92BLdojKKgiejhSYxNpU=;
+	s=arc-20240116; t=1762409280; c=relaxed/simple;
+	bh=Ihzl7Ao2TnZ47MsUZ7C0rnzU2oDrKdyTBrcgnpnqoNU=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=B5eXNAwrkxO5O8TlCUFq+pG/pFNt5wsh7RqME1l7v3sl0BtOvb2cxnJWGvfUb83FvIFuSl0hYSDESOMCQWK/JF2psgI55bvFXcTyJAjPKByeEAJX2ZptwdFOV6HC6WOSUFeWXaTxucCwbNT07iitO1eIXem69xOTjGD/fsVjCjs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=aEPXtmTb; arc=fail smtp.client-ip=52.101.66.50
+	 Content-Type:MIME-Version; b=SkmaHGtQGZn0eRYwkgpCxmyciwGZYsy9xS6ipeFgZ8fVp0r59nuYcNE9atL89qfd/tNV4JQuKETjZWDz2fQGDS3hOgLSoGyy6t2FX/5jJtoCTTGk/tmsUNpNXwT2sj4vN0kYRZfn9L2x0I5wGdAK+h9h68UGkrFOy708kIyE9qs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=qqUgUOi/; arc=fail smtp.client-ip=40.107.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l2M+jsIKNkB8VGjp1LPgbv5nZuiNXMxpOwBVzKE31pF7VSGOBb57CcyqBhcP2+zXYbAqW9EiCKpb2nWFvZp43EDFVnlr7/OFy0fqrzPPX92yhdA/JFo3K1r33yQ0AybggfBMTvUetMZJAe9k9VlPLReqwy2qqCo8C862oGspsQfXVfESklTdmlT4JaVo1oSbo0miq3m00JDxs7mRqA8DcaDTe3/gKqhRUPfr0L2aeYKC+l9z3gp87KklaXXrQY3+Q21wcvLjHxZrkc9GueHPKpepGbtTh2B+dYhJzYQqw6+SSvvNlANwUcqrjxfSrKi3oQuMArzwEn/Z3EEDdTVqlw==
+ b=Hm7mziW1+ITjiwDB3+9gFE16kVqFBz4vnk1NNwBC3qtj2rgwukZfpKOJUBH/2P1oKG9tnBgmeXDBNKvqb0buheLK6RoVB9xH8NSRp4tMavTz9rWk7N2GyiRh3XAeevG8YscRnXrHv8r2Bim4xgm15JCUM61/S2eQ5XDGMpk1unDQ+dv/vWgINXAcCZaTgWCbyQOEoIXcx3QkPLL1/gGbEvqx29ahT8uB2ujYV5u13VU0RD2MrbRYCdyzyo6w7fQ/Z7vO6x+q5M6HFhWGDD/mUD5v34CxJKhFR2uI6+QI7DrZOUjaOkTCaaX0fCuH8WTFaSNcGsWNPsmK+i/yz0+XqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8wFLI9aIBSpz8ZSOqp1O1zPOXT9cpIybOR8pL9H4yVo=;
- b=Nsrnm86qvABJqu/vKafarVxO7SAuUJL8yKz5MT6Yd+PdBodS/c9XrIAY/0X7l+to8N77v+sZ04fcMzqwKy7+YAWPD6V9rFkVdIhHW6hmx8aEl8SlWpmrRwxMbBuTCuBAZPQKVyMoiTmB8a3g0IxNEdaVgX6K2FCkNUqUM5d77pCxiyxJtJQ2S5l57bamJe+tTq/J3LqCo1rgmO/uUeHPZPw6g1LwRkJuTy8wAKM6ptHlfBGdj8Z1e4auV2K+W/jOcR5LFkQ02QJhNYs29rX8TZtVfOnWV4I7lxV10J8IQ9zuoMplCLMNnIjTZLdIQn8WXuK9bLAKQXcSz8ncTL+pYQ==
+ bh=hLrGQPJJu6j5xSuwzpP4BOGxhm3EOXqGOtgaSnK5/FE=;
+ b=O6gcy49IiMJm9EXC6+HcGE81MuRMkbZWcuQSdqxJgu5det+PmAWPHY25q7miTT4oGI2c2rapmZ0+8pM2kkvxR/MDOVcyaTeGU/sGdizNNxiDtVIEuU4Qc5bLj/549lKK+7B9Mc+QK/N9iR7LpBmG0tQ0ZnTLUMrB5gL2wfNkXdO5c+LQ3WDbSnNepuoSC9qdi372I8E5Nou9Ouzvo3CxyiVpdaQUj/BEJCJH21q6ViD8yNt4cMXnKJnSdVpYpGYeOhhGBauH4E4zEnc5Bt2wzslf46iOjUMuuGr3hu6qtssBAgIp2byi1AyA1ay2UAZkw9lKYcgt+785Im+oS/ZZmQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8wFLI9aIBSpz8ZSOqp1O1zPOXT9cpIybOR8pL9H4yVo=;
- b=aEPXtmTbTBJRgAOMx1Ot8ZhVzdWupOnv10p5rjV4Z78LjnKrXRYW44u/ix2o+ECifdYR+a821HtiaYC2IcerHQ1YGRKzL5ra0SB1KuALkAXl2eFb95v1BRPyAtg8QIkiQrfoDTORYlMCPpbk/i8fpyW00Fs07ErzwLOQ/c8MuldfpfnwcGZNrLiZh0p4nFLmSAIpRdfgOm9FA/AeRm5gbyJ5bwQ4vrUEVfB2h8EG0WqhKkjEJjOxCGfjjHG+LIRUK0CQ2pJaoH5NcnhCVQmnYd4pFKpDkOIkQpMCxhftrgAYnfgr5u737n5uMXJ1qJXHmPEETwVa67L6iQuATK1eKg==
+ bh=hLrGQPJJu6j5xSuwzpP4BOGxhm3EOXqGOtgaSnK5/FE=;
+ b=qqUgUOi/k061U+stj/DnlV3K3Ci1s62vNcROuwMy9LhUF+k4qxDYZcCBB1S3vaJ/Wq9EO6BYEOKqfY5kS9x/QBhZiBf5LUNhDHBf6QCco7T4OQk57vqj3m+mplkzXxOOeGRcpqPV4Zzm1wwEisnMG5V8frg4Yy/ft4HUbth3t3isPj6PwvfQNywqOPtHQz32rhqQt05iW1C1SGRplxhlhlImhGx+I+Vfp1akuDcKRZ8fitUhuHFKndHVEqErUTMcuswLWxJYCCwJowPCmtXRE7HNvt9gLbu7wlt2OhBGGxAKT1gfl1doABZe27GIw0Fq0lBqZjIATg/yyJq3Y4bc7g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by PA3PR10MB9260.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4ad::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
- 2025 06:07:30 +0000
+ 2025 06:07:55 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9275.015; Thu, 6 Nov 2025
- 06:07:30 +0000
-Message-ID: <b2019235-3fa5-4e38-8a2e-2c3ed955de06@siemens.com>
-Date: Thu, 6 Nov 2025 07:07:28 +0100
+ 06:07:55 +0000
+Message-ID: <0368bc9e-b5de-4b35-9f96-1bdc32aa6b02@siemens.com>
+Date: Thu, 6 Nov 2025 07:07:54 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: GDB causing OOPS on insmod
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
- linux-kernel@vger.kernel.org
-Cc: Kieran Bingham <kbingham@kernel.org>
-References: <aQvdFfIhcMBpJdmJ@fedora>
+Subject: Re: [PATCH 0/2] scripts/gdb/symbols: make BPF debug info available to
+ GDB
+To: Ilya Leoshkevich <iii@linux.ibm.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Kieran Bingham <kbingham@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20250710115920.47740-1-iii@linux.ibm.com>
+ <1eec0bc4-dc4a-4fe1-affa-3b8620dfc79d@siemens.com>
+ <ea1f1fd23d1bf4937c91be3bd45744b07b000b1e.camel@linux.ibm.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
@@ -109,9 +116,9 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <aQvdFfIhcMBpJdmJ@fedora>
+In-Reply-To: <ea1f1fd23d1bf4937c91be3bd45744b07b000b1e.camel@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-ClientProxiedBy: FR2P281CA0140.DEUP281.PROD.OUTLOOK.COM
  (2603:10a6:d10:9e::8) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
@@ -123,173 +130,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA3PR10MB9260:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1902d51c-2090-433e-bc62-08de1cfac43d
+X-MS-Office365-Filtering-Correlation-Id: 7b0af609-e6e1-4092-f6a4-08de1cfad3c5
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cXRJbDZJLzhOa3hocGg0QmpnNmdMN2hQZlMraG5POHB0NGprQjJESTV0UE5q?=
- =?utf-8?B?OUJHZW5lNUhQQ2NSNTU4STlXRnIreEdWSHF0VThhcFArNWhFNkhmbHVtL1lF?=
- =?utf-8?B?TUllbWEzUEZHRHQ1bG9NbjM5R240Y0twdU5KRDUvcHN2dDRkRHg2Z0xLdkk0?=
- =?utf-8?B?bDhLalpzZ1NzRTdtL0xLQ2w5emZKYkJNekxZRlFrYWJSSGZCbjNpQXFDNW9L?=
- =?utf-8?B?TElVZVNVMisrNUYzYlU5MWFNRTh3UjZPQThrODZTdXpNSnJvcXRIVGhVb20v?=
- =?utf-8?B?Yk5qdnZ6WStGOStrUVpoV3JJRDZlVlVHQVBzdnJVNkM3YXRzUVJQUjhlT3Ay?=
- =?utf-8?B?MkFWeFJ4Y0Rad0MvMjAvY05oY1gwQU1BUkR3Vnp1TzNObDl6dUozRGNNZlYw?=
- =?utf-8?B?aEFiSHpZcTJSNzFWWHVrV2gzcHFDYitCVG5LNHU2YTViRXJTNnJFd1FnVzBz?=
- =?utf-8?B?UldERS8zZjZxT1AzeWlVcXZpbXNIeDN4cDROaVpGcWR0WkxHbDFqaTZsNHlJ?=
- =?utf-8?B?RHdOTzdmNkc5UUZ6VnQ2STFtbFYvM0l5WDJEY3JodUlMRzF2dEd3U1NBdmtt?=
- =?utf-8?B?Ti9DNGtkRkdEeDJHK0Z2QzJodDJiVVdlemtGTW5MbnkySStJeDdnRUM0SnIw?=
- =?utf-8?B?bWhlOTZkbFV0amJVa0hWSGU5U0QzRmh6Nkxibk5wOW8rTWJCMmk2b0o2cExv?=
- =?utf-8?B?OUlaYThrb0JETW9rVjlFMlpGNTBabUFPNmNiVnVpMUgzRVNnTDMrM2x1eWhU?=
- =?utf-8?B?MGNta1JRZVpFdDRrMDQ5K3lUVGRkUVVPNFYvU0J0bW1rbEc5WjdObmF5RnAw?=
- =?utf-8?B?UGZURXdMQis3eGd1VUJRczROTXlNYjFhZWtZNmNZY3kzc0MvMXowWnU2T3Nz?=
- =?utf-8?B?QzBZMGs1dThKS00ybVBsdmhuWEVSNUlaS3ZaSVdGbE9CN3BsUzc2aEpMLzZV?=
- =?utf-8?B?ZzdqSWZxQ0svY0lSaS8rM3k3Q1o1UWhzejdRMlpOMTZpRTJ4bi9iZkdFQTRH?=
- =?utf-8?B?bUJDc3p0OFNvc0FMYy9mbDdvM25SbnNINEVWRzJJamhrckZ5blBmQUxyWCsw?=
- =?utf-8?B?b2k2WnlBaXcrb0pRSy9lNnpPdEZyc0lnZld3V1JyVFAyWUYxQUpWdDRlcGdz?=
- =?utf-8?B?UlU3L2MxdFcyS3pGbVZYZjAwSnlFSkw1VEsrbFN5UlNGU2g3ZDJ6ZnB5eUlX?=
- =?utf-8?B?TnA0VE9qM0dCbU5VOUxPMU5CMjY2UlcvRWJpMzBGVW1JU0VDSEd2MGk1Yk42?=
- =?utf-8?B?ZUpSWUlLVjFEb2Jua25pTzRuSmV3elVReUkySG05ZHMzdlZldUlVZkhwci9Z?=
- =?utf-8?B?cy95Zkx2ek5VN0hnbzNvOUZ2dng2dy93M1lNRE5xV094V2QxY0tab0gwVlBq?=
- =?utf-8?B?TXJlR2xIbkFweEhxQ0ErUVpwWC9qclNYbEtnQnk3TVF6TWw1em9JVHpkNnZp?=
- =?utf-8?B?TU9jMlloelRjZ1pTYUhDVGtTaHR5cWRtWTZTMWNSR0NMOVI2d2xRTHFPVXdT?=
- =?utf-8?B?RkR0VkwwbndJc1Jhd1ZZazhERHlRNlRJVmRCZHI5QXY0NDhIczk0VVlaU1RE?=
- =?utf-8?B?MWw3WjA3RSszR1FIU3pPa29tYTJIRktWSUZHS0d3RTdwWTFnbnlKVmRDaTg0?=
- =?utf-8?B?V3FldWJ6R3RBN1g2aW42UkxUQzdkVVZZNzFmdnFlWnFRVnB4VWRFMTBTK3lS?=
- =?utf-8?B?MnpyZGpicHJpWmdtZjM4VDhMZ3lhS09xLzlyNm5COXk4NHFKQm4xK1BUZUg5?=
- =?utf-8?B?RnJGTFF3dkdVbFQxQ2pkS1NWTEgrTWoxQVVqeGJ3OU5DbTd2YWZacVgrTGht?=
- =?utf-8?B?N3JWTU5sZFROZnVXUUlGaDltWlFzbVozaFYzdFJOSHYyMFlLdlBDb2M4U01F?=
- =?utf-8?B?Q2J0QU1wanJHKzA3c21QYzRGYnRUYWpSeWVhdTc4S2NoajVMSDZLcDg1Tyt3?=
- =?utf-8?Q?e8cyV9Z9dvqvbY7k2fqQ3FX8h/NA39Iv?=
+	=?utf-8?B?SzZCL2huT1BmZGJRT2IwYWx5Nk5RTjVBL2VRKzZMdUV4aWwxM1hYdGRkZmFM?=
+ =?utf-8?B?Z0xRNDFtakk4SGVtcW5peEVRc0owT0htdVQ0Ny92UXFBK09sSC9XKzFLaDZZ?=
+ =?utf-8?B?MnpUU3BpMThwb2prc0ZLV0VqWmNaQVNQTDgwR0lxb2tpQlVYRWh1TDFyaHp2?=
+ =?utf-8?B?T1RwKzYzbnVwVUNwWndJUWJ3NEhPV01oRlQ2NU1zV0QzSTlPbFdSelFVL0xy?=
+ =?utf-8?B?ZzRXL3BzM1NIY09lNG9uNXEzMjQxL292NnREbmRGcldOT2JtOUROM3FQallO?=
+ =?utf-8?B?aWg0KytzeGRRWUJwdGM1TG5kd2hFQ0ZwaDhYYjZtMzV3b2JyQ0tQVDRLbnZk?=
+ =?utf-8?B?SWVnaFVER0NOL3hTNDRQNzlNYlBkUVZ5WC81ZUZ4bHhoN2Z6cENXamZSbURl?=
+ =?utf-8?B?dy9qSDlvVnIzMEVackJ4YkM3M0s5OWhzVjZFQ1BsMVN3Z3JObzdObVZiNTZv?=
+ =?utf-8?B?Q2cwYnBOU1BTY0tpdmNiWTdtdHdnNEprM1hYb2tRZ0pRTFF2VThaYWY2dElr?=
+ =?utf-8?B?aVZUM3Y0bGdLWUx5WmljeGpvdDE0ZUdwSGovSXZFWmZvVlI1azVIRUloYVRx?=
+ =?utf-8?B?YldYTTVDY1I0aVVJYWhibk85anBKbCsvSVYwWVZtVm5CNndwWUhwSDA5V1kr?=
+ =?utf-8?B?UkJQcWVvaXhvcUdCeU8zQktTQi96OFBacGRNc3pkV2pFRnlxc3lXSXNzZTl2?=
+ =?utf-8?B?WnZ6UnNTOENaS1hnbENYZlMranJQalA4WDlaRDA2MWtnZm1qb0p2aHdxalZs?=
+ =?utf-8?B?Z2wxTk9yMXErakY1WFlOaVNMdFBxNjVYZUNCRW83ZkdwRUNqQU9RNWdYcWJz?=
+ =?utf-8?B?QlBKRVhFTXVpRlV1dWJod1VNSElWN0MvemNoY2J0TEo0V0ZCVWNBdHExOWtO?=
+ =?utf-8?B?eGovT2wyZzNaamZUYSt3aGNSMmpCbTdpVG1yNGlmcHhFNHFEakcwNFl0Z0pO?=
+ =?utf-8?B?d3lLYzE3NWhsNS9uOFZpWnJzWFRoN1p6SHN3MXZvZC9acjAwT2pmSzRWY3Zo?=
+ =?utf-8?B?RitnSHZCeXlVMjc3ZTc5NGQrTTJsUmM4R1YzT2lPRTJQOGw0cmdQWUJQNE81?=
+ =?utf-8?B?bGJaKzRCNjN5aGdLNXpJZEJvc2lYMHpxRjlHUHM5SjV2NEdseXZzTWdzakNr?=
+ =?utf-8?B?SUpQZWdtSXp5R3FmVk5OM0Vtc3daaGE0WVVmNlE0dHIyZzhZU3Iwamw4WWhK?=
+ =?utf-8?B?OWdtdFJoTkxiYno0MmNpMzFRMnBLZ2hCcmUxQm9WWUN2WFFwSnZkYmY2dC92?=
+ =?utf-8?B?VGxHeTdhOU5Wd3pQU29LcWlmQmpLZnE1d1ltNmNNRHhIQllvbVBpSXg1d2JW?=
+ =?utf-8?B?T1A2TVBwUUZzeU1oYUx4UGJZREZKTExBSmtNUXFndFVZY3MyVWVteDREY0Vn?=
+ =?utf-8?B?WHk1R2pobEZMZmFBTEVYL2FuOU1xMWVWa250SzlJZVRQcUpNZlMzV01Wa1N5?=
+ =?utf-8?B?Vkd1clhwUzdleG9VdEEzMCs0WnVRL0I3YWVCWWRLVjR5T0UwRk5wNmVVdHps?=
+ =?utf-8?B?WGJxendKaVE0bUFTZmxnOVRFdVh2eENER1J5aGdhZ1g1L2tsRHlsMURBMit6?=
+ =?utf-8?B?UDRZOEkvemFLckVWaEJuS1lJMUVvOTVtTjNDMGlBc0pvNVdTZzdiODgrNTh3?=
+ =?utf-8?B?TTZLeGozblViMmQ4clNVT25UeG55cmFsem5ZalJkbjl6eWNSd1gwVXUxY1o0?=
+ =?utf-8?B?MlBqeFFHdHY2dlcrd0dyazM3U0J1dTJEeVhERmJrM2Z1eHBuaC9xeEpTck9F?=
+ =?utf-8?B?YUhvaTM5VjdSOTB5Z20rWjJReEt4am9NMC8zQmFxbGNMZTVkSldjM1BBbldm?=
+ =?utf-8?B?N04wREF1VVZyN3dvTkEvTWxVa0lYUzZTV25WZGFZdVpwaG5EVDBnMDlSa0xS?=
+ =?utf-8?B?NXZ4U1JCU3pMWlhvTHVTL05MNzQrMlptZTVVaExGNjBXOWlSZ0FscUliT2RI?=
+ =?utf-8?Q?6VbP6nwitQi7mBW/RTML6WJe0Eu+SU7V?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZEM0bldqTjlVcGUrbkZ5enhWUStQSDhxRUV4TWRvMHZTWmxwcWJuU0d3Z0NC?=
- =?utf-8?B?bHppUFpZMlkxNjBlUnhVYjNMaVo0OUp2RDAzWmsxWDFvcklaL3ZhZzM3RHNk?=
- =?utf-8?B?d05MSGh1ejJrZXl2Qy8wSk1BajNYdWo4K3hNR2QvRDI1V1JvdWV1M00wSC93?=
- =?utf-8?B?a0tiRmpXMDc5cTNPdEUzR2hGQTgzMElTL0tPOXcvRFZFZWR4V1dOV3M2STVy?=
- =?utf-8?B?NkZlYXlENERONk9qcXhseFhHT1JMcCt1WGZBTjB2Zy9mY2ZUZ2luQkFGZWxz?=
- =?utf-8?B?cUxXZHZpWEFZdUt1Qy95TFFRRGdkS2s2aEhRdEhGakwzWUNjRlJuQjREOWsz?=
- =?utf-8?B?WU80SzFGSU5zOWRCb0EzeTh3SUZNRzkrV2hQWW9ObTZDNnZzY3gxMWFVd0NI?=
- =?utf-8?B?UEUwM01wTDBDYXdQNzNTN3pIekM2MjlqNTVaNTFZMFJPZE9wdUhYNUdqd0ph?=
- =?utf-8?B?ZmtxbCtNVGVxY0RCcEkvZlhtVW9KZk5OcVlPLzFnY0FsMUhmS2V6UmROMnlt?=
- =?utf-8?B?TURId1kvUm9JOWNFWldseC9CdGQ5N0JOUUpxdzFJV0c1MS9XekJOaE5RL0hS?=
- =?utf-8?B?eVMyN3QvWGpSZWRMNUlyZkxsMnlGWlYzcEZhdGQ2cVhaZENhK210ZncvK3l3?=
- =?utf-8?B?ZE45YktrSTF3Y1llZ3dWcFh3WGRpZHNCdU9YS1IwcUVaMkVCbUt1dXE1bDNX?=
- =?utf-8?B?YjVrL3B3b2lrTGoxcHhTSi9TQjR6SjYwUTFPWTNGclZqUFAyTklzNDBSelYy?=
- =?utf-8?B?SlQxbE9qN0N6QVpIcDlHT2NwWUtPeDk2QVhNNWFlRWxnT1lmWEVaYkVsYmkv?=
- =?utf-8?B?bkJ1TkVtZ09Na3dMZzlUMVkrcEtwSE5jVEpsSWtCcDRYZzJmdHJvOExYRDZh?=
- =?utf-8?B?czJITGJmK2M4MkpKNGhsUjlCSlVxSzhPeW1QQWgrcjhyNnRVdGt2ODh1dm96?=
- =?utf-8?B?eDNJSzV5N040ekp6UEZ0dW4wanhndzAxa25ON1R0aTNvVUoyVng5YWEyYnFq?=
- =?utf-8?B?bUtLYUJpdisyNFpwRDBmbDl1eE5SdU1aMnhxUnBOSXg5dWQ3SUxTbWt4Qnpk?=
- =?utf-8?B?bzZocnplYW1OaEpQQ2tYS3lqSFNoRXRHeUdUZG5TQmhEMVR3RFhQaUxCYXlF?=
- =?utf-8?B?Q1JuSXRJR2VXUUJhTGpTN0VMRTUyZ0ZrcEUwS0VRRlY5aXI4L0o4SVQzamxT?=
- =?utf-8?B?NGN6cVllN0dmdElQbjFyMlR5RklsNjZKZWtGVmQzTFJaWEhiYVcrK0tGR0tk?=
- =?utf-8?B?YUNDa0RQa1ZsWUVCTDdpeGFrOUoyaGZBREM5MHlSSGpYWDRER05sSUJwYnNO?=
- =?utf-8?B?bHh0clo1WHg3d0xnUGYrMHJkRTFkT3ZqYWVZeHBMcUZrKzdqMlBNM0I1ek5D?=
- =?utf-8?B?WDNZNEM2MTZidk9MV2pzN3lCL0Zkd3kvYnF6aXV0dis3eVp5YVNEWDYrWC9Q?=
- =?utf-8?B?OW4zQkV1WFgxWnFGMXp3d1diRzJ0aXQwVTNXRmRQNUhRb0loYmVpNGxCRmZy?=
- =?utf-8?B?V0l3STVVRWY2aGJXYkZSSWhJQnRDeTdYYVZLcnVoRDZnWGwxdlUwM2lRVE9j?=
- =?utf-8?B?QlRSdENwVG5mZjFrdXlTenlDQ3FvOGFST0ZzWFRsNmFrTE44d0pnMVkrYTVP?=
- =?utf-8?B?blRyNEhtTkpSaDk2TkFTWWl3ZUljdzVUSVVJQWhYeURWTDlxZzVpU0RWM2p4?=
- =?utf-8?B?NEtKLzNDOTV2VU9yajlTWU5Fc1h5aER5TWhUSDZzblZRMHhTRkpPVk9Ia2gv?=
- =?utf-8?B?MzgwV3NvTEJVSzlxZDlwa1FKcTNENnVLTGx4MWpqQzRkLzc1OHgycEk3RmVS?=
- =?utf-8?B?ajhWV2lWZVdERW5IS1UxZUpYSk54ZEVXT1FiOWUrNnFXWnI2Nk9yUmFnQVI4?=
- =?utf-8?B?RGZER1lmN1kyYUsrdVBMTFVVbmo4QUtpVlpPNUt6cVdVMzQzT1ZPcGxRbmIr?=
- =?utf-8?B?UjFVZlZYcDNlSzR4V3c1c0NWUWtWR3ZLbG1GdjVRL0lOR3cyWDVEVEIvdld5?=
- =?utf-8?B?QW02TnA0VXh4anBnY25Na0tNZWo4ZmR5UmRnTDdxenJydWV6V1d3RzNsdkV4?=
- =?utf-8?B?aTlNVVltV0V3dGRGUENOUnVESnBNQXpNSHc1SVVJdFBhL1M3WGs0cFZkVWl2?=
- =?utf-8?B?azd2bWdRb2FQeGgwTHJkK01RbTNmams0bkV4TmE2amFSbXZ3ZTZEckdSTDc5?=
- =?utf-8?B?RkE9PQ==?=
+	=?utf-8?B?L2pocWU0UW51aU81ZC9uRUluQ21oTjMxQzRFUk5LcGJMVDE3N0RWZFhyc1dF?=
+ =?utf-8?B?cGw4MXY1NC94VEhlazlyUGdLUUpOQkwva0w0MEtDTDlmbUg0OUhIKzhqRjFO?=
+ =?utf-8?B?TGh0Y0V6VXNjcUUvSkhJWHgzQ3Y4cUltTVI4aGpxQ2h0a1F0UWcvRWtIcWRC?=
+ =?utf-8?B?aE1OaG9GbGF1SDZZZlc5RllScm5MaENJcnZHVk9tQ0w1VDZIZ0dlU2U1WjBH?=
+ =?utf-8?B?N29yRlBzQ1ZoSnBFdnZIb0lNK2owcnhqRUkwZXBtSldBU1NSS3o5TEJPK2NJ?=
+ =?utf-8?B?UCtHK3gvT3d6RGpDTThsR0JCVHRyMnpJVVhBMGdwbmpkYjk2MUJqa1JyZE85?=
+ =?utf-8?B?dXNLZ2duNjlGbWQzUVNyZUVuNDMvbTAxSjJ5QVgyaU56MVVoVXdCUnphTllV?=
+ =?utf-8?B?VFBkcFBQZ0JSYllyU0NJS0ZvVFg0OU02N25zNnRGcGh6UUpXMW02encvM2Jv?=
+ =?utf-8?B?dHdldzFTU1JqL3ZBdHVVWkNmdnJmRFBXeWJsY2RXMWk3cVVDcUZmT0kvVGJi?=
+ =?utf-8?B?UTBHMVl0MSsybUlqL3ZaOTU2S2RYRUZJcTJTWGdkV3JicDVaZUlpaVlHZWNS?=
+ =?utf-8?B?RUlCRzhzRERRNHUzb1ZwWXdSMnlCQlFUM0VVd0JGU3BRM3pxVE5ZenN1SnE5?=
+ =?utf-8?B?N2tSK0NmZURhTFZUdjJ0emQ3VlVNcWFhSUkybjViMG1Ucy9vRGRTNDFKZTdp?=
+ =?utf-8?B?Y2pRMTFheVFEaWtSS2VQWWhCOTRJKysxNThESWtCZUxnYXYyY0t1RFo4QU5T?=
+ =?utf-8?B?bGtGQklUTlpoOGZmYmVGZ2pXNGthbUR2M1J6Skl3STZHK1hNOHU3VDhQTnBt?=
+ =?utf-8?B?eFUxeUs4VWw0VlNZSmxFcnV4TmpOYTFOZVdUaXlLSjY4TnJVWFVCK25WamNC?=
+ =?utf-8?B?bmIxYUFaNG4rbE5OMTBwdm5JNjRvVG53eW1VeXJ1UDk5c0x2OEd4dHlGVitw?=
+ =?utf-8?B?bitHdjFjL3VNWXFiK2c5SXNremZKT25UWU1kdzAyZEJ6eG5WQVBSNERvWDFF?=
+ =?utf-8?B?Y1RKVXpFaURIb0VRREV0aVc2M0lxamtueEhkc2hMbkI1SXZnQ1l5aVZCSFAy?=
+ =?utf-8?B?c2NBL2I4eGtvSUlEMG8zUFByUklLTVExajNLcDI0bUl0S01PaFR1TllLTndn?=
+ =?utf-8?B?akpnbnU1bzY1RHFiaGVRRW9HenN5TEdPK0t1TkVjU0pnMmk4R1NwWWoyYnBh?=
+ =?utf-8?B?VXJUdnlUWmFhdjRRcWNOMFByR0c3OCtWWWlwdVo2VmVHOUU3MW01Tk9PVDVh?=
+ =?utf-8?B?ZVJja01sMmlwZFI0a1VIVzdDNW9iRFhyeDByaGkyUmRwRFczMVFBZnM1ZWZX?=
+ =?utf-8?B?eFJBTEUzeWVDZGtXRU5DN1dTdk9xMm5jMGtDUm1kc0NrTnBTSkwySGFqQVMz?=
+ =?utf-8?B?YmRpaXZmQWgxWEpDOVZTV0YzWkovMy84SDVmZHhZZVhZc2hzV0hKM3JSVGhU?=
+ =?utf-8?B?RmxDaHp4RzdrNUVlYURERUJTbEFNTTJZa0lYbERwVXpsSHk0enk0Uzg0bUwr?=
+ =?utf-8?B?MVU3N0dvSHdRVXJnSjNTOTl1YnlDbVpFSTVHSDd5aW9NaTA3elVNTXdiditK?=
+ =?utf-8?B?V2ZEOTlEUE5uT09yc1g5WG4zcVVUSDJmQ1k2cWpXMmhiYW9MbWJyQ0tOdllh?=
+ =?utf-8?B?QUZxODNaeVRQWjRPMlV0VWF1ZGpvdnRuOWFtS0RQa1JhOXJiclFrbGxKZ29o?=
+ =?utf-8?B?ZDVsbnBoTXlYdnpaVmhEaDVoeDNlMnd1b1JxK21LSGxZNGpWekFpS055RE0v?=
+ =?utf-8?B?Z1R0cTEwelM5Wk14eUdqQkI4WXMwVDNyVEprNWNQM1ZGRXcvakVFbERvRUFD?=
+ =?utf-8?B?aGZqTmpIZzY1c0hJQWJJeFdScHptallTMjZMdEF2aHhRNTN4RWVnWTVOVjFm?=
+ =?utf-8?B?Q2VVVURnT0NsdmQyQVFKODc0NmZLck5OOWY2MGdWL0FreG1GaWY0MUxrazdL?=
+ =?utf-8?B?SkZsbnZsVFdzdlpHa2N3WTJaKy9ndG1FMk94alVYYTEwTnJ6OEo1dzg3UVFS?=
+ =?utf-8?B?T3JReHpWQ1M3MHdQZVRmVFV6bEhPUS8zdWdlSDZYSjhkc0grS3FzSXJkZGhE?=
+ =?utf-8?B?Z3hWdUJ5WjkzNGQ5VEdlM2F5SVVyVDFNZ2o0c1lyZ2F0MzRxUzM5T2RBT2ZJ?=
+ =?utf-8?B?TXNLTzBiZnNJdmtCc0tWUExUN2Y4UUZMY1MvTTdHK2hOcVZZTGlFTjIweUc4?=
+ =?utf-8?B?d1E9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1902d51c-2090-433e-bc62-08de1cfac43d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b0af609-e6e1-4092-f6a4-08de1cfad3c5
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 06:07:29.9243
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 06:07:55.5178
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fqMlA0kuwxQYF3SFw7Qr9vd9AuhBQr2jYEiQEKuJXC8lACB3VHB2qWX2EoTjtWk4nhqfhddUYUR8NS6r6eYUqQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4u31OXi1ahs2VTd6nWIHP3VH6ZGPPp/rxf/qdzXkU0v1wa0tS0XDIVGAis5qqpUJ3Q+2dTtv6Ok+TTyBc47fnw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PR10MB9260
 
-On 06.11.25 00:26, Vishal Moola (Oracle) wrote:
-> I'm on a x86 defconfig + GDB_SCRIPTS + DEBUG_VM + PAGE_OWNER kernel. Running 
-> 'lx-symbols' in gdb Before loading modules causes the kernel to OOPS on
-> module load:
+On 05.11.25 20:32, Ilya Leoshkevich wrote:
+> On Thu, 2025-10-30 at 17:47 +0100, Jan Kiszka wrote:
+>> On 10.07.25 13:53, Ilya Leoshkevich wrote:
+>>> Hi,
+>>>
+>>> This series greatly simplifies debugging BPF progs when using QEMU
+>>> gdbstub by providing symbol names, sizes, and line numbers to GDB.
+>>>
+>>> Patch 1 adds radix tree iteration, which is necessary for parsing
+>>> prog_idr. Patch 2 is the actual implementation; its description
+>>> contains some details on how to use this.
+>>>
+>>> Best regards,
+>>> Ilya
+>>>
+>>> Ilya Leoshkevich (2):
+>>>   scripts/gdb/radix-tree: add lx-radix-tree-command
+>>>   scripts/gdb/symbols: make BPF debug info available to GDB
+>>>
+>>>  scripts/gdb/linux/bpf.py          | 253
+>>> ++++++++++++++++++++++++++++++
+>>>  scripts/gdb/linux/constants.py.in |   3 +
+>>>  scripts/gdb/linux/radixtree.py    | 139 +++++++++++++++-
+>>>  scripts/gdb/linux/symbols.py      |  77 ++++++++-
+>>>  4 files changed, 462 insertions(+), 10 deletions(-)
+>>>  create mode 100644 scripts/gdb/linux/bpf.py
+>>>
+>>
+>> This wasn't picked up yet, right? Sorry for the late reply, my part
+>> of
+>> the "maintenance" here is best effort based.
+>>
+>> Looks good to me regarding integration. I haven't tried it out, I'm
+>> just
+>> wondering if it has notable performance impact on starting gdb or
+>> interacting or when that could be the case. BPF programs are not
+>> uncommon in common setups today. But if you don't want to debug them,
+>> does this add unneeded overhead?
+>>
+>> Otherwise, I think it could move forward if it still applies (which
+>> it
+>> likely does).
+>>
+>> Jan
 > 
-> [   13.627373] BUG: kernel NULL pointer dereference, address: 0000000000000900
-> [   13.627376] #PF: supervisor write access in kernel mode
-> [   13.627377] #PF: error_code(0x0002) - not-present page
-> [   13.627378] PGD 0 P4D 0 
-> [   13.627379] Oops: Oops: 0002 [#1] SMP PTI
-> [   13.627383] CPU: 0 UID: 0 PID: 279 Comm: insmod Not tainted 6.18.0-rc3+ #163 PREEMPT(voluntary) 
-> [   13.627384] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-6.fc43 04/01/2014
-> [   13.627385] RIP: 0010:__kernel_read+0x210/0x2f0
-> [   13.627390] Code: 00 40 0f 84 bd 00 00 00 48 3b 7f 18 0f 84 c3 00 00 00 48 89 f2 b9 02 00 00 00 44 89 d6 e8 78 6c 06 00 4d 01 ac 24 f0 08 00 00 <49> 83 84 24 00 09 00 00 01 48 8b 45 e0 65 48 2b 05 53 38 c7 01 0f
-> [   13.627391] RSP: 0018:ffffc900002f7c68 EFLAGS: 00010246
-> [   13.627393] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-> [   13.627393] RDX: 0000000000000000 RSI: 0000000000000246 RDI: ffffffff82d47e70
-> [   13.627394] RBP: 00000000002f7cf8 R08: 0000000000000000 R09: 0000000000000000
-> [   13.627394] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-> [   13.627395] R13: 0000000000000000 R14: ffffc900002f7d10 R15: ffffc900002f7d10
-> [   13.627399] FS:  00007f704851c740(0000) GS:ffff8880bba45000(0000) knlGS:0000000000000000
-> [   13.627401] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   13.627402] CR2: 0000000000000900 CR3: 00000000095f2000 CR4: 00000000000006f0
-> [   13.627406] Call Trace:
-> [   13.627407]  <TASK>
-> [   13.627409]  ? init_module_from_file+0x92/0xd0
-> [   13.627412]  ? init_module_from_file+0x92/0xd0
-> [   13.627414]  ? idempotent_init_module+0x109/0x2f0
-> [   13.627416]  ? __x64_sys_finit_module+0x60/0xb0
-> [   13.627418]  ? x64_sys_call+0x1a74/0x1da0
-> [   13.627421]  ? do_syscall_64+0xa4/0x290
-> [   13.627429]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> [   13.627431]  </TASK>
-> [   13.627431] Modules linked in: test_xarray
-> [   13.627433] CR2: 0000000000000900
-> [   13.627434] ---[ end trace 0000000000000000 ]---
-> [   13.627435] RIP: 0010:__kernel_read+0x210/0x2f0
-> [   13.627437] Code: 00 40 0f 84 bd 00 00 00 48 3b 7f 18 0f 84 c3 00 00 00 48 89 f2 b9 02 00 00 00 44 89 d6 e8 78 6c 06 00 4d 01 ac 24 f0 08 00 00 <49> 83 84 24 00 09 00 00 01 48 8b 45 e0 65 48 2b 05 53 38 c7 01 0f
-> [   13.627438] RSP: 0018:ffffc900002f7c68 EFLAGS: 00010246
-> [   13.627439] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-> [   13.627439] RDX: 0000000000000000 RSI: 0000000000000246 RDI: ffffffff82d47e70
-> [   13.627440] RBP: 00000000002f7cf8 R08: 0000000000000000 R09: 0000000000000000
-> [   13.627440] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-> [   13.627440] R13: 0000000000000000 R14: ffffc900002f7d10 R15: ffffc900002f7d10
-> [   13.627442] FS:  00007f704851c740(0000) GS:ffff8880bba45000(0000) knlGS:0000000000000000
-> [   13.627444] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   13.627445] CR2: 0000000000000900 CR3: 00000000095f2000 CR4: 00000000000006f0
+> Thanks for taking a look!
 > 
-> I used module test_xarray for the purpose of demonstration, but this does
-> happen with all modules.
+> I have to admit the performance implications are noticeable due to
+> having to spawn an external process for each BPF prog.
 > 
-> I have no clue what patch caused this, or when this bug was introduced.
-> I played around with the scripts a bit and found the diff below eliminates
-> this issue entirely:
-> 
-> diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
-> index 6edb99221675..8b507907e044 100644
-> --- a/scripts/gdb/linux/symbols.py
-> +++ b/scripts/gdb/linux/symbols.py
-> @@ -44,8 +44,7 @@ if hasattr(gdb, 'Breakpoint'):
->                                "'{0}'\n".format(module_name))
->                      cmd.load_all_symbols()
->                  else:
-> -                    cmd.load_module_symbols(module)
-> -
-> +                    cmd.load_all_symbols()
->              return False
-> 
-> Does anyone know what's going on here? And is this the fix we should upstream?
+> What do you think about hiding this behind `lx-symbols --bpf` flag?
 
-Are you using kvm or tcg with qemu? Is the issue gone when switching the
-accelerator mode?
+Sounds like a reasonable path.
 
-And when do you attach to the kernel here? System booted, idle, attach,
-continue, load (another) module?
+Just one detail: I think gdb only uses a single dash for flags, thus:
+lx-symbols -bpf.
 
 Jan
 
