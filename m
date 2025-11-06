@@ -1,140 +1,83 @@
-Return-Path: <linux-kernel+bounces-889078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA512C3C9FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:56:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A671CC3CAB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77EA93527CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4283E4E9512
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEE634A78A;
-	Thu,  6 Nov 2025 16:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4093284665;
+	Thu,  6 Nov 2025 16:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Na8DiMyd"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRiTQyzo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C151347BBE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBE034B661;
+	Thu,  6 Nov 2025 16:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448186; cv=none; b=iUl3/SElxSG7tKsID8JNWlxAy0dCBlqaMLLojKHOZp9PUMRt6l0HB1CHpQGaRhiiKXG5q8mGp+oy5mrNhXQZD2DnnoX27J1ahnP1V3j00sk2BkpUrWdLkoDSLV05uEL1uVG+zxsRbkbib/5Lv8Csnlr8sMfrJaUHZwp8eVqW6l0=
+	t=1762448188; cv=none; b=kpq/4SzuNNOnr645aAKSjJ2eV19QEbs/zflIy4A1wj5t+P2ChtzuXAUKKaUKrbm54Crvd7Lqml3U4rv/SNODlKLlUGdjKSJ/JnPLPvFmsFsFrAmkO9NpX9YHlj98qBFbfJem0sqj+NEB5/TpsoPlmuipamknRh1bOJrduZL2rjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448186; c=relaxed/simple;
-	bh=069UhOXOJgsi1oIjqBENDlkBNgO/tL7N/jC2rM7iMA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rqXxbu5/G2SklQZ1WKdQNWHXykO9meNVjnFYewRdmQIvKMsWjvAReEIm5BSzfHcHYAdz9RcmpJTWMR0t1xJ5zYlpUPd1T/4EIBE+Cws5+1Efww6PkOhrLPLsliNiq1dnrYCDuyMQRt7RJ7s4krcQYOOVYcoRtvQCvLT4m2uTOpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Na8DiMyd; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640f0f82da9so2121043a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:56:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1762448182; x=1763052982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y1d33Qfkr/UySDlVInSW41vMX+/10XV70RYaxgiV9H4=;
-        b=Na8DiMydQN2WVmieNbNglQINnhzqan47t244XAjhIkPu8H/cHjeHyAgUp//4QJiXWR
-         8HZMFFXfOuYoTd2QzhCOIisa93dHIYpw0tt3iZgfyqdmnLkvfkid2pa8A2lrQMCMbjCN
-         zuCc+GyF9lYHrZh1SVk4XifTtBNZRiXvAzUZQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448182; x=1763052982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=y1d33Qfkr/UySDlVInSW41vMX+/10XV70RYaxgiV9H4=;
-        b=Qh61he08KFoba5nCuIIcMpVvyjaUMSjNcdQoBkO1DnW1+/dZNwN+ysvKGf8OnP/+BH
-         uw4+IVzG0BL2aQTM/MxEf5LbAHfu98EjnRjDLpGU+4JBq4Cam4fjdTif9rEPJozfd8wL
-         7KROZ98njELPTnXpuGc26PoOqdmoLDVNxidaok5XUoFXjaAioh112cjPAfrRRPo7kbnd
-         3imfmXPvl2dCtHPYmczomqzWlvynKlGICBYalYHhtOvCkJnPhcXtX6/PSPN9+7BDbS1v
-         Pb5dCetHg53Upq15SDFOGw1mwrXBX6ZVIrsxUJr6OINTiyegkCuG5GrPSWDJhMrF/60U
-         6fQg==
-X-Gm-Message-State: AOJu0YzVna3rfsDdcm3YMgtNSlQaoBWPCJjGB/GhdLkT9cdPhQRbe2fJ
-	zp9NJlLv45ZFtPO1Gcu0/AVu/3njzqjxdW2nWU6DBSUM2biwgT1nReBICUmSFl/7RDck097EYgl
-	/FyA=
-X-Gm-Gg: ASbGnctp/q6tgMwlnEe0GR+INHpK0PPCEfIFLnOwunrU5nvNVE7hsTkl4UZR9vr1wZ5
-	Vzy9i/6iW2u3YG/EwPg4xsqS88fqLKo2sZC0Z9UDh2nXB1JyVPsNqFH/dCEWpbaYaNyy+MFWW55
-	wh7dCEeZwPofxUm3cohHfPQ5AA05ZVsfHONTGPxd+vLu9ZlDdiVAbeL/+Yhukr2PswffUpfjzJ3
-	GmRp1ldU+8gTe5dkBG88Xv6yt6xHU1mQ5tLaQd8J4/jeNv305Xl2azTFPD0ngAYjRIXFniTeQC2
-	mRmRJXWR72jbUb8sC+pm7RbPXc1mhdAxJ6BzvtIwH5WEHmSgz28bDO9TWTCBZ/v038DY1JwIzFD
-	BeSHuICoietYilmB3mLKG0GsY2UoRbbVu7JyQxSOO3slV54eJ7+FcPLen5+Wo8YoVC4gVQZw7Jo
-	HfNunJEBZ7u+Wzcm5IxqnK3jQL/UKdLtfS1mAu9Mo=
-X-Google-Smtp-Source: AGHT+IFJ3VQix7tPWRjOC2nHaPrM1agPeTtri+WJU4m2j2aqDdVQvIRjy1m8vP/8H1H1PbxHA+JOjQ==
-X-Received: by 2002:a05:6402:26d2:b0:640:6653:65c1 with SMTP id 4fb4d7f45d1cf-6413f059d91mr48283a12.5.1762448181688;
-        Thu, 06 Nov 2025 08:56:21 -0800 (PST)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f857839sm2331726a12.21.2025.11.06.08.56.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 08:56:15 -0800 (PST)
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso797475f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:56:15 -0800 (PST)
-X-Received: by 2002:a5d:5887:0:b0:429:c505:99d0 with SMTP id
- ffacd0b85a97d-429e32e4484mr7115033f8f.25.1762448175160; Thu, 06 Nov 2025
- 08:56:15 -0800 (PST)
+	s=arc-20240116; t=1762448188; c=relaxed/simple;
+	bh=g8hhqYAlLRPy0OO8aW+VM4dqaefjEpSWoUgU+32L+Ko=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=E0nnbD7TMO15mk/X6dktPJRujvPzgXIEScdQgkKdKeSQ41mYf855Eu6RXWpYBXC/Y4MdeABuglIFiIvfr2XBd18EK0cV4sMsQ7ZxetEGmIg2n3HZ7wF+BgdqPYlxayZb7wB/HmnRGNlP1ty0RIGblOUlCGxouJcMtfISG0ndHHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRiTQyzo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F67DC19421;
+	Thu,  6 Nov 2025 16:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762448187;
+	bh=g8hhqYAlLRPy0OO8aW+VM4dqaefjEpSWoUgU+32L+Ko=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=KRiTQyzoeXHPV3ZgoIDaRR/5bkTrDMu3LXTDeswLnqvUsIHubMVgJzxY0pDXgcR1W
+	 jx8PIe5ieZxbb3ENAIXYmzy0SdbYd7xFQCmgd3atLpTlNQP5dFpMjfN+HWaLIjtEax
+	 X/GDQgi/C5D/1xgqSarpTSKrdOYdeQ2hCd81CN1aqKfoEithXlnK+Y6bZICIZiJHC+
+	 7nv4SuTGY1vzUkq/lidwnF6vvvxgbpb/PusDqFuvU/BO8gd43XtKja4CFV+mdzLINr
+	 ebPTgu1fkZcd4BTOhnMmWNnpChNlBV35POmfYzfEQOWWDHLxM3DBOdcIvlYfRI671A
+	 jpUjSaBY9pKqg==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+ Helge Deller <deller@gmx.de>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-fbdev@vger.kernel.org
+In-Reply-To: <20250729-expresswire-dep-fix-v1-0-635cd4cc746b@dujemihanovic.xyz>
+References: <20250729-expresswire-dep-fix-v1-0-635cd4cc746b@dujemihanovic.xyz>
+Subject: Re: [PATCH 0/2] ExpressWire dependency fixes
+Message-Id: <176244818496.1958671.2173337292589676568.b4-ty@kernel.org>
+Date: Thu, 06 Nov 2025 16:56:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101040043.3768848-1-ajye_huang@compal.corp-partner.google.com>
- <CAD=FV=XqgkgLLOeozooypbwiO-8j0ZNy_GJ1UD2sXL1EKzC=Fw@mail.gmail.com>
-In-Reply-To: <CAD=FV=XqgkgLLOeozooypbwiO-8j0ZNy_GJ1UD2sXL1EKzC=Fw@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 6 Nov 2025 08:56:04 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UoiSAhHOs=HUoGU-kX_ARc_EJP5p7_Ozo7u5vcY33GSg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkJiA0NM5kHBq2AiPq1aBIwz3sEY3uTcdzu4ZMGksAVclFhXHwVsuamfP4
-Message-ID: <CAD=FV=UoiSAhHOs=HUoGU-kX_ARc_EJP5p7_Ozo7u5vcY33GSg@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
-To: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-Cc: linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, jazhan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-52d38
 
-Hi,
+On Tue, 29 Jul 2025 19:18:28 +0200, Duje Mihanović wrote:
+> This tiny series fixes two dependency issues with the ExpressWire
+> library and the KTD2801 backlight driver. Thanks to Randy for reporting
+> these.
+> 
+> 
 
-On Mon, Nov 3, 2025 at 8:38=E2=80=AFAM Doug Anderson <dianders@chromium.org=
-> wrote:
->
-> Hi,
->
-> On Fri, Oct 31, 2025 at 9:01=E2=80=AFPM Ajye Huang
-> <ajye_huang@compal.corp-partner.google.com> wrote:
-> >
-> > The Sharp LQ116M1JW105 reports that it supports 8 bpc modes,
-> > but it will happen display noise in some videos.
-> > So, limit it to 6 bpc modes.
-> >
-> > Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-> > ---
-> > changes from v1->v2:
-> > * Change EDID_QUIRK_FORCE_6BPC to BIT(EDID_QUIRK_FORCE_6BPC)
-> >
-> >  drivers/gpu/drm/drm_edid.c | 3 +++
-> >  1 file changed, 3 insertions(+)
->
-> There was some extra testing and summarization on the internal
-> discussion about this problem that cleared up my confusion and I agree
-> that this is the right fix. While the panel does properly link train
-> at 8bpp and generally displays images OK, showing certain images on
-> the screen displays consistent corruption on just this panel (other
-> 8bpp panels are fine). It seems like there's some sort of subtle bug
-> in the panel at 8bpp. Limiting it to 6bpp, which is what the panel was
-> originally tested with, is the right thing to do.
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Applied, thanks!
 
-Pushed to drm-misc-next:
+[1/2] leds: Drop duplicate LEDS_EXPRESSWIRE config
+      (no commit info)
+[2/2] backlight: ktd2801: Depend on GPIOLIB
+      commit: d95963e309bc1211e28051314e72638d98225614
 
-[1/1] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
-      commit: f23e40e378a0858da26e8d5a6f09f82ecd95e247
+--
+Lee Jones [李琼斯]
+
 
