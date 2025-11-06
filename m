@@ -1,159 +1,145 @@
-Return-Path: <linux-kernel+bounces-887716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D7DC38F08
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:02:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AE5C39057
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04B904EB8BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:02:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 492014F849A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BED154425;
-	Thu,  6 Nov 2025 03:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2994A2BE652;
+	Thu,  6 Nov 2025 03:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7TCD885"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="evRfUVzE"
+Received: from mail-m8240.xmail.ntesmail.com (mail-m8240.xmail.ntesmail.com [156.224.82.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB2E1EA84
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9418E1F;
+	Thu,  6 Nov 2025 03:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.82.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762398141; cv=none; b=rthQNan6RabExAdP7f25vpK3ykCpN5iiGTINrLUXBswRRhGMJ3B3O4KFQWaPzQ5aee3hQcbz9ECcaYfCShyU7qmtL4ImCaKm5wf/KIbAd65weVqUxamgobZDlnugIwUIMHzwhp5uVoN172orwh5isdcRHDyFeYyjnmGnXILiq1s=
+	t=1762400559; cv=none; b=BwSmNQE5Ocu9GWhLK/InjFHjGrz5oA35aedL7eGQkD9XIhHdP0osB8AnX+6ZNQil+rOfN2Cdo5txc1RToLHXiOElh2I8dS4BekUAARd5AexC5gJNEkzFjZM3ZWH2JEMzOdXgzfNqBhb53kFo2LdFueJ+JUIPvLOXT7xjAeQ6avc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762398141; c=relaxed/simple;
-	bh=Kqvf9mGvhQ804Eoz9/qab3V3WXgY3X1gqB1lr87U+b8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z/VsYcMx+Dl0gj01Z9/CeEgIcdbnKkiP6XNNADjLi3JS9CLWHFTs5Nkw4b3df3dO4iEqoDy9WdIny3I0IACm6dSR1m/wT1ZhQQ6l/h6su8gbmMbghEfwwEAclSY1aaNoMT3WKwGHXVzVkTFBmDNz3YJtFMju4p27RgSW9Myux8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7TCD885; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640f627d01dso829811a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:02:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762398138; x=1763002938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tdTVOQ5C6+I6zTXTkQAAntlGv9zzOWGKY2nCqub+/QI=;
-        b=D7TCD885asWc1HhGogTpawSCoDkyF0PUlmxj015yM441ODc06kZ7IkzmRJwx06249A
-         EsWC6R550DGNP0xpIWE8LdVznfa+4YEtN/a1gn9PYCkn9ecIen/Q5o6pWSK9yIkDtu2D
-         i0hvPK3npnHHkOK7nQdfz6T9i4NqJal29kb36uJbXIwr0ymWrhQCQg+YtsSdMXDTb5EO
-         5YXZ8rgeFxcsYMhCyBtohvh/M2Iz4m7rDAy3rdYbWcxJi0RcOsY8QdZ41Th+ujP/xbDl
-         AX8EFYkc4ORiqpC+LgezFHU/YCMZRbqLowqqI1CtGRNFvZyOdd5JQuuWFd2BT2ptWVJo
-         Z5VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762398138; x=1763002938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tdTVOQ5C6+I6zTXTkQAAntlGv9zzOWGKY2nCqub+/QI=;
-        b=NxTjCgHhremMN1L+fvoPRq5NolI1T0Y0jo+dIeqB7YlH5DUd9vygmVJSBu+k/ZGS0O
-         n5mFSzMaJk/mM13uh3Vx3DlJX9+FyfeUL6YK5YhIPpMFRRCHqrd3awFsJ7kszudMFV/c
-         zdOa8YyejZN+oosAwC8/UQDKxh4qE9QEvqdZti/7Esvb6Im/5rlvClZCaCab0oWGbPdC
-         ixTXUKo+74EGihVzdMHkMj1q8YkGZmkNADdl8XGF+LH0BV5Cbv1ExIQzO8ilA2HuqjjW
-         av9YklSJVzF+lfhXsdWj8GRwoIxdajoADHccQHF2sOQLD7Cx/r58WNnmZnIsgXPtSR7K
-         IokA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Z5REf5yeO2THS21RpRbhxq/Gozlkd9FEz1f5ejx9A7qBpso3UNw8/y+dLFkIF2TrG7C2TP/t/PGgefQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy1gcrNZp7UUZ5WOr2XSIhVgcFtQH+fiqXAWeQO0TXRjnEqqGE
-	SnD0zEjekHU4TptuQ9t23c5XBBIT9HLS7H4oj2vlfi1h8Ab9Y6LbE/x95hBThY2fHHL4qQqsP7U
-	UOXypbn8lkleKq1zmjXhVePxUz97NqoE=
-X-Gm-Gg: ASbGncvVZf1zB0+RVGuasgAb8spG51IsgMvu9LBoHSKog2uqEuRa+7r6JMH7EClQVb6
-	oeku43+khVG2q46R5Qx2YX8fPPnysqjphxCYSJjq8jgdcLUdnYPmQ9YwtFwRvJsC2yCv5Spakmw
-	bI8GMxDfKQUyr2n6djT9wJmM22PCplcOXHMGXAEJMvQfUAm7ySgsiVD2h5UgbAITMuKb4pSKzNV
-	NQRHQ5C2qv4zojq63viZoRETgg9bOA3oj/3OPmLm4TQPctqArd6EUqWwrLbZhNYzLKfiybs5Nb+
-	stO7zXzM8AXT4fs=
-X-Google-Smtp-Source: AGHT+IEj9m5ZkaxmPEyaM29/PZON51jtee+49+ZR5dFaEI08ZZsdq2jvMbQ+D4eQUShG1eHFYMyFG9ITbmJGz6KZXw0=
-X-Received: by 2002:a17:907:7284:b0:b72:6383:4c57 with SMTP id
- a640c23a62f3a-b7265688425mr496965366b.55.1762398138199; Wed, 05 Nov 2025
- 19:02:18 -0800 (PST)
+	s=arc-20240116; t=1762400559; c=relaxed/simple;
+	bh=TzX8m58SmqbwimRAq1EhErxeZeCXyR9XP1KXrbaHUCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o8QjsIFxT2AxwjFXc+vjuUem3tm0rC+SBPj7tSmLHeX27yewQrFqH7ubqIUFvhv/M89ShaOX85rGSrsRbbjE9sQZZWhkCvx2AUHUAiQt5anaEGvdMkHJnM6Q95kWCbZPrdyzA30qi7eK/37RiaDDiMka4/Zu26arG7XnsQg+ZZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=evRfUVzE; arc=none smtp.client-ip=156.224.82.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.149] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2893b798a;
+	Thu, 6 Nov 2025 11:06:56 +0800 (GMT+08:00)
+Message-ID: <64de56d4-43e8-4e77-a171-0bd0855ad816@rock-chips.com>
+Date: Thu, 6 Nov 2025 11:06:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104231414.1150771-1-alistair.francis@wdc.com> <20251105132023.GC19044@lst.de>
-In-Reply-To: <20251105132023.GC19044@lst.de>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Thu, 6 Nov 2025 13:01:51 +1000
-X-Gm-Features: AWmQ_blU2RdEZd9t9U93QfcNDb_wTd4nmog6RFwVnxgAE9dHZ0GjWIC6Zcaxd-0
-Message-ID: <CAKmqyKOuR4jyJyY3ypqMMbghBioG3u3xECJnsmM_sRtcOeeaug@mail.gmail.com>
-Subject: Re: [PATCH v2] nvmet-auth: update sc_c in target host hash calculation
-To: Christoph Hellwig <hch@lst.de>
-Cc: hare@suse.de, kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me, 
-	kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 03/10] drm/bridge: Implement generic USB Type-C DP HPD
+ bridge
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Chaoyi Chen <kernel@airkyi.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251029071435.88-1-kernel@airkyi.com>
+ <20251029071435.88-4-kernel@airkyi.com>
+ <rzozpbqmymdczerh3iijxxtz3xnsznoku7w2mquikwv6u5osvo@7h43hwc2fpzm>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <rzozpbqmymdczerh3iijxxtz3xnsznoku7w2mquikwv6u5osvo@7h43hwc2fpzm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a9a5721af0c03abkunm89fae464e7fb72
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtKHlZKSk1MSE5OS0kfTkpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=evRfUVzE9gnJAOXo0XuZFWXMj+MLkXfh5miIhw12ck4N1iYs5TbQdrxU9sXAhiqRhN95j9bofAlR+87xDufP/ZBmz83i5dVRqQ8YiIiWE3TJThOgujLTjEgg/nXx4gfI/QUtvi+Nqf0kpUsoxBrB6H+DOC0XV+9rUTNW2AupTjQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=uxhO0QLYdKtAxkfwSVZCwZIlmY3EqbMoelKvCYvQETM=;
+	h=date:mime-version:subject:message-id:from;
 
-On Wed, Nov 5, 2025 at 11:20=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> >  4 files changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/nvme/host/auth.c b/drivers/nvme/host/auth.c
-> > index a01178caf15b..19980122d3d5 100644
-> > --- a/drivers/nvme/host/auth.c
-> > +++ b/drivers/nvme/host/auth.c
-> > @@ -492,6 +492,7 @@ static int nvme_auth_dhchap_setup_host_response(str=
-uct nvme_ctrl *ctrl,
-> >       ret =3D crypto_shash_update(shash, buf, 2);
-> >       if (ret)
-> >               goto out;
-> > +     memset(buf, 0, sizeof(buf));
-> >       *buf =3D chap->sc_c;
-> >       ret =3D crypto_shash_update(shash, buf, 1);
->
-> I'm really confused about both the existing code and this fixup.
+On 11/3/2025 12:00 PM, Dmitry Baryshkov wrote:
 
-Mostly just to keep the original style from the fixes commit from the host =
-code.
-7e091add9c43 ("nvme-auth: update sc_c in host response")
+> On Wed, Oct 29, 2025 at 03:14:28PM +0800, Chaoyi Chen wrote:
+>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>
+>> Several USB-C controller drivers have already implemented the DP HPD
+>> bridge function provided by aux-hpd-bridge.c, but there are still
+>> some USB-C controller driver that have not yet implemented it.
+>>
+>> This patch implements a generic DP HPD bridge based on aux-hpd-bridge.c,
+>> so that other USB-C controller drivers don't need to implement it again.
+> This doesn't describe the problem that you are trying to solve.
+>
+>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>> ---
+>>
+>> Changes in v8:
+>> - Merge generic DP HPD bridge into one module.
+>>
+>>   drivers/gpu/drm/bridge/Kconfig                |  5 +-
+>>   drivers/gpu/drm/bridge/Makefile               |  8 +++-
+>>   drivers/gpu/drm/bridge/aux-hpd-bridge.c       | 23 ++++++++-
+>>   drivers/gpu/drm/bridge/aux-hpd-bridge.h       | 13 +++++
+>>   .../gpu/drm/bridge/aux-hpd-typec-dp-bridge.c  | 47 +++++++++++++++++++
+>>   5 files changed, 93 insertions(+), 3 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/bridge/aux-hpd-bridge.h
+>>   create mode 100644 drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+>>
+>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+>> index a250afd8d662..17257b223a28 100644
+>> --- a/drivers/gpu/drm/bridge/Kconfig
+>> +++ b/drivers/gpu/drm/bridge/Kconfig
+>> @@ -23,13 +23,16 @@ config DRM_AUX_BRIDGE
+>>   	  build bridges chain.
+>>   
+>>   config DRM_AUX_HPD_BRIDGE
+>> -	tristate
+>> +	tristate "AUX HPD bridge support"
+> Why? No, this is supposed to be selected by other drivers. Users don't
+> know an wouldn't know what is this.
+>
+Sorry, I might have misunderstood you point. In v7, I added a new DRM_AUX_TYPEC_DP_HPD_BRIDGE module to select DRM_AUX_HPD_BRIDGE. This seems to fit the "selected by other drivers" scenario, but I think you might not want to expose any information to the users.
 
->
-> Why isn't chap->sc_c directly passed to crypto_shash_update here?
-> Why do we need to memset buf when only a single byte is passed to
-> crypto_shash_update?
->
-> >       ret =3D crypto_shash_update(shash, buf, 2);
-> >       if (ret)
-> >               goto out;
-> > -     *buf =3D sc_c;
-> > +     *buf =3D req->sq->sc_c;
-> >       ret =3D crypto_shash_update(shash, buf, 1);
->
-> Just pass it directly here?
+And the other one is what Heikki said:
 
-We can directly pass it. The rest of the code is copying data into
-`buf` so I went with that way as it matches the existing code. I feel
-it also makes it clear that it's just a const input and we aren't
-editing it in crypto_shash_update().
++if DRM_AUX_HPD_BRIDGE + +config DRM_AUX_HPD_TYPEC_BRIDGE + tristate + depends on TYPEC || !TYPEC + default TYPEC + +endif /* DRM_AUX_HPD_BRIDGE */ + menu "Display Interface Bridges" depends on DRM && DRM_BRIDGE
 
->
-> >       if (ret)
-> >               goto out;
-> > @@ -378,6 +378,7 @@ int nvmet_auth_host_hash(struct nvmet_req *req, u8 =
-*response,
-> >       ret =3D crypto_shash_update(shash, ctrl->hostnqn, strlen(ctrl->ho=
-stnqn));
-> >       if (ret)
-> >               goto out;
-> > +     memset(buf, 0, sizeof(buf));
-> >       ret =3D crypto_shash_update(shash, buf, 1);
->
-> just have a
->
->         sttic const u8 zero =3D 0;
->
-> and use that here instead of the memset?
+If I understand correctly, in this scenario we need to select DRM_AUX_HPD_BRIDGE in the DP driver. When Type-C is available, DRM_AUX_HPD_TYPEC_BRIDGE will be selected automatically.
 
-We don't actually need this memset at all, it's a mistake from my
-rebase, I'll drop it.
+Is the method mentioned by Heikki what you want? Thank you.
 
-Do you still want me to just directly pass req->sq->sc_c in?
+-- 
+Best,
+Chaoyi
 
-Alistair
 
