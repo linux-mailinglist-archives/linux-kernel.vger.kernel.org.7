@@ -1,77 +1,136 @@
-Return-Path: <linux-kernel+bounces-887544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40689C387C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:33:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 386C6C387F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20B324E344C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:33:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03DB84F2E2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E2652F88;
-	Thu,  6 Nov 2025 00:33:34 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310CD1B4223;
+	Thu,  6 Nov 2025 00:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GPM717ar"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338BE20ED
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D151552F88;
+	Thu,  6 Nov 2025 00:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762389213; cv=none; b=eXCWBWQrT++ZVYuKWR6xWeQHbfZ3DR1RA3RVOyiQDH1n6+I3DSmnvv6Crn6gj9ZAbS2HJCXOR1aLu9dD9JIlTR3qdtD7U/xPGd/sUUK5BN+S7IfuHmjSzhyGZUXwYsRjShV9k07AfIKqTaOoqzFo74zkZ9OZbXbbDjVRVsVTBdw=
+	t=1762389333; cv=none; b=WjWes5IiYNYMNeY80bwzLcVkT3sA/VzSw/GtT0yj20n0OysLqZvLrhPEsJO/9+fQQc6kIXn8c17OSrNLHjspfM9e3KZJeyue0C0zk4KLdmwLuXrbXr8ri+hxBjXQQeGWxU7H5tVO8QQaa9MURWGUuF4jQD13ANwEz6GucYzi56s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762389213; c=relaxed/simple;
-	bh=Ieq1ck0qvm3ZmRsGLSRgTwo5ZTOdLuFi0WGVB/YIMwQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=q8kif82cck2QT0bWdA2Kl/EC3ueJ7Oer7f3nS/wFLTZ8dODTgWoDmdRF4lzX/g8AK/5pEPxp6/J3p6lQfD3pe8E0ir0Gg6/p+IEoS9k+EZlvO220CnYQKA8vySmDtjqwY6Wv71g2fpM1EO4TG8aEyib2NImh4dkXQKD9F8kEpW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4334affe616so4481495ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:33:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762389211; x=1762994011;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OV9FnEIMn3tAb3e2Fleb7GR+066UTYm6BepX40jlcc8=;
-        b=mlO+MKEMeqKBCq9jV3sq+Lm4mvXxaiB9DFq1V8OeATqRQA6i7N9yWvzgt4Y/SIEdNQ
-         kaE6PkgBnebTRzGVHhTDv6i1idyy+LTYNFNuhSfFFjhKPxH4CkYZ7AGTFz53yiwhLp9k
-         rIA9EN+EY7OD+dOJZKpF3SD2dQnPUAc8yo7DYbIljhD2s0Qzl455kbNA2mRCSWnM9e0N
-         lLJnwAAryhG86c5uu9Ep/KMcLBzblBa9ETsR2MUqNVERPRfG3Q9eSeWu1kBJCKeaHBqw
-         5YB8RXl4CGafgo8ASUe//eyJjNeclNnoZU6RHugjV7zsqDhfPdTohJKrIlJTfldG5yv7
-         a69g==
-X-Gm-Message-State: AOJu0Yz/FMhgaxzeM/5KXT7mosS/AcKelIW/TlBeMRuxXURoP03D5otJ
-	tL3TSLes/da7lSP+FgMdhXhP4F6/c1Qrgl8cgu2dirAT0s3FcuISM7qBIKMa9EbHoXoI6cV1mZX
-	ZQKNxnc00Lbx17hkwLqzV5Ej1B2FnIJN6o62kqko7XKBje4tRtxFD15Qa4wI=
-X-Google-Smtp-Source: AGHT+IGfg7N2yklpmECIrg6TZ/0/3W4u8pmZJyGNAYsJAQYD8N1RjW2xPvRJNUcJK/fx4dLgfkx2r4wVlQSBdJkhHUtposAIFobl
+	s=arc-20240116; t=1762389333; c=relaxed/simple;
+	bh=KVpDWxWF/dm4zgKhhVqhqvrQM0bzaukrblkcGtaAFao=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n6wHWwu7hlrxxxxq9iFwMq5msXdPM6U0ltC2r0J6naY1L4Fp7lso31a5qwmWjtP8L8RV03gD1KNBqvf1eJzcfWCjaF/MJvFk1A3B07C3L9bL1Hu8RAN97nn+OnusHRsH7JQLgzpSrENN/otN34eo3AOT6/JdyBT6UnIuoRK4cyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GPM717ar; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762389321;
+	bh=DhZc1sa9BxLzaAumTCpTVerftcgyskXVgkIQbbKjSwo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GPM717arSqZpALFFg48dOXn2o7iCenJu+l5lbrrZ8dS4L4Ev9XXo2G2PohJksW5Cw
+	 BcPXolPguJ5oqUmntlCKni0Lsr35JzSOL8rK4g/SNr/n1TFZ041x0hDtbZjNlRJpAz
+	 o9ZCFLo1JBjIrLp3ycsEP4Dc+/34B6FD6Rwvu62Daka9E5M9DIjxvD1i8z5cETv9zI
+	 cP7UQwDsHoX2QhAGTS6GktbaBqd+XtymVmyHnKaOcL6RyN6mWlERaUOiO2yO45COMy
+	 f65J42Xj7Y+aD0rJ5dPwjS3qtZ2aCIGKZCkFnxBsNCSYltBqxhIAN0yWljY+aCJpIl
+	 TJPDAl+L5P2MA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d23BK1LS2z4w23;
+	Thu, 06 Nov 2025 11:35:20 +1100 (AEDT)
+Date: Thu, 6 Nov 2025 11:35:19 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
+Cc: Mykyta Yatsenko <yatsenko@meta.com>, bpf <bpf@vger.kernel.org>,
+ Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
+Message-ID: <20251106113519.544d147d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1789:b0:433:31cf:2c2 with SMTP id
- e9e14a558f8ab-433407905f3mr82075345ab.13.1762389211378; Wed, 05 Nov 2025
- 16:33:31 -0800 (PST)
-Date: Wed, 05 Nov 2025 16:33:31 -0800
-In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690becdb.050a0220.baf87.007b.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/0lwr1YLBOt+uFngh7Rx_hSQ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+--Sig_/0lwr1YLBOt+uFngh7Rx_hSQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-***
+Hi all,
 
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-Author: yanjun.zhu@linux.dev
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-#syz test: https://github.com/zhuyj/linux.git 
-v6.17_fix_gid_table_release_one
+  kernel/bpf/helpers.c
+
+between commits:
+
+  ea0714d61dea ("bpf:add _impl suffix for bpf_task_work_schedule* kfuncs")
+  137cc92ffe2e ("bpf: add _impl suffix for bpf_stream_vprintk() kfunc")
+
+from the bpf tree and commit:
+
+  8d8771dc03e4 ("bpf: add plumbing for file-backed dynptr")
+
+from the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/bpf/helpers.c
+index e4007fea4909,865b0dae38d1..000000000000
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@@ -4380,9 -4531,11 +4535,11 @@@ BTF_ID_FLAGS(func, bpf_strncasestr)
+  #if defined(CONFIG_BPF_LSM) && defined(CONFIG_CGROUPS)
+  BTF_ID_FLAGS(func, bpf_cgroup_read_xattr, KF_RCU)
+  #endif
+ -BTF_ID_FLAGS(func, bpf_stream_vprintk, KF_TRUSTED_ARGS)
+ -BTF_ID_FLAGS(func, bpf_task_work_schedule_signal, KF_TRUSTED_ARGS)
+ -BTF_ID_FLAGS(func, bpf_task_work_schedule_resume, KF_TRUSTED_ARGS)
+ +BTF_ID_FLAGS(func, bpf_stream_vprintk_impl, KF_TRUSTED_ARGS)
+ +BTF_ID_FLAGS(func, bpf_task_work_schedule_signal_impl, KF_TRUSTED_ARGS)
+ +BTF_ID_FLAGS(func, bpf_task_work_schedule_resume_impl, KF_TRUSTED_ARGS)
++ BTF_ID_FLAGS(func, bpf_dynptr_from_file, KF_TRUSTED_ARGS)
++ BTF_ID_FLAGS(func, bpf_dynptr_file_discard)
+  BTF_KFUNCS_END(common_btf_ids)
+ =20
+  static const struct btf_kfunc_id_set common_kfunc_set =3D {
+
+--Sig_/0lwr1YLBOt+uFngh7Rx_hSQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkL7UcACgkQAVBC80lX
+0GwSjgf+IwWpUtTU/H/MvvQmDHmtqqSSj9OqIhYdw8pBSr2gWW4BHJyTu+XUSthB
+oq5ixveT/j4idfg4HSSAHY6eQiYG7l0XarnlEtgO1y+ttPldVEhPlWkLSWn+nLRo
+A8tzUHAXID5z4OLmTV2CzdE4jzdjCO00I73+zg2R7YJMLsMGHwNThFar5hlN4ush
+veYwA7b0xnHg2x8aTJ0cU6WOrPl8i73d6EPd5CQtA0yoVASXhfIKWpyjk0WEJ+BM
+7OL4TjfW1w5k2tp92r3RjAOcoHOAuk4Vj5uUOPTfi0NuRgslOx9CsADvCyaVGuiz
+RQngF4UhCZBJMSs/PJxLiLgdXQJCug==
+=/jW5
+-----END PGP SIGNATURE-----
+
+--Sig_/0lwr1YLBOt+uFngh7Rx_hSQ--
 
