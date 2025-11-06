@@ -1,115 +1,79 @@
-Return-Path: <linux-kernel+bounces-888988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B85C3C6E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:31:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E5FC3C6D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E1B3B9AF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5848C1892908
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60733570D0;
-	Thu,  6 Nov 2025 16:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jH7Gu7G6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C5F35773F;
+	Thu,  6 Nov 2025 16:20:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E746A34CFBC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A1E357721;
+	Thu,  6 Nov 2025 16:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445969; cv=none; b=cPcmPEsZHwz55bjAgX413gj6fNMqO2NtX/xDx91lmAjn8LuhkfgIdgKPl6KGHRFmb4fiQ5G2xHTjmAgkCcT+pKueU0CfMtceyjV/Kywul0rkC+sUz5JHnyxdP+FLHTJ6xPirnZioxXIsBKJl4xBLdWp5pEFDzr+D0NkMhezyGas=
+	t=1762446001; cv=none; b=nqMHvEKgWahtJFYvN6HTg3EpjF1YnPfKsmNfqZH5p7ckQNF09IZwBc5Th0LD1aHDHSLpiKwp5oYAPLdNjgv3kqUMUhzopp9c3zH4JawdFL1W7w0SNT663q1VZsSTrpXF2H+2LlKKrhj0LYK5liO9j+9muiovp/QrkBtQ00ToaTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445969; c=relaxed/simple;
-	bh=gYEqW7pTjmnipJi5Wy4m3ru4H5R578dICFIJMQfiHvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z54C7YN8BAXvpKCnBrRUSyzIzfAczmJ987e7xcf5ytqkLyjJwa1CdN42sosJyEo0FILG1PBg+U0gFahlCXiQn+e/IGlARTyP5BDH77WjjycPqblMzkJBHmvYExGW7mb4CvInGm2mTZgxcC5XD8ZH6+CgKnzwD8DMsBIddvS75hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jH7Gu7G6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E994DC116C6;
-	Thu,  6 Nov 2025 16:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762445968;
-	bh=gYEqW7pTjmnipJi5Wy4m3ru4H5R578dICFIJMQfiHvY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jH7Gu7G6EGNodkceKgA2+Z2PEYCdQ7YslEv7MyzElCwS1PB1oDz8vP0CvLy+Ll7tQ
-	 kej53UyfleI6hjBGg3Yxr1fIBJ7B8cmzY3+4kBbQlPqpxT3bqRCtzW4vl3ruAaDVRQ
-	 u/RJiajdxO7CVyDR89UVpdgf9TxOAiDBlM/Oh7eYz1aC9Uwl41FzGu7nq2zuPGyEcV
-	 VRtRaxCC2Jc/QXASpoGyscEm1jUTuwVBxczqoyzIYUOatTr2pENBzuoAa/7shu4gMY
-	 6yIqPorGBKVaTailUucZlpP9dkUlzhNvZ6o5ZNT8h4JIjkDfn5z0u3GyLJYMHCN8Sv
-	 PbkgUEXN1B5rA==
-Date: Thu, 6 Nov 2025 16:19:25 +0000
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, Ryan Houdek <houdek.ryan@fex-emu.org>,
-	Billy Laws <blaws05@gmail.com>
-Subject: Re: [RFC PATCH 1/1] arch: arm64: Implement unaligned atomic emulation
-Message-ID: <aQzKjZci6kgMTziA@finisterre.sirena.org.uk>
-Mail-Followup-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, Ryan Houdek <houdek.ryan@fex-emu.org>,
-	Billy Laws <blaws05@gmail.com>
-References: <20251106160735.2638485-1-andrealmeid@igalia.com>
- <20251106160735.2638485-2-andrealmeid@igalia.com>
+	s=arc-20240116; t=1762446001; c=relaxed/simple;
+	bh=OVcOtVk12b2dUh33QkalNDOXz+aQqlvRcKVr+4p/xFo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=DsDfoemOeNIEJmJjYQnHE7IiSkRMY58m/gOkMmNQl6E1KJ3o2BRLkMhGo5bWUCaucOcpCpgo51vmCDKiZZxGaD4vB0jHOW08CvzBHdIPXJ2asRn57moBDbfD8FHwrf1MHmmkeoyZGlBaZ1kGt2PSDTXgep/2btOSJPqNj+g5MH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d2S7m0blvzJ46Dq;
+	Fri,  7 Nov 2025 00:19:32 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 134F1140277;
+	Fri,  7 Nov 2025 00:19:55 +0800 (CST)
+Received: from [10.123.122.223] (10.123.122.223) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 6 Nov 2025 19:19:54 +0300
+Message-ID: <64893d23-157c-4cd4-b1d6-5f120bba7a03@huawei.com>
+Date: Thu, 6 Nov 2025 19:19:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XqQkjShh4NKVWX0c"
-Content-Disposition: inline
-In-Reply-To: <20251106160735.2638485-2-andrealmeid@igalia.com>
-X-Cookie: If in doubt, mumble.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 06/14] ipvlan: Support GSO for port -> ipvlan
+From: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>
+To: Eric Dumazet <edumazet@google.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<andrey.bokhanko@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>
+References: <20251105161450.1730216-1-skorodumov.dmitry@huawei.com>
+ <20251105161450.1730216-7-skorodumov.dmitry@huawei.com>
+ <CANn89i+iq3PVz6_maSeGJT4DxcYfP8sN0_v=DTkin+AMhV-BNA@mail.gmail.com>
+ <dfad18c7-0721-486a-bd6e-75107bb54920@huawei.com>
+ <bd0da59d-153f-4930-851a-68117dbcc2de@huawei.com>
+Content-Language: en-US
+In-Reply-To: <bd0da59d-153f-4930-851a-68117dbcc2de@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: mscpeml100003.china.huawei.com (10.199.174.67) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
 
---XqQkjShh4NKVWX0c
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 06.11.2025 18:41, Dmitry Skorodumov wrote:
+> I see that currently there is no any tests for this ipvlan module (may be I missed something).. Do you have any ideas about tests? I'm a bit  confused at the moment: designing tests from scratch - this might be a bit tricky.
+>
+> Or it is enough just describe test-cases I checked manually (in some of the patches of the series)?
+>
+I just got few ideas how to implement tests.. I think I'll provide some tests, at least for the new functionality.
 
-On Thu, Nov 06, 2025 at 01:07:35PM -0300, Andr=E9 Almeida wrote:
+Dmitry
 
-> +int set_unalign_atomic_ctl(unsigned int val)
-> +{
-> +	unsigned long valid_mask =3D PR_ARM64_UNALIGN_ATOMIC_EMULATE;
-> +	if (val & ~valid_mask)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * TODO: check if this is running in a ARM v8.1 or greater.
-> +	 * Refuse otherwise.
-> +	 */
-
-The code should check for the specific feature you're relying on, not
-the architecture level which isn't really a technically discoverable
-thing, something like:
-
-	if (!cpus_have_final_cap(ARM64_HAS_LDAPR))
-		return -EINVAL;
-
---XqQkjShh4NKVWX0c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkMyokACgkQJNaLcl1U
-h9BOhQf/VD+f+HyEnpIFksKgxLXU7d72NXlh1nSX4/yjfknSUrpBvaGlazKdJYEw
-dzb4RIidHwSFc/5c0sQrNFj9TcvNAhsXtyl1XVBOhq5ciFalSQmH7U/inmfEdkqn
-38OEgXR4iSDxuNntfTNbYNbwp8DGa6IYtTyyP7ijWr6//XeWcbv7MWWgtdDMhJvC
-l+iTemYM671y/sCj1iOEUuuzXNGzdf4jpxZ5bQ2Zy/N7lAWeih6exHnbAo1LKTpM
-MyZ2XjydJKneLttxX02ksw1xE0Wa2cxciSCZLiNMLhbIfuiAlguYRcF9vLmEn3tV
-idJcKvq2oJTUs7Q7ehXcaSQ2TZwTRw==
-=5Z1A
------END PGP SIGNATURE-----
-
---XqQkjShh4NKVWX0c--
 
