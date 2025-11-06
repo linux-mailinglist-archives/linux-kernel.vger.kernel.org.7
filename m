@@ -1,104 +1,180 @@
-Return-Path: <linux-kernel+bounces-889062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FDBC3CA63
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:58:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6B1C3C9E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3890942143C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:52:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65A144FF744
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBF2335072;
-	Thu,  6 Nov 2025 16:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039FD27F724;
+	Thu,  6 Nov 2025 16:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVpN20h+"
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrgWgGW1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CC632D0E3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E31B137932;
+	Thu,  6 Nov 2025 16:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447925; cv=none; b=Z4eeSzd3F3ApFU5Rz0HrMm5Cybeo3q3KRJOwI1t9xNAsQHxKVaPkS1fkWko2mr8htd6nxBsW5StAgK/dDnQo9LFoPzk2x3PI02uzWOTTr2dH8P7BjyW6oVwqDComtpM+dwsxn2yA2mMQno1M6RU6Qx3hFYbm5H7M5THo87ZnMBo=
+	t=1762447930; cv=none; b=Hz7kWHBgvr8Ma6hEWhn0fTyyA9cfT5WFi1+slzq/EnTGDOACQDNqOgSJPexz5nMzktrYtc6Gmd9Edsz/I4zA7NiEA697wMljtrA/OGy+Ovt+FySnxJtFsQHB+o2ZPvMKBfQKbKwPZX5HQ9u8A8qr+mwu8P8JwRnmELLWuwoYpG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447925; c=relaxed/simple;
-	bh=yvXJfu/ob0GjOMeavc3rYWon+fHKroOYnZx49oPhgbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B5LrU+6RYPad+NkurRtB3nk7txIW88Kl2mAua4Z03HD/uGzcOiqqjYHGI1LwGBSXYcGjuTyvbecqafm/IQHfJGUtoQTRMj2q35+G/HF5thjos/CyF7/STFnfak7F7/toc7JinhTGnCug/7W8rRpN2JQ/hapeU8j7EDGfealss04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XVpN20h+; arc=none smtp.client-ip=74.125.224.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63fd17f0cbfso1083501d50.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:52:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762447923; x=1763052723; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=x932i+qn7VOr3brR1Z77jL6cYxaH6GfwHUzG9KPyVH0=;
-        b=XVpN20h+w4PRej1A5WYXmr42/SRIMjKio2piLWGGcuQpCSr0INVahVGWD8W8JLKaLt
-         95TonH73S92OHo3c+z8zEyt4oB7dlJOtA6Z0xHuWjTFFHnO1u6+F4UhokOR+Pc+qHgA6
-         7/L9UbV/hvnD0GGyURV3RsF53xhQQsxBs00ViOI9xVZ+PI1WxFM3aUe6v7RHlp6pBNHh
-         tbD4XshZQB90V9JKzjfLlKszkoI4uttiEi/76ijvfGNGNQJ//RbFkTimZbbnc/KlgD1d
-         Nif72+HBgpyYJdy/mWKsEfuLbdh3w7XWDLY5kbE56k7pJm/lOO4w8WTrZAyVtCnXdqfT
-         sw7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762447923; x=1763052723;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x932i+qn7VOr3brR1Z77jL6cYxaH6GfwHUzG9KPyVH0=;
-        b=YzHPcl6cceF0LePTSwdoYEm8gmtITY0VrZqZVBDe/nPVL+x4/Dn6wtKb21Aa/UnT20
-         oWQD+BSRtfO+ogzilfnspWJKc+J8ePluqwScXDQslOKpYvDxOcUqzcjydrQeUPZG7pf1
-         lxbmdKckBmJhfC91z+l+52b3d5Id5qkF0SnwPsVnwMD2vnVPVtdhXCPpjlGSiEHYOs7R
-         9myZ40FNFS8DHsqdxx9JnJ9/XfDC3ptBIwDl+d0EH87GUJgx8tdO7I30mGpjcVwfnZ6l
-         MogoWVlBui552hgNudOsVh0d7SVru7sTjvv4vUSJS+4OsD+l5oDSPNDb+1AzSUmezCDZ
-         o3Ig==
-X-Gm-Message-State: AOJu0YxJHIRWIcW1H9IxF2FWV5JQ3y38I8TnOr5dRSYnOaEiGG6YDzeV
-	ut9zGBP43QHQrUXKqtc2NDXCDZxCcwiIl4tXGGvYYWccXcplzH1w2W5VlL42Bg==
-X-Gm-Gg: ASbGncvRA42v66YybZcZ4iCaFfW3HQGunGtNz8pEpUDumqqh9VWD3bci/KnUmMH4iQd
-	PWDNtmfvuqO6VeV2+v3ua8mx/ViP/cfu5Bvr/cg/uLD0/eAWXy1YJKVU69goxLcLLb7lf3V4DzG
-	JhRRCbMBSbWqEGIAjrQDxd8lAF/kIB/gYPSzuaTrymeAdGhJ+ClkMXbwx5PCa+5XtoNabmIV0Ng
-	UNhVI7EcdMzoMHDgztEbSVHzwAvuu7LC5YoJ/YYGydYVLTgH3WCPD38jdvJa+s4WRuqF9UJV+NL
-	KLtSGVFXX/CZIlxPTd9fR8nA07kQrRwJQsABdspQShS9gCdLydIRkeb3ut/lowMqb43VCJqQOyo
-	ag7AS58+msOxvFbF6tkLpL7+OFuuhI6UXMuu9Hs/yUfC/UXy2GwFlzsYPkneg4LiC67UQ5/5+ZF
-	874i0vkdVdfhnbcqU7nq97oxeuD+WTfN/t
-X-Google-Smtp-Source: AGHT+IGOGW0J40NdlB/jBjaSg2YarxTTiaMotE2HgwQ7NjGGd+B3lbnlpZu0LUm2pVB2JQOEkxMbYw==
-X-Received: by 2002:a05:690e:1594:20b0:63f:a103:5d3d with SMTP id 956f58d0204a3-640c4374c8bmr17792d50.45.1762447922995;
-        Thu, 06 Nov 2025 08:52:02 -0800 (PST)
-Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b159b666sm9375647b3.39.2025.11.06.08.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:52:02 -0800 (PST)
-Date: Thu, 6 Nov 2025 11:52:00 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 0/2] bitops: update MAINTAINERS and fix hweight.c
-Message-ID: <aQzSMMX5LUbCZIoW@yury>
-References: <20251106080712.1885074-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762447930; c=relaxed/simple;
+	bh=oN3GXkIarMfXtltrEnr18z/wQu882uSM+visD53ptdI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ctz1gYr3mC+ZhgLKELpbcUoXIz9T7F4cVdecV/ivDEDAzb+MCzXHLVb5LAeooFKcz7YUucyF/nt84M4xhDq4AIwKiqYovH6lunScFA6Fx1jqRAoQLzl8q8miAX2befAEJSYTViujJGYz03aIgjZuPI14IiwBmnVj2gXONvTVupw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrgWgGW1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE43C4CEF7;
+	Thu,  6 Nov 2025 16:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762447929;
+	bh=oN3GXkIarMfXtltrEnr18z/wQu882uSM+visD53ptdI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PrgWgGW1fAZBBSn7TU15fO93nXWJSPOGIZdCd34rodOjYwIxcBGhdafh/DB7+lpIe
+	 eNU+lIHrUeBq0Bx8nx3f0RPtavjnQoFaxYKf6IX6UE6IHyaNlI5CNo0keA0qvC5F55
+	 8OcuW2fIEN0gOMWthL2yXHcmMBO1UAsVF/3d/clViYo08wuWVoF0zt+LQK+hG+BYIQ
+	 5c0J+fj95Jf9BDjnKFXfFzeWxWRdCnNv8hEfEMG7C01D4QTo6kIWD5NSODZKv7EQTb
+	 B7rBWhMYQeqh+uRSjOxH5Z1TKVJPxhbcYgD8xLMC9/eNHF19CM2ECLkr/dHWSlS3HM
+	 nEc/+WvXK4GRQ==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH 0/2] tracing: tprobe-events: Fixes for tprobe events
+Date: Fri,  7 Nov 2025 01:52:05 +0900
+Message-ID: <176244792552.155515.3285089581362758469.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106080712.1885074-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 06, 2025 at 09:02:49AM +0100, Andy Shevchenko wrote:
-> Update MAINTAINERS and fix hweight.c to avoid kernel-doc warnings.
-> 
-> Andy Shevchenko (2):
->   bitops: Add missed file to MAINTAINERS
->   bitops: Update kernel-doc in hweight.c to fix the issues with it
+Hi,
 
-Applied in bitmap-for-next.
+Beau reported tprobe example in the document does not work on 6.17
+kernel.
 
-Thanks,
-Yury
+---
+echo "t sched_switch preempt prev_pid=prev->pid next_pid=next->pid" > /sys/kernel/tracing/dynamic_events
+echo 1 > /sys/kernel/tracing/events/tracepoints/sched_switch/enable
+cat /sys/kernel/tracing/trace_pipe
+---
+
+It seems that the tracepoint callback is not correctly set. So I tried
+to trace the actual function calls and the local variables.
+(I need to enable CONFIG_KPROBE_EVENTS_ON_NOTRACE for tracing ftrace
+code itself.)
+
+With the below commands, I got some probe definitions for debug:
+
+ $ perf probe -k vmlinux -D "tracepoint_user_find_get name:string"
+ $ perf probe -k vmlinux -D '__regsiter_tracepoint_fprobe:13 tuser tuser->tpoint'
+ $ perf probe -k vmlinux -D 'register_fprobe_ips addrs[1]'
+ $ perf probe -k vmlinux -D 'register_fprobe_ips%return ret=$retval'
+ $ perf probe -k vmlinux -D '__regsiter_tracepoint_fprobe tf->tprobe'
+ $ perf probe -k vmlinux -D 'tracepoint_probe_register_prio_may_exist tp'
+ $ perf probe -k vmlinux -D 'tracepoint_probe_register_prio_may_exist%return ret=$retval'
+ $ perf probe -k vmlinux -D '__tracepoint_user_init name:string'
+
+And run below commands on the machine:
+
+-----
+ $ cat > /sys/kernel/tracing/dynamic_events << EOF
+p:probe/tracepoint_user_find_get enable_trace_fprobe+271 name_string=+0(%bp):string
+p:probe/regsiter_tracepoint_fprobe_L13 enable_trace_fprobe+692 tuser=%r13 tpoint=+24(%r13)
+p:probe/regsiter_tracepoint_fprobe_L13_1 enable_trace_fprobe+685 tuser=%r13 tpoint=+24(%r13)
+p:probe/register_fprobe_ips register_fprobe_ips+0 addrs=+8(%si):u64
+r:probe/register_fprobe_ips__return register_fprobe_ips+0 ret=\$retval
+p:probe/regsiter_tracepoint_fprobe enable_trace_fprobe+247 tprobe=+80(-96(%r14)):u8
+p:probe/tracepoint_probe_register_prio_may_exist tracepoint_probe_register_prio_may_exist+0 tp=%di
+r:probe/tracepoint_probe_register_prio_may_exist__return tracepoint_probe_register_prio_may_exist+0 ret=\$retval
+p:probe/tracepoint_user_init enable_trace_fprobe+440 name_string=+0(%bp):string
+EOF
+ $ echo 1 > /sys/kernel/tracing/events/probe/enable
+
+ $ echo "t sched_switch preempt prev_pid=prev->pid next_pid=next->pid" >> /sys/kernel/tracing/dynamic_events
+ $ echo 1 > /sys/kernel/tracing/events/tracepoints/sched_switch/enable
+ $ cat /sys/kernel/tracing/trace
+-----
+
+And I got below trace data:
+
+-----
+#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+#              | |         |   |||||     |         |
+              sh-107     [005] ..Zff     7.290496: regsiter_tracepoint_fprobe: (enable_trace_fprobe+0xf7/0x3a0) tprobe=0
+              sh-107     [005] ..Zff     7.290547: tracepoint_user_find_get: (enable_trace_fprobe+0x10f/0x3a0) name_string="sched_switch"
+              sh-107     [005] ..Zff     7.290680: tracepoint_user_init: (enable_trace_fprobe+0x1b8/0x3a0) name_string="sched_switch"
+              sh-107     [005] ..Zff     7.290727: regsiter_tracepoint_fprobe_L13_1: (enable_trace_fprobe+0x2ad/0x3a0) tuser=0xffff88800538b280 tpoint=0xffffffff82a4ac10
+              sh-107     [005] ..Zff     7.290730: regsiter_tracepoint_fprobe_L13: (enable_trace_fprobe+0x2b4/0x3a0) tuser=0xffff88800538b280 tpoint=0xffffffff82a4ac10
+              sh-107     [005] ..Zff     7.290735: register_fprobe_ips: (register_fprobe_ips+0x4/0x310) addrs=18446612682157410880
+              sh-107     [005] .....     7.311345: register_fprobe_ips__return: (enable_trace_fprobe+0x2f6/0x3a0 <- register_fprobe_ips) ret=0
+-----
+
+No tracepoint_probe_register_prio_may_exist event is recorded, but 
+tracepoint_user_init and regsiter_tracepoint_fprobe_L13_1 (call-site
+of tracepoint_user_init()) are recorded and `tuser` and `tpoint`
+are not NULL or error.
+
+This means when the tprobe is enabled, the register_tracepoint_fprobe()
+eventually calls tracepoint_user_init() correctly. However, it does not
+call tracepoint_probe_register_prio_may_exist() to register tracepoint
+callback. So the bug is inside tracepoint_user_init(), not NULL return
+path.
+
+-----
+static struct tracepoint_user *__tracepoint_user_init(const char *name, struct tracepoint *tpoint)
+{
+	struct tracepoint_user *tuser __free(tuser_free) = NULL;
+	int ret;
+
+	tuser = kzalloc(sizeof(*tuser), GFP_KERNEL);
+	if (!tuser)
+		return NULL;
+	tuser->name = kstrdup(name, GFP_KERNEL);
+	if (!tuser->name)
+		return NULL;
+
+	if (tpoint) {
+		ret = tracepoint_user_register(tuser); /* forgot to set tuser->tpoint */
+		if (ret)
+			return ERR_PTR(ret);
+	}
+-----
+
+And found it forgot to set tuser->tpoint before calling
+tracepoint_user_register() which calls
+tracepoint_probe_register_prio_may_exist(tuser->tpoint).
+To fix that, I just moved the tuser->tpoint setting line
+right before tracepoint_user_register() call [1/2].
+
+I also found another issue when I switched enable and disable[2/2].
+
+I hope this report will help someone to do similar debug by tracing.
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (2):
+      tracing: tprobe-events: Fix to register tracepoint correctly
+      tracing: tprobe-events: Fix to put tracepoint_user when disable the tprobe
+
+
+ kernel/trace/trace_fprobe.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
