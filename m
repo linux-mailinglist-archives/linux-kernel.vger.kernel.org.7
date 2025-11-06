@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-888555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A93FC3B237
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:16:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939CCC3B2DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 924FE4FBEB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC19D563CDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4F632ABF6;
-	Thu,  6 Nov 2025 13:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B32632A3EB;
+	Thu,  6 Nov 2025 13:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rmuPyfyb"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="srfdnJ+2"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D191F2E6CCE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78FC30F7F0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762434463; cv=none; b=OlnW6yQTYvo18mvk3HYzjHHWKg9qe+vnDHf00lR116Dq1zyhLeqsE3IdnUfkoYDklhr9YH6S4npHSssqe9+Q/shmdNnr+67Zi3VzBF6aYQIbynJELrZdRJnJAlrBTyCJ+kCx13l4wytBnDdncQISdd/Fr1sGuaMBL+sxcHgYGR8=
+	t=1762434479; cv=none; b=KzX28Ndplx0B3Dk/ibD11FG/jD+QDsWuG8+jIGxg+rvynWt2uDC+MKwgUht1FuU4EEisJv6rkyLbacLYdZtWgrD3+ha8fIFaTx2ExtvhY7v73WM4h4Begi29zIXdVeNfNvucxtHSFnOYFctg22wPcVs8fhcZwOrpgdnGGuhopxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762434463; c=relaxed/simple;
-	bh=LRYrbPfj7iDywk6i5TpH4lu16qc/Q3uOnOAZZcr1P5g=;
+	s=arc-20240116; t=1762434479; c=relaxed/simple;
+	bh=M4QT5Dzf9GjJafEiQfiyy2fY/ikWWsQVry7YuWSnjEA=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lA7Z8SrdL0CLMj+ZUaLyuVFvcU9u8N3t4QX0WHbZYXub/AkZY9AX9tkGSZ3kB9bd+lLWeaGkn0ryI7vJdMXHu3qmGKud7Jkey++E3ClKaYCZrPHPjxX2w69sEyCq1u8cP3O7mBdUmAT48F8vKEYCQkMl0UG4gG8CyZINbNbVQ7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rmuPyfyb; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=VlxBYgxXw3tOOdbXwo39Hk453TXg1PurZZOUaoAVo0+bI6pa0WXARDNkgZeKSD3Rpzhs7wBlVEYKs0UVf40EZg/2TnWpmiAP2RUoqW0nxmAhYX12dhEex1zTItcRa2FwASuLw5cLabsBFOQaZieo9MgePe2ZAoce/tYxz4W4DLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=srfdnJ+2; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47112a73785so6131545e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:07:41 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4775895d69cso4766405e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:07:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762434460; x=1763039260; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762434476; x=1763039276; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2yLyeCjgls6cM1HvoV4Agizj+GB/rHC0r8rByuRqqxM=;
-        b=rmuPyfybejU8CSesISW4TXUq35Zed2iFNGHyGPTDm7AvrRVmzbFSkSFqW/rKWCtJjg
-         c7FTL5DZwYzEMdeIRZRSN5WRAcJnKwlT/9D4sFy2iCWWGS2oDjBaKuuIfkL93s+p75GI
-         +Bw+DHg/jK+tbILL15FhwodMXpQ0ViGxt7IRwiIrtRg1xwKgwUgn0/DmQucLvQ9DhH+Q
-         xBpaepkUJZPBr7xBgTbmgEwEgx4k8EmPZR2yFno4Rq+bGwip1hsGn9XnryyN3R/ZWxsE
-         7bfvylCTh4SFRXjAGLhSB8AnPSIajMTOnBV7YRERl+xvD2WNplwt+8+z8qMdhbKI4OyO
-         ooIg==
+        bh=5QvPSUGb//zRFPRLtsCtC5iw3J3piVlBv6zJlWuYiB0=;
+        b=srfdnJ+2SHO7DxHG+320ita1djRjzlDffOXD8kbzdLn4yuD6Fr+OJeAXlG5EiVveDz
+         JS1wPYxQp02DV7sNdODGsXeYBHqNG+VQ8TrJs53eOsyj+Cg8ntBTXeuGCEzLb+tRpUgH
+         HbnxR3gZEMBVFdNBgrjRTPYIgdwkEiYMqQBW3XEEikF2wTJjArlmKRb/KerplSIFth7x
+         kHmAYTmJjpiRKb1AL1EScGhD/xTqUroBwXmzcackFBbkikN5Ma2j8R/3+xs0iqP0CFAQ
+         JElOv42/w6T7pOlmzwGflj5nqwJBMw+JSn8LILZm1JA8pmUYDTadmNAP6ZKcmZrmC4l5
+         mTTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762434460; x=1763039260;
+        d=1e100.net; s=20230601; t=1762434476; x=1763039276;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=2yLyeCjgls6cM1HvoV4Agizj+GB/rHC0r8rByuRqqxM=;
-        b=EMlFYw4i2yEuhtt8ktdgAxhMnQ68JfXmFbbxc32rtbNpyMhZOOIIi6IMQWSZPaAYgA
-         3OghtPl2kKU0eue7qJZTjsbVKT87hvk18FL4mDeGSxOpT1WEoVMlGPBagf1ckyHolDw4
-         4yFW+mvAdpOWVrtudy/Z+0ESzjR1C7Z0xX+6+VLeqPrF5l9hdjuEqQ/cxlgye94rfBeM
-         sbFTjP+mL5uP6dl1cMsQRDj0j6wPQ3rSRf8o5lcaPJKCZNjeOOhOgZOlzwkg46LTg23q
-         FOIrStYoi0843hI8BuKNMKW5PGy9frwoezrEApdeIUoNj/dbrjfwsb5BdxwPw8wrj5mb
-         8g2Q==
-X-Gm-Message-State: AOJu0YwlobKuf45RmdjSfj9Y2OJQsSuEG30EXWOmocleioE5wkkrpSZr
-	BhL/8JymAwEeZYhwaSMxHzdOrxgfB0ANfbiu88Js89oagXhrkzkgbw0tOwu0CFUMG7w=
-X-Gm-Gg: ASbGnctKMnkx60s4Jw3UPhtVQfxJkQLkvi5MO1PNcp8v5Hu4Q28G9AUa/s38oD86ITQ
-	40kyGpzBoQ+Hf/Dhq7gxHz7csF40ehSqbp/AmyGwSRTAVoIzhjfHD1bpQQAy1+/bDONlKGzl6u7
-	q76FjyKUmKjUKaB6Fr275hwDrwfb+1PTMwbqmkAe16ZoGN6BchAGJe/L7erTnAk2WGy38Ppio93
-	afDhh0SRuogAaJnPr1sUNtGQOOcbkapSDNFK52ZlYpgzBIYGXuJQ2c0shu62CKwdJ9AR0tTUVRu
-	cz8FaqJE/n5+3kexrYajD46pRdUv0QViEtgeyqUjZreDFcWjgxz251jd5n716DkMl+jgsGU6Tbd
-	2VSOgZcaR0qXV/CdCVBM5FpH24lXFNFS8BGV0Msl7j1y+xfXIA3wij0NVReMgnK7UtfnkEP9qMg
-	VitdOLHd/OWtlNNNE1RYkix41I4sdsR5Y4Qg==
-X-Google-Smtp-Source: AGHT+IFAsKArlrU067DkxQxwFDKfyGP6fHe4iUyS/Bdq+iRDMjLgKkS8gLp/s5Zpe2BQhezfS1P8SA==
-X-Received: by 2002:a05:600c:1d88:b0:477:54cd:202e with SMTP id 5b1f17b1804b1-4775cdad6aamr62589075e9.2.1762434459994;
-        Thu, 06 Nov 2025 05:07:39 -0800 (PST)
+        bh=5QvPSUGb//zRFPRLtsCtC5iw3J3piVlBv6zJlWuYiB0=;
+        b=q+BHbur/zJiDk2y+yxXDSJteIl5uIglz3kTbu6zum5BtCMTyDS+oB201XsRrDc/347
+         4tEdJgmiBnXCnTiEXJShOuO2fNPIHLKAzFaSPu4lPr9RJyJxKFunqTMWsRzADtTRd44k
+         t9ICc8RHftTB9HbnDSYXFJPNYFV+W7XaXCACwtMhqgQQb88qJlvdsZrQFFLttsDjkqpd
+         slvvkDysonZ+0efjmVZHADP+b1FsF9JuC5ELsoAeYuiYQyEPoY6yoJ0+dy2D0KNhgQEA
+         T+UuSVZDRv0JFn9/S+g4sPYp2HUsFO7Ct0tklJ1pWsxlojpgsdisrlbxXGR5bToEytNi
+         9XWg==
+X-Gm-Message-State: AOJu0YzH8aLTwcFxMbuXNeMTp81W5REwAEYStJfgDbfKSKQ9olsVbAkt
+	KwMDPQJ/Yqz8gM9wzlkQmtSEShV49uSdhCQZxOrTk4Bu6Rd/PhkzSG311Ww6Rnma6no=
+X-Gm-Gg: ASbGnctlthU+q0WjJXtV7obcWL0dLsVGSOSxiWTjhnjCPr5mPjCW6h/0Fmh4aPb+1Nk
+	Jl4VaXVvQBT0BbLpqvlJTMdln1a1QtO4L2MH3c5+Ke3zAssykubuNb91SXvHHaM+rC8U8GfvlV2
+	Llzlf22goCXWEegP08t02LjMLqz8ZyjSVzo059ZK+evqEvJ1UwofkGhnZ87Lky9JIJV9NcU0K/R
+	eHzcb21ItELzluZ9an/SKHl7aeSjYZDrxODSIaRROf+/RtfYZuq3QcnMKS200mPkWMbtCDUpocH
+	Quh8VWwTpRr71Tw/PbQbQ/n32WjfKR46oGl2spT4cw1nlURSgwwbPyuFnPqJqOjgSYH51QJ/Fn3
+	zVSesFD4p9Wvh+i1pQAo8BnWatAShMP5edfrzHRmWeTLGH8KAZprq2AO7LC5O7p9SMprbkfG49x
+	Cn18vIdM5wbwlkA+/VlExiGgif3APlubfu/w==
+X-Google-Smtp-Source: AGHT+IEcA0Q2m/qVvATLPTcfnYahR6FSKXQ5pQBy1S1Zf1wyKWuv6GZxoL1JXLz9q2/EUWawAmfXkQ==
+X-Received: by 2002:a05:600c:190a:b0:45d:d97c:236c with SMTP id 5b1f17b1804b1-47769d50827mr12690725e9.21.1762434472702;
+        Thu, 06 Nov 2025 05:07:52 -0800 (PST)
 Received: from [192.168.27.65] (home.rastines.starnux.net. [82.64.67.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e4d7f2sm15640615e9.4.2025.11.06.05.07.38
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47767749916sm25485755e9.4.2025.11.06.05.07.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 05:07:39 -0800 (PST)
-Message-ID: <f324cafd-c466-4cb8-81ab-fbabac7bbca7@linaro.org>
-Date: Thu, 6 Nov 2025 14:07:38 +0100
+        Thu, 06 Nov 2025 05:07:52 -0800 (PST)
+Message-ID: <73e4c1d0-f6a5-4989-a918-ba0d5cc69878@linaro.org>
+Date: Thu, 6 Nov 2025 14:07:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 2/5] irqchip: Add support for Amlogic S6 S7 and S7D SoCs
+Subject: Re: [PATCH 3/5] arm64: dts: Add gpio_intc node for Amlogic S6 SoCs
 To: xianwei.zhao@amlogic.com, Thomas Gleixner <tglx@linutronix.de>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
@@ -95,7 +95,7 @@ To: xianwei.zhao@amlogic.com, Thomas Gleixner <tglx@linutronix.de>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
 References: <20251105-irqchip-gpio-s6-s7-s7d-v1-0-b4d1fe4781c1@amlogic.com>
- <20251105-irqchip-gpio-s6-s7-s7d-v1-2-b4d1fe4781c1@amlogic.com>
+ <20251105-irqchip-gpio-s6-s7-s7d-v1-3-b4d1fe4781c1@amlogic.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -122,86 +122,41 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20251105-irqchip-gpio-s6-s7-s7d-v1-2-b4d1fe4781c1@amlogic.com>
+In-Reply-To: <20251105-irqchip-gpio-s6-s7-s7d-v1-3-b4d1fe4781c1@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 11/5/25 10:45, Xianwei Zhao via B4 Relay wrote:
 > From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> The Amlogic S6/S7/S7D SoCs support 12 GPIO IRQ lines,
-> details are as below.
-> 
->      S6 IRQ Number:
->      - 99:98    2 pins on bank CC
->      - 97       1 pin  on bank TESTN
->      - 96:81   16 pins on bank A
->      - 80:65   16 pins on bank Z
->      - 64:45   20 pins on bank X
->      - 44:37    8 pins on bank H offs H1
->      - 36:32    5 pins on bank F
->      - 31:25    7 pins on bank D
->      - 24:22    3 pins on bank E
->      - 21:14    8 pins on bank C
->      - 13:0    14 pins on bank B
-> 
->      S7 IRQ Number:
->      - 83:82    2 pins on bank CC
->      - 81       1 pin  on bank TESTN
->      - 80:68   13 pins on bank Z
->      - 67:48   20 pins on bank X
->      - 47:36   12 pins on bank H
->      - 35:24   12 pins on bank D
->      - 23:22    2 pins on bank E
->      - 21:14    8 pins on bank C
->      - 13:0    14 pins on bank B
-> 
->      S7D IRQ Number:
->      - 83:82    2 pins on bank CC
->      - 81:75    7 pins on bank DV
->      - 74       1 pin  on bank TESTN
->      - 73:61   13 pins on bank Z
->      - 60:41   20 pins on bank X
->      - 40:29   12 pins on bank H
->      - 28:24    5 pins on bank D
->      - 23:22    2 pins on bank E
->      - 21:14    8 pins on bank C
->      - 13:0    14 pins on bank B
+> Add GPIO interrupt controller device.
 > 
 > Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->   drivers/irqchip/irq-meson-gpio.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
+>   arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 > 
-> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-> index 7d177626d64b..7e718b07e960 100644
-> --- a/drivers/irqchip/irq-meson-gpio.c
-> +++ b/drivers/irqchip/irq-meson-gpio.c
-> @@ -174,6 +174,14 @@ static const struct meson_gpio_irq_params s4_params = {
->   	INIT_MESON_S4_COMMON_DATA(82)
->   };
->   
-> +static const struct meson_gpio_irq_params s6_params = {
-> +	INIT_MESON_S4_COMMON_DATA(100)
-> +};
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
+> index 0dca64a2ef9e..3ee1b563a34a 100644
+> --- a/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi
+> @@ -199,6 +199,16 @@ gpiocc: gpio@300 {
+>   					gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_CC<<8) 2>;
+>   				};
+>   			};
 > +
-> +static const struct meson_gpio_irq_params s7_params = {
-> +	INIT_MESON_S4_COMMON_DATA(84)
-> +};
-> +
->   static const struct meson_gpio_irq_params c3_params = {
->   	INIT_MESON_S4_COMMON_DATA(55)
+> +			gpio_intc: interrupt-controller@4080 {
+> +				compatible = "amlogic,s6-gpio-intc",
+> +					     "amlogic,meson-gpio-intc";
+> +				reg = <0x0 0x4080 0x0 0x20>;
+> +				interrupt-controller;
+> +				#interrupt-cells = <2>;
+> +				amlogic,channel-interrupts =
+> +					<10 11 12 13 14 15 16 17 18 19 20 21>;
+> +			};
+>   		};
+>   	};
 >   };
-> @@ -195,6 +203,9 @@ static const struct of_device_id meson_irq_gpio_matches[] __maybe_unused = {
->   	{ .compatible = "amlogic,a4-gpio-ao-intc", .data = &a4_ao_params },
->   	{ .compatible = "amlogic,a4-gpio-intc", .data = &a4_params },
->   	{ .compatible = "amlogic,a5-gpio-intc", .data = &a5_params },
-> +	{ .compatible = "amlogic,s6-gpio-intc", .data = &s6_params },
-> +	{ .compatible = "amlogic,s7-gpio-intc", .data = &s7_params },
-> +	{ .compatible = "amlogic,s7d-gpio-intc", .data = &s7_params },
->   	{ .compatible = "amlogic,c3-gpio-intc", .data = &c3_params },
->   	{ .compatible = "amlogic,t7-gpio-intc", .data = &t7_params },
->   	{ }
 > 
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
