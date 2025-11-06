@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-889067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B49CC3C96A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:53:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9822FC3CA57
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:58:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BBFB1895A5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:53:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41BD34F4FF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3EE27F724;
-	Thu,  6 Nov 2025 16:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1F5334366;
+	Thu,  6 Nov 2025 16:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnxosHox"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P4Dh4HG6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E86C334C24;
-	Thu,  6 Nov 2025 16:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C89029E110
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447975; cv=none; b=TGhHtlrTIVQHgMo2WZ4jcwvUxx6zdHxVNqjgcOAUAp2ARcjD32ljQB1VWgpVRhUZ2qVdy+OBTpYXBDhyJc1zhcOMKJ+AiUBGPJ85fjh2lDaHZXnp1967PEeBJ+MgRYUYKJRELoIexhRAJqVvHJUwmcuHgDpf7ndO5vLhPwmmvcs=
+	t=1762448004; cv=none; b=IfSiC3311C1pRUVFkpYj0Nma9RYNtk4xEQRXnWR8S/eDyj8uT29nEvzEWYI/tWMuDYkKRPp/W8G1OBKkIeffo+JqY+fwAVgXj5/5UpFntjOYf8JoGdodQ76keCpiX5CECGyM0nO/5UVUo7xJnl6UfSwP0o4GNpczmBxwCYGGzuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447975; c=relaxed/simple;
-	bh=dIyMUhdYzSO4klL+M2Wm/feXCZVTk+vDwb5pQv1QcSc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Cx+DxV5W7s+r4+U2HfIAYHyuKhtS7D8+WkaLeYXS9bmO3HxurHqRpQoAUQRhJjhEiY4Vx2e6rKoSfb2QxQh6QoDfaM4ZwG9HGFO3SsTnD3UZVlFLbM/jNJT/rCT84wmv1NlAxw9Ogogmdx6tChVl5OvlAYH7IBCRLprsOteyZLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnxosHox; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0087BC4CEF7;
-	Thu,  6 Nov 2025 16:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762447974;
-	bh=dIyMUhdYzSO4klL+M2Wm/feXCZVTk+vDwb5pQv1QcSc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jnxosHoxmtBQd7FCskiWs8SjJVKHWAiEZk9jDINuiwGhS8XNOHwBdbgweuqYGfwNL
-	 aFOeDwu2F8XZN9hx2vUS96NNzUMAkRP1bU/cJ2paueKkMVOvE7CFv2VX8REs9EHaf6
-	 MXRqzdPtzLHShM2DN00yjVCLvrwf8MoLS4I640uTRE5Q09Vc4NfXZS3X5+7c9Kc37w
-	 bnoAWt3okBsH8oWFwzTBjAr/7asS3mCkBAhUwLRdnauPEJpwfjympSrkYe9wFJkO1h
-	 hP8Gd+QNUcJ1431MS0+T0L6c/1EDn4jGeiYjfLUwdENGzmi7CsBa5cdGI7VsSs/Qhd
-	 2r/l2pMcXhdvQ==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20251028-cros_ec-leds-no-colors-v1-1-ebe13a02022a@weissschuh.net>
-References: <20251028-cros_ec-leds-no-colors-v1-1-ebe13a02022a@weissschuh.net>
-Subject: Re: (subset) [PATCH] leds: leds-cros_ec: Skip LEDs without color
- components
-Message-Id: <176244797270.1955851.7712074891056264221.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 16:52:52 +0000
+	s=arc-20240116; t=1762448004; c=relaxed/simple;
+	bh=JpRqcPxnyiahrRWopQHqL/udNfz8xFLZ4IJJ1yNFRzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LzYl8j1Wzf5IM/rvdq63fgAfuVyjOSAJVGoxz4mWGz6jEYJDTgobJHSNcPG/ZnwwvhndZD1TiwVvPofLLt1i4mWEPSHw8H9hsDXMtd5pTTSwa2dDRx/CQu9r6FRpt6JDxhNYN66kwqoJLG61J95+67hrGtlh8nL9pLs02nyYLeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P4Dh4HG6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762448001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jfaHKlPxHr/Mtq+6BIhwUxcOaTw79FDWo9JAt0vNPf8=;
+	b=P4Dh4HG6AqQOAHBchWKM1nZMa/9ktoo1YoaZUlmPCvt/qaQkFjPlIBt5LXx2YMpeNEQdlw
+	ytK/gXnS6olpjeOM93Y+HAelkYCkZYRxJJDC1GXZwXddIS+OAMy5WYpF0qMeUHXIaBGR85
+	lsG8neC7+LLw7RalyAUmzkOTe+hWjec=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-112-xY4CcUjtNz2QogZHgjJ15Q-1; Thu,
+ 06 Nov 2025 11:53:17 -0500
+X-MC-Unique: xY4CcUjtNz2QogZHgjJ15Q-1
+X-Mimecast-MFC-AGG-ID: xY4CcUjtNz2QogZHgjJ15Q_1762447996
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A47DA19560B3;
+	Thu,  6 Nov 2025 16:53:15 +0000 (UTC)
+Received: from wsxc.redhat.com (unknown [10.96.134.113])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4F9151800362;
+	Thu,  6 Nov 2025 16:53:11 +0000 (UTC)
+From: Ricardo Robaina <rrobaina@redhat.com>
+To: audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Cc: paul@paul-moore.com,
+	eparis@redhat.com,
+	fw@strlen.de,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	Ricardo Robaina <rrobaina@redhat.com>
+Subject: [PATCH v5 0/2] audit: improve NETFILTER_PKT records
+Date: Thu,  6 Nov 2025 13:53:03 -0300
+Message-ID: <cover.1762434837.git.rrobaina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-52d38
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, 28 Oct 2025 16:31:03 +0100, Thomas Weißschuh wrote:
-> A user reports that on their Lenovo Corsola Magneton with EC firmware
-> steelix-15194.270.0 the driver probe fails with EINVAL. It turns out
-> that the power LED does not contain any color components as indicated
-> by the following "ectool led power query" output:
-> 
-> Brightness range for LED 1:
->         red     : 0x0
->         green   : 0x0
->         blue    : 0x0
->         yellow  : 0x0
->         white   : 0x0
->         amber   : 0x0
-> 
-> [...]
+Currently, NETFILTER_PKT records lack source and destination
+port information, which is often valuable for troubleshooting.
+This patch series adds ports numbers, to NETFILTER_PKT records.
 
-Applied, thanks!
+The first patch refactors netfilter-related code, by moving
+duplicated code to audit.c, creating two helper functions:
+'audit_log_packet_ip4' and 'audit_log_packet_ip6'. 
+The second one, improves the NETFILTER_PKT records, by 
+including source and destination ports for protocols of
+interest.
 
-[1/1] leds: leds-cros_ec: Skip LEDs without color components
-      commit: 4dbf066d965cd3299fb396f1375d10423c9c625c
+Ricardo Robaina (2):
+  audit: add audit_log_packet_ip4 and audit_log_packet_ip6 helper
+    functions
+  audit: include source and destination ports to NETFILTER_PKT
 
---
-Lee Jones [李琼斯]
+ include/linux/audit.h    |  12 +++++
+ kernel/audit.c           | 114 +++++++++++++++++++++++++++++++++++++++
+ net/netfilter/nft_log.c  |  43 ++-------------
+ net/netfilter/xt_AUDIT.c |  43 ++-------------
+ 4 files changed, 134 insertions(+), 78 deletions(-)
+
+-- 
+2.51.1
 
 
