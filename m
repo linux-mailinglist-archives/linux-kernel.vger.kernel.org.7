@@ -1,162 +1,112 @@
-Return-Path: <linux-kernel+bounces-887829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89B1C392E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:40:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDBCC392DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2669D1A20509
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:40:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CCAE4E9DEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5312D94BA;
-	Thu,  6 Nov 2025 05:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A1B2D8764;
+	Thu,  6 Nov 2025 05:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="QtcLfTc/"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jUljfr+5"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB02E2D5A07;
-	Thu,  6 Nov 2025 05:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05C51DA0E1
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762407604; cv=none; b=KQLwXNL36sI1tTqkIOG7VzwL5eKjn+kNX9A5RDgBeJbUHijzNTACBNulqV0OHtqqcPFBQXYFw1GYkdA8Lhfvz6Ucf9AYUwQTrfweEFX3lRdTMV+u2MUmFO6qaFk8DpjlfG0v0qzVL2rMqDsy9xn4iL/bgCiGdMFXSZbnn0PzRuk=
+	t=1762407602; cv=none; b=mYaWEVcHFQgAyKuhujeJ88Rlto8Smxg8QnoAkXZ+Il3fLsl6CuI+y0qE8FCjdbfqsTEFFNlGkDbIu6b7OsCXvpAn83JkcpHJ3uxspbTUY5a9ab8XtOWwxLojtAeB30MRNDNb5w6KE6sGGexgRyiZ5UB7lbRH9RWbdoI9V8UeJUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762407604; c=relaxed/simple;
-	bh=I9IGPVE+YBI/dRlj6+eZuJWgl/DvSxlpz5FiBKVomuM=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXALPhqSXmWPZ6Z1/FyNf7ZbT09vJOzBkn/aBSHS4V+CFw7juWEjBd7tYw26BGpApf6eI4mLzsl4lrc7cOGNGponP5X+RCuaErNov7fYfebADmQXoISwch7scSSCOhouucNfTMv5iA3RUDm2DNnNaFvYtPgkn19gTIEsYwGXDOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=QtcLfTc/; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1762407514;
-	bh=P1Rz7vX4LUWb0KmLFM3Q/aK5/FfNA1LnBQcP6+5neyY=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=QtcLfTc/E1qrc5LEdEIAjAU1o6kjEqxYhbxTDsnXEiAHd2/HTs+bUf6Xi2PBXywbw
-	 lC+r5MKSRuBozC9alCktQ6v+eMxiHFdAb77XhPhUxDyRQe5SWNZipstuHBu46izRVZ
-	 UMQ98xrvckxrNT52sD5Jf2pmFGbJd/LgM5SaRmOY=
-X-QQ-mid: zesmtpgz7t1762407512t3ee89d79
-X-QQ-Originating-IP: 3VST9Ej0v63tRCSDrHmfzPvPOG/iqybQz5oibi7AIA8=
-Received: from = ( [183.48.244.176])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 06 Nov 2025 13:38:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8810434806403676206
-EX-QQ-RecipientCnt: 10
-Date: Thu, 6 Nov 2025 13:38:30 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Michael Opdenacker <michael.opdenacker@rootcommit.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH] i2c: spacemit: fix detect issue
-Message-ID: <0E2B2679F0650AE1+aQw0VgKNbcFqDH33@kernel.org>
-References: <20251103-fix-k1-detect-failure-v1-1-bb07a8d7de7c@linux.spacemit.com>
- <aQvTMM0S16gOdiAN@aurel32.net>
- <12878F9DA586AA19+aQv0bKwLTzw_kJOq@kernel.org>
- <aQwzYrmv5TAIuqTh@aurel32.net>
+	s=arc-20240116; t=1762407602; c=relaxed/simple;
+	bh=TQv944OsNJBy399bRPOXpN9cFgowfIvc7mJdW7mtYBc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ecc6OaPf40kJn08UDL3LAnbW6PGfIb54+7baUuQubu+CM2YiVRSzVtbFv9koaeIjOoo6WGaaD2jRc0CFl/lJQ8kmw1fSoU0fzq6H4cj8gYM9hreSTKwV6nBc55C0+jeQLa102NwwT4O6fz8yrYrTYxvgFpqQcKrCsu6BwlnwZKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jUljfr+5; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=C/
+	qSfn8XWm+oaCfY2V1Q0d+VxMXeZuMkTYlNsiNF8Y4=; b=jUljfr+5Q1323SHae5
+	MkgDS4zSYU/yb6jIRf28Q+fMXdaY/vsr0TvgEeOow7LsWDwswmm7hgq/NG7zcIqK
+	0TAk0UWJSwMnyzc60eMH5D8WWmwf2ZafVAU0hVJinzm+tV5NP7Itf3TNk+mojCv3
+	I7aXl7VMnDznavLUwlVvwA3Hs=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3f5N4NAxpLAQPCA--.4683S2;
+	Thu, 06 Nov 2025 13:39:05 +0800 (CST)
+From: wangdich9700@163.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	cezary.rojewski@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	wangdicheng <wangdich9700@163.com>,
+	wangdicheng <wangdicheng@kylinos.cn>
+Subject: [PATCH] ALSA: hda/senary: Replace magic numbers with defined constants
+Date: Thu,  6 Nov 2025 13:39:02 +0800
+Message-Id: <20251106053902.98614-1-wangdich9700@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQwzYrmv5TAIuqTh@aurel32.net>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: M8JnMGwRo1mQ/DUTij+F6rLmMw5PkZZKwrJ1NOFPlZPP9FxgJS6cuZKf
-	aSUqtmnEk1MOzt087podP1fmhCXAu1SzJM3wFcz5Zk0Bn/LNBVRWl6E5Xbc7W8I3J0jG2pU
-	CFj2i+SVqOFLJBiQjyjyZgeRxN+DA8PLFPQtM07d+LFpsUqfzQWmpHFOBY+w89rNvBJaC8a
-	xPyNcO27CskSM7y0PN1MIIYeiick8WD7GlEgkRaGZ45DuE4hc9MLQXcY1qBJmNWKg6DcNSH
-	P+KatW4iLof/sQBs0VCX0jY22GHZUGc+Hjv87O82iIpugNwkTWw5G/Vn+ql2IeIK8eAbxO1
-	zgSV6EWtvXAphULcR4+TxmcCye88oepdDgwbon00UepVuVUQMug/cfKMm3/WICIe/8cMqkg
-	whD6cIcZ+Et0eswC37cJdzuFb4y6/0zyAMQ8L2jElQhTvp16+0OF9r4ra62Orlt25qcX98A
-	okGjPvOxcB6/mCRx4b2pt9HQm2ALv50SwtsoemVjNOrPClBY2LsG6ty/Z/elh4apXlz7H50
-	GpS0jjV+eqAri/o2GFMqZOpvJ04TOEmkf47OYhlKMzZIWEY00iI45KEFc7ABczA1Y3mYub1
-	ZBe5kLOKl/1c/fApbHK1RL2wVonTHLq8Xq2y5UuqOO4GMfUs8m2/OU6ifdr9B1qMfU3kZ9o
-	MFC2J6OBQ7am2ATXl6XUcFLgE3qYyuEzOejsNDwnol9QVsDO/8bazsdvDA2OBD7Dkk7dMFM
-	KRgJcIwUCRipoWx/HHdu7wL67NL5SjAMzGnVDDW8esqnLU0VPgv8wnfGYGuxYHU5TfXyi/T
-	/nfVhUS0TawLPTd9y5fQbCMXAfTPASZEfcjKOJ0WQby6M1fOVlzrEoFw38AcjvxBR0hmzF+
-	CKeN37R1NK87Y9HbnZmx1wFYuorNQ/qUNcBWKFmDaiudVy/9oGF2KLnYVqpbL6QAv/GGezm
-	tVrEJEsS+d/6frQt3i9nLKXOX6a3k1018VPiCF6dxUTEI7nHHAujranXDqmxMHleRyfWy1U
-	tqNQZV2YfS1nmcnoIh2zdfBwmOmkE8k0y9mOvuGpHp9nAmuU4wk4HArVrPOX7UV61mgp3ct
-	gGROr8bFGihDgSQkHQJrwY=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3f5N4NAxpLAQPCA--.4683S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ur47tryktFy5KFWfAF43ZFb_yoW8GF18pF
+	n0kFyrKrZ3Jr10yF18GayfZFyrGas8WF43K342g3WYvan2krykX3Wjqryaq3W3JF9rK3Wa
+	vryxZ34UCryqyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pis2-UUUUUU=
+X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/1tbiRwL9T2kMMBRlBwAAsU
 
-On Thu, Nov 06, 2025 at 06:34:26AM +0100, Aurelien Jarno wrote:
-> Hi,
-> 
-> On 2025-11-06 09:05, Troy Mitchell wrote:
-> > On Wed, Nov 05, 2025 at 11:44:00PM +0100, Aurelien Jarno wrote:
-> > > Hi,
-> > > 
-> > > On 2025-11-03 15:06, Troy Mitchell wrote:
-> > [...]
-> > > >  	if (i2c->status & (SPACEMIT_SR_BED | SPACEMIT_SR_ALD)) {
-> > > >  		spacemit_i2c_reset(i2c);
-> > > > -		return -EAGAIN;
-> > > > +		if (i2c->status & SPACEMIT_SR_ALD)
-> > > > +			return -EAGAIN;
-> > > >  	}
-> > > 
-> > > This makes the resulting code, while correct, complex to understand as 
-> > > it is now two really different errors, as you explained well in the 
-> > > commit message.
-> > > 
-> > > I therefore suggest to organize the code as:
-> > > 
-> > > 	/* Arbitration Loss Detected */
-> > > 	if (i2c->status & SPACEMIT_SR_ALD) {
-> > > 		spacemit_i2c_reset(i2c);
-> > > 		return -EAGAIN;
-> > > 	}
-> > > 
-> > > 	/* Bus Error No ACK/NAK */
-> > > 	if (i2c->status & SPACEMIT_SR_BED) {
-> > > 		spacemit_i2c_reset(i2c);
-> > > 	}
-> > Thanks. I'll fix it in the next version.
-> > > 
-> > > 
-> > > >  	return i2c->status & SPACEMIT_SR_ACKNAK ? -ENXIO : -EIO;
-> > > > @@ -491,6 +492,8 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
-> > > >  
-> > > >  	spacemit_i2c_init(i2c);
-> > > >  
-> > > > +	spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK);
-> > > > +
-> > > 
-> > > This sounds good to start the transfer with a clean interrupt state. I 
-> > > just wonder if it should be moved to spacemit_i2c_init(), ie where the 
-> > > corresponding interrupts are enabled.
-> > Uh, We can move it actually. But is it essentail?
-> 
-> For me ensuring that the interrupt status is in a clean state after 
-> enabling the interrupt is part of the initialization.
-Yes, I agree that.
-> Furthermore if 
-> spacemit_i2c_init() has to be called from another place, it's very 
-> likely that it's also needed to get interrupt status in a clean state.
-Why we need to call init() in other place?
-Could you give me a cese?
+From: wangdicheng <wangdich9700@163.com>
 
-                    - Troy
-> 
-> Regards
-> Aurelien
-> 
-> -- 
-> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-> aurelien@aurel32.net                     http://aurel32.net
-> 
+Replace hardcoded GPIO node value with a defined constant for better
+code readability and maintainability.
+
+Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+---
+ sound/hda/codecs/senarytech.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/sound/hda/codecs/senarytech.c b/sound/hda/codecs/senarytech.c
+index 99af8d5e51db..d61d57538bc9 100644
+--- a/sound/hda/codecs/senarytech.c
++++ b/sound/hda/codecs/senarytech.c
+@@ -19,6 +19,9 @@
+ #include "hda_jack.h"
+ #include "generic.h"
+ 
++/* GPIO node ID */
++#define SENARY_GPIO_NODE		0x01
++
+ struct senary_spec {
+ 	struct hda_gen_spec gen;
+ 
+@@ -131,11 +134,11 @@ static void senary_init_gpio_led(struct hda_codec *codec)
+ 	unsigned int mask = spec->gpio_mute_led_mask | spec->gpio_mic_led_mask;
+ 
+ 	if (mask) {
+-		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_MASK,
++		snd_hda_codec_write(codec, SENARY_GPIO_NODE, 0, AC_VERB_SET_GPIO_MASK,
+ 				    mask);
+-		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DIRECTION,
++		snd_hda_codec_write(codec, SENARY_GPIO_NODE, 0, AC_VERB_SET_GPIO_DIRECTION,
+ 				    mask);
+-		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA,
++		snd_hda_codec_write(codec, SENARY_GPIO_NODE, 0, AC_VERB_SET_GPIO_DATA,
+ 				    spec->gpio_led);
+ 	}
+ }
+-- 
+2.25.1
 
 
