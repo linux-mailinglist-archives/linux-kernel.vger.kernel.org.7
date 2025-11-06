@@ -1,141 +1,166 @@
-Return-Path: <linux-kernel+bounces-889218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B0DC3CFC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:01:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DD1C3D008
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:04:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147C4188655F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:01:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 392163BB31D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA7A2DAFA1;
-	Thu,  6 Nov 2025 18:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC3F34F494;
+	Thu,  6 Nov 2025 18:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IbxB/F35"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4XyW7vN"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB252AD25
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC882D94AF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452057; cv=none; b=Pnf1dpNDACTrXI4syQUzZ8QFdrLNM2S5M319p6US7lYDGGo3NJTZtZjKQvBY5K9uNaKK+M9QPAPSVyx+6Uqj1HZ8FxSb4//9wFjpBz9uHAB4hIfgeJ3B99lhVW13YCY+EqAF7iAqRnml/QsJl1FJ1Q2dSOcOf9TzHw6oVfoDEPk=
+	t=1762452075; cv=none; b=HseBsz/ajtd42SBHt5H8DWeVmZsWawOUA9eihqH0ypdwmxM1FKCAYzaYTysYs2z2CQYQu5bMJNmBw1T2+hDsnSYiuxpCsfpqvB5KR3EELSKXHE4lRM4/6YAeAIILuaX6N6dhK7pm4iBdLH0skDRUfxbynm7RlRXBNCpBo4lLrkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452057; c=relaxed/simple;
-	bh=RDbOBh66JjfFuihq973fOzGY3o9zf2l1zRXPEVekqzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N9LeUAfYSNefvcP1ctkDxbQ6Khr2mm/qIREDorZnwb/dNo7SC7cp6pkqP5+i5t2hVyXhBRpijJkzSMUPXBR65XCiuQJ5opZKHZQJV3ojmAZiDa6z5c2mB9fpynEUEfRoCVqdxtNjBA+lEdKMDxZjOhQ4d5AXFIK6+9R0xFDwhBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IbxB/F35; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640b1d0496aso497a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:00:55 -0800 (PST)
+	s=arc-20240116; t=1762452075; c=relaxed/simple;
+	bh=d6fcH4YBy4tJrSO/61Sxb3Q4+XTZBualHoVt8LZv+l4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N3P6duiPn5G+vqwDLpIODhhggjl+8blfKF+1juCtXUgM3wHWW0v8mHoxbc5cnTs+89Fvidv2TZ/22cA23bcohZk3Xw8sA6w5rJJmGeTt0goV7CQ/XnBp/JqDt44ULjzKLkl50/cXpFJmek8pTgdPBRk0I8ElexXscr5XTaC2Rxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4XyW7vN; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b472842981fso111848066b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:01:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762452054; x=1763056854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ECxc40/29Z32hQLab5xgI0WYbyB6Uam5SiKdMQt43ew=;
-        b=IbxB/F35JSeMuUWgL7ZzMS4I35FMAoE3bkr6uWDqgUkDaL0Y7tBeih0zJZaGbzc7Xn
-         W6gitdVahiT1WoTZjqYw6hBdoo4u/EUtPavbBWADM/Q19eeyM9mvK9wPgtPWh6ZXPne+
-         8fSa3zCE2CdKuTChCvgrfyq8mSZZ9DiBtyikjJm/hPFfOUYGmRxE/BwKXEhR/MhHptoc
-         w2r+nQ/e8jiVXUWmAXfwU6UlbZ0igVWvcQn00f/eSGQL/IDYkld6z8Zi99H2uio2StsI
-         wsrJnVxreJQ9iSAbh5sruzlhBSS0CgawIvT96lUnyf1LYch2op1i5XuS8x5JtGUJ5mm7
-         MW1w==
+        d=gmail.com; s=20230601; t=1762452071; x=1763056871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2T3N0BT2STs8n+iZkoEMWI+F1MMhUxu61N6/yM0vzrc=;
+        b=H4XyW7vNizeqxrowPTLAfeOBkxdjSJITunlBteHpteph+J+7BmYmJCpR9GrFefnTTY
+         6nZipxgJ1VsZ41P0dGGWhJqrSOhiAemwl6HohvZVI4zDTK/VThxaM4QARJZ2wVFOPtRn
+         90oB05KIAkDTE6XFXDh9ySSGNPKt/2ZNo1bFKI1nzutr9tBLe+W2s+2/qc9ATVQ6NxYF
+         opKDplbrNWInoix5Pir7KA9QAt4ig5OudhDDU8wPkTjNULayXg5VZX0MsSbZcXPof6CJ
+         mljex2KoNGh0VOdAMvKaMes93OGIqGHv7VXc4oMJkvrP5MNecRl91Iw920w7WttD9AHo
+         he7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762452054; x=1763056854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ECxc40/29Z32hQLab5xgI0WYbyB6Uam5SiKdMQt43ew=;
-        b=EjP1P04kBCTjdqHcSEJfTlasrONdOkQPmX8Q0/cmPYOLlguviRwdnbtW99T90mFXrN
-         Cqphz7Ks66dpnF38j/og3IL6y8LuQTZS4MYVdtFW5RKVsLed7PlVh6RfKbNj5/g2RAwB
-         HzKJQo/UmWMqhmsGV8NW4CL1vadqDRRmLXR0qOJxl49oWwWyxqLPGIYevAx/UOLnwYMt
-         wM/1YreWGX3CrYLmvULD0WpiD3afBM+WDviHfG479QTTkFHkHF1g9bX+bY2c3YL17+rg
-         neUbQ+4CUho12mad0tL8vjUQV6IRLlNPLBTz4KOi7XVfp1itFIO/UmUgxPO1/hntT2yd
-         r/Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUX7PXBh8ek0Fe1uzQH/Jeo2QaAD/mGW78Fn/l3Ey2TjTPVdWNXzvP3r23RuvPF9t3gk6XJJyzXIlVUYxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcQPqOZDMUkDLRGU+vNIA05pjdSITyUW/ktJCP5CEyytDFGwR2
-	X2pTc7i2cGgaH7HUadBhxm853MY2Crqw2VUBLV0zw87giwEny2LCyigUS6lbb67WKJI6jYO49Ey
-	eFQ2eeAJ8I7jxOck52Ek6trA2hHlqlSoFhm1RsgRL
-X-Gm-Gg: ASbGncud8IbxqoeWYDs6l+aQeluHx2eqvdhOPCFtHJsVQ75mcCXl+SGNMLA8DRntD3f
-	HMG27FMBErnwZweYZwUSezn6NA5tYhcfU+7mguniTUXdQ+HiqEMZ21tahIF7ExcfsVh8bhSF5nV
-	yThnx0LcfYIxCeWzdBaTLwdVJHy0+o3Rz4q1yCRE4/ssKM42MmCTAbbl6Ph+O/kehJl/vgCne1T
-	ALB3YUQEF5uPSifUQ/uNh5GFopkimQMjNYVfsLl8ac4O4UPNWSSYbs3Ukre
-X-Google-Smtp-Source: AGHT+IE7GjLCqbggaJQz0UO9QtVJXndW650mkFQiyDlLAyMAbdE71393iphWqqs4UlmzxKitL9AYC90ViRjQuJU6m/Q=
-X-Received: by 2002:aa7:cf93:0:b0:640:fa3c:da93 with SMTP id
- 4fb4d7f45d1cf-6413f4f7c98mr6926a12.4.1762452053454; Thu, 06 Nov 2025 10:00:53
- -0800 (PST)
+        d=1e100.net; s=20230601; t=1762452071; x=1763056871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2T3N0BT2STs8n+iZkoEMWI+F1MMhUxu61N6/yM0vzrc=;
+        b=T1u9GepLHfbJHtypWYGtACfT9QQxakmaHPKPxJR80Jpha6Lp5/cTqxZGZpRMJjBIal
+         BbIuBNOX5Ysc/MM68uFiZS8SM7q18T4Avij22XAx7UKiXeuRAr1+sxkwAHIMwZIooCvT
+         X+m45GKqBcUpbVrT0E5Krpwxhh2w6ZDu68PENxn3BuyCZsIOlQ2G1qQtTlN+IKoQ4qx6
+         1BNl362lj7YXz927Gmsih25KLY8M05H2bZIavqkmDZl/EZNM953TJRkLdIG9IjfdHHyF
+         3/Dq4JO6vYV9JUUSG3JKMTWiyn3E/C5hN6l/a2rWr3CZaMBn+EzXDWD7QS4iwj7WsWPw
+         kBFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjrSvFZCR7SaOaZbzUZPtVjOPVpda9TICYyNKl+EcZttcNUiK13D+DxwmiHcdCST1fngzd08nAm1uARnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu2xtsTpE5ET2jKxYQQdNycBUyWPb3b9WvaDnkU7cE6yd9J++5
+	jVu1pCweGoSgPH/tS6lo3cfTYt75Dso1ErWii+hZjYiKnQOLcYlH2foX
+X-Gm-Gg: ASbGncvjKa+lSQJ/SQXrc7HHcE4keoiB13qj6/nqViWZdUwoT9vy7Wrtf+eNkOm3zCk
+	IEraksEWsesk7bBSgRzVWWY703d6efuaxxV4yIsb1jbJcOviWj5E0rJm/Ol7exTiPgH4G6zf0Ta
+	RUfmqDJAKm3j/p4BGMzF2tRjyAI4lAQdRppa3kGSHEwdC+tNBWICuldP500O5GInk+KsmPMpaiX
+	FR0W+5oxpbXhZ0F+aEAjYAgji0yPTa2/eg6KKjsDh2lieY0kI4wgovZLzsCJuxsFHQwA+a0X7BG
+	un6jTnYL+UDZHMdwYRy43cqyCnx3HWGyzbXQHlENj8I72k9zBTpYvqNNrlbyl5+2hdgljb9kdJk
+	n0m54qXcaufFhehoPusR8tcYxJIoqiU1A7Yz36I5FkR4TakU72+oX1HpQPfCkwv7VyVuFeAI/PA
+	OUS3mgOVgSy9qz0PYSdqy9FMjE+Qb7ChXcBt+sjFerOciJLQrx
+X-Google-Smtp-Source: AGHT+IHjp607z6cdgZ7HFt5E5SFL6QJoNHGzb+TT6QDSql6CaQ0lp76FRbpfISADQTjtlAYn9VTXPA==
+X-Received: by 2002:a17:907:9607:b0:b70:b5b9:1f82 with SMTP id a640c23a62f3a-b72c0abcb78mr4492966b.31.1762452070474;
+        Thu, 06 Nov 2025 10:01:10 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa0f1bbsm15430466b.65.2025.11.06.10.01.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 10:01:09 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	tytso@mit.edu,
+	torvalds@linux-foundation.org,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2 0/4] permission check avoidance during lookup
+Date: Thu,  6 Nov 2025 19:00:58 +0100
+Message-ID: <20251106180103.923856-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101000241.3764458-1-jmattson@google.com> <6f749888-28ef-419b-bc0a-5a82b6b58787@amd.com>
-In-Reply-To: <6f749888-28ef-419b-bc0a-5a82b6b58787@amd.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 6 Nov 2025 10:00:40 -0800
-X-Gm-Features: AWmQ_bmLFtgDgGCdP9lS_QlaeE1Am88tZ8dhTXJnTRlEz705U-E3EMSXmDVBmHI
-Message-ID: <CALMp9eQJ69euqBs2NF6fQtb-Vf_0XqSiXs07h29Gr57-cvdGJg@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: SVM: Mark VMCB_LBR dirty when L1 sets DebugCtl[LBR]
-To: Shivansh Dhiman <shivansh.dhiman@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, nikunj.dadhania@amd.com, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Matteo Rizzo <matteorizzo@google.com>, evn@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 6, 2025 at 8:09=E2=80=AFAM Shivansh Dhiman <shivansh.dhiman@amd=
-.com> wrote:
->
-> On 01-11-2025 05:32, Jim Mattson wrote:
-> > With the VMCB's LBR_VIRTUALIZATION_ENABLE bit set, the CPU will load
-> > the DebugCtl MSR from the VMCB's DBGCTL field at VMRUN. To ensure that
-> > it does not load a stale cached value, clear the VMCB's LBR clean bit
-> > when L1 is running and bit 0 (LBR) of the DBGCTL field is changed from
-> > 0 to 1. (Note that this is already handled correctly when L2 is
-> > running.)
-> >
-> > There is no need to clear the clean bit in the other direction,
-> > because when the VMCB's DBGCTL.LBR is 0, the VMCB's
-> > LBR_VIRTUALIZATION_ENABLE bit will be clear, and the CPU will not
-> > consult the VMCB's DBGCTL field at VMRUN.
-> >
-> > Fixes: 1d5a1b5860ed ("KVM: x86: nSVM: correctly virtualize LBR msrs whe=
-n L2 is running")
-> > Reported-by: Matteo Rizzo <matteorizzo@google.com>
-> > Reported-by: evn@google.com
-> > Signed-off-by: Jim Mattson <jmattson@google.com>
-> > ---
-> >  arch/x86/kvm/svm/svm.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index 153c12dbf3eb..b4e5a0684f57 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -816,6 +816,8 @@ void svm_enable_lbrv(struct kvm_vcpu *vcpu)
-> >       /* Move the LBR msrs to the vmcb02 so that the guest can see them=
-. */
-> >       if (is_guest_mode(vcpu))
-> >               svm_copy_lbrs(svm->vmcb, svm->vmcb01.ptr);
-> > +     else
-> > +             vmcb_mark_dirty(svm->vmcb, VMCB_LBR);
-> >  }
-> >
-> >  static void svm_disable_lbrv(struct kvm_vcpu *vcpu)
->
-> Hi Jim,
-> I am thinking, is it possible to add a test in KVM Unit Tests that
-> covers this? Something where the stale cached value is loaded instead of
-> the correct one, without your patch.
+To quote from patch 1:
+<quote>
+Vast majority of real-world lookups happen on directories which are
+traversable by anyone. Figuring out that this holds for a given inode
+can be done when instantiating it or changing permissions, avoiding the
+overhead during lookup. Stats below.
 
-Though permitted by the architectural specification, I don't know if
-there is any hardware that caches the DBGCTL field when LBR
-virtualization is disabled.
+A simple microbench of stating /usr/include/linux/fs.h on ext4 in a loop
+on Sapphire Rapids (ops/s):
+before: 3640352
+after:  3797258 (+4%)
+</quote>
+
+During a kernel build about 90% of all lookups managed to skip
+permission checks in my setup, see the commit message for a breakdown.
+
+WARNING: more testing is needed for correctness, but I'm largely happy
+with the state as is.
+
+WARNING: I'm assuming the following bit is applied:
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 78ea864fa8cd..eaf776cd4175 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5518,6 +5518,10 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+                goto bad_inode;
+        brelse(iloc.bh);
+ 
++       /* Initialize the "no ACL's" state for the simple cases */
++       if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_file_acl)
++               cache_no_acl(inode);
++
+        unlock_new_inode(inode);
+        return inode;
+
+Lack of the patch does not affect correctness, but it does make the
+patch ineffective for ext4. I did not include it in the posting as other
+people promised to sort it out.
+
+Discussion is here with an ack from Jan:
+https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#m30d6cea6be48e95c0d824e98a328fb90c7a5766d
+and full thread:
+https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omur2l2opitn7lbvfm@rm4y24fcfzbz/T/#t
+
+v2:
+- productize
+- btrfs and tmpfs support
+
+Mateusz Guzik (4):
+  fs: speed up path lookup with cheaper MAY_EXEC checks
+  ext4: opt-in for IOP_MAY_FAST_EXEC
+  btrfs: opt-in for IOP_MAY_FAST_EXEC
+  tmpfs: opt-in for IOP_MAY_FAST_EXEC
+
+ fs/attr.c          |  1 +
+ fs/btrfs/inode.c   | 12 +++++-
+ fs/ext4/inode.c    |  2 +
+ fs/ext4/namei.c    |  1 +
+ fs/namei.c         | 95 +++++++++++++++++++++++++++++++++++++++++++++-
+ fs/posix_acl.c     |  1 +
+ fs/xattr.c         |  1 +
+ include/linux/fs.h | 21 +++++++---
+ mm/shmem.c         |  9 +++++
+ 9 files changed, 134 insertions(+), 9 deletions(-)
+
+-- 
+2.48.1
+
 
