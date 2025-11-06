@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-888359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C80C3AA0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:39:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9303BC3A961
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:32:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB35464F49
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:32:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3EAAD34E62C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361DC2F5319;
-	Thu,  6 Nov 2025 11:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4858B2F5A2A;
+	Thu,  6 Nov 2025 11:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WEtydfwk"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YgmNxMJC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E09B2F1FDF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C272F49FE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428740; cv=none; b=IncehKA5RUKAl2HtUxzLimHfpXiI9J2jrxx98budmeQzFq1kGqtqTpFGeNygdlkPWAT8gMia3eCqRH0lpb9Pb823ItyanjwmPIDF39x2SVajQpFmPj4PuT8PWtxQUlmmUWMtAr1QAkbTsNeV6T96jhwUxR8cS1OX/jm/+WbxE7k=
+	t=1762428764; cv=none; b=p951eoIoPLLkXLs1QvlP6xAO8BFwqxMLOTlL8PMTV7VNFEJOjDss1JErVKOgz4jntVCV/88llPlmlQMAXT4ZMMH6OIxIuiy079fOs6XUvl/V+7Vy+WHVC7XdCM0hocv05viVGvdXXoQkTgj5mxBsoIAlM3ewjFMk38zC3de/BjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428740; c=relaxed/simple;
-	bh=8PJUiAxMn07nrgsxR/0urCL5MfqhEEgeM7+TpUdG1lc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=S6CbwAVSNXSvBwcwgBjMCCiU+akuNjgt1ijNzcqt8olEzYVgFiDJvDWiCJvZa90ixS5F1MhG4pbfWCr2BZPIhc2jokhwtao2wkN9QppLCDvA0M4iaUNRuo5tDQ8/W9GhNMkjRn+poAPD1JnI66xLDfgtBAcAglJxiQ9yQycSL6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WEtydfwk; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4775e54a70aso8153585e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:32:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762428737; x=1763033537; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pI4KxVsOrU0xDYslR/Hq61cmr/c2s2itghpzGG80OZ4=;
-        b=WEtydfwkKxsAFoU83hSSnaJ+83+TftsyfCQYOv2ZpV5HBDnMX6O1ZTT27qQoqH/S9h
-         XFSA9/C8iZhoM2jtRDdeiVDCsj+OMKh6H04mkglfBrYJrs4O2eBs3T5MQvfjB84nZBQg
-         ZZJMChybdAVxElm7N6wGCnGPu6CWP7h9LM9SvTXfltlCQhzXfUXiXMVxa/TEJUNyTTvF
-         vgVNsd5EwoEBQXzcjY7RMWmYY2QJaXR9I4QDHgdrew7XYFS1tFXN1djOfPboNJkslqG2
-         c7jdhCBLcHA9dXWnCb4SZ2jon/rKZqCdQdQ2XguCOHKM67alcza/UfEr62/ZcjRzJlWy
-         A9FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762428737; x=1763033537;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pI4KxVsOrU0xDYslR/Hq61cmr/c2s2itghpzGG80OZ4=;
-        b=h45x/c5lmKJ0SzFZNfPhRgLlzewen9Dgwrx4FAlybkvy4s6ZnPQY+MIDyavKO/zmnH
-         W47RhDmuaQx9y8UfQg81ar4h6gNQDK/TjIROsMywCA9XNo5rvNddTPgAuyXEQ6VwU9eA
-         yDVkQzIAaQTf62qmhhz/ZA8VN9dKfMlYo08B3oCWUtX2DLvqoahd3xgJrUb5egGq2pao
-         eSOjJqbGyZZwjjgUVWlqNBrpA6vBMQUFfKpU3I95UZ5maHJVo41fK8UrkcrbB2rh73eN
-         UMmE5WNhzVLRdJMJY2jL3FbcYqxVR++VauCB5tDyOG0Eh5e6CLSyjgKDLodoBP7bsT72
-         6lDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOYPijwnQpyuGGG0IceSnIicY8rAiRR4LgrlnNNJ059q8p6i2Xujuk1m3WHq3qxbnY4/3hExGZwzXotgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+F4bHtrEMWlkGioi3moqu77jowLHnQifEjTI6E+ktMPlvBogU
-	pjJ5ic64VBYyf4EsQMZipmB7BWDTUNXjG9zzNdH/ot+Hfbm1ns3AfTmeMyjrow9khfdDjm3eQai
-	yJxP/ZhTB9Zh23xBupQ==
-X-Google-Smtp-Source: AGHT+IHHL7QNWakLO+U/Vin4WQXNt+KlP2Dp2qlMK/OrLhzbZjzGufGkPNGVdcItr6+Ft7e8srNqVj1i7yw3M3k=
-X-Received: from wmco20.prod.google.com ([2002:a05:600c:a314:b0:477:54e1:e29e])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5252:b0:477:be4:7a52 with SMTP id 5b1f17b1804b1-4775ce34dc4mr51049625e9.39.1762428737530;
- Thu, 06 Nov 2025 03:32:17 -0800 (PST)
-Date: Thu, 6 Nov 2025 11:32:16 +0000
-In-Reply-To: <20251106112015.214867-1-m18080292938@163.com>
+	s=arc-20240116; t=1762428764; c=relaxed/simple;
+	bh=rXdwkC2kpzeOskXcOpVmw3AQky91ZGRKR5wdWTGOMOk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f0lhLHIPByGKYGjmR7JvuzqssYtUAuPlTwP0c1QmypXukE10Pqkc86JCsVTYb5ZF/QoNjeJQAYsX5oVOul5yNhHoLXtrST8VuqWaipsmQ6TIlDbZtHylzRus/fekYqIupiwm297Wtzhh8bPKfxTksVMoyWE7Y2nGJTf+L+dj2MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YgmNxMJC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762428762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=ZtAYXPMxLgYjZTh5H3JFSB5dtUOxCvr3cjQwTWjPznw=;
+	b=YgmNxMJC0WPxwE0FGUI8tNYMQ/NshjEL29WSkNuUknRNjUMXES1acukR7tPAydlo7fB9YF
+	Jy5Bo1rnKsirQ4m/HHt/vYwqDN1qirs62Tfa72mbNU00py2h1EIgjH2GUdNgLFl/qOW9lq
+	N+yxsJZf0hNUOMi1v+8KGezhfYMnU5M=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-8a4OgR3pN8KGrkdEJCOFFA-1; Thu,
+ 06 Nov 2025 06:32:37 -0500
+X-MC-Unique: 8a4OgR3pN8KGrkdEJCOFFA-1
+X-Mimecast-MFC-AGG-ID: 8a4OgR3pN8KGrkdEJCOFFA_1762428755
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B47EA1801230;
+	Thu,  6 Nov 2025 11:32:34 +0000 (UTC)
+Received: from localhost (unknown [10.22.64.111])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 894D530044DA;
+	Thu,  6 Nov 2025 11:32:33 +0000 (UTC)
+Date: Thu, 6 Nov 2025 08:32:32 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.246-rt140
+Message-ID: <aQyHUB0nONxUWe1R@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251106112015.214867-1-m18080292938@163.com>
-Message-ID: <aQyHQFYGTodXADNU@google.com>
-Subject: Re: [PATCH] rust: correct documentation comment for rbtree cursor
- peek_next method
-From: Alice Ryhl <aliceryhl@google.com>
-To: Hang Shu <m18080292938@163.com>
-Cc: ojeda@kernel.org, Hang Shu <hangshu847@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Nov 06, 2025 at 11:20:14AM +0000, Hang Shu wrote:
-> From: Hang Shu <hangshu847@gmail.com>
-> 
-> The peek_next method's doc comment incorrectly stated it accesses the
-> "previous" node when it actually accesses the next node. This commit
-> fixes the documentation to accurately reflect the method's behavior.
-> 
-> Signed-off-by: Hang Shu <hangshu847@gmail.com>
+Hello RT-list!
 
-Thanks.
+I'm pleased to announce the 5.10.246-rt140 stable release.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+This release is just an update to the new stable 5.10.246 version and
+no RT-specific changes have been made.
 
-This should probably have a fixes tag:
+You can get this release via the git tree at:
 
-Fixes: 98c14e40e07a ("rust: rbtree: add cursor")
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-Alice
+  branch: v5.10-rt
+  Head SHA1: f897d4f7c89fcc13524137c2b79b7c26ce0703a0
+
+Or to build 5.10.246-rt140 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.246.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.246-rt140.patch.xz
+
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
+
 
