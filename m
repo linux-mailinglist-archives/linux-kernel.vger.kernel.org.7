@@ -1,86 +1,101 @@
-Return-Path: <linux-kernel+bounces-888338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495ABC3A8DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:25:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D925C3A904
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF934462EB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96FA463355
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C581F2F0686;
-	Thu,  6 Nov 2025 11:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C43D30DEC8;
+	Thu,  6 Nov 2025 11:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bvia0hXf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dFXgyogD"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA612E0413;
-	Thu,  6 Nov 2025 11:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D634430BF66;
+	Thu,  6 Nov 2025 11:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427943; cv=none; b=hEXSr6czCGWFygpFVefXjnRFhRQWEAW0j6l+1RhnB+plgWFQzHbMAJgXDW92Pq5LomNH9M0Jj7BJe9agvxgSPXOyvqcjMTj0+FTaStJp68mRJbOnKLHSxD4kLoonbpe7FEdNXikI5uID9/p8UV5/XjC7BTYJ/fsraBDLrWpxfIY=
+	t=1762428125; cv=none; b=XMuhpbkDujyrshbVSgYY47bakgDQpPlgcEHxPcXAW5EkoLumUdZ1i/dte1Ex/nG5BpQks+9IWqJuwET5M7l4uMQRaC0Rsq/vrBO6AsNoS9fWvISpo5LMRPbfKo1TKwnha0GUpfl4ob6qVeR6hxKh/7PP24ArjHUSLo1BqT4CTAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427943; c=relaxed/simple;
-	bh=uImHPwXYfgO1OsgDjUhpotL5RTPQMGjlax5/2LxDgoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D34FjS4d4UQO8J8i2M4u7ChGjQZd+UeN+y22Qqm70CNtYx/m4yD71s9OC+NPbXe/ig6UunYPLjv13wwZ/6fhvwlf2qSimkO/yq2wJTN5LfewagdtrHgH8J6xL/VCn2fNMT3arCYRVdfrtL73qXfD4Vi0KKskoqroTt14QB50/zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bvia0hXf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C2BC116C6;
-	Thu,  6 Nov 2025 11:18:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762427942;
-	bh=uImHPwXYfgO1OsgDjUhpotL5RTPQMGjlax5/2LxDgoM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bvia0hXfwFamS3dGiFgQBaoMMG5MmqEThD5KdGn9o8KcIojUqXbnUEfhwSP3SDXCd
-	 PczjxFlmYVUgjZVjsEhx3x0/M+Jvun0vI8752K6yBV/jqR/WxMxR/q8cR3srOo+pRI
-	 dyV9en4CtAGWtl777bKKjxwTivN8Go+7/3LZRyvUVsonZO5OyY8k32H72oNsWAUqAL
-	 zg/Uhu66tqP0Uyugrk5R9z8FjVKfJAwBDxMxcmDjE68w7b4OmppwUofAM7OQReutkd
-	 OT2YA4Bg7/J5ZOPNvxfZrJ8lQcygIWTaqe7KANgdrbEXRfVyBMyaU0zMLV+4P2RwSu
-	 HC0A5l+qjwJNA==
-Message-ID: <fc051006-5cb2-49e1-bb27-7839837439cd@kernel.org>
-Date: Thu, 6 Nov 2025 12:18:57 +0100
+	s=arc-20240116; t=1762428125; c=relaxed/simple;
+	bh=NdLfAVUeT/ytNabjs6xqCGDoi9eV7GZq2NHkn8N7lpw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uSlAl6gBxljChr9IeiTZbpbXLubxhEhxjNIVFY6G6xx6p2fNZiCAXEJ9ChOQQ3lY5ZCLS8/dkYJ6ELarPOOuRCJo0AaNSSAVHf5+EeYuQZUYcblIXmHdVjEjZPI3Py1AP7QM7MvsxEb5Km+9/IC/3a3BObQC6LiU20tqIVuzpAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dFXgyogD; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=GG
+	Jr17qKdc34PltHTdQzC51mfe8l8hdR3MCBbmWEcEo=; b=dFXgyogDuJiUNiQwLH
+	wEQ/wPeTzeXzM7jw6V/9ZDadcQUG+b2m1m4w84Nr07f8RsNcHjilqBB6Ilu5Yriq
+	9fYquEEQokg/hMD1xUXK1sze/BJ8hc466s0ADqJd4o3sqE5Qt6+5AKl9TsOaN7l2
+	bxsj54J11wALcl9VpOngMy1tI=
+Received: from ubuntu.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3d6+dhAxpkL8BCA--.11322S2;
+	Thu, 06 Nov 2025 19:21:02 +0800 (CST)
+From: Hang Shu <m18080292938@163.com>
+To: ojeda@kernel.org
+Cc: Hang Shu <hangshu847@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Hang Shu <m18080292938@163.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rust: correct documentation comment for rbtree cursor peek_next method
+Date: Thu,  6 Nov 2025 11:20:14 +0000
+Message-ID: <20251106112015.214867-1-m18080292938@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest/mm: fix pointer comparison in mremap_test
-To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20251106104917.39890-1-ankitkhushwaha.linux@gmail.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251106104917.39890-1-ankitkhushwaha.linux@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3d6+dhAxpkL8BCA--.11322S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr18GryfKFW5ArWftry3CFg_yoWfJwb_WF
+	n0qF18Aa48uF4qvasxArs3AryIgr4fGr4Fkw17KrWUKryUCF4UJrn5ur90q3s3W3yIgrZr
+	Zr1Sg3WDKr17JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMPfHUUUUUU==
+X-CM-SenderInfo: bpryimqqszjmity6il2tof0z/1tbiPQL9kWkMgeMtigABsy
 
-On 06.11.25 11:49, Ankit Khushwaha wrote:
-> Pointer arthemitic with 'void * addr' and 'unsigned long long dest_alignment'
-> triggers following warning:
-> 
-> mremap_test.c:1035:31: warning: pointer comparison always evaluates to
-> false [-Wtautological-compare]
->   1035 |                 if (addr + c.dest_alignment < addr) {
->        |                                             ^
-> 
-> typecasting 'addr' to 'unsigned long long' to fix pointer comparison.
+From: Hang Shu <hangshu847@gmail.com>
 
-With which compiler are you seeing this?
+The peek_next method's doc comment incorrectly stated it accesses the
+"previous" node when it actually accesses the next node. This commit
+fixes the documentation to accurately reflect the method's behavior.
 
+Signed-off-by: Hang Shu <hangshu847@gmail.com>
+---
+ rust/kernel/rbtree.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+index b8fe6be6f..9e178dacd 100644
+--- a/rust/kernel/rbtree.rs
++++ b/rust/kernel/rbtree.rs
+@@ -835,7 +835,7 @@ pub fn peek_prev(&self) -> Option<(&K, &V)> {
+         self.peek(Direction::Prev)
+     }
+ 
+-    /// Access the previous node without moving the cursor.
++    /// Access the next node without moving the cursor.
+     pub fn peek_next(&self) -> Option<(&K, &V)> {
+         self.peek(Direction::Next)
+     }
 -- 
-Cheers
+2.43.0
 
-David
 
