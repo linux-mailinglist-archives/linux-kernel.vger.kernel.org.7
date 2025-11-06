@@ -1,120 +1,189 @@
-Return-Path: <linux-kernel+bounces-887629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E5AC38BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:53:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D5AC38C38
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 851A54EEB3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:52:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B8CF03419AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB5D221703;
-	Thu,  6 Nov 2025 01:52:03 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC925233711;
+	Thu,  6 Nov 2025 01:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kpYwou+8"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011054.outbound.protection.outlook.com [52.101.52.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9D1DF273;
-	Thu,  6 Nov 2025 01:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762393922; cv=none; b=ZUxz/+sLhr3Ec1CqM2zANiVJABXvoXMh9YXyRA4hl3/CbWJ8EO8AZiGlNFd4igpnTDfm1WbGQpyvwW1IdvG2eJn5GQhUXLvs+fPUhnfyoHk5C+K06HHIiFCf0U7HCDGp23r1kZyMpy9Tuw+rWbHgQ/JImwdtbZmv/8aBpETyaGg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762393922; c=relaxed/simple;
-	bh=3CCbmMymK0ULlPSTKAXkiBqudh6MhKNCAHxuexNlEuI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qmsv3tCPqae07rDZ2ycSICtbK9Ml+KFWePciAmuwjEvPRdUtZMlNt6D9gjaH9A3mfI29GqFOwm91RLxopvRqtxfsZoK25F9GbUKz+HiW2xe3pqGGJfq1t2whnC+jG9V2+3Uo1RWkOW2QWpE7M1n1qW+kq9MhfEBivt0vS3ARgkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2b21c0babab311f0a38c85956e01ac42-20251106
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED
-	SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:67eb8836-86be-490a-93c6-e1c8495515fa,IP:20,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:15
-X-CID-INFO: VERSION:1.3.6,REQID:67eb8836-86be-490a-93c6-e1c8495515fa,IP:20,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:15
-X-CID-META: VersionHash:a9d874c,CLOUDID:3721bf5aae6e1147e7218dee29ef3e10,BulkI
-	D:25110609515685T1QEX0,BulkQuantity:0,Recheck:0,SF:17|19|38|66|78|102|850,
-	TC:nil,Content:0|15|52,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 2b21c0babab311f0a38c85956e01ac42-20251106
-X-User: zhaochenguang@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <zhaochenguang@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1656210356; Thu, 06 Nov 2025 09:51:53 +0800
-From: Chenguang Zhao <zhaochenguang@kylinos.cn>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Chenguang Zhao <zhaochenguang@kylinos.cn>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] docs/zh_CN: Add kbuild timestamp Chinese translation
-Date: Thu,  6 Nov 2025 09:51:48 +0800
-Message-Id: <20251106015148.54424-1-zhaochenguang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D511EF36E;
+	Thu,  6 Nov 2025 01:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762394266; cv=fail; b=TnnA3cGQoL49lkJ7u9fWKUVgiGiYUsM/zTpwnhb1Lmahn6ONdjQCVrkucd7XIc5x/W/8AI/kRxMmfNROv9ach1XT8IjKr1KNp/X5kVknVGAy8R1IJ1dq+jVzbE6xGdEHmBqhGxJK8jYCwDgtuyvLav/iw/6u3mTJHnNx6tTb2hM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762394266; c=relaxed/simple;
+	bh=4AhKb57wrn2SWB0LQVMiAc2qfK0KIEmUM+QpSj1LLkA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O2WrVTHIL8Hs73o0/HlEuvI6JuOFr2vpZRNbCi+jH7modzRjpDF7NWS8xPO3q9V4gIk9YXaNKRPkt6px3feNvNdK4D5nc8o88gF6hyqH35Wq6KEwN4ukwgaLRwc2d1kpRVf73CjSYZPJsSi/mRRbu8091BZ6zuK/LoFfLIKj6XU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kpYwou+8; arc=fail smtp.client-ip=52.101.52.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XXrQ91PJT0ik9PkvMm5oPon0bUPk9Kjeqh9AuCXh4oDN6Bh/aEr1mTA5X01rqIOFa0we4nRvkWwhsD3HKxP7LmBDwY4TPqe61y+4NRopHp8apzQc/wL2ZiLwlyOHqJJl01hFxKJFyBDz8aXoquJ/xWU750b44y6bFYMMx5aqXAHpn+yvgslkZkFSH3MNxYVZZjdRZJw7lm0I4oor3Pa9bwmn2O3AuGFWj/Ec0v1efoE+JayhYBYbSGqtcJ3KKbOWl9C7J8zbzis7SjqEGnRIP1RjSpmkYurp3NbhmNYRpIJncRD4QsRN9BCiIA76nLn1aAQoqldodWmGON74ixknfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eSPfemeHc//fW3JPbTuePU9LPktU7QwBvRzFY08aGc4=;
+ b=QItm+8CO3B1YxKSEaG7X+loLRDU0VvTcw8OwPD3YuqFhwNCBqk7qBm9A4YMG3ohaJLk/Kpdzgv3VMU3LrB0rI/7jaQsDOWZGVhFbbtA5twFJySZinM0S4ggqL3INXYKvSe1HVsWFZs5Rv61LLQ2C/U+Z5cG3wb+VBP3t0sBBtWBlZwBcbz/F3JZhKBWM5AMBlfOTWjM8aMhE5b8r3FKfaIrYkb9aiBhY5o6//l+tc4i/H6ZeCVa8YTGgIlcG9zf7lUeP4UwWpku+dGGCTPuu1ZZxzjPF+AiQvblo1nQXC90MEgbEAKlhBdbF/TWvlJgDAljkvb5MMffQ6GXjJWPzmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eSPfemeHc//fW3JPbTuePU9LPktU7QwBvRzFY08aGc4=;
+ b=kpYwou+8Wb6tTIM4wN46Ui84Y5761YattFtliRLXuhH7UT8P/zSSzqtkxme3GLTw8nKVxUt3B1DtCxVl81bUf+QsCFIE56wtrncpuPi2rqFB0bgLgcJuODIlVB8fW/ZDt8nouys+gtk3KI3WYqpUZSSpjTGlGRdBVefV6TT7mf4=
+Received: from BY5PR20CA0006.namprd20.prod.outlook.com (2603:10b6:a03:1f4::19)
+ by IA1PR12MB9529.namprd12.prod.outlook.com (2603:10b6:208:592::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.10; Thu, 6 Nov
+ 2025 01:57:41 +0000
+Received: from SJ5PEPF00000208.namprd05.prod.outlook.com
+ (2603:10b6:a03:1f4:cafe::29) by BY5PR20CA0006.outlook.office365.com
+ (2603:10b6:a03:1f4::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.9 via Frontend Transport; Thu, 6
+ Nov 2025 01:57:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ5PEPF00000208.mail.protection.outlook.com (10.167.244.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 01:57:40 +0000
+Received: from titanite-d354host.amd.com (10.180.168.240) by
+ satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 5 Nov 2025 17:57:37 -0800
+From: Avadhut Naik <avadhut.naik@amd.com>
+To: <linux-edac@vger.kernel.org>, <linux-doc@vger.kernel.org>
+CC: <bp@alien8.de>, <gregkh@linuxfoundation.org>, <corbet@lwn.net>,
+	<chenhuacai@kernel.org>, <mchehab+huawei@kernel.org>,
+	<yazen.ghannam@amd.com>, <linux-kernel@vger.kernel.org>,
+	<avadhut.naik@amd.com>
+Subject: [PATCH v2 0/3] Cleanups in amd64_edac and removal of legacy EDAC sysfs interface
+Date: Thu, 6 Nov 2025 01:54:43 +0000
+Message-ID: <20251106015727.1987246-1-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000208:EE_|IA1PR12MB9529:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47b55fe7-101a-49b6-7a63-08de1cd7de6e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CnAg28K1esBD1vGrQmzL4hqvRduohOOno49PepSTjPvLsfPSNqt5FvFO5xtf?=
+ =?us-ascii?Q?yuoyRb0Z3Zos2DKCDZ8+j90dednytSfRk1IjnGTijN4WeiCLoofq4PEm1paS?=
+ =?us-ascii?Q?tuynhhwqSSbwEhGZsjdsIxcapkLv2u71PxQiQmP9zeRbLqVmgV3XXDqOpvvi?=
+ =?us-ascii?Q?snNwNUQuvPq8gg8SD6eXOeHoIqfPigp9mrJfjtM/a76O4QUfgZNGoNS1B41k?=
+ =?us-ascii?Q?f0H4JLzj4+nGnF+x7OMWl9IJVU/hRAQhkerk+gTiipCS8XVJndQ7/J0IR09y?=
+ =?us-ascii?Q?9FNzfJg5DgnHP8yBCQgOZk4w6dSgoJWpZ44FPsIlbeHb6CvU9iC9gUBmXcmF?=
+ =?us-ascii?Q?Nh6WuDTfBUQOiSsMQPJ+52XC2SvKRC5qW6mbDjiUqo5iX0ICYC3GKRZ9AbSP?=
+ =?us-ascii?Q?cHgVum6DAWQmaZEfz9Xt4jyg0I1V+UV35pP6nu6hKN8rzwdxEaWp+c7fHirV?=
+ =?us-ascii?Q?yGJ+YxYTCfd7vqH1eQHWHr2Gx9jWwOXieoB5JuOm88Qc/BjB+KExymms/WDn?=
+ =?us-ascii?Q?JVb3ZfOMvgJaHgdcWsZcEhoWJXx/Hq7l5Vv6wkugnB50e679uGoiz193jgby?=
+ =?us-ascii?Q?NKkN8KKrpNb0JVjYs1gebVpVKTFKm0Ytw3o8X7hTsGUmY/pHF8qwHm9FbCeh?=
+ =?us-ascii?Q?DXCPcBZvjpUqlf0urylqdEF6lk5B7DopR1xKLYn2I2qgcnen37hH2GKG49Ws?=
+ =?us-ascii?Q?u3flNDhxRP9utaB+6RMdoKvl9DAmpjzmDUBOmCqWOhmyLt4mXOclQh+vcnOs?=
+ =?us-ascii?Q?BR4JQivucnxBCwrLPbZkTcuEIoH7MVbCP3dJkB3UHmqI7chKkNlfJfFS3f/d?=
+ =?us-ascii?Q?P0OIJLLRQ4Halv6N7nIc86i+9HSe06EaM0x/vuAd6cOpYBWiz61GB7L88czv?=
+ =?us-ascii?Q?r0tzZOhpU16Atk88DISFvEy3/8MEg9ZQM7EHnTvJWpfBNOjurvs1pRdZHoRJ?=
+ =?us-ascii?Q?pwfomA+IMjynkf+NUsbfxmhiUxP7t5NTQQCNcpZIqTA6mtegDH9loxnVw9B+?=
+ =?us-ascii?Q?i8HZykBrjszFMQfMuERsztDsX8QNio71Crxn9qo5DSm51nPJNfVpH+gMFOAF?=
+ =?us-ascii?Q?wZPXA604TTkoVZCKKKCGwJ71RG/Knnbr4EhpXeVzcY6UWpxMeJZhymK0a1i5?=
+ =?us-ascii?Q?CsMI01xzP0nP105sTWhTifG7EBw9NUrd7QXpXkk2qbBR4Rw0ZxADKiYM+lk1?=
+ =?us-ascii?Q?d319Pw9DSpsUhBNtfixudQSNLgtxw8kG/dFC9Rvq1aL6F5h92uBdoB+koydi?=
+ =?us-ascii?Q?zUUMMbBBvEUghLaNC2nY+RJfvtyYydhcKjWcGMDQN3qrTtgqPpcdfBWAZMSr?=
+ =?us-ascii?Q?U1Bn0VpVeXNMAa7yGJb/s2VK7wqJ2sqmoRPhFp3jcDYlkaSaaD52aQTcyB4q?=
+ =?us-ascii?Q?H50/PVx3MoLbqy7Au47T7NghUUc+VqpmT3XnfJXCT63Z6YLxrudYN8RmpAsj?=
+ =?us-ascii?Q?OVlOmdxnJSiCCRjn6Xz+rm1klnbeutX/fCTGyC8S9yJ01lcTKfMvCuL+IQ9k?=
+ =?us-ascii?Q?W49Zel9zSUEEpA8seWvAq+0k4oczKI5qEJq2+WSvG1HTjjCRWKaNgIijV6Gi?=
+ =?us-ascii?Q?Qe8CjzgNDoOGQl0/3aSDLa6fkS/pVZm98oHy6RYq?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 01:57:40.7179
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47b55fe7-101a-49b6-7a63-08de1cd7de6e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000208.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9529
 
-Sync the translation of changes in kbuild/kbuild.rst about
-KBUILD_BUILD_TIMESTAMP.
+This patchset undertakes some cleanups in the amd64_edac module and
+removes the legacy EDAC sysfs interface since it has been obsolete for
+more than a decade.
 
-Update the translation through commit 5cbfb4da7e06
-("kbuild: doc: improve KBUILD_BUILD_TIMESTAMP documentation")
+The first patch removes explicit assignment of the ctl_name string and
+instead generates it at runtime using scnprintf.
 
-Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
----
-v2:
- - modify the commit message as suggested by Dongliang and add
-   a corresponding commit info for the English documentation.
----
- Documentation/translations/zh_CN/kbuild/kbuild.rst | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+The second patch removes the NUM_CONTROLLERS macro and instead uses the
+max_mcs variable to determine the size of chipselect array.
 
-diff --git a/Documentation/translations/zh_CN/kbuild/kbuild.rst b/Documentation/translations/zh_CN/kbuild/kbuild.rst
-index e5e2aebe1ebc..ad3e84eabbbf 100644
---- a/Documentation/translations/zh_CN/kbuild/kbuild.rst
-+++ b/Documentation/translations/zh_CN/kbuild/kbuild.rst
-@@ -290,8 +290,13 @@ IGNORE_DIRS
- KBUILD_BUILD_TIMESTAMP
- ----------------------
- 将该环境变量设置为日期字符串，可以覆盖在 UTS_VERSION 定义中使用的时间戳
--（运行内核时的 uname -v）。该值必须是一个可以传递给 date -d 的字符串。默认值是
--内核构建某个时刻的 date 命令输出。
-+（运行内核时的 uname -v）。该值必须是一个可以传递给 date -d 的字符串。例如::
-+
-+	$ KBUILD_BUILD_TIMESTAMP="Mon Oct 13 00:00:00 UTC 2025" make
-+
-+默认值是内核构建某个时刻的date命令输出。如果提供该时戳，它还用于任何initramfs
-+归档文件中的mtime字段。Initramfs mtimes是32位的，因此早于Unix纪元1970年，或
-+晚于协调世界时 (UTC)2106年2月7日6时28分15秒的日期是无效的。
- 
- KBUILD_BUILD_USER, KBUILD_BUILD_HOST
- ------------------------------------
+The third patch removes the old EDAC sysfs interface.
+
+NOTE:
+These cleanups were earlier submitted as part of the set adding EDAC
+support for AMD's newer Family 1Ah-based SOCs.[1] However, since the
+support patches were critical to enabling EDAC on newer AMD SOCs and
+since these cleanups were still under review, the set was split up.
+
+[1]: https://lore.kernel.org/all/20250909185748.1621098-1-avadhut.naik@amd.com/
+
+Changes in v2:
+ - Drop the patch that set zn_regs_v2 flag for all SOCs based on Family
+1Ah and later.
+ - Change MAX_CTL_NAMELEN macro from 20 to 19.
+ - Modify commit message of the second patch per feedback received.
+ - Skip deprecation and just remove the old EDAC sysfs interface.
+
+Links:
+v1: https://lore.kernel.org/all/20251013173632.1449366-1-avadhut.naik@amd.com/
+
+Avadhut Naik (3):
+  EDAC/amd64: Generate ctl_name string at runtime
+  EDAC/amd64: Remove NUM_CONTROLLERS macro
+  edac: Remove the legacy EDAC sysfs interface
+
+ Documentation/admin-guide/RAS/main.rst     | 142 +-------
+ arch/loongarch/configs/loongson3_defconfig |   1 -
+ drivers/edac/Kconfig                       |   8 -
+ drivers/edac/amd64_edac.c                  |  61 +---
+ drivers/edac/amd64_edac.h                  |   7 +-
+ drivers/edac/edac_mc_sysfs.c               | 404 ---------------------
+ 6 files changed, 22 insertions(+), 601 deletions(-)
+
+
+base-commit: d05ab93a9183520b2a6965765e14a3e6bdf01f90
 -- 
-2.25.1
+2.43.0
 
 
