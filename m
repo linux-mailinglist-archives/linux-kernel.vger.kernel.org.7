@@ -1,83 +1,53 @@
-Return-Path: <linux-kernel+bounces-888541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F76C3B192
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:10:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D82C3B210
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1E204F6BF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:02:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46DC1B217F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F76336EEC;
-	Thu,  6 Nov 2025 12:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48EB339710;
+	Thu,  6 Nov 2025 12:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1s1a115T"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012050.outbound.protection.outlook.com [40.107.200.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="FkoR7f/k"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969434402A;
-	Thu,  6 Nov 2025 12:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433777; cv=fail; b=n4S/Ss8lHpojTrHMO8dfjy5BvDBohr/R0i1YwBuznMVwr3req/72EludnPXpT/8VFjKGEIq4wFB9frasmLIFiOhgHc/RwnU5tAFv1lOrueLbgwz4dII84W6Y222eib/xu3xipjj/iQKV7XPQnAzFmljjKjuq83GFv7nB/EjtIvw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433777; c=relaxed/simple;
-	bh=VSEcRY8bl+NE6lLHLevw+CZXcc+iTA9Hbd15K/R+C1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hqQOF0pAy6VmXsfQQL8uCCMZiRtMgtSIPOjaxyspIAABEGycymero4YnyVOsYEai16HqGlaG1Ow0omyVqPmGk1FTn0hX5rBZfbXzHSX9sA2BoQoNfGufa/sfmBlKZQUMW4l+/USFIT+UNM3PcsW2w5UCANYUbAn4XIOQ27NqBg8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1s1a115T; arc=fail smtp.client-ip=40.107.200.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j2GHcblU6n5NlAmubrpUQkMUALr8qZZ/CXHFINW07sB90eTLQpMsslSeLhdlmOu30P8ThDCGO9soc+XrWZxfMqvj9PVLMgKL/8vHiRiwPCu7YE0De6JxFjkmiTXWDyDn507hni7ngLfobz7IEk16QYvY8w130NS1oq1cu/v4Jq0JIDhMPO/sSwlUjQTTLIxDW/SXZBzTO6dqbM5fKrDor5gPVDZMe0S0TYPGa/8rLzSSf074JNUMmaqoN8T965Ter42Yz75KvNK9lUwglVPC81CasxU5f7OFOCyyJTgzC0mvIohyNBYPTR8u9Uc+asxTDPeFB7AE5logbFxewneisw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BaH4jL/kGe8N/E21Aq+Ilky+SDexErt27SV2D0lZmWs=;
- b=EDU5/Rki3JVMceB1izlQO5xJfhe+NbiyGwlsrtDFXn41cd9V15tPBZmt0kqQQ4iOEEnkzTo43FUOBM862Zn83uH79UxXYmNLHxjWUU9/Sa9wYW5/p6ro1SzHS3jQ4Lng7cL/VA3uTTick+J++46W6lvC6YoRHtLgsm4QgbIH/IWZresoCFpWW2QpXuhKsf7347BCdqrLDtjbCHxZIKcOisHuxSwNuFdPVDNwP5vsmab3EnrACDxv+5SOMpjfixaLPqb0LZ75MxdBnfxCBipZdMqoOoKXHjqILy+pBL0nbn1jlIdJ7jrHOH7+zmX2dQTYykDeKvmrUoyxEg119oPzUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BaH4jL/kGe8N/E21Aq+Ilky+SDexErt27SV2D0lZmWs=;
- b=1s1a115TFEP1DrlJDqN4/IPRyVEJP//LsBSuVUSugCvldJ34+1Mo9w0+qCPEtJIsbklt7reTDvpov7CH7v7v6gp11enDxWblrtK9yJvbxFimeFeGA0AG8DEDcgwc7zrDXNdmgFwRh62AX+cg1QBcyWTQp/cM3uQftXpMSkF6Z+g=
-Received: from CY5PR15CA0256.namprd15.prod.outlook.com (2603:10b6:930:66::27)
- by DS0PR12MB8342.namprd12.prod.outlook.com (2603:10b6:8:f9::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Thu, 6 Nov
- 2025 12:56:06 +0000
-Received: from CY4PEPF0000EDD0.namprd03.prod.outlook.com
- (2603:10b6:930:66:cafe::4e) by CY5PR15CA0256.outlook.office365.com
- (2603:10b6:930:66::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Thu,
- 6 Nov 2025 12:56:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CY4PEPF0000EDD0.mail.protection.outlook.com (10.167.241.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 12:56:05 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 6 Nov
- 2025 04:56:02 -0800
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Nov
- 2025 06:56:02 -0600
-Received: from [172.31.39.154] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 6 Nov 2025 04:55:50 -0800
-Message-ID: <c1b74f44-27eb-4e7c-a2dc-ee48ccfe34a3@amd.com>
-Date: Thu, 6 Nov 2025 18:25:49 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A684E324B20;
+	Thu,  6 Nov 2025 12:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762433817; cv=none; b=LjM5qWUDd/QjR9I7jvlo8nU+Kt9dUjbIKZMVqXjH9MthplU+W9fxo+imfQKZArE268Z5ZGYGvoHPWi7LEF3reGCAErH25EUEs1bfrROkWkXZySj+POXSwEoeik+mJPfLboDbYK9IG8vR7bOJIJbdwKMAF6bNxNGX7rUpORVJ1+Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762433817; c=relaxed/simple;
+	bh=pm4CXXxkNxyP57QCn41n0cSFLcj6+S7nOOKBKYrt7Y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=THRw4AGEKdAa+pGWhWjEjSplCnt5EwlIykTi8LNuaFFRMko0R0a2m3MmuAtD0CDU/6erBQ4zFAJfVgucbcbCMf0QD+TdRpvmEH2Vi1hRQicCV6YsqySNJ9mPwTHh4DAFrzqciUSkyZXJJV4MPSFnvOzWNFc0fPkAPNrI3KuZBUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=FkoR7f/k; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.178.76] (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
+	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id C7BCA2FC0061;
+	Thu,  6 Nov 2025 13:56:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1762433812;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HxxhpFSk8AGbWyqP7e/YOXfL/JukFyEo9PWJ9mt5yxk=;
+	b=FkoR7f/k+BuMSMIGvnGPcueRpv7BPUi/P8bxJeSt+x23s8G1ZZIJpFxQTSBW5BAzSJbpgY
+	n8BlaUjkth3cfXl/JPvzr+yUBENScj5Khu2hAONJmGLIlEMJEi/HznmTYvlZpy3ll70Xcn
+	77F9NWQaQCObTo5Onr717uypzkfXpj4=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=g.gottleuber@tuxedocomputers.com
+Message-ID: <a3b26b2f-3f23-4a1a-87ef-0f5631e96ce7@tuxedocomputers.com>
+Date: Thu, 6 Nov 2025 13:56:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,255 +55,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/34] sparc64: vdso: Switch to the generic vDSO
- library
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, "Andy
- Lutomirski" <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	"Vincenzo Frascino" <vincenzo.frascino@arm.com>, Arnd Bergmann
-	<arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, Andreas Larsson
-	<andreas@gaisler.com>, "Nick Alcock" <nick.alcock@oracle.com>, John Stultz
-	<jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>, John Paul Adrian
- Glaubitz <glaubitz@physik.fu-berlin.de>, Shuah Khan <shuah@kernel.org>,
-	"Catalin Marinas" <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	"Theodore Ts'o" <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
-	"Vasily Gorbik" <gor@linux.ibm.com>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Shannon Nelson <sln@onemain.com>
-CC: <linux-kernel@vger.kernel.org>, <sparclinux@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
-	<linux-mips@vger.kernel.org>, <linux-s390@vger.kernel.org>, Arnd Bergmann
-	<arnd@kernel.org>
-References: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
+Subject: Re: [PATCH v2 0/7] Add TUXEDO Elite 14 Gen1 (X1E78100)
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Georg Gottleuber <ggo@tuxedocomputers.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ettore Chimenti <ettore.chimenti@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>, stefan.schmidt@linaro.org,
+ stephan.gerhold@linaro.org, wse@tuxedocomputers.com, cs@tuxedo.de
+References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
+ <eccdb13b-e062-4106-8c79-ca57b6839a0e@kernel.org>
 Content-Language: en-US
-From: "Aithal, Srikanth" <sraithal@amd.com>
-In-Reply-To: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB04.amd.com: sraithal@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD0:EE_|DS0PR12MB8342:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a55891a-6f69-4c80-2198-08de1d33d95e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026|921020|7053199007|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?azRLNUtMRXJ1bHRwcjMycEZIa1k5TCtTemZreW5HUzQvckNLY1krN1RQVW9s?=
- =?utf-8?B?U2VJQStFbXlHU2hLOWUwMWQ4SXhrVmxkaHhKSkJyRU84WUh1dytzM21GSUVu?=
- =?utf-8?B?SFRtTlRSUll0UmxVMW9NWUw2Q0RmaVlGVHdOb25uYU1XZXlBamZ1bG9zMGp5?=
- =?utf-8?B?eC82QVhjeDVYRDZLanpXS3lNeDdPam9UUGxZOVdBWEZaTjR2ZlpEWUtkSDRX?=
- =?utf-8?B?VVcrbFpBTUxvTmJkT2lpTnVEeUpBOThMcVJuWGRIVWRhUTZrejI3MzFMeVcx?=
- =?utf-8?B?WHRNR1BaazNGVWd1UGgxNVp2OFBVYmZYamlEYXpQQmtoRTZ5Rk9mRTRDMjls?=
- =?utf-8?B?Vmlzb0UyY0tHa3p2bW9JbEorMnJabytjcEszbVdESk1lNDRBL0IvMnRuemgw?=
- =?utf-8?B?Z0ptQzBPV1lSZmNJUXAxU2UxeWlZU1ZFbmxGempoRTMvT1I5SzV6VzVNbVlK?=
- =?utf-8?B?OEhCU0psa2dLaXJYWWJGaUptbEFKcHhOcEFqUDdjMGJuZFdDNUVyNFVaNzhM?=
- =?utf-8?B?TFNoQi9NeWVReW95V1NLQVVuTnRsZzFnUnhTZFpjSFBVMjNhdnlvZVV5aFFw?=
- =?utf-8?B?Y0RmL2s0b2xyOHEyaElISVVoY1RXZmJzU3dXN09GVVc1c0VoQjYrVXJ6dkhN?=
- =?utf-8?B?NldadHVOU0N5QUg3VE5Ca1diTWM1QWhNMWowejNZT1lDZCtVZnM1VnlRd3Iw?=
- =?utf-8?B?WGZ6YWtkSlZnM1JDU2ZhbmVxRDY3RUkrYnhDQWhsRk92ZldBNTU3OSsyRFpy?=
- =?utf-8?B?UmhFenNGQnRmb2JWT3N1YkhMbzEvTVBYaitmdjNLRzZsYkl3R2NmQU5Qb3Uv?=
- =?utf-8?B?YkN5cU5PT045OVljc1Z2TUgvd3BHbThKaDRGRFZlYjZWbVdqSDR1eCtKT2hz?=
- =?utf-8?B?UTlFeFBJc3J6TWR3UEpaRHNYYXU2OFI1bWJKV2RLem4yeWp1bmVoa3dMNUJP?=
- =?utf-8?B?QUk0bVVMcTN5bnlqOWdpRm5XQkZkM3hxVWpzNkxyRFRyelVIR3NpQzFYNUhY?=
- =?utf-8?B?WDBuNTlpVFFNS3hIaUpPNXlRMXBkNnJqOFZWclRtSFo0TE9xVk9XUGc3c2xu?=
- =?utf-8?B?czl0anF2TFRLV2dXeWhRTXJNRXNWL0pFWUdDSkhYWlVuYVQ2MTN2bDBnSzdU?=
- =?utf-8?B?ZmV2RlVDeTRGSUFHcngycXdZeUo4WG5qbndCTVdWZHQ5ZDc1SDJmWnVEZXR1?=
- =?utf-8?B?OCsyVVVGaWp5TDh1b2o5ZGs3aEQ4bkRMb3ZVeXkzQTFBSW8zQ1FVMVRicVJZ?=
- =?utf-8?B?TTduWGlrRnpid281Yk5xQXQyNHJGNndUdE12bjlBa05ZbHBFbVFiQU9lUGdY?=
- =?utf-8?B?a0xCSDF3aWhmY3haZ3BjVnVUbzg3U0tOUHRyTlVlRWxGYWJjVFVKSlRPTmlZ?=
- =?utf-8?B?YzFkMjJwb3dhRVVJK00vbC9na0dkbE5WTEhVU09PT29JcDg0MUw4Ri9UMzNo?=
- =?utf-8?B?eW5yUGFncFpyQS9UVE5iM0NDT0NXMTJ3UkNWQlFUMFhJVVhEWktsd3BsU0J5?=
- =?utf-8?B?M3pDUUxtNjl2UWZCVWR1ek42bnBPUDZVblg0TnQvWHE3V080NDBlaHI5NGMx?=
- =?utf-8?B?NGhNNnVxRUVpRFJHZi9mOThNK21mTlZLU08zdlhodkszVTFuTGNXMWpvTHVm?=
- =?utf-8?B?M0k4eGhPeG45TVczeTg2cUFRd0RUSjVXZE1WSHpsb2R5WDRCdmJTd1ZZS0Uw?=
- =?utf-8?B?MnFSUG5kVDZ3VTVGV2FVQWo1VEM1bjl3UEdoc3k3a0gvRXVuMkVkOURJdDZX?=
- =?utf-8?B?UCszMm12b2dMc293aVBwc25RYm1NUVBDWVE4dzhhbUIzL1kyL2NLV05CSTVI?=
- =?utf-8?B?eWJKUUJZa2dqb0lacDVWbEJZM3Z4Wnk5ZzB4OEV5Q2pqNXNjRngvNmRDN2lV?=
- =?utf-8?B?dHRlOG5HSWlsSmJWSjBzbzJIcWdtL05tN0tiVzVuUHVTcFIvZUJ2TitOQUI0?=
- =?utf-8?B?NWFmbGVDaXNiaUdnSkxEN2lTbFVNMkpMTUp0VlhhaFNNMFoyWHBCaUR2a28z?=
- =?utf-8?B?WTdJdEpjV1FrOXptL1NqaFhsblBFYWU2VHBzeDkyY013MUxuVDRRODl4WnlM?=
- =?utf-8?B?L0V2MG1KSHA0VnhGdTRKMnYxYUNvOEsrT3JLa3I1UG02cC9vaFR5Zmc4eldW?=
- =?utf-8?Q?aa8f76PjUIX6n7lAN6xooVZBM?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026)(921020)(7053199007)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 12:56:05.9668
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a55891a-6f69-4c80-2198-08de1d33d95e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD0.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8342
+From: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
+Autocrypt: addr=g.gottleuber@tuxedocomputers.com; keydata=
+ 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
+ bsxTTcOuRnk=
+In-Reply-To: <eccdb13b-e062-4106-8c79-ca57b6839a0e@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/6/2025 3:31 PM, Thomas WeiÃschuh wrote:
-> The generic vDSO provides a lot common functionality shared between
-> different architectures. SPARC is the last architecture not using it,
-> preventing some necessary code cleanup.
+
+
+Am 06.11.25 um 09:15 schrieb Krzysztof Kozlowski:
+> On 05/11/2025 16:41, Georg Gottleuber wrote:
+>> Initial support for TUXEDO Elite 14 Gen1 laptop. It is based on Qualcomm
+>> Snapdragon X Elite SoC (X1E78100).
+>>
+>> Changes in v2:
+>> - Rebase to v6.18-rc4/master
+>> - Add support for accelerated video decoding
+>> - Add support for audio (speakers, microphones, headset)
+>> - Add support for Bluetooth
+>> - Add support for camera
+>> - Add support for fingerprint reader
+>> - Add support for HDMI-A port
+>> - Add support for QSEECOM
+>> - Add support for USB Type-A
+>> - Add support for USB-C DP altmode
+>> - Add ASL Xiamen Technology Co. Ltd. vendor prefix
+>> - Add TUXEDO vendor prefix
+>> - Add cover letter
+>> - Removal of pointless comments
+>> - Coding style fixes
+>> - Spell check
+>>
+>> The device tree uses the dtschema from Linaro qcom-laptops [1].
 > 
-> Make use of the generic infrastructure.
+> No, it cannot. You must work on mainline.
 > 
-> Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
-> https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org/
+> Specifically, you must use mainline dtschema and I do not understand why
+> you choose it from some 3rd party repo. See writing-schema how to
+> install main dtschema package.
+
+I am building and testing with mainline dtschema, but checking this dts
+with 'make CHECK_DTBS=y qcom/x1e80100-tuxedo-elite-14-gen1.dtb' has
+revealed that one property was unevaluated (output: 'data-lanes' was
+unexpected [see line 1461]).
+
+This data-lane property is described in the following commit
+https://gitlab.com/Linaro/arm64-laptops/linux/-/commit/3d106a8ac261f81e48e4ee2a31b7484d863e0a4a
+
+Due to the warning from the check tool, I just wanted to point out this
+commit.
+
+Regards,
+Georg
+
+
 > 
-> SPARC64 can not map .bss into userspace, so the vDSO datapages are
-> switched over to be allocated dynamically. This requires changes to the
-> s390 and random subsystem vDSO initialization as preparation.
-> The random subsystem changes in turn require some cleanup of the vDSO
-> headers to not end up as ugly #ifdef mess.
-> 
-> Tested on a Niagara T4 and QEMU.
-> 
-> This has a semantic conflict with my series "vdso: Reject absolute
-> relocations during build" [0]. The last patch of this series expects all
-> users of the generic vDSO library to use the vdsocheck tool.
-> This is not the case (yet) for SPARC64. I do have the patches for the
-> integration, the specifics will depend on which series is applied first.
-> 
-> Based on v6.18-rc1.
-> 
-> [0] https://lore.kernel.org/lkml/20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de/
-> 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
-> Changes in v5:
-> - Merge the patches for 'struct page' mapping and dynamic allocation
-> - Zero out newly-allocated data pages
-> - Pick up review tags
-> - Link to v4: https://lore.kernel.org/r/20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de
-> 
-> Changes in v4:
-> - Rebase on v6.18-rc1.
-> - Keep inclusion of asm/clocksource.h from linux/clocksource.h
-> - Reword description of "s390/time: Set up vDSO datapage later"
-> - Link to v3: https://lore.kernel.org/r/20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de
-> 
-> Changes in v3:
-> - Allocate vDSO data pages dynamically (and lots of preparations for that)
-> - Drop clock_getres()
-> - Fix 32bit clock_gettime() syscall fallback
-> - Link to v2: https://lore.kernel.org/r/20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de
-> 
-> Changes in v2:
-> - Rebase on v6.17-rc1
-> - Drop RFC state
-> - Fix typo in commit message
-> - Drop duplicate 'select GENERIC_TIME_VSYSCALL'
-> - Merge "sparc64: time: Remove architecture-specific clocksource data" into the
->    main conversion patch. It violated the check in __clocksource_register_scale()
-> - Link to v1: https://lore.kernel.org/r/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de
-> 
-> ---
-> Arnd Bergmann (1):
->        clocksource: remove ARCH_CLOCKSOURCE_DATA
-> 
-> Thomas Weißschuh (33):
->        selftests: vDSO: vdso_test_correctness: Handle different tv_usec types
->        arm64: vDSO: getrandom: Explicitly include asm/alternative.h
->        arm64: vDSO: gettimeofday: Explicitly include vdso/clocksource.h
->        arm64: vDSO: compat_gettimeofday: Add explicit includes
->        ARM: vdso: gettimeofday: Add explicit includes
->        powerpc/vdso/gettimeofday: Explicitly include vdso/time32.h
->        powerpc/vdso: Explicitly include asm/cputable.h and asm/feature-fixups.h
->        LoongArch: vDSO: Explicitly include asm/vdso/vdso.h
->        MIPS: vdso: Add include guard to asm/vdso/vdso.h
->        MIPS: vdso: Explicitly include asm/vdso/vdso.h
->        random: vDSO: Add explicit includes
->        vdso/gettimeofday: Add explicit includes
->        vdso/helpers: Explicitly include vdso/processor.h
->        vdso/datapage: Remove inclusion of gettimeofday.h
->        vdso/datapage: Trim down unnecessary includes
->        random: vDSO: trim vDSO includes
->        random: vDSO: remove ifdeffery
->        random: vDSO: split out datapage update into helper functions
->        random: vDSO: only access vDSO datapage after random_init()
->        s390/time: Set up vDSO datapage later
->        vdso/datastore: Reduce scope of some variables in vvar_fault()
->        vdso/datastore: Drop inclusion of linux/mmap_lock.h
->        vdso/datastore: Allocate data pages dynamically
->        sparc64: vdso: Link with -z noexecstack
->        sparc64: vdso: Remove obsolete "fake section table" reservation
->        sparc64: vdso: Replace code patching with runtime conditional
->        sparc64: vdso: Move hardware counter read into header
->        sparc64: vdso: Move syscall fallbacks into header
->        sparc64: vdso: Introduce vdso/processor.h
->        sparc64: vdso: Switch to the generic vDSO library
->        sparc64: vdso2c: Drop sym_vvar_start handling
->        sparc64: vdso2c: Remove symbol handling
->        sparc64: vdso: Implement clock_gettime64()
-> 
->   arch/arm/include/asm/vdso/gettimeofday.h           |   2 +
->   arch/arm64/include/asm/vdso/compat_gettimeofday.h  |   3 +
->   arch/arm64/include/asm/vdso/gettimeofday.h         |   2 +
->   arch/arm64/kernel/vdso/vgetrandom.c                |   2 +
->   arch/loongarch/kernel/process.c                    |   1 +
->   arch/loongarch/kernel/vdso.c                       |   1 +
->   arch/mips/include/asm/vdso/vdso.h                  |   5 +
->   arch/mips/kernel/vdso.c                            |   1 +
->   arch/powerpc/include/asm/vdso/gettimeofday.h       |   1 +
->   arch/powerpc/include/asm/vdso/processor.h          |   3 +
->   arch/s390/kernel/time.c                            |   4 +-
->   arch/sparc/Kconfig                                 |   3 +-
->   arch/sparc/include/asm/clocksource.h               |   9 -
->   arch/sparc/include/asm/processor.h                 |   3 +
->   arch/sparc/include/asm/processor_32.h              |   2 -
->   arch/sparc/include/asm/processor_64.h              |  25 --
->   arch/sparc/include/asm/vdso.h                      |   2 -
->   arch/sparc/include/asm/vdso/clocksource.h          |  10 +
->   arch/sparc/include/asm/vdso/gettimeofday.h         | 184 ++++++++++
->   arch/sparc/include/asm/vdso/processor.h            |  41 +++
->   arch/sparc/include/asm/vdso/vsyscall.h             |  10 +
->   arch/sparc/include/asm/vvar.h                      |  75 ----
->   arch/sparc/kernel/Makefile                         |   1 -
->   arch/sparc/kernel/time_64.c                        |   6 +-
->   arch/sparc/kernel/vdso.c                           |  69 ----
->   arch/sparc/vdso/Makefile                           |   8 +-
->   arch/sparc/vdso/vclock_gettime.c                   | 380 ++-------------------
->   arch/sparc/vdso/vdso-layout.lds.S                  |  26 +-
->   arch/sparc/vdso/vdso.lds.S                         |   2 -
->   arch/sparc/vdso/vdso2c.c                           |  24 --
->   arch/sparc/vdso/vdso2c.h                           |  45 +--
->   arch/sparc/vdso/vdso32/vdso32.lds.S                |   4 +-
->   arch/sparc/vdso/vma.c                              | 274 +--------------
->   drivers/char/random.c                              |  71 ++--
->   include/linux/clocksource.h                        |   6 +-
->   include/linux/vdso_datastore.h                     |   6 +
->   include/vdso/datapage.h                            |  23 +-
->   include/vdso/helpers.h                             |   1 +
->   init/main.c                                        |   2 +
->   kernel/time/Kconfig                                |   4 -
->   lib/vdso/datastore.c                               |  74 ++--
->   lib/vdso/getrandom.c                               |   3 +
->   lib/vdso/gettimeofday.c                            |  17 +
->   .../testing/selftests/vDSO/vdso_test_correctness.c |   8 +-
->   44 files changed, 449 insertions(+), 994 deletions(-)
-> ---
-> base-commit: 28b1ac5ccd8d4900a8f53f0e6e84d517a7ccc71f
-> change-id: 20250722-vdso-sparc64-generic-2-25f2e058e92c
 > 
 > Best regards,
+> Krzysztof
 
-The regression [1] v4 series patchset [2] had caused as part of [3]
-has been fixed by this series.
-
-Tested-by: Srikanth Aithal <sraithal@amd.com>
-
-[1] 
-https://lore.kernel.org/all/977b68ad-6796-4c3d-9c34-d023597f8ab2@amd.com/T/#u
-[2] 
-https://lore.kernel.org/all/977b68ad-6796-4c3d-9c34-d023597f8ab2@amd.com/T/#m5a310ed22ed9203672b0d0d85ecda0a8fec481c4 
-specifically "[PATCH v4 24/35] vdso/datastore: Allocate data pages 
-dynamically"
-[3] next-20251103, 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
