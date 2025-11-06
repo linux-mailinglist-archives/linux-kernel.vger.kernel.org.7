@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-888873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB3AC3C22F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:45:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C73C3C2BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FC1D4E855C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:45:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD1E3B0926
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606F6325492;
-	Thu,  6 Nov 2025 15:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2885B3321CE;
+	Thu,  6 Nov 2025 15:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Oj2hIZ0f"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ABNOmtDl"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6121E5205
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEB4308F1B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762443901; cv=none; b=maQJMfD189Klo+9ISou9WuCvn6NR48+9RN+yQvvakhM99W+PDAXiH+WZ2Gwhc1HReDhIXJK0cUpVaJ0GRzn/rBtOTjJdPj3Qvtr1fUab7HYvtWNJLovPqPcFCuQvZMYAZmkLLXt1lUqSws7hr6CN4+1G0F84/xxltmTl9Sb6tdo=
+	t=1762443902; cv=none; b=l8JSGMHcqj9CWvybkfIE9AJuPaiLs4ZSwuEfl3P7gGruFk2uyQjQ5/wX/1UB6VUOAL+KbdhdTLIsHClHFe8tE5gxnfVV8eHULYWophIhlrZrD0YkWUUVLLdDY6a2P8SkDIpj2ban6os3+7Ax7hz+9j2ZQkeroIZHv3dzd+nW69s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762443901; c=relaxed/simple;
-	bh=m5IGuc219hR91E6jxj726r30nxaBrIgbepoJBLfYMuU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nfw9r+Y09do9yPak30NIj4YDuVNyXB1jRTz8avGNlBe74/tjBOD37pDzVtWuP1WiSztKUwuMovuVCW9XxJD8RsJNaRCHjp4NnnO/2EuJKDM00//Geuisraicyz+ZL8CMLbDL32bA7BN7lYMrEphaVaS3Vuy/lJQ95yVmCHl5ngg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Oj2hIZ0f; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1762443902; c=relaxed/simple;
+	bh=qbhajpU0G4kJl7tgyhXKSP59dX10IT1q+klpIbWREpg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bkIP7J0c0ZqcZffBGhNvXSdPduQRLAvgqNR2DuZUv76cC7V06cBdSg2WmwMa9dluvDBwimbp25fVbS6AcozZZ/2sERuusm5jtBR1W8EAB3ierJs/tg77+eR5AABRs7Lc771SVei1Esrm5NJ9HBwlWBX9CIrOgejuEFlxEtgFOeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ABNOmtDl; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4774f41628bso11520705e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:44:58 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4775ae77516so13328375e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762443897; x=1763048697; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aT/t6a4KBrR+Dsl/bounBEPokvpfPwhEHbEcRC2FxNM=;
-        b=Oj2hIZ0ffij1IL671TsaxYfCizRNi4PiWHj2CGlxxuWJkg+bS43UlUlghY5QHuovEv
-         UDyHqUBtbmoKFbK8ypGY2KvCQxzcgTlPEPfDry9L0xL3mf7kSw9s02eedusFOuDvNe3N
-         pS1EReXYleAsf8LN9d8Fks0/GyEQ7f0upAajCat0ce24YsJftUeTs8eaav7e8Ie8Ts7C
-         0K1BNqBJ0q/3VoWyqXZ8AQboWsl/SAf4XVU2n1RbWl+IVKpBREku8ik69NSRxxZ4fmfI
-         xfKECQ4ZHfEtipb0IdGYQDNNqrGlpG5ejKs421LehU4TonSneUIqfLRT+0QZJQjBvgj2
-         vYYA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762443899; x=1763048699; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x66guca1eftJPuWCv2VQqhGjAMisaYzjZ4uDuE1tm+w=;
+        b=ABNOmtDl35JvgV5qJ97DZbDB9OFa2hGqfdga6fZENEGwfbMbWyHqOpOXyqlFmQUs5u
+         FRkQcO/f4SaAStfqzL5LD9KjL7rH3BEC6OpeIsLS1hbEDLP8s4nIrlVoiM2aDCxO072y
+         8g2cp89lLP3Xb6MdDLQ+jLVFKKvIjtcqKDdGFtt2uuuVZ2e1EmDEpcAZJeFBP0qnj9eO
+         R1hJNlN7ibLfxQUgTcswMb0Jsip32qZZd+TtqQymrBaT3VkwZK/ww0/xImUksQocuC6T
+         lsstcXySQXXvyBoAlNlN5Sr5FctH7JaqaZ8mOX2lxF9o/GEZB1XTbxV84GjofIBmjW0A
+         4tEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762443897; x=1763048697;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aT/t6a4KBrR+Dsl/bounBEPokvpfPwhEHbEcRC2FxNM=;
-        b=Qr3A3DtBramVvi9Le8YuUEe31UwY4wnuo/vtaS72s0QsmO8flAy2LqTiwv9YwD5VpS
-         rEbTSAZWNXjxCfuPnOLdhq68vwuuzsZW0yXiM2OEIQbQj2S1gY6jQZOgLkBlnGVfKpg3
-         U7z2HkiNpbM7rxfp+FbpUzIS0/071o8nCpgnted5cXadBlq+2SvMDj3kvJkAITaGrGnf
-         M0vMKnXfmRr9zO9Y5jkRbdNMGqyB9IetGhtDElCP2961xEprVRPAHZqNkpi76jAcCXT2
-         42R6rSfe148uVQJzmWujme2cct1PuEOcvMkcHKcSmuOctwF1scFQ03Rc3Ux0jW6x76Pz
-         Q/wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3afUjrA31GdHjMPcQrgBC7/DiRgH6eoyFaaOXnrMvr/2nNBxs3TLBSatiEGhZkKNZGpr/OfWyroRldbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6IY3c2V0ECdzFqmPN+yyDV9gL2lUAhOd4SXvRSeWXMFTtNWgP
-	/Fpq81ZILIgGfh5tt55i7zgmcx6P5d7DwWVUDRqiTZg8kx0XzUXF8xh4OCSQvq9QfJPvw3xZ4Sd
-	vhiCawA8=
-X-Gm-Gg: ASbGncuXE5ZIU387gR+X5jy8vn2X2xHjjqL7enmPaHfUQH0/9KsGMNKt4L2QhVGtr7Q
-	hjrdqN6pxo+uXutxcuPExNW6TuiSf8L13tVNM4cNUUMxMkSxLzELF1nqPlFqT4BzcEXorx5P9HC
-	x3S1V25pwCLbp0LXijwtYLHP+HQ/J60VJHEFof9OJoGdwX9a/UG9wvmHyeZwsTUPXuADUgEGi0C
-	VIj591iXRd4rhXQ3MMdIPjZ8vPr5tPl5Ho1fPFsHNMI7V9d3EaDO+WnsN7XE4wjMSQoepda/wK1
-	L1msZPrEKQaoYtqV31TsemCng9iWavjYtIThh2UenbLK+p0EBrpQR4L+SmnltJlnz1hlZO31IZ3
-	1txaVDBt1GFYkELH+MpQQO2sh8mzuDEO6qpx1KgwiGyqaS28/ieVIbqR2OzcoiA2PDm9EVp1VW9
-	2I41qe
-X-Google-Smtp-Source: AGHT+IE9fxs4rMTAf1h1yPirBF6DFkbLD1LQP4bNnKenkfRTYH5bQ38vhZIY+6TZBwAkKcgCf4p+PQ==
-X-Received: by 2002:a05:600c:1988:b0:477:6373:ce7c with SMTP id 5b1f17b1804b1-4776ba75d9bmr501805e9.3.1762443896962;
-        Thu, 06 Nov 2025 07:44:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762443899; x=1763048699;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x66guca1eftJPuWCv2VQqhGjAMisaYzjZ4uDuE1tm+w=;
+        b=UGJleWEc/JCzMrwmUa1ACR89yXK+9kdd4RxEi+tELtuZsPXTbxwkHDYZbJ4aJKtJKl
+         O19GA384BezWd5QyXSDOAS2m77JSU8ifZslaZGt8UbizyJ+uB/2PZXhUgL3BGlAVmK4e
+         COA1ulyxT6Acj5mEkznGb/Bj+Mg0CyxojfjT8ow4Lz6DboGfRGGE9ZGQaDfdm0nFAe7V
+         u+nwteK8hoHPrAfsS2BgSp70JyrUgbwzC9sr8mILjs7JOHfxR21q3PtOX6ySpxM5YFwS
+         S9cZynR7REq/2qwF0X50MOa0zDSKOswjdEEK9zaDkJr2dZH35x7Ud7DMBcL5JPSDqdKT
+         NO0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUPSMAXvyIdEYGThEP/AvaK6PKgPWSflYUHxJRIIu3kQun5JoB0WnWokrEyUZ19bA3UdPwKAJDWhsJ17CQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaYj4C0fxfztxSc1PloLZvdBrT+hP1yrawREJlV+Ytda/VIWnJ
+	Wi1n3whP7RJDCCPA1doTW9rDFYSwwP6k84jr7eSkKGDaNHknylL+HNsxycjbAtS0L5mxQCq4PlP
+	A9KjO4BI=
+X-Gm-Gg: ASbGncuew4MYQ0PQJ+PAge5GBxRZaMIB4AMZM62hYki/gkdsP84ph+MjHMEbFdQlO/z
+	0vPthukdxwncrM93caBYXKX8vP5iUmqlReBMwF/fLL6nJK6pG3NZxw44m0jrBApRHFV9TEhoBKq
+	hgYGUbiVlXvbuC7bDFnBcjFHJ2z+Egpf40VuN27Qdyemip+90rPBIgZwFCc06cLu4Ia6ooLMkSP
+	WuEWTWu0HGDlRmUIi3s/xTVcNbR4PGfh93FuCCSlpeeW+uIPCkQoL/JassYzU03jvi+Xk5ArQjZ
+	5Tis4KdMLJnfzR+1W42Cv0dn3Qp6UO4LjG1kx/2nDHCfMlI4BFClTufseB/RaCol4HNf6mDZlGW
+	g5IZoGl6k8I2/ZIwE0ZFwBmyoK+p15Y5IsvN987sWzqXyTLwyciOtgCSGU1ZCAlS4RsydLQ==
+X-Google-Smtp-Source: AGHT+IEGoGND80uf9mOa5zbUVNeRt3iYWwEu+Kyw+xpveCZRRlkiUNTnCbyfpa/6u3X0EIG0bh4BHQ==
+X-Received: by 2002:a05:600c:841a:b0:459:e398:ed89 with SMTP id 5b1f17b1804b1-4775cdad627mr57791065e9.1.1762443899025;
+        Thu, 06 Nov 2025 07:44:59 -0800 (PST)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:d9de:4038:a78:acab])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e66b1fsm20621705e9.1.2025.11.06.07.44.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e66b1fsm20621705e9.1.2025.11.06.07.44.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 07:44:56 -0800 (PST)
+        Thu, 06 Nov 2025 07:44:57 -0800 (PST)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 0/3] dmengine: qcom: bam_dma: some driver refactoring
-Date: Thu, 06 Nov 2025 16:44:49 +0100
-Message-Id: <20251106-qcom-bam-dma-refactor-v1-0-0e2baaf3d81a@linaro.org>
+Date: Thu, 06 Nov 2025 16:44:50 +0100
+Subject: [PATCH 1/3] dmaengine: qcom: bam_dma: order includes
+ alphabetically
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,51 +85,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHHCDGkC/x2MSQqAMBDAviJzdsC2bvgV8dBl1DnUaisiiH+3e
- AwheSBRZEowFA9Eujhx2DKIsgC76m0hZJcZZCUbIaoWDxs8Gu3ReY2RZm3PELE2qpVdY3qrHOR
- 2z4bv/ztO7/sBAnI09mcAAAA=
-X-Change-ID: 20251106-qcom-bam-dma-refactor-4b36275b8c3d
+Message-Id: <20251106-qcom-bam-dma-refactor-v1-1-0e2baaf3d81a@linaro.org>
+References: <20251106-qcom-bam-dma-refactor-v1-0-0e2baaf3d81a@linaro.org>
+In-Reply-To: <20251106-qcom-bam-dma-refactor-v1-0-0e2baaf3d81a@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
  linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=703;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1604;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=m5IGuc219hR91E6jxj726r30nxaBrIgbepoJBLfYMuU=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpDMJzgNgQRm8qx7/pmdbGI2+JW/uD2olQMBTY5
- 5r3mhZZLh6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQzCcwAKCRARpy6gFHHX
- cjIHEACCwHmB0cdbopPZxqv/VaUmPRQSXbSe9fvcixEcfilOkHFTELwlKm2in6/WaykAMQUY61X
- vvllhAECOdGGOnfLcF8Wm/Yaixt6eJWJ9m9lsANmehPCtkBbYtUg2HkfF/rLV2C576YjerxfrJD
- 2+fLZwOtBOMjk9kziEbUWWE8fptx3JFFew9OWF5dS2eVVPT7Tg9yDCnFo+L8dUlFxLoqaE/EmVy
- EY/l5wGDSi5Le0YODuc4qSlwfwGY6CGQRFiEpzfMHAmNE9c8Iq0vqrmlG14IowjNHFSlmyJ1UCe
- 9NPOJmTWBc8zFxdBq2ZITP4Hiv2zF4Fmefjyfs8N43+5+HWZIr4K0vm94Mcgr7IEObiq58bKMuT
- g9aOO3aVBiRJga9jI9RCOEbJZoJWlZ06KWbTQl9v/Q2aNXFoZA2NYlXhC8bGH68jh84BG7nvrVQ
- LPCSzu9LGLiVAdoEz0J/6nIUwBzXzXiHr0pDAyv11s/6X7Pr0edUjmtLyn8h9QX+kdHTX/0vLrE
- LpR8hH65KFRLnml+1Jc9wLmJ+r4LwXAJvP8XyUMla0J/HkzAgO+1s9dx4cBlI4fW7cZusADRas8
- XEaJaf0h9RkOwd4HrhK2GML4dVtV20ePtHpRAEBCcoQY8/YKmljFaAz7Un1rO6evOlfu6OvsgNZ
- KPkdJ4aCFCPKTyg==
+ bh=e7cbrLbtrA2QdYXynWY0z/h9f2KdWIz0hBln6YJk0L0=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpDMJ3wDD2iDBCwRq63Jsh20+PEuvzfO1VNoM8c
+ UWpJEg308SJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQzCdwAKCRARpy6gFHHX
+ cmvdD/9stMXXL0j4g69U3lcomFVsfQJQpzTmu+YskFtImN0Dwz9haq2L24+GCKQxrkb46zFkS9m
+ mhc6DLIiWboRf9MmT4+tnh/Q9uuXGRZj9aLED1R5+4NJTWuuKFQHA6ZZmPVwgS5sCnY0omEVawX
+ 0wq93BmeG1ChHA+nvqubkhUE8rKWrcZIo+hWkpHZ8ncWjoEIc7nl4JVTgt5o6MpAxnCPY8NlGmu
+ WbQIfOOF7ZPkibrQhDEfnKv5AMfiTktll1b+CJXxHv+i63R1oRxNmI+1SyT2HqVlIhQiBE7bECR
+ RZEKztqv7bM/Dl4kOfJTW85sUHL+zt3YkTXbsSyA8HWgml0pcAdYmYMGiPp7lhFQwEmvoVy2NRr
+ tUvdVSwNCb3bQR/fmxYaKLyIVPaQrVrjSFCGMiKgtlc6P/OgSDhoBHn7P+4jmBnf4YG7OCtCv0F
+ bIBlVyuGbMjJLpeLToSmftHcytHwbohtX4sZbehnt9EiLjg2wFxlO6KcYBM0C3ooF+6BlaJnqah
+ OwO/DLmp4r+exW8mW1F+P1Rm+dRYKiZznvuybJfy2dCjnG6g1Jxmo4BDu5gg/bjJi1DeBT/1Xnp
+ I6Y8dn3C/c7rPp1XTD+ExTOEVWl4akKA1Fr8YZ5YxTl0M+E9aLN7g+nKuYv6VucZM+29WEkFZCV
+ aAow4lMyOdoRxcw==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Here are some changes I figured would be nice to have while working on
-the BAM locking feature.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+For easier maintenance and better readability order all includes
+alphabetically.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Bartosz Golaszewski (3):
-      dmaengine: qcom: bam_dma: order includes alphabetically
-      dmaengine: qcom: bam_dma: use lock guards
-      dmaengine: qcom: bam_dma: convert tasklet to a workqueue
+ drivers/dma/qcom/bam_dma.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
- drivers/dma/qcom/bam_dma.c | 184 +++++++++++++++++++++------------------------
- 1 file changed, 85 insertions(+), 99 deletions(-)
----
-base-commit: 0297a4fa6f372fd3ed8fe9b4d49b96ff8708ac71
-change-id: 20251106-qcom-bam-dma-refactor-4b36275b8c3d
+diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+index 2cf060174795fe326abaf053a7a7a10022455586..2f1f295d3e1ff910a5051c20dc09cb1e8077df82 100644
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -23,24 +23,24 @@
+  * indication of where the hardware is currently working.
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/io.h>
+-#include <linux/init.h>
+-#include <linux/slab.h>
+-#include <linux/module.h>
+-#include <linux/interrupt.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/scatterlist.h>
+-#include <linux/device.h>
+-#include <linux/platform_device.h>
+-#include <linux/of.h>
+-#include <linux/of_address.h>
+-#include <linux/of_irq.h>
+-#include <linux/of_dma.h>
+ #include <linux/circ_buf.h>
+ #include <linux/clk.h>
++#include <linux/device.h>
++#include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_dma.h>
++#include <linux/of_irq.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/scatterlist.h>
++#include <linux/slab.h>
+ 
+ #include "../dmaengine.h"
+ #include "../virt-dma.h"
 
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.51.0
 
 
