@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-888011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E50C39921
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:25:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73D0C39927
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66BA64E52C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDFC01A22F59
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0445D3019C3;
-	Thu,  6 Nov 2025 08:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1955302172;
+	Thu,  6 Nov 2025 08:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2X8erI1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CqBuS2gp"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012049.outbound.protection.outlook.com [52.101.43.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F68130170C;
-	Thu,  6 Nov 2025 08:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762417542; cv=none; b=S3NQTbxGIIzqpF54vzBmdOiBPm4pdE5rdOPknCKgUSgQbpPArll/R6vRc9KHWlilz+lYAznqOleKcL0/ftGPIUSfr5XwA9X7y9uasTywooW781IidkUHSONceacrbI4++VYDR4X2MtpffMQxqZEIkG5P4STsjgJOOGlesgps6zw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762417542; c=relaxed/simple;
-	bh=DCnfh7mLbukTm540wr5ypp9ub3cRbfvtzASA2bFr5UQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PLt1krXZkclfB2N9bUac6LeHa6+gq38Beo50sNTnmjuAzG1127uQxmKCWpq9+rApAo5Xt/4JG1EzEZw6hvvEWR4r+/agulLLjuj5J6JYPc2oFLGv/MHFdwm6Nkc5botnWAZKcZf5RPBjp08pyesm8WsMkqXd+5QKrXZDhijZv5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2X8erI1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F66FC4CEF7;
-	Thu,  6 Nov 2025 08:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762417541;
-	bh=DCnfh7mLbukTm540wr5ypp9ub3cRbfvtzASA2bFr5UQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o2X8erI1WCidQeB/fJ3hxdn68JhhCmdtURxZ6pDYRokF3gwUy3KaKMn7O4GTtA3TS
-	 1rb3a9qyv6iCCJaD1KO3ta7K8muaEObJoUT7o/VwawUWqzkWOb7Ndqintz04nuqFxQ
-	 +WnOkaOIXhS6BYJYesjASd3tTIvP33NmpdgxJuhpVhxKlGeVrg33QiSyf/ROHm5vfB
-	 eUUmf2jQCB02sOhlqFCt43Lg/o3o/NfI8tq4WTa7EKswLccErikKuZdAOXXig9GQaq
-	 q6QJdpvp1kYqYw2hE7tFTecDW2hSeEiix/pGJ8VUufDI2eqjYJ+6Z3smGLqvSrpow7
-	 SWjL0CCqsJSiA==
-Message-ID: <1f3106e6-c49f-4fb3-9d5a-890229636bcd@kernel.org>
-Date: Thu, 6 Nov 2025 09:25:36 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B56830170C;
+	Thu,  6 Nov 2025 08:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762417555; cv=fail; b=sDttsLO/YeWbt2l9h/ASSxS1glls6Q/SD29gEqNTG9VfpSRphTj0aERAZGZ/5PohoF2UZEoUG9n6oTrbHy6HqpPBOuh8WKlMS34qbxERPmfadbo/6G1/z/aOS1gdsEB5i6XyW0obGAzr7z8ZIk+2YsC+oN1M/UaWgjQJtMTr4ck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762417555; c=relaxed/simple;
+	bh=Fhi2pumzgWII1oMyvmJNe4QYWBPI4iv7GHCgbWrKd6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uMKhtaUpU1ckRI9CoNS1RIRf/qZda4wmPgPliAim0v1hMYPEHC6t0EN/3oA+CSPBEoqZvO4yB05E57OK3iiwJ+kQTOVucyuV4R6tx3h0UNCpaPgyP0B4F+oSUWfv3AmX/iKrZh9S4X1EMI84MU+j6zIx2YhhkeZOkn0HWYAJQ9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CqBuS2gp; arc=fail smtp.client-ip=52.101.43.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D8p4DOEcGlzNFsSXC3eBWP/zOvycVOyDkwFkWOsLus7UiXzfjDj+jRvcLO0ApaACE4yT6c3/gtm58fEuMYhdOaMA3xaaPlmXJPb4diBlNF4QJyJ0lPkzZNDVMrQ0WOqa5hd94eQfVMZN6qPeZyT/XeeoeQb1DqXid5VwGL6Y+6y22o/W8D0YCDqDOucFqGejHZfcfdiQjD+fT4IAgntK54VkMQl060uyLj5IFBb0QmaNgLbmmtI5PEevuxyhxqOCqo/16LS0wAX9oBsg9THhb8mknv4XTr8outgXmXg3W75gzSqMONaJidFXgOBgvZdOY4V3apfMA8fQv7/TZdTt5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=40bxVa9NdKeTMQZnQAZ/jDR3xNVbQvwwLVMioTyJXms=;
+ b=oTQAsPKEdpqqR7qEhMOFkUEpdjWi9Y+Wb1zCgCo9RCjxyv5h7wOEXioM9zfo1PLN1bdsyq/URTRxqEDL1x4Wof5ObklptLq25U7C837HlVJOISU6KVKDU0H0YNJDaALgIRIy9F0DGVPcFXEz0iZavmJzDdvCZanzmdFzlniTnlbxlemMsf2NfgCBWySmJZ6Ilej2tQ8DKerVrPdWJ44/Nppgjd3SEOT9pC8AG0RXu9WgCNH+WT/U83bBoVrJ7ieCGM9h1sdwdIAJHmdvGEq9wG/S1LrCBrQCdN+OQuG3R7ya88T2P+QNfSNXEeYpOYfInkIOwE5tI0+RIBm5ehV7ZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=40bxVa9NdKeTMQZnQAZ/jDR3xNVbQvwwLVMioTyJXms=;
+ b=CqBuS2gpZ/MDgDjAs7n2PPEBUjOCmo+DBjrQMJ+XFhp/0mS/BczukeRSGWdferVyjOzt8vhMSW4MZwXEnNrVucoMGHA/3sf8j83tstG/Nmpnny2d1RqLfVK6PbulV2MW3oM7HcpoFjqb+sh3+iSPOZ63UoILpW564XBaYwJC4pk=
+Received: from BN0PR04CA0136.namprd04.prod.outlook.com (2603:10b6:408:ed::21)
+ by CY8PR10MB7266.namprd10.prod.outlook.com (2603:10b6:930:7c::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Thu, 6 Nov
+ 2025 08:25:49 +0000
+Received: from BN2PEPF000044A4.namprd02.prod.outlook.com
+ (2603:10b6:408:ed:cafe::ff) by BN0PR04CA0136.outlook.office365.com
+ (2603:10b6:408:ed::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Thu,
+ 6 Nov 2025 08:25:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ BN2PEPF000044A4.mail.protection.outlook.com (10.167.243.155) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 08:25:49 +0000
+Received: from DLEE204.ent.ti.com (157.170.170.84) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
+ 2025 02:25:45 -0600
+Received: from DLEE202.ent.ti.com (157.170.170.77) by DLEE204.ent.ti.com
+ (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
+ 2025 02:25:44 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE202.ent.ti.com
+ (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 6 Nov 2025 02:25:44 -0600
+Received: from [10.24.69.191] (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A68Pf2N953136;
+	Thu, 6 Nov 2025 02:25:42 -0600
+Message-ID: <afabae10-95fa-43c2-8929-c6d8164a56f2@ti.com>
+Date: Thu, 6 Nov 2025 13:55:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,126 +89,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
- properties for AST2600
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Po-Yu Chuang <ratbert@faraday-tech.com>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "taoren@meta.com" <taoren@meta.com>
-References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
- <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
- <20251104-victorious-crab-of-recreation-d10bf4@kuoka>
- <SEYPR06MB5134B91F5796311498D87BE29DC4A@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <9ae116a5-ede1-427f-bdff-70f1a204a7d6@kernel.org>
- <SEYPR06MB5134004879B45343D135FC4B9DC2A@SEYPR06MB5134.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 2/4] crypto: ti - Add support for AES-CTR in DTHEv2
+ driver
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>, Manorit Chawdhry
+	<m-chawdhry@ti.com>, Kamlesh Gurudasani <kamlesh@ti.com>, Shiva Tripathi
+	<s-tripathi1@ti.com>, Kavitha Malarvizhi <k-malarvizhi@ti.com>, "Vishal
+ Mahaveer" <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251022180302.729728-1-t-pratham@ti.com>
+ <20251022180302.729728-3-t-pratham@ti.com>
+ <aQSDLpD2LXlqILku@gondor.apana.org.au>
+ <f4c339e3-0964-469e-9cec-eeaf2e2f078b@ti.com>
+ <aQxM2z9kC6sTqBZ5@gondor.apana.org.au>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <SEYPR06MB5134004879B45343D135FC4B9DC2A@SEYPR06MB5134.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <aQxM2z9kC6sTqBZ5@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A4:EE_|CY8PR10MB7266:EE_
+X-MS-Office365-Filtering-Correlation-Id: df25480d-ce9a-49c5-24dd-08de1d0e1765
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|34020700016|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2hpREs3bG9kMnRPYXl5NytqS0hVR0Q1ZnFlNjFHeWNBM0lGL0UveEYva3Ns?=
+ =?utf-8?B?YXNpekU4M3V3aXJBQ283ZTFuR1JmZzRjaWFBTUZBMHB4K3ZMcGJZcFNERWFD?=
+ =?utf-8?B?NjNkTSt6ZkphQ0grdWZBL1N6dzlHYlRFSndjTU5VeGVnRUN3bkNFQkVHTGUr?=
+ =?utf-8?B?STR5R05CZDRrTVNZcGVjd0dQakJ2MUc1RE1XK0M0a2duSmV3M0dPSXZsYnd2?=
+ =?utf-8?B?TmJUNHlpdWVJeFpudGNubTlqVUJzM0tBVXcrVkF4dUlINlNyT0pvTXpmRTUy?=
+ =?utf-8?B?cStxQlJ3aG41RmpoNlozRGhobURpWXJHcXdyUHMyRnVmY05JNnFOOTZnQ2s5?=
+ =?utf-8?B?RFRFQzBpUDQrbnlXaTA4Y29YTDFDOEVZQUxSdEtrSjYvcldtdG4zK08zNnZu?=
+ =?utf-8?B?blVFcFBJaGtxdUxISVdaWkJVSUFoNXdSbnRaZHJZL2dzQ1R0SFkxeXRwb2hp?=
+ =?utf-8?B?NEJLNjh3allweTluc0hCSkt0eEVTSjRleG93ZnorZGRhV29YVEh1b1gyYWZv?=
+ =?utf-8?B?ZGZweVp0WDFxV3ozNzdVdFUraVpPbEZlMkx3bkQ1a01TbzRJRE9tN0ZGYmxI?=
+ =?utf-8?B?b2hWbWZHRVVpNmNVWUdzbTVKRGlnRTdQZnZzTnNpYUhBdW5NYTNRUGdtVnln?=
+ =?utf-8?B?UUs4bVc5cWdJMW1WVExmUjMxd3lpcjdtemxZck1nc3h6T1A5VFJsTFE5Q0t4?=
+ =?utf-8?B?RGZDK1J1Z1g3ZFRCUTJCY3VqcXZqazFkVFY5WUNjbDBNMkZ2L0FDN1JuQmJI?=
+ =?utf-8?B?TUROcXpQWG1hb3A0Y0RNeXQ5YklRdVU2aGc2VjFkSnZZR1RZTk51U1ZZcTZO?=
+ =?utf-8?B?dmIxZEJObTl2cWVQaGNZNTlTTDFxUkF3dElyS0FnUlNHY3F1dmNicS9UQUt4?=
+ =?utf-8?B?MkJacm53TTBoSXR0ZFJGaUR3VXhLa0xPWEpabTcybGFaM0pmYVMxekh3L2tv?=
+ =?utf-8?B?N0IweUEwckgraDBnT3VreUkvOERjRkM1VHUxOGRTNVNSSFJHdXUxYkVHWjRt?=
+ =?utf-8?B?cVI0K1dma004aXFLR21aR2EzcXBTSGwzRENNZWUveUt5cjBFOE1ZdmtUeFpR?=
+ =?utf-8?B?cVZjR210cEkwZGVKTzNkTCsrSktzdnlWaDNlV0tRTnMyREVoNW05OWFWMTFZ?=
+ =?utf-8?B?N2svdmlTNm5ZVDRDSFlYZ0JJcmxnSzJiZzdGd095ZGtNaFV3YUZYUFpLVmRp?=
+ =?utf-8?B?WHRvL24wMHFTU0NQaXp6aGN1RTdFVk9ha2Q3OTJGaUZGWkc4SGwzQU4rMjh4?=
+ =?utf-8?B?SzhWcjhYc0ZXK2h1OHU0c2F5OXZHZWNsSnZYb2RKWnMrYXljZUlMWGg5TDhk?=
+ =?utf-8?B?SURIeXBWdmFmRnFKVWdwUW9WQVh5T2tkbVRFRFRqTEZQUXBzOTBOcUxEc0Q3?=
+ =?utf-8?B?OEg5ZG0wVEVqdjNZeGhkOWt4VzluRDRSNU90T1kwQUpMTXQ0ZnIzVjBNT0F3?=
+ =?utf-8?B?K1BvMFV5TzNIS1ZIN0VabkE2UFRVd2JCWHFwcFh4OTlGczRXODJhRkxwRHc1?=
+ =?utf-8?B?K0VUU1FBOUwzajlYVDdIQUU2alo5VFRrMFFSdmJoelBIeExVdWtRSlJPSnoy?=
+ =?utf-8?B?VTQ2ZXBFZVhGblhNUzY2N3JIRFJsQnRvR2NEOUNRRWtwaERwMXp5YjdzSndX?=
+ =?utf-8?B?VFg1eFJwTmZ5M3ZHM2ZkNnBsUW5PZFBVa3dXZ2VwVkFIS05mczdwY1Zyb2xa?=
+ =?utf-8?B?T0xrdW5oSFB6SXhLUXQwcmRaTVU4TklVS0ZERDRQTE1Uay9iMDJrMTVxVkVK?=
+ =?utf-8?B?VEZRQXJQSGN0dHBHWTNPMkU4Y2hTV0tEVURoaHN2VUtSby9xdDZjM1JGRC9y?=
+ =?utf-8?B?aEJFU1l6QldtTWk2U3B1Rkt1bnFuLzVHNERjN0dQbisvSllSR2oxak9CZFpV?=
+ =?utf-8?B?YWZsbTlpQlVZc1BHdU91REFVR1VPcUVmUGtYVEdLWGFOVTZsT1NHRjM1QjM3?=
+ =?utf-8?B?Sk15THVaNDcrTVRnUzRicittTVpRbXdqUFgrRmgxTy9OU2pXRWc1a3p1Ri9q?=
+ =?utf-8?B?THArNGFRSDJOcnVhOFcweFV3TnluUUtXRzJkVCsraEJLNVlDSVhhRVo0TEsv?=
+ =?utf-8?B?QlVXc3RGZG9NYW5oMnNWR2RQS29HZTR0RGQ2bUhYS01oMnBvK2QwQVpQSFBw?=
+ =?utf-8?Q?2zgw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(34020700016)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 08:25:49.1223
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: df25480d-ce9a-49c5-24dd-08de1d0e1765
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A4.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB7266
 
-On 06/11/2025 06:41, Jacky Chou wrote:
->>>>> Create the new compatibles to identify AST2600 MAC0/1 and MAC3/4.
->>>>> Add conditional schema constraints for Aspeed AST2600 MAC controllers:
->>>>> - For "aspeed,ast2600-mac01", require rx/tx-internal-delay-ps properties
->>>>>   with 45ps step.
->>>>> - For "aspeed,ast2600-mac23", require rx/tx-internal-delay-ps properties
->>>>>   with 250ps step.
->>>>
->>>> That difference does not justify different compatibles. Basically you
->>>> said they have same programming model, just different hardware
->>>> characteristics, so same compatible.
->>>>
->>>
->>> This change was originally based on feedback from a previous review
->> discussion.
->>> At that time, another reviewer suggested introducing separate
->>> compatibles for
->>> MAC0/1 and MAC2/3 on AST2600, since the delay characteristics differ
->>> and they might not be fully compatible.
+On 06/11/25 12:53, Herbert Xu wrote:
+> On Fri, Oct 31, 2025 at 08:11:34PM +0530, T Pratham wrote:
 >>
+>> Let me know if this is fine.
+> 
+> Yes I think this should work.
+> 
+>> However, I suppose we similarly cannot do allocations in AEADs as well?
+>> If that is the case, my current code relies a lot on it (using sg_split
+>> to separate AAD from {plain, cipher}text and applying padding like CTR
+>> here, both of which allocate memory).
 >>
->> Your commit msg does not provide enough of rationale for that.
->> Difference in DTS properties is rather a counter argument for having separate
->> compatibles. That's why you have these properties - to mark the difference.
->>
+>> I can change padding to avoid kmallocs like CTR easily. But separating
+>> AAD and plaintext/ciphertext without using sg_split will be a task. Let
+>> me know if this is correct, so that I'll split the series and send
+>> ciphers now, and AEADs later.
 > 
-> Actually, on the AST2600 there are two dies, and each die has its own MAC.
-> The MACs on these two dies indeed have different delay configurations.
-
-Is this the logic like: we have multiple snps,dw-apb-uart UARTs on the
-device, so we need snps,dw-apb-uart-1, snps,dw-apb-uart-2 and
-snps,dw-apb-uart-3?
-
+> OK it's not totally forbidden to allocate memory.  However, you
+> should only use GFP_ATOMIC to avoid dead-lock (GFP_KERNEL can
+> trigger writes to storage, which can in turn call crypto), and
+> provide a fallback path to software crypto when the allocation
+> fails.
 > 
-> Previously, the driver did not configure these delays — they were set earlier during 
-> the bootloader stage. Now, I’m planning to use the properties defined in 
-> ethernet-controller.yaml to configure these delays properly within the driver.
-> 
-> Since these legacy settings have been used for quite some time, I’d like to deprecate 
-> the old compatible and clearly distinguish that the AST2600 contains two different 
-> MACs. Future platforms based on the AST2600 will use the new compatibles with 
-> the correct PHY and delay configurations.
+> Cheers,
 
-Why are you repeating the same? So I will repeat the same. You need to
-provide rationale why different compatible is justified. Difference in
-delay itself is not the enough. Please write concise answer based on
-device programming model differences or other rules expressed in writing
-bindings or numerous presentations.
+Understood. Thanks for the insights. I'll re-spin the series with
+necessary changes.
 
-Best regards,
-Krzysztof
+-- 
+Regards
+T Pratham <t-pratham@ti.com>
 
