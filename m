@@ -1,123 +1,149 @@
-Return-Path: <linux-kernel+bounces-889035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0609FC3C8BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:45:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B62C3C8AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1263BE4CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:39:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D924F504C67
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AAC34D4F9;
-	Thu,  6 Nov 2025 16:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BF034F484;
+	Thu,  6 Nov 2025 16:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XY/FDOaQ"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ij4X2dpM"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAA834C828
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F5234D919;
+	Thu,  6 Nov 2025 16:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447020; cv=none; b=gzbnLtcTJMdHL9qFpUc/5bfgLvP/d60QlmypBxl/UDYgsvjbWfzVVoD+JzwA0QgzLRmX78DlNP4pIySts4VfF2XBA8BCulBL5YWP7MKnYvaX8x89rJgZwjghaygTRyXJzyFGSvtEsU+lqqKcjQnvNNuPoFd6h12KRcihPZICsKA=
+	t=1762447023; cv=none; b=Gdl7tDuTlzoglXmOFyscXdtoryFJuCRK7m9PPRv4TDjetkGR2nvjee+2miTFifVoExcNCEVJXnXevkLPIQtfqFLH3SNqzC5/aFyezWvCONORkdKsgR8ZxY5AEpvSmhsj4aoiia7NV2vBzcK7AutOiLgoU51wVdyYtzT+Mh6NnHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447020; c=relaxed/simple;
-	bh=/H4aKQiGoB+WRNMdPbS39s+XSOfaGMVBTg+VNXS/AO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tRAD2YoPPCUcZBPirCFBbTqaES9NlWT5A6rjn0QD21dJdFI63z8osCc/mPjoblTb7M+4MQPR/mAnYIwzz8YAeq6OTJpZM00X823jS5atfqR1Ew1rN8AkJEkUjv5GjOUl7i6vNVC6snhQlRr6fVlK+WtZnJ+m0SpkWV1Uwn0aVRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XY/FDOaQ; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ed0c8e4dbcso353361cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:36:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762447018; x=1763051818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=unfH04DSjfahtY/Ro5y5JWosPD9lmvBdHPZWteASQ2g=;
-        b=XY/FDOaQoj+ZAR8PxvT+5Y2lv7KZxY5LGlkhb8xvsn1s7ZpZY4LqYia5rRHbEUpuXs
-         aqae7ZK4Ji4maep+IVLR4olUuACbVMgUVPbMeHYIk6n7JePULk6YpHdC6v59dheNdfhw
-         PzrOhLsyJvdR49Gl4TDuCVPlxObpz/aB0LWGnKCw2zj6RyJRrfWtwkxwVO+Fy4fFvHZj
-         gw5V/QpL30/X6gqXhaK7eVLXfkNLY5JEf1bTUk92FUSL1a7RuK3+moTT9k9GPfRG9WhM
-         fpxbcvw0QRwCUAro5A2zCH5Plut8s5Li8xiyh/6PhLjRlxRI1yfvPqZgXOWlE2j7X+cj
-         /pSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762447018; x=1763051818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=unfH04DSjfahtY/Ro5y5JWosPD9lmvBdHPZWteASQ2g=;
-        b=WUNRjvqb7q8IR8uY8sdQaPVboTKV65MG5eqlmamDia45AhVJeOKmyMA7bmgD/oWXqP
-         zAlirn1mHGKJgU0gmvy9QaFs3r47oa6QqcbWnoE0bCz4NpCJwXP4q/ktXXBrE0z/Mkuc
-         Cz2hL2igIn5abIRa6ywRobOe+fy5TunHdMfBiTGXWxD4rqN1yVI35PUJQ42iuLrMbTa1
-         50HYBli8LpSGcvX6fHQgrc+in7/MsfUOycYiunAl+ODvuBAL76bK5tdWcR6sudnKdnbE
-         TMNKPHBePL8zqA7wUWrCc67fkzLOENzmDU54BNdnHWyCIkwJc4J+dm5Z9Y9NOCtfmXYa
-         BVqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYDOLT5+oG0i2WAuNlt6C1Q8OyyHCdPfv7z4Kp7yaD9fXQofN7wwbD0B4Y3h6RslpM7NJvPZcAldhYX50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKKHzP9AZAKPSWy8HX6ensTNgkT3oSi/qKnMi1i9TjmPq6OooV
-	cylr+SNe30Lysk26hIJ9mbjU6l9YzSWV+7eRaznxyHrmKdA7QHmhaMJGtl8jhQNr05K2Uzm/O/N
-	6+5hS/hhiW7R8LupzT7pSY/A/pvS8S8rwy1U+p9Dd
-X-Gm-Gg: ASbGncvVHnvuAV9MQ2JJ7JYeWHKy4bAVoW+o3c72ErwYQBYRSqELP+Fs4GgRgihiJyK
-	gl/dtVKDo0ugU564YRYglnpMkk0TsIENfkjuXL483p4KK8JjiAtJwt9wxB9Me+oiXmabM4TF3/q
-	fvOI1FvXGRCGDnEG/V5akXVi6C1WQ3atbrYmbYWbBYJ9ZTU/3BdK/LLneSBnFOF2KjObvENqzXI
-	lvcS7qE5b+C3zwq93FhUaLBWrdGMdHB37XG7M/CVaca+JBx0TXS1HtD0+U8
-X-Google-Smtp-Source: AGHT+IH4D/IkZOkIcH6+QihJJUYRXkSroIwjVIneHKA2+S/ighH3/zauPQTD1YhucwuTFxNEEfdh6lM9UHFcearQHbo=
-X-Received: by 2002:ac8:5792:0:b0:4b7:aa51:116a with SMTP id
- d75a77b69052e-4ed813f1d79mr8130581cf.4.1762447017683; Thu, 06 Nov 2025
- 08:36:57 -0800 (PST)
+	s=arc-20240116; t=1762447023; c=relaxed/simple;
+	bh=jKvGY2o3ZqFAf3yPe+ZDefckpQ2RNPLFY32rU0oGtx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bvdRtDrX718BxDHmVk1pWjWJOeDUwKGt1tQjYTVOJn4wDyUv3hA/Hztv7MiAeLm5JtSOjbbtKR2MOfK3drCRpjkJmhlnS/ONfhPiEIRMc18yV5/nMri5VK3B16XeSXtgkOOdFeyhxcDwD05Jpnfjwz0sbnvBUq3iHGegZcmKaCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ij4X2dpM; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A652Fes023094;
+	Thu, 6 Nov 2025 16:36:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=HHrRKk
+	BbLdY6ORM2fAIldjadhFQ2gBLJwb6jSqr32us=; b=ij4X2dpMDlabvPDfvCRbWi
+	JEwBoost42YZi3LzKQuLp+91JniAJXC2vThBvtfFcDOf2tocsxlYb+vRZt/iv17w
+	Ydq7t30GFmPkPQr5xlmQXIP++8lOlnIKyYtsXJ9ZAdUT3oZFqbu/jyvRxl92Y161
+	b9p4YP2pvAFNti/EMqD8/KxvR3d2t1uKb2f7wH/zbflz5DnCnGPmpO3/sKwlgDbK
+	R8ebY32NEuCHjK3X3I4SXKiRgsv47Zf4rGSuRv/Js3EEKhcblMS/j+X97dttywtm
+	xJ/q99Ao2Ippfg03CVF4Sa77uKma2CLlf0RDFPjXqxhcj+v1kg6Ci8/Ac7EY4C5g
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xc890g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 16:36:58 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6G2omq012861;
+	Thu, 6 Nov 2025 16:36:57 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5y8266gc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 16:36:57 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6GarSM30146984
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Nov 2025 16:36:53 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B99432004B;
+	Thu,  6 Nov 2025 16:36:53 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4C4B420040;
+	Thu,  6 Nov 2025 16:36:53 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.155.209.42])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  6 Nov 2025 16:36:53 +0000 (GMT)
+Date: Thu, 6 Nov 2025 17:36:50 +0100
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, seiden@linux.ibm.com, schlameuss@linux.ibm.com,
+        hca@linux.ibm.com, svens@linux.ibm.com, agordeev@linux.ibm.com,
+        gor@linux.ibm.com, david@redhat.com, gerald.schaefer@linux.ibm.com
+Subject: Re: [PATCH v3 21/23] KVM: s390: Enable 1M pages for gmap
+Message-ID: <20251106173650.31907261@p-imbrenda>
+In-Reply-To: <5dd6e694-8cf9-4b1c-ae83-088b6bd22a17@de.ibm.com>
+References: <20251106161117.350395-1-imbrenda@linux.ibm.com>
+	<20251106161117.350395-22-imbrenda@linux.ibm.com>
+	<5dd6e694-8cf9-4b1c-ae83-088b6bd22a17@de.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104003536.3601931-1-rananta@google.com> <20251104003536.3601931-2-rananta@google.com>
- <aQvoYE7LPQp1uNEA@google.com>
-In-Reply-To: <aQvoYE7LPQp1uNEA@google.com>
-From: Raghavendra Rao Ananta <rananta@google.com>
-Date: Thu, 6 Nov 2025 22:06:44 +0530
-X-Gm-Features: AWmQ_bnOnZ7KqbhSC0MJ1bizQMExDCc20cQdxq8DyRf13e7QBXYi53UHkKLSdUk
-Message-ID: <CAJHc60xjPktqw=RgxgpOSqJP0Ldq6skmxLQm4QhpiojPAMOA=A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] vfio: selftests: Add support for passing vf_token in
- device init
-To: David Matlack <dmatlack@google.com>
-Cc: Alex Williamson <alex@shazbot.org>, Alex Williamson <alex.williamson@redhat.com>, 
-	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfXwtK8bXvHSc6X
+ B6cmlup6vR1csQ864iUpkv5IVnWoCNP6ZjPzjc57zw8rpNprWKwl3FAQz5812pYX0MClJXQ7mzx
+ uj8qpcH9qG0RDT1tO2jpoEpB+vPrgvNhN26QaxkCLvsFl9wjZAWZyrtbU9uvRKaK092EIbkjJaH
+ 0DH320T27MzEtMm/nET+kDgQtzqIrFMQm+uiAClYdmjTjsQ82jz6Vj4b2wFV4c5BD0ueEeCTtHf
+ c4K9p47JuJUrhxC0ma54M3RpXNRd8OQX05bfdukC4PI4dLPHxmSiMkELj4hKfX2fJ4nk8ZFMK1z
+ y0ODJO69bSgYFvyE18iBXE3bvetjv2hlIfEz6PymwOs2Y6pB2bE/m6+LTuZk7yfPCQ1oJfNdDQ5
+ Sm0mZ36zGPQurIir8+Mb8oSsRH+/aQ==
+X-Proofpoint-GUID: GTdQQs1ZhJEsZo4w_vJm5JFeqGJ6aFCn
+X-Authority-Analysis: v=2.4 cv=OdCVzxTY c=1 sm=1 tr=0 ts=690cceaa cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=V77HFTMLeaZSbkRks0wA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: GTdQQs1ZhJEsZo4w_vJm5JFeqGJ6aFCn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1015 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
 
-On Thu, Nov 6, 2025 at 5:44=E2=80=AFAM David Matlack <dmatlack@google.com> =
-wrote:
->
-> On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
->
-> > diff --git a/tools/testing/selftests/vfio/lib/libvfio.mk b/tools/testin=
-g/selftests/vfio/lib/libvfio.mk
-> > index 5d11c3a89a28e..2dc85c41ffb4b 100644
-> > --- a/tools/testing/selftests/vfio/lib/libvfio.mk
-> > +++ b/tools/testing/selftests/vfio/lib/libvfio.mk
-> > @@ -18,7 +18,9 @@ $(shell mkdir -p $(LIBVFIO_O_DIRS))
-> >
-> >  CFLAGS +=3D -I$(VFIO_DIR)/lib/include
-> >
-> > +LDLIBS +=3D -luuid
->
-> I wonder if we really need this dependency. VFIO and IOMMUFD just expect
-> a 16 byte character array. That is easy enough to represent. The other
-> part we use is uuid_parse(), but I don't know if selftests need to do
-> that validation. We can let VFIO and IOMMUFD validate the UUID as they
-> see fit and return an error if they aren't happy with it. i.e. We do not
-> need to duplicate validation in the test.
+On Thu, 6 Nov 2025 17:22:33 +0100
+Christian Borntraeger <borntraeger@de.ibm.com> wrote:
 
-Unfortunately, VFIO interface accepts UUID in multiple formats. For
-VFIO_DEVICE_FEATURE and VFIO_DEVICE_BIND_IOMMUFD it accepts a
-'u8[16]', but for VFIO_GROUP_GET_DEVICE_FD, we must present it as a
-string. Is there an issue with the inclusion of an external library (I
-think I've seen others in tools/ use it).
+> Am 06.11.25 um 17:11 schrieb Claudio Imbrenda:
+> > While userspace is allowed to have pages of any size, the new gmap
+> > would always use 4k pages to back the guest.
+> > 
+> > Enable 1M pages for gmap.
+> > 
+> > This allows 1M pages to be used to back a guest when userspace is using
+> > 1M pages for the corresponding addresses (e.g. THP or hugetlbfs).
+> > 
+> > Remove the limitation that disallowed having nested guests and
+> > hugepages at the same time.  
+> 
+> Nice. This might allow us to enable hpage=1 as new default as soon as
+> things stabilize.
+> 
+> We would also be able to use 2GB huge pages for the qemu mapping?
 
-Thank you.
-Raghavendra
+yes, but I don't think that userspace can have 2G THPs right now
+
+> With this patch we then have 1MB pages for the guest mapping.
+> 
+> As a future improvement, maybe also allow guest mapping 2GB pages.
+
+the core of the new gmap code introduced in this series supports 2G
+pages already; to enable 2G pages, a simple patch similar to this one
+is all that's needed.
+
+I refrained from enabling 2G pages in this series because this series
+is already too big, and also I would not be able to test it easily.
 
