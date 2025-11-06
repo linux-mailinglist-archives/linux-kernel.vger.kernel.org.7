@@ -1,108 +1,136 @@
-Return-Path: <linux-kernel+bounces-888667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D8FC3B9EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:15:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D7FC3B93C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:08:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE44A5681C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:02:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1EA14FF8CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDE2339B56;
-	Thu,  6 Nov 2025 14:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8983D33BBDD;
+	Thu,  6 Nov 2025 14:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKJOV6V8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ud+s8WUS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D98303CB4;
-	Thu,  6 Nov 2025 14:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB0133A015;
+	Thu,  6 Nov 2025 14:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762437746; cv=none; b=ZNJvLWqFwtSYGlzDy/04PWPwY1CdteN1qkFGQvYe6U1iPKuiQ1mDPVyd1yz40SDchMVgLAVX6Z9PcelC6sAi9OMjNTFK4alc8/yDpa5MiePet2m1ufBDmcENk/cCKCU/E72mRuxUJPddfiECBSNcMx8kPQmKHSbyjp3Qii3Noeg=
+	t=1762437747; cv=none; b=IXy7PFLB2MpmjEuA0I2BHbJAEmxvclpsXKkOzvcfFTKPp9EMyn/InFqeNiv3yADgJiC994npwFkPUE+tkYEqGV4BCju+CRqi/QHjs+0x1IZG68k3xFQWOd4FEm8Fign9P2Ycgj7ptiAFx1+jcBudIW2InSoOb8e5a9wPweezK2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762437746; c=relaxed/simple;
-	bh=hiQQw6k86ZVHtOXveAjwjSs/SFXI36atd+KcmN4uR6U=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=KxgZ5lGsoyN+nB7hhywql+KzioSxK+/FTOs96sniVpo10DyPdbXP/yPdd6DuVya5UcfD+PyQHhBzi30kETk/VoDggVQhRrOT8A9pEPSKSERsHH8XUjDL4uHf6+VxYEyhjsVJQQYfeuDZWeFBvgMoECc3QnrNnT9NlPw2wkDNbtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKJOV6V8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE6B1C4CEFB;
-	Thu,  6 Nov 2025 14:02:25 +0000 (UTC)
+	s=arc-20240116; t=1762437747; c=relaxed/simple;
+	bh=rks74Ok2xVDZRYVekwVF/tod1CxxsRBTTzdE/GlxP70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLABcp0Fn8Vr10idJJU94lSuXmV+DANbiJ1Fp4dYvmW+HwDczdp51lNRyayvHjfdK8+bTdG5Zfvfp9P0VYjoEf+SoGoQHNFlm+O1caQ7t8MLcXO9ooPdqpR1g7rxQvfJGLWk5Ouhk/0wu54lhddRmrvz06xA49WhPNH4CGae0uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ud+s8WUS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A90C4CEFB;
+	Thu,  6 Nov 2025 14:02:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762437745;
-	bh=hiQQw6k86ZVHtOXveAjwjSs/SFXI36atd+KcmN4uR6U=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=SKJOV6V8NNXUmOgJUCVDxPTxCRUG3LhVH2hz17HmwIjUL1VOET0PiuylvL2SNqvEX
-	 iVUbC5eumzOQrcsBCPramUlOdj4PswFkDO7xSzdW+KOE0YLYna1sOw8yonXiq59R+h
-	 K1sEiPkHqyUGoOzsnfMX8UwJ/JsqL23kruSnhMWWxsq5An2Yca5SRQTUsI13CBbWRv
-	 3GnIzJyDDLu0ZeBqvAeVxVRJfJhUTkheJTiSx74WC5HnWhwII3ZRMcYs3l8nUm2LcF
-	 KpjfG96FvbJnWdIpG2eqFTTOG0wTdV0kk8HrFmkXA6R3y5iR5ZgxAToVMnwiJJwiED
-	 aAKIrGYjx1KXw==
-Date: Thu, 06 Nov 2025 06:02:23 -0800
-From: Kees Cook <kees@kernel.org>
-To: =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
- Amit Dhingra <mechanicalamit@gmail.com>
-CC: =?ISO-8859-1?Q?Timur_Krist=F3f?= <timur.kristof@gmail.com>,
- Alex Deucher <alexander.deucher@amd.com>, Leo Li <sunpeng.li@amd.com>,
- David Airlie <airlied@gmail.com>,
- amd-gfx list <amd-gfx@lists.freedesktop.org>,
- dri-devel <dri-devel@lists.freedesktop.org>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: linux-next-20251029 - build error in amdgpu
-User-Agent: K-9 Mail for Android
-In-Reply-To: <105884.1762399131@turing-police>
-References: <1043551.1761844832@turing-police> <32ed124e9d603cad950c4836c7a14a3ba8bc2068.camel@gmail.com> <1296761.1762045181@turing-police> <CAFF-SiU3XL5pZAzsB=eXi7e1LKzx5XwiNOyfGpPXOnnc6uo2cw@mail.gmail.com> <CAO=gReF+sWpKZFa+wbtGxa3+wSjAQG1UMG3iJaDt2EOPmH-7mQ@mail.gmail.com> <105884.1762399131@turing-police>
-Message-ID: <A9C2FED1-EFBF-48AD-A3C8-41DDD16F8AA1@kernel.org>
+	s=k20201202; t=1762437747;
+	bh=rks74Ok2xVDZRYVekwVF/tod1CxxsRBTTzdE/GlxP70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ud+s8WUSocuprubvzUOn8VaTTNgP5pI8KL1QrPvB41zFUOTeVRqsg6VXanq7RjXrt
+	 Xn+A/6fKrbkrAoSRxtE7sgs19ET/So8zm9IajCVZ4mSdbwTSULmFfhU5BAo+iF7nTD
+	 ZMUcjlN+rjIbRkhA07YgsdHFpyV+ozJZ/xB4qYFYWSN+AChzURE/gwQXR5xm4ExRgC
+	 f5IG/MS4uEHvmQ/Vp4534qX52O/yMhhPHpmXheOg/bpZX16ILqr8bdwixpllo89E9L
+	 dh0F2VOHbeO7NnGAN2xsSfXTCxZCZ93t4sk6Si+GzjOjs2MhU+GK+MX4wmRD6Ijdjv
+	 z3wqWVhwtQQaQ==
+Date: Thu, 6 Nov 2025 14:02:24 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Nick Alcock <nick.alcock@oracle.com>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-s390@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH v5 00/34] sparc64: vdso: Switch to the generic vDSO
+ library
+Message-ID: <aQyqcH39IPLRWMt_@finisterre.sirena.org.uk>
+References: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4rnwqeK5vRaFw2+U"
+Content-Disposition: inline
+In-Reply-To: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
+X-Cookie: Dyslexics have more fnu.
+
+
+--4rnwqeK5vRaFw2+U
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+On Thu, Nov 06, 2025 at 11:01:53AM +0100, Thomas Wei=DFschuh wrote:
+> The generic vDSO provides a lot common functionality shared between
+> different architectures. SPARC is the last architecture not using it,
+> preventing some necessary code cleanup.
+>=20
+> Make use of the generic infrastructure.
 
+> ---
+> Changes in v5:
+> - Merge the patches for 'struct page' mapping and dynamic allocation
+> - Zero out newly-allocated data pages
+> - Pick up review tags
+> - Link to v4: https://lore.kernel.org/r/20251014-vdso-sparc64-generic-2-v=
+4-0-e0607bf49dea@linutronix.de
 
-On November 5, 2025 7:18:51 PM PST, "Valdis Kl=C4=93tnieks" <valdis=2Eklet=
-nieks@vt=2Eedu> wrote:
->On Wed, 05 Nov 2025 18:34:05 -0800, Amit Dhingra said:
->
->> I have the same problem=2E
->>  =2E=2E=2E
->
->> Setting RANDSTRUCT_NONE=3Dy seems to stop the error=2E
->>
->> [1] https://lore=2Ekernel=2Eorg/all/2025062439-tamer-diner-68e9@gregkh/
->
->Wow=2E  I wouldn't have guessed that RANDSTRUCT would be the cause=2E=2E=
-=2E
->However, RANDSTRUCT_NONE=3Dy does make dce_stream_encoder=2Ec compile cle=
-anly=2E
->
-><insert Twilight Zone theme music here>
->
->Adding Kees Cook and the linux-hardening list to the cc:, hope somebody h=
-as an
->idea what's going on=2E
+I've validated that the zeroing fixes the issues we were seeing with
+boot failures on a reasonable chunk of the arm64 platforms:
 
-I'm surprised the stable team didn't find the associated fix in your linke=
-d thread=2E It had the right Fixes tag:
-https://lore=2Ekernel=2Eorg/all/20250502224156=2Ework=2E617-kees@kernel=2E=
-org/
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Regardless, just remove the "0" from the dce110_an_str_enc_funcs initializ=
-er; that's an older code pattern that isn't needed any more=2E
+I didn't get to all of them but I'd expect the rest are also fine.
 
-Randstruct requires designated initializers, though I thought the macro tu=
-rned that on universally, so the fact that the error is only present with r=
-andstruct seems like a separate bug=2E
+--4rnwqeK5vRaFw2+U
+Content-Type: application/pgp-signature; name="signature.asc"
 
--Kees
+-----BEGIN PGP SIGNATURE-----
 
---=20
-Kees Cook
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkMqnAACgkQJNaLcl1U
+h9DdXQf/cqvSjdtV28SWYNX+UHnXmboyHxzenwcfa4zxbnrzgQ8feYntV6Ikfx7L
+ovSme6EY9cGYwoDmmhIHSSVZ0iuMwgiSj/NLxYlzbayc8uJITnfMorXtyOkqn7eQ
+9PngOIxdOAGels3s3oLIZfRg7pXKnfX176OvkFQi6I2gHaBHCpQbBq4o5qVqFo85
+Yra3emkWyARoll2AJ3u/dPVaDlXP2H3z4fm9QzX/1aWFaGN5Ml43iLbTfuC6YPlA
+/XTavzO9jIbi7l2J36K152BdwsgyOEHqQezDy5a/7bSQwA9cH7ok32svP1b5hpl1
+DOGKdUeeQCo9BAzV2TfMQR9jwzkZSQ==
+=zN3L
+-----END PGP SIGNATURE-----
+
+--4rnwqeK5vRaFw2+U--
 
