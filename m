@@ -1,220 +1,230 @@
-Return-Path: <linux-kernel+bounces-889314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FDBDC3D404
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D68C3D416
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 20:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3254189699E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:33:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93F4E1894180
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 19:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8A32DE70C;
-	Thu,  6 Nov 2025 19:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F9C32D0D4;
+	Thu,  6 Nov 2025 19:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyAtUapj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyL2PI5t"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBF32192EE;
-	Thu,  6 Nov 2025 19:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39922DF15F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 19:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762457556; cv=none; b=L0W7xB9G9HPloko5LGrmjjsUv623ClzZK7TPe9/SoPfWoNGaDgagSIRfMJEEJOI/I6v2RW4vKEtcnumT9ICNmoUQckDj4mbOXy0Wez3N7FU0balz9MfhVsad1Q6U7Q+CCCC00Zwpm8M9pvKsfxpiSu5HjapdkRk1C4piixj2P50=
+	t=1762457692; cv=none; b=hYXeSwlAqryacxAWJFcWkO2JmTN/JEyceCqcP+JlPH6UssUA2mJsFL5fVmGimJ5VoSGtflk3SOskJzMsdmjoHU7aP8Mplwzjs4STKbGYN4ethTrNzpaJXzi5HJAbxjjsQxvMD3xeOrpemc012GM5TOg2rI+4cZhyo+2w5pKjGP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762457556; c=relaxed/simple;
-	bh=wihSTnkFXhy5/fis4z4HZGvN91Ktb4fLONbT7S8xWpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i1Ag5/IlfW+Li5S32NrtnSa+WQT7GICxgsCHeF9jUshC/H02wwpXG9zL0muHhQuYicXWY+j4U6pY9pHYfN0xXkqMxFOfliYkS+epIRA6XQIwyq7CSemN1X1Npv4eUWjr8XK9gpo9o48HjJtSQNMopajnoRcC5LvNl9tgRdq/YIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyAtUapj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7A77C116B1;
-	Thu,  6 Nov 2025 19:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762457556;
-	bh=wihSTnkFXhy5/fis4z4HZGvN91Ktb4fLONbT7S8xWpE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OyAtUapjtDpyKFoDldaMJa+VnyboN2vy6fCqEDoy+3nWV13qJej4AVLFxuvU6/1BR
-	 04oC11JrryRpjtiol5Gs3KG3uELtZMPOHSsKHVIgVxBFBP+hZTR8nnAhg4d7ej/yTC
-	 LkZtEuyjfJA4EfzZx98rcAW23h6A7T2f8RiVVuXh15w4t8lVi3Bno93iGw3pe6Gp6e
-	 ePa4/tvq7lDzRi00FD39hWH1qIrudnAZXo7v2FGFn+AogjuKW+k1Dy9hPThTxgd7Sh
-	 ykE95u1AfnsJmFCBPFO0br2OJhAOBB9Y8+FPtwq23baxusCKIGZyaUcuGNfbXnTUZx
-	 h0SZjegJMEIxw==
-Message-ID: <8cf5dc85-dee8-4e83-8f83-6b3411dddbee@kernel.org>
-Date: Thu, 6 Nov 2025 14:32:34 -0500
+	s=arc-20240116; t=1762457692; c=relaxed/simple;
+	bh=T/3euURa4sf5pno5n07UA3H6TYwADkHD4DxPPNGT6W0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hmuc30O1hjbGOEJhRVHs/vvfFm6Uu15AXc/U2PIer15bT6hgvXnsk1oz3HfLHm7crNzpvqncD/NkYVP6Ud5aI8SEHZBI3JoyTZfCZBBBmaL/eUQGdlfvGujDg/pxkejzZx66qu0TA0buEezvYhd5T2d0rfabnO8TuuUK+eXGybY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZyL2PI5t; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e9d633b78so232097966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 11:34:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762457689; x=1763062489; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mCBvcf/NJMhjuoNcaV9EjlbhEjMTciXlshR/lOPkPFk=;
+        b=ZyL2PI5t4p40TnO1N19UYKSCxgoiuj5n22JXUq+xjSDI3fX8qDyh19Z+CAXxwCvSdj
+         d4n4c89yfBvWyxmtK0Gkk8VLX0fRBCPy4rld0fHtYiWAbED8CNJHFxFxRAHbxPb/VHrS
+         Dn3RBiaojFLrENqbm33rkUPU6U/EzGd+ubuLR2vSEV222OPI0NQkjAB1eas6LZKdG012
+         sawKKfISfLG3qWRrAnW7IAdHKA4olmoFlMkIa6JF9zQvTEQ2rhWa1/4PZr1u7srtkgMX
+         0qWO09MXSiyh6LXFcj5KqGKDhyMxEgeIqhp015AGbdOECmNEdZNUVwg4xUUV7YbJRVKu
+         sAsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762457689; x=1763062489;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mCBvcf/NJMhjuoNcaV9EjlbhEjMTciXlshR/lOPkPFk=;
+        b=KWJoquroCm/BuZDu+aywDBTeVjC3WvFESRASpIX0FCNN3/E1eJFDn7SEsa13uMsy+Z
+         8Msd7b3o+nxhlycPRUe9sRZDt0B95mjbPLRWsTTVz/gl8bCedpgOksjw3gEv1TJ5eW5e
+         Elj33a3BPyEcn5jSfCHJzmjfVY5NLrn/e2ppxA7AZSPM4h/QDAaOWfM7df1Z36hZn0RE
+         F+P9y0Fw1RELTwkmVpEXq6DM56BAAcq3SZT1Z7EW6a2qPFQoU+3WzBF43ER5LjAr/iUx
+         uhMGmZHTshCW1LlnbvY8IGIURUCLZLcU08Ee6Q57XKNJ6QbFvCePBuTDcrgTCqqjQnwQ
+         Djjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG9PmsCd0XH7LvTFQuG1DdQm6tiUBllTBWHW8OPc47H1HiLZUoNO3E15HYw090iF2ABKAvc2qQeILs0Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsonrtgWjfxWDxelYmdUvNmLb0DziM1BKrPkkHLDHgiaeCk5+k
+	jFgLtuJ1Qs2NYcATkx+EEbvjrK0nP4C27gTuj7NfdyRkA0u7LkV6oERvLYpZlHnk0ljlgqMvuga
+	iFa9/ez+mq6vNIUf/Cj1RWyzimz7AGJc=
+X-Gm-Gg: ASbGnctIwKBp4KAgQWkso/5/WC19sUGVXwc4Ajwjkt6KDcvW7NC8A5ZMagt3heNBhck
+	VImVvt6b/B3nVXyoKYIYsA/uNOPs1BLfioOVWuKgR5FbIZyRyecoLzVZjbTWoTsigwQO/q2DgSb
+	bvo1ZwREjeoMkDeD/5ypYBUckMsLXIQMatV4WhZkHTGv7HPjdDRcNrgemsKcjiJPD5+G+nhwS4A
+	+fNCo5+BhsM4e/lQek5VOyXS5Z8EaRtckvjUFvm1+/IXOhesQOpdDn+zjvvJlktpgtfy2r0nWrS
+	rlMQ7J5Kod2Ev7hjy/KbaTfKyA==
+X-Google-Smtp-Source: AGHT+IEDHxdgCYJuNF4Psgi4yycknqN7aYM8f3c/D+9flybAQhXx8OLT9RAar7ZocVrcCQXNf1dHRkhEGhitFBett60=
+X-Received: by 2002:a17:907:970a:b0:b53:f93f:bf59 with SMTP id
+ a640c23a62f3a-b7289645bddmr458133666b.29.1762457688968; Thu, 06 Nov 2025
+ 11:34:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
- greater than high limit total_avail/scale_factor
-To: David Laight <david.laight.linux@gmail.com>
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Laight <David.Laight@ACULAB.COM>,
- Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
- Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
- speedcracker@hotmail.com
-References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>
- <37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>
- <20251106192210.1b6a3ca0@pumpkin>
-Content-Language: en-US
-From: Chuck Lever <cel@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20251106192210.1b6a3ca0@pumpkin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251106180103.923856-1-mjguzik@gmail.com>
+In-Reply-To: <20251106180103.923856-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 6 Nov 2025 20:34:36 +0100
+X-Gm-Features: AWmQ_bmwHSwkUrd6OUGx9_ZPsDHuq69IIK4ETTJeTUhXllTD4dJ_LEyZsJjk-2c
+Message-ID: <CAGudoHFVnOvshyXi9-1gMs+SOg5zc9e++iT9_Nz6UjwtmG6VuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] permission check avoidance during lookup
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, 
+	torvalds@linux-foundation.org, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/6/25 2:22 PM, David Laight wrote:
-> On Thu, 6 Nov 2025 09:33:28 -0500
-> Chuck Lever <cel@kernel.org> wrote:
-> 
->> FYI
->>
->> https://bugzilla.kernel.org/show_bug.cgi?id=220745
-> 
-> Ugg - that code is horrid.
-> It seems to have got deleted since, but it is:
-> 
-> 	u32 slotsize = slot_bytes(ca);
-> 	u32 num = ca->maxreqs;
-> 	unsigned long avail, total_avail;
-> 	unsigned int scale_factor;
-> 
-> 	spin_lock(&nfsd_drc_lock);
-> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used)
-> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-> 	else
-> 		/* We have handed out more space than we chose in
-> 		 * set_max_drc() to allow.  That isn't really a
-> 		 * problem as long as that doesn't make us think we
-> 		 * have lots more due to integer overflow.
-> 		 */
-> 		total_avail = 0;
-> 	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
-> 	/*
-> 	 * Never use more than a fraction of the remaining memory,
-> 	 * unless it's the only way to give this client a slot.
-> 	 * The chosen fraction is either 1/8 or 1/number of threads,
-> 	 * whichever is smaller.  This ensures there are adequate
-> 	 * slots to support multiple clients per thread.
-> 	 * Give the client one slot even if that would require
-> 	 * over-allocation--it is better than failure.
-> 	 */
-> 	scale_factor = max_t(unsigned int, 8, nn->nfsd_serv->sv_nrthreads);
-> 
-> 	avail = clamp_t(unsigned long, avail, slotsize,
-> 			total_avail/scale_factor);
-> 	num = min_t(int, num, avail / slotsize);
-> 	num = max_t(int, num, 1);
-> 
-> Lets rework it a bit...
-> 	if (nfsd_drc_max_mem > nfsd_drc_mem_used) {
-> 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-> 		avail = min(NFSD_MAX_MEM_PER_SESSION, total_avail);
-> 		avail = clamp(avail, n + sizeof(xxx), total_avail/8)
-> 	} else {
-> 		total_avail = 0;
-> 		avail = 0;
-> 		avail = clamp(0, n + sizeof(xxx), 0);
-> 	}
-> 
-> Neither of those clamp() are sane at all - should be clamp(val, lo, hi)
-> with 'lo <= hi' otherwise the result is dependant on the order of the
-> comparisons.
-> The compiler sees the second one and rightly bleats.
-> I can't even guess what the code is actually trying to calculate!
-> 
-> Maybe looking at where the code came from, or the current version might help.
+On Thu, Nov 6, 2025 at 7:01=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+>
+> To quote from patch 1:
+> <quote>
+> Vast majority of real-world lookups happen on directories which are
+> traversable by anyone. Figuring out that this holds for a given inode
+> can be done when instantiating it or changing permissions, avoiding the
+> overhead during lookup. Stats below.
+>
+> A simple microbench of stating /usr/include/linux/fs.h on ext4 in a loop
+> on Sapphire Rapids (ops/s):
+> before: 3640352
+> after:  3797258 (+4%)
+> </quote>
+>
+> During a kernel build about 90% of all lookups managed to skip
+> permission checks in my setup, see the commit message for a breakdown.
+>
+> WARNING: more testing is needed for correctness, but I'm largely happy
+> with the state as is.
+>
 
-The current upstream code is part of a new feature that is not
-appropriate to backport to LTS kernels. I consider that code out of
-play.
+Forgot to explain more in the commit message, so here it is right now:
+how almost the entirety of inode_permission() can get elided for
+inodes which qualify for it.
+inode_permission()
+{
+        retval =3D sb_permission(inode->i_sb, inode, mask);
+        if (unlikely(retval))
+                return retval;
 
-The compiler error showed up in 6.1.y with the recent minmax.h
-changes -- there have been no reported problems in any of the LTS
-kernels until now, including with 32-bit builds.
+sb_permission starts with a check for mask & MAY_WRITE. Since mask is
+MAY_EXEC, this does not need to execute.
 
-The usual guidelines about regressions suggest that the most recent
-backports (ie, minmax.h) are the ones that should be removed or reworked
-to address the compile breakage. I don't think we should address this by
-writing special clean-ups to code that wasn't broken before the minmax.h
-changes. Cleaning that code up is more likely to introduce bugs than
-reverting the minmax.h changes.
+        if (unlikely(mask & MAY_WRITE)) {
 
+Same here.
 
-> It MIGHT be that the 'lo' of slotsize was an attempt to ensure that
-> the following 'avail / slotsize' was as least one.
-> Some software archaeology might show that the 'num = max(num, 1)' was added
-> because the code above didn't work.
-> In that case the clamp can be clamp(avail, 0, total_avail/scale_factor)
-> which is just min(avail, total_avail/scale_factor).
-> 
-> The person who rewrote it between 6.1 and 6.18 might now more.
-> 
-> 	David
-> 	
->>
->>
->> -------- Forwarded Message --------
->> Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit
->> slotsize greater than high limit total_avail/scale_factor
->> Date: Thu, 06 Nov 2025 07:29:25 -0500
->> From: Jeff Layton <jlayton@kernel.org>
->> To: Mike-SPC via Bugspray Bot <bugbot@kernel.org>, cel@kernel.org,
->> neilb@ownmail.net, trondmy@kernel.org, linux-nfs@vger.kernel.org,
->> anna@kernel.org, neilb@brown.name
->>
->> On Thu, 2025-11-06 at 11:30 +0000, Mike-SPC via Bugspray Bot wrote:
->>> Mike-SPC writes via Kernel.org Bugzilla:
->>>
->>> (In reply to Bugspray Bot from comment #5)  
->>>> Chuck Lever <cel@kernel.org> replies to comment #4:
->>>>
->>>> On 11/5/25 7:25 AM, Mike-SPC via Bugspray Bot wrote:  
->>>>> Mike-SPC writes via Kernel.org Bugzilla:
->>>>>   
->>>>>> Have you found a 6.1.y kernel for which the build doesn't fail?  
->>>>>
->>>>> Yes. Compiling Version 6.1.155 works without problems.
->>>>> Versions >= 6.1.156 aren't.  
->>>>
->>>> My analysis yesterday suggests that, because the nfs4state.c code hasn't
->>>> changed, it's probably something elsewhere that introduced this problem.
->>>> As we can't reproduce the issue, can you use "git bisect" between
->>>> v6.1.155 and v6.1.156 to find the culprit commit?
->>>>
->>>> (via https://msgid.link/ab235dbe-7949-4208-a21a-2cdd50347152@kernel.org)  
->>>
->>>
->>> Yes, your analysis is right (thanks for it).
->>> After some investigation, the issue appears to be caused by changes introduced in
->>> include/linux/minmax.h.
->>>
->>> I verified this by replacing minmax.h in 6.1.156 with the version from 6.1.155,
->>> and the kernel then compiles successfully.
->>>
->>> The relevant section in the 6.1.156 changelog (https://cdn.kernel.org/pub/linux/kernel/v6.x/ChangeLog-6.1.156) shows several modifications to minmax.h (notably around __clamp_once() and the use of
->>> BUILD_BUG_ON_MSG(statically_true(ulo > uhi), ...)), which seem to trigger a compile-time assertion when building NFSD.
->>>
->>> Replacing the updated header with the previous one resolves the issue, so this appears
->>> to be a regression introduced by the new clamp() logic.
->>>
->>> Could you please advise who is the right person or mailing list to report this issue to
->>> (minmax.h maintainers, kernel core, or stable tree)?
->>>   
->>
->> I'd let all 3 know, and I'd include the author of the patches that you
->> suspect are the problem. They'll probably want to revise the one that's
->> a problem.
->>
->> Cheers,
-> 
+        retval =3D do_inode_permission(idmap, inode, mask);
+        if (unlikely(retval))
+                return retval;
 
+do_inode_permission starts with a check for IOP_FASTPERM. This is of
+no relevance as we are skipping the perm checks and the behavior is as
+if generic_permission() was always called.
 
--- 
-Chuck Lever
+Then generic_permission:
+        ret =3D acl_permission_check(idmap, inode, mask);
+        if (ret !=3D -EACCES)
+                return ret;
+
+We don't have to check the error code as we expect the perm is granted.
+
+acl_permission_check:
+       if (!((mask & 7) * 0111 & ~mode)) {
+                if (no_acl_inode(inode))
+                        return 0;
+                if (!IS_POSIXACL(inode))
+                        return 0;
+        }
+
+We don't need this as we already pre-checked the perm is at least 0111
+and there are no acls set.
+
+back to inode_permission:
+        retval =3D devcgroup_inode_permission(inode, mask);
+        if (unlikely(retval))
+                return retval;
+
+This checks if we are dealing with a device. The IOP_FAST_MAY_EXEC is
+only legally set on directories, so it is an invariant we are not
+dealing with a device and don't need to check that.
+
+Finally this:
+        return security_inode_permission(inode, mask);
+
+.. *does* execute in the new scheme.
+
+However, LSM has notpatchable calls inside and only 2 users, normally
+not present on Ubuntu et al. Or to put it differently, this is a func
+call to a nop slide on most kernels and with some extra work can also
+get elided.
+
+> WARNING: I'm assuming the following bit is applied:
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 78ea864fa8cd..eaf776cd4175 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5518,6 +5518,10 @@ struct inode *__ext4_iget(struct super_block *sb, =
+unsigned long ino,
+>                 goto bad_inode;
+>         brelse(iloc.bh);
+>
+> +       /* Initialize the "no ACL's" state for the simple cases */
+> +       if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_fil=
+e_acl)
+> +               cache_no_acl(inode);
+> +
+>         unlock_new_inode(inode);
+>         return inode;
+>
+> Lack of the patch does not affect correctness, but it does make the
+> patch ineffective for ext4. I did not include it in the posting as other
+> people promised to sort it out.
+>
+> Discussion is here with an ack from Jan:
+> https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omu=
+r2l2opitn7lbvfm@rm4y24fcfzbz/T/#m30d6cea6be48e95c0d824e98a328fb90c7a5766d
+> and full thread:
+> https://lore.kernel.org/linux-fsdevel/kn44smk4dgaj5rqmtcfr7ruecixzrik6omu=
+r2l2opitn7lbvfm@rm4y24fcfzbz/T/#t
+>
+> v2:
+> - productize
+> - btrfs and tmpfs support
+>
+> Mateusz Guzik (4):
+>   fs: speed up path lookup with cheaper MAY_EXEC checks
+>   ext4: opt-in for IOP_MAY_FAST_EXEC
+>   btrfs: opt-in for IOP_MAY_FAST_EXEC
+>   tmpfs: opt-in for IOP_MAY_FAST_EXEC
+>
+>  fs/attr.c          |  1 +
+>  fs/btrfs/inode.c   | 12 +++++-
+>  fs/ext4/inode.c    |  2 +
+>  fs/ext4/namei.c    |  1 +
+>  fs/namei.c         | 95 +++++++++++++++++++++++++++++++++++++++++++++-
+>  fs/posix_acl.c     |  1 +
+>  fs/xattr.c         |  1 +
+>  include/linux/fs.h | 21 +++++++---
+>  mm/shmem.c         |  9 +++++
+>  9 files changed, 134 insertions(+), 9 deletions(-)
+>
+> --
+> 2.48.1
+>
 
