@@ -1,148 +1,148 @@
-Return-Path: <linux-kernel+bounces-889213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B40C3CF90
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:57:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF04C3CFA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D81ED4E1F05
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:57:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFF61899038
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BCD34C9AD;
-	Thu,  6 Nov 2025 17:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC9F3502A5;
+	Thu,  6 Nov 2025 17:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+5gLqTQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSa0AzFx"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E834F225D6;
-	Thu,  6 Nov 2025 17:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DE8350298
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451844; cv=none; b=JPj7TTcwst4Qb4wIuJ/ApIp0S8ATxzkW2Mll/UpjekRiktJqCUYIgmYLLmPIv5oRyc3ebA571xcvnAsCHyrM0wbc/sFOL6HdUvQPRCmSmFQ5m678S3oaOybHNVIVnmRnmmNWtVeOCgpc7iCHa5mvG+Cs5iKw+Q5d7G61IxK6stE=
+	t=1762451882; cv=none; b=ZCLP0x8anqBy0ekUN4uxBgzeW/AWcWijUyR91ZiRBzabrJ5QIXe+gDxkcfp0uomj3pHuTynSFPAyptWdDacNyvlRcVIKyTGRG0eYp4GHijmjun7aPSK2kGErWXJ//D8NHSaAGH2qV2/qWZ5ZxS2Day9F2xHgbcS1Wga+4ZNShSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451844; c=relaxed/simple;
-	bh=UnXS+32sgS7AJSR2SoposJwC2eun1G19mYNc72E2K9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D/uE9I64BtsbJsEfY7LYIsb1Dy3c3iRQCYHcFzBLSfL0+k5782RvRTHIS14uU/iB1RP0VzrdjPuvPpwyVbgagFeQGi85LzAR8m5H+hqO3dU4qIMza6YkTwFL5FPQwRPomlPgcLKAUeHyF6ABM82gw2jtqxy86hIg9nMTVVL4fRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+5gLqTQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF523C116B1;
-	Thu,  6 Nov 2025 17:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762451842;
-	bh=UnXS+32sgS7AJSR2SoposJwC2eun1G19mYNc72E2K9I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T+5gLqTQgqFu/RfWCN2JY9reasd2XIE7GssvtBAvYl1UNjmyo8HO+ya6lnnGoKuOR
-	 SB1KXP728LboNv1GZ/ihMQlxUtNXd2yb6VhmS+MB1sSazXtTdyjwKNV5+yKQwc2aDg
-	 bOlbl224sxBSSMixdmxTAJv3qrM1B557gb6s+CnAHPUlsIzyxeheNuYwaxy+uvYP62
-	 g2KcTWhsAcxCV4DUAaNHVnXW/gLthd9C2cfzX4afddm5bGRW+eKs1nFSSfksQ7rrw4
-	 PeAbeyTrcbHswsO4jxLcUystypu6fnnS3PQhXu8j0/zYDCz8BWyvUagIXYgt/XwbZv
-	 aVv49Asr7zvBw==
-Date: Thu, 6 Nov 2025 17:57:17 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 1/4] dt-bindings: connector: Add PCIe M.2 Mechanical Key
- M connector
-Message-ID: <20251106-legibly-resupply-1d3cef545229@spud>
-References: <20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com>
- <20251105-pci-m2-v1-1-84b5f1f1e5e8@oss.qualcomm.com>
+	s=arc-20240116; t=1762451882; c=relaxed/simple;
+	bh=glDJwADkOumTnv2wh0y8hasj3tQrqspeLBN3EP/hPeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UnqWRLST1Z0OtU+3lu9ylPpQI5THcF4LCuR8AqdbdkS4lZBOIPhRTktNKJibr28ij2vEnBxoWnpJ3U4vKnZ7viJG4G8lwVI0EdL8bHXCgyd8Bcg7nJWwuaI+KGb6SAZhcLmr1QUQBVgrVDerekvZQrJymHCKkHAR+YxINksmPkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSa0AzFx; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-ba2450aba80so752271a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:58:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762451880; x=1763056680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qq2BG8wI9bIT4TcMCE4faFvSiiQMg+JzNyI7cyMI09g=;
+        b=HSa0AzFxYv7Eywl+uuTcMiBDZCL4x61QFtqaeTalq9vAF+EBARPsAutYojSSzBXY/j
+         HgyJE+Kczrqr/XsUX9wkUO0jm1ekeMQxNjTWYQ6aEfcry9/BrWxs2nxG2C0CZZwngyWL
+         e5a/dtezsaRTnUneG7iAnR4TA4jqBL436pwIqVwc0XmggagxM2jLRTNHmxO0bwUDFeqL
+         VXeGMsQiMuCmT8DtKZlDXcb3Y+BA2LPLPjArZzaRcjwENq4uzZLV/vkRTZWuBlrbphIw
+         KGAUq++7NbOMwv5wnOBWVWpeRTz7duDVEwPCmRbIp5Jp9ksCqL6qiG2Lxy4kRjRzKtom
+         Omvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762451880; x=1763056680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Qq2BG8wI9bIT4TcMCE4faFvSiiQMg+JzNyI7cyMI09g=;
+        b=tzUV7+2DnI/qQRUeyy80oAhtzOTQ3h1lY4mSNM/1h2URTOIsnOBlalYFuq/YYCSK94
+         mPAk1luTXES1KX+O3H/Jil5vF/u9e+iXltclIztW6mct7fPMyav+r4tLVu5sGOSkm+lf
+         pyQ00NLP6Bq/FkPJ/1P30GTftFRKXVfyhCS6T15miSqsqr/Em68xirCtJRi26RrFaI2M
+         mBUMcR7F1NX4AmC/vvcrlQVgk0ZV3KCv8f85aT8j/VZpdJf1giT3u4XM838EMVz0Bndj
+         nJQ6TtdnLuptUf0/YxPdTu7HLTGHSctsk6itk34KUjuxfEFxzB4CBoPqESnGKhGpW+TC
+         KG5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2qsfQCGBTHwCyvXnT+UA/xO9uj8NLbosHfo0SGQXiSvtaDKcmS4UUiiFUeif1HXhMOIgALMjDbBZBXbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo4bMMbOKosBkoLkrwMBBmrU3B/qwrMXo8Cg0BOrCjUNoBJR3J
+	Kj34/+qRkTYGRYmmcjbhYuIGE75LYL2KuZP1cko9A5TqwewmTZlxw22tTF/vHBRu6q4WeVi97Ic
+	sk2wvT+aUdMNQ48QPlvbWBwlTxAdVN+0=
+X-Gm-Gg: ASbGnctLMWjUB041NnDqeY7MDd9/l91Xw4QW49yG/FsvY+wwgfFFWWCdmB/KiIStAcm
+	rgDMGm1v5z4sa4alupK7kwvYXrZ9ykgmZo6yLpWf/Zcmn5szgQTEjCc4x0Hze9oD/3/vIhXWbor
+	oc2GSqlu4IZaQM/7bVI768YkdRAXvbxLiLEOTJElh2V4FTII8MBmEhe4vndkUz++PCaX0gziIh5
+	kA+su+MdZPbwx8T3fmBvq9Wke82zMVlAlldRIcMx2sNW/Ui29jl+APVSuv8HpKcniIor2fDBz5O
+	75VUo67pjGc=
+X-Google-Smtp-Source: AGHT+IEo2c3LTKhoAWPaU5mA29bYX/vQ3YlDfexEaLKPDZKxloUHe6GGY5t624x7bqLaqtKa75S0FMw4WhtkQE0EKKo=
+X-Received: by 2002:a17:902:db0b:b0:297:c048:fb60 with SMTP id
+ d9443c01a7336-297c048fb72mr3932805ad.25.1762451880461; Thu, 06 Nov 2025
+ 09:58:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uAYGTx5GDWafj68j"
-Content-Disposition: inline
-In-Reply-To: <20251105-pci-m2-v1-1-84b5f1f1e5e8@oss.qualcomm.com>
-
-
---uAYGTx5GDWafj68j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251106113519.544d147d@canb.auug.org.au>
+In-Reply-To: <20251106113519.544d147d@canb.auug.org.au>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 6 Nov 2025 09:57:46 -0800
+X-Gm-Features: AWmQ_bm8E-PozACS9d1X9w71i5ba0KKhj-9cPqMEYJ2xotNsfTlmXkti2aB73FA
+Message-ID: <CAEf4BzbDyeMG4KdgryqFTTT3t5EQWRsKf8n1W6AHL_VOW0SC7A@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Mykyta Yatsenko <yatsenko@meta.com>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05, 2025 at 02:45:49PM +0530, Manivannan Sadhasivam wrote:
-> Add the devicetree binding for PCIe M.2 Mechanical Key M connector. This
-> connector provides interfaces like PCIe and SATA to attach the Solid State
-> Drives (SSDs) to the host machine along with additional interfaces like
-> USB, and SMB for debugging and supplementary features. At any point of
-> time, the connector can only support either PCIe or SATA as the primary
-> host interface.
->=20
-> The connector provides a primary power supply of 3.3v, along with an
-> optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
-> 1.8v sideband signaling.
->=20
-> The connector also supplies optional signals in the form of GPIOs for fine
-> grained power management.
->=20
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.=
-com>
-> ---
->  .../bindings/connector/pcie-m2-m-connector.yaml    | 121 +++++++++++++++=
-++++++
->  1 file changed, 121 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-m-connec=
-tor.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.=
-yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2db23e60fdaefabde6f208e4a=
-e0c9dded3a513f6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> @@ -0,0 +1,121 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/connector/pcie-m2-m-connector.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: PCIe M.2 Mechanical Key M Connector
-> +
-> +maintainers:
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> +
-> +description:
-> +  A PCIe M.2 M connector node represents a physical PCIe M.2 Mechanical =
-Key M
-> +  connector. The Mechanical Key M connectors are used to connect SSDs to=
- the
-> +  host system over PCIe/SATA interfaces. These connectors also offer opt=
-ional
-> +  interfaces like USB, SMB.
-> +
-> +properties:
-> +  compatible:
-> +    const: pcie-m2-m-connector
+On Wed, Nov 5, 2025 at 4:35=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+>
+>   kernel/bpf/helpers.c
+>
+> between commits:
+>
+>   ea0714d61dea ("bpf:add _impl suffix for bpf_task_work_schedule* kfuncs"=
+)
+>   137cc92ffe2e ("bpf: add _impl suffix for bpf_stream_vprintk() kfunc")
+>
+> from the bpf tree and commit:
+>
+>   8d8771dc03e4 ("bpf: add plumbing for file-backed dynptr")
+>
+> from the bpf-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc kernel/bpf/helpers.c
+> index e4007fea4909,865b0dae38d1..000000000000
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@@ -4380,9 -4531,11 +4535,11 @@@ BTF_ID_FLAGS(func, bpf_strncasestr)
+>   #if defined(CONFIG_BPF_LSM) && defined(CONFIG_CGROUPS)
+>   BTF_ID_FLAGS(func, bpf_cgroup_read_xattr, KF_RCU)
+>   #endif
+>  -BTF_ID_FLAGS(func, bpf_stream_vprintk, KF_TRUSTED_ARGS)
+>  -BTF_ID_FLAGS(func, bpf_task_work_schedule_signal, KF_TRUSTED_ARGS)
+>  -BTF_ID_FLAGS(func, bpf_task_work_schedule_resume, KF_TRUSTED_ARGS)
+>  +BTF_ID_FLAGS(func, bpf_stream_vprintk_impl, KF_TRUSTED_ARGS)
+>  +BTF_ID_FLAGS(func, bpf_task_work_schedule_signal_impl, KF_TRUSTED_ARGS)
+>  +BTF_ID_FLAGS(func, bpf_task_work_schedule_resume_impl, KF_TRUSTED_ARGS)
+> + BTF_ID_FLAGS(func, bpf_dynptr_from_file, KF_TRUSTED_ARGS)
+> + BTF_ID_FLAGS(func, bpf_dynptr_file_discard)
+>   BTF_KFUNCS_END(common_btf_ids)
 
-Is this something generated from a standard that's going to be
-practically identical everywhere, or just some qcom thing?
+LGTM, thanks
 
---uAYGTx5GDWafj68j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQzhfQAKCRB4tDGHoIJi
-0t1uAQDc5pmQNbPwDyEMTn5FPMnQn+G5mQWnMFTjroDojrxmzwD/ceWjD/qF8RZb
-JhTn84HyG8HzouxenXWUck33JLAQFQg=
-=ayfa
------END PGP SIGNATURE-----
-
---uAYGTx5GDWafj68j--
+>
+>   static const struct btf_kfunc_id_set common_kfunc_set =3D {
 
