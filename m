@@ -1,159 +1,185 @@
-Return-Path: <linux-kernel+bounces-888008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275C9C39912
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:24:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DBCC3990F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B849E3BE221
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:23:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B464E4EBC1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C142DFA31;
-	Thu,  6 Nov 2025 08:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A191A301460;
+	Thu,  6 Nov 2025 08:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aiFDdLkX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQfFohEU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11711C1F02;
-	Thu,  6 Nov 2025 08:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA308280332;
+	Thu,  6 Nov 2025 08:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762417396; cv=none; b=MRjlXNt7W66PMPQLC+yI3uj98g6l3Lo0kQiA4ML/Ymaou1W310DgzfxSSSHuU2tAZFO5FXPbLO0StL/353trWhz+eIM3AaD5+3tFoDyZAPcz43sByVZ3B1DonK9lQthPwEvmuNjyBWXxAkx5Wk4KN3nLts+3q7n+rkr9HSyfWT0=
+	t=1762417481; cv=none; b=XqAftwhGqXlgHFXEeMGR1s7kc3Da1I9P6AkYwpVeqFqxVee7c7T1z5cp+F5fLcu3GoliRFfXyf4lVKvTk8wwtxlByapyB7K+QfdvX/b8vXtJwkwDDzdOOtUnRDv2/q267cxI7jyFXgJnb9lWtvC7Rv8uyAZs/EdxWjWmcIGRevg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762417396; c=relaxed/simple;
-	bh=ggYl4wROTMQhBWwNCz1HZZl2SXgT9BaNW3tVZd9kZ3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EKo9cbzNRCBwTxDuDM3aO2BN65Ixk035v/gzkYEkXJnCI84dAsosAtMUOGVnSSkGFc9O/UJhigtyhiAOWcSVrwMeThqEQBvI7Af2iJ8u4dDIkOv9JtII80a2R7LhVeRL2Y4AZOBt9UKwXTWXUR+jKEbqS8Gpxq8Vr8xpz0nonLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aiFDdLkX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A66OHrY1739040;
-	Thu, 6 Nov 2025 08:23:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xbYonG8RpSbD0wjnOmT+jjxZamQ3fVtoDroJknOWGEE=; b=aiFDdLkXiIpOthBx
-	yhmOm1WlO4uffmAZozBYNgiJp67tC6QTybu+pH1LhKf1bB7kCQpRH9E6MUjU8Gyb
-	9vcFzCAlkWziYdjXj36mWbG51+QPJHQsDoR9esZQhvaMuc4E2F5y4yjzS86VEDj7
-	cVxWYQUr5anubhzJ9rJHyxEAK3QAKeTxmlWJBJxWu9/WfEi0dR/SF5gHgHJkmg86
-	Z8FxPxm8ResXwbvQjiDvTrRmXrBABsiqGWUcEMY21TV7LbolLaAvtcfwA3SEGU31
-	wUv2BCtkvnUc+d/Soi43CoQA0a0GuFWbsHVvTIo7kR/qcrouqAjHqqz0kasbD6He
-	VoB3Ow==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8an3tbu1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 08:23:11 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A68NAE8024605
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Nov 2025 08:23:10 GMT
-Received: from [10.204.78.32] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 6 Nov
- 2025 00:23:07 -0800
-Message-ID: <e00ebe76-ba73-42f5-8278-5cc3ee24709d@quicinc.com>
-Date: Thu, 6 Nov 2025 13:53:04 +0530
+	s=arc-20240116; t=1762417481; c=relaxed/simple;
+	bh=tnT+oLc/kBo4dvSKn58H5wJqyeTpfH6PqdkJR5lwiCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1VnQDvPVbRvLabMr6AY4LV5JUrNziHCgnB6jMXLq56cp1TywEPEyUWD0xfzyP/gJRwuTigVh2BK/RDkWTCjSpRYC5ublEG1fFb1P9lnq2VjCpJ7L18UUOaaF9vP2gvi+27o1+s9kzJIV9zXBiOKhikc61nkVOl4PvtdG3BWGgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQfFohEU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3145C4CEFB;
+	Thu,  6 Nov 2025 08:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762417480;
+	bh=tnT+oLc/kBo4dvSKn58H5wJqyeTpfH6PqdkJR5lwiCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MQfFohEUn+hXz5i9qgPu11Y8k2A6IGar+vdTxNhbAo5kq96oZC66SvEwCEwZLngMa
+	 nZqgVO6+lGr5SbnAscnFEGlOYth+V4uFEvuRy8xVQMnvVEiHxMmse/uc5VnagiJNt8
+	 7+LUyj+hqpudRx/65qxTU8MdcRF9WWbQQgyoIMJ5FYNqvVvXm0EJe3tzNLVe4x9hWN
+	 OwMtBjGFSqk12yNZ+IiQNnuFCH6ChjQrOxCXNG3qNwMylFktFN1x1Sr2exkVzhcv2W
+	 GcbUH/H4EasrjeEnAZuC2B/VAI67qBmhIzlMObyBFLthPShiCWyultl0kZZGY0ZbBJ
+	 1YtPynLoEba2g==
+Date: Thu, 6 Nov 2025 10:24:24 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, anthony.yznaga@oracle.com,
+	arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org,
+	bp@alien8.de, catalin.marinas@arm.com, corbet@lwn.net,
+	dave.hansen@linux.intel.com, devicetree@vger.kernel.org,
+	dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com,
+	hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org,
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org,
+	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com,
+	pbonzini@redhat.com, peterz@infradead.org, robh@kernel.org,
+	rostedt@goodmis.org, saravanak@google.com,
+	skinsburskii@linux.microsoft.com, tglx@linutronix.de,
+	thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
+Subject: Re: [PATCH v8 01/17] memblock: add MEMBLOCK_RSRV_KERN flag
+Message-ID: <aQxbOG65t-Vu6TVe@kernel.org>
+References: <20250509074635.3187114-1-changyuanl@google.com>
+ <20250509074635.3187114-2-changyuanl@google.com>
+ <ef6wfr72set5wa5el3wbbu4yd5tnc4p2rhtjpb5kpmncv3xs5d@i3c5v3ciioi3>
+ <mafs0wm4yluej.fsf@kernel.org>
+ <mafs0h5w2lpqu.fsf@kernel.org>
+ <2ege2jfbevtunhxsnutbzde7cqwgu5qbj4bbuw2umw7ke7ogcn@5wtskk4exzsi>
+ <mafs0cy6pljci.fsf@kernel.org>
+ <c2nrxby4atq75o5yhwdpoikyso42tzimwn2bnl7fk54wuwdqax@i6kdssez3kfj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot' function
- for hpd gpio
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_riteshk@quicinc.com>,
-        <quic_rajeevny@quicinc.com>, <quic_vproddut@quicinc.com>
-References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
- <1398b513-0948-4775-a71d-dd06ee2296f9@oss.qualcomm.com>
-Content-Language: en-US
-From: Amit Singh <quic_amitsi@quicinc.com>
-In-Reply-To: <1398b513-0948-4775-a71d-dd06ee2296f9@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=W981lBWk c=1 sm=1 tr=0 ts=690c5aef cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=jnTCBMiWdBIKK8qhwyMA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: lRqrRCJAqi3-oMSxxjL7x7ctEo-NJ6fp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA2NyBTYWx0ZWRfX40zHUSIOU4SF
- 2NLDPhb8bR0vgTKv2fNVj2ekocjORYKSCjaFmYRxQcD7EzwDHfGI7nuHuipbIGfsjpinUHEByKk
- umj1E2cqEAhuF6d8NFJisWhW1i5WlOZuatSAbMbPJBlfBkDMm+Gc5Z8vsigqH0Dz3EzunVYQ+i0
- T1yKf2I6mH+e3d1NTNVsbqgAUmn9bREk6X/Un4z0M8//4S3T67TRHY8ZyLNr1ULk8jrLTtkzfgQ
- pha5nLPRoi2JVcMjw/eRDoEj7sHyWi0eEgBVZkvtIcUlVNRbxtwvSFdrTa7+bIEfsY0ymFQesUQ
- Mi23SV8OG+XLx/WKKBujPE3RARTdZlDvwSCKGEU4pS+R9xotih5sEE4W8eUhD/wKxN2gGexNL8R
- F2aLBg4ytUDUfmQnFEADgn0o1JLyAA==
-X-Proofpoint-ORIG-GUID: lRqrRCJAqi3-oMSxxjL7x7ctEo-NJ6fp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
- bulkscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060067
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c2nrxby4atq75o5yhwdpoikyso42tzimwn2bnl7fk54wuwdqax@i6kdssez3kfj>
 
+Hello Breno,
 
-
-On 10/31/2025 2:37 PM, Konrad Dybcio wrote:
-> On 10/31/25 9:57 AM, Amit Singh wrote:
->> Currently, hpd gpio is configured as a general-purpose gpio, which does
->> not support interrupt generation. This change removes the generic
->> hpd-gpios property and assigns the edp_hot function to the pin,
->> enabling proper irq support.
->>
->> Fixes: 756efb7cb7293 ("arm64: dts: qcom: qcs6490-rb3gen2: Add DP output")
->> Signed-off-by: Amit Singh <quic_amitsi@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> index c146161e4bb4..caa0b6784df3 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
->> @@ -49,8 +49,6 @@ dp-connector {
->>  		label = "DP";
->>  		type = "mini";
->>  
->> -		hpd-gpios = <&tlmm 60 GPIO_ACTIVE_HIGH>;
+On Wed, Nov 05, 2025 at 02:18:11AM -0800, Breno Leitao wrote:
+> Hello Pratyush,
 > 
-> I think this change will take away DRM_BRIDGE_OP_DETECT which is very
-> much desired to have.. (via display_connector_probe())
+> On Tue, Oct 14, 2025 at 03:10:37PM +0200, Pratyush Yadav wrote:
+> > On Tue, Oct 14 2025, Breno Leitao wrote:
+> > > On Mon, Oct 13, 2025 at 06:40:09PM +0200, Pratyush Yadav wrote:
+> > >> On Mon, Oct 13 2025, Pratyush Yadav wrote:
+> > >> >
+> > >> > I suppose this would be useful. I think enabling memblock debug prints
+> > >> > would also be helpful (using the "memblock=debug" commandline parameter)
+> > >> > if it doesn't impact your production environment too much.
+> > >> 
+> > >> Actually, I think "memblock=debug" is going to be the more useful thing
+> > >> since it would also show what function allocated the overlapping range
+> > >> and the flags it was allocated with.
+> > >> 
+> > >> On my qemu VM with KVM, this results in around 70 prints from memblock.
+> > >> So it adds a bit of extra prints but nothing that should be too
+> > >> disrupting I think. Plus, only at boot so the worst thing you get is
+> > >> slightly slower boot times.
+> > >
+> > > Unfortunately this issue is happening on production systems, and I don't
+> > > have an easy way to reproduce it _yet_.
+> > >
+> > > At the same time, "memblock=debug" has two problems:
+> > >
+> > >  1) It slows the boot time as you suggested. Boot time at large
+> > >     environments is SUPER critical and time sensitive. It is a bit
+> > >     weird, but it is common for machines in production to kexec
+> > >     _thousands_ of times, and kexecing is considered downtime.
+> > 
+> > I don't know if it would make a real enough difference on boot times,
+> > only that it should theoretically affect it, mainly if you are using
+> > serial for dmesg logs. Anyway, that's your production environment so you
+> > know best.
+> > 
+> > >
+> > >     This would be useful if I find some hosts getting this issue, and
+> > >     then I can easily enable the extra information to collect what
+> > >     I need, but, this didn't pan out because the hosts I got
+> > >     `memblock=debug` didn't collaborate.
+> > >
+> > >  2) "memblock=debug" is verbose for all cases, which also not necessary
+> > >     the desired behaviour. I am more interested in only being verbose
+> > >     when there is a known problem.
 > 
-> Konrad
-
-Yes, this change will indeed remove DRM_BRIDGE_OP_DETECT.
-We'll be relying on the internal HPD line (edp_hot) that's directly connected to the DP controller instead.
-
-Do you foresee any specific issues with this approach?
-
+> I am still interested in this problem, and I finally found a host that
+> constantly reproduce the issue and I was able to get `memblock=debug`
+> cmdline. I am running 6.18-rc4 with some debug options enabled.
 > 
->> -
->>  		port {
->>  			dp_connector_in: endpoint {
->>  				remote-endpoint = <&mdss_edp_out>;
->> @@ -1420,7 +1418,6 @@ &wifi {
->>  /* PINCTRL - ADDITIONS TO NODES IN PARENT DEVICE TREE FILES */
->>  
->>  &edp_hot_plug_det {
->> -	function = "gpio";
->>  	bias-disable;
->>  };
->>  
+> 	DMA-API: exceeded 7 overlapping mappings of cacheline 0x0000000006d6e400
+> 	WARNING: CPU: 58 PID: 828 at kernel/dma/debug.c:463 add_dma_entry+0x2e4/0x330
+> 	pc : add_dma_entry+0x2e4/0x330
+> 	lr : add_dma_entry+0x2e4/0x330
+> 	sp : ffff8000b036f7f0
+> 	x29: ffff8000b036f800 x28: 0000000000000001 x27: 0000000000000008
+> 	x26: ffff8000835f7fb8 x25: ffff8000835f7000 x24: ffff8000835f7ee0
+> 	x23: 0000000000000000 x22: 0000000006d6e400 x21: 0000000000000000
+> 	x20: 0000000006d6e400 x19: ffff0003f70c1100 x18: 00000000ffffffff
+> 	x17: ffff80008019a2d8 x16: ffff80008019a08c x15: 0000000000000000
+> 	x14: 0000000000000000 x13: 0000000000000820 x12: ffff00011faeaf00
+> 	x11: 0000000000000000 x10: ffff8000834633d8 x9 : ffff8000801979d4
+> 	x8 : 00000000fffeffff x7 : ffff8000834633d8 x6 : 0000000000000000
+> 	x5 : 00000000000bfff4 x4 : 0000000000000000 x3 : ffff0001075eb7c0
+> 	x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0001075eb7c0
+> 	Call trace:
+> 	add_dma_entry+0x2e4/0x330 (P)
+> 	debug_dma_map_phys+0xc4/0xf0
+> 	dma_map_phys (/home/leit/Devel/upstream/./include/linux/dma-direct.h:138 /home/leit/Devel/upstream/kernel/dma/direct.h:102 /home/leit/Devel/upstream/kernel/dma/mapping.c:169)
+> 	dma_map_page_attrs (/home/leit/Devel/upstream/kernel/dma/mapping.c:387)
+> 	blk_dma_map_direct.isra.0 (/home/leit/Devel/upstream/block/blk-mq-dma.c:102)
+> 	blk_dma_map_iter_start (/home/leit/Devel/upstream/block/blk-mq-dma.c:123 /home/leit/Devel/upstream/block/blk-mq-dma.c:196)
+> 	blk_rq_dma_map_iter_start (/home/leit/Devel/upstream/block/blk-mq-dma.c:228)
+> 	nvme_prep_rq+0xb8/0x9b8
+> 	nvme_queue_rq+0x44/0x1b0
+> 	blk_mq_dispatch_rq_list (/home/leit/Devel/upstream/block/blk-mq.c:2129)
+> 	__blk_mq_sched_dispatch_requests (/home/leit/Devel/upstream/block/blk-mq-sched.c:314)
+> 	blk_mq_sched_dispatch_requests (/home/leit/Devel/upstream/block/blk-mq-sched.c:329)
+> 	blk_mq_run_work_fn (/home/leit/Devel/upstream/block/blk-mq.c:219 /home/leit/Devel/upstream/block/blk-mq.c:231)
+> 	process_one_work (/home/leit/Devel/upstream/kernel/workqueue.c:991 /home/leit/Devel/upstream/kernel/workqueue.c:3213)
+> 	worker_thread (/home/leit/Devel/upstream/./include/linux/list.h:163 /home/leit/Devel/upstream/./include/linux/list.h:191 /home/leit/Devel/upstream/./include/linux/list.h:319 /home/leit/Devel/upstream/kernel/workqueue.c:1153 /home/leit/Devel/upstream/kernel/workqueue.c:1205 /home/leit/Devel/upstream/kernel/workqueue.c:3426)
+> 	kthread (/home/leit/Devel/upstream/kernel/kthread.c:386 /home/leit/Devel/upstream/kernel/kthread.c:457)
+> 	ret_from_fork (/home/leit/Devel/upstream/entry.S:861)
+> 
+> 
+> Looking at memblock debug logs, I haven't seen anything related to
+> 0x0000000006d6e400.
 
+It looks like the crash happens way after memblock passed all the memory to
+buddy. Why do you think this is related to memblock?
+ 
+> I got the output of `dmesg | grep memblock` in, in case you are curious:
+> 
+> 	https://github.com/leitao/debug/blob/main/pastebin/memblock/dmesg_grep_memblock.txt
+> 
+> Thanks
+> --breno
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
