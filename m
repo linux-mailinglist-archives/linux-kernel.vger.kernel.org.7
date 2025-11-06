@@ -1,155 +1,171 @@
-Return-Path: <linux-kernel+bounces-889024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC52C3C78B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:36:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8821BC3C861
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F141D3525CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77A8420E52
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8236234C144;
-	Thu,  6 Nov 2025 16:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSpKoGMV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CD93376A5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2245D3491EB;
+	Thu,  6 Nov 2025 16:33:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF765214236
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762446788; cv=none; b=JLOmmRjX4VtjkeTezU9DOj8ssXM0lnj5wkhVlAz4TF8U4sTdIbhUf1PE2fsY2muTFVm5aCwRBqbzmQBoc15f+nbQ0FL0UkFUyVjTtAMZUy66d4Oah51PEsxVCcMoxgh1BFQNaiPbnP6/82V9oqsJw7ieQiucQsPN+QEiCSZj5Xo=
+	t=1762446785; cv=none; b=mxt+Tje/XHqwdIsON42skxjvzyhiUiYIXKWFzGTs7cqzzwiFpYHN/V2s17Ep3k8iKxyZ7YjuMuJE03+SEgL7hwyzYs8/AmrQs3VIJde7sEh6J54UhOgN99PhTU15ucm7DusXVoR06rqhN8ODpxsN3dvdY/k0oargJgVv3HViyME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762446788; c=relaxed/simple;
-	bh=d6t8VCDtVkzg2tyFSGAJ0Kp7H3//Z+lwp247CTf/+KA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUP269ebR9i1T0I2bwIr/Z6OktQQpGIF/bYX14xCawWi1FAKSSrRJtGEtgfsmf+akXOA8Axz7TaEuZerWtkg4tXQEDUpi52YSLRFf45Lsluhve2iGaCva7Aa2fNe+LFqtf22YrDb2oJeE9OGJ+DvsYMoR4hPvs2WYScgvr3FPx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSpKoGMV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45FF8C4AF09
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762446788;
-	bh=d6t8VCDtVkzg2tyFSGAJ0Kp7H3//Z+lwp247CTf/+KA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WSpKoGMV8Wwf2m/UKpUYS11e6M5f9hopt15TGpNQAnOZBrK/i7IMoc/AoWgCfwusa
-	 mpj79K8bkQ49pOMb5ihHlXGOsD1qzzBka97RPyKxlBbBsxXlXbg+DmKJW0PEZGVfJ0
-	 jvmR/39u1Jcppw0lQInRKcOGyyzpIOx+FhgfHvkorvgsx8FI9FcUeKMeVBdHeGYatL
-	 UyCkGa7fPOmNFpIa3i7oIZOdewaXs+DGpYUAFc+rxeI5tmUHZs2ZwaWQpegdQrOFC9
-	 uM5YVQeSY+IfybZkiXWxOA83VkPETJYSGBhrIFxrIsbr2vyZm0XzE+KFJhrdDqGSVY
-	 Bp+19bxobtqMQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-594330147efso1224282e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:33:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXK8CqnscPEl/Vk9+IKSC7tGuR8T8dPYRrrLAoe6wcij6BgY8xEqLU1oHveLsqI1Asq2c/16F4+7kEy9P0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw97nrOp8KgDCXo1tbkQ1DVHYoileJJaRlvyo3A231vinb9GTG
-	Ru2+tAFFQBnBLby2/xp+JYvMI5VVHRSiMiC5CwCWktzP7/UcsEyyzlbI/rApoEdXvOawV1QJORs
-	4DJhXujW7mLEWzoXTnl5tubabj/JV5u0=
-X-Google-Smtp-Source: AGHT+IEhhD9njjfUVAqVHB5FaOXmdh17RU3QYw1j6NvOm7obm1z5UqtY1UySh/ipvlLN53qhZsWvUeDBr9oTo+u1qeM=
-X-Received: by 2002:a05:6512:110d:b0:594:3caf:bec1 with SMTP id
- 2adb3069b0e04-5943d7fd616mr2551307e87.47.1762446786573; Thu, 06 Nov 2025
- 08:33:06 -0800 (PST)
+	s=arc-20240116; t=1762446785; c=relaxed/simple;
+	bh=o9fiIS3uun1k3bj/Y0c2ckqno1Eb1lFwcu8R14ViDmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j7OU7bv8fCwMiDVgV0TBvP8Do+xLzGCTbrMjCQvT8zSbg3TTf3iLAL0sBwIgXwK9DnD2kJJosVkiGXw3OBVrQVIldllCL2UO2ZMXAYymaN11r0YAsZAeaXoAJnXuC/u/5HiPtj4W6j/7z9eJzacLGcg66xwglAzRIXtvuvqGIm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 903721516;
+	Thu,  6 Nov 2025 08:32:54 -0800 (PST)
+Received: from [10.1.30.195] (XHFQ2J9959.cambridge.arm.com [10.1.30.195])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C8FFD3F66E;
+	Thu,  6 Nov 2025 08:32:59 -0800 (PST)
+Message-ID: <8bc796e2-f652-4c12-a347-7b778ae7f899@arm.com>
+Date: Thu, 6 Nov 2025 16:32:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106162311.2705162-1-mclapinski@google.com>
-In-Reply-To: <20251106162311.2705162-1-mclapinski@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 6 Nov 2025 17:32:54 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFc5fcXM1UCtgev+7LFyc+vuTD-M0ma31fNasOGmpQqUQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bmgUhwej99AV8Blkp-FE0fsUEHyUVBIodtTRGYOFW0SgqIkuLpXsoL04i4
-Message-ID: <CAMj1kXFc5fcXM1UCtgev+7LFyc+vuTD-M0ma31fNasOGmpQqUQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] x86/boot/compressed: Fix avoiding memmap in
- physical KASLR
-To: Michal Clapinski <mclapinski@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Chris Li <chrisl@kernel.org>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed
+ text pages
+Content-Language: en-GB
+To: "Garg, Shivank" <shivankg@amd.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Vlastimil Babka <vbabka@suse.cz>,
+ Jann Horn <jannh@google.com>, zokeefe@google.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 6 Nov 2025 at 17:23, Michal Clapinski <mclapinski@google.com> wrote:
->
-> The intent of the code was to cancel KASLR if there are more than 4
-> memmap args. Unfortunately, it was only doing that if the memmap args
-> were comma delimited, not if they were entirely separate.
->
-> So it would disable physical KASLR for:
-> memmap=1G!4G,1G!5G,1G!6G,1G!7G,1G!8G
-> since the whole function is just called once and we hit the `if` at
-> the end of the function.
->
-> But it would not disable physical KASLR for:
-> memmap=1G!4G memmap=1G!5G memmap=1G!6G memmap=1G!7G memmap=1G!8G
-> The whole function would be called 5 times in total. On the 4th run the
-> last `if` would not trigger since `str` would be null. On the 5th run
-> we would exit early via the first `if`. That way the last `if` would
-> never trigger.
->
-> For the second input, the code would avoid the first 4 memmap regions
-> but not the last one (it could put the kernel there).
->
-> The new code disables physical KASLR for both of those inputs.
->
-> Signed-off-by: Michal Clapinski <mclapinski@google.com>
-> Suggested-by: Chris Li <chrisl@kernel.org>
-> Link: https://lore.kernel.org/all/CAF8kJuMvX31n8yNWn11bo1wCgXXOwOAp8HbYpSEBy94LR6phDA@mail.gmail.com/
-> Fixes: d52e7d5a952c ("x86/KASLR: Parse all 'memmap=' boot option entries")
-> ---
-> v3: added a link in the description and a better explanation
-> v2: used Chris Li's snippet to change the flow of the function
-> ---
->  arch/x86/boot/compressed/kaslr.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
+On 06/11/2025 12:16, Garg, Shivank wrote:
+> Hi All,
+> 
+> I've been investigating an issue with madvise(MADV_COLLAPSE) for TEXT pages
+> when CONFIG_READ_ONLY_THP_FOR_FS=y is enabled, and would like to discuss the
+> current behavior and improvements.
+> 
+> Problem:
+> When attempting to collapse read-only file-backed TEXT sections into THPs
+> using madvise(MADV_COLLAPSE), the operation fails with EINVAL if the pages
+> are marked dirty.
+> madvise(aligned_start, aligned_size, MADV_COLLAPSE) -> returns -1 and errno = -22
+> 
+> Subsequent calls to madvise(MADV_COLLAPSE) succeed because the first madvise 
+> attempt triggers filemap_flush() which initiates async writeback of the dirty folios.
+> 
+> Root Cause:
+> The failure occurs in mm/khugepaged.c:collapse_file():
+> } else if (folio_test_dirty(folio)) {
+>     /*
+>      * khugepaged only works on read-only fd,
+>      * so this page is dirty because it hasn't
+>      * been flushed since first write. There
+>      * won't be new dirty pages.
+>      *
+>      * Trigger async flush here and hope the
+>      * writeback is done when khugepaged
+>      * revisits this page.
+>      */
+>     xas_unlock_irq(&xas);
+>     filemap_flush(mapping);
+>     result = SCAN_FAIL;
+>     goto xa_unlocked;
+> }
+> 
+> Why the text pages are dirty?
 
-This looks fine to me, but as I noted before, I'd happily simply
-disable physical KASLR entirely if 'memmap=' appears at all.
+This is the real question to to answer, I think...
 
-> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-> index 3b0948ad449f..649264503ce6 100644
-> --- a/arch/x86/boot/compressed/kaslr.c
-> +++ b/arch/x86/boot/compressed/kaslr.c
-> @@ -162,14 +162,18 @@ static void mem_avoid_memmap(char *str)
->  {
->         static int i;
->
-> -       if (i >= MAX_MEMMAP_REGIONS)
-> -               return;
-> -
-> -       while (str && (i < MAX_MEMMAP_REGIONS)) {
-> +       while (str) {
->                 int rc;
->                 u64 start, size;
-> -               char *k = strchr(str, ',');
-> +               char *k;
-> +
-> +               if (i >= MAX_MEMMAP_REGIONS) {
-> +                       /* Too many memmap regions, disable physical KASLR. */
-> +                       memmap_too_large = true;
-> +                       return;
-> +               }
->
-> +               k = strchr(str, ',');
->                 if (k)
->                         *k++ = 0;
->
-> @@ -190,10 +194,6 @@ static void mem_avoid_memmap(char *str)
->                 mem_avoid[MEM_AVOID_MEMMAP_BEGIN + i].size = size;
->                 i++;
->         }
-> -
-> -       /* More than 4 memmaps, fail kaslr */
-> -       if ((i >= MAX_MEMMAP_REGIONS) && str)
-> -               memmap_too_large = true;
->  }
->
->  /* Store the number of 1GB huge pages which users specified: */
-> --
-> 2.51.2.1026.g39e6a42477-goog
->
+What architecture are you running on?
+
+
+> It initially seemed unusual for a read-only text section to be marked as dirty, but
+> this was actually confirmed by /proc/pid/smaps.
+> 
+> 55bc90200000-55bc91200000 r-xp 00400000 07:00 133                        /mnt/xfs-mnt/large_binary_thp
+> Size:              16384 kB
+> KernelPageSize:        4 kB
+> MMUPageSize:           4 kB
+> Rss:                 256 kB
+> Pss:                 256 kB
+> Pss_Dirty:           256 kB
+> Shared_Clean:          0 kB
+> Shared_Dirty:          0 kB
+> Private_Clean:         0 kB
+> Private_Dirty:       256 kB
+> 
+> /proc/pid/smaps (before calling MADV_COLLAPSE) showing Private_Dirty pages in r-xp mappings.
+> This may be due to dynamic linker and relocations that occurred during program loading.
+
+On arm64 at least, I wouldn't expect the text to be modified. Relocations should
+be handled in data. But given you have private dirty pages here, they must have
+been cow'ed and are therefore anonymous? In which case, where is writeback
+actually going?
+
+> 
+> Reproduction using XFS/EXT4:
+> 
+> 1. Compile a test binary with madvise(MADV_COLLAPSE), ensuring the load TEXT segment is
+>    2MB-aligned and sized to a multiple of 2MB. 
+>   Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+> LOAD           0x400000 0x0000000000400000 0x0000000000400000 0x1000000 0x1000000 R E 0x200000
+> 
+> 2. Create and mount the XFS/EXT4 fs:
+>    dd if=/dev/zero of=/tmp/xfs-test.img bs=1M count=1024
+>    losetup -f --show /tmp/xfs-test.img  # output: /dev/loop0
+>    mkfs.xfs -f /dev/loop0
+>    mkdir -p /mnt/xfs-mnt
+>    mount /dev/loop0 /mnt/xfs-mnt
+> 3. Copy the binaries to /mnt/xfs-mnt and execute.
+> 4. Returns -EINVAL on first run, then run successfully on subsequent run. (100% reproducible)
+> 5. To reproduce again; reboot/kexec and repeat from step 2. 
+> 
+> Workaround:
+> 1. Manually flush dirty pages before calling madvise(MADV_COLLAPSE):
+> 	int fd = open("/proc/self/exe", O_RDONLY);
+> 	if (fd >= 0) {
+> 		fsync(fd);
+> 		close(fd);
+> 	}
+> 	// Now madvise(MADV_COLLAPSE) succeeds
+> 2. Alternatively, retrying madvise_collapse on EINVAL failure also work.
+> 
+> Problems with Current Behavior:
+> 1. Confusing Error Code: The syscall returns EINVAL which typically indicates invalid arguments
+>    rather than a transient condition that could succeed on retry.
+> 
+> 2. Non-Transparent Handling: Users are unaware they need to flush dirty pages manually. Current
+>    madvise_collapse assumes the caller is khugepaged (as per code snippet comment) which will revisit
+>    the page. However, when called via madvise(MADV_COLLAPSE), the userspace program typically don't
+>    retry, making the async flush ineffective. Should we differentiate between madvise and khugepaged
+>    behavior for MADV_COLLAPSE?
+> 
+> Would appreciate thoughts on the best approach to address this issue.
+> 
+> Thanks,
+> Shivank
+
 
