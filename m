@@ -1,361 +1,78 @@
-Return-Path: <linux-kernel+bounces-889123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9D3C3CCA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:20:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BC4C3CC9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7259C3BF46C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B944215EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEFC34DB5C;
-	Thu,  6 Nov 2025 17:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052F734DB69;
+	Thu,  6 Nov 2025 17:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XyXNp3Qo"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c84W3GkV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A396834D900
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6442E7F22;
+	Thu,  6 Nov 2025 17:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449189; cv=none; b=mFQtINPLzMBbLd6Wz/EUZorQSqIW5k6Lvi5N11chowrQU5CICEOMR5vQEC67835WsyqxNvhLFAIu/U9HorCU6jQmP32Q4RpO3xWmutGUqYf2i5oP87bRQvdm5zIC1B1rBLO/oxSuK6mNXAZS0X7nPqfrb8ZBEaI/oWW8sW4/2+A=
+	t=1762449256; cv=none; b=WNkd83OScKNQc7N3M67wxhXrFLW1jTMXxCAiKvBLfoWxh1TVQZ5R4Vp6RAuPeUMoKLWnrJefT8GjkCV3w6aKYYsz88LoAyvN0GqMy2aaso+NAEtlY06V//5gV8ZjK+nUU0by7GWnfn0SprMoJWlTlHIW1EHtJibxZZddlgWyuJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449189; c=relaxed/simple;
-	bh=7plaZMVJBTSYCEcQOzeNYKQroEkrWNKYavtWargYKCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jK31IH3asQeMR/qXzm6drBkb350x8kjpBF1TRC6wF3Ctr5Jf6Y+N5pZbii73PUd0hKUM4XpPFzTkFwBJsDNg+Wq73RZFahw1x4ilFQflNAF3o0j6fW67nlwowLCzbKQEK7sc0/K03FCfgtyS8rmssgIMPuTFnq+dO1mbki7/4hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XyXNp3Qo; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3418ad69672so925851a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:13:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762449187; x=1763053987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bQ0vS99MH51DIQEi/4lEFA0vAZuDEs4nuiBhiiP9BpQ=;
-        b=XyXNp3QoO1I4nYdY7QEHywdFt+T4gymYgBJ0yTQApGP/BLjrL9jUUOBXr3mNJiGX2u
-         wd3s76pmGDG6wxoCUpylcLgAXobw8dKbK/Wopw7xjGB037OPYTNt5YMx8FbZHSYiZ/6c
-         ajA83IQm9SAlSTaeP2KaR+t07wirgbSkhpq7Xnz0CXbbosOsK/ZyoZK7GWX41QV+8Wt4
-         VeTRishKwIkfDaHFNDfHmy+xo3TuqzwDyBeZBz+dzTXWZZXv2DUHI2FCS33g+A3IdHkX
-         +vc5AlNwQK2S/9pDKBTZ5YR7jbORDuqzev/Ahj3jd0TffQxAFkSaH8mz8f4xuk2hzyj4
-         i3UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762449187; x=1763053987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bQ0vS99MH51DIQEi/4lEFA0vAZuDEs4nuiBhiiP9BpQ=;
-        b=YiALcgW+W/5yOaKVIlRkgaKZ3YqW4HGTgMe5IwOBsMYXt7tLadIOBSTG4iPmCtwZYR
-         VgHdZtvJ72SzXoBDt40B6jEkKgwvIe8xfuRtxKf4hgsgKyGAQl5r3hpGzCBjArkmWQ/Z
-         CYYnHtam47VjlmcHiO3/WPYQIIk/KSMVlPFnnmE21xmJAob51ghHcL0WHqjuWaIPdQwv
-         pFqibgSi1tpNx7sn2QbWfhSZGfTHsnh5Rlbik7L3Kh7TDlgvvsP3jOmE7akA63s6nZq5
-         Msit+A6sp7svzpv7op78CiDv+2B4bTMeYHPFaBTMmbHjN74J/M+mA6Mfw9A50suPJhWe
-         ENVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYplWFw/CRUK1/Z5Gb4EA0PZDYWKfLE28M2IRiso5abNVTXgcNRM5tNLEHrRcZEn0YCrWjdzXhRYpxI84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKCdqhGhct+HuOoc/HgpGnFuPIOdz+PsTQgL8QuhIbuKPeVB7w
-	XF1YXcauGGTmng6onhxwesauwtkqNG6y7YOL5YCpbdnwOtEGcaBhP39QcZTXznU/tp/lh6vdTTh
-	vKPgheMrep/Hqf9r1gF0QGTDmcNpCtSaaiEag
-X-Gm-Gg: ASbGncu/MjpHsDPXp+Uycu+hNG75+b6ZhuYiGRQo7Rnc1qFNQ5Mh+jyfHCCM3Jp23Ez
-	jDCrgX6+HXaR6lVuxw/o+4uK5ZzL7hvdyH+Ho/zpwSwNMDYDNl57ge0pIhna5r2VxDsdt4Xavv4
-	SiEPfLi/PIR4YWaakrsYrb2FmGdcT90We0EMz74/DVv1Xk5qFMaei7HDGn2DUGFFXA7SCXvlQmw
-	Q5yi3+wSZxyo0OHkzNQQy9MnoghHs++oWnEa4KiJm5tDZBecZn5NQcohjlJrh667pssDv7w4L7K
-	irEupZ96oeY=
-X-Google-Smtp-Source: AGHT+IF1tyXh2VMRfi+PF4mWI7B7YlqcdbDXKhyxFy/RByI/ZqqTE31LNnMKzampDG9sS9KTk0JDuqLXRRhFqE5eQSI=
-X-Received: by 2002:a17:90b:5250:b0:33b:ba40:c3f with SMTP id
- 98e67ed59e1d1-341a6c091cfmr8826479a91.5.1762449186714; Thu, 06 Nov 2025
- 09:13:06 -0800 (PST)
+	s=arc-20240116; t=1762449256; c=relaxed/simple;
+	bh=EqB7RdqWp9d1/ZPOg8KzZ+wKzAyj/zzi7GOHdzU1J5g=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jI4xRvPkeMhGSrF8NGNwqMNqFgzb4LofU55lpgWIN+Fwjl8wa9x/rOLuiQoV1+HAsEDAWBUW3LhCH/eDOR8qvuZ42SYM73XzPPTq3O95972FmGuVFiQXD+ZQGH7W2YB/hpoc+uCG+BX7KH9bYq3+Uqxp4cWOyRdCko7jcqZK3fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c84W3GkV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3313C116B1;
+	Thu,  6 Nov 2025 17:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762449254;
+	bh=EqB7RdqWp9d1/ZPOg8KzZ+wKzAyj/zzi7GOHdzU1J5g=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=c84W3GkVsdv1X5HNtl2JVh0RXv6i7sA1RWjgqMMFMVcRjsBHPbnQ6nTsCn+tInj3H
+	 ux8RH4tiQyfLFjTGCamQRbCuGuIFwxlJhoRHTCS0k7lfXHW8Nr3RVmu87H5sGvLepa
+	 UPmhaNFWm7Pen456kRg70U+6OqLpFo2C+Hz+U9XVzeoUyPG0agpv7BtkR/En0huL9O
+	 gHbf6AWxjwQTA6EBZy2MpaED7m76iH2AiMcDU0ka8wbZ6YuEjwjz497bRSVb3d78C6
+	 K+3qD1YRKtxsOoBD4AlEmT5IdXQIX3/7B43Gei403iSJSfx7yJDfl8GPDVnl1hMCw6
+	 vAzzIukh+WRDA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF8139EF956;
+	Thu,  6 Nov 2025 17:13:48 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.18-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20251106163413.4144149-1-kuba@kernel.org>
+References: <20251106163413.4144149-1-kuba@kernel.org>
+X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20251106163413.4144149-1-kuba@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.18-rc5
+X-PR-Tracked-Commit-Id: 3534e03e0ec2e00908765549828a69df5ebefb91
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c2c2ccfd4ba72718266a56f3ecc34c989cb5b7a0
+Message-Id: <176244922759.295084.13837638295083326105.pr-tracker-bot@kernel.org>
+Date: Thu, 06 Nov 2025 17:13:47 +0000
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-3-dolinux.peng@gmail.com> <CAEf4BzaQ9k=_JwpmkjnbN8o0XaA=EGcP-=CBxmXLc3kzh3aY3A@mail.gmail.com>
- <CAErzpmv8eBjuX-RO0nopuy8qMV7wzVxa2e+HteXfFodwbBoALg@mail.gmail.com>
- <CAEf4Bza+pHVSGTC2vcjF-DmsVxKq2Ksq321E9CJEGdyT8hQn3g@mail.gmail.com> <CAErzpmvDk0Tvr9h772EDZk_4tRtLtAZv-r4yKCxEOM+_gc+G7A@mail.gmail.com>
-In-Reply-To: <CAErzpmvDk0Tvr9h772EDZk_4tRtLtAZv-r4yKCxEOM+_gc+G7A@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 6 Nov 2025 09:12:51 -0800
-X-Gm-Features: AWmQ_blIHFX9GNS-rDIzgY4otEOEfAJPKsVT-KOUyJkJmjdyohuZxdJySJpqZ9w
-Message-ID: <CAEf4BzbYc+2T8BAyLyvT3kRWbJ8m1qxxwO6ZBHm=fsCucoWVQw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 2/7] libbpf: Add BTF permutation support for type reordering
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 5, 2025 at 11:31=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> On Thu, Nov 6, 2025 at 2:29=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Wed, Nov 5, 2025 at 4:53=E2=80=AFAM Donglin Peng <dolinux.peng@gmail=
-.com> wrote:
-> > >
-> > > On Wed, Nov 5, 2025 at 8:11=E2=80=AFAM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > On Tue, Nov 4, 2025 at 5:40=E2=80=AFAM Donglin Peng <dolinux.peng@g=
-mail.com> wrote:
-> > > > >
-> > > > > From: pengdonglin <pengdonglin@xiaomi.com>
-> > > > >
-> > > > > Introduce btf__permute() API to allow in-place rearrangement of B=
-TF types.
-> > > > > This function reorganizes BTF type order according to a provided =
-array of
-> > > > > type IDs, updating all type references to maintain consistency.
-> > > > >
-> > > > > The permutation process involves:
-> > > > > 1. Shuffling types into new order based on the provided ID mappin=
-g
-> > > > > 2. Remapping all type ID references to point to new locations
-> > > > > 3. Handling BTF extension data if provided via options
-> > > > >
-> > > > > This is particularly useful for optimizing type locality after BT=
-F
-> > > > > deduplication or for meeting specific layout requirements in spec=
-ialized
-> > > > > use cases.
-> > > > >
-> > > > > Cc: Eduard Zingerman <eddyz87@gmail.com>
-> > > > > Cc: Alexei Starovoitov <ast@kernel.org>
-> > > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > > > Cc: Alan Maguire <alan.maguire@oracle.com>
-> > > > > Cc: Song Liu <song@kernel.org>
-> > > > > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> > > > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> > > > > ---
-> > > > >  tools/lib/bpf/btf.c      | 161 +++++++++++++++++++++++++++++++++=
-++++++
-> > > > >  tools/lib/bpf/btf.h      |  34 +++++++++
-> > > > >  tools/lib/bpf/libbpf.map |   1 +
-> > > > >  3 files changed, 196 insertions(+)
-> > > > >
-> > > > > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > > > > index 5e1c09b5dce8..3bc03f7fe31f 100644
-> > > > > --- a/tools/lib/bpf/btf.c
-> > > > > +++ b/tools/lib/bpf/btf.c
-> > > > > @@ -5830,3 +5830,164 @@ int btf__relocate(struct btf *btf, const =
-struct btf *base_btf)
-> > > > >                 btf->owns_base =3D false;
-> > > > >         return libbpf_err(err);
-> > > > >  }
-> > > > > +
-> > > > > +struct btf_permute {
-> > > > > +       /* .BTF section to be permuted in-place */
-> > > > > +       struct btf *btf;
-> > > > > +       struct btf_ext *btf_ext;
-> > > > > +       /* Array of type IDs used for permutation. The array leng=
-th must equal
-> > > >
-> > > > /*
-> > > >  * Use this comment style
-> > > >  */
-> > >
-> > > Thanks.
-> > >
-> > > >
-> > > > > +        * the number of types in the BTF being permuted, excludi=
-ng the special
-> > > > > +        * void type at ID 0. For split BTF, the length correspon=
-ds to the
-> > > > > +        * number of types added on top of the base BTF.
-> > > >
-> > > > many words, but what exactly ids[i] means is still not clear, actua=
-lly...
-> > >
-> > > Thanks. I'll clarify the description. Is the following parameter
-> > > explanation acceptable?
-> > >
-> > > @param ids Array containing original type IDs (excluding VOID type ID
-> > > 0) in user-defined order.
-> > >                     The array size must match btf->nr_types, which
-> >
-> > Users don't have access to btf->nr_types, so referring to it in API
-> > description seems wrong.
-> >
-> > But also, this all will change if we allow removing types, because
-> > then array size might be smaller. But is it intentionally smaller or
-> > user made a mistake? Let's go with the ID map approach, please.
->
-> Thanks. I can implement both approaches, then we can assess their
-> pros and cons.
->
-> >
-> > > also excludes VOID type ID 0.
-> > >
-> > >
-> > > >
-> > > > > +        */
-> > > > > +       __u32 *ids;
-> > > > > +       /* Array of type IDs used to map from original type ID to=
- a new permuted
-> > > > > +        * type ID, its length equals to the above ids */
-> > > >
-> > > > wrong comment style
-> > >
-> > > Thanks, I will fix it in the next version.
-> > >
-> > > >
-> > > > > +       __u32 *map;
-> > > >
-> > > > "map" is a bit generic. What if we use s/ids/id_map/ and
-> > > > s/map/id_map_rev/ (for reverse)? I'd use "id_map" naming in the pub=
-lic
-> > > > API to make it clear that it's a mapping of IDs, not just some arra=
-y
-> > > > of IDs.
-> > >
-> > > Thank you for the suggestion. While I agree that renaming 'map' to 'i=
-d_map'
-> > > makes sense for clarity, but 'ids' seems correct as it denotes a coll=
-ection of
-> > > IDs, not a mapping structure.
-> > >
-> > > >
-> > > > > +};
-> > > > > +
-> > > > > +static int btf_permute_shuffle_types(struct btf_permute *p);
-> > > > > +static int btf_permute_remap_types(struct btf_permute *p);
-> > > > > +static int btf_permute_remap_type_id(__u32 *type_id, void *ctx);
-> > > > > +
-> > > > > +int btf__permute(struct btf *btf, __u32 *ids, const struct btf_p=
-ermute_opts *opts)
-> > > >
-> > > > Let's require user to pass id_map_cnt in addition to id_map itself.
-> > > > It's easy to get this wrong (especially with that special VOID 0 ty=
-pe
-> > > > that has to be excluded, which I can't even make up my mind if that=
-'s
-> > > > a good idea or not), so having user explicitly say what they think =
-is
-> > > > necessary for permutation is good.
-> > >
-> > > Thank you for your suggestion. However, I am concerned that introduci=
-ng
-> > > an additional `id_map_cnt` parameter could increase complexity. Speci=
-fically,
-> > > if `id_map_cnt` is less than `btf->nr_types`, we might need to consid=
-er whether
-> > > to resize the BTF. This could lead to missing types, potential ID rem=
-apping
-> > > failures, or even require BTF re-deduplication if certain name string=
-s are no
-> > > longer referenced by any types.
-> > >
-> >
-> > No, if the user provided a wrong id_map_cnt, it's an error and we
-> > return -EINVAL. No resizing.
-> >
-> > > >
-> > > > > +{
-> > > > > +       struct btf_permute p;
-> > > > > +       int i, err =3D 0;
-> > > > > +       __u32 *map =3D NULL;
-> > > > > +
-> > > > > +       if (!OPTS_VALID(opts, btf_permute_opts) || !ids)
-> > > >
-> >
-> > [...]
-> >
-> > > > > +               goto done;
-> > > > > +       }
-> > > > > +
-> > > > > +done:
-> > > > > +       free(map);
-> > > > > +       return libbpf_err(err);
-> > > > > +}
-> > > > > +
-> > > > > +/* Shuffle BTF types.
-> > > > > + *
-> > > > > + * Rearranges types according to the permutation map in p->ids. =
-The p->map
-> > > > > + * array stores the mapping from original type IDs to new shuffl=
-ed IDs,
-> > > > > + * which is used in the next phase to update type references.
-> > > > > + *
-> > > > > + * Validates that all IDs in the permutation array are valid and=
- unique.
-> > > > > + */
-> > > > > +static int btf_permute_shuffle_types(struct btf_permute *p)
-> > > > > +{
-> > > > > +       struct btf *btf =3D p->btf;
-> > > > > +       const struct btf_type *t;
-> > > > > +       __u32 *new_offs =3D NULL, *map;
-> > > > > +       void *nt, *new_types =3D NULL;
-> > > > > +       int i, id, len, err;
-> > > > > +
-> > > > > +       new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
-> > > >
-> > > > we don't really need to allocate memory and maintain this, we can j=
-ust
-> > > > shift types around and then do what btf_parse_type_sec() does -- ju=
-st
-> > > > go over types one by one and calculate offsets, and update them
-> > > > in-place inside btf->type_offs
-> > >
-> > > Thank you for the suggestion. However, this approach is not viable be=
-cause
-> > > the `btf__type_by_id()` function relies critically on the integrity o=
-f the
-> > > `btf->type_offs` data structure. Attempting to modify `type_offs` thr=
-ough
-> > > in-place operations could corrupt memory and lead to segmentation fau=
-lts
-> > > due to invalid pointer dereferencing.
-> >
-> > Huh? By the time this API returns, we'll fix up type_offs, users will
-> > never notice. And to recalculate new type_offs we don't need
-> > type_offs. One of us is missing something important, what is it?
->
-> Thanks, however the bad news is that the btf__type_by_id is indeed called
-> within the API.
->
-> static int btf_permute_shuffle_types(struct btf_permute *p)
-> {
->         struct btf *btf =3D p->btf;
->         const struct btf_type *t;
->         __u32 *new_offs =3D NULL, *ids_map;
->         void *nt, *new_types =3D NULL;
->         int i, id, len, err;
->
->         new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
->         new_types =3D calloc(btf->hdr->type_len, 1);
->         ......
->         nt =3D new_types;
->        for (i =3D 0; i < btf->nr_types; i++) {
->                 id =3D p->ids[i];
->                 ......
->                 /* must be a valid type ID */
->                 t =3D btf__type_by_id(btf, id);  <<<<<<<<<<<<<
+The pull request you sent on Thu,  6 Nov 2025 08:34:13 -0800:
 
-You are still on the old types layout and old type_offs at that point.
-You are not using your new_offs here *anyways*
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.18-rc5
 
->                 ......
->                 len =3D btf_type_size(t);
->                 memcpy(nt, t, len);
->                 new_offs[i] =3D nt - new_types;
->                 *ids_map =3D btf->start_id + i;
->                 nt +=3D len;
->         }
-> ......
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c2c2ccfd4ba72718266a56f3ecc34c989cb5b7a0
 
-... you will recalculate and update type_offs here ... well past
-btf__type_by_id() usage ...
+Thank you!
 
-> }
->
-> >
-> > [...]
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
