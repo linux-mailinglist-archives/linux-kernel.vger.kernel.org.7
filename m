@@ -1,130 +1,191 @@
-Return-Path: <linux-kernel+bounces-888444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E2BC3AD22
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:13:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E936C3AD16
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 535B534D9E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:12:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 410FE344763
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C24328625;
-	Thu,  6 Nov 2025 12:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49113271EC;
+	Thu,  6 Nov 2025 12:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q7j5ya5I"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCSP76bS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573CA32721A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDAB14F112;
+	Thu,  6 Nov 2025 12:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762430956; cv=none; b=Y97ljAspzE3fgr7epaiYrUycUYi717bPE8xvMaoVJ8Pj6OqqxcNY4f6kSnDB4ozc57RYXpEMv1FCVD4IkL6BEsvmbretkwn9dCNFODv7Y/24LpHMZlPjiZbbu4sWH51vS1wJ90XBJsFN5heanEVNY102tzyXJ7yX3wIBYTSLlX8=
+	t=1762430944; cv=none; b=DJ77N3Sbj9SIU/ePx1iDtqsFJJpz2ge8Fdocds/zYsznwtoxXLuItZt1iGkwtjpyD+KIyGzktyzjpb30A2wxavxGrNaCVWV0N/JAlraLJ1oy9TQJbmK6ansnkwpWc/MYTAFGr9bAPrINeBvKzMU0Icc3dwC9xKVPrcg8ewnvrek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762430956; c=relaxed/simple;
-	bh=v8C8yVAE9Ny+v9yDr6VsXp9BWcYD+xa4DF1KLCBpzIs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Dadu2dBkTu3URnd2o4S/eqKF+MyZmQz3AxNvrQ42SSLy6PZiEjxzRbIXfVDBATWxgZyzmxYfbaVCxWAsHxEs+tRxvjF87LIi5qTRyy05DjJbOfVdULUmjH/1o5vL+xlfY2qtE0IMw3qskOm6nP7x86idgHH2nM1GnMKWaV8Igoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q7j5ya5I; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-477171bbf51so6336675e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:09:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762430951; x=1763035751; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oMi8GYYBlVguXP2AF0cTsK9jLp8lS1meVWWIEbSlshI=;
-        b=Q7j5ya5IB0x/pr6ng9pNDPxd3spxe/lmh84QGr5w7rtlpjU2jSoOD016wYX40DuBFC
-         tzhA1EUkfiZfQ0e2sO/rzgWxvQly7KRt1V29XvwnpohhMJibpgRIXnBbdGIks+Rq8y3O
-         yV5ue0smcC3ckSdyj/fKrzffP3HoCTXxFNKv94UXa7Xe/GOpJFkbnHb1bbWh3zhw5VFE
-         h4z2uwZsRJXMv1f9YmIDU7ty1ADHWubMcDVrKmXvzwnybAxO/wsrYd87dSXd2yyVpBmc
-         EH1s0/gsTDUUWQ3daeFZKnj+hpPWDbSpwra1+31SNvEN+bbDKE6NxakDhRkaBQJOhYL/
-         zXdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762430951; x=1763035751;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oMi8GYYBlVguXP2AF0cTsK9jLp8lS1meVWWIEbSlshI=;
-        b=mS35wlfwM8qgEQq+K4GCOm70X+p7R6r9K9eUPKOGBXkdYUsGJgkM5Am8EMJISP8++P
-         uRheL5OcDMe96UaPsQljDsRJpkk/RwOre+iDxY0IYLxvqa9b2Kfq9tU5zx+AhZJ95Map
-         GsDxvp7X/cVElBNk6WTC3UAkRZ7Rz0bLlrNBEMb9/RpOQbgKMr5+NSM9ZcMUgspqdxUG
-         sMSBQY2kp02Ly6wK08BMmRf16/luRzgjES89BwnytG0McAahlDqbnLGF5mpI7QHhZ60a
-         2TAzNjb3LlB3gQFKXWQMrqlfggh77/1pBMlUIXpt0tk9faRQBR2LCiLWzR1GwudXSAb8
-         Y6Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4gbSEVBoVJRVYmtVXJK4snS1R31r3zCfiOjnpEt6lI3vCFEMZGQLAjO1ZRnvg4N2FmNXC7ecxx96sibc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrrVFku589q+e8Mm+Z9h3jdakYt1CwhsY/1IeupQwyZTLipMq8
-	wQhNLvbx9PwlK70STs+k0MxtFvmwD70Eqi7IAMJFZlCS+ZNLXHnySKNORTtR4uEPTWgqfgSyI87
-	LKMe/1gUP00jC0SrKHQ==
-X-Google-Smtp-Source: AGHT+IEtMPrBTDtt42DdHcV8/FsihzPxKe2LPSw5tuK9yCOfw0mIa+59YYpR7BHvm8ZaRw0lQbnZQ6EGDYgr+Nc=
-X-Received: from wmf20.prod.google.com ([2002:a05:600c:2294:b0:475:d898:b23c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1c1e:b0:477:6ae9:87d with SMTP id 5b1f17b1804b1-4776ae9091fmr2504845e9.4.1762430951751;
- Thu, 06 Nov 2025 04:09:11 -0800 (PST)
-Date: Thu, 06 Nov 2025 12:08:58 +0000
+	s=arc-20240116; t=1762430944; c=relaxed/simple;
+	bh=LP7ZmyrMkXBm+ONLXJyVda0lQs6BJPqHUOBgiw51NPQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nZrrb5TVzNEBU9OpMuNVcPeDgyAvMmpOl4lZzi0hh8IbyMpdXIQL70RqvHQWxBFEcmAIvRYFdAkKRjuhbh7rUpBfSmX/DJqKzqSEkMZtY+C2RfzKQ2FC9HENV73eM02okfaaeZ6nIN/cl1wlpsttEIveRHx9DAC6L92BHx2G1Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCSP76bS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBB8C113D0;
+	Thu,  6 Nov 2025 12:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762430943;
+	bh=LP7ZmyrMkXBm+ONLXJyVda0lQs6BJPqHUOBgiw51NPQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=aCSP76bShFtNtarqKQ39cOrob87BYEJLR8x3XybpvWCgVqAQg/pdqC7n7NRZSmbQS
+	 aNN47Anax/M1kyq/usu7O/0dBObpluAMnF3sFzlrhrSW8T43auNgEuci9QQYAtoBIx
+	 29Va/KeJj7GrIBHoYMiSKxlyXBSa59bf+6AeS5TxZu/sS49XPQCYJAhsJ7NnONgO66
+	 3Hy0defaktIndrn0UqyxX+ZlmLRDGnf42JeFjvZfb1NVnXcZZpwWwhut7If4/G9LSI
+	 v8698KoD1zXlJDLOT70thrR2ItNqSa0voVRpVm3ljJRTYzULb0nbvr8BfxPvlFNjUO
+	 /xHq47tX/fPpg==
+Message-ID: <fc9765e8c58fbbc14c8066f685477da0cb2b55d0.camel@kernel.org>
+Subject: Re: [PATCH v5 09/17] vfs: clean up argument list for vfs_create()
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Chuck Lever	 <chuck.lever@oracle.com>, Alexander Aring
+ <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, Anna
+ Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,  Paulo
+ Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM	 <bharathsm@microsoft.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>,
+ Tyler Hicks <code@tyhicks.com>, Olga Kornievskaia	 <okorniev@redhat.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein	 <amir73il@gmail.com>, Namjae
+ Jeon <linkinjeon@kernel.org>, Steve French	 <smfrench@gmail.com>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman	
+ <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-nfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, 	samba-technical@lists.samba.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ netdev@vger.kernel.org
+Date: Thu, 06 Nov 2025 07:08:59 -0500
+In-Reply-To: <176237805165.634289.1849067298194355086@noble.neil.brown.name>
+References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
+	, <20251105-dir-deleg-ro-v5-9-7ebc168a88ac@kernel.org>
+	 <176237805165.634289.1849067298194355086@noble.neil.brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIANqPDGkC/x3MQQqDMBBG4avIrDtgUqLoVaQLNX90Nhpm2lIR7
- 97g8lu8d5JBBUZ9dZLiKyb7VuAeFc3ruC1gicXkax+cqxtW2P7RGZzXw/h9ZEQk4yZOz7bzbXS hoxJnRZLfPR5e1/UHM5X3umgAAAA=
-X-Change-Id: 20251106-resource-phys-typedefs-6db37927d159
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1041; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=v8C8yVAE9Ny+v9yDr6VsXp9BWcYD+xa4DF1KLCBpzIs=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpDI/m7X+heP/YqgbiZX1Gt1RjQZsNIEEXCXzkM
- sefQqICjj+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaQyP5gAKCRAEWL7uWMY5
- RuphD/9prTANQ5o2yI3jFwYwwCJaJP3ixK22fADia1t5O/qL9B+1d6yYpVdN2u/RfEwC/g1ABXs
- 2BCEY7/CfrP9K8NsZyPxeLjnWa4ERBRy/CsJ0Pqu0Lo1mA+o55HqqRqYwzetZA494s/64C1F9DP
- ZIH/M2VBqEfpJ+C5b0y/0T6Y8dBnUS/Btxp0VY70v4pA6JZCTv4CZwAVeZFHZHDvJ9Gh/qNBMze
- gfw6YhiTljh6i2G5OtAv8AI5ZxBQ5Tp90apmU7cuTD3plpBq9h1wlv6O6TqVTyJlGPpsdpLitoC
- NNT1qxk7DHxRoTm4rZY1SnU4MXQ9ndU6kiFY8C4UA2Qry3XZviHifd2vnTr3j9dCAkxm5iMWETu
- FPYaY3BKs4+SWb3BgmYAM56VUz5GfAQsNaY3s+nE1g8s+4s2FNBAUw8BgtCM+XKtb/JFslitoGQ
- +/OgREqCgLwnkkZmN1hqVG7CvOtYMlKqCFMYR+rpcUwKUzjjVmt49e1Dpby25Ca7XrPzBy60VQh
- A8f2v99WTaKkjIQghayogekwcgtrNrD43G5OWWnKjtRJCM5kLMamzybTILXaT1Jif4TPFh8IGND
- rjufLi8PUdTpvDFq7DWEnL3y3LJL64HxiOKvJOoeOVckP+HG5eYkgacNxZeMH33hGZoU2WWPZYr tzeN1RyJ9+cYBoA==
-X-Mailer: b4 0.14.2
-Message-ID: <20251106-resource-phys-typedefs-v1-0-0c0edc7301ce@google.com>
-Subject: [PATCH 0/4] Rust: Fix typedefs for resource_size_t and phys_addr_t
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 
-This changes ResourceSize to use the resource_size_t typedef (currently
-ResourceSize is defined as phys_addr_t), and moves ResourceSize to
-kernel::io and defines PhysAddr next to it. Any usage of ResourceSize or
-bindings::phys_addr_t that references a physical address is updated to
-use the new PhysAddr typedef.
+On Thu, 2025-11-06 at 08:27 +1100, NeilBrown wrote:
+> On Thu, 06 Nov 2025, Jeff Layton wrote:
+> > As Neil points out:
+> >=20
+> > "I would be in favour of dropping the "dir" arg because it is always
+> > d_inode(dentry->d_parent) which is stable."
+> >=20
+> > ...and...
+> >=20
+> > "Also *every* caller of vfs_create() passes ".excl =3D true".  So maybe=
+ we
+> > don't need that arg at all."
+> >=20
+> > Drop both arguments from vfs_create() and fix up the callers.
+> >=20
+> > Suggested-by: NeilBrown <neilb@ownmail.net>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>=20
+> This I like.
+>=20
+> Reviewed-by: NeilBrown <neil@brown.name>
+>=20
+> It would be consistent to also remove the 'dir' arg from vfs_mkdir(),
+> vfs_mknod(), etc.  I wouldn't do that until we find out what other
+> people think of the change.
+>=20
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Alice Ryhl (4):
-      rust: io: define ResourceSize as resource_size_t
-      rust: io: move ResourceSize to top-level io module
-      rust: scatterlist: import ResourceSize from kernel::io
-      rust: io: add typedef for phys_addr_t
-
- rust/kernel/devres.rs      | 18 +++++++++++++++---
- rust/kernel/io.rs          | 26 +++++++++++++++++++++++---
- rust/kernel/io/resource.rs | 13 ++++++-------
- rust/kernel/scatterlist.rs |  2 +-
- 4 files changed, 45 insertions(+), 14 deletions(-)
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251106-resource-phys-typedefs-6db37927d159
-
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
-
+I was thinking that too. I can roll patches to do those as well, but at
+this point I think I'd rather do that on top of this series rather than
+in the context of it.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
