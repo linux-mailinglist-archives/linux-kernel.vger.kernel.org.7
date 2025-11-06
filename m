@@ -1,214 +1,181 @@
-Return-Path: <linux-kernel+bounces-889232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E546EC3D08F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:13:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10214C3D089
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5333B1FEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:12:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AEAD73512D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC2432B98D;
-	Thu,  6 Nov 2025 18:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D31B34DB54;
+	Thu,  6 Nov 2025 18:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EVMqJf/N"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010050.outbound.protection.outlook.com [52.101.85.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qP5LWF/N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140652BDC0F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452762; cv=fail; b=OjoH45XM6wteYdwd8m3IsybuL8/rocs6DM22TdmObc7eFZXflnTZDiz4L4+oVxYcSL1MIonZV4t1s9/7voIdwgKVC/fft5YmVYhOyfQtQue/mpuTYyrh98JA3BrDtBW09GNMuYASh76emiaq+lrMPNZc7PVZmYxGh/ebccOzQ2I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452762; c=relaxed/simple;
-	bh=bLG9qbv0rzopPyvuUmEPpZkzsI7oaXLsrs2HPrhk94Y=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EniLgJedx8Rg3UH+9WlVqqz6eoGCMIx0fem2u9XrL+dFKVJLsrFSHI6hSRhfHtnZYxwnXc+3EV0F6euk//GblNKySU2gsp6cxbOGOciZ7JBUTLHQlBPJXtvQi9qMxgVpSSpPubMwdI7qP9EG8HsWAW1PrWN8SKGCMcVxYDKu/Qo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EVMqJf/N; arc=fail smtp.client-ip=52.101.85.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JMdImSM+x34eqh4NASHcJjp9nXwU4djWXbDI9K968t8AqxmsVAlQN548olYXwkGZ5FDP2Z76L3L7enzOIeQC7nN6Xa0m+BhkzdCVjeeR3iJg3qIPnCOVkXSdYF8DaJq/DIfbQer07tF4mQCI1ppHrdE6oaChb6VvPlNYf7lMnNXIRoj48eZB5IVcCLphznIKgChUGVxMRqB80B2ElzdTaTQrbOGCKssQQlEAu0klQ6vlkYEt+HGRugbQne/Xrgy9nrLAT6XW3qEynyLlbHVfRhhaV897TUt6XACoU8dip9q7w/IhXCMHf529XNcrMS6UOHhMBtbxl17jXLW+xOuKPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZNUD4SmZhwaWjLx3jKfdoutYk0P/DV99CqEjfViTn9w=;
- b=Rg/5tlA5aA5571A8gtaLk5NtTws2rRoNBDbGo98MFEO0RmGyCqSNOlEbLzwuDRoSa4mxSARWftxWmY/FNI7VZLYvJNbDaN9HFk53c4+vDUOe98Vv8rQOJAVjDYkB9vkzbZE76WGwuXk8gngGbd8SsSxTlEa8lybp6pRRd2eliJSnGfmAcG3YYtKXBFuv8UK42fUkpKVgaj9FzZidrwY3u59tN9VSuHiAhoEecX8R1Ji4PhA5ehMNphfxrtFbaffunkz4f18gp5/x32Iv5SNZ4/ai9ndfgWxuB9d88Xv6dHTmaNTVu9VHAwVpTmbiKyW64jGsi8FFNQSho56XNzrynw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZNUD4SmZhwaWjLx3jKfdoutYk0P/DV99CqEjfViTn9w=;
- b=EVMqJf/NlELQ7hr2q7f3vOLQ06XUF5JbjLP6i25nAqc7OcptvmTPzTu1Ha7bVqZLwDXOgTq2sYx8nyOfrI8yF0NEv9OJAM2pH+io8cOPUy+FG8xyrrCaQoI8b+o2cVwLkINUt1oAJ/1sOITyGdjs00YsP4f7zSLE7as36F1ngH4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SN7PR12MB7856.namprd12.prod.outlook.com (2603:10b6:806:340::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
- 2025 18:12:38 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 18:12:38 +0000
-Message-ID: <d21ece5b-d27b-447f-8a8e-5d672fa0c473@amd.com>
-Date: Thu, 6 Nov 2025 12:12:33 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/amdxdna: Treat power-off failure as unrecoverable
- error
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
-References: <20251106180521.1095218-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20251106180521.1095218-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DS7PR03CA0214.namprd03.prod.outlook.com
- (2603:10b6:5:3ba::9) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73EB2BDC0F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762452757; cv=none; b=S4yGsnA8c69bAQFKwtg8tJKm8ii7oAxsr3APsU5XZxoujmZXPMZgfccqvuukRv16X8wJ6dByXkT4ce8uIDXTqJfL0r5HZLi9CxPuK3MoHJPF76dfAWDUImqJV7wzKa8dhlXBxeK1786Tk5wnIeOvGktyAKewj2jCaAs8aHgtzi4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762452757; c=relaxed/simple;
+	bh=j0baMIJpFG/QRZRX1egnx5Da+S9JJD3aqt5kUE57y7Y=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=WwTXpTYRubCh1xIto1xijhbM5jpLPLnXkju6sjzC5JcxU72FrLfmuIhNsNOUJ+LclPt+IKP8E7b2ex3b6NrrTT3ostfFdJBitN3/p8h+DQ0EcCwSgFXIrzrM4/8STGvRRj9dJ87AffbneazGcknyg5/7BSszNXPL5D/xQpfRqEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qP5LWF/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C025C4CEF7;
+	Thu,  6 Nov 2025 18:12:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762452757;
+	bh=j0baMIJpFG/QRZRX1egnx5Da+S9JJD3aqt5kUE57y7Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qP5LWF/Np6Y0caMLbyCKAlAU4re8Ak1DxIsyWiJnlds2+Ote/tq3aD1jUzauf48UX
+	 VjFxOGERZQld7CLFpXtCd0XOcR4IgtZE+8NL4UIo9+rWL47koZOu2CIWlIuvXiQHXj
+	 nmEoJSxxW4jxgR7hso8ZrVfU1QTnpQBcNl2a0ROwsB0kkUVZ0yF8FkPL611vuYPadK
+	 1bUN2uFFct8Yea4zeKJvxtk7j712FYoDJbaaWWRlCtfRhmAFlJS0Mq5oufNPIefhes
+	 QYu0FCAoZUqyrIJ7pI34opcWmtHmRDah0WC8jj07GqRQH447IxGp+0BxfHymCqLCN9
+	 Ge3lTOrFug07Q==
+Date: Thu, 06 Nov 2025 08:12:36 -1000
+Message-ID: <99e1ba732f01b0082d48c6466aea214e@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, Dan Schatzberg <dschatzberg@meta.com>, Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v2 cgroup/for-6.19] cgroup: Fix sleeping from invalid context warning on PREEMPT_RT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB7856:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf19eae5-19ec-47b2-dfb0-08de1d601167
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SmZnZk9JVU1DMXRuc3loNHZqNHJ2bzdSZXZwQUNiQXI1Tjc3Yk9ScmY0Qk1S?=
- =?utf-8?B?M1dVdGp3UXZBK3BqR0t4WC94dHgyYXZFUExQNm5FZ2lrTTEyMFNmUnMrckNG?=
- =?utf-8?B?Zk0yeUpocXY1NGQ1L05Idmx0bFJGUjN0ZXkvZ2Q3VUdxdXBlTlNJU1N0NnR6?=
- =?utf-8?B?cGIzVSttY2h1L1dzMjNvcjRqTzB5M0xCWW5OYmQ1ZUN1Z1RwK25YMjFOeFhJ?=
- =?utf-8?B?ekNsbXkzb2I4WStiVmViQWJRT2RjNTVGTVVIODZwSkZxelgzZmhUUU9id0ZH?=
- =?utf-8?B?dFlMQmJyQnlsVVJLMVRNSTg1VjlOTFhvZTc0c21mZjJ0L002d0hjR04rQ3Vw?=
- =?utf-8?B?S0JaSTJZdG9oOTJsUEVrTFVBTlpQRHh3THc5ZW9CSUc2S0NOU1ZPL2dzdzNG?=
- =?utf-8?B?Uno2cTY5dnJDQUZ1RmxvNWlXN2ptT3lqdm5aUWYwWE1YV1BQc3F0SUFlSE9G?=
- =?utf-8?B?NTVBSEdiazE4RWhZZTBCc2JkUUxhUVl4YUNZYjlIMGZWd0xVa0pvZ3FGaitH?=
- =?utf-8?B?cFpCL21nV0IyQk94VklOU3owbjM3QnpsL05NOCtzYVg3RnZSbmRBeEgwa0di?=
- =?utf-8?B?TkRBOS9HWUwvNTJUYlBLV0xZM3RCMENZSllWenFYb1VpQWpHbzRFSWxpMEpD?=
- =?utf-8?B?Znh1MEFBd0ZNemdUaGUzUzBBcW9POElSU2QxMUp3d1ZGNXBhWmFRQzdOV3Ji?=
- =?utf-8?B?dVpxL3JCQlVSRVNLMUJLak1nc2w0TWdQaXNmRW91cHF6SkNFcTdtV1lsMFFa?=
- =?utf-8?B?QjUxSERGdjE4VkoxcWFSU3U0cjBtcUNvbUoyTVZQWXllTzlxd2wzVDdybTB0?=
- =?utf-8?B?RVRGaE4rdzB2V0pDRDdTTFA3R2Z1UUt3OGF6MHkzb0NUQkh3M2Q5S1FVYm40?=
- =?utf-8?B?UkJnckN3VW40ZjA0cHZQZ3ZiOHN5Yi9pMWZkM3pYdTVSTWpCMmRJR25rckFZ?=
- =?utf-8?B?TWtEUG8rbDhyRzRlZDRlV0t4aGdqY0xGM3RmMXNDT2NFcGkyWk8xYVJkZElI?=
- =?utf-8?B?cmRJWFpGRUVaRFR6NmkrRzJ5bHBya3czL3VmaTJsSUU4dFBkNGtpejhWSzZk?=
- =?utf-8?B?N2lDeUlySFVzeU8zSzRTQktiN2hNUG1hZXQzN24waGZsUUhGQTJJOUZHMFkr?=
- =?utf-8?B?Z0Z0UDBESnhnMHNabUJMQVVEYWkvbGZCK203YUJPcVdMRHlyRU1yellNODA1?=
- =?utf-8?B?eTIwaFRpMnJHbm5uV3dTOGU5Ymc1WXdlNmxMdDNuVlVabWVBa2VWN3NneUEy?=
- =?utf-8?B?eEpxMnVjUWwyNVprZWliYWlGWHYzQWhjQXcrbURIWit3ejlabTRBM040YU1q?=
- =?utf-8?B?amJWTm9tYmNUUTFzbUFaR1k1S0xTT0JPaVcrOFdzVjlPMkhuWlJVSVFNdmpV?=
- =?utf-8?B?QjdIY2I0RlExSHFQRWdtTU1jeTVvRHFVOFNiTVZPR1hXRXY0Tzg2Umowb0xw?=
- =?utf-8?B?UzVscWJXOEt1NkV6UzdCWmQ1SkpIVnFpOFY4VlVLNXV5ZmhYUFg3U1VvV3A3?=
- =?utf-8?B?TWJIdGZINDBQWVk2YXF3eHo4QTNpcHBtMXJzRzRqNnhNb09uWG1KYmI4Vitm?=
- =?utf-8?B?ZW82VVJMbEFOaHZpUWUzb0hveXpLYU9HdnUvZE5Vb1RPRFVOR1phdXRpd1Rr?=
- =?utf-8?B?Ui9pbW1rZTc3NG5OczNrdVdMWkl5Z00rT1BwdUJRMEc1VDNRTVVuYUdvS1oy?=
- =?utf-8?B?QmxmWm1QWndxZ2xwTzFPQ0h3U2dDRVV5V1VKSFF1QlBRdFlCWi9FdkU2Z2hh?=
- =?utf-8?B?cndKOTVEYWVxT3JOc3lqSm04WnBVSWczVjZrQ28xYjRZYS81MHJlUloxU2h6?=
- =?utf-8?B?WFNvQU9XcVBmbDJ6b1lvaHlPZmsxYVE5MnhXVGZTMzV2VzBXQmdpbVhBdDcz?=
- =?utf-8?B?d1dxbWY3OTJ1Z0VkVUhsV2x5MWlWOGEwMVJpakxUOEVZRVFjQ3VpVi9PWWJG?=
- =?utf-8?Q?0qnvZEl2jZdUP97pBErKjzXcNT/vZQUZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b3ZCRzVXQXhKNGw3a1U3SWJTelVhUjQ5WDlXdFUvVVluTE9KYkwwYzVESk5B?=
- =?utf-8?B?UVpGMEw5RkUrVElycTZ4bHkwblA4Z01Od3p0WEpLdVVjQnZHK2FQVVFDa3hz?=
- =?utf-8?B?RWxtdFBVT0RvZWdYUVN1RUFkckJINHpSUFpNNnpPTE9ZK1N6TXVZS3BmN1dS?=
- =?utf-8?B?NUNxVWVCT25oY1lxR05Lem1Fc2oram5EY0xzTFo4NmJQa2ZMZmszM2ttK0tr?=
- =?utf-8?B?aFJwQVlEbkJpeFVNa3FtdEtuWFJGcW0rVmxOOEZaeDllWjBKcGxMUTh5dWo2?=
- =?utf-8?B?dTg2OGpoUlNhaDVYOHkwV0hHWlBtSzRPSHZjMlJlWDAxdEZWdHdWRkdkRjF4?=
- =?utf-8?B?Y21sdlFnT0NDeUM0eXVmY01ZaTVoWEZxTE9uOS9MYnNzbW5NL0pLQi9JM0o0?=
- =?utf-8?B?NmUzekJZVkZOM0lxWktPYmZ5Um1rQlhQZWxJb3R5anFzeXJzSGVDVXFBT2ZE?=
- =?utf-8?B?Z0xNTm9aYUEwTkJyd0QxbElFSzlWRStHWFNtWUpGeSs2UHJ6TFZrK0lWM3BP?=
- =?utf-8?B?MHNaQzVnajdzZzVoNC9aaWJjMzZVWHByWUlxWWpzcDd2eEJlQzZHYXlrYVgw?=
- =?utf-8?B?bk1kYmYvZHlrYk8vVTJJQUxPWUJpRFN0bjAxbHZQNzJGYU5BQTdUTDhXb2Zj?=
- =?utf-8?B?SDFkQmh0ZHVqVHVNclg3OGdzSGJhRWRLaVUvN1NIdjRqdElmUXpvWDdlSFUx?=
- =?utf-8?B?Mlpmb1VlbmdBaXNYemtENDQ5M0ROeWtpWlJKRGcyRUlsMHdYSzRUaE14UW0x?=
- =?utf-8?B?L2dyb2JtbVU2bm9Fa290SVVIQmFyRC9VeGU4bTFvS3ZabEpsNk5aYzU4S0Mv?=
- =?utf-8?B?R0szeDkrd3hraFc2eFRjZGRTbG0wQmdzMk9COFBTR3RHQWJQWDEwNmV5ekY2?=
- =?utf-8?B?bnZIQmZ2cURPRGJRR1A0WjdvRWtWSisyUXZNMUxZQTQySW42Rm9uRUJlWmQx?=
- =?utf-8?B?R2tiUzJMU2hOMVF1Y3kvTCtuVy9xbjAzWGxHL25iYnBGNXhJdUxGdGFYWGhF?=
- =?utf-8?B?OVVxQlJlZU0ycUloQmhMQkhrc3VhWW5oRUwyOXN0SC9ZeE5oM0xoL2xWRmtm?=
- =?utf-8?B?VEUvNmwySDJFejFSeDRhbGRHblFrd2FUODEzU3hVL0IrTjlycWROOTZXbTU3?=
- =?utf-8?B?SWtLMmhxMjJlVkExT1Y2TGtUMGYyK1plVWRweHQ0cW14cTlOT1Q0NHBkdjYr?=
- =?utf-8?B?YWdQR2xBQzJkam1ldEY3N0I2T2YydGJ0TDZnMHNTMnJScGJtWVdzU1dOUllV?=
- =?utf-8?B?WmtmRFhrdVpCU1crRWQzUWw4RzUwTHpSNTlVK25ZeE5WSmFCOXhMcDRuMHpl?=
- =?utf-8?B?d0hlbWRWd1plbFJrVmliaFRmVW1sdTE0dW5QUndQVml6MEEyN2VDU21Rb0RZ?=
- =?utf-8?B?Wm5GVTUwblcybndvYk1GS1NKbXhlR2pNVEV0T0xvdGFNY3JuQXNzWGRCbDJq?=
- =?utf-8?B?RGNneVRGZXoxWC9rUHhtUHkwR2owTVZzd05UdFEzS094cFh5MEg3RHdyOTZh?=
- =?utf-8?B?b3I4L1owdlgrTDhEaVJEUHVLdWE5N0J3RVZZQjR6NDhkZXhqKys4WHI1NVNn?=
- =?utf-8?B?bDdoOEl0eVpJVXRNUEhQOG1WV21qZ1FqODhzSWNxdmlYbWJhcXM3ajZQaDZk?=
- =?utf-8?B?TXYvK0lnY1BXZThOcGJBa3FvNEJyOGQ3RmVOZElOMzJ3dTY4ditCblJxKzg0?=
- =?utf-8?B?WFhVSXV2S1FidFdYcWxVVTM4YzlpRW82am1jTzF1akVvZktFUTRCdm96eXU2?=
- =?utf-8?B?L0d2ZThZVCs0YmxWRzRpVGtkK2k1ekdtcDBRRWI5eTV1NW8wLzdnSnN6S3Nn?=
- =?utf-8?B?bytKLzJsT3Rwb1M1eXBHNjIvaVA1anJyRjRxWThGMFVVZ1BHcGp5YmZyd0hR?=
- =?utf-8?B?ak5kV0kyQzc2aVJvaDJYVlUvMXNsaFFMbzJ2NWhHVzcwbjBoODFOZVIwenlZ?=
- =?utf-8?B?N090c1BJMVFzVXdndFpxa2dnV3QyUnplOTZLTGhiWjdyUnoyNzZIY1FGV0sr?=
- =?utf-8?B?ZFBxSWJqZEZSZjlzZXlrYlBuZEUzaGpOQmdzL2VpZjZyN3lRTStpd3I0OUFt?=
- =?utf-8?B?TldXdUJ1Z0wzVjlmdUVFcXVhR1dGeDJuYVhLNFZCb2VCT0Z0U0swdHZhVXVS?=
- =?utf-8?Q?oBCaPWVfocMRvrgR4brWoykXX?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf19eae5-19ec-47b2-dfb0-08de1d601167
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 18:12:38.1516
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 70FLLzSmOg7bw1DS2D5F/O+B5B0LW1Hpew9Xkbd0k5ChKnBZWadI8qI82tAk1cOepzeKJ+3YBN43Tc88haT21w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7856
 
-On 11/6/25 12:05 PM, Lizhi Hou wrote:
-> Failing to set power off indicates an unrecoverable hardware or firmware
-> error. Update the driver to treat such a failure as a fatal condition
-> and stop further operations that depend on successful power state
-> transition.
-> 
-> This prevents undefined behavior when the hardware remains in an
-> unexpected state after a failed power-off attempt.
-> 
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+cgroup_task_dead() is called from finish_task_switch() which runs with
+preemption disabled and doesn't allow scheduling even on PREEMPT_RT. The
+function needs to acquire css_set_lock which is a regular spinlock that can
+sleep on RT kernels, leading to "sleeping function called from invalid
+context" warnings.
 
-Presumably all versions of hardware in the wild can handle receiving a 
-power off command if they're already powered off?
+css_set_lock is too large in scope to convert to a raw_spinlock. However,
+the unlinking operations don't need to run synchronously - they just need
+to complete after the task is done running.
 
-> ---
->   drivers/accel/amdxdna/aie2_smu.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/accel/amdxdna/aie2_smu.c b/drivers/accel/amdxdna/aie2_smu.c
-> index 11c0e9e7b03a..bd94ee96c2bc 100644
-> --- a/drivers/accel/amdxdna/aie2_smu.c
-> +++ b/drivers/accel/amdxdna/aie2_smu.c
-> @@ -147,6 +147,16 @@ int aie2_smu_init(struct amdxdna_dev_hdl *ndev)
->   {
->   	int ret;
->   
-> +	/*
-> +	 * Failing to set power off indicates an unrecoverable hardware or
-> +	 * firmware error.
-> +	 */
-> +	ret = aie2_smu_exec(ndev, AIE2_SMU_POWER_OFF, 0, NULL);
-> +	if (ret) {
-> +		XDNA_ERR(ndev->xdna, "Access power failed, ret %d", ret);
-> +		return ret;
-> +	}
-> +
->   	ret = aie2_smu_exec(ndev, AIE2_SMU_POWER_ON, 0, NULL);
->   	if (ret) {
->   		XDNA_ERR(ndev->xdna, "Power on failed, ret %d", ret);
+On PREEMPT_RT, defer the work through irq_work. While the work doesn't need
+to happen immediately, it can't be delayed indefinitely either as the dead
+task pins the cgroup and task_struct can be pinned indefinitely. Use the
+lazy version of irq_work to allow batching and lower impact while ensuring
+timely completion.
 
+v2: Use IRQ_WORK_INIT_LAZY instead of immediate irq_work and add explanation
+    for why the work can't be delayed indefinitely (Sebastian Andrzej Siewior).
+
+Fixes: d245698d727a ("cgroup: Defer task cgroup unlink until after the task is done switching out")
+Reported-by: Calvin Owens <calvin@wbinvd.org>
+Link: https://lore.kernel.org/r/20251104181114.489391-1-calvin@wbinvd.org
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ include/linux/sched.h  |    5 +++-
+ kernel/cgroup/cgroup.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 58 insertions(+), 2 deletions(-)
+
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1324,7 +1324,10 @@ struct task_struct {
+ 	struct css_set __rcu		*cgroups;
+ 	/* cg_list protected by css_set_lock and tsk->alloc_lock: */
+ 	struct list_head		cg_list;
+-#endif
++#ifdef CONFIG_PREEMPT_RT
++	struct llist_node		cg_dead_lnode;
++#endif	/* CONFIG_PREEMPT_RT */
++#endif	/* CONFIG_CGROUPS */
+ #ifdef CONFIG_X86_CPU_RESCTRL
+ 	u32				closid;
+ 	u32				rmid;
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -290,6 +290,7 @@ static void kill_css(struct cgroup_subsy
+ static int cgroup_addrm_files(struct cgroup_subsys_state *css,
+ 			      struct cgroup *cgrp, struct cftype cfts[],
+ 			      bool is_add);
++static void cgroup_rt_init(void);
+
+ #ifdef CONFIG_DEBUG_CGROUP_REF
+ #define CGROUP_REF_FN_ATTRS	noinline
+@@ -6360,6 +6361,7 @@ int __init cgroup_init(void)
+ 	BUG_ON(ss_rstat_init(NULL));
+
+ 	get_user_ns(init_cgroup_ns.user_ns);
++	cgroup_rt_init();
+
+ 	cgroup_lock();
+
+@@ -6990,7 +6992,7 @@ void cgroup_task_exit(struct task_struct
+ 	} while_each_subsys_mask();
+ }
+
+-void cgroup_task_dead(struct task_struct *tsk)
++static void do_cgroup_task_dead(struct task_struct *tsk)
+ {
+ 	struct css_set *cset;
+ 	unsigned long flags;
+@@ -7016,6 +7018,57 @@ void cgroup_task_dead(struct task_struct
+ 	spin_unlock_irqrestore(&css_set_lock, flags);
+ }
+
++#ifdef CONFIG_PREEMPT_RT
++/*
++ * cgroup_task_dead() is called from finish_task_switch() which doesn't allow
++ * scheduling even in RT. As the task_dead path requires grabbing css_set_lock,
++ * this lead to sleeping in the invalid context warning bug. css_set_lock is too
++ * big to become a raw_spinlock. The task_dead path doesn't need to run
++ * synchronously but can't be delayed indefinitely either as the dead task pins
++ * the cgroup and task_struct can be pinned indefinitely. Bounce through lazy
++ * irq_work to allow batching while ensuring timely completion.
++ */
++static DEFINE_PER_CPU(struct llist_head, cgrp_dead_tasks);
++static DEFINE_PER_CPU(struct irq_work, cgrp_dead_tasks_iwork);
++
++static void cgrp_dead_tasks_iwork_fn(struct irq_work *iwork)
++{
++	struct llist_node *lnode;
++	struct task_struct *task, *next;
++
++	lnode = llist_del_all(this_cpu_ptr(&cgrp_dead_tasks));
++	llist_for_each_entry_safe(task, next, lnode, cg_dead_lnode) {
++		do_cgroup_task_dead(task);
++		put_task_struct(task);
++	}
++}
++
++static void __init cgroup_rt_init(void)
++{
++	int cpu;
++
++	for_each_possible_cpu(cpu) {
++		init_llist_head(per_cpu_ptr(&cgrp_dead_tasks, cpu));
++		per_cpu(cgrp_dead_tasks_iwork, cpu) =
++			IRQ_WORK_INIT_LAZY(cgrp_dead_tasks_iwork_fn);
++	}
++}
++
++void cgroup_task_dead(struct task_struct *task)
++{
++	get_task_struct(task);
++	llist_add(&task->cg_dead_lnode, this_cpu_ptr(&cgrp_dead_tasks));
++	irq_work_queue(this_cpu_ptr(&cgrp_dead_tasks_iwork));
++}
++#else	/* CONFIG_PREEMPT_RT */
++static void __init cgroup_rt_init(void) {}
++
++void cgroup_task_dead(struct task_struct *task)
++{
++	do_cgroup_task_dead(task);
++}
++#endif	/* CONFIG_PREEMPT_RT */
++
+ void cgroup_task_release(struct task_struct *task)
+ {
+ 	struct cgroup_subsys *ss;
 
