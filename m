@@ -1,313 +1,296 @@
-Return-Path: <linux-kernel+bounces-887898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAE3C3954F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:06:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76B4C39561
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFF374EF2C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:06:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E14734B79D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C292BCF75;
-	Thu,  6 Nov 2025 07:06:29 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AA2DCF47;
+	Thu,  6 Nov 2025 07:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BAbxmAcy"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010069.outbound.protection.outlook.com [52.101.85.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0752527A900
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762412788; cv=none; b=XywKmV5mgTpj5KOF0lHyp5JdBohcEiEMMXxY7rnZuMTcuVetdeLCzueM7S1QkL1Po3XCbbgSdgT8K6pyhV8+mYFFnivdldqvTG3+eu59Kklb1h0YYY6ZmLaeYfLsBehoZg0IQmJ70yHyHQKFopJ7B4R/xWpvQXUcDrRhWxNCMmw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762412788; c=relaxed/simple;
-	bh=Vsck3KVS79t9iyBWAKXa9PBwAc6LKWW5IM6f2vwD49s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k8LdKc4d+1i0zahlrMeLAjOeaijytYFj1B3rvjK5JPI7H9oAxG6s3EHRABeaDUQf8klEPh8fmkqIc6+niuMBvxOr90RZQwWX+L6aYklLGg6qIuYhNh6yJgc6CrdJh/y3nQtDDCMf4xBRl9mZ2zuGuklCsseqbOMJwyX4dyjyHBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9484c28ead6so144661839f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:06:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762412786; x=1763017586;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PHGI1fIvq5g4LUo0l+Mvua/E9YykyS2a0n+xCruQvDo=;
-        b=jlRMGlknUqTR2+WNCcWe5IOIQLp5PPsfVnvrigNYBqpCrRE+6XYSi5JhtnvpV0KWwy
-         kaWAJPdyUWPbWCgjwdF1BINqzSqDRn/pLmtJvHJwthPoJK6DlLDl6cNhWPDBEh5DcnpB
-         WRZ5De57Ai6UOfx1NACtYUsTqOrMZNhPXwh1Cz1PnrwQWgHfMLbPUOqrPLmp3mGakhtw
-         58cOEhcU7frpkWWl/+XqxkyrTymnD4ACkMvptg5zbkMY90PTc+BLtVGJr7uUEt8H3A57
-         SqgRs2hkJY0C4jc04vmYOGYEHS8qVK5lqBYYdL88LIjYKKk8JTJEQeLySShDFKv3AVbu
-         WIyg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8UogId4p7DlV2LLminIgBnBP+pm9SUYLkkUGUjUEXrwl5bmu+YFB+5563azj6hWzbUjjzjk145B3K1YQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLT/eg7Vw8PSlgdeLEPux4Uth4Cao1KQt+7lZACb3wxmwa2fFy
-	XRPujpVnBEeh/7R7W3mJhM87IbjcUb4/L+SGOWN8vRqPj4wHsBkGW0Z8BApO6EBYstegbuh8R9q
-	arrdFsVlGMRmcclogbz4HvDbBUgCmI7JsGD9KBASPtbhP6LjKNhl+EOZqPI8=
-X-Google-Smtp-Source: AGHT+IEtLYA4a8D4q653L6XpdJakCkkDFF5JUVAdgzAl1r6TN+xd/0xGAlCuV7tFyHS/r2CKE+ekR0AUbPacvzqGZpQjspU0we4Q
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7692D7395;
+	Thu,  6 Nov 2025 07:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762412889; cv=fail; b=hgZusH1jsvw/e5tB2FElEEnZ2RokGOmlTOEYbbBeyx2niC0YgCV+69Myuhh8dOfoGE55gR1bAsEQRD73tU367TswYky7ebobAuVClDQDU/YMt/oxBXbA6rUL+A0ed5i/dKY046ABujY8qSw0FLV2HDEjUbZj5mO8kEFy9r0FGoc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762412889; c=relaxed/simple;
+	bh=AseZ0s16BiOLtBdi//ubLy3sSidWub2ncYy2D9Huy7o=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=FPDO75RxWNmIURUOcCBvYp20OytiWvEpSku4AQ0OcLdihG4WzeQuDWnUDOvsK+JmoAfC5SzO8vytB1VQ827DQOkQb02GKo9tc3cjd3u7c2tV97OzWUTVaHCCU/bLru6QsYre5tEYzkC/mgEKZX7sdfVRt2Puoh4uKUdyD2kTc28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BAbxmAcy; arc=fail smtp.client-ip=52.101.85.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rH7zsH06Fe7tE+8thb6x0TOyjJuRjXEkGfWGO6Vixt8lARr9bxZmTPoDrwlKbKkxlZEluP5vsR9wuMg4TuPAj1gQBdsgPcln9A9FXKpVygEuBecASzeao30sUqMi0XAYl7qT1IKEyPrz2Mhbovp5kAF3lJlgeNyDUt1q9ZH4QXFlQYleQP3fZGdMlwIgvM1WCGy8ZtkA6D3kLXzdk9O8dhXgIkN7Rg8RW40d6wVe9iEX5RbOjG6UZ75DOONEjTWWwBKxBRrmBLpWuw/FeTXJ2udi8PWHEoul2lVWuU93aw06PXyFlZeP25vXne1Blv2FY7QQsc9KV6E4RqssOOJLzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r7daY2cb5xEZpBs20em13XEvABQhEiKsmr+q8fSVFtA=;
+ b=aT7aUR43oFaOh6lAQW5uexMC4sb/SijaCLfiEU5bCBR+eIacSt1ZSSWLl8bIdLzTIkvQQmb1Ah5rncho48hEH7TQXScM28ZCmjG6stbot4LeQhMslOEvyuVEaWsveQb8v4CPBAAZE9I1b0aTIdj6SGDJP/FwPH2Larsc/yjVqB+XvC1XaBgbd9J9fdkFF7jL2WI9a6nvGu7OWagDbZ8d3WO2CC/CHrJIjFEVXlEAaLKjj7C552gsH4X9SLu4QXk2rV3/2I/XjVOBcwNkxGg4bdbVP5yRwoOPzv9K2IZ4DPSmwVj6VzKt/iEnaSsr2rX5k45Fx5PJiC88Ma3urq7V9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r7daY2cb5xEZpBs20em13XEvABQhEiKsmr+q8fSVFtA=;
+ b=BAbxmAcy6L+NrymJ6ycyz1YAVoj74BjJ05pax4MZCvK6t3aAibdwjROXRgIwmYSEP04r+wlUjxiw+TOgIZCxQNqwrA1qD/OYkxoQqpway3jLNA09+l8hWYq8wsRUd7UOe4t+/S2Wa2v7IHQRpR+guCQufliexV/ciyxIpeEYHVlR2+ARq5hrDm99mOv06flkhr7zGClQtt1DEQb8clhwif+E8aCSBJnGPc9I4Z9vgguv6cN/2tXoZ9A2IPzjcm+jBZWajSmm8TjMhHMuU5mSCd7Ewm0IrUzDCp6bcql5ujW3NVczfnMoEsLdD7goIgNgknLTbAEXChru+OzThWiZEw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA5PPF7F0CA3746.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d1) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
+ 2025 07:07:59 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
+ 07:07:58 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v3 0/4] rust: add Bounded integer type
+Date: Thu, 06 Nov 2025 16:07:12 +0900
+Message-Id: <20251106-bounded_ints-v3-0-47104986a5c3@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACBJDGkC/22OywoCMQxFf0W6ttK081BX/oeIdCaJZmFHploUm
+ X+3owi+ljdwzslNReqFolpObqqnJFG6kIebTlS792FHWjBvZY0twRjQTXcOSLiVcIoa0BRljQt
+ PtlIZOfbEcnno1pu89xJPXX992BOM15fIfooSaKMRK8Pl3BTki1VIguJnbXcYxU/KwR+KLDYtz
+ hl9De/U2E/2vbn4om2mmR3WTOSY8V8Tfj4dqZrYtLZqAF310RyG4Q7PUc0zUwEAAA==
+X-Change-ID: 20251001-bounded_ints-1d0457d9ae26
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+ Yury Norov <yury.norov@gmail.com>, Jesung Yang <y.j3ms.n@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: TYCP286CA0117.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29c::15) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3d84:b0:433:209d:feee with SMTP id
- e9e14a558f8ab-433407a1353mr105670735ab.13.1762412786137; Wed, 05 Nov 2025
- 23:06:26 -0800 (PST)
-Date: Wed, 05 Nov 2025 23:06:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690c48f2.050a0220.baf87.0080.GAE@google.com>
-Subject: [syzbot] [net?] KASAN: slab-use-after-free Read in qfq_reset_qdisc (2)
-From: syzbot <syzbot+ec7176504e5bcc33ca4e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA5PPF7F0CA3746:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae92557c-b568-46c3-9b49-08de1d03374c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|10070799003|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cHhLRWcvdFFTWkhsbkoycEd1YmpmQWFHcG53RzJFaTI4ZWlmY21GMGV3WVVL?=
+ =?utf-8?B?RUxpcDJuTnAzMW1yNXV2NC9ObHl6bDFPVjNka3E0anllNGNxY2NOSkd2eTNQ?=
+ =?utf-8?B?K1ZQR25DZlVLdXVyNm8rcE9tWEt1MW9JdytKOGZsbU5tSjRzdk8xWmNwU1lw?=
+ =?utf-8?B?d2NoeWRqcTFKUG9wblVuSS95TmpreG5CU2RWYWJvQ1RXQzVVZzN4V0h2dnBt?=
+ =?utf-8?B?ZVNHcnVEcWhFRXcrQkkrVDFuT2J2SXA4dFlVQjNsQnZ5c3lNODUvWksyZGNK?=
+ =?utf-8?B?aDd0bFhaRGhLaUJuN01lM0ZTLzRGSVh5My84Y0kybzIyS09yekxjdTFsenlT?=
+ =?utf-8?B?aURxVm9LQ2RtU2Zxc2ovL0x5UFI0elZ0RFlZWWhtdkx4L0dJZ2ZPK1BZNnBu?=
+ =?utf-8?B?WmpOeTh5MURueVdGa2NvWHRPNWx5cjNGMHhXaEVaY3lCUm9rVGdFQ3R0ei9i?=
+ =?utf-8?B?OTNzSXM1UG9BMU95aVFEV1RNVFhZRnU0T3ladTFiUU1GUlhVanRWS2YwNFl1?=
+ =?utf-8?B?OUk4WjZ3bzczNGJVT1hRWW1ybVlidzdabU5mUzhrVkhwUlFmVFFNb2VRN3ky?=
+ =?utf-8?B?TGJJejNpSTJsc0FNaFgyVHdoNlEzejYrQmZLSStPeExydENTV0NrWDdEd2dx?=
+ =?utf-8?B?YnZpQUxNQXd0RlVTYTlOUUVsYTdMc0t5anVPVE1RTzFtSzNyb0NRS1h2S2JZ?=
+ =?utf-8?B?R092SkhDVnJiRGRQRjVRNFl2T0NzQXl2aTJsTmtzUWQrbmV6NHdFLytXdnpI?=
+ =?utf-8?B?TEhFRUpWUThXblFicXUrYjNITk1LNklSbGpqMklNZEMxSFJUWHY4NHdEeGEv?=
+ =?utf-8?B?V2xEOE0zbWxtNExRQmR3K2Y2eHcwWWRCUnJlTFBXYWg5bGxNaTczemZLNkdJ?=
+ =?utf-8?B?azQ0eEFScitXRHM0Sm44SFRxSVNsWjRTQXlIYnl1VUIreTZIZW43MkxFZkQ3?=
+ =?utf-8?B?RU9NY2FUVXdCWERMK3hEWlZqNXVyUFBjc3NITmxCSXZ3djgvRy9IblF2N1dD?=
+ =?utf-8?B?L3kwUEZPVnNkRUJBWHZmRXhoS3FMVzE3endRVENDYkdMN2puMUhjbjRpZlNN?=
+ =?utf-8?B?Rnl4QTJEay9aNUEyZEl6WThVaGdvUU9lcmI4aE4zenYyczJDYkRrNXRIS1RU?=
+ =?utf-8?B?RzUrY0tHU3B0dk8xOXJoYjBvWlBkY1Y1OXBlL3VXczl4bWc5b1hMeEhpNm5S?=
+ =?utf-8?B?Qk1KbHBnamhyMERKaUFjL1ZHMVY2NHBSRU5pQUh1aGh4SmRxWWFSQXplK3d1?=
+ =?utf-8?B?eFlqQStJd3ZIa2NXZWxHbnNTc3NXSnFRcFZReVRJVGsxcWdIcWhNNm9mbU9h?=
+ =?utf-8?B?N2RIOGtXdTJ0OFNESDcyd21EOU0wSmd2aGxnSlhSaUJBSXZUenkzZHpEeHJi?=
+ =?utf-8?B?aVhFTFVKMnV2eEREQnZHeFVzTU1EakYwOGF6SDdoamovS0lRMXUvYmVtMkRk?=
+ =?utf-8?B?OHZxNWFEd0VjRHBnMDNMVzFrRm9UaUlKcVZuNm52V205Qm43YVdROGg0Mk1Z?=
+ =?utf-8?B?c0dCOXZudUxpVm4vYWJWSHlydHRSSFk5NXZlbzRiQ3dDQzBNQ3hrc2ZobGlF?=
+ =?utf-8?B?aFZlYnJOcTNDbFpFUjMvak1pUmpybE9kR2NkRWpiT3FEUEIvY1gwQkI4VjlL?=
+ =?utf-8?B?VnIwK21mS2FUN2QxY0xGUUJ4dmFrOGc0Q0dDdHZIa0YzRGRRMTdPcDNZeUwy?=
+ =?utf-8?B?Rko3emhZTDVhVVVTVlNlVFIrUFdlYVBkU2U3RlR0REpjbThxL0FzK3U1SUs5?=
+ =?utf-8?B?bVN0c3gyWTdWVTRBTHB5SWJHN2FZT0VxcmtRaytSd2JZT0lLRU1yaHZSWnZa?=
+ =?utf-8?B?MVAzVW9IdjA4U0l5eXA0N0dSb1E0L1FCMndYNXFBOEtTYlU3Qm1oWnNzSU5a?=
+ =?utf-8?B?dkphZkYrTm1tU20vYTRxS0czTVFVMHY0MWVObnBvcDU2M0NWMU80OVRVR3B4?=
+ =?utf-8?B?SDBxbENONGE1NGJHVHlpa21IRzk3Z0w2TGhvckxNRXhYbnBNeGRXRUw5eUVh?=
+ =?utf-8?B?L1dVVzI2M2RLU1k2d0twRlVkZmozckg3cnVaKy90SW1NRXVsVG5OZ3QxYUtm?=
+ =?utf-8?Q?7mvYG+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bTVIVmRVQTJXaWs3aEZVanh4Tzk0ZFBhbjVCSE1QM1p1bzZybWtYMGFqaHhU?=
+ =?utf-8?B?Vjd1aFBlckNSM3YvT3NqVi9FQUdTZW9ZZ2lWaTBkTkx0UGRUb2tmQW9ESDY2?=
+ =?utf-8?B?emIza0JGeVRUZnFNTElnQmRaL3NmL3ltWEJDTjBKQjdVRTZlYzRUTTRlRUV0?=
+ =?utf-8?B?QVZxZXJHUE5qbldEeG1NRmdFaTBJb1liQmpDa09KL3J3ZzhYUWRPak95Y1Bl?=
+ =?utf-8?B?QWZHbHJQSytCSTRkMElXWUdzdTlSN0JFS1h5U2FrYmt1ZjR0K1hYVUo4ZE9k?=
+ =?utf-8?B?MXlWblRzUnhQd3RqR0ZOVjZsWHhCQitwVFdJbkVWaXlXZkRVRzFrUHc5OHdO?=
+ =?utf-8?B?U2g3MTkvZnB0V2xiMGFnZS9qdzQ3TzM5cEpRSWphVHk5V0loME9Ia3Q4aHpS?=
+ =?utf-8?B?My9zNDh6YzNORFNTYXVxSVVCQWJPRzdrNHBKTG9Jb3cwa24zVDZqWU1kb2Fz?=
+ =?utf-8?B?SXNqUCtLTzhuN2lxNFZJN3Arc0p5YjhtZWZUTWYySGhTYlIyRFJ6SkUvNWxT?=
+ =?utf-8?B?bXlIdzF5VUZEQzF4RTVJRE13Z2ZzR25UYXQyc0ZaZThyeHN3Y01xVEIvWWV1?=
+ =?utf-8?B?T2FIcll5b3BUWHlSWFhvcjlMM0Yxc3lZaHJMSm0rS256eFNHVlJCOEFQVTNm?=
+ =?utf-8?B?RGZ4OVRrYzZkYkFBL3NjQnV6U3Q1K3ZjTExmL05Za1FRVzBKMUhqamd5bndZ?=
+ =?utf-8?B?ZDl3blV3WHRqVkhJdHJQNW43dkZQeGRvTFB5WlBqWXdBdUFMczNETUtTMnNv?=
+ =?utf-8?B?M1ZSQWtrUVdNUTdOUVRxRUpZODE3b2hNclhJMk5ZeEthYkIxZ0xTWkl4U1Qw?=
+ =?utf-8?B?eTV0bWp5d3RSVS9WblNqeldvV1UvSWxVT2I0MU9sN0hhTG5VSXJvOS9GNExY?=
+ =?utf-8?B?UjZybkxnckRVenNIc1UyTHd0L1ZtQkJOWUtuVjhrcmRubks0ZnlqajFSSkpp?=
+ =?utf-8?B?TXhLcjRBaEN0VXFtcXhTd0FYWkhpa1RYeU9aMkJKRy92VHk1bmdaOWhIZ0hl?=
+ =?utf-8?B?ZE9NYXlmdndvaitlN3NLcUkwTDkwZFBmTGZZTVJKWmt3TGF5NGxaZHJxWWFa?=
+ =?utf-8?B?UkZjekp2V1Zjek1PcGFvT2JiK3JHQWhwT3g4eUZEb3RvcXNVZVkxTkJzQ2ZT?=
+ =?utf-8?B?QVRmUE1RSmd1S3pmMDN1MFExOXZVdUNNK000akkwOVM3NEVTdFFrWkE1Si9y?=
+ =?utf-8?B?Vnp1TXJEcUJPWWM4MnFQbkJaWVM2SXdpSWRzNExZTmJCMlhyYVN5bE85VTdN?=
+ =?utf-8?B?dUZPWnlyR0dMb0NDUytOeFhlazJJM1RFZm04OExCNDltYzlvb295Wk5yU3ZM?=
+ =?utf-8?B?NkRvYVNIcXZqTXVPbFZKcnpiNTBsbnVuYlVaVUFaTkJ3Z3RsenNrbkhDSGp2?=
+ =?utf-8?B?dUk5czdQYjlucDZ6QjFObUkydkdabENzbEptbUt2c1pjandaUHQzWFB2ZzZm?=
+ =?utf-8?B?c01ndW04WTh3ZUVQNXFJMHo1U2pxNjJJMmdrVENIa0tMM043SEkyQndSVWEx?=
+ =?utf-8?B?MzFpQXR1K0dtclNhNVBzVzQ1YzV0Y2t5Q05vZ0lRdklhNnpBa0xWeXVqcHN1?=
+ =?utf-8?B?SWlWSFV1NHBERUZHOU12Q0Y0ZmtrRTNtc3htdEIraWs2bHJybUMvTlo0TUdh?=
+ =?utf-8?B?Yy9ISUJtc2RJeUUwNGYrcThTQnJwZXpkVUVSZ3k3Z2RjTzE2dm0vQ2I4Y05R?=
+ =?utf-8?B?MmJDa1NZRlJ6a0ZzUUhmemEwN1Y0azlPQUI0NHYzck55NFF0djNESWMxZUE5?=
+ =?utf-8?B?emNFRTJERmV3NG52eXY1c1JBNjRmN3ZIRCtHTkZqMWZGSTdReHhJa2xWdFlH?=
+ =?utf-8?B?dDVFLzJFVG80UXJKSW5qZnM5b2FVRnVTb0M4L2dtcjdCK1ArQk9YMlRyc0hm?=
+ =?utf-8?B?ZXJXUVhuai9lSW50bTc3cGUxUElhdkt5UURZd1FLbmk1QUNyNVZabHQxeks4?=
+ =?utf-8?B?N0RGODdKSjB3bkpxbkRQZUQ0N2FGbS9XZHg0c0Q0UTJFaDZUU1drV2FJaS9n?=
+ =?utf-8?B?ZTN1RGJZeXVwNnVhbm1Pb0lsUHpYOVZiT2RsYTNPMUhSZHZrdC9uN3FNVHND?=
+ =?utf-8?B?ditzTlhWZE5XZnhOQW9rMzBORFRxUTBzMWhFWVBBUnVSMmlqcnhRUzd6bXBE?=
+ =?utf-8?B?aDNlQ0tPclcxYUovYkRkcno5dHE4TTlXajc1UlNkdUpPeU0wWnZQVHVCZ3R6?=
+ =?utf-8?Q?MZdZcnxF46NTlHkyaqM3j3OgfJKchx5XBsh13e1fSfTV?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae92557c-b568-46c3-9b49-08de1d03374c
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 07:07:58.5208
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xCfOGGA2zErDQlVDcgXJMsyWkcwfvNPnVcUn1gAxw37oKTqbMPRc74oEIsSx0ONzgFipOmXjmULtlL2NIvEiGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF7F0CA3746
 
-Hello,
+New revision, where we rename `BitInt` to `Bounded` and consolidate
+things a bit. The `Integer` trait also exposes more common features of
+integers to generic code, which makes it more useful - to the point
+where we can now use it in place of the `Boundable` trait.
 
-syzbot found the following issue on:
+Patch 3 adds a MAINTAINERS entry in case the Rust core team would like
+us to maintain this, but please ignore it if you prefer to take it under
+the core umbrella.
 
-HEAD commit:    143937ca51cc arm64, mm: avoid always making PTE dirty in p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=15939b04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=158bd6857eb7a550
-dashboard link: https://syzkaller.appspot.com/bug?extid=ec7176504e5bcc33ca4e
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11763734580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b9e3e2580000
+This series provides `Bounded`, a wrapper type for primitive integers
+that guarantees that only a given number of bits are used to represent
+values. This is particularly useful when working with bitfields, as the
+guarantee that a given value fits within the number of assigned bits can
+be enforced by the type system, saving cumbersome runtime checks, or
+(worse) stripping data when bits are silently dropped.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a6ff641e43d2/disk-143937ca.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/22d9e0afd13f/vmlinux-143937ca.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ab2dee8c9ca/Image-143937ca.gz.xz
+For a basic usage, please see the rustdoc of the `Bounded` type on the
+second patch.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ec7176504e5bcc33ca4e@syzkaller.appspotmail.com
+The first use of this will be to represent bitfields in Nova register
+types to guarantee that no data is ever stripped when manipulating them.
+This should eventually allow the `bitfield` and `register` macros to
+move out of Nova and into the kernel crate.
 
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-==================================================================
-BUG: KASAN: slab-use-after-free in qfq_reset_qdisc+0xcc/0x208 net/sched/sch_qfq.c:1484
-Read of size 8 at addr ffff0000ca2bfe50 by task syz.0.17/6716
+The last patch is just here to illustrate the use of this module; it is
+not intended to be merged this cycle as it would likely result in big
+merge conflicts with the drm tree.
 
-CPU: 0 UID: 0 PID: 6716 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
- __dump_stack+0x30/0x40 lib/dump_stack.c:94
- dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
- print_address_description+0xa8/0x238 mm/kasan/report.c:378
- print_report+0x68/0x84 mm/kasan/report.c:482
- kasan_report+0xb0/0x110 mm/kasan/report.c:595
- __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
- qfq_reset_qdisc+0xcc/0x208 net/sched/sch_qfq.c:1484
- qdisc_reset+0x128/0x598 net/sched/sch_generic.c:1038
- __qdisc_destroy+0x134/0x4bc net/sched/sch_generic.c:1077
- qdisc_put net/sched/sch_generic.c:1109 [inline]
- dev_shutdown+0x35c/0x47c net/sched/sch_generic.c:1497
- unregister_netdevice_many_notify+0xbb8/0x1de0 net/core/dev.c:12242
- unregister_netdevice_many net/core/dev.c:12317 [inline]
- unregister_netdevice_queue+0x2b4/0x300 net/core/dev.c:12161
- unregister_netdevice include/linux/netdevice.h:3389 [inline]
- __tun_detach+0x5d4/0x1304 drivers/net/tun.c:621
- tun_detach drivers/net/tun.c:637 [inline]
- tun_chr_close+0x118/0x1f8 drivers/net/tun.c:3436
- __fput+0x340/0x75c fs/file_table.c:468
- ____fput+0x20/0x58 fs/file_table.c:496
- task_work_run+0x1dc/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
- el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+This series applies on top of drm-rust-next for the needs of the last
+patch, but the first 2 patches should apply cleanly on rust-next. A
+branch with this series and its dependencies is available here:
 
-Allocated by task 6716:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:77
- kasan_save_alloc_info+0x44/0x54 mm/kasan/generic.c:573
- poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
- __kasan_kmalloc+0x9c/0xb4 mm/kasan/common.c:417
- kasan_kmalloc include/linux/kasan.h:262 [inline]
- __kmalloc_cache_noprof+0x3a4/0x65c mm/slub.c:5748
- kmalloc_noprof include/linux/slab.h:957 [inline]
- kzalloc_noprof include/linux/slab.h:1094 [inline]
- qfq_change_class+0x498/0xbe8 net/sched/sch_qfq.c:479
- __tc_ctl_tclass net/sched/sch_api.c:2274 [inline]
- tc_ctl_tclass+0x988/0x10b0 net/sched/sch_api.c:2304
- rtnetlink_rcv_msg+0x624/0x97c net/core/rtnetlink.c:6963
- netlink_rcv_skb+0x220/0x3fc net/netlink/af_netlink.c:2552
- rtnetlink_rcv+0x28/0x38 net/core/rtnetlink.c:6981
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x694/0x8c4 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x648/0x930 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg net/socket.c:742 [inline]
- ____sys_sendmsg+0x490/0x7b8 net/socket.c:2630
- ___sys_sendmsg+0x204/0x278 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __arm64_sys_sendmsg+0x184/0x238 net/socket.c:2719
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+https://github.com/Gnurou/linux/tree/b4/bounded_ints
 
-Freed by task 6716:
- kasan_save_stack mm/kasan/common.c:56 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:77
- __kasan_save_free_info+0x58/0x70 mm/kasan/generic.c:587
- kasan_save_free_info mm/kasan/kasan.h:406 [inline]
- poison_slab_object mm/kasan/common.c:252 [inline]
- __kasan_slab_free+0x74/0xa4 mm/kasan/common.c:284
- kasan_slab_free include/linux/kasan.h:234 [inline]
- slab_free_hook mm/slub.c:2523 [inline]
- slab_free mm/slub.c:6611 [inline]
- kfree+0x184/0x600 mm/slub.c:6818
- qfq_change_class+0x92c/0xbe8 net/sched/sch_qfq.c:533
- __tc_ctl_tclass net/sched/sch_api.c:2274 [inline]
- tc_ctl_tclass+0x988/0x10b0 net/sched/sch_api.c:2304
- rtnetlink_rcv_msg+0x624/0x97c net/core/rtnetlink.c:6963
- netlink_rcv_skb+0x220/0x3fc net/netlink/af_netlink.c:2552
- rtnetlink_rcv+0x28/0x38 net/core/rtnetlink.c:6981
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x694/0x8c4 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x648/0x930 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg net/socket.c:742 [inline]
- ____sys_sendmsg+0x490/0x7b8 net/socket.c:2630
- ___sys_sendmsg+0x204/0x278 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __arm64_sys_sendmsg+0x184/0x238 net/socket.c:2719
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x254 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:746
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+Changes in v3:
+- Rename to `Bounded` to avoid confusion with C's `_BitInt`.
+- Request all common integer features on `Integer` trait and remove
+  unneeded `Boundable`.
+- Use `assert` instead of `build_assert` in const blocks. (thanks Alice!)
+- Implement `Integer` for `u/isize` and `u/i128`.
+- Support `usize`/`isize` as `Bounded` types.
+- Implement arithmetic and logic ops between two `Bounded` of the same
+  backing type (but not necessarily same length).
+- Move addition of `num` module to its own patch.
+- Add MAINTAINERS entry for `num`.
+- Link to v2: https://lore.kernel.org/r/20251102-bounded_ints-v2-0-7ef0c26b1d36@nvidia.com
 
-The buggy address belongs to the object at ffff0000ca2bfe00
- which belongs to the cache kmalloc-128 of size 128
-The buggy address is located 80 bytes inside of
- freed 128-byte region [ffff0000ca2bfe00, ffff0000ca2bfe80)
+Changes in v2:
+- Move type invariants of `BitInt` to a centralizing private
+  constructor.
+- Simplify `From` implementations to and from primitive types.
+- Remove ability to convert between unsigned and signed types as it was
+  buggy, and its utility doubtful.
+- Use macro to implement `Integer` and avoid repeating code.
+- Fix a few typos.
+- More doctests, and split them into different paragraphs in the
+  `BitInt` main doccomment.
+- Fix build with Rust 1.78.
+- Finish implementing relevant `core::ops` traits.
+- Link to v1: https://lore.kernel.org/r/20251031-bounded_ints-v1-0-e2dbcd8fda71@nvidia.com
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10a2bf
-flags: 0x5ffc00000000000(node=0|zone=2|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 05ffc00000000000 ffff0000c0001a00 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
+Changes in v1:
+- Rebase on top of `drm-rust-next`.
+- Rename `BoundedInt` to `BitInt` (thanks Yury!).
+- Add lots of documentation.
+- Use shifts to validate bounds, as it works with both unsigned and
+  signed types contrary to the mask method.
+- Support signed types (albeit with some bugs).
+- Use `new` for the const static constructor and make it the preferred
+  way to build values (thanks Alice and Joel!).
+- Rename `LargerThanX` into `AtLeastX` (thanks Joel!).
+- Support basic arithmetic operations (+, -, etc.) against the backing
+  type.
+- Add `Deref` implementation as alternative to the `get` method.
+- Write correct `Default` implementation for bitfields.
+- Make the new bitfield accessors `inline(always)`.
+- Update bitfield documentation to the new usage.
+- Link to RFC v2: https://lore.kernel.org/r/20251009-bounded_ints-v2-0-ff3d7fee3ffd@nvidia.com
 
-Memory state around the buggy address:
- ffff0000ca2bfd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
- ffff0000ca2bfd80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff0000ca2bfe00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                 ^
- ffff0000ca2bfe80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff0000ca2bff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
-==================================================================
-Unable to handle kernel paging request at virtual address 006a007b60000350
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[006a007b60000350] address between user and kernel address ranges
-Internal error: Oops: 0000000096000004 [#1]  SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 6716 Comm: syz.0.17 Tainted: G    B               syzkaller #0 PREEMPT 
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : qfq_reset_qdisc+0xbc/0x208 net/sched/sch_qfq.c:1484
-lr : qfq_reset_qdisc+0x158/0x208 net/sched/sch_qfq.c:1483
-sp : ffff8000a5b577c0
-x29: ffff8000a5b577d0 x28: 0000000000000000 x27: 1fffe0001a92d05a
-x26: 006a807b60000350 x25: dfff800000000000 x24: 0000000000000000
-x23: 035403db00001a84 x22: 035403db00001a34 x21: ffff0000d49682d0
-x20: ffff0000d49682d8 x19: ffff0000d4968000 x18: 1fffe000337db690
-x17: 3d3d3d3d3d3d3d3d x16: ffff800082de9540 x15: 0000000000000001
-x14: 1ffff0001250b1b8 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff70001250b1b9 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000c9320000 x7 : 0000000000000001 x6 : ffff8000805638d4
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff80008936af34
-x2 : 0000000000000000 x1 : 0000000000000008 x0 : 0000000000000000
-Call trace:
- qfq_reset_qdisc+0xbc/0x208 net/sched/sch_qfq.c:1484 (P)
- qdisc_reset+0x128/0x598 net/sched/sch_generic.c:1038
- __qdisc_destroy+0x134/0x4bc net/sched/sch_generic.c:1077
- qdisc_put net/sched/sch_generic.c:1109 [inline]
- dev_shutdown+0x35c/0x47c net/sched/sch_generic.c:1497
- unregister_netdevice_many_notify+0xbb8/0x1de0 net/core/dev.c:12242
- unregister_netdevice_many net/core/dev.c:12317 [inline]
- unregister_netdevice_queue+0x2b4/0x300 net/core/dev.c:12161
- unregister_netdevice include/linux/netdevice.h:3389 [inline]
- __tun_detach+0x5d4/0x1304 drivers/net/tun.c:621
- tun_detach drivers/net/tun.c:637 [inline]
- tun_chr_close+0x118/0x1f8 drivers/net/tun.c:3436
- __fput+0x340/0x75c fs/file_table.c:468
- ____fput+0x20/0x58 fs/file_table.c:496
- task_work_run+0x1dc/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
- el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-Code: d1002116 b4000656 910142d7 d343fefa (38796b48) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	d1002116 	sub	x22, x8, #0x8
-   4:	b4000656 	cbz	x22, 0xcc
-   8:	910142d7 	add	x23, x22, #0x50
-   c:	d343fefa 	lsr	x26, x23, #3
-* 10:	38796b48 	ldrb	w8, [x26, x25] <-- trapping instruction
-
+Changes in RFC v2:
+- Thorough implementation of `BoundedInt`.
+- nova-core fully adapted to use `BoundedInt`.
+- Link to RFC v1: https://lore.kernel.org/r/20251002-bounded_ints-v1-0-dd60f5804ea4@nvidia.com
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Alexandre Courbot (4):
+      rust: add num module and Integer trait
+      rust: num: add Bounded integer wrapping type
+      MAINTAINERS: add entry for the Rust `num` module
+      [FOR REFERENCE] gpu: nova-core: use BitInt for bitfields
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ MAINTAINERS                               |    8 +
+ drivers/gpu/nova-core/bitfield.rs         |  366 +++++-----
+ drivers/gpu/nova-core/falcon.rs           |  140 ++--
+ drivers/gpu/nova-core/falcon/hal/ga102.rs |    5 +-
+ drivers/gpu/nova-core/fb/hal/ga100.rs     |    3 +-
+ drivers/gpu/nova-core/gpu.rs              |    9 +-
+ drivers/gpu/nova-core/regs.rs             |  139 ++--
+ rust/kernel/lib.rs                        |    1 +
+ rust/kernel/num.rs                        |   79 +++
+ rust/kernel/num/bounded.rs                | 1045 +++++++++++++++++++++++++++++
+ 10 files changed, 1492 insertions(+), 303 deletions(-)
+---
+base-commit: ade19c5060dfa39b84a9475a4a6b05e2a8a2b3ac
+change-id: 20251001-bounded_ints-1d0457d9ae26
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Alexandre Courbot <acourbot@nvidia.com>
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
