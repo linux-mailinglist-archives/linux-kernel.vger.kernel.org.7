@@ -1,201 +1,102 @@
-Return-Path: <linux-kernel+bounces-887962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2213DC39753
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:51:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A034EC3975F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33FA44EA8B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7E11887645
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B402882D7;
-	Thu,  6 Nov 2025 07:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yx6awSaD"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3CB27F19B;
+	Thu,  6 Nov 2025 07:51:24 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E0A27F19B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8D2295516;
+	Thu,  6 Nov 2025 07:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415453; cv=none; b=Y2yNHPs8Oy6k9jy301SfpZc/r7e+vgGFhu43JkV7D1lGnvz9IE9ndhXRWpySZAmW51NUCTTNgZJNMrhL58kw0zqVZ9WSUlV0udE7NAnVBWRBDxp6gKheojqOKAiXjkqW8ZSKLI8+A2qwvShabsSchro0OcEAesGMuiO8foVjWuo=
+	t=1762415484; cv=none; b=Q4oPp1pxTlxLzkbdjmAJItu2kXyDq+8INg0snVuNiV4H2i2N6tEpBu1s5VfiicA1Mi2RmEpUrfe/bYy7j+TpZ3V6tnCBoTb1Nmo48NJJdkpMj0FSoBxs+FN49ctgu9tswOwFJmh3Pk4EYe9FpNsmEgSa33TZ8joYrOi4USFfL7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415453; c=relaxed/simple;
-	bh=p3t1Nu3/jaRiIeOqwFNK5UrO9I5BIOo4m9uqYA+ne9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l5LiDiNkwmbhCfisjpr9vKRSpuOdtIJmLY96j0d2OFuf3Sdn4Uz5E0B0h+uzZlEP/doH+VNVttuM9dcE46IdlJqJPDvwU8lXexO7WuYYKuLA1ou0WeOULxD7YpRQI3smshNlZ2OAdRI1YLwn5qrnVfR0fE3z+ElVU0TWwJ0BMVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yx6awSaD; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b729f239b39so28397966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:50:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762415450; x=1763020250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4oSZTMv5D/sOGGLnpJ+IvuCz5xyHo5sq+jQga6CKtnM=;
-        b=Yx6awSaD7lS9u7PttF4PUpdeWss2Yn7T4chucVApGLMuE2r1Q9G+1luxSzXa1vAg9M
-         MU+heyTc4xfsXpCsUWqU+9oEZArL6hjBqOOGUopCctJTQeP4xhVgmsMdDgNE5bcqrvVA
-         YsMMhuLDt5no2Gcn9fFhXvlS9o7PrtuxmSKDw6LwgHeN8iUsvgrCBH0tqdNb4juFJxLr
-         tiToJvoUjcHVejsrUWswgtTcQOZ/BZJNS1ZFt/de73t4b9shCmhS8du99ZeuZY8DdmVk
-         oi5gHZ6bVcr8/V8pEP7w4XekiVS1NxYpGshEA053EPy3NbRQTfO8le9PNI9ZrSKGNiA3
-         lDZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762415450; x=1763020250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4oSZTMv5D/sOGGLnpJ+IvuCz5xyHo5sq+jQga6CKtnM=;
-        b=Ol9i/O4B4S3VHac9+ME05Kq0YMsr7nHUv1RF0TmkLjFRi65pM8Iid4d6fDtXfdkXnx
-         YiZLijymYnpO40L1p6xPRRfMOpDfiMD9RorD+4Idj7F9VSVzZkEA4WpNL7QQr22fkucL
-         YwdoFd9x+RJdC0SCAOb3cHPe26/eLUep+04kKGTqgP0uuIiXgtU/7VENLKmCn8UZD7eI
-         ztV58ObtXFeE5eB5Xit6+fZsKspbyNFz224wFpLcbjGsOZIx6BguAV1ETyq9KPP2dtN/
-         gmpxyRT9idkLLkCBHwpGHF52KNbq/2IXHt08M2V1CP2h8Ppz/rSYHNF+fT25YyyCwIyA
-         x+pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAvPFgIjXZbzM9xLx2gC5mQozXKWd9KuaE6WNqLrfNMP3tg1FbcCiVa1jchcg8PvmcA7vviJt1DluH6aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXpaLLtky714+a2DpNGVb4eYTf+W1NvP+MzWZPy9azOUZgmrbB
-	Ftd5c8VPsLaCxWrBg5AXevDVubejSWWIuR3LkUuS5hYtUVZgN/95+11qXqLVktQ/1tA+T30vyzw
-	8Pg6F9gh9GXMoi9NcYTVGDx6wH1CzeDXa6Ura6urNFg==
-X-Gm-Gg: ASbGncvVOWWWuLLYEbXveqeanTJiQtRl06pqBGl4RL4VzRDmyu1NKAyngB/TI6NOnLN
-	UPWEAgyf+3tNA7krT0TLIQMlDaSf8s91uJEsuK1cXZSzLdG8pnhl7tNoGQnFWlVKIUKer1o8136
-	uDHMEXf8OX+F8V9mcQ0QWeQKOspuqeVTAQJdb78pvjQz2AjD08wgZHkUHhGOVIMYd6iNFTon2N0
-	TUEYDVT7YtxBASelxGh+a+e9xv+bvDkNnfUj2k3k215lgjpUou5RAPxbSIctg==
-X-Google-Smtp-Source: AGHT+IGTqwA2P7XvjyYF/Izos2lVy+T5to2mL8X2E6WlWDzOEu9Bmz8GxKORg8EJlnHJ5cxaDH8TQQoU0UmnunUk7JI=
-X-Received: by 2002:a17:907:94d2:b0:b72:6d68:6663 with SMTP id
- a640c23a62f3a-b728964dea0mr251219566b.31.1762415449844; Wed, 05 Nov 2025
- 23:50:49 -0800 (PST)
+	s=arc-20240116; t=1762415484; c=relaxed/simple;
+	bh=KvESVpECG/hSqZs6a/6LvTTpH8QiSRhu2VyyX90vh/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KAY6a43gkMzMCGEAi3KveEpO+IEgX9z7X3p/Et1JI6jNNDMxI1ncS+zaRnDgqXobwSMcwV6yr3let7li7ajAZOmVXxjQiEAyjfFdPe0+70GJbn8394/QKYv41wyRDLyDTL43w9++ADvZLiLbxeeB80H+v4Hw7fC51HN3UHMspnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowACnDmlnUwxp5jinAQ--.2074S2;
+	Thu, 06 Nov 2025 15:51:05 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: srinivas.kandagatla@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] ASoC: codecs: va-macro: fix resource leak in probe error path
+Date: Thu,  6 Nov 2025 15:50:54 +0800
+Message-ID: <20251106075055.555-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKfTPtCtHquxtK=Zx2WSNm15MmqeUXO8XXi8FkS4EpuP80PP7g@mail.gmail.com>
- <20251106000531.GA1930429@bhelgaas> <vrgjkulv22hzbx65olh3zpyqxq6dr7d5mepngjwgc3gudjoxwo@ll7xc2teya2s>
-In-Reply-To: <vrgjkulv22hzbx65olh3zpyqxq6dr7d5mepngjwgc3gudjoxwo@ll7xc2teya2s>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 6 Nov 2025 08:50:37 +0100
-X-Gm-Features: AWmQ_bkYpQyZF7OktEjeeIhdfj_KOUOxVV3OYB8DSDbc8qdV2MpPBlN_Lqu--DE
-Message-ID: <CAKfTPtB=oMPsfjRFcQrAKM1m97B1LL9RJYVix+ea9Vb0FqDk3A@mail.gmail.com>
-Subject: Re: [PATCH 3/4 v3] PCI: s32g: Add initial PCIe support (RC)
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, chester62515@gmail.com, mbrugger@suse.com, 
-	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, bhelgaas@google.com, 
-	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com, 
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	cassel@kernel.org, Richard Zhu <hongxing.zhu@nxp.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Minghuan Lian <minghuan.Lian@nxp.com>, 
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>, 
-	Christian Bruel <christian.bruel@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACnDmlnUwxp5jinAQ--.2074S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFW5Xr4ruF4fGFyDKrW7Arb_yoWDZrb_C3
+	95Wr48ZFy8WF9xK3yktr48A39avrnxCrW5GF42y393GFyUJr13ZF4UCrn8urW5Wwsaka45
+	WF1DXrW8AFyavjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
+	6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUfrcfUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4SA2kMGc3mDAAAsN
 
-On Thu, 6 Nov 2025 at 07:24, Manivannan Sadhasivam <mani@kernel.org> wrote:
->
-> On Wed, Nov 05, 2025 at 06:05:31PM -0600, Bjorn Helgaas wrote:
-> > [+cc imx6, layerscape, stm32 maintainers for possible suspend bug]
-> >
-> > On Fri, Oct 24, 2025 at 08:50:46AM +0200, Vincent Guittot wrote:
-> > > On Wed, 22 Oct 2025 at 21:04, Bjorn Helgaas <helgaas@kernel.org> wrot=
-e:
-> > > > On Wed, Oct 22, 2025 at 07:43:08PM +0200, Vincent Guittot wrote:
-> > > > > Add initial support of the PCIe controller for S32G Soc family. O=
-nly
-> > > > > host mode is supported.
-> >
-> > > > > +static void s32g_init_pcie_controller(struct s32g_pcie *s32g_pp)
-> > > > > +{
-> > > > > ...
-> > > > > +     /*
-> > > > > +      * Make sure we use the coherency defaults (just in case th=
-e settings
-> > > > > +      * have been changed from their reset values)
-> > > > > +      */
-> > > > > +     s32g_pcie_reset_mstr_ace(pci, memblock_start_of_DRAM());
-> > > >
-> > > > This seems sketchy and no other driver uses memblock_start_of_DRAM(=
-).
-> > > > Shouldn't a physical memory address like this come from devicetree
-> > > > somehow?
-> > >
-> > > I was using DT but has been asked to not use it and was proposed to
-> > > use memblock_start_of_DRAM() instead
-> >
-> > Can you point me to that conversation?
-> >
-> > > > > +     s32g_pp->ctrl_base =3D devm_platform_ioremap_resource_bynam=
-e(pdev, "ctrl");
-> > > > > +     if (IS_ERR(s32g_pp->ctrl_base))
-> > > > > +             return PTR_ERR(s32g_pp->ctrl_base);
-> > > >
-> > > > This looks like the first DWC driver that uses a "ctrl" resource.  =
-Is
-> > > > this something unique to s32g, or do other drivers have something
-> > > > similar but use a different name?
-> > >
-> > > AFAICT this seems to be s32g specific in the RM
-> >
-> > It does look like there's very little consistency in reg-names across
-> > drivers, so I guess it's fine.
-> >
-> > > > > +static int s32g_pcie_suspend_noirq(struct device *dev)
-> > > > > +{
-> > > > > +     struct s32g_pcie *s32g_pp =3D dev_get_drvdata(dev);
-> > > > > +     struct dw_pcie *pci =3D &s32g_pp->pci;
-> > > > > +
-> > > > > +     if (!dw_pcie_link_up(pci))
-> > > > > +             return 0;
-> > > >
-> > > > Does something bad happen if you omit the link up check and the lin=
-k
-> > > > is not up when we get here?  The check is racy (the link could go d=
-own
-> > > > between dw_pcie_link_up() and dw_pcie_suspend_noirq()), so it's not
-> > > > completely reliable.
-> > > >
-> > > > If you have to check, please add a comment about why this driver ne=
-eds
-> > > > it when no other driver does.
-> > >
-> > > dw_pcie_suspend_noirq returns an error and the suspend fails
-> >
-> > The implication is that *every* user of dw_pcie_suspend_noirq() would
-> > have to check for the link being up.  There are only three existing
-> > callers:
-> >
-> >   imx_pcie_suspend_noirq()
-> >   ls_pcie_suspend_noirq()
-> >   stm32_pcie_suspend_noirq()
-> >
-> > but none of them checks for the link being up.
-> >
->
-> If no devices are attached to the bus, then there is no need to broadcast
-> PME_Turn_Off and wait for L2/L3. I've just sent out a series that fixes i=
-t [1].
-> Hopefully, this will allow Vincent to use dw_pcie_{suspend/resume}_noirq(=
-) APIs.
+In the commit referenced by the Fixes tag, clk_hw_get_clk()
+was added in va_macro_probe() to get the fsgen clock,
+but forgot to add the corresponding clk_put() in va_macro_remove().
+This leads to a clock reference leak when the driver is unloaded.
 
-I'm going to test it
+Add clk_put() call in va_macro_remove() to properly release the clock
+reference obtained in probe.
 
-Thanks
+Fixes: 30097967e056 ("ASoC: codecs: va-macro: use fsgen as clock")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ sound/soc/codecs/lpass-va-macro.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> - Mani
->
-> [1] https://lore.kernel.org/linux-pci/20251106061326.8241-1-manivannan.sa=
-dhasivam@oss.qualcomm.com/
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
+index a49551f3fb29..440d0f54aa33 100644
+--- a/sound/soc/codecs/lpass-va-macro.c
++++ b/sound/soc/codecs/lpass-va-macro.c
+@@ -1663,6 +1663,7 @@ static void va_macro_remove(struct platform_device *pdev)
+ {
+ 	struct va_macro *va = dev_get_drvdata(&pdev->dev);
+ 
++	clk_put(va->fsgen);
+ 	if (va->has_npl_clk)
+ 		clk_disable_unprepare(va->npl);
+ 
+-- 
+2.50.1.windows.1
+
 
