@@ -1,133 +1,145 @@
-Return-Path: <linux-kernel+bounces-889234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1889DC3D09E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:14:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C67FC3D0AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96C2F4E187D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50A73B7761
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E37F34F495;
-	Thu,  6 Nov 2025 18:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879692DC334;
+	Thu,  6 Nov 2025 18:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UiNhbo12"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="UAurMIDh"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44FD2BDC0F;
-	Thu,  6 Nov 2025 18:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFC12D877D;
+	Thu,  6 Nov 2025 18:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452884; cv=none; b=i3ZpTM81NgaBAbtRlWaBprAQbZIRcABAiuklRYoruUVZztyvR4tu39WsCEGgikdX3nQquSAe0mwGa0eDZ1LH/jsGyS2NqWo+35wBrGsjjc20R5okg7G3Xpq0wd/gtdOhXusYq70V2au8qawLTzEftoo313McetbZUjfBS9TRlpY=
+	t=1762452998; cv=none; b=RiMgXdJAqFcGlUmbgDnqP5x65uiq262w+Lmt4RIpwK0bd6AE/WFqsX32Csv4WF14nkMuUISY+WRtxCl1mU5COqYsoldA7pbSxb4U6XsTf5rQvGcgt32f+ize4oi6iGgstG/rFWqHk4iVAudPFgkEyMxsiHl6ZRpeyN+pNT4iZGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452884; c=relaxed/simple;
-	bh=TuHLkmP7oc7f1fwGrsHYpTvZNlACxygQSvckAoQGFAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nm3ZSOgwl9l/zxS57ttqqTb61pCaAa4jD1cdLyUSN9BZD4Uelpcivpx+RUcDtPJb6vjb53RU5vgNwLMYAF5VU8Lag/IsmDFGbb14dxZizcl3+MgXW0uUWV4iiOGRmytJf4fCshuKEkIWMEzyK7B1pCnQQFopy9HwHhgZOYUjgZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UiNhbo12; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762452882; x=1793988882;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=TuHLkmP7oc7f1fwGrsHYpTvZNlACxygQSvckAoQGFAU=;
-  b=UiNhbo12y/w3+0aQdDy7j6E5JUsWd4ne7OHyv7CmuKx6lH7dkqdDqIl9
-   hlG9Euot1Gqwce6PS/acT7IbZ6FNXnlUm1HEk3OcQFXKHhYUxS7WhP5cH
-   /uprq8cfTu5toOAfk+yy0daRD7kW7oeWBgCQbJPSbxLxpcybdD1oLKM8K
-   4dTd0GXQ9xEDtOoHf9JDfwIBG6rsHlbYmfGHSnycQfFPKfgwrfUFSB/CW
-   ngluLIT9twGheZ1oE25K+iEoapZqk+puTKwboqMPy2kB4/6DC8UgMo/Rg
-   9Jbn+SBlz1zDMTtqB8okrdXBeneeV3ZgTf57jAVLPX7Gw0L6tGNcUjI2O
-   Q==;
-X-CSE-ConnectionGUID: 1KO+HuPUSJ6P5Lnbee4OVQ==
-X-CSE-MsgGUID: fAMSPbduTYWgbwc5gNc5xg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="68251111"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="68251111"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 10:14:41 -0800
-X-CSE-ConnectionGUID: yrcWH+axQQWKTfc/aTiusg==
-X-CSE-MsgGUID: LElf2maNR6+qrVRe5mwBWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="193000886"
-Received: from abityuts-desk.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.224])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 10:14:38 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vH4VH-00000006DZ2-3ofE;
-	Thu, 06 Nov 2025 20:14:35 +0200
-Date: Thu, 6 Nov 2025 20:14:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Alex Davis <alex47794@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Borislav Petkov <bp@alien8.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
-Message-ID: <aQzliw1B5DPKcwi5@smile.fi.intel.com>
-References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com>
- <20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local>
- <aQzJveMYT6O3EHeK@smile.fi.intel.com>
- <20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local>
- <3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
- <ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com>
+	s=arc-20240116; t=1762452998; c=relaxed/simple;
+	bh=WilPTc4l6SbkcmoD6H9/XVoLeq69nGoaUqu2FKouRnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GLKSjm/docvYoBj0JQrlp5WBjxjqVbLd95+XoLILAdFEOtrv9tlkcf5m68acONLirMtkVGAbDvprQrP4Gcc7D6ZHUehlme/K5OZWuk0qKnprWsfGNt7vJtmmlR9ZUO+sYM9m/cwaTnEEFDq0/fLy73eiikQmPtN0stYAO0b80U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=pass smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=UAurMIDh; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 055C04447C;
+	Thu,  6 Nov 2025 18:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1762452989;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IbaUwN97vGeANThuFDgulgsFTpORSyAqqWAycmMvn0Q=;
+	b=UAurMIDhvSirMkEYhH8XOdIrF0QaJtlbdslpce4O9SGmzZ/RKVM2eyy3koQ1nl05Ga1WZP
+	MIIwfeUBRdE4R7HtdNQgD57Z4zaSOcFfy76RbFos318PSt9gCCOHdXeT1e6e5LB2nBJaY5
+	kJXkGISsNkt9PJKtrBDT/Tx0VhibOWRh4auHXKLPA90bT2s7UzHj0wpVY0I8P+vTQ5s7hj
+	NIyGIKu2Hj5jB9mUJ0LU5oE8qRFon9ywu8lkYFg9UgTtm7vwwFR0z5q4c3E8s81VgjVZ68
+	dyfbk+1hPIPAUNuMSq9bPGb6asMguUHhfTTRJXxiGnA/qEm0HkKKA3TKKcUu7A==
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Greg Ungerer <gerg@linux-m68k.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-m68k@lists.linux-m68k.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] m68k: coldfire: Add RNG support for MCF54418
+Date: Thu, 06 Nov 2025 19:16:17 +0100
+Message-ID: <4689159.LvFx2qVVIh@jeanmichel-ms7b89>
+In-Reply-To: <aQzHO6Ty+l1Bwt6N@lizhi-Precision-Tower-5810>
+References:
+ <20251106-m5441x-add-rng-support-v1-1-ee8230910d17@yoseli.org>
+ <aQzHO6Ty+l1Bwt6N@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeejgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtqhertddttdejnecuhfhrohhmpeflvggrnhdqofhitghhvghlucfjrghuthgsohhishcuoehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrgheqnecuggftrfgrthhtvghrnhepffevhfduvdeludeugfdtleduuedvhfeuvdevgfeiieefieevteektdettdeifeetnecukfhppedvrgdtudemvgdtrgemudeileemjedugedtmedvrgegtdemfhefrggrmeejudejvgemudefsgdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmeduieelmeejudegtdemvdgrgedtmehffegrrgemjedujegvmedufegsvddphhgvlhhopehjvggrnhhmihgthhgvlhdqmhhsjegskeelrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrghdpnhgspghrtghpthhtohepudegpdhrtghpthhtohephfhrrghnkhdrlhhisehngihprdgtohhmpdhrtghpthhtohepghgvrhhgsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnu
+ higqdhmieekkhdrohhrghdprhgtphhtthhopeholhhivhhirgesshgvlhgvnhhitgdrtghomhdprhgtphhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Thu, Nov 06, 2025 at 08:00:36PM +0200, Ilpo Järvinen wrote:
-> On Thu, 6 Nov 2025, Ilpo Järvinen wrote:
-> > On Thu, 6 Nov 2025, Borislav Petkov wrote:
-> > > On Thu, Nov 06, 2025 at 06:15:57PM +0200, Andy Shevchenko wrote:
-> > > > > So I'm seeing this with an allmodconfig build too:
-> > > 			       ^^^^^^^^^^^^
-> > > > > depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> > > > > depmod: ERROR: Found 2 modules in dependency cycles!
-> > > > 
-> > > > I'm surprised it took so long to people to start complaining.
-> > > > 
-> > > > So, some of those are modules? Can you share the
-> > > > 
-> > > > 	grep 8250 .config
-> > > > 
-> > > > part?
-> > > 
-> > > See above.
-> > 
-> > https://lore.kernel.org/all/87frc3sd8d.fsf@posteo.net/
-> > 
-> > I wonder if 8250_rsa.o can be put into 8250_base.o where most of its 
-> > callers are anyway?
-> 
-> This seems to resolve the build issue for me:
+Hi Frank,
 
-I prefer this solution to anything that suggests to merge the 8250_rsa in
-another module.
+Le jeudi 6 novembre 2025, 17:05:15 heure normale d=E2=80=99Europe centrale =
+=46rank Li a=20
+=C3=A9crit :
+> On Thu, Nov 06, 2025 at 08:10:08AM +0100, Jean-Michel Hautbois wrote:
+> > Add platform device support for the MCF54418 RNGB hardware with clock
+> > enabled at platform initialization.
+> >=20
+> > The imx-rngc driver now uses devm_clk_get_optional() to support both
+> > Coldfire (always-on clock) and i.MX platforms (managed clock).
+> >=20
+> > Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+> > ---
+> >=20
+> >  arch/m68k/coldfire/device.c       | 28 ++++++++++++++++++++++++++++
+> >  arch/m68k/coldfire/m5441x.c       |  2 +-
+> >  arch/m68k/include/asm/m5441xsim.h |  9 +++++++++
+> >  drivers/char/hw_random/Kconfig    |  3 ++-
+> >  drivers/char/hw_random/imx-rngc.c |  9 ++++++++-
+> >  5 files changed, 48 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+> > index
+> > b6958ec2a220cf91a78a14fc7fa18749451412f7..9d8f844e319a98f0afb79cceb544c=
+2d
+> > 3029482a4 100644 --- a/arch/m68k/coldfire/device.c
+> > +++ b/arch/m68k/coldfire/device.c
+> > @@ -622,6 +622,31 @@ static struct platform_device mcf_flexcan0 =3D {
+> >=20
+> >  };
+> >  #endif /* MCFFLEXCAN_SIZE */
+> >=20
+> > +#ifdef MCF_RNG_BASE
+> > +/*
+> > + * Random Number Generator (RNG) - only on MCF54418
+> > + */
+> > +static struct resource mcf_rng_resource[] =3D {
+>=20
+> const?
 
-If it fixes for the reporters, feel free to add my
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Why not, but I wanted to be consistent with all the other structures in thi=
+s=20
+file.
 
--- 
-With Best Regards,
-Andy Shevchenko
+JM
+
+> Frank
+>=20
+> > +	{
+> > +		.start =3D MCF_RNG_BASE,
+> > +		.end   =3D MCF_RNG_BASE + MCF_RNG_SIZE - 1,
+> > +		.flags =3D IORESOURCE_MEM,
+> > +	},
+> > +	{
+> > +		.start =3D MCF_IRQ_RNG,
+> > +		.end   =3D MCF_IRQ_RNG,
+> > +		.flags =3D IORESOURCE_IRQ,
+> > +	},
+> > +};
+>=20
+> ...
+
+
 
 
 
