@@ -1,197 +1,339 @@
-Return-Path: <linux-kernel+bounces-887530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB582C38745
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:20:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBEDAC38751
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:21:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C659D4E40F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55CC1A24064
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C006199E89;
-	Thu,  6 Nov 2025 00:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F1818DF9D;
+	Thu,  6 Nov 2025 00:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qzlFUq7e"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012042.outbound.protection.outlook.com [40.93.195.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZPR8UZ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2E818872A;
-	Thu,  6 Nov 2025 00:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762388396; cv=fail; b=FSMCaFq3vSeWSmj0PFgEuFa3JteWK0hyKxJ+2kHuzOAmS+wXi5JXqUw42+b+wMWOOGc9HGSsLtdhluCRRoVMXxio31XuD+cG6+o73uvUFhffDCOgQ253KUjCz9gWH9JVvQDGUxeFaCZOVJEWOLLLw8bSndJ64MeITQJWV8Rk4NI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762388396; c=relaxed/simple;
-	bh=r4ntPR3bNpe3RBTssep8ZpQGXVvuHVPuowPmLw46gsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WKGp84de900hOXHkjolJJftPLapAUZWryv8vPC5PTaRfE7jL7EKwNpUq47hx3pvgW0g4eFG5Oo7Y9JjStsEOS7nyhS3ZGZjGKqCaqdx3eyKWaiiPzh1qlm277cARkTdQn/qX+Lswn4wVI+brsfshFCTNlrx2+sQnvmu5i0PYfkI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qzlFUq7e; arc=fail smtp.client-ip=40.93.195.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hejDqzok+1x9mi/mfDnuayv75PHOI/pWxBoXj8FKOVcef0PuZVJKEqNjA7siV086gxaCYNZdq6C6ooNMcy9Q+s7nXuFNXbMWehtEPmaAlW+JhoV5j+zH5wZkXiNTvCtVONP7TeZxzQUhZ7QOLwnZfFAoKVSSLEfFg8DEZ8x6nAKI7nOI4oy9sebbBm7oHI7om6syyYcibbi4E99BhL+QXj7Y7dtZ6znMf9A7ecLpw8ncesU5Nr6WRIHkjkdWxUxr8zpthXGrRBT/TwPd/X7Q1L+ZTEiiHoaVdPKp/aAUhcX6LTMsJFfJUeWOzMqnKFaUIKnW7Cs7QMxgJgoDFdaZJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+v5ft7yKs6ph5QIJJP6+oJvJtID6GCAcYQK6qmHG0Us=;
- b=a6qYuaBvUk44GrH0pXdWWvD0yjZ3ZzKFyKyZvWECh7ZsOiqv8DawA3mE1IohMtvIpQJ1tUsLo6llrzIpw6SVJqjTmE9zHctR72gTlv3ivIEoCfQhXGqiuw1M4WYtkcPamJASAyn4E3D9f+iSHQKbjLHEG8Dorxfp9Qqjfjrv58g6onLdp919cpw4iwsIlYTOo0CV9v3uTGAoy6dYrvnJygftIcJ0yXn7HnxejVmj7m8lxoC/v7tSmzj8OrCdfxHndZQF37wglScP21bqIrL5wtN6lhiRncm1d/VyybbLrfe56koo5HU4fZey6jBkjTdHsJ9C7rvdXnVFNpPIdPg59Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+v5ft7yKs6ph5QIJJP6+oJvJtID6GCAcYQK6qmHG0Us=;
- b=qzlFUq7eo8OtupjCeEc5Jp+gNeW9N54FkuJulm64zTU8OVYY4ZlUENeayWCqkDATvkqVtHY5mK8RUsAJ2fU575N90BdLIdYzd0DukYBN78Xg3gkii8/wntx0ikFG0yPX7JgeWPh8cRb3GPguO8PYvj09yHG1MgLSK3Lyxhtq3UVIHguepVzV4t11xt0UlDs1OgM/b97q3tJrD1A2yyIgn3+gqZ0ZJKLlCQ+zf5wALn6rYsi6vpzXSu8FBUDvTrTGSiSOueXS6CkQQvLJiUr4T/ynrzGt7oABUrz3kR1kRzibfOwv8eK8jTWI02nq2nr0OWLUTuU6CvcJUBehp24vrw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS0PR12MB8443.namprd12.prod.outlook.com (2603:10b6:8:126::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.9; Thu, 6 Nov 2025 00:19:50 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 00:19:50 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@kernel.org>,
- Wei Yang <richard.weiyang@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm/huge_memory: fix folio split check for anon folios in
- swapcache.
-Date: Wed, 05 Nov 2025 19:19:47 -0500
-X-Mailer: MailMate (2.0r6283)
-Message-ID: <3DF5A0BA-D828-41BB-9E80-35EFC02D2ACC@nvidia.com>
-In-Reply-To: <20251105155752.fabace52f503424c64517735@linux-foundation.org>
-References: <20251105162910.752266-1-ziy@nvidia.com>
- <20251105155752.fabace52f503424c64517735@linux-foundation.org>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL1PR13CA0270.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::35) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28BC28E9;
+	Thu,  6 Nov 2025 00:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762388498; cv=none; b=heObBJEw+OQYGR3+l4OxaVU+Bf8Nrm+EuRyPVPenorINoN3Z8qCLaA923lQo2d3/3cKtZkfQ8Ak3dhFcmylIf4xV25V5jQ902g+a9lLfKZms9Rzd4xRhSf/4ZuTqvCKr0lW9+Ru1MNbgg6Pttvj9ylFttlbs1FFl+aAyRMyXCrs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762388498; c=relaxed/simple;
+	bh=Y2hCur7XaI2XXznlltyJtt8DhqhwBdUCRRv+EdY3nqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSqDKHfsgXsYC0zOd0vJybRcGJo/GmzoUTd0nDMO+PYm4x5Mu45uQYKMuY8so6geiuvy9Qp3573+LpFBVl5ppP9x5eG2jUsPXawbR5SEo7sJh0avT9ys+P7y3tPz0HrhegVoEWUodQ4jFPLxIjUNtaw5hkADtYT4kQRHqQdUrD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZPR8UZ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38314C4CEF5;
+	Thu,  6 Nov 2025 00:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762388498;
+	bh=Y2hCur7XaI2XXznlltyJtt8DhqhwBdUCRRv+EdY3nqw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AZPR8UZ2YVUCoEpXoestDFmN3KxGZ5XSumakh53pFpG/x9yhmbck1iRSHCz5uCh2M
+	 Y1+R625ouZXXVUKC97DVaSsYeI8JCgDBj/YdZopEIWYnjDqNsO3mIKsyieD2Upp1YM
+	 8AEGWn22IY1a94p3qvF67qGJx3M7ihMoSaO6It5x+e01M4UTubNvcrQemf2hdRK1zV
+	 vual/m1XgseJt31v9S/CsEhDKeH15uOct/A1vaqQf7xozcXHEQegt5/YtCuxt/XjKt
+	 RMFcaCBbvkPyLkdXAN0xP00IR3+aI2DJD54Ny+lL/wxp+HSNugzbdFYFfKy2xCcIbG
+	 ZCa5rP5/ZSy0Q==
+Date: Wed, 5 Nov 2025 16:21:37 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>,
+	Bernd Schubert <bernd@bsbernd.com>, Theodore Ts'o <tytso@mit.edu>,
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20251106002137.GQ196362@frogsfrogsfrogs>
+References: <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
+ <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+ <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+ <20250916025341.GO1587915@frogsfrogsfrogs>
+ <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+ <87ldkm6n5o.fsf@wotan.olymp>
+ <CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+ <7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
+ <20251105224245.GP196362@frogsfrogsfrogs>
+ <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB8443:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31337e21-7d59-40ae-81fd-08de1cca3327
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?t+8CL1fZuxYLwyfrDr/cttBxKxazZhRJ5SrRs1L9LvUpVmd6+I5PfF9kScji?=
- =?us-ascii?Q?Hs0tRu5hm3U39QUmGVBPEFYSJ7ySoWKP8lxc/R2EQ/a5JBsVYuw5MYYXGeOJ?=
- =?us-ascii?Q?ShqOave9qwGxrGWHWBXghaSONwYu6l8EKFl9fs500RN1DKCQCB7idg7aXgKH?=
- =?us-ascii?Q?ndpQc/zjpqEeNZ13vJsKkIqrJDqlcpHRBd3I3lY5NbzuB1olOLgzyuRfDiHm?=
- =?us-ascii?Q?O4d7nHdLOtjz7GhhL63OFtXuQEwO17hWaZEhfHMIskiaSHqez/KL0IqoDfjN?=
- =?us-ascii?Q?4TkxuIPFFR9ZWb8s9z9uMSMMP5xgZhPdkk3bkwT1fkiL14WeJx9BBqJtwGUK?=
- =?us-ascii?Q?pf9pdQmiial1M01AYw1OiZkB/nUzpdZcsTKAoKA3dsVp+td1O0o+apxmcU33?=
- =?us-ascii?Q?or7QvPpXnYncAqZumC7SDNPNuwWPaql6SuKIlDJyV7gZo97nvrb8/j0VtVWy?=
- =?us-ascii?Q?4qjwWxoGUIKvxU2fc7RPjK+nS6Zpil7p3Sj7fOAYCAxiPVDk9Lr4qRkTPNX9?=
- =?us-ascii?Q?1VtUTwcl5HTdhwx3vlP68if1REMSx0kNT/Awx5cT3ylWjk6DIdiyV56Fia0/?=
- =?us-ascii?Q?IESGeMh0e9qgaph5saUIkf4cXL4hX+io8w5u+IUX3HqmNkBzx8YVSfZSy67q?=
- =?us-ascii?Q?WSQbOrKDyZOpviMUCzThN75MLOQx3Y8yC3rRsP7TRAdkeWwF9ypSb6pGB7CV?=
- =?us-ascii?Q?xm7NK1HHOx5OjoEdYEacTBZUPhe5HT9/dDcLuj3e3wKjXqKVisjkQN7c3NCJ?=
- =?us-ascii?Q?5Ybq2Apj17NCPgWd5uxfGSVPO7+gqw0lhdSzfKNA7tHy8loya6Oz+iMkmEPs?=
- =?us-ascii?Q?v22jYIvMu+VwgJ53AJmbuzJviDyCWMq1k1RdXG38s9t+t1QfhqIy3C5Jg5mu?=
- =?us-ascii?Q?ueo9dop8lJN3sQvnExQauUHU9ETgTxWUM0F5wpEUmGjU8okbNCFfFoqL7fR5?=
- =?us-ascii?Q?48EXYz0rR+ZFDT92UMiy2KZ84NjvhDsjJKFDGhOQSkH/ViLOQGpAA82biqwq?=
- =?us-ascii?Q?XPFAuJZ7REaHZRlWjMQmiTcxa/J6Kj+XeV+LniLq5zHp6LQM8ZOW8Ev5LlSa?=
- =?us-ascii?Q?vuUMsAio6HbW0DblS/WwsOrDacnlSCnvqov4dq+1zIbERl+tSxSACJP8Gb/s?=
- =?us-ascii?Q?R2bsOz8jSHi+25bnZ34u6MyvRcC3EKTDNzDI08ANbO6mVWmIll0Kh2jHXXE6?=
- =?us-ascii?Q?1bynNU40JJD8zGCewiX2tp0Td2z626MuFkUoo/uyR7JifbY4b1s7gtm8e7oR?=
- =?us-ascii?Q?xjsLfkwSiPT/cfboYBxkqf/GCgbnSXQvCEnmnSVAZK50SGHSQ+us8ENuZtEn?=
- =?us-ascii?Q?p//xoCzQ7t2rtRx2Nx4qewIt/LVm8PaVJyfmYp1HSurpqlk1G2XkFQzpyqsU?=
- =?us-ascii?Q?RCzuQwGegF0yE8RYAJfJmDLVutXLbsn/eArQfZwcvStwCX1+kudQBnGM9dXh?=
- =?us-ascii?Q?7xB5zViYoHZ0cmzEChCOqLyFXBywfKlGUgrDGYhXmlzvyA8xn6JQiQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WO7PzOdzJRY/1pAaue6+Q++RCeUu7bDteuZaHwc66wzBeXYA+iptfTi0k2x3?=
- =?us-ascii?Q?Dh+VQITldulH0r4O+Fd9jNXjX42E9EAWJb0nl4RFHtsO+13Ytu//2vunGw2g?=
- =?us-ascii?Q?l8oLmdYA3vXB5METYnY7yXNvApuGqttEo9UnEN2JlA4np8OLmHjMh+bs66Ht?=
- =?us-ascii?Q?SxY54/F12+5cgpmKYh8Pxmd/KaaBShQ9wXw7HKbbRilwGVrPJKDXTVJtx5ok?=
- =?us-ascii?Q?ciujvOLxpywEC8ONCSl0Fq2Qosw5CA3D5F1T51yir/S2sIL5FEyJmVmD21L8?=
- =?us-ascii?Q?fHnxmWgQjb0jb8MrrwcnHYypRq2U5xN02MDWzhlGbGQAtI9LO0bLeHxzPlVi?=
- =?us-ascii?Q?YMrQjXVHO9WK6sjcBRByfsiF9dNYmKswR6xyWNgXQJxGH7dteRp3TZ00K12u?=
- =?us-ascii?Q?5nNkpOnWMqrRnSnHD6+/F8rrj8IEUeRsyfM4vFN8xrqnAK7byauV/m4QwruE?=
- =?us-ascii?Q?t/hIT06R4WG7aR2/IBo0ST/aa/E8W7t0L9OqH8Y7XtASbW0riYgpniod2sk9?=
- =?us-ascii?Q?ex4fc8G+EBJyTyh7HzS91l3W8Oo8NCtNtRaTBm2CxhAzi+O2EArmJtUDc5cG?=
- =?us-ascii?Q?W4Rjt/ojcz9mRsEgVfQp4bokvSpXR5QwRoNdgNdUVk3VmzdNBIPFhdX5m+Y4?=
- =?us-ascii?Q?LMLpH7sr0k+uPnEPMAEgb8eaOKilRl1yCsTvqYsZ0EboEp2DJOCAOa8P9ktR?=
- =?us-ascii?Q?MMJE/pm/5Bt3TDbO/XagQlq7Hs0TWJeqKjWdc4w+WzP1DvV5Z8BNU7HePl/m?=
- =?us-ascii?Q?ISYVFlABNMKKQ3JXYbTDMuU8QcSzb8v5XsX9lK0sw57b2jQdjBuyMvvEIxfQ?=
- =?us-ascii?Q?FBSraKwcJk/9YVtKB3IEP5+Tlc4xSNUGVVxQp+eHfoXynxw1Kd6BYwWWhJtT?=
- =?us-ascii?Q?oJWOrUFrGIx7jzYfA5Hn9/5lGVd0S/v3JNGAbRCpVkkjCYc/PixBgQDjIcuh?=
- =?us-ascii?Q?syRnUQujCGty8VJodiPcqminHv5A62xX1LY+ZmyMjfH1BH44bOcaeGg6MIu3?=
- =?us-ascii?Q?rV3+y2dQ3iJxI/lT1wGMlPKay4tQ7jc6psktUvBX3S2icvj3DQZHq96zIJ6d?=
- =?us-ascii?Q?3bdFDlGgn0PAKKojrqa2LPfH93uIMVCE+tt1anR4NxLLTp8V3O5n754AS7VG?=
- =?us-ascii?Q?dWH7ZTQaur5NXmr1urKLktiCqzwj5QPNRNSjbjb8YGcTLjgmalo+K7xBvGNv?=
- =?us-ascii?Q?HovcZaEobJGLhUi11u0jxOCHSfY+FEPz0aLOPK7NRII+TPG5rFBcGDo2zhBq?=
- =?us-ascii?Q?S9I4HQNIGQIqyEC742aTp+jib1cekU6Cpj3BHjYFgpR/L2gD2NQqKQ3se3v+?=
- =?us-ascii?Q?uLI8DWb2poFHEHKnnq3SFclD2n9uFDz6A/oKRQSS9GLyH00ghZi1Ij0mxzeX?=
- =?us-ascii?Q?Ay59QQ1guBgV0jY4msdKNX3lC+qoWJPQwRGglHkcirReznSthBx3ZaTghlH6?=
- =?us-ascii?Q?12g12qK4RuOnvQyOSOhWpBicLMXZFjB8+Cjy91jjFscmTtC6J65/jmJsWrKV?=
- =?us-ascii?Q?Xd8X3whclwZ7LAj45ujsdLZ//+3rzxPknTfpBOwlmqAQdDfoIfTnbOkqwBRw?=
- =?us-ascii?Q?wDL7Gynb8F1g3vNCI3sNcNTeQYbyEehO9kWvud0r?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31337e21-7d59-40ae-81fd-08de1cca3327
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 00:19:50.2007
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UdKiqi+dLmKmWvj386aYxGzBFlZfm7O1x3mjf9CW4EMH13pWbff6efhKSWbt65Y6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8443
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
 
-On 5 Nov 2025, at 18:57, Andrew Morton wrote:
+On Wed, Nov 05, 2025 at 11:48:21PM +0100, Bernd Schubert wrote:
+> 
+> 
+> On 11/5/25 23:42, Darrick J. Wong wrote:
+> > On Wed, Nov 05, 2025 at 11:24:01PM +0100, Bernd Schubert wrote:
+> >>
+> >>
+> >> On 11/4/25 14:10, Amir Goldstein wrote:
+> >>> On Tue, Nov 4, 2025 at 12:40 PM Luis Henriques <luis@igalia.com> wrote:
+> >>>>
+> >>>> On Tue, Sep 16 2025, Amir Goldstein wrote:
+> >>>>
+> >>>>> On Tue, Sep 16, 2025 at 4:53 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>>>>>
+> >>>>>> On Mon, Sep 15, 2025 at 10:41:31AM +0200, Amir Goldstein wrote:
+> >>>>>>> On Mon, Sep 15, 2025 at 10:27 AM Bernd Schubert <bernd@bsbernd.com> wrote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 9/15/25 09:07, Amir Goldstein wrote:
+> >>>>>>>>> On Fri, Sep 12, 2025 at 4:58 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> >>>>>>>>>>
+> >>>>>>>>>> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> On 9/12/25 13:41, Amir Goldstein wrote:
+> >>>>>>>>>>>> On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> On 8/1/25 12:15, Luis Henriques wrote:
+> >>>>>>>>>>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
+> >>>>>>>>>>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> >>>>>>>>>>>>>>>>> could restart itself.  It's unclear if doing so will actually enable us
+> >>>>>>>>>>>>>>>>> to clear the condition that caused the failure in the first place, but I
+> >>>>>>>>>>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> >>>>>>>>>>>>>>>>> aren't totally crazy.
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> I'm trying to understand what the failure scenario is here.  Is this
+> >>>>>>>>>>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
+> >>>>>>>>>>>>>>>> is supposed to happen with respect to open files, metadata and data
+> >>>>>>>>>>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
+> >>>>>>>>>>>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
+> >>>>>>>>>>>>>>>> potentally to be out of sync, right?
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> What are the recovery semantics that we hope to be able to provide?
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> <echoing what we said on the ext4 call this morning>
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> With iomap, most of the dirty state is in the kernel, so I think the new
+> >>>>>>>>>>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
+> >>>>>>>>>>>>>>> would initiate GETATTR requests on all the cached inodes to validate
+> >>>>>>>>>>>>>>> that they still exist; and then resend all the unacknowledged requests
+> >>>>>>>>>>>>>>> that were pending at the time.  It might be the case that you have to
+> >>>>>>>>>>>>>>> that in the reverse order; I only know enough about the design of fuse
+> >>>>>>>>>>>>>>> to suspect that to be true.
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> Anyhow once those are complete, I think we can resume operations with
+> >>>>>>>>>>>>>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
+> >>>>>>>>>>>>>>> fuse_make_bad'd, which effectively revokes them.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
+> >>>>>>>>>>>>>> but probably GETATTR is a better option.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> So, are you currently working on any of this?  Are you implementing this
+> >>>>>>>>>>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
+> >>>>>>>>>>>>>> look at fuse2fs too.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Sorry for joining the discussion late, I was totally occupied, day and
+> >>>>>>>>>>>>> night. Added Kevin to CC, who is going to work on recovery on our
+> >>>>>>>>>>>>> DDN side.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
+> >>>>>>>>>>>>> server restart we want kernel to recover inodes and their lookup count.
+> >>>>>>>>>>>>> Now inode recovery might be hard, because we currently only have a
+> >>>>>>>>>>>>> 64-bit node-id - which is used my most fuse application as memory
+> >>>>>>>>>>>>> pointer.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
+> >>>>>>>>>>>>> outstanding requests. And that ends up in most cases in sending requests
+> >>>>>>>>>>>>> with invalid node-IDs, that are casted and might provoke random memory
+> >>>>>>>>>>>>> access on restart. Kind of the same issue why fuse nfs export or
+> >>>>>>>>>>>>> open_by_handle_at doesn't work well right now.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
+> >>>>>>>>>>>>> would not return a 64-bit node ID, but a max 128 byte file handle.
+> >>>>>>>>>>>>> And then FUSE_REVALIDATE_FH on server restart.
+> >>>>>>>>>>>>> The file handles could be stored into the fuse inode and also used for
+> >>>>>>>>>>>>> NFS export.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> I *think* Amir had a similar idea, but I don't find the link quickly.
+> >>>>>>>>>>>>> Adding Amir to CC.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
+> >>>>>>>>>>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks for the reference Amir! I even had been in that thread.
+> >>>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
+> >>>>>>>>>>>>> will iterate over all superblock inodes and mark them with fuse_make_bad.
+> >>>>>>>>>>>>> Any objections against that?
+> >>>>>>>>>>
+> >>>>>>>>>> What if you actually /can/ reuse a nodeid after a restart?  Consider
+> >>>>>>>>>> fuse4fs, where the nodeid is the on-disk inode number.  After a restart,
+> >>>>>>>>>> you can reconnect the fuse_inode to the ondisk inode, assuming recovery
+> >>>>>>>>>> didn't delete it, obviously.
+> >>>>>>>>>
+> >>>>>>>>> FUSE_LOOKUP_HANDLE is a contract.
+> >>>>>>>>> If fuse4fs can reuse nodeid after restart then by all means, it should sign
+> >>>>>>>>> this contract, otherwise there is no way for client to know that the
+> >>>>>>>>> nodeids are persistent.
+> >>>>>>>>> If fuse4fs_handle := nodeid, that will make implementing the lookup_handle()
+> >>>>>>>>> API trivial.
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> I suppose you could just ask for refreshed stat information and either
+> >>>>>>>>>> the server gives it to you and the fuse_inode lives; or the server
+> >>>>>>>>>> returns ENOENT and then we mark it bad.  But I'd have to see code
+> >>>>>>>>>> patches to form a real opinion.
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> You could make fuse4fs_handle := <nodeid:fuse_instance_id>
+> >>>>>>>>> where fuse_instance_id can be its start time or random number.
+> >>>>>>>>> for auto invalidate, or maybe the fuse_instance_id should be
+> >>>>>>>>> a native part of FUSE protocol so that client knows to only invalidate
+> >>>>>>>>> attr cache in case of fuse_instance_id change?
+> >>>>>>>>>
+> >>>>>>>>> In any case, instead of a storm of revalidate messages after
+> >>>>>>>>> server restart, do it lazily on demand.
+> >>>>>>>>
+> >>>>>>>> For a network file system, probably. For fuse4fs or other block
+> >>>>>>>> based file systems, not sure. Darrick has the example of fsck.
+> >>>>>>>> Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
+> >>>>>>>> fuse-server gets restarted, fsck'ed and some files get removed.
+> >>>>>>>> Now reading these inodes would still work - wouldn't it
+> >>>>>>>> be better to invalidate the cache before going into operation
+> >>>>>>>> again?
+> >>>>>>>
+> >>>>>>> Forgive me, I was making a wrong assumption that fuse4fs
+> >>>>>>> was using ext4 filehandle as nodeid, but of course it does not.
+> >>>>>>
+> >>>>>> Well now that you mention it, there /is/ a risk of shenanigans like
+> >>>>>> that.  Consider:
+> >>>>>>
+> >>>>>> 1) fuse4fs mount an ext4 filesystem
+> >>>>>> 2) crash the fuse4fs server
+> >>>>>> <fuse4fs server restart stalls...>
+> >>>>>> 3) e2fsck -fy /dev/XXX deletes inode 17
+> >>>>>> 4) someone else mounts the fs, makes some changes that result in 17
+> >>>>>>    being reallocated, user says "OOOOOPS", unmounts it
+> >>>>>> 5) fuse4fs server finally restarts, and reconnects to the kernel
+> >>>>>>
+> >>>>>> Hey, inode 17 is now a different file!!
+> >>>>>>
+> >>>>>> So maybe the nodeid has to be an actual file handle.  Oh wait, no,
+> >>>>>> everything's (potentially) fine because fuse4fs supplied i_generation to
+> >>>>>> the kernel, and fuse_stale_inode will mark it bad if that happens.
+> >>>>>>
+> >>>>>> Hm ok then, at least there's a way out. :)
+> >>>>>>
+> >>>>>
+> >>>>> Right.
+> >>>>>
+> >>>>>>> The reason I made this wrong assumption is because fuse4fs *can*
+> >>>>>>> already use ext4 (64bit) file handle as nodeid, with existing FUSE protocol
+> >>>>>>> which is what my fuse passthough library [1] does.
+> >>>>>>>
+> >>>>>>> My claim was that although fuse4fs could support safe restart, which
+> >>>>>>> cannot read from recycled inode number with current FUSE protocol,
+> >>>>>>> doing so with FUSE_HANDLE protocol would express a commitment
+> >>>>>>
+> >>>>>> Pardon my naïvete, but what is FUSE_HANDLE?
+> >>>>>>
+> >>>>>> $ git grep -w FUSE_HANDLE fs
+> >>>>>> $
+> >>>>>
+> >>>>> Sorry, braino. I meant LOOKUP_HANDLE (or FUSE_LOOKUP_HANDLE):
+> >>>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> >>>>>
+> >>>>> Which means to communicate a variable sized "nodeid"
+> >>>>> which can also be declared as an object id that survives server restart.
+> >>>>>
+> >>>>> Basically, the reason that I brought up LOOKUP_HANDLE is to
+> >>>>> properly support NFS export of fuse filesystems.
+> >>>>>
+> >>>>> My incentive was to support a proper fuse server restart/remount/re-export
+> >>>>> with the same fsid in /etc/exports, but this gives us a better starting point
+> >>>>> for fuse server restart/re-connect.
+> >>>>
+> >>>> Sorry for resurrecting (again!) this discussion.  I've been thinking about
+> >>>> this, and trying to get some initial RFC for this LOOKUP_HANDLE operation.
+> >>>> However, I feel there are other operations that will need to return this
+> >>>> new handle.
+> >>>>
+> >>>> For example, the FUSE_CREATE (for atomic_open) also returns a nodeid.
+> >>>> Doesn't this means that, if the user-space server supports the new
+> >>>> LOOKUP_HANDLE, it should also return an handle in reply to the CREATE
+> >>>> request?
+> >>>
+> >>> Yes, I think that's what it means.
+> >>>
+> >>>> The same question applies for TMPFILE, LINK, etc.  Or is there
+> >>>> something special about the LOOKUP operation that I'm missing?
+> >>>>
+> >>>
+> >>> Any command returning fuse_entry_out.
+> >>>
+> >>> READDIRPLUS, MKNOD, MKDIR, SYMLINK
+> >>
+> >> Btw, checkout out <libfuse>/doc/libfuse-operations.txt for these
+> >> things. With double checking, though, the file was mostly created by AI
+> >> (just added a correction today). With that easy to see the missing
+> >> FUSE_TMPFILE.
+> >>
+> >>
+> >>>
+> >>> fuse_entry_out was extended once and fuse_reply_entry()
+> >>> sends the size of the struct.
+> >>
+> >> Sorry, I'm confused. Where does fuse_reply_entry() send the size?
+> >>
+> >>> However fuse_reply_create() sends it with fuse_open_out
+> >>> appended and fuse_add_direntry_plus() does not seem to write
+> >>> record size at all, so server and client will need to agree on the
+> >>> size of fuse_entry_out and this would need to be backward compat.
+> >>> If both server and client declare support for FUSE_LOOKUP_HANDLE
+> >>> it should be fine (?).
+> >>
+> >> If max_handle size becomes a value in fuse_init_out, server and
+> >> client would use it? I think appended fuse_open_out could just
+> >> follow the dynamic actual size of the handle - code that
+> >> serializes/deserializes the response has to look up the actual
+> >> handle size then. For example I wouldn't know what to put in
+> >> for any of the example/passthrough* file systems as handle size - 
+> >> would need to be 128B, but the actual size will be typically
+> >> much smaller.
+> > 
+> > name_to_handle_at ?
+> > 
+> > I guess the problem here is that technically speaking filesystems could
+> > have variable sized handles depending on the file.  Sometimes you encode
+> > just the ino/gen of the child file, but other times you might know the
+> > parent and put that in the handle too.
+> 
+> Yeah, I don't think it would be reliable for *all* file systems to use
+> name_to_handle_at on startup on some example file/directory. At least
+> not without knowing all the details of the underlying passthrough file
+> system.
 
-> On Wed,  5 Nov 2025 11:29:10 -0500 Zi Yan <ziy@nvidia.com> wrote:
->
->> Both uniform and non uniform split check missed the check to prevent
->> splitting anon folios in swapcache to non-zero order. Fix the check.
->
-> Please describe the possible userspace-visible effects of the bug
-> especially when proposing a -stable backport.
+I think if you can send arbitrarily sized outblobs back to the kernel
+then it would be ok for a filesystem to have different handle sizes for
+a file, just so long as it doesn't change during the lifetime of a file.
+Obviously you couldn't then have a meaningful fs-wide max_handle_size.
 
-Splitting anon folios in swapcache to non-zero order can cause data
-corruption since swapcache only support PMD order and order-0 entries.
-This can happen when one use split_huge_pages under debugfs to split
-anon folios in swapcache.
+--D
 
->
->> Fixes: 58729c04cf10 ("mm/huge_memory: add buddy allocator like (non-un=
-iform) folio_split()")
->> Reported-by: "David Hildenbrand (Red Hat)" <david@kernel.org>
->> Closes: https://lore.kernel.org/all/dc0ecc2c-4089-484f-917f-920fdca4c8=
-98@kernel.org/
->
-> I was hopeful, but that's "from code inspection".
-
-In-tree callers do not perform such an illegal operation. Only debugfs
-interface could trigger it. I will put adding a test case on my TODO
-list.
-
->
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
-
-
-Best Regards,
-Yan, Zi
+> 
+> Thanks,
+> Bernd
+> 
 
