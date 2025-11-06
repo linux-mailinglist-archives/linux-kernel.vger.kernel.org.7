@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-889348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55691C3D580
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:26:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56179C3D577
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D19D53513A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:26:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C0D24E023F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C012F7ACC;
-	Thu,  6 Nov 2025 20:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231382F7AB5;
+	Thu,  6 Nov 2025 20:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VpjqOZeo"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTI/2/Jc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B512F7AAD;
-	Thu,  6 Nov 2025 20:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDFF2F7475;
+	Thu,  6 Nov 2025 20:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762460799; cv=none; b=dq8VNRR6LLazgZoincjTeqMB+kSU8o9e81AkPEP1e5cy38KtJ8XYdj7MjvMWa8YiIFIzF7UnVUr0CuDknx7ytSeuM+c0wUzQM5JFBU52z1H9KwVlGhnfARw2fkVgutjfk9dRLPwKYXRtn2fOEtV4pmM7p9v+m/GS1WndSafZIsg=
+	t=1762460745; cv=none; b=lteaFtX9pdXlPb/jpszNXD8ErOw6Tz0LXZDOdAEqQW5zhfyGPtKlKeWwEP++rmsayYWl9UKgpH1LkwZrDpShm5/2w3rpUkk8prua35Hi93bUON5yneXCPp7fs7mLvREY69TGuoqrrABzYohhMudfxPEx7DlJ7xnm2hwDRjo7EyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762460799; c=relaxed/simple;
-	bh=XZAtY+Rd14/2cybaJxKcM5kD5I/W2njZtjsegKIfEcA=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=cMi8chAi/oAeeV642RFdexq8CJ4/0Mgrcg8VJYvHhLbTK5iytFA0mIgm7K/4Mj+tsH62edLXx6zxWoP/TcnemS3wD3VWV3+C82mblVdVo7RQlfLlGhwjom6/7FHQC7C+ynysDJIxzf0cS0/O9H70GgqkOqD8zsjljKR0nCWPrkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VpjqOZeo; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id H6XrvyPdL8BgRH6XrvECBk; Thu, 06 Nov 2025 21:25:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1762460725;
-	bh=NQMjb3iEHPYWazi+q361lmQ6S9XwgUIL/XHW25HFaI8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=VpjqOZeo7T+Xk9AVJm9oZCR/KNJFfABW2xmLNx2EosNbSObH5FLDZFdRP8JxJPrnw
-	 zdhH+CRI2IqrVFVYWtbnjoLnZQsYkrOQrXNN3hdUu69AlzNvFSKZNI/pdRsSisFS/V
-	 nJouBMLdPT5WHZ6k/ZZt3mfONtIhqdCEo+11DbuFvxUzvemZCzEL6aumNyeyv9Wq/O
-	 14VfheJAGE+KYIF7mr67smSQa4OBQwDyJaxtkDOTLBd+AXpNYfsFw1W901XHJkFVNq
-	 ppXUxW1RHmgJgCcPoJcaS/YnYTKbWcBAY+JyNO7c71pElGQuJdRRl9U4QlfBuqCWYn
-	 tPvBDAX5ZsLhw==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 06 Nov 2025 21:25:25 +0100
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <bc9074b9-27b5-4a31-ab85-ef7fcc309523@wanadoo.fr>
-Date: Thu, 6 Nov 2025 21:25:23 +0100
+	s=arc-20240116; t=1762460745; c=relaxed/simple;
+	bh=SRAMAkyKyrD5o7pBxELMq9QSxVAxrDV5ZGYyJJUGbzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqbcxKUPs4Y7jZwDpi1vN5VvuOvtprM6Tq2/h0mTleWSpHy1J7BBPdn/T0AQEtgum49MWZ3yB7R9kLR4AhHWV81kHTvN3EJMncOUQCPsPjlod0IPLfGUJYGllq0rCC40eyQTilTsZ/e5MoV/8FZ1QLsbl9PhR5MrYVy6RiItB+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTI/2/Jc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BA9C4AF09;
+	Thu,  6 Nov 2025 20:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762460745;
+	bh=SRAMAkyKyrD5o7pBxELMq9QSxVAxrDV5ZGYyJJUGbzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTI/2/JcJmU96Xy/sXPupIKhToZV7iBp76fw6EvsQV+iF3THlj0TDZ1YNHEdJQm/A
+	 7KsXVzAL4s7c6KVXQ/R1NxFf2F71twQWCB0RNrCtcsCOudH7vnBZWUHZCxNl2zBxpc
+	 K94/D77UYEoOvv4YeuZQT0V7C6xT0yFXBOrUpP7l5KO4ZS7Mjo8MEO9SSQssa41OpY
+	 Nnntd9EKRrMZYVdRWA+sf9OiRyzh6BN2DKawkm/Pm0To2w5+ebfCgs4H4n+57c3Vhb
+	 DmYqXFLy0EnmaBK6CkcE/3pxAiPeU4KLFHglaw3oQdDreSq1NcQychtYuDcWdX5xUv
+	 eHdhjfhM7xiNA==
+Date: Thu, 6 Nov 2025 17:25:40 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>,
+	Trevor Gross <tmgross@umich.edu>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/1] perf symbols: Handle '1' symbols in /proc/kallsyms
+Message-ID: <aQ0ERJiTpiA_rL5D@x1>
+References: <aQjua6zkEHYNVN3X@x1>
+ <aQltxZIVd6w5VNtI@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] clk: en7523: generalize register clocks function
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-3-ansuelsmth@gmail.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251106195935.1767696-3-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQltxZIVd6w5VNtI@google.com>
 
-Le 06/11/2025 à 20:59, Christian Marangi a écrit :
-> Generalize register clocks function for Airoha EN7523 and EN7581 clocks
-> driver. The same logic is applied for both clock hence code can be
-> reduced and simplified by putting the base_clocks struct in the soc_data
-> and passing that to a generic register clocks function.
+On Mon, Nov 03, 2025 at 07:06:45PM -0800, Namhyung Kim wrote:
+> On Mon, Nov 03, 2025 at 03:03:23PM -0300, Arnaldo Carvalho de Melo wrote:
+> > Just FYI, I'm carrying this on the perf tools tree.
+
+> > I started seeing this in recent Fedora 42 kernels:
+
+> >   root@x1:~# uname -a
+> >   Linux x1 6.17.4-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Sun Oct 19 18:47:49 UTC 2025 x86_64 GNU/Linux
+> >   root@x1:~#
+
+> >   root@x1:~# perf test 1
+> >     1: vmlinux symtab matches kallsyms     : FAILED!
+> >   root@x1:~#
+
+> > Related to:
+
+> >   root@x1:~# grep ' 1 ' /proc/kallsyms
+> >   ffffffffb098bc00 1 __pfx__RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
+> >   ffffffffb098bc10 1 _RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
+> >   root@x1:~#
+
+> > That is found in:
+ 
+> >   root@x1:~# pahole --running_kernel_vmlinux
+> >   /usr/lib/debug/lib/modules/6.17.4-200.fc42.x86_64/vmlinux
+> >   root@x1:~#
+ 
+> >   root@x1:~# readelf -sW /usr/lib/debug/lib/modules/6.17.4-200.fc42.x86_64/vmlinux | grep __pfx__RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
+> >   150649: ffffffff81f8bc00    16 FUNC    LOCAL  DEFAULT    1 __pfx__RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
+> >   root@x1:~#
+> > 
+> > But was being filtered out when reading /proc/kallsyms, as the '1'
+> > symbol type was not being handled, do it, there are just two of them at
+> > this point.
 > 
-> While at it rework some function to return error and use devm variant
-> for clk_hw_regiser.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->   drivers/clk/clk-en7523.c | 148 +++++++++++++++++----------------------
->   1 file changed, 66 insertions(+), 82 deletions(-)
+> Do you know what the type '1' means?  It seems they are from Rust.
 
-...
+They are related to anonymous Rust closures in the QR encoder for the
+DRM panic, this part:
 
-> +static int en75xx_register_clocks(struct device *dev,
-> +				  const struct en_clk_soc_data *soc_data,
-> +				  struct clk_hw_onecell_data *clk_data,
-> +				  struct regmap *map, struct regmap *clk_map)
-> +{
-> +	struct clk_hw *hw;
-> +	u32 rate;
-> +	int i;
-> +
-> +	for (i = 0; i < soc_data->num_clocks - 1; i++) {
-> +		const struct en_clk_desc *desc = &soc_data->base_clks[i];
-> +		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-> +		int err;
-> +
-> +		err = regmap_read(map, desc->base_reg, &val);
-> +		if (err) {
-> +			pr_err("Failed reading fixed clk rate %s: %d\n",
+drivers/gpu/drm/drm_panic_qr.rs
 
-Would it be better to use dev_err()? (here and in other places)
+    fn from_segments(segments: &[&Segment<'_>]) -> Option<Version> {
+        (1..=40)
+            .map(Version)
+            .find(|&v| v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum())
+    }
 
-> +			       desc->name, err);
-> +			return err;
-> +		}
-> +		rate = en7523_get_base_rate(desc, val);
-> +
-> +		err = regmap_read(map, reg, &val);
-> +		if (err) {
-> +			pr_err("Failed reading fixed clk div %s: %d\n",
-> +			       desc->name, err);
-> +			return err;
-> +		}
-> +		rate /= en7523_get_div(desc, val);
-> +
-> +		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
+That 
 
-I think that the issue was already there before, but should we have a 
-corresponding clk_hw_unregister_fixed_rate() somewhere in this driver?
+Using rustfilt we get:
 
-I've not seen any.
+core::iter::adapters::map::map_try_fold::<usize, drm_panic_qr::Version, (), core::ops::control_flow::ControlFlow<drm_panic_qr::Version>, drm_panic_qr::Version, core::iter::traits::iterator::Iterator::find::check<drm_panic_qr::Version, <drm_panic_qr::Version>::from_segments::{closure#0}>::{closure#0}>::{closure#0}
+#
 
-Or use devm_clk_hw_register_fixed_rate()?
+Both are for the same symbol, the __pfx__ is to do some stack probing.
+LLVM may introduce this for other reasons.
 
-> +		if (IS_ERR(hw)) {
-> +			pr_err("Failed to register clk %s: %ld\n",
-> +			       desc->name, PTR_ERR(hw));
-> +			return PTR_ERR(hw);
-> +		}
-> +
-> +		clk_data->hws[desc->id] = hw;
-> +	}
-> +
-> +	hw = en7523_register_pcie_clk(dev, clk_map);
-> +	if (IS_ERR(hw))
-> +		return PTR_ERR(hw);
-> +
-> +	clk_data->hws[EN7523_CLK_PCIE] = hw;
-> +
-> +	return 0;
-> +}
-> +
->   static int en7581_pci_is_enabled(struct clk_hw *hw)
->   {
->   	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+So far, '1' symbols are Rust symbols, in the Linux kernel, for unnamed
+closures and its prefix code checking for stack space, Miguel, do you
+have something to add?
 
-...
-
-CJ
+- Arnaldo
 
