@@ -1,325 +1,196 @@
-Return-Path: <linux-kernel+bounces-888986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF3CC3C6A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:29:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071CCC3C6FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:31:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 826131884C50
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:26:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 862624E5469
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624B03563CC;
-	Thu,  6 Nov 2025 16:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5E73570B1;
+	Thu,  6 Nov 2025 16:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wzh1+7BN";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="naptq2FY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VqgjbaIJ"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013018.outbound.protection.outlook.com [52.101.72.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631E43559E2
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445929; cv=none; b=og7d0VR1CibQLxoL1UgtAf7mtIzrq0gi0Le1hIuP3E7cx2ImeBoRcZRa42/Y2S7rXGtJT8Ax3OOaOgUHSmkAGSg0YDFJNG0wjhgOKpkLKKMxrGFQWIVPbjHnS8mZNb1qIGrtIvzk9We2+5g0IUFeYfv1rFYBqY30M+8EJJ3PVFs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445929; c=relaxed/simple;
-	bh=P6dqZEO6asp6iI5HNxSfu9qxJ1GAnGbKVOQiwtyp9f0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZLelGDIuVkaFVB/nJS2E2jyGRf99Rg5hMKZ4Vyn/nu0iXcVLI87ILeQG2bmjEy+tRVPm75RNrLA2YTmcQqbL1OVRd0wdhD+evgsMSPDCbdoiHuoXsamFC3dCLV0MuieJ5hZSuS0Eaq/EvxwtDBqxm1O4EqXM9ruV8cmMMvCSVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wzh1+7BN; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=naptq2FY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762445925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HlaSIzfnjC1rglQ5EMwdrXBGdH8/0geumBayPNyr3uQ=;
-	b=Wzh1+7BNBcYsPVC74gTquuXgmHuWiarz/scb5Rq9CZxeKqNg1W5PhRKk6nQAPtHkL3p3a4
-	eoql4tFU/y3SyDTEiiZRrjswB9vJ2WvDL9ixd4XLXPJfRiBpMeuahpVmMOyDq88rR838nL
-	vGu8t4pxeOoF9gGyGd9NT1DpqVlkSjI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-uqJn6Mn0Oq-xtWtCsBI8Tg-1; Thu, 06 Nov 2025 11:18:43 -0500
-X-MC-Unique: uqJn6Mn0Oq-xtWtCsBI8Tg-1
-X-Mimecast-MFC-AGG-ID: uqJn6Mn0Oq-xtWtCsBI8Tg_1762445923
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-477563a0c75so7692675e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762445922; x=1763050722; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HlaSIzfnjC1rglQ5EMwdrXBGdH8/0geumBayPNyr3uQ=;
-        b=naptq2FY7vSy6FB81bWqWweXzkkfSANvNAOsfCt7jdTi8zUsspJAuzTbEFHsLhWyVV
-         Iuh+DSI02FpkpGfOyGdH5Z1qJOP52LlN8PMHKGCVGNFj8tZ+CAOj8ZTg5DKHXKthWOEQ
-         0ckrpwdpyVS9f/+4Anqcw+8Dx8D4+rgsbontvpkJjbN+2eljAeLg9kLr+GiOyXbRo0L5
-         o0AiiCM41C+2hPMzKrhSg+9FgzH8tNnZyQ2s0hY6r8mLNUehUZQ+/WX6FkLbydRWDypx
-         NTQqLvYAzNxfCuxcGznAqxNxtH97qXY/AZiCRlWTOpx/iA2P0sZGxHvQn8YJ8XcPMI3l
-         T6cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762445922; x=1763050722;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HlaSIzfnjC1rglQ5EMwdrXBGdH8/0geumBayPNyr3uQ=;
-        b=IdbtV0yLRN8yGRH+mneSHthKRAaG4iY8Rl9FqPYv8Bs+blYim+wdqNNeW+91lGQPrj
-         5S4rqF3lHPxbRKvqI1NY6SvuilzeZ7qc4rAfEHtfZOhJSTN+PsUyJWiu0r8OiA/MzLyR
-         kR+wPdBPKzUGXnYXuTJVx7nEJOQkfSvXPpqVMg4BllRMvav/+LOmXTDmSpaI9+ZTaPrx
-         AhC5E04Mui8m65FnfF22Z2Zyn+fqxQa2o6k6+f/pXpVWSwdCKBRPmr9qGjrA47bimcwQ
-         0WpItBEA8ckjQC8vXCtbLufeRwWLzIcuDA609s+832pYbSI2ng3NyhzBD1O4m3DGYRgX
-         ItMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJRo2fzxinfHsit93WP/RvTUp8oTFpiBIeAiYojGTFKgTjfGmLhSwSb3dU62sMzoiGtt77OQyLMcyRw04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNRrhD25pC8Gf04TK7y/r0thANmRPyA716EUC9VfYo9gVt31+G
-	Vo+jlywQjvaBoI4tN/7gOt1prRQsC4QW2oTIKmdSlcI2qp+RydUaRLoS3TGH170ez0gT3pI6+rS
-	S7nySQlSsVkTq3dwces0MJeHQAyJb9yWMnPrE8GbU31vgsA12iQcayoRzA/iavBjtAg==
-X-Gm-Gg: ASbGncvYW+tCuBttz87AHVziv+5nQnfJLKC7MpamEFjBbq9Dzu8+A93eL4PzUIjs7jd
-	UL+LckdmViSJsQnb08ELqIa1gMZiuAiJ4Fpzeu5OwpCY/BtklWqgZ7708qY8igvoJNsmv0l9ee+
-	1CqFQeSe5rB+JlWaARiw6Vuasw2E+TIcJQ5FJhCJVMn5AmpT3WTHe8HovjEuNgFTwnLxmn4YXp4
-	Ked+4N204JUy/mLlYLcr+72FIlB9dgguz56yO/wCR3MEGOjyUCJAbDqcHUe4pRfmYhnTbnYABLg
-	nxZry56LH2shVNcxW9dOefekQx0C/zECbQ93BYfGQkIxh+UXQ8Ikkzx0aU94IRhsUwzZ6xxbTPH
-	zeA==
-X-Received: by 2002:a05:600c:5251:b0:470:fe3c:a3b7 with SMTP id 5b1f17b1804b1-4775cdbd546mr60024935e9.5.1762445922531;
-        Thu, 06 Nov 2025 08:18:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFP/WvasiwYTgtNLqdi1/A6yt0PQxbP4Abxbsn2GMIJwekrkfT7LDMidIZ3T6Hr6zobvw5ZaQ==
-X-Received: by 2002:a05:600c:5251:b0:470:fe3c:a3b7 with SMTP id 5b1f17b1804b1-4775cdbd546mr60024435e9.5.1762445921975;
-        Thu, 06 Nov 2025 08:18:41 -0800 (PST)
-Received: from sgarzare-redhat ([78.209.9.120])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477626eb4fdsm55397145e9.17.2025.11.06.08.18.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:18:41 -0800 (PST)
-Date: Thu, 6 Nov 2025 17:18:36 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v8 05/14] vsock/loopback: add netns support
-Message-ID: <tuclqrdg5p2uzfvczhcdig7jlifvhqtlafe4xcqy4x4p3vrya6@jq5mujdluze5>
-References: <20251023-vsock-vmtest-v8-0-dea984d02bb0@meta.com>
- <20251023-vsock-vmtest-v8-5-dea984d02bb0@meta.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A043563FF;
+	Thu,  6 Nov 2025 16:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762445937; cv=fail; b=pFTDL8J/ukwihcJ57+3fe0NZPDhLW1vqojhzD0q7gsuD8dxyQogipCtyDC2NLvITLYVj0rjYl/TWfATYQYtLkqu412Lp3gRZyfB3NEox3IzkBv27PAcbCytCpO/u5ybDlBq7UcmgARXOS+LlYF98NUFJSkNcAMqKgmK/KhO8YOw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762445937; c=relaxed/simple;
+	bh=8Dk/oYziHJcaRAKrwubbbUzy1yotgkADtLRruipBiz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uERYf3uCjwW0+Hx3WmudVPfnxJ4rbbbe6IyL0kNioxxaM4Kyhzi0Fgg5MsMSu326TNn55BcQwm7lauCf/HbRBbiOLvmYiPYWH0srdjtKJbGWq1xy+JhOq/NIawfPCJlTHONLjOShE9r+fJIpSc8tBRUWqf3PMq1CRwCwd6SVy0o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VqgjbaIJ; arc=fail smtp.client-ip=52.101.72.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fro91cMQTmhpT/9ci68ez2Y/EPLtMH4baCniBoYVS6hZUWuhFOApEujuLYcz4kM1obrqvqE1PAciwSOupwYiMFXle3sqFu9k3NTt/Z2yNQgm9vKqWrksQBzfxrNM0o7JCHizqWmTUeXxBsmKA+ddIXBeJIompq7WBomtJDt+YgJOfGAxQhGwMeq0brktN1iPZzr0w8MoGzyT4td7//YH5BOESxXrmyeO5AIKMQbb6WYWhGobj5kt12IcvhLw5CDR31hF5ThaSps+yLhkLW5v7EIrr9cg2ziwMcScVhG2CgL3XhA2uXZD4kcRqEHjYccr14fsc5vEuYpfLhuY3AyMBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eTz9UJSuLnUeUGTINRq3Is75pzH9w51wh7zvg4E2a/E=;
+ b=WO5pXicwrPNqliksPhaneraRRUzyryfKwfRdpF+trRQH6Q9FZuchpLb4tyBb/U/5NiWKbXDEPaNaAAdU3CSsKabjfpFpLMMkzBSkFEini6VqntGVZn0N21oRGm3T0tGp4u87hMWXYgvzU55b63ZbrUG8ubgfri52YIqCFrVMJsLbQDjAsu7PJDQ7eQb1WFCiLxp8BL8rHgOZSiNsC+VfNT+jATguW2PghZjliCi+crN37c9DzYCTPiCwrvlnUS46j3PQ0RRBUqVtOrpiWE1yu+m/Cd3zEOjX8Yo3CcYRROq21Zjd/ZxcB2piT8CEXkrfC1vXDquw7QVbHNHym75Cpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eTz9UJSuLnUeUGTINRq3Is75pzH9w51wh7zvg4E2a/E=;
+ b=VqgjbaIJSBfJaTZT4VLGEVNG+wmBwCLaeti95wAzswzd3ksQC5uN1DBe1Eq5Qt9Alu5XOpTAgN+TgdwsDDtYZeMI4wNn2V47LdrX1TF4l/MdpVkucwsP+v6NujfH5RRcbCtLrVoMMkxWWOINYlqkUk0+F6V8liMvoRFPBUPTN/zrBjJTCezRkQ17aQH4cyS4lrRGbu6FZUk2AdxxszwZHDN5ShUoJ+8jNxgwE0eUWo9gVlo1DmNRxkOn6fW/hLMz7hd1W0xxAzEM/BfGUK7jDkcOItqhdvCD8bRl035BsVIvOsJZjXKpLu1IMYJdDTzadXgBnhL1EBErDPH+iCpCqw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AS4PR04MB9315.eurprd04.prod.outlook.com (2603:10a6:20b:4e6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Thu, 6 Nov
+ 2025 16:18:51 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
+ 16:18:51 +0000
+Date: Thu, 6 Nov 2025 11:18:43 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-pm@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc: imx93: fix missing clock disable in remove path
+Message-ID: <aQzKY/BPlNC5AUeb@lizhi-Precision-Tower-5810>
+References: <20251106030822.1139-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106030822.1139-1-vulab@iscas.ac.cn>
+X-ClientProxiedBy: SJ0PR03CA0012.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::17) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251023-vsock-vmtest-v8-5-dea984d02bb0@meta.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS4PR04MB9315:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95a6e6f6-cb68-4cd1-288a-08de1d502c88
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|19092799006|366016|1800799024|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Y4e6EKiR8F47zpHCehMeC///J+fLH6MrV61/dk7RLmFtmn+C2jAbIs6Q5GQ6?=
+ =?us-ascii?Q?1DxitiVDTsYU5RfEvEjMg4dMEgTrslajjiaZSDqBLbe0Htuz9pYb16+a55em?=
+ =?us-ascii?Q?J7kkaWJURIJ9usQqZsohcXETQXiQ98HhmeyxlXCZgSTBGBiRx50Ns5zEOKHe?=
+ =?us-ascii?Q?T9e3omhDj0oU+Tpz5mo60T+CDePRjtgJvMWVuXkrU48mBMx3SV1AImwkk+s3?=
+ =?us-ascii?Q?eDxnpfS+jTUeMN6A4BP776SNNEZ4BBBoPu8Cv6aoSPzNrih1pYNj8yJHpivu?=
+ =?us-ascii?Q?QBpJbXmjIXT4bFeZXsLX6VgfTnbaHOmKuCT53H3ukQY6GEg+pg7LR//9avpx?=
+ =?us-ascii?Q?2cknvV54Vv32RCEFd1z8ydrqEcswxJ72c7/b3hmHHBj5Oq63ONBcgPKEL8p/?=
+ =?us-ascii?Q?tVyVbEEGkRYFyNWga0BI90rs5Io9dk69oVfRtlxBzhnXXw+vIo6SrNIg6ta5?=
+ =?us-ascii?Q?F9VTCfQZSE0xhVCYem9pHsUyClr+QKUKeQVSegT6VmOMEDc6yUEcqRcYLnQo?=
+ =?us-ascii?Q?2m5ze3G7NLzCP1Pxc6ONp/52IwGW558Y1e4CmKFRCvo8k3hhn0iz+5Folo0X?=
+ =?us-ascii?Q?THkGjoGDks/d8I1Hvd/IvAqguyDme9eDOO9nM359W9y8iziswzcHi0JoSVNq?=
+ =?us-ascii?Q?IWOVUz/g5i1Hq5pZtGdtGv3OsQ2MfEqI/337v5dhZIzCzdidVTFo36q7ROjE?=
+ =?us-ascii?Q?qVt7+/TxOfC4Bp6A0i0Djy+PFOvlFG6xmJ6dycG/1PPymQlLDQAOYXkC2QGL?=
+ =?us-ascii?Q?wrE/j1rQ+WYsFs3gISR7xKk6U70l0gZV43nNuq6ubIMuLTn1bX0t312GQwHf?=
+ =?us-ascii?Q?ZMZ6TIpACQjinee3X6G37gvSEs1mXAme8nlcSpngUzUuTC4h35csANy3LPux?=
+ =?us-ascii?Q?6mSDPrptBUyoqhIh8Yhn+VT/E/W5QfIWffuqyPXlL9GLk68xIf257tb9JjOY?=
+ =?us-ascii?Q?JV5NJUxwowG6ajl2FlN7ALGcm6qlPQ9W/PcO+7iyN19LrQTqg/z5xykSBHOs?=
+ =?us-ascii?Q?FV5ftJhGk9m62wW79b2iIykO8+cLhpngKWInsXnMa5MR6SSq2pzWJ1B4daKr?=
+ =?us-ascii?Q?q6TM9JiggvIrqsYrYeo2wW/A05rqSocojEPmjau2rYP+RXYng06dgIHMyx0g?=
+ =?us-ascii?Q?a3fk73HvVsCn9AjnKaAQM7a0Y4NTFxCfc4pjGnND5vF9K/Zp8oArykiyk2yQ?=
+ =?us-ascii?Q?RYUDpLLKyCLDCLUDWpIMI0NQvKuHzmyZdT+lPPIWMAeG7ecrTdXg957RyyOk?=
+ =?us-ascii?Q?H83qTte3FXkh+M6gJWZA0o9Oe8d0g1yBDkL5DBqz7DyN+4rO6BPJ6q/Xk30m?=
+ =?us-ascii?Q?l2isRDB9ANrvqrguRW3u1CYLtTh+NmLxfteyQ5iWWoukeL+gmLXtss7VsuJb?=
+ =?us-ascii?Q?SjjiPXMMt1izkPUXcflnSuxc2Km5RAkfPSOTeU27NK3rsB7uNWD5Oikgq+26?=
+ =?us-ascii?Q?mVM+uIcdFGZtCnJSa648KvzIS4qODAxTxPwrfXYdMzexNx2GRVa7ahSp1/o3?=
+ =?us-ascii?Q?sQRtHRToqEXA3O1/Jv3Xh46WO08OKACixPoW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(19092799006)(366016)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0wyiPkzgoJ6lanQwRmXkHEr3rd2bVguDkYxD7+Gp4EbdSj6E29sCRM+oJJax?=
+ =?us-ascii?Q?ZW3Pz8kKDbk1venSqjCTOTwY2H033mLkGqBndSi+dBljfG2D5ZMds9ScG93O?=
+ =?us-ascii?Q?yTRq9l897jPlXG9RnD0+5NHO/V4lE5aMxJi7btk8Y5MZ+KZONof37rWMoKw9?=
+ =?us-ascii?Q?4Yrav+O/RgozmS/ot0qdcJZ/9G/qpiYO+8ekNDgPnAiI4kHcBa7M/TnvJG0S?=
+ =?us-ascii?Q?+NYIKP/k1f8h1s/zVYQaMe6tK2v2ir2M8PpW8OuDAxKwd07wO2/Vbt1QKVdn?=
+ =?us-ascii?Q?F4KFTDTJvzw9oEjkdyw5dL7rk1X1ENCwRERhE6wvCrytun/wBbGWHzGKFbZG?=
+ =?us-ascii?Q?DFOvgmDOeLrOiHHNLLDUoRU9Day78vUT3MyxnRgTjkhp2CGqglxcBQpw7nRy?=
+ =?us-ascii?Q?IvYzseTz7dys7G3FE1IHUtwjM335w3Qr1eZNwq5uLaqwMXebxkaikfAdNKeR?=
+ =?us-ascii?Q?bUOjeU0k+m+RPImBgAkf8tXET5blMlaIwRftVehVJ9pEYQoUCcShBueFT2CD?=
+ =?us-ascii?Q?BTh79MECuY3edlMNVEobeYMV2wbHtg0nYJRFi3jLm8MImInWOX6+Z/Om55uy?=
+ =?us-ascii?Q?I03mMzrtG/nVNk2zUW7sR/SG8zZZbBZWXyGojzeq5rl+yYz7woSLAkoSKZu0?=
+ =?us-ascii?Q?7RiMx5zZYsg2fc2qZQ8/snhbAMR2l3eF5b5jWxCwEtE+4jMzxE+3B4PIpq2Y?=
+ =?us-ascii?Q?ySO+eK11MQq1jEFts4KHRVAMYrLSm3zYZORQPBrqsE8D3DnxS4/enDYZ8zbW?=
+ =?us-ascii?Q?VCo8LRMbPmqQI4H1pZBPLJxqdYkTYONSVWmQo6mEQgjZu3xSVQFkpP7n+YMw?=
+ =?us-ascii?Q?mRs/GcV0HkODsZ+hWCRG8vgYRehbqnLU3kWRsL8Fj35ijZLgw3obl+APH/4P?=
+ =?us-ascii?Q?+/XYtFOzATipgxROWuBhUwQTjM7wuDbvkpHNyGchF9b3VXtCdgQWJ0dJ+/+P?=
+ =?us-ascii?Q?GUC6QpVphDz/mSTGu82Bv6WShHHwwGnW2rDKh57g2U9WSoagISZI8f3dklae?=
+ =?us-ascii?Q?PW944TAhA2QzzhFXjanteIr39GUzBQJbThUhZPSijMlnB1yP8EnsMhX1FlGV?=
+ =?us-ascii?Q?ubGxGUehrDB0N5/atfM/1EWqisoPX3Fo1LMewUk4IUbzYVP9SA/pU28PYwPP?=
+ =?us-ascii?Q?Om4y3F2KPU36algLJthVsfM+kc0MHQmUUQnULEL5msA1P9jjFTqQw8ujuaTE?=
+ =?us-ascii?Q?1u3dzltZePTLYULubcWoNFUMBw6GeF+px3NXMVWvjpR3wUEfpZWzniJ7LPJ+?=
+ =?us-ascii?Q?5foM5aHRPkQheCAK0Q58BdhpRiZB207qINRw5S2XSxZcl/+LkfQNwPCMw+MR?=
+ =?us-ascii?Q?GKzRBLeZ1O3rjTg7OJfzOgNXU/ksBnf0MyqPjUqcWfNybf3pGAri7hjRR2Iq?=
+ =?us-ascii?Q?HKH7vQB6aHMwF551FH05JmshO0ZmV7ggnnygfY5SO47dKQpH0r+NLVpXQcWp?=
+ =?us-ascii?Q?TCOZp5tYZHO8B/lSpgKvJQDXdm2bjKdP52boZTO9xYq2VGdQ+gDSLD/KZBij?=
+ =?us-ascii?Q?ktNPVdFzcedLJHyD+YxxR6ufILjzFrR7kFCVU5Crdvya8WF2M8DYaCPhUB3d?=
+ =?us-ascii?Q?Beq+R0/mknAn2JLu+5BKExpQdjhoret6r9OvxQ7/?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95a6e6f6-cb68-4cd1-288a-08de1d502c88
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 16:18:51.7249
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UHeDMtI9IXjA6s/eE6UYpLmR5Si+dpi6kZvBzuwKIhfhYSy9dRVzh74WDVqVeAKyGaknFPVYmYzSDFq216+/dg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9315
 
-On Thu, Oct 23, 2025 at 11:27:44AM -0700, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
+On Thu, Nov 06, 2025 at 11:08:22AM +0800, Haotian Zhang wrote:
+> The remove function never disables clocks that were enabled
+> in probe when the domain was initially on. The function
+> pm_genpd_remove() does not invoke the .power_off callback,
+> so clocks may remain prepared and enabled if the power domain
+> has not been powered off before removal.
 >
->Add NS support to vsock loopback. Sockets in a global mode netns
->communicate with each other, regardless of namespace. Sockets in a local
->mode netns may only communicate with other sockets within the same
->namespace.
+> Explicitly disable and unprepare the clocks in
+> imx93_pd_remove() to ensure proper resource cleanup.
 >
->Use pernet_ops to install a vsock_loopback for every namespace that is
->created (to be used if local mode is enabled).
+> Fixes: 0a0f7cc25d4a ("soc: imx: add i.MX93 SRC power domain driver")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
+>  drivers/pmdomain/imx/imx93-pd.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
->Retroactively call init/exit on every namespace when the vsock_loopback
->module is loaded in order to initialize the per-ns device.
+> diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
+> index d68273330687..da5b7b81dd98 100644
+> --- a/drivers/pmdomain/imx/imx93-pd.c
+> +++ b/drivers/pmdomain/imx/imx93-pd.c
+> @@ -91,6 +91,8 @@ static void imx93_pd_remove(struct platform_device *pdev)
 >
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
+>  	of_genpd_del_provider(np);
+>  	pm_genpd_remove(&domain->genpd);
+> +	if (!(readl(domain->addr + MIX_FUNC_STAT_OFF) & FUNC_STAT_ISO_STAT_MASK))
 
-I'm a bit confused, should we move this after the next patch that add 
-support of netns in the virtio common module?
+Does it work if check struct generic_pm_domain::stay_on ?
 
-Or this is a pre-requisite?
+Frank
 
->Changes in v7:
->- drop for_each_net() init/exit, drop net_rwsem, the pernet registration
->  handles this automatically and race-free
->- flush workqueue before destruction, purge pkt list
->- remember net_mode instead of current net mode
->- keep space after INIT_WORK()
->- change vsock_loopback in netns_vsock to ->priv void ptr
->- rename `orig_net_mode` to `net_mode`
->- remove useless comment
->- protect `register_pernet_subsys()` with `net_rwsem`
->- do cleanup before releasing `net_rwsem` when failure happens
->- call `unregister_pernet_subsys()` in `vsock_loopback_exit()`
->- call `vsock_loopback_deinit_vsock()` in `vsock_loopback_exit()`
+> +		clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
+>  }
 >
->Changes in v6:
->- init pernet ops for vsock_loopback module
->- vsock_loopback: add space in struct to clarify lock protection
->- do proper cleanup/unregister on vsock_loopback_exit()
->- vsock_loopback: use virtio_vsock_skb_net()
+>  static int imx93_pd_probe(struct platform_device *pdev)
+> --
+> 2.50.1.windows.1
 >
->Changes in v5:
->- add callbacks code to avoid reverse dependency
->- add logic for handling vsock_loopback setup for already existing
->  namespaces
->---
-> include/net/netns/vsock.h      |  2 +
-> net/vmw_vsock/vsock_loopback.c | 85 ++++++++++++++++++++++++++++++++++++------
-> 2 files changed, 75 insertions(+), 12 deletions(-)
->
->diff --git a/include/net/netns/vsock.h b/include/net/netns/vsock.h
->index c9a438ad52f2..9d0d8e2fbc37 100644
->--- a/include/net/netns/vsock.h
->+++ b/include/net/netns/vsock.h
->@@ -16,5 +16,7 @@ struct netns_vsock {
-> 	/* protected by lock */
-> 	enum vsock_net_mode mode;
-> 	bool mode_locked;
->+
->+	void *priv;
-> };
-> #endif /* __NET_NET_NAMESPACE_VSOCK_H */
->diff --git a/net/vmw_vsock/vsock_loopback.c b/net/vmw_vsock/vsock_loopback.c
->index a8f218f0c5a3..474083d4cfcb 100644
->--- a/net/vmw_vsock/vsock_loopback.c
->+++ b/net/vmw_vsock/vsock_loopback.c
->@@ -28,8 +28,16 @@ static u32 vsock_loopback_get_local_cid(void)
->
-> static int vsock_loopback_send_pkt(struct sk_buff *skb)
-> {
->-	struct vsock_loopback *vsock = &the_vsock_loopback;
->+	struct vsock_loopback *vsock;
-> 	int len = skb->len;
->+	struct net *net;
->+
->+	net = virtio_vsock_skb_net(skb);
->+
->+	if (virtio_vsock_skb_net_mode(skb) == VSOCK_NET_MODE_LOCAL)
->+		vsock = (struct vsock_loopback *)net->vsock.priv;
-
-Is there some kind of refcount on the net?
-What I mean is, are we sure this pointer is still valid? Could the net 
-disappear in the meantime?
-
-The rest LGTM!
-
-Thanks,
-Stefano
-
->+	else
->+		vsock = &the_vsock_loopback;
->
-> 	virtio_vsock_skb_queue_tail(&vsock->pkt_queue, skb);
-> 	queue_work(vsock->workqueue, &vsock->pkt_work);
->@@ -134,11 +142,8 @@ static void vsock_loopback_work(struct work_struct *work)
-> 	}
-> }
->
->-static int __init vsock_loopback_init(void)
->+static int vsock_loopback_init_vsock(struct vsock_loopback *vsock)
-> {
->-	struct vsock_loopback *vsock = &the_vsock_loopback;
->-	int ret;
->-
-> 	vsock->workqueue = alloc_workqueue("vsock-loopback", WQ_PERCPU, 0);
-> 	if (!vsock->workqueue)
-> 		return -ENOMEM;
->@@ -146,15 +151,73 @@ static int __init vsock_loopback_init(void)
-> 	skb_queue_head_init(&vsock->pkt_queue);
-> 	INIT_WORK(&vsock->pkt_work, vsock_loopback_work);
->
->+	return 0;
->+}
->+
->+static void vsock_loopback_deinit_vsock(struct vsock_loopback *vsock)
->+{
->+	if (vsock->workqueue) {
->+		flush_work(&vsock->pkt_work);
->+		virtio_vsock_skb_queue_purge(&vsock->pkt_queue);
->+		destroy_workqueue(vsock->workqueue);
->+		vsock->workqueue = NULL;
->+	}
->+}
->+
->+static int vsock_loopback_init_net(struct net *net)
->+{
->+	int ret;
->+
->+	net->vsock.priv = kzalloc(sizeof(struct vsock_loopback), GFP_KERNEL);
->+	if (!net->vsock.priv)
->+		return -ENOMEM;
->+
->+	ret = vsock_loopback_init_vsock((struct vsock_loopback *)net->vsock.priv);
->+	if (ret < 0) {
->+		kfree(net->vsock.priv);
->+		net->vsock.priv = NULL;
->+		return ret;
->+	}
->+
->+	return 0;
->+}
->+
->+static void vsock_loopback_exit_net(struct net *net)
->+{
->+	vsock_loopback_deinit_vsock(net->vsock.priv);
->+	kfree(net->vsock.priv);
->+	net->vsock.priv = NULL;
->+}
->+
->+static struct pernet_operations vsock_loopback_net_ops = {
->+	.init = vsock_loopback_init_net,
->+	.exit = vsock_loopback_exit_net,
->+};
->+
->+static int __init vsock_loopback_init(void)
->+{
->+	struct vsock_loopback *vsock = &the_vsock_loopback;
->+	int ret;
->+
->+	ret = vsock_loopback_init_vsock(vsock);
->+	if (ret < 0)
->+		return ret;
->+
->+	ret = register_pernet_subsys(&vsock_loopback_net_ops);
->+	if (ret < 0)
->+		goto out_deinit_vsock;
->+
-> 	ret = vsock_core_register(&loopback_transport.transport,
-> 				  VSOCK_TRANSPORT_F_LOCAL);
-> 	if (ret)
->-		goto out_wq;
->+		goto out_unregister_pernet_subsys;
->
-> 	return 0;
->
->-out_wq:
->-	destroy_workqueue(vsock->workqueue);
->+out_unregister_pernet_subsys:
->+	unregister_pernet_subsys(&vsock_loopback_net_ops);
->+out_deinit_vsock:
->+	vsock_loopback_deinit_vsock(vsock);
-> 	return ret;
-> }
->
->@@ -164,11 +227,9 @@ static void __exit vsock_loopback_exit(void)
->
-> 	vsock_core_unregister(&loopback_transport.transport);
->
->-	flush_work(&vsock->pkt_work);
->-
->-	virtio_vsock_skb_queue_purge(&vsock->pkt_queue);
->+	unregister_pernet_subsys(&vsock_loopback_net_ops);
->
->-	destroy_workqueue(vsock->workqueue);
->+	vsock_loopback_deinit_vsock(vsock);
-> }
->
-> module_init(vsock_loopback_init);
->
->-- 
->2.47.3
->
-
 
