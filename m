@@ -1,142 +1,151 @@
-Return-Path: <linux-kernel+bounces-889107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35659C3CBF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 452DAC3CBF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF09D4FEC27
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:07:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A8B04F80E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670CD34DCD1;
-	Thu,  6 Nov 2025 17:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F1534D900;
+	Thu,  6 Nov 2025 17:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hOdgNQwH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="xCljxPQP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jusofg/7"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9707D2E54D3;
-	Thu,  6 Nov 2025 17:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F271D18E1F;
+	Thu,  6 Nov 2025 17:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448792; cv=none; b=nQLnfXewdhhFsY8ecrjy7lryZRK7RwWNLG0qlhwTtYnfXYOw6y/vctQCpJuWuwZX3wBJziTu9UL9WWPdqaKQIme03ggdAVz49gcPhYIie0inAp9ZKoZrj9m+Z+FLnnT5L87qk/k+T8z7LJF4RpWjjfBrHCMB6TfKHtKMqf1tvAI=
+	t=1762448869; cv=none; b=JDGH2sXXVbQNhuIiB16cpV0vJWnIrfTob49F/X5fGAh85yUVy66aljPBeAbD/jXEMZyv6DBXSk8AHOtN2MHPluNlNRuy7ISX085spwJwXnlAbZZd1ezza6J/lo8ZH+k6P60nXgVj2RHthZ5x3/Q0+GCEMFrwfgfcCWgmQNme/MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448792; c=relaxed/simple;
-	bh=FUbMYbaELvLrs8bf13pLYSXjByOOd4CHpAy3KOf73zU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PAN9Uy+kIpQeYHOpOok8+aULaTrlG0R8fZ5vp5hrT1WrSVpFpW7ihhjc3hxbzwYzDuGYUrS+JXFHm+2SzSXaqgST+PDr7ysjJfj6EfHHtSsa8tPBsnXSeDkCqDWdIlDU/RsVA7XWbHpIUOl26sGtMXMBt7tvCwrP8NKGD/5b0NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hOdgNQwH; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762448790; x=1793984790;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=FUbMYbaELvLrs8bf13pLYSXjByOOd4CHpAy3KOf73zU=;
-  b=hOdgNQwHOA0S9nOentNv8xnf5ySG5gMk/Fiev/dS6B80yAoXJHsyvNaT
-   6R9wWqWg11BTAXIqwaFQqk6nMesNLHIvEMowrJIcid7oiThggIVsaQIM5
-   XZdvYZMBKaYAgFNRg1v5fFHD5rbrqz5maKZdJmw1Mpwh0L7TIS8lpQ0po
-   vImqgPUomDIOADdDGLN1WoKo7rJAnni1b3+WcGAEiNWj0qbuYKiKbhzEU
-   RpYYac2X6SJPefSof4YE/j1su4QEX1ymEpYukn/DQd0dMnws1ebx1JjPq
-   KxqN7ee+1NMZ1ozHBLSjbnysmXIeymDamHY5csINCahk+ukkJl6aTbYb8
-   w==;
-X-CSE-ConnectionGUID: 3B/KXMkVR6GI5t4LA1CoBw==
-X-CSE-MsgGUID: PS538C+nTSKZB7Su3MoKMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64630388"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="64630388"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 09:06:29 -0800
-X-CSE-ConnectionGUID: WrSmznYITU+IH82s+lGP1g==
-X-CSE-MsgGUID: DLBTkHZ8RQaDaINnNIc9PA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="225055223"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.187])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 09:06:28 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 6 Nov 2025 19:06:24 +0200 (EET)
-To: Marcos Vega <marcosmola2@gmail.com>
-cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] [PATCH v2] platform/x86: hp-wmi: Fixed Omen MAX
- 16-ah0xx board name
-In-Reply-To: <20251106165657.23241-1-marcosmola2@gmail.com>
-Message-ID: <f89e0a02-91a2-e98c-d06a-6b7060bb2848@linux.intel.com>
-References: <81699228-710c-144c-0909-1fe5be0604ca@linux.intel.com> <20251106165657.23241-1-marcosmola2@gmail.com>
+	s=arc-20240116; t=1762448869; c=relaxed/simple;
+	bh=h1058CZvmcEAuS48xVbeNUx2rGhH6qDGWSw72hhAycE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JDklGOmDTV5sAbigTSJnYwSxUVbaU/6OMzPkzC7BI8rJZ9w2D20n0FlaL5ZR0C4bzcr1eHVgcmPfUVATHHdlN50KAR/uspVpbAKkI6xqBqkxrVj3k6dUg8NcgZQqVFnL+m07d4GwoUUz15Tqi06ao7PFp4mfl2LcqdbmSpaJqy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=xCljxPQP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jusofg/7; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id E337FEC00D3;
+	Thu,  6 Nov 2025 12:07:44 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 06 Nov 2025 12:07:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1762448864; x=
+	1762535264; bh=yl1ymtp/RyH/pP2ToBzXQ5l7JFAI5bU3TI9lUfWo91A=; b=x
+	CljxPQPmtP8HCoH/NjGaVIVMNq40uKF5CnEUWR+EitSz1d+B4/g3S8zhJfQHIWA+
+	6iU0o5ZXunwfy/84RLbKUUrsEcLujEgPZM5iZHleB74I3wOE/8LEtOvUFL+4DQHo
+	jmz4VNAORiGA71vxMZHOKQwwxSvJGqxf3Xi/9qI1U9xUpsTJUzOa8SxM5Bdl4cLe
+	k0QEvxu5dPVgk1ZvBmdjdzgIcHimaVDh8w9A0VFdIieYc76utpm2AFpNbGQoALTH
+	3XU4IVf2AdussfRLgsYAtGDggvr6Bpa/H7ykYydHdRn3+8F9/u17wlMuyCy+07wM
+	vIP014n42f9TIRKdQXXTA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762448864; x=1762535264; bh=yl1ymtp/RyH/pP2ToBzXQ5l7JFAI5bU3TI9
+	lUfWo91A=; b=jusofg/7lKzEacMBsWUoUMmQPTeySJsx67J4JKfF3P9cCvt3C9N
+	9oELAS2tuc5FtWQ1hf2VseMKNEJOfMOBFDkN5YkhF7jIEVZiib0JB8F5cd/vbRLQ
+	MtR6dqC4DMA5gSd4bXey5rj0TaBbqpnbQLkDhStMcb2Z9idMUETKy0Npgi/tr5qt
+	GPuN5DiNxxrCMKIokfYVE+WTKyYVZeO4YmwDrUzqsVKi8Bls4dZ33bN7xUjzrssw
+	6T30dVCp7NCOE2KaDkJ4Z+rLfOPJCUHr4HfphD/emZNYr1TTJc3fZCj/iOGiMbKA
+	kwT5mNVVmgoNpAr7OiItosxw3Cflx+OrbNA==
+X-ME-Sender: <xms:3tUMaa31a3QL0xjs96vK7V1WrPyMK_4OzESfcBZfConYhKkrv1nAxQ>
+    <xme:3tUMadh710VVUnPPGcuhFHlDYJLCy-XpqayVRm0AL-jkoxLJq7ccNjRZNbshOJuyV
+    Kl3fy61_4Mjn_ow49sCUjHO90XUpYPI6nir9iDrNMoaE4V5hWp3ng>
+X-ME-Received: <xmr:3tUMaSo7BzJccg1Ktt7ED5k6kzT1nLRNgXpX0yMK3GcyVLc28ERFukfZxE-B>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeejfeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
+    dttdejnecuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghs
+    hihsnhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuieduge
+    dtfefhkeegteehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedt
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvth
+    dpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegt
+    lhhfjedttdefkeefsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdp
+    rhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephh
+    gvrhgsvghrthesghhonhguohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtphhtthhopehk
+    uhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:3tUMaYO8hRnaUS-kr4eiWQPPvyG-yj7EuVNHrDE528RBxclT3P5ROQ>
+    <xmx:3tUMaW0AvoI92bPUXANQYHOQaDGLzSX86dVHh_P8Qmz30t02b0XWOA>
+    <xmx:3tUMaep7d_1FF6Tvm79ZI186rLqoby6DhKgH9Trpoxyjo_x31gi1Sw>
+    <xmx:3tUMaYeGPYHBPH-W5IGtGo0P17-8c3vUnX7EjDtbWCnVriaAPfGNdA>
+    <xmx:4NUMaeW3MTksGZ5dmESMcOQ3Vhc0_TAFhPABpul8o8TAnWegavp2DYuK>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Nov 2025 12:07:42 -0500 (EST)
+Date: Thu, 6 Nov 2025 18:07:40 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: clingfei <clf700383@gmail.com>
+Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com,
+	herbert@gondor.apana.org.au, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, steffen.klassert@secunet.com, eadavis@qq.com,
+	ssrane_b23@ee.vjti.ac.in,
+	syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCHSET IPSec 0/3] net: key: Fix address family validation and
+ integer overflow in set_ipsecrequest
+Message-ID: <aQzV3KHoF4Kk6DGF@krikkit>
+References: <20251106135658.866481-1-1599101385@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-17423666-1762448784=:981"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251106135658.866481-1-1599101385@qq.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+2025-11-06, 21:56:55 +0800, clingfei wrote:
+> From: Cheng Lingfei <clf700383@gmail.com>
+> 
+> Hi,
+> 
+> This patchset addresses a security issue in the PF_KEYv2 implementation where
+> improper address family validation could lead to integer overflows and buffer
+> calculation errors in the set_ipsecrequest() function.
+> 
+> The core problem stems from two interrelated issues:
+> 
+> 1. The `family` parameter in set_ipsecrequest() is declared as u8 but receives
+>    a 16-bit value, causing truncation of the upper byte.
+> 
+> 2. pfkey_sockaddr_len() returns 0 for unsupported address families, but the
+>    calling code doesn't properly validate this return value before using it in
+>    size calculations, leading to potential integer overflows.
+> 
+> The patchset is structured as follows:
+> 
+> Patch 1/3: Corrects the type of the family argument from u8 to u16 to prevent
+>            truncation of 16-bit address family values.
+> 
+> Patch 2/3: Adds proper validation for the return value of pfkey_sockaddr_len()
+>            to catch unsupported address families early.
+> 
+> Patch 3/3: Enhances the error handling to ensure zero-length allocations are
+>            properly rejected and adds appropriate error returns.
+> 
+> This series fixes the original issue introduced in:
+> Fixes: 14ad6ed30a10 ("net: allow small head cache usage with large MAX_SKB_FRAGS values")
 
---8323328-17423666-1762448784=:981
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+This doesn't seem right. It looks more like a mismatch between the
+size computation done before allocating the skb and the space actually
+needed, and commit 14ad6ed30a10 made the pre-existing bug more visible.
 
-On Thu, 6 Nov 2025, Marcos Vega wrote:
-
-> You are totally right, after more thorough testing, I realised I had made=
- a mistake,
-> board 8D41 must only go on victus_s_thermal_profile_boards.
->=20
-> I send the correct commit in hopes to fix this.
-> This is my first time contributing to the kernel, =C2=A1thank you for you=
-r patience!
-
-It's no problem.
-
-Please, send v3 with the usual changelog (see also below for one=20
-additional comment).
-
-In case you need to add (additional) comments like here now is, those=20
-should be placed under --- line so our tools will automatically remove=20
-them when applying.
-
-It's also custom to add patch version history below --- line so the=20
-reviewers know what was changed.
-
-> Signed-off-by: Marcos Vega <marcosmola2@gmail.com>
-> ---
->  drivers/platform/x86/hp/hp-wmi.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/h=
-p-wmi.c
-> index 8b3533d6ba09..7a3cad80f0b5 100644
-> --- a/drivers/platform/x86/hp/hp-wmi.c
-> +++ b/drivers/platform/x86/hp/hp-wmi.c
-> @@ -92,9 +92,10 @@ static const char * const victus_thermal_profile_board=
-s[] =3D {
->  =09"8A25"
->  };
-> =20
-> -/* DMI Board names of Victus 16-r1000 and Victus 16-s1000 laptops */
-> +/* DMI Board names of Victus 16-r1000 and Victus 16-s1000 laptops, as we=
-ll
-> +   as some Omen boards using this profile */
->  static const char * const victus_s_thermal_profile_boards[] =3D {
-> -=09"8C99", "8C9C"
-> +=09"8C99", "8C9C", "8D41"
-
-It would be better to base this on top of the review-ilpo-fixes branch=20
-which currently has many additions to this so I can easily apply this=20
-patch there too.
-
-As this is a new prefix (8D), place it on own line and include the=20
-trailing comma (I just decided while dealing with all these recent ID=20
-patches, we really want to have these better organized than in the other=20
-disorganized array).
-
---=20
- i.
-
---8323328-17423666-1762448784=:981--
+-- 
+Sabrina
 
