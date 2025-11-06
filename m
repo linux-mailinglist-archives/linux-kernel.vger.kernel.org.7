@@ -1,225 +1,115 @@
-Return-Path: <linux-kernel+bounces-888507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC0BBC3B05F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20424C3B09B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E6B45009F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:53:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 733B350147D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF91330334;
-	Thu,  6 Nov 2025 12:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C518A32D7F0;
+	Thu,  6 Nov 2025 12:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jHGNqUD+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pZQrq0W7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KYATowHQ"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743D132D0D1;
-	Thu,  6 Nov 2025 12:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04142D531;
+	Thu,  6 Nov 2025 12:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433583; cv=none; b=ZT0T+qV/ow7vYS9ji+wpND1Jwpk8s5QaySoa3E95PETdDfY1SqDnVj5SuTZj+DuA8CUxRSxrPbK1iCupwUUhaIolqE1cE/hK0sHhfowSynMJqIDk1SDb8Y3Md5oEpret3d9Kk6MwLodTiC0wh3iCmYmzCEhJlx+o1C+8etZ0uqs=
+	t=1762433601; cv=none; b=YncuTuk+wPkWbD/8LsgfosXpc9GWg+zxt5Gkq+8xvCjU7mqdgmHz9lta2KzFHX2cDv1jlxV2FEhU9UwaDO6ItSe6j2TnN+ovg1QuhxvoAoVtvNwFq3X4Ta0pZga/GCuzkUHQKBxZE/rsCCLl7uwwqffY4rVQ8grpIoY8uHCB92U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433583; c=relaxed/simple;
-	bh=Q1lDQPBZEkicMnquQ1YOdFB0CXMBYHu3BjY3lArkrVY=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Z7cRVdMku/qw5hIHF1HGoG8RNA81tz9GrBRsW+zAd/9egBPpnr8j3eVnzHaeJZZ4iCvgVJfgspOyPSx+H6746wrzVmM2OxYpF+6oL8rkQiTrMB7GIkV/w83CWV6Wb/JTbIsBONvsJ+UoAx3qnpUQhDXNkU0b+1JE2RMoYkQ2TQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jHGNqUD+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pZQrq0W7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 06 Nov 2025 12:52:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762433579;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=XjYbkBoHuWFIK2MCQLGU0gbyCCoY/9KpbxOKoefTGcw=;
-	b=jHGNqUD+L0Om06uQGksdVdrdvPBb+qF0io1DObyAQ7PMV+61b/n73jyLJgAb1x2Ij225m9
-	+LQgs3442uyeU+VR/0jZoXOzqUhhcGDdK+nn/hvHS6TjHPjAY7LcpNBp525et94qx2vh2w
-	tBqIKJkoeOl1EM5NNCyPcOfjj0P6+U1cWLgup8dyc7HjSxEX4SoWVrXxUwfSpKe3ohwsIC
-	dqOsgUaXxuFxit9NGmIVYxxU/fpJseh6UGxDgRHlaypeteMTtd1hEes5JHV2vlBau51siN
-	4g5HFQ6Lc+0LvwLKu1GH5tm34NS3A+uK5aXVtghe993qX9EjXksc8ErfmE5HfQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762433579;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=XjYbkBoHuWFIK2MCQLGU0gbyCCoY/9KpbxOKoefTGcw=;
-	b=pZQrq0W7a+91Q7yghTFYRce+FSwahBivzvKXDqOyt/u8Ydcg214MX/fnDLM60w1bkFJkfB
-	b6+Zbf7SvokYI2AQ==
-From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce: Unify AMD THR handler with MCA Polling
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1762433601; c=relaxed/simple;
+	bh=T2qqAIkGOjgeE12cY01soizOVyB2zgKxML7ZlYxcWl8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kmnO3hiDKL4N0WCgU9QCeIgDk9g/7oPiJs6ltAMjHlXfxfWrt12am9dXmQPeYsOCXzzcbY1U1DcCX9arJcjo7EMYJ0SVIcrfZeuD236gxLWUoeHrnHtKaUSpa22bxry9+hZ4iJ2E+q0MNhfYldn5gX3oEGG89CjWDEtgrOq+s/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KYATowHQ; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 25791C0FA8A;
+	Thu,  6 Nov 2025 12:52:55 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2F9506068C;
+	Thu,  6 Nov 2025 12:53:16 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 446A211851002;
+	Thu,  6 Nov 2025 13:53:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762433595; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=AZ1qEQt0C6rmw6jWPJAozV0mbsRRxIGiRl5di1gTL00=;
+	b=KYATowHQm407dFfUrqN7izPUJ+L/5enlObTBFs+O6dqWoAeD5kgMHRGfxmTbXGhr7ZKgqy
+	r8jW77VMN/ctThA/QnX9BilUF/3EpP9/bUQdpESB0/ppxzF9btNirD/2d5uA5V7+enYm4l
+	FVU1DKj9gEsSZtU32SwDMNJ2zLHne0E01m0wlpgaBlFp5Wwa7u0Y4gEQLfMTh9sfaely5Q
+	SwKBQsrBiszNEFuUy38kgLNl3dhHKikApZD0ZnAquBpBj0ONnjtYd7ODgiOwpuyjjJiZR7
+	zVYgEgS6lzb8yRkI8kGBKtQcSrnl5zrfRVoPkkRU430QF8vomn93ZfFg/JOerw==
+From: "Bastien Curutchet (Schneider Electric)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH net v2 0/4] net: dsa: microchip: Fix resource releases in
+ error path
+Date: Thu, 06 Nov 2025 13:53:07 +0100
+Message-Id: <20251106-ksz-fix-v2-0-07188f608873@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176243357764.2601451.14090868024795844272.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADOaDGkC/2WMyw7CIBBFf6WZtRgepQ2u/A/ThS2DnahggDRqw
+ 79L2Lo8596cHRJGwgSnboeIGyUKvoI8dLCsV39DRrYySC614Eqwe/oyR29mZ9Vr68ZBaQf1/Yp
+ YdStdwGOGqcqVUg7x0+qbaNNfaBOMsxH7waIxBq04zyHkB/njEp4wlVJ+Ifz2jKUAAAA=
+X-Change-ID: 20251031-ksz-fix-db345df7635f
+To: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Arun Ramadoss <arun.ramadoss@microchip.com>
+Cc: Pascal Eberhard <pascal.eberhard@se.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (Schneider Electric)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-The following commit has been merged into the ras/core branch of tip:
+Hi all,
 
-Commit-ID:     34da4a5d6814ca4cd0116144e37433bf55cf0189
-Gitweb:        https://git.kernel.org/tip/34da4a5d6814ca4cd0116144e37433bf55c=
-f0189
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Tue, 04 Nov 2025 14:55:38=20
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 05 Nov 2025 13:41:18 +01:00
+I worked on adding PTP support for the KSZ8463. While doing so, I ran
+into a few bugs in the resource release process that occur when things go
+wrong arount IRQ initialization.
 
-x86/mce: Unify AMD THR handler with MCA Polling
+This small series fixes those bugs.
 
-AMD systems optionally support an MCA thresholding interrupt. The interrupt
-should be used as another signal to trigger MCA polling. This is similar to
-how the Intel Corrected Machine Check interrupt (CMCI) is handled.
+The next series, which will add the PTP support, depend on this one.
 
-AMD MCA thresholding is managed using the MCA_MISC registers within an MCA
-bank. The OS will need to modify the hardware error count field in order to
-reset the threshold limit and rearm the interrupt. Management of the MCA_MISC
-register should be done as a follow up to the basic MCA polling flow. It
-should not be the main focus of the interrupt handler.
-
-Furthermore, future systems will have the ability to send an MCA thresholding
-interrupt to the OS even when the OS does not manage the feature, i.e.
-MCA_MISC registers are Read-as-Zero/Locked.
-
-Call the common MCA polling function when handling the MCA thresholding
-interrupt. This will allow the OS to find any valid errors whether or not the
-MCA thresholding feature is OS-managed. Also, this allows the common MCA
-polling options and kernel parameters to apply to AMD systems.
-
-Add a callback to the MCA polling function to check and reset any threshold
-blocks that have reached their threshold limit.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20251104-wip-mca-updates-v8-0-66c8eacf67b9@amd.=
-com
+Signed-off-by: Bastien Curutchet (Schneider Electric) <bastien.curutchet@bootlin.com>
 ---
- arch/x86/kernel/cpu/mce/amd.c | 51 +++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 28 deletions(-)
+Changes in v2:
+- Add Fixes tag.
+- Split PATCH 1 in two patches as it needed two different Fixes tags
+- Add details in commit logs
+- Link to v1: https://lore.kernel.org/r/20251031-ksz-fix-v1-0-7e46de999ed1@bootlin.com
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index d690644..ac6a98a 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -54,6 +54,12 @@
-=20
- static bool thresholding_irq_en;
-=20
-+struct mce_amd_cpu_data {
-+	mce_banks_t     thr_intr_banks;
-+};
-+
-+static DEFINE_PER_CPU_READ_MOSTLY(struct mce_amd_cpu_data, mce_amd_data);
-+
- static const char * const th_names[] =3D {
- 	"load_store",
- 	"insn_fetch",
-@@ -556,6 +562,7 @@ prepare_threshold_block(unsigned int bank, unsigned int b=
-lock, u32 addr,
- 	if (!b.interrupt_capable)
- 		goto done;
-=20
-+	__set_bit(bank, this_cpu_ptr(&mce_amd_data)->thr_intr_banks);
- 	b.interrupt_enable =3D 1;
-=20
- 	if (!mce_flags.smca) {
-@@ -896,12 +903,7 @@ static void amd_deferred_error_interrupt(void)
- 		log_error_deferred(bank);
- }
-=20
--static void log_error_thresholding(unsigned int bank, u64 misc)
--{
--	_log_error_deferred(bank, misc);
--}
--
--static void log_and_reset_block(struct threshold_block *block)
-+static void reset_block(struct threshold_block *block)
- {
- 	struct thresh_restart tr;
- 	u32 low =3D 0, high =3D 0;
-@@ -915,23 +917,14 @@ static void log_and_reset_block(struct threshold_block =
-*block)
- 	if (!(high & MASK_OVERFLOW_HI))
- 		return;
-=20
--	/* Log the MCE which caused the threshold event. */
--	log_error_thresholding(block->bank, ((u64)high << 32) | low);
--
--	/* Reset threshold block after logging error. */
- 	memset(&tr, 0, sizeof(tr));
- 	tr.b =3D block;
- 	threshold_restart_block(&tr);
- }
-=20
--/*
-- * Threshold interrupt handler will service THRESHOLD_APIC_VECTOR. The inter=
-rupt
-- * goes off when error_count reaches threshold_limit.
-- */
--static void amd_threshold_interrupt(void)
-+static void amd_reset_thr_limit(unsigned int bank)
- {
--	struct threshold_bank **bp =3D this_cpu_read(threshold_banks), *thr_bank;
--	unsigned int bank, cpu =3D smp_processor_id();
-+	struct threshold_bank **bp =3D this_cpu_read(threshold_banks);
- 	struct threshold_block *block, *tmp;
-=20
- 	/*
-@@ -939,24 +932,26 @@ static void amd_threshold_interrupt(void)
- 	 * handler is installed at boot time, but on a hotplug event the
- 	 * interrupt might fire before the data has been initialized.
- 	 */
--	if (!bp)
-+	if (!bp || !bp[bank])
- 		return;
-=20
--	for (bank =3D 0; bank < this_cpu_read(mce_num_banks); ++bank) {
--		if (!(per_cpu(bank_map, cpu) & BIT_ULL(bank)))
--			continue;
--
--		thr_bank =3D bp[bank];
--		if (!thr_bank)
--			continue;
-+	list_for_each_entry_safe(block, tmp, &bp[bank]->miscj, miscj)
-+		reset_block(block);
-+}
-=20
--		list_for_each_entry_safe(block, tmp, &thr_bank->miscj, miscj)
--			log_and_reset_block(block);
--	}
-+/*
-+ * Threshold interrupt handler will service THRESHOLD_APIC_VECTOR. The inter=
-rupt
-+ * goes off when error_count reaches threshold_limit.
-+ */
-+static void amd_threshold_interrupt(void)
-+{
-+	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->thr_intr_ba=
-nks);
- }
-=20
- void amd_clear_bank(struct mce *m)
- {
-+	amd_reset_thr_limit(m->bank);
-+
- 	mce_wrmsrq(mca_msr_reg(m->bank, MCA_STATUS), 0);
- }
-=20
+---
+Bastien Curutchet (Schneider Electric) (4):
+      net: dsa: microchip: common: Fix checks on irq_find_mapping()
+      net: dsa: microchip: ptp: Fix checks on irq_find_mapping()
+      net: dsa: microchip: Ensure a ksz_irq is initialized before freeing it
+      net: dsa: microchip: Immediately assing IRQ numbers
+
+ drivers/net/dsa/microchip/ksz_common.c | 14 ++++++++------
+ drivers/net/dsa/microchip/ksz_ptp.c    | 17 +++++++++--------
+ 2 files changed, 17 insertions(+), 14 deletions(-)
+---
+base-commit: cd2f741f5aec1043b707070e7ea024e646262277
+change-id: 20251031-ksz-fix-db345df7635f
+
+Best regards,
+-- 
+Bastien Curutchet (Schneider Electric) <bastien.curutchet@bootlin.com>
+
 
