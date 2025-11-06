@@ -1,165 +1,100 @@
-Return-Path: <linux-kernel+bounces-887991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B05AC3983D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:08:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BEEC3987F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC163BAF66
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:08:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED8F94FF4B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B493E3002B4;
-	Thu,  6 Nov 2025 08:08:12 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCB12FA0F6;
-	Thu,  6 Nov 2025 08:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7EE3009F4;
+	Thu,  6 Nov 2025 08:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2x9KvRt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6422253F2;
+	Thu,  6 Nov 2025 08:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762416492; cv=none; b=PGRToqBkc9CenIi/NEtk5xk9A1lBnydw6AgJUhMxdZPqFZXhPf6wfW5burDqJTHkeQCJdN/KPI8et4iKCOeGpfFDfoVymLjtD+Wp0HB7vd/cmcx5lIHxG2eoiXuohEqjy6dVCILFtat4VU3h37uijNnK4q5GLZjWgNX7KV8SenU=
+	t=1762416511; cv=none; b=axHedFoNQc4w05urTw7aG2cbyu6smVvL17RZduy6NLF4AsAHurz5mSiTtZkhrCdGWLJXsl/0yKfRJFJ92LiUIFGC/cUanVzEHnMJgds8Y1ui5YvRMDV9njTZG4E0z/RnvgBNwVbtHbjBznb/Uazwl/W29zwN6xkixMmMPeEfJco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762416492; c=relaxed/simple;
-	bh=zQF54YGxdip1p/b0RB0fDedsZEKacHGzvRUHq9IznVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b9mvDA6oBedgAQlwGlYzvIzypyDx2mCNLleBDrnxvTjuvzu9ouDWbLfPfIJEu0SrrWftlsS+SIwZb2o8zE4em1DRnG/1mn+VK6YIPl5YK9DBEfw9XPmJbPdDYPojkIRGzfOBPPNZbDZNgoOmNyVseQyKaN5fgzMgU5uJVJNBIU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: MH4Rch2vTO2vIfkJRw8GNA==
-X-CSE-MsgGUID: wj30XI7qR4ScPQOJwu/rJQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 17:08:04 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.113])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0D359400755B;
-	Thu,  6 Nov 2025 17:08:01 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: geert+renesas@glider.be,
-	linus.walleij@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: biju.das.jz@bp.renesas.com,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	John Madieu <john.madieu.xa@bp.renesas.com>,
-	Pavel Machek <pavel@denx.de>
-Subject: [PATCH] pinctrl: renesas: rzg2l: Refactor OEN register PWPR handling
-Date: Thu,  6 Nov 2025 09:07:58 +0100
-Message-ID: <20251106080758.36645-1-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762416511; c=relaxed/simple;
+	bh=w0M9A2NncSddLvs5Kxagx3Vtm92cHZObBfIEs7nJX8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jQnBC57/GkNCxcuFAMF7bdJD3xkE7qPoZzvUqPFXmPx7UKpfJ++H94r3cAkfChwTyxjFGKpcSY0q6j/joEsZ4I14lEx/+/K32ZNWWq5NiMDXvwWMk/8tWGKwqVSnuD+oyCw8KZWrkqgg07PwlNUqKq+9I1QpOvsXuDsQ/pUf0eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2x9KvRt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 477ACC4CEF7;
+	Thu,  6 Nov 2025 08:08:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762416510;
+	bh=w0M9A2NncSddLvs5Kxagx3Vtm92cHZObBfIEs7nJX8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D2x9KvRtTbpR5iFyEYcANr+9QrdGK+MT6L4Qx+RWHwSBYW7iNLfvDUl4TJqoT9Juh
+	 SsIoEhzr+xnB2tWoJUDEp6FPHKre5O99//qBpKHAPV3rSbEDOLCF9gisCURDxcwEDn
+	 tmzGeoOn41CktdZao1/mgMaN6dlSvpHKpayS8PB8zdiCut7BnqwmqgbXxNtV73ZTAN
+	 QlKIMubPNflhIPb/Y8GjIoksl0gcl9mqsKn9l2NBCQZGN+bs0tNW604GilfI2IT2Cl
+	 OQoKLUOLSisIZgS+5M/WLzlRrKw1hw9lOWJGv5PFNydOPuDlaItLzfYT4/fpKMW3LA
+	 XUbD3Bd0CzVVA==
+Date: Thu, 6 Nov 2025 09:08:28 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Georg Gottleuber <ggo@tuxedocomputers.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ettore Chimenti <ettore.chimenti@linaro.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	stefan.schmidt@linaro.org, stephan.gerhold@linaro.org, wse@tuxedocomputers.com, 
+	cs@tuxedo.de
+Subject: Re: [PATCH v2 4/7] dt-bindings: vendor-prefixes: Add prefix for
+ TUXEDO Computers GmbH
+Message-ID: <20251106-calculating-gainful-cuttlefish-2ff391@kuoka>
+References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
+ <20251105154107.148187-5-ggo@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251105154107.148187-5-ggo@tuxedocomputers.com>
 
-Extract the OEN register write with PWPR protection logic into a helper
-function to eliminate code duplication between rzg2l_write_oen() and
-rzg2l_pinctrl_resume_noirq().
+On Wed, Nov 05, 2025 at 04:41:04PM +0100, Georg Gottleuber wrote:
+> TUXEDO Computers GmbH is a german supplier for computers.
+> 
+> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Introduce rzg2l_oen_write_with_pwpr() helper that encapsulates the
-PWPR unlock, OEN register write, and PWPR lock sequence. This helper
-must be called with pctrl->lock already held by the caller.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Closes: https://lore.kernel.org/cip-dev/OS9PR01MB16368C765305362F5F4132759FFC4A@OS9PR01MB16368.jpnprd01.prod.outlook.com/T/#u
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 53 +++++++++++++++----------
- 1 file changed, 33 insertions(+), 20 deletions(-)
+<form letter>
+This is an automated instruction, just in case, because many review
+tags are being ignored. If you know the process, just skip it entirely
+(please do not feel offended by me posting it here - no bad intentions
+intended, no patronizing, I just want to avoid wasted efforts). If you
+do not know the process, here is a short explanation:
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index f25ecada5c692..863e779dda028 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -1112,13 +1112,37 @@ static int rzg2l_read_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
- 	return !(readb(pctrl->base + pctrl->data->hwcfg->regs.oen) & BIT(bit));
- }
- 
--static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oen)
-+/**
-+ * rzg2l_oen_write_with_pwpr - Write to OEN register with PWPR protection
-+ * @pctrl: pinctrl driver data
-+ * @val: value to write to OEN register
-+ *
-+ * Writes to the OEN register, handling PWPR write protection if required
-+ * by the hardware configuration. Must be called with pctrl->lock held.
-+ */
-+static void rzg2l_oen_write_with_pwpr(struct rzg2l_pinctrl *pctrl, u8 val)
- {
- 	const struct rzg2l_register_offsets *regs = &pctrl->data->hwcfg->regs;
-+	u16 oen_offset = pctrl->data->hwcfg->regs.oen;
-+	u8 pwpr;
-+
-+	if (pctrl->data->hwcfg->oen_pwpr_lock) {
-+		pwpr = readb(pctrl->base + regs->pwpr);
-+		writeb(pwpr | PWPR_REGWE_B, pctrl->base + regs->pwpr);
-+	}
-+
-+	writeb(val, pctrl->base + oen_offset);
-+
-+	if (pctrl->data->hwcfg->oen_pwpr_lock)
-+		writeb(pwpr & ~PWPR_REGWE_B, pctrl->base + regs->pwpr);
-+}
-+
-+static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oen)
-+{
- 	u16 oen_offset = pctrl->data->hwcfg->regs.oen;
- 	unsigned long flags;
--	u8 val, pwpr;
- 	int bit;
-+	u8 val;
- 
- 	if (!pctrl->data->pin_to_oen_bit)
- 		return -EOPNOTSUPP;
-@@ -1133,13 +1157,8 @@ static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oe
- 		val &= ~BIT(bit);
- 	else
- 		val |= BIT(bit);
--	if (pctrl->data->hwcfg->oen_pwpr_lock) {
--		pwpr = readb(pctrl->base + regs->pwpr);
--		writeb(pwpr | PWPR_REGWE_B, pctrl->base + regs->pwpr);
--	}
--	writeb(val, pctrl->base + oen_offset);
--	if (pctrl->data->hwcfg->oen_pwpr_lock)
--		writeb(pwpr & ~PWPR_REGWE_B, pctrl->base + regs->pwpr);
-+
-+	rzg2l_oen_write_with_pwpr(pctrl, val);
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- 
- 	return 0;
-@@ -3200,7 +3219,6 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
- 	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
- 	unsigned long flags;
--	u8 pwpr;
- 	int ret;
- 
- 	if (!atomic_read(&pctrl->wakeup_path)) {
-@@ -3210,16 +3228,11 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 	}
- 
- 	writeb(cache->qspi, pctrl->base + QSPI);
--	if (pctrl->data->hwcfg->oen_pwpr_lock) {
--		raw_spin_lock_irqsave(&pctrl->lock, flags);
--		pwpr = readb(pctrl->base + regs->pwpr);
--		writeb(pwpr | PWPR_REGWE_B, pctrl->base + regs->pwpr);
--	}
--	writeb(cache->oen, pctrl->base + pctrl->data->hwcfg->regs.oen);
--	if (pctrl->data->hwcfg->oen_pwpr_lock) {
--		writeb(pwpr & ~PWPR_REGWE_B, pctrl->base + regs->pwpr);
--		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
--	}
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+
- 	for (u8 i = 0; i < 2; i++) {
- 		if (regs->sd_ch)
- 			writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
--- 
-2.25.1
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here ('b4 trailers -u ...').
+However, there's no need to repost patches *only* to add the tags. The
+upstream maintainer will do that for tags received on the version they
+apply.
+
+https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+</form letter>
+
+Best regards,
+Krzysztof
 
 
