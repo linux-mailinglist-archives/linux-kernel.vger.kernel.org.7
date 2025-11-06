@@ -1,266 +1,165 @@
-Return-Path: <linux-kernel+bounces-888214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEAB6C3A39C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:26:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7296C3A38A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE56E427967
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A46D462964
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C5730DD37;
-	Thu,  6 Nov 2025 10:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE1D30EF6C;
+	Thu,  6 Nov 2025 10:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LHNnUo8H"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010068.outbound.protection.outlook.com [52.101.46.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOa9ZqL8"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121A9272E41;
-	Thu,  6 Nov 2025 10:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762424031; cv=fail; b=cru0m5XIacb0aUydXDsZizm8dkK1buZRP2tNs9Ng0anGyIZ3YAqu6VgVCcFY4ME1lGg66+0eFl3rdQoQCRogE+HTiLyz8cVzZEUUDBD8XdX6cr8pL3fsMEHC32i31mWFjKzJDY1tWipAYR9JNlQfhLeRzSZ2E3XxWEkJXRO9v4w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762424031; c=relaxed/simple;
-	bh=P68vKlWyEjUEuSbxUWa1gPHHAtBdFdO0rfBjXxqay+c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XAadrMtyq7x3Hnr9bFvWMGhnnndYcHuYnVoQVJIhva0nCFjSwlzIsEdVd5ine7nmhQSV5rGpTOt1JEWSpOblRTCe1/4KY2FSpRkaEGW6uk91BemLOwHDQE66ihUGS6x+L2ocsQBg5RxkMH7dJ+K1JgdCT7djalJaIaXAqvbAM8w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LHNnUo8H; arc=fail smtp.client-ip=52.101.46.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WIMYi50lNcLitXprC+tY8/9+hpDA7oUvTT1jih3jY4+DX8M3+1zQ7ovGmX+OA2GYetbkXPfy2jAe9fXzyQ7k41wxqIF9XbuNLmdm8UK/tYdQUoMS8Hdc64Sun7ihvvEGyzBSItBzBPCeBqtKogSgP5uKXb7qds00kSgRayOSrGZ5J8ZA8rakxgvbsB35Qya/i4ADPkSeucZrhqqmhCO0BZ6T7TC/PbrS0xV+E9CP9jfv34Bu+uaYlEJnEERJ4xj3RRP7Ga3q6btbeeawYzrzvHmPc9VP+QsuD+KuB8pLY39mkGPXFG4IKrBm+hceAJ9xi6jsih0HJvY1kUq6toVfCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oV7VXlCFNTS5ZMqnWBXevcDc24CntSGFVnOyFBDuCTc=;
- b=XHCl1KuKEMtf2szVxEQQRReAE4yyrRziJi2CdgEdbtktgBghQc3tqliTfScbu6rxZywpANhh4lMli64MZWzCHzx0kUdHOTiJhxClMjewmGiGByINMxMu5c8IzmuFShXcJlPShkNTPqiCQ9UKzMR2Rl0C1mFLYIE2bUZ9hhNyz8StOUEDpMls+T3C+FFSn2H7GHJEnZWdVz5KLJEtWUGCGz3CfdHPAzK2jITRh0L0Snz3p7wLeiMKKqluLFPiD1J83iZcoIEgmybI+TmmQH9qqZL0XqEYGzHVbjniEbJaBIpp0Nf6bEhxZxqnTsZib84MKpIvQ9BNYG4Wa3vmfiJiMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oV7VXlCFNTS5ZMqnWBXevcDc24CntSGFVnOyFBDuCTc=;
- b=LHNnUo8HAORiN/NthPAHM6RYXokG3XY9JXvmh6pjT44KF/1G8jaqvc5j/bZgm9Jb7cDBQqrxMdSucBwZ2qf9xMoF/tcg126J/uzyRANczZz3DMe93oE92tX/Zp7roMu9oXXv+qHw7kxdbpxzGoKFVKmoggrcYPUSDOuWwAkVzjM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MW5PR12MB5649.namprd12.prod.outlook.com (2603:10b6:303:19d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
- 2025 10:13:46 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
- 10:13:46 +0000
-Message-ID: <e6de55cf-35ca-42d7-8532-d4ea2ce9b48c@amd.com>
-Date: Thu, 6 Nov 2025 11:13:39 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/ttm: Fix @alloc_flags description
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux DRI Development <dri-devel@lists.freedesktop.org>,
- Linux Intel Graphics <intel-gfx@lists.freedesktop.org>
-Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Zack Rusin <zack.rusin@broadcom.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20251106005217.14026-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20251106005217.14026-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BN0PR04CA0038.namprd04.prod.outlook.com
- (2603:10b6:408:e8::13) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397EE30DEBD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762424042; cv=none; b=QjWSLYUAV2/6+b0POccghWVhCHUFh3ZUYm7wa3uL38p6aYSW/aGCR1vNeu2sf8s0p+vK6sn3N6iXKe/SFxHFQtu6v5wOWe1i292NgKG23EEksYxVSPwHX6PJcoQgIdJ0Sa/bDFGMC9mwZX5CtpTLbOVrIzrlgIDgB0pJp0L/N5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762424042; c=relaxed/simple;
+	bh=3g6OwqvUvgOuE0sVQ1tvj2/4v52gpeHEPrmCnel5VNw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EYSqu3sQ4IHDclCiu5dkwp+Gp+lgPvCtr8T6/33xfK9pkV6nMr4XFupmli0fnujmJOdPfp22vQnrlnR3PwGGmqYrDfUaNPhAh+3e9kaeX+pMABKxEqUeGdJSk6LNGPF9PDQbR1dnvitZRE84oL95FEZfwY+Kiea6tNUrTHauu7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOa9ZqL8; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso817704b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:13:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762424038; x=1763028838; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XVferEyN4+RzXvE7eehEmFRfQazqGQ49nTw3vZt6WP4=;
+        b=fOa9ZqL89qNKkCAz8jQYoADmdLmc1LtqIlsCaUEVxK9YS6x3ZBOhldjv8rDDuf4yvf
+         GhQbPWIX2m8kSLQ7HAZseTB5Tsg8lrSzVTXqPO6aKqiboFeCiC/C58qBa79f2wiRhApB
+         Vtn93e1Kp3oVPkrv9lMvvJ764fw6z8Qw+jLMlOTPSSnRkVdLgp702zIwJszfsM8okrrQ
+         lb/B90zsPEt2Pavga6L2LHM4EV5/3yu2v9PQl7rKjsEyVbRwFpA1CIa9IMvSZ+E6nbRq
+         1ZV8WZ8uXOBdPxRAxkfAI+rxq4KzGAElTBNzHGFzZuX/yRQsZAVr9/XNQy+seOD2PJNM
+         qqVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762424038; x=1763028838;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XVferEyN4+RzXvE7eehEmFRfQazqGQ49nTw3vZt6WP4=;
+        b=XvWJ3Gql/yMB55k2Xr/1dVtfeBTpgWpzbYD6ApmVDZvcpIYF6bFDG1WhH57T0rRT1b
+         7T3i5aqNPOmapcDb4jO93yfIJQLGSr/aa4ZS+bcxcZWxH+DEemp30y0ZQGuwII5zGenF
+         /eO5NXCJUFcHak4Sbbn5fMY94mStFvL1o2qemA34LrHLRKq2v4Zo/rGVBAmrCGiB1qaQ
+         zoclcgLKAZ49AN5uNX89R2m4LQ7dRe6YcJjnAyYenCSV5NpbKnuCM8govJSFJ2UEvGXS
+         xQgW6JhGVgpitTFlhhn6nxwVApeob40JgF8TJPBWIwL0xERTwWDnRCY9MCiwTuDGQmhm
+         CDZg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Ne8AoBzdfwAiT2/TPcbsQSGugJxssewURfuAzr3Gf67M0UhhfdvA98YYh10J7+DSRqCfKzQVno/aKso=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl+oc+t31c5ZmKV7jwMhN0g4Adzt4XIVQ4zhskeziMbkLI5Ijx
+	D2n03YzSmSb+wKR7e0YxUu7aEZ/uB0KNw2w0JwiAujCwaO7foSe+gClX
+X-Gm-Gg: ASbGncuEkI/CvICIFtq7n0CmlxGyVXYjmNsRdQXVmW4xZibgA9IG6DNkN8KWD9x9KPs
+	YsiRYpA3pmHHHMqD6LjSKV1BcyL0H8Ln5uYlzkZqsCPwoya9bIesaM5u9tr8n4EbD9dKvTT48BO
+	1xuEiwZUhUaBqTPVrRS4yBHA4w1b3Ij5pWZ+6Nas9SMTXaQ4D9mqnIloqdoTtmBEiSyVOMlKX61
+	auqfR0GyubUMdvjBB8uMgTOybY4ksSuvpAKUwhgNz+74iIRXoK4Y4PM6t6r9vnDY/3j/i9L4Hmp
+	CV/2mOZXY3HvQIZggpj8kmeoQhkcB2xKGy4n2tXXPjeaWaLkKBiMx8briVHrYcOnIYMQz0o0oEW
+	aQ/JqdqNZMcEsBUtfGB0onrn3f3i+yyp3BbAV4NKl1CPGCiZqjuPCeBkX6oQo25rOQ2e3xvUdOi
+	PiqGoqOK9SmFustQTTmYtje15JwkYoK+cTWuV+ngwlkQsDs+3d
+X-Google-Smtp-Source: AGHT+IHFm4f4DIfuJZeWFWHECmS607MVUrzEbqxwY7bBNABCSqwm+nfFI94x/cfAN4hYxfUSU4FFIA==
+X-Received: by 2002:a05:6a00:2e0d:b0:792:574d:b12 with SMTP id d2e1a72fcca58-7ae1d7350a5mr8116654b3a.10.1762424038444;
+        Thu, 06 Nov 2025 02:13:58 -0800 (PST)
+Received: from ?IPv6:2401:4900:88f4:f6c4:5041:b658:601d:5d75? ([2401:4900:88f4:f6c4:5041:b658:601d:5d75])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af825fbc63sm2270481b3a.49.2025.11.06.02.13.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 02:13:58 -0800 (PST)
+Message-ID: <26b0845236aeeedae68b20765376e6acf3bb0e97.camel@gmail.com>
+Subject: Re: [PATCH] net: ethernet: fix uninitialized pointers with free attr
+From: ally heev <allyheev@gmail.com>
+To: kernel test robot <lkp@intel.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>,  Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller"	 <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski	 <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "K. Y.
+ Srinivasan"	 <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ Wei Liu	 <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org, 
+	intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, Dan Carpenter <error27@gmail.com>
+Date: Thu, 06 Nov 2025 15:43:49 +0530
+In-Reply-To: <202511061627.TYBaNPrX-lkp@intel.com>
+References: 
+	<20251105-aheev-uninitialized-free-attr-net-ethernet-v1-1-f6ea84bbd750@gmail.com>
+	 <202511061627.TYBaNPrX-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW5PR12MB5649:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3c6f50c-5cf1-4b4b-da9d-08de1d1d2bf5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ODErUEt4MDFEUHY0QzVhYk55M085cDJDSE1SbWF3RTFtVUZlNXI3cG9zV1cx?=
- =?utf-8?B?N05LdHIwR2NFMGFqWERVK2ZTWkRmNjcxNXFiTUlsYitQSWlDbUVLczFOeENw?=
- =?utf-8?B?RTFMZkVvZ2dSYWdFcmJmWE1yMjUwOGdUcGRiQ25iQjVrQ29oSGhJeVVaZklt?=
- =?utf-8?B?NFE5UmR5T0RmLzhWZTBDSit3Z2lzdGJsYTEza1FsVFdTWmFnS2VMeGlzMWt6?=
- =?utf-8?B?NncrVUZqNExsaGY0a1NCcnE3NjV3Wlp0S1Z3S1MvSU54Tk04NnYxWm04MS8z?=
- =?utf-8?B?VDQxOXlRdE9hMVF4OVVZek5hTmNJSm90ejhaK2ozaW5ma084K25lVnpFSlZz?=
- =?utf-8?B?Uy9Vbk1vS0xSM0RqRmVxMHkvMm5CeEsxeDJLUXpwRGpxMHBkUWIxT0svOWk1?=
- =?utf-8?B?K00xOEVmcnpDYzhEOEhta3loaUV4eC9HWlMrRXlmc2I5azhZSWtnTGgwblhN?=
- =?utf-8?B?ckFlYk1RUHJHNmVCdkV2ZU9tVmVNbkp6V1g2Y1Z2SGpYZVc3MHg4SG1ZSXgy?=
- =?utf-8?B?VDhsTThuNzFjaS83TEJQbjN4SmdVTXh5ZThZYlhGZFRoaHRHaGYycmxqVmR5?=
- =?utf-8?B?YmgzcFFtQk9YMEg1YkgreTBKSklaMjk3aEV5K1E2MU5TRVd1MVVjTjVrbmVi?=
- =?utf-8?B?OXJGU05ldTZtZjY3SWEvaW02QjBxdVI4WlRuNklCNXVTVGJMUHVJWGROU3ll?=
- =?utf-8?B?VnpXS0FzcjZCaTJHaDdacXJKUXRhRjlXd3VWVXJtaThSYlRtU3RXT05xN0hO?=
- =?utf-8?B?aW83NG9xKytNOVFRazd3Y2R5NURaNER6RWRCSFR1NU1TRnVZeW9SV0FrMVo4?=
- =?utf-8?B?T3pHRjVqcVhidkJqa0JaOEc1eHJmQVRnaHBTOEtPVkZSbVZzaGh1V0MxcUww?=
- =?utf-8?B?ZktmWmxjcE1SYXlsNzBPOGMrZnY3QlE5Zy9lVzRYQlpVNG1QazFWZkN6Tkkx?=
- =?utf-8?B?S241aUc2R2xvcFhLV1k4eVNuVjFZeExPQmRYc1duN2VKS01qRDg1UmNWMm42?=
- =?utf-8?B?Y0xId1F1OU9LN0lIWFBERXh1eTRXcUcrMzB4OWJNTVd2RnFzUytBTmlmQi90?=
- =?utf-8?B?V201d2R4Vi9Da2VEN0dTaEVlN055RGtWd2RQd3VIR2Q3NjZYWE84YlhMYnUz?=
- =?utf-8?B?WU5HSVVaNmNRSlVjcitMZnUyK0tVQzJNYjlMSUd1aUk5Z3dsWFVOM1ZBMWVx?=
- =?utf-8?B?Qkl2YXU5ZXNsa09uU3A4NHlsakVScEtvdXV3TXZGOUhMbGJzL25DL0Y5LzBr?=
- =?utf-8?B?QmpPQnJoaEtVNzJzVEdSYlphZkZXRVRRWWNmMXkwZkNRMCtPY013aXlqQXVV?=
- =?utf-8?B?aFdYRkxLS2Q0ZDAxTHYzdU5lRys4TzVUTVVTcjhWY0xjMVZlMkJtc1JKTmJD?=
- =?utf-8?B?cVRreDYyYU01UnF3Mlpwc2Ftc3c3d1RsSThQLzdQc3BrV0lQc3ZRZHNoZHZw?=
- =?utf-8?B?eFhxeG82QldEZkR2SC9kejZEUWh0WjRlRGtTK2JJeGtNYlo2SHJ0ZldTanNL?=
- =?utf-8?B?a21Gd2tKQnhTZ3pwUlBpb210MG1MVGg2RXo1YXdlSlBERHJ2aXZobTBpcTEx?=
- =?utf-8?B?OWRGYkVoR05GR2FyRW13TXZvQ3hOUTB0Zjc4MG1oUytBeURPT2pSUkJTTTg3?=
- =?utf-8?B?TUErbklyNkVsVm9sN0NxZ1A5VTVXbDEyZWt1Q3hPUmM1YmtMNDhFSXNxUHZn?=
- =?utf-8?B?RFJnamxkVVBuZG5CTTd4RUlFeHJmSHhHdUh5NXpRVnlDSGZwLzVLT00vbkox?=
- =?utf-8?B?SUw5TmpqdTBjeWdUdHV6VVIvTG5Hc3JZT2ZZN1RCbC9zQjRUa3QvNHhYdlhi?=
- =?utf-8?B?bGJvdlBmTjZpekY4M1dSeWpSN0RVZVdJTWpzOVE5bENjM3dUbDFmdjVtcHR1?=
- =?utf-8?B?Q0tlbnF5ajRFWEc2WVhPTnpvZEpZTEVOd2lGOElWbHlhancrZEVuVkJNNTBW?=
- =?utf-8?B?TlJrNjhsd05QQkM1U21VaHkwMEZGY1BxMTdXWUsyd1Y5anhubXpXaU5CODN6?=
- =?utf-8?B?ZG1wVjlLMDJnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TWlxeFhybnIyQzg3dGpNdW1lRXVkSzQwVWlKbS9EdEJ4ck1xTVFuNjVGN1ov?=
- =?utf-8?B?Y25uelNVcVhaQ3hMSTViQ0YvZlh3bVBDZ2dlZ0l3cm1DV0pCZ3ljdGNPdmFJ?=
- =?utf-8?B?N0N3MmdrTTJaUDVhaUdUd3RuYS96YXlJeTloRWNiZjl5bUVFTnNnSENKRGVT?=
- =?utf-8?B?TmxQOGpJZkhkdFBhUjd4T003NUVzZGNqWndvS05lZyt1RGRGTExyT05rTXBh?=
- =?utf-8?B?Q2ZrY1ZOSE9FSHhHczdUSW84RCtXVWM1bjNJOFlVbWpRRlcrU1Bwb0w0dFA1?=
- =?utf-8?B?WmVNV0UyYlFpQWt0ZXZOVXhCSnplL0FsN1lmSktFZUhHcVJ2TFJJeUlWazBV?=
- =?utf-8?B?WC9HbGxLZ1RNNjNneWl0cnJLQWNyYldTeTQvN1NJSC9KUHV0eGg3eTAyTlF4?=
- =?utf-8?B?NmhuSXlRQXdkcXE1NE9ZeTV6Q052MG5QdE9zRWRDVzFydTFMS0E1cEZSaG01?=
- =?utf-8?B?bG56c2xab0RIa3plY2dXbWduczd2UTBZMjZlTE0vL01FVGlPSzJBZkQxRHBv?=
- =?utf-8?B?Wmt0WnZFYjBzWUZkeEpOSW5aVGdEZHVpOXFaZ3l3R2lGRjdPb05WVW9ZQ05U?=
- =?utf-8?B?dUs0SzdMUGxvQWtkckxPbExMRmphTVV1OEZ3dGVIcllodjZlK3FwWVk0WnVw?=
- =?utf-8?B?ckhJc1FIU09BN3NiTVlCVlowQitLdkozeFpGR09lbzBIb2VTb25taG1QWW5m?=
- =?utf-8?B?cVNXcGhVWXMyalF5cmVETzJQdUY3OHAvcVRPSnlYemx2cDVYTktkUVg4VDlh?=
- =?utf-8?B?M3BRb3VUN1ZMalY4OVNocWFOb3d3VXlYeVFrdy95UzZJN1FtUlFVazVyUnN3?=
- =?utf-8?B?RFhoU2RRK2RRRUNLL3NLdHNOODdyMHZyVzJhQ09VRFlyNFlmR2xoTHhDd0V3?=
- =?utf-8?B?ZXlWQzhDcjV3Ylc5Q3U0SzdjQXhVQTZ2ck9VOEYxb0lvMmM4bVcvenZZVldU?=
- =?utf-8?B?UE85Nk9yMEhjYTlFMnlNMks5WmlseUhpNnJ6TUF5bGZMLzF3Z3VvSVVlRmlS?=
- =?utf-8?B?MnFjbEN6M1RidmQzbGlJWDBKVW9oU1psVEk3cmgvbEZTOWV3TTFrT3kvMmRt?=
- =?utf-8?B?QUZGSCtBTmNGclJtVDJlSHVRZVROYmxYLzlSSFNFTTZGYnFhREFkYUxPd1Na?=
- =?utf-8?B?cXFoT25WZjBBd2F4OXBVS2lHTEFJZitEd3JkdDd0Sm1lbUR6a3JlclZReW1i?=
- =?utf-8?B?M0p0d2ZaOVhvTWlXNEhUZFVsMFpibnJ2dTF4UkNyYmZwUXYzVVVjTG5uSUtx?=
- =?utf-8?B?RVh3aElsQ0xiOHdzckFMTlNqUDdaNVp2aytFRmFNYW1PSkRBQjNCZXdNV1M3?=
- =?utf-8?B?U1ZIeDA0WUFOeFFUTVhYT2N3dm9ac3M4eHo4OEszeHJoQ0sxTm9hMFNzK1lu?=
- =?utf-8?B?OE1KWXlSS01Id3laZ0dpY0NLQVI0bUFxU3JSVUxNbzBOeGhyYldVSlVKTFAr?=
- =?utf-8?B?UzM5cUJuQk93dHV2aHR4c1J1VEVzdmJoaVVMOWpFVVNRSlV4SEVTdXdtWmp1?=
- =?utf-8?B?Z2NCV0k5YXJLeUFQNUE0cURqR1dFYThpaTJsc0QvWkluY2RvS2I0WkVUQkhm?=
- =?utf-8?B?Z0tsSWJoUmhjMTI4WnlHUk94UXN6bVY5aUViUTNiZ1h1S3FDckd2MzBqVG1V?=
- =?utf-8?B?b0c2djNXNzNXZERNU3NQQ3VHUWRDVWZhbG9mOHowUHVaQ21qV3FqcFZFOW9o?=
- =?utf-8?B?dVdZQ1p2RUhKUE9BbGVBN3hGVWZzUlNVV1B0S3ZhakpyZnFNQ09VamdxZGdv?=
- =?utf-8?B?Zm1MZElaZlZENEhxb0xnMDhiaVRwM2lJR1pqVE43N09OeWpQQlkvRU1rK0JG?=
- =?utf-8?B?R010dm9lbkkyWWZuZHhldDAxQUJGZGN3aGRObVlTN0VkOUc5SzhkVzZuaDJG?=
- =?utf-8?B?aHIxeTBTZENHTFpoZTVQeUYzeEF1N1EzY2s3bkZxWk5XeVpJbEJ2SXRITjJJ?=
- =?utf-8?B?VUw3S1BLYVZaNFgzZ0w1WnllbDMySWpJdS9tTnFQbms4U2hlaG9SNFdaUklC?=
- =?utf-8?B?RngxR3Nxdk1Zak44dWZNYVdKVEFOWmNkMHFROXVmN0tsMlhEVzhFK0ZZYzM5?=
- =?utf-8?B?WGtWVzFkQkM4UWxDZGhRVTZkTlZVN0RSam9SeVE1Wk9JWEYzc0VGUGxZdFBs?=
- =?utf-8?Q?Ny2WZpzMCypOafXFMKe0+o4Nh?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3c6f50c-5cf1-4b4b-da9d-08de1d1d2bf5
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 10:13:46.3928
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: H78U8wfBm0GYI7/yWyywg8KbF/M+k9lf8aAVRv/cfpH+IrREkmPuWkZTL8nivvSx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5649
 
-On 11/6/25 01:52, Bagas Sanjaya wrote:
-> Stephen Rothwell reports htmldocs warnings when merging drm-misc tree:
-> 
-> Documentation/gpu/drm-mm:40: include/drm/ttm/ttm_device.h:225: ERROR: Unknown target name: "ttm_allocation". [docutils]
-> Documentation/gpu/drm-mm:43: drivers/gpu/drm/ttm/ttm_device.c:202: ERROR: Unknown target name: "ttm_allocation". [docutils]
-> Documentation/gpu/drm-mm:73: include/drm/ttm/ttm_pool.h:68: ERROR: Unknown target name: "ttm_allocation_pool". [docutils]
-> Documentation/gpu/drm-mm:76: drivers/gpu/drm/ttm/ttm_pool.c:1070: ERROR: Unknown target name: "ttm_allocation_pool". [docutils]
-> 
-> Fix these by adding missing wildcard on TTM_ALLOCATION_* and
-> TTM_ALLOCATION_POOL_* in @alloc_flags description.
-> 
-> Fixes: 0af5b6a8f8dd ("drm/ttm: Replace multiple booleans with flags in pool init")
-> Fixes: 77e19f8d3297 ("drm/ttm: Replace multiple booleans with flags in device init")
-> Fixes: 402b3a865090 ("drm/ttm: Add an allocation flag to propagate -ENOSPC on OOM")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20251105161838.55b962a3@canb.auug.org.au/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+On Thu, 2025-11-06 at 17:06 +0800, kernel test robot wrote:
+> Hi Ally,
+>=20
+> kernel test robot noticed the following build errors:
+>=20
+> [auto build test ERROR on c9cfc122f03711a5124b4aafab3211cf4d35a2ac]
+>=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ally-Heev/net-ethe=
+rnet-fix-uninitialized-pointers-with-free-attr/20251105-192022
+> base:   c9cfc122f03711a5124b4aafab3211cf4d35a2ac
+> patch link:    https://lore.kernel.org/r/20251105-aheev-uninitialized-fre=
+e-attr-net-ethernet-v1-1-f6ea84bbd750%40gmail.com
+> patch subject: [PATCH] net: ethernet: fix uninitialized pointers with fre=
+e attr
+> config: x86_64-randconfig-015-20251106 (https://download.01.org/0day-ci/a=
+rchive/20251106/202511061627.TYBaNPrX-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251106/202511061627.TYBaNPrX-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202511061627.TYBaNPrX-lkp=
+@intel.com/
+>=20
+> All errors (new ones prefixed by >>):
+>=20
+>    In file included from include/uapi/linux/posix_types.h:5,
+>                     from include/uapi/linux/types.h:14,
+>                     from include/linux/types.h:6,
+>                     from include/linux/objtool_types.h:7,
+>                     from include/linux/objtool.h:5,
+>                     from arch/x86/include/asm/bug.h:7,
+>                     from include/linux/bug.h:5,
+>                     from include/linux/vfsdebug.h:5,
+>                     from include/linux/fs.h:5,
+>                     from include/linux/debugfs.h:15,
+>                     from drivers/net/ethernet/microsoft/mana/gdma_main.c:=
+4:
+>    drivers/net/ethernet/microsoft/mana/gdma_main.c: In function 'irq_setu=
+p':
+> > > include/linux/stddef.h:8:14: error: invalid initializer
+>        8 | #define NULL ((void *)0)
+>          |              ^
+>    drivers/net/ethernet/microsoft/mana/gdma_main.c:1508:55: note: in expa=
+nsion of macro 'NULL'
+>     1508 |         cpumask_var_t cpus __free(free_cpumask_var) =3D NULL;
+>          |                                                       ^~~~
+>=20
+>=20
+> vim +8 include/linux/stddef.h
+>=20
+> ^1da177e4c3f41 Linus Torvalds   2005-04-16  6 =20
+> ^1da177e4c3f41 Linus Torvalds   2005-04-16  7  #undef NULL
+> ^1da177e4c3f41 Linus Torvalds   2005-04-16 @8  #define NULL ((void *)0)
+> 6e218287432472 Richard Knutsson 2006-09-30  9 =20
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
-
-> ---
->  drivers/gpu/drm/ttm/ttm_device.c | 2 +-
->  drivers/gpu/drm/ttm/ttm_pool.c   | 2 +-
->  include/drm/ttm/ttm_device.h     | 2 +-
->  include/drm/ttm/ttm_pool.h       | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/ttm/ttm_device.c b/drivers/gpu/drm/ttm/ttm_device.c
-> index 5c10e5fbf43b7f..9a51afaf0749e2 100644
-> --- a/drivers/gpu/drm/ttm/ttm_device.c
-> +++ b/drivers/gpu/drm/ttm/ttm_device.c
-> @@ -199,7 +199,7 @@ EXPORT_SYMBOL(ttm_device_swapout);
->   * @dev: The core kernel device pointer for DMA mappings and allocations.
->   * @mapping: The address space to use for this bo.
->   * @vma_manager: A pointer to a vma manager.
-> - * @alloc_flags: TTM_ALLOCATION_ flags.
-> + * @alloc_flags: TTM_ALLOCATION_* flags.
->   *
->   * Initializes a struct ttm_device:
->   * Returns:
-> diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
-> index 97e9ce505cf68d..18b6db015619c0 100644
-> --- a/drivers/gpu/drm/ttm/ttm_pool.c
-> +++ b/drivers/gpu/drm/ttm/ttm_pool.c
-> @@ -1067,7 +1067,7 @@ long ttm_pool_backup(struct ttm_pool *pool, struct ttm_tt *tt,
->   * @pool: the pool to initialize
->   * @dev: device for DMA allocations and mappings
->   * @nid: NUMA node to use for allocations
-> - * @alloc_flags: TTM_ALLOCATION_POOL_ flags
-> + * @alloc_flags: TTM_ALLOCATION_POOL_* flags
->   *
->   * Initialize the pool and its pool types.
->   */
-> diff --git a/include/drm/ttm/ttm_device.h b/include/drm/ttm/ttm_device.h
-> index d016360e5cebbc..5618aef462f21b 100644
-> --- a/include/drm/ttm/ttm_device.h
-> +++ b/include/drm/ttm/ttm_device.h
-> @@ -221,7 +221,7 @@ struct ttm_device {
->  	struct list_head device_list;
->  
->  	/**
-> -	 * @alloc_flags: TTM_ALLOCATION_ flags.
-> +	 * @alloc_flags: TTM_ALLOCATION_* flags.
->  	 */
->  	unsigned int alloc_flags;
->  
-> diff --git a/include/drm/ttm/ttm_pool.h b/include/drm/ttm/ttm_pool.h
-> index 67c72de913bb9d..233581670e7825 100644
-> --- a/include/drm/ttm/ttm_pool.h
-> +++ b/include/drm/ttm/ttm_pool.h
-> @@ -64,7 +64,7 @@ struct ttm_pool_type {
->   *
->   * @dev: the device we allocate pages for
->   * @nid: which numa node to use
-> - * @alloc_flags: TTM_ALLOCATION_POOL_ flags
-> + * @alloc_flags: TTM_ALLOCATION_POOL_* flags
->   * @caching: pools for each caching/order
->   */
->  struct ttm_pool {
-> 
-> base-commit: c553832116b8d0039b13ae84d1ed06e7ee4f1fdf
-
+Sorry. I think I messed up config somehow during build. Hence, couldn't
+catch the error in local. Fixed in v2
 
