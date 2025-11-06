@@ -1,219 +1,212 @@
-Return-Path: <linux-kernel+bounces-887657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D81C38D11
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:10:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E53C38CB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45C524F4DA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4240A1A24BDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5296C2405E3;
-	Thu,  6 Nov 2025 02:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176CE2264AA;
+	Thu,  6 Nov 2025 02:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="QWIMM8WM"
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="c20y4YPG"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010004.outbound.protection.outlook.com [52.101.56.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A265F226D14;
-	Thu,  6 Nov 2025 02:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394905; cv=none; b=pA05hDhMenXGSdsWaPXgC6uj0lGBgqm4KLy1paJgyDOvS1WC0qyRU8ZqwSY9vWIlAjDX6icoJBbVfyw8dfVV8WaBxn6fvjfTrJGvrb5VLGuevjOlgNrH4EVsY82KXdWw5XQ9VBdgF9sUz/OHiwKMyE+a2moKzleOESMV9DbN80Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394905; c=relaxed/simple;
-	bh=qaIb7TGVuqIcpeKgfA6nBAfe+2E4Q/GvG4+uDHXtQC4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=i3so5sO+orPNyNjtHRNxDsDNIxzK32KuBBCAYCOkhQfEF+ArJrFi++euafldjS4R8Ugk84gc7xz8I9e90ETdbFvhkIk8zVcBuNmJjK6Eo+ZPkB6+cMGYaR11YoJVIznBdbTHOQIYtnyLZL2ShBwvNwWMhIWlhcl/Ko+ADcLHhuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=QWIMM8WM; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1762394838;
-	bh=J2Dfi8ObLWDtR4Ds26hqQWc9pn2P2eSkWbDnDzh2tek=;
-	h=From:To:Subject:Date:Message-Id;
-	b=QWIMM8WMLgmM1GHI2ekmPYFThz45q9VZVmq8Tu/S+w+MjnJDs2JJKQrU8Tvupgr+7
-	 6bt1dw2uq68DQKZfSlWhkS2WbEyYGaocSqjGAQh9Qh3AkTrKWPk7JkscrPROkLZZBh
-	 jd+i5m3MBZx1lu4jT570uTwKfyaptIFTt8vWguiU=
-X-QQ-mid: esmtpgz15t1762394836t5c25a9a9
-X-QQ-Originating-IP: MNgHLaivXKIqdVXO1uJSHb8Co2TeOFaAisJDtLBd4mA=
-Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 06 Nov 2025 10:07:14 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4187062248744172939
-From: Chaoyi Chen <kernel@airkyi.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Subject: [PATCH 9/9] drm/rockchip: vop: Add support for rk3506
-Date: Thu,  6 Nov 2025 10:06:32 +0800
-Message-Id: <20251106020632.92-10-kernel@airkyi.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251106020632.92-1-kernel@airkyi.com>
-References: <20251106020632.92-1-kernel@airkyi.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:airkyi.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NmjM7tI9iA2tclLMxUkABYeywUVgWiGT5d+cHlw3fxtG6M+TkmOC9emn
-	G69z+CUpiKxYB9BKG/DFScyQE8b3X/uNE/2uorCMt64eUnZNggaXcdE9RuEeU3SfX8t+v20
-	/q+3fZrScWbp1gKT11rm3JOBwHio8wzuHhUfUwMYMD6iG9MZ8ZKHtbs5ICB2MGAe+CS2Vvj
-	dwaeHOvdFxEaLWbkG+xakq2cj23rc6wSmXy8VUzYgZ14Q3ZtCTpzTXbU6hhXhgFaNu0qkSq
-	FNpIHtG+Mg2Hqu/M9vzIECGuk7PRduFdD5CqWKcXRJiHFPuBCapxh+4Z6DBzS4zSzEY+Cz1
-	FglCY6+XjFVkElG39Gge9aFcs2DGcybzjYCgF/ILu2/6GjB0wSgU36djHPFVmRWJ1hYM+fb
-	CL1p7036Z1zP7Eg25C/yKBU/SuriIzTU671fbKpttmolJPmS8Uo6mIGwfLRHGr9md+qOYmf
-	C0lUYJe8YIMitmlB0NdRSspNnALLMDBA415mN2KPhnO7/afL5Y1Xp+U0ddxwC4wLZG5f6bz
-	MHJfVutBlHwYywJq58B357JHw/IiWLqxtMTuyno5fUyGPMP6cNTW26wCG//ay/utfZCW2ol
-	0VrOfDUCE6yPVTbckosU+0wmajJwHPYPWOAue4S7modGzpKwj9AkVZNxNPS64BwgRHECVbk
-	uYV+rZ6TqXdpJNQ1PICVVh7cZL1J/Xh6EmHtKLt7sT/iwZqRLNWMB14wetJ73MXxJ+iQxui
-	oBj/yBhOmMqgFDjG6dDqXP/Tp23vnT5uXAUrpaElIdNzpSoodAT1ylCJxPy5m6VRvuajNWW
-	uz0qXWVOgpz1pdzAS/9rvmRebi32ZvaNTvLnGzh4iKK30GIYDQvagnLtQwN7hDHIcwmBk1X
-	uPtunjxzZoNxnWQZcEIkmO9p4irwsrLwa1aBXbd8lVCPQrLAG2iL33RJFiyTheugHKlPzr7
-	UVnxHqGNJ1FawHFzZdcaizdxn6zp+6kryDTJDU9sgKQKi8uA5uiPVIdYWmI+tUM7Wzc1r97
-	PACVtKgHNmY52td5yLJ1MXIO00/Z+CtxrgpTMcqA==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A3442AB7;
+	Thu,  6 Nov 2025 02:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762394811; cv=fail; b=lx8zYXLmqKmgHfIuSW9XDroRbH4r7gFYxeociuSmnet664QpFi5ok5TK2GBwli43qIVdQgHAxCeGxQD7iA3CGTAF5VgVf02tmhpTa+LQ3hKVDr3TR0ivZ8VFvBRy9qnwsPNDYAfx3qfKH/RjLG4VWtUuzgC/2C5Bjlxw2fwRqBg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762394811; c=relaxed/simple;
+	bh=WWM+BnH7lVM3htGDgGKs5ZaIupsOciwYiwJiAQk0A1s=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YMlmeDk+JdCuT/pVaB26vi2VWl31LlWniLE3TLfo0d3Yj/cyHAD2AtapWcRU/ww4IinYFHfwzCEM41ri1xerheofz/ZMQszaNDeHy4yIzq3qNTszbMw2wiu24J6j8d3Bb7JJxTRoENjBydZzR8CONZ2ZOrWsYk19aRJy4gy7U4c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=c20y4YPG; arc=fail smtp.client-ip=52.101.56.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O0j5BzHuAjvYgPkzTvl7epq+cC+/YY6+/EVrpg6X+Jsw7gMz5biBEszDAR8CaJLjhDHwuDYc2BDZR2X2ftOUPG3BPpWAxj9lf3UmKh0bFK44xtKG7mbR//akAmWGSzJa1Ng4Q0ytx0z6IsDU/TDdP7U7uYBBe1lCbokQYRXFAEuGRU8iQWstVhWKVus7x0IM7Woi7ccsZUp/nG2h7RqvNBv6NaDqAFN+KXzpRL5iEJDvc0iirIkJr16fqjYru4z2cTBNWexRlj5zh+gQUBDufsJHKIZ/lRSpyUsKRgvLYuszmVTrPbCoNqOUdgzQaOWLsWAc7K+T83cGQqdcAxi+yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DEr9yASFKzCBxyKOW7CbKpMX67ulPH6iwB6PbHIZ7zo=;
+ b=RpsEbfwHWkIhltaQFPImU7yWJSEvgf5ng6/xd4GWHpg8luJjtcgWoH7fhLekQ0lv+wiUd2HRdCjf+L1Ko43ZhDT2W/fdhRC05E+7+g573W/7xWgim5BDo6+qGtY3DGgtPsxWOX3PXkqIbZJkU6JHFwPvfXw5hZZSFx+7LzKnYzreg2AxwONbzIiuFrPwiy5XTeuDpDTU9fLEj4pkfX590Je+OESQzSyY9H3btjBBGAAK9fWq4kNqi3EvmUltfcJL8vtrENqujxK+PVsOwLYMLxAhqwuT7a5rSMNRQV/NIJ7NEbpGGEy+orYgNauW5yu4+vhQ/Ramm7LR8aWuJBaZFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DEr9yASFKzCBxyKOW7CbKpMX67ulPH6iwB6PbHIZ7zo=;
+ b=c20y4YPGhjnB9dsyyME93i81vVdxMx6FZrRh9OlJ2ge4YhKwzZEKM6ij7CNyGAI47CBuisxyRvzDRxf4vuctpM/29NTuY6FcVEcAplu22I0N74CSDLcywkZ6RqMftrY06lC9aTiahUFYDnHHEJhLZp1ia6a2iBBbh2NpHmPaCng5o0mFBbxlq/MDyHibmmDLqPvQN1biTScEoannQbo3aOHacx+/LPUVw+ccovQeytMCEVDss1kNhCJlXIZ07OasdVniKqWeLzJqRYH+d7jboCXBQustzG9a/cZWqRfdosswFNnzCV6+kHM1HSzL3HIZGX6IJnXGeU2upQpPsxM61g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by CH1PPF6B6BCC42C.namprd12.prod.outlook.com (2603:10b6:61f:fc00::612) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Thu, 6 Nov
+ 2025 02:06:42 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
+ 02:06:42 +0000
+Message-ID: <35642339-8913-45cc-869e-8bcf93553920@nvidia.com>
+Date: Wed, 5 Nov 2025 18:06:41 -0800
+User-Agent: Mozilla Thunderbird
+From: John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v2 00/12] nova-core: Complete GSP boot and begin RPC
+ communication
+To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
+ nouveau@lists.freedesktop.org
+References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR04CA0009.namprd04.prod.outlook.com
+ (2603:10b6:a03:40::22) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CH1PPF6B6BCC42C:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6755680-acf9-46db-1a0e-08de1cd920e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dnRMOWVpbHhQV1VlVC9jdFRXeDAxOU53Yk5nY01XWThlTndJL3FCSnQzbS8z?=
+ =?utf-8?B?QWg0cXJPcVdTWGtPNnIxRkRpbXdXQWJLU0pWY2V2TTA5cSsvektjZUVUbnE2?=
+ =?utf-8?B?OFp0aHNpZkErdzRiSTFCRU1UMnhJallUYXNxdzh2aHdycGdsWXJPMXA5b0dm?=
+ =?utf-8?B?VFVqR1l1cnBFNEN0RmhJWjVnS0c0WndoUjJ2MDdTM20wQlcxc3QwTVZ1MURq?=
+ =?utf-8?B?UTZXMXFzSFgrL0gxNHhQSGVOWXJSWHJsYjk5cHVCUW9GRkxic1RDb0ZwVytn?=
+ =?utf-8?B?Rlp5Vkd1WXIvL0xLMVNUblp0bDZWRXhFUFZtcDVLcXVtYXJ3M2xNYTIwMEVa?=
+ =?utf-8?B?NC9oQ0UvN0p2OWpqS054ek0xM3FtM2xBenVpMFZCRUpLNVRUY0p5N0VPcG9x?=
+ =?utf-8?B?RHRiVklpWmJkK0h2c0xEU0xWVi9xNVBBcy9lN2wxendiclFaeW5ROVJIN05j?=
+ =?utf-8?B?TFhaV05tcSsvcjFSeUhzMXdEazlpWGUvNmlUUExURjZlaFpnd0hRV0wxV3dy?=
+ =?utf-8?B?cks1blg3aG85bGV5N0dacG8vcURpYkE1akIvdnp1dDFLVS94VG9LazN5MSty?=
+ =?utf-8?B?Mkx1N2Z2bE1HV3NpVnlzMWdLZHhwV0FDTy9SME1TazZGSEVwaFpxUWNwTEs2?=
+ =?utf-8?B?S1pvTzFDbEtGS0hQQ2xabS90Zkl5b2I4ZWF4dG51dkw5ZGE2c3lOZGRNRHdl?=
+ =?utf-8?B?djhtRjUzcjZHY29oZG1vNWUxVHgvWFdmWmppcm1KazNnYVhHdlhnaXdRamwv?=
+ =?utf-8?B?RHJRb0gzR0JaZ3EreHN2b2tjOFpDT21HTEpoUWtBUUp5V0szVjdsc3BjNDlr?=
+ =?utf-8?B?dUFtUFJHeUlMUkZ1N2sycm4vQTE0UnpTSnBNRS80NnhpZkFqUk9ZLzBQaHZF?=
+ =?utf-8?B?aE1TY25CcHlqMURIRVhrQUplenRIOXB0UjVzUXoya1NIUDB6T005Wklnelp4?=
+ =?utf-8?B?VnM0Znk0NWdFaENmZWZ2cjZOZmJYTFJMaGZTRHJ2N2dOMEFJS0dmazViU2hN?=
+ =?utf-8?B?TGoyMWZYaEhUYVB4bkJ5YjlJVlVxL2pyM2ZYVjNodFNuMUtpbU4zUmsrcHNS?=
+ =?utf-8?B?dnVJYWx4Wm41ZXhmQmRxbzZwOG8rbS9YMkVQVFJvWVpIeERxelMxU21CSm1M?=
+ =?utf-8?B?YitDaXR5YTBLbE02VWQ1VC90QTh3TVhrL0psU2U0MTBjT0FIYk1wUWZJc3Yx?=
+ =?utf-8?B?ZFc1QmJmYUF5SnN1VVd6dzBQUXEvVUxGYU5zblFzOVZWNGtRSXF5ZTNBc3FC?=
+ =?utf-8?B?dkdQQ3BoMmw1cjMzbnhuR3RzWW91SVZONUN5WDh0ZmFlcGhrbnMveG1kT2ZW?=
+ =?utf-8?B?bWNtZFJiamVFOXZKaE9jbk9HakJ3WFZxTVUwdXQ2alRGbHhMdEN0VXMweFZB?=
+ =?utf-8?B?OGI0T1MrQkpWY0lCNnE4a2ZQQzlIUUcrSkt6Y1ludkprVCt5WWJXSDdWVGFq?=
+ =?utf-8?B?dFNjKzRrRDcrZmVaZlZFQVB1UGVpZnE3RmxmcWxvYWJ4c3FpYWh0S0J3N1dM?=
+ =?utf-8?B?VWxXOHZtamhHVjBuSXhpTFphUUwrbzlUMldUeDFVOU9ITXpCVGRYMjRBdXEw?=
+ =?utf-8?B?MnJVZG9ZNUNiK3h1Umh5ZHNyM2l0Z3Qzb3d3WVpPZ0FBVG1YcjdCZU5ybW5h?=
+ =?utf-8?B?NzR0dkpwdWRXLy9MUUNiQkMyZ2hSUWJKaEczLzRHbWFHeXkrQm9FUDVReUlz?=
+ =?utf-8?B?OU5LcHNsZWVPaXlLQ2NHalk5bmROTER3WjNTMWRJT0ZsL3hpd2VtMDI4Nmwz?=
+ =?utf-8?B?dUVpK1g0cTJYOUZzTmJOYjNXYTdud0Y4UCtIOWcrTkJFeFBpbHhwU0ZvNzFE?=
+ =?utf-8?B?eGhaTUtHR0FYRFJBWHJEUy8rRU5PQjQwcTRzU0pCV3RoUDF3S2xmdWJaZ1lW?=
+ =?utf-8?B?M0RHUlQ0dzFiRVdKTHJDTEJNa1N1c3Z0WE5LSGtZZThZczBkS3BGUXBJNlha?=
+ =?utf-8?Q?oQ2v/hWRnHsUMsi5vP2avm7fJNchG+qn?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bk9yamU4YjVoY3hDaDY5aFNScWFPeXUyZDB1Z1c4UUlWcTlBbXQ4NjZkUTlD?=
+ =?utf-8?B?bFUrUFNpaE0zcEpqbHhlUHIrbVJrK21TZ05UbHRWR2orUFFwTGpTZFMwU1pq?=
+ =?utf-8?B?QVBkS1lSZ3plVWt6UStHZDZ0OW0yWFFiVFVKbGRabjNSWSs0SkhDZGlaRUZj?=
+ =?utf-8?B?TXlZVnQyTDFWUXRmWHdtZUVXcDFCc0dTeTdLcWs2NEZ3MlJOL1hNdExQNWl2?=
+ =?utf-8?B?TDFpYlVod0V3Y0w2REtkLzk0d1F2Q0FVNXJTUlJ6TXIrSUpxOUxYS3lrQWts?=
+ =?utf-8?B?a1piOUxlZVpKUUtmZ2JCbERqdXkvYlU2L1IvSlB3eEdjNG5EcEN2VnRXVWd2?=
+ =?utf-8?B?RWxGckN2U0dYRnUxaXFFQ2lBVlAzWC90ZjRHREVDb2hORHQ5ZTBUbXp0QUdj?=
+ =?utf-8?B?MzBha0s0a0JoUFBUN0JSSEJ2SkRwMlZYcVA0SnFyZjRMMERDVjNxMXIrMHM4?=
+ =?utf-8?B?ZHRocTUxbFpjTHl6S1ZWZGFJRCtyMVByWkFmSFlvWWRIQVRyL0s5aS94Tldx?=
+ =?utf-8?B?bHUzTWhNM211MU5Jd2l5eFIyNHdYNG1hbnc4OWNESCtKVDZrQm5IdEZTN216?=
+ =?utf-8?B?b1htWFQ0cEFCMkNrenhOSUVMRXJmbWF0NXA5aFIxOWF4THhVZW42aUlGSXpN?=
+ =?utf-8?B?RklHZCtBaFZZZDlZaUZQRWlaMzVvaUZnOE1OQXBtcmZaZGFDeTViMkpmSlFI?=
+ =?utf-8?B?WitRL2FWTXJEQXNmMWhNdW9uR21FRzR0TkVMTy9WNTY2M2sxOE5hVnRVWEZF?=
+ =?utf-8?B?MTVFb0VWNlVkSE1sNU93a2dtbU0vVEZlNlFrRGJOYnBoMFJKM3VpTlBLTEM2?=
+ =?utf-8?B?SHZ5MTVodHFqNDEvMXlLQS8rdzNZSlVjb1ZTaW1XcXE2dlZMeTd6U2JrYUhQ?=
+ =?utf-8?B?cmdOOVdKWjJZaXE1bG9HczdNa3lDVE5KZCszcFozUGNlc00vRXE5N0NPMnVI?=
+ =?utf-8?B?NlF6M1d2eEVadEJnZGdDL000OW5yb29OaUQ3dCsxWHpudDdMYUVlMnArcE1V?=
+ =?utf-8?B?TE1VU3FoQkp1QzA3Wm83Z2tqdUFiQ3hVUy84NTdoMWtDU0x1NjRqNTRja01n?=
+ =?utf-8?B?RWVNamFueDJxai9SUVUxK2g1dFEvU2FUS1UyVFcyZFJ3UGVKaWVvMFJkUFVH?=
+ =?utf-8?B?SWYwS2JXMXcrbmZhd3B2aFQ0SDRneTdXbHFyL3ZtSFR6UDZkTDRQZzhGeDcr?=
+ =?utf-8?B?bVEzN1lySkZLeE5jaW1LMDY3anN2YmNhTFUzcXlMU0F6L3VRRXIrR2tKbGpn?=
+ =?utf-8?B?K3JtT095T0JZV3VpMkpoNTF6UExUSFV4MDRqY1QrZmRoTXBxdDFaa3dLdVVv?=
+ =?utf-8?B?OWZzQjJ4ci9tUGdnTUVQNmlYNkNsZDNlOC9hd3E0dlQ5QldIMkFNSEZyc04w?=
+ =?utf-8?B?cmErbnpBTWViSWttYXFJZ1g4VldCNGZwSEtkQ1p3SmlpRmo4ZDZRaXN6TWJW?=
+ =?utf-8?B?cXM4OTE0c3RtWTVOQUV3UDJoVUxLYndXa0tYK1JKZ1Brb1B6Rytha3NnTG4w?=
+ =?utf-8?B?OVE3NzFZNk9GY0I4UU5BSTlVL0lWK3k5a0VhMnVxM2dpRVRTSnlNbEV5Y0tE?=
+ =?utf-8?B?MHB4WlRMeW90aFYvZTNjNkR3TUR3SVRhanJxRWVPWC9oRFlGL2lnaG5aRldk?=
+ =?utf-8?B?UVdPMXA4S2JYd280R3RScjJCdGdhVTc4cVVkNnV6dlVNTTdwQjQ1K2ZKUFpq?=
+ =?utf-8?B?OU00cXViSmx4OFp4aE1JOTNvTXgxZW9jOUtiVHlCa3JOU05vaUVrMnpPK0NR?=
+ =?utf-8?B?UC9mTU1ZQnpHRXlDYWpvY3lZSGQ0OEdrb1JHVmcweXpnQmhicHk1U0NmVURH?=
+ =?utf-8?B?VjM2d0NNSlUyaDZ6a25iNk0yUmdYRitEOWdCWC9ybGNtTXdYN1hTWDFBRWU0?=
+ =?utf-8?B?UjFybEovUzZhVCtsUFcvVktwdGhuY2JqdWkyR0NQc1RmbG9ha3RFSWZ1YmVj?=
+ =?utf-8?B?YlRDTkNUaW83M091Rjc3YXlVN0xXcTFvUEVSK1FCSHZXNXlsSUkzRmNIRWRW?=
+ =?utf-8?B?bXd2SFkrR3hUdjF3cnNFbUYybkl4clhtZFM0N0dFQVZEV3dlNVNvUFJkL3cr?=
+ =?utf-8?B?aWtzeTA2RE1wenFvTG92Zklhck9ieHB5WS95WXhSYlh6OWd3TDhxdmUzd3V5?=
+ =?utf-8?Q?w14HShf4fZDQcQAHrpj7nY0BY?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6755680-acf9-46db-1a0e-08de1cd920e9
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 02:06:42.0654
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j/Awm/YhrbNCgFRknZo7ylSbp4BP4j7e1EZTb27zZlI/ktSf2EPtuingzzIRHQ3Ze5zk3WxUwvvHFQi6GxS0wQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF6B6BCC42C
 
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+On 11/2/25 3:59 PM, Joel Fernandes wrote:
+...
+> Joel Fernandes (11):
+>   nova-core: falcon: Move waiting until halted to a helper
+>   nova-core: falcon: Move start functionality into separate helper
+>   nova-core: falcon: Move mbox functionalities into helper
+>   nova-core: falcon: Move dma_reset functionality into helper
+>   nova-core: gsp: Add support for checking if GSP reloaded
+>   nova-core: Add bindings required by GSP sequencer
+>   nova-core: Implement the GSP sequencer
+>   nova-core: sequencer: Add register opcodes
+>   nova-core: sequencer: Add delay opcode support
+>   nova-core: sequencer: Implement basic core operations
+>   nova-core: sequencer: Implement core resume operation
 
-The VOP on rk3506:
-- Support 2 lane MIPI DSI interface, 1.5Gbps/lane.
-- Support RGB interface.
-- Max output resolution is 1280x1280@60fps.
-- WIN1 layer support RGB888/ARGB8888/RGB565.
-- Support Gamma LUT.
-- ...
+Another quick note: while preparing another patchset for posting,
+I just noticed that the convention that Alex established for these
+is:
 
-Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
----
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 57 +++++++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_vop_reg.h | 14 +++++
- 2 files changed, 71 insertions(+)
+    gpu: nova-core: <remainder of patch one-liner>
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index d1f788763318..6b654b682a94 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -1179,6 +1179,61 @@ static const struct vop_data rk3328_vop = {
- 	.max_output = { 4096, 2160 },
- };
- 
-+static const struct vop_common rk3506_common = {
-+	.standby = VOP_REG_SYNC(RK3506_SYS_CTRL2, 0x1, 1),
-+	.out_mode = VOP_REG(RK3506_DSP_CTRL2, 0xf, 16),
-+	.dsp_blank = VOP_REG(RK3506_DSP_CTRL2, 0x1, 14),
-+	.dither_down_en = VOP_REG(RK3506_DSP_CTRL2, 0x1, 8),
-+	.dither_down_sel = VOP_REG(RK3506_DSP_CTRL2, 0x1, 7),
-+	.dither_down_mode = VOP_REG(RK3506_DSP_CTRL2, 0x1, 6),
-+	.dsp_lut_en = VOP_REG(RK3506_DSP_CTRL2, 0x1, 5),
-+	.dither_up = VOP_REG(RK3506_DSP_CTRL2, 0x1, 2),
-+	.cfg_done = VOP_REG_SYNC(RK3506_REG_CFG_DONE, 0x1, 0),
-+};
-+
-+static const struct vop_output rk3506_output = {
-+	.rgb_en = VOP_REG(RK3506_DSP_CTRL0, 0x1, 0),
-+	.rgb_pin_pol = VOP_REG(RK3506_DSP_CTRL0, 0x7, 2),
-+	.mipi_en = VOP_REG(RK3506_DSP_CTRL0, 0x1, 24),
-+	.mipi_dclk_pol = VOP_REG(RK3506_DSP_CTRL0, 0x1, 25),
-+	.mipi_pin_pol = VOP_REG(RK3506_DSP_CTRL0, 0x7, 26),
-+};
-+
-+static const struct vop_win_phy rk3506_win1_data = {
-+	.data_formats = formats_win_lite,
-+	.nformats = ARRAY_SIZE(formats_win_lite),
-+	.format_modifiers = format_modifiers_win_lite,
-+	.enable = VOP_REG(RK3506_WIN1_CTRL0, 0x1, 0),
-+	.format = VOP_REG(RK3506_WIN1_CTRL0, 0x7, 4),
-+	.rb_swap = VOP_REG(RK3506_WIN1_CTRL0, 0x1, 12),
-+	.channel = VOP_REG(RK3506_WIN1_CTRL1, 0xf, 8),
-+	.yrgb_vir = VOP_REG(RK3506_WIN1_VIR, 0x1fff, 0),
-+	.yrgb_mst = VOP_REG(RK3506_WIN1_MST, 0xffffffff, 0),
-+	.dsp_info = VOP_REG(RK3506_WIN1_DSP_INFO, 0xffffffff, 0),
-+	.dsp_st = VOP_REG(RK3506_WIN1_DSP_ST, 0xffffffff, 0),
-+	.alpha_en = VOP_REG(RK3506_WIN1_ALPHA_CTRL, 0x1, 0),
-+	.alpha_mode = VOP_REG(RK3506_WIN1_ALPHA_CTRL, 0x1, 1),
-+	.alpha_pre_mul = VOP_REG(RK3506_WIN1_ALPHA_CTRL, 0x1, 2),
-+};
-+
-+static const struct vop_win_data rk3506_vop_win_data[] = {
-+	{ .base = 0x00, .phy = &rk3506_win1_data,
-+	  .type = DRM_PLANE_TYPE_PRIMARY },
-+};
-+
-+static const struct vop_data rk3506_vop = {
-+	.version = VOP_VERSION(2, 0xe),
-+	.feature = VOP_FEATURE_INTERNAL_RGB,
-+	.intr = &px30_intr,
-+	.common = &rk3506_common,
-+	.modeset = &px30_modeset,
-+	.output = &rk3506_output,
-+	.win = rk3506_vop_win_data,
-+	.win_size = ARRAY_SIZE(rk3506_vop_win_data),
-+	.lut_size = 256,
-+	.max_output = { 1280, 1280 },
-+};
-+
- static const struct vop_common rv1126_common = {
- 	.standby = VOP_REG_SYNC(PX30_SYS_CTRL2, 0x1, 1),
- 	.out_mode = VOP_REG(PX30_DSP_CTRL2, 0xf, 16),
-@@ -1259,6 +1314,8 @@ static const struct of_device_id vop_driver_dt_match[] = {
- 	  .data = &rk3228_vop },
- 	{ .compatible = "rockchip,rk3328-vop",
- 	  .data = &rk3328_vop },
-+	{ .compatible = "rockchip,rk3506-vop",
-+	  .data = &rk3506_vop },
- 	{ .compatible = "rockchip,rv1126-vop",
- 	  .data = &rv1126_vop },
- 	{},
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h b/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-index addf8ca085f6..7805533e88bc 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-@@ -1033,4 +1033,18 @@
- #define RK3066_DSP_LUT_ADDR		0x800
- /* rk3066 register definition end */
- 
-+/* rk3506 register definition */
-+#define RK3506_REG_CFG_DONE		0x00
-+#define RK3506_SYS_CTRL2		0x18
-+#define RK3506_DSP_CTRL0		0x20
-+#define RK3506_DSP_CTRL2		0x28
-+#define RK3506_WIN1_CTRL0		0x90
-+#define RK3506_WIN1_CTRL1		0x94
-+#define RK3506_WIN1_VIR			0x98
-+#define RK3506_WIN1_MST			0xa0
-+#define RK3506_WIN1_DSP_INFO		0xa4
-+#define RK3506_WIN1_DSP_ST		0xa8
-+#define RK3506_WIN1_ALPHA_CTRL		0xbc
-+/* rk3506 register definition end */
-+
- #endif /* _ROCKCHIP_VOP_REG_H */
+...since all of my tree is also old and using the "nova-core: "
+prefix, too.
+
+
+thanks,
 -- 
-2.51.1
-
+John Hubbard
 
