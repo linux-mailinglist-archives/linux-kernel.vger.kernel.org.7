@@ -1,144 +1,222 @@
-Return-Path: <linux-kernel+bounces-888780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FE8C3BE53
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:55:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2C5C3BE6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D0B74F4C93
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:50:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09DC9189DEF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C011B3446C2;
-	Thu,  6 Nov 2025 14:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E7132548D;
+	Thu,  6 Nov 2025 14:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZRQ2CdTr"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aiWKQcAF";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AinBshkz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D22314A62
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20D53203AA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440616; cv=none; b=BSziffVq2iiBAJmbeaj9lSt801+ZtmpVg4+hz1hVUik3sKQfvgtgDJtTwPF/gOm4v21rzwHZKyJoLt/IVGXm8v8i4+aqgz0Zv105JzRkdtyCrmRJku1Y6/4IG4E1xPv18Niii1bN3FXS7cBkaMekq2G0vPL1k0qkWTfPgGKiD2A=
+	t=1762440649; cv=none; b=B6+Co/lLRmyrEvPBcifpgC68dhqCM3XIgmT9UDBUeiJSKTiLdPO6MyNoPlDsx1uiuScwv5flwfB4Dun6FXmGIEScSVlMj8I0S8/2bSMz6NaJVUBGZw8p6tVThThxhM3K0LdijS3NPrD0TV/J5M63UN0t7zAQUH5+JNFtfI8eN3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440616; c=relaxed/simple;
-	bh=lH+dRzPdzs9ilCqrnljXat6niwfb9l9dK6HM/aEWRz8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XBcNCizBV/QZvkOxmOcRQ8VXBE3IxHKPHb8O6PMpoZcYqAeia9QO20OsyaMMnPN1rscNrG+cDX4ugoPEkGrMb/9/o6XQB4sGRTfMbsF+OjefknM4qjPQlEVlAucL+6eyZo67fzpGKAFH8z5fs/lRpg6J7F9g1/bkAoUbW4eWPe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZRQ2CdTr; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47728f914a4so6400135e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:50:12 -0800 (PST)
+	s=arc-20240116; t=1762440649; c=relaxed/simple;
+	bh=LWM0l4vzzbacqdnVzpCnRRUWEOcQxOAdXEAdjEcgw4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KtBTILIbqLwxVylGpeuoT5vwxddspv+IuZ9bTXPuWyZeTWWvYWH9WBu7mLYBJEjQ60xfN+gOOCYV9YfkHD/4tI901/qE7LX6667RQdZrIq0boOJUCgFSX92hAZJd8HTlIqd5Bds1kklFPV8AKcm1Xu3BofXqy+dGUWN8liQeWKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aiWKQcAF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AinBshkz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A66rB8u3361967
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 14:50:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+c/QOz5FWP7I3LmCV+SwCpj23lo4cqX+0KR+4hGKgwo=; b=aiWKQcAFWqcZzvGc
+	YiTfnQU70O1Cm/+AL4xg3JhPMxgPcSzp0HFbt6WJ/luulrbH34FYMgJDW1pPCStD
+	AtDY6gnb1jjAKwE6dE92jvyiCCqyxl5YnGBrhVCDf4nku7sogirG9efGnsBAAcJN
+	4OOSEb1kpJerjBaOGBjhQdaUtdsh2Lt//LokUKGQqFQEPXlspYSueLJiIkyT2waK
+	pfgwEN8HtDdtlFuRJxnGfls1QMgSg5jtt1rfkBglCT4kly38SgbKi1EFIfcRlaZV
+	uXRU4aiXYpTd3goEZpZDho6lyP8b2GY8HH1AcoV36l2fsdt4lq83bSFh02MIjFI2
+	tzvvhw==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8pt59adb-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:50:47 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3418c17d21dso1150988a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:50:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762440611; x=1763045411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xPyWtxNj4oyHd2usnrxZrS333s1+6Us8v25kUZGu0Ms=;
-        b=ZRQ2CdTrYY6yTmOgNbHBONWJwXzYYHFZOEFJIf7TjFm/okK71BMM2u3qxGjTC/ni6M
-         0btSfHxIQWxDp2L7VKhL8JXpkdRukzozgnb7iEI4q5KqzSr87o7NS/wmXTlGDlbR6/n/
-         MMSPyUJrprAewqOziW1t4uxaRF2pEXn9Cr6xTorJJyA+RJMcC2+/jtby9EyVD7ULLTYt
-         hS5ZFjZqkVE3s6g0/3VNPY7CoweZ/w3Ia4kPIhoNPFVOQkgJDb/WRVzcxKR5EzNKLFht
-         zHdTpzzyO7c4W2myxvv+YDC9CtBgFjB1NDWAPEzE4ECLGaRUPbT/v2qzhJNJtkGkZovm
-         Yd3w==
+        d=oss.qualcomm.com; s=google; t=1762440646; x=1763045446; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+c/QOz5FWP7I3LmCV+SwCpj23lo4cqX+0KR+4hGKgwo=;
+        b=AinBshkziaDfbl7t6QLG0GowA5fREtn+pIr6VSJJAfCcXr/bUFM10l3M0s0JYl1XsO
+         7QS1Z0zSpKYOjvWdEuLH1XJFxVMPJ7V5agSoAsL2i9qufdeJOyswuPUWMVKaXdOYzvK7
+         e8qRKbzLzgXE2+XVrST7TsG+hhvtdXB1YeruIubujm/eWg5a4+pwYcb1bS5QJl4mVUBU
+         6Hl25fmfRNDQSzPIoktzqasNfkDxG5Kc7juSHQpuffK0Z0IRL0tIfeFPuIstqQi24oo5
+         sOzpYWf7jSkzu8GNumwS0cQ969Msw0p2Mwxv9ChLytr2oFqeMMLHLE3CWZTN/v9UaXMW
+         rDvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762440611; x=1763045411;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xPyWtxNj4oyHd2usnrxZrS333s1+6Us8v25kUZGu0Ms=;
-        b=mV7cW+DJahsphpzLpMiRqRauHoI2CinKZeEFELZr3t6H59kpunR5bEEHKLJmvM6dv6
-         68mAzARiTXeP2a50AwIGOzweaz0wizEvT3KhNCWt9LLa4K/h5yLPrksmtb6zETHkYsoS
-         fiCPWV0/1T7wOQVlA+8qrOdqbdeXficXcIe2VTfxcNzKaW9V4Za3h3TpoFXwzzrTGxxU
-         C2cgN3e3br6S1apehbyPnx6BO/tATl0F8alsO8oOhkmYGJ+JP+42UY8cnADnPZchd3my
-         O24buiVEKydZy+6xZvxpcrp7GWJmtWu/6guPdfCPCnU+y3wtIXsKFivE562FXO/KtR1z
-         OalQ==
-X-Gm-Message-State: AOJu0Yy2wyXUsT4HP5zOAyvyhm63vw4vXu1fQGC7NSJjIZaEUqUSxhOd
-	fSujixCr4OxV6Q/3/jMM0AWdi9so4hkaZpsfgHZ7Fa+zOF2M5EF1G82p+zfLyme6FDp84N/MJKU
-	WuS9K
-X-Gm-Gg: ASbGncuS9uuL6b1a+UwWlxzzYisdrfG7pi56CnddHnb+DifSYdJc4kQwU0Og6hgaGN5
-	QrHANwi5TWELO08WR+jlrxMncO3Xc+CXFTTugB4exzn8OE439gK4G2XpQT6rNNbEUDf8RrgcAJG
-	VvNTvEMXm58IpUGs2GqAFbGRBTzP5QPOTfe+suAW+Iyca/ix5+Itwz56SZLqrZQn1/VXNn629rT
-	JlAUvDxOifZvEcvy9lkTk0BEUix7qXk3R33Atj6gqSu2z8IQh6WrH90iMV7p5IioqFJrqV4T/b/
-	Zmz9+jv4mteUA5IOBusKqD4hkuVG4Z1kEksphknejgqER7H9kRfGFfAFUvowxeTcP75p/fEm10G
-	nDErtVO26K5PCkJHABfnDb9x/tN/ojm8StTEPLVKvjDuhgPKILturJsI6UxoH/NezdgQKAOepl0
-	hFAYrjJru0Nn+SsCd36Jn+2p4=
-X-Google-Smtp-Source: AGHT+IGBw8hgZO9ZeCLtRVjHd+533/r7fPmdgOo1/ZUErUhukgNXHrkqbH81/fl3KkzHzQWA2xHp+A==
-X-Received: by 2002:a05:600c:4703:b0:477:639d:c85b with SMTP id 5b1f17b1804b1-477639dc896mr28671985e9.2.1762440610861;
-        Thu, 06 Nov 2025 06:50:10 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdce8d2sm111566275e9.8.2025.11.06.06.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 06:50:10 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v2] regulator: qcomm-labibb: replace use of system_wq with system_dfl_wq
-Date: Thu,  6 Nov 2025 15:50:03 +0100
-Message-ID: <20251106145003.245866-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+        d=1e100.net; s=20230601; t=1762440646; x=1763045446;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+c/QOz5FWP7I3LmCV+SwCpj23lo4cqX+0KR+4hGKgwo=;
+        b=tZ54hZLJxlWbfXNc0xeQcg5vRo5UQj/qYJKlrNNRUmKR+LIF2UFv8WAmXLMcghdviV
+         OKPn7zJ1MqS9GxygAubgeq8TUCUbvOzx+GYw0Z+R1VxqFPVyF7YMPwgJXaisD4wMvncm
+         B/JW9A6Vq2ulNgE0+oXCKnpbptBvmq8M/yQLy6YiVhZWZUCuBlEwMINI7ZPQG9VEVsgR
+         3bfjpTO1/opTByBbHM3nEnKxjVfwcJVAiibRc9VhdmhnVKIRYspXoAVd+tCaAGDCa/+f
+         seRfqCZnBuJ1iQ5AJIopfV47FUGT0/zOQqki7T3j/KBKP0ljWeK6LwnqBhTPCyUC1c0M
+         LnoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0/jyVLPLqEwUsuQvbQT9AEZpVs0srhU2uVWSMI1eWs9+S1IidaUvfRhIYKEcrpSFOIJHkQNvSOA3QNr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvtLDYcDMM1DutG5PkaI5riLLUh8+lHrAPmrckAJSNTYuD1KLn
+	BweLQvo1tsg+iAHnDWkc2gc7Qu/fnvVW3vhheJbpgd4dBE72XQFhQyIRg89kW1eF//KqQ0ETRbF
+	m8N+Cdmq1bDIKrsr+KOwFgGp08dPHzpdDJGOOhXnFuYt038ANWOBs+Wo0PGwPE9Spjvg=
+X-Gm-Gg: ASbGncu20SV4KHGv2x1KrPB/eLoe6Tcjg6Panajn0GtU8SlXp2e+/fWBgrechlj+QwR
+	T1vZqyk/UyZKzD4qOpGjFnj1LlS/9j1bJM48pZrx5FjYteJI9vh83fmGEiHyWhYFjcsk9jluDc1
+	2nlwbMA0VgN0VbQr1LLqVW7X3WS6uWaDqpV+AZbLh/t8JTaSFp2ZQBGG7kMEx2T81sG1wtcmJrO
+	m1W8IARueLDX4bL9qgdx1710tro02qm+ni7kG0RnmyJH51Rdcu0MdyjqQFsdoSzGzOFVUv2pVTl
+	wUxP1H0k84m6v4LpoDbh72K25lSpwC+qq93xhjJWcU1Dv8CueSr5pD0btupiVOxRcW2diOjSh3t
+	Xy/Fi2UypzJNmjGEkOkEiHEk4su5hnV6LIw==
+X-Received: by 2002:a17:903:240e:b0:295:3a79:e7e5 with SMTP id d9443c01a7336-2962ad88638mr95158365ad.34.1762440646349;
+        Thu, 06 Nov 2025 06:50:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEDRjrSPgAtrWEFqUDfncKSqQ+S6NIN3iMJTRreo40l/2rWNYrrLBKk8fycn3wYrt9sMYdptw==
+X-Received: by 2002:a17:903:240e:b0:295:3a79:e7e5 with SMTP id d9443c01a7336-2962ad88638mr95157765ad.34.1762440645836;
+        Thu, 06 Nov 2025 06:50:45 -0800 (PST)
+Received: from [192.168.0.171] ([49.205.253.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096b90asm31242295ad.23.2025.11.06.06.50.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 06:50:45 -0800 (PST)
+Message-ID: <fdf4c469-d276-4f64-b13d-5266cca7235c@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 20:20:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
+ kaanapali video codec binding
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vishnu Reddy <quic_bvisredd@quicinc.com>
+References: <20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com>
+ <20251017-knp_video-v2-1-f568ce1a4be3@oss.qualcomm.com>
+ <c9d8f76a-513f-4a09-bba4-cb8f0df1d2fe@kernel.org>
+ <034bf6f4-0a49-4973-8536-28526b3409d1@oss.qualcomm.com>
+ <9c920cdf-1985-4656-bee2-8bfacc15bfa9@oss.qualcomm.com>
+ <24719933-d81f-41cb-aabc-e28f018b156c@kernel.org>
+Content-Language: en-US
+From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+In-Reply-To: <24719933-d81f-41cb-aabc-e28f018b156c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: xHdVmP7r_9fUmdSmapfPGjVicQ3Veoc8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDExNyBTYWx0ZWRfXzpLXH/5QtoKl
+ jkht024GACAORbRZ+YTyUJPsiJIurPLKy1C6rXhFFCjFDs8KpNcTabWJ2uWP5sFDKGtu57fca7x
+ a38XXAQP3yLwkI/BdleH3Qaq3stfEpR47DK7wDqUFEMIaotOfjB+sGNta/9GfmtGtiX98NuIjFz
+ 8f5lnejFvpgL99hO19IkXW66LA1FFeR9IxXupFMbBYJmU/UNooXU2/YqF5IX8Ysp2isrtTGItLy
+ OAcI4oAGytG3n+wVwpNaVw5M8QwNWLcOSULxJ+PsMHeojpNLlrUPR2SPPRs83c8L0VessaSYlj2
+ vN7h/q4dKxkiErtbWxPndiD2cFuC4q2IcRjfOWm+PsRcnblUzKEoVtL864u31OjPPvpqKkujTv2
+ ZR7eZC3DWFdLJ+LYvUD8+AqK7+6Hkw==
+X-Authority-Analysis: v=2.4 cv=XNI9iAhE c=1 sm=1 tr=0 ts=690cb5c7 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=qKS+5dAnvCMTy05vH4hvkg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=9_Y8sxrH3V15ADIk1vQA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-ORIG-GUID: xHdVmP7r_9fUmdSmapfPGjVicQ3Veoc8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060117
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
 
-This lack of consistency cannot be addressed without refactoring the API.
+On 10/22/2025 9:58 PM, Krzysztof Kozlowski wrote:
+> On 22/10/2025 17:36, Konrad Dybcio wrote:
+>>>
+>>> [    1.361157] pc : qcom_smmu_write_s2cr+0x64/0xa4
+>>> [    1.361165] lr : arm_smmu_write_s2cr+0x2c/0xbc
+>>> [    1.361168] sp : ffff80008005b8f0
+>>> [    1.361169] x29: ffff80008005b8f0 x28: 0000000000000000 x27: ffffc7f252f45320
+>>> ....
+>>> [    1.361195] x2 : ffff800081200c48 x1 : 0000000000000048 x0 : ffff800081200000
+>>> [    1.361198] Call trace:
+>>> [    1.361199]  qcom_smmu_write_s2cr+0x64/0xa4 (P)
+>>> [    1.361203]  arm_smmu_master_install_s2crs+0x7c/0xac
+>>> [    1.361207]  arm_smmu_attach_dev+0xb0/0x1d4
+>>>
+>>> Could you please suggest on listing the iommu items ? I did not find the
+>>> relevant references in other bindings where flexible iommus is being listed.
+>>
+>> Krzysztof would probably like to see what I believe someone else somewhere
+>> sometime suggested in the iommus discussions (sorry it's not possible to
+>> keep track of it all), where the DT can list every possible required iommu
+>> sid, but the driver ensures only the ones that are necessary are utilized.
+>>
+>> This will require big changes to the iommu framework though, I'm afraid
+>>
+>>>> I already asked this.
+>>>>
+>>>>> +
+>>>>> +  memory-region:
+>>>>> +    minItems: 1
+>>>>> +    maxItems: 2
+>>>>
+>>>> Same comment. I already asked this about iommus.
+>>>
+>>> Same here, there aren't any bindings which lists for flexible memory-region.
+>>> Please suggest if there are any such references.
+>>
+>> Similarly, we can define the additional memory region that's necessary
+>> for $reasons and leave it unused in the driver (actually I don't know
+>> why there may be two, but let's assume it's a QTEE/noQTEE detail), because
+>> for the hw to operate, it must be set up by some entity in the system
+>> either way (i.e. the memory is reserved even if it's not done by Linux)
+> 
+> 
+> Another point is pretty obvious: if one claims that
+> iommus/memory-regions list is flexible - some elements are optional -
+> then clearly there is a distinction which elements are mandatory and
+> which are optional. So there is difference between elements of the
+> array. If there is a difference, they all must be explicitly listed,
+> like every other list (clocks, resets etc) property. Writing bindings
+> doc also defines this rule.
+> 
 
-This patch continues the effort to refactor worqueue APIs, which has begun
-with the change introducing new workqueues and a new alloc_workqueue flag:
+I would like to describe the video bindings covering all the interfaces, 
+including the secure stream ids. For this to do, i would have to wait 
+for [1] to conclude. Will put up a new revision on this series, to 
+exclude the binding patch and the one which enables kaanapali. That way 
+we can have the driver prepared for vpu4, while kaanapali binding and 
+patch to enable it in driver can be raised separately later once [1] is 
+concluded.
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+[1] 
+https://lore.kernel.org/all/cover.1762235099.git.charan.kalla@oss.qualcomm.com/
 
-This specific workload do not benefit from a per-cpu workqueue, so use
-the default unbound workqueue (system_dfl_wq) instead.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/regulator/qcom-labibb-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/qcom-labibb-regulator.c b/drivers/regulator/qcom-labibb-regulator.c
-index ba3f9391565f..1b14015caca6 100644
---- a/drivers/regulator/qcom-labibb-regulator.c
-+++ b/drivers/regulator/qcom-labibb-regulator.c
-@@ -230,7 +230,7 @@ static void qcom_labibb_ocp_recovery_worker(struct work_struct *work)
- 	return;
- 
- reschedule:
--	mod_delayed_work(system_wq, &vreg->ocp_recovery_work,
-+	mod_delayed_work(system_dfl_wq, &vreg->ocp_recovery_work,
- 			 msecs_to_jiffies(OCP_RECOVERY_INTERVAL_MS));
- }
- 
-@@ -510,7 +510,7 @@ static void qcom_labibb_sc_recovery_worker(struct work_struct *work)
- 	 * taking action is not truly urgent anymore.
- 	 */
- 	vreg->sc_count++;
--	mod_delayed_work(system_wq, &vreg->sc_recovery_work,
-+	mod_delayed_work(system_dfl_wq, &vreg->sc_recovery_work,
- 			 msecs_to_jiffies(SC_RECOVERY_INTERVAL_MS));
- }
- 
--- 
-2.51.1
-
+Regards,
+Vikash
 
