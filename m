@@ -1,181 +1,159 @@
-Return-Path: <linux-kernel+bounces-888525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD88DC3B0FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:04:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B89FC3B0A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCBA14FF61E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558FC560ACB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4946333DED9;
-	Thu,  6 Nov 2025 12:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039FC32D0E3;
+	Thu,  6 Nov 2025 12:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIC/eUSF"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f9eYDanA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XY5746Qa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66604337B8A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7836D32AAA4;
+	Thu,  6 Nov 2025 12:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433626; cv=none; b=NEn79sqrGRtmgLgjpzrHb7po6qny/q47B3P1CJgQmIAKEJGInSn9j9VSeVbmc7jI42bXyd6mZ9aq2grRWVXK8rttR6SvGYPHZOrhIb4y4KbzFaikezeU8tkAGg9rhOyP0lNXtiQGKwAJ4ABcFiFEzd9l8qOw4Ood7cUmajy0krA=
+	t=1762433581; cv=none; b=aFmDkpAgq3ddBq3N7yrUbpjjEngfiaTweQ8Ya7x4qG1X5FcvMI8gk+13OcewIVVaOtTnySQ9dshlb5z1yq5fOkfFRtENORvoJS8WglfEXPUD4ADfSR5+8nZWOiZIVXWpGE4sdt1WEOCbMnoWBnWyIED9hghVgZhQXiqgn5MuFus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433626; c=relaxed/simple;
-	bh=7aRplSUW6kRxQPV1HlG/HN4UwlXrr6wHRd070gm8Gy4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tOhuQ9eaUZSfYpaqEaXYnw4A7m8uiA7WE7QWTFGVUV4FBxP6RL+P15GDYbZ+INTyR+e/cnCXumYpGXvcq2lfpl0uQ3LlNUCvuh4wrwQ8Vg9G17kPnyMcOHoFoG3+i4o8yxVpz8njy0k1gY+fOnkOaSmsqkdKXdLBcArvE/dZGGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIC/eUSF; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so643270f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762433622; x=1763038422; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o3F/6Pnt47lpVjXos7n4gvnzZgK+tzG4a7nXCFmIfgo=;
-        b=FIC/eUSFRkr68T3/WrgHjrvM1/YhYI/DYHAjvefGMgJktSb/zwNXg+7BQjHvkYKWqq
-         1JYxNOpTzZm7I00RSs1qYUSFv51TdDK6cutj0x3HW6SdQmd+9LVWwHCnoFTR+OgKHGfJ
-         EOywxGWAYX5JEdRgNapQbhpld0zFbKEaXPm24jBs5+fi0cO3umLwP6P3FZIO+syfrNhm
-         ScxEh6PKz5e/C83KXYwhHsrxotC1//MLpF+Tbn4JNmVLKdUc6FXEhL5QYz7G3FIlUP7s
-         uhrZRzfC20KDWdw5Yvw21iTo/CxTNCFX2PI94C29ryCQ9peC+u/x0KJ9dLZcrip2N4Uw
-         6uzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762433622; x=1763038422;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o3F/6Pnt47lpVjXos7n4gvnzZgK+tzG4a7nXCFmIfgo=;
-        b=mXds5BNVqX/WHZ/cHHdgzm70ubnxoN5H7FadZoXVNa+yTD6ZcORTB5vXmZPtlfrV2W
-         5/qeoxMur1kZuOJ4xMRY1T3i9J6M4PqwXhE8VW7Zi0OYG9rDUBIMpRDDwnatrVjlW++X
-         sP7FQqYZ0PFtJG4/2D+Ce8DepOjcmz2EBIdDVpCCKl5dS2+FVAzyBB8nKKwPjWu0r0PB
-         eWi2WmwaOzl7Wb0hylg4EPCFcBvF4S0BoJvSlnK6SvkBolzJwfdp4+yoJ0/RxXC56e6b
-         k5XsGJmXDvLp1uUPmhX/00JH1mRi/ziSVKBBhvo5dCAbCnUokXlhRRg7VuVDttK4T11P
-         8QKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrJU65k5P/XP5axYL5ZTKq9qLcyCJW6+HRxNBEMMkUtdqpjfH1sClxbuv9BUtSQoownbwJoig3MxOaKKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHVcWsU9ctzcH9oYSOW3h29veyah8789a/gzUShx0eaRRd+Gq7
-	LIybDzZBRAbDXe/q3HveldqzzwHBuzl8OuIdUTOjCanspwbkdwkWqSM=
-X-Gm-Gg: ASbGncvqCmOXhBD9GlZ/iEwWI69rlpLM+tCk+QR5pPTKZhw3ie8UdEufOvw5yZ6qrOx
-	IiTWQjsLHRzouo1hYVeLsoeD8waV3Q4VSjw66ExRt3Juntn3oAhnzfpOXW0hYANeZTbidDPHwDR
-	BY52wJWeE4vO2ALM95Q9JQdbRk/q8iVl07fr5UmlipMl1vaV9UTNJucsTGK6PwEeSXaJ3HDA/We
-	TuxliXL8RZoa1TnvNqe0AP3rgsDfhamdpM2pvCstui7sNDOmxSFqyiGeRjB7nAxCYg9OiGq3LPX
-	o8lhgZw9Pmy0/bPpmKAEXIISRGtt7prZRqZQ257z5jlXKAKd0/GDx9TjBhQ7rLDUIuoYvySw4R0
-	JrEF9L2H0vmWkIuxW6/RPQ//LP31LVC+2lyA7L+D5qUdM88VCIwJHyTL6NZWqFKz2NfPyZuUdfy
-	FkJP7hr38t5c8MNS7TIr2/JQnAYTpbfom37JSWbBaa5gnjBRhM7N2Kl/Q=
-X-Google-Smtp-Source: AGHT+IE5q5ICdDDBK7g4wnCXX0jnjR/QAHVpDJVspbKXccSBPyw3RSDN+ilC4Bc2cp04IBzrsLidPg==
-X-Received: by 2002:a05:6000:615:b0:425:7cf6:5b9e with SMTP id ffacd0b85a97d-429e32c831amr6689558f8f.3.1762433622302;
-        Thu, 06 Nov 2025 04:53:42 -0800 (PST)
-Received: from ast-epyc5.inf.ethz.ch (ast-epyc5.inf.ethz.ch. [129.132.161.180])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40379esm4788856f8f.9.2025.11.06.04.53.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 04:53:42 -0800 (PST)
-From: Hao Sun <sunhao.th@gmail.com>
-X-Google-Original-From: Hao Sun <hao.sun@inf.ethz.ch>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	john.fastabend@gmail.com,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	linux-kernel@vger.kernel.org,
-	sunhao.th@gmail.com,
-	Hao Sun <hao.sun@inf.ethz.ch>
-Subject: [PATCH RFC 11/17] bpf: Track stack spill/fill in bcf_track()
-Date: Thu,  6 Nov 2025 13:52:49 +0100
-Message-Id: <20251106125255.1969938-12-hao.sun@inf.ethz.ch>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
-References: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
+	s=arc-20240116; t=1762433581; c=relaxed/simple;
+	bh=sQshsx2ax2jjy2QELlDoTRv8fjCOO8G0M+h1KjQbw2Q=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=LbUOy4DVFPOw9uqg0mvP1CS/vxT9fG/MOboCr7oJ7ZNkWAstZW37LLmrpdGo3gVG3JqhkGExOd1NkorMQestrCHsb8hFlInXHhI3vQBryuaVrEwNrpsyyXIHy97h4jGoOwH+NnZ4BEGzExjfRdUpZ38iOE25qa2RL8DuFWJYgww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f9eYDanA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XY5746Qa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Nov 2025 12:52:51 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762433572;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=tCiEpCdjDROAd0QyqPBOvwEBFqvfaeViH+MoNG8YbGg=;
+	b=f9eYDanApmStE95sBTLQ1/NjlSIcfMKmkeBGasGZlWzXjNnCUpiT5cxSG9frhlkfN5CEYx
+	JaxKHYR10OQTKPt/Ko+PSIHpgPXAUQ3Ca/CEryhokYma+dvkFTSaeyXF1JnsQ5U6wrvOTE
+	soLcGJhgcaWgmqLXHenD0tGu8EX9l/01hDn2M1tYvBlDodCb1CGEmP23g5rTlpPyfmDuW6
+	RVITwHc2QA7EK23Ap50quZKCAUmS68rYW7dd5E1jNRSJMYW341iZGlp6hh2Ra9FKfPsnZR
+	iEhJ1NH8QlDPeqy7b/f0sTR4YKYLhx63WjkJWsPqqb1DFcqVAE/IfLMnOmVjCg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762433572;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=tCiEpCdjDROAd0QyqPBOvwEBFqvfaeViH+MoNG8YbGg=;
+	b=XY5746QaDqzl8Y0KFs7ze8UBpvb01grT9hUgzOD15ipOby5BXzwn3jeknh4DKzf7JG3RLO
+	DDobLROlrz58prCg==
+From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: ras/core] x86/mce/amd: Define threshold restart function for banks
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <176243357102.2601451.3504447031194372723.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Track symbolic values across stack spills/fills.
+The following commit has been merged into the ras/core branch of tip:
 
-- On spill (`save_register_state()`), if tracking and the source is
-  non-constant and the spill is narrower than a full register, derive the
-  appropriate-width for the spill slot using `bcf_mov()`.
+Commit-ID:     56f17be67a332d146821d1a812ab16388d07ace7
+Gitweb:        https://git.kernel.org/tip/56f17be67a332d146821d1a812ab16388d0=
+7ace7
+Author:        Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate:    Tue, 04 Nov 2025 14:55:43=20
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 05 Nov 2025 22:38:31 +01:00
 
-- On data writes to stack slots (`check_stack_write_*`), invalidate any
-  previously spilled pointer symbolic value by setting `spilled_ptr.bcf_expr`
-  to -1 when the slot is clobbered.
+x86/mce/amd: Define threshold restart function for banks
 
-- On loads that coerce value register sizes (`check_mem_access()`), if the
-  destination already has a symbolic expr, cast it to the loaded size via
-  `bcf_mov()`.
+Prepare for CMCI storm support by moving the common bank/block iterator code
+to a helper function.
 
-Signed-off-by: Hao Sun <hao.sun@inf.ethz.ch>
+Include a parameter to switch the interrupt enable. This will be used by the
+CMCI storm handling function.
+
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Link: https://lore.kernel.org/20251104-wip-mca-updates-v8-0-66c8eacf67b9@amd.=
+com
 ---
- kernel/bpf/verifier.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/x86/kernel/cpu/mce/amd.c | 37 +++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index df6d16a1c6f6..3f2981db1d40 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -5286,6 +5286,10 @@ static void copy_register_state(struct bpf_reg_state *dst, const struct bpf_reg_
- 	*dst = *src;
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index af2221b..940d1a0 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -471,6 +471,24 @@ static void threshold_restart_block(void *_tr)
+ 	wrmsr(tr->b->address, lo, hi);
  }
- 
-+static int bcf_mov(struct bpf_verifier_env *env, struct bpf_reg_state *dst_reg,
-+		   struct bpf_reg_state *src_reg, u32 sz, bool bit32,
-+		   bool sext);
+=20
++static void threshold_restart_bank(unsigned int bank, bool intr_en)
++{
++	struct threshold_bank **thr_banks =3D this_cpu_read(threshold_banks);
++	struct threshold_block *block, *tmp;
++	struct thresh_restart tr;
 +
- static void save_register_state(struct bpf_verifier_env *env,
- 				struct bpf_func_state *state,
- 				int spi, struct bpf_reg_state *reg,
-@@ -5295,6 +5299,11 @@ static void save_register_state(struct bpf_verifier_env *env,
- 
- 	copy_register_state(&state->stack[spi].spilled_ptr, reg);
- 
-+	if (env->bcf.tracking && !tnum_is_const(reg->var_off) &&
-+	    size != BPF_REG_SIZE)
-+		bcf_mov(env, &state->stack[spi].spilled_ptr, reg, size * 8,
-+			false, false);
++	if (!thr_banks || !thr_banks[bank])
++		return;
 +
- 	for (i = BPF_REG_SIZE; i > BPF_REG_SIZE - size; i--)
- 		state->stack[spi].slot_type[i - 1] = STACK_SPILL;
- 
-@@ -5437,6 +5446,7 @@ static int check_stack_write_fixed_off(struct bpf_verifier_env *env,
- 
- 		/* regular write of data into stack destroys any spilled ptr */
- 		state->stack[spi].spilled_ptr.type = NOT_INIT;
-+		state->stack[spi].spilled_ptr.bcf_expr = -1;
- 		/* Mark slots as STACK_MISC if they belonged to spilled ptr/dynptr/iter. */
- 		if (is_stack_slot_special(&state->stack[spi]))
- 			for (i = 0; i < BPF_REG_SIZE; i++)
-@@ -5566,6 +5576,7 @@ static int check_stack_write_var_off(struct bpf_verifier_env *env,
- 
- 		/* Erase all other spilled pointers. */
- 		state->stack[spi].spilled_ptr.type = NOT_INIT;
-+		state->stack[spi].spilled_ptr.bcf_expr = -1;
- 
- 		/* Update the slot type. */
- 		new_type = STACK_MISC;
-@@ -8025,6 +8036,11 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 			coerce_reg_to_size(&regs[value_regno], size);
- 		else
- 			coerce_reg_to_size_sx(&regs[value_regno], size);
++	memset(&tr, 0, sizeof(tr));
 +
-+		if (env->bcf.tracking && regs[value_regno].bcf_expr >= 0)
-+			err = bcf_mov(env, &regs[value_regno],
-+				      &regs[value_regno], size * 8, false,
-+				      is_ldsx);
- 	}
- 	return err;
++	list_for_each_entry_safe(block, tmp, &thr_banks[bank]->miscj, miscj) {
++		tr.b =3D block;
++		tr.b->interrupt_enable =3D intr_en;
++		threshold_restart_block(&tr);
++	}
++}
++
+ static void mce_threshold_block_init(struct threshold_block *b, int offset)
+ {
+ 	struct thresh_restart tr =3D {
+@@ -814,24 +832,7 @@ static void amd_deferred_error_interrupt(void)
+=20
+ static void amd_reset_thr_limit(unsigned int bank)
+ {
+-	struct threshold_bank **bp =3D this_cpu_read(threshold_banks);
+-	struct threshold_block *block, *tmp;
+-	struct thresh_restart tr;
+-
+-	/*
+-	 * Validate that the threshold bank has been initialized already. The
+-	 * handler is installed at boot time, but on a hotplug event the
+-	 * interrupt might fire before the data has been initialized.
+-	 */
+-	if (!bp || !bp[bank])
+-		return;
+-
+-	memset(&tr, 0, sizeof(tr));
+-
+-	list_for_each_entry_safe(block, tmp, &bp[bank]->miscj, miscj) {
+-		tr.b =3D block;
+-		threshold_restart_block(&tr);
+-	}
++	threshold_restart_bank(bank, true);
  }
--- 
-2.34.1
-
+=20
+ /*
 
