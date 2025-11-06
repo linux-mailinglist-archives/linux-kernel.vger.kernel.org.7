@@ -1,263 +1,228 @@
-Return-Path: <linux-kernel+bounces-888908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0DAFC3C3EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:06:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65901C3C43C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A9064FAE88
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36FC23AF0A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9715A333452;
-	Thu,  6 Nov 2025 16:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NA7EG4Nj"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA27347FD1;
+	Thu,  6 Nov 2025 16:02:43 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52FE2EB860
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C8B3314CB;
+	Thu,  6 Nov 2025 16:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444934; cv=none; b=OeXOR4LtwKqKiWFT+8zDsQVQi2Tp/hSZM/Om6eo4/DlwDv2RWVhGkJm5QiF8iz55KO6iivZRE7scA8fK04YfTxrYy1UUSO4St1hcvd+OyGt+uEGt1wRDNCCRmpwif7sePWY9YyzDXOGJqhCOZ/nIr9/Mz0NXeBk5QfgAutDIqoI=
+	t=1762444963; cv=none; b=Npud1A8PzTLDa3l0DjSvtX+rEML4E0ZatGSYJyuwgkSM1fS16/RA6TSAEVUSMY30hd9F3wcvJXVNOgK3gjC55Owu+VZI1Ti1AGFJ2gCOe89iuDMHlU80AXkaFQfBzMRmzrFCWus9OwKnq51yjgpbDNjI4d99fq9yYfi6qFFEuls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444934; c=relaxed/simple;
-	bh=oTIkHrAGc+PJG6lIC9MbDF4ws+gdVwa9wYkQ8yopGNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sbOzUY/rNqxKrXw3x+hPMUTcluPpRPAIj4uYog+V4d9eRRX4+bioXtUkQuJyHSTxc7zvigNiDbSeZPOhD1CNNHVXbcphj+2aFAShqMJx9y5lzjFB0ZFYNmigCbzpkngFfK//Kxh3kHGX4BELIrWkBFyC9iCda6515vjweoWrSVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NA7EG4Nj; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1730254a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:02:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762444930; x=1763049730; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=44vNGM2NsIAugsSY4yeMEiLRHsHSPV8cmDAjt250+bg=;
-        b=NA7EG4NjUKIuLEhQyH6jdwyfPCgYox1h5Qs2tMjwsflA8hq617z8KLwCKw9Fxqxexu
-         0tcZOLT8JMGoh+8e0iRkWqeSQvjFXR7XMxZoRyg4qhxGOWBjUu+Gzl1rMGiQ0Ze4GXuG
-         Xz2ULS2EzyvCPZh1kV+F1Sf0Ypv/hgT938xiFGN5EmQUjt8CIOHi2+eeFdvZYK3HUlyg
-         T79IOSt1p7BrYT/3akzQy6y1kYTYU6z0vIYd1NLfpQLodxtXE74S8a/cUzs19K53VSru
-         Xti62hbHY0FjN3BTUXi7UhB21ciIL3QOWcOlriiWHAPgSVp66vEHn7IRRLzhVMQEI8JF
-         j8tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762444930; x=1763049730;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=44vNGM2NsIAugsSY4yeMEiLRHsHSPV8cmDAjt250+bg=;
-        b=CeJe0O83lN6RLqdorw61r7KIs6e3MS+1nFDoL1lPmes2Ec6iOJbCijnedDk+5h4vY6
-         LAcYeNXjuO/DWM7veFBa+i/tnIsxQPoerF9ddV4O9YAw2kzN9VhbIlOZ0KmcYXwv3ahL
-         jn9y32U8M0i4L/cLbRnl6CKrS7WyzCdtDwsu4D+7vDU0qWD494Gissn1hxRki3/GLsnW
-         wUU9V2TOLUnqJh51wGPTykg5T9QhSf35JJoEXNr5BfmALqnC7hjdr3zxcS43/6eOTM6c
-         MX6h0oXMo7xeRX2yCcexNOJhupXeuUKb4fcFEPdAt5lKNGOMoTUMpwvbzvcE5GD2+PwK
-         bejw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDE/buHh3ws+Thg5upHxIQHuPrn7Jj7iIDGdmgoj+yyNPS2GOtyjM2z1K4uncwUxqvSO5yAlursq+anB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLeWM/1gAsJxmuiTbVvgtQuvrk6WiIkzYCa7zuV7X8XzI+Clgc
-	KPcXUJutBLgh1gS6mmQsCdcvieppZuLpoHzpYPKQ50vZ46xSotIFJsIY
-X-Gm-Gg: ASbGncutyqjqR8thi3ANemdzvVMXvUbEBc98LMe/Wuy/8Lk8FNk/3Y01XR+sWUCnjk8
-	Fx0ZGxupXrPaoa0FsPuH+xktqrItdnoEWt5u5nR1ka0rbbe5UsP8KLolTHDMAksyg9GX/dF5EIv
-	0MKSkyPUFtGK0vy+yQTi1UfHCI9BQixNBWJe3FQe+oD5NA19xaX5kbnrwqiz+JqzN0uA6IoBqNO
-	Pl1aiBiqCXaBMyv+ZEqV6Mn52jcQ2CGPkRd5LAaUtTYLCDouuTA5+56QQgeHpU5M978ld38nN/0
-	uwScReKvDR1/FYoLTSBfHRSP7oUu8CmQGJ8bFiakZEfE+CNxwM9p00ySKHuqVGVT/38NR6o6EYU
-	kTHlzI26HLRLTjEAxr9p5mohL5BHyfqb973zp96ul4rWHfH9Et0I/SkwuFcZ/Qx0/C1OFdMtWiq
-	vMjxwPsArGwSiPF1W3s5i5J09ePTA=
-X-Google-Smtp-Source: AGHT+IHhiwaS86Qf05ow+2ljmxHHVJaS1EqN2g3gDNvTqSg2n0SjpaidlCNbWm4msNcpmzg8Mzjszg==
-X-Received: by 2002:a05:6402:5189:b0:641:1f6c:bccf with SMTP id 4fb4d7f45d1cf-6411f6cbe71mr3204075a12.16.1762444929652;
-        Thu, 06 Nov 2025 08:02:09 -0800 (PST)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f862cd7sm2230000a12.30.2025.11.06.08.02.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:02:09 -0800 (PST)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Andi Shyti <andi.shyti@kernel.org>
-Cc: Artem Shimko <a.shimko.dev@gmail.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] i2c: designware: Replace magic numbers with named constants
-Date: Thu,  6 Nov 2025 19:02:05 +0300
-Message-ID: <20251106160206.2617785-1-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762444963; c=relaxed/simple;
+	bh=H+shqCH+Wu91YwAHohrcMFif/PuJQzNKSWZc3R7gQDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JFfbl1Vddo38SldNbaSxEN1UMXRuUybeMxSZqMs+uMHhjBJqsOQq+k+B/4bzaQUeAbJpKvRGLs2hYLoOOErClEF6/XCBFYsQLyxsYiRccrIV18ovnjnEzTJHRQ+oDK6ZmHm02jYAkoQ8Nfov3dCx5l6ixmU+z8sFhnSbpEdgKgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 505681401AC;
+	Thu,  6 Nov 2025 16:02:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 63B0520018;
+	Thu,  6 Nov 2025 16:02:31 +0000 (UTC)
+Date: Thu, 6 Nov 2025 11:02:30 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
+ Siewior <bigeasy@linutronix.de>, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
+ __DO_TRACE_CALL() with SRCU-fast
+Message-ID: <20251106110230.08e877ff@batman.local.home>
+In-Reply-To: <20251105203216.2701005-10-paulmck@kernel.org>
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+	<20251105203216.2701005-10-paulmck@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: fmkt714m1m4c6ehxka6831mtzforau8e
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 63B0520018
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19iaTKyFCI0tGtmoCLTDsC8g5M4bk6js8o=
+X-HE-Tag: 1762444951-168403
+X-HE-Meta: U2FsdGVkX1+3moqzzczi8f0rQKt2e3epFUYYRV6jSfaWDCASsq5r4G1RK7MJifKYHjovT+JyKwH8ChPK+7RU67eNBv6Bu8r4z8pgIl9HuANgMN2IBsIoIXsUwZ6WbWDcYZ4/s1SP36ppyeKkTiib4tOzIwA5z5RJ34eoGuRyeqGHY7prfSdShDK+mqGrA0zEJ+LoKS/lcZbAogkHGOXWAg8EsRWy2SifDVUS+ZZo3qAJLQNe49McGcUjZtVRR5SGinnFib8xTQUrTw4mcJbLTqzy/3iBE2eNxlUIEW2HXSGj6E0lIs3OFPgcjRLzZyU0wzHt4TnaMEClDCnG6M6z3eUh531J3eu/
 
-Replace various magic numbers with properly named constants to improve
-code readability and maintainability. This includes constants for
-register access, timing adjustments, timeouts, FIFO parameters,
-and default values.
+On Wed,  5 Nov 2025 12:32:10 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
+> 
+> The current commit can be thought of as an approximate revert of that
+> commit, with some compensating additions of preemption disabling pointed
+> out by Steven Rostedt (thank you, Steven!).  This preemption disabling
 
-The change makes the code more self-documenting without altering any
-functionality.
+> uses guard(preempt_notrace)(), and while in the area a couple of other
+> use cases were also converted to guards.
 
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
+Actually, please don't do any conversions. That code is unrelated to
+this work and I may be touching it. I don't need unneeded conflicts.
 
-Hello maintainers and reviewers,
+> ---
+>  include/linux/tracepoint.h   | 45 ++++++++++++++++++++++--------------
+>  include/trace/perf.h         |  4 ++--
+>  include/trace/trace_events.h |  4 ++--
+>  kernel/tracepoint.c          | 21 ++++++++++++++++-
+>  4 files changed, 52 insertions(+), 22 deletions(-)
+> 
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 826ce3f8e1f8..9f8b19cd303a 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -33,6 +33,8 @@ struct trace_eval_map {
+>  
+>  #define TRACEPOINT_DEFAULT_PRIO	10
+>  
+> +extern struct srcu_struct tracepoint_srcu;
+> +
+>  extern int
+>  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+>  extern int
+> @@ -115,7 +117,10 @@ void for_each_tracepoint_in_module(struct module *mod,
+>  static inline void tracepoint_synchronize_unregister(void)
+>  {
+>  	synchronize_rcu_tasks_trace();
+> -	synchronize_rcu();
+> +	if (IS_ENABLED(CONFIG_PREEMPT_RT))
+> +		synchronize_srcu(&tracepoint_srcu);
+> +	else
+> +		synchronize_rcu();
+>  }
 
-Fix replaces magic numbers throughout the DesignWare I2C driver with named 
-constants to improve code readability and maintainability.
+Instead of using the IS_ENABLED(CONFIG_PREEMPT_RT) I think it would be
+somewhat cleaner to add macros (all of this is untested):
 
-The change introduces constants for register access, timing adjustments, 
-timeouts, FIFO parameters, and default values, all properly documented 
-with comments.
+#ifdef CONFIG_PREEMPT_RT
+extern struct srcu_struct tracepoint_srcu;
+# define tracepoint_sync() synchronizes_srcu(&tracepoint_srcu)
+# define tracepoint_guard() \
+     guard(srcu_fast_notrace)(&tracepoint_srcu); \
+     guard(migrate)()
+#else
+# define tracepoint_sync() synchronize_rcu();
+# define tracepoint_guard() guard(preempt_notrace)
+#endif
 
-No functional changes.
+And then the above can be:
 
-Thank you for your consideration.
---
-Best regards,
-Artem Shimko
+static inline void tracepoint_synchronize_unregister(void)
+{
+ 	synchronize_rcu_tasks_trace();
+	tracepoint_sync();
+}
 
-ChangeLog:
-  v1:
-    * https://lore.kernel.org/all/20251105161845.2535367-1-a.shimko.dev@gmail.com/T/#u
-  v2:
-    * Move register-related constants to i2c-designware-core.h
-    * Remove unnecessary comments to reduce clutter  
-    * Keep only essential timeouts and default parameters in .c file
-    * Use FIELD_GET() for FIFO depth extraction as suggested
+and the below:
 
- drivers/i2c/busses/i2c-designware-common.c | 32 ++++++++++++++--------
- drivers/i2c/busses/i2c-designware-core.h   | 13 +++++++++
- 2 files changed, 34 insertions(+), 11 deletions(-)
+	static inline void __do_trace_##name(proto)			\
+	{								\
+		if (cond) {						\
+			tracepoint_guard();				\
+			__DO_TRACE_CALL(name, TP_ARGS(args));		\
+		}							\
+	}								\
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index 5b1e8f74c4ac..1aa10e712712 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -34,6 +34,14 @@
- 
- #include "i2c-designware-core.h"
- 
-+#define DW_IC_DEFAULT_BUS_CAPACITANCE_PF	100
-+
-+#define DW_IC_ABORT_TIMEOUT_US			10
-+#define DW_IC_ABORT_TOTAL_TIMEOUT_US		100
-+
-+#define DW_IC_BUSY_POLL_TIMEOUT_US		1100
-+#define DW_IC_BUSY_TOTAL_TIMEOUT_US		20000
-+
- static const char *const abort_sources[] = {
- 	[ABRT_7B_ADDR_NOACK] =
- 		"slave address not acknowledged (7bit mode)",
-@@ -106,7 +114,7 @@ static int dw_reg_read_word(void *context, unsigned int reg, unsigned int *val)
- 	struct dw_i2c_dev *dev = context;
- 
- 	*val = readw(dev->base + reg) |
--		(readw(dev->base + reg + 2) << 16);
-+		(readw(dev->base + reg + DW_IC_REG_STEP_BYTES) << DW_IC_REG_WORD_SHIFT);
- 
- 	return 0;
- }
-@@ -116,7 +124,7 @@ static int dw_reg_write_word(void *context, unsigned int reg, unsigned int val)
- 	struct dw_i2c_dev *dev = context;
- 
- 	writew(val, dev->base + reg);
--	writew(val >> 16, dev->base + reg + 2);
-+	writew(val >> DW_IC_REG_WORD_SHIFT, dev->base + reg + DW_IC_REG_STEP_BYTES);
- 
- 	return 0;
- }
-@@ -165,7 +173,7 @@ int i2c_dw_init_regmap(struct dw_i2c_dev *dev)
- 	if (reg == swab32(DW_IC_COMP_TYPE_VALUE)) {
- 		map_cfg.reg_read = dw_reg_read_swab;
- 		map_cfg.reg_write = dw_reg_write_swab;
--	} else if (reg == (DW_IC_COMP_TYPE_VALUE & 0x0000ffff)) {
-+	} else if (reg == lower_16_bits(DW_IC_COMP_TYPE_VALUE)) {
- 		map_cfg.reg_read = dw_reg_read_word;
- 		map_cfg.reg_write = dw_reg_write_word;
- 	} else if (reg != DW_IC_COMP_TYPE_VALUE) {
-@@ -384,7 +392,7 @@ int i2c_dw_fw_parse_and_configure(struct dw_i2c_dev *dev)
- 	i2c_parse_fw_timings(device, t, false);
- 
- 	if (device_property_read_u32(device, "snps,bus-capacitance-pf", &dev->bus_capacitance_pF))
--		dev->bus_capacitance_pF = 100;
-+		dev->bus_capacitance_pF = DW_IC_DEFAULT_BUS_CAPACITANCE_PF;
- 
- 	dev->clk_freq_optimized = device_property_read_bool(device, "snps,clk-freq-optimized");
- 
-@@ -539,8 +547,9 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 
- 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
- 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
--					       !(enable & DW_IC_ENABLE_ABORT), 10,
--					       100);
-+					       !(enable & DW_IC_ENABLE_ABORT),
-+					       DW_IC_ABORT_TIMEOUT_US,
-+					       DW_IC_ABORT_TOTAL_TIMEOUT_US);
- 		if (ret)
- 			dev_err(dev->dev, "timeout while trying to abort current transfer\n");
- 	}
-@@ -552,7 +561,7 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 		 * in that case this test reads zero and exits the loop.
- 		 */
- 		regmap_read(dev->map, DW_IC_ENABLE_STATUS, &status);
--		if ((status & 1) == 0)
-+		if (!(status & 1))
- 			return;
- 
- 		/*
-@@ -635,7 +644,8 @@ int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
- 
- 	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
- 				       !(status & DW_IC_STATUS_ACTIVITY),
--				       1100, 20000);
-+				       DW_IC_BUSY_POLL_TIMEOUT_US,
-+				       DW_IC_BUSY_TOTAL_TIMEOUT_US);
- 	if (ret) {
- 		dev_warn(dev->dev, "timeout waiting for bus ready\n");
- 
-@@ -699,12 +709,12 @@ int i2c_dw_set_fifo_size(struct dw_i2c_dev *dev)
- 	if (ret)
- 		return ret;
- 
--	tx_fifo_depth = ((param >> 16) & 0xff) + 1;
--	rx_fifo_depth = ((param >> 8)  & 0xff) + 1;
-+	tx_fifo_depth = FIELD_GET(DW_IC_FIFO_TX_FIELD, param) + 1;
-+	rx_fifo_depth = FIELD_GET(DW_IC_FIFO_RX_FIELD, param) + 1;
- 	if (!dev->tx_fifo_depth) {
- 		dev->tx_fifo_depth = tx_fifo_depth;
- 		dev->rx_fifo_depth = rx_fifo_depth;
--	} else if (tx_fifo_depth >= 2) {
-+	} else if (tx_fifo_depth >= DW_IC_FIFO_MIN_DEPTH) {
- 		dev->tx_fifo_depth = min_t(u32, dev->tx_fifo_depth,
- 				tx_fifo_depth);
- 		dev->rx_fifo_depth = min_t(u32, dev->rx_fifo_depth,
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index 347843b4f5dd..a699953bf5ae 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -41,6 +41,19 @@
- #define DW_IC_DATA_CMD_DAT			GENMASK(7, 0)
- #define DW_IC_DATA_CMD_FIRST_DATA_BYTE		BIT(11)
- 
-+/*
-+ * Register access parameters
-+ */
-+#define DW_IC_REG_STEP_BYTES			2
-+#define DW_IC_REG_WORD_SHIFT			16
-+
-+/*
-+ * FIFO depth configuration
-+ */
-+#define DW_IC_FIFO_TX_FIELD			GENMASK(23, 16)
-+#define DW_IC_FIFO_RX_FIELD			GENMASK(15, 8)
-+#define DW_IC_FIFO_MIN_DEPTH			2
-+
- /*
-  * Registers offset
-  */
--- 
-2.43.0
+And not have to duplicate all that code.
+
+>  static inline bool tracepoint_is_faultable(struct tracepoint *tp)
+>  {
+> @@ -266,23 +271,29 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>  		return static_branch_unlikely(&__tracepoint_##name.key);\
+>  	}
+>  
+> -#define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
+> +#define __DECLARE_TRACE(name, proto, args, cond, data_proto)			\
+>  	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
+> -	static inline void __do_trace_##name(proto)			\
+> -	{								\
+> -		if (cond) {						\
+> -			guard(preempt_notrace)();			\
+> -			__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> -		}							\
+> -	}								\
+> -	static inline void trace_##name(proto)				\
+> -	{								\
+> -		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+> -			__do_trace_##name(args);			\
+> -		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
+> -			WARN_ONCE(!rcu_is_watching(),			\
+> -				  "RCU not watching for tracepoint");	\
+> -		}							\
+> +	static inline void __do_trace_##name(proto)				\
+> +	{									\
+> +		if (cond) {							\
+> +			if (IS_ENABLED(CONFIG_PREEMPT_RT) && preemptible()) {	\
+> +				guard(srcu_fast_notrace)(&tracepoint_srcu);	\
+> +				guard(migrate)();				\
+> +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> +			} else {						\
+> +				guard(preempt_notrace)();			\
+> +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> +			}							\
+> +		}								\
+> +	}									\
+> +	static inline void trace_##name(proto)					\
+> +	{									\
+> +		if (static_branch_unlikely(&__tracepoint_##name.key))		\
+> +			__do_trace_##name(args);				\
+> +		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {			\
+> +			WARN_ONCE(!rcu_is_watching(),				\
+> +				  "RCU not watching for tracepoint");		\
+> +		}								\
+>  	
+>  
+
+>  /*
+> diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+> index 4f22136fd465..fbc07d353be6 100644
+> --- a/include/trace/trace_events.h
+> +++ b/include/trace/trace_events.h
+> @@ -436,6 +436,7 @@ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+>  static notrace void							\
+>  trace_event_raw_event_##call(void *__data, proto)			\
+>  {									\
+> +	guard(preempt_notrace)();					\
+
+Note, the tracepoint code expects that there's only one level of
+preemption done, as it records the preempt_count and needs to subtract
+what tracing added. Just calling preempt_notrace here if it had already
+disabled preemption will break that code.
+
+It should only disable preemption if it hasn't already done that (when
+PREEMPT_RT is enabled).
+
+>  	do_trace_event_raw_event_##call(__data, args);			\
+>  }
+>  
+> @@ -447,9 +448,8 @@ static notrace void							\
+>  trace_event_raw_event_##call(void *__data, proto)			\
+>  {									\
+>  	might_fault();							\
+> -	preempt_disable_notrace();					\
+> +	guard(preempt_notrace)();					\
+>  	do_trace_event_raw_event_##call(__data, args);			\
+> -	preempt_enable_notrace();					\
+
+I may be modifying the above, so I would leave it alone.
+
+Thanks,
+
+-- Steve
 
 
