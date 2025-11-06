@@ -1,80 +1,211 @@
-Return-Path: <linux-kernel+bounces-887593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC977C38AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:13:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4FBC38AAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A5018874CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE251899349
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBC21E9B35;
-	Thu,  6 Nov 2025 01:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B031EF38E;
+	Thu,  6 Nov 2025 01:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jigt7hQn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a4hr2rgb"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0033F25771;
-	Thu,  6 Nov 2025 01:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27251EDA2C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762391504; cv=none; b=ambPfo+vqm2JR19VC05Lu1qZ84+A100IQt5f2qps0QloubEsiUdNpQNkwuTrPlmDU7QkQOj1FvQWymn3Ggz9P5ClL4XTZ+1e27meoa8YTHc/dTbBDT0wrnXApVGlxrFVz54gaVb3BRtyX9cXzVz5WEO91FbWzwIaPZXfqE6W7Ys=
+	t=1762391527; cv=none; b=CphcsolL4/1dIFCqeI2DQFQdDWBXeANKs9vR7ujfZXVSsjVJhze7YzmTGB1fLZ9Nxzn1n2/sW0OD8H3Km7KSwwBS2aMMob2FVsw9Mi9rKG2Kyr14Y17+zVuutzmhJDSX0ocnLopoe5LM1OEv+T7YjkeDV67liuYOAMoUexmwy0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762391504; c=relaxed/simple;
-	bh=rXfldVACt/gkpYlnhG6YdGv64PpVb80vtm91wnJSmNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rtqfbfvxng5mrW9mg5RJLNEW9UopjtGzFqfCC2tW+Kf06tuUjzpbNxAAFk1l8ntr4fPada6QRUYKvql66LItrS1O7Co155kxrkNU/5+YIO6v24+v0zLCSzqZlTkY9Cr1lWf50GG9m+UXavvnZVWSSakrpUsUDMWsetlV1OsA7Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jigt7hQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0590DC4CEF5;
-	Thu,  6 Nov 2025 01:11:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762391503;
-	bh=rXfldVACt/gkpYlnhG6YdGv64PpVb80vtm91wnJSmNA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Jigt7hQncx+C/NC0ZcrjGP9G1O8wtvs4lbb6BL9w1NNnQlYEH2/iysPPlogl9hFsd
-	 HDKyB1yHl2PAbvX6coXPGHhYQV7JNVdXmyj55BlgNIKnOKisUPyubRhTDOxCh9FmMY
-	 +LfNmlxlw/G7MqPDARIfSswIWjsF79tElMykm3HY8Svskm8PYO5F7Z7MQQA4/A49y7
-	 ezV0SO11i6aSJPRGFU2Fp/ZxTrPc/SX3NxyRUkxiXNIM0u9bZPE7Th2OIZMQbsVArx
-	 HdcsrFz81Hd0yjWvQQcO1K5mzROApOqRnJuQmQfSAIFTUNMzL7E9Y42xBBIXTF2m5z
-	 jITUzSH+DfJhg==
-Date: Wed, 5 Nov 2025 17:11:42 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Joshua Washington
- <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Jesper Dangaard Brouer <hawk@kernel.org>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, Simon Horman <horms@kernel.org>,
- Willem de Bruijn <willemb@google.com>, ziweixiao@google.com, Vedant Mathur
- <vedantmathur@google.com>
-Subject: Re: [PATCH net v1 2/2] gve: use max allowed ring size for ZC
- page_pools
-Message-ID: <20251105171142.13095017@kernel.org>
-In-Reply-To: <20251105200801.178381-2-almasrymina@google.com>
-References: <20251105200801.178381-1-almasrymina@google.com>
-	<20251105200801.178381-2-almasrymina@google.com>
+	s=arc-20240116; t=1762391527; c=relaxed/simple;
+	bh=JFanjHbbLwb5uHWb9hkMmEsFRF+9A56LzAFzGKiegec=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=temYJWS4wLPU+gBY5XPUF8GoghH7hxT9uvJdyMbGXg41b2Th7A2UN0AIKgt+OaV7yTC6ThPRej2XphVSGWmGqDKHC+EfzfzIdrZYBzShPzV0fLvr1Z4TB476pzw3tF0VLv+FZSBHqdC9Cbxr0nrx2IYxNYl13dYQ/PaRBTqlMuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a4hr2rgb; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29555415c09so5442205ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:12:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762391524; x=1762996324; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ATDrY9pnr/Exq7p+ImQ6l1ONiv9lIJFXXdONPuERRRI=;
+        b=a4hr2rgbOpaadNnqnXdg/3Z+yCC3hxhbZNzGhBsm2vhfW0axPd/58OWan75dYgCPxK
+         bZG/YM4ayHAkVY4HTZEd8mWOrCENdpUPvV0snFTfH8GZAde8ZZaJWhq8c+/OD7XLlCLY
+         xAyeESdLQ5wwqfX/r8oi7Tw8aFv9JuEpy8BjzB0gxBmAT8YVESz5Go6aOSKviNyIsLFj
+         qeuBhHXu4Jz82SWTl3VGxr//g7M7chYg0UaA+T3L86/p8SwzfpyOvmOhIOpkGqjJHIj3
+         poS9bH1bhULSf4bLTFNO1fPsDSrdPL9vLtvPwWWF3AxnyXlM4Z47NtQIJ+tI4HB7GI3C
+         EJmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762391524; x=1762996324;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ATDrY9pnr/Exq7p+ImQ6l1ONiv9lIJFXXdONPuERRRI=;
+        b=FKAeteQe0pc50tgn8WHqYQA+14coQMoZFXGrm9zkKZvcd++nij9lz3e/Qany3tPKkZ
+         UC14hePt2E4IZPgRLDNrSSKDxle5T8V58j611Cp2Ts+gWCnkBQVPh9qUC7GtlSMrbJW4
+         KUOoB6oyI/va9GjZ9mHJtUitqVgPEfMRV8aYNbyowBwg1P1cH35bLRfpc3YQvjl+XMu8
+         gmaNZ42h+TlnOF0wh7DXYickb0+O0vf6jrhuNMp6thsJh16SLY7Hm7KQ3O8/56sQMvkt
+         Eir7J+F50YO8l97d6eUpVn1KSzhqEXwsbVVaHGhqNulVo7UtLv5nQ8PmcmRlztBqOaDM
+         5/lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXieAPvfT4uTabP0QLGfxH+42Ay+XxM+3Alm/eBvv5ETUt2aF7qESXu94dkhpaKxaoKtmaWf6M35QxKE4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI8IIu5S10seQ20+EtmjRZK/5AXKUG2Pef7vaHWVY4dg0h1HGM
+	kkb2NJ4AafY0KCQe0E5nm2sCTAl0k9cgeZC/V1yocav/bXYACYRWTo1xmwTq7P9qRPPJPMydwh+
+	3v4VUZA==
+X-Google-Smtp-Source: AGHT+IFU8dVy3+C8h5H/JSEcFYx+3vw6lAHXCrtYhjVhwrTs7NO7K+KQeCc61ZdcJOxJbbS8jvKyp34an1I=
+X-Received: from plks11.prod.google.com ([2002:a17:903:2cb:b0:295:445a:2a7c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:40cc:b0:295:9cb5:ae57
+ with SMTP id d9443c01a7336-2962aead085mr56511175ad.60.1762391524202; Wed, 05
+ Nov 2025 17:12:04 -0800 (PST)
+Date: Wed, 5 Nov 2025 17:12:02 -0800
+In-Reply-To: <CAFULd4Y6W0hJbA8Ki2yB60537mC8+ohXyUgxD+HuKDQhq7zGmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250807063733.6943-1-ubizjak@gmail.com> <aKSRbjgtp7Nk8-sb@google.com>
+ <CAFULd4ZOtj7WZkSSKqLjxCJ-yBr20AYrqzCpxj2K_=XmrX1QZg@mail.gmail.com>
+ <aKTI1WOJAKDnkRyu@google.com> <CAFULd4ZR6TPVqq5TXToR-0HbX5oM=NEdw126kcDe5LNDdxZ++w@mail.gmail.com>
+ <CAFULd4Y6W0hJbA8Ki2yB60537mC8+ohXyUgxD+HuKDQhq7zGmA@mail.gmail.com>
+Message-ID: <aQv14mmAkUPL-Fap@google.com>
+Subject: Re: [PATCH] KVM: VMX: Micro-optimize SPEC_CTRL handling in __vmx_vcpu_run()
+From: Sean Christopherson <seanjc@google.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: kvm@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed,  5 Nov 2025 20:07:58 +0000 Mina Almasry wrote:
-> NCCL workloads with NCCL_P2P_PXN_LEVEL=2 or 1 are very slow with the
-> current gve devmem tcp configuration.
+On Wed, Aug 20, 2025, Uros Bizjak wrote:
+> On Wed, Aug 20, 2025 at 8:10=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> w=
+rote:
 
-Hardcoding the ring size because some other attribute makes you think
-that a specific application is running is rather unclean IMO..
+...
 
-Do you want me to respin the per-ring config series? Or you can take it over.
-IDK where the buffer size config is after recent discussion but IIUC 
-it will not drag in my config infra so it shouldn't conflict.
+> VMX patch is at [1]. SVM patch is a bit more involved, because new
+> 32-bit code needs to clobber one additional register. The SVM patch is
+> attached to this message, but while I compile tested it, I have no
+> means of testing it with runtime tests. Can you please put it through
+> your torture tests?
+>=20
+> [1] https://lore.kernel.org/lkml/20250820100007.356761-1-ubizjak@gmail.co=
+m/
+
+Finally got around to testing this (such a pain to test this code).  I hack=
+ed
+a host to allow any value for MSR_IA32_SPEC_CTRL, and then ran in a VM to v=
+erify
+KVM could actually save/restore 64-bit values (and that KVM elides the WRMS=
+Rs
+when possible).
+
+The VMX patch looks good (I'll get it applied shortly).  The SVM version ha=
+s a
+bug, but I've got it working and will post a patch shortly.
+=20
+>=20
+> Uros.
+
+> diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
+> index 235c4af6b692..a1b9f2ac713c 100644
+> --- a/arch/x86/kvm/svm/vmenter.S
+> +++ b/arch/x86/kvm/svm/vmenter.S
+> @@ -52,11 +52,23 @@
+>  	 * there must not be any returns or indirect branches between this code
+>  	 * and vmentry.
+>  	 */
+> -	movl SVM_spec_ctrl(%_ASM_DI), %eax
+> -	cmp PER_CPU_VAR(x86_spec_ctrl_current), %eax
+> +#ifdef CONFIG_X86_64
+> +	mov SVM_spec_ctrl(%rdi), %rdx
+> +	cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
+> +	je 801b
+> +	movl %edx, %eax
+> +	shr $32, %rdx
+> +#else
+> +	mov SVM_spec_ctrl(%edi), %eax
+> +	mov PER_CPU_VAR(x86_spec_ctrl_current), %ecx
+> +	xor %eax, %ecx
+> +	mov SVM_spec_ctrl + 4(%edi), %edx
+> +	mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %esi
+> +	xor %edx, %esi
+> +	or %esi, %ecx
+>  	je 801b
+> +#endif
+>  	mov $MSR_IA32_SPEC_CTRL, %ecx
+> -	xor %edx, %edx
+>  	wrmsr
+>  	jmp 801b
+>  .endm
+> @@ -80,14 +92,31 @@
+>  	cmpb $0, \spec_ctrl_intercepted
+>  	jnz 998f
+>  	rdmsr
+> -	movl %eax, SVM_spec_ctrl(%_ASM_DI)
+> +#ifdef CONFIG_X86_64
+> +	shl $32, %rdx
+> +	or %rax, %rdx
+> +	mov %rdx, SVM_spec_ctrl(%rdi)
+>  998:
+
+To avoid defining the 998 label separately for 64-bit vs. 32-bit, I think i=
+t's
+worth making two 32-bit writes to svm->spec_ctrl even on 64-bit kernels, e.=
+g.
+
+	cmpb $0, \spec_ctrl_intercepted
+	jnz 998f
+	rdmsr
+	movl %eax, SVM_spec_ctrl(%_ASM_DI)
+	movl %edx, SVM_spec_ctrl + 4(%_ASM_DI)
+998:
+	/* Now restore the host value of the MSR if different from the guest's.  *=
+/
+> -
+>  	/* Now restore the host value of the MSR if different from the guest's.=
+  */
+> -	movl PER_CPU_VAR(x86_spec_ctrl_current), %eax
+> -	cmp SVM_spec_ctrl(%_ASM_DI), %eax
+> +	mov SVM_spec_ctrl(%rdi), %rdx
+> +	cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
+>  	je 901b
+> -	xor %edx, %edx
+> +	movl %edx, %eax
+> +	shr $32, %rdx
+> +#else
+> +	mov %eax, SVM_spec_ctrl(%edi)
+> +	mov %edx, SVM_spec_ctrl + 4(%edi)
+> +998:
+> +	/* Now restore the host value of the MSR if different from the guest's.=
+  */
+> +	mov SVM_spec_ctrl(%edi), %eax
+> +	mov PER_CPU_VAR(x86_spec_ctrl_current), %esi
+> +	xor %eax, %esi
+> +	mov SVM_spec_ctrl + 4(%edi), %edx
+> +	mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %edi
+> +	xor %edx, %edi
+> +	or %edi, %esi
+> +	je 901b
+
+This particular flow is backwards, in that it loads the guest value into ED=
+X:EAX
+instead of the host values.
+
+> +#endif
+>  	wrmsr
+>  	jmp 901b
+>  .endm
 
 
