@@ -1,176 +1,208 @@
-Return-Path: <linux-kernel+bounces-888281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D24AC3A62C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F72C3A602
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:52:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D94FB4FF61B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:50:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD4E94E4D27
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6326330C628;
-	Thu,  6 Nov 2025 10:50:11 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA52C2E92D4;
-	Thu,  6 Nov 2025 10:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEC22E8B98;
+	Thu,  6 Nov 2025 10:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="POjsuEUr";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="F2ewHI/K"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA132DF3E7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762426210; cv=none; b=BiDTcdcQ60HHjwD9aop0z0mql9bM7XX+Z0tehbZigPoDRiC4pxgF2jt2QkutFQEN5Gol6DQkuHMz8vwrEsQPU9T8V6VINP7PgGaZ1R8WdwfuIlIYBZZy38u3w86iij0zBEuJz8p90YFZVeGfZ+f9Gr+I/VhvmdNKGP/dwL2ehIw=
+	t=1762426204; cv=none; b=q0LnpWSIixZkrCL6kqlJxceeTxaHEgOh5S/dHqFN3aIW5DiYjRZOXJO98Wv7HinIdnVh7A8UVrPflwq6PYHuc8ZhFFf+4KIVLrolYylhMwKo64GEScslanf02l0fZIZ3zMH89x0zhHOghSRcDAyZaQ/qw/iER/2B2iC6x9Ybd14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762426210; c=relaxed/simple;
-	bh=M/ZNM0BXH69JOaoZQjZBoFizMQzaO3iJpvFIMDhZqBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DIVqpM9uh2ODR4aPwk2o4oaWIotIZTr6kyLQgiAkD9/CIgWA5giXdRzyss6fj7fn/HdMf7240CMVuQcULVQJz8nw8wOt42PYfP9CLIiJu24CBHdluPdVwVwq2VjlI+ZILPmZXNbkUH+z3yHDNrRgF7o9nTT2wqecCdalFqE3DOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006493LT.eswin.cn (unknown [10.127.112.153])
-	by app2 (Coremail) with SMTP id TQJkCgAHS65FfQxpxyQ7AA--.65325S4;
-	Thu, 06 Nov 2025 18:49:43 +0800 (CST)
-From: caohang@eswincomputing.com
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Thinh.Nguyen@synopsys.com,
-	p.zabel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Hang Cao <caohang@eswincomputing.com>
-Subject: [PATCH v6 0/2] Add driver support for ESWIN EIC7700 SoC USB controller
-Date: Thu,  6 Nov 2025 18:49:38 +0800
-Message-ID: <20251106104938.1386-1-caohang@eswincomputing.com>
-X-Mailer: git-send-email 2.45.1.windows.1
+	s=arc-20240116; t=1762426204; c=relaxed/simple;
+	bh=zBCKExl8HjB48xNUrTGGNh6timupCDTQI00rzd31IVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hz/8VuaIOsRHyaVAB8IKfrSYIuI2vbEJoeCcbuEm5TSL1OMKNAEIPLmbV2WRFmra2JzBHVIqPW+JDvc2KhkZ/CM7i/ejTJ6A8qrDEnGkfGRu1UbrqJ6p7ucMm882TCc9h7BYkZYjtMK01DRIib2mkzuyNp196thJhcW+/a3jYOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=POjsuEUr; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=F2ewHI/K; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A68jlpc3383559
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 10:50:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eYIclMc1S8tQ3EHXNewhAU
+	NCGGawrS1pWeLI+oTbF4o=; b=POjsuEUr1+AkwxREVeNEvoC4wHtovyLcLXbUgw
+	Rk/HY3m7X3DI7MSvVQ+O+GsMGTdMcMaZ5YEQLTqtpQs2RtYB0mgNrJoBtpxbJKNS
+	HJ9iaO0OF6xuoa++lB7fY/F6ZknI/3LQUAaPYk2IZ3zp5SfZlR4+gflE/YoAlOuE
+	ECvKJNJF9N56xwcpfZ2VKDiApt4ZbgPZE6+Asauo3w/pgGLYH48f1V9ARC4NblEb
+	qm+DEOgak9YpLLoHhaQUYRKtGuTgSScl5kZin8oyyHUWWj7+GwK64uxUpNfqEG+4
+	AZo818aQPfPV7LAfOQhdiTNJ1gX7dg+sCP8FIOovrXWCm1rA==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8reurb6r-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:50:00 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-272b7bdf41fso5758025ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:50:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762426200; x=1763031000; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eYIclMc1S8tQ3EHXNewhAUNCGGawrS1pWeLI+oTbF4o=;
+        b=F2ewHI/KWHsTBUfqB1LV7osAbvLrBT/px2fMcA5vFp/+X/jfyVJxIvWaVu30xsi4wo
+         Pi9AkL6dGdh5TuNBL6L971SIJ7Fs4rxkYEHyMY6mcIIHzrhnIPbBMYeJqK/WCJCU7Psv
+         1fHDljfxcD+m6LlFBdvnJui627gVbkC/+X1TASHbB/665kc32uPmtCg1Z4NWNi4OwKyO
+         d4WhneJ3eUWLpHzY9SITs3Bcd/QhRUGpeDkwhi20mfoCM1ghSrEwSGmmUuH9qpx5p5Or
+         A8GgSnxQGfp4wNAZUa5n9mE+ayV/auzamWb/LS3sd+8p9wuoK2daV7xUG7MrnTlg17zt
+         j+7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762426200; x=1763031000;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eYIclMc1S8tQ3EHXNewhAUNCGGawrS1pWeLI+oTbF4o=;
+        b=k4wTCCo2PzT4Z8nBMTooV4ksEP56I8eyMelGsqtX/+s3/KN0z/2C1cwOPhSKrequ1Q
+         TMsNqaxP8H+Rv4Imd32F21B93E83oj1vwtbfZfAV4PLYVdWiuE9yOIznVXAA5CszQyZS
+         zfNSR9OSIhWjsd7UOGT9A8Tk9Bv3QcMvaDq0AASKyZuVLlrCnxqw19wGDHacoudyvfKO
+         blFPVTX8y8ljIjAEVzHn4vvHOiLg2MPYTu6Y0/liyGuvDS2sPh9u4bboTuOnQBQsDu4h
+         JArQi/F6u9TVHIpbiPBGenciZUg7F64aJx0Ln60c4Xl1oZ8+zQpoDxjq0GUl8Gd33jiE
+         3xng==
+X-Forwarded-Encrypted: i=1; AJvYcCVlnn9FBK45QPywk7bgsmUobkZdTQ42mqZq54AH9u/ssNCvN/WV/AtD+UL8iUlTPPC+M7DoOG2xaU+7q+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGQxXvnmj36W+zTFaDT8J0oYaCf3gunBZ31TgEYz6ESKijuDOh
+	v8Sz4q+UJHgEYX0+6kqIRfdIJ1xy5WfkvsODvdc3GV+VI12bTc7OjZMtKTor5xY+DpMRf/lSYmD
+	Y3ymhE6dRWIza8uASex/dBDU91k+ssXZwVpIpJHr7ccZXnqKQaKESuJu7Mns6/bjDrVA=
+X-Gm-Gg: ASbGncutzXix16VyLkZTaZ0ZH24PD4KbQ+PxvuE34eIDEfXiu3QEHVb41LsFSuUq+fU
+	pkWyqCStwjYORD+EO9djkY5hhqyZy/fVnujdTRArDX1qgH4Cnt8DhK2OWdNRWjcpPXPLdhSuQT3
+	TVi3Yp8R8aFIgp+3r3hSLIxcqOvh/EV6uOKZQbmzlJAJ/fb6NVr1Ggsi3rIzHipQ0qDOb3Zq+SD
+	xVWZY2hF1ZHWBD2zPd7tjZ5a2ke0VLJQgOniz/9XUp7oRNR9dYMkRz0CoEu4L7VhE4AN3GfavTR
+	azRkyFxoi7Hi51xpTBiwGbyGq6tIB/d0sWfIDOFeg0ndgMbpxoCiKiJutxl3yUiG2bk1cWRe/sC
+	0IQC5FAEh65KtvLwfpaedVJObq5hlUA==
+X-Received: by 2002:a17:903:2986:b0:295:3d5d:fe3b with SMTP id d9443c01a7336-2962ad95d44mr92650675ad.28.1762426199934;
+        Thu, 06 Nov 2025 02:49:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFKbtc7O+Ae/vhgwno4UxymyqOjep2QdMp+I6x5qOroY50xVCKvQHkpgkjOhA37e0xwIzT3bQ==
+X-Received: by 2002:a17:903:2986:b0:295:3d5d:fe3b with SMTP id d9443c01a7336-2962ad95d44mr92650365ad.28.1762426199366;
+        Thu, 06 Nov 2025 02:49:59 -0800 (PST)
+Received: from hu-kshaikkh-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ccf0e7sm24274215ad.101.2025.11.06.02.49.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 02:49:58 -0800 (PST)
+From: Khaja Hussain Shaik Khaji <khaja.khaji@oss.qualcomm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: kprobes@vger.kernel.org, linux-kernel@vger.kernel.org, will@kernel.org,
+        catalin.marinas@arm.com, masami.hiramatsu@linaro.org,
+        khaja.khaji@oss.qualcomm.com
+Subject: [PATCH] arm64: insn: Route BTI to simulate_nop to avoid XOL/SS at function entry
+Date: Thu,  6 Nov 2025 16:19:55 +0530
+Message-Id: <20251106104955.2089268-1-khaja.khaji@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgAHS65FfQxpxyQ7AA--.65325S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxXrWUWw4fur47AF4fZF1UKFg_yoWrXF4fpa
-	ykKFW5GrZ5JryxJan2q3WrKF4fGanrXFWUGr1Iqw1jvw4jg3W7JrWI9F4YyrWDCwn3Z3yY
-	yay3W39Yka4DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbknY7UUUUU==
-X-CM-SenderInfo: xfdrxt1qj6v25zlqu0xpsx3x1qjou0bp/
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA4NCBTYWx0ZWRfX3qdhCdBsds4o
+ pv4W25kW6rYt/l/9Ozd7OvUdRnKi+opMcM0xgmJCq5+H53jeOmrs6R5BlrgKGAGAhpn6534jwHp
+ a/BAIFXLvfcadFrCn1NdAlxeDpyz5Fs4pjudRqnBYVQ7+3mWQqQjoYmmwMC2iwIY9IU6p48WBTu
+ UWcS0jZthP8IUKE5F5uUgsLBGUXEWwIsGwncM0/xgsiAMBYaxbkc/2CtlBT+9m62PEIPG9tPffX
+ Fxh43PKifosgn8UyV0ucoJ86b+odrOVn3AL6eZCsB98Im3v12m5xm6uSJS7hHrpwdEhjFFjHefQ
+ +GDIne++WKTtVmQzYKhSDdMErKmaM8s6lMt6gwZw7vF3ukUwJ5SUrZN8h0y37ivuihmL8LVAdoF
+ K+Hsv/qUAUsTB/+rNylDHb2tlOXQAg==
+X-Proofpoint-ORIG-GUID: QXKexGqWd8DZzENrK-NQBOqC6wPmSQ0a
+X-Authority-Analysis: v=2.4 cv=RrDI7SmK c=1 sm=1 tr=0 ts=690c7d58 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=XwLyKEN_6mDbY-G0MD0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: QXKexGqWd8DZzENrK-NQBOqC6wPmSQ0a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1011 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060084
 
-From: Hang Cao <caohang@eswincomputing.com>
+On arm64 with branch protection, functions typically begin with a BTI
+(Branch Target Identification) landing pad. Today the decoder treats BTI
+as requiring out-of-line single-step (XOL), allocating a slot and placing
+an SS-BRK. Under SMP this leaves a small window before DAIF is masked
+where an asynchronous exception or nested probe can interleave and clear
+current_kprobe, resulting in an SS-BRK panic.
 
-Add support for ESWIN EIC7700 USB driver controller.
+Handle BTI like NOP in the decoder and simulate it (advance PC by one
+instruction). This avoids XOL/SS-BRK at these sites and removes the
+single-step window, while preserving correctness for kprobes since BTI’s
+branch-target enforcement has no program-visible effect in this EL1
+exception context.
 
-Changes in v6->v5:
-- Updates: dwc3-generic-plat.c
-  - Update commit message.
-  - Add dwc3_plat_config structure.
-  - Add dwc3_eic7700_init function.
-- Link to V5:https://lore.kernel.org/all/20251104065045.1464-1-caohang@eswincomputing.com/
+In practice BTI is most commonly observed at function entry, so the main
+effect of this change is to eliminate entry-site single-stepping. Other
+instructions and non-entry sites are unaffected.
 
-Changes in v5->v4:
-- Updates: eswin,eic7700-usb.yaml
-  -  Remove the unnecessary properties of quirk.
+Signed-off-by: Khaja Hussain Shaik Khaji <khaja.khaji@oss.qualcomm.com>
+---
+ arch/arm64/include/asm/insn.h            | 5 -----
+ arch/arm64/kernel/probes/decode-insn.c   | 9 ++++++---
+ arch/arm64/kernel/probes/simulate-insn.c | 1 +
+ 3 files changed, 7 insertions(+), 8 deletions(-)
 
-- Updates: dwc3-generic-plat.c
-  - Rebase to usb-testing branch of gregkh/usb.git.
-  - Add eic7700 pre init in probe function.
-
-Changes in v4->v3:
-- Updates:
-  - Removed config option patch dependency from cover letter, because the patch
-    was applied.
-  - Remove dwc3-eic7700.c instead of dwc3-generic-plat.c.
-
-- Updates: eswin,eic7700-usb.yaml
-  - Add usb_en clock.
-  - Add usb_rst reset.
-  - Update eswin,hsp-sp-csr description.
-  - Remove the last two unused items of eswin,hsp-sp-csr.
-
-- Updates: dwc3-generic-plat.c
-  - Add eswin,eic7700-dwc3 to the compatible table.
-  - Add the dwc3_generic_match_data structure.
-  - Add the eic7700_dwc3_bus_init function to initialize the bus.
-  - Add the init_ops callback in the probe function.
-- Link to V3: https://lore.kernel.org/all/20250915085329.2058-1-caohang@eswincomputing.com/
-
-Changes in v3->v2:
-- Updates: eswin,eic7700-usb.yaml
-  - Sort the attributes according to the DTS coding style.
-  - Remove the #address-cells and #size-cells attributes.
-  - Fold the child node into the parent.
-  - Update commit message.
-
-- Updates: dwc3-eic7700.c
-  - Use dwc3 core as a library.
-  - Add system and runtime pm.
-  - Use pm_ptr and remove the __maybe_unused tags.
-  - Add new author name
-  - Add prepare and complete function
-  - Update commit message.
-- Link to V2: https://lore.kernel.org/lkml/20250730073953.1623-1-zhangsenchuan@eswincomputing.com/
-
-Changes in v2->v1:
-- Updates: eswin,eic7700-usb.yaml
-  - Drop the redundant descriptions.
-  - Supplement the constraints of resets.
-  - Replace "eswin,hsp_sp_csr" with "eswin,hsp-sp-csr"
-    and add items description.
-  - Drop numa-node-id, This is not necessary.
-  - Add patternProperties and match the rules defined
-    in the "snps,dwc3.yaml" file.
-  - Add "#address-cells" "#size-cells".
-  - Update the space indentation, remove the redundant labels,
-    and sort the attributes according to the DTS encoding style.
-  - Drop the "status = "disabled" attribute.
-  - Update the common usb node names and fold the child
-    nodes into the parent nodes.
-  - The warning detected by the robot has been resolved.
-
-- Updates: dwc3-eic7700.c
-  - Remove dwc3_mode_show dwc3_mode_store dwc3_eswin_get_extcon_dev,
-    dwc3_eswin_device_notifier and dwc3_eswin_host_notifier, usb role
-    detection and switching are not supported.
-  - Remove the hub-rst attribute, remove the dwc3_hub_rst_show and
-    dwc3_hub_rst_store functions, this feature is not supported.
-  - Use syscon_regmap_lookup_by_phandle_args instead of the
-    syscon_regmap_lookup_by_phandle function.
-  - Use dev_err_probe in probe function.
-  - Drop mutex_lock, which is not required.
-  - Remove clk_prepare_enable and of_clk_get, and manage multiple
-    clocks using devm_clk_bulk_get_all_enabled.
-  - Remove the device_init_wakeup related functions, which were
-    used incorrectly.
-  - Remove MODULE_ALIAS, which is used incorrectly.
-  - The warning detected by the robot has been resolved.
-- Link to V1: https://lore.kernel.org/lkml/20250516095237.1516-1-zhangsenchuan@eswincomputing.com/
-
-Hang Cao (2):
-  dt-bindings: usb: Add ESWIN EIC7700 USB controller
-  usb: dwc3: eic7700: Add EIC7700 USB driver
-
- .../bindings/usb/eswin,eic7700-usb.yaml       | 94 +++++++++++++++++++
- drivers/usb/dwc3/dwc3-generic-plat.c          | 70 ++++++++++++--
- 2 files changed, 157 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
-
---
+diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
+index 18c7811774d3..7e80cc1f0c3d 100644
+--- a/arch/arm64/include/asm/insn.h
++++ b/arch/arm64/include/asm/insn.h
+@@ -452,11 +452,6 @@ static __always_inline bool aarch64_insn_is_steppable_hint(u32 insn)
+ 	case AARCH64_INSN_HINT_PACIASP:
+ 	case AARCH64_INSN_HINT_PACIBZ:
+ 	case AARCH64_INSN_HINT_PACIBSP:
+-	case AARCH64_INSN_HINT_BTI:
+-	case AARCH64_INSN_HINT_BTIC:
+-	case AARCH64_INSN_HINT_BTIJ:
+-	case AARCH64_INSN_HINT_BTIJC:
+-	case AARCH64_INSN_HINT_NOP:
+ 		return true;
+ 	default:
+ 		return false;
+diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
+index 6438bf62e753..7ce2cf5e21d3 100644
+--- a/arch/arm64/kernel/probes/decode-insn.c
++++ b/arch/arm64/kernel/probes/decode-insn.c
+@@ -79,10 +79,13 @@ enum probe_insn __kprobes
+ arm_probe_decode_insn(u32 insn, struct arch_probe_insn *api)
+ {
+ 	/*
+-	 * While 'nop' instruction can execute in the out-of-line slot,
+-	 * simulating them in breakpoint handling offers better performance.
++	 * NOP and BTI (Branch Target Identification) have no program‑visible side
++	 * effects for kprobes purposes. Simulate them to avoid XOL/SS‑BRK and the
++	 * small single‑step window. BTI’s branch‑target enforcement semantics are
++	 * irrelevant in this EL1 kprobe context, so advancing PC by one insn is
++	 * sufficient here.
+ 	 */
+-	if (aarch64_insn_is_nop(insn)) {
++	if (aarch64_insn_is_nop(insn) || aarch64_insn_is_bti(insn)) {
+ 		api->handler = simulate_nop;
+ 		return INSN_GOOD_NO_SLOT;
+ 	}
+diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
+index 4c6d2d712fbd..b83312cb70ba 100644
+--- a/arch/arm64/kernel/probes/simulate-insn.c
++++ b/arch/arm64/kernel/probes/simulate-insn.c
+@@ -200,5 +200,6 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
+ void __kprobes
+ simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
+ {
++	/* Also used as BTI simulator: both just advance PC by one insn. */
+ 	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+ }
+-- 
 2.34.1
 
 
