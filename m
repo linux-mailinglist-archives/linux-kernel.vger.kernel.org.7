@@ -1,265 +1,165 @@
-Return-Path: <linux-kernel+bounces-888920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71968C3C47E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:11:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27FE4C3C484
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DFA64FC72F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:07:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03FD34FFF85
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCA93451C8;
-	Thu,  6 Nov 2025 16:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D50033DEE5;
+	Thu,  6 Nov 2025 16:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ULtLdBXd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="FMqCrZK3"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B5C316918;
-	Thu,  6 Nov 2025 16:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8562328852E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445247; cv=none; b=ZKBQYzdYTCPqSnK0LYhp5vqA9n4LLdZFwrO5Qy7McnrHAcsVFBryQLXILNKReQ14A4BOnS6wcrJwiZ2dZxIR5tb4vie1RIFb9BD+n21aLqVE4cFgfElDz0iuyAHVRBd8k/HEPhGVu3npPYVU546B0rZAqTvZFyPaHSJkDZS2jDk=
+	t=1762445270; cv=none; b=IiVMrDXG85kK2NlcCdJynnUwE967Q7euIp9ZCtEkVT5bnT393eYspqeWRtf67Bs6QeIYSL6FPC/WEjJxlTqHwTajeK+Q5lX9X/qhoxP1usWT+hngHtJfeo2H06BSRTH0HTCue7CHr7i0/Msm/YB9ylvcCNme/Yq/+SBz0RTu8mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445247; c=relaxed/simple;
-	bh=SbAz1dDS4lGDeM9FWy6nLhyTEHqSyFKNrQiQdkYRtqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUP2yG81d/zLQy9jqLodXMm90uWGV5pfPf8CiPxhKu+0Ku6IZN+zoWc1UDnLsrujxjx0IFcbLikxbzY5ORLYDck+MgnJrCoGJ9fxGEZgVEYxNnxdv3vQpeZ8nmfF8jaG+1jEfPaXGz2CAs2+p61kRCcmyZMV4Xqj9oSuOByHyvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ULtLdBXd; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762445245; x=1793981245;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SbAz1dDS4lGDeM9FWy6nLhyTEHqSyFKNrQiQdkYRtqE=;
-  b=ULtLdBXdJUgpKbjcSsLkbbmzSaiuP89PFBRX/pb7WCP69TbVvaMuzX1V
-   kA/Xq0M6KpAg0OzKEvXRQn1nSxYmQSI+CkySBs+CKOizHhDMtkDrV6MWt
-   k0JfUDkGnbSQogQrzn68mc+jBpeceFdJMSyAdo9uXxTWQ0reUZbwRFsRw
-   kpy87CjRowBJTKYpcJAbJbdShXpcMrEAK+DIPvOOCkHkPDnl+rqLZttmf
-   sntr4ERF2agrIW1dy0GPbIkQDFmGHwF2JoxGkI6PhqvNxi37Z/Mrztr3R
-   y8n27HxS5vKCjZgQT39WtQUmuPnTNGk3hqxAUN3j3ilOfXsW5RX/ITEAI
-   g==;
-X-CSE-ConnectionGUID: ivy8FE9RRXqDfGvzV9cAug==
-X-CSE-MsgGUID: sbtaZjGxTV20ZDb+FVBPpA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64469941"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="64469941"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:07:24 -0800
-X-CSE-ConnectionGUID: xyGQLGVLSAGvFCLnQ0FfRg==
-X-CSE-MsgGUID: QGNNY7BrSregxim4Q2AYIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="218545205"
-Received: from abityuts-desk.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.224])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:07:21 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vH2W6-00000006BoP-1d52;
-	Thu, 06 Nov 2025 18:07:18 +0200
-Date: Thu, 6 Nov 2025 18:07:18 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] iio: add processed write API
-Message-ID: <aQzHtqFEIA5E0ikO@smile.fi.intel.com>
-References: <20251106-ltm8054-driver-v3-0-fd1feae0f65a@bootlin.com>
- <20251106-ltm8054-driver-v3-2-fd1feae0f65a@bootlin.com>
+	s=arc-20240116; t=1762445270; c=relaxed/simple;
+	bh=4ZjsGYfXbmMvZwQ8n4htYvu+MTNXcoG47WYUZFVEgnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NCjFC5z2I2TfJvrq/5fStgpMcg+tbMzXq32WBBtXEQaawAmYYdq97WcI/+BLN9Xsp1/ng9qd1NiKiTQCGCufcY5ecu1M/COPSxvlXY3GUeodDHBnyL69S3XdrIJWlKWUIEjZh7BPMiwK33dlJwAhs4YGW2v+ozxjNTl5EKFdVZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=FMqCrZK3; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=MqjdHvvQt+5moiTUatIvmnnJusOWuTmIDSyMeBxekmc=; b=FMqCrZK3jXXYQMVFQcCaKLaxf8
+	+7f2S0nKYDA5/M2smBRXBVtCR386MK2O9GOlLPmTYcIAoeMmt/BMwFDwy4HNFBPdp1zr60uF3JzP6
+	7PPDN0srM8M4OufDvh+OB57hOrEafpifrUKfivqR5xvxtWbNgEeWWYCZr4uR4/5HLhhh1fEhDQTeE
+	iXccKdCga1r14Puq1wt78fNvzTKsSiw58NITyy9vWKojb4rzBvg0br2IwDrZArhRney8YbIo4RPIM
+	NFBXwXIdhxfgRQAj3wdZ4NnhljN8IxbXynDROWkp7EdxXW+xs/rtsgVkCaAf91E1yOecyP8qXlzHc
+	srCldqpw==;
+Received: from [191.8.29.151] (helo=steammachine)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vH2WS-0034gL-LR; Thu, 06 Nov 2025 17:07:41 +0100
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Ryan Houdek <houdek.ryan@fex-emu.org>,
+	Billy Laws <blaws05@gmail.com>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [RFC PATCH 0/1] arch: arm64: Implement unaligned atomic emulation
+Date: Thu,  6 Nov 2025 13:07:34 -0300
+Message-ID: <20251106160735.2638485-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106-ltm8054-driver-v3-2-fd1feae0f65a@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 06, 2025 at 03:11:47PM +0100, Romain Gantois wrote:
-> Add a function to allow IIO consumers to write a processed value to a
-> channel.
+This patch proposes adding kernel-side emulation for unaligned atomic
+instructions on ARM64. This is intended for x86 emulators (like FEX)
+that struggle to effectively handle such operations in userspace alone.
+Such handling is required as x86 permits such unaligned accesses (albeit
+sometimes with a performance penalty as in the case of split-locks[1])
+but ARM64 does not and will raise a bus error.
 
-...
+User applications that wish to enable support for this can use the new
+pctrl() flag `PR_ARM64_UNALIGN_ATOMIC_EMULATE`. Some optimizations and
+instructions were left for future revisions of this patchset.
 
-> +int iio_divide_by_value(int *result, s64 numerator,
-> +			unsigned int type, int val, int val2)
-> +{
-> +	s64 tmp_num, tmp_den;
-> +
-> +	switch (type) {
-> +	case IIO_VAL_INT:
-> +		tmp_num = numerator;
-> +		tmp_den = val;
-> +		break;
-> +	case IIO_VAL_INT_PLUS_MICRO:
-> +	case IIO_VAL_INT_PLUS_NANO:
-> +		switch (type) {
-> +		case IIO_VAL_INT_PLUS_MICRO:
-> +			tmp_num = MICRO;
-> +			tmp_den = MICRO;
-> +			break;
-> +
-> +		case IIO_VAL_INT_PLUS_NANO:
-> +			tmp_num = NANO;
-> +			tmp_den = NANO;
-> +			break;
-> +		}
+Emulators like FEX attempt to emulate this in userspace, but with
+caveats in two areas:
 
-> +		tmp_num *= numerator;
-> +		tmp_den = (s64)abs(val) * tmp_den + (s64)abs(val2);
+ * Performance
 
-Here is a subtle bug. The problematic piece is abs(). See
-https://lore.kernel.org/r/20251106152051.2361551-1-andriy.shevchenko@linux.intel.com
-for the answer.
+It should first be noted that due to x86's TSO (total store order)
+memory model, ARM64 atomic instructions must be used for all memory
+accesses. This results in unaligned loads/stores being much more common
+than one would expect and the overhead of emulating them significantly
+impacting performance.  For this common case of unaligned loads/stores,
+code backpatching is used in FEX to avoid repeated overhead from
+handling the same faulting access. This replaces faulting unaligned
+atomic ARM64 instructions with regular load/stores and memory barriers.
+This comes at a cost of introducing significant performance problems if
+a function like memcpy ends up being patched because it very
+infrequently happens to be used with unaligned memory. This is severe
+enough to make games like Mirror's Edge and Assassin's Creed: Origin
+unplayable without application-specific configuration.
 
-> +		if (val < 0 || val2 < 0)
-> +			tmp_num *= -1;
+Microbenchmarks[2] measure a 4x decrease in overhead with kernel-side
+handling compared to userspace, and this figure is currently even larger
+when FEX is ran under Wine. Such a dramatic decrease would make it
+reasonable for FEX to default to the no-backpatching path and provide
+consistent performance. 
 
-Drop that duplication of the switches above and split the calculations. Note,
-with the split done, the confusing assignments of tmp_den will gone as well.
+ * Correctness:
 
-> +		break;
-> +	case IIO_VAL_FRACTIONAL:
-> +		tmp_num = (s64)numerator * (s64)val2;
-> +		tmp_den = val;
-> +		break;
-> +	case IIO_VAL_FRACTIONAL_LOG2:
-> +		tmp_num = (s64)numerator << val2;
-> +		tmp_den = val;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!tmp_den)
-> +		return -ERANGE;
-> +
-> +	*result = div64_s64(tmp_num, tmp_den);
-> +
-> +	return IIO_VAL_INT;
-> +}
+x86 atomic accesses can cross 16-byte (LSE2) granules, but there is no
+ARM64 instruction that would allow for direct atomic emulation of this.
+As such, a lock must be taken for correctness. While this is easy to
+emulate in userspace within a process, correct atomic cross-granule
+operations on shared memory mapped into multiple processes would require
+a lock shared between all FEX instances which cannot be implemented
+safely in userspace as is (robust futexes do not work here as they are
+under the control of the emulated x86 program). Note, this is a less
+coarse restriction than split locks on x86, which are only concerned
+with accesses crossing a 64 byte cacheline size.
 
-...
+ * Precedent:
 
-> +	offset_type = iio_channel_read(chan, &offset_val, &offset_val2,
+Both XNU and NT kernels support unaligned atomic emulation for their
+respective x86 emulators. Windows additionally supports 'volatile
+metadata', which is emitted by newer versions of MSVC to inform
+emulators which specific load/store accesses require atomic handling
+[3]. FEX supports this together with an extension mechanism [4] which
+can be manually populated to avoid e.g. the aforementioned Assassin's
+Creed slowdown.
 
-> +	if (offset_type >= 0) {
+This implementation is a RFC so we can learn more about how to make this
+code upstream and what the maintainers think of such feature being
+merged here. The code is a simplified version of the original work done
+by Billy Laws, where we accept just a subset of 64bit atomic
+instructions that are enough to be used with a benchmark tool[2], and
+this is the proposed interface being used by FEX: [5].
 
-Why?
+Thanks!
+	André
 
-> +		switch (offset_type) {
-> +		case IIO_VAL_INT:
-> +		case IIO_VAL_INT_PLUS_MICRO:
-> +			half_step = MICRO / 2;
-> +			break;
-> +		case IIO_VAL_INT_PLUS_NANO:
-> +			half_step = NANO / 2;
-> +			break;
-> +		case IIO_VAL_FRACTIONAL:
-> +			offset_val = DIV_ROUND_CLOSEST(offset_val, offset_val2);
-> +			break;
-> +		case IIO_VAL_FRACTIONAL_LOG2:
-> +			offset_val >>= offset_val2;
-> +			break;
+[1] https://lwn.net/Articles/911219/
+[2] https://gitlab.freedesktop.org/freedesktop/snippets/-/snippets/7875
+[3] https://learn.microsoft.com/en-us/cpp/build/reference/volatile?view=msvc-170
+[4] https://github.com/FEX-Emu/FEX/pull/4773
+[5] https://github.com/FEX-Emu/FEX/pull/4985
 
-> +		default:
+André Almeida (1):
+  arch: arm64: Implement unaligned atomic emulation
 
-You probably wanted to check it here.
-
-> +			return -EINVAL;
-
-
-
-> +		}
-> +
-> +		/* Round fractional part to closest to reduce rounding bias. */
-> +		if (half_step) {
-> +			if (offset_val2 >= half_step)
-> +				*raw -= 1;
-> +			else if (offset_val2 <= -half_step)
-> +				*raw += 1;
-> +		}
-> +
-> +		*raw -= offset_val;
-> +	}
-
-...
-
-> +EXPORT_SYMBOL_GPL(iio_write_channel_processed_scale);
-
-Can we start using namespaced exports?
-
-...
-
-> +/**
-> + * iio_divide_by_value() - Divide by an IIO value
-> + * @result:	Destination pointer for the division result
-> + * @numerator:	Numerator.
-> + * @type:	One of the IIO_VAL_* constants. This decides how the @val
-> + *		and @val2 parameters are interpreted.
-> + * @val:	Denominator.
-> + * @val2:	Denominator. @val2 use depends on type.
-> + *
-> + * Divide an s64 number by an IIO value, storing the result as
-
-s64 number --> @numerator
-
-> + * IIO_VAL_INT. This is typically used for scaling.
-> + *
-> + * Returns:
-> + * IIO_VAL_INT on success or a negative error-number on failure.
-
-Use % for the constants. It will be rendered differently (font) when
-applicable. Same for other constants in all of the kernel-doc you add.
-
-> + */
-
-...
-
-> +/**
-> + * iio_write_channel_processed_scale() - scale and write processed value to a given channel
-> + * @chan:		The channel being queried.
-> + * @val:		Value to write.
-> + * @scale:		Processed value is divided by this scale factor during the conversion.
-> + *
-> + * This function writes a processed value to a channel. A processed value means
-> + * that this value will have the correct unit and not some device internal
-> + * representation. If the device does not support writing a processed value, the
-> + * function will query the channel's scale and offset and write an appropriately
-> + * transformed raw value.
-
-> + * Context: May sleep.
-
-The above kernel-doc doesn't have this!
-
-> + * Return: an error code or 0.
-
-Be consistent with the existing code, and even in your own change.
-
-("Return" section name, "Context" section presence, etc.)
-
-Use Perl (original) kernel-doc for now, the Python has a significant regression
-(the fix is pending to go to Linus' branch).
+ arch/arm64/include/asm/exception.h   |   1 +
+ arch/arm64/include/asm/processor.h   |   3 +
+ arch/arm64/include/asm/thread_info.h |   1 +
+ arch/arm64/kernel/Makefile           |   2 +-
+ arch/arm64/kernel/process.c          |  15 +
+ arch/arm64/kernel/unaligned_atomic.c | 520 +++++++++++++++++++++++++++
+ arch/arm64/mm/fault.c                |  10 +
+ include/uapi/linux/prctl.h           |   5 +
+ kernel/sys.c                         |   7 +-
+ 9 files changed, 562 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/kernel/unaligned_atomic.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.51.1
 
 
