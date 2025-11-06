@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-887557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A04DC38832
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:45:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8647C3883E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2493A18C6DB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:46:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C30A54E96B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E86145FE0;
-	Thu,  6 Nov 2025 00:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A831C7012;
+	Thu,  6 Nov 2025 00:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="M8PzGw7V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eCLkpFVb"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZrE8zUUy"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC4428682
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6150FCA52;
+	Thu,  6 Nov 2025 00:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762389944; cv=none; b=TCMMg5t8ZUT7B8o62yo0JNM+/2fpdwMQQ/oefqG9MAvxPkg4a3Vfc92ZUdsxIdTbApkNCeWmOqTT+UL1Wx/TXo/2SpS5ohbkwiVdvIeyc2wewHAL1wC84oSLZb71HMQGdGBRE6inCXoDxNpV18QOQLOhCtJ9f0cGlSSYdyOVTPE=
+	t=1762390086; cv=none; b=jIWKZpx+vLf04RlRe8tQiO9q7ipXz4G9kWPvD123R+04RkRpXUJMeL3F2jWcLDsdmTjUo6z1rTD/A4RSV5wZQj9OsQIOyro9YyFAWZ+yVvtUvW6xrGvOpqrxjgZ6W0vRICs7xSDbuZ/qj52UQfrBAz4rpaNIi8sKDTXhBZoEWDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762389944; c=relaxed/simple;
-	bh=10Ew/ghZ46XTfAby6cqOMZs9fqorvMIL9zZ3GJakaJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doCYZ4UXzIBZVBYnzK4274gxlohVmiXCoShCg//+HzU+ON8AptVeQPS2sZyvLylX9xu0u/sshd8t0KQ8M2QPwj7SJcc8TF9F5IWHfu5YQMfVpLDfqTbMGBOMP6ZrOKu8YfXLzskryuN1+0UaPGxJKOICFppj4IrcwYc82ZINQrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=M8PzGw7V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eCLkpFVb; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 814867A0208;
-	Wed,  5 Nov 2025 19:45:40 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 05 Nov 2025 19:45:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1762389940; x=
-	1762476340; bh=iMVQBhCbodDOlPgtYHasoP+2KCJfXZe+ug3BYsjar5w=; b=M
-	8PzGw7Vo48QVTxwiyDqizEV7S9vWtdzlvQEzH0NkK5BlBooZFffqS7aQAe8zPyJo
-	flVWNfZ7ir2shhz5nPDoN9DH2cZZiBvxPWBCV/MnyRSol5+mUjc5JEiyKH2p6JzI
-	t1XGpQL9YP6Ow8Xec6bJpapqaiDJgg3h7TaSeFkfHFwzbJLqqhCUNrzgw/d1nu+O
-	V+u0vB8/6d95bGUJmCqztOabCjqWC/SHuTBSaE8CwzFX/+P5MSpsYls1dFvrL5Jm
-	0imzC/d8xy2E3yNwLCJYvA00O25UbgWk5jPZs/wo1g79PeidxPj1Z8iWBz8ujvYV
-	eMA2A4I06ZjLXjaDPN/Fw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762389940; x=1762476340; bh=iMVQBhCbodDOlPgtYHasoP+2KCJfXZe+ug3
-	BYsjar5w=; b=eCLkpFVbzdAcniU88e3/jAF6oP39RYIiDDX+VBZLwgoPo/4StDn
-	UUN9wkWjkvEHj9f08rZQ3Hj5bOJBTE5+cgicvcjZv+B+/kKMhK7S/fffvd8U2SNv
-	nZS8e+nEphFDIL6XBeDadgrCboC2Zfhh+3r0ZhKVHZnbIP2QypdVHwvSWCIqAHjz
-	5XD881fXGVJJrS7Mx7V86C0pOk1SkIlY5FP4oGX5Uay7zvBU7RQgjcAvwixiVK85
-	qlGJzJnfbEy457qE5RNPrsyNWihsWqBbEHz2+QjNEfPzeQIvKhjzmz0N7yvL63QH
-	2joFHAZvi1sK9vsX1og7G43fv9fktvFhd5g==
-X-ME-Sender: <xms:tO8Lac974mjpMfjjI6eENuENGIgAYglnDl28GVZ-FJMlOUlbwHcxeA>
-    <xme:tO8LaSr6WPBvC37lXgxVgiQrbRsP6PAgsduFmKkJLac98dZb4kyeino2PA5VYey-q
-    wupsY1P6BFglt0N4JwqTREcs-e_ziuQvLCopJ6xIcpFO09POY8PE-rX>
-X-ME-Received: <xmr:tO8LaZm9IjuQh2TlE4lQ1Tr8pleojQEJAelPv7lrGVOoQYAqRGyefmUROLhxops1uiQIm8qtkvUW19BPmogHnBDy6CgGwMdGHPz5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehfeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
-    dttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
-    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhteetgf
-    ekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
-    hkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurh
-    gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:tO8LaZIbxnj6xu-RbVNiG4uPEWWiMRVMcOo5veT8rxGz3qFBioDZ1A>
-    <xmx:tO8LaeybS0vZK1Kma7HnsyUzM9wUHDizUgdgOjgvDLeidSiMJ1y1NQ>
-    <xmx:tO8LaRtjqRTx23hKeUdGMX79sXklmJmettlhFszgfEQWgOYEBMBa1A>
-    <xmx:tO8Ladt8i_YtWpMqQLEAO00-b72Z6zvQHepd8ypEeS_VLayBMKwDLA>
-    <xmx:tO8LaSSMdo9tLaC3kzpNlHLTeKvMVWtFxnZI_q6KGRPGBekP15wjplHg>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 19:45:39 -0500 (EST)
-Date: Thu, 6 Nov 2025 09:45:36 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] firewire: core: code refactoring for transaction
- layer
-Message-ID: <20251106004536.GA10722@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-References: <20251101102131.925071-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1762390086; c=relaxed/simple;
+	bh=uaKL6lhEQeACMML1EXw6l59dK4hnNOMSzI0H3qUqppM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AMC8Iv1ZO4iDRNUvVGABax6L/FZZ+SvBY+5D1XMZ0QRF0UpWpzhmrYfK6EDm1jscvdzrv9fIlXdfkZhOcHYrlm4csa0kPKQkA5OWxKcd2KUBfLHK26Y19PXrdXUcs7FvX5MHf2egO/2tc0QO7WflilCYEe/mLi7C+iu/o855K6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZrE8zUUy; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A60lwM832079079, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1762390078; bh=/10ERdKAjHAnTJ9B3wlMyTnBTsS/68fs0Nb7m0Vmyo0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=ZrE8zUUyemgUfAZaQ76HEEQqZYHeZQWUTvlRM0cZmWDpZ6xCN+9T8GrC7obROfvYC
+	 eLn2z+CIy/fuB7WohLCN5OJuAeLGnSit7jiHZ97wwL7Y9sWNGw2QYBIU2pPC8ds8I3
+	 UzVeu0ZjQ6PEifyjUjPkTVCDFiEW2JFul9EJEkQ4FUMRHxjFhZfA2elgDG4tY0IHuy
+	 8PLtAyHXjFoogqWH/mpTGGlqjv2Yn+cCRoGJ40H+krUMZQDFWv/sjlpJB7G+u3JF7H
+	 IwHpQkZXffUAKlMd8kptUI2TbqB/2nHDYtvfq8U3Y6jS/iRnDNLNZeM66Eim7y61LM
+	 N2Ei/H4lnVufQ==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A60lwM832079079
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Nov 2025 08:47:58 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 6 Nov 2025 08:47:59 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 6 Nov 2025 08:47:58 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
+ 15.02.1544.027; Thu, 6 Nov 2025 08:47:58 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
+Thread-Topic: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
+Thread-Index: AQHcSmbpgJ0klacK4UCTMB6Tyko8vbTgKWCwgAOD1wCAASvT4A==
+Date: Thu, 6 Nov 2025 00:47:58 +0000
+Message-ID: <6ebf3019105c4d5b9a3170ce9bcf2ed8@realtek.com>
+References: <aQSz3KnK4wFIJoe3@stanley.mountain>
+ <8d6962531a9545fd8279fbc7cd04340c@realtek.com>
+ <5c992936-4e7b-4c0a-abfc-0ec0fb9ef9fd@suswa.mountain>
+In-Reply-To: <5c992936-4e7b-4c0a-abfc-0ec0fb9ef9fd@suswa.mountain>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251101102131.925071-1-o-takashi@sakamocchi.jp>
 
-On Sat, Nov 01, 2025 at 07:21:29PM +0900, Takashi Sakamoto wrote:
-> Hi,
-> 
-> The current implementation of transaction layer includes some duplicated
-> code for managing transaction list. This patchset adds some helper
-> functions and macros to eliminate the duplication.
-> 
-> Takashi Sakamoto (2):
->   firewire: core: code refactoring to remove transaction entry
->   firewire: core: code refactoring to find and pop transaction entry
-> 
->  drivers/firewire/core-transaction.c | 57 +++++++++++++++--------------
->  1 file changed, 30 insertions(+), 27 deletions(-)
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> On Mon, Nov 03, 2025 at 01:17:07AM +0000, Ping-Ke Shih wrote:
+> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > > Sent: Friday, October 31, 2025 9:04 PM
+> > > The "->allstasleep" variable is a 1 bit bitfield.  It can only be
+> > > 0 or 1.  This "=3D -1" assignement was supposed to be "=3D 1".  This
+> > > doesn't change how the code works, it's just a cleanup.
+> >
+> > Yes, this patch doesn't change logic at all. However, it looks like exi=
+sting
+> > code is wrong, since other places in the same pattern in this driver se=
+t to 0.
+> > More, I check vendor driver which also sets this value to 0.
+> >
+>=20
+> Ah.  Good.  Thanks.
+>=20
+> Could you send that patch and give me a Reported-by tag?
+>=20
 
-Applied to for-next branch.
+Sent by [1].
 
+[1] https://lore.kernel.org/linux-wireless/1762390172-21091-1-git-send-emai=
+l-pkshih@realtek.com/T/#u
 
-Regards
-
-Takashi Sakamoto
 
