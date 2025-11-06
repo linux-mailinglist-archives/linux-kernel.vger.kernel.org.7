@@ -1,113 +1,171 @@
-Return-Path: <linux-kernel+bounces-888291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDF6C3A6A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:00:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C79C3A62F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:53:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A8F3B9C5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591721A46902
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5F72EF64F;
-	Thu,  6 Nov 2025 10:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81007224244;
+	Thu,  6 Nov 2025 10:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N3wD9YEJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTOQ3frv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D24C2E8DFC;
-	Thu,  6 Nov 2025 10:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB45F2EB5BD;
+	Thu,  6 Nov 2025 10:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762426383; cv=none; b=YHsi9Bs1zo0z5Ayx/0EKSWNhsJOCY3f6rX+Jlc+lgjvQkgRy2/oQIe0syMM7WNzKNxisWzC00npi+aMFsOeJ+kIeFVoyBUxeJFFSQTU1WRG+BiZgI7OsJFyDIjlcZp7pjsQ2QrXm0EOdJZxly1gwhP3qdq547lRqJ1cnZoNsk08=
+	t=1762426422; cv=none; b=XiwR+aHi9H0sKjmUNWWm/+zzNpBAecHwqpUn53hWxN6BXT0d3+l2L4+nlDJx1Q9GHiJ40+hxbeTKR+CAnm7Zq6x5uQgUIubaJtNy2gWKZvlfliqlt6U08Q2deSXEpI5ebveJwGeqCX2cX0kB8xl9lpvlX9sipN9aVxSos28H8lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762426383; c=relaxed/simple;
-	bh=r2hF2PvB5PI45qRZ/Meo3WjXC2+7MGN36CB4V/Zvb0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbWLTFAyzGlLHXZtMMb4eSvwaZmdCTgm1yOwbIamjaaW8onUn/jFaiIN9P8IlD2XDkU7sKXR+EnA0LoTWW52fckzs+K+xecEymHh2z+GGIrvgROZxLSRPsBkbgLViaW3dUJezOsnKgX7WxDJvYyxb2/fzs0ZTH7Dtw9dTm7wv8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N3wD9YEJ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762426381; x=1793962381;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r2hF2PvB5PI45qRZ/Meo3WjXC2+7MGN36CB4V/Zvb0A=;
-  b=N3wD9YEJo25ZGoHDMcvpEbCrPrtUzWeRJGLz7EpmgFR5zbfwulpLtO67
-   /94UG3mXARkAfCTxp96Yc013QawC77Q0bPNRTmBhmxRYBaVd1V/cZoxUm
-   vY1FrR7yn6VTgrdxvfawA7B5wT4rWoRWEU9g8XlMIFg+iPhkLsrMJMHje
-   ZnajGm/wrLvRriRdG3zQBeehfGsCCygvIHZUVq7Gq1bkTKxt/bpYPgxRc
-   BA88hPq3mALZPd9f8LmX1+bUstKp2+w+q0CXqw42neAHf4zC5QrNl9iPW
-   eArchno/MnBcJs0QBs84V4xY2KVG2E/oMmxtr6qV3vCiWckeFZwZ2I3Sw
-   Q==;
-X-CSE-ConnectionGUID: rGsU/CHiSICbQjCawbW8iw==
-X-CSE-MsgGUID: DtxR5NVrRYWOFsFvxD7SvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64594649"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="64594649"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 02:53:01 -0800
-X-CSE-ConnectionGUID: pRUXSRkuT+GEm/fkNoRm2g==
-X-CSE-MsgGUID: yZXmObeNSVGNKpkqM88ZtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="186979567"
-Received: from jjgreens-desk21.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.221.229])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 02:53:00 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vGxbr-0000000646H-0OZy;
-	Thu, 06 Nov 2025 12:52:55 +0200
-Date: Thu, 6 Nov 2025 12:52:54 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware: Replace magic numbers with named
- constants
-Message-ID: <aQx-BlL9PjHeR7Dy@smile.fi.intel.com>
-References: <20251105161845.2535367-1-a.shimko.dev@gmail.com>
- <20251106104228.GP2912318@black.igk.intel.com>
+	s=arc-20240116; t=1762426422; c=relaxed/simple;
+	bh=Epp5YO2QE/d3UMrboGIdGCaW2vlY+8wmDJGCJi4/2V8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aeg1Ny75Q9tZUgKahy+zEAcwGJRh6EHsAZD6WZCkihQB72CgSBDvRClcNpfiwu3waM8f54PJwCrI0BfNFGCGSDt31z6zPLSZewA6r+IT0XjeseJaRROF/QOxtyI/iZ8eNTz4D+NmRUkzm0FHTHMvbPmHkCEMZb874zjobcwffD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTOQ3frv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6A290C113D0;
+	Thu,  6 Nov 2025 10:53:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762426422;
+	bh=Epp5YO2QE/d3UMrboGIdGCaW2vlY+8wmDJGCJi4/2V8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=CTOQ3frvprYP22eUAb6vYVcbfZSWhBScQElSnxVOgQGlV4vEJ/t4j6NG/n84eB6uO
+	 0Gsuds4CTx14Z0PSz5FCo8prtDFTXAJgOP8KOftWaUZXJSUtMQ33tzBM2TlVYAxHB5
+	 A13owtU/tKk2zZHJOWFsEDv9D9At8IrGGzCT2nc9Dh24p2spxepRh9aT7HkxSfER7x
+	 TVWj710ZqRF0YTC4N+aQ+LddaHYbG+JQtYz/9aj9A+egOBHIiPqKSluwSN+QEyXZOY
+	 vzyPm7XbfPCsOkrn/NVMgDNdsxgEo7Exih3s+XGuTovllrN8zWJcTkZw+oz+nX6zMI
+	 sVvrmBgV0Walw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B334CCFA03;
+	Thu,  6 Nov 2025 10:53:42 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Date: Thu, 06 Nov 2025 11:53:40 +0100
+Subject: [PATCH v2] dt-bindings: panel: s6e3fc2x01: Sort and remove
+ unnecessary properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106104228.GP2912318@black.igk.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251106-dt-s6e3fc2x01-v2-1-deb87727152e@ixit.cz>
+X-B4-Tracking: v=1; b=H4sIADN+DGkC/3XMQQ6CMBCF4auQWTumUwSUlfcwLKCdymzAtKSpk
+ t7dyt7l/5L37RDYCwfoqx08RwmyLiX0qQIzj8uTUWxp0Eo3RKpFu2FouXZGJ0Vou7GzdcsTTQb
+ K5+XZSTq8x1B6lrCt/n3wkX7rPykSEqpLd3PaXqemdndJsp3NB4ac8xdv7k+jqAAAAA==
+X-Change-ID: 20251106-dt-s6e3fc2x01-d7a7d36eb1bc
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2065; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=pgClw84QtPBlwZV86TtKjb3RNNcrtweHBH9CMqAbjKE=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpDH41wJI/LnkhayCRRmgDzx03QNQa6cdxF8slQ
+ dKBnyNcL7uJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaQx+NQAKCRBgAj/E00kg
+ ci3IEAC6oNsRTnliM3ysSAzlOLeGie3TdehlTDk9zxe8oXnRlWr3K1iggTxVxBtAS1nt3qnPVCp
+ HscEX8BlvYYfiazFqGECPsaIEJ4twkzjTwaE9o70IYj1psxeQV+pRe64oTrbIAt9UWBzdwMvkfK
+ 9kZCuX8QfPRCyLGNRd98IiALZhC7FCmc6f8v6esKbVPc+n3lQoQhcXUZC8voUpigfZGRkVo3xHH
+ 5E2UDfBfjXUBEQ5B5jOKMmmxajCc7yb6YOvjQaiHcQHuOqJjOQ0+HbxN3v5phSQe288HUGYPxFC
+ ggJv8ZrNcGbf7BjuimnoDDIMAbRgpAEQ8qbHcSyf+e5OCDblIE4ioLs654uD8dSV0RWpIJpxjVj
+ QOjYMxTiaLazF/W3F7AllbJiTpFzXf80w0bOmfN5iVGZ+cZ6qC+oEtPiO4fRVEVZS8a0IcIuTWO
+ xVHbGcd+C2MgJkEnKKwMIl2dJMlumNCQAimB7DGDV3x67WXroXBGWJg3JxrvaGLXA77+FQq5Bsd
+ IsiEzwfaFV1TXNZN5flIYkd8jt//XdENYG4+HcPRPHNHJmlrDmXvq9z2JXtlnF/boh0jQnOoTb8
+ /ajqXY9QfOmfcuDl6CdUA+Y8eYZ/UY+AtAC6QzBnfDF5BnoR+pSsGCK0EI5v8fsU39KRt+d7Syz
+ jUH+8WIQia5VODw==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On Thu, Nov 06, 2025 at 11:42:28AM +0100, Mika Westerberg wrote:
-> On Wed, Nov 05, 2025 at 07:18:44PM +0300, Artem Shimko wrote:
+From: David Heidelberg <david@ixit.cz>
 
-...
+Properties are now sorted, reset-gpio and port property dropped because
+they are already accepted here as part of panel-common and usage of
+unevaluatedProperties.
 
-> /* Timeouts in us */
-> #define DW_IC_BUSY_POLL_TIMEOUT		1100
-> #define DW_IC_BUSY_TOTAL_TIMEOUT	20000
-> #define DW_IC_FOO_TIMEOUT		1234
+Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+Changes in v2:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v1: https://lore.kernel.org/r/20251106-dt-s6e3fc2x01-v1-1-0479f2d8b53f@ixit.cz
+---
+ .../bindings/display/panel/samsung,s6e3fc2x01.yaml   | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-It's in-kernel practice to add units to the definitions and avoid unneeded
-comments. Also it will be clearer to the reader without looking back for any
-comments like above.
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml b/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml
+index d48354fb52ea0..fd4388f5fb118 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml
+@@ -6,11 +6,11 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Samsung S6E3FC2X01 AMOLED DDIC
+ 
+-description: The S6E3FC2X01 is display driver IC with connected panel.
+-
+ maintainers:
+   - David Heidelberg <david@ixit.cz>
+ 
++description: The S6E3FC2X01 is display driver IC with connected panel.
++
+ allOf:
+   - $ref: panel-common.yaml#
+ 
+@@ -25,25 +25,21 @@ properties:
+   reg:
+     maxItems: 1
+ 
+-  reset-gpios: true
+-
+-  port: true
+-
+-  vddio-supply:
+-    description: VDD regulator
++  poc-supply:
++    description: POC regulator
+ 
+   vci-supply:
+     description: VCI regulator
+ 
+-  poc-supply:
+-    description: POC regulator
++  vddio-supply:
++    description: VDD regulator
+ 
+ required:
+   - compatible
+   - reset-gpios
+-  - vddio-supply
+-  - vci-supply
+   - poc-supply
++  - vci-supply
++  - vddio-supply
+ 
+ unevaluatedProperties: false
+ 
 
-...
+---
+base-commit: df5d79720b152e7ff058f11ed7e88d5b5c8d2a0c
+change-id: 20251106-dt-s6e3fc2x01-d7a7d36eb1bc
 
-> All the register offsets, shifts and masks should be in
-> drivers/i2c/busses/i2c-designware-core.h and you don't need to "document"
-> them because all this is available in the datasheet.
-
-Also the benefit could be switch to use bitfield.h.
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
+David Heidelberg <david@ixit.cz>
 
 
 
