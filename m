@@ -1,465 +1,200 @@
-Return-Path: <linux-kernel+bounces-888681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DE6C3B9A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:13:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08322C3B9AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE5D1AA4DAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE771AA51C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC8833F8DD;
-	Thu,  6 Nov 2025 14:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6664D286408;
+	Thu,  6 Nov 2025 14:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LI9HEaQ1"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dqBNPo6A"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazhn15013036.outbound.protection.outlook.com [52.102.140.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D3433EB0E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762438325; cv=none; b=oA1nfsJ/Kpf+wV7/JGpf+uBqR/FAFqnmiUmCiGlzAS1HJARpOkYKPxGdfq9SFe3W52qDoft3dddH1RKXHvoWj+FzSzL/dl/rM1OUS6z4/Liy82LUm1zIpELzIgOtXNb4Da2UfqIjmh3I4Go9YdVzvTMaM1Gbh++zeCKcxYVlkPQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762438325; c=relaxed/simple;
-	bh=tBrLnoN6fk+Xqnm3U9nOXSYuDRrAPCj1BStgPuNDt7Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fbd4JossXWlrgx/mH9uKbAAKl541y+9ZwBdFDuCDHwSeh1DTbosIPoyB74SYQFJyNX1rYayT5fgFEFo20RTIz87LUUsSGBy1TqtyR8eJWcowuf+96BED8VoBYLDGB1dSBKbwVzedrKitrfnR1aPIC/lceZprklFDZ7Y69G12NeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LI9HEaQ1; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id CC56D4E4156D;
-	Thu,  6 Nov 2025 14:12:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A24A96068C;
-	Thu,  6 Nov 2025 14:12:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B3D721185115B;
-	Thu,  6 Nov 2025 15:11:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762438320; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZKeWFZxA04Nf3/9eL/Uw741y2vR3pCplWxqb3hcOC3s=;
-	b=LI9HEaQ1i0wvEe68W/tfHeEZ/AHtRXpsEbeYhliUApXxyy47PLgV1dQcYu1x/8xCwx4oj+
-	nMACmlmkv0j2aRLaR1CsAWJFUjcR6ewc69wIz+D0hslv/GDWGtOEFCEYUbfPIDtdZh8KT5
-	jYjQZZ/mcAG4ToTMk+3ybnw3ogU5zg06bJf1Irwre8wknpb+Y3XX1RvEC5dc1zJpg/MhMZ
-	A7juBUx4D4TpNO1ZmiKKCq8eKaOU9iv9NFo2fJWr+EOWqKmjdzHAuHpHDv1rDNc6LKlLak
-	Z8Q606K7qiJHuCs9tLWYSxQg+wvSOPKIu+CamLVd2esyrbXMvOUjhvWhjR4mdA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Thu, 06 Nov 2025 15:11:50 +0100
-Subject: [PATCH v3 5/5] regulator: ltm8054: Support output current limit
- control
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D082133CEBB;
+	Thu,  6 Nov 2025 14:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.140.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762438366; cv=fail; b=NArB6pxkFMVmzWLLChchX53NEUoLiW0Qx1UGicLR6+dwg5Ruw1FX/kiZH4a4Th+jY6lf+OVsNbU6qCcrinZMduVg3RtjIsKwWV/LTm8Usss0kmQABxXFksGDUqGz/Y9XKSoXL3du0qGYR7B27jFZYzjOuPKhMK2xEgUeiouFHhk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762438366; c=relaxed/simple;
+	bh=W1Fhp3w8MfRWcGP1UaL66fH4HTWGfWz4fF81q4DBYqY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oemes/wx5/HQf7KdC49ReWe8aEowmc84OJrKo8fPRFPf+kOLZUolCS0dTW9Z0CYQ9UnbCONl3jo9WtsTd+kvHpgtwDThz0kUSEZOTh0SkYqdMuLWJ0qIbN9MWqHtY324lRYzursvg5b5ryf62idRRBNOWHxhgWQCfCkNwXojnJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dqBNPo6A; arc=fail smtp.client-ip=52.102.140.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h5iL6FXT3S+StaV0OhNd4FIOYxHpGY7HJofpG1zXewsmmE5qniPS08TxMkTs7RqPQR902fEjfFu7MYuVLjQtKmTSRvuAe+8CIexXXaswNXm2LXLh75KidHc8bgm+hKu0FJrjHQX2x3NcB+tXwLNroqoPbzEoDfsgUe+OIbhU4nd8S3hBHbuC9ZwhF2CVEeSp1ym8KGCEULTLP2eD6exN/N9f8dVQ7vY0yqMGmTxUTNGM3uzI7AJDvpyDW7RhNNzonqGZcb7dsl4n/sJsrPXsemUzIllVIm+RLogxQkJM+nigfGiCXCwBLKwdLGpZ+iLB4E2W9tU3xK7QuIxCZsVt2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QXdUvXSxWrs+FwX6iDSuZBIRT4MDrWOtuvhT0jlw7bw=;
+ b=BgTbnDN0YBC8vz8s6YAmOE5pvmvEtAU0xAAwNlqOpczw5725nsFzpM2WkguXFp0DInLFOCtkhdWBVK7Sc0hPdp4s36fvGJxt0oScZvheJRT3zxAZm4t/MlZygjfwMeUSlY/Gk1dUbVG3JoggX50FGQHePaGlnmvQ/NqHPcUmCnjsyqzY5ogB/bKhJaj3R2PP7wUhlXlNzLmSlm0VU/jKMfS85WsHzD5JpwzrfuRkdyxYZYY8iI904qYmk+COPHlK7F+Hrq2UMkwPnY/TSRrIHrsCM3VA12w/VG5m/ZlAjHy2nkwc99vJ/FqOsCqouxXhq0HCBW/7Rk3DjQzwaL75+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QXdUvXSxWrs+FwX6iDSuZBIRT4MDrWOtuvhT0jlw7bw=;
+ b=dqBNPo6As9oLRNcHD4hSg2TqsX+KCdXBdZlx/0UUVd6iz9JjI5tdwXy23RDEmSE6aBShrz4TN3zI4mH3WKoqAFHHSwJgtsAdAhCJZlUNyCZ/1vric/Q4CNGRMOhPIjsKqLlBK5HPtp/p5S5cyACmOn4rUqAsDk+xBWz2ieeBVbU=
+Received: from MN0PR02CA0021.namprd02.prod.outlook.com (2603:10b6:208:530::23)
+ by SA1PR10MB5710.namprd10.prod.outlook.com (2603:10b6:806:231::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
+ 2025 14:12:41 +0000
+Received: from BL6PEPF00022570.namprd02.prod.outlook.com
+ (2603:10b6:208:530:cafe::90) by MN0PR02CA0021.outlook.office365.com
+ (2603:10b6:208:530::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Thu,
+ 6 Nov 2025 14:12:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ BL6PEPF00022570.mail.protection.outlook.com (10.167.249.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 14:12:40 +0000
+Received: from DLEE213.ent.ti.com (157.170.170.116) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
+ 2025 08:12:34 -0600
+Received: from DLEE212.ent.ti.com (157.170.170.114) by DLEE213.ent.ti.com
+ (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
+ 2025 08:12:33 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 6 Nov 2025 08:12:33 -0600
+Received: from a0512632.dhcp.ti.com (a0512632.dhcp.ti.com [172.24.233.20])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A6ECREN1335893;
+	Thu, 6 Nov 2025 08:12:28 -0600
+From: Swamil Jain <s-jain1@ti.com>
+To: <jyri.sarha@iki.fi>, <tomi.valkeinen@ideasonboard.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>, <nm@ti.com>,
+	<vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <lee@kernel.org>,
+	<louis.chauvet@bootlin.com>, <aradhya.bhatia@linux.dev>
+CC: <devarsht@ti.com>, <praneeth@ti.com>, <h-shenoy@ti.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [RESEND PATCH v2 0/5] drm/tidss: Fixes data edge sampling on AM62X and AM62A
+Date: Thu, 6 Nov 2025 19:42:22 +0530
+Message-ID: <20251106141227.899054-1-s-jain1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-ltm8054-driver-v3-5-fd1feae0f65a@bootlin.com>
-References: <20251106-ltm8054-driver-v3-0-fd1feae0f65a@bootlin.com>
-In-Reply-To: <20251106-ltm8054-driver-v3-0-fd1feae0f65a@bootlin.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: Hans de Goede <hansg@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-iio@vger.kernel.org, Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022570:EE_|SA1PR10MB5710:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a6906a2-b797-4cdd-275b-08de1d3e8bdd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|34020700016|36860700013|376014|7416014|1800799024|921020|12100799066;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pPJ9H9CDGylzq/SFYOsCpnBAkAktJzSOpqu8Iyw9BLEANi5fqMKAnTNeyOp+?=
+ =?us-ascii?Q?Q3dkVPr4yfrxA+PSwN0rXAVQ7ehsoJhwlRhcMDd7LNnwqOXxg5vY2AX7ZYJi?=
+ =?us-ascii?Q?3hmqt76V+6d4iApc7Awsds5kXPSdHIxC5I1muaOo6nzV7ubGilNbMWeEu+iW?=
+ =?us-ascii?Q?irpOzHPtjiLKJDAlOEgWig74CmUauubpGqdyAszqY59BAptrXZiNx7Owr7w7?=
+ =?us-ascii?Q?MmVcYSDO+BDfP1SvX0GIxsMS8FCrTBpEs473cd9qLK11vRBkc+Kf9vb3931i?=
+ =?us-ascii?Q?tkTGTbTXGz9Cr6BiY5lCZNAzouwQLs0iONIsNLm/MQgjr6PdgH7lzACXak2E?=
+ =?us-ascii?Q?cot/0uPJnpsjaLmIz9C5mT1sSjFQG1IO1uOKk6A9T9yDt6U+4b+tLYAehOno?=
+ =?us-ascii?Q?SDqc4pWQd+THQ4fhtcYBe/HhzOuuxqkzQEDTunWHYHTKUzmWH81dYf+OaFb4?=
+ =?us-ascii?Q?4zJtGlLYkq/tKBBvjYBPYl2f4ZEVnnoCuXOkRO4u4YWUo0bKUNZDEEkTcGvM?=
+ =?us-ascii?Q?RheT12EaWzOjQfsdxkACdLNerqLfcptvRx6PVvXd11iCslhFPj6LP8yKxo3+?=
+ =?us-ascii?Q?ui2aEvKgLfIVpuBgPBbRexzA7g/JXuEzV7WpwPg+V919GLzF1vzpYYZdITuT?=
+ =?us-ascii?Q?26InOQrgfe5xUwmKuc0DR5Rvlcsp5CEAqwPhVtIsMCJm46/3OKi3vJNEei3+?=
+ =?us-ascii?Q?aTKQfAE70dZA7SnjDxagd2E7ArGQWn6Kl4MkSrhrb7eU6EYn5R5dOXxo+UE4?=
+ =?us-ascii?Q?BcBf/H3fdsK3yKCeNBvO4SOuem5KyKzp1gVs3DEsVKa/SCRHIkNOxzXjLtW+?=
+ =?us-ascii?Q?K+vApYk6ShFrkGnQGqLSVwsIC9pCugd284zuWoMC0wCUvt6D6eMvwMzLJdoM?=
+ =?us-ascii?Q?zmrc+fQo9J7hUSEZCWaSdEGff2qiVYYKYaOz5By+IvN54kkYUE9E49GhQNw3?=
+ =?us-ascii?Q?5URoCUVwg03A5eRaKziTLbm4sc9xrxe2tPqs532hJjE4FDPyboDRp6u4W1Jd?=
+ =?us-ascii?Q?oX8Rk2xPQSySQ9o4kNmf9EWxZWHBPtVUDZ2UhMkwLp7ZFhfIZf8hQsElCwU9?=
+ =?us-ascii?Q?SQoRGxqP9Jor88mGQWLct/It9NusjSS2jlElnf6WW09g9kBAgvPPLomwrxnG?=
+ =?us-ascii?Q?whWiDxzedUNSL8MvifmPdhcs2wiRIGfN3y1iMkXcJSzbF2BYY5PnfEr294sh?=
+ =?us-ascii?Q?JQkecN6DgP58lw3g2RnvnU2UX0C3Ai+haDdemL0Tonydcz+vquao8KvEINcQ?=
+ =?us-ascii?Q?n9YEUU2F3l0NZN6/tatyvTStGaZmLC3hWG1YM+wyWD2qE5gB1Z9oeOrogHnj?=
+ =?us-ascii?Q?tIavZZiOnbaSAeMD17tD2QVbxW14T7qtnj3dEFzuksbFOUWk+vZ2syteAScr?=
+ =?us-ascii?Q?csNTpNHXOeVhPxdOESPBTl5I93zNZ6OO+l/ei4W68zRcn3ukjDUlRJIQ0AFu?=
+ =?us-ascii?Q?3j8bORjU9CEaKdsqasbpw2+Yk2bewB73JQZvfRM7FMB0wFg8ILrYwN+fSOvI?=
+ =?us-ascii?Q?nXEgmQyEPaY1AhywkMHa+m2+Y5z6xf8ZKPqlLWGNkGzKna/eRgkLFZMLgKjs?=
+ =?us-ascii?Q?tUmD6+W1AgRer+cgqQAjgKG3e855FeFB3Yj38GQI?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(34020700016)(36860700013)(376014)(7416014)(1800799024)(921020)(12100799066);DIR:OUT;SFP:1501;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 14:12:40.3715
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a6906a2-b797-4cdd-275b-08de1d3e8bdd
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022570.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB5710
 
-The LTM8054 supports setting a fixed output current limit using a sense
-resistor connected to a dedicated pin. This limit can then be lowered
-dynamically by varying the voltage level of the CTL pin.
+Currently the driver only configure the data edge sampling partially.
+AM62X, AM62A and AM62P require it to be configured in two distinct
+registers: one in tidss and one in the Control MMR registers.
 
-Support controlling the LTM8054's output current limit.
+Introduce a new dt property to link the proper syscon node from the main 
+device registers into the tidss driver.
 
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+The series targets to fix the issue for AM62X and AM62A, later will add 
+the changes required for AM62P after DSS support gets upstreamed.
+
+Fixes: ad2ac9dc9426 ("drm/tidss: Add support for AM625 DSS")
+Fixes: 5cc5ea7b6d7b ("drm/tidss: Add support for AM62A7 DSS")
 ---
- drivers/regulator/Kconfig             |   1 +
- drivers/regulator/ltm8054-regulator.c | 273 +++++++++++++++++++++++++++++++++-
- 2 files changed, 268 insertions(+), 6 deletions(-)
+Cc: stable@vger.kernel.org
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index f5c6d4a21a88..aad8c523420a 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -587,6 +587,7 @@ config REGULATOR_LTC3676
- 
- config REGULATOR_LTM8054
- 	tristate "LTM8054 Buck-Boost voltage regulator"
-+	depends on IIO
- 	help
- 	  This driver provides support for the Analog Devices LTM8054
- 	  Buck-Boost micromodule regulator. The LTM8054 has an adjustable
-diff --git a/drivers/regulator/ltm8054-regulator.c b/drivers/regulator/ltm8054-regulator.c
-index b5783f6629e3..38072231b8e4 100644
---- a/drivers/regulator/ltm8054-regulator.c
-+++ b/drivers/regulator/ltm8054-regulator.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/array_size.h>
-+#include <linux/completion.h>
- #include <linux/device.h>
- #include <linux/device/devres.h>
- #include <linux/device/driver.h>
-@@ -15,7 +16,11 @@
- #include <linux/errno.h>
- 
- #include <linux/gpio/consumer.h>
-+#include <linux/iio/consumer.h>
-+#include <linux/jiffies.h>
-+#include <linux/lockdep.h>
- #include <linux/math64.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -26,10 +31,42 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/types.h>
- 
-+#include <linux/units.h>
-+#include <linux/workqueue.h>
-+
- /* The LTM8054 regulates its FB pin to 1.2V */
- #define LTM8054_FB_uV 1200000
- 
-+/* Threshold voltage between the Vout and Iout pins which triggers current
-+ * limiting.
-+ */
-+#define LTM8054_VOUT_IOUT_MAX_uV 58000
-+
-+#define LTM8054_MAX_CTL_uV 1200000
-+#define LTM8054_MIN_CTL_uV 50000
-+
-+#define LTM8054_CTL_RW_TIMEOUT msecs_to_jiffies(500)
-+
-+/* CTL pin read/write transaction */
-+struct ltm8054_ctl_pin_work {
-+	struct work_struct work;
-+	unsigned int ctl_val;
-+	bool write;
-+	int ret;
-+};
-+
- struct ltm8054_priv {
-+	struct device *dev;
-+
-+	struct iio_channel *ctl_dac;
-+	struct ltm8054_ctl_pin_work ctl_work;
-+	/* Lock for ctl_work. */
-+	struct mutex ctl_work_lock;
-+	struct completion ctl_rw_done;
-+
-+	int min_uA;
-+	int max_uA;
-+
- 	struct regulator_desc rdesc;
- };
- 
-@@ -43,14 +80,190 @@ static int ltm8054_scale(unsigned int uV, u32 r1, u32 r2)
- 	return uV + tmp;
- }
- 
--static const struct regulator_ops ltm8054_regulator_ops = { };
-+static void ltm8054_do_ctl_work(struct work_struct *work)
-+{
-+	struct ltm8054_ctl_pin_work *ctl_work = container_of_const(work,
-+								   struct ltm8054_ctl_pin_work,
-+								   work);
-+	struct ltm8054_priv *priv = container_of_const(ctl_work,
-+						       struct ltm8054_priv,
-+						       ctl_work);
-+	unsigned int val;
-+	bool write;
-+	int ret;
-+
-+	lockdep_assert_not_held(&priv->ctl_work_lock);
-+
-+	mutex_lock(&priv->ctl_work_lock);
-+	val = ctl_work->ctl_val;
-+	write = ctl_work->write;
-+	mutex_unlock(&priv->ctl_work_lock);
-+
-+	/* Standard IIO voltage unit is mV, scale accordingly. */
-+	if (write)
-+		ret = iio_write_channel_processed_scale(priv->ctl_dac,
-+							val, 1000);
-+	else
-+		ret = iio_read_channel_processed_scale(priv->ctl_dac,
-+						       &val, 1000);
-+
-+	pr_debug("LTM8054: %s CTL IO channel, val: %duV\n", write ? "wrote" : "reading", val);
-+
-+	mutex_lock(&priv->ctl_work_lock);
-+	ctl_work->ret = ret;
-+	ctl_work->ctl_val = val;
-+	mutex_unlock(&priv->ctl_work_lock);
-+
-+	complete(&priv->ctl_rw_done);
-+}
-+
-+static int ltm8054_ctl_pin_rw(struct ltm8054_priv *priv, bool write, unsigned int *ctl_val)
-+{
-+	struct ltm8054_ctl_pin_work *ctl_work = &priv->ctl_work;
-+	int ret = 0;
-+
-+	lockdep_assert_not_held(&priv->ctl_work_lock);
-+
-+	/* The get/set_current_limit() callbacks have an active regulator core
-+	 * reservation ID (obtained with ww_acquire_init()).
-+	 *
-+	 * Or, the IO channel driver may call something like
-+	 * regulator_enable(), meaning this thread would acquire a new
-+	 * regulator core reservation ID before the current one is dropped
-+	 * (using ww_acquire_fini()). This is forbidden.
-+	 *
-+	 * Thus, perform the IO channel read/write in a different thread, and
-+	 * wait for it to complete, with a timeout to avoid deadlocking.
-+	 */
-+
-+	scoped_guard(mutex, &priv->ctl_work_lock) {
-+		if (work_busy(&ctl_work->work))
-+			return -EBUSY;
-+
-+		if (write) {
-+			ctl_work->ctl_val = *ctl_val;
-+			ctl_work->write = 1;
-+		} else {
-+			ctl_work->write = 0;
-+		}
-+
-+		schedule_work(&ctl_work->work);
-+	}
-+
-+	ret = wait_for_completion_timeout(&priv->ctl_rw_done, LTM8054_CTL_RW_TIMEOUT);
-+	reinit_completion(&priv->ctl_rw_done);
-+
-+	if (unlikely(!ret))
-+		return -ETIMEDOUT;
-+
-+	scoped_guard(mutex, &priv->ctl_work_lock) {
-+		ret = ctl_work->ret;
-+
-+		if (!ret && !write)
-+			*ctl_val = ctl_work->ctl_val;
-+	}
-+
-+	return ret;
-+}
-+
-+static int ltm8054_set_current_limit(struct regulator_dev *rdev, int min_uA, int max_uA)
-+{
-+	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
-+	unsigned int ctl_val;
-+	u64 vdac_uV;
-+
-+	min_uA = clamp_t(int, min_uA, priv->min_uA, priv->max_uA);
-+
-+	/* adjusted current limit = Rsense current limit * CTL pin voltage / max CTL pin voltage */
-+	vdac_uV = (u64)min_uA * LTM8054_MAX_CTL_uV;
-+	do_div(vdac_uV, priv->max_uA);
-+
-+	dev_dbg(&rdev->dev,
-+		"Setting current limit to %duA, CTL pin to %lluuV\n", min_uA, vdac_uV);
-+
-+	ctl_val = vdac_uV;
-+
-+	return ltm8054_ctl_pin_rw(priv, 1, &ctl_val);
-+}
-+
-+static int ltm8054_get_current_limit(struct regulator_dev *rdev)
-+{
-+	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
-+	unsigned int ctl_val;
-+	int ret;
-+	u64 uA;
-+
-+	ret = ltm8054_ctl_pin_rw(priv, 0, &ctl_val);
-+	if (ret)
-+		return ret;
-+
-+	uA = (u64)ctl_val * priv->max_uA;
-+	do_div(uA, LTM8054_MAX_CTL_uV);
-+
-+	return uA;
-+}
-+
-+static const struct regulator_ops ltm8054_no_ctl_ops = { };
-+
-+static const struct regulator_ops ltm8054_ctl_ops = {
-+	.set_current_limit = ltm8054_set_current_limit,
-+	.get_current_limit = ltm8054_get_current_limit,
-+};
-+
-+static struct iio_channel *ltm8054_init_ctl_dac(struct platform_device *pdev)
-+{
-+	struct iio_channel *ctl_dac;
-+	enum iio_chan_type type;
-+	int ret;
-+
-+	ctl_dac = devm_iio_channel_get(&pdev->dev, "ctl");
-+	if (IS_ERR(ctl_dac)) {
-+		if (PTR_ERR(ctl_dac) == -ENODEV)
-+			return ERR_PTR(-EPROBE_DEFER);
-+
-+		return ctl_dac;
-+	}
-+
-+	ret = iio_get_channel_type(ctl_dac, &type);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	if (type != IIO_VOLTAGE)
-+		return ERR_PTR(-EINVAL);
-+
-+	return ctl_dac;
-+}
- 
- static int ltm8054_of_parse(struct device *dev, struct ltm8054_priv *priv,
- 			    struct regulator_config *config)
- {
-+	u32 rsense;
- 	u32 r[2];
-+	u64 tmp;
- 	int ret;
- 
-+	ret = device_property_read_u32(dev, "adi,iout-rsense-micro-ohms", &rsense);
-+	if (ret)
-+		return ret;
-+
-+	if (rsense == 0)
-+		return -EINVAL;
-+
-+	/* The maximum output current limit is the one set by the Rsense resistor */
-+	tmp = (u64)LTM8054_VOUT_IOUT_MAX_uV * MICRO;
-+	do_div(tmp, rsense);
-+	priv->max_uA = tmp;
-+
-+	/*
-+	 * Applying a voltage below LTM8054_MAX_CTL_uV on the CTL pin reduces
-+	 * the output current limit. If this level drops below
-+	 * LTM8054_MIN_CTL_uV the regulator stops switching.
-+	 */
-+
-+	tmp = (u64)priv->max_uA * LTM8054_MIN_CTL_uV;
-+	do_div(tmp, LTM8054_MAX_CTL_uV);
-+	priv->min_uA = tmp;
-+
- 	ret = device_property_read_u32_array(dev, "regulator-fb-voltage-divider-ohms",
- 					     r, ARRAY_SIZE(r));
- 	if (ret)
-@@ -60,6 +273,9 @@ static int ltm8054_of_parse(struct device *dev, struct ltm8054_priv *priv,
- 	priv->rdesc.min_uV = priv->rdesc.fixed_uV;
- 	priv->rdesc.n_voltages = 1;
- 
-+	dev_dbg(dev, "max_uA: %d min_uA: %d fixed_uV: %d\n",
-+		priv->max_uA, priv->min_uA, priv->rdesc.fixed_uV);
-+
- 	config->of_node = dev_of_node(dev);
- 	config->init_data = of_get_regulator_init_data(dev,
- 						       config->of_node,
-@@ -77,32 +293,76 @@ static int ltm8054_of_parse(struct device *dev, struct ltm8054_priv *priv,
- static int ltm8054_probe(struct platform_device *pdev)
- {
- 	struct regulator_config config = { };
-+	struct iio_channel *ctl_dac = NULL;
- 	struct device *dev = &pdev->dev;
- 	struct regulator_dev *rdev;
- 	struct ltm8054_priv *priv;
- 	int ret;
- 
-+	/* Do this first, as it might defer. */
-+	if (device_property_match_string(dev, "io-channel-names", "ctl") >= 0) {
-+		ctl_dac = ltm8054_init_ctl_dac(pdev);
-+		if (IS_ERR(ctl_dac))
-+			return dev_err_probe(dev, PTR_ERR(ctl_dac),
-+					     "failed to initialize CTL DAC\n");
-+	}
-+
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->dev = dev;
- 	priv->rdesc.name = "ltm8054-regulator";
--	priv->rdesc.ops = &ltm8054_regulator_ops;
-+	priv->rdesc.ops = &ltm8054_no_ctl_ops;
- 	priv->rdesc.type = REGULATOR_VOLTAGE;
- 	priv->rdesc.owner = THIS_MODULE;
- 
-+	if (ctl_dac) {
-+		priv->ctl_dac = ctl_dac;
-+
-+		INIT_WORK(&priv->ctl_work.work, ltm8054_do_ctl_work);
-+		init_completion(&priv->ctl_rw_done);
-+		mutex_init(&priv->ctl_work_lock);
-+
-+		priv->rdesc.ops = &ltm8054_ctl_ops;
-+	}
-+
- 	config.dev = dev;
- 	config.driver_data = priv;
- 
- 	ret = ltm8054_of_parse(dev, priv, &config);
--	if (ret)
--		return dev_err_probe(dev, ret, "failed to parse device tree\n");
-+	if (ret) {
-+		ret = dev_err_probe(dev, ret, "failed to parse device tree\n");
-+		goto out_err;
-+	}
- 
- 	rdev = devm_regulator_register(dev, &priv->rdesc, &config);
--	if (IS_ERR(rdev))
--		return dev_err_probe(dev, PTR_ERR(rdev), "failed to register regulator\n");
-+	if (IS_ERR(rdev)) {
-+		ret = dev_err_probe(dev, PTR_ERR(rdev), "failed to register regulator\n");
-+		goto out_err;
-+	}
- 
- 	return 0;
-+
-+out_err:
-+	if (ctl_dac) {
-+		cancel_work_sync(&priv->ctl_work.work);
-+		mutex_destroy(&priv->ctl_work_lock);
-+	}
-+
-+	return ret;
-+}
-+
-+static void ltm8054_remove(struct platform_device *pdev)
-+{
-+	struct ltm8054_priv *priv = platform_get_drvdata(pdev);
-+
-+	if (priv->ctl_dac) {
-+		cancel_work_sync(&priv->ctl_work.work);
-+		mutex_destroy(&priv->ctl_work_lock);
-+	}
- }
- 
- static const struct of_device_id ltm8054_of_match[] = {
-@@ -113,6 +373,7 @@ MODULE_DEVICE_TABLE(of, ltm8054_of_match);
- 
- static struct platform_driver ltm8054_driver = {
- 	.probe = ltm8054_probe,
-+	.remove = ltm8054_remove,
- 	.driver = {
- 		.name  = "ltm8054",
- 		.of_match_table = ltm8054_of_match,
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Signed-off-by: Swamil Jain <s-jain1@ti.com>
+---
 
--- 
-2.51.2
+Changelog v1->v2:
+- Add all devices requiring the fix in cover letter
+- Update Fixes tag
+- Use "Cc: stable@vger.kernel.org" properly
+
+Link to v1:
+https://lore.kernel.org/all/20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com/
+---
+
+Louis Chauvet (4):
+  dt-bindings: display: ti,am65x-dss: Add clk property for data edge
+    synchronization
+  dt-bindings: mfd: syscon: Add ti,am625-dss-clk-ctrl
+  arm64: dts: ti: k3-am62-main: Add tidss clk-ctrl property
+  drm/tidss: Fix sampling edge configuration
+
+Swamil Jain (1):
+  arm64: dts: ti: k3-am62a-main: Add tidss clk-ctrl property
+
+ .../bindings/display/ti/ti,am65x-dss.yaml          |  6 ++++++
+ Documentation/devicetree/bindings/mfd/syscon.yaml  |  3 ++-
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi           |  6 ++++++
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi          |  7 +++++++
+ drivers/gpu/drm/tidss/tidss_dispc.c                | 14 ++++++++++++++
+ 5 files changed, 35 insertions(+), 1 deletion(-)
 
 
