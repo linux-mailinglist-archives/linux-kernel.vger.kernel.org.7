@@ -1,579 +1,169 @@
-Return-Path: <linux-kernel+bounces-888835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01479C3C0D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:30:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DF9C3C066
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8EB424177
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77272189F52F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0568E281370;
-	Thu,  6 Nov 2025 15:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B19284889;
+	Thu,  6 Nov 2025 15:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ol1BLcuj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LFpsDnqX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WzAKjhsg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6484283686;
-	Thu,  6 Nov 2025 15:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D426270EAB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762442634; cv=none; b=keaDaAx/m8f5Ur+0YObw2P8gDHSP4aGprr+S97Sj4NYf/MplDdzUV/VHVSML12kuZMzaoORXahj1VG50KfzBzLbOQK6U229xbNOkafUULA3YoGrnTLzJ5aGRVJdH2hgT8/eatOFo+lyDgcnMDiK5Cc0PZg9M0LYHeo3FTt+GmNM=
+	t=1762442634; cv=none; b=bExHjA5v1+HLPdvgHyYGo2hbdu8GAHGfWej/VTkyQn7+gkikUdUwfRc5GcVfKiSCYVZfTkk63AE452aCCwW8s4axCc3o8YgFogRTBhTkIdHxKg/ST1ug+xpvM2JUPVs8ynAbgCunTmNfBfVvOSp1+WyC7onTuZC4ulFA1ZdQ2GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762442634; c=relaxed/simple;
-	bh=L1n+Tj2DJMmqjzHLWDQjLW3uCuFg9ugR/TMXsEcxzvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WitVFGXTd+FKikX0nnw/8MsZn4cefKV83KSSQoyxYBHCgvhehNlteG+hrVJcqLyXhWEJqbD8L4WT+rbzdB5JT3j1/GzLta8AmnGelWvaorc0lfl4wJs+LrUj2F9jH2tLr/sd1T7tA9CjcCyAA8EvyPeD93sBe308EKGLOp3DN74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ol1BLcuj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B37DC4CEFB;
-	Thu,  6 Nov 2025 15:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762442634;
-	bh=L1n+Tj2DJMmqjzHLWDQjLW3uCuFg9ugR/TMXsEcxzvI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ol1BLcujUHyAaODCHoHg7WtykOdW798jeepFLSk/whg6VVkXwMcarEKK+qUgE3rcg
-	 Eo3OmXUioKCWIovBK1G+VALtCPqCZ3rXB8unCHNOXVyF3Lt4vCDezDgfpy1NCG+cvZ
-	 hpzRBoVtay241w38YK8JgLSaBmwSf9+irstMYSAyawWQONwU0G/FUxlR898CTgHyHq
-	 XSVR8qSUpxM/ZSa0/XgkuBvhU37jQTYehSa8U3koPZX88LG2WUD5LuuQNyaEK53NQv
-	 eNxPvpgbiauYpkYejN4ucqHpiIzy+j9I5EzyQKjqnhOlXPjRv6XwQu68aQrt17I0m7
-	 1VnFCEmFouhBA==
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	tzungbi@kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH v6 3/3] selftests: revocable: Add kselftest cases
-Date: Thu,  6 Nov 2025 23:23:30 +0800
-Message-ID: <20251106152330.11733-4-tzungbi@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251106152330.11733-1-tzungbi@kernel.org>
-References: <20251106152330.11733-1-tzungbi@kernel.org>
+	bh=HCaYR4YVOukbLj7jhdYFa5FxgeZeqJDhW58mi5gV+F4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=otrGRHGS57WEf4TwNM6Wbi5Ti2bWLEiXQN8T9AzBKDVxLrMgg+c2NIL13mD9bY7AA1bjTa3ZFXLtghuTXAQ4/iSUkoosQz5ZnnFIVIXRC/cmuLGvZ6MP23uC8hKbQHeyh/paANluJRGcy55asfUa2rnrqs4sFKDGpihniB8PDrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LFpsDnqX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WzAKjhsg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6CYA0P3217502
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 15:23:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AM2sfMtEfOa7KhDU3VgLqOS5fRlov02lYAgiXrnPdFE=; b=LFpsDnqXbN5J8HSQ
+	p5kjOSYW7NDB+pDWWE86gHRIbIOit/osKG0RvSt1cF06nYypOIayGHXkO6hKf0XH
+	zzbZ2iKK5vvj0g1NC87dQtIXYKN7xyd8DkE8wIHb97KvSLbBYOnHjCrwr1s6oc6T
+	BudvlhVhTXK519NdZoVa3FRJ5JH8/nsn7NRRAjADGVQNX2v42Sv50atDxK0u7WuG
+	e7lyl4iIi6T5213YsmUOfuqSVuAWNJU1kzKlK/hYV5RxKIChxNdLl5u4Bta80RDo
+	NR6H+h5gfeRcNaKpmVYxKxY5uOBgHeajzXCefNxW24cYeQkiHvrIRVLqJbnH35QJ
+	MVDcYw==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8n7phr3f-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:23:52 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77f610f7325so994470b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:23:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762442632; x=1763047432; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AM2sfMtEfOa7KhDU3VgLqOS5fRlov02lYAgiXrnPdFE=;
+        b=WzAKjhsgwV4QJ+wjd1POxOX40IHgmBnAy5HIZutRzZKRlICHjSytmp4u7oveVkHzgn
+         V75oMiRGYmhby6l+k8sUPFcacTgWIbZWBQYYhHWyJ3MuvoDcuJ1EIuq2oWylvMnnTaIj
+         86DY9mYaT7FMU752ZZaLH0qZdEf+/4QwUG1GL0wyuhQ3blcE5nnS1yj124R1wRQoRGv0
+         KFVMvmf+ngnn5IHXrtPrO2isS8kLUCCjaSztavY31TSe18H5yChjtYujV2rIpK7/DDXA
+         Bqe2XXI/zVGwcz0CZxZNin2IoSQDoNOoDcyIk46K13iMGUubfjhtuQm3HYL6xRxLSjCG
+         MVHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762442632; x=1763047432;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AM2sfMtEfOa7KhDU3VgLqOS5fRlov02lYAgiXrnPdFE=;
+        b=hRqYgPnZGss+RlHDC20wc7riqiT2IobyHn/pOaaZj7plETdPOKeOiE4z3p45zDqow0
+         6/I2rS6ERtU/TSrLeXvgfqNneX+f85Dkl3D1j6nMNaHeVyF22YWMRMLcBM1z6VELt8TI
+         AW0WnION6k0cVx0LUe1M1n4oa9DPMYcVTWA1Bqiz1QdUI6SkQ7/HfyDerze1N49M37Qp
+         hBXoSWu9IaiqfprTtUJmtxKWC4LXH+MXYoe5KphuOQhbCo4F9iOiPLSloS4waowxoGyH
+         uvneoXBlA9CK/lrak61dWmVlY7gA080rP8ITaASSNM7FUZSxuiVIz4j341IcbG+B8Mi6
+         +wXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz9b/zDn+T1qfJ3BN0jhF6lHgBca5Wg+f5Xj+0sMG6gjcyTCI9K33sVzDqpU39yuiU8EXxQrU75oloae4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWP2zd3ReB2NmHg9s2wAniFXK+PC5zSnSDLlN3o5Serk6Vs1Z2
+	wWGYvCsd2fqN7BJcCTVyvKBry6k7b61LEhZkFrqxzqVYK+R7//niNoPvoe8Y/t6JhWHu/9LRc9R
+	Z+ISfedr8yfmqiqfWCLQAOGuUDv1ZzDqGBUsdfwO2CLqOusjzCzwRrmwQJsAxQLLmuvE=
+X-Gm-Gg: ASbGncvwWnIRU/Hy8DOsmhglnlpMJpCUKGLm3Vt1vjROpBP2UB9CprD+HgAx0HYDEqr
+	yaItzu9wgsn37ZJokSUhzzX1uerq/zVAIuZSnMTo1wAyMLYKVLTPkRK//+viwbCGEGTk9atPMnm
+	BRz1g7DQJ84Fjz3wrNtj8hlDsbmX7yAUXJnkKJQGQiEg7leqo9iSC527Olmzuf2J6wPd2CM5yaI
+	NKfmCe3bPotvZ3wBTiXhRI8v7LSmIRcNcCrIjZSu9v2Rx/zdUuTVdh/WH9c9N4B4XU6XkODfieA
+	3o0Q3B3EE0mspSgkk2pKiu6N7/YfpImt+K7I+4/OJ5VVOcMk1NNeAGYoMXkowYzr6+LDavt26+l
+	CxILn6Z/oTHLoi6uUVm+Gosh6ZMb8OP720w==
+X-Received: by 2002:a05:6a20:7294:b0:344:97a7:8c5c with SMTP id adf61e73a8af0-34f868ec5acmr9474788637.48.1762442631924;
+        Thu, 06 Nov 2025 07:23:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF97e0GXoOncAGOrjI2ScllFLDrtpqS3SjsIAfKcVzSGuS3VIsb+Ftj9YpLE5DE7gJppyEwPQ==
+X-Received: by 2002:a05:6a20:7294:b0:344:97a7:8c5c with SMTP id adf61e73a8af0-34f868ec5acmr9474750637.48.1762442631390;
+        Thu, 06 Nov 2025 07:23:51 -0800 (PST)
+Received: from [192.168.1.3] ([182.65.157.163])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a69b698asm6878934a91.21.2025.11.06.07.23.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 07:23:51 -0800 (PST)
+Message-ID: <65a910ff-61ae-41a8-b5aa-9a7a119fb13d@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 20:53:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID pin
+ state
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251102164819.2798754-1-krishna.kurapati@oss.qualcomm.com>
+ <20251102164819.2798754-3-krishna.kurapati@oss.qualcomm.com>
+ <aQxyfjYosVd_kPKC@kuha.fi.intel.com> <aQx1WVif-vgN0_T-@kuha.fi.intel.com>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <aQx1WVif-vgN0_T-@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: lGvPxjkfmB88GTlhtihwVIfrkmDFhFYM
+X-Proofpoint-GUID: lGvPxjkfmB88GTlhtihwVIfrkmDFhFYM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDEyMiBTYWx0ZWRfX9RsXHZt1ROEH
+ BrD9iRY3kB8lAEOljf+fH1f1AsWge7r8yzhCWehTDv8PVks5tVJJ1XGJQP22WHdhs6b34p1Vkrl
+ IIGKX+EYi6bC4gRahh7tFXP6Vlf/tGKe6Lk9Prp5lqqoPCIsDe7sGdL7BBpWXP+6L9PGv4YBeTn
+ rCpZziISfzU/to91Lha3Ndcv8ajJNiiTeymapTSQYLoYUWE1f0e1bE3vBLP3W6wc6WAq1hSDz+p
+ hZnUM3mWLVEDvXXweIBglpF/Jjw8ZHxCc1uihph/Uk0smu5/l+f9yhtpTM/Jsdhj2jvgH24GeUW
+ VmskfKeudJIknt0ohmAbs/+JuvdPsp+vA/DtvxpUtixiSskKRzHKhTnjExEUiNX5pd5b+tbyhP0
+ Sq9yivi7ZDAJSFuwZzhqjy8W1PoWaQ==
+X-Authority-Analysis: v=2.4 cv=ErnfbCcA c=1 sm=1 tr=0 ts=690cbd88 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fO48qRZoIuIFQjWVjTpNpw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=RlX0HteZJ6yL10uBmSMA:9 a=QEXdDO2ut3YA:10
+ a=QYH75iMubAgA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 clxscore=1015 adultscore=0 impostorscore=0
+ bulkscore=0 priorityscore=1501 suspectscore=0 spamscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060122
 
-Add kselftest cases for the revocable API.
 
-The test consists of three parts:
-- A kernel module (revocable_test.ko) that creates a debugfs interface
-  with `/provider` and `/consumer` files.
-- A user-space C program (revocable_test) that uses the kselftest
-  harness to interact with the debugfs files.
-- An orchestrating shell script (test-revocable.sh) that loads the
-  module, runs the C program, and unloads the module.
 
-The test cases cover the following scenarios:
-- Basic: Verifies that a consumer can successfully access the resource
-  provided via the provider.
-- Revocation: Verifies that after the provider revokes the resource,
-  the consumer correctly receives a NULL pointer on a subsequent access.
-- Macro: Same as "Revocation" but uses the REVOCABLE_TRY_ACCESS_WITH()
-  and REVOCABLE_TRY_ACCESS_SCOPED().
+On 11/6/2025 3:46 PM, Heikki Krogerus wrote:
+>>          struct regulator *vbus;
+>>
+>>          vbus = devm_of_regulator_get_optional(...
+>>          if (IS_ERR(vbus) && vbus != ERR_PTR(-ENODEV))
+>>                  return PTR_ERR(vbus);
+>>
+>>          hd3ss3220->vbus = vbus;
+> 
+> Sorry, that has to be:
+> 
+>          hd3ss3220->vbus = vbus == ERR_PTR(-ENODEV) ? NULL : vbus;
+> 
+> 
 
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
----
-v6:
-- Rename REVOCABLE_TRY_ACCESS_WITH() -> REVOCABLE_TRY_ACCESS_SCOPED().
-- Add tests for new REVOCABLE_TRY_ACCESS_WITH().
+Thanks for the review Heikki.
+Will update the suggestions in next revision.
 
-v5: https://lore.kernel.org/chrome-platform/20251016054204.1523139-4-tzungbi@kernel.org
-- No changes.
-
-v4: https://lore.kernel.org/chrome-platform/20250923075302.591026-4-tzungbi@kernel.org
-- REVOCABLE() -> REVOCABLE_TRY_ACCESS_WITH().
-- revocable_release() -> revocable_withdraw_access().
-
-v3: https://lore.kernel.org/chrome-platform/20250912081718.3827390-4-tzungbi@kernel.org
-- No changes.
-
-v2: https://lore.kernel.org/chrome-platform/20250820081645.847919-4-tzungbi@kernel.org
-- New in the series.
-
-A way to run the kselftest (for my reference):
-- Update kernel to the DUT.
-- `mkdir build` and copy the kernel config to build/.
-- `make O=build LLVM=1 -j32` (for generated headers and built-in symbols).
-- `make O=build LLVM=1 KDIR=$(pwd) -C tools/testing/selftests/
-     TARGETS=drivers/base/revocable gen_tar`.
-- Copy build/kselftest/kselftest_install/kselftest-packages/kselftest.tar.gz
-  to the DUT, extract, and execute the run_kselftest.sh.
-
- MAINTAINERS                                   |   1 +
- tools/testing/selftests/Makefile              |   1 +
- .../selftests/drivers/base/revocable/Makefile |   7 +
- .../drivers/base/revocable/revocable_test.c   | 136 ++++++++++++
- .../drivers/base/revocable/test-revocable.sh  |  39 ++++
- .../base/revocable/test_modules/Makefile      |  10 +
- .../revocable/test_modules/revocable_test.c   | 195 ++++++++++++++++++
- 7 files changed, 389 insertions(+)
- create mode 100644 tools/testing/selftests/drivers/base/revocable/Makefile
- create mode 100644 tools/testing/selftests/drivers/base/revocable/revocable_test.c
- create mode 100755 tools/testing/selftests/drivers/base/revocable/test-revocable.sh
- create mode 100644 tools/testing/selftests/drivers/base/revocable/test_modules/Makefile
- create mode 100644 tools/testing/selftests/drivers/base/revocable/test_modules/revocable_test.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 63b96b786e7a..a47a2279adfc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22159,6 +22159,7 @@ S:	Maintained
- F:	drivers/base/revocable.c
- F:	drivers/base/revocable_test.c
- F:	include/linux/revocable.h
-+F:	tools/testing/selftests/drivers/base/revocable/
- 
- RFKILL
- M:	Johannes Berg <johannes@sipsolutions.net>
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index c46ebdb9b8ef..1136a8f12ef5 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -17,6 +17,7 @@ TARGETS += damon
- TARGETS += devices/error_logs
- TARGETS += devices/probe
- TARGETS += dmabuf-heaps
-+TARGETS += drivers/base/revocable
- TARGETS += drivers/dma-buf
- TARGETS += drivers/ntsync
- TARGETS += drivers/s390x/uvdevice
-diff --git a/tools/testing/selftests/drivers/base/revocable/Makefile b/tools/testing/selftests/drivers/base/revocable/Makefile
-new file mode 100644
-index 000000000000..afa5ca0fa452
---- /dev/null
-+++ b/tools/testing/selftests/drivers/base/revocable/Makefile
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+TEST_GEN_MODS_DIR := test_modules
-+TEST_GEN_PROGS_EXTENDED := revocable_test
-+TEST_PROGS := test-revocable.sh
-+
-+include ../../../lib.mk
-diff --git a/tools/testing/selftests/drivers/base/revocable/revocable_test.c b/tools/testing/selftests/drivers/base/revocable/revocable_test.c
-new file mode 100644
-index 000000000000..0d23816b15fb
---- /dev/null
-+++ b/tools/testing/selftests/drivers/base/revocable/revocable_test.c
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2025 Google LLC
-+ *
-+ * A selftest for the revocable API.
-+ *
-+ * The test cases cover the following scenarios:
-+ *
-+ * - Basic: Verifies that a consumer can successfully access the resource
-+ *   provided via the provider.
-+ *
-+ * - Revocation: Verifies that after the provider revokes the resource,
-+ *   the consumer correctly receives a NULL pointer on a subsequent access.
-+ *
-+ * - Macro: Same as "Revocation" but uses the REVOCABLE_TRY_ACCESS_WITH()
-+ *   and REVOCABLE_TRY_ACCESS_SCOPED().
-+ */
-+
-+#include <fcntl.h>
-+#include <unistd.h>
-+
-+#include "../../../kselftest_harness.h"
-+
-+#define DEBUGFS_PATH "/sys/kernel/debug/revocable_test"
-+#define TEST_CMD_RESOURCE_GONE "resource_gone"
-+#define TEST_DATA "12345678"
-+#define TEST_MAGIC_OFFSET 0x1234
-+#define TEST_MAGIC_OFFSET2 0x5678
-+
-+FIXTURE(revocable_fixture) {
-+	int pfd;
-+	int cfd;
-+};
-+
-+FIXTURE_SETUP(revocable_fixture) {
-+	int ret;
-+
-+	self->pfd = open(DEBUGFS_PATH "/provider", O_WRONLY);
-+	ASSERT_NE(-1, self->pfd)
-+		TH_LOG("failed to open provider fd");
-+
-+	ret = write(self->pfd, TEST_DATA, strlen(TEST_DATA));
-+	ASSERT_NE(-1, ret) {
-+		close(self->pfd);
-+		TH_LOG("failed to write test data");
-+	}
-+
-+	self->cfd = open(DEBUGFS_PATH "/consumer", O_RDONLY);
-+	ASSERT_NE(-1, self->cfd)
-+		TH_LOG("failed to open consumer fd");
-+}
-+
-+FIXTURE_TEARDOWN(revocable_fixture) {
-+	close(self->cfd);
-+	close(self->pfd);
-+}
-+
-+/*
-+ * ASSERT_* is only available in TEST or TEST_F block.  Use
-+ * macro for the helper.
-+ */
-+#define READ_TEST_DATA(_fd, _offset, _data, _msg)			\
-+	do {								\
-+		int ret;						\
-+									\
-+		ret = lseek(_fd, _offset, SEEK_SET);			\
-+		ASSERT_NE(-1, ret)					\
-+			TH_LOG("failed to lseek");			\
-+									\
-+		ret = read(_fd, _data, sizeof(_data) - 1);		\
-+		ASSERT_NE(-1, ret)					\
-+			TH_LOG(_msg);					\
-+		data[ret] = '\0';					\
-+	} while (0)
-+
-+TEST_F(revocable_fixture, basic) {
-+	char data[16];
-+
-+	READ_TEST_DATA(self->cfd, 0, data, "failed to read test data");
-+	EXPECT_STREQ(TEST_DATA, data);
-+}
-+
-+TEST_F(revocable_fixture, revocation) {
-+	char data[16];
-+	int ret;
-+
-+	READ_TEST_DATA(self->cfd, 0, data, "failed to read test data");
-+	EXPECT_STREQ(TEST_DATA, data);
-+
-+	ret = write(self->pfd, TEST_CMD_RESOURCE_GONE,
-+		    strlen(TEST_CMD_RESOURCE_GONE));
-+	ASSERT_NE(-1, ret)
-+		TH_LOG("failed to write resource gone cmd");
-+
-+	READ_TEST_DATA(self->cfd, 0, data,
-+		       "failed to read test data after resource gone");
-+	EXPECT_STREQ("(null)", data);
-+}
-+
-+TEST_F(revocable_fixture, macro) {
-+	char data[16];
-+	int ret;
-+
-+	READ_TEST_DATA(self->cfd, TEST_MAGIC_OFFSET, data,
-+		       "failed to read test data");
-+	EXPECT_STREQ(TEST_DATA, data);
-+
-+	ret = write(self->pfd, TEST_CMD_RESOURCE_GONE,
-+		    strlen(TEST_CMD_RESOURCE_GONE));
-+	ASSERT_NE(-1, ret)
-+		TH_LOG("failed to write resource gone cmd");
-+
-+	READ_TEST_DATA(self->cfd, TEST_MAGIC_OFFSET, data,
-+		       "failed to read test data after resource gone");
-+	EXPECT_STREQ("(null)", data);
-+}
-+
-+TEST_F(revocable_fixture, macro2) {
-+	char data[16];
-+	int ret;
-+
-+	READ_TEST_DATA(self->cfd, TEST_MAGIC_OFFSET2, data,
-+		       "failed to read test data");
-+	EXPECT_STREQ(TEST_DATA, data);
-+
-+	ret = write(self->pfd, TEST_CMD_RESOURCE_GONE,
-+		    strlen(TEST_CMD_RESOURCE_GONE));
-+	ASSERT_NE(-1, ret)
-+		TH_LOG("failed to write resource gone cmd");
-+
-+	READ_TEST_DATA(self->cfd, TEST_MAGIC_OFFSET2, data,
-+		       "failed to read test data after resource gone");
-+	EXPECT_STREQ("(null)", data);
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/drivers/base/revocable/test-revocable.sh b/tools/testing/selftests/drivers/base/revocable/test-revocable.sh
-new file mode 100755
-index 000000000000..3a34be28001a
---- /dev/null
-+++ b/tools/testing/selftests/drivers/base/revocable/test-revocable.sh
-@@ -0,0 +1,39 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+mod_name="revocable_test"
-+ksft_fail=1
-+ksft_skip=4
-+
-+if [ "$(id -u)" -ne 0 ]; then
-+	echo "$0: Must be run as root"
-+	exit "$ksft_skip"
-+fi
-+
-+if ! which insmod > /dev/null 2>&1; then
-+	echo "$0: Need insmod"
-+	exit "$ksft_skip"
-+fi
-+
-+if ! which rmmod > /dev/null 2>&1; then
-+	echo "$0: Need rmmod"
-+	exit "$ksft_skip"
-+fi
-+
-+insmod test_modules/"${mod_name}".ko
-+
-+if [ ! -d /sys/kernel/debug/revocable_test/ ]; then
-+	mount -t debugfs none /sys/kernel/debug/
-+
-+	if [ ! -d /sys/kernel/debug/revocable_test/ ]; then
-+		echo "$0: Error mounting debugfs"
-+		exit "$ksft_fail"
-+	fi
-+fi
-+
-+./revocable_test
-+ret=$?
-+
-+rmmod "${mod_name}"
-+
-+exit "${ret}"
-diff --git a/tools/testing/selftests/drivers/base/revocable/test_modules/Makefile b/tools/testing/selftests/drivers/base/revocable/test_modules/Makefile
-new file mode 100644
-index 000000000000..f29e4f909402
---- /dev/null
-+++ b/tools/testing/selftests/drivers/base/revocable/test_modules/Makefile
-@@ -0,0 +1,10 @@
-+TESTMODS_DIR := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-+KDIR ?= /lib/modules/$(shell uname -r)/build
-+
-+obj-m += revocable_test.o
-+
-+all:
-+	$(Q)$(MAKE) -C $(KDIR) M=$(TESTMODS_DIR)
-+
-+clean:
-+	$(Q)$(MAKE) -C $(KDIR) M=$(TESTMODS_DIR) clean
-diff --git a/tools/testing/selftests/drivers/base/revocable/test_modules/revocable_test.c b/tools/testing/selftests/drivers/base/revocable/test_modules/revocable_test.c
-new file mode 100644
-index 000000000000..3c360ad6b54b
---- /dev/null
-+++ b/tools/testing/selftests/drivers/base/revocable/test_modules/revocable_test.c
-@@ -0,0 +1,195 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2025 Google LLC
-+ *
-+ * A kernel module for testing the revocable API.
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/module.h>
-+#include <linux/revocable.h>
-+#include <linux/slab.h>
-+
-+#define TEST_CMD_RESOURCE_GONE "resource_gone"
-+#define TEST_MAGIC_OFFSET 0x1234
-+#define TEST_MAGIC_OFFSET2 0x5678
-+
-+static struct dentry *debugfs_dir;
-+
-+struct revocable_test_provider_priv {
-+	struct revocable_provider *rp;
-+	struct dentry *dentry;
-+	char res[16];
-+};
-+
-+static int revocable_test_consumer_open(struct inode *inode, struct file *filp)
-+{
-+	struct revocable *rev;
-+	struct revocable_provider *rp = inode->i_private;
-+
-+	rev = revocable_alloc(rp);
-+	if (!rev)
-+		return -ENOMEM;
-+	filp->private_data = rev;
-+
-+	return 0;
-+}
-+
-+static int revocable_test_consumer_release(struct inode *inode,
-+					   struct file *filp)
-+{
-+	struct revocable *rev = filp->private_data;
-+
-+	revocable_free(rev);
-+	return 0;
-+}
-+
-+static ssize_t revocable_test_consumer_read(struct file *filp,
-+					    char __user *buf,
-+					    size_t count, loff_t *offset)
-+{
-+	char *res;
-+	char data[16];
-+	size_t len;
-+	struct revocable *rev = filp->private_data;
-+
-+	switch (*offset) {
-+	case 0:
-+		res = revocable_try_access(rev);
-+		snprintf(data, sizeof(data), "%s", res ?: "(null)");
-+		revocable_withdraw_access(rev);
-+		break;
-+	case TEST_MAGIC_OFFSET:
-+		{
-+			REVOCABLE_TRY_ACCESS_WITH(rev, res);
-+			snprintf(data, sizeof(data), "%s", res ?: "(null)");
-+		}
-+		break;
-+	case TEST_MAGIC_OFFSET2:
-+		REVOCABLE_TRY_ACCESS_SCOPED(rev, res)
-+			snprintf(data, sizeof(data), "%s", res ?: "(null)");
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	len = min_t(size_t, strlen(data), count);
-+	if (copy_to_user(buf, data, len))
-+		return -EFAULT;
-+
-+	*offset = len;
-+	return len;
-+}
-+
-+static const struct file_operations revocable_test_consumer_fops = {
-+	.open = revocable_test_consumer_open,
-+	.release = revocable_test_consumer_release,
-+	.read = revocable_test_consumer_read,
-+	.llseek = default_llseek,
-+};
-+
-+static int revocable_test_provider_open(struct inode *inode, struct file *filp)
-+{
-+	struct revocable_test_provider_priv *priv;
-+
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+	filp->private_data = priv;
-+
-+	return 0;
-+}
-+
-+static int revocable_test_provider_release(struct inode *inode,
-+					   struct file *filp)
-+{
-+	struct revocable_test_provider_priv *priv = filp->private_data;
-+
-+	debugfs_remove(priv->dentry);
-+	if (priv->rp)
-+		revocable_provider_revoke(priv->rp);
-+	kfree(priv);
-+
-+	return 0;
-+}
-+
-+static ssize_t revocable_test_provider_write(struct file *filp,
-+					     const char __user *buf,
-+					     size_t count, loff_t *offset)
-+{
-+	size_t copied;
-+	char data[64];
-+	struct revocable_test_provider_priv *priv = filp->private_data;
-+
-+	copied = strncpy_from_user(data, buf, sizeof(data));
-+	if (copied < 0)
-+		return copied;
-+	if (copied == sizeof(data))
-+		data[sizeof(data) - 1] = '\0';
-+
-+	/*
-+	 * Note: The test can't just close the FD for signaling the
-+	 * resource gone.  Subsequent file operations on the opening
-+	 * FD of debugfs return -EIO after calling debugfs_remove().
-+	 * See also debugfs_file_get().
-+	 *
-+	 * Here is a side command channel for signaling the resource
-+	 * gone.
-+	 */
-+	if (!strcmp(data, TEST_CMD_RESOURCE_GONE)) {
-+		revocable_provider_revoke(priv->rp);
-+		priv->rp = NULL;
-+	} else {
-+		if (priv->res[0] != '\0')
-+			return 0;
-+
-+		strscpy(priv->res, data);
-+
-+		priv->rp = revocable_provider_alloc(&priv->res);
-+		if (!priv->rp)
-+			return -ENOMEM;
-+
-+		priv->dentry = debugfs_create_file("consumer", 0400,
-+						   debugfs_dir, priv->rp,
-+						   &revocable_test_consumer_fops);
-+		if (!priv->dentry) {
-+			revocable_provider_revoke(priv->rp);
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	return copied;
-+}
-+
-+static const struct file_operations revocable_test_provider_fops = {
-+	.open = revocable_test_provider_open,
-+	.release = revocable_test_provider_release,
-+	.write = revocable_test_provider_write,
-+};
-+
-+static int __init revocable_test_init(void)
-+{
-+	debugfs_dir = debugfs_create_dir("revocable_test", NULL);
-+	if (!debugfs_dir)
-+		return -ENOMEM;
-+
-+	if (!debugfs_create_file("provider", 0200, debugfs_dir, NULL,
-+				 &revocable_test_provider_fops)) {
-+		debugfs_remove_recursive(debugfs_dir);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit revocable_test_exit(void)
-+{
-+	debugfs_remove_recursive(debugfs_dir);
-+}
-+
-+module_init(revocable_test_init);
-+module_exit(revocable_test_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Tzung-Bi Shih <tzungbi@kernel.org>");
-+MODULE_DESCRIPTION("Revocable Kselftest");
--- 
-2.48.1
-
+Regards,
+Krishna,
 
