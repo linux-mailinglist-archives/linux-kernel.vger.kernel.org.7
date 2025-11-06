@@ -1,300 +1,152 @@
-Return-Path: <linux-kernel+bounces-888569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F950C3B2C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:21:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2A9C3B2E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD57B4FEC62
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:15:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 680734FCCC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA038248B;
-	Thu,  6 Nov 2025 13:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5281232E6B6;
+	Thu,  6 Nov 2025 13:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZpjrzR5S";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="R/7tQpoR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bgV11jk8"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AA82AD04
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F662E7F1E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762434938; cv=none; b=maDa5k3PrjxEJ05g121zhsMn4sFvXblxMKJ39KLZXLDsJryVfptntKV4WWVc/kh8xhwQEv6OnnvRZA9e3ixPcRAf5fRn1P63oBisO0IDzvZRN5kG18oNkGZOjCYMKiZD4tCoJSHFMz8g1ItL0I5I4HluCJY67sUSW4nrHajr9Js=
+	t=1762435051; cv=none; b=Tl2FSbyjERLMXsY3BsxIgViWpWzlBqAw5sFQwkQKFSNPBfArbqM4b0nZtHgyVYiujTjTB67wiz5zkpV3VcLAHtyg46reh96jOKJWGFYmKO/w2j2ss2wOnhaeUSPLjSKMMV/spYa4Gc2GSH6rkcnVE+0hYxI9hSNTwxKIBYglPI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762434938; c=relaxed/simple;
-	bh=BiZqzMBevU8msCFO5nB5qb+GqBePwXQWkozVPa9VEkg=;
+	s=arc-20240116; t=1762435051; c=relaxed/simple;
+	bh=8xyayUNeX27WinogYM/STcDgXHhgPSZqFVuRAY979CU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=APsmgza+kADw9nFRiQMdfWcxlRKBvGbNULhTOFXA6tMZcn7IfCbcElIZXcWCy3gjepSqX5hGj/7QaPPPCclAcVRLo20EVbJKAG2cBwhSgs0nAGQOmH3TVChGNmCuGA28ZWJtng8hz/+45vX4o/lBaaGsLI+GLVSNwwAk9xICtHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZpjrzR5S; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=R/7tQpoR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762434935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vOTU/WjqME9wpuzOdb6Og4gQN4XcI7w/UopK/h4SWBU=;
-	b=ZpjrzR5Slig9CyD5kk3QdpiuJS3qWNl3GVzKfjFtD87d3CV410EgndIUPlUOZOnUjpx/7J
-	0vE971yp9KvVMlJUWCc0rGKu1H8KXQEDoiFhOLBm4l2J9ZD387lIhxoswmN0d4JQ8wOrnK
-	OdpXDgm9tmvzRas+iQCFAD/GIQVv1tw=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-Pnymx4DGPXSZJcgg8ZXVXg-1; Thu, 06 Nov 2025 08:15:34 -0500
-X-MC-Unique: Pnymx4DGPXSZJcgg8ZXVXg-1
-X-Mimecast-MFC-AGG-ID: Pnymx4DGPXSZJcgg8ZXVXg_1762434934
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-786a0fe77d9so5266357b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:15:34 -0800 (PST)
+	 To:Cc:Content-Type; b=SPqCAm/u66SXANK2Z8zHJ3+x57FiFPYu0HObFc9YRGJc8q0vqW2dhL/xYFnTN0DTFvfb7uqn4VeNvtQC/GyiS+07x6kWeH/fM9ksaIEnJuESIiJxk9d0tvRhs0IsxLR11+T2faUWYGfXkcQrVZvWnSi+jLnzoiT+aiyI6vtltxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bgV11jk8; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e8a25d96ecso6699601cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:17:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762434934; x=1763039734; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762435049; x=1763039849; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vOTU/WjqME9wpuzOdb6Og4gQN4XcI7w/UopK/h4SWBU=;
-        b=R/7tQpoRdalaxJHic+tTdDRLnm4xJVwI2Xo87yrRipRGRyojjxkA8WrQpGA0zP+EAf
-         dKk/RqWqXck/IwTO2JOQsVCDznxUOAfudsAtNj5XDKrJfrfXxBmZiZK42kcQhoAeDF5T
-         8r2ri9o6NNIlNuj4b6qtWVzbb9crfN2m2epGC9ZDngI5e4Ah1+6xYDxUfZerM6lsO1yB
-         3wjCGgFuzJUw5HUR2c5ez3G0OljbWijnvGDAgKThhZX9aDESdLZke38MPgYiKtt0vWoa
-         V69B2+O2aoRrkWidZBlujjxl5nI8ZT812yejkzhDK1O6A1QoSlGhxZraOH+4+o4bxvfv
-         KT3Q==
+        bh=9yKqqA00jwTc/irIUDNF5NewMs+/9jewFrwR1l5Pykk=;
+        b=bgV11jk8QoNsIbL82roahyKlhtYwGQ3Qcrzog2usjpeA6WcdA6jXVATLPLyqHdWXng
+         MYymRswIReG/mABBRLgtxA9mJUzY3au35c3b5N8gc/a+/JvXHK6Or0L8Cdlo8TB2+HRI
+         2GzOQP4qirU80Vwvo9hVkdkL2YcRsqanDkikuv9z7XRBCsurV54xzIDmcfSbT3FMW2F4
+         i3qP/WHPFQNrEmESWGMos6UVDEEpOkZLyp++MeHWM1EIRg+YhO2ZJd0kbWLRLJXt7wkU
+         GXbFUymwBz1bFNySGLzXI64qktUf+r6fNr6dbRHSJXZWuYWNWeY6IkpEvt/Rw2nN1l5j
+         VTjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762434934; x=1763039734;
+        d=1e100.net; s=20230601; t=1762435049; x=1763039849;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vOTU/WjqME9wpuzOdb6Og4gQN4XcI7w/UopK/h4SWBU=;
-        b=fCVIEVfHk+K5ELd48wxhnpRd0QVq+V8mWWT9jkw7R1G/mQpl0INIi6bpXrAr4AAiR+
-         3dHHmpfRBwE2H46G0auL+ICrFbpe5QBaYUwL9oKeyNQwFuQVZDjzZH11ggge4U34yqq5
-         Lw4VP76ZY0dOjDOtP0KHU7FZ7lW/xPVN/kTgVpLfu9JjcYIyJBxs2oKIi8bhCqPc3Sdw
-         3pz+bwwM4pMkjE0PEUTnhYfk3HohDubbFfBDprWi6CL7p86SBGnlJkXPSAJWmMpDnfxm
-         NuPSSlU11CZG0bccFc0DOarla0YJhuI0sR1BA0zpHAe+wJ5lj1KNR50pnED/rRmQZHit
-         kImQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG9zJ+lBskGi1xRz9Zd5MBzV6hzfqNEpLaagx7naN/DjUJ2Y14fqYI9EwTO1LoK3io9aKW8wZRrZdILgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx3vI8V+paEPZLqIvcLSmpEemlIwE8dPySixWfDAjTeNlwlkPb
-	fuw1HZSN5gATpTdMPwqXcbbCK63aC/G8frBIJsSpl8fLmKRoVYRxgzg3alXhVpjCm4TU0FQHoU/
-	Uemu/7NHe4Vl1nvki1n/Ak4tdHOQvfJ/+JJ4WFRmlHiOdM6WVGBqF4pGX8o6P/g60JXtgR370eo
-	DMdRGyGTq8KrsR65XRVbvDhfPS+w9Dhjn7Hg3+0DPo
-X-Gm-Gg: ASbGncsEhlic3l3wIisgNc43bn9tOyXfC64QfWBita5PftR6ChNt06eHYmVkLUI/N1z
-	9GWi9TsOdxC5DIU1YeHq+a2Gr/Q0tkpGlHRxatkQykNsmAZwxB8/SErm2YDRHwXokU0Hn1fewAN
-	zjN0NRdSwlG8JybFkA94tDMDcaOXl9ygrrxoTrT5UTe2KvJCYz2FhFY0uI
-X-Received: by 2002:a05:690c:2c03:b0:784:a2f3:85bf with SMTP id 00721157ae682-786a41ea673mr70789587b3.58.1762434933672;
-        Thu, 06 Nov 2025 05:15:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGVo4Oz4xoqitm3NbY8Hy/MkEeK7IYUW5ZGbL0j9AkgtFVqIj4TVyFclW/ZdGgUeRRe6jeLpUZIJklp01doVpQ=
-X-Received: by 2002:a05:690c:2c03:b0:784:a2f3:85bf with SMTP id
- 00721157ae682-786a41ea673mr70789237b3.58.1762434933106; Thu, 06 Nov 2025
- 05:15:33 -0800 (PST)
+        bh=9yKqqA00jwTc/irIUDNF5NewMs+/9jewFrwR1l5Pykk=;
+        b=wmeWHcAIXcqOGTVqzV27u0yY1iDn5pvMrUECqOZ40hPl1/uTVHqvdwl8CD+ct3roI/
+         WhzS4rWuzGIIKDw3Gdi2TKsOQQBScjwHGWL1na3F3qIfTqb5wCE62km+D8xqHeDiB7wa
+         FJhndjhvzGn2Gf0YWpPGjtBh3XVEWq1OShnacCtOFr0npRqGj8XsLmeB/lIt6rgQexNQ
+         j1GflY2ksXuVGf30hFoIMBIJJZ8HlcwJRWmzmkYDACGYspx83/5SJ7ThbknmJtthasEt
+         cKutrP97Y3cGDK0KtEzXHc6wJbWKBEKKGFbSBncahmc2q1lCwcZ952ptZM9vx4001nul
+         LMCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXX2V1w5n5ckiL/lWjD586W5WIKCvdwPAIZtxfOm+Xtko96MYlOMYWoB6pD9UaKMs81hUfo3e1TewBGZoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0BTiBrFQDeqbIQ9G3hs38O32TSpLIyyEisjl57nslMCLzM2mH
+	hVb1enp7qiZFFcS881KogxlE+A0Rieb/buINunW2+sAIVF75ivtOtoa8yC6MdYNLEjKfBFfIHsj
+	oqTYz0GkDJwoy/agLS7eaCkGQccwGmQlZ4n0w1oj8gNI7jp2rGnyHaYxNqs8=
+X-Gm-Gg: ASbGncvF+AobrUZrP+5p8FK/ifQgQJYsQL6p5RiL8YSf9n4pTJgsvceeGFbxgh4lIw5
+	tZA5LG0Q/5uNV5YGqF303Fo4WU1x/NX0zEXgdhWJzCxcTutsHQZJfMTZ7HfaWe2wLCutBqQ7Ky9
+	84QoME+LC8SHkrSd1N0rkltsFRZtSsOx+vDjYA3XrkqfJo11zibOA0NJz68bXvQx5E8Ve89OqE4
+	y3FpC4NjngtqJgtbY0rLYru7JbVN07oPHvgTa5Axs8l5y7ynDpH6Yh3pz+44PxARR9sZNIpjHVO
+	TTY9BA==
+X-Google-Smtp-Source: AGHT+IHoVZY32WaUUPLhhY4TIgToxdwsHfeGByBPVatw4n/WThQoOgUxSF+0rV1ygA7KDRf83XJehc/SzmchYE2halI=
+X-Received: by 2002:a05:622a:4a09:b0:4ed:5ed:2527 with SMTP id
+ d75a77b69052e-4ed72330515mr88050901cf.3.1762435048365; Thu, 06 Nov 2025
+ 05:17:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103125757.1405796-1-linan666@huaweicloud.com>
- <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com>
- <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com> <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
- <2c1ab8fc-99ac-44fd-892c-2eeedb9581f4@fnnas.com> <CALTww289ZzZP5TmD5qezaYZV0Mnb90abqMqR=OnAzRz3NkmhQQ@mail.gmail.com>
- <5396ce6f-ba67-4f5e-86dc-3c9aebb6dc20@fnnas.com>
-In-Reply-To: <5396ce6f-ba67-4f5e-86dc-3c9aebb6dc20@fnnas.com>
-From: Xiao Ni <xni@redhat.com>
-Date: Thu, 6 Nov 2025 21:15:20 +0800
-X-Gm-Features: AWmQ_bnRuB74FXKgXzaMZD2Cc5BM10Be30QDd4KNaH4-k9UIl2C0Xd4nmwtnZsY
-Message-ID: <CALTww2_MHcXCOjeOPha0+LHNiu8O_9P4jVYP=K5-ea951omfMw@mail.gmail.com>
-Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
-To: yukuai@fnnas.com
-Cc: Li Nan <linan666@huaweicloud.com>, corbet@lwn.net, song@kernel.org, hare@suse.de, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20251029131235.GA3903@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <20251031162611.2a981fdf@kernel.org> <82bcd959-571e-42ce-b341-cbfa19f9f86d@linux.microsoft.com>
+ <20251105161754.4b9a1363@kernel.org> <bb692420-25f9-4d6e-a68b-dd83c8f4be10@linux.microsoft.com>
+In-Reply-To: <bb692420-25f9-4d6e-a68b-dd83c8f4be10@linux.microsoft.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 6 Nov 2025 05:17:17 -0800
+X-Gm-Features: AWmQ_bkBBaZsd-rIT26BTjS7cW1vwvaDIkKAjz7m89rgLrJMPIY3CSG-aBEvnJU
+Message-ID: <CANn89iJ8QKbwFfLUExJvB1SJCu7rVCw_drD3f=rOU84FNvaPZg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: mana: Handle SKB if TX SGEs exceed
+ hardware limit
+To: Aditya Garg <gargaditya@linux.microsoft.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, kys@microsoft.com, haiyangz@microsoft.com, 
+	wei.liu@kernel.org, decui@microsoft.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, pabeni@redhat.com, longli@microsoft.com, 
+	kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com, 
+	ssengar@linux.microsoft.com, ernis@linux.microsoft.com, 
+	dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com, 
+	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	gargaditya@microsoft.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 6, 2025 at 8:49=E2=80=AFPM Yu Kuai <yukuai@fnnas.com> wrote:
+On Thu, Nov 6, 2025 at 5:01=E2=80=AFAM Aditya Garg
+<gargaditya@linux.microsoft.com> wrote:
 >
-> Hi,
->
-> =E5=9C=A8 2025/11/6 20:35, Xiao Ni =E5=86=99=E9=81=93:
-> > On Thu, Nov 6, 2025 at 11:45=E2=80=AFAM Yu Kuai <yukuai@fnnas.com> wrot=
-e:
-> >> Hi,
+> On 06-11-2025 05:47, Jakub Kicinski wrote:
+> > On Wed, 5 Nov 2025 22:10:23 +0530 Aditya Garg wrote:
+> >>>>            if (err) {
+> >>>>                    (void)skb_dequeue_tail(&txq->pending_skbs);
+> >>>> +          mana_unmap_skb(skb, apc);
+> >>>>                    netdev_warn(ndev, "Failed to post TX OOB: %d\n", =
+err);
+> >>>
+> >>> You have a print right here and in the callee. This condition must
+> >>> (almost) never happen in practice. It's likely fine to just drop
+> >>> the packet.
 > >>
-> >> =E5=9C=A8 2025/11/4 15:17, Xiao Ni =E5=86=99=E9=81=93:
-> >>> On Tue, Nov 4, 2025 at 10:52=E2=80=AFAM Li Nan <linan666@huaweicloud.=
-com> wrote:
-> >>>>
-> >>>> =E5=9C=A8 2025/11/4 9:47, Xiao Ni =E5=86=99=E9=81=93:
-> >>>>> On Mon, Nov 3, 2025 at 9:06=E2=80=AFPM <linan666@huaweicloud.com> w=
-rote:
-> >>>>>> From: Li Nan <linan122@huawei.com>
-> >>>>>>
-> >>>>>> Raid checks if pad3 is zero when loading superblock from disk. Arr=
-ays
-> >>>>>> created with new features may fail to assemble on old kernels as p=
-ad3
-> >>>>>> is used.
-> >>>>>>
-> >>>>>> Add module parameter check_new_feature to bypass this check.
-> >>>>>>
-> >>>>>> Signed-off-by: Li Nan <linan122@huawei.com>
-> >>>>>> ---
-> >>>>>>     drivers/md/md.c | 12 +++++++++---
-> >>>>>>     1 file changed, 9 insertions(+), 3 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> >>>>>> index dffc6a482181..5921fb245bfa 100644
-> >>>>>> --- a/drivers/md/md.c
-> >>>>>> +++ b/drivers/md/md.c
-> >>>>>> @@ -339,6 +339,7 @@ static int start_readonly;
-> >>>>>>      */
-> >>>>>>     static bool create_on_open =3D true;
-> >>>>>>     static bool legacy_async_del_gendisk =3D true;
-> >>>>>> +static bool check_new_feature =3D true;
-> >>>>>>
-> >>>>>>     /*
-> >>>>>>      * We have a system wide 'event count' that is incremented
-> >>>>>> @@ -1850,9 +1851,13 @@ static int super_1_load(struct md_rdev *rde=
-v, struct md_rdev *refdev, int minor_
-> >>>>>>            }
-> >>>>>>            if (sb->pad0 ||
-> >>>>>>                sb->pad3[0] ||
-> >>>>>> -           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof=
-(sb->pad3[1])))
-> >>>>>> -               /* Some padding is non-zero, might be a new featur=
-e */
-> >>>>>> -               return -EINVAL;
-> >>>>>> +           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof=
-(sb->pad3[1]))) {
-> >>>>>> +               pr_warn("Some padding is non-zero on %pg, might be=
- a new feature\n",
-> >>>>>> +                       rdev->bdev);
-> >>>>>> +               if (check_new_feature)
-> >>>>>> +                       return -EINVAL;
-> >>>>>> +               pr_warn("check_new_feature is disabled, data corru=
-ption possible\n");
-> >>>>>> +       }
-> >>>>>>
-> >>>>>>            rdev->preferred_minor =3D 0xffff;
-> >>>>>>            rdev->data_offset =3D le64_to_cpu(sb->data_offset);
-> >>>>>> @@ -10704,6 +10709,7 @@ module_param(start_dirty_degraded, int, S_=
-IRUGO|S_IWUSR);
-> >>>>>>     module_param_call(new_array, add_named_array, NULL, NULL, S_IW=
-USR);
-> >>>>>>     module_param(create_on_open, bool, S_IRUSR|S_IWUSR);
-> >>>>>>     module_param(legacy_async_del_gendisk, bool, 0600);
-> >>>>>> +module_param(check_new_feature, bool, 0600);
-> >>>>>>
-> >>>>>>     MODULE_LICENSE("GPL");
-> >>>>>>     MODULE_DESCRIPTION("MD RAID framework");
-> >>>>>> --
-> >>>>>> 2.39.2
-> >>>>>>
-> >>>>> Hi
-> >>>>>
-> >>>>> Thanks for finding this problem in time. The default of this kernel
-> >>>>> module is true. I don't think people can check new kernel modules
-> >>>>> after updating to a new kernel. They will find the array can't
-> >>>>> assemble and report bugs. You already use pad3, is it good to remov=
+> >> The logs placed in callee doesn't covers all the failure scenarios,
+> >> hence I feel to have this log here with proper status. Maybe I can
+> >> remove the log in the callee?
+> >
+> > I think my point was that since there are logs (per packet!) when the
+> > condition is hit -- if it did in fact hit with any noticeable frequency
+> > your users would have complained. So handling the condition gracefully
+> > and returning BUSY is likely just unnecessary complexity in practice.
+> >
+>
+> In this, we are returning tx_busy when the error reason is -ENOSPC, for
+> all other errors, skb is dropped.
+> Is it okay requeue only for -ENOSPC cases or should we drop the skb?
+
+I would avoid NETDEV_TX_BUSY like the plague.
+Most drivers get it wrong (including mana)
+Documentation/networking/driver.rst
+
+Please drop the packet.
+
+>
+> > The logs themselves I don't care all that much about. Sure, having two
+> > lines for one error is a bit unclean.
+> >
+> >>> Either way -- this should be a separate patch.
+> >>>
+> >> Are you suggesting a separate patch altogether or two patch in the sam=
 e
-> >>>>> the check about pad3 directly here?
-> >>>>>
-> >>>>> By the way, have you run the regression tests?
-> >>>>>
-> >>>>> Regards
-> >>>>> Xiao
-> >>>>>
-> >>>>>
-> >>>>> .
-> >>>> Hi Xiao.
-> >>>>
-> >>>> Thanks for your review.
-> >>>>
-> >>>> Deleting this check directly is risky. For example, in configurable =
-LBS:
-> >>>> if user sets LBS to 4K, the LBS of a RAID array assembled on old ker=
-nel
-> >>>> becomes 512. Forcing use of this array then risks data loss -- the
-> >>>> original issue this feature want to solve.
-> >>> You're right, we can't delete the check.
-> >>> For the old kernel, the array which has specified logical size can't
-> >>> be assembled. This patch still can't fix this problem, because it is
-> >>> an old kernel and this patch is for a new kernel, right?
-> >>> For existing arrays, they don't have such problems. They can be
-> >>> assembled after updating to a new kernel.
-> >>> So, do we need this patch?
-> >> There is a use case for us that user may create the array with old ker=
-nel, and
-> >> then if something bad happened in the system(may not be related to the=
- array),
-> >> user may update to mainline releases and later switch back to our rele=
-ase. We
-> >> want a solution that user can still use the array in this case.
-> > Hi all
+> >> series?
 > >
-> > Let me check if I understand right:
-> > 1. a machine with an old kernel has problems
-> > 2. update to new kernel which has new feature
-> > 3. create an array with new kernel
-> > 4. switch back to the old kernel, so assemble fails because sb->pad3
-> > is used and not zero.
-> >
-> > The old kernel is right to do so. This should be expected, right?
+> > The changes feel related enough to make them a series, but either way
+> > is fine.
 >
-> Not quite what I mean, for example
-> 1. old kernel create an array md0;
-> 2. something bad happened(not related to md0), for example, file system f=
-rom other device crashed, or another array can't assembled;
-> 3. user might update to new kernel and try to copy data, however, md0 wil=
-l be assembled and sb->pad3 will be set;
-> 4. user switch back to old kernel, the md0 assemble failed and can't not =
-be used in old kernel anymore.
-
-In patch05, the commit says this:
-
-Future mdadm should support setting LBS via metadata field during RAID
-creation and the new sysfs. Though the kernel allows runtime LBS changes,
-users should avoid modifying it after creating partitions or filesystems
-to prevent compatibility issues.
-
-So it only can specify logical block size when creating an array. In
-the case you mentioned above, in step3, the array will be assembled in
-new kernel and the sb->pad3 will not be set, right?
-
-Regards
-Xiao
-
+> Regards,
+> Aditya
 >
-> >
-> >>>> Future features may also have similar risks, so instead of deleting =
-this
-> >>>> check directly, I chose to add a module parameter to give users a ch=
-oice.
-> >>>> What do you think?
-> >>> Maybe we can add a feature bit to avoid the kernel parameter. This
-> >>> feature bit can be set when specifying logical block size.
-> >> The situation still stand, for unknown feature bit, we'd better to for=
-bid
-> >> assembling the array to prevent data loss by default.
-> > If I understand correctly, the old kernel already refuses to assemble i=
-t.
->
-> The problem is that if array is created from old kernel, and user still
-> want to use it in the old kernel, then the user can't assemble this array
-> in new kernel. However, this is real use case for us :(
->
-> > Regards
-> > Xiao
-> >
-> >> Thanks,
-> >> Kuai
-> >>
-> >>> Regards
-> >>> Xiao
-> >>>> --
-> >>>> Thanks,
-> >>>> Nan
-> >>>>
->
-
 
