@@ -1,184 +1,224 @@
-Return-Path: <linux-kernel+bounces-889396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABC8C3D73D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:05:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E225C3D740
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D703A4E8089
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:04:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5072D4E7E29
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6206305E14;
-	Thu,  6 Nov 2025 21:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673CA303C91;
+	Thu,  6 Nov 2025 21:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E76R01OU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPCZRZZA"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51FD3043CD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FCC29C351
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762463038; cv=none; b=LNhqPZJuj2vE1BGQLAwFYoZOxbxRI2WxUyMz5ePkMYDOD6fmyDTwGSwXlbkM8DB/zkIxhcqrJjYhTwKJmRYMwsX0AEzIytaQMus2cOmvYXMs+UkN7W8mLB+2BRoHzPCQOJ3ABG7CsOI+bUzvONYaSuPzJIBM17Ygbx9tDrAsUbo=
+	t=1762463149; cv=none; b=re8/7LJfNpZKOYVAYDGils2eZqrTxBFafKGAqr+yOPFaTqX/C9B+vkJEA0UjpqvIvLX/LObPIJ+Go3L8cCl7kgFicBqh9JJZyOAkgagX9MqbeO1axMB7bk1G23eoCl2pJMUgiGJ/KYl3eWojM9rgkqMz/+69hYdBptGLH0PP1HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762463038; c=relaxed/simple;
-	bh=WQdlEZLR91pyM/JJhDRZIhhFahmWBrTK9PMzbl3MwYU=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=NZyEZ1N78IFO3izmNaS4azpu0tm1aVOEe5KI2h9EhJTCx8k5KOWXFGxClHemJws2u7fO69FQilqS8fxa/SHyrSEzjLxeOhVyihADQvVFL2EG05qGW5DGXaBi6HJ3GPtTgcbxlcbjM3pYRnQgloW/bbpmrXgwiChHsP82U1+d2MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E76R01OU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78E53C113D0;
-	Thu,  6 Nov 2025 21:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762463038;
-	bh=WQdlEZLR91pyM/JJhDRZIhhFahmWBrTK9PMzbl3MwYU=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=E76R01OUGuL+5mpBoODiYIyO30KnJH2q0n/cHWwhHpWcadHCSg/1vN7YU/tOKlX5q
-	 VcfJdf3YwO11rTUm7Z2aN2YCXPQY+WLUOxmHHPPYNfOvvxXHvIITMSPGB5sArJvhbi
-	 PodVB/mD1IVAjupEX5VXHto3whMITxomMne/wt3LNcc7q+8sO9y8VYkLTfgX27veTh
-	 rxdwUB3ki2hvNHamTgC+Crl8HJy/PpQ0E1CwtIFylIkVrLCodhAcv9dt37Zh6dDrvM
-	 NVcUaV+AYpmGdtJXQLk6SL+xuA73iiNiSgxXQM+a/inHP/Cbmf1wYAnNTuWYPRC8k8
-	 u+zIht2spX+Aw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1vH79C-000000008EI-0aa5;
-	Thu, 06 Nov 2025 16:03:58 -0500
-Message-ID: <20251106210357.996566505@kernel.org>
-User-Agent: quilt/0.68
-Date: Thu, 06 Nov 2025 16:03:38 -0500
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 7/7] tracing: Use switch statement instead of ifs in set_tracer_flag()
-References: <20251106210331.537317097@kernel.org>
+	s=arc-20240116; t=1762463149; c=relaxed/simple;
+	bh=tFs1YSs6vaG6b04Rbtv82NnFm6uU9OnzMGVU1yUjXcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QUP1eih+YLnlg/8Bq+PjwI11yMM80f5vg21HsKj/lQRn9ujXSIulgRpytlnq9qCxklUoNRPuunWC1ISED3FMFzwrZWMlKYFuFZfAtJgaJpTw3qblv86EjF0vwbbMvRDwyvUvWy1F5d+ONLi0AbF7eJeCbasaiEoS/YtiroeskG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPCZRZZA; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-426f1574a14so36400f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:05:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762463146; x=1763067946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=q413bhrhJwOAVLfpt+EjMm9+VisP6PJcOIixFAEVSFA=;
+        b=YPCZRZZAH4/EHhxzBVoYL8dqlqHrIEdIbXzrf1SMyZA+9TI+EtUx9NGxKuGVa0hHWc
+         ve/ArQxmSbVK7rkPtvbunvnhxYpANpiIWBmAkQ8PfzeuigiRBPNO/s/0ESq5y4/jNdDa
+         R6kV9LbVPk0PbxwtfC3H2imBoMXCkhkVR1m6IMGC5uV2Fq9Z7VQoiN45Gtp+1k/89P8W
+         z/zuKClYt9TOB9WQsh8MgQ1t8CDleS/4gK0khMiLZWwrFRjpv+ktebJPpevhehcOi77z
+         Ar8nx1h5+g9jutddQwkeH6wz8Bih7tRp5jYOy+644E3ET1Q14RSSHBICIodjl2SWPM7O
+         Y2qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762463146; x=1763067946;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q413bhrhJwOAVLfpt+EjMm9+VisP6PJcOIixFAEVSFA=;
+        b=WOwJjPuttJ7KcteB8Fv15oCHscwNiAT1BByPrgvux7skU3nxPHirapB8weWICeYKl5
+         e8atVPDZcSCDqLy2ZbJU5E2WRfVFDVeNe/Gjitav9ScizR0yBxlVOCIjbE0A+YUHDW1Z
+         E9xgtm985IIYqGPCbPmjkr/p3W55Mfl3uYFnXLcbd3sKonQijVjgNcdqy56I8hC+ukTJ
+         PlwJ7ZVvSMkuCxQ/DKTZC2Fte7/ODwxVBn89VXxSErDUKwyVX8G6T8ULeIWUjm7S3r4h
+         jvTgiDlrOksePwOyap0yzlpYqUov70hN+fqSL6QGexJ8cHU0w/eqTe6WTrjpHtW61oNE
+         /cTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXh/40iuK/G7lN5TcJkc0oqpH53B4V6qcvi3Opa9VvzYRjGsvhXcraj2KJI1FgJUjPSur5/lfWpTqOXxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ4GLLv96YFDqTbWG7KTJND+0btOu7M6AA67+HOiuUtcIs8L+T
+	e1VIRSM1FmBPhXeAevBuyoCpH8lHdZcQ1ARuerRXrQizLc+NEQD3QwvJ
+X-Gm-Gg: ASbGncu/boMkwTVpw2fXLBpGRzG9JrLHA41x9Vw3OSgKZwDxhmTavannQ6E3CSnTS9J
+	9MRS3Jh4i1n9cUhfGvvNMjcw4reAK4fZA5Mamp9BZ4aDNm642gkumsiCCaS951Q3F5tVdngRuiP
+	IWoWb+skdd/NFPg3sz+cY/ZScENmfeqh1FMeTMVHln+iMZ67fIHNZH1QWOF1+AWhmT1sZ3b84Hw
+	DHXrZxSc7W6WyJGm8Jkr6IYN/jYiPAJ2I/ad72iCs9NRuQOqn+lFejdU6YGRVWLO2FJrX/p60ve
+	zyQmc2sSR4altoi9Z0zWNYjVpUxnwKxs/wFTG6sw7psHVD0KcMYAGYPlIdTMtkJMYGLgag99j3D
+	Iquz/pO0sInX/nDYlH+sQuuP1mtX5c4WTYjh4t/xxbuO8BDg9dTUFG5WzhLmr1stivcuagfbeWh
+	oP5tXafYvK0XV/1lLrNoiX4q4sxPiIAHZqvICHpM8=
+X-Google-Smtp-Source: AGHT+IEbAWZGXC2i989InvZLZeR310/TSzIZgHH8Ye/jSaLz4FLCazBpkgnlp2Vx7xAT+bFkyoZqJw==
+X-Received: by 2002:a05:6000:430d:b0:429:ca7f:8d73 with SMTP id ffacd0b85a97d-42adce35cbamr566921f8f.26.1762463145942;
+        Thu, 06 Nov 2025 13:05:45 -0800 (PST)
+Received: from [192.168.3.141] (p4ff1feb5.dip0.t-ipconnect.de. [79.241.254.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b1e3sm1217619f8f.4.2025.11.06.13.05.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 13:05:45 -0800 (PST)
+Message-ID: <77a54f63-f5da-42a2-b24d-5c8a0f41d1e6@gmail.com>
+Date: Thu, 6 Nov 2025 22:05:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed
+ text pages
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, "Garg, Shivank" <shivankg@amd.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Vlastimil Babka <vbabka@suse.cz>,
+ Jann Horn <jannh@google.com>, zokeefe@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
+ <8bc796e2-f652-4c12-a347-7b778ae7f899@arm.com>
+ <ozkb6mcxuymlz7tm4vcnqf266gd4ruiik2zal2koo5ffprgxfk@35godtyix2cf>
+ <43a8c8a6-388b-4c73-9a62-ee57dfb9ba5a@lucifer.local>
+From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <43a8c8a6-388b-4c73-9a62-ee57dfb9ba5a@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 06.11.25 18:17, Lorenzo Stoakes wrote:
+> On Thu, Nov 06, 2025 at 11:55:05AM -0500, Liam R. Howlett wrote:
+>> * Ryan Roberts <ryan.roberts@arm.com> [251106 11:33]:
+>>> On 06/11/2025 12:16, Garg, Shivank wrote:
+>>>> Hi All,
+>>>>
+>>>> I've been investigating an issue with madvise(MADV_COLLAPSE) for TEXT pages
+>>>> when CONFIG_READ_ONLY_THP_FOR_FS=y is enabled, and would like to discuss the
+>>>> current behavior and improvements.
+>>>>
+>>>> Problem:
+>>>> When attempting to collapse read-only file-backed TEXT sections into THPs
+>>>> using madvise(MADV_COLLAPSE), the operation fails with EINVAL if the pages
+>>>> are marked dirty.
+>>>> madvise(aligned_start, aligned_size, MADV_COLLAPSE) -> returns -1 and errno = -22
+>>>>
+>>>> Subsequent calls to madvise(MADV_COLLAPSE) succeed because the first madvise
+>>>> attempt triggers filemap_flush() which initiates async writeback of the dirty folios.
+>>>>
+>>>> Root Cause:
+>>>> The failure occurs in mm/khugepaged.c:collapse_file():
+>>>> } else if (folio_test_dirty(folio)) {
+>>>>      /*
+>>>>       * khugepaged only works on read-only fd,
+>>>>       * so this page is dirty because it hasn't
+>>>>       * been flushed since first write. There
+>>>>       * won't be new dirty pages.
+>>>>       *
+>>>>       * Trigger async flush here and hope the
+>>>>       * writeback is done when khugepaged
+>>>>       * revisits this page.
+>>>>       */
+>>>>      xas_unlock_irq(&xas);
+>>>>      filemap_flush(mapping);
+>>>>      result = SCAN_FAIL;
+>>>>      goto xa_unlocked;
+>>>> }
+>>>>
+>>>> Why the text pages are dirty?
+>>>
+>>> This is the real question to to answer, I think...
+>>
+>> Agree with Ryan here, let's stop things from being marked dirty if they
+>> are not.
+> 
+> Hmm I wonder if we have some broken assumptions in khugepaged for MAP_PRIVATE
+> mappings.
+> 
+> collapse_single_pmd()
+> -> collapse_scan_file() if not vma_is_anonymous() (it won't be)
+> -> collapse_file()
+> -> the snippet above.
+> 
+> But that could be running on an anon folio...
+> 
+> Yup given it's CONFIG_READY_ONLY_THP_FOR_FS that is strange. We are confounding
+> expectations here surely?
+> 
+> Presumably it's because these are MAP_PRIVATE mappings, so this is an anon folio
+> but then collapse_file() goes into the snippet above and gets very confused.
+> 
+> Do we need to add a folio_test_anon() here?
+> 
+> Unless I'm missing something... (very possible, am only glancing over the code
+> here)
 
-The "mask" passed in to set_trace_flag() has a single bit set. The
-function then checks if the mask is equal to one of the option masks and
-performs the appropriate function associated to that option.
+collapse_file() operates exclusively on the pagecache.
 
-Instead of having a bunch of "if ()" statement, use a "switch ()"
-statement instead to make it cleaner and a bit more optimal.
+I think we only start working on the actual page tables when calling
+retract_page_tables().
 
-No function changes.
+In there, we have this code, when iterating over page tables belonging
+to the mapping:
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://patch.msgid.link/20251106003501.890298562@kernel.org
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 38 +++++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+		/*
+		 * The lock of new_folio is still held, we will be blocked in
+		 * the page fault path, which prevents the pte entries from
+		 * being set again. So even though the old empty PTE page may be
+		 * concurrently freed and a new PTE page is filled into the pmd
+		 * entry, it is still empty and can be removed.
+		 *
+		 * So here we only need to recheck if the state of pmd entry
+		 * still meets our requirements, rather than checking pmd_same()
+		 * like elsewhere.
+		 */
+		if (check_pmd_state(pmd) != SCAN_SUCCEED)
+			goto drop_pml;
+		ptl = pte_lockptr(mm, pmd);
+		if (ptl != pml)
+			spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 88234b541b09..0aea9cb84276 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5220,11 +5220,13 @@ int trace_keep_overwrite(struct tracer *tracer, u64 mask, int set)
- 
- int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- {
--	if ((mask == TRACE_ITER(RECORD_TGID)) ||
--	    (mask == TRACE_ITER(RECORD_CMD)) ||
--	    (mask == TRACE_ITER(TRACE_PRINTK)) ||
--	    (mask == TRACE_ITER(COPY_MARKER)))
-+	switch (mask) {
-+	case TRACE_ITER(RECORD_TGID):
-+	case TRACE_ITER(RECORD_CMD):
-+	case TRACE_ITER(TRACE_PRINTK):
-+	case TRACE_ITER(COPY_MARKER):
- 		lockdep_assert_held(&event_mutex);
-+	}
- 
- 	/* do nothing if flag is already set */
- 	if (!!(tr->trace_flags & mask) == !!enabled)
-@@ -5235,7 +5237,8 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 		if (tr->current_trace->flag_changed(tr, mask, !!enabled))
- 			return -EINVAL;
- 
--	if (mask == TRACE_ITER(TRACE_PRINTK)) {
-+	switch (mask) {
-+	case TRACE_ITER(TRACE_PRINTK):
- 		if (enabled) {
- 			update_printk_trace(tr);
- 		} else {
-@@ -5252,9 +5255,9 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 			if (printk_trace == tr)
- 				update_printk_trace(&global_trace);
- 		}
--	}
-+		break;
- 
--	if (mask == TRACE_ITER(COPY_MARKER)) {
-+	case TRACE_ITER(COPY_MARKER):
- 		update_marker_trace(tr, enabled);
- 		/* update_marker_trace updates the tr->trace_flags */
- 		return 0;
-@@ -5265,10 +5268,12 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 	else
- 		tr->trace_flags &= ~mask;
- 
--	if (mask == TRACE_ITER(RECORD_CMD))
-+	switch (mask) {
-+	case TRACE_ITER(RECORD_CMD):
- 		trace_event_enable_cmd_record(enabled);
-+		break;
- 
--	if (mask == TRACE_ITER(RECORD_TGID)) {
-+	case TRACE_ITER(RECORD_TGID):
- 
- 		if (trace_alloc_tgid_map() < 0) {
- 			tr->trace_flags &= ~TRACE_ITER(RECORD_TGID);
-@@ -5276,24 +5281,27 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 		}
- 
- 		trace_event_enable_tgid_record(enabled);
--	}
-+		break;
- 
--	if (mask == TRACE_ITER(EVENT_FORK))
-+	case TRACE_ITER(EVENT_FORK):
- 		trace_event_follow_fork(tr, enabled);
-+		break;
- 
--	if (mask == TRACE_ITER(FUNC_FORK))
-+	case TRACE_ITER(FUNC_FORK):
- 		ftrace_pid_follow_fork(tr, enabled);
-+		break;
- 
--	if (mask == TRACE_ITER(OVERWRITE)) {
-+	case TRACE_ITER(OVERWRITE):
- 		ring_buffer_change_overwrite(tr->array_buffer.buffer, enabled);
- #ifdef CONFIG_TRACER_MAX_TRACE
- 		ring_buffer_change_overwrite(tr->max_buffer.buffer, enabled);
- #endif
--	}
-+		break;
- 
--	if (mask == TRACE_ITER(PRINTK)) {
-+	case TRACE_ITER(PRINTK):
- 		trace_printk_start_stop_comm(enabled);
- 		trace_printk_control(enabled);
-+		break;
- 	}
- 
- 	return 0;
--- 
-2.51.0
+		/*
+		 * Huge page lock is still held, so normally the page table
+		 * must remain empty; and we have already skipped anon_vma
+		 * and userfaultfd_wp() vmas.  But since the mmap_lock is not
+		 * held, it is still possible for a racing userfaultfd_ioctl()
+		 * to have inserted ptes or markers.  Now that we hold ptlock,
+		 * repeating the anon_vma check protects from one category,
+		 * and repeating the userfaultfd_wp() check from another.
+		 */
+		if (likely(!vma->anon_vma && !userfaultfd_wp(vma))) {
+			pgt_pmd = pmdp_collapse_flush(vma, addr, pmd);
+			pmdp_get_lockless_sync();
+			success = true;
+		}
+
+Given !vma->anon_vma, we cannot have anon folios in there.
+
+Given !userfaultfd_wp(vma), we cannot have uffd-wp markers in there.
+
+Given that all folios in the range we are collapsing where unmapped, we cannot have
+them mapped there.
+
+So the conclusion is that the page table must be empty and can be removed.
 
 
+Could guard markers be in there?
 
