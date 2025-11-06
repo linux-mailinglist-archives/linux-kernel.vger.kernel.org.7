@@ -1,249 +1,250 @@
-Return-Path: <linux-kernel+bounces-888941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F87C3C4AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:13:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD44C3C596
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1D2F189DF23
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2377621CA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA59634D914;
-	Thu,  6 Nov 2025 16:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180EC34DB71;
+	Thu,  6 Nov 2025 16:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nNorho7L"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010022.outbound.protection.outlook.com [52.101.69.22])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lJxWjUIS"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11F434DCE1;
-	Thu,  6 Nov 2025 16:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445449; cv=fail; b=ibWEphpIfPYRKxEtTJVUUDcJx4kYfPpp/6AWdX7Y0ZrGVFlZJDrG8HgJZv7vAZ+cVK4eVYBVYXk/crkItBX6so+x4EdEDCe+nPPBDQSjKkXhEERbTCBkAI9Jmfh7csRX35Ch7tXfW9p2Ldu5LYQunnAKIOp6R1FWkmHmIIUekjM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445449; c=relaxed/simple;
-	bh=s7f/DC2ok1H25tyyA0bT/tk3mGL/MbXpAw2hTI4BFwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sODbWBgGlfKnqhbUP3cCzgV/U0NiNgGtIHagQcz/4puvhCHhdPjflnVeH89hcVS46buIllpsZ+6GU6v2+70w14zqG1sXD8aSkDqsWB+O37Fkijxw14bhg88bw74Y7mwcN62/t+8IfIdY+QTcsYJK2WktqL5BkFZ9NJ+N4/ZKhik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nNorho7L; arc=fail smtp.client-ip=52.101.69.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mi6Z0F+xABx2cjHr32tDMoNXT0WGlAyf5sxl5ZVMwJUC5pcRs/Vy4ihqhokPpfE3ZkTcy89v5d6m0/2HZUczm77XZfk7mC9QZ3PacOUeEg8k/mKB/TwDq02lP60t5hwD0upW7w52BgD9wg/bJtuenprTIzP7RE+lWj4hYRxCOocbs53qNWW6Ul6/OJOMOc4mNy5xjbNHVbodBKA/PRoOnpxQj68ojaG+VuJscLaVSOMQGspvbGBAcmPp/ibvY9m0krCWLS6uZDsnMLbCBuDFBxt1pQl8ATX+rfi6pihk1+aNq1wxm/UgZTDGxDjI/Gnblt30E8wgBtnywjAaMHelKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HRQsXifAT2jLWuA0KnRaCBqnLCJV8ruoD9qRC600qvo=;
- b=PCaqCISb03B0zsnl2VouYdVMpZlZhP98PvctCGFb7P8g7gtEkf5jm7rqWz6YaPjvonnbahwbrDJv6KwGWU9AbvlzhdnxHwBvIFXnjYoRJ+H+FTOmF88RdG1avVmttC6YHC0yDy2SGO5bf+Yvud0TlYNo5KuMUo5ZtZ4FLNEikSKU5WFWZMQ23/Iz9snIh60SXO/6HnwUYGYSyo/2v1YkY2MDn3Pb155c4Vj2Ev6M+bEpEZXJ3mOPmKwRRcm0eVSpZ8Tzea1fno0b5dwQxx7o7/oQaz/3wp3A/SXTlf0j233XzU9OMiMUP6xzL8sVOdtPJFtF3jouUsDL7px6BgsnCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HRQsXifAT2jLWuA0KnRaCBqnLCJV8ruoD9qRC600qvo=;
- b=nNorho7L/Oj/sn59E7HisOb2eIpBOwU2VBYuiffzN3xty3cz1JZSy9nInLCBs3lr//CLKbPyU6lXRmdiAh8tvQLmUvQkSHYg6I5Ks55wbNi55fq/UgK7FunechJ3mOYbwBNOqJrBCKf0+FLa+NyHrhweAq4B3yveGOwmWZ/VY/y0Di3jBAbFwT/qfxTfqDY8lAz9zufEGvDGqLgL+moVmmUo60GNmN2Wk3RWxY7SzRJi7LARyb69b3hc5GgeAG+4B7XEoRQrJcggwJWqHR9J8C9Iyu5yAWu49VI1KBSu9ayLjVTtyQP89a3Gk1yJjpL0gpl8jhY43VMNj9PbjMrWug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by GV2PR04MB11304.eurprd04.prod.outlook.com (2603:10a6:150:2a8::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
- 2025 16:10:43 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 16:10:43 +0000
-Date: Thu, 6 Nov 2025 11:10:34 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/11] remoteproc: imx_dsp_rproc: Use
- start/stop/detect_mode ops from imx_rproc_dcfg
-Message-ID: <aQzIeh1bb+LieDzl@lizhi-Precision-Tower-5810>
-References: <20251106-imx-dsp-2025-11-06-v1-0-46028bc3459a@nxp.com>
- <20251106-imx-dsp-2025-11-06-v1-6-46028bc3459a@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106-imx-dsp-2025-11-06-v1-6-46028bc3459a@nxp.com>
-X-ClientProxiedBy: PH1PEPF0001330C.namprd07.prod.outlook.com
- (2603:10b6:518:1::1b) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAF734CFA0;
+	Thu,  6 Nov 2025 16:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762445487; cv=none; b=fe62FqEuxEZ7Hp3/MCO94CBueV54XYOvWZkzZcSoTUtElC8ysog6DvCWl83Bk/Mc6/prJIlIc51X8DfpXDROsxaVcy4Klz4FFPdoQl0itmwFPFeUHC/xyLIclSmRlkNjWWnG5ncW+0D+CBnu4/nQBYC6EQDH5GG6Ry0R42joVUY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762445487; c=relaxed/simple;
+	bh=XH4+lwyFACHHtvind3oO7V+qFasFasS+jBGUmEuxkjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ex+ffBHrxTUOu/b1cBmpFL9VHlo77nxsKLRCcSuC9s1AIdfNGkWhz1sIxuiayKPD5DK1mIXBJOVnNhWDwXjNWaDSX0y1LL5XeMdupTKxkbKhEXDq3dYL5ZsjFQnQMD7mUjxGNmEb7yYiwdAm9rmvlfS+I6c29swZCZJwV5iP8xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lJxWjUIS; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6EdmAQ026450;
+	Thu, 6 Nov 2025 16:11:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=Q2UksBgU4B1EFbaighN3qMLZUxtLWsrE6SLEVvNVy
+	c0=; b=lJxWjUISW8aVA5jS/ymmv3DvPCAYofdm2w0OLeSLPfteS3BJFXAVTtEC1
+	tcI6Cqx2PQA5knP5Ee0O6HbRnfRS4JzgJHS8SGqeWifjPF3KZOBdhiXlR03Jvyvu
+	2I0g6FAra8p8Eiz3F4PZFb2kbp3KD+wyYIP2JsPrhdVGjPbfYMP1klWmiDBWrmUB
+	cNPfITRItvHvBKFijuKwDn7pJuuWx3JKVu2neeaj33DFLUN300Dbeqqhgt3AYt9C
+	CVVi1TXWExB8CBoMumAuLjyz8G7MBIbVx04G5dQ0kz4EQgI2BDO/2j/SU8G7Xmf+
+	Vjcu9bA0PiuRhXB8/+7c8k3kvfXmw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q9876c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 16:11:23 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6FSEuY009863;
+	Thu, 6 Nov 2025 16:11:22 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5x1kp933-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 16:11:21 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A6GBIdu16384402
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Nov 2025 16:11:18 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F38BA20043;
+	Thu,  6 Nov 2025 16:11:17 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8BE9320040;
+	Thu,  6 Nov 2025 16:11:17 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.155.209.42])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  6 Nov 2025 16:11:17 +0000 (GMT)
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        borntraeger@de.ibm.com, frankja@linux.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, seiden@linux.ibm.com, schlameuss@linux.ibm.com,
+        hca@linux.ibm.com, svens@linux.ibm.com, agordeev@linux.ibm.com,
+        gor@linux.ibm.com, david@redhat.com, gerald.schaefer@linux.ibm.com
+Subject: [PATCH v3 00/23] KVM: s390: gmap rewrite, the real deal
+Date: Thu,  6 Nov 2025 17:10:54 +0100
+Message-ID: <20251106161117.350395-1-imbrenda@linux.ibm.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GV2PR04MB11304:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4dc1456-95fd-4276-81d7-08de1d4f09b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|19092799006|1800799024|366016|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?u/NiiOtgQcxrr5EPRgWfRuc2UJi6eEgqUtCcaDGvde6C0FABFEySRb7EEO6w?=
- =?us-ascii?Q?QewYVvlE8o/MIZv6GGu3X3I+nQzXi+a+GnwIoh0/5zPeCxgBztlTOk2TehT9?=
- =?us-ascii?Q?n5rciJ7p/ToITZtzak/Bv4tVc+Nr1a20xe6CUp8O8JMP6KTASIO4HuiNMivy?=
- =?us-ascii?Q?fviH7ae9D8Kw/B1zxa1fN+DBANGQunRYyZQAUcnCi+KnQ7RQCYH3yFIz2YJy?=
- =?us-ascii?Q?i7Jv2+SzW0Mr0p+QYA+tta6GXI49F2WmKT1k/FQt31Qg4ZukNkc/qzpgxi5i?=
- =?us-ascii?Q?b2Wv4L6MwVnHkVwMUEsbV/h86MWjRoq3KlB70K4rrgd/4MvEF0xEXBOM5vdl?=
- =?us-ascii?Q?BsRtNYDJp+2NXbvTjQSeLGQMJTywbgrPZKu2ePd8i82BtekXv7k9ruOuhOgS?=
- =?us-ascii?Q?0n1IaDGRXknFz+fcZtIfNdwQh8SWY4lIYpdBaFa5fK2knCe2AnbTdw0FkR5a?=
- =?us-ascii?Q?+/w0JubXbjnS4C6EETcNKl1WMMmZ2coV86UOCBglWRcGyoQEz8yLpHujpUea?=
- =?us-ascii?Q?HOyX6Qe86Oy797cjYadjXUc8bZfvSrTmWcn4HzW8I/x1e34mfTcZ3wmS1xBs?=
- =?us-ascii?Q?0KiUJwBfb+bB4h0DYeXI0cU/YdKdtAP0K2+ERq+HtAJqw99R6oLlzJdHxUNF?=
- =?us-ascii?Q?x3z60bXtCg/P+aQq43j1uVCmOmE/1ZNAiqwrKjjgkDvEeFjncNNypnuVTav7?=
- =?us-ascii?Q?KHqOR2SdrspJtqPvU6QfqLT8FeQmuhrULSTceNVP0YuI81jgRHh2WTSBuuXV?=
- =?us-ascii?Q?vxhBlIDQRK6a2C7lJcyE0MWnfHvBk86aDBOnIt/2oP+slipptGtI5ug/3U8k?=
- =?us-ascii?Q?wm2QDfApu9Bfn3DaohkUgffHnZin5CzpVDO5XXaKJXywbXw7H2wLr5CrkFkA?=
- =?us-ascii?Q?ub8u6TLZTy6mU9QgMXRdgXugVUdCPZoPglrJj1JWbhCtUG1ppK/gDdul1ihG?=
- =?us-ascii?Q?E/DjJ0FBrguSfcUqw+/vq1Shu3wgzOMgQ0XlooGsu4QpIcx/2T0rHiFH0T9l?=
- =?us-ascii?Q?uW3zPDiczc8/UjJ5ti6QcZzQAA2YroYOmIz5RwUhCL0qfxIjGdb+u0eUX8tc?=
- =?us-ascii?Q?RfkF3j7ATi85kHZ7r3uHR3iF34rXzhOHOStI8602cGbfe8KSPlPEdCIZ32FE?=
- =?us-ascii?Q?llVaYnUyWjiWzIsS6TJijX4ZtbhvbH07Er3ICZcA0+0w8DCaL0mn+WcJ/0Sm?=
- =?us-ascii?Q?AXPAbCxCZAQx5B0dzBlvkldaFuftDa05w1vzxg2XA0KpBlPl02hF9VJ1dkZ9?=
- =?us-ascii?Q?9zNQNj6dBP1MYAQiQ0jH+SvNliELYD6aIY5HAeS3lbng2m8668b7RnjUn27Q?=
- =?us-ascii?Q?t76las/7KQoMwQ0ViMhIxSNe4TmKwZyqtS4fOd4+OnChSHG627Ha+AtNyPzu?=
- =?us-ascii?Q?vMLyHiyP4FqeI6tCtbI1HcQrSlJnVvvGIaZLyqJD1PcoEvJLVCv2aY5cpflC?=
- =?us-ascii?Q?fCcVytKEenDEsy541acVlLj/ufjRsGA0G0NDqqCP1MCi6LiJeK+VTMfV7rNz?=
- =?us-ascii?Q?bw5HOTAduCM2P9TRo9bMLsIOuMF5uCz0Sd2S?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(19092799006)(1800799024)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QLP2BkUmob8hDnrFmfLEM/4a3lJ5uBatq+1RX1sXUFsLVGlNxWLhoj3ueCRQ?=
- =?us-ascii?Q?zl/yGQ/sIkWrxxkKpt8bB3IGksdx3OkoQOxwlUqCF7jdF0tmbKm8n/W4xSQT?=
- =?us-ascii?Q?olQ1hW2oRp8F3MjArw1UieUi2jW+nHq1dYqIaOo0qKdPsmhZiDoRV0R4cAq2?=
- =?us-ascii?Q?+G1g1Pa5+oJmgX+pIBDlwfiEHTIDSXmkUPbWjqUNXUB/3scaZo/knK6TC1AU?=
- =?us-ascii?Q?4tlA30h3QraUfyn/qlTlnm1Fmj6qzQOu1Um3zf4Va/UjDJvqexB3l6UgqdQJ?=
- =?us-ascii?Q?jx8i3jRCapypdsoSCguyACPYhwD0U9LQzSlUx6oxR6QLR3FYu9JafwLmyqyb?=
- =?us-ascii?Q?pZA0XkGH7Z9kl5XyjOIoCbgmtv5m9ImfHEejUKaxhXNR4lvxkFYub+vYlyhQ?=
- =?us-ascii?Q?MjpO8Q9jxzUYPO7KveeXSPpxiZ8D/E04JAa2e50Spf/w9KlDYYNulkAnk/AC?=
- =?us-ascii?Q?Gp+BJPNyibzUOqSF9tCcu8CBaAswfYphuuoZURCLEby68RwG89TQ0rSqqHwy?=
- =?us-ascii?Q?j0EiIkjAauIIs81lVbnvBUhA/BVq+hP+ZyGMo+sE8FDTDCKNJmjGQ8nYFjbt?=
- =?us-ascii?Q?+QRUJcsTd6CIwpl8FJZO7rdmwUt8lHhWvfuJtBtE0VnhqigtEfGThVyrfzep?=
- =?us-ascii?Q?wqDnP2npV3MYycdBeO5zMhxb4xOdb0nQnlQp1u5zAdS1QUr10ae4CI3qkbwt?=
- =?us-ascii?Q?iTCWTaGCyGUFfi6g44Ffoi4yiBG4rxSfvcWJy6i2pKMDGEQ12GZsr/Gl3NP7?=
- =?us-ascii?Q?F3lFDvlW2NQpnDGsal1Z74sIzVLnFixGgyOUKvOobULHBKUsSkrr61ZdkKEI?=
- =?us-ascii?Q?jBRhs0bB87kyw472R9sJrf9r1wN0KZYOdbq8a4eswP1Wr0gQNFxbpITyUr/L?=
- =?us-ascii?Q?T9dhkRwcf+aMZ3edXOKNVVW9gEE1fptgBB1G2fsET//4dO+HV0Agqb1JKIsN?=
- =?us-ascii?Q?giUxN7bCISspNZ3BJiso2kVP4R6XywCBbySXZ50em0ozDgauiOdQDvX6aikL?=
- =?us-ascii?Q?DYeYiQtpIzOD2iiri5f25hWjPbkLx0PvepqIMlE8CagFpYTNEOQEyTLZlcAh?=
- =?us-ascii?Q?VgSxwYsFxisvspZeJ1bw7EE2waSyHItmXvTRdg8ifrBIVXWpRNW33KrTFbtq?=
- =?us-ascii?Q?H9F8UHLhOFzsetn2rvilFJErqkslgBMWsdoU8Tfumn8JgajcQJVL9NzUJOGN?=
- =?us-ascii?Q?EEo83iQQtit7SJUumGbLhmwxfVbk4ckkStHj3URKsNQlCeYo5SvVgH7QsaIE?=
- =?us-ascii?Q?D/cvYu/FEmEbzyc/MMHPk7kVqHG4pU9+wwXgfnWXZkX8T93CIg7PINa0ox6N?=
- =?us-ascii?Q?PdNxe8h8BnL02SenP5M5uuZXUCsx5wqF+BXbxmjio7tKMkE8mUhkTPbFBqUH?=
- =?us-ascii?Q?Avo3iTqyIIzPVPlaHVgmLnjM/kTonaLa4rZJXknON/ozJnrzBnV4P6oVuhEz?=
- =?us-ascii?Q?lZwvtoPRj8nuifg97FxbERl8ckH4hT0i/KOgaUmiQRpDf+A+OeG8QCmRjCCb?=
- =?us-ascii?Q?IIBUphoT9cKCIzGW3zuNQFVpWhDVW1dTkBD4birGhOkGxqcjg3H9+Ex6W/pb?=
- =?us-ascii?Q?P0v5N3iiZh9sb+jiu98=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4dc1456-95fd-4276-81d7-08de1d4f09b6
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 16:10:43.7316
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B2B0Jhs7cSCg7vvK/kPnbZ+jUOReGMdQtfv+cJEUfy9jxm5eWtWW3L1FCq1t31a0pw2M8WvrgJLTgXSvHZUJUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11304
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=StmdKfO0 c=1 sm=1 tr=0 ts=690cc8ab cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KiohzL8Nbn7Py9lwjSIA:9
+X-Proofpoint-ORIG-GUID: bOJ5VDC4VVzbOXZPI-c9m6nlY5xlhPUq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAxOCBTYWx0ZWRfX32h5ryJwgnDN
+ 5fzQvVwI9BxVe0tOK5hPWHbPtGo077DzrXE2E2XXrDm5jyisRyTu97LX6+MSem9p0RHBWHYtDEV
+ vnSCCweopSKua7rk079uiPORSGK7CvSa7kxqSoo4fOWoOd0AZ8uMIxb/XdDw/pK4y9wCIlblZwM
+ aj+7cmyNtImResk145Nmy/4Az+Ssjk4XJZOCSC6J4BDaEfVn514a+/K3tz10eVePa9rJ29vKOcM
+ BWnSfqZvDte+cJN4SzcJ+3nO5mu0pGcqaNE87tvMEtIumdDosQMCIVBMrqSO04ducbw37gv7vJ4
+ Tb4z/HS3HYBF9qFcqFXb0xbVgJQTKx9RMythu0F02GK+iuPHkG7/rMA/tlYdBQ0wlrs0UklmIss
+ CzK+6dMkOEAamFQuZzIQ3i4RwKSncA==
+X-Proofpoint-GUID: bOJ5VDC4VVzbOXZPI-c9m6nlY5xlhPUq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 phishscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010018
 
-On Thu, Nov 06, 2025 at 11:30:32AM +0800, Peng Fan wrote:
-> Allow each platform to provide its own implementation of start/stop/
-> detect_mode operations, and prepare to eliminate the need for multiple
-> switch-case statements.
->
-> Improve code readability and maintainability by encapsulating
-> platform-specific behavior.
->
-> No functional changes.
->
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+This series is the last big series of the gmap rewrite. It introduces
+the new code and actually uses it. The old code is then removed.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 1726aaa1eafb9ac1a913e3e2caea73801b86dc09..833b1bd4019614157f0bedf09bd348caab802eef 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -404,6 +404,11 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  	struct device *dev = rproc->dev.parent;
->  	int ret;
->
-> +	if (dcfg->ops && dcfg->ops->start) {
-> +		ret = dcfg->ops->start(rproc);
-> +		goto start_ret;
-> +	}
-> +
->  	switch (dcfg->method) {
->  	case IMX_RPROC_MMIO:
->  		ret = regmap_update_bits(priv->regmap,
-> @@ -424,6 +429,7 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  		return -EOPNOTSUPP;
->  	}
->
-> +start_ret:
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
->  	else if (priv->flags & WAIT_FW_READY)
-> @@ -449,6 +455,11 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  		return 0;
->  	}
->
-> +	if (dcfg->ops && dcfg->ops->stop) {
-> +		ret = dcfg->ops->stop(rproc);
-> +		goto stop_ret;
-> +	}
-> +
->  	switch (dcfg->method) {
->  	case IMX_RPROC_MMIO:
->  		ret = regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask,
-> @@ -467,6 +478,7 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  		return -EOPNOTSUPP;
->  	}
->
-> +stop_ret:
->  	if (ret)
->  		dev_err(dev, "Failed to stop remote core\n");
->  	else
-> @@ -1085,10 +1097,14 @@ static int imx_dsp_attach_pm_domains(struct imx_dsp_rproc *priv)
->  static int imx_dsp_rproc_detect_mode(struct imx_dsp_rproc *priv)
->  {
->  	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
-> +	const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
->  	struct device *dev = priv->rproc->dev.parent;
->  	struct regmap *regmap;
->  	int ret = 0;
->
-> +	if (dcfg->ops && dcfg->ops->detect_mode)
-> +		return dcfg->ops->detect_mode(priv->rproc);
-> +
->  	switch (dsp_dcfg->dcfg->method) {
->  	case IMX_RPROC_SCU_API:
->  		ret = imx_scu_get_handle(&priv->ipc_handle);
->
-> --
-> 2.37.1
->
+The insertions/deletions balance is negative both for this series, and
+for the whole rewrite, also considering all the preparatory patches.
+
+KVM on s390 will now use the mmu_notifier, like most other
+architectures. The gmap address space is now completely separate from
+userspace; no level of the page tables is shared between guest mapping
+and userspace.
+
+One of the biggest advantages is that the page size of userspace is
+completely independent of the page size used by the guest. Userspace
+can mix normal pages, THPs, hugetlbfs, and more.
+
+Patches 1 to 6 are mostly preparations; introducing some new bits and
+functions, and moving code around.
+
+Patch 7 to 16 is the meat of the new gmap code; page table management
+functions and gmap management. This is the code that will be used to
+manage guest memory.
+
+Patch 18 is unfortunately big; the existing code is converted to use
+the new gmap and all references to the old gmap are removed. This needs
+to be done all at once, unfortunately, hence the size of the patch.
+
+Patch 19 and 20 remove all the now unused code.
+
+Patch 21 and 22 allow for 1M pages to be used to back guests, and add
+some more functions that are useful for testing.
+
+Patch 23 fixes storage key manipulation functions, which would
+otherwise be broken by the new code.
+
+
+v2->v3:
+* Add lots of small comments and cosmetic fixes
+* Rename some functions to improve clarity
+* Remove unused helper functions and macros
+* Rename inline asm constraints labels to make them more understandable
+* Refactor the code to pre-allocate the page tables (using custom
+  caches) when sleeping is allowed, use the cached pages when holding
+  spinlocks and handle gracefully allocation failures (i.e. retry
+  instead of killing the guest)
+* Refactor the code for fault handling; it's now in a separate file,
+  and it takes a callback that can be optionally called when all the
+  relevant locks are still held
+* Use assembler mnemonics instead of manually specifying the opcode
+  where appropriate
+* Remove the LEVEL_* enum, and use TABLE_TYPE_* macros instead;
+  introduce new TABLE_TYPE_PAGE_TABLE
+* Remove usage of cpu_has_idte() since it is being removed from the
+  kernel
+* Improve storage key handling and PGSTE locking
+* Introduce struct guest_fault to represent the state of a guest fault
+  that is being resolved
+* Minor CMMA fixes
+
+
+Claudio Imbrenda (23):
+  KVM: s390: Refactor pgste lock and unlock functions
+  KVM: s390: add P bit in table entry bitfields, move union vaddress
+  s390: Move sske_frame() to a header
+  KVM: s390: Add gmap_helper_set_unused()
+  KVM: s390: Enable KVM_GENERIC_MMU_NOTIFIER
+  KVM: s390: Rename some functions in gaccess.c
+  KVM: s390: KVM-specific bitfields and helper functions
+  KVM: s390: KVM page table management functions: allocation
+  KVM: s390: KVM page table management functions: clear and replace
+  KVM: s390: KVM page table management functions: walks
+  KVM: s390: KVM page table management functions: storage keys
+  KVM: s390: KVM page table management functions: lifecycle management
+  KVM: s390: KVM page table management functions: CMMA
+  KVM: s390: New gmap code
+  KVM: s390: Add helper functions for fault handling
+  KVM: s390: Add some helper functions needed for vSIE
+  KVM: s390: Stop using CONFIG_PGSTE
+  KVM: s390: Switch to new gmap
+  KVM: s390: Remove gmap from s390/mm
+  KVM: S390: Remove PGSTE code from linux/s390 mm
+  KVM: s390: Enable 1M pages for gmap
+  KVM: s390: Storage key manipulation IOCTL
+  KVM: s390: Fix storage key memop IOCTLs
+
+ MAINTAINERS                          |    2 -
+ arch/s390/Kconfig                    |    3 -
+ arch/s390/include/asm/dat-bits.h     |   32 +-
+ arch/s390/include/asm/gmap.h         |  174 --
+ arch/s390/include/asm/gmap_helpers.h |    1 +
+ arch/s390/include/asm/kvm_host.h     |    5 +
+ arch/s390/include/asm/mmu.h          |   13 -
+ arch/s390/include/asm/mmu_context.h  |    6 +-
+ arch/s390/include/asm/page.h         |    4 -
+ arch/s390/include/asm/pgalloc.h      |    4 -
+ arch/s390/include/asm/pgtable.h      |  163 +-
+ arch/s390/include/asm/tlb.h          |    3 -
+ arch/s390/include/asm/uaccess.h      |   70 +-
+ arch/s390/kvm/Kconfig                |    3 +-
+ arch/s390/kvm/Makefile               |    3 +-
+ arch/s390/kvm/dat.c                  | 1362 ++++++++++++++
+ arch/s390/kvm/dat.h                  |  971 ++++++++++
+ arch/s390/kvm/diag.c                 |    2 +-
+ arch/s390/kvm/faultin.c              |  148 ++
+ arch/s390/kvm/faultin.h              |   92 +
+ arch/s390/kvm/gaccess.c              |  929 +++++-----
+ arch/s390/kvm/gaccess.h              |   20 +-
+ arch/s390/kvm/gmap-vsie.c            |  141 --
+ arch/s390/kvm/gmap.c                 | 1125 ++++++++++++
+ arch/s390/kvm/gmap.h                 |  159 ++
+ arch/s390/kvm/intercept.c            |   15 +-
+ arch/s390/kvm/interrupt.c            |    2 +-
+ arch/s390/kvm/kvm-s390.c             |  926 ++++------
+ arch/s390/kvm/kvm-s390.h             |   28 +-
+ arch/s390/kvm/priv.c                 |  207 +--
+ arch/s390/kvm/pv.c                   |   67 +-
+ arch/s390/kvm/vsie.c                 |  117 +-
+ arch/s390/lib/uaccess.c              |  184 +-
+ arch/s390/mm/Makefile                |    1 -
+ arch/s390/mm/fault.c                 |    4 +-
+ arch/s390/mm/gmap.c                  | 2453 --------------------------
+ arch/s390/mm/gmap_helpers.c          |   87 +-
+ arch/s390/mm/hugetlbpage.c           |   24 -
+ arch/s390/mm/page-states.c           |    1 +
+ arch/s390/mm/pageattr.c              |    7 -
+ arch/s390/mm/pgalloc.c               |   24 -
+ arch/s390/mm/pgtable.c               |  818 +--------
+ include/uapi/linux/kvm.h             |   10 +
+ mm/khugepaged.c                      |    9 -
+ 44 files changed, 5116 insertions(+), 5303 deletions(-)
+ delete mode 100644 arch/s390/include/asm/gmap.h
+ create mode 100644 arch/s390/kvm/dat.c
+ create mode 100644 arch/s390/kvm/dat.h
+ create mode 100644 arch/s390/kvm/faultin.c
+ create mode 100644 arch/s390/kvm/faultin.h
+ delete mode 100644 arch/s390/kvm/gmap-vsie.c
+ create mode 100644 arch/s390/kvm/gmap.c
+ create mode 100644 arch/s390/kvm/gmap.h
+ delete mode 100644 arch/s390/mm/gmap.c
+
+-- 
+2.51.1
+
 
