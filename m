@@ -1,229 +1,127 @@
-Return-Path: <linux-kernel+bounces-889094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959CCC3CB5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:07:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D1DC3CBC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E6804FED11
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34190567260
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A35145B3E;
-	Thu,  6 Nov 2025 17:02:42 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7E82E7F3A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A4233F8A2;
+	Thu,  6 Nov 2025 17:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gdxv0LZR"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7F6145B3E;
+	Thu,  6 Nov 2025 17:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448561; cv=none; b=ob7KvjDp+I8qexPITdjOQr7j5K1CRtW/JcrvUSHLhO4RSzEHt+XjuS8JbDNPN0R3vEWQa4bVvl4HV1YUv6Zz5Qu8wKrJS1mXU+w47iaAaOyCn7NN5sWtsBPRtlo2LfygzVNGR/pqguUHackJ7in7w1b0uuWT+uSw7cqU9RhQVK4=
+	t=1762448598; cv=none; b=VcCazA/FvrpRlz1rmtr8UkKLA2p7saMfwsxbQBztekIoyXILtxcpokxgvXhNbe0lXZiIuUbe+T1OgQSas5mUxIM3gY7ZA11QN/aifySfw9ajcZ1A/RCNKFycEuomTANiEVUnDTgI8PojoXZMM+YXEcIxJh2n7X/Fux7EWkfwM5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448561; c=relaxed/simple;
-	bh=Sz5yZDvrAqDWQ73BgqCKc6pgb4Y+o2NR2xbEM89iVfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hNWVFe8x3gVbojv5lqO7SN91rzr1orjsSjqqtJ+Oka3BPlE/KWoP2QUQDR9/GJEq/luc8d8NPRIR6NcvdL3Gmws52dwkFrad4zmDbz2jlcgS/NxiQ7p008ut9d/9kkqTcNhvs2wP1BigILgoMekPJwY9oqLY6aqN7nQeRLueuTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b729a941e35so120506966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:02:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448555; x=1763053355;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0HaYqdPsMXwfHzpR9yoIkvINZrh5vn/MQcKn5Y6oG5U=;
-        b=PH6QTZ0xUMEuNUYWmZXYdWmykMm4dGYyoPnIzaVpcCQH8LBdhW3hc4Sel7oT/Kd+Z2
-         SuZFAdkoYxASi1mSGX3WFMU8tKF7XJtGVWb/77xKsRzosPdO9MaeW9upkXvs49ChmhAm
-         REi/sU/IXKieQwoA6S7NsmUnE0CHDk/A4VpO57QC1KHTwhqTVt2stvDUaNGqDweIYz4+
-         B7r4NAkTKyPp9ZcMNvZIRagZsikiaFeOA6mMd3B49UbIx8mYOnL46TMG0g094fXqbzi0
-         tU6Tlria3+YynKziuNA4BogcPZG5NGSuCWn5P0IsOP5lU7YUyAoQbHb1pBh7yh/LCTz5
-         Sadg==
-X-Forwarded-Encrypted: i=1; AJvYcCWK+O1BIVM4tWmRLe7Mvc9ay5JkiBiZ3bhkUduHv5rNxm7ndb44iNQSM8HJWx6xQVNJuTdgKoGnWW63kY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXjSNmkreKkYNpZcJUc7HFUaRvaJ0pWbmCUZhClIvU3znBn+WT
-	O68FkOU6exy+FbndYJy7BGwt8IyOXtn9dj6ey/rxPjp383yDAR8iCZyzrSR2/FINGZk=
-X-Gm-Gg: ASbGncu45jJSxZUuaW0PPjIp50cJg5BIrw4HGTOyK/CI+szwkCU+A9FUHtFQqnk96S6
-	3tO7fxju5czRBS+7GRSCwRt85hweMXMkEUhgNb2kCA2yZMdlwXOMtEts8seeBAFjboDZdkPmJIH
-	sorIuk+AAilQSMirsmwHGhFMfMIoIKP9RRwUUvK4ltiC+MHwgehDgKTSdccIr6fkBy6d7vkN/m5
-	YUalJpIf05q8qn+EJx0iRzh95V/k7JxnvkvKiVx0cFGC6bwgi/4K1V6pt5xbkMRrFZ+5tuwXhOS
-	tFjZjl6xqlB4XJ+tkPsLzpll/z1wP/zatQ46fQiaYKI7GL/74SHo5OQy301xAeRucbKl33EtEgK
-	wz36H0xfbP1Y6qIQNpG3RxNNNTa3GhyTKiUIyXeOO3sHWAKxHy4o3MulwKzLyGchkH+xlU+gSq+
-	yohSzL3fFc5mWscip+AGXPIWCBRcxYi7RF4PCpnxN4nWfa1uvz
-X-Google-Smtp-Source: AGHT+IGraJq9691of9SQmWGd/KY36FvJQfOqOGjBA6rAsDShjSW2DPc+QYNW2uQbDvF/uw5vc88euA==
-X-Received: by 2002:a17:907:6d16:b0:b6d:55fe:a50f with SMTP id a640c23a62f3a-b72655181a6mr747008066b.42.1762448554589;
-        Thu, 06 Nov 2025 09:02:34 -0800 (PST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e563sm3538766b.41.2025.11.06.09.02.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 09:02:33 -0800 (PST)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-641018845beso1923684a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:02:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWPhSkEm9vVZtLPWEPtSJu20pPZ9NZJFiteSTXGkKUbSq9JqZC5k72obVBreZOvx3LVIMIBEUhTTsQEDb0=@vger.kernel.org
-X-Received: by 2002:a05:6402:5214:b0:637:dfb1:33a8 with SMTP id
- 4fb4d7f45d1cf-6413eec4a2cmr109416a12.3.1762448553296; Thu, 06 Nov 2025
- 09:02:33 -0800 (PST)
+	s=arc-20240116; t=1762448598; c=relaxed/simple;
+	bh=rrWu3nzkmdhuH0jhgfW2/CmpbQhyqs3JLeD+VZ7jPCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oMR8ZCXWRQxQWsfWCjcBrZpKS/6GgP033MRn3cSfa4AtRp6sCdC6a0O8SJGFqLhmUpqK2Nv1vF8dX+hThHyfwo8DENRVPZsxWTG0n1ByMld7nXJAm8iP/7j/sKoQ1O87Dgwu0F+mcM3OGW+0d7hMGjLjvuqe3eMmEUvKOLUQdzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gdxv0LZR; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.225.81] (unknown [4.194.122.144])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0969F201CEF4;
+	Thu,  6 Nov 2025 09:03:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0969F201CEF4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762448596;
+	bh=hnrJlGbkpTWpmJ1hPVp7S4M/nbBQSXDCGRX4VjItaHI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gdxv0LZRkhrpyU2ztf+w32wy4FxEJy5kkqlsJbzzCTC/EamZckh0xFUwEzlXQsHSB
+	 FSazdWB3i+BtPLh7Tr3EIGFjecbnnrj2tYX35lgd9Mxt3SUdqnY79zZWzCrNVMoIwi
+	 FaZarYA2GbXmCq0wh/IzuYzcZVb0FLPVY4QULfnI=
+Message-ID: <c7e53740-ed96-470c-b16a-46061a9dfac7@linux.microsoft.com>
+Date: Thu, 6 Nov 2025 22:33:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923154707.1089900-1-cosmin-gabriel.tanislav.xa@renesas.com> <CAMuHMdWRCGYLRK_WBmbB0cRP7PHiGPSi3U1jdWSVKaTSweruUw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWRCGYLRK_WBmbB0cRP7PHiGPSi3U1jdWSVKaTSweruUw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Nov 2025 18:02:20 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXb0hPPR9feTVrHDvyzEbiOEG7Vy5ec_bnwdXTZ=9Cg8Q@mail.gmail.com>
-X-Gm-Features: AWmQ_blWAJjuL3S2mf-_klybP6MpuG6h9woX8spkwghV9sy5gQZ33dOTZbj4xGI
-Message-ID: <CAMuHMdXb0hPPR9feTVrHDvyzEbiOEG7Vy5ec_bnwdXTZ=9Cg8Q@mail.gmail.com>
-Subject: Re: [PATCH] tty: serial: sh-sci: fix RSCI FIFO overrun handling
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Nam Cao <namcao@linutronix.de>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, stable@vger.kernel.org, 
-	Biju Das <biju.das.au@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 2/2] Drivers: hv: Introduce mshv_vtl driver
+To: Michael Kelley <mhklinux@outlook.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Mukesh Rathor <mrathor@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ ALOK TIWARI <alok.a.tiwari@oracle.com>
+References: <20251029050139.46545-1-namjain@linux.microsoft.com>
+ <20251029050139.46545-3-namjain@linux.microsoft.com>
+ <SN6PR02MB41574847FF9B66A3D7321167D4C2A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB41574847FF9B66A3D7321167D4C2A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-CC Biju, linux-renesas-soc (let's hope for real)
 
-On Thu, 6 Nov 2025 at 17:54, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Cosmin,
->
-> On Tue, 23 Sept 2025 at 17:47, Cosmin Tanislav
-> <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> > The receive error handling code is shared between RSCI and all other
-> > SCIF port types, but the RSCI overrun_reg is specified as a memory
-> > offset, while for other SCIF types it is an enum value used to index
-> > into the sci_port_params->regs array, as mentioned above the
-> > sci_serial_in() function.
-> >
-> > For RSCI, the overrun_reg is CSR (0x48), causing the sci_getreg() call
-> > inside the sci_handle_fifo_overrun() function to index outside the
-> > bounds of the regs array, which currently has a size of 20, as specified
-> > by SCI_NR_REGS.
-> >
-> > Because of this, we end up accessing memory outside of RSCI's
-> > rsci_port_params structure, which, when interpreted as a plat_sci_reg,
-> > happens to have a non-zero size, causing the following WARN when
-> > sci_serial_in() is called, as the accidental size does not match the
-> > supported register sizes.
-> >
-> > The existence of the overrun_reg needs to be checked because
-> > SCIx_SH3_SCIF_REGTYPE has overrun_reg set to SCLSR, but SCLSR is not
-> > present in the regs array.
-> >
-> > Avoid calling sci_getreg() for port types which don't use standard
-> > register handling.
-> >
-> > Use the ops->read_reg() and ops->write_reg() functions to properly read
-> > and write registers for RSCI, and change the type of the status variable
-> > to accommodate the 32-bit CSR register.
-> >
-> > sci_getreg() and sci_serial_in() are also called with overrun_reg in the
-> > sci_mpxed_interrupt() interrupt handler, but that code path is not used
-> > for RSCI, as it does not have a muxed interrupt.
-> >
-> > ------------[ cut here ]------------
-> > Invalid register access
-> > WARNING: CPU: 0 PID: 0 at drivers/tty/serial/sh-sci.c:522 sci_serial_in+0x38/0xac
-> > Modules linked in: renesas_usbhs at24 rzt2h_adc industrialio_adc sha256 cfg80211 bluetooth ecdh_generic ecc rfkill fuse drm backlight ipv6
-> > CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc1+ #30 PREEMPT
-> > Hardware name: Renesas RZ/T2H EVK Board based on r9a09g077m44 (DT)
-> > pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > pc : sci_serial_in+0x38/0xac
-> > lr : sci_serial_in+0x38/0xac
-> > sp : ffff800080003e80
-> > x29: ffff800080003e80 x28: ffff800082195b80 x27: 000000000000000d
-> > x26: ffff8000821956d0 x25: 0000000000000000 x24: ffff800082195b80
-> > x23: ffff000180e0d800 x22: 0000000000000010 x21: 0000000000000000
-> > x20: 0000000000000010 x19: ffff000180e72000 x18: 000000000000000a
-> > x17: ffff8002bcee7000 x16: ffff800080000000 x15: 0720072007200720
-> > x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
-> > x11: 0000000000000058 x10: 0000000000000018 x9 : ffff8000821a6a48
-> > x8 : 0000000000057fa8 x7 : 0000000000000406 x6 : ffff8000821fea48
-> > x5 : ffff00033ef88408 x4 : ffff8002bcee7000 x3 : ffff800082195b80
-> > x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff800082195b80
-> > Call trace:
-> >  sci_serial_in+0x38/0xac (P)
-> >  sci_handle_fifo_overrun.isra.0+0x70/0x134
-> >  sci_er_interrupt+0x50/0x39c
-> >  __handle_irq_event_percpu+0x48/0x140
-> >  handle_irq_event+0x44/0xb0
-> >  handle_fasteoi_irq+0xf4/0x1a0
-> >  handle_irq_desc+0x34/0x58
-> >  generic_handle_domain_irq+0x1c/0x28
-> >  gic_handle_irq+0x4c/0x140
-> >  call_on_irq_stack+0x30/0x48
-> >  do_interrupt_handler+0x80/0x84
-> >  el1_interrupt+0x34/0x68
-> >  el1h_64_irq_handler+0x18/0x24
-> >  el1h_64_irq+0x6c/0x70
-> >  default_idle_call+0x28/0x58 (P)
-> >  do_idle+0x1f8/0x250
-> >  cpu_startup_entry+0x34/0x3c
-> >  rest_init+0xd8/0xe0
-> >  console_on_rootfs+0x0/0x6c
-> >  __primary_switched+0x88/0x90
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
-> > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
->
-> Thanks for your patch, which is now commit ef8fef45c74b5a00 ("tty:
-> serial: sh-sci: fix RSCI FIFO overrun handling") in v6.18-rc3.
->
-> > --- a/drivers/tty/serial/sh-sci.c
-> > +++ b/drivers/tty/serial/sh-sci.c
-> > @@ -1014,16 +1014,18 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
-> >         struct sci_port *s = to_sci_port(port);
-> >         const struct plat_sci_reg *reg;
-> >         int copied = 0;
-> > -       u16 status;
-> > +       u32 status;
-> >
-> > -       reg = sci_getreg(port, s->params->overrun_reg);
-> > -       if (!reg->size)
-> > -               return 0;
-> > +       if (s->type != SCI_PORT_RSCI) {
-> > +               reg = sci_getreg(port, s->params->overrun_reg);
-> > +               if (!reg->size)
-> > +                       return 0;
-> > +       }
-> >
-> > -       status = sci_serial_in(port, s->params->overrun_reg);
-> > +       status = s->ops->read_reg(port, s->params->overrun_reg);
-> >         if (status & s->params->overrun_mask) {
-> >                 status &= ~s->params->overrun_mask;
-> > -               sci_serial_out(port, s->params->overrun_reg, status);
-> > +               s->ops->write_reg(port, s->params->overrun_reg, status);
-> >
-> >                 port->icount.overrun++;
-> >
->
-> Ouch, this is really becoming fragile, and thus hard to maintain.
-> See also "[PATCH v2 2/2] serial: sh-sci: Fix deadlock during RSCI FIFO
-> overrun error".
-> Are you sure this is the only place where that can happen?
-> sci_getreg() and sci_serial_{in,out}() are used all over the place.
->
-> [1] https://lore.kernel.org/20251029082101.92156-3-biju.das.jz@bp.renesas.com/
 
-Gr{oetje,eeting}s,
+On 11/6/2025 8:24 PM, Michael Kelley wrote:
+> From: Naman Jain <namjain@linux.microsoft.com> Sent: Tuesday, October 28, 2025 10:02 PM
+>>
+>> Provide an interface for Virtual Machine Monitor like OpenVMM and its
+>> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
+>> Expose devices and support IOCTLs for features like VTL creation,
+>> VTL0 memory management, context switch, making hypercalls,
+>> mapping VTL0 address space to VTL2 userspace, getting new VMBus
+>> messages and channel events in VTL2 etc.
+>>
+>> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> ---
+>>   arch/x86/hyperv/Makefile           |   10 +-
+>>   arch/x86/hyperv/hv_vtl.c           |   43 +
+>>   arch/x86/hyperv/mshv-asm-offsets.c |   37 +
+>>   arch/x86/hyperv/mshv_vtl_asm.S     |   98 ++
+>>   arch/x86/include/asm/mshyperv.h    |   34 +
+>>   drivers/hv/Kconfig                 |   26 +-
+>>   drivers/hv/Makefile                |    7 +-
+>>   drivers/hv/mshv_vtl.h              |   25 +
+>>   drivers/hv/mshv_vtl_main.c         | 1392 ++++++++++++++++++++++++++++
+>>   include/hyperv/hvgdk_mini.h        |  106 +++
+>>   include/uapi/linux/mshv.h          |   80 ++
+>>   11 files changed, 1855 insertions(+), 3 deletions(-)
+>>   create mode 100644 arch/x86/hyperv/mshv-asm-offsets.c
+>>   create mode 100644 arch/x86/hyperv/mshv_vtl_asm.S
+>>   create mode 100644 drivers/hv/mshv_vtl.h
+>>   create mode 100644 drivers/hv/mshv_vtl_main.c
+>>
+> 
+> I've reviewed and made suggestions on most of this code pretty
+> carefully over the past few months and through 10 revisions. This
+> version addresses my suggestions and looks good to me. There
+> are a few areas, such as the assembly code in mshv_vtl_asm.S and
+> the details of the hypervisor ABI for doing VTL Return, that are
+> outside my area of expertise so I'm limited to a surface level
+> review.
+> 
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
-                        Geert
+Thanks for the review Michael.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards
+Naman
 
