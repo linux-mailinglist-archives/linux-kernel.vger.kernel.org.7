@@ -1,238 +1,87 @@
-Return-Path: <linux-kernel+bounces-889429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A347C3D883
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:56:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24BBC3D889
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:57:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5B234E29A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:56:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B19924E2B8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CA33081D8;
-	Thu,  6 Nov 2025 21:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="REjd7ea4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TEBqBx0v"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF613081B7;
+	Thu,  6 Nov 2025 21:57:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E56F2ED175;
-	Thu,  6 Nov 2025 21:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493893081B1
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762466194; cv=none; b=pq3FlPvHubjhz4bL1PPhBVukNfRjMytt+nNdF1N8Jbw8TKpZ6W9ujX+bAynRDa0yywcAVb6XJvqQ0RlNa3odq5vT8prFu12a1G+YZ3nWN1156cg6HV+jwbzskPVzHM+E3T16so4mwpCxfSk9D3/A7lXuWUhi7BdAqaHEEaojSw8=
+	t=1762466226; cv=none; b=Tvb9VwhOmkPq0LMEWf+hdZppXswmO3o/kusbMiBBJ6hoIm+P01W9vtgqXLvxZAqOfU0wkDnu46WKYM42liGZzJ3DUvzzmWP74Zm7JneC52d/x1AIK4wq8IY6gf2hYDKKsNDGbemktygMDKnE3u64vbX12kTvINYkWmSjncRWN8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762466194; c=relaxed/simple;
-	bh=Wnn2TE7l8/HF6KTmsLA1p6vAtjQPjrc9cNKpin17/Pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cm/r6Q+RpivgLXsG5NjiyXR4GczgmlSfUlSZww2sI4r4VwxVUUgncSDlNmSewMv5ItcdS0EzSMg4pbKeg/gg/5sC/dhfkkjRuIbMDV9s3MLxG8aC6SKDnqmJYC3DppT6+CP31CqhGZFNBxqjCyrQat+U4iRRpmcIy0Aa1n54Lm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=REjd7ea4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TEBqBx0v; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 33E637A009A;
-	Thu,  6 Nov 2025 16:56:29 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Thu, 06 Nov 2025 16:56:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762466189;
-	 x=1762552589; bh=qPfsiLN1n3oCXH0bYb9sc+hEU45g8Wrq4al92DnOXSw=; b=
-	REjd7ea48BU9x1rmydQeYrwoKcgxNX8+mUmzTKMSvlEpUs8m9K9hlcK0GbU1LEeA
-	NVYPwD98/nmhIhUIkLFGqEMkZ0zcb0UQhKmGw+p9ULpJ6tfK3soxbmxm7mpK1sID
-	0KVYWCJWDNk6s3a4BLoCx0SUO8J1WUcG40XOMjtQAlKGZEmb3YXWXyZUcr1PFtHv
-	9lrTfMGzUTYcWiQFC9b1lvoBBt+S0AC9DYVLwU3vGQBdD5rpksjiEq8ERDMLzQh2
-	TCKP8oE1oMim/s7wzlN+v5BhFYNDZ88Y+Q85D3JXd4I889RtES83LnojVTX7vIhz
-	gcPNtHt1r9nbutpmtX3g/A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762466189; x=
-	1762552589; bh=qPfsiLN1n3oCXH0bYb9sc+hEU45g8Wrq4al92DnOXSw=; b=T
-	EBqBx0vGyrD+M7zHDdEiypWw2aHj44F4s+KKGiS6E7bbBqutRUYGGdUXJDCJOPAP
-	cH8T4NgtQFCrRZMfvh5JdrYimP+Atx9vaYclPTYIVED5Zl30HjeD0vqfv//7lsem
-	/80j4lM4I85ZsZf0Cexk0ZY5LuzcuBze1x76Fgl5QNEJd3cNydWw5o4PC+u4vOPl
-	DSgosf/FvJe/Rjs8EJdluO5i2unn6u8QIJUwn8NCw1dqdWDjpaXDTLxAdmRlbRc4
-	s33o+DwUb34GVfaw0ww0pKuJ0GAxUvtYopgP56lHjoNF1Y29qJLrQ39QmyWuzt9e
-	Cm0zXNNMk0OliQDNcZyzg==
-X-ME-Sender: <xms:ihkNaZyuoNPb30d6i4X9m4a5JDlaVzyKERQvPEE3jNzHt2CQQ3PhSA>
-    <xme:ihkNaRjbfos2rb-YOcRfsfkOJQcqWFRmF26uvJe4fv47K1yA6hxkEVdV0jWjhsjfB
-    RHMgljin4t4oRzgzZD1sERWcnEn2PiyrV8uRKsfUZE0tqtIN9JI>
-X-ME-Received: <xmr:ihkNaRI8Za-W-t78sM2q5XqiH2yb-clOLLraA92U79VBmkvuUWTNPmp8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeejledvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfgjfhggtgfgsehtjeertd
-    dttddvnecuhfhrohhmpeetlhgvgicuhghilhhlihgrmhhsohhnuceorghlvgigsehshhgr
-    iigsohhtrdhorhhgqeenucggtffrrghtthgvrhhnpeehvddtueevjeduffejfeduhfeufe
-    ejvdetgffftdeiieduhfejjefhhfefueevudenucffohhmrghinhepkhgvrhhnvghlrdho
-    rhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hlvgigsehshhgriigsohhtrdhorhhgpdhnsggprhgtphhtthhopeefledpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtoheprghnkhhithgrsehnvhhiughirgdrtghomhdprhgtph
-    htthhopegrnhhikhgvthgrsehnvhhiughirgdrtghomhdprhgtphhtthhopehvshgvthhh
-    ihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepjhhgghesnhhvihguihgrrdgtohhmpd
-    hrtghpthhtohepmhhotghhshesnhhvihguihgrrdgtohhmpdhrtghpthhtohepshhkohhl
-    ohhthhhumhhthhhosehnvhhiughirgdrtghomhdprhgtphhtthhopehlihhnmhhirghohh
-    gvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehnrghordhhohhrihhguhgthhhisehg
-    mhgrihhlrdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtih
-    honhdrohhrgh
-X-ME-Proxy: <xmx:ihkNaQcEhPMq-qSqBVkoefCb_0FrAK5mvbl7mJTt0zHmSaNo0LROJw>
-    <xmx:ixkNaVjv2QmUxlYiv9iqoyIZtqTYLtXDPfE3w3ztagX3NOq5dIUI3g>
-    <xmx:ixkNaVmiKwJPbNlzenf75TxYAt9k9HqaWn0xSxG0NfO9US_s1_J6uw>
-    <xmx:ixkNacVfSy0qbaJ67wFSS92CC5LBEmjQeDgZ49X0naGjhg6gxdpY9w>
-    <xmx:jRkNaWE7ZC2BhJZqjFONk0ddcg7naexkNkaf5fTZrI7LB8RMAz3li4ND>
-Feedback-ID: i03f14258:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Nov 2025 16:56:24 -0500 (EST)
-Date: Thu, 6 Nov 2025 14:56:22 -0700
-From: Alex Williamson <alex@shazbot.org>
-To: <ankita@nvidia.com>
-Cc: <aniketa@nvidia.com>, <vsethi@nvidia.com>, <jgg@nvidia.com>,
- <mochs@nvidia.com>, <skolothumtho@nvidia.com>, <linmiaohe@huawei.com>,
- <nao.horiguchi@gmail.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
- <lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
- <rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
- <tony.luck@intel.com>, <bp@alien8.de>, <rafael@kernel.org>,
- <guohanjun@huawei.com>, <mchehab@kernel.org>, <lenb@kernel.org>,
- <kevin.tian@intel.com>, <cjia@nvidia.com>, <kwankhede@nvidia.com>,
- <targupta@nvidia.com>, <zhiw@nvidia.com>, <dnigam@nvidia.com>,
- <kjaju@nvidia.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-edac@vger.kernel.org>, <Jonathan.Cameron@huawei.com>,
- <ira.weiny@intel.com>, <Smita.KoralahalliChannabasappa@amd.com>,
- <u.kleine-koenig@baylibre.com>, <peterz@infradead.org>,
- <linux-acpi@vger.kernel.org>, <kvm@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] vfio/nvgrace-gpu: register device memory for
- poison handling
-Message-ID: <20251106145622.1610d306.alex@shazbot.org>
-In-Reply-To: <20251102184434.2406-4-ankita@nvidia.com>
-References: <20251102184434.2406-1-ankita@nvidia.com>
-	<20251102184434.2406-4-ankita@nvidia.com>
+	s=arc-20240116; t=1762466226; c=relaxed/simple;
+	bh=nMBuniHz/O8qiGXN4IWxh8DDwWCwm/1mpwVRstYdTdM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dvIRyXJ+FZ+cwokKqSSrCrs4CD4onh43mkiCc9c27ZuABkUgH3LBh/d296Rp5KHTGHHzYi8O1SNrR4s9ZLR+BnN1vWWnJPnKIAJfjVn4uozlPBDNJ9CJLwZ4zKUheLq5JcpFu9Ep7XB+0cu7Am0vctJLWgV1h8ycDVmxBU67kxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-94866b3853cso13263739f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:57:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762466224; x=1763071024;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M1xz94chkMqUvyPz4y2XlwzU7CWHm8umhkPUE3KUVv0=;
+        b=YBNF2WoUspI+hjifNSEU2imhioY4UOSoyHVWmjtnaqYXOhKd1EEyOSN9UfQ0SJbgaW
+         61z3N6KZNw4YZomXxcaDMmPs5dXAUDD2mN4lVeuaaWISqCi64O8H0bpShqrmt1/yEvfg
+         dD2l62SAvugeDQZwMrpKiGy6yJeZmqJBnjR+tZ8jJSOF0R/jh9bv8/HDLFQGekFHrLgg
+         IvITaw60YTJqnndf2TRoou5t8Jc5mE/TEE4ScX1crIzQi9FpsIBwlv00SCvH4Cj3f3y7
+         DzBAaiz18mmvqrMXid/Th/2zXq54DajLS26wldJWu9KsNqF2ziNdAqWV8OMtPiAQgME8
+         XoIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZjsy27hGJh9Gxs9EgDUX49cImUtUE8EgWQNLj2+fAkv5po+AUu/aIvtdoIMgruHAu2cskWKkmJZwneio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKivetmJ0M3s5jkoL/ENwzKujHxojD5ZSQ+1vNgc3jhu3DUDZ2
+	bv/W3mAz36CiBGKNmSMJ2Yia8qo6uoEDD+9vy9Q1l65Iu/1AgZErHsT/q8CFmOPz9cjWbROjoxm
+	8qD2fRMgcl2nWQk8k3UonKj+TlY7QQqFJf0Z610aqZ+4qxTauh5z6HSv5DV4=
+X-Google-Smtp-Source: AGHT+IHeTL7q7TxJdnvouf6FlvqphW/a04AVnqWHN5452qdKILI7Tvv7S7xa5k4MEUhehwF8UNwaoVVspvS+c+mZgejkO8OFN4sF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:36cc:b0:948:74e2:b24c with SMTP id
+ ca18e2360f4ac-94888ef8104mr140676239f.10.1762466224192; Thu, 06 Nov 2025
+ 13:57:04 -0800 (PST)
+Date: Thu, 06 Nov 2025 13:57:04 -0800
+In-Reply-To: <CAL4kbRMK8SAMKZVfwVm+CCTcBG0_diiQH2pkbbvdP8p0wrckMw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690d19b0.a70a0220.22f260.000d.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] KMSAN: uninit-value in ib_nl_handle_ip_res_resp
+From: syzbot <syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com>
+To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 2 Nov 2025 18:44:34 +0000
-<ankita@nvidia.com> wrote:
+Hello,
 
-> From: Ankit Agrawal <ankita@nvidia.com>
-> 
-> The nvgrace-gpu-vfio-pci module [1] maps the device memory to the user VA
-> (Qemu) using remap_pfn_range() without adding the memory to the kernel.
-> The device memory pages are not backed by struct page. The previous
-> patch implements the mechanism to handle ECC/poison on memory page without
-> struct page. This new mechanism is being used here.
-> 
-> The module registers its memory region and the address_space with the
-> kernel MM for ECC handling using the register_pfn_address_space()
-> registration API exposed by the kernel.
-> 
-> Link: https://lore.kernel.org/all/20240220115055.23546-1-ankita@nvidia.com/ [1]
-> 
-> Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
-> ---
->  drivers/vfio/pci/nvgrace-gpu/main.c | 45 ++++++++++++++++++++++++++++-
->  1 file changed, 44 insertions(+), 1 deletion(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-LGTM.  I see Andrew has already picked this up in mm-new, if he
-refreshes, here's another ack.
+Reported-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
+Tested-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
 
-Acked-by: Alex Williamson <alex@shazbot.org>
+Tested on:
 
-Thanks,
-Alex
+commit:         a1388fcb Merge tag 'libcrypto-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e8e17c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cbf50e713aaa5cb0
+dashboard link: https://syzkaller.appspot.com/bug?extid=938fcd548c303fe33c1a
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=168bb012580000
 
-> diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
-> index d95761dcdd58..80b3ed63c682 100644
-> --- a/drivers/vfio/pci/nvgrace-gpu/main.c
-> +++ b/drivers/vfio/pci/nvgrace-gpu/main.c
-> @@ -8,6 +8,10 @@
->  #include <linux/delay.h>
->  #include <linux/jiffies.h>
->  
-> +#ifdef CONFIG_MEMORY_FAILURE
-> +#include <linux/memory-failure.h>
-> +#endif
-> +
->  /*
->   * The device memory usable to the workloads running in the VM is cached
->   * and showcased as a 64b device BAR (comprising of BAR4 and BAR5 region)
-> @@ -47,6 +51,9 @@ struct mem_region {
->  		void *memaddr;
->  		void __iomem *ioaddr;
->  	};                      /* Base virtual address of the region */
-> +#ifdef CONFIG_MEMORY_FAILURE
-> +	struct pfn_address_space pfn_address_space;
-> +#endif
->  };
->  
->  struct nvgrace_gpu_pci_core_device {
-> @@ -60,6 +67,28 @@ struct nvgrace_gpu_pci_core_device {
->  	bool has_mig_hw_bug;
->  };
->  
-> +#ifdef CONFIG_MEMORY_FAILURE
-> +
-> +static int
-> +nvgrace_gpu_vfio_pci_register_pfn_range(struct mem_region *region,
-> +					struct vm_area_struct *vma)
-> +{
-> +	unsigned long nr_pages;
-> +	int ret = 0;
-> +
-> +	nr_pages = region->memlength >> PAGE_SHIFT;
-> +
-> +	region->pfn_address_space.node.start = vma->vm_pgoff;
-> +	region->pfn_address_space.node.last = vma->vm_pgoff + nr_pages - 1;
-> +	region->pfn_address_space.mapping = vma->vm_file->f_mapping;
-> +
-> +	ret = register_pfn_address_space(&region->pfn_address_space);
-> +
-> +	return ret;
-> +}
-> +
-> +#endif
-> +
->  static void nvgrace_gpu_init_fake_bar_emu_regs(struct vfio_device *core_vdev)
->  {
->  	struct nvgrace_gpu_pci_core_device *nvdev =
-> @@ -127,6 +156,13 @@ static void nvgrace_gpu_close_device(struct vfio_device *core_vdev)
->  
->  	mutex_destroy(&nvdev->remap_lock);
->  
-> +#ifdef CONFIG_MEMORY_FAILURE
-> +	if (nvdev->resmem.memlength)
-> +		unregister_pfn_address_space(&nvdev->resmem.pfn_address_space);
-> +
-> +	unregister_pfn_address_space(&nvdev->usemem.pfn_address_space);
-> +#endif
-> +
->  	vfio_pci_core_close_device(core_vdev);
->  }
->  
-> @@ -202,7 +238,14 @@ static int nvgrace_gpu_mmap(struct vfio_device *core_vdev,
->  
->  	vma->vm_pgoff = start_pfn;
->  
-> -	return 0;
-> +#ifdef CONFIG_MEMORY_FAILURE
-> +	if (nvdev->resmem.memlength && index == VFIO_PCI_BAR2_REGION_INDEX)
-> +		ret = nvgrace_gpu_vfio_pci_register_pfn_range(&nvdev->resmem, vma);
-> +	else if (index == VFIO_PCI_BAR4_REGION_INDEX)
-> +		ret = nvgrace_gpu_vfio_pci_register_pfn_range(&nvdev->usemem, vma);
-> +#endif
-> +
-> +	return ret;
->  }
->  
->  static long
-
+Note: testing is done by a robot and is best-effort only.
 
