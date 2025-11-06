@@ -1,174 +1,88 @@
-Return-Path: <linux-kernel+bounces-888591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43954C3B3BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DCDC3B3E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DFC44F0C7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:30:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0597B4FC0E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA8D325498;
-	Thu,  6 Nov 2025 13:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965173254B5;
+	Thu,  6 Nov 2025 13:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Z7jQs5Mc"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="moLnTb0U"
+Received: from sg-1-18.ptr.blmpb.com (sg-1-18.ptr.blmpb.com [118.26.132.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048522550CA;
-	Thu,  6 Nov 2025 13:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0212EAB70
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762435800; cv=none; b=VyknptV5vn1x9/VO6Xr0/ckOTpLbxLxG5nU6aNC2bz4LQBuzbQA8pdbEXxyvFoA/RTKSM60YDN2H/9rR2Lk26E5J0vDH807JW/Z3kzxt8rpyqnGVDsCXcaGkr6b3J1OB2/ey7+9gbOxD9zRWJt/HuFTHGJlRRkzj+DXUejrxJAI=
+	t=1762435852; cv=none; b=m/RhJNmnRDR+IePNsVzPtd1wtyxH0sZRS6MmtXKu5vq9oQo/FiwFb+XjVGc7RQvwBTJukEa1UTbyBXt4RAT8XVHfOZFMg4pKVds82FMQDfOPoLz9ywcztqKPWs3UJhGh7blgiLq84mORv8eamR5MoaQZH/STP9eF9kByuIGKnrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762435800; c=relaxed/simple;
-	bh=yscLidwPb/TfU6vuuKFD9lrGYUswI5iL1Fu4J6VabZo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e4GuPE6Lug0En1LF++UfXzYnxthErQ0m6pfpR00+kzLlMwQMuaD8gQWsRd+oZn2MJymeB7K6qTkKkNAX8kIx9MgXgwor51dGjbFiqrUNQwKLBr8m+HLBZtFWTPcHjNfOIt8fEDV02BEKEogdwahx8yJHevvi2eM4kAdqSYkLjjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Z7jQs5Mc; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762435793; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=1kXLXXv2N3VYJNPmf0poJF0RIiMv5kZuy7eqQXCw1X4=;
-	b=Z7jQs5McRR/RUUvFRE7otomvLWt0boJZ1+Pkv1Zam6Qu0BPlEdHaDUEz5VT2wQbz+Pa9GSPt6hWBdiOkvzHtxM1ANuxCAiIOWweja/nFkaqnkjELynDtdUdmpZGWLi+W0dEqDcud7D295t/QKWleRKSZmK6D/mlkA0DJg183jYk=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WrptGql_1762435791 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 06 Nov 2025 21:29:52 +0800
-From: fangyu.yu@linux.alibaba.com
-To: anup@brainfault.org
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	atish.patra@linux.dev,
-	fangyu.yu@linux.alibaba.com,
-	graf@amazon.com,
-	guoren@kernel.org,
-	jiangyifei@huawei.com,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	pbonzini@redhat.com
-Subject: Re: Re: [PATCH] RISC-V: KVM: Fix guest page fault within HLV* instructions 
-Date: Thu,  6 Nov 2025 21:29:50 +0800
-Message-Id: <20251106132950.80534-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <CAAhSdy0azfC-L3buko7-mN1PDWxi08HN=3NQ+0VeyMR8gVJNoQ@mail.gmail.com>
-References: <CAAhSdy0azfC-L3buko7-mN1PDWxi08HN=3NQ+0VeyMR8gVJNoQ@mail.gmail.com>
+	s=arc-20240116; t=1762435852; c=relaxed/simple;
+	bh=r2L6JC/Rz40stNo3tTQ9hmYVh8zumvvXc+nrPbHyrEk=;
+	h=From:Date:Mime-Version:Content-Type:In-Reply-To:To:References:
+	 Subject:Message-Id:Cc; b=mem77YwRFQlSlNdZGOQaJo2nQd4a8G2i2Zh/CVuXENpZ27a9lNBkPdxsONWuribnRBEdSnbQZeo5GUxcDLvbPVLOBNC4yBTOK0pzMZPfiNUbjBE8DzU7yOEN+EKWIP2FTb7q5T6QBZCbhCQS9W2EitXGnAnTTM8e2gxNMSpNrl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=moLnTb0U; arc=none smtp.client-ip=118.26.132.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1762435842;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=r2L6JC/Rz40stNo3tTQ9hmYVh8zumvvXc+nrPbHyrEk=;
+ b=moLnTb0UwFY1nmb86jktYB5b3ch1VdLtUWW3qUMeZ27hYN0+FCc/jtzpToc6OoX+TVDMs7
+ l/daMQr/P0GWObSwL58HoM8SlQPscDg1InviMYn3FtjuC0CRjZrFUL790yswqymSFFVNks
+ NX7Kg2WReJ569U0NE9dm5k22grzt63ReViD92PJXt8qgF6IASH2vlq56Nv2NaRZ85rl9tX
+ Vj5L6gAhBreB050d8TjaVEMzFs5h/hylcWuvzqsiFVfiNkL9HKLG2cQaZ1Ze51OYnPD9ju
+ Wi3HLbq11xpyV3i4sHDhWUYzU6k+XxZbwoskGycOYKMvKM5ndx3hWOciXG91XQ==
+Content-Transfer-Encoding: quoted-printable
+Reply-To: yukuai@fnnas.com
+From: "Yu Kuai" <yukuai@fnnas.com>
+Date: Thu, 6 Nov 2025 21:30:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Lms-Return-Path: <lba+2690ca300+36598a+vger.kernel.org+yukuai@fnnas.com>
+User-Agent: Mozilla Thunderbird
+Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CALTww2_MHcXCOjeOPha0+LHNiu8O_9P4jVYP=K5-ea951omfMw@mail.gmail.com>
+To: "Xiao Ni" <xni@redhat.com>
+References: <20251103125757.1405796-1-linan666@huaweicloud.com> <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com> <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com> <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com> <2c1ab8fc-99ac-44fd-892c-2eeedb9581f4@fnnas.com> <CALTww289ZzZP5TmD5qezaYZV0Mnb90abqMqR=OnAzRz3NkmhQQ@mail.gmail.com> <5396ce6f-ba67-4f5e-86dc-3c9aebb6dc20@fnnas.com> <CALTww2_MHcXCOjeOPha0+LHNiu8O_9P4jVYP=K5-ea951omfMw@mail.gmail.com>
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 06 Nov 2025 21:30:39 +0800
+Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
+Message-Id: <c3124729-4b78-4c45-9b13-b74d59881dba@fnnas.com>
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+Cc: "Li Nan" <linan666@huaweicloud.com>, <corbet@lwn.net>, <song@kernel.org>, 
+	<hare@suse.de>, <linux-doc@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>, <linux-raid@vger.kernel.org>, 
+	<yangerkun@huawei.com>, <yi.zhang@huawei.com>, <yukuai@fnnas.com>
 
->> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->>
->> When executing HLV* instructions at the HS mode, a guest page fault
->> may occur when a g-stage page table migration between triggering the
->> virtual instruction exception and executing the HLV* instruction.
->>
->> This may be a corner case, and one simpler way to handle this is to
->> re-execute the instruction where the virtual  instruction exception
->> occurred, and the guest page fault will be automatically handled.
->>
->> Fixes: 9f7013265112 ("RISC-V: KVM: Handle MMIO exits for VCPU")
->> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->> ---
->>  arch/riscv/kvm/vcpu_insn.c | 21 ++++++++++++++++++---
->>  1 file changed, 18 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
->> index 97dec18e6989..a8b93aa4d8ec 100644
->> --- a/arch/riscv/kvm/vcpu_insn.c
->> +++ b/arch/riscv/kvm/vcpu_insn.c
->> @@ -448,7 +448,12 @@ int kvm_riscv_vcpu_virtual_insn(struct kvm_vcpu *vcpu, struct kvm_run *run,
->>                         insn = kvm_riscv_vcpu_unpriv_read(vcpu, true,
->>                                                           ct->sepc,
->>                                                           &utrap);
->> -                       if (utrap.scause) {
->> +                       switch (utrap.scause) {
->> +                       case 0:
->> +                               break;
->
->This looks like an unrelated change so drop it or send a separate patch
->with proper explanation.
->
->> +                       case EXC_LOAD_GUEST_PAGE_FAULT:
->> +                               return KVM_INSN_CONTINUE_SAME_SEPC;
->
->The KVM_INSN_xyz enum values are only for functions called via
->system_opcode_insn() so return 1 over here just like the below
->default case.
->
->Also, add some comments over here about why we are simply
->continuing the guest.
->
->> +                       default:
->>                                 utrap.sepc = ct->sepc;
->>                                 kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
->>                                 return 1;
->> @@ -503,7 +508,12 @@ int kvm_riscv_vcpu_mmio_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
->>                  */
->>                 insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
->>                                                   &utrap);
->> -               if (utrap.scause) {
->> +               switch (utrap.scause) {
->> +               case 0:
->> +                       break;
->
->This looks like an unrelated change so drop it or send a separate patch
->with proper explanation.
->
->> +               case EXC_LOAD_GUEST_PAGE_FAULT:
->> +                       return KVM_INSN_CONTINUE_SAME_SEPC;
->
->Same comment as kvm_riscv_vcpu_virtual_insn().
->
->> +               default:
->>                         /* Redirect trap if we failed to read instruction */
->>                         utrap.sepc = ct->sepc;
->>                         kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
->> @@ -629,7 +639,12 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
->>                  */
->>                 insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
->>                                                   &utrap);
->> -               if (utrap.scause) {
->> +               switch (utrap.scause) {
->> +               case 0:
->> +                       break;
->
->This looks like an unrelated change so drop it or send a separate patch
->with proper explanation.
->
->> +               case EXC_LOAD_GUEST_PAGE_FAULT:
->> +                       return KVM_INSN_CONTINUE_SAME_SEPC;
->
->Same comment as kvm_riscv_vcpu_virtual_insn().
->
->> +               default:
->>                         /* Redirect trap if we failed to read instruction */
->>                         utrap.sepc = ct->sepc;
->>                         kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
->> --
->> 2.49.0
->>
->>
->
->Regards,
->Anup
+Hi,
 
-Hi Anup:
+=E5=9C=A8 2025/11/6 21:15, Xiao Ni =E5=86=99=E9=81=93:
+> In patch05, the commit says this:
+>
+> Future mdadm should support setting LBS via metadata field during RAID
+> creation and the new sysfs. Though the kernel allows runtime LBS changes,
+> users should avoid modifying it after creating partitions or filesystems
+> to prevent compatibility issues.
+>
+> So it only can specify logical block size when creating an array. In
+> the case you mentioned above, in step3, the array will be assembled in
+> new kernel and the sb->pad3 will not be set, right?
 
-Thanks for the review.
-I will follow your suggestions in the next version.
+No, lbs will be set to the value array actually use in metadata, otherwise
+data loss problem will not be fixed for the array with different lbs from
+underlying disks, this is what we want to fix in the first place.
 
 Thanks,
-Fangyu
+Kuai
 
