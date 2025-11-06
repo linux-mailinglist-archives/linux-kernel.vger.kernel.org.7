@@ -1,246 +1,243 @@
-Return-Path: <linux-kernel+bounces-888501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA4CC3B044
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:56:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF47C3B10E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:05:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 906EF4E938E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 879FE188A0AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57DE32B9AF;
-	Thu,  6 Nov 2025 12:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE7433DED1;
+	Thu,  6 Nov 2025 12:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UhnXxHFl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XJBA3CN/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f85kQUa5"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783072E8B6C;
-	Thu,  6 Nov 2025 12:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB75F330335
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433579; cv=none; b=Yalx5rK3UaYJhuxD1e18iDSSWVJTZpFkw0RQDclNq2eZrfNs1iUZUea85YKRuxFqtholJdKnk0fzaCFsDB0cej0KsZuAZ+1Nu9v98ojJuUqzoO3E5xtPH6tykxNnwjxhsTdqae6DnBGcZFjZb0hWxMZLI2oRyR40tnC7C1TyCNo=
+	t=1762433626; cv=none; b=j2OOCzP0PVidCA74tbs+4Y3RX+JY6mR9nVx5aXdlLT9GnTTSoTC50QlE9ed0Yc5kUcNK21u44dP2jkqa8zsIQ34IqeVRi+dYOXguwp217O62ubmqgCKqTMwtO4oNXbCa7RTNCn9dolTIXi+jyb7KFSeTKtdSrlab6/ZjhFQUamE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433579; c=relaxed/simple;
-	bh=a+hoAekt+tDiQ9rS06HgceLWMtICNHF3W/X58Ba+l18=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=V17p9l6TC63fjv5SPzm6E7fVF1ltzGr1w7Y0bfkFxtgcLCvXu7AiU8KQTghZLO6KvbdJKe7UFSpA3n81fgn2/jrvP1z/eseON2X3F+KK7Z8bNvnqPm2rTPlBgrAa5m6kptN1nwnedJW34u7dYMBfH1G5FFSQIfSDFw5sCpeNjJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UhnXxHFl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XJBA3CN/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 06 Nov 2025 12:52:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762433569;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=bR4KmuXz8m+5MNLrR7xba4Yc9yh4ek36Rx0GSIw334g=;
-	b=UhnXxHFl9Y9W9RNYjfsJIqE+OugrKjEwmXD9qwhnhSvuPnEtE47Ll5bejMKxLGTDRprXQo
-	ya6XQ7+UcmK4ZVXHG7aIi3l4dq/QapViKc9o2UojTupven0rEAbkEIfPzRKPImancrtGh3
-	NsVpg1DEg5g2EnUl9PtH8KIYYoEJp5wynuh2a4CTWLjeFzFKXUkypp0dIQKzsRxuFCEdSC
-	yXtHgiWL6Oj7+hLQp80Rt+rxFlnxIu02I1vcRRavOSSNd6h2W+dzZ/+Cf/SfAb+beilQzd
-	WJJX6ukjJ0O9hNQ+WQi/jKkeLoWCT2rKgVXKc+a7zZ2Ceaaw0fUrj8zgNucp0A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762433569;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=bR4KmuXz8m+5MNLrR7xba4Yc9yh4ek36Rx0GSIw334g=;
-	b=XJBA3CN/VaknXsMfSBymho8iZz9xudKsGyseqdOA/ZsgkWP5tgv4vzgw8H6dHNC1mimPwo
-	GERGrN7vZAXJXwAQ==
-From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce: Save and use APEI corrected threshold limit
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1762433626; c=relaxed/simple;
+	bh=bcHRGOqbqzzhPFu+ojNR6wxaw6xjv4kXNLSndDc36ME=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ua2oyyLnnojIuDbLqAc4FcCTuj6TM4+wKmjQtxmVEXTxoqvyF9hI4Hfn/R/NcTZ5Vv/+CoNd9Qs1yKppjyWRscRwCwfpMg1UfaK4cJIvnW3o1ALFrsIYeuazozsu3j1Uyo7rbaSBhcSXDszK7SphXP+3w5lBR4GfABu6YWejbVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f85kQUa5; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-429eb7fafc7so651313f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:53:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762433622; x=1763038422; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DjCst0RmwR8vxuLUXqKmfS8QPtIrCS1B+n9Hqasdjnw=;
+        b=f85kQUa5iJSxf0Et/ff+m7JLvsgQzLhg2mQongDbZuAGXkCAUW//misPdEBKj4hOes
+         kc5h4kTctIZBVISZ2MY7y2EOQLe0AAnu/VFSXlQhISObgOIdQt9V52zxAzVXrmJm+/Gv
+         y2dlS/LSBB6SqaQhvJpd72gfY037Zc5oksQhJy+SdvOS53Fvoq4y6SFnkVHtw14lYFvd
+         6ONOUcRXdLlWUrC/yWZhdbob5iaMBl+xDR7D/sh8hzR7gu2lMo8z3HVXI0yaQm3BW36z
+         wiurrTWyqwzSBsQFZZP0f9lVxBM/iFDGN3Ca7BRw0yyMIhRDNLSdTAYvcWsx36c1gWCI
+         1xWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762433622; x=1763038422;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DjCst0RmwR8vxuLUXqKmfS8QPtIrCS1B+n9Hqasdjnw=;
+        b=atY4In1PmojG+kQmoF6ze5Nxs1GJ2mj/9R+/EGEhpgbvs7d6ENg3tzqAo/g/85cJq8
+         EWvFD2nc3iRX3BN+fSQ+cPvbG/B4Ikwl9V0kPVqzqr5yWeWouJSL5YjAIGzrulb03/oo
+         0uEHKQLtI2tO/pKkMeuQ27XN+4nE2FLSaKLyWkcVh6bVTDFmgcdJDCF3C9Z1bBpcAVH9
+         fg0rgw9YXY+nFS15IWeXcnFiXceKZwG2g7ndYc2EMfWCnQxWj/glPw3y/A9rK3buPb1+
+         MmIWmU2mFbIczTyPne5KkkznzuNNUgodR1IWTBVdg6tm+5tU66yeNyAiEByQpmHXeZA1
+         syzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJCiSqUVXSzYU08PVslMDvM6+GLUmoAKGIXhQFG5pZKP+/kqyrUs7j/fMqrNqsDXA9J3mffKO0SEJsgPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQafqgcqt5Y9r2TTK+4QC/NSxCno4EyuRPgiO5IfIdgyxvWwYW
+	1R+1Qd4xh5Dw3doIppYvoFx03y39IrJeXTLlwWqX1jnv7IO6/w27GKY=
+X-Gm-Gg: ASbGncsdyuHwh6YX7Y243aBcDRZ2+ulXQxPLgSuK/uy1dEnj1SfmeOTm2+sFjBz66G3
+	wWgoaNIo2bXOeJsSfrGrBzY6dlpG1zBn1nlsG/r5YFEEKeToZnlaVan+C3+KwkslqqjnbOr+Yq8
+	XnNiYtaTJqK2+tak0gGmpBWrypAow3gQjx0HEvixMx3DK0v+BZE2/k6c1DyYeoNPz9+nPTcKsF2
+	oULJIw3Hzl3BApBaMbKb8Hsbb6+QpBDoRayccIFAuPYeF0LhF/wi37Q+1XlYzXUZfnyoc4RqifY
+	d6/4icDbzkCBCQFPoSjiw/KbRI/V7qEi16pOQmwoP+nZV34AwtrCHH6d+dZfFu95jXTqUqLT03e
+	NyCW6tW163wSkmGTdae5kpCF9POI3CNUtp43wa83wkUQgHyPcAarwwPr5+lBKboktO2nmPRmaWY
+	molIWsLO9WpbrzYHGuqCMU+LACP03lQbYekUUzd/EviloC2G5fpO7jv+Q=
+X-Google-Smtp-Source: AGHT+IF59d5GYYpx4VOKuwUgzJ5BNLyqt4IadFejfqDnuxk1Y2oRGUxA032fi9ljWUpPNLgprK4b7A==
+X-Received: by 2002:a05:6000:220d:b0:426:ff2f:9c15 with SMTP id ffacd0b85a97d-429e32c8784mr7110253f8f.5.1762433621744;
+        Thu, 06 Nov 2025 04:53:41 -0800 (PST)
+Received: from ast-epyc5.inf.ethz.ch (ast-epyc5.inf.ethz.ch. [129.132.161.180])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40379esm4788856f8f.9.2025.11.06.04.53.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 04:53:41 -0800 (PST)
+From: Hao Sun <sunhao.th@gmail.com>
+X-Google-Original-From: Hao Sun <hao.sun@inf.ethz.ch>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	john.fastabend@gmail.com,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	linux-kernel@vger.kernel.org,
+	sunhao.th@gmail.com,
+	Hao Sun <hao.sun@inf.ethz.ch>
+Subject: [PATCH RFC 10/17] bpf: Add bcf_alu() 32bits optimization
+Date: Thu,  6 Nov 2025 13:52:48 +0100
+Message-Id: <20251106125255.1969938-11-hao.sun@inf.ethz.ch>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
+References: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176243356804.2601451.7860856037876137782.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the ras/core branch of tip:
+Lower symbolic ALU nodes to 32-bit when both operands and the resulting dst
+fit in 32 bits, to reduce solver/proof complexity.
 
-Commit-ID:     94567e69f7460766aada806939ca8c13364861a3
-Gitweb:        https://git.kernel.org/tip/94567e69f7460766aada806939ca8c13364=
-861a3
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Tue, 04 Nov 2025 14:55:45=20
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 05 Nov 2025 22:40:41 +01:00
+- Extend `bcf_alu()` with `op_u32`/`op_s32` hints and derive a `zext` decision:
+  when ALU32 or both operands/results fit u32, emit a 32-bit op and zero-extend
+  to 64; when signed-32 is in effect, sign-extend to 64 after the op.
 
-x86/mce: Save and use APEI corrected threshold limit
+- Compute `op_u32`/`op_s32` for pointer and scalar ALUs (using fit_u32/fit_s32)
+  before emitting the node, then mask them again with the post-ALU dst range so
+  the final node width reflects the verifier’s bounds.
 
-The MCA threshold limit generally is not something that needs to change during
-runtime. It is common for a system administrator to decide on a policy for
-their managed systems.
+This shrinks many BV nodes and helps keep per-node vlen within limits (U8_MAX),
+reducing proof size.
 
-If MCA thresholding is OS-managed, then the threshold limit must be set at
-every boot. However, many systems allow the user to set a value in their BIOS.
-And this is reported through an APEI HEST entry even if thresholding is not in
-FW-First mode.
-
-Use this value, if available, to set the OS-managed threshold limit.  Users
-can still override it through sysfs if desired for testing or debug.
-
-APEI is parsed after MCE is initialized. So reset the thresholding blocks
-later to pick up the threshold limit.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20251104-wip-mca-updates-v8-0-66c8eacf67b9@amd.=
-com
+Signed-off-by: Hao Sun <hao.sun@inf.ethz.ch>
 ---
- arch/x86/include/asm/mce.h          |  6 ++++++
- arch/x86/kernel/acpi/apei.c         |  2 ++
- arch/x86/kernel/cpu/mce/amd.c       | 18 ++++++++++++++++--
- arch/x86/kernel/cpu/mce/internal.h  |  2 ++
- arch/x86/kernel/cpu/mce/threshold.c | 13 +++++++++++++
- 5 files changed, 39 insertions(+), 2 deletions(-)
+ kernel/bpf/verifier.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 7d65881..1cfbfff 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -308,6 +308,12 @@ DECLARE_PER_CPU(struct mce, injectm);
- /* Disable CMCI/polling for MCA bank claimed by firmware */
- extern void mce_disable_bank(int bank);
-=20
-+#ifdef CONFIG_X86_MCE_THRESHOLD
-+void mce_save_apei_thr_limit(u32 thr_limit);
-+#else
-+static inline void mce_save_apei_thr_limit(u32 thr_limit) { }
-+#endif /* CONFIG_X86_MCE_THRESHOLD */
-+
- /*
-  * Exception handler
-  */
-diff --git a/arch/x86/kernel/acpi/apei.c b/arch/x86/kernel/acpi/apei.c
-index 0916f00..e21419e 100644
---- a/arch/x86/kernel/acpi/apei.c
-+++ b/arch/x86/kernel/acpi/apei.c
-@@ -19,6 +19,8 @@ int arch_apei_enable_cmcff(struct acpi_hest_header *hest_hd=
-r, void *data)
- 	if (!cmc->enabled)
- 		return 0;
-=20
-+	mce_save_apei_thr_limit(cmc->notify.error_threshold_value);
-+
- 	/*
- 	 * We expect HEST to provide a list of MC banks that report errors
- 	 * in firmware first mode. Otherwise, return non-zero value to
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index ec54175..53385e6 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -489,6 +489,18 @@ static void threshold_restart_bank(unsigned int bank, bo=
-ol intr_en)
- 	}
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 66682d365e5e..df6d16a1c6f6 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -14866,11 +14866,13 @@ static int sanitize_check_bounds(struct bpf_verifier_env *env,
  }
-=20
-+/* Try to use the threshold limit reported through APEI. */
-+static u16 get_thr_limit(void)
-+{
-+	u32 thr_limit =3D mce_get_apei_thr_limit();
-+
-+	/* Fallback to old default if APEI limit is not available. */
-+	if (!thr_limit)
-+		return THRESHOLD_MAX;
-+
-+	return min(thr_limit, THRESHOLD_MAX);
-+}
-+
- static void mce_threshold_block_init(struct threshold_block *b, int offset)
+ 
+ static int bcf_alu(struct bpf_verifier_env *env, struct bpf_reg_state *dst_reg,
+-		   struct bpf_reg_state *src_reg, u8 op, bool alu32)
++		   struct bpf_reg_state *src_reg, u8 op, bool alu32,
++		   bool op_u32, bool op_s32)
  {
- 	struct thresh_restart tr =3D {
-@@ -497,7 +509,7 @@ static void mce_threshold_block_init(struct threshold_blo=
-ck *b, int offset)
- 		.lvt_off		=3D offset,
- 	};
-=20
--	b->threshold_limit		=3D THRESHOLD_MAX;
-+	b->threshold_limit		=3D get_thr_limit();
- 	threshold_restart_block(&tr);
- };
-=20
-@@ -1076,7 +1088,7 @@ static int allocate_threshold_blocks(unsigned int cpu, =
-struct threshold_bank *tb
- 	b->address		=3D address;
- 	b->interrupt_enable	=3D 0;
- 	b->interrupt_capable	=3D lvt_interrupt_supported(bank, high);
--	b->threshold_limit	=3D THRESHOLD_MAX;
-+	b->threshold_limit	=3D get_thr_limit();
-=20
- 	if (b->interrupt_capable) {
- 		default_attrs[2] =3D &interrupt_enable.attr;
-@@ -1087,6 +1099,8 @@ static int allocate_threshold_blocks(unsigned int cpu, =
-struct threshold_bank *tb
-=20
- 	list_add(&b->miscj, &tb->miscj);
-=20
-+	mce_threshold_block_init(b, (high & MASK_LVTOFF_HI) >> 20);
+ 	DEFINE_RAW_FLEX(struct bcf_expr, alu_expr, args, 2);
+ 	bool unary = (op == BPF_NEG);
+ 	int dst, src = 0, bits;
++	bool zext = alu32 || op_u32;
+ 
+ 	if (!env->bcf.tracking)
+ 		return 0;
+@@ -14879,6 +14881,7 @@ static int bcf_alu(struct bpf_verifier_env *env, struct bpf_reg_state *dst_reg,
+ 		return 0;
+ 	}
+ 
++	alu32 |= (op_u32 || op_s32);
+ 	dst = bcf_reg_expr(env, dst_reg, alu32);
+ 	if (!unary)
+ 		src = bcf_reg_expr(env, src_reg, alu32);
+@@ -14892,8 +14895,11 @@ static int bcf_alu(struct bpf_verifier_env *env, struct bpf_reg_state *dst_reg,
+ 	alu_expr->args[0] = dst;
+ 	alu_expr->args[1] = src;
+ 	dst_reg->bcf_expr = bcf_add_expr(env, alu_expr);
+-	if (alu32)
++	if (zext)
+ 		bcf_zext_32_to_64(env, dst_reg);
++	else if (op_s32)
++		bcf_sext_32_to_64(env, dst_reg);
 +
- 	err =3D kobject_init_and_add(&b->kobj, &threshold_ktype, tb->kobj, get_name=
-(cpu, bank, b));
- 	if (err)
- 		goto out_free;
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/int=
-ernal.h
-index 9920ee5..a31cf98 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -67,6 +67,7 @@ void mce_track_storm(struct mce *mce);
- void mce_inherit_storm(unsigned int bank);
- bool mce_get_storm_mode(void);
- void mce_set_storm_mode(bool storm);
-+u32  mce_get_apei_thr_limit(void);
- #else
- static inline void cmci_storm_begin(unsigned int bank) {}
- static inline void cmci_storm_end(unsigned int bank) {}
-@@ -74,6 +75,7 @@ static inline void mce_track_storm(struct mce *mce) {}
- static inline void mce_inherit_storm(unsigned int bank) {}
- static inline bool mce_get_storm_mode(void) { return false; }
- static inline void mce_set_storm_mode(bool storm) {}
-+static inline u32  mce_get_apei_thr_limit(void) { return 0; }
- #endif
-=20
- /*
-diff --git a/arch/x86/kernel/cpu/mce/threshold.c b/arch/x86/kernel/cpu/mce/th=
-reshold.c
-index 22930a8..0d13c9f 100644
---- a/arch/x86/kernel/cpu/mce/threshold.c
-+++ b/arch/x86/kernel/cpu/mce/threshold.c
-@@ -13,6 +13,19 @@
-=20
- #include "internal.h"
-=20
-+static u32 mce_apei_thr_limit;
-+
-+void mce_save_apei_thr_limit(u32 thr_limit)
-+{
-+	mce_apei_thr_limit =3D thr_limit;
-+	pr_info("HEST corrected error threshold limit: %u\n", thr_limit);
-+}
-+
-+u32 mce_get_apei_thr_limit(void)
-+{
-+	return mce_apei_thr_limit;
-+}
-+
- static void default_threshold_interrupt(void)
- {
- 	pr_err("Unexpected threshold interrupt at vector %x\n",
+ 	if (dst_reg->bcf_expr < 0)
+ 		return dst_reg->bcf_expr;
+ 
+@@ -14922,6 +14928,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 	u8 opcode = BPF_OP(insn->code);
+ 	u32 dst = insn->dst_reg;
+ 	int ret, bounds_ret;
++	bool op_u32, op_s32;
+ 
+ 	dst_reg = &regs[dst];
+ 	src_reg = dst_reg == ptr_reg ? off_reg : ptr_reg;
+@@ -15034,6 +15041,8 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			if (dst_reg->bcf_expr < 0)
+ 				return dst_reg->bcf_expr;
+ 		}
++		op_u32 = fit_u32(dst_reg) && fit_u32(src_reg);
++		op_s32 = fit_s32(dst_reg) && fit_s32(src_reg);
+ 		/* A new variable offset is created.  Note that off_reg->off
+ 		 * == 0, since it's a scalar.
+ 		 * dst_reg gets the pointer type and since some positive
+@@ -15062,7 +15071,9 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			memset(&dst_reg->raw, 0, sizeof(dst_reg->raw));
+ 		}
+ 
+-		ret = bcf_alu(env, dst_reg, src_reg, opcode, false);
++		op_u32 &= fit_u32(dst_reg);
++		op_s32 &= fit_s32(dst_reg);
++		ret = bcf_alu(env, dst_reg, src_reg, opcode, false, op_u32, op_s32);
+ 		if (ret)
+ 			return ret;
+ 		break;
+@@ -15102,6 +15113,8 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			if (dst_reg->bcf_expr < 0)
+ 				return dst_reg->bcf_expr;
+ 		}
++		op_u32 = fit_u32(dst_reg) && fit_u32(src_reg);
++		op_s32 = fit_s32(dst_reg) && fit_s32(src_reg);
+ 		/* A new variable offset is created.  If the subtrahend is known
+ 		 * nonnegative, then any reg->range we had before is still good.
+ 		 */
+@@ -15130,7 +15143,9 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 				memset(&dst_reg->raw, 0, sizeof(dst_reg->raw));
+ 		}
+ 
+-		ret = bcf_alu(env, dst_reg, src_reg, opcode, false);
++		op_u32 &= fit_u32(dst_reg);
++		op_s32 &= fit_s32(dst_reg);
++		ret = bcf_alu(env, dst_reg, src_reg, opcode, false, op_u32, op_s32);
+ 		if (ret)
+ 			return ret;
+ 		break;
+@@ -15787,6 +15802,7 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 	u8 opcode = BPF_OP(insn->code);
+ 	bool alu32 = (BPF_CLASS(insn->code) != BPF_ALU64);
+ 	int ret, dst_expr = dst_reg->bcf_expr;
++	bool op_u32, op_s32;
+ 
+ 	if (!is_safe_to_compute_dst_reg_range(insn, &src_reg)) {
+ 		__mark_reg_unknown(env, dst_reg);
+@@ -15806,6 +15822,8 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 		if (dst_expr < 0)
+ 			return dst_expr;
+ 	}
++	op_u32 = fit_u32(dst_reg) && fit_u32(&src_reg);
++	op_s32 = fit_s32(dst_reg) && fit_s32(&src_reg);
+ 
+ 	/* Calculate sign/unsigned bounds and tnum for alu32 and alu64 bit ops.
+ 	 * There are two classes of instructions: The first class we track both
+@@ -15887,7 +15905,9 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 	reg_bounds_sync(dst_reg);
+ 
+ 	dst_reg->bcf_expr = dst_expr;
+-	ret = bcf_alu(env, dst_reg, &src_reg, opcode, alu32);
++	op_u32 &= fit_u32(dst_reg);
++	op_s32 &= fit_s32(dst_reg);
++	ret = bcf_alu(env, dst_reg, &src_reg, opcode, alu32, op_u32, op_s32);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.34.1
+
 
