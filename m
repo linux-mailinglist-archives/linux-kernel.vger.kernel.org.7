@@ -1,116 +1,199 @@
-Return-Path: <linux-kernel+bounces-889168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85409C3CDD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:34:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EF7C3CE10
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016051883FCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:34:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9033AE350
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E7034C98F;
-	Thu,  6 Nov 2025 17:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C30734DCC2;
+	Thu,  6 Nov 2025 17:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cT49hAf9"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CjTzGeZX"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C933254A6
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE56343200
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762450454; cv=none; b=pso3uFVaDS1s/1p5Pqc609UKeucka6zPQcLGhmdOnIT7SSQ1wYUZdkRsGyuwbIn4S6ipHaadLpVJlayJ5q1S/5S4W0timSKrHsXiA7h8VF/DJ9bdtl0XvcE518sJQZwsN2yQz8ojfGMoY9mn0KB8xDD8oV+PJ8RCpeel0TecxYg=
+	t=1762450507; cv=none; b=LuROXTV8IzGarE4CyzdYhI/Em1TlKE2jDuQ+ONU/7V3pEVYYy/2oY2Oyv5gY6Tk1rbxBR/p9kKnnB8ROtHWxTW51n1qPPmW6V76BA6DabFd5c51MHo+fNAgufwhj3td2hUav+so0HYuzcbM3a+lCHsXz9HW20HWmfdxwsVWo9Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762450454; c=relaxed/simple;
-	bh=xC5jpduGSYvNExHOxUniHoKwme79jjzk7c0JLPQ4BHc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=scl4Qa/8b9xfv1His1QxgfmrwxYKyxLwTI21vFhj27lDNqLiHNb2LjNS4xb2jZD4PQLjXfA9H85A1OgN/Y4nDEBtSG4ykcU+WQVuH3YmqNzULBAdJ5cNnNnwIAv87YEesAolYYZen2883Upou2bgOE7nffFMY34CkbykrRQqsuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cT49hAf9; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640ace5f283so1589247a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:34:11 -0800 (PST)
+	s=arc-20240116; t=1762450507; c=relaxed/simple;
+	bh=zuH8vTEFQ81y0S9J2aMAnZJU8ZzAWmEuKbor7lXFpuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hti4PuWsVQZlmfCWS6dCaP6afratpHFK6/2mxSYQRO7y61LcLELEat5U85Cy00m/Cigq4s1FHUFW+NONVwOT9H8RKWj7M9khPnSFQHD+OY4ewtJB9xnIWFJYBJU8bgeCD5k40Ubb0488xqng43xrsWZeIrC0eKcXiihnQ4fv3cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CjTzGeZX; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-341988c720aso1040819a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:35:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762450450; x=1763055250; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UVFA7b5QNQKKgbY4Sgbk0fAZQJ8jQ8t0W8uUVANJyQ0=;
-        b=cT49hAf9OsKChazElePsEHJdxLafiAKnO3sIjrgG2uAZ6zG0QHHn2dceIli1N6jOxY
-         AhyqskzfAUTwWzLb6iEcjpvwCevjyaaGcVBEgTIyzVjDQCjOWYoKr5VsyUvf8TM7qPKk
-         9SzeRIzoFqqy9jh1VM9mOsVLtBT16iObKdEJdqClkcGPMhE71Y4Rpi8vvmZe6T78F1A5
-         Gwi21+LYrextTTugG+qIZkcfLlJQoNrUExdsDFOuF2HWiV6zeQn/tDZTDRcnTHFwfgLp
-         vSnHhpjLG02FgdJYnWYDuzhNyVL/b+/2SLf0INoX+exTOOR3ChpuNucRIzJ6UG/QS04j
-         tI7g==
+        d=google.com; s=20230601; t=1762450505; x=1763055305; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wqhRMbkeP5a6AhGXE/N+V0jVQXSY8bQ8HANY/uvlWJg=;
+        b=CjTzGeZXQBYGpmPqpKVPSnVlaza3aGHJlLKRN7YTmp8JyVrLQfKvc6GMzagjLXJ+4P
+         I+SCgC16TkeXmWOHrDuTfKRLsH3L+kv6mnO1Vt1kXwHt/nShOlpCa4I3rXtHHJm6+NSB
+         pySO6vdgeoI4ss9uEvWcfq4QEZSL3LOL/kf+LB8LpD//Wonyqnk3NPH26G1gOgXT3WtW
+         ujhioDza+TSgkT0a5v2Ac/qZeILjzpnJDJZUzUb93iySZWGg/xi1OXZ5aM9d+UHim5ht
+         QsyHSdsJkHZTJX597NttpG4dTSo0IgmomO71D8J5VydDEIpfzXI5G97c/UFTuHZjIf8y
+         UeiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762450450; x=1763055250;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UVFA7b5QNQKKgbY4Sgbk0fAZQJ8jQ8t0W8uUVANJyQ0=;
-        b=GqCuVtEdV5LkG2/zlEDMR5lXdZXV9TkDh17YaJHE2gHs7uQdPgM+WpP/iwc3iRHQ5q
-         DHCZBx00FlCdtE1rbSA/cM98jvbD3BPTmyVZmGIQcy4urtXhpliAaWYKOleOPEroyGI+
-         mLXHUQ1IccTs65n1HAsuNkokytYUCE6p2YURgixvBx0NB+4b9EJNdpOySgaOaIbgVW/i
-         Lf0usnZnlbKH5pDvbuM5vZc6iQl+9y/1/YWVt7A9EjM/HLcXK080um0dldibDhI0r3hC
-         bmd6SqJV2p3JkJFsddo/ZGLU5VTkgIV/Q863Wug1j7LNBDaI9BWvIc18Ydx8PXWl/cr1
-         jHHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHdzP3s2TY/ZIiBINyJFjIkdDEpNykqn4TgRGcNDHQYjZErAH3HSieWejjEw2d31Iij43eGOGeaInsikQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygRs5LePM5jno7IRrkLiecCINkPFFezavCipySEq2XFwVgL330
-	9lw8ntg9EVT9sO8nn2xRUOIokwPPZgh6ob7HydqLsffQ/AksUBqJGR5x9qQEmpTfEqBfdUbnVMm
-	2sEWT2AOew27RI66SzUIoaMnZK3q2wTJecfQIaaRqRg==
-X-Gm-Gg: ASbGncv1NdiMn+f2AKoLtiEatMYCf75Ka6n5kGd9qk1kY6g0qJNWP6envEI+CoyNZtd
-	lKunT2RPgeiXcLkMHg8fGGvoeDBptDs7Hbc0SnOgLm4DJzveI6g4VMZEUUJJZp26/8IRljGgvch
-	oZq+D4cjiwrP/YpXv45MO7/3ZCR3ri5ndunVr9EKRRBRMx8VR3TQiEzIpNIjawXlP9ReoqIYXaK
-	8cJXjua0nBHiyUnj/psbq5UN6cewr1bBy46ojQy3l9AaIFvN/MOe7afn6pYSg==
-X-Google-Smtp-Source: AGHT+IHa3dttDqTITgV3tGTkp6TSuSmsFY+1K88280Yqh8YjVvfMj6OJH0DKtk3h1bhQap8rFtBGhpjoLqExb/O6Ijo=
-X-Received: by 2002:a05:6402:35c3:b0:641:3090:cba3 with SMTP id
- 4fb4d7f45d1cf-6413f094b4amr145941a12.37.1762450450078; Thu, 06 Nov 2025
- 09:34:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762450505; x=1763055305;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wqhRMbkeP5a6AhGXE/N+V0jVQXSY8bQ8HANY/uvlWJg=;
+        b=kw5tjxwQi4sHN/U028/3aAL5BPK1NTLF7TcdIsCUuj9Ic+Md5gkrGeo2zceRquA1TI
+         E20LfUnKT2he+ZjxUevZ2NguCWYcSRd27VdQRc1/4yKMD3UNnCmQXrASH5D6PA146zTR
+         fd3iOJD+sOsTJyfHunJ5AoaFsGTkVwunp9wXVUfNEJA8i4SeDfi2uJsdAgLHBdgypglY
+         NjrgTpioNLQ2gvUpFsxg+sM+12xUPa3OjOYds/CN0LCDgslNhhK6ncmSgm7p4MOT+kQf
+         scPMp/8CBkgltqdUJJa8R0C2u91mZh4qZTf9cIv0LQXr3JpxA61Za2bdBPUiBSPsvODt
+         dADQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNN4jHTmBzVJpEuP2Fp8stjZZ0X9dUXZzYrEW6LQLs6y6okuQiDxOP7IEoLOBAR55a+KwMOCKP0G3Jzw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkli8y3DznI3R4qWOPkRFjT+b74FGyo3JDL7B6AaXrnH223A9W
+	3Rkw2zC/8TQw6LKe8AiThHSDC+/xgiaIzeB3vhzcfDhzoX+OkiCQDYoZgHNwRmHqyw==
+X-Gm-Gg: ASbGnctPSOpWE0BI0XIRWBQmt9kj2Dfn6PnsSOAvNaJlAC9nLJKAO0VuhgZKR3mGOaC
+	LEz7eob2vgvJN6gt/kAjM3T4ishPj1FsQHk8/g1plL0k3QjXyGr6DwU7q7WZ/NeiOU1yru03mq1
+	Kn1EpZMvXxQbVEXbEfK/T8HRqSgTC2FxCyYVdUMUOU9j75pKuLZOtmKuifIKaT2vustCxLiA1nX
+	zCi9n27NJCiQz2rrtDqIgd9cNuC41DxuujPNbd4Fua3mqDxy36DNFt/rxPl8SIvZezgzq1e6NAw
+	eW6Rld317Ht/6E2GdLJMf96FGUgr0RNg3CR4tDzbogExxQBqzzJqxTFPTMEOqV3zY2Xq5bulG0l
+	81AeQPSdW60fKGZq88eJ9bZf2EVs3BxijW7XHdNDoqd7+b+3Ds3LxshzCieRduLoh+oqykoX1Ec
+	dNuLLFsz3NAHr3Q963n4YyQIzm4/0UzE+DVJjLJZZ+CBD3FkIqzCJ6
+X-Google-Smtp-Source: AGHT+IEMuhZXfrhRzZPgDXKf74LCucNnT8xcoW50rzL12P2WEHwgK0T6/7gvoTOtnyJThJPPYu//JA==
+X-Received: by 2002:a17:90b:4c0f:b0:341:8adc:76d2 with SMTP id 98e67ed59e1d1-341a6d5aea7mr11537455a91.16.1762450504826;
+        Thu, 06 Nov 2025 09:35:04 -0800 (PST)
+Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c3566e7sm35903a91.19.2025.11.06.09.35.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 09:35:03 -0800 (PST)
+Date: Thu, 6 Nov 2025 17:34:59 +0000
+From: David Matlack <dmatlack@google.com>
+To: Raghavendra Rao Ananta <rananta@google.com>
+Cc: Alex Williamson <alex@shazbot.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] vfio: selftests: Add tests to validate SR-IOV UAPI
+Message-ID: <aQzcQ0fJd-aCRThS@google.com>
+References: <20251104003536.3601931-1-rananta@google.com>
+ <20251104003536.3601931-5-rananta@google.com>
+ <aQvzNZU9x9gmFzH3@google.com>
+ <CAJHc60ycPfeba0hjiHLTgFO2JAjPsuWzHhJqVbqOTEaOPfNy_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022174309.1180931-4-vincent.guittot@linaro.org> <20251106172312.GA1931285@bhelgaas>
-In-Reply-To: <20251106172312.GA1931285@bhelgaas>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 6 Nov 2025 18:33:58 +0100
-X-Gm-Features: AWmQ_bnxeRp9L3wzoigXubjMbIkUdPeZ-SXfzJV0HZAKsvwmODUh-S8pANI5ZcY
-Message-ID: <CAKfTPtDn8r-YfgspLscd=4oE0GukFg6tORpsUqd7fUs7DJqnLA@mail.gmail.com>
-Subject: Re: [PATCH 3/4 v3] PCI: s32g: Add initial PCIe support (RC)
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
-	s32@nxp.com, bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, 
-	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com, 
-	bogdan.hamciuc@nxp.com, Frank.li@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	cassel@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJHc60ycPfeba0hjiHLTgFO2JAjPsuWzHhJqVbqOTEaOPfNy_A@mail.gmail.com>
 
-On Thu, 6 Nov 2025 at 18:23, Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Wed, Oct 22, 2025 at 07:43:08PM +0200, Vincent Guittot wrote:
-> > Add initial support of the PCIe controller for S32G Soc family. Only
-> > host mode is supported.
->
-> > +config PCIE_NXP_S32G
-> > +     tristate "NXP S32G PCIe controller (host mode)"
-> > +     depends on ARCH_S32 || COMPILE_TEST
-> > +     select PCIE_DW_HOST
-> > +     help
-> > +       Enable support for the PCIe controller in NXP S32G based boards to
-> > +       work in Host mode. The controller is based on DesignWare IP and
-> > +       can work either as RC or EP. In order to enable host-specific
-> > +       features PCIE_S32G must be selected.
->
-> Did you mean PCIE_NXP_S32G here?
->
-> PCIE_S32G itself doesn't appear in this series.
+On 2025-11-06 10:35 PM, Raghavendra Rao Ananta wrote:
+> On Thu, Nov 6, 2025 at 6:30 AM David Matlack <dmatlack@google.com> wrote:
+> >
+> > On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
+> >
+> > > +static const char *pf_dev_bdf;
+> > > +static char vf_dev_bdf[16];
+> >
+> > vf_dev_bdf can be part of the test fixture instead of a global variable.
+> > pf_dev_bdf should be the only global variable since we have to get it
+> > from main() into the text fixture.
+> >
+> My understading is placing vars in FIXTURE() is helpful to get an
+> access across various other FIXTURE_*() and TEST*() functions. Out of
+> curiosity, is there an advantage here vs having them global?
 
-Yes I failed to rename this one.
+Global variables are just generally a bad design pattern. IMO, only
+variables that truly need to be global should be global.
+
+The only variable that needs to be global is pf_dev_bdf.
+
+Since vf_dev_bdf needs to be accessed within FIXTURE_SETUP(),
+FIXTURE_TEARDOWN(), and TEST_F(), then FIXTURE() is the right home for
+it. The whole point of FIXTURE() is to hold state for each TEST_F().
+
+> 
+> > > +
+> > > +struct vfio_pci_device *pf_device;
+> > > +struct vfio_pci_device *vf_device;
+> >
+> > These can be local variables in the places they are used.
+> >
+> I was a bit greedy to save a few lines, as they are reassigned in
+> every TEST_F() anyway. Is there any advantage by making them local?
+
+It's easy to mess up global variables. And also when reading the code it
+is confusing to see a global variable that does not need to be global.
+It makes me think I must be missing something.
+
+As a general practice I think it's good to limit the scope of variables
+to the minimum scope they are needed.
+
+> > > +     snprintf(path, PATH_MAX, "%s/%s/sriov_numvfs", PCI_SYSFS_PATH, pf_dev_bdf);
+> > > +     ASSERT_GT(fd = open(path, O_RDWR), 0);
+> > > +     ASSERT_GT(read(fd, buf, ARRAY_SIZE(buf)), 0);
+> > > +     nr_vfs = strtoul(buf, NULL, 0);
+> > > +     if (nr_vfs == 0)
+> >
+> > If VFs are already enabled, shouldn't the test fail or skip?
+> >
+> My idea was to simply "steal" the device that was already created and
+> use it. Do we want to skip it, as you suggested?
+
+If a VF already exists it might be bound to a different driver, and may
+be in use by something else. I think the only safe thing to do is to
+bail if a VF already exists. If the test creates the VF, then it knows
+that it owns it.
+
+> > > +FIXTURE_TEARDOWN(vfio_pci_sriov_uapi_test)
+> > > +{
+> > > +}
+> >
+> > FIXTURE_TEARDOWN() should undo what FIXTURE_SETUP() did, i.e. write 0 to
+> > sriov_numvfs. Otherwise running this test will leave behind SR-IOV
+> > enabled on the PF.
+> >
+> I had this originally, but then realized that run.sh aready resets the
+> sriov_numvfs to its original value. We can do it here too, if you'd
+> like to keep the symmetry and make the test self-sufficient. With some
+> of your other suggestions, I may have to do some more cleanup here
+> now.
+
+I think the test should return the PF back to the state it was in at the
+start of the test. That way the test doesn't "leak" changes it made. The
+best way to do that is to clean up in FIXTURE_TEARDOWN(). There might be
+some other test that wants to run using the PF before run.sh does its
+cleanup work.
+
+> > You could also make this the users problem (the user has to provide a PF
+> > with 1 VF where both PF and VF are bound to vfio-pci). But I think it
+> > would be nice to make the test work automatically given a PF if we can.
+> Let's go with the latter, assuming it doesn't get too complicated
+> (currently, the setup part seems bigger than the actual test :) )
+
+Let's create helpers for all the sysfs operations under lib.
+
+e.g. tools/testing/selftests/vfio/lib/sysfs.c:
+
+  int sysfs_get_sriov_totalvfs(const char *bdf);
+  void sysfs_set_sriov_numvfs(const char *bdfs, int numvfs);
+  ...
+
+That will greatly simplify the amount of code in this test, and I think
+it's highly likely we re-use those functions in other tests. And even if
+we don't, it's nice to encapsulate all the sysfs code in one place for
+readability and maintainability.
+
+If you do this I think there's also some sysfs stuff in
+vfio_pci_device.c that you can also pull out into this helper file.
 
