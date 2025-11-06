@@ -1,161 +1,257 @@
-Return-Path: <linux-kernel+bounces-888203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE6DC3A2EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:19:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BC1C3A2F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D6C3A8BA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0596542516C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B1F30C62A;
-	Thu,  6 Nov 2025 10:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D23E30F819;
+	Thu,  6 Nov 2025 10:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qYd7f+wt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gafqgFFp";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zKXpyvRy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WyaTMup9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IrnOchfJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72E82848A7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A2D30E848;
+	Thu,  6 Nov 2025 10:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762423502; cv=none; b=TO5+fptjHSj47HmqIUivHKT6q8lyFlbJi/Qi47wdFQ2DDyAU1gTOz5BrFqKLCLmjgR0uMSJLkKwUqxWHuXRU+u8PIsobT3zmh2meRG4scFD54zHmBAspmjYFXxVB+wtq9Wzo+k13MlbU+3/vf1SHoa6QSWIDAtMt6NLE2vfmvEs=
+	t=1762423519; cv=none; b=VwUriHR074Lb01Rithzsm6XEwujiUAwPPbFhOi0J1w4tTM4CCfwyGuVOdJC59iq5FnU6nOKlBjuwMpPYlaGeyp+uOljDjMVpMJvYqhGVHoAUe1HDi3KBYmOwJTWvBmfJWqho6NzYkkks9EWKZ8n5lNFq3/Sfbhldb6HeIxrg6wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762423502; c=relaxed/simple;
-	bh=RGFjMWGmcgUsV3X1SztoiiQ0KkJtUGLHxAdCfukuBdU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mGEitgvLRXEySeeo3g2zA1WF464Qk2hxvH4gjGqqYqZ1J6dYYlI5gAGcd/d7Nyn85NCgg/FEOJzgVLjxB9+ie9eyBUloqycLrlUVliVviWys98ywPtwghZF7j7uGY+R5g8gUtKcXKz7a85OcTcA7ekBvlnrjpY2Y/CJo+4Bxuog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qYd7f+wt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gafqgFFp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zKXpyvRy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WyaTMup9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 92653211CC;
-	Thu,  6 Nov 2025 10:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762423499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KuaYp2qrLzFaro3w9aEzA1iCPDWlTi5GGfmshKLJZSs=;
-	b=qYd7f+wtgJJJhwaYOLABFzPe2+rgfBfVRC7a6mPgwEzqUc6tI8QgWmAlWiQPlYZo/GenDq
-	sc/E5ctPK6nYEAAPx3C98K2MeEHB2g4og+swO7RSXYyKe6VpI3h+w84HuZ3rtNm4mRF1Ja
-	QDDyHA5dnAp64Ib4iHhbDiRTChpWLKI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762423499;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KuaYp2qrLzFaro3w9aEzA1iCPDWlTi5GGfmshKLJZSs=;
-	b=gafqgFFp4qazKMdDG6dzdr23tOrmbZyzGI3+s+m3nJ3zZ4fyBeiHT4V6eKp/MEM8GIG+4g
-	/7DCx6AhUH3PW4DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=zKXpyvRy;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=WyaTMup9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762423497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KuaYp2qrLzFaro3w9aEzA1iCPDWlTi5GGfmshKLJZSs=;
-	b=zKXpyvRy+rIc/zGmERdQo7JJ/LR+NavTvDGhW67JV/0ZKovXs2jNwNV0hvEQ5ENt0guSbs
-	fsPzaSVA9KMN1h4p6apU18KBE9YzkU7chmDG3vOT3KbMdE9tsLho57bjo1472fCaOk56Gi
-	eYbRa0/ehwaIcT7IuGJG1sDJHJUrLiA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762423497;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KuaYp2qrLzFaro3w9aEzA1iCPDWlTi5GGfmshKLJZSs=;
-	b=WyaTMup9V7oowWOJqAsh3aaPVF9y65W0TED5S08Nbksi/HAs9uWMXO9O4hzKBLVwcse8jk
-	EtMBMVBs9BByVGAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D0FA13A31;
-	Thu,  6 Nov 2025 10:04:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /GN0EclyDGmMOgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 06 Nov 2025 10:04:57 +0000
-Date: Thu, 06 Nov 2025 11:04:56 +0100
-Message-ID: <875xbnh3xz.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: wangdich9700@163.com
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	wangdicheng <wangdicheng@kylinos.cn>
-Subject: Re: [PATCH] ALSA: hda/senary: Replace magic numbers with defined constants
-In-Reply-To: <20251106063626.115358-1-wangdich9700@163.com>
-References: <20251106063626.115358-1-wangdich9700@163.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1762423519; c=relaxed/simple;
+	bh=YWfPD6ERS7CRZ4S7egpNwL4TQ7anww/3U8sL9Mazjg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWulj9bjvnLjY48ZkGoj7lpafW1apHh+1qxhOuMkZcVqb8MFB4ifGo6bS84HbCJRPSnlI2vn2I/sC044ct1UCAYw3y0m9YwoUtViYZYfOOnuuNAGC6FJc8qchWxcA2YppxNyIK2GqnqVL02yS/Jvh4J2ZbZ5i1FdqX10tZJ+sP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IrnOchfJ; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762423518; x=1793959518;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YWfPD6ERS7CRZ4S7egpNwL4TQ7anww/3U8sL9Mazjg8=;
+  b=IrnOchfJsuEBdiJI+3Qp8Z/fuW6T4i1EZKq99ORFsC4xHQbEQzdNvrwo
+   F+ffjufiGcmoA5tDCB4WM283hJ4U80C6sGdNCb6DI4MrRJtotglk5QJ7L
+   AxXsuCzYdJLRAVIvd9tACWTsql+3bTFR/4yqYFQqQGqSOg1Nsu/GhuwG5
+   uyck8BhP299738oS6sOh1ndM4g+r6nCDIJg36rJqWv1WiGtzSHnrdxP7b
+   NRzSo6s9GR2a20M/2RIDD1potNWMhAuyE6sHPq7papQqc0o3UQHPwhc1L
+   mrNMX276/5D3+oMvfckjkYqcmBe5CagGp75q7IqJy6XyUgnFwxRzwCycS
+   Q==;
+X-CSE-ConnectionGUID: CM0SWtTlTJW2kvSH9Tf83g==
+X-CSE-MsgGUID: jelJfvwkTo+CFxJ6hD4zIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="67168873"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="67168873"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 02:05:17 -0800
+X-CSE-ConnectionGUID: YX33hdY5TbmcTJAfU86JYA==
+X-CSE-MsgGUID: A/A8oXilRGq1wZ0TAEdPLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="187383441"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.236])
+  by fmviesa007.fm.intel.com with SMTP; 06 Nov 2025 02:05:13 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 06 Nov 2025 12:05:12 +0200
+Date: Thu, 6 Nov 2025 12:05:12 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID
+ pin state
+Message-ID: <aQxyfjYosVd_kPKC@kuha.fi.intel.com>
+References: <20251102164819.2798754-1-krishna.kurapati@oss.qualcomm.com>
+ <20251102164819.2798754-3-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 92653211CC
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[163.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,perex.cz,suse.com,vger.kernel.org,lists.infradead.org,kylinos.cn];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,kylinos.cn:email,suse.de:mid,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.51
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251102164819.2798754-3-krishna.kurapati@oss.qualcomm.com>
 
-On Thu, 06 Nov 2025 07:36:26 +0100,
-wangdich9700@163.com wrote:
-> 
-> From: wangdicheng <wangdich9700@163.com>
-> 
-> Replace hardcoded GPIO node value with a defined constant for better
-> code readability and maintainability.
-> 
-> Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+Hi Krishna,
 
-Please try to align both From and Signed-off-by addresses.
+Sun, Nov 02, 2025 at 10:18:19PM +0530, Krishna Kurapati kirjoitti:
+> There is a ID pin present on HD3SS3220 controller that can be routed
+> to SoC. As per the datasheet:
+> 
+> "Upon detecting a UFP device, HD3SS3220 will keep ID pin high if VBUS is
+> not at VSafe0V. Once VBUS is at VSafe0V, the HD3SS3220 will assert ID pin
+> low. This is done to enforce Type-C requirement that VBUS must be at
+> VSafe0V before re-enabling VBUS"
+> 
+> Add support to read the ID pin state and enable VBUS accordingly.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>  drivers/usb/typec/hd3ss3220.c | 72 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> index 3ecc688dda82..75fbda42eaf4 100644
+> --- a/drivers/usb/typec/hd3ss3220.c
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -15,6 +15,9 @@
+>  #include <linux/usb/typec.h>
+>  #include <linux/delay.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/of_graph.h>
+>  
+>  #define HD3SS3220_REG_CN_STAT		0x08
+>  #define HD3SS3220_REG_CN_STAT_CTRL	0x09
+> @@ -54,6 +57,11 @@ struct hd3ss3220 {
+>  	struct delayed_work output_poll_work;
+>  	enum usb_role role_state;
+>  	bool poll;
+> +
+> +	struct gpio_desc *id_gpiod;
+> +	int id_irq;
+> +
+> +	struct regulator *vbus;
+>  };
+>  
+>  static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
+> @@ -319,6 +327,44 @@ static const struct regmap_config config = {
+>  	.max_register = 0x0A,
+>  };
+>  
+> +static irqreturn_t hd3ss3220_id_isr(int irq, void *dev_id)
+> +{
+> +	struct hd3ss3220 *hd3ss3220 = dev_id;
+> +	int ret;
+> +	int id;
+> +
+> +	if (!hd3ss3220->vbus)
+> +		return IRQ_HANDLED;
 
+If you don't need this routine unless there is a vbus regulator, then
+don't register it at all if there is no vbus regulator.
+
+> +	id = hd3ss3220->id_gpiod ? gpiod_get_value_cansleep(hd3ss3220->id_gpiod) : 1;
+
+You still don't need to check for hd3ss3220->id_gpiod - this function
+will not get called unless it's there.
+
+        if (gpiod_get_value_cansleep(hd3ss3220->id_gpiod))
+                ret = regulator_disable(hd3ss3220->vbus);
+        else
+                ret = regulator_enable(hd3ss3220->vbus);
+
+Note:
+
+If you are concerned that the reference to the id_gpiod may be
+released before this routine is unregistered, then that condition will
+not help. The hd3ss3220->id_gpiod member is _not_ NULL after the
+reference is released.
+
+If you need a specific order in which the references are released,
+then you can't use the resource management (devm_*) to automate things
+for you.
+
+> +	if (!id) {
+> +		ret = regulator_enable(hd3ss3220->vbus);
+> +		if (ret)
+> +			dev_err(hd3ss3220->dev, "enable vbus regulator failed\n");
+> +	} else {
+> +		regulator_disable(hd3ss3220->vbus);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int hd3ss3220_get_vbus_supply(struct hd3ss3220 *hd3ss3220,
+> +				     struct fwnode_handle *connector)
+> +{
+> +	int ret  = 0;
+> +
+> +	hd3ss3220->vbus = devm_of_regulator_get_optional(hd3ss3220->dev,
+> +							 to_of_node(connector),
+> +							 "vbus");
+> +	if (PTR_ERR(hd3ss3220->vbus) == -ENODEV)
+> +		hd3ss3220->vbus = NULL;
+> +	else if (IS_ERR(hd3ss3220->vbus))
+> +		ret = PTR_ERR(hd3ss3220->vbus);
+
+So the regulator API's optional functions return -ENODEV instead of NULL :(
+In any case, don't double assign the member. Use local variable.
+
+        struct regulator *vbus;
+
+        vbus = devm_of_regulator_get_optional(...
+        if (IS_ERR(vbus) && vbus != ERR_PTR(-ENODEV))
+                return PTR_ERR(vbus);
+
+        hd3ss3220->vbus = vbus;
+        return 0;
+
+I don't think you need this function - just do that in the probe function.
+
+> +	return ret;
+> +}
+> +
+>  static int hd3ss3220_probe(struct i2c_client *client)
+>  {
+>  	struct typec_capability typec_cap = { };
+> @@ -354,11 +400,37 @@ static int hd3ss3220_probe(struct i2c_client *client)
+>  		hd3ss3220->role_sw = usb_role_switch_get(hd3ss3220->dev);
+>  	}
+>  
+> +	hd3ss3220->id_gpiod = devm_gpiod_get_optional(hd3ss3220->dev, "id", GPIOD_IN);
+> +	if (IS_ERR(hd3ss3220->id_gpiod))
+> +		return PTR_ERR(hd3ss3220->id_gpiod);
+> +
+> +	if (hd3ss3220->id_gpiod) {
+> +		hd3ss3220->id_irq = gpiod_to_irq(hd3ss3220->id_gpiod);
+> +		if (hd3ss3220->id_irq < 0)
+> +			return dev_err_probe(hd3ss3220->dev, hd3ss3220->id_irq,
+> +					     "failed to get ID gpio\n");
+> +
+> +		ret = devm_request_threaded_irq(hd3ss3220->dev,
+> +						hd3ss3220->id_irq, NULL,
+> +						hd3ss3220_id_isr,
+> +						IRQF_TRIGGER_RISING |
+> +						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> +						dev_name(hd3ss3220->dev), hd3ss3220);
+> +		if (ret < 0)
+> +			return dev_err_probe(hd3ss3220->dev, ret, "failed to get ID irq\n");
+> +	}
+> +
+>  	if (IS_ERR(hd3ss3220->role_sw)) {
+>  		ret = PTR_ERR(hd3ss3220->role_sw);
+>  		goto err_put_fwnode;
+>  	}
+>  
+> +	ret = hd3ss3220_get_vbus_supply(hd3ss3220, connector);
+> +	if (ret) {
+> +		dev_err(hd3ss3220->dev, "failed to get vbus: %d\n", ret);
+> +		goto err_put_fwnode;
+> +	}
+> +
+>  	typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
+>  	typec_cap.driver_data = hd3ss3220;
+>  	typec_cap.type = TYPEC_PORT_DRP;
+> -- 
+> 2.34.1
 
 thanks,
 
-Takashi
+-- 
+heikki
 
