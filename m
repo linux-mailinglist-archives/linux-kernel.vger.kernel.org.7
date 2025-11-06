@@ -1,150 +1,202 @@
-Return-Path: <linux-kernel+bounces-889050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F79C3C87D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:43:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01331C3C976
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6C4E35250F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292FA660B51
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319FB339B3B;
-	Thu,  6 Nov 2025 16:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4F32D061C;
+	Thu,  6 Nov 2025 16:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IusIFD+P"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTB9pWOU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1562494FF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E9726F2AA;
+	Thu,  6 Nov 2025 16:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447367; cv=none; b=eV05yWH+bvnx9w1FpPl5QuirxfIoxH7ama0ToWxjBcLFZqKM3Bw+WAbNPswQBQHAsW1PvMPAeGQJRpMAX5Sbnww565yPq6i+wGxZQ4NxB2r2Gcems5hmoe+ss2SmFfvmhD4cXOGOL0mUvHzxWTSMOM4uLdkI1GvqIK8utgQ9vMg=
+	t=1762447365; cv=none; b=hLLXgfBdsVwkWtlcxhyFbRkTLBfthOz6e42qxrXVQERbOFMROSIFcws+gG1nNWmcxBUe7nCeUIJXTKtIapf7YkUYLxVc+lB3bQT4JqS5XWhGJbCWTm72P/RxFcZqw5RwKrBzdav2nfXAPIMaXmRhDEyDnvfAcokIVUhLGjQPr44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447367; c=relaxed/simple;
-	bh=dWua4jrZl0r37ywkIwIo1mbydYSjyvb6Mj4LORQIgS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qE2bVaIRgCW16h83GoVPit/rfk2J9D51eb+L1xwF6zf90MayJbrw62mp5x9jlXEk2H9tIHHSDPzjSQfkno2SF5dF50nBsHfXGfvw04j+oOy27w/S2ZPj2HYKn4IX8sZl/3zanZ3PK0mOWcx1DmA7TjN3OPEBjlSDbJObGfolHJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IusIFD+P; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so7158965e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:42:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762447363; x=1763052163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5bWVfG3C8DSuF6D5kXiUtuvNzIgvYK/pa4hX5McjgVk=;
-        b=IusIFD+P84syu65y/9cYP/jr+NUA/whUPyzdEWdNhCY4ydeduGTGcWsrLolUSFBbbh
-         Nywa2anM0hvGkjv9PIjvcAM4D+/CkU0/1QotZ41j/PDg4YhZENQe644MNSOiU6JXrdNQ
-         LF/csdbGrRGcgUbyTkXzUPD9b6VPhT3+hlt6U+/7e9/mpc7c+XUtV/oX9MeJwU53hmv/
-         hcWFtI+SExtBED/G0uEr8wvAa8YsqWVNioEeUJO6NXThC2zJMoYQmK0T/7VLZS7wOcMq
-         cGXFET/Y1C8HTN3AzR0mFvu6SPZXIBLTu/vI6gdQkzmRc/mg4OiiPg/Mnh16J1srlJ9B
-         jSeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762447363; x=1763052163;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5bWVfG3C8DSuF6D5kXiUtuvNzIgvYK/pa4hX5McjgVk=;
-        b=hlm9dFa6ZEuqYwz7R/skw/qj0UNqo6bOu/IDWeCiCB6THd/0WH3Rr4EcKz9xtjTcMJ
-         miwiDNO2ezyb6H2WPogupWf2vgpVDMzksM3H75Ik0QVIUfwkOoje8150kb/46VLzaBcC
-         JbZEUhGAEOsgrixr7QcUZoT0jLjOn17sQ8Ck45IxSNcWFSlbaLgHQq2pwVp32Ugkonok
-         w2VDUu/87VcPkLD6UV4FtI14rNpt+HZrrHVnihIm7ocXsDhgBJ18+oJLBmpiDmOYE/2B
-         dxP4Ngee4gyY6PSHA0MIMwaUmbpT+XtbxKpH1JoZkiilCAaakIR7lBiD1RSoWTUIq24c
-         MBWQ==
-X-Gm-Message-State: AOJu0YyqzXSQY7E5fZdZzobFJ97aqKfToTtm7ir1P4CwCZl25AtCeAKX
-	YNXSaKAL6Tx5jlQrFdf/L8EBwOtkKoWCwji4cbjQvGcCZv3A1p6Y0QwEw7bV2SzYJI9nk3UpNpH
-	gULuc
-X-Gm-Gg: ASbGncvG6jTZayKyuV7ZBtHxRMyypkrZxeEPl1CQ6rb3ccvzq6aAlXjR6ErPyzV0lTa
-	36GDRlm6pJRa4b9ODaNe7SL1R0SDfx/4ontMw0GmcIFuZ86Ge4tC7YSz2TUprjNTGnYHfyPrp8I
-	I/GLfVhhAeUuT/mikTnjL9TVu3sr+pzlEYEwavp9AmJyHxuigkWrFZMGUWzUHrdpc/dQP/A3H2l
-	tjOcwLXbYmqrrCPLMLaj0rJqOYbtTDPgNNpomR6x6vFuZTb/6PpGgKQBA00e3lXMqSGIFNBC/Jh
-	EY5VK2iyjigq1pog70aLejns3AHP/70X5s1IOhHV5LCGs8aLReIx5qw3Ys5BSIi626fGLNBpPNZ
-	UlA85ePFM7QqjLfjhGk5CMp4vv52glGfSSl/YAU6vSGXtPq3xwQ1q93XNppcU7E/S85A0xaaDof
-	3H7aXCIl09UnO13SJd3aUUUqQFAG9it6B1Aw==
-X-Google-Smtp-Source: AGHT+IF+PBs1j5FzTL4nTtbZy9S8jQx0oyM0Yw6fciG0T5QoS4kG8UPHtVSxZJs1keD6X3tfzWTt3w==
-X-Received: by 2002:a05:600c:8216:b0:471:1716:11c4 with SMTP id 5b1f17b1804b1-4775ce20dcemr92100835e9.34.1762447363317;
-        Thu, 06 Nov 2025 08:42:43 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b28asm75115f8f.6.2025.11.06.08.42.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:42:42 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>
-Subject: [PATCH] crypto: cavium/nitrox - add WQ_PERCPU to alloc_workqueue users
-Date: Thu,  6 Nov 2025 17:42:36 +0100
-Message-ID: <20251106164236.344954-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762447365; c=relaxed/simple;
+	bh=SpeVu426/WkvU4V04i2YQbDyRo+Q5S/+ReTMbj/44jY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbIBqEzwWLn1MBicZ2fjpSlDcavv4HZdOywccGGj1k9Ld2hI3k/0J5h+QhUHHS+ceYXmJOgWGh3ZZ8bUKiLiajKw+aYgcVifzzKmySbedMnTrBQ+DfuYftutFgKSCzxR899Pt5BPt0HY0oPl6/C74SMt4j08E+PhBFs4Jqm8u8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTB9pWOU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB19C116C6;
+	Thu,  6 Nov 2025 16:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762447364;
+	bh=SpeVu426/WkvU4V04i2YQbDyRo+Q5S/+ReTMbj/44jY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sTB9pWOU6SlUQaXG8s5lq5F+7OO7QHlYrYaTNbFrAXxi6byliTu7t04qThNTSVZ8G
+	 WHjdbQnkU+ReOqrFxEdCJg5aSp0emBlaM1T38ul3Cax75ChyVUAMqi80hE2VXyhw4t
+	 xd9AXDXqLVqEPrtaEbW3BCEpERppmPG61GCcUftUcMYzIxzHOU+81T9aCtsCgRZoca
+	 sMe4W0FprvW0swDFPgCs78LPqdLS6uMajyBIxkSBDws37fHqWIdC6u3i8y/eYoQQEx
+	 o2Z3mc0FOphql1qJs0PqJYsApyBVDb9Afc/b5kPGYqXfLbjGqFS7lBqbIlWPXcH31N
+	 MtYBgsRLsCZkQ==
+Date: Thu, 6 Nov 2025 16:42:40 +0000
+From: Lee Jones <lee@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Subject: Re: [PATCH v3 2/4] mfd: tqmx86: refactor I2C setup
+Message-ID: <20251106164240.GW8064@google.com>
+References: <bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
+ <999718e052b5e600813cefc3ec19ba3028afa034.1761123080.git.matthias.schiffer@ew.tq-group.com>
+ <20251106133848.GL8064@google.com>
+ <eb1b752b3584d27e4d5e38544e54d7d1b5faf4ab.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <eb1b752b3584d27e4d5e38544e54d7d1b5faf4ab.camel@ew.tq-group.com>
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+On Thu, 06 Nov 2025, Matthias Schiffer wrote:
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+> On Thu, 2025-11-06 at 13:38 +0000, Lee Jones wrote:
+> > On Wed, 22 Oct 2025, Matthias Schiffer wrote:
+> > 
+> > > Preparation for supporting the second I2C controller, and detecting both
+> > > ocores and machxo2 controllers.
+> > > 
+> > > - Avoid the confusing "soft" I2C controller term - just call it the
+> > >   ocores I2C
+> > > - All non-const parts of the MFD cell are moved from global variables
+> > >   into new functions tqmx86_setup_i2c_ocores() and tqmx86_setup_i2c()
+> > > - Define TQMX86_REG_I2C_DETECT relative to I2C base register
+> > > 
+> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > > ---
+> > > 
+> > > v2: no changes
+> > > v3: no changes
+> > > 
+> > >  drivers/mfd/tqmx86.c | 130 ++++++++++++++++++++++++-------------------
+> > >  1 file changed, 74 insertions(+), 56 deletions(-)
+> > > 
+> > > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> > > index 1cba3b67b0fb9..3c6f158bf1a45 100644
+> > > --- a/drivers/mfd/tqmx86.c
+> > > +++ b/drivers/mfd/tqmx86.c
+> > > @@ -18,7 +18,7 @@
+> > >  
+> > >  #define TQMX86_IOBASE	0x180
+> > >  #define TQMX86_IOSIZE	0x20
+> > > -#define TQMX86_IOBASE_I2C	0x1a0
+> > > +#define TQMX86_IOBASE_I2C1	0x1a0
+> > >  #define TQMX86_IOSIZE_I2C	0xa
+> > >  #define TQMX86_IOBASE_WATCHDOG	0x18b
+> > >  #define TQMX86_IOSIZE_WATCHDOG	0x2
+> > > @@ -54,8 +54,8 @@
+> > >  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
+> > >  #define TQMX86_REG_SAUC		0x17
+> > >  
+> > > -#define TQMX86_REG_I2C_DETECT	0x1a7
+> > > -#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
+> > > +#define TQMX86_REG_I2C_DETECT	0x7
+> > > +#define TQMX86_REG_I2C_DETECT_OCORES	0xa5
+> > >  
+> > >  static uint gpio_irq;
+> > >  module_param(gpio_irq, uint, 0);
+> > > @@ -65,17 +65,6 @@ static uint i2c1_irq;
+> > >  module_param(i2c1_irq, uint, 0);
+> > >  MODULE_PARM_DESC(i2c1_irq, "I2C1 IRQ number (valid parameters: 7, 9, 12)");
+> > >  
+> > > -enum tqmx86_i2c1_resource_type {
+> > > -	TQMX86_I2C1_IO,
+> > > -	TQMX86_I2C1_IRQ,
+> > > -};
+> > > -
+> > > -static struct resource tqmx_i2c_soft_resources[] = {
+> > > -	[TQMX86_I2C1_IO] = DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
+> > > -	/* Placeholder for IRQ resource */
+> > > -	[TQMX86_I2C1_IRQ] = {},
+> > > -};
+> > > -
+> > >  static const struct resource tqmx_watchdog_resources[] = {
+> > >  	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
+> > >  };
+> > > @@ -91,28 +80,13 @@ static struct resource tqmx_gpio_resources[] = {
+> > >  	[TQMX86_GPIO_IRQ] = {},
+> > >  };
+> > >  
+> > > -static struct i2c_board_info tqmx86_i2c_devices[] = {
+> > > +static const struct i2c_board_info tqmx86_i2c1_devices[] = {
+> > >  	{
+> > >  		/* 4K EEPROM at 0x50 */
+> > >  		I2C_BOARD_INFO("24c32", 0x50),
+> > >  	},
+> > >  };
+> > >  
+> > > -static struct ocores_i2c_platform_data ocores_platform_data = {
+> > > -	.num_devices = ARRAY_SIZE(tqmx86_i2c_devices),
+> > > -	.devices = tqmx86_i2c_devices,
+> > > -};
+> > > -
+> > > -static const struct mfd_cell tqmx86_i2c_soft_dev[] = {
+> > > -	{
+> > > -		.name = "ocores-i2c",
+> > > -		.platform_data = &ocores_platform_data,
+> > > -		.pdata_size = sizeof(ocores_platform_data),
+> > > -		.resources = tqmx_i2c_soft_resources,
+> > > -		.num_resources = ARRAY_SIZE(tqmx_i2c_soft_resources),
+> > > -	},
+> > > -};
+> > > -
+> > >  static const struct mfd_cell tqmx86_devs[] = {
+> > >  	{
+> > >  		.name = "tqmx86-wdt",
+> > > @@ -238,13 +212,74 @@ static int tqmx86_setup_irq(struct device *dev, const char *label, u8 irq,
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static int tqmx86_setup_i2c(struct device *dev, const char *name,
+> > > +			    unsigned long i2c_base, const void *platform_data,
+> > > +			    size_t pdata_size, u8 irq)
+> > > +{
+> > > +	const struct resource resources[] = {
+> > > +		DEFINE_RES_IO(i2c_base, TQMX86_IOSIZE_I2C),
+> > > +		irq ? DEFINE_RES_IRQ(irq) : (struct resource) {},
+> > > +	};
+> > > +	const struct mfd_cell i2c_dev = {
+> > > +		.name = name,
+> > > +		.platform_data = platform_data,
+> > > +		.pdata_size = pdata_size,
+> > > +		.resources = resources,
+> > > +		.num_resources = ARRAY_SIZE(resources),
+> > > +	};
+> > 
+> > No, please don't do it this way.
+> > 
+> > Keep as much information as you can in easy to read, easy to reference,
+> > easy to find, easy to follow, etc static data.  If you have to add a
+> > couple more static structs above, sobeit, but all of this parameter
+> > passing through abstracted functions is a regression in readability and
+> > maintainability IMHO.
+> 
+> Hmm, my reasoning for this change was that non-const static data always feels
+> yucky (and it can't be const because of the dynamic irq field); but course you
+> could argue that it's fine for a platform driver because there can only be a
+> single instance.
+> 
+> Maybe have a const static at the toplevel, and copy that to a stack variable to
+> fill in the resources?
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+It's okay not to be const.  We have a bunch of drivers that dynamically
+add platform_data and the like.  It's the lesser of 2 evils.  Adding all
+of this cruft dynamically "at the stack level" is suboptimal.
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
-
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-This change adds a new WQ_PERCPU flag to explicitly request alloc_workqueue()
-to be per-cpu when WQ_UNBOUND has not been specified.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/crypto/cavium/nitrox/nitrox_mbx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/cavium/nitrox/nitrox_mbx.c b/drivers/crypto/cavium/nitrox/nitrox_mbx.c
-index d4e06999af9b..a6a76e50ba84 100644
---- a/drivers/crypto/cavium/nitrox/nitrox_mbx.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_mbx.c
-@@ -192,7 +192,7 @@ int nitrox_mbox_init(struct nitrox_device *ndev)
- 	}
- 
- 	/* allocate pf2vf response workqueue */
--	ndev->iov.pf2vf_wq = alloc_workqueue("nitrox_pf2vf", 0, 0);
-+	ndev->iov.pf2vf_wq = alloc_workqueue("nitrox_pf2vf", WQ_PERCPU, 0);
- 	if (!ndev->iov.pf2vf_wq) {
- 		kfree(ndev->iov.vfdev);
- 		ndev->iov.vfdev = NULL;
 -- 
-2.51.1
-
+Lee Jones [李琼斯]
 
