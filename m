@@ -1,233 +1,167 @@
-Return-Path: <linux-kernel+bounces-888393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B6BC3AB6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:54:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7E7C3AAC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B56B3BE919
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:45:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B2FF4E5FE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83331314A62;
-	Thu,  6 Nov 2025 11:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173F7313E38;
+	Thu,  6 Nov 2025 11:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="FYEV5g/m";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AHw05ijj"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jvcy2Ycf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D497D30CDBD;
-	Thu,  6 Nov 2025 11:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCAA2E0406
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762429547; cv=none; b=XGKfqQWSd3uDteNjVmQZbeV2crf5J2OkzzNGMdabA4WJ6+HO6N6MrPFKpeBof3xnloRTVCK/q+yxPA/wJfEbGUMlA3DUgcXYr7f/r/EdKYp2LkBVIh+pSerNJ0aM1ncgVzWMAMnBtz45r3gW7Ns7uC2TJBM/xxEVahNS9IqR2tI=
+	t=1762429596; cv=none; b=OP1qk6SPj4ANV8g/753Pwe+mNZNxM9SeWJc5JckeEZbFaOAj/TUsEkxJ5Gz/KFxDVCX+gQAebxt/bXEHW//DXQHSc9T0Cu6xlW7I4gaAZQf8cr0NYpxBsOyE9kxFC0ieJISrdDfThfsZmc5m6FHmAy0wbRbIrsBfCitNU0EMClA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762429547; c=relaxed/simple;
-	bh=lRYu+qLZL4qifVykWfCOuRwuIpfbS/rl12XbWnvSfcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=MRd5HK/gZxkSJ+Ko0sfzxUfElyX1yzN5udJF5GK4v8zwdu9uR+8HWbCnJCbeN69jJrYk4B81popixCfDK9ZxlkBuCraWKzB52BuIDzoNoiBN/xCcNVvM/AZIVzLvOOGOeXswow8wfBqxO+z5198Wx6mGscZh7mXsqutXQQbg2jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=FYEV5g/m; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AHw05ijj; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C52FD14001EE;
-	Thu,  6 Nov 2025 06:45:43 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Thu, 06 Nov 2025 06:45:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1762429543; x=1762515943; bh=5k3gaOYj30dDfSaXFYGpf
-	fTJp8o5nXzOORcxkgidDlY=; b=FYEV5g/mCBf34duDLFuxYo/NshXE3UGd+cPhD
-	SmZPp+opVG7AdZFSuRopcOKyUv+Jr8vJ6hJX5El2MWWchqsCBQ30bPlyFgZ+evOo
-	GIFZ23+onrnQiiAK07vHOdoRf9Mufmw8E4sYgNWbOHiwMmLgZkQYQj19ChXkSoRA
-	FoHSpprkId53nO1ASVaUnpMPmDV7NxdaLF4RzWqY36Z94DqRXFh+nMYknTVMJXTL
-	NPhm0UzcGZ3w5K65agrQDmvN3kH6DeZ7d4c5edct6ddWlvRnY4aNdM8BIiCAFT/T
-	tH3L1X8sIcC/+oNBIhTmUDu8ntD5H6HZt22heXaVxMR9OCJaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762429543; x=1762515943; bh=5k3gaOYj30dDfSaXFYGpffTJp8o5nXzOORc
-	xkgidDlY=; b=AHw05ijjthcuUW/Y4mRXDtouinbqbTItCo49SlVfohlLZyiUJjY
-	y6v+3d49rOfjqNZOCzvghhwx1kKkVC8MMD6J0ZWrSOrmz80sOwlOfV0dbcVRZ4Xd
-	Jx3iYLnAHyMLU4jemlpehwU6KYB5/nyFXpezOhwg/Dbz9D6UJb3+la/HuG3opjOE
-	tBhS+UDO0c9S0UqU/MT06jRglsHehn6TtmoSgPwkUQ6U/ykkUND3STpp1MGMezzj
-	SWSHZTnRMY+uIdd9qgqTn2auBA+4iukxNYTGlgeLv3nAtg4IR4s1TsREOVAmC0Yp
-	KZJ5Z8hwD8H7fY4+/zbxn3xn9BDbIU+xkXg==
-X-ME-Sender: <xms:Z4oMaVWa0xMAqjcsih5lcDOdf2-FIInIc-YWZKnoXgbE_hhLCqqBSg>
-    <xme:Z4oMadvlG7W19GzjpsSHdWLVFzNEg9kWNWPhEdx9vnbhX4AUqTtnlNz5HPtR5cs_9
-    -nOFBZhRsUxait2dJaTTqxeWv-xK3c5fazyiQYCyiFQNE_3o7-7Vf0>
-X-ME-Received: <xmr:Z4oMaQ6u4Ma1LlAcFCQWG_5yXMxoP88DIesLd6M6559-BLrSliaUWDF79AylIDuyxTdC_qx7pumk5fdvebleQuw7n_zKeGMvxw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeiieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkgggtuggjsehttdertddttddvnecuhfhrohhmpefrvghtvghrucfj
-    uhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvtheqne
-    cuggftrfgrthhtvghrnhepgfelteeufedtleevjeetvdejvdffleduveevtedugfefveev
-    tddtudevgfejveegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpvghtvghrrdhhuhhtthgv
-    rhgvrhesfihhohdqthdrnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjuggvnhhoshgvsehgohhoghhlvgdrtghomhdprhgtphht
-    thhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnthhishhsse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehg
-    mhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpth
-    htoheprhihuggsvghrghessghithhmrghthhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Z4oMaYQuXXWMyE3RR1HRmjxZcuEw_9hrWPKjWnbbpCtbvdWwHX2Axg>
-    <xmx:Z4oMabuHF4d0fJEPCPhYUt5yLllHH_S6Rgz7DWVC8NxG4w1tZFWJKg>
-    <xmx:Z4oMaS9syFgBGPQLwhoachseBbNQnOgq0-Jqni4xqgON_F9M_4vM1Q>
-    <xmx:Z4oMacxUxvQddZMNnLWqOQkRzZRBsHPGqmqQXsA33ez5qORd0ILNEw>
-    <xmx:Z4oMaYp8_67n-CnA0Lou_ydctdKVaRzhXQJqorE7mQCEtaYnOjwgEfvs>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Nov 2025 06:45:39 -0500 (EST)
-Date: Thu, 6 Nov 2025 21:45:34 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
-	Sean O'Brien <seobrien@google.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v3] Input: rename INPUT_PROP_HAPTIC_TOUCHPAD to
- INPUT_PROP_PRESSUREPAD
-Message-ID: <20251106114534.GA405512@tassie>
+	s=arc-20240116; t=1762429596; c=relaxed/simple;
+	bh=jtGVnAw7hGw7A86rWQx2BybPyMp2c9/oRFnEqktD72c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZMWItfzSU7WaguOTM6qKKacACOYJbAdYpgnFSM/DUzHBwGT7Rn8bimO+gArkO1aVI4igzROfAXzNK+7HdFis6tOKb9TiBhMGQFLPM+HHVUf6briTSoM84nDpjMEHNv9YcC98Nqj80NWsK42XjUu+dUj5hTXWqCnBAFRQ0yhIqYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jvcy2Ycf; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762429595; x=1793965595;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jtGVnAw7hGw7A86rWQx2BybPyMp2c9/oRFnEqktD72c=;
+  b=Jvcy2YcfMrgN7Gi+uWVdJC6Qb0noJ+ovEV2Qv4nXOTN7XoFvigBzgaV0
+   FDaJ2fL2uTaV5rYsw3UQXwgqVKCrd+tJmMJnPsG/ucs1EWAdj2HOMtlrn
+   Xuo5N4otgkL47uwpntsjd4cnpafn0x6aIGMYeb8xMRAeSChWZAj2MpCid
+   vjuiPgLpdVnHnemDGnau5qd+kL1/7GKktiQf1ePSDJaGg6D8JtawboPkF
+   IfVOjE+jx+aTFB4yl78DebNvPHdvYmBkdC4ukRYfkciKpPxRKB+zpmfDi
+   3dhZV4KGz79eysu8z8thwmomC5WSGQQYvjT0PCOI75oplsGdBMa5Bt64x
+   Q==;
+X-CSE-ConnectionGUID: hWnfSXnUT3KKLhq79wvZaQ==
+X-CSE-MsgGUID: GN706/XEQOCrblEhHFUllQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="81966323"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="81966323"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 03:46:34 -0800
+X-CSE-ConnectionGUID: tKM8SudVTDuHVuG6/mJYig==
+X-CSE-MsgGUID: zeWtXRMXSAWMKcUokAYHCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="218400319"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa002.jf.intel.com with ESMTP; 06 Nov 2025 03:46:33 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 45DCA95; Thu, 06 Nov 2025 12:46:32 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>,
+	Joy Zou <joy.zou@nxp.com>,
+	linux-kernel@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] regulator: pf9453: Fix kernel doc for mux_poll()
+Date: Thu,  6 Nov 2025 12:46:28 +0100
+Message-ID: <20251106114628.2302762-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030011735.GA969565@quokka>
+Content-Transfer-Encoding: 8bit
 
-And expand it to encompass all pressure pads.
+The validator is not happy:
 
-Definition: "pressure pad" as used here as includes all touchpads that
-use physical pressure to convert to click, without physical hinges. Also
-called haptic touchpads in general parlance, Synaptics calls them
-ForcePads.
+Warning: drivers/regulator/pf9453-regulator.c:303 This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
 
-Most (all?) pressure pads are currently advertised as
-INPUT_PROP_BUTTONPAD. The suggestion to identify them as pressure pads
-by defining the resolution on ABS_MT_PRESSURE has been in the docs since
-commit 20ccc8dd38a3 ("Documentation: input: define
-ABS_PRESSURE/ABS_MT_PRESSURE resolution as grams") but few devices
-provide this information.
+Update the kernel-doc accordingly.
 
-In userspace it's thus impossible to determine whether a device is a
-true pressure pad (pressure equals pressure) or a normal clickpad with
-(pressure equals finger size).
-
-Commit 7075ae4ac9db ("Input: add INPUT_PROP_HAPTIC_TOUCHPAD") introduces
-INPUT_PROP_HAPTIC_TOUCHPAD but restricted it to those touchpads that
-have support for userspace-controlled effects. Let's expand and rename
-that definition to include all pressure pad touchpads since those that
-do support FF effects can be identified by the presence of the
-FF_HAPTIC bit.
-
-This means:
-- clickpad: INPUT_PROP_BUTTONPAD
-- pressurepad: INPUT_PROP_BUTTONPAD + INPUT_PROP_PRESSUREPAD
-- pressurepad with configurable haptics:
-  INPUT_PROP_BUTTONPAD + INPUT_PROP_PRESSUREPAD + FF_HAPTIC
-
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-ftr, I picked PRESSUREPAD over Dmitry's PRESSURE_TOUCHPAD suggestion
-because it matches better with the existing BUTTONPAD.
+ drivers/regulator/pf9453-regulator.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-Changes to v1: extra empty lines to render the lists as lists
-Changes to v2: rename to PRESSUREPAD and rename it in the instances
-  where it's used in the code
-
-v1: https://lore.kernel.org/linux-input/20251030011735.GA969565@quokka/T/#u
-v2: https://lore.kernel.org/linux-input/20251030011735.GA969565@quokka/T/#m9504de27b02d00a55d540fd9fec9aed3edd0133c
-
- Documentation/input/event-codes.rst    | 25 ++++++++++++++++++-------
- drivers/hid/hid-haptic.c               |  2 +-
- include/uapi/linux/input-event-codes.h |  2 +-
- 3 files changed, 20 insertions(+), 9 deletions(-)
-
-diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
-index 1ead9bb8d9c6..4424cbff251f 100644
---- a/Documentation/input/event-codes.rst
-+++ b/Documentation/input/event-codes.rst
-@@ -400,19 +400,30 @@ can report through the rotational axes (absolute and/or relative rx, ry, rz).
- All other axes retain their meaning. A device must not mix
- regular directional axes and accelerometer axes on the same event node.
+diff --git a/drivers/regulator/pf9453-regulator.c b/drivers/regulator/pf9453-regulator.c
+index 4cd7a9068836..cdb80f9d1bd7 100644
+--- a/drivers/regulator/pf9453-regulator.c
++++ b/drivers/regulator/pf9453-regulator.c
+@@ -289,13 +289,15 @@ static int pf9453_pmic_write(struct pf9453 *pf9453, unsigned int reg, u8 mask, u
+ }
  
--INPUT_PROP_HAPTIC_TOUCHPAD
----------------------------
-+INPUT_PROP_PRESSUREPAD
-+----------------------
-+
-+The INPUT_PROP_PRESSUREPAD property indicates that the device provides
-+simulated haptic feedback (e.g. a vibrator motor situated below the surface)
-+instead of physical haptic feedback (e.g. a hinge). This property is only set
-+if the device:
+ /**
+- * pf9453_regulator_enable_regmap for regmap users
++ * pf9453_regulator_enable_regmap - enable regulator for regmap users
+  *
+  * @rdev: regulator to operate on
+  *
+  * Regulators that use regmap for their register I/O can set the
+  * enable_reg and enable_mask fields in their descriptor and then use
+  * this as their enable() operation, saving some code.
++ *
++ * Return: %0 on success, or negative errno.
+  */
+ static int pf9453_regulator_enable_regmap(struct regulator_dev *rdev)
+ {
+@@ -314,13 +316,15 @@ static int pf9453_regulator_enable_regmap(struct regulator_dev *rdev)
+ }
  
--The INPUT_PROP_HAPTIC_TOUCHPAD property indicates that device:
--- supports simple haptic auto and manual triggering
- - can differentiate between at least 5 fingers
- - uses correct resolution for the X/Y (units and value)
--- reports correct force per touch, and correct units for them (newtons or grams)
- - follows the MT protocol type B
+ /**
+- * pf9453_regulator_disable_regmap for regmap users
++ * pf9453_regulator_disable_regmap - disable regulator for regmap users
+  *
+  * @rdev: regulator to operate on
+  *
+  * Regulators that use regmap for their register I/O can set the
+  * enable_reg and enable_mask fields in their descriptor and then use
+  * this as their disable() operation, saving some code.
++ *
++ * Return: %0 on success, or negative errno.
+  */
+ static int pf9453_regulator_disable_regmap(struct regulator_dev *rdev)
+ {
+@@ -339,7 +343,7 @@ static int pf9453_regulator_disable_regmap(struct regulator_dev *rdev)
+ }
  
-+If the simulated haptic feedback is controllable by userspace the device must:
-+
-+- support simple haptic auto and manual triggering, and
-+- report correct force per touch, and correct units for them (newtons or grams), and
-+- provide the EV_FF FF_HAPTIC force feedback effect.
-+
- Summing up, such devices follow the MS spec for input devices in
--Win8 and Win8.1, and in addition support the Simple haptic controller HID table,
--and report correct units for the pressure.
-+Win8 and Win8.1, and in addition may support the Simple haptic controller HID
-+table, and report correct units for the pressure.
-+
-+Where applicable, this property is set in addition to INPUT_PROP_BUTTONPAD, it
-+does not replace that property.
+ /**
+- * pf9453_regulator_set_voltage_sel_regmap for regmap users
++ * pf9453_regulator_set_voltage_sel_regmap - set voltage for regmap users
+  *
+  * @rdev: regulator to operate on
+  * @sel: Selector to set
+@@ -347,6 +351,8 @@ static int pf9453_regulator_disable_regmap(struct regulator_dev *rdev)
+  * Regulators that use regmap for their register I/O can set the
+  * vsel_reg and vsel_mask fields in their descriptor and then use this
+  * as their set_voltage_vsel operation, saving some code.
++ *
++ * Return: %0 on success, or negative errno.
+  */
+ static int pf9453_regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned int sel)
+ {
+@@ -397,7 +403,7 @@ static int find_closest_bigger(unsigned int target, const unsigned int *table,
+ }
  
- Guidelines
- ==========
-diff --git a/drivers/hid/hid-haptic.c b/drivers/hid/hid-haptic.c
-index aa090684c1f2..fc8a9997f815 100644
---- a/drivers/hid/hid-haptic.c
-+++ b/drivers/hid/hid-haptic.c
-@@ -86,7 +86,7 @@ int hid_haptic_input_configured(struct hid_device *hdev,
- 	if (hi->application == HID_DG_TOUCHPAD) {
- 		if (haptic->auto_trigger_report &&
- 		    haptic->manual_trigger_report) {
--			__set_bit(INPUT_PROP_HAPTIC_TOUCHPAD, hi->input->propbit);
-+			__set_bit(INPUT_PROP_PRESSUREPAD, hi->input->propbit);
- 			return 1;
- 		}
- 		return 0;
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 8ba48590bd2c..d21172c6a266 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -27,7 +27,7 @@
- #define INPUT_PROP_TOPBUTTONPAD		0x04	/* softbuttons at top of pad */
- #define INPUT_PROP_POINTING_STICK	0x05	/* is a pointing stick */
- #define INPUT_PROP_ACCELEROMETER	0x06	/* has accelerometer */
--#define INPUT_PROP_HAPTIC_TOUCHPAD	0x07	/* is a haptic touchpad */
-+#define INPUT_PROP_PRESSUREPAD		0x07	/* pressure triggers clicks */
- 
- #define INPUT_PROP_MAX			0x1f
- #define INPUT_PROP_CNT			(INPUT_PROP_MAX + 1)
+ /**
+- * pf9453_regulator_set_ramp_delay_regmap
++ * pf9453_regulator_set_ramp_delay_regmap - set ramp delay for regmap users
+  *
+  * @rdev: regulator to operate on
+  * @ramp_delay: desired ramp delay value in microseconds
+@@ -405,6 +411,8 @@ static int find_closest_bigger(unsigned int target, const unsigned int *table,
+  * Regulators that use regmap for their register I/O can set the ramp_reg
+  * and ramp_mask fields in their descriptor and then use this as their
+  * set_ramp_delay operation, saving some code.
++ *
++ * Return: %0 on success, or negative errno.
+  */
+ static int pf9453_regulator_set_ramp_delay_regmap(struct regulator_dev *rdev, int ramp_delay)
+ {
 -- 
-2.51.1
+2.50.1
 
 
