@@ -1,126 +1,92 @@
-Return-Path: <linux-kernel+bounces-888098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30136C39D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:36:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2BAC39D70
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0203BC01B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:36:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D95764EE0CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998E5303CBB;
-	Thu,  6 Nov 2025 09:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+xqXbxm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3E3286D55;
-	Thu,  6 Nov 2025 09:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D28F2FFF99;
+	Thu,  6 Nov 2025 09:36:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3B5266B66
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762421770; cv=none; b=AQTVtTkZvsSN+9ZF1kQNIRoY8++JOYIEY6IuiTgJjNWh6QGEScyP/I2V274Y8DvVjrkEehaM8QRWh/FyhwbGqKoB3sW4BMqV2I1vkr4dQtp1+E3op53SC26bAqgMv5BxHhfRr1plYVubB7iq+USiAvPlXDvsuSSAqXfuz4Hfv5I=
+	t=1762421799; cv=none; b=N/6nCAGwaYB+3tUuwwu9YfBCMbBiXjXwU8kX/AT4CV555qpxELE56Sd7am5dH5KWo8DNkt6lM0Dzs4JCR2F4JvNIZ5PQc/OqLAieqcHHemXtWHVHEC8PZWTKE03mMssmWI4ncydDYJg/5QeVGCpCm2Bng1qx4Di5IAWARKBtbzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762421770; c=relaxed/simple;
-	bh=Toqy0lKEohSNoSfFWjUFFL6GdfH+5truG1nkMtppQZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oV09vWh7VNBu0aoQQwhFoAlxDdaB1xMf8P3e48JPXx3pwJnAehJXql6lOrAPY1WojN6MZjpnY0cJhJ36P22MH/wdudx6XyqhdIxKnnN92gtoSVLiDJYmgNaK5qJVv7tWwrtr/2pzTRwUWiDpIvZUQf+E6ld4N9pqnH5pmY24AJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+xqXbxm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B1DC4CEF7;
-	Thu,  6 Nov 2025 09:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762421769;
-	bh=Toqy0lKEohSNoSfFWjUFFL6GdfH+5truG1nkMtppQZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O+xqXbxmhje9PKO4r4kC5DzuJSUy7ZKdpoZP5dm9YbLP3no4UkysZfcytuEjnrrfb
-	 5QZaB9M0CVIgIDsncBVTmxGj/nqYDTqDXvSPycArX3faqc9H/qyHCJYZRMk/N2Wz+O
-	 ZXULGdO9KRde+AXEllK0hgKM9YlyQlTHg1LfEi4EdmZzDeBPhKogzMO2u7fqsC+CIk
-	 iAFTeXvY+GzfABCLSzQTi9klc47ocuefQAsxyKynA/gQc2tofmQ069ZJ71ejC28hnq
-	 lKRX2tVQAkmFdX4uGEDQeySxoiZaMcM4mo+xn5aMND1G9zDz4N/tOVNdefvaiSQ2qu
-	 2Z/Q71GfuFKKQ==
-Date: Thu, 6 Nov 2025 10:36:06 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] pwm: rzg2l-gpt: Reinitialize cache value
-Message-ID: <ct7zlhhexzjsogtthsmhejm37idby3pphljzzdarylkcupmblg@gripvo3dxzqq>
-References: <20250915163637.3572-1-biju.das.jz@bp.renesas.com>
- <20250915163637.3572-2-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1762421799; c=relaxed/simple;
+	bh=70yxIt6bKMGQJcBtDHtZsRT/fntqcZbcd0DrCF/dN1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pa0ZBm08QgwgPPnsycDLssK9cPyi0vrc+nN/xmMHiI4HV3/dGqHHIwarF8YSaioi+sFDvyyqI9t8BB3QmoRdr/tYDduBGbxVYylW9JDKCddMT7GA0sfERqWvk5RjtjQ7KPFYdMK0jsg81MOBAAiTiJ48hQQ/CNcp5BIrkW+2bO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE5251595;
+	Thu,  6 Nov 2025 01:36:28 -0800 (PST)
+Received: from [10.163.73.244] (unknown [10.163.73.244])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 333AB3F63F;
+	Thu,  6 Nov 2025 01:36:33 -0800 (PST)
+Message-ID: <2be8882d-08eb-4d7d-a846-d29406858bcc@arm.com>
+Date: Thu, 6 Nov 2025 15:06:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="or25wqcocuvjykyk"
-Content-Disposition: inline
-In-Reply-To: <20250915163637.3572-2-biju.das.jz@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: cleanup vma_iter_bulk_alloc
+To: Wentao Guan <guanwentao@uniontech.com>, Liam.Howlett@oracle.com
+Cc: vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhanjun@uniontech.com, niecheng1@uniontech.com
+References: <20251106063424.3381872-1-guanwentao@uniontech.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20251106063424.3381872-1-guanwentao@uniontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---or25wqcocuvjykyk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/2] pwm: rzg2l-gpt: Reinitialize cache value
-MIME-Version: 1.0
 
-On Mon, Sep 15, 2025 at 05:36:30PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Reinitialize the cache value to 0 during disable().
->=20
-> Fixes: 061f087f5d0b ("pwm: Add support for RZ/G2L GPT")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On 06/11/25 12:04 PM, Wentao Guan wrote:
+> commit d24062914837 ("fork: use __mt_dup() to duplicate maple tree in dup_mmap()"),
+> remove the only user and mas_expected_entries has been removed,
+> since commit e3852a1213ffc ("maple_tree: Drop bulk insert support").
+> 
+> No functional change.
+> 
+> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+
 > ---
-> v3:
->  * New patch.
-> ---
->  drivers/pwm/pwm-rzg2l-gpt.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
-> index 360c8bf3b190..b2452e50d618 100644
-> --- a/drivers/pwm/pwm-rzg2l-gpt.c
-> +++ b/drivers/pwm/pwm-rzg2l-gpt.c
-> @@ -190,8 +190,10 @@ static void rzg2l_gpt_disable(struct rzg2l_gpt_chip =
-*rzg2l_gpt,
->  	/* Stop count, Output low on GTIOCx pin when counting stops */
->  	rzg2l_gpt->channel_enable_count[ch]--;
-> =20
-> -	if (!rzg2l_gpt->channel_enable_count[ch])
-> +	if (!rzg2l_gpt->channel_enable_count[ch]) {
->  		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), RZG2L_GTCR_CST, 0);
-> +		rzg2l_gpt->period_ticks[ch] =3D 0;
-> +	}
+>  mm/vma.h | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/mm/vma.h b/mm/vma.h
+> index 9183fe5490090..4aa72c7e94400 100644
+> --- a/mm/vma.h
+> +++ b/mm/vma.h
+> @@ -498,12 +498,6 @@ static inline unsigned long vma_iter_end(struct vma_iterator *vmi)
+>  	return vmi->mas.last + 1;
+>  }
+>  
+> -static inline int vma_iter_bulk_alloc(struct vma_iterator *vmi,
+> -				      unsigned long count)
+> -{
+> -	return mas_expected_entries(&vmi->mas, count);
+> -}
+> -
+>  static inline
+>  struct vm_area_struct *vma_iter_prev_range(struct vma_iterator *vmi)
+>  {
+> 
+> base-commit: dc77806cf3b4788d328fddf245e86c5b529f31a2
 
-A code comment and/or a more verbose commit log would be very welcome.
-
->  	/* Disable pin output */
->  	rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTIOR(ch), RZG2L_GTIOR_OxE(sub_ch), 0=
-);
-
-Best regards
-Uwe
-
---or25wqcocuvjykyk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkMbAQACgkQj4D7WH0S
-/k5+rggAlRnnHOXN5Cyw8ayTcICgtQSHgkNtrg/M4WN0498MLEqAHdcv1roeEPsd
-m1x47NRM+vGIf2oMvY0IZsLsbAg8EG6oKLa7C3THrvw9BsKFve//pta+YG4I1C3K
-KEMD9mphHFew0BQiB226JLY5viehPw4vQsoQjKV0Z7aRA1gwm9c6kv8xRK5LYmnE
-j6xdciMlATGTNXfTV4ad+jW+8rpHlgXU7Yjq4OH0ED6oFfan5t80pSJ/7kmPvyOb
-qLzBd+LPfnfGXlXbfnDRUMThzzPq2KuQqMHwx3SDt3w+KQiWUnfbNB23HXtS5N1P
-EBsJ6qucUih8ZNIiKfb1lPSrPuWrqg==
-=7Iko
------END PGP SIGNATURE-----
-
---or25wqcocuvjykyk--
 
