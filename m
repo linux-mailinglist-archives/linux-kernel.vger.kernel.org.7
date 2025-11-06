@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-888530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF94C3B11A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:06:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1659AC3B129
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F41189AE24
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:59:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB45463AC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4472E340DA3;
-	Thu,  6 Nov 2025 12:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A354D32E6AB;
+	Thu,  6 Nov 2025 12:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCH6GiVv"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g3EOW+eG"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2348633C531
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A5832C956
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433630; cv=none; b=gxhOELFrwbSe8IY1FnHgSjcW5DiBT8Mc5QBFOsStpn8AWJF+VBeM4fP6t8ZK5S03uQ+sa1SXIBvgZZPk+i80VvTBDs+iLsrs+DehT7A/54RsiqZD2Cv/hWK4Xm4I77rqve640NTfnVuxh8Sep9HtMRC/2P9h4Bsp+czSKjVDyqg=
+	t=1762433603; cv=none; b=buutqxVB28q3Wnu46CB1Mn/cxR+tcyoa2GC3vyGIYJm1C0BAufPIExD4OVc8O5vyquHro3O6RJErOiTgb03D3fzuL5uLUn4fsUlob3QdHcjyhJ3Pf/Df/CNKxOu4On27TMu3gzY+f6z5tmZZh5/ZvDvSTwRbLrwUQpKOcuWGTdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433630; c=relaxed/simple;
-	bh=Q+gPCrBvqV9eKYawaaZc594PBuJnFIBv2mWZKk6piR8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uAxyceVyo05Zt0cKmg+YfcrlUp6CW+6meRW+ywT41kyM8bwhve0ikT13LY9zjg58pxiA+p1e3FyBh0tLNkHfRjtaRXGhYxr240JbmtKOeQ4xXFLxG2P85v7hE+UxZxXAxbhWHuvUJPKzQfqCP6eZf41Fx6VzmzoTI4lcI5URBsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCH6GiVv; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-429bf011e6cso943932f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:53:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762433626; x=1763038426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K34fjCYCGoSJdwCxfEsku+tPUzx/FlDGUOaZ5xDsmCE=;
-        b=gCH6GiVveRDMs7EoevQ8mPsqJ7GoXyb7Wzlx3oNyF9R+WxBEHvZXnzB7QkdG5qG+4a
-         PJMamgzZIM6+1CBE2P48CI6tGnlOGztEz/MC0pCChRh+SK4yCIFFB6J4pXyqGzUmS2Ix
-         1lqX7n4vNdkcqm1FXrdKJ7W6VCLvypcb3hn6IxbORgHFKBUzR0XAkILT4D1Ys8F3EMGC
-         i7rtN98eCRHHco2k5nb33pfJmC2i6F40OGI5m5/gC21Oe1Ji3AOcTZ85SaEsqOeyERYF
-         d66+Q66n3m6GR/TGNjob0Pailh+lECMQLBxFO0tj7lyGVG/cAzii1u5ZDFXnsmh2O1Pu
-         l47Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762433626; x=1763038426;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K34fjCYCGoSJdwCxfEsku+tPUzx/FlDGUOaZ5xDsmCE=;
-        b=BkkyCLgzZOSJ3/n3T7NpeifaqaO2J25X/VS6EnJjx3EXdfcZnRCIYmy7BSmFukAoAM
-         lA0bGmoZAgEi9s7qdVRJ0ipPk+Gax2b8CqG1iRp5fEh7EiQ3theD+z+yGNHgXVTQ9WI+
-         IN/Q+OnxlC37F0NVIpICNbUFssunFEXP4N7Xbuh6PsB8/5oxujB/NbU12r5FOi+BJGfU
-         HxOOvEQmwD7eE+wL4B4Q/pM0WWDqn9kjFBn3SVXyLyuhE5/b0MOMvKFv7Reo8WjUOVgp
-         roagPN7UHE1S9HuFoxRwKwzxAtcUraITkGGlc5Mv/kHGBKCT0rAQ+UoMU4Fz07iHPqW+
-         3fwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWe/7T48VWs/QlJdN6flMZX1jDf3ifWfu35P+cw7ohiD9+RsIhaMSpmcpISTCcq9zwwy8fNf6IZ9qPYOVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwinB5S/4DUzOX2YeS4jQSW5Pf3VfVf7Pbq0dNGbFpAWl0XevhD
-	iFJ61gagfxCocgaGT8SXpWJ2ORP8ABMaA3fwyARAtGGE6wuNcqbUzhNqlI6a
-X-Gm-Gg: ASbGncuxqH7jvhNhLPHBNn/1yZU6pw7V5srh7i62GyJdMgmdwLfNDPLE7VEZnL6MZO1
-	UDbJ+uO8fVtROPKi71Qj8B0JWH3SiaBN43z9ZvbY8gR0EYZhQBkW6UEf3UEuBX+MbD9nE/7X1Jb
-	IXY+E7Bj8oDrVYmEC1NpxzsqR4cUeLZa2SEgAEwyVrRpghFpsg5teZKBRcUWvgE4FmoUivvMIMp
-	RteiGKBIE97hJH19bQ7nGRaN8vNf+fdtRP3QvFVNxKnHgnHpoc1SNN1kSXCwlQx/0nQu2xTWciC
-	4OFMHApfnW5a3b+WZjb3vzcUPlcACktMpofzxpyWpVyhougMJ+SPzJj8r47AbpoAYOaCa/NyYYX
-	C0d5DSYVZ/D0+b0DiDviWls4nv67xqZAYhk1lAhxPmHtvP1WfNggERpQhPHKrNGbmQzCHTjqBcP
-	OdqKe/oxY24zQcRmRXw7A5GH0JfHxDz76TR4BUELG+zgf1PeNHwa4itsk=
-X-Google-Smtp-Source: AGHT+IEsHuLNMGEHDB74IdUzyIrXs5wkTefXkfvvLRH9gq2+IppFGexW3BvrP1HGL9GdfsxYTxaF9Q==
-X-Received: by 2002:a05:6000:64b:b0:429:dde3:6576 with SMTP id ffacd0b85a97d-429e32e6c08mr5782407f8f.16.1762433626184;
-        Thu, 06 Nov 2025 04:53:46 -0800 (PST)
-Received: from ast-epyc5.inf.ethz.ch (ast-epyc5.inf.ethz.ch. [129.132.161.180])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40379esm4788856f8f.9.2025.11.06.04.53.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 04:53:45 -0800 (PST)
-From: Hao Sun <sunhao.th@gmail.com>
-X-Google-Original-From: Hao Sun <hao.sun@inf.ethz.ch>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	john.fastabend@gmail.com,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	linux-kernel@vger.kernel.org,
-	sunhao.th@gmail.com,
-	Hao Sun <hao.sun@inf.ethz.ch>
-Subject: [PATCH RFC 17/17] bpf: Enable bcf for priv users
-Date: Thu,  6 Nov 2025 13:52:55 +0100
-Message-Id: <20251106125255.1969938-18-hao.sun@inf.ethz.ch>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
-References: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
+	s=arc-20240116; t=1762433603; c=relaxed/simple;
+	bh=DgaEBzJVE0diUpcGF2jdqQ0yAib13/RGrDpfzFmIiKQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=V9qZzQ02v9cjRVxPm7nZFNMu1/FrlO5p9z0wak8fZcX325fhG4giEw3yvkWPhPCvwaGL+/jn8enwbZSooHVg9oMgGQVbbkK54rinHKzP8jWTC9kdy1mvkEBZ/lmwJnrHQjyNp5h9SPL9+nRk8FLAIP0Dfn88L4IkOK2lLJuIky4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g3EOW+eG; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5602C4E41460;
+	Thu,  6 Nov 2025 12:53:19 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2B4CB6068C;
+	Thu,  6 Nov 2025 12:53:19 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4CED71185102A;
+	Thu,  6 Nov 2025 13:53:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762433598; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=U52A0foBkCvgyCUwDdVQ7zTmGiYooyVZixhAGJ0JZp4=;
+	b=g3EOW+eGxuVNT5I+V9nxHKZM18Y6DjUN+oYkr6K8uOh0+Z5Rng0mL9EF/XsCp3l0I4El5Z
+	RvoQOXMJ/w7MKzF3mkM3EGSlvcRbULcte5qOoyAzckRtS5hgQ43f4QMtxnnZaxGvukc7PZ
+	5HdWDsprEhGYHT5dja3XpvBzXtsTdzI9zi6PPfSSpte81N4lXW8XNBE2KpoNStGU6GnfF1
+	IQ3XYO6Xh5vATkXfiqEQEFUksRAI/rzX4MLVG/CX1wcwfaUDv5/vPPvbyhvkmgA5d7oGG/
+	FYUnzoyFn6oXilNo/lrzmIMR/lmQ/Hr6M35hI+dM5WURyht8M+NMzffiZq9oAg==
+From: "Bastien Curutchet (Schneider Electric)" <bastien.curutchet@bootlin.com>
+Date: Thu, 06 Nov 2025 13:53:09 +0100
+Subject: [PATCH net v2 2/4] net: dsa: microchip: ptp: Fix checks on
+ irq_find_mapping()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251106-ksz-fix-v2-2-07188f608873@bootlin.com>
+References: <20251106-ksz-fix-v2-0-07188f608873@bootlin.com>
+In-Reply-To: <20251106-ksz-fix-v2-0-07188f608873@bootlin.com>
+To: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Arun Ramadoss <arun.ramadoss@microchip.com>
+Cc: Pascal Eberhard <pascal.eberhard@se.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (Schneider Electric)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Enable bcf when bcf_buf is provided and is_priv.
+irq_find_mapping() returns a positive IRQ number or 0 if no IRQ is found
+but it never returns a negative value. However, during the PTP IRQ setup,
+we verify that its returned value isn't negative.
 
-Signed-off-by: Hao Sun <hao.sun@inf.ethz.ch>
+Fix the irq_find_mapping() check to enter the error path when 0 is
+returned. Return -EINVAL in such case.
+
+Fixes: cc13ab18b201 ("net: dsa: microchip: ptp: enable interrupt for timestamping")
+Signed-off-by: Bastien Curutchet (Schneider Electric) <bastien.curutchet@bootlin.com>
 ---
- kernel/bpf/verifier.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/dsa/microchip/ksz_ptp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index fb672c9cc7cd..d48357bac9f3 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -25961,6 +25961,7 @@ int bpf_check(struct bpf_prog **prog, union bpf_attr *attr, bpfptr_t uattr, __u3
- 	env->bypass_spec_v1 = bpf_bypass_spec_v1(env->prog->aux->token);
- 	env->bypass_spec_v4 = bpf_bypass_spec_v4(env->prog->aux->token);
- 	env->bpf_capable = is_priv = bpf_token_capable(env->prog->aux->token, CAP_BPF);
-+	env->bcf.available = is_priv && attr->bcf_buf_size;
+diff --git a/drivers/net/dsa/microchip/ksz_ptp.c b/drivers/net/dsa/microchip/ksz_ptp.c
+index 35fc21b1ee48a47daa278573bfe8749c7b42c731..c8bfbe5e2157323ecf29149d1907b77e689aa221 100644
+--- a/drivers/net/dsa/microchip/ksz_ptp.c
++++ b/drivers/net/dsa/microchip/ksz_ptp.c
+@@ -1139,8 +1139,8 @@ int ksz_ptp_irq_setup(struct dsa_switch *ds, u8 p)
+ 		irq_create_mapping(ptpirq->domain, irq);
  
- 	bpf_get_btf_vmlinux();
+ 	ptpirq->irq_num = irq_find_mapping(port->pirq.domain, PORT_SRC_PTP_INT);
+-	if (ptpirq->irq_num < 0) {
+-		ret = ptpirq->irq_num;
++	if (!ptpirq->irq_num) {
++		ret = -EINVAL;
+ 		goto out;
+ 	}
  
+
 -- 
-2.34.1
+2.51.0
 
 
