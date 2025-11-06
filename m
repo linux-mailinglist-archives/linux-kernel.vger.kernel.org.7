@@ -1,208 +1,264 @@
-Return-Path: <linux-kernel+bounces-888143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5897C39F3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:57:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1961C39E02
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:45:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92F4550035B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:53:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 146AB350847
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4760530DEC1;
-	Thu,  6 Nov 2025 09:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsKaoMtO"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8432DE70A;
+	Thu,  6 Nov 2025 09:45:33 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0229A2DF145
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5770723B605
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422605; cv=none; b=CpWZynB7T71nE8Ok6tkqYNMhaBcnVaAczqctynHamqBvxLQqq+LIJgpPT7SbpwCDFD7lUXVimk7Jmij9rT12XhSfb429lSO0jhPFQvdoJEyxDkNW7eKYGaHyVpoYyy0nS0AS4uaLejVLDuq1oaCygk5cClPBaAQUKK8dNmIS3sE=
+	t=1762422333; cv=none; b=QHGGWT0yl3Dp4tNK8AbPHmPdXNecrDQBecOa8hG4K/10TjaaWCzgIVg9EDeExB/q4GYR8LfeDRfNfk36qjaii8zu+0aKzcS/pArArb8ZszDCjwHsSzuFAVWQ0W3UvwZpjqUSWjtquUJEXwxNj+v3t0HoSdRBWfeloqRPvaxTBvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422605; c=relaxed/simple;
-	bh=IRcPar28/4D04E4r0bzkVCy8UYUvk2JvQczEvypeUz8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZIBVw2LoKdWcFdjvUrKJK6/eHyYuQYas9VSq4w1xy3kbDaI490C4zTXPijx9oCFyi71aSkd37PrKm42JiAx35wVNteslt+rrsMQ46R2SUQkmmSWxudfpTt44WgbNaaBl715byzyL74431JR8MQjqdhVuFUWt7YCR7fJlLa6dEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsKaoMtO; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33be037cf73so905285a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:50:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762422603; x=1763027403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tuITS4kBtdrE0xOY6fuM1GNDJI0Hyov1YNBt8plbc9A=;
-        b=TsKaoMtOg0Y/2ugepLzaICi1jqLe2Z+dfzFs8mxnAIQygkPv/PmPeLNoQbqFKm2AMd
-         pnUc+zBHnNouz40ehoXORH1pTxTbKXvRSxcrjC93X96E3TqtswlcVfSeBjdDkriREi+H
-         g5Rd/eoZ9XA4M9joSj2Mfh0/2mmOOsHZwbKYBrFvUATx1eUkXp/A4L/hA5erD/BwktNr
-         M80dBqVG6INw2u/Q6oGs8KekxCPMNXQQbsOt33XOxbW6AvWZk9qyjAtOZQfnREvzAvtL
-         N49t11xweXxPWojSILWKBpW7h0TdpM4FpqjXNmxuDok+sdw71uIfEZ75XldXDaVQkrM/
-         ORZQ==
+	s=arc-20240116; t=1762422333; c=relaxed/simple;
+	bh=T1JG3gRzFohCXeutxQ1/hQSof93zQqaQskwwtXst5fI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=k6QSithpy0FYtW8t/5qMfyLV0tXSo9BgiG28Duun2OHfHRJn7DSL3IVahcF6OY4bZpRdJOJuGSGEMK98iVz7wwAln40nBiWY4+hGbW5w5y1KLRH+NKjy7V1WPDwRNb2p2X702TOp5pH+vaYVadFByb7SMvQyexd6ByHSvWsAS3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8870219dce3so15881939f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:45:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762422603; x=1763027403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tuITS4kBtdrE0xOY6fuM1GNDJI0Hyov1YNBt8plbc9A=;
-        b=IsiUjsyoYQC7mQ4VAjy1VK+rfXa+46Di8UOHXM5HSssu9xLYenvMqNucaphNwbyPyf
-         ES9jiWQ6lKUmiLcvOf3UJuh7u4hl3MD5LzrdIaIXfAGmBvpv0SgYuuoXUUiqmgIyFkBU
-         aNwb61ec1abt8i31vBUlPUm3IVCXe5LoqsxUCRp7Uw8ozR40UvoSWEDsWYfL4418UVMv
-         Zl02wtSQqGe6ZGRbjErrIFQ723bOo4Bv5tW+Z0tnk/dpU387slpgZzneayownaQDBclB
-         lKjilCsjT5X2rnqZrwWoAIWNKW35YcYA97xS72KeABwZujZRJoCscJ9ZzzUoKP/TgCu+
-         9oUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkTPtaNvCrOGKsyyA+fMveivpRUqxcX5kPY6zH8UcCHwUxKSfcfShbvz4Nd8W4VE4JFgHC8B+pmr7c7Ck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuH8OYEqEIY0+TclqpvfDeuI2WpT61m1gEcckaLIKpzJO1dgim
-	Oy6n9VluT+KxhY+ZfiAXtbxAmwhcHG2f51cmIrxA6Po2R0/JZ+7bF8G2PO+8dGtHXugbide/dHz
-	khgFcm+SRnviW1ceAt0FaCsFkMt1uCWc=
-X-Gm-Gg: ASbGncvnNAlGxRYvj591xhGgz4DwguSWLooBsk5BwKEjp4CmXM/U58AFYdujRI1WMz3
-	+i1+XIfSq3OvD9Z64VinRYbh/DQHh8LeBp0KbLLODfBjQTL8Db8U2FcmZNlKeOMeVHJ6AEvIwh0
-	CfoRFhp13WAarR7SQ5H516IVVEuBwxwf/aSvxImbLeO5NnSquAWojmINEQfuemMClzkpO7ntwT1
-	G9fQFwX9N9z76l2Vmb52O6/aQBiJPLEPom9XpshdsnkW+GqVrb/COb+/GoI
-X-Google-Smtp-Source: AGHT+IHtTu0aItN7oCpYlQZATPWzMYAFpRwqJjPF19uAoe9o1LjA9xlu2YB532D+sdeX4rZwu4Y297vlJzwmbTz5sNU=
-X-Received: by 2002:a17:90b:584d:b0:341:315:f50d with SMTP id
- 98e67ed59e1d1-341a6bfb59bmr7314378a91.8.1762422603266; Thu, 06 Nov 2025
- 01:50:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762422330; x=1763027130;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZTcgL6H5oY5FCjggOzmzN/zMv4D73ZQd/MUlTuqioEA=;
+        b=YIJCmy48sd3QkTf/o4Dlg1JWRfCaSquC08fA60vzpfpYcNLkmRQn4n2R24JrkedkE6
+         NUNMTHCyiIm5amuu03nuz33B2D75Ol7ZtEnRJNoLRy0w2M4bN71MHqppXVjWXHTyRpyP
+         bVgn1vWOaolcjpaoklC05ghSH1B7kG/kZMGNkI4BTKJu+Vn4Wd/kAzCoG3/C0pg4/Qkq
+         03f9t15IUecOkqJXPn1rMchW55eH6ea5ckFUDmFSWCo1NF4elh/8AJ1T7yLL/+yej8VA
+         4ABqWXTKg2USVCZOHCMaT2JB6ocS3BZbNRV7klxef83fE1kk2fW1obcZ2DZ2legH42cy
+         TM/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXQTJjRraOEAJn+xF/ifqzuFw8s7VKTK5C3CIZKXHmpBgZfLEl3e8YUnhrq/UMkxq59EmmJxkVSlInu68o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLSACvs+uzJtHvW2gmtvlL3Cdw3Zi/Z/x5a1Mca9oRiCjpiODz
+	zk1W8mpf7ZEh4Zcymk14mrUG6BgwLoQkQfTFh6Vk9mGPVySP3KvXQxgd5Vo3JtfzrK8aSLp0W+3
+	wOFRmL1NYvuj/2wzbC5iP9tKp9y/MxT5Hu5HDjJswqI5gUy0Zh9H9JYXDh3o=
+X-Google-Smtp-Source: AGHT+IG0cB2j9bryLBdBpOtLE59pe4+E5rx7ZQ1JMEg73jOxwVU5mtzuatZQPVVXpnM3zAoO92cxRI9GgLGlEkV958n2FokGzRRi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106054940.2728641-1-linchengming884@gmail.com>
- <20251106054940.2728641-2-linchengming884@gmail.com> <87o6pf8r24.fsf@bootlin.com>
-In-Reply-To: <87o6pf8r24.fsf@bootlin.com>
-From: Cheng Ming Lin <linchengming884@gmail.com>
-Date: Thu, 6 Nov 2025 17:45:27 +0800
-X-Gm-Features: AWmQ_blxzccAHkkFrG_7m68qvbkNEe1KQA8jfJHjAGe25H_MIaeW4TBvjXhKUes
-Message-ID: <CAAyq3Sa=7d6We2xz6bEb_x_zBv+fJwEZuSsfti+S46t3JVo7sw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mtd: ubi: skip programming unused bits in ubi headers
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: richard@nod.at, chengzhihao1@huawei.com, vigneshr@ti.com, 
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	alvinzhou@mxic.com.tw, leoyu@mxic.com.tw, 
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
+X-Received: by 2002:a05:6602:6b08:b0:943:5c83:d68e with SMTP id
+ ca18e2360f4ac-94869cb498bmr905272739f.1.1762422330444; Thu, 06 Nov 2025
+ 01:45:30 -0800 (PST)
+Date: Thu, 06 Nov 2025 01:45:30 -0800
+In-Reply-To: <685d4c2a.a00a0220.2e5631.028c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690c6e3a.050a0220.3d0d33.0123.GAE@google.com>
+Subject: Re: [syzbot] [hams?] possible deadlock in nr_rt_ioctl (2)
+From: syzbot <syzbot+14afda08dc3484d5db82@syzkaller.appspotmail.com>
+To: davem@davemloft.net, eadavis@qq.com, edumazet@google.com, hdanton@sina.com, 
+	horms@kernel.org, kuba@kernel.org, linux-hams@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Miquel,
+syzbot has found a reproducer for the following issue on:
 
-Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B411=E6=9C=
-=886=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:10=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> Hello,
->
-> On 06/11/2025 at 13:49:40 +08, Cheng Ming Lin <linchengming884@gmail.com>=
- wrote:
->
-> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >
-> > This patch prevents unnecessary programming of bits in ec_hdr and
-> > vid_hdr that are not used or read during normal UBI operation. These
-> > unused bits are typcially already set to 1 in erased flash and do not
-> > need to be explicitly programmed to 0 if they are not used.
-> >
-> > Programming such unused areas offers no functional benefit and may
-> > result in unnecessary flash wear, reducing the overall lifetime of the
-> > device. By skipping these writes, we preserve the flash state as much a=
-s
-> > possible and minimize wear caused by redundant operations.
-> >
-> > This change ensures that only necessary fields are written when prepari=
-ng
-> > UBI headers, improving flash efficiency without affecting functionality=
-.
-> >
-> > Additionally, the Kioxia TC58NVG1S3HTA00 datasheet (page 63) also notes
-> > that continuous program/erase cycling with a high percentage of '0' bit=
-s
-> > in the data pattern can accelerate block endurance degradation.
-> > This further supports avoiding large 0x00 patterns.
-> >
-> > Link: https://europe.kioxia.com/content/dam/kioxia/newidr/productinfo/d=
-atasheet/201910/DST_TC58NVG1S3HTA00-TDE_EN_31442.pdf
-> >
-> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
->
-> Thanks for this very clear and detailed commit log, as well as for the
-> well written cover letter. I am personally fine with the overall idea of
-> clearing these unused bits to 1. Yet, I have one concern regarding the
-> implementation, please see below.
->
-> > ---
-> >  drivers/mtd/ubi/io.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/mtd/ubi/io.c b/drivers/mtd/ubi/io.c
-> > index a4999bce4..c21242a14 100644
-> > --- a/drivers/mtd/ubi/io.c
-> > +++ b/drivers/mtd/ubi/io.c
-> > @@ -868,6 +868,8 @@ int ubi_io_write_ec_hdr(struct ubi_device *ubi, int=
- pnum,
-> >               return -EROFS;
-> >       }
-> >
-> > +     memset((char *)ec_hdr + UBI_EC_HDR_SIZE, 0xFF, ubi->ec_hdr_alsize=
- - UBI_EC_HDR_SIZE);
-> > +
-> >       err =3D ubi_io_write(ubi, ec_hdr, pnum, 0, ubi->ec_hdr_alsize);
-> >       return err;
-> >  }
-> > @@ -1150,6 +1152,11 @@ int ubi_io_write_vid_hdr(struct ubi_device *ubi,=
- int pnum,
-> >               return -EROFS;
-> >       }
-> >
-> > +     if (ubi->vid_hdr_shift)
-> > +             memset((char *)p, 0xFF, ubi->vid_hdr_alsize - UBI_VID_HDR=
-_SIZE);
-> > +     else
-> > +             memset((char *)p + UBI_VID_HDR_SIZE, 0xFF, ubi->vid_hdr_a=
-lsize - UBI_VID_HDR_SIZE);
->
-> Here I am reaching the limits of my UBI knowledge, so I would prefer
-> Richard to (in)validate what I am saying, but AFAIU, the VID header can
-> be literally anywhere in the page, not just at the start or end of a
-> subpage, so in the vid_hdr_shift I would expect some extra maths to
-> happen, no?
->
-> Here is an excerpt of the main comment at the top of the io.c file:
->
->     * As it was noted above, the VID header may start at a non-aligned
->     * offset. For example, in case of a 2KiB page NAND flash with a 512
->     * bytes sub-page, the VID header may reside at offset 1984 which is
->     * the last 64 bytes of the * last sub-page (EC header is always at
->     * offset zero).
->
+HEAD commit:    dc77806cf3b4 Merge tag 'rust-fixes-6.18' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c0e114580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=609c87dcb0628493
+dashboard link: https://syzkaller.appspot.com/bug?extid=14afda08dc3484d5db82
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17feb812580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fb5812580000
 
-Here I was considering the comment in io.c, and also the definitions in
-ubi.h, which say:
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-dc77806c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eef2d5e8c3fb/vmlinux-dc77806c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e6323f5f18c6/bzImage-dc77806c.xz
 
- * @vid_hdr_offset: starting offset of the volume identifier header (might
- *                  be unaligned)
- * @vid_hdr_aloffset: starting offset of the VID header aligned to
- *                    @hdrs_min_io_size
- * @vid_hdr_shift: contains @vid_hdr_offset - @vid_hdr_aloffset
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+14afda08dc3484d5db82@syzkaller.appspotmail.com
 
-So, if ubi->vid_hdr_shift is non-zero, then the VID header is not located
-at the beginning of the subpage. In this case, we fill 0xFF from the start
-of the buffer until the actual vid_hdr_start.
+bond0: (slave rose0): Error: Device is in use and cannot be enslaved
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.18/6086 is trying to acquire lock:
+ffffffff9033ef98 (nr_neigh_list_lock){+...}-{3:3}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ffffffff9033ef98 (nr_neigh_list_lock){+...}-{3:3}, at: nr_remove_neigh net/netrom/nr_route.c:307 [inline]
+ffffffff9033ef98 (nr_neigh_list_lock){+...}-{3:3}, at: nr_del_node net/netrom/nr_route.c:342 [inline]
+ffffffff9033ef98 (nr_neigh_list_lock){+...}-{3:3}, at: nr_rt_ioctl+0x2007/0x29b0 net/netrom/nr_route.c:678
 
-If ubi->vid_hdr_shift is zero, then the VID header is already placed at
-the beginning of the subpage. Then we fill 0xFF only after the header
-region in the buffer.
+but task is already holding lock:
+ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: nr_node_lock include/net/netrom.h:152 [inline]
+ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: nr_del_node net/netrom/nr_route.c:335 [inline]
+ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: nr_rt_ioctl+0x29d/0x29b0 net/netrom/nr_route.c:678
 
-> I am not sure this is super common today though.
->
-> Thanks,
-> Miqu=C3=A8l
+which lock already depends on the new lock.
 
-Thanks,
-Cheng Ming Lin
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&nr_node->node_lock){+...}-{3:3}:
+       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+       _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
+       spin_lock_bh include/linux/spinlock.h:356 [inline]
+       nr_node_lock include/net/netrom.h:152 [inline]
+       nr_del_node net/netrom/nr_route.c:335 [inline]
+       nr_rt_ioctl+0x29d/0x29b0 net/netrom/nr_route.c:678
+       nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
+       sock_do_ioctl+0x118/0x280 net/socket.c:1254
+       sock_ioctl+0x227/0x6b0 net/socket.c:1375
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:597 [inline]
+       __se_sys_ioctl fs/ioctl.c:583 [inline]
+       __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (nr_node_list_lock){+...}-{3:3}:
+       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+       _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
+       spin_lock_bh include/linux/spinlock.h:356 [inline]
+       nr_rt_device_down+0xd3/0x810 net/netrom/nr_route.c:517
+       nr_device_event+0x126/0x170 net/netrom/af_netrom.c:126
+       notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
+       call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
+       call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+       call_netdevice_notifiers net/core/dev.c:2281 [inline]
+       netif_close_many+0x319/0x630 net/core/dev.c:1784
+       netif_close net/core/dev.c:1797 [inline]
+       netif_close+0x17f/0x230 net/core/dev.c:1791
+       dev_close+0xaa/0x240 net/core/dev_api.c:220
+       bpq_device_event+0x6a9/0x910 drivers/net/hamradio/bpqether.c:528
+       notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
+       call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
+       call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+       call_netdevice_notifiers net/core/dev.c:2281 [inline]
+       netif_close_many+0x319/0x630 net/core/dev.c:1784
+       netif_close net/core/dev.c:1797 [inline]
+       netif_close+0x17f/0x230 net/core/dev.c:1791
+       dev_close+0xaa/0x240 net/core/dev_api.c:220
+       bond_setup_by_slave drivers/net/bonding/bond_main.c:1567 [inline]
+       bond_enslave+0x1e42/0x5de0 drivers/net/bonding/bond_main.c:1972
+       bond_do_ioctl+0x601/0x6c0 drivers/net/bonding/bond_main.c:4615
+       dev_siocbond net/core/dev_ioctl.c:516 [inline]
+       dev_ifsioc+0xe9c/0x1f70 net/core/dev_ioctl.c:666
+       dev_ioctl+0x223/0x10e0 net/core/dev_ioctl.c:838
+       sock_do_ioctl+0x19d/0x280 net/socket.c:1268
+       sock_ioctl+0x227/0x6b0 net/socket.c:1375
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:597 [inline]
+       __se_sys_ioctl fs/ioctl.c:583 [inline]
+       __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (nr_neigh_list_lock){+...}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+       _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
+       spin_lock_bh include/linux/spinlock.h:356 [inline]
+       nr_remove_neigh net/netrom/nr_route.c:307 [inline]
+       nr_del_node net/netrom/nr_route.c:342 [inline]
+       nr_rt_ioctl+0x2007/0x29b0 net/netrom/nr_route.c:678
+       nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
+       sock_do_ioctl+0x118/0x280 net/socket.c:1254
+       sock_ioctl+0x227/0x6b0 net/socket.c:1375
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:597 [inline]
+       __se_sys_ioctl fs/ioctl.c:583 [inline]
+       __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  nr_neigh_list_lock --> nr_node_list_lock --> &nr_node->node_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&nr_node->node_lock);
+                               lock(nr_node_list_lock);
+                               lock(&nr_node->node_lock);
+  lock(nr_neigh_list_lock);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.0.18/6086:
+ #0: ffffffff9033eff8 (nr_node_list_lock){+...}-{3:3}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #0: ffffffff9033eff8 (nr_node_list_lock){+...}-{3:3}, at: nr_del_node net/netrom/nr_route.c:334 [inline]
+ #0: ffffffff9033eff8 (nr_node_list_lock){+...}-{3:3}, at: nr_rt_ioctl+0x221/0x29b0 net/netrom/nr_route.c:678
+ #1: ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #1: ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: nr_node_lock include/net/netrom.h:152 [inline]
+ #1: ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: nr_del_node net/netrom/nr_route.c:335 [inline]
+ #1: ffff88802acfc870 (&nr_node->node_lock){+...}-{3:3}, at: nr_rt_ioctl+0x29d/0x29b0 net/netrom/nr_route.c:678
+
+stack backtrace:
+CPU: 3 UID: 0 PID: 6086 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2043
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5237
+ lock_acquire kernel/locking/lockdep.c:5868 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+ __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+ _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
+ spin_lock_bh include/linux/spinlock.h:356 [inline]
+ nr_remove_neigh net/netrom/nr_route.c:307 [inline]
+ nr_del_node net/netrom/nr_route.c:342 [inline]
+ nr_rt_ioctl+0x2007/0x29b0 net/netrom/nr_route.c:678
+ nr_ioctl+0x19a/0x2d0 net/netrom/af_netrom.c:1254
+ sock_do_ioctl+0x118/0x280 net/socket.c:1254
+ sock_ioctl+0x227/0x6b0 net/socket.c:1375
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl fs/ioctl.c:583 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5a58b8f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff0134ba58 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f5a58de5fa0 RCX: 00007f5a58b8f6c9
+RDX: 0000200000000680 RSI: 000000000000890c RDI: 000000000000000a
+RBP: 00007f5a58c11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f5a58de5fa0 R14: 00007f5a58de5fa0 R15: 0000000000000003
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
