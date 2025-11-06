@@ -1,164 +1,234 @@
-Return-Path: <linux-kernel+bounces-889495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D68C3DC81
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:18:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239F5C3DC8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:18:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C463318906F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CDB61891255
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248B93559CD;
-	Thu,  6 Nov 2025 23:14:32 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ADE3074A4;
+	Thu,  6 Nov 2025 23:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yfFq3X5J"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A8024C06A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3850027FD4B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470871; cv=none; b=OeZOPOEidgcGNC92iF8txZIB+W4P8N5tRQcF3NA/s7nr58Mr5qxwVjylrGL1/qKujtxFrnS9RbXDnqJWvQzcpPFXtOX6ss3px4YHkijBwVJuACyTMIbjrDDwSCAZtuxMHHLmzNQR9FhPDDb8GpeicrW4r9NN0CJ+jhpoLARMrDg=
+	t=1762470941; cv=none; b=RwmNMld39LZBA8SLS9R9DFaoyfsnltH0dTMd4+4BjC2DfkITxH2khm7CJrzwK4a8/VlzA6un78H5GGopw8SsJkezg2LkorLVGZn4lZ9jw4g8XN2oO+28kHE8B5t39kUG23f4lAMM/AIV+aUyzDDpOPQYd4FhALu8LHMrmbbaEG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470871; c=relaxed/simple;
-	bh=KkuJTcka+8xp0DpDWc4kTontJXbDC9h/mzebBbfDgHM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G9QGfiOwG1VCOaW0pAR+UTus7iKcbIGCbamrTvEnoDmtqJezebrQgYxSOq6xcvdQ7WYOHOHINbKhYzu0sZr83MNoouabsfMNQpdKR+BbQvXiSdjf7/maQ2JmPhRYIoCUSq/j8PidkVSt4wZE0lN8b63zsFcq1KNzFZWzLdFMLtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-43333f50556so4948855ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:14:29 -0800 (PST)
+	s=arc-20240116; t=1762470941; c=relaxed/simple;
+	bh=8aCdLloTz/t3BojhCp+mmRF3NEYyUU7GJs7cta9e7sg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=BhKWC6FJLt4nu5mbRSXdENY1HLx0k9RYNATTjmiwmbK+4h4/Z9art17Y8fAQ9UC5cKYutsYVp3SWA+Yt5GLldD0xty4d4uT/V3VVDYJRhEVraVr0k2MsnFB83Lv3mgu1fpmD+OrDarg1/qbRRZ1c3aBkM+N8OOnsjOTkMbAtBIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yfFq3X5J; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b471737e673so253146a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:15:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762470939; x=1763075739; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/XT3ZjgJNZ2AXY2aHWzO3eK40WFYsHQBaK/r9kuz9k4=;
+        b=yfFq3X5JPClkCCE6S/lFh+gojPexoV/ejVNGFkn+pB9contP0cPXz2F9XEMQCePMyP
+         p4RaFEMs9akWFxOdGrV8OWCT6+XibGJsnruNxkMpg2TM1cP8JudhS2TMOzT1FjQ5nyLl
+         nozk1TkIo3Pi3nZy+czWL/euQzlC59xjXMsVgVCZQvURJJGgNEV+IxTRKa546R44Ta0F
+         xSFV/9xL7MutfCy0p5zLCNMZFbJc+cu+XVfvLOC5YBI4/VDn1Bb44zAwVB/V8p09WGk9
+         sac7Yydzbe5QAiv7VITgfzsZ+szY5+NM5Vathd0ql79Af2V7MW0qeyEj89p+jjAqwnEH
+         UjEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762470869; x=1763075669;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1762470939; x=1763075739;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fH2h5Xx2k3fHBHPqxx/rP0WBkMwA7jvWWW6DLmqDYEo=;
-        b=dOOsfJt211+fXLJQwwLb2uyjoevrGPc8Gzl/8W292Quvd1mzB9eUf1b2SPRRLuDZ4h
-         Gh+CHIzUuC1vEMQJPxdgKlAbzgPrh80oVXWMO0JgqU9GIDcVkNWkqFnh8vUApbpD7agf
-         r4M5tyZa8cBD7a0hJZ35KG9cjjiD0eBZgLSggukZaz8P98zwKxkiGx5oBnFiN75XnwDI
-         al6XfHy2FEQtGBEegjq3EvB3hyUvXpgSrUawO/W4QclhiJtsnPM8+lMs43icil3EM1jv
-         zoIK1z99oTGXcHdcGMEfhcp6q+xPpWSjqMxZ81hjt133a9BFGcOkcguOr3E8Q7O6bZBQ
-         Z24g==
-X-Forwarded-Encrypted: i=1; AJvYcCXOLc5Koc377/d4i5gV9Azsp1KDxMk1urJDZWSXVjJMsGCsRMSA5Syj9dumwhWS+K+2f2KClUO3MS8pBCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMe8I6EV/c1R+xs7dbMQPv251FtnIAKYuqoixhte3Pu6MLbUvG
-	3GP0XQf/OmW62T8PwRWnWnMZd/O48KonKrnOCMPH4ibu2qouWvpmk4tenu2fN1idFGwN7sWsImg
-	hryerMtmfmIVy50cce/mPmAZ86MolrNL8Fi0F3HvwDqoOMa1TulxZCMMIwlI=
-X-Google-Smtp-Source: AGHT+IF8qjkQWCmR0Q7YUfopt65SrIHO8TnsfPNAO54omAeyphaXJ+kUNh5eIP+SMFGQAE3pdEs5c0FeNBeOKphyQzrSnDG+A80X
+        bh=/XT3ZjgJNZ2AXY2aHWzO3eK40WFYsHQBaK/r9kuz9k4=;
+        b=jvhBQLLDe+FZ0ajj3cvyhHLb8tT9uGxb4d9NbtqApx+wWAgvdzvwJE9HXWAa26KoEi
+         AaRCw1UXVdGdyMtLagJmfpfdcZXvdXxtQJlNe/U+E/BtafbL8xJKIsCFhBsR1AeXi+ln
+         t/mbBgmu8jcbJ4pgidUt7occnfgoQ5F/N0j5JCn4nE1Hub7cfzqSdMl2uIcCq6f79shf
+         HOfzLq27geZfoep4ZRmzsrDJwSZf20kokaOuSECxmGepyGtieygj7l+bJQN96gIlfNZs
+         KXPmpKSjqqwnREUqPpmZHUor2MiAzagCwSQSm7gMNO23TeXN2GLNHqmWgn0UvcQ16XjF
+         aHEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfjGnJ3hLrEBOII8chOE724W4riVjm8FcqW5WtreX1rNZuyZwcVRYQu7EUUjRu6vfy0G7MaxGrhTTogBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGux0wtJQaRnqFVhoXNHXbE40AQiRDhC92G8Ck2vv8ZvZLD90Q
+	ZX/oAGf12rfE/8cVAzG+tzz2hjN+0ASBUYZgtXPY/yLc25gnPGXAaAoVLx9pKUV+KSVK5IqeGq8
+	I7VzOGTm4Gw==
+X-Google-Smtp-Source: AGHT+IFAnYRThxcTSwYAfES/JdjNBEucxhflaMx9acjC6Ty1fvWpL9aUy+/lD1w+un+82GdxyfbmTVQGTyPt
+X-Received: from dlbrx9.prod.google.com ([2002:a05:7022:1709:b0:119:78ff:fe16])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cecb:b0:24e:3cf2:2453
+ with SMTP id d9443c01a7336-297c048f41cmr14757195ad.61.1762470939302; Thu, 06
+ Nov 2025 15:15:39 -0800 (PST)
+Date: Thu,  6 Nov 2025 15:14:50 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:349e:b0:433:4fc9:7b3d with SMTP id
- e9e14a558f8ab-4335f45b01bmr17807845ab.22.1762470869154; Thu, 06 Nov 2025
- 15:14:29 -0800 (PST)
-Date: Thu, 06 Nov 2025 15:14:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690d2bd5.a70a0220.22f260.000f.GAE@google.com>
-Subject: [syzbot] [exfat?] WARNING in __rt_mutex_slowlock_locked (2)
-From: syzbot <syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251106231508.448793-1-irogers@google.com>
+Subject: [PATCH v2 00/18] Switch the default perf stat metrics to json
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Prior to this series stat-shadow would produce hard coded metrics if
+certain events appeared in the evlist. This series produces equivalent
+json metrics and cleans up the consequences in tests and display
+output. A before and after of the default display output on a
+tigerlake is:
 
-syzbot found the following issue on:
+Before:
+```
+$ perf stat -a sleep 1
 
-HEAD commit:    c2c2ccfd4ba7 Merge tag 'net-6.18-rc5' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=151be114580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=5216036fc59c43d1ee02
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11062a58580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e19084580000
+ Performance counter stats for 'system wide':
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/121c46acc3df/disk-c2c2ccfd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/eb0aef8fb7a1/vmlinux-c2c2ccfd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a2bba0757aa5/bzImage-c2c2ccfd.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/03760a9baabf/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=12084532580000)
+    16,041,816,418      cpu-clock                        #   15.995 CPUs utilized             
+             5,749      context-switches                 #  358.376 /sec                      
+               121      cpu-migrations                   #    7.543 /sec                      
+             1,806      page-faults                      #  112.581 /sec                      
+       825,965,204      instructions                     #    0.70  insn per cycle            
+     1,180,799,101      cycles                           #    0.074 GHz                       
+       168,945,109      branches                         #   10.532 M/sec                     
+         4,629,567      branch-misses                    #    2.74% of all branches           
+ #     30.2 %  tma_backend_bound      
+                                                  #      7.8 %  tma_bad_speculation    
+                                                  #     47.1 %  tma_frontend_bound     
+ #     14.9 %  tma_retiring           
+```
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5216036fc59c43d1ee02@syzkaller.appspotmail.com
+After:
+```
+$ perf stat -a sleep 1
 
-loop0: detected capacity change from 0 to 256
-exFAT-fs (loop0): start_clu is invalid cluster(0x400)
-------------[ cut here ]------------
-rtmutex deadlock detected
-WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
-WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
-WARNING: CPU: 0 PID: 6071 at kernel/locking/rtmutex.c:1674 __rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
-Modules linked in:
-CPU: 0 UID: 0 PID: 6071 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:rt_mutex_handle_deadlock kernel/locking/rtmutex.c:1674 [inline]
-RIP: 0010:__rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
-RIP: 0010:__rt_mutex_slowlock_locked+0xed2/0x25e0 kernel/locking/rtmutex.c:1760
-Code: 7c 24 20 dd 4c 8b b4 24 98 00 00 00 0f 85 fd 0a 00 00 48 8b 7c 24 10 e8 4c 50 28 09 90 48 c7 c7 60 fd ea 8a e8 ef 62 e7 ff 90 <0f> 0b 90 90 48 8b 9c 24 80 00 00 00 43 80 3c 3e 00 74 08 4c 89 e7
-RSP: 0018:ffffc90003d87a20 EFLAGS: 00010246
-RAX: 5bae39e042a2bb00 RBX: ffff88802472e4e0 RCX: ffff88802472da00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003d87c10 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed101710487b R12: ffff88802472f160
-R13: ffff88802472da18 R14: 1ffff110048e5e2c R15: dffffc0000000000
-FS:  00005555931b8500(0000) GS:ffff888126df9000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffefdd79178 CR3: 000000003e14c000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- rt_mutex_slowlock+0xb5/0x160 kernel/locking/rtmutex.c:1800
- __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
- rwbase_write_lock+0x14f/0x750 kernel/locking/rwbase_rt.c:244
- inode_lock include/linux/fs.h:980 [inline]
- vfs_rmdir+0xf7/0x520 fs/namei.c:4537
- do_rmdir+0x25f/0x550 fs/namei.c:4603
- __do_sys_unlinkat fs/namei.c:4777 [inline]
- __se_sys_unlinkat fs/namei.c:4771 [inline]
- __x64_sys_unlinkat+0xc2/0xf0 fs/namei.c:4771
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f03a63ff6c9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd1d6ca228 EFLAGS: 00000246 ORIG_RAX: 0000000000000107
-RAX: ffffffffffffffda RBX: 00007f03a6655fa0 RCX: 00007f03a63ff6c9
-RDX: 0000000000000200 RSI: 0000200000000040 RDI: 0000000000000006
-RBP: 00007f03a6481f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f03a6655fa0 R14: 00007f03a6655fa0 R15: 0000000000000003
- </TASK>
+ Performance counter stats for 'system wide':
 
+             2,890      context-switches                 #    179.9 cs/sec  cs_per_second     
+    16,061,923,339      cpu-clock                        #     16.0 CPUs  CPUs_utilized       
+                43      cpu-migrations                   #      2.7 migrations/sec  migrations_per_second
+             5,645      page-faults                      #    351.5 faults/sec  page_faults_per_second
+         5,708,413      branch-misses                    #      1.4 %  branch_miss_rate         (88.83%)
+       429,978,120      branches                         #     26.8 K/sec  branch_frequency     (88.85%)
+     1,626,915,897      cpu-cycles                       #      0.1 GHz  cycles_frequency       (88.84%)
+     2,556,805,534      instructions                     #      1.5 instructions  insn_per_cycle  (88.86%)
+                        TopdownL1                 #     20.1 %  tma_backend_bound      
+                                                  #     40.5 %  tma_bad_speculation      (88.90%)
+                                                  #     17.2 %  tma_frontend_bound       (78.05%)
+                                                  #     22.2 %  tma_retiring             (88.89%)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+       1.002994394 seconds time elapsed
+```
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Having the metrics in json brings greater uniformity, allows events to
+be shared by metrics, and it also allows descriptions like:
+```
+$ perf list cs_per_second
+...
+  cs_per_second
+       [Context switches per CPU second]
+```
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+A thorn in the side of doing this work was that the hard coded metrics
+were used by perf script with '-F metric'. This functionality didn't
+work for me (I was testing `perf record -e instructions,cycles`
+with/without leader sampling and then `perf script -F metric` but saw
+nothing but empty lines) but anyway I decided to fix it to the best of
+my ability in this series. So the script side counters were removed
+and the regular ones associated with the evsel used. The json metrics
+were all searched looking for ones that have a subset of events
+matching those in the perf script session, and all metrics are
+printed. This is kind of weird as the counters are being set by the
+period of samples, but I carried the behavior forward. I suspect there
+needs to be follow up work to make this better, but what is in the
+series is superior to what is currently in the tree. Follow up work
+could include finding metrics for the machine in the perf.data rather
+than using the host, allowing multiple metrics even if the metric ids
+of the events differ, fixing pre-existing `perf stat record/report`
+issues, etc.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+There is a lot of stat tests that, for example, assume '-e
+instructions,cycles' will produce an IPC metric. These things needed
+tidying as now the metric must be explicitly asked for and when doing
+this ones using software events were preferred to increase
+compatibility. As the test updates were numerous they are distinct to
+the patches updating the functionality causing periods in the series
+where not all tests are passing. If this is undesirable the test fixes
+can be squashed into the functionality updates, but this will be kind
+of messy, especially as at some points in the series both the old
+metrics and the new metrics will be displayed.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+v2: Drop merged patches, add json to document target_cpu/core_wide and
+    example to "Add care to picking the evsel for displaying a metric"
+    commit message (Namhyung).
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+v1: https://lore.kernel.org/lkml/20251024175857.808401-1-irogers@google.com/
 
-If you want to undo deduplication, reply with:
-#syz undup
+Ian Rogers (18):
+  perf metricgroup: Add care to picking the evsel for displaying a
+    metric
+  perf expr: Add #target_cpu literal
+  perf jevents: Add set of common metrics based on default ones
+  perf jevents: Add metric DefaultShowEvents
+  perf stat: Add detail -d,-dd,-ddd metrics
+  perf script: Change metric format to use json metrics
+  perf stat: Remove hard coded shadow metrics
+  perf stat: Fix default metricgroup display on hybrid
+  perf stat: Sort default events/metrics
+  perf stat: Remove "unit" workarounds for metric-only
+  perf test stat+json: Improve metric-only testing
+  perf test stat: Ignore failures in Default[234] metricgroups
+  perf test stat: Update std_output testing metric expectations
+  perf test metrics: Update all metrics for possibly failing default
+    metrics
+  perf test stat: Update shadow test to use metrics
+  perf test stat: Update test expectations and events
+  perf test stat csv: Update test expectations and events
+  perf tool_pmu: Make core_wide and target_cpu json events
+
+ tools/perf/builtin-script.c                   | 238 ++++++++++-
+ tools/perf/builtin-stat.c                     | 154 ++-----
+ .../arch/common/common/metrics.json           | 151 +++++++
+ .../pmu-events/arch/common/common/tool.json   |  12 +
+ tools/perf/pmu-events/empty-pmu-events.c      | 229 ++++++----
+ tools/perf/pmu-events/jevents.py              |  28 +-
+ tools/perf/pmu-events/pmu-events.h            |   2 +
+ .../tests/shell/lib/perf_json_output_lint.py  |   4 +-
+ tools/perf/tests/shell/lib/stat_output.sh     |   2 +-
+ tools/perf/tests/shell/stat+csv_output.sh     |   2 +-
+ tools/perf/tests/shell/stat+json_output.sh    |   2 +-
+ tools/perf/tests/shell/stat+shadow_stat.sh    |   4 +-
+ tools/perf/tests/shell/stat+std_output.sh     |   4 +-
+ tools/perf/tests/shell/stat.sh                |   6 +-
+ .../perf/tests/shell/stat_all_metricgroups.sh |   3 +
+ tools/perf/tests/shell/stat_all_metrics.sh    |   7 +-
+ tools/perf/util/evsel.h                       |   1 +
+ tools/perf/util/expr.c                        |   8 +-
+ tools/perf/util/metricgroup.c                 |  92 +++-
+ tools/perf/util/stat-display.c                |  55 +--
+ tools/perf/util/stat-shadow.c                 | 404 +-----------------
+ tools/perf/util/stat.h                        |   2 +-
+ tools/perf/util/tool_pmu.c                    |  24 +-
+ tools/perf/util/tool_pmu.h                    |   9 +-
+ 24 files changed, 756 insertions(+), 687 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.json
+
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
+
 
