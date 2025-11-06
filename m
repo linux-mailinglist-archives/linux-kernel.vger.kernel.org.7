@@ -1,182 +1,177 @@
-Return-Path: <linux-kernel+bounces-887590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561F0C38A7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:08:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36735C38AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4F5C4E6A7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:08:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28A93B6ABC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F261E1E16;
-	Thu,  6 Nov 2025 01:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617351E32D6;
+	Thu,  6 Nov 2025 01:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RznJW4KQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWhPg+TT"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F0E1891AB;
-	Thu,  6 Nov 2025 01:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218D15464F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762391306; cv=none; b=QlyRQFd4FFJchyFC42a3GJY5GCZH7szbb9BdPEC1NRgT9xhXVRIy2t7fsx0dtfDQ9rzM5QDXEAUwB6KlwOb96ysF3bYCq+4n/NESZB1SMFKQf/YuIRle0MjzUfHfw0GhJRhAjJUiAWNYk0o7FdCpY/N9ApxsqoGPhDSWwaJqMfM=
+	t=1762391439; cv=none; b=WHJRocdhNjrTOqPC/s8NOdKvaGXIdJoqdUzNsuKoBjhBMOJ1kez++xC73kK/OxAUpu8Do/GYVLEw9jLrtnToDe9OpNU2mehg1sQiwWCBmCWE0pRtcNbcP0Q35/P3hjGAgCG54T1XT1Hl+96ORXhv030LjbwhF9yb1Tloh0Y3Gds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762391306; c=relaxed/simple;
-	bh=C1CMXKhozu8LYFPbX6ylpFCy9Bm+8ecgB1ZjwnG2s6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0PJBF928F/r3CGL9uWVK7a/5WT3kLzwrKylDdLjG2PqDWyZhtwN4RjcKFw1zOoxuoLJc1+iavR++RleKO7DAFhDJkQOs2ax3ARkhNq0h8FIyFGUWn35Y+RwH+Vqysb6x3OQ6Y6VRH9euL9ofbqdNS6ObEAZgyPhtKXUayeruA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RznJW4KQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C62DC4CEF5;
-	Thu,  6 Nov 2025 01:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762391305;
-	bh=C1CMXKhozu8LYFPbX6ylpFCy9Bm+8ecgB1ZjwnG2s6A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RznJW4KQCN5afy0v0SrJz6ewkOwCFcTW5mT6gKEDRbByUJ/aXvmZOKgHub0HfGd8F
-	 C62tJ3ju+U+txK4vrh5547VZXBHPVZ6z1b9FWZlV02UTTcV4YzzmkRxBn8D96VkDv3
-	 i5DocrXEANqZcwu3Ue356M+VYoVdTckBOc6aIs0ShO3a3dzIVMXgXBOgbu53tyx4dJ
-	 49NwlzJdN7yZvJCUhFduK41LNPzVqrvC8dHhK0pyklkvM0fV+GM+TzNWz57AuMdUG5
-	 4Q6TgklWVOkAEMA4uUYP7eOqjiTioLhq6rtY/ec36qG0EkQSxMzx2xmXs5KxYvxu0P
-	 3y492NtCsA4vg==
-Date: Wed, 5 Nov 2025 18:08:20 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Omar Sandoval <osandov@osandov.com>
-Cc: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>,
-	linux-kbuild@vger.kernel.org, Samir M <samir@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org,
-	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-	linux-debuggers@vger.kernel.org, Nicolas Schier <nsc@kernel.org>,
-	Alexey Gladkov <legion@kernel.org>
-Subject: Re: [mainline]Error while running make modules_install command
-Message-ID: <20251106010820.GA3031707@ax162>
-References: <7fef7507-ad64-4e51-9bb8-c9fb6532e51e@linux.ibm.com>
- <56905387-ec43-4f89-9146-0db6889e46ab@linux.ibm.com>
- <aQpCE_XTU-bZHFbk@telecaster>
- <CANBHLUhJ5UVsN4-JN2PG=jq63yGttB9BD6Qm8MgvYirTvg_stw@mail.gmail.com>
- <20251105011548.GB769905@ax162>
- <aQvHSVXbOdiN_J5D@telecaster>
+	s=arc-20240116; t=1762391439; c=relaxed/simple;
+	bh=5zrFGqaY2s63rjFRtLY50UAaAhJky1Nl9P7e0n0a7DQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pQeuHh6cESznZ7rGE1VJtlbFH2zZvrUQFCY/Czt6mGoDUdlFHVwjJOyMo6ZuoXTXo3x8HlDa4bg3teR6gId3a0zn7dqcHRCKYVgZbYNyzQgnMqtAikd+H1AxGuaKC9J0T+NIcnhMW3V04maXclV3MHLWNw8lttA+ksEEHH4V2XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWhPg+TT; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8b1f2fbaed7so43354985a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:10:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762391437; x=1762996237; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pyhS6jZpYBILAbqR+rnW9JcsPWV01j5CzZ2xzVsZ5pE=;
+        b=YWhPg+TTjdfxi56VkC1Wqnd4D2fpNtZ+URfjuF5bODqae2ooofzbRaioJ5CNPm/hqc
+         koi0WguUoXCZuX14+Ofq5qUv1aNewFgMnyuF0SK/1RJ/8VPRFqFCVAG/PczqqLW0nxo5
+         8F0HiCOUIzpSCQ3Jg6RlITC/EPXOXWKig6fei5ER/HO5G2UF8ucQVFg3/0Jr3nw/+Apu
+         RZ0pTFSglDCiRQ1aSypRvezY2WVFerPEDmV4EEtInxgnHdkvk+v7+QURQyn/ECFdAwhT
+         FMyQIauY6Z475AjW/o8C18Zv920D2p93HVbH17Yyhb1HK6XVvtEex46N/hH1koIriBqa
+         oHeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762391437; x=1762996237;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pyhS6jZpYBILAbqR+rnW9JcsPWV01j5CzZ2xzVsZ5pE=;
+        b=DukCVBfMJXhNAME2btOuGR/6SWtzLLZOMZQ9Zua/IWD0DS37rS/DxEZSK8eKAHg4Yn
+         1wTxEXqCk3T7Dt8GIW4Mrh63Sft1w1TdHAyH+d1Dx62YlgPvk8h58QJNQZNMcTl3EWqI
+         vTHD+In66k/RBjv0sRRgCEv4FuSvzGhQPOXVvw8P7pfS9P6qj6VYUrcMz8hRruDJLep8
+         o1CdsQX2hXvCZWZllHB2BmGAL6s3P7xhXhiaO1SsNqFOF+KagPRBn9EueWeVUvbh3XgM
+         8gQKGb+vIhFcLGHm25Lybiogv+63lcZEfy5FLY7aYLNvb7FKerXydj306Y3QDKoyPCW/
+         uSuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkuR7RW8kS/LgJ0djI1i73eMym9CegYggWMxTYc372P/QaIA1w4t0T5lAhm6tL1zNAPn7zR8YKKjD791s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsvfZ4csRzeW3MfitcB5hvPaZEYZbl0Y6fUH1FziFHOdHBgFlx
+	zgUt2gYhDTWSlYvXfbIWIactxCiHwgDgC+khpyW1Axef4Lkaj7i6ZeqG2KsTN4tqP6fPJfurUNX
+	qfKPzpScbR8ovyG5CVk67yUqYZxnggUU=
+X-Gm-Gg: ASbGncu2cLWC9d5DhHrHZYXvKSW5veQCBWBrCIQ/DhIfPpjoMLljXXC4oUNCLeinyW1
+	fo3z2l9g1pKFilU65XK2pWPK0gmkT6JeELR4tP5PzfvKnLEjkj1B5D0rQzYD6XU8Ow5IP8D09fX
+	3QkJh4equ5K+WgAb8TEaEYI90ty6bh7fPvInbcZXYzd6EBCMIV93rYUfW1riluwtjIIuV5Iwoti
+	iay5p36LTuhSGn4rQ7CYx8EIXqFzANfdPduLhGAyV/YecXKzMyeEYca+D8=
+X-Google-Smtp-Source: AGHT+IGUC6+9UkrRywwWWGU2MV3s+qVzGfbXA45ue4Tsj/rDblSjV6K9yCuZbFoS90JE8TEkBbHhcXBLEr05S4MkH4s=
+X-Received: by 2002:a05:620a:d8b:b0:873:9fcc:3fb5 with SMTP id
+ af79cd13be357-8b22081b49dmr710776085a.1.1762391436933; Wed, 05 Nov 2025
+ 17:10:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQvHSVXbOdiN_J5D@telecaster>
+References: <20251030181153.1208-1-jajones@nvidia.com>
+In-Reply-To: <20251030181153.1208-1-jajones@nvidia.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Thu, 6 Nov 2025 11:10:25 +1000
+X-Gm-Features: AWmQ_bmCTQVuWSlyEeES5u_487iyQN-Bb540-HKjfSbJe_ACE1aHE1Bnc6YfQP8
+Message-ID: <CAPM=9tzMUi_9BRL8onjvXoj8Cb0eQFpFwmKHveGTCRU1Nc7O3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] drm/nouveau: Advertise correct modifiers on GB20x
+To: James Jones <jajones@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Faith Ekstrand <faith.ekstrand@collabora.com>, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Simona Vetter <simona@ffwll.ch>, Joel Fernandes <joelagnelf@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 05, 2025 at 01:53:13PM -0800, Omar Sandoval wrote:
-> Here's a script that reproduces it:
-> 
-> ```
-> #!/bin/sh
-> 
-> set -e
-> 
-> host_arch=x86_64
-> compiler_version="12.4.0"
-> 
-> compiler_dir="/tmp/arm64-gcc-$compiler_version"
-> if [ ! -e "$compiler_dir" ]; then
-> 	rm -rf "$compiler_dir.tmp"
-> 	mkdir "$compiler_dir.tmp"
-> 	curl -L "https://mirrors.kernel.org/pub/tools/crosstool/files/bin/$host_arch/$compiler_version/$host_arch-gcc-$compiler_version-nolibc-aarch64-linux.tar.xz" | tar -C "$compiler_dir.tmp" -Jx
-> 	mv "$compiler_dir.tmp" "$compiler_dir"
-> fi
-> 
-> export PATH="$compiler_dir/gcc-$compiler_version-nolibc/aarch64-linux/bin:$PATH"
-> make ARCH=arm64 CROSS_COMPILE=aarch64-linux- tinyconfig
-> make ARCH=arm64 CROSS_COMPILE=aarch64-linux- -j$(nproc) vmlinux
-> readelf -W -l vmlinux | awk '$1 == "LOAD" && $6 ~ /0x0+\>/'
-> ```
-> 
-> It prints something like:
-> 
->   LOAD           0x1ef008 0x0000000000000000 0xffff800080220000 0x000000 0x000000 R   0x10000
-> 
-> I.e., a segment with FileSiz and MemSiz 0.
+I've pushed both of these to drm-misc-fixes.
 
-Thank you, that was incredibly helpful.
+Thanks,
+Dave.
 
-> Using a newer crosstool version fixes it, so maybe this was a GCC or
-> binutils bug.
-
-Good observation, as this was reproducible with GCC 12.4.0 from
-kernel.org but not GCC 12.5.0, which I noticed has a newer binutils
-version. I was able to reproduce it with a self compiled copy of
-binutils 2.42 but not with binutils 2.44 so I reverse bisected the fix
-to [1], which certainly makes sense :)
-
-The diff of 'readelf -lW' before that change:
-
-diff --git a/tmp/.psub.9QY0ZO b/tmp/.psub.6lHG9T
-index 7f7f4de7be8..ea3a9b4ffb0 100644
---- a/tmp/.psub.9QY0ZO
-+++ b/tmp/.psub.6lHG9T
-@@ -7,14 +7,14 @@ Program Headers:
-   Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
-   LOAD           0x010000 0xffff800080000000 0xffff800080000000 0x14f000 0x14f000 R E 0x10000
-   LOAD           0x160000 0xffff800080150000 0xffff800080150000 0x08f008 0x0c4c40 RWE 0x10000
--  LOAD           0x1f0000 0xffff800080220000 0xffff800080220000 0x000d08 0x000d08 R   0x10000
-+  LOAD           0x1ef008 0x0000000000000000 0xffff800080220000 0x000000 0x000000 R   0x10000
-   NOTE           0x1860f8 0xffff8000801760f8 0xffff8000801760f8 0x000054 0x000054 R   0x4
--  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x10
-+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x8
- 
-  Section to Segment mapping:
-   Segment Sections...
-    00     .head.text .text 
-    01     .rodata __param __ex_table .notes .rodata.text .init.text .exit.text .altinstructions .init.data runtime_shift_d_hash_shift runtime_ptr_dentry_hashtable .data..percpu .data .mmuoff.data.write .mmuoff.data.read .bss 
--   02     .modinfo 
-+   02     
-    03     .notes 
-    04     
-
-After:
-
-diff --git a/tmp/.psub.x5uqM8 b/tmp/.psub.LHoP7d
-index 7f7f4de7be8..27bda6ea7cc 100644
---- a/tmp/.psub.x5uqM8
-+++ b/tmp/.psub.LHoP7d
-@@ -1,20 +1,18 @@
- 
- Elf file type is EXEC (Executable file)
- Entry point 0xffff800080000000
--There are 5 program headers, starting at offset 64
-+There are 4 program headers, starting at offset 64
- 
- Program Headers:
-   Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
-   LOAD           0x010000 0xffff800080000000 0xffff800080000000 0x14f000 0x14f000 R E 0x10000
-   LOAD           0x160000 0xffff800080150000 0xffff800080150000 0x08f008 0x0c4c40 RWE 0x10000
--  LOAD           0x1f0000 0xffff800080220000 0xffff800080220000 0x000d08 0x000d08 R   0x10000
-   NOTE           0x1860f8 0xffff8000801760f8 0xffff8000801760f8 0x000054 0x000054 R   0x4
--  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x10
-+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x8
- 
-  Section to Segment mapping:
-   Segment Sections...
-    00     .head.text .text 
-    01     .rodata __param __ex_table .notes .rodata.text .init.text .exit.text .altinstructions .init.data runtime_shift_d_hash_shift runtime_ptr_dentry_hashtable .data..percpu .data .mmuoff.data.write .mmuoff.data.read .bss 
--   02     .modinfo 
--   03     .notes 
--   04     
-+   02     .notes 
-+   03     
-
-I am not really sure how to workaround this in a concise way... at least
-for arm64 since it does not seem to use PHDRS to describe ELF segments,
-it just relies on the default linker heuristics? It also seems seems
-like this is a generic problem not specific to .modinfo, we just so
-happen to see it with this section since it is in its own segment and we
-are removing it.
-
-[1]: https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=7f26d260ef76a4cb2873a7815bef187005528c19
-
-Cheers,
-Nathan
+On Fri, 31 Oct 2025 at 04:07, James Jones <jajones@nvidia.com> wrote:
+>
+> This series adds new format modifiers for 8 and 16-bit formats on GB20x
+> GPUs, preventing them from mistakenly sharing block-linear surfaces
+> using these formats with prior GPUs that use a different layout.
+>
+> There are a few ways the parameteric format modifier definition
+> could have been altered to handle the new layouts:
+>
+> -The GOB Height and Page Kind field has a reserved value that could
+>  have been used. However, the GOB height and page kind enums did
+>  not change relative to prior chips, so this is sort of a lie.
+>  However, this is the least-invasive change.
+>
+> -An entirely new field could have been added. This seems
+>  inappropriate given the presence of an existing appropriate field.
+>  The advantage here is it avoids splitting the sector layout field
+>  across two bitfields.
+>
+> The chosen approach is the logically consistent one, but has the
+> downside of being the most complex, and that it causes the
+> DRM_FORMAT_MOD_NVIDIA_BLOCK_LINEAR_2D() macro to evaluate its 's'
+> parameter twice. However, utilizing simple helper functions in
+> client code when accessing the parameteric format modifier fields
+> easily addresses the complexity, and I have audited the relevant code
+> and do not believe the double evaluation should cause any problems in
+> practice.
+>
+> Tested on GB20x and TU10x cards using the following:
+>
+> -kmscube w/NVK+Zink built with these patches applied:
+>
+>    https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36336
+>
+>  with various manually specified formats
+>  and both manually specified and automatically
+>  selected modifiers.
+>
+> -drmfmtmods, a tiny test program that lists modifiers:
+>
+>    https://github.com/cubanismo/drmfmtmods
+>
+> Changes in v2:
+>
+> -Added "Fixes: 6cc6e08d4542" line since this can be considered a bug
+>  fix for the initial blackwell KMS support in nouveau.
+>
+> -Dropped the second patch from the v1 series as it has been merged.
+>
+> Changes since the RFC version here:
+>
+>   https://lore.kernel.org/nouveau/20250703223658.1457-1-jajones@nvidia.com/
+>
+> -Dropped the helper macros & static inlines in
+>  drm_fourcc.h as requested by Faith Ekstrand,
+>  who noted these aren't helpful for UMD code,
+>  which is all written in rust now. I may re-
+>  introduce some of these in a subsequent series,
+>  but we both agreed we do not want to delay
+>  progress on the modifiers themselves while we
+>  debate the details of those cometic details.
+>
+> -Reserved an extra bit for future sector
+>  layouts.
+>
+> -Fixed handling of linear modifiers on GB20x
+>  and NV5x/G8x/G9x/GT2xx chips.
+>
+> James Jones (2):
+>   drm: define NVIDIA DRM format modifiers for GB20x
+>   drm/nouveau: Advertise correct modifiers on GB20x
+>
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c     |  4 ++-
+>  drivers/gpu/drm/nouveau/dispnv50/disp.h     |  1 +
+>  drivers/gpu/drm/nouveau/dispnv50/wndw.c     | 24 +++++++++++++--
+>  drivers/gpu/drm/nouveau/dispnv50/wndwca7e.c | 33 +++++++++++++++++++++
+>  include/uapi/drm/drm_fourcc.h               | 25 ++++++++++------
+>  5 files changed, 75 insertions(+), 12 deletions(-)
+>
+> --
+> 2.50.1
+>
 
