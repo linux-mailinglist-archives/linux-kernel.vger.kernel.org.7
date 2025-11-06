@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-889090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C7EC3CB6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:08:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8EAC3CC57
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12BF62442E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41225660D3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8363F2D2388;
-	Thu,  6 Nov 2025 17:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902FB34D918;
+	Thu,  6 Nov 2025 17:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOS97Tpq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOdGsbOb"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E0F145B3E;
-	Thu,  6 Nov 2025 17:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EDF345CBD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448469; cv=none; b=Qk04lyK2WCyvYGGHZowczh/A6tXOt3kwy1Ox+cj0cXxVUwNBgVyZa+CaPRWuNe9uJzCXyj6uEABzyFJqCnI9I9UBm00IoOHuSTQ8BgOdwYwixHvT5WcgbUWnHfjFghyQM73YGUtFwd/Dee/Ty5wN9VwnmS3VU+o+cmSU+9Ji9QY=
+	t=1762448944; cv=none; b=eB1OK81Oi05VXwUprbLqIwb819sj9/jgQxqK/XIRB1ogazNXmGe/jEpKCNXGwUVNnfv4REiwM0wUQv6F77iVxYiZEXrb22D11u3oFlKseOsdoRktDoCKSslLUlmlZ1KWeMltOJSv0lhXAtooVgiVcaGeeZywx2fXl46tghrso2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448469; c=relaxed/simple;
-	bh=1xmd/cakKix3IcCYvRr7/Y4fa9JwaDq2p+/Ah1ZkYzA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GWVP5y357Q6nY5uUoMRhMoWvlqr/PFKJLgumBJHxIxa5msVasTPeHD9Sp3pTLqWxVXbZt4aBif4zfSdJn0c/nFZaUEkn8WjYAZxQlUH2j4wCizEAxd+mIiCZKkTWunree/QwhzGzPtr/4o+3QViygZaZ+AWQwOoRptENCEqTD2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOS97Tpq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EBFBC116C6;
-	Thu,  6 Nov 2025 17:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762448468;
-	bh=1xmd/cakKix3IcCYvRr7/Y4fa9JwaDq2p+/Ah1ZkYzA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nOS97TpqsElKTaldl0ip8xAa71AH3oUDx090eUgrcWJKZ/kSb5IuWR04hs9aMHwoe
-	 r/GjLD69WMar97AYMEDA1LdQ6Vm1/4m2dCDWhYT3HkNL3BELhyq5NnVYQYacn663rA
-	 XEMwmoR90VFlh1ejGAU+e0sZRlddluRnYmR9boro6LrfvV3kxfc0QmHOmpCpPa4vG7
-	 6Df2JIBUTXdMJ7eMb7j+q85v1nLfVXSivWualE8AUI2tyMq8zs4IRWETTEthzB2EWa
-	 oQxbC+9g8bjaStFUSFcabaSDiXRAoqGzRMcVWgemjNKh9QTfBwT3qvDZhWvqw868eM
-	 6iHxkwQ1CTzhQ==
-Date: Fri, 7 Nov 2025 02:01:04 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] tracing: Hide __NR_utimensat and _NR_mq_timedsend when
- not defined
-Message-Id: <20251107020104.fd7f43772d3b0ce5b28474bd@kernel.org>
-In-Reply-To: <20251104205310.00a1db9a@batman.local.home>
-References: <20251104205310.00a1db9a@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762448944; c=relaxed/simple;
+	bh=brTwyt3ALfzwXTTOJDXGAi9yS9jEzrppUFzQdw+ocYk=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=PrgHTNJSlAftO/OtCGCFJEiZHYC1o/3qS1g6uIK4cI/8Mel+DistERKL7XWTAVRDrmWzon9wgzH4SpIuUJqkX64pJQMsOsp91MG4MaG7nDvOPlJeGjG+/n5P2UvHT1b4LCj7i21b2fGRluznvTWmo91go46dkf2OoUYS43v5CdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOdGsbOb; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso1204433b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:09:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762448943; x=1763053743; darn=vger.kernel.org;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nxXbjl0HhdoITaZBDxLqmLJTjrhCiLD5WEPTG0leRLU=;
+        b=VOdGsbObG8XS2cOV/oYGc6509C6pplAtbg3R/s9fYoV/Y7NElk8ISvmQH5MXg0zHRn
+         H2VHstJF/sP+ldXVTkrRuSVf5bWaMIUBhg+DsqODrJ2XDvywK/VeWTJPb4TpQK1FnuuN
+         gvjpENQYU5sonetuDZTa/Dbeq56zYz5q7NhtomkbwAyYs+h0Jjw6NN1oalLAJEw/2AMm
+         OEp5o7ey6EsJCw4mH+HyTihqHEHbja1NnhyMqRRxRYfF8ArU8Lc9yd8EBX/bq7t5qeVv
+         wBWDoNRNM2QbpXSl7k922aAWxH51VOj/gzpa9JGoYn6o4XzyjnHXfxDOcIe2srSrsbTn
+         N76w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762448943; x=1763053743;
+        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nxXbjl0HhdoITaZBDxLqmLJTjrhCiLD5WEPTG0leRLU=;
+        b=boJ3iqMkerFjJ57KtWpsZWVB27i9fmpAquCJAQer8qxEERvhw3GxYHr7y5+sBfsCym
+         tD4KhXJJSbq+4cDhjyFwZtibJKM00zNJmdXZdN6/b+rFIrcIzN5n3ZxCjraCXOYsNzQw
+         R1mw3v46E8OnSdU93pO4yb6GaSGbadOqPMHtza4+OArGm3KiPVPG/ccNz0ZPlxJ/EvOR
+         tOU+rwgyyskXUI2bAD76pppRvgV+9EiS1PfEPQsyutvnwsFusWi/fozhSErLio8mQMe3
+         KLJqPrZp3hafYzCi/4AFF4qT/FjT4K/skb6ovp3OBVz0cwyGfmXRJ5UhYiAyuIXPjXyE
+         F+xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLniL/kYZiGZxd4MNy0kaStX0Gg0OXo4T7+aYOsmltTR+kHazUBJPeIjX6RfGkd7t+373linkFGv86dZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHiDHGgUMoXB6r2aoq3vEHhF3zOwLrgkFe9DtnTTZ6Ze3J2PXv
+	y+emI8uRamaFrUN9HeqqsXVEeAvdaN6Aa4zSsc7+q/vIY+MbrVuD+W+C
+X-Gm-Gg: ASbGncsUQPmCYanxm4HL4W/jmd8efqutEYIlClgGdRnJR2A4PlMte65GtM8KYDDoynH
+	Z0Z0/vrbLdy2eQWQGDxe+yAz29ocrYp3lE04qAuKb7NXoucbKRGOCf71+1WJ8mHPUKxB8UuYyNa
+	6naFqeoqPjHKrYJux2/tzbnqzVbdVqT7pxefc/olAMKlFd9BljLS99jMRmmKmGqg4+OVu9Iu+p9
+	F7hvOYY4o55GBv4PNUhdoxLMCjAiQViwQRnX5XxlyvAowN9DcsinhpCUuY67yV+/bhra1lM00yS
+	s7Mgmbl6SrX5FNV4uDDecn+0E491Wk6uahFm5xk42Rit2CU6zm2x/7hqrXxqxuC10QLvG4G/X2z
+	BSstWLaENVrLpJJnGx8HtK0FsIcBOgoQceFbeKGiq/TwrP6VNshWbu+NtJheHx5idgXKg7Q==
+X-Google-Smtp-Source: AGHT+IGcGbtG/gxArci+CopvKuv0vsWkSHD0Cj0H8EsVfNgzuLLOXCCQpVWCS8AAZU2IHguSNAAo3Q==
+X-Received: by 2002:aa7:88c2:0:b0:7a9:f465:f25 with SMTP id d2e1a72fcca58-7b0bdb856abmr331762b3a.27.1762448942695;
+        Thu, 06 Nov 2025 09:09:02 -0800 (PST)
+Received: from dw-tp ([171.76.85.117])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0c9c0874bsm68007b3a.16.2025.11.06.09.08.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 09:09:02 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Andreas Larsson <andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, 
+	Juergen Gross <jgross@suse.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>, 
+	Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, x86@kernel.org
+Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
+In-Reply-To: <87ikfn3yvs.ritesh.list@gmail.com>
+Date: Thu, 06 Nov 2025 22:31:27 +0530
+Message-ID: <87h5v73xjs.ritesh.list@gmail.com>
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com> <20251029100909.3381140-8-kevin.brodsky@arm.com> <87ms5050g0.ritesh.list@gmail.com> <50d1b63a-88d7-4484-82c0-3bde96e3207d-agordeev@linux.ibm.com> <87ikfn3yvs.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue, 4 Nov 2025 20:53:10 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Some architectures (riscv-32) do not define __NR_utimensat and
-> _NR_mq_timedsend, and fails to build when they are used.
-> 
-> Hide them in "ifdef"s.
+> For e.g... 
+>   
+>     arch_enter_lazy_mmu_mode()
+>         hpte_need_flush()
+>             get_cpu_var()   // this takes care of preempt_disable() 
+>             adds vpns to per-cpu batch[i]
+>             put_cpu_var()   // 
+>     arch_leave_lazy_mmu_mode()
+>
 
-(I wonder we can expect that other __NR_* also defined on every
-architecture?)
-Anyway, this looks good to me.
+Sorry, here is the more accurate call sequence for previous email.
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+caller()... 
+     arch_enter_lazy_mmu_mode()
+     ptep_xxx_()
+        pte_update()
+             hpte_need_flush()
+                get_cpu_var()   // this takes care of preempt_disable() 
+                adds vpns to per-cpu batch[i]
+                put_cpu_var()   // 
+     arch_leave_lazy_mmu_mode()
 
-Thanks,
-
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202511031239.ZigDcWzY-lkp@intel.com/
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace_syscalls.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-> index e07c5a3cc7ab..e96d0063cbcf 100644
-> --- a/kernel/trace/trace_syscalls.c
-> +++ b/kernel/trace/trace_syscalls.c
-> @@ -1072,7 +1072,9 @@ static void check_faultable_syscall(struct trace_event_call *call, int nr)
->  	switch (nr) {
->  	/* user arg 1 with size arg at 2 */
->  	case __NR_write:
-> +#ifdef __NR_mq_timedsend
->  	case __NR_mq_timedsend:
-> +#endif
->  	case __NR_pwrite64:
->  		sys_data->user_mask = BIT(1);
->  		sys_data->user_arg_size = 2;
-> @@ -1186,7 +1188,9 @@ static void check_faultable_syscall(struct trace_event_call *call, int nr)
->  	case __NR_syslog:
->  	case __NR_statx:
->  	case __NR_unlinkat:
-> +#ifdef __NR_utimensat
->  	case __NR_utimensat:
-> +#endif
->  		sys_data->user_mask = BIT(1);
->  		break;
->  	/* user arg at position 2 */
-> -- 
-> 2.51.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+-ritesh
 
