@@ -1,495 +1,289 @@
-Return-Path: <linux-kernel+bounces-888330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3693C3A850
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A090C3A8BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C081B3AA8BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90689424B2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA6A30F530;
-	Thu,  6 Nov 2025 11:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771530DEC8;
+	Thu,  6 Nov 2025 11:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="hMDQb6sn"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="recwIZj8"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CC230E855;
-	Thu,  6 Nov 2025 11:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E06230DECD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762427795; cv=none; b=S1DfLlYwUltSZk7k28TBCyQCsmahF2IfPLD3Uo0Fuz7HQY8C34FxjKgB0wVNPhjlVjKsZCDxtJjiDxU2COm1nXYl6aSclHYSs4LAE+Zx5W7XdFWO/qPKR6+C1F0xzEpnpf47fiDCEW7URS55AtaJnU32ptmcWl29E1fEgvlGcNA=
+	t=1762427819; cv=none; b=mU+2U8ULi0vv769a8S4GAYxkIrvkqKSPUy2fjjUNoKEozLX7OGu/8DgTjXtZdpMbG+cci51JM+FE9dDl4PA/i1U3pQPqxmx5i5n3pHm9lLfoCEJIJ+Al529h1avkl9bllysTvOGVaHUneNu9zs9pF44K3F55BG1v8ALmCQeXD3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762427795; c=relaxed/simple;
-	bh=VJdH6yCH1FlPB/mFOhAUS8yChUM/wAAL3NagpZxDlu4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aPN7xY0eQJZN/lC5gP5FWgJ+meApNcghg/AGdUWy03NTyMN2bIdmv4iZwpRmgYWSRJ+tToGfZ9Jfkn78Duf6tSy1YaU6TAXjeOjlo9XPTFhksgKS4erTkebkQSDYLRdTsoBjt9VxaTUe1EeOO0NVt4QzUT3oi48RGU5fln3l3qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=hMDQb6sn; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=FovJo2ysejFVYUpn7Gmetks3w6DpihkzTRBm2TAGC58=;
-	b=hMDQb6snb/U2aFfhIqXA4r5UOegBCWcpEaWTuWAedkasBoUiCPF4JpSZTPrBloX7h6W0j569P
-	9EnY+N4uXr6+VpePx2Dmtr7HCvbDGhcGKESgLv/wSb3VHrTd3oOcrPmQ7p/BCOxG5fUPKNOnt4u
-	H0X20utmqNb5E+gsnBda2jM=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d2KNh2ddLz1T4jT;
-	Thu,  6 Nov 2025 19:15:16 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 68BDC140276;
-	Thu,  6 Nov 2025 19:16:31 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.188.120) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 6 Nov 2025 19:16:30 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
-	<netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, <Markus.Elfring@web.de>, <pavan.chebbi@broadcom.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>, luosifu
-	<luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>, Shen Chenyang
-	<shenchenyang1@hisilicon.com>, Zhou Shuai <zhoushuai28@huawei.com>, Wu Like
-	<wulike1@huawei.com>, Shi Jing <shijing34@huawei.com>, Luo Yang
-	<luoyang82@h-partners.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
-	<gur.stavi@huawei.com>
-Subject: [PATCH net-next v05 5/5] hinic3: Add netdev register interfaces
-Date: Thu, 6 Nov 2025 19:15:55 +0800
-Message-ID: <a75cfa4f9ee4bd9d75718a8b072f47c3ce9d3515.1762414088.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <cover.1762414088.git.zhuyikai1@h-partners.com>
-References: <cover.1762414088.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1762427819; c=relaxed/simple;
+	bh=iOnSHttlHxEBz59SQ4jdgNgo9JFu8A4IXT8SBBlJsi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMdHAiZko28JF0pJi2teXmcp8i9XiiQY9er8baJomI4A+tlfhyT3K2gJ6gCITDKX3lg0Iy8Do4nfCRniIM65DuEdDYIfF/88kMowoJh83WQ8ezlOIylfdsabyM4/CPmdPFnJXvEDeWrIzbyleaagrmx5KYUcWd3lJ9o8jdFPAy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=recwIZj8; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=589L1lurVHR6xC2CRnq4RoM0AJNLqs3DJRM3s81Rbxo=; b=recwIZj81kfbYLFpqD1l71U502
+	nqsQMVwkgFRkfAjJ7SnU2t0D47agFSTZiYY71mF/iiPzZYULDmJfFJa6clMJfbDX7uozXwBQL9pBu
+	XGDSx/xpnMPbsNhp6JUQePqivmjWIKLyxluWmgRmj3EropuXLQZOBAh4nq3xK5m44VH9Blp23JMVD
+	GHNkdfimbnfeS51QoLTorua9wWkzWcVeDOUi4zuWbrm0VheqhrAswZkn0lkAC8iUccqEH2EBEPTi3
+	5hiHZLs8YaJ9EUBK2MIhuivbDuqur2Pyis4ryS8I3QnBgM58LCZf9CXP8Jbi5H3iQqeTk87WpjxN7
+	CwhkpGOA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGx6Z-000000046br-1eMQ;
+	Thu, 06 Nov 2025 10:20:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0C203300265; Thu, 06 Nov 2025 12:16:03 +0100 (CET)
+Date: Thu, 6 Nov 2025 12:16:03 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Zicheng Qu <quzicheng@huawei.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	wulibin163@126.com, tanghui20@huawei.com, zhangqiao22@huawei.com,
+	judy.chenhui@huawei.com
+Subject: Re: [PATCH EEVDF NULL deref] sched/eevdf: Fix NULL deref when
+ avg_vruntime nears overflow
+Message-ID: <20251106111603.GB4068168@noisy.programming.kicks-ass.net>
+References: <20251103130441.1013188-1-quzicheng@huawei.com>
+ <20251103202611.GE3245006@noisy.programming.kicks-ass.net>
+ <7cdcc98e-990e-4408-ba75-57dd0229316e@huawei.com>
+ <20251105123954.GM3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105123954.GM3245006@noisy.programming.kicks-ass.net>
 
-Add netdev notifier to accept netdev event.
-Refine port event type to change link status.
+On Wed, Nov 05, 2025 at 01:39:54PM +0100, Peter Zijlstra wrote:
 
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
+> > As for the zero_vruntime patch, after applying it, we have not
+> > observed any crashes over than 24 hours.
+> 
+> Excellent, I'll go think about the SCHED_CORE case and make it a proper
+> patch then.
+
 ---
- .../net/ethernet/huawei/hinic3/hinic3_hwdev.h |   9 +
- .../net/ethernet/huawei/hinic3/hinic3_irq.c   |   2 +
- .../net/ethernet/huawei/hinic3/hinic3_main.c  | 182 +++++++++++++++++-
- .../huawei/hinic3/hinic3_netdev_ops.c         |  12 ++
- .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  18 ++
- .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   2 +
- 6 files changed, 222 insertions(+), 3 deletions(-)
+Subject: sched/core: Add comment explaining force-idle vruntime snapshots
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu Nov 6 10:50:49 CET 2025
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
-index 58bc561f95b3..9686c2600b46 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.h
-@@ -17,6 +17,15 @@ enum hinic3_event_service_type {
- 	HINIC3_EVENT_SRV_NIC  = 1
- };
- 
-+enum hinic3_comm_event_type {
-+	HINIC3_COMM_EVENT_PCIE_LINK_DOWN = 0,
-+	HINIC3_COMM_EVENT_HEART_LOST = 1,
-+	HINIC3_COMM_EVENT_FAULT = 2,
-+	HINIC3_COMM_EVENT_SRIOV_STATE_CHANGE = 3,
-+	HINIC3_COMM_EVENT_CARD_REMOVE = 4,
-+	HINIC3_COMM_EVENT_MGMT_WATCHDOG = 5,
-+};
-+
- enum hinic3_fault_err_level {
- 	HINIC3_FAULT_LEVEL_SERIOUS_FLR = 3,
- };
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-index cb9412986c26..d793dff88109 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-@@ -215,6 +215,8 @@ static void hinic3_auto_moderation_work(struct work_struct *work)
- 	nic_dev = container_of(delay, struct hinic3_nic_dev, moderation_task);
- 	period = (unsigned long)(jiffies - nic_dev->last_moder_jiffies);
- 	netdev = nic_dev->netdev;
-+	if (!test_bit(HINIC3_INTF_UP, &nic_dev->flags))
-+		return;
- 
- 	queue_delayed_work(nic_dev->workq, &nic_dev->moderation_task,
- 			   HINIC3_MODERATONE_DELAY);
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_main.c b/drivers/net/ethernet/huawei/hinic3/hinic3_main.c
-index e43597937da5..030a15b5ccc0 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_main.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_main.c
-@@ -29,6 +29,65 @@
- #define HINIC3_DEFAULT_TXRX_MSIX_COALESC_TIMER_CFG  25
- #define HINIC3_DEFAULT_TXRX_MSIX_RESEND_TIMER_CFG   7
- 
-+#define HINIC3_MAX_VLAN_DEPTH_OFFLOAD_SUPPORT  1
-+#define HINIC3_VLAN_CLEAR_OFFLOAD \
-+	(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | \
-+	 NETIF_F_SCTP_CRC | NETIF_F_RXCSUM | NETIF_F_ALL_TSO)
-+
-+/* used for netdev notifier register/unregister */
-+static DEFINE_MUTEX(hinic3_netdev_notifiers_mutex);
-+static int hinic3_netdev_notifiers_ref_cnt;
-+
-+static u16 hinic3_get_vlan_depth(struct net_device *netdev)
-+{
-+	u16 vlan_depth = 0;
-+
-+#if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
-+	while (is_vlan_dev(netdev)) {
-+		netdev = vlan_dev_priv(netdev)->real_dev;
-+		vlan_depth++;
-+	}
-+#endif
-+	return vlan_depth;
-+}
-+
-+static int hinic3_netdev_event(struct notifier_block *notifier,
-+			       unsigned long event, void *ptr)
-+{
-+	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(ndev);
-+	u16 vlan_depth;
-+
-+	if (!is_vlan_dev(ndev))
-+		return NOTIFY_DONE;
-+
-+	netdev_hold(ndev, &nic_dev->tracker, GFP_ATOMIC);
-+
-+	switch (event) {
-+	case NETDEV_REGISTER:
-+		vlan_depth = hinic3_get_vlan_depth(ndev);
-+		if (vlan_depth == HINIC3_MAX_VLAN_DEPTH_OFFLOAD_SUPPORT) {
-+			ndev->vlan_features &= (~HINIC3_VLAN_CLEAR_OFFLOAD);
-+		} else if (vlan_depth > HINIC3_MAX_VLAN_DEPTH_OFFLOAD_SUPPORT) {
-+			ndev->hw_features &= (~HINIC3_VLAN_CLEAR_OFFLOAD);
-+			ndev->features &= (~HINIC3_VLAN_CLEAR_OFFLOAD);
-+		}
-+
-+		break;
-+
-+	default:
-+		break;
-+	}
-+
-+	netdev_put(ndev, &nic_dev->tracker);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block hinic3_netdev_notifier = {
-+	.notifier_call = hinic3_netdev_event,
-+};
-+
- static void init_intr_coal_param(struct net_device *netdev)
- {
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-@@ -161,6 +220,14 @@ static int hinic3_init_nic_dev(struct net_device *netdev,
- 	return 0;
- }
- 
-+static void hinic3_free_nic_dev(struct net_device *netdev)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+
-+	destroy_workqueue(nic_dev->workq);
-+	kfree(nic_dev->vlan_bitmap);
-+}
-+
- static int hinic3_sw_init(struct net_device *netdev)
- {
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-@@ -238,6 +305,8 @@ static void hinic3_assign_netdev_ops(struct net_device *netdev)
- static void netdev_feature_init(struct net_device *netdev)
- {
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	netdev_features_t hw_features = 0;
-+	netdev_features_t vlan_fts = 0;
- 	netdev_features_t cso_fts = 0;
- 	netdev_features_t tso_fts = 0;
- 	netdev_features_t dft_fts;
-@@ -250,7 +319,29 @@ static void netdev_feature_init(struct net_device *netdev)
- 	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_TSO))
- 		tso_fts |= NETIF_F_TSO | NETIF_F_TSO6;
- 
--	netdev->features |= dft_fts | cso_fts | tso_fts;
-+	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_RX_VLAN_STRIP |
-+				HINIC3_NIC_F_TX_VLAN_INSERT))
-+		vlan_fts |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX;
-+
-+	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_RX_VLAN_FILTER))
-+		vlan_fts |= NETIF_F_HW_VLAN_CTAG_FILTER;
-+
-+	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_VXLAN_OFFLOAD))
-+		tso_fts |= NETIF_F_GSO_UDP_TUNNEL | NETIF_F_GSO_UDP_TUNNEL_CSUM;
-+
-+	/* LRO is disabled by default, only set hw features */
-+	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_LRO))
-+		hw_features |= NETIF_F_LRO;
-+
-+	netdev->features |= dft_fts | cso_fts | tso_fts | vlan_fts;
-+	netdev->vlan_features |= dft_fts | cso_fts | tso_fts;
-+		hw_features |= netdev->hw_features | netdev->features;
-+	netdev->hw_features = hw_features;
-+	netdev->priv_flags |= IFF_UNICAST_FLT;
-+
-+	netdev->hw_enc_features |= dft_fts;
-+	if (hinic3_test_support(nic_dev, HINIC3_NIC_F_VXLAN_OFFLOAD))
-+		netdev->hw_enc_features |= cso_fts | tso_fts | NETIF_F_TSO_ECN;
- }
- 
- static int hinic3_set_default_hw_feature(struct net_device *netdev)
-@@ -275,6 +366,36 @@ static int hinic3_set_default_hw_feature(struct net_device *netdev)
- 	return 0;
- }
- 
-+static void hinic3_register_notifier(struct net_device *netdev)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	int err;
-+
-+	mutex_lock(&hinic3_netdev_notifiers_mutex);
-+	hinic3_netdev_notifiers_ref_cnt++;
-+	if (hinic3_netdev_notifiers_ref_cnt == 1) {
-+		err = register_netdevice_notifier(&hinic3_netdev_notifier);
-+		if (err) {
-+			dev_dbg(nic_dev->hwdev->dev,
-+				"Register netdevice notifier failed, err: %d\n",
-+				err);
-+			hinic3_netdev_notifiers_ref_cnt--;
-+		}
-+	}
-+	mutex_unlock(&hinic3_netdev_notifiers_mutex);
-+}
-+
-+static void hinic3_unregister_notifier(void)
-+{
-+	mutex_lock(&hinic3_netdev_notifiers_mutex);
-+	if (hinic3_netdev_notifiers_ref_cnt == 1)
-+		unregister_netdevice_notifier(&hinic3_netdev_notifier);
-+
-+	if (hinic3_netdev_notifiers_ref_cnt)
-+		hinic3_netdev_notifiers_ref_cnt--;
-+	mutex_unlock(&hinic3_netdev_notifiers_mutex);
-+}
-+
- static void hinic3_link_status_change(struct net_device *netdev,
- 				      bool link_status_up)
- {
-@@ -297,6 +418,44 @@ static void hinic3_link_status_change(struct net_device *netdev,
- 	}
- }
- 
-+static void hinic3_port_module_event_handler(struct net_device *netdev,
-+					     struct hinic3_event_info *event)
-+{
-+	const char *g_hinic3_module_link_err[LINK_ERR_NUM] = {
-+		"Unrecognized module"
-+	};
-+	struct hinic3_port_module_event *module_event;
-+	enum port_module_event_type type;
-+	enum link_err_type err_type;
-+
-+	module_event = (struct hinic3_port_module_event *)event->event_data;
-+	type = module_event->type;
-+	err_type = module_event->err_type;
-+
-+	switch (type) {
-+	case HINIC3_PORT_MODULE_CABLE_PLUGGED:
-+	case HINIC3_PORT_MODULE_CABLE_UNPLUGGED:
-+		netdev_info(netdev, "Port module event: Cable %s\n",
-+			    type == HINIC3_PORT_MODULE_CABLE_PLUGGED ?
-+			    "plugged" : "unplugged");
-+		break;
-+	case HINIC3_PORT_MODULE_LINK_ERR:
-+		if (err_type >= LINK_ERR_NUM) {
-+			netdev_info(netdev, "Link failed, Unknown error type: 0x%x\n",
-+				    err_type);
-+		} else {
-+			netdev_info(netdev,
-+				    "Link failed, error type: 0x%x: %s\n",
-+				    err_type,
-+				    g_hinic3_module_link_err[err_type]);
-+		}
-+		break;
-+	default:
-+		netdev_err(netdev, "Unknown port module type %d\n", type);
-+		break;
-+	}
-+}
-+
- static void hinic3_nic_event(struct auxiliary_device *adev,
- 			     struct hinic3_event_info *event)
- {
-@@ -310,8 +469,20 @@ static void hinic3_nic_event(struct auxiliary_device *adev,
- 				   HINIC3_NIC_EVENT_LINK_UP):
- 		hinic3_link_status_change(netdev, true);
- 		break;
-+	case HINIC3_SRV_EVENT_TYPE(HINIC3_EVENT_SRV_NIC,
-+				   HINIC3_NIC_EVENT_PORT_MODULE_EVENT):
-+		hinic3_port_module_event_handler(netdev, event);
-+		break;
- 	case HINIC3_SRV_EVENT_TYPE(HINIC3_EVENT_SRV_NIC,
- 				   HINIC3_NIC_EVENT_LINK_DOWN):
-+	case HINIC3_SRV_EVENT_TYPE(HINIC3_EVENT_SRV_COMM,
-+				   HINIC3_COMM_EVENT_FAULT):
-+	case HINIC3_SRV_EVENT_TYPE(HINIC3_EVENT_SRV_COMM,
-+				   HINIC3_COMM_EVENT_PCIE_LINK_DOWN):
-+	case HINIC3_SRV_EVENT_TYPE(HINIC3_EVENT_SRV_COMM,
-+				   HINIC3_COMM_EVENT_HEART_LOST):
-+	case HINIC3_SRV_EVENT_TYPE(HINIC3_EVENT_SRV_COMM,
-+				   HINIC3_COMM_EVENT_MGMT_WATCHDOG):
- 		hinic3_link_status_change(netdev, false);
- 		break;
- 	default:
-@@ -359,7 +530,7 @@ static int hinic3_nic_probe(struct auxiliary_device *adev,
- 
- 	err = hinic3_init_nic_io(nic_dev);
- 	if (err)
--		goto err_free_netdev;
-+		goto err_free_nic_dev;
- 
- 	err = hinic3_sw_init(netdev);
- 	if (err)
-@@ -372,6 +543,8 @@ static int hinic3_nic_probe(struct auxiliary_device *adev,
- 	if (err)
- 		goto err_uninit_sw;
- 
-+	hinic3_register_notifier(netdev);
-+
- 	queue_delayed_work(nic_dev->workq, &nic_dev->periodic_work, HZ);
- 	netif_carrier_off(netdev);
- 
-@@ -382,6 +555,7 @@ static int hinic3_nic_probe(struct auxiliary_device *adev,
- 	return 0;
- 
- err_uninit_nic_feature:
-+	hinic3_unregister_notifier();
- 	hinic3_update_nic_feature(nic_dev, 0);
- 	hinic3_set_nic_feature_to_hw(nic_dev);
- 
-@@ -390,7 +564,8 @@ static int hinic3_nic_probe(struct auxiliary_device *adev,
- 
- err_free_nic_io:
- 	hinic3_free_nic_io(nic_dev);
--
-+err_free_nic_dev:
-+	hinic3_free_nic_dev(netdev);
- err_free_netdev:
- 	free_netdev(netdev);
- 
-@@ -411,6 +586,7 @@ static void hinic3_nic_remove(struct auxiliary_device *adev)
- 
- 	netdev = nic_dev->netdev;
- 	unregister_netdev(netdev);
-+	hinic3_unregister_notifier();
- 
- 	disable_delayed_work_sync(&nic_dev->periodic_work);
- 	cancel_work_sync(&nic_dev->rx_mode_work);
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
-index 335de3093382..edc1d8805918 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
-@@ -435,6 +435,11 @@ static int hinic3_open(struct net_device *netdev)
- 	struct hinic3_dyna_qp_params qp_params;
- 	int err;
- 
-+	if (test_bit(HINIC3_INTF_UP, &nic_dev->flags)) {
-+		netdev_dbg(netdev, "Netdev already open, do nothing\n");
-+		return 0;
-+	}
-+
- 	err = hinic3_init_nicio_res(nic_dev);
- 	if (err) {
- 		netdev_err(netdev, "Failed to init nicio resources\n");
-@@ -462,6 +467,8 @@ static int hinic3_open(struct net_device *netdev)
- 	if (err)
- 		goto err_close_channel;
- 
-+	set_bit(HINIC3_INTF_UP, &nic_dev->flags);
-+
- 	return 0;
- 
- err_close_channel:
-@@ -482,6 +489,11 @@ static int hinic3_close(struct net_device *netdev)
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
- 	struct hinic3_dyna_qp_params qp_params;
- 
-+	if (!test_and_clear_bit(HINIC3_INTF_UP, &nic_dev->flags)) {
-+		netdev_dbg(netdev, "Netdev already close, do nothing\n");
-+		return 0;
-+	}
-+
- 	hinic3_vport_down(netdev);
- 	hinic3_close_channel(netdev);
- 	hinic3_uninit_qps(nic_dev, &qp_params);
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
-index 2c129de241eb..d7a299fb2d51 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
-@@ -22,6 +22,7 @@ struct hinic3_nic_dev;
- enum hinic3_nic_event_type {
- 	HINIC3_NIC_EVENT_LINK_DOWN = 0,
- 	HINIC3_NIC_EVENT_LINK_UP   = 1,
-+	HINIC3_NIC_EVENT_PORT_MODULE_EVENT = 2,
- };
- 
- struct hinic3_sq_attr {
-@@ -51,6 +52,23 @@ struct mag_cmd_set_port_enable {
- 	u8                   rsvd1[3];
- };
- 
-+enum link_err_type {
-+	LINK_ERR_MODULE_UNRECOGENIZED,
-+	LINK_ERR_NUM,
-+};
-+
-+enum port_module_event_type {
-+	HINIC3_PORT_MODULE_CABLE_PLUGGED,
-+	HINIC3_PORT_MODULE_CABLE_UNPLUGGED,
-+	HINIC3_PORT_MODULE_LINK_ERR,
-+	HINIC3_PORT_MODULE_MAX_EVENT,
-+};
-+
-+struct hinic3_port_module_event {
-+	enum port_module_event_type type;
-+	enum link_err_type          err_type;
-+};
-+
- int hinic3_get_nic_feature_from_hw(struct hinic3_nic_dev *nic_dev);
- int hinic3_set_nic_feature_to_hw(struct hinic3_nic_dev *nic_dev);
- bool hinic3_test_support(struct hinic3_nic_dev *nic_dev,
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-index 985cbd91b7c8..1e8d41fc112c 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-@@ -17,6 +17,7 @@
- #define HINIC3_MODERATONE_DELAY  HZ
- 
- enum hinic3_flags {
-+	HINIC3_INTF_UP,
- 	HINIC3_MAC_FILTER_CHANGED,
- 	HINIC3_RSS_ENABLE,
- 	HINIC3_UPDATE_MAC_FILTER,
-@@ -119,6 +120,7 @@ struct hinic3_intr_coal_info {
- struct hinic3_nic_dev {
- 	struct pci_dev                  *pdev;
- 	struct net_device               *netdev;
-+	netdevice_tracker               tracker;
- 	struct hinic3_hwdev             *hwdev;
- 	struct hinic3_nic_io            *nic_io;
- 
--- 
-2.43.0
+I always end up having to re-read these emails every time I look at
+this code. And a future patch is going to change this story a little.
+This means it is past time to stick them in a comment so it can be
+modified and stay current.
 
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20200506143506.GH5298@hirez.programming.kicks-ass.net
+Link: https://lkml.kernel.org/r/20200515103844.GG2978@hirez.programming.kicks-ass.net
+---
+ kernel/sched/fair.c |  181 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 181 insertions(+)
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -13015,6 +13015,187 @@ static inline void task_tick_core(struct
+ }
+ 
+ /*
++ * Consider any infeasible weight scenario. Take for instance two tasks,
++ * each bound to their respective sibling, one with weight 1 and one with
++ * weight 2. Then the lower weight task will run ahead of the higher weight
++ * task without bound.
++ *
++ * This utterly destroys the concept of a shared time base.
++ *
++ * Remember; all this is about a proportionally fair scheduling, where each
++ * tasks receives:
++ *
++ *              w_i
++ *   dt_i = ---------- dt                                     (1)
++ *          \Sum_j w_j
++ *
++ * which we do by tracking a virtual time, s_i:
++ *
++ *          1
++ *   s_i = --- d[t]_i                                         (2)
++ *         w_i
++ *
++ * Where d[t] is a delta of discrete time, while dt is an infinitesimal.
++ * The immediate corollary is that the ideal schedule S, where (2) to use
++ * an infinitesimal delta, is:
++ *
++ *           1
++ *   S = ---------- dt                                        (3)
++ *       \Sum_i w_i
++ *
++ * From which we can define the lag, or deviation from the ideal, as:
++ *
++ *   lag(i) = S - s_i                                         (4)
++ *
++ * And since the one and only purpose is to approximate S, we get that:
++ *
++ *   \Sum_i w_i lag(i) := 0                                   (5)
++ *
++ * If this were not so, we no longer converge to S, and we can no longer
++ * claim our scheduler has any of the properties we derive from S. This is
++ * exactly what you did above, you broke it!
++ *
++ *
++ * Let's continue for a while though; to see if there is anything useful to
++ * be learned. We can combine (1)-(3) or (4)-(5) and express S in s_i:
++ *
++ *       \Sum_i w_i s_i
++ *   S = --------------                                       (6)
++ *         \Sum_i w_i
++ *
++ * Which gives us a way to compute S, given our s_i. Now, if you've read
++ * our code, you know that we do not in fact do this, the reason for this
++ * is two-fold. Firstly, computing S in that way requires a 64bit division
++ * for every time we'd use it (see 12), and secondly, this only describes
++ * the steady-state, it doesn't handle dynamics.
++ *
++ * Anyway, in (6):  s_i -> x + (s_i - x), to get:
++ *
++ *           \Sum_i w_i (s_i - x)
++ *   S - x = --------------------                             (7)
++ *              \Sum_i w_i
++ *
++ * Which shows that S and s_i transform alike (which makes perfect sense
++ * given that S is basically the (weighted) average of s_i).
++ *
++ * Then:
++ *
++ *   x -> s_min := min{s_i}                                   (8)
++ *
++ * to obtain:
++ *
++ *               \Sum_i w_i (s_i - s_min)
++ *   S = s_min + ------------------------                     (9)
++ *                     \Sum_i w_i
++ *
++ * Which already looks familiar, and is the basis for our current
++ * approximation:
++ *
++ *   S ~= s_min                                              (10)
++ *
++ * Now, obviously, (10) is absolute crap :-), but it sorta works.
++ *
++ * So the thing to remember is that the above is strictly UP. It is
++ * possible to generalize to multiple runqueues -- however it gets really
++ * yuck when you have to add affinity support, as illustrated by our very
++ * first counter-example.
++ *
++ * Luckily I think we can avoid needing a full multi-queue variant for
++ * core-scheduling (or load-balancing). The crucial observation is that we
++ * only actually need this comparison in the presence of forced-idle; only
++ * then do we need to tell if the stalled rq has higher priority over the
++ * other.
++ *
++ * [XXX assumes SMT2; better consider the more general case, I suspect
++ * it'll work out because our comparison is always between 2 rqs and the
++ * answer is only interesting if one of them is forced-idle]
++ *
++ * And (under assumption of SMT2) when there is forced-idle, there is only
++ * a single queue, so everything works like normal.
++ *
++ * Let, for our runqueue 'k':
++ *
++ *   T_k = \Sum_i w_i s_i
++ *   W_k = \Sum_i w_i      ; for all i of k                  (11)
++ *
++ * Then we can write (6) like:
++ *
++ *         T_k
++ *   S_k = ---                                               (12)
++ *         W_k
++ *
++ * From which immediately follows that:
++ *
++ *           T_k + T_l
++ *   S_k+l = ---------                                       (13)
++ *           W_k + W_l
++ *
++ * On which we can define a combined lag:
++ *
++ *   lag_k+l(i) := S_k+l - s_i                               (14)
++ *
++ * And that gives us the tools to compare tasks across a combined runqueue.
++ *
++ *
++ * Combined this gives the following:
++ *
++ *  a) when a runqueue enters force-idle, sync it against it's sibling rq(s)
++ *     using (7); this only requires storing single 'time'-stamps.
++ *
++ *  b) when comparing tasks between 2 runqueues of which one is forced-idle,
++ *     compare the combined lag, per (14).
++ *
++ * Now, of course cgroups (I so hate them) make this more interesting in
++ * that a) seems to suggest we need to iterate all cgroup on a CPU at such
++ * boundaries, but I think we can avoid that. The force-idle is for the
++ * whole CPU, all it's rqs. So we can mark it in the root and lazily
++ * propagate downward on demand.
++ */
++
++/*
++ * So this sync is basically a relative reset of S to 0.
++ *
++ * So with 2 queues, when one goes idle, we drop them both to 0 and one
++ * then increases due to not being idle, and the idle one builds up lag to
++ * get re-elected. So far so simple, right?
++ *
++ * When there's 3, we can have the situation where 2 run and one is idle,
++ * we sync to 0 and let the idle one build up lag to get re-election. Now
++ * suppose another one also drops idle. At this point dropping all to 0
++ * again would destroy the built-up lag from the queue that was already
++ * idle, not good.
++ *
++ * So instead of syncing everything, we can:
++ *
++ *   less := !((s64)(s_a - s_b) <= 0)
++ *
++ *   (v_a - S_a) - (v_b - S_b) == v_a - v_b - S_a + S_b
++ *                             == v_a - (v_b - S_a + S_b)
++ *
++ * IOW, we can recast the (lag) comparison to a one-sided difference.
++ * So if then, instead of syncing the whole queue, sync the idle queue
++ * against the active queue with S_a + S_b at the point where we sync.
++ *
++ * (XXX consider the implication of living in a cyclic group: N / 2^n N)
++ *
++ * This gives us means of syncing single queues against the active queue,
++ * and for already idle queues to preserve their build-up lag.
++ *
++ * Of course, then we get the situation where there's 2 active and one
++ * going idle, who do we pick to sync against? Theory would have us sync
++ * against the combined S, but as we've already demonstrated, there is no
++ * such thing in infeasible weight scenarios.
++ *
++ * One thing I've considered; and this is where that core_active rudiment
++ * came from, is having active queues sync up between themselves after
++ * every tick. This limits the observed divergence due to the work
++ * conservancy.
++ *
++ * On top of that, we can improve upon things by moving away from our
++ * horrible (10) hack and moving to (9) and employing (13) here.
++ */
++
++/*
+  * se_fi_update - Update the cfs_rq->min_vruntime_fi in a CFS hierarchy if needed.
+  */
+ static void se_fi_update(const struct sched_entity *se, unsigned int fi_seq,
 
