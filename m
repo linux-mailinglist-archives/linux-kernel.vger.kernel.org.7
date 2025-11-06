@@ -1,149 +1,166 @@
-Return-Path: <linux-kernel+bounces-887832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C64C392FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:48:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DEEC39304
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 06:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFF73B7935
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:48:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FA544E3B66
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 05:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D462D5944;
-	Thu,  6 Nov 2025 05:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102522D5410;
+	Thu,  6 Nov 2025 05:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="jwMybd2v"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eN5Jc3Rw"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179E91D88B4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B963E1AA7BF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 05:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762408085; cv=none; b=ftzCUoJ7NJeYBXaU5NbqZuHvj0lM2yYwex752mKQApx7VaUAt5RUhneTYnU2q7vDL8/mR56qfioIBz01JTNrVUmyhXy8RilRAjKdJGOBfUQf3gBguRaLEHK2Ppkm7/a24j1thEQTUCwZEiA5EAokEyv6zzfqMegfjRQz6ldeteg=
+	t=1762408146; cv=none; b=nXH/sCzGsQk7ScwTUL3gjU7B+Y3vNO+rfh09bKReCDx2cIoivyWuKJXtmtLAsSIC7FLCBdv/Ml0hbi9jytM5Hv19dH76DVY59SHr99M0O08aUtvl/YzzPPJgWYdKsW8+z9mvDs7ytp0bnE39BFvk2f01r1VA8EqxhltC+Ck/+C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762408085; c=relaxed/simple;
-	bh=8XRNkDGcev4wjXeN5rtSeb2UjJZSMlpIuFc4FifvGkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yw2sEMP2GHHyRb6kABCS+YakBERYGeS+PFXmyAPSI8Zb4ANcQ2Rb0jpn1vGbWegPBv3ewmSuMN0CvQn+mPc/ZjsyDa17SObV/mzikAGExV4HVpEiuL4dvy2+PoLuNFvDWvnF+WVL45wa3X74fnSvAO+SfXLHlAL/kqOMMzCx5Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=jwMybd2v; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-433261f2045so4921855ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 21:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1762408083; x=1763012883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3uoew2SarmiylnjDmk3L9GFoWwHK51enAJRQNH2IHjc=;
-        b=jwMybd2vspIS0ixUv3Vji9As6RoIfO1BG8XcrHsra78OiMmKRs9+XZlyJhcpGjHtHZ
-         CiiRoFnrBAtxS1+vxsfzyp2fWM4XudwlvK5fnbsBk8QrH2oyoFxot17LbLQw0QJ6BgVa
-         WDZQfdUA69kP8YnaWCDx8kLtz6vW6FsDJgTOk/h030PMWqPnYFt6vJEMCQfgOct7aXbe
-         EomTu4ruux8PhFNHcNc5bNH6nyVcJVOcIs7Q/JW1UsYZGnGmMXsn/xMJ0hBicLdgGLTo
-         CcP1C9+DH4wYOWnXd57nBwt/+svRR205yDq9z76DLHoNV3MaO1LD5UvW11ZXwB4mseJK
-         3ejg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762408083; x=1763012883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3uoew2SarmiylnjDmk3L9GFoWwHK51enAJRQNH2IHjc=;
-        b=Lf+tFSBXk2y6z2QPRawCMzRTzHofRGK9qRCUkqg3UwLkcIxPhqK7yhC/EmumQTTwjW
-         u6eKwXxCxSrbvVgPBSqi5ErTWDgoraE995CCc47FBF3IcvNBtjioBV4fWMJzXqlNt5v3
-         3LmIcBHHEQHxXOP7+agBWkrq/a+nkwrarDIDK7ADtcE+8fh7jEgdIjQ5F0Xhzfp30Zvo
-         2Pvb2wJV52YOTSv1+Lc6sxmx0dmm1sPvfOMq1s6uDFefYgbgLqnLePqgmKEcWNqUmnw0
-         z9cQOM2EtEsppwMV9sQa5TBvt0iefvsBUbbKcOKrx6VVRdMMYnu7gy1/vB/F1zZVKnTW
-         R4TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRrquIHlL16sdeBFqVC0GLnvZYlIqW3OLTaDAkbQLAkj40Y15fMg96qB/Ov/3bxvMrUc4FPlLouLJ71Mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo0sYrf23OogvUr4CE1E6jo1L0jwg68hWPeybNSi6Q7Q0sKkkW
-	gThkRxmyM4JGeEuEsQS1FjUDGhcO5Vb/wvnhtdN/M7mlCBBmsqQ2J7lXHs4AyhBrw0r7r0DHek0
-	VEZ43RzJL2KiM2p+HGXE+15Iisxy3eOEmmwgncTxR3Q==
-X-Gm-Gg: ASbGnct6yCr8dK0gRWK0teTVcnhRiEBmEVJD8mfHzixV5AdzfoIVDz0OUwgw+LaX5G7
-	wgs9sXGqvHR1TKjsqc9y4d3dkkYJh/MnUaDVxbXTdl2uR2tCrswcVxum3DmvNGxIcJeOLSGfE2Z
-	HT7BZiwbRw8aSphMFG5M4rDkhJsl/kYcUQS8rtmesXrTMQKqruukthgyGeOKEClxUQRWWZE/IeK
-	RWHzB9dPdojVyrxb6KFvDrL15K/crvcdsWq16aeG289296LlRNxF6WDqYmBNQ==
-X-Google-Smtp-Source: AGHT+IFbNEYpDbiUd8mOqCap1mJWhYJV/tTSDvIy+00/QF2eXniMKHHbQXm4twuBcloi6qoxWYJp8gwaXR8SH9byI/k=
-X-Received: by 2002:a05:6e02:240b:b0:433:23f0:1ebf with SMTP id
- e9e14a558f8ab-43340779d13mr96165935ab.9.1762408083096; Wed, 05 Nov 2025
- 21:48:03 -0800 (PST)
+	s=arc-20240116; t=1762408146; c=relaxed/simple;
+	bh=1SWZ5dJMXYAfckU3hzwl8ghlb5SPVLlHYomP60Onpyo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aB6kbWLoZS73IHlJ27xHkqOGM3FcBCDi9jH52DDzcWn0VvIjNxGPCq20mwgeV50XMqI8x/T5NcT2zaZoVGPGviOFyhdP21HzqMOirrEnpnDszeSLYXhQSZk8wJO2Dn+dxYbinVLXjwRp5DyuYutib/4cIN/XTEmnE0VzZt351+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eN5Jc3Rw; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 496d0a90bad411f08ac0a938fc7cd336-20251106
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=HyujfE2bQfleTrEZ9zgDhAaIhD1VJqM2orZjZ6pqvKo=;
+	b=eN5Jc3Rw6I5FpVlhrn9req61sYlyJgUqGRzSQUiJHjfasQhxUAwnnzvC2G4Xe50vplTFEcHcHN7pBWOSFkn2oVVMi/zxwILL968XiFbUk93KxCsiBNWTmcFgrMr8PF7byJnIOUq8Vq1MfbLKASwjRA0tYPz9ES10g0WdzI0a9yk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:041bcb7e-23f1-445a-a401-bb76dd6cc1c7,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:d258fa18-3399-4579-97ab-008f994989ea,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|83|102|836|888|898,TC:-5,Content:
+	0|15|50,EDM:-3,IP:nil,URL:99|1,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0
+	,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 496d0a90bad411f08ac0a938fc7cd336-20251106
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <niklaus.liu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 441798809; Thu, 06 Nov 2025 13:48:57 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 6 Nov 2025 13:48:56 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Thu, 6 Nov 2025 13:48:55 +0800
+From: Niklaus Liu <Niklaus.Liu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<sirius.wang@mediatek.com>, <vince-wl.liu@mediatek.com>,
+	<jh.hsu@mediatek.com>, <zhigang.qin@mediatek.com>, <sen.chu@mediatek.com>,
+	Niklaus Liu <niklaus.liu@mediatek.com>, Niklaus Liu
+	<Niklaus.Liu@mediatek.com>
+Subject: Re: [PATCH v4 0/1] soc: mediatek: mtk-regulator-coupler: Add support for MT8189
+Date: Thu, 6 Nov 2025 13:48:51 +0800
+Message-ID: <20251106054854.1395-1-Niklaus.Liu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923053851.32863-1-xiangwencheng@lanxincomputing.com>
-In-Reply-To: <20250923053851.32863-1-xiangwencheng@lanxincomputing.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Thu, 6 Nov 2025 11:17:51 +0530
-X-Gm-Features: AWmQ_bllfHXAxLhpsO6n51JY0CLvNreW7JWG-sL9GnCN1uB2qpTsPmrk7YdRxzE
-Message-ID: <CAAhSdy0OSCxo2oPYEhWjUJbOfx3HJ7Ak4KoVv4fi3ukKm6dRCg@mail.gmail.com>
-Subject: Re: [PATCH v2] RISC-V: KVM: Introduce KVM_EXIT_FAIL_ENTRY_NO_VSFILE
-To: BillXiang <xiangwencheng@lanxincomputing.com>
-Cc: kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, atish.patra@linux.dev, ajones@ventanamicro.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, Sep 23, 2025 at 11:09=E2=80=AFAM BillXiang
-<xiangwencheng@lanxincomputing.com> wrote:
+Refer to the discussion in the link:
+v3: https://patchwork.kernel.org/project/linux-mediatek/patch/20251104071252.12539-2-Niklaus.Liu@mediatek.com/
+
+- reply comment:
+Hi Angelo:
+We have already confirmed with the GPU Owner/HW team that for the MT8189 SoC without AOC 2.0, the GPU power sequence requires vgpu to be enabled before vsram. This is also the case for the MT8188. In addition, we have already implemented MFG0/1 for GPU/GPU_VSRAM. Is there anything else that needs clarification from our side?
+
 >
-> Currently, we return CSR_HSTATUS as hardware_entry_failure_reason when
-> kvm_riscv_aia_alloc_hgei failed in KVM_DEV_RISCV_AIA_MODE_HWACCEL
-> mode, which is vague so it is better to return a well defined value
-> KVM_EXIT_FAIL_ENTRY_NO_VSFILE provided via uapi/asm/kvm.h.
+> changes in v4:
+>   - reply comment:
+
+Niklaus, please just reply inline to the emails instead of sending an entirely new
+version just for a reply: it's easier for everyone to follow, and it's also easier
+for me to read, and for you to send a reply by clicking one button :-)
+
+> 1. MTK hardware requires that vsram_gpu must be higher than vgpu; this rule must be satisfied.
 >
-> Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
-
-LGTM.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Queued this for Linux-6.19
-
-Thanks,
-Anup
-
-> ---
->  arch/riscv/include/uapi/asm/kvm.h | 2 ++
->  arch/riscv/kvm/aia_imsic.c        | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
+> 2. When the GPU powers on, the mtcmos driver first calls regulator_enable to turn on vgpu, then calls regulator_enable to
+> turn on vsram_gpu. When enabling vgpu, mediatek_regulator_balance_voltage sets the voltages for both vgpu and vsram_gpu.
+> However, when enabling vsram_gpu, mediatek_regulator_balance_voltage is also executed, and at this time, the vsram_gpu voltage
+> is set to the minimum voltage specified in the DTS, which does not comply with the requirement that vsram_gpu must be higher than vgpu.
 >
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
-asm/kvm.h
-> index ef27d4289da1..068d4d9cff7b 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -23,6 +23,8 @@
->  #define KVM_INTERRUPT_SET      -1U
->  #define KVM_INTERRUPT_UNSET    -2U
+
+2. -> There's your problem! VSRAM_GPU has to be turned on *first*, VGPU has to be
+turned on *last* instead.
+
+Logically, you need SRAM up before the GPU is up as if the GPU tries to use SRAM
+it'll produce unpowered access issues: even though it's *very* unlikely for that
+to happen on older Mali, it's still a logical mistake that might, one day, come
+back at us and create instabilities.
+
+Now, the easy fix is to just invert the regulators in MFG nodes. As I explained
+*multiple* times, you have a misconfiguration in your DT.
+
+GPU subsystem main MFG -> VSRAM
+GPU core complex MFG -> VGPU
+GPU per-core MFG -> nothing
+
+> 3.During suspend, the voltages of vgpu and vsram_gpu should remain unchanged, and when resuming, vgpu and vsram_gpu should be
+> restored to their previous voltages. When the vgpu voltage is adjusted, mediatek_regulator_balance_voltage already synchronizes the
+> adjustment of vsram_gpu voltage. Therefore, adjusting the vsram_gpu voltage again in mediatek_regulator_balance_voltage is redundant.
+
+If you fix your DT, N.3 won't happen.
+
+Regards,
+Angelo
+
 >
-> +#define KVM_EXIT_FAIL_ENTRY_NO_VSFILE  (1ULL << 0)
-> +
->  /* for KVM_GET_REGS and KVM_SET_REGS */
->  struct kvm_regs {
->  };
-> diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
-> index fda0346f0ea1..937963fb46c5 100644
-> --- a/arch/riscv/kvm/aia_imsic.c
-> +++ b/arch/riscv/kvm/aia_imsic.c
-> @@ -802,7 +802,7 @@ int kvm_riscv_vcpu_aia_imsic_update(struct kvm_vcpu *=
-vcpu)
->                 /* For HW acceleration mode, we can't continue */
->                 if (kvm->arch.aia.mode =3D=3D KVM_DEV_RISCV_AIA_MODE_HWAC=
-CEL) {
->                         run->fail_entry.hardware_entry_failure_reason =3D
-> -                                                               CSR_HSTAT=
-US;
-> +                                                               KVM_EXIT_=
-FAIL_ENTRY_NO_VSFILE;
->                         run->fail_entry.cpu =3D vcpu->cpu;
->                         run->exit_reason =3D KVM_EXIT_FAIL_ENTRY;
->                         return 0;
-> --
-> 2.43.0
+>
+> changes in v3:
+>   - modify for comment[add the new entry by alphabetical order]
+>
+> changes in v2:
+>   - change title for patch
+>   - reply comment: This is a software regulator coupler mechanism, and the regulator-coupled-with
+> configuration has been added in the MT8189 device tree. This patchaddresses an issue reported by a
+> Chromebook customer. When the GPU regulator is turned on, mediatek_regulator_balance_voltage already
+> sets both the GPU and GPU_SRAM voltages at the same time, so there is no need to adjust the GPU_SRAM
+> voltage again in a second round. Therefore, a return is set for MT8189.
+> If the user calls mediatek_regulator_balance_voltage again for GPU_SRAM, it may cause abnormal behavior of GPU_SRAM.
+>
+>
+> changes in v1:
+>   - mediatek-regulator-coupler mechanism for platform MT8189
+>
+> *** BLURB HERE ***
+>
+> Niklaus Liu (1):
+>    soc: mediatek: mtk-regulator-coupler: Add support for MT8189
+>
+>   drivers/soc/mediatek/mtk-regulator-coupler.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+>
+
+Niklaus Liu (1):
+  soc: mediatek: mtk-regulator-coupler: Add support for MT8189
+
+ drivers/soc/mediatek/mtk-regulator-coupler.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+-- 
+2.46.0
+
 
