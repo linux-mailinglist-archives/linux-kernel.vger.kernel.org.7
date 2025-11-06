@@ -1,212 +1,106 @@
-Return-Path: <linux-kernel+bounces-887754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07306C3902D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:41:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42092C39009
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59E904FB6C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912583B7D21
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEC42BEFE4;
-	Thu,  6 Nov 2025 03:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAEC2C11F7;
+	Thu,  6 Nov 2025 03:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ei/aOelj"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qBcpUvAT"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2F07E0E8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7C82C0265;
+	Thu,  6 Nov 2025 03:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762399938; cv=none; b=lJC5bPK+fqGqM03DTo1yYrkbvIjb1J6BSHEtW8MhrxVdtxqGTmAwB6pzoarkvBOqkVu8rFuGeUPd6xGCjho80VdLja/V0bibISWkazl5LgK/rMUlxkxxO049x/6PtTlmCZ7DByRTPoWVuHsTb6Xpgx/HlpppDnJpJ4bV0OGJh14=
+	t=1762399979; cv=none; b=eS1ohiF/L9uGNEHLmfpSeZ4fmUlTmCVLBDjcJFRgl200H5Tnf3ZeCpooO9VSczkVTwZYpCNtUjHNQx6B8VzC7/VjPnKIRHXvPULeAleCkyf/cSMhsFdkFq+8I1CgesOJNQdA0v1z2dPCjwVeaS5BW0f7kO6koBsgIzWOtSKxmwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762399938; c=relaxed/simple;
-	bh=Te84rK9w8E3Z6V8axC0U2jmEpZ8B3+gW8jFEI9yrxj8=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sudTZvHvvVCxO4FlrlLzXgJ6bXoKs4J8q+O251F+I1Rmop3YLBiBAGxZW1s2oYcdLQL1jG+0mxJmt/wReNTNtgrRxM15uGixRJxgwacSRf4iMmUDQb/N+3UotkxBkXjg3SERrhQJ7/mHf18yyKiENIS43ITDPAOzgclUMxck9AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ei/aOelj; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429eb7fafc7so284873f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:32:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762399935; x=1763004735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yrEk/Xf2Q2n9dlGq6cH1zvZkMfQfJdDOTEouv0yhkfE=;
-        b=Ei/aOelj9ZH1n9t02GNmlZAS1FeQUh+5P1a8DHUvmG5qqi4B84d/nJP4J5+pWLDoKd
-         0WVPjH+MY/mYM1FUOF5dAmPNxGFrjHCuypOaDuNt8SJmiZI6AailH2oMuOZdzVKdvGwS
-         NzD+8GWTAl5eHrPzQCoDQtc2ftJQ+gepqRNBAhjMSTVH9esl33NBFvw+Qr3jtklIFXRj
-         hfwCsZm5SVa4E0O+7ynLWHj+yZ/D+YY3qNbNr0S6KRggqhBBX+vm3E30dNSlLVHPt02Y
-         zKHEuDvGOlvsmMhOaKGPl4RVvj6ri9rbAWDsIFj9HE9NIAPueiCx5d8CBcjLqF2Lu9e5
-         Pd8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762399935; x=1763004735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yrEk/Xf2Q2n9dlGq6cH1zvZkMfQfJdDOTEouv0yhkfE=;
-        b=Ut85wCO8GYVQHlkgV72R/8QZmTqd6eSf4UkWL0Rql4mO2V1CXIq8Ndk6644fA400F9
-         Tcm6DtIiVPAuZdaJ7DO1kPmzAdkui0OAv+HUXEw/fRkg3/2dLRz68PxrvNedZSYbWi5Q
-         Yh7c3M+sXr7U3EWF4nUISLZGDnaxBt4HOv5idsdzgC9Rqi0BZdCNohATdms/kr41Rzd6
-         L9JttveyLuGEQmVVc/pxKVercBUJOdRH9+bf8KsBV40oEWNETAE53pwKn6bOApecX4Lt
-         OKgq/vWo1CmzjlFrZJikGSw7mV2uOP/P0Pi2WYrwycj3bUEOTYno6u/BR/tqYKnfqaEn
-         gYwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdQp+HdC1fNafsTYYrQCnSEDYZomKZow8rNxl+tHJNQpdR1g6110bzt4bNU7mKNxXAGqzTeRiBOVFwzsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHTnoIH40TjMUV98Da6movzcJkgYwck/pUAeJAyDTLHUJ8ajNh
-	k9aWm0HveXOJUi7fx1VHJM9Vfi3g91A/L7bP6l1IJVCFrFS3VZ986Sj2i2ElqzCn3L8gNgPi33n
-	iSESgpQTEKNBtflKLA1Gn8+SLlxVzVN0=
-X-Gm-Gg: ASbGncsIzIpNCBKSJLwOTZaFcQDdQMJh4szQaOK5f4GigpaPeOIJ0sXYSZ294BB5Juh
-	qcDhvr8jUzGI4ayz6UH3vAQWrC0OUTWmXYsmsNaZeYYqw5SjBDFaJVwc6dq16Kr6iA4NHkNmORK
-	37/zI3LE+EOs2x5JdKB99PWLTtOZ6rypd5GQxds7zhDLILhPfELBQcWVGoOP+7UlbG2/bEUEQDS
-	NYdAext+0Rftsq0dLo/uHIDErCvMf/zUVnztJugh4KeWVF7hI2U+1y4EXVG
-X-Google-Smtp-Source: AGHT+IFrfGKqaeGd0M4rahJWdXYrfC2f9U8PYeDUdpZcxXT+BGPgGV/ia28mdz/Wa5fqNR6TklX63VW1vOs+z/WpW7g=
-X-Received: by 2002:adf:9dcc:0:b0:3eb:2428:4a05 with SMTP id
- ffacd0b85a97d-429e35d2979mr3812837f8f.3.1762399935152; Wed, 05 Nov 2025
- 19:32:15 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 5 Nov 2025 19:32:12 -0800
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 5 Nov 2025 19:32:12 -0800
-From: Amit Dhingra <mechanicalamit@gmail.com>
-References: <1043551.1761844832@turing-police> <32ed124e9d603cad950c4836c7a14a3ba8bc2068.camel@gmail.com>
- <1296761.1762045181@turing-police> <CAFF-SiU3XL5pZAzsB=eXi7e1LKzx5XwiNOyfGpPXOnnc6uo2cw@mail.gmail.com>
- <CAO=gReF+sWpKZFa+wbtGxa3+wSjAQG1UMG3iJaDt2EOPmH-7mQ@mail.gmail.com>
- <149f5bb52a21becedc17a5b0bf1a586672940af6.camel@gmail.com>
- <CAO=gReERBacxH6SjLrcCNcStiAzMosR=aW5D4W925CJ_yjzbhA@mail.gmail.com> <867953df79b54037ce91cf1886b09ec5c30f7442.camel@gmail.com>
+	s=arc-20240116; t=1762399979; c=relaxed/simple;
+	bh=RH1ijha1MrDHYJctdTAb0EvYl03aoxyabxxSyFsflTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jtx/hnLVue48II9EbBEG0lgCa7yBy56XLC/0Fy5WaHzb+7O90f4rImlq28+3QEHSkdpvoe125d+es4Cl9XU4A7/NyNjrRhvz38FOs8nXrnTM1KEwgPPwTV/5Oo2uV063vepohQAvvGEWA8jlDttQ+0SlU8ii0TAWMn1dbOxuMJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qBcpUvAT; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762399972;
+	bh=yPp+FKxVYAXZY5MHLnaeDhoOLp/SX3bq3GOz87rKi4A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qBcpUvAT07M/HUsItGuNJ92m3k519E0s7y/bTr7HZo4fAl+wFET44l3KgNwlJb19X
+	 sSBJJKrni2lVFcscFAZSLl/rBS5k8GzeGuG87Dhx1QhfMhOG07WH5NYN0vQA9AbQht
+	 EdZM3CeFu24Xjya7fex2ZICdn0rn6II8YV4fAutd3h4xJro3jqxo5Nhlm3sJ/7K+EO
+	 3knvFTcpKhEcVE9xILGdxkJ9crInybGdG8UFNflJwcHEa2Qedcbn1WJBrgm6arFOkp
+	 yg0uvg5jynMpnwKekifuApB9jep1/rWf4qtAEpDb0Z8lFyUaBXN0Vv3hBeAZcAB4kR
+	 r9O1lyVi54hYw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d27782NN3z4w0q;
+	Thu, 06 Nov 2025 14:32:52 +1100 (AEDT)
+Date: Thu, 6 Nov 2025 14:32:51 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Jakub Kicinski <kuba@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning in Linus' tree
+Message-ID: <20251106143251.43f92fc7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <867953df79b54037ce91cf1886b09ec5c30f7442.camel@gmail.com>
-Date: Wed, 5 Nov 2025 19:32:12 -0800
-X-Gm-Features: AWmQ_bnotwgT6unc_-gxGV9K6-s_IBREkpHZkpHK4M-tvSqJlBDCl1SbJWJwBdI
-Message-ID: <CAO=gReE5LThojtkZx3+6aJYuB7UpRs1tHVnvma+BynFduA_9Zg@mail.gmail.com>
-Subject: Re: linux-next-20251029 - build error in amdgpu
-To: =?UTF-8?Q?Timur_Krist=C3=B3f?= <timur.kristof@gmail.com>
-Cc: =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>, 
-	Alex Deucher <alexander.deucher@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	David Airlie <airlied@gmail.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/BNdfGA5oOB3L3rjssvLB4q0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/BNdfGA5oOB3L3rjssvLB4q0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 04:29:05AM +0100, Timur Krist=C3=B3f wrote:
-> On Wed, 2025-11-05 at 19:24 -0800, Amit Dhingra wrote:
-> > On Thu, Nov 06, 2025 at 03:40:52AM +0100, Timur Krist=C3=B3f wrote:
-> > > On Wed, 2025-11-05 at 18:34 -0800, Amit Dhingra wrote:
-> > > >
-> > > > >
-> > > > > What do I need to do to trigger the warning?
-> > > > >
-> > > > I have the same problem.
-> > > >
-> > > > linux-next on Arch Linux
-> > > > GCC : 15.2.1 20250813
-> > > >
-> > > >
-> > > > Steps to reproduce the error
-> > > > - make mrproper
-> > > > - make allmodconfig
-> > > > - make drivers/gpu/drm/amd/amdgpu/
-> > > >
-> > > > Turns out its due to randconfig, See [1]
-> > > >
-> > > > Setting RANDSTRUCT_NONE=3Dy seems to stop the error.
-> > >
-> > > Can you please try and see if this fixes the warning?
-> > > https://pastebin.com/raw/b8j3UABj
-> >
-> > The patch above defining all fields seems to fix the error.
-> >
-> > >
-> > > Alternatively, if anyone has other recommendations on how to fix
-> > > it,
-> > > I'm also open to suggestions.
-> > >
-> >
-> > What seemed to also work for me is to defining the struct as below
-> > without an initialization.
-> >
-> > static const struct stream_encoder_funcs dce110_an_str_enc_funcs;
-> >
-> > Its static so should be initialized zeroed out. objdump shows correct
-> > size
-> > allocation.
-> >
-> > objdump -x dce_stream_encoder.o
-> >
-> > =C2=A0 0000000000000b60 l=C2=A0=C2=A0=C2=A0=C2=A0 O .rodata	00000000000=
-00130
-> > dce110_str_enc_funcs
-> > =C2=A0 0000000000000a00 l=C2=A0=C2=A0=C2=A0=C2=A0 O .rodata	00000000000=
-00130
-> > dce110_an_str_enc_funcs
-> >
->
-> Thanks! This looks even cleaner.
->
-> I will submit a patch to fix the warning next week.
-> Can I add your name and email to the Suggested-by tag?
+Hi all,
 
-Certainly. Thank you!!
+In Linus' tree today's linux-next build (htmldocs) produced this warning:
 
->
-> Thanks,
-> Timur
->
->
->
-> >
-> > > Thanks,
-> > > Timur
-> > >
-> > >
-> > > > >
-> > > > > Valdis Kl=C4=93tnieks <valdis.kletnieks@vt.edu> ezt =C3=ADrta (id=
-=C5=91pont:
-> > > > > 2025.
-> > > > > nov.
-> > > > > 2., Vas 1:59):
-> > > > >
-> > > > > > On Thu, 30 Oct 2025 19:05:30 +0100, Timur Krist=C3=B3f said:
-> > > > > >
-> > > > > > > Can you say how to reproduce that?
-> > > > > > > I use the same version of GCC but it hasn't given me any
-> > > > > > > warning or
-> > > > > > > error for that patch.
-> > > > > >
-> > > > > > Upon further testing,
-> > > > > >
-> > > > > > [/usr/src/linux-next] make
-> > > > > >
-> > > > > > is sufficient on my system. Turns out that it errors out even
-> > > > > > without W=3D1.
-> > > > > > My
-> > > > > > next guess was that it had to do with -Werror, which would
-> > > > > > cause
-> > > > > > warnings
-> > > > > > to
-> > > > > > be treated as errors, but my .config has
-> > > > > >
-> > > > > > # CONFIG_WERROR is not set
-> > > > > > # CONFIG_DRM_WERROR is not set
-> > > > > > # CONFIG_DRM_AMDGPU_WERROR is not set
-> > > > > >
-> > > > > > Do you perhaps have patches in your tree that aren't in next-
-> > > > > > 20251029?
-> > > > > >
-> > > > > > I wonder if Fedora's build of gcc 15.2.1 is different somehow
-> > > > > > from the
-> > > > > > build you're using....
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > >
+WARNING: /home/sfr/kernels/next/next/include/linux/ethtool.h:495 This comme=
+nt starts with '/**', but isn't a kernel-doc comment. Refer Documentation/d=
+oc-guide/kernel-doc.rst
+ * IEEE 802.3ck/df defines 16 bins for FEC histogram plus one more for
+
+Introduced by commit
+
+  cc2f08129925 ("ethtool: add FEC bins histogram report")
+
+"make htmldocs" was not reporting all the warnings for some time.
+That has now been fixed and this warning showed up.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BNdfGA5oOB3L3rjssvLB4q0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkMFuMACgkQAVBC80lX
+0Gy5QggAhEfzqos+HHTkoew5KLfWkl4zJxGFl/hbbwx+subnvGCUXd25y0/awcoO
+zhyAleW6itIYEjtDqzBdl46D5kswX11WtLBG+46qMUDr+GgPxW4/rk4VWFdHotKt
+T/hlf/qW9BhwevM/2SgD9fb0JGx90TL0lhZ6L39vXZ2dZzuCh1zDQkwIjanGUtJ4
+WBG1/4nUxafSU0/UoNPS656ivNYPMJ4WTRLFXmrujb2mfshyhxBo5/170LkU2tRq
+W/uf146T32u1qPRi/s0dKmcSdzlHjYeRQe6zwcfEHgNNVNYtqdzhCSMV8gKkNys7
+53LI3lcKIoxNKCEA7PlOx2dr4s5reA==
+=vRiZ
+-----END PGP SIGNATURE-----
+
+--Sig_/BNdfGA5oOB3L3rjssvLB4q0--
 
