@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-889547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445A9C3DE14
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:46:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C97C3DE2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09FF3A4CF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 207433AA3EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215BB306B09;
-	Thu,  6 Nov 2025 23:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B9533F8C7;
+	Thu,  6 Nov 2025 23:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDaJ/5/t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="USVRjQRb"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7893D26FDA6;
-	Thu,  6 Nov 2025 23:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF0A2F39D7;
+	Thu,  6 Nov 2025 23:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762472753; cv=none; b=pcl3S0YUhV1E4FdksgUWmAt+ejh/5gADh2LNtOu6MqEqYkk5g0kbRPofQgucslZKFxEkg1k5Lhd40PSpFmmRpvgUkWt5x5t2dvtTG/S6Xl+41zLZNkTJ4DmDmJk/gxz5NKv3uG/AlogYVSENxcD3jw86eMUW1k/Wr9pjNwFafxE=
+	t=1762472896; cv=none; b=b4i1bwp05u8VzNYcQe2kYCFcVStu7uQg2wCcRnm6RR/6nuulQ7JO/vEfKLTAK3xt15vHPRWgYhQaeR6HzsBgLhecaRs4os6m50WlCWo1RqAKq/w+HoDXvLjUqcwlQNi92oSfWUZM84ExhH/rkJ2BBSS+GGtNcHkP1LEjjKIrzOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762472753; c=relaxed/simple;
-	bh=23mhRYspHUO/+Jn5j6UsbhA1co9CDPUsRj1RdkMabQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PGkXfhPedKRY9ROghYOtJiiyYquFCPOTRIun16IG1bVSZk7sS60vZLcqQx/XxewXcwVFsm3HesB9NkLKG8uVA1QdeIXmG1hH5aHOPp9Nxmhd33vVVxaXXv7cnL/+C4Km/qvSkc33gj3RokK9nfvQ3jwDrtDhbiOKKLPD5r6RdYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDaJ/5/t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2545C4CEF7;
-	Thu,  6 Nov 2025 23:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762472753;
-	bh=23mhRYspHUO/+Jn5j6UsbhA1co9CDPUsRj1RdkMabQU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nDaJ/5/t364D5zfSObhgA0ft1VArPTqWeLPFQA2zIvyUNQrfV2m8D9AA6X3c5wRfH
-	 Q21Bodv0vO+P2iAZM+d8B129L6ihVGsJdLbnQgXgMWbxJxAKxB9W/Vzpt9ERYKmJRt
-	 aPh4IG8/t4b7ih5DeFQIRITz4ez1HnuyE4TWHMhy1rLMvRcLng9ku7ZrAH+AJOoAxT
-	 +SnElhanks/y9iRPZtvGOTsNrJWW8mOlltH/yeUnl3icmXwDxMakvBdKh4Ty7d1tei
-	 a8n09H4P4KN7mwJUyC1cfXnAir4KE2faeS5B4uxozC0VPQXKcCBLQQM2poCCsk8o7Z
-	 9Wg2vPA8Kn0XA==
-Date: Thu, 6 Nov 2025 17:45:51 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	mad skateman <madskateman@gmail.com>,
-	"R . T . Dickinson" <rtd2@xtra.co.nz>,
-	Darren Stevens <darren@stevens-zone.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Lukas Wunner <lukas@wunner.de>,
-	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>,
-	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
-	hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org,
-	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/2] PCI/ASPM: Allow quirks to avoid L0s and L1
-Message-ID: <20251106234551.GA1976429@bhelgaas>
+	s=arc-20240116; t=1762472896; c=relaxed/simple;
+	bh=TnpdPvH+RZ2LrlXRMB0uxyj+0oHXbiY9DRoi/gpHLZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YOC/s0u3LCBCeSzZ7Wqe2TwYUPrjCX/E79mB87FJPksys4gtyTuPeBVeuooSQulICfIpIYlxKP+KQXC+rdNjugDUpqpFcjowcFeW296AkVn5BARSQU8eOycxupvV4NBKWCX65B0dnvrrzg84OJNFBZQ5dZOMTS5ZZXWLwQwJB8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=USVRjQRb; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=OYz7MP8O2k8oBKZENe/xkYWnFpyCZoav16ctpYVEDG0=; b=USVRjQRbYJQTy+3GtLjYFb/dkM
+	2D75bMF8DXeY9aF5J8IogdFizhCV2ipRrbRlCaCcgS6cUDdV+xkcqAig03+hWJVT7rrqWlTAoaGDE
+	jUmhcGGM6LkXnt3XTSNLil9OMWiZhuGNk/KqMVpIpTTwYV6Sa28EhgFOeTfu65OQCUAeo2+f6FE8V
+	RIFVZd6ZX7GgB/dCVaAW3z6cjh5wLQxWzuAw1+TenO3xRYHnkkpOzTtk3yUzBOCJ3BIc/RcUC4T7n
+	E8bFjO8OTSxTaJPu3fM1hjbw5dRKg2+eS26jB3kFG9HkkBJsGymyBpJ3U5qNVvxn18qND/aGq/2ST
+	MQkUkqIw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vH9i7-0000000GPM2-1F4B;
+	Thu, 06 Nov 2025 23:48:11 +0000
+Message-ID: <9dba0eb7-6f32-41b7-b70b-12379364585f@infradead.org>
+Date: Thu, 6 Nov 2025 15:48:10 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106183643.1963801-1-helgaas@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iommupt: Describe @bitnr parameter
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux IOMMU <iommu@lists.linux.dev>
+Cc: Jonathan Corbet <corbet@lwn.net>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Samiullah Khawaja <skhawaja@google.com>,
+ Kevin Tian <kevin.tian@intel.com>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>
+References: <20251106073845.36445-1-bagasdotme@gmail.com>
+ <20251106073845.36445-3-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251106073845.36445-3-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 12:36:37PM -0600, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> We enabled ASPM too aggressively in v6.18-rc1.  f3ac2ff14834 ("PCI/ASPM:
-> Enable all ClockPM and ASPM states for devicetree platforms") enabled ASPM
-> L0s, L1, and (if advertised) L1 PM Substates.
-> 
-> L1 PM Substates and Clock PM in particular are a problem because they
-> depend on CLKREQ# and sometimes device-specific configuration, and none of
-> this is discoverable in a generic way.
-> 
-> df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
-> (v6.18-rc3) backed off and omitted Clock PM and L1 Substates.
-> 
-> L0s and L1 are generically discoverable, but some devices advertise them
-> even though they don't work correctly.  This series is a way to avoid L0s
-> and L1 in that case.
-> 
-> Bjorn Helgaas (2):
->   PCI/ASPM: Cache Link Capabilities so quirks can override them
->   PCI/ASPM: Avoid L0s and L1 on Freescale Root Ports
-> 
->  drivers/pci/pcie/aspm.c | 42 ++++++++++++++++++++---------------------
->  drivers/pci/probe.c     |  5 ++---
->  drivers/pci/quirks.c    | 12 ++++++++++++
->  include/linux/pci.h     |  1 +
->  4 files changed, 36 insertions(+), 24 deletions(-)
 
-I put these on for-linus, hopefully for v6.18.  I would like to have
-some review and testing before asking Linus to pull them, especially
-since the first one is not completely trivial and is a change (but
-shouldn't be a functional change) for all platforms.
+
+On 11/5/25 11:38 PM, Bagas Sanjaya wrote:
+> Sphinx reports kernel-doc warnings when making htmldocs:
+> 
+> WARNING: ./drivers/iommu/generic_pt/pt_common.h:361 function parameter 'bitnr' not described in 'pt_test_sw_bit_acquire'
+> WARNING: ./drivers/iommu/generic_pt/pt_common.h:371 function parameter 'bitnr' not described in 'pt_set_sw_bit_release'
+> 
+> Describe @bitnr to squash them.
+> 
+> Fixes: bcc64b57b48e ("iommupt: Add basic support for SW bits in the page table")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  drivers/iommu/generic_pt/pt_common.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/iommu/generic_pt/pt_common.h b/drivers/iommu/generic_pt/pt_common.h
+> index b5628f47e0db40..54c16355be2842 100644
+> --- a/drivers/iommu/generic_pt/pt_common.h
+> +++ b/drivers/iommu/generic_pt/pt_common.h
+> @@ -354,6 +354,7 @@ static inline unsigned int pt_max_sw_bit(struct pt_common *common);
+>  /**
+>   * pt_test_sw_bit_acquire() - Read a software bit in an item
+>   * @pts: Entry to set
+> + * @bitnr: Bit to set
+
+Shouldn't both of these (above) to "to read" instead of "to set"?
+
+>   *
+>   * Software bits are ignored by HW and can be used for any purpose by the
+>   * software. This does a test bit and acquire operation.
+> @@ -364,6 +365,7 @@ static inline bool pt_test_sw_bit_acquire(struct pt_state *pts,
+>  /**
+>   * pt_set_sw_bit_release() - Set a software bit in an item
+>   * @pts: Entry to set
+> + * @bitnr: Bit to set
+>   *
+>   * Software bits are ignored by HW and can be used for any purpose by the
+>   * software. This does a set bit and release operation.
+
+-- 
+~Randy
+
 
