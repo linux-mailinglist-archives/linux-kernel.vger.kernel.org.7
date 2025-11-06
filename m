@@ -1,202 +1,119 @@
-Return-Path: <linux-kernel+bounces-889049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01331C3C976
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:54:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3D4C3C95E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:52:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292FA660B51
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D133A4235E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4F32D061C;
-	Thu,  6 Nov 2025 16:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CD32494FF;
+	Thu,  6 Nov 2025 16:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTB9pWOU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hl7064yz"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E9726F2AA;
-	Thu,  6 Nov 2025 16:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA1D2192EE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447365; cv=none; b=hLLXgfBdsVwkWtlcxhyFbRkTLBfthOz6e42qxrXVQERbOFMROSIFcws+gG1nNWmcxBUe7nCeUIJXTKtIapf7YkUYLxVc+lB3bQT4JqS5XWhGJbCWTm72P/RxFcZqw5RwKrBzdav2nfXAPIMaXmRhDEyDnvfAcokIVUhLGjQPr44=
+	t=1762447414; cv=none; b=sVkiHHMgs8o3JIG/gwkNviE09+se/ABq6rt637mBmPknCLtOroYO5NZJBMitW3QrfIH5PRVFp4iBPUfqYxy128EYPak3Lz2WuVzGFzl6rbsXTgrqiUpyJANheK1W7jy3xEpvUwsG5zU+W9bS5dCyel/1K0TJMBzoJ6Z7nQDMQYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447365; c=relaxed/simple;
-	bh=SpeVu426/WkvU4V04i2YQbDyRo+Q5S/+ReTMbj/44jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hbIBqEzwWLn1MBicZ2fjpSlDcavv4HZdOywccGGj1k9Ld2hI3k/0J5h+QhUHHS+ceYXmJOgWGh3ZZ8bUKiLiajKw+aYgcVifzzKmySbedMnTrBQ+DfuYftutFgKSCzxR899Pt5BPt0HY0oPl6/C74SMt4j08E+PhBFs4Jqm8u8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTB9pWOU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB19C116C6;
-	Thu,  6 Nov 2025 16:42:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762447364;
-	bh=SpeVu426/WkvU4V04i2YQbDyRo+Q5S/+ReTMbj/44jY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sTB9pWOU6SlUQaXG8s5lq5F+7OO7QHlYrYaTNbFrAXxi6byliTu7t04qThNTSVZ8G
-	 WHjdbQnkU+ReOqrFxEdCJg5aSp0emBlaM1T38ul3Cax75ChyVUAMqi80hE2VXyhw4t
-	 xd9AXDXqLVqEPrtaEbW3BCEpERppmPG61GCcUftUcMYzIxzHOU+81T9aCtsCgRZoca
-	 sMe4W0FprvW0swDFPgCs78LPqdLS6uMajyBIxkSBDws37fHqWIdC6u3i8y/eYoQQEx
-	 o2Z3mc0FOphql1qJs0PqJYsApyBVDb9Afc/b5kPGYqXfLbjGqFS7lBqbIlWPXcH31N
-	 MtYBgsRLsCZkQ==
-Date: Thu, 6 Nov 2025 16:42:40 +0000
-From: Lee Jones <lee@kernel.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Subject: Re: [PATCH v3 2/4] mfd: tqmx86: refactor I2C setup
-Message-ID: <20251106164240.GW8064@google.com>
-References: <bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
- <999718e052b5e600813cefc3ec19ba3028afa034.1761123080.git.matthias.schiffer@ew.tq-group.com>
- <20251106133848.GL8064@google.com>
- <eb1b752b3584d27e4d5e38544e54d7d1b5faf4ab.camel@ew.tq-group.com>
+	s=arc-20240116; t=1762447414; c=relaxed/simple;
+	bh=23KhdHrGNqhSoczMRBVuAoklJQ3W5i54MPFbE3H6OhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=apalNiIDHYwt8TirH3dZ5vf08TgWYRiWUFVM24oZ3+2rE22MrdZZ149s6sn4ExrQ+8O4fAZfxo0Y8RQSo7vIkmTgo/U/iwereeL8LjlLBbNGB+F/Tj9xLr3NLyeqjBIpQfb4epEuvlHNXynqhCGNw5xAWLXbwdYK8EtzgmZBCkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hl7064yz; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ed6ca52a0bso332931cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762447411; x=1763052211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=23KhdHrGNqhSoczMRBVuAoklJQ3W5i54MPFbE3H6OhU=;
+        b=hl7064yztkQzRpmThdGygVZywIdETCmrZbQ20VPWfKvAEM9fKqqtZy4pmXCka+b5pb
+         1A5p1MdV7Z7Fv4LZl7+/anD+niGZ3m85cJXDsZCcdaI8z1Dj3DiETSSU92CNCluXzxFL
+         FfUnDa9rvkm5vTL2X7LxYo6lw7aS6FAMoAu3PeE0cLvejOuerhvOyDZp/ADZtTHZofel
+         7cNgY2+i9j+Rq/2+49tz1nTVZQAGiR3yIrtl09rLTI4T89O+bj/ie/LMd3HxMNfQ9PuW
+         Ywis0WHEAtmucRSCOnVICod/AX1/9FJbGYt5wIBJ4K8gfI1z+hNJQYATEVkqgneCPd6G
+         aMlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762447411; x=1763052211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=23KhdHrGNqhSoczMRBVuAoklJQ3W5i54MPFbE3H6OhU=;
+        b=WhhsIIHLyocaHTskNq8uYT8b4vRE1H5OkW75i9lsfke/ekKzWBDAvRahuoqTV4Oxxx
+         idWNvvzvukIwX0Ma5QLMNn33m/XnulH79XMSbzs3/je//TbG8CdYHZbHVblyze5z87jx
+         1fzufhb7o5f9qu/PpSra2k7iaUG7EFFp4M2HPmSSXb+SoCsw1P4ZH59ppvk+Wj5yMk2k
+         NqdE/5ZRn4NAOB8WlDUArU68UfiGB8N2fI/3NYsqBodr60OYEwabKWk3fnX5fQrXN2Ea
+         H4uv5GUPycQLptFn4+DtRSxawQbCCh3pINWAa+kkICcrnn6CxqqSh7/V1jSyWs91p3cl
+         lAxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhT0vgKutOCrhP3xxIABRC15jj3iUoopTAOc+1o1MxGABhbxN1/MIimjPk1ItL/itsWCnoxMmEPJ+rVZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEt0G1dXENTjVjVBmlxde16PMsR2GocGP6W61QZB92sMEm01MG
+	xWX9NYAJmkT40x2LtzOnFMM/PDFHR+orFdnXNpbpQoklHtubJ9Y5wl2XyybLCRqTop2q3M0yiL5
+	YyzWnN3/QemSBCdq+ponr7fH+QruoMPneg3Mnyki2
+X-Gm-Gg: ASbGncv2FDcP4uCDsK3boqM7Va059LH/RVedLAzGbjSjsqVskl7AFaikdZPCNBZLkkJ
+	u1ZOWGx5aGJIDIyhVy0FBN14RbML+vTbl97or4X9fGcM6csJHJtkszQUxeQIL9vAicqgZWKO8Sw
+	y5uGKEd+gaSDquKRmKLlCIpww1v2RPZJ4sbt0NwDnW41O2BgjglpaaC9dt5Q4PsrphjVjmAW8fT
+	OhGR9C2cJaAyDolsOLHrPtjjzoerPAOVfiQwIMX+tG+hw/WyaetnHTq//HjKvEQFXAHbEo=
+X-Google-Smtp-Source: AGHT+IHFNLGTMhkyLgALgSkUpZLbDK3FpgsatbT6pzX6mKoR91iR99UbhzJfyxnc3EJI3tbpMq2dKzN5z2548rdYrpY=
+X-Received: by 2002:ac8:7f15:0:b0:4e4:f2b9:55aa with SMTP id
+ d75a77b69052e-4ed82be2324mr7226371cf.17.1762447411075; Thu, 06 Nov 2025
+ 08:43:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb1b752b3584d27e4d5e38544e54d7d1b5faf4ab.camel@ew.tq-group.com>
+References: <20251104003536.3601931-1-rananta@google.com> <20251104003536.3601931-3-rananta@google.com>
+ <aQvu1c8Hb8i-JxXd@google.com>
+In-Reply-To: <aQvu1c8Hb8i-JxXd@google.com>
+From: Raghavendra Rao Ananta <rananta@google.com>
+Date: Thu, 6 Nov 2025 22:13:18 +0530
+X-Gm-Features: AWmQ_bm7AruMQuRGa1cc38uouBoYuXGFOfqLovOg7UmBpX2k74LmnZs47QpcMlI
+Message-ID: <CAJHc60ztBSSm4SUxxeJ-YULhdYuCHSprtns0xt_WVJPvgmtsBA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] vfio: selftests: Export vfio_pci_device functions
+To: David Matlack <dmatlack@google.com>
+Cc: Alex Williamson <alex@shazbot.org>, Alex Williamson <alex.williamson@redhat.com>, 
+	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 06 Nov 2025, Matthias Schiffer wrote:
+On Thu, Nov 6, 2025 at 6:12=E2=80=AFAM David Matlack <dmatlack@google.com> =
+wrote:
+>
+> On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
+> > Refactor and make the functions called under device initialization
+> > public. A later patch adds a test that calls these functions to validat=
+e
+> > the UAPI of SR-IOV devices. Opportunistically, to test the success
+> > and failure cases of the UAPI, split the functions dealing with
+> > VFIO_GROUP_GET_DEVICE_FD and VFIO_DEVICE_BIND_IOMMUFD into a core
+> > function and another one that asserts the ioctl. The former will be
+> > used for testing the SR-IOV UAPI, hence only export these.
+>
+> I have a series that separates the IOMMU initialization and fields from
+> struct vfio_pci_device. I suspect that will make what you are trying to
+> do a lot easier.
+>
+> https://lore.kernel.org/kvm/20251008232531.1152035-1-dmatlack@google.com/
+>
+Nice! I'll take a look at it. By the way, how do we normally deal with
+dependencies among series? Do we simply mention it in the
+cover-letter?
 
-> On Thu, 2025-11-06 at 13:38 +0000, Lee Jones wrote:
-> > On Wed, 22 Oct 2025, Matthias Schiffer wrote:
-> > 
-> > > Preparation for supporting the second I2C controller, and detecting both
-> > > ocores and machxo2 controllers.
-> > > 
-> > > - Avoid the confusing "soft" I2C controller term - just call it the
-> > >   ocores I2C
-> > > - All non-const parts of the MFD cell are moved from global variables
-> > >   into new functions tqmx86_setup_i2c_ocores() and tqmx86_setup_i2c()
-> > > - Define TQMX86_REG_I2C_DETECT relative to I2C base register
-> > > 
-> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> > > ---
-> > > 
-> > > v2: no changes
-> > > v3: no changes
-> > > 
-> > >  drivers/mfd/tqmx86.c | 130 ++++++++++++++++++++++++-------------------
-> > >  1 file changed, 74 insertions(+), 56 deletions(-)
-> > > 
-> > > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-> > > index 1cba3b67b0fb9..3c6f158bf1a45 100644
-> > > --- a/drivers/mfd/tqmx86.c
-> > > +++ b/drivers/mfd/tqmx86.c
-> > > @@ -18,7 +18,7 @@
-> > >  
-> > >  #define TQMX86_IOBASE	0x180
-> > >  #define TQMX86_IOSIZE	0x20
-> > > -#define TQMX86_IOBASE_I2C	0x1a0
-> > > +#define TQMX86_IOBASE_I2C1	0x1a0
-> > >  #define TQMX86_IOSIZE_I2C	0xa
-> > >  #define TQMX86_IOBASE_WATCHDOG	0x18b
-> > >  #define TQMX86_IOSIZE_WATCHDOG	0x2
-> > > @@ -54,8 +54,8 @@
-> > >  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
-> > >  #define TQMX86_REG_SAUC		0x17
-> > >  
-> > > -#define TQMX86_REG_I2C_DETECT	0x1a7
-> > > -#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
-> > > +#define TQMX86_REG_I2C_DETECT	0x7
-> > > +#define TQMX86_REG_I2C_DETECT_OCORES	0xa5
-> > >  
-> > >  static uint gpio_irq;
-> > >  module_param(gpio_irq, uint, 0);
-> > > @@ -65,17 +65,6 @@ static uint i2c1_irq;
-> > >  module_param(i2c1_irq, uint, 0);
-> > >  MODULE_PARM_DESC(i2c1_irq, "I2C1 IRQ number (valid parameters: 7, 9, 12)");
-> > >  
-> > > -enum tqmx86_i2c1_resource_type {
-> > > -	TQMX86_I2C1_IO,
-> > > -	TQMX86_I2C1_IRQ,
-> > > -};
-> > > -
-> > > -static struct resource tqmx_i2c_soft_resources[] = {
-> > > -	[TQMX86_I2C1_IO] = DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-> > > -	/* Placeholder for IRQ resource */
-> > > -	[TQMX86_I2C1_IRQ] = {},
-> > > -};
-> > > -
-> > >  static const struct resource tqmx_watchdog_resources[] = {
-> > >  	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
-> > >  };
-> > > @@ -91,28 +80,13 @@ static struct resource tqmx_gpio_resources[] = {
-> > >  	[TQMX86_GPIO_IRQ] = {},
-> > >  };
-> > >  
-> > > -static struct i2c_board_info tqmx86_i2c_devices[] = {
-> > > +static const struct i2c_board_info tqmx86_i2c1_devices[] = {
-> > >  	{
-> > >  		/* 4K EEPROM at 0x50 */
-> > >  		I2C_BOARD_INFO("24c32", 0x50),
-> > >  	},
-> > >  };
-> > >  
-> > > -static struct ocores_i2c_platform_data ocores_platform_data = {
-> > > -	.num_devices = ARRAY_SIZE(tqmx86_i2c_devices),
-> > > -	.devices = tqmx86_i2c_devices,
-> > > -};
-> > > -
-> > > -static const struct mfd_cell tqmx86_i2c_soft_dev[] = {
-> > > -	{
-> > > -		.name = "ocores-i2c",
-> > > -		.platform_data = &ocores_platform_data,
-> > > -		.pdata_size = sizeof(ocores_platform_data),
-> > > -		.resources = tqmx_i2c_soft_resources,
-> > > -		.num_resources = ARRAY_SIZE(tqmx_i2c_soft_resources),
-> > > -	},
-> > > -};
-> > > -
-> > >  static const struct mfd_cell tqmx86_devs[] = {
-> > >  	{
-> > >  		.name = "tqmx86-wdt",
-> > > @@ -238,13 +212,74 @@ static int tqmx86_setup_irq(struct device *dev, const char *label, u8 irq,
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +static int tqmx86_setup_i2c(struct device *dev, const char *name,
-> > > +			    unsigned long i2c_base, const void *platform_data,
-> > > +			    size_t pdata_size, u8 irq)
-> > > +{
-> > > +	const struct resource resources[] = {
-> > > +		DEFINE_RES_IO(i2c_base, TQMX86_IOSIZE_I2C),
-> > > +		irq ? DEFINE_RES_IRQ(irq) : (struct resource) {},
-> > > +	};
-> > > +	const struct mfd_cell i2c_dev = {
-> > > +		.name = name,
-> > > +		.platform_data = platform_data,
-> > > +		.pdata_size = pdata_size,
-> > > +		.resources = resources,
-> > > +		.num_resources = ARRAY_SIZE(resources),
-> > > +	};
-> > 
-> > No, please don't do it this way.
-> > 
-> > Keep as much information as you can in easy to read, easy to reference,
-> > easy to find, easy to follow, etc static data.  If you have to add a
-> > couple more static structs above, sobeit, but all of this parameter
-> > passing through abstracted functions is a regression in readability and
-> > maintainability IMHO.
-> 
-> Hmm, my reasoning for this change was that non-const static data always feels
-> yucky (and it can't be const because of the dynamic irq field); but course you
-> could argue that it's fine for a platform driver because there can only be a
-> single instance.
-> 
-> Maybe have a const static at the toplevel, and copy that to a stack variable to
-> fill in the resources?
-
-It's okay not to be const.  We have a bunch of drivers that dynamically
-add platform_data and the like.  It's the lesser of 2 evils.  Adding all
-of this cruft dynamically "at the stack level" is suboptimal.
-
--- 
-Lee Jones [李琼斯]
+> Can you take a look at it and see if it would simplifying things for
+> you? Reviews would be very appreciated if so :)
+Absolutely! Sorry, I have it on my TODO list to review the changes,
+but didn't get a chance. I'll get to it soon. Thanks for the reminder
+:)
 
