@@ -1,251 +1,149 @@
-Return-Path: <linux-kernel+bounces-889465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EAFC3DB0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:52:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98266C3DB13
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BDAA3A1A3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:51:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F1E74E6A2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2592C34A785;
-	Thu,  6 Nov 2025 22:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CFD33CEAE;
+	Thu,  6 Nov 2025 22:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="yIjWpIx5"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EunqhHxg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC372F746F;
-	Thu,  6 Nov 2025 22:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BED1EB9FA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762469512; cv=none; b=pdGcWP710wYzUrXEikHcxYJzOgp48ZpZItdVrl5hMlpP5zACyH9j9MidmcZM7TKVqkgpRg7eBz+7yFzEkyBBrXHsQGdbzpzhCD+gguOpySeCMTFgYAT+AbbN0cnMsNFpwBImBaCiC1esEMnzS5PnPUUizpT2XyEXc5JMCx2TRcw=
+	t=1762469544; cv=none; b=irE82qBWEUt3x0o/xQDQSCShNXDWEncL7DbWIj4mB9+pSeBbiDMhSsy9U8pn8feV6LxMHVwhNBTvSLMaSoLmePHT4+kIoUHNw/CrrM2AWiXNPUYSw5J5316KL/4Wgr+kCoc3ggcnRhBM+/u/d3a3cwUOXUG73leN7rNLlngDBEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762469512; c=relaxed/simple;
-	bh=T5RnXfkphYkI1OmEJLaNXb5cQNY5bpX8r8geheayJp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K2dmf7KqXJnUHq8JtGDWTjtF+YQMJHv2ohKiZEBO7j5liRK8cGRei96Y9/oinEo3dqPBg3fC6pP9GswAwU/piNS5+hFl3p56rrfJT92KDKlfQBMTnikyBfRZuhkw7yxZEcAXfnqjgypVWQUmT2Zk4Mf1VW4CpepbUwOcNF6PWxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=yIjWpIx5; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=Dvf/XQpzulji1wBhBHLC8XVhm9Xe3eYDeZQP7tzMob0=; b=yIjWpIx5joxDlkCEEOayYDdvkF
-	E4y4iX+xlBS0cYIF0dlv2X8MnTLPR2GT7/iGLLPbDiHL/ftjrbiNsce/KIu/r0bIzisALENVXwMNX
-	9Jq0M125bUHdah5OUvBLrV7HdTKu+oHCVuGcqlMNHGXXJCgHTOW5BfTA/OJfY1aANka9B2uu8v+yL
-	u3IiKF2KGD3SKucquTQRMVFZo830WdFRVQbu6aywuKLRXZKNIveDqB0l3UScL04mxSqoqs/FlxiDO
-	xs3G+PM9CsF+iFlk7eoKcXGbZCwn3ZuahwpDvR273xXHVqppQT5wNtojuAdl9Tgh1USDVzsdjmcDB
-	TX20EwoQ==;
-Received: from i53875bac.versanet.de ([83.135.91.172] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vH8pR-0001my-97; Thu, 06 Nov 2025 23:51:41 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
- Jonas Karlman <jonas@kwiboo.se>, Coia Prant <coiaprant@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Coia Prant <coiaprant@gmail.com>
-Subject:
- Re: [PATCH v5 3/3] arm64: dts: rockchip: Add devicetree for the 9Tripod X3568
- v4
-Date: Thu, 06 Nov 2025 23:51:40 +0100
-Message-ID: <7930630.EvYhyI6sBW@phil>
-In-Reply-To: <20251103171702.1518730-4-coiaprant@gmail.com>
-References:
- <20251103171702.1518730-1-coiaprant@gmail.com>
- <20251103171702.1518730-4-coiaprant@gmail.com>
+	s=arc-20240116; t=1762469544; c=relaxed/simple;
+	bh=IRSfT8Qcf/blTDsXUTYbvaNw0dJP4wdg2wtqcoH4yR4=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=beV20By7iOJ1Hb9tQ7orbejTdOhRU4sF5JLJRsNgOZqolIZg9dQWVUtKLR5XTlrlb05dVn5TrhGq6wnxSdvYeZ3f7knVNdzMv847r1MPBcr2x8MSwHEDLUaXJ+AChc9MBJZV5I6ol0fEPvRpkNyFeH9vx/XEaipfstqosk713ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EunqhHxg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB47C4CEFB;
+	Thu,  6 Nov 2025 22:52:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762469543;
+	bh=IRSfT8Qcf/blTDsXUTYbvaNw0dJP4wdg2wtqcoH4yR4=;
+	h=Date:From:To:cc:Subject:From;
+	b=EunqhHxgmUSdhXFTenfnXxc0Emrh3LEc4uoA6tGgiY5NJC02JnZpkeK4rQkDOuv0y
+	 ROjoeFLWeEXSTiUKLWZct/fsWRfl1VtXEMTdj/YTZSPPns0S3/I3/qQTc5P2/qTtFs
+	 +tg9PxCiZWGUDhAH7Idie5DNQ50oEHyrlwYHzW9xMoPGBDxqSIxQWUzRoBzmNcM3/5
+	 RTqzEifevewgnrVcz3iCpFrg18tRK2ZA+deESaPngDpDVgaOrZUr5jM7GKpyLi7vyW
+	 nM/s6ilnEaO+CjG3VCVSlF4vV/X82aR8HitsdrqI3i2/Quf5k11Cd1DAszSajDDzSO
+	 QlbCDysn0YH8Q==
+Date: Thu, 6 Nov 2025 15:52:22 -0700 (MST)
+From: Paul Walmsley <pjw@kernel.org>
+To: torvalds@linux-foundation.org
+cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RISC-V updates for v6.18-rc5
+Message-ID: <50a5b4a5-18ae-6dda-bdbd-db67e112bc1b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Hi,
-
-Am Montag, 3. November 2025, 18:17:02 Mitteleurop=C3=A4ische Normalzeit sch=
-rieb Coia Prant:
-> The 9Tripod X3568 v4 is an RK3568-based SBC, just like the RK3568-EVB.
-> It always uses soldered connections between the X3568CV2/X3568CV3/X3568CV=
-4 core board
-> and the X3568bv4 I/O board.
->=20
-> The differences between the core boards
-> - PCB size, layout
-> - CPU (RKK3568B2/RK3568J)
-> - Memory type (DDR4/LPDDR4/LPDDR4X) and size
-> - eMMC size
-> - DSI/EDP resistor values
-> Although the components vary, they maintain full compatibility.
->=20
-> The X3568 board has multiple hardware revisions, and we currently support=
- v4 (I/O board).
-
-[...]
-
-> Signed-off-by: Coia Prant <coiaprant@gmail.com>
-
-I've dropped the camera overlay for the time being, when applying the
-board, because there were a number of smallish issues with it.
-
-So please submit it separately again. Also, how can you use the camera
-yet, when the whole vicap work is still pending?
-
-Details below
-
-> ---
->  arch/arm64/boot/dts/rockchip/Makefile         |  11 +
->  .../rk3568-9tripod-x3568-v4-camera-demo.dtso  |  84 ++
->  .../rk3568-9tripod-x3568-v4-video-demo.dtso   | 154 +++
->  .../dts/rockchip/rk3568-9tripod-x3568-v4.dts  | 887 ++++++++++++++++++
->  4 files changed, 1136 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-=
-camera-demo.dtso
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-=
-video-demo.dtso
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4.=
-dts
->=20
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/=
-rockchip/Makefile
-> index ad684e383..959a806a2 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -130,6 +130,9 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3566-lubancat-1.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3566-nanopi-r3s.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3566-bigtreetech-cb2-manta.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3566-bigtreetech-pi2.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-9tripod-x3568-v4.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-9tripod-x3568-v4-camera-demo.dtbo
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-9tripod-x3568-v4-video-demo.dtbo
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-bpi-r2-pro.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-evb1-v10.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-fastrhino-r66s.dtb
-> @@ -252,6 +255,14 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3576-armsom-sige5=
-=2Dv1.2-wifibt.dtb
->  rk3576-armsom-sige5-v1.2-wifibt-dtbs :=3D rk3576-armsom-sige5.dtb \
->  	rk3576-armsom-sige5-v1.2-wifibt.dtbo
-> =20
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-9tripod-x3568-v4-camera-demo.dtb
-> +rk3568-9tripod-x3568-v4-camera-demo-dtbs :=3D rk3568-9tripod-x3568-v4.dt=
-b \
-> +	rk3568-9tripod-x3568-v4-camera-demo.dtbo
-> +
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3568-9tripod-x3568-v4-video-demo.dtb
-> +rk3568-9tripod-x3568-v4-video-demo-dtbs :=3D rk3568-9tripod-x3568-v4.dtb=
- \
-> +	rk3568-9tripod-x3568-v4-video-demo.dtbo
-> +
-
-when adding overlays, please sort them correctly,
-rk3568-9tripod* should be above rk3568-wolfvision*
+Content-Type: text/plain; charset=US-ASCII
 
 
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-edgeble-neu6a-wifi.dtb
->  rk3588-edgeble-neu6a-wifi-dtbs :=3D rk3588-edgeble-neu6a-io.dtb \
->  	rk3588-edgeble-neu6a-wifi.dtbo
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-=
-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-dem=
-o.dtso
-> new file mode 100644
-> index 000000000..2b428ca71
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-demo.dt=
-so
-> @@ -0,0 +1,84 @@
+Linus,
 
-[...]
+The following changes since commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa:
 
-> +&csi_dphy {
-> +	status =3D "okay";
-> +
-> +	ports {
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		port@0 {
+  Linux 6.18-rc3 (2025-10-26 15:59:49 -0700)
 
-=2E./arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-demo.dtso:=
-41.8-56.4: Warning (graph_child_address): /fragment@2/__overlay__/ports: gr=
-aph node has single child node 'port@0', #address-cells/#size-cells are not=
- necessary
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linus-6.18-rc5
+
+for you to fetch changes up to 2e448567839c65768486d56612c88cb327d26050:
+
+  cpuidle: riscv-sbi: Replace deprecated strcpy in sbi_cpuidle_init_cpu (2025-10-27 23:38:13 -0600)
 
 
-> +			reg =3D <0>;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +
-> +			mipi_in_ucam: endpoint@2 {
-> +				reg =3D <2>;
-> +				remote-endpoint =3D <&ucam_out>;
-> +				data-lanes =3D <1 2 3 4>;
-> +			};
-> +		};
-> +	};
+- Paul
+----------------------------------------------------------------
+RISC-V updates for v6.18-rc5
 
-/home/devel/hstuebner/00_git-repos/linux-rockchip/_build-arm64/arch/arm64/b=
-oot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-demo.dtb: phy@fe870000 (roc=
-kchip,rk3568-csi-dphy): 'ports' does not match any of the regexes: '^pinctr=
-l-[0-9]+$'
-        from schema $id: http://devicetree.org/schemas/phy/rockchip-inno-cs=
-i-dphy.yaml#
+Some RISC-V updates for v6.18-rc5, including:
 
-not sure what is up with that.
+- A fix to disable KASAN checks while walking a non-current task's
+  stackframe (following x86)
 
-> +};
-> +
-> +&i2c4 {
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <0>;
-> +	status =3D "okay";
-> +
-> +	camera@37 {
-> +		compatible =3D "ovti,ov5695";
-> +		reg =3D <0x37>;
-> +		clocks =3D <&cru CLK_CIF_OUT>;
-> +		clock-names =3D "xvclk";
-> +		avdd-supply =3D <&vcc_cam>;
-> +		dvdd-supply =3D <&vcc_cam>;
-> +		dovdd-supply =3D <&vcc_cam>;
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&cif_clk>;
-> +		reset-gpios =3D <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>;
-> +		pwdn-gpios =3D <&gpio4 RK_PB4 GPIO_ACTIVE_LOW>;
-> +
-> +		port {
-> +			ucam_out: endpoint {
-> +				remote-endpoint =3D <&mipi_in_ucam>;
-> +				data-lanes =3D <1 2 3 4>;
-> +			};
-> +		};
+- A fix for a kvrealloc()-related memory leak in
+  module_frob_arch_sections()
 
-/home/devel/hstuebner/00_git-repos/linux-rockchip/_build-arm64/arch/arm64/b=
-oot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-demo.dtb: camera@37 (ovti,o=
-v5695): port:endpoint:data-lanes: [1, 2, 3, 4] is too long
-        from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov569=
-3.yaml#
-/home/devel/hstuebner/00_git-repos/linux-rockchip/_build-arm64/arch/arm64/b=
-oot/dts/rockchip/rk3568-9tripod-x3568-v4-camera-demo.dtb: camera@37 (ovti,o=
-v5695): Unevaluated properties are not allowed ('port', 'pwdn-gpios' were u=
-nexpected)
-        from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov569=
-3.yaml#
+- Two replacements of strcpy() with strscpy()
 
+- A change to use the RISC-V .insn assembler directive when possible
+  to assemble instructions from hex opcodes
 
-> +	};
-> +};
+- Some low-impact fixes in the ptdump code and kprobes test code
 
+----------------------------------------------------------------
+Ben Dooks (1):
+      riscv: asm: use .insn for making custom instructions
 
+Chunyan Zhang (1):
+      riscv: stacktrace: Disable KASAN checks for non-current tasks
 
-Heiko
+Josephine Pfeiffer (1):
+      riscv: ptdump: use seq_puts() in pt_dump_seq_puts() macro
 
+Miaoqian Lin (1):
+      riscv: Fix memory leak in module_frob_arch_sections()
 
+Thorsten Blum (2):
+      riscv: KGDB: Replace deprecated strcpy in kgdb_arch_handle_qxfer_pkt
+      cpuidle: riscv-sbi: Replace deprecated strcpy in sbi_cpuidle_init_cpu
+
+Vivian Wang (2):
+      riscv: tests: Rename kprobes_test_riscv to kprobes_riscv
+      riscv: tests: Make RISCV_KPROBES_KUNIT tristate
+
+ arch/riscv/include/asm/asm.h                    |  6 ++++++
+ arch/riscv/include/asm/insn-def.h               |  8 ++++----
+ arch/riscv/include/asm/vendor_extensions/mips.h |  6 +++---
+ arch/riscv/kernel/kgdb.c                        |  4 ++--
+ arch/riscv/kernel/module-sections.c             |  8 ++++++--
+ arch/riscv/kernel/stacktrace.c                  | 21 +++++++++++++++++++--
+ arch/riscv/kernel/tests/Kconfig.debug           |  2 +-
+ arch/riscv/kernel/tests/kprobes/Makefile        |  4 +++-
+ arch/riscv/kernel/tests/kprobes/test-kprobes.c  |  5 ++++-
+ arch/riscv/mm/ptdump.c                          |  2 +-
+ drivers/cpuidle/cpuidle-riscv-sbi.c             |  5 +++--
+ 11 files changed, 52 insertions(+), 19 deletions(-)
+
+vmlinux size differences in bytes (from v6.18-rc3):
+ text  data bss    dec   hex filename                             
+ -112   +64   .    -48   -30 vmlinux.defconfig.gcc-15             
+ -104   +64   .    -40   -28 vmlinux.nosmp_defconfig.gcc-15       
+ -112  +160   .    +48   +30 vmlinux.rv32_defconfig.gcc-15        
+  +32   +96   .   +128   +80 vmlinux.rv32_nosmp_defconfig.gcc-15  
+  +24   +64   .    +88   +58 vmlinux.nommu_virt_defconfig.gcc-15  
+  +32   +96   .   +128   +80 vmlinux.defconfig.clang-20           
+  +24   +96   .   +120   +78 vmlinux.nosmp_defconfig.clang-20     
+  +40   +96   .   +136   +88 vmlinux.rv32_defconfig.clang-20      
+  +32  +160   .   +192   +c0 vmlinux.rv32_nosmp_defconfig.clang-20
+   +8   +64   .    +72   +48 vmlinux.nommu_virt_defconfig.clang-20
+ -112  +128   .    +16   +10 vmlinux.defconfig.gcc-14             
+ -104   +64   .    -40   -28 vmlinux.nosmp_defconfig.gcc-14       
+ -104   +96   .     -8    -8 vmlinux.rv32_defconfig.gcc-14        
+  +24  +160   .   +184   +b8 vmlinux.rv32_nosmp_defconfig.gcc-14  
+  +24   +64   .    +88   +58 vmlinux.nommu_virt_defconfig.gcc-14  
+  +36  +128   .   +164   +a4 vmlinux.defconfig.clang-19           
+  +40   +96   .   +136   +88 vmlinux.nosmp_defconfig.clang-19     
+  +40   +96   .   +136   +88 vmlinux.rv32_defconfig.clang-19      
+  +48  +128   .   +176   +b0 vmlinux.rv32_nosmp_defconfig.clang-19
+  +16     .   .    +16   +10 vmlinux.nommu_virt_defconfig.clang-19
+    .     .   .      .     . vmlinux.allnoconfig.gcc-14           
+-5937 -4656   . -10593 -2961 vmlinux.allmodconfig.gcc-14          
 
