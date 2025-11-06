@@ -1,172 +1,104 @@
-Return-Path: <linux-kernel+bounces-888036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0579AC39A2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:48:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CA6C39A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18E984E85F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:48:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 730934EFF15
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347F12FB616;
-	Thu,  6 Nov 2025 08:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmDL8kr5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A4D3090CC;
+	Thu,  6 Nov 2025 08:49:14 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBBA3002C5;
-	Thu,  6 Nov 2025 08:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2953923717F;
+	Thu,  6 Nov 2025 08:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762418902; cv=none; b=V5w2A1EGVJbCAXbNv+xo0Mx21Ycuhn+5I5ZyRI7B2oGmrLeKqoe4OQZ4TfEQEtIn3GhBw/OUBAmMaGX0f4FfSsi4lDUDmuUAM55N65gtpx/idA/8BAyYiZzQp63hLauFm+sZTZrV4CPU42NI93wc7llXZ3KDGAGX/lxzDd97Mu4=
+	t=1762418954; cv=none; b=BNZsf1U6GTlbdRcLFztjbTDatB7kWFdL+Ryjsp9PTjkgOoW55fuQ9fjN0Uz72g6aVyZxbKrXLaKjt27R+qxBxOZ6V4GTbbqsqMpEYPOuSXzolLHthziiGjyOIu4rv7sLXhdvs8cndVYyNJ4bQ4eYS5yADJHF2tAfCE4NR3Fb+e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762418902; c=relaxed/simple;
-	bh=zckLRNukcp03dx43dCWtDB8En+8nFsNdYJbK7sYTUZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=reEWf5nRptwLUhwrLHuBEieiFGJkA/qo4lvWsztjfg0uQeTqXWBQqS+30PMkbsZe+u4hMT9zLEGdUE9WmUj26IM3UU38Wy/mi20iglDsNFUVC4SMljqIlg6i4PXjGeQt8EVcFRb8Qic0NUnfe3aM4OvNwqQhqIabLIuJn84YCQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmDL8kr5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870F6C116C6;
-	Thu,  6 Nov 2025 08:48:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762418902;
-	bh=zckLRNukcp03dx43dCWtDB8En+8nFsNdYJbK7sYTUZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tmDL8kr51DyTy99fAvpjF42DJxyl9vb9C54R2cbSW/SrQCkL/yd26tEj/EqR5fJUg
-	 GBHKPly/rLMv1rz9xGwfnq1EIZGOty1sDFIzq5GJjH3MjsM6mkcgUXLwIK+eGnJimU
-	 4L+dI2D4MkmrqmigeBJbKcM1H4D6hs1lapYS61EYLJl2GdkBZjFjOieGcYW4UE+Z8n
-	 Jpl7mYbIC9qarWF7+lkGeyNPyAMrIijFJ01JyE23AtC3U+yYD234NQGhEN2j+NLw9W
-	 fWIcCkq/IHRZ4HzBSFFu0NwlMBxU38UlyGd0M7bvi36oiBo7EfRitObQbAy04zx329
-	 wKfQ72AQCzBww==
-Date: Thu, 6 Nov 2025 09:48:19 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Casey Connolly <casey.connolly@linaro.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
-Subject: Re: [PATCH 01/12] dt-bindings: panel: Add Samsung SOFEF00 DDIC with
- panel
-Message-ID: <20251106-enlightened-centipede-of-tempering-3cfa50@kuoka>
-References: <20251104-sofef00-rebuild-v1-0-dfcfa17eb176@ixit.cz>
- <20251104-sofef00-rebuild-v1-1-dfcfa17eb176@ixit.cz>
+	s=arc-20240116; t=1762418954; c=relaxed/simple;
+	bh=q1Pmsl28SPq6AeXsI0AP2vqxF0zgwAn6cmGXQ/MSido=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sLP/FbMgLxlnTanrQutK6AWXOVvOy4UWWkj51ckI9zDRD3D6Bzu1cfIYILBgtljL9kY+7htOJ1niO4f3xo8TWRGyXwtNwwdhHsBdsNCcmG60MPfZILZ5lrB3oU2pE4StqFrM3Tu2SIxCLAFv8AZfJLEw4bhQ4AQlYfzeajcucrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowACXEur8YAxpIwy2AQ--.1774S2;
+	Thu, 06 Nov 2025 16:49:02 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: nhorman@tuxdriver.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] crypto: ansi_cprng: fix cipher leak in cprng_init error path
+Date: Thu,  6 Nov 2025 16:48:50 +0800
+Message-ID: <20251106084851.639-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104-sofef00-rebuild-v1-1-dfcfa17eb176@ixit.cz>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACXEur8YAxpIwy2AQ--.1774S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFWrtry8KFyDJr1xAr1kXwb_yoWkArg_J3
+	s2gw1Igry3AF97uwn7ta9rZr1IqF9xCryq9FWrKrZ7t3y3JrWqvF9rGr98Ar17urWjvrWU
+	Gan5ury3AwnrujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjO6pDUUUU
+	U==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0SA2kMSF9lDAAAsB
 
-On Tue, Nov 04, 2025 at 11:16:09PM +0100, David Heidelberg wrote:
-> Basic description for S6E3FC2X01 DDIC with attached panels
-> 
->  - Samsung AMS601NT22 6.01 inch, 1080x2160 pixels, 18:9 ratio
->  - Samsung AMS628NW01 6.28 inch, 1080x2280 pixels, 19:9 ratio
-> 
-> This panel has three supplies, while panel-simple-dsi is limited to one.
-> There is no user of this compatible, nor the compatible make sense.
+In the commit referenced by the Fixes tag, crypto_alloc_cipher()
+was moved from reset_prng_context() to cprng_init(). However,
+this approach does not account for the error path: when
+reset_prng_context() fails, crypto_free_cipher() is never called,
+resulting in a resource leak.
 
-There are. git grep samsung,sofef00, gives me two users.
+Free the allocated cipher before returning on reset_prng_context()
+failure.
 
-> Remove it from simple DSI panel definitions.
-> 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
+Fixes: fd09d7facb7c ("crypto: ansi_prng - alloc cipher just in init")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ crypto/ansi_cprng.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-..
-
->  additionalProperties: false
->  
->  required:
->    - compatible
-> +  - power-supply
->    - reg
->  
->  examples:
-> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,sofef00.yaml b/Documentation/devicetree/bindings/display/panel/samsung,sofef00.yaml
-> new file mode 100644
-> index 0000000000000..527a10e3b798e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/samsung,sofef00.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/samsung,sofef00.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung SOFEF00 AMOLED DDIC
-> +
-> +description: The SOFEF00 is display driver IC with connected panel.
-
-Description goes below maintainers, see example-schema.
-
-> +
-> +maintainers:
-> +  - David Heidelberg <david@ixit.cz>
-> +
-> +allOf:
-> +  - $ref: panel-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +            # Samsung 6.01 inch, 1080x2160 pixels, 18:9 ratio
-> +          - samsung,sofef00-ams601nt22
-> +            # Samsung 6.28 inch, 1080x2280 pixels, 19:9 ratio
-> +          - samsung,sofef00-ams628nw01
-
-These were not in the old binding, so please explain in the commit msg
-reasons for adding new front compatibles.
-
-> +      - const: samsung,sofef00
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  reset-gpios: true
-
-Drop, not needed. It can stay required, though.
-
-> +
-> +  port: true
-
-Drop
-
-> +
-> +  vddio-supply:
-> +    description: VDD regulator
-> +
-> +  vci-supply:
-> +    description: VCI regulator
-> +
-> +  poc-supply:
-> +    description: POC regulator
-
-1st poc, then vci then vddio to keep it more-or-less sorted. Same in
-required list.
-
-> +
-> +required:
-> +  - compatible
-> +  - reset-gpios
-> +  - vddio-supply
-> +  - vci-supply
-> +  - poc-supply
-> +
-> +unevaluatedProperties: false
-
-Best regards,
-Krzysztof
+diff --git a/crypto/ansi_cprng.c b/crypto/ansi_cprng.c
+index 153523ce6076..6cf505bcf794 100644
+--- a/crypto/ansi_cprng.c
++++ b/crypto/ansi_cprng.c
+@@ -329,8 +329,10 @@ static int cprng_init(struct crypto_tfm *tfm)
+ 		return PTR_ERR(ctx->tfm);
+ 	}
+ 
+-	if (reset_prng_context(ctx, NULL, DEFAULT_PRNG_KSZ, NULL, NULL) < 0)
++	if (reset_prng_context(ctx, NULL, DEFAULT_PRNG_KSZ, NULL, NULL) < 0) {
++		crypto_free_cipher(ctx->tfm);
+ 		return -EINVAL;
++	}
+ 
+ 	/*
+ 	 * after allocation, we should always force the user to reset
+-- 
+2.50.1.windows.1
 
 
