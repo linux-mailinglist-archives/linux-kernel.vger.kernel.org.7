@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-888599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A99C3B463
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:38:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE86C3B547
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:43:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE401A448C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:35:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCEF561F01
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5161E3328E1;
-	Thu,  6 Nov 2025 13:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531DF331A4D;
+	Thu,  6 Nov 2025 13:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RejsDbjP"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llznu7vx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA8432D0E6
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837FB330326;
+	Thu,  6 Nov 2025 13:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762436080; cv=none; b=iK7DQWYN5EbewSqZId0HyIpZal2DFm9krePqMoJj4DLcO1bFCH3XWdOxfIDC8eS4fvuXjtAxt/9tcEKU3h+yIMYn2DEONRV3ILJympMBNiV/U5O6cGurUwSs8gUiZ8kyGG1ajjj06EhBtmyBn6/llMmyRTdCHLwjAC3B1Ez3k2g=
+	t=1762436079; cv=none; b=Yivu7YZAWgQCINGE2Z39l1pAQYsCl9uE9gJdcwpxvi/JIofCC7rM+EJz5a3BDOanjH8l2JrR4CXdvU16o5KDyYARSoqzsncvxJ1JtM2U2zEI6UtIgXPPWT4TMybIDkIYHTYd6ZvHvaz2a28JTYoFS6ML0gGHv9oluqd0zEJLvI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762436080; c=relaxed/simple;
-	bh=j9SuhjIVPNBBqJfnVLYcJU6kiIExeCsnHgyWendxW+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sdTAXa3ICDUTXc58atUvjMyZEVHy1joqMM2PBCNWoTZOA/bhxYbTfTuZN2vo4sKmHqSfHrGXu/v7O7a1jmj3xhlPDUOWwo8bzXi4+9Xeez1eb3/9AZGD5976Gk9whIRCV/nk7XXZnfG+mVr5fcd4P/vlzctWjo/hFWrEnuWR3w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RejsDbjP; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29498a10972so1228605ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:34:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762436079; x=1763040879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OAPFc6E2cuOBznS+PFsa8uaGEFuFxns4wE3SuTksKDk=;
-        b=RejsDbjP2jbgpCpqsdNG6OMV13aH6dy2qkkZoZiMhJdYvPthSskFOjy1WXWxigrFfT
-         x0zrGjVhvmGenH8bAspZjjV6n30oMIHvkpUflefZtXs50vZ6TmG6tE5EpfV83MSevzRu
-         /MRSVUH8RVDdhxZF6tkVgGOHj8dKEG+xvhgcu3sgjaCs7FxGjqXu3rW65Fc3DV/8qiLN
-         ksxt7atx1AX3oZTtyoEI2WsTP86YA4G1TjOGtdUPw2vAsopxkkDdqpkHD2CKB3vWn/0t
-         1eZrI8a/qn9JldEtgP0NGSzIU6nKrrST3EzNlwA4bJ4TIDNqMd5A8JUXHCVa1xGffE/A
-         M41A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762436079; x=1763040879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OAPFc6E2cuOBznS+PFsa8uaGEFuFxns4wE3SuTksKDk=;
-        b=d3a8WSHa6E+Y5LF3PX8gdZBEH9LB+7FmIxDmsA8r/A1iIFlN/90oeSapdUE3PUcEfh
-         RCtnw9u1X0Iz4krZ5SmAEWEKoIPF9u2+qN7e7K9dfwgtt3t3mPWoacvAtAO98Ol0cQgR
-         jVItr3K5VO93BM5GE/AfH9Yd56NOwg4ZTAfIVillwoZ/iHQDP2eySy1ACRgB8iArrVmo
-         0XU2kSRgIuf/KPXaA791Hb54mXp3Et6KhEy7tf09DjUQVRBWVuW9bHEVqKVUB0TnfBbw
-         IE8ppKpbD0NhgMdEIeX3BBDG10SDkXSZ1Njm3eyf4BAl5l/2YXd1Mq9Tec7714+i9pYL
-         bdTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkGwmaAYyxzu0l0JjD0dulC6riOoi5gKAUMtBvi5y1MRgOaE8Ek6uK+qCAT5HOBfnWfa/yA+ze4MQhD4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmzoEk3Iz0FSO0yV+voHP3KNnBz7SNVQTgb/DOmmvKMUVIQkPc
-	9aNOKxOJbFkjgg7AC5n2UKKoKkUI/kJ+TMFrtWl9FkPCRcH4L9r5RuUD/OM3O2qRW9HaA9FYHns
-	/+Z+e4TrIZS96eUCflQWLPY7liimiQjQ=
-X-Gm-Gg: ASbGncvAhd6QJT7HU04SKnYFv7Uj/+pt2yOiZxjnLmeWnuLvEAaOg0yrVuHxqNAVTam
-	10LhOiLDeP7sWpTvY1c/GtOw+sa30e1mJ+jSyTlqH+B8kJ6vFKHBu68QBlLnSixYOLVDXN0Sdw+
-	ZqeHObAtorBzCMCJLF2rz0RUfQjdMp1AMNDnYSjO0R9w2ZwI910KgqEQLBTX/Sim93NlUQI8Psw
-	ml6z0zqUXx8dVbx8Da9VTwAFA9R1YLBn6WuynQ96tUI4s3Zo/O9KfWx3VFNAkpsQcK1Poha4Qs4
-	F2li/7llakK8jGNQRKy64E/4OyRgxfePWjQ8e8a7ZTkwhmcs+xgbvp3MQRz/AVmiZEPaBgOZuHO
-	K1Eg=
-X-Google-Smtp-Source: AGHT+IFgsu64H5AxVDYQ4VC1AtIntPLrClhNs2DhzecuOxKsWfCafPqovP7OzWqL14ZLgcHX93hNFscreoxfb/7qqJM=
-X-Received: by 2002:a17:902:d2c5:b0:290:ad79:c617 with SMTP id
- d9443c01a7336-2962adb0131mr50508655ad.1.1762436078666; Thu, 06 Nov 2025
- 05:34:38 -0800 (PST)
+	s=arc-20240116; t=1762436079; c=relaxed/simple;
+	bh=UxsA7mpBbTvyv+g/LrSCFPsTpp7DeoIh9dJ/dkCgAxY=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=JJldS6UEMbX0Tu25rGi/tFofkreOxFWVxd85ZqBSfvU3J7V+I+ClQBBoRBZVthzPB4eUpH+8b5xR2XD5WBDz3IlOw5oadTWSan1I1CzE/ImflH1flk1yESAKjx+4mzuQKOZeY5gh0/cPxqzH2hHSYQQnAr/y23EQLSN92BRHIuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llznu7vx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4C6C116C6;
+	Thu,  6 Nov 2025 13:34:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762436078;
+	bh=UxsA7mpBbTvyv+g/LrSCFPsTpp7DeoIh9dJ/dkCgAxY=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=llznu7vxVvCdwnCl/IdM4fTDwJiq1ztqiQ6zJ2Ed1+c3HAjvpQk1TkOwDcnTxNJRZ
+	 wWff58/kXcPtX0BGe7JdTaR4eGFQSAUwCj2ySVW6AYwbPeVsN463BW05DfIpCWw/hl
+	 Jj06IfZCO6KqhJ0grsxnLXj72NGc6eQw5N1vyoBG8o7dBfKxaUqBZ/Bg5VwJpot8/O
+	 CvuRqY0Q0zTKdoKJinZos92gB/UOC/NIbZwxyhbXL+BeTpjbnSQOo7CUBr7c+L9Zc6
+	 P4WKltBa+np+i9Frx4hv7oveioFV9m0sYcgu5mhVs4L50JnJ7xN3RgtvTtIp0le4rg
+	 jmxcZgsRfxNtg==
+Date: Thu, 06 Nov 2025 07:34:37 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106102753.2976-1-zhiw@nvidia.com> <20251106102753.2976-3-zhiw@nvidia.com>
-In-Reply-To: <20251106102753.2976-3-zhiw@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Nov 2025 14:34:25 +0100
-X-Gm-Features: AWmQ_bkZlBPvsV_cw8dYZQNsheLfRuBL-Y7e_Ty1STSrCFE-bOnmtmTHqEfXIAE
-Message-ID: <CANiq72kE9QFdAP2cTjBaxwsQ_H=BmMyabY9vSWUdfj0Ai0QZCA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/7] rust: devres: style for imports
-To: Zhi Wang <zhiw@nvidia.com>
-Cc: rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dakr@kernel.org, aliceryhl@google.com, 
-	bhelgaas@google.com, kwilczynski@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, markus.probst@posteo.de, helgaas@kernel.org, 
-	cjia@nvidia.com, smitra@nvidia.com, ankita@nvidia.com, aniketa@nvidia.com, 
-	kwankhede@nvidia.com, targupta@nvidia.com, acourbot@nvidia.com, 
-	joelagnelf@nvidia.com, jhubbard@nvidia.com, zhiwang@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, sirius.wang@mediatek.com, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, netdev@vger.kernel.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, jh.hsu@mediatek.com, 
+ devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ Qiqi Wang <qiqi.wang@mediatek.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Michael Turquette <mturquette@baylibre.com>, vince-wl.liu@mediatek.com, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>
+In-Reply-To: <20251106124330.1145600-3-irving-ch.lin@mediatek.com>
+References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
+ <20251106124330.1145600-3-irving-ch.lin@mediatek.com>
+Message-Id: <176243607706.3652517.3944575874711134298.robh@kernel.org>
+Subject: Re: [PATCH v3 02/21] dt-bindings: power: mediatek: Add MT8189
+ power domain definitions
 
-On Thu, Nov 6, 2025 at 11:28=E2=80=AFAM Zhi Wang <zhiw@nvidia.com> wrote:
->
-> +///     device::{Bound, Device},
 
-Is this one converted?
+On Thu, 06 Nov 2025 20:41:47 +0800, irving.ch.lin wrote:
+> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> 
+> Add device tree bindings for the power domains of MediaTek MT8189 SoC.
+> 
+> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> ---
+>  .../power/mediatek,power-controller.yaml      |  1 +
+>  .../dt-bindings/power/mediatek,mt8189-power.h | 38 +++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+>  create mode 100644 include/dt-bindings/power/mediatek,mt8189-power.h
+> 
 
-> +    /// # use kernel::{
-> +    ///     device::Core,
+My bot found errors running 'make dt_binding_check' on your patch:
 
-This hides only the first line, which will look quite confusing when
-rendered -- please double-check with the `rustdoc` target.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml:25:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
-Thanks!
+dtschema/dtc warnings/errors:
 
-Cheers,
-Miguel
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251106124330.1145600-3-irving-ch.lin@mediatek.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
