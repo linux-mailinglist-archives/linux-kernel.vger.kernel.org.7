@@ -1,234 +1,137 @@
-Return-Path: <linux-kernel+bounces-888341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BAAAC3A8E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:26:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 234B7C3A8F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCFCE4FE866
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:21:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 575894F918E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4D830DD20;
-	Thu,  6 Nov 2025 11:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CDD30E0E9;
+	Thu,  6 Nov 2025 11:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mCWdfpw9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7KsETbu6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mCWdfpw9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7KsETbu6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IzTlHh55"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F04530BF66
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5194F2DC772
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428115; cv=none; b=G9xRNLGu+31BIGaaG+C4AI+KyrY659H2QxoT0M2gErqXR+z5ta6175Zfv79TGEQy3QR6Qi3rYOGLOG+A+DOaSG7EO/0Xqj2jtRasBHlhvc+CDxAVdp14JonbWl3LBoCq3YKbACs9jYHaNIp/3BY1SjxUKBEMEuDJ8tKOD5KKEp0=
+	t=1762428233; cv=none; b=oJBkBzyOXqD6c77R3YK5Fj0Y9mrto/sGCs6iSd7iQlvY9TFkUHQpU35EBdMkrRuqb6xB0Kf4Ry5w7Gt2Jzl0qgKNiaS+oZtrBRTQ1mdF+jQzNmOGrNpHtuGilF6tLppM+gDw27vuTf4QmAx1aVdvt560ScnkIhCyt7XF5OvtqJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428115; c=relaxed/simple;
-	bh=pWeDbTyMEbi9jKlWZSXSktZuiN1P/Z4Ga30OoTokyM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=db2sUwgcziWCFX0N2NZx5qHX8nGkYlF7n7n53hWQys45yj0WFvruawEJQxeM1pZz96EM8SDn9T1otEE+fkRTgWurFpWI2BDR4sE4FPBI3vUSrNYTLOV9w8vcvyqtMKSNmTK2KtYMTe3wmeFjKg0eM2/fkU+smMMiUGQcxCBAKT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mCWdfpw9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7KsETbu6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mCWdfpw9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7KsETbu6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A9D1921167;
-	Thu,  6 Nov 2025 11:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762428111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nCLK0JACbHXLigZ6nEKG/UmaSG0t7b0G4wJCqcJWWgk=;
-	b=mCWdfpw9DA3hCNy+BA8Ui0AIHY6ZGnqtBhiXBl+JJSjcfUjkpaG3VOGk/LPkXW9u3nUamJ
-	1HlTPmkXnAuFN+ggvyXMeC6p4auJzw94AVNToeQYWZ5JfTvXQwxnt2pVQO+wRGHGmnqEM7
-	hYqfWyx5qNzgHPUCqenZ8BLi8QzPLl0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762428111;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nCLK0JACbHXLigZ6nEKG/UmaSG0t7b0G4wJCqcJWWgk=;
-	b=7KsETbu618Q3ZjcGUS8hMbQYWNZtrJVYtrk/XEchP3aCBCHw67E/u7nm0nDjLj/BhPbaoH
-	KpRypsBpmu7hZGDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762428111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nCLK0JACbHXLigZ6nEKG/UmaSG0t7b0G4wJCqcJWWgk=;
-	b=mCWdfpw9DA3hCNy+BA8Ui0AIHY6ZGnqtBhiXBl+JJSjcfUjkpaG3VOGk/LPkXW9u3nUamJ
-	1HlTPmkXnAuFN+ggvyXMeC6p4auJzw94AVNToeQYWZ5JfTvXQwxnt2pVQO+wRGHGmnqEM7
-	hYqfWyx5qNzgHPUCqenZ8BLi8QzPLl0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762428111;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nCLK0JACbHXLigZ6nEKG/UmaSG0t7b0G4wJCqcJWWgk=;
-	b=7KsETbu618Q3ZjcGUS8hMbQYWNZtrJVYtrk/XEchP3aCBCHw67E/u7nm0nDjLj/BhPbaoH
-	KpRypsBpmu7hZGDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6252C139A9;
-	Thu,  6 Nov 2025 11:21:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gxNeFs+EDGkbCQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 06 Nov 2025 11:21:51 +0000
-Message-ID: <d5d39307-cbdf-437c-9d74-dbaf1cc45d24@suse.de>
-Date: Thu, 6 Nov 2025 12:21:50 +0100
+	s=arc-20240116; t=1762428233; c=relaxed/simple;
+	bh=8ppx794pGtGPlpDEc1FMucl+Dmk0WYAnxnBIes+aoMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gpmB/Nc77VpbUisMb6CubNJlRA5csrqh2NCzEUKZPT++LivF2GJfCs0uOviToJS1FlaqjQRKxZ6dxuODZgKA2r0H//QPSMAREn4g6KUex4xsdaQZ828MyFY3lbohsy0Np/Z8zbt4T5Roepf9kW9KFRPzSgBnbYES6dXrCoqtkMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IzTlHh55; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NRo75t32CyEPHLJJsdCHgw/V1D9FuevZedIuWhDM698=; b=IzTlHh55jT3f0QHI3l2BCWlxqY
+	kYDt20Qw7QnDW8oQ+UZ3IU9/GMCYr9g/iCZNxY/ttck7UmZaol1BkVKfy82tEGDgpW++UDaxf5rio
+	eWDRefmDmowwk5OIUbtQsw1SI7dcncC2J5njHHNAA8oYUR86RUxInPY5wNLG5tJv/2HLJzD6wcz8O
+	xH8fsygXWsz/Zx2nB9qMtruR0ENhNtOFlPcqY0+roxt45hju1tdcl5gDWtgN5CklFhM8Y0M/w2cX1
+	7n07rzAFsTY6rrYXcr/T/ccIJIEMyyQsZlktyLx7QpB8ewaacz2XvnPFjIoGU79NvHyXhElRhxVwp
+	5Qt75SqQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vGxDv-000000047cT-1zEr;
+	Thu, 06 Nov 2025 10:28:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F0FF1300230; Thu, 06 Nov 2025 12:23:39 +0100 (CET)
+Date: Thu, 6 Nov 2025 12:23:39 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Shrikanth Hegde <sshegde@linux.ibm.com>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Paul McKenney <paulmck@kernel.org>
+Subject: Re: [PATCH v2 0/6] futex: Use RCU-based per-CPU reference counting
+Message-ID: <20251106112339.GQ3245006@noisy.programming.kicks-ass.net>
+References: <20250710110011.384614-1-bigeasy@linutronix.de>
+ <e0f58203-22ef-44c0-9f7b-b15c6007249b@linux.ibm.com>
+ <20250715163134.pM1J2XO9@linutronix.de>
+ <88edcfdf-2253-4563-a895-6e8bb1625800@linux.ibm.com>
+ <20250716142946.GD905792@noisy.programming.kicks-ass.net>
+ <ae8c6fd5-cc9c-44f3-a489-0346873f4be5@linux.ibm.com>
+ <20251106092929.GR4067720@noisy.programming.kicks-ass.net>
+ <20251106110907.noLpnulw@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] drm/udl: Increase GET_URB_TIMEOUT
-To: oushixiong1025@163.com, Dave Airlie <airlied@redhat.com>
-Cc: Sean Paul <sean@poorly.run>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20251106103556.111503-1-oushixiong1025@163.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20251106103556.111503-1-oushixiong1025@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[163.com,redhat.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[poorly.run,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.com:url,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106110907.noLpnulw@linutronix.de>
 
+On Thu, Nov 06, 2025 at 12:09:07PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2025-11-06 10:29:29 [+0100], Peter Zijlstra wrote:
+> > Subject: futex: Optimize per-cpu reference counting
+> > From: Peter Zijlstra <peterz@infradead.org>
+> > Date: Wed, 16 Jul 2025 16:29:46 +0200
+> > 
+> > Shrikanth noted that the per-cpu reference counter was still some 10%
+> > slower than the old immutable option (which removes the reference
+> > counting entirely).
+> > 
+> > Further optimize the per-cpu reference counter by:
+> > 
+> >  - switching from RCU to preempt;
+> >  - using __this_cpu_*() since we now have preempt disabled;
+> >  - switching from smp_load_acquire() to READ_ONCE().
+> > 
+> > This is all safe because disabling preemption inhibits the RCU grace
+> > period exactly like rcu_read_lock().
+> > 
+> > Having preemption disabled allows using __this_cpu_*() provided the
+> > only access to the variable is in task context -- which is the case
+> > here.
+> 
+> Right. Read and Write from softirq happens after the user transitioned
+> to atomics.
+> 
+> > Furthermore, since we know changing fph->state to FR_ATOMIC demands a
+> > full RCU grace period we can rely on the implied smp_mb() from that to
+> > replace the acquire barrier().
+> 
+> That is the only part I struggle with but having a smp_mb() after a
+> grace period sounds reasonable.
 
+IIRC the argument goes something like so:
 
-Am 06.11.25 um 11:35 schrieb oushixiong1025@163.com:
-> From: Shixiong Ou <oushixiong@kylinos.cn>
->
-> [WHY]
-> A situation has occurred where udl_handle_damage() executed successfully
-> and the kernel log appears normal, but the display fails to show any output.
-> This is because the call to udl_get_urb() in udl_crtc_helper_atomic_enable()
-> failed without generating any error message.
->
-> [HOW]
-> 1. Increase GET_URB_TIMEOUT.
-> 2. Add error messages when calling udl_get_urb() failed in
-> udl_crtc_helper_atomic_enable().
->
-> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+A grace-period (for rcu-sched, which is implied by regular rcu)
+implies that every task has done at least one voluntary context switch.
+A context switch implies a full barrier.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Therefore observing a state change separated by a grace-period implies
+an smp_mb().
 
-> ---
->   drivers/gpu/drm/udl/udl_main.c    | 2 +-
->   drivers/gpu/drm/udl/udl_modeset.c | 5 ++++-
->   2 files changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
-> index bc58991a6f14..dd9576fd4ff0 100644
-> --- a/drivers/gpu/drm/udl/udl_main.c
-> +++ b/drivers/gpu/drm/udl/udl_main.c
-> @@ -285,7 +285,7 @@ static struct urb *udl_get_urb_locked(struct udl_device *udl, long timeout)
->   	return unode->urb;
->   }
->   
-> -#define GET_URB_TIMEOUT	HZ
-> +#define GET_URB_TIMEOUT	(HZ * 2)
->   struct urb *udl_get_urb(struct udl_device *udl)
->   {
->   	struct urb *urb;
-> diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
-> index 231e829bd709..2df5bd291b0a 100644
-> --- a/drivers/gpu/drm/udl/udl_modeset.c
-> +++ b/drivers/gpu/drm/udl/udl_modeset.c
-> @@ -21,6 +21,7 @@
->   #include <drm/drm_gem_framebuffer_helper.h>
->   #include <drm/drm_gem_shmem_helper.h>
->   #include <drm/drm_modeset_helper_vtables.h>
-> +#include <drm/drm_print.h>
->   #include <drm/drm_probe_helper.h>
->   #include <drm/drm_vblank.h>
->   
-> @@ -342,8 +343,10 @@ static void udl_crtc_helper_atomic_enable(struct drm_crtc *crtc, struct drm_atom
->   		return;
->   
->   	urb = udl_get_urb(udl);
-> -	if (!urb)
-> +	if (!urb) {
-> +		drm_err_ratelimited(dev, "Get urb failed when enabling crtc\n");
->   		goto out;
-> +	}
->   
->   	buf = (char *)urb->transfer_buffer;
->   	buf = udl_vidreg_lock(buf);
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
-GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
-
-
+> > This is very similar to the percpu_down_read_internal() fast-path.
+> >
+> > The reason this is significant for PowerPC is that it uses the generic
+> > this_cpu_*() implementation which relies on local_irq_disable() (the
+> > x86 implementation relies on it being a single memop instruction to be
+> > IRQ-safe). Switching to preempt_disable() and __this_cpu*() avoids
+> > this IRQ state swizzling. Also, PowerPC needs LWSYNC for the ACQUIRE
+> > barrier, not having to use explicit barriers safes a bunch.
+> > 
+> > Combined this reduces the performance gap by half, down to some 5%.
+> 
+> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> 
+> Sebastian
 
