@@ -1,140 +1,165 @@
-Return-Path: <linux-kernel+bounces-888450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4261BC3AD52
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E5FC3AD67
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 09ADE352816
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:14:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3261134B44E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00115322C81;
-	Thu,  6 Nov 2025 12:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC21328608;
+	Thu,  6 Nov 2025 12:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlskMDN+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tnWSirdF"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270C92BEC45;
-	Thu,  6 Nov 2025 12:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C22B327212
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762431188; cv=none; b=riwRt2JhSBX/lblpnQ2CTHGAQWvB3UjMRWM+x24xvsXdOz33x+TfEO2ArkN5EgkMUvjMjIhBgfv7vWTeWM6W8ilJvFS6SNNok3ojNh0tqe2/ywM8hrdmbuAAIA3yIjbsjXMC+52vq1cRaYYZLpTjtsf9SEDuraVsemimQDeO2Kg=
+	t=1762431315; cv=none; b=foX8bIRSWpRCu8P7UZq2NtSPVEKaRzf3m4EjTT1ozm7kiw4tGOigwzmD3AD/+FrmEXXaZgJTpfqEp5hYJBLW9IOkzyM+1rEGI5QXOLUOk3x+e84nUJgJODs9cR7+pbmp4TvkVYqZuyRYNqim9pXwHLeDxn525N4Foz13Dt8wUKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762431188; c=relaxed/simple;
-	bh=oh14vv/HtRjMApNW1mpN2Hvcpdi+R/tKq99BYfQm83s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HwiAMDKr8zSXQabv265NkR35G+gelIq14zF9OPiNWzAq/hx3ih32T+tnGARe42jeIo5cpa8/2+tM2WFxc5NXBdXAuHTj3xMBttFF8KOEWQ9ml8z8bNID/yJCm93IXHfO5Rf8LvEILBn7U1kce4Ef7kmPPaDZK5h8i8/uNZDD5bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlskMDN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33742C16AAE;
-	Thu,  6 Nov 2025 12:13:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762431187;
-	bh=oh14vv/HtRjMApNW1mpN2Hvcpdi+R/tKq99BYfQm83s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IlskMDN+Hu+Kbvf4B8A3ZGWU9zbaLSLMRaZjJdNDOOIW20ntKlIx+z+NiJFB6V96B
-	 CO6ZkYWrL3dKS31VxOz8aSjBHZ8N3Oxej61sNrgRRXDqZZ9lHN5c9bJZ/1RczyQmAL
-	 xV+b4gWsWscUVVsHHh4HZVSo/kNYOaphHF8KoUi7fjK4ASX98MxH22TqZ8e9uEHpag
-	 ZrceImwId2z4vD7jpPKhxP5mDTp5xasNqCLZdwaCnynlx5C9oy4FzWQyB8FYuwtJFW
-	 c49ojJxd4b41aP0TZQHFoQUCRIS+j6kp/pqaPsCNxvTsDKoQLXd1zEif4eBGqyvsEG
-	 tj5UHFoVOWLww==
-Message-ID: <1db683cc-ffce-48da-ad2f-e25ed901ce00@kernel.org>
-Date: Thu, 6 Nov 2025 13:13:04 +0100
+	s=arc-20240116; t=1762431315; c=relaxed/simple;
+	bh=eesYonv8VDWpDiw9NEHAmnwjEfPu25SCd58POVgRTe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bNY8pqLOWDOaDG2KRXqUkVpxqXhhLgiR0Xd3lSGchRvcDMac2O+LfPUhuwlWcdQjAn+RCM+NfYzL0pAmMzIXKFOAunDqn8rfW79t5lqc5NTeKcvFp6gjsPXh1JKz/nL/ds4+PFTzr7nx+y28Nt5t/WJBRpdM/zeGm42IrS4TM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tnWSirdF; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762431301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eesYonv8VDWpDiw9NEHAmnwjEfPu25SCd58POVgRTe4=;
+	b=tnWSirdFFSVXM/0R3H3QU2mNgbWL80tcOOVOs8i481KTTl14rVX3G6d67N2+maOdHGRIIx
+	bxVqPvb1fPzBnZjlNde5Sr8T1phS2vyLE/mnE9B+pKq/U0EhlbG+YQAk5hvmlQIiu9/B7l
+	BXPCfJ1/R/BxJgace2+tqyfM5djOovU=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Menglong Dong <menglong8.dong@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Subject:
+ Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting for
+ x86_64
+Date: Thu, 06 Nov 2025 20:14:46 +0800
+Message-ID: <3660175.iIbC2pHGDl@7950hx>
+In-Reply-To:
+ <CAADnVQ+ZuQS_RSFL8ThrDkZwSygX2Rx49LBAcMpiv3y4nnYunQ@mail.gmail.com>
+References:
+ <20251026030143.23807-1-dongml2@chinatelecom.cn>
+ <CAEf4BzZcrWCyC3DhNoefJsWNUhE46_yu0d3XyJZttQ8sRRpyag@mail.gmail.com>
+ <CAADnVQ+ZuQS_RSFL8ThrDkZwSygX2Rx49LBAcMpiv3y4nnYunQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/13] memory: tegra186-emc: Simplify and handle
- deferred probe with dev_err_probe()
-To: Jon Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- Aaron Kling <webgeek1234@gmail.com>
-References: <20250911-memory-tegra-cleanup-v2-0-d08022ff2f85@linaro.org>
- <20250911-memory-tegra-cleanup-v2-8-d08022ff2f85@linaro.org>
- <4ba8a1ec-fa17-4564-a174-0b8e8eada061@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4ba8a1ec-fa17-4564-a174-0b8e8eada061@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-On 06/11/2025 13:04, Jon Hunter wrote:
->> @@ -319,14 +318,13 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->>   
->>   	emc->bpmp = tegra_bpmp_get(&pdev->dev);
->>   	if (IS_ERR(emc->bpmp))
->> -		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp), "failed to get BPMP\n");
->> +		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp),
->> +				     "failed to get BPMP\n");
->>   
->>   	emc->clk = devm_clk_get(&pdev->dev, "emc");
->> -	if (IS_ERR(emc->clk)) {
->> -		err = PTR_ERR(emc->clk);
->> -		dev_err(&pdev->dev, "failed to get EMC clock: %d\n", err);
->> -		goto put_bpmp;
->> -	}
->> +	if (IS_ERR(emc->clk))
->> +		return dev_err_probe(&pdev->dev, PTR_ERR(emc->clk),
->> +				     "failed to get EMC clock\n");
-> 
-> I see now that we dropped a 'put_bpmp' here and we should not have. I 
-> see this is in -next, do you want fix up or I can send a patch?
+On 2025/11/6 06:00, Alexei Starovoitov wrote:
+> On Wed, Nov 5, 2025 at 9:30=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Tue, Nov 4, 2025 at 6:43=E2=80=AFPM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Tue, Nov 4, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
+> > > <andrii.nakryiko@gmail.com> wrote:
+> > > >
+[......]
+> > >
+> > > Instead of all that I have a different suggestion...
+> > >
+> > > how about we introduce this "session" attach type,
+> > > but won't mess with trampoline and whole new session->nr_links.
+> > > Instead the same prog can be added to 'fentry' list
+> > > and 'fexit' list.
+> > > We lose the ability to skip fexit, but I'm still not convinced
+> > > it's necessary.
+> > > The biggest benefit is that it will work for existing JITs and trampo=
+lines.
+> > > No new complex asm will be necessary.
+> > > As far as writable session_cookie ...
+> > > let's add another 8 byte space to bpf_tramp_run_ctx
+> > > and only allow single 'fsession' prog for a given kernel function.
+> > > Again to avoid changing all trampolines.
+> > > This way the feature can be implemented purely in C and no arch
+> > > specific changes.
+> > > It's more limited, but doesn't sound that the use case for multiple
+> > > fsession-s exist. All this is on/off tracing. Not something
+> > > that will be attached 24/7.
+> >
+> > I'd rather not have a feature at all, than have a feature that might
+> > or might not work depending on circumstances I don't control. If
+> > someone happens to be using fsession program on the same kernel
+> > function I happen to be tracing (e.g., with retsnoop), random failure
+> > to attach would be maddening to debug.
+>=20
+> fentry won't conflict with fsession. I'm proposing
+> the limit of fsession-s to 1. Due to stack usage there gotta be
+
+I think Andrii means that the problem is the limiting the fsession to
+1, which can make we attach fail if someone else has already attach
+it.
+
+If we want to limit the stack usage, I think what we should limit is
+the count of the fsession progs that use session cookie, rather the
+count of the fsessions.
+
+I understand your idea that add the prog to both fentry and fexit list
+instead of introducing a BPF_TRAMP_SESSION in the progs_hlist.
+However, we still have to modify the arch stuff, as we need to store the
+"bpf_fsession_return". What's more, it's a little complex to add a prog
+to both fentry and fexit list, as bpf_tramp_link doesn't support such
+operation.
+
+So I think it's more clear to keep current logic. As Andrii suggested,
+we can reuse the nr_args, and no more room will be used on the
+stack, except the session cookies.
+
+As for the session cookies, how about we limit its number? For example,
+only 4 session cookies are allowed to be used on a target, which
+I think should be enough.
+
+I can remove the "fexit skipping" part to make the trampoline simpler
+if you prefer, which I'm OK, considering the optimization I'm making
+to the origin call in x86_64.
+
+Therefore, the logic won't be complex, just reserve the room for the
+session cookies and the call to invoke_bpf().
+
+Thanks!
+Menglong Dong
+
+> a limit anyway. I say, 32 is really the max. which is 256 bytes
+> for cookies plus all the stack usage for args, nr_args, run_ctx, etc.
+> Total of under 512 is ok.
+> So tooling would have to deal with the limit regardless.
+>=20
 
 
-Indeed, thanks for noticing this. Please send a patch with Fixes tag.
-Will you also take a look at other patches from this patchset, if I did
-not make same mistake?
 
-Best regards,
-Krzysztof
+
 
