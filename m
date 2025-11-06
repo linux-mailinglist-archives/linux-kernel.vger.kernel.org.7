@@ -1,53 +1,95 @@
-Return-Path: <linux-kernel+bounces-888547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D82C3B210
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:14:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29D3C3B1BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46DC1B217F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:05:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACF7B4FF101
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48EB339710;
-	Thu,  6 Nov 2025 12:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EB9330B21;
+	Thu,  6 Nov 2025 12:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="FkoR7f/k"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vdwaa.nl header.i=@vdwaa.nl header.b="Mp3r7C+x";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ipUJmA3m"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A684E324B20;
-	Thu,  6 Nov 2025 12:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AFF32AAA4;
+	Thu,  6 Nov 2025 12:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433817; cv=none; b=LjM5qWUDd/QjR9I7jvlo8nU+Kt9dUjbIKZMVqXjH9MthplU+W9fxo+imfQKZArE268Z5ZGYGvoHPWi7LEF3reGCAErH25EUEs1bfrROkWkXZySj+POXSwEoeik+mJPfLboDbYK9IG8vR7bOJIJbdwKMAF6bNxNGX7rUpORVJ1+Q=
+	t=1762433973; cv=none; b=chaNHrpukRbSnxYwEjkMWrHpGHWag2lr090xbQrYfirD7m2LhzEAxlkaazAYI05iDKMSE51ue9KW/WFbCQu2eEl57b2Nq6GvCSy4yWCgiUZggQL68IgHExvF1A36sG7tKF8kyWKdPxhEhtPlAkt+DvRbBscfxaIZoM81CaUFF/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433817; c=relaxed/simple;
-	bh=pm4CXXxkNxyP57QCn41n0cSFLcj6+S7nOOKBKYrt7Y0=;
+	s=arc-20240116; t=1762433973; c=relaxed/simple;
+	bh=JNRNJfZk/M2DMebQMpJh5c9oaTtadwPDLyrm08DR/ik=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=THRw4AGEKdAa+pGWhWjEjSplCnt5EwlIykTi8LNuaFFRMko0R0a2m3MmuAtD0CDU/6erBQ4zFAJfVgucbcbCMf0QD+TdRpvmEH2Vi1hRQicCV6YsqySNJ9mPwTHh4DAFrzqciUSkyZXJJV4MPSFnvOzWNFc0fPkAPNrI3KuZBUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=FkoR7f/k; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.178.76] (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
-	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id C7BCA2FC0061;
-	Thu,  6 Nov 2025 13:56:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762433812;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HxxhpFSk8AGbWyqP7e/YOXfL/JukFyEo9PWJ9mt5yxk=;
-	b=FkoR7f/k+BuMSMIGvnGPcueRpv7BPUi/P8bxJeSt+x23s8G1ZZIJpFxQTSBW5BAzSJbpgY
-	n8BlaUjkth3cfXl/JPvzr+yUBENScj5Khu2hAONJmGLIlEMJEi/HznmTYvlZpy3ll70Xcn
-	77F9NWQaQCObTo5Onr717uypzkfXpj4=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=g.gottleuber@tuxedocomputers.com
-Message-ID: <a3b26b2f-3f23-4a1a-87ef-0f5631e96ce7@tuxedocomputers.com>
-Date: Thu, 6 Nov 2025 13:56:51 +0100
+	 In-Reply-To:Content-Type; b=E5jIoHA4ibnta4m3DicY25fOqlCA1TG5K9e7//YwTVyN/YgSR3mRNI8BSSy/9ykV9jkLYS2BTEeNsK7K8Dqq0on5rw3NCns2uJsS3jTopIhW8Ww6RXvs5kKS4WGKd89If1zjCZis0sIQHGBo2/xUlKCwDaxhsfJaUP9fNFUg43Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vdwaa.nl; spf=pass smtp.mailfrom=vdwaa.nl; dkim=pass (2048-bit key) header.d=vdwaa.nl header.i=@vdwaa.nl header.b=Mp3r7C+x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ipUJmA3m; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vdwaa.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vdwaa.nl
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 859001D00141;
+	Thu,  6 Nov 2025 07:59:28 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Thu, 06 Nov 2025 07:59:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vdwaa.nl; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1762433968;
+	 x=1762520368; bh=Ox9ObyoIxaRhE3WEIQoEfOWN6rhA66eyylIhLTSftn0=; b=
+	Mp3r7C+xFC+i2RtPFW3WkmvnqnI+augraGS3iLLzLlcvEO2lXxpDAvMObSkLMnZi
+	1anK0bkWArQqtDdOjhW1FRKuCNidwsVSG2m+LeeapcNBjnP8X8fH48axQfYYtxa+
+	2ZVZLq85q4KVjqDxr44iMQ+VvyE/5yJkxF3CC/YWDR1u4LtuMTvkTQ79DTZVorL3
+	6UJXy9jwzpvNyQ4WH53rTWVB6ZpKxW1wxn1uZnsKR/jLaZiXeERZUf2+1p5RNptj
+	vA4+s1zAU2nbmLPXMHnofhQ5wM7I+JVmANoai2bfsLaC+oP423jg746kFQPoEoxO
+	q5V14f/g/sztxT88ITLmnw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762433968; x=
+	1762520368; bh=Ox9ObyoIxaRhE3WEIQoEfOWN6rhA66eyylIhLTSftn0=; b=i
+	pUJmA3mHQSMD1eMhY1C8K04jEVnfUP3o639H0AeoENK1eWE4YIud/S4PC1pYGHK4
+	juUdWQB5gWPM8+qPH9wNnufRNVyPQkkecuiVZEVfOmfoaoWj5zEPbabzcq/Bwgf7
+	GXRZKbQygUgnCB73o6hmvdEPnkEmoZpQn5R72vhObf5bvpQT5azJore2K5cj/l99
+	PcYdR0oeeCmC+aIA25OV0DU5LcxA96//wEhNOLvDEo+sV6qhi2e/0xcfSakALg8t
+	taAqfgoEykt+ltCEKbrdgwxOe9V/v0fgW/vMnRkPwiIgEDFViBav/861X5uXhG/y
+	CMGMrkVKQTwhKOxuQolZw==
+X-ME-Sender: <xms:r5sMaYBEiDbcykKk20xjlg8Q9-LSISzazqnC5IZZg9tXmQ5PYj5SeA>
+    <xme:r5sMaWgoSKxqe9d3VOidSgYJOO6X842-1I_wWR0MZ59o-dYbzv4Au1fGaA-d57cy8
+    S1hDDTE3mYSXKH0infkgPteZ6ecSXKPRatBnPmODIO8lPiIHQMzZdc>
+X-ME-Received: <xmr:r5sMadz0qSH2rDa_gCJ454_g0wlIHpLrYeSnnfgKL3TP9H-TnMA6BT15UzwVnCJ8dZcUujIBqZA7deJfxsmNINMGHrXLpw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeikeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflvghllhgv
+    uchvrghnucguvghrucghrggruceojhgvlhhlvgesvhgufigrrgdrnhhlqeenucggtffrrg
+    htthgvrhhnpeeugedtgfevleefvddvkedtfffghfejjedttdffvddvudfhheetueefgfdv
+    teejgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hjvghllhgvsehvugifrggrrdhnlhdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhht
+    phhouhhtpdhrtghpthhtohepihesrhhonhhgrdhmohgvpdhrtghpthhtohepihhkvghprg
+    hnhhgtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhpvggrrhhsohhnqdhlvghnohhv
+    ohesshhquhgvsggsrdgtrgdprhgtphhtthhopeguvghrvghkjhhohhhnrdgtlhgrrhhkse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrnhhsgheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomh
+    dprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:r5sMaf3J3rzfVKDXSW6zTd3x8AbjzYYCeWXQG08O12HKT9admgdG6g>
+    <xmx:r5sMaa8jr7ZUrsZ56ZZUviEzyfA2TifMmMDaV5fM1GzFk8zQmrP0-g>
+    <xmx:r5sMafoggtdQoz4XC9_tdTLC4FVHMi_qBjGEJf42M-FBXGOCL5xEpQ>
+    <xmx:r5sMaUTWAGAlRcFmvyt0r5JHWuIaTV7Z4mR0vBnBWWEeo1RUtLWXYg>
+    <xmx:sJsMaRqJOKes6kDPBe4COSj65xSrGPBV7S9H8iBmyMnt84JGKIg8Ht9h>
+Feedback-ID: i2d0446dd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Nov 2025 07:59:26 -0500 (EST)
+Message-ID: <489d1b5f-4177-4a8a-855c-adc65f794177@vdwaa.nl>
+Date: Thu, 6 Nov 2025 13:59:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,119 +97,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] Add TUXEDO Elite 14 Gen1 (X1E78100)
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Georg Gottleuber <ggo@tuxedocomputers.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ettore Chimenti <ettore.chimenti@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>, stefan.schmidt@linaro.org,
- stephan.gerhold@linaro.org, wse@tuxedocomputers.com, cs@tuxedo.de
-References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
- <eccdb13b-e062-4106-8c79-ca57b6839a0e@kernel.org>
+Subject: Re: [PATCH v2 4/4] platform/x86: ideapad-laptop: Add
+ charge_types:Fast (Rapid Charge)
+To: Rong Zhang <i@rong.moe>, Ike Panhc <ikepanhc@gmail.com>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251105182832.104946-1-i@rong.moe>
+ <20251105182832.104946-5-i@rong.moe>
 Content-Language: en-US
-From: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
-Autocrypt: addr=g.gottleuber@tuxedocomputers.com; keydata=
- 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
- bsxTTcOuRnk=
-In-Reply-To: <eccdb13b-e062-4106-8c79-ca57b6839a0e@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Jelle van der Waa <jelle@vdwaa.nl>
+Autocrypt: addr=jelle@vdwaa.nl;
+ keydata= xsBNBE6QLAIBCAC3O6LmF+GKvOh7IV00TG+EKAQHAwjESnHGJOW58lKK7eAYn62ZM1uy0+6h
+ yCMu5PD7+ND6U1gcgTTHYwNK8AaJt7yY4FRssgdcJk59uJBwROZtllotClJ893CuB6Wgr68b
+ 07gIRbENYrB8rEoGfpUG//8/ep7sY8PS03jnFb4ll6mPlUE2oQVdYOlXgF4f9qkkIi4SQeE2
+ MTuERaOrDuUNDlroJ7Yfx3J/rL5Qjn578/TKCAxg0pns6VIA/P9spRGmLhT4zP+OxZXeSZme
+ IxcwFdJJXHr4oGaZvqe1yHlMmKR98rrIfPWhkw2Ls/XIZIxf6prT0XyczbzBnC2y1JyNABEB
+ AAHNIkplbGxlIHZhbiBkZXIgV2FhIDxqZWxsZUB2ZHdhYS5ubD7CwHsEEwECACUCGwMGCwkI
+ BwMCBhUIAgkKCwQWAgMBAh4BAheABQJUX8WhAhkBAAoJEMBghjN8UHc+mFwH/jjN+Qob4O36
+ YiieajRwVLGuYdUDt9Z655oQYU8V4qbWf2tjUtqTYXrxLnaY6xQoYouRz9yFbh9dIKZb67ir
+ 7AeVgCOtWVesGxAlGH6EY5JBZcsN0v0ScsivqQAv/Mv+4HK+XM57YlyRagD8tkprYskioWHg
+ OwQfXAO6nlm4BJHWO9bHJUMgiGs7I190IKQG7iLBnJuGjsOFuy5KTLpnv+w7twmz0H+pkUPe
+ jVHfJlJWdN4v1PigpgpjOR6ZepSIggMk7dHsa6GNLUOzi61yYVFe60+EGXhwyJIqSt56a4oR
+ jMUcXaOugGr+JwC8Eq7Pg2+aFk+8fbe0oUzZJucHGnDOwE0ETpAsAgEIAK4Usb7B00WRxCZG
+ HtM973F7V4OhOKv4kZKduxtu71bVUZsTuzn4h+m8guJ51uY/I2icUrN9gJG5aEzRqPuQi2L7
+ KmZUjs3pscZWgUgiT8UZFDR6RuQ4k3CcWobsRCjYZdSblSZ8ccrLJE7xSbwKMXjAh2PEiaQT
+ lS6wQbn6mHv4y3H9QVHs7+jXbmfHCxnVcwLqRmpuegSmezDaL5TlSc102voiXinhrWEZUvAB
+ KDh6VuJ/60Y6zelCXVsEjRaApz90iXY1nifLhkHM8B2wG7Pum3V3X0Y0QTVD+z3EL1iq5mFu
+ epKp//IOeeJN5iwHcRSJGy2s1oOzjRDyPv6v1AUAEQEAAcLAXwQYAQIACQUCTpAsAgIbDAAK
+ CRDAYIYzfFB3PvDuB/0dI13hSYHW27c2Rq8BaGbIhXYYETtPD5B25/P1JJ5OQZkPmVq+vSHw
+ uzUaDZHy3ZcwE+xFXzlkwXGdWos07JUGo74zV3HfeZxVEPv0HB9ACqQVU/JKjLZNj2SfhgzL
+ 4F+O4Zgdsf0YaZG09F5PbMvbhoCZLfAaKWz/4fLEfhrDJLhrphUyPDXosn0UxPkDv0iiixn4
+ V+bEZ5/wd8dRWi58R/iND+gRGsBREm5SpzdhnsarwoX6YdsQ449379enDNUN7jV4C3Gkon2s
+ VwI2ZZbS10cY8rFSAV/CJA2E9daRoz40DI0tgXgLBAVhy7y5HWZJsDZexU0HFKJfkDi7RUPj
+In-Reply-To: <20251105182832.104946-5-i@rong.moe>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-Am 06.11.25 um 09:15 schrieb Krzysztof Kozlowski:
-> On 05/11/2025 16:41, Georg Gottleuber wrote:
->> Initial support for TUXEDO Elite 14 Gen1 laptop. It is based on Qualcomm
->> Snapdragon X Elite SoC (X1E78100).
->>
->> Changes in v2:
->> - Rebase to v6.18-rc4/master
->> - Add support for accelerated video decoding
->> - Add support for audio (speakers, microphones, headset)
->> - Add support for Bluetooth
->> - Add support for camera
->> - Add support for fingerprint reader
->> - Add support for HDMI-A port
->> - Add support for QSEECOM
->> - Add support for USB Type-A
->> - Add support for USB-C DP altmode
->> - Add ASL Xiamen Technology Co. Ltd. vendor prefix
->> - Add TUXEDO vendor prefix
->> - Add cover letter
->> - Removal of pointless comments
->> - Coding style fixes
->> - Spell check
->>
->> The device tree uses the dtschema from Linaro qcom-laptops [1].
+On 05/11/2025 19:28, Rong Zhang wrote:
+> The GBMD/SBMC interface on recent devices supports Rapid Charge mode
+> (charge_types: Fast) in addition to Conservation Mode (charge_types:
+> Long_Life).
 > 
-> No, it cannot. You must work on mainline.
+> Query the GBMD interface on probe to determine if a device supports
+> Rapid Charge. If so, expose these two modes while carefully maintaining
+> their mutually exclusive state, which aligns with the behavior of
+> manufacturer utilities on Windows.
 > 
-> Specifically, you must use mainline dtschema and I do not understand why
-> you choose it from some 3rd party repo. See writing-schema how to
-> install main dtschema package.
+> Signed-off-by: Rong Zhang <i@rong.moe>
+> Acked-by: Ike Panhc <ikepanhc@gmail.com>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> ---
+> Changes in v2:
+> - Only expose Rapid Charge on devices that support it (thanks Jelle van
+>    der Waa)
+> - Reword commit message
+> ---
+<snip>
 
-I am building and testing with mainline dtschema, but checking this dts
-with 'make CHECK_DTBS=y qcom/x1e80100-tuxedo-elite-14-gen1.dtb' has
-revealed that one property was unevaluated (output: 'data-lanes' was
-unexpected [see line 1461]).
+Tested on my U330p and it doesn't expose the "Fast" charge type as expected.
 
-This data-lane property is described in the following commit
-https://gitlab.com/Linaro/arm64-laptops/linux/-/commit/3d106a8ac261f81e48e4ee2a31b7484d863e0a4a
+You can add Tested-By: Jelle van der Waa <jelle@vdwaa.nl>
 
-Due to the warning from the check tool, I just wanted to point out this
-commit.
+Thanks,
 
-Regards,
-Georg
-
-
-> 
-> 
-> Best regards,
-> Krzysztof
-
+Jelle van der Waa
 
