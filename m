@@ -1,186 +1,208 @@
-Return-Path: <linux-kernel+bounces-888208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E64C3A1FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:13:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F5FC3A357
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EB2D8350843
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111514617EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5639930F7EE;
-	Thu,  6 Nov 2025 10:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4696D30C345;
+	Thu,  6 Nov 2025 10:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlEfJF3o"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="FdNoIyU0";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="Nito9qib"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152F62D94AC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5662DF131
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762423735; cv=none; b=RU/mT+1bbxiMdhUmzeV72j1NEwIv9+r7wknh+MgaGCCfrJcRzAJG2bJ7xEuWUDsMTpK0inc4lL977gIFU6mqWo068wih774wlAFR7qXQ5w+weXgtVf3QmEKMfx0/j5w6orydnOcAJ8PRjVLRCd0PEpoD3uUw0yqNF/X96ZjPvBc=
+	t=1762423882; cv=none; b=AJnxJEZR2lCdfAdAHHlmymkpddz4oXpvWp+AaW7Ls4airc1xQeGI66700VjiKgkI+y1lQsxGL+w0HaUjyX4JlME9XIMgnHnoJDOz3ELdKQlebX2bzGvCYaPMTAguD/dt679XjvvQbPpvLafhwS/0gANTioiMnYMEgWbOiM8BUz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762423735; c=relaxed/simple;
-	bh=1DqFSj/S5FdRM8xI1vnmMW27R5cKr38U/BL7DRT8f0g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=infK+qXc4sgkA2VxoEJ48aONfIzeQLKibkbCBWc0+6hBNGDYFX4CjPYy4MjcJ7wNAWQ6y7x9KXnkJ7+H4QAczpJNeEf/u7XDPJXZKAZ19RXpjZQi0tc5Dhz5bRW/78s4Yb6xF80HWbZS/mqNgUpfjYHNONir7lu4LHhNU5VvvZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlEfJF3o; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b556284db11so587102a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:08:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762423733; x=1763028533; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5B/ZONU+mx/MPUhZ8D2RqXDgUbTh84Ll8Fc5jTmwlA0=;
-        b=mlEfJF3oPxLblRV4lAF2VG3SsP74Gq63409Ip3P24uJlVoujGz4BVdywglFT8UohXt
-         sbu6VzHs7luUzp4Z9UC7y8zs3uwB55x8lHpXaMxor1J6qOkHQuDHtJYoO8tPYk0c7ZoW
-         fzTsCb1fez042OSglt08WcCx4QKUXRbyk9iwd8sYTcycAoQCrooNnnMBqGUX0qcWcrBa
-         Gc9BjVOqMhXXusloJxrcCe4cnNnly4TyN2D6diL3ElnY48QXdC3yBati26R+0sQOnvGS
-         rID/KYCjjOKzPIHe/BNq6fsPsP633oVUrTqBptjTfvyCgB1iYXpcFvkAIxQ8dmGSMmnc
-         y9hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762423733; x=1763028533;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5B/ZONU+mx/MPUhZ8D2RqXDgUbTh84Ll8Fc5jTmwlA0=;
-        b=h/iPobYSkrgqkHEPl6+JLwCK5xU6Oc0UxuitZ8rEbd9lbahJ52Syl5wQRDGOQRWbyc
-         xw79ArZbrtBRynEwyqkowrBQMLWoEV0uEDXGA2y620ESkN3TNCL0+2VPjl9ONUUNk8lN
-         G9Cyg5RQpnO3W+j0AcO7Rj3yNZBEKPmqFJGLHqJ0kaW2+bvQ+6tppEYmtNlQxtlJOxrU
-         hCFAFkas5/ZL3hpeK1NGnF1IZnRjUZDWRm48ddk5yqYFNpH6z1u87nAY33LSdD+tf8oN
-         VkD4w8S1neJWAnmlBBdmFRmSKqaXloJymczOsnLC9G6zDanEe4K4PzTzDTH9X+N7zF7k
-         m1QA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7CtBtOTkjVZilk9g//IS/Jad921t+FJk//RYBqX7FXuRoS9iVBTtRcAjSj+1zKvEWsavajCDRV57lXXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypjMafNEIUnzm9SzMfnxX77cDhS4zc6SEiFHzLGpUg6KPi99nK
-	zJqOQDqX0t57gT6P5pduhVTsWNuR2fTPWm+qPhWYAVgKTmeEBPG0GpVr
-X-Gm-Gg: ASbGnctC4spEzpxzDwdII4TfNwk+1GTvm5kT7M2aVaxKmYNZ1S9LaW3e1itFJB49SqJ
-	34PVvOLZ1xCQTX0BdYV8+OFUhYp1+yutHmq6e2XQW+g6aRr8ZL4frNmR/OQb0c7BCvVGTUY6/rl
-	yWVEBxRjCX2kbhrW/SJ7hwZqneuzK/4JCDxqGQgq8vE41/Uxu75381JOEVN8L8WCduxOeaZlpRq
-	wyBlLdMlhms6SfUmWb9xdmtK39zrZTlqG7XtzNlH4SSZJI9Y/BDs8DB0VxOmFUDNcCPnjsH58Ki
-	MOzd9aH4J58Uby4GK3l3P6NxHRT3A41dPoNmNFJZVq7z1d6FPRcKU7VxXSMWkq3B0fCtqrBUUwd
-	N7TlM2iEgY6aSteMzaCvAK9D2Ot1bEt841WQDgRhgmWd+HKC41qPEopoZx7umd95YD8oFIxiPnp
-	qs
-X-Google-Smtp-Source: AGHT+IGGknNbfaJf1wlwBpbXS9DgfCxm28G8CeSW3otZfXLcPcwJFPQBOKlOcIpLEk4FHszmJ38k6Q==
-X-Received: by 2002:a05:6a20:1b10:b0:343:64dc:8d3 with SMTP id adf61e73a8af0-34f866ffce8mr6522570637.31.1762423733294;
-        Thu, 06 Nov 2025 02:08:53 -0800 (PST)
-Received: from aheev.home ([2401:4900:88f4:f6c4:5041:b658:601d:5d75])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba902207232sm1855872a12.32.2025.11.06.02.08.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 02:08:52 -0800 (PST)
-From: Ally Heev <allyheev@gmail.com>
-Date: Thu, 06 Nov 2025 15:38:41 +0530
-Subject: [PATCH v2] net: ethernet: fix uninitialized pointers with free
- attr
+	s=arc-20240116; t=1762423882; c=relaxed/simple;
+	bh=Y5z1uXmZs/OdJ17uDDr/wJqUZdutnhpg605mFdWeSzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RQ/iECNQc+gARBxAFj0cvoITrHuYJfLcB0GXaEY12ZnGrRoC1hZfK28+xF7PAqlUqictslXTq+30ksnHFHBHZ93MwL6r7/8x6QSyu4WZ0P8oS51AXJDIkWBwl8v4oYov3d0On1GXzz3jdYpnZXwZYQyESverHO6o9jquEkzZMSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=FdNoIyU0; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=Nito9qib; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1762423823; bh=ejLPRY3iozpYHHEti2rE7LN
+	zfuScAzWruHHkQQn0/lQ=; b=FdNoIyU0AcOXJV90e6yWKsRg+Jsg5pgdjd0yKSyUz7HYYw429p
+	hWUdHoTkspboJjGXfyfzPUJZmAqhF/pxKyjZ+se46kp1beiRn73IsAsAezW/08fEMD0rn0rf0VH
+	8+HGuip3zJPedlYhTCU2VbYwBgSIX4PWjoMuADVp2ImU45F1gFnnpXVIajmPyG+E1Nz0IanIuVi
+	598WLh1s2UlSHHfQhsuEhVX36mqWNUc1ykfyhW3idGDYL/sz36S87dzCDM4se570AemA1m/QbC+
+	UKN6cudRs/RiWtF2uRQKD3suu1OfsHZDyPPEM5nY3VxaV7cHsfcTsR3MTfxTUqiSM5w==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1762423823; bh=ejLPRY3iozpYHHEti2rE7LN
+	zfuScAzWruHHkQQn0/lQ=; b=Nito9qibsjdqNZfJbc7et2R3jg7txn1gwFaaRuvOJEyl2WH1dT
+	cgf7iKfE8ymmuILBhZud9+ZFAEVn+6jBL1Ag==;
+Message-ID: <a87d491d-e0ff-4bf6-bce8-6d2935271e6b@damsy.net>
+Date: Thu, 6 Nov 2025 11:10:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-aheev-uninitialized-free-attr-net-ethernet-v2-1-048da0c5d6b6@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKhzDGkC/52NTQ6CMBBGr0K6dkyL/BhX3sOwKHRKJ4FiprVRC
- Xe3cAR33/sW760iIBMGcStWwZgo0OIzlKdCDE77EYFMZlHKslZK1qAdYoKXJ0+R9ERfNGAZEXS
- MDB4jYHTI+2iNkg1Wur/YVmThk9HS+4g9usyOQlz4c7ST2t+/MkmBAtugvlZ9b9pa3sdZ03Qel
- ll027b9AKkmv87kAAAA
-X-Change-ID: 20251105-aheev-uninitialized-free-attr-net-ethernet-7d106e4ab3f7
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- "K. Y. Srinivasan" <kys@microsoft.com>, 
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
- Dexuan Cui <decui@microsoft.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
- Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3029; i=allyheev@gmail.com;
- h=from:subject:message-id; bh=1DqFSj/S5FdRM8xI1vnmMW27R5cKr38U/BL7DRT8f0g=;
- b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDJ5ite1TzulbSKvft6+c1daVuL3VXO3XN4S+kf7pZ/nF
- mfjf2sdOkpZGMS4GGTFFFkYRaX89DZJTYg7nPQNZg4rE8gQBi5OAZjIVQmG/45tCdELukNbauaV
- zUr0cPrRop6YYxkY0VLG7HF+isKty4wM7Ynayxg0fV5dMYjz6nz+fpVBVJK8j5Xa1BURM+5Nlmp
- jBQA=
-X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
- fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] drm/amdgpu: increment sched score on entity
+ selection
+To: Tvrtko Ursulin <tursulin@ursulin.net>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251106093933.18859-1-pierre-eric.pelloux-prayer@amd.com>
+ <20251106093933.18859-3-pierre-eric.pelloux-prayer@amd.com>
+ <9e5abc5f-1948-4b18-8485-6540f84cdfd8@ursulin.net>
+Content-Language: en-US
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <9e5abc5f-1948-4b18-8485-6540f84cdfd8@ursulin.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Uninitialized pointers with `__free` attribute can cause undefined
-behaviour as the memory assigned(randomly) to the pointer is freed
-automatically when the pointer goes out of scope
 
-net/ethernet doesn't have any bugs related to this as of now,
-but it is better to initialize and assign pointers with `__free` attr
-in one statement to ensure proper scope-based cleanup
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-Signed-off-by: Ally Heev <allyheev@gmail.com>
----
-Changes in v2:
-- fixed non pointer initialization to NULL
-- NOTE: drop v1
-- Link to v1: https://lore.kernel.org/r/20251105-aheev-uninitialized-free-attr-net-ethernet-v1-1-f6ea84bbd750@gmail.com
----
- drivers/net/ethernet/intel/ice/ice_flow.c       | 5 +++--
- drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+Le 06/11/2025 à 11:00, Tvrtko Ursulin a écrit :
+> 
+> On 06/11/2025 09:39, Pierre-Eric Pelloux-Prayer wrote:
+>> For hw engines that can't load balance jobs, entities are
+>> "statically" load balanced: on their first submit, they select
+>> the best scheduler based on its score.
+>> The score is made up of 2 parts:
+>> * the job queue depth (how much jobs are executing/waiting)
+>> * the number of entities assigned
+>>
+>> The second part is only relevant for the static load balance:
+>> it's a way to consider how many entities are attached to this
+>> scheduler, knowing that if they ever submit jobs they will go
+>> to this one.
+>>
+>> For rings that can load balance jobs freely, idle entities
+>> aren't a concern and shouldn't impact the scheduler's decisions.
+>>
+>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+>> ---
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 21 ++++++++++++++++-----
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h |  1 +
+>>   2 files changed, 17 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/ 
+>> amdgpu/amdgpu_ctx.c
+>> index afedea02188d..953c81c928c1 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+>> @@ -209,6 +209,7 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, 
+>> u32 hw_ip,
+>>       struct amdgpu_ctx_entity *entity;
+>>       enum drm_sched_priority drm_prio;
+>>       unsigned int hw_prio, num_scheds;
+>> +    struct amdgpu_ring *aring;
+>>       int32_t ctx_prio;
+>>       int r;
+>> @@ -239,11 +240,13 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx 
+>> *ctx, u32 hw_ip,
+>>               goto error_free_entity;
+>>       }
+>> -    /* disable load balance if the hw engine retains context among dependent 
+>> jobs */
+>> -    if (hw_ip == AMDGPU_HW_IP_VCN_ENC ||
+>> -        hw_ip == AMDGPU_HW_IP_VCN_DEC ||
+>> -        hw_ip == AMDGPU_HW_IP_UVD_ENC ||
+>> -        hw_ip == AMDGPU_HW_IP_UVD) {
+>> +    sched = scheds[0];
+>> +    aring = container_of(sched, struct amdgpu_ring, sched);
+>> +
+>> +    if (aring->funcs->engine_retains_context) {
+>> +        /* Disable load balancing between multiple schedulers if the hw
+>> +         * engine retains context among dependent jobs.
+>> +         */
+>>           sched = drm_sched_pick_best(scheds, num_scheds);
+>>           scheds = &sched;
+>>           num_scheds = 1;
+>> @@ -258,6 +261,11 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, 
+>> u32 hw_ip,
+>>       if (cmpxchg(&ctx->entities[hw_ip][ring], NULL, entity))
+>>           goto cleanup_entity;
+>> +    if (aring->funcs->engine_retains_context) {
+>> +        entity->sched_score = sched->score;
+>> +        atomic_inc(entity->sched_score);
+> 
+> Maybe you missed it, in the last round I asked this:
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_flow.c b/drivers/net/ethernet/intel/ice/ice_flow.c
-index 6d5c939dc8a515c252cd2b77d155b69fa264ee92..3590dacf3ee57879b3809d715e40bb290e40c4aa 100644
---- a/drivers/net/ethernet/intel/ice/ice_flow.c
-+++ b/drivers/net/ethernet/intel/ice/ice_flow.c
-@@ -1573,12 +1573,13 @@ ice_flow_set_parser_prof(struct ice_hw *hw, u16 dest_vsi, u16 fdir_vsi,
- 			 struct ice_parser_profile *prof, enum ice_block blk)
- {
- 	u64 id = find_first_bit(prof->ptypes, ICE_FLOW_PTYPE_MAX);
--	struct ice_flow_prof_params *params __free(kfree);
- 	u8 fv_words = hw->blk[blk].es.fvw;
- 	int status;
- 	int i, idx;
- 
--	params = kzalloc(sizeof(*params), GFP_KERNEL);
-+	struct ice_flow_prof_params *params __free(kfree) =
-+		kzalloc(sizeof(*params), GFP_KERNEL);
-+
- 	if (!params)
- 		return -ENOMEM;
- 
-diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-index cbb5fa30f5a0ec778c1ee30470da3ca21cc1af24..368138715cd55cd1dadc686931cdda51c7a5130d 100644
---- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-+++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-@@ -1012,7 +1012,6 @@ static int idpf_send_get_caps_msg(struct idpf_adapter *adapter)
-  */
- static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
- {
--	struct virtchnl2_get_lan_memory_regions *rcvd_regions __free(kfree);
- 	struct idpf_vc_xn_params xn_params = {
- 		.vc_op = VIRTCHNL2_OP_GET_LAN_MEMORY_REGIONS,
- 		.recv_buf.iov_len = IDPF_CTLQ_MAX_BUF_LEN,
-@@ -1023,7 +1022,9 @@ static int idpf_send_get_lan_memory_regions(struct idpf_adapter *adapter)
- 	ssize_t reply_sz;
- 	int err = 0;
- 
--	rcvd_regions = kzalloc(IDPF_CTLQ_MAX_BUF_LEN, GFP_KERNEL);
-+	struct virtchnl2_get_lan_memory_regions *rcvd_regions __free(kfree) =
-+		kzalloc(IDPF_CTLQ_MAX_BUF_LEN, GFP_KERNEL);
-+
- 	if (!rcvd_regions)
- 		return -ENOMEM;
- 
+I missed it, sorry.
 
----
-base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-change-id: 20251105-aheev-uninitialized-free-attr-net-ethernet-7d106e4ab3f7
+> 
+> """
+> Here is would always be sched->score == aring->sched_score, right?
 
-Best regards,
--- 
-Ally Heev <allyheev@gmail.com>
+Yes because drm_sched_init is called with args.score = ring->sched_score
+
+> 
+> If so it would probably be good to either add that assert, or even to just fetch 
+> it from there. Otherwise it can look potentially concerning to be fishing out 
+> the pointer from scheduler internals.
+> 
+> The rest looks good to me.
+> """
+> 
+> Because grabbing a pointer from drm_sched->score and storing it in AMD entity 
+> can look scary, since sched->score can be scheduler owned.
+> 
+> Hence I was suggesting to either fish it out from aring->sched_score. If it is 
+> true that they are always the same atomic_t at this point.
+
+I used sched->score, because aring->sched_score is not the one we want (the 
+existing aring points to scheds[0], not the selected sched). But I can change 
+the code to:
+
+if (aring->funcs->engine_retains_context) {
+    aring = container_of(sched, struct amdgpu_ring, sched)
+    entity->sched_score = aring->sched_score;
+    atomic_inc(entity->sched_score);
+}
+
+If it's preferred.
+
+Pierre-Eric
+
+> 
+> Regards,
+> 
+> Tvrtko
+> 
+>> +    }
+>> +
+>>       return 0;
+>>   cleanup_entity:
+>> @@ -514,6 +522,9 @@ static void amdgpu_ctx_do_release(struct kref *ref)
+>>               if (!ctx->entities[i][j])
+>>                   continue;
+>> +            if (ctx->entities[i][j]->sched_score)
+>> +                atomic_dec(ctx->entities[i][j]->sched_score);
+>> +
+>>               drm_sched_entity_destroy(&ctx->entities[i][j]->entity);
+>>           }
+>>       }
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h b/drivers/gpu/drm/amd/ 
+>> amdgpu/amdgpu_ctx.h
+>> index 090dfe86f75b..f7b44f96f374 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+>> @@ -39,6 +39,7 @@ struct amdgpu_ctx_entity {
+>>       uint32_t        hw_ip;
+>>       uint64_t        sequence;
+>>       struct drm_sched_entity    entity;
+>> +    atomic_t        *sched_score;
+>>       struct dma_fence    *fences[];
+>>   };
 
 
