@@ -1,163 +1,174 @@
-Return-Path: <linux-kernel+bounces-888766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A2DC3BDB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:49:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E25C3BDCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749B73B03D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8543BFFAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73168342CA9;
-	Thu,  6 Nov 2025 14:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACD133CEB0;
+	Thu,  6 Nov 2025 14:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EERpNU/8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fax+zxpM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02AF1EEA5D;
-	Thu,  6 Nov 2025 14:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FFD333452;
+	Thu,  6 Nov 2025 14:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762440230; cv=none; b=gjLTa3jrdlDEnWuYpYf4/m3sEDRp5QAn6zUY/kzL4UHR18H6u89tkHtScZhIxwUv4aZrFdnBw1+e1Lg1ZJ4YkXqPteIhgLqV/R1WaOTHfCvew1auynTMzXkKNnfhORRT/w8W2MchPRrgV2428/MZgghjcrD0G8AkMx57xcZmqwY=
+	t=1762440290; cv=none; b=WjRiefYGf7V43Uxq7onSqAGGZQd8FUTLfzZpxVT5qL/h6EcPlJ+2dK0tDZQmrmbTLDfPJlDYpfZmAyrXXHCHtEVA4joCSdrQaE3VwlbZjXvOyl1TaacKru0Qqr4X0yXyz/7uwtq6kcWIfcAqqji7TPg6OpW5q8mtUEAURyfBdmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762440230; c=relaxed/simple;
-	bh=WOGz5zHsl9XCqC1tDXHOQNBKUlu5HckNP7FXGTFgO2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n2w353h5ftjIttuIJ6esdKUtm3JW+rQ+tLGVKNLfN6J9eVx12U6nxAU4yt1HJ7Gg2puVnpoLXa+0jXVc9DON5G+pDbJwfiqpJjsmsppdhhT2tvp3Lp+3a9fFf474Xc+No+mZCfbOs0LMsVHdMD6ymyYyIIfG5JUhNjvd1cifoAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EERpNU/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF622C4CEFB;
-	Thu,  6 Nov 2025 14:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762440230;
-	bh=WOGz5zHsl9XCqC1tDXHOQNBKUlu5HckNP7FXGTFgO2M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EERpNU/8B4+Y73DK4pQ+WLZj2KIkXd7YCnZ07fHPRcdupfLQ8YCm2rnjO0M87PM/F
-	 knx8P8+xzNCU2jXPzfToclJUiiaTpAGvT/zj15y4ikGT0B+y1OtGFs5ctRVjA7MLvp
-	 5d2+bXg8AQphEQImtOL2fjqcKkrQI8YCOJ1nj8HtncfSMoo206fyuKODSmjzSSx+lI
-	 kQPcvmCTlgZkIrFIgmnEsyTO4X1duGfLJ0rHmXtbyMTSdLBadYqgjLVOO/dRG+P8uv
-	 2D9VuhKAhpczGeXnFh80u2ZnkadCsRAojlo8bA8gyq7BcZ6Ca1MjrOTgSFblSHPatU
-	 l+/Wxd/0ZoOHQ==
-Message-ID: <86d203a7-af58-4777-ada5-0dda28186d7f@kernel.org>
-Date: Thu, 6 Nov 2025 15:43:46 +0100
+	s=arc-20240116; t=1762440290; c=relaxed/simple;
+	bh=CgKPrhlOB1S3JfrLDg6vTp5p6jX2SaUAEva586MhNWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBE25pI6piR2UgJDDxuJKFcFtd1u9io4eI4H2pP2NviygEYCl/MOJpaG1e1P+Qzr6LVP2VUDauQdA0T/iWDE3b1KTD4BOe4jeScDk7bzer3QfR5HhATiaau/yclOyb6cz0THp3i871qgs9dSFsH4vd32eZCIucpCjR1073sbrA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fax+zxpM; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762440289; x=1793976289;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CgKPrhlOB1S3JfrLDg6vTp5p6jX2SaUAEva586MhNWo=;
+  b=fax+zxpMdBxZi35qiqTykfwB6NxjRR0GNIAr01NQb0RVM6mjAnSNDiCH
+   vIa91xikfQjVpGD36bqnHrb+m0Zz3LAPg0IiENMJq01TrcXrorZstpwgF
+   6ev/EQ6JHzEbB44agCHyyZbX3/T8Fi1PdZljmcibvU0bWLKalPJeFJaMr
+   noF4o3RxCwDQbqtKbj1AIMaReTnn6Cdb6NGhUWj0I3au7eAJmLnCD3Rpv
+   QK8o7vzY/fUxouq5OdaRzBXJuQQnoslS7UXfOxZO96NLsKhvPepPa3OZ4
+   EecKtraIzDXm++jWkgA7liwsRrlVEty6aMQ7HHzhQWovKqDOeNKEhb5/J
+   w==;
+X-CSE-ConnectionGUID: X4URzY64S1CYg1oFnFmOFQ==
+X-CSE-MsgGUID: ZU5VHBv8Sk2cO48/r3umPg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64504252"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64504252"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 06:44:48 -0800
+X-CSE-ConnectionGUID: kvm5eJDVRiSb47UCQQrdxA==
+X-CSE-MsgGUID: 2tiTZfdERMmRL0zFQqehgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="192819498"
+Received: from abityuts-desk.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.224])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 06:44:37 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vH1E0-00000006AO5-06YC;
+	Thu, 06 Nov 2025 16:44:32 +0200
+Date: Thu, 6 Nov 2025 16:44:31 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Miller <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jianping Shen <Jianping.Shen@de.bosch.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-edac@vger.kernel.org, qat-linux@intel.com,
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 12/26] bitfield: Add less-checking __FIELD_{GET,PREP}()
+Message-ID: <aQy0T2vUINze_6_q@smile.fi.intel.com>
+References: <cover.1762435376.git.geert+renesas@glider.be>
+ <cfc32f8530d5c0d4a7fb33c482a4bf549f26ec24.1762435376.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/13] memory: tegra186-emc: Simplify and handle
- deferred probe with dev_err_probe()
-To: Jon Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- Aaron Kling <webgeek1234@gmail.com>
-References: <20250911-memory-tegra-cleanup-v2-0-d08022ff2f85@linaro.org>
- <20250911-memory-tegra-cleanup-v2-8-d08022ff2f85@linaro.org>
- <4ba8a1ec-fa17-4564-a174-0b8e8eada061@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4ba8a1ec-fa17-4564-a174-0b8e8eada061@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cfc32f8530d5c0d4a7fb33c482a4bf549f26ec24.1762435376.git.geert+renesas@glider.be>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 06/11/2025 13:04, Jon Hunter wrote:
+On Thu, Nov 06, 2025 at 02:34:00PM +0100, Geert Uytterhoeven wrote:
+> The BUILD_BUG_ON_MSG() check against "~0ull" works only with "unsigned
+> (long) long" _mask types.  For constant masks, that condition is usually
+> met, as GENMASK() yields an UL value.  The few places where the
+> constant mask is stored in an intermediate variable were fixed by
+> changing the variable type to u64 (see e.g. [1] and [2]).
 > 
-> On 11/09/2025 10:43, Krzysztof Kozlowski wrote:
->> Certain calls, like clk_get, can cause probe deferral and driver should
->> handle it.  Use dev_err_probe() to fix that and also change other
->> non-deferred errors cases to make the code simpler.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>   drivers/memory/tegra/tegra186-emc.c | 14 ++++++--------
->>   1 file changed, 6 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
->> index 00baa7ab89214b1a151ab0c0a9ab76f90f922478..a0de80afe3e90531fcfb29d20773aed0d04478c5 100644
->> --- a/drivers/memory/tegra/tegra186-emc.c
->> +++ b/drivers/memory/tegra/tegra186-emc.c
->> @@ -302,9 +302,8 @@ static int tegra_emc_interconnect_init(struct tegra186_emc *emc)
->>   
->>   remove_nodes:
->>   	icc_nodes_remove(&emc->provider);
->> -	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
->>   
->> -	return err;
->> +	return dev_err_probe(emc->dev, err, "failed to initialize ICC\n");
->>   }
->>   
->>   static int tegra186_emc_probe(struct platform_device *pdev)
->> @@ -319,14 +318,13 @@ static int tegra186_emc_probe(struct platform_device *pdev)
->>   
->>   	emc->bpmp = tegra_bpmp_get(&pdev->dev);
->>   	if (IS_ERR(emc->bpmp))
->> -		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp), "failed to get BPMP\n");
->> +		return dev_err_probe(&pdev->dev, PTR_ERR(emc->bpmp),
->> +				     "failed to get BPMP\n");
->>   
->>   	emc->clk = devm_clk_get(&pdev->dev, "emc");
->> -	if (IS_ERR(emc->clk)) {
->> -		err = PTR_ERR(emc->clk);
->> -		dev_err(&pdev->dev, "failed to get EMC clock: %d\n", err);
->> -		goto put_bpmp;
->> -	}
->> +	if (IS_ERR(emc->clk))
->> +		return dev_err_probe(&pdev->dev, PTR_ERR(emc->clk),
->> +				     "failed to get EMC clock\n");
+> However, for non-constant masks, smaller unsigned types should be valid,
+> too, but currently lead to "result of comparison of constant
+> 18446744073709551615 with expression of type ... is always
+> false"-warnings with clang and W=1.
 > 
-> I see now that we dropped a 'put_bpmp' here and we should not have. I 
-> see this is in -next, do you want fix up or I can send a patch?
+> Hence refactor the __BF_FIELD_CHECK() helper, and factor out
+> __FIELD_{GET,PREP}().  The later lack the single problematic check, but
+> are otherwise identical to FIELD_{GET,PREP}(), and are intended to be
+> used in the fully non-const variants later.
+> 
+> [1] commit 5c667d5a5a3ec166 ("clk: sp7021: Adjust width of _m in
+>     HWM_FIELD_PREP()")
+> [2] commit cfd6fb45cfaf46fa ("crypto: ccree - avoid out-of-range
+>     warnings from clang")
 
-Great thanks!
 
-Best regards,
-Krzysztof
+Also can be made as
+
+Link: https://git.kernel.org/torvalds/c/5c667d5a5a3ec166 [1]
+
+The positive effect that one may click that on Git Web.
+Ideally, of course, would be an additional parses on Git Web kernel.org uses to
+parse that standard "commit ...()" notation to add the respective HREF link.
+
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+...
+
+> +	BUILD_BUG_ON_MSG(__bf_cast_unsigned(mask, mask) >		\
+> +			 __bf_cast_unsigned(reg, ~0ull),		\
+> +			 pfx "type of reg too small for mask")
+
+Perhaps we may convert this (and others?) to static_assert():s at some point?
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
