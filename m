@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-887796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B1DC391C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 05:49:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5655AC391C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 05:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A36BD4E2B65
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 04:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84D8D1A248E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 04:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08012C21C0;
-	Thu,  6 Nov 2025 04:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76B51D5CC9;
+	Thu,  6 Nov 2025 04:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HLmQDBwM"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YStyB7qj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7272175BF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 04:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A801E1A33;
+	Thu,  6 Nov 2025 04:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762404556; cv=none; b=Y9NxUeX0ScjPyoCFG8fDBa2WHf9Pe4Jl9/fJMEk8SptZuAYcZA+zeADS9iTNDpfYqwetJExI4r9KsuVskpanfx2OwVZDa1L6V3dGIsXZb2PDLP78FpTHwDjCJM96IIx/umm/GOdhYjOoijUnXqo1giGC8cgk9c6upFzc6tUtOw4=
+	t=1762404582; cv=none; b=i81JI79vnNLGd0/xY3/xSG70KfHVSBOn18WweiJh1WatUUYTHNqRHDWQwQRWdjUNo28gxNSLqnp/qJUJnlpkFH5UUfB/PDeQMdmmkk8/MQREfWFwssLldC6cyhfk8aQ6WIO71r7GJv9J0Frmu8WQKZMNmekKRAX/VH5a47HfYsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762404556; c=relaxed/simple;
-	bh=DaXAlj8JblPAjO5bWQU1Zg3FrFOWeWEku85KyWvoPSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCGh6asQNc6Txbit/d/4q5dvnKCUqUDFRYPXd/PEVh5tcgdAD6V3Ig1dTybL/Z8XKcNF8jLrmYn/7tLDhEKcWMmXD1ipo3Xy1Rt/Cluc2vtrmA3Cw4nPrttu/177ojfy+PwFl+lQdcMU4bE0WOsJiXazbkGzloZk5IYD7CvJSmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HLmQDBwM; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762404539; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=hveDkFOYYmOMs9eLitfKUolNxOoYD1TWAO9nN3vGzlc=;
-	b=HLmQDBwMfZfzOmUok+yoqVQwJECQgVsJAdMC+dRY1HcAAutRsXoYdxBUD+LtJom/m2jpZ2cxAVidOifoMFwLDeOYpdHVh7OsthMphKtW3DGSLNcpAnDUBJk7iCxLNCAC4xbTVS0i15E7zUY35jgSUwQddIKjN4fpiCaGi0IeRyE=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WroLZx6_1762404538 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 06 Nov 2025 12:48:59 +0800
-Date: Thu, 6 Nov 2025 12:48:58 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: paulmck@kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lance Yang <ioworker0@gmail.com>, Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH 2/3] hung_task: Add hung_task_sys_info sysctl to dump sys
- info on task-hung
-Message-ID: <aQwoukY-yU0bSX5f@U-2FWC9VHC-2323.local>
-References: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
- <20251106023032.25875-3-feng.tang@linux.alibaba.com>
- <572e1211-79e2-4b8e-b36f-4eeca125427c@linux.dev>
+	s=arc-20240116; t=1762404582; c=relaxed/simple;
+	bh=K5q6mFCqEJoiN/KJurCtB8NCrdq395/U9mnU7TWiwP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FvKqwfxCMa47qFflXWg85mVbQF34wK+EG2z14gAwTEUfg8uNgCNjpB7dQWJ1wgTs6bWWwPmLOPTUVU+9kc/hMOOAauavr3nd/UDAHSTI+yo3OK1CxvYpyhhRLX5zdeuHZ8mhUTXC9wNl0ZtzqEY3kMGFUYMmi+rSVi7AmXOPuBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YStyB7qj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5307CC4CEF7;
+	Thu,  6 Nov 2025 04:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762404581;
+	bh=K5q6mFCqEJoiN/KJurCtB8NCrdq395/U9mnU7TWiwP4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YStyB7qjfvn/iLsLoKrii/KL0mjZOMw4rQHVT6Ykoa2Z8Kypqb23rewhbYHNbQrBr
+	 U9jQMiR99T6fKVoXmB2PWmdpiVRixaoC1NwiKVuoAPSBGu5AEvlxZXGldUDIiMJn0Q
+	 r0ybFQNhmiHFqHmdsnEd5DIfDFcyF7jUrRdcMwUuNk6Bj72IML9RI5Q/hKp9cGRWq/
+	 m47Lgpw3j38ZEwDPXWOulGcRRvU/x+yxYroOCbhzltBI25OKAooG6crr9naVtsisuN
+	 /z8lQ5r5lYLLGPNYJFc2ePaWbmrra8tYAhByIdI2UIHPGrIe8LmhH8ljhbhSPtHDIs
+	 g8JPhX+Tygglg==
+Message-ID: <3f138af5-8473-4366-9562-3cdea3862f1a@kernel.org>
+Date: Wed, 5 Nov 2025 22:49:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <572e1211-79e2-4b8e-b36f-4eeca125427c@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] EDAC/altera: Handle OCRAM ECC enable after warm reset
+To: niravkumarlaxmidas.rabara@altera.com, bp@alien8.de, tony.luck@intel.com
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251103140920.1060643-1-niravkumarlaxmidas.rabara@altera.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20251103140920.1060643-1-niravkumarlaxmidas.rabara@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 11:28:12AM +0800, Lance Yang wrote:
-> 
-> 
-> On 2025/11/6 10:30, Feng Tang wrote:
-> > When task-hung happens, developers may need different kinds of system
-> > information (call-stacks, memory info, locks, etc.) to help debugging.
-> > 
-> > Add 'hung_task_sys_info' sysctl knob to take human readable string like
-> > "tasks,mem,timers,locks,ftrace,...", and when task-hung happens, all
-> > requested information will be dumped. (refer kernel/sys_info.c for more
-> > details).
-> > 
-> > Meanwhile, the newly introduced sys_info() call is used to unify some
-> > existing info-dumping knobs.
-> 
-> Thanks! Just one nit below.
-> 
-> > 
-> > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> > ---
-> >   Documentation/admin-guide/sysctl/kernel.rst |  5 +++
-> >   kernel/hung_task.c                          | 39 +++++++++++++++------
-> >   2 files changed, 33 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> > index a397eeccaea7..45b4408dad31 100644
-> > --- a/Documentation/admin-guide/sysctl/kernel.rst
-> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> > @@ -422,6 +422,11 @@ the system boot.
-> >   This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
-> > +hung_task_sys_info
-> > +==================
-> > +A comma separated list of extra system information to be dumped when
-> > +hung task is detected, for example, "tasks,mem,timers,locks,...".
-> > +Refer 'panic_sys_info' section below for more details.
-> >   hung_task_timeout_secs
-> >   ======================
-> > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> > index 84b4b049faa5..102be5a8e75a 100644
-> > --- a/kernel/hung_task.c
-> > +++ b/kernel/hung_task.c
-> > @@ -24,6 +24,7 @@
-> >   #include <linux/sched/sysctl.h>
-> >   #include <linux/hung_task.h>
-> >   #include <linux/rwsem.h>
-> > +#include <linux/sys_info.h>
-> >   #include <trace/events/sched.h>
-> > @@ -60,12 +61,23 @@ static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
-> >   static int __read_mostly sysctl_hung_task_warnings = 10;
-> >   static int __read_mostly did_panic;
-> > -static bool hung_task_show_lock;
-> >   static bool hung_task_call_panic;
-> > -static bool hung_task_show_all_bt;
-> >   static struct task_struct *watchdog_task;
-> > +/*
-> > + * A bitmask to control what kinds of system info to be printed when
-> > + * a hung task is detected, it could be task, memory, lock etc. Refer
-> > + * include/linux/sys_info.h for detailed bit definition.
-> > + */
-> > +static unsigned long hung_task_si_mask;
-> > +
-> > +/*
-> > + * There are several sysctl knobs, and this serves as the runtime
-> > + * effective sys_info knob
-> > + */
-> 
-> Nit: let's make the comment for cur_si_mask even more explicit.
-> +/*
-> + * The effective sys_info mask for the current detection cycle. It
-> + * aggregates the base hung_task_si_mask and any flags triggered
-> + * by other conditions within this cycle. It is cleared after use.
-> + */
-> > +static unsigned long cur_si_mask;
-> 
-> That makes its lifecycle (aggregate, use, and clear) super obvious ;)
 
-Yep. Thanks for the imporovement! Will take.
 
-> With that, LGTM!
+On 11/3/25 08:09, niravkumarlaxmidas.rabara@altera.com wrote:
+> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
 > 
-> Reviewed-by: Lance Yang <lance.yang@linux.dev>
-Thanks!
+> The OCRAM ECC is always enabled either by the BootROM or by the Secure
+> Device Manager (SDM) during a power-on reset on SoCFPGA.
+> 
+> However, during a warm reset, the OCRAM content is retained to preserve
+> data, while the control and status registers are reset to their default
+> values. As a result, ECC must be explicitly re-enabled after a warm reset.
+> 
+> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+> ---
+>   drivers/edac/altera_edac.c | 18 +++++++++++++++---
+>   1 file changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> index 103b2c2eba2a..a776d61027f2 100644
+> --- a/drivers/edac/altera_edac.c
+> +++ b/drivers/edac/altera_edac.c
+> @@ -1184,10 +1184,22 @@ altr_check_ocram_deps_init(struct altr_edac_device_dev *device)
+>   	if (ret)
+>   		return ret;
+>   
+> -	/* Verify OCRAM has been initialized */
+> +	/*
+> +	 * Verify that OCRAM has been initialized.
+> +	 * During a warm reset, OCRAM contents are retained, but the control
+> +	 * and status registers are reset to their default values. Therefore,
+> +	 * ECC must be explicitly re-enabled in the control register.
+> +	 * Error condition: if INITCOMPLETEA is clear and ECC_EN is already set.
+> +	 */
+>   	if (!ecc_test_bits(ALTR_A10_ECC_INITCOMPLETEA,
+> -			   (base + ALTR_A10_ECC_INITSTAT_OFST)))
+> -		return -ENODEV;
+> +			   (base + ALTR_A10_ECC_INITSTAT_OFST))) {
+> +		if (!ecc_test_bits(ALTR_A10_ECC_EN,
+> +				   (base + ALTR_A10_ECC_CTRL_OFST)))
+> +			ecc_set_bits(ALTR_A10_ECC_EN,
+> +				     (base + ALTR_A10_ECC_CTRL_OFST));
+> +		else
+> +			return -ENODEV;
+> +	}
+>   
+>   	/* Enable IRQ on Single Bit Error */
+>   	writel(ALTR_A10_ECC_SERRINTEN, (base + ALTR_A10_ECC_ERRINTENS_OFST));
 
-- Feng
+
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
 
