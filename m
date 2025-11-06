@@ -1,132 +1,142 @@
-Return-Path: <linux-kernel+bounces-889254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21F5C3D13B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:33:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750E7C3D141
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D2DC74E1AD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:33:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 449774E3502
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2DC350A02;
-	Thu,  6 Nov 2025 18:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B4334D92F;
+	Thu,  6 Nov 2025 18:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vyFqBeDD"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOV+8Ut1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507BC34E771
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F08828725F;
+	Thu,  6 Nov 2025 18:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762453975; cv=none; b=Y2Fvv73YP5FBP1mep2VN07BSU2SmjTD8e37XmlnosgwiOYpiHQDdAzFlmG0x6DW/XOwRir1U5JiK0yKPlkDdIBwvs3tKY8Rq94NTLNOtGFqtnMhmnaYo3nGayk/RHkjZ9tGYsOnz1uU9iE1aqR82sPSkc7ARNqnwAZ8wB6YfIGk=
+	t=1762453988; cv=none; b=cU6vJmkMr+wMqeQgqFuaV29zE8NbsgVvPgX3U/3VfkP98pZgaLzvXkhJIpIwSnDos5XLWLPbEH9O6k0qGobkt8fJshh8Orr9yAhUG00fWoryRwqrgPuc4+nB3NZdRhdH8xphD4DODvG15vNoB8kqEToCI8EIL17Dzgi5Jyvw8MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762453975; c=relaxed/simple;
-	bh=sVQLIpPNNK87Swax1RQ2kNXix0G9QJSkyvr+/9F+uA0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z5TfGiyHJosoRwurYpG9hAJ0nEYNw76SkUFeTmTvDWZTL+tE8QDsAgcgJAEdq+l119LnpwonGANzjZpKA9qmqpJ82JRz2GafIwyHiMKW591F9B92lemktgwF7n5jqWM9Rn8lrV90tb2D1CQBPpgIpyrfFU6ga6k+oiR0a1cu230=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vyFqBeDD; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2930e2e8e7fso16495905ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:32:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762453974; x=1763058774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ILtqOILvGty/pMJ9/qXl6knV0E74S+U/rmoIpSy5GYU=;
-        b=vyFqBeDDe69xCrA8XH6jbdMtDtWCDf6vNkTEWY19Sro76iSwUxBDs2bRsRyAT/R/kY
-         gZUyzIdDt5+5xw0BFq3GnEeUNLJd1WnhF8ReURyyk2PQNwZBxbycAgSKONBFig6JnFp9
-         MnhqKl/DsvFW7nXPatVqho34xK5gZ3tv+HvlNkNkCoymgUHAUrQYtnhfVeL2dtoEiNgn
-         oDJZ1MHgcioTotR1DaKg2xzNLqsF40b0g+9oTt8jfLkQcapgdX0usblqwgoIhxXgJtjO
-         WXuPVe2nxEjQKYhzqVrOOj/rWXdWavAXEPX8gvAF+D1KrdLxq6o16GA+gMqOXKSPYe0g
-         978g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762453974; x=1763058774;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ILtqOILvGty/pMJ9/qXl6knV0E74S+U/rmoIpSy5GYU=;
-        b=WayC6dzC7pHWs84HAoL4Fszxj4lDSFTKjlkpdTzgwuQdZbsBzWieZAGr22xZdhBJp2
-         NpRHea5KhX7II47HdCkva08iqFzevbbdm4IA3NNETB9EOst0DB8ppB1wue3XLQxT7Wnr
-         5IVROp2jk/HD9FsYBHDkjQpB6CKPm4Q4VaFGmrZRCDtNM6mRHLwNO3S+GAt4MYp2FrzC
-         daou+XERMgqfwqrryHhOWW21iG+kB93UbjW3eoXbYkN3stwUI9Sg20EkDWuaiC7PwDiB
-         1cr6okbC1xM1IDn4n2Kk5t9R5LmjoV8tdo6o/6And3tjHsTdGfKzbWY4Cs+XPh/mBxyL
-         a3Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk5Dpj3tca0Iyipxa/HRPCgcTamPKo8hrksrmfgl8HjXvDpdF622BVeqz1L/Cd4oGTzWbV3Idl4MDJ+8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXQOwrK+pxLq7w9NIboin5K849G/3DukSEyHIuACBRHmjm+JwS
-	0tsmWkm4k00t+zIkAUgnAewE36jfuZ42JuLO6jTy7k2NfUN+33t/0p1XsAdxepSuGm2S2LSLNIx
-	0HSOm3Q==
-X-Google-Smtp-Source: AGHT+IHxhdirp/8jMYvdEMpulJuVcQ8tfoz/G82tmND5n6uBXi9xqwvXWzZIhBm3NMCpdYEMxyVrG89AQwM=
-X-Received: from plbm10.prod.google.com ([2002:a17:902:d18a:b0:267:dbc3:f98d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:b10:b0:295:a1a5:bb0f
- with SMTP id d9443c01a7336-297c03a8e41mr6156695ad.18.1762453973700; Thu, 06
- Nov 2025 10:32:53 -0800 (PST)
-Date: Thu, 6 Nov 2025 10:32:52 -0800
-In-Reply-To: <CAFULd4Z=PKeyzaER51CE7Zm4a-yeiru=HcBFx8E4J5hx3io=Tw@mail.gmail.com>
+	s=arc-20240116; t=1762453988; c=relaxed/simple;
+	bh=kyEhNYI7HzIpb2ZS57YS899tQPqI51sWObp1JT+wH0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bg5MccuOuDb4tkXkX8+iHyx+gOQf1u9J/yKrVdeUo7CaV3Q3qaxqfWdNS4xxznciIFP63uwqOZb11sJTIiLHgT0C3ABnJMTGvpCLa3S+ySsf9Z84GFuCJGroH/33DyyxbpHnzr7sEEuJJsEleMNy9aoyNZKk27BN+yOOz9FtJU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOV+8Ut1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37256C4CEFB;
+	Thu,  6 Nov 2025 18:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762453982;
+	bh=kyEhNYI7HzIpb2ZS57YS899tQPqI51sWObp1JT+wH0c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gOV+8Ut1d6OcGYc3ICn04IZJW//qT27NjmUtjJ6+mBW1NT1FFiv7zt7i+LtlVYr2u
+	 +QyjsqeXE8Sn2oMnEma69cqZnz8E2bs97Zd21gVcE9G+lLR2h4a7HI13S60l+iXsVs
+	 u16usha+Jdk67Zl7zF3UaT+UJVxWp7m1yJ0qB6+oG9KS25zWNmVHJlSDFSZzRv2+1P
+	 ZAYKzpGNv6p3B4Q/kW+nI41gjOTNrhNvKKK58r6zgnYp52LIMmln8DYOxYVB3Nv6qw
+	 s3UQNBSNhXrmD9+XPEWOMgXKSUBynWUYAenY7fGvck8RU/W1+bGVm9+C4zQls2P0Us
+	 cwmLU7tUs0DRg==
+Message-ID: <4791720d-59ac-4cbb-9a72-74d3dcb55a2a@kernel.org>
+Date: Thu, 6 Nov 2025 11:33:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251106011330.75571-1-seanjc@google.com> <CAFULd4Z=PKeyzaER51CE7Zm4a-yeiru=HcBFx8E4J5hx3io=Tw@mail.gmail.com>
-Message-ID: <aQzp1I1D8CfUSEug@google.com>
-Subject: Re: [PATCH] KVM: SVM: Ensure SPEC_CTRL[63:32] is context switched
- between guest and host
-From: Sean Christopherson <seanjc@google.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH linux-next] fs/ntfs3: Initialize allocated memory before
+ use
+To: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>,
+ almaz.alexandrovich@paragon-software.com
+Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev,
+ syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com,
+ syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
+References: <20251105211808.260893-1-kubik.bartlomiej@gmail.com>
+From: Khalid Aziz <khalid@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251105211808.260893-1-kubik.bartlomiej@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025, Uros Bizjak wrote:
-> On Thu, Nov 6, 2025 at 2:13=E2=80=AFAM Sean Christopherson <seanjc@google=
-.com> wrote:
-> >  998:
-> > -
-> >         /* Now restore the host value of the MSR if different from the =
-guest's.  */
-> > -       movl PER_CPU_VAR(x86_spec_ctrl_current), %eax
-> > -       cmp SVM_spec_ctrl(%_ASM_DI), %eax
-> > +#ifdef CONFIG_X86_64
-> > +       mov SVM_spec_ctrl(%rdi), %rdx
-> > +       cmp PER_CPU_VAR(x86_spec_ctrl_current), %rdx
-> >         je 901b
-> > -       xor %edx, %edx
-> > +       mov PER_CPU_VAR(x86_spec_ctrl_current), %rdx
-> > +       movl %edx, %eax
-> > +       shr $32, %rdx
->=20
-> The above code can be written as:
->=20
-> mov PER_CPU_VAR(x86_spec_ctrl_current), %rdx
-> cmp SVM_spec_ctrl(%rdi), %rdx
+On 11/5/25 2:18 PM, Bartlomiej Kubik wrote:
+> KMSAN reports: Multiple uninitialized values detected:
+> 
+> - KMSAN: uninit-value in ntfs_read_hdr (3)
+> - KMSAN: uninit-value in bcmp (3)
+> 
+> Memory is allocated by __getname(), which is a wrapper for
+> kmem_cache_alloc(). This memory is used before being properly
+> cleared. Change kmem_cache_alloc() to kmem_cache_zalloc() to
+> properly allocate and clear memory before use.
+> 
+> Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+> Fixes: 78ab59fee07f ("fs/ntfs3: Rework file operations")
+> Tested-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
+> Reported-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=332bd4e9d148f11a87dc
+> 
+> Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+> Fixes: 78ab59fee07f ("fs/ntfs3: Rework file operations")
+> Tested-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
+> Reported-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=0399100e525dd9696764
+> 
+> Signed-off-by: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>
+> ---
 
-Gah, that's obvious in hindsight.
+Looks good to me.
 
-> je 901b
-> movl %edx, %eax
-> shr $32, %rdx
->=20
-> The improved code will save a memory read from x86_spec_ctrl_current.
->=20
-> > +#else
-> > +       mov SVM_spec_ctrl(%edi), %esi
-> > +       mov PER_CPU_VAR(x86_spec_ctrl_current), %eax
->=20
-> Can the above two instructions be swapped, just to be consistent with
-> x86_64 code?
->=20
-> > +       xor %eax, %esi
->=20
-> > +       mov SVM_spec_ctrl + 4(%edi), %edi
-> > +       mov PER_CPU_VAR(x86_spec_ctrl_current + 4), %edx
->=20
-> ... and the above two insns.
+Reviewed-by: Khalid Aziz <khalid@kernel.org>
 
-Ya, will do.  Thanks!
+--
+Khalid
+
+>   fs/ntfs3/inode.c | 7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+> index ab61388f819c..13720baf079d 100644
+> --- a/fs/ntfs3/inode.c
+> +++ b/fs/ntfs3/inode.c
+> @@ -1281,7 +1281,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+>   		fa |= FILE_ATTRIBUTE_READONLY;
+> 
+>   	/* Allocate PATH_MAX bytes. */
+> -	new_de = __getname();
+> +	new_de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
+>   	if (!new_de) {
+>   		err = -ENOMEM;
+>   		goto out1;
+> @@ -1723,10 +1723,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+>   	struct NTFS_DE *de;
+> 
+>   	/* Allocate PATH_MAX bytes. */
+> -	de = __getname();
+> +	de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
+>   	if (!de)
+>   		return -ENOMEM;
+> -	memset(de, 0, PATH_MAX);
+> 
+>   	/* Mark rw ntfs as dirty. It will be cleared at umount. */
+>   	ntfs_set_state(sbi, NTFS_DIRTY_DIRTY);
+> @@ -1762,7 +1761,7 @@ int ntfs_unlink_inode(struct inode *dir, const struct dentry *dentry)
+>   		return -EINVAL;
+> 
+>   	/* Allocate PATH_MAX bytes. */
+> -	de = __getname();
+> +	de = kmem_cache_zalloc(names_cachep, GFP_KERNEL);
+>   	if (!de)
+>   		return -ENOMEM;
+> 
+> --
+> 2.39.5
+> 
+
 
