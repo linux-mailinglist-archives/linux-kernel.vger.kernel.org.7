@@ -1,222 +1,231 @@
-Return-Path: <linux-kernel+bounces-887983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275E5C39822
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:06:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A551C39858
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D569E3B91FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:06:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 301204FBBAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F943002B4;
-	Thu,  6 Nov 2025 08:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D113009E7;
+	Thu,  6 Nov 2025 08:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="le4SFKMY"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LXCqa2GV"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012036.outbound.protection.outlook.com [40.93.195.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC91C2FFFAE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 08:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762416391; cv=none; b=c54eA1YBMuRnId28RJI8HU60PQkCRuNJcu3lSVdmxoRETgAhcOyNDstPBmP67I7GRo2IGh5kvsdR9G5KeO8JyS/3EzAm99cM9uGkM3MXaDMZHAPdHI6dGUiR1FOAGxA3WSRRg941OAgitZhnsOCDeJYcaVUNDc5ejfIJcC6vVCw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762416391; c=relaxed/simple;
-	bh=Xcq1VO07bvbJD0WWhR55au0q8U3Q2bG4+2h9wG9ZHY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RoPqvSB+aWcHRQ7Y18p5LL1OcnR+59rTznb9SbTA1HvxqXClDMkcrUmtxhZTX+5WNKfnby65FxKT+63Mq4LqdSK5a5ugMRxlKZu97tuvLdrmrI58L9TE2vCTyf3KZFQC2/ovz1oLvfJTrW6lZ2KNQkr45QJYJTfWyHkFpsacUa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=le4SFKMY; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A60a2XZ029885;
-	Thu, 6 Nov 2025 08:06:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=GcPVE+
-	Bt0+691uanTzZ6AQR9EtD6ext5gTgu22ByQss=; b=le4SFKMYUHe6bZ4xlQIWBV
-	GoQctNNUEBo/5wfoQ5fLrVWSqdwjKXbtdc7PhKxHc0ODtYE2Zx1uADCbmCku9had
-	Httn+m08SVwXafg8Y83cQuryNT/br+KsdNtiKReb0WRRJDt54oYtLtyfe8Sj01mc
-	9n5ApVUEsheA4rYEayj5KpMEaRIgX6fzN0IMzuHzEbmSa14ItiXNg72SOHVM/FTg
-	4nyfSgghIRlRfXs18wHxWCoBoYS0qYXjeyOhF6wwMpLI99Ol3g2S+GY/IVQQUqDH
-	L9qp8RxJv/mSRxIpVpGbKfWtFvTQ9rJHw7uVyC+ADQp+Nbo+Fgy3hmSITbUwajRA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a57mrd9bd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 08:06:16 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A67lGCL009855;
-	Thu, 6 Nov 2025 08:06:16 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5x1kmapm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 08:06:16 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A686Ele31261202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Nov 2025 08:06:14 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 85A7D58056;
-	Thu,  6 Nov 2025 08:06:14 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 990DD58052;
-	Thu,  6 Nov 2025 08:06:12 +0000 (GMT)
-Received: from [9.98.109.80] (unknown [9.98.109.80])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  6 Nov 2025 08:06:12 +0000 (GMT)
-Message-ID: <55249262-e8aa-40a7-8784-1c883d0b0c30@linux.ibm.com>
-Date: Thu, 6 Nov 2025 13:36:11 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DCF3002B0;
+	Thu,  6 Nov 2025 08:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762416402; cv=fail; b=op1bL/+tj+EjxAJee9DxPVHXy4HmLlhYEfP+A+femsobvXkdGz3P2Mcw2L1etFgdRDz9z37rESd5SdxB5hYx6ud2Oj+DgUOFBsWfi4Hxm0ceGJ6Jwe6DJR7LUo1Aelh4yr3DWuJTLXvGZwAwC3Ua1ssVqn2X0n5VNGP7+NpyMLs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762416402; c=relaxed/simple;
+	bh=3dX+0/8aeUqGzjHWFpExsmJl/UKgZcfYmaqDl+96iPA=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mC3/fObxBDxLkJ8Ld0QBBq8xa54iG3JEgl5Brmb4gqBVpJt79Ud6gAW7ktPKym65LIWKhmIxxMlIi2MppeyCz812+9PYpdBvMazU4wt6GAYeNG7VHy1ZCnxKjusYSe6gKBggUf0g/LP9O1H0WBOA22ETBE5IlG2LiIsOZAe2SXo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LXCqa2GV; arc=fail smtp.client-ip=40.93.195.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AkCHS6cLcBPnSrCG8+KNRPnqfgCbrnFH6V1GpQyGZGQWSgjya4Ld9fx2scAu9q5cUfAt1i2kYZTw+Wu7IUwVqzV+M+pLd3/W/46jRCxzqgeD0/M7AvRVi8kqqqkz15Ma9aPnWuRoy2kXVDq/ZuCIs2a2dmXnzFpFyVN2ruTfwW6p9PgKOpy7Rd1yNQPI/01e+hNO6sG1v8QPQnwADsTKSa39d1h+y3ApAwKIQtnMA7ztT3adhtgaqAwvsOtwfuTsTwGmzoGK7LxqQ6tbBpCucCunKvUP2Iy5vhBN6e74ie75ZMYrK3prIQoK4s5IjdVsgI55o9c47UUV/+CGO6cssQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6Ns0IbJsN8dNXv49T8Jz4FvPENdWfWxCOkDv9+iMmxY=;
+ b=xz1/F4hwJOasX47MPBL3bMsWQXLHnkgOmYS8EQbgppkYgljvBsQFuCRbJFizoh0uHnqhKCMAhHfWjE3Qv4NeunyADJctMpeEDBIxD4c5UaZNFYDWrCA1cOlCh33PwHHA0y6bvhYkSDLkyazUaCr57UHooFB4ClBj2QVmYZx7pwJsX2dwbThoCA+emhWztB29Mhy3r5QfFCHbOn88zln39ND/ylY3G1hXojhAXdFcvPK8ETYgg+OLykuXJjDxYNdlECa9NSd+acvNx9Ked8YO7yEn3/kSRImtInkP+X30NFMxC5QEv8ckLqlpbPACF95QuDzwI4CzeJnNXh2vpQEB6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Ns0IbJsN8dNXv49T8Jz4FvPENdWfWxCOkDv9+iMmxY=;
+ b=LXCqa2GVOs6TmmVLc1eNziCqZ4PJswOEOKDw31GNZYwl3ZlCvtcr8FDUPt7bUr3cWnDJ3goBBp4LH5vScXjn7CEsUfzt1/IKSc516mhjf5okIMX+c+RM/YSeOlV2RDmk4BEM6+7E/za5Csojb0GN3XaF5PwSDVs+HvdNd3SYpt2zVhpkTgHp8y0ffGn77icgCUBtq+f/kKQJLCRShUOIB9Xfq7yAN8okCaJvMV3hcC8d48LDgQYtcelegavJKddNkj2WWuwph5QJSE4WsIx5xbECQtbUbfgCkNOFXSw4bikDUo81LWiN85bfGhmKZtYXthIPOeQV7XkXtxcJ/hR21Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN0PR12MB5716.namprd12.prod.outlook.com (2603:10b6:208:373::14)
+ by SA1PR12MB7222.namprd12.prod.outlook.com (2603:10b6:806:2bf::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.10; Thu, 6 Nov
+ 2025 08:06:37 +0000
+Received: from MN0PR12MB5716.namprd12.prod.outlook.com
+ ([fe80::1770:161a:675f:7861]) by MN0PR12MB5716.namprd12.prod.outlook.com
+ ([fe80::1770:161a:675f:7861%3]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
+ 08:06:36 +0000
+Message-ID: <75cb233c-8089-4da7-b7c1-1b229e2b5931@nvidia.com>
+Date: Thu, 6 Nov 2025 13:36:13 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] i2c: tegra: Add logic to support different register
+ offsets
+To: Jon Hunter <jonathanh@nvidia.com>, akhilrajeev@nvidia.com,
+ andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
+ digetx@gmail.com, smangipudi@nvidia.com, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251001153648.667036-1-kkartik@nvidia.com>
+ <20251001153648.667036-2-kkartik@nvidia.com>
+ <4b121269-1efe-4741-b67f-42346b6c5c88@nvidia.com>
+Content-Language: en-US
+From: Kartik Rajput <kkartik@nvidia.com>
+In-Reply-To: <4b121269-1efe-4741-b67f-42346b6c5c88@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA5PR01CA0018.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:177::7) To DM4PR12MB5721.namprd12.prod.outlook.com
+ (2603:10b6:8:5c::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline] Kernel OOPs while running powerpc/mce/ selftest
-Content-Language: en-GB
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Ganesh Goudar <ganeshgr@linux.ibm.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>
-References: <4b107285-57d7-482d-9fdf-8499e5fdbebb@linux.ibm.com>
- <18dd8200-6a8c-449e-9fb8-56874342defb@csgroup.eu>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <18dd8200-6a8c-449e-9fb8-56874342defb@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: VNI9_mDa694wphE-RXidgrZv-Shg1cmI
-X-Authority-Analysis: v=2.4 cv=MKhtWcZl c=1 sm=1 tr=0 ts=690c56f9 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=FSTmDItLWoQog4XJFnAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: VNI9_mDa694wphE-RXidgrZv-Shg1cmI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwMSBTYWx0ZWRfXyMLkV1cliQGd
- kKY9gV8OrwL8vVuxCSE472awj694wkzSELIoZtvo/OA5/VQpwbldyt82jZd2e1qoQRfnQORJRC6
- qKGqe712rB8rOu8ASnLMB62imDpIZD3Ec9ID8ActZW0/qhm01Hd1Z+B2Kg++89i6n1wgNZQkNL+
- 1NsXmYP7yj95/WuAaATAxLQx5FsoMPdH7SkU34kRT+eROBVPVrSDnjQLrAEvrNRyc+zVfJqhzFJ
- CtRxHZ7fiH+uYsJ4v+bgu69lS0JANqEiAxri9PGpOZ7DO/EX+rVhhquVa3Z+MKj8MGRVZV9Kd+P
- yj/Y8mIkNtuU6LNHZL7LlKlBxlF7qrVEUGjuVTbnUY2uKneVimp/QWRAR7Noyu+CTZFP5E0/D12
- jLIM2GOP40NJ3pKCevI5VHkVUYfHzA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010001
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB5716:EE_|SA1PR12MB7222:EE_
+X-MS-Office365-Filtering-Correlation-Id: f16a58e7-046d-4927-64ec-08de1d0b67a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MStGS05FQzdjSklKblI2V1pzRmRPVm9kajJ0VWFpandTQjhsd0RlaTg5WkJJ?=
+ =?utf-8?B?bXl3MlRXc2MvTjR3dkVWREdtUEUzRnJRdG9kcGZFS2l3eGxLQ3hoQ0hsTW52?=
+ =?utf-8?B?OVRKYlNiVmRlclVjWXhpZE9IdTF3TWlJQkpBYnVaSnNsZy9CS2hkUUg1dTNy?=
+ =?utf-8?B?UDRWMkV1MlAvMkMrQnBaZ0tMMGxNMEk3dThqZkp5d3FWZG53cEpmMlBXTndZ?=
+ =?utf-8?B?eVk0UFNXOUducUJ0SzFPbTBKdnozVTZlMDBJTGg2T0lsR2NTeXV2WGZlYzJZ?=
+ =?utf-8?B?TW9BNGVFa2lQMVJwTEMyZDU3dlYzamVMb2dpNkhhbFVnQ2g4V2pQaU5ZeS9p?=
+ =?utf-8?B?a1pnSnlEdFBtWWIxbnpJdkJucm9VTnhUS25Yc3FpQXI3ZytETFlBR2M3WDhV?=
+ =?utf-8?B?TVo5Rk16ZTkzTnU0MmI1SWc0T1ZUQTJWaS9ReDZBRjJQSGpqa3hCN1h4SDVp?=
+ =?utf-8?B?amlaZDlOVHM5SlRGdXRzNmtJWGo5VzFpd3Buc1Q5akROeWxsODZmTURXQjA2?=
+ =?utf-8?B?eU9QVDJhcWw3aFBXTFZqMU13V212MGFLT0MwdEVvMzZxS2krM3V0QWpwd1Bk?=
+ =?utf-8?B?dXljc2crQkwvQ2VScjlJU2V3c3NBM0ZZN1NuRjFCa0NCNmtCR0JrdlVxZHlK?=
+ =?utf-8?B?dVVCRGgxSkdiODdjQVFLOWRsSkpRSFRGNC8yTTQ1anB3SFg1WnNFVGZLbU1R?=
+ =?utf-8?B?dU5GRU5jcUhxVDB5RjlKV01zUnh3WVR2eHB3bkwwQTZNZDRVTjFNcFdTUXo2?=
+ =?utf-8?B?cVMwMkdRN3ZEeWxxck01WHV3Ri9HbkVnOEtHRkE2dFgwNlNzV1FRVXBRMjly?=
+ =?utf-8?B?Vm9tb0tlU1ZJdXV1eTVjYlp6VFNicUFpYVo2djhtN0xENmY0bk9Wano4c0lo?=
+ =?utf-8?B?cXloRGdSRmhkZGRTUUJSVmljaXFVTDNOdDFsYXVlZEIrd09ZdVBsQ2RKczF1?=
+ =?utf-8?B?YkE5c21Cazc4TWFKSnk5VStkTVVJblVkY1BxUHRXNEdSM0ZKR2MzRkg2MXow?=
+ =?utf-8?B?STMvUS81eGM2WS9OOUt4Tk1GUDMyQ2p6L2l2aDZiK2R6UkxwZHNOZkxwajRt?=
+ =?utf-8?B?czR3djdmUURCWXlnS1kxRStGeDhTRnpWcVFZWk92ZTQzU1prdHBZZ2Y1Rnk2?=
+ =?utf-8?B?a05wd3dTdzNoZkcyL1k2bmNZdE5kVE9QaE9NREJlNUtpQXJjbHZzN2h1RWc1?=
+ =?utf-8?B?SXFvVTFzRVNjN0NoYkJpNENXUjJUVjFnYmcwVlpCRzdEK3Z0YTF3ZEJ2cXJl?=
+ =?utf-8?B?ZloyOUhCdzFjUTA5UlBpL0N2Z0lCd3UrSjZkNGVtOWFoeWpjSmFBazJaRlZu?=
+ =?utf-8?B?OTkvWjNrb1lFV1ErSWdkSktHM0NEQkhrdjR4RG1sZ1FpNHhBbW45dzFMeGla?=
+ =?utf-8?B?NFdHc0grOXhhaW9VaGZYTHdFaXV5N21BRTFrSzJUVE9wZ0hYR3daZVNreFps?=
+ =?utf-8?B?Nko4OGpQRExSVTNWS01XVE5LT3BURE55a3dTQTAzWmd5bWh1NW9yZitnZ2ZQ?=
+ =?utf-8?B?MSs3VU95ei9mbGZ2VzlhL0hHZTdzRmRBUm9UTjN1RFpOdUhrL3JzZUZYVnlK?=
+ =?utf-8?B?c1M5WjNZTkRRUEdqNDAzVWhEalcwMGhBQjY2UWhvUks1ekJFemtTZE00TFIr?=
+ =?utf-8?B?VnRRQXJYYUtrL1IzV3pTdEpGSGJHc3JKZDIzSXlNczhrVEwxZE1JUmErWVBp?=
+ =?utf-8?B?ZndVUjB0MEFUU2Z6cDFPaG1wZ1psQkw2VTgxRXowaU5wV0poRWlVRHNpV01r?=
+ =?utf-8?B?dVhlNmh2Uzh6d3NJUlAranNUUkVxTERSaUt2aDBzd2wyRTJQNUVlTU9oV3U1?=
+ =?utf-8?B?dUdsYk1nZGVRR2JVTWVwcEtnWEFqaXJxK1NjR3NDQWVuYkNWdGdsNCtzejRR?=
+ =?utf-8?B?Uk1ISXBaRS9VZ21PY25hRVluLzBwdVFFdGUyNmdSR3N5TVNJMUU5ZVJKd1Z4?=
+ =?utf-8?B?WDBqdXpWa2s0bXp5a0xBb0hzcXBYL1JuODdiYWZpdmpSaEVwSGFpcGlaZTZT?=
+ =?utf-8?Q?2CCg7IPxkIlhfaDwi+zvnjFUzoq4Yo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5716.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TUNscVkxaldFMWRKOWp5YVpncDZGUTk4cDJiTXZmRC92N1M0eDh3U05KUllG?=
+ =?utf-8?B?NWtRRjZyUkRSaWhpVUFyYXpPSllvTERVdHZtZERWRWUySFV0NXpSc3hpNHFR?=
+ =?utf-8?B?QlV3T0NkV3dvanFYNms2SW9YblhZb2VOVUV1c2k3Z3ZZY1lBYmJ5ZjdtQ1pX?=
+ =?utf-8?B?R09nRm9vbGFpTm4yNWorQ2VEWUxUOG9uVmhxVXF0Y25yY2hJQTlCY285Q1B2?=
+ =?utf-8?B?TjAxUjhEdVo1NWFidjQ4UEJMaWowcmdvNGJhU3dFSFhRcTVVdFlsLy8wazhK?=
+ =?utf-8?B?TExzRnV5Tk9QZVEzK05LOHV1ME9DSlI2RW9hRjJmYklMSlY5clNjZjlMQXlE?=
+ =?utf-8?B?RUxJNUNuOGs0ZTJ0c3hsbmw1em9GeTcwN3JYa3IxOENid0RVOVNJMUhIZnhM?=
+ =?utf-8?B?WE01L0RSaTFVaG5VQmpjY2RobUxFUTNYbEJsT3ZlbFlqQ2VGNnhKdkQzd2lL?=
+ =?utf-8?B?dVRDVzhLMXlBVG4yd2plVFg1bkVlWTZUREpTcHVlemtIb3JyVVhMZFI2ZFA4?=
+ =?utf-8?B?c0tkZ0FnRW5QTnVmYW9JcVpTUC9ZVElXY08rRVZvazJDV0YzTDhZdzM1aWEz?=
+ =?utf-8?B?bzNZRzgyR3pSakpQcDE1NkR3bUY0S09lVDJmZDlMTm1ZelljV0lGV0VIZVNM?=
+ =?utf-8?B?Z0x5bWx0RkRLd0x6MTdCMEgxMlpkYkptZGU0dXBmdFhnYlBnN01URDB3THlP?=
+ =?utf-8?B?Qm85elJ0TEhMdnZ0czBUakxybDdGd0RRenhmcXlwMkprYU94Yjd0UW5GcG9W?=
+ =?utf-8?B?b0p1akFOK205YlIyMzcxQXZqMGRSS2VHTUg0aG1yaEpxWG5Yb2svV0JjdHkv?=
+ =?utf-8?B?cEhYSzFCNWgvZ0hTUmhFMGM3WVZtaEVlTy9PVTYzZE1oSFkvU1FKNm9WbHQv?=
+ =?utf-8?B?c3BLOXUwS1RCaFdkaWJ6SWo2YkdDYUw2Y0U2NmYva0oyYUR5OUNHbG13SW9N?=
+ =?utf-8?B?Uis2YTRRbS9VREpUanBDQXFsZC9IcTdsdm9nUHVTQlVnQ0k3U094T2RRaC83?=
+ =?utf-8?B?dHZRaE9mREw3cld1Nnc5bGhuUzE3dWs4bUR4M1owMmFGWkQ3QzRsU2U1c3BM?=
+ =?utf-8?B?bVpDUjNiL01TUmV6cSsvQTZ4NkkwSjJXWFcxYzVsMHlzU3V2MzhFYU1TRis2?=
+ =?utf-8?B?Q3dhQnptK0ZyVkUvMzFHaDFXYTdPc0FzWVFRRFc5V0tMWG1FWmh5eDhpWnVI?=
+ =?utf-8?B?ZVdGSWpxNVByT3lpZlVLQ2VWKzNUS1VJVFBtQ3g3djlqNXVlNjdlRDExQ3NZ?=
+ =?utf-8?B?VzAxck9BU1RUQ0VQSHJYZXd1SXRqSXpqSVZUV21QbEhFWThmbHZZOTFzeVAx?=
+ =?utf-8?B?UHU2OFRoa29IdlgvR0wybC95RXVBSGJhUDYzeVVHMUdILzhrRTRxMFhjQ3lN?=
+ =?utf-8?B?bHRsNEpKd3FPYndYdnEycG52RWVUK1ZHQWhtZGlZaWRHT3FNQzA5TkJqS1FQ?=
+ =?utf-8?B?RFhuNTZlVXlzaEFWWXdhL21oaEZUdDF1YWZiTEVKWjZrNXE1MG9NS001TVFm?=
+ =?utf-8?B?RytDY2dOYzRBSnJSYkh3WXdLRVZSb2xjV2xkNEplbXRFTFRNS2hWZTQ1OHdC?=
+ =?utf-8?B?MjJ4OW8vZmFqNEg1Tm5KK2EvUElsMjZKVlIrREdwSUxXalJjOTNkMGR4NGNQ?=
+ =?utf-8?B?b2tKTThnNDQreU1LRVY3a1VHMnZRN0FnWGFBN2JCSHNFTkZjSzRwQ2xZbktr?=
+ =?utf-8?B?WkxCbDVEVmxIYjh2UFBJMW1VSzdxY2hzL3ZUWkY3QjNaVkJ0VmdHYkVVVmJi?=
+ =?utf-8?B?bEVSMjV1dFVEaXlhQVN2Q2N1WGV1MkE4aVZ0Vm1KL3FMUXY3NEltR0VndHps?=
+ =?utf-8?B?RWVlNjhhVjZlSDlJVUdwQThHNnJkMWF2aVFuV3ZIK1lUK0NaazlDN3dURGRl?=
+ =?utf-8?B?WnJZbEZCUVlmVS9pWGNmRHJNeG5YMHZ6QkJzWnlpUDNjYVhVeTIzRWFCdlla?=
+ =?utf-8?B?YXhTc2FOdVNIUGtSeUdYZXRKcGx6Rlpad1ZuSFJ0MnY2NkVVTFNzSkRyS1cv?=
+ =?utf-8?B?V1ZOTHU5eVRESVdoUnQyb2RrbElaSzg1cm9NTmtKOGUxL1RnLzM5TWRnK3Ex?=
+ =?utf-8?B?YlNMckh2MHBqZm5RSDFRVlBRWTBDSnl2OWRiMERFckFSQUF5aFF4ekNNTG9B?=
+ =?utf-8?Q?U/mS6ECtTtOXp+eTCxEe0bOEc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f16a58e7-046d-4927-64ec-08de1d0b67a9
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5721.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 08:06:36.5467
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zAQPjr40xEdy4I0vMCQ+gIcsD7nk1Ume0HlMwUfxY7Ghz24900ffkIiK7SKseBnzpyWbisW2nxEqBhjYOvLuuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7222
 
-
-On 05/11/25 7:15 pm, Christophe Leroy wrote:
->
->
-> Le 23/10/2025 à 06:54, Venkat Rao Bagalkote a écrit :
->> Greetings!!!
+On 06/11/25 13:29, Jon Hunter wrote:
+> 
+> On 01/10/2025 16:36, Kartik Rajput wrote:
+>> Tegra410 use different offsets for existing I2C registers, update
+>> the logic to use appropriate offsets per SoC.
 >>
+>> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+>> ---
+>>   drivers/i2c/busses/i2c-tegra.c | 499 ++++++++++++++++++++++-----------
+>>   1 file changed, 334 insertions(+), 165 deletions(-)
 >>
->> IBM CI has reported a kernel crash while running mce selftests on 
->> mainline kernel, from tools/testing/selftests/powerpc/mce/.
->>
->>
->> This issue is hit when CONFIG_KASAN is enabled. If its disabled, test 
->> passes.
->>
->>
->> Traces:
->>
->>
->> [ 8041.225432] BUG: Unable to handle kernel data access on read at 
->> 0xc00e0001a1ad6103
->> [ 8041.225453] Faulting instruction address: 0xc0000000008c54d8
->> [ 8041.225461] Oops: Kernel access of bad area, sig: 11 [#1]
->> [ 8041.225467] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
->> [ 8041.225475] Modules linked in: nft_fib_inet nft_fib_ipv4 
->> nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 
->> nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack bonding tls 
->> nf_defrag_ipv6 nf_defrag_ipv4 rfkill ip_set nf_tables nfnetlink 
->> pseries_rng vmx_crypto dax_pmem fuse ext4 crc16 mbcache jbd2 nd_pmem 
->> papr_scm sd_mod libnvdimm sg ibmvscsi ibmveth scsi_transport_srp 
->> pseries_wdt
->> [ 8041.225558] CPU: 17 UID: 0 PID: 877869 Comm: inject-ra-err Kdump: 
->> loaded Not tainted 6.18.0-rc2+ #1 VOLUNTARY
->> [ 8041.225569] Hardware name: IBM,9080-HEX Power11 (architected) 
->> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
->> [ 8041.225576] NIP:  c0000000008c54d8 LR: c00000000004e464 CTR: 
->> 0000000000000000
->> [ 8041.225583] REGS: c0000000fff778d0 TRAP: 0300   Not tainted 
->> (6.18.0- rc2+)
->> [ 8041.225590] MSR:  8000000000001003 <SF,ME,RI,LE>  CR: 48002828  
->> XER: 00000000
->> [ 8041.225607] CFAR: c00000000004e460 DAR: c00e0001a1ad6103 DSISR: 
->> 40000000 IRQMASK: 3
->> [ 8041.225607] GPR00: c0000000019d0598 c0000000fff77b70 
->> c00000000244a400 c000000d0d6b0818
->> [ 8041.225607] GPR04: 0000000000004d43 0000000000000008 
->> c00000000004e464 004d424900000000
->> [ 8041.225607] GPR08: 0000000000000001 18000001a1ad6103 
->> a80e000000000000 0000000003000048
->> [ 8041.225607] GPR12: 0000000000000000 c000000d0ddf3300 
->> 0000000000000000 0000000000000000
->> [ 8041.225607] GPR16: 0000000000000000 0000000000000000 
->> 0000000000000000 0000000000000000
->> [ 8041.225607] GPR20: 0000000000000000 0000000000000000 
->> 0000000000000000 0000000000000000
->> [ 8041.225607] GPR24: 0000000000000000 0000000000000000 
->> 0000000000000000 0000000000000000
->> [ 8041.225607] GPR28: c000000d0d6b0888 c000000d0d6b0800 
->> 0000000000004d43 c000000d0d6b0818
->> [ 8041.225701] NIP [c0000000008c54d8] __asan_load2+0x54/0xd8
->> [ 8041.225712] LR [c00000000004e464] pseries_errorlog_id+0x20/0x3c
->> [ 8041.225722] Call Trace:
->> [ 8041.225726] [c0000000fff77b90] [c0000000001f8748] 
->> fwnmi_get_errinfo+0xd4/0x104
->> [ 8041.225738] [c0000000fff77bc0] [c0000000019d0598] 
->> get_pseries_errorlog+0xa8/0x110
->> [ 8041.225750] [c0000000fff77c00] [c0000000001f8f68] 
->> pseries_machine_check_realmode+0x11c/0x214
->> [ 8041.225762] [c0000000fff77ce0] [c000000000049ca4] 
->> machine_check_early+0x74/0xc0
->> [ 8041.225771] [c0000000fff77d30] [c0000000000084a4] 
->> machine_check_early_common+0x1b4/0x2c0
->
-> Is it a new problem or has it always been there ?
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>> index 038809264526..1e26d67cbd30 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+> 
+> ...
+> 
+>>   /*
+>>    * msg_end_type: The bus control which needs to be sent at end of transfer.
+>>    * @MSG_END_STOP: Send stop pulse.
+>> @@ -219,6 +322,9 @@ enum msg_end_type {
+>>    *        timing settings.
+>>    * @has_hs_mode_support: Has support for high speed (HS) mode transfers.
+>>    * @has_mutex: Has mutex register for mutual exclusion with other firmwares or VMs.
+>> + * @is_dvc: This instance represents the DVC I2C controller variant.
+>> + * @is_vi: This instance represents the VI I2C controller variant.
+>> + * @regs: Register offsets for the specific SoC variant.
+>>    */
+>>   struct tegra_i2c_hw_feature {
+>>       bool has_continue_xfer_support;
+>> @@ -247,6 +353,9 @@ struct tegra_i2c_hw_feature {
+>>       bool has_interface_timing_reg;
+>>       bool has_hs_mode_support;
+>>       bool has_mutex;
+>> +    bool is_dvc;
+>> +    bool is_vi;
+>> +    const struct tegra_i2c_regs *regs;
+>>   };
+> 
+> 
+> I think it could be better to have a 'variant' flag for these is_dvc and is_vi variables because they are mutually exclusive.
+> 
+> Jon
+> 
 
+Ack, I will use a flag for 'is_dvc' and 'is_vi' in the next version.
 
-Its not a new problem. I have enabled KASAN recently in the config, and 
-then I started seeing this issue.
-
-I have tested on 6.17, 6.16 and 6.15 kernels and issues is there all along.
-
-
-Regards,
-
-Venkat.
-
->
-> The problem is because KASAN is not compatible with realmode (MMU 
-> translation is OFF).
->
-> pseries_machine_check_realmode() is located in 
-> arch/powerpc/platforms/pseries/ras.c built with KASAN_SANITIZE_ras.o := n
->
-> But pseries_machine_check_realmode() calls mce_handle_error() which 
-> calls get_pseries_errorlog().
->
-> get_pseries_errorlog() is in arch/powerpc/kernel/rtas.c which is _not_ 
-> built with KASAN_SANITIZE disabled hence the Oops.
->
-> Unrelated, but it looks like there is also a problem with commit 
-> cc15ff327569 ("powerpc/mce: Avoid using irq_work_queue() in 
-> realmode"), which removed the re-enabling of translation but left the 
-> call to mce_handle_err_virtmode().
->
-> Christophe
->
+Thanks,
+Kartik
 
