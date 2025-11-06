@@ -1,100 +1,153 @@
-Return-Path: <linux-kernel+bounces-887788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1E9C39172
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 05:25:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AECAC39181
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 05:28:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 001714E494D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 04:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F8F33B9B76
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 04:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5A72C21DC;
-	Thu,  6 Nov 2025 04:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33A4245006;
+	Thu,  6 Nov 2025 04:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OZmlPCxL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MmVMRwYn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE155245006;
-	Thu,  6 Nov 2025 04:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97A12C11CF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 04:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762403094; cv=none; b=Wo3WgMda38vH3l95vGVcB2gRp5cDka9rfwnlH603QRB/bGftSs5SPf9FlCIULXGeRw6EQmLhMCNB9EhwGXW69uxA46xiQoF+3a0po0u/pt87gKIX2nW/045+JE6E59UsArQLlogFC3BBVW8bcWyKNvzeGf7XOZoTu3tKIhuP/9I=
+	t=1762403279; cv=none; b=NIFGf6bn6CYwux4ztwHQRQeez51+lVf6+wsW0TT2cCKEu7A35q4aJO45CTQpTXAdaxK7gZ3NZIwob1I29TavwmQG69MKOfPiSiPsz5zl9znzVqcV+JYC/zjAiZDZk/Y7WxTpTZp5hLkCzJYZB98XnjUEYbanltWdu5VEr1vWak4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762403094; c=relaxed/simple;
-	bh=h8YUZFyKOsq6k/ExnTuHpNMS76dAqK3eRmXgNmKkbkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oIuFe2FPLw5D7C6ALrFjLh2wch+l0W4sx6Ls9T9pYyzSXkYulKyVVNf8Ifbp4XVuI5QVmKtnOHbS3mgFJWQfX8xdEHpBotwwzt/BljAH0XK4UlilUH8ow1WcJGkGZKfSjry0ApH1NMk1Zj/TqGx6yHBaZntp1U9Dg8DKztMpMlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OZmlPCxL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762403089;
-	bh=jScILRVhE2oDsSJy38UFQR8/CAbeoy127HkXyX2Nouk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OZmlPCxLUOBBm/H7RywoNxtiqNik6GOEN4QB+V0GbRcnVuqmrds2L8uyjo3/t8lBO
-	 PHWkcgvtnWbOhFpuDJ5cBGyl4KgAIH0ybF9o2wC2I2VHJndCM1+hU2gJ6evDLhADPQ
-	 koBLQ1N+r9X+Hlyd0OaBWFzG4BMpdC5hRmOgqE9uibUyg21zXsLmZtVcMBAFDA1HFI
-	 FO9FXtTa0D3KymvcxNTti/M5hYvnVajG/A4V7mSJLlRHAtNLWlAPTR114UyXrmBrI3
-	 4BwqkVHlOn6LilPIypqfBW2vEcNzh4L/tTFf4TixKYJd5Ze/JkuA9OxZ88XTb41sfL
-	 TEr7otc/H3FAw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1762403279; c=relaxed/simple;
+	bh=uT2zzEe6rtu8oBGdqI7+U9ippLJiZCCOdHqn6R2mDbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SO+tilQUIsVoW8Umn5JD39BrbAUYI618lr4MP5l0wuL2YkD0SkdFW1Z7zk49xjzIDrU4EhI6egsabZQKsJ22G0NNnH3LSevU5B3+YBdOX33LcJcxZJ09XPDm1rlUmf67EyE9v329n1EiaC/e2a4IPF71ff8+qxYXDJIX1GMA70I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MmVMRwYn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762403276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x9Vfrw1KRujThrbFg2bU5JBZHEnXRsqM1wEXeXjFpQE=;
+	b=MmVMRwYn4FZQUOew3Fct8GZYZxSZuq1OqOJVJ9MqLAEjxq+7Z9NnXfKr8uwTXu+BvzFqaU
+	vsOYUHdYE1/fHHodOw8LDuhNofUgl4oVHAVUAUGmJ6Vna/j288XygX8UJbgUpsI/OWDMwx
+	RuSth1LUF9K0Z7ZCLuldb49QJAkhIB0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-nPUykFD6Mc-VsMw55TC4qg-1; Wed,
+ 05 Nov 2025 23:27:53 -0500
+X-MC-Unique: nPUykFD6Mc-VsMw55TC4qg-1
+X-Mimecast-MFC-AGG-ID: nPUykFD6Mc-VsMw55TC4qg_1762403272
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d28H46khnz4wM2;
-	Thu, 06 Nov 2025 15:24:48 +1100 (AEDT)
-Date: Thu, 6 Nov 2025 15:24:48 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Matt Coster <matt.coster@imgtec.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning in Linus' tree
-Message-ID: <20251106152448.453b53ad@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D22411955F3E;
+	Thu,  6 Nov 2025 04:27:51 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.24])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25BC5180049F;
+	Thu,  6 Nov 2025 04:27:47 +0000 (UTC)
+Date: Thu, 6 Nov 2025 12:27:42 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] ublk: use rq_for_each_bvec() for user copy
+Message-ID: <aQwjvu-bFZRT-8Ol@fedora>
+References: <20251105202823.2198194-1-csander@purestorage.com>
+ <20251105202823.2198194-3-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8rCGGy8QP4MJA3/8nfOh+FV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105202823.2198194-3-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
---Sig_/8rCGGy8QP4MJA3/8nfOh+FV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 05, 2025 at 01:28:23PM -0700, Caleb Sander Mateos wrote:
+> ublk_advance_io_iter() and ublk_copy_io_pages() currently open-code the
+> iteration over request's bvecs. Switch to the rq_for_each_bvec() macro
+> provided by blk-mq to avoid reaching into the bio internals and simplify
+> the code. Unlike bio_iter_iovec(), rq_for_each_bvec() can return
+> multi-page bvecs. So switch from copy_{to,from}_iter() to
+> copy_page_{to,from}_iter() to map and copy each page in the bvec.
+> 
+> Suggested-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>  drivers/block/ublk_drv.c | 78 ++++++++++++----------------------------
+>  1 file changed, 23 insertions(+), 55 deletions(-)
+> 
+> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> index 40eee3e15a4c..929d40fe0250 100644
+> --- a/drivers/block/ublk_drv.c
+> +++ b/drivers/block/ublk_drv.c
+> @@ -911,81 +911,49 @@ static const struct block_device_operations ub_fops = {
+>  	.open =		ublk_open,
+>  	.free_disk =	ublk_free_disk,
+>  	.report_zones =	ublk_report_zones,
+>  };
+>  
+> -struct ublk_io_iter {
+> -	struct bio *bio;
+> -	struct bvec_iter iter;
+> -};
+> -
+> -/* return how many bytes are copied */
+> -static size_t ublk_copy_io_pages(struct ublk_io_iter *data,
+> -		struct iov_iter *uiter, int dir)
+> +/*
+> + * Copy data between request pages and io_iter, and 'offset'
+> + * is the start point of linear offset of request.
+> + */
+> +static size_t ublk_copy_user_pages(const struct request *req,
+> +		unsigned offset, struct iov_iter *uiter, int dir)
+>  {
+> +	struct req_iterator iter;
+> +	struct bio_vec bv;
+>  	size_t done = 0;
+>  
+> -	for (;;) {
+> -		struct bio_vec bv = bio_iter_iovec(data->bio, data->iter);
+> -		void *bv_buf = bvec_kmap_local(&bv);
+> +	rq_for_each_bvec(bv, req, iter) {
+>  		size_t copied;
+>  
+> +		if (offset >= bv.bv_len) {
+> +			offset -= bv.bv_len;
+> +			continue;
+> +		}
+> +
+> +		bv.bv_offset += offset;
+> +		bv.bv_len -= offset;
+> +		bv.bv_page += bv.bv_offset / PAGE_SIZE;
+> +		bv.bv_offset %= PAGE_SIZE;
 
-Hi all,
+The above two lines are not needed because copy_page_*_iter() handles
+it already.
 
-Today's linux-next build (htmldocs) produced this warning:
+>  		if (dir == ITER_DEST)
+> -			copied = copy_to_iter(bv_buf, bv.bv_len, uiter);
+> +			copied = copy_page_to_iter(
+> +				bv.bv_page, bv.bv_offset, bv.bv_len, uiter);
 
-WARNING: drivers/gpu/drm/imagination/pvr_device.h:339 struct member 'power'=
- not described in 'pvr_device'
+WARN in page_copy_sane() is triggered because copy_page_*_iter() requires 
+all pages belong to one same compound page.
 
-Introduced by commit
+One quick fix is to replace rq_for_each_bvec() with rq_for_each_segment().
 
-  330e76d31697 ("drm/imagination: Add power domain control")
+thanks,
+Ming
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8rCGGy8QP4MJA3/8nfOh+FV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkMIxAACgkQAVBC80lX
-0GwEnAf/QjqhRMCe47+ikiRf5fPTo02ETe/9Tk65L/y4MEXGLmFDm1X0cnLyKGhD
-cuB5tM7JtzYx3z8a8BxApq3RBFXgFCyTxCr4DUCGQVJmUqOE/sVT0idApduXMmww
-XhKFsHPohmqe1H+AsPtJPqufXGK62qiXzlS1BkWOHPbWH2r9SMRYicUc4mGYnD2c
-nNQaB2th/WuDIIKlpXAlybcvYjf6RcRob5B0Ct1OQqA0npZjZZzD6O2WQgLxsfwP
-QCuqUIJ8zXOFFBqVOCGsysvnd/0xdQeka6uxflKtIzQFLg7HTWZUjGNZXUu53lHe
-uLQqDkiuPPcJBiZ1tNeI5XZKG2EolQ==
-=Ztgn
------END PGP SIGNATURE-----
-
---Sig_/8rCGGy8QP4MJA3/8nfOh+FV--
 
