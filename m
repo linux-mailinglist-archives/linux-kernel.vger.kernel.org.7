@@ -1,126 +1,296 @@
-Return-Path: <linux-kernel+bounces-889440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5150C3D8E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:14:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF9CC3D8F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B168D188C844
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:14:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5D0188EEC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796BC30BB9D;
-	Thu,  6 Nov 2025 22:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8099730BF6A;
+	Thu,  6 Nov 2025 22:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qngDrBqK"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F30F30BBB0;
-	Thu,  6 Nov 2025 22:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="DQa171+o"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA393191D3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 22:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762467216; cv=none; b=kvIVYgYQCnknXuCTU4OTcouGwSmQQFbz1Mys82zz7u/eRqw5TsOZF2ER0PXkNdKvI7a1dSPi22QlXjewoMauZ3MSETKmBE89xwdPrgABhDx7/uSGT1CWHPUpTmqTF1vM5pcvTeBIOeN/5YcpCfRA3ckShyy4IVsgHs4uMXfCR8w=
+	t=1762467309; cv=none; b=U7xJn+L1C3SsVDmC5hZ+y+snfp3I7T793go0ptiRiWxLTzP/SdrgqH/sCQgMff0kX62Y9GAHWMXE62cUpdWrqfrM+ctgArlghAAaFq+v8YbMItg7fiqLGTAj3fDuB4BULpFc3BLqAaXHTML8w7dVzD82fI1v9lqxQpSad06vsv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762467216; c=relaxed/simple;
-	bh=1GsE3ZQQUNdKJ93/v6q7dsqth8ASVKYkWHm9x63xlwI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=W9sTLQKsK02TBp8rqwVh6779UXQDM3TIjxLmzL1ewQ2eV2xuJd1hVpP+6o6V21GpAae+BFm4oI5/L/saRN4O50VgoQYW6W3Es+vXtpPh0WIuv3vpv2foPHnm5WBtpUenuz6HplVlvy1uevlJTGckukgCga1ZDB046pvRJoCi8xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qngDrBqK; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1032)
-	id 45B99211CFAF; Thu,  6 Nov 2025 14:13:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 45B99211CFAF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762467215;
-	bh=RmRanQLOp0XTHdqwcRIWaYAnmlFXYk+Veiu4Gf5Xd8I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qngDrBqKN8nTsvpAvV+Ptw/TQfqM7S4wP2eJIfkcLw/3q4astbld1BrDmY8Ifmq4n
-	 dBR/bMP3OgXl+t0wb0qu2Jd2Yltu3r2E9Znai1/GvZ3j8mVyExuML3YrLwdGREq1bX
-	 P7dcHJDYxxmZKlppHfar8ozDuNsb16byeCVCxtU4=
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mhklinux@outlook.com,
-	magnuskulke@linux.microsoft.com
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	longli@microsoft.com,
-	skinsburskii@linux.microsoft.com,
-	prapal@linux.microsoft.com,
-	mrathor@linux.microsoft.com,
-	muislam@microsoft.com,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Subject: [PATCH v2 2/2] mshv: Allow mappings that overlap in uaddr
-Date: Thu,  6 Nov 2025 14:13:31 -0800
-Message-Id: <1762467211-8213-3-git-send-email-nunodasneves@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1762467211-8213-1-git-send-email-nunodasneves@linux.microsoft.com>
-References: <1762467211-8213-1-git-send-email-nunodasneves@linux.microsoft.com>
+	s=arc-20240116; t=1762467309; c=relaxed/simple;
+	bh=HUyJsMoU7vKGcC46di7f4HcprOlRD7DP810v6feRbK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rqz6F9ZLccpAm/i+MPkcf2y8BYeYKLoqEDzbRCqpmfrkRx3YFy9ka5eADpgYtmOFAyWoQR55C4Cpv/4bgL7PIw4BLF0ex0KKlVFBBESQGXMZ/vzqa0V9somY/cLExfxEJR5JJz/IGfGhWUpuGDOXpdbCYlSDdyuyId7wGmzNbwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=DQa171+o; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so188218a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 14:15:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1762467305; x=1763072105; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f81U5/79UyOAGW6VXn6pxFacbUSlx5ZrI8Z3RpSpADo=;
+        b=DQa171+oqiFSwEqXEMz7yD5bNcI0AwFa1dT1I45YMfpbCBVR99nsAXkDzq6kULs9ij
+         IJt+Dcili1OjoVCNpEmEHnXYAvhpWX1YTdQGhUur/pD4dsqwoXa4R30WZnVHhc+dUoaa
+         P59L3LnRzJrDFdi7WBNVViMH2HLFLT9s03otzU3cGAJ6CS8NolO8tMeAoF94IuTaWZou
+         PJ54suuUy7p6CtlNiuCvBRvyGn4Lx0qsTjs9E4u+BpqCWx0Hm7uxx9LTfkDLEK2Tnx50
+         vgUHHA2m+z7FnpJjH7j7zBrYiAyPg3UwDGRtpXl2WZwjyeOXAyNgfJSDIgU89ImtXRWk
+         ZX4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762467305; x=1763072105;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=f81U5/79UyOAGW6VXn6pxFacbUSlx5ZrI8Z3RpSpADo=;
+        b=Nlsz2MNLQtGBssXRglmw8HksPtSg9Ci+1g6GKLfz4tYPgpp7Qwrsktp9Nnc87By63b
+         QyFVz/iZBW1bMXIbB7bkWn3LYZdMF+DqdWZLkz//kS3txgXn59f0ox/+aqGyqOQ9d8BG
+         /23jBBQ21tWsXB+QrFN2ibAjsDQPaRVdlkd7yHLeT67lSf3vzgo1IF1pTv4hKs4w2tIO
+         l7HTY08fGYsVkMec6Gm3/HDwSykt2qZQSMs7GFqqfzdHA0QZwFN0R2ixhOEBdX+DoTRf
+         WiC50OabmSejtuVzs6k76JCIGRF+ZPRAl/XVnRrqPkgCfAJHawyDNC/yNnKktouRlcan
+         TIKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcWzwKxkUA+FtpoUqz5sPyTzmjYMDxhUCVA/cwovvuP5PmomOLMVAcgtzGMoAR2IcAW6JuNsoUrSydxTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyid3eJezeWOxvEeARX0NvmxKHGQuWHshhli18BgFWorPmesuju
+	c8mLP7KUsNyM9uUW1qT+OONmoTwZ9ZFR+UsoK4vbKFvixDRV60oUY279/p1YlwWGiu6Bgv5wnDq
+	uD197gkJ00nznMKRecZb5v+ud81Pp/ajOthxTZrD+iA==
+X-Gm-Gg: ASbGncvcEaQKW1zOVAlncB8D8WnRYbtJsC+sklyiTUk3NLNDzqgLYsGY/RNtjUj4vH2
+	2x0csM3EbL0Yoh/wnGh24DkXy/CI25BpEDUX37pugQACQCf8bjdmbKE7Qu63XOKNJef5bCSc1da
+	HPtka0a0onYINOlDMOL0qI+EXz42vLW3Ts6jb9Y1KQb4yh0ck8w0z99hEgtI5oSdad5L3jqAxLa
+	1yE3gTOX93s6or4T4B8acNua25+TU5gC2hnLzkCMKCOD6bDSGaqEWqujNzkZTcNyvjt
+X-Google-Smtp-Source: AGHT+IFMNxw/R1yQ2ypKv/nek+CS+Dt0g6lco0tSe4JF0aLBw9GdvNDeY3wOMxlums/5C8vWYWYunbR1HZth+5+nSYU=
+X-Received: by 2002:a05:6402:3590:b0:638:74dc:cf78 with SMTP id
+ 4fb4d7f45d1cf-6413f08ef69mr1005608a12.34.1762467305387; Thu, 06 Nov 2025
+ 14:15:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251101142325.1326536-3-pasha.tatashin@soleen.com>
+ <202511061629.e242724-lkp@intel.com> <CA+CK2bCUWuK4fmuz5Us_mS1ByGy5SjaedVEquj1WxN8JUPsJaw@mail.gmail.com>
+In-Reply-To: <CA+CK2bCUWuK4fmuz5Us_mS1ByGy5SjaedVEquj1WxN8JUPsJaw@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 6 Nov 2025 17:14:28 -0500
+X-Gm-Features: AWmQ_bkf90cd7vGfxxwFQfOgh84qLMbCwawCMq5n9jVWpcK7oaXbMt6knSHxPMQ
+Message-ID: <CA+CK2bCSv99byZ-mc8bdoqfbp7qZTS9anky6oh=5ptg=MWPgxA@mail.gmail.com>
+Subject: Re: [PATCH v9 2/9] kho: drop notifiers
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, kexec@lists.infradead.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	brauner@kernel.org, corbet@lwn.net, graf@amazon.com, jgg@ziepe.ca, 
+	linux-kselftest@vger.kernel.org, masahiroy@kernel.org, ojeda@kernel.org, 
+	pratyush@kernel.org, rdunlap@infradead.org, rppt@kernel.org, tj@kernel.org, 
+	yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Magnus Kulke <magnuskulke@linux.microsoft.com>
+On Thu, Nov 6, 2025 at 4:46=E2=80=AFPM Pasha Tatashin <pasha.tatashin@solee=
+n.com> wrote:
+>
+> The bug is in lib/test_kho.c, when KHO is not enabled, it should not
+> run KHO commands, there is a function to test that: kho_is_enabled().
+> So, KHO is disabled and kho_add_subtree() which calles add debugfs
+> entry, and the list is not initialized, because KHO is disabled. The
+> fix is:
 
-Currently the MSHV driver rejects mappings that would overlap in
-userspace.
+Sent it as a patch:
+https://lore.kernel.org/all/20251106220635.2608494-1-pasha.tatashin@soleen.=
+com
 
-Some VMMs require the same memory to be mapped to different parts of
-the guest's address space, and so working around this restriction is
-difficult.
-
-The hypervisor itself doesn't prohibit mappings that overlap in uaddr,
-(really in SPA; system physical addresses), so supporting this in the
-driver doesn't require any extra work: only the checks need to be
-removed.
-
-Since no userspace code until now has been able to overlap regions in
-userspace, relaxing this constraint can't break any existing code.
-
-Signed-off-by: Magnus Kulke <magnuskulke@linux.microsoft.com>
-Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
----
- drivers/hv/mshv_root_main.c | 8 ++------
- include/uapi/linux/mshv.h   | 2 +-
- 2 files changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-index 25a68912a78d..b1821b18fa09 100644
---- a/drivers/hv/mshv_root_main.c
-+++ b/drivers/hv/mshv_root_main.c
-@@ -1220,12 +1220,8 @@ static int mshv_partition_create_region(struct mshv_partition *partition,
- 
- 	/* Reject overlapping regions */
- 	hlist_for_each_entry(rg, &partition->pt_mem_regions, hnode) {
--		u64 rg_size = rg->nr_pages << HV_HYP_PAGE_SHIFT;
--
--		if ((mem->guest_pfn + nr_pages <= rg->start_gfn ||
--		     rg->start_gfn + rg->nr_pages <= mem->guest_pfn) &&
--		    (mem->userspace_addr + mem->size <= rg->start_uaddr ||
--		     rg->start_uaddr + rg_size <= mem->userspace_addr))
-+		if (mem->guest_pfn + nr_pages <= rg->start_gfn ||
-+		    rg->start_gfn + rg->nr_pages <= mem->guest_pfn)
- 			continue;
- 
- 		return -EEXIST;
-diff --git a/include/uapi/linux/mshv.h b/include/uapi/linux/mshv.h
-index 9091946cba23..b10c8d1cb2ad 100644
---- a/include/uapi/linux/mshv.h
-+++ b/include/uapi/linux/mshv.h
-@@ -123,7 +123,7 @@ enum {
-  * @rsvd: MBZ
-  *
-  * Map or unmap a region of userspace memory to Guest Physical Addresses (GPA).
-- * Mappings can't overlap in GPA space or userspace.
-+ * Mappings can't overlap in GPA space.
-  * To unmap, these fields must match an existing mapping.
-  */
- struct mshv_user_mem_region {
--- 
-2.34.1
-
+>
+> diff --git a/lib/test_kho.c b/lib/test_kho.c
+> index 025ea251a186..85b60d87a50a 100644
+> --- a/lib/test_kho.c
+> +++ b/lib/test_kho.c
+> @@ -315,6 +315,9 @@ static int __init kho_test_init(void)
+>         phys_addr_t fdt_phys;
+>         int err;
+>
+> +       if (!kho_is_enabled())
+> +               return 0;
+> +
+>         err =3D kho_retrieve_subtree(KHO_TEST_FDT, &fdt_phys);
+>         if (!err)
+>                 return kho_test_restore(fdt_phys);
+>
+> On Thu, Nov 6, 2025 at 3:41=E2=80=AFAM kernel test robot <oliver.sang@int=
+el.com> wrote:
+> >
+> >
+> >
+> > Hello,
+> >
+> > kernel test robot noticed "WARNING:at_kernel/kexec_handover.c:#kho_add_=
+subtree" on:
+> >
+> > commit: e44a700c561d1e892a8d0829d557e221604a7b93 ("[PATCH v9 2/9] kho: =
+drop notifiers")
+> > url: https://github.com/intel-lab-lkp/linux/commits/Pasha-Tatashin/kho-=
+make-debugfs-interface-optional/20251101-222610
+> > patch link: https://lore.kernel.org/all/20251101142325.1326536-3-pasha.=
+tatashin@soleen.com/
+> > patch subject: [PATCH v9 2/9] kho: drop notifiers
+> >
+> > in testcase: boot
+> >
+> > config: x86_64-randconfig-001-20251015
+> > compiler: gcc-14
+> > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m=
+ 16G
+> >
+> > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> >
+> >
+> > +--------------------------------------------------------+------------+=
+------------+
+> > |                                                        | 93e4b3b2e9 |=
+ e44a700c56 |
+> > +--------------------------------------------------------+------------+=
+------------+
+> > | WARNING:at_kernel/kexec_handover.c:#kho_add_subtree    | 0          |=
+ 8          |
+> > | RIP:kho_add_subtree                                    | 0          |=
+ 8          |
+> > +--------------------------------------------------------+------------+=
+------------+
+> >
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > | Closes: https://lore.kernel.org/oe-lkp/202511061629.e242724-lkp@intel=
+.com
+> >
+> >
+> > [   13.620111][    T1] ------------[ cut here ]------------
+> > [   13.620739][    T1] WARNING: CPU: 1 PID: 1 at kernel/kexec_handover.=
+c:704 kho_add_subtree (kernel/kexec_handover.c:704)
+> > [   13.621665][    T1] Modules linked in:
+> > [   13.622090][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted=
+ 6.18.0-rc3-00211-ge44a700c561d #1 VOLUNTARY
+> > [   13.623073][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, =
+1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > [   13.624054][    T1] RIP: 0010:kho_add_subtree (kernel/kexec_handover=
+.c:704)
+> > [   13.624596][    T1] Code: c7 38 b4 ac 85 31 ed e8 01 1c 00 00 48 c7 =
+c7 70 5a ca 86 85 c0 89 c3 40 0f 95 c5 31 c9 31 d2 89 ee e8 37 b5 0a 00 85 =
+db 74 02 <0f> 0b b9 01 00 00 00 31 d2 89 ee 48 c7 c7 40 5a ca 86 e8 1c b5 0=
+a
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> >    0:   c7 38 b4 ac 85          xbegin 0xffffffff85acb43d,(bad)
+> >    5:   31 ed                   xor    %ebp,%ebp
+> >    7:   e8 01 1c 00 00          call   0x1c0d
+> >    c:   48 c7 c7 70 5a ca 86    mov    $0xffffffff86ca5a70,%rdi
+> >   13:   85 c0                   test   %eax,%eax
+> >   15:   89 c3                   mov    %eax,%ebx
+> >   17:   40 0f 95 c5             setne  %bpl
+> >   1b:   31 c9                   xor    %ecx,%ecx
+> >   1d:   31 d2                   xor    %edx,%edx
+> >   1f:   89 ee                   mov    %ebp,%esi
+> >   21:   e8 37 b5 0a 00          call   0xab55d
+> >   26:   85 db                   test   %ebx,%ebx
+> >   28:   74 02                   je     0x2c
+> >   2a:*  0f 0b                   ud2             <-- trapping instructio=
+n
+> >   2c:   b9 01 00 00 00          mov    $0x1,%ecx
+> >   31:   31 d2                   xor    %edx,%edx
+> >   33:   89 ee                   mov    %ebp,%esi
+> >   35:   48 c7 c7 40 5a ca 86    mov    $0xffffffff86ca5a40,%rdi
+> >   3c:   e8                      .byte 0xe8
+> >   3d:   1c b5                   sbb    $0xb5,%al
+> >   3f:   0a                      .byte 0xa
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >    0:   0f 0b                   ud2
+> >    2:   b9 01 00 00 00          mov    $0x1,%ecx
+> >    7:   31 d2                   xor    %edx,%edx
+> >    9:   89 ee                   mov    %ebp,%esi
+> >    b:   48 c7 c7 40 5a ca 86    mov    $0xffffffff86ca5a40,%rdi
+> >   12:   e8                      .byte 0xe8
+> >   13:   1c b5                   sbb    $0xb5,%al
+> >   15:   0a                      .byte 0xa
+> > [   13.626370][    T1] RSP: 0018:ffffc9000001fca0 EFLAGS: 00010286
+> > [   13.626951][    T1] RAX: dffffc0000000000 RBX: 00000000ffffffff RCX:=
+ 0000000000000000
+> > [   13.627737][    T1] RDX: 1ffffffff0d94b52 RSI: 0000000000000001 RDI:=
+ ffffffff86ca5a90
+> > [   13.628523][    T1] RBP: 0000000000000001 R08: 0000000000000008 R09:=
+ fffffbfff0dfac4c
+> > [   13.629330][    T1] R10: 0000000000000000 R11: ffffffff86fd6267 R12:=
+ ffff888133ee2000
+> > [   13.630101][    T1] R13: ffffffff85acb340 R14: ffff888117a5f988 R15:=
+ dffffc0000000000
+> > [   13.630869][    T1] FS:  0000000000000000(0000) GS:ffff888426ea0000(=
+0000) knlGS:0000000000000000
+> > [   13.631727][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
+3
+> > [   13.632370][    T1] CR2: 00007f586df260ac CR3: 00000000054ea000 CR4:=
+ 00000000000406f0
+> > [   13.633154][    T1] Call Trace:
+> > [   13.633506][    T1]  <TASK>
+> > [   13.633833][    T1]  kho_test_prepare_fdt+0x145/0x180
+> > [   13.634446][    T1]  ? kho_test_save_data+0x210/0x210
+> > [   13.635097][    T1]  ? csum_partial (lib/checksum.c:123)
+> > [   13.635546][    T1]  kho_test_init (lib/test_kho.c:177 lib/test_kho.=
+c:284)
+> > [   13.636018][    T1]  ? vmalloc_test_init (lib/test_kho.c:271)
+> > [   13.636508][    T1]  ? add_device_randomness (drivers/char/random.c:=
+944)
+> > [   13.637485][    T1]  ? mix_pool_bytes (drivers/char/random.c:944)
+> > [   13.637955][    T1]  ? trace_initcall_start (include/trace/events/in=
+itcall.h:27 (discriminator 3))
+> > [   13.638498][    T1]  ? vmalloc_test_init (lib/test_kho.c:271)
+> > [   13.638989][    T1]  do_one_initcall (init/main.c:1284)
+> > [   13.639477][    T1]  ? trace_initcall_start (init/main.c:1274)
+> > [   13.639998][    T1]  ? parse_one (kernel/params.c:143)
+> > [   13.640455][    T1]  ? kasan_save_track (mm/kasan/common.c:69 (discr=
+iminator 1) mm/kasan/common.c:78 (discriminator 1))
+> > [   13.640948][    T1]  ? __kmalloc_noprof (mm/slub.c:5659)
+> > [   13.641465][    T1]  do_initcalls (init/main.c:1344 (discriminator 3=
+) init/main.c:1361 (discriminator 3))
+> > [   13.641924][    T1]  kernel_init_freeable (init/main.c:1595)
+> > [   13.642441][    T1]  ? rest_init (init/main.c:1475)
+> > [   13.642891][    T1]  kernel_init (init/main.c:1485)
+> > [   13.643345][    T1]  ? rest_init (init/main.c:1475)
+> > [   13.643788][    T1]  ret_from_fork (arch/x86/kernel/process.c:164)
+> > [   13.644256][    T1]  ? rest_init (init/main.c:1475)
+> > [   13.644703][    T1]  ret_from_fork_asm (arch/x86/entry/entry_64.S:25=
+5)
+> > [   13.645213][    T1]  </TASK>
+> > [   13.645540][    T1] irq event stamp: 132025
+> > [   13.645971][    T1] hardirqs last  enabled at (132035): __up_console=
+_sem (arch/x86/include/asm/irqflags.h:26 arch/x86/include/asm/irqflags.h:10=
+9 arch/x86/include/asm/irqflags.h:151 kernel/printk/printk.c:345)
+> > [   13.646887][    T1] hardirqs last disabled at (132046): __up_console=
+_sem (kernel/printk/printk.c:343 (discriminator 3))
+> > [   13.648253][    T1] softirqs last  enabled at (131286): handle_softi=
+rqs (kernel/softirq.c:469 (discriminator 1) kernel/softirq.c:650 (discrimin=
+ator 1))
+> > [   13.649690][    T1] softirqs last disabled at (131281): __irq_exit_r=
+cu (kernel/softirq.c:496 kernel/softirq.c:723)
+> > [   13.651128][    T1] ---[ end trace 0000000000000000 ]---
+> >
+> >
+> > The kernel config and materials to reproduce are available at:
+> > https://download.01.org/0day-ci/archive/20251106/202511061629.e242724-l=
+kp@intel.com
+> >
+> >
+> >
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+> >
 
