@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-888366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E042CC3A997
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:36:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 619E3C3AA30
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED9574FE487
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:34:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5427A4FDCA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508052F4A04;
-	Thu,  6 Nov 2025 11:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9B42F5319;
+	Thu,  6 Nov 2025 11:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="capru84j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kHdyJ48e"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0FC2FB0A4;
-	Thu,  6 Nov 2025 11:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752302F5330;
+	Thu,  6 Nov 2025 11:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428861; cv=none; b=ryW0A07k0kJupfVmrgz/PRxMBG7lf5sBu6/mu+1qNlmf368pQZQ9WfTdA31P/qgsOpSPoz6Qt5gh8qWskYd5qJ0hagbk2kjrKgHdoNeJek9VCfbPSN5zSHm0tGodM1VPM5E4bQl+JVnK51wiWs+/kNbub2/1Zy6bnnF7EgdxQFY=
+	t=1762428901; cv=none; b=sBZ3umZ9BpWBmuybdzqqrCtH6MDbwLio7MHrBjuF+80lnclqJwP3TJhiksOdLJbeU5wIL4gZyhzAO+6eisLqWabaq0J0C7Kj+qZ22ZXKbwJ9B2WEjcRVuzmb6cnlbw8x0TsPTOtxP85IXRyEFzIKhrHYqZuDIYDSsj1m4r3jaZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428861; c=relaxed/simple;
-	bh=BMvBp0vVYTdKvDSUYn73f7UGpreVUIWzVn6Q8Jb768A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PxbDPoFmnZOUHubTgdTgl+7+UgF6kFK91IwvD2Dq4OrFU3HJYRIH7nPsjtUaBm3xNKcPGXNX0estgfrlyrypkxtfYc/lMP7i/co3jJSJ1BgOEvGLDSCr6n8chKGe3YS3CLyjSTRiXLxgXPadtOlGSNJOMcScwz3AXFLoDXF4uPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=capru84j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC49C4CEF7;
-	Thu,  6 Nov 2025 11:34:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762428861;
-	bh=BMvBp0vVYTdKvDSUYn73f7UGpreVUIWzVn6Q8Jb768A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=capru84jwTfVANq97uUdwiKStahByghPYOfcSZsfq7pqGdSWPnZQX0ejEBzEqm/1x
-	 hCPX8mxyjURRZeQDpwl1uf9BpSNKJ1k/WARaamJNL9BFjx3vl2s9Xh++0+A+nRu8k+
-	 y8zVeQcnh5MAnqu0vYoTXoCpt3ZY06s9ibVXKjWU7iMpfAKiREQf55fzfeN6s+1irx
-	 0QB7yl6Vg/8dQqU40OVcnTyk/g8PI3OMy88aWZgKD+j+vf0KMzJTxvqWYu1ZTw6TFg
-	 PYehweac4njn/0tcc2ITP10V8kpAPZWKoOzDKTL16kRjNknJK1Em5t6ir7u66U5Van
-	 uE82QDdn8kNOg==
-From: Mark Brown <broonie@kernel.org>
-To: joel@jms.id.au, andrew@codeconstruct.com.au, clg@kaod.org, 
- linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-Cc: kernel test robot <lkp@intel.com>
-In-Reply-To: <20251105084952.1063489-1-chin-ting_kuo@aspeedtech.com>
-References: <20251105084952.1063489-1-chin-ting_kuo@aspeedtech.com>
-Subject: Re: [PATCH] spi: aspeed: Use devm_iounmap() to unmap
- devm_ioremap() memory
-Message-Id: <176242885811.2357454.3184590153610422112.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 11:34:18 +0000
+	s=arc-20240116; t=1762428901; c=relaxed/simple;
+	bh=FZ+xQhevs4W6MojfQXMJAFD8Dy6zfGeKkSvuojK3q0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PLalTA8TU6NfBVHB7VBTIjJh60sZ7oZcG0TtNI9PjEgH2KvGnMKHuEonOmtInqFA9DmRPDKFVzMwbGbGU6bEsBAN7LGy+S6iK4jcaDL/eGrYridvEyUT7Ogl9ZROA3SIkwQt5ku5VNwg7jC1p9jAO0Qnz90GiPdpDEKPPF7VTa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kHdyJ48e; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9189940E0191;
+	Thu,  6 Nov 2025 11:34:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZrgZyW1OZZM8; Thu,  6 Nov 2025 11:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762428890; bh=BMtzBSnJBOm8d3+HVK2n5RalBifjQWJOzmJjLIuA8n4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kHdyJ48euVXrbvL5GmyvXxjubv1k7H/0LpvojnfbQ6Zu762M5u2vQVXjbisW051xA
+	 DtOld8kil5i5xRNaQmbX83yrhf8HRaMcVJHGjkvlOnuh5v172JhV80hOPjulkK7d+A
+	 mxZXnSJOTl37mqCwo3DhxvVI+92vtmcOB+G0yx1j9e4cfasxoU7vxzVsUiU6vgWt7J
+	 az/rg2AsCGInvwhT8BClqoaaqifIBICHbniRPeFXVGNdztqXjjJdG5dRAjghXA5izH
+	 T7+0jfndFGsANY4+2sNOsICqvBcoZrytCOnYSaO12QlM2swz609HLskCUx8mDhElh4
+	 aPXPM2O+1H37CtyKcBYOBhtEpvtZZFa4n9BeryrTzsSVJDICuBVL4kX6T3Usn4GcpW
+	 sV2NxVUnHBs0CSAzFl9QajDp05E4JEwRUzkS151vNxtMv/0L00n2TYfvMCJJvV2PDR
+	 0QTmAQeH1Kz+a7StJ63IcomnAFWzatr8isiTw/mzQu4sL3H1VmVpaiKgPQ/vwcuqCo
+	 k0GTXpjePq2X/lo2KG9zog5itUfwFdcQ/r+8dGN0ZdyFuNZA9Zlob7tMoEXsLfuRuJ
+	 S0RVhLNHZdnVtEW51YUjO9bGxRjzWEGnydzwOM4DFPZduE7QpMY5wOepeAhqRevAG9
+	 SBUgBbp5TSml+t1DH7ENTPi8=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 197E440E00DE;
+	Thu,  6 Nov 2025 11:34:43 +0000 (UTC)
+Date: Thu, 6 Nov 2025 12:34:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: tony.luck@intel.com
+Cc: Ma Ke <make24@iscas.ac.cn>, jbaron@akamai.com, qiuxu.zhuo@intel.com,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH v3] EDAC/ie31200: Fix error handling in
+ ie31200_register_mci
+Message-ID: <20251106113436.GAaQyHzGJfszVtHNU0@fat_crate.local>
+References: <20251106084735.35017-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a6db3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251106084735.35017-1-make24@iscas.ac.cn>
 
-On Wed, 05 Nov 2025 16:49:52 +0800, Chin-Ting Kuo wrote:
-> The AHB IO memory for each chip select is mapped using
-> devm_ioremap(), so it should be unmapped using devm_iounmap()
-> to ensure proper device-managed resource cleanup.
+On Thu, Nov 06, 2025 at 04:47:35PM +0800, Ma Ke wrote:
+> ie31200_register_mci() calls device_initialize() for priv->dev
+> unconditionally. However, in the error path, put_device() is not
+> called, leading to an imbalance. Similarly, in the unload path,
+> put_device() is missing.
 > 
+> Although edac_mc_free() eventually frees the memory, it does not
+> release the device initialized by device_initialize(). For code
+> readability and proper pairing of device_initialize()/put_device(),
+> add put_device() calls in both error and unload paths.
 > 
+> Found by code review.
+> 
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v3:
+> - moved put_device() from fail_free to fail_unmap to avoid using uninitialized priv variable when window allocation fails.
 
-Applied to
+Zapped v2 from the tree for the time being.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> Changes in v2:
+> - modified the patch, thanks for developer's suggestions;
+> - removed Fixes line.
 
-Thanks!
+-- 
+Regards/Gruss,
+    Boris.
 
-[1/1] spi: aspeed: Use devm_iounmap() to unmap devm_ioremap() memory
-      commit: 2f538ef9f6f7c3d700c68536f21447dfc598f8c8
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
