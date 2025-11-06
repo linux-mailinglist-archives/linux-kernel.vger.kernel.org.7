@@ -1,265 +1,188 @@
-Return-Path: <linux-kernel+bounces-887579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEC8C38A53
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B7CC38857
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7883B423D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CDD3B2F86
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576802472A4;
-	Thu,  6 Nov 2025 00:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3B91D61A3;
+	Thu,  6 Nov 2025 00:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="PTST6WA8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZJEcOsnA"
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqXEMfoT"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A847E1FE46D;
-	Thu,  6 Nov 2025 00:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690D833E7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762390636; cv=none; b=n87Kzlfpv36SFB5SFlHICkyTTVvugCr/CoPTrK/ny+W76rXGQj70g8N+o9lVZBJxl6SylopAT35NEsWX/fj7jwawuR2sMtfX40T+3UTYrE3f1mH1GGUgBKauq4pDVKlXvQRXnVvEO1Fx2oDIl2s2v/RXtm2P3QJXfTHh65U+tFY=
+	t=1762390367; cv=none; b=JjTSynGsYZlAkm5BdhKjKnpFqZES5o52MqkDz4+pVzseXfdJNCXzL4I0YphOkkzjIxHJUmnG1GCgy//mR+1SlXB/fN1BU2nSryMLTn3BARqvdcebkIW2F9UnY7hDEdR/Ex0wbwF6gUuDBI50Ykd/dbR3ZzDLJtZ5pBA/JNLAFkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762390636; c=relaxed/simple;
-	bh=X2D3OwIKW4rR3cIHHnntV7DDsOoGo04YBA483px290I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SCfvo29P/A0dvsHBV9k3+0VOQ2GSxJs+6QLkoZ65jv6uE7ruk26wWh1gvYJPifmIfTS4bKBAglmIF3rxd/Ja0BVF8rvzk61WupZDTXoLlPPqx4a7RHjNF3zX78sQii/9toSDA9zqRAodSp8rAxZSSFc3Aub81nj6lRDV7PpPxfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=PTST6WA8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZJEcOsnA; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.stl.internal (Postfix) with ESMTP id E9AA113005FE;
-	Wed,  5 Nov 2025 19:57:12 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 05 Nov 2025 19:57:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1762390632;
-	 x=1762397832; bh=6X4X+jO8scXaaR1fA21EGG74X2XQZWnQw+ie11lSXCw=; b=
-	PTST6WA8hfLl1kp1qyqqgQgCaPl3oThCtjKzi+CutJCPiAO0qOZtCNkFXtOZbYIr
-	6/z7UAeFWK610e9P12o+aWGmoMgMBUXVfwQB5ewT+6rnXfz80ZHUWC4Ci5gSv7hl
-	wWCTyCVcyzACiu+rfkAx8934wUDpptGJClj6DJhv3FWWECLZDPwAN+ZeJ2OXJzRM
-	JthM/fejEKuFoSlzgzdp98QNLTP6J81Zn3brDKEMg/TiormExtTiIcWLTeK/L34D
-	Fnzb5cclWtt/gVEEIRGSQHnrAftkUB/ecYH7cK1J88qYraX6ykEgcnDJsgZOPOeu
-	LCVucLO90TPP/KNbMQJRPg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1762390632; x=1762397832; bh=6
-	X4X+jO8scXaaR1fA21EGG74X2XQZWnQw+ie11lSXCw=; b=ZJEcOsnAfFH09d89e
-	xMnEvMts0mGxlHriO4R2hiJGejWj2avaymUdFF/QjuJP+aOtLH601VFRHHSwMVcc
-	6z5nghlAOmInHpxMhXOIyd4qVNmRqKbOdvEoH6vDYx/tqLXTAImiKPu4jrKb1pTu
-	pYcjRcxOM//owrYHfZ8iPi6eEJ8fzPecQ4FjjyG4v7BunczFu8jY0b88J0ScmbQV
-	qw4r5H7jrAKrn0+5I9DtlG3GimpgUMhSnkmiBIR0Z66UCSfwz/wZpmmle5NyYNRQ
-	XEr1bXgqDSmRNrzHz4BxVFEDE0BqRoa/DOu321Z6ZkGO+9I0CGHYUt3XQbfIVJ/0
-	P6zAw==
-X-ME-Sender: <xms:aPILaQoliaJCA0F8WPgArfBCnlyvr_5jlFurL2Iax8fjtRYmvNaj2g>
-    <xme:aPILabuP5SmzjrZSMnDYXIF37Bi1aUl1JFwDkXZe47jYVq-chGG2SQG4NFAmvPH5i
-    -XEurUYyaiId4CZnVm8uPRngXZhWdYTVXLMQW2HBQcUEBK4TA>
-X-ME-Received: <xmr:aPILaSN6aqtKa1guMORW5uua4BDZUfBARCFJLayzm2unI6ppmY8ceqmyl1PzwWdEyevUXUf5NnIBqdXP4Nt2fOKc1Qd-yp1X238JPFBU3jjk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehfeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epveevkeffudeuvefhieeghffgudektdelkeejiedtjedugfeukedvkeffvdefvddunecu
-    vehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgedtpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidquhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:aPILaVkUhA08m4Sorrl9Wc2SBj15wI5xlRK_lOh9YRS19MEhgXlIHA>
-    <xmx:aPILaRY3IReKWTzcv-pRVn183qO-H72I7OjH9XpoVlCJmldBN8YODw>
-    <xmx:aPILac1Gx-DLb0z5dk-RSQfbm_gPK58TNeBlI1G1A2mzTTgdWupztw>
-    <xmx:aPILafRnqqWjoD5PXsl_HNX8qNHlMmVM1Gkdl7p4mbFP_uQZI7OBCQ>
-    <xmx:aPILadyOYBpskcKadCFIOqZ6_3lrJ0Wdn6zP2iMtmTntXjzow5PIl0Hp>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 19:57:02 -0500 (EST)
-From: NeilBrown <neilb@ownmail.net>
-To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Christian Brauner" <brauner@kernel.org>,
-	"Amir Goldstein" <amir73il@gmail.com>
-Cc: "Jan Kara" <jack@suse.cz>,	linux-fsdevel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,	David Howells <dhowells@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,	Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,	Dai Ngo <Dai.Ngo@oracle.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Carlos Maiolino <cem@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,	Mateusz Guzik <mjguzik@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,	linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,	ecryptfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,	linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org,	linux-xfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,	selinux@vger.kernel.org
-Subject: [PATCH v5 14/14] VFS: introduce end_creating_keep()
-Date: Thu,  6 Nov 2025 11:50:58 +1100
-Message-ID: <20251106005333.956321-15-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20251106005333.956321-1-neilb@ownmail.net>
-References: <20251106005333.956321-1-neilb@ownmail.net>
-Reply-To: NeilBrown <neil@brown.name>
+	s=arc-20240116; t=1762390367; c=relaxed/simple;
+	bh=6OeZWmkLzPTDm0Nogt0/O0+112Y2Ks/sc1xjGQfLCtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ci/RaNaWhRIv7U4URWphRq1Xx9bsvzm06XoHuWLLR6B4Pe3ctlv2BmbBy5awCUcnKix3OO7yCZOUvkVzm2OKHETKEaGvr9cYJCJK7pXug9s2oMRsGSxbXGR4Zc4gusUaUJJ9OycHm58BxHwkuK70AZcsPid9X966cXoLQwI7NSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqXEMfoT; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so515964a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:52:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762390364; x=1762995164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4TC3jknw27uusNIMn2p5lG+ecGQ+4uLN2sc869EijWA=;
+        b=HqXEMfoT7kF4TVXlp/Hsu51zwuwloi1mrZ+acodJKsyfWxhVDiTNNGGkZGXD+azsWg
+         1OXxGLS/V4jlR9QK1TcyrUtlLt3F+ny3ZFHXlzs3/3qgHEuDHKw8ev+TssypIsJHpGBi
+         tPGTQrFhLbpguVjZbhe8+g2B7tKMaW/Sxq0EFqBT0iIziJyDcUkTLcek4l9s+cPr7MGB
+         bCA+fX2NhSzxbEicep4qIZkQe3UKOG8pemknu59RxCFrxn7B3QOn6Fw+hRBCk2cS9b7U
+         VYpeoB85qzQxecmEyaiT8VYcSw/7FQZDgrQec0k7OvBIUyUo8lUdhU0TbV87UEQR1Lx0
+         BIVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762390364; x=1762995164;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4TC3jknw27uusNIMn2p5lG+ecGQ+4uLN2sc869EijWA=;
+        b=G0ft2laA5v2DG7KalsTrxcuFz4rMQ62TzMDxPyj02n2FBP5AqXxplRbcJr7hF3hk0u
+         iNsNs7Zm5S5ifKmoFVkV5uI2IojEDa7vYOOCdz6rKegYZ9EqSvbQIxltFipBBLtw0k87
+         DiabTWLa787faB5JO4RGGTPS7MPX69+tqUiyUNby49rIRVDvzHwQ+0bWFrs4qry8fgPA
+         FYFiv5YhbBCaG2sOznxGYKt4vG+iTZvPsAw2kJw9gAjki1bg9vVIHH1TB1KVGo3V0EXk
+         DhX/NiMYWns3seC6CsKcg0nZ30EakDiJORG0qZ+HsQOzf5fZDhE0Bdhvi0TZ5ReaqqWy
+         P4aA==
+X-Gm-Message-State: AOJu0YxuB/fTCQ36HfD+EN/cpOGyTMXD0g6C8qChJ6dWv5pHsGVXsEBt
+	wNcTm8zPsMxnupagAqqRjw8eHIkMPRHUB5gIr71QWRCCVya8XwY7kUoz
+X-Gm-Gg: ASbGncu+PtybdDrczXAyFB9aB7VAF27s8JcG8/HqsQJJt3odZjNHPakR6Uzbxhjad6b
+	ms1vKrtORDk5u3BSiqJD0lR0dAA+o9WqNFM4caHp0z2L269JQWcH62wKmgSmBS+drnpizUbj+GF
+	cwq2Duu/Flsmozm7eycjOJrf40MyGkkM7luBt2b4d3f2JoytzTm5zf7DHrLGjX4Qg/RQ4fR06Li
+	hE17bCbVOXH+0DSZhgEBmoc3YcHkycQKa243SGm9UOAe8MVzrZ5A1eWSPHRsx65HQCluPulv7da
+	LBATFKEwAsjcHLHcfRQ0c1Pf25t4r6QJXQxHjpeP2T3nptSJeZnG3j9YPi6e8O/Sps7kt25A87J
+	wTJcUB9lYqWaQLfnq0n81p9DoNuUqx3daaQ6zG0Qi1Duk3pLHmiKW9chazU1nP7dv/+V8Ll8psZ
+	khloMgFZtOVRL2PAOZIIVx8g==
+X-Google-Smtp-Source: AGHT+IGyPw3/1ye6s+MutCB7GxPiniSAjUqQCYxPkECNVoFIt+LeekKL8kDCX7wiOXbyde9uL5l1lQ==
+X-Received: by 2002:a05:6402:2417:b0:640:af04:d718 with SMTP id 4fb4d7f45d1cf-64105a5c7c8mr4938545a12.30.1762390363532;
+        Wed, 05 Nov 2025 16:52:43 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f862697sm476807a12.25.2025.11.05.16.52.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 16:52:42 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id D7F1D420A685; Thu, 06 Nov 2025 07:52:32 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux DRI Development <dri-devel@lists.freedesktop.org>,
+	Linux Intel Graphics <intel-gfx@lists.freedesktop.org>
+Cc: Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] drm/ttm: Fix @alloc_flags description
+Date: Thu,  6 Nov 2025 07:52:17 +0700
+Message-ID: <20251106005217.14026-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3498; i=bagasdotme@gmail.com; h=from:subject; bh=6OeZWmkLzPTDm0Nogt0/O0+112Y2Ks/sc1xjGQfLCtE=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJncH/IOLdgTFFyjsmVl+3nljed/3uFbIm99O3GxYOe+J Yz/uRW9O0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRDj2Gf1qX/599FxLc3dGx 1uPH2qyjp6/3i5n+9A76y6zTvG+h0xKgCg67uoPm/TbK4WuldbNmSKTIGj6bW7dO4s5PFstb12V 4AA==
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-From: NeilBrown <neil@brown.name>
+Stephen Rothwell reports htmldocs warnings when merging drm-misc tree:
 
-Occasionally the caller of end_creating() wants to keep using the dentry.
-Rather then requiring them to dget() the dentry (when not an error)
-before calling end_creating(), provide end_creating_keep() which does
-this.
+Documentation/gpu/drm-mm:40: include/drm/ttm/ttm_device.h:225: ERROR: Unknown target name: "ttm_allocation". [docutils]
+Documentation/gpu/drm-mm:43: drivers/gpu/drm/ttm/ttm_device.c:202: ERROR: Unknown target name: "ttm_allocation". [docutils]
+Documentation/gpu/drm-mm:73: include/drm/ttm/ttm_pool.h:68: ERROR: Unknown target name: "ttm_allocation_pool". [docutils]
+Documentation/gpu/drm-mm:76: drivers/gpu/drm/ttm/ttm_pool.c:1070: ERROR: Unknown target name: "ttm_allocation_pool". [docutils]
 
-cachefiles and overlayfs make use of this.
+Fix these by adding missing wildcard on TTM_ALLOCATION_* and
+TTM_ALLOCATION_POOL_* in @alloc_flags description.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: NeilBrown <neil@brown.name>
+Fixes: 0af5b6a8f8dd ("drm/ttm: Replace multiple booleans with flags in pool init")
+Fixes: 77e19f8d3297 ("drm/ttm: Replace multiple booleans with flags in device init")
+Fixes: 402b3a865090 ("drm/ttm: Add an allocation flag to propagate -ENOSPC on OOM")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/linux-next/20251105161838.55b962a3@canb.auug.org.au/
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- fs/cachefiles/namei.c |  3 +--
- fs/overlayfs/dir.c    |  8 ++------
- fs/overlayfs/super.c  | 11 +++--------
- include/linux/namei.h | 22 ++++++++++++++++++++++
- 4 files changed, 28 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/ttm/ttm_device.c | 2 +-
+ drivers/gpu/drm/ttm/ttm_pool.c   | 2 +-
+ include/drm/ttm/ttm_device.h     | 2 +-
+ include/drm/ttm/ttm_pool.h       | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 59327618ac42..ef22ac19545b 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -155,8 +155,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
+diff --git a/drivers/gpu/drm/ttm/ttm_device.c b/drivers/gpu/drm/ttm/ttm_device.c
+index 5c10e5fbf43b7f..9a51afaf0749e2 100644
+--- a/drivers/gpu/drm/ttm/ttm_device.c
++++ b/drivers/gpu/drm/ttm/ttm_device.c
+@@ -199,7 +199,7 @@ EXPORT_SYMBOL(ttm_device_swapout);
+  * @dev: The core kernel device pointer for DMA mappings and allocations.
+  * @mapping: The address space to use for this bo.
+  * @vma_manager: A pointer to a vma manager.
+- * @alloc_flags: TTM_ALLOCATION_ flags.
++ * @alloc_flags: TTM_ALLOCATION_* flags.
+  *
+  * Initializes a struct ttm_device:
+  * Returns:
+diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
+index 97e9ce505cf68d..18b6db015619c0 100644
+--- a/drivers/gpu/drm/ttm/ttm_pool.c
++++ b/drivers/gpu/drm/ttm/ttm_pool.c
+@@ -1067,7 +1067,7 @@ long ttm_pool_backup(struct ttm_pool *pool, struct ttm_tt *tt,
+  * @pool: the pool to initialize
+  * @dev: device for DMA allocations and mappings
+  * @nid: NUMA node to use for allocations
+- * @alloc_flags: TTM_ALLOCATION_POOL_ flags
++ * @alloc_flags: TTM_ALLOCATION_POOL_* flags
+  *
+  * Initialize the pool and its pool types.
+  */
+diff --git a/include/drm/ttm/ttm_device.h b/include/drm/ttm/ttm_device.h
+index d016360e5cebbc..5618aef462f21b 100644
+--- a/include/drm/ttm/ttm_device.h
++++ b/include/drm/ttm/ttm_device.h
+@@ -221,7 +221,7 @@ struct ttm_device {
+ 	struct list_head device_list;
  
- 	/* Tell rmdir() it's not allowed to delete the subdir */
- 	inode_lock(d_inode(subdir));
--	dget(subdir);
--	end_creating(subdir);
-+	end_creating_keep(subdir);
+ 	/**
+-	 * @alloc_flags: TTM_ALLOCATION_ flags.
++	 * @alloc_flags: TTM_ALLOCATION_* flags.
+ 	 */
+ 	unsigned int alloc_flags;
  
- 	if (!__cachefiles_mark_inode_in_use(NULL, d_inode(subdir))) {
- 		pr_notice("cachefiles: Inode already in use: %pd (B=%lx)\n",
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index a4a0dc261310..50717ff8cac7 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -252,10 +252,7 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdir,
- 	if (IS_ERR(ret))
- 		return ret;
- 	ret = ovl_create_real(ofs, workdir, ret, attr);
--	if (!IS_ERR(ret))
--		dget(ret);
--	end_creating(ret);
--	return ret;
-+	return end_creating_keep(ret);
- }
- 
- static int ovl_set_opaque_xerr(struct dentry *dentry, struct dentry *upper,
-@@ -365,8 +362,7 @@ static int ovl_create_upper(struct dentry *dentry, struct inode *inode,
- 	if (IS_ERR(newdentry))
- 		return PTR_ERR(newdentry);
- 
--	dget(newdentry);
--	end_creating(newdentry);
-+	end_creating_keep(newdentry);
- 
- 	if (ovl_type_merge(dentry->d_parent) && d_is_dir(newdentry) &&
- 	    !ovl_allow_offline_changes(ofs)) {
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 3acda985c8a3..7b8fc1cab6eb 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -319,8 +319,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
- 		};
- 
- 		if (work->d_inode) {
--			dget(work);
--			end_creating(work);
-+			end_creating_keep(work);
- 			if (persist)
- 				return work;
- 			err = -EEXIST;
-@@ -336,9 +335,7 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
- 		}
- 
- 		work = ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
--		if (!IS_ERR(work))
--			dget(work);
--		end_creating(work);
-+		end_creating_keep(work);
- 		err = PTR_ERR(work);
- 		if (IS_ERR(work))
- 			goto out_err;
-@@ -630,9 +627,7 @@ static struct dentry *ovl_lookup_or_create(struct ovl_fs *ofs,
- 		if (!child->d_inode)
- 			child = ovl_create_real(ofs, parent, child,
- 						OVL_CATTR(mode));
--		if (!IS_ERR(child))
--			dget(child);
--		end_creating(child);
-+		end_creating_keep(child);
- 	}
- 	dput(parent);
- 
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index b4d95b79b5a8..58600cf234bc 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -126,6 +126,28 @@ static inline void end_creating(struct dentry *child)
- 	end_dirop(child);
- }
- 
-+/* end_creating_keep - finish action started with start_creating() and return result
-+ * @child: dentry returned by start_creating() or vfs_mkdir()
-+ *
-+ * Unlock and return the child. This can be called after
-+ * start_creating() whether that function succeeded or not,
-+ * but it is not needed on failure.
-+ *
-+ * If vfs_mkdir() was called then the value returned from that function
-+ * should be given for @child rather than the original dentry, as vfs_mkdir()
-+ * may have provided a new dentry.
-+ *
-+ * Returns: @child, which may be a dentry or an error.
-+ *
-+ */
-+static inline struct dentry *end_creating_keep(struct dentry *child)
-+{
-+	if (!IS_ERR(child))
-+		dget(child);
-+	end_dirop(child);
-+	return child;
-+}
-+
- /**
-  * end_removing - finish action started with start_removing
-  * @child:  dentry returned by start_removing()
+diff --git a/include/drm/ttm/ttm_pool.h b/include/drm/ttm/ttm_pool.h
+index 67c72de913bb9d..233581670e7825 100644
+--- a/include/drm/ttm/ttm_pool.h
++++ b/include/drm/ttm/ttm_pool.h
+@@ -64,7 +64,7 @@ struct ttm_pool_type {
+  *
+  * @dev: the device we allocate pages for
+  * @nid: which numa node to use
+- * @alloc_flags: TTM_ALLOCATION_POOL_ flags
++ * @alloc_flags: TTM_ALLOCATION_POOL_* flags
+  * @caching: pools for each caching/order
+  */
+ struct ttm_pool {
+
+base-commit: c553832116b8d0039b13ae84d1ed06e7ee4f1fdf
 -- 
-2.50.0.107.gf914562f5916.dirty
+An old man doll... just what I always wanted! - Clara
 
 
