@@ -1,167 +1,86 @@
-Return-Path: <linux-kernel+bounces-887625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABCAC38BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3000C38BC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4C13B46E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9D93B47C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89F71F0E2E;
-	Thu,  6 Nov 2025 01:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B048F20E023;
+	Thu,  6 Nov 2025 01:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r7mwuw9B"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ux/u5mvj"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481AE18C031;
-	Thu,  6 Nov 2025 01:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222701C3BF7
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762393607; cv=none; b=gyW8ymW0VVI13NsJteLmocod+5icm9by9Fnt1+01zG1cbUIFEfpOoMwv76ubs0UqbmVTnK6PofNEyXzSVow1jsb4n3FMhpJwRoR2oj63FSAiZWutAOICi7GtCQk5OLlgzGIwWpNE8kUZyCo/QSJRvchUUDo0qxocWvffHsr8sBQ=
+	t=1762393689; cv=none; b=VDPf/Hm+MmRBBkIc9u/N0xPQLPYKo5+kNbOE4MRkKalwS5oVQynbyPT9nqmxvCfRGKrFw5jVFrtgwgMaIrxFK9NngMjO8yIoMQPUcSy70P5h73FUrNIdx6giHEfwRaGP9VEm+67A1OxRCLhFXAySHWykWYLxy8hueOIWrdeza1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762393607; c=relaxed/simple;
-	bh=r8bX+yJXsU0v2Pmnrd8Ky6DxWtmt9NZxiobsxGY6T9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iOGVSwo33H/AP26qXVVd50T3Z9l4JzPkC1f3EVm7nRpztk18njMu1nCMeSWbNAa7vfBbUYQ8MC49+sztrAa++ADFpTnbeODPwSMDXVzxAi14tBeL0oc45DYC1E0t1qP6frtVUc4yh4MgRyd8+PtgfIH9o+dhpH7PRUXXJw2rC04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r7mwuw9B; arc=none smtp.client-ip=115.124.30.119
+	s=arc-20240116; t=1762393689; c=relaxed/simple;
+	bh=N9Z6x/+q9VV8d1+/g2yquSGB5fui5IKT2Juq43OZErU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WkUFtWlv4YNrkOM7eIo7VTbV9lFpVXRUwYKdndedBBwrDOJLhdO28+1X1w91k5YZ3zwXtVPhJysaVCmzyQ09Q4AgDrWzMCzybMrnuzoI0tU8SlgYGq7AOpq8GEqwm4yOktBYrKKnHZXOcermdd37tfqgl9VR5FTKRS4fAM4QbUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ux/u5mvj; arc=none smtp.client-ip=115.124.30.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1762393595; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=SIoe8Yy+lzQHHxDyVTXXxWwFYxdZgxjpGLMjyIO/Btw=;
-	b=r7mwuw9Bn/Rwn0K4wOF7FQYMEMnd/YW70b0XJaTgy+gc0WCtOFM5cAkCgxBICdUEqgHa+4em1dOUQd3gacChd37aayNiZxMAeswoih2GU0tgZGwRrkf5gD4SnRnsiKDIKk1+uLwjHropmFfNkdPFQEoDjHvb1PReP3WTiCcll84=
-Received: from 30.246.177.186(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WrnXrJr_1762393594 cluster:ay36)
+	t=1762393676; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=JleXV2cElTuz2OqNV5twzdb7cDT+l16Orn/ETYLhCd4=;
+	b=ux/u5mvjes1KIZ200OHwEK0oMtJw7GYWOR7DiF6b6/P8kfGDlQWbDT1uMr26Fm7onMYnIboGh8I2SB4xY6u4zM7Ovh3HMtuly5Tk4LeejAKwKYxDBZ4liWZVSJ+K4MKYHO1ypaR4iMwVWprteutR+AOw0hiaGvk9jC9pIc4H2gg=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WrnXrhY_1762393669 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 06 Nov 2025 09:46:34 +0800
-Message-ID: <4ecbe3d3-71f0-47e9-8fad-35b16689d1fa@linux.alibaba.com>
-Date: Thu, 6 Nov 2025 09:46:33 +0800
+          Thu, 06 Nov 2025 09:47:56 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: alexander.deucher@amd.com
+Cc: christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] drm/amdgpu/userqueue: Remove duplicate amdgpu_reset.h header
+Date: Thu,  6 Nov 2025 09:47:47 +0800
+Message-ID: <20251106014747.46768-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: APEI: GHES: Improve ghes_notify_nmi() status check
-To: Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev,
- Andi Kleen <andi.kleen@intel.com>
-References: <20251103230547.8715-1-tony.luck@intel.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20251103230547.8715-1-tony.luck@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+./drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c: amdgpu_reset.h is included more than once.
 
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=26930
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-在 2025/11/4 07:05, Tony Luck 写道:
-> ghes_notify_nmi() is called for every NMI and must check whether the NMI was
-> generated because an error was signalled by platform firmware.
-> 
-> This check is very expensive as for each registered GHES NMI source it reads
-> from the acpi generic address attached to this error source to get the physical
-> address of the acpi_hest_generic_status block.  It then checks the "block_status"
-> to see if an error was logged.
-> 
-> The ACPI/APEI code must create virtual mappings for each of those physical
-> addresses, and tear them down afterwards. On an Icelake system this takes around
-> 15,000 TSC cycles. Enough to disturb efforts to profile system performance.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
+index 836a14ef0052..9a969175900e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
+@@ -32,7 +32,6 @@
+ #include "amdgpu_vm.h"
+ #include "amdgpu_userq.h"
+ #include "amdgpu_hmm.h"
+-#include "amdgpu_reset.h"
+ #include "amdgpu_userq_fence.h"
+ 
+ u32 amdgpu_userq_get_supported_ip_mask(struct amdgpu_device *adev)
+-- 
+2.43.5
 
-Hi, Tony
-
-Interesting.
-
-If I understand correctly, you mean ghes_peek_estatus() and
-ghes_clear_estatus().
-
-I conducted performance testing on our system (ARM v8) and found the
-following average costs:
-
-- ghes_peek_estatus(): 8,138.3 ns (21,160 cycles)
-- ghes_clear_estatus(): 2,038.3 ns (5,300 cycles)
-
-> 
-> If that were not bad enough, there are some atomic accesses in the code path
-> that will cause cache line bounces between CPUs. A problem that gets worse as
-> the core count increases.
-
-Could you elaborate on which specific atomic accesses you're referring to?
-
-> 
-> But BIOS changes neither the acpi generic address nor the physical address of
-> the acpi_hest_generic_status block. So this walk can be done once when the NMI is
-> registered to save the virtual address (unmapping if the NMI is ever unregistered).
-> The "block_status" can be checked directly in the NMI handler. This can be done
-> without any atomic accesses.
-> 
-> Resulting time to check that there is not an error record is around 900 cycles.
-> 
-> Reported-by: Andi Kleen <andi.kleen@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> 
-> ---
-> N.B. I only talked to an Intel BIOS expert about this. GHES code is shared by
-> other architectures, so it would be wise to get confirmation on whether this
-> assumption applies to all, or is Intel (or X86) specific.
-
-The assumption is "BIOS changes neither the acpi generic address nor the
-physical address of the acpi_hest_generic_status block."?
-
-I've consulted with our BIOS experts from both ARM and RISC-V platform
-teams, and they confirmed that error status blocks are reserved at boot
-time and remain unchanged during runtime.
-
-> ---
->   include/acpi/ghes.h      |  1 +
->   drivers/acpi/apei/ghes.c | 39 ++++++++++++++++++++++++++++++++++++---
->   2 files changed, 37 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
-> index ebd21b05fe6e..58655d313a1f 100644
-> --- a/include/acpi/ghes.h
-> +++ b/include/acpi/ghes.h
-> @@ -29,6 +29,7 @@ struct ghes {
->   	};
->   	struct device *dev;
->   	struct list_head elist;
-> +	void __iomem *error_status_vaddr;
->   };
->   
->   struct ghes_estatus_node {
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 97ee19f2cae0..62713b612865 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -1425,7 +1425,21 @@ static LIST_HEAD(ghes_nmi);
->   static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
->   {
->   	static DEFINE_RAW_SPINLOCK(ghes_notify_lock_nmi);
-> +	bool active_error = false;
->   	int ret = NMI_DONE;
-> +	struct ghes *ghes;
-> +
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(ghes, &ghes_nmi, list) {
-> +		if (ghes->error_status_vaddr && readl(ghes->error_status_vaddr)) {
-> +			active_error = true;
-> +			break;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	if (!active_error)
-> +		return ret;
-
-Shoud we put active_error into struct ghes? If we know it is active, we
-do not need to call __ghes_peek_estatus() to estatus->block_status().
-
-Thanks.
-Shuai
 
