@@ -1,115 +1,143 @@
-Return-Path: <linux-kernel+bounces-887937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A79C39660
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:27:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3194C39669
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEDD74F4A73
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9574C3B93B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3B32D660E;
-	Thu,  6 Nov 2025 07:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB0E2DECC6;
+	Thu,  6 Nov 2025 07:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VagYr5/c"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2CHkhgo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BA82DEA86;
-	Thu,  6 Nov 2025 07:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853A721FF2E;
+	Thu,  6 Nov 2025 07:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762414028; cv=none; b=LnK4IV4Vo0Y6I99pmDRlUXy9Bu/GYBi6JENCjI29m0s9YUine96iY38XnsxWDmtRmbQjOWSdPy4P6EbSqkuRGcFp0QXO3WXCawQD6I/HZU/2OOi0FVo+EFuMC1I6V60oSQjTysbjX4uHbO6+n0zudroDUIkSg9P/KfXYSpsLydU=
+	t=1762414115; cv=none; b=nF42nqej2ZISvrMu7L4Z//sbX6g5wW2fXiJDYfgXOAIAGSz5lDSky+vfcSMBXkamB5E+GlokKYl3i4kPbzFvHzYDxmY8zDQGZraBrZMLn9GEytGKEKKPnkKcRJv3DBOZqP9jNU6eVUXGVIxR2wFjTl3nqUj6wcWTG9YpuWrwJso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762414028; c=relaxed/simple;
-	bh=ANLZ4nuzI28Jw/q/dw1oy3HkAMfTnpYAiKK29auuSQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uREku0c/GFDgT6VQvPnUBrOBU1PnGUXJLZ2B2e8WhxYxZJMx2hwQxU3gNbTVj2qAaWTF4L26fWkcqy73Qwo7euS0TCPyBB/O33wp1aNQK4VofX18PJdxrJMYRqCfO2pThxswkurLBmZxsgqB9nHO5qRX2xqrm/ZcDMdK4bygyvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VagYr5/c; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762414022;
-	bh=Vz9mhb435f+hOkgsRUlA5LdbIcbxh8AyNii3iCi92dQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VagYr5/c7IU+3HcZZDJxK4Gewbq8o8fLChSOHHEOsPFfpdoR55bLFotd9BdlZ4Kdc
-	 4eMPcLV7Hyda4iOupAWapEMdif9rbSWxjIs/TkserVMpgt7DAQBJLrHAEq+neNVNRw
-	 xsy0T8uOdegnWwZ/u14u5uXv7LW4PYnSmWxr5Gg+iTb2p8SybFRtrQzBl3Dtpj3h9v
-	 D0r5YPUcjWIAfOhlx1d4NvP11XGoLKSZp4ybItSQaFKucH8HC2zSfUjxE4wSJg85bs
-	 wVk2lXGRA0NI/OI17jDeSdgpDvYsfzJZ/BB5ofE7GX7SSV+5iGIgLZJvGDKijxT7Qr
-	 NnWLRpejiQGgg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d2DKK58YQz4w9q;
-	Thu, 06 Nov 2025 18:27:01 +1100 (AEDT)
-Date: Thu, 6 Nov 2025 18:27:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Ard Biesheuvel
- <ardb@kernel.org>, David Howells <dhowells@redhat.com>, Linux Crypto List
- <linux-crypto@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the libcrypto tree
-Message-ID: <20251106182700.092a328f@canb.auug.org.au>
-In-Reply-To: <20251106041953.GB1650@sol>
-References: <20251106143623.06b23d57@canb.auug.org.au>
-	<20251106035521.GA1650@sol>
-	<20251106041953.GB1650@sol>
+	s=arc-20240116; t=1762414115; c=relaxed/simple;
+	bh=5GFgLQayQxL+0EO09s0cLKYJvaSzj5FZ7EbeMU2N5MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mZ7HxNP8KL/7nKb8KuIiuwvTsVwBawTpAP9PYiaGZjVwFo8uNaWIIIg4PIGrat6GCnk7caKwg/pP9uKk7XXMqifNBxQhLqjcHaHVKl2B8EkfiKkUk6cAT2Yo4jgiUDPv3BF7EG7QrlVy438RWSQawJC80Ikxl9s8WnwrqUHyPVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2CHkhgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BDAC4CEF7;
+	Thu,  6 Nov 2025 07:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762414115;
+	bh=5GFgLQayQxL+0EO09s0cLKYJvaSzj5FZ7EbeMU2N5MQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k2CHkhgopIagvwdl2Jl3EgYMzCOWTC9ISqFGfMKgY2aexPhkz0ozDZ+4f+7eFL8Ic
+	 xdGbCc42zCobldqNX5u+FdJtZ/d7F4Zo/ecV8OdBGpwsY7haFMD04X4gf1WYmK8jDN
+	 0AptJVgE5uuZicjDtRk+9oMYv7jBZgq1kELiZEEtkuH2Z3scf6k28U5M+zyaOKtUb2
+	 kql2asTemixsFzKHDG6n3oNvQKS5J2wYz1XNLnUiNDJ2wp0VVySuOXoy5HwJQFgKrU
+	 nJjno3/Qu+7LUfqeQM9Cz5ghwgDZjVaxwnEIPs9Q4XdNSpOgDAvBV70iXTyCB0Khek
+	 upj0cTdgY6ong==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf stat: Align metric output without events
+Date: Wed,  5 Nov 2025 23:28:34 -0800
+Message-ID: <20251106072834.1750880-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.51.2.1026.g39e6a42477-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_3AyMO_=V=iRL6QgN5LCRd6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/_3AyMO_=V=iRL6QgN5LCRd6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+One of my concern in the perf stat output was the alignment in the
+metrics and shadow stats.  I think it missed to calculate the basic
+output length using COUNTS_LEN and EVNAME_LEN but missed to add the
+unit length like "msec" and surround 2 spaces.  I'm not sure why it's
+not printed below though.
 
-Hi Eric,
+But anyway, now it shows correctly aligned metric output.
 
-On Wed, 5 Nov 2025 20:19:53 -0800 Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Okay, it's because some kernel-doc warnings were accidentally turned off
-> for everyone :-(  And they just got turned back on by
-> https://lore.kernel.org/r/20251104215502.1049817-1-andriy.shevchenko@linu=
-x.intel.com/
-> With that applied, './scripts/kernel-doc -v -none include/crypto/sha3.h'
-> does catch this.
+  $ perf stat true
 
-Yeah, I found quite a few warnings today.
+   Performance counter stats for 'true':
 
-> I folded the following into "lib/crypto: sha3: Add SHA-3 support" to
-> convert the comments starting with "/**" into proper kerneldoc comments:
+             859,772      task-clock                       #    0.395 CPUs utilized
+                   0      context-switches                 #    0.000 /sec
+                   0      cpu-migrations                   #    0.000 /sec
+                  56      page-faults                      #   65.134 K/sec
+           1,075,022      instructions                     #    0.86  insn per cycle
+           1,255,911      cycles                           #    1.461 GHz
+             220,573      branches                         #  256.548 M/sec
+               7,381      branch-misses                    #    3.35% of all branches
+                          TopdownL1                        #     19.2 %  tma_retiring
+                                                           #     28.6 %  tma_backend_bound
+                                                           #      9.5 %  tma_bad_speculation
+                                                           #     42.6 %  tma_frontend_bound
 
-Thanks.
+         0.002174871 seconds time elapsed                  ^
+                                                           |
+         0.002154000 seconds user                          |
+         0.000000000 seconds sys                          here
 
---=20
-Cheers,
-Stephen Rothwell
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/stat-display.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---Sig_/_3AyMO_=V=iRL6QgN5LCRd6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index a67b991f4e810336..8fbfec5c0ef7b147 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -439,9 +439,9 @@ static inline void __new_line_std_csv(struct perf_stat_config *config,
+ 	aggr_printout(config, os, os->evsel, os->id, os->aggr_nr);
+ }
+ 
+-static inline void __new_line_std(struct outstate *os)
++static inline void __new_line_std(struct perf_stat_config *config, struct outstate *os)
+ {
+-	fprintf(os->fh, "                                                 ");
++	fprintf(os->fh, "%*s", COUNTS_LEN + EVNAME_LEN + config->unit_width + 2, "");
+ }
+ 
+ static void do_new_line_std(struct perf_stat_config *config,
+@@ -450,7 +450,7 @@ static void do_new_line_std(struct perf_stat_config *config,
+ 	__new_line_std_csv(config, os);
+ 	if (config->aggr_mode == AGGR_NONE)
+ 		fprintf(os->fh, "        ");
+-	__new_line_std(os);
++	__new_line_std(config, os);
+ }
+ 
+ static void print_metric_std(struct perf_stat_config *config,
+@@ -583,13 +583,13 @@ static void print_metricgroup_header_std(struct perf_stat_config *config,
+ 	int n;
+ 
+ 	if (!metricgroup_name) {
+-		__new_line_std(os);
++		__new_line_std(config, os);
+ 		return;
+ 	}
+ 
+ 	n = fprintf(config->output, " %*s", EVNAME_LEN, metricgroup_name);
+ 
+-	fprintf(config->output, "%*s", MGROUP_LEN - n - 1, "");
++	fprintf(config->output, "%*s", MGROUP_LEN + config->unit_width + 2 - n, "");
+ }
+ 
+ /* Filter out some columns that don't work well in metrics only mode */
+-- 
+2.51.2.1026.g39e6a42477-goog
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkMTcQACgkQAVBC80lX
-0GytUAf/eLz0/CNApPaPG3fxbGJ94IakX4pARYdnDig4Pt0NUV+ZJpQU4r6tJ5FM
-vA+jjQdzrtzuLDjOB/WZ9z5nFNMaGMuC+sOQUOQ6/mbmq9jvbcMdMnFM/QLbubzV
-/smdegYosizg0DwacpyW0hlmjr5ECAreHqR/NZOOEsxx6mrOB0Z0evOx/QHpG0v7
-X7u/2TSx1Zf0clAwcHx40vuUBMKI0Jrz0B3Tru+bzEW8HIE4Gu1gAahmgsCYncWE
-+e69O58Wx9CxcMoKv3vhAbhxFfO32P/HpGVl0ePu1Pl+8H/FATUP1qHvZRtJ+ocX
-ODA4LdGCkr5hJQRClGoWr8yNUCgh5A==
-=Ho9X
------END PGP SIGNATURE-----
-
---Sig_/_3AyMO_=V=iRL6QgN5LCRd6--
 
