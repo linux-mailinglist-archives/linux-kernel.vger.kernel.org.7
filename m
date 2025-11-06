@@ -1,228 +1,122 @@
-Return-Path: <linux-kernel+bounces-888909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65901C3C43C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:09:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5241C3C3C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36FC23AF0A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:02:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFA91B24612
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA27347FD1;
-	Thu,  6 Nov 2025 16:02:43 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382B834A3BC;
+	Thu,  6 Nov 2025 16:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eKKFTDQj"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C8B3314CB;
-	Thu,  6 Nov 2025 16:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497BD33DEC9;
+	Thu,  6 Nov 2025 16:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762444963; cv=none; b=Npud1A8PzTLDa3l0DjSvtX+rEML4E0ZatGSYJyuwgkSM1fS16/RA6TSAEVUSMY30hd9F3wcvJXVNOgK3gjC55Owu+VZI1Ti1AGFJ2gCOe89iuDMHlU80AXkaFQfBzMRmzrFCWus9OwKnq51yjgpbDNjI4d99fq9yYfi6qFFEuls=
+	t=1762444982; cv=none; b=nUgM+14Y+BjnZirXgK7a6vQKiAO8/XNNJketIZV/Yjh8Kb7+8u1bQNU18z4NTpBZLAOodm2IuZvKjkXDs+xrpg4dOZ8g/Pmlk+F1NTVwOoTLm2ZRZChQxhrzHTf8QedWlD7rI+Rux7d+22pmn8uxyu4efo0bnvgv7B5hbTwD+Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762444963; c=relaxed/simple;
-	bh=H+shqCH+Wu91YwAHohrcMFif/PuJQzNKSWZc3R7gQDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JFfbl1Vddo38SldNbaSxEN1UMXRuUybeMxSZqMs+uMHhjBJqsOQq+k+B/4bzaQUeAbJpKvRGLs2hYLoOOErClEF6/XCBFYsQLyxsYiRccrIV18ovnjnEzTJHRQ+oDK6ZmHm02jYAkoQ8Nfov3dCx5l6ixmU+z8sFhnSbpEdgKgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 505681401AC;
-	Thu,  6 Nov 2025 16:02:33 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 63B0520018;
-	Thu,  6 Nov 2025 16:02:31 +0000 (UTC)
-Date: Thu, 6 Nov 2025 11:02:30 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
- Siewior <bigeasy@linutronix.de>, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
- __DO_TRACE_CALL() with SRCU-fast
-Message-ID: <20251106110230.08e877ff@batman.local.home>
-In-Reply-To: <20251105203216.2701005-10-paulmck@kernel.org>
-References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
-	<20251105203216.2701005-10-paulmck@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762444982; c=relaxed/simple;
+	bh=qAiKRprOv+nYZf99DweHNyqG3piOWPCI7gcz1FUSgrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ib1KnoYyOfmOt8LpWKNtEimavhICi0GNyN1AqKPF0SzWiaYAUb+eKpKfwCLHvrXSom/BkO+ktWAkOcCeIS729uPd+7Fe6EnJ89f1k3MU2vozDWypt3lMjEKseXEkWGKSJy03XEpMty2skmPi3nYrRMMGBWnI2qZAJkbypCcm+zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eKKFTDQj; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E9BA740E016E;
+	Thu,  6 Nov 2025 16:02:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gVpGdWd_mrbE; Thu,  6 Nov 2025 16:02:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762444970; bh=CB+rQwsuUSRqiQFnWnyRZyUO4MuMXkuilw8PJhO5FvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eKKFTDQjUTW1AJpO67hGXKCLqbtIyDdAKJljPsZQGkB2P7qkg55dMHMuOKMPLSXkT
+	 BkivfFkySioyeKsQ86n6yjnZ5NZUGNnpQPE3nS9rNdhe0XcVcjfqX7xBfiEldCWlZ2
+	 nMcIBb9BGix2dX7GIW/RKDZsgZeH/HWS7xfXXr4WjR1ohsTBEkA3MHfA8YMujkrlae
+	 l6fV8lfvU1Rv4hK5cmz0myWOg1oFeadEra84Tl3l9+faMCauAHUcWiXOvMHLB27xIB
+	 fDrGiM0cpo0oomZA4erklQr7hvwZWGyiGvf2n8KQFeIdyp4BH12mdKdRFw6qPoXw3Q
+	 YB8M5oRicGLmHPub1UdAwtChNXNufrkWgX+kOrhwmyaGph0KxebX77b1ZoV26lDP5H
+	 nlMrYBt/i3z3eAfQU/N1ThvmlHnsDOweonXsRbsE0qCtlskd/IZJ/bE2AlUwYlkCW5
+	 KUedTixP8UU1POeOO9yxwe3I15KzmVFD8t36o/5xpSqEiCqGxiu8eJ1jDz3UUbvBWj
+	 DgUHz7dzrnsjQVLuZZDkMSeTQr9mbDA/IwDwt8+4dxraNF6G+Zn7vNt45A591JvEmV
+	 V6ZMRp6jemnChhfI2ZZGuJMFCCQdDISYtuhqshav8QxzlqyGp92wUgS2iK9OsavHAw
+	 /X9AaCf4kghDb00O9rIY7lU0=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 08F8540E015B;
+	Thu,  6 Nov 2025 16:02:41 +0000 (UTC)
+Date: Thu, 6 Nov 2025 17:02:35 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Alex Davis <alex47794@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-serial@vger.kernel.org
+Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
+Message-ID: <20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local>
+References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: fmkt714m1m4c6ehxka6831mtzforau8e
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 63B0520018
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19iaTKyFCI0tGtmoCLTDsC8g5M4bk6js8o=
-X-HE-Tag: 1762444951-168403
-X-HE-Meta: U2FsdGVkX1+3moqzzczi8f0rQKt2e3epFUYYRV6jSfaWDCASsq5r4G1RK7MJifKYHjovT+JyKwH8ChPK+7RU67eNBv6Bu8r4z8pgIl9HuANgMN2IBsIoIXsUwZ6WbWDcYZ4/s1SP36ppyeKkTiib4tOzIwA5z5RJ34eoGuRyeqGHY7prfSdShDK+mqGrA0zEJ+LoKS/lcZbAogkHGOXWAg8EsRWy2SifDVUS+ZZo3qAJLQNe49McGcUjZtVRR5SGinnFib8xTQUrTw4mcJbLTqzy/3iBE2eNxlUIEW2HXSGj6E0lIs3OFPgcjRLzZyU0wzHt4TnaMEClDCnG6M6z3eUh531J3eu/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com>
 
-On Wed,  5 Nov 2025 12:32:10 -0800
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
+Lemme add a whole bunch of relevant ppl to Cc.
+
+So I'm seeing this with an allmodconfig build too:
+
+depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
+depmod: ERROR: Found 2 modules in dependency cycles!
+make[6]: *** [scripts/Makefile.modinst:132: depmod] Error 1
+make[5]: *** [Makefile:1917: modules_install] Error 2
+make[4]: *** [Makefile:2140: run-command] Error 2
+make[3]: *** [debian/rules:66: binary-image] Error 2
+dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+make[2]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2
+make[1]: *** [/home/amd/kernel/linux/Makefile:1643: bindeb-pkg] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+That's 6.17.7
+
+On Sun, Oct 05, 2025 at 09:40:28PM -0400, Alex Davis wrote:
+> When running make modules_install on linux 6.17. with the attached
+> .config, I get the following error:
 > 
-> The current commit can be thought of as an approximate revert of that
-> commit, with some compensating additions of preemption disabling pointed
-> out by Steven Rostedt (thank you, Steven!).  This preemption disabling
-
-> uses guard(preempt_notrace)(), and while in the area a couple of other
-> use cases were also converted to guards.
-
-Actually, please don't do any conversions. That code is unrelated to
-this work and I may be touching it. I don't need unneeded conflicts.
-
-> ---
->  include/linux/tracepoint.h   | 45 ++++++++++++++++++++++--------------
->  include/trace/perf.h         |  4 ++--
->  include/trace/trace_events.h |  4 ++--
->  kernel/tracepoint.c          | 21 ++++++++++++++++-
->  4 files changed, 52 insertions(+), 22 deletions(-)
+>   DEPMOD  /lib/modules/6.17.1-rc1
+> depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
+> depmod: ERROR: Cycle detected: serial_mctrl_gpio
+> depmod: ERROR: Found 2 modules in dependency cycles!
+> make[2]: *** [scripts/Makefile.modinst:132: depmod] Error 1
+> make[1]: *** [/spare/linux/linux-6.17/Makefile:1917: modules_install] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
 > 
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index 826ce3f8e1f8..9f8b19cd303a 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -33,6 +33,8 @@ struct trace_eval_map {
->  
->  #define TRACEPOINT_DEFAULT_PRIO	10
->  
-> +extern struct srcu_struct tracepoint_srcu;
-> +
->  extern int
->  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
->  extern int
-> @@ -115,7 +117,10 @@ void for_each_tracepoint_in_module(struct module *mod,
->  static inline void tracepoint_synchronize_unregister(void)
->  {
->  	synchronize_rcu_tasks_trace();
-> -	synchronize_rcu();
-> +	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-> +		synchronize_srcu(&tracepoint_srcu);
-> +	else
-> +		synchronize_rcu();
->  }
+> 
+> This also happens with 6.17; it does not happen with 6.16.x.
 
-Instead of using the IS_ENABLED(CONFIG_PREEMPT_RT) I think it would be
-somewhat cleaner to add macros (all of this is untested):
+-- 
+Regards/Gruss,
+    Boris.
 
-#ifdef CONFIG_PREEMPT_RT
-extern struct srcu_struct tracepoint_srcu;
-# define tracepoint_sync() synchronizes_srcu(&tracepoint_srcu)
-# define tracepoint_guard() \
-     guard(srcu_fast_notrace)(&tracepoint_srcu); \
-     guard(migrate)()
-#else
-# define tracepoint_sync() synchronize_rcu();
-# define tracepoint_guard() guard(preempt_notrace)
-#endif
-
-And then the above can be:
-
-static inline void tracepoint_synchronize_unregister(void)
-{
- 	synchronize_rcu_tasks_trace();
-	tracepoint_sync();
-}
-
-and the below:
-
-	static inline void __do_trace_##name(proto)			\
-	{								\
-		if (cond) {						\
-			tracepoint_guard();				\
-			__DO_TRACE_CALL(name, TP_ARGS(args));		\
-		}							\
-	}								\
-
-And not have to duplicate all that code.
-
->  static inline bool tracepoint_is_faultable(struct tracepoint *tp)
->  {
-> @@ -266,23 +271,29 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  		return static_branch_unlikely(&__tracepoint_##name.key);\
->  	}
->  
-> -#define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
-> +#define __DECLARE_TRACE(name, proto, args, cond, data_proto)			\
->  	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
-> -	static inline void __do_trace_##name(proto)			\
-> -	{								\
-> -		if (cond) {						\
-> -			guard(preempt_notrace)();			\
-> -			__DO_TRACE_CALL(name, TP_ARGS(args));		\
-> -		}							\
-> -	}								\
-> -	static inline void trace_##name(proto)				\
-> -	{								\
-> -		if (static_branch_unlikely(&__tracepoint_##name.key))	\
-> -			__do_trace_##name(args);			\
-> -		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
-> -			WARN_ONCE(!rcu_is_watching(),			\
-> -				  "RCU not watching for tracepoint");	\
-> -		}							\
-> +	static inline void __do_trace_##name(proto)				\
-> +	{									\
-> +		if (cond) {							\
-> +			if (IS_ENABLED(CONFIG_PREEMPT_RT) && preemptible()) {	\
-> +				guard(srcu_fast_notrace)(&tracepoint_srcu);	\
-> +				guard(migrate)();				\
-> +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
-> +			} else {						\
-> +				guard(preempt_notrace)();			\
-> +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
-> +			}							\
-> +		}								\
-> +	}									\
-> +	static inline void trace_##name(proto)					\
-> +	{									\
-> +		if (static_branch_unlikely(&__tracepoint_##name.key))		\
-> +			__do_trace_##name(args);				\
-> +		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {			\
-> +			WARN_ONCE(!rcu_is_watching(),				\
-> +				  "RCU not watching for tracepoint");		\
-> +		}								\
->  	
->  
-
->  /*
-> diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-> index 4f22136fd465..fbc07d353be6 100644
-> --- a/include/trace/trace_events.h
-> +++ b/include/trace/trace_events.h
-> @@ -436,6 +436,7 @@ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
->  static notrace void							\
->  trace_event_raw_event_##call(void *__data, proto)			\
->  {									\
-> +	guard(preempt_notrace)();					\
-
-Note, the tracepoint code expects that there's only one level of
-preemption done, as it records the preempt_count and needs to subtract
-what tracing added. Just calling preempt_notrace here if it had already
-disabled preemption will break that code.
-
-It should only disable preemption if it hasn't already done that (when
-PREEMPT_RT is enabled).
-
->  	do_trace_event_raw_event_##call(__data, args);			\
->  }
->  
-> @@ -447,9 +448,8 @@ static notrace void							\
->  trace_event_raw_event_##call(void *__data, proto)			\
->  {									\
->  	might_fault();							\
-> -	preempt_disable_notrace();					\
-> +	guard(preempt_notrace)();					\
->  	do_trace_event_raw_event_##call(__data, args);			\
-> -	preempt_enable_notrace();					\
-
-I may be modifying the above, so I would leave it alone.
-
-Thanks,
-
--- Steve
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
