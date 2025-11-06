@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-889347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56179C3D577
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:25:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785D4C3D58C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 21:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C0D24E023F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF805188A2F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 20:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231382F7AB5;
-	Thu,  6 Nov 2025 20:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C06A2F999F;
+	Thu,  6 Nov 2025 20:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTI/2/Jc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4JL8aP7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDFF2F7475;
-	Thu,  6 Nov 2025 20:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56672F83B8;
+	Thu,  6 Nov 2025 20:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762460745; cv=none; b=lteaFtX9pdXlPb/jpszNXD8ErOw6Tz0LXZDOdAEqQW5zhfyGPtKlKeWwEP++rmsayYWl9UKgpH1LkwZrDpShm5/2w3rpUkk8prua35Hi93bUON5yneXCPp7fs7mLvREY69TGuoqrrABzYohhMudfxPEx7DlJ7xnm2hwDRjo7EyI=
+	t=1762460800; cv=none; b=rcdT6eqxs07kljd7yhDcfydFePSJDis/NVk0kQGKQOjqBx1NHaSiFmmCQ4DsIPo3cJE8dtEHOVzlb0GG9BlVgShrztFZ46071GeAPg49ZKYkmdSI09lyBlwWVFfrakaNSJTHmK8fGXzMd407NURkUKNaTrLwIFuST1yIwGFUNpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762460745; c=relaxed/simple;
-	bh=SRAMAkyKyrD5o7pBxELMq9QSxVAxrDV5ZGYyJJUGbzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqbcxKUPs4Y7jZwDpi1vN5VvuOvtprM6Tq2/h0mTleWSpHy1J7BBPdn/T0AQEtgum49MWZ3yB7R9kLR4AhHWV81kHTvN3EJMncOUQCPsPjlod0IPLfGUJYGllq0rCC40eyQTilTsZ/e5MoV/8FZ1QLsbl9PhR5MrYVy6RiItB+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTI/2/Jc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BA9C4AF09;
-	Thu,  6 Nov 2025 20:25:43 +0000 (UTC)
+	s=arc-20240116; t=1762460800; c=relaxed/simple;
+	bh=G5+JFHN9pF0pfKeMBtPHehPbGANjfz2YxWFZBSN6yuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VM/Ep4CubFVVSAIHNUQSIkbsK6pc+9uVrq6pGQGmeHiWYiKMCD6oyKK+GNW57ij9GgGoG4iZ5eFhEf382wCCWNidbGD2g7cHe0mkFaCXrret6G6f7b1xVMeeCD7RNnc3nZ+zykr9DctK8NhWLeQxPnmqLsA3kvkcXQa9/ojUh4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4JL8aP7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7037C4CEF7;
+	Thu,  6 Nov 2025 20:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762460745;
-	bh=SRAMAkyKyrD5o7pBxELMq9QSxVAxrDV5ZGYyJJUGbzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTI/2/JcJmU96Xy/sXPupIKhToZV7iBp76fw6EvsQV+iF3THlj0TDZ1YNHEdJQm/A
-	 7KsXVzAL4s7c6KVXQ/R1NxFf2F71twQWCB0RNrCtcsCOudH7vnBZWUHZCxNl2zBxpc
-	 K94/D77UYEoOvv4YeuZQT0V7C6xT0yFXBOrUpP7l5KO4ZS7Mjo8MEO9SSQssa41OpY
-	 Nnntd9EKRrMZYVdRWA+sf9OiRyzh6BN2DKawkm/Pm0To2w5+ebfCgs4H4n+57c3Vhb
-	 DmYqXFLy0EnmaBK6CkcE/3pxAiPeU4KLFHglaw3oQdDreSq1NcQychtYuDcWdX5xUv
-	 eHdhjfhM7xiNA==
-Date: Thu, 6 Nov 2025 17:25:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>,
-	Trevor Gross <tmgross@umich.edu>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/1] perf symbols: Handle '1' symbols in /proc/kallsyms
-Message-ID: <aQ0ERJiTpiA_rL5D@x1>
-References: <aQjua6zkEHYNVN3X@x1>
- <aQltxZIVd6w5VNtI@google.com>
+	s=k20201202; t=1762460800;
+	bh=G5+JFHN9pF0pfKeMBtPHehPbGANjfz2YxWFZBSN6yuU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k4JL8aP7g3emW8K/WZvE0ZM2dTj76VdsE2erzADNRJ0g0nK2Zy0+FO0/90r/bz4pL
+	 RHZhSc8mt04soUjBv/tFZ+X33fFy7fydtwv3C0+Yo/D/2PAntrfoTeCNFHuNVasTep
+	 2kR94GaP2pqY2tWUIoOb98rY7DgipXqSprX2wFCiTfbsTL/b3kta8m7jmOicaDqyce
+	 WBT5ngTQ0TOG0AfpAw2SeBvyBv4a6/3MmCDAekz9hvP19vn4ZcZNeMzEosshsnRS/B
+	 q3WVXhHA5oyeL4f0k3kx9r1golXRvHmHMAU+eDvbNxITbugUA3LNDvCRY0tqH7QaCI
+	 NlJAK1yVbTiPg==
+Date: Thu, 6 Nov 2025 12:26:37 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+	Yongpeng Yang <yangyongpeng@xiaomi.com>,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: [GIT PULL] fscrypt fix for v6.18-rc5
+Message-ID: <20251106202637.GA7015@quark>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,69 +58,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQltxZIVd6w5VNtI@google.com>
 
-On Mon, Nov 03, 2025 at 07:06:45PM -0800, Namhyung Kim wrote:
-> On Mon, Nov 03, 2025 at 03:03:23PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Just FYI, I'm carrying this on the perf tools tree.
+The following changes since commit 6146a0f1dfae5d37442a9ddcba012add260bceb0:
 
-> > I started seeing this in recent Fedora 42 kernels:
+  Linux 6.18-rc4 (2025-11-02 11:28:02 -0800)
 
-> >   root@x1:~# uname -a
-> >   Linux x1 6.17.4-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Sun Oct 19 18:47:49 UTC 2025 x86_64 GNU/Linux
-> >   root@x1:~#
+are available in the Git repository at:
 
-> >   root@x1:~# perf test 1
-> >     1: vmlinux symtab matches kallsyms     : FAILED!
-> >   root@x1:~#
+  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
 
-> > Related to:
+for you to fetch changes up to 1e39da974ce621ed874c6d3aaf65ad14848c9f0d:
 
-> >   root@x1:~# grep ' 1 ' /proc/kallsyms
-> >   ffffffffb098bc00 1 __pfx__RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
-> >   ffffffffb098bc10 1 _RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
-> >   root@x1:~#
+  fscrypt: fix left shift underflow when inode->i_blkbits > PAGE_SHIFT (2025-11-04 16:37:38 -0800)
 
-> > That is found in:
- 
-> >   root@x1:~# pahole --running_kernel_vmlinux
-> >   /usr/lib/debug/lib/modules/6.17.4-200.fc42.x86_64/vmlinux
-> >   root@x1:~#
- 
-> >   root@x1:~# readelf -sW /usr/lib/debug/lib/modules/6.17.4-200.fc42.x86_64/vmlinux | grep __pfx__RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
-> >   150649: ffffffff81f8bc00    16 FUNC    LOCAL  DEFAULT    1 __pfx__RNCINvNtNtNtCsfwaGRd4cjqE_4core4iter8adapters3map12map_try_foldjNtCskFudTml27HW_12drm_panic_qr7VersionuINtNtNtBa_3ops12control_flow11ControlFlowB10_ENcB10_0NCINvNvNtNtNtB8_6traits8iterator8Iterator4find5checkB10_NCNvMB12_B10_13from_segments0E0E0B12_
-> >   root@x1:~#
-> > 
-> > But was being filtered out when reading /proc/kallsyms, as the '1'
-> > symbol type was not being handled, do it, there are just two of them at
-> > this point.
-> 
-> Do you know what the type '1' means?  It seems they are from Rust.
+----------------------------------------------------------------
 
-They are related to anonymous Rust closures in the QR encoder for the
-DRM panic, this part:
+Fix an UBSAN warning that started occurring when the block layer started
+supporting logical_block_size > PAGE_SIZE.
 
-drivers/gpu/drm/drm_panic_qr.rs
+----------------------------------------------------------------
+Yongpeng Yang (1):
+      fscrypt: fix left shift underflow when inode->i_blkbits > PAGE_SHIFT
 
-    fn from_segments(segments: &[&Segment<'_>]) -> Option<Version> {
-        (1..=40)
-            .map(Version)
-            .find(|&v| v.max_data() * 8 >= segments.iter().map(|s| s.total_size_bits(v)).sum())
-    }
-
-That 
-
-Using rustfilt we get:
-
-core::iter::adapters::map::map_try_fold::<usize, drm_panic_qr::Version, (), core::ops::control_flow::ControlFlow<drm_panic_qr::Version>, drm_panic_qr::Version, core::iter::traits::iterator::Iterator::find::check<drm_panic_qr::Version, <drm_panic_qr::Version>::from_segments::{closure#0}>::{closure#0}>::{closure#0}
-#
-
-Both are for the same symbol, the __pfx__ is to do some stack probing.
-LLVM may introduce this for other reasons.
-
-So far, '1' symbols are Rust symbols, in the Linux kernel, for unnamed
-closures and its prefix code checking for stack space, Miguel, do you
-have something to add?
-
-- Arnaldo
+ fs/crypto/inline_crypt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
