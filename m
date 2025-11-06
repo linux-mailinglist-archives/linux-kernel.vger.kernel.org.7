@@ -1,156 +1,95 @@
-Return-Path: <linux-kernel+bounces-888644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE83C3B7F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:58:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2F1C3B7B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B23C4507A8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:49:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F32F4F8B1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B08336ED1;
-	Thu,  6 Nov 2025 13:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB62F238145;
+	Thu,  6 Nov 2025 13:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFFiXMPU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hvusLK8Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F31C230D0F;
-	Thu,  6 Nov 2025 13:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC21222599
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762436863; cv=none; b=EySNiOjhkbNznPzkl9SdWLIUdMbACCcxl0x7oEwH4WxuaqGWRFlb8vKPHlbIXuMnWoO1kO+jnT0doGWBoVTf/LZPR3vvnDGzEt8TUwH6BZ9fHmnsIWbN0PhR8a6BLQoHNXai4k+aT0f8szeaf3HzKMX0VC9IS0pa31f91uDn1qs=
+	t=1762436911; cv=none; b=RADBOgNBqP9lwnILe0XCGGoR4k4UoWYrxZPa6Hc5zNmwo1N59d/gHhZxKBIVdYhd2ywUV49+HGJhtQugULH5jI43aW/IyxdG9gg6pEAXsDwIrC74Nw58CCMz+D5JEr4IQvMnJQcffX6Mo2pZA0s6IrJJX/A4aLY5N/gMxmPgMFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762436863; c=relaxed/simple;
-	bh=D5+ojXPQ4gle+DVaRqLeJ8qdlQnA4cmPuT0VmHaWAo8=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=bv/y3/eh3RBuNu/imevz24bQL0O/3ojUdlfxDFNt6jY/S+eXMs+3+vu9kJqTQQc6rMWjL+44IUZeeG/QPAafpZcAYQO9Ktvx5UqX3AqdSQHO47tYYYFYdQKP+XqPN+I3OC/A7QQ3KOjmRwD6CUIqg7FeHpHMGATsO7T6jHQaPPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFFiXMPU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6BDCC2BCB3;
-	Thu,  6 Nov 2025 13:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762436863;
-	bh=D5+ojXPQ4gle+DVaRqLeJ8qdlQnA4cmPuT0VmHaWAo8=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=YFFiXMPUO8OqIxtrLjYXJLK9pO2a/cu1nwlL0BVl6hReslrGLAfG3M++QFDMzrbq7
-	 buivQCZzjSnfl//Y+6kFJTZvM2YkZZU/tkPix7onFZURiLEjWJ80TcuKv72tIrGv0n
-	 mtV7NuYeZ4NtDAkxF+Q4RplnwvYTXZMI8AuSg9BD77HnjzLSkGmNpiYRXd4i3lS7y2
-	 BUKS8tCn5HBNBeegHoNbczBAX/aojg0FlhV07ci5gzoK3ijXJNtKZRZHc68q6cKbUN
-	 VClKi6pv5H8Jy0I6PwwPYJkkn9aXMcUE1EsDQ3aRLkGMyO3Y2KsnGc6hgUB+o79EoS
-	 VPzWJdoCwXKhQ==
-Content-Type: multipart/mixed; boundary="===============7811395342483101209=="
+	s=arc-20240116; t=1762436911; c=relaxed/simple;
+	bh=TuikOT6xWXwFxsuJJ7R+NfK1+n0kSJjfuECC87r7N6E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CRFvYAQWUSwURlXPb65Y/g2FMuugMpAVSOetzKvBberKRel7l5ksStyzlTSmsmdlnge03o2wgMcdz5CWNGwmpEdLVHrAMz1/MQ2yry3pDpxFiWxKuBwtwkJIgZnReQj36jdsFp8qO3+Cb05zZgyyaoQEDzHR42mNycL4HMSDp0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hvusLK8Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762436908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QoL72t07+fb2NdHff0tfowphC2zMaMnXwcnl9cRu2ps=;
+	b=hvusLK8Z6ful3XGW+w1buF32yzT7PGCRIEsoMw2llHQy50xvFzpbFAXWGpY+0dwUMP1A2l
+	ERLVbz1RAxdP6DQCWaXWyvQNFIAT1RwqJzUEbptqMBBYgo91XGISBTwdKYHqFHOOMKQUE8
+	DUNX/M0URksxDr/2yoOr/fhtZE6XkK8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-126-eP0SrYTyN2uUEYoqZvSIQg-1; Thu,
+ 06 Nov 2025 08:48:25 -0500
+X-MC-Unique: eP0SrYTyN2uUEYoqZvSIQg-1
+X-Mimecast-MFC-AGG-ID: eP0SrYTyN2uUEYoqZvSIQg_1762436904
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9534A180034F;
+	Thu,  6 Nov 2025 13:48:23 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.98])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BEB491800451;
+	Thu,  6 Nov 2025 13:48:20 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Hans Holmberg <hans.holmberg@wdc.com>
+Cc: linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  Dave
+ Chinner <david@fromorbit.com>,  "Darrick J . Wong" <djwong@kernel.org>,
+  Christoph Hellwig <hch@lst.de>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+In-Reply-To: <20251106133530.12927-1-hans.holmberg@wdc.com> (Hans Holmberg's
+	message of "Thu, 6 Nov 2025 14:35:30 +0100")
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+Date: Thu, 06 Nov 2025 14:48:12 +0100
+Message-ID: <lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
-In-Reply-To: <20251106131956.1222864-7-dolinux.peng@gmail.com>
-References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
-Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary search
-From: bot+bpf-ci@kernel.org
-To: dolinux.peng@gmail.com,ast@kernel.org
-Cc: eddyz87@gmail.com,andrii.nakryiko@gmail.com,zhangxiaoqin@xiaomi.com,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,dolinux.peng@gmail.com,alan.maguire@oracle.com,song@kernel.org,pengdonglin@xiaomi.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Thu,  6 Nov 2025 13:47:42 +0000 (UTC)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
---===============7811395342483101209==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+* Hans Holmberg:
 
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 66cb739a0..33c327d3c 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -552,6 +552,70 @@ u32 btf_nr_types(const struct btf *btf)
->  	return total;
->  }
->
-> +/* Verifies that BTF types are sorted in ascending order according to their
-> + * names, with named types appearing before anonymous types. If the ordering
-> + * is correct, counts the number of named types and updates the BTF object's
-> + * nr_sorted_types field.
-> + *
-> + * Return: true if types are properly sorted, false otherwise
-> + */
-> +static bool btf_check_sorted(struct btf *btf)
-> +{
-> +	const struct btf_type *t;
-> +	int i, n, k = 0, nr_sorted_types;
-> +
-> +	if (likely(btf->nr_sorted_types != BTF_NEED_SORT_CHECK))
-> +		goto out;
-> +	btf->nr_sorted_types = 0;
-                            ^
+> We don't support preallocations for CoW inodes and we currently fail
+> with -EOPNOTSUPP, but this causes an issue for users of glibc's
+> posix_fallocate[1]. If fallocate fails, posix_fallocate falls back on
+> writing actual data into the range to try to allocate blocks that way.
+> That does not actually gurantee anything for CoW inodes however as we
+> write out of place.
 
-Can multiple threads race when writing to btf->nr_sorted_types here?
-Looking at btf_find_by_name_kind()->btf_check_sorted(), I see that
-btf_find_by_name_kind() receives a const pointer but casts away the const
-to call btf_check_sorted(). The function bpf_find_btf_id() calls
-btf_find_by_name_kind() without holding any locks (line 737), and later
-explicitly unlocks before calling it again (lines 756-757).
+Why doesn't fallocate trigger the copy instead?  Isn't this what the
+user is requesting?
 
-This means multiple threads can concurrently enter btf_check_sorted() and
-write to btf->nr_sorted_types. While the validation logic is idempotent
-and all threads would compute the same value, the concurrent writes to the
-same memory location without synchronization could trigger KCSAN warnings.
+Thanks,
+Florian
 
-Should this use atomic operations, or should the validation be performed
-under a lock during BTF initialization before the BTF becomes visible to
-multiple threads?
-
-> +
-> +	if (btf->nr_types < 2)
-> +		goto out;
-> +
-> +	nr_sorted_types = 0;
-> +	n = btf_nr_types(btf) - 1;
-> +	for (i = btf_start_id(btf); i < n; i++) {
-> +		k = i + 1;
-> +		if (btf_compare_type_names(&i, &k, btf) > 0)
-> +			goto out;
-> +
-> +		t = btf_type_by_id(btf, i);
-> +		if (t->name_off)
-> +			nr_sorted_types++;
-> +	}
-> +
-> +	t = btf_type_by_id(btf, k);
-> +	if (t->name_off)
-> +		nr_sorted_types++;
-> +	if (nr_sorted_types)
-> +		btf->nr_sorted_types = nr_sorted_types;
-                             ^
-
-The same race condition applies to this write of nr_sorted_types as well.
-
-> +
-> +out:
-> +	return btf->nr_sorted_types > 0;
-> +}
-
-[ ... ]
-
-> @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const struct btf *btf, const char *name, u8 kind)
->  			goto out;
->  	}
->
-> -	if (btf->nr_sorted_types != BTF_NEED_SORT_CHECK) {
-> +	if (btf_check_sorted((struct btf *)btf)) {
-                                  ^
-
-The const cast here enables the concurrent writes discussed above. Is
-there a reason to mark the btf parameter as const if we're modifying it?
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19137195500
-
---===============7811395342483101209==--
 
