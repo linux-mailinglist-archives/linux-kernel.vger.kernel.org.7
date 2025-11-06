@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-887631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5245C38C08
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:55:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7526DC38C29
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4726D34FC9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:55:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996E3188C1BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEAC22D7B0;
-	Thu,  6 Nov 2025 01:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661F022D795;
+	Thu,  6 Nov 2025 01:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GpGTV08x"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFAezk7b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B8121C9FD;
-	Thu,  6 Nov 2025 01:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8251223DED
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394145; cv=none; b=GrAYoRvNo4XyQ8yehaYBrZ9E4fQfAAE/zpY1qicf6sNLzTfHZdm9k6udrajKTo31ApiqRctbS52Gz3HTDc15bwHXZ+5fRCfGspGhJ21j3vzMAY/XKozgeRZQFdwxj0n4shv3iTBygMjD3OqNOPTYMP5rrzclEARR857oNiitPPo=
+	t=1762394176; cv=none; b=KLiguXuu2UcvTq+v+755WQexrAM32Bphs26tQp8bedi7YhVDlDy4eM6SQPNUh1TP2C4GQDJIahLca9ecXdqQAm5IhR/IpYuusUxGJBykcilKa+f83IqCvZWsTa4UUjf3GMaCvUApdBKUyRwX9AU7W800BBO/xH0CtKRX2jEF7tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394145; c=relaxed/simple;
-	bh=pRLZN8mGjbS1FREllnEA9ISH0/+3SzyEx0UzjRHUbuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eM3fTONfLOFZShKACBDJGHOSnwf7K9UotJ4hgjJ0nL7KtVTKvXFrv7IaTOqa+bPEEypK8Lw3Tjty9zg+wVdDbDuDRlIB6mDJDKOG4V0ApqRA9EsPGRNDOzem13AvnpjKPK8sEjJ9KqmRJga6vJ1H9pbfYFve0LsVL6GxgBz1qdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GpGTV08x; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762394144; x=1793930144;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pRLZN8mGjbS1FREllnEA9ISH0/+3SzyEx0UzjRHUbuc=;
-  b=GpGTV08xxlO21wcPYpoBt361Te+/Fgovzv1CTQojZSpVEnxM0jz+tz14
-   QSTba4tE5+h2Ug8Gkyu2eKnuKDBQ6gLzcpBk3kvj9BRiwptBc7VcmFdHq
-   ymI6h0IKh24Q4NxFvDnvKCXE2jxnlyy2aUo+4wZRExlsO6jikBRP4eosp
-   7OpS2rpbTovXEtaDibw3XDJg5JRPLHDrzwYPJLG79gAoTmoDaCg/WT40p
-   3e4uxebdgOguOhrqV7a+4yn6laNfOHF1WpB12VPA7Cw0f3gfbK+7dzJou
-   Hv5latikOCip53IdJt2YjP8Z/fIejWwWLVmEoQjxOkKWLLpG4CW55Uo1c
-   g==;
-X-CSE-ConnectionGUID: 57akyfHXRLCvGAZwzw9Hrw==
-X-CSE-MsgGUID: hyp4wpMHQFKMucO3lAPRzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75875550"
-X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
-   d="scan'208";a="75875550"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 17:55:43 -0800
-X-CSE-ConnectionGUID: JUHR9PThSVGDlsvXS1MlAg==
-X-CSE-MsgGUID: B1q0o/X7S1StXv9phEUPoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
-   d="scan'208";a="186910781"
-Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 17:55:42 -0800
-Message-ID: <7b30f2b5-5173-4c3b-85ff-dbfeda3c807a@linux.intel.com>
-Date: Thu, 6 Nov 2025 09:55:39 +0800
+	s=arc-20240116; t=1762394176; c=relaxed/simple;
+	bh=Lwi+HBW6NI9Zzpj1VH4WGk4UsyyneW2Nkp2PQ1aZCJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b8SsqNk3KVhHHIZPiEtnmeFVTUfI8S4kI5vJxXds3+dBp+QhfDteFGX8yloEEjCLHnH5mbjwI8B8SiQ+j+O7JI3b6rLENi6VoKzQ0PTFRgAyIT1ohf2CYp4CGEoq5oaPMOtdyg383ZZEpeZ19QL0o8/K9r2zRPNX2bH9afu7cLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFAezk7b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F07DC19423
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762394176;
+	bh=Lwi+HBW6NI9Zzpj1VH4WGk4UsyyneW2Nkp2PQ1aZCJk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jFAezk7bFkzOnpSyKtu/v/0eMNhdxWRoH1Mwm+NPQd0YUkK/tMK3Xje0KPEp81c7F
+	 XsYqd64+4G4K6CK9dfdMN/Z1hEHdawN/kdcYTQpiQJNwk3yQk9hwx698TPLcTPbwHG
+	 9d1vTFv8sBziGLxYtWQkJlP8ajLZZPGjPgJwGOEblng3QHZLv+j2LuQ7XwG0n4UzUa
+	 TeLk3tNQzrVyW2ycOtHn/XQuZy0wN+sNSPL/5bTh4MhmvKJf/kjYvRSb0HQxZv2cu0
+	 WKGGnfm/9o/+LHPHYI4upH6AjvoBfTgVVnEcnXfaY3ZSsDJpK48OI5cAmZcxGbRqbW
+	 EJvb0sm9iPvDA==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso665662a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:56:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVS+5sTx+i6YqZznCrgNMqxBU4yPr3dibbeF6hjAGua6j+/BaQhKZfDMONH0Anmdyr1GER99WpreCa6u0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKo7gqi3UVh5mG1wipivo2d6Bux6eaiy9KIlXEQbDOS9qp6MSu
+	FSOzcZzE9yN0HfHNz2kzNKum8iAReVdwN8itW9n1kgWM3qrIzrVFHBHCppAdwvD1c/q+vB5nUXT
+	fj1886/QyNM6uxD7/09lLcdh545BrfRk=
+X-Google-Smtp-Source: AGHT+IGRWQr/yMix2KC9FWBoMcuBXJI8axGaVe0Q7R1p9lozVUkvmiwrl4KtXQgDBkKGB2LM0O8foBaqARcRluikU3E=
+X-Received: by 2002:a05:6402:51d1:b0:63c:2d72:56e3 with SMTP id
+ 4fb4d7f45d1cf-64105a5d549mr4682456a12.23.1762394174672; Wed, 05 Nov 2025
+ 17:56:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] KVM: x86: Load guest/host XCR0 and XSS outside of the
- fastpath run loop
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jon Kohler <jon@nutanix.com>
-References: <20251030224246.3456492-1-seanjc@google.com>
- <20251030224246.3456492-4-seanjc@google.com>
- <88404ae2-fa4b-4357-918b-fd949dd2521a@linux.intel.com>
- <aQtiYwBYtsz6Whwz@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <aQtiYwBYtsz6Whwz@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251106005333.956321-1-neilb@ownmail.net> <20251106005333.956321-8-neilb@ownmail.net>
+In-Reply-To: <20251106005333.956321-8-neilb@ownmail.net>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 6 Nov 2025 10:56:01 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8noOKEPEBDKSFa4FLFsHH3oCKRM58Tq+PTmTG5yjyDdw@mail.gmail.com>
+X-Gm-Features: AWmQ_blmBmQhx0SfF_RJrLZwQ93tMKfLranVnNF6NMqPQEMSGUPWm6n05JxFEa0
+Message-ID: <CAKYAXd8noOKEPEBDKSFa4FLFsHH3oCKRM58Tq+PTmTG5yjyDdw@mail.gmail.com>
+Subject: Re: [PATCH v5 07/14] VFS: introduce start_removing_dentry()
+To: NeilBrown <neil@brown.name>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 11/5/2025 10:43 PM, Sean Christopherson wrote:
-> On Wed, Nov 05, 2025, Binbin Wu wrote:
->>
->> On 10/31/2025 6:42 AM, Sean Christopherson wrote:
->> [...]
->>> -void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
->>> +static void kvm_load_guest_xfeatures(struct kvm_vcpu *vcpu)
->>>    {
->>>    	if (vcpu->arch.guest_state_protected)
->>>    		return;
->>>    	if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
->>> -
->>>    		if (vcpu->arch.xcr0 != kvm_host.xcr0)
->>>    			xsetbv(XCR_XFEATURE_ENABLED_MASK, vcpu->arch.xcr0);
->>> @@ -1217,6 +1216,27 @@ void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
->>>    		    vcpu->arch.ia32_xss != kvm_host.xss)
->>>    			wrmsrq(MSR_IA32_XSS, vcpu->arch.ia32_xss);
->>>    	}
->>> +}
->>> +
->>> +static void kvm_load_host_xfeatures(struct kvm_vcpu *vcpu)
->>> +{
->>> +	if (vcpu->arch.guest_state_protected)
->>> +		return;
->>> +
->>> +	if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
->>> +		if (vcpu->arch.xcr0 != kvm_host.xcr0)
->>> +			xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
->>> +
->>> +		if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
->>> +		    vcpu->arch.ia32_xss != kvm_host.xss)
->>> +			wrmsrq(MSR_IA32_XSS, kvm_host.xss);
->>> +	}
->>> +}
->> kvm_load_guest_xfeatures() and kvm_load_host_xfeatures() are almost the same
->> except for the guest values VS. host values to set.
->> I am wondering if it is worth adding a helper to dedup the code, like:
->>
->> static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, u64 xcr0, u64 xss)
->> {
->>          if (vcpu->arch.guest_state_protected)
->>                  return;
->>
->>          if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
->>                  if (vcpu->arch.xcr0 != kvm_host.xcr0)
->>                          xsetbv(XCR_XFEATURE_ENABLED_MASK, xcr0);
->>
->>                  if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
->>                      vcpu->arch.ia32_xss != kvm_host.xss)
->>                          wrmsrq(MSR_IA32_XSS, xss);
->>          }
->> }
-> Nice!  I like it.  Want to send a proper patch (relative to this series)?  Or
-> I can turn the above into a patch with a Suggested-by.  Either way works for me.
+On Thu, Nov 6, 2025 at 9:55=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
 >
-I can send a patch.
+> From: NeilBrown <neil@brown.name>
+>
+> start_removing_dentry() is similar to start_removing() but instead of
+> providing a name for lookup, the target dentry is given.
+>
+> start_removing_dentry() checks that the dentry is still hashed and in
+> the parent, and if so it locks and increases the refcount so that
+> end_removing() can be used to finish the operation.
+>
+> This is used in cachefiles, overlayfs, smb/server, and apparmor.
+>
+> There will be other users including ecryptfs.
+>
+> As start_removing_dentry() takes an extra reference to the dentry (to be
+> put by end_removing()), there is no need to explicitly take an extra
+> reference to stop d_delete() from using dentry_unlink_inode() to negate
+> the dentry - as in cachefiles_delete_object(), and ksmbd_vfs_unlink().
+>
+> cachefiles_bury_object() now gets an extra ref to the victim, which is
+> drops.  As it includes the needed end_removing() calls, the caller
+> doesn't need them.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: NeilBrown <neil@brown.name>
+For ksmbd part,
+Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
+Thanks!
 
