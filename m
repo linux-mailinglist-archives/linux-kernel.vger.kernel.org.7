@@ -1,121 +1,181 @@
-Return-Path: <linux-kernel+bounces-889205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D6CC3CF45
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:50:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FED8C3CF42
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:50:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 950BD18972FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:51:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EED114E180F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E293734EEFA;
-	Thu,  6 Nov 2025 17:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A702D876B;
+	Thu,  6 Nov 2025 17:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJ9VHHDd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIYXEgc+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4836A280033
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FB423EA94;
+	Thu,  6 Nov 2025 17:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451426; cv=none; b=h21KBQMtKiFxi1vUfbNh2hqqtibQ/o26f7wacf4lD+fIH/p8/zjw9V5nSAo7c3eXiBVNMWDZkrytelOBw8YOqAExl2MKZNIXly+iKLiQbiiHAsTPq4hcc0Tt+G61f68zR+wfwwznf4mZBdszCkwYznycYIS5DzHmGr80VJ8mN5g=
+	t=1762451418; cv=none; b=Fy56ZfIZ5ajqm/ic0HnRnR+KVh7jnqsIjfGwtTF3lN1rgzGuQAXBchd5A+T1TkEAEH7unAwLRv9BelJciyG3IRCGH9mU+bxNwhyrD1B7Cx9sq9HXTPdyiAsZDNQyZITFk4U0aSmNB/hmmDwWeEi2SIRf425YAynMM3ZVgLV+b/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451426; c=relaxed/simple;
-	bh=qzhI9+URfNWbqE5zCw+LeJhYdEcE5WIvYvUPAvFFsVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DdfdumqdddVqcSqZ8YGNtdN0lXT0LnGgS0wEp98noFPSFV61vMkekBFN8UuHd5kK00uFeLDCv+2GuDMRi+ZuTY+ol8Jq/ec9VfEh/IHs/JdF8rWQpNym9WuL5XNHWBfOynl/3tiwq6b0Bp9owb4iDqGPBx893CUTddg2R4osob4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJ9VHHDd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07174C19422
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:50:26 +0000 (UTC)
+	s=arc-20240116; t=1762451418; c=relaxed/simple;
+	bh=FxKA2fMr/WdbaFHAbSbkmcbsbRlTbS4a5322zAtajMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=b0LlP4WB0A05BY8prNnL1fiDcKoMZn4RTnRbed26EhhkZGU9tASF+3YsFxXXSkSwl4bfPe2vObDnAqHd0DdcSzmfjFHb8JlzXQ5WxqjWBCBRnX1AAdure1Z6aZ4iMkB/O4Hs2YTEx7D6CE0rI0iFoKyonVqZshdFEVMDacRT8Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIYXEgc+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C033BC16AAE;
+	Thu,  6 Nov 2025 17:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762451426;
-	bh=qzhI9+URfNWbqE5zCw+LeJhYdEcE5WIvYvUPAvFFsVI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cJ9VHHDdg2JOOWFmSm0BOAFzcriV2YwximQPq9/ep7LyD2xSKW1cQJZJTGe8pXGSk
-	 p+RB+HIrgqG9fSkt1luL01RBH+eLfCoHSqFUf2PTU4+/VXQjts9yFMbrj7oLx5NEDt
-	 d+7mFw+Ic3k6VXE6SfqTRdqqahNf4Du4GkjRlqYtLeSYped/A7kyBLPiMzbxx2yYGU
-	 3QUC6Mdwi/BSBmDpF6wpsBwaaaymCjxGfjEbAqIRPL3g9/te1JgbmZXfAgtHGPIpnh
-	 qjdLeZSKatmqGV+3FoSuIpfZXUJoyISJUAFNg03UjkVbinjiD8qHGsWa1wSVMnAESL
-	 KPIBqGFKfkzjA==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5942b58ac81so1021876e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:50:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWsvr3/GMBzgDOrCBAF0ybTHwLj90C2bkeULxBsAXcgHN3PsJhoCs3z4FX3vDt2X/w7myZsAcHc4ruBNwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwgh3j+FTjDGYrfFdeqNxjSTnGVj8DtrElqkAzcjQ4nxmHsjHf
-	ESfxoyiWUYbbma6PgAOCx4rAI2g8DYaXFhWi6FBk85/ZA18ZZhFKrkdJy6tUTQ4nXt8GXiCl960
-	jWwPvPs9eU6POoe/819Cm4Ce24sZxd9A=
-X-Google-Smtp-Source: AGHT+IGvVKXBW2KL0UZrApxnN9UEVenMr25iwuRuIyvqU+cz6fvJPWSZOlISCL0iXLWtlMzUylvIHuJfQ5Kg0YHvPDk=
-X-Received: by 2002:a05:6512:3b2a:b0:594:2c42:abaf with SMTP id
- 2adb3069b0e04-59456b86178mr13804e87.34.1762451424356; Thu, 06 Nov 2025
- 09:50:24 -0800 (PST)
+	s=k20201202; t=1762451417;
+	bh=FxKA2fMr/WdbaFHAbSbkmcbsbRlTbS4a5322zAtajMg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=QIYXEgc+9LBNb0m+aXShs3Aup8pDGTCbuhCr/0D/IZdFYZk8GefrTYscWUAExw+uK
+	 F+/r5w0Zxdu1QkgCyRa+LwZHc+eaY2CKB0ogbUBGUIZfnC3HBKwXDfwMXdhQIkrLha
+	 Y8lA7m4P4Y354Al6MypB308FfCHwrHvZzllLa2Pn9aMmvr2AO9iitJVoBbpZo72dNl
+	 4l1LzzuE9bgOfcC7qP72MpKzYzlUMPMyAkeAgiqtuxTFnX/nzzWEI4T487KcxwVKyB
+	 iEkymD1taiV704dGGuUEu2vcXX1THFvk1HWfJtRGuFqJJwjBmEkyIEiof7+EHGIv48
+	 zAPF78BGrEAfg==
+Date: Thu, 6 Nov 2025 11:50:16 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mbrugger@suse.com,
+	guillaume.gardet@arm.com, tiwai@suse.com,
+	Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] PCI: of: Downgrade error message on missing of_root
+ node
+Message-ID: <20251106175016.GA1960490@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251102001411.108385-1-francescopompo2@gmail.com> <68a428fd-aad8-4540-a509-d33ba116b5b9@suswa.mountain>
-In-Reply-To: <68a428fd-aad8-4540-a509-d33ba116b5b9@suswa.mountain>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 6 Nov 2025 18:50:12 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHZioMA21NM_Ddg+U0siyxzTkGWjYiY_jUNP=QXvu1jdw@mail.gmail.com>
-X-Gm-Features: AWmQ_blPPZZMTzAdP0WTqwb-_oGGhHcoCn-JzrpnjtP5TVNcu0FwPOmFemn4gfU
-Message-ID: <CAMj1kXHZioMA21NM_Ddg+U0siyxzTkGWjYiY_jUNP=QXvu1jdw@mail.gmail.com>
-Subject: Re: [PATCH] efistub/smbios: Add fallback for SMBIOS record lookup
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Francesco Pompo <francescopompo2@gmail.com>, lkp@intel.com, 
-	oe-kbuild-all@lists.linux.dev, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106182708.03cfb6c6@bootlin.com>
 
-Hi Dan,
+On Thu, Nov 06, 2025 at 06:27:08PM +0100, Herve Codina wrote:
+> On Thu, 6 Nov 2025 16:21:47 +0100
+> Andrea della Porta <andrea.porta@suse.com> wrote:
+> > On 13:18 Thu 06 Nov     , Herve Codina wrote:
+> > > On Thu, 6 Nov 2025 12:04:07 +0100
+> > > Andrea della Porta <andrea.porta@suse.com> wrote:
+> > > > On 18:23 Wed 05 Nov     , Bjorn Helgaas wrote:  
+> > > > > On Wed, Nov 05, 2025 at 07:33:40PM +0100, Andrea della Porta wrote:    
+Patch at https://lore.kernel.org/r/955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com,
+added back for reference:
 
-On Thu, 6 Nov 2025 at 14:08, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> Hi Francesco,
->
-> kernel test robot noticed the following build warnings:
->
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Francesco-Pompo/efistub-smbios-Add-fallback-for-SMBIOS-record-lookup/20251102-081803
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git next
-> patch link:    https://lore.kernel.org/r/20251102001411.108385-1-francescopompo2%40gmail.com
-> patch subject: [PATCH] efistub/smbios: Add fallback for SMBIOS record lookup
-> config: i386-randconfig-141-20251103 (https://download.01.org/0day-ci/archive/20251104/202511040131.8yGeRa6u-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202511040131.8yGeRa6u-lkp@intel.com/
->
-> smatch warnings:
-> drivers/firmware/efi/libstub/smbios.c:55 verify_ep_int_checksum() error: buffer overflow 'ptr' 5 <= 14
->
-> vim +/ptr +55 drivers/firmware/efi/libstub/smbios.c
->
-> d45578057224c4 Francesco Pompo 2025-11-02  48  static bool verify_ep_int_checksum(const struct smbios_entry_point *ep)
-> d45578057224c4 Francesco Pompo 2025-11-02  49  {
-> d45578057224c4 Francesco Pompo 2025-11-02  50   const u8 *ptr = (u8 *)&ep->int_anchor;
-> d45578057224c4 Francesco Pompo 2025-11-02  51   u8 sum = 0;
-> d45578057224c4 Francesco Pompo 2025-11-02  52   int i;
-> d45578057224c4 Francesco Pompo 2025-11-02  53
-> d45578057224c4 Francesco Pompo 2025-11-02  54   for (i = 0; i < 15; i++)
-> d45578057224c4 Francesco Pompo 2025-11-02 @55           sum += ptr[i];
->
-> This loop reads across a bunch of struct members.  We would normally
-> use a struct_group() to say that all the struct members are grouped
-> together.
->
-> d45578057224c4 Francesco Pompo 2025-11-02  56
-> d45578057224c4 Francesco Pompo 2025-11-02  57   return sum == 0;
-> d45578057224c4 Francesco Pompo 2025-11-02  58  }
->
+  diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+  index 3579265f1198..872c36b195e3 100644
+  --- a/drivers/pci/of.c
+  +++ b/drivers/pci/of.c
+  @@ -775,7 +775,7 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
 
-Please report issues against the version of the patch that is actually
-in -next, rather than random versions from the mailing list.
+	  /* Check if there is a DT root node to attach the created node */
+	  if (!of_root) {
+  -               pr_err("of_root node is NULL, cannot create PCI host bridge node\n");
+  +               pr_info("Missing DeviceTree, cannot create PCI host bridge node\n");
+		  return;
+	  }
+
+> > > > > > When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error
+> > > > > > message is generated if no 'of_root' node is defined.
+> > > > > > 
+> > > > > > On DT-based systems, this cannot happen as a root DT node
+> > > > > > is always present. On ACPI-based systems, this is not a
+> > > > > > true error because a DT is not used.
+> > > > > > 
+> > > > > > Downgrade the pr_err() to pr_info() and reword the message
+> > > > > > text to be less context specific.    
+> > > > > 
+> > > > > of_pci_make_host_bridge_node() is called in the very generic
+> > > > > pci_register_host_bridge() path.  Does that mean every boot
+> > > > > of a kernel with CONFIG_PCI_DYNAMIC_OF_NODES on a non-DT
+> > > > > system will see this message?    
+> > > > 
+> > > > This is the case, indeed. That's why downgrading to info seems
+> > > > sensible.
+> > > >   
+> > > > > This message seems like something that will generate user
+> > > > > questions.  Or is this really an error, and we were supposed
+> > > > > to have created of_root somewhere but it failed?  If so, I
+> > > > > would expect a message where the of_root creation failed.    
+
+I think we should just remove the message completely.  I don't want
+users to enable CONFIG_PCI_DYNAMIC_OF_NODES out of curiosity or
+willingness to test, and then ask about this message.
+
+"You can avoid the message by also enabling CONFIG_OF_EARLY_FLATTREE"
+is not a very satisfactory answer.
+
+A message at the point of *needing* this, i.e., when loading an
+overlay fails for lack of this dynamic DT, is fine.
+
+> > > > Not really an error per se: on ACPI system we usually don't
+> > > > have DT, so this message just warns you that there will be no
+> > > > pci nodes created on it.  Which, again, should be of no
+> > > > importance on ACPI.  
+> > > 
+> > > I my last understanding, all architecture (even x86) have the DT
+> > > root node set. This node is empty on architectures that don't
+> > > use DT to describe hardware at boot (ACPI for instance).  
+> > 
+> > This does not seem to be the case for all arch, see below.
+> > 
+> > > This DT node is needed for PCI board that will be described by a
+> > > DT overlay.  LAN966x for instance.
+> > > 
+> > > On v6.18-rc1 kernel, I successfully used my LAN966x board on a
+> > > ACPI system.  This means that of_root DT node was present on my
+> > > system.
+> > >   
+> > > > The only scenario in which this message is actually an error
+> > > > would be on ACPI system that use DT as a complement to make
+> > > > runtime overlay work,  
+> > > 
+> > > It is an error also if you use a PCI board that needs PCI DT
+> > > nodes (CONFIG_PCI_DYNAMIC_OF_NODES) Lan966x for instance.  
+> > 
+> > Yes, I was referring exactly to that.
+> > 
+> > > > i.e. the overlay approach for RP1 on RPi5 with ACPI fw. AFAIK
+> > > > this fw is more a PoC that something really widespread and
+> > > > currntly the overlay approach is in stand-by anyway (meaning
+> > > > no one will use it unless some major changes will be made to
+> > > > make it work). But there may be other situations in which this
+> > > > scenario could arise, I'm thinking about Bootlin's LAN966x
+> > > > driver which also uses runtime overlay to describe thw hw.  On
+> > > > ACPI system the root DT node is not created because
+> > > > unflatten_device_tree() is not called.  
+> > > 
+> > > I am not so sure.  My LAN966x board is working on a x86 ACPI
+> > > system.  
+> > 
+> > Indeed it depends on the architecture. On x86 an empty DT node is
+> > created, provided you have CONFIG_OF_EARLY_FLATTREE defined (which
+> > I guess you have, even if it's not in default config).
+> 
+> Indeed, I have CONFIG_OF_EARLY_FLATTREE = y.
+> 
+> > On arm64, ACPI and DT are mutually exclusive, unless the DT is
+> > basically empty (i.e. only root node and chosen node). The DT root
+> > node is not automatically created if not provided at boot, though.
+> > This reinforces my idea of providing the only root node DT on arm
+> > as well, but I'm not entirely sure about possible side effects.
+> 
+> Isn't it possible to have the same kind of operations on ARM64 ACPI
+> and on x86?
+> 
+> In order to have CONFIG_PCI_DYNAMIC_OF_NODES working on ACPI, we
+> need a DT node, even empty.
+> 
+> ARM64 ACPI without an empty DT node means that no PCI boards using a
+> DT description will work on this system.
 
