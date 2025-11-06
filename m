@@ -1,279 +1,142 @@
-Return-Path: <linux-kernel+bounces-887633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CF4C38C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:56:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5245C38C08
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4E50434FC50
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:56:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4726D34FC9C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E143223EA93;
-	Thu,  6 Nov 2025 01:56:18 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329962144CF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEAC22D7B0;
+	Thu,  6 Nov 2025 01:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GpGTV08x"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B8121C9FD;
+	Thu,  6 Nov 2025 01:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394178; cv=none; b=Tv3fPlYJ2wgRk/0VNB91guZ1QdPkcHcjylxRPUTc6HHLgH0W3obmY+EQ6fJ1w1KmqtQTcabFfOXE/H/BApoC60mqQcaUfMIkT+hHBlxMlDUfpvW1ok3hbqoLZATYcEKgO53hr+vRi9lFfxCfpEqGyULRhUHON7sO1q8sj3c75gc=
+	t=1762394145; cv=none; b=GrAYoRvNo4XyQ8yehaYBrZ9E4fQfAAE/zpY1qicf6sNLzTfHZdm9k6udrajKTo31ApiqRctbS52Gz3HTDc15bwHXZ+5fRCfGspGhJ21j3vzMAY/XKozgeRZQFdwxj0n4shv3iTBygMjD3OqNOPTYMP5rrzclEARR857oNiitPPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394178; c=relaxed/simple;
-	bh=Uy9YyrLDMDKCgUP3MXz7JoZCBcI0AC2ZMIJdmO0L164=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=j6KgEOykYxQDJN+2Na7rLGEXrHC7nM7ombC4dwtMKGkTdfxAU0mldswdIbxb5JQvlhPVauPhm+B7ZNXNZ/5IUlY/dzNz4YZyRulwXVTyis2V6xh6fzHYdn1vNxYjobSF9B0FOC3DRJlmSGGd33DF74gyFMIIzaYIZg3U5L5Ew1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8AxSNE9AAxpIoYfAA--.3477S3;
-	Thu, 06 Nov 2025 09:56:13 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by front1 (Coremail) with SMTP id qMiowJAxT+Y6AAxpAxspAQ--.53990S3;
-	Thu, 06 Nov 2025 09:56:12 +0800 (CST)
-Subject: Re: [PATCH] Loongarch:Make pte/pmd_modify can set _PAGE_MODIFIED
-To: Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Cc: kernel@xen0n.name, akpm@linux-foundation.org, willy@infradead.org,
- david@redhat.com, linmag7@gmail.com, thuth@redhat.com, apopple@nvidia.com,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- Liupu Wang <wangliupu@loongson.cn>
-References: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
- <CAAhV-H5JnmJqTZ1GnhcgODtjL5FLy8x5HNRJxs6us=gzcFon5Q@mail.gmail.com>
- <95e6f0a6-fd6c-a85f-5983-5a37eaf960a2@loongson.cn>
- <CAAhV-H4WrphWQqW7HoeD7xSvRuHV1KBt7jgESQU7N-y1HrSVVw@mail.gmail.com>
- <b839a6a6-3791-ba73-baff-e860aa879bbc@loongson.cn>
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Message-ID: <833f6790-f1bf-d089-84cf-9f55e1c9866f@loongson.cn>
-Date: Thu, 6 Nov 2025 09:55:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1762394145; c=relaxed/simple;
+	bh=pRLZN8mGjbS1FREllnEA9ISH0/+3SzyEx0UzjRHUbuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eM3fTONfLOFZShKACBDJGHOSnwf7K9UotJ4hgjJ0nL7KtVTKvXFrv7IaTOqa+bPEEypK8Lw3Tjty9zg+wVdDbDuDRlIB6mDJDKOG4V0ApqRA9EsPGRNDOzem13AvnpjKPK8sEjJ9KqmRJga6vJ1H9pbfYFve0LsVL6GxgBz1qdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GpGTV08x; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762394144; x=1793930144;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pRLZN8mGjbS1FREllnEA9ISH0/+3SzyEx0UzjRHUbuc=;
+  b=GpGTV08xxlO21wcPYpoBt361Te+/Fgovzv1CTQojZSpVEnxM0jz+tz14
+   QSTba4tE5+h2Ug8Gkyu2eKnuKDBQ6gLzcpBk3kvj9BRiwptBc7VcmFdHq
+   ymI6h0IKh24Q4NxFvDnvKCXE2jxnlyy2aUo+4wZRExlsO6jikBRP4eosp
+   7OpS2rpbTovXEtaDibw3XDJg5JRPLHDrzwYPJLG79gAoTmoDaCg/WT40p
+   3e4uxebdgOguOhrqV7a+4yn6laNfOHF1WpB12VPA7Cw0f3gfbK+7dzJou
+   Hv5latikOCip53IdJt2YjP8Z/fIejWwWLVmEoQjxOkKWLLpG4CW55Uo1c
+   g==;
+X-CSE-ConnectionGUID: 57akyfHXRLCvGAZwzw9Hrw==
+X-CSE-MsgGUID: hyp4wpMHQFKMucO3lAPRzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75875550"
+X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
+   d="scan'208";a="75875550"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 17:55:43 -0800
+X-CSE-ConnectionGUID: JUHR9PThSVGDlsvXS1MlAg==
+X-CSE-MsgGUID: B1q0o/X7S1StXv9phEUPoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,283,1754982000"; 
+   d="scan'208";a="186910781"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2025 17:55:42 -0800
+Message-ID: <7b30f2b5-5173-4c3b-85ff-dbfeda3c807a@linux.intel.com>
+Date: Thu, 6 Nov 2025 09:55:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <b839a6a6-3791-ba73-baff-e860aa879bbc@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] KVM: x86: Load guest/host XCR0 and XSS outside of the
+ fastpath run loop
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jon Kohler <jon@nutanix.com>
+References: <20251030224246.3456492-1-seanjc@google.com>
+ <20251030224246.3456492-4-seanjc@google.com>
+ <88404ae2-fa4b-4357-918b-fd949dd2521a@linux.intel.com>
+ <aQtiYwBYtsz6Whwz@google.com>
 Content-Language: en-US
-X-CM-TRANSID:qMiowJAxT+Y6AAxpAxspAQ--.53990S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxKF18XFW5ur4rXrWrArWfXrc_yoW3Cw1fpF
-	4kJFyUZFW5Jr1xAa40gF17Xry2yr4DJ3WkXr1DJF18Jr4Dt34jqr18Xrn09r1rJr48Jw1U
-	Xr1UJr43ZF43JwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aQtiYwBYtsz6Whwz@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi ,Bibao
 
-在 2025/11/5 上午9:18, Bibo Mao 写道:
->
->
-> On 2025/11/5 上午9:07, Huacai Chen wrote:
->> On Wed, Nov 5, 2025 at 8:57 AM Tianyang Zhang 
->> <zhangtianyang@loongson.cn> wrote:
->>>
->>> Hi, Huacai
->>>
->>> 在 2025/11/4 下午4:00, Huacai Chen 写道:
->>>> Hi, Tianyang,
->>>>
->>>> The subject line can be:
->>>> LoongArch: Let {pte,pmd}_modify() record the status of _PAGE_DIRTY (If
->>>> I'm right in the later comments).
->>> Ok. I got it
->>>>
->>>> On Tue, Nov 4, 2025 at 3:30 PM Tianyang Zhang 
->>>> <zhangtianyang@loongson.cn> wrote:
->>>>> In the current pte_modify operation, _PAGE_DIRTY might be cleared. 
->>>>> Since
->>>>> the hardware-page-walk does not have a predefined _PAGE_MODIFIED 
->>>>> flag,
->>>>> this could lead to loss of valid data in certain scenarios.
->>>>>
->>>>> The new modification involves checking whether the original PTE 
->>>>> has the
->>>>> _PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, 
->>>>> ensuring
->>>>> that the pte_dirty interface can return accurate information.
->>>> The description may be wrong here. Because pte_dirty() returns
->>>> pte_val(pte) & (_PAGE_DIRTY | _PAGE_MODIFIED).
->>>> If _PAGE_DIRTY isn't lost, pte_dirty() is always right, no matter
->>>> whether there is or isn't _PAGE_MODIFIED.
->>>>
->>>> I think the real reason is we need to set _PAGE_MODIFIED in
->>>> pte/pmd_modify to record the status of _PAGE_DIRTY, so that we can
->>>> recover _PAGE_DIRTY afterwards, such as in pte/pmd_mkwrite().
->>> Ok, I will adjust the description
->> After some thinking, your original description may be right. Without
->> this patch the scenario maybe like this:
->> The pte is dirty _PAGE_DIRTY but without _PAGE_MODIFIED, after
->> pte_modify() we lose _PAGE_DIRTY, then pte_dirty() returns false. So
->> we need _PAGE_MODIFIED to record _PAGE_DIRTY here.
-> In theory pte_modify() is to modify RWX attribute. I think that it is 
-> a tricky to remove _PAGE_DIRTY and add _PAGE_MODIFIED with HW PTW system.
->
-> Also _PAGE_ACCESSED is lost with pte_modify() API, is there any 
-> influence with HW PTW system, or wait until possible problems coming out.
 
-static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
-{
-         return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
-                      (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
-}
-In my understand, During the  pte_modify process, it is essential to 
-ensure that specific bits are inherited from the original PTE rather 
-than simply replaced(as set_pte),
-
-this guarantees the coherent operation of the memory management system.
-
-Since _PAGE_CHG_MASK explicitly requires preserving pte_modified, and 
-there is an inherent correlation between pte_dirty and pte_modified, 
-these attributes must be evaluated and handled accordingly.
-
-The pte_valid attribute, being a hardware property, is inherently the 
-target of modification in the pte_modify interface. Therefore, it is 
-reasonable not to preserve it.
-
-Thanks
-
-Tianyang
-
->
-> Regards
-> Bibo Mao
+On 11/5/2025 10:43 PM, Sean Christopherson wrote:
+> On Wed, Nov 05, 2025, Binbin Wu wrote:
 >>
->> But the description also needs to be updated.
->>
->>>>
->>>>> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
->>>>> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
->>>>> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
->>>>> ---
->>>>>    arch/loongarch/include/asm/pgtable.h | 17 +++++++++++++----
->>>>>    1 file changed, 13 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/arch/loongarch/include/asm/pgtable.h 
->>>>> b/arch/loongarch/include/asm/pgtable.h
->>>>> index bd128696e96d..106abfa5183b 100644
->>>>> --- a/arch/loongarch/include/asm/pgtable.h
->>>>> +++ b/arch/loongarch/include/asm/pgtable.h
->>>>> @@ -424,8 +424,13 @@ static inline unsigned long 
->>>>> pte_accessible(struct mm_struct *mm, pte_t a)
->>>>>
->>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->>>>>    {
->>>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->>>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->>>>> +       unsigned long val = (pte_val(pte) & _PAGE_CHG_MASK) |
->>>>> +                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
->>>>> +
->>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
->>>>> +               val |= _PAGE_MODIFIED;
->>>>> +
->>>>> +       return __pte(val);
->>>>>    }
->>>>>
->>>>>    extern void __update_tlb(struct vm_area_struct *vma,
->>>>> @@ -547,9 +552,13 @@ static inline struct page *pmd_page(pmd_t pmd)
->>>>>
->>>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->>>>>    {
->>>>> -       pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->>>>> +       unsigned long val = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->>>>>                                   (pgprot_val(newprot) & 
->>>>> ~_HPAGE_CHG_MASK);
->>>>> -       return pmd;
->>>>> +
->>>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
->>>>> +               val |= _PAGE_MODIFIED;
->>>>> +
->>>>> +       return __pmd(val);
->>>>>    }
->>>> A minimal modification can be:
->>>> diff --git a/arch/loongarch/include/asm/pgtable.h
->>>> b/arch/loongarch/include/asm/pgtable.h
->>>> index 1f20e9280062..907ece0199e0 100644
->>>> --- a/arch/loongarch/include/asm/pgtable.h
->>>> +++ b/arch/loongarch/include/asm/pgtable.h
->>>> @@ -448,8 +448,13 @@ static inline unsigned long pte_accessible(struct
->>>> mm_struct *mm, pte_t a)
->>>>
->>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->>>>    {
->>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->>>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
->>>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
->>>> +
->>>> +       if (pte_val(pte) & _PAGE_DIRTY)
->>>> +               pte_val(pte) |= _PAGE_MODIFIED;
->>>> +
->>>> +       return pte;
->>>>    }
->>>
->>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
->>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
->>>
->>> After this step, _PAGE_DIRTY may have already disappeared,
->>> If no new variables are added, they can be modified in follow way:
->>>
->>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->>>    {
->>> +       if (pte_val(pte) & _PAGE_DIRTY)
->>> +               pte_val(pte) |= _PAGE_MODIFIED;
+>> On 10/31/2025 6:42 AM, Sean Christopherson wrote:
+>> [...]
+>>> -void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
+>>> +static void kvm_load_guest_xfeatures(struct kvm_vcpu *vcpu)
+>>>    {
+>>>    	if (vcpu->arch.guest_state_protected)
+>>>    		return;
+>>>    	if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
+>>> -
+>>>    		if (vcpu->arch.xcr0 != kvm_host.xcr0)
+>>>    			xsetbv(XCR_XFEATURE_ENABLED_MASK, vcpu->arch.xcr0);
+>>> @@ -1217,6 +1216,27 @@ void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
+>>>    		    vcpu->arch.ia32_xss != kvm_host.xss)
+>>>    			wrmsrq(MSR_IA32_XSS, vcpu->arch.ia32_xss);
+>>>    	}
+>>> +}
 >>> +
->>>          return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->>>           (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->>>
->>>    }
->> OK, it makes sense.
+>>> +static void kvm_load_host_xfeatures(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	if (vcpu->arch.guest_state_protected)
+>>> +		return;
+>>> +
+>>> +	if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
+>>> +		if (vcpu->arch.xcr0 != kvm_host.xcr0)
+>>> +			xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
+>>> +
+>>> +		if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
+>>> +		    vcpu->arch.ia32_xss != kvm_host.xss)
+>>> +			wrmsrq(MSR_IA32_XSS, kvm_host.xss);
+>>> +	}
+>>> +}
+>> kvm_load_guest_xfeatures() and kvm_load_host_xfeatures() are almost the same
+>> except for the guest values VS. host values to set.
+>> I am wondering if it is worth adding a helper to dedup the code, like:
 >>
->> Huacai
->>>
->>>>
->>>>    extern void __update_tlb(struct vm_area_struct *vma,
->>>> @@ -583,7 +588,11 @@ static inline struct page *pmd_page(pmd_t pmd)
->>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->>>>    {
->>>>           pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->>>> -                               (pgprot_val(newprot) & 
->>>> ~_HPAGE_CHG_MASK);
->>>> +                       (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
->>>> +
->>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
->>>> +               pmd_val(pmd) |= _PAGE_MODIFIED;
->>>> +
->>>>           return pmd;
->>>>    }
->>>>
->>>> You needn't define a new variable.
->>>>
->>>>
->>>> Huacai
->>>>
->>>>>    static inline pmd_t pmd_mkinvalid(pmd_t pmd)
->>>>> -- 
->>>>> 2.41.0
->>>>>
->>>>>
->>> Thanks
->>>
->>> Tianyang
->>>
-
+>> static void kvm_load_xfeatures(struct kvm_vcpu *vcpu, u64 xcr0, u64 xss)
+>> {
+>>          if (vcpu->arch.guest_state_protected)
+>>                  return;
+>>
+>>          if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
+>>                  if (vcpu->arch.xcr0 != kvm_host.xcr0)
+>>                          xsetbv(XCR_XFEATURE_ENABLED_MASK, xcr0);
+>>
+>>                  if (guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVES) &&
+>>                      vcpu->arch.ia32_xss != kvm_host.xss)
+>>                          wrmsrq(MSR_IA32_XSS, xss);
+>>          }
+>> }
+> Nice!  I like it.  Want to send a proper patch (relative to this series)?  Or
+> I can turn the above into a patch with a Suggested-by.  Either way works for me.
+>
+I can send a patch.
 
