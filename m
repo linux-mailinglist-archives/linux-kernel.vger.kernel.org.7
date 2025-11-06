@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-888630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C848C3B730
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:51:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A99C3B463
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E6C5504E43
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE401A448C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64EC3375A6;
-	Thu,  6 Nov 2025 13:39:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5161E3328E1;
+	Thu,  6 Nov 2025 13:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RejsDbjP"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7313370F5;
-	Thu,  6 Nov 2025 13:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA8432D0E6
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762436342; cv=none; b=T+HzJRWRP05YxWdGixF8WM+Y1c3YJ0eZPchpar/NTv6ygcrGCESRB4UTq+RZxfS7cu05BJBgd7Z+MxNVj7eeNIqVl0oH/283gTIqHDZeyQeowe0MjOqkcMyhmztsJdcsZmpyExk1rGhFjODIq3nDCXgxia07YkvbSHmidTVSslw=
+	t=1762436080; cv=none; b=iK7DQWYN5EbewSqZId0HyIpZal2DFm9krePqMoJj4DLcO1bFCH3XWdOxfIDC8eS4fvuXjtAxt/9tcEKU3h+yIMYn2DEONRV3ILJympMBNiV/U5O6cGurUwSs8gUiZ8kyGG1ajjj06EhBtmyBn6/llMmyRTdCHLwjAC3B1Ez3k2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762436342; c=relaxed/simple;
-	bh=WYHa35/WSbF7l7X/7zby0sd49RpvAMPpddrSd2lq3dI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BzNntgnc82R8Vd2YIlNkvOFBfpckunkOhYjLoqOir9S6F42khi9qXRwBQJ1+Es59jx3mIaKGiTN1TcCN1J+ZPR/jgBZWJOR9GOBzEDpFly2BKsAlv+GG4opsH7cYfZBWVSbx6aSPZs43DVr2AaTWJNKBG1sovXKqw2KRtNyTkxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7F0C19422;
-	Thu,  6 Nov 2025 13:38:51 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Yury Norov <yury.norov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	qat-linux@intel.com,
-	linux-gpio@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 26/26] soc: renesas: Use bitfield helpers
-Date: Thu,  6 Nov 2025 14:34:14 +0100
-Message-ID: <4316b09f7e7a4fa2ac0c5d05c3dbb25547969833.1762435376.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1762435376.git.geert+renesas@glider.be>
-References: <cover.1762435376.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1762436080; c=relaxed/simple;
+	bh=j9SuhjIVPNBBqJfnVLYcJU6kiIExeCsnHgyWendxW+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sdTAXa3ICDUTXc58atUvjMyZEVHy1joqMM2PBCNWoTZOA/bhxYbTfTuZN2vo4sKmHqSfHrGXu/v7O7a1jmj3xhlPDUOWwo8bzXi4+9Xeez1eb3/9AZGD5976Gk9whIRCV/nk7XXZnfG+mVr5fcd4P/vlzctWjo/hFWrEnuWR3w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RejsDbjP; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29498a10972so1228605ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:34:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762436079; x=1763040879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OAPFc6E2cuOBznS+PFsa8uaGEFuFxns4wE3SuTksKDk=;
+        b=RejsDbjP2jbgpCpqsdNG6OMV13aH6dy2qkkZoZiMhJdYvPthSskFOjy1WXWxigrFfT
+         x0zrGjVhvmGenH8bAspZjjV6n30oMIHvkpUflefZtXs50vZ6TmG6tE5EpfV83MSevzRu
+         /MRSVUH8RVDdhxZF6tkVgGOHj8dKEG+xvhgcu3sgjaCs7FxGjqXu3rW65Fc3DV/8qiLN
+         ksxt7atx1AX3oZTtyoEI2WsTP86YA4G1TjOGtdUPw2vAsopxkkDdqpkHD2CKB3vWn/0t
+         1eZrI8a/qn9JldEtgP0NGSzIU6nKrrST3EzNlwA4bJ4TIDNqMd5A8JUXHCVa1xGffE/A
+         M41A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762436079; x=1763040879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OAPFc6E2cuOBznS+PFsa8uaGEFuFxns4wE3SuTksKDk=;
+        b=d3a8WSHa6E+Y5LF3PX8gdZBEH9LB+7FmIxDmsA8r/A1iIFlN/90oeSapdUE3PUcEfh
+         RCtnw9u1X0Iz4krZ5SmAEWEKoIPF9u2+qN7e7K9dfwgtt3t3mPWoacvAtAO98Ol0cQgR
+         jVItr3K5VO93BM5GE/AfH9Yd56NOwg4ZTAfIVillwoZ/iHQDP2eySy1ACRgB8iArrVmo
+         0XU2kSRgIuf/KPXaA791Hb54mXp3Et6KhEy7tf09DjUQVRBWVuW9bHEVqKVUB0TnfBbw
+         IE8ppKpbD0NhgMdEIeX3BBDG10SDkXSZ1Njm3eyf4BAl5l/2YXd1Mq9Tec7714+i9pYL
+         bdTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkGwmaAYyxzu0l0JjD0dulC6riOoi5gKAUMtBvi5y1MRgOaE8Ek6uK+qCAT5HOBfnWfa/yA+ze4MQhD4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmzoEk3Iz0FSO0yV+voHP3KNnBz7SNVQTgb/DOmmvKMUVIQkPc
+	9aNOKxOJbFkjgg7AC5n2UKKoKkUI/kJ+TMFrtWl9FkPCRcH4L9r5RuUD/OM3O2qRW9HaA9FYHns
+	/+Z+e4TrIZS96eUCflQWLPY7liimiQjQ=
+X-Gm-Gg: ASbGncvAhd6QJT7HU04SKnYFv7Uj/+pt2yOiZxjnLmeWnuLvEAaOg0yrVuHxqNAVTam
+	10LhOiLDeP7sWpTvY1c/GtOw+sa30e1mJ+jSyTlqH+B8kJ6vFKHBu68QBlLnSixYOLVDXN0Sdw+
+	ZqeHObAtorBzCMCJLF2rz0RUfQjdMp1AMNDnYSjO0R9w2ZwI910KgqEQLBTX/Sim93NlUQI8Psw
+	ml6z0zqUXx8dVbx8Da9VTwAFA9R1YLBn6WuynQ96tUI4s3Zo/O9KfWx3VFNAkpsQcK1Poha4Qs4
+	F2li/7llakK8jGNQRKy64E/4OyRgxfePWjQ8e8a7ZTkwhmcs+xgbvp3MQRz/AVmiZEPaBgOZuHO
+	K1Eg=
+X-Google-Smtp-Source: AGHT+IFgsu64H5AxVDYQ4VC1AtIntPLrClhNs2DhzecuOxKsWfCafPqovP7OzWqL14ZLgcHX93hNFscreoxfb/7qqJM=
+X-Received: by 2002:a17:902:d2c5:b0:290:ad79:c617 with SMTP id
+ d9443c01a7336-2962adb0131mr50508655ad.1.1762436078666; Thu, 06 Nov 2025
+ 05:34:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251106102753.2976-1-zhiw@nvidia.com> <20251106102753.2976-3-zhiw@nvidia.com>
+In-Reply-To: <20251106102753.2976-3-zhiw@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 6 Nov 2025 14:34:25 +0100
+X-Gm-Features: AWmQ_bkZlBPvsV_cw8dYZQNsheLfRuBL-Y7e_Ty1STSrCFE-bOnmtmTHqEfXIAE
+Message-ID: <CANiq72kE9QFdAP2cTjBaxwsQ_H=BmMyabY9vSWUdfj0Ai0QZCA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/7] rust: devres: style for imports
+To: Zhi Wang <zhiw@nvidia.com>
+Cc: rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dakr@kernel.org, aliceryhl@google.com, 
+	bhelgaas@google.com, kwilczynski@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, markus.probst@posteo.de, helgaas@kernel.org, 
+	cjia@nvidia.com, smitra@nvidia.com, ankita@nvidia.com, aniketa@nvidia.com, 
+	kwankhede@nvidia.com, targupta@nvidia.com, acourbot@nvidia.com, 
+	joelagnelf@nvidia.com, jhubbard@nvidia.com, zhiwang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the field_get() helper, instead of open-coding the same operation.
+On Thu, Nov 6, 2025 at 11:28=E2=80=AFAM Zhi Wang <zhiw@nvidia.com> wrote:
+>
+> +///     device::{Bound, Device},
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v6:
-  - No changes,
+Is this one converted?
 
-v5:
-  - No changes,
+> +    /// # use kernel::{
+> +    ///     device::Core,
 
-v4:
-  - No changes,
+This hides only the first line, which will look quite confusing when
+rendered -- please double-check with the `rustdoc` target.
 
-v3:
-  - No changes,
+Thanks!
 
-v2:
-  - Drop RFC, as a dependency was applied.
----
- drivers/soc/renesas/renesas-soc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 1eb52356b996bdd7..ee4f17bb4db45db7 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2014-2016 Glider bvba
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -524,8 +525,7 @@ static int __init renesas_soc_init(void)
- 							   eshi, eslo);
- 		}
- 
--		if (soc->id &&
--		    ((product & id->mask) >> __ffs(id->mask)) != soc->id) {
-+		if (soc->id && field_get(id->mask, product) != soc->id) {
- 			pr_warn("SoC mismatch (product = 0x%x)\n", product);
- 			ret = -ENODEV;
- 			goto free_soc_dev_attr;
--- 
-2.43.0
-
+Cheers,
+Miguel
 
