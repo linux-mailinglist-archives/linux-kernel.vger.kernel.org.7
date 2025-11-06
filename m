@@ -1,91 +1,107 @@
-Return-Path: <linux-kernel+bounces-888400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF84C3AB3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:52:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD803C3AA63
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06FFC1A45D21
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:51:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78520502F80
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE3A3195FC;
-	Thu,  6 Nov 2025 11:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29DE30F7E9;
+	Thu,  6 Nov 2025 11:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="U7wpaGwg"
-Received: from sonic312-23.consmr.mail.gq1.yahoo.com (sonic312-23.consmr.mail.gq1.yahoo.com [98.137.69.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cWTKpl7u";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NXNvkOsV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ADA3191BA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEAF30F938
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762429812; cv=none; b=MbIljWjWwN8Hn4hT+CeFKb/RFwf1iYF5pbwokWWAltsrGzBoRoEZgLUUN/DhdTtJXmnSgzsCiEh2vMYyBjoXW14QXky4a2E1wNyzfF4sBS1w/ycV+gITqLZDLG7gCiTfRIIZjiqifRROYV8nsWPHv3FHrXAD/zPxzuirk9tgH88=
+	t=1762429212; cv=none; b=MSDmn7/cc4k0RjR0CHOpYhkK110+OqDRoQd2z8xpdDtBnfFo6CguR/yOA0Oz6P1Fgz4I6r/h+OQ62HLsjOMLvEs+3z8IBMy5gketEu1VobrlKBE8bTVCtQwHKJPyRWX4U+bLZkxxA9XqaC793U9aIfxO2leil0DvittZiOJ5qoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762429812; c=relaxed/simple;
-	bh=sC0i03XrfK+aAFJKa1QWFz01JSapbAfVrpNt2LQ8wd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ba8ZDYM+3p0UA2Pt2PPFilMWfXXyTbBRbQrFytywRjCra4ubcZWiM/tOACOP+AFidRhmwTbsbH/+nCk8a9WqVzTBrRAFWj8PPKJ57OvpKDgebTM0t2gB++hFW2oyNVQXXrnJRP+tVMVZs3qoDSLejb04U5g3s5bDe7IzKKFEx2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=U7wpaGwg; arc=none smtp.client-ip=98.137.69.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762429810; bh=2NqNGQgdR8dBJVHAkyaPyaTZDk61lHGGvXQ0jY/4ZXc=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=U7wpaGwgpjziNtdahGvRLNIoVW+vsanisvOp2HwgC96f90aEETBOvlhkd37ADvWw89JlFIDAYl08+DAbxHXc1QmNbxUaDQHEhwpBjvzwWHQRgDXJ47gI0zAyVFfzIU1YzGGHQowV+fFZHVuO8jrbWrk1+nBWgmJpq1uvvZE+joPogi5hyClh2RiGozjmbV8fHXFTa75wFIVSyUg3/cYkuo5vKnUMqmkdSHma/WzbUrQeS9eCGPanPt1xYT7vXCj053xwFM/RhH4LFd7Fu1PSlsvabS5u9MxMWgZz1RhMolXEKqfvg4wP16Eg9Kk8PO3QJRnOkWOxshBkJawPckbmmA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762429810; bh=GeSTgtxwKWbxaQEszXL9Kylx03Kq8AUPIcpcd5XUEZB=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=rlrIM/HLP1/8vlmz+UromMf4bOtQ9nW8Mxn9QUd9o5izHVUgmVp6BezLPhGkXNRu3pn0Bgao/6sylL+jV1BWa3zQJ+kx5nH857IT2ter28Q8XD4mtYpnTQcd/QteuEuruZqpB7XsTky2By8mtJVeTHH7c0udbQV7gAnnWEvQPvkJgVYmZKiivLp40nh5g2frp9Rax8k6LoNcWlWmY29jz7nmDAjxyyyaKdY8byVfVDYftaQd6ljijZ/BTZbneZP/TyWul9MG7U3JhyrYiQ9v6Rnr/2NbxWKdn/+2rzsuoi+ypmv6/Pj9Co/DzpLWZa0WIuOg2P2pXU/OSdK8DVB/Gw==
-X-YMail-OSG: FsdktGkVM1mkYImRS80awQNUrL1Xn_6foRdjk5U0qAOlkQYRm2OlO7HpY5BZ7RX
- 1vJoFVqVXVt3AKcZC3_gewM9VSXnMTWLiCll29s4fyPfEITLaB8p5UKNvRQq5rPWyeLM.2Jjxveq
- 75XPPoepssPXThNRbrBrq.t0omGJ.gv8rjadJy0UHKdUvNvIztAHlvTceesz.COEO.FKBvb0xfaH
- hXrYgjV0PjNsy8l1k7yP2OQOOwz1vTsBfGrvDlxM9TYcm_Gyp05UnNFGtjWbeM4pO_Z890qFCFnp
- yqpHVasSW1rshPiFBmHG7wg6SjuzXMNQq9YClQBjOlBXmq2w0.Kcl92pL.d7gFtghY5meSnucCQw
- cybcRDu7SXvNfOiG.obLze9UuL6CABRc_P8M8nIsnMVZZEsusLk76IcDhA_kiqrKig0VBlIxuNGA
- 5.x91EQJ1jD1Nk6kdFG4csBp8c0Wq_ap8.0rcogDoJVkGMtrm7G2yIrfS17f.mjwIIY3wmAte4De
- GQjpbFv_4QNqAv5jDmW5bSC31poi9Gzda9jZOEgJGUOPiRyI7iMj501r0SHsU7PZ5bqinfw8cxQZ
- HAYobdzM4nLNQdU_UOQuhQY3qIiCleJC6eFqpX6uiWbO6I4yq.wT1F96o4TNFIN25CEK3k43hLFa
- mC7sOyIOA6wozhKZf03qYdCLoQ0gBXZIIMdhcH_ngrYQwg1e_xDIdmzWl0bVsb6VW22N7vMuDgks
- V5Q9WhWRkA.w_GyMjcSLREXoAp1.boeC.j0NquVFJUmnRnP9knjEWOJf6VOye3tIxLDscmxOkGKd
- Vr4OwP8oLJjCKZTYjn5GLkLdPDJ35MgjQwux5MOniwjJkdQlKoQ7jxIMsL5qdyct8o3dzCUs0Yzj
- 0ZFwZTvWnALmcTbLo1k6iSlgVevzeGfC9tFMQHiL7q.L4aLVuNA9Btbfdph6FtKCheEuKXMmKp15
- 2D8bQMO5Kin5rZanVPZriICUHtGl2L9HVtc2ZG6_ln3ihq6cfSPc3wpBsXhiNmEEHJ3dpVuA5Qms
- 4gOyFJNm649Iyj7XbuGzKplTFr54d_JGpicC918P..Qjw0TYVAhuWfwvtFH9W5u23C9yd348dl0A
- yQAqCqaNWKBwNfJ7e8gqhzOEx_KbGVCnxNMENrhSvMqBwQmq.h44nrje60xYf9GtN1sqaeNgQtMZ
- Z8Rs2BuQM4jFxSQZ_oaNPosOea8uP2_0W.gfiT17mhDqGV5PZGSGUSA2uxk8LfNBcSzRD8Q6mEWA
- HyBaCFr.mxfbyorLqqBKBm_ZA6Q0lgOlOd6Czh7DvBQQMNNSjZ6BZCcSZHZ3NXRgL0dGObpMLlpb
- 0BUJuAVvnptVErMqN9hcT4F8AYhgcAriB2cJEIFQoVI_Qc0GyhGhwXe9WvAlKAy5R7MQFinrde_E
- wCLQFJGjddjyQsdW8_4mrKe2U.q_xuXbSEfxqo6GOxyfGYMNkIRMw9Kx2LlqDGMcXEx5pN3LUqy8
- Lyat6SuY_zaIs7GJ.WI8IgISX1gsaL0OSx6I84hVWnxUuM3dv0d4Yoc8vvudp6sR4QH9C3Wa4RfH
- 5VPn7Fn3MCKT_rt939PlCUkWfkgf.Uy6_wO2.4WjqC9bRyFIgrnM6Tpozfnt4JkZXMByAw9nlr0C
- aR_.HZ4g_3FCsXRRT_vyogzn_bKoGd9VQZ1oT2bddBMXaqY3WBxiu92uLduZ_qHALKr6I6BYBVWL
- R6G0E61t2bKjxKlAzTGrMMrPhZD8QLFnuzxp8OgHLeV3Y7b4N875xS8XQhByddWOFxa8DCh1ICP8
- ptdgtth9Z2_IyWgmZyMQSu5K8aypKGZQsJFukgouiCW0F..h8BEaG9GR2QjYIhFiawY.9y96jlot
- _YmMMMcyoKKF42BC68.3c4eAc8KsG4KEwf9ya6FuqNVjPqBfLza528O6qVUdD0NVnVHV6h_zAACs
- RZTtrJChNXBpzxKKcF6Qsb0xrv6m.mG2PcHPEjrMK7y_oqbRHrHUSnNNXzo.jBoRapZ.NJ8v59yt
- xBvXE7bfZSoBNsIEnI0HIqqYRSWXACw2__dwCg0qsOiUT2hgPqzERpZ8t_Wt8voBzwBZudw9qW9g
- Weii.Y6i78ikOSBqa27_EQmzvDfhpKpkcUorAqRWywp0RvJdC9d4Pw7iBHvVw3nf_oSuqZcn1P87
- KGAT0jXyMju6QnJ7VF1GLTqecQZwmhESqDhvYGxa.PQnGMWSwtnbJ7SzESNEqTKU66w9YpEhBzpp
- 7hJ6mgpvgMzALk8SK75y8GzSYzoA6NZNO2KXumBIIQ3BXEHmAj1ppKTLwqHcckzmLw1IYLxplR1m
- XS6UGy9adn7UpxnyBoWU-
-X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 7148212a-1dc7-4061-8833-5f97ad941812
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 6 Nov 2025 11:50:10 +0000
-Received: by hermes--production-bf1-58477f5468-vjcpj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a2a71f3be34b9b294192b02c80d46421;
-          Thu, 06 Nov 2025 11:39:58 +0000 (UTC)
-From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	pavel@kernel.org,
-	anna-maria@linutronix.de,
-	frederic@kernel.org,
-	mingo@kernel.org,
-	tglx@linutronix.de
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Subject: [PATCH 2/2] time: tick-oneshot: add missing Return: and param descriptions to  kernel-doc
-Date: Thu,  6 Nov 2025 12:39:38 +0100
-Message-ID: <20251106113938.34693-3-adelodunolaoluwa@yahoo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251106113938.34693-1-adelodunolaoluwa@yahoo.com>
-References: <20251106113938.34693-1-adelodunolaoluwa@yahoo.com>
+	s=arc-20240116; t=1762429212; c=relaxed/simple;
+	bh=IATc/BWe25FDjleFlTjelCzWKgHVZ0FKWD/Y6NACOW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n3GrKEwUAM//Idrk43VnjqDnIX6wJpCVaARJ4U4hWUQXJ4Vdu2gVXpSs0x/3PDb8lBBdWB/pYWvlJXGRb+Fgg2PyCUwf7uRpQZrVtCnxv5tod9rRLE3/K6OJe5+0hANz8W0u+r0HkGeN8vQJE48NUB1d87ruJtOJtDuUZ1O7q+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cWTKpl7u; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NXNvkOsV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A66rDhI3361979
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 11:40:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=tplQaWj0LuJZs5gP92aThpV6BCVGBwjEo2F
+	RoetI/a8=; b=cWTKpl7uylAE8ZSH5FJ6mBudAt0nW7lIfwlu+/eq9Jl3Kx70dXK
+	5eQ73Ft+MOj029II1odW+3dgDdvD4MNQoLUK3vIbGNKutb/OuR8qY5e42ZUWXVq9
+	QbCNJrKY/DfXLgN9jhAgqW1TOPQYaOQZvK46KOLFjMqKms1QGTUspJCXPyKxSD81
+	hZ2NpHmiIg/zNshlr5VsCSQ0A1LghJCSL6McpT28ec4bTraP60Ixx2XkelArVOB7
+	O3ujdxHZ+Tm6FoSceP/5PnvxMykV5aMP793EyCRTFm+MqqaC1RkgMBGOQSzDYMva
+	zM86jigHaLh4DCDG7nRUWDPsq1HIqA+Dpgw==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8pt58sd3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 11:40:09 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7ae9be0d8d5so641714b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:40:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762429209; x=1763034009; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tplQaWj0LuJZs5gP92aThpV6BCVGBwjEo2FRoetI/a8=;
+        b=NXNvkOsVcdaob3HO5ImMNb9zm1poy4IUR2dcQBvh13pH3AqHyEwSPkOCNDX8gyLqDv
+         QSEEq5+bDbkoA+O3QSiWzKKfdEg0v3eCqhYXzJQRoQLCIqm+b6FNj69VTtIyiT5jYWgy
+         6AnEamsWrPFPCuRo1wwe+d4S8XNTGHmBdihVcUf1fgSMLLuWL5Q0BeQ0n50NaRHkUE68
+         eAr13vMRJMxaOkxa8NkX3qJA1lfiFi4VtzbPeiEsdA+VWJAdUQ3EAUveiBxF63UXxYPD
+         7rrv9pyt3RFSsrZDNzwAKIup5ednd5MenWQ69n5VPRbZP0KkxQeOUQDSemNmbYk92oP1
+         N2Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762429209; x=1763034009;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tplQaWj0LuJZs5gP92aThpV6BCVGBwjEo2FRoetI/a8=;
+        b=UyUxl1fJyIgkTjpoUv4cMJdk+WQQkZ8T0EgtGVYCwO3tUCy0RktY3RrDEa/LYAv42p
+         TiGtlMSudL1Iu2kSZgA0K9mC3cS5PuKWbNTF0GuM7d2LzCMZrBPMfTM7BYjZPVbjCMYW
+         Da538D6cKYEHDk8TUlT5qHk7U9FZWCalkDiB3J5Mf9orj9ENPO+avMnmdSPc4Omx8xgO
+         XdHTnaZ+DIDn0GIpvn4FH1jS+ew983sk1RiP7k/M7R1v62zDM03fjO/TW3ZgPSbXao9V
+         qoEPztNQj8lgEK2ggMMLMu2zqabUVc5Ap29VWzy0L8+vfBluqq+xmX0lwECtQaapmnaD
+         KMUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu/9qiyxpZKMOHaaFa1PMxxS0FiHLm35kth51Oq82oExS/1lDHRnUgphsI+5LnF8ZJ8y3x6q1I94L3Vi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXI+biKdyF0xXANC4ojSo661AEshvfV4/z/MqhZz5UQ4Ms3ivr
+	R9HYeHFETlV0bP/uI9FtrpWkHp+J+y5PZAVczUV4yDozSSIB7k9V+yxOykwaQJcjXKMr1HlOdlY
+	LWm8af76gBeDuC3nhskxgoX1ewdaI0lIQjJumACLnFfz7dxOVuhy18A8s7dMWyxplsv0=
+X-Gm-Gg: ASbGncswAHczh87hZTGvu4DIZVKAru85Htj4Xn8Tjq1pzdV+qLVhnp7kaKozAhYErF7
+	brS6MqN63mk5hun3lCwJECtg4A6oN6NX5LlN/QU7pUwiK8es2QuOR9thuKMbHsKS13sBogyC0r+
+	8UQfA2xL9fS2ClT/FqjfFqsi2A+QdRAkqzpNh5kvQFejEHNmVSv+BLqJV/TuBzDvrXSelnrwl1p
+	L4l0C5YrEFJXVCVXq4PwEMt7vtsc1XS43+fcVAGmvUqTHqlABtRROOYp9fbyUcBckdumplMzaMR
+	+DcUjCEF8xa87PjTU1A/Q3VJJ4otcxEqvdUB8ENjch4zfIDctOdwLazntjpfUHWb/sZDiaMR/bf
+	7LaEGfYfPPhXcV9wCG+57nfryjoWxkca/7Q==
+X-Received: by 2002:a05:6a00:2d16:b0:7aa:4f1d:c458 with SMTP id d2e1a72fcca58-7ae1eda0230mr8572493b3a.19.1762429208695;
+        Thu, 06 Nov 2025 03:40:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEVUotlLDMkntNYYi4mBj3e7/x6lXZl4DxAaQeDTqWGqpoOiGkfaB2MP1zjb/rE3tBpq3DVJA==
+X-Received: by 2002:a05:6a00:2d16:b0:7aa:4f1d:c458 with SMTP id d2e1a72fcca58-7ae1eda0230mr8572448b3a.19.1762429208107;
+        Thu, 06 Nov 2025 03:40:08 -0800 (PST)
+Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af822041d1sm2480040b3a.37.2025.11.06.03.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 03:40:07 -0800 (PST)
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+To: andersson@kernel.org, robh@kernel.org, manivannan.sadhasivam@linaro.org,
+        krzk@kernel.org, helgaas@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        lpieralisi@kernel.org, kw@linux.com, conor+dt@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree-spec@vger.kernel.org, quic_vbadigan@quicinc.com,
+        krishna.chundru@oss.qualcomm.com
+Subject: [PATCH] schemas: pci: Document PCIe T_POWER_ON
+Date: Thu,  6 Nov 2025 17:09:51 +0530
+Message-Id: <20251106113951.844312-1-krishna.chundru@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,80 +109,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: gxfktsXrugkhJJDfSK1Uw1ipk1g94j-5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA5MSBTYWx0ZWRfXzmC/xkS1Dj17
+ fgvFNaoJtwfP0OzIcNo7oE+MVm3sxU+lsw6ocKmVm5r40yH1Nk0h98NgVN8xiLsg+6nbd5tDk0l
+ QHPIOhjqQ2wFQ52B1jFEwCyLhOreB8Ax3tSS/4FAkaK/iiafhWi/v2Dan9WZ8JTp4TfmsLhAMG8
+ TmXCGRHdeFV24Q3bTa07gGGBk9muyLp5a4/+0oJYE+PaFLhRqaBefyii/ScjmkzcAkw3ufniCtN
+ pL24mjOPBO+bjjBpKXRLm9jHQOwBHGB086Yyq2p4EcHqYbvlWj0SobJHdnmDUXq0Gp0GAQ4uZHh
+ CpCbUKFSkxnkwuVP9oGEDiHEQIv6vMGBq46XHz1AoaE9AyXRtnm+rs+H859CCfEo6YUTHkoeVQ6
+ stlf3YdiOccFFuCURvyYFN5nE0xVjQ==
+X-Authority-Analysis: v=2.4 cv=XNI9iAhE c=1 sm=1 tr=0 ts=690c8919 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=fqsP0TYi9zmme8frg18A:9 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-ORIG-GUID: gxfktsXrugkhJJDfSK1Uw1ipk1g94j-5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060091
 
-Several functions in kernel/time/tick-oneshot.c were missing parameter
-and return value descriptions in their kernel-doc comments. This caused
-warnings during doc generation.
+From PCIe r6, sec 5.5.4 & sec 5.5.5 T POWER_ON is the minimum amount
+of time that each component must wait in L1.2.Exit after sampling CLKREQ#
+asserted before actively driving the interface to ensure no device is ever
+actively driving into an unpowered component and these values are based on
+the components and AC coupling capacitors used in the connection linking
+the two components.
 
-Update the kernel-doc blocks to include detailed @param and
-Return: descriptions for better clarity and to fix kernel-doc warnings.
-No functional code changes are made.
+Certain controllers may need to program this before enumeration, such
+controllers can use this property to program it.
 
-Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 ---
- kernel/time/tick-oneshot.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ dtschema/schemas/pci/pci-bus-common.yaml | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/kernel/time/tick-oneshot.c b/kernel/time/tick-oneshot.c
-index 5e2c2c26b3cc..ffee943d796d 100644
---- a/kernel/time/tick-oneshot.c
-+++ b/kernel/time/tick-oneshot.c
-@@ -19,6 +19,10 @@
+diff --git a/dtschema/schemas/pci/pci-bus-common.yaml b/dtschema/schemas/pci/pci-bus-common.yaml
+index 5257339..bbe5510 100644
+--- a/dtschema/schemas/pci/pci-bus-common.yaml
++++ b/dtschema/schemas/pci/pci-bus-common.yaml
+@@ -152,6 +152,15 @@ properties:
+       This property is invalid in host bridge nodes.
+     maxItems: 1
  
- /**
-  * tick_program_event - program the CPU local timer device for the next event
-+ * @expires: the time at which the next timer event should occur
-+ * @force: flag to force reprograming even if the event time hasn't changed
-+ *
-+ * Return: 0 on success, negative error code on failure
-  */
- int tick_program_event(ktime_t expires, int force)
- {
-@@ -57,6 +61,13 @@ void tick_resume_oneshot(void)
- 
- /**
-  * tick_setup_oneshot - setup the event device for oneshot mode (hres or nohz)
-+ * @newdev: Pointer to the clock event device to configure
-+ * @handler: Function to be called when the event device triggers an interrupt
-+ * @next_event: Initial expiry time for the next event (in ktime)
-+ *
-+ * Configures the specified clock event device for onshot mode,
-+ * assigns the given handler as its event callback, and programs
-+ * the device to trigger at the specified next event time.
-  */
- void tick_setup_oneshot(struct clock_event_device *newdev,
- 			void (*handler)(struct clock_event_device *),
-@@ -69,6 +80,10 @@ void tick_setup_oneshot(struct clock_event_device *newdev,
- 
- /**
-  * tick_switch_to_oneshot - switch to oneshot mode
-+ * @handler: function to call when an event occurs on the tick device
-+ *
-+ * Return: 0 on success, -EINVAL if the tick device is not present,
-+ *         not functional, or does not support oneshot mode.
-  */
- int tick_switch_to_oneshot(void (*handler)(struct clock_event_device *))
- {
-@@ -101,7 +116,7 @@ int tick_switch_to_oneshot(void (*handler)(struct clock_event_device *))
- /**
-  * tick_oneshot_mode_active - check whether the system is in oneshot mode
-  *
-- * returns 1 when either nohz or highres are enabled. otherwise 0.
-+ * Return: 1 when either nohz or highres are enabled, otherwise 0.
-  */
- int tick_oneshot_mode_active(void)
- {
-@@ -120,6 +135,9 @@ int tick_oneshot_mode_active(void)
-  * tick_init_highres - switch to high resolution mode
-  *
-  * Called with interrupts disabled.
-+ *
-+ * Return: 0 on success, -EINVAL if the tick device cannot switch
-+ *         to oneshot/high-resolution mode.
-  */
- int tick_init_highres(void)
- {
++  t-power-on-us:
++    description:
++      The minimum amount of time that each component must wait in
++      L1.2.Exit after sampling CLKREQ# asserted before actively driving
++      the interface to ensure no device is ever actively driving into an
++      unpowered component. This value is based on the components and AC
++      coupling capacitors used in the connection linking the two
++      components(PCIe r6.0, sec 5.5.4).
++
+   supports-clkreq:
+     description:
+       If present this property specifies that CLKREQ signal routing exists from
 -- 
-2.43.0
+2.34.1
 
 
