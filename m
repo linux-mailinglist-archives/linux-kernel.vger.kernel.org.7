@@ -1,183 +1,281 @@
-Return-Path: <linux-kernel+bounces-888502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E507C3B13E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:07:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535D2C3B111
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038003ADC51
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3971D18931B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED89310768;
-	Thu,  6 Nov 2025 12:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4452633EAEC;
+	Thu,  6 Nov 2025 12:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vGKRYLPl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/ZwRfiJC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wg1bueW+"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38903309DC5;
-	Thu,  6 Nov 2025 12:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49A0337BBA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433579; cv=none; b=i+GYPMdilJ3Q4tih+1aSClq9paW0km9jpEiSLSdi7wZmbKLwrN/WuFYaFHdPDfBrhZcjPU6TQXlJK5Tph+zVLE7Km+SXEpisUUcR70+ae6g6VeVff1AhVFq+u/qKqrDKTtgeOu5qKkjbtqDIoTKyPU2VYn+BQTslhnQQgi8cJzY=
+	t=1762433627; cv=none; b=nrBNFhYpg7N0gj8sZyN6i/xnoZ7NGkHXBb8SN0jr1m7AN2+5suxxJVpoUKJr5/x/zYEPyKWaJNt9DU8sl61ccyyFQPtt/nD+ftaAubHamZAQ6JTFFAI8mT9qISj76MpgxM3VDA9mdTpenVMLp0y8GrV8FZjFBYdjEebMwOSyh2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433579; c=relaxed/simple;
-	bh=To+oyemkEeA/7fdhvUQm3hiGgtleFO1L3sYOZxp+Qa8=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=TxIoGHgWa8kqJovV4niCxBa2euxEd4vDO9Y7+gS5ifBBlRbQC7F1Wu6mYZLhDtMcGZEuCwGwoGeAsS4J0rcp8jTcz2C+/KtZp70TIwdr/TdyCLeKc9muhvgZPHy65TJNky/V+CiWEguLqSQ/gV5H5+5w+T5liIClj5GfKiWyn8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vGKRYLPl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/ZwRfiJC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 06 Nov 2025 12:52:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762433571;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=6yyzbdvGvw6JVeK4T4jxr6O5Ta+B2OTAYqOSqPzayVQ=;
-	b=vGKRYLPlAtMI4U5Xn7m8eMJC4RfteZHQenk5AGP6xh8Iv4W6rn5rij4jHjJUy3SlxxDdyy
-	CCTYGOHO2T1wi6KakXYgUCKYSHJzh8xAsRzfLEtkpdgORr7FJCL0tQ9dPB+13KV6i0UgRV
-	GKQZMVTHK1fXiFSN9bFTJSKMs6P+xjJebdx8W4XEQpnvfrNamvW8NnXEtW6VOX/iB1fSYN
-	YJdPTU6M55u1Dtwj8zqF3Qdz1JOKQ/7quurPU7n8KG7Nw+utD+l1Tj6ByMXYOvLA7EfXWW
-	TBLvA1dFKeLmEa9SW4mdx2i4OQNTpPNVsiZ1w+yf7s6KGoo2sURks8RiuexUAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762433571;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=6yyzbdvGvw6JVeK4T4jxr6O5Ta+B2OTAYqOSqPzayVQ=;
-	b=/ZwRfiJCTlilmd6ULoYPPNjsC36zJRnKH2SSjt4y1wzbCOTD9pAL0sN+19/XMAyy3qU23E
-	9N1W2QVKm8RBh4BQ==
-From: "tip-bot2 for Smita Koralahalli" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce: Handle AMD threshold interrupt storms
-Cc: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- Tony Luck <tony.luck@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1762433627; c=relaxed/simple;
+	bh=VcMIYDcgbIp7gzck2lmzT1DdYedQDnPc1OGCfRsQ8Rw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TtDtnNRQwOy5o3tAVpgkZyQJo0zzyRxnJ89+Xb57/kEhi4b/42OmebJyBTh5UQLdMV5jXMGeEDn5VMd2wA9kS1yFLxqr4tMG3ZPvo9jo/tpx8zo2WRPn5bEaXdAOpbmwiEb24i0x9AAsFk4E4TKSJ2J/h7YXEdA6dfPoVS+eq5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wg1bueW+; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42421b1514fso516602f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:53:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762433623; x=1763038423; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uAHXlerzYNMFVMdi3HCj0A57dbSsWmdWDXdM/zHlcgQ=;
+        b=Wg1bueW+3QVsiD1y43hZKpA9SiKfrNpOG1yhK41STqCEKrv/lZ1/Vp9hEeze79znuh
+         tox5FTE52Z3H3aQKgwQtr/r6WG/cqLzzu8tu4JdzP/XnBglw4uVWy3E4pQI4tWiwKiN7
+         2ny7j7ZT1Sg4hmag9Q2WRSFu9EPCcN6l1QQWnzBHHO4Y0RYqiM3JNP+LkurMTuKSZetH
+         j25fKmYZIB/Sd/96xt7sFDwZ/Gen0fWfABbi9A3psimBIH/wZpuNFzSr44pHks9Kg2wk
+         ESOLWWravQ3QhbgmhGKF0QmsbFVSA3e7zjcbxUr59K5p74Emv9lTOfecbF8WtPEfs3rE
+         U+oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762433623; x=1763038423;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uAHXlerzYNMFVMdi3HCj0A57dbSsWmdWDXdM/zHlcgQ=;
+        b=AtiWiCHl7d+SQmUAshCXwDM0p1wgvMnwMqcJ4MrGgqYLqyGjCuv8GbKTmW+DxUO3h7
+         y7lQAmvCs0kdamHuezFMUk1HclYo3lcrTzV8pegZCRkLz1tNZd9PXV3V8OavHKODNxjC
+         Ns4AoJ2jZX32i2EHNf0gAMvCsis0Nv9635KshO0oemUTOZb/K4d4xj+sjKTON09biyHC
+         0nuqtFqnofwR9Jke8fajcjTvJT0kcvLr3SeVxkb1sDsAYxarblcNb/yxvpFivgno4Q1l
+         c3UKBD87SBH8DgtZIjGNOsAw4cNX40eoIhsRmhmWrPaSOC4nZ8J7KfNzBtsVjRV1xaWE
+         Tsjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDLoFtN1rq+ibuZM1624PMzjatQLjwv0dYjee1epAq15+mL/1xYKjz2FVrRpZ/iRCpBbiwt3O2snvHeRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbdLLsRKoejtbnJNLRtoZj1JciK/jdkM9qEEGAhGFGgoY0EyGF
+	PRrzFf0xHZR4wzD91Y8DO52JONVRdHJu429VFDce6SpfOm+v0iFcFe0=
+X-Gm-Gg: ASbGncupIfq9bcPlUvotMfrdnF6N71nU28bWMbn9STsm7/GPzrmS9uO4kszHmPIkOw7
+	vnuieV6KykZ6P16fF5+rVcUhHcQg+lXZh71j7EIY51oCMIhgWJ4bkiQHCEc1Wn4eAww8Kfxf2/t
+	5f2LjXpyFZxT86qOadv3LdkfzWzuFt/rBse7KFpHFGqr+fl3n30YUk7Y9+rn90LTtSndBshQem9
+	6H1wBS94N80+UKbRjhvIryxmcj34TQwQ6SrEEdw1mTO4d0Y0jmk6ar6WeMX8GNmKODgAMs5Kz2j
+	mLKf798qGZb5+bi8DCEPXRX4nJeQhRRgmUg/buekmbkq3ULsFpZ4S5GQcJPIlqNzE9JnhAxLYUJ
+	J8K4TOee7t3+TB9d/bIvGYPJEG/StVB0VxEzWBci3sWhylElgYSBB6RcFql3N2sa6qwObVaW8LG
+	hYwq4zzm8AnVbXO76ODYEg+A40OUhmDnAAkq6xapIvjCZwnUlQWqo0SuU=
+X-Google-Smtp-Source: AGHT+IEpSkzz80Ete4RN99YnH1gQLlKEKMFwhAKzS6oQ8PF5tpjR7FJdfvzr60LpAUuxBGi+08V9xA==
+X-Received: by 2002:a5d:5f87:0:b0:429:bc93:9d8a with SMTP id ffacd0b85a97d-429e3307958mr6150736f8f.37.1762433622868;
+        Thu, 06 Nov 2025 04:53:42 -0800 (PST)
+Received: from ast-epyc5.inf.ethz.ch (ast-epyc5.inf.ethz.ch. [129.132.161.180])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40379esm4788856f8f.9.2025.11.06.04.53.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 04:53:42 -0800 (PST)
+From: Hao Sun <sunhao.th@gmail.com>
+X-Google-Original-From: Hao Sun <hao.sun@inf.ethz.ch>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	john.fastabend@gmail.com,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	linux-kernel@vger.kernel.org,
+	sunhao.th@gmail.com,
+	Hao Sun <hao.sun@inf.ethz.ch>
+Subject: [PATCH RFC 12/17] bpf: Track path constraint
+Date: Thu,  6 Nov 2025 13:52:50 +0100
+Message-Id: <20251106125255.1969938-13-hao.sun@inf.ethz.ch>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
+References: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176243356968.2601451.11559805061162819633.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the ras/core branch of tip:
+Record per-branch conditions during `bcf_track()` and build a single
+conjunction to represent the path suffix constraint.
 
-Commit-ID:     a5834a5458aa004866e7da402c6bc2dfe2f3737e
-Gitweb:        https://git.kernel.org/tip/a5834a5458aa004866e7da402c6bc2dfe2f=
-3737e
-Author:        Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-AuthorDate:    Tue, 04 Nov 2025 14:55:44=20
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 05 Nov 2025 22:39:40 +01:00
+- Add `record_path_cond()`: after processing each instruction under tracking,
+  examine the previous instruction; if it is a conditional jump over scalars,
+  construct a boolean condition that matches the taken/not-taken edge, and then
+  append the condition id to `env->bcf.br_conds`.
 
-x86/mce: Handle AMD threshold interrupt storms
+- When tracking completes, if there are recorded conditions, build
+  `env->bcf.path_cond` as either the single condition or a BCF_BOOL|BCF_CONJ
+  of all collected conditions.
 
-Extend the logic of handling CMCI storms to AMD threshold interrupts.
+- In `bcf_refine()`, if both `path_cond` and a refinement-specific
+  `refine_cond` exist, combine them via a 2-ary conjunction so userspace proves
+  exactly the path-specific condition.
 
-Rely on the similar approach as of Intel's CMCI to mitigate storms per CPU and
-per bank. But, unlike CMCI, do not set thresholds and reduce interrupt rate on
-a storm. Rather, disable the interrupt on the corresponding CPU and bank.
-Re-enable back the interrupts if enough consecutive polls of the bank show no
-corrected errors (30, as programmed by Intel).
-
-Turning off the threshold interrupts would be a better solution on AMD systems
-as other error severities will still be handled even if the threshold
-interrupts are disabled.
-
-Also, AMD systems currently allow banks to be managed by both polling and
-interrupts. So don't modify the polling banks set after a storm ends.
-
-  [Tony: Small tweak because mce_handle_storm() isn't a pointer now]
-  [Yazen: Rebase and simplify]
-
-Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Link: https://lore.kernel.org/20251104-wip-mca-updates-v8-0-66c8eacf67b9@amd.=
-com
+Signed-off-by: Hao Sun <hao.sun@inf.ethz.ch>
 ---
- arch/x86/kernel/cpu/mce/amd.c       | 5 +++++
- arch/x86/kernel/cpu/mce/internal.h  | 2 ++
- arch/x86/kernel/cpu/mce/threshold.c | 6 +++++-
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c | 113 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 107 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 940d1a0..ec54175 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -830,6 +830,11 @@ static void amd_deferred_error_interrupt(void)
- 	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->dfr_intr_ba=
-nks);
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 3f2981db1d40..f1e8e70f9f61 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -20589,6 +20589,70 @@ static int bcf_match_path(struct bpf_verifier_env *env)
+ 	return PATH_MATCH;
  }
-=20
-+void mce_amd_handle_storm(unsigned int bank, bool on)
+ 
++static int record_path_cond(struct bpf_verifier_env *env)
 +{
-+	threshold_restart_bank(bank, on);
++	int prev_insn_idx = env->prev_insn_idx;
++	struct bpf_reg_state *regs = cur_regs(env);
++	struct bpf_reg_state *dst, *src;
++	int dst_expr, src_expr;
++	struct bpf_insn *insn;
++	u8 class, op, bits;
++	bool jmp32, non_taken;
++	int cond_expr;
++
++	if (prev_insn_idx < 0)
++		return 0;
++
++	insn = &env->prog->insnsi[prev_insn_idx];
++	class = BPF_CLASS(insn->code);
++	op = BPF_OP(insn->code);
++	if (class != BPF_JMP && class != BPF_JMP32)
++		return 0;
++	if (op == BPF_CALL || op == BPF_EXIT || op == BPF_JA || op == BPF_JCOND)
++		return 0;
++	if (insn->off == 0)
++		return 0;
++
++	dst = regs + insn->dst_reg;
++	src = regs + insn->src_reg;
++	if (BPF_SRC(insn->code) == BPF_K) {
++		src = &env->fake_reg[0];
++		memset(src, 0, sizeof(*src));
++		src->type = SCALAR_VALUE;
++		__mark_reg_known(src, insn->imm);
++	}
++	if (dst->type != SCALAR_VALUE || src->type != SCALAR_VALUE)
++		return 0;
++
++	jmp32 = (class == BPF_JMP32);
++	bits = jmp32 ? 32 : 64;
++	dst_expr = bcf_reg_expr(env, dst, jmp32);
++	src_expr = bcf_reg_expr(env, src, jmp32);
++	if (dst_expr < 0 || src_expr < 0)
++		return -ENOMEM;
++
++	non_taken = (prev_insn_idx + 1 == env->insn_idx);
++	if (op == BPF_JSET) {
++		int and_expr, zero_expr;
++
++		and_expr = bcf_build_expr(env, BCF_BV | BPF_AND, bits, 2,
++					  dst_expr, src_expr);
++		zero_expr = bcf_val(env, 0, jmp32);
++		op = BPF_JNE;
++		if (non_taken)
++			op = BPF_JEQ;
++		cond_expr = bcf_build_expr(env, BCF_BOOL | op, 0, 2,
++					   and_expr, zero_expr);
++	} else {
++		if (non_taken)
++			op = rev_opcode(op);
++		cond_expr = bcf_build_expr(env, BCF_BOOL | op, 0, 2, dst_expr,
++					   src_expr);
++	}
++
++	return bcf_add_cond(env, cond_expr);
 +}
 +
- static void amd_reset_thr_limit(unsigned int bank)
+ static int do_check(struct bpf_verifier_env *env)
  {
- 	threshold_restart_bank(bank, true);
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/int=
-ernal.h
-index b0e00ec..9920ee5 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -267,6 +267,7 @@ void mce_prep_record_per_cpu(unsigned int cpu, struct mce=
- *m);
- #ifdef CONFIG_X86_MCE_AMD
- void mce_threshold_create_device(unsigned int cpu);
- void mce_threshold_remove_device(unsigned int cpu);
-+void mce_amd_handle_storm(unsigned int bank, bool on);
- extern bool amd_filter_mce(struct mce *m);
- bool amd_mce_usable_address(struct mce *m);
- void amd_clear_bank(struct mce *m);
-@@ -299,6 +300,7 @@ void smca_bsp_init(void);
- #else
- static inline void mce_threshold_create_device(unsigned int cpu)	{ }
- static inline void mce_threshold_remove_device(unsigned int cpu)	{ }
-+static inline void mce_amd_handle_storm(unsigned int bank, bool on)	{ }
- static inline bool amd_filter_mce(struct mce *m) { return false; }
- static inline bool amd_mce_usable_address(struct mce *m) { return false; }
- static inline void amd_clear_bank(struct mce *m) { }
-diff --git a/arch/x86/kernel/cpu/mce/threshold.c b/arch/x86/kernel/cpu/mce/th=
-reshold.c
-index f4a0076..22930a8 100644
---- a/arch/x86/kernel/cpu/mce/threshold.c
-+++ b/arch/x86/kernel/cpu/mce/threshold.c
-@@ -63,6 +63,9 @@ static void mce_handle_storm(unsigned int bank, bool on)
- 	case X86_VENDOR_INTEL:
- 		mce_intel_handle_storm(bank, on);
- 		break;
-+	case X86_VENDOR_AMD:
-+		mce_amd_handle_storm(bank, on);
-+		break;
+ 	bool pop_log = !(env->log.level & BPF_LOG_LEVEL2);
+@@ -20656,8 +20720,9 @@ static int do_check(struct bpf_verifier_env *env)
+ 
+ 			if (path == PATH_MISMATCH)
+ 				goto process_bpf_exit;
+-			else if (path == PATH_DONE)
+-				return 0;
++			err = record_path_cond(env);
++			if (err || path == PATH_DONE)
++				return err;
+ 		}
+ 
+ 		if (signal_pending(current))
+@@ -24023,11 +24088,37 @@ static int bcf_track(struct bpf_verifier_env *env,
+ 	if (!err && !same_callsites(env->cur_state, st))
+ 		err = -EFAULT;
+ 
+-	if (!err) {
+-		tracked_regs = cur_regs(env);
+-		for (i = 0; i < BPF_REG_FP; i++)
+-			regs[i].bcf_expr = tracked_regs[i].bcf_expr;
++	if (err)
++		goto out;
++
++	tracked_regs = cur_regs(env);
++	for (i = 0; i < BPF_REG_FP; i++)
++		regs[i].bcf_expr = tracked_regs[i].bcf_expr;
++
++	/* Build the path constraint. */
++	if (bcf->br_cond_cnt == 1) {
++		bcf->path_cond = *bcf->br_conds;
++	} else if (bcf->br_cond_cnt > 1) {
++		struct bcf_expr *cond_expr;
++		int cond;
++
++		cond = bcf_alloc_expr(env, bcf->br_cond_cnt + 1);
++		if (cond < 0) {
++			err = cond;
++			goto out;
++		}
++		cond_expr = bcf->exprs + cond;
++		cond_expr->code = BCF_BOOL | BCF_CONJ;
++		cond_expr->params = 0;
++		cond_expr->vlen = bcf->br_cond_cnt;
++		memcpy(cond_expr->args, bcf->br_conds,
++		       sizeof(u32) * bcf->br_cond_cnt);
++		bcf->path_cond = cond;
  	}
- }
-=20
-@@ -85,7 +88,8 @@ void cmci_storm_end(unsigned int bank)
++out:
++	kfree(bcf->br_conds);
++	bcf->br_conds = NULL;
++	bcf->br_cond_cnt = 0;
+ 
+ 	free_verifier_state(env->cur_state, true);
+ 	env->cur_state = NULL;
+@@ -24134,6 +24225,7 @@ static int __used bcf_refine(struct bpf_verifier_env *env,
+ 			     refine_state_fn refine_cb, void *ctx)
  {
- 	struct mca_storm_desc *storm =3D this_cpu_ptr(&storm_desc);
-=20
--	__clear_bit(bank, this_cpu_ptr(mce_poll_banks));
-+	if (!mce_flags.amd_threshold)
-+		__clear_bit(bank, this_cpu_ptr(mce_poll_banks));
- 	storm->banks[bank].history =3D 0;
- 	storm->banks[bank].in_storm_mode =3D false;
-=20
+ 	struct bpf_reg_state *regs = st->frame[st->curframe]->regs;
++	struct bcf_refine_state *bcf = &env->bcf;
+ 	struct bpf_verifier_state *base;
+ 	int i, err;
+ 
+@@ -24168,6 +24260,15 @@ static int __used bcf_refine(struct bpf_verifier_env *env,
+ 	if (!err && refine_cb)
+ 		err = refine_cb(env, st, ctx);
+ 
++	/* The final condition is the conj of path_cond and refine_cond. */
++	if (!err && bcf->refine_cond >= 0 && bcf->path_cond >= 0) {
++		bcf->refine_cond = bcf_build_expr(env, BCF_BOOL | BCF_CONJ, 0,
++						  2, bcf->path_cond,
++						  bcf->refine_cond);
++		if (bcf->refine_cond < 0)
++			err = bcf->refine_cond;
++	}
++
+ 	if (!err && (env->bcf.refine_cond >= 0 || env->bcf.path_cond >= 0))
+ 		mark_bcf_requested(env);
+ 
+-- 
+2.34.1
+
 
