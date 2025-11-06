@@ -1,248 +1,301 @@
-Return-Path: <linux-kernel+bounces-888229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD63C3A424
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:30:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D62C3A41A
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2663B9289
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:23:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4837218891CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786512C031B;
-	Thu,  6 Nov 2025 10:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BD52D94AC;
+	Thu,  6 Nov 2025 10:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="D6vT9roT"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bb8hFQAE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wwWmp2qy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="izEmMzlL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Xzf/5/Xo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B664D26B08F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C0728726E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762424586; cv=none; b=lI1Ekyg8EmUDBJzc/jfCXHkvjeDt09a0oPlaBhEM5pXcoLGaSBA8plQkBJZiZvc2OtOsiHlpSusH8FsoBfh5/xT9I+h50wbv7WfvmimQ5SLtYAmD+axkDMbOoX/fVZEA/+yta3DtDGXoHPqG1WIcK/rhibxu41f+hw1eYh2v/Go=
+	t=1762424652; cv=none; b=SFA6RGVKfQXskYKM/r8H9QdEZfb29NcTWTHD4tf2GY2Ut1FtXy+2Lk88ghtS1TCXLr0GoIkV1PAYQ+ArVIlucWKevRO3E1qs0DwtBn6Q8Prd/bwdq5uTkbKgg4TXt5HCCqs2RNG0Pb6jEhkmuLeF2uc+LCbKjnYdrfMboZv8q0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762424586; c=relaxed/simple;
-	bh=3VcIWGEidVBc6S38LPZkC6VXAiK5JHVOsJryEifSV+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qrmhEvh6i71QyN6HpdydkbHx/rktUTc9hu+PNU1GscgG/qsN6hPKs0gCkRY6pprpiHMcmm5sTOrE0wUQdq912AltLXKUliJqz+DEUxW+lmR7MYF2OdlazWG5GFe/EDbp7UUE1/M3vXmMHBlFrsMewUbMl2CDOLMsD2t1etVvUmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=D6vT9roT; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47112a73785so4734665e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:23:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin.net; s=google; t=1762424583; x=1763029383; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VgOP42kyVIF+OaMBMLYClO2LZ5oQJ3Uk17eUAjkdIvg=;
-        b=D6vT9roTI1x4BCZBOD5YYJIg2jxQvudynP6jXxH364wrYpgCx9TZKSNBB7G2n9L4QU
-         WtgVz5etJGoA2zQi1lP4rciBxqU73YirVEZigbY8xwJLYvTJTRpzHGY3Q47wF8uDjiYP
-         GVwfNEfVazH8DtOYKJuy711MpZ7IkubaIKOxRetoJ6XjKuRTs1GWUSbQ2rop5dU3Leq3
-         y4LHQ5PZ/56zWgFDaYaH6rS9Aqr4AIcoaiakngieEUFGZ9Kte9wKZTZ8heNOhOn32M1D
-         Zpq9T2SamBW8kBuZpQjBIghUNwhob+WtTW4jJp38oA2JSx1nP6tcVX7e2zRAi3BtEppE
-         4Exg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762424583; x=1763029383;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgOP42kyVIF+OaMBMLYClO2LZ5oQJ3Uk17eUAjkdIvg=;
-        b=HV+jDhGJstiOGs/CXUjM64fW4doWVeOE2qpQAjbmzZR1Y0oQgp5Toec5vrfT2riJXc
-         ZhpTiqpk6U9ME24uMO8B0WxCjEu5A7OCen9V1HgdILwZHtS3WmD6baI/LiyLigRH9bSp
-         hmRTwggkEJS3T2/hkTNh2ZtZg6KwgPzUCombe9Mt8Bj3Pf3k1LcC7cPUvpDqvjwxRhgp
-         zNj9wVf6qybdlmtNg5Gty0ySAw5kqdXXTYaGzxwGUrGaBVBKn+PoMVUoX4ntiR6m8JN3
-         Ah/x07Q1fALpDSV+dyTPBxVREViMWKGmn2yPTNJhAhic0foV+OY+H6cwR7JTlILnvGBY
-         s1iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVa8aOvKh0Z6tzDzkw1c/h6aFhrJ1qXVkbfEqiWaISR//RQ45Z8EL6dadtL4EI/XWRrTU5VPioigKNaB0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyea0pVO4AHMMbi5ltnqkjll6JieJ8eX9d0Blef9/FgG3FyQ2F0
-	vQRqaS5q+ebNA6SsAHtIcXFelNZpVhPrrhNU+zpLd5C2dqgq6MYDUPUQn//L0yJhijQ=
-X-Gm-Gg: ASbGncuJLsTFq5GWdirQjCOIJWloL9Y4wMGaCEYyFjm0UPqsw42oTRVgERrirGMh8bV
-	oMV4/TrQm0Rap4DnX5ab+91RCJQ4F/Pq0tgocz6xMGegYfC9keai11UxxtNtrbcW0NQOoQIsvn5
-	AQkGz06HlP3XXq5xCRyROcB4DExc12QJSmwADyIU6zHqSqQv+uCmWuc+zzy62NQ6B8nT6Y1kf1p
-	d9hbRAjmitZN1HbEBxCuVK6AqcVgdzAXZEd3F0nIarHJO3pUEKPJnfQ4IdELilS5/b00qy5V7pA
-	zGmnE2H5ors7/I0kiClNTok7q1MDl3MWs2H07xnRzy+5f+aBmxZgbcZhMwwgorePCqH7acKCYmo
-	5S4JdUpMmDo6Kn7jnMGEnNSnewYXTFJBt63mGDxzk2rHn0+hSve2A/Nxp8QlVdu4SdE5yaJDQvP
-	rJAYnZxqWcWNzNfLRS0ln/lTi2E+8=
-X-Google-Smtp-Source: AGHT+IEtpJZ2x8DlPogW4WdO8xvm2uRzmqJs0tYIUZ3boZRuyGklclD2npgr2Aq/2sPhN6v4NkYQGw==
-X-Received: by 2002:a05:600c:1e1e:b0:476:6ef6:e28c with SMTP id 5b1f17b1804b1-4775ce23c7amr41354635e9.38.1762424582943;
-        Thu, 06 Nov 2025 02:23:02 -0800 (PST)
-Received: from [192.168.0.101] ([90.240.106.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc552sm106633505e9.6.2025.11.06.02.23.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 02:23:02 -0800 (PST)
-Message-ID: <6a7159d5-fb5c-44b5-ba90-2dcd02b59097@ursulin.net>
-Date: Thu, 6 Nov 2025 10:23:02 +0000
+	s=arc-20240116; t=1762424652; c=relaxed/simple;
+	bh=qavZbl+4d9Auzi5x68FVpqsK2Og3mcO4H6nFIWFrYhE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d+aDFeSbnCF7UkJ3YDBnUsfsedJOt/I112Hs4QT42Swmv6lI+XGf6YAi+fyV5tENACnHh3GCJYJ5RQTpD06r6Zcjgw9FuKjWHPGW5+DdLzzRWSBlmpwqtBoEJ+HtCSq5RdHNb/qW54wib2761aY1eDVsD8fvGUy6+ii0uR96pwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bb8hFQAE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wwWmp2qy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=izEmMzlL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Xzf/5/Xo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DD3D31F457;
+	Thu,  6 Nov 2025 10:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762424649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
+	b=Bb8hFQAEuSZnXsy25UAs1Y+hk+z0ks/G/sifw2viOzyvExgcyxxYEGm3/afKlEhtWKoBV2
+	F6UK3FYCzscG2CYbGlkD0mWbJChzyjaVGnePMEJZGD0PNOUZ9boeAsZZx8jj6jPKJLWSzV
+	GW5RTMH2Ex2b5uzVgL/m9nD+4Y3ncEY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762424649;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
+	b=wwWmp2qyvkHAne2YQTKe96siCokd5zgk3lJsD4v6ZyEwwxw9RFAFfAx+NH982wSaTH5ssg
+	/KZ8Mf2Z5DHmIIDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762424648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
+	b=izEmMzlLr8p7R9KnNOS2tOsBfnagLWGsm7Vuh0DgtR+Fa+uPN7QQHGnBEr+A0lPkTr28Ed
+	lovcdVuH9BmhrSbHiU8rqLXp2szENMsUKc4r4FRnu/GsSBkJP+9Pmma0tALmiJSEPMEcMA
+	ra28UEhvpC9jCL2v96lkrmrz9eSQ9Us=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762424648;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YqCJ3U/dPBQGaV7i7k/kR7atpy/cVN5b99fapvM1uOs=;
+	b=Xzf/5/XoHJMiLaiYgcUq0ksQp8xe9wr/VTd48oxcAL+nVZg7k6yipfyiDr/cO0Gtc4XyET
+	yGeaD5lMImjpH5AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F3B213A31;
+	Thu,  6 Nov 2025 10:24:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TnqQIUh3DGmITQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 06 Nov 2025 10:24:08 +0000
+Date: Thu, 06 Nov 2025 11:24:08 +0100
+Message-ID: <871pmbh31z.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: wangdich9700@163.com
+Cc: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	cezary.rojewski@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	wangdicheng <wangdicheng@kylinos.cn>
+Subject: Re: [PATCH] [PATCH v3] ALSA: hda/conexant: Fix pop noise on CX11880/SN6140 codecs
+In-Reply-To: <20251106063459.115006-1-wangdich9700@163.com>
+References: <20251106063459.115006-1-wangdich9700@163.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] drm/amdgpu: increment sched score on entity
- selection
-To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251106093933.18859-1-pierre-eric.pelloux-prayer@amd.com>
- <20251106093933.18859-3-pierre-eric.pelloux-prayer@amd.com>
- <9e5abc5f-1948-4b18-8485-6540f84cdfd8@ursulin.net>
- <a87d491d-e0ff-4bf6-bce8-6d2935271e6b@damsy.net>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <a87d491d-e0ff-4bf6-bce8-6d2935271e6b@damsy.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[163.com];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,perex.cz,suse.com,intel.com,vger.kernel.org,lists.infradead.org,kylinos.cn];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,kylinos.cn:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
+
+On Thu, 06 Nov 2025 07:34:59 +0100,
+wangdich9700@163.com wrote:
+> 
+> From: wangdicheng <wangdich9700@163.com>
+> 
+> Pop noise mitigation: When headphones are unplugged during playback, mute
+> speaker DAC (0x17) immediately and restore after 20ms delay to avoid
+> audible popping. This fix is specifically for CX11880 (0x14f11f86) and
+> SN6140 (0x14f11f87) codecs based on testing verification.
+> 
+> Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
+> ---
+> V2 -> V3:
+> - Fixed container_of usage by storing codec pointer in spec structure
+> - Added cancellation of delayed work when headphone is re-plugged
+> - Limited the fix to specific device IDs (0x14f11f86, 0x14f11f87) based on testing
+> - Added proper cleanup in remove function
+
+Thanks for the patch, but unfortunately the patch isn't in a good
+enough shape.
+
+First off, the code change doesn't consider about the runtime PM.
+That is, the work itself might wake up the runtime resume.
+
+The other points are:
+- The patch contains lots of magic numbers that should have been
+  represented with the defined constants.
+- It touches the HD-audio codec verbs directly for pin detections and
+  amps, which should be rather done via the standard helpers --
+  otherwise it will break the whole regmap caches.  This might be
+  intentional, but if so, it must be clearly commented.
+- The work must be synced properly at suspend or similar operations,
+  too.
+- The code assumes the fixed pin definitions without checking the
+  actual pin configurations.  It won't work when the pin config
+  differs.
+
+And, the most important point is that it's better to do the root cause
+analysis again.  Does this happen with the driver's auto-mute feature?
+Or it's triggered by user-space like pulseaudio / pipewire?
+And, if it's drivers' auto-mute, setting spec->gen.auto_mute_via_amp
+has any influence?
 
 
-On 06/11/2025 10:10, Pierre-Eric Pelloux-Prayer wrote:
-> 
-> 
-> Le 06/11/2025 à 11:00, Tvrtko Ursulin a écrit :
->>
->> On 06/11/2025 09:39, Pierre-Eric Pelloux-Prayer wrote:
->>> For hw engines that can't load balance jobs, entities are
->>> "statically" load balanced: on their first submit, they select
->>> the best scheduler based on its score.
->>> The score is made up of 2 parts:
->>> * the job queue depth (how much jobs are executing/waiting)
->>> * the number of entities assigned
->>>
->>> The second part is only relevant for the static load balance:
->>> it's a way to consider how many entities are attached to this
->>> scheduler, knowing that if they ever submit jobs they will go
->>> to this one.
->>>
->>> For rings that can load balance jobs freely, idle entities
->>> aren't a concern and shouldn't impact the scheduler's decisions.
->>>
->>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux- 
->>> prayer@amd.com>
->>> ---
->>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 21 ++++++++++++++++-----
->>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h |  1 +
->>>   2 files changed, 17 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/ 
->>> drm/amd/ amdgpu/amdgpu_ctx.c
->>> index afedea02188d..953c81c928c1 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
->>> @@ -209,6 +209,7 @@ static int amdgpu_ctx_init_entity(struct 
->>> amdgpu_ctx *ctx, u32 hw_ip,
->>>       struct amdgpu_ctx_entity *entity;
->>>       enum drm_sched_priority drm_prio;
->>>       unsigned int hw_prio, num_scheds;
->>> +    struct amdgpu_ring *aring;
->>>       int32_t ctx_prio;
->>>       int r;
->>> @@ -239,11 +240,13 @@ static int amdgpu_ctx_init_entity(struct 
->>> amdgpu_ctx *ctx, u32 hw_ip,
->>>               goto error_free_entity;
->>>       }
->>> -    /* disable load balance if the hw engine retains context among 
->>> dependent jobs */
->>> -    if (hw_ip == AMDGPU_HW_IP_VCN_ENC ||
->>> -        hw_ip == AMDGPU_HW_IP_VCN_DEC ||
->>> -        hw_ip == AMDGPU_HW_IP_UVD_ENC ||
->>> -        hw_ip == AMDGPU_HW_IP_UVD) {
->>> +    sched = scheds[0];
->>> +    aring = container_of(sched, struct amdgpu_ring, sched);
->>> +
->>> +    if (aring->funcs->engine_retains_context) {
->>> +        /* Disable load balancing between multiple schedulers if the hw
->>> +         * engine retains context among dependent jobs.
->>> +         */
->>>           sched = drm_sched_pick_best(scheds, num_scheds);
->>>           scheds = &sched;
->>>           num_scheds = 1;
->>> @@ -258,6 +261,11 @@ static int amdgpu_ctx_init_entity(struct 
->>> amdgpu_ctx *ctx, u32 hw_ip,
->>>       if (cmpxchg(&ctx->entities[hw_ip][ring], NULL, entity))
->>>           goto cleanup_entity;
->>> +    if (aring->funcs->engine_retains_context) {
->>> +        entity->sched_score = sched->score;
->>> +        atomic_inc(entity->sched_score);
->>
->> Maybe you missed it, in the last round I asked this:
-> 
-> I missed it, sorry.
-> 
->>
->> """
->> Here is would always be sched->score == aring->sched_score, right?
-> 
-> Yes because drm_sched_init is called with args.score = ring->sched_score
-> 
->>
->> If so it would probably be good to either add that assert, or even to 
->> just fetch it from there. Otherwise it can look potentially concerning 
->> to be fishing out the pointer from scheduler internals.
->>
->> The rest looks good to me.
->> """
->>
->> Because grabbing a pointer from drm_sched->score and storing it in AMD 
->> entity can look scary, since sched->score can be scheduler owned.
->>
->> Hence I was suggesting to either fish it out from aring->sched_score. 
->> If it is true that they are always the same atomic_t at this point.
-> 
-> I used sched->score, because aring->sched_score is not the one we want 
-> (the existing aring points to scheds[0], not the selected sched). But I 
-> can change the code to:
-> 
-> if (aring->funcs->engine_retains_context) {
->     aring = container_of(sched, struct amdgpu_ring, sched)
->     entity->sched_score = aring->sched_score;
->     atomic_inc(entity->sched_score);
-> }
-> 
-> If it's preferred.
+thanks,
 
-For me it is, yes. Because it removes any doubt on who owns the atomic_t 
-pointed to. And it also isolates the driver from any changes in DRM 
-scheduler structures.
+Takashi
 
-With that:
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-
-Regards,
-
-Tvrtko
-
->>> +    }
->>> +
->>>       return 0;
->>>   cleanup_entity:
->>> @@ -514,6 +522,9 @@ static void amdgpu_ctx_do_release(struct kref *ref)
->>>               if (!ctx->entities[i][j])
->>>                   continue;
->>> +            if (ctx->entities[i][j]->sched_score)
->>> +                atomic_dec(ctx->entities[i][j]->sched_score);
->>> +
->>>               drm_sched_entity_destroy(&ctx->entities[i][j]->entity);
->>>           }
->>>       }
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h b/drivers/gpu/ 
->>> drm/amd/ amdgpu/amdgpu_ctx.h
->>> index 090dfe86f75b..f7b44f96f374 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
->>> @@ -39,6 +39,7 @@ struct amdgpu_ctx_entity {
->>>       uint32_t        hw_ip;
->>>       uint64_t        sequence;
->>>       struct drm_sched_entity    entity;
->>> +    atomic_t        *sched_score;
->>>       struct dma_fence    *fences[];
->>>   };
-
+> 
+>  sound/hda/codecs/conexant.c | 73 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+> 
+> diff --git a/sound/hda/codecs/conexant.c b/sound/hda/codecs/conexant.c
+> index 5fcbc1312c69..f2f447ab749e 100644
+> --- a/sound/hda/codecs/conexant.c
+> +++ b/sound/hda/codecs/conexant.c
+> @@ -43,6 +43,10 @@ struct conexant_spec {
+>  	unsigned int gpio_mute_led_mask;
+>  	unsigned int gpio_mic_led_mask;
+>  	bool is_cx11880_sn6140;
+> +
+> +	/* Pop noise mitigation */
+> +	struct hda_codec *codec;
+> +	struct delayed_work pop_mitigation_work;
+>  };
+>  
+>  
+> @@ -212,10 +216,74 @@ static void cx_auto_shutdown(struct hda_codec *codec)
+>  
+>  static void cx_remove(struct hda_codec *codec)
+>  {
+> +	struct conexant_spec *spec = codec->spec;
+> +
+> +	cancel_delayed_work_sync(&spec->pop_mitigation_work);
+>  	cx_auto_shutdown(codec);
+>  	snd_hda_gen_remove(codec);
+>  }
+>  
+> +static void mute_unmute_speaker(struct hda_codec *codec, hda_nid_t nid, bool mute)
+> +{
+> +	unsigned int conn_sel, dac, conn_list, gain_left, gain_right;
+> +
+> +	conn_sel = snd_hda_codec_read(codec, nid, 0, 0xf01, 0x0);
+> +	conn_list = snd_hda_codec_read(codec, nid, 0, 0xf02, 0x0);
+> +
+> +	dac = ((conn_list >> (conn_sel * 8)) & 0xff);
+> +	if (dac == 0)
+> +		return;
+> +
+> +	gain_left = snd_hda_codec_read(codec, dac, 0, 0xba0, 0x0);
+> +	gain_right = snd_hda_codec_read(codec, dac, 0, 0xb80, 0x0);
+> +
+> +	if (mute) {
+> +		gain_left |= 0x80;
+> +		gain_right |= 0x80;
+> +	} else {
+> +		gain_left &= (~(0x80));
+> +		gain_right &= (~(0x80));
+> +	}
+> +
+> +	snd_hda_codec_write(codec, dac, 0, 0x3a0, gain_left);
+> +	snd_hda_codec_write(codec, dac, 0, 0x390, gain_right);
+> +
+> +	if (mute) {
+> +		snd_hda_codec_write(codec, nid, 0, 0x707, 0);
+> +		codec_dbg(codec, "mute_speaker, set 0x%x PinCtrl to 0.\n", nid);
+> +	} else {
+> +		snd_hda_codec_write(codec, nid, 0, 0x707, 0x40);
+> +		codec_dbg(codec, "unmute_speaker, set 0x%x PinCtrl to 0x40.\n", nid);
+> +	}
+> +}
+> +
+> +static void pop_mitigation_worker(struct work_struct *work)
+> +{
+> +	struct conexant_spec *spec = container_of(work, struct conexant_spec,
+> +			pop_mitigation_work.work);
+> +	struct hda_codec *codec = spec->codec;
+> +
+> +	mute_unmute_speaker(codec, 0x17, false);
+> +}
+> +
+> +static void cx_auto_pop_mitigation(struct hda_codec *codec,
+> +		struct hda_jack_callback *event)
+> +{
+> +	struct conexant_spec *spec = codec->spec;
+> +	int phone_present;
+> +
+> +	phone_present = snd_hda_codec_read(codec, 0x16, 0, 0xf09, 0x0);
+> +	if (!(phone_present & 0x80000000)) {
+> +		/* Headphone unplugged, mute speaker immediately */
+> +		mute_unmute_speaker(codec, 0x17, true);
+> +		/* Schedule unmute after 20ms delay */
+> +		schedule_delayed_work(&spec->pop_mitigation_work, msecs_to_jiffies(20));
+> +	} else {
+> +		/* Headphone plugged in, cancel any pending unmute */
+> +		cancel_delayed_work_sync(&spec->pop_mitigation_work);
+> +	}
+> +}
+> +
+>  static void cx_process_headset_plugin(struct hda_codec *codec)
+>  {
+>  	unsigned int val;
+> @@ -1178,6 +1246,9 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
+>  	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
+>  	if (!spec)
+>  		return -ENOMEM;
+> +
+> +	spec->codec = codec;
+> +	INIT_DELAYED_WORK(&spec->pop_mitigation_work, pop_mitigation_worker);
+>  	snd_hda_gen_spec_init(&spec->gen);
+>  	codec->spec = spec;
+>  
+> @@ -1187,6 +1258,8 @@ static int cx_probe(struct hda_codec *codec, const struct hda_device_id *id)
+>  	case 0x14f11f87:
+>  		spec->is_cx11880_sn6140 = true;
+>  		snd_hda_jack_detect_enable_callback(codec, 0x19, cx_update_headset_mic_vref);
+> +		/* Enable pop noise mitigation for both codecs */
+> +		snd_hda_jack_detect_enable_callback(codec, 0x16, cx_auto_pop_mitigation);
+>  		break;
+>  	}
+>  
+> -- 
+> 2.25.1
+> 
 
