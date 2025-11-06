@@ -1,128 +1,196 @@
-Return-Path: <linux-kernel+bounces-889010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC58AC3C85B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:41:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6C9C3C830
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF29A4F8BFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:32:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F2F0505DEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FB534D4E1;
-	Thu,  6 Nov 2025 16:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B07634B430;
+	Thu,  6 Nov 2025 16:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ed/MdcYF"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n+pna2tc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B7OKnQ5b"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DAD34C804
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8F334847E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762446598; cv=none; b=SQ8km+xfEAkzwgrtK/CNBvZcryNFv2wBlgMOl5NBLpoKz3wN6xLjD9o/l9PTy0ALH9qsa/iWSopmfKgEk+og03ISuzD1dnbjmN51ZIXSMI2BQdGpBi0KlxXK6YQzDMiF5L+TY6L9yuI3zl6GU9ze7X83hACwReNpylzMb3m8mmM=
+	t=1762446595; cv=none; b=tu45jN4r13ffchCJa7V+g4PO5Ry4TxvncGGgrPeZQOgnF7pWXJss8gJCn+heNykiLwn9ZmwxLVBfg9neeYHJpYdRGyFsMANVVTQiStX3MCMV2rVo3MiQC2uSaR2+Z7UHc4RJL/0YMS6w/a9Grh51Jz3+Rm8iZ+ZVy3qVF1meC6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762446598; c=relaxed/simple;
-	bh=jEkS0wS9JdICTaCzYvZx0OjcAUCfKSnRc9lNZ08RGwQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BMAGTWY+K7mS9/l36ePtpvtUF/zOZG1Ohr8f72JgkuC8XWVlL7FMBlFBRcoOL988kdQRHCo5crLy6CtotJU9EiXotZASe7FRiCWY5VCWAYRHFTiaWihKWFF9QW6nOm3+lZIk92J549vJfrKO2eCG1KjxxR3PHZNIhpPiGnnaHuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ed/MdcYF; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-34182b1c64bso800049a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:29:56 -0800 (PST)
+	s=arc-20240116; t=1762446595; c=relaxed/simple;
+	bh=VzaCR7H9TvLPBQ9CB5Z3dGT3hJnO4fASZTntV/6fnQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MKDQQWrjJE6jP9uCVDC8Aua/8OSJOwF7whNsaw+PzWN88isOj0elG/HXpOHwZpDrgxryatj6I/B8a5yjVAWAbX9A0JEmtApeyna1TRa46MwKc7hGDpwjMz0bf8Bvn1/hz0HJzflvUN1M1vu8bRifYcn25DVf9jl+1lRuqKjQK6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n+pna2tc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B7OKnQ5b; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6ASpVp3748991
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 16:29:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WgmN4NxVV9M82DvCj9Jb02Y2HdGbR+gEIO/NMxbQG2c=; b=n+pna2tcBKKGun8+
+	JzSqkJXPMRjIBF6qXOcKmQiubQBM6XujHappE5+x3+jLCALbEyBBN5LGeymXYwOx
+	OOhX2EiLEoxRqr32SzZGRR73sFJCwHpnh0/64k8lxP+ofNmuC2cpmCGUetZs43Jm
+	Z2KsmZvdAqYC2rQ0OSAoREsz70vbSDK37yh1/MI5RO/1v1xHyqfEDOCT/wKibL40
+	3ENESVruLu3ChY8rKJk4TtBo5A1wn3ub7LKiw3ebJ/a6L9lvmvFfJxkUlCkuRQcS
+	pWUVl7bSW7Suu3so/1zx4B9Q7x/i1Vgyhq1qlhoFmmGmM8FwGmjMl8ptCYGxqszh
+	LRwE1g==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8sy6h1we-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:29:52 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-88046bc20faso2780076d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:29:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762446596; x=1763051396; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EMufvlKZanMTIZvbWWJIkNimyApBJZflYRWdIy87U/A=;
-        b=Ed/MdcYFf0bE13i+lCUqEh61uYXZIRFsVri+LZVomCRwmAuWXJVvLQ6mrDubJbKC/U
-         vgzdb5uvdJai6GSmlEbySoX2SUCrdlDoz2F9sx1SWdbzdQb1CUxPXT/gtK8D1XUm+uXo
-         j0rAiZJ0MNULiHXmz1XEGw05ynjQVlhBxUGfxDUKihjbB22zhlJodUfyutsQ2QKzHe/B
-         hA6rKMfalhvvFRHacfP1Ml7PV6yUAAlVMMDPtTvKJ+rNXJHvAsUQu7bL0GCDGXaUQfwp
-         vXAO6e7LM+ffXLxPJcsgLhhaDz+7HRmkQkGY8eqQcBvoTaaUIefuchT0dpju/c1ZhgCM
-         x+qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762446596; x=1763051396;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=oss.qualcomm.com; s=google; t=1762446592; x=1763051392; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EMufvlKZanMTIZvbWWJIkNimyApBJZflYRWdIy87U/A=;
-        b=C05JQmh1cm1wkstozMMmjwzihpbH3EuxcmSGcpxTH+OfSUz82jAUSr0Gc2x1S95uPp
-         19veoSH5r2qhOV84HU3eb/XDjBwyhJt/TBJpifcpKIIvceHmeaOPB0PcwIfR5daWWirq
-         v1Oi2kgXXydHacNtU1LsJ8WxZSwWVoSSylqWbph2Nw2NhgUAyXQfMaj+CZdVSmaraUhU
-         ySr7gTnG8WE0znWk5V8ewDywM1HvUpHYQKINPhY6hUlLxMb1HK+5dFI+/lzf9OgUe/dG
-         Cb4pc2lSYtc66WbJvozPWv+MVuGzCGaYdMhMYUk04nn4np82VjZ1l4/oOWaumND0ydj5
-         7BFw==
-X-Gm-Message-State: AOJu0Yxrl8J9EvqLfRUp/Ja2WG1BpZ497xIdZYJ4Y93WArzWH+qWZjvY
-	E1FsxXt7gJePSFRZZNq6495lpmKG6UXhNyrptS4/aFa3IH4FIJRuOcuJ
-X-Gm-Gg: ASbGnctjbpeA/ikW/tQsC53eaNjzlll8nyMy0ezdUPaaLbV6+c93Q/k98JgyslcQ6G8
-	Rwgt8BQLt9nRbYLLXKW5k8T9QGgbjmQBXrCnPuTLpWVl/eP8f+9g39Ec4EIi+RLBpdV9IHXnAfm
-	3g4PtOPAsulrXSXE7gj1S80Ic+3bqi/FmEGQD59oSlOFFrzHgYXBVFAvWdo0/4ALxIW8fhp2Hw5
-	s9nvFbcfHXzIpoWk4LsvnwYaCKNoyHM5IWPN9Q2AhMtdrG7VU7xC5IucS+5rDMF4hhGN3rgLDrE
-	MOoWKo6Yllf8evLa6cZ3CJ7JgHaO7Q445fcVzDIs+0NOcF6ELCfrWpG2hXup9c21W9rlLx9nBp2
-	dWXfaE3RglZrCxZYdud3QN24d5lmxMPU4NYc/Gbk4QwAsjqCGiZJqAttbxPU4Zsz2foIwqDOjLF
-	XL5PmcN51IMQeuD7OMfybRO7CMqvkzAqJ0iHPR+Ungo8hOw+OZDLCzfv/NdzituRuE5CnClw==
-X-Google-Smtp-Source: AGHT+IG+/YJFa+iN7B35iE0D3sOPdQh3iyKV5sn/uuCGaHI5yvaeFznbvQBUEeV5BmhRnHB0H5TLTA==
-X-Received: by 2002:a17:90b:3607:b0:341:abdc:8ea2 with SMTP id 98e67ed59e1d1-341abdc8fdemr6666428a91.37.1762446596409;
-        Thu, 06 Nov 2025 08:29:56 -0800 (PST)
-Received: from ?IPv6:2401:4900:88f4:f6c4:12e8:f050:511d:31f3? ([2401:4900:88f4:f6c4:12e8:f050:511d:31f3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a68ad143sm6652545a91.3.2025.11.06.08.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:29:55 -0800 (PST)
-Message-ID: <67e28fadf4c20433c964d13d96dafe3514457656.camel@gmail.com>
-Subject: Re: [PATCH RESEND v3] checkpatch: add uninitialized pointer with
- __free attribute check
-From: ally heev <allyheev@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, Geert Uytterhoeven	
- <geert@linux-m68k.org>, linux-doc@vger.kernel.org,
- workflows@vger.kernel.org,  Joe Perches <joe@perches.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, Andy
- Whitcroft <apw@canonical.com>, Jonathan Corbet <corbet@lwn.net>, Dan
- Carpenter	 <dan.carpenter@linaro.org>, Dan Williams
- <dan.j.williams@intel.com>, David Hunter <david.hunter.linux@gmail.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn	
- <lukas.bulwahn@gmail.com>, Nishanth Menon <nm@ti.com>, Shuah Khan	
- <skhan@linuxfoundation.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar	
- <vireshk@kernel.org>
-Date: Thu, 06 Nov 2025 21:59:33 +0530
-In-Reply-To: <221c2b9b-4809-48d8-af7d-f290d1c2a7fa@web.de>
-References: 
-	<CAMuHMdV+12MoAGNHC9kf==Bt0cLuJ39Fs+W61DN67sE_p-u=og@mail.gmail.com>
-	 <221c2b9b-4809-48d8-af7d-f290d1c2a7fa@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+        bh=WgmN4NxVV9M82DvCj9Jb02Y2HdGbR+gEIO/NMxbQG2c=;
+        b=B7OKnQ5bRC/v+aNm8cYnQK3BOknlp6i/HyiOuDPYfxWJRi5/6bZo3TzPB8HTkpbMIE
+         vv3/012RR0nf9MjqbpvDCoWeab1zWIGSueXyG45yhj48OC4dmCHgk8tFVt4z9Zj2LODb
+         YFwK6MP9mugDfZFEvfZq6lCKE76jOimc9JitePtSqSY2xLrLH83XwCNZ8YjTK2FxtFQZ
+         SAmUADIhkwO9ukkWrs5FDxDFW209YoUpdrUk9uagKGLJibqWenRGtXXEEjBQS4WrMI73
+         J7UswYEsSsuyAgMZ2Ja1lOb8uxmtp0nggz3RJ4L/WDhzUHyjgY+oxYeNJa7YKboeov2B
+         w9JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762446592; x=1763051392;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WgmN4NxVV9M82DvCj9Jb02Y2HdGbR+gEIO/NMxbQG2c=;
+        b=VaWR+d6bbovdXDwBxkn1vqqIWnKiLcAyQB4nD+75HeMKP+NgBiMVhG5kiPezrn6BY7
+         2j7MRcvENkbaBI9rlCcJXQ2q0mHnIVPCUdtWaVKOaK3MstOtuHcjb35M/wGl0GagAFyl
+         vW68xaoI2eDXAo79iEOOxayN4agCYvRt/EOSVF6j8J4rMDJaN65sOHIrIv9VlxmWDn09
+         UKWoDmpRPCZ/EXC5Cb92izdaF+6PNb9Gp9B0u/GRGVqflWvXq8YyaL/7wGa/ziafuCga
+         4izOY5+XMMIQsueqW1i2FFtYp0Cmn4p4zkd2XDSO9RbSlLJ2Feht06SSnKt5SqCGS8fd
+         WA3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVswS+91uuXvS0WNx6QlCpSPWaLN4qI32dYQ12UO1YsY7VLPas1wB0z2Y/2xU0W8PnXPlFktNrWHENfB3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNL58GZURaVkofucqt288POl4e6HRvu3fWYe+5ccrpM+t7VDgA
+	sWOlGDrBraW7tyumha5V4q0wLQg7kpHGrSBGu75mG0pojJ1kfLEXKLg/n8FMRZMQ6K8/wajTuPK
+	0KUgXyWRpOEEOxgzXhNRSr6sCHoN0sqcxB3i15WzQCw1lWoA+coNZ9Gic51KI6pLJkVA=
+X-Gm-Gg: ASbGncvKBsgVHK9EWuL8yc/yiB85DgbHteZKfEcbu97C/j5VEQaQVXSY17flWaOzoE0
+	H39jy+M7L3Fbt7miz0Y6Y2DhZDQeduXRJUAjO7NwgdRnfnWOeX9kCZ68OZNBYuql8fW0riBEzgv
+	+1n4xVGq/rv1wGyA0vInFrslhsnPY+tDdts2ECkrriG5bhEP+OlNavVlMu4W/IiyWNEvh9FWtMe
+	BnOSqCVtxmO5BL4KKU8EPMJASd0kffIxyyreVu73Ih9wJ7xW172HU/meXG10lBqGScCJcZfDEki
+	EVjJ7oLE8+LPMNmM4dN4hwwg8xZg/72VkVxrjvluvlUU4yjJbsFpJ2zNsxpBMpepNPGR/83k+A0
+	k+PW8h53c/eGQIbOCtdernuGe9PJlehYFrV73k72BrpnRN8+AxmHDxpnY
+X-Received: by 2002:ac8:598c:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4ed7233c5acmr59986241cf.4.1762446591850;
+        Thu, 06 Nov 2025 08:29:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEZxjYZc8rxsuvOHdd3txcVs2PoTli39CB2wIhCv+eMHSJx/cwSSBEXCcPzDCkWvSvQ6pH8rg==
+X-Received: by 2002:ac8:598c:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4ed7233c5acmr59985991cf.4.1762446591404;
+        Thu, 06 Nov 2025 08:29:51 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7289684873sm246890766b.58.2025.11.06.08.29.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 08:29:50 -0800 (PST)
+Message-ID: <f20fd593-0173-424d-9951-e0f2ad33b4cd@oss.qualcomm.com>
+Date: Thu, 6 Nov 2025 17:29:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: dts: qcom: unoq: add dts for arduino unoq
+To: Riccardo Mereu <r.mereu.kernel@arduino.cc>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, broonie@kernel.org
+Cc: linux@roeck-us.net, Jonathan.Cameron@huawei.com, wenswang@yeah.net,
+        naresh.solanki@9elements.com, michal.simek@amd.com, nuno.sa@analog.com,
+        chou.cosmo@gmail.com, grantpeltier93@gmail.com, eajames@linux.ibm.com,
+        farouk.bouabid@cherry.de, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, mm.facchin@arduino.cc,
+        Riccardo Mereu <r.mereu@arduino.cc>
+References: <20251106153119.266840-1-r.mereu@arduino.cc>
+ <20251106153119.266840-6-r.mereu@arduino.cc>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251106153119.266840-6-r.mereu@arduino.cc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=690ccd00 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=1Br4yamZUyoIW7x64XAA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDEzMSBTYWx0ZWRfXxSvjvGlXNbu1
+ YJqIVXtdWKhsFMPe7XIlizcrSzRSCPM4SVMdBV2SBRY8h3uqBR/RigOInNl7g2FoMxFBb3a5RX1
+ dAur5GRryAFE8unmlVLIfYc7+NHsCIW1H0I4jZPfFjvOG5BbH+tECHGQIJS4BUG2EOOBeT6UNQc
+ gdzKFh1bGi7w0MPnBaNhU5GY2Dy/1J9S3I/K8H0rYOQ5ovWoquJVEW1dPDZzpOMgoLX9JDwx6Yq
+ k9yWxWxSnxo+QgJRo+9yPZrpGj4c4JZ9CQcE/KOuJbbJ01XmDAP14NYDozC02T0GG2zhm1V36na
+ d4OynnOhBLfWonNxaxvwvvrwMXoJzI2Mzqwsiobskn0TpDwZDhU3Ys22Tu8mTLihOPTMhopNQpq
+ fapQnGO1DJokAlsWAEBh8+oVGCwb5g==
+X-Proofpoint-ORIG-GUID: dxuqMrqv313fpVYQbu07Mp8Pby33BS01
+X-Proofpoint-GUID: dxuqMrqv313fpVYQbu07Mp8Pby33BS01
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060131
 
-On Wed, 2025-11-05 at 10:18 +0100, Markus Elfring wrote:
-[..]
-> * Do corresponding source code analysis requirements indicate a need
->   to perform data processing with other programming interfaces than regul=
-ar expressions?
->=20
+On 11/6/25 4:31 PM, Riccardo Mereu wrote:
+> From: Riccardo Mereu <r.mereu.kernel@arduino.cc>
+> 
+> Arduino UnoQ is a single-board computer combining Qualcomm
+> Dragonwing™ QRB2210 microprocessor with STMicroelectronics STM32U585
+> microcontroller.
+> Support to a simply boot to shell environment includes:
+> - UART, I2C, SPI
+> - onboard LEDS
+> - eMMC
+> - WLAN and BT
+> 
+> Signed-off-by: Riccardo Mereu <r.mereu@arduino.cc>
+> ---
 
-not sure about other source code analysis tools, but checkpatch
-predominantly uses regexes
+[...]
 
-> * How do you think about to mention the possibility once more that scopes
->   can be reduced for affected local variables?
->   https://elixir.bootlin.com/linux/v6.18-rc4/source/include/linux/cleanup=
-.h#L142-L146
->  ...
+> +        leds: leds {
+> +                compatible = "gpio-leds";
+> +
+> +                ledpanic: led-panic {
+> +                        label = "red:panic";
+> +                        function = LED_FUNCTION_INDICATOR;
+> +                        color = <LED_COLOR_ID_RED>;
+> +                        gpios = <&tlmm 39 GPIO_ACTIVE_HIGH>;
+> +                        linux,default-trigger = "none";
+> +                        default-state = "off";
+> +                        panic-indicator;
+> +                };
+> +
+> +                ledwlan: led-wlan {
+> +                        label = "green:wlan";
+> +                        function = LED_FUNCTION_WLAN;
+> +                        color = <LED_COLOR_ID_GREEN>;
+> +                        gpios = <&tlmm 40 GPIO_ACTIVE_HIGH>;
+> +                        linux,default-trigger = "phy0tx";
+> +                        default-state = "off";
+> +                };
+> +
+> +                ledbt: led-bt {
 
-The docstring talks about interdependency issues caused by assigning to
-`NULL` which are very rare
+The labels (label: node-name@unit-addr {}) for the above 3 LEDs and
+the group are not used, please drop them
 
-Regards,
-Ally
+Looks good otherwise
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
 
