@@ -1,200 +1,100 @@
-Return-Path: <linux-kernel+bounces-888261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAADC3A513
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:41:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9683FC3A558
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 726F8350A8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8603B324F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806A32DEA83;
-	Thu,  6 Nov 2025 10:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D592DF131;
+	Thu,  6 Nov 2025 10:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="JkZLIG8a"
-Received: from fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.156.205.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J7fSLwVg"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB13A2E7180
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.156.205.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E392D9EEA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762425675; cv=none; b=ESWkwdnHVlGKUEYStU2q3n8dkl6vxMemCUyOz39xxQy06y+Jl+9sF6YGxjitlLnqcylWn/hXn5TF4Oy+qY5N5Fw/kLS44OZyYLE8XzlkdTNt6bPx8NxMYeh36c4mGjpuwxpvKvefkN7XVDu3iIefsBtjink1bjd/1FHb+EAHaCI=
+	t=1762425666; cv=none; b=DM7HuDoupnGQU15KMKsUH7yRAPWvFuSB6E8ksmPbY9Xq+6jr6YtgCWLY4x84WOytlX01iljU3wgJhPVCLVz4fJQTxPXto3dR9PpfHlP81rVpf8gsIbyQyn2N5h3iAzFkRWCwYwF18jFrHiSmiE/a1Nj9i6x5SNPyc7aV79Ive9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762425675; c=relaxed/simple;
-	bh=AH7fyg9mSRyP0w8xKjB/5Vk5vaEcqXyBHcQq13ueWQE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DxCKyTYNoQ94IF29AU9zULSUcYNJQrBmeSy5IlQ+JwyeywcPAYELlz4IV6I55h8MjfWGhxBY99WQBc1HF18gzmxiCpWWROMyoM4on67bccvWtAyJpHPLSGAuYB7BP5hMThHkWhQqs04Tt4oAoo5UTKjR4b+hVThjDamL9PfnZeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=JkZLIG8a; arc=none smtp.client-ip=18.156.205.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1762425666; c=relaxed/simple;
+	bh=6gEsH+luGD0b4Sn5LNm8FkmN4nubeyVKxdIlp8HfmLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M2aQ0+vG6aqeb2foFBXsPy5DTJtNYpJDyMaqdGESiCElZl1oZS0mXvsafcBmUXoOJYlptpPWT6g57d37oYUXP3Pv9QmoogtabDI5gB6XFZUjDzTozNJ9tc7Pll+ZSH+o6yQI87tTb3QSiywBt3Od+0n8lWYF34/hzkoO1YqJgok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J7fSLwVg; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ed0d6d3144so8142401cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:41:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762425674; x=1793961674;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DIfE1sRcHzlkIplQspgwVLr+o35YgtcuNHsGKU6KDEQ=;
-  b=JkZLIG8aoCGODx94nMEFUFscFchoHKpCllpDel3CyZDL5JKtXiJsaFPm
-   NjujxsasX7D6F12SWERpUBMCIeicyJd4nEE/pp2DCOsa/e+zvWGyKiZd1
-   psvusQDz+7eOmbRWZ6FW3blJNb62Ksg/jQCJ49J9TTHB5PZBk9eaxnmH5
-   G+7ijpEaVpGY0t0YgNnJiQhatUOGhT4RqVeVL36r781Fg+IvHHOpzOVo2
-   HdBHq5M7B3jnT/b4t7PUYeh9pguHc7Bj5l+pSH+k20AbTUwe8NjYStHQ1
-   aeHCVelXsHMnE6G5a3xhhzGpPRNIVCE/j//YmIGyZDUvc10aSUXpCtwq0
-   w==;
-X-CSE-ConnectionGUID: XkUPWOVMSA2v0iKjGxmmKA==
-X-CSE-MsgGUID: MtJodpotSZiWNzKsYaoAXQ==
-X-IronPort-AV: E=Sophos;i="6.19,284,1754956800"; 
-   d="scan'208";a="4764964"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 10:40:56 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:11320]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.45.127:2525] with esmtp (Farcaster)
- id 0ea984dd-9df7-450f-ac28-d7592dda643d; Thu, 6 Nov 2025 10:40:56 +0000 (UTC)
-X-Farcaster-Flow-ID: 0ea984dd-9df7-450f-ac28-d7592dda643d
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Thu, 6 Nov 2025 10:40:45 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.108) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Thu, 6 Nov 2025 10:40:38 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<vschneid@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <dwmw@amazon.co.uk>, <jschoenh@amazon.de>,
-	<liuyuxua@amazon.com>
-Subject: [PATCH] sched: Proxy yields to donor tasks
-Date: Thu, 6 Nov 2025 12:40:10 +0200
-Message-ID: <20251106104022.195157-1-sieberf@amazon.com>
-X-Mailer: git-send-email 2.43.0
+        d=google.com; s=20230601; t=1762425664; x=1763030464; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6gEsH+luGD0b4Sn5LNm8FkmN4nubeyVKxdIlp8HfmLs=;
+        b=J7fSLwVgcdgqNighfhszmyiy3U8XC0YvVbqf5ZWdr9JC8W9GpGuouG4G8Gv6S5T9M/
+         lOlAIRVAV8ottwME7cHUU8dx/Cui9iUxJI/HxH92ZnACfxOLRCdBgA+CJpXUj8b1yOmZ
+         WLWlK2RTbJsMf7Vc2oTmxiJoF8Q7DOjztlduWu+PqsxrUunEKRWnTZ3j777fjNtfaE2Z
+         aJucj5MprMG+su/b7HPZX1DLB4ewhexVCaFC8pOSfrowwi+lqFN5EaoGk0BHnADyw+d8
+         RLLiDW33SJ2tElW/LSzHeDYBDZlKClSqKYNkbldQvFD891XRWHMijGTvYKUb7z1wRkI1
+         Df0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762425664; x=1763030464;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6gEsH+luGD0b4Sn5LNm8FkmN4nubeyVKxdIlp8HfmLs=;
+        b=xKc8AkR96i/eq9Opp26uOQFKqQhpYQOrtct8C6j9yZFfU8coBCvM5pL1gI4wLzrun9
+         g+ySW/H0awOCnUQIRUzx4MD3wkTP3XaZAAYNEF98HvIHgg/6dWAZzvOFbmoGutqj7tcv
+         ws+76KGW9ILAte4ypXxfV+bDn60SBOmePLgqDJBXpYlmjZIY6CHzV0Pg/R7wZq5qRExo
+         GBA4sl0cNT77SaNXYdHLwVXjvDjTIa4dH95Kc7k2KHnxl9OuX1jexUzCzx7lN4vOXmhD
+         w3HImSMmrNZVWe8VyAdQPsnR+DlclpRkKQDHS/uB2ssyjrGEzRTaaZ5eZ/8cjc4IfStx
+         9FiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw0EhelxKJ3Q7WJPKAiEPAnXzx50teDBWFrwxpkhNySEEe5KZcxx0o8Jj7wjp9QRX7VuUBMHkyagL2fVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySUQNgvlO0qj95LTtmOxoKulOdQSYBQ1b5/DhjeJN2k6VxVlQ8
+	F+ab/oN+r6h6hkWZ7syCbVpOT4gPiY3kcCiQqo5FtlDQ7um2vItvWC+CU0DlgubV+eqNOeKwdSi
+	10tx/ZVo2yseqRpjpP6xyzOQ52AsExJ0a1a04A20H
+X-Gm-Gg: ASbGncuBzovvO9l1Fl7uK8dOjcVBJkdBszdOtBEDToalydzWrEcY3NSdTsTUeuqPEKa
+	qh4FHayXDfSkf8q7nt50v3VGZgDRcBjbcH0fDcuPQlsT31HS0ux97DegLlGWWLdJ3IGdtIqMMtU
+	77Z8QXwj8deMIw3Xw9Vx7Fvl+vRoptZUw5pLtvYBRbffwlMw5Q4MJC21oCIq9NtNxwPCm6jJfrf
+	HmyjVwwMwWoFpjs5pfybWiLU6CZ/lrfdvx1C7YE/n3qXr8CmeMEdvaHlkUeKu632sQ6JN4=
+X-Google-Smtp-Source: AGHT+IGw4QTWrNAeDwKQA3mseTWaldl/aBYFiJzlYb7bl8eG84BmiMGOLAD768QMPwKw9sPjZXv4X2Sk2G4u9UmgwGU=
+X-Received: by 2002:ac8:7d82:0:b0:4ec:f09a:4faa with SMTP id
+ d75a77b69052e-4ed7234f780mr76123641cf.19.1762425663934; Thu, 06 Nov 2025
+ 02:41:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D039UWA004.ant.amazon.com (10.13.139.68) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
+ <20251104161327.41004-2-simon.schippers@tu-dortmund.de> <CANn89iL6MjvOc8qEQpeQJPLX0Y3X0HmqNcmgHL4RzfcijPim5w@mail.gmail.com>
+ <66d22955-bb20-44cf-8ad3-743ae272fec7@tu-dortmund.de> <CANn89i+oGnt=Gpo1hZh+8uaEoK3mKLQY-gszzHWC+A2enXa7Tw@mail.gmail.com>
+ <be77736d-6fde-4f48-b774-f7067a826656@tu-dortmund.de> <CANn89iJVW-_qLbUehhJNJO70PRuw1SZVQX0towgZ4K-JvsPKkw@mail.gmail.com>
+ <c01c12a8-c19c-4b9f-94d1-2a106e65a074@tu-dortmund.de> <CANn89iJpXwmvg0MOvLo8+hVAhaMTL_1_62Afk_6dG1ZEL3tORQ@mail.gmail.com>
+ <9ebd72d0-5ae9-4844-b0be-5629c52e6df8@tu-dortmund.de> <64a963ed-400e-4bd2-a4e3-6357f3480367@tu-dortmund.de>
+In-Reply-To: <64a963ed-400e-4bd2-a4e3-6357f3480367@tu-dortmund.de>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 6 Nov 2025 02:40:52 -0800
+X-Gm-Features: AWmQ_blmcXmxEskv0hK08fp1Pm62Xthwvodkvx571QVJ7EF0DaCgwYh2halYhmA
+Message-ID: <CANn89iKt+OYAfQoZxkqO+gECRx_oAecCRTVcf1Kumtpc9u+n0w@mail.gmail.com>
+Subject: Re: [PATCH net-next v1 1/1] usbnet: Add support for Byte Queue Limits (BQL)
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When executing a task in proxy context, handle yields as if they were
-requested by the donor task.
+>
+> I compiled it with CONFIG_PROVE_LOCKING and ran iperf3 TCP tests on my
+> USB2 to Gbit Ethernet adapter I had at hand. dmesg shows no lockdep
+> warnings. What else should I test?
 
-This avoids scenario like proxy task yielding, pick next task selecting the
-same previous blocked donor, running the proxy task again, etc.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
----
- kernel/sched/deadline.c | 2 +-
- kernel/sched/ext.c      | 4 ++--
- kernel/sched/fair.c     | 2 +-
- kernel/sched/rt.c       | 2 +-
- kernel/sched/syscalls.c | 5 +++--
- 5 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 7b7671060bf9..c4402542ef44 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2143,7 +2143,7 @@ static void yield_task_dl(struct rq *rq)
- 	 * it and the bandwidth timer will wake it up and will give it
- 	 * new scheduling parameters (thanks to dl_yielded=1).
- 	 */
--	rq->curr->dl.dl_yielded = 1;
-+	rq->donor->dl.dl_yielded = 1;
- 
- 	update_rq_clock(rq);
- 	update_curr_dl(rq);
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index ecb251e883ea..7e0fcfdc06a2 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1474,7 +1474,7 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags
- static void yield_task_scx(struct rq *rq)
- {
- 	struct scx_sched *sch = scx_root;
--	struct task_struct *p = rq->curr;
-+	struct task_struct *p = rq->donor;
- 
- 	if (SCX_HAS_OP(sch, yield))
- 		SCX_CALL_OP_2TASKS_RET(sch, SCX_KF_REST, yield, rq, p, NULL);
-@@ -1485,7 +1485,7 @@ static void yield_task_scx(struct rq *rq)
- static bool yield_to_task_scx(struct rq *rq, struct task_struct *to)
- {
- 	struct scx_sched *sch = scx_root;
--	struct task_struct *from = rq->curr;
-+	struct task_struct *from = rq->donor;
- 
- 	if (SCX_HAS_OP(sch, yield))
- 		return SCX_CALL_OP_2TASKS_RET(sch, SCX_KF_REST, yield, rq,
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 25970dbbb279..aa58c73b0f79 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8993,7 +8993,7 @@ static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct t
-  */
- static void yield_task_fair(struct rq *rq)
- {
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr = rq->donor;
- 	struct cfs_rq *cfs_rq = task_cfs_rq(curr);
- 	struct sched_entity *se = &curr->se;
- 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 7936d4333731..fb07dcfc60a2 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1490,7 +1490,7 @@ static void requeue_task_rt(struct rq *rq, struct task_struct *p, int head)
- 
- static void yield_task_rt(struct rq *rq)
- {
--	requeue_task_rt(rq, rq->curr, 0);
-+	requeue_task_rt(rq, rq->donor, 0);
- }
- 
- static int find_lowest_rq(struct task_struct *task);
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 77ae87f36e84..bf360a6fbb80 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -1351,7 +1351,7 @@ static void do_sched_yield(void)
- 	rq = this_rq_lock_irq(&rf);
- 
- 	schedstat_inc(rq->yld_count);
--	current->sched_class->yield_task(rq);
-+	rq->donor->sched_class->yield_task(rq);
- 
- 	preempt_disable();
- 	rq_unlock_irq(rq, &rf);
-@@ -1420,12 +1420,13 @@ EXPORT_SYMBOL(yield);
-  */
- int __sched yield_to(struct task_struct *p, bool preempt)
- {
--	struct task_struct *curr = current;
-+	struct task_struct *curr;
- 	struct rq *rq, *p_rq;
- 	int yielded = 0;
- 
- 	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
- 		rq = this_rq();
-+		curr = rq->donor;
- 
- again:
- 		p_rq = task_rq(p);
--- 
-2.43.0
-
-
-
-
-Amazon Development Centre (South Africa) (Proprietary) Limited
-29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-Registration Number: 2004 / 034463 / 07
-
+That should be fine, please send a V2
 
