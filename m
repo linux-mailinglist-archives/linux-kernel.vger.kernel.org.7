@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-889511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39DDC3DCC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:22:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A75C3DCCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6E6188EF21
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0410E1891BF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5EB35A15C;
-	Thu,  6 Nov 2025 23:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C133596E0;
+	Thu,  6 Nov 2025 23:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NWFOQQUe"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1NLcQ74E"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C12D35A925
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B68635A93C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470970; cv=none; b=EpBpNqFmDyHMmhliSPTRUBq/jJUUphoEQQu3U/Th7TVxoX3MK+Gk/OdB+gxqdg0dPejBMER3PM8V5346hWwzotQirBSRFlo6yFpYsT1XE5UwJETB+VtUHF93vo97vYeymORxcOCi/fRUgFSPymZIv3st3zPfXVNRWwdk+zhWiI8=
+	t=1762470972; cv=none; b=ZE9NMKhs6LPUqKzT4MN0NYPY43ZtuEj4FC//klqxZYXyxtBBzmRX4sw0Z3kNthcC9j4Xd2n54Digcuw/MitkyKNVg8d7F5ABFde9DWenwsn+/IW8BP2o6uBRArv9VwbA3Z0m6GzunurvSbBSLJHrLvGNj6aoJ18ZCYfapLsmz48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470970; c=relaxed/simple;
-	bh=NQZLwrJVuAq7AnAGYojD2+FNeBDfMGlmTWdY5sb/Yxo=;
+	s=arc-20240116; t=1762470972; c=relaxed/simple;
+	bh=LLn9FDAlPcwSWZjUFvp9EB4XY1jJAmyC35CaM/eue2A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=cly64mHsH8DOkbqGyFYsciPccjg1VlyeX0EI2cEvYhk6UvmsMdcCGn/bweICf2dOE5G5U4GlxEgM0+PCR+YIwpcizC0IEoEGGqwuJAAXuUPM4Czi/UWLVOWXTpBuJeMGS+XgtD+i/Us56Za5krrv0M7Tii3IR35Bit0nabFS9bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NWFOQQUe; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=MNEfsCC1V2C6L08zby1w3Y0c8+JUA4ieJHsPq7LzOpv7B7cGgdjjxSH/8EOGzNFNPn2MLilA4kl88Rxa1tVT4o+yasYXGlkcVlefJfqJPmuHFKaFHlMJv5Or2cYzgmnsWwRVJZuGAgU9UuNpkxQrkZ/YANJ0dXNWtPFdRVi5gxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1NLcQ74E; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29085106b99so2982285ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:16:08 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-297b355d33eso2093055ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:16:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762470967; x=1763075767; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762470970; x=1763075770; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Snl9m+Gsuclyili9Jia8BWYLwnDqexlNgmsV+/z8jHs=;
-        b=NWFOQQUe8v8/GpDgi/IMW4HZTWq3cryI1Af1I0SHMizuR/ijzlyxSuF768DZnJUQqO
-         cvYhwbBoVufnjvwDR2CUP36PWn9FvGL8cLgmnav78K6VJwjCjlZEHVYfBmiEMUGD1Xni
-         bT3SJnEDebyWA3nxJDn10CvxMm8aS4Y4wA2jJ8yTU3P16kUBAi2+pvN4sG37W3z6nsJM
-         r+uPlKSx9cUUMVL3wvbMtDt3qFxXpkzLpBE53rOZFrqfvQWseTOndBb1vC+4B3ofGRF2
-         ZL/2456Lh/nnqg8eNs8Eze1P0F1RIbYO56BAEQm4SN6m6HcLFkHbdhhCLypBGaKLJ/sm
-         TeQg==
+        bh=5Et4hjqXaxJjcCbzTA1Cjej6Oy43GlvxgQk6XgvQSd0=;
+        b=1NLcQ74EZgycn3kNOtoGOgJIIjzLWz/BF7TUsHn9xcXkoq7AzNkTY6Wng8zgvJTDph
+         uVw4D7ZP2mhh3r5Z04VJ11X7mjfKTc+ZOv0EDwEXvmExAPKkvT0SZekY8BmrqxTRnhd3
+         UT71wtsvrrmF7sWrHxT++6ILcNA4DP+auE6wUnO5GzZRqRiItMWQOuY66IEwrW/rew7z
+         9shjHLeqJ616FO2goCvdQHQtJEGKe8yWDKbnjsdI2unpZABp6GsmaZ0eUuV2B+v5ciC0
+         P5tPCgz4WU2yw58mJVdIkMI6Tap2cHmoepDwilC1qyD4c5GBaL8evrK0yqJMmes06XLv
+         6Qmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762470967; x=1763075767;
+        d=1e100.net; s=20230601; t=1762470970; x=1763075770;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Snl9m+Gsuclyili9Jia8BWYLwnDqexlNgmsV+/z8jHs=;
-        b=MZrhijmePPX4JyA7a0gNdptlAyXWmvWZ6nd6CNevgAFdTS+83+Z2JhiCjCvCl/cBeV
-         pUyz/gCE0MppxoZczdLs2A0PXBvnMKDLXrv4x18W2uL6GxLFfIRGpvgpZRhcAoVO7f2G
-         MYmRzTg6QZ4CCnB/QFvtbKdLjodN70Chj+mvEdWKWL9Z2iE05vQIwPXZqaqMV2Ah8Fuh
-         3PRQBk6wn14NJnjXwNOuvaRrBVEsUAo2NqEj2ZvVp3j3Ra2xHylrapePxmz/mXYijaqe
-         lGrYGrwOtj8b70WXa5EEpIU263MkKKePHiQUZy0LKm9hOn2zry6og7Hx5aInrlcpv9fY
-         CAsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGqnoRCWrCVj4oEsD/A2mLo7T6PTAfkzNk0oiRvubt+wBH2r3Y8XDc1riEvc5YdC395wrlB4Y2R/xC2E4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyymVHGQyFlO70wS6CMacI0+bTHlVbcSJ5Hj8LirXT7wgXU8ohf
-	iGV04/C5yaRJGDJXvbuFwOsyLEaaxmEl/RNR6KieobV2M8ly4lPggCDy5fG5yaQAHPqr1SaJZqL
-	vubW8N5GEaA==
-X-Google-Smtp-Source: AGHT+IFc3t+pl+dtq2Ew3dKGXbYWje+bXWKgsuDNMN96A/1Pua+fxj/lreuHJRndBsoMYTI4pD+iANneYzz2
-X-Received: from dlbps9.prod.google.com ([2002:a05:7023:889:b0:119:49ca:6bac])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dac4:b0:262:2ae8:2517
- with SMTP id d9443c01a7336-297c03936f3mr16182735ad.5.1762470967518; Thu, 06
- Nov 2025 15:16:07 -0800 (PST)
-Date: Thu,  6 Nov 2025 15:15:05 -0800
+        bh=5Et4hjqXaxJjcCbzTA1Cjej6Oy43GlvxgQk6XgvQSd0=;
+        b=X0XBgoC0WzCSUxMYBZULNJGjTeWxUlplyRtPH2GYtc/MuqMl8lYoDjZJZsy01kLEbc
+         HYTf3BmoJAkkmApmcgh94GbHClwqycD12bWxhVpbxp9KZuMOJYxvQt8IWQjBohJ0l4DR
+         Do1d1mIWm0cAbGBvdy3H2EpzNsos8lLzyPbOaKFb6M1tmG02CPlXe7bTWfF6kQWQM4gd
+         PwPtr9Nwre1dkCnw4zArRaAjWDadPUXzYazkat8/02mLDJwaWOHFIoPHWBUCLPd/KwWB
+         Fht+QvL1Js/eQ+h8W6u1tC381b0QtTGZhMLiagQLoJJtOepdrIFGry0oDNzmQlz/68xh
+         TieA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhC6Jkh8MKsG3dWjMWNR7XJ0r+Kqxj1zNm+OzQ58XD9fwrG8hgW2hs5I5ABhcybsrEFQ+C65MzWpf8ChE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM5Kru7X2PbduHcTlMxHF2JwKOZWhiZgc5dKwG2X56nwIhujpS
+	R9hxnar1DXqZTBli8QucOVS5hrmBB06NTG7reqJ0UpS5vo4sOVlrpKwmzxx3baGc1tj1ryT3w9t
+	gthYNPtfM3g==
+X-Google-Smtp-Source: AGHT+IFCzEWuu8E6wOVwBRXCBSsioiFshS7Q4FDnLNqnIcuUiZKmhlPwpMmYDVVdcfSiH6o8aL2K6ccpLJe+
+X-Received: from dlbqs13.prod.google.com ([2002:a05:7023:d0d:b0:119:b185:ea75])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dacf:b0:27e:ee83:fc80
+ with SMTP id d9443c01a7336-297c04aaa05mr14080615ad.57.1762470969776; Thu, 06
+ Nov 2025 15:16:09 -0800 (PST)
+Date: Thu,  6 Nov 2025 15:15:06 -0800
 In-Reply-To: <20251106231508.448793-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251106231508.448793-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251106231508.448793-16-irogers@google.com>
-Subject: [PATCH v2 15/18] perf test stat: Update shadow test to use metrics
+Message-ID: <20251106231508.448793-17-irogers@google.com>
+Subject: [PATCH v2 16/18] perf test stat: Update test expectations and events
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,36 +90,49 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Previously '-e cycles,instructions' would implicitly create an IPC
-metric. This now has to be explicit with '-M insn_per_cycle'.
+test_stat_record_report and test_stat_record_script used default
+output which triggers a bug when sending metrics. As this isn't
+relevant to the test switch to using named software events.
+
+Update the match in test_hybrid as the cycles event is now cpu-cycles
+to workaround potential ARM issues.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/shell/stat+shadow_stat.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/tests/shell/stat.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/tests/shell/stat+shadow_stat.sh b/tools/perf/tests/shell/stat+shadow_stat.sh
-index 8824f445d343..cabbbf17c662 100755
---- a/tools/perf/tests/shell/stat+shadow_stat.sh
-+++ b/tools/perf/tests/shell/stat+shadow_stat.sh
-@@ -14,7 +14,7 @@ perf stat -a -e cycles sleep 1 2>&1 | grep -e cpu_core && exit 2
+diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
+index 8a100a7f2dc1..985adc02749e 100755
+--- a/tools/perf/tests/shell/stat.sh
++++ b/tools/perf/tests/shell/stat.sh
+@@ -18,7 +18,7 @@ test_default_stat() {
  
- test_global_aggr()
- {
--	perf stat -a --no-big-num -e cycles,instructions sleep 1  2>&1 | \
-+	perf stat -a --no-big-num -M insn_per_cycle sleep 1  2>&1 | \
- 	grep -e cycles -e instructions | \
- 	while read num evt _ ipc rest
- 	do
-@@ -53,7 +53,7 @@ test_global_aggr()
+ test_stat_record_report() {
+   echo "stat record and report test"
+-  if ! perf stat record -o - true | perf stat report -i - 2>&1 | \
++  if ! perf stat record -e task-clock -o - true | perf stat report -i - 2>&1 | \
+     grep -E -q "Performance counter stats for 'pipe':"
+   then
+     echo "stat record and report test [Failed]"
+@@ -30,7 +30,7 @@ test_stat_record_report() {
  
- test_no_aggr()
- {
--	perf stat -a -A --no-big-num -e cycles,instructions sleep 1  2>&1 | \
-+	perf stat -a -A --no-big-num -M insn_per_cycle sleep 1  2>&1 | \
- 	grep ^CPU | \
- 	while read cpu num evt _ ipc rest
- 	do
+ test_stat_record_script() {
+   echo "stat record and script test"
+-  if ! perf stat record -o - true | perf script -i - 2>&1 | \
++  if ! perf stat record -e task-clock -o - true | perf script -i - 2>&1 | \
+     grep -E -q "CPU[[:space:]]+THREAD[[:space:]]+VAL[[:space:]]+ENA[[:space:]]+RUN[[:space:]]+TIME[[:space:]]+EVENT"
+   then
+     echo "stat record and script test [Failed]"
+@@ -196,7 +196,7 @@ test_hybrid() {
+   fi
+ 
+   # Run default Perf stat
+-  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/[uH]*|  cycles[:uH]*  " -c)
++  cycles_events=$(perf stat -a -- sleep 0.1 2>&1 | grep -E "/cpu-cycles/[uH]*|  cpu-cycles[:uH]*  " -c)
+ 
+   # The expectation is that default output will have a cycles events on each
+   # hybrid PMU. In situations with no cycles PMU events, like virtualized, this
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
