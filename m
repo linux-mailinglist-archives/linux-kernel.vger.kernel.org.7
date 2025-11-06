@@ -1,74 +1,74 @@
 Return-Path: <linux-kernel+bounces-888522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6642C3B0FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:04:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BF3C3B10B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 14:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6083E504614
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:57:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A553D188CBBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF9033DECB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079BC33DEC7;
 	Thu,  6 Nov 2025 12:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1M8DFEq"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9pv/ail"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1D632ED3C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028F92E8B6C
 	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 12:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762433624; cv=none; b=VUkXpF/SOgXO2IILq8wUtmea7HQxWVUQ5eYSKXvQUqUOXQRgvUP4iUx2v6yIpxt+67nc23ckil8dCv+K0NevPzRAvichMEL8rUmbzToA0ls/Spz0K/CzfNK1ngdDvPG3kK37XfANMq/taSG6ZYt+64EiA6loBxL9DNJUb7UmHeA=
+	t=1762433625; cv=none; b=p+lbbDfeDP+6ZGCS4+5b3qK0VcJD4diZFqlxqA0KYFbT1xntIQso+vbw/nUOYlN6ojDu0VKVo4zZeR0BEIkTThoV4qBtP0prxgDAN1bVMNobrnvir0+ndorTt86g6rt4P5jO6IM+cpoG2VAXlIIY4/3+CO7zN2HWYUksm67CTuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762433624; c=relaxed/simple;
-	bh=yJ5nI4Pj/e2l438vacBXP4YBnLRHauWN7FXlZehjs1U=;
+	s=arc-20240116; t=1762433625; c=relaxed/simple;
+	bh=+3bu+o7yrXof/2MI+bET1ey025h5hY27tO76ys+rXo8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uflxk0WZ83sU7AF7Jz2sJR5C5KbC9D2z+Cc9oGWs6L3tK6n97b1PKeZ2qay91oK7VRTNM5CJm8NvraqJ3pkfYJhSJlQVWNIEznDbOdFNMidgxRwDpXoY2EvzRMb21jxtqgGlgshbQNAwVReuVzprO6nk4O4fcwcJzntU9Aum7jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1M8DFEq; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version:Content-Type; b=RdgD0bz0HWdbZMWwjSUPIHwKFVVaScQQ75jVNePR8Thh2ymtok3y064IG4lieazg9oanOJTstTghXtVOISBkUOzktYfd9DarqAjt2PoeiDlbmeUSqTy1DDrWR0l0L8ZYTpUepkSxKzmeO3Rj16hCXzR+C813Jmi5Q4qDLtPCW8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9pv/ail; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429bcddad32so702271f8f.3
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-429eb7fafc7so651305f8f.2
         for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 04:53:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1762433621; x=1763038421; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TeQ1qQssRNVDy6SgVbDGPxE08ddX4PJBvQHFLhXifeI=;
-        b=R1M8DFEqJCZQNRUjCVDryhHFk+KbSPp/UeHeOYMK/0OApOx3+K6WAuh0SAFowvafHM
-         9y3tkfibNU8uQVw/GqI2XYG/V+CViA4IBiwns9LtV0ehBY3P99bSOL+9QPbAGi5tq/up
-         +srnFNoutTJtEzRGmcbjoWEgCRglm/0IuTH4Iom4yKIfFjqFGs6pOX8miioZsCaxWNQf
-         y9MzTneQQLrePWQRulg3HRtNvtJBrmzvzvooObwDssixwjbulUvnG0TJMrtgTCED3qKX
-         COA4EmpyiprnpDYKLpys4vb1dW4q3pGV1OXcFH0AYrKEJx9NjccyXnd+Zs+1/Gn1agn/
-         uraA==
+        bh=SgIvWdywaJTgIXUxCBq7xXfTtWMf1izHesmgmA/pMTw=;
+        b=P9pv/ail5t9GJeLjOLMdRswZwIyt/H58+iG9PAic1EBwaU4MhQTR7Hey5cMYdgNHic
+         qlgSvkuFxBNNX0IIYGza3rMcqE/wXdIR3HiIhnbzTmWmqLkA4ZRRjho8eCg2+XLCowGN
+         tCmmJ5uZ6JQ294ZpN5c8IGpUovVMKAKgo2Jtzh7h1UUBrNOyloAqNgm1NdYVbjJWyAYH
+         d6vO8pPi8+JNuYDqNX0od5TFvZG41hvbEQFmTaL27opZso69yHsFxTjWezRmi1l8I0OP
+         NZmCj6I1lHnk5Vt69edm3can3A7ihsgl9t1aGCw5ErLn8fGZJsl1Eq0xTNuGbAGOAwkh
+         Gfdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1762433621; x=1763038421;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TeQ1qQssRNVDy6SgVbDGPxE08ddX4PJBvQHFLhXifeI=;
-        b=JTIrVBKQvZeIV0hANR1r60g3wf3esmLI6hayXWI40wCBaeb+kHaNOGI+kHwIjk//Fb
-         OYBAqfJOxY45C64x3GU95zh64JDG9HMZU1UWi6lj/SQ48aUFU16o50Oe+u2wekKEAtHt
-         +Xo29z50/UxSBb2bK1qrgiofl+SAZAurHytfnWXO12F7HNteBrVY/I/iNTMR4SyYdtOT
-         l40wH5JE1sPJZ6lPwbXZyIR5gOqPGkIjVICbblCQ9YRvSNCTKcE56sJtA0uWotA86V5m
-         F3w84o7uUEyyKG6FIu4d31VNTsu8EdEWsAJwkVDD38lppDi3m2/CdnMpQIptDM1w51uu
-         XIQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHRiMnxpESKGjuCkan0YgNJwMIecRtnfyv+uShkRrs/6HwghGxz07Xtpvm1kgoeBI+Vaptqe3hZgn5AF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztUxfp//+YzSmVZXIpDPrel9FOpXVLafz3pGK7PxYpq43U+rqd
-	fvJ6t9Gh/j15NofmWkORA4UeXEPFDWSkS6r5lV2NQkJTNqPj+JiERDc=
-X-Gm-Gg: ASbGncuncQu1EdcVbuZ4gSJa9bLxmlGStmRg6Kt7LC5NRu9YjRMYEkDIAt617ZP4xp6
-	UfGvIUYBKEuYfGE0YIJkRuIrxa43wWNgu7pAsEjVExdlzHHWmQ64ye8hgNljg/HVDn0OxBiKk4g
-	vK63NbmOoSVaUG27V8f/hWLfGgw5mIwI39hJYaL6Rt/+dySTrK61dRx8aZpzo0ZbZX/yMDMY+sW
-	+eHDC9Dvmy9R6J5HYDRrcIcQhjvGAzkii54P4xQEKDU4ITZYHeLglN5hUiqa+WL2piPNFYkBcrZ
-	zVg/1hfUe1F5GKyQvOUdKtYcGtOBOnxi2QbY+nz3QHrzLmRlBDGKjqPATYqjAqITZvCc2Eu+8CW
-	3B4W57qFIxXzlw6kWp8j+kkoyadWTJFEnc9xHezl3sceTZWPGTKIlozV+tlmxMI6m8KXqozFGzl
-	iysvdM/lgI4I8mrdJHvs5SbFb6ohC8/EJ0WIur7BaCTSlaKXvLRqsnJJwNAO0w7uRGCg==
-X-Google-Smtp-Source: AGHT+IGmXXB3sYTtNVijmZK/dE1I0XwRMENPcN7ucBxdXqW1KCxYeITYB9d4TFOdh1oLXlDVTdzeLg==
-X-Received: by 2002:a05:6000:2304:b0:429:c505:8cb1 with SMTP id ffacd0b85a97d-429e3333c80mr6684600f8f.52.1762433620557;
-        Thu, 06 Nov 2025 04:53:40 -0800 (PST)
+        bh=SgIvWdywaJTgIXUxCBq7xXfTtWMf1izHesmgmA/pMTw=;
+        b=WVthF+rywy5OoSjI1reh5iarVhgyFrsro7ubn77voUoEN7Smu+mW4dBjaKEtBNxm5h
+         eEvr8kyYzhT3IDl1WCfugJ/QJa1v5T10EvXK0QpVoJAIjB4IYgatumNvQOiXJ+9dmCe6
+         SMfq0x2F3eZP1ruprtlkdmS7UdGDxMcDZonis6VZMFFertnLgp9sxbZyODJ2kJKO74AP
+         D0Wj32usCRpHHuSZvTQatZWsqh+byzq/5k3Ku5ispPXk3G+jMYOBWO6F4tsVs2m4PvNC
+         sTRHIk32/glsHMCZOFpwehlTy4efUHjENhxO1xjA8p3ZznQ63+m/aJYv0olJGpv638hW
+         dE2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVdBu90+153XnKYEjdXpaYun3rQb5KS+p+JuvEcFFlZzpHVroH+H+MLh8Jp9NK8E90WqLsuti79BmuUZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgMRC+BvawWXp9NBq+a7yZLnJN8VfrCwW7br0JIdDa93z6HEqj
+	UV941JvBrT0QKssdHAcbYfjj6BuEagPjiAZrG7p9PfgjA/RM3lMX9OQ=
+X-Gm-Gg: ASbGncvFauIyhP4x40iAYLm+qq86xAK0gGgZGq/feRwDljhHsOXMDcwEPXoAYV4co7c
+	0hrdyKJMKFpJd717KINGNtEvJqKVZCKlu6nmZ1pG0osMy/Lrsm93O4IgNKZwrKGmDRwWxCvZKnG
+	mqnDNJLXwDFhTANPUkidKWC/mBmViUzrSn0E+An+IvzlFNXUro3ILR9FVzeqRsyJkGm1wolFXZt
+	P/lnSkLYJzWcPxSnUImncYXC9778joRtvhFzQJnybQ1F9bqGhB6FtF9KqFfHrX1XH0w3/AvREPG
+	jrjqVs+KKV6KE5wxEx+WbbRS+Wx5nNg6aI/vJ9Xc6u32XQGl/Zxj7cFtPUuOYl8YI4Id8HywQfd
+	/zHhamqZDql9/d8jASnWjxZQm0VlRjPrJ4Q24phhtMQRXpNIYxBplIz3o5UKb6MsPwAyuyVKtAp
+	ZLkklIx+TZzKRTmvitHmNWAoB2+S1Jx4SklJFUAuMNBrZ22xb4dkukiBM=
+X-Google-Smtp-Source: AGHT+IGl6C6kdPOlCbRiSJYBIio8cezmiils5dPZ8ddwCv4SAqIpv33ItVTQPophXlCcShFEyPG7Bw==
+X-Received: by 2002:a05:6000:210c:b0:3e1:2d70:673e with SMTP id ffacd0b85a97d-429e3308422mr4649504f8f.37.1762433621174;
+        Thu, 06 Nov 2025 04:53:41 -0800 (PST)
 Received: from ast-epyc5.inf.ethz.ch (ast-epyc5.inf.ethz.ch. [129.132.161.180])
         by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40379esm4788856f8f.9.2025.11.06.04.53.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -87,9 +87,9 @@ Cc: ast@kernel.org,
 	linux-kernel@vger.kernel.org,
 	sunhao.th@gmail.com,
 	Hao Sun <hao.sun@inf.ethz.ch>
-Subject: [PATCH RFC 08/17] bpf: Track mov and signed extension
-Date: Thu,  6 Nov 2025 13:52:46 +0100
-Message-Id: <20251106125255.1969938-9-hao.sun@inf.ethz.ch>
+Subject: [PATCH RFC 09/17] bpf: Track alu operations in bcf_track()
+Date: Thu,  6 Nov 2025 13:52:47 +0100
+Message-Id: <20251106125255.1969938-10-hao.sun@inf.ethz.ch>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
 References: <20251106125255.1969938-1-hao.sun@inf.ethz.ch>
@@ -99,38 +99,39 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add `bcf_mov()` helpers to model MOV/cast operations in `bcf_track()` and add 
-calls into ALU processing paths. The helpers extract the source to the target
-width and apply zero/sign extension to the final width as needed.
+Model scalar and pointer ALU operations in the symbolic tracking.
 
-- For MOV32, build a 32-bit expr for src and zero-extend it.
-- For sign-extending MOVs (s8/s16 to W, or s8/s16 to R), extract the sub-width
-  and sign-extend to 32 or 64.
-- If the destination is known-constant, clear `dst_reg->bcf_expr` (-1) to avoid
-  carrying redundant symbolic nodes.
+- Scalar ALU: when either operand is non-constant, lazily bind `dst_reg` to a
+  symbolic expr and emit the BV op; If both operands are constants, rely on
+  the verifier’s result and skip emitting a symbolic node.
+  Achieved by hooking `adjust_scalar_min_max_vals()`,
 
-These routines are only active when `env->bcf.tracking` is set. They are called
-from `check_alu_op()` in the relevant MOV/SEXT cases.
+- Pointer ALU: follow verifier logic in `adjust_ptr_min_max_vals()` and record
+  only the variable part into `dst_reg->bcf_expr`, carrying constants in
+  `reg->off`.
 
 Signed-off-by: Hao Sun <hao.sun@inf.ethz.ch>
 ---
- kernel/bpf/verifier.c | 69 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 66 insertions(+), 3 deletions(-)
+ kernel/bpf/verifier.c | 80 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 76 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 7b6d509c773a..4491d665cc49 100644
+index 4491d665cc49..66682d365e5e 100644
 --- a/kernel/bpf/verifier.c
 +++ b/kernel/bpf/verifier.c
-@@ -15959,6 +15959,57 @@ static int adjust_reg_min_max_vals(struct bpf_verifier_env *env,
+@@ -14865,6 +14865,41 @@ static int sanitize_check_bounds(struct bpf_verifier_env *env,
  	return 0;
  }
  
-+static int bcf_mov(struct bpf_verifier_env *env, struct bpf_reg_state *dst_reg,
-+		   struct bpf_reg_state *src_reg, u32 sz, bool bit32, bool sext)
++static int bcf_alu(struct bpf_verifier_env *env, struct bpf_reg_state *dst_reg,
++		   struct bpf_reg_state *src_reg, u8 op, bool alu32)
 +{
-+	int src_expr, ext_sz, bitsz = bit32 ? 32 : 64;
++	DEFINE_RAW_FLEX(struct bcf_expr, alu_expr, args, 2);
++	bool unary = (op == BPF_NEG);
++	int dst, src = 0, bits;
 +
 +	if (!env->bcf.tracking)
 +		return 0;
@@ -139,90 +140,145 @@ index 7b6d509c773a..4491d665cc49 100644
 +		return 0;
 +	}
 +
-+	src_expr = bcf_reg_expr(env, src_reg, bit32 || sz == 32);
-+	if (sz != 32) /* u/s16 u/s8 */
-+		src_expr = bcf_extract(env, sz, src_expr);
++	dst = bcf_reg_expr(env, dst_reg, alu32);
++	if (!unary)
++		src = bcf_reg_expr(env, src_reg, alu32);
++	if (dst < 0 || src < 0)
++		return -ENOMEM;
 +
-+	if (sext) {
-+		ext_sz = bitsz - sz;
-+		dst_reg->bcf_expr =
-+			bcf_extend(env, ext_sz, bitsz, true, src_expr);
-+		if (bit32)
-+			bcf_zext_32_to_64(env, dst_reg);
-+	} else {
-+		ext_sz = 64 - sz;
-+		dst_reg->bcf_expr =
-+			bcf_extend(env, ext_sz, 64, false, src_expr);
-+	}
++	bits = alu32 ? 32 : 64;
++	alu_expr->code = BCF_BV | op;
++	alu_expr->vlen = unary ? 1 : 2;
++	alu_expr->params = bits;
++	alu_expr->args[0] = dst;
++	alu_expr->args[1] = src;
++	dst_reg->bcf_expr = bcf_add_expr(env, alu_expr);
++	if (alu32)
++		bcf_zext_32_to_64(env, dst_reg);
 +	if (dst_reg->bcf_expr < 0)
 +		return dst_reg->bcf_expr;
 +
 +	return 0;
 +}
 +
-+static int bcf_mov32(struct bpf_verifier_env *env, struct bpf_reg_state *dst,
-+		     struct bpf_reg_state *src)
-+{
-+	return bcf_mov(env, dst, src, 32, true, false);
-+}
-+
-+static int bcf_sext32(struct bpf_verifier_env *env, struct bpf_reg_state *dst,
-+		      struct bpf_reg_state *src, u32 sz)
-+{
-+	return bcf_mov(env, dst, src, sz, true, true);
-+}
-+
-+static int bcf_sext64(struct bpf_verifier_env *env, struct bpf_reg_state *dst,
-+		      struct bpf_reg_state *src, u32 sz)
-+{
-+	return bcf_mov(env, dst, src, sz, false, true);
-+}
-+
- /* check validity of 32-bit and 64-bit arithmetic operations */
- static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ /* Handles arithmetic on a pointer and a scalar: computes new min/max and var_off.
+  * Caller should also handle BPF_MOV case separately.
+  * If we return -EACCES, caller may want to try again treating pointer as a
+@@ -14872,12 +14907,12 @@ static int sanitize_check_bounds(struct bpf_verifier_env *env,
+  */
+ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 				   struct bpf_insn *insn,
+-				   const struct bpf_reg_state *ptr_reg,
+-				   const struct bpf_reg_state *off_reg)
++				   struct bpf_reg_state *ptr_reg,
++				   struct bpf_reg_state *off_reg)
  {
-@@ -16084,8 +16135,12 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
- 						if (no_sext)
- 							assign_scalar_id_before_mov(env, src_reg);
- 						copy_register_state(dst_reg, src_reg);
--						if (!no_sext)
-+						if (!no_sext) {
- 							dst_reg->id = 0;
-+							err = bcf_sext64(env, dst_reg, src_reg, insn->off);
-+							if (err)
-+								return err;
-+						}
- 						coerce_reg_to_size_sx(dst_reg, insn->off >> 3);
- 						dst_reg->subreg_def = DEF_NOT_SUBREG;
- 					} else {
-@@ -16110,8 +16165,12 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
- 						 * range otherwise dst_reg min/max could be incorrectly
- 						 * propagated into src_reg by sync_linked_regs()
- 						 */
--						if (!is_src_reg_u32)
-+						if (!is_src_reg_u32) {
- 							dst_reg->id = 0;
-+							err = bcf_mov32(env, dst_reg, src_reg);
-+							if (err)
-+								return err;
-+						}
- 						dst_reg->subreg_def = env->insn_idx + 1;
- 					} else {
- 						/* case: W1 = (s8, s16)W2 */
-@@ -16120,8 +16179,12 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
- 						if (no_sext)
- 							assign_scalar_id_before_mov(env, src_reg);
- 						copy_register_state(dst_reg, src_reg);
--						if (!no_sext)
-+						if (!no_sext) {
- 							dst_reg->id = 0;
-+							err = bcf_sext32(env, dst_reg, src_reg, insn->off);
-+							if (err)
-+								return err;
-+						}
- 						dst_reg->subreg_def = env->insn_idx + 1;
- 						coerce_subreg_to_size_sx(dst_reg, insn->off >> 3);
- 					}
+ 	struct bpf_verifier_state *vstate = env->cur_state;
+ 	struct bpf_func_state *state = vstate->frame[vstate->curframe];
+-	struct bpf_reg_state *regs = state->regs, *dst_reg;
++	struct bpf_reg_state *regs = state->regs, *dst_reg, *src_reg;
+ 	bool known = tnum_is_const(off_reg->var_off);
+ 	s64 smin_val = off_reg->smin_value, smax_val = off_reg->smax_value,
+ 	    smin_ptr = ptr_reg->smin_value, smax_ptr = ptr_reg->smax_value;
+@@ -14889,6 +14924,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 	int ret, bounds_ret;
+ 
+ 	dst_reg = &regs[dst];
++	src_reg = dst_reg == ptr_reg ? off_reg : ptr_reg;
+ 
+ 	if ((known && (smin_val != smax_val || umin_val != umax_val)) ||
+ 	    smin_val > smax_val || umin_val > umax_val) {
+@@ -14989,8 +15025,15 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			dst_reg->var_off = ptr_reg->var_off;
+ 			dst_reg->off = ptr_reg->off + smin_val;
+ 			dst_reg->raw = ptr_reg->raw;
++			dst_reg->bcf_expr = ptr_reg->bcf_expr;
+ 			break;
+ 		}
++
++		if (env->bcf.tracking) {
++			bcf_reg_expr(env, dst_reg, false);
++			if (dst_reg->bcf_expr < 0)
++				return dst_reg->bcf_expr;
++		}
+ 		/* A new variable offset is created.  Note that off_reg->off
+ 		 * == 0, since it's a scalar.
+ 		 * dst_reg gets the pointer type and since some positive
+@@ -15018,6 +15061,10 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			/* something was added to pkt_ptr, set range to zero */
+ 			memset(&dst_reg->raw, 0, sizeof(dst_reg->raw));
+ 		}
++
++		ret = bcf_alu(env, dst_reg, src_reg, opcode, false);
++		if (ret)
++			return ret;
+ 		break;
+ 	case BPF_SUB:
+ 		if (dst_reg == off_reg) {
+@@ -15046,8 +15093,15 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			dst_reg->id = ptr_reg->id;
+ 			dst_reg->off = ptr_reg->off - smin_val;
+ 			dst_reg->raw = ptr_reg->raw;
++			dst_reg->bcf_expr = ptr_reg->bcf_expr;
+ 			break;
+ 		}
++
++		if (env->bcf.tracking) {
++			bcf_reg_expr(env, dst_reg, false);
++			if (dst_reg->bcf_expr < 0)
++				return dst_reg->bcf_expr;
++		}
+ 		/* A new variable offset is created.  If the subtrahend is known
+ 		 * nonnegative, then any reg->range we had before is still good.
+ 		 */
+@@ -15075,6 +15129,10 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			if (smin_val < 0)
+ 				memset(&dst_reg->raw, 0, sizeof(dst_reg->raw));
+ 		}
++
++		ret = bcf_alu(env, dst_reg, src_reg, opcode, false);
++		if (ret)
++			return ret;
+ 		break;
+ 	case BPF_AND:
+ 	case BPF_OR:
+@@ -15728,7 +15786,7 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ {
+ 	u8 opcode = BPF_OP(insn->code);
+ 	bool alu32 = (BPF_CLASS(insn->code) != BPF_ALU64);
+-	int ret;
++	int ret, dst_expr = dst_reg->bcf_expr;
+ 
+ 	if (!is_safe_to_compute_dst_reg_range(insn, &src_reg)) {
+ 		__mark_reg_unknown(env, dst_reg);
+@@ -15741,6 +15799,14 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 			return sanitize_err(env, insn, ret, NULL, NULL);
+ 	}
+ 
++	/* Constants alu produces constant, skip it; otherwise, bind expr. */
++	if (env->bcf.tracking && (!tnum_is_const(dst_reg->var_off) ||
++				   !tnum_is_const(src_reg.var_off))) {
++		dst_expr = bcf_reg_expr(env, dst_reg, false);
++		if (dst_expr < 0)
++			return dst_expr;
++	}
++
+ 	/* Calculate sign/unsigned bounds and tnum for alu32 and alu64 bit ops.
+ 	 * There are two classes of instructions: The first class we track both
+ 	 * alu32 and alu64 sign/unsigned bounds independently this provides the
+@@ -15819,6 +15885,12 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 	if (alu32)
+ 		zext_32_to_64(dst_reg);
+ 	reg_bounds_sync(dst_reg);
++
++	dst_reg->bcf_expr = dst_expr;
++	ret = bcf_alu(env, dst_reg, &src_reg, opcode, alu32);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
 -- 
 2.34.1
 
