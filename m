@@ -1,190 +1,159 @@
-Return-Path: <linux-kernel+bounces-887715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F437C38F05
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:02:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D7DC38F08
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C78A3A7DBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:01:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04B904EB8BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04246221FCC;
-	Thu,  6 Nov 2025 03:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BED154425;
+	Thu,  6 Nov 2025 03:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GRW8VA9D";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RqGpfL4n"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7TCD885"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D276745038
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB2E1EA84
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762398112; cv=none; b=ToRxhl6WFsTfJr7krCUDjMZaqcGCMRMIBjfe6y4aZ3Oo0+bGtc8yYKQ817MHvrTOSZdaHEPogBcLEnmAb+U1Hk5pSABZDUD/B8JDT+qgy589ujYKjMqZqhauhrcmFBHOTSaV7AXyVjB2LCqezYzEiAa+1pMr0S6eR5Jo8qu8VCc=
+	t=1762398141; cv=none; b=rthQNan6RabExAdP7f25vpK3ykCpN5iiGTINrLUXBswRRhGMJ3B3O4KFQWaPzQ5aee3hQcbz9ECcaYfCShyU7qmtL4ImCaKm5wf/KIbAd65weVqUxamgobZDlnugIwUIMHzwhp5uVoN172orwh5isdcRHDyFeYyjnmGnXILiq1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762398112; c=relaxed/simple;
-	bh=nUTLKkkulc9/hptETYKiTiydQrJXhFrgVjkwtfokOwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=leUF2TVnmYnNJzmXCjqT008gjXpNh2dPDZ4GUe86MFzO23fKdzx6JlpZczoYO+e0OS1gULVjYtg/WuuDQj/ryzc65ytkHJwepkE8pvNr21WXfVTY6kZyNCk7k3aoPxZFCMz2EcFkIaE9IMKx+u/qKtjtV5n8jTEi7fzUm2G2ago=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GRW8VA9D; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RqGpfL4n; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5KF20G1738525
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 03:01:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IcZ5XW+5y/suI/eniq9nSNCUyFz6b6A2Qd06C384cqA=; b=GRW8VA9DCGQUoWUH
-	i2Flq1TNst1Uo5MVMmkwASOBiu9IFkmDjCYQmiWTkrFQQLHvB4f6MpY4Oxt1w5Wq
-	nNW1qaSC9MPzFJBZSpZ3Wg8jx6j16m2BqyZQ3+BmSzZi1uX6TuyYu9N/kfqLoAr5
-	E0l59Pll8Q+keWbrOPX2fE4VYVoLml2Q8pxHnz0JYSlLqNwumdKYrUAPCYSPcyRd
-	BVabvTaShP7dxs1dSW6+jg5fVmhQZFuFlqC72gQmbHFimKiqB0ySHP1oI9d0aX6v
-	HnB/vMIji4mOJN9XigMOuCtk7QaHjA7ufrhbGsdo337W7vm4TVM5QSKeSaRQku9r
-	11H5Eg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8an3sj5m-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:01:49 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3418ad76063so635801a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:01:49 -0800 (PST)
+	s=arc-20240116; t=1762398141; c=relaxed/simple;
+	bh=Kqvf9mGvhQ804Eoz9/qab3V3WXgY3X1gqB1lr87U+b8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z/VsYcMx+Dl0gj01Z9/CeEgIcdbnKkiP6XNNADjLi3JS9CLWHFTs5Nkw4b3df3dO4iEqoDy9WdIny3I0IACm6dSR1m/wT1ZhQQ6l/h6su8gbmMbghEfwwEAclSY1aaNoMT3WKwGHXVzVkTFBmDNz3YJtFMju4p27RgSW9Myux8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7TCD885; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640f627d01dso829811a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:02:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762398109; x=1763002909; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IcZ5XW+5y/suI/eniq9nSNCUyFz6b6A2Qd06C384cqA=;
-        b=RqGpfL4npqqgxg8F3xodc874s+M7mPst7Rp32na0kNFsXPdqJasBuXhT479Ccjmytq
-         VqOM4yVCWk8XKlT0EYPabFs5iuw7MD8ebakXKbg6QZXGG1BpgNtoUA/tTYEIp9e0LCsu
-         6x5yXnTbykG0X9lj5b8ZCmgOr7Jkt6zt9ZW1qW3arjPlQrUMRbDvTEXH6b0QKQJMB2rR
-         qPV1RQcAtSrQoyQmJRxQ2x0Rz4PrXVwI/oK7QCOT4AH57KitqcBR3tuWoe7tzYEbeZDt
-         Vwzk8ci6OzSxx2IgoNOTpW0n5I/0fnnJW63rtydD7eatIALd1WbLZC012mdzxFHbl5ks
-         yc/g==
+        d=gmail.com; s=20230601; t=1762398138; x=1763002938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tdTVOQ5C6+I6zTXTkQAAntlGv9zzOWGKY2nCqub+/QI=;
+        b=D7TCD885asWc1HhGogTpawSCoDkyF0PUlmxj015yM441ODc06kZ7IkzmRJwx06249A
+         EsWC6R550DGNP0xpIWE8LdVznfa+4YEtN/a1gn9PYCkn9ecIen/Q5o6pWSK9yIkDtu2D
+         i0hvPK3npnHHkOK7nQdfz6T9i4NqJal29kb36uJbXIwr0ymWrhQCQg+YtsSdMXDTb5EO
+         5YXZ8rgeFxcsYMhCyBtohvh/M2Iz4m7rDAy3rdYbWcxJi0RcOsY8QdZ41Th+ujP/xbDl
+         AX8EFYkc4ORiqpC+LgezFHU/YCMZRbqLowqqI1CtGRNFvZyOdd5JQuuWFd2BT2ptWVJo
+         Z5VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762398109; x=1763002909;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IcZ5XW+5y/suI/eniq9nSNCUyFz6b6A2Qd06C384cqA=;
-        b=oqDQVpHossBzwBK3Wh6zb8vDzwg+5vM1r9YaXKatHtb8l8lXJ5J64q07EgUv3QToyv
-         g8rNLVl0BGV3ALbMksl9Ejtt41VPIEfzJrjEc2IC9BWKkYsrdzujDCuxKxYGfUALfx2X
-         FSL2AnqYTWEak8WTC91qGDwnGQaZXj1idYDXIyXdwwOYKcqV2gDC6G+b/pUX9OFMCyLJ
-         EjoY2sDE9OBpnUO7PBgbH+6N57EJ77ysvSdiCz0T2/Piux4Eqwq0bF5qpEDXxRFRNe8e
-         oe9e75JqbJUetiZUp8QkpyJCiPReGy7aDiBkTePs3cHbVkvCaMZyn+6LnfYeLmvEFIA5
-         ruKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVemsC++NqircdsJqC4IGWpcP23o3aS8Dqt/mwejmc5sY4bJtoAVhgH47WuleS47IkT8ND1PKGBJk/Dt9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6bdcvq61Wwijkgtr19NPK3GAWlpu68CFm9qOfo/MGeOLdn1iI
-	Ko97tlT/EZC61M9qxeiz70NU8keu/WTus7E2UczcJll5/rBw50YS+ZtO5otVtxbIw3nH0dGPwm4
-	cPc955F14A1F8alUY/Kx0DoRy/ApSX46xFlhA03HF1uDMmSx3P7vMIGGS4ON1orr2IWc=
-X-Gm-Gg: ASbGnctN4sHiM+WJ3O+EDBbApGu4N9gVkF5lYQlViBsP/hobbFNGdeza2aym1AOr7Ew
-	qnpO/fmujhZSML4bW9Hb9ZpBPMrLZM0nfQmLewpDA4HKNDjURNZBY2WTPD2VLkJF2RD8tZt1xeH
-	mYh/7FkQB0HtC4cFT4Ub5jmXcHm4Dfv6thmWtTlszN5a6DtwSqv49MbathtD1XIXWnX8ZncnqM0
-	c1+DEilFD9NnhQ62GpWij0swlZArEoqI59qGUyAuwqU4Lq//WNMyQooZpfFrETOIqRtYDO45bgg
-	JKQfJAN9j/GJAFPqEeBX7ySIMoqd3vIDJspy0JkdHFo9UJ6miDZhjl8nF8mWEuVUliA4MPrTbE5
-	k6Hl10NTuuGS9pm3AKRP7GLDS9iMo3MPkV5HmE/HqrOwCeHd4ZW7DtZjkOW7cwInf6ge+
-X-Received: by 2002:a17:90b:2f0b:b0:340:be4d:8980 with SMTP id 98e67ed59e1d1-341a6c2d896mr6620008a91.14.1762398108801;
-        Wed, 05 Nov 2025 19:01:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGoXDA26snF2QAx1SJ2dm5RA8MLCOM/hsiL6D4DdcIt8AO8K6jFoPUSbmPwY21HSMJ+zFzRig==
-X-Received: by 2002:a17:90b:2f0b:b0:340:be4d:8980 with SMTP id 98e67ed59e1d1-341a6c2d896mr6619969a91.14.1762398108317;
-        Wed, 05 Nov 2025 19:01:48 -0800 (PST)
-Received: from [10.133.33.93] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f9ed21f6sm817620a12.13.2025.11.05.19.01.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Nov 2025 19:01:48 -0800 (PST)
-Message-ID: <57adec59-17f2-458f-ba31-12a9b3a88dfd@oss.qualcomm.com>
-Date: Thu, 6 Nov 2025 11:01:41 +0800
+        d=1e100.net; s=20230601; t=1762398138; x=1763002938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tdTVOQ5C6+I6zTXTkQAAntlGv9zzOWGKY2nCqub+/QI=;
+        b=NxTjCgHhremMN1L+fvoPRq5NolI1T0Y0jo+dIeqB7YlH5DUd9vygmVJSBu+k/ZGS0O
+         n5mFSzMaJk/mM13uh3Vx3DlJX9+FyfeUL6YK5YhIPpMFRRCHqrd3awFsJ7kszudMFV/c
+         zdOa8YyejZN+oosAwC8/UQDKxh4qE9QEvqdZti/7Esvb6Im/5rlvClZCaCab0oWGbPdC
+         ixTXUKo+74EGihVzdMHkMj1q8YkGZmkNADdl8XGF+LH0BV5Cbv1ExIQzO8ilA2HuqjjW
+         av9YklSJVzF+lfhXsdWj8GRwoIxdajoADHccQHF2sOQLD7Cx/r58WNnmZnIsgXPtSR7K
+         IokA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Z5REf5yeO2THS21RpRbhxq/Gozlkd9FEz1f5ejx9A7qBpso3UNw8/y+dLFkIF2TrG7C2TP/t/PGgefQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy1gcrNZp7UUZ5WOr2XSIhVgcFtQH+fiqXAWeQO0TXRjnEqqGE
+	SnD0zEjekHU4TptuQ9t23c5XBBIT9HLS7H4oj2vlfi1h8Ab9Y6LbE/x95hBThY2fHHL4qQqsP7U
+	UOXypbn8lkleKq1zmjXhVePxUz97NqoE=
+X-Gm-Gg: ASbGncvVZf1zB0+RVGuasgAb8spG51IsgMvu9LBoHSKog2uqEuRa+7r6JMH7EClQVb6
+	oeku43+khVG2q46R5Qx2YX8fPPnysqjphxCYSJjq8jgdcLUdnYPmQ9YwtFwRvJsC2yCv5Spakmw
+	bI8GMxDfKQUyr2n6djT9wJmM22PCplcOXHMGXAEJMvQfUAm7ySgsiVD2h5UgbAITMuKb4pSKzNV
+	NQRHQ5C2qv4zojq63viZoRETgg9bOA3oj/3OPmLm4TQPctqArd6EUqWwrLbZhNYzLKfiybs5Nb+
+	stO7zXzM8AXT4fs=
+X-Google-Smtp-Source: AGHT+IEj9m5ZkaxmPEyaM29/PZON51jtee+49+ZR5dFaEI08ZZsdq2jvMbQ+D4eQUShG1eHFYMyFG9ITbmJGz6KZXw0=
+X-Received: by 2002:a17:907:7284:b0:b72:6383:4c57 with SMTP id
+ a640c23a62f3a-b7265688425mr496965366b.55.1762398138199; Wed, 05 Nov 2025
+ 19:02:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: dma: qcom,gpi: Document the Kaanapali GPI
- DMA engine
-To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>,
-        Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com,
-        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
-References: <20250924-knp-bus-v1-1-f2f2c6e6a797@oss.qualcomm.com>
- <d8b302ca-c2fc-4583-be77-6b720d5bdab7@oss.qualcomm.com>
-Content-Language: en-US
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-In-Reply-To: <d8b302ca-c2fc-4583-be77-6b720d5bdab7@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=W981lBWk c=1 sm=1 tr=0 ts=690c0f9e cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=Cd-w85Unq2EMQxkHV9cA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-GUID: bTzbDH-0CXYRNQe1SYy4u8xfqIeH4-Fr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDAyNCBTYWx0ZWRfX7SKpPr3dOf/b
- 9AEZ2HUK/DV7bj3S4TsNcbRqFKIGIFzoAmhu6J7DqqWMWl0xilOp/4GhLSu0YFKGEZy6kp9C5gj
- 6qqmIDGLpW1yZf//4alOctYQETo7pSQhrypxgRQhYwYPk8IH2ZV+TPHa0LwZnBFI5x59YIMfa76
- 9PO2uCsBKLZBQptZnKtAFr9dCIPag/7x257zrphn8dM81qPziws5Wqa4acDS0hlxaZ3dWMnwFfV
- bTr6Af9HRZDhDHjx+3D9V+z4FZJJW59VxQeNuQETUY+kiFyRZJ/6+5G86/Tfq45KYPv6If4LXQW
- pFcyWSVjaYyB1y4ClDC3hvuFK7StK0VYRPd7YCHCbAqcfGM8YYnqzXFBr1w5H6uzoKoF+w5Jqxo
- 03LUzT956g+m8o9DfL+Tz5u2RQWoEw==
-X-Proofpoint-ORIG-GUID: bTzbDH-0CXYRNQe1SYy4u8xfqIeH4-Fr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_09,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
- bulkscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060024
+References: <20251104231414.1150771-1-alistair.francis@wdc.com> <20251105132023.GC19044@lst.de>
+In-Reply-To: <20251105132023.GC19044@lst.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Thu, 6 Nov 2025 13:01:51 +1000
+X-Gm-Features: AWmQ_blU2RdEZd9t9U93QfcNDb_wTd4nmog6RFwVnxgAE9dHZ0GjWIC6Zcaxd-0
+Message-ID: <CAKmqyKOuR4jyJyY3ypqMMbghBioG3u3xECJnsmM_sRtcOeeaug@mail.gmail.com>
+Subject: Re: [PATCH v2] nvmet-auth: update sc_c in target host hash calculation
+To: Christoph Hellwig <hch@lst.de>
+Cc: hare@suse.de, kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me, 
+	kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 5, 2025 at 11:20=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> >  4 files changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/nvme/host/auth.c b/drivers/nvme/host/auth.c
+> > index a01178caf15b..19980122d3d5 100644
+> > --- a/drivers/nvme/host/auth.c
+> > +++ b/drivers/nvme/host/auth.c
+> > @@ -492,6 +492,7 @@ static int nvme_auth_dhchap_setup_host_response(str=
+uct nvme_ctrl *ctrl,
+> >       ret =3D crypto_shash_update(shash, buf, 2);
+> >       if (ret)
+> >               goto out;
+> > +     memset(buf, 0, sizeof(buf));
+> >       *buf =3D chap->sc_c;
+> >       ret =3D crypto_shash_update(shash, buf, 1);
+>
+> I'm really confused about both the existing code and this fixup.
 
+Mostly just to keep the original style from the fixes commit from the host =
+code.
+7e091add9c43 ("nvme-auth: update sc_c in host response")
 
-On 11/5/2025 5:50 PM, Aiqun(Maria) Yu wrote:
-> On 9/25/2025 7:44 AM, Jingyi Wang wrote:
->> From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->>
->> Document the GPI DMA engine on the Kaanapali platform.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> ---
->>  Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
->> index bbe4da2a1105..e7b8f59a5264 100644
->> --- a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
->> +++ b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
->> @@ -24,6 +24,7 @@ properties:
->>            - qcom,sm6350-gpi-dma
->>        - items:
->>            - enum:
->> +              - qcom,kaanapali-gpi-dma
->>                - qcom,milos-gpi-dma
->>                - qcom,qcm2290-gpi-dma
->>                - qcom,qcs8300-gpi-dma
->>
->> ---
->> base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
->> change-id: 20250917-knp-bus-e5ede66d8e0e
->>
->> Best regards,
-> 
-> Suggest to have glymur support[1] as well like other similar bindings
-> change:
-> [1]https://lore.kernel.org/all/20250920133305.412974-1-pankaj.patil@oss.qualcomm.com/
-> 
+>
+> Why isn't chap->sc_c directly passed to crypto_shash_update here?
+> Why do we need to memset buf when only a single byte is passed to
+> crypto_shash_update?
+>
+> >       ret =3D crypto_shash_update(shash, buf, 2);
+> >       if (ret)
+> >               goto out;
+> > -     *buf =3D sc_c;
+> > +     *buf =3D req->sq->sc_c;
+> >       ret =3D crypto_shash_update(shash, buf, 1);
+>
+> Just pass it directly here?
 
-Well noted.
+We can directly pass it. The rest of the code is copying data into
+`buf` so I went with that way as it matches the existing code. I feel
+it also makes it clear that it's just a const input and we aren't
+editing it in crypto_shash_update().
 
-Thanks,
-Jingyi
+>
+> >       if (ret)
+> >               goto out;
+> > @@ -378,6 +378,7 @@ int nvmet_auth_host_hash(struct nvmet_req *req, u8 =
+*response,
+> >       ret =3D crypto_shash_update(shash, ctrl->hostnqn, strlen(ctrl->ho=
+stnqn));
+> >       if (ret)
+> >               goto out;
+> > +     memset(buf, 0, sizeof(buf));
+> >       ret =3D crypto_shash_update(shash, buf, 1);
+>
+> just have a
+>
+>         sttic const u8 zero =3D 0;
+>
+> and use that here instead of the memset?
 
+We don't actually need this memset at all, it's a mistake from my
+rebase, I'll drop it.
+
+Do you still want me to just directly pass req->sq->sc_c in?
+
+Alistair
 
