@@ -1,108 +1,142 @@
-Return-Path: <linux-kernel+bounces-888939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB5FC3C48A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:11:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825FEC3C4A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BFB15351E45
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E77189A9D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63FF34D4CF;
-	Thu,  6 Nov 2025 16:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gAPB+iyQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6530934A3CD;
-	Thu,  6 Nov 2025 16:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235BD34DCDD;
+	Thu,  6 Nov 2025 16:10:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34AF34D900;
+	Thu,  6 Nov 2025 16:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762445427; cv=none; b=lioUJy9uz3u+hBfCAr+ECrNwF4+uzBIgJglEu3Mz93qI7u22S8ERjXqj4IaSOxmSmHKJ5hkxhM7tKprUWE/8xcWMs/PILlD61HwgdmJVR43OAltm4IDAqJcKYu6BjajZ2hZXo2i/O/pJYs+NkF/ZYu+SR8IQnGgxpjTwHFm/ups=
+	t=1762445441; cv=none; b=j2xYjpVQxx3MktT8dAlcZ8sA43UsoCRcE03GYObfUXLX7iuP9fefKCmgwNlpb6C22SnYbpBOu+Waw2hwzHCABSkuNHJ9/MWJVUSlsZWEiWp+3TLs5yYGo65qOSbQkRYEIuXOcaGDBbJiQ6ycFv5skBGBwuxyJTOcqchUBEUtBn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762445427; c=relaxed/simple;
-	bh=Llc47k9a9TnaZH+5o6GJeioVsarqczKfv1LsFk7gtBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o2J2rg8AvWRp4RAd1EofZwqbvYLCcnypwmBHzTLozanUsiyaqosc5n0DDe8ErT6gxjLxVBwh8XNQLQeakFg6+oMsaN3lv/p4f6eHOAwMDMQV1mD55yZSEolTNoWb6lPZf+j78zWe8Qwe68X0RHbhlPFLcZbQ31OjKGT+25zshAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gAPB+iyQ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762445425; x=1793981425;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Llc47k9a9TnaZH+5o6GJeioVsarqczKfv1LsFk7gtBQ=;
-  b=gAPB+iyQEtwqd044pOKIT+QJ8OVW7ob4GWX9B9fN7hEwc0hcfmBIXgNN
-   VYnjJrH+uN9l4y5GhpVeUO1k+9es6gfyUoajmXfadKsO0lnrSfQUNij4R
-   wBIgcmY7BkCtMINuUm3zelm04gO6bv9ji0+TQeLTpCfdbshYP3SD+V9Y7
-   DVSFGOstPfv1DqIFvg4Au8k2FTDQeAzIwU96SucUfpEA2vy5eQa9berMt
-   MUb4H5QTsxXwGP0+QwYVvGLEkjMux/I9+8rDkfhelUJrnsZcSUhdXf2O7
-   52w/GaW8JBFnMaaX50dJaCYdcrI3drtCFJyGIl/IdO6WmMP4PmXURbx3t
-   w==;
-X-CSE-ConnectionGUID: XjAcL7QJR7+3K7vO1qC4Rw==
-X-CSE-MsgGUID: AyPaW+eBT3qQsEfaEW23jA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="68446874"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="68446874"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:10:25 -0800
-X-CSE-ConnectionGUID: 18epo9g/S/+XH0+8iF5hZg==
-X-CSE-MsgGUID: Yw6PxLOjQLqAALwiKX9jYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="187637058"
-Received: from abityuts-desk.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.224])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:10:22 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vH2Z1-00000006Brb-0xHC;
-	Thu, 06 Nov 2025 18:10:19 +0200
-Date: Thu, 6 Nov 2025 18:10:18 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] iio: test: Add kunit tests for
- iio_divide_by_value()
-Message-ID: <aQzIavXYD7fUbrqc@smile.fi.intel.com>
-References: <20251106-ltm8054-driver-v3-0-fd1feae0f65a@bootlin.com>
- <20251106-ltm8054-driver-v3-3-fd1feae0f65a@bootlin.com>
+	s=arc-20240116; t=1762445441; c=relaxed/simple;
+	bh=0Z5E9gveLmOiBEAsV7z1dBjgZMRUNfMQkHgdXl2stHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UhyjErW8EYQeJEoVplL5tr2HMGhHFNVzboEOez311IvBh7yrh2Olu+k+99lBtf8U73rvbBJKO4SD0wDsVSbL5QtKgmRjK7Edlp6Y/0nCRpGz54+XpBbVknvO/d0iUd1Zw4cuzKOz5vFHp5wm1LioufJjdLnFVlOzbvbVURUrw3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9141215A1;
+	Thu,  6 Nov 2025 08:10:31 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C71A93F66E;
+	Thu,  6 Nov 2025 08:10:34 -0800 (PST)
+Message-ID: <02f008a8-1bd6-4044-99f0-553d441d6d4b@arm.com>
+Date: Thu, 6 Nov 2025 16:10:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106-ltm8054-driver-v3-3-fd1feae0f65a@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/29] ACPI / PPTT: Stop acpi_count_levels() expecting
+ callers to clear levels
+To: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
+ Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-3-james.morse@arm.com>
+ <20251024122921.000004bc@huawei.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251024122921.000004bc@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 03:11:48PM +0100, Romain Gantois wrote:
-> Add kunit tests for iio_divide_by_value(), these are similar to the
-> existing tests for iio_multiply_value(), but the operand values used differ
-> slightly.
+Hi Jonathan,
 
-When use abs() in the code, always add a check for the *_MIN.
-This will give you a few surprises.
+On 10/24/25 12:29, Jonathan Cameron wrote:
+> On Fri, 17 Oct 2025 18:56:18 +0000
+> James Morse <james.morse@arm.com> wrote:
+> 
+>> In acpi_count_levels(), the initial value of *levels passed by the
+>> caller is really an implementation detail of acpi_count_levels(), so it
+>> is unreasonable to expect the callers of this function to know what to
+>> pass in for this parameter.  The only sensible initial value is 0,
+>> which is what the only upstream caller (acpi_get_cache_info()) passes.
+>>
+>> Use a local variable for the starting cache level in acpi_count_levels(),
+>> and pass the result back to the caller via the function return value.
+>>
+>> Get rid of the levels parameter, which has no remaining purpose.
+>>
+>> Fix acpi_get_cache_info() to match.
+>>
+>> Suggested-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> 
+> Another meh, the name is confusing type comment. 
+> 
+>> -static void acpi_count_levels(struct acpi_table_header *table_hdr,
+>> -			      struct acpi_pptt_processor *cpu_node,
+>> -			      unsigned int *levels, unsigned int *split_levels)
+>> +static int acpi_count_levels(struct acpi_table_header *table_hdr,
+>> +			     struct acpi_pptt_processor *cpu_node,
+>> +			     unsigned int *split_levels)
+>>  {
+>> +	int starting_level = 0;
+>> +
+>>  	do {
+>> -		acpi_find_cache_level(table_hdr, cpu_node, levels, split_levels, 0, 0);
+>> +		acpi_find_cache_level(table_hdr, cpu_node, &starting_level, split_levels, 0, 0);
+>>  		cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
+>>  	} while (cpu_node);
+>> +
+>> +	return starting_level;
+> Given it's not the starting level at this point... Maybe just call it level or current_level.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Makes sense. I've made this update.
 
+>>  }
+>>  
+>>  /**
+>> @@ -645,7 +649,7 @@ int acpi_get_cache_info(unsigned int cpu, unsigned int *levels,
+>>  	if (!cpu_node)
+>>  		return -ENOENT;
+>>  
+>> -	acpi_count_levels(table, cpu_node, levels, split_levels);
+>> +	*levels = acpi_count_levels(table, cpu_node, split_levels);
+>>  
+>>  	pr_debug("Cache Setup: last_level=%d split_levels=%d\n",
+>>  		 *levels, split_levels ? *split_levels : -1);
+> 
+> 
+
+Thanks,
+
+Ben
 
 
