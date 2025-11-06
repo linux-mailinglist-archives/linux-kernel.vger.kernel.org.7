@@ -1,439 +1,118 @@
-Return-Path: <linux-kernel+bounces-889026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1002BC3C87A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:42:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2ACC3C88C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:44:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14F2B3B96E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:36:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD133503529
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20ED34DB51;
-	Thu,  6 Nov 2025 16:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E3D34E767;
+	Thu,  6 Nov 2025 16:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUx7Ii5x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FgfXQ2Ep"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F1734D4E1;
-	Thu,  6 Nov 2025 16:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8A3328F5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762446802; cv=none; b=Zx25AmkO//9tNW5piy+aGQG+xAAHAIx3vGWqEzpOsyzWXTs1LbqGM7x4cysyI628cEP7t+3c79DcOxuIvdIw7IV+z5b0WYeCGCwZMk85fMLfxEbJ8X1Wj8QmQct/4IObzOh1Dy6fmxQ9zwuApmmKpG2t02k06w8TAyr33GQyw5Q=
+	t=1762446814; cv=none; b=QbSZy2YbwMXhshLbLaCIqtCd7rler9QVpm2Ue3jv0EIiK8cAnONha9CroC5q9JcLzFDZhT3Xg29Qsim4WmAK3mqek4+DzAHa+rFbko+g9TptlhachOXfBhchjqDMZcFUoRVsm+QcORN6SY5q9hOFMr6K5ukCDK9xT6N1LslX4e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762446802; c=relaxed/simple;
-	bh=NwlmAbeYHld7D0GB0SpygWEv2y4XXsuSm4A+ULELn3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oe3FvRmgZOUfiwO/0m2xxqRBErLqd4P6IszVi6YAdlZ5rVlG7LjQuMteDUkNIa5BHBp99nEIEOqUCa8o92oVLzaN/WKEpe25wAaiIeB6EY9U3cniCzSA+H5byw8Ll7Y18WJzhCXDyOWVNrIyXXdlm3i2IlwNxVOmJuY92wDw5iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUx7Ii5x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFAEC116B1;
-	Thu,  6 Nov 2025 16:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762446802;
-	bh=NwlmAbeYHld7D0GB0SpygWEv2y4XXsuSm4A+ULELn3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dUx7Ii5xS7orcx74bqQTwUK7Cbk5860Je1WIzIcWBaO25kKAqBlnXoQGWGz69Zv5P
-	 y8DCJkAUsBgj2sbA0S8UoLcaQB/ATrj80qUPzZoH3VWfP/pPGB4z+ac/72T+rZ5CUW
-	 s5l9xlasjUmqawRE87OGKqftHU6KVOiky28TWzJ0AqXrCgGF/D6i4JwWWPzEBIHUmA
-	 7LTJ27Dr+8epskuieLJgSZTr1jnVa4QdYEVp0/iSei0nUPI420jpD6B1GaCNq2dPtL
-	 fKtgCU+vZJlyNMeyUFGuoxDATo2NI2TFhvjfGJGdK4CMbtoJ2bR1sdkGYLGh4Q9gGR
-	 kFhyP261JG/Cg==
-Date: Thu, 6 Nov 2025 16:33:16 +0000
-From: Lee Jones <lee@kernel.org>
-To: Sander Vanheule <sander@svanheule.net>
-Cc: Michael Walle <mwalle@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 5/8] mfd: Add RTL8231 core device
-Message-ID: <20251106163316.GV8064@google.com>
-References: <20251021142407.307753-1-sander@svanheule.net>
- <20251021142407.307753-6-sander@svanheule.net>
+	s=arc-20240116; t=1762446814; c=relaxed/simple;
+	bh=5ihuDeqsYQ0psikMxLSzF19AqAAShlKz6wsIdUFp4WU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SJ/osCy5mMRSNMlXSk1x8U84YT9ZpZHqnCGjgq9Wpz3vqG+0UcQeZRn5UnZyZtHTNzu/llPuXalRaxqqjaUQgWB8MAPLkywoazkhtFnXCc73UhL6JhVBB+MsxiRWTQjqXWDcFRWLJbm03l1MuLcBDrdJHFq0ROShJy5l+34NHzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FgfXQ2Ep; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ed67a143c5so392081cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:33:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762446811; x=1763051611; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lnZy7OiPe/kS2Rv9Wy12Swhc5j0bx/uxDP7H3ZzWM20=;
+        b=FgfXQ2EpMNBcci4CetxscIG0V4Mueb5shGFITySLZIDUOMsdvqtJYJeuI5X9cF7MAq
+         wHTcxIfnENX63Wa192zliRtYQmYTJ4mj+wltbT3IzEUCq0BiXIFESuXWRId9y5nZojar
+         ICrRMNI259tYOi7krTRtN9u/ijN9ICe4G7y4uCe759kw7qDuXnt7HKcsmBJX6BiqmPzw
+         Xzqckd6WDV4tm3GdfBKY0w2xowNPYkbhxxdHfZr1UTCIq1AgMkvLJBvZTjYNbFRScF0J
+         CIqGyl3+tzpUi8hhP6SASjyqklTrt9Kv8HxIziE2NUVaKxGXZ/XaXQAfPn6m0QUCqWxL
+         1tKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762446811; x=1763051611;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lnZy7OiPe/kS2Rv9Wy12Swhc5j0bx/uxDP7H3ZzWM20=;
+        b=jNHoq2ST/bqCNIDnk5+T2JapZAO2PvKyF9s5qVHSDRfUS0nJVZZorSMXllun+5tt5+
+         kWTVMdIb3pnuXR7SsNHM8XGTuTSu6ZLwlvrRNkhqu1sXAvqa+IprcidNW6qBPLH8li2x
+         EGlcKyHgP2Ujxtvk2FzWNke2jYHjOR1Tqcb3h9v2e7aovzTJJs4Dhi8icFWFRBfUv1pC
+         xcjD3S1pMWGwOFErGXRr7LNWzrfHk/ow5r+yWu9L+ahgko8/7ajBIlbb6ivx2cF1NLp5
+         mTFLlar6aWJ1ZO2Pm2ie0ZNTE+jmyQgYgL2zyzCldDLNzrhdAwFv3lSwEHfHpf/CXO+2
+         xBmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwN4juzigvL+NNya0IyI41dxvd/wPoXtJ8BtXASy7reBEz9fmHhVWbbC5BIzZ3SL9nrOqVaunlKFHCI0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKPoAL7X3izCVTJM0+Hi+kTHcRVuOZVenMy4M3mSPd66CnUpNi
+	056To7jwVIUoNxheFLud6LCP+2wwPBoEJX1BQVROXCgKiM68QDS/q0b4Qt6qDW7pGLsEYRC5VBz
+	kze70oVVFxm4IcctE4afzfDj0lihPIEndIMNYbDQ6
+X-Gm-Gg: ASbGncszK/o6M9mnw3r7VdRRQHBCDRuR16I/SNS9dB8lXsWBKbIp5HL7WwfZPU1CNLu
+	LomSiRxF2CclsnsVyoME/pyquS7k08MOhRyqW4EB1e3T2By68YBC+be/LqK4enb/diZfP2Hge2A
+	jHBr75r2B47u284qMIUH2VpqtDzaCRCOHFRPwirBHO1SzOVemLewm0vBkZv9akWKOSjZ04LEISq
+	DdUQjNLVneMfF03LaUXk2NpgwZuG9Di6epQKQF6Ej3WGc5wBNoUGQU8lVqX
+X-Google-Smtp-Source: AGHT+IHkFFTqQuW3CEPcoZzja9ixONknh7QDVB4aPSigXJPx2frRev2iHo0yg8eQxo4ySjq4nFKmcGplZ7r9pitYqzM=
+X-Received: by 2002:a05:622a:60a:b0:4ed:341a:5499 with SMTP id
+ d75a77b69052e-4ed82bc69e1mr6700211cf.11.1762446811408; Thu, 06 Nov 2025
+ 08:33:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251021142407.307753-6-sander@svanheule.net>
+References: <20251104003536.3601931-1-rananta@google.com> <20251104003536.3601931-2-rananta@google.com>
+ <aQvjQDwU3f0crccT@google.com> <aQvn1b9sspmbYQVo@google.com>
+In-Reply-To: <aQvn1b9sspmbYQVo@google.com>
+From: Raghavendra Rao Ananta <rananta@google.com>
+Date: Thu, 6 Nov 2025 22:03:19 +0530
+X-Gm-Features: AWmQ_bkGLaUZfEme6FxbIW7ZkiI0Va_bGW9y5wLoRjtgBHqe9dY7AfVYeS3floE
+Message-ID: <CAJHc60z5wX7My+2TYGjV4DYYWow=v9XQH8EQNP+WVQdq2LoxXg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] vfio: selftests: Add support for passing vf_token in
+ device init
+To: David Matlack <dmatlack@google.com>
+Cc: Alex Williamson <alex@shazbot.org>, Alex Williamson <alex.williamson@redhat.com>, 
+	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 21 Oct 2025, Sander Vanheule wrote:
+On Thu, Nov 6, 2025 at 5:42=E2=80=AFAM David Matlack <dmatlack@google.com> =
+wrote:
+>
+> On 2025-11-05 11:52 PM, David Matlack wrote:
+> > On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
+> >
+> > > -struct vfio_pci_device *vfio_pci_device_init(const char *bdf, const =
+char *iommu_mode);
+> > > +struct vfio_pci_device *vfio_pci_device_init(const char *bdf,
+> > > +                                         const char *iommu_mode,
+> > > +                                         const char *vf_token);
+> >
+> > Vipin is also looking at adding an optional parameter to
+> > vfio_pci_device_init():
+> > https://lore.kernel.org/kvm/20251018000713.677779-20-vipinsh@google.com=
+/
+> >
+> > I am wondering if we should support an options struct for such
+> > parameters. e.g. something like this
+>
+> Wait, patch 4 doesn't even use vfio_pci_device_init(). Do we need this
+> commit? It seems like we just need some of the inner functions to have
+> support for vf_token.
 
-> The RTL8231 is implemented as an MDIO device, and provides a regmap
-> interface for register access by the core and child devices.
-> 
-> The chip can also be a device on an SMI bus, an I2C-like bus by Realtek.
-> Since kernel support for SMI is limited, and no real-world SMI
-> implementations have been encountered for this device, this is currently
-> unimplemented. The use of the regmap interface should make any future
-> support relatively straightforward.
-> 
-> After a soft reset, all pins are muxed to GPIO inputs before the pin
-> drivers are enabled. This is done to prevent accidental system resets,
-> when a pin is connected to the main SoC's reset line.
-> 
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
-> ---
->  drivers/mfd/Kconfig         |   9 ++
->  drivers/mfd/Makefile        |   1 +
->  drivers/mfd/rtl8231.c       | 193 ++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/rtl8231.h |  71 +++++++++++++
->  4 files changed, 274 insertions(+)
->  create mode 100644 drivers/mfd/rtl8231.c
->  create mode 100644 include/linux/mfd/rtl8231.h
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6cec1858947b..e13e2df63fee 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1301,6 +1301,15 @@ config MFD_RDC321X
->  	  southbridge which provides access to GPIOs and Watchdog using the
->  	  southbridge PCI device configuration space.
->  
-> +config MFD_RTL8231
-> +	tristate "Realtek RTL8231 GPIO and LED expander"
-> +	select MFD_CORE
-> +	select REGMAP_MDIO
-> +	help
-> +	  Support for the Realtek RTL8231 GPIO and LED expander.
-> +	  Provides up to 37 GPIOs, 88 LEDs, and one PWM output.
-> +	  When built as a module, this module will be named rtl8231.
-> +
->  config MFD_RT4831
->  	tristate "Richtek RT4831 four channel WLED and Display Bias Voltage"
->  	depends on I2C
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 865e9f12faff..ba973382a20f 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -252,6 +252,7 @@ obj-$(CONFIG_MFD_HI6421_PMIC)	+= hi6421-pmic-core.o
->  obj-$(CONFIG_MFD_HI6421_SPMI)	+= hi6421-spmi-pmic.o
->  obj-$(CONFIG_MFD_HI655X_PMIC)   += hi655x-pmic.o
->  obj-$(CONFIG_MFD_DLN2)		+= dln2.o
-> +obj-$(CONFIG_MFD_RTL8231)	+= rtl8231.o
->  obj-$(CONFIG_MFD_RT4831)	+= rt4831.o
->  obj-$(CONFIG_MFD_RT5033)	+= rt5033.o
->  obj-$(CONFIG_MFD_RT5120)	+= rt5120.o
-> diff --git a/drivers/mfd/rtl8231.c b/drivers/mfd/rtl8231.c
-> new file mode 100644
-> index 000000000000..60d4a0feea5c
-> --- /dev/null
-> +++ b/drivers/mfd/rtl8231.c
-> @@ -0,0 +1,193 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/bits.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mdio.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-
-Alphabetical please.
-
-> +#include <linux/mfd/rtl8231.h>
-> +
-> +static bool rtl8231_volatile_reg(struct device *dev, unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	/*
-> +	 * Registers with self-clearing bits, strapping pin values.
-> +	 * Don't mark the data registers as volatile, since we need
-> +	 * caching for the output values.
-> +	 */
-> +	case RTL8231_REG_FUNC0:
-> +	case RTL8231_REG_FUNC1:
-> +	case RTL8231_REG_PIN_HI_CFG:
-> +	case RTL8231_REG_LED_END:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static const struct reg_field RTL8231_FIELD_LED_START = REG_FIELD(RTL8231_REG_FUNC0, 1, 1);
-
-Why does this have to be global?
-
-Variables should be lowercase.
-
-> +static const struct mfd_cell rtl8231_cells[] = {
-> +	{
-> +		.name = "rtl8231-pinctrl",
-> +	},
-> +	{
-> +		.name = "rtl8231-leds",
-> +		.of_compatible = "realtek,rtl8231-leds",
-> +	},
-> +};
-
-This is a pretty tenuous MFD!
-
-> +static int rtl8231_soft_reset(struct regmap *map)
-
-s/map/regmap/
-
-> +{
-> +	const unsigned int all_pins_mask = GENMASK(RTL8231_BITS_VAL - 1, 0);
-> +	unsigned int val;
-> +	int err;
-> +
-> +	/* SOFT_RESET bit self-clears when done */
-> +	regmap_write_bits(map, RTL8231_REG_PIN_HI_CFG,
-> +		RTL8231_PIN_HI_CFG_SOFT_RESET, RTL8231_PIN_HI_CFG_SOFT_RESET);
-> +	err = regmap_read_poll_timeout(map, RTL8231_REG_PIN_HI_CFG, val,
-> +		!(val & RTL8231_PIN_HI_CFG_SOFT_RESET), 50, 1000);
-> +	if (err)
-> +		return err;
-
-Do we have to scrunch these calls together?
-
-> +	regcache_mark_dirty(map);
-> +
-> +	/*
-> +	 * Chip reset results in a pin configuration that is a mix of LED and GPIO outputs.
-> +	 * Select GPI functionality for all pins before enabling pin outputs.
-> +	 */
-> +	regmap_write(map, RTL8231_REG_PIN_MODE0, all_pins_mask);
-> +	regmap_write(map, RTL8231_REG_GPIO_DIR0, all_pins_mask);
-> +	regmap_write(map, RTL8231_REG_PIN_MODE1, all_pins_mask);
-> +	regmap_write(map, RTL8231_REG_GPIO_DIR1, all_pins_mask);
-> +	regmap_write(map, RTL8231_REG_PIN_HI_CFG,
-> +		RTL8231_PIN_HI_CFG_MODE_MASK | RTL8231_PIN_HI_CFG_DIR_MASK);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rtl8231_init(struct device *dev, struct regmap *map)
-> +{
-> +	struct regmap_field *led_start;
-> +	unsigned int started;
-> +	unsigned int val;
-
-If this is used for only one thing, it makes sense to use better
-nomenclature that refers to that thing.
-
-> +	int err;
-> +
-> +	err = regmap_read(map, RTL8231_REG_FUNC1, &val);
-> +	if (err) {
-> +		dev_err(dev, "failed to read READY_CODE\n");
-> +		return err;
-> +	}
-> +
-> +	val = FIELD_GET(RTL8231_FUNC1_READY_CODE_MASK, val);
-> +	if (val != RTL8231_FUNC1_READY_CODE_VALUE) {
-> +		dev_err(dev, "RTL8231 not present or ready 0x%x != 0x%x\n",
-> +			val, RTL8231_FUNC1_READY_CODE_VALUE);
-> +		return -ENODEV;
-> +	}
-> +
-> +	led_start = dev_get_drvdata(dev);
-> +	err = regmap_field_read(led_start, &started);
-> +	if (err)
-> +		return err;
-> +
-> +	if (!started) {
-
-Reverse the logic and exit early if 'started'.
-
-> +		err = rtl8231_soft_reset(map);
-> +		if (err)
-> +			return err;
-
-'\n' here.
-
-> +		/* LED_START enables power to output pins, and starts the LED engine */
-> +		err = regmap_field_force_write(led_start, 1);
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static const struct regmap_config rtl8231_mdio_regmap_config = {
-> +	.val_bits = RTL8231_BITS_VAL,
-> +	.reg_bits = RTL8231_BITS_REG,
-> +	.volatile_reg = rtl8231_volatile_reg,
-> +	.max_register = RTL8231_REG_COUNT - 1,
-> +	.use_single_read = true,
-> +	.use_single_write = true,
-> +	.reg_format_endian = REGMAP_ENDIAN_BIG,
-> +	.val_format_endian = REGMAP_ENDIAN_BIG,
-> +	/* Cannot use REGCACHE_FLAT because it's not smart enough about cache invalidation  */
-> +	.cache_type = REGCACHE_MAPLE,
-> +};
-> +
-> +static int rtl8231_mdio_probe(struct mdio_device *mdiodev)
-> +{
-> +	struct device *dev = &mdiodev->dev;
-> +	struct regmap_field *led_start;
-> +	struct regmap *map;
-> +	int err;
-> +
-> +	map = devm_regmap_init_mdio(mdiodev, &rtl8231_mdio_regmap_config);
-> +	if (IS_ERR(map)) {
-> +		dev_err(dev, "failed to init regmap\n");
-> +		return PTR_ERR(map);
-> +	}
-> +
-> +	led_start = devm_regmap_field_alloc(dev, map, RTL8231_FIELD_LED_START);
-> +	if (IS_ERR(led_start))
-> +		return PTR_ERR(led_start);
-
-Why do we need to do LED specific actions in the core driver?
-
-> +	dev_set_drvdata(dev, led_start);
-> +
-> +	mdiodev->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(mdiodev->reset_gpio))
-> +		return PTR_ERR(mdiodev->reset_gpio);
-> +
-> +	device_property_read_u32(dev, "reset-assert-delay", &mdiodev->reset_assert_delay);
-> +	device_property_read_u32(dev, "reset-deassert-delay", &mdiodev->reset_deassert_delay);
-> +
-> +	err = rtl8231_init(dev, map);
-> +	if (err)
-> +		return err;
-> +
-> +	return devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, rtl8231_cells,
-> +		ARRAY_SIZE(rtl8231_cells), NULL, 0, NULL);
-
-Odd tabbing.  Please line-up with the '(' like usual.
-
-> +}
-> +
-> +__maybe_unused static int rtl8231_suspend(struct device *dev)
-
-The __maybe_unused comes after the "static int" part.
-
-> +{
-> +	struct regmap_field *led_start = dev_get_drvdata(dev);
-> +
-> +	return regmap_field_force_write(led_start, 0);
-> +}
-> +
-> +__maybe_unused static int rtl8231_resume(struct device *dev)
-> +{
-> +	struct regmap_field *led_start = dev_get_drvdata(dev);
-> +
-> +	return regmap_field_force_write(led_start, 1);
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(rtl8231_pm_ops, rtl8231_suspend, rtl8231_resume);
-> +
-> +static const struct of_device_id rtl8231_of_match[] = {
-> +	{ .compatible = "realtek,rtl8231" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, rtl8231_of_match);
-> +
-> +static struct mdio_driver rtl8231_mdio_driver = {
-> +	.mdiodrv.driver = {
-> +		.name = "rtl8231-expander",
-> +		.of_match_table	= rtl8231_of_match,
-> +		.pm = pm_ptr(&rtl8231_pm_ops),
-> +	},
-> +	.probe = rtl8231_mdio_probe,
-> +};
-> +mdio_module_driver(rtl8231_mdio_driver);
-> +
-> +MODULE_AUTHOR("Sander Vanheule <sander@svanheule.net>");
-> +MODULE_DESCRIPTION("Realtek RTL8231 GPIO and LED expander");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/rtl8231.h b/include/linux/mfd/rtl8231.h
-> new file mode 100644
-> index 000000000000..003eda3797a3
-> --- /dev/null
-> +++ b/include/linux/mfd/rtl8231.h
-> @@ -0,0 +1,71 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Register definitions the RTL8231 GPIO and LED expander chip
-> + */
-> +
-> +#ifndef __LINUX_MFD_RTL8231_H
-> +#define __LINUX_MFD_RTL8231_H
-> +
-> +#include <linux/bits.h>
-> +
-> +/*
-> + * Registers addresses are 5 bit, values are 16 bit
-> + * Also define a duplicated range of virtual addresses, to enable
-> + * different read/write behaviour on the GPIO data registers
-> + */
-> +#define RTL8231_BITS_VAL		16
-> +#define RTL8231_BITS_REG		5
-> +
-> +/* Chip control */
-> +#define RTL8231_REG_FUNC0		0x00
-> +#define RTL8231_FUNC0_SCAN_MODE		BIT(0)
-> +#define RTL8231_FUNC0_SCAN_SINGLE	0
-> +#define RTL8231_FUNC0_SCAN_BICOLOR	BIT(0)
-> +
-> +#define RTL8231_REG_FUNC1		0x01
-> +#define RTL8231_FUNC1_READY_CODE_VALUE	0x37
-> +#define RTL8231_FUNC1_READY_CODE_MASK	GENMASK(9, 4)
-> +#define RTL8231_FUNC1_DEBOUNCE_MASK	GENMASK(15, 10)
-> +
-> +/* Pin control */
-> +#define RTL8231_REG_PIN_MODE0		0x02
-> +#define RTL8231_REG_PIN_MODE1		0x03
-> +
-> +#define RTL8231_PIN_MODE_LED		0
-> +#define RTL8231_PIN_MODE_GPIO		1
-> +
-> +/* Pin high config: pin and GPIO control for pins 32-26 */
-> +#define RTL8231_REG_PIN_HI_CFG		0x04
-> +#define RTL8231_PIN_HI_CFG_MODE_MASK	GENMASK(4, 0)
-> +#define RTL8231_PIN_HI_CFG_DIR_MASK	GENMASK(9, 5)
-> +#define RTL8231_PIN_HI_CFG_INV_MASK	GENMASK(14, 10)
-> +#define RTL8231_PIN_HI_CFG_SOFT_RESET	BIT(15)
-> +
-> +/* GPIO control registers */
-> +#define RTL8231_REG_GPIO_DIR0		0x05
-> +#define RTL8231_REG_GPIO_DIR1		0x06
-> +#define RTL8231_REG_GPIO_INVERT0	0x07
-> +#define RTL8231_REG_GPIO_INVERT1	0x08
-> +
-> +#define RTL8231_GPIO_DIR_IN		1
-> +#define RTL8231_GPIO_DIR_OUT		0
-> +
-> +/*
-> + * GPIO data registers
-> + * Only the output data can be written to these registers, and only the input
-> + * data can be read.
-> + */
-> +#define RTL8231_REG_GPIO_DATA0		0x1c
-> +#define RTL8231_REG_GPIO_DATA1		0x1d
-> +#define RTL8231_REG_GPIO_DATA2		0x1e
-> +#define RTL8231_PIN_HI_DATA_MASK	GENMASK(4, 0)
-> +
-> +/* LED control base registers */
-> +#define RTL8231_REG_LED0_BASE		0x09
-> +#define RTL8231_REG_LED1_BASE		0x10
-> +#define RTL8231_REG_LED2_BASE		0x17
-> +#define RTL8231_REG_LED_END		0x1b
-> +
-> +#define RTL8231_REG_COUNT		0x1f
-> +
-> +#endif /* __LINUX_MFD_RTL8231_H */
-> -- 
-> 2.51.0
-> 
-> 
-
--- 
-Lee Jones [李琼斯]
+Gah, that's my bad. I changed the approach later but forgot to revert
+the API. I'll fix it in v2.
 
