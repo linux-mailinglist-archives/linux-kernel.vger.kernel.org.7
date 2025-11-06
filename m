@@ -1,161 +1,153 @@
-Return-Path: <linux-kernel+bounces-888232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F0AC3A438
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:30:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C75C3A44D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B56189A6EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B93E83ABD5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB3F2DC784;
-	Thu,  6 Nov 2025 10:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CA14C9D;
+	Thu,  6 Nov 2025 10:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lWi8nRnE";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HSPhVDg/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="sS2O1qPK"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B032248B4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1562248B4;
+	Thu,  6 Nov 2025 10:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762424701; cv=none; b=UEad0UMUAZhFaoIwYyLqSDlADIRrM3NcwfMKX92O8uJtHw3fkHcrx5VWU7yGUn3dXi8yJ8o927dIwZYHh1WrgUpGanTh0GetwzG/XD2KbKf2HgzL/N5FsvzAzZOu5yciMBm88Bl/ZxVw7I3I/x2N1MYbKGw25SKcz+7cSRoyr4k=
+	t=1762424760; cv=none; b=OH6sM+BzQHk0qRXWybbMiP64bQo7u5Fgl3wktGZtx7q7Oxx1ZYITYgtdng1yTdy/vPVn+qo37wYNgrAjDAhFUGJRpLMitSN4vZ4P3prwBU47CS/gmw7+ayBOeyF2Hnxa/nhcbtikOJ6APabOe7pHAgzd7Memmo1+/v58zmew9z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762424701; c=relaxed/simple;
-	bh=8nQ5sw6au/GXcvKkhMPHNjA11MU04f/w4R2BKCtYs5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qyUMvAIt1PlWVlEWToyzM61C3JPeV8cDMMdCf3tmN4b+MbnrcYk8sVHaPGmfuBTvPhCXaqdfQ8oXBY27uIohQBqApm6pDQIr9GM1Wj3vUZN9LidTxs2fRqReanT9xWnpZhYYg/SIihossAp9G6NogARITRZahm9mQRgQ0v8wNM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lWi8nRnE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HSPhVDg/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A68iuuK2326866
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 10:24:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=QNbkeSHSadGd92B2YVOcrLu0e7BSImxzf++
-	QWKYHrRE=; b=lWi8nRnEIAIx+vsEfV87YjhZple1f8eh0bykbBX70EJOeQBJRhO
-	Va6YvtZI8HnbbKL74OVomdCRTHMpymETM8hEZaGlqw3z8eEu2tSPoWji5K34bscT
-	kATgt6kZFroT5tEfGSia2pufID8vl9AEHa+4Z8l/elI/yj/6NLRHNFvIV/cx4kh3
-	l3ey8oYZ2zV6TUOV+I8NZyyz3LC5X2UIrB+8exS/dWW+6zuWQxWMtkcsd9bd685y
-	mYQ8sB6it5IBJiRciM0Xckf4+xVTBe1G1QwUncZvIjgoUQ62DmPIU+y3tvHHlr+w
-	jGecLSsRYIXde05zkKYOgfi4ulxcvELz4lQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8h0v1j0x-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:24:58 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7aa148105a2so904377b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762424697; x=1763029497; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QNbkeSHSadGd92B2YVOcrLu0e7BSImxzf++QWKYHrRE=;
-        b=HSPhVDg/lnPzCpHpR+8tPT4uRLz6goWZ0vPJzb3GvquItoOf20tlIZeZ0TK6IJ57P7
-         NpQ+52/zjvsn7KFC8XkcdjNIX5lQXEo4cRZEOGz4tWGUwcs5EB4j1R9aRu4TNf4RKwiA
-         dlxxY2kiudrYE/avprtdp6wpX49yr2GbyCdql9allc8JiiCE+KN0mYJeVd0MCTa3EITU
-         Nxg54emcibyHEq0LqwDfNma1UXj2rEYdiPqSGTzkOg+7EP0CUlSB3aXOWNOchDHF/Qv7
-         WZ2LI6xbgyhBqwTGqtcsyNkDxIzCV+Wo025X05gDTpu7ubFw6M7czzJ3wAUZqE2+elE1
-         e1Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762424697; x=1763029497;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QNbkeSHSadGd92B2YVOcrLu0e7BSImxzf++QWKYHrRE=;
-        b=iZ2QvcnMP5cUdAt9y7FuafHfGpEIsIW6ECA+r6Su2TH9HsDlku/7k/9fcjtrUk+9OI
-         d5bkZXzppVK3rM9LXviSBau11lN6jPGFagGoeJwyTa9BHAYILgwMKeVtmu2CIXtGMiZY
-         VQ0LsPdYLuqcHywDmB0SMJD2JJ6hDKmDzpM7rA+GyggPLXAnYsRhR1TYjvOOd3E02chY
-         8kGdPmPjCHdJ89Dv1I/hfvNSe34mGLtPir0ZYiyKtOkAHjb7J0dvH19Xy4qB5BTh49PC
-         +VFPTxfzqDQS3QxQ0ns/bgS4WU2QC7YDfDT5vKYxSRFGLYiXhBZKBET+8BuOGJ7rzq45
-         aQ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYsgoFThN/q/gXG/5oShowBVQvfZ49FXrJVA4YOa7o6AcImGUoaSuW3XUwYWLgDcd1vNqZDz7g3KBjXkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdVQgRRpvI1lNi6jJQzOtUetPHpFG8I8WAyfm12bZE0dH1kSR/
-	RAMeKgiK8zT5oqn9eVZCAghur/4TaB8Xh2fTTOInRPobHBJkYD++4Ip2uyZyu7mD0nrWaDU8Owa
-	3OfooqgXse3Cl5Ayr2eWC9LeXyAOX+y3NliSftCAmEqjcqQLFwIr1spdjblSE9plZCuk=
-X-Gm-Gg: ASbGnctyHK9zwwWrRLQ/Yvgn7wxp4KRYWAUdqF90r/N9vnkU/uTXtZdqntU7ysVz0Bx
-	ZECieBZdhNmB4dR+2LQxoJxKISAy8jqSXWOjdhhmfQHplumYbYTK8nXHC8nrkY5+jv6DkGDeu+4
-	MCcMhOgxxis8r9Vc1M8Kj1W0n7du4pVbnKwLlR5kyGR3SLAqkIRpbU2yBVFSHWU7dAKS1mH6ajm
-	cJEvk4gt70qALnSEnoipaQuy1rc19F17p/PB3wJBtIDsPMhhUHZ2c3Rseeu7MRyrmxqNOrwrWyh
-	WPEXMz6YLiIaElIcz80/5t8CBmE99S0w2a+3VGXS5FbUYqx8sVP+SVPJr/xV3SbOZC8ICpHFOqw
-	jdHCOc63bMd6x6O87IKsj5Q==
-X-Received: by 2002:a05:6a00:2289:b0:7aa:57f0:31c8 with SMTP id d2e1a72fcca58-7ae1f884dbcmr7775873b3a.30.1762424697462;
-        Thu, 06 Nov 2025 02:24:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGA97dPyjuCRwZu1A4D9p9GRmCCF06mkmLB//emzW/7wDLHKMRkafeSkKDaoxwRyQM889YqdA==
-X-Received: by 2002:a05:6a00:2289:b0:7aa:57f0:31c8 with SMTP id d2e1a72fcca58-7ae1f884dbcmr7775844b3a.30.1762424696904;
-        Thu, 06 Nov 2025 02:24:56 -0800 (PST)
-Received: from cse-cd04-lnx.qualcomm.com ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7af7fd59a58sm2319687b3a.21.2025.11.06.02.24.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 02:24:56 -0800 (PST)
-From: Xueyao An <xueyao.an@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: qcom: hamoa-iot-som: Unreserve GPIOs blocking SPI11 access
-Date: Thu,  6 Nov 2025 18:24:48 +0800
-Message-ID: <20251106102448.3585332-1-xueyao.an@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762424760; c=relaxed/simple;
+	bh=l6IJfTSubUl1j+bVYQvNukvCpqigIfS4TZId0nfTM9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=exhOKCFMjMoVAdFgVTh49oVAjXp8hfC8/zXnmlVExB1uSdKIw/vJ4MncEvLSx1avjOn3VagDgDRZU0OjHL+AInEAs+ZT0nXpxJKeE3J70wwjCU/e0ecCMNi7yVgpwWIZyuPRfrK16fxzlqGEHRmZN5shsSdVusuXQQ7kRfRguLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=sS2O1qPK; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=2IClDRTOjvKr2LkZUS907ZmY/aBDdBWl2pRamxXXXKg=; t=1762424758;
+	x=1762856758; b=sS2O1qPKH4NJcG4nSyZGwY4M8Ue1/enu3lw58G19vP13Gx2RFN+cMlnq1Hh1z
+	GRhYu+CnKcLPTNiUY0Tg9SkYdMbEzKkcwGviLeYwfeH7v1Lx6CSxEy1XdkOfxYFPiw5YlOyNaRazN
+	+2spBnGAC2VujXgqs1YR3EzO8OfbDhn6r/jypRRs+mnbVH0KShSPCtJTQAXBMgmQmtkexIdGETDfL
+	RjeXewmAIcaqLrJcDXfl1IcaEtx5PyT6g0yWx8L+FzFWDVWTltmIgUDS1FkzRiuFYbip504Jny/7N
+	jMkMuo4IiazhKKg4L5G5t1C0ypZWdo3+bGLWS+pRFj0QRMWqrQ==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1vGxBk-005Y5i-1q;
+	Thu, 06 Nov 2025 11:25:56 +0100
+Message-ID: <35bd11bf-23fa-4ce9-96fb-d10ad6cd546e@leemhuis.info>
+Date: Thu, 6 Nov 2025 11:25:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: muiWPFNvEavcImWfK-EB47U2PRZkLJcV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA4MSBTYWx0ZWRfXylFkHxzOdRzi
- VX11+gAL3QSW2RSIRwldvIsHCNJrCz+JEPhGZkTNjYW9viOQaw5HTXiNfPsy36sYhLFQEzlfhGL
- gcLEtlR9xyyLmgWoB6xKE5Bed1moPtO5Hvx6x3x6UTKDCXtqlZjukiwp5yjWI8mS1DXz8jj2K7S
- xunt0ypiLLL0zFYw9iYWMB99jqvcSPLmKaFpbB1X2vZBLBlKMqKwNQweS/IwVGHmSgLLBpE1PW3
- zR7omZWNGXAoJZH6JgHBdLgnXxLIAaGVOJciVOLyJvUSqhbRQVHMXFfCVQCJOMLklORP7+sGS/Q
- mu1bOV9J1ny7U0x6tnIbF/pFFN3m0C0T6ft3SW3gmv3xkOe9Vdp7bDy8W4OZijvdZGQ1Tcu8NJr
- 8F5//5og0+i1HYS0L6BEyJqvBq1p0g==
-X-Proofpoint-GUID: muiWPFNvEavcImWfK-EB47U2PRZkLJcV
-X-Authority-Analysis: v=2.4 cv=PoyergM3 c=1 sm=1 tr=0 ts=690c777a cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=uYweBXC_siuRksOLPw8A:9 a=zZCYzV9kfG8A:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060081
+User-Agent: Mozilla Thunderbird
+Subject: Re: PROBLEM: hwclock busted w/ M48T59 RTC (regression)
+To: Nick Bowler <nbowler@draconx.ca>, Esben Haabendal <esben@geanix.com>
+Cc: linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+ linux-rtc@vger.kernel.org, stable@vger.kernel.org, sparclinux@vger.kernel.org
+References: <krmiwpwogrvpehlqdrugb5glcmsu54qpw3mteonqeqymrvzz37@dzt7mes7qgxt>
+ <DmLaDrfp-izPBqLjB9SAGPy3WVKOPNgg9FInsykhNO3WPEWgltKF5GoDknld3l5xoJxovduV8xn8ygSupvyIFOCCZl0Q0aTXwKT2XhPM1n8=@geanix.com>
+ <ni6gdeax2itvzagwbqkw6oj5xsbx6vqsidop6cbj2oqneovjib@mrwzqakbla35>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: de-DE, en-US
+In-Reply-To: <ni6gdeax2itvzagwbqkw6oj5xsbx6vqsidop6cbj2oqneovjib@mrwzqakbla35>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1762424758;53ba1f3e;
+X-HE-SMSGID: 1vGxBk-005Y5i-1q
 
-GPIOs 44-47 were previously reserved, preventing Linux from accessing
-SPI11 (qupv1_se3). Since there is no TZ use case for these pins on Linux,
-they can be safely unreserved. Removing them from the reserved list
-resolves the SPI11 access issue for Linux.
+Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+for once, to make this easily accessible to everyone.
 
-Signed-off-by: Xueyao An <xueyao.an@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Just wondering: was this fixed in between? Just asking, as I noticed the
+culprit was backported to various stable/longterm series recently
 
-diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
-index 1aead50b8920..107ea8045f55 100644
---- a/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
-+++ b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
-@@ -451,8 +451,7 @@ &remoteproc_cdsp {
- };
- 
- &tlmm {
--	gpio-reserved-ranges = <34 2>, /* TPM LP & INT */
--			       <44 4>; /* SPI (TPM) */
-+	gpio-reserved-ranges = <34 2>; /* TPM LP & INT */
- 
- 	pcie4_default: pcie4-default-state {
- 		clkreq-n-pins {
--- 
-2.43.0
+Ciao, Thorsten
 
+On 10/23/25 15:39, Nick Bowler wrote:
+> On Thu, Oct 23, 2025 at 07:21:21AM +0000, Esben Haabendal wrote:
+>> On Thursday, 23 October 2025 at 06:45, Nick Bowler <nbowler@draconx.ca> wrote:
+>>
+>>> After a stable kernel update, the hwclock command seems no longer
+>>> functional on my SPARC system with an ST M48T59Y-70PC1 RTC:
+>>>
+>>> # hwclock
+>>> [...long delay...]
+>>
+>> I assume this is 10 seconds long.
+> 
+> Yeah, about that.
+> 
+>>> hwclock: select() to /dev/rtc0 to wait for clock tick timed out
+>>
+>> And this is 100% reproducible, or does it sometimes work and sometimes fail?
+> 
+> It fails every time.
+> 
+>> Are you using the util-linux hwclock command? Which version?
+> 
+> hwclock from util-linux 2.40.2
+> 
+>> Do you have CONFIG_RTC_INTF_DEV_UIE_EMUL enabled?
+> 
+> No, this option is not enabled.
+> 
+>> Can you run `hwclock --verbose`, both with and without the reverted commit,
+>> and send the output from that?
+> 
+> 6.18-rc2 (broken):
+> 
+>   # hwclock --verbose
+>   hwclock from util-linux 2.40.2
+>   System Time: 1761226454.799573
+>   Trying to open: /dev/rtc0
+>   Using the rtc interface to the clock.
+>   Last drift adjustment done at 1657523820 seconds after 1969
+>   Last calibration done at 1657523820 seconds after 1969
+>   Hardware clock is on UTC time
+>   Assuming hardware clock is kept in UTC time.
+>   Waiting for clock tick...
+>   hwclock: select() to /dev/rtc0 to wait for clock tick timed out
+>   ...synchronization failed
+> 
+> 6.18-rc2 w/ revert (working):
+> 
+>   # hwclock --verbose
+>   hwclock from util-linux 2.40.2
+>   System Time: 1761226685.238753
+>   Trying to open: /dev/rtc0
+>   Using the rtc interface to the clock.
+>   Last drift adjustment done at 1657523820 seconds after 1969
+>   Last calibration done at 1657523820 seconds after 1969
+>   Hardware clock is on UTC time
+>   Assuming hardware clock is kept in UTC time.
+>   Waiting for clock tick...
+>   ioctl(3, RTC_UIE_ON, 0): Input/output error
+>   Waiting in loop for time from /dev/rtc0 to change
+>   ...got clock tick
+>   Time read from Hardware Clock: 2025/10/23 13:38:06
+>   Hw clock time : 2025/10/23 13:38:06 = 1761226686 seconds since 1969
+>   Time since last adjustment is 103702866 seconds
+>   Calculated Hardware Clock drift is 0.000000 seconds
+>   2025-10-23 09:38:05.239100-04:00
+> 
+> Thanks,
+>   Nick
+> 
+
+
+#regzbot poke
 
