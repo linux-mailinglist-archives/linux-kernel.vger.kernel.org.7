@@ -1,131 +1,177 @@
-Return-Path: <linux-kernel+bounces-888652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5342C3B909
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:06:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096BBC3B874
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F80627C2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:54:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 099444E2DC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF3E3321BC;
-	Thu,  6 Nov 2025 13:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60422EAD1C;
+	Thu,  6 Nov 2025 13:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hs+iYUl3"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQvUOAAz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF972E62A6
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 13:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AE7213E6D;
+	Thu,  6 Nov 2025 13:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762437243; cv=none; b=VBDnHY/9VAjQgVfTCzluD/dWrk5Govue4qeVYmsF6SWfZtN+XUGHumxqlcnaMTVocA7LH1bMDE0VnmVSPeu5qRM9RNMEoRuDcL0rE6HHPsNgtLR7EMlOQmfCbkKi2eeECP6KGttcSbRyT6jBHN+LDSN2/pqOHoSP19gzjGUG4Nk=
+	t=1762437262; cv=none; b=CtUyHadTg6xqeyyP22YxpOx4tgYWVM2bDfCN8AIIFQAMjzqrBVki1LhmNoBgPdi9SBwkKWFbsRV82Ru7iDFZ2Ys/AqA6gEYzBJk/SV3M1IEDDKFzKbugK0eTEJP4Fd3d7p3TF10FVSI7CQTD6nyWp1wzUHy4l7F8Islv8KhGgTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762437243; c=relaxed/simple;
-	bh=AhPAM+k/mbCfFiz/F0PHfPcbmIYBw78Z8GftLMLsgOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ol68tRZ8R2MeycUFOGHrzwdAX5E9Ybal3ntDT1TDoYJXP5/Kj0trLAHfuiDTxSqE9Q7bcJLtIHrKqY+dmw0uTpsY/fz46y8uQ/jrPKHAr3nxAv2rMBAuYZFDJGxwT60CuAr5MC8DyS86LppylJy3TJTRlFxgattGEbk2VoC0JWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hs+iYUl3; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-429b72691b4so823651f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 05:54:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762437240; x=1763042040; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bSE62zCP8M8Uf64VGNcoF8MdlXmdGzIa+kIu5nfKLd4=;
-        b=hs+iYUl3uxdn48HF0iYgz0rQGG65LDNm+Dx0axdSsG90TNSIUX7LCj95Rfqe0Y1FpT
-         XGNrxlx+YCiJnpfK5LEKKVWNsINPlElKdR0wNGi2DQ+OPNgRNHOfky+DrFc0cqB0Mv4g
-         TqaUzSCf5WIPbLyqPWQ/NrULCwhSQuV2geaZGW+QDFq8BRIsJa1cBs5+CVCM15+pPtjo
-         F24UuCeV1Z2XYTX6ECTPMYZso9fS7Bz7ki+yNqYr0UgwzOmP2DvJyJHHekS9IzxCgeJx
-         Oidj6yfbLqYs80eJ8Qn84iTRIEHEZUbkmrLICKQIwH+HYNjcNvMK33yABvAnYZY1J/Bb
-         meuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762437240; x=1763042040;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bSE62zCP8M8Uf64VGNcoF8MdlXmdGzIa+kIu5nfKLd4=;
-        b=fqqvdXnAGoMDb/5IiWTJIgazhTD2KllFXdNHButQFLwxMe6sC9kD0bogmq6X5hlkeB
-         M1nXMCVzZzi9KhAT9w/4khh565LxAKqj+X4fvBFsVJhgqBfrHkd4NYOT7ED+vWYecE+x
-         RWIR3by4HjhqyK+hw1aFLMRdY7n+cvMFGPym7BSR1zmcDiA2Ab1rT4B5effAUsYzunFV
-         j4Pfc8yFaE+jUES7WSMATMd4VOUjQFFQEqVFDetAXeH4tYuxt3wKktjrWhtocsZW8zPu
-         J79wKW2+6Zzv4h0xsYSPEuOULXTs0ZWwhkQqLgAq7GvQboT8TS/zNKdSaxkiWgtQ/SzX
-         1s5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWlizrKVPgBHEtB8KT2FTRhCZrvAGk0ZtNqyK9WlIntWvJCOEjxJBiGvsnK4wAvOvE/fvuMRqJB7QMe800=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy03ub7NakIKVeGa30WbmEE7YE2TMnoA9wMfPyZa0LzzaIt8oLY
-	hh+YSTsrRYRyx/9q+oN49U4XuqUESSlh+awVMpCKZYsRT22MDf72aK15EbvQaA==
-X-Gm-Gg: ASbGncuALhQBtUFGM8ezjMyUZAlMm13a1p/4KP5cQhCZz7ZEw2Y54+fB4tLsa7t+eEd
-	xEaWwx2TUIIpIhHdxqMPyTo+v4Q93gmsWUcQoii1R3V9Y+vLXyFt25+XJ73OWqruTGCcc7eACrd
-	R7bVCcN4XrTzJDFMyxyL5EsDNCC12j1uAUXwbZrFSqXgV2WXJo4mde1ljxrJGZBrWKgkyYqFfsO
-	zdHuoW+syDA5wLg2mVLX5tNc2Km3T+aV+dTM87K8zE04BoQH0n7abAmE2Y+S1rIyLGDRxAKTZ/C
-	TGLrHYvJTP1Igj2O6e049JziXhOJ1OSAborPLrtS/E5ISpXTCbv2s8B5YcnGUA3ZIESKkpNWQFU
-	forZgTD0tqpQNMJg+0y6rCeai+nsloSoSU3eXe5Q2LBiGW+QDR1TZ1L3Kk7N6fvcd/We1n5FAnz
-	5P8sR4ti+WESHzT6pmSi100EMeSMpwe4mpsp060CjTePLsB1MHEBAR
-X-Google-Smtp-Source: AGHT+IE59bq6lBC7TbfcSOn0yh/wIaNNOVWL8lW2tMhLMbEFTHA8APoD/iPj54+AJd6KBZJ2wQ8NLg==
-X-Received: by 2002:a05:600c:3e0b:b0:477:5b0a:e616 with SMTP id 5b1f17b1804b1-4775cdf44a5mr51201495e9.5.1762437240210;
-        Thu, 06 Nov 2025 05:54:00 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e4d7f2sm16568475e9.4.2025.11.06.05.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 05:53:59 -0800 (PST)
-Date: Thu, 6 Nov 2025 13:53:56 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, Davidlohr Bueso
- <dave@stgolabs.net>, "Andre Almeida" <andrealmeid@igalia.com>, Andrew
- Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Simon Horman
- <horms@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen
- <dave.hansen@linux.intel.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v4 00/10] powerpc: Implement masked user access
-Message-ID: <20251106135356.51721903@pumpkin>
-In-Reply-To: <cover.1762427933.git.christophe.leroy@csgroup.eu>
-References: <cover.1762427933.git.christophe.leroy@csgroup.eu>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1762437262; c=relaxed/simple;
+	bh=gpGj9lMLnvuz0MT/8CxK0FE+kuoPB2CSVZM/LrsKjdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i88CRfOzyGAr46YtoidUYw5hbniar+oRngJ9bTHgagiG1pYBZZpYpEL+3x+caDYWu3TN9Vtn/LKOpgpKv0IsMU9KUDzrPjm9/yYr5jLuanEf7eo6iVSsnIgEYJjqZ4c46+QSO2P0fW/kjVbuIRT86PWpE8MB1LSaHBAg0r1NsL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQvUOAAz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460AAC116D0;
+	Thu,  6 Nov 2025 13:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762437261;
+	bh=gpGj9lMLnvuz0MT/8CxK0FE+kuoPB2CSVZM/LrsKjdE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nQvUOAAzRQ71RP1RFBkIEsamS76gIZw1XnPOymu03j1Qb22RtExWxS+omPqMRNcjN
+	 nBuU0Cz7BSw9jbp2vZxe+QD+mXy19WzwfNLbRQms+5Kd5vnyAROdYcvHX1m2u6zj41
+	 eNIVCkzPE421CW+xRFXRNFd50RkbqKGtOvaopfNk7fEyaIwn1dgNf2ZjLEvjqsu0MX
+	 Lb++LzbcqEGnKinMAryDzTFI0oT7fCa7/7SDIWB2g//lBKQobZupVI5l6UQzi3nSb9
+	 M0OvsONVZoN/R368gSI7iDqXgtqC6v/gnNzqGFOr3a7QBzOfMIhvjOBl33IZQ5NORG
+	 pZjmnvbxZRCsg==
+Date: Thu, 6 Nov 2025 13:54:14 +0000
+From: Lee Jones <lee@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-doc@vger.kernel.org, Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v4 03/11] rtc: Add new rtc-macsmc driver for Apple
+ Silicon Macs
+Message-ID: <20251106135414.GO8064@google.com>
+References: <20251025-macsmc-subdevs-v4-0-374d5c9eba0e@gmail.com>
+ <20251025-macsmc-subdevs-v4-3-374d5c9eba0e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251025-macsmc-subdevs-v4-3-374d5c9eba0e@gmail.com>
 
-On Thu,  6 Nov 2025 12:31:18 +0100
-Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+On Sat, 25 Oct 2025, James Calligeros wrote:
 
-> This is a rebase on top of commit 6ec821f050e2 (tag: core-scoped-uaccess)
-> from tip tree.
+> From: Hector Martin <marcan@marcan.st>
 > 
-> Thomas, Peter, could you please take non-powerpc patches (1, 2, 3)
-> in tip tree for v6.19, then Maddy will take powerpc patches (4-10)
-> into powerpc-next for v6.20.
+> Apple Silicon Macs (M1, etc.) have an RTC that is part of the PMU IC,
+> but most of the PMU functionality is abstracted out by the SMC.
+> On T600x machines, the RTC counter must be accessed via the SMC to
+> get full functionality, and it seems likely that future machines
+> will move towards making SMC handle all RTC functionality.
 > 
-> Masked user access avoids the address/size verification by access_ok().
-> Allthough its main purpose is to skip the speculation in the
-> verification of user address and size hence avoid the need of spec
-> mitigation, it also has the advantage to reduce the amount of
-> instructions needed so it also benefits to platforms that don't
-> need speculation mitigation, especially when the size of the copy is
-> not know at build time.
-...
+> The SMC RTC counter access is implemented on all current machines
+> as of the time of this writing, on firmware 12.x. However, the RTC
+> offset (needed to set the time) is still only accessible via direct
+> PMU access. To handle this, we expose the RTC offset as an NVMEM
+> cell from the SPMI PMU device node, and this driver consumes that
+> cell and uses it to compute/set the current time.
+> 
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+> ---
+>  MAINTAINERS              |   1 +
+>  drivers/rtc/Kconfig      |  11 ++
+>  drivers/rtc/Makefile     |   1 +
+>  drivers/rtc/rtc-macsmc.c | 141 +++++++++++++++++++++++++
+>  4 files changed, 154 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 10f4c0034b5e..3c6322872dd1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2460,6 +2460,7 @@ F:	drivers/nvmem/apple-spmi-nvmem.c
+>  F:	drivers/pinctrl/pinctrl-apple-gpio.c
+>  F:	drivers/power/reset/macsmc-reboot.c
+>  F:	drivers/pwm/pwm-apple.c
+> +F:	drivers/rtc/rtc-macsmc.c
+>  F:	drivers/soc/apple/*
+>  F:	drivers/spi/spi-apple.c
+>  F:	drivers/spmi/spmi-apple-controller.c
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index 4a8dc8d0a4b7..e165301d4abb 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -2078,6 +2078,17 @@ config RTC_DRV_WILCO_EC
+>  	  This can also be built as a module. If so, the module will
+>  	  be named "rtc_wilco_ec".
+>  
+> +config RTC_DRV_MACSMC
+> +	tristate "Apple Mac System Management Controller RTC"
+> +	depends on MFD_MACSMC
+> +	help
+> +	  If you say yes here you get support for RTC functions
+> +	  inside Apple SPMI PMUs accessed through the SoC's
+> +	  System Management Controller
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called rtc-macsmc.
+> +
+>  config RTC_DRV_MSC313
+>  	tristate "MStar MSC313 RTC"
+>          depends on ARCH_MSTARV7 || COMPILE_TEST
+> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+> index 610a9ee5fd33..32083bd5bb81 100644
+> --- a/drivers/rtc/Makefile
+> +++ b/drivers/rtc/Makefile
+> @@ -93,6 +93,7 @@ obj-$(CONFIG_RTC_DRV_M48T35)	+= rtc-m48t35.o
+>  obj-$(CONFIG_RTC_DRV_M48T59)	+= rtc-m48t59.o
+>  obj-$(CONFIG_RTC_DRV_M48T86)	+= rtc-m48t86.o
+>  obj-$(CONFIG_RTC_DRV_MA35D1)	+= rtc-ma35d1.o
+> +obj-$(CONFIG_RTC_DRV_MACSMC)	+= rtc-macsmc.o
+>  obj-$(CONFIG_RTC_DRV_MAX31335)	+= rtc-max31335.o
+>  obj-$(CONFIG_RTC_DRV_MAX6900)	+= rtc-max6900.o
+>  obj-$(CONFIG_RTC_DRV_MAX6902)	+= rtc-max6902.o
+> diff --git a/drivers/rtc/rtc-macsmc.c b/drivers/rtc/rtc-macsmc.c
+> new file mode 100644
+> index 000000000000..05e360277f63
+> --- /dev/null
+> +++ b/drivers/rtc/rtc-macsmc.c
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
+> + * Apple SMC RTC driver
+> + * Copyright The Asahi Linux Contributors
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/mfd/core.h>
 
-Any thoughts on doing the same changes to 32bit x86?
+Why is this here?
 
-I think it just requires that TASK_SIZE_MASK be reduced by 4k and
-then the address 'mask' code written.
+> +#include <linux/mfd/macsmc.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-consumer.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/rtc.h>
+> +#include <linux/slab.h>
 
-	David
+-- 
+Lee Jones [李琼斯]
 
