@@ -1,125 +1,305 @@
-Return-Path: <linux-kernel+bounces-887666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A349CC38D75
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:18:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB202C38D3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:13:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102AB188357A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:16:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428771883384
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA751D61A3;
-	Thu,  6 Nov 2025 02:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="ByUDlhhL"
-Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484F629A1
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 02:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA0122ACEF;
+	Thu,  6 Nov 2025 02:13:14 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B4D158857
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 02:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762395386; cv=none; b=Xy/1JuWAAZlsmVNkVe9UJEjhy224SfnZaFRPPlMlLWCRsUxsnlzBhkfpicm6H4FNM5GKeyLBtGdI4VdwpsxR9As9Cc6AviKKn4SQCMlFdy8kkwNPT2IyjWVXWI9Xg4AjW2F9hucFCPZzRXlc0Gj8QJx9FRzSpgq0h8ffZh9Mo0c=
+	t=1762395193; cv=none; b=VdnO+0g3/4W1LqUGVgJXYPxcyOBln56FyJmBiBPDqnHxsNcChPM61UIwUBMso7gN/R70OWx22mVB/keKsllfxXeh32DXYIhQZ3hreoJRVUt9MojUup33ZgXotPeQM38/muybQ2PQBBkzKsNUBQQHopC/cuKbVGGCyQ3w/Bvq46s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762395386; c=relaxed/simple;
-	bh=8b6ZVtmjdfwHqqripVHysOYjeiYRLQedxptvJ8Gs8ao=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FmblliafF/kKCk4eErhtKfmr2s1ZmqOwBFxQHgycn6uPWZ6YyLNtOG0viwm5upMuiXeCXhO1aHV4p39zTX65y+03Ifxltkx9g9iRsBU/Na73tMheilAFZ4+4bfJ8vHtwoL7TotzpeNjY1y2015BmbR5760FJkEs3zO84XU2Js6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=ByUDlhhL; arc=none smtp.client-ip=61.135.153.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1762395377;
-	bh=GtC0iH5sWMVmdYCbBu/YjfG+/vRiPwjsySKIMir874k=;
-	h=From:Subject:Date:Message-ID;
-	b=ByUDlhhLBHE03Dh1OYDhtAbTZsNXkbEm14GmTShle1ZIFqMhgP1eDAUIPZmjG7DAI
-	 +GzF6cvFxMzCaWuoQmVXtVwhB9SYC2YQBg1r6Zn4LamREzELqCWjPeh0X3Q1GOdWK2
-	 AuKMzu/sqgV4g1/BytPKjuGuNSpFyhlYCAyObIW4=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 690C03A700002076; Thu, 6 Nov 2025 10:10:49 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4762776292212
-X-SMAIL-UIID: ED1AA25D3DDB430BA2E549C9090DC073-20251106-101049-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [sound?] [usb?] KASAN: slab-out-of-bounds Write in copy_to_urb
-Date: Thu,  6 Nov 2025 10:10:38 +0800
-Message-ID: <20251106021039.8866-1-hdanton@sina.com>
-In-Reply-To: <690b6b46.050a0220.3d0d33.0054.GAE@google.com>
-References: 
+	s=arc-20240116; t=1762395193; c=relaxed/simple;
+	bh=8O1afWPCIUriz6dg2UVb09ts/MQCB4Ctntd4ruiQnjk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ly09E/lTbvqE5264tfy+8tPS6COYWF1YN8sK6So9RG9PPH8iCLxRj2vPaXbUjFSF7Arg12QyfUEqRdmvN7JYDoRM+z2m9+fkx98hPbwppK5Hz8WgoqjyRaeo8WWwKpnJtFV4dbYKZZlAF/+Pi4PfIgXz9IpoTtFJFtaWmF3HzgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxJ9EyBAxpoocfAA--.2490S3;
+	Thu, 06 Nov 2025 10:13:06 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJBxC8EvBAxp6R4pAQ--.19845S3;
+	Thu, 06 Nov 2025 10:13:05 +0800 (CST)
+Subject: Re: [PATCH] Loongarch:Make pte/pmd_modify can set _PAGE_MODIFIED
+To: Tianyang Zhang <zhangtianyang@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: kernel@xen0n.name, akpm@linux-foundation.org, willy@infradead.org,
+ david@redhat.com, linmag7@gmail.com, thuth@redhat.com, apopple@nvidia.com,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Liupu Wang <wangliupu@loongson.cn>
+References: <20251104073006.1764241-1-zhangtianyang@loongson.cn>
+ <CAAhV-H5JnmJqTZ1GnhcgODtjL5FLy8x5HNRJxs6us=gzcFon5Q@mail.gmail.com>
+ <95e6f0a6-fd6c-a85f-5983-5a37eaf960a2@loongson.cn>
+ <CAAhV-H4WrphWQqW7HoeD7xSvRuHV1KBt7jgESQU7N-y1HrSVVw@mail.gmail.com>
+ <b839a6a6-3791-ba73-baff-e860aa879bbc@loongson.cn>
+ <833f6790-f1bf-d089-84cf-9f55e1c9866f@loongson.cn>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <e035d888-a7a6-0f46-fdc1-92331cc12a93@loongson.cn>
+Date: Thu, 6 Nov 2025 10:10:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <833f6790-f1bf-d089-84cf-9f55e1c9866f@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxC8EvBAxp6R4pAQ--.19845S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3Wr4xGw1UWFyDAF1DtF1UurX_yoWfWF17pF
+	1kJF1UZFW5tr1xJay0qF17Xry2yr4DJ3WDXr1DJF18Jr4Dt34jqr18Xrn09r1rJr48Jw1U
+	Xr1UJr43ZF47JwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVW8ZVWrXwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
 
-> Date: Wed, 05 Nov 2025 07:20:38 -0800
-> Hello,
+
+
+On 2025/11/6 上午9:55, Tianyang Zhang wrote:
+> Hi ,Bibao
 > 
-> syzbot found the following issue on:
+> 在 2025/11/5 上午9:18, Bibo Mao 写道:
+>>
+>>
+>> On 2025/11/5 上午9:07, Huacai Chen wrote:
+>>> On Wed, Nov 5, 2025 at 8:57 AM Tianyang Zhang 
+>>> <zhangtianyang@loongson.cn> wrote:
+>>>>
+>>>> Hi, Huacai
+>>>>
+>>>> 在 2025/11/4 下午4:00, Huacai Chen 写道:
+>>>>> Hi, Tianyang,
+>>>>>
+>>>>> The subject line can be:
+>>>>> LoongArch: Let {pte,pmd}_modify() record the status of _PAGE_DIRTY (If
+>>>>> I'm right in the later comments).
+>>>> Ok. I got it
+>>>>>
+>>>>> On Tue, Nov 4, 2025 at 3:30 PM Tianyang Zhang 
+>>>>> <zhangtianyang@loongson.cn> wrote:
+>>>>>> In the current pte_modify operation, _PAGE_DIRTY might be cleared. 
+>>>>>> Since
+>>>>>> the hardware-page-walk does not have a predefined _PAGE_MODIFIED 
+>>>>>> flag,
+>>>>>> this could lead to loss of valid data in certain scenarios.
+>>>>>>
+>>>>>> The new modification involves checking whether the original PTE 
+>>>>>> has the
+>>>>>> _PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, 
+>>>>>> ensuring
+>>>>>> that the pte_dirty interface can return accurate information.
+>>>>> The description may be wrong here. Because pte_dirty() returns
+>>>>> pte_val(pte) & (_PAGE_DIRTY | _PAGE_MODIFIED).
+>>>>> If _PAGE_DIRTY isn't lost, pte_dirty() is always right, no matter
+>>>>> whether there is or isn't _PAGE_MODIFIED.
+>>>>>
+>>>>> I think the real reason is we need to set _PAGE_MODIFIED in
+>>>>> pte/pmd_modify to record the status of _PAGE_DIRTY, so that we can
+>>>>> recover _PAGE_DIRTY afterwards, such as in pte/pmd_mkwrite().
+>>>> Ok, I will adjust the description
+>>> After some thinking, your original description may be right. Without
+>>> this patch the scenario maybe like this:
+>>> The pte is dirty _PAGE_DIRTY but without _PAGE_MODIFIED, after
+>>> pte_modify() we lose _PAGE_DIRTY, then pte_dirty() returns false. So
+>>> we need _PAGE_MODIFIED to record _PAGE_DIRTY here.
+>> In theory pte_modify() is to modify RWX attribute. I think that it is 
+>> a tricky to remove _PAGE_DIRTY and add _PAGE_MODIFIED with HW PTW system.
+>>
+>> Also _PAGE_ACCESSED is lost with pte_modify() API, is there any 
+>> influence with HW PTW system, or wait until possible problems coming out.
 > 
-> HEAD commit:    ba36dd5ee6fd Merge tag 'bpf-fixes' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1759afe2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=929790bc044e87d7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c74292580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107bffe2580000
+> static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+> {
+>          return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+> }
+> In my understand, During the  pte_modify process, it is essential to 
+> ensure that specific bits are inherited from the original PTE rather 
+> than simply replaced(as set_pte),
+> 
+> this guarantees the coherent operation of the memory management system.
+> 
+> Since _PAGE_CHG_MASK explicitly requires preserving pte_modified, and 
+The problem is how _PAGE_CHG_MASK should be defined, do you check with 
+other architectures?
+> there is an inherent correlation between pte_dirty and pte_modified, 
+> these attributes must be evaluated and handled accordingly.
+> 
+> The pte_valid attribute, being a hardware property, is inherently the 
+> target of modification in the pte_modify interface. Therefore, it is 
+> reasonable not to preserve it.
+On HW PTW system, _PAGE_PRESENT will control whether trigger page fault 
+rather than pte_valid/_PAGE_ACCESSED. For simple, do you think the 
+following code is ok or not ?
 
-#syz test
+  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+  {
+-       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+-                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
++       unsigned long mask = _PAGE_CHG_MASK;
++
++       if (cpu_has_ptw)
++               mask |= _PAGE_DIRTY | _PAGE_ACCESSED;
++       return __pte((pte_val(pte) & mask) |
++                    (pgprot_val(newprot) & ~mask));
+  }
 
---- x/sound/usb/pcm.c
-+++ y/sound/usb/pcm.c
-@@ -1470,6 +1470,21 @@ static void fill_playback_urb_dsd_bitrev
- 	urb_ctx_queue_advance(subs, urb, bytes);
- }
- 
-+static int copy_to_urb_prepare(struct snd_usb_substream *subs, struct urb *urb,
-+			int offset, int stride, unsigned int bytes)
-+{
-+	if (subs->hwptr_done + bytes > subs->buffer_bytes) {
-+		;
-+	} else {
-+		struct snd_urb_ctx *ctx = urb->context;
-+
-+		if (bytes > ctx->buffer_size ||
-+		    offset > ctx->buffer_size - bytes)
-+			return -EAGAIN;
-+	}
-+	return 0;
-+}
-+
- static void copy_to_urb(struct snd_usb_substream *subs, struct urb *urb,
- 			int offset, int stride, unsigned int bytes)
- {
-@@ -1607,9 +1622,12 @@ static int prepare_playback_urb(struct s
- 			fill_playback_urb_dsd_bitrev(subs, urb, bytes);
- 		} else {
- 			/* usual PCM */
--			if (!subs->tx_length_quirk)
-+			if (!subs->tx_length_quirk) {
-+				int ret = copy_to_urb_prepare(subs, urb, 0, stride, bytes);
-+				if (ret)
-+					return ret;
- 				copy_to_urb(subs, urb, 0, stride, bytes);
--			else
-+			} else
- 				bytes = copy_to_urb_quirk(subs, urb, stride, bytes);
- 			/* bytes is now amount of outgoing data */
- 		}
---
+Regards
+Bibo Mao
+
+> 
+> Thanks
+> 
+> Tianyang
+> 
+>>
+>> Regards
+>> Bibo Mao
+>>>
+>>> But the description also needs to be updated.
+>>>
+>>>>>
+>>>>>> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
+>>>>>> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
+>>>>>> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+>>>>>> ---
+>>>>>>    arch/loongarch/include/asm/pgtable.h | 17 +++++++++++++----
+>>>>>>    1 file changed, 13 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h 
+>>>>>> b/arch/loongarch/include/asm/pgtable.h
+>>>>>> index bd128696e96d..106abfa5183b 100644
+>>>>>> --- a/arch/loongarch/include/asm/pgtable.h
+>>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
+>>>>>> @@ -424,8 +424,13 @@ static inline unsigned long 
+>>>>>> pte_accessible(struct mm_struct *mm, pte_t a)
+>>>>>>
+>>>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>>>>>    {
+>>>>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>>>>>> +       unsigned long val = (pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>>> +                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
+>>>>>> +
+>>>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
+>>>>>> +               val |= _PAGE_MODIFIED;
+>>>>>> +
+>>>>>> +       return __pte(val);
+>>>>>>    }
+>>>>>>
+>>>>>>    extern void __update_tlb(struct vm_area_struct *vma,
+>>>>>> @@ -547,9 +552,13 @@ static inline struct page *pmd_page(pmd_t pmd)
+>>>>>>
+>>>>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+>>>>>>    {
+>>>>>> -       pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+>>>>>> +       unsigned long val = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+>>>>>>                                   (pgprot_val(newprot) & 
+>>>>>> ~_HPAGE_CHG_MASK);
+>>>>>> -       return pmd;
+>>>>>> +
+>>>>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
+>>>>>> +               val |= _PAGE_MODIFIED;
+>>>>>> +
+>>>>>> +       return __pmd(val);
+>>>>>>    }
+>>>>> A minimal modification can be:
+>>>>> diff --git a/arch/loongarch/include/asm/pgtable.h
+>>>>> b/arch/loongarch/include/asm/pgtable.h
+>>>>> index 1f20e9280062..907ece0199e0 100644
+>>>>> --- a/arch/loongarch/include/asm/pgtable.h
+>>>>> +++ b/arch/loongarch/include/asm/pgtable.h
+>>>>> @@ -448,8 +448,13 @@ static inline unsigned long pte_accessible(struct
+>>>>> mm_struct *mm, pte_t a)
+>>>>>
+>>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>>>>    {
+>>>>> -       return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>> -                    (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>>>>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
+>>>>> +
+>>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
+>>>>> +               pte_val(pte) |= _PAGE_MODIFIED;
+>>>>> +
+>>>>> +       return pte;
+>>>>>    }
+>>>>
+>>>> +       pte_val(pte) = (pte_val(pte) & _PAGE_CHG_MASK) |
+>>>> +                       (pgprot_val(newprot) & ~_PAGE_CHG_MASK);
+>>>>
+>>>> After this step, _PAGE_DIRTY may have already disappeared,
+>>>> If no new variables are added, they can be modified in follow way:
+>>>>
+>>>>    static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+>>>>    {
+>>>> +       if (pte_val(pte) & _PAGE_DIRTY)
+>>>> +               pte_val(pte) |= _PAGE_MODIFIED;
+>>>> +
+>>>>          return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
+>>>>           (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
+>>>>
+>>>>    }
+>>> OK, it makes sense.
+>>>
+>>> Huacai
+>>>>
+>>>>>
+>>>>>    extern void __update_tlb(struct vm_area_struct *vma,
+>>>>> @@ -583,7 +588,11 @@ static inline struct page *pmd_page(pmd_t pmd)
+>>>>>    static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+>>>>>    {
+>>>>>           pmd_val(pmd) = (pmd_val(pmd) & _HPAGE_CHG_MASK) |
+>>>>> -                               (pgprot_val(newprot) & 
+>>>>> ~_HPAGE_CHG_MASK);
+>>>>> +                       (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
+>>>>> +
+>>>>> +       if (pmd_val(pmd) & _PAGE_DIRTY)
+>>>>> +               pmd_val(pmd) |= _PAGE_MODIFIED;
+>>>>> +
+>>>>>           return pmd;
+>>>>>    }
+>>>>>
+>>>>> You needn't define a new variable.
+>>>>>
+>>>>>
+>>>>> Huacai
+>>>>>
+>>>>>>    static inline pmd_t pmd_mkinvalid(pmd_t pmd)
+>>>>>> -- 
+>>>>>> 2.41.0
+>>>>>>
+>>>>>>
+>>>> Thanks
+>>>>
+>>>> Tianyang
+>>>>
+
 
