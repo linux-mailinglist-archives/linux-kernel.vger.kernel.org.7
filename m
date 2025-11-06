@@ -1,88 +1,60 @@
-Return-Path: <linux-kernel+bounces-887520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2039C386DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:00:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07860C386E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C0B3B4B8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:00:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 319144E7C09
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE089274B58;
-	Thu,  6 Nov 2025 00:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AF62C11CA;
+	Thu,  6 Nov 2025 00:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuuaFbep"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxzfXxvY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7B928E5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B0B28E5;
+	Thu,  6 Nov 2025 00:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762387224; cv=none; b=K11YjGyCHHvSgnjpQoDrce+ZXdP57YH94WfOBtLkFcxO/5sEAxamsBYdg3OASLT9IFHhufnDbKHXRbeGXrQXcVTYKrp7kz+uZDaqQxjmy3pVAn9N1N6nbm1lExuLiiNHLukamp/MgpHVzcvRup9o2Tzp2wythQ++dHBq5H7HcB0=
+	t=1762387255; cv=none; b=tslizQsCG+fg+gRZVOEm3lWetuqOaSTWUj/ByViW5Wu7P2IuzPT6d2lGXD3544SrNM4wu3sP57z5UnWHATqkpkKYv2QqeR/gKboLufKRBCgC+ezVbGDCmqWA35Sq7KOX/t45ABTPRyKP0oKlNTfVzureqPaQkM2Nov5gVm027QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762387224; c=relaxed/simple;
-	bh=8MLnt+XglQZk2yYFdRLxYI7oowvX/sdme0l9dh+SAX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBeWhHuJ9JTrnyifL204P7rZqmNcKgk/wM8/E93W26uYbA5FcSGdkUJSsq28PkaCxuljva5Bg0C8nzaiqu50p8iuCw3vB7VkGQTe6LgFsWzPnj6F0ifWeCCCkMbl6wgJOYSAQ0LtQ+nxWsY+4ETl2O82Bo5xD6xpHpSpAZqvlDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuuaFbep; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3414de5b27eso362719a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:00:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762387222; x=1762992022; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xdi2SbNzBRTUXMlj2tQpqfAaio37iPV8pPO566c4vYQ=;
-        b=GuuaFbep4eHy3SMVfE07AKI/w+Hg2klwIm+3Xr4D8ocpwuT6W/lEjy7qShXn7a1sP9
-         zhhO5sA2xn4VZcnoHyJjxJHm58sYTmShOXA8J/Rb9EkEUjiGGwG4X7SEaW++zAMyCeyX
-         MmrJ0tx/FZEDXPuc/dtrUKpDRfagfalUAUdhzbFJIshNicVLsWt3idtFaLXmday6g5t5
-         kprxnEP6kb5ecMZL64nNgG7q9jGFX3qitcwWPhkISLOT4cTf48huHUoLbGET9PoqyRkn
-         8+Klow6dVp1doNjX6+09hYIACWK64hZRk3ItDBBwHd65Puw5eK0BGN7nSuBlV5IxSv9o
-         l2cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762387222; x=1762992022;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xdi2SbNzBRTUXMlj2tQpqfAaio37iPV8pPO566c4vYQ=;
-        b=dn4pnXp3JTk61CHTaWa5isnBLaj9VkpiF67Z3d4R6Mkf04Ly4syGjaQ97RIDldOUwL
-         yn54E/NAkESw3QP7bvcSSFbOtaO/xb2q4O54cESHkqKf9PVItRKr3/dFBcZiXPLLyJRE
-         haBcLYgex01+lBn9IYeewkcLuPTRZizY6NsfLjF9qzGN4VlvX1UBEBj0P6/JtzZeUtbw
-         +5btu1SILxy8rrILf/GvvYEisPKXo1l7KRwd3G+xaFJtdNKzZUHAap+NA7m/oPNZClmK
-         xrvI1etP0ULVINwAnyJlh9CsRuy+cKnIdEpnde4AP5X7yToIVLCG6ucORY/g5JwsDJdz
-         pVpA==
-X-Gm-Message-State: AOJu0YwpfSJxTvZQU+28Is0FJxeN6XfUYJxbxTzooR9LaGoDZCsUfv+C
-	xuk2Z773v+kAqHLka92gko+rSCA5tqH3sl7CDmQPDcbyfI3Y4yb9w1Fn
-X-Gm-Gg: ASbGncsHaE4Oj6mcBrxFfm3u80h6grKb7e+Ups0rtCYT9Bx8ZvdgRU3cCot28vIaS93
-	kD5D9LMvSrMBEMoV326aOhlCiPsBs9o1cODGGBpg65jUw2lkxmZkF7zGDx276XFnMCdgLWhXR86
-	F3UiRm8d6k0rktaXhEg+2ujtqUv0qkWOVKyoTYeIJbgzFtzOy3OQo0iAmizY7NQdh5EEcjQM1cS
-	KNUFs8yIAB7kVxeQneD3Mx26Kro7ICTRsKOuq+y/BUbrPaK3dSvGGvhq0G3bR18ZFegyMLE8iG0
-	GDOyMRD8OW1qAS2X5IjMSeaByn4jWhYoCxxx5MryWqk4yQjiJLdUaB+1QKT+2G82+hCSndFG9ij
-	c2odXbWUj5gwkFHaMl6CBPGXbAU4SGFqQtn4qiROhBYfMHxkTIwQvpvIE+Ek1PSpyk3BmnRJ/Fy
-	4r6rK2QOvkMgzW7KC33KayPalo/kuQPNjvI7k7c1poAG8=
-X-Google-Smtp-Source: AGHT+IHGfj9th0acpdDFjz42m74ilf/decQCNexo/5AMGZVdg/gkNfCJVX6eIBxzLZID9Xwzn+qfZg==
-X-Received: by 2002:a17:90b:5824:b0:340:b152:65c0 with SMTP id 98e67ed59e1d1-341a6debc8fmr6184346a91.26.1762387221835;
-        Wed, 05 Nov 2025 16:00:21 -0800 (PST)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a69b33c7sm4100865a91.18.2025.11.05.16.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 16:00:21 -0800 (PST)
-Date: Wed, 5 Nov 2025 16:00:19 -0800
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [RFC PATCH v2 1/4] mm/vmalloc: warn on invalid vmalloc gfp flags
-Message-ID: <aQvlE8Hcy0uYAAmh@fedora>
-References: <20251103190429.104747-1-vishal.moola@gmail.com>
- <20251103190429.104747-2-vishal.moola@gmail.com>
- <aQopoAj3i2jdIX6V@pc636>
- <CA+KHdyWxjqAxVEBjOun9VxoeErWEyba3OvcJveLqnRuBLk2RLA@mail.gmail.com>
+	s=arc-20240116; t=1762387255; c=relaxed/simple;
+	bh=5IK5qZfBjMO/Z5358IGhBKuigXyQuAzqcpc4dXrDunc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rL+kgMfQmf7fWSOmKv3cuDvAJ3i/2DFw1w5k5j8QslRBuUGkEPk/hBcz59HTrL7ucc+WrBz4cluH6T3BxiHS9tZ4wmCg4x2k/UBJrf8FEvHSXMsVx4A5Zs5Bxaelq9u1YLwkg4TfNtpGo29tbj1ijNZOJVNu8ON/DEpwEwdW+sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxzfXxvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E245C4CEFB;
+	Thu,  6 Nov 2025 00:00:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762387254;
+	bh=5IK5qZfBjMO/Z5358IGhBKuigXyQuAzqcpc4dXrDunc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YxzfXxvYcR3RlTH0HKRVAzhkpjaPTcY/o1R3VVPf0UDf9p98OQn6a8kwF2rBRUg/Z
+	 HDFXzEPvIQuJGaVqj5zZTOsjyoaMkE4Rbw4EbNNXBjD4BpATBd/1kEVBd2HWlNXfmt
+	 550GLlqGovaCwYjgyHDcJE/P9Y/tTxnkaERkmJC0QStvxFv5jt32c886hIvOHSg24e
+	 J1BpC/EMdz0I1adY1GhrxAjp3KbGRgWy0GukHujC4+/tlXgPedslb2LZY5sHSGpbiM
+	 z7jDzyZ1Kp6BkWE4LdzL3eH9Kcp8o5n+nSQ8VYHUUcBjbdk54ZX5Y0rmKQOphcqb71
+	 nLB0vd/F7h05A==
+Date: Wed, 5 Nov 2025 18:00:53 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: chester62515@gmail.com, mbrugger@suse.com,
+	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, bhelgaas@google.com,
+	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com,
+	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com,
+	bogdan.hamciuc@nxp.com, Frank.li@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, cassel@kernel.org
+Subject: Re: [PATCH 1/4 v3] dt-bindings: PCI: s32g: Add NXP PCIe controller
+Message-ID: <20251106000053.GA1932421@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,43 +63,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+KHdyWxjqAxVEBjOun9VxoeErWEyba3OvcJveLqnRuBLk2RLA@mail.gmail.com>
+In-Reply-To: <20251022174309.1180931-2-vincent.guittot@linaro.org>
 
-On Wed, Nov 05, 2025 at 02:16:24PM +0100, Uladzislau Rezki wrote:
-> > On Mon, Nov 03, 2025 at 11:04:26AM -0800, Vishal Moola (Oracle) wrote:
-> > > Vmalloc explicitly supports a list of flags, but we never enforce them.
-> > > vmalloc has been trying to handle unsupported flags by clearing and
-> > > setting flags wherever necessary. This is messy and makes the code
-> > > harder to understand, when we could simply check for a supported input
-> > > immediately instead.
-> > >
-> > > Define a helper mask and function telling callers they have passed in
-> > > invalid flags, and clear those unsupported vmalloc flags.
-> > >
-> > > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> > > ---
-> > >  mm/vmalloc.c | 24 ++++++++++++++++++++++++
-> > >  1 file changed, 24 insertions(+)
-> > >
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index 0832f944544c..290016c7fb58 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -3911,6 +3911,26 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> > >       return NULL;
-> > >  }
-> > >
-> > > +/*
-> > > + * See __vmalloc_node_range() for a clear list of supported vmalloc flags.
-> > > + * This gfp lists all flags currently passed through vmalloc. Currently,
-> > > + * __GFP_ZERO is used by BFP and __GFP_NORETRY is used by percpu.
-> > > + */
-> > > +#define GFP_VMALLOC_SUPPORTED (GFP_KERNEL | GFP_ATOMIC | GFP_NOWAIT |\
-> > > +                             __GFP_NOFAIL |  __GFP_ZERO | __GFP_NORETRY)
-> > > +
-> Also we do support %GFP_NOFS and %GFP_NOIO flags.
+On Wed, Oct 22, 2025 at 07:43:06PM +0200, Vincent Guittot wrote:
+> Describe the PCIe host controller available on the S32G platforms.
 
-Both of those are subsets of GFP_KERNEL, so I felt it was redundant to
-add.
+> +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
+> +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
+> +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
+> +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
+> +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
+> +                  <0x5f 0xffffe000 0x0 0x00002000>;  /* config space */
+
+Fix comment alignment.
 
