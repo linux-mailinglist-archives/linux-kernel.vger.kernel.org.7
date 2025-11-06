@@ -1,154 +1,105 @@
-Return-Path: <linux-kernel+bounces-888458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93037C3AE04
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:25:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A81C3AE07
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 13:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB38464600
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:19:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02B9A4E862F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 12:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDDE32AAAA;
-	Thu,  6 Nov 2025 12:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCAB32AAAB;
+	Thu,  6 Nov 2025 12:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mT6it3kh"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1k6kuZ9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2258B32721F;
-	Thu,  6 Nov 2025 12:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679C030E0C0;
+	Thu,  6 Nov 2025 12:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762431544; cv=none; b=g57aoGq9jrZh4BKv30Vpdxq7i1oNvzz5S8vzSGpiDSG44LOmWCbmZEQNN8wCaJRZuSpW0qp1FSQK4m3A/wCLnyh4OiePzlhdU/Rw/SV009XpdklSMND8pPr5TUgSr+17M1r0UT3ZRrKt6Px/fubJiivFhdBYjIkXdzmh9vg1p6Q=
+	t=1762431652; cv=none; b=bEdXof+0M4nHgw7RgGMcfqCUzHIzvpr9u8jsIYiIKRymfD2G7F+O5cHz4wFGkH6gOu0ER8tZtlWNmcIMocbbv412p1jd18bTCHJmKuTuy0gtxfXcs0k2ZZZKzenBVDlk0BVr5m17QI4iAV4vRORnLi30kq6UzlGuheX73qK7bRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762431544; c=relaxed/simple;
-	bh=3Qo9p504br6E8O5em7NlOnt/ylpumOzEneV4yrVVLjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X4m0K8xwmx9lg+nGSIF462Bs4ACYLPYpEYIHMVqf8xE14oFT9M+lFMLE5pBSr3Q0eN4x6vP9O3rhSQLOKWNixAnSyKyuGBRp4yzUyTNoVjtGHH8mLbDc4Is+beRy9xGWHjCot3DHFhVXoPmL7ic3QnpAVsoVyu7jhYKgA0fD/NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mT6it3kh; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 3C8081A18F6;
-	Thu,  6 Nov 2025 12:18:59 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0A1AC6068C;
-	Thu,  6 Nov 2025 12:18:59 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9A68D11850E1E;
-	Thu,  6 Nov 2025 13:18:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762431538; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=cD98W/fulZnWO52DCEQXKVY0Q7L/B0fTZwxSO/g6/ks=;
-	b=mT6it3khmPmj+SW8y4XCmEenlxW8ADsCI7pdOqSWhWAlsp0KWUGISl0tLEHO+vaawiAIKL
-	Bx62OsSZi/AuZVCcFu+6uUNe/FRTCHvtJeGXqiq+4x3YamxHy+UqgNINUhvdvNUlquUD+6
-	Na8TYVzaKGqE46qDZScRXBHP85QZvzfUbiRAhe5ZCuiNn9HT/sAhmahYkbuRGnRvahhx/L
-	ql1rwOqpha22E3yIbwMzm6UjJC0AjuVVsRrCSWu8BPMczCD6UxTtxMHWAHrpYG2uIGVXe6
-	HytfFbuDzAUVTGpQERS4mbVIt4EEzgT8kYAOVR12twTP1hbOm+vdIaDPcDBBGA==
-Date: Thu, 6 Nov 2025 13:18:54 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mbrugger@suse.com,
- guillaume.gardet@arm.com, tiwai@suse.com, Lizhi Hou <lizhi.hou@amd.com>
-Subject: Re: [PATCH v2] PCI: of: Downgrade error message on missing of_root
- node
-Message-ID: <20251106131854.0f0aa8b7@bootlin.com>
-In-Reply-To: <aQyApy8lcadd-1se@apocalypse>
-References: <955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com>
-	<20251106002345.GA1934302@bhelgaas>
-	<aQyApy8lcadd-1se@apocalypse>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1762431652; c=relaxed/simple;
+	bh=Ehdwcafh5mxaP5S+PGqr3JnEJUeuqwfYf/112kGr5Q0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tZ2fAE9q5VPISi3YmzfW5fJg1q8uw0MeR+2odW85Un44ImwMUYAz1zZeeHidhReOMKcplQYvGX0XVwNt0zyp1JpdvQyRgMB5gy82vrZRQEAIakA8f7YDCz6yEyjzfiHKuS/1BPC08D4+lOM2opI3myUm5Qm5+fcAEymugwXRhHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1k6kuZ9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762431650; x=1793967650;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=Ehdwcafh5mxaP5S+PGqr3JnEJUeuqwfYf/112kGr5Q0=;
+  b=T1k6kuZ9r51L29SxbnvCBwdIhDXYxyTTx/D7454de9Ktp9VF1mKorLGX
+   uMrD49P0aLWmOQe+qHxtKLul75DHF8HGb+GFD2DzqB28ycDu/Gf2tTNHi
+   z9HMbLDkoSdYJVAub8t2yl9zOLMashNMUWeNan/WFRnTixfAodV0JWSNC
+   uIyv9xlKIOZoBGAsBKGnaZNztVFEaoVTFc4yXo74ZyOZYaIau4e5GjQH0
+   S1ooIJkKs0W1/gpkE+4LvGdKd2C97dARi3+4RPhp/MYn2I5B5ufxfBU86
+   vfA2kID/ffLn3SF9jODPAnBpSDa/KiWWdMVPlpCUGqvI2vSr3BtjLdqfy
+   Q==;
+X-CSE-ConnectionGUID: mGHFoaJWQY2rMabnC79w/g==
+X-CSE-MsgGUID: we9Nst1/Qk2QMsP5wD3VBA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75916820"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="75916820"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 04:20:50 -0800
+X-CSE-ConnectionGUID: vTVVDgZmRka0ymoFsYVvUg==
+X-CSE-MsgGUID: 0eaqcrS/QMa7KbsJMeQKWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="187688589"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.187])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 04:20:48 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Marcos Vega <marcosmola2@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251106115017.77782-1-marcosmola2@gmail.com>
+References: <20251106115017.77782-1-marcosmola2@gmail.com>
+Subject: Re: [PATCH] platform/x86: hp-wmi: Add Omen MAX 16-ah0xx fan
+ support and thermal profile
+Message-Id: <176243164304.2946.1841460166696016305.b4-ty@linux.intel.com>
+Date: Thu, 06 Nov 2025 14:20:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hi, Andrea, Bjorn,
+On Thu, 06 Nov 2025 12:50:17 +0100, Marcos Vega wrote:
 
-On Thu, 6 Nov 2025 12:04:07 +0100
-Andrea della Porta <andrea.porta@suse.com> wrote:
-
-> [+cc Herve]
+> New HP Omen laptops follow the same WMI thermal profile as Victus 16-r1000 and 16-s1000.
 > 
-> Hi Bjorn,
+> Add DMI board 8D41 to omen_thermal_profile_boards as well as victus_s_thermal_profile_boards.
 > 
-> On 18:23 Wed 05 Nov     , Bjorn Helgaas wrote:
-> > [+cc Lizhi]
-> > 
-> > On Wed, Nov 05, 2025 at 07:33:40PM +0100, Andrea della Porta wrote:  
-> > > When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error message
-> > > is generated if no 'of_root' node is defined.
-> > > 
-> > > On DT-based systems, this cannot happen as a root DT node is
-> > > always present. On ACPI-based systems, this is not a true error
-> > > because a DT is not used.
-> > > 
-> > > Downgrade the pr_err() to pr_info() and reword the message text
-> > > to be less context specific.  
-> > 
-> > of_pci_make_host_bridge_node() is called in the very generic
-> > pci_register_host_bridge() path.  Does that mean every boot of a
-> > kernel with CONFIG_PCI_DYNAMIC_OF_NODES on a non-DT system will see
-> > this message?  
+> Tested on: HP Omen MAX 16-ah0xx (8D41)
+> Result:
+> * RPMs can be read
+> * echo 0 | sudo tee /sys/devices/platform/hp-wmi/hwmon/*/pwm1_enable allows the fans to run on max RPM.
 > 
-> This is the case, indeed. That's why downgrading to info seems sensible.
-> 
-> > 
-> > This message seems like something that will generate user questions.
-> > Or is this really an error, and we were supposed to have created
-> > of_root somewhere but it failed?  If so, I would expect a message
-> > where the of_root creation failed.  
-> 
-> Not really an error per se: on ACPI system we usually don't have DT, so
-> this message just warns you that there will be no pci nodes created on it.
-> Which, again, should be of no importance on ACPI.
-
-I my last understanding, all architecture (even x86) have the DT root node
-set. This node is empty on architectures that don't use DT to describe
-hardware at boot (ACPI for instance).
-
-This DT node is needed for PCI board that will be described by a DT overlay.
-LAN966x for instance.
-
-On v6.18-rc1 kernel, I successfully used my LAN966x board on a ACPI system.
-This means that of_root DT node was present on my system.
-
-> 
-> The only scenario in which this message is actually an error would be on
-> ACPI system that use DT as a complement to make runtime overlay work,
-
-It is an error also if you use a PCI board that needs PCI DT nodes
-(CONFIG_PCI_DYNAMIC_OF_NODES) Lan966x for instance.
-
-> i.e. the overlay approach for RP1 on RPi5 with ACPI fw. AFAIK this fw is
-> more a PoC that something really widespread and currntly the overlay
-> approach is in stand-by anyway (meaning no one will use it unless some
-> major changes will be made to make it work). But there may be other
-> situations in which this scenario could arise, I'm thinking about Bootlin's
-> LAN966x driver which also uses runtime overlay to describe thw hw.
-> On ACPI system the root DT node is not created because unflatten_device_tree()
-> is not called.
-
-I am not so sure.
-My LAN966x board is working on a x86 ACPI system.
-
-I think, that if you don't want the kernel log, just set 
-  CONFIG_PCI_DYNAMIC_OF_NODES = n
-
-With CONFIG_PCI_DYNAMIC_OF_NODES = y, we need to create some nodes
-and if cannot succeed to attach them to a DT tree, it is an error.
-IMHO, pr_err() in that case is legit.
+> [...]
 
 
-Best regards,
-Hervé
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86: hp-wmi: Add Omen MAX 16-ah0xx fan support and thermal profile
+      commit: 836a26660b97c62b1ed734e38a78bd20949dfa22
+
+--
+ i.
+
 
