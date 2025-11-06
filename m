@@ -1,180 +1,77 @@
-Return-Path: <linux-kernel+bounces-887546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298ADC387E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:35:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40689C387C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:33:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C8074F3A94
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:35:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20B324E344C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2EC1B4F1F;
-	Thu,  6 Nov 2025 00:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJdfXsBf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E2652F88;
+	Thu,  6 Nov 2025 00:33:34 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B996C16D9C2;
-	Thu,  6 Nov 2025 00:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338BE20ED
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762389292; cv=none; b=lEB1akVzS3TtgVvaw2EtnNikS5cSdlQIYdoUFnqt5YW0CWV7G8xxN/Y/t0VEFQ7TNhzjo3x99hEZ3xlRc9iBY5QHnbzfdq6Ef4gpr49oMWgtHCPzPDM1bofGCwt/x52HAA+DxnaoWwstX8IX7om0iTE0Za0EfYSPP9P1KhXcwjs=
+	t=1762389213; cv=none; b=eXCWBWQrT++ZVYuKWR6xWeQHbfZ3DR1RA3RVOyiQDH1n6+I3DSmnvv6Crn6gj9ZAbS2HJCXOR1aLu9dD9JIlTR3qdtD7U/xPGd/sUUK5BN+S7IfuHmjSzhyGZUXwYsRjShV9k07AfIKqTaOoqzFo74zkZ9OZbXbbDjVRVsVTBdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762389292; c=relaxed/simple;
-	bh=Ql+H8A5+GMaJkE7Zpv0T+FJ4Id1te48MhyUNdLkw2bg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=aGxySezGCLFrjRdXrKqewujuk5E3W8xMTGX0buQRGCUZekmGHLdSK4fz1B3mzs4EaaRqkqIVQ3xXvUpooD4vsJge+CnZnTHDpiRfWcfznEJwkAKK31+DMx9UA00XLT1nEVid4x5nEcCWFHUD9HWzG/L5T1NEc9p+3iT9O72CmlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJdfXsBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A231C116D0;
-	Thu,  6 Nov 2025 00:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762389292;
-	bh=Ql+H8A5+GMaJkE7Zpv0T+FJ4Id1te48MhyUNdLkw2bg=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=XJdfXsBfMyWba9m8O6tTXKDOt+ytO0b+ClVo6ci4aPOsR402kL9boqh9dZrbQaUNu
-	 820+AaZ7WqAc97BCKM8rjOG6NburzUeFZ/NF9oQiAN0Ukfma3jsGERnEk+4eP2JCyF
-	 Lj9HEjT4EumBTV+KICYB5lRuAjAYNsVXHLrOfpMjgIcSeZS8AgtI90RqJIbDfg6Z10
-	 hFmayU4NLGA6uttJj250xPjwsklTp/S829OnWhlKDWNq6rOBRar8s/rhjpqax7jKMs
-	 vMir1Yi8mbLTiJnS9QrM8NTjY1ez1g/OdRuQpPgYj13PejDBf6ns54gxbfY2ciARPv
-	 RyTg13yMxw1YQ==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1vGnxu-000000019J6-0744;
-	Wed, 05 Nov 2025 19:35:02 -0500
-Message-ID: <20251106003501.890298562@kernel.org>
-User-Agent: quilt/0.68
-Date: Wed, 05 Nov 2025 19:33:26 -0500
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 2/2] tracing: Use switch statement instead of ifs in set_tracer_flag()
-References: <20251106003324.964761749@kernel.org>
+	s=arc-20240116; t=1762389213; c=relaxed/simple;
+	bh=Ieq1ck0qvm3ZmRsGLSRgTwo5ZTOdLuFi0WGVB/YIMwQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=q8kif82cck2QT0bWdA2Kl/EC3ueJ7Oer7f3nS/wFLTZ8dODTgWoDmdRF4lzX/g8AK/5pEPxp6/J3p6lQfD3pe8E0ir0Gg6/p+IEoS9k+EZlvO220CnYQKA8vySmDtjqwY6Wv71g2fpM1EO4TG8aEyib2NImh4dkXQKD9F8kEpW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4334affe616so4481495ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:33:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762389211; x=1762994011;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OV9FnEIMn3tAb3e2Fleb7GR+066UTYm6BepX40jlcc8=;
+        b=mlO+MKEMeqKBCq9jV3sq+Lm4mvXxaiB9DFq1V8OeATqRQA6i7N9yWvzgt4Y/SIEdNQ
+         kaE6PkgBnebTRzGVHhTDv6i1idyy+LTYNFNuhSfFFjhKPxH4CkYZ7AGTFz53yiwhLp9k
+         rIA9EN+EY7OD+dOJZKpF3SD2dQnPUAc8yo7DYbIljhD2s0Qzl455kbNA2mRCSWnM9e0N
+         lLJnwAAryhG86c5uu9Ep/KMcLBzblBa9ETsR2MUqNVERPRfG3Q9eSeWu1kBJCKeaHBqw
+         5YB8RXl4CGafgo8ASUe//eyJjNeclNnoZU6RHugjV7zsqDhfPdTohJKrIlJTfldG5yv7
+         a69g==
+X-Gm-Message-State: AOJu0Yz/FMhgaxzeM/5KXT7mosS/AcKelIW/TlBeMRuxXURoP03D5otJ
+	tL3TSLes/da7lSP+FgMdhXhP4F6/c1Qrgl8cgu2dirAT0s3FcuISM7qBIKMa9EbHoXoI6cV1mZX
+	ZQKNxnc00Lbx17hkwLqzV5Ej1B2FnIJN6o62kqko7XKBje4tRtxFD15Qa4wI=
+X-Google-Smtp-Source: AGHT+IGfg7N2yklpmECIrg6TZ/0/3W4u8pmZJyGNAYsJAQYD8N1RjW2xPvRJNUcJK/fx4dLgfkx2r4wVlQSBdJkhHUtposAIFobl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Received: by 2002:a05:6e02:1789:b0:433:31cf:2c2 with SMTP id
+ e9e14a558f8ab-433407905f3mr82075345ab.13.1762389211378; Wed, 05 Nov 2025
+ 16:33:31 -0800 (PST)
+Date: Wed, 05 Nov 2025 16:33:31 -0800
+In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690becdb.050a0220.baf87.007b.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Steven Rostedt <rostedt@goodmis.org>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-The "mask" passed in to set_trace_flag() has a single bit set. The
-function then checks if the mask is equal to one of the option masks and
-performs the appropriate function associated to that option.
+***
 
-Instead of having a bunch of "if ()" statement, use a "switch ()"
-statement instead to make it cleaner and a bit more optimal.
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+Author: yanjun.zhu@linux.dev
 
-No function changes.
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 38 +++++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 07bd10808277..8460bec9f263 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5251,11 +5251,13 @@ int trace_keep_overwrite(struct tracer *tracer, u64 mask, int set)
- 
- int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- {
--	if ((mask == TRACE_ITER(RECORD_TGID)) ||
--	    (mask == TRACE_ITER(RECORD_CMD)) ||
--	    (mask == TRACE_ITER(TRACE_PRINTK)) ||
--	    (mask == TRACE_ITER(COPY_MARKER)))
-+	switch (mask) {
-+	case TRACE_ITER(RECORD_TGID):
-+	case TRACE_ITER(RECORD_CMD):
-+	case TRACE_ITER(TRACE_PRINTK):
-+	case TRACE_ITER(COPY_MARKER):
- 		lockdep_assert_held(&event_mutex);
-+	}
- 
- 	/* do nothing if flag is already set */
- 	if (!!(tr->trace_flags & mask) == !!enabled)
-@@ -5266,7 +5268,8 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 		if (tr->current_trace->flag_changed(tr, mask, !!enabled))
- 			return -EINVAL;
- 
--	if (mask == TRACE_ITER(TRACE_PRINTK)) {
-+	switch (mask) {
-+	case TRACE_ITER(TRACE_PRINTK):
- 		if (enabled) {
- 			update_printk_trace(tr);
- 		} else {
-@@ -5283,9 +5286,9 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 			if (printk_trace == tr)
- 				update_printk_trace(&global_trace);
- 		}
--	}
-+		break;
- 
--	if (mask == TRACE_ITER(COPY_MARKER)) {
-+	case TRACE_ITER(COPY_MARKER):
- 		update_marker_trace(tr, enabled);
- 		/* update_marker_trace updates the tr->trace_flags */
- 		return 0;
-@@ -5296,10 +5299,12 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 	else
- 		tr->trace_flags &= ~mask;
- 
--	if (mask == TRACE_ITER(RECORD_CMD))
-+	switch (mask) {
-+	case TRACE_ITER(RECORD_CMD):
- 		trace_event_enable_cmd_record(enabled);
-+		break;
- 
--	if (mask == TRACE_ITER(RECORD_TGID)) {
-+	case TRACE_ITER(RECORD_TGID):
- 
- 		if (trace_alloc_tgid_map() < 0) {
- 			tr->trace_flags &= ~TRACE_ITER(RECORD_TGID);
-@@ -5307,24 +5312,27 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
- 		}
- 
- 		trace_event_enable_tgid_record(enabled);
--	}
-+		break;
- 
--	if (mask == TRACE_ITER(EVENT_FORK))
-+	case TRACE_ITER(EVENT_FORK):
- 		trace_event_follow_fork(tr, enabled);
-+		break;
- 
--	if (mask == TRACE_ITER(FUNC_FORK))
-+	case TRACE_ITER(FUNC_FORK):
- 		ftrace_pid_follow_fork(tr, enabled);
-+		break;
- 
--	if (mask == TRACE_ITER(OVERWRITE)) {
-+	case TRACE_ITER(OVERWRITE):
- 		ring_buffer_change_overwrite(tr->array_buffer.buffer, enabled);
- #ifdef CONFIG_TRACER_MAX_TRACE
- 		ring_buffer_change_overwrite(tr->max_buffer.buffer, enabled);
- #endif
--	}
-+		break;
- 
--	if (mask == TRACE_ITER(PRINTK)) {
-+	case TRACE_ITER(PRINTK):
- 		trace_printk_start_stop_comm(enabled);
- 		trace_printk_control(enabled);
-+		break;
- 	}
- 
- 	return 0;
--- 
-2.51.0
-
-
+#syz test: https://github.com/zhuyj/linux.git 
+v6.17_fix_gid_table_release_one
 
