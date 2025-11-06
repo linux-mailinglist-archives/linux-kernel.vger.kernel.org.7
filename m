@@ -1,124 +1,71 @@
-Return-Path: <linux-kernel+bounces-888649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9CDC3B8E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:05:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E765AC3B868
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF45162095C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:52:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18C67504D16
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 13:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38EB332EDA;
-	Thu,  6 Nov 2025 13:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N7QrAgMk"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023AD238150;
+	Thu,  6 Nov 2025 13:52:26 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D116303CB4;
-	Thu,  6 Nov 2025 13:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725C9303CB4;
+	Thu,  6 Nov 2025 13:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762437132; cv=none; b=aeWIJwtD+PMGSzHhe9N69Ba7cxX8FgfkqsCUwJJw5RVYaRfjieGxfJJ/jB6j5oBAXW4tB/f0CiwxSsT+DatQgY8z8leK6Cui/CGCKnK2IA2bJWYmfX4wDodo9sB7ab6RIDy+UrYej5ckx8FQI6bOvRwbsH13SHol6kH/cAOrThI=
+	t=1762437145; cv=none; b=toOJifeStrlwgFOPtljAd7DR7aWJkcz20IEhcoGi8TMnTACFtrN6OlY5EMZaMdILJ7skJkTr03+ksC4Jk1pKF+VTfsubiwp/ihrYdogW9hP04F19WeQ7BnUXYlX54/PoaS7tEhhvwsVW4r9dnta9BKtmB2bV3f1ZpP5GJj54kIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762437132; c=relaxed/simple;
-	bh=53bXnWtrnTsPldREUa+Lsxot9SVqLVmn/rFIO8nhXr4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o72/aVWVVM0Ei4/Z59OreZCooUK0+gs2adAEYMUcUfk2IrVcCfrmC/F6H3bZvQxG1oDxfdceYTI1rxCpC2LGPQLY2EUmA+QhAbjLdG7OBInHHeNQAfeCynRtddcPrn71XRki3kNvi9ATIoEE5epboTAZGZlsfuig4GWe+Z/0nB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N7QrAgMk; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id A27FA1A18E3;
-	Thu,  6 Nov 2025 13:52:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6C0A46068C;
-	Thu,  6 Nov 2025 13:52:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3E6E1118507C9;
-	Thu,  6 Nov 2025 14:51:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762437123; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=jlA1rDTx6Lva7xxbNDSbnwmuIRj6XrFx8dhfkF20V3Y=;
-	b=N7QrAgMkWFI6HQA3UOPNdJgTNfngqMabJGVtz4L+Z73P+g7Zy9UbJTU+6nw0C9k9RuS7d4
-	0t10bFhDoUFVEGJ+Dg0SVEPlweQKe2PAXJr8Jz4p0vCtadpzf6O74ZnS7GqYOlZvfDaY6I
-	k8zAULnGAfPT+lFjrdeN7WGH5nH4+yQEOKBvD68jGpg820Mlfz+H4dZozShrI33OjfvP+U
-	M+bXMIHVwX6aB2riVG3gPYDkVh8w03xBzHKb5BrG3VlwReQesR+l62n1eXPZUVCqRHWdIc
-	lXqhB86i08GEcs4OdPzXCoemI/MVE/PUPlPSH2kxSDqNCyBJvDcIaP6LQyRDCw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Yury Norov <yury.norov@gmail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Nicolas
- Ferre <nicolas.ferre@microchip.com>,  Alexandre Belloni
- <alexandre.belloni@bootlin.com>,  Claudiu Beznea
- <claudiu.beznea@tuxon.dev>,  Giovanni Cabiddu
- <giovanni.cabiddu@intel.com>,  Herbert Xu <herbert@gondor.apana.org.au>,
-  David Miller <davem@davemloft.net>,  Linus Walleij
- <linus.walleij@linaro.org>,  Bartosz Golaszewski <brgl@bgdev.pl>,  Joel
- Stanley <joel@jms.id.au>,  Andrew Jeffery <andrew@codeconstruct.com.au>,
-  Crt Mori <cmo@melexis.com>,  Jonathan Cameron <jic23@kernel.org>,
-  Lars-Peter Clausen <lars@metafoo.de>,  Jacky Huang
- <ychuang3@nuvoton.com>,  Shan-Chun Hung <schung@nuvoton.com>,  Rasmus
- Villemoes <linux@rasmusvillemoes.dk>,  Jaroslav Kysela <perex@perex.cz>,
-  Takashi Iwai <tiwai@suse.com>,  Johannes Berg
- <johannes@sipsolutions.net>,  Jakub Kicinski <kuba@kernel.org>,  Alex
- Elder <elder@ieee.org>,  David Laight <david.laight.linux@gmail.com>,
-  Vincent Mailhol <mailhol.vincent@wanadoo.fr>,  Jason Baron
- <jbaron@akamai.com>,  Borislav Petkov <bp@alien8.de>,  Tony Luck
- <tony.luck@intel.com>,  Michael Hennerich <Michael.Hennerich@analog.com>,
-  Kim Seer Paller <kimseer.paller@analog.com>,  David Lechner
- <dlechner@baylibre.com>,  Nuno =?utf-8?Q?S=C3=A1?= <nuno.sa@analog.com>,
-  Andy Shevchenko
- <andy@kernel.org>,  Richard Genoud <richard.genoud@bootlin.com>,  Cosmin
- Tanislav <demonsingur@gmail.com>,  Biju Das <biju.das.jz@bp.renesas.com>,
-  Jianping Shen <Jianping.Shen@de.bosch.com>,  Nathan Chancellor
- <nathan@kernel.org>,  Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-clk@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-renesas-soc@vger.kernel.org,
-  linux-crypto@vger.kernel.org,  linux-edac@vger.kernel.org,
-  qat-linux@intel.com,  linux-gpio@vger.kernel.org,
-  linux-aspeed@lists.ozlabs.org,  linux-iio@vger.kernel.org,
-  linux-sound@vger.kernel.org,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v6 24/26] mtd: rawnand: sunxi: Convert to common
- field_{get,prep}() helpers
-In-Reply-To: <e1c879967328d8c1098aaa014845c2f11874d7c7.1762435376.git.geert+renesas@glider.be>
-	(Geert Uytterhoeven's message of "Thu, 6 Nov 2025 14:34:12 +0100")
-References: <cover.1762435376.git.geert+renesas@glider.be>
-	<e1c879967328d8c1098aaa014845c2f11874d7c7.1762435376.git.geert+renesas@glider.be>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Thu, 06 Nov 2025 14:51:43 +0100
-Message-ID: <87frar8e1c.fsf@bootlin.com>
+	s=arc-20240116; t=1762437145; c=relaxed/simple;
+	bh=oWDHkFTVXZZsXOi4gtkmtUtQVoQsLeLNoQFUWNDUZ5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WT7a7Ex/RU258HuaI5hQs34F1TFv57LL/IcNPGeZzGBwdxJDvoRvgcQo2tm268W+6qXL1kiNLsJfNDCcipC/gPZ9n7d3hRt9A4p5ZUHfGpQLgCYlHBzAnL6QRNAlTtYCYTngY8zg86N72ZrUMpEy8cndDq/vCOxScOratXeTPTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 13794227A87; Thu,  6 Nov 2025 14:52:13 +0100 (CET)
+Date: Thu, 6 Nov 2025 14:52:12 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <20251106135212.GA10477@lst.de>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hello Geert,
+On Thu, Nov 06, 2025 at 02:48:12PM +0100, Florian Weimer wrote:
+> * Hans Holmberg:
+> 
+> > We don't support preallocations for CoW inodes and we currently fail
+> > with -EOPNOTSUPP, but this causes an issue for users of glibc's
+> > posix_fallocate[1]. If fallocate fails, posix_fallocate falls back on
+> > writing actual data into the range to try to allocate blocks that way.
+> > That does not actually gurantee anything for CoW inodes however as we
+> > write out of place.
+> 
+> Why doesn't fallocate trigger the copy instead?  Isn't this what the
+> user is requesting?
 
-On 06/11/2025 at 14:34:12 +01, Geert Uytterhoeven <geert+renesas@glider.be>=
- wrote:
+What copy?
 
-> Drop the driver-specific field_get() and field_prep() macros, in favor
-> of the globally available variants from <linux/bitfield.h>.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v6:
->   - New.
-
-Thanks for preemptively handling this case!
-
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thansk,
-Miqu=C3=A8l
 
