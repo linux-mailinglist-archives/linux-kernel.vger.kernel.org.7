@@ -1,294 +1,97 @@
-Return-Path: <linux-kernel+bounces-889054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938FCC3C90A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:48:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6063C3C9C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4B1188B04B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550843AB49F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA67E2C15B4;
-	Thu,  6 Nov 2025 16:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ADB2C237E;
+	Thu,  6 Nov 2025 16:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UuFdifao"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPAldE4H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BCA2BE7C0
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A0E19D07E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447611; cv=none; b=R6ggVY5Cy7VSYRaBYZMfdxXF2vgMEC50KEFnE14m/0is4NaN96oYuOsqOfU4GNV/QfpRIxn+V8hh8MsUoMC7HbGxQ6+4mCbhYChZJwSVjLohouAawC5WcJb+7py3DqXXNrrsNgGh86RkESmqjhu3LkG0RXtO4nW8swSnRnD42ek=
+	t=1762447699; cv=none; b=Se0kK/k8yOvz/U5iaKeUFqJE8YoCjcq68xAI9mdbOmgRSg+0nxlPL3EgtMf49toSa9leD2F7yuus4I8/j4/ZEq9mpv2uqGvG3QmrJD88THTJo2BHEKGCmZ59buVmrxlg+SDqm99ysu38qp7B+X0zYlF6Up9U38U6L/1kr9uQj5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447611; c=relaxed/simple;
-	bh=VtfB1KUcFL0xMOsOi2+T3R/0Iq6++CHZOUryBlQUghc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nFEMQcynhtkLwhaNA79k7YoAk3oRPkQDeu8qY+gJQXy31CZrNtRsvfx0WRMgRL5ORvcNlX3W61SdLcoz3AXhMIir6GoTfbpIKslYtl/lIVmXI1QjQ2mJpalYq26dyanu6noRZRmFm493JHupFZMDbp97AEZi48IYqwOYYt/7SfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UuFdifao; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-429b9b6ce96so911013f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:46:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762447607; x=1763052407; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F2CGjwOEf268xK6EpSqBlS6x+60lB39zWMEUAhOSh0M=;
-        b=UuFdifaoEIXTXqvE9bfQebm470pxnj/ue8rAwFfWl9zN8wvkn95xP2EcRs0OImi0Q5
-         q9fXUrCPhda1bwQD593uoNytMKJ0gyunJy7/BuFsLO7uwi7QC2588xFN0bASjWKxS6wZ
-         NBtVZrzPKhp0Fu5cG7hUdvS9izyWadJ99LhBpg/0oVFeaUMjNYVzDc4pLHq4t6xf/RCn
-         mtAVWXimGIyR9Dp0K+5uulT/Tjln84hix3DoK89Dihjj+5VqmTykMLS4l5iqaIf7fpgv
-         MLUg5cvwwfHwmX9Ix2X4GQamM66M3DIy4NtpUgsxY9SRUT/Kg5K1CBfhx+dUO3vaykBR
-         MjVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762447607; x=1763052407;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F2CGjwOEf268xK6EpSqBlS6x+60lB39zWMEUAhOSh0M=;
-        b=nFjRwdDlYC7CmwrzIrkw70BIE22ngGX62AoZ78958KD5pVvgVmaXJGy+3irrZOA1tW
-         5Yf0PWBikvHQgfb+CRpRLBosczXztdtAfb80mn3ANs1POreZzjQGE/M7z97IAaWhHQkd
-         PJpXjZtfx0JPMpn75MN1Q+A5dnSMe3CKwkODlbJlXj4MXWFadzyWP34qMd210kU0mIlP
-         7BQ+nLtliPwwU8nO0PdA+cFKE74lSb6znftxXC7o0t7mjaR5b8OaLgZL8EHEGDEIrPk8
-         wB/HctDmLtUTWlgb3OcxIh58/bHbf0pidaWXJt6CQU8BocrlOrVwPfcDBCEoU4H8kRu4
-         9vyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHIkKAuu3gx4OJ/pfE5VmxXHwVO1iltJOQTC1w/ml1shh6xJUFismyJxjFoJ2Q7NcB0d+RNM9liZxj6z0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx40c4U75YNPhIWIXOwz7rRHgyUXdDGBIeujyQumXDhRoaeGY4U
-	+vxhma5ZNBpQ+1Z/4hmznaDeI3tpXefrmwGsZYBtbwzzxPB1+GYHnSuOxeKXfTauUv4=
-X-Gm-Gg: ASbGnctD12aH8Avn8bzi3eddwuDIqbn/AGsJbaYZaFeamf67lO0jx9yu2ly3CLHMOxK
-	v1Ezfp91ksU0nvqci2dRRyJ5PxmPLvWqQtUjWq0dwZrsWnhy67Wt95or1L2Cv9ec28UJkh5H5/v
-	j01I+RJOQLpWl5Xd0KsJsfwDJTrohNOdFmoNEooLaOhPLezwMTw8/kfRbgxl2Mus924deB2vc/t
-	A0vX+gMkhvFlLFT1W7qYOwywNlkHC+m7+s0ZkOhzuhJ4tP307rGb/d7XLDyBh9c8SHF/mCLyJy0
-	Abjc8SVKTkb+mnz+ZkS4NC05svP4JnSzEIOxzgDD1scBFPwJQnUS0p71F5G/kVjbe9rBOTyqzOW
-	fDh1tjkYEb9g+Xqov6Y85+cf6chyHioP8kkp5RT84Ji8ENc9z8X6VXjm5x4BwetAC4JHLsMUh0y
-	sx//jtshYR4ugdU0xbmYRwR6m5++b1Zcg=
-X-Google-Smtp-Source: AGHT+IEtwk06j8D/enrqc1dAKzkU0iQg4RByjCkBxEdT7ejlbyuD/EIdmlvPWrYAon2QhBk/29tStg==
-X-Received: by 2002:a5d:5f87:0:b0:429:bc93:9d8a with SMTP id ffacd0b85a97d-429e3307958mr6910042f8f.37.1762447607101;
-        Thu, 06 Nov 2025 08:46:47 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63e131sm90856f8f.20.2025.11.06.08.46.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:46:46 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 06 Nov 2025 17:46:45 +0100
-Subject: [PATCH RFC RFT] interconnect: qcom: implement get_bw with
- rpmh_read
+	s=arc-20240116; t=1762447699; c=relaxed/simple;
+	bh=C5wiFf0HtzjNwELAgnIcKzS2SjngF5LO34y+NigSrww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W03OudJwvVsn6pnnciWHZ8hZVaoPJzeukv7YcrfG4DOTA82xUBz4ZnMFZFQT519urOg1I7iH9j9+R5CvWrtqp7RfEWjc/+t4PQVx4jdeoXcdAf3DeDZOmHNRwp3UULZol398C7XSDUao8n498dvzNnQFilgpVeHozk9KeOCXPNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPAldE4H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EC5AC16AAE;
+	Thu,  6 Nov 2025 16:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762447699;
+	bh=C5wiFf0HtzjNwELAgnIcKzS2SjngF5LO34y+NigSrww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IPAldE4Hi3LS6gkbwLjpFilfSJwWbAwjhaM2cdjdUbsy/R10VpiECYSdy2UCAr8A/
+	 2sEkllP8ZshVididPe4K/fi8ryYZlkyKFtczyH81Z3NwP2NKW3oV+NCOyadqpECMmK
+	 5BZBAqOls43gp9jFSH/f/q9nJV/WlghIQdLhR/uQjR9Gs4wMk7XqP9+Wa8e/rZawoH
+	 eAjacCD9Jai5uhg8rS4FGU32YHHsPY2eKfx4ugYYMH3QF6RViRaleGCnJCQqWd9Jid
+	 rL+2ggNqcjVto5yqq7KlXSYo7gv1TCd9r2ImAuqyP850YpGjS/ZKwUr0e6J/pWv8HQ
+	 3lY4pYJY9rBxQ==
+Date: Thu, 6 Nov 2025 16:48:14 +0000
+From: Lee Jones <lee@kernel.org>
+To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH 06/21] mfd: prepare to generalize BITS() macro
+Message-ID: <20251106164814.GA1949330@google.com>
+References: <20251025162858.305236-1-yury.norov@gmail.com>
+ <20251025162858.305236-7-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-topic-sm8x50-icc-read-rpmh-v1-1-d03a2e5ca5f7@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPTQDGkC/x3MMQqEMBBA0avI1A4kwahsK3gA2U62iHFcp1DDZ
- BFBvPtGy/eLf0IkYYrwyk4Q2jnytiboPAM/u/VLyGMyGGWs1qrE3xbYY1zqwypk71HIjShhmZE
- GV5TaFdZQBWkQhCY+nnkPXdvcrWvf8LmuPzt5XXd4AAAA
-X-Change-ID: 20251106-topic-sm8x50-icc-read-rpmh-eba461a452e7
-To: Georgi Djakov <djakov@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5545;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=VtfB1KUcFL0xMOsOi2+T3R/0Iq6++CHZOUryBlQUghc=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBpDND2tt6nZcw4CZUEUyupiX0UreTRwt5d96EDwFcD
- QDV+RbCJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaQzQ9gAKCRB33NvayMhJ0axID/
- 0Xgp1xS98+LLt5JkxiMa/1b0DsaA3DWKpVweXhtTmQruL3NMCPYIrW9nOVvJWbfB/KoP7E1/QHEbXJ
- B16LxSIGg8iUChhtFCQPuj+O0DIMZRlShnbcCrEev76M+cDfbCnJ9jUEI6wqgQR7mN0ZXELF6ukx6F
- Pn/ELrSEmHlAQTtx39p0+0BkEwJ7K0++JQOIeQuMNAE5bRXBW9gtUbtlh0NjWG07yQdiPqf+Wg6H7M
- 6i755lXU5j8CgohGYLrPkxhk0DfyqQaOSXwKKN0bBQAaCkRp0r35TjDCzk9oc3WSzpuDHe0V6DJj9L
- Tr9HLUBpXQSfTfHC4wHQiGhBIHOWtiitES4p4J8aWyRVGqu9WHLdf8pMjfPxAx1AR6My6JIN6CQU5T
- t1ISB9txK4v2NH8m+t/xrWzQCQBI7hzLLPTmf94y5dflqK6fDMlmd3R8Qp1At7IEy4/VaGToRzBAki
- xteMol9KILSalswzJ/Ot4IW+R4JXdgj/BYstuUkpqE49HoSIqQIwOBIstqPWvy/NAr3Qo2F7y/8dTv
- 3qbld4pOgDuW58vBMBASW7tfVZlONRXhML90gNAmZ+n0yyfPzM//yAq9W6Qe/QZaQSPcBKE8qp9IRl
- I42lFgVNbYMBso+Q7kUwbGrkM+7UZcfs7L2HNrIKgvdKq1UfW9pwO1KSotvA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251025162858.305236-7-yury.norov@gmail.com>
 
-Since we can actually read back the APPS rpmh interconnect
-BCM votes we can actually implement the get_bw() callback
-and provide a coherent average and peak bandwidth at probe time.
+On Sat, 25 Oct 2025, Yury Norov (NVIDIA) wrote:
 
-The benefits of that are:
-- keep disabled BCMs disabled
-- avoid voting unused BCMs to INT_MAX
+> In preparation for adding generic BITS() macro, add an #undef directive
+> for the existing BITS(). The following patches will drop it entirely.
+> 
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> ---
+>  drivers/mfd/db8500-prcmu-regs.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mfd/db8500-prcmu-regs.h b/drivers/mfd/db8500-prcmu-regs.h
+> index 75fd1069372c..25d2d5966211 100644
+> --- a/drivers/mfd/db8500-prcmu-regs.h
+> +++ b/drivers/mfd/db8500-prcmu-regs.h
+> @@ -12,6 +12,7 @@
+>  #ifndef __DB8500_PRCMU_REGS_H
+>  #define __DB8500_PRCMU_REGS_H
+>  
+> +#undef BITS
 
-If the interconnects are correctly described for a platform,
-all the required BCMs would be voted to the maximum bandwidth
-until sync_state is reached.
+Doesn't this get removed in 2 patches time?
 
-Since we only get the BCM vote, we need to redistribute
-the vote values to the associated nodes. The initial BCM
-votes are read back at probe time in order to be ready when
-the get_bw() is called when a node is added.
+>  #define BITS(_start, _end) ((BIT(_end) - BIT(_start)) + BIT(_end))
+>  
+>  #define PRCM_ACLK_MGT		(0x004)
+> -- 
+> 2.43.0
+> 
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
-Depends on:
-https://lore.kernel.org/all/20251022-add-rpmh-read-support-v2-2-5c7a8e4df601@oss.qualcomm.com/
----
- drivers/interconnect/qcom/bcm-voter.c | 36 +++++++++++++++++++++
- drivers/interconnect/qcom/bcm-voter.h |  2 ++
- drivers/interconnect/qcom/icc-rpmh.c  | 60 ++++++++++++++++++++++++++++++++++-
- 3 files changed, 97 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
-index a2d437a05a11..9014bf20adad 100644
---- a/drivers/interconnect/qcom/bcm-voter.c
-+++ b/drivers/interconnect/qcom/bcm-voter.c
-@@ -261,6 +261,42 @@ void qcom_icc_bcm_voter_add(struct bcm_voter *voter, struct qcom_icc_bcm *bcm)
- }
- EXPORT_SYMBOL_GPL(qcom_icc_bcm_voter_add);
- 
-+/**
-+ * qcom_icc_bcm_get_bw - get current bcm vote
-+ * @voter: voter used to query bcm
-+ * @bcm: bcm to get current vote from
-+ */
-+void qcom_icc_bcm_get_bw(struct bcm_voter *voter,
-+			 struct qcom_icc_bcm *bcm)
-+{
-+	struct tcs_cmd cmd = { .addr = bcm->addr };
-+	int ret, i;
-+	u64 x, y;
-+
-+	mutex_lock(&voter->lock);
-+
-+	rpmh_invalidate(voter->dev);
-+
-+	ret = rpmh_read(voter->dev, &cmd);
-+	if (ret) {
-+		pr_err("Error sending AMC RPMH requests (%d)\n", ret);
-+		goto out;
-+	}
-+
-+	x = FIELD_GET(BCM_TCS_CMD_VOTE_X_MASK, cmd.data);
-+	y = FIELD_GET(BCM_TCS_CMD_VOTE_Y_MASK, cmd.data);
-+
-+	/* For boot-up, fill the AMC vote in all buckets */
-+	for (i = 0; i < QCOM_ICC_NUM_BUCKETS; i++) {
-+		bcm->vote_x[i] = x;
-+		bcm->vote_y[i] = y;
-+	}
-+
-+out:
-+	mutex_unlock(&voter->lock);
-+}
-+EXPORT_SYMBOL_GPL(qcom_icc_bcm_get_bw);
-+
- /**
-  * qcom_icc_bcm_voter_commit - generates and commits tcs cmds based on bcms
-  * @voter: voter that needs flushing
-diff --git a/drivers/interconnect/qcom/bcm-voter.h b/drivers/interconnect/qcom/bcm-voter.h
-index b4d36e349f3c..338cdc16653d 100644
---- a/drivers/interconnect/qcom/bcm-voter.h
-+++ b/drivers/interconnect/qcom/bcm-voter.h
-@@ -13,6 +13,8 @@
- #include "icc-rpmh.h"
- 
- struct bcm_voter *of_bcm_voter_get(struct device *dev, const char *name);
-+void qcom_icc_bcm_get_bw(struct bcm_voter *voter,
-+			 struct qcom_icc_bcm *bcm);
- void qcom_icc_bcm_voter_add(struct bcm_voter *voter, struct qcom_icc_bcm *bcm);
- int qcom_icc_bcm_voter_commit(struct bcm_voter *voter);
- 
-diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
-index 001404e91041..202bbb565de0 100644
---- a/drivers/interconnect/qcom/icc-rpmh.c
-+++ b/drivers/interconnect/qcom/icc-rpmh.c
-@@ -136,6 +136,61 @@ int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- }
- EXPORT_SYMBOL_GPL(qcom_icc_set);
- 
-+static int qcom_icc_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
-+{
-+	struct qcom_icc_node *qn = node->data;
-+	u32 avg_max = 0;
-+	u32 peak_max = 0;
-+	u64 x, y;
-+	int i;
-+
-+	if (!qn->num_bcms) {
-+		*avg = INT_MAX;
-+		*peak = INT_MAX;
-+
-+		return 0;
-+	}
-+
-+	for (i = 0; i < qn->num_bcms; ++i) {
-+		struct qcom_icc_bcm *bcm = qn->bcms[i];
-+
-+		/* Use AMC vote for boot-up */
-+		x = bcm->vote_x[QCOM_ICC_BUCKET_AMC];
-+		y = bcm->vote_y[QCOM_ICC_BUCKET_AMC];
-+
-+		/* Consider enable mask and convert to INT_MAX */
-+		if (bcm->enable_mask) {
-+			if (x & bcm->enable_mask)
-+				avg_max = INT_MAX;
-+			if (y & bcm->enable_mask)
-+				peak_max = INT_MAX;
-+		} else {
-+			if (x) {
-+				x *= bcm->aux_data.unit;
-+				do_div(x, bcm->vote_scale);
-+				x *= qn->buswidth * qn->channels;
-+				do_div(x, bcm->aux_data.width);
-+
-+				avg_max = max(avg_max, x);
-+			}
-+
-+			if (y) {
-+				y *= bcm->aux_data.unit;
-+				do_div(y, bcm->vote_scale);
-+				y *= qn->buswidth;
-+				do_div(y, bcm->aux_data.width);
-+
-+				peak_max = max(peak_max, y);
-+			}
-+		}
-+	}
-+
-+	*avg = avg_max;
-+	*peak = peak_max;
-+
-+	return 0;
-+}
-+
- /**
-  * qcom_icc_bcm_init - populates bcm aux data and connect qnodes
-  * @bcm: bcm to be initialized
-@@ -255,6 +310,7 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
- 	provider = &qp->provider;
- 	provider->dev = dev;
- 	provider->set = qcom_icc_set;
-+	provider->get_bw = qcom_icc_get_bw;
- 	provider->pre_aggregate = qcom_icc_pre_aggregate;
- 	provider->aggregate = qcom_icc_aggregate;
- 	provider->xlate_extended = qcom_icc_xlate_extended;
-@@ -272,8 +328,10 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
- 	if (IS_ERR(qp->voter))
- 		return PTR_ERR(qp->voter);
- 
--	for (i = 0; i < qp->num_bcms; i++)
-+	for (i = 0; i < qp->num_bcms; i++) {
- 		qcom_icc_bcm_init(qp->bcms[i], dev);
-+		qcom_icc_bcm_get_bw(qp->voter, qp->bcms[i]);
-+	}
- 
- 	for (i = 0; i < num_nodes; i++) {
- 		qn = qnodes[i];
-
----
-base-commit: c077667d2d33618e2053f79ec60300dae7a58e0c
-change-id: 20251106-topic-sm8x50-icc-read-rpmh-eba461a452e7
-
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
-
+Lee Jones [李琼斯]
 
