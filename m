@@ -1,97 +1,94 @@
-Return-Path: <linux-kernel+bounces-889055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6063C3C9C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:56:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B42C3CA27
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:57:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550843AB49F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6136206DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ADB2C237E;
-	Thu,  6 Nov 2025 16:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F25C343D8C;
+	Thu,  6 Nov 2025 16:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPAldE4H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="R1yNUuOZ"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A0E19D07E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63828333448
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447699; cv=none; b=Se0kK/k8yOvz/U5iaKeUFqJE8YoCjcq68xAI9mdbOmgRSg+0nxlPL3EgtMf49toSa9leD2F7yuus4I8/j4/ZEq9mpv2uqGvG3QmrJD88THTJo2BHEKGCmZ59buVmrxlg+SDqm99ysu38qp7B+X0zYlF6Up9U38U6L/1kr9uQj5U=
+	t=1762447765; cv=none; b=RAegpKVt2GdT7LZzc1OokByvY/iwG8igyeHmBa8DgcPrkO16bc9PR0InaMA+S5fHw6tDIPhiKIIh0XG2+SyrbWNvAeEPCkopNDqnZNgFGyAcclPHU0DwturMTlhDYmnPHTxnbF09URWL59GAlT1p0YC6UA3qo1TTjK48xLfCrbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447699; c=relaxed/simple;
-	bh=C5wiFf0HtzjNwELAgnIcKzS2SjngF5LO34y+NigSrww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W03OudJwvVsn6pnnciWHZ8hZVaoPJzeukv7YcrfG4DOTA82xUBz4ZnMFZFQT519urOg1I7iH9j9+R5CvWrtqp7RfEWjc/+t4PQVx4jdeoXcdAf3DeDZOmHNRwp3UULZol398C7XSDUao8n498dvzNnQFilgpVeHozk9KeOCXPNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPAldE4H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EC5AC16AAE;
-	Thu,  6 Nov 2025 16:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762447699;
-	bh=C5wiFf0HtzjNwELAgnIcKzS2SjngF5LO34y+NigSrww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IPAldE4Hi3LS6gkbwLjpFilfSJwWbAwjhaM2cdjdUbsy/R10VpiECYSdy2UCAr8A/
-	 2sEkllP8ZshVididPe4K/fi8ryYZlkyKFtczyH81Z3NwP2NKW3oV+NCOyadqpECMmK
-	 5BZBAqOls43gp9jFSH/f/q9nJV/WlghIQdLhR/uQjR9Gs4wMk7XqP9+Wa8e/rZawoH
-	 eAjacCD9Jai5uhg8rS4FGU32YHHsPY2eKfx4ugYYMH3QF6RViRaleGCnJCQqWd9Jid
-	 rL+2ggNqcjVto5yqq7KlXSYo7gv1TCd9r2ImAuqyP850YpGjS/ZKwUr0e6J/pWv8HQ
-	 3lY4pYJY9rBxQ==
-Date: Thu, 6 Nov 2025 16:48:14 +0000
-From: Lee Jones <lee@kernel.org>
-To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 06/21] mfd: prepare to generalize BITS() macro
-Message-ID: <20251106164814.GA1949330@google.com>
-References: <20251025162858.305236-1-yury.norov@gmail.com>
- <20251025162858.305236-7-yury.norov@gmail.com>
+	s=arc-20240116; t=1762447765; c=relaxed/simple;
+	bh=yi0fxMXpQZRWPXrznY8gn/2p2+4llOSnxeMYK6PSvZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GG6IzmV2ep0LChM/1gorFvJ6zPV2LmQDn9h6jhjT6PNgBSISqC1ypcgSCG4uDRNttleYf55UyxPXwmFKGbbgQ0Gi4IISE91aWkwHsQExyGuJrSjL2kOVAf1WDqH+yGOQshT0C+PTxaWv7MY+gavpA2B+HbRj5ZPIvF0Kkt+jZfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com; spf=pass smtp.mailfrom=korsgaard.com; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=R1yNUuOZ; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=R1yNUuOZ5a+tjQkh2Z++IdKeDvgsvocMwnqI2nQ2R2RHaetSb3SNcv94UyW3CdU7v2MoC8XDfZyibMlxxLJJYc6SPcgIu/k2DmD9q/CROFLQ3uxnnGgxzA01OK5N7Bi/MM0q3FJZ50t9RMdElsenEt92bZInvpGaUSH/LyKH1uoG5SDDN6A+1mMVmoOrXpQyfZsPtroNcNYwrklTTXyA1ariGKSjEa9o7RUgV31A3VVLjoTvd61wut2uZBTxaGZdx0e3msKebGrd64rLskAbMBw49UYorpPKvflRzFQ38RYje5CtqWwc4fz8myeFI0ZHCcSxkyFUtrrn24Gvcj0BhQ==; s=purelymail2; d=purelymail.com; v=1; bh=yi0fxMXpQZRWPXrznY8gn/2p2+4llOSnxeMYK6PSvZU=; h=Feedback-ID:Received:Received:From:To:Subject:Date;
+Feedback-ID: 21632:4007:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -12591747;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Thu, 06 Nov 2025 16:48:59 +0000 (UTC)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.96)
+	(envelope-from <peko@dell.be.48ers.dk>)
+	id 1vH3AP-0079Cp-2I;
+	Thu, 06 Nov 2025 17:48:57 +0100
+From: Peter Korsgaard <peter@korsgaard.com>
+To: javier.carrasco@wolfvision.net,
+	heikki.krogerus@linux.intel.com,
+	neal@gompa.dev,
+	gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org
+Cc: Peter Korsgaard <peter@korsgaard.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: typec: tipd: drop double register read in tps6598x_interrupt
+Date: Thu,  6 Nov 2025 17:48:49 +0100
+Message-Id: <20251106164850.1703648-1-peter@korsgaard.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251025162858.305236-7-yury.norov@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=UTF-8
 
-On Sat, 25 Oct 2025, Yury Norov (NVIDIA) wrote:
+Commit 409c1cfb5a80 ("usb: typec: tipd: fix event checking for tps6598x")
+added (by accident?) a double read of the TPS_REG_INT_EVENT1 register.  Dro=
+p
+that.
 
-> In preparation for adding generic BITS() macro, add an #undef directive
-> for the existing BITS(). The following patches will drop it entirely.
-> 
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> ---
->  drivers/mfd/db8500-prcmu-regs.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mfd/db8500-prcmu-regs.h b/drivers/mfd/db8500-prcmu-regs.h
-> index 75fd1069372c..25d2d5966211 100644
-> --- a/drivers/mfd/db8500-prcmu-regs.h
-> +++ b/drivers/mfd/db8500-prcmu-regs.h
-> @@ -12,6 +12,7 @@
->  #ifndef __DB8500_PRCMU_REGS_H
->  #define __DB8500_PRCMU_REGS_H
->  
-> +#undef BITS
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ drivers/usb/typec/tipd/core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Doesn't this get removed in 2 patches time?
+diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+index 2b1049c9a6f3..2d4fcf62c200 100644
+--- a/drivers/usb/typec/tipd/core.c
++++ b/drivers/usb/typec/tipd/core.c
+@@ -994,8 +994,6 @@ static irqreturn_t tps6598x_interrupt(int irq, void *da=
+ta)
+ =09    TPS_VERSION_HW_VERSION(version) =3D=3D TPS_VERSION_HW_65987_8_DK)
+ =09=09intev_len =3D TPS_65987_8_INTEVENT_LEN;
+=20
+-=09ret =3D tps6598x_block_read(tps, TPS_REG_INT_EVENT1, event1, intev_len)=
+;
+-
+ =09ret =3D tps6598x_block_read(tps, TPS_REG_INT_EVENT1, event1, intev_len)=
+;
+ =09if (ret) {
+ =09=09dev_err(tps->dev, "%s: failed to read event1\n", __func__);
+--=20
+2.39.5
 
->  #define BITS(_start, _end) ((BIT(_end) - BIT(_start)) + BIT(_end))
->  
->  #define PRCM_ACLK_MGT		(0x004)
-> -- 
-> 2.43.0
-> 
-
--- 
-Lee Jones [李琼斯]
 
