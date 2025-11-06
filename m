@@ -1,291 +1,141 @@
-Return-Path: <linux-kernel+bounces-889217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7892C3CFE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:02:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B0DC3CFC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D7A3B3A26
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147C4188655F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137B52D878C;
-	Thu,  6 Nov 2025 18:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA7A2DAFA1;
+	Thu,  6 Nov 2025 18:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GiZwAM+n"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IbxB/F35"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35192AD25;
-	Thu,  6 Nov 2025 18:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB252AD25
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452045; cv=none; b=haUgKRVB8Wy+OtcXzuj8IGTu4D8zAz+WYzZdpsiPB4KwV3VN+5hswOMlCJCpKOtfHCbRdNpW0eKYYZGTMo6VQbENjxAiCgMU2sQhajv8WeX32Mw7ZxdR+bPQIRyaaj2D1hyX6pHdfPZC8eq56/7xt+RZ6yevwy5nCfTZZMAgsmE=
+	t=1762452057; cv=none; b=Pnf1dpNDACTrXI4syQUzZ8QFdrLNM2S5M319p6US7lYDGGo3NJTZtZjKQvBY5K9uNaKK+M9QPAPSVyx+6Uqj1HZ8FxSb4//9wFjpBz9uHAB4hIfgeJ3B99lhVW13YCY+EqAF7iAqRnml/QsJl1FJ1Q2dSOcOf9TzHw6oVfoDEPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452045; c=relaxed/simple;
-	bh=ADhGBiYj8YWwqtFnyim68Cwy/3DupMspluG/EMWSVVg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MFhBRYZFj2eJW+QMlHZFsl2fETxlWXdbH8gREIFcNzkDNDK6II1b+ytt5ZUi6VwXjLVlyWnBAN8ceDaZzAz/ag6/3GvTfjo1q9lbQZ7uOo2jR8T4eKubzy5Z9kVd2IdwVE14Af151pYAmh3L6b68h9EeLnfF4enIvU3ck6TLwmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GiZwAM+n; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762452043; x=1793988043;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ADhGBiYj8YWwqtFnyim68Cwy/3DupMspluG/EMWSVVg=;
-  b=GiZwAM+nkAShOK02aw4SHLyuj491aGAqCm/nuW2t3JIHW+9SJRudxeXd
-   77QO6ULbSumkYGoKOnqljJ3Epu4OOFN8vUnDYfdoQHlQRJBVeKdaSkQVn
-   M6Ja0ek40qeT+AHAEtAyHV4WL5zoVYODiG6Buzo9rE0V9PEIRhl5TVQO5
-   D/IIu9EVSGiUmr7TNYibl1jgK7RBrM5Zm78SgaWtH+MWsdFT3hPKc8tg9
-   3h2MFkz40nPQpTerub789RqTzI412vp1BsaydGmnyIgsNWItV9M5Y5Uj0
-   CB1QDJ1joPDkREbgL05u2WImR+ALMYVNObUAiVOe6sEcq5BTFbh6PFfVw
-   w==;
-X-CSE-ConnectionGUID: FtJQbuJeTTO2Wi6RNq6rwA==
-X-CSE-MsgGUID: /3NRJTbnTtWnoGqg5ImmDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="82003906"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="82003906"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 10:00:42 -0800
-X-CSE-ConnectionGUID: 89jO18aoRy2UQeicNgl4wg==
-X-CSE-MsgGUID: drnuHqlARqCNz3yjhbU26g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="187767555"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.187])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 10:00:39 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 6 Nov 2025 20:00:36 +0200 (EET)
-To: Alex Davis <alex47794@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-cc: Borislav Petkov <bp@alien8.de>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, John Ogness <john.ogness@linutronix.de>, 
-    linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
-In-Reply-To: <3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
-Message-ID: <ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com>
-References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com> <20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local> <aQzJveMYT6O3EHeK@smile.fi.intel.com> <20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local>
- <3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
+	s=arc-20240116; t=1762452057; c=relaxed/simple;
+	bh=RDbOBh66JjfFuihq973fOzGY3o9zf2l1zRXPEVekqzE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N9LeUAfYSNefvcP1ctkDxbQ6Khr2mm/qIREDorZnwb/dNo7SC7cp6pkqP5+i5t2hVyXhBRpijJkzSMUPXBR65XCiuQJ5opZKHZQJV3ojmAZiDa6z5c2mB9fpynEUEfRoCVqdxtNjBA+lEdKMDxZjOhQ4d5AXFIK6+9R0xFDwhBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IbxB/F35; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640b1d0496aso497a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:00:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762452054; x=1763056854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ECxc40/29Z32hQLab5xgI0WYbyB6Uam5SiKdMQt43ew=;
+        b=IbxB/F35JSeMuUWgL7ZzMS4I35FMAoE3bkr6uWDqgUkDaL0Y7tBeih0zJZaGbzc7Xn
+         W6gitdVahiT1WoTZjqYw6hBdoo4u/EUtPavbBWADM/Q19eeyM9mvK9wPgtPWh6ZXPne+
+         8fSa3zCE2CdKuTChCvgrfyq8mSZZ9DiBtyikjJm/hPFfOUYGmRxE/BwKXEhR/MhHptoc
+         w2r+nQ/e8jiVXUWmAXfwU6UlbZ0igVWvcQn00f/eSGQL/IDYkld6z8Zi99H2uio2StsI
+         wsrJnVxreJQ9iSAbh5sruzlhBSS0CgawIvT96lUnyf1LYch2op1i5XuS8x5JtGUJ5mm7
+         MW1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762452054; x=1763056854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ECxc40/29Z32hQLab5xgI0WYbyB6Uam5SiKdMQt43ew=;
+        b=EjP1P04kBCTjdqHcSEJfTlasrONdOkQPmX8Q0/cmPYOLlguviRwdnbtW99T90mFXrN
+         Cqphz7Ks66dpnF38j/og3IL6y8LuQTZS4MYVdtFW5RKVsLed7PlVh6RfKbNj5/g2RAwB
+         HzKJQo/UmWMqhmsGV8NW4CL1vadqDRRmLXR0qOJxl49oWwWyxqLPGIYevAx/UOLnwYMt
+         wM/1YreWGX3CrYLmvULD0WpiD3afBM+WDviHfG479QTTkFHkHF1g9bX+bY2c3YL17+rg
+         neUbQ+4CUho12mad0tL8vjUQV6IRLlNPLBTz4KOi7XVfp1itFIO/UmUgxPO1/hntT2yd
+         r/Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX7PXBh8ek0Fe1uzQH/Jeo2QaAD/mGW78Fn/l3Ey2TjTPVdWNXzvP3r23RuvPF9t3gk6XJJyzXIlVUYxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcQPqOZDMUkDLRGU+vNIA05pjdSITyUW/ktJCP5CEyytDFGwR2
+	X2pTc7i2cGgaH7HUadBhxm853MY2Crqw2VUBLV0zw87giwEny2LCyigUS6lbb67WKJI6jYO49Ey
+	eFQ2eeAJ8I7jxOck52Ek6trA2hHlqlSoFhm1RsgRL
+X-Gm-Gg: ASbGncud8IbxqoeWYDs6l+aQeluHx2eqvdhOPCFtHJsVQ75mcCXl+SGNMLA8DRntD3f
+	HMG27FMBErnwZweYZwUSezn6NA5tYhcfU+7mguniTUXdQ+HiqEMZ21tahIF7ExcfsVh8bhSF5nV
+	yThnx0LcfYIxCeWzdBaTLwdVJHy0+o3Rz4q1yCRE4/ssKM42MmCTAbbl6Ph+O/kehJl/vgCne1T
+	ALB3YUQEF5uPSifUQ/uNh5GFopkimQMjNYVfsLl8ac4O4UPNWSSYbs3Ukre
+X-Google-Smtp-Source: AGHT+IE7GjLCqbggaJQz0UO9QtVJXndW650mkFQiyDlLAyMAbdE71393iphWqqs4UlmzxKitL9AYC90ViRjQuJU6m/Q=
+X-Received: by 2002:aa7:cf93:0:b0:640:fa3c:da93 with SMTP id
+ 4fb4d7f45d1cf-6413f4f7c98mr6926a12.4.1762452053454; Thu, 06 Nov 2025 10:00:53
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1187919288-1762452036=:981"
+References: <20251101000241.3764458-1-jmattson@google.com> <6f749888-28ef-419b-bc0a-5a82b6b58787@amd.com>
+In-Reply-To: <6f749888-28ef-419b-bc0a-5a82b6b58787@amd.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Thu, 6 Nov 2025 10:00:40 -0800
+X-Gm-Features: AWmQ_bmLFtgDgGCdP9lS_QlaeE1Am88tZ8dhTXJnTRlEz705U-E3EMSXmDVBmHI
+Message-ID: <CALMp9eQJ69euqBs2NF6fQtb-Vf_0XqSiXs07h29Gr57-cvdGJg@mail.gmail.com>
+Subject: Re: [PATCH] KVM: x86: SVM: Mark VMCB_LBR dirty when L1 sets DebugCtl[LBR]
+To: Shivansh Dhiman <shivansh.dhiman@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, nikunj.dadhania@amd.com, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matteo Rizzo <matteorizzo@google.com>, evn@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Nov 6, 2025 at 8:09=E2=80=AFAM Shivansh Dhiman <shivansh.dhiman@amd=
+.com> wrote:
+>
+> On 01-11-2025 05:32, Jim Mattson wrote:
+> > With the VMCB's LBR_VIRTUALIZATION_ENABLE bit set, the CPU will load
+> > the DebugCtl MSR from the VMCB's DBGCTL field at VMRUN. To ensure that
+> > it does not load a stale cached value, clear the VMCB's LBR clean bit
+> > when L1 is running and bit 0 (LBR) of the DBGCTL field is changed from
+> > 0 to 1. (Note that this is already handled correctly when L2 is
+> > running.)
+> >
+> > There is no need to clear the clean bit in the other direction,
+> > because when the VMCB's DBGCTL.LBR is 0, the VMCB's
+> > LBR_VIRTUALIZATION_ENABLE bit will be clear, and the CPU will not
+> > consult the VMCB's DBGCTL field at VMRUN.
+> >
+> > Fixes: 1d5a1b5860ed ("KVM: x86: nSVM: correctly virtualize LBR msrs whe=
+n L2 is running")
+> > Reported-by: Matteo Rizzo <matteorizzo@google.com>
+> > Reported-by: evn@google.com
+> > Signed-off-by: Jim Mattson <jmattson@google.com>
+> > ---
+> >  arch/x86/kvm/svm/svm.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > index 153c12dbf3eb..b4e5a0684f57 100644
+> > --- a/arch/x86/kvm/svm/svm.c
+> > +++ b/arch/x86/kvm/svm/svm.c
+> > @@ -816,6 +816,8 @@ void svm_enable_lbrv(struct kvm_vcpu *vcpu)
+> >       /* Move the LBR msrs to the vmcb02 so that the guest can see them=
+. */
+> >       if (is_guest_mode(vcpu))
+> >               svm_copy_lbrs(svm->vmcb, svm->vmcb01.ptr);
+> > +     else
+> > +             vmcb_mark_dirty(svm->vmcb, VMCB_LBR);
+> >  }
+> >
+> >  static void svm_disable_lbrv(struct kvm_vcpu *vcpu)
+>
+> Hi Jim,
+> I am thinking, is it possible to add a test in KVM Unit Tests that
+> covers this? Something where the stale cached value is loaded instead of
+> the correct one, without your patch.
 
---8323328-1187919288-1762452036=:981
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Thu, 6 Nov 2025, Ilpo J=E4rvinen wrote:
-
-> On Thu, 6 Nov 2025, Borislav Petkov wrote:
->=20
-> > On Thu, Nov 06, 2025 at 06:15:57PM +0200, Andy Shevchenko wrote:
-> > > > So I'm seeing this with an allmodconfig build too:
-> > =09=09=09       ^^^^^^^^^^^^
-> > > > depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> > > > depmod: ERROR: Found 2 modules in dependency cycles!
-> > >=20
-> > > I'm surprised it took so long to people to start complaining.
-> > >=20
-> > > So, some of those are modules? Can you share the
-> > >=20
-> > > =09grep 8250 .config
-> > >=20
-> > > part?
-> >=20
-> > See above.
->=20
-> https://lore.kernel.org/all/87frc3sd8d.fsf@posteo.net/
->=20
-> I wonder if 8250_rsa.o can be put into 8250_base.o where most of its=20
-> callers are anyway?
-
-This seems to resolve the build issue for me:
-
---
-From: =3D?UTF-8?q?Ilpo=3D20J=3DC3=3DA4rvinen?=3D <ilpo.jarvinen@linux.intel=
-=2Ecom>
-Subject: [PATCH 1/1] serial: 8250: Fix 8250_rsa symbol loop
-
-make allmodconfig build fails due to dependency loop:
-
-  depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-  depmod: ERROR: Found 2 modules in dependency cycles!
-
-Break dependency loop by moving 8250_rsa.o into 8250_base and by
-passing univ8250_port_base_ops to univ8250_rsa_support() that can make
-a local copy of it.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reported-by: Alex Davis <alex47794@gmail.com>
-Fixes: b20d6576cdb3 ("serial: 8250: export RSA functions")
-Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/tty/serial/8250/8250.h          |  2 +-
- drivers/tty/serial/8250/8250_platform.c |  2 +-
- drivers/tty/serial/8250/8250_rsa.c      | 18 +++++++++---------
- drivers/tty/serial/8250/Makefile        |  2 +-
- 4 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.=
-h
-index 58e64c4e1e3a..bd294fbf0e65 100644
---- a/drivers/tty/serial/8250/8250.h
-+++ b/drivers/tty/serial/8250/8250.h
-@@ -322,7 +322,7 @@ static inline void serial8250_pnp_exit(void) { }
- #endif
-=20
- #ifdef CONFIG_SERIAL_8250_RSA
--void univ8250_rsa_support(struct uart_ops *ops);
-+void univ8250_rsa_support(struct uart_ops *ops, const struct uart_ops *cor=
-e_ops);
- void rsa_enable(struct uart_8250_port *up);
- void rsa_disable(struct uart_8250_port *up);
- void rsa_autoconfig(struct uart_8250_port *up);
-diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8=
-250/8250_platform.c
-index b27981340e76..fe7ec440ffa5 100644
---- a/drivers/tty/serial/8250/8250_platform.c
-+++ b/drivers/tty/serial/8250/8250_platform.c
-@@ -75,7 +75,7 @@ static void __init __serial8250_isa_init_ports(void)
-=20
- =09/* chain base port ops to support Remote Supervisor Adapter */
- =09univ8250_port_ops =3D *univ8250_port_base_ops;
--=09univ8250_rsa_support(&univ8250_port_ops);
-+=09univ8250_rsa_support(&univ8250_port_ops, univ8250_port_base_ops);
-=20
- =09if (share_irqs)
- =09=09irqflag =3D IRQF_SHARED;
-diff --git a/drivers/tty/serial/8250/8250_rsa.c b/drivers/tty/serial/8250/8=
-250_rsa.c
-index 40a3dbd9e452..d76d1be86625 100644
---- a/drivers/tty/serial/8250/8250_rsa.c
-+++ b/drivers/tty/serial/8250/8250_rsa.c
-@@ -14,6 +14,8 @@
- static unsigned long probe_rsa[PORT_RSA_MAX];
- static unsigned int probe_rsa_count;
-=20
-+static const struct uart_ops *core_port_base_ops;
-+
- static int rsa8250_request_resource(struct uart_8250_port *up)
- {
- =09struct uart_port *port =3D &up->port;
-@@ -67,7 +69,7 @@ static void univ8250_config_port(struct uart_port *port, =
-int flags)
- =09=09}
- =09}
-=20
--=09univ8250_port_base_ops->config_port(port, flags);
-+=09core_port_base_ops->config_port(port, flags);
-=20
- =09if (port->type !=3D PORT_RSA && up->probe & UART_PROBE_RSA)
- =09=09rsa8250_release_resource(up);
-@@ -78,11 +80,11 @@ static int univ8250_request_port(struct uart_port *port=
-)
- =09struct uart_8250_port *up =3D up_to_u8250p(port);
- =09int ret;
-=20
--=09ret =3D univ8250_port_base_ops->request_port(port);
-+=09ret =3D core_port_base_ops->request_port(port);
- =09if (ret =3D=3D 0 && port->type =3D=3D PORT_RSA) {
- =09=09ret =3D rsa8250_request_resource(up);
- =09=09if (ret < 0)
--=09=09=09univ8250_port_base_ops->release_port(port);
-+=09=09=09core_port_base_ops->release_port(port);
- =09}
-=20
- =09return ret;
-@@ -94,15 +96,17 @@ static void univ8250_release_port(struct uart_port *por=
-t)
-=20
- =09if (port->type =3D=3D PORT_RSA)
- =09=09rsa8250_release_resource(up);
--=09univ8250_port_base_ops->release_port(port);
-+=09core_port_base_ops->release_port(port);
- }
-=20
--void univ8250_rsa_support(struct uart_ops *ops)
-+void univ8250_rsa_support(struct uart_ops *ops, const struct uart_ops *cor=
-e_ops)
- {
-+=09core_port_base_ops =3D core_ops;
- =09ops->config_port  =3D univ8250_config_port;
- =09ops->request_port =3D univ8250_request_port;
- =09ops->release_port =3D univ8250_release_port;
- }
-+EXPORT_SYMBOL_FOR_MODULES(univ8250_rsa_support, "8250");
-=20
- module_param_hw_array(probe_rsa, ulong, ioport, &probe_rsa_count, 0444);
- MODULE_PARM_DESC(probe_rsa, "Probe I/O ports for RSA");
-@@ -146,7 +150,6 @@ void rsa_enable(struct uart_8250_port *up)
- =09if (up->port.uartclk =3D=3D SERIAL_RSA_BAUD_BASE * 16)
- =09=09serial_out(up, UART_RSA_FRR, 0);
- }
--EXPORT_SYMBOL_FOR_MODULES(rsa_enable, "8250_base");
-=20
- /*
-  * Attempts to turn off the RSA FIFO and resets the RSA board back to 115k=
-bps compat mode. It is
-@@ -178,7 +181,6 @@ void rsa_disable(struct uart_8250_port *up)
- =09if (result)
- =09=09up->port.uartclk =3D SERIAL_RSA_BAUD_BASE_LO * 16;
- }
--EXPORT_SYMBOL_FOR_MODULES(rsa_disable, "8250_base");
-=20
- void rsa_autoconfig(struct uart_8250_port *up)
- {
-@@ -191,7 +193,6 @@ void rsa_autoconfig(struct uart_8250_port *up)
- =09if (__rsa_enable(up))
- =09=09up->port.type =3D PORT_RSA;
- }
--EXPORT_SYMBOL_FOR_MODULES(rsa_autoconfig, "8250_base");
-=20
- void rsa_reset(struct uart_8250_port *up)
- {
-@@ -200,7 +201,6 @@ void rsa_reset(struct uart_8250_port *up)
-=20
- =09serial_out(up, UART_RSA_FRR, 0);
- }
--EXPORT_SYMBOL_FOR_MODULES(rsa_reset, "8250_base");
-=20
- #ifdef CONFIG_SERIAL_8250_DEPRECATED_OPTIONS
- #ifndef MODULE
-diff --git a/drivers/tty/serial/8250/Makefile b/drivers/tty/serial/8250/Mak=
-efile
-index 513a0941c284..9ec4d5fe64de 100644
---- a/drivers/tty/serial/8250/Makefile
-+++ b/drivers/tty/serial/8250/Makefile
-@@ -7,7 +7,6 @@ obj-$(CONFIG_SERIAL_8250)=09=09+=3D 8250.o
- 8250-y=09=09=09=09=09:=3D 8250_core.o
- 8250-y=09=09=09=09=09+=3D 8250_platform.o
- 8250-$(CONFIG_SERIAL_8250_PNP)=09=09+=3D 8250_pnp.o
--8250-$(CONFIG_SERIAL_8250_RSA)=09=09+=3D 8250_rsa.o
-=20
- obj-$(CONFIG_SERIAL_8250)=09=09+=3D 8250_base.o
- 8250_base-y=09=09=09=09:=3D 8250_port.o
-@@ -15,6 +14,7 @@ obj-$(CONFIG_SERIAL_8250)=09=09+=3D 8250_base.o
- 8250_base-$(CONFIG_SERIAL_8250_DWLIB)=09+=3D 8250_dwlib.o
- 8250_base-$(CONFIG_SERIAL_8250_FINTEK)=09+=3D 8250_fintek.o
- 8250_base-$(CONFIG_SERIAL_8250_PCILIB)=09+=3D 8250_pcilib.o
-+8250_base-$(CONFIG_SERIAL_8250_RSA)=09+=3D 8250_rsa.o
-=20
- obj-$(CONFIG_SERIAL_8250_CONSOLE)=09+=3D 8250_early.o
-=20
-
-base-commit: 719f3df3e113e03d2c8cf324827da1fd17a9bd8f
---=20
-2.39.5
-
---8323328-1187919288-1762452036=:981--
+Though permitted by the architectural specification, I don't know if
+there is any hardware that caches the DBGCTL field when LBR
+virtualization is disabled.
 
