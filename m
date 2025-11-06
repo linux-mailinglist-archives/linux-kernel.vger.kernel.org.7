@@ -1,141 +1,188 @@
-Return-Path: <linux-kernel+bounces-888866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACCEC3C1DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2859BC3C202
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:42:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168B51AA68E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:41:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19D218900AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D2829BDB8;
-	Thu,  6 Nov 2025 15:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E387320CC2;
+	Thu,  6 Nov 2025 15:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mtvz5v52"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="h1DmG993"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0387129BDA2
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2A330CD86
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762443633; cv=none; b=RcAP+WUjwO4kBD1SYNX0Xjb8iD/fCTXcK/dAE6mqHQoGofD3NYg/WnGjGiCgzZ1IFFNblAagykUm4WKbQXDatlMbSP3xat+eZicW7/3w0P57gSKmb+JNWCGK6bVbHPd+vDh1l+w8/gr+CriOiFzKEMjqJVun/pYViSopXkflnX4=
+	t=1762443651; cv=none; b=ceVebzBnjDt4btGiRYTczNVnCDSR4laYzlGTl13Dpf5jGcGNJKfeG+LEYtm4Sx7FzWW2Q0JSTwb/74WKdWRkYIo5v71xNdHcD/wKHq2UuATUSwMCjHjATrCWSPGKJeRSa2qQynSGypbbp1dbFX5cV5RPf9dVeqcxsHzKZk77xUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762443633; c=relaxed/simple;
-	bh=bPYWoT/GHriiQOAtYqZ8RIEg/mdLe3X0Fy0Cau6Ehaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cTLbRvCvYOuwtyuHCkUbWMsClW860lhWmi+OB78MwdEfnzCyKscFLahf3Gg97q0kDl+6qibfnD1yBWEQqquOOeXYYZtLN28Pb/gNHLylx7yUK3TO8M6hSN1KHvYvznV/P2eTKLmauENxvaUXzr/dGTIY0/WRIGWrG5dOpQs3++E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mtvz5v52; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-477563bcaacso8376125e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:40:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762443629; x=1763048429; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q1Wk3Zb6iHABuxMtqYWJQhotr9eHGE3DttWEmz8jd9g=;
-        b=mtvz5v52aKC7EZ6exceptOGN/yR8gwoXsD6+ODVzB9kwg3a747NB7nAIIRkFLLuLQR
-         XBcjKQN5CZNpKd1ZcguBqMiX2nSvC0Z1oG4hopafKH8vJx+eI4zGuJAJwrSH9ktm9bUP
-         ef5TD6xf7LgbjHen8vXyrF1x4MZh1P2Rn6KmzqAaAkc2ej7h2JXr9LBezDKJBzCJWyb/
-         kLk8+T9ZGQe0OQH6XEgJfMkwIarLnluWJZ4U2rBWJ/A9Cu8+7CHNuyhqwbPZS+Pgd3lb
-         Lp2qBmseBwR7R4lAID9txgDYo+nALkyWLvigN2v5GkBKoQN4Y1Ocwb6z5ztpSHoMdW0J
-         FBlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762443629; x=1763048429;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q1Wk3Zb6iHABuxMtqYWJQhotr9eHGE3DttWEmz8jd9g=;
-        b=Ysl56nTk7NHwtVhBoRprwfp/B2QSBVl3+zZR1bWLPTLDTydhO3L/3N5eLG+pyV5KQ0
-         WS8YqOg9DsYXZ6DI11WnpyPt8s239gtFjtekO0WxHP5G9Q81854lHuza1gA3WFpi9MWR
-         u+Zd1aG43cJe6a1N1jJXPuyuszfF4dMxD6d25eiKDXs6fXg6ohO6nziT3Mk9NmLvLAj0
-         xG2b0B/sG28cHp26HdYhBHOeusKQWpV7XpvmYChTWnKVq/EM/fu0gmohvWvkYeeDNyLH
-         vr6ZqS5qNrJEqppG4JUca8VWGxw6FcI2ZcWB0/Rm/qc7nOHNL3qpDuWLtxx+0bA/grRb
-         FzuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOXrqKWIKsgDrprnFRAHHnjZ24TSWTNVa12E+y1l9Ik3+pQrvTWixao/qUbUsMD07+n1nCYsfiWQ/iR+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBvs0Z+MoNlf2PzOP8ywdrnY010xGnqbrcS4K7SFMCDAxZ2umu
-	828XykPdQZ6BkNVNa/EvF9lL959exgGK3lKpTPI8wyQXNsi3xn2GyhtV+r6tV+9Vc2g=
-X-Gm-Gg: ASbGnctNcbYyl/i5wVts577lOmUxZihidKw2zlwv5Otv0fUTqwpLOVEtVNTWVYbNHXf
-	nzSVfqGnMLhbkU31yV1DWyMSRNP+/EGguSNTkDeAGLTUICRGWX9XOvzALMo9hJE+UUGW70KEg0E
-	YeD5IyaAcTd3/g8BBhuoIBc/54zyXizGiGGhn94USr/uxTjMJg2Q12dSQ01sV701ZCxR2+JU5E9
-	qEnJvcn9tHt0zSAU9HxpTj2PdgNZ9TimRRk+ampTT4AY24Gbgi9r2evgz57xPw/t3HyxM1LxXlO
-	/zHNolM9+Xu5OE0XUr9ttDhLVB6ii/0GjvylVbtDOUeNkpAvHyMOyyRp8ELmeJlbSUynKEDJJg6
-	oFyifxW2/Dd1vGggBOb/Ppu0gVF5gc+4qnyJHbvvCz8LJ43ZF2zu8luDeYFQAsn0+MytonLbiga
-	UCl2xo7ZIVNfDD+0qq1JA=
-X-Google-Smtp-Source: AGHT+IFjpy8Et4z+rAreshTApQ1UnG8la7y5eDtsFm4fqVoBZudQUf3WRA0jtYYTZf5YlVXK7dWKmw==
-X-Received: by 2002:a5d:5d0c:0:b0:3f7:b7ac:f3d2 with SMTP id ffacd0b85a97d-429e3309cc9mr7040773f8f.43.1762443629298;
-        Thu, 06 Nov 2025 07:40:29 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429ec767edasm5003126f8f.43.2025.11.06.07.40.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 07:40:28 -0800 (PST)
-Message-ID: <e0c8b161-3e08-48a0-89ef-8e0ea8b76672@tuxon.dev>
-Date: Thu, 6 Nov 2025 17:40:24 +0200
+	s=arc-20240116; t=1762443651; c=relaxed/simple;
+	bh=nB8ihh8drVNc7jO6z5A16olh0Vuvr2Vz6ehNqJSTkdM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=onV6Gm+zTNc4LceUdyg4zZ0t9DN++KqymVW16gnxHBLfGTljATlflmm7weSTBqkjG3ZVieln9GcaQRx0tI23cmKhrs7RwGgKqeN34E2DiIeWFDEV/7ZIgn98cAFexkNr3vGE4uifS0qlCdo+R3TdIBCc9qDUP9oTDbcrwrm+UOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=h1DmG993; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 074A0C0FA8E;
+	Thu,  6 Nov 2025 15:40:26 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EC1C26068C;
+	Thu,  6 Nov 2025 15:40:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 203D9102F2297;
+	Thu,  6 Nov 2025 16:40:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762443646; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=zTpK1778ZPo0Zk1DH+IDXFuxbwb9kJMouXvCPWR5ZLc=;
+	b=h1DmG9933broA7Ryh6sUIlcQfMGsC5AMkucLe4vzFliajP4VR/8eA9dyR/oom0t9NmufoD
+	dNINLKVE6EUvqV9xhYonVQu1bVQOEzoJJTlMRkE3wzG+izuoyet4ZLMGwf3Tlp5eLxKCjx
+	L6GZ9gD+cw6L8y4wT+2Dgb1JPaRBMmK/ZUtgHF0AExEpWjifZeoJWdapiumboBuAc21sMT
+	ULK9ZojkEAlGaHjGC+FcSAibdLw2ldvaVi+6OyAiT4XE04H2LEZRYHrcUfu3nbaibslc68
+	eYztXvvDRhQai4ue1InuYjN4V1VtwMBbglRdUO0JpvAmycmtveHPKBuLytCW3Q==
+From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Dmitry Guzman <dmitry.guzman@mobileye.com>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+Subject:
+ Re: [PATCH v2 5/5] i2c: designware: Support of controller with
+ IC_EMPTYFIFO_HOLD_MASTER disabled
+Date: Thu, 06 Nov 2025 16:40:40 +0100
+Message-ID: <2047821.56niFO833r@benoit.monin>
+In-Reply-To: <20251103104330.GG2912318@black.igk.intel.com>
+References:
+ <20251031-i2c-dw-v2-0-90416874fcc0@bootlin.com>
+ <20251031-i2c-dw-v2-5-90416874fcc0@bootlin.com>
+ <20251103104330.GG2912318@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 21/26] soc: renesas: rz-sysc: Convert to common
- field_get() helper
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Yury Norov <yury.norov@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Miller
- <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>,
- Alex Elder <elder@ieee.org>, David Laight <david.laight.linux@gmail.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Jason Baron
- <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
- Tony Luck <tony.luck@intel.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Kim Seer Paller <kimseer.paller@analog.com>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Richard Genoud <richard.genoud@bootlin.com>,
- Cosmin Tanislav <demonsingur@gmail.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Jianping Shen <Jianping.Shen@de.bosch.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-edac@vger.kernel.org, qat-linux@intel.com, linux-gpio@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762435376.git.geert+renesas@glider.be>
- <ed045ec4db284ca8b4ec0c5b6ff334e459d14096.1762435376.git.geert+renesas@glider.be>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <ed045ec4db284ca8b4ec0c5b6ff334e459d14096.1762435376.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Last-TLS-Session-Version: TLSv1.3
+
+Hi Mika,
+
+On Monday, 3 November 2025 at 11:43:30 CET, Mika Westerberg wrote:
+> On Fri, Oct 31, 2025 at 03:35:43PM +0100, Beno=C3=AEt Monin wrote:
+[...]
+> > +/*
+> > + * Return true if the message needs an explicit RESTART before being s=
+ent.
+> > + * Without an explicit RESTART, two consecutive messages in the same d=
+irection
+> > + * will be merged into a single transfer.
+> > + * The adapter always emits a RESTART when the direction changes.
+> > + */
+> > +static inline bool i2c_dw_msg_need_restart(struct i2c_msg msgs[], int =
+idx)
+>=20
+> This can take const parameters.
+>=20
+Agreed.
+
+> > +{
+>=20
+> Please move the dev->flags & NO_EMPTYFIFO_HOLD_MASTER here too.
+>=20
+Agreed.
+
+> > +	/* No need for a RESTART on the first message */
+> > +	if (idx =3D=3D 0)
+> > +		return false;
+>=20
+> That's
+>=20
+> 	if (!idx)=20
+>=20
+Ack.
+
+> But why not pass the actual message instead of the index?
+>=20
+Because we need the direction of the previous message and if we are checking
+the first message. Passing the array of messages and the index of the
+message to check give us the info we need to perform the check.
+
+> > +
+> > +	return (msgs[idx - 1].flags & I2C_M_RD) =3D=3D (msgs[idx].flags & I2C=
+_M_RD);
+>=20
+> You don't need the outer parens.
+>=20
+> > +}
+> > +
+> >  static int
+> >  i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+> >  {
+> > @@ -918,6 +958,17 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_m=
+sg msgs[], int num)
+> >  				goto done;
+> >  			}
+> > =20
+> > +			/*
+> > +			 * Make sure we don't need explicit RESTART for
+> > +			 * controllers that cannot emit them.
+> > +			 */
+> > +			if (dev->flags & NO_EMPTYFIFO_HOLD_MASTER &&
+> > +			    i2c_dw_msg_need_restart(msg, cnt - 1)) {
+> > +				dev_err(dev->dev, "cannot emit RESTART\n");
+> > +				ret =3D -EINVAL;
+> > +				goto done;
+> > +			}
+> > +
+> >  			if ((msg[cnt - 1].flags & I2C_M_STOP) ||
+> >  			    (msg + cnt =3D=3D msgs + num))
+> >  				break;
+> > diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/=
+busses/i2c-designware-platdrv.c
+> > index d7d764f7554d..4aad3dc51fbc 100644
+> > --- a/drivers/i2c/busses/i2c-designware-platdrv.c
+> > +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+> > @@ -346,6 +346,7 @@ static void dw_i2c_plat_remove(struct platform_devi=
+ce *pdev)
+> > =20
+> >  static const struct of_device_id dw_i2c_of_match[] =3D {
+> >  	{ .compatible =3D "baikal,bt1-sys-i2c", .data =3D (void *)MODEL_BAIKA=
+L_BT1 },
+> > +	{ .compatible =3D "mobileye,eyeq6lplus-i2c", .data =3D (void *)NO_EMP=
+TYFIFO_HOLD_MASTER },
+> >  	{ .compatible =3D "mscc,ocelot-i2c", .data =3D (void *)MODEL_MSCC_OCE=
+LOT },
+> >  	{ .compatible =3D "snps,designware-i2c" },
+> >  	{}
+> >=20
+>=20
+
+
+Best regards,
+=2D-=20
+Beno=C3=AEt Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
 
-On 11/6/25 15:34, Geert Uytterhoeven wrote:
-> Drop the driver-specific field_get() macro, in favor of the globally
-> available variant from <linux/bitfield.h>.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
