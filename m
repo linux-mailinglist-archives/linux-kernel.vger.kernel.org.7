@@ -1,103 +1,225 @@
-Return-Path: <linux-kernel+bounces-888799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710A5C3BF0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:03:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4B5C3BF51
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABF544E5568
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984465681DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DBC33CEBC;
-	Thu,  6 Nov 2025 15:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAA52E8B64;
+	Thu,  6 Nov 2025 15:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pQM4S8vt"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="GDYgoEl4"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0653D33E36D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4F819D07E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762441200; cv=none; b=pOxpQXNY1JHuxl0dTBGcj+GT7+TGZOq85+m+OmRRf8D6Hj9xZDYzszKD2sXxzZYGhmelg6xFNsUNX5QapWmdu003b8f0JvsBCarn7By12RulOpqE/hV5i8Tw4E3VSx0N+LXqCnfBRfrmlFZnEQHUxrAA5Cd56wyoAA+aEApKYVo=
+	t=1762441266; cv=none; b=V8S6wOZDPaIM9cRkjG71+OnbrLAwFFCm1mZWstTvC6PsaWvFndMV1KfAlXhjwwVYtz72L7FHoQJjLYTBETWwPRgvWh9SFUvXvLOax9UByB4jH7ilcYDOly9m8ij6K2a2NC21PmI1iQk610udWk2Tflts7AfKt8XVAokMyGwNdXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762441200; c=relaxed/simple;
-	bh=ojB4U0iGQi84vORYN2iwAJcLhCDT+ZMOyB+kX04ewFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VgMI1RcVPo2HkYySHabMLk7iueavRIuyraQlCvyOsIRzBRoLw3IgOX7/AGue83ixOSIe2h4Prz3BXEmUyUU2T2HVg/2UfmekgtBVb32orW30imKidfslK27OKiK+kCziWun+TeHqG7VHYfWom3hp5WKELAYKKF6OxA0ZtcPhO0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pQM4S8vt; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-640fb02a662so9022a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:59:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762441197; x=1763045997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ojB4U0iGQi84vORYN2iwAJcLhCDT+ZMOyB+kX04ewFo=;
-        b=pQM4S8vt4U1Y/OozUmNgyad3pQay8nolSAKzTuZh+8skMZ5C2pNlzL0Hxd2o1YI3/+
-         E9TzYcTOiy69Lm0yWwqUExuDUFpP7EAzS1zh8dROenmJSoxq9rZYnRL8+dfT2tViGVPi
-         8Le18aJeSBzJUz6IyAqQtsz5JOLmLZVSXFpjq5cqfMpQrO3dKWLe4iShcIx0dIUIP/A+
-         P+B94kuoPmP/9cqljCKZKxTtTMmsAe/Psd3wnkeR9qvgjGz/J6BUBJA7GAphWK2HOLAv
-         Kuc6wAgr4sqP7DgG64rRVh0zcK9VzGHx+0ai/HTWstHZu0eDDeGClHsEaQj0aopIN22g
-         /K8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762441197; x=1763045997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ojB4U0iGQi84vORYN2iwAJcLhCDT+ZMOyB+kX04ewFo=;
-        b=m0Hf1qw04p22i0vCf6E6ph3yzJMDLCAQt1R+3gNHHJdzx/qe0lBeKuWv4DYRXw0DY+
-         FuvrwJzqG470gApSp5Po7KUzf4R7WhmYqRdQBvobd30CXb5Dq4mRqOzGhMx2V9X+2TnO
-         pTpeJovpFp6Yqe/PwmrtaT9eKS9NSCFC935XK/SGmhLrJ/fFKgdCtpR9U7H/HaZ3bnNd
-         YcRdfuksi5Bjp4ZW6gSFOZpfTcyK6E3+FfqxKZ8i2u/0kW6wqbFSRpgCLAsWVnH9lwO7
-         J9qffR8Y02kjtC6Qh/ZDeCtt0LvTaTBpzg/hiWaYNtPN44SGV990a1bU+/ijcFydHnIf
-         IcWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnDurZP6gbtKsnk2Tjbo7AzZh1Qip3DHA2m9ZkRRtY+EbX3tjacz5UYDG9RclqJzZQ3z3IMQ6kjrpB1hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTfaVS/0ZO0A3Efk87uNfBaYNscCYA3fxzt8URiYhZJzsZIIzN
-	V30Lo1ueU7lk4mm4KGebE9UiNu59aPxb4bcljWCZ+yW7Ep0g7b5PqAGrAajhGmEG0Pg/bxtL09u
-	qXOowN+kt/7VrErKuyjSVreFyjAfhiIkqYDcNReN5
-X-Gm-Gg: ASbGncswi8e/Y2CtsslxUdwmgU9EZOPBZH7uDWbhedrGD+Y8XzphXne7s7getUxWDiw
-	Ks/MjAnTw+oQYs/5JEmykjmdzM0jfVV8Zja6366AHWXR3wVxPgtz34YvWlRCKe7PiDDMpWBPMo8
-	8MEMVR4k59WeG79+WO9dMXFdOq06UVP3IYNOXjnfqLaN/iWpR9nf8RGc/YFpovuzfBigQ/WJW8v
-	C/al4QeBHN2zG/23H07llFtN0Y+yrP2kkwmOBkxF5HrbZ40B95fjPqr77C7uun1czBy6XkWPvni
-	Q9wJEtIrfrjKyAI=
-X-Google-Smtp-Source: AGHT+IGHdNYVXOyw8OR4JNTCRIhzO34mAiw8TBRizu2olGDPo3dCEj83yRPXDkaVILFFXq5aB2ZLeC23K52l0h7JNT0=
-X-Received: by 2002:a05:6402:5148:b0:62f:9f43:2117 with SMTP id
- 4fb4d7f45d1cf-6411e306383mr99058a12.0.1762441197130; Thu, 06 Nov 2025
- 06:59:57 -0800 (PST)
+	s=arc-20240116; t=1762441266; c=relaxed/simple;
+	bh=vOLSZCP+9mJjD/w5bHEK4PSG6JNi4Vvac0nQEDaz1Qc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kVa/cb33vSzLRJ6PXrKaG5Sdo2Zs/RXran8NZJqvY9qwqGLRz/0nc+QdXJXR0bHc2LeWSC6OP0hCimN6zi9Gyu21d7NgxgxYcpKvnPGlQpQEJlFJ7tKmGcn5fEoFrxeAXwdqF6QCBVsbqPuGecvT75dbukNg+R7TlrE/T181fJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=GDYgoEl4; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1762441258; x=1762700458;
+	bh=N20bsF88qmtxzuIu4gZ0s1r8sTe/QYH+2BKK9mK/6ww=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=GDYgoEl4LngLY9+ZW1gVaKIEyG1SHIh1SrAsD0+vRBpdfjCgYfaPLDAPwJfY3+yzw
+	 FM3YmOlNxdYCwvJIbRt5N+t44b4i6tycDlu2qT+b9CTSO2CW3ZuVk4ODp1LRjvE+zq
+	 U6/rFnbBoh6thQdjr+7rJvDv8h1HYgsLNqtsX7U/Z+hlsF5GCWKAjXB1dzGUj8uGhh
+	 Z9hvn1NzeQJfGZMeqGeoKSj/c8khdplqqaypqby7h+36/mTHSXYtuOq4GYSm8VSr17
+	 Wm6KvSW8MZ4R139G/SiBRC0gjQ5eTyQXUndhuv6XFYXclR1d11kW1EM+NN+7EeIvxE
+	 JzF/g66ef3xhg==
+Date: Thu, 06 Nov 2025 15:00:48 +0000
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+From: =?utf-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <m.wieczorretman@pm.me>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, Marco Elver <elver@google.com>, stable@vger.kernel.org, Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Baoquan He <bhe@redhat.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 1/2] kasan: Unpoison pcpu chunks with base address tag
+Message-ID: <v75jgljobtrc6d7plw2x5caloipqkclfhh6w3quylarqrzczkk@5blzaptwme4l>
+In-Reply-To: <00818656-41d0-4ebd-8a82-ad6922586ac4@lucifer.local>
+References: <cover.1762267022.git.m.wieczorretman@pm.me> <821677dd824d003cc5b7a77891db4723e23518ea.1762267022.git.m.wieczorretman@pm.me> <00818656-41d0-4ebd-8a82-ad6922586ac4@lucifer.local>
+Feedback-ID: 164464600:user:proton
+X-Pm-Message-ID: 321924270825e08940ed773dce8975504f8a0244
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022233743.1134103-1-mclapinski@google.com>
-In-Reply-To: <20251022233743.1134103-1-mclapinski@google.com>
-From: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
-Date: Thu, 6 Nov 2025 15:59:46 +0100
-X-Gm-Features: AWmQ_bngUFoIZYbCxtoJgERO5kE_lu_Hu_xYRaDTxABTXdLwDtNKvnEeJ1GsMXY
-Message-ID: <CAAi7L5cp9D6jiKSHB8yGm587vP+tOWJsK=X9--zKy066y08yoA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] x86/boot/compressed: Fix avoiding memmap in
- physical KASLR
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Chris Li <chrisl@kernel.org>, x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 1:37=E2=80=AFAM Michal Clapinski <mclapinski@google=
-.com> wrote:
-...
+As Andrey noticed I'll have to rework this function to be a proper
+refactor of the previous thing.
 
-Ping. It's been 2 weeks. I'm sure there are ways to improve this code
-even more but I truly believe it's better than it was since it's just
-a bugfix.
+This solution seems okay, after noticing the issue I was thinking about
+adding a new file for vmalloc code that is shared between different
+KASAN modes. But I'll have to add different mode code in here too
+anyway. So it's probably okay to keep this function behind the ifdef, I
+see shadow.c and hw-tags.c doing something similar too.
 
-Are there any changes I should make to this?
+On 2025-11-05 at 22:00:41 +0000, Lorenzo Stoakes wrote:
+>Hi,
+>
+>This patch is breaking the build for mm-new with KASAN enabled:
+>
+>mm/kasan/common.c:587:6: error: no previous prototype for =E2=80=98__kasan=
+_unpoison_vmap_areas=E2=80=99 [-Werror=3Dmissing-prototypes]
+>  587 | void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vm=
+s)
+>
+>Looks to be because CONFIG_KASAN_VMALLOC is not set in my configuration, s=
+o you
+>probably need to do:
+>
+>#ifdef CONFIG_KASAN_VMALLOC
+>void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
+>{
+>=09int area;
+>
+>=09for (area =3D 0 ; area < nr_vms ; area++) {
+>=09=09kasan_poison(vms[area]->addr, vms[area]->size,
+>=09=09=09     arch_kasan_get_tag(vms[area]->addr), false);
+>=09}
+>}
+>#endif
+>
+>That fixes the build for me.
+>
+>Andrew - can we maybe apply this just to fix the build as a work around un=
+til
+>Maciej has a chance to see if he agrees with this fix?
+>
+>Thanks, Lorenzo
+>
+>On Tue, Nov 04, 2025 at 02:49:08PM +0000, Maciej Wieczor-Retman wrote:
+>> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>>
+>> A KASAN tag mismatch, possibly causing a kernel panic, can be observed
+>> on systems with a tag-based KASAN enabled and with multiple NUMA nodes.
+>> It was reported on arm64 and reproduced on x86. It can be explained in
+>> the following points:
+>>
+>> =091. There can be more than one virtual memory chunk.
+>> =092. Chunk's base address has a tag.
+>> =093. The base address points at the first chunk and thus inherits
+>> =09   the tag of the first chunk.
+>> =094. The subsequent chunks will be accessed with the tag from the
+>> =09   first chunk.
+>> =095. Thus, the subsequent chunks need to have their tag set to
+>> =09   match that of the first chunk.
+>>
+>> Refactor code by moving it into a helper in preparation for the actual
+>> fix.
+>>
+>> Fixes: 1d96320f8d53 ("kasan, vmalloc: add vmalloc tagging for SW_TAGS")
+>> Cc: <stable@vger.kernel.org> # 6.1+
+>> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>> Tested-by: Baoquan He <bhe@redhat.com>
+>> ---
+>> Changelog v1 (after splitting of from the KASAN series):
+>> - Rewrite first paragraph of the patch message to point at the user
+>>   impact of the issue.
+>> - Move helper to common.c so it can be compiled in all KASAN modes.
+>>
+>>  include/linux/kasan.h | 10 ++++++++++
+>>  mm/kasan/common.c     | 11 +++++++++++
+>>  mm/vmalloc.c          |  4 +---
+>>  3 files changed, 22 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+>> index d12e1a5f5a9a..b00849ea8ffd 100644
+>> --- a/include/linux/kasan.h
+>> +++ b/include/linux/kasan.h
+>> @@ -614,6 +614,13 @@ static __always_inline void kasan_poison_vmalloc(co=
+nst void *start,
+>>  =09=09__kasan_poison_vmalloc(start, size);
+>>  }
+>>
+>> +void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms);
+>> +static __always_inline void kasan_unpoison_vmap_areas(struct vm_struct =
+**vms, int nr_vms)
+>> +{
+>> +=09if (kasan_enabled())
+>> +=09=09__kasan_unpoison_vmap_areas(vms, nr_vms);
+>> +}
+>> +
+>>  #else /* CONFIG_KASAN_VMALLOC */
+>>
+>>  static inline void kasan_populate_early_vm_area_shadow(void *start,
+>> @@ -638,6 +645,9 @@ static inline void *kasan_unpoison_vmalloc(const voi=
+d *start,
+>>  static inline void kasan_poison_vmalloc(const void *start, unsigned lon=
+g size)
+>>  { }
+>>
+>> +static inline void kasan_unpoison_vmap_areas(struct vm_struct **vms, in=
+t nr_vms)
+>> +{ }
+>> +
+>>  #endif /* CONFIG_KASAN_VMALLOC */
+>>
+>>  #if (defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)) &&=
+ \
+>> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+>> index d4c14359feaf..c63544a98c24 100644
+>> --- a/mm/kasan/common.c
+>> +++ b/mm/kasan/common.c
+>> @@ -28,6 +28,7 @@
+>>  #include <linux/string.h>
+>>  #include <linux/types.h>
+>>  #include <linux/bug.h>
+>> +#include <linux/vmalloc.h>
+>>
+>>  #include "kasan.h"
+>>  #include "../slab.h"
+>> @@ -582,3 +583,13 @@ bool __kasan_check_byte(const void *address, unsign=
+ed long ip)
+>>  =09}
+>>  =09return true;
+>>  }
+>> +
+>> +void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
+>> +{
+>> +=09int area;
+>> +
+>> +=09for (area =3D 0 ; area < nr_vms ; area++) {
+>> +=09=09kasan_poison(vms[area]->addr, vms[area]->size,
+>> +=09=09=09     arch_kasan_get_tag(vms[area]->addr), false);
+>> +=09}
+>> +}
+>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>> index 798b2ed21e46..934c8bfbcebf 100644
+>> --- a/mm/vmalloc.c
+>> +++ b/mm/vmalloc.c
+>> @@ -4870,9 +4870,7 @@ struct vm_struct **pcpu_get_vm_areas(const unsigne=
+d long *offsets,
+>>  =09 * With hardware tag-based KASAN, marking is skipped for
+>>  =09 * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
+>>  =09 */
+>> -=09for (area =3D 0; area < nr_vms; area++)
+>> -=09=09vms[area]->addr =3D kasan_unpoison_vmalloc(vms[area]->addr,
+>> -=09=09=09=09vms[area]->size, KASAN_VMALLOC_PROT_NORMAL);
+>> +=09kasan_unpoison_vmap_areas(vms, nr_vms);
+>>
+>>  =09kfree(vas);
+>>  =09return vms;
+>> --
+>> 2.51.0
+>>
+>>
+>>
+
 
