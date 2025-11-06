@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-888346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC86EC3A8D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:25:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D447C3A95E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:32:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CE791A425C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2DA46245E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5428D30EF7E;
-	Thu,  6 Nov 2025 11:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04ED230E834;
+	Thu,  6 Nov 2025 11:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ejgtQVDm"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="SqBftk1V"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55D330EF7F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A42130DD20
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428309; cv=none; b=eW833gl4XcLDCGis6ayx6t5CqJ3qCpHrj92M3BzPFAZyAWaFB+ng7Gvl10o4grvMxaJbdrNryBniDy/pNQIxeS/WJaKYiZmB0qR884c7Y3TK1CNjXW+3wRezrNBwf+0DNFC8N1Jv1/RouOkPe6pdo3degQFSjnKBIaGctEhXvSI=
+	t=1762428322; cv=none; b=r6wJmp3ynbKJbuQwkwbhFd6Opl32QZEbhBhnHrpB0e+KOFCtWqdlLOWRgQzfNM/vBE1ULkAx+JyEHzZFQJ6EoER4eti7UQ0xEFlz8GIzRbA/EHHZBnRDYAWOvtsnJCLdKC7kS5jfoM7wD+GtKebtTdWJ4tVyXGT/8K1ZxD4JmQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428309; c=relaxed/simple;
-	bh=53aEGacbdt9mh4MHgrcdnj49wMl+MBanKoOkq+buiLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SQIOnZaifNZmdf3cqJ3Z9miADywnC9ayPgqB/fIlG2zPpNOS5I/I6qOMQelmSKeetSi02352p6MXvJ/3ku6Mfv/YrFRYLx8p/QFqdq80cec0T8yaJxLp3RL0aAqgDN9qro94mfyJGdA86oEDquLMotLX3GwMoaFfKQTG9P8jCn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ejgtQVDm; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-4711b95226dso9919375e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:25:07 -0800 (PST)
+	s=arc-20240116; t=1762428322; c=relaxed/simple;
+	bh=yflAE0IohrHMPff4q5CRSpNWbs6XScZWnLpg5OWbzEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cd67naR5N6aFIVbSWtCIc+ed8ke7hpi/AqrQK2BF6mBeMl+Qs7xonkAxnho0Me3xWhXKeUCKS6BOul8WYIi8gWVvNWImo3CzwfdRoOueAEasaRUSmaGBv08weJ86nwrEeTdF/Vk9fCyt7S13L5tZJ9W184KyybKl1i9DLODuKIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=SqBftk1V; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3418ad69672so651952a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:25:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762428306; x=1763033106; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGj/iSzkfuIyvS/QpRi8dDUcKS5Ee/173QO43nXzkMU=;
-        b=ejgtQVDmtduDXGYDlI8HYMEIQCpNaFqguu6t4EvtJt/IXWcwdszsAnU1KhJDqEDxIX
-         OoTgptsTRWNujLME58H1SjbGDK6+0QoxSJqIsqPm6aYmxP/XyhF0gMa7tIV/nvwauSgU
-         zpp2loXhMyos1wk4m1ndc0UiPCYa5wmrnfZ+/Kzq0awuoSnB5mZl6iHvzvQhPFYDZrlL
-         PNhJCk8vfxN8djkAOMQ4ep/WgjeV1zk/4O61X0FrbRgSd4OMlFXZV62As8cWAbWQRtfC
-         SrgvWjXLeHA/YA5MYFZ/cR4NaNCSRqlIfPgx50OYctXw9YAaTeiAX9MKrsD6SRfdR5EY
-         rCBw==
+        d=bytedance.com; s=google; t=1762428320; x=1763033120; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yflAE0IohrHMPff4q5CRSpNWbs6XScZWnLpg5OWbzEc=;
+        b=SqBftk1VFHHZHfp/VnIy3X46R3abbKUY6BWwAXtYNy754D7vxpId/ibTOivBhJT67W
+         pUdc/vhslqtajIs+sS7TL6ilwpOW4uBsnGn17nihY5gVYwgOhATbdYiA/uaTh8qKWpsj
+         xp44K0oUEjw3pN7InI8c9lv/sq0/K9qZRCCP5idp3rJ2z9owL5ix0j6/juod/ozLCYEp
+         4UYilRe11c9n3hg6z4WX3AEuXSJb7MWglqeDtQDlg0AEBFfnZ+TwsC31pr4rQD2+Tv1D
+         He/JRg5Qwx6Kbcw2W0zV357vsNsGkYGyjAG/A8WKiyKmPTl6nph4/Mj17hfckOyVtJlc
+         /U3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762428306; x=1763033106;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iGj/iSzkfuIyvS/QpRi8dDUcKS5Ee/173QO43nXzkMU=;
-        b=FPO74Syf9qWBfyJMxehPx7tQfVW8OShiAXF3nDZA7WNJtOlO+W1umx1kw3BZTCV0de
-         pn2LNuBGwl8KntKAaALRiYmkOtRB7uedUSoJHzbYV6Eg+MCeYcI3aUUZ3KhkFyXSj3sg
-         MdirKioc/qRfaI7D6vr7gG84QG1ePJxzIVhQ5zvEAeunUmzFaI4j4Mc1Z59ntkT2FWqK
-         2KlnTXNCK7QlXUaq1nbQ7APIabZ25dbctL1Wl+9vF9CwoL6YEj9XaWt5pH0GdsQQugYw
-         JSAYMoFfdEbWwRDPij66QgS1gbj2Xafl7ScBF+m7uOSaBvoP5NQFiqrrKlZ4INYoJAkv
-         gRAQ==
-X-Gm-Message-State: AOJu0YzIWWC7DG6LcHPS5FjcrdeM45AcxMxp9I9dLOSyFqOaaSVrs4Ft
-	8xWPuRhONjhd5uBxA7trQmP0MfAqDiIne5YlFa05FfdR/bu6VWxjQoXqsuZuJ5uo1Hbs9DtIyr+
-	N/u7C
-X-Gm-Gg: ASbGncvpEjP2Phl43Yql8m7ezQQggQRIhl4Wd/701HhpYJjSTItvuMA8m0WQmd+2yy+
-	LjiUycGhaoNGZIZ7sz2RTSKz2srsNNDhvccO3ukbXumLtWlPtQrEYxs4yOUmaGNcXGtJsSaeisT
-	K+JWYNuO1t0r3vNYIL44qfNzRaviGFz/HAT7wcmlWOUQZO3C5L5RqspLdjO4w8665MKoZQIotop
-	qKchjGqWv3wjIBaXPJd7lyxkx+hX1Hnmml3MDtqHkvLRkIMxdTDfcnWYjGH6Vwk1FDgJ/XT7bve
-	rwuxV2KK4roLwnbcmR52Iux4p1JMsZU0yJwoMNVO7bfvUEKoQocXLRgXAr2Jd9tq2tteu5EAXno
-	UkqdHvVaja+GH41Qc5gzINvmIFbF6M2sUR/AomOzEn7SHfIFy7yrC7cqZdlqWFcExTO9fZkyjVl
-	Nm6FaK1Wq+5G71QwqkwMhpYXAs
-X-Google-Smtp-Source: AGHT+IGA3eaiIFQ+2ZbiTA2MOgo0wwCquzKHa49AC8U6KCcMIh1ZnlWSFALO8lJzdAqqAE7UjkdKpg==
-X-Received: by 2002:a05:600c:841a:b0:471:a73:a9d2 with SMTP id 5b1f17b1804b1-4775cdc53d5mr54886855e9.11.1762428305744;
-        Thu, 06 Nov 2025 03:25:05 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc528sm102956575e9.7.2025.11.06.03.25.05
+        d=1e100.net; s=20230601; t=1762428320; x=1763033120;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yflAE0IohrHMPff4q5CRSpNWbs6XScZWnLpg5OWbzEc=;
+        b=gNn4KCzJF62PMIuefATPUw+rKSRT3ApWq3wzr7AG+TPr7sIZMBe4ieHBGljt2Dq26x
+         GcOoCjeh8F9cXhtz5GA/7lGbzFzpTljdG1Fq1LyadQLj6USAz8CowVdfY0W5CkZiMFoj
+         KsiLua/g8OhQ5QP1R3ym7Gya23IPzcfWoTjLVK/eRzh7ADQlTd8RmbrpW9srs0LbHtdS
+         L2GsRErh8r1q06/Zf7XJicbE06Esx07d+WyVLA/rVSSs/LIZj0uatG909QNWZy+eNtnW
+         0eQq/ytkOcW+Tyf0afd5fD4XGDFyhKXBp+YkLbFJD4YlFIVXaMRnFTJ6ljqbcCrpdXAL
+         ANXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFbSEjGhNh/pmRyXLWASqJy7/HQPZwmG6jBUFlUToXDj40iTHg6391VXBbJmJX/w61XW+nglUfX2dd0h4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDqt3d+Z7S6qwVGSdpFEWPYtWBroOoTj2+dd46crjAlk9151i0
+	dSWnoEP7HW6BZG8mqiiu0gPPsvL75ldX/qy18KSZIaL62A9B/eHVoMqhmvHyBoLvpQ==
+X-Gm-Gg: ASbGncvi3KS1zMv04qHAr2UKr2mNJAFRWcQ0yMGMrJjx5nYsyhWpOChYcDCMKV6egYr
+	gJwDAA/zCRnsMerABCpSBHgoYN72/T/qAXpsbBd8H7OzyUyWzutSJE9A8psWOXMEIGQUstvCuZS
+	Wt1NQZXhzVJi9Xk8azI14s1n6mnphnQor9d6FN1w940SWhOyjBWMZMlAbI0q4+qGnjuvzVDowmG
+	LoCb3LIwz4PAdA2fQ52t9VrQBsFQxjXrtHNqBCT5ryzGLUsq0646NpX7d/6KVfWYjGF98pcx1CS
+	80BeIElWbnlPbR9BD8pqvLMvcy0Z0CSBolTWxv2/PtHzgGDLngAyYYSp6RRN+qISm4wQs0K3+QN
+	jBTYmb30iwErkPKL3rrh/olengM9odphYPMhLBV2byTcLAjOI2U2HRtacvH1vF9XS8x9zp3HjP7
+	fkFMbuAtqqv5CCg7kZep65sSr3U1KoywQ=
+X-Google-Smtp-Source: AGHT+IGu1haJpE0XfBd6Kafz5MUEUUFB8STfx5OylqtQQ3p8U6kY8U+a9xayUjJC6pn8gVDj4E2G7Q==
+X-Received: by 2002:a17:903:41cf:b0:295:3d5d:fe57 with SMTP id d9443c01a7336-2962ad2add3mr96789755ad.21.1762428319699;
+        Thu, 06 Nov 2025 03:25:19 -0800 (PST)
+Received: from bytedance ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5c71dsm25377235ad.31.2025.11.06.03.25.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 03:25:05 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Subject: [PATCH v2] RAS/CEC: replace use of system_wq with system_percpu_wq
-Date: Thu,  6 Nov 2025 12:24:54 +0100
-Message-ID: <20251106112454.124568-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+        Thu, 06 Nov 2025 03:25:19 -0800 (PST)
+Date: Thu, 6 Nov 2025 19:25:00 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Benjamin Segall <bsegall@google.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Hao Jia <jiahao.kernel@gmail.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v3] sched/fair: Prevent cfs_rq from being unthrottled
+ with zero runtime_remaining
+Message-ID: <20251106112500.GA471@bytedance>
+References: <20251030032755.560-1-ziqianlu@bytedance.com>
+ <xm26346sjh47.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xm26346sjh47.fsf@google.com>
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used workqueue is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a CPU is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+On Wed, Nov 05, 2025 at 01:37:28PM -0800, Benjamin Segall wrote:
+... ...
+> Reviewed-By: Benjamin Segall <bsegall@google.com>
 
-This lack of consistency cannot be addressed without refactoring the API.
-For more details see the Link tag below.
+Thank you Ben.
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
+Hi Peter,
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-Switch to using system_percpu_wq because system_wq is going away as part of
-a workqueue restructuring.
-
-Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/ras/cec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index e440b15fbabc..15f7f043c8ef 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -166,7 +166,7 @@ static void cec_mod_work(unsigned long interval)
- 	unsigned long iv;
- 
- 	iv = interval * HZ;
--	mod_delayed_work(system_wq, &cec_work, round_jiffies(iv));
-+	mod_delayed_work(system_percpu_wq, &cec_work, round_jiffies(iv));
- }
- 
- static void cec_work_fn(struct work_struct *work)
--- 
-2.51.1
-
+Do you have any other comments about this patch? Or do I need to send an
+updated version with all the tags collected? Thanks.
 
