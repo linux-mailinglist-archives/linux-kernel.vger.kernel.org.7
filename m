@@ -1,133 +1,235 @@
-Return-Path: <linux-kernel+bounces-889033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8656C3C8E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:47:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6609BC3C7EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95CB623363
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:38:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E06BC352263
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66118346799;
-	Thu,  6 Nov 2025 16:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCF234CFBD;
+	Thu,  6 Nov 2025 16:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OgAXOfBq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="0I+sxEHR";
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="j8PSu/4Y"
+Received: from mx0b-000eb902.pphosted.com (mx0b-000eb902.pphosted.com [205.220.177.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2311A303C88
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762446969; cv=none; b=LZpBs0x/msA43b3n9vX1i4q4dTLLvh+0DUhYXlZB86at2qH614Ck7Y6wSZasUbgM6nDHlbFG45Dj+3fkEbvZNibiDCp/awtFoqI3oSh5tl96DdY79GojxgxN5Yobnd2KC472b9eWBfkubN078Ax67287dlxUWaljRkF5d6tqrTw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762446969; c=relaxed/simple;
-	bh=TQsvlsQ+Zt3jW5svb4d7EhDMPgc75RYv7YuUsEhIvGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=przyRQ0dpCA3w0QRoQLVV/Cff6FC7DE0Hr+qodlpnQ2E53PNzk4Joydr9WrKLAzDhrBxU0u7eTmu41+1nYa5QqcmmhFPpKERpDUYwAhprHNJFT8+l79O2g5iDEj9l0Do4yHN/M+czqvgytbfvj5HVT7s6RG361w3k0EPCrjHn44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OgAXOfBq; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762446969; x=1793982969;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TQsvlsQ+Zt3jW5svb4d7EhDMPgc75RYv7YuUsEhIvGo=;
-  b=OgAXOfBqw/Wntx5jIYr01v98YbqPYNU+PoWi/l9sUBs83ZH11L7MZDs5
-   Jts+EwCc0xw3xv8EL4NffFj42AJjJkyy5gTg68LGfWHRqJzqQqDfNR5Vt
-   A2c2UjlGh9XcFC5KJ0DTXlBp679kFXkGuFpeF7JMF+APyAi3mO+z+NX+m
-   MlAxfiijZbHTtNzlWK36KYYciyi5R635wrbSOcrY6SOZfPfle3yjbKnXe
-   5CXJ79fLq5RTECDhgy/ImPTE7sQUS1RcPAMsCBBD9jKFuz6g4BAL5X6NB
-   X6ayiss40dQV/5u6xiP9N2bZXdMEMJGnsa6BQIWX2xkGjhSuD0QTx3aIm
-   A==;
-X-CSE-ConnectionGUID: 5ntcR2K5Q56F+ALDlW2tng==
-X-CSE-MsgGUID: h8+wIwcBRWioOuDzJmAFvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="87219257"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="87219257"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:36:08 -0800
-X-CSE-ConnectionGUID: 78qERZPUQJuu0S8bAbhrnw==
-X-CSE-MsgGUID: gmi7XcBTTLaEU06YAyj+aA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="187056841"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.111.59]) ([10.125.111.59])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 08:36:07 -0800
-Message-ID: <6074cbfa-b529-45f5-b696-044464ed433e@intel.com>
-Date: Thu, 6 Nov 2025 08:36:06 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63291261B70;
+	Thu,  6 Nov 2025 16:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.212
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762447018; cv=fail; b=RdUITHWTxImuj8kUJ81a489lkfQtkoaF69G0ubFEQQx0f7+Leui+3ytG/jgOFordJGKDb950rrnGnGlSMmV+UlsavNAKvKxiBxBTbNeFjxk/9ayGfrX4DOd8m9KvUA+V3hpzziszwlb37SQbKKNWCrOr7zaJmbr6TwFB0+rO7b8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762447018; c=relaxed/simple;
+	bh=3GefN5ObL4mlTF0N8HXHkZE1z91FNWRjyWo35Nh9QXw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fAaoCxiLqDQ79f4+kAWsCcfYWXFWEiTFAo+/WWhEGkYloF0zGfi977ZKX4GmM7DXmLjndcsjC7IGk57z/pGr26+X5GdB+fyq9tkipKc7UwQpgWPVfjtxSy63/4hXkqQVCMC682xHTWRUGfBC4gDyNKCs4HZAekzI87rC744ZeVQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com; spf=pass smtp.mailfrom=garmin.com; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=0I+sxEHR; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=j8PSu/4Y; arc=fail smtp.client-ip=205.220.177.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garmin.com
+Received: from pps.filterd (m0220297.ppops.net [127.0.0.1])
+	by mx0a-000eb902.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6B7i5Q020706;
+	Thu, 6 Nov 2025 10:36:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pps1; bh=3GefN
+	5ObL4mlTF0N8HXHkZE1z91FNWRjyWo35Nh9QXw=; b=0I+sxEHRvOVd8xT3oueFj
+	dqB+k2pe8+FV+4W7B5NDPQKeSi5xIT4FG5KVzM+idSpRDTMn09X1s/Fk8YUnthHW
+	55vj6EK7sVUf18YPYoFqz+a4Xcz/Jc2a3d/aTaEGZ3/xOpVa19oShTLX7gV3qJnG
+	UMuPPPPTqanhUU1ft4mOwLFTTStSa3GiWuMWIlNcIhLAY8Jd5KP2FcfblgrWYnF7
+	JC0YiAGuEhozv7a+2ZrKh//iqcp2KZ3Mua+8m1UD/UoUUPSeHU4Nc3f7YTHrAxz1
+	2PYfjyhZfKe4257FIitOjHwG1Gaw0uv0eo52NVBzbuq9d79RX4KzW88G27BCE6aq
+	A==
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11020135.outbound.protection.outlook.com [52.101.56.135])
+	by mx0a-000eb902.pphosted.com (PPS) with ESMTPS id 4a8thfgskf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Nov 2025 10:36:34 -0600 (CST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rEBOieuG1MoMdCBo3LRUlurOt5eKhf0otKTASDmPwL2sYkHs46sKRVzIjlTuLkub/Px6gG9QcyKbNNN0s7KQOAxb4o2mMGltuBKfvetq7U4ULQqtFKxiWOWOVLqu1L/ZyODuhQ8wrUepP0La+ZW2kipJq0ghIT6XRB/YbeSkDdnDcTGgx97vrMmTsRrQqr7iFX4VQOML0sgk7LBO/RFQjwvRTDmRKOaSR2ILgAr3EDakg3b1EixpBjqsHs6+w2f04K27AtCJWZw52VMideSlFq7TLidHYbDySJymZyhsbuXmCI0hVTK6h7BQL4rHi+H+Nt7MKJRDd8EM9VyN0TAaOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3GefN5ObL4mlTF0N8HXHkZE1z91FNWRjyWo35Nh9QXw=;
+ b=muQRk8clmIefWh8NDrI+9IKgsOpczRcGMApIxNNgkxtsP5lLFZAB81NujQURja3tYDtZ9qstHmQJeu/Skzig1n+nW2XcYmj71ZZKrmkxPLMkxQzbsTE/rcW5cG2YEZdT3WQk1dBf2UgxIfhZ4oa+c4SRO+KsgGRNZLYW0jwkmsZsq9qnI5Ca/8cwwPXn5XtC/S8UwmsFX6PaurB5JYAFEFNK8JjPCzSwPekNydw+aehc4Hv32p9zsH19EmaWF2D7SPxAErxbgagtXJaenv/GF6ZGe8iTwMfJHUXU4bYyAjvrDJVbtX6miw+EG2aNcBkO3dni0MruqL3u2ykhWMtfmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 204.77.163.244) smtp.rcpttodomain=queasysnail.net smtp.mailfrom=garmin.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=garmin.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3GefN5ObL4mlTF0N8HXHkZE1z91FNWRjyWo35Nh9QXw=;
+ b=j8PSu/4Y3TvbYWbGrsEIsmwDw5oaEUTIY1HeBgyL9ypfiu4m2wJAPKukh1LP7/kzrky66lbCErad97YOKKIAsR/MJFiw1Ijn8xtaUacp0z69Aer3G2G3f3wu8Cee0EFKPD5v/TQQIM0HEYwkc3ABOalZIk7+OQX9NiWWWvqnpKBrxaf34+XRvfA0+/IGjxpcZukirvo9/fdYfYBnzU9HlkxBuoN2ycV1c2hy5IWGTUs3SmptF+LhpNf97sY7pS0KEBLxXVH/7F+E+ZExsd8iPi3NgcTp+DhQ6bgwm7F4u8EWa59WQ8cp9er+qx+oWfhB9DSPIimFZElD9734OxygmA==
+Received: from SJ0PR05CA0210.namprd05.prod.outlook.com (2603:10b6:a03:330::35)
+ by DS4PR04MB9847.namprd04.prod.outlook.com (2603:10b6:8:2ec::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Thu, 6 Nov
+ 2025 16:36:32 +0000
+Received: from SJ1PEPF00002325.namprd03.prod.outlook.com
+ (2603:10b6:a03:330:cafe::95) by SJ0PR05CA0210.outlook.office365.com
+ (2603:10b6:a03:330::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.8 via Frontend Transport; Thu, 6
+ Nov 2025 16:36:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 204.77.163.244)
+ smtp.mailfrom=garmin.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=garmin.com;
+Received-SPF: Pass (protection.outlook.com: domain of garmin.com designates
+ 204.77.163.244 as permitted sender) receiver=protection.outlook.com;
+ client-ip=204.77.163.244; helo=edgetransport.garmin.com; pr=C
+Received: from edgetransport.garmin.com (204.77.163.244) by
+ SJ1PEPF00002325.mail.protection.outlook.com (10.167.242.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 16:36:32 +0000
+Received: from kc3wpa-exmb3.ad.garmin.com (10.65.32.83) by cv1wpa-edge1
+ (10.60.4.254) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 6 Nov
+ 2025 10:36:21 -0600
+Received: from cv1wpa-exmb3.ad.garmin.com (10.5.144.73) by
+ kc3wpa-exmb3.ad.garmin.com (10.65.32.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 6 Nov 2025 10:36:23 -0600
+Received: from cv1wpa-exmb3.ad.garmin.com (10.5.144.73) by
+ cv1wpa-exmb3.ad.garmin.com (10.5.144.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.57; Thu, 6 Nov 2025 10:36:23 -0600
+Received: from ola-9gm7613-uvm.ad.garmin.com (10.5.209.17) by smtp.garmin.com
+ (10.5.144.73) with Microsoft SMTP Server id 15.1.2507.57 via Frontend
+ Transport; Thu, 6 Nov 2025 10:36:23 -0600
+From: Nate Karstens <nate.karstens@garmin.com>
+To: <sd@queasysnail.net>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+        <jacob.e.keller@intel.com>, <john.fastabend@gmail.com>,
+        <kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <linux@treblig.org>,
+        <mrpre@163.com>, <nate.karstens@garmin.com>, <nate.karstens@gmail.com>,
+        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+        <stable@vger.kernel.org>, <tom@quantonium.net>
+Subject: Re: [PATCH] strparser: Fix signed/unsigned mismatch bug
+Date: Thu, 6 Nov 2025 10:36:23 -0600
+Message-ID: <20251106163623.1772347-1-nate.karstens@garmin.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aQy9TZm4rpP3ZB4b@krikkit>
+References: <aQy9TZm4rpP3ZB4b@krikkit>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] x86/boot/compressed: Fix avoiding memmap in
- physical KASLR
-To: Ard Biesheuvel <ardb@kernel.org>, Michal Clapinski <mclapinski@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Chris Li <chrisl@kernel.org>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Dan Williams <dan.j.williams@intel.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org
-References: <20251106162311.2705162-1-mclapinski@google.com>
- <CAMj1kXFc5fcXM1UCtgev+7LFyc+vuTD-M0ma31fNasOGmpQqUQ@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAMj1kXFc5fcXM1UCtgev+7LFyc+vuTD-M0ma31fNasOGmpQqUQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002325:EE_|DS4PR04MB9847:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3859ea24-2590-486c-38e6-08de1d52a4d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4oxXXWUoW+5YYgnIR/zwy74zBxola1s+CYrxa5GicgWTcqBHJpx8XoUiDdsA?=
+ =?us-ascii?Q?bMSSd9B10c9eZSA6nNralTPCzdwoYUulpmo2qAhiJNXy63zKBoTiZ2FwCvcM?=
+ =?us-ascii?Q?adrkI+RNJQhSTasdBygUHg0W30+Iq89LDf85zJdM3QhnfPMPN3IQwgYbwlzl?=
+ =?us-ascii?Q?wS1yAFJNtvZVfiP0NSLN9wiWt+ZTrsMa2F3t43OK0ovEjAapRPlGG3RQFy8d?=
+ =?us-ascii?Q?4cGI0SgHiZ4BEcX8si3Cx/J85YsSd1k1LdiQISsIdynmrlGpk6fj0232eFaV?=
+ =?us-ascii?Q?YGwsg82WjpWEEWzH7klAKdxa8ru1m5lAqNkhdDKOmlWIVAiMFBXBaSlGLaVo?=
+ =?us-ascii?Q?QaztTi/xXsNlciVxxSkKmJJo3X3qurhxUf7teSaV3f0jfjLHf2eYPpAHj38m?=
+ =?us-ascii?Q?ycg7KJce5YEweQSJ0QP+yKdhY4fzjuQm0McK92M68Y43jsfqPYVxOurP5Ca7?=
+ =?us-ascii?Q?U3ntxQrEFUDMt4Qj2Mhbov51TpzpaCSBJHqD6x3KGDsmcQXkklVe0fvrbwMU?=
+ =?us-ascii?Q?o0tT9ybIeT4+yKlD3pL6lqPXq3/aa/XEseP53MNdjdF108eiGYuaHu7TO4gn?=
+ =?us-ascii?Q?QTvGVUy/wOwW3PYfpD0Y7rOEeMMbnbkZUOAOcTZutdIaSLtOFj+IdUpa2+aL?=
+ =?us-ascii?Q?4woEGMaHtDQwmTP/Pt47QSEXDtBvLQwp0ZKNMS1PajaQO4CKCQf0k9OTlHZx?=
+ =?us-ascii?Q?U09+wcgM5SKZIYhJL8yh0ppx1NuTYdn9c3CWY3UaEQXlRDrlMmvFKkBSoRPN?=
+ =?us-ascii?Q?tD0E2QWnb/22x5pi4RXJ7/u+q4WIA9ljTBxWtiV598O4IbBv3uPbT/S5ILpe?=
+ =?us-ascii?Q?jYHz/tF8/TCvnhca3MVfATaFNhXTWAFkkNJOZmTpD8eQVvY/KBtTO3caYN5H?=
+ =?us-ascii?Q?56J8dNOthmjPytKGr5aNfZJ11uFf8lnhsEtP7DbFD+N0kwJS08wLGF2DBTV7?=
+ =?us-ascii?Q?CR3lkMu7/Du7hlnPTZS1rMGP6RbhqeWvlwMNBNR0p6qALRhgLep9OihwBnOJ?=
+ =?us-ascii?Q?6tGXnWLjlNzUvpGnCUHPuQRxHoarnWV5FpVDC8sm1v/mw6wBPQQy2o5MgtoV?=
+ =?us-ascii?Q?PvddXrO92eGXbuGLYH0WNL2T4dn3s/II3L9gEfCFd2icOl4tb5jWFgIYibNX?=
+ =?us-ascii?Q?7leQRXTHek2PC6mj9ce1sia4mxqC9J7E304r3G7O/0otp3+r2miFiD1rzIcB?=
+ =?us-ascii?Q?yoeVdk7WbvbR7Dhooqc4hXvpWrO/T0459WMmSJOxAJPGjMEQnq2e5csZPJnd?=
+ =?us-ascii?Q?9Y3cXqdz0AUwPTqyRWtn8+VVi7hvR7gu4YWcBbTqIzsMHhyZTEJPz92+nEUz?=
+ =?us-ascii?Q?6KKlw+G1GZOfT+32jD4w2LyT/OBpXjBJ3MMbH2yWbZFoTZLLkp3Xfw1Fkw77?=
+ =?us-ascii?Q?o9HRXSqgLGSDo9F40qs8rBX+RPnLrtvZaKXys6n13wmKP7eKNCL+oXj5WdE9?=
+ =?us-ascii?Q?N7MwJhIOiO/ulvZwiPIJkR4KCmK3tJGhQzPBEx/7Rz5VxKkXIfyUrTrydnZE?=
+ =?us-ascii?Q?UBnm57e18f00E0pv09NubSNAPq9zMjwDdFk9GbKHJGwUUuFFWXV+brzuRxSo?=
+ =?us-ascii?Q?zirEtkdUx+NIG1XF4Eo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:204.77.163.244;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:edgetransport.garmin.com;PTR:extedge.garmin.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: garmin.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 16:36:32.1642
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3859ea24-2590-486c-38e6-08de1d52a4d5
+X-MS-Exchange-CrossTenant-Id: 38d0d425-ba52-4c0a-a03e-2a65c8e82e2d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38d0d425-ba52-4c0a-a03e-2a65c8e82e2d;Ip=[204.77.163.244];Helo=[edgetransport.garmin.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002325.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR04MB9847
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA4NyBTYWx0ZWRfXzDcc/9oqLsSa vEnLfuIvNhxrtwlHj7xW1LTZpyQxJhobXpANvVwbmirtkZYI0Lr7ZHaj/+z9HD/Ux69pChJ23M/ BMHl3ZFxjwq2lHswvk59DYCFZL8y1th37j0E8l0tcEKH43qpLtDf+NvDgfR5zy34SFHMHXe26oY
+ iAuqoB6UCkPQR/z1CqKBM21UnfBIpAVR6c7keVDrt1l9ujzeRuqF4Aa2zVcspEuyzfZfrhzMs0F O0WUq65sLIpKTOSd5Jfi+iLmeyIeAmhfJYTehn0+1lH7PaptH2Z6Hmi/TCpemXHPvq65kJPzhiL Vi/jXKg6k9GCXXB6lp6nExYTNic4HeeMDJYQFm0Hnk080Pzpq1W740METmGkI9gaHYxmTbnoHPF
+ rIVTIcmF1Osd0+qe+4cYgMa6bpKgU9u1TlTGVmQZiMM3YfkiozE=
+X-Proofpoint-ORIG-GUID: ulZyAtWQrQlpWbnmUR6kRrZjs1Z5fP6k
+X-Proofpoint-GUID: ulZyAtWQrQlpWbnmUR6kRrZjs1Z5fP6k
+X-Authority-Analysis: v=2.4 cv=VuIuwu2n c=1 sm=1 tr=0 ts=690cce92 cx=c_pps a=7RdxWpphQ0FXUQ9+5PcytA==:117 a=YA0UzX50FYCGjWi3QxTvkg==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=6UeiqGixMTsA:10 a=qm69fr9Wx_0A:10 a=VkNPw1HP01LnGYTKEx00:22 a=PCC1QBCX1cjj2AFU9lAA:9
+ cc=ntf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc=notification
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2510240000
+ definitions=main-2511060087
 
-On 11/6/25 08:32, Ard Biesheuvel wrote:
-> This looks fine to me, but as I noted before, I'd happily simply
-> disable physical KASLR entirely if 'memmap=' appears at all.
+Thanks, Sabrina!
 
-Hey, post the patch and we'll see which one looks better.
+> Are you testing on some 32b arch? Otherwise ssize_t would be s64 and
+> int/unsigned int should be 32b so the missing cast would not matter?
+
+Yes, that is a good point. I tested this on a 32-bit architecture. On a 64-=
+bit system, the u32 would be put into an s64 because all possible values fo=
+r the u32 can fit into the s64. Signed arithmetic is used and you would get=
+ the correct result.
+
+> Agree. And adding a summary of the information in this thread to the
+> commit message would be really useful
+
+Sounds good!
+
+> Agree. I didn't mean to dismiss the presence of a bug, sorry if it
+> sounded like that. But I was a bit unclear on the conditions, this
+> discussion is helpful.
+
+No worries, I didn't take it as being dismissive at all. You had great ques=
+tions and I agree that the discussion has been really helpful!
+
+Cheers,
+
+Nate
+
+________________________________
+
+CONFIDENTIALITY NOTICE: This email and any attachments are for the sole use=
+ of the intended recipient(s) and contain information that may be Garmin co=
+nfidential and/or Garmin legally privileged. If you have received this emai=
+l in error, please notify the sender by reply email and delete the message.=
+ Any disclosure, copying, distribution or use of this communication (includ=
+ing attachments) by someone other than the intended recipient is prohibited=
+. Thank you.
+
+________________________________
+
+CONFIDENTIALITY NOTICE: This email and any attachments are for the sole use=
+ of the intended recipient(s) and contain information that may be Garmin co=
+nfidential and/or Garmin legally privileged. If you have received this emai=
+l in error, please notify the sender by reply email and delete the message.=
+ Any disclosure, copying, distribution or use of this communication (includ=
+ing attachments) by someone other than the intended recipient is prohibited=
+. Thank you.
 
