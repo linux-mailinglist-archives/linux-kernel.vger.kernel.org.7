@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-888301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C30C3A6DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:01:38 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34962C3A6FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62E018932BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:02:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C3431345D84
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6708280024;
-	Thu,  6 Nov 2025 11:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABF130BBA5;
+	Thu,  6 Nov 2025 11:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4m31jUk"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BqmcGAbI"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C710D2472B5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD1F2C08BC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762426890; cv=none; b=iP5d9d+kh8Ge7zoBJDYXBJ49YPYAQjae00CH6wapNGJ7HuDykDr/mmtqbGO2m43NT5YA3XQRQAQwXfKl+LJ/hVLql014GJ3y5WpknEUFuW3zQAs4yDZ/Nvg+GWaasTfyZQcYYPLFH11wU398u+6poOrB5Vbg2ME12WXi2ocyQyY=
+	t=1762427048; cv=none; b=uHjngW1nhcNPLgKU6qX60P9QOOtx3xYg4lhIzB9p7kQM/tHQo3KBgLzs02rOpsZJKvL72ptEh8wydMbN7BcYtodH26o2hBwNROFOxtNfd+2oQB30j8X99b3HoTZlKTpHf4UkD4bwputa5PpaiNl38IfYCQgiFGpqr7oV5UIBEj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762426890; c=relaxed/simple;
-	bh=ir//lFT9wS6wCSvmIE4K+HR90jLm5Sr1r9449X9pQYI=;
+	s=arc-20240116; t=1762427048; c=relaxed/simple;
+	bh=+GeJ8NmKQkLawbH/LMVrmrdydLjiycqpLHBxv2MYx9U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AcvcmO7c2DOUsci5JdRxV+hjgTpx7eeYh5x1kBbjyd8gJIa1Q9wvPNw8sWjLW1PH+pT6CWSP40aqqfhGKtkLKw0O/t0IeX9BfRbZgjA0gvqWJCovXv/Gq24iKHCm7LGHMj8yakMWyrLf25wSahejgvbFKZRuOV/OWR1D209h90Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4m31jUk; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-640c6577120so1423084a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:01:28 -0800 (PST)
+	 To:Cc:Content-Type; b=OYnkaVdByHTi2FjMaIZZIFMsXiA4zEwTsXXWMJvyTqOuSGdxLDjRkKk8MR08IMYSnJWnKZ3NYRt+LEHnVftx2xIS0ZwC5+KqDQWXqswRPEEQbreX8cmP+oNsBDVA5svo0n4YPk7L7s990zDeaGBNxFKMBzJMR8ATe25/3TGGMoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BqmcGAbI; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-59428d2d975so755771e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:04:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762426887; x=1763031687; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1762427042; x=1763031842; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ir//lFT9wS6wCSvmIE4K+HR90jLm5Sr1r9449X9pQYI=;
-        b=P4m31jUkMQGtagzKYPdHFcoDDe0O3G6tpphUTiCMePdNR28d/YuWzkdD7H1ojp3CIB
-         Y9bbnkby8t4Rc01y5804HlTmXS4fLQFL4suesUgNcyZ8v6oJ2Ad8HBEHMyB1yBjvSGIM
-         KnvF1PwsNuGPYVSOIV1ZQ118qnuN3ZkTk2xaLngsnvGukkHu1XG3pDw1FoZdEgKKVtPS
-         rzht2g8avq/MIhqtsoywQ+6OlBPNIQV/09pisKXF5LqtDla6HWJzCHlBs6+Ht8MTydYm
-         Xqq/dW1YmrJVE3l7BhWq+6rMsQVB3JMnAaxZ2AnWq0F3hUlmDMtsiq1PYZeRSVSWZcKv
-         gWrA==
+        bh=LyHaZAbJ53jyXeWbX+O1Xs3tfYFAmudzKPogsGg5xTs=;
+        b=BqmcGAbI+LT59HfN9ZmXOspf9yAWEWx5uXYAQK/N4OoZA+CDeX3fiH8L9YZT+2ITx/
+         C00phDGXeG0uUiV3tFvl1B9wvhj1UH8tA5I9FCAgpRCIpHEgb+QTMFQqimxcgcaZp+WT
+         HK0Jn2z8qHu5qQFM0x+XAS0liLZwV4rXLHwExiQnK7n6sWQ20IY2Ffp3vnJad4bOEuTC
+         cjhum6UB0M739hq7F1PGkj7BfvPQh3BjmUqh017CTMGjdTN+nx7aT4zIbrSouxNmtKgy
+         7yXKZbAQEqsW7bBDan8iFsfh0zyH3EDNgHgqcSWJgW5MVs+/OfzI43Dvfb7Q/QdUQxMk
+         Tn6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762426887; x=1763031687;
+        d=1e100.net; s=20230601; t=1762427042; x=1763031842;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ir//lFT9wS6wCSvmIE4K+HR90jLm5Sr1r9449X9pQYI=;
-        b=uQ7/IV7YPRUwnOiEq6gFC8ZKCpZTlq5QdEd69p+t7EdkwT3LrRcFsqwRCos7c+fkp+
-         AiU1D0dk3V3AE5Th7gdQzsAA3V8d08H8h6boynlTUkRcCCD3xQ8M/6ArEwqwrkyQSZYx
-         rTvbWexv/oDbYtsyV3kdzPq+ZgrYrj8FgR2t3iG0MlJs14JVBcdM2g77ClX8VkamQZLo
-         Cd6o5VFqWbrqdhgbaaDYl1IoCVhP58gNCo25gqJnYAHlWryZ+hIZFM9aCRE3MpqlX+fQ
-         OqZL8n/+ZPovfDAxNNHJZUN2GGRDV2ZuDMAyE9ZgpcU6fRj1V7ok0Y5CSdfiQweilTKM
-         V8Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEs65Z4omjcCArLDj0qSpQEpU6fYYoP9ZGw0usc7G0R0rHrIzm7974LkWQVqu2a3NMaof8RUQeoChss7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPPsahf0vVETqql+ca8FV2bNXunWzG8sB9/R4zhbDCvKHgvXiw
-	1YEqEEYZoZ5BsRXz9QUcgdErK0XjmcbcVrFHuuG8AkdL51blJmpiE1nfZSLTTXpHcGFr+HH1HNe
-	wy0JAAA7CnHpEbViL/V6IjwlCzddJ3OQ=
-X-Gm-Gg: ASbGncsdLPnPK11qOr7Yzb480cw567Zk8eWIm84Vh/YTWGLER2KcRDCbXjg31ak4aM1
-	lej8v9+kJnYf0HLRFPCUlMLLN8ERNTH+hsRPNe9DLICbzXX4PoNykZeguYH1Anf+OgV5F9tgnCA
-	boQR6CEaDDpkTGfsDH3LCR7EnyEd4bcU1pYZ4MXMF1qhKkjOUjaubnem4HTTkiaLnfF3I4ph6fZ
-	9e91JTCGcb9gtqllf5UX+1yjU0DvDcXjWjWJqz/ZXt1nm+dqEqc7tpdqCu4+Q==
-X-Google-Smtp-Source: AGHT+IE3ZLXP3+oYOCDOf8HdHiiPIx4UVriZLNHQt5QqAgQyg7lMQ1CUloE2bPCtkRDLKsQ1PmtiKY3RDXWEaZ6PDlg=
-X-Received: by 2002:a05:6402:1eca:b0:640:ceef:7e44 with SMTP id
- 4fb4d7f45d1cf-64105a5c99amr6575408a12.28.1762426886854; Thu, 06 Nov 2025
- 03:01:26 -0800 (PST)
+        bh=LyHaZAbJ53jyXeWbX+O1Xs3tfYFAmudzKPogsGg5xTs=;
+        b=fu/zcAd7+aRXVnGa1moD/VdsJlDso3YzsTbjNQucbvtRrICd44Xju8SEreWnnHjOYL
+         GtWG1H79S7empCS8Hb81h4v7M102H4nLSb22AeE9z+DvokQjle5Uds5KCMdSpg36e26V
+         hCm050VJTFrrxbl/CcsqLzbovyDr3kPiNZ1Dwt3im32NrCRB4juahqQpq2CpE1q7bJhv
+         KG6tw092sPfwFs155cQUaLeUbiB9/wdqglfz8jjlnsPit4DOzQmrJ0gvdEB1wnXbZLpX
+         8gzblKknx9nVKaDKM1YXpyOhehsurWXuyO/YdRw3pcQ2B78lELsTmI3QgoxzGad60+Da
+         //dA==
+X-Gm-Message-State: AOJu0YwDlAYti81tLAhaXtKM0+GnCVI/YDQi0kmSzEX6/kqHOCdDJUOH
+	+77jRAJQYR/aQ8HsO7Z325RKdGEw0legPhvAhr0xLWT0NcJR4SuoFaiSUmLuHiun2HSAeqOPX/V
+	Oh+ZrPq1nhU13ix+wQtErXxRsFyxuD1gOaELJUAP0Bg==
+X-Gm-Gg: ASbGncvnF3/7/dnvIxj+cbQT64ww4edp9U+WPnmBq3kHbcRUBQ0iv7ZkCEO+rGoUrT+
+	cjefITocyKIqcH9uBMhu+WeV7rXexVlHPgMixDSt8gGtRntKsljsHHvSQKFI08Jc4w+9TOknlPt
+	uInj6cbsaTElv7Y4qCYn4Is1jwHmBwcZE7IW/jioHxVuDsDWDjJ9aJmMcbGjkwawyW6zzUJUXbi
+	ABfDlgfOqeV5F/+3WOWWNZ6fI7OG0KdttTFVu+kXdX7YaHPkGU6T7/bU0VF2z6d+BbOehUXAhSu
+	00ULiOZFV2uj+wbydQ==
+X-Google-Smtp-Source: AGHT+IHNS+lV8DDaPEBqqaz8m9DQ1tr37iv//49lVHU47CIoDVlu01s4MTSMDavSRxporI0IE2zgko0r5MzlKSRbmvo=
+X-Received: by 2002:a05:6512:61b3:b0:592:fb56:f2be with SMTP id
+ 2adb3069b0e04-5943d7dd243mr2232093e87.49.1762427042386; Thu, 06 Nov 2025
+ 03:04:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105161845.2535367-1-a.shimko.dev@gmail.com> <20251106104228.GP2912318@black.igk.intel.com>
-In-Reply-To: <20251106104228.GP2912318@black.igk.intel.com>
-From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Thu, 6 Nov 2025 14:01:15 +0300
-X-Gm-Features: AWmQ_bmlkS6-iACEnyny5YPvKbBIRoPsEPwqNcbfawNSc0tFOMLrZxEL14qOOkc
-Message-ID: <CAOPX745kvE-5mh8PjTzwboTR1uKijvgG72YOb4pOjXzE4+3qaQ@mail.gmail.com>
-Subject: Re: [PATCH] i2c: designware: Replace magic numbers with named constants
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251105160819.302988-1-marco.crivellari@suse.com>
+ <20251105162932.GAaQt7bON4FtSmxQ3Z@fat_crate.local> <CAAofZF4fBbFtiKxde2M2ikK4k-LqYVRoavPbNVh-XFiQPmfGvw@mail.gmail.com>
+ <20251105210800.GCaQu8sKCjZ9Xcq8-n@fat_crate.local> <CAAofZF4Sdk0REJFearcrB5_MLLQZWaNpecUPV0+BOiNcvmTaWA@mail.gmail.com>
+ <20251106104921.GAaQx9MWLfhyqHNDYK@fat_crate.local>
+In-Reply-To: <20251106104921.GAaQx9MWLfhyqHNDYK@fat_crate.local>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Thu, 6 Nov 2025 12:03:51 +0100
+X-Gm-Features: AWmQ_bkqO5AWnwijQqvBv076aCG27zkaFUfGIMNS6UQEH9zKSWwtFXQwBUx15T0
+Message-ID: <CAAofZF7cz_F9qgr7WqbORwH5iMuAO9f0SkWRQxQ4ns4o2X_xJA@mail.gmail.com>
+Subject: Re: [PATCH] RAS/CEC: replace use of system_wq with system_percpu_wq
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Tony Luck <tony.luck@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 6, 2025 at 1:43=E2=80=AFPM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Thu, Nov 6, 2025 at 11:49=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrot=
+e:
+>
+> On Thu, Nov 06, 2025 at 10:17:18AM +0100, Marco Crivellari wrote:
+> > It's just a "rename" from system_wq to system_percpu_wq.
+>
+> So why don't you call it that?
+>
+> Instead of beating around the bush and confusing me? :-)
+>
+> IOW, just do this:
+>
+> "Rename system_wq to system_percpu_wq as part of workqueue refactoring.
+>
+> For more details see the Link tag below.
+>
+> ...
+>
+> Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de"
+>
+> And now all those people who are interested in the details can go look it=
+ up.
 
-> I think it adds too much to be honest.
+I was torn between "replace" and "rename", because there is a new workqueue=
+,
+not only a rename of the old one, because for now it is still existing. :-)
 
-Hi Mika,
+BTW,  thanks for your advice, I will send the v2 improving the commit log!
 
-Thank you for the review.
+--=20
 
- I'll prepare v2 that addresses all your feedback.
-Will send the revised version shortly.
+Marco Crivellari
 
-Best regards,
-Artem
+L3 Support Engineer, Technology & Product
 
