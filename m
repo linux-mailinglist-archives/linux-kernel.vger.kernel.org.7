@@ -1,238 +1,197 @@
-Return-Path: <linux-kernel+bounces-887759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF69CC39036
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:42:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535C8C39042
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D5F3A64A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78641899077
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81B123E32B;
-	Thu,  6 Nov 2025 03:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51C12BFC8F;
+	Thu,  6 Nov 2025 03:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OwVg5LP5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rtbnRJrj"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="I6EoVb+t"
+Received: from sg-1-17.ptr.blmpb.com (sg-1-17.ptr.blmpb.com [118.26.132.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EFD23AB95
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762400532; cv=fail; b=n9Uw+QGQcpKFCw3TniQds4Lbf5odSiHjcAjEkZ0zW917lEa/g7OM7ApXsKGsiSefNKFCwlHFUhUoO/BVakdPAv6gtJRFdEJ6m/iVTev+fDO25fk0mm93L8WAzMm4rBORCUb8rArItNC3wxB/46Tbd5pytZgCV0ZvbGpfPmGt++0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762400532; c=relaxed/simple;
-	bh=rtvuOSc/UABJwW8e0vEj4pV11RfEtgvNusQIO7a1dXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=stYAIyZixPO+Cr0Gi0jHXXpNl+l2xxH+ODfSb0zfChplIrNH/na+a9CUwdqg7ObaPnjeMtN1KS5iYTW3uoO369UwC1jYBXPERWQAfopPiU/tqFbwgAv14yQwHqyCVFkqh5eGzcK6hsabDde7lB38ta44bipc44mYnwthb3KGS3o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OwVg5LP5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rtbnRJrj; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A61DP7V010292;
-	Thu, 6 Nov 2025 03:41:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=OfVXxjC0iPAyfGeKdN
-	eO1luHARWUt5DVSsio092WZbM=; b=OwVg5LP5TgGuEkx98Qp6MdrxNhnVimaJCi
-	XWREglcQu/jtFq0e5S4mpQD9WYvRrnBSC/Zz79ips34QVsrS2WXUDYP3QSw61QEk
-	fPuyqOx1N6IofPBEwLaIiu1triN4vg4jeQ1ijnvOalAQc9N3aZgOtINHNHUeujHf
-	DzUQ+pyfjrWmjg7vDSgfwMsXBhS61DYs9WBXaIPV50bOyI3ZMoDVcUkIXRAPGEw2
-	AODaSdYNiET4008EeLvrHjbmwHR8JwP6l8pKdDblZ2DIWtIJgqU8t+vIlUpb7vHF
-	lxy5l/MGB72h09YzV7GbjyBAxgv5xAVGwFx9O+PzTPgl75h5HsWA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8b5ys0mw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Nov 2025 03:41:55 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A60uuaG010852;
-	Thu, 6 Nov 2025 03:41:55 GMT
-Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010065.outbound.protection.outlook.com [52.101.56.65])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58nbv4fa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Nov 2025 03:41:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DEQxirMP4++RE1j9fFhlshrA7qJcYa9J2h7BHqPL8eULIyKqQIK0s8P9dsLWheTD56c0/INIWqxaSX7k8VRDzlUgPQZTgJD0fJlvsZ/BeYXvr8POQ0XrYl5kbiYtQVrNPhz85IAapFVylgpFCL+aTpx3tMtjy0MuF2wy6sRLVJo9NlFQMEEYrFR1sRbBZOlindks/FZovnnbny4isOFdO3HaAwesuoZ28yh9Mw32JAoaBlSQT2gmp35/eWpzn+gsW3pisbG4U4Qkz449eeazsR6OJQh6NU9t01jnmQzercIleNOSU7pttuyfctrvSfaJYEp9OzfdIOhtyauWAETS4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OfVXxjC0iPAyfGeKdNeO1luHARWUt5DVSsio092WZbM=;
- b=cLZdgmERTpoGyks/JPm/TZyvUWGdZrpzHL/heFLYv4XqKbq0AW3IFIYlrr19N6qdcIiPHUHPANEA9Pa+TfaDSY9ujwqr7jDB/+YBhaJPE7Px9h5ZqK8x1YkYX7JBthNRJqDjWe3EBSeYpdm4y9wagONiaPTABFpjfgE7/q9Dum0tLznIDUt5Ox3Rgz9H5jRRrTuF9jCqKcbVkQdtM2MFBoKtwNasu9tNfT2fd+bkwZD1GYu7KoDJGUzOUwlGWhiXQrPcoCeqJcucTjz82rNyP17P2MqF4TjX85LY394eg8ajRhgIUCT8nGaYdQGZlw1n/3iHOJWpPQDFDcbz1NX3Hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OfVXxjC0iPAyfGeKdNeO1luHARWUt5DVSsio092WZbM=;
- b=rtbnRJrjOHD6gnth87P/QVZlpwyPwV/tD2IhIAcumGVqY7sZS25wY+QRDSuXXfk0cTWbS10fCMPcGCeXQ9ORJlhu52qVR4oYXKQF7+6vJXcYTsKKXw8KATgJiTgQKfTd+zvHNu1wKiqj0WyrRL0Jka5ye4g/TVx1uvLhnG1wORg=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by CY8PR10MB6657.namprd10.prod.outlook.com (2603:10b6:930:55::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
- 2025 03:41:51 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
- 03:41:51 +0000
-Date: Thu, 6 Nov 2025 12:41:43 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@gentwo.org>,
-        David Rientjes <rientjes@google.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab: prevent infinite loop in kmalloc_nolock() with
- debugging
-Message-ID: <aQwY90CJJECSSFtW@harry>
-References: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
-X-ClientProxiedBy: SEWP216CA0148.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2be::11) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6096427AC4D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762400704; cv=none; b=mLdjtmkfJJ4KLACkF5OGUJTTuxHtV9WRYinpuovVsiWy/xi+c+DlV10Sg8BHzWnV94ESlBloOJW2qf+QbXA2785k2yu9SEUcEiba3yz/efvMqOEhuYL2Ypb66g9DsqaSqrnCECogjO/gRaal/x4qen06frXjofl5cd2Ne9Qyb90=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762400704; c=relaxed/simple;
+	bh=Do+sv32JRcqdfksgmI5pdC8DcgydpqdBgIxqCojJvc4=;
+	h=Cc:From:Mime-Version:Content-Type:To:Subject:Date:In-Reply-To:
+	 Message-Id:References; b=G/uNDxxr765YZvSfxnzbL6ZS/3p0MyDeZfNDfT+tBLpKsypGXd4qFGaHvjf8ncxEb8MdhpLxgvgu3684JHB+pyOo26wi4T1qzLO+I/d0a7Qt1nejkE/tXiPRgzrdNzqe5benLMoGM5E/bmI5zTqBZY3O7ex3OGOdIa7Ktu0q/m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=I6EoVb+t; arc=none smtp.client-ip=118.26.132.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1762400696;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=EiW9nRHb8Mbz7qGQdlY2Kw3uUegK7QOWWArHXK3yj70=;
+ b=I6EoVb+tqogX+QqsIKVz9yjRExPq8/IAr/KauQblSIO4r8ZA1DQVO7lFsUnlmRrApQu5va
+ wdTY7irJZG+QrUwQ1kL4voYaI1ESewX9DvHeXTDaqFD9TWaiZsAYi2VrfClmFe+D4UI7XX
+ +Iq55N8oHDNdcIsGEC4XSCBeNoUikbHnnDhSeoO8N8ifkhr4Z8WIX4P92kkd5jGyZ9aHmK
+ ORWViumUtMUW5VOfLeY2U81mzJCCbTtERgNVPqTvX9TchuS+ld2XFxxcT1Tr3LPP4eMXv0
+ OFMWqAny1lNt8Z1v88l7Jt48XYFB7EfSqL28GzBotGEEObigX2s81yyzqU6THw==
+Cc: <corbet@lwn.net>, <song@kernel.org>, <hare@suse.de>, 
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<linux-raid@vger.kernel.org>, <yangerkun@huawei.com>, 
+	<yi.zhang@huawei.com>
+From: "Yu Kuai" <yukuai@fnnas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|CY8PR10MB6657:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1bd003ce-c3d6-4742-cbc8-08de1ce66bbd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CmokcPSYDs2wq3BWJvpJHQXR1+sAsV/iP79Mt2OVPQoZo2OCQvIGIUIGpmHJ?=
- =?us-ascii?Q?rZ3QpsjK3lAJp7x0qZPFB4V4ZcVwEO/yCjSOf3NoEEtlEVAKeDux3iEFrPvT?=
- =?us-ascii?Q?Z4AcnvB2Ha/7VflGGTPCLkd+kCXvxu3c3fhLelmgURgNu/VD/DwvTQP+TuYs?=
- =?us-ascii?Q?ovJjgptJ7Oi0VdT7q2DpggyLqHzZK9GysvdIMtJAGxx/m/DNlF/g+jezwHw0?=
- =?us-ascii?Q?x8Q6mpZOWX0FRQ5H9JLNKpPTm0cDjeoFpsx0OfGv3I00/uOzDEQx415ltQSW?=
- =?us-ascii?Q?tDe4wnskH3Oizxx4SXmmv+XxYWG2BJaPiKbB3GLprWEveBwbFppFdjpyMpeP?=
- =?us-ascii?Q?yRtq7hdhkUsbZcXST2WvHpWlustJk0Rdq+kxkBAuspBUmKXH/xYhFMRF/Vvq?=
- =?us-ascii?Q?SW3mzYEb3ME5+IpBVBpD0MqZf+jM+06BIhbLTjc9/+cOaMm8ju1ZcFYdFdOW?=
- =?us-ascii?Q?Cnz6EkLammoFDK6o7zTZgvsiJVKnTcmB6GegIUrJYCuAGv5UDkmQ/8rJTeEc?=
- =?us-ascii?Q?pJ7KbfbiASj1zX6dI/PQddBnU6wIDAo86fwC4T01bCje4dH9ciKrJYTY/ST2?=
- =?us-ascii?Q?4yd6B1ss5qGhSoXakwmPo1KcqjpAZqRUSR0oazURWyxQHN84o8VshHmwYzBo?=
- =?us-ascii?Q?n7mqvFpVZSH67i5kWl+9aLGn/V9xPLakXK8q+tswkG4SyXI0PKnoWWMUCACH?=
- =?us-ascii?Q?kI+ScMpmntRbUvGJtaViCWR1G7OgLgaXbAiXtpuyjZsK+QbzrLscyBrYj4qf?=
- =?us-ascii?Q?VzJSVZT6ayrLgo1FDJUMRswbmwesoQmSQpkm+utecc/YrJrKBFSDaKhkQSqC?=
- =?us-ascii?Q?YBNRNvzT7jeqwWx1KbDMcOota834TPcQXlis4KrkK4AYndcFv+P8Jg/i9+5R?=
- =?us-ascii?Q?zzbh72p28naMon4OIQeioebGPWkKsrwnkpXGhGdZdrE6pnMeuIDbb1ZHie0Z?=
- =?us-ascii?Q?COTjOw5aI0wfxk6Fdps9dwyJvhvtw6qSiBVw1mbSwhHSbi1GbGm5sCzt7ttZ?=
- =?us-ascii?Q?YoKWG61hx0lOAeP2Gn5D61rPaEpCout80JXajg4QNNC5gc3fj4L4zXprWmas?=
- =?us-ascii?Q?fiunjH3SmraN5MyrQDxp1y7bdvXnyXSv/2YbSSHyN59c83Sto0/iehoC8pBt?=
- =?us-ascii?Q?LaXj/QYCt9uja488xMxKVIANyLdn/s8RVxUAWwwaK9545XNAkDEbxILzmuko?=
- =?us-ascii?Q?KPfOMaGyPufy6mRJ9uoKO/NuRfvS2sKvfnd9N2rB2e0m/OYpjW+Hp6bOCnlS?=
- =?us-ascii?Q?oEiN9XmfT66wn9wa+PvcsbrzAvswGpPokb3uIWJrK6oDrFp10lbYGwyhL4Kn?=
- =?us-ascii?Q?j7PMunzRJ4KBUNYZNawQkJFlkg/hKgdK3eLDyHLSU1204MhKwmZJz/YE1HR5?=
- =?us-ascii?Q?213BHboVUj3if0fqv7N1bE1R5Z2OWlFjsgGi+6eBXyEnRknZx1DyvFYu/0J9?=
- =?us-ascii?Q?o3i+0IS/MRX5vMHvGwhjqfVTfWPbtlXc/vvgdkutYNid5TNoqpE2lw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?S/iG+zGz2JYBNItUgt/tMQ2omtKWZLihA+xLt/zuK+nwc06cmCIj3PofEl/X?=
- =?us-ascii?Q?UBwzyDAEkgUgeCpN0V3ZaMSdP6yG8ZnLKqPmuro2f5EIFvVmNwUqXSM96qGt?=
- =?us-ascii?Q?QJp493bOTETiELImq/i0q2AuXkJoH+Hhxrg5efu65khP71MyqjneBy6ujOng?=
- =?us-ascii?Q?ZdxzInOqmJjbpbUFK8OsutSmgAhne4GnffYVg3ET6lAyJTxOgn5ylIoLpVbR?=
- =?us-ascii?Q?rymuPenS84szb2W97/xDPa3siIRyNjQeruFsSpzCn2FsX0indUdLIFnswrJQ?=
- =?us-ascii?Q?6ojAUoDCWB0wyxivvRwMIGFpJaJhnRsViQBEugLV+94ixkhisxBoJ5klyc7O?=
- =?us-ascii?Q?vF9lF+SrXmtnYzZBfyx+JicmBPALyzn/IJZaoyTFNFEE14uJJYNJ4o1AKM24?=
- =?us-ascii?Q?kOOuAhbv3ryMcnBQu1NvcsKglkNpXwzd3bc3cDSN6Fns4V/0mTHWG3rxtJhR?=
- =?us-ascii?Q?bO5Pm28kqiayxF9mGQbGAhqOrlRRWjwjMa81zFNoA/TqRxtqdbxeZxSE1kTS?=
- =?us-ascii?Q?F/FFEanuwSS0VUEvnnO4yrpmh/MUzzoRs0bhgIAqWa2H163gU3pMRWM5rR9P?=
- =?us-ascii?Q?lg5Y2PPlabjso9WywLW8aZ80K9F5X/0GQgxZ384Ql3LjOSO8XZaO5FBJdxCU?=
- =?us-ascii?Q?kMx0daxKXUoVasOyY7Wg7GQsHxPwRmP5K0HUD/qrkH1cDIAH573CMY3713TU?=
- =?us-ascii?Q?EBDICy9lGa+mgSA8TLV116ZWNNOn1dUCT54Xf6FeyoHGXtdHmXdjyYUtrtmN?=
- =?us-ascii?Q?3CnVjC4QsLzCdCUkcJIwZewOCW4C2KQucPKhfJgph+WAXQbjRRSs8U/mkbnN?=
- =?us-ascii?Q?pGJuoznoRzUrCs1yXu1oEvpU6sbCRFmaoNW1bXqUiql/Y6e7RsfanUAl7w9W?=
- =?us-ascii?Q?Hyda2buhR82uUH7SwIb/2DGZaiPyhVC637JSLHCn2ebskDSuu4yLNtSSBTxK?=
- =?us-ascii?Q?gOil0yWCBpSUvRyrkVO7/eMR4xd8/ZIYbN1h+q8i25O9CEPyrvk/d6UbG3W1?=
- =?us-ascii?Q?1FzTQK9aSHPrZDHlVShN+5lzxNCfp6+d2fkBG8EIRpeE63lDzFI0qcQkg/gz?=
- =?us-ascii?Q?4TJmmICqRhzVqo59cc5l4Hkrp+AVt3DWIc4wUV3Is8+y5ALiGNv0dU2/8YnN?=
- =?us-ascii?Q?TDC0OHTg3/O3y3vpZve3RUYztiPy8qUMXc2kVCbq4reOPE09giZBvPikCYu8?=
- =?us-ascii?Q?dKqHMJLD54TF/rcVzLQDh6yrX7OY2U9dHddiVhPip5IzoyaCI8mU/V6uk58R?=
- =?us-ascii?Q?hAPcICtKF70jtNMGZp+5HXW+C0iNIUCvlsSdeXinJi1LrRLGYs8mK+ooUwSu?=
- =?us-ascii?Q?QQbsIKw04RhEHFhEI8sYNz3+QvvXyo908adFJYJhzfH1shGplBeTpNShrxD9?=
- =?us-ascii?Q?ylt/8RWx6wrZG+PguOXZ/tcC9HD7J9vl9CBJuJgASBcBzO9KGqlVNz3Zcp4p?=
- =?us-ascii?Q?5jRx+wbfypvgyfOZSTII14gNydgJbR59LD1N1M7ATk7YGnvQ0GwjAZB1MT1S?=
- =?us-ascii?Q?OHyviREP6GkvCnOvZKNuSjt1L7DLLnL8Ahh3Y0ygULFpbOVqkWF+tICeOa+9?=
- =?us-ascii?Q?T5RKeojTHwFzKcyMDy/79jN0UHmoQNejCUG4H99y?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ecVg2ho0T3YTL/7cFNQhxKxqbPb9qzzSbU25wGvNzXocVsWq9RE9i5Cb5hjRdEo9QkDkgXJc5feQ9VCuhjfLwos0WNukcdeWsmZWvglf7ls+lyydWvSlOumWc2A1prRmcZkcQGjyIXqRW3P0WFUFD7rY8o2r2YqbJMhxmGT5OqMXih0Hqroy/7obOwFp8EjYUXmQS1aNHuKY7AtXZPogvvmyBnO9aUB5HaDVhQDygYjhGgeBckMwIGi8ijG9FvYZTiZ5RlUZSnWERwcgjAL0A/NROCRahXrOO7FT6dSyC7sRMQghIELBcT8Z99tTVA+zGg7mFGQQ4hRSZ6eGQVmy42gwU4Ea75QBrf4mWwPrD+W6FUvzWADowkjUK/fW+x4sNlwksxDOL0iabkM4Muyqv5cL+2blUBsFfylYo423yg/2pP6cShn2YlbRvha8xEFZiajcox+GZcf5hczKEN8TcB7KWjrlXQE/3svmV+H78gAevNTVSvGjfsTzN48scCz3wzjTRFYOmRsCsoD8QFXgc/o5UfqynkEtq3F0/Ln4lNnuV0Rd0ELVY0NQdauzO0wPRme7r/MFE95GTya3kr9pWOWmLtPS95pPznOwQiuoSck=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bd003ce-c3d6-4742-cbc8-08de1ce66bbd
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 03:41:51.1388
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U3f/r8XhDfzNm/JCb8565FRPZERhITn87eeWT1Wx95yqkTyFz3MwVIfBspPyWAEEnVoPEp7zX3FzBnZI5x+XoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6657
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_09,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 suspectscore=0 mlxscore=0 adultscore=0 mlxlogscore=996
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511060027
-X-Authority-Analysis: v=2.4 cv=IcKKmGqa c=1 sm=1 tr=0 ts=690c1904 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=u2ey0Y-QUYRKGIaFtsAA:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: f6Yb9qMTiEEJHKWaoKqSvZSUBTyYKPTk
-X-Proofpoint-GUID: f6Yb9qMTiEEJHKWaoKqSvZSUBTyYKPTk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEzOCBTYWx0ZWRfXzHlawKOvRzzQ
- R1e/afaXjr8L+UpCuSpjRqZ1N8ilSQbfx4xmXEsWqy8a7Dxqde2N9p3GP4880ylL6c4yt9sqMnZ
- +bltOms/5BMpRxP5a/Fi6zTFJ+89rP/rb9fHT8ruTpsCqCv5K0Q62pqIz1AF0au3CiIR0zeuyvS
- nDPW0ekzwqzBl/41c/sa0yfv54i+fHKYO0n2YDxFjwZYpoFv/y0ZpxsqdOyuUFSEZegG6VHKOIe
- apyRF/r792dUwVUN9SXeIPbKF1izh3VEKoIfn2160EZJ3sNXIyzveu8PkvRHFdgt7bepUb0Bdys
- CpzEm7WCyBFvgLoj/oOxmt7UIxQZ5YQM3XU+r4V4djR1GCP/jwlYn2/PV/Glmezuqfh9mX1j63c
- 23wgNP5JFicoBHiGOtzA+tH8KKif+A==
+Mime-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Thu, 06 Nov 2025 11:44:53 +0800
+Content-Type: text/plain; charset=UTF-8
+X-Lms-Return-Path: <lba+2690c19b6+3e32cb+vger.kernel.org+yukuai@fnnas.com>
+To: "Xiao Ni" <xni@redhat.com>, "Li Nan" <linan666@huaweicloud.com>
+Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
+Date: Thu, 6 Nov 2025 11:44:51 +0800
+In-Reply-To: <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+Reply-To: yukuai@fnnas.com
+Message-Id: <2c1ab8fc-99ac-44fd-892c-2eeedb9581f4@fnnas.com>
+Content-Transfer-Encoding: quoted-printable
+References: <20251103125757.1405796-1-linan666@huaweicloud.com> <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com> <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com> <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
 
-On Mon, Nov 03, 2025 at 01:24:15PM +0100, Vlastimil Babka wrote:
-> In review of a followup work, Harry noticed a potential infinite loop.
-> Upon closed inspection, it already exists for kmalloc_nolock() on a
-> cache with debugging enabled, since commit af92793e52c3 ("slab:
-> Introduce kmalloc_nolock() and kfree_nolock().")
-> 
-> When alloc_single_from_new_slab() fails to trylock node list_lock, we
-> keep retrying to get partial slab or allocate a new slab. If we indeed
-> interrupted somebody holding the list_lock, the trylock fill fail
-> deterministically and we end up allocating and defer-freeing slabs
-> indefinitely with no progress.
-> 
-> To fix it, fail the allocation if spinning is not allowed. This is
-> acceptable in the restricted context of kmalloc_nolock(), especially
-> with debugging enabled.
-> 
-> Reported-by: Harry Yoo <harry.yoo@oracle.com>
-> Closes: https://lore.kernel.org/all/aQLqZjjq1SPD3Fml@hyeyoo/
-> Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
-> as we discussed in the linked thread, 6.18 hotfix to be included in
-> slab/for-next-fixes
-> ---
+Hi,
 
-Looks good to me,
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+=E5=9C=A8 2025/11/4 15:17, Xiao Ni =E5=86=99=E9=81=93:
+> On Tue, Nov 4, 2025 at 10:52=E2=80=AFAM Li Nan <linan666@huaweicloud.com>=
+ wrote:
+>>
+>>
+>> =E5=9C=A8 2025/11/4 9:47, Xiao Ni =E5=86=99=E9=81=93:
+>>> On Mon, Nov 3, 2025 at 9:06=E2=80=AFPM <linan666@huaweicloud.com> wrote=
+:
+>>>> From: Li Nan <linan122@huawei.com>
+>>>>
+>>>> Raid checks if pad3 is zero when loading superblock from disk. Arrays
+>>>> created with new features may fail to assemble on old kernels as pad3
+>>>> is used.
+>>>>
+>>>> Add module parameter check_new_feature to bypass this check.
+>>>>
+>>>> Signed-off-by: Li Nan <linan122@huawei.com>
+>>>> ---
+>>>>    drivers/md/md.c | 12 +++++++++---
+>>>>    1 file changed, 9 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>>>> index dffc6a482181..5921fb245bfa 100644
+>>>> --- a/drivers/md/md.c
+>>>> +++ b/drivers/md/md.c
+>>>> @@ -339,6 +339,7 @@ static int start_readonly;
+>>>>     */
+>>>>    static bool create_on_open =3D true;
+>>>>    static bool legacy_async_del_gendisk =3D true;
+>>>> +static bool check_new_feature =3D true;
+>>>>
+>>>>    /*
+>>>>     * We have a system wide 'event count' that is incremented
+>>>> @@ -1850,9 +1851,13 @@ static int super_1_load(struct md_rdev *rdev, s=
+truct md_rdev *refdev, int minor_
+>>>>           }
+>>>>           if (sb->pad0 ||
+>>>>               sb->pad3[0] ||
+>>>> -           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb-=
+>pad3[1])))
+>>>> -               /* Some padding is non-zero, might be a new feature */
+>>>> -               return -EINVAL;
+>>>> +           memcmp(sb->pad3, sb->pad3+1, sizeof(sb->pad3) - sizeof(sb-=
+>pad3[1]))) {
+>>>> +               pr_warn("Some padding is non-zero on %pg, might be a n=
+ew feature\n",
+>>>> +                       rdev->bdev);
+>>>> +               if (check_new_feature)
+>>>> +                       return -EINVAL;
+>>>> +               pr_warn("check_new_feature is disabled, data corruptio=
+n possible\n");
+>>>> +       }
+>>>>
+>>>>           rdev->preferred_minor =3D 0xffff;
+>>>>           rdev->data_offset =3D le64_to_cpu(sb->data_offset);
+>>>> @@ -10704,6 +10709,7 @@ module_param(start_dirty_degraded, int, S_IRUG=
+O|S_IWUSR);
+>>>>    module_param_call(new_array, add_named_array, NULL, NULL, S_IWUSR);
+>>>>    module_param(create_on_open, bool, S_IRUSR|S_IWUSR);
+>>>>    module_param(legacy_async_del_gendisk, bool, 0600);
+>>>> +module_param(check_new_feature, bool, 0600);
+>>>>
+>>>>    MODULE_LICENSE("GPL");
+>>>>    MODULE_DESCRIPTION("MD RAID framework");
+>>>> --
+>>>> 2.39.2
+>>>>
+>>> Hi
+>>>
+>>> Thanks for finding this problem in time. The default of this kernel
+>>> module is true. I don't think people can check new kernel modules
+>>> after updating to a new kernel. They will find the array can't
+>>> assemble and report bugs. You already use pad3, is it good to remove
+>>> the check about pad3 directly here?
+>>>
+>>> By the way, have you run the regression tests?
+>>>
+>>> Regards
+>>> Xiao
+>>>
+>>>
+>>> .
+>> Hi Xiao.
+>>
+>> Thanks for your review.
+>>
+>> Deleting this check directly is risky. For example, in configurable LBS:
+>> if user sets LBS to 4K, the LBS of a RAID array assembled on old kernel
+>> becomes 512. Forcing use of this array then risks data loss -- the
+>> original issue this feature want to solve.
+> You're right, we can't delete the check.
+> For the old kernel, the array which has specified logical size can't
+> be assembled. This patch still can't fix this problem, because it is
+> an old kernel and this patch is for a new kernel, right?
+> For existing arrays, they don't have such problems. They can be
+> assembled after updating to a new kernel.
+> So, do we need this patch?
 
--- 
-Cheers,
-Harry / Hyeonggon
+There is a use case for us that user may create the array with old kernel, =
+and
+then if something bad happened in the system(may not be related to the arra=
+y),
+user may update to mainline releases and later switch back to our release. =
+We
+want a solution that user can still use the array in this case.
+
+>
+>> Future features may also have similar risks, so instead of deleting this
+>> check directly, I chose to add a module parameter to give users a choice=
+.
+>> What do you think?
+> Maybe we can add a feature bit to avoid the kernel parameter. This
+> feature bit can be set when specifying logical block size.
+
+The situation still stand, for unknown feature bit, we'd better to forbid
+assembling the array to prevent data loss by default.
+
+Thanks,
+Kuai
+
+>
+> Regards
+> Xiao
+>> --
+>> Thanks,
+>> Nan
+>>
 
