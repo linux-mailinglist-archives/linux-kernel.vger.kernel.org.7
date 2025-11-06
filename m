@@ -1,224 +1,235 @@
-Return-Path: <linux-kernel+bounces-889072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91B9C3CA9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:59:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0934EC3C985
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E69E4F60FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D87F188FC3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E49B34A3DB;
-	Thu,  6 Nov 2025 16:54:53 +0000 (UTC)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7EF284665;
+	Thu,  6 Nov 2025 16:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MSnSg7qw"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF3E346762
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24796285CBC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448092; cv=none; b=b6LcwdUk7P7IGNZ4doczITBfGTX4cwMxp0txSH/PsCIYiRRwHZkfS1iOEgPW+0CXzmmqj2iHqf1m7nKoIXT0JcPbZBIPgKG1JKMl7HbMaHa6dQFhTn+45RvA9brb2KuvVGV9OlMvv2YnHPG/qiX1pjkaqyY/1F7W1a4SIuWqCUA=
+	t=1762448087; cv=none; b=ZswIwyRnaRspfn2i24mgrh3wLmy1KZPy+rZ6emDB/7SbIo8xbs2ZIi2XbqCRSUC6kKkD6pyftifFgL3O8+ZVyG6LNi3o56HzgZ/E601D66g5TSXwlU6sTkQcBmQVI1t83ugbSknohmd3ZdKGD+JF2uc5ri6vFRBi0Acd0gg1ViU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448092; c=relaxed/simple;
-	bh=0f45Jhy3vyneeuTWj7fqcWoBCV5Ykzs4Vow1o8J9vUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EkQdWpvB+wkA1ArOIOivUFBPAcloL1q5igXX3zStmO++a4dygxX5z1I67+1daV5BA2yUQ2WGKW1zU4yJNQV7QeCegC+Zrtf7XO6Lfp5yUEFIUTDkrSvSKkrRbf+trpJLzEZJHGRiruoFI/HmIK85VZQnc6PeqLmCn81u5WkRRzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso1818624a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:54:50 -0800 (PST)
+	s=arc-20240116; t=1762448087; c=relaxed/simple;
+	bh=+er897VeBk4n/vRglajwaZ5PSzwLJpIHytxIjwJ2hFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LxswUqrBjMr3HVb5Ccyoy0InSJ5g2Wt1nWV/bRMziaV2DFo4tfGL+4U40sZ/bLm0kJ6YfR0Gf+hxhj+jcJRy7JRE4yyLx2BVS831FtGQXVMjfNn3gMkpL9BmLq/pPjoOcdxUFleaBX8eWmb6yATxzERHbzDE9ZyVaNqDOQ/MaTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MSnSg7qw; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47754e0a13bso86545e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:54:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762448083; x=1763052883; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qy5jSwN7S6PcN2+UAQhcACOnAgI06MV590m9VcIejho=;
+        b=MSnSg7qw4+vQ9qYhCVauQnT/UVXc5vcjiEBq2BE23Gps9eXOjPcFGAN5gEX46Pu+OB
+         yzPlgBKxHdDo0ikAXK+0yJ6tDqoT4a4oZ3//F+NM0ANbw1dW+cGhJfe9Dgbww/iWl5Ga
+         7IvAAgzpbSGV+PVfEzFTq+UTw4jmYX7dvblwCcGGd0mzB2lVP76vrIKzo/u9LE+oqzKu
+         WzM5LRvmqlTdrfG7KfQ6C6fgCdafBkyrQRtGTfhHZ4S/jyNCxb0pUmlzq5UxqJMOfQKs
+         ZTe32zNxRzNPyOvvReX86U7mKlUYjVDrbfGWSIEtAyHgIzUmVZF3s03ruyalYqbJdsK4
+         3DDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762448087; x=1763052887;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WHEPbBF5p6FHfbwI0jMq/NClHsHl36pINBGK1avEHfY=;
-        b=Sr4Z9DE10I48k6f67Hyf61kNEV3imrVpAFLhNg5TDE6dozKuSy67EuiT/aXztK84o8
-         wgsGRAk+En6Rx/RxxepzZ1eXLmWxvJx0qNh8Ps2200DLT+nslL55jPtoYGkMOHhFjYMk
-         z9iQoQsOyXa40NPjXpyKPcu/lYyE17CPudN8ZyrLOQfyi0J7zEEtNrfCwKHCBOoA2BxX
-         nKAYqpdy4bMsOrCShWZGHhN7ubXqHi716Q8WDJcoZwNz+BXEGIrTYIH1szrQY5xmagtk
-         4ULvda91+GS0Fc33XbQqoOsvq7kgCs0ADh1HWqIAFTr/4nVijfDsSu3/qIQt98fxGVEG
-         papg==
-X-Forwarded-Encrypted: i=1; AJvYcCVimPgcd/35z28vlCCYJJlWZpDw2PLn3DcVgwEFyh9gCeHcGe46pt4P2VnJw0e63kZhUr8reDoRyxvan2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXQ/NltoLJDmRMISMlWAuoce9CdwqkQrRxLvI0B/aq/LeBVAv3
-	UpWARdNYgpJTt/DHSiynTdMgF4372iaY5R8VxK8Tg/5GZR9YCxrHPvcowdYm91QVTzQ=
-X-Gm-Gg: ASbGncsMk06NYX6SK+9oTFMCoOc184IZJJh6LbqcvEw9k5gr/i8htYk7Ef+69z/Q66V
-	Vu9ZGfyPJzxy7J1BUBe8py+ydSuDn94zfc+Pz5yxvcqqiWLmAfmtVKLqAz8t+Z3csUBmzCT8THA
-	5LVuqSNl47YwLJi8N57EUlBITGqzmxB7XYglaWPu2dVHu+d1USwMXFwfQAE4Ixk5OQdNhzLfztK
-	/bbIwiKORQVK5KEfi+vGxpI4j5Cujrn63ozYJe2rp31/aXKk5tsz5Q/hbdXr+oTFLcyJ7+VzhLj
-	J2tkPnU+G+CarQt2mASAtgaGElXnhop5ZDKIyJZJwnTOWnjg//KY7QLWpFi0s8hLdqhx/V9I8IT
-	cD/GAV6eI81X2i1UAcq6YJFHL9LeEV79wnKKLeKJc8sT6/c/+c5V+lcSIDFjNgEM4XcVL9zXfrw
-	m1qNy0FYzh1qPQcglDlsZmFjAaiHo+bxyb3ZwCVLuMXfkATwfzomCtyz0iq9w=
-X-Google-Smtp-Source: AGHT+IHKaDcUK3PRiYiqN9y1Sm2MXXBeBNSxmRtV3jJDqF8zzhGKZnFfIuiDBSc/b1AoSnCn6j+8jg==
-X-Received: by 2002:a05:6402:5113:b0:640:ea4b:6a96 with SMTP id 4fb4d7f45d1cf-6413eeafa28mr76687a12.8.1762448086688;
-        Thu, 06 Nov 2025 08:54:46 -0800 (PST)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713a68sm2215273a12.2.2025.11.06.08.54.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        d=1e100.net; s=20230601; t=1762448083; x=1763052883;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qy5jSwN7S6PcN2+UAQhcACOnAgI06MV590m9VcIejho=;
+        b=wxIEGP09hbZvolc0OCUGfTodhlJ2v2GPRrOr7jN0Jca1y7oneFKBXlCG47LdnOW93x
+         SB1iGmMPDJMr9gQTT1cTqrJFR8VyvyXv7x6SWZymXLXmKT+QCq56td9ru5WJbNH+7ZOk
+         ztnKQyeHXanCtBtCbUFYGaZzvgYUgyb9z/gjoqmoOvcVKpz2p47V8qKou4XimCgXzvOv
+         S/fK5e9IEdRVjZT4segmijsGN/h7koW50rd9gT5h39aKdKLPsvhUpRaNxGIa6KlY9FW3
+         9mlWmnf8nyzuyvv4++bqraEovFH+AH13JG2MadCKT15Z7jhOcdG4kpvuDLGc4iTKljBJ
+         fhbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBAlHeoL+65B0cxxcBe6Gfw5CyU52NW9L6znrmk6vlHgeCHayctSRsl76s5i1NoIDVH0HrFuzxzh0yanU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOcz5GGksH51mgYEsSAuCIMeyhbRoIfaGTCMJMxawZqezdOF0w
+	h5ywHIdkOpuuu/hTs31kAFrZZATR4iMsKkMwNpvB9NYfiqfYkW+XPdgAV5O4q/dyEg==
+X-Gm-Gg: ASbGncuWSR5Fsj9rXb4ry3CbKg6JIWrqyD5VcVWLks8P9oiYP7xNof6lyUBovY03ibr
+	mwCg/suh+70aSrY5J1MWpel3htR/NdBcgtgiCTiiY8eqtSINQh87LqJtwV/0q+NoJIyIyIOK9/d
+	fb9phF9FTK3bX7FHlFoC17ugG2K4s1TLjdNiBG/B5czTIrhr8DDuyKqM4jR+iSFM/eBzv1lQ6yv
+	AldkmInoQgLmeAPl9duDk3olBqzm2aT3RwUouheQjNFCafSVRem1vk5Mr1uRFFxMg32nLXBmuq6
+	Yen1xPFLKMkUnMgmkcuMzAPv+IFtQ6Tz1oW0BQyLd96IHgstijYMk6kXemdDEqOJrtPZKhk5HND
+	L9tfrbvvoX0ManfkV/1lQ5ZX8PqToUEosuwve4mZrXIFo6SgrShzzG9BkhqSq4Bxu3WTwJNza5e
+	jUQWWdFewAHstySnGvJjLllPdHHNtsyO5ULgdhamMtu7ZHi0ildyPPA/+RH8OV
+X-Google-Smtp-Source: AGHT+IH9Sel42fS+BYooq+9ScS2mxKoFKXpJsaK/tHTCGPR8SBDeDrXp6AvREwD204lt8g8KrZ9JGg==
+X-Received: by 2002:a05:600c:c10f:b0:477:1afe:b962 with SMTP id 5b1f17b1804b1-4776410ec16mr2231445e9.1.1762448083254;
         Thu, 06 Nov 2025 08:54:43 -0800 (PST)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso1929828a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:54:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXNzI4sVxqkzu8gQfNwRicFUFDcqoChfB+yv3A6yWayWiSIZSqU5/jpb2C2bG5sLF7fdYjwW2zPANLTdPE=@vger.kernel.org
-X-Received: by 2002:a05:6402:460f:20b0:640:a7bc:30c5 with SMTP id
- 4fb4d7f45d1cf-6413f070166mr36081a12.28.1762448083616; Thu, 06 Nov 2025
- 08:54:43 -0800 (PST)
+Received: from google.com (54.140.140.34.bc.googleusercontent.com. [34.140.140.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce210a7sm120476545e9.12.2025.11.06.08.54.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 08:54:42 -0800 (PST)
+Date: Thu, 6 Nov 2025 16:54:38 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
+ mode
+Message-ID: <aQzSzhcndQ3Ry0a2@google.com>
+References: <20250819215156.2494305-16-smostafa@google.com>
+ <aMQmA9cLaeYWG5_C@willie-the-truck>
+ <aNKwROPzDCWgJBGQ@google.com>
+ <20250923173806.GF2547959@ziepe.ca>
+ <aNppE9A3PDiDg_1W@google.com>
+ <20251002151308.GG3195829@ziepe.ca>
+ <aQt9-kTCe8TpuyVq@google.com>
+ <20251105171208.GN1204670@ziepe.ca>
+ <aQyBIohAuxNHV-XI@google.com>
+ <20251106132331.GU1204670@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923154707.1089900-1-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20250923154707.1089900-1-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Nov 2025 17:54:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWRCGYLRK_WBmbB0cRP7PHiGPSi3U1jdWSVKaTSweruUw@mail.gmail.com>
-X-Gm-Features: AWmQ_bmQmsHt_92KjlOBxlqZCgcBwWXwdvX6xOc66LuFHB1pYmrIKPozpRSE9Ro
-Message-ID: <CAMuHMdWRCGYLRK_WBmbB0cRP7PHiGPSi3U1jdWSVKaTSweruUw@mail.gmail.com>
-Subject: Re: [PATCH] tty: serial: sh-sci: fix RSCI FIFO overrun handling
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Nam Cao <namcao@linutronix.de>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251106132331.GU1204670@ziepe.ca>
 
-Hi Cosmin,
+On Thu, Nov 06, 2025 at 09:23:31AM -0400, Jason Gunthorpe wrote:
+> On Thu, Nov 06, 2025 at 11:06:11AM +0000, Mostafa Saleh wrote:
+> > Thanks for the explanation, I had a closer look, and indeed I was
+> > confused, iommu_init_device() was failing because of .probe_device().
+> > Because of device_set_node(), now both devices have the same fwnode,
+> > so bus_find_device_by_fwnode() from arm_smmu_get_by_fwnode() was returning
+> > the wrong device.
+> > 
+> > driver_find_device_by_fwnode() seems to work, but that makes me question
+> > the reliability of this approach.
+> 
+> Yeah, this stuff is nasty. See the discussion here.
+> 
+> https://lore.kernel.org/linux-iommu/0d5d4d02-eb78-43dc-8784-83c0760099f7@arm.com/
+> 
+> riscv doesn't search, so maybe ARM should follow it's technique:
+> 
+> static struct iommu_device *riscv_iommu_probe_device(struct device *dev)
+> {
+>         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+>         struct riscv_iommu_device *iommu;
+>         struct riscv_iommu_info *info;
+>         struct riscv_iommu_dc *dc;
+>         u64 tc;
+>         int i;
+> 
+>         if (!fwspec || !fwspec->iommu_fwnode->dev || !fwspec->num_ids)
+>                 return ERR_PTR(-ENODEV);
+> 
+>         iommu = dev_get_drvdata(fwspec->iommu_fwnode->dev);
+>         if (!iommu)
+>                 return ERR_PTR(-ENODEV);
+> 
+> It would make it reliable..
 
-On Tue, 23 Sept 2025 at 17:47, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> The receive error handling code is shared between RSCI and all other
-> SCIF port types, but the RSCI overrun_reg is specified as a memory
-> offset, while for other SCIF types it is an enum value used to index
-> into the sci_port_params->regs array, as mentioned above the
-> sci_serial_in() function.
->
-> For RSCI, the overrun_reg is CSR (0x48), causing the sci_getreg() call
-> inside the sci_handle_fifo_overrun() function to index outside the
-> bounds of the regs array, which currently has a size of 20, as specified
-> by SCI_NR_REGS.
->
-> Because of this, we end up accessing memory outside of RSCI's
-> rsci_port_params structure, which, when interpreted as a plat_sci_reg,
-> happens to have a non-zero size, causing the following WARN when
-> sci_serial_in() is called, as the accidental size does not match the
-> supported register sizes.
->
-> The existence of the overrun_reg needs to be checked because
-> SCIx_SH3_SCIF_REGTYPE has overrun_reg set to SCLSR, but SCLSR is not
-> present in the regs array.
->
-> Avoid calling sci_getreg() for port types which don't use standard
-> register handling.
->
-> Use the ops->read_reg() and ops->write_reg() functions to properly read
-> and write registers for RSCI, and change the type of the status variable
-> to accommodate the 32-bit CSR register.
->
-> sci_getreg() and sci_serial_in() are also called with overrun_reg in the
-> sci_mpxed_interrupt() interrupt handler, but that code path is not used
-> for RSCI, as it does not have a muxed interrupt.
->
-> ------------[ cut here ]------------
-> Invalid register access
-> WARNING: CPU: 0 PID: 0 at drivers/tty/serial/sh-sci.c:522 sci_serial_in+0x38/0xac
-> Modules linked in: renesas_usbhs at24 rzt2h_adc industrialio_adc sha256 cfg80211 bluetooth ecdh_generic ecc rfkill fuse drm backlight ipv6
-> CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc1+ #30 PREEMPT
-> Hardware name: Renesas RZ/T2H EVK Board based on r9a09g077m44 (DT)
-> pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : sci_serial_in+0x38/0xac
-> lr : sci_serial_in+0x38/0xac
-> sp : ffff800080003e80
-> x29: ffff800080003e80 x28: ffff800082195b80 x27: 000000000000000d
-> x26: ffff8000821956d0 x25: 0000000000000000 x24: ffff800082195b80
-> x23: ffff000180e0d800 x22: 0000000000000010 x21: 0000000000000000
-> x20: 0000000000000010 x19: ffff000180e72000 x18: 000000000000000a
-> x17: ffff8002bcee7000 x16: ffff800080000000 x15: 0720072007200720
-> x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
-> x11: 0000000000000058 x10: 0000000000000018 x9 : ffff8000821a6a48
-> x8 : 0000000000057fa8 x7 : 0000000000000406 x6 : ffff8000821fea48
-> x5 : ffff00033ef88408 x4 : ffff8002bcee7000 x3 : ffff800082195b80
-> x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff800082195b80
-> Call trace:
->  sci_serial_in+0x38/0xac (P)
->  sci_handle_fifo_overrun.isra.0+0x70/0x134
->  sci_er_interrupt+0x50/0x39c
->  __handle_irq_event_percpu+0x48/0x140
->  handle_irq_event+0x44/0xb0
->  handle_fasteoi_irq+0xf4/0x1a0
->  handle_irq_desc+0x34/0x58
->  generic_handle_domain_irq+0x1c/0x28
->  gic_handle_irq+0x4c/0x140
->  call_on_irq_stack+0x30/0x48
->  do_interrupt_handler+0x80/0x84
->  el1_interrupt+0x34/0x68
->  el1h_64_irq_handler+0x18/0x24
->  el1h_64_irq+0x6c/0x70
->  default_idle_call+0x28/0x58 (P)
->  do_idle+0x1f8/0x250
->  cpu_startup_entry+0x34/0x3c
->  rest_init+0xd8/0xe0
->  console_on_rootfs+0x0/0x6c
->  __primary_switched+0x88/0x90
-> ---[ end trace 0000000000000000 ]---
->
-> Cc: stable@vger.kernel.org
-> Fixes: 0666e3fe95ab ("serial: sh-sci: Add support for RZ/T2H SCI")
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+That makes sense, and it will address the problem Robin was solving also:
+https://lore.kernel.org/r/6d7ce1dc31873abdb75c895fb8bd2097cce098b4.1733406914.git.robin.murphy@arm.com
 
-Thanks for your patch, which is now commit ef8fef45c74b5a00 ("tty:
-serial: sh-sci: fix RSCI FIFO overrun handling") in v6.18-rc3.
+> 
+> > > > 2- Check if KVM is initialised from the SMMUv3 driver,
+> > > >    if not -EPROBE_DEFER (as Will suggested), that will guarded by the
+> > > >    KVM driver macro and cmdline to enable protected mode.
+> > > 
+> > > SMMUv3 driver shouldn't even be bound until KVM is ready and it is an
+> > > actual working driver? Do this by not creating the struct device until
+> > > it is ready.
+> > > 
+> > > Also Greg will not like if you use platform devices here, use an aux
+> > > device..
+> > 
+> > But I am not sure if it is possible with built-in drivers to delay
+> > the binding.
+> 
+> You should never be delaying binding, you should be delaying creating
+> the device that will be bound.
+> 
+> pkvm claims the platform device.
+> 
+> pkvm completes its initialization and then creates an aux device
+> 
+> smmu driver binds the aux device and grabs the real platform_device
+> 
+> smmu driver grabs the resources it needs from the parent, including
+> the of node. No duplication.
+> 
+> Seems straightforward to me.
 
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -1014,16 +1014,18 @@ static int sci_handle_fifo_overrun(struct uart_port *port)
->         struct sci_port *s = to_sci_port(port);
->         const struct plat_sci_reg *reg;
->         int copied = 0;
-> -       u16 status;
-> +       u32 status;
->
-> -       reg = sci_getreg(port, s->params->overrun_reg);
-> -       if (!reg->size)
-> -               return 0;
-> +       if (s->type != SCI_PORT_RSCI) {
-> +               reg = sci_getreg(port, s->params->overrun_reg);
-> +               if (!reg->size)
-> +                       return 0;
-> +       }
->
-> -       status = sci_serial_in(port, s->params->overrun_reg);
-> +       status = s->ops->read_reg(port, s->params->overrun_reg);
->         if (status & s->params->overrun_mask) {
->                 status &= ~s->params->overrun_mask;
-> -               sci_serial_out(port, s->params->overrun_reg, status);
-> +               s->ops->write_reg(port, s->params->overrun_reg, status);
->
->                 port->icount.overrun++;
->
+Maybe I am misunderstanding this, but that looks really intrusive to me,
+at the moment arm-smmuv-3.c is a platform driver, and rely on the
+platform bus to understand the device (platform_get_resource...)
 
-Ouch, this is really becoming fragile, and thus hard to maintain.
-See also "[PATCH v2 2/2] serial: sh-sci: Fix deadlock during RSCI FIFO
-overrun error".
-Are you sure this is the only place where that can happen?
-sci_getreg() and sci_serial_{in,out}() are used all over the place.
+You are suggesting to change that so it can also bind to AUX devices, then
+change the “arm_smmu_device_probe” function to understand that and possibly
+parse info from the parent device?
 
-[1] https://lore.kernel.org/20251029082101.92156-3-biju.das.jz@bp.renesas.com/
+One of the main benefits from choosing trap and emulate was that it
+looks transparent from the kernel of point view, so doing such radical
+changes to adapt to KVM doesn't look right to me, I think the driver
+should remain as is (a platform driver that thinks it's directly
+talking to the HW).
+The only thing we need to do is to make the SMMUs available after
+KVM is up (at device_sync initcall).
 
-Gr{oetje,eeting}s,
+> 
+> > Also, I had to use platform devices for this, as the KVM driver binds
+> > to the actual SMMUv3 nodes, and then duplicates them so the SMMUv3
+> > driver can bind to the duplicate nodes, where the KVM devices are the
+> > parent, but this approach seems complicated, besides the problems
+> > mentioned above.
+> 
+> I don't think you need to do this this, you can use aux device and the
+> fwspec things all search the iommu_devices_list to find the
+> iommu_driver. You don't need to duplicate anything.
+> 
+> Create the aux driver when the emulated smmu is ready to go.
 
-                        Geert
+See my point above.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> > That works for me. And if we want to back the KVM driver with device I was
+> > thinking we can rely on impl_ops, that has 2 benefits:
+> 
+> > 1- The SMMUv3 devices can be the parent instead of KVM.
+> > 2- The KVM devices can be faux/aux as they are not coming from FW and
+> >    don't need to be on the platform bus.
+> 
+> IMHO this is backwards. The kvm driver should be probing first, the
+> smmu driver should come later once kvm is ready to go.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Agree.
+
+>  
+> > Besides this approach and the one in this patch, I don't see a simple way
+> > of achieving this without adding extra support in the driver model/platform
+> > bus to express such dependency.
+> 
+> You shouldn't need anything like this.
+
+Agree.
+
+Thanks,
+Mostafa
+
+> 
+> Jason
 
