@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-888862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4059C3C1FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:42:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCF5C3C205
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA1803AC098
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CEAB3A5919
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407C029B20D;
-	Thu,  6 Nov 2025 15:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEC3299957;
+	Thu,  6 Nov 2025 15:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RCBBHmI5"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="AqM6PpJa"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82B821C173
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82274274B46
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762443408; cv=none; b=RA3IV9J8QMInBBNkK5+ZIn3JSXjLi287+QYV/ZYM7fELQtvHIBIdpELHA2QR4jfMS7WFXYOZ4bcMHLBq75ZMy9ln7c3cw7Hp9vjnDPmy4nIMEUOMyCBiAncFmOyA5jJfKaaq+uTTC8kpDRE5SnzCMkznVDFzsynt29Gvw1RmNDM=
+	t=1762443456; cv=none; b=IDWdI4BwVp8Kl53jPHHLyzerCEChtma5I1b/WlVY78fkX25h81JzLXGwmQxgQo9af3S5WFvSx0UFN4E+H88NtuEt0EIXxHX+pgiuuudsfKklbIV62PcPhkUUpJVNuD+orIfHEK9+1FbvMV7vUoh9+Q5JPRKV5xwdOoeMpvc4zFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762443408; c=relaxed/simple;
-	bh=xk6l2WOOOp6czqXIg1WfykCAiMAdHCUw6VSHs/tqjfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X4V7btwnNz5oEKdDT4+mgBQqPhSfIB9qcLO5FDZwEsPUS4iLzrvry3VteNbm4p4GsLsrk1hXTUgN69qxgh0C0Fn5RZgc0SjHihIMpE/vdVCHybB3xdolO3F7mweDjqZyMx/iwgkwU5GFWUPRWWOzgy87Xv5OBIdRF9s2JwoA24E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RCBBHmI5; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4775ae77516so13202495e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 07:36:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762443404; x=1763048204; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NoiFfWZaW31Ma9mD3WuZZQSDOEMD5VY8nTTYH6Ca1fs=;
-        b=RCBBHmI5NJuL/b0QMZqwJKF7ud8TA4ryMo59VDUQpnay3XsUAvEHe9LO/fOzuRpsZT
-         Jx1NFanVf4S6AnMyYzJCnljlJyN6jxlel+V/rblI5B/Ke6DaEPf+ndUzWrqDMCP+HdnB
-         uDl16AbXtCY5QarJXQGxMW4weytJLsYo/hhgWgTWp6oEXUmaIM9yVLpkAXqAknXGbXx1
-         QuqO79EbjR+FpS9ROH8ywiCYKLR1Vo0TveRfPl4UAmhu6xulcIFSO5a0/1OJf0Rjev67
-         yegxuQY82ZCP4p/4NvCgTDGdk/lzzVLD1htvb51kbSpM+eaB4whicLPwz/DWF4glUFn4
-         0IHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762443404; x=1763048204;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NoiFfWZaW31Ma9mD3WuZZQSDOEMD5VY8nTTYH6Ca1fs=;
-        b=mZ2iZYS+y9mOVsLG6ZGNP/M/k8Znp3dQEoYmcf1j652Rypj5F5sZzxDLnqora7UCYc
-         tRWVJAMtCO1xP4CpdCMb4TBU5oQ575/zVf5mzm15cR2cc1cGr1I9F6lAN7ChBPy73M+V
-         FSoPrl1iRFCKxxYfcTYzVwv+5HcKSKTKRUwcpCUOEkZJ9/PMvRrGs1O5z5zHyME8og3d
-         qr9Y2A9XBnTL9kZCnQ7c5A16ezCaBS4RZj9cmzv7UfFQqtypwzyigmWyTvTi+8K/TMDA
-         f5FENy6V575rm/H1rOM9vHGDougnLpyN0NS8/PRmGu7cBoRvDEgz1kdiPie0/dS8tU7+
-         CaJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQXqhRYXg7NBendhhAdrvGR07YRSbJk/9FHHw5KWPOPENuuhi31mQPAxSDgted19G6gCS4muRV4xEAqe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGWogALfXFhySYgHo+MUYaPB4vNCqCig/TbFZ6x/viN6KYFHqM
-	EDrq5cuTDXKVvzrUwPb+Zm8J/h6cIN4MHal3YEk74rrm66ETTOM7ajD1JgaqUhZPUtA=
-X-Gm-Gg: ASbGncskZs5/AyvSNlXDbYn7ZGRSUAQL99f28nDpDXycWLQ1eNN9D8qIfbmIA9hBfHn
-	DsoQSKNyI+e8kRxrDJRvlj609wTAr78O14exA6HqcJMWsh2MCgZd9f19GmzzZFGM9zLNAit8+1v
-	jNDQtCn/xyIZDnBUAb45CQ7L8IEXvpyDgc+yy1kg1z86bpTVemBA4zJrZiKtwrZPmKbYrsFLBeV
-	45TIUr0Pjtt9ciDmeMCKliWcNI84pCyLZKdAwx7uu7/7rmcZ+eiQgnA+dOheyH2JGjnorRnLQqC
-	X59iD3FyKJjEqeUNUmRWd4FcosL4fkr8gBrpDsxBcWpxu3GjXGbrugvmz4NxOmbabtTnrG82lVo
-	QBZiAH1fG7GUBvMzdYMnrjBBv1wAfLu4oGSse5f942m3l7ZgkbgnplGfF5jJr4AVCgZDvPEKW8x
-	br/3MIArsT8ZQ9csF1pZ4=
-X-Google-Smtp-Source: AGHT+IHm/6/RnHvUQpqjyEKIYZGBSjHuPRp5b3DBLGbL1GoDEzCDZheRRGUhzX2BHAHpgilQLx/Q7g==
-X-Received: by 2002:a05:600c:621a:b0:471:14f5:126f with SMTP id 5b1f17b1804b1-4775ce206f3mr59734595e9.33.1762443404278;
-        Thu, 06 Nov 2025 07:36:44 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477622f42a5sm98437525e9.1.2025.11.06.07.36.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 07:36:43 -0800 (PST)
-Message-ID: <d1b02488-7722-4b39-bb8e-f7e5c8e11b1e@tuxon.dev>
-Date: Thu, 6 Nov 2025 17:36:40 +0200
+	s=arc-20240116; t=1762443456; c=relaxed/simple;
+	bh=tBdP/IZR113dSKubFnTF/iCokshd/YfieV+VHXde2f4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EiWmKj5UcJIO3cjoCTusXwNOKxkwsGUQ5e1LAgtOCKLClgPHKv1e1cDjsdBJWBIaDJBama1YzpoX1B9dwBe8WvXQ10Ffi9OJLVMPulIvyBF/3E8raaeu7dZJztmHq/F/1w9E3rcYcRyf23hhba1UUHaWfQ8Xhi0FBeJApWF94FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=AqM6PpJa; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4d2RC85wbVz9ssn;
+	Thu,  6 Nov 2025 16:37:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762443444; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cN4XQ/yrUjnQZynIJUOa5KorXTWvolGeJbB10svfxsc=;
+	b=AqM6PpJaxlmgTu5Q+jXa6O7QtusawLOFlOtIVmFEUkbacSKvd6HoGe92PjjUYEKZjfaVQ7
+	dA2e+sJn0TK0ysYyAekfObU5M8mFbWsUGvjh97/lcZqV5K8tf1pLVyZWhcIooz7qPMlxod
+	MB6/wb3/scq/Nt+PH7wYVNn+T1oGwhtsWNa6RVr/ORGtsH+Bl15ddm7HqIb3ufwcrqTQAg
+	7JxyBfQE9TNnV7bejWPtLJguBAytWrfmCFfhmuj2/+1aHUc7vj5SA9fDFzohidP4GKR8Ml
+	58ihyv/efShPRRUnE0DTDPpLWRx5T9n7eQ5HMH0sY//kHNJ76WjmdXRtBRpZ2g==
+Message-ID: <b1f91dd8624ed65308b0420fe2d973f0bb44632d.camel@mailbox.org>
+Subject: Re: [PATCH v2] drm/sched: Replace use of system_wq with
+ system_percpu_wq
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Marco Crivellari <marco.crivellari@suse.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>,  Michal Hocko <mhocko@suse.com>, Matthew Brost
+ <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Philipp
+ Stanner <phasta@kernel.org>, Christian Konig
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Date: Thu, 06 Nov 2025 16:37:18 +0100
+In-Reply-To: <20251106150121.256367-1-marco.crivellari@suse.com>
+References: <20251106150121.256367-1-marco.crivellari@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/26] clk: at91: pmc: #undef field_{get,prep}() before
- definition
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Yury Norov <yury.norov@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Miller
- <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>,
- Alex Elder <elder@ieee.org>, David Laight <david.laight.linux@gmail.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Jason Baron
- <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
- Tony Luck <tony.luck@intel.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Kim Seer Paller <kimseer.paller@analog.com>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Richard Genoud <richard.genoud@bootlin.com>,
- Cosmin Tanislav <demonsingur@gmail.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Jianping Shen <Jianping.Shen@de.bosch.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-edac@vger.kernel.org, qat-linux@intel.com, linux-gpio@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762435376.git.geert+renesas@glider.be>
- <939d8c6da1f468026b1bb201413ba08b1d0751fd.1762435376.git.geert+renesas@glider.be>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <939d8c6da1f468026b1bb201413ba08b1d0751fd.1762435376.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: a1198811dd6e4b25ce0
+X-MBO-RS-META: rqfh18m4u7737iekrnbknye3yd315ms1
+
+On Thu, 2025-11-06 at 16:01 +0100, Marco Crivellari wrote:
+> In the general workqueue implementation, if a user enqueues a work item
+> using schedule_delayed_work() the used wq is "system_wq" (per-cpu wq)
+> while queue_delayed_work() use WORK_CPU_UNBOUND (used when a cpu is not
+> specified). The same applies to schedule_work() that is using system_wq
+> and queue_work(), that makes use again of WORK_CPU_UNBOUND.
+
+Alright, just to be sure:
+Behavior doesn't change and system_percpu_wq is then still a workqueue
+where we can submit normal delayed_work?
+
+The scheduler's timeout mechanism relies on scheduling and canceling
+delayed work items.
+
+>=20
+> This lack of consistency cannot be addressed without refactoring the API.
+> For more details see the Link tag below.
+>=20
+> This continues the effort to refactor worqueue APIs, which has begun
+> with the change introducing new workqueues and a new alloc_workqueue flag=
+:
+>=20
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+>=20
+> Use the successor of system_wq, system_percpu_wq, for the scheduler's
+> default timeout_wq. system_wq will be removed in a few release cycles.
+>=20
+> Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+
+Thanks for the updated commit message, looks great.
 
 
+P.
 
-On 11/6/25 15:33, Geert Uytterhoeven wrote:
-> Prepare for the advent of globally available common field_get() and
-> field_prep() macros by undefining the symbols before defining local
-> variants.  This prevents redefinition warnings from the C preprocessor
-> when introducing the common macros later.
-> 
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
+eduler/sched_main.c
+> index c39f0245e3a9..13192e99637a 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1315,7 +1315,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,=
+ const struct drm_sched_init_
+> =C2=A0	sched->name =3D args->name;
+> =C2=A0	sched->timeout =3D args->timeout;
+> =C2=A0	sched->hang_limit =3D args->hang_limit;
+> -	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_wq;
+> +	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_perc=
+pu_wq;
+> =C2=A0	sched->score =3D args->score ? args->score : &sched->_score;
+> =C2=A0	sched->dev =3D args->dev;
+> =C2=A0
 
-Acked-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
