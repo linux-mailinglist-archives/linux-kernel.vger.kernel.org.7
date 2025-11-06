@@ -1,195 +1,141 @@
-Return-Path: <linux-kernel+bounces-889140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8BFC3CD3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:28:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C065C3CDBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A07B5664D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:19:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE96A4FE040
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2E7351FB7;
-	Thu,  6 Nov 2025 17:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C39A34F484;
+	Thu,  6 Nov 2025 17:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w4AKHo3S"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OYJ1GXgf"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE07834F49A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E88A34FF5D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449474; cv=none; b=RvSw9d/7JEF+F498yyqjk2jP+bFT5COUhAJxE219wZwolXj+hHF1ldmwfJg92h/AQEsw1ut2Cvj3xJAN2vkS0CJY250D+lhL+tW4pNs/wYNUy8q5lU4u2r0FkqwAUQuiq95zKo1I5MTF1d4vA2+V5pQFm5vWbZSkpDL7iYuteFY=
+	t=1762450092; cv=none; b=OyeGakZVjfkfSb0nNt87YebI7DyYpLnZz8SNibCvLogpJN+BobYIQfiyYeio2/zwMkZ9tn9LMlZ0Zs6GCMMjUoXHJVB9K36OnEutTFAS/91B1o7xC6jwxRAruMNft13pXky2r6PKBAzYEA54ia/Q8XYWgkF61QBTWwkJ+x8J5wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449474; c=relaxed/simple;
-	bh=UJl3TI/ILL+L2NZ+C5cZaJQp+uHS3WBY0UUH6UoHN8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlyvyRFmLEgtCCOJxJuo2E8rElnBZWuljgOs0/11V7W2Pbk6lr2r42/UpKgjo+GPf3x3vV6MvSzBUlAlUG+lVvH4e5olQGHd94L98+oYJ/YZKXcAp4SsUWnGH+COCUBeZ4XZEWuyIiJfIFV19/ctBTa5Pd3YdfWRArtCThCcb6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w4AKHo3S; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-34182b1c64bso832230a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:17:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762449472; x=1763054272; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e8rOmUB/Qab4XNuUxUB9H9N1Hcl6ltErOzE5ty1KzV8=;
-        b=w4AKHo3S9eS/LeesnMUfXSDs1G0dLnrETNoCEg2s9Q9m0k86V2W/T4wfmli9HQ7cXH
-         s+34AYGUN1hzBM0/wWgMu7RmRHyz1xpFL2dAyxu2MhMtlkbi6BEtdA818n3iFBU/SvJR
-         nP7PAldxBu4nZ1FnHvUZRK5DrgyynjOZkCQMbjAQesWuHPZ9cNHUQY6zComg44CdCzAE
-         nXQ5Og7BJNyv5HgqXGQGzyKh0+EgoSN/16X0GZCKsgugp1PAJYEwKBJL4fiWHprI88Sj
-         YtUczu8xnDKGq546Nfl1sAyILPr4fdIW6Myk8MqKdKwQTdkIdE0/jJZqMKH0JSaAVg1g
-         JC0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762449472; x=1763054272;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e8rOmUB/Qab4XNuUxUB9H9N1Hcl6ltErOzE5ty1KzV8=;
-        b=WYpW8QShzksCqC+utuDx2cx2uSBBUtL8nLuJ9/uHU2gcYCt8MuaIoliDYGRStBehBN
-         awo+4q0ILERJ21dhnAxct0z04sbRmXwr/cxXoXrYQTQTV6AOxRyaiEjiTiFdX0n++Lgi
-         w10iRSpDZvDECKkcQehlBiCwFSs7WF3FHqF032wVzC6KmAVNoj7Ou3S4uSlwCmjmbFhf
-         FPe/g8gISul7hmubmhlD8D7Potjz6FVKoo2fmkjZpCoQ/fqPqCfnF8Pad7PWRndpW5xs
-         zRCbxTx7ukFhhurq737PkFGZW7Fc1AvmxkYWhn0/PbELZA2FIPDe7HpCA3JsHNlXXGU1
-         2cew==
-X-Forwarded-Encrypted: i=1; AJvYcCXEdTWim0d0aYAvLcIDSbjsyfIm8RPAqPuLzF7qCnvnTogwpt/ukND6PcFhvVjfU61cLft5LWCCwbLM37Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjdA0PHTS8nce/hYhEyhaAK1IxlWa8vSwNJC0A95lrjC/KKtFv
-	FcOTw5r7o7d+BWIPtc70fyX6EBDBmFAZJdAec3zV4bliNzNVEZRWaQWckgUMjmP40g==
-X-Gm-Gg: ASbGncsm0NajsguniQMEqwQd5YhzfXD/E2k4OqV/Qvs6mQdAKjmGzdWmQ/xeP1xYKHo
-	glW4KEYxz+37ISrefGFoH/LHvBUvDiDQWPqvZIQZ/MMZx/kIH+iinT8OUFSVtMTWRjLWQdHBqKq
-	aFNAJqxios790q5eyLFgpWxKtVgN9iPm1SZ2WNNBYCvBGYFL3Xm+l8gvYTpyigUVVxasxzRC+94
-	XH3claJG0CaC2pK66YURB0XpptSj5g/3VIsg9kspLL8RFnMeK9EXxML8DvEShUwgn9epHRqEhHX
-	RcSxBjy8CAyjqNzJz6MJ1MBe3Md3JUmmeM4qCEeBH7QH9i7zQy3OY5xcZPSkgWVV60M4Ft440g+
-	TlEIzNOqs7eZbQHbkz2E73N+u/8owN4v3vtFl4PBhd8OSgADX3MV9+u8DtDByv61jfjNw/5H4/q
-	sMCtZNEv22bE2D5dTjiNh3elyL8YhdKQPzp1fTTYHitpDHIYm9W6Y+
-X-Google-Smtp-Source: AGHT+IF5dm3b+TfCvr+idRK4WAQL6ailGdHxqBosbW+mh5LC8pP1b83d5wfZFY8YbKRvEpQzBtUNuQ==
-X-Received: by 2002:a17:90b:48ca:b0:340:bfcd:6af8 with SMTP id 98e67ed59e1d1-341a6bfb6bdmr10106676a91.4.1762449471620;
-        Thu, 06 Nov 2025 09:17:51 -0800 (PST)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a699c98dsm6825962a91.17.2025.11.06.09.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 09:17:50 -0800 (PST)
-Date: Thu, 6 Nov 2025 17:17:46 +0000
-From: David Matlack <dmatlack@google.com>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Alex Williamson <alex@shazbot.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] vfio: selftests: Add support for passing vf_token in
- device init
-Message-ID: <aQzYOjWPs0qsW4YR@google.com>
-References: <20251104003536.3601931-1-rananta@google.com>
- <20251104003536.3601931-2-rananta@google.com>
- <aQvjQDwU3f0crccT@google.com>
- <CAJHc60xb_=v9k46MEo=6S5QmMXKnd_1FiuWQr9dkCnE_XtTkfQ@mail.gmail.com>
+	s=arc-20240116; t=1762450092; c=relaxed/simple;
+	bh=sngSJFzH0gflKDa+8Iim+lbvqosTBty+UDJw/IjLKlk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ol6NvFtgLZ9g8/HeDEDWr0ZBTARsLcsOEYoFz1Ej5oKQgnisl9YDEP/D18kRpFsTI4DG/CxsIhui16mNAGKeh5JQFmpG2jVsEmuEaUjWgIOlbf5TbEYLRzJR3sMymBkB4dsU+g1g/qjDjMz4kXyiuYnrBjbGPcDTMQA/aiImoOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OYJ1GXgf; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251106172002epoutp01029086d4eaa54bf42701a116a4631f29~1epNC55ma0345603456epoutp01p
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:20:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251106172002epoutp01029086d4eaa54bf42701a116a4631f29~1epNC55ma0345603456epoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762449602;
+	bh=GMxbGaHTegvxzjmrCuxMyXkM1amJUDVoE5ZIXTzbZNE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=OYJ1GXgfV/XZM6ojtZSaI/3vG020gvqa7gJISvsW8Z2xJwsaN2nIoU2D582IRZA0o
+	 3qlBInMo1MbRvN7mEJspmxW45nJxNVQQCjtRRybuZ+DgyuLKQjGTEuzDqqyzhse9sJ
+	 utOjWzduvIZmewRbGl1E3fbsDQo3vqYzXkyHR8RY=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251106172001epcas5p1dda439ff0736d2ad8b7b1fe79939d39c~1epMgioyt1461914619epcas5p1R;
+	Thu,  6 Nov 2025 17:20:01 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4d2TTX3cTNz6B9m4; Thu,  6 Nov
+	2025 17:20:00 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251106171959epcas5p1bfa773e26cfc783e69ddcb7ffca54190~1epLEgwkF1620916209epcas5p10;
+	Thu,  6 Nov 2025 17:19:59 +0000 (GMT)
+Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251106171954epsmtip2bfb46d347a900a171b074f453dd1a3cf~1epFsVcSg0814108141epsmtip2f;
+	Thu,  6 Nov 2025 17:19:54 +0000 (GMT)
+From: "Faraz Ata" <faraz.ata@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Andi Shyti'"
+	<andi.shyti@kernel.org>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <linux-i2c@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>,
+	<pritam.sutar@samsung.com>
+In-Reply-To: <7ba31fb7-8f1b-4277-a3cf-649a76c7dda5@kernel.org>
+Subject: RE: [PATCH v2] arm64: dts: exynosautov920: Add DT node for all I2C
+ ports
+Date: Thu, 6 Nov 2025 22:49:03 +0530
+Message-ID: <000001dc4f41$948cb470$bda61d50$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJHc60xb_=v9k46MEo=6S5QmMXKnd_1FiuWQr9dkCnE_XtTkfQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFOiGH9IZBP/MALtVgmdgdp0NuXDgFMvpOsAcCx1FYC93HaobXRSjbA
+Content-Language: en-us
+X-CMS-MailID: 20251106171959epcas5p1bfa773e26cfc783e69ddcb7ffca54190
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251014111455epcas5p30731028365023e101dad3b9ba1f90bec
+References: <CGME20251014111455epcas5p30731028365023e101dad3b9ba1f90bec@epcas5p3.samsung.com>
+	<20251014112338.2023223-1-faraz.ata@samsung.com>
+	<2knbzksxobg2kl3aexuiwluctgafgzxblsqc5q5rcikuruuegr@cqlizryhhx4s>
+	<7ba31fb7-8f1b-4277-a3cf-649a76c7dda5@kernel.org>
 
-On 2025-11-06 09:56 PM, Raghavendra Rao Ananta wrote:
-> On Thu, Nov 6, 2025 at 5:22 AM David Matlack <dmatlack@google.com> wrote:
-> > On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
-> >
-> > > -struct vfio_pci_device *vfio_pci_device_init(const char *bdf, const char *iommu_mode);
-> > > +struct vfio_pci_device *vfio_pci_device_init(const char *bdf,
-> > > +                                           const char *iommu_mode,
-> > > +                                           const char *vf_token);
-> >
-> > Vipin is also looking at adding an optional parameter to
-> > vfio_pci_device_init():
-> > https://lore.kernel.org/kvm/20251018000713.677779-20-vipinsh@google.com/
-> >
-> > I am wondering if we should support an options struct for such
-> > parameters. e.g. something like this
-> >
-> > diff --git a/tools/testing/selftests/vfio/lib/include/vfio_util.h b/tools/testing/selftests/vfio/lib/include/vfio_util.h
-> > index b01068d98fda..cee837fe561c 100644
-> > --- a/tools/testing/selftests/vfio/lib/include/vfio_util.h
-> > +++ b/tools/testing/selftests/vfio/lib/include/vfio_util.h
-> > @@ -160,6 +160,10 @@ struct vfio_pci_driver {
-> >         int msi;
-> >  };
-> >
-> > +struct vfio_pci_device_options {
-> > +       const char *vf_token;
-> > +};
-> > +
-> >  struct vfio_pci_device {
-> >         int fd;
-> >
-> > @@ -202,9 +206,18 @@ const char *vfio_pci_get_cdev_path(const char *bdf);
-> >
-> >  extern const char *default_iommu_mode;
-> >
-> > -struct vfio_pci_device *vfio_pci_device_init(const char *bdf,
-> > -                                             const char *iommu_mode,
-> > -                                             const char *vf_token);
-> > +struct vfio_pci_device *__vfio_pci_device_init(const char *bdf,
-> > +                                              const char *iommu_mode,
-> > +                                              const struct vfio_pci_device_options *options);
-> > +
-> > +static inline struct vfio_pci_device *vfio_pci_device_init(const char *bdf,
-> > +                                                          const char *iommu_mode)
-> > +{
-> > +       static const struct vfio_pci_device_options default_options = {};
-> > +
-> > +       return __vfio_pci_device_init(bdf, iommu_mode, &default_options);
-> > +}
-> > +
-> >
-> > This will avoid you having to update every test.
-> >
-> > You can create a helper function in vfio_pci_sriov_uapi_test.c to call
-> > __vfio_pci_device_init() and abstract away the options stuff from your
-> > test.
-> >
-> I like the idea of an optional expandable struct. I'll implement this in v2.
+HI  Krzysztof
 
-Just to make sure we're on the same page: I don't think you need to add
-this in v2 since you don't need to call vfio_pci_device_init(). For the
-inner functions that you want to call from your test, passing vf_token
-directly makes more sense IMO. vfio_pci_device_init() will just pass in
-NULL to those functions for vf_token by default.
-
-If/when we want to pass vf_token to vfio_pci_device_init() we can add
-the options struct.
-
-> > No space necessary after a cast. This is another one checkpatch.pl will
-> > catch for you.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Thursday, October 30, 2025 9:11 PM
+> To: Andi Shyti <andi.shyti=40kernel.org>; Faraz Ata <faraz.ata=40samsung.=
+com>
+> Cc: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> alim.akhtar=40samsung.com; linux-i2c=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> pritam.sutar=40samsung.com
+> Subject: Re: =5BPATCH v2=5D arm64: dts: exynosautov920: Add DT node for a=
+ll I2C
+> ports
+>=20
+> On 30/10/2025 16:34, Andi Shyti wrote:
+> > Hi Faraz,
 > >
-> >   CHECK:SPACING: No space is necessary after a cast
-> >   #81: FILE: tools/testing/selftests/vfio/lib/vfio_pci_device.c:338:
-> >   +       char *arg = (char *) bdf;
+> > On Tue, Oct 14, 2025 at 04:53:38PM +0530, Faraz Ata wrote:
+> >> Universal Serial Interface (USI) supports three serial protocol like
+> >> uart, i2c and spi. ExynosAutov920 has 18 instances of USI.
+> >> Add i2c nodes for all the instances.
+> >>
+> >> Signed-off-by: Faraz Ata <faraz.ata=40samsung.com>
 > >
-> Actually, I did run checkpatch.pl on the entire series as:
-> .$ ./scripts/checkpatch.pl *.patch
-> 
-> I didn't see any of these warnings. Are there any other options to consider?
+> > what happened to patch 1/1?
+>=20
+> Different patchset, no?
 
-Ah, I run with a few additional options. That's probably why we are
-seeing different output. Here's what I have in my .bashrc:
+In order to address your below comment=20
+https://lore.kernel.org/all/000001dc39a2=242cf5e570=2486e1b050=24=40samsung=
+.com/
 
-function checkpatch() {
-        scripts/checkpatch.pl \
-                -q \
-                --strict \
-                --codespell \
-                --no-signoff \
-                --show-types \
-                --ignore gerrit_change_id,FILE_PATH_CHANGES,NOT_UNIFIED_DIFF \
-                --no-summary \
-                "$@"
-}
+I added the lore link to dt binding in v2=20
+https://lore.kernel.org/all/176044840242.3094524.6549941972513295895.robh=
+=40kernel.org/
+
+Please suggest if anything else need to be done  and via which tree this pa=
+tch set will go
+>=20
+> Best regards,
+> Krzysztof
+
 
