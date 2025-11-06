@@ -1,186 +1,219 @@
-Return-Path: <linux-kernel+bounces-888125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70C8C39E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:51:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FCEC39F30
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:57:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 290084FADA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:48:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FE9C4F8FBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148772D9EDB;
-	Thu,  6 Nov 2025 09:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEF62836A0;
+	Thu,  6 Nov 2025 09:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hSLKx8pI";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Euh5obur"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0x/BQ3K";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="foejwH2X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71097214A94
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7433219A8A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422478; cv=none; b=Jhm5ftwWqikvZmyoZo+Svu68u5GsRHjPhZTKVqY5R5KOYLxeA2JUYdDLMft3xO1DvTUFSEzLt+cSFup9NaM8Oe/lJPoHSJpu5zAgxkjoKQLQKb/F+UIr87kRJBYt421Ocazuaniz5uE+ubQiaLzIsv5c1noT3bsldhlXKGfxUE0=
+	t=1762422569; cv=none; b=Z6dRgq4TakqZ5GVfAHzaQBoJnEZ8/jfOKNCnHt8kzKhTFU2jKOtslEntEnZFBBqNVzthKsyhMtRTreJwmFJhqAj9vGrgpNoCC33/6o4tWbc7vnT2BZAbc48hNUzDIJnWiNwOtqLQ+cHMW57mZVeI5wkYLpFfhA+0T4cm6NvPSB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422478; c=relaxed/simple;
-	bh=vavezM5McYCdO0GTAExjvodbuYeC8rvFYUP3Bzrb6a0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SC4lLgv5qfd0ejAQs+wcLe338uEeBX97DHGjPXOiYxi9Pu/FxEXE5yOqMUINqSZT28NzQH+k7zjLgJnbCZET56+MSE8+Uzkwkl6DNj+ZzrKjWMlgGYS5r6j/efaorh0DrXbGwDFmWVVOwXdo8JnTAGppvpJKS3Xp6krueN9aldQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hSLKx8pI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Euh5obur; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A68aqXX2327621
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 09:47:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9IBxiMX/J2w532V+aM7PJT3Rhdmy1U28t6gabb7CXog=; b=hSLKx8pIVW45KUsN
-	UE5qLb8ljopgQ97CwrnC1XRVYnlbeIqDY038Sk3CR9zQENRHt/lvWe/aDxbbGneS
-	3RJk3WO1YHDNZtvBotsfSLca3QdcnMj7lNqHXqeViHhZvydRyBeHP1k5L6L9KMWm
-	hAOQhhkM24EwKjEbtTR4I/Nx/1zABG+ROYSnyrQ5pnXyqYFzVJuUigL2Y5k/S6BP
-	ZQNXJ5gaDs+M6dFf0aSDex6f8G+371Qvpwogtnnprvt7IsX2q2utiPV5LZGVhZSj
-	V9ukR/kvm6aPBv1vY7TAkfcLu1DjBS+bePfFMy3W9zbeMCpOFXsbm4aSsuLrcuxN
-	IXCxqA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8h0v1e8s-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:47:54 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b1be0fdfe1so3790685a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:47:54 -0800 (PST)
+	s=arc-20240116; t=1762422569; c=relaxed/simple;
+	bh=2sMhzj5ZSerndxu5LUketJQ9VpoNWNO3E0MuBLF1XRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onUuaGmhMpSHqQS5dDYmNkvVUR6Nh0oHSiWE2aA6OTw6W3nhMp2uQgYqq+nY3ZvgwuR+QsBlxUVpMQrP3G9R8zFDdafCR1C+RMdqODygYHf2a77N5hcokDw90k/QpTXd5n5ygTCGdQd/sP/tVVNSQ6B3ebbRg178/oEp+VNGvl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0x/BQ3K; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=foejwH2X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762422566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=97/v+8IzcwHBddy9YosW9MdJRIYiAAxaDT3Ms1fX0hI=;
+	b=F0x/BQ3KT1JnuYg7QLGSjzImBWE2ThsmU+s1N8VygJDY5wy0Ltkxw1ecAq9u9LcCnlY5l6
+	//JgNFz234nwLHZlzg2Md4QdoHbxCMVxkIkeCG7PlfbgVXWZcfDHH4MosmZjvB1nljRMRl
+	1b+Ae3arHyhisvPtsdnHMtqHZnV3fKY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-458-SpBHU_TxPMef3ZbYix-zwg-1; Thu, 06 Nov 2025 04:49:25 -0500
+X-MC-Unique: SpBHU_TxPMef3ZbYix-zwg-1
+X-Mimecast-MFC-AGG-ID: SpBHU_TxPMef3ZbYix-zwg_1762422564
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-429c5f1e9faso594843f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:49:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762422474; x=1763027274; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9IBxiMX/J2w532V+aM7PJT3Rhdmy1U28t6gabb7CXog=;
-        b=Euh5oburOgbQyEo3+sqVXqEORRndoSlqmAN6LGWQSBl1sGYMlx4wnBx0tFxz2l6vlV
-         DHLF7gLt2BVJ5QZirossefsLdfaGdmaCyLcBdBdlBR5TtX9ryNXT9P0838qCyFaHcBZ0
-         GKv+ZTSH47S8iQ+l6XTWrUC5p7ykvAaOxyM2B/502fTwiLq8qAyUzIKpdYghmputGnPn
-         NXVasNDInm8U5ScXlpTumOWA6Tbeqory/9plMw9lzlmaMB0aVzvXcayuqS4FHfuN/jpt
-         hYBOb8a8HXreZCgj4ll8Ih2G7F4fPwzFsNtgJ6cmjBcUcVBc4szZQh6Bc5jPodraOavS
-         n1lQ==
+        d=redhat.com; s=google; t=1762422564; x=1763027364; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=97/v+8IzcwHBddy9YosW9MdJRIYiAAxaDT3Ms1fX0hI=;
+        b=foejwH2Xm//K0A+CLgfmsWCH0eg6ePOAZoil5CN2qaTwtCC9SfFE+OqgPTDRxYzesx
+         BclzFSm9vEGCf1enhroYxQecezL+A/yL4FSrT7RFOhcMQ5lxxli8KTlPGxeO0jD2X/Ti
+         luwMcpmgPnpAELwZNWkbxV1ddQgKodkHeBKIhCH9HTi/mP4jhg0tihhBt/bn+lY/H/cN
+         t1jtELGAHlt0RggNSBnlvtp0yI4BKpYN6bXE+8pvehOsaMOQGMPLqVmBvHuV++n7psvM
+         g2I6WAMtfR2r4TC8SY/IRwiA3wAYyBlvg1ZXU+TS401EyMSBP1N+m0sE4YmZCJpVgGxN
+         lE0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762422474; x=1763027274;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9IBxiMX/J2w532V+aM7PJT3Rhdmy1U28t6gabb7CXog=;
-        b=vLhwVniZcik+wJFROdWRRpZlGiwsYKzW+JTW9cJovIi8Y5e8USiFsn7dLmX1PYqONe
-         d9EBSTh4kTvZTx+0Pf7jpnZU7KFDAuhR73dXM6ikxWbvGPlbI6ZnPokZNaAl9FwLaJCI
-         vX6wldG9/PvvCPPBW6pf+17brmEEws3rH2uh5NHBZQSzXmd4sVFOrUfK/TRHJ496d4W5
-         Y0Ancvg2nJJ+DgcYqAb8/mfkFV3EVWyC3eqqT/xb+E2uHhCM8Xt/HBQALF9L2n9GyytN
-         3KyHKJ7DVuDUh4nMwHATYj3gKtcPKhQ0VelxbK7tcsrIWNmkPBjDw8/JMHTYE3oDl+N9
-         +uMg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+o2X+D79SyzP+LFtig59upE6GQ8GlhgMAhyqPgKvjpDgV3tor5uRfrCXpaL4TIizcPoev6ebNe3KYizE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww1WdE5ykRVLeDS4ImwOzX2SN2kzbyb2W+pD0tOMk1HNyMVpxM
-	qoBCEcG9f+/6Huy0GhoyeOscOE/upELljODI/VSIZvOrGNxGaFYUsAykjPrDIuVAvZaQBwy40qA
-	qJQh/QQ8VF1RahDxlwHqD4HXsW2Ovpbj+t/7FiQhA+/3EahHjmQRAeNPkBM9Nw+6XLUe9E1IP7H
-	M=
-X-Gm-Gg: ASbGncsOZvTcOr3Ks1qa2nObo7hNW9L0bpbOdTD+6jGlQAY+Uvf1g6MxeGsrPfRYoo5
-	hIVNWfpl6zqw+eeDT4aoszQzrXCinNFwqnMTprnX6X48UoFWX3w3YI96PJFxfcMlk+mVRVZO3pE
-	ZFNON6BGFVrSNzruhTub1z3RZQh3UMqB5J8C1I1oSZ7SpiBX3pNbHw3Nn/fI5Gy/mHawHf1qdPH
-	h+F+dywSWXV+3Xxse40T013i8JmfQGrogBTWy2KlrMsXtxgcUl8MfZXraX+y34RKmw/xZ3y/esN
-	W+Es/Srr8E9CVtBHb/MazXwd1aWoCoUiGZ/KG3OkYYgAN+iH8EBnqBS7oC/1XdeIimVJu4z5Y15
-	vSgcbCC/+DtsssYlQkWTkYoM3saSbaPNBV92UsKT6dlD604hCdr7bcaIo
-X-Received: by 2002:a05:622a:18a6:b0:4ed:1869:6c05 with SMTP id d75a77b69052e-4ed72338594mr57540471cf.5.1762422473661;
-        Thu, 06 Nov 2025 01:47:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGpuKuCWzp0t7fCbW5KVhS4FD/Jdg9+sVXbJS47KWq/o+LFPWmer47f/TSodncTzWe2GNegOw==
-X-Received: by 2002:a05:622a:18a6:b0:4ed:1869:6c05 with SMTP id d75a77b69052e-4ed72338594mr57540311cf.5.1762422473198;
-        Thu, 06 Nov 2025 01:47:53 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6412a27d68dsm516869a12.9.2025.11.06.01.47.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 01:47:51 -0800 (PST)
-Message-ID: <4aface5d-66eb-41bb-b6f3-ee8ce5d5da6b@oss.qualcomm.com>
-Date: Thu, 6 Nov 2025 10:47:48 +0100
+        d=1e100.net; s=20230601; t=1762422564; x=1763027364;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=97/v+8IzcwHBddy9YosW9MdJRIYiAAxaDT3Ms1fX0hI=;
+        b=LRd2neXv1ZwjINXJWe0HQnYRnbw+BPDeN1hvai6UMsFnANED1pUeExCV4XDGrb3Jei
+         NNTk5cxgH+2y7nBX9TqzuUayXQmpa9yqyynZsCKGFy2KgxMmudk8ZpgN25NBjm8WXPyT
+         HoHq6dj3892I8HXT9tlWbDOdO6CetzIKDJkqGaHiI857VjLXDiDlbp2rzw3HbF6bjV27
+         FNUE/V0x2ihTL9/slumV2SEUnZBWfUVVxmSr6Ak0hhnZXWa27BRIV+rEnNoO4kcnnWsS
+         5+SLTKm7MCnuTVIMW8h1tVD4ShNH1/NLhi7dhbbA5ajwA8O3QEgAlOmk2+B0dvflPt+J
+         eQIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB08JWfYg97a+xf+GzAJS0E4tKUD9fbXz9/4B4+h80LiRTnuQJJEHDo6XUby6ufO9qzpLX9FaYi/KHZ1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcHT1iKDqFDOF4bon7OQvHCwxWvZV4rJdxLP4La1Y3Hq9JXvHy
+	TZvsfG2jgsrsiAYxvMwua0PGJRy+jst51jzuX8La7kGDJMMDBTL3ros7jPGpEyZz+uYio+V+UQd
+	6XlVdAwnm9OeeRfKnTNX9kauIPvsyLJK+usiKeZ5VLYOVEGV3orSOp3FLHoF7LQGOaw==
+X-Gm-Gg: ASbGncvCfGsRPbGKU323ekNFsLUBfv7GwgYq1I92vcGSMkcIRUZciO0Pm0pZSagtpD1
+	gZdLfCWpjqXTpmmewYaL5251cRZ8w/0j5Kw3mxY+YoborHb8Uza3q0sxwmxhjNvrycJ9KJJxOse
+	NuTnZkzv8bRibeLPzuqw2syxc2Vlo+X2B+Cil/6zrVmlXnxJLqqY2yUqJ/dX0LK3SLo+zV26e0r
+	nnhihcQSy+KbvGI0jxjDSjLPqB/IAyvEPpknPjB8Lx+W1rftvzCxTy8IAWWJYjHoxO3iPh/4MNq
+	dTxWq9X0Fojj+0Dm2AIMcpQvTu1Lm72J4iif9tfXAQ7/NROzuuRDWM0UimIB4xtGbTTAIP5KzkH
+	vUOAzuB+RVWVTbVyttrfsucBk9HIF2g==
+X-Received: by 2002:a05:6000:310a:b0:429:c8f6:5873 with SMTP id ffacd0b85a97d-429e32edf7bmr6285264f8f.22.1762422564007;
+        Thu, 06 Nov 2025 01:49:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHL0R8EQ/PK5EAoW8oq2GeV1D9YmMWfZAWeWYzx+9WjjcHM87V/eC7FnOSgRGl6YpJ+tkE4pA==
+X-Received: by 2002:a05:6000:310a:b0:429:c8f6:5873 with SMTP id ffacd0b85a97d-429e32edf7bmr6285230f8f.22.1762422563539;
+        Thu, 06 Nov 2025 01:49:23 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.129.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb403854sm3942693f8f.5.2025.11.06.01.49.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 01:49:22 -0800 (PST)
+Date: Thu, 6 Nov 2025 10:49:20 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Luigi De Matteis <ldematteis123@gmail.com>,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] sched/deadline: Add support to initialize and
+ remove dl_server bandwidth
+Message-ID: <aQxvIBIwOCDDu60b@jlelli-thinkpadt14gen4.remote.csb>
+References: <20251029191111.167537-1-arighi@nvidia.com>
+ <20251029191111.167537-5-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] PCI: host-common: Add an API to check for any device
- under the Root Ports
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-        lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-        bhelgaas@google.com
-Cc: will@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh@kernel.org, linux-arm-msm@vger.kernel.org,
-        zhangsenchuan@eswincomputing.com
-References: <20251106061326.8241-1-manivannan.sadhasivam@oss.qualcomm.com>
- <20251106061326.8241-2-manivannan.sadhasivam@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251106061326.8241-2-manivannan.sadhasivam@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: JnFDJXUrz-BtTptZwhBQXHRNJLWgm1qg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA3OCBTYWx0ZWRfX8poqf8JUh6Rr
- vPGs+YaGNWBwSkweYyjBo0NRVSsrayPq80ZD3FWAQDCqhEfKlsMtp2+XepRnJE99docfgwiRShB
- pX007vLh/vnt3jiaCG1okRjGn7QZaXfqy2Jd/y124nEVwbGICr8JU5T/R7pwDQ/NtwwFgSy1eD1
- zP3W0RhZ7upoje+xf9e0blW811tdOTh/1bcyZWK9ZcFl5y03ekuofEzEFaL1nNZ+wv/ynkQnOpT
- sOiKQRQNKf1iXvrVj11CeYCuWJV95DtgLsNQwBpyAhbZuwsEsNulGkXpdnaIqty/adbHvGL9zZP
- R5FzGaUXlE9MBL2b1maALlEUIl7ltHHWQt/pd7WUztle9NBjZ+QMAOvciikS8s7BUUxZ8eggkEA
- /7jd/k3Q0GXbOgArH4/XjOU3PJgMjA==
-X-Proofpoint-GUID: JnFDJXUrz-BtTptZwhBQXHRNJLWgm1qg
-X-Authority-Analysis: v=2.4 cv=PoyergM3 c=1 sm=1 tr=0 ts=690c6eca cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=X544SMn2G6euAj6E:21 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=RsEGIJiJnbDJ2EEs828A:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 phishscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029191111.167537-5-arighi@nvidia.com>
 
-On 11/6/25 7:13 AM, Manivannan Sadhasivam wrote:
-> Some controller drivers need to check if there is any device available
-> under the Root Ports. So add an API that returns 'true' if a device is
-> found under any of the Root Ports, 'false' otherwise.
+Hi,
+
+On 29/10/25 20:08, Andrea Righi wrote:
+> During switching from sched_ext to fair tasks and vice-versa, we need
+> support for intializing and removing the bandwidth contribution of
+> either DL server.
+
+My first and more general/design question is do we strictly need this
+automagic bandwidth management. We seem to agree [1] that we want to
+move towards explicit dl-server(s) and tasks bandwidth handling, so we
+might want to consider leaving the burden completely to whomever might
+be configuring the system.
+
+> Add support for handling these transitions.
+
+Anyway, if we still want to do this :) ...
+
+> Moreover, remove references specific to the fair server, in preparation
+> for adding the ext server.
 > 
-> Controller drivers can use this API for usecases like turning off the
-> controller resources only if there are no devices under the Root Ports,
-> skipping PME_Turn_Off broadcast etc...
+> v2: - wait for inactive_task_timer to fire before removing the bandwidth
+>       reservation (Juri Lelli)
+>     - add WARN_ON_ONCE(!cpus) sanity check in dl_server_apply_params()
+>       (Andrea Righi)
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> Co-developed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 > ---
->  drivers/pci/controller/pci-host-common.c | 21 +++++++++++++++++++++
->  drivers/pci/controller/pci-host-common.h |  2 ++
->  2 files changed, 23 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pci-host-common.c b/drivers/pci/controller/pci-host-common.c
-> index 810d1c8de24e..6b4f90903dc6 100644
-> --- a/drivers/pci/controller/pci-host-common.c
-> +++ b/drivers/pci/controller/pci-host-common.c
-> @@ -17,6 +17,27 @@
->  
->  #include "pci-host-common.h"
->  
+
+...
+
 > +/**
-> + * pci_root_ports_have_device - Check if the Root Ports under the Root bus have
-> + *				any device underneath
-> + * @dev: Root bus
+> + * dl_server_remove_params - Remove bandwidth reservation for a DL server
+> + * @dl_se: The DL server entity to remove bandwidth for
 > + *
-> + * Return: true if a device is found, false otherwise
+> + * This function removes the bandwidth reservation for a DL server entity,
+> + * cleaning up all bandwidth accounting and server state.
+> + *
+> + * Returns: 0 on success, negative error code on failure
 > + */
-> +bool pci_root_ports_have_device(struct pci_bus *root_bus)
+> +int dl_server_remove_params(struct sched_dl_entity *dl_se,
+> +			    struct rq *rq, struct rq_flags *rf)
 > +{
-> +	struct pci_bus *child;
+> +	if (!dl_se->dl_server)
+> +		return 0; /* Already disabled */
 > +
-> +	/* Iterate over the Root Port busses and look for any device */
-> +	list_for_each_entry(child, &root_bus->children, node) {
-> +		if (list_count_nodes(&child->devices))
+> +	/*
+> +	 * First dequeue if still queued. It should not be queued since
+> +	 * we call this only after the last dl_server_stop().
+> +	 */
+> +	if (WARN_ON_ONCE(on_dl_rq(dl_se)))
+> +		dequeue_dl_entity(dl_se, DEQUEUE_SLEEP);
+> +
+> +	if (hrtimer_try_to_cancel(&dl_se->inactive_timer) == -1) {
+> +		rq_unlock_irqrestore(rq, rf);
 
-Is this list ever shrunk? I grepped around and couldn't find where
-that happens
+This seems racy. I fear the moment we release the rq lock something can
+slip in and the server(s) state might change?
 
-Konrad
+> +
+> +		hrtimer_cancel(&dl_se->inactive_timer);
+
+I am not sure we actually need to force cancel the timer (but still
+contradicting myself every time I go back at staring at code :). The way
+I believe this should work 'in theory' is
+
+ - we remove a server (either automagic or user sets runtime to 0 -
+   which is probably to fix/look at in current implementation as well
+   btw)
+ - current bandwidth is retained and only freed (and server reset) at
+   0-lag (when inactive_timer fires)
+ - if server is activated back before 0-lag it will use it's current
+   parameters
+ - after 0-lag it's a new instance with new parameters
+
+In inactive_timer() we have this behavior for simple tasks, but we skip
+__dl_sub() etc for servers (since we clear it up immediately).
+
+In all this I essentially fear that if we clear parameters immediately
+one could be able to trick the system by quickly disabling/enabling a
+dl-server to let fair/scx tasks execute more than what requested (as
+each new enable will be seen as a new instance). But, again, I wasn't
+yet able to demonstrate this and I am still uncomfortably uncertain.
+Please Peter and others keep me honest.
+
+Also, server parameters changes are root only, so maybe not a big deal?
+For scx automagic as well?
+
+Thanks!
+Juri
+
+1 - https://lore.kernel.org/lkml/aQiE1ULtInJS6X4R@jlelli-thinkpadt14gen4.remote.csb/
+
 
