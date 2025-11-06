@@ -1,353 +1,236 @@
-Return-Path: <linux-kernel+bounces-887959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AE9C3972F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:49:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F0FC39747
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1011A4037F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:50:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1868F4EDFD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3070B14F70;
-	Thu,  6 Nov 2025 07:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FF82DC79A;
+	Thu,  6 Nov 2025 07:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmW0aiKS"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="L5WyxcgW"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9195F21D00A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125052DF12F;
+	Thu,  6 Nov 2025 07:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415376; cv=none; b=HqZrONLxq7SVoVj/DjJ1mzN+waZBw0tg2Qz1G2z/yXq+vl6nxIdg99bKnCB3b2JOSDFD5E9vsOeCJjaqe8VckKWhza7gZMek1GH/uy3ytSAouBQqxepbj6VlNPGN5oJxbxx7CQvnapSypNTeZwIkKVKMqyIfNPqn+sVPT3p8HFQ=
+	t=1762415410; cv=none; b=O8wszDamjXDtEBdpSipzVRfLEZBgeCIUu3Mz8AXs0SmeMvDNDnbX96bYhApzANJwF3m0CEzXuPF4iIdlJ4Tw9nQQygDTqQ2ytcXKQv1003Sbaw2WI2ywpq1kev2wfSV0yj9wvCrFFzFkv/zklm08jmO88ucO47tSTFHeVezqHZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415376; c=relaxed/simple;
-	bh=LaPNV5JwqAPmCbB2AHkLV/E6mdeYaEN1cj3GhiXXACU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gJU81DaktpOGhGxowC85jjxSmBMNmOasfdodDBfkJRV/MNY49dtmN89V3+aiqC+ILAKKRjZflPeZSQSEfuQzMtvlkg3hoxwG4YOLcN4eSX3XeMXAy3uvADgru3TJe72XjBSVmrShK0uK3JGP9ayZQRf203FzP2xpxGFnz9Y/oI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmW0aiKS; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e896e91368so9148391cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:49:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762415373; x=1763020173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0tiWx6G2y5VkTXLe9CsWA2Y81nDkdhbh4l0X/t/ec0w=;
-        b=SmW0aiKS/S+6Z5CB76hei2GkhLCKD6Ww7dLdXEDq2ELJlO07eJ3M3GkBUU/6vcL0tw
-         ecJy5DgMS1w3qj+SW1FsQCxZ7fsmjLu0lyq8atwa4p7vbYkbMKKIAPaJIrxKpsc9bAUC
-         rNxALbjOWa59jEbzPztzMQ5upC6+g04/GwsS2J/5NE1PO/Y1zdO3emAiO0CUS+vlFZAx
-         AqYkC+Bon3vftPISW/kwc6keit3JDLNMethkqDPI3h2JgENL2G4hr8fmqBGIw1X5Jp7p
-         Z+alwkSPnc+NVtCdRuttmK9WWwpN6hjwsPeFaBQFpZdU89gtS8NDbgC09Q7YErl8TJdC
-         7jhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762415373; x=1763020173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0tiWx6G2y5VkTXLe9CsWA2Y81nDkdhbh4l0X/t/ec0w=;
-        b=CsSkjDxmFuItRHQSlOtCNE5MyUrn9IXY3KDDylu9nj+5dwVn1o8Wt9bA4tiNCk6ka4
-         nIRrD+Y914k0yD3X/S0+RN3PWyu8iez7ngJ+1fSuNTa7SA/3RYweuI6iGgIMWCTsgCpv
-         Y3TIHdHa5Wq1VhrUkEYi33QBq20XmpYzDzd/GTdiOx7ldAvZZnwLBzmjmhAluoeKPTf2
-         tsvfaMvjwv4gYd1zbcRLjmpeHdb6IeokW6lqJvHMbpaiNgKReqyaWNOFVfVyf0/pjONi
-         yE74QNJjP2qHGRKseFxUCFnPwApHYAQRv1O/ltC0Vp8g8kVW5t+juDqbo23IJM/Zrhoi
-         /GqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+3qe6sR8w00a/5mo/iqRD2W38ecfxV841rXlh5HN1x1qdQDKQAVBDRBBR1NW9b1TSswgByPW6rNYUJmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrEHcIyGcWVJFT7p2yEW27LljbDTqFo4kN64hnfOFiS86fkLGn
-	Ru1lVeoO7dO3z760O1vaKsS83yG6ohOH1ogf43E4AL/nVOkRnR6/Ff06PWMX6GuJVuFubOJp2PM
-	4DQNOBSDgRSmxuHLnEAMHftzC+wiGopk=
-X-Gm-Gg: ASbGncvAIznfkn+iEdSNXQW8hV9lCKoBb9ubcjVwxr9LpIvLVH+tefbiENFZpcdr0MD
-	dnzMvnGzyOhab+D/WMQ0fABcXwZ7wRYeCbISnHOE4YQVlRPxpRY4rYfywtp5x9M/mlQiNNY4AnY
-	QW5zLuir/Xzws/RXUNiWXk65QgPzAW3l62/GDbw9K26HqtSdclGSeWM9zKwS0LK9hgk4vVExODk
-	snZYhrSDPAp/GrPJCTSzC8OgbNb1QmcH8fhDGb/uT2mymZiCeloRdM5yDHrJw==
-X-Google-Smtp-Source: AGHT+IFnfeDempYnux+zQUPN8hPmO1whNM3DVSY4U4bNwH+Nsy3ZE2acm1Goqm/p4GafjK/G+YVJDSv1wBfoOqkJQUI=
-X-Received: by 2002:a05:622a:2d3:b0:4ec:ed9e:7fc1 with SMTP id
- d75a77b69052e-4ed7262f327mr86233571cf.60.1762415373358; Wed, 05 Nov 2025
- 23:49:33 -0800 (PST)
+	s=arc-20240116; t=1762415410; c=relaxed/simple;
+	bh=6krB87tTpg7PnjQCqlyzNLsWgUPFNQzg1RuH0acs9H4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GG0Wq35ZQ4gsalX8CQ0VLpwCgO3vZMwYsGJBsCXuDtydcxmweM1ggYCxctanGakTeHqiL8t0N1QZM2J8RPYuUjNsSvlZ5h7sclLNDWkvO32uAgUt63kxAVgQAXQ6EN+AN/OXfTMETnFuMUdVLCcpSbRYs8FpIDGI+qeu3/SsGcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=L5WyxcgW; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=7Daal1mpDnwksHTBXhovLycDkyASp1letXDnqfk8zx0=; t=1762415405;
+	x=1763020205; b=L5WyxcgWmEC4z5z9DknCBodljeCa1B6aqVEvHpXUMHR4eBQYBtViQciJlHEj6
+	JDax301w5OpOO2mYA2VmR1FtivxNn0sBZNTNceTYymqZkZlLVk2IV0OhIYtjMHlmkb9RzECRxQLGv
+	AgZU2ve910D0UUPUOUhtYUmBrnvCywChZHMNvB53loDVLOcq6WxiQVxt6jR+BGzfJFp3pB5Txp3Hy
+	zgKuhn2CAflfkqThRgpQuFxXponvN+om4tuUJhPzlVCjrB4V+Bf8NygzQB1WYuYCFipumhOTqPnYG
+	XJ+5KoAuUswtWaJUspFxLPe2PLmtvxemFYcqHGW28DRDAmP9aA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1vGukh-00000003Msv-3VoG; Thu, 06 Nov 2025 08:49:51 +0100
+Received: from dynamic-077-183-232-018.77.183.pool.telefonica.de ([77.183.232.18] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1vGukh-00000003VWh-2Pwo; Thu, 06 Nov 2025 08:49:51 +0100
+Message-ID: <8fcc0fd4b74f99d5c4d80d3907e7607a7d4c89da.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 02/24] sparc/PCI: Remove pcibios_enable_device() as they
+ do nothing extra
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Andreas Larsson <andreas@gaisler.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ "David S. Miller" <davem@davemloft.net>,  Geert Uytterhoeven
+ <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, 	linux-pci@vger.kernel.org,
+ sparclinux@vger.kernel.org, Thomas Bogendoerfer	
+ <tsbogend@alpha.franken.de>, Christian =?ISO-8859-1?Q?K=F6nig?=	
+ <christian.koenig@amd.com>, Yinghai Lu <yinghai@kernel.org>, Igor Mammedov	
+ <imammedo@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Jonathan
+ Cameron <Jonathan.Cameron@huawei.com>, Lorenzo Pieralisi
+ <lorenzo.pieralisi@arm.com>,  Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
+ <kw@linux.com>, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>, 
+	linuxppc-dev@lists.ozlabs.org
+Date: Thu, 06 Nov 2025 08:49:50 +0100
+In-Reply-To: <20250822145605.18172-3-ilpo.jarvinen@linux.intel.com>
+References: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
+	 <20250822145605.18172-3-ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-4-dolinux.peng@gmail.com> <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
- <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
- <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com>
- <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
- <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com> <CAEf4Bzb3Eu0J83O=Y4KA-LkzBMjtx7cbonxPzkiduzZ1Pedajg@mail.gmail.com>
-In-Reply-To: <CAEf4Bzb3Eu0J83O=Y4KA-LkzBMjtx7cbonxPzkiduzZ1Pedajg@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Thu, 6 Nov 2025 15:49:18 +0800
-X-Gm-Features: AWmQ_bmgI8QZNrZYj30gBC8F2EuWnfMCfYQIX_xp3XQmkC4yFPXeguunpIlcKpE
-Message-ID: <CAErzpmtJq5Qqdvy+9B8WmvZFQxDt6jKidNqtTMezesP0b=K8ZA@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
- search for sorted BTF
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Thu, Nov 6, 2025 at 2:11=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Wed, Nov 5, 2025 at 5:48=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.c=
-om> wrote:
-> >
-> > On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.=
-com> wrote:
-> > >
-> > > On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
-> > > > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <eddyz87@gm=
-ail.com> wrote:
-> > > > >
-> > > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf=
- *btf, __u32 type_id)
-> > > > > > >         return type_id;
-> > > > > > >  }
-> > > > > > >
-> > > > > > > -__s32 btf__find_by_name(const struct btf *btf, const char *t=
-ype_name)
-> > > > > > > +/*
-> > > > > > > + * Find BTF types with matching names within the [left, righ=
-t] index range.
-> > > > > > > + * On success, updates *left and *right to the boundaries of=
- the matching range
-> > > > > > > + * and returns the leftmost matching index.
-> > > > > > > + */
-> > > > > > > +static __s32 btf_find_type_by_name_bsearch(const struct btf =
-*btf, const char *name,
-> > > > > > > +                                               __s32 *left, =
-__s32 *right)
-> > > > > >
-> > > > > > I thought we discussed this, why do you need "right"? Two binar=
-y
-> > > > > > searches where one would do just fine.
-> > > > >
-> > > > > I think the idea is that there would be less strcmp's if there is=
- a
-> > > > > long sequence of items with identical names.
-> > > >
-> > > > Sure, it's a tradeoff. But how long is the set of duplicate name
-> > > > entries we expect in kernel BTF? Additional O(logN) over 70K+ types
-> > > > with high likelihood will take more comparisons.
-> > >
-> > > $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3}' | sor=
-t | uniq -c | sort -k1nr | head
-> > >   51737 '(anon)'
-> > >     277 'bpf_kfunc'
-> > >       4 'long
-> > >       3 'perf_aux_event'
-> > >       3 'workspace'
-> > >       2 'ata_acpi_gtm'
-> > >       2 'avc_cache_stats'
-> > >       2 'bh_accounting'
-> > >       2 'bp_cpuinfo'
-> > >       2 'bpf_fastcall'
-> > >
-> > > 'bpf_kfunc' is probably for decl_tags.
-> > > So I agree with you regarding the second binary search, it is not
-> > > necessary.  But skipping all anonymous types (and thus having to
-> > > maintain nr_sorted_types) might be useful, on each search two
-> > > iterations would be wasted to skip those.
->
-> fair enough, eliminating a big chunk of anonymous types is useful, let's =
-do this
->
-> >
-> > Thank you. After removing the redundant iterations, performance increas=
-ed
-> > significantly compared with two iterations.
-> >
-> > Test Case: Locate all 58,719 named types in vmlinux BTF
-> > Methodology:
-> > ./vmtest.sh -- ./test_progs -t btf_permute/perf -v
-> >
-> > Two iterations:
-> > | Condition          | Lookup Time | Improvement |
-> > |--------------------|-------------|-------------|
-> > | Unsorted (Linear)  | 17,282 ms   | Baseline    |
-> > | Sorted (Binary)    | 19 ms       | 909x faster |
-> >
-> > One iteration:
-> > Results:
-> > | Condition          | Lookup Time | Improvement |
-> > |--------------------|-------------|-------------|
-> > | Unsorted (Linear)  | 17,619 ms   | Baseline    |
-> > | Sorted (Binary)    | 10 ms       | 1762x faster |
-> >
-> > Here is the code implementation with a single iteration approach.
-> > I believe this scenario differs from find_linfo because we cannot
-> > determine in advance whether the specified type name will be found.
-> > Please correct me if I've misunderstood anything, and I welcome any
-> > guidance on this matter.
-> >
-> > static __s32 btf_find_type_by_name_bsearch(const struct btf *btf,
-> > const char *name,
-> >                                                 __s32 start_id)
-> > {
-> >         const struct btf_type *t;
-> >         const char *tname;
-> >         __s32 l, r, m, lmost =3D -ENOENT;
-> >         int ret;
-> >
-> >         /* found the leftmost btf_type that matches */
-> >         l =3D start_id;
-> >         r =3D btf__type_cnt(btf) - 1;
-> >         while (l <=3D r) {
-> >                 m =3D l + (r - l) / 2;
-> >                 t =3D btf_type_by_id(btf, m);
-> >                 if (!t->name_off) {
-> >                         ret =3D 1;
-> >                 } else {
-> >                         tname =3D btf__str_by_offset(btf, t->name_off);
-> >                         ret =3D !tname ? 1 : strcmp(tname, name);
-> >                 }
-> >                 if (ret < 0) {
-> >                         l =3D m + 1;
-> >                 } else {
-> >                         if (ret =3D=3D 0)
-> >                                 lmost =3D m;
-> >                         r =3D m - 1;
-> >                 }
-> >         }
-> >
-> >         return lmost;
-> > }
->
-> There are different ways to implement this. At the highest level,
-> implementation below just searches for leftmost element that has name
-> >=3D the one we are searching for. One complication is that such element
-> might not event exists. We can solve that checking ahead of time
-> whether the rightmost type satisfied the condition, or we could do
-> something similar to what I do in the loop below, where I allow l =3D=3D =
-r
-> and then if that element has name >=3D to what we search, we exit
-> because we found it. And if not, l will become larger than r, we'll
-> break out of the loop and we'll know that we couldn't find the
-> element. I haven't tested it, but please take a look and if you decide
-> to go with such approach, do test it for edge cases, of course.
->
-> /*
->  * We are searching for the smallest r such that type #r's name is >=3D n=
-ame.
->  * It might not exist, in which case we'll have l =3D=3D r + 1.
->  */
-> l =3D start_id;
-> r =3D btf__type_cnt(btf) - 1;
-> while (l < r) {
->     m =3D l + (r - l) / 2;
->     t =3D btf_type_by_id(btf, m);
->     tname =3D btf__str_by_offset(btf, t->name_off);
->
->     if (strcmp(tname, name) >=3D 0) {
->         if (l =3D=3D r)
->             return r; /* found it! */
+Hello Ilpo,
 
-It seems that this if condition will never hold, because a while(l < r) loo=
-p
-is used. Moreover, even if the condition were to hold, it wouldn't guarante=
-e
-a successful search.
+On Fri, 2025-08-22 at 17:55 +0300, Ilpo J=C3=A4rvinen wrote:
+> Under arch/sparc/ there are multiple copies of pcibios_enable_device()
+> but none of those seem to do anything extra beyond what
+> pci_enable_resources() is supposed to do. These functions could lead to
+> inconsistencies in behavior, especially now as pci_enable_resources()
+> and the bridge window resource flags behavior are going to be altered
+> by upcoming changes.
+>=20
+> Remove all pcibios_enable_device() from arch/sparc/ so that PCI core
+> can simply call into pci_enable_resources() instead using it's __weak
+> version of pcibios_enable_device().
+>=20
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>  arch/sparc/kernel/leon_pci.c | 27 ---------------------------
+>  arch/sparc/kernel/pci.c      | 27 ---------------------------
+>  arch/sparc/kernel/pcic.c     | 27 ---------------------------
+>  3 files changed, 81 deletions(-)
+>=20
+> diff --git a/arch/sparc/kernel/leon_pci.c b/arch/sparc/kernel/leon_pci.c
+> index 8de6646e9ce8..10934dfa987a 100644
+> --- a/arch/sparc/kernel/leon_pci.c
+> +++ b/arch/sparc/kernel/leon_pci.c
+> @@ -60,30 +60,3 @@ void leon_pci_init(struct platform_device *ofdev, stru=
+ct leon_pci_info *info)
+>  	pci_assign_unassigned_resources();
+>  	pci_bus_add_devices(root_bus);
+>  }
+> -
+> -int pcibios_enable_device(struct pci_dev *dev, int mask)
+> -{
+> -	struct resource *res;
+> -	u16 cmd, oldcmd;
+> -	int i;
+> -
+> -	pci_read_config_word(dev, PCI_COMMAND, &cmd);
+> -	oldcmd =3D cmd;
+> -
+> -	pci_dev_for_each_resource(dev, res, i) {
+> -		/* Only set up the requested stuff */
+> -		if (!(mask & (1<<i)))
+> -			continue;
+> -
+> -		if (res->flags & IORESOURCE_IO)
+> -			cmd |=3D PCI_COMMAND_IO;
+> -		if (res->flags & IORESOURCE_MEM)
+> -			cmd |=3D PCI_COMMAND_MEMORY;
+> -	}
+> -
+> -	if (cmd !=3D oldcmd) {
+> -		pci_info(dev, "enabling device (%04x -> %04x)\n", oldcmd, cmd);
+> -		pci_write_config_word(dev, PCI_COMMAND, cmd);
+> -	}
+> -	return 0;
+> -}
+> diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+> index ddac216a2aff..a9448088e762 100644
+> --- a/arch/sparc/kernel/pci.c
+> +++ b/arch/sparc/kernel/pci.c
+> @@ -722,33 +722,6 @@ struct pci_bus *pci_scan_one_pbm(struct pci_pbm_info=
+ *pbm,
+>  	return bus;
+>  }
+> =20
+> -int pcibios_enable_device(struct pci_dev *dev, int mask)
+> -{
+> -	struct resource *res;
+> -	u16 cmd, oldcmd;
+> -	int i;
+> -
+> -	pci_read_config_word(dev, PCI_COMMAND, &cmd);
+> -	oldcmd =3D cmd;
+> -
+> -	pci_dev_for_each_resource(dev, res, i) {
+> -		/* Only set up the requested stuff */
+> -		if (!(mask & (1<<i)))
+> -			continue;
+> -
+> -		if (res->flags & IORESOURCE_IO)
+> -			cmd |=3D PCI_COMMAND_IO;
+> -		if (res->flags & IORESOURCE_MEM)
+> -			cmd |=3D PCI_COMMAND_MEMORY;
+> -	}
+> -
+> -	if (cmd !=3D oldcmd) {
+> -		pci_info(dev, "enabling device (%04x -> %04x)\n", oldcmd, cmd);
+> -		pci_write_config_word(dev, PCI_COMMAND, cmd);
+> -	}
+> -	return 0;
+> -}
+> -
+>  /* Platform support for /proc/bus/pci/X/Y mmap()s. */
+>  int pci_iobar_pfn(struct pci_dev *pdev, int bar, struct vm_area_struct *=
+vma)
+>  {
+> diff --git a/arch/sparc/kernel/pcic.c b/arch/sparc/kernel/pcic.c
+> index 25fe0a061732..3d54ad5656a4 100644
+> --- a/arch/sparc/kernel/pcic.c
+> +++ b/arch/sparc/kernel/pcic.c
+> @@ -641,33 +641,6 @@ void pcibios_fixup_bus(struct pci_bus *bus)
+>  	}
+>  }
+> =20
+> -int pcibios_enable_device(struct pci_dev *dev, int mask)
+> -{
+> -	struct resource *res;
+> -	u16 cmd, oldcmd;
+> -	int i;
+> -
+> -	pci_read_config_word(dev, PCI_COMMAND, &cmd);
+> -	oldcmd =3D cmd;
+> -
+> -	pci_dev_for_each_resource(dev, res, i) {
+> -		/* Only set up the requested stuff */
+> -		if (!(mask & (1<<i)))
+> -			continue;
+> -
+> -		if (res->flags & IORESOURCE_IO)
+> -			cmd |=3D PCI_COMMAND_IO;
+> -		if (res->flags & IORESOURCE_MEM)
+> -			cmd |=3D PCI_COMMAND_MEMORY;
+> -	}
+> -
+> -	if (cmd !=3D oldcmd) {
+> -		pci_info(dev, "enabling device (%04x -> %04x)\n", oldcmd, cmd);
+> -		pci_write_config_word(dev, PCI_COMMAND, cmd);
+> -	}
+> -	return 0;
+> -}
+> -
+>  /* Makes compiler happy */
+>  static volatile int pcic_timer_dummy;
 
->         r =3D m;
->     } else {
->         l =3D m + 1;
->     }
-> }
-> /* here we know given element doesn't exist, return index beyond end of t=
-ypes */
-> return btf__type_cnt(btf);
+This change actually broke driver initialization on SPARC, see:
 
-I think that return -ENOENT seems more reasonable.
+https://github.com/sparclinux/issues/issues/22
 
->
->
-> We could have checked instead whether strcmp(btf__str_by_offset(btf,
-> btf__type_by_id(btf, btf__type_cnt() - 1)->name_off), name) < 0 and
-> exit early. That's just a bit more code duplication of essentially
-> what we do inside the loop, so that if (l =3D=3D r) seems fine to me, but
-> I'm not married to this.
+Adrian
 
-Sorry, I believe that even if strcmp(btf__str_by_offset(btf,
-btf__type_by_id(btf,
-btf__type_cnt() - 1)->name_off), name) >=3D 0, it still doesn't seem to
-guarantee that the search will definitely succeed.
-
->
-> >
-> > static __s32 btf_find_type_by_name_kind(const struct btf *btf, int star=
-t_id,
-> >                                    const char *type_name, __u32 kind)
-> > {
-> >         const struct btf_type *t;
-> >         const char *tname;
-> >         int err =3D -ENOENT;
-> >         __u32 total;
-> >
-> >         if (!btf)
-> >                 goto out;
-> >
-> >         if (start_id < btf->start_id) {
-> >                 err =3D btf_find_type_by_name_kind(btf->base_btf, start=
-_id,
-> >                                                  type_name, kind);
-> >                 if (err =3D=3D -ENOENT)
-> >                         start_id =3D btf->start_id;
-> >         }
-> >
-> >         if (err =3D=3D -ENOENT) {
-> >                 if (btf_check_sorted((struct btf *)btf)) {
-> >                         /* binary search */
-> >                         bool skip_first;
-> >                         int ret;
-> >
-> >                         /* return the leftmost with maching names */
-> >                         ret =3D btf_find_type_by_name_bsearch(btf,
-> > type_name, start_id);
-> >                         if (ret < 0)
-> >                                 goto out;
-> >                         /* skip kind checking */
-> >                         if (kind =3D=3D -1)
-> >                                 return ret;
-> >                         total =3D btf__type_cnt(btf);
-> >                         skip_first =3D true;
-> >                         do {
-> >                                 t =3D btf_type_by_id(btf, ret);
-> >                                 if (btf_kind(t) !=3D kind) {
-> >                                         if (skip_first) {
-> >                                                 skip_first =3D false;
-> >                                                 continue;
-> >                                         }
-> >                                 } else if (skip_first) {
-> >                                         return ret;
-> >                                 }
-> >                                 if (!t->name_off)
-> >                                         break;
-> >                                 tname =3D btf__str_by_offset(btf, t->na=
-me_off);
-> >                                 if (tname && !strcmp(tname, type_name))
-> >                                         return ret;
-> >                                 else
-> >                                         break;
-> >                         } while (++ret < total);
-> >                 } else {
-> >                         /* linear search */
-> > ...
-> >                 }
-> >         }
-> >
-> > out:
-> >         return err;
-> > }
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
