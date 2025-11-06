@@ -1,198 +1,133 @@
-Return-Path: <linux-kernel+bounces-888805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628F3C3BF41
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:07:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2064C3BF3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 948334FE7D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D4D18894DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AC6346E6A;
-	Thu,  6 Nov 2025 15:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89FA3446C4;
+	Thu,  6 Nov 2025 15:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FP5outQi"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="XSZGqn6G"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671893446C4;
-	Thu,  6 Nov 2025 15:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03327345CB3;
+	Thu,  6 Nov 2025 15:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762441415; cv=none; b=DI+PwsadwYbyRQknM+O8+sFO+Lw17tg0O6LylJvrM+5GnTBhCciWT/Uqzwph/5hEAJXPDdGz4wkFgyYgXvJDlCYSQN30saglYNSjJCe5ujQR8EDay8hFeYhLzfRvLMP1E7r2c4gblkVz8uiVmWfXcBxt/PvLECfPS+KxzTIGXS0=
+	t=1762441400; cv=none; b=k+GCadk38B6ERmE0tleYEb23cPSYvs3YetemxsvzEPfjQZ76oqNEeI2A0z+cypNQu+UpEC5OuYfttwCkoT8pIzDmEPpJFSEKulE9Yvkgg+qt+NpmU+RtNPQxX6lCsR2GXQUqB51vOa5goxKUzlnDyBEw9c1SZQC5aQO/VGVzXZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762441415; c=relaxed/simple;
-	bh=c0J0R5lf0yRz6IhPcaWUy1ymKbmyPY9nGF9EVVnFmYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S8Fksy+JVPnp2mzkEY+nAXuPAsHS/ORlBs0UVRuts7FbxgwJTts2siEYfjwIH4qYXxb6fm+uDQE8MW60X2+tv1t5SrelwnGdPtRZeYfxNzdUgwwZfNQOBP1aexRIBs8r1aZgL+EP2ms9akE89oTH1zdzorrt6JbVzjhc8KBFFXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FP5outQi; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6CCcck002496;
-	Thu, 6 Nov 2025 15:03:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=mIu+0
-	BvpPUMYahbiUlctpgUApoi9d+74Wsa3M0aMNqE=; b=FP5outQixiRpYpbZBPKjT
-	5uv081FlLoeqJPvtUwjV/IID2YbueGwB1/SU2nQhukHz6POisl4NZbCq1TasZKjT
-	3xOrp2OlbMeukKAMc4yRHjwMEV6Iz2XJrfzQAbVSrY57TSlNT4ganAt9p38EKkh8
-	fVng/h3ImnDTS2ap9Uj2/A3Hm5r4VQnrNJH3FL1UGzV2I4NiMpFWTduKrP2JhGUI
-	ofHsfCsWMp92Uj2pqsL2d6vpUkDT6yLleb8lo5zs9NAiaUsG5DHyohnxlDT/wD0c
-	K9o+KJuHkIKEmkAJS9OKbtJ8GuriYOO8t91Vbns9vJ/VXQI1CLLbpKx2KCP01UFN
-	g==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8aqwa7rh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Nov 2025 15:03:17 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6E1PvD039714;
-	Thu, 6 Nov 2025 15:03:16 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58nc8mh4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Nov 2025 15:03:16 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A6ExlIX013458;
-	Thu, 6 Nov 2025 15:03:15 GMT
-Received: from oracle (dhcp-10-154-170-248.vpn.oracle.com [10.154.170.248])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a58nc8m6b-2;
-	Thu, 06 Nov 2025 15:03:14 +0000
-From: gregory.herrero@oracle.com
-To: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-        andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gregory Herrero <gregory.herrero@oracle.com>
-Subject: [PATCH] i40e: validate ring_len parameter against hardware specific values.
-Date: Thu,  6 Nov 2025 16:02:47 +0100
-Message-ID: <20251106150248.721025-2-gregory.herrero@oracle.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251106150248.721025-1-gregory.herrero@oracle.com>
-References: <20251106150248.721025-1-gregory.herrero@oracle.com>
+	s=arc-20240116; t=1762441400; c=relaxed/simple;
+	bh=7y2zEn2ROiUzVTxt1mB7quCKO14Pw3dkEKbmNjuWvh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvQurzmTvhUoxvzvcolf4xHle2Uegcb8hKlgJbZkdMOdd9l3kpJaoF0yFLfQsZBEc+fJkCodEUQeCfi4r/u1QLdbhQpdoevjM6MwL97f+ecNeHP9aKj5oKKlY8EKH3gSgUaS+hLUQuLVFsRDSnwOMP5nu/z5kDzruAMlslqG3Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=XSZGqn6G; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id EB6071F93B;
+	Thu,  6 Nov 2025 16:03:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1762441394;
+	bh=6I2Iu+cJT3+xxGMe7PrlNglBTOagx6IwbhJZJqxqBGE=; h=From:To:Subject;
+	b=XSZGqn6GIJD61EDUYa00+rIE5rUeW4v9fNypsOF6u/RPK6BxPlVVAj6tAdbZDNfGj
+	 cESdjMrFBVhb0ZAs0GkNehC3GhXkfzDZGj7kPYpt72E/HCIqoP6lW8ygTB+zRtJqpy
+	 6Po4wRrC44QVQNpSgJg1diuMDwpfrj3Hiuss0M7OZQJBz5X6DXtTJb7Mjj2/+u6MeM
+	 Wj+a8mbumaROEssjFPUKxPPXXk62WIvnVZ4PLNESgWQAH7WoTn6miY14uF36aFhcS3
+	 olAz+zgdzG8RaiZkOj46PIkzBTyOnSJ1iuTRY3FOWf5x6EpXgGVtlBPNJ56ZESvD7Z
+	 V4pZ95whObyhQ==
+Date: Thu, 6 Nov 2025 16:03:09 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Andrew Davis <afd@ti.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1 2/3] arm64: dts: ti: Add Aquila AM69 Support
+Message-ID: <20251106150309.GA44898@francesco-nb>
+References: <20251104144915.60445-1-francesco@dolcini.it>
+ <20251104145240.61219-1-francesco@dolcini.it>
+ <20251104145240.61219-2-francesco@dolcini.it>
+ <d77bf3dd-4501-4f17-a776-3353f96f4fb1@ti.com>
+ <20251105115335.GA14157@francesco-nb>
+ <7024f4b3-00a0-4618-8bf9-53e305fcc982@ti.com>
+ <20251106101932.GA5975@francesco-nb>
+ <be8040c0-76b1-46e3-bd89-841cbfa10c84@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511060119
-X-Authority-Analysis: v=2.4 cv=NajrFmD4 c=1 sm=1 tr=0 ts=690cb8b5 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=2JYSdunga3JKcJtQgaIA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: N0Ikuwr29JWU9Bog8HWqNJfzf0tkhQBn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEzMyBTYWx0ZWRfXz/c8ZsJHL/u/
- iYLeJOYf9bSIYfvY4EAZwr0fpKLd90wD/8xMTHGiTsVaCvAAIx1uYXPg1jC7z8K87ItyBkX3TNt
- u/vUETCWMGYh5qNK98zfoEX2lWeDgKH3wIBvYSbgQuw+a7xCJFwwvr1+EXlKFLjkhgxiRfZTGqc
- ZlvVVVPAQqxY6TlqYSe0wa0AHwZoFfUfdudmeb00ZfwopYtDesC7YJl8vpIxdEJvdVORhbUZxnJ
- ez9NIO75MyaMmEHIXb6hXAwndSmH6k+Qk3WfCP/4ZvBVEF2ImWYnut6M0BFVjD4pFR6y54es6B8
- tnFoZxML7kexbl5FWXl5mXN0aoU+GVuCtI5UhbXMjPg3azi2P6/woMu0ubxTHBQuYGseFb0qtI1
- 7HnVzOfMo4dDlwychtnIYJBnnP1kVA==
-X-Proofpoint-GUID: N0Ikuwr29JWU9Bog8HWqNJfzf0tkhQBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be8040c0-76b1-46e3-bd89-841cbfa10c84@ti.com>
 
-From: Gregory Herrero <gregory.herrero@oracle.com>
+Hello Andrew,
 
-The maximum number of descriptors supported by the hardware is hardware
-dependent and can be retrieved using i40e_get_max_num_descriptors().
-Move this function to a shared header and use it when checking for valid
-ring_len parameter rather than using hardcoded value.
-Cast info->ring_len to u32 in i40e_config_vsi_tx_queue() as it's u16 in
-struct virtchnl_txq_info.
-Also cast it in i40e_config_vsi_rx_queue() even if it's u32 in
-virtchnl_rxq_info to ease stable backport in case this changed.
+On Thu, Nov 06, 2025 at 07:32:44AM -0600, Andrew Davis wrote:
+> On 11/6/25 4:19 AM, Francesco Dolcini wrote:
+> > On Wed, Nov 05, 2025 at 02:01:35PM -0600, Andrew Davis wrote:
+> > > On 11/5/25 5:53 AM, Francesco Dolcini wrote:
+> > > > On Tue, Nov 04, 2025 at 11:41:54AM -0600, Andrew Davis wrote:
+> > > > > On 11/4/25 8:52 AM, Francesco Dolcini wrote:
 
-Fixes: 55d225670def ("i40e: add validation for ring_len param")
-Signed-off-by: Gregory Herrero <gregory.herrero@oracle.com>
----
- drivers/net/ethernet/intel/i40e/i40e.h         | 18 ++++++++++++++++++
- drivers/net/ethernet/intel/i40e/i40e_ethtool.c | 12 ------------
- .../net/ethernet/intel/i40e/i40e_virtchnl_pf.c |  4 ++--
- 3 files changed, 20 insertions(+), 14 deletions(-)
+...
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e.h b/drivers/net/ethernet/intel/i40e/i40e.h
-index 801a57a925da..0e697375fcaf 100644
---- a/drivers/net/ethernet/intel/i40e/i40e.h
-+++ b/drivers/net/ethernet/intel/i40e/i40e.h
-@@ -1418,4 +1418,22 @@ static inline struct i40e_veb *i40e_pf_get_main_veb(struct i40e_pf *pf)
- 	return (pf->lan_veb != I40E_NO_VEB) ? pf->veb[pf->lan_veb] : NULL;
- }
- 
-+/**
-+ * i40e_get_max_num_descriptors - get maximum descriptors number for this hardware.
-+ * @pf: pointer to a PF
-+ *
-+ * Return: u32 value corresponding to maximum descriptors number.
-+ **/
-+static inline u32 i40e_get_max_num_descriptors(struct i40e_pf *pf)
-+{
-+	struct i40e_hw *hw = &pf->hw;
-+
-+	switch (hw->mac.type) {
-+	case I40E_MAC_XL710:
-+		return I40E_MAX_NUM_DESCRIPTORS_XL710;
-+	default:
-+		return I40E_MAX_NUM_DESCRIPTORS;
-+	}
-+}
-+
- #endif /* _I40E_H_ */
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-index 86c72596617a..61c39e881b00 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-@@ -2013,18 +2013,6 @@ static void i40e_get_drvinfo(struct net_device *netdev,
- 		drvinfo->n_priv_flags += I40E_GL_PRIV_FLAGS_STR_LEN;
- }
- 
--static u32 i40e_get_max_num_descriptors(struct i40e_pf *pf)
--{
--	struct i40e_hw *hw = &pf->hw;
--
--	switch (hw->mac.type) {
--	case I40E_MAC_XL710:
--		return I40E_MAX_NUM_DESCRIPTORS_XL710;
--	default:
--		return I40E_MAX_NUM_DESCRIPTORS;
--	}
--}
--
- static void i40e_get_ringparam(struct net_device *netdev,
- 			       struct ethtool_ringparam *ring,
- 			       struct kernel_ethtool_ringparam *kernel_ring,
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index 081a4526a2f0..5e058159057b 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -656,7 +656,7 @@ static int i40e_config_vsi_tx_queue(struct i40e_vf *vf, u16 vsi_id,
- 
- 	/* ring_len has to be multiple of 8 */
- 	if (!IS_ALIGNED(info->ring_len, 8) ||
--	    info->ring_len > I40E_MAX_NUM_DESCRIPTORS_XL710) {
-+	    (u32)info->ring_len > i40e_get_max_num_descriptors(pf)) {
- 		ret = -EINVAL;
- 		goto error_context;
- 	}
-@@ -726,7 +726,7 @@ static int i40e_config_vsi_rx_queue(struct i40e_vf *vf, u16 vsi_id,
- 
- 	/* ring_len has to be multiple of 32 */
- 	if (!IS_ALIGNED(info->ring_len, 32) ||
--	    info->ring_len > I40E_MAX_NUM_DESCRIPTORS_XL710) {
-+	    (u32)info->ring_len > i40e_get_max_num_descriptors(pf)) {
- 		ret = -EINVAL;
- 		goto error_param;
- 	}
--- 
-2.51.0
+> > > > > > +/* Aquila SPI_1 */
+> > > > > > +&main_spi2 {
+> > > > > > +	pinctrl-names = "default";
+> > > > > > +	pinctrl-0 = <&pinctrl_main_spi2>, <&pinctrl_main_spi2_cs0>;
+> > > > > > +	status = "disabled";
+> > > > > 
+> > > > > This is already disabled by default in the SoC dtsi file.
+> > > > 
+> > > > Yes, known. Is this an issue?
+> > > > 
+> > > > This node must be disabled, no matter what is present in any included
+> > > > dtsi file, it's a deliberate decision.
+> > > > 
+> > > > This dtsi file describes a SoM, the used pins/functions are defined on
+> > > > the pinout, but this node cannot be enabled unless the SoM is mated with
+> > > > a carrier board that is exposing it.
+> > > 
+> > > Same as my point above, you shouldn't enable nodes that are not used
+> > > or have anything attached. The SoM only has some edge connectors so
+> > > it should not be enabled at the SoM level, that we seem to agree, but
+> > > the carrier board doesn't connect those lines to anything either. They
+> > > just run to a pin header with nothing attached, how is that header
+> > > any different than the pins on the edge of the SoM?
+> > 
+> > You are commenting something unrelated here, or I am not understanding
+> > you.
+> 
+> Yes this was a bit of a tangent to the comment above. The point here
+> was more on the pinmux, as a new carrier board might use these pins
+> for something other than SPI, the pinmuxing shouldn't be done at the
+> SoM dtsi level. Instead do it at the point the node is connected to
+> some hardware on the carrier board in its DTS.
+
+Our SoM implements a specific pinout, with well defined functions,
+therefore the functionality of the pin is defined at the SoM level [1].
+
+[1] https://docs1.toradex.com/116801-aquila_family_specification.pdf
+	  page 13, 14, 15
+
+
+Francesco
 
 
