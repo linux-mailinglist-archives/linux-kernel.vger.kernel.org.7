@@ -1,350 +1,468 @@
-Return-Path: <linux-kernel+bounces-889075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E72EC3CAA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:00:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE51C3C9A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:55:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB9B84FE8FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0854B18834FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A873434887C;
-	Thu,  6 Nov 2025 16:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cFTX8Zb5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xZAENyU+"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A26333B964
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448152; cv=fail; b=RsHKd5aqL4lZIORVu3DnnWnTOMrV5OUY7v/M1pcajUkd21nnNT7/LdxIS1n/NnbIrraF5HOwMGoPFZevZHUvtO+pmQfMgx+ApGRc9VAugSALsUJNL6DxbzoXesxrD1WIWxzKXCIrYWJY8iuKDE1vdvxgRf82Z9iMOl6DQCAHD4s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448152; c=relaxed/simple;
-	bh=RIKzkK9kAnmR7GfggbQe5CaE9i55Shb3zV+fGKIemuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MxonXTX6lYoOgcGgEi46T+1Uz27FwYUUs1MdjNuuE3IE4H4bVZFu+QDquIDUFg+pjTKrwIiXVpi6+r7GGPGxQSYpJHyffaRH4jzbSAQltCXdD1XZPm9oiv4rpYkC4ynKginCi0pzjrTzoLr/CKSmCIMKlAYsqIZSo1EpSn0jNL8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cFTX8Zb5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xZAENyU+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6CA4uD000476;
-	Thu, 6 Nov 2025 16:55:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Mu8WVmyG0VE6PELAke
-	rzN58OYLaSbLHumIUlbbwrySg=; b=cFTX8Zb5qDY2MHl87xuiETtC4ZQv/NXC/s
-	/8oWcLkt8q2PaHkAJ0fcHLTaM3XmVkCFpEGzdxF7NvLCnITXY0QSj5SXuXdch1V1
-	OHdF/3lNu1T6m6+NowwGC4C2ORQD81+cp+Cl2HLnFT1QqInrqVkTpalUjuctWGax
-	pcDGpU1pN5Tg+x6qk2uxSh5JgLhgpFcY3K4fgJlJjw2DyiWiIkcytE5p07cKW3sk
-	pvsWsu9KhBxrXdoElOZz9hsbzlugb2W73zL5CKWhRY0f14wrowO9AUyKL6JmYP8r
-	B+mPK/z3RTpmEt+cs1eXn0fNx8gzpmAKKZqiwdrclEuKWNdubjKg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8at92gq0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Nov 2025 16:55:15 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6Gj1gU035877;
-	Thu, 6 Nov 2025 16:55:13 GMT
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11010008.outbound.protection.outlook.com [52.101.85.8])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58npfw8t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Nov 2025 16:55:13 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uH6hpjtO1xuvZcgqiio/STLPne/fL3HdYRIRn3qyzn4ajAYzeCMH14Sk28CY2tkfdqKfR2usfNtZFKnxezLh1wyBisaGrd/ELTbTE7qtMTybfvmbTA4aq9quR6PhSMpcW6PDndKL5Qe8lVGUlbQqHMjZezmOpyaNAOaeWvyhvria3Ph7enII5tbExZJTdTK35t1uPB9m7NmEuDbq4+3ZCH11K2+qgqxpK1KXIzqVbMA8PAA4lX0+w4PI1OOB+ZPJlj3bz4TKk11FLo1lDkyYodK87VgXKQVO4akf81F3G1a+fHksDiYSycGn8zsc/B+0qSvriiTJR2X43JuKnpw09g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mu8WVmyG0VE6PELAkerzN58OYLaSbLHumIUlbbwrySg=;
- b=oeDFlzGiLDIMPzvnLD5cgkgESPvIGv2NECSd3996mIJKoOZaXt6bFsd8Cm+9CujUkbiR68GkVNJhyT3WSeR5g1etY+YyeyBwpYeeNtUi3ZGh5YSl6i35WWYna60ujjbh5cqtQc5WAJYtPueGbrHKYE/RmfdbiGTEM8maqWnEl6TUakyB01Pvwlf/OECUNzd5ky0eWmqG5xqBhKer1r3I+4r+sVTbtgshe8qjDpUC2ZomiXWMhjt+ESf1/cECiyq17Qkd983NksVJSrpmEwwPj5oq7hqrongHdlmI712Tn1YKIlT2ovKpo+4PKc5EWS/Q+5pcW0LxtbPIdl/el0wHSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mu8WVmyG0VE6PELAkerzN58OYLaSbLHumIUlbbwrySg=;
- b=xZAENyU+lyCwR/UGERWvAMWJLr9rcXjN8MwYZhkF1dZInZG6rXhOhcmBsN+Xn56k57l+hWEBOllWwMY2pPx/8a1tFO1uQ+EBV09sNBCxNG+Hooeh671sEtpD/xlCLJVZDZ/AgEF/L0PoKuWWESjOLsOTlFKgekJ0KRdYYoVcU+Q=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by SJ0PR10MB4621.namprd10.prod.outlook.com (2603:10b6:a03:2d1::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Thu, 6 Nov
- 2025 16:55:10 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%7]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
- 16:55:10 +0000
-Date: Thu, 6 Nov 2025 11:55:05 -0500
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: "Garg, Shivank" <shivankg@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
-        Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        zokeefe@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: madvise(MADV_COLLAPSE) fails with EINVAL on dirty file-backed
- text pages
-Message-ID: <ozkb6mcxuymlz7tm4vcnqf266gd4ruiik2zal2koo5ffprgxfk@35godtyix2cf>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, "Garg, Shivank" <shivankg@amd.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, zokeefe@google.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com>
- <8bc796e2-f652-4c12-a347-7b778ae7f899@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8bc796e2-f652-4c12-a347-7b778ae7f899@arm.com>
-User-Agent: NeoMutt/20250905
-X-ClientProxiedBy: MW4PR02CA0011.namprd02.prod.outlook.com
- (2603:10b6:303:16d::28) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49DE226D02;
+	Thu,  6 Nov 2025 16:55:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7028B322C7B;
+	Thu,  6 Nov 2025 16:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762448140; cv=none; b=Pniq7y7zFbL9V2yuqXmD3IHJ9eo3zRFBEZ9yQLmV/f3mSsrejOJHa8fU97MGNC9ZSbFI8wej6F1t9a8BoSgjXK+4WQv6ik4PwYXISdgO0BXxjoWN702VQx54yphusszYnabSmZaAE9k/4Pg0B2JLUcJj43aOnwxKAVe54CchvG8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762448140; c=relaxed/simple;
+	bh=EWvftsdprc8NsVbNDEw/7VR/Xy7cqCGHjIUYZ5+zXE4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EdP4H/MlF8KggVRwZnAB2tyaVMfPUkht5+h3llgvfLVGhX19Tjjq0gynT0wAI5DfB+XXeAjhvhn49U/b+2e+9vglp7bEcSt8c5CYlZAYbWnupirhp6knWAvPTzqrn0koH0fpj7OX18gIJTC6RbD97H8mQkf0Ip2+H4zaJgznDis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2CEA1596;
+	Thu,  6 Nov 2025 08:55:29 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04D2B3F694;
+	Thu,  6 Nov 2025 08:55:32 -0800 (PST)
+Message-ID: <54e8aa78-27bc-4375-95ef-374d79758762@arm.com>
+Date: Thu, 6 Nov 2025 16:55:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|SJ0PR10MB4621:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23f62cb8-21cf-4cb3-3969-08de1d553ecf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?K8QzeFSjmnuLqU8uATrMZIWfh/kLBfFiPbMrNfvmsGFaqH5iMFgYlDcYImk2?=
- =?us-ascii?Q?39RPv5JVTwgVs+geMQmFXGszZVf/JXSNId1ZAhkoQ9ua0cIanI+lhWr9rsq/?=
- =?us-ascii?Q?SsLU87nTSPbyIQje9Xg2ACXsTJ2NSrIxoNSRhubsfkTUD21fydLAQduqzOSs?=
- =?us-ascii?Q?mvHQzAQsdCT6c1jsgOjrR1Gjz+Nvb0Fm+vQjct+KMR1UetKGss94UpgZdA7p?=
- =?us-ascii?Q?0G1FwsTSVRdc3+fI0mVKMkT1n34g2y1fDnrj1ezosoc3olBGM9khgH8qS3kA?=
- =?us-ascii?Q?FRU60nKGiSEMNm4+zU32xb0ukO+yC+2o95n16e2GVQ+RFyezV0r9VfbdDL29?=
- =?us-ascii?Q?3EhOSAWZSZlUhxphuuev3g5pAnNlN+S+jew3+Ve9o6yqTUnwsPT0JCXdXjW7?=
- =?us-ascii?Q?0eRYGphYpw0eKom89jEqbf/3vmbSDWmJphvrgR3m4wQ4ZDuZn6ZcOCq+8aVN?=
- =?us-ascii?Q?kQZOtdMb5/LasNRMdBlgbGPyPayDQlVHl2cT8Dit9sYNquNaSdu8Ez8iJ8xO?=
- =?us-ascii?Q?0m3M+jEltzxrN4OYWVzNN+vV/3uRZ4K+zZB9ytXVHivSPoEmLrZjztesGmJj?=
- =?us-ascii?Q?LAwT0SqIG9AcoUooUOuGlYQAoNa7/c/ODuioNft9bDBAA9Lr5qbUAumcQspL?=
- =?us-ascii?Q?5id+JPxgzw2BvtCqEdK+TIBMY8BUeNqdp/39SeLzJbSJu3om9MiZwROZwfbC?=
- =?us-ascii?Q?Qg4MXKknzuRK52EwdStbnq0oUfoxKmTwEIWGK1pOffKYvHK8l5BUwEMqBeHP?=
- =?us-ascii?Q?TyPSEK5uKm8z7ecgwtActHCcz6ZRGncmSkzW3Pl11LE2VoL5Sphr7Mi4QRYk?=
- =?us-ascii?Q?h9qV+FPXB8jXYWjHRSpLV5VhK2aS0Viy0NGoHIytUZ3RbmDENRrwSqKWCKCW?=
- =?us-ascii?Q?kSNVD7hmIwuCDU6KTE8ArlGG/1QhlXAj2if3SPpKi/ug2oTywmoaX7ikvH+p?=
- =?us-ascii?Q?mMYyU/Av68SsC1CCNIydXNZStu5Kl6HIBh0+SM6jRRH5VGgEaL14RbFCwdUO?=
- =?us-ascii?Q?WPJTApiP5L3xuYKqygqz4NtmpGZP9nWmXqawdG+EI/eU14E90kbP9UmtTU/2?=
- =?us-ascii?Q?shIkLc7ssZ7b6Jg0nQhUOYrbIV8I4HNuWsB8BRaGzX47PAzfIpSIN/SHzN8x?=
- =?us-ascii?Q?3cPvwmavqd+3Ns3fxpaVnF1pB7SYeqoS1owPQ/9qagFrUdmJ1BIg7IEymD2R?=
- =?us-ascii?Q?cx/jMOt0QAU6oTDGQc488pL66QnTgdAr8ZJAB8cYqPsEmyAcqqXLHgvF8Hg5?=
- =?us-ascii?Q?uEghvmuQSU0POu4ZNaKlbhSBPtFq38fUMApcd4zKwXcJpiy/quCZQuruUpgc?=
- =?us-ascii?Q?I8ZD8eMdhBWU6YiDZp1wbnfHWHHLXVhKCwPmvBcPqyYT9+PHVOwCtVmF4XlR?=
- =?us-ascii?Q?2eddv9G94kAYS56uNJ0Y7TwE15BJK8UPhSr/STBSAVgXMLxnGMVRBmry5BLc?=
- =?us-ascii?Q?prJC0AJ3sMLxamvCPQPlKtfQe7j/mKLM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bje9Zc4Bd2rDYMgdr9ZbZyC5xYZt7ZZC5Y/MyOPmZcEb65p4BcSXhtiJ73rz?=
- =?us-ascii?Q?wCSmYqBMxEqM9D3i/FPtk+ZXbtDs6mHJXcyxwLUM7Sn7PWvKKduhwWTWMN1z?=
- =?us-ascii?Q?pj57Vw0/LasfksPI+CRsm2gY5loFC0Rb1VIZv9JiLgSUk6V7kHtPxwr8Rj7u?=
- =?us-ascii?Q?i6+FEn3O7Nnzgq/xLPX3fk6M8ZBQa11veHQMlFf7Suc8T7X46SkYlwGHUnTY?=
- =?us-ascii?Q?PMuU/izupwVlQF+tY7JLRP8QusP+WRWYncMeuy/+UPdktKVGulRC47FgsqYv?=
- =?us-ascii?Q?zwsLCkgaein/DiPsoE+Pq9wjIgcTDwkzQHPz/oL8bbH09Tbc9XgzRFfhYOcJ?=
- =?us-ascii?Q?vCpDD0zs5gdx7yRN3+ehLmL9LictUv8gpm+LiMBNoKYfHufooOm9DdCz/l6X?=
- =?us-ascii?Q?42Pnafil6apzOywwQlucKlVg45tIiZjaGa2OOnIL+7QWwFSeErhgH4aZiIF0?=
- =?us-ascii?Q?2iZpSS35B83R5q7SMb9ceAwou8NOPixQWwtPm0Ggy2JM9LQgVuRjtcIBZb3x?=
- =?us-ascii?Q?WKIfA1TEK+TaeM02T/eaXrcwchyIO5hug3oFkT7iaDgQvmfsOhG+EnqNDb+t?=
- =?us-ascii?Q?qFlPSWMx8aUIg6f/f5RLjmGlPlgzc1NvRjizx6BiGV8mYTqqhmfzBAodBHmt?=
- =?us-ascii?Q?skHFimF0tpyIcIByc1VvRU/g4/vKN+o5buRuzOt2HlcXL9rd+ydEEIjy78he?=
- =?us-ascii?Q?FqPMWxKUDoaPmuJQ6I1+Rd+KT0ynmavO+islnBphk8gB49ABTGymEayci8mO?=
- =?us-ascii?Q?thVab4Y4egRFAl8kXCdq65prfe72ePbJ+KHBm5xRBx0ppQYehTUq700/cAzL?=
- =?us-ascii?Q?i5bqHq7IXiqYG8SHseoQeTl+vZQ5ZsvN1ASWOaWrT++Po92AoXU05LE8w+7Q?=
- =?us-ascii?Q?M9jfkeeIqHRV03vgPbVIiY6kjOPd7VoCZEyvrP0/5mUp+kLnL9AToclSWw7p?=
- =?us-ascii?Q?e8+LVj/grpL276uTzvZ1KKZrnPwlZWaJtsrpK2KIekpl4O1QbLAuLwp0c9Bc?=
- =?us-ascii?Q?y+L9cr52D9FE6fKpkMxhKJua2BjB2p2sq+Hz0QoBuDZ8+MnyTET2mBiB+ebM?=
- =?us-ascii?Q?nqcyQAgwCpMVZUvQ/s8Y75yt41lv0sqDRA1D+lTncOlU8WGnRP7HS74kT10K?=
- =?us-ascii?Q?00/oZyVBdMd6SaOORDZyRZazgqmNNdflNeolaOBnCyWVQm52gqgEwZI/3/M9?=
- =?us-ascii?Q?Bi++lboc6tYG99aOfrVdCqwTWTqODoe/OoUGGv49BxekjoIPmIhYJ/t8rB6Y?=
- =?us-ascii?Q?RPfMpW2dFDG7o2OxvkBJa9Qyfok9sD/njIRtDNyY4OczHLDRSUYIss8HV5gs?=
- =?us-ascii?Q?MOWaFRv2FyCR1TLG8y42XjX1HdColHx39k5eHRXES0UfCmzPX/vAwBH9J4AC?=
- =?us-ascii?Q?HjY3tyOQnK2zltEwSxhI9pdtzLyYm7UyyO32mnIiPpdu5yfSwLvFTzSUdMei?=
- =?us-ascii?Q?7MPE/IMzEryp6D6mY8KxbuQkrfER/Z6ektr95SG+YdbML+XM1x34GzUEfdcZ?=
- =?us-ascii?Q?zk+i/K+a+teCZYxyAwQ0Tp+YXJgtHtfGhpv7CDsg+yzjKZ0Fu4UwpfkIDXXu?=
- =?us-ascii?Q?0Hr+DpdltK0CyKjxwh/DTaFZT0QmDgT2D/YbksJF?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	PfvJ4/MdpmVuid5jyniaot/iIRa+ZHsJGEiItkN5b9uOtF+pXYr16Rp5A4MPsCfQ/HD2xc84YoLG+5U+er+VMjnnuOHaFzOYg1mLNbJxVnr+ddivTnG8mZcs2mE6AFqHLL5V20e/fZBAbLNY5tiBF5CRm5lUWgHy5SCdavARZcjBoeLLclz1zKZthjlOuZMHH3IlLZRqvx7NF1iEqyh9Cg80xoz6IuHcWIR3zvq+vK2FCsdDsHR3bJyu3hr7hS7yh1sYlgmQMm/gS2VnjmAQw4ofK7Fz2C4K78CVZ5Lwxa/6OzCn1MB9nRtcW4n/Cu3oV9NYuxr3dzgFPeVtMGbCMIuI4w2oJl236E4nyEFmsUtD1E2ykqOKfCq77TqZttKqJdKJSILOT/UVCHLhhC8cLsW2eOFIh5hYvT50Y9Nk/573vO7imyGtdY4Flh6G80pkNr+msH9pZ6EEaP1fObY1gfkYztPIKBzPBFd8JPzuaqDv1c2+fvhYsAJk+Kjy1r1PU5P8spAx1Hu1+t+BcrvmolzxDa40c02zqx2gpZWM+sSnIyvzZFRuLHFXjloo1F2hLiYGtKzeEM6VmwhYsU5f+D0OSkk7J5Du7dci1YSIc3o=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23f62cb8-21cf-4cb3-3969-08de1d553ecf
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 16:55:09.9004
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MQLP3pELcDSeuDRvq5L+m7SRx6Qaq1ghSU2x/N7HKLaBmL4nYIz9DXDjgZ9JUH52ihs5R4Hhggmi9mSD7rFh0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4621
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 spamscore=0
- suspectscore=0 mlxscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511060135
-X-Authority-Analysis: v=2.4 cv=HPPO14tv c=1 sm=1 tr=0 ts=690cd2f3 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=7CQSdrXTAAAA:8 a=pT10WjuGWfTA5hqc9-cA:9 a=CjuIK1q_8ugA:10
- a=a-qgeE7W1pNrGK8U0ZQC:22 cc=ntf awl=host:12101
-X-Proofpoint-GUID: KpbHjio0GAbsAy7ozptAJZFofRlqk6x5
-X-Proofpoint-ORIG-GUID: KpbHjio0GAbsAy7ozptAJZFofRlqk6x5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDEzNCBTYWx0ZWRfX4hmwS7rUt03/
- c9cDYF5+tiLKcG3NwSt5SIBAJFSwpbKoqI99lEe94itIMQadCT/juXsKNhrLG0xFnO/OEhRwIbN
- sqPt/I8ArN1ySsncgpXqbJJknTLfZkwrYWHKdZT8cn26IlLj3/3lrR4J2N0uwk2FCUFRiIRi0SX
- w35EvKTAzlMZ5y8RRWDNbj1wt8wYGSzp3npxyM3DtQGc7wRirpEG3wHEcpB0KcOd2boUCwII19V
- 72mgpV4taDWsle5C19p6tKN7KwA8HwhyUBZhUgBjH74bIcVXuilC2J1L3Gt/nqHKidU68Us97LB
- RH+0qFZC2l63knYPL/mBNE/njK9mWtP3lo7/v1cJIudyy+vHnHHQQ9327LiMtZ5qo2F9xK3rhtw
- Kn8VpabEytWwagg6wchg/Hs9HfjIPn9ihQx+ZFZMAwnHKZ7bmLc=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/29] ACPI / MPAM: Parse the MPAM table
+To: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
+ Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-7-james.morse@arm.com>
+ <20251024171350.00005451@huawei.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251024171350.00005451@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Ryan Roberts <ryan.roberts@arm.com> [251106 11:33]:
-> On 06/11/2025 12:16, Garg, Shivank wrote:
-> > Hi All,
-> > 
-> > I've been investigating an issue with madvise(MADV_COLLAPSE) for TEXT pages
-> > when CONFIG_READ_ONLY_THP_FOR_FS=y is enabled, and would like to discuss the
-> > current behavior and improvements.
-> > 
-> > Problem:
-> > When attempting to collapse read-only file-backed TEXT sections into THPs
-> > using madvise(MADV_COLLAPSE), the operation fails with EINVAL if the pages
-> > are marked dirty.
-> > madvise(aligned_start, aligned_size, MADV_COLLAPSE) -> returns -1 and errno = -22
-> > 
-> > Subsequent calls to madvise(MADV_COLLAPSE) succeed because the first madvise 
-> > attempt triggers filemap_flush() which initiates async writeback of the dirty folios.
-> > 
-> > Root Cause:
-> > The failure occurs in mm/khugepaged.c:collapse_file():
-> > } else if (folio_test_dirty(folio)) {
-> >     /*
-> >      * khugepaged only works on read-only fd,
-> >      * so this page is dirty because it hasn't
-> >      * been flushed since first write. There
-> >      * won't be new dirty pages.
-> >      *
-> >      * Trigger async flush here and hope the
-> >      * writeback is done when khugepaged
-> >      * revisits this page.
-> >      */
-> >     xas_unlock_irq(&xas);
-> >     filemap_flush(mapping);
-> >     result = SCAN_FAIL;
-> >     goto xa_unlocked;
-> > }
-> > 
-> > Why the text pages are dirty?
+Hi Jonathan,
+
+On 10/24/25 17:13, Jonathan Cameron wrote:
+> On Fri, 17 Oct 2025 18:56:22 +0000
+> James Morse <james.morse@arm.com> wrote:
 > 
-> This is the real question to to answer, I think...
+>> Add code to parse the arm64 specific MPAM table, looking up the cache
+>> level from the PPTT and feeding the end result into the MPAM driver.
+>>
+>> This happens in two stages. Platform devices are created first for the
+>> MSC devices. Once the driver probes it calls acpi_mpam_parse_resources()
+>> to discover the RIS entries the MSC contains.
+>>
+>> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
+>> the MPAM driver with optional discovered data about the RIS entries.
+>>
+>> CC: Carl Worth <carl@os.amperecomputing.com>
+>> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
+>> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>>
+> Hi James,
+> 
+> Various comments inline.  One challenge with this is that a few
+> very generic things (the acpi table DEFINE_FREE() stuff and the
+> platform device put equivalent) aren't obvious enough that I'd expect
+> those concerned to necessarily notice them.  I'd break those out
+> as precursor patches, or narrow what they do to not be generic.
 
-Agree with Ryan here, let's stop things from being marked dirty if they
-are not.
+I've moved these both to separate patches.
 
 > 
-> What architecture are you running on?
+> 
+>> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
+>> new file mode 100644
+>> index 000000000000..59712397025d
+>> --- /dev/null
+>> +++ b/drivers/acpi/arm64/mpam.c
+>> @@ -0,0 +1,377 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (C) 2025 Arm Ltd.
+>> +
+>> +/* Parse the MPAM ACPI table feeding the discovered nodes into the driver */
+>> +
+>> +#define pr_fmt(fmt) "ACPI MPAM: " fmt
+>> +
+>> +#include <linux/acpi.h>
+>> +#include <linux/arm_mpam.h>
+>> +#include <linux/bits.h>
+>> +#include <linux/cpu.h>
+>> +#include <linux/cpumask.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include <acpi/processor.h>
+>> +
+>> +/*
+>> + * Flags for acpi_table_mpam_msc.*_interrupt_flags.
+>> + * See 2.1.1 Interrupt Flags, Table 5, of DEN0065B_MPAM_ACPI_3.0-bet.
+> 
+> This needs to ultimately end up in ACPICA.  Perhaps fine to have it here
+> for now. Maybe can't happen until this isn't a beta? I'm not sure on
+> policy around that.
+
+I've kept it here for the moment.
+
+> 
+>> + */
+>> +#define ACPI_MPAM_MSC_IRQ_MODE                              BIT(0)
+>> +#define ACPI_MPAM_MSC_IRQ_TYPE_MASK                         GENMASK(2, 1)
+>> +#define ACPI_MPAM_MSC_IRQ_TYPE_WIRED                        0
+>> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_MASK                BIT(3)
+>> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR           0
+>> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR_CONTAINER 1
+>> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_VALID                    BIT(4)
+>> +
+>> +/*
+>> + * Encodings for the MSC node body interface type field.
+>> + * See 2.1 MPAM MSC node, Table 4 of DEN0065B_MPAM_ACPI_3.0-bet.
+>> + */
+>> +#define ACPI_MPAM_MSC_IFACE_MMIO   0x00
+>> +#define ACPI_MPAM_MSC_IFACE_PCC    0x0a
+>> +
+> 
+>> +static bool acpi_mpam_register_irq(struct platform_device *pdev, int intid,
+>> +				   u32 flags, int *irq)
+> Given irq value of 0 is invalid, could just return the irq from this.
+> Or even return error codes for what went wrong given negative irqs are invalid
+> as well.
+> 
+>> +{
+>> +	u32 int_type;
+>> +	int sense;
+>> +
+>> +	if (!intid)
+>> +		return false;
+>> +
+>> +	if (_is_ppi_partition(flags))
+>> +		return false;
+>> +
+>> +	sense = FIELD_GET(ACPI_MPAM_MSC_IRQ_MODE, flags);
+> 
+> Given it's one bit that indicates 1 if edge, I'd call this edge (which
+> inherently doesn't mean level).  Sense as a term I think can incorporate
+> this and rising/falling high/low.  It's parse to acpi_register_gsi()
+> which calls it trigger so that would work as well.
+
+I've gone with 'trigger'.
+
+> 
+>> +	int_type = FIELD_GET(ACPI_MPAM_MSC_IRQ_TYPE_MASK, flags);
+>> +	if (int_type != ACPI_MPAM_MSC_IRQ_TYPE_WIRED)
+>> +		return false;
+>> +
+>> +	*irq = acpi_register_gsi(&pdev->dev, intid, sense, ACPI_ACTIVE_HIGH);
+>> +	if (*irq <= 0) {
+>> +		pr_err_once("Failed to register interrupt 0x%x with ACPI\n",
+>> +			    intid);
+>> +		return false;
+>> +	}
+>> +
+>> +	return true;
+>> +}
+>> +
+>> +static void acpi_mpam_parse_irqs(struct platform_device *pdev,
+>> +				 struct acpi_mpam_msc_node *tbl_msc,
+>> +				 struct resource *res, int *res_idx)
+>> +{
+>> +	u32 flags, intid;
+>> +	int irq;
+>> +
+>> +	intid = tbl_msc->overflow_interrupt;
+>> +	flags = tbl_msc->overflow_interrupt_flags;
+>> +	if (acpi_mpam_register_irq(pdev, intid, flags, &irq))
+>> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "overflow");
+>> +
+>> +	intid = tbl_msc->error_interrupt;
+>> +	flags = tbl_msc->error_interrupt_flags;
+>> +	if (acpi_mpam_register_irq(pdev, intid, flags, &irq))
+>> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "error");
+>> +}
+>> +
 > 
 > 
-> > It initially seemed unusual for a read-only text section to be marked as dirty, but
-> > this was actually confirmed by /proc/pid/smaps.
-> > 
-> > 55bc90200000-55bc91200000 r-xp 00400000 07:00 133                        /mnt/xfs-mnt/large_binary_thp
-> > Size:              16384 kB
-> > KernelPageSize:        4 kB
-> > MMUPageSize:           4 kB
-> > Rss:                 256 kB
-> > Pss:                 256 kB
-> > Pss_Dirty:           256 kB
-> > Shared_Clean:          0 kB
-> > Shared_Dirty:          0 kB
-> > Private_Clean:         0 kB
-> > Private_Dirty:       256 kB
-> > 
-> > /proc/pid/smaps (before calling MADV_COLLAPSE) showing Private_Dirty pages in r-xp mappings.
-> > This may be due to dynamic linker and relocations that occurred during program loading.
+> This function has a bit of a dual use to it. I think it needs some documentation
+> to explain under what conditions acpi_id is set.
 > 
-> On arm64 at least, I wouldn't expect the text to be modified. Relocations should
-> be handled in data. But given you have private dirty pages here, they must have
-> been cow'ed and are therefore anonymous? In which case, where is writeback
-> actually going?
+>> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
+>> +				     struct platform_device *pdev,
+>> +				     u32 *acpi_id)
+>> +{
+>> +	char hid[sizeof(tbl_msc->hardware_id_linked_device) + 1] = { 0 };
+>> +	bool acpi_id_valid = false;
+>> +	struct acpi_device *buddy;
+>> +	char uid[11];
+>> +	int err;
+>> +
+>> +	memcpy(hid, &tbl_msc->hardware_id_linked_device,
+>> +	       sizeof(tbl_msc->hardware_id_linked_device));
+>> +
+>> +	if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
+>> +		*acpi_id = tbl_msc->instance_id_linked_device;
+>> +		acpi_id_valid = true;
+>> +	}
+>> +
+>> +	err = snprintf(uid, sizeof(uid), "%u",
+>> +		       tbl_msc->instance_id_linked_device);
+>> +	if (err >= sizeof(uid)) {
 > 
-> > 
-> > Reproduction using XFS/EXT4:
-> > 
-> > 1. Compile a test binary with madvise(MADV_COLLAPSE), ensuring the load TEXT segment is
-> >    2MB-aligned and sized to a multiple of 2MB. 
-> >   Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
-> > LOAD           0x400000 0x0000000000400000 0x0000000000400000 0x1000000 0x1000000 R E 0x200000
-> > 
-> > 2. Create and mount the XFS/EXT4 fs:
-> >    dd if=/dev/zero of=/tmp/xfs-test.img bs=1M count=1024
-> >    losetup -f --show /tmp/xfs-test.img  # output: /dev/loop0
-> >    mkfs.xfs -f /dev/loop0
-> >    mkdir -p /mnt/xfs-mnt
-> >    mount /dev/loop0 /mnt/xfs-mnt
-> > 3. Copy the binaries to /mnt/xfs-mnt and execute.
-> > 4. Returns -EINVAL on first run, then run successfully on subsequent run. (100% reproducible)
-> > 5. To reproduce again; reboot/kexec and repeat from step 2. 
-> > 
-> > Workaround:
-> > 1. Manually flush dirty pages before calling madvise(MADV_COLLAPSE):
-> > 	int fd = open("/proc/self/exe", O_RDONLY);
-> > 	if (fd >= 0) {
-> > 		fsync(fd);
-> > 		close(fd);
-> > 	}
-> > 	// Now madvise(MADV_COLLAPSE) succeeds
-> > 2. Alternatively, retrying madvise_collapse on EINVAL failure also work.
-> > 
-> > Problems with Current Behavior:
-> > 1. Confusing Error Code: The syscall returns EINVAL which typically indicates invalid arguments
-> >    rather than a transient condition that could succeed on retry.
+> The err naming is a bit confusing as it's not an error code. Could call it
+> something like len or just avoid having a local variable at all.
 
-This is also an issue though.  Reading the documentation on my system,
-EINVAL with collapse has two meanings:
-        EINVAL addr is not page-aligned or length is negative.
-        EINVAL advice is not a valid.
-Neither are right here.
+Changed to 'len'.
 
-EAGAIN seems to make sense, but the documentation would need to be
-changed too:
-        EAGAIN A kernel resource was temporarily unavailable.
-
-> > 
-> > 2. Non-Transparent Handling: Users are unaware they need to flush dirty pages manually. Current
-> >    madvise_collapse assumes the caller is khugepaged (as per code snippet comment) which will revisit
-> >    the page. However, when called via madvise(MADV_COLLAPSE), the userspace program typically don't
-> >    retry, making the async flush ineffective. Should we differentiate between madvise and khugepaged
-> >    behavior for MADV_COLLAPSE?
-
-The collapse documentation states that it works on the existing state of
-the system memory, so it is doing what it says but the EINVAL return on
-dirty pages is not documented, afaict?
-
-> > 
-> > Would appreciate thoughts on the best approach to address this issue.
-> > 
-> > Thanks,
-> > Shivank
 > 
+> 	if (snprintf(uid, sizeof(uid), "%u",
+> 		     tbl_msc->instance_id_linked_device) >= sizeof(uid))
+>> +		pr_debug("Failed to convert uid of device for power management.");
+>> +		return acpi_id_valid;
+>> +	}
+>> +
+>> +	buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
+>> +	if (buddy)
+>> +		device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
+>> +
+>> +	return acpi_id_valid;
+>> +}
+> 
+>> +
+>> +static struct platform_device * __init acpi_mpam_parse_msc(struct acpi_mpam_msc_node *tbl_msc)
+>> +{
+>> +	struct platform_device *pdev __free(platform_device_put) = platform_device_alloc("mpam_msc", tbl_msc->identifier);
+> That's too long. Format as
+> 	struct platform_device *pdev __free(platform_device_put) =
+> 		platform_device_alloc("mpam_msc", tbl_msc->identifier);
+> 
+>> +	int next_res = 0, next_prop = 0, err;
+> 
+> ...
+> 
+>> +
+>> +static int __init acpi_mpam_parse(void)
+>> +{
+>> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
+>> +	char *table_end, *table_offset = (char *)(table + 1);
+>> +	struct acpi_mpam_msc_node *tbl_msc;
+>> +	struct platform_device *pdev;
+>> +
+>> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
+> Check acpi_disabled || !system_supports_mpam() before
+> 
+> 	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
+> 	
+> 	if (IS_ERR(table))
+> 		return 0;
+> 
+> That way we aren't relying on acpi_get_table_ret() doing the right thing if acpi_disabled == true
+> which seems gragile even though it is fine today
+> 
+> Declaring stuff using __free() inline is fine (commonly done).
+> 
+>> +		return 0;
+>> +
+> 
+> ...
+> 
+>> +int acpi_mpam_count_msc(void)
+>> +{
+>> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
+>> +	char *table_end, *table_offset = (char *)(table + 1);
+>> +	struct acpi_mpam_msc_node *tbl_msc;
+>> +	int count = 0;
+>> +
+>> +	if (IS_ERR(table))
+> Why fewer things to guard on in here than in the parse function?
+> I guess this may only be called in circumstances where we know those
+> other reasons not to carry on aren't true, but still seem odd.
+> 
+>> +		return 0;
+>> +
+>> +	if (table->revision < 1)
+>> +		return 0;
+>> +
+>> +	table_end = (char *)table + table->length;
+>> +
+>> +	while (table_offset < table_end) {
+>> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
+>> +		if (!tbl_msc->mmio_size)
+> 
+> Bit marginal on how much we protect against garbage, but perhaps
+> check the length is long enough to get here. Or can you just
+> do the length checks first?
+
+This check is for disable/not present mscs and was added in the latest
+revision of the mpam acpi.
+
+> 
+>> +			continue;
+> 
+> Infinite loop?  table_offset isn't updated so this
+> keeps checking the same value. Similar to funciton above, I'd
+> do the table_offset update before check this (and modify
+> the appropriate checks below).
+
+Good spot. I've moved this after the table_offset increment.
+
+> 
+>> +
+>> +		if (tbl_msc->length < sizeof(*tbl_msc))
+>> +			return -EINVAL;
+>> +		if (tbl_msc->length > table_end - table_offset)
+>> +			return -EINVAL;
+>> +		table_offset += tbl_msc->length;
+>> +
+>> +		count++;
+>> +	}
+>> +
+>> +	return count;
+>> +}
+>  
+>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>> index a9dbacabdf89..9d66421f68ff 100644
+>> --- a/include/linux/acpi.h
+>> +++ b/include/linux/acpi.h
+>> @@ -8,6 +8,7 @@
+>>  #ifndef _LINUX_ACPI_H
+>>  #define _LINUX_ACPI_H
+>>  
+>> +#include <linux/cleanup.h>
+>>  #include <linux/errno.h>
+>>  #include <linux/ioport.h>	/* for struct resource */
+>>  #include <linux/resource_ext.h>
+>> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
+>>  void acpi_table_init_complete (void);
+>>  int acpi_table_init (void);
+>>  
+>> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
+> I wonder if it's worth instance being a variable.  11 instances of 1, 52 instances of 0
+> (almost nothing else).  Maybe just about worth it...
+> 
+> Whilst I like the general nature of this I wonder if smoother
+> to merge acpi_get_table_mpam() that does this first and then
+> look at generalizing when it's not on the critical path for this
+> patch set?  If ACPI folk are fine with this I don't mind it being
+> in here though as generally useful to have.
+> (I may well be arguing with earlier me on this :)
+> 
+>> +{
+>> +	struct acpi_table_header *table;
+>> +	int status = acpi_get_table(signature, instance, &table);
+>> +
+>> +	if (ACPI_FAILURE(status))
+>> +		return ERR_PTR(-ENOENT);
+>> +	return table;
+>> +}
+>> +DEFINE_FREE(acpi_table, struct acpi_table_header *, if (!IS_ERR(_T)) acpi_put_table(_T))
+> 
+> Ben raised earlier comment on checking for NULL as well to let the compiler optimize
+> things better.
+> 
+>> +
+>>  int acpi_table_parse(char *id, acpi_tbl_table_handler handler);
+>>  int __init_or_acpilib acpi_table_parse_entries(char *id,
+>>  		unsigned long table_size, int entry_id,
+>> diff --git a/include/linux/arm_mpam.h b/include/linux/arm_mpam.h
+>> new file mode 100644
+>> index 000000000000..3d6c39c667c3
+>> --- /dev/null
+>> +++ b/include/linux/arm_mpam.h
+>> @@ -0,0 +1,48 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/* Copyright (C) 2025 Arm Ltd. */
+>> +
+>> +#ifndef __LINUX_ARM_MPAM_H
+>> +#define __LINUX_ARM_MPAM_H
+>> +
+>> +#include <linux/acpi.h>
+>> +#include <linux/types.h>
+> 
+> ...
+> 
+>> +enum mpam_class_types {
+>> +	MPAM_CLASS_CACHE,       /* Well known caches, e.g. L2 */
+> 
+> Curious comment.  As opposed to the lesser known l5?   I get
+> what you mean about not including the weird like memory-side caches
+> but TLBs are also well known caches so I'd just go with
+> /* Caches, e.g. l2, l3 */
+> or something like that.
+> 
+>> +	MPAM_CLASS_MEMORY,      /* Main memory */
+>> +	MPAM_CLASS_UNKNOWN,     /* Everything else, e.g. SMMU */
+>> +};
+>> +
+>> +#ifdef CONFIG_ACPI_MPAM
+>> +/* Parse the ACPI description of resources entries for this MSC. */
+> 
+> I'd push more detailed documentation down along side the implementation
+> rather than having it here.  The function name and parameters make this fairly
+> obvious anyway.
+> 
+>> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
+>> +			      struct acpi_mpam_msc_node *tbl_msc);
+>> +
+>> +int acpi_mpam_count_msc(void);
+>> +#else
+> 
+>> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+>> index 074754c23d33..23a30ada2d4c 100644
+>> --- a/include/linux/platform_device.h
+>> +++ b/include/linux/platform_device.h
+>> @@ -232,6 +232,7 @@ extern int platform_device_add_data(struct platform_device *pdev,
+>>  extern int platform_device_add(struct platform_device *pdev);
+>>  extern void platform_device_del(struct platform_device *pdev);
+>>  extern void platform_device_put(struct platform_device *pdev);
+>> +DEFINE_FREE(platform_device_put, struct platform_device *, if (_T) platform_device_put(_T))
+> 
+> I'd break this out as a separate precursor patch mostly so people notice it.
+> Likely will get some review from folk who aren't going to spot it down here.
+> They may well tell you to not have it as a separate patch but at least you'll
+> be sure it was noticed!
+> 
+> Jonathan
+> 
+>>  
+>>  struct platform_driver {
+>>  	int (*probe)(struct platform_device *);
+> 
+> 
+
+Thanks,
+
+Ben
+
 
