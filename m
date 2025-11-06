@@ -1,137 +1,91 @@
-Return-Path: <linux-kernel+bounces-889437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056F6C3D8D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:13:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DEE7C3D8DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 23:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C4F188B78D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:13:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21C8B4E35E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 22:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D216C30BB8E;
-	Thu,  6 Nov 2025 22:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06A230B50D;
+	Thu,  6 Nov 2025 22:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jo2meooQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329D927F4E7;
-	Thu,  6 Nov 2025 22:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hsLdwz6v"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5012773E6;
+	Thu,  6 Nov 2025 22:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762467182; cv=none; b=H3Azys/zk5HSSzMQ43Bz5uFIu0UbEq6Ere7tB0NlVNfvSTC/aKN2Mv98mt1Yp1vpb21AV8D+Fft1Vk20qS6BPbIHfJUNlNRqqXYgQ9VqvD9V1pvRt2jB62GxTGt0FkVgbw4uN9VbKhfQ6vvrqTsH8i/wH9xhsYJ49HX7ugWDNls=
+	t=1762467214; cv=none; b=OrDer1P46Hxg3SZ9dMldDpZr9OZyy9zQOMaMgcQfuqk5MNFueHOGKUjjAERoMMbl+J26zS0PpUPjxWXj20QjcU/oWzxb3Ik3ADD1P/a65cX5/bJaye2miGVKKosHyfsuEGZlmIaJlDofe5wUiTJBt/wFNBZ+S8MzM7NQrYXrWos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762467182; c=relaxed/simple;
-	bh=NeL+xYZHOYWXuLDLXVvZlwC64XSLn6KftmV4pqYADUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rC43jyaAgdHXWPrVXWqgfbR+LHtNb8o4Osvl6Wq4SknJHRqxoJFvo86CCxdEuPdiepxO/12x1Lbd9NDcMPK7ec7nQmXD8cl/1YbLVgkpHXSkjcOuRev7akcXCkWV09Kd4PwIlKuvnRvqOJzkjmklSBr+M3df0uXpeWBthx04kqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jo2meooQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEA3AC4CEFB;
-	Thu,  6 Nov 2025 22:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762467181;
-	bh=NeL+xYZHOYWXuLDLXVvZlwC64XSLn6KftmV4pqYADUc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jo2meooQuqdXmsWyZVGGaNVGhbtcfxponiIoHz93yOP7bUQY6lEW3BZFevPO/QIsB
-	 R8zcAG3m6jeEaIq357tLKwF6iR05JRADanMUzYIgMcH+CdCcs5dki1CBqLYn+cYQtH
-	 DuSnCmFYaa5vR69kPYpdBRpdVhPflkjIR0K1f14vrE2/EzkOH9iUL1ehDNro8eUObP
-	 hhmJ2auhqavPjII7UzR192K0faeZ2mZLWd1EyhRLNAsU4fZUOVQCG81S9mLmSagpo8
-	 qFwB9ajtRM2gqGEkqqlBB1pxR6u+P6TGDg8NFAVpiTxiel7qWnWmsIeyIztJL3qnA9
-	 q0OxJnr61p7ZQ==
-Date: Thu, 6 Nov 2025 14:12:59 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: I Viswanath <viswanathiyyappan@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, sdf@fomichev.me, kuniyu@google.com, ahmed.zaki@intel.com,
- aleksander.lobakin@intel.com, jacob.e.keller@intel.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- david.hunter.linux@gmail.com, khalid@kernel.org
-Subject: Re: [RFC/RFT PATCH net-next v3 1/2] net: Add ndo_write_rx_config
- and helper structs and functions:
-Message-ID: <20251106141259.60e48f1e@kernel.org>
-In-Reply-To: <CAPrAcgMXw5e6mi1tU=c7UaQdcKZhhC8j-y9woQk0bk8SeV4+8A@mail.gmail.com>
-References: <20251028174222.1739954-1-viswanathiyyappan@gmail.com>
-	<20251028174222.1739954-2-viswanathiyyappan@gmail.com>
-	<20251030192018.28dcd830@kernel.org>
-	<CAPrAcgPD0ZPNPOivpX=69qC88-AAeW+Jy=oy-6+PP8jDxzNabA@mail.gmail.com>
-	<20251104164625.5a18db43@kernel.org>
-	<CAPrAcgMXw5e6mi1tU=c7UaQdcKZhhC8j-y9woQk0bk8SeV4+8A@mail.gmail.com>
+	s=arc-20240116; t=1762467214; c=relaxed/simple;
+	bh=RhjRaTQDb/aH+7ce1bs7MNDW/yq9CBrZUdwK7uRcmRE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=hGMZezNWs2CKOzKEPgBfwllMFTJqd3f5F3VAaTzHtGfxeJ69tYMMQigWfoNhn/XGqnOo+5AiVyjs/3HcLLzs1u/nibkz2gq7cdcukQgAMGLSbZGepCgXH3i/1ICVUYpNXAoKh1+q6E/3sPbKAoJ5Lby/hVH9CqybWp0rqGCEkxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hsLdwz6v; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1032)
+	id 777B8211CFAF; Thu,  6 Nov 2025 14:13:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 777B8211CFAF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762467212;
+	bh=b7sfTf728Ih9zvv3gAb/QuGUQWX4OQNArbjmiwdlG0E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hsLdwz6vOz1we8cvZ1m6Y6LMypQOaqPUDwficEG0jyVOFeBpzqy4WnupP8rL2oKLV
+	 UMuSCy7RAgjksS4zIz/gVInBGe4auSPVSux9htElzYqEmMeJ5zmKU+F/EU1ZvdPYCW
+	 0PmL4HBvbPsatTSOyorXrAwmHwyP8X5cV3giUzcw=
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mhklinux@outlook.com,
+	magnuskulke@linux.microsoft.com
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	longli@microsoft.com,
+	skinsburskii@linux.microsoft.com,
+	prapal@linux.microsoft.com,
+	mrathor@linux.microsoft.com,
+	muislam@microsoft.com,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Subject: [PATCH v2 0/2] mshv: Allow mappings that overlap in uaddr
+Date: Thu,  6 Nov 2025 14:13:29 -0800
+Message-Id: <1762467211-8213-1-git-send-email-nunodasneves@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 6 Nov 2025 21:38:59 +0530 I Viswanath wrote:
-> On Wed, 5 Nov 2025 at 06:16, Jakub Kicinski <kuba@kernel.org> wrote:
-> > I wouldn't use atomic flags. IIRC ndo_set_rx_mode is called under
-> > netif_addr_lock_bh(), so we can reuse that lock, have update_config()
-> > assume ownership of the pending config and update it directly.
-> > And read_config() (which IIUC runs from a wq) can take that lock
-> > briefly, and swap which config is pending.  
-> 
-> How does this look?
-> 
-> It's possible for the actual work of set_rx_mode to be in a work item
-> so we need to validate that dev->addr_list_lock is held in update_config()
-> 
-> // These variables will be part of dev->netif_rx_config_ctx in the final code
-> bool pending_cfg_ready = false;
-> struct netif_rx_config *ready, *pending;
-> 
-> void update_config()
-> {
->     WARN_ONCE(!spin_is_locked(&dev->addr_list_lock),
->     "netif_update_rx_config() called without netif_addr_lock_bh()\n");
-> 
->     int rc = netif_prepare_rx_config(&pending);
->     if (rc)
->         return;
-> 
->     pending_cfg_ready = true;
-> }
-> 
-> void read_config()
-> {
->     // We could introduce a new lock for this but
->     // reusing the addr lock works well enough
->     netif_addr_lock_bh();
-> 
->     // There's no point continuing if the pending config
->     // is not ready
->     if(!pending_cfg_ready) {
->        netif_addr_unlock_bh();
->        return;
->     }
-> 
->     swap(ready, pending);
->     pending_cfg_ready = false;
-> 
->     netif_addr_unlock_bh();
-> 
->     do_io(ready);
-> }
+Currently the MSHV driver rejects mappings that would overlap in
+userspace. Remove this limitation as it is overly restrictive and
+allowing overlap is useful for VMMs.
 
-Yes, I think this flow looks good.
+Before make this change, fix the region overlap checking logic
+which is broken.
 
-> On the topic of virtio_net:
-> 
-> set_rx_mode in virtio_net schedules and does the actual work in a work
-> item, so would
-> the correct justification here be moving I/O out of the rtnl lock?
+---
+Changes in v2:
+- Add a patch to fix the overlap checking [Michael Kelley]
+- Move deletion of mshv_partition_region_by_uaddr() to the fix patch
 
-Avoiding rtnl_lock is not a goal right now. We should still take
-rtnl_lock around read_config() in case the driver assumes rtnl_lock
-is held around all its config paths.
+---
+Magnus Kulke (1):
+  mshv: Allow mappings that overlap in uaddr
 
-The objective is just to simplify the driver. Avoid the state
-management and work scheduling in every driver that needs to the config
-async. IOW we just want to give drivers an ndo_set_rx_mode that can
-sleep.
+Nuno Das Neves (1):
+  mshv: Fix create memory region overlap check
+
+ drivers/hv/mshv_root_main.c | 27 +++++++--------------------
+ include/uapi/linux/mshv.h   |  2 +-
+ 2 files changed, 8 insertions(+), 21 deletions(-)
+
+-- 
+2.34.1
+
 
