@@ -1,165 +1,247 @@
-Return-Path: <linux-kernel+bounces-888255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6612C3A4DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:37:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1494C3A53B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8248D34C35B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:37:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7503BEF23
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717DF2D7D2F;
-	Thu,  6 Nov 2025 10:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDFC2DAFDB;
+	Thu,  6 Nov 2025 10:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8yc6LZu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fGUAu15u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yGWAfYfM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fGUAu15u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yGWAfYfM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6E12DC339;
-	Thu,  6 Nov 2025 10:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB8E2D5C8E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762425431; cv=none; b=VJQaVjuzb/f7U+dH54Kavq9pDD8CwET/z7SDZUJ4ilbF27/dAMB96tpOXWQ0C1hCwzKKzBUmDG1Tb/hBE0M3jt066Qe0k0JvLgqtoZZYkEnFVlNX/Zti42Z5Vhq7tq62C89OvMzAiLxY9n0sG1FvmbI3sfiDOgqE4bKEVftXLLY=
+	t=1762425574; cv=none; b=j401miR8OgfNRxznhmT0Wug6ZyTHLs5jb7xYL2XRWmyPK0B2RvIbwteAwwnIji8o9d6iqeRRH06Mjq3V9HPBTChqX0CWyLm74SoOnYlGzs8dsuNBoODXw129zdQbrabIhUnD0hIWrK8iW6vJSP8do4aWWZvPA3Gfa34umMMjTQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762425431; c=relaxed/simple;
-	bh=oRcxtDkMnpRFX3GYMYD2PAG21EFt6th384KfP0a89wM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oFwybyszQq+l0DJ0a7h5AJ/lMY8xewlL+k7W/QMB+QERNKBa4LYPRaM1vX3t4rL0C5vPDD7lFRlvv/OSGiQGEeUykygsZk9zhsUK5UuKtIwflWog81HT6AfGEXj8DByexj0HqbEUvwj1QvvkywnDO6DyBfUJ20vMITIkSvbvy2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8yc6LZu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EA153C4CEFB;
-	Thu,  6 Nov 2025 10:37:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762425431;
-	bh=oRcxtDkMnpRFX3GYMYD2PAG21EFt6th384KfP0a89wM=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=V8yc6LZu5IJgjyn/Tp66dY+u63w0yeX12uAjeKd/F8MGPkqanTP9lfWtQIuDgy1gm
-	 vMlZ1wUJEZMJv5ECrtkDISygU1S7CMrKIvy32YzN3oPjW2ur2OCxd8tSZjyc4Ucwfi
-	 BGiLAdrr/WxAcRgUs3RY/BviekqZN6utdgmO1Q1j/JOwRTZd7Q6tkqTsrnYL5BgXFr
-	 1yRdLt/hF8ZLvyjvo8XElDN9C7WAA8wnNOG90LP3vaBPaQa1LZFABUj3TA+vdWhwbJ
-	 hvPP7qP85pt2X/5GrVaNPCWPDlMU+9mBHDorsAQHkYACOHPsjUFciYPRq/nWR6MslA
-	 MP5XnS6Vx5cnQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D551CCCFA05;
-	Thu,  6 Nov 2025 10:37:10 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Thu, 06 Nov 2025 11:36:59 +0100
-Subject: [PATCH] dt-bindings: panel: s6e3fc2x01: Sort and remove
- unnecessary properties
+	s=arc-20240116; t=1762425574; c=relaxed/simple;
+	bh=SSW95CX6WlK0R8DRQxilEgtoYYnKrIWcKhxcs8gQqPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X4Zi5qaHdRvZqi1Ozb+ZqCIFSa7XFRYMlBe6KJh+ZO+G6UPvX8zzjkoGjbZOvsTBBZYPxJXsEuEZ8u8JU69ZhMp3bSwmkctzeQ89pQdLr3HRYn+ARBsGqMAzMlBPKU3GcF8pnk5ycMwETXqQiDTtaGu1lckCuby+/jf+HR8ib28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fGUAu15u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yGWAfYfM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fGUAu15u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yGWAfYfM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8A48A211D0;
+	Thu,  6 Nov 2025 10:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762425569; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LUC894EkN1Ri8Isz8oVgyo60pIndnmnfMDWBoq1SCQk=;
+	b=fGUAu15uukdcYPvh1QKp+k56esnXoryL6xnIi5ODC6JToaAfcaF9vYJeuYfHn4kXuJI2nv
+	UHVoPzZhRgqu8T+IdbjbP3PGxvK+aLqiBQgrkAVnyR8sXrE2T9E6zPeA+zDRdyrmX1WWiv
+	ME3qg7zXFhXaN3ImX1c6orASo5qj15E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762425569;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LUC894EkN1Ri8Isz8oVgyo60pIndnmnfMDWBoq1SCQk=;
+	b=yGWAfYfMI92bWPSsIXCYdU4IRWi5rLaW5zOC6GadK9cXmb1ZfnC+wuU2cNBPUDV/39oksx
+	BF4ohMLXDOywqvDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fGUAu15u;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=yGWAfYfM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762425569; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LUC894EkN1Ri8Isz8oVgyo60pIndnmnfMDWBoq1SCQk=;
+	b=fGUAu15uukdcYPvh1QKp+k56esnXoryL6xnIi5ODC6JToaAfcaF9vYJeuYfHn4kXuJI2nv
+	UHVoPzZhRgqu8T+IdbjbP3PGxvK+aLqiBQgrkAVnyR8sXrE2T9E6zPeA+zDRdyrmX1WWiv
+	ME3qg7zXFhXaN3ImX1c6orASo5qj15E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762425569;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LUC894EkN1Ri8Isz8oVgyo60pIndnmnfMDWBoq1SCQk=;
+	b=yGWAfYfMI92bWPSsIXCYdU4IRWi5rLaW5zOC6GadK9cXmb1ZfnC+wuU2cNBPUDV/39oksx
+	BF4ohMLXDOywqvDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B3FF13A31;
+	Thu,  6 Nov 2025 10:39:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WXyXGeF6DGmTXAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 06 Nov 2025 10:39:29 +0000
+Message-ID: <13c7242e-3a40-469b-9e99-8a65a21449bb@suse.cz>
+Date: Thu, 6 Nov 2025 11:39:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm/ksm: fix flag-dropping behavior in ksm_madvise
+Content-Language: en-US
+To: Jakub Acs <acsjakub@amazon.de>, linux-mm@kvack.org,
+ Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, xu.xin16@zte.com.cn,
+ chengming.zhou@linux.dev, peterx@redhat.com, axelrasmussen@google.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251001090353.57523-1-acsjakub@amazon.de>
+ <20251001090353.57523-2-acsjakub@amazon.de>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20251001090353.57523-2-acsjakub@amazon.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-dt-s6e3fc2x01-v1-1-0479f2d8b53f@ixit.cz>
-X-B4-Tracking: v=1; b=H4sIAEp6DGkC/x3MPQqAMAxA4atIZgNNxRa8ijj0J9UsKq1IQby7x
- fEb3nugcBYuMHUPZL6lyLE3UN9B2Ny+MkpsBq30SKQMxguL4SEFXRVhtM7GwbAnH6A1Z+Yk9f/
- Ny/t+ZW1ET18AAAA=
-X-Change-ID: 20251106-dt-s6e3fc2x01-d7a7d36eb1bc
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1829; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=1KDAH+YpEy+rZDz3Q9O9UwxUiZX+yY2cR18RR7GgY04=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpDHpVj6JEO0HK+rGxbwLrFh6Q5T+5Su7vWvL6Q
- YB4nrdnyaCJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaQx6VQAKCRBgAj/E00kg
- ctirD/sFPN0KSNSsj6NjI0HjAusuMkskUFWozdEH0DEJzGpPp5FXfvb1yiwv4TMxUXvIM7flRvF
- z7y/NUWcL16HBT/UJlHMWMkcd+55OQd1VCysHfS7b1q1+KxQeO7y2EghSP84zxpP8/NR6rDJ4bg
- lETYEbTkMNwNcqh1hWlUZ2gLgRmkQwf3TeoCoInrAL8AHgsU3Vtc4Ny6879DHE9+e4L5rLrE5EQ
- lDp33CeG1S2/DzTBjhiBV8K4Oa+HL+CiQtDh6pWMTvn4LY1FRFLxUfpPTy+kbdKnK/xN7OYHXhn
- t/4TPSH49yqSzyCHKLwnwi9RxC8jmgyVxBY5x6IloN3AJ29BTHY+kcaU03fK+0LC4rOL6HGguEW
- muOErDYBn4LuLO6xVGqDZsSk3AsnLPTP7/ApvIkP/fBM+XUFLKmqqe4BllNPDjVCR7IYNRDyEfC
- ai1Es6Oe50TOcI2vFEK6pabYAgKLC8JdaBUpHDNqX8uChHhqbmR8yyBsfgX0cZu7ph/kwJBqOSJ
- Ogi3oRWErubwyxPvRvdLrZ3g/DJtCFdm+wfNW2lJysXMBRXyzm73HWI1yYe6SXv+ym6XU0o2zOr
- SMFwtCsolWmapxkyeWAPn6hU0yeXrokWCNO504tYPXww9oRt1iCPH3LENGCIUnS/VFPm4fcmEOd
- pfwfTRMsIP8v5Tw==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+X-Rspamd-Queue-Id: 8A48A211D0
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-From: David Heidelberg <david@ixit.cz>
+On 10/1/25 11:03, Jakub Acs wrote:
+> syzkaller discovered the following crash: (kernel BUG)
+> 
+> [   44.607039] ------------[ cut here ]------------
+> [   44.607422] kernel BUG at mm/userfaultfd.c:2067!
+> [   44.608148] Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+> [   44.608814] CPU: 1 UID: 0 PID: 2475 Comm: reproducer Not tainted 6.16.0-rc6 #1 PREEMPT(none)
+> [   44.609635] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [   44.610695] RIP: 0010:userfaultfd_release_all+0x3a8/0x460
+> 
+> <snip other registers, drop unreliable trace>
+> 
+> [   44.617726] Call Trace:
+> [   44.617926]  <TASK>
+> [   44.619284]  userfaultfd_release+0xef/0x1b0
+> [   44.620976]  __fput+0x3f9/0xb60
+> [   44.621240]  fput_close_sync+0x110/0x210
+> [   44.622222]  __x64_sys_close+0x8f/0x120
+> [   44.622530]  do_syscall_64+0x5b/0x2f0
+> [   44.622840]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   44.623244] RIP: 0033:0x7f365bb3f227
+> 
+> Kernel panics because it detects UFFD inconsistency during
+> userfaultfd_release_all(). Specifically, a VMA which has a valid pointer
+> to vma->vm_userfaultfd_ctx, but no UFFD flags in vma->vm_flags.
+> 
+> The inconsistency is caused in ksm_madvise(): when user calls madvise()
+> with MADV_UNMEARGEABLE on a VMA that is registered for UFFD in MINOR
+> mode, it accidentally clears all flags stored in the upper 32 bits of
+> vma->vm_flags.
+> 
+> Assuming x86_64 kernel build, unsigned long is 64-bit and unsigned int
+> and int are 32-bit wide. This setup causes the following mishap during
+> the &= ~VM_MERGEABLE assignment.
+> 
+> VM_MERGEABLE is a 32-bit constant of type unsigned int, 0x8000'0000.
+> After ~ is applied, it becomes 0x7fff'ffff unsigned int, which is then
+> promoted to unsigned long before the & operation. This promotion fills
+> upper 32 bits with leading 0s, as we're doing unsigned conversion (and
+> even for a signed conversion, this wouldn't help as the leading bit is
+> 0). & operation thus ends up AND-ing vm_flags with 0x0000'0000'7fff'ffff
+> instead of intended 0xffff'ffff'7fff'ffff and hence accidentally clears
+> the upper 32-bits of its value.
+> 
+> Fix it by changing `VM_MERGEABLE` constant to unsigned long, using the
+> BIT() macro.
+> 
+> Note: other VM_* flags are not affected:
+> This only happens to the VM_MERGEABLE flag, as the other VM_* flags are
+> all constants of type int and after ~ operation, they end up with
+> leading 1 and are thus converted to unsigned long with leading 1s.
+> 
+> Note 2:
+> After commit 31defc3b01d9 ("userfaultfd: remove (VM_)BUG_ON()s"), this is
+> no longer a kernel BUG, but a WARNING at the same place:
+> 
+> [   45.595973] WARNING: CPU: 1 PID: 2474 at mm/userfaultfd.c:2067
+> 
+> but the root-cause (flag-drop) remains the same.
+> 
+> Fixes: 7677f7fd8be76 ("userfaultfd: add minor fault registration mode")
 
-Properties are now sorted, reset-gpio and port property dropped.
+Late to the party, but it seems to me the correct Fixes: should be
+f8af4da3b4c1 ("ksm: the mm interface to ksm")
+which introduced the flag and the buggy clearing code, no?
 
-Fixes: 986f28f3a71e ("dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC with panel")
-Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- .../bindings/display/panel/samsung,s6e3fc2x01.yaml   | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+Commit 7677f7fd8be76 is just one that notices it, right? But there are other
+flags in >32 bit area, including pkeys etc. Sounds rather dangerous if they
+can be cleared using a madvise.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml b/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml
-index d48354fb52ea0..fd4388f5fb118 100644
---- a/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e3fc2x01.yaml
-@@ -6,11 +6,11 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Samsung S6E3FC2X01 AMOLED DDIC
- 
--description: The S6E3FC2X01 is display driver IC with connected panel.
--
- maintainers:
-   - David Heidelberg <david@ixit.cz>
- 
-+description: The S6E3FC2X01 is display driver IC with connected panel.
-+
- allOf:
-   - $ref: panel-common.yaml#
- 
-@@ -25,25 +25,21 @@ properties:
-   reg:
-     maxItems: 1
- 
--  reset-gpios: true
--
--  port: true
--
--  vddio-supply:
--    description: VDD regulator
-+  poc-supply:
-+    description: POC regulator
- 
-   vci-supply:
-     description: VCI regulator
- 
--  poc-supply:
--    description: POC regulator
-+  vddio-supply:
-+    description: VDD regulator
- 
- required:
-   - compatible
-   - reset-gpios
--  - vddio-supply
--  - vci-supply
-   - poc-supply
-+  - vci-supply
-+  - vddio-supply
- 
- unevaluatedProperties: false
- 
+So we can't amend the Fixes: now but maybe could advise stable to backport
+for even older versions than based on 7677f7fd8be76 ?
 
----
-base-commit: df5d79720b152e7ff058f11ed7e88d5b5c8d2a0c
-change-id: 20251106-dt-s6e3fc2x01-d7a7d36eb1bc
-
-Best regards,
--- 
-David Heidelberg <david@ixit.cz>
-
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Xu Xin <xu.xin16@zte.com.cn>
+> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Axel Rasmussen <axelrasmussen@google.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> ---
+>  include/linux/mm.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 1ae97a0b8ec7..c6794d0e24eb 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -296,7 +296,7 @@ extern unsigned int kobjsize(const void *objp);
+>  #define VM_MIXEDMAP	0x10000000	/* Can contain "struct page" and pure PFN pages */
+>  #define VM_HUGEPAGE	0x20000000	/* MADV_HUGEPAGE marked this vma */
+>  #define VM_NOHUGEPAGE	0x40000000	/* MADV_NOHUGEPAGE marked this vma */
+> -#define VM_MERGEABLE	0x80000000	/* KSM may merge identical pages */
+> +#define VM_MERGEABLE	BIT(31)		/* KSM may merge identical pages */
+>  
+>  #ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+>  #define VM_HIGH_ARCH_BIT_0	32	/* bit only usable on 64-bit architectures */
 
 
