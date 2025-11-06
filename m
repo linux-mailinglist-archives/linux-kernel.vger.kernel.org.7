@@ -1,205 +1,263 @@
-Return-Path: <linux-kernel+bounces-889516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E156C3DCD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:22:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B329AC3DCF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:23:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C05E63A8DDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7CEB1891884
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914E0319608;
-	Thu,  6 Nov 2025 23:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQBhQs9l"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24F42DA76A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C39E35504F;
+	Thu,  6 Nov 2025 23:19:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291EB350D64;
+	Thu,  6 Nov 2025 23:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762471114; cv=none; b=cagpQTVteKk5CkN/a6gk+OVFBHsd+mV3ZW0aNdIUUuZc9B+8vAHJRPoLbuJ0c5qC80jLP9NmEK6EX3WpTF7hMplUSBmb3qiOkEgliyJb/q32d6sRROYEX5vi2076NGZpKgCw25s3zTSidJEVWoLa3cIQCcXYGEDI7rRc3D8YLtA=
+	t=1762471173; cv=none; b=OFNLwitB1/UYtiIzAQuOi8osLS+mTEBE5w5mOw/iLDXJLx0Z6Hl0cnDKMHxuFzKKH8C++yX5Dvn6cklbX04epKUGg0YYZfYjL2Z60uM18J0dc2Y1Qg/i0eY6Dvktx1xf/IOoWKfN6hHhcfOCI1EbjddWL4JEnoQwhriRto9W+TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762471114; c=relaxed/simple;
-	bh=pJv4zqeHNRTU4obBtaUTIfBb2/QOdc1xoGqDwBpqYyg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sIJWZf2hBi6Odjw2ZYx+mu2UKWZKYSDgUyGSuPrd5hCw0ZltqmzFCLvRkdRk1aJugst2s3R3fO2jwVZt9FTLgCQ6+jRpI8RGDnIOP2VbCmaX4Q37zixiHNd3wI1hsO5GYum9q8eZbwrLzsSvFSzMKQa17zrfbPVvN2/eUuV0dmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQBhQs9l; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so291671a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:18:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762471111; x=1763075911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZOUOWyN3SQvZiS/RbaKwiZi9YRB0sBMbqUhJ8OtdPmE=;
-        b=VQBhQs9l8s29JcsXcZMvKXE7GzuL6auflRRAU28ptQT12CENWV5Kha5RYcIWR6B5t5
-         YBau/CCYY97R3+paGz+/7pmXJlSHCq3ivGJ0ghSdlG/b6pq6h++AU78z5QxI20YDBnnI
-         2ne8QZZSBU+9z6Odpjtm4R5ZODQu62JXOo8TfO3zKmvYlv6+mDIAtsiJlu5jWGLh/BCz
-         CGFnrUnmt6hejFxjUqo5frQpOeznQy72Ess9GLUm04+ORq6PFDnRhTQNZlinTrmEiSiS
-         8FuRxP6RhwHu5QqijXIKBXUN1fhuFq6ThgBQKtaxc50trwD5BK3x2wsAS/wLHKwGkksd
-         lR5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762471111; x=1763075911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZOUOWyN3SQvZiS/RbaKwiZi9YRB0sBMbqUhJ8OtdPmE=;
-        b=sgHMWIIyyI3ZqS/Bdrd6pNEyg0lHZRankTDJGCfU1r4jUddngHLix8jcGjkdRDMECd
-         Dzsd8Vb3qUhZyjzPiW4V2bnHr/cZnRy7pPoCp/u1kK3KwMtJ/mOvkrRpMaQoKgU7iZ5F
-         MlDEc8k4dYZNfcDajnfZ9X+hYOYofxB0fFOR9nmNUj4ro/K0W1rfvCFne8/EUFw3Bsxu
-         9qcejI03eT0AWSV0VIaiD/cpANrixeOi1cicu6ahInpMu3FaNuvKbFiSpApE1bMuaPHi
-         aX6gFfzqS6rjcgxNq/Rs/JkLcn2h+Cx5LBGFJd+6UKOgh1Dcy6TWxLJXQfuyGnZ9hdf5
-         tLUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMQ1gIMZzwG2etRXDSY37Nxeq6T+nZ1bq5+N2Ms2Y8Ko6eAGIlDB9IDljSxvSJuFBN8ZXVzlam7qR+8Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4ugIJAdb5bLEcmpgGQhCy+4TsIChGuwFXnec0R2JIDd1a0FfQ
-	jv6BNgVGN0jJSeTIErFN33g00+KxlccwMwOYl4is+Mu+CwXy75Zqs63U8WJ4xYIJCw5BcVwYXq5
-	fcZm8G7aJdagQ29OZxhDkh9VmZ0Lv6iQ=
-X-Gm-Gg: ASbGncv9zqKU3J8mzQafPv0PeCzI4UVmFu2v2aknC8cFD9k5nvInqPjKviE75cYc1AR
-	AoHvbfNw6Jjg+0v0bBmlqcUiUhuUGAP/ktRCeTF2keqEBPYHQ6vYWfOXUOJmtW7zDHDIGWOcx/3
-	CTNY5XI7gdR0yVPHI1Li4XxmpIZ1r/OALnPReJeiLkZvA0oLCkkZS55B+s5i6m462pNsGMevZJt
-	1NGidBPIsrI/qJ34bphzIVprbwylyihUCadlf984K05MTpp/jin6GmqWAfSIMhUL2tbEtWm2HH0
-	NwrAHI4FeqP4yyg=
-X-Google-Smtp-Source: AGHT+IFQ3p9ssmPv8Jm7gFsQL6RL6oReE2y+7vSXZxGI2qjE3DMYEWlLAqv+wQJCw4Kqxr8DuM1E/gWRvm7feQCSeeI=
-X-Received: by 2002:a17:907:6e94:b0:b72:6fec:5d0e with SMTP id
- a640c23a62f3a-b72c08dca97mr94592666b.13.1762471111104; Thu, 06 Nov 2025
- 15:18:31 -0800 (PST)
+	s=arc-20240116; t=1762471173; c=relaxed/simple;
+	bh=QbnhjtM2DHCyRlTmO5eo3u7W6bXvB1xuo27Rpl1G/KI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wvi4PHEFj9kIdHQuXzlGMa90YNt0iAZhScOxetmzkuigj2gtXni/7kGcfNNyqeVBKHJozL1eMpHY/kHmZbn4k0XlnwpwdrU5a6nshY0gN2Zr0gPVCuuTRpJQRhL6V/oBoS2Xrdti83qg1Yv27vWzs/bORSnb4q48gp8viD/9i3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 855301595;
+	Thu,  6 Nov 2025 15:19:22 -0800 (PST)
+Received: from [10.118.100.70] (u104515.arm.com [10.118.100.70])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 228253F694;
+	Thu,  6 Nov 2025 15:19:30 -0800 (PST)
+Message-ID: <e50f810f-a770-47b2-b266-5701172c8041@arm.com>
+Date: Thu, 6 Nov 2025 17:19:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104231414.1150771-1-alistair.francis@wdc.com> <adba53a05329dc8399c3bd49c7bcd5eff5e69574.camel@gmail.com>
-In-Reply-To: <adba53a05329dc8399c3bd49c7bcd5eff5e69574.camel@gmail.com>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Fri, 7 Nov 2025 09:18:04 +1000
-X-Gm-Features: AWmQ_bm5LInA_pSlrz_9pdkVaeGS-Cw3yi_cxhx174Xg7NOZ-pKujDIKCUNvg0k
-Message-ID: <CAKmqyKOMFdKqcYN1Nuz224nczaQMmXhk=H6Vx6n+XLRpeVQdNA@mail.gmail.com>
-Subject: Re: [PATCH v2] nvmet-auth: update sc_c in target host hash calculation
-To: Martin George <martinus.gpy@gmail.com>
-Cc: hare@suse.de, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, 
-	sagi@grimberg.me, kch@nvidia.com, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] vfio/pci: add PCIe TPH device ioctl
+To: Alex Williamson <alex@shazbot.org>
+Cc: Jeremy Linton <jeremy.linton@arm.com>, alex.williamson@redhat.com,
+ jgg@ziepe.ca, pstanner@redhat.com, kvm@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251013163515.16565-1-wathsala.vithanage@arm.com>
+ <9df72789-ab35-46a0-86cf-7b1eb3339ac7@arm.com>
+ <4bf8ba8f-57c3-4af2-9f2a-f4313121be87@arm.com>
+ <20251105121541.4d383694.alex@shazbot.org>
+Content-Language: en-US
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+In-Reply-To: <20251105121541.4d383694.alex@shazbot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 6, 2025 at 11:05=E2=80=AFPM Martin George <martinus.gpy@gmail.c=
-om> wrote:
->
-> On Wed, 2025-11-05 at 09:14 +1000, alistair23@gmail.com wrote:
-> > From: Alistair Francis <alistair.francis@wdc.com>
-> >
-> > Commit 7e091add9c43 "nvme-auth: update sc_c in host response" added
-> > the sc_c variable to the dhchap queue context structure which is
-> > appropriately set during negotiate and then used in the host
-> > response.
-> >
-> > This breaks secure concat connections with a Linux target as the
-> > target
-> > code wasn't updated at the same time. This patch fixes this by adding
-> > a
-> > new sc_c variable to the host hash calculations.
-> >
-> > Fixes: 7e091add9c43 ("nvme-auth: update sc_c in host response")
-> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> > ---
-> > v2:
-> >  - Rebase on v6.18-rc4
-> >  - Add Fixes tag
-> >
-> >  drivers/nvme/host/auth.c               | 1 +
-> >  drivers/nvme/target/auth.c             | 5 +++--
-> >  drivers/nvme/target/fabrics-cmd-auth.c | 1 +
-> >  drivers/nvme/target/nvmet.h            | 1 +
-> >  4 files changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/nvme/host/auth.c b/drivers/nvme/host/auth.c
-> > index a01178caf15b..19980122d3d5 100644
-> > --- a/drivers/nvme/host/auth.c
-> > +++ b/drivers/nvme/host/auth.c
-> > @@ -492,6 +492,7 @@ static int
-> > nvme_auth_dhchap_setup_host_response(struct nvme_ctrl *ctrl,
-> >       ret =3D crypto_shash_update(shash, buf, 2);
-> >       if (ret)
-> >               goto out;
-> > +     memset(buf, 0, sizeof(buf));
-> >       *buf =3D chap->sc_c;
-> >       ret =3D crypto_shash_update(shash, buf, 1);
-> >       if (ret)
->
-> This memset in host/auth.c doesn't seem to serve any purpose. Also
-> given your patch is intended to modify the target behavior for sc_c
-> handling, maybe you should restrict the patch to target side updates
-> alone.
->
-> All the memset cleanup in both the host/auth.c & target/auth.c should
-> ideally be done in a separate patch, and not part of this current
-> patch.
 
-Yeah, I realised I don't actually need any of them. They have been removed =
-in v3
-
+On 11/5/25 13:15, Alex Williamson wrote:
+> On Mon, 27 Oct 2025 09:33:33 -0500
+> Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
 >
-> > diff --git a/drivers/nvme/target/auth.c b/drivers/nvme/target/auth.c
-> > index 02c23998e13c..f54a1425262d 100644
-> > --- a/drivers/nvme/target/auth.c
-> > +++ b/drivers/nvme/target/auth.c
-> > @@ -298,7 +298,7 @@ int nvmet_auth_host_hash(struct nvmet_req *req,
-> > u8 *response,
-> >       const char *hash_name;
-> >       u8 *challenge =3D req->sq->dhchap_c1;
-> >       struct nvme_dhchap_key *transformed_key;
-> > -     u8 buf[4], sc_c =3D ctrl->concat ? 1 : 0;
-> > +     u8 buf[4];
-> >       int ret;
-> >
-> >       hash_name =3D nvme_auth_hmac_name(ctrl->shash_id);
-> > @@ -367,7 +367,7 @@ int nvmet_auth_host_hash(struct nvmet_req *req,
-> > u8 *response,
-> >       ret =3D crypto_shash_update(shash, buf, 2);
-> >       if (ret)
-> >               goto out;
-> > -     *buf =3D sc_c;
-> > +     *buf =3D req->sq->sc_c;
-> >       ret =3D crypto_shash_update(shash, buf, 1);
-> >       if (ret)
-> >               goto out;
-> > @@ -378,6 +378,7 @@ int nvmet_auth_host_hash(struct nvmet_req *req,
-> > u8 *response,
-> >       ret =3D crypto_shash_update(shash, ctrl->hostnqn, strlen(ctrl-
-> > >hostnqn));
-> >       if (ret)
-> >               goto out;
-> > +     memset(buf, 0, sizeof(buf));
-> >       ret =3D crypto_shash_update(shash, buf, 1);
-> >       if (ret)
-> >               goto out;
-> > diff --git a/drivers/nvme/target/fabrics-cmd-auth.c
-> > b/drivers/nvme/target/fabrics-cmd-auth.c
-> > index 5d7d913927d8..16894302ebe1 100644
-> > --- a/drivers/nvme/target/fabrics-cmd-auth.c
-> > +++ b/drivers/nvme/target/fabrics-cmd-auth.c
-> > @@ -43,6 +43,7 @@ static u8 nvmet_auth_negotiate(struct nvmet_req
-> > *req, void *d)
-> >                data->auth_protocol[0].dhchap.halen,
-> >                data->auth_protocol[0].dhchap.dhlen);
-> >       req->sq->dhchap_tid =3D le16_to_cpu(data->t_id);
-> > +     req->sq->sc_c =3D le16_to_cpu(data->sc_c);
->
-> Given sc_c is an unsigned 8bit int, is there really a need to make this
-> endian safe by calling le16_to_cpu()?
+>> On 10/16/25 16:41, Jeremy Linton wrote:
+>>> Hi,
+>>>
+>>> On 10/13/25 11:35 AM, Wathsala Vithanage wrote:
+>>>> TLP Processing Hints (TPH) let a requester provide steering hints that
+>>>> can enable direct cache injection on supported platforms and PCIe
+>>>> devices. The PCIe core already exposes TPH handling to kernel drivers.
+>>>>
+>>>> This change adds the VFIO_DEVICE_PCI_TPH ioctl and exposes TPH control
+>>>> to user space to reduce memory latency and improve throughput for
+>>>> polling drivers (e.g., DPDK poll-mode drivers). Through this interface,
+>>>> user-space drivers can:
+>>>>     - enable or disable TPH for the device function
+>>>>     - program steering tags in device-specific mode
+>>>>
+>>>> The ioctl is available only when the device advertises the TPH
+>>>> Capability. Invalid modes or tags are rejected. No functional change
+>>>> occurs unless the ioctl is used.
+>>>>
+>>>> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+>>>> ---
+>>>>    drivers/vfio/pci/vfio_pci_core.c | 74 ++++++++++++++++++++++++++++++++
+>>>>    include/uapi/linux/vfio.h        | 36 ++++++++++++++++
+>>>>    2 files changed, 110 insertions(+)
+>>>>
+>>>> diff --git a/drivers/vfio/pci/vfio_pci_core.c
+>>>> b/drivers/vfio/pci/vfio_pci_core.c
+>>>> index 7dcf5439dedc..0646d9a483fb 100644
+>>>> --- a/drivers/vfio/pci/vfio_pci_core.c
+>>>> +++ b/drivers/vfio/pci/vfio_pci_core.c
+>>>> @@ -28,6 +28,7 @@
+>>>>    #include <linux/nospec.h>
+>>>>    #include <linux/sched/mm.h>
+>>>>    #include <linux/iommufd.h>
+>>>> +#include <linux/pci-tph.h>
+>>>>    #if IS_ENABLED(CONFIG_EEH)
+>>>>    #include <asm/eeh.h>
+>>>>    #endif
+>>>> @@ -1443,6 +1444,77 @@ static int vfio_pci_ioctl_ioeventfd(struct
+>>>> vfio_pci_core_device *vdev,
+>>>>                      ioeventfd.fd);
+>>>>    }
+>>>>    +static int vfio_pci_tph_set_st(struct vfio_pci_core_device *vdev,
+>>>> +                   const struct vfio_pci_tph_entry *ent)
+>>>> +{
+>>>> +    int ret, mem_type;
+>>>> +    u16 st;
+>>>> +    u32 cpu_id = ent->cpu_id;
+>>>> +
+>>>> +    if (cpu_id >= nr_cpu_ids || !cpu_present(cpu_id))
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (!cpumask_test_cpu(cpu_id, current->cpus_ptr))
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    switch (ent->mem_type) {
+>>>> +    case VFIO_TPH_MEM_TYPE_VMEM:
+>>>> +        mem_type = TPH_MEM_TYPE_VM;
+>>>> +        break;
+>>>> +    case VFIO_TPH_MEM_TYPE_PMEM:
+>>>> +        mem_type = TPH_MEM_TYPE_PM;
+>>>> +        break;
+>>>> +    default:
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>> +    ret = pcie_tph_get_cpu_st(vdev->pdev, mem_type,
+>>>> topology_core_id(cpu_id),
+>>>> +                  &st);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +    /*
+>>>> +     * PCI core enforces table bounds and disables TPH on error.
+>>>> +     */
+>>>> +    return pcie_tph_set_st_entry(vdev->pdev, ent->index, st);
+>>>> +}
+>>>> +
+>>>> +static int vfio_pci_tph_enable(struct vfio_pci_core_device *vdev,
+>>>> int mode)
+>>>> +{
+>>>> +    /* IV mode is not supported. */
+>>>> +    if (mode == PCI_TPH_ST_IV_MODE)
+>>>> +        return -EINVAL;
+>>>> +    /* PCI core validates 'mode' and returns -EINVAL on bad values. */
+>>>> +    return pcie_enable_tph(vdev->pdev, mode);
+>>>> +}
+>>>> +
+>>>> +static int vfio_pci_tph_disable(struct vfio_pci_core_device *vdev)
+>>>> +{
+>>>> +    pcie_disable_tph(vdev->pdev);
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int vfio_pci_ioctl_tph(struct vfio_pci_core_device *vdev,
+>>>> +                  void __user *uarg)
+>>>> +{
+>>>> +    struct vfio_pci_tph tph;
+>>>> +
+>>>> +    if (copy_from_user(&tph, uarg, sizeof(struct vfio_pci_tph)))
+>>>> +        return -EFAULT;
+>>>> +
+>>>> +    if (tph.argsz != sizeof(struct vfio_pci_tph))
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    switch (tph.op) {
+>>>> +    case VFIO_DEVICE_TPH_ENABLE:
+>>>> +        return vfio_pci_tph_enable(vdev, tph.mode);
+>>>> +    case VFIO_DEVICE_TPH_DISABLE:
+>>>> +        return vfio_pci_tph_disable(vdev);
+>>>> +    case VFIO_DEVICE_TPH_SET_ST:
+>>>> +        return vfio_pci_tph_set_st(vdev, &tph.ent);
+>>>> +    default:
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>> +}
+>>>> +
+>>>>    long vfio_pci_core_ioctl(struct vfio_device *core_vdev, unsigned
+>>>> int cmd,
+>>>>                 unsigned long arg)
+>>>>    {
+>>>> @@ -1467,6 +1539,8 @@ long vfio_pci_core_ioctl(struct vfio_device
+>>>> *core_vdev, unsigned int cmd,
+>>>>            return vfio_pci_ioctl_reset(vdev, uarg);
+>>>>        case VFIO_DEVICE_SET_IRQS:
+>>>>            return vfio_pci_ioctl_set_irqs(vdev, uarg);
+>>>> +    case VFIO_DEVICE_PCI_TPH:
+>>>> +        return vfio_pci_ioctl_tph(vdev, uarg);
+>>>>        default:
+>>>>            return -ENOTTY;
+>>>>        }
+>>>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+>>>> index 75100bf009ba..cfdee851031e 100644
+>>>> --- a/include/uapi/linux/vfio.h
+>>>> +++ b/include/uapi/linux/vfio.h
+>>>> @@ -873,6 +873,42 @@ struct vfio_device_ioeventfd {
+>>>>      #define VFIO_DEVICE_IOEVENTFD        _IO(VFIO_TYPE, VFIO_BASE + 16)
+>>>>    +/**
+>>>> + * VFIO_DEVICE_PCI_TPH - _IO(VFIO_TYPE, VFIO_BASE + 22)
+>>>> + *
+>>>> + * Control PCIe TLP Processing Hints (TPH) on a PCIe device.
+>>>> + *
+>>>> + * Supported operations:
+>>>> + * - VFIO_DEVICE_TPH_ENABLE: enable TPH in no-steering-tag (NS) or
+>>>> + *   device-specific (DS) mode. IV mode is not supported via this ioctl
+>>>> + *   and returns -EINVAL.
+>>>> + * - VFIO_DEVICE_TPH_DISABLE: disable TPH on the device.
+>>>> + * - VFIO_DEVICE_TPH_SET_ST: program an entry in the device TPH
+>>>> Steering-Tag
+>>>> + *   (ST) table. The kernel derives the ST from cpu_id and mem_type;
+>>>> the
+>>>> + *   value is not returned to userspace.
+>>>> + */
+>>>> +struct vfio_pci_tph_entry {
+>>>> +    __u32 cpu_id;            /* CPU logical ID */
+>>>> +    __u8  mem_type;
+>>>> +#define VFIO_TPH_MEM_TYPE_VMEM        0   /* Request volatile memory
+>>>> ST */
+>>>> +#define VFIO_TPH_MEM_TYPE_PMEM        1   /* Request persistent
+>>>> memory ST */
+>>>> +    __u8  rsvd[1];
+>>>> +    __u16 index;            /* ST-table index */
+>>>> +};
+>>>> +
+>>>> +struct vfio_pci_tph {
+>>>> +    __u32 argsz;            /* Size of vfio_pci_tph */
+>>>> +    __u32 mode;            /* NS and DS modes; IV not supported */
+>>>> +    __u32 op;
+>>>> +#define VFIO_DEVICE_TPH_ENABLE        0
+>>>> +#define VFIO_DEVICE_TPH_DISABLE        1
+>>>> +#define VFIO_DEVICE_TPH_SET_ST        2
+>>>> +    struct vfio_pci_tph_entry ent;
+>>>> +};
+>>>> +
+>>>> +#define VFIO_DEVICE_PCI_TPH    _IO(VFIO_TYPE, VFIO_BASE + 22)
+>>> A quick look at this, it seems its following the way the existing vfio
+>>> IOCTls are defined, yet two of them (ENABLE and DISABLE) won't likely
+>>> really change their structure, or don't need a structure in the case
+>>> of disable. Why not use IOW() and let the kernel error handling deal
+>>> with those two as independent ioctls?
+>>>
+>>>
+>>> Thanks,
+>>
+>> It will require two IOCTLs. I’m ok with having two IOCTLs for this
+>> feature if the maintainers are fine with it.
+> TBH, I'm not sure why we didn't use a DEVICE_FEATURE for this.  Seems
+> like we could implement a SET operation that does enable/disable and
 
-No, it's not required. Fixed in v3.
+Thanks Alex, it was implemented as a DEVICE_FEATURE in RFC v1,
+except it had a GET operation to get the tag to the user; which we
+decided to drop.
 
-Alistair
+> another for steering tags.  I still need to fully grasp the
+> implications of this support though.  Thanks,
+This is now same as the already merged RDMA TPH feature.
+https://lore.kernel.org/linux-rdma/cover.1751907231.git.leon@kernel.org/
 
->
-> -Martin
->
+--wathsala
+
+
 
