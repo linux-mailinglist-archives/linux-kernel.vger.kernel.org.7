@@ -1,170 +1,247 @@
-Return-Path: <linux-kernel+bounces-889188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4782C3CEAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:46:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0100AC3CED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06A424ECB15
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43BC3AFD4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACDE34EF04;
-	Thu,  6 Nov 2025 17:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC61D34FF6D;
+	Thu,  6 Nov 2025 17:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmQK3NK/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LQQ5kOPO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADEB30E0F7;
-	Thu,  6 Nov 2025 17:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ED334F246;
+	Thu,  6 Nov 2025 17:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762451082; cv=none; b=ECPLwRaq4NQmBG3jsnzH1+WVHoeSOeevyZuVBi0pkfMBc+rgoBPsXIvNx2EWPWg0EA7HFrDIoF1UmjEA8AMXNOY/hm+tQcVUxkBP5VN41GhbkU5YFKjkVsljoyTmL+yB7Q2U4j/0SfuyTJK0LKqub7LmESqd6YuW2aNYK7PhSug=
+	t=1762451085; cv=none; b=qeoBQuj8h/CJucHovB/4zZh9cLmu5bvNebFgOia3OUPFlcqU6BtS534ShllMoUhuC5lO8t/nFd3RuNE5BCXLUFZt96qJQnDC4FCB/aXUpYHjwWTTC9nRGm9Bm21cVvlwTcFrbzdGF5dqzVUCx1ZG+/J1tJ0FVeduxLh/APmKGkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762451082; c=relaxed/simple;
-	bh=s+hOfpwfVBSoBV09E+QkoZp1hloRIcTVQh6C7/aLE14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZU2w/tFCsSXCHZAJ8JHR3hN5ID0gRhzb+3X7R1sVHEcdoxq2Dk85A1JdyjAktUiy435YsmJmpV8RXrSURxht7tGgRzEQJweZfKw7d88viYsZaHsqsneJKceXHZoffW7MNWrsW2lLmcxw0Wl8HHNd+smNLFdF9UNWuOwrmPH/6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmQK3NK/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537F2C4CEFB;
-	Thu,  6 Nov 2025 17:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762451081;
-	bh=s+hOfpwfVBSoBV09E+QkoZp1hloRIcTVQh6C7/aLE14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JmQK3NK/k9EkXb6/MfI17SXwa3NF/9LE4cGV9CXpIPVTWUS+D6maDS+Hx2v2sznsz
-	 HPDK3oE6XYv0Ko4jBSUmTEq5KXI42A6XhKf5+y8S8NoUrRfk9RTifi/hi4LL4+Ib6T
-	 ROb/8UmLf9vacQJtf1/v7sFTfUbPDFnvZJF23LHofZD9N1awX6mdrMU8OBmSz9ahhJ
-	 oHJt3cjKYMsUfI1N1y7tsWMh3qAC0pK7zTIdU8edfMFD2ujG31k59FoMe37n08oS9P
-	 OXehpgliJR8aVcQ6Ev1C8KOSytgbGaTFJ59R5Lo98ggdWJfUazHY5/ub1ZuGgjE2bK
-	 l/lpaXuVZF3ww==
-Date: Thu, 6 Nov 2025 17:44:36 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: imx6ul-clock: add optional clock
- enet1_ref_pad
-Message-ID: <20251106-seventeen-gilled-5146c6dc9720@spud>
-References: <20251105-ccm_dts-v1-0-6aadcdf97cb8@nxp.com>
- <20251105-ccm_dts-v1-1-6aadcdf97cb8@nxp.com>
+	s=arc-20240116; t=1762451085; c=relaxed/simple;
+	bh=VfLMnWVZDg6b+wtxUN7DNTsuv1mesxfWQJqFSKOfyKM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KAbhEGe+GqhTA8yVV6CD1WpUkhYnCXgcxdQW334UD5KD0OO8WCyGvEajcif1dGMfx0+A9bFfvN8ed4pmzzn/VCr1hY6VNKsPSLidl04b+d8S6UKN8whyl4Y2nNAb7cxlptMTNELW9P1xq6iXTfZnMGuNp8F46kAAuVVwbruHOGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LQQ5kOPO; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762451083; x=1793987083;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=VfLMnWVZDg6b+wtxUN7DNTsuv1mesxfWQJqFSKOfyKM=;
+  b=LQQ5kOPOkk6E9QeEOpLX0Yt+DSN3sn+yBSWsuf+BLNbyPNzO22kKg0iR
+   6wl+Q+J7p08FJ1oRnqBL4l/hFOxzXXSldOocc1YyWfFh0jO9jx2xkJToc
+   heqM6JLc+4AjyV64f8qenZSGdEfyOmbdYAFiGZei1lBO6nFj3QRa8rOWS
+   czk8uz/zuQLPHeXwLF+VVcYIhOS3c6u+mOBU6paMPc0bfy5JRDpns+7pJ
+   3oQOrcBMgR0/FVG92Lrt8bTubdvhMMlH4meH7JOdjNGeZokhgRwCkVOSS
+   k/ZsXT2motXKSSMdLhno9u6wbSbfD3vGDfWi2m0IW1rwOAWkKDL7CW7tX
+   A==;
+X-CSE-ConnectionGUID: Si/qL2JAQW+sSUCVo8870Q==
+X-CSE-MsgGUID: rIDJ2LFDT868tKhdfbUEkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="82002160"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="82002160"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 09:44:42 -0800
+X-CSE-ConnectionGUID: IVchUY7wSMS80ui52sSxaA==
+X-CSE-MsgGUID: D28/gahHSPKuJiii/5ATmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="187074453"
+Received: from spandruv-desk2.jf.intel.com ([10.88.27.176])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 09:44:42 -0800
+Message-ID: <851e605992395b78490a97e7a6d771eb0c232848.camel@linux.intel.com>
+Subject: Re: [REGRESSION] Intel Turbo Boost stuck disabled on some Clevo
+ machines (was: [PATCH] cpufreq: intel_pstate: Unchecked MSR aceess in
+ legacy mode)
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Aaron Rainbolt <arainbolt@kfocus.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, 	mmikowski@kfocus.org
+Date: Thu, 06 Nov 2025 09:44:41 -0800
+In-Reply-To: <20251106113137.5b83bb3f@kf-m2g5>
+References: <20250429210711.255185-1-srinivas.pandruvada@linux.intel.com>
+		<CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
+		<20250910113650.54eafc2b@kf-m2g5>
+		<dda1d8d23407623c99e2f22e60ada1872bca98fe.camel@linux.intel.com>
+		<20250910153329.10dcef9d@kf-m2g5>
+		<db92b8a310d88214e2045a73d3da6d0ffe8606f7.camel@linux.intel.com>
+	 <20251106113137.5b83bb3f@kf-m2g5>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="faLTa5Z8RzHut49n"
-Content-Disposition: inline
-In-Reply-To: <20251105-ccm_dts-v1-1-6aadcdf97cb8@nxp.com>
 
-
---faLTa5Z8RzHut49n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 05, 2025 at 11:55:28AM -0500, Frank Li wrote:
-> Add optional clock source enet1_ref_pad, which input from ENET ref pad.
+On Thu, 2025-11-06 at 11:31 -0600, Aaron Rainbolt wrote:
+> On Thu, 06 Nov 2025 07:23:14 -0800
+> srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
 >=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/clock/imx6q-clock.yaml  | 4 ++++
->  Documentation/devicetree/bindings/clock/imx6ul-clock.yaml | 4 ++++
->  2 files changed, 8 insertions(+)
+> > Hi Aaron,
+> >=20
+> > On Wed, 2025-09-10 at 15:33 -0500, Aaron Rainbolt wrote:
+> > > On Wed, 10 Sep 2025 10:15:00 -0700
+> > > srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
+> > > =C2=A0=20
+> > > > On Wed, 2025-09-10 at 11:36 -0500, Aaron Rainbolt wrote:=C2=A0=20
+> > > > > On Wed, 30 Apr 2025 16:29:09 +0200
+> > > > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+> > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > > > On Tue, Apr 29, 2025 at 11:07=E2=80=AFPM Srinivas Pandruvada
+> > > > > > <srinivas.pandruvada@linux.intel.com> wrote:=C2=A0=C2=A0=C2=A0=
+=20
+> > > > > > >=20
+> > > > > > > When turbo mode is unavailable on a Skylake-X system,
+> > > > > > > executing
+> > > > > > > the
+> > > > > > > command:
+> > > > > > > "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"
+> > > > > > > results in an unchecked MSR access error: WRMSR to 0x199
+> > > > > > > (attempted to write 0x0000000100001300).=C2=A0=20
+> > Please try the attached patch, if this address this issue.
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml b/D=
-ocumentation/devicetree/bindings/clock/imx6q-clock.yaml
-> index cd3c04c883df4ab02af29582369757df36269cb6..49475aec22a81ba87048eef58=
-8368261cbb38465 100644
-> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
-> @@ -29,20 +29,24 @@ properties:
->      const: 1
-> =20
->    clocks:
-> +    minItems: 4
->      items:
->        - description: 24m osc
->        - description: 32k osc
->        - description: ckih1 clock input
->        - description: anaclk1 clock input
->        - description: anaclk2 clock input
-> +      - description: clock input from enet1 ref pad
-> =20
->    clock-names:
-> +    minItems: 4
->      items:
->        - const: osc
->        - const: ckil
->        - const: ckih1
->        - const: anaclk1
->        - const: anaclk2
-> +      - const: enet1_ref_pad
+> I can confirm that this patch does resolve the issue when applied to
+> Kubuntu Focus's 6.14 kernel. CPU frequencies are available that
+> require
+> turbo boost, and `cat /sys/devices/system/cpu/intel_pstate` returns
+> `0`. The logs from `dmesg` also indicate that turbo was disabled
+> earlier in boot, but the warnings about turbo being disabled stop
+> appearing later on, even when manipulating the `no_turbo` file:
 
-I think you could drop the _pad from here, and just make it enet1_ref.
-Only a suggestion though,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Thanks for test. I am waiting for some other reporters from Suse to
+confirm.
+I will add your tested by tag.
 
-> =20
->    fsl,pmic-stby-poweroff:
->      $ref: /schemas/types.yaml#/definitions/flag
-> diff --git a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml b/=
-Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
-> index d57e18a210cc1d8a836b50058613dfb0308fbf11..035002721a3b3b65fe67734e1=
-3b686b91539f328 100644
-> --- a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
-> @@ -29,18 +29,22 @@ properties:
->      const: 1
-> =20
->    clocks:
-> +    minItems: 4
->      items:
->        - description: 32k osc
->        - description: 24m osc
->        - description: ipp_di0 clock input
->        - description: ipp_di1 clock input
-> +      - description: clock input from enet1 ref pad
-> =20
->    clock-names:
-> +    minItems: 4
->      items:
->        - const: ckil
->        - const: osc
->        - const: ipp_di0
->        - const: ipp_di1
-> +      - const: enet1_ref_pad
-> =20
->  required:
->    - compatible
+
+- Srinivas
+
 >=20
-> --=20
-> 2.34.1
+> [=C2=A0=C2=A0 25.893012] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 25.893019] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 25.950587] NET: Registered PF_QIPCRTR protocol family
+> [=C2=A0=C2=A0 26.599013] Realtek Internal NBASE-T PHY r8169-0-6c00:00: at=
+tached
+> PHY driver (mii_bus:phy_addr=3Dr8169-0-6c00:00, irq=3DMAC)
+> [=C2=A0=C2=A0 26.725959] ACPI BIOS Error (bug): Could not resolve symbol
+> [\_TZ.ETMD], AE_NOT_FOUND (20240827/psargs-332)
 >=20
-
---faLTa5Z8RzHut49n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQzehAAKCRB4tDGHoIJi
-0li0AP0X6venSRgjjxG9X1+jQvK3e+ds+gItM0mvxCkUAiEFtQD+PyCxXMtSstG5
-WwI6mPxRa8Fd/1QmOnlKcjMMfpH9Vgk=
-=JAlp
------END PGP SIGNATURE-----
-
---faLTa5Z8RzHut49n--
+> [=C2=A0=C2=A0 26.725976] No Local Variables are initialized for Method [_=
+OSC]
+>=20
+> [=C2=A0=C2=A0 26.725978] Initialized Arguments for Method [_OSC]:=C2=A0 (=
+4 arguments
+> defined for method invocation)
+> [=C2=A0=C2=A0 26.725979]=C2=A0=C2=A0 Arg0:=C2=A0=C2=A0 0000000030ddf166 <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Buffer(16)
+> 5D A8 3B B2 B7 C8 42 35
+> [=C2=A0=C2=A0 26.725991]=C2=A0=C2=A0 Arg1:=C2=A0=C2=A0 0000000002bd3ac4 <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Integer
+> 0000000000000001
+> [=C2=A0=C2=A0 26.725996]=C2=A0=C2=A0 Arg2:=C2=A0=C2=A0 0000000033eb047e <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Integer
+> 0000000000000002
+> [=C2=A0=C2=A0 26.725999]=C2=A0=C2=A0 Arg3:=C2=A0=C2=A0 00000000de6cf5f1 <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Buffer(8)
+> 00 00 00 00 05 00 00 00
+>=20
+> [=C2=A0=C2=A0 26.726010] ACPI Error: Aborting method \_SB.IETM._OSC due t=
+o
+> previous error (AE_NOT_FOUND) (20240827/psparse-529)
+> [=C2=A0=C2=A0 26.726056] Consider using thermal netlink events interface
+> [=C2=A0=C2=A0 26.769209] r8169 0000:6c:00.0 enp108s0: Link is Down
+> [=C2=A0=C2=A0 26.857318] zram0: detected capacity change from 0 to 195035=
+136
+> [=C2=A0=C2=A0 26.864390] vboxdrv: Found 32 processor cores/threads
+> [=C2=A0=C2=A0 26.873227] Adding 97517564k swap on /dev/zram0.=C2=A0 Prior=
+ity:-2
+> extents:1 across:97517564k SS
+> [=C2=A0=C2=A0 26.880588] vboxdrv: TSC mode is Invariant, tentative freque=
+ncy
+> 2419194640 Hz
+> [=C2=A0=C2=A0 26.880592] vboxdrv: Successfully loaded version 7.2.4 r1709=
+95
+> (interface 0x00340001)
+> [=C2=A0=C2=A0 26.895725] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 26.895730] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 26.943715] iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION:=
+ 0x20
+> [=C2=A0=C2=A0 26.943746] iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION=
+: 0x1f
+> [=C2=A0=C2=A0 26.943755] iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+> [=C2=A0=C2=A0 26.943765] iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x0
+> [=C2=A0=C2=A0 26.944901] iwlwifi 0000:00:14.3: RFIm is deactivated, reaso=
+n =3D 5
+> [=C2=A0=C2=A0 27.045437] iwlwifi 0000:00:14.3: Registered PHC clock: iwlw=
+ifi-
+> PTP, with index: 0
+> [=C2=A0=C2=A0 27.098590] VBoxNetFlt: Successfully started.
+> [=C2=A0=C2=A0 27.101687] VBoxNetAdp: Successfully started.
+> [=C2=A0=C2=A0 27.153602] bridge: filtering via arp/ip/ip6tables is no lon=
+ger
+> available by default. Update your scripts to load br_netfilter if you
+> need this.
+> [=C2=A0=C2=A0 27.851014] loop14: detected capacity change from 0 to 8
+> [=C2=A0=C2=A0 27.895706] r8169 0000:6c:00.0: invalid VPD tag 0xff (size 0=
+) at
+> offset 0; assume missing optional EEPROM
+> [=C2=A0=C2=A0 28.898015] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 28.898021] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 31.900781] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 31.900788] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 33.959448] Bluetooth: RFCOMM TTY layer initialized
+> [=C2=A0=C2=A0 33.959456] Bluetooth: RFCOMM socket layer initialized
+> [=C2=A0=C2=A0 33.959462] Bluetooth: RFCOMM ver 1.11
+> [=C2=A0=C2=A0 36.903768] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 36.903777] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 38.054345] systemd-journald[883]:
+> /var/log/journal/a9e8e3d2041547169b107e1e1a23f2ce/user-1000.journal:
+> Journal file uses a different sequence number ID, rotating.
+> [=C2=A0=C2=A0 39.799560] warning: `kded5' uses wireless extensions which =
+will
+> stop working for Wi-Fi 7 hardware; use nl80211
+> [=C2=A0=C2=A0 40.884365] wlp0s20f3: authenticate with 18:ee:86:8b:16:a2 (=
+local
+> address=3D98:bd:80:8a:e9:27)
+> [=C2=A0=C2=A0 40.885147] wlp0s20f3: send auth to 18:ee:86:8b:16:a2 (try 1=
+/3)
+> [=C2=A0=C2=A0 40.968595] wlp0s20f3: authenticate with 18:ee:86:8b:16:a2 (=
+local
+> address=3D98:bd:80:8a:e9:27)
+> [=C2=A0=C2=A0 40.968603] wlp0s20f3: send auth to 18:ee:86:8b:16:a2 (try 1=
+/3)
+> [=C2=A0=C2=A0 40.980941] wlp0s20f3: authenticated
+> [=C2=A0=C2=A0 40.981904] wlp0s20f3: associate with 18:ee:86:8b:16:a2 (try=
+ 1/3)
+> [=C2=A0=C2=A0 41.042933] wlp0s20f3: RX AssocResp from 18:ee:86:8b:16:a2
+> (capab=3D0x1431 status=3D0 aid=3D14)
+> [=C2=A0=C2=A0 41.046917] wlp0s20f3: associated
+>=20
+> If you post the patch, I'm happy to add a `Tested-by` tag for it.
+> Thank you for your help!
+>=20
+> > Thanks,
+> > Srinivas
+>=20
 
