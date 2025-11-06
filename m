@@ -1,127 +1,211 @@
-Return-Path: <linux-kernel+bounces-889096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D1DC3CBC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:10:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB846C3CB88
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:09:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34190567260
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:03:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59A634F4354
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A4233F8A2;
-	Thu,  6 Nov 2025 17:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2D233342D;
+	Thu,  6 Nov 2025 17:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gdxv0LZR"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7F6145B3E;
-	Thu,  6 Nov 2025 17:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXcZJFdY"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416B534D917
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 17:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762448598; cv=none; b=VcCazA/FvrpRlz1rmtr8UkKLA2p7saMfwsxbQBztekIoyXILtxcpokxgvXhNbe0lXZiIuUbe+T1OgQSas5mUxIM3gY7ZA11QN/aifySfw9ajcZ1A/RCNKFycEuomTANiEVUnDTgI8PojoXZMM+YXEcIxJh2n7X/Fux7EWkfwM5g=
+	t=1762448649; cv=none; b=NtpW7+QfwDwBqn6G+hGCMJ+zEFWGng3Hb22C1IWhPkyrea8/9bdrhmv4HSzEvrNuLO5Y9WaPA+D7kTumaFyQ+Wib0uRAyNEYiiB/PdQGeH8BC1KSHBB0fsWMNO9PTqLW7oUw1ck4uukyDAVRJqj0hM5H6Py8yoz/diLCgc5nh9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762448598; c=relaxed/simple;
-	bh=rrWu3nzkmdhuH0jhgfW2/CmpbQhyqs3JLeD+VZ7jPCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oMR8ZCXWRQxQWsfWCjcBrZpKS/6GgP033MRn3cSfa4AtRp6sCdC6a0O8SJGFqLhmUpqK2Nv1vF8dX+hThHyfwo8DENRVPZsxWTG0n1ByMld7nXJAm8iP/7j/sKoQ1O87Dgwu0F+mcM3OGW+0d7hMGjLjvuqe3eMmEUvKOLUQdzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gdxv0LZR; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.225.81] (unknown [4.194.122.144])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0969F201CEF4;
-	Thu,  6 Nov 2025 09:03:09 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0969F201CEF4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762448596;
-	bh=hnrJlGbkpTWpmJ1hPVp7S4M/nbBQSXDCGRX4VjItaHI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gdxv0LZRkhrpyU2ztf+w32wy4FxEJy5kkqlsJbzzCTC/EamZckh0xFUwEzlXQsHSB
-	 FSazdWB3i+BtPLh7Tr3EIGFjecbnnrj2tYX35lgd9Mxt3SUdqnY79zZWzCrNVMoIwi
-	 FaZarYA2GbXmCq0wh/IzuYzcZVb0FLPVY4QULfnI=
-Message-ID: <c7e53740-ed96-470c-b16a-46061a9dfac7@linux.microsoft.com>
-Date: Thu, 6 Nov 2025 22:33:06 +0530
+	s=arc-20240116; t=1762448649; c=relaxed/simple;
+	bh=ooTjmqxoccW01NUKc0gS4keVxfN97wLoRDyeWtsB1zY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pJ1YdC2zeuVuJw7cri53z320zXPKJteDT+Y2MJt2Vng8eR20rDFUvCOIbLZiyMyhoYY7jn3UYjBslAbpY+XHQ4LC3SeNK4DWfh3SyyGe/NFv0PFE9AWCrtkZC7oGYbvRNsV2Xw9AdWZCUTacBstIgXUNUp2m9VbabuScc2EpNp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXcZJFdY; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b7291af7190so162031066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 09:04:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762448645; x=1763053445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ooTjmqxoccW01NUKc0gS4keVxfN97wLoRDyeWtsB1zY=;
+        b=YXcZJFdYZZt4bUpTXslGWVV6FNHqCGkOhaPwGV5aIpIXvNQ7lgENRMnf8ZUq12Xvc+
+         6CjLV4KJCP1jWJmggXgpzrRO52Rtng59NcIOUAcHqf30tMOTK+/gowwLXcTVdlLVJ9ET
+         +31xvTIXbs/VBcZwWwkl3WfB5urXunRG280XbcKvSiZgG7qaPQT5DRpsjUSlWFIVASdN
+         oQN1SL0H5b3HsEJFidkmZTYYSL13v+ilhTBnJGDPyrJbasqgXk7HikW3VSRuk6PQlY/n
+         JDiOz3WpPScJXojGKmwy0E7jJ4nBn8TTuQO2yobqVcmxsdo0iiw0cX7LFts3kyUdjuQJ
+         p5dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762448645; x=1763053445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ooTjmqxoccW01NUKc0gS4keVxfN97wLoRDyeWtsB1zY=;
+        b=FE/Vf/ASgEnZazHhqsESxeG3E7I99yVjftpPqalKzGrdczt81EPJanKEeayKcPYRtD
+         ls6Sv8y3LU+GLaPEywe6Zf+YztsF3FbQUJmsnzVpG0dFEZbKi0DcBfGewJ1qhW58iwug
+         T9i6Rf9NZQ0zA6Ho+tUfxfEyGrzdGTgUPs2b9zDuCjqy5OoXxFF6FlENDLq+o6dEXurK
+         qb7tEkic5cOJf8Fhc10fJmD5sw66kOSU1Bmnota4No/IprJ7UyawZYQRq0HLbN8pih0T
+         76iPOi4HIHVDH9IETbWlnclnsbcrdpCGtmJlyU/YvAyzP4AlgHzQ1QSpmLoANtJCxV4T
+         +IyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWT5GD877OSziAfQaiF8p39sd09PTZgslsAwhRLf2PcC8GE1++8cGOqhsSPOb9dCqoxbWep4Dc5dFiaSjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpUyx6wHGSetIWxb2hFcSzGFZWZLPax5OLPH2N14LCKcxLlY22
+	aWNT9L89+rDETvde742hveP4mhInJq94WXZxfYXvFHrybm4fTn+Q653n/QlFks0K4JTw5vnR8D6
+	NOW3zUZTBiHGksoYoww8AGywcs+lWiiw=
+X-Gm-Gg: ASbGncuGi4m0mPvBv+0ePx4eVd2CCShG/kzeJXcspdtYQ6dxhxO/3IytLfVv9sflBXf
+	DfuSnlc12WGMNsVrUGqfGAVvygqgL6WcqIBFMzUl+3iX5IuU5/dzWflVEtckREuIw3fOACvurEb
+	ToraKmi3vxv9URcw+iMtTIQ/SJY14Ukgi5XezlDI7kg7bSvMOKd0HxidLyfM0M9Y8UjGDNhBtKz
+	Cf8rsg3dGCCYtO71LYA/+Q9398TAeowA1GEq/79Ud5LFgUcrTeu3r65CYIHM0S1vcX8VN/qMT+k
+	i8bKQif2j7E=
+X-Google-Smtp-Source: AGHT+IHNlxtI/JVMPHyR2Z3tqo6lrMJ91iBd+Gb9TQGi/Q/RZ1cmuJNwlQvKQ2BQLxtl3dEXYaCjoMJZUAcjOf81P2Q=
+X-Received: by 2002:a17:907:d644:b0:b72:adfe:10a9 with SMTP id
+ a640c23a62f3a-b72adfe1230mr193936366b.11.1762448645279; Thu, 06 Nov 2025
+ 09:04:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Mukesh Rathor <mrathor@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- Christoph Hellwig <hch@infradead.org>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>
-References: <20251029050139.46545-1-namjain@linux.microsoft.com>
- <20251029050139.46545-3-namjain@linux.microsoft.com>
- <SN6PR02MB41574847FF9B66A3D7321167D4C2A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41574847FF9B66A3D7321167D4C2A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251026030143.23807-1-dongml2@chinatelecom.cn>
+ <CAEf4BzZcrWCyC3DhNoefJsWNUhE46_yu0d3XyJZttQ8sRRpyag@mail.gmail.com>
+ <CAADnVQ+ZuQS_RSFL8ThrDkZwSygX2Rx49LBAcMpiv3y4nnYunQ@mail.gmail.com> <3660175.iIbC2pHGDl@7950hx>
+In-Reply-To: <3660175.iIbC2pHGDl@7950hx>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 6 Nov 2025 09:03:48 -0800
+X-Gm-Features: AWmQ_blXHVq0CyBxiR3axWozOfhTXkCji6HUu3bJQHr4b4xjx0v3XaMrOqRyL3g
+Message-ID: <CAEf4BzZoyrSdV6SbcA7in=51==en2aoEcmvS6=vz-fixLS9M_A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting
+ for x86_64
+To: Menglong Dong <menglong.dong@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Menglong Dong <menglong8.dong@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Nov 6, 2025 at 4:15=E2=80=AFAM Menglong Dong <menglong.dong@linux.d=
+ev> wrote:
+>
+> On 2025/11/6 06:00, Alexei Starovoitov wrote:
+> > On Wed, Nov 5, 2025 at 9:30=E2=80=AFAM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Tue, Nov 4, 2025 at 6:43=E2=80=AFPM Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
+> > > >
+> > > > On Tue, Nov 4, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
+> > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > >
+> [......]
+> > > >
+> > > > Instead of all that I have a different suggestion...
+> > > >
+> > > > how about we introduce this "session" attach type,
+> > > > but won't mess with trampoline and whole new session->nr_links.
+> > > > Instead the same prog can be added to 'fentry' list
+> > > > and 'fexit' list.
+> > > > We lose the ability to skip fexit, but I'm still not convinced
+> > > > it's necessary.
+> > > > The biggest benefit is that it will work for existing JITs and tram=
+polines.
+> > > > No new complex asm will be necessary.
+> > > > As far as writable session_cookie ...
+> > > > let's add another 8 byte space to bpf_tramp_run_ctx
+> > > > and only allow single 'fsession' prog for a given kernel function.
+> > > > Again to avoid changing all trampolines.
+> > > > This way the feature can be implemented purely in C and no arch
+> > > > specific changes.
+> > > > It's more limited, but doesn't sound that the use case for multiple
+> > > > fsession-s exist. All this is on/off tracing. Not something
+> > > > that will be attached 24/7.
+> > >
+> > > I'd rather not have a feature at all, than have a feature that might
+> > > or might not work depending on circumstances I don't control. If
+> > > someone happens to be using fsession program on the same kernel
+> > > function I happen to be tracing (e.g., with retsnoop), random failure
+> > > to attach would be maddening to debug.
+> >
+> > fentry won't conflict with fsession. I'm proposing
+> > the limit of fsession-s to 1. Due to stack usage there gotta be
+>
+> I think Andrii means that the problem is the limiting the fsession to
+> 1, which can make we attach fail if someone else has already attach
+> it.
+>
 
+Yeah, I wasn't worried about fsession vs fentry interactions. I was
+(still am) worried that whenever I'll be deciding to use fsession I'd
+have to think about (and implement) fallback plan in case fsession
+attachment fails because (presumably) someone else already used
+fsession on the function. Just too much hassle to bother with fsession
+at that point.
 
-On 11/6/2025 8:24 PM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Tuesday, October 28, 2025 10:02 PM
->>
->> Provide an interface for Virtual Machine Monitor like OpenVMM and its
->> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
->> Expose devices and support IOCTLs for features like VTL creation,
->> VTL0 memory management, context switch, making hypercalls,
->> mapping VTL0 address space to VTL2 userspace, getting new VMBus
->> messages and channel events in VTL2 etc.
->>
->> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> ---
->>   arch/x86/hyperv/Makefile           |   10 +-
->>   arch/x86/hyperv/hv_vtl.c           |   43 +
->>   arch/x86/hyperv/mshv-asm-offsets.c |   37 +
->>   arch/x86/hyperv/mshv_vtl_asm.S     |   98 ++
->>   arch/x86/include/asm/mshyperv.h    |   34 +
->>   drivers/hv/Kconfig                 |   26 +-
->>   drivers/hv/Makefile                |    7 +-
->>   drivers/hv/mshv_vtl.h              |   25 +
->>   drivers/hv/mshv_vtl_main.c         | 1392 ++++++++++++++++++++++++++++
->>   include/hyperv/hvgdk_mini.h        |  106 +++
->>   include/uapi/linux/mshv.h          |   80 ++
->>   11 files changed, 1855 insertions(+), 3 deletions(-)
->>   create mode 100644 arch/x86/hyperv/mshv-asm-offsets.c
->>   create mode 100644 arch/x86/hyperv/mshv_vtl_asm.S
->>   create mode 100644 drivers/hv/mshv_vtl.h
->>   create mode 100644 drivers/hv/mshv_vtl_main.c
->>
-> 
-> I've reviewed and made suggestions on most of this code pretty
-> carefully over the past few months and through 10 revisions. This
-> version addresses my suggestions and looks good to me. There
-> are a few areas, such as the assembly code in mshv_vtl_asm.S and
-> the details of the hypervisor ABI for doing VTL Return, that are
-> outside my area of expertise so I'm limited to a surface level
-> review.
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+> If we want to limit the stack usage, I think what we should limit is
+> the count of the fsession progs that use session cookie, rather the
+> count of the fsessions.
+>
+> I understand your idea that add the prog to both fentry and fexit list
+> instead of introducing a BPF_TRAMP_SESSION in the progs_hlist.
+> However, we still have to modify the arch stuff, as we need to store the
+> "bpf_fsession_return". What's more, it's a little complex to add a prog
+> to both fentry and fexit list, as bpf_tramp_link doesn't support such
+> operation.
+>
+> So I think it's more clear to keep current logic. As Andrii suggested,
+> we can reuse the nr_args, and no more room will be used on the
+> stack, except the session cookies.
+>
+> As for the session cookies, how about we limit its number? For example,
+> only 4 session cookies are allowed to be used on a target, which
+> I think should be enough.
 
-Thanks for the review Michael.
+I think Alexei's concern is not so much stack space usage
+(realistically you will almost never have more that 1-2-3
+fsessions+fentry+fexit programs per trampoline), his concern is code
+complexity in arch-specific trampoline generation code. And I share
+the concern. But if we do support 4 session cookies, we might as well
+just not put any artificial limits because code complexity-wise this
+won't change anything.
 
-Regards
-Naman
+So I think we should decide whether we add fsession with session
+cookie as a concept, and if yes, then not add unnecessary
+restrictions, as at that point the code complexity won't really change
+much.
+
+>
+> I can remove the "fexit skipping" part to make the trampoline simpler
+> if you prefer, which I'm OK, considering the optimization I'm making
+> to the origin call in x86_64.
+>
+> Therefore, the logic won't be complex, just reserve the room for the
+> session cookies and the call to invoke_bpf().
+>
+> Thanks!
+> Menglong Dong
+>
+> > a limit anyway. I say, 32 is really the max. which is 256 bytes
+> > for cookies plus all the stack usage for args, nr_args, run_ctx, etc.
+> > Total of under 512 is ok.
+> > So tooling would have to deal with the limit regardless.
+> >
+>
+>
+>
+>
 
