@@ -1,221 +1,351 @@
-Return-Path: <linux-kernel+bounces-887735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA5EC38FB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:34:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0A5C38FFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 04:37:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1977A4F707E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7AA189657E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 03:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314E42C11C7;
-	Thu,  6 Nov 2025 03:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AF725B30D;
+	Thu,  6 Nov 2025 03:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZsgkFQzV";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LVDzCZBC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DT172/GJ"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013007.outbound.protection.outlook.com [52.101.83.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E722C0F78
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 03:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762399851; cv=none; b=DBI3EBSocDgT9rLZJXi8DGYqlgWlIOJqqBvCXizFjLLD/1aIuhdPVvn+5CfP9a5jTJlgHrYKdrJYkOgtH76VNJu6OsECnaiWGqfxW8UXbLnQKmB9B9Tpl0vaXco0xQ+9cZGWm2dBauGTKGI8/lNAW701J9tlLYhnE+ycrXA+9HE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762399851; c=relaxed/simple;
-	bh=qJb7NKtP7BXOcePFVLUH4KlNlOEuEnolQugxAYnTO7c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GJFHNkQAnhwGH5IonR7yAPPlSQ1eM93LnGZHRqVkG2YwysBSC3Sq6NRE0B/dgsvHNd692PWzM1tjsi5eagxbSU+YUCBSoXV74MoWSlwp6wVPwrR0eDJg/GkKz1Nvjweq9+Uc+CT9+dEvIgAC6tHM/i02YhV2mvfr+Qfa5/gqxYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZsgkFQzV; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LVDzCZBC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A5KFAR31656876
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 03:30:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OvPKp/XZNM2PzOQ7/u/SpcYLmO4fMzfvUCxKd6PJgI8=; b=ZsgkFQzVmth4pPMJ
-	e3c4LOduI3mQbqUFCP9tQJ7VyplHKRGU4JaYzN40auyfTI4fvnj3dLschWW1rS6i
-	DrCexryDJTJn2cZQRsGAmMYoo4GiGqXaorNIigMCqZqdW4LGkOZXIc/6S+KaaHMl
-	snoP5+9Z5Se1wOI8BzZ/NS8hkeErR8Kfh1ORXBM5IogLaKQqFbWp2HuXBY0g5nAF
-	Nk1pWxPtU/f7lbemtiGHVcUb+zN2IQ9IkmtV6K0qtyaLdk0XhjbYME7iHl6bt8EW
-	RlvA0DmBumSC2hxDcj40Lg8q2ZoCTksUvoTMDQ9Mk6WaDfCOUwsv8QsGPXzOjtfZ
-	I3R/5A==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8831a6se-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:30:48 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-29555415c09so6691065ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 19:30:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762399848; x=1763004648; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OvPKp/XZNM2PzOQ7/u/SpcYLmO4fMzfvUCxKd6PJgI8=;
-        b=LVDzCZBC0gZPjcMAfxDDp+c3cKIGIW0u+hBESGAPlkawDXwPMopnylq8wqBsXZuluM
-         vjJAbWGS3Je7iuYY6EGRoQDk7YE3RdT+o39H2CNYRRTOPBSgJyOfoD7iJxDZfiABud18
-         tYZVPQCNnh8vAzqNSGmCQQSeMSv7kjA/uG7xdEDslr8LSy4RCzzO7DKpa694mKmCiC3K
-         +VUDJPKrwqTMxrXaqn8y9TndxNJaWJSOm/PLkyXGelhYpMZ4HVH6Ozwe60Txqpz+SBe4
-         6iNVqT8mpxWjUcZiERFzAfX0qg8va7nrcSYaVUe7MtUOkLglmVMWX9+/CncraVvwhzdf
-         Pqng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762399848; x=1763004648;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OvPKp/XZNM2PzOQ7/u/SpcYLmO4fMzfvUCxKd6PJgI8=;
-        b=uSlwqEE49KVre1rozpv4FzDsDHUhlsxyPTMcM4oOS9OraWGCyWondqnznrXVpf5jen
-         OqOav6P9Rua8LYNAuCm0CNtuD5s9MwmQVAlXBIBi9TQztxJMtm3VNL57+hYO3mgrlFOs
-         x7HcL7rYUO4nUF5kCFL4SoAeygGWIjLbnrLY2wOBnPDY0n7AbQJYTB7goQQFHI0p2Azk
-         EsPeuBZ5mEe5GnWMcfq/T0PnUs+xlsFUqPZJplCnVl7Ht6cIwJxR78mGiRvn7Yp7Qzwf
-         G786IveK2/Y22ls7kScvLdd3yrTnpp5rbRlL7Yi+cZwAjXco4RmPfzyZD2AzZZcfKHuS
-         VJ3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDGdjDIZNrVhdMDt3QxRshR8NavXuuM/j0+cJoeot8iIKUiyA2M/fUYDXfv1A4P8SxlU0mjcwAVYXvWcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWxzuMmqjheBuP6T7TX+UCHK4ba3nARvMn+J+kEeid1mjXIYpP
-	maXBWZdYeLMh+Le/0TVGUnUWWMCjmRoWflGZvvm5i/DMEDI7OGFcS7tK3WNu3JczpG2s1E2Fij6
-	7TTESS8CBko++dQKYWuqJ+sm3bYnHjbrNMkbxkqV5CfB8kXM6f2uGyzCFVqJLm3e6NOA=
-X-Gm-Gg: ASbGncthd+l2YusvTcqwYtiBel4u9zMqqiPsYuqjjrBobwHDreK2EndYFMqvhGfVauk
-	V1d6IG3CdsYtK8hrfV5R8aKuDK/uUyE67JgjN3UHEnLkTE8X8OndT5UnC0hcThJ10tjWrJpxuV6
-	wrdpPGimBTnbr2b8qnEBHBnaxY59kYnBZ+EfKrv8SCLSNoNdoNYNqSncN8XC6Bhk1F2mR6+czmd
-	67Ai/vlAxZkCG3eN0m2GmdeFs/XPri5CaNWF2NSIMWUeGcjKQk8GJGD941u47jLjbYKpeAVzfVb
-	JOJEsMO/bVzmPGU1gt41x+IVMFdFrGvpGv1mPDuG25yiQunv9LnC93nJDVHKyU9D6AtmMqPuTne
-	t/brZTJuKxnRQaU5M9jNk8En1To5dgwz5+g7/X4xUvavhx021noLVTgTRhLhkuvwxIw5+WvN+7A
-	==
-X-Received: by 2002:a17:903:1b6f:b0:295:5132:1aa5 with SMTP id d9443c01a7336-2962ae9ae81mr75418855ad.55.1762399848177;
-        Wed, 05 Nov 2025 19:30:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEv2NP3ANxlqrvF/FIb5iVXRiT3DT25+JxcO10XbpL3VFfkhhp2sKCiW4RWCuurF5kPljO4oA==
-X-Received: by 2002:a17:903:1b6f:b0:295:5132:1aa5 with SMTP id d9443c01a7336-2962ae9ae81mr75418435ad.55.1762399847641;
-        Wed, 05 Nov 2025 19:30:47 -0800 (PST)
-Received: from WANGAOW-LAB01.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651cd0060sm10361925ad.108.2025.11.05.19.30.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 19:30:47 -0800 (PST)
-From: Wangao Wang <wangao.wang@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB702E06D2;
+	Thu,  6 Nov 2025 03:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762399895; cv=fail; b=levxyL/j/5lTZ4Z/4fJ275e0Giu03o1RAUmQE8sk9g4nA4i4DWVNTZ4wXVudQ7F7H1vS4xHfSSyhsK8Ya+TZ+q/1wMsq+AdXFTicagee4yP6a9PKsnm76kVEwPreRBZUsZjOCZB5CQxYE+1zGkoyJ8hzti4HfZcEWKMGupARfvE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762399895; c=relaxed/simple;
+	bh=Kfgs/vF82eWV1bNh0E+Y7nXzmmVLX4GlUMjPOkJRabk=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=Qg25yFp/RUCrfiEbYEfIdpYrb/nSkNr4uJXnik9Cl6ICyYlMckhD/eASAIp9lIPcQ1eWgeZw0mjTJhxJCthm/RQ8ZMYAUhaCD+X4QAO6bVbcoI41OvdRDsMyC7sAibE3HZYY82Qk9LsBq43XT3tfceofrdFNLrElvq68dTTBbhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DT172/GJ; arc=fail smtp.client-ip=52.101.83.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E85EkrPWyxTQiRt4eD4ydUL/2rpQAftVyKEynDc4HoIePtMebaElamEpqcbOI8Js5Ycovfwtuu00ePprRRtRXCgOoaQ3ECKi7bp7fDWfJkpHagmCTkS8Z6xwJlAMRCUZTv6LGRRWH6OgtCRke26wCi+S1DtvEnwGzJIaqzig3vOcqDcai6oGyZBHx4EPaUyra5ogfInGpAxysmsYKGt5nL1nk6WDVBjqjaaotlJt9LoNqpK99ThvGfCZDrukDvp4c0Z/ORNkRmyTu46dWwshyyhRGOP0CZdjr1K5BhJ9B7kV39TC9LYV36Bc2qU5h0iRGBkwOtBmtHp+njJhRI4YiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CJQRzwyv9hGdcFinz3mJ/IkcxW6QFlg69+WbpJe0g9o=;
+ b=hKm6hSgoUktkRer3h9XtVzfC6pZAQm9TjnAs327mec3e3GGN2VpyW3JgelfRFDY6u5ALSkwMa7oXOzMDkOFL1X9z5vLw+ZHePIVAINnRhKI820d3RArt0TsNCQLXwzQpNBOWtsHcEJ+RhnoXTvsXhWf6Du7KO1mrBMYgzS18J9Ml0GkIkeTu8FgSnOFRiSMTMazO4KT8MglfXgAHeFW0ZC3JOEiQp2Xdx35kAoTjzRUgZO4Ovhdp8NQgXC2QewnGT/nioP8OZabAqVlyaWpi0X7D66s/CL8wKRBPdAE9Z5QZodtR4/WDaOxyebrljipZDcTrFyuDFCqKO6IbdA+lWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CJQRzwyv9hGdcFinz3mJ/IkcxW6QFlg69+WbpJe0g9o=;
+ b=DT172/GJUaFPuy8gz3X/3FX6mUANSLuBYeCd7y5X8TATksrj0m/lZAk/zcvpNILHn4cDNLg6r1qrYkaObJL29U+hszV6mshzBPiOgVqRKcxhxKo9ARJ5w37z0SOdsOAXRpj4BRMFOel3GtH9il13zo9I8E6TTRx6BpudoV2r25iQ1cGHJ6qSr0yRX32yjfYHoNwDREYtv3u50De+5RVWqHsYlE/MnwsnbypLFyPaM8sDH6/mSLb6UzdQi5NVp4BqNgsoLjPv63i8ssHLOkQKa3hBLNAxYULUR5vK6krB0fAAUD058AOcNLwyFf9AfWnnL/pFVSCMvL3PIJmKXzuP+w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI1PR04MB6813.eurprd04.prod.outlook.com (2603:10a6:803:13c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
+ 2025 03:31:30 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
+ 03:31:30 +0000
+From: Peng Fan <peng.fan@nxp.com>
 Date: Thu, 06 Nov 2025 11:30:34 +0800
-Subject: [PATCH v4 2/6] media: qcom: iris: Improve crop_offset handling for
- encoder
+Subject: [PATCH 08/11] remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_MMIO
+ switch case
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251106-imx-dsp-2025-11-06-v1-8-46028bc3459a@nxp.com>
+References: <20251106-imx-dsp-2025-11-06-v1-0-46028bc3459a@nxp.com>
+In-Reply-To: <20251106-imx-dsp-2025-11-06-v1-0-46028bc3459a@nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>, 
+ Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762399839; l=5452;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=Kfgs/vF82eWV1bNh0E+Y7nXzmmVLX4GlUMjPOkJRabk=;
+ b=Tp0YWMcFvS5m7XHo08CYkUe4JUf3ySBCBhdwpukkZ8Xsz7xq9VPoJpeGJKbyXfvcTGLv+kvrW
+ KsXWfRMP82CC9CoUuq8Bw1NiKyaEPg3CdOlNxacB6wNMrjOucsn3viu
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SG2P153CA0028.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::15)
+ To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-iris_encoder_enhancements-v4-2-5d6cff963f1b@oss.qualcomm.com>
-References: <20251106-iris_encoder_enhancements-v4-0-5d6cff963f1b@oss.qualcomm.com>
-In-Reply-To: <20251106-iris_encoder_enhancements-v4-0-5d6cff963f1b@oss.qualcomm.com>
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wangao Wang <wangao.wang@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>, quic_qiweil@quicinc.com,
-        quic_renjiang@quicinc.com
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762399836; l=2880;
- i=wangao.wang@oss.qualcomm.com; s=20251021; h=from:subject:message-id;
- bh=qJb7NKtP7BXOcePFVLUH4KlNlOEuEnolQugxAYnTO7c=;
- b=2F6gp3sW6wOu+3Uds/IHQam6HdnLR0lRJdvIzRoHsFpQui/qgQ4rWcpsu89ySa/C81Irt0yKc
- GjmXJC+lqF8Dc7asip64hLvk+T4KewN78GMDVeXHsIlIk402wLffpIT
-X-Developer-Key: i=wangao.wang@oss.qualcomm.com; a=ed25519;
- pk=bUPgYblBUAsoPyGfssbNR7ZXUSGF8v1VF4FJzSO6/aA=
-X-Proofpoint-ORIG-GUID: vfA8pKTrIm1uvCrPaNxUy-kvm_4Y684O
-X-Proofpoint-GUID: vfA8pKTrIm1uvCrPaNxUy-kvm_4Y684O
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDAyNiBTYWx0ZWRfX+ncwFThIEXnJ
- ZHMnZ3ha5f8Bm0/wcxCvOrefm2cMoBcbu1nerbGq+oA29v7pNxejZIbB26hqgf3qfTqCdmlXXLw
- HSCsNwP2fh2nixUdyanQXaWt+k6HzJDWRBRiNn77B09zjTwlbEFBzj6Ai3ZUYbGk5qFY02lKPjC
- leaCFSNPWRw35U/GmtUPhDeOAJSPLLLvHPd0gF1h3EcTonZbEa+T87pF2fNgO0l1XAqalNvwWq+
- fZ2LVzolS3knQtyMs5KirO/g5GtS6xODm1H8xigq/7ixyRw8If4roSlUKM37fQ58FKKPx4u+FBD
- cQH+D81TONMI/P1nds6g7x7Lwm7MjqcwG+9HWxXMYDUSQrCWMlThydSp4iPRyCxZ0dmsb9PPMM9
- pnOjCls+OqoEzZNJnvfMv3vWqrE7YA==
-X-Authority-Analysis: v=2.4 cv=Mdhhep/f c=1 sm=1 tr=0 ts=690c1668 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=ZGEL9ByRZDbVprvkw1YA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-05_09,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- suspectscore=0 spamscore=0 clxscore=1015 malwarescore=0 adultscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060026
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI1PR04MB6813:EE_
+X-MS-Office365-Filtering-Correlation-Id: d67c66e6-1c1d-4616-2228-08de1ce4f9a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|19092799006|366016|7416014|376014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WFdpMUh1OHFoR3AvMEZIeGQ4bWhINXZRaDN3dFBpejZxSE1jbndYSmh2VExq?=
+ =?utf-8?B?M2VjNURDbUxNOEhXKzlTWHpKZ1NmUkRyTnhqQVZUdWFJTkhhU0hQSnBYSzBV?=
+ =?utf-8?B?T1FManIrK2tkbTEvWDV6UCtIVU5NSGxVd01aOTBwMU9xdC9sQ3k3VWZadmpX?=
+ =?utf-8?B?aGtxdjN5SFVQV2RBTmpOVlFMVGlvUkh1UGZyZkxXc3pxOXA1OXFBWXZzS2F3?=
+ =?utf-8?B?ZTNET3VpMTF1WFYwUEhtM2ZQU2ozRFdmZW9sOW0yVEtYcDE0cjhTMzdzNTY0?=
+ =?utf-8?B?a0RCTVhQNnE0ekpoU0J3SHdRczNPRXBkeW1QOHVHUXkxZmJGRUJtcHhwVHBs?=
+ =?utf-8?B?eDBNbis0akNuNVU5ZlpmdWoyYmNXTGdUNkhMY3lZR2QrRVZIa2pYTEtIWUNI?=
+ =?utf-8?B?THo1b0ZqM1QxamdDZGtOUW5kMWFsUUsxaDhOMFNnbzJpVnR2YzRFblpqQW5m?=
+ =?utf-8?B?M0I3NkFYMmlyamVsSUlHRVR6SFdLSG8yb3c5d1RVcmhOc0pCYUgwbmJYMmJR?=
+ =?utf-8?B?eXovcW5VK0x4YXNKaFR1cXFNejhKbTAwdXZkZ2t3S0JLUmlmdUU0M0ZsK2VY?=
+ =?utf-8?B?RUtER1FvZERhVEpacHV6a0gwMjF3Ym8zaXlOVjExQkQwa3FLQ0ZwazVVMkdu?=
+ =?utf-8?B?d3d1VExxQ3dXaXZsUEFFKzBnaGdCTE5qQ29qQWc4aFRSWGpydkxsUkE2cjBk?=
+ =?utf-8?B?cHF2YTFzVWhyckJJOGFkZSs4MW84VjgzUnpiekNsbng0a3F2cVpsb0FXdW9v?=
+ =?utf-8?B?WUdwd3AzaHR0eEtOczJTaklOazJNMlllNFBWdlRSRm1jMHd4QVZRL0NpbWor?=
+ =?utf-8?B?dEtDbkNPZndES3ZqY3hSWGlJU1FwS0xuNC9qZHBEeDZpcEdGWm1HL1hFTDdl?=
+ =?utf-8?B?cHZZWHhXS0JLcDRwTU0vZEhUN0xjaklKd1F3ZHQwa09CdGI5RER6NVZmNytw?=
+ =?utf-8?B?Qi85RGN4a1pqSGtKMC83eG5NSWpTTUV1Y1h2dU5GWjVSdkdtcEV0Z2RFSGJV?=
+ =?utf-8?B?YzJOSHNHL2I5Mlpha1JFbklUNllZb3VKVEpNbnNsdkFZdXFsQ3FTMC9WNkZY?=
+ =?utf-8?B?S2ZubFdRWFZEWlYrNXFJUE9mb2JwaUtpSkU1VHhySkVDZ1RIeDBhblVkRk92?=
+ =?utf-8?B?dkJyU1NTWGNQcW10TjFlbWhIRnFiMEdxQXh3K1hKSVQxQTMzMkdBdjlsOTJn?=
+ =?utf-8?B?T21EdlJWOTNWTVJmUGxPZzRTQWI2QzVwZEdvNk9tcm1CN3M1aGUrNVBNRjV2?=
+ =?utf-8?B?QWVUVndSUXJWSjJKS0w4cHpqVldPbGdmOURPU29BTEJhVW5YSk9pYmgrUm8r?=
+ =?utf-8?B?SXQyVlJMSFY2MXFFWXU2SFM5RmtPOUs0TS9LOGpGTWJDbGtyNW1XdDByUnVR?=
+ =?utf-8?B?Q0RqckJHVG5ENkg1YnVRSnJPREVNRldLTnQ2RVVYTkRuWE9LUkM5ZUlrZnNw?=
+ =?utf-8?B?MzNlMEFMWmJjdGwwVHAvNVU4Yk1GcXg1S1grbnJzdjArQ3pYZkc2ZWt0eFFk?=
+ =?utf-8?B?ZHBRUEtLN2diNDJHZ21MczN2UU03bnFMeXczdDdLK01rTjNuMW1RYUQ1RHVF?=
+ =?utf-8?B?a21QM25TQmllalEyTzZnVVFXbUtYUUt6bGdyR1o1QzlyMUc2amwrdXRYdi9V?=
+ =?utf-8?B?dXlySnRZcXlPZ2lsT0NOZnB2ZFZWOFVEdUJoK25sUm9EdUo4aFJvTmRhM0xB?=
+ =?utf-8?B?N1ZwZHpMS29kMU1yL1hnMU8vTTZZcjlqb3gwTE9GeEJhSUVwTEF3TFM3eG1r?=
+ =?utf-8?B?QzI2TUNvdlp0S3ZFOTllZ1lyZzQrVUtOL3oxakFTWGtzMXdOZm9RQTI3RGFy?=
+ =?utf-8?B?aGc5WjlyT3B3V3ByMDIzV2UvWTBMc1o3TWxtV0FlRnhkb1RuSjBlZDU0b2xF?=
+ =?utf-8?B?bHI5WVFJRGEzU1hZSlRSSm1UeEU0Z3gyL0xKbC9LVVN0WWZrUGlDendMczNU?=
+ =?utf-8?B?VERzbGVBNWZxM09KZXh4QkQwazlETUpraytEaVVHd3p0dkFhTzk4MEwreXBj?=
+ =?utf-8?B?cm9uZGJqUGNpYUpzZEl2M3hRZmk1NytmZ3ZRODlTNzVpczN1b2s4TFZ6UG10?=
+ =?utf-8?B?ZTJKMFdlNGZ3NEl6VnBqNlZXT1MzdUtsd1FQZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(366016)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dWhDOUNpM0xrQnNkUWlmZWtvV0FnNkQwRktlQnJtZ2lVb1oxbng2ZFhaaTRy?=
+ =?utf-8?B?VmpWZFYwTkRxdDIrajFqcFg2NTVBMGpXdDZ4SzJZZitpMzNxTWxKN3FGRWlQ?=
+ =?utf-8?B?VXo5eGUvM2I0elRHSHdibmtFd211NWlPZDJZc2I4Mmk4S1RtSHVzOVdZYjh0?=
+ =?utf-8?B?dDVMR3d1UUdMNHZzOTFUaWVPaXFwV1MvZ3RUbXdLUHFONFl4WHI3dDBvQ0RF?=
+ =?utf-8?B?dlFzbG85K1FqVE1WYjJ5eHhQSUZBd0EzMnJFb0Frb3JRSklpTSt6N2xJR2Vt?=
+ =?utf-8?B?eUl5Y2hwOExheVZWT0JEZDRyOWlnV1JzMlZvUFRVRkU3Rmt6V3lvK1hUR0M0?=
+ =?utf-8?B?ZUxWZmR6WjgwTFQ2OVoyV2ZFUnZSdlIxZHJEUmlaaDJZb1JLaE15bGZTN09n?=
+ =?utf-8?B?SkJQQUk5NXFuWXlEbVJDQVZUeEtFUUVweVV6bzMrMExsaW5RZEt1bjRmV2hG?=
+ =?utf-8?B?YnBuc2w4NWxINGxENEllOVJIT1Fab3dMY0ZNdktFREFxblU5a08reTdDNVBC?=
+ =?utf-8?B?R1BacWhIOU9hMEFqTnlNdWZKK01FZVI4Qk9RYndUSXFvZUdvTFNNV1JRbk9H?=
+ =?utf-8?B?OE9SOGNad1BLVFdJa3Ryb2FuQUkwdXpjVlJzRHU2c2MwUjdFbllLekdqQlNa?=
+ =?utf-8?B?REFPcSt2Um11OEZwYU43VlN0YzJ3VnFDTVczUVh4MkNOTXVkWHRQWHpHV1da?=
+ =?utf-8?B?Y0pBK0ZET1o4RlJkc2ZwMUhVdGZPM2VtWFhpY2J1d05NTmM4NXdIa20xd0RF?=
+ =?utf-8?B?ellTUUdKNE5UN21sMnJEVFFKdjZMd2hBL0t3RHNqSVhOdXN2TUJjTTB1SExH?=
+ =?utf-8?B?UkNNVURPdzhoNDArbjJxdjJsanludHRzNERkbjRKNVFjZC9EbDlFQmVIVnZP?=
+ =?utf-8?B?NDhSNHRZaWh2YjdSNkJoT2duRWJvNVFhUmpYUHFnQW9lZ3FrTVVqQjkxRXZv?=
+ =?utf-8?B?aHpzV2E5V3BPMDlMbzA5cGplMnhHdnM0eDNMVXZzMTJBSTU1Z0krcFpteFd0?=
+ =?utf-8?B?S0dqUFYxK0RXYmxNb0hVYnA0K3lsZDU2YlNXdVM4QnJzYU5RYkoyaUtGdHIv?=
+ =?utf-8?B?OUZjYW8wSlZEc0kvVVhxb1pPWjBCOGRod25lQWNZbGkyM1JJTlJPbkd6eGtO?=
+ =?utf-8?B?RTdyWHI0YTBYVjBxUlgzQy9QdytPT1JCdEdrMXdjYUtRaVByTy9QUUdYakdq?=
+ =?utf-8?B?MlpBN05zTlNtZHBSdGZFZ211c0krbVBFLzlIdmdoV0FHaVRFaS9EWU9lMmVl?=
+ =?utf-8?B?Zk95M1VWa1NkMjFIUFZiZ3BSc3g3VmVZa3BqVkEvMjQ0RTlrSXAzMk50NENl?=
+ =?utf-8?B?N1JZcmNTd1UwUC9xaHFYamdmWWtDOEdhUGhwZzV0MlppejJHSFdjdEdHUERY?=
+ =?utf-8?B?cWNibExISUZQQWJQaDJNdzA2Y05LeWtlVWsvYnQxS3BQRzJiMFVqZ2FiT2JQ?=
+ =?utf-8?B?YXJBSUxoL1NwdjFrbTJEQm1FSU1ZamM3SDBhVlNVMmJkc01sbjRSSnpXMjhV?=
+ =?utf-8?B?b3BCMFZ3bm9IazBnSWIwZjliUHdRbDRGakduK2ljTTJWMTdjSmRmUFJ6bEtI?=
+ =?utf-8?B?Z1pYYjlxbzNTc3JvTkhLTGQ3QW9WbTZjWDA1aHdXcTdyWXA4L09TdmNBQUZE?=
+ =?utf-8?B?b3Y4KzRyK2s1QVA2VUhVZHFoZXhxdDZqdHZ1TkY5TWNTeVgySnpENG8yditt?=
+ =?utf-8?B?eUp5cStPc29CbzNwZmN3Q2FnZUpzZVJBR3BuendNdlRtVGdLRmtSWTJxLzMy?=
+ =?utf-8?B?Qk00elcvNDEzcThXMkw2bUNZQ0piRktwZk5zSXpYT3VlNkJWcmNOYzVlKzVH?=
+ =?utf-8?B?dDFyMkw4Tndtdm11eTBFUXlnNXdmZUJmWGVWcGpQdHdmK21ob3Q0bGo0STFu?=
+ =?utf-8?B?b1liSmlRRkMyWnBCaFhtNHViRENYczdqR3ltM2FKNXRBRzVsaUhWbkVIbC8w?=
+ =?utf-8?B?d2t4TTRWMzRZeTFyK3RSdk5jL05tUDdNRnVnd3M1czY2V2N2dU9UVFVmczdU?=
+ =?utf-8?B?TC9nTkk4bEtqaThHbXJmM0pwVnZtMFo1ak9VRTg4ZENVVmNGSkJFblEvcVlv?=
+ =?utf-8?B?c0p4QzdGWjFINFFMMmM1NEhlRk9ObnMzSTJkS1pPMlZNcGg2YjNYbVVTVGw1?=
+ =?utf-8?Q?8X9Jcs0JXSqnSQzHbOxJHSP40?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d67c66e6-1c1d-4616-2228-08de1ce4f9a1
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 03:31:30.1914
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KkaY2drf+fVlf6geF+go/3dYdB/WLCS4de7SY5l9C9iROEJAbd6KHPk0q21ouTXVGMN74nDneMEkPBWhtUNtfg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6813
 
-The setting of HFI_PROP_CROP_OFFSETS for the OUTPUT port is correct,
-but on the CAPTURE port it is used to inform the firmware about the
-ROI, so crop_offset needs to be handled accordingly.
+Introduce imx_dsp_rproc_mmio_{start, stop, detect_mode}() helper functions
+for i.MX variants using IMX_RPROC_MMIO to manage remote processors.
 
-Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
+Allows the removal of the IMX_RPROC_MMIO switch-case blocks from
+imx_dsp_rproc_[start,stop,detect_mode](), resulting in cleaner and more
+maintainable code.
+
+No functional changes.
+
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- .../media/platform/qcom/iris/iris_hfi_gen2_command.c   | 18 ++++++++++++++----
- drivers/media/platform/qcom/iris/iris_venc.c           |  4 ++--
- 2 files changed, 16 insertions(+), 6 deletions(-)
+ drivers/remoteproc/imx_dsp_rproc.c | 61 +++++++++++++++++++++++++-------------
+ drivers/remoteproc/imx_rproc.h     |  2 --
+ 2 files changed, 40 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-index aaa79dfe2db281bb77be7274233f093b0086b5d4..69034e1ea8eb64440646776a40dcc657453916db 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-@@ -215,8 +215,11 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
- 	u32 port = iris_hfi_gen2_get_port(inst, plane);
- 	u32 bottom_offset, right_offset;
- 	u32 left_offset, top_offset;
-+	u32 codec_align;
- 	u32 payload[2];
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index f28d25cab3f1d89e5cde37a04b528870a59abeed..71776816c3508a86bf7b8a09ac45827a83a7bb3a 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -338,6 +338,14 @@ static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
+ 	return RSC_HANDLED;
+ }
  
-+	codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
++static int imx_dsp_rproc_mmio_start(struct rproc *rproc)
++{
++	struct imx_dsp_rproc *priv = rproc->priv;
++	const struct imx_rproc_dcfg *dcfg = priv->dsp_dcfg->dcfg;
 +
- 	if (inst->domain == DECODER) {
- 		if (V4L2_TYPE_IS_OUTPUT(plane)) {
- 			bottom_offset = (inst->fmt_src->fmt.pix_mp.height - inst->crop.height);
-@@ -230,10 +233,17 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
- 			top_offset = inst->compose.top;
- 		}
- 	} else {
--		bottom_offset = (inst->fmt_dst->fmt.pix_mp.height - inst->enc_raw_height);
--		right_offset = (inst->fmt_dst->fmt.pix_mp.width - inst->enc_raw_width);
--		left_offset = inst->crop.left;
--		top_offset = inst->crop.top;
-+		if (V4L2_TYPE_IS_OUTPUT(plane)) {
-+			bottom_offset = (inst->enc_raw_height - inst->crop.height);
-+			right_offset = (inst->enc_raw_width - inst->crop.width);
-+			left_offset = inst->crop.left;
-+			top_offset = inst->crop.top;
-+		} else {
-+			bottom_offset = (inst->fmt_dst->fmt.pix_mp.height - inst->enc_raw_height);
-+			right_offset = (inst->fmt_dst->fmt.pix_mp.width - inst->enc_raw_width);
-+			left_offset = 0;
-+			top_offset = 0;
-+		}
++	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_start);
++}
++
+ /*
+  * Start function for rproc_ops
+  *
+@@ -360,12 +368,6 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
  	}
  
- 	payload[0] = FIELD_PREP(GENMASK(31, 16), left_offset) | top_offset;
-diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
-index 50a3eb975a2523abf1c2df128a66a762a1ed35c6..7ad747d2272f029e69a56572a188a032f898a3fb 100644
---- a/drivers/media/platform/qcom/iris/iris_venc.c
-+++ b/drivers/media/platform/qcom/iris/iris_venc.c
-@@ -62,8 +62,8 @@ int iris_venc_inst_init(struct iris_inst *inst)
+ 	switch (dcfg->method) {
+-	case IMX_RPROC_MMIO:
+-		ret = regmap_update_bits(priv->regmap,
+-					 dcfg->src_reg,
+-					 dcfg->src_mask,
+-					 dcfg->src_start);
+-		break;
+ 	case IMX_RPROC_SCU_API:
+ 		ret = imx_sc_pm_cpu_start(priv->ipc_handle,
+ 					  IMX_SC_R_DSP,
+@@ -388,6 +390,14 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+ 	return ret;
+ }
  
- 	inst->crop.left = 0;
- 	inst->crop.top = 0;
--	inst->crop.width = f->fmt.pix_mp.width;
--	inst->crop.height = f->fmt.pix_mp.height;
-+	inst->crop.width = DEFAULT_WIDTH;
-+	inst->crop.height = DEFAULT_HEIGHT;
++static int imx_dsp_rproc_mmio_stop(struct rproc *rproc)
++{
++	struct imx_dsp_rproc *priv = rproc->priv;
++	const struct imx_rproc_dcfg *dcfg = priv->dsp_dcfg->dcfg;
++
++	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_stop);
++}
++
+ /*
+  * Stop function for rproc_ops
+  * It clears the REMOTE_IS_READY flags
+@@ -411,10 +421,6 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+ 	}
  
- 	inst->operating_rate = DEFAULT_FPS;
- 	inst->frame_rate = DEFAULT_FPS;
+ 	switch (dcfg->method) {
+-	case IMX_RPROC_MMIO:
+-		ret = regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask,
+-					 dcfg->src_stop);
+-		break;
+ 	case IMX_RPROC_SCU_API:
+ 		ret = imx_sc_pm_cpu_start(priv->ipc_handle,
+ 					  IMX_SC_R_DSP,
+@@ -1032,6 +1038,23 @@ static int imx_dsp_attach_pm_domains(struct imx_dsp_rproc *priv)
+ 	return devm_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+ }
+ 
++static int imx_dsp_rproc_mmio_detect_mode(struct rproc *rproc)
++{
++	struct imx_dsp_rproc *priv = rproc->priv;
++	struct device *dev = rproc->dev.parent;
++	struct regmap *regmap;
++
++	regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,dsp-ctrl");
++	if (IS_ERR(regmap)) {
++		dev_err(dev, "failed to find syscon\n");
++		return PTR_ERR(regmap);
++	}
++
++	priv->regmap = regmap;
++
++	return 0;
++}
++
+ /**
+  * imx_dsp_rproc_detect_mode() - detect DSP control mode
+  * @priv: private data pointer
+@@ -1049,7 +1072,6 @@ static int imx_dsp_rproc_detect_mode(struct imx_dsp_rproc *priv)
+ 	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
+ 	const struct imx_rproc_dcfg *dcfg = dsp_dcfg->dcfg;
+ 	struct device *dev = priv->rproc->dev.parent;
+-	struct regmap *regmap;
+ 	int ret = 0;
+ 
+ 	if (dcfg->ops && dcfg->ops->detect_mode)
+@@ -1061,15 +1083,6 @@ static int imx_dsp_rproc_detect_mode(struct imx_dsp_rproc *priv)
+ 		if (ret)
+ 			return ret;
+ 		break;
+-	case IMX_RPROC_MMIO:
+-		regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,dsp-ctrl");
+-		if (IS_ERR(regmap)) {
+-			dev_err(dev, "failed to find syscon\n");
+-			return PTR_ERR(regmap);
+-		}
+-
+-		priv->regmap = regmap;
+-		break;
+ 	case IMX_RPROC_RESET_CONTROLLER:
+ 		priv->run_stall = devm_reset_control_get_exclusive(dev, "runstall");
+ 		if (IS_ERR(priv->run_stall)) {
+@@ -1301,6 +1314,12 @@ static const struct dev_pm_ops imx_dsp_rproc_pm_ops = {
+ 	RUNTIME_PM_OPS(imx_dsp_runtime_suspend, imx_dsp_runtime_resume, NULL)
+ };
+ 
++static const struct imx_rproc_plat_ops imx_dsp_rproc_ops_mmio = {
++	.start		= imx_dsp_rproc_mmio_start,
++	.stop		= imx_dsp_rproc_mmio_stop,
++	.detect_mode	= imx_dsp_rproc_mmio_detect_mode,
++};
++
+ /* Specific configuration for i.MX8MP */
+ static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8mp = {
+ 	.att		= imx_dsp_rproc_att_imx8mp,
+@@ -1321,7 +1340,7 @@ static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8ulp = {
+ 	.src_stop	= IMX8ULP_SYSCTRL0_DSP_STALL,
+ 	.att		= imx_dsp_rproc_att_imx8ulp,
+ 	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8ulp),
+-	.method		= IMX_RPROC_MMIO,
++	.ops		= &imx_dsp_rproc_ops_mmio,
+ };
+ 
+ static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8ulp = {
+diff --git a/drivers/remoteproc/imx_rproc.h b/drivers/remoteproc/imx_rproc.h
+index aeed08bdfb5619c7afd7201589f417cfd6745818..912827c39c0dedeed76c13740efd42a8e7cf9c45 100644
+--- a/drivers/remoteproc/imx_rproc.h
++++ b/drivers/remoteproc/imx_rproc.h
+@@ -18,8 +18,6 @@ struct imx_rproc_att {
+ /* Remote core start/stop method */
+ enum imx_rproc_method {
+ 	IMX_RPROC_NONE,
+-	/* Through syscon regmap */
+-	IMX_RPROC_MMIO,
+ 	/* Through ARM SMCCC */
+ 	IMX_RPROC_SMC,
+ 	/* Through System Control Unit API */
 
 -- 
-2.43.0
+2.37.1
 
 
