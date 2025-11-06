@@ -1,223 +1,117 @@
-Return-Path: <linux-kernel+bounces-887980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F8AC3980A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:04:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6265C39801
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:04:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC903BA303
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745301892572
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335093002DF;
-	Thu,  6 Nov 2025 08:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462BD3009C7;
+	Thu,  6 Nov 2025 08:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JfzAfGli"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvHF5V12"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F452FFFA0;
-	Thu,  6 Nov 2025 08:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A0B288C25;
+	Thu,  6 Nov 2025 08:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762416259; cv=none; b=eaVjPV86rFmMLMxm1N+wlIrqK9eAtxDMlky5ppWUB/31GcnvEWuHXBq864bLIDIz4J1npesJi894RoyE0NPnKQDeCe95D4mGNxgiGNQOl0ybJMdlCZYCBwaBzmZOLqLu07+f6Dxl0xQR+kWwMW9cMUIjMKTofMm1bq23ptnAX5o=
+	t=1762416247; cv=none; b=n53Gn9PbhxAyEhgW7n+TOnc2PuAsbsb4hswg3MhcuKvt8Cc3K1cB7BLVeg1HAxpdgAh/0jSHUIAGFQuKmmMMDaogspITJqO/2UhXCqnnNQ2BCvOTRUe414ZURaXg8Krr4iDfe3NXXIlg0mLi/+mtoBAb17vK66pNJPaDaHFIyXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762416259; c=relaxed/simple;
-	bh=131iDQVyyskIhVuG1SFU61y/fyTqSpI4DzA2ydWEaSU=;
+	s=arc-20240116; t=1762416247; c=relaxed/simple;
+	bh=ccHkm5qtYzT6iKa2MpQExMHciYd9ipIA4PEh7rQnhmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pv51kfAyxLY1pvqGl8lGVqfgwmTz6z5vheSp+76dyVR+QQMW8M4tRisIPI6RKbtLstA543c0wSw61e71WWWoBiS5EAFQgQELyKPUCz8sb42KJSE4atoKWLVIlqvCn8vltUp6ufCUiG63QEDxrgk5Qc+7bU2SIGM0bDcoxv1eBvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JfzAfGli; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762416257; x=1793952257;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=131iDQVyyskIhVuG1SFU61y/fyTqSpI4DzA2ydWEaSU=;
-  b=JfzAfGliajiuPJFkQdQp3ZxPe/0nWoeg53ktLUYG+35Cba7KhJLxj2rm
-   R7JwOD9LdN8R1RVB9h8nwzF9sdxf0fvwrd1lcnsQPixgjLzBfm1iqUfLF
-   Ohbq6QY6MtlSdz4wsG2neTitbE+5rYY7LtpRmEDQue8mrv52VwzF3uUy7
-   7J2BROGyVCfKRiv3aghtZ7Pob/hOazl88QOb5gCgX2nk+/TS08ucQdQ9r
-   PKyk/RcQnc4xd6Pj6EgZcnfxsluYKg/rSrEHnFykzM4GC0m7SnpiJJiRE
-   T3szDT5BrvDT87OGjT+tvFXKBxcsOKjQHi+Jl6qeL0aUlsvTvYO4NpX5c
-   w==;
-X-CSE-ConnectionGUID: HqskvpfxRqSl8FIHONy5Cw==
-X-CSE-MsgGUID: rVgGo6AYTLa2JxMy71PYQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75898443"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="75898443"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 00:04:16 -0800
-X-CSE-ConnectionGUID: hnUDeEh8TwiKbA4olcaorg==
-X-CSE-MsgGUID: 5dUVcYXoTZau1DVQwPTbdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
-   d="scan'208";a="192742600"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 06 Nov 2025 00:04:13 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vGuyV-000Tds-1P;
-	Thu, 06 Nov 2025 08:04:07 +0000
-Date: Thu, 6 Nov 2025 16:03:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, David Jander <david@protonic.nl>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
-Subject: Re: [PATCH v1 2/2] iio: adc: Add TI ADS131M0x ADC driver
-Message-ID: <202511061518.r106EK1T-lkp@intel.com>
-References: <20251105143814.1807444-3-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j47mOUvD5tqvVVb6ld6LetIuZPz8nmzt5FscL3kEZIVM0lBrhaTEem69u2Eu3n45WuG9UvgNlMrjsal6KoyPsm3Z/547tvHWb51mIy2cZwX2ZHbye/QAfHUJOOS6XgCataU6vMbpRUqTnTOjHtwMsQ/QNkUHSqfWMej30HKmo5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvHF5V12; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA2CC4CEFB;
+	Thu,  6 Nov 2025 08:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762416247;
+	bh=ccHkm5qtYzT6iKa2MpQExMHciYd9ipIA4PEh7rQnhmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NvHF5V12wKqbRMiQh9lD2BGO6IANaZaFz4LZfCAwGDwOjoG5QFOJu38rdjOPjw8mV
+	 haXxY/iWnRM8GboXg478oHWJpF2vHWZzLbOfM/2L2YdtzCSYDa4Tf4zv/kcfmniEiY
+	 d/I6gdIPiAsnEkbIkqaIrnWxY1RTzRJCXPgrWt3P5VaSdknfiowbmC+SZQevCd/ldP
+	 blDmJLIhXIIJ4mtoBiVRN9A8X3tPOBUdfcXS/Ag+iQHm1J1rmKsbODJ6dnTxLw4NVG
+	 Hq8vSt7CDeRJKm8OSn6K2RRO36AAkqGww9DdqxAFgro75BPf3L6XHde6ydlik4vGXv
+	 Skifuqv+5A5tg==
+Date: Thu, 6 Nov 2025 09:04:04 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sjoerd Simons <sjoerd@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Jianjun Wang <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>, kernel@collabora.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+	linux-phy@lists.infradead.org, netdev@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>, 
+	Bryan Hinton <bryan@bryanhinton.com>
+Subject: Re: [PATCH v3 08/13] dt-bindings: net: mediatek,net: Correct
+ bindings for MT7981
+Message-ID: <20251106-unbiased-warping-earthworm-f4f66c@kuoka>
+References: <20251105-openwrt-one-network-v3-0-008e2cab38d1@collabora.com>
+ <20251105-openwrt-one-network-v3-8-008e2cab38d1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251105143814.1807444-3-o.rempel@pengutronix.de>
+In-Reply-To: <20251105-openwrt-one-network-v3-8-008e2cab38d1@collabora.com>
 
-Hi Oleksij,
+On Wed, Nov 05, 2025 at 10:18:03PM +0100, Sjoerd Simons wrote:
+> Different SoCs can have different numbers of Wireless Ethernet
+> Dispatch (WED) units, specifically the MT7981 only has a single WED.
+> Furthermore the MT7981 uses infracfg for PHY switching. Adjust bindings
+> to match both aspects.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+> ---
+> V2 -> V3: Only update MT7981 constraints rather then defaults
+> V1 -> V2: Only overwrite constraints that are different from the default
+> ---
+>  Documentation/devicetree/bindings/net/mediatek,net.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mediatek,net.yaml b/Documentation/devicetree/bindings/net/mediatek,net.yaml
+> index b45f67f92e80d..c49871438efc7 100644
+> --- a/Documentation/devicetree/bindings/net/mediatek,net.yaml
+> +++ b/Documentation/devicetree/bindings/net/mediatek,net.yaml
+> @@ -338,12 +338,14 @@ allOf:
+>              - const: netsys0
+>              - const: netsys1
+>  
+> -        mediatek,infracfg: false
+> -
+>          mediatek,sgmiisys:
+>            minItems: 2
+>            maxItems: 2
+>  
+> +        mediatek,wed:
+> +          minItems: 1
 
-kernel test robot noticed the following build errors:
+Drop, 1 mis already minimum.
 
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on linus/master v6.18-rc4 next-20251106]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/bindings-iio-adc-Add-bindings-for-TI-ADS131M0x-ADCs/20251105-224149
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20251105143814.1807444-3-o.rempel%40pengutronix.de
-patch subject: [PATCH v1 2/2] iio: adc: Add TI ADS131M0x ADC driver
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20251106/202511061518.r106EK1T-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251106/202511061518.r106EK1T-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511061518.r106EK1T-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iio/adc/ti-ads131m0x.c: In function 'ads131m_tx_frame_unlocked':
->> drivers/iio/adc/ti-ads131m0x.c:174:9: error: implicit declaration of function 'put_unaligned_be24' [-Wimplicit-function-declaration]
-     174 |         put_unaligned_be24(command << 8, &priv->tx_buffer[0]);
-         |         ^~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/ti-ads131m0x.c:163:13: warning: unused variable 'ret' [-Wunused-variable]
-     163 |         int ret;
-         |             ^~~
-   drivers/iio/adc/ti-ads131m0x.c: In function 'ads131m_check_status_crc_err':
->> drivers/iio/adc/ti-ads131m0x.c:224:18: error: implicit declaration of function 'get_unaligned_be16' [-Wimplicit-function-declaration]
-     224 |         status = get_unaligned_be16(&priv->rx_buffer[0]);
-         |                  ^~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/ti-ads131m0x.c: In function 'ads131m_adc_read':
->> drivers/iio/adc/ti-ads131m0x.c:523:30: error: implicit declaration of function 'get_unaligned_be24' [-Wimplicit-function-declaration]
-     523 |         *val = sign_extend32(get_unaligned_be24(buf), 23);
-         |                              ^~~~~~~~~~~~~~~~~~
+Anyway, this does not match top-level schema which said minItems 2. You
+need to keep these consistent among all variants and top-level.
 
 
-vim +/put_unaligned_be24 +174 drivers/iio/adc/ti-ads131m0x.c
+Best regards,
+Krzysztof
 
-   149	
-   150	/**
-   151	 * ads131m_tx_frame_unlocked - Sends a command frame with Input CRC
-   152	 * @priv: Device private data structure.
-   153	 * @command: The 16-bit command to send (e.g., NULL, RREG, RESET).
-   154	 *
-   155	 * Assumes the mutex lock is held.
-   156	 * This function sends a command in Word 0, and its calculated 16-bit
-   157	 * CRC in Word 1, as required when Input CRC is enabled.
-   158	 *
-   159	 * Return: 0 on success, or a negative error code from spi_sync.
-   160	 */
-   161	static int ads131m_tx_frame_unlocked(struct ads131m_priv *priv, u32 command)
-   162	{
-   163		int ret;
-   164		u16 crc;
-   165	
-   166		/*
-   167		 * Zero the entire TX buffer to send a valid frame.
-   168		 */
-   169		memset(priv->tx_buffer, 0, ADS131M_FRAME_BSIZE(priv->num_channels));
-   170	
-   171		/*
-   172		 * Word 0: 16-bit command, MSB-aligned in 24-bit word.
-   173		 */
- > 174		put_unaligned_be24(command << 8, &priv->tx_buffer[0]);
-   175	
-   176		/*
-   177		 * Word 1: Input CRC
-   178		 * Calculated over the 3 bytes of Word 0.
-   179		 */
-   180		crc = ads131m_crc_calculate(priv->tx_buffer, 3);
-   181		put_unaligned_be24(crc << 8, &priv->tx_buffer[3]);
-   182	
-   183		return spi_sync(priv->spi, &priv->msg);
-   184	}
-   185	
-   186	/**
-   187	 * ads131m_rx_frame_unlocked - Receives a full SPI data frame.
-   188	 * @priv: Device private data structure.
-   189	 *
-   190	 * This function sends a NULL command (with its CRC) to clock out a
-   191	 * full SPI frame from the device (e.g., response + channel data + CRC).
-   192	 *
-   193	 * Assumes the mutex lock is held.
-   194	 *
-   195	 * Return: 0 on success, or a negative error code from spi_sync.
-   196	 */
-   197	static int ads131m_rx_frame_unlocked(struct ads131m_priv *priv)
-   198	{
-   199		return ads131m_tx_frame_unlocked(priv, ADS131M_CMD_NULL);
-   200	}
-   201	
-   202	/**
-   203	 * ads131m_check_status_crc_err - Checks for an Input CRC error.
-   204	 * @priv: Device private data structure.
-   205	 *
-   206	 * Sends a NULL command to fetch the STATUS register and checks the
-   207	 * CRC_ERR bit. This is used to verify the integrity of the previous
-   208	 * command (like RREG or WREG).
-   209	 *
-   210	 * Context: This function assumes the mutex 'lock' is held.
-   211	 * Return: 0 on success, -EIO if CRC_ERR bit is set.
-   212	 */
-   213	static int ads131m_check_status_crc_err(struct ads131m_priv *priv)
-   214	{
-   215		int ret;
-   216		u16 status;
-   217	
-   218		ret = ads131m_rx_frame_unlocked(priv);
-   219		if (ret < 0) {
-   220			dev_err(&priv->spi->dev, "SPI error on STATUS read for CRC check\n");
-   221			return ret;
-   222		}
-   223	
- > 224		status = get_unaligned_be16(&priv->rx_buffer[0]);
-   225		if (status & ADS131M_STATUS_CRC_ERR) {
-   226			dev_err(&priv->spi->dev, "Previous input CRC error, STATUS=0x%04x\n",
-   227				status);
-   228			return -EIO;
-   229		}
-   230	
-   231		return 0;
-   232	}
-   233	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
