@@ -1,224 +1,247 @@
-Return-Path: <linux-kernel+bounces-888730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE32C3BC55
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:34:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEC2C3BC5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0116D1886065
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:32:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6F41888254
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44F733C529;
-	Thu,  6 Nov 2025 14:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E26339B46;
+	Thu,  6 Nov 2025 14:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJX7t4pg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NkMz5ajF"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19781E3DE8;
-	Thu,  6 Nov 2025 14:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629A021D3CA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439534; cv=none; b=vCkR7pURWsMe81G9BSbXUAIHtUR3WGrP/yz5MhAmoUSdGxWE09KlmJClU1t+JZ/2qPRqBtPGFGwFDQO1ACxGFUcNHiTUTSzx5gnUPxE0Mvo1uUY37WGfbiE1xJdc3sFjuwzf65ixqEa80NtLKx4OhI02tJhkpoRq+6izJeCngAc=
+	t=1762439566; cv=none; b=nFpMq3eK85fSDJJ7O9rkFyDcxhylNgLiiW1D1MLlI9KufAzXnpsqcgZUCnn/oIdHwu1PWJ16duTjY1ieBvacG5yIGbt5WZM7zT5zDc61gecyLNmq0fUwBoBShASbg1gYkzKsyuXhnSDDcyK2bbQhpYTyW+du/QB2LeSe5X6ZTLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439534; c=relaxed/simple;
-	bh=smxgPni+XOx0Jk4VOOGxnMqDJbqmptrO8uIANUW5hTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNEc8PVwtDrz1oSN8+ctfc9VqQP43apy1nnL/xxkQDGq9K4iiYhnq+EDeZFszBMthUf8QuS15Gmgda9f3dxCTiySbEdRQo1385TJKTfZedFba8Ts8wnLthHYgxWTpNnPlEdVepj/AgnXOXbDRw/NniiZyK+PtmHHaBLNogSUMto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJX7t4pg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C30C4CEFB;
-	Thu,  6 Nov 2025 14:32:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762439533;
-	bh=smxgPni+XOx0Jk4VOOGxnMqDJbqmptrO8uIANUW5hTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJX7t4pg/WECd8xf1IbVsO8VZ1eDnUzlNB0hmqShiM/x27ndGfn7cho4Hx06zPu0x
-	 7b+AJBpRegoceGugk00Ui/ZlHDNxbgIMedoMSLRaYfrc2Swqsx+0vk/5JMw6QtaCC/
-	 WOiW3HINNKJ5NMPBMwTpjDxUfdWQiX4iN0JUOkd47XFH6Awl3CguDmCeAbcGvekSPv
-	 o8KR2ruASPDQpxP1Ghahhhk3y97WpVakDpKmhP3v/h/lIRdXgZkLqhoqW3LG1OlmYC
-	 Kp5U6ynuEXElDHuW1UYIGkrBlnue6gx/YgOjyGESRV3M1GeVRFg2OTe8G1WJNe9nfP
-	 b1LvApkuH+Wqg==
-Date: Thu, 6 Nov 2025 20:02:01 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 4/4] power: sequencing: Add the Power Sequencing driver
- for the PCIe M.2 connectors
-Message-ID: <5wbwpr7ivnvpttacyl7b5fsexfda2uvoqau7yaaxuavskka4z6@vvntbnakzrjb>
-References: <20251105-pci-m2-v1-0-84b5f1f1e5e8@oss.qualcomm.com>
- <20251105-pci-m2-v1-4-84b5f1f1e5e8@oss.qualcomm.com>
- <CAMRc=McB4Zk8WuSPL=7+7kX4RJbdFBNReWZyiFnH8vfVx3DxAg@mail.gmail.com>
- <tc2r2mme4wtre7vb7xj22vz55pks4fbdabyl62mgutyhcjxnlx@qn4jvx3jqhie>
- <CAMRc=McDYL_B+hFtLekevtB2XpUkaMN1dsDNeefvR+ppj4whFg@mail.gmail.com>
+	s=arc-20240116; t=1762439566; c=relaxed/simple;
+	bh=ctODtsC0esXCVWhIY/sr8GjZ8CcJ4i+JiJY0LqQGWMU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QduBkuErAAivivsYv5/IDTsH15RIWIJ0o8l8coS+0cwiuz27OTSbnKcLEgGJLr+OpmViNd5yIe8Rp41Zn3iH2bBL4iz2MyXfyY7RLwg45t7uzrpVBjtzlkHDWD8bG2V5GL8A5GH7HESaJgSVl1aAPN+ybyCXsxVNfsHKX3JVywQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NkMz5ajF; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so6193105e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 06:32:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762439563; x=1763044363; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3QQfmyFob5b081h0eUWQHPYT4hWgdjaHxmWN9i2alqI=;
+        b=NkMz5ajFHDv/qEWltRNt4Q4cOVtOIZXq/nDr9ODEQZz0/L5hx2lzvdSOE39VatigMM
+         HWSmchofZo0sbT705ZmliggQq/0Nnq9t8iHxDfg3qdYCRPXNL/W3IcHctDpNZcmCHcZd
+         IcjPSlO+pG0T0aFhwbjQOy5fLLbMmtG0wxJez1yzLlYBW0yij53mLQSLgtuPDakIa1ac
+         OZgDy6NOLierTtGoALgA/HwhuszgUPTbOebw5ra34fffhVVv86pHtbWs0mL6M2kwGZ03
+         aJeMRfyDGWU5SbjnsUGfa1x9n+ApZJHDBE2Jv8M+3JnS7PE3VuS9o8m5eTHU2p6uW3mG
+         cYNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762439563; x=1763044363;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3QQfmyFob5b081h0eUWQHPYT4hWgdjaHxmWN9i2alqI=;
+        b=qdo+vzWaKiYOLRESTiMvLlywQlPX+Z3cdCcuBZmj59HLF9HpGsE4a0Xrx+Z1l4Bn45
+         J3laAwcRgPpTB+By2QONG213UxoCI3vIvl7Q0s0MtfIu7Af0uYHmI+bIuzAfmoIQArdB
+         K6aFyiPnzAiQl2YRgvey1h/2OOkikjUtjTtIJ4hsSY/F1WJSZUneIrGOwbNIqUT1LhD0
+         G3CUArLHPBXwwuD5/6ZZv9G25WtaYhoAOmgyK7ZFTyeHRQ6tqj4FqYdaDmuc5hsI/D9J
+         5FfFGUOHoespSGF/eLS1kHe0oq+UH/Qq0UNaqC++U7iR3UgbjBxBDBOJm9OukiTwXGy4
+         LtJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhUNL6tNhnYxbl23hOyugpeYL/5H1LZc70guPEU8Qg3A24yAddMgYa/JIjK0NBCK7n8ruGs+bnscUA0ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzStQBbOhuzi5mrUJaTqZjayj7P7YPlaJJq6dmQCZZjAlCPHHKQ
+	7pmQQIoXP8h9cMlem7jW31vOszrQWklB87Hk9XGtT/nYkVY0+logMS2d4Fk47aBIkFI=
+X-Gm-Gg: ASbGncuPWLQaMLKwP0K6aadFWGvtixQP5z6CDOL0kN7NF1MED+ZKTMm5UfNE4yQ19bf
+	jUi3gV9YZkVY0Jo+5PFE3QcPqhmzxcHcCOJMtMPDjURBEs8SM9UKHK72OmwIePQa2jWlJVqYA1U
+	Lbv8edAO/fwgPqa54bg0b2i3Mw+YKMhgB8E4/dnl3HBUWHTOSlFcbxzmbMAdPLH2yzc6tzJPpcz
+	VjWWkj0AfIei3te4hmA2tdeGj/s5n1wo3sWNPY5E/aXxTPJzpnlgErS0awf46KWdCwE1wVnz1I0
+	QDv02YAe3QFhh3KRkX8zNM4+SuTVLfnAcMl/QiD4KnJgqPO2g2OciYHmeLgpwNdnt6+/esgNKR8
+	YDqy4MXzYOMckKZizJkRF54nnHFoyseRyLfvUaPVDqHl2xFiUikfbpmnIjl58FDfm+zyA
+X-Google-Smtp-Source: AGHT+IFrvsh9BDvGdM7+2fX+/+Gs8y0NYdBYNnBOWHnoflSRv7bon6UeTIae4LlH4+5boKMynR0Zig==
+X-Received: by 2002:a05:600c:4e88:b0:477:5c70:e15d with SMTP id 5b1f17b1804b1-4775cd3a4afmr70743025e9.0.1762439562439;
+        Thu, 06 Nov 2025 06:32:42 -0800 (PST)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:d9de:4038:a78:acab])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763de4fb5sm18871515e9.2.2025.11.06.06.32.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 06:32:41 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 0/8] reset: rework reset-gpios handling
+Date: Thu, 06 Nov 2025 15:32:29 +0100
+Message-Id: <20251106-reset-gpios-swnodes-v6-0-69aa852de9e4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McDYL_B+hFtLekevtB2XpUkaMN1dsDNeefvR+ppj4whFg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH2xDGkC/23QTWrDMBAF4KsErasyGv1n1XuELqRYdgTFClJQU
+ 4LvXtmbuljLNzDfG+ZFSsgxFHI+vUgONZaY5hbU24lcb26eAo1DywQBJViUNIcSHnS6x1Ro+Z7
+ TEAodvJQ8KA1WetI27zmM8bmpl8+Wb7E8Uv7ZSipbp5vHAFTXq4wCVQPnKL11o8CPrzi7nN5Tn
+ sgKVtwhiH0EV8SCMZIDWuYPCN8jto/wFeHGiatv5wA7IOIPYcD7iFgRoZgB8EpreUDkHun/uMq
+ GsFFpYa0zaPQ/ZFmWX5qe++3LAQAA
+X-Change-ID: 20250925-reset-gpios-swnodes-db553e67095b
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Daniel Scally <djrscally@gmail.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-acpi@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5994;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=ctODtsC0esXCVWhIY/sr8GjZ8CcJ4i+JiJY0LqQGWMU=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpDLGDY523SfozHo1LnbBBlG6oxqvIx3S1AVwTg
+ vTpeSyLmUeJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQyxgwAKCRARpy6gFHHX
+ chO8D/9RT7hiVkWYEusuakykM1KOSErO7g8xn3anmQ38AT2HDI1SYWBVH6ACzMPpFprgZ5oK8uz
+ aZ863AN+oYdlnBCY5sfYws5seM3Jo1cuepLoLYcx43S2bgMz2jkLv14sYL22+f2PTb98HagWamq
+ /UPvcT3mTFguYK2jvJHNbbXNRnFeNGBXQ45hClywmPbmY5/ejYbbyqV1iJ067+BpptcilTLpIDN
+ kLrACWV+gp5UwEzgt1ott8zIh0wPcI7oFMw9vV2I6uEJsW8+lHwEquq+NTk24zTu36p1UYA2/9l
+ g0dHibuhm1ignFGRZOPTYWLc0s97AoKuRrTsLSh9ZusnaN5nhM+VzgY+Eok44LDe69nf1G1cV2E
+ mtGhAtoxS6KZCQ5r5hgVk96JNxPLNBcYecnNd2kWXdOWcxMV2w+7lvBDM6V8N6ILGr8NOfmdvIf
+ 9oAX8FrQNMCBXqNvd7oIkU2jQDbkSUnSZHjA8Tub0KnLir1GoEJqUx3uBgmfUSirMv0J9HSVwAm
+ dWHr8AmYWPlh0LpNQ8Qursx/JN7Y8SvTWeU+QRx1h1skTUatmOIG1TIehCzbmVsAhg5KAF9lgdO
+ ajYeNNqk6mFjZAfVSepL279H9rTSpwFjUdQag7UBF7IX60pnA/QnF803X64MTquRcfG+DkNhaFO
+ IsYaokiFVmWaFQg==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Thu, Nov 06, 2025 at 10:53:05AM +0100, Bartosz Golaszewski wrote:
-> On Wed, Nov 5, 2025 at 6:46 PM Manivannan Sadhasivam <mani@kernel.org> wrote:
-> >
-> > On Wed, Nov 05, 2025 at 05:21:46PM +0100, Bartosz Golaszewski wrote:
-> > > On Wed, Nov 5, 2025 at 10:17 AM Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@oss.qualcomm.com> wrote:
-> > > >
-> > > > This driver is used to control the PCIe M.2 connectors of different
-> > > > Mechanical Keys attached to the host machines and supporting different
-> > > > interfaces like PCIe/SATA, USB/UART etc...
-> > > >
-> > > > Currently, this driver supports only the Mechanical Key M connectors with
-> > > > PCIe interface. The driver also only supports driving the mandatory 3.3v
-> > > > and optional 1.8v power supplies. The optional signals of the Key M
-> > > > connectors are not currently supported.
-> > > >
-> > >
-> > > I'm assuming you followed some of the examples from the existing WCN
-> > > power sequencing driver. Not all of them are good or matching this
-> > > one, please see below.
-> > >
-> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > > > ---
-> > > >  MAINTAINERS                               |   7 ++
-> > > >  drivers/power/sequencing/Kconfig          |   8 ++
-> > > >  drivers/power/sequencing/Makefile         |   1 +
-> > > >  drivers/power/sequencing/pwrseq-pcie-m2.c | 138 ++++++++++++++++++++++++++++++
-> > > >  4 files changed, 154 insertions(+)
-> > > >
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 46126ce2f968e4f9260263f1574ee29f5ff0de1c..9b3f689d1f50c62afa3772a0c6802f99a98ac2de 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -20474,6 +20474,13 @@ F:     Documentation/driver-api/pwrseq.rst
-> > > >  F:     drivers/power/sequencing/
-> > > >  F:     include/linux/pwrseq/
-> > > >
-> > > > +PCIE M.2 POWER SEQUENCING
-> > > > +M:     Manivannan Sadhasivam <mani@kernel.org>
-> > > > +L:     linux-pci@vger.kernel.org
-> > > > +S:     Maintained
-> > > > +F:     Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > > > +F:     drivers/power/sequencing/pwrseq-pcie-m2.c
-> > > > +
-> > > >  POWER STATE COORDINATION INTERFACE (PSCI)
-> > > >  M:     Mark Rutland <mark.rutland@arm.com>
-> > > >  M:     Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > > > diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
-> > > > index 280f92beb5d0ed524e67a28d1c5dd264bbd6c87e..f5fff84566ba463b55d3cd0c07db34c82f9f1e31 100644
-> > > > --- a/drivers/power/sequencing/Kconfig
-> > > > +++ b/drivers/power/sequencing/Kconfig
-> > > > @@ -35,4 +35,12 @@ config POWER_SEQUENCING_TH1520_GPU
-> > > >           GPU. This driver handles the complex clock and reset sequence
-> > > >           required to power on the Imagination BXM GPU on this platform.
-> > > >
-> > > > +config POWER_SEQUENCING_PCIE_M2
-> > > > +       tristate "PCIe M.2 connector power sequencing driver"
-> > > > +       depends on OF || COMPILE_TEST
-> > >
-> > > The OF dependency in the WCN driver is there because we're doing some
-> > > phandle parsing and inspecting the parent-child relationships of the
-> > > associated nodes. It doesn't look like you need it here. On the other
-> > > hand, if you add more logic to the match() callback, this may come
-> > > into play.
-> > >
-> >
-> > For sure the driver will build fine for !CONFIG_OF, but it is not going to work.
-> > And for the build coverage, COMPILE_TEST is already present. Maybe I was wrong
-> > to enforce functional dependency in Kconfig.
-> >
-> 
-> Given what you said below for the regulator API, let's keep it as is.
-> 
-> > > > +
-> > > > +static int pwrseq_pcie_m2_match(struct pwrseq_device *pwrseq,
-> > > > +                                struct device *dev)
-> > > > +{
-> > > > +       return PWRSEQ_MATCH_OK;
-> > >
-> > > Eek! That will match any device we check. I'm not sure this is what
-> > > you want. Looking at the binding example, I assume struct device *
-> > > here will be the endpoint? If so, you should resolve it and confirm
-> > > it's the one referenced from the connector node.
-> > >
-> >
-> > I was expecting this question, so returned PWRSEQ_MATCH_OK on purpose. I feel it
-> > is redundant to have match callback that just does link resolution and matches
-> > the of_node of the caller. Can't we have a default match callback that does just
-> > this?
-> >
-> 
-> To be clear: the above is certainly wrong. Any power sequencing
-> consumer would match against this device.
-> 
-> To answer your question: sure, there is nothing wrong with having a
-> default match callback but first: I'd like to see more than one user
-> before we generalize it, and second: it still needs some logic. What
-> is the relationship between the firmware nodes of dev and pwrseq here
-> exactly?
-> 
+NOTE: I've picked up commit e5d527be7e69 ("gpio: swnode: don't use the
+swnode's name as the key for GPIO lookup") into my fixes branch and will
+send it upstream by the end of this week. It will be part of v6.18-rc5
+which tag will need to be the base for the future immutable branch
+created by Philipp.
 
-The 'dev' belongs to the PCIe Root Port node where the graph port is defined:
+Software node maintainers: if this versions is good to go, can you leave
+your Acks under patches 1-3 and allow Philipp to take it through the
+reset tree, provided he creates an immutable branch you can pull from
+for v6.19?
 
-&pcie6_port0 {
-	...
-	port {
-		pcie6a_port0_ep: endpoint {
-			remote-endpoint = <&m2_pcie_ep>;
-		};
-	};
-};
+Machine GPIO lookup is a nice, if a bit clunky, mechanism when we have
+absolutely no idea what the GPIO provider is or when it will be created.
+However in the case of reset-gpios, we not only know if the chip is
+there - we also already hold a reference to its firmware node.
 
-So I have to do remote-endpoint lookup from the pwrseq and compare the of_node
-of the parent with 'dev->of_node', I believe. If so, this looks like a common
-pattern.
+In this case using fwnode lookup makes more sense. However, since the
+reset provider is created dynamically, it doesn't have a corresponding
+firmware node (in this case: an OF-node). That leaves us with software
+nodes which currently cannot reference other implementations of the
+fwnode API, only other struct software_node objects. This is a needless
+limitation as it's imaginable that a dynamic auxiliary device (with a
+software node attached) would want to reference a real device with an OF
+node.
 
-> > > > +       if (!ctx->pdata)
-> > > > +               return dev_err_probe(dev, -ENODEV,
-> > > > +                                    "Failed to obtain platform data\n");
-> > > > +
-> > > > +       ret = of_regulator_bulk_get_all(dev, dev_of_node(dev), &ctx->regs);
-> > >
-> > > Same here, you already have the device, no need to get the regulators
-> > > through the OF node. Just use devm_regulator_bulk_get()
-> > >
-> >
-> > I used it on purpose. This is the only regulator API that just gets all
-> > regulators defined in the devicetree node without complaining. Here, 3.3v is
-> > mandatory and 1.8v is optional. There could be other supplies in the future and
-> > I do not want to hardcode the supply names in the driver. IMO, the driver should
-> > trust devicetree to supply enough supplies and it should just consume them
-> > instead of doing validation. I proposed to add a devm_ variant for this, but
-> > Mark was against that idea.
-> >
-> 
-> What was the reason for being against it?
+This series does three things: extends the software node implementation,
+allowing its properties to reference not only static software nodes but
+also existing firmware nodes, updates the GPIO property interface to use
+the reworked swnode macros and finally makes the reset-gpio code the
+first user by converting the GPIO lookup from machine to swnode.
 
-Mark doesn't want the drivers to trust DT for regulators. It was an IRC
-discussion and the conclusion was the drivers had to specify the supplies
-manually and not trust DT to provide required regulators. But then we already
-have this API that does the same.
+Another user of the software node changes in the future could become the
+shared GPIO modules that's in the works in parallel[1].
 
-> Anyway: in that case, would
-> you mind adding a comment containing what you wrote here so that
-> people don't mindlessly try convert it to the regular variant in the
-> future?
-> 
+Merging strategy: the series is logically split into three parts: driver
+core, GPIO and reset respectively. However there are build-time
+dependencies between all three parts so I suggest the reset tree as the
+right one to take it upstream with an immutable branch provided to
+driver core and GPIO.
 
-Sure.
+[1] https://lore.kernel.org/all/20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org/
 
-- Mani
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v6:
+- Do ref[0].swnode -> ref->swnode in software_node_graph_get_remote_endpoint()
+- Fix some nit picks from Andy
+- Link to v5: https://lore.kernel.org/r/20251105-reset-gpios-swnodes-v5-0-1f67499a8287@linaro.org
 
+Changes in v5:
+- Use _Generic() even more and simplify the patch allowing to reference
+  firmware nodes significantly
+- Use _Generic() to avoid adding more macros to linux/property.h
+- Don't rename macro arguments in linux/property.h
+- Drop patch renaming the GPIO reference property
+- Pick up the patch modifying the swnode GPIO lookup to using fwnodes
+  into my fixes branch
+- Simplify the patch allowing GPIO swnode references to reference
+  firmware nodes
+- Link to v4: https://lore.kernel.org/r/20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org
+
+Changes in v4:
+- Fix an issue with uninitialized ret variable in reset core
+- Use _Generic() to simplify the __SOFTWARE_NODE_REF() macro and remove
+  one of the arguments
+- Add a comment explaining the relationship between swnodes and fwnodes
+  and why we're using the fwnode API in swnode code
+- Allow longer lines
+- Link to v3: https://lore.kernel.org/r/20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org
+
+Changes in v3:
+- Really fix the typo in commit message in patch 7/9
+- Update the commit message in patch 3/9 after implementation changes
+- Don't remove checking the refnode for NULL and returning -ENOENT
+- Move lockdep assertion higher up in the reset code
+- Simplify patch 4/9: don't change the logic of inspecting the gpio
+  device's software node
+- Add new patch that still allows GPIO lookup from software nodes to
+  find chips associated with any firmware nodes
+- Drop the comma in reset-gpio auxiliary ID
+- Drop the no longer used type argument from software node reference
+  macros
+- Link to v2: https://lore.kernel.org/r/20251022-reset-gpios-swnodes-v2-0-69088530291b@linaro.org
+
+Changes in v2:
+- Don't use a union for different pointer types in the software node
+  reference struct
+- Use fwnode_property_read_u32() instead of
+  fwnode_property_read_u32_array() as we're only reading a single
+  integer
+- Rename reset_aux_device_release() to reset_gpio_aux_device_release()
+- Initialize the device properties instead of memsetting them
+- Fix typo in commit message
+- As discussed on the list: I didn't change patch 7/9 because most of
+  it goes away anyway in patch 9/9 and the cleanup issues will be fixed
+  in the upcoming fwnode conversion
+- Link to v1: https://lore.kernel.org/r/20251006-reset-gpios-swnodes-v1-0-6d3325b9af42@linaro.org
+
+---
+Bartosz Golaszewski (8):
+      software node: read the reference args via the fwnode API
+      software node: increase the reference of the swnode by its fwnode
+      software node: allow referencing firmware nodes
+      gpio: swnode: allow referencing GPIO chips by firmware nodes
+      reset: order includes alphabetically in reset/core.c
+      reset: make the provider of reset-gpios the parent of the reset device
+      reset: gpio: convert the driver to using the auxiliary bus
+      reset: gpio: use software nodes to setup the GPIO lookup
+
+ drivers/base/swnode.c         |  30 +++++++--
+ drivers/gpio/gpiolib-swnode.c |   3 +-
+ drivers/reset/Kconfig         |   1 +
+ drivers/reset/core.c          | 145 ++++++++++++++++++++++++------------------
+ drivers/reset/reset-gpio.c    |  19 +++---
+ include/linux/property.h      |  13 +++-
+ 6 files changed, 130 insertions(+), 81 deletions(-)
+---
+base-commit: cb69ab793066d9038345da89e54545aea34aaef0
+change-id: 20250925-reset-gpios-swnodes-db553e67095b
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
