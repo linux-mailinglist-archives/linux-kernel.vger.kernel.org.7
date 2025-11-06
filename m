@@ -1,343 +1,172 @@
-Return-Path: <linux-kernel+bounces-889401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8514C3D755
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:12:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7F2C3D787
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 280DE4E1F6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:12:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0463AD3C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D0F8248B;
-	Thu,  6 Nov 2025 21:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF32305E2E;
+	Thu,  6 Nov 2025 21:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a5ibXJDb"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011062.outbound.protection.outlook.com [40.93.194.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="b5JzrfDd"
+Received: from mail-io1-f100.google.com (mail-io1-f100.google.com [209.85.166.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B03304BDA;
-	Thu,  6 Nov 2025 21:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762463541; cv=fail; b=iaXIy8Rp63hwAoz9fH05NhAYulF07zs1nf2rg2yPbP45FrDJYhKakP7AfsESloXzrsSf3cqpms/8ZEeLaI+GUuHvrDrypOvtAX+TEwJ3oBXiZ1uIC9MSdpJ1OYyZD7gPhUbxAFn21lnatqLOggWCCac9oSWOJX1Jpxv9mfH+z1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762463541; c=relaxed/simple;
-	bh=3MajJUIcWvNtFxkgIAVxc12DBJAW5TTFw9Gil+f8NUE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=j/zOBG9Q79N75kORdgLSME1kZIpwbZa9awXup1j/IpUnOYsy8oKVZlDP/a1FnQMdo5SC8yvGq3/FNtNvcugkQVfmJ15lV3I8v5Jdu+9rFHOfXIySAeW7GVMvvxGn/SZM/NeuSm2LekTYVPlo9xSZMCH1dMkLRqaLoCLGGsrMLaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a5ibXJDb; arc=fail smtp.client-ip=40.93.194.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E+GtEEhILYPHFNxrk+VRmBhOFEqJxZr83fXEq6RE+wde8lNC+UEclW4RGqd1MQQfIalL4JcdVcxOQ+hXezkV0k11GgPp6cEUOlyzQUZAaC/u/12D/gQcOvL9iabpq6eGga1c7MJ6NSia/WYk96AtUUKvonNrDret7ZWCvdQ9xBxJZfMo6Dla/bvQTNHNGtRH3FOR4NdFqpCXZK4g9Jv2h/ACWYy5uAf0yx8wGLNNjfyW1uQGkGbsZxWnP1oIvQadVIgEMPAgfzQMxHxmGXoTnZ/RCBZZ0eEGsQwZ/9wthfL1ycbt60udJ2SzKoZllUKdUHDsVHYzWyvSwTkY45Wm3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sECWeo6pOVkYgPrIYDTIP6Y1Y7akMeediyWM55U3+gQ=;
- b=RDiu+LKf4PWX8gvHiGwjZvC88OMW58uZ1qaT0L05+rwlJdTWpQAULrsz0exb1Cx/6F/Advttr0LifNyvjQktBCUQ0LyljDJOERaaag8QImLBsfx0bSn2ehY6wVj9Vi0cyeWiSUzhZUMNJv+bNndlJDZV9WjoSkI5PpC2xDWNoANDm3yt1OP9OPciINg22DG3caZCSNKXisBggrct2kstg9iutvlsbbOchQ2jeYH0npwB+cD3gpV5nIOl+XoSIRvgwmHR1AA+o8AhKFN2EDP3VB991s658JX/sJuwJzz4ndRB1/WTT3ktKrTZyqza1/wSPFa7ADJcKg53T+W/uNwoTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sECWeo6pOVkYgPrIYDTIP6Y1Y7akMeediyWM55U3+gQ=;
- b=a5ibXJDbTY4K3Wnc8mfqL2aXIQrrmPUxLd7vHiH3N2xIJt+Ul7geUo3cCJ8VrMojQIpsnGKSr55Dn6UiDnh7Jfh7/vZLqepGrFuZj1Ul0j+iTRmP2ymqjFw8W3+IwnLQRu88/OZ7UBFVL7Jddu9xuuDM712qP6vNFeWtQNN3uNCUzytPKus0J+IfU9Mwcc0NTTTCUcjh60pwvH/6YIaerVhy6bgyNxR3/kI7KStfv8PnQIaomfVwMsMVLQcvn+8BdzTIaeD8ufjOiBAB2wAPnnF3ry3nJu5dhlVrSYREs52feyoosOqu5VtJeGUdTCtMPUcIQhJw94BqXSr5UgLI8g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by BL3PR12MB6403.namprd12.prod.outlook.com (2603:10b6:208:3b3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
- 2025 21:12:15 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
- 21:12:15 +0000
-Message-ID: <2c381df5-de8c-4f2b-ad2d-9cce9569a956@nvidia.com>
-Date: Thu, 6 Nov 2025 13:12:12 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] gpu: nova-core: prepare Spec and Revision types
- for boot0/boot42
-To: Alexandre Courbot <acourbot@nvidia.com>,
- Danilo Krummrich <dakr@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
- Zhi Wang <zhiw@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- Nouveau <nouveau-bounces@lists.freedesktop.org>
-References: <20251106012754.139713-1-jhubbard@nvidia.com>
- <20251106012754.139713-2-jhubbard@nvidia.com>
- <DE1G0R9W3JS9.INLIKG0AXGES@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <DE1G0R9W3JS9.INLIKG0AXGES@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR08CA0014.namprd08.prod.outlook.com
- (2603:10b6:a03:100::27) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AE82D5C91
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.100
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762463876; cv=none; b=nif+F6tAGQ0p01A72CpPDELPLMpJPq8HNEDBlSl2/l9gcwu5M2i13YVKhWTFBhSo7n+z6wJ5kUHRqzLu7zyoyzj3UfGfUX+BrO8d2B9DSCGrPFC6rZwyXrQu6xGd1oPnYEIV5gl7GtpfVw5P0rsvirai+D8+trfh0keyXrXesds=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762463876; c=relaxed/simple;
+	bh=zeV5pygef1wyF/lJ9ko9Ct1bLGUnJuj9ngVBugT6rW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OVgIhfeb8GRdGum+5KI26OGhZ+kWjJuzbthpB4FWSXHG2ZZJIvge9w8c0UEGW4WMm23t763TU2Ckt5R0J4rQn3d03KI9A/mW+iyr6Xs7xZ0Al1dz5Uc3n6LWgmow9hZ6dRfxQljOPWFOO1LVNhvBoUU5633PrRbRngfrUhTPNvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=b5JzrfDd; arc=none smtp.client-ip=209.85.166.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-io1-f100.google.com with SMTP id ca18e2360f4ac-94884c52a03so3808639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:17:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762463873; x=1763068673;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9qh6M2+2slNp/Eaqs7CKpAs0otSPjZ5PWWWvvqphD0E=;
+        b=WpBTXem1BcdIn8OVugiEabFQfQJh08+p1lB4xfnkCRbwbYDq3BmgTwaMFDFZhQcg73
+         P2enEMizEPPb3VWzo/5T+xZ6Icm7wrYLeELGme7TlD41uc6KTW+xQR7Q1r92EWk4o2ic
+         B6TsR/UzAoQmRxumWtrD4bvyyTNEZdPog/JXVRtqoOIvdci+JUnY+qpHbiXs7y1gLRaG
+         Om1ceA9eFJEXDbxUV/x3MK+xDzUXxD8iCkphu7etpX4B0+IhtLMYrcm5pw7JThUcanTQ
+         9MC01P3WFVE3dxyjnj6glAm/zJpXrsa+sIfoPCVIM8vfzS7To04+7sUZuvMaLVVOgYI4
+         1W6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXv3PYGddDcSNmHW0zeg7hXzLPfdWl5WxfwY8vZZaJfP7eCTTWOnSTU22NqYjZgiBCa/FA3pdiS3QpZJjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHh5ck/UGPHC60FJ56L5NKYggatK9hTk/WgaEyfEBxaB5YkUBL
+	cJx+xDI9uVNHjHkutlMcfjcOfWrvN+MwtdKZh8JQ2BzvzQsw0zcreIdzq3J3gsrraFz1HMQ24pR
+	IgFvrbJ0v1yxeM7NSqw6Y/5kYbb6ZoevoMTknSbSzH/MQ6j6Fej2/eeVLGNMjG2dgnHQboDLG+Z
+	0SGCNZMfHZJD7JczNOkoFe2QxPrQ6P4oh+mLyHjfoyZnPPeL9zx9Ji/M4QmNmr3N3zeEL+bNA66
+	hCFJ9Ay014kqom7Q6AvrTob
+X-Gm-Gg: ASbGncsxveA7BcZdD6+qkznUvAmUN37gfWZX0lQXDG65YeowbVCZSEJHV956nAC2Tn7
+	X1U5lztwO9ORxgzLeotFeA41ovwnMKFtoQXRuAae6pHzyWzS8WPXCgrWIyOr5H8wOJMkYO236ve
+	az9exN1SIDN0dFu8zZ7f3lRvmH1HhDAHb9TMtniw/kIZ1F2rdVsGOk0BxkWwubukcfUGnVfPnXi
+	D5kvGroMxp+JaVoDfphMZ5p/otT/zEwNBnOASZ7GSWAEkC1GY2aHrkcNqukWWaE3/34Qsr6CaOu
+	HFwUbuDj5KFUmzvwBkQjISh8u1Wtlg/P33i4e4vycGLdBPhUwRuTAYnJ6T+4v2223n9PdcNxqxk
+	XgOSg0c4W5ik8ndTIIc+MrGFzIK2PNGmdNQ7nHraScYJz2iwlNbsxyAeK/oQWWux5sl6vHyxK56
+	Zbaa7NwJEkOnZRTkzTmT/OA6VF0dMA9kUUfx/aGZI=
+X-Google-Smtp-Source: AGHT+IEUSDgt4G4oyj4wLOLpQEOaN/zCVGuZA593+mfvDqBYmam5iKnfuaQfUM3erouY5qi/SOVZfVLIDXvU
+X-Received: by 2002:a05:6e02:370c:b0:431:d726:9efd with SMTP id e9e14a558f8ab-4335f3cfb5dmr13686665ab.12.1762463873613;
+        Thu, 06 Nov 2025 13:17:53 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-5b74677112esm359107173.14.2025.11.06.13.17.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Nov 2025 13:17:53 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b1d8f56e24so17282885a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:17:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1762463873; x=1763068673; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9qh6M2+2slNp/Eaqs7CKpAs0otSPjZ5PWWWvvqphD0E=;
+        b=b5JzrfDdLeLAvFNJwlJ7KBXF32doILcZrZqRa463Mj4Ani4PEYFUe3Xf6QZ/sLe5YK
+         x6iyI2MYDdpf8osrkAF5L08o4Sei1Ve3kmtgWHzqCYIgWbrm6EY0GCmZvL6ULyzVp8Xw
+         N6qfQ0RDA/bQ8xHpS56j3NdZdkCy5B1Q9/CB8=
+X-Forwarded-Encrypted: i=1; AJvYcCXn9h2B622btTziqLXH4QOXD9GucSGJNurBmOc/EMlyXsIJuUkHvd6lyGEp+hsdHelB0pOAKQOfvAfYhfo=@vger.kernel.org
+X-Received: by 2002:a05:620a:294a:b0:8a0:8627:30b0 with SMTP id af79cd13be357-8b245339b21mr164834285a.49.1762463872805;
+        Thu, 06 Nov 2025 13:17:52 -0800 (PST)
+X-Received: by 2002:a05:620a:294a:b0:8a0:8627:30b0 with SMTP id af79cd13be357-8b245339b21mr164830985a.49.1762463872373;
+        Thu, 06 Nov 2025 13:17:52 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2358287eesm270270585a.54.2025.11.06.13.17.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 13:17:51 -0800 (PST)
+Message-ID: <f0eae1d1-f845-479a-8388-a9351e9467b0@broadcom.com>
+Date: Thu, 6 Nov 2025 13:17:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|BL3PR12MB6403:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d86630c-5a49-402f-d09d-08de1d79294f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c29Fdi9KRGFEeTBiQ2JOb2QwQnJTMzZvSlZId2FkN3MrNG9MaGdXNXgyeGY5?=
- =?utf-8?B?K1BSeWdsTDNCU0wwQWszdFY1TEtVRVZFdnozMDZPVEdGekJ6NmZ5N2c3S3NV?=
- =?utf-8?B?YjJ4N0JLMVQvL2o5Ri9QSDY1SHJFQjZPaTZIc3dSMFJMa1ZOSzZFV2dGT0lq?=
- =?utf-8?B?eUlhK296L0I2MFA1MGNGdFRNOElPREQwcG5OTmExM2wwTnpUZStuMk9JRnFT?=
- =?utf-8?B?a1FjRTI5NTdEMmRuWU5qeGp3SlpxQzg0Wk5uTENoUFd5L056eS9MbFV0TFZa?=
- =?utf-8?B?ejF1eFJ1MkxlT0FsMjB4eUFabGVuVkI5SlBCSVAyTzJrY0NTV3VDVzdzYWpV?=
- =?utf-8?B?bkVhaDFyUEpSazFSclJNcFBielZ2ZGtSWmJXSlpQTUJQZUN1di8zRTBpUDY1?=
- =?utf-8?B?elpaaWtGRkNjNWdXWlFQVEtsSGZORkRmNndxdzRhajFObW1OUG1RZmZHLzZv?=
- =?utf-8?B?MzJ6T3BLZXZWWFRvRjNvZHB5NHlxTEdXUEhYV2dRTlJNd3pyVTZIQzZENGpT?=
- =?utf-8?B?cDZMaHlReVFrVjNkbkZ3Nm54aFlpYmh6WkRwU3pCVEN0QkNud1dKUGlGcWlo?=
- =?utf-8?B?VEt6TG9SNDl3TGtSVFB3a0JjNXRZVlZzeFFhNldjdThZOEFlUVJvY0xWTW5L?=
- =?utf-8?B?RUVJRGpJY1FTRENPSGpKNFlnZ2FoZS96eFV1VE1TK0J1NSt1ZDk4T3F5S2Q5?=
- =?utf-8?B?dUtWYnVxdWlhY2tFRXhXanNvdFBNWm5UYWJNQW0vVEtHL3VkajlkQjZ1SVlt?=
- =?utf-8?B?RjNxWFVhWFp2SVo3ZDN0OExtcEhISlROeU11dzVvbmpLem9kcHhwUzZkeUtK?=
- =?utf-8?B?ZDh4d1R2SEhwYU93VlNFSDF4MHZ4eW9QdCt5ZCtCU2VDcGhYeHFlMzE1bVYy?=
- =?utf-8?B?WXFPOTJLckxETm1uQXU4NnlOWWJqL1ZaYnVjV0ZCU0ZoL0pEeXd3cXUxOWFq?=
- =?utf-8?B?MEEyT3VJNk9adG1RSzZ4cEE2bVY4ckdzQVRLdTdEV1JDMS85TWV2UWl6TUFV?=
- =?utf-8?B?eXJrd0JXdGpOQXpORkk1TUwxRnppR0p5N3crQmM3bmNMOUczU010Z2xNZEVQ?=
- =?utf-8?B?Z1BlNXM2SjR1N2ZvR2hGT0F4M1U3S2xTeUw2TTI3eWNjYzRPVWtjQ0w1b29L?=
- =?utf-8?B?VTVlYUUxb3piSWNRLzJ2K1krL0hZZE40UVBYMFcrV2VWTXpjQXRpVmRGdFF5?=
- =?utf-8?B?eHVaYlNTNlZaYWVIelNVMXhiVDQzUjJZa3JnZkd5VExqdHBicHJiRFo1eHV0?=
- =?utf-8?B?cjE2NVA1a28vVWs0YlphQmdXR2lwNzF3S1NFek5jOTFOYm1KZWRxRG9SeEhI?=
- =?utf-8?B?WURtcnp4SGVQN3hPcmdjQ0pmTjdXaUNBSFVGV1hOUEhZRmlsWDJXYkRIR0dr?=
- =?utf-8?B?Q09VemNtSWFKSWR5RldQTE42ejRHRlVvV3EvTHdmdHllS2s1d0JUd01LWk5G?=
- =?utf-8?B?QUtpbkNtWW51cjhWMFo3SEJyTjZuaWFqeVpQM2RMR3UzMkZJRXIwUmI3U2VK?=
- =?utf-8?B?eXZmUUN5bXI4amVEWFFGMTdFV3liZHQ4bEVvZklaS2hIUDVJaFp2RjlpSlUv?=
- =?utf-8?B?ODl0WVljVzU3d01zRTBIT3lGVGhhTzJaOGlTa1djN1lzVFA2WGc4M1JSOGRL?=
- =?utf-8?B?eE9abHZsdDBMSzZpMjRhSkFLWEtzQVpnamozQlhySmRQWTBSYXlCMWtjckdw?=
- =?utf-8?B?aUNWTzhkZmhLc2xzNkhSYzJWM25RTFI3R0g4R2R4dEdHTFowMTZzU0NsVXZ2?=
- =?utf-8?B?a29GNkRST0N3UkV1R253aXBOY0N6WEpld1lqUkdMcUViNUdJY0lOUlhmQ0ZJ?=
- =?utf-8?B?WTFKVjdlb3JrTTBubXJIbGJxVFpaK2FPNkpSMGVjZUw0Z0pZUmY5VGxZOW1Y?=
- =?utf-8?B?Q1NYRSticHU1YUQwR2p2cjlPVGVPNlBzcjNUbVpWUXM2QVNHbUtPeWxwYUpu?=
- =?utf-8?Q?kJ/EeLXQl4bqwynhEiFBk7ypC+SwFvyR?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TW1KMEtuMWhiWkpZVnZaSnZkYnBJaHlvUjR5RVZIUks1WUVtTVlLMS84ZFA5?=
- =?utf-8?B?NG4yL2xMTDBkZHBIblBxNWJFcVdjb2xPTE1GU3JrTDRQcGdNUE1pTEtPZnRT?=
- =?utf-8?B?YXB2Y1pvRkd4Y2lSTU11Wm9COER2SERvYTZsdFptMkNVdDNVSTZraFg1ZnVH?=
- =?utf-8?B?RUxJVndQL2hBM0NNa2VQcHJZL2x3TjRqS3c5VmsybForMVlGYVFDU0VIMk1L?=
- =?utf-8?B?ZFR0OGJDQVRPZ3QyS281TXFDRkczOWlLVHNrU1NHdDZKMlFXN3JWbWRFRU03?=
- =?utf-8?B?dmlzeXlpQ0JoNnJtNkUzYXpiYzRsUm1SaWVBdlAxQi80alUvK0JTT3YvUGxW?=
- =?utf-8?B?RjJ5WURPK1dEdEdCTzNXMlRoWEtxMWloY3VxOXN1WUprYlp4VERSa1BRVnZu?=
- =?utf-8?B?WDJHTWVUVStZOFhJS2VSY291VWRwU2w1TVkvT29HY2pHQUo2cTlCVkhlYytH?=
- =?utf-8?B?NHIrSWpKRWpLYnFheVJMMmhlZVZTKzNhaUhQamo3Q0V1NzZqMWQrd21LQ3k5?=
- =?utf-8?B?SzRaU0YrRFZoM0RSTUEwWnFVQlI0eVFxQWFmMVpsaWZmU1NDYjhZa1U2M1N0?=
- =?utf-8?B?TUR4Q2w1YlNBYkMxRjdvN0MxVmtJZTNEWVpCVXNicGpBa2R3MTNBSG5mWlBl?=
- =?utf-8?B?WFRLVDNjTHZhbHh4SFZaNUZtU3lvL0gzM083Z0dWaTBmdENvZlk0b1NuYzRG?=
- =?utf-8?B?cWJsNnJIaG9VSmJWZjY4V29qYzhuVHdOeldXcWs1aHppYUdBSEZsNVVxckk0?=
- =?utf-8?B?aStPdFM4TUZ2akQwYkd2aE9JOUxOM2IrTW9qMjdxNXVDajk4b3BTTWw2eGVR?=
- =?utf-8?B?QzdpYzdaVkFJZ1g2ai9FZjJidVZIdk9CZG0vR3NFUGFPVTlkcXZ0UlFEemJD?=
- =?utf-8?B?cThjVXprK3FWSG1aSStnOXFNWUdhN0ZoMjU4bEdhZ2xQV1BFK0tONFZDTjNG?=
- =?utf-8?B?OFhXVWk0MjJuSlAvM01hUFRPY2RVVXlWL2tlTngvSEhvbUlDWERwTTcyOU1y?=
- =?utf-8?B?eW5kVklXM2dnVEV2N0czMTE3d0VnREpmYitHTWU2NUdkbUpRUU1FZjdnd2pW?=
- =?utf-8?B?TXJlRmJwRHlCSnBaMjJlSndqWFdWMEtUbFJzbG9ROUVOdVBIanFpYmhnWVJl?=
- =?utf-8?B?TkxuZ2xtME9tNTRCUWRNRnFSQjBLbnl1aDRLRmxrSEhMZXE4Sm9MbVU4cXVH?=
- =?utf-8?B?YWhPWDBhUGN6QW8xelB4S2Jyb2xaQStxWktJQWpYc2xTcTJrRU1iS3Npd1hW?=
- =?utf-8?B?OGZmcTNYeitDY3IxZ29XMWQ2WHd1TFhoSkF0Y2RORWxaQXRXc2FLUmlMa2tT?=
- =?utf-8?B?ckwzbk5LSGc5OTBsZDdoVkp0VFgvbUFMYmtLQnBlekZUK2o3ano0WHB4ZElT?=
- =?utf-8?B?Rm9Nbkk0cE1kQ0lXOG0wdjQrNWhIMVJYNTdtRE5WU1BraWFYZmdSWm5URjIy?=
- =?utf-8?B?ZE9zSDMzVTIrSWJZMXpYdEFGaWFqZCtSVTZMbzUvb2ZxVHg0Snk1dGcxTktx?=
- =?utf-8?B?MnJIY1k3LzFRc1UzdEVRdzZQK1g1N1FnTmZObVA0RXkyK0VreWRvSThxSjFt?=
- =?utf-8?B?QlgyYkcrNThmeFZHV2U0YnhXNjdtamVTM2lhcjNxcERpbmN1K25pT05yaGU1?=
- =?utf-8?B?bUNLUmZJMjRrY0NlWHFVKzI3bUVPRFlka1hvUWpKNXB6N0hocmVkZVg2ejN6?=
- =?utf-8?B?UUdDQUVWazFzQ3ZNZnlGazVVZ3ZMUENhSkZwK2YzUnE4MW1wcHZlayt1azdW?=
- =?utf-8?B?U2JRaVYrV1RacjUvVDdXYmRQT0dJNWd5TEZtZFRQUTI5bEVud0lEcFNmYnl6?=
- =?utf-8?B?OTNGL3k5YzNMYzVVSndML25qbDJyRXZxQUd1QnFrU21PL2NpaWdGSk5qRUtT?=
- =?utf-8?B?RXFmUjAwM2JuQTlPazRySHNDV3JXRGsrZVNRWGVZeGFYUUw5SnhHaUFXYTRB?=
- =?utf-8?B?VXBOM3oyT1lnNnNQeXBEQ1lrSXlyeXM4Q0RkeHkyaWZiYXRSeTdEa3J3VDJC?=
- =?utf-8?B?cWc4QUtCdHdlY1FJSFZUOEc4VXBoMWQyTkxyMmEza1Z0NnZGRGhhS0R4NGpl?=
- =?utf-8?B?RDhhZlVvQjNIVldEVEg2UGo3LzZhWTMxK0Fyb0V3anBua1YyZlNsemVta0tQ?=
- =?utf-8?Q?tOvTUfrKFdlx2upOQuT1/f4e9?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d86630c-5a49-402f-d09d-08de1d79294f
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 21:12:15.5916
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6XMX9YpzzvEp40maIFTfPuPDDdU8rCuTIwbDeXvSpTO93iwhwHWSfw3JGFTQzyZPL+nBFlo57bC25L5jz1DTgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6403
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 0/2] Allow disabling pause frames on panic
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+ Doug Berger <opendmb@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Antoine Tenart <atenart@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Yajun Deng <yajun.deng@linux.dev>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251104221348.4163417-1-florian.fainelli@broadcom.com>
+ <20251104155702.0b2aadb3@kernel.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20251104155702.0b2aadb3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On 11/5/25 11:45 PM, Alexandre Courbot wrote:
-> On Thu Nov 6, 2025 at 10:27 AM JST, John Hubbard wrote:
->> 1) Implement Display for Spec. This simplifies the dev_info!() code for
->>    printing banners such as:
->>
->>     NVIDIA (Chipset: GA104, Architecture: Ampere, Revision: a.1)
->>
->> 2) Decouple Revision from boot0.
->>
->> 3) Enhance Revision, which in turn simplifies Spec::new().
->>
->> 4) Also, slightly enhance the comment about Spec, to be more precise.
+On 11/4/25 15:57, Jakub Kicinski wrote:
+> On Tue,  4 Nov 2025 14:13:46 -0800 Florian Fainelli wrote:
+>> This patch set allows disabling pause frame generation upon encountering
+>> a kernel panic. This has proven to be helpful in lab environments where
+>> devices are still being worked on, will panic for various reasons, and
+>> will occasionally take down the entire Ethernet switch they are attached to.
 > 
-> A bullet-list in a patch description is a sure sign you will be asked to
-> split things up. :)
+> FWIW this still feels like a hack to work around having broken switches
+> to me :( Not sure how to stomach having a sysfs knob for every netdev on
+> the planet for one lab with cheap switches..
 
-Yes. That is an eternal truth, which I foolishly ignored here. haha
+That's understandable, we have seen it with any sort of Ethernet 
+adapter, GENET is the one that we have the most deployed, but we have 
+seen that with Asix USB Ethernet dongles happen, which is why this made 
+me look for a common solution, rather than a driver specific solution.
 
 > 
-> And in this case I think it makes all the more sense, since all these
-> things taken separately ought to be simple, but having them in the same
-> diff makes it confusing to review.
-> 
-> Although it's mostly the `Display` implementation that at the very least
-> should be its own patch, the rest can probably be kept together as it is
-> related, and adding an intermediate patch would require temporary code
-> to build Revision. The diff becomes much clearer once the impl blocks
-> are moved where they should be (please see below).
-> 
-> The comment update can be squashed together with the Revision/Spec
-> patch.
-> 
+> If anyone else has similar problems please speak up?
 
-Will do.
 
->>
->> Cc: Alexandre Courbot <acourbot@nvidia.com>
->> Cc: Danilo Krummrich <dakr@kernel.org>
->> Cc: Timur Tabi <ttabi@nvidia.com>
->> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
->> ---
->>  drivers/gpu/nova-core/gpu.rs  | 45 +++++++++++++++++++----------------
->>  drivers/gpu/nova-core/regs.rs |  8 +++++++
->>  2 files changed, 33 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
->> index 9d182bffe8b4..8173cdcd8378 100644
->> --- a/drivers/gpu/nova-core/gpu.rs
->> +++ b/drivers/gpu/nova-core/gpu.rs
->> @@ -130,16 +130,18 @@ fn try_from(value: u8) -> Result<Self> {
->>  }
->>  
->>  pub(crate) struct Revision {
->> -    major: u8,
->> -    minor: u8,
->> +    pub(crate) major: u8,
->> +    pub(crate) minor: u8,
->>  }
->>  
->> -impl Revision {
->> -    fn from_boot0(boot0: regs::NV_PMC_BOOT_0) -> Self {
->> -        Self {
->> -            major: boot0.major_revision(),
->> -            minor: boot0.minor_revision(),
->> -        }
->> +impl TryFrom<regs::NV_PMC_BOOT_0> for Spec {
->> +    type Error = Error;
->> +
->> +    fn try_from(boot0: regs::NV_PMC_BOOT_0) -> Result<Self> {
->> +        Ok(Self {
->> +            chipset: boot0.chipset()?,
->> +            revision: boot0.revision(),
->> +        })
-> 
-> This impl block for `Revision` gets replaced by a block for `Spec`,
-> which is only declared later. Can you move it (and the one for BOOT_42
-> in the third patch) to the right place, next to the other impl blocks
-> for `Spec`?
-
-Yes.
-
-> 
->>      }
->>  }
->>  
->> @@ -149,7 +151,7 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
->>      }
->>  }
->>  
->> -/// Structure holding the metadata of the GPU.
->> +/// Structure holding a basic description of the GPU: Architecture, Chipset and Revision.
->>  pub(crate) struct Spec {
->>      chipset: Chipset,
->>      /// The revision of the chipset.
->> @@ -160,10 +162,19 @@ impl Spec {
->>      fn new(bar: &Bar0) -> Result<Spec> {
->>          let boot0 = regs::NV_PMC_BOOT_0::read(bar);
->>  
->> -        Ok(Self {
->> -            chipset: boot0.chipset()?,
->> -            revision: Revision::from_boot0(boot0),
->> -        })
->> +        Spec::try_from(boot0)
->> +    }
->> +}
->> +
->> +impl fmt::Display for Spec {
->> +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
->> +        write!(
->> +            f,
->> +            "Chipset: {}, Architecture: {:?}, Revision: {}",
->> +            self.chipset,
->> +            self.chipset.arch(),
->> +            self.revision
->> +        )
->>      }
->>  }
->>  
->> @@ -193,13 +204,7 @@ pub(crate) fn new<'a>(
->>      ) -> impl PinInit<Self, Error> + 'a {
->>          try_pin_init!(Self {
->>              spec: Spec::new(bar).inspect(|spec| {
->> -                dev_info!(
->> -                    pdev.as_ref(),
->> -                    "NVIDIA (Chipset: {}, Architecture: {:?}, Revision: {})\n",
->> -                    spec.chipset,
->> -                    spec.chipset.arch(),
->> -                    spec.revision
->> -                );
->> +                dev_info!(pdev.as_ref(),"NVIDIA ({})\n", spec);
->>              })?,
->>  
->>              // We must wait for GFW_BOOT completion before doing any significant setup on the GPU.
->> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
->> index 206dab2e1335..207b865335af 100644
->> --- a/drivers/gpu/nova-core/regs.rs
->> +++ b/drivers/gpu/nova-core/regs.rs
->> @@ -41,6 +41,14 @@ pub(crate) fn chipset(self) -> Result<Chipset> {
->>              })
->>              .and_then(Chipset::try_from)
->>      }
->> +
->> +    /// Returns the revision information of the chip.
->> +    pub(crate) fn revision(self) -> crate::gpu::Revision {
->> +        crate::gpu::Revision {
-> 
-> nit: let's import `Revision`, or at least `gpu`, to align with what we
-> do with the other structures.
-
-Yes.
-
-thanks,
 -- 
-John Hubbard
-
+Florian
 
