@@ -1,188 +1,222 @@
-Return-Path: <linux-kernel+bounces-887561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B7CC38857
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:53:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E38C38955
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 01:58:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CDD3B2F86
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:52:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27A6B4F5FAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 00:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3B91D61A3;
-	Thu,  6 Nov 2025 00:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqXEMfoT"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8132F21A95D;
+	Thu,  6 Nov 2025 00:55:51 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690D833E7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 00:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E991A1E570D;
+	Thu,  6 Nov 2025 00:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762390367; cv=none; b=JjTSynGsYZlAkm5BdhKjKnpFqZES5o52MqkDz4+pVzseXfdJNCXzL4I0YphOkkzjIxHJUmnG1GCgy//mR+1SlXB/fN1BU2nSryMLTn3BARqvdcebkIW2F9UnY7hDEdR/Ex0wbwF6gUuDBI50Ykd/dbR3ZzDLJtZ5pBA/JNLAFkc=
+	t=1762390550; cv=none; b=GfwfLVAHBMFNOCNQD4hP6hOMsTlbDwl5QRZJNmdkY7WJDyfU/zkxvz2HL9VUod+tAZryqjXiotUcy/5YdEunaZ+i70E0qN2eH5s0ZwPuEdP3V/Wce/0XxkFCBG7pPVie6txGhks+lSJgPBQFwXN4AWyRYUw7p1ak7OFRA1w2/OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762390367; c=relaxed/simple;
-	bh=6OeZWmkLzPTDm0Nogt0/O0+112Y2Ks/sc1xjGQfLCtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ci/RaNaWhRIv7U4URWphRq1Xx9bsvzm06XoHuWLLR6B4Pe3ctlv2BmbBy5awCUcnKix3OO7yCZOUvkVzm2OKHETKEaGvr9cYJCJK7pXug9s2oMRsGSxbXGR4Zc4gusUaUJJ9OycHm58BxHwkuK70AZcsPid9X966cXoLQwI7NSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqXEMfoT; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so515964a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 16:52:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762390364; x=1762995164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4TC3jknw27uusNIMn2p5lG+ecGQ+4uLN2sc869EijWA=;
-        b=HqXEMfoT7kF4TVXlp/Hsu51zwuwloi1mrZ+acodJKsyfWxhVDiTNNGGkZGXD+azsWg
-         1OXxGLS/V4jlR9QK1TcyrUtlLt3F+ny3ZFHXlzs3/3qgHEuDHKw8ev+TssypIsJHpGBi
-         tPGTQrFhLbpguVjZbhe8+g2B7tKMaW/Sxq0EFqBT0iIziJyDcUkTLcek4l9s+cPr7MGB
-         bCA+fX2NhSzxbEicep4qIZkQe3UKOG8pemknu59RxCFrxn7B3QOn6Fw+hRBCk2cS9b7U
-         VYpeoB85qzQxecmEyaiT8VYcSw/7FQZDgrQec0k7OvBIUyUo8lUdhU0TbV87UEQR1Lx0
-         BIVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762390364; x=1762995164;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4TC3jknw27uusNIMn2p5lG+ecGQ+4uLN2sc869EijWA=;
-        b=G0ft2laA5v2DG7KalsTrxcuFz4rMQ62TzMDxPyj02n2FBP5AqXxplRbcJr7hF3hk0u
-         iNsNs7Zm5S5ifKmoFVkV5uI2IojEDa7vYOOCdz6rKegYZ9EqSvbQIxltFipBBLtw0k87
-         DiabTWLa787faB5JO4RGGTPS7MPX69+tqUiyUNby49rIRVDvzHwQ+0bWFrs4qry8fgPA
-         FYFiv5YhbBCaG2sOznxGYKt4vG+iTZvPsAw2kJw9gAjki1bg9vVIHH1TB1KVGo3V0EXk
-         DhX/NiMYWns3seC6CsKcg0nZ30EakDiJORG0qZ+HsQOzf5fZDhE0Bdhvi0TZ5ReaqqWy
-         P4aA==
-X-Gm-Message-State: AOJu0YxuB/fTCQ36HfD+EN/cpOGyTMXD0g6C8qChJ6dWv5pHsGVXsEBt
-	wNcTm8zPsMxnupagAqqRjw8eHIkMPRHUB5gIr71QWRCCVya8XwY7kUoz
-X-Gm-Gg: ASbGncu+PtybdDrczXAyFB9aB7VAF27s8JcG8/HqsQJJt3odZjNHPakR6Uzbxhjad6b
-	ms1vKrtORDk5u3BSiqJD0lR0dAA+o9WqNFM4caHp0z2L269JQWcH62wKmgSmBS+drnpizUbj+GF
-	cwq2Duu/Flsmozm7eycjOJrf40MyGkkM7luBt2b4d3f2JoytzTm5zf7DHrLGjX4Qg/RQ4fR06Li
-	hE17bCbVOXH+0DSZhgEBmoc3YcHkycQKa243SGm9UOAe8MVzrZ5A1eWSPHRsx65HQCluPulv7da
-	LBATFKEwAsjcHLHcfRQ0c1Pf25t4r6QJXQxHjpeP2T3nptSJeZnG3j9YPi6e8O/Sps7kt25A87J
-	wTJcUB9lYqWaQLfnq0n81p9DoNuUqx3daaQ6zG0Qi1Duk3pLHmiKW9chazU1nP7dv/+V8Ll8psZ
-	khloMgFZtOVRL2PAOZIIVx8g==
-X-Google-Smtp-Source: AGHT+IGyPw3/1ye6s+MutCB7GxPiniSAjUqQCYxPkECNVoFIt+LeekKL8kDCX7wiOXbyde9uL5l1lQ==
-X-Received: by 2002:a05:6402:2417:b0:640:af04:d718 with SMTP id 4fb4d7f45d1cf-64105a5c7c8mr4938545a12.30.1762390363532;
-        Wed, 05 Nov 2025 16:52:43 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f862697sm476807a12.25.2025.11.05.16.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Nov 2025 16:52:42 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id D7F1D420A685; Thu, 06 Nov 2025 07:52:32 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux DRI Development <dri-devel@lists.freedesktop.org>,
-	Linux Intel Graphics <intel-gfx@lists.freedesktop.org>
-Cc: Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] drm/ttm: Fix @alloc_flags description
-Date: Thu,  6 Nov 2025 07:52:17 +0700
-Message-ID: <20251106005217.14026-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762390550; c=relaxed/simple;
+	bh=QLck3GIt8vPMfgt0eHGXCkrpAXE3TypTezixglxPgog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MdrXmZjJqZFOGRzen93rFSIOAuTG8lvfhNhusi9r9RSemPogi7AHHAnMEy5gI2q4a/Z6K4GfbFw4pofG+GURF8xV2gn0NhHIeMlvswQMQx4wfsgNwREb+ab7Q2Hb75MqzfPe/EY6xSmcA/L7y7WY1o4R3OUXHs0kuUaCkgl7fPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d23dj4RvPzKHMSC;
+	Thu,  6 Nov 2025 08:55:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 95FAD1A0C0B;
+	Thu,  6 Nov 2025 08:55:45 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP1 (Coremail) with SMTP id cCh0CgDXR0sO8gtpxr9CCw--.11206S2;
+	Thu, 06 Nov 2025 08:55:44 +0800 (CST)
+Message-ID: <e0b3f050-ef2e-478e-9e22-5f800b86ee42@huaweicloud.com>
+Date: Thu, 6 Nov 2025 08:55:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3498; i=bagasdotme@gmail.com; h=from:subject; bh=6OeZWmkLzPTDm0Nogt0/O0+112Y2Ks/sc1xjGQfLCtE=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJncH/IOLdgTFFyjsmVl+3nljed/3uFbIm99O3GxYOe+J Yz/uRW9O0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRDj2Gf1qX/599FxLc3dGx 1uPH2qyjp6/3i5n+9A76y6zTvG+h0xKgCg67uoPm/TbK4WuldbNmSKTIGj6bW7dO4s5PFstb12V 4AA==
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/31] cpuset: Propagate cpuset isolation update to
+ workqueue through housekeeping
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
+ <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
+ Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-mm@kvack.org, linux-pci@vger.kernel.org, netdev@vger.kernel.org
+References: <20251105210348.35256-1-frederic@kernel.org>
+ <20251105210348.35256-18-frederic@kernel.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20251105210348.35256-18-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgDXR0sO8gtpxr9CCw--.11206S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw47CFWUurWDGFyfZFWfAFb_yoW7Jw17pF
+	Z8CFW8Kay0q3y5u3s8Jws2kr47Kw4kKF17Kwn7Ww1Fyryaqwn7Zw1jgrZIvryFqr98Gr15
+	ZFZ0g39rGF40kwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
+	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	j6a0PUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Stephen Rothwell reports htmldocs warnings when merging drm-misc tree:
 
-Documentation/gpu/drm-mm:40: include/drm/ttm/ttm_device.h:225: ERROR: Unknown target name: "ttm_allocation". [docutils]
-Documentation/gpu/drm-mm:43: drivers/gpu/drm/ttm/ttm_device.c:202: ERROR: Unknown target name: "ttm_allocation". [docutils]
-Documentation/gpu/drm-mm:73: include/drm/ttm/ttm_pool.h:68: ERROR: Unknown target name: "ttm_allocation_pool". [docutils]
-Documentation/gpu/drm-mm:76: drivers/gpu/drm/ttm/ttm_pool.c:1070: ERROR: Unknown target name: "ttm_allocation_pool". [docutils]
 
-Fix these by adding missing wildcard on TTM_ALLOCATION_* and
-TTM_ALLOCATION_POOL_* in @alloc_flags description.
+On 2025/11/6 5:03, Frederic Weisbecker wrote:
+> Until now, cpuset would propagate isolated partition changes to
+> workqueues so that unbound workers get properly reaffined.
+> 
+> Since housekeeping now centralizes, synchronize and propagates isolation
+> cpumask changes, perform the work from that subsystem for consolidation
+> and consistency purposes.
+> 
+> For simplification purpose, the target function is adapted to take the
+> new housekeeping mask instead of the isolated mask.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>  include/linux/workqueue.h |  2 +-
+>  init/Kconfig              |  1 +
+>  kernel/cgroup/cpuset.c    | 14 ++++++--------
+>  kernel/sched/isolation.c  |  4 +++-
+>  kernel/workqueue.c        | 17 ++++++++++-------
+>  5 files changed, 21 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+> index dabc351cc127..a4749f56398f 100644
+> --- a/include/linux/workqueue.h
+> +++ b/include/linux/workqueue.h
+> @@ -588,7 +588,7 @@ struct workqueue_attrs *alloc_workqueue_attrs_noprof(void);
+>  void free_workqueue_attrs(struct workqueue_attrs *attrs);
+>  int apply_workqueue_attrs(struct workqueue_struct *wq,
+>  			  const struct workqueue_attrs *attrs);
+> -extern int workqueue_unbound_exclude_cpumask(cpumask_var_t cpumask);
+> +extern int workqueue_unbound_housekeeping_update(const struct cpumask *hk);
+>  
+>  extern bool queue_work_on(int cpu, struct workqueue_struct *wq,
+>  			struct work_struct *work);
+> diff --git a/init/Kconfig b/init/Kconfig
+> index cab3ad28ca49..a1b3a3b66bfc 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1247,6 +1247,7 @@ config CPUSETS
+>  	bool "Cpuset controller"
+>  	depends on SMP
+>  	select UNION_FIND
+> +	select CPU_ISOLATION
+>  	help
+>  	  This option will let you create and manage CPUSETs which
+>  	  allow dynamically partitioning a system into sets of CPUs and
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index b04a4242f2fa..ea102e4695a5 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1392,7 +1392,7 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+>  	return isolcpus_updated;
+>  }
+>  
+> -static void update_unbound_workqueue_cpumask(bool isolcpus_updated)
+> +static void update_housekeeping_cpumask(bool isolcpus_updated)
+>  {
+>  	int ret;
+>  
+> @@ -1401,8 +1401,6 @@ static void update_unbound_workqueue_cpumask(bool isolcpus_updated)
+>  	if (!isolcpus_updated)
+>  		return;
+>  
+> -	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
+> -	WARN_ON_ONCE(ret < 0);
+>  	ret = housekeeping_update(isolated_cpus, HK_TYPE_DOMAIN);
+>  	WARN_ON_ONCE(ret < 0);
+>  }
+> @@ -1558,7 +1556,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>  	list_add(&cs->remote_sibling, &remote_children);
+>  	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
+>  	spin_unlock_irq(&callback_lock);
+> -	update_unbound_workqueue_cpumask(isolcpus_updated);
+> +	update_housekeeping_cpumask(isolcpus_updated);
+>  	cpuset_force_rebuild();
+>  	cs->prs_err = 0;
+>  
+> @@ -1599,7 +1597,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+>  	compute_excpus(cs, cs->effective_xcpus);
+>  	reset_partition_data(cs);
+>  	spin_unlock_irq(&callback_lock);
+> -	update_unbound_workqueue_cpumask(isolcpus_updated);
+> +	update_housekeeping_cpumask(isolcpus_updated);
+>  	cpuset_force_rebuild();
+>  
+>  	/*
+> @@ -1668,7 +1666,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+>  	if (xcpus)
+>  		cpumask_copy(cs->exclusive_cpus, xcpus);
+>  	spin_unlock_irq(&callback_lock);
+> -	update_unbound_workqueue_cpumask(isolcpus_updated);
+> +	update_housekeeping_cpumask(isolcpus_updated);
+>  	if (adding || deleting)
+>  		cpuset_force_rebuild();
+>  
+> @@ -2027,7 +2025,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>  		WARN_ON_ONCE(parent->nr_subparts < 0);
+>  	}
+>  	spin_unlock_irq(&callback_lock);
+> -	update_unbound_workqueue_cpumask(isolcpus_updated);
+> +	update_housekeeping_cpumask(isolcpus_updated);
+>  
+>  	if ((old_prs != new_prs) && (cmd == partcmd_update))
+>  		update_partition_exclusive_flag(cs, new_prs);
+> @@ -3047,7 +3045,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>  	else if (isolcpus_updated)
+>  		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
+>  	spin_unlock_irq(&callback_lock);
+> -	update_unbound_workqueue_cpumask(isolcpus_updated);
+> +	update_housekeeping_cpumask(isolcpus_updated);
+>  
 
-Fixes: 0af5b6a8f8dd ("drm/ttm: Replace multiple booleans with flags in pool init")
-Fixes: 77e19f8d3297 ("drm/ttm: Replace multiple booleans with flags in device init")
-Fixes: 402b3a865090 ("drm/ttm: Add an allocation flag to propagate -ENOSPC on OOM")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20251105161838.55b962a3@canb.auug.org.au/
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- drivers/gpu/drm/ttm/ttm_device.c | 2 +-
- drivers/gpu/drm/ttm/ttm_pool.c   | 2 +-
- include/drm/ttm/ttm_device.h     | 2 +-
- include/drm/ttm/ttm_pool.h       | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+The patch [1] has been applied to cgroup/for-next, you may have to adapt it.
 
-diff --git a/drivers/gpu/drm/ttm/ttm_device.c b/drivers/gpu/drm/ttm/ttm_device.c
-index 5c10e5fbf43b7f..9a51afaf0749e2 100644
---- a/drivers/gpu/drm/ttm/ttm_device.c
-+++ b/drivers/gpu/drm/ttm/ttm_device.c
-@@ -199,7 +199,7 @@ EXPORT_SYMBOL(ttm_device_swapout);
-  * @dev: The core kernel device pointer for DMA mappings and allocations.
-  * @mapping: The address space to use for this bo.
-  * @vma_manager: A pointer to a vma manager.
-- * @alloc_flags: TTM_ALLOCATION_ flags.
-+ * @alloc_flags: TTM_ALLOCATION_* flags.
-  *
-  * Initializes a struct ttm_device:
-  * Returns:
-diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
-index 97e9ce505cf68d..18b6db015619c0 100644
---- a/drivers/gpu/drm/ttm/ttm_pool.c
-+++ b/drivers/gpu/drm/ttm/ttm_pool.c
-@@ -1067,7 +1067,7 @@ long ttm_pool_backup(struct ttm_pool *pool, struct ttm_tt *tt,
-  * @pool: the pool to initialize
-  * @dev: device for DMA allocations and mappings
-  * @nid: NUMA node to use for allocations
-- * @alloc_flags: TTM_ALLOCATION_POOL_ flags
-+ * @alloc_flags: TTM_ALLOCATION_POOL_* flags
-  *
-  * Initialize the pool and its pool types.
-  */
-diff --git a/include/drm/ttm/ttm_device.h b/include/drm/ttm/ttm_device.h
-index d016360e5cebbc..5618aef462f21b 100644
---- a/include/drm/ttm/ttm_device.h
-+++ b/include/drm/ttm/ttm_device.h
-@@ -221,7 +221,7 @@ struct ttm_device {
- 	struct list_head device_list;
- 
- 	/**
--	 * @alloc_flags: TTM_ALLOCATION_ flags.
-+	 * @alloc_flags: TTM_ALLOCATION_* flags.
- 	 */
- 	unsigned int alloc_flags;
- 
-diff --git a/include/drm/ttm/ttm_pool.h b/include/drm/ttm/ttm_pool.h
-index 67c72de913bb9d..233581670e7825 100644
---- a/include/drm/ttm/ttm_pool.h
-+++ b/include/drm/ttm/ttm_pool.h
-@@ -64,7 +64,7 @@ struct ttm_pool_type {
-  *
-  * @dev: the device we allocate pages for
-  * @nid: which numa node to use
-- * @alloc_flags: TTM_ALLOCATION_POOL_ flags
-+ * @alloc_flags: TTM_ALLOCATION_POOL_* flags
-  * @caching: pools for each caching/order
-  */
- struct ttm_pool {
+[1]: https://lore.kernel.org/cgroups/20251105043848.382703-6-longman@redhat.com/T/#u
 
-base-commit: c553832116b8d0039b13ae84d1ed06e7ee4f1fdf
 -- 
-An old man doll... just what I always wanted! - Clara
+Best regards,
+Ridong
 
 
