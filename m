@@ -1,214 +1,206 @@
-Return-Path: <linux-kernel+bounces-887846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20678C39385
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:10:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B572C3938B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 07:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0F21A2497F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:10:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053B13A7F17
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 06:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DB72DC334;
-	Thu,  6 Nov 2025 06:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8069A2DC763;
+	Thu,  6 Nov 2025 06:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ElF1dVm0"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHoDwdnR"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6122DAFA8;
-	Thu,  6 Nov 2025 06:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE5B2DAFA8
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 06:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762409412; cv=none; b=SAXZume6Z8jjdpQy+TAg1gSdzhWS0BAIl+yZvuCF6OjxQwZ1OuapePJdKqJV5LngdWK1mk7Bw/pYTHOTFlGLDDemJndVxF+E4FiTxqPRlhMKZR8g0hC9EsYuto2u5gSBa+b7em3NfdelPUpiCH2XVsxme7YIHEe9zLlSEivWCUI=
+	t=1762409427; cv=none; b=Y2EKBVKx7yoLpp5d4ITs2JXmaDzU+ia3k64idwH4s82wBw60CnNiCNzjWGaprSBxkqs4tRC7V3tsP3VwYKR65NfOSiPHecvRhW5KyS85IMCcKKAunBCBk2vzBCrcnDabvurTDgPdBqzIsALpG3WdD+tMaqafx+TNoH8OG6ZWt1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762409412; c=relaxed/simple;
-	bh=PNbZ//mjttXPJb3yONShlvpYxJ0IjQ+8uVab+aHuuM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UC/AGqa9QrvzUgxZ1w2sQ7LTEdYeACz5EdP+7ZBWgIqL0QONj5iFKHJ+iP3m6NHraDD+852Rg5mmeyHR5Xapiqxo3U4bpAtazlEP1RuPRr9edjZ9BW5ZCK7Fjak1G9OSSDJ0vor60qvBj/libAdSB28Qfi70rBdeW3FYn5rIsag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ElF1dVm0; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A65aI3e009252;
-	Thu, 6 Nov 2025 06:10:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Phvrrh
-	TQJ7Z0NnfSz3ZRbSMUDYtfHlMm5TlpGRPS3ek=; b=ElF1dVm0Y8J9Z4+WacWS4t
-	E7C+n9m9KCBRYkpzb1B/97BLNwkknsEq1BZgyb1HaJENCg8ptGIe1NJrsOKjcj+4
-	YorQvHTZrcR9H0i7TAwIE3Fr1Ypa8myZvG0/lc7apoTlvfNdsz0R6Ylt6uTNZi+w
-	NcoLpja4uflyzGKCB/dwX5gvyydG/hSxjc7SWEtG5d79gnZLlq8kApNIRiOBQw32
-	AwqdAA09ERi3HaYeeEUu7iUsBBqNEyhJAonvjLO1JFbKQZIpwM4jcgIdZXmrNq5g
-	mmjeqpmaxC5AwuqNdzzbrninEMG84wiPok1v/xwjydCfnALeBOwexX+8lD3Z8WSQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xc5cqy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 06:10:00 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A628A7U025605;
-	Thu, 6 Nov 2025 06:09:59 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5vhsv6d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Nov 2025 06:09:59 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A669vod53018934
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Nov 2025 06:09:57 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7419C58051;
-	Thu,  6 Nov 2025 06:09:57 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A2ED85805E;
-	Thu,  6 Nov 2025 06:09:53 +0000 (GMT)
-Received: from [9.61.250.250] (unknown [9.61.250.250])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  6 Nov 2025 06:09:53 +0000 (GMT)
-Message-ID: <16abe317-1a17-4edb-ab71-5f2e27405c18@linux.ibm.com>
-Date: Thu, 6 Nov 2025 11:39:51 +0530
+	s=arc-20240116; t=1762409427; c=relaxed/simple;
+	bh=8zU8wbn2z1V8CTGGApcTBZoXpzriYORpFImI4i1/BrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ahZn0GSFfa0dfR6VMMUmbb5TtZ0rdqRhVzEE1U6+tR5xcxtkvaxSKiqq5hCM4wTu63PwaE26gzxRdZuzpTP46lsE3sny9PSK7jlge6XfcLRwdikW8fSAzFY2VlWs6ryKRjLp2n7JXv0cObjYeCMKwLrEZLLnrSvaQ/Jv+McGm7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHoDwdnR; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b6d4e44c54aso95640066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 22:10:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762409423; x=1763014223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=orfpxuWkJXcAaZjFD8OqI76Fe/duVOXyBW/7SsSgZf4=;
+        b=DHoDwdnRvI9Gqutlcqo9qn9dqQb0+ctH5kMlDucdh7lY0hOAmmWbd4a+ujnH8mzaxU
+         MVA4r2YgkitB0eR2ip5ktTswmQtIvSSKJr1SFuSBQ5dbBRk0aeWuCyzrBPwuL28sKv8T
+         3uEfZ0OwsT9HHUrcUokQsLK4gkwBP8sMFrAWCiVBVoLAdADNnSWXkXyXI87k9fY6yR5F
+         ezmZPHdhihhEok7ku+UYMQVGj498TD4gDtagGQecy/Uq4ie1AH/6WK6SnxrxUaom9uik
+         zUWbtQ+tESmuCWZulF47wFf721ohHESZKhS9WFMDSPNkpKlDb3eJ6W72EU8YNcKqWpHX
+         R3LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762409423; x=1763014223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=orfpxuWkJXcAaZjFD8OqI76Fe/duVOXyBW/7SsSgZf4=;
+        b=mpSK9or7ydjxdCNr3AHViGa/I9LmwuTZzsTjEVjUGiGiFRTCpnzWtFfK+fAvJuJeju
+         WJoOQ1SGazvpipRoDDVtN4HpdQCLysReRhDm+G+sbQw/VLD8YocM7Pa+l3/w+aP44E/u
+         ooFTDMZiF6rN25wWUZeHTd1Me21wkerpv4I9mlcZ+88qESWK8DG0LoxWWp8TvIph04gY
+         2lyPFwlYytIBueIEEMdxdUouvQ8XPBbhZpC43v3EFE1Fu37xTk1p6IHtqvXU1zC///9O
+         3deRaubjaY26aJsnmc74/jFYNyKVBZz0oxW3XEAjhKzOR9YfQM+I7+J5ar40N/dMO1e3
+         y76A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2fCpOdMNWep7AU/4BrFbBMZQWBA/JYehTc2axMA8XjiXu0jY9jlk9hgZj1q25Uoyloxwxl8Ze461Fdec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCgHsbVRbP5uSNXoy/gGa+DDwM3nWIyk2Vk8rfXIvByQ7oQDJo
+	vVkBZUnPP6HXOp1XxCD00JFtvyXsDtof2uKNoxlZNMKbd1Qhb4i7k80w3PyYAoWdYSD3kmJzwQ8
+	CCh207bW1PLM7OJ2z/ZAtFIT6P9iFBuQ=
+X-Gm-Gg: ASbGncvbcvhG7kxrSJMdsZdHUTprDlTL9rji9JnwkdoZ0TPGurU4X3kVM3m3nDWwpqs
+	zhuCMDWepqotc3rxM/8bwR5FQNjMBwiNEy6T7+h4Ih3TCXCLz8SO0EsTPaEDp7tLYESYb6NChNx
+	WHQ4IeNDFHTZuy68H75quGJPgaHpdC2spGzSWrtF/ITh3PhFlBhaKRwFuu0vbmYhpT8AvBo2ScU
+	pfu/+k5yhSzJyz8bXnSFQSwpOkQtOekpKXQEtKe7gEwIknYHBCsWduFtpf1VjeOtKH2e6QF
+X-Google-Smtp-Source: AGHT+IEidHI/FsHQMKJRhGUczDXlQ9eJAKyM9ahYXSasyjeT6UMUJOVYgc8zIR1wN6nxxZFYAqEzwcdOGM1mMiUmSvc=
+X-Received: by 2002:a17:907:3da3:b0:b70:7cd8:9098 with SMTP id
+ a640c23a62f3a-b72655ee49emr621490466b.61.1762409423165; Wed, 05 Nov 2025
+ 22:10:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline]Error while running make modules_install command
-To: Nathan Chancellor <nathan@kernel.org>,
-        Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        Omar Sandoval <osandov@osandov.com>
-Cc: linux-kernel@vger.kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, dimitri.ledkov@surgut.co.uk,
-        stable@vger.kernel.org, Nicolas Schier <nsc@kernel.org>,
-        Alexey Gladkov <legion@kernel.org>, linux-debuggers@vger.kernel.org
-References: <7fef7507-ad64-4e51-9bb8-c9fb6532e51e@linux.ibm.com>
- <56905387-ec43-4f89-9146-0db6889e46ab@linux.ibm.com>
- <20251105005603.GA769905@ax162>
-Content-Language: en-US
-From: Samir M <samir@linux.ibm.com>
-In-Reply-To: <20251105005603.GA769905@ax162>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX5xvM4uBI9w8N
- x5e5DR8fZtLo/Bsjq58z0vXlqP3eHxrKTODaB3AMlGVdnhNZ1nA/vAFMCbRASud179b6+JrUxru
- IvJSd+ii4Zb/1K1EtSvc00myh169edFI6fBm0FUU+E3MKnm8S95I/NlqXpFk1fjVDijwRYR4PaE
- UHTySjCS9HP6Y/d9W0ygOAZ+KH3hlRywNULVcg0mD7eX2iP41c62ymE7xJiQjAFyGoHG2409Ksw
- 1EvL1yNWD51lpB533gnHil+7JS+nHC0MyXvuL6eyAixyKj7YiVaPfaOy27nJHu+nyX/nd2c8BK8
- NDLSA4gsO+zrHSYY/sWfzPIU1YNez0MsfDzrZ19GCTu8JhTqA16A5xCj01nf5pnNx7fEPzXqy0n
- mHDpPX81wKEvXMfPFke8haQkjmdTiQ==
-X-Proofpoint-GUID: epWAkT0AsDvtFuRGDI0Lw5v2vkCRLxEm
-X-Authority-Analysis: v=2.4 cv=OdCVzxTY c=1 sm=1 tr=0 ts=690c3bb8 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=WG_6xDmpAAAA:8 a=s5HezVcRJVFevGRlhjIA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=vnvZt3YqmSlbJLwVaSfU:22
- a=cPQSjfK2_nFv0Q5t_7PE:22 a=HhbK4dLum7pmb74im6QT:22 a=pHzHmUro8NiASowvMSCR:22
- a=Ew2E2A-JSTLzCXPT_086:22
-X-Proofpoint-ORIG-GUID: epWAkT0AsDvtFuRGDI0Lw5v2vkCRLxEm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_01,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1011 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
+References: <20251104134033.344807-1-dolinux.peng@gmail.com>
+ <20251104134033.344807-4-dolinux.peng@gmail.com> <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
+ <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
+ <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com>
+ <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
+ <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com> <f6b2596eadf032516b81c19c6f9a8fd85c8ff195.camel@gmail.com>
+In-Reply-To: <f6b2596eadf032516b81c19c6f9a8fd85c8ff195.camel@gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Thu, 6 Nov 2025 14:10:11 +0800
+X-Gm-Features: AWmQ_blC0ncp1CzLNuLcqLTH7HRaiajrysKatVZp9OLg5bZUuEHPLLgr-byQw5w
+Message-ID: <CAErzpmsoNO66S8ER8EfmH-9H_iMAEWQGtKNEF=767-n3SR-JJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
+ search for sorted BTF
+To: Eduard Zingerman <eddyz87@gmail.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 05/11/25 6:26 am, Nathan Chancellor wrote:
-> + Nicolas and Alexey, just as an FYI.
+On Thu, Nov 6, 2025 at 12:52=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
+> wrote:
 >
-> Top of thread is:
+> On Wed, 2025-11-05 at 21:48 +0800, Donglin Peng wrote:
+> > On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.=
+com> wrote:
+> > >
+> > > On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
+> > > > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <eddyz87@gm=
+ail.com> wrote:
+> > > > >
+> > > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const struct btf=
+ *btf, __u32 type_id)
+> > > > > > >         return type_id;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > -__s32 btf__find_by_name(const struct btf *btf, const char *t=
+ype_name)
+> > > > > > > +/*
+> > > > > > > + * Find BTF types with matching names within the [left, righ=
+t] index range.
+> > > > > > > + * On success, updates *left and *right to the boundaries of=
+ the matching range
+> > > > > > > + * and returns the leftmost matching index.
+> > > > > > > + */
+> > > > > > > +static __s32 btf_find_type_by_name_bsearch(const struct btf =
+*btf, const char *name,
+> > > > > > > +                                               __s32 *left, =
+__s32 *right)
+> > > > > >
+> > > > > > I thought we discussed this, why do you need "right"? Two binar=
+y
+> > > > > > searches where one would do just fine.
+> > > > >
+> > > > > I think the idea is that there would be less strcmp's if there is=
+ a
+> > > > > long sequence of items with identical names.
+> > > >
+> > > > Sure, it's a tradeoff. But how long is the set of duplicate name
+> > > > entries we expect in kernel BTF? Additional O(logN) over 70K+ types
+> > > > with high likelihood will take more comparisons.
+> > >
+> > > $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3}' | sor=
+t | uniq -c | sort -k1nr | head
+> > >   51737 '(anon)'
+> > >     277 'bpf_kfunc'
+> > >       4 'long
+> > >       3 'perf_aux_event'
+> > >       3 'workspace'
+> > >       2 'ata_acpi_gtm'
+> > >       2 'avc_cache_stats'
+> > >       2 'bh_accounting'
+> > >       2 'bp_cpuinfo'
+> > >       2 'bpf_fastcall'
+> > >
+> > > 'bpf_kfunc' is probably for decl_tags.
+> > > So I agree with you regarding the second binary search, it is not
+> > > necessary.  But skipping all anonymous types (and thus having to
+> > > maintain nr_sorted_types) might be useful, on each search two
+> > > iterations would be wasted to skip those.
+> >
+> > Thank you. After removing the redundant iterations, performance increas=
+ed
+> > significantly compared with two iterations.
+> >
+> > Test Case: Locate all 58,719 named types in vmlinux BTF
+> > Methodology:
+> > ./vmtest.sh -- ./test_progs -t btf_permute/perf -v
+> >
+> > Two iterations:
+> > > Condition          | Lookup Time | Improvement |
+> > > --------------------|-------------|-------------|
+> > > Unsorted (Linear)  | 17,282 ms   | Baseline    |
+> > > Sorted (Binary)    | 19 ms       | 909x faster |
+> >
+> > One iteration:
+> > Results:
+> > > Condition          | Lookup Time | Improvement |
+> > > --------------------|-------------|-------------|
+> > > Unsorted (Linear)  | 17,619 ms   | Baseline    |
+> > > Sorted (Binary)    | 10 ms       | 1762x faster |
+> >
+> > Here is the code implementation with a single iteration approach.
 >
-> https://lore.kernel.org/7fef7507-ad64-4e51-9bb8-c9fb6532e51e@linux.ibm.com/
+> Could you please also check if there is a difference between having
+> nr_sorted_types as is and having it equal to nr_types?
+> Want to understand if this optimization is necessary.
+
+Yes, here is the result:
+
+| Condition                                       | Lookup Time   |
+Improvement  |
+|----------------------------------------------|------------------
+--|------------------|
+| Unsorted (Linear)                          | 16666461 us   | Baseline    =
+   |
+| Sorted (Binary) nr__types             | 9957 us           | 1673x faster =
+|
+| Sorted (Binary) nr_sorted_types   | 9337 us           | 1785x faster |
+
+Using nr_sorted_types provides an additional 6% performance improvement
+over nr_types.
+
 >
-> On Tue, Nov 04, 2025 at 04:54:38PM +0530, Venkat Rao Bagalkote wrote:
->> IBM CI has also reported this error.
->>
->>
->> Error:
->>
->>
->> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
->> prefix
->>    INSTALL /boot
->> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
->> prefix
->> depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname
->> prefix
->>
->>
->> Git bisect is pointing to below commit as first bad commit.
->>
->>
->> d50f21091358b2b29dc06c2061106cdb0f030d03 is the first bad commit
->> commit d50f21091358b2b29dc06c2061106cdb0f030d03
->> Author: Dimitri John Ledkov <dimitri.ledkov@surgut.co.uk>
->> Date:   Sun Oct 26 20:21:00 2025 +0000
->>
->>      kbuild: align modinfo section for Secureboot Authenticode EDK2 compat
-> Thank you for the bisect. I can reproduce this with at least kmod 29.1,
-> which is the version I can see failing in drgn's CI from Ubuntu Jammy
-> (but I did not see it with kmod 34, which is the latest version in Arch
-> Linux at the moment).
->
-> Could you and Omar verify if the following diff resolves the error for
-> you? I think this would allow us to keep Dimitri's fix for the
-> Authenticode EDK2 calculation (i.e., the alignment) while keeping kmod
-> happy. builtin.modules.modinfo is the same after this diff as it was
-> before Dimitri's change for me.
->
-> Cheers,
-> Nathan
->
-> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> index ced4379550d7..c3f135350d7e 100644
-> --- a/scripts/Makefile.vmlinux
-> +++ b/scripts/Makefile.vmlinux
-> @@ -102,11 +102,23 @@ vmlinux: vmlinux.unstripped FORCE
->   # modules.builtin.modinfo
->   # ---------------------------------------------------------------------------
->   
-> +# .modinfo in vmlinux is aligned to 8 bytes for compatibility with tools that
-> +# expect sufficiently aligned sections but the additional NULL bytes used for
-> +# padding to satisfy this requirement break certain versions of kmod with
-> +#
-> +#   depmod: ERROR: kmod_builtin_iter_next: unexpected string without modname prefix
-> +#
-> +# Strip the trailing padding bytes after extracting the .modinfo sections to
-> +# comply with what kmod expects to parse.
-> +quiet_cmd_modules_builtin_modinfo = GEN     $@
-> +      cmd_modules_builtin_modinfo = $(cmd_objcopy); \
-> +                                    sed -i 's/\x00\+$$/\x00/g' $@
-> +
->   OBJCOPYFLAGS_modules.builtin.modinfo := -j .modinfo -O binary
->   
->   targets += modules.builtin.modinfo
->   modules.builtin.modinfo: vmlinux.unstripped FORCE
-> -	$(call if_changed,objcopy)
-> +	$(call if_changed,modules_builtin_modinfo)
->   
->   # modules.builtin
->   # ---------------------------------------------------------------------------
-
-Hi,
-
-
-This change fixes the reported issue. You can add below tag as well, 
- while sending a patch.
-
-
-Tested-by: Samir M <samir@linux.ibm.com>
-
-
-Thank you for the fix !!
-
-Regards,
-
-Samir
-
+> [...]
 
