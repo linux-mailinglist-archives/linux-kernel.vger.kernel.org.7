@@ -1,184 +1,229 @@
-Return-Path: <linux-kernel+bounces-887973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD24C397A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 08:59:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B759C397B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 09:00:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4117C350235
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 07:59:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C294B350278
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 08:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDE12FB632;
-	Thu,  6 Nov 2025 07:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F52FB978;
+	Thu,  6 Nov 2025 07:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7n9jRdD";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="geYYbVLY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TsAv5npF"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013019.outbound.protection.outlook.com [40.107.201.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F822FA0D3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 07:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415977; cv=none; b=OETphXdUf+eUwuZg3jok7v3cEg/4/b3T7k1K2YonU6rCg95d7JGAMAhR73OM7x9mfPJrdQxtEXgNa3wy/WFL+HnPc8h8UkESop/QlFet80IgCOagMLMgUxq4fv3HkSoK9QLffIUutLsgqochUx0GPd7/mMyUt7ViI9fXAT++zwo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415977; c=relaxed/simple;
-	bh=+HFp5teyxBDg8jC+Iw/Ud9wGGwCABYXLJqBhAplJgPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hf17FjixO7EtWpzjBaoeTxs7DAin41BKfKpwR8ZPsGPQvmrmF3MOSKAT4oEgDMTdGsWlDCBNCcitJ7ucP2H7r56P88aFgD7qDQr+dajqJmivnYQnviQVCYFVYmEG3LzlSbuhmOE8YCwsoNjF2WuEW9P2Ws6BCZLgnNFXLtuQ2nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7n9jRdD; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=geYYbVLY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762415975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9OQ1T7JKFRO66U5Rzh5RNwPuFMaB1j+5Hb1k3YmuMzw=;
-	b=h7n9jRdDRJLTAjUkIF772ZH7P1QC170GJsO60rxy/wBQsN9lnXK1zhENEydI8sGtaFAvCM
-	1pLOI2KHwfRDe8HllCGs20kxfF+OkjxmI979eidf1XTt1IgExHCU1C6oSvTZL0eKVFgw4s
-	49CD2au71CybevIA34CQz2yWHYLUbCc=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-267-ysASiE3RMKyrFZnPCg-Hcg-1; Thu, 06 Nov 2025 02:59:33 -0500
-X-MC-Unique: ysASiE3RMKyrFZnPCg-Hcg-1
-X-Mimecast-MFC-AGG-ID: ysASiE3RMKyrFZnPCg-Hcg_1762415972
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-5dbcf848bc9so65255137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 23:59:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762415972; x=1763020772; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9OQ1T7JKFRO66U5Rzh5RNwPuFMaB1j+5Hb1k3YmuMzw=;
-        b=geYYbVLYnNISL1H4MuRXTIjg9Js4zGAiA26yT6QPT1sYteaGQy69ZzvwklOkruozRL
-         UbEcre0X/4wuzpqU0QwhtAvyQBjCZuXSfJBMrCu58cM9CdAdFqSCxMKe688NNbvVN9j2
-         T2iwYS/pD9fQUsEwm3uB9lVSJDzkB2bCXZ+z/BAB13qwricfWifBowW55bSb0+sKfR4c
-         5G5fWSGiD0Mv4pTgXwH550txfosWWHctlG0y1A1UzjHwmNP5IDpg+c//NMOLovF7CGOO
-         KTya+AbbAtJv/idZRw+pU7nipij1KFqhMdMPhKDivzB0TFhzInp+vDo7j0BqeimRpeOn
-         /XVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762415972; x=1763020772;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9OQ1T7JKFRO66U5Rzh5RNwPuFMaB1j+5Hb1k3YmuMzw=;
-        b=MTactzUz+V7mypcVYfNshSRRvBbxU4Xmq2Zt3F/QvCLgTCUgirpUYjdkoRADsB0oTF
-         VKzUr8Wdzgm166UEFhp1xrolNDXLLIUUBD59Lx96bTIViHKi6/x4rPsWtbC1oxkuFVW3
-         KPLjsKyGQyUVCBAUnEGYJrgtFdgSJgv2EwTFuQ2J2Pl7nD40FW4LkZYxAlwpxucxjKjc
-         K4xou8jR47HJKBYA5Z6jcT5hBcH0SePwGfrJjbxgGhCv6Yw56eVSjmVFeQvp2xXsLX7X
-         VSE2inc7Rb0LKVh23lmyOTQGgCM937F3uInD2L7IMTNmw7i8cHd4wnXzmNhuJcywEpAU
-         niqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVadUZ9X2LZ6/oGBToeiD7DS9z8gyT7dcLVj4D/GVfL8cQCOo6DRel9ShLxXikphpzwPhFIpT/u4abXrjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFwI8YUK+hKGl4ZhSJJMR0aUx9RQvzYl2bpzL2GjT5AWEB3/Sa
-	gZtzhRqduDJLk6xVQv6tTanZcRrMGuOZb732SlldzBv8FxjjcAP7L/9Em13J2Bigtcc52Yuwffl
-	MCMehOK9Xo+NeJ7kaWTDb2zh9va9dBOPPNfTYY5Feq3LWQERCfk6TKBBw6fMaLbL38++lpa8E18
-	Hia+GmMsTRRsDdeZc609NmH9UZnrmM/k56Bp3gwvcO
-X-Gm-Gg: ASbGncvzcxRiB1Wr34xMBCh4Cd1F7vY/OmeJnMY99jIXkfBfu/kPr6Uy/bwdsw9o99e
-	3+oq+yHvUH9G3eGomDTM/Gs4eijarYP9+OTbuLXndQuOAkh1j9zR0d6t4Fp3VsyONyUwak9YWEs
-	3Wf5EQeRWW12sg4fHdEfFOekajdYuwFRDmYDjvLOBd2dfqZKmH3GgLfZ3P
-X-Received: by 2002:a05:6102:2929:b0:5db:f9df:34de with SMTP id ada2fe7eead31-5dd8920ba8fmr1896819137.23.1762415972366;
-        Wed, 05 Nov 2025 23:59:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG3y+j0Qkz+bU++xXKWMhgu+xZDmAkoz+uj4iKjUkfpaG45KgV6Bd99eebvGDTo7Wl7cf1YQ7k40zBEV9g3T04=
-X-Received: by 2002:a05:6102:2929:b0:5db:f9df:34de with SMTP id
- ada2fe7eead31-5dd8920ba8fmr1896812137.23.1762415972015; Wed, 05 Nov 2025
- 23:59:32 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281982F9DB2;
+	Thu,  6 Nov 2025 07:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762415997; cv=fail; b=lokcicLskzWKVbxHiDJMPhiZXWalsFMBHhUOwloOlC7EjFNY7+oXFBcOsmhRiPqWGRMzdgDS5P+WXLG7p9jyQyy8T+oJ9ABAS4pHyD9FG/A4NQVV44rL8jsDdrIrTkdxMHzFcmDNNICVC/p8kmLtdOHjkYp5M5PmBclD1hw582c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762415997; c=relaxed/simple;
+	bh=Khft72q/IhZ9Gw0Dy4iwaTARNe/BVQCXCciZcQ5v1GE=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MakONeVWFEaEzAKy6Fmwn5hPCpjZ1rbzeiuELmh1XcBz4STH/HBv/LS8lMaYNq3WA9vEtQECT/VStad5AsYp4qJJEHuqmsQc0P7n5rbwKR21zeqkX4y7eG2tQfI2EjEttC6VLG03jWJn93y+qd3AxIodXNX9Su+OoF1a5XlC+8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TsAv5npF; arc=fail smtp.client-ip=40.107.201.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qeTLnCmJgY1qfpdExA4RP7QvUdMHk2IqCGrWBfD1vrtyZE9aRkaUKqDZ30oFQ3fiSldjkkXiX86QYJQfZUGw0EWYxu0ORsOAqVk9tB63mBroSH9s6Fwzsy4la1IKkTNKI7PKG4++WnHih5l2yL+qvytSRRRAblCLfNHc67j7jC36Ed1FfU9HOdB1v3Mjj9ls2QTxmqjAfXf14hfWbCTQ9PH5Z/uI3VBiF3aKJuEYa20Vmwmv2yl2fV+bvwHWnCmxhuEpfy663Tc2NzYi3I8Db1/dv3P2qraDxLhOwYSmfXfv+tY6PliZa5zrYVRVpA3fohSkrH1zjKVfkeI91w0lXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LDWlR3B3fAoIIxhkbUg13XKQFFumar+nI/I0JYkn5h0=;
+ b=QNuz1KxZ0xsUr+LENZbtMAX+4q9XTrIWKIIEjF8eU4IuFy1cLyL+FC+opRYU06qBqjmnq2raar2MSGfeGxtW+pl5Hs3dmLZfQ1u21Hiu46H08lbPAXPCk22JNn20fe0u1hHBqsFVWomodidnbAdiMDpX9uMV5zGDuW1HGUrnjyh7l5STfkft9jvG3OkL6j0j8QeJtuYBCSXSqn9x3nXFlEZ2zwXj05dDx5hXfC7bMpEVxefTyfUN6kWzCAyJtrCqDtttFwFH4mGGXkGvJRDFLtc1jFagTJ3l+UoWbGvkfibdnoG50tnfcW5G35egYYaxjzwPlOiF9ozuR6llLqeJOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LDWlR3B3fAoIIxhkbUg13XKQFFumar+nI/I0JYkn5h0=;
+ b=TsAv5npF1UcJDsMT9F9qg+z7B3mHEUPLQNqxpyMei8s6mr4ut7BCIS8iYjfPhdHRJ5Mqz11KvSR0YjW6NzE+DFKyxdrKulb0ts4J0KQ9fkla7IvEMEaDjiopdfKZ5ZfmS+0JDKcJSDvigeX7EjroBEfNmcn2Zjje+NavEcg+k/6neQVGGeq8gUyxvPhaQs6X3iLuaMnKtwPgUdGHnK9631um/XZcLvyGnYn7dNxtEx6WpZDU9L63pFduLo2WGUHP/YU0Pram8s/8MhABUY6t6SoJcNd9DoDLrxlq5sPAS1yqe667M/R9uS65Vp6+sUmN8vZ/gFjGdoeBckOknKLnmQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SA0PR12MB4493.namprd12.prod.outlook.com (2603:10b6:806:72::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Thu, 6 Nov
+ 2025 07:59:52 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9298.007; Thu, 6 Nov 2025
+ 07:59:52 +0000
+Message-ID: <4b121269-1efe-4741-b67f-42346b6c5c88@nvidia.com>
+Date: Thu, 6 Nov 2025 07:59:46 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] i2c: tegra: Add logic to support different register
+ offsets
+To: Kartik Rajput <kkartik@nvidia.com>, akhilrajeev@nvidia.com,
+ andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
+ digetx@gmail.com, smangipudi@nvidia.com, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251001153648.667036-1-kkartik@nvidia.com>
+ <20251001153648.667036-2-kkartik@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251001153648.667036-2-kkartik@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0450.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a9::23) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105080151.1115698-1-lulu@redhat.com> <20251105080151.1115698-2-lulu@redhat.com>
- <CACGkMEvdjE+bYxS5_XPEnKWR1sQBuq=6CAqjioto6enryKm8kw@mail.gmail.com>
-In-Reply-To: <CACGkMEvdjE+bYxS5_XPEnKWR1sQBuq=6CAqjioto6enryKm8kw@mail.gmail.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Thu, 6 Nov 2025 15:58:52 +0800
-X-Gm-Features: AWmQ_bn7aRMESoWH1MH-rtiOYr4zIjpmOWnGluH1naEda3Sb2UdEGholcLuo-pc
-Message-ID: <CACLfguW7=HEETEcpYgb66V0+Frn8LYgvDkWo3-RfA7+e273Rxw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vdpa/mlx5: update MAC address handling in mlx5_vdpa_set_attr()
-To: Jason Wang <jasowang@redhat.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, netdev@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA0PR12MB4493:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf59f185-1c5f-466a-ba95-08de1d0a770b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NkgxV1V2ODBaYldRVEpUTFo5bTFKZHZZRVZIUk4xUER0V2NHZTNaQWFzdTUx?=
+ =?utf-8?B?TmFBczBUT2kzS2ZLRkdiQitPMU5CWHd1czZnN24zVUIvQXk3ME5zUGQ1ZmxM?=
+ =?utf-8?B?L1FDcjBUTUd5RkNxdE9VOEREVkI3RnFjRURaSG9EcldqQlp6RVlOUEphVk0x?=
+ =?utf-8?B?dFlPclFFNlRBdWtHZGhjYjZwbzdQOVFFVVNPVEtyY3phdHFNcDJDL0tJM0dF?=
+ =?utf-8?B?RmtwWjhSYmVkeVlEdDFXUlNkUVpHVlBHSjhmOHB2UDROS3p6c2ZiKzNLMmVI?=
+ =?utf-8?B?OGxBQm9iSUsxRGw4MUQwbHRRNnhxUkplZUFZVFVGVjVsTVgvOGp0eE9pNE5C?=
+ =?utf-8?B?RDh0L0U2NEJ6akdUUmNHVkhKT2ZRdlg4bVJzTmhKTS9BSVEzQjV2WmZkR3Bh?=
+ =?utf-8?B?b3lsNXBuTTZGV3dDVFhyelpTUGVDaC83R0M2UkNhMDZIem44dVNGekxwV3Fq?=
+ =?utf-8?B?ZGVqQTU5ZGIwK29xSzJ0OXpISlpFUWpPUEd6OTBnUlZJMkVHak1UWW1yNmhD?=
+ =?utf-8?B?YlJDKzd0V29aWCs3dUdFRllaUkEwU3UzNFk0QWxwZzNYVnd2NTlqYVdYdEFQ?=
+ =?utf-8?B?M0JYemMrWStTdW1LeDM5NlF0YlFZa0ZtY2RMSGpWUXlBYWVDeXU4RVUyKzda?=
+ =?utf-8?B?andJWUk0K2NaQys1L1cvblBLaXQyVWY3OGRvNFl4OVFFNHBNUE9YREhhK3JX?=
+ =?utf-8?B?bk5DSE5KU1hiVXhBdWlCS3ZHMWlPSURLWlpOMDdNUlkydjBxLyt3bUkxK1VS?=
+ =?utf-8?B?RnhvNXFuL2VkYytvcG1sSVh2aEMyL2s0QlA4cGlJcXVOcWtOL0tTQ0UyR3py?=
+ =?utf-8?B?TUVvNjFnbG5KQXNkK0lUWE1seGJOZ1NaWENMYytUMVVmNzZLVlpwYlpPcCtr?=
+ =?utf-8?B?a09lWGZMaERaWDMxcjhYdytBSUFxNzdCREFPeVQ4eUFUU1JIZE00ZlBQN01G?=
+ =?utf-8?B?MFZMUDQrWi81NkhIQ1lSb3JOUkZqVEVHZGxudGNpa0doUFBnN0hVQ1QwSzV3?=
+ =?utf-8?B?SjE5bFBPZWhjajJaWCt6OTF6WDFjNmlJdzlNbmE1RFdTbzVreHBPWWhXWG9z?=
+ =?utf-8?B?OU5RK0grL3pFY2VObEF3TUlPT1l5YTl1cktoU2t2TWZSdWIyemw3MkdWaFJY?=
+ =?utf-8?B?azRzZTUxT085TEx1cUJEbE5JT2tSTWlEcWlKaEhPdTNVMHB6aklBUTdSa3ZP?=
+ =?utf-8?B?YWprUzVtRTNhTzZxbGJLNXRxeHArTnp1L3Jzd3ZrVUM1MHJidFZQOUIzakpB?=
+ =?utf-8?B?Y2lSWWsyVTFENUkwYm1ZYTgwZUsvaFRWamx6eEVtVXdiS2dmdHZXVW1sN21n?=
+ =?utf-8?B?ZUM0L2Ezd3dDamJUWlBpcHczTnYyUmNZbFZiRHo3VUwzbDhrSjRFTE82cVRN?=
+ =?utf-8?B?VDhMcUt3TzYwZERtM3FqQjZPSEZDSHhSOHcrelhRZlg0eURrV2lscTdZZDdV?=
+ =?utf-8?B?ejROWnh3b1BDU3ZsMTQ1dmdVcE9KenlmRDJIS1prZGM3SXc4aXdwaU01aTBw?=
+ =?utf-8?B?S0FWWjBQQXVIYTVpYjBZeWdzbVJISThvQS95dXg2ODdEZk1iVmdodGc0cmtz?=
+ =?utf-8?B?OURnblhzbUh0ckdadnNzZG53VDFlQlJCZ1Z4d0xiN1BjVnBMWTRxWEZBSmhN?=
+ =?utf-8?B?TnhtZVZrd0cyUHdVZW5MSjhJVUVFcUZwelEvZHhoY0lqVmV1TVVwRy83eTlN?=
+ =?utf-8?B?QkFQbFBZZEIybnE4S2FmeWM1VlRlT3RpUUF3dXAzN2M1My9vTDNJa1ZYUit1?=
+ =?utf-8?B?UUNRNzZ5NVcxWDdUWmdVQXNDS3gvTUlkTmkrdFprbmMyUFVJcVNvdm1LQlBC?=
+ =?utf-8?B?TDZ5Sm5hZmw1TnNMeXlKcGlEZVBVY0RHZ3Q3K0M1Z0R3OGhZY2tBYmhYcWRP?=
+ =?utf-8?B?cVc0a0psVGZxejVSQ2ppSjBVcng1VHRiNGs4U3QxMWZLT1JMTHQ5TFNpTEpP?=
+ =?utf-8?B?Y084Nk96eW5yNE1yZE9qcEs3RzRFcEIyay9wUzl1NGtlemdzcGRYSDFnZkc2?=
+ =?utf-8?Q?Ol4LbOTtQFTC04kbd2iqfbSqhJ1hdc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aHVPb3JLem1BZ3hxS3BZdDJLU2R3UW43Q0Q2UlcvSy9qL25GUG0yRWVQNFNj?=
+ =?utf-8?B?NDZHZGw2bjZYdWNONEdJZ0RNampaK09aY0RnTzdjZUI1UXNaVityRzdVc2VU?=
+ =?utf-8?B?S2EzMW9oWnY2WlY1amlwOHpadTgyZGQvOFJUYzNQbmVQcGhmbjJWNFpteitz?=
+ =?utf-8?B?VGNud1o0WndUTEdab1B0R0dMZGNjYzZiV2JMZ0VQQjhOa2IvOXdEaFBHdlJq?=
+ =?utf-8?B?eTErNFVVRE13VSt1OERmeFhCUHJHK0lZNEdidGhVQUNadDdrM28xYUZGU2J1?=
+ =?utf-8?B?WDRYUjRVRkFPRTQ0WHptVTNmak1XenVwbEZEWE9PV1FYSkNEVmRDZ1J6N3Z5?=
+ =?utf-8?B?eW5Jb1pmbkJSeGhNdzJCdlp0TU54dm5XLzg0UnQwSStKUjFmam9JMFJ5TnhR?=
+ =?utf-8?B?VU9UcUR0akNoekVmY1BzMm5KajVGTkMvenZaVXR0L3g5NlFjeFhQWVBZdVp0?=
+ =?utf-8?B?VXZiejIrRWpzdUphNFhOQ25WdmRrR3IzelJ5cU00RzZ5Y1RnMnFlZWp3QW1F?=
+ =?utf-8?B?TVk0WmZrenZjSW1CdW82R0llMlNjc3NST3RGSGowYmdXTW41UEFXR0ZZQUh2?=
+ =?utf-8?B?V1dNLzdXVEl4ZElKU2hHeVB5VnVLNEpqUjUyUGZhMUtTVS9WVHI3N0txcjRn?=
+ =?utf-8?B?UEhNMkNEV05wdjBsQmdJdVRrTlJnM0JCKzVTdDM0OW9iNERuR1E1RjYrRi9O?=
+ =?utf-8?B?VzZuL1lVeHNXU05qZUhYSTZlQU5ncEZQUnN5dVo5K0R5QXJ5aCtGQmZGRWNC?=
+ =?utf-8?B?dzl5UEZxYzc4M1pPQ0RhQ3h5RXFFSnJIeGVTdzNyT3dOUkxHWHJBSi9DdFZ0?=
+ =?utf-8?B?Y2hnbGJwVFoycGtoUW1WbWJ3L1NGMUFIZlkrOGhqUVdrWlB4dERPdllCRHc1?=
+ =?utf-8?B?RW5ZSkpJSTNDc2V3bXpXSmExSWlXVDAwY1BzT25BbEJhOFk0LzN2dzR1MUIw?=
+ =?utf-8?B?RzFFc1EyWlFDNjlaQWJzcEswdFlzRE85RmdmMDFkNGVaU1hxbjUxZ1BxOWRu?=
+ =?utf-8?B?eTBZRnU5QlNubmQ5a05EZloyTkpPZ05DUXRnMjh3RXdPVDhsTVBKR0NwWW94?=
+ =?utf-8?B?WmVabHNhRE1GalVqNXVJbXh6MGZDUlEvcnh6b2NXOWhRUWw5RW9DMjg5Vjh5?=
+ =?utf-8?B?OHRvVXZkcVRKa2dIbFI5TVdmV0JFbjhxbnJoRVNGWGcvT01kZ1htdHBDUlZT?=
+ =?utf-8?B?Q1VrN2wyalpBbnJnYUYvS2thM05PM3VWSHhBV25KRktIdmZvVitqcE1ZTmdz?=
+ =?utf-8?B?TnNzME5EdXFnRVR4eDF6Q09TUnpZbVNvSGc1bi9wMXhvaXl3M01ZUjJoT3lq?=
+ =?utf-8?B?Vzk0ekhuQ0JEdFlQNUZCdjJPTmRRdGlzQ1BqWVJ5eHBWeHVVQlFoTWtiVndo?=
+ =?utf-8?B?YnlhZXFXeWhpT3p5b21WbDhjSll5ZWtZSlU3MzNyWmZiS0NqbmpmM1NLY08v?=
+ =?utf-8?B?NkY1MVVRN1FGWmQwQ3Q0VUVkSDlTcVBLdUlQS3BGVmd6blVYMU05aW9qVytp?=
+ =?utf-8?B?RU15c0hpeWVoZTZ4aURsbG9YRUFzNG5UZmFiSWtxNUlWa2VKWFN4Qzk0aGow?=
+ =?utf-8?B?Z1dJVUxnME1VcFpKT2dpUFZKYmZlbVFKUjdlaER3QmJjNEVJOTk0cVZHQkNm?=
+ =?utf-8?B?bkVzUlVicGQ2SjVzK0RzaWxvTkZNcWtRR3RHME0vbUN0djA3akFCT0QycUky?=
+ =?utf-8?B?cDJIVFNPZ2NPeEwwSXZCdEhqWW13bHBPZGVwbDJoOEo1WDNCakttU0JUb2tK?=
+ =?utf-8?B?WlVSVDFXdmVxc3JFazdaTnN3MG5iUVhDV2N0M3RwQnRkWXlxS3NoVWxsZzho?=
+ =?utf-8?B?NVZ4elYyZjh3Tms5TmN5YVJCN1Nvd1NNeGZVVFNWVTEzdlNjYWhvMGZ1N2Jz?=
+ =?utf-8?B?bTMxR2thSXk1eHBXT1ZTTTJsK3RnRWJlNUg4SnFqY01DQm5BbzU4NHJycXFH?=
+ =?utf-8?B?cE5aQndieFdUai9XcVlydVcveWkyT1pzOWF2N0JiZHNPMWhpZVM2M0g1a0tq?=
+ =?utf-8?B?N0J6Q2ltMWZXVWhnRVVZOGlWeGhPLzlkRlgrbTRJcExFTnJ0RW8zYU5GOVN3?=
+ =?utf-8?B?MVpsRjI4V1pwSktmcUtqeTJ2bkhNcjdCMUVDbSt0ajJQaGJsc0hBbkpoeDVz?=
+ =?utf-8?B?dGQvc1pzWCt5SXJHSWdraXpROTl6YnhDYUtxZWxmTVltQmhiRkhOaWVjZE1o?=
+ =?utf-8?Q?mzOCHCaADiweQKT3AOiwJr3RCztqNko/dBxRPq8VTZ8b?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf59f185-1c5f-466a-ba95-08de1d0a770b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 07:59:52.0292
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MJRGDL0CEsg7+oGwIZRz2UEQdd8tK5gqtk2ToQgGuGmcmgFsELE/JA3LUKiRRmtxRQWa5YVaPTYOYSWuZuQkMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4493
 
-On Thu, Nov 6, 2025 at 12:11=E2=80=AFPM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Wed, Nov 5, 2025 at 4:02=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
-> >
-> > Improve MAC address handling in mlx5_vdpa_set_attr() to ensure
-> > that old MAC entries are properly removed from the MPFS table
-> > before adding a new one. The new MAC address is then added to
-> > both the MPFS and VLAN tables.
-> >
-> > Warnings are issued if deleting or adding a MAC entry fails, but
-> > the function continues to execute in order to keep the configuration
-> > as consistent as possible with the hardware state.
-> >
-> > This change fixes an issue where the updated MAC address would not
-> > take effect until the qemu was rebooted
-> >
-> > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > ---
-> >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 20 ++++++++++++++++++--
-> >  1 file changed, 18 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
-mlx5_vnet.c
-> > index e38aa3a335fc..4bc39cb76268 100644
-> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > @@ -4067,10 +4067,26 @@ static int mlx5_vdpa_set_attr(struct vdpa_mgmt_=
-dev *v_mdev, struct vdpa_device *
-> >         down_write(&ndev->reslock);
-> >         if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
-> >                 pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pdev));
-> > -               err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
-> > -               if (!err)
-> > +               if (!is_zero_ether_addr(ndev->config.mac)) {
-> > +                       if (mlx5_mpfs_del_mac(pfmdev, ndev->config.mac)=
-) {
-> > +                               mlx5_vdpa_warn(mvdev,"failed to delete =
-old MAC %pM from MPFS table\n",
-> > +                                       ndev->config.mac);
->
-> Any reason we need to keep trying when we fail here?
->
-sure will change this. i will reuse the code in hanle_ctrl_mac
-> > +                       }
-> > +               }
-> > +               err =3D mlx5_mpfs_add_mac(pfmdev, (u8 *)add_config->net=
-.mac);
-> > +               if (!err) {
-> > +                       mac_vlan_del(ndev, config->mac, 0, false);
-> >                         ether_addr_copy(config->mac, add_config->net.ma=
-c);
-> > +               } else {
-> > +                       mlx5_vdpa_warn(mvdev,"failed to add new MAC %pM=
- to MPFS table\n",
-> > +                               (u8 *)add_config->net.mac);
-> > +                       up_write(&ndev->reslock);
-> > +                       return err;
-> > +               }
-> >         }
-> > +       if (mac_vlan_add(ndev, ndev->config.mac, 0, false))
-> > +               mlx5_vdpa_warn(mvdev,"failed to add new MAC %pM to vlan=
- table\n",
-> > +                              (u8 *)add_config->net.mac);
-> >
-> >         up_write(&ndev->reslock);
-> >         return err;
-> > --
-> > 2.45.0
-> >
->
-> Thanks
->
+
+On 01/10/2025 16:36, Kartik Rajput wrote:
+> Tegra410 use different offsets for existing I2C registers, update
+> the logic to use appropriate offsets per SoC.
+> 
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> ---
+>   drivers/i2c/busses/i2c-tegra.c | 499 ++++++++++++++++++++++-----------
+>   1 file changed, 334 insertions(+), 165 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 038809264526..1e26d67cbd30 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+
+...
+
+>   /*
+>    * msg_end_type: The bus control which needs to be sent at end of transfer.
+>    * @MSG_END_STOP: Send stop pulse.
+> @@ -219,6 +322,9 @@ enum msg_end_type {
+>    *		timing settings.
+>    * @has_hs_mode_support: Has support for high speed (HS) mode transfers.
+>    * @has_mutex: Has mutex register for mutual exclusion with other firmwares or VMs.
+> + * @is_dvc: This instance represents the DVC I2C controller variant.
+> + * @is_vi: This instance represents the VI I2C controller variant.
+> + * @regs: Register offsets for the specific SoC variant.
+>    */
+>   struct tegra_i2c_hw_feature {
+>   	bool has_continue_xfer_support;
+> @@ -247,6 +353,9 @@ struct tegra_i2c_hw_feature {
+>   	bool has_interface_timing_reg;
+>   	bool has_hs_mode_support;
+>   	bool has_mutex;
+> +	bool is_dvc;
+> +	bool is_vi;
+> +	const struct tegra_i2c_regs *regs;
+>   };
+
+
+I think it could be better to have a 'variant' flag for these is_dvc and 
+is_vi variables because they are mutually exclusive.
+
+Jon
+
+-- 
+nvpublic
 
 
