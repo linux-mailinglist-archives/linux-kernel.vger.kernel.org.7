@@ -1,82 +1,49 @@
-Return-Path: <linux-kernel+bounces-888160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E578DC3A05F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:05:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AF0C39FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 305B24F9F5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FF9188885E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3509330CDB4;
-	Thu,  6 Nov 2025 10:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F6030CDA8;
+	Thu,  6 Nov 2025 10:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YRXqBhMk"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="NHHG58p4"
+Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AC72848A7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0632D8379;
+	Thu,  6 Nov 2025 10:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762423238; cv=none; b=TXPEjhtCyI0QFJtvGtqSMHld/dDl7SXj5jV8/nmGEWRzwNAmNFY31LQ1cKKdAeyktSWYve47kxZMMsmtpV6EONTFd4bkXb8Lrur10GpD88ljEzxoS2SiFGKFI0QS5mzebM+0/W0Apq/ees9sKKhhPXazfirSmuQdpOT6wLBA/2A=
+	t=1762423258; cv=none; b=XQLENm1zdARMhynHEEl7aYJZR4ISBe7jQUoJ9uzD95n1KhcnEck9m4pyhbX6/tfSnTHLx7Z/n6GKedHZg7sQfMrCVCvFLOLvO+tv1xPy+NM76TmXLtFnIwJsq/MfX3kQ3yWL0NeYMLZ1evOIR+C3xU0jv7awtG5vtPmvl9JID3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762423238; c=relaxed/simple;
-	bh=I4H5qHab6Aj0C5LwJMaHRiYnjpVzkseYs1jdsdGDz1Y=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YH27NVFqYxhdl/0hPllAQsdyIdnAZxhPZAlzxaemt2xQzdRPssHvNnwwDXXQmWZh7XeU9QJyslpCaKq/5zYB3cxoGXNQDy+66AVkyuur02QGXD+9bYa1R1iQz93ATwIT0V9v+mnHtnBAV3RjONjugFqRUBX5efd6j+xLR2oiZWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YRXqBhMk; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477549b3082so6667955e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 02:00:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762423233; x=1763028033; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hotEei7lwkfLoPtTcXzDgl2xx83T+2l/lt8Evo2copA=;
-        b=YRXqBhMkOQZ8MSYcTZP/RasE+JNe2wuuwWQGUSbFZpl2TdFcnFda8HdJ0Htrr+zxnI
-         YGYjbD/bQWd5we/rwedzxS50IZ364NDCvqjMzpeLpe3sBgBei7sNfJZIIob0XUTHYbls
-         RnKRHwAF+VM/YdIGqHFJkc5QErHxYAZbpgeUfiKxP5WcOQD4JDN246sF0Sjjcdpx3HC3
-         9oQmkfsVwzfnemIGaiI36yTB48PLo2MrMGl1DuMIZnPZ3GQ+2VGCnmGJQLAEuC9Yx8lY
-         PzZSSl9ONQMGIrKN6hLo3ErbDQ38gYiu0hd1X9i40uNxEH0DdYmZGVKRr/bRIa++JbBS
-         1qUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762423233; x=1763028033;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hotEei7lwkfLoPtTcXzDgl2xx83T+2l/lt8Evo2copA=;
-        b=j9WKxP1aVA+O7ZPwg+yBYibWXf7jCvoM6SOGs0L3wf9S1upuWVHa5K1Ya7sFQlpVq4
-         un83agBBNvTtAn4dIoZI/y0zbnklKOiaFiSaQgITLGGDvXMf7IPLRlZsobmZRacBSI81
-         eaOHwIPfCVkxYtoYf8NXu2AD+Mkafi1UOi5J2OCtsaNujzOlXhrc9PTAR98wYSwUGILK
-         OJdnsF9aNpTe0dGB8MFxRtTvEQxxrTtKweTCaSU3u1KYOYNq+y2yUfcjzEvRwCHIIBl5
-         ZBH2MgFosg0sNOFnZtZeWh0U9ATQMTAeOpqgRpkxhzA/22ugPZ2huQZvgEBvCPA5rKSh
-         xFQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl6+gykZc7uSIF+6G5AOk5/JfZJGQO/z7U/5YWyo7gnvv743o1DuGZ9xFUXs/UdQKvEpCdL0HY2wbg4tQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZwiXuUc+CxYJGPFA9v7OgzPJ1IOo88wmPGMMajFtFbcJ2M0Oe
-	amoMXEBa2gTCXRmt19bgLBSOSHyIbbRblmKaXd2cCGfHsyPBfiGMEmVjtUcaTdSzB74=
-X-Gm-Gg: ASbGncsOSMCzb6i7C0o0hqZ7NPWEDyOh0E9wYeN6KmBr239T5bWOJPm0zdR7kYeZAA1
-	EwXxwNIvzLMgFGCNutB4amahlAcKUil8bctT+2dkxNw2lAuc7ojm1rrRhiZ1+a+bdz4zppU7PKS
-	OfZL393T5bUo8oiUeW7wbrdUpgRYuR/SxvTYYw4QC6bCRifpNG6LHEUxZZJZKMs7kZtYU9cq6Zw
-	GAr67t8vFR/au/kWMD03AZj/iyJDgxIATqKwvtlIaDlttEWH0bw2wWKhwQA7M2NjBWT3NdS22eq
-	dtLWUnB1ULblWmXfbNpm9DBUYMwflfj1z3QIQh099zV0rfQ2Uhqc3UAS+MFdSFMiUNGqBEvLppE
-	e5BtpBeekULF0oX2oDiiF2k9o4+O/LEK5MWefeTxwQAEuhS1ZC8YWj6La4eU6O0GXasuzeuf0NR
-	bvF6B4UEenK8MQldlKcICLvR9SyIyFg04aAg==
-X-Google-Smtp-Source: AGHT+IG+IVP2okOyZfO9efTEqK5kYK+g6r3W0Uym8vBYAKG016/w0MJyIa7e2e068PJnJ764TdjQ4Q==
-X-Received: by 2002:a05:600c:621a:b0:471:14f5:126f with SMTP id 5b1f17b1804b1-4775ce206f3mr49954515e9.33.1762423233373;
-        Thu, 06 Nov 2025 02:00:33 -0800 (PST)
-Received: from [192.168.27.65] (home.rastines.starnux.net. [82.64.67.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477625e88fasm45340025e9.15.2025.11.06.02.00.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 02:00:32 -0800 (PST)
-Message-ID: <1c31a5ef-39f6-460b-8046-3c7b2627e3ba@linaro.org>
-Date: Thu, 6 Nov 2025 11:00:29 +0100
+	s=arc-20240116; t=1762423258; c=relaxed/simple;
+	bh=uph84l1p2vMYf1OKlZ++OkFEZdA0lZxvO6IihMHL0Ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=damys9C2hVUxv1nIMFZhOf0Uggw1qb0zQA3gEHQ49Ph7t0iH3ANmmwegAK5ExrN1iFlNf1D1uWmJT71bbC6VSWghU4KkMO+3UkPGvx7qvMxwc2DnC/4weAIY45+CMkKXQKamEn1xmLHY6nuuq6rJ8f+MKaUb913Z6MxUp0HNQHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=NHHG58p4; arc=none smtp.client-ip=129.217.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
+Received: from [172.31.100.153] ([172.31.100.153])
+	(authenticated bits=0)
+	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 5A6A0h5s011136
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 6 Nov 2025 11:00:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
+	s=unimail; t=1762423244;
+	bh=uph84l1p2vMYf1OKlZ++OkFEZdA0lZxvO6IihMHL0Ko=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=NHHG58p4JXfq1ZbV6y29+dFlgpSJ5Uyeosnca4fqi9dfyAkvbmlkOc1+JJOvwEgSP
+	 LOY0Tunrmn7EURLQ9A6wwT0sQFqJc11Dh4XejRmzcc+QBZjieDis77tEi/8Ej07fhR
+	 Dp1kBfbNesSiMTNllUVF/30dlKDyL6/N+diImZEQ=
+Message-ID: <676869a2-2e0d-4527-8494-db910b3a0018@tu-dortmund.de>
+Date: Thu, 6 Nov 2025 11:00:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,144 +51,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RESEND 3/3] PCI: meson: Fix parsing the DBI register
- region
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hanjie Lin <hanjie.lin@amlogic.com>,
- Yue Wang <yue.wang@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Andrew Murray <amurray@thegoodpenguin.co.uk>,
- Jingoo Han <jingoohan1@gmail.com>,
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, stable@vger.kernel.org,
- Linnaea Lavia <linnaea-von-lavia@live.com>
-References: <20251101-pci-meson-fix-v1-0-c50dcc56ed6a@oss.qualcomm.com>
- <20251101-pci-meson-fix-v1-3-c50dcc56ed6a@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20251101-pci-meson-fix-v1-3-c50dcc56ed6a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH net-next v1 0/1] usbnet: Add support for Byte Queue Limits
+ (BQL)
+To: Daniele Palmas <dnlplm@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, oneukum@suse.com,
+        andrew+netdev@lunn.ch, davem@davemloft.net, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
+ <CANn89iLLwWvbnCKKRrV2c7eo+4UduLVgZUWR=ZoZ+SPHRGf=wg@mail.gmail.com>
+ <f2a363d3-40d7-4a5f-a884-ec147a167ef5@tu-dortmund.de>
+ <CAGRyCJERd93kE3BsoXCVRuRAVuvubt5udcyNMuEZBTcq2r+hcw@mail.gmail.com>
+ <c29f8763-6e0e-4601-90be-e88769d23d2a@tu-dortmund.de>
+ <CAGRyCJE1_xQQDfu1Tk3miZX-5T-+6rarzgPGo3=K-1zsFKpr+g@mail.gmail.com>
+Content-Language: en-US
+From: Simon Schippers <simon.schippers@tu-dortmund.de>
+In-Reply-To: <CAGRyCJE1_xQQDfu1Tk3miZX-5T-+6rarzgPGo3=K-1zsFKpr+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 11/6/25 09:38, Daniele Palmas wrote:
+> Hi Simon,
+> 
+> Il giorno mer 5 nov 2025 alle ore 12:05 Simon Schippers
+> <simon.schippers@tu-dortmund.de> ha scritto:
+>>
+>> On 11/5/25 11:35, Daniele Palmas wrote:
+>>> Hello Simon,
+>>>
+>>> Il giorno mer 5 nov 2025 alle ore 11:40 Simon Schippers
+>>> <simon.schippers@tu-dortmund.de> ha scritto:
+>>>>
+>>>> On 11/4/25 18:02, Eric Dumazet wrote:
+>>>>> On Tue, Nov 4, 2025 at 8:14 AM Simon Schippers
+>>>>> <simon.schippers@tu-dortmund.de> wrote:
+>>>>>>
+>>>>>> During recent testing, I observed significant latency spikes when using
+>>>>>> Quectel 5G modems under load. Investigation revealed that the issue was
+>>>>>> caused by bufferbloat in the usbnet driver.
+>>>>>>
+>>>>>> In the current implementation, usbnet uses a fixed tx_qlen of:
+>>>>>>
+>>>>>> USB2: 60 * 1518 bytes = 91.08 KB
+>>>>>> USB3: 60 * 5 * 1518 bytes = 454.80 KB
+>>>>>>
+>>>>>> Such large transmit queues can be problematic, especially for cellular
+>>>>>> modems. For example, with a typical celluar link speed of 10 Mbit/s, a
+>>>>>> fully occupied USB3 transmit queue results in:
+>>>>>>
+>>>>>> 454.80 KB / (10 Mbit/s / 8 bit/byte) = 363.84 ms
+>>>>>>
+>>>>>> of additional latency.
+>>>>>
+>>>>> Doesn't 5G need to push more packets to the driver to get good aggregation ?
+>>>>>
+>>>>
+>>>> Yes, but not 455 KB for low speeds. 5G requires a queue of a few ms to
+>>>> aggregate enough packets for a frame but not of several hundred ms as
+>>>> calculated in my example. And yes, there are situations where 5G,
+>>>> especially FR2 mmWave, reaches Gbit/s speeds where a big queue is
+>>>> required. But the dynamic queue limit approach of BQL should be well
+>>>> suited for these varying speeds.
+>>>>
+>>>
+>>> out of curiosity, related to the test with 5G Quectel, did you test
+>>> enabling aggregation through QMAP (kernel module rmnet) or simply
+>>> qmi_wwan raw_ip ?
+>>>
+>>> Regards,
+>>> Daniele
+>>>
+>>
+>> Hi Daniele,
+>>
+>> I simply used qmi_wwan. I actually never touched rmnet before.
+>> Is the aggregation through QMAP what you and Eric mean with aggregation?
+>> Because then I misunderstood it, because I was thinking about aggregating
+>> enough (and not too many) packets in the usbnet queue.
+>>
+> 
+> I can't speak for Eric, but, yes, that is what I meant for
+> aggregation, this is the common way those high-cat modems are used:
 
-On 11/1/25 05:29, Manivannan Sadhasivam wrote:
-> First of all, the driver was parsing the 'dbi' register region as 'elbi'.
-> This was due to DT mistakenly passing 'dbi' as 'elbi'. Since the DT is
-> now fixed to supply 'dbi' region, this driver can rely on the DWC core
-> driver to parse and map it.
+Hi Daniele,
+
+I think I *really* have to take a look at rmnet and aggregation through
+QMAP for future projects :)
+
+> it's not clear to me if the change you are proposing could have any
+> impact when rmnet is used, that's why I was asking the test
+> conditions.
 > 
-> However, to support the old DTs, if the 'elbi' region is found in DT, parse
-> and map the region as both 'dw_pcie::elbi_base' as 'dw_pcie::dbi_base'.
-> This will allow the driver to work with both broken and fixed DTs.
-> 
-> Also, skip parsing the 'elbi' region in DWC core if 'pci->elbi_base' was
-> already populated.
-> 
-> Cc: <stable@vger.kernel.org> # 6.2
-> Reported-by: Linnaea Lavia <linnaea-von-lavia@live.com>
-> Closes: https://lore.kernel.org/linux-pci/DM4PR05MB102707B8CDF84D776C39F22F2C7F0A@DM4PR05MB10270.namprd05.prod.outlook.com/
-> Fixes: 9c0ef6d34fdb ("PCI: amlogic: Add the Amlogic Meson PCIe controller driver")
-> Fixes: c96992a24bec ("PCI: dwc: Add support for ELBI resource mapping")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
->   drivers/pci/controller/dwc/pci-meson.c       | 18 +++++++++++++++---
->   drivers/pci/controller/dwc/pcie-designware.c | 12 +++++++-----
->   2 files changed, 22 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-> index 787469d1b396d4c7b3e28edfe276b7b997fb8aee..54b6a4196f1767a3c14c6c901bfee3505588134c 100644
-> --- a/drivers/pci/controller/dwc/pci-meson.c
-> +++ b/drivers/pci/controller/dwc/pci-meson.c
-> @@ -108,10 +108,22 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
->   			       struct meson_pcie *mp)
->   {
->   	struct dw_pcie *pci = &mp->pci;
-> +	struct resource *res;
->   
-> -	pci->dbi_base = devm_platform_ioremap_resource_byname(pdev, "elbi");
-> -	if (IS_ERR(pci->dbi_base))
-> -		return PTR_ERR(pci->dbi_base);
-> +	/*
-> +	 * For the broken DTs that supply 'dbi' as 'elbi', parse the 'elbi'
-> +	 * region and assign it to both 'pci->elbi_base' and 'pci->dbi_space' so
-> +	 * that the DWC core can skip parsing both regions.
-> +	 */
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
-> +	if (res) {
-> +		pci->elbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
-> +		if (IS_ERR(pci->elbi_base))
-> +			return PTR_ERR(pci->elbi_base);
-> +
-> +		pci->dbi_base = pci->elbi_base;
-> +		pci->dbi_phys_addr = res->start;
-> +	}
->   
->   	mp->cfg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
->   	if (IS_ERR(mp->cfg_base))
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index c644216995f69cbf065e61a0392bf1e5e32cf56e..06eca858eb1b3c7a8a833df6616febcdbe854850 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -168,11 +168,13 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->   	}
->   
->   	/* ELBI is an optional resource */
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
-> -	if (res) {
-> -		pci->elbi_base = devm_ioremap_resource(pci->dev, res);
-> -		if (IS_ERR(pci->elbi_base))
-> -			return PTR_ERR(pci->elbi_base);
-> +	if (!pci->elbi_base) {
-> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
-> +		if (res) {
-> +			pci->elbi_base = devm_ioremap_resource(pci->dev, res);
-> +			if (IS_ERR(pci->elbi_base))
-> +				return PTR_ERR(pci->elbi_base);
-> +		}
->   	}
->   
->   	/* LLDD is supposed to manually switch the clocks and resets state */
+> Thanks,
+> Daniele
 > 
 
-Tested with "old" and "new" DT worked fine with both:
+This patch has an impact on the underlying USB physical transport of
+rmnet. From my understanding, the call stack is as follows:
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Bananapi-M2S
+rmnet_map_tx_aggregate or rmnet_send_skb
+
+|
+| Calling dev_queue_xmit(skb)
+V
+
+qmi_wwan used for USB modem
+
+|
+|  ndo_start_xmit(skb, net) is called
+V
+
+usbnet_start_xmit is executed where the size of the internal queue is
+dynamically changed using the Byte Queue Limits algorithm by this patch.
+
+Correct me if I am wrong, but I think in the end usbnet is used.
 
 Thanks,
-Neil
+Simon
+
+>> Thanks
+>>
+>>>>>>
+>>>>>> To address this issue, this patch introduces support for
+>>>>>> Byte Queue Limits (BQL) [1][2] in the usbnet driver. BQL dynamically
+>>>>>> limits the amount of data queued in the driver, effectively reducing
+>>>>>> latency without impacting throughput.
+>>>>>> This implementation was successfully tested on several devices as
+>>>>>> described in the commit.
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Future work
+>>>>>>
+>>>>>> Due to offloading, TCP often produces SKBs up to 64 KB in size.
+>>>>>
+>>>>> Only for rates > 500 Mbit. After BQL, we had many more improvements in
+>>>>> the stack.
+>>>>> https://lwn.net/Articles/564978/
+>>>>>
+>>>>>
+>>>>
+>>>> I also saw these large SKBs, for example, for my USB2 Android tethering,
+>>>> which advertises a network speed of < 500 Mbit/s.
+>>>> I saw these large SKBs by looking at the file:
+>>>>
+>>>> cat /sys/class/net/INTERFACE/queues/tx-0/byte_queue_limits/inflight
+>>>>
+>>>> For UDP-only traffic, inflight always maxed out at MTU size.
+>>>>
+>>>> Thank you for your replies!
+>>>>
+>>>>>> To
+>>>>>> further decrease buffer bloat, I tried to disable TSO, GSO and LRO but it
+>>>>>> did not have the intended effect in my tests. The only dirty workaround I
+>>>>>> found so far was to call netif_stop_queue() whenever BQL sets
+>>>>>> __QUEUE_STATE_STACK_XOFF. However, a proper solution to this issue would
+>>>>>> be desirable.
+>>>>>>
+>>>>>> I also plan to publish a scientific paper on this topic in the near
+>>>>>> future.
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Simon
+>>>>>>
+>>>>>> [1] https://medium.com/@tom_84912/byte-queue-limits-the-unauthorized-biography-61adc5730b83
+>>>>>> [2] https://lwn.net/Articles/469652/
+>>>>>>
+>>>>>> Simon Schippers (1):
+>>>>>>   usbnet: Add support for Byte Queue Limits (BQL)
+>>>>>>
+>>>>>>  drivers/net/usb/usbnet.c | 8 ++++++++
+>>>>>>  1 file changed, 8 insertions(+)
+>>>>>>
+>>>>>> --
+>>>>>> 2.43.0
+>>>>>>
+>>>>
 
