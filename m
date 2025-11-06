@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-888384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F032C3AA0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:40:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF84C3AB3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BBF1A478CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06FFC1A45D21
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9E030EF90;
-	Thu,  6 Nov 2025 11:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE3A3195FC;
+	Thu,  6 Nov 2025 11:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="XSFyVBrQ"
-Received: from sonic305-19.consmr.mail.gq1.yahoo.com (sonic305-19.consmr.mail.gq1.yahoo.com [98.137.64.82])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="U7wpaGwg"
+Received: from sonic312-23.consmr.mail.gq1.yahoo.com (sonic312-23.consmr.mail.gq1.yahoo.com [98.137.69.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FB430EF6B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ADA3191BA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762429202; cv=none; b=AQ8G4V6799hcKs4glqnuFRhA/wMI/t3wpbRA8DogcJsCcjb1MIQnj/0EYjOqqGmFDKESIen+EjbAdG/zTTpYpJ5v8CcGCqebl58C43fnpcWElTEQpLgWtBx4mjod43CyCa9xaAxIVHL2/n2NWMxZkrz2D4FB8pBlQGiq5X5dB24=
+	t=1762429812; cv=none; b=MbIljWjWwN8Hn4hT+CeFKb/RFwf1iYF5pbwokWWAltsrGzBoRoEZgLUUN/DhdTtJXmnSgzsCiEh2vMYyBjoXW14QXky4a2E1wNyzfF4sBS1w/ycV+gITqLZDLG7gCiTfRIIZjiqifRROYV8nsWPHv3FHrXAD/zPxzuirk9tgH88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762429202; c=relaxed/simple;
-	bh=v2rMqKQjvEwiC3UE8YIQnpWIc49AWaxyZty0N67bGuo=;
+	s=arc-20240116; t=1762429812; c=relaxed/simple;
+	bh=sC0i03XrfK+aAFJKa1QWFz01JSapbAfVrpNt2LQ8wd4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q6FbX1W4Lkwxf4o1Of2YEl74hsgeVrDyk9Qr7aRXivoGHg2PSBGGJPi132FZ9d+XZfzNI6SYmDLeI5NLU4Sa9a9XwRhPu6i6HyR7uTFA9Ckmfkwp9RsUOyEVAOJgOdrpoN3N6KrA6Wle00j7iXCU4zpSg07PODqZuGoKsk7F0fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=XSFyVBrQ; arc=none smtp.client-ip=98.137.64.82
+	 MIME-Version; b=ba8ZDYM+3p0UA2Pt2PPFilMWfXXyTbBRbQrFytywRjCra4ubcZWiM/tOACOP+AFidRhmwTbsbH/+nCk8a9WqVzTBrRAFWj8PPKJ57OvpKDgebTM0t2gB++hFW2oyNVQXXrnJRP+tVMVZs3qoDSLejb04U5g3s5bDe7IzKKFEx2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=U7wpaGwg; arc=none smtp.client-ip=98.137.69.204
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762429194; bh=cZ+6BA/dOKXbMAPfS0F4xWs8LUFnwRtkkTGEFa9upoQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=XSFyVBrQaybTrfo1lXYUsk+pb1bxA5FgIOk/6qqPvWI32XlGNtwrRdcud3TjUm76UxAltNfGaHQk4QypwJfMQtrWFH+V7Uj5MK9w32AWO7BYL8XscOHWCbpckr9kUn1GsNYe0+CsYYtCpNb41so/WBnz4rzYvn1uYuOWEUEKIlD8e4Kze1/EL5jsm+XB5na3wQ2msJEPlRmp6IHRhV0dVAhh7zPUdWouvgToABTT2hRxryKl6g5RPK/2Ur0k1r/JJHI58x3QbCOP9y2A3SGG6USwNYBX6MNAsyGuBlxN0DfSOz8z/31cjODPj0+IecG9YtQTD4VlXW1hQzoFpi6y4w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762429194; bh=LqcLWYXQWb0Ip0SPiqalyv/pE8J5LXoRo13y3+eIwOJ=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=QHfm8mJjLIuIloGLdqzVmbZ9YjqxTu7UUZAnq6yiWrwyZh5+q6KTc9vvG/QH8bAmSr3jW/Ct9wVH5y4BBWVubHWG3Tf/Vx551vz09yMI73vBvQd/frknhY29f6k7AMZwLVWWLtzO+zpVDpp/G2VwYfmehnHlPauWiFmzSZRV5y31BT4uQ8550pcgzM9pfXuqsU5YGj8DtvnX2k/oIS9DmWDEJ9IGMTUpY+veNjG9hQHl+6qFGGKFcCgH//psctwHIOOih+hjnGK1W9eREKJ9btX3zp8YOKbLMXYh08WjR1v/l22hbP5JpBSXw6w1WaJeatmW2ZNUzem14yOEcnI1jw==
-X-YMail-OSG: k9ZbsqQVM1kEzsbWKnPr6TPBwE18ohEy9zHwHXVdtKRGUQDoh48Ewidn._BNor_
- kqUxgkt.aDuocS_OXVHCe8aIOX43YQPQyUjsiAd8Dzvs7dyVFEYp17NqqodvpP66S89Kzrjn9aVC
- GD6fMmMvdVyMpe0bfuPDQsLOcHuXWpmrFC5WyAJCojOitojh8nPsaNSbcFU4VM6.OVI.nuh7S4mL
- TMGaqwZC2okaZAQv_MjHK54EMHvCMqeUVWHxknPZShiF0.XugiIyS_UkFscdIF3JT1nBHNRuYRAt
- yXO2QIWPiHAOaExFLaVBJwFsRdua2toduW9KZAGe59_asSwpQygctGEuHrue3R7Y6Qhy829lfMwr
- RtDlUSOiI6mBZxouFMMIadeTNLNU7TdrbeYk6.vTrwAZbDfaWpjCTWd19X3aZy6HPRpe_1Wxs14N
- xq5mlK_7U1aCH.XjGuxN594n7eOjmZhBFGF3.yc2GwoHV98EiQmRcwOVG6TFAOCp_wVb27kMAwjn
- 5l33Rvu3Ln0v20bQTvEmsPCE0qPoS7RRAzvwqlLC68Uy4eJ4bNvGaH4_3BJVbl7Kz4wV_V11XfkM
- bIJ0I.3nUod3SKjnJ9gNczWqHsbR.GsZSsIZKgW46AcF6cGNkunGLZUbAlmH7vcbxEnG0CQHQRqa
- _fixRSkzYCvWkP0jEh4X3qYa0OGBDRX.8Mze3nRX9JUiWM68XAfhMY7JKWIIKfbxq2m33z8Mr_NB
- yp8RKBDu1EP.YJgezdZrZSw8wDSsXmecMP_FFTZtY_zthzVuWxHOigfoRSh9Sk0ytK0.U5N0gxjt
- _VZJjPnnIFlhfyPGaTL5q20VjXQJDd3DmtqJV1LYV2otzuSMRiv_TnxJmEn7csD2GYE4y0KeTl_x
- hb5mieGtUlJ3_DDoAIPJjwDbOU7kL3EEnIxS9FKerzwpY9vu5pCYcuf7heSC4omhO5JIehLpIzzK
- Qj6.cZ0OtA2A7HVvclEL01JuG_CJUVU3tSGehSpXzU0MbIyyinqQR2oVda2AF_5Qj5wJ.NcMGqmW
- BBRUEyeC6ikChfH7fPHzKWHjv.aodYYZhci6c_B_amEdIBCwtckQnPUxDwxSko.GkGsI00t5AD9B
- TKL_f2.anMgAoeA6y7ec.NFm_C2xmoGoUyL9tqeN.lbggJAdTteiikVLmG4JWf1pnXpjQsiV0qSo
- qXHwhNbyw8g8RJgNqxFJUEp2CZZUcsyXuHMrIzvdNHeqcw6I47TL3zCmaFJhfHg.1EfYyFGqsp0y
- AJM8zczGbiXHbKpjZJ9duqvbMsHpkqYtn_uJXww4WCSi4huPGzu01W4z8QEYxdi7kW3_JbBT45ZG
- PZPoFpNl_nUrKaCBQtQmHyUe7wvLB9m.S6TLOigKO0TDIYaIOsbgB9dEX5Se.DcH3zUoUCTR3UiT
- GmUOYwWsVRqwzpoJ179DPIjSO_pUkh1jOFsdxb9o0Cv7NwGvh7yzQnzRHiKVlBJvYauBfM_58AaA
- W3Z6emlMXIYiuQluyWLYvS6zDybMHpkEMBohO4mRIaRul4bSSrUeUVXAmuqgt542NwcMGLruR9yp
- VEs5vYLk5yvu3aXGlanKVuWmpVvqHmcxDOjq6x068cWp_Kek1smGmwKWS3ZWkOmnuqK5QscKtDmh
- g.BSF3vNhXuQ5zszQ9T9aicwflCm0ya.UVAERvjVzabfpR4nYDxksiY4Yy_nlMFVPs8f80o787Gj
- qKQ1oxWpbUFhWZcQvVC6Rt8jRe7XLc80GUqLn4drexXROd6Vr1ZqTJTcBN1xgcTMEO0ed5bdDC5R
- EJO6lWno7DzTBCsfnlkRsUexoH35PPsI3nmpKEpTnzWhwjfIeEGrV0QaJKqlgHjQ127i2ptSl_Oe
- 4ay1i3sViwehVS1_pFlkSJPF8pfOn0K3gqL.4wtuvOUu5QhFDsZh_hkQXIuQFZhcnwZ0DqGTsr.Y
- SpHbYfHPQxPGjPsLPZShaD36rNQg1bnj1ZYoJIROQZ.XkC8XwsNs6cJnKmudROoq5jlhpU_DKZ6A
- KcDCcbJqPx21f3kUYyZSyliL8VEY_j6gtIlBYUtSPNySahhGCdADmywr6T.rNSV_MbNogMUxRuQY
- lFrnvuSspmjsEhLGqIWlePKzftnojDg5LtGCmA7Ri7I3IKgUA5z1qvXL.9zNDB3B_ytj_AIC3oat
- 1WFe1khlLKIBcmLqFyUKhPeZNN1Pxz0e7_iwMKYyGd2N5rjcqkckzgDe3AQdeEQfa8NLyUiQhuhj
- S3hTDg_yQX0npFuhFdnleUatOZf3PKqPB_TanZEEK2qkrWxeWtUrOPijlrtGLcj4_i126EOAqsgW
- aPk65lslE4HOF8YwQYfsi.g--
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762429810; bh=2NqNGQgdR8dBJVHAkyaPyaTZDk61lHGGvXQ0jY/4ZXc=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=U7wpaGwgpjziNtdahGvRLNIoVW+vsanisvOp2HwgC96f90aEETBOvlhkd37ADvWw89JlFIDAYl08+DAbxHXc1QmNbxUaDQHEhwpBjvzwWHQRgDXJ47gI0zAyVFfzIU1YzGGHQowV+fFZHVuO8jrbWrk1+nBWgmJpq1uvvZE+joPogi5hyClh2RiGozjmbV8fHXFTa75wFIVSyUg3/cYkuo5vKnUMqmkdSHma/WzbUrQeS9eCGPanPt1xYT7vXCj053xwFM/RhH4LFd7Fu1PSlsvabS5u9MxMWgZz1RhMolXEKqfvg4wP16Eg9Kk8PO3QJRnOkWOxshBkJawPckbmmA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1762429810; bh=GeSTgtxwKWbxaQEszXL9Kylx03Kq8AUPIcpcd5XUEZB=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=rlrIM/HLP1/8vlmz+UromMf4bOtQ9nW8Mxn9QUd9o5izHVUgmVp6BezLPhGkXNRu3pn0Bgao/6sylL+jV1BWa3zQJ+kx5nH857IT2ter28Q8XD4mtYpnTQcd/QteuEuruZqpB7XsTky2By8mtJVeTHH7c0udbQV7gAnnWEvQPvkJgVYmZKiivLp40nh5g2frp9Rax8k6LoNcWlWmY29jz7nmDAjxyyyaKdY8byVfVDYftaQd6ljijZ/BTZbneZP/TyWul9MG7U3JhyrYiQ9v6Rnr/2NbxWKdn/+2rzsuoi+ypmv6/Pj9Co/DzpLWZa0WIuOg2P2pXU/OSdK8DVB/Gw==
+X-YMail-OSG: FsdktGkVM1mkYImRS80awQNUrL1Xn_6foRdjk5U0qAOlkQYRm2OlO7HpY5BZ7RX
+ 1vJoFVqVXVt3AKcZC3_gewM9VSXnMTWLiCll29s4fyPfEITLaB8p5UKNvRQq5rPWyeLM.2Jjxveq
+ 75XPPoepssPXThNRbrBrq.t0omGJ.gv8rjadJy0UHKdUvNvIztAHlvTceesz.COEO.FKBvb0xfaH
+ hXrYgjV0PjNsy8l1k7yP2OQOOwz1vTsBfGrvDlxM9TYcm_Gyp05UnNFGtjWbeM4pO_Z890qFCFnp
+ yqpHVasSW1rshPiFBmHG7wg6SjuzXMNQq9YClQBjOlBXmq2w0.Kcl92pL.d7gFtghY5meSnucCQw
+ cybcRDu7SXvNfOiG.obLze9UuL6CABRc_P8M8nIsnMVZZEsusLk76IcDhA_kiqrKig0VBlIxuNGA
+ 5.x91EQJ1jD1Nk6kdFG4csBp8c0Wq_ap8.0rcogDoJVkGMtrm7G2yIrfS17f.mjwIIY3wmAte4De
+ GQjpbFv_4QNqAv5jDmW5bSC31poi9Gzda9jZOEgJGUOPiRyI7iMj501r0SHsU7PZ5bqinfw8cxQZ
+ HAYobdzM4nLNQdU_UOQuhQY3qIiCleJC6eFqpX6uiWbO6I4yq.wT1F96o4TNFIN25CEK3k43hLFa
+ mC7sOyIOA6wozhKZf03qYdCLoQ0gBXZIIMdhcH_ngrYQwg1e_xDIdmzWl0bVsb6VW22N7vMuDgks
+ V5Q9WhWRkA.w_GyMjcSLREXoAp1.boeC.j0NquVFJUmnRnP9knjEWOJf6VOye3tIxLDscmxOkGKd
+ Vr4OwP8oLJjCKZTYjn5GLkLdPDJ35MgjQwux5MOniwjJkdQlKoQ7jxIMsL5qdyct8o3dzCUs0Yzj
+ 0ZFwZTvWnALmcTbLo1k6iSlgVevzeGfC9tFMQHiL7q.L4aLVuNA9Btbfdph6FtKCheEuKXMmKp15
+ 2D8bQMO5Kin5rZanVPZriICUHtGl2L9HVtc2ZG6_ln3ihq6cfSPc3wpBsXhiNmEEHJ3dpVuA5Qms
+ 4gOyFJNm649Iyj7XbuGzKplTFr54d_JGpicC918P..Qjw0TYVAhuWfwvtFH9W5u23C9yd348dl0A
+ yQAqCqaNWKBwNfJ7e8gqhzOEx_KbGVCnxNMENrhSvMqBwQmq.h44nrje60xYf9GtN1sqaeNgQtMZ
+ Z8Rs2BuQM4jFxSQZ_oaNPosOea8uP2_0W.gfiT17mhDqGV5PZGSGUSA2uxk8LfNBcSzRD8Q6mEWA
+ HyBaCFr.mxfbyorLqqBKBm_ZA6Q0lgOlOd6Czh7DvBQQMNNSjZ6BZCcSZHZ3NXRgL0dGObpMLlpb
+ 0BUJuAVvnptVErMqN9hcT4F8AYhgcAriB2cJEIFQoVI_Qc0GyhGhwXe9WvAlKAy5R7MQFinrde_E
+ wCLQFJGjddjyQsdW8_4mrKe2U.q_xuXbSEfxqo6GOxyfGYMNkIRMw9Kx2LlqDGMcXEx5pN3LUqy8
+ Lyat6SuY_zaIs7GJ.WI8IgISX1gsaL0OSx6I84hVWnxUuM3dv0d4Yoc8vvudp6sR4QH9C3Wa4RfH
+ 5VPn7Fn3MCKT_rt939PlCUkWfkgf.Uy6_wO2.4WjqC9bRyFIgrnM6Tpozfnt4JkZXMByAw9nlr0C
+ aR_.HZ4g_3FCsXRRT_vyogzn_bKoGd9VQZ1oT2bddBMXaqY3WBxiu92uLduZ_qHALKr6I6BYBVWL
+ R6G0E61t2bKjxKlAzTGrMMrPhZD8QLFnuzxp8OgHLeV3Y7b4N875xS8XQhByddWOFxa8DCh1ICP8
+ ptdgtth9Z2_IyWgmZyMQSu5K8aypKGZQsJFukgouiCW0F..h8BEaG9GR2QjYIhFiawY.9y96jlot
+ _YmMMMcyoKKF42BC68.3c4eAc8KsG4KEwf9ya6FuqNVjPqBfLza528O6qVUdD0NVnVHV6h_zAACs
+ RZTtrJChNXBpzxKKcF6Qsb0xrv6m.mG2PcHPEjrMK7y_oqbRHrHUSnNNXzo.jBoRapZ.NJ8v59yt
+ xBvXE7bfZSoBNsIEnI0HIqqYRSWXACw2__dwCg0qsOiUT2hgPqzERpZ8t_Wt8voBzwBZudw9qW9g
+ Weii.Y6i78ikOSBqa27_EQmzvDfhpKpkcUorAqRWywp0RvJdC9d4Pw7iBHvVw3nf_oSuqZcn1P87
+ KGAT0jXyMju6QnJ7VF1GLTqecQZwmhESqDhvYGxa.PQnGMWSwtnbJ7SzESNEqTKU66w9YpEhBzpp
+ 7hJ6mgpvgMzALk8SK75y8GzSYzoA6NZNO2KXumBIIQ3BXEHmAj1ppKTLwqHcckzmLw1IYLxplR1m
+ XS6UGy9adn7UpxnyBoWU-
 X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
-X-Sonic-ID: 4305c9c2-da40-495b-ae94-407935b23269
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Thu, 6 Nov 2025 11:39:54 +0000
+X-Sonic-ID: 7148212a-1dc7-4061-8833-5f97ad941812
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Thu, 6 Nov 2025 11:50:10 +0000
 Received: by hermes--production-bf1-58477f5468-vjcpj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a2a71f3be34b9b294192b02c80d46421;
-          Thu, 06 Nov 2025 11:39:53 +0000 (UTC)
+          Thu, 06 Nov 2025 11:39:58 +0000 (UTC)
 From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
 To: rafael@kernel.org,
 	lenb@kernel.org,
@@ -80,9 +80,9 @@ To: rafael@kernel.org,
 Cc: linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Subject: [PATCH 1/2] power/swap: add missing params and Return: descriptions to kernel-doc comments
-Date: Thu,  6 Nov 2025 12:39:37 +0100
-Message-ID: <20251106113938.34693-2-adelodunolaoluwa@yahoo.com>
+Subject: [PATCH 2/2] time: tick-oneshot: add missing Return: and param descriptions to  kernel-doc
+Date: Thu,  6 Nov 2025 12:39:38 +0100
+Message-ID: <20251106113938.34693-3-adelodunolaoluwa@yahoo.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106113938.34693-1-adelodunolaoluwa@yahoo.com>
 References: <20251106113938.34693-1-adelodunolaoluwa@yahoo.com>
@@ -94,145 +94,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Kernel-doc checks (scripts/kernel-doc) reported a number of warnings
-for missing parameters and `Return:` descriptions in kernel/power/swap.c.
-These missing return descriptions make the generated documentation
-noisy and break doc-build when -Werror is used.
+Several functions in kernel/time/tick-oneshot.c were missing parameter
+and return value descriptions in their kernel-doc comments. This caused
+warnings during doc generation.
 
-Update the kernel-doc comment blocks to add explicit
-Return: lines (and a few parameter tags where helpful) for the functions
-that were triggering warnings. No functional code changes are made.
-
-Example warnings that motivated this change:
- - Warning: kernel/power/swap.c:535 No description found for return value
-   of 'save_image'
- - Warning: kernel/power/swap.c:687 No description found for return value
-  of 'save_compressed_image'
- - Warning: kernel/power/swap.c:941 No description found for return value
-   of 'swsusp_write'
+Update the kernel-doc blocks to include detailed @param and
+Return: descriptions for better clarity and to fix kernel-doc warnings.
+No functional code changes are made.
 
 Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
 ---
- kernel/power/swap.c | 35 +++++++++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
+ kernel/time/tick-oneshot.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index 0beff7eeaaba..3f0df7a26bc3 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -341,6 +341,8 @@ unsigned int swsusp_header_flags;
-  *	and get its index (if so)
-  *
-  *	This is called before saving image
+diff --git a/kernel/time/tick-oneshot.c b/kernel/time/tick-oneshot.c
+index 5e2c2c26b3cc..ffee943d796d 100644
+--- a/kernel/time/tick-oneshot.c
++++ b/kernel/time/tick-oneshot.c
+@@ -19,6 +19,10 @@
+ 
+ /**
+  * tick_program_event - program the CPU local timer device for the next event
++ * @expires: the time at which the next timer event should occur
++ * @force: flag to force reprograming even if the event time hasn't changed
 + *
-+ *	Return: 0 on success, negative error code on failure.
++ * Return: 0 on success, negative error code on failure
   */
- static int swsusp_swap_check(void)
+ int tick_program_event(ktime_t expires, int force)
  {
-@@ -367,6 +369,8 @@ static int swsusp_swap_check(void)
-  *	@buf:		Address we're writing.
-  *	@offset:	Offset of the swap page we're writing to.
-  *	@hb:		bio completion batch
-+ *
-+ *	Return: 0 on success, negative error code on failure.
-  */
- 
- static int write_page(void *buf, sector_t offset, struct hib_bio_batch *hb)
-@@ -528,6 +532,11 @@ static int swap_writer_finish(struct swap_map_handle *handle,
+@@ -57,6 +61,13 @@ void tick_resume_oneshot(void)
  
  /**
-  *	save_image - save the suspend image data
-+ *	@handle: swap map handle for writing the image
-+ *	@snapshot: snapshot handle to read pages from
-+ *	@nr_to_write: number of pages to write
+  * tick_setup_oneshot - setup the event device for oneshot mode (hres or nohz)
++ * @newdev: Pointer to the clock event device to configure
++ * @handler: Function to be called when the event device triggers an interrupt
++ * @next_event: Initial expiry time for the next event (in ktime)
 + *
-+ *	Return: 0 on success, negative error on failure
++ * Configures the specified clock event device for onshot mode,
++ * assigns the given handler as its event callback, and programs
++ * the device to trigger at the specified next event time.
   */
- 
- static int save_image(struct swap_map_handle *handle,
-@@ -676,6 +685,8 @@ static int compress_threadfn(void *data)
-  * @handle: Swap map handle to use for saving the image.
-  * @snapshot: Image to read data from.
-  * @nr_to_write: Number of pages to save.
-+ *
-+ * Return: 0 on success, negative error code on failure.
-  */
- static int save_compressed_image(struct swap_map_handle *handle,
- 				 struct snapshot_handle *snapshot,
-@@ -906,8 +917,9 @@ static int save_compressed_image(struct swap_map_handle *handle,
+ void tick_setup_oneshot(struct clock_event_device *newdev,
+ 			void (*handler)(struct clock_event_device *),
+@@ -69,6 +80,10 @@ void tick_setup_oneshot(struct clock_event_device *newdev,
  
  /**
-  *	enough_swap - Make sure we have enough swap to save the image.
-+ *	@nr_pages: number of pages we need to save
+  * tick_switch_to_oneshot - switch to oneshot mode
++ * @handler: function to call when an event occurs on the tick device
++ *
++ * Return: 0 on success, -EINVAL if the tick device is not present,
++ *         not functional, or does not support oneshot mode.
+  */
+ int tick_switch_to_oneshot(void (*handler)(struct clock_event_device *))
+ {
+@@ -101,7 +116,7 @@ int tick_switch_to_oneshot(void (*handler)(struct clock_event_device *))
+ /**
+  * tick_oneshot_mode_active - check whether the system is in oneshot mode
   *
-- *	Returns TRUE or FALSE after checking the total amount of swap
-+ *	Return: TRUE or FALSE after checking the total amount of swap
-  *	space available from the resume partition.
+- * returns 1 when either nohz or highres are enabled. otherwise 0.
++ * Return: 1 when either nohz or highres are enabled, otherwise 0.
   */
- 
-@@ -930,6 +942,8 @@ static int enough_swap(unsigned int nr_pages)
-  *	them synced (in case something goes wrong) but we DO not want to mark
-  *	filesystem clean: it is not. (And it does not matter, if we resume
-  *	correctly, we'll mark system clean, anyway.)
+ int tick_oneshot_mode_active(void)
+ {
+@@ -120,6 +135,9 @@ int tick_oneshot_mode_active(void)
+  * tick_init_highres - switch to high resolution mode
+  *
+  * Called with interrupts disabled.
 + *
-+ *	Return: 0 on success, negative error code on failure.
++ * Return: 0 on success, -EINVAL if the tick device cannot switch
++ *         to oneshot/high-resolution mode.
   */
- 
- int swsusp_write(unsigned int flags)
-@@ -1078,9 +1092,12 @@ static int swap_reader_finish(struct swap_map_handle *handle)
- }
- 
- /**
-- *	load_image - load the image using the swap map handle
-- *	@handle and the snapshot handle @snapshot
-- *	(assume there are @nr_pages pages to load)
-+ *	load_image - load the image using the swap map and snapshot handles
-+ *	@handle: pointer to the swap map used for reading swap pages
-+ *	@snapshot: pointer to the snapshot handle that tracks image pages
-+ *	@nr_to_read: number of pages to read from the snapshot
-+ *
-+ *	Return: 0 on success, negative error code on failure.
-  */
- 
- static int load_image(struct swap_map_handle *handle,
-@@ -1195,6 +1212,8 @@ static int decompress_threadfn(void *data)
-  * @handle: Swap map handle to use for loading data.
-  * @snapshot: Image to copy uncompressed data into.
-  * @nr_to_read: Number of pages to load.
-+ *
-+ * Return: 0 on success, negative error code on failure.
-  */
- static int load_compressed_image(struct swap_map_handle *handle,
- 				 struct snapshot_handle *snapshot,
-@@ -1529,6 +1548,8 @@ static int load_compressed_image(struct swap_map_handle *handle,
-  *	swsusp_read - read the hibernation image.
-  *	@flags_p: flags passed by the "frozen" kernel in the image header should
-  *		  be written into this memory location
-+ *
-+ *	Return: 0 on success, negative error code on failure.
-  */
- 
- int swsusp_read(unsigned int *flags_p)
-@@ -1567,6 +1588,10 @@ static void *swsusp_holder;
- /**
-  * swsusp_check - Open the resume device and check for the swsusp signature.
-  * @exclusive: Open the resume device exclusively.
-+ *
-+ * Return:
-+ *        0 if a valid hibernation image is found,
-+ *        negative error code on failure.
-  */
- 
- int swsusp_check(bool exclusive)
-@@ -1631,6 +1656,8 @@ void swsusp_close(void)
- 
- /**
-  *      swsusp_unmark - Unmark swsusp signature in the resume device
-+ *
-+ *      Return: 0 on success, negative error code on failure.
-  */
- 
- #ifdef CONFIG_SUSPEND
+ int tick_init_highres(void)
+ {
 -- 
 2.43.0
 
