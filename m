@@ -1,49 +1,72 @@
-Return-Path: <linux-kernel+bounces-888826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787AAC3BFFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:20:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EF1C3C087
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 16:27:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22DB13511BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EBD93B3EE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 15:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A8B269B1C;
-	Thu,  6 Nov 2025 15:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16982266582;
+	Thu,  6 Nov 2025 15:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ap8p4VUe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gtl4Rgfk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4282475D0;
-	Thu,  6 Nov 2025 15:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C392475D0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 15:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762442434; cv=none; b=sZ73XVLIL0EaQZ+7EbV9quDDV0MgZjySFIB6U1RkOAeWIt8MnfMlr8vDXlJ4JMMxTdbvoBwo1y3PZ/XfCvkxfNSDH80yMdeZ4xwINvVReJBK5VGUpWFHNT5tU15ENE9Cz5XREJ08/TBxmHKOoQvr//Iwxma1gR/CJrO78O90+OI=
+	t=1762442457; cv=none; b=TTqcVQX0W6lC27P9akf62c9v9Mbo5Ten0ClfHG0DWHjbqjuv4hyXX73CtDnEtQROT0T0jyzpl6wlxnpPB1F9X14C00V/5q5Iu9qpPQDzQV4f6xiLqqe+IgDvpbXXKvvZI+qgnK2eYai90/1VHZH4idR6R4d0bwnBMdjdqCl7DTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762442434; c=relaxed/simple;
-	bh=75nwJcYh3ayxAyBri9fPkZT2hlnuHFYolgbEPXEoNEM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qCgj1bKRlrvEonZFP7c5BhLi1IgaJJejIABxp2/KVyBgLZEXyNE46LCVsZm1zB2/hNcuvXZhb1mWlnFzjhIKYnNQIuDbz6RzLAO91xUsD9jDg0bDmnR/B4xTpwDLKSur6OjAymP/qiZ3jX/ELt1huCuHS45DqtgzoEmDT4X6zNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ap8p4VUe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 875C6C4CEFB;
-	Thu,  6 Nov 2025 15:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762442432;
-	bh=75nwJcYh3ayxAyBri9fPkZT2hlnuHFYolgbEPXEoNEM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ap8p4VUej9qNBy6kcMV2rDhoURxA8Y/snR1cLEr1eoAnXJBLTeuXNlarBYgU09rBY
-	 QSQXNZwZmALj67EKc86XN5A/sAn6Y8d6QWqAv0csqATaBfzlQkkw04etWoQ9pQBZhx
-	 MAqfK85gjZWiL63OG7X6ATBa1dgNgsw1VQbDBPnCc3pzmT05KEW8tFbMytJHZ45C9P
-	 LGW3aV53Wi5q5hSR2tjEEwe2OyG5EBp0hgRgNMh4KxcnKbOcS+Vge2/jW1ExU7rp4M
-	 66SqDZFq9dIzuPGXjmTzdv9cmvXLAWR9Ww5O9xyj8Iu2Al22tZsPq2V+f23Z7+PXQc
-	 AdCiNU8Fmd48A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE8D39EF945;
-	Thu,  6 Nov 2025 15:20:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762442457; c=relaxed/simple;
+	bh=bzFS3bRMMrYYlXOSRZ6YYXzzwOxNCRYCEcNMy9sHD2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=blYmkhW9dMBQGdkApy35b7kCRKpbwfIJrw4r2e62E9ZfSrzUFx819x09D3ipx3VDftTGDqMF8AaAe6ALEaGBn++VugJTzuztWTh/R17mztU9emXrhvdSlf22dlVGEugp5VF71P6/MiTEIH6G5xjkFbKfvu3BfzOQoWo2EhaSBQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gtl4Rgfk; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762442455; x=1793978455;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bzFS3bRMMrYYlXOSRZ6YYXzzwOxNCRYCEcNMy9sHD2Y=;
+  b=Gtl4RgfkxyBzhiJ0Yxr0fNnRVyO7bqdNHXszNYC+RbRCYRkoLfVKji89
+   Q5WwHMm4ihoJi+4F8z5abfaGFE5GS4f6FkD+m/ffPDRBGznKhNYga2TqI
+   GIxph1AJEf/fzW+VoAVW/filiW+iI09qLWhzd3y0UOT7WSNxxAB1wbCBR
+   PG828AYT5yiiPWKdUikN7Y2JOQaClOLCeZYcBc6iY0KyCeimwCo2wMp29
+   c6K1F82TqXUQTuEDix3xvlc6RKrMAI9Xswq7EGln8NYc7qn86iGMNGBPL
+   8f8FIEyFG+/uzVP+jjISHBYYgBet3PWmTKEm3cKFrDqp7clkAn+hy6Zt8
+   w==;
+X-CSE-ConnectionGUID: krsMfABSRU+NrQpPOM6J2A==
+X-CSE-MsgGUID: m0hiOaYdROyAipekJC1D5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64464879"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="64464879"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 07:20:55 -0800
+X-CSE-ConnectionGUID: lit7DOnwSDK+BlkMyS9N1w==
+X-CSE-MsgGUID: 75XPaZbMQYmNB14lVVBKsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; 
+   d="scan'208";a="192830939"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa004.fm.intel.com with ESMTP; 06 Nov 2025 07:20:53 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 05CC096; Thu, 06 Nov 2025 16:20:53 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <jic23@kernel.org>
+Subject: [PATCH v1 1/1] math.h: Amend kernel-doc and add a note about signed type limits
+Date: Thu,  6 Nov 2025 16:20:51 +0100
+Message-ID: <20251106152051.2361551-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,49 +74,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: dsa: microchip: Fix reserved multicast
- address
- table programming
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176244240551.248343.15383684088656662475.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Nov 2025 15:20:05 +0000
-References: <20251105033741.6455-1-Tristram.Ha@microchip.com>
-In-Reply-To: <20251105033741.6455-1-Tristram.Ha@microchip.com>
-To:  <Tristram.Ha@microchip.com>
-Cc: woojung.huh@microchip.com, arun.ramadoss@microchip.com, andrew@lunn.ch,
- olteanv@gmail.com, linux@rempel-privat.de, lukma@nabladev.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, tristram.ha@microchip.com
 
-Hello:
+First of all, amend the existing kernel-doc so the description
+of the function is decoupled with the parameter descriptions.
+Second, add a note to explain behaviour for the signed types when
+supplied value is the minimum (e.g., INT_MIN for int type).
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/math.h | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-On Tue, 4 Nov 2025 19:37:41 -0800 you wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> KSZ9477/KSZ9897 and LAN937X families of switches use a reserved multicast
-> address table for some specific forwarding with some multicast addresses,
-> like the one used in STP.  The hardware assumes the host port is the last
-> port in KSZ9897 family and port 5 in LAN937X family.  Most of the time
-> this assumption is correct but not in other cases like KSZ9477.
-> Originally the function just setups the first entry, but the others still
-> need update, especially for one common multicast address that is used by
-> PTP operation.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v2] net: dsa: microchip: Fix reserved multicast address table programming
-    https://git.kernel.org/netdev/net/c/96baf482ca1f
-
-You are awesome, thank you!
+diff --git a/include/linux/math.h b/include/linux/math.h
+index 7fcb980677a0..c02cc5b9e6ae 100644
+--- a/include/linux/math.h
++++ b/include/linux/math.h
+@@ -180,11 +180,16 @@ __STRUCT_FRACT(u32)
+ 
+ /**
+  * abs - return absolute value of an argument
+- * @x: the value.  If it is unsigned type, it is converted to signed type first.
+- *     char is treated as if it was signed (regardless of whether it really is)
+- *     but the macro's return type is preserved as char.
++ * @x: the value.
+  *
+- * Return: an absolute value of x.
++ * If it is unsigned type, @x is converted to signed type first.
++ * char is treated as if it was signed (regardless of whether it really is)
++ * but the macro's return type is preserved as char.
++ *
++ * NOTE, for signed type if @x is the minimum, the returned result is undefined
++ * as there is not enough bits to represent it as a positive number.
++ *
++ * Return: an absolute value of @x.
+  */
+ #define abs(x)	__abs_choose_expr(x, long long,				\
+ 		__abs_choose_expr(x, long,				\
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.50.1
 
 
