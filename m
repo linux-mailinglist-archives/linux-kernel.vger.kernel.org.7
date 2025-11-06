@@ -1,100 +1,47 @@
-Return-Path: <linux-kernel+bounces-889009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6C9C3C830
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5644CC3C824
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F2F0505DEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:32:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EDDF50877E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B07634B430;
-	Thu,  6 Nov 2025 16:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC1B34D933;
+	Thu,  6 Nov 2025 16:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n+pna2tc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B7OKnQ5b"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dH1JpBbk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8F334847E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4950F21A447;
+	Thu,  6 Nov 2025 16:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762446595; cv=none; b=tu45jN4r13ffchCJa7V+g4PO5Ry4TxvncGGgrPeZQOgnF7pWXJss8gJCn+heNykiLwn9ZmwxLVBfg9neeYHJpYdRGyFsMANVVTQiStX3MCMV2rVo3MiQC2uSaR2+Z7UHc4RJL/0YMS6w/a9Grh51Jz3+Rm8iZ+ZVy3qVF1meC6Q=
+	t=1762446648; cv=none; b=uZ417Z2kk/4BGS4NunszAt4VQdwz3/c4LDfZgn+q0VCSq6z3+onW1WOFF8yqqVGsrm9W5thiw5IDG+1r4KWFCS7jtLFYi/6m/1TZF93zKldQDTU1MpllODcvcrj+wlMNrjeWJv10ymHclqLq9u458tDnNy1PC3tUmV+Gyt1ZsBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762446595; c=relaxed/simple;
-	bh=VzaCR7H9TvLPBQ9CB5Z3dGT3hJnO4fASZTntV/6fnQo=;
+	s=arc-20240116; t=1762446648; c=relaxed/simple;
+	bh=2NTUHWqf1qau7veU3PKoiP154ztHLX5ZmfnSdksBHic=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MKDQQWrjJE6jP9uCVDC8Aua/8OSJOwF7whNsaw+PzWN88isOj0elG/HXpOHwZpDrgxryatj6I/B8a5yjVAWAbX9A0JEmtApeyna1TRa46MwKc7hGDpwjMz0bf8Bvn1/hz0HJzflvUN1M1vu8bRifYcn25DVf9jl+1lRuqKjQK6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n+pna2tc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B7OKnQ5b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6ASpVp3748991
-	for <linux-kernel@vger.kernel.org>; Thu, 6 Nov 2025 16:29:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WgmN4NxVV9M82DvCj9Jb02Y2HdGbR+gEIO/NMxbQG2c=; b=n+pna2tcBKKGun8+
-	JzSqkJXPMRjIBF6qXOcKmQiubQBM6XujHappE5+x3+jLCALbEyBBN5LGeymXYwOx
-	OOhX2EiLEoxRqr32SzZGRR73sFJCwHpnh0/64k8lxP+ofNmuC2cpmCGUetZs43Jm
-	Z2KsmZvdAqYC2rQ0OSAoREsz70vbSDK37yh1/MI5RO/1v1xHyqfEDOCT/wKibL40
-	3ENESVruLu3ChY8rKJk4TtBo5A1wn3ub7LKiw3ebJ/a6L9lvmvFfJxkUlCkuRQcS
-	pWUVl7bSW7Suu3so/1zx4B9Q7x/i1Vgyhq1qlhoFmmGmM8FwGmjMl8ptCYGxqszh
-	LRwE1g==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8sy6h1we-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:29:52 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-88046bc20faso2780076d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:29:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762446592; x=1763051392; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WgmN4NxVV9M82DvCj9Jb02Y2HdGbR+gEIO/NMxbQG2c=;
-        b=B7OKnQ5bRC/v+aNm8cYnQK3BOknlp6i/HyiOuDPYfxWJRi5/6bZo3TzPB8HTkpbMIE
-         vv3/012RR0nf9MjqbpvDCoWeab1zWIGSueXyG45yhj48OC4dmCHgk8tFVt4z9Zj2LODb
-         YFwK6MP9mugDfZFEvfZq6lCKE76jOimc9JitePtSqSY2xLrLH83XwCNZ8YjTK2FxtFQZ
-         SAmUADIhkwO9ukkWrs5FDxDFW209YoUpdrUk9uagKGLJibqWenRGtXXEEjBQS4WrMI73
-         J7UswYEsSsuyAgMZ2Ja1lOb8uxmtp0nggz3RJ4L/WDhzUHyjgY+oxYeNJa7YKboeov2B
-         w9JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762446592; x=1763051392;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WgmN4NxVV9M82DvCj9Jb02Y2HdGbR+gEIO/NMxbQG2c=;
-        b=VaWR+d6bbovdXDwBxkn1vqqIWnKiLcAyQB4nD+75HeMKP+NgBiMVhG5kiPezrn6BY7
-         2j7MRcvENkbaBI9rlCcJXQ2q0mHnIVPCUdtWaVKOaK3MstOtuHcjb35M/wGl0GagAFyl
-         vW68xaoI2eDXAo79iEOOxayN4agCYvRt/EOSVF6j8J4rMDJaN65sOHIrIv9VlxmWDn09
-         UKWoDmpRPCZ/EXC5Cb92izdaF+6PNb9Gp9B0u/GRGVqflWvXq8YyaL/7wGa/ziafuCga
-         4izOY5+XMMIQsueqW1i2FFtYp0Cmn4p4zkd2XDSO9RbSlLJ2Feht06SSnKt5SqCGS8fd
-         WA3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVswS+91uuXvS0WNx6QlCpSPWaLN4qI32dYQ12UO1YsY7VLPas1wB0z2Y/2xU0W8PnXPlFktNrWHENfB3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNL58GZURaVkofucqt288POl4e6HRvu3fWYe+5ccrpM+t7VDgA
-	sWOlGDrBraW7tyumha5V4q0wLQg7kpHGrSBGu75mG0pojJ1kfLEXKLg/n8FMRZMQ6K8/wajTuPK
-	0KUgXyWRpOEEOxgzXhNRSr6sCHoN0sqcxB3i15WzQCw1lWoA+coNZ9Gic51KI6pLJkVA=
-X-Gm-Gg: ASbGncvKBsgVHK9EWuL8yc/yiB85DgbHteZKfEcbu97C/j5VEQaQVXSY17flWaOzoE0
-	H39jy+M7L3Fbt7miz0Y6Y2DhZDQeduXRJUAjO7NwgdRnfnWOeX9kCZ68OZNBYuql8fW0riBEzgv
-	+1n4xVGq/rv1wGyA0vInFrslhsnPY+tDdts2ECkrriG5bhEP+OlNavVlMu4W/IiyWNEvh9FWtMe
-	BnOSqCVtxmO5BL4KKU8EPMJASd0kffIxyyreVu73Ih9wJ7xW172HU/meXG10lBqGScCJcZfDEki
-	EVjJ7oLE8+LPMNmM4dN4hwwg8xZg/72VkVxrjvluvlUU4yjJbsFpJ2zNsxpBMpepNPGR/83k+A0
-	k+PW8h53c/eGQIbOCtdernuGe9PJlehYFrV73k72BrpnRN8+AxmHDxpnY
-X-Received: by 2002:ac8:598c:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4ed7233c5acmr59986241cf.4.1762446591850;
-        Thu, 06 Nov 2025 08:29:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEZxjYZc8rxsuvOHdd3txcVs2PoTli39CB2wIhCv+eMHSJx/cwSSBEXCcPzDCkWvSvQ6pH8rg==
-X-Received: by 2002:ac8:598c:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4ed7233c5acmr59985991cf.4.1762446591404;
-        Thu, 06 Nov 2025 08:29:51 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7289684873sm246890766b.58.2025.11.06.08.29.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 08:29:50 -0800 (PST)
-Message-ID: <f20fd593-0173-424d-9951-e0f2ad33b4cd@oss.qualcomm.com>
-Date: Thu, 6 Nov 2025 17:29:47 +0100
+	 In-Reply-To:Content-Type; b=WlgkdvGlbTVC1HKnpSCTRAAihUUKtvDWsy3gTzNulNLNgL3PGmZ6jbws+/OZHrT4oeN/vBs7Y6gb/fRsDnih557jID+3xmSDdpHdrWux/leABgdcN760aeQkWjU1HvrdrqrkgfKE26nW+kFzjgoNYfvta2/VagQTw7TpBakKTIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dH1JpBbk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53D0FC4CEFB;
+	Thu,  6 Nov 2025 16:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762446645;
+	bh=2NTUHWqf1qau7veU3PKoiP154ztHLX5ZmfnSdksBHic=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dH1JpBbkZtmxABwSsWHd1QeVGJUmK1heuJAc7RAIsl4kdfE7dzGmhQ7MR9TIUWpvN
+	 30UqsyeOEEJ1JsJoYcwK8wKD+8bxlMqygzmzQpNx3Cgi/IQe0o5B9EskYi9smW4N4f
+	 LSxLpHz72HPdiTQVaeAE5Q9yZrrDtfxwT3llA+UdTGiWYiavIJKuKObYHwTHru1zCW
+	 ENf/uIW0jjpqcOgDizSV8RxARPFrWLkbEHnAol93LHIPa26mf1JtSjzEJcfUzrkyNn
+	 Fag6Lk1I1ygnoGE6bUtS+MVtQM7kK59DaieoJO5c6nyIPYB5mCLgBT98+lzSX4LEgo
+	 995u0ZFyhNDjQ==
+Message-ID: <d6b4df47-87f7-480b-b837-0835b8df54fb@kernel.org>
+Date: Thu, 6 Nov 2025 17:30:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,95 +49,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: unoq: add dts for arduino unoq
-To: Riccardo Mereu <r.mereu.kernel@arduino.cc>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, broonie@kernel.org
-Cc: linux@roeck-us.net, Jonathan.Cameron@huawei.com, wenswang@yeah.net,
-        naresh.solanki@9elements.com, michal.simek@amd.com, nuno.sa@analog.com,
-        chou.cosmo@gmail.com, grantpeltier93@gmail.com, eajames@linux.ibm.com,
-        farouk.bouabid@cherry.de, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, mm.facchin@arduino.cc,
-        Riccardo Mereu <r.mereu@arduino.cc>
-References: <20251106153119.266840-1-r.mereu@arduino.cc>
- <20251106153119.266840-6-r.mereu@arduino.cc>
+Subject: Re: [PATCH v5 6/7] rust: pci: add config space read/write support
+To: Zhi Wang <zhiw@nvidia.com>
+Cc: rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aliceryhl@google.com, bhelgaas@google.com,
+ kwilczynski@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu,
+ markus.probst@posteo.de, helgaas@kernel.org, cjia@nvidia.com,
+ smitra@nvidia.com, ankita@nvidia.com, aniketa@nvidia.com,
+ kwankhede@nvidia.com, targupta@nvidia.com, acourbot@nvidia.com,
+ joelagnelf@nvidia.com, jhubbard@nvidia.com, zhiwang@kernel.org
+References: <20251106102753.2976-1-zhiw@nvidia.com>
+ <20251106102753.2976-7-zhiw@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251106153119.266840-6-r.mereu@arduino.cc>
+In-Reply-To: <20251106102753.2976-7-zhiw@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=690ccd00 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=1Br4yamZUyoIW7x64XAA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDEzMSBTYWx0ZWRfXxSvjvGlXNbu1
- YJqIVXtdWKhsFMPe7XIlizcrSzRSCPM4SVMdBV2SBRY8h3uqBR/RigOInNl7g2FoMxFBb3a5RX1
- dAur5GRryAFE8unmlVLIfYc7+NHsCIW1H0I4jZPfFjvOG5BbH+tECHGQIJS4BUG2EOOBeT6UNQc
- gdzKFh1bGi7w0MPnBaNhU5GY2Dy/1J9S3I/K8H0rYOQ5ovWoquJVEW1dPDZzpOMgoLX9JDwx6Yq
- k9yWxWxSnxo+QgJRo+9yPZrpGj4c4JZ9CQcE/KOuJbbJ01XmDAP14NYDozC02T0GG2zhm1V36na
- d4OynnOhBLfWonNxaxvwvvrwMXoJzI2Mzqwsiobskn0TpDwZDhU3Ys22Tu8mTLihOPTMhopNQpq
- fapQnGO1DJokAlsWAEBh8+oVGCwb5g==
-X-Proofpoint-ORIG-GUID: dxuqMrqv313fpVYQbu07Mp8Pby33BS01
-X-Proofpoint-GUID: dxuqMrqv313fpVYQbu07Mp8Pby33BS01
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511060131
+Content-Transfer-Encoding: 7bit
 
-On 11/6/25 4:31 PM, Riccardo Mereu wrote:
-> From: Riccardo Mereu <r.mereu.kernel@arduino.cc>
-> 
-> Arduino UnoQ is a single-board computer combining Qualcomm
-> Dragonwing™ QRB2210 microprocessor with STMicroelectronics STM32U585
-> microcontroller.
-> Support to a simply boot to shell environment includes:
-> - UART, I2C, SPI
-> - onboard LEDS
-> - eMMC
-> - WLAN and BT
-> 
-> Signed-off-by: Riccardo Mereu <r.mereu@arduino.cc>
-> ---
-
-[...]
-
-> +        leds: leds {
-> +                compatible = "gpio-leds";
+>  impl Device<device::Core> {
+> @@ -441,6 +480,20 @@ pub fn set_master(&self) {
+>          // SAFETY: `self.as_raw` is guaranteed to be a pointer to a valid `struct pci_dev`.
+>          unsafe { bindings::pci_set_master(self.as_raw()) };
+>      }
 > +
-> +                ledpanic: led-panic {
-> +                        label = "red:panic";
-> +                        function = LED_FUNCTION_INDICATOR;
-> +                        color = <LED_COLOR_ID_RED>;
-> +                        gpios = <&tlmm 39 GPIO_ACTIVE_HIGH>;
-> +                        linux,default-trigger = "none";
-> +                        default-state = "off";
-> +                        panic-indicator;
-> +                };
+> +    /// Return an initialized config space object.
+> +    pub fn config_space<'a>(
+> +        &'a self,
+> +    ) -> Result<ConfigSpace<'a, { ConfigSpaceSize::Normal.as_raw() }>> {
+> +        Ok(ConfigSpace { pdev: self })
+> +    }
 > +
-> +                ledwlan: led-wlan {
-> +                        label = "green:wlan";
-> +                        function = LED_FUNCTION_WLAN;
-> +                        color = <LED_COLOR_ID_GREEN>;
-> +                        gpios = <&tlmm 40 GPIO_ACTIVE_HIGH>;
-> +                        linux,default-trigger = "phy0tx";
-> +                        default-state = "off";
-> +                };
-> +
-> +                ledbt: led-bt {
+> +    /// Return an initialized config space object.
+> +    pub fn config_space_exteneded<'a>(
+> +        &'a self,
+> +    ) -> Result<ConfigSpace<'a, { ConfigSpaceSize::Extended.as_raw() }>> {
+> +        Ok(ConfigSpace { pdev: self })
+> +    }
+>  }
 
-The labels (label: node-name@unit-addr {}) for the above 3 LEDs and
-the group are not used, please drop them
+Please implement them for Device<Bound> rather than Device<Core>. Also, the
+methods seem to be infallible, hence no need to return a Result.
 
-Looks good otherwise
+> +/// Represents the PCI configuration space of a device.
+> +///
+> +/// Provides typed read and write accessors for configuration registers
+> +/// using the standard `pci_read_config_*` and `pci_write_config_*` helpers.
+> +///
+> +/// The generic const parameter `SIZE` can be used to indicate the
+> +/// maximum size of the configuration space (e.g. 256 bytes for legacy,
+> +/// 4096 bytes for extended config space). The actual size is obtained
+> +/// from the underlying `struct pci_dev` via [`Device::cfg_size`].
+> +pub struct ConfigSpace<'a, const SIZE: usize = { ConfigSpaceSize::Extended as usize }> {
+> +    pub(crate) pdev: &'a Device<device::Core>,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
-
+/Core/Bound/
 
