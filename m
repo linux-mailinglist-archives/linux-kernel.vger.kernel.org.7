@@ -1,131 +1,125 @@
-Return-Path: <linux-kernel+bounces-889398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22060C3D743
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:08:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B753FC3D749
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5630F4E2B89
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6863BB69E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC64304BC1;
-	Thu,  6 Nov 2025 21:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BE930507B;
+	Thu,  6 Nov 2025 21:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UxrWx6UZ"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bKsYhKw9"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB864304BA8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9862304BCB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762463299; cv=none; b=JeVsHWnG8+GYTE0J9w5rHiTjwtm33SEfEYhLVKK3m02qf+A5T2uaqxGPQscd0tqoiFBev3muXX1zqx/RD7HpL3rogUIfNzzYB7SM6h+tN5wNKXlb1kKg/vwqJEHpzD4OGnTiqLTqaXgNX2H6qpL7saC3dpSk4U43c1FCKrSOxVI=
+	t=1762463346; cv=none; b=YG74a+zs/sNQSJN+N2w0iHJkBjpOhn+rjehF0LMtnIweSF/mMXOqnVpuyGGIP3e7M9XlQK3ZA5v04w5bgZmH6dt7sOZutwrlHCxvirwg1llVpse6OMV4WaKlu8co0hJdfRuxQLJ9h0PrKVIpQyAjb5Hk15th8DVASXTbZzcdSHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762463299; c=relaxed/simple;
-	bh=xkGEVA7tDKhEqGoNowkcJNlMxtjGqjAFlqV1MMTXzoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f615F0UN19epxvWf261izoKnuziF3ZHVwIBb+F/XWY/V55av6URUJc2qVYn7bNGYObVKxlYBwfOZz+e5UR6HHNq+vSc+QILKLSa9ImHcrQSU1ECLEseL8zCkKsZJl4Ro3dNoHgTjqFFcKT5/m2GbeG1AbQy7i9Vf5fpPFnVzlHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UxrWx6UZ; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-4710683a644so484935e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:08:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762463296; x=1763068096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/5xVpAr9ZbKaVO0bAtNOEOCLIRQmDJLc8ZfpgxCZQug=;
-        b=UxrWx6UZxycBAkbF9zhBdzFwdhR6ipMT3b2PpXXuHtaKe1J8+b1u8BROuuvr+If+hP
-         GDjzrlI/LFk7+37kwVAvoiERH1/9augH/+fmTvCgRKXhpkLHqsvo2Z3R6AqkEm5lQSYr
-         2DA8LhSn56i6UTG7Rk9YWoYPFEG4rYhzmCXwJSk7VvqcsygVszp4IAIpE2+q6g9+tYyn
-         v/jJxKFX76HenfycvCUZyLgafRQFBgiXgWqDzGE9y8MaBaU5SInOS3544flvVoDp/XhQ
-         zOAjcmjQIS9pbRzs2i7Kl6MjFTo2PCYsPl/lQg3z2cJN27kE+DI4icGKSSy7J1pMZsPi
-         rTeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762463296; x=1763068096;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/5xVpAr9ZbKaVO0bAtNOEOCLIRQmDJLc8ZfpgxCZQug=;
-        b=Kvs9qFHJyLNGZM9vwrPQjHzP6lB97xOCxER7xOjR5GtPwtYLDUM6e608e8XBQObJam
-         h979q8aBk22upXzFpfPKltdtcTY1Oy1lA5YRTKCQHc9cBNGXf48JqSfjxYGn4kZ6TEZu
-         GC7sh/hmUt5qBFzB1k45tHoz2Eual6EIgcqVrKvXh3Fe0xkzJo+ImAjeLf5JpE6ZdYAf
-         up4HVHUVGM8d8vvK/4hBJl1cIzH34sftbzw44DIPlrgiiQgVzaS/Q8kITWe0d4tzO1wO
-         qJyy3/rm3rJ8yiwIc/NjBvcadYedUmwVmjKXIQ8FuuiVUM2YX1kwZE3c8IDchXJslHCa
-         Ce/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWWb9iHcUeXXwHpiguEjeoQEn8tt5stHcOkopAuEhx/7sXRTuhXNpzn4TcB0+c8EAhQGY5ky4FBSrqyvVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpHOAUaULMNfqQYGRg4/lBZKEEwaC+9CKu63DKdQd07cj6jguG
-	G6Ydn10K44Nxb1qp47NnhgH5vERfenULQgfjHT5o8R72W4k4i7+q75e3
-X-Gm-Gg: ASbGncvO0/mx5ktOqsMHnQnyYITzmDc7pgm4e65UvVNZuRu5d3IiNhE4jvM0B66Z/nK
-	KZFSlSw79DEfZUijvi4tYLEfOITQNXXKuLXb5xgXBtOVDkr8MZarv16SeoWGOouCxQYW00ATVDd
-	bT3h3PuMCrdBVGuM73Dfpzat9lFvV8ggTsH7KBiUJZn2Rbgi+d0YOoGmzNarGRx7RiKsW56vd1n
-	gKLG1JJkoRZHq9OchEgJIOgTlZ0rNziO0RrHJEKJ81jXPmZafKUzMamBXQhBkEuKE3puR13n8FC
-	aQlfa+vQIISYgGigEmP4cHY7bSio/GDhHpkRL34x/YrxH45OKBUIME1rp5zYcn7SQkap2wR1Uqt
-	i5Tav3e3glnFgD/r5h7DpMvsWwxMofJ71NWEvF6O46Ecvbp8uLO/XcHqiar9Tcz07VtMxEvA7M8
-	YkA9lEMRvEp/VE00MVj6Kzmw5bs9EUKBwkjT7bgjY=
-X-Google-Smtp-Source: AGHT+IHlju2rSLGApcUhNyvklc08dTRWO1IjCiDhqZ7qoZQsGLq1uvql05prWWXeOTbmMu/aHY+nIw==
-X-Received: by 2002:a05:600c:4ec6:b0:471:665:e688 with SMTP id 5b1f17b1804b1-4776baa5b9emr9690255e9.17.1762463295905;
-        Thu, 06 Nov 2025 13:08:15 -0800 (PST)
-Received: from [192.168.3.141] (p4ff1feb5.dip0.t-ipconnect.de. [79.241.254.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac6794f6esm1300220f8f.41.2025.11.06.13.08.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 13:08:15 -0800 (PST)
-Message-ID: <de2f65f0-8b5d-4d64-a918-4f0c91ee3e59@gmail.com>
-Date: Thu, 6 Nov 2025 22:08:14 +0100
+	s=arc-20240116; t=1762463346; c=relaxed/simple;
+	bh=3AtY/VwyhU9BVz2wNHpcH2scMMYmfb188zCCT3AVuZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PBc4ze+tOQNWoot2EEWXpPdo3sqtPLLwZ7GnkcaABCk7E65hG8Oy3dnV9ilkF4qOwn62OovBOt7asdv68zYho0rJUBR8K2bxVdzGX6QlnbAW9iblalXZTfKjXbKvs2aWmsGQP/Rs2YM4Aqvx5bokMgY2afl5EbXVxzQAUQURZFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bKsYhKw9; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a14d9fe2-e2f3-454c-acbc-229f358f05af@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762463340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pA+Au9Wfg4FnaO+AIfMrv9CyLswebJ75y8ZdGYpg94s=;
+	b=bKsYhKw9FfnEZB/GKRLwVYih+dtPxKW/JZz5B+iFwQ5S9x6dtdnCuTU32kpbfrD73M3GOr
+	jp4lgonMcVhtxlYkWziQeVQYa9ullJUZ5YzsQvuoZbOTzCrth6xCJTYg36KG9BvWNswYpV
+	T9WGXQ+dsbTn52PjKHuKe05we2I648o=
+Date: Thu, 6 Nov 2025 13:08:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] arm64: mm: Don't sleep in
- split_kernel_leaf_mapping() when in atomic context
-To: Ryan Roberts <ryan.roberts@arm.com>, catalin.marinas@arm.com,
- will@kernel.org, yang@os.amperecomputing.com, ardb@kernel.org,
- dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Guenter Roeck <groeck@google.com>
-References: <20251106160945.3182799-1-ryan.roberts@arm.com>
- <20251106160945.3182799-2-ryan.roberts@arm.com>
-From: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>,
+ jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <690d0ccd.a70a0220.22f260.000a.GAE@google.com>
 Content-Language: en-US
-In-Reply-To: <20251106160945.3182799-2-ryan.roberts@arm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
+In-Reply-To: <690d0ccd.a70a0220.22f260.000a.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 06.11.25 17:09, Ryan Roberts wrote:
-> It has been reported that split_kernel_leaf_mapping() is trying to sleep
-> in non-sleepable context. It does this when acquiring the
-> pgtable_split_lock mutex, when either CONFIG_DEBUG_PAGEALLOC or
-> CONFIG_KFENCE are enabled, which change linear map permissions within
-> softirq context during memory allocation and/or freeing. All other paths
-> into this function are called from sleepable context and so are safe.
-> 
-> But it turns out that the memory for which these 2 features may attempt
-> to modify the permissions is always mapped by pte, so there is no need
-> to attempt to split the mapping. So let's exit early in these cases and
-> avoid attempting to take the mutex.
-> 
-> There is one wrinkle to this approach; late-initialized kfence allocates
-> it's pool from the buddy which may be block mapped. So we must hook that
-> allocation and convert it to pte-mappings up front. Previously this was
-> done as a side-effect of kfence protecting all the individual pages in
-> its pool at init-time, but this no longer works due to the added early
-> exit path in split_kernel_leaf_mapping().
-> 
-> So instead, do this via the existing arch_kfence_init_pool() arch hook,
-> and reuse the existing linear_map_split_to_ptes() infrastructure.
-> 
-> Closes: https://lore.kernel.org/all/f24b9032-0ec9-47b1-8b95-c0eeac7a31c5@roeck-us.net/
-> Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
-> Tested-by: Guenter Roeck <groeck@google.com>
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
 
-Reviewed-by: David Hildenbrand (Red Hat) <david@kernel.org>
+On 11/6/25 1:02 PM, syzbot wrote:
+> Hello,
+>
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in gid_table_release_one
+>
+> ------------[ cut here ]------------
+> Possibly kref leak, ref:403, state: 3
+> WARNING: CPU: 0 PID: 12 at drivers/infiniband/core/cache.c:820 release_gid_table drivers/infiniband/core/cache.c:819 [inline]
+> WARNING: CPU: 0 PID: 12 at drivers/infiniband/core/cache.c:820 gid_table_release_one+0x4fb/0x800 drivers/infiniband/core/cache.c:897
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:0 Not tainted syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+> Workqueue: ib-unreg-wq ib_unregister_work
+
+The problem occurred in ib_unreg_wq. It is a workqueue in ib device.
+
+I will work on this problem.
+
+Yanjun.Zhu
+
+> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:819 [inline]
+> RIP: 0010:gid_table_release_one+0x4fb/0x800 drivers/infiniband/core/cache.c:897
+> Code: 49 01 c6 4c 89 f0 48 c1 e8 03 42 0f b6 04 28 84 c0 0f 85 be 01 00 00 41 8b 16 48 c7 c7 60 7d 2b 8c 44 89 e6 e8 16 e2 35 f9 90 <0f> 0b 90 90 e9 c4 fe ff ff e8 f7 76 72 f9 4c 8b 7c 24 48 4c 89 f8
+> RSP: 0018:ffffc90000117900 EFLAGS: 00010246
+> RAX: a2ec906fdf0a5800 RBX: ffff888030cab6d8 RCX: ffff88801c6e5ac0
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+> RBP: ffff888079d48010 R08: 0000000000000003 R09: 0000000000000004
+> R10: dffffc0000000000 R11: fffffbfff1b7a680 R12: 0000000000000193
+> R13: dffffc0000000000 R14: ffff888028a68690 R15: ffff888030cab600
+> FS:  0000000000000000(0000) GS:ffff88812636a000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f49bf3056c0 CR3: 00000000772e8000 CR4: 00000000003526f0
+> Call Trace:
+>   <TASK>
+>   ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+>   device_release+0x9c/0x1c0 drivers/base/core.c:-1
+>   kobject_cleanup lib/kobject.c:689 [inline]
+>   kobject_release lib/kobject.c:720 [inline]
+>   kref_put include/linux/kref.h:65 [inline]
+>   kobject_put+0x22b/0x480 lib/kobject.c:737
+>   process_one_work kernel/workqueue.c:3263 [inline]
+>   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+>   kthread+0x711/0x8a0 kernel/kthread.c:463
+>   ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>   </TASK>
+>
+>
+> Tested on:
+>
+> commit:         690e9fda RDMA/core: Fix WARNING in gid_table_release_one
+> git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16bbb012580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>
+> Note: no patches were applied.
 
