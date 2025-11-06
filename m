@@ -1,264 +1,150 @@
-Return-Path: <linux-kernel+bounces-889048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F7AC3C953
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:52:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F79C3C87D
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 17:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A3EB4202DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:42:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6C4E35250F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 16:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEAC34A3DB;
-	Thu,  6 Nov 2025 16:41:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E80329C41;
-	Thu,  6 Nov 2025 16:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319FB339B3B;
+	Thu,  6 Nov 2025 16:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IusIFD+P"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1562494FF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 16:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447284; cv=none; b=g1oKV+Sk3e6QWTHIZUhFesmMq0Z3S+HJ5c9ikqMhPt3l7E8jJWwBwreZBT4tcswI+rY0I4rHLuIG03DGuJk8wKqsJuTw4Cx4R7sxG05JqkRwu72LKCo0XB+RzmGNQusU4RxCi8zyOMdkVz6AsD7i1VjdKHWzg0Njd5RkENtYpA8=
+	t=1762447367; cv=none; b=eV05yWH+bvnx9w1FpPl5QuirxfIoxH7ama0ToWxjBcLFZqKM3Bw+WAbNPswQBQHAsW1PvMPAeGQJRpMAX5Sbnww565yPq6i+wGxZQ4NxB2r2Gcems5hmoe+ss2SmFfvmhD4cXOGOL0mUvHzxWTSMOM4uLdkI1GvqIK8utgQ9vMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447284; c=relaxed/simple;
-	bh=4lFGiA8K/kfABjdnawuyfjQPak1ZBQeZWmw3ME/MyJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vj2cZVMqdhsZzpTI1y9cRNs8fwisK8+X7vqqUl8qMtnLSGM/XEwsXMAryOHZAYYXYfSoFNW991iUjjRAqaCFYy9dwtl1m7bwaxOTD7WYmseonhqNHqH8yxiKLE+ScPELa6p9q1NhRxnnJrrYa4TquCvQGVfsUuF2Rm6XYWHQb8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6BDE153B;
-	Thu,  6 Nov 2025 08:41:13 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB86F3F66E;
-	Thu,  6 Nov 2025 08:41:16 -0800 (PST)
-Message-ID: <9e2f912d-2a2e-49ed-b0ab-4286fe94e145@arm.com>
-Date: Thu, 6 Nov 2025 16:41:15 +0000
+	s=arc-20240116; t=1762447367; c=relaxed/simple;
+	bh=dWua4jrZl0r37ywkIwIo1mbydYSjyvb6Mj4LORQIgS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qE2bVaIRgCW16h83GoVPit/rfk2J9D51eb+L1xwF6zf90MayJbrw62mp5x9jlXEk2H9tIHHSDPzjSQfkno2SF5dF50nBsHfXGfvw04j+oOy27w/S2ZPj2HYKn4IX8sZl/3zanZ3PK0mOWcx1DmA7TjN3OPEBjlSDbJObGfolHJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IusIFD+P; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so7158965e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 08:42:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762447363; x=1763052163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5bWVfG3C8DSuF6D5kXiUtuvNzIgvYK/pa4hX5McjgVk=;
+        b=IusIFD+P84syu65y/9cYP/jr+NUA/whUPyzdEWdNhCY4ydeduGTGcWsrLolUSFBbbh
+         Nywa2anM0hvGkjv9PIjvcAM4D+/CkU0/1QotZ41j/PDg4YhZENQe644MNSOiU6JXrdNQ
+         LF/csdbGrRGcgUbyTkXzUPD9b6VPhT3+hlt6U+/7e9/mpc7c+XUtV/oX9MeJwU53hmv/
+         hcWFtI+SExtBED/G0uEr8wvAa8YsqWVNioEeUJO6NXThC2zJMoYQmK0T/7VLZS7wOcMq
+         cGXFET/Y1C8HTN3AzR0mFvu6SPZXIBLTu/vI6gdQkzmRc/mg4OiiPg/Mnh16J1srlJ9B
+         jSeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762447363; x=1763052163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5bWVfG3C8DSuF6D5kXiUtuvNzIgvYK/pa4hX5McjgVk=;
+        b=hlm9dFa6ZEuqYwz7R/skw/qj0UNqo6bOu/IDWeCiCB6THd/0WH3Rr4EcKz9xtjTcMJ
+         miwiDNO2ezyb6H2WPogupWf2vgpVDMzksM3H75Ik0QVIUfwkOoje8150kb/46VLzaBcC
+         JbZEUhGAEOsgrixr7QcUZoT0jLjOn17sQ8Ck45IxSNcWFSlbaLgHQq2pwVp32Ugkonok
+         w2VDUu/87VcPkLD6UV4FtI14rNpt+HZrrHVnihIm7ocXsDhgBJ18+oJLBmpiDmOYE/2B
+         dxP4Ngee4gyY6PSHA0MIMwaUmbpT+XtbxKpH1JoZkiilCAaakIR7lBiD1RSoWTUIq24c
+         MBWQ==
+X-Gm-Message-State: AOJu0YyqzXSQY7E5fZdZzobFJ97aqKfToTtm7ir1P4CwCZl25AtCeAKX
+	YNXSaKAL6Tx5jlQrFdf/L8EBwOtkKoWCwji4cbjQvGcCZv3A1p6Y0QwEw7bV2SzYJI9nk3UpNpH
+	gULuc
+X-Gm-Gg: ASbGncvG6jTZayKyuV7ZBtHxRMyypkrZxeEPl1CQ6rb3ccvzq6aAlXjR6ErPyzV0lTa
+	36GDRlm6pJRa4b9ODaNe7SL1R0SDfx/4ontMw0GmcIFuZ86Ge4tC7YSz2TUprjNTGnYHfyPrp8I
+	I/GLfVhhAeUuT/mikTnjL9TVu3sr+pzlEYEwavp9AmJyHxuigkWrFZMGUWzUHrdpc/dQP/A3H2l
+	tjOcwLXbYmqrrCPLMLaj0rJqOYbtTDPgNNpomR6x6vFuZTb/6PpGgKQBA00e3lXMqSGIFNBC/Jh
+	EY5VK2iyjigq1pog70aLejns3AHP/70X5s1IOhHV5LCGs8aLReIx5qw3Ys5BSIi626fGLNBpPNZ
+	UlA85ePFM7QqjLfjhGk5CMp4vv52glGfSSl/YAU6vSGXtPq3xwQ1q93XNppcU7E/S85A0xaaDof
+	3H7aXCIl09UnO13SJd3aUUUqQFAG9it6B1Aw==
+X-Google-Smtp-Source: AGHT+IF+PBs1j5FzTL4nTtbZy9S8jQx0oyM0Yw6fciG0T5QoS4kG8UPHtVSxZJs1keD6X3tfzWTt3w==
+X-Received: by 2002:a05:600c:8216:b0:471:1716:11c4 with SMTP id 5b1f17b1804b1-4775ce20dcemr92100835e9.34.1762447363317;
+        Thu, 06 Nov 2025 08:42:43 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b28asm75115f8f.6.2025.11.06.08.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 08:42:42 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>
+Subject: [PATCH] crypto: cavium/nitrox - add WQ_PERCPU to alloc_workqueue users
+Date: Thu,  6 Nov 2025 17:42:36 +0100
+Message-ID: <20251106164236.344954-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 26/29] arm_mpam: Use long MBWU counters if supported
-To: Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, dfustini@baylibre.com,
- amitsinght@marvell.com, David Hildenbrand <david@redhat.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
- Gavin Shan <gshan@redhat.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
- <20251017185645.26604-27-james.morse@arm.com>
- <CALPaoCjJXHD+HgFizzvNEvBorbUcJLTngLb7UJy-uMdybhCfrg@mail.gmail.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <CALPaoCjJXHD+HgFizzvNEvBorbUcJLTngLb7UJy-uMdybhCfrg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Peter,
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-On 11/6/25 16:15, Peter Newman wrote:
-> Hi Ben (and James),
-> 
-> On Fri, Oct 17, 2025 at 8:59 PM James Morse <james.morse@arm.com> wrote:
->>
->> From: Rohit Mathew <rohit.mathew@arm.com>
->>
->> Now that the larger counter sizes are probed, make use of them.
->>
->> Callers of mpam_msmon_read() may not know (or care!) about the different
->> counter sizes. Allow them to specify mpam_feat_msmon_mbwu and have the
->> driver pick the counter to use.
->>
->> Only 32bit accesses to the MSC are required to be supported by the
->> spec, but these registers are 64bits. The lower half may overflow
->> into the higher half between two 32bit reads. To avoid this, use
->> a helper that reads the top half multiple times to check for overflow.
->>
->> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
->> [morse: merged multiple patches from Rohit, added explicit counter selection ]
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
->> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
->> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> ---
->> Changes since v2:
->>  * Removed mpam_feat_msmon_mbwu as a top-level bit for explicit 31bit counter
->>    selection.
->>  * Allow callers of mpam_msmon_read() to specify mpam_feat_msmon_mbwu and have
->>    the driver pick a supported counter size.
->>  * Rephrased commit message.
->>
->> Changes since v1:
->>  * Only clear OFLOW_STATUS_L on MBWU counters.
->>
->> Changes since RFC:
->>  * Commit message wrangling.
->>  * Refer to 31 bit counters as opposed to 32 bit (registers).
->> ---
->>  drivers/resctrl/mpam_devices.c | 134 ++++++++++++++++++++++++++++-----
->>  1 file changed, 116 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> index f4d07234ce10..c207a6d2832c 100644
->> --- a/drivers/resctrl/mpam_devices.c
->> +++ b/drivers/resctrl/mpam_devices.c
->> @@ -897,6 +897,48 @@ struct mon_read {
->>         int                             err;
->>  };
->>
->> +static bool mpam_ris_has_mbwu_long_counter(struct mpam_msc_ris *ris)
->> +{
->> +       return (mpam_has_feature(mpam_feat_msmon_mbwu_63counter, &ris->props) ||
->> +               mpam_has_feature(mpam_feat_msmon_mbwu_44counter, &ris->props));
->> +}
->> +
->> +static u64 mpam_msc_read_mbwu_l(struct mpam_msc *msc)
->> +{
->> +       int retry = 3;
->> +       u32 mbwu_l_low;
->> +       u64 mbwu_l_high1, mbwu_l_high2;
->> +
->> +       mpam_mon_sel_lock_held(msc);
->> +
->> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
->> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
->> +
->> +       mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
->> +       do {
->> +               mbwu_l_high1 = mbwu_l_high2;
->> +               mbwu_l_low = __mpam_read_reg(msc, MSMON_MBWU_L);
->> +               mbwu_l_high2 = __mpam_read_reg(msc, MSMON_MBWU_L + 4);
->> +
->> +               retry--;
->> +       } while (mbwu_l_high1 != mbwu_l_high2 && retry > 0);
->> +
->> +       if (mbwu_l_high1 == mbwu_l_high2)
->> +               return (mbwu_l_high1 << 32) | mbwu_l_low;
->> +       return MSMON___NRDY_L;
->> +}
->> +
->> +static void mpam_msc_zero_mbwu_l(struct mpam_msc *msc)
->> +{
->> +       mpam_mon_sel_lock_held(msc);
->> +
->> +       WARN_ON_ONCE((MSMON_MBWU_L + sizeof(u64)) > msc->mapped_hwpage_sz);
->> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
->> +
->> +       __mpam_write_reg(msc, MSMON_MBWU_L, 0);
->> +       __mpam_write_reg(msc, MSMON_MBWU_L + 4, 0);
->> +}
->> +
->>  static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>                                    u32 *flt_val)
->>  {
->> @@ -924,7 +966,9 @@ static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>                                                ctx->csu_exclude_clean);
->>
->>                 break;
->> -       case mpam_feat_msmon_mbwu:
->> +       case mpam_feat_msmon_mbwu_31counter:
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +       case mpam_feat_msmon_mbwu_63counter:
->>                 *ctl_val |= MSMON_CFG_MBWU_CTL_TYPE_MBWU;
->>
->>                 if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw, &m->ris->props))
->> @@ -946,7 +990,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_CSU_CTL);
->>                 *flt_val = mpam_read_monsel_reg(msc, CFG_CSU_FLT);
->>                 return;
->> -       case mpam_feat_msmon_mbwu:
->> +       case mpam_feat_msmon_mbwu_31counter:
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +       case mpam_feat_msmon_mbwu_63counter:
->>                 *ctl_val = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
->>                 *flt_val = mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
->>                 return;
->> @@ -959,6 +1005,9 @@ static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->>  static void clean_msmon_ctl_val(u32 *cur_ctl)
->>  {
->>         *cur_ctl &= ~MSMON_CFG_x_CTL_OFLOW_STATUS;
->> +
->> +       if (FIELD_GET(MSMON_CFG_x_CTL_TYPE, *cur_ctl) == MSMON_CFG_MBWU_CTL_TYPE_MBWU)
->> +               *cur_ctl &= ~MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L;
->>  }
->>
->>  static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->> @@ -978,10 +1027,15 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->>                 mpam_write_monsel_reg(msc, CSU, 0);
->>                 mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
->>                 break;
->> -       case mpam_feat_msmon_mbwu:
->> +       case mpam_feat_msmon_mbwu_44counter:
->> +       case mpam_feat_msmon_mbwu_63counter:
->> +               mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
->> +               fallthrough;
->> +       case mpam_feat_msmon_mbwu_31counter:
->>                 mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
->>                 mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
->>                 mpam_write_monsel_reg(msc, MBWU, 0);
-> 
-> The fallthrough above seems to be problematic, assuming the MBWU=0
-> being last for 31-bit was intentional. For long counters, this is
-> zeroing the counter before updating the filter/control registers, but
-> then clearing the 32-bit version of the counter. This fails to clear
-> the NRDY bit on the long counter, which isn't cleared by software
-> anywhere else.
-> 
-> From section 10.3.2 from the MPAM spec shared:
-> 
->  "On a counting monitor, the NRDY bit remains set until it is reset by
-> software writing it as 0 in the monitor register, or automatically
-> after the monitor is captured in the capture register by a capture
-> event"
-> 
-> If I update the 63-bit case to call
-> mpam_msc_zero_mbwu_l(m->ris->vmsc->msc) after updating the
-> control/filter registers (in addition to the other items I pointed in
-> my last reply), I'm able to read MBWU counts from my hardware through
-> mbm_total_bytes.
-> 
-> Thanks,
-> -Peter
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-Thanks for the testing and flagging the problem. We should do the
-configuration in the same order for all the monitors.
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-I'll change the case to:
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-	case mpam_feat_msmon_mbwu_31counter:
-	case mpam_feat_msmon_mbwu_44counter:
-	case mpam_feat_msmon_mbwu_63counter:
-		mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
-		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-		if (m->type == mpam_feat_msmon_mbwu_31counter)
-			mpam_write_monsel_reg(msc, MBWU, 0);
-		else
-			mpam_msc_zero_mbwu_l(m->ris->vmsc->msc);
+This change adds a new WQ_PERCPU flag to explicitly request alloc_workqueue()
+to be per-cpu when WQ_UNBOUND has not been specified.
 
-		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
-		break;
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
 
-Thanks,
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
 
-Ben
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/crypto/cavium/nitrox/nitrox_mbx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_mbx.c b/drivers/crypto/cavium/nitrox/nitrox_mbx.c
+index d4e06999af9b..a6a76e50ba84 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_mbx.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_mbx.c
+@@ -192,7 +192,7 @@ int nitrox_mbox_init(struct nitrox_device *ndev)
+ 	}
+ 
+ 	/* allocate pf2vf response workqueue */
+-	ndev->iov.pf2vf_wq = alloc_workqueue("nitrox_pf2vf", 0, 0);
++	ndev->iov.pf2vf_wq = alloc_workqueue("nitrox_pf2vf", WQ_PERCPU, 0);
+ 	if (!ndev->iov.pf2vf_wq) {
+ 		kfree(ndev->iov.vfdev);
+ 		ndev->iov.vfdev = NULL;
+-- 
+2.51.1
 
 
