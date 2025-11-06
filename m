@@ -1,93 +1,98 @@
-Return-Path: <linux-kernel+bounces-887644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF15C38C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CDFC38C8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6EF54F1866
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:01:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3B704EE4F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C6F23D7DF;
-	Thu,  6 Nov 2025 02:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBW3/EaZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB39225A3B;
+	Thu,  6 Nov 2025 02:01:57 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC79191;
-	Thu,  6 Nov 2025 02:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF7F1EB1A4;
+	Thu,  6 Nov 2025 02:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394460; cv=none; b=YBjbwUId266iqYY6LS3Y72lEyNEAw9zwgwo3wQxYXzupzwBYRW6d1pA2o4nbf7WxXZifTDpEQ9l+ese+7jAODSpPB36s0mZTMzDSwm7wQaAt2nXytPo9jEgzGj7ka4PJ54CA+Sk6JaAYvvQlw5fofOPTymRbsDMmj0hUy5JVpt8=
+	t=1762394516; cv=none; b=p4f1ktMHbMFXwYpCfR6EOZFLEO17pqHBc18/9YgllXSeDdLXvJ837WTK8Nins+EJgtaUgaTC5RYXrMoraZwGXuSZ+cJErR1vj+MwHbjFcu8UhLl7fEO8hL6RmbtOIGKpD2IUWyZSTMLmmJfIuCmB9JvpX14aBBrnvJxIslChLng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394460; c=relaxed/simple;
-	bh=g5glJOowTX7943JcxtaX4WzDgp9ra7F8qfw4QcXZDWM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=A/4OeTI2CKfixJjmGsx9xUhinyFxXv8L4GufAt1M8eM13dYAnvuLMUX5cqSfFKdwLUqj3MBSc4dJGazEGjx9GFQXbje1qgpWvUcmBz8BE0kjkbmMJjF5DcG+1XolSdHE2vFMTyQcR71R7THFC0p09JsCx7HuTBByJyMRmx6ML+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBW3/EaZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3977C4CEF5;
-	Thu,  6 Nov 2025 02:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762394459;
-	bh=g5glJOowTX7943JcxtaX4WzDgp9ra7F8qfw4QcXZDWM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=tBW3/EaZiGs+gaRtzpJRt4ZBM83j3mr2+qz6VE6tppk592sNxw55gGE8FfPaJdXeJ
-	 9KcYfPC92+e3z5C6KHifeq5XPg5QyC3ZuE7sSGIuYQtdAOnA0yTm6GxAfg0cv2Byap
-	 jYsQykOaXh310co+oKuS36ae0kk44Bj2AL5W0awbL4us9ChkF/lmYg47I+nq6eQarE
-	 CZWSiPraX+Yg9riA5xDrtHnAsqqzSrgqqacIPXrKYHE+MvFFeF8120ueaLXsECcGrB
-	 /tpwOIb09Tt2khFjGICRnXHM2EOE/N/IzfiRluF8qk3wF5geW4JFF8FOWrNINpW/q7
-	 /uADxn/XxGHaw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DFA380AAF5;
-	Thu,  6 Nov 2025 02:00:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762394516; c=relaxed/simple;
+	bh=dO4FE21Zua9R4vz9RM9/cPVMk1N63kCDv91oB1BEKbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kq6Q7nKQx5WGBAQvzuUvYjKMMdYV8cQsKBfsX6TUIHXZr8mYLSnJLRklUDWpM0kj7tbkwumF0nMoM2RnUaJIAGTVAwDbO7ZNVeTah2wOfk3Au+89Yz4xWKfiSSQDSC+UNNurjlMLom9ewHRnig3OX8TToQQbKVLHaSceqp+e+tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 66ECF14050B;
+	Thu,  6 Nov 2025 02:01:52 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id ABB3120025;
+	Thu,  6 Nov 2025 02:01:50 +0000 (UTC)
+Date: Wed, 5 Nov 2025 21:01:59 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the ftrace tree
+Message-ID: <20251105210159.2334ba3c@gandalf.local.home>
+In-Reply-To: <20251106123317.217e24ed@canb.auug.org.au>
+References: <20251106123317.217e24ed@canb.auug.org.au>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] ptp: Return -EINVAL on ptp_clock_register if
- required ops are NULL
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176239443274.3831359.3134439998474183740.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Nov 2025 02:00:32 +0000
-References: <20251104225915.2040080-1-thostet@google.com>
-In-Reply-To: <20251104225915.2040080-1-thostet@google.com>
-To: Tim Hostetler <thostet@google.com>
-Cc: netdev@vger.kernel.org, richardcochran@gmail.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, kuniyu@google.com, hramamurthy@google.com,
- vadim.fedorenko@linux.dev
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: ABB3120025
+X-Stat-Signature: 5w9samtco698mhw199fgimuxugexy6f8
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+6k4fUAW9Fg4Wmq7JiUW6tey5kHaShdu8=
+X-HE-Tag: 1762394510-850612
+X-HE-Meta: U2FsdGVkX1+8dDZho369NEeDVMgwQNQ7xG712XN8KUpgDfN8b+FuU2BFRm+r3rAq8Oo2mcQlgNOHGLTY9Q696DluJ9RP4ohfG3aJ2gv3rfrByJvZi44djB4Z/dyJkDhXzgwq7F3z815QgyPtCF2yt15SHZAvh65L7rNt2CdgPVagc9eSR5x0HiLfyx0mwnAJTFwTKnUlt7iVf4qLtsRCSTduIB5BvFoq6cyV0+MafVPOvF0tY9tvtWqoUTfIIC9GdOMLyLdVrAnZesPr2rN8+y+cEexpz4fzDwS3kTPQEt2ECKmpHtRb9UbLUIAAkk1CACapG4NLKPN2NdQx6JffTXkvn+2178cAf3W/EVVWfEz5NbMydzkulrn19JgiRjmK
 
-Hello:
+On Thu, 6 Nov 2025 12:33:17 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue,  4 Nov 2025 14:59:15 -0800 you wrote:
-> ptp_clock should never be registered unless it stubs one of gettimex64()
-> or gettime64() and settime64(). WARN_ON_ONCE and error out if either set
-> of function pointers is null.
+> Hi all,
 > 
-> For consistency, n_alarm validation is also folded into the
-> WARN_ON_ONCE.
+> After merging the ftrace tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> [...]
+> kernel/trace/trace_syscalls.c: In function 'print_syscall_enter':
+> kernel/trace/trace_syscalls.c:267:48: error: 'TRACE_ITER_VERBOSE' undeclared (first use in this function); did you mean 'TRACE_ITER_VERBOSE_BIT'?
+>   267 |                 if (!tr || !(tr->trace_flags & TRACE_ITER_VERBOSE))
+>       |                                                ^~~~~~~~~~~~~~~~~~
+>       |                                                TRACE_ITER_VERBOSE_BIT
+> kernel/trace/trace_syscalls.c:267:48: note: each undeclared identifier is reported only once for each function it appears in
+> 
+> Caused by commit
+> 
+>   64b627c8da9a ("tracing: Add parsing of flags to the sys_enter_openat trace event")
+> 
+> interacting with commit
+> 
+>   bbec8e28cac5 ("tracing: Allow tracer to add more than 32 options")
+> 
+> which should have been fixed up in commit
+> 
+>   2021eabbdb41 ("Merge probes/for-next")
+> 
+> I have used the ftrace tree from next-20251105 for today.
+> 
 
-Here is the summary with links:
-  - [net-next,v2] ptp: Return -EINVAL on ptp_clock_register if required ops are NULL
-    https://git.kernel.org/netdev/net-next/c/dfb073d32cac
+Ah, Masami made a branch that I had to merge with a fix and I'm still
+testing that. But my scripts merged it without the fix. Hopefully I'll have
+that fixed soon.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+-- Steve
 
