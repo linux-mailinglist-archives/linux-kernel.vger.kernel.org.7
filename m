@@ -1,225 +1,187 @@
-Return-Path: <linux-kernel+bounces-887664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D0CC38D4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:14:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7E0C38D3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 03:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D212D4EC711
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:14:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB7F84EB7A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 02:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA3238149;
-	Thu,  6 Nov 2025 02:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1A223B632;
+	Thu,  6 Nov 2025 02:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NayA01pH"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MAKbWqC6"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012050.outbound.protection.outlook.com [52.101.66.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F1B1BBBE5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 02:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762395256; cv=none; b=esjDwuYnm/2RfYJiaBvAgHPC2OBxWP809aP3eBt1y6iv9goUjyXPzZpXEoPgNOMJ/TYC3Pql62vMm4I9Hi9HM9GCabZfSO3BpEshSYf0pO4J8rsm0zabPILL7IBPv0mVDi5g7r6f1Y2Gg2TrpJD/v9NcGUV5AYg4z7+X1p+1nso=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762395256; c=relaxed/simple;
-	bh=vZP6Olr5BkV89fHbnFl2sWgdkU0Nu6NEN5nDJ+HXmt8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lVJgkYNq1hWVM7a3+yOW2x3FacIU5caJW3WzeN18D0UU6gvlw+tRd/gOYLBxed8QYlqqLJ4dmkft1BPxYcUgZczgdaPt/4WjdVrX+7FhYK0SucylOWgsLjf2jJDlg5SYwoGquplGzCTqJoQdrA+/3JKQRig4W4MONlVX+cz2Mns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NayA01pH; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47754e9cc7fso2517355e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 18:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762395253; x=1763000053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pID6uUnnVVZ9vUknZjr7R/tHvBIqPxx/hilxjQ4G/4I=;
-        b=NayA01pH7J4QAApvV6oY6JB9WF6zyrc7iVR/2oNn9ntLYTClVYcxFDZqneiLVuoy6t
-         pe3+Ws2RO7Tej5S8Ulx3RaMx8N2E2KO1odP4b5A929XWZNqrWbtix44axXqAIb6gPFkx
-         GlpFkNg0KsxsITlLCUtmQPoy8skXOh0PnXpYK8pcmGsNckYAp/JhiRyYX6FGoV38FsRg
-         3q4xJ+VkUxESZj26RO8rCVai7geBECTyJsEt0fF3jisSwvvWbqBI+RXyHSazb0EvuRix
-         JYKuzNgjhJkkvxkSr1n4QZIxcPw9TpF0mnWfRZTtxwfGSoEfFm9V1ubNoe0iZN5CSk3J
-         TpDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762395253; x=1763000053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pID6uUnnVVZ9vUknZjr7R/tHvBIqPxx/hilxjQ4G/4I=;
-        b=YmoIxpjCwHJpyhUOOgHnMyvrBZgnQ9YCP9BsoWdJrK2lXQNH5/NIAmyPu58w23+m4t
-         kBP3QB3Qwv5YOHmuv28Ls3ZzTFsbmCIvkZBQ+mG2bYrwZFcCkKk51E15KOE0igphBoRB
-         Hep55D91IesveXGHQk3wyt//xiXF7P8LHUj6v89d2gm9q2c4lRG6kNbs8rydU7vGgnZS
-         33sca8CuzCVJ8OxtS8J78mEnH3o4QWZuN0k6HgODLbmzbly0W6T0o461spdgWEhlDD63
-         56XaSfJ8ZnPGntyITfQQw4/Qm25IHq6shAZMQpyw20seC5vivcIBfSxd2uk28OrQ9B06
-         qmgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJLNAZFha291OC41owj5LkHnEm2Q2+0CPgAR07+Eb6aYMHSCIS4KTYwxUnn4UiogWiVVeJxrIUnvqtNbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy176iy9+H1tunQh99pjTDbXzHSL05A+YebXS6Q1f5wBmLc3bTj
-	ZTXJv9XckMV8DN8vvuqQ00xv69VEfBr0vmUB4r4DE+xwNBBmCkuw8+kFvFVGIhrsSW4u2h1zxXH
-	XGMWq9tZbsHA/GSCd5C4GvSg8Cd8COb8=
-X-Gm-Gg: ASbGnctbPiam9CPZtv6liZPYKR/695DU/nTQqEOO1WzNLxjKOuHQzBieELufV6+q4Nk
-	TdQuMbFB5HrlGh9u+OOn/k6mvz3si6VaxFKyHxj5e2CC6yt4XD2WpadLJuwYIWXDtPEgeCqoXuE
-	GRxVigsABHxiW92+k4Y9/SmA05c0PV5EPiSDmejE1AxaSdzixMo0xxHu/QPmFNUk78mlWsA87ll
-	F/6t79rlsRZm8CcrUkA2WQ/Wu5WAUzxY4SZL0s8bZYSYsB5Hmb9roZbE677SW5mqfTekWbxofAD
-	cpSjPGjBq7kVP9BlIgyKNbeb35n5
-X-Google-Smtp-Source: AGHT+IHNnfInoqONg+HdDsdA3ANtxnE3sVDgNmGAhLj4s+3clgxi2RV1/L4viLoDYukFGUUERUQj1xR+74oc6GYdLj4=
-X-Received: by 2002:a05:600c:621b:b0:477:fad:acd9 with SMTP id
- 5b1f17b1804b1-4775ce7dfcfmr67517835e9.34.1762395252988; Wed, 05 Nov 2025
- 18:14:12 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162A8145FE0;
+	Thu,  6 Nov 2025 02:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762395235; cv=fail; b=nDmPlbOxANsXG21HSXDQES/JKvlkPhCG7NJMJmX8rSbk8DUGCufJHJxJW3obtVtYHqf1bGMUlsPHD99MKT7uuHIyTJYvTC7w+vuiF2YrCFA7+JHIIjsScVvd1SUwUq0SMRS2rc0OAjsiGj8mYpRHIJTTALxCcnYWR6XVL00MU3M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762395235; c=relaxed/simple;
+	bh=KF1M9agGgY5sqMYGNQmRb8J5zEATnDJr52p3JYj6vDY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=WCot7601QdZYqe5pu19wo4GdKqH17nnutp9+SPYCL7pB8zPOAQ2ZK2Mo2t4tRKwaHv6VHlP8cFGPP1yZ03hJ5fZ+K81Pgq2/PJVv2T8hS7k+nEsfHmlCCNGIVk/sHFZWj1cCFck39aEqCjARzCI7brYVJcYIMdqq0Ux4Lo/HoCc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MAKbWqC6; arc=fail smtp.client-ip=52.101.66.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kz+2of+h+AmPuLJ6LrzgR+kLTaXZkOCyeNSzQPDLQ6j1T8lYfWVKGlOSpj1GqS1bl4WgI+bOzd6u31KUCmK0m2NP8exNJK/DRw6+A4Q6Y5L1DCvNLqJU4z2lERsNVQx8eZQWQcV6lqXRjGcX2q9IpVt3/MaCuY1ubin+qfyif4WjH5turlNXnVy+Ksuc2em/HpS8VnKiKwQnKrMvaTX5U/bMJteNNOePTH97OKxR6jZ9xxUbQoPUguWGt7MMDSrkP8d6Dxm4y8NqST7HLXUY+aC1apdv4jZqDwxj4oA7w/HXAJD9Yr/ji5+y+R8wh9fquKbtqf1lQlND6GvNenLrvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3zL+OsOmD4/l1JfTKnT9jBlkd1EzV5R3mMXiijcicjE=;
+ b=vqS9tNhIx+BkxB7BcwtarbUy4DoucjnVF9WVaF45U18jr0RCXzp8qnBA8vouxkqWXhkZp7yCHakpSZNz3dikMesoYrqiJf4e7ue8FojhYU8oDPZqToiyz78BPzZp/8VXToxk6W83AT1Onfn1Yu4/DABc9adRNcHoQkEWsiHm+biuN6RtHWseVMIa0yPi1N1SMPQf8CNHT8SuPhjmw/CmEvmi1FdUbNAzcav2VxhbYeoys2ub9xJHsHtrJurDywEYj/qDy3ailqGc6usq+3ucmIEGSGMW5JQ+1Hsd6L0uiUGSkBYbgQc5b13rNTfks0/6jHSvqWTX1TTZEiAbo+16cw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3zL+OsOmD4/l1JfTKnT9jBlkd1EzV5R3mMXiijcicjE=;
+ b=MAKbWqC6sdNMbKU3Evqr72QywKM1HtK2HZhMWPQjHdmq25ObELXXm9iIPB9C8DqDj+75v1CZ9fWx21q4oJlp6bwuwl03F+hsCNUs+K7TtpHvN5W0vqzslD7pK4tgVz23uNlH6qaKL77UmjN1BuY04D+cWD6MtQ77sYPqJqMTH77NodjWPtt99MVjJ+z+AJJeA0eqkKW/giZo/u9GAEniDntF3Cccq9Jh5JKIHr+Dm1dbGB3qFRSgbi3QjUgmuh5jR6ZngD9/sWrEVTCsk2TUGmhz/hO3wOad2OQlpagqozAt5xb6I/JOpDAQpyHOSXtVC97eq7uLkHrWGndPtGT/ng==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PR3PR04MB7402.eurprd04.prod.outlook.com (2603:10a6:102:89::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 02:13:48 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
+ 02:13:48 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: shenwei.wang@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	eric@nelint.com
+Cc: imx@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: fec: correct rx_bytes statistic for the case SHIFT16 is set
+Date: Thu,  6 Nov 2025 10:14:21 +0800
+Message-Id: <20251106021421.2096585-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0120.apcprd03.prod.outlook.com
+ (2603:1096:4:91::24) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101193357.111186-1-harshit.m.mogalapalli@oracle.com>
- <20251101193357.111186-2-harshit.m.mogalapalli@oracle.com>
- <CAADnVQLe6a8Kae892sVaND-2p1DQDXGD5gqxHWHHUC85ntLCqw@mail.gmail.com>
- <e9d43dab-cfae-48a8-9039-e050ea392797@kernel.org> <CAADnVQKzSBZYaj0iMkNBk6FvaOket1mWPksX661zwC2rg2FBkQ@mail.gmail.com>
- <7874cfab-3f96-4cfb-9e52-b9d8108bc536@kernel.org>
-In-Reply-To: <7874cfab-3f96-4cfb-9e52-b9d8108bc536@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 5 Nov 2025 18:14:02 -0800
-X-Gm-Features: AWmQ_bkDFU4rnwNyySArAEKJqcvgmyxv0uWO4gd3WyExlNwj1KcULnAVkj1_8jg
-Message-ID: <CAADnVQL7cLYPKEQOLWi1DjTZjhE_Fy4zWLrWG+=NSeN821SyMw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] bpftool: Print map ID upon creation and support
- JSON output
-To: Quentin Monnet <qmo@kernel.org>
-Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, bpf <bpf@vger.kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|PR3PR04MB7402:EE_
+X-MS-Office365-Filtering-Correlation-Id: 784a75da-5bcb-4af6-3ae5-08de1cda1ed3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hKrTIrjrsEAPfG0L4oPxeA66Z1gTNV1ljBlq5avwq1Jk4INH+uNTZB0Uw9iK?=
+ =?us-ascii?Q?p3JPAajW0yCTVadcDf03Aiqgxcdr9OrhVzrTVtn6sdCsa8XgCnYvk+Akt4UH?=
+ =?us-ascii?Q?omlK5mSWkSgPham+rCwxjL1Y1pnNqainJAKxnUFfZaJDBms65nr3TRllIWXR?=
+ =?us-ascii?Q?U+O1ThDbddkm2Mfca0NGgklM1vH5d50/uasXz3Ucbv6aUmy56p/8tWPibuUi?=
+ =?us-ascii?Q?8JWYA8N3K/bCzVD4Ezxj+yEX6VCygvMfJMxkOmga3I7UndO3m3CqZ8Cwfncz?=
+ =?us-ascii?Q?cGryx6i2fE0g3TiDlxQIFuj7ebWBl7qojbe88X49KT6fy905mGQcTlPmXYec?=
+ =?us-ascii?Q?ChXdaQcxWvpdEaqRKn+10vkpdiDfDOtjrHw8/TNMkKIL4DBXEA08WaR9/Upj?=
+ =?us-ascii?Q?ZSggYqrB2v1c8T2CL4itHSVIGEz/xGI/mrQMAzVpGA0fGqmAsGTWkXUZh699?=
+ =?us-ascii?Q?Oary4uKwjbbXWlcDV7/fyFy0TvyiLdyEDLdkI03lTDOdJvzgW+SYR+EsyDB3?=
+ =?us-ascii?Q?vVkKxJNE3aeLngBngYPV/ac6CFpPgRsKck0/ZTgCv+4D4NFuKi80+/qbBY4i?=
+ =?us-ascii?Q?L91os2oliDIQ24T9BSw6xLQgOZ8+5xUtPt06H6GX957uVbTNnTi6qfw+uReQ?=
+ =?us-ascii?Q?SuytbKqwvVl/ggzugKFFmmUABR6T/LxNnZ694M/if1TlrYXC0YDHoa6lHQlE?=
+ =?us-ascii?Q?r1UQjqEBAChlb1YRzcB2ZKHmncAU2l4qM7Nv2R1TZHfcEL6Gikd7ZwCcl5ub?=
+ =?us-ascii?Q?qOuXMPyyyUqM9UkVR6G60jXrvpoIfFjYXmo6kfDGWTKs+QtrbhSHIi8FVuTV?=
+ =?us-ascii?Q?jhEyPi+KIZ8ET1p3OgLUm5bxxRXVtc1nPoIQN1nA6Fwyin18LUzf56Bs1NAA?=
+ =?us-ascii?Q?hHUXjVtxoW5b2lfoAWawuPsaZfI67KP0+Xidi7FK4MMq1ii4gKYx00Jipo9S?=
+ =?us-ascii?Q?B+8/8T1AhIAcAZFqrXU3e3AQDBmilEIjKHsYEGHj83n5DB7/K64NYoiyuhjq?=
+ =?us-ascii?Q?enBDTdnKAPLn2iX/DXj+l0uMzluNZV48bEdhy1KnJNHqbimGoO8TLogogbeg?=
+ =?us-ascii?Q?W212HSq3ffc99UdnpGwTHUX+xTCG6Z8HLYsulWSFGm1xhUCfPG/UxRqW4jzW?=
+ =?us-ascii?Q?eu3ssJaAlBjIubC3Al8rA/Y+E+bKS1p0k1bTo09EdUpFzGPLNFxjL+5py8HX?=
+ =?us-ascii?Q?Jw2e6RRmAxUWmSUzwJ9EXcxNZDaEoIbw2gY0uxAJpad03f6pawH4OmhMtqxm?=
+ =?us-ascii?Q?FeejyjgGhMhKygLZ6lrBIkGsHW65caj3OiDpTs/QBvlU8Z+Fwd9rKGnu3bjz?=
+ =?us-ascii?Q?YthNe/xxM/lbu7/DMQTZOMYlFo20V5FZjAOZBxpvzVS35jPFaoyeYwJLa+Bt?=
+ =?us-ascii?Q?fUU2xH8IBdAp59tGA8ZO5S0wks9CvzmsOcIdr975FWKG6c5ZCaMvobZagKoE?=
+ =?us-ascii?Q?Gn3U4KjWYapS/eDwjC6q1qr1kWE9Y/QUjxczVXZtaE0x4AywD8bzOU5j5r2L?=
+ =?us-ascii?Q?tjOUJMUPkOMJar4VyY6/2aayNLodfvvJ0xvF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QO/vGfmU+RK3zVjZ9wGIfYAWVWAL2SmSl1DiGlGh1JqWUR7kigX7UWF51Xbt?=
+ =?us-ascii?Q?9BLaMDfdEhdHuGS1D2iF0g2vyd1LwaEkSDxstuSIiS3ToK03FaVvLA6NjJTI?=
+ =?us-ascii?Q?tCfVR1O+6MpHoRNVQUd355i7cEhalNKbcDtN0uEDRPWHELAGaaMeXK0viQhS?=
+ =?us-ascii?Q?zhvHZpBlqOw4WLfmSVZ48NG8quuEBjR3ZTbih4/JRD1OKFGVdftCJ/nF5gtL?=
+ =?us-ascii?Q?ZPtj0hqLh47VC4Oed7r6ck+U3Ad8uRCGps0EfOHfN34KwVpPWjgISFm+ns85?=
+ =?us-ascii?Q?s4G7DtWZ7298D7cRkxD2rNxuhouU+5/dlyG9F1wc7A3Njejk7y3wpuAVpASP?=
+ =?us-ascii?Q?Q5PilrwlONcT2JA8BX/ANx018JJlwyGCqTFlCAF7aMNzCM99b/reiki9rg7T?=
+ =?us-ascii?Q?Mk2QycQB2QgEL8K4hXJ/87bq4OnYhXVpX8UbMIU6M3QH0MdMfq90+95jKfjU?=
+ =?us-ascii?Q?2o+dCwzge+UuXl4usUg5sudVoyg4wC5u2IpomqvMKVvbKBBhzAneR49lhs3w?=
+ =?us-ascii?Q?HvHReMu8WP9LaowgC0jgwIJ5AEJIujMWimPhhUBI2tng8QaMe8QnYmKMQRdF?=
+ =?us-ascii?Q?Nr3GzCrQnJv5P1U/pPWKLak8XjcE6ZxCw4Z74L57rV/xYro8GXJNjmQeIkD0?=
+ =?us-ascii?Q?jpsvKiGmWibipM38tS718o9JGRF1wLpcSAYRUcgoF4KswxTyuQCwvphNC1qf?=
+ =?us-ascii?Q?ryLTSi4px2LvSy6AhXBjX/UuTyIwgR4hO2mdiEs6a04IS+wR9clmjPrL7tUw?=
+ =?us-ascii?Q?Q4JHBs8r9eCq790qHbawcJSiPzP4ILQ8sFRbxaN55AkhyEjj0ggrixJLY2dK?=
+ =?us-ascii?Q?p7qzoBuz7a2zXOzIbs+REc3W51gKju+tQlxLkpsvLhh97WkoK9LbIZVu1OTb?=
+ =?us-ascii?Q?KL6smdWMVUyq+z5j1JdD1+MqjhDRNPO365xKBkwLKbQEo0mxssmIKpftGdKs?=
+ =?us-ascii?Q?EvxDZSCTaMFw1eMKPz91L1vNgIz8lSsbH1B2tQkbRkl3MzJfxVSDbnIC4Bjc?=
+ =?us-ascii?Q?yGvaShyAmHSiRL0xAU/r0orlzOKmuONyP2qK6FFzgNf3hc6JlRyK6nGLXEIg?=
+ =?us-ascii?Q?H/LAMQVWvnf/01RzESLMzGGOJ1ZOPJq3evD2MYPNdklmGin68dhdJA59mnD+?=
+ =?us-ascii?Q?IxWwNdqyaizOplWe1lp1LXF8tnPMT3S14bb1n7Focu7u5B6+SD22Xlj1Xxc+?=
+ =?us-ascii?Q?F7BlQy0Yq1A3Bng6puvSKLjHioWlU0jyDBtRDLV10CbSpkEqarkV4GW5TBNF?=
+ =?us-ascii?Q?J4upDEYZtPtU5n57LqkX+FpOo90foy/gHvmO1pjPkZaiPd9r9pwudwtNQJE4?=
+ =?us-ascii?Q?RhyG3BBzzfC1Qmva1xYgzfdXJBr+VHnyKE2VuPUbfcRVyrCsMwlyo/flVvIW?=
+ =?us-ascii?Q?Z/sYV6UW1T5YjaFyH7OP1Q32WpyhV7+4I1BiWFetUQYdn+jhv03C1NrhJ7IM?=
+ =?us-ascii?Q?p9trTKnpLi4/LQzRun4TD1Vj+a/cdPAJMQajFzBo9r6FUHYRuHbWqZL1/3pu?=
+ =?us-ascii?Q?nTSgsZj9421zjO3ByLuXQMkycXV9etf2A2MCB9w3yGFprSEAr4oZODUdLivZ?=
+ =?us-ascii?Q?CqBk1taLjWIcxC8bOtZbbQ6XCNH1GldLvbIMVtIN?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 784a75da-5bcb-4af6-3ae5-08de1cda1ed3
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 02:13:48.5552
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GJe93sIyxKyFD2fBabzH4XkiVn45CSoQuw+MWDIMNVn3krWRe7DiYaAJn3eCa7RdRN5qujoyzi/0eJUqcZx3Wg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7402
 
-On Wed, Nov 5, 2025 at 6:05=E2=80=AFPM Quentin Monnet <qmo@kernel.org> wrot=
-e:
->
-> 2025-11-05 17:29 UTC-0800 ~ Alexei Starovoitov
-> <alexei.starovoitov@gmail.com>
-> > On Wed, Nov 5, 2025 at 1:38=E2=80=AFAM Quentin Monnet <qmo@kernel.org> =
-wrote:
-> >>
-> >> 2025-11-04 09:54 UTC-0800 ~ Alexei Starovoitov
-> >> <alexei.starovoitov@gmail.com>
-> >>> On Sat, Nov 1, 2025 at 12:34=E2=80=AFPM Harshit Mogalapalli
-> >>> <harshit.m.mogalapalli@oracle.com> wrote:
-> >>>>
-> >>>> It is useful to print map ID on successful creation.
-> >>>>
-> >>>> JSON case:
-> >>>> $ ./bpftool -j map create /sys/fs/bpf/test_map4 type hash key 4 valu=
-e 8 entries 128 name map4
-> >>>> {"id":12}
-> >>>>
-> >>>> Generic case:
-> >>>> $ ./bpftool  map create /sys/fs/bpf/test_map5 type hash key 4 value =
-8 entries 128 name map5
-> >>>> Map successfully created with ID: 15
-> >>>>
-> >>>> Bpftool Issue: https://github.com/libbpf/bpftool/issues/121
-> >>>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
-> >>>> Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> >>>> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com=
->
-> >>>> ---
-> >>>> v2->v3: remove a line break("\n" ) in p_err statement. [Thanks Quent=
-in]
-> >>>> ---
-> >>>>  tools/bpf/bpftool/map.c | 21 +++++++++++++++++----
-> >>>>  1 file changed, 17 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
-> >>>> index c9de44a45778..f32ae5476d76 100644
-> >>>> --- a/tools/bpf/bpftool/map.c
-> >>>> +++ b/tools/bpf/bpftool/map.c
-> >>>> @@ -1251,6 +1251,8 @@ static int do_create(int argc, char **argv)
-> >>>>         LIBBPF_OPTS(bpf_map_create_opts, attr);
-> >>>>         enum bpf_map_type map_type =3D BPF_MAP_TYPE_UNSPEC;
-> >>>>         __u32 key_size =3D 0, value_size =3D 0, max_entries =3D 0;
-> >>>> +       struct bpf_map_info map_info =3D {};
-> >>>> +       __u32 map_info_len =3D sizeof(map_info);
-> >>>>         const char *map_name =3D NULL;
-> >>>>         const char *pinfile;
-> >>>>         int err =3D -1, fd;
-> >>>> @@ -1353,13 +1355,24 @@ static int do_create(int argc, char **argv)
-> >>>>         }
-> >>>>
-> >>>>         err =3D do_pin_fd(fd, pinfile);
-> >>>> -       close(fd);
-> >>>>         if (err)
-> >>>> -               goto exit;
-> >>>> +               goto close_fd;
-> >>>>
-> >>>> -       if (json_output)
-> >>>> -               jsonw_null(json_wtr);
-> >>>> +       err =3D bpf_obj_get_info_by_fd(fd, &map_info, &map_info_len)=
-;
-> >>>> +       if (err) {
-> >>>> +               p_err("Failed to fetch map info: %s", strerror(errno=
-));
-> >>>> +               goto close_fd;
-> >>>> +       }
-> >>>>
-> >>>> +       if (json_output) {
-> >>>> +               jsonw_start_object(json_wtr);
-> >>>> +               jsonw_int_field(json_wtr, "id", map_info.id);
-> >>>> +               jsonw_end_object(json_wtr);
-> >>>> +       } else {
-> >>>> +               printf("Map successfully created with ID: %u\n", map=
-_info.id);
-> >>>> +       }
-> >>>
-> >>> bpftool doesn't print it today and some scripts may depend on that.
-> >>
-> >>
-> >> Hi Alexei, are you sure we can't add any input at all? I'm concerned
-> >> that users won't ever find the IDs for created maps they might want to
-> >> use, if they never see it in the plain output.
-> >>
-> >>
-> >>> Let's drop this 'printf'. Json can do it unconditionally, since
-> >>> json parsing scripts should filter things they care about.
-> >>
-> >> I'd say the risk is the same. Scripts should filter things, but in
-> >> practise they might just as well be comparing to "null" today, given
-> >> that we didn't have any other output for the command so far. Conversel=
-y,
-> >> what scripts should not do is rely on plain output, we've always
-> >> recommended using bpftool's JSON for automation (or the exit code, in
-> >> the case of map creation). So I'm not convinced it's justified to
-> >> introduce a difference between plain and JSON in the current case.
-> >
-> > tbh the "map create" feature suppose to create and pin and if both
-> > are successful then the map will be there and bpftool will
-> > exit with success.
-> > Now you're arguing that there could be a race with another
-> > bpftool/something that pins a different map in the same location
-> > and success of bpftool doesn't mean that exact that map is there.
-> > Other tool could have unpinned/deleted map, pinned another one, etc.
-> > Sure, such races are possible, but returning map id still
-> > looks pointless. It doesn't solve any race.
-> > So the whole 'lets print id' doesn't quite make sense to me.
->
-> OK "solving races" is not accurate, but returning the ID gives a unique
-> handle to work with the map, if a user runs a follow-up invocation to
-> update entries using the ID they can be sure they're working with the
-> same map - whatever happened with the bpffs. Or they can have the update
-> fail if you really want that particular map but, for example, it's been
-> recreated in the meantime. At the moment there's no way to uniquely
-> identify the map we've created with bpftool, and that seems weird to me.
+Two additional bytes in front of each frame received into the RX FIFO if
+SHIFT16 is set, so we need to subtract the extra two bytes from pkt_len
+to correct the statistic of rx_bytes.
 
-ID is not unique. If somebody rm -rf bpffs. That ID will not point anywhere=
-.
-Also it's 31-bit space and folks in the past demonstrated an attack
-to recycle the same ID.
-So the users cannot be sure what ID is this.
+Fixes: 3ac72b7b63d5 ("net: fec: align IP header in hardware")
+Signed-off-by: Wei Fang <wei.fang@nxp.com>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 1edcfaee6819..3222359ac15b 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -1835,6 +1835,8 @@ fec_enet_rx_queue(struct net_device *ndev, u16 queue_id, int budget)
+ 		ndev->stats.rx_packets++;
+ 		pkt_len = fec16_to_cpu(bdp->cbd_datlen);
+ 		ndev->stats.rx_bytes += pkt_len;
++		if (fep->quirks & FEC_QUIRK_HAS_RACC)
++			ndev->stats.rx_bytes -= 2;
+ 
+ 		index = fec_enet_get_bd_index(bdp, &rxq->bd);
+ 		page = rxq->rx_skb_info[index].page;
+-- 
+2.34.1
+
 
