@@ -1,187 +1,169 @@
-Return-Path: <linux-kernel+bounces-889243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6DAC3D0E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:20:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6F9C3D0F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:21:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD493BA00C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592481887791
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9742DAFA1;
-	Thu,  6 Nov 2025 18:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5BE34D91A;
+	Thu,  6 Nov 2025 18:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="e0plIv+y"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Oh7bW9Vi"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC7A29AAFA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54B3335064
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762453234; cv=none; b=uIsQ8oDM0ijBBKAEXRB4Y14dxa7cdWrLjd+UV5JRVTJYGDQZMBtsl8ocmGkqjPLGBnPF47/hlYYHySFXeNWAwJGcyV3/hUk2K6axNJhMhG3qo1ZCoO6lQs1IShz3OG8lUDHEuP1dHNeZJ3TfS/T9RZP61mbBW34eXzfG3Hr269k=
+	t=1762453305; cv=none; b=kf3Ny7QLo30bqmyz9eExbMdC20f4f2I0xL5vTpakCmuqkW5xO0sUwFmvIw7nvSsbjhtLYedNNXRqsssikdjYDw36NisN8kr7qu1vZViQf8colMMnn4mGCZjuH/4b6V4GicwcvOptmavQLXCU+g7USUh/FtXH1Bi1FDL4v8dGYlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762453234; c=relaxed/simple;
-	bh=375jKvwYcq0QUXukIrQ1f+N3NOj9DqIX4Aj/+YlX5mk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tYf72TzYSYJ/8do4RrZnCENG/eie+tLHN2fz8/bIdtyqX6iX2+m+jARuRNbPn7gVqW1ry7Qmt7SoVZ3t0Tz4GYe9ZU2W22qRwUjjtOpkGzCI4Raw3r4Z3u09ykMQ1ns0IJ45RQ5IcjUyLk+IUvuuWj8px9id3tE2WHufuz/dqco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=e0plIv+y; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7a59ec9bef4so1589938b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:20:31 -0800 (PST)
+	s=arc-20240116; t=1762453305; c=relaxed/simple;
+	bh=S6IGYBBDmC8dLHoMGr9C7EQYKSCOuNtAEg+rHyPaHQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cAqj6nwwJ9ibGVzps35C98vamEqbSR1wXCKvvOO66R8mzZjRK1R6F5qQr0KlTw1YxMLkcXn9bUJv/zyLFcES25mIRMCp5HpVlPuSZerWK+aH7vslGGObNDdRpIUA+IubHmltbl2Lki/dT4cq5TlGLVNU/o2jNSy53tu4GWqc2xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Oh7bW9Vi; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso1416313b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:21:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1762453231; x=1763058031; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1762453303; x=1763058103; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7ASB8FKtZK1f63TZGwMkE6Mcut8cdvc7Tlq+5U4LNTk=;
-        b=e0plIv+ywDol0GQRnZeP6WMULY+1FxqOwFU8hTwb4f5U0YIR0qzYdG6sDWUhRmXwpl
-         fl6wW2Fm+dLS5dU7YiokNPy87x59rCJzUjZ+3ErRkJV4vTPvQUJFCeX+45tegHPH6OJ2
-         X+hArojOp06aBdWJhNI/QDbOLj9dnKU3M2el4=
+        bh=n/uY7+JVbofrnb0xY1CmpLxlpuZ3PWjT1kJgbc7DbmI=;
+        b=Oh7bW9ViFccIi63sPtFlz2BeEa2kGVFs+3Hz3seNAq0WeGbZKpLgUCJlN1L+uSEV5a
+         UMhk/oLZpN9DHGvKP4tRVY/3zcGAiVUaBQuzjTzrG9kjwJ2EAZat8t3a7qSG9CW9owOt
+         fAXAFeVn2sCqQSMfUfydJ/tP00M9q8cr4IMZk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762453231; x=1763058031;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1762453303; x=1763058103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=7ASB8FKtZK1f63TZGwMkE6Mcut8cdvc7Tlq+5U4LNTk=;
-        b=TB4q7+tI0sKcnOQrYZJx89QpSzceAFiW9OEuxEAleNv04WdcZlRTU+UpQ6WeR+M+fa
-         QukBDhO8wZlbNUI4isIsvQ+Un6G6cHeEvR+6bybVz8fUDAov00jIjDwP5r5zLrR+HUTN
-         jkVtJ/CK/6x7xrnVRTCS9y5RK/OG1GP4pdAEpmRfOVgRJKLvKuO7+VOkEDFqJVQ1bHL0
-         u589/hHTlpSbiJvEBIiAoYH9KixZtQl7U2I55pRSKI2y2EFsNKiZvF03RH4ICBPlMnFX
-         GkU6ViZbtO9DB8zVu48teSSXpC6fgVj3aJUL9D2H6Ig8JHVRdtyVyIgJm+OBKuVPUG0I
-         ohyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwWv6vRmu1aGBQO2sPrPypHJPAQjm/tT6CX1YRs+6e7qDKOae9gVEJE0qVlxvrj75GnEEh8Xj+KRE48Q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7WY2CozcY9r52c8KfOYaQLAY6pWlE7VktWXvKaZD7oPGLlPc+
-	ceRwFsxBLi4wYtoFyq4Hy/4vCAmQzjpXasBDn8NuOGXRBgRalv0Zh5Q3ZkrVqdoV3Jo=
-X-Gm-Gg: ASbGnctu06sXQM8isRyZ3MR2kFLAI2/4+b8I/ZcNlrvts0GdjXLaGyV1eJ2+4XyMhc3
-	uKj3J1ejRKDFi1NaFhkgZM/Lk+FWI6Ftz8nqwRoCNkESuR8dFtNw0KZHgsgw/fLtzPuf3C6WO/o
-	4Nkab8Anjc6BGAQgWm1MY6VsrUvmGjVy7gEcJmSDM+0WhGLSQHBbxbZg3IcjL53KusdOwA0wElr
-	adltev55jpCvXDwyMlvTRMp7rD/qz/qY9sG4Ds3NWTcoVnFOJ8cmEdRz9fxZbY75CtCq17wSZ38
-	yT51L7nPigljcMIQUX+3jtXRjkLvX07WF4fwIByZRj6/HFsQax8psgi3JLqSvcsTfE8rDHHSfK1
-	tPmG708E8VBQksGrG7ea1qnKjME2sDjvGzheSu9lzgj1Utp9v7rEa4Ny9YBaimCJF2lYr3VHJed
-	FLVcMaY7YT86P0xzUmJZ+waKnLv4GSyBsDtu2qnOjUVp6XToMM9hSIO7Zmrw==
-X-Google-Smtp-Source: AGHT+IGjsvWizViuKvqU/9ixMSrMVwXUSyqJ0gQDi1Sv/r9iYmMJdX5r5ZgGWH4p4H/sroNO9dU7pw==
-X-Received: by 2002:a17:902:e88b:b0:290:9a74:a8ad with SMTP id d9443c01a7336-297c047f196mr4517675ad.53.1762453230814;
-        Thu, 06 Nov 2025 10:20:30 -0800 (PST)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([110.226.176.248])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ccec88sm35062555ad.107.2025.11.06.10.20.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 10:20:30 -0800 (PST)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: linux-bluetooth@vger.kernel.org
-Cc: luiz.dentz@gmail.com,
-	marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	pav@iki.fi,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-Subject: [PATCH v2 1/1] Bluetooth: L2CAP: Fix use-after-free in l2cap_unregister_user
-Date: Thu,  6 Nov 2025 23:50:16 +0530
-Message-Id: <20251106182016.26508-1-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251105142251.101852-1-ssranevjti@gmail.com>
-References: <20251105142251.101852-1-ssranevjti@gmail.com>
+        bh=n/uY7+JVbofrnb0xY1CmpLxlpuZ3PWjT1kJgbc7DbmI=;
+        b=qRj7Wn4i9LWe+Z25b/zd8SEReVOXnmOOxafz/fB2tEo5lCA0CEUPZ9oC1X6gsvbY+M
+         kc/f/OzlL8LTvPiJMoafjwKKiT+s/TCE7Isgmgy+kcv5NfCuj43gtAQoi8a88hwrHkpJ
+         KHvnxt52kdi+ylodpEl/Jjo524Mm+R8cE/btrdb6x9+YbhgZnP0Qe/xzs4qrqlM1CDAN
+         s9U2wIx/7eizspiOe1GpZwOqsReec70V5wansnLyVck8o7XzVN7ssdxAnCPJiygJQu3S
+         TeFV4NCiipmSmJcg+MXY+9HMy9ld86lMXC/GlYY7rWYblG8w6MCxyU1lls8pathqvuYD
+         qspQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/kgYX1rkhUf7ZqXGfBCFQMq6gA+oLaDn9UWburPEzvGXrpO3AeF5V4g4sPmvE1Mb0AOki0W1rvPE+KKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe1u89DxB0RY4jI9fQQ7Twibh0Tv2gPTOhxBHOMPTqb4ZQp4lg
+	KpRxvr5LQEEbfhM+d8OLJkXQMKX1Xgp2TNSoorsCRFtimt1RgxADf6dzX8OLlmU+Qtv4/Fse01U
+	E3tGdgJPeVQMIi5WwHEnVUH+Q9xhAK+6X0O9kyyxF
+X-Gm-Gg: ASbGncttptgIRvFq1KGMczsk/EMcHAgbOpkz4DP5V7WlL89Anqw/S/Nq84KGCE4lUKv
+	NREy7JsKmf/7pd0yF9FGJI+VlL4J/Xi6x2i3SNgoM4wTNC/mJy5vwdJNV6DF69p2tOVPNIsVWNw
+	dEe4AqYrR4TF+fYBB710gLCVE+7lahPrgkZt6ThSokqAFE/0FT5SX64o1DpOng8+6AFmBGnFkdn
+	ZqWPQruJX4u1VcvmPvpgtFoPA0GfTWi5H1VOtWZiOLtKD7xHGXLX6FC68fUI0ygUrVZ
+X-Google-Smtp-Source: AGHT+IGqr3GmrXIMcT/NyfIZvvWpHhArzhPvNJ5PgGeULQ7OBJzK+zQVZZdpfuZs1qI8AKKejbsmymnq/rMFCO95DZE=
+X-Received: by 2002:a05:6a20:12c3:b0:2ca:1b5:9d45 with SMTP id
+ adf61e73a8af0-35229758ca4mr749053637.32.1762453303097; Thu, 06 Nov 2025
+ 10:21:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251013203331.398517-1-jthies@google.com> <20251013203331.398517-2-jthies@google.com>
+ <aQzaq2ord0gK-gaL@google.com>
+In-Reply-To: <aQzaq2ord0gK-gaL@google.com>
+From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date: Thu, 6 Nov 2025 10:21:31 -0800
+X-Gm-Features: AWmQ_bmyZu1_dP_yzvFdUPfiLQKow1ew3PcvaAsktAKcPqiJMFh5m_duCsqHJ_M
+Message-ID: <CANFp7mWXyUNbOAzLkT59gSrtPidLafxsrsK0vdn4_JP5uuxd-Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: chrome: Add cros-ec-ucsi
+ compatibility to typec binding
+To: Benson Leung <bleung@google.com>
+Cc: Jameson Thies <jthies@google.com>, dmitry.baryshkov@oss.qualcomm.com, 
+	akuchynski@chromium.org, krzk+dt@kernel.org, robh@kernel.org, 
+	bleung@chromium.org, heikki.krogerus@linux.intel.com, ukaszb@chromium.org, 
+	tzungbi@kernel.org, devicetree@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+On Thu, Nov 6, 2025 at 9:28=E2=80=AFAM Benson Leung <bleung@google.com> wro=
+te:
+>
+> Hi Jameson,
+>
+> On Mon, Oct 13, 2025 at 08:33:25PM +0000, Jameson Thies wrote:
+> > Chrome OS devices with discrete power delivery controllers (PDCs) allow
+> > the host to read port status and control port behavior through a USB
+> > Type-C Connector System Software (UCSI) interface with the embedded
+> > controller (EC). This uses a separate interface driver than other
+> > Chrome OS devices with a Type-C port manager in the EC FW. Those use
+> > a host command interface supported by cros-ec-typec. Add a cros-ec-ucsi
+> > compatibility string to the existing cros-ec-typec binding.
+> >
+> > Additionally, update maintainer list to reflect cros-ec-ucsi and
+> > cros-ec-typec driver maintainers.
+> >
+> > Signed-off-by: Jameson Thies <jthies@google.com>
+> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>
+> Reviewed-by: Benson Leung <bleung@chromium.org>
+>
+> > ---
+> >  .../bindings/chrome/google,cros-ec-typec.yaml | 19 +++++++++++++++----
+> >  1 file changed, 15 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-ty=
+pec.yaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.ya=
+ml
+> > index 9f9816fbecbc..fd1a459879bd 100644
+> > --- a/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yam=
+l
+> > +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-typec.yam=
+l
+> > @@ -8,17 +8,28 @@ title: Google Chrome OS EC(Embedded Controller) Type =
+C port driver.
+> >
+> >  maintainers:
+> >    - Benson Leung <bleung@chromium.org>
+> > -  - Prashant Malani <pmalani@chromium.org>
+> > +  - Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > +  - Andrei Kuchynski <akuchynski@chromium.org>
+> > +  - =C5=81ukasz Bartosik <ukaszb@chromium.org>
+> > +  - Jameson Thies <jthies@google.com>
+> >
+> >  description:
+> >    Chrome OS devices have an Embedded Controller(EC) which has access t=
+o
+> >    Type C port state. This node is intended to allow the host to read a=
+nd
+> > -  control the Type C ports. The node for this device should be under a
+> > -  cros-ec node like google,cros-ec-spi.
+> > +  control the Type C ports. This binding is compatible with both the
+> > +  cros-ec-typec and cros-ec-ucsi drivers. The cros-ec-typec driver
+> > +  supports the host command interface used by the Chrome OS EC with a
+> > +  built-in Type-C port manager and external Type-C Port Controller
+> > +  (TCPC). The cros-ec-ucsi driver supports the USB Type-C Connector
+> > +  System Software (UCSI) interface used by the Chrome OS EC when the
+> > +  platform has a separate power delivery controller (PDC). The node fo=
+r
+> > +  this device should be under a cros-ec node like google,cros-ec-spi.
+> >
+> >  properties:
+> >    compatible:
+> > -    const: google,cros-ec-typec
+> > +    enum:
+> > +      - google,cros-ec-typec
+> > +      - google,cros-ec-ucsi
+> >
+> >    '#address-cells':
+> >      const: 1
+> > --
+> > 2.51.0.858.gf9c4a03a3a-goog
+> >
 
-After commit ab4eedb790ca ("Bluetooth: L2CAP: Fix corrupted list in
-hci_chan_del"), l2cap_conn_del() uses conn->lock to protect access to
-conn->users and conn->hchan. However, l2cap_register_user() and
-l2cap_unregister_user() still use hci_dev_lock(), creating a race
-condition where these functions can access conn->users and conn->hchan
-concurrently with l2cap_conn_del().
-
-This can lead to use-after-free and list corruption bugs, as reported
-by syzbot.
-
-Fix this by changing l2cap_register_user() and l2cap_unregister_user()
-to use conn->lock instead of hci_dev_lock(), ensuring consistent locking
-for the l2cap_conn structure.
-
-Reported-by: syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=14b6d57fb728e27ce23c
-Fixes: ab4eedb790ca ("Bluetooth: L2CAP: Fix corrupted list in hci_chan_del")
-
-Changes in v2:
- - Replaced hci_dev_lock()/unlock() with mutex_lock()/unlock(&conn->lock)
-   in both l2cap_register_user() and l2cap_unregister_user().
- - Updated comments to match current locking rules.
- - Removed unnecessary hci_dev_hold()/hci_dev_put() usage.
-
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
----
- net/bluetooth/l2cap_core.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index d08320380ad6..29e78801c507 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -1685,17 +1685,15 @@ static void l2cap_info_timeout(struct work_struct *work)
- 
- int l2cap_register_user(struct l2cap_conn *conn, struct l2cap_user *user)
- {
--	struct hci_dev *hdev = conn->hcon->hdev;
- 	int ret;
- 
- 	/* We need to check whether l2cap_conn is registered. If it is not, we
--	 * must not register the l2cap_user. l2cap_conn_del() is unregisters
--	 * l2cap_conn objects, but doesn't provide its own locking. Instead, it
--	 * relies on the parent hci_conn object to be locked. This itself relies
--	 * on the hci_dev object to be locked. So we must lock the hci device
--	 * here, too. */
-+	 * must not register the l2cap_user. l2cap_conn_del() unregisters
-+	 * l2cap_conn objects under conn->lock, and we use the same lock here
-+	 * to protect access to conn->users and conn->hchan.
-+	 */
- 
--	hci_dev_lock(hdev);
-+	mutex_lock(&conn->lock);
- 
- 	if (!list_empty(&user->list)) {
- 		ret = -EINVAL;
-@@ -1716,16 +1714,14 @@ int l2cap_register_user(struct l2cap_conn *conn, struct l2cap_user *user)
- 	ret = 0;
- 
- out_unlock:
--	hci_dev_unlock(hdev);
-+	mutex_unlock(&conn->lock);
- 	return ret;
- }
- EXPORT_SYMBOL(l2cap_register_user);
- 
- void l2cap_unregister_user(struct l2cap_conn *conn, struct l2cap_user *user)
- {
--	struct hci_dev *hdev = conn->hcon->hdev;
--
--	hci_dev_lock(hdev);
-+	mutex_lock(&conn->lock);
- 
- 	if (list_empty(&user->list))
- 		goto out_unlock;
-@@ -1734,7 +1730,7 @@ void l2cap_unregister_user(struct l2cap_conn *conn, struct l2cap_user *user)
- 	user->remove(conn, user);
- 
- out_unlock:
--	hci_dev_unlock(hdev);
-+	mutex_unlock(&conn->lock);
- }
- EXPORT_SYMBOL(l2cap_unregister_user);
- 
--- 
-2.34.1
-
+Reviewed-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 
