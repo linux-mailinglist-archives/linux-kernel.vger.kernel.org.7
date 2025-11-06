@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-887632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-887634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7526DC38C29
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:56:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A85C38C3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 02:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996E3188C1BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 198901A24CCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 01:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661F022D795;
-	Thu,  6 Nov 2025 01:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953262459D7;
+	Thu,  6 Nov 2025 01:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFAezk7b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H/LN3e8i"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8251223DED
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5822144CF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762394176; cv=none; b=KLiguXuu2UcvTq+v+755WQexrAM32Bphs26tQp8bedi7YhVDlDy4eM6SQPNUh1TP2C4GQDJIahLca9ecXdqQAm5IhR/IpYuusUxGJBykcilKa+f83IqCvZWsTa4UUjf3GMaCvUApdBKUyRwX9AU7W800BBO/xH0CtKRX2jEF7tg=
+	t=1762394187; cv=none; b=uZ+wuoRO9YAh7LUF1/bNLhIRGujRVQonBLtwg7AxGr20AfgbbFsGUn470ud1fGpg4xmzBfc9JntsxMgJ6Ht9Nqhf9Fj3YqSCl9B3UeTV3VP5wZawv8gVd3DAp1xATMw5mDKG1KgfTZEMytD+WGbVPz9566IS3leNTldQrUC56YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762394176; c=relaxed/simple;
-	bh=Lwi+HBW6NI9Zzpj1VH4WGk4UsyyneW2Nkp2PQ1aZCJk=;
+	s=arc-20240116; t=1762394187; c=relaxed/simple;
+	bh=jLw7k/KAz5FUEjGhd6v3ts9iOCpt5gHWAPtf5CRRl8k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b8SsqNk3KVhHHIZPiEtnmeFVTUfI8S4kI5vJxXds3+dBp+QhfDteFGX8yloEEjCLHnH5mbjwI8B8SiQ+j+O7JI3b6rLENi6VoKzQ0PTFRgAyIT1ohf2CYp4CGEoq5oaPMOtdyg383ZZEpeZ19QL0o8/K9r2zRPNX2bH9afu7cLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFAezk7b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F07DC19423
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 01:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762394176;
-	bh=Lwi+HBW6NI9Zzpj1VH4WGk4UsyyneW2Nkp2PQ1aZCJk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jFAezk7bFkzOnpSyKtu/v/0eMNhdxWRoH1Mwm+NPQd0YUkK/tMK3Xje0KPEp81c7F
-	 XsYqd64+4G4K6CK9dfdMN/Z1hEHdawN/kdcYTQpiQJNwk3yQk9hwx698TPLcTPbwHG
-	 9d1vTFv8sBziGLxYtWQkJlP8ajLZZPGjPgJwGOEblng3QHZLv+j2LuQ7XwG0n4UzUa
-	 TeLk3tNQzrVyW2ycOtHn/XQuZy0wN+sNSPL/5bTh4MhmvKJf/kjYvRSb0HQxZv2cu0
-	 WKGGnfm/9o/+LHPHYI4upH6AjvoBfTgVVnEcnXfaY3ZSsDJpK48OI5cAmZcxGbRqbW
-	 EJvb0sm9iPvDA==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso665662a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:56:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVS+5sTx+i6YqZznCrgNMqxBU4yPr3dibbeF6hjAGua6j+/BaQhKZfDMONH0Anmdyr1GER99WpreCa6u0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKo7gqi3UVh5mG1wipivo2d6Bux6eaiy9KIlXEQbDOS9qp6MSu
-	FSOzcZzE9yN0HfHNz2kzNKum8iAReVdwN8itW9n1kgWM3qrIzrVFHBHCppAdwvD1c/q+vB5nUXT
-	fj1886/QyNM6uxD7/09lLcdh545BrfRk=
-X-Google-Smtp-Source: AGHT+IGRWQr/yMix2KC9FWBoMcuBXJI8axGaVe0Q7R1p9lozVUkvmiwrl4KtXQgDBkKGB2LM0O8foBaqARcRluikU3E=
-X-Received: by 2002:a05:6402:51d1:b0:63c:2d72:56e3 with SMTP id
- 4fb4d7f45d1cf-64105a5d549mr4682456a12.23.1762394174672; Wed, 05 Nov 2025
- 17:56:14 -0800 (PST)
+	 To:Cc:Content-Type; b=pXBuxv18bi+KlZfdJHjlad0L2OmC/bAqpC7Y6gcPnsThL4lmpwEOjVGTOzhl+VFUYxc9uswpNl+t8i+GXrvefRDh8d/Df47EeOb8FELZnHO7J30082bJ51GD8Z4cZ8A/5EI2AdWvzknlORblg/QBb2eFCs2w3Y/yIN5FObbYPnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H/LN3e8i; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ea12242d2eso94401cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Nov 2025 17:56:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762394184; x=1762998984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iUatHznZUYVcukINaQffbDk6qMtXMnZNYeCcDgim0vc=;
+        b=H/LN3e8iVZU1vF8Ko6HoNITQ7O0K/zgXfrs0Wxo82wsqa+eUtEh5cE1fUl6wPJNspH
+         tF7Y2ZDBKCxgVTr1NGmiQv9jWuK6braoULKx/HeGHHWOmPRJGEQEB0Y6fVfuwEv/sjiM
+         whuoMfzIaZ5ayaAAdUvYhqIoueVIdt70xGglZisTJUwjxAE6TJInnTR+ksyy+XuTnwRz
+         V7bWWIB2nlmnbDGVtdFYhwdcQ9t4VCb6lXHUElTwRMxd+fZpmqYQ/SUJRyoAjbBAtYha
+         YVhJ/4O8ROjLvQtTGz/F0mXRMtoFkUdS53vP435+1WD4n5Ag64BNkg443NhiSspUSVEN
+         R/RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762394184; x=1762998984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iUatHznZUYVcukINaQffbDk6qMtXMnZNYeCcDgim0vc=;
+        b=pvzhSuaNhOaWvurNs6xePlysTNXHYUXt/RudOfpLHNptgPPqLXiWssUyL++iL5v/8H
+         AkQajGwsahvVWMkpubL8osjSnxryatX8RApftiChDdIMzEEODVz0iYci0YaAubI9JgX4
+         OwZ6RGLeFvBHCChMBYdf5FTPQR3KlaUYdPkYpjm7AN1oP0isebcFyASvsTP+FyCw31Q2
+         mqjKRc6Twm/zAqTl4U6yKCvZMa6HhXy5Tgk9C8wuOt3+jvAoHaucEPSg+ADUSMPpa53b
+         i7cF5ytdy5KD0v1G1i5rH5IZYlfNC1HC7SZmy9VAA8uvRNjyw5g0gg2ZTdQ+p1aR+rui
+         gpKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkfp4nmVsYB+l4rz0Hveqa/xINuvOslXQrafwpAtS6xhFZCrwoc6Om0EFgf6qhJ/WEZ+OQPeByWHuxQb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaZMz6Icoi5VR0LsrrX+FddOeZOQ5bTQB6f7qUGK0QQ6EGgYL5
+	eRztiHppID+PXrxDE0V9fOiCLb41KlggkyTEXeXjPJFrXwS40oOGSoZ2qrQNr3YjgA7/jOX/hxm
+	HLjuNFtgD64ghnNmvqvUZr4msWXPIupyDvgAHHc1u
+X-Gm-Gg: ASbGncvTofHp0+48afwavLH2+A5OirYG2vL5aQ/fxb3HQi4fxWdM1aVKRVdkPhyfpiD
+	UBMQbYc229nBlhpH14ly8ajqxdGO1BltzIIO8lCdWaDfBGkBLeJ/qpQI5A/ynVp1pRZcBsVYVIt
+	dZ1gqRW0bVu8d4Sgil3JA8Xg1IelrJe8/Sb61WA4xTF2kp1alfaWqUctxJJ7EiH9/UCt27HpwlI
+	GDdoA6F5DsKM8mIOUJqmW/S1nGlr56uQOQnokJ4xKld43zXGQfBhRIcpyoyuyDlb+1RYD9RDC4E
+	iBR+Z3LTxsZmlW0rxBAZ1/P94vCu
+X-Google-Smtp-Source: AGHT+IHibGvmFnDlfr24rRt2tIra4G1k1r3PX3TWXENAKkaEvVbOFGfGF4YxKvcB5vtfTr1sBaCrevD27B/Da7aRkrQ=
+X-Received: by 2002:a05:622a:15d0:b0:4b3:7533:c1dd with SMTP id
+ d75a77b69052e-4ed82b51179mr2027741cf.1.1762394183935; Wed, 05 Nov 2025
+ 17:56:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106005333.956321-1-neilb@ownmail.net> <20251106005333.956321-8-neilb@ownmail.net>
-In-Reply-To: <20251106005333.956321-8-neilb@ownmail.net>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 6 Nov 2025 10:56:01 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8noOKEPEBDKSFa4FLFsHH3oCKRM58Tq+PTmTG5yjyDdw@mail.gmail.com>
-X-Gm-Features: AWmQ_blmBmQhx0SfF_RJrLZwQ93tMKfLranVnNF6NMqPQEMSGUPWm6n05JxFEa0
-Message-ID: <CAKYAXd8noOKEPEBDKSFa4FLFsHH3oCKRM58Tq+PTmTG5yjyDdw@mail.gmail.com>
-Subject: Re: [PATCH v5 07/14] VFS: introduce start_removing_dentry()
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
-	David Howells <dhowells@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
+References: <20251105200801.178381-1-almasrymina@google.com>
+ <20251105200801.178381-2-almasrymina@google.com> <20251105171142.13095017@kernel.org>
+In-Reply-To: <20251105171142.13095017@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 5 Nov 2025 17:56:10 -0800
+X-Gm-Features: AWmQ_bmWD_sYB6gVzqw7Ayfki29RE_amHqVThrUXCC1Sw1ZxmeZGu81hIcUYDwE
+Message-ID: <CAHS8izNg63A9W5GkGVgy0_v1U6_rPgCj1zu2_5QnUKcR9eTGFg@mail.gmail.com>
+Subject: Re: [PATCH net v1 2/2] gve: use max allowed ring size for ZC page_pools
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Joshua Washington <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Simon Horman <horms@kernel.org>, Willem de Bruijn <willemb@google.com>, ziweixiao@google.com, 
+	Vedant Mathur <vedantmathur@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 6, 2025 at 9:55=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
+On Wed, Nov 5, 2025 at 5:11=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
+te:
 >
-> From: NeilBrown <neil@brown.name>
+> On Wed,  5 Nov 2025 20:07:58 +0000 Mina Almasry wrote:
+> > NCCL workloads with NCCL_P2P_PXN_LEVEL=3D2 or 1 are very slow with the
+> > current gve devmem tcp configuration.
 >
-> start_removing_dentry() is similar to start_removing() but instead of
-> providing a name for lookup, the target dentry is given.
+> Hardcoding the ring size because some other attribute makes you think
+> that a specific application is running is rather unclean IMO..
 >
-> start_removing_dentry() checks that the dentry is still hashed and in
-> the parent, and if so it locks and increases the refcount so that
-> end_removing() can be used to finish the operation.
+
+I did not see it this way tbh. I am thinking for devmem tcp to be as
+robust as possible to the burstiness of frag frees, we need a bit of a
+generous ring size. The specific application I'm referring to is just
+an example of how this could happen.
+
+I was thinking maybe binding->dma_buf->size / net_iov_size (so that
+the ring is large enough to hold every single netmem if need be) would
+be the upper bound, but in practice increasing to the current max
+allowed was good enough, so I'm trying that.
+
+> Do you want me to respin the per-ring config series? Or you can take it o=
+ver.
+> IDK where the buffer size config is after recent discussion but IIUC
+> it will not drag in my config infra so it shouldn't conflict.
 >
-> This is used in cachefiles, overlayfs, smb/server, and apparmor.
->
-> There will be other users including ecryptfs.
->
-> As start_removing_dentry() takes an extra reference to the dentry (to be
-> put by end_removing()), there is no need to explicitly take an extra
-> reference to stop d_delete() from using dentry_unlink_inode() to negate
-> the dentry - as in cachefiles_delete_object(), and ksmbd_vfs_unlink().
->
-> cachefiles_bury_object() now gets an extra ref to the victim, which is
-> drops.  As it includes the needed end_removing() calls, the caller
-> doesn't need them.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: NeilBrown <neil@brown.name>
-For ksmbd part,
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
-Thanks!
+
+You mean this one? "[RFC net-next 00/22] net: per-queue rx-buf-len
+configuration"
+
+I don't see the connection between rx-buf-len and the ring size,
+unless you're thinking about some netlink-configurable way to
+configure the pp->ring size? I am hoping for something backportable
+with fixes to make this class of workloads usable.
+
+--=20
+Thanks,
+Mina
 
