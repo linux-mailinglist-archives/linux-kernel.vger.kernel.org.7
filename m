@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-889507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD95C3DCA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:20:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956D7C3DCC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 00:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F17D4E8687
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F40B1891684
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 23:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011BD359FB1;
-	Thu,  6 Nov 2025 23:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47E63590CC;
+	Thu,  6 Nov 2025 23:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MvbgYCNX"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cpObOfek"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73319358D22
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6C2359FA2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 23:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762470962; cv=none; b=RIq2DGyB80igx5qDe/k406V2O6sG1uKBU0SQ1NmDJV3yFojcE2GS1bg1MLpiJvQ7O3E9hQDtgh4O3f8UYegn/VYMXxkWiHlMh8u8g3OrCdf46dnJGTgAjunoLtSN3nVPVVUW8oWjrjZaO0WpbF51aIQtX+Yw5RpL1dcORfD5beM=
+	t=1762470964; cv=none; b=Kok+ZFL1Bu2XfSoRRCo3g7c05zPpXmCF7Mh/FQ/mUAVElMntbbOCmVW4340ZlMC5Yxn3LaNUPxYTg1fC8EJundfQ7djeEF7t52uDeB0A8kdpk/VUBdgE0/uF5RhVdkdQz68J9UkeuLD5SpqOZMyRMMVC3h/kSAgznFQDraCw7OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762470962; c=relaxed/simple;
-	bh=vsAC+bALI30qElPFV06AjAurdz8WlWhRwpAQxUMz2cg=;
+	s=arc-20240116; t=1762470964; c=relaxed/simple;
+	bh=QjO8gSjusfZ0mPendJr0+QHEFToVhbHiU4PqR4DkANY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=bLlz2fYvP4rrogOC2SaHDQkPk/4erEXRWGnqfJcz7F5p5cIHhQE3CtaZ02NYP5WdLni9daZr2H0E3RuHrHnfiYJPCLOkRy2KwyZBvnLRVnKhVlA45UVR8a6707NLgPxZCQC3jnwhqF1NNNVRCYRLTB44T0Y4TVx5wAk/HQoQ8fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MvbgYCNX; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=R+Au+3xMvCQgYb7C3viQq14+rKhtWLpYrkuyeeUjcSpt6roYO5yiYt4W3sQTDmoEpXcaWROdxW2QV5qZ70F4m6eX1ow5jLF+7/aNinQ/1353ibkupXHbyEdHCuoowr2nlb+ZV/pdL23ZI2T4cLXmu3EoBhtvCpLbXTcCGLTWPy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cpObOfek; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2930e2e8e7fso1949375ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:16:00 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29555415c09so2107655ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 15:16:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762470960; x=1763075760; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762470962; x=1763075762; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ScLENsyYSFxSsSXeHlp0LDfphHjWjgXO0/fUWwSEsxM=;
-        b=MvbgYCNXDgx6Kez59C5aClvU6tiGpApTI4UK9WJEE8bE11buT/K3A9GSB6z2MMLcWI
-         XP2uj20eENuvWWaOkN9Rm8ahGTVQxXs36dLVp+BkGV1Rf6Pckbv2sqFYzwbz65+ej8bz
-         XZH0ZcorUrFmcmBOB6DtA9bYgrS22K30rs6IJj0MkwL4+bYw6vc5J7lXtYLej3KbMnED
-         H7s7wIax7lEphBxryMNMxdBeN7CdZANKeX/2x0TGqYTkKTClglepRJc/ojeiVPr27sq1
-         eqh+47W/6KUrP3g93oXwPpoX9ZpNs8UzUY5GyMdoNPPQvQ67+kNpzhK4M1172DKAEA5V
-         r7wQ==
+        bh=DlhPdv0WtdedRwVAzlOAlu+LBijAGUItUQ61/Soo80E=;
+        b=cpObOfekKgmF/Wr/e2BhDr9Id0SkoWP0yK6vGkdkeuDCC/ijjHbwqvS2hYh9+7xUTD
+         iiJ7UKLi01kq3f1V+/DE/pSr26ENrWyC8uOOOHaLT4CTDuQfAOJOj1eDFfcmPKBZBxFo
+         5U5GwGwsgkg+qkExfgwd06dWsNvY9hWSuvUC5uCTJvlt3TYNknO2nXNSj5vS2uJAp40Z
+         5HWmMGJO06VF6jwJndR9yFhKlXbtc9jvf9DycJCOVv+vLy8hlZnTN2aPvpGbOErzkuGY
+         hmOS8E63mFUt9KJ3pyKshJOMUeZuEiGNkweOHX/B4rAbt5PmwEMM3GNiSUsPLYRnD/6s
+         tkQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762470960; x=1763075760;
+        d=1e100.net; s=20230601; t=1762470962; x=1763075762;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ScLENsyYSFxSsSXeHlp0LDfphHjWjgXO0/fUWwSEsxM=;
-        b=mztfP/r/Efm6YS/hapFL7hdorE4Td7qy+VlEoODYXyfK04n26KNvixC+xLRAF1V9Cx
-         EwhnS8gwY/xY2jNpoDcnH9h9M/RO6SU2VRbLMb5GZxb67OyaZBDMcA9Va4TA7dkMRXk4
-         aa+2UhWK+JkcXzW+PnDO2uNnmfS1waLp0/INq5DR8fSgezdvKJKnKbrJDAwG+hbj9AWz
-         ZjtTSbRsn90mtADnSQH4WRiNKdQ1upwiSfhstWqnbBr1usN/ah2BQ5b6K3icFvKqqHd4
-         xizeqGfi1JL6EMSXNEZYH5qrVjykL8vcVP/IMtiL78bw+n86Qmd2eyF8ej9L7Bmuazp3
-         oJ/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW7ljOezDM8Mmthku8ggIPFBaWQtxnqthpn9h9648W5kFUkfX3/OVHzF/7eRe6RvfXWarMqxk0xPgGGA9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1ogJIsOl6YH+3Fj7ALnrm4sX1l3O/rdLlTUTMncRDXMB21gps
-	/EIQl7eyMnN7GOnCo30nJLlfK/6snUyATFfpFizCyuOSIQFUY1NimmjzzyyBpBJ95+DBaUG5Glg
-	cnvgdeeiSkg==
-X-Google-Smtp-Source: AGHT+IF7+Q0cPmYHz5/abpijevA/om0VtU1+3MKAlA1OEDRxVqteWbaXmduw+smzYLuvecGGWKpEaTo9uj7A
-X-Received: from dlai18.prod.google.com ([2002:a05:701b:2712:b0:119:49ca:6b9c])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce82:b0:295:5a06:308d
- with SMTP id d9443c01a7336-297c03a84a8mr14347725ad.14.1762470959559; Thu, 06
- Nov 2025 15:15:59 -0800 (PST)
-Date: Thu,  6 Nov 2025 15:15:01 -0800
+        bh=DlhPdv0WtdedRwVAzlOAlu+LBijAGUItUQ61/Soo80E=;
+        b=rm3EL4Sz4GBZyk/OIeJNHGDUFoaLHwgQh+7mUM6mMifvrzjBDhZatNz6mLuPWWidme
+         GYq0WUPs978T5CfBJhUD7E8UVlKKFn8fOoodVj21MUuVsnf74e4M/h1IZxeFNiQjIKd7
+         FPk5/rois66mUEq+7vKnmseBikx1AiM7Tk9oaVnWZxkjUfB13tZBjLH2gx1fQl2F2bfK
+         XC1Kz+ceFcTec+FX3IDmLu7R9hjUpFiUx3vEsoBTq4ZrOAVE5eyFXviW7pUdED5DRF5Y
+         18IopTDJDcFIcMg7xyM9+/MHws8JiQcwsMXOwW/PVZwXSy9uaGcazBcsB0W+kkG5YyFk
+         0lJA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5pZbthB9G0zN4pUHwbsC9zN/k9fq2cOPDgv6m7eQil9AWmvKN6Nuxd2GPI9RYWbt+SCIdmJVoczSBuWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4XRpTkw2oiavxQo9zpPqf5IczvHait+WYvZ9u0GQbU1VeSiBN
+	sPzxE2g06WyEqej+GmZGKj4QbjnjiSxG96afJhYEW3imKjqgWuax6+FL7zMhPJI9mvidQag3EVY
+	8kZJKTASuSQ==
+X-Google-Smtp-Source: AGHT+IHGozQui+AGGQhIfFXH2HFvKRA7CZtWpQ/Mv2fL+bTBN/Rcs9YJrd0UGOU3Fx1UbKXIr+g8XrJOLICv
+X-Received: from dlbrs16.prod.google.com ([2002:a05:7022:f690:b0:119:49ca:6b95])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a85:b0:295:ac70:10c4
+ with SMTP id d9443c01a7336-297c04575a6mr15133595ad.47.1762470961751; Thu, 06
+ Nov 2025 15:16:01 -0800 (PST)
+Date: Thu,  6 Nov 2025 15:15:02 -0800
 In-Reply-To: <20251106231508.448793-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251106231508.448793-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251106231508.448793-12-irogers@google.com>
-Subject: [PATCH v2 11/18] perf test stat+json: Improve metric-only testing
+Message-ID: <20251106231508.448793-13-irogers@google.com>
+Subject: [PATCH v2 12/18] perf test stat: Ignore failures in Default[234] metricgroups
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,54 +90,28 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When testing metric-only, pass a metric to perf rather than expecting
-a hard coded metric value to be generated.
-
-Remove keys that were really metric-only units and instead don't
-expect metric only to have a matching json key as it encodes metrics
-as {"metric_name", "metric_value"}.
+The Default[234] metric groups may contain unsupported legacy
+events. Allow those metric groups to fail.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/shell/lib/perf_json_output_lint.py | 4 ++--
- tools/perf/tests/shell/stat+json_output.sh          | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/tests/shell/stat_all_metricgroups.sh | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/tests/shell/lib/perf_json_output_lint.py b/tools/perf/tests/shell/lib/perf_json_output_lint.py
-index c6750ef06c0f..1369baaa0361 100644
---- a/tools/perf/tests/shell/lib/perf_json_output_lint.py
-+++ b/tools/perf/tests/shell/lib/perf_json_output_lint.py
-@@ -65,8 +65,6 @@ def check_json_output(expected_items):
-       'socket': lambda x: True,
-       'thread': lambda x: True,
-       'unit': lambda x: True,
--      'insn per cycle': lambda x: isfloat(x),
--      'GHz': lambda x: True,  # FIXME: it seems unintended for --metric-only
-   }
-   input = '[\n' + ','.join(Lines) + '\n]'
-   for item in json.loads(input):
-@@ -88,6 +86,8 @@ def check_json_output(expected_items):
-                            f' in \'{item}\'')
-     for key, value in item.items():
-       if key not in checks:
-+        if args.metric_only:
-+          continue
-         raise RuntimeError(f'Unexpected key: key={key} value={value}')
-       if not checks[key](value):
-         raise RuntimeError(f'Check failed for: key={key} value={value}')
-diff --git a/tools/perf/tests/shell/stat+json_output.sh b/tools/perf/tests/shell/stat+json_output.sh
-index 98fb65274ac4..85d1ad7186c6 100755
---- a/tools/perf/tests/shell/stat+json_output.sh
-+++ b/tools/perf/tests/shell/stat+json_output.sh
-@@ -181,7 +181,7 @@ check_metric_only()
- 		echo "[Skip] CPU-measurement counter facility not installed"
- 		return
- 	fi
--	perf stat -j --metric-only -e instructions,cycles -o "${stat_output}" true
-+	perf stat -j --metric-only -M page_faults_per_second -o "${stat_output}" true
- 	$PYTHON $pythonchecker --metric-only --file "${stat_output}"
- 	echo "[Success]"
- }
+diff --git a/tools/perf/tests/shell/stat_all_metricgroups.sh b/tools/perf/tests/shell/stat_all_metricgroups.sh
+index c6d61a4ac3e7..1400880ec01f 100755
+--- a/tools/perf/tests/shell/stat_all_metricgroups.sh
++++ b/tools/perf/tests/shell/stat_all_metricgroups.sh
+@@ -37,6 +37,9 @@ do
+       then
+         err=2 # Skip
+       fi
++    elif [[ "$m" == @(Default2|Default3|Default4) ]]
++    then
++      echo "Ignoring failures in $m that may contain unsupported legacy events"
+     else
+       echo "Metric group $m failed"
+       echo $result
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
