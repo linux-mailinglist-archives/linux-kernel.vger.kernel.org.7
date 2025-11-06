@@ -1,59 +1,82 @@
-Return-Path: <linux-kernel+bounces-888363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D612C3AA39
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:41:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24DDC3AAB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 12:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D60D7465D58
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867CF464CDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 11:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830452F5A3F;
-	Thu,  6 Nov 2025 11:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551C3315D36;
+	Thu,  6 Nov 2025 11:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZwpeJD5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cozPM+gq"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59A026F29C;
-	Thu,  6 Nov 2025 11:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526A5314A9D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 11:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762428846; cv=none; b=kzBe5ICyy9L915a+R920NFtRGpVLybrkBQs961I9qFMns3BPxCoHPXy1wo30wS9Gy8dGFhHl1TpM6Fp+7qabk3/BRtOC4FOzxAE8Z5958fF3e0uoomUDeOmwzg+V0d44AdDGtndzszmeWhcZVa6GQmiiIOVdn3NpAA8pisJsB/g=
+	t=1762428880; cv=none; b=KHNnku3lBSieNOGRruOEk4EmWuqT+0rPb7bpx/Zgg7i4ZWfkczRSoauBYdFfEQmvKjQZvV6R+pNDyQqPyqzqEgwIZysYZptxXb3+wJcZU2BiUh2kiwEm7DWpkYXB8MmHlhVZtU0RAfz90rErswtA8kLmZOlk0z5kkhmik5AYAuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762428846; c=relaxed/simple;
-	bh=x0vSPZuKoRb3szafYiv21K0FcdiPZdKs0Jp10xlTOqg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=r92cOLxRMo3k6u5uX2oHIB8Hf9tXEhKf8KUsLhoiDjfEhGwOkacWAACZtCJKUg/xESrVhe7yVWrDzg7oqrwbEWxtIzQTZg7SO2ulRcycZpO8A40kK71G/uSdXIjHWCawJlH2DJoHioVov03zQgfvb/tz6dBGiNvZSbgl+X+y8v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZwpeJD5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F75C19421;
-	Thu,  6 Nov 2025 11:34:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762428846;
-	bh=x0vSPZuKoRb3szafYiv21K0FcdiPZdKs0Jp10xlTOqg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rZwpeJD5qSn0xu/aGF3pXyhMLon1Go9aoKkG1nuVdqFSpyZVcT56FbiQqQ3zKDs8Z
-	 /Wc1Hs59K+N1++qOXxcxUDLeG5g3b8YtNKJyJglTk3If109pRtrCy5WRrP5absdUlU
-	 nNFoS8P7dBDqK8xRNz3LJ24vHDlYNRHGFbj536mMpIqPB4h5XkM6PttyBLDIsvN7R2
-	 Za4Ky13ASREhFVbX1uGrRmwtXaqmMLVnbK0wHpJst9lF9nQ97HN9dujeP8WIySrAod
-	 suOpisJDZK5M2wbqMdmaldf1Fjz97jNne32fQbz8VBZ8isfHvUNV6IT0Nll3oqiFcu
-	 kwTG7EhCPWoTg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Ranganath V N <vnranganath.20@gmail.com>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
- david.hunter.linux@gmail.com, khalid@kernel.org, 
- linux-kernel-mentees@lists.linuxfoundation.org
-In-Reply-To: <20251104-dtbs-v7-1-224aacb09671@gmail.com>
-References: <20251104-dtbs-v7-1-224aacb09671@gmail.com>
-Subject: Re: [PATCH v7] ASoC: dt-bindings: ti,pcm1862: convert to dtschema
-Message-Id: <176242884289.2357326.13162539553675802549.b4-ty@kernel.org>
-Date: Thu, 06 Nov 2025 11:34:02 +0000
+	s=arc-20240116; t=1762428880; c=relaxed/simple;
+	bh=/4QBhPILX+5X6ezhag3LzaL8aK4X9XYd5TN1S9llZuQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Q/+9ar1rRTCulKb0ymies2/Ifi1wr5FMx0FS+LyY2m66G9mmZxOmvCe2gIscsB1V2fkaX2scBcMVRqsh3pTticWJA0m5EQJdfStxn2ZEDChFVB5OVwa+GMBqlonyDVXUZLDQw/ZSEgU7Hdzgdou27GbiMSdVRjLcIH1w6fo1P+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cozPM+gq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4775ae5684fso4511535e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 03:34:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762428877; x=1763033677; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CZCZoXJ9tyVK56ZhBsaXTFl9gWPV9NIZVv0TaZjVvdM=;
+        b=cozPM+gqPF257/AAvUHF4OUxs9MiaUza0s09GA/T2VQF+ZDJfF+s4G4mFRla2dnico
+         2hGpS6k+8aqcy3L2Ye8kxwNnh6/n97WFndnKlZQfXhUyPejsFPKCBKXjJKcke85/zH1H
+         YvbaO5vw8S+0FO9zHLCgjK/EVp8wuO8aNKAiOWM/bMX6DOnjHs//ulByqcTOPbWMdrvk
+         TUiV74CdJCUU6oYc8hf1ZXHsSR8ISskjKSmSgfhPJS0Fqhj+HrGKVC2QXB0jeTCWFjAc
+         R16U528dhCp3nKEEySIzWXmVZp+zPCS4gqWphggPx2hl5yZ/BS9U2DoIBgKUPopZVeAC
+         DRpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762428877; x=1763033677;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CZCZoXJ9tyVK56ZhBsaXTFl9gWPV9NIZVv0TaZjVvdM=;
+        b=G484qKTB1fZQ4uzCblFpMMKteJts48T2RmirCEDWcM0ye5DrE+9whoT8LkRa+n8X1r
+         5CESXGkoRsl1pukNytQBuuykE4dQYF47PgkLUFyrkZFfgocKAFEfQgCUyCDO0pIfcU8a
+         r24iNnebTeqDT4X+j3UDFUW/DQaA5fPMQHdtSK1f72zq6C/tH5WrIj1EqCE+yAWthquJ
+         JEXctG6NDNGczkBIhF7KVQu+9Rl+9oE68d7fV1FQhyTQruiLRwqGlbuIhqtU7EXUYvHz
+         KQOMrRdsVe5A8Gsp1socb5/syjgBRyDfp70sA1RFGojKVbDuqgyi7WgEpzi4AYExkT95
+         +49g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtNCdJsP1UWLaMR9VqYN4aJR+vN6y9NUctp27for6m/d0XJrdKI6YYpFm6jsFc2By8hfA+Ea8lsmdIFM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjIftVqHJ5o510X8350DdkItjy2zsJVNa3mySYvBiLJnUouNsA
+	h0FCmq7P+5TbSBAK/a7PshPh0QdNwVgqvFChSuTzAIYNhNtsEScUIsJKS7F26Jb0ch4=
+X-Gm-Gg: ASbGncsPOcZXT3ySUcQF9wDg7rw7xcVl9lEPLpH+kwUeuI5xe9VGl7XUKp9Hyjo98C5
+	qELewCw4vkPsqR7zFyJxFFmpvbH6h6DWp1EBHlreOaGcrSSc5fDPpE7PNRKxcQzRicPEeiLnTkc
+	/rKQpUPzq33H1zOOGet2oause/eJtqCo9kgaRVbtLsMYIK2PUL+EDJUx9jPnwzX+oIORLeU8q1L
+	Ewcx713f/10eMPP8uiyHeJhEiD8DsNev/QRE7cR5+1b4TM8pnSU1u4Aevc7MU1JH94Vl1kSz5RB
+	TDB0vR138sz5gtRaHPO+AB/Nholh6me03na/BY3u88CgbGhUSbc4XJ7vLArLITdI5gtGqCU4gKF
+	txu0+3CqnG4jsbRqxhO/Mjr0yklBbBKnfspbx5HGj77zdZqzPfxuSdDukdd4pMnu0Yvw3nbSvxc
+	KVIkA=
+X-Google-Smtp-Source: AGHT+IEoXAUh9y67MgtZ/T4+RHHzxUkHerOKyg5NFcea653MMAitTHLap8TN4SHlWCmAxqH1lFJlTA==
+X-Received: by 2002:a05:600c:528d:b0:477:582e:7a81 with SMTP id 5b1f17b1804b1-4775cdbe164mr62433665e9.4.1762428876702;
+        Thu, 06 Nov 2025 03:34:36 -0800 (PST)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:d9de:4038:a78:acab])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb40379esm4389459f8f.9.2025.11.06.03.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 03:34:35 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 06 Nov 2025 12:34:03 +0100
+Subject: [PATCH v8 07/11] crypto: qce - Use existing devres APIs in
+ devm_qce_dma_request()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,44 +85,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a6db3
+Message-Id: <20251106-qcom-qce-cmd-descr-v8-7-ecddca23ca26@linaro.org>
+References: <20251106-qcom-qce-cmd-descr-v8-0-ecddca23ca26@linaro.org>
+In-Reply-To: <20251106-qcom-qce-cmd-descr-v8-0-ecddca23ca26@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Udit Tiwari <quic_utiwari@quicinc.com>, 
+ Daniel Perez-Zoghbi <dperezzo@quicinc.com>, 
+ Md Sadre Alam <mdalam@qti.qualcomm.com>
+Cc: dmaengine@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-crypto@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1934;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=KihkhkXsgDZVFVp7bMRhRGSm4F/l7kYDlH9NjlkYozI=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpDIe8Ry42D3ryUjeP0c/0Pmqoo9z4r8wyiSqXR
+ SFSlEAdOBSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQyHvAAKCRARpy6gFHHX
+ cqF4EADO++008kQ6Q9EDWBZgxlmhMZczuLDY93SmZLHXETOPEMuKPH2bcqkP4XJ0tjidhHLsrJu
+ SZLvk/98dkqELZlj9RE6wdE4r+BmgqFlt7l/LxhhCkDLxoC47Ngi+XsQqxG68SP+RnJOjxdQc/f
+ wYpSlMwh+YH2oJ4jI87elMTWEWlH/4t817TWLTp4fUnDFmpKSiv+LZ17fAsJUzOxlK68/NUovbZ
+ s3MH/9Z5JIXVD/npEUUTrehWYIBybRRTeZ+svv4RHQ4xZr7DyoszfO7E+XGoPopxta3Q54x60Jr
+ QgpV+SNqpf6VKViBoxMg+9hzh/uRfu+K0PcesR2QblmkuB64DTjxb+kB/CaVY7LOsZ7k+YPDkmB
+ LTD5WVP9wvlCZ5uWwqcMSQK6IIC1chxJjdne5bzVwyuK8BP8s0pl3lQS8uiRcEraD6/O64w1Vky
+ aKrkQRx7J4UrZUV7vwUz6NOGMC/2jE6fBGvieEpk9N8zHbqiHGm6fJNy014mxwQhTnFJoM4anmC
+ o2SZh7XqPHrXLlN8Tk6PJnqo8gjojBGIY7aF1QuBWEaKudcfKkMJyceOHIhOTMXBFiX7MujpA4M
+ /hhQ9G4+TZDJijq0LnhvBPNCjAA/FfmwjVy5T8DOcpi5lm0+hFLvEvXZdd68hslsmL3XgqkFFx4
+ dDGrrcS1dexY/5g==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Tue, 04 Nov 2025 16:04:58 +0530, Ranganath V N wrote:
-> convert the Texas Instruments PCM186x Universal audio ADC bindings
-> to DT schema.
-> 
-> The PCM186x codec provides a single digital audio interface. Therefore
-> this binding adds a reference to dai-common.yaml and defines
-> '#sound-dai-cells = 0".
-> 
-> [...]
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Applied to
+Switch to devm_kmalloc() and devm_dma_alloc_chan() in
+devm_qce_dma_request(). This allows us to drop two labels and shrink the
+function.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/crypto/qce/dma.c | 37 ++++++++-----------------------------
+ 1 file changed, 8 insertions(+), 29 deletions(-)
 
-Thanks!
+diff --git a/drivers/crypto/qce/dma.c b/drivers/crypto/qce/dma.c
+index 4c15dd8bbeb85f6ac0e463d7b9eab70faeb2be94..bfa54d3401ca095a089656e81a37474d6f788acf 100644
+--- a/drivers/crypto/qce/dma.c
++++ b/drivers/crypto/qce/dma.c
+@@ -12,45 +12,24 @@
+ 
+ #define QCE_IGNORE_BUF_SZ		(2 * QCE_BAM_BURST_SIZE)
+ 
+-static void qce_dma_release(void *data)
+-{
+-	struct qce_dma_data *dma = data;
+-
+-	dma_release_channel(dma->txchan);
+-	dma_release_channel(dma->rxchan);
+-	kfree(dma->result_buf);
+-}
+-
+ int devm_qce_dma_request(struct qce_device *qce)
+ {
+ 	struct qce_dma_data *dma = &qce->dma;
+ 	struct device *dev = qce->dev;
+-	int ret;
+ 
+-	dma->txchan = dma_request_chan(dev, "tx");
++	dma->txchan = devm_dma_request_chan(dev, "tx");
+ 	if (IS_ERR(dma->txchan))
+ 		return PTR_ERR(dma->txchan);
+ 
+-	dma->rxchan = dma_request_chan(dev, "rx");
+-	if (IS_ERR(dma->rxchan)) {
+-		ret = PTR_ERR(dma->rxchan);
+-		goto error_rx;
+-	}
++	dma->rxchan = devm_dma_request_chan(dev, "rx");
++	if (IS_ERR(dma->rxchan))
++		return PTR_ERR(dma->rxchan);
+ 
+-	dma->result_buf = kmalloc(QCE_RESULT_BUF_SZ + QCE_IGNORE_BUF_SZ,
+-				  GFP_KERNEL);
+-	if (!dma->result_buf) {
+-		ret = -ENOMEM;
+-		goto error_nomem;
+-	}
++	dma->result_buf = devm_kmalloc(dev, QCE_RESULT_BUF_SZ + QCE_IGNORE_BUF_SZ, GFP_KERNEL);
++	if (!dma->result_buf)
++		return -ENOMEM;
+ 
+-	return devm_add_action_or_reset(dev, qce_dma_release, dma);
+-
+-error_nomem:
+-	dma_release_channel(dma->rxchan);
+-error_rx:
+-	dma_release_channel(dma->txchan);
+-	return ret;
++	return 0;
+ }
+ 
+ struct scatterlist *
 
-[1/1] ASoC: dt-bindings: ti,pcm1862: convert to dtschema
-      commit: aa897ffc396b48cc39eee133b6b43175d0df9eb5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+2.51.0
 
 
