@@ -1,311 +1,208 @@
-Return-Path: <linux-kernel+bounces-888120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF006C39E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:47:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5897C39F3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F371E4FD111
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:45:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92F4550035B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D35E30CDB8;
-	Thu,  6 Nov 2025 09:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4760530DEC1;
+	Thu,  6 Nov 2025 09:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jp7kGB/J"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012002.outbound.protection.outlook.com [52.101.53.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsKaoMtO"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C44B218845;
-	Thu,  6 Nov 2025 09:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422276; cv=fail; b=V84tq3+4ltpaFuZnB+NJBSH1aoPd2yGn6rK9sslwzgjlz8J1FHJK1PT5dK0pjRDPROJf6h3BHu48h8+bjlNF/7cIdrV1opxyC5M7mS9tzcweHMEBQfoycumM5sllA+rOo0VgtYQLO3unv66jaBQrvbOdQYmV63WXgDcwuca44qs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422276; c=relaxed/simple;
-	bh=HoNhxPKLzGazgVciNHddmrVSCEDz5irIxlJISJ3phb8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CLtMmr44VZGWDl5eFPHi6AI6xzUZChpLIh9pq4tEaJbuyRG81xFYiuFoycd83Vo8n3T2hFW2RAF5b5vTzywXqlfTD4u97+j3nTBzNud2IIQcDBz6l0FP1raqYLfRj7avA8nIGJVq+Hu/IHO858Oy+wYV/8Ez8AAUSeGc4TNdZ0E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jp7kGB/J; arc=fail smtp.client-ip=52.101.53.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mN05KMEbKM0h6xLaM6g6b5UwNmsS+8XQBfMg/7NBkgQW0jOqh+9jA5vbCrbauYvTxsAx81Wbnrm6ANjEE2tjJEhzfwu3A6WObAsmqrNjw2Sc3USBp9A4tIzd1o5dzHH2tldLb17W4klo44UpriM1FI05KsEyvkxjdasKTsaWth7083vdIZnwD3InKqSh+whZg5FwmIe3IeLFe3GHdLFQJQ4C3gCE8KX/FU4emunmzTzaxIMUMjsmn4FOq4Kl8P0b6k8W3Whd61EUqcEP/BNxXi+HXyBK+5uvCw8HFo7beBwLRYbVHkmHnwGy+Mq9vuW1rATyOebxygmvpTQXQMOQzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8BHAC32eqxjFGLpzNnxWkDsRhgWFwcZQEWIbn4H3pjs=;
- b=g23+oAC4MXSQ1HWwTU5yIsMNsm4IllnwQ+k8lbjMe/6wpTQhm4JLO30xTIJQo/JxOTXZS8Kk6UHPRg7y2F8Y6w1pHj8vGEmycU66IBxG3NFXulXVMpz4su0qPxRsRAlfKGXDEA8/RYDz6l4pc4oi8L+JK22v2is8ovrJqoxUUfFAS7gKoA0bfC7mxy8alcA4jcZNLNswbxMl/VSI8tvCPhkOIMmV+hEgV51OiIkznVQ/UaB90Iu42fIAGBGDkYzWyLy4qtkjTOE51lx/3yD8fHaT9Z8lNTxLxWDgnzt7COmNffCixN6KsNIVjwC3t4VYBFXQu0/u4jU0FPtpzO02yQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8BHAC32eqxjFGLpzNnxWkDsRhgWFwcZQEWIbn4H3pjs=;
- b=jp7kGB/JCh0lDABGxwco5Hg4NGQGn9+O7cgF/dl3Nl6JL7LTzavsT3omdKojN4XqRMVUXUi26KL0j9LtZNKbMn8cThEWe9iTdQ/cHLb/MhkVtTdGAz79LLfUqTLvKI8G59+YubVhkjViYe+oTlvVeHOAA27up+cQDWK0N5aWrsCOv+m5Jx6iEGRiDEosK3acv/HIZrxNgTleYORW5W1FCot2ALSeAOwkeiGo2IM9rteTy3AdOW2LVQGDh2TP323/dLV8wUzT7f7+VckCqt/mgBD5dUbfFkGmiih348nRRzcyZC7YdH3Lu4EOx/S6Ts+BEm32qxWfoK/hHYNRofAZ6w==
-Received: from MW3PR06CA0027.namprd06.prod.outlook.com (2603:10b6:303:2a::32)
- by DS7PR12MB6287.namprd12.prod.outlook.com (2603:10b6:8:94::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Thu, 6 Nov
- 2025 09:44:26 +0000
-Received: from SJ1PEPF00001CE1.namprd05.prod.outlook.com
- (2603:10b6:303:2a:cafe::d7) by MW3PR06CA0027.outlook.office365.com
- (2603:10b6:303:2a::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Thu,
- 6 Nov 2025 09:44:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ1PEPF00001CE1.mail.protection.outlook.com (10.167.242.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 09:44:25 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 01:44:16 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 6 Nov 2025 01:44:16 -0800
-Received: from inno-thin-client (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 6 Nov 2025 01:44:12 -0800
-Date: Thu, 6 Nov 2025 11:44:11 +0200
-From: Zhi Wang <zhiw@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-CC: <bhelgaas@google.com>, <kwilczynski@kernel.org>, <ojeda@kernel.org>,
-	<alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
-	<bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
-	<aliceryhl@google.com>, <tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
-	<rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rust: pci: use "kernel vertical" style for imports
-Message-ID: <20251106114411.370711ce.zhiw@nvidia.com>
-In-Reply-To: <20251105120352.77603-1-dakr@kernel.org>
-References: <20251105120352.77603-1-dakr@kernel.org>
-Organization: NVIDIA
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0229A2DF145
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762422605; cv=none; b=CpWZynB7T71nE8Ok6tkqYNMhaBcnVaAczqctynHamqBvxLQqq+LIJgpPT7SbpwCDFD7lUXVimk7Jmij9rT12XhSfb429lSO0jhPFQvdoJEyxDkNW7eKYGaHyVpoYyy0nS0AS4uaLejVLDuq1oaCygk5cClPBaAQUKK8dNmIS3sE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762422605; c=relaxed/simple;
+	bh=IRcPar28/4D04E4r0bzkVCy8UYUvk2JvQczEvypeUz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VZIBVw2LoKdWcFdjvUrKJK6/eHyYuQYas9VSq4w1xy3kbDaI490C4zTXPijx9oCFyi71aSkd37PrKm42JiAx35wVNteslt+rrsMQ46R2SUQkmmSWxudfpTt44WgbNaaBl715byzyL74431JR8MQjqdhVuFUWt7YCR7fJlLa6dEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsKaoMtO; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33be037cf73so905285a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:50:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762422603; x=1763027403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tuITS4kBtdrE0xOY6fuM1GNDJI0Hyov1YNBt8plbc9A=;
+        b=TsKaoMtOg0Y/2ugepLzaICi1jqLe2Z+dfzFs8mxnAIQygkPv/PmPeLNoQbqFKm2AMd
+         pnUc+zBHnNouz40ehoXORH1pTxTbKXvRSxcrjC93X96E3TqtswlcVfSeBjdDkriREi+H
+         g5Rd/eoZ9XA4M9joSj2Mfh0/2mmOOsHZwbKYBrFvUATx1eUkXp/A4L/hA5erD/BwktNr
+         M80dBqVG6INw2u/Q6oGs8KekxCPMNXQQbsOt33XOxbW6AvWZk9qyjAtOZQfnREvzAvtL
+         N49t11xweXxPWojSILWKBpW7h0TdpM4FpqjXNmxuDok+sdw71uIfEZ75XldXDaVQkrM/
+         ORZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762422603; x=1763027403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tuITS4kBtdrE0xOY6fuM1GNDJI0Hyov1YNBt8plbc9A=;
+        b=IsiUjsyoYQC7mQ4VAjy1VK+rfXa+46Di8UOHXM5HSssu9xLYenvMqNucaphNwbyPyf
+         ES9jiWQ6lKUmiLcvOf3UJuh7u4hl3MD5LzrdIaIXfAGmBvpv0SgYuuoXUUiqmgIyFkBU
+         aNwb61ec1abt8i31vBUlPUm3IVCXe5LoqsxUCRp7Uw8ozR40UvoSWEDsWYfL4418UVMv
+         Zl02wtSQqGe6ZGRbjErrIFQ723bOo4Bv5tW+Z0tnk/dpU387slpgZzneayownaQDBclB
+         lKjilCsjT5X2rnqZrwWoAIWNKW35YcYA97xS72KeABwZujZRJoCscJ9ZzzUoKP/TgCu+
+         9oUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkTPtaNvCrOGKsyyA+fMveivpRUqxcX5kPY6zH8UcCHwUxKSfcfShbvz4Nd8W4VE4JFgHC8B+pmr7c7Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuH8OYEqEIY0+TclqpvfDeuI2WpT61m1gEcckaLIKpzJO1dgim
+	Oy6n9VluT+KxhY+ZfiAXtbxAmwhcHG2f51cmIrxA6Po2R0/JZ+7bF8G2PO+8dGtHXugbide/dHz
+	khgFcm+SRnviW1ceAt0FaCsFkMt1uCWc=
+X-Gm-Gg: ASbGncvnNAlGxRYvj591xhGgz4DwguSWLooBsk5BwKEjp4CmXM/U58AFYdujRI1WMz3
+	+i1+XIfSq3OvD9Z64VinRYbh/DQHh8LeBp0KbLLODfBjQTL8Db8U2FcmZNlKeOMeVHJ6AEvIwh0
+	CfoRFhp13WAarR7SQ5H516IVVEuBwxwf/aSvxImbLeO5NnSquAWojmINEQfuemMClzkpO7ntwT1
+	G9fQFwX9N9z76l2Vmb52O6/aQBiJPLEPom9XpshdsnkW+GqVrb/COb+/GoI
+X-Google-Smtp-Source: AGHT+IHtTu0aItN7oCpYlQZATPWzMYAFpRwqJjPF19uAoe9o1LjA9xlu2YB532D+sdeX4rZwu4Y297vlJzwmbTz5sNU=
+X-Received: by 2002:a17:90b:584d:b0:341:315:f50d with SMTP id
+ 98e67ed59e1d1-341a6bfb59bmr7314378a91.8.1762422603266; Thu, 06 Nov 2025
+ 01:50:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE1:EE_|DS7PR12MB6287:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a6a206d-a82b-48ca-eea7-08de1d1912d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013|7053199007|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WplZEbyvg4oe+k8Qm5ZsN4qB1Q3nCScsOnt853l2z5ObS/Azn/OYOBgF4wTb?=
- =?us-ascii?Q?HH5mlSmBwRisL5Bh8lv2EiXhxiq7/FzWvfT8yFdzJLvq02myNmi+8R76J2xP?=
- =?us-ascii?Q?ew8FTEv/th82CuIKuOB3ioFurtyMkrtwSuxLH5nSiYtWLdn/e166rKUeqoWk?=
- =?us-ascii?Q?u3dZk4fSFUnOfk3G7lOwEkzVTS1QqmFF8VFjEEl7EHvmkHAayepk9ZFKPqeO?=
- =?us-ascii?Q?tJTM0t87AmSxVz609mEzQ01PJ8l+HLbs2bQWy8drh7AIRUG7g7Ro3qrTHG2Q?=
- =?us-ascii?Q?N/wWnoaOCwUOsgE2q0pHO53ppB/8et6M3qgds4J637dJpb1tvb9XsCapIgwM?=
- =?us-ascii?Q?bmynMas5XFjsLVh63UDzom7ITw0rSbsNSojuBI5zqJ8E61+ER13OOT9ujQam?=
- =?us-ascii?Q?8C2x/tD88kysXulcnXNi1SfFreq9G6wKK+5RDcoDvVFyDIe4b2OvHp6Yp9XF?=
- =?us-ascii?Q?Giv6VfCEeTRpP0FkBlx3RCOFuqWCXpqngYgU6Qz2Gf7FLlxu0fN8noDSvnHO?=
- =?us-ascii?Q?ufiCbM6w2qWLG+L/JTzsr0n4PkuEKVKCu/bsUH0lKofyZ54fvRN0ln6TsujH?=
- =?us-ascii?Q?XQKottgIa9qV7/fMZ6yw113DD7Y4dNWsfmUWf8pul7KsHWwmjmPUliaW1+jb?=
- =?us-ascii?Q?BNMQcnGVFj4RkQqrk03uLdrp5Y+SAJ881FeVlMa8Ql7SlrE1aMYXTOK+9I5w?=
- =?us-ascii?Q?JslrIbe63pgEka1xWo4eVlpMEiuOSYzU6lQ9qmYNZhtc3yVIUTCoRqtixIv1?=
- =?us-ascii?Q?6zUBM+2SJswyTNFjvC0qNanpdXMmrpsirGK10+YQVvzwKyBUcRIrXKgqwpPy?=
- =?us-ascii?Q?oIZAHaAYaj9oKF96TZiQTgoYda5HXgdWUH3VBmtNx37FavqYdstsfZYqrYCH?=
- =?us-ascii?Q?YW1HfLob7F8nPrqCGUISM7xP5T1sUzyk2yksityLpVF2562CzTOq3l7ytd6A?=
- =?us-ascii?Q?dJz6Qf49moS9bX0Hg4WOPHGGRk4lCOvr2v6E2mjPZJP2+BjOESV36XGd4VJ5?=
- =?us-ascii?Q?9NQCr8gIZHYkU3AQfzecvgXU3OcBaEv2zgCUU5LEl8BurM5hSpOzqkqfgGZ0?=
- =?us-ascii?Q?+9JbB8g33gn2xbm0DQwRrbzUjAk9SrtyJfxpcqmxfZMvvegIh5WN5SBmh75P?=
- =?us-ascii?Q?hPNpRHL8GHNegynbx6Rd5jl0yS5HSzAHIFHq9NYYCd+zGksJ4+wh6neqVNKH?=
- =?us-ascii?Q?h8cmOkHRLmaYakFTc1tVvRc32mlIn7uKoxMKlMlexCuLdF8pMFo+1P28ntna?=
- =?us-ascii?Q?NBacnS8Q/4VAJypcyLqcpYBgjWJFZd75MH1wUtAo88yDSDWEVNOXAoNZVPLt?=
- =?us-ascii?Q?O1Md1sAPoDyNRYcPIxO3ZLKBCXNPK6/OjvCKHECdDan4uuEKmnpZ/bz0J2XP?=
- =?us-ascii?Q?r4/yNjzOONwwX+5rtcp6AhzmJSCkfdkEhjD5O7Y96L8E1zhlACM1q3pUQuZ3?=
- =?us-ascii?Q?pviMNiR0dWBUSho0nsD3FVAKVpocTLuOpczstyAHSMX4rRNr68qJpE3sH5Fc?=
- =?us-ascii?Q?IiVNuvYeFL3zMflGS1oktU4YRz3P/0Wil26C98sRjsQ5SlgFxpqgyLJVik+3?=
- =?us-ascii?Q?jXNBW9gZdQlrXuYnaWM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013)(7053199007)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 09:44:25.9913
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a6a206d-a82b-48ca-eea7-08de1d1912d4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6287
+References: <20251106054940.2728641-1-linchengming884@gmail.com>
+ <20251106054940.2728641-2-linchengming884@gmail.com> <87o6pf8r24.fsf@bootlin.com>
+In-Reply-To: <87o6pf8r24.fsf@bootlin.com>
+From: Cheng Ming Lin <linchengming884@gmail.com>
+Date: Thu, 6 Nov 2025 17:45:27 +0800
+X-Gm-Features: AWmQ_blxzccAHkkFrG_7m68qvbkNEe1KQA8jfJHjAGe25H_MIaeW4TBvjXhKUes
+Message-ID: <CAAyq3Sa=7d6We2xz6bEb_x_zBv+fJwEZuSsfti+S46t3JVo7sw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mtd: ubi: skip programming unused bits in ubi headers
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: richard@nod.at, chengzhihao1@huawei.com, vigneshr@ti.com, 
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	alvinzhou@mxic.com.tw, leoyu@mxic.com.tw, 
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed,  5 Nov 2025 13:03:28 +0100
-Danilo Krummrich <dakr@kernel.org> wrote:
+Hi Miquel,
 
-> Convert all imports in the PCI Rust module to use "kernel vertical"
-> style.
-> 
-> With this subsequent patches neither introduce unrelated changes nor
-> leave an inconsistent import pattern.
-> 
-> While at it, drop unnecessary imports covered by prelude::*.
-> 
+Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B411=E6=9C=
+=886=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:10=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> Hello,
+>
+> On 06/11/2025 at 13:49:40 +08, Cheng Ming Lin <linchengming884@gmail.com>=
+ wrote:
+>
+> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> >
+> > This patch prevents unnecessary programming of bits in ec_hdr and
+> > vid_hdr that are not used or read during normal UBI operation. These
+> > unused bits are typcially already set to 1 in erased flash and do not
+> > need to be explicitly programmed to 0 if they are not used.
+> >
+> > Programming such unused areas offers no functional benefit and may
+> > result in unnecessary flash wear, reducing the overall lifetime of the
+> > device. By skipping these writes, we preserve the flash state as much a=
+s
+> > possible and minimize wear caused by redundant operations.
+> >
+> > This change ensures that only necessary fields are written when prepari=
+ng
+> > UBI headers, improving flash efficiency without affecting functionality=
+.
+> >
+> > Additionally, the Kioxia TC58NVG1S3HTA00 datasheet (page 63) also notes
+> > that continuous program/erase cycling with a high percentage of '0' bit=
+s
+> > in the data pattern can accelerate block endurance degradation.
+> > This further supports avoiding large 0x00 patterns.
+> >
+> > Link: https://europe.kioxia.com/content/dam/kioxia/newidr/productinfo/d=
+atasheet/201910/DST_TC58NVG1S3HTA00-TDE_EN_31442.pdf
+> >
+> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+>
+> Thanks for this very clear and detailed commit log, as well as for the
+> well written cover letter. I am personally fine with the overall idea of
+> clearing these unused bits to 1. Yet, I have one concern regarding the
+> implementation, please see below.
+>
+> > ---
+> >  drivers/mtd/ubi/io.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/mtd/ubi/io.c b/drivers/mtd/ubi/io.c
+> > index a4999bce4..c21242a14 100644
+> > --- a/drivers/mtd/ubi/io.c
+> > +++ b/drivers/mtd/ubi/io.c
+> > @@ -868,6 +868,8 @@ int ubi_io_write_ec_hdr(struct ubi_device *ubi, int=
+ pnum,
+> >               return -EROFS;
+> >       }
+> >
+> > +     memset((char *)ec_hdr + UBI_EC_HDR_SIZE, 0xFF, ubi->ec_hdr_alsize=
+ - UBI_EC_HDR_SIZE);
+> > +
+> >       err =3D ubi_io_write(ubi, ec_hdr, pnum, 0, ubi->ec_hdr_alsize);
+> >       return err;
+> >  }
+> > @@ -1150,6 +1152,11 @@ int ubi_io_write_vid_hdr(struct ubi_device *ubi,=
+ int pnum,
+> >               return -EROFS;
+> >       }
+> >
+> > +     if (ubi->vid_hdr_shift)
+> > +             memset((char *)p, 0xFF, ubi->vid_hdr_alsize - UBI_VID_HDR=
+_SIZE);
+> > +     else
+> > +             memset((char *)p + UBI_VID_HDR_SIZE, 0xFF, ubi->vid_hdr_a=
+lsize - UBI_VID_HDR_SIZE);
+>
+> Here I am reaching the limits of my UBI knowledge, so I would prefer
+> Richard to (in)validate what I am saying, but AFAIU, the VID header can
+> be literally anywhere in the page, not just at the start or end of a
+> subpage, so in the vid_hdr_shift I would expect some extra maths to
+> happen, no?
+>
+> Here is an excerpt of the main comment at the top of the io.c file:
+>
+>     * As it was noted above, the VID header may start at a non-aligned
+>     * offset. For example, in case of a 2KiB page NAND flash with a 512
+>     * bytes sub-page, the VID header may reside at offset 1984 which is
+>     * the last 64 bytes of the * last sub-page (EC header is always at
+>     * offset zero).
+>
 
-Looking good to me and test on the driver-core-testing branch.
+Here I was considering the comment in io.c, and also the definitions in
+ubi.h, which say:
 
-Reviewed-by: Zhi Wang <zhiw@nvidia.com>
+ * @vid_hdr_offset: starting offset of the volume identifier header (might
+ *                  be unaligned)
+ * @vid_hdr_aloffset: starting offset of the VID header aligned to
+ *                    @hdrs_min_io_size
+ * @vid_hdr_shift: contains @vid_hdr_offset - @vid_hdr_aloffset
 
-> Link: https://docs.kernel.org/rust/coding-guidelines.html#imports
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/pci.rs     | 35 +++++++++++++++++++++++++++--------
->  rust/kernel/pci/id.rs  |  5 ++++-
->  rust/kernel/pci/io.rs  | 13 ++++++++-----
->  rust/kernel/pci/irq.rs | 14 +++++++++-----
->  4 files changed, 48 insertions(+), 19 deletions(-)
-> 
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index b68ef4e575fc..410b79d46632 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -5,27 +5,46 @@
->  //! C header: [`include/linux/pci.h`](srctree/include/linux/pci.h)
->  
->  use crate::{
-> -    bindings, container_of, device,
-> -    device_id::{RawDeviceId, RawDeviceIdIndex},
-> +    bindings,
-> +    container_of,
-> +    device,
-> +    device_id::{
-> +        RawDeviceId,
-> +        RawDeviceIdIndex, //
-> +    },
->      driver,
-> -    error::{from_result, to_result, Result},
-> +    error::{
-> +        from_result,
-> +        to_result, //
-> +    },
-> +    prelude::*,
->      str::CStr,
->      types::Opaque,
-> -    ThisModule,
-> +    ThisModule, //
->  };
->  use core::{
->      marker::PhantomData,
-> -    ptr::{addr_of_mut, NonNull},
-> +    ptr::{
-> +        addr_of_mut,
-> +        NonNull, //
-> +    },
->  };
-> -use kernel::prelude::*;
->  
->  mod id;
->  mod io;
->  mod irq;
->  
-> -pub use self::id::{Class, ClassMask, Vendor};
-> +pub use self::id::{
-> +    Class,
-> +    ClassMask,
-> +    Vendor, //
-> +};
->  pub use self::io::Bar;
-> -pub use self::irq::{IrqType, IrqTypes, IrqVector};
-> +pub use self::irq::{
-> +    IrqType,
-> +    IrqTypes,
-> +    IrqVector, //
-> +};
->  
->  /// An adapter for the registration of PCI drivers.
->  pub struct Adapter<T: Driver>(T);
-> diff --git a/rust/kernel/pci/id.rs b/rust/kernel/pci/id.rs
-> index 7f2a7f57507f..a1de70b2176a 100644
-> --- a/rust/kernel/pci/id.rs
-> +++ b/rust/kernel/pci/id.rs
-> @@ -4,7 +4,10 @@
->  //!
->  //! This module contains PCI class codes, Vendor IDs, and supporting
-> types. 
-> -use crate::{bindings, error::code::EINVAL, error::Error, prelude::*};
-> +use crate::{
-> +    bindings,
-> +    prelude::*, //
-> +};
->  use core::fmt;
->  
->  /// PCI device class codes.
-> diff --git a/rust/kernel/pci/io.rs b/rust/kernel/pci/io.rs
-> index 3684276b326b..0d55c3139b6f 100644
-> --- a/rust/kernel/pci/io.rs
-> +++ b/rust/kernel/pci/io.rs
-> @@ -4,14 +4,17 @@
->  
->  use super::Device;
->  use crate::{
-> -    bindings, device,
-> +    bindings,
-> +    device,
->      devres::Devres,
-> -    io::{Io, IoRaw},
-> -    str::CStr,
-> -    sync::aref::ARef,
-> +    io::{
-> +        Io,
-> +        IoRaw, //
-> +    },
-> +    prelude::*,
-> +    sync::aref::ARef, //
->  };
->  use core::ops::Deref;
-> -use kernel::prelude::*;
->  
->  /// A PCI BAR to perform I/O-Operations on.
->  ///
-> diff --git a/rust/kernel/pci/irq.rs b/rust/kernel/pci/irq.rs
-> index 782a524fe11c..063b6a5101ff 100644
-> --- a/rust/kernel/pci/irq.rs
-> +++ b/rust/kernel/pci/irq.rs
-> @@ -4,16 +4,20 @@
->  
->  use super::Device;
->  use crate::{
-> -    bindings, device,
-> +    bindings,
-> +    device,
->      device::Bound,
->      devres,
-> -    error::{to_result, Result},
-> -    irq::{self, IrqRequest},
-> +    error::to_result,
-> +    irq::{
-> +        self,
-> +        IrqRequest, //
-> +    },
-> +    prelude::*,
->      str::CStr,
-> -    sync::aref::ARef,
-> +    sync::aref::ARef, //
->  };
->  use core::ops::RangeInclusive;
-> -use kernel::prelude::*;
->  
->  /// IRQ type flags for PCI interrupt allocation.
->  #[derive(Debug, Clone, Copy)]
+So, if ubi->vid_hdr_shift is non-zero, then the VID header is not located
+at the beginning of the subpage. In this case, we fill 0xFF from the start
+of the buffer until the actual vid_hdr_start.
 
+If ubi->vid_hdr_shift is zero, then the VID header is already placed at
+the beginning of the subpage. Then we fill 0xFF only after the header
+region in the buffer.
+
+> I am not sure this is super common today though.
+>
+> Thanks,
+> Miqu=C3=A8l
+
+Thanks,
+Cheng Ming Lin
 
