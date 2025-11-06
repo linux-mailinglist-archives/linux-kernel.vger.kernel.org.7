@@ -1,197 +1,115 @@
-Return-Path: <linux-kernel+bounces-888113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1499EC39E0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:46:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29909C39E10
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 10:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CAC24FF2DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:43:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C9894FF77B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 09:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAA830FF28;
-	Thu,  6 Nov 2025 09:41:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7A530FC3A;
-	Thu,  6 Nov 2025 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0093830DEAC;
+	Thu,  6 Nov 2025 09:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5EsMDxD"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0DE30C61F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 09:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762422063; cv=none; b=GXUq3B+sqLagtQMYr18NdlLPgLzdMnZAgT9foJr98XUugL1RGln9eXjydkjVTpyJdK2ZMuMZ2jDowhLRyHgCLPscy965zbvrt7GM4Fr+46xpv7MnE/qB219Qs+hqzqOHaM6JjoMAHIqbzm4LTgv9tImxuyRSEgBtPdVKZHSfASA=
+	t=1762422074; cv=none; b=KvSngK0vs7qtstj1UKRyfyhYbBKqCidkyVWldhoN2EtMyI1BKUFzW6rrwv+7VrvOzeTqYWOgI8GxQaQSqsiGPRAa1RKgoRKGctMcY/jeSbTZzsUQ9pn+at7t5MAbyLmK5WQIk0nt3oTulBFq86nNslSkcXdMBwtc0/h87X1TgFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762422063; c=relaxed/simple;
-	bh=8wkKqIwNbyN7I7/HPYVeMmDdvS4HQpc4c7E7Cb3xp5o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dMAQ5/UmiFg9Zaxk1DTzagnKrLKJHtE8yDI+ME5BYPjvBulqfkCH9wirfzXEwRQOdxa0Si6zt/zsDylt2iRenOBWeKmpYDA6oKwJSBmIQs8R5ajO0QmIIhtTTRECbhSASDFOZScHBRqyyfX22mgtRLMuhYnQF/SdvhDWe3il36w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2AE981764;
-	Thu,  6 Nov 2025 01:40:53 -0800 (PST)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C20953F63F;
-	Thu,  6 Nov 2025 01:40:57 -0800 (PST)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	maz@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	miko.lenczewski@arm.com,
-	kevin.brodsky@arm.com,
-	ardb@kernel.org,
-	suzuki.poulose@arm.com,
-	lpieralisi@kernel.org,
-	yangyicong@hisilicon.com,
-	scott@os.amperecomputing.com,
-	joey.gouly@arm.com,
-	yuzenghui@huawei.com,
-	pbonzini@redhat.com,
-	shuah@kernel.org,
-	mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v11 9/9] arm64: armv8_deprecated: apply FEAT_LSUI for swpX emulation.
-Date: Thu,  6 Nov 2025 09:40:23 +0000
-Message-Id: <20251106094023.1371246-10-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251106094023.1371246-1-yeoreum.yun@arm.com>
-References: <20251106094023.1371246-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1762422074; c=relaxed/simple;
+	bh=RKJbS+3Og1qBZgNICKzI7bLri5edv7amSAm4JK5iL44=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Fcr5jkqr2x4ZyMTCiN7DJPNkTTGlPB8GChXDKM5Q1NqPnG1DoMvNEzMgGJfsE+5egmyPVbAcB0r5iO6xmUwGTZDrBbzqsBjIxp6I9Nr5ZVaWtlFHiRfS2tvb00SmY2gr1b9AZbF/b7ne14zIhpnIQwL4FFwP2/bfcQNdcTXNUnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e5EsMDxD; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429bf011e6cso727471f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 01:41:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762422068; x=1763026868; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RKJbS+3Og1qBZgNICKzI7bLri5edv7amSAm4JK5iL44=;
+        b=e5EsMDxDROfFj7UL/LncIzUA3+J/nWnCLVlJe72koYYD/9GjGXkmQqy6FM3RqF0uXi
+         +NdZ1Jr/Znzg+zurhKIkPAqgwDsJ7mNXm67jH82vtk7AZ3cB+r9j+xGqEdZASlGStkGI
+         4rPz5frJKOP0xHyAJxT9hRIBJR87EvWKFkw30xqt+N1xi3uBEgktj5ywWVOQA3trP7Os
+         3AqCH91YLeTdRlNTgqqq4253cXVAeUQbB6aBdJnMT9+PmURBkOH2O8iuVmpXceyU+XEi
+         krsyc86AbmqEJnIQHdjK41mxEzu5UdL7cQMeWY4ZY1I21p6XS4wQ3M+sL8CUrj2vFJIn
+         au7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762422068; x=1763026868;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RKJbS+3Og1qBZgNICKzI7bLri5edv7amSAm4JK5iL44=;
+        b=NPHBP9vZQn+J7ulZYo8/zmdWFH8bnHMp3XwrCa8KZn1lYNaT+p3TknMkNca2QyBUri
+         LwOy3gZUgH8fTfwUAyIMzgs8g0PHmacjnP5XGadbZhkapxa3dMS11ogEjIw+6eVXq7fF
+         JmsDM6CVMHi4FxMcoitXwmLIW554DZmRD9RLwBWVGoalzx0Z2UTCx9gjGNWiGb9D2b8D
+         aKx4tmYWvOxPLo7jzGme9mnjf70j32MsrDyOs8YVZB/5wqcb0ZUPXAlEnKbGvNYryfWF
+         o4YDD6Q+7GRS1XNYxTGO4wlCs8quWCAMLLO9p6bnovtmwFFSE8bwcd28Vjnx20qVlx2z
+         EhaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWj46ji6aCjJs3UJtJkG9vdWkQEQ4OYNIn/BsVGtUKGuGOf9VaghHX967gR22+g/sJXVg6KrlMt8iLgkL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRuSsYcVxBUCDvA/yTUjUPqRghYEZtZejLz4vIiiRS2+RjYxUC
+	abwjCwjhZuA5tciuJ8DXq/22VnByMI9tQcjNY7ApshlKFYnf8vbU9czI
+X-Gm-Gg: ASbGncsAO8cioeuFKf4Fem2oIyEnIegQftDp6qz1kBOP0LF72sdD4cI5Lz5Qg2jg5KY
+	Robah9vvabiBsB8S1Idn4pSI5qmpwfzJaqd4GWgncDW/ssdnZodmHSJa7XcWq/Ta1X9nT9nRuSL
+	df62MvnnJLTPPpAX7Sd8xK/f4YNoZV8UO4ZG5hp4b95a4EDe4XM41WE1KH0YKVxUDVnYW6PYB/4
+	BYHTnWLRmkasaGX1ZYU2yWf3Fu0aJIlfBOVQO7KzS3qckc2tTw+SZrKXVrg/J2uMELTsl6Ws5IL
+	GPUOKvfilGlrdQ1OqS6a7Z22+D1i9UGXwwbhvzNA84YojwoO0WumUPf1oTHWo/KR3U9/1oVwFkq
+	htDRSR9JOeo0cghxQzaiSyC/hcFPPOoCEtOoZQILf85HrVL2oFv2Y8fNV/sIpydvLpawMgTfmfK
+	sO5ucC
+X-Google-Smtp-Source: AGHT+IF21ozos7qDutZAt/g/NvKo+hXW9YgEZlmxLNCbCy/dsSjMoZqB47HL5w20yrKmfk7J5t7S6Q==
+X-Received: by 2002:a05:600c:474f:b0:477:59f0:5b61 with SMTP id 5b1f17b1804b1-4775cdf455bmr64248505e9.2.1762422067762;
+        Thu, 06 Nov 2025 01:41:07 -0800 (PST)
+Received: from [172.23.94.183] ([136.226.168.195])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429ef2d58c2sm1990984f8f.16.2025.11.06.01.41.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 01:41:07 -0800 (PST)
+From: HariKrishna Sagala <hariconscious@gmail.com>
+X-Google-Original-From: HariKrishna Sagala <hkrishna@gmail.com>
+Date: Thu, 6 Nov 2025 15:10:33 +0530 (IST)
+To: Mark Brown <broonie@kernel.org>, hariconscious@gmail.com
+cc: lgirdwood@gmail.com, peter.ujfalusi@linux.intel.com, 
+    yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com, 
+    daniel.baluta@nxp.com, kai.vehmanen@linux.intel.com, 
+    pierre-louis.bossart@linux.dev, shuah@kernel.org, perex@perex.cz, 
+    tiwai@suse.com, sound-open-firmware@alsa-project.org, 
+    linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sound/soc/sof:Use kmalloc_array instead of kmalloc
+In-Reply-To: <fad32f5c-f9a4-4cf2-9082-845deff309ea@sirena.org.uk>
+Message-ID: <9e808d38-c720-fd59-8bc1-d1da6255c59b@gmail.com>
+References: <20250923142513.11005-1-hariconscious@gmail.com> <fad32f5c-f9a4-4cf2-9082-845deff309ea@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-apply FEAT_LSUI instruction to emulate deprecated swpX instruction.
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/kernel/armv8_deprecated.c | 77 +++++++++++++++++++++++++---
- 1 file changed, 71 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
-index d15e35f1075c..b8e6d71f766d 100644
---- a/arch/arm64/kernel/armv8_deprecated.c
-+++ b/arch/arm64/kernel/armv8_deprecated.c
-@@ -13,6 +13,7 @@
- #include <linux/uaccess.h>
- 
- #include <asm/cpufeature.h>
-+#include <asm/lsui.h>
- #include <asm/insn.h>
- #include <asm/sysreg.h>
- #include <asm/system_misc.h>
-@@ -86,13 +87,77 @@ static unsigned int __maybe_unused aarch32_check_condition(u32 opcode, u32 psr)
-  *	   Rn  = address
-  */
- 
-+/* Arbitrary constant to ensure forward-progress of the loop */
-+#define __SWP_LOOPS	4
-+
-+#ifdef CONFIG_AS_HAS_LSUI
-+static __always_inline int
-+__lsui_user_swp_asm(unsigned int *data, unsigned int addr)
-+{
-+	int err = 0;
-+	unsigned int temp;
-+
-+	asm volatile("// __lsui_user_swp_asm\n"
-+	__LSUI_PREAMBLE
-+	"1:	swpt		%w1, %w2, [%3]\n"
-+	"	mov		%w1, %w2\n"
-+	"2:\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-+	: "+r" (err), "+r" (*data), "=&r" (temp)
-+	: "r" ((unsigned long)addr)
-+	: "memory");
-+
-+	return err;
-+}
-+
-+static __always_inline int
-+__lsui_user_swpb_asm(unsigned int *data, unsigned int addr)
-+{
-+	u8 i, idx;
-+	int err = -EAGAIN;
-+	u64 __user *addr_al;
-+	u64 oldval;
-+	union {
-+		u64 var;
-+		u8 raw[sizeof(u64)];
-+	} newval, curval;
-+
-+	idx = addr & (sizeof(u64) - 1);
-+	addr_al = (u64 __user *)ALIGN_DOWN(addr, sizeof(u64));
-+
-+	for (i = 0; i < __SWP_LOOPS; i++) {
-+		if (get_user(oldval, addr_al))
-+			return -EFAULT;
-+
-+		curval.var = newval.var = oldval;
-+		newval.raw[idx] = *data;
-+
-+		asm volatile("// __lsui_user_swpb_asm\n"
-+		__LSUI_PREAMBLE
-+		"1: cast	%x2, %x3, %1\n"
-+		"2:\n"
-+		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-+		: "+r" (err), "+Q" (*addr_al), "+r" (curval.var)
-+		: "r" (newval.var)
-+		: "memory");
-+
-+		if (curval.var == oldval) {
-+			err = 0;
-+			break;
-+		}
-+	}
-+
-+	if (!err)
-+		*data = curval.raw[idx];
-+
-+	return err;
-+}
-+#endif /* CONFIG_AS_HAS_LSUI */
-+
- /*
-  * Error-checking SWP macros implemented using ldxr{b}/stxr{b}
-  */
- 
--/* Arbitrary constant to ensure forward-progress of the LL/SC loop */
--#define __SWP_LL_SC_LOOPS	4
--
- #define LLSC_USER_SWPX(B)					\
- static __always_inline int					\
- __llsc_user_swp##B##_asm(unsigned int *data, unsigned int addr)	\
-@@ -117,7 +182,7 @@ __llsc_user_swp##B##_asm(unsigned int *data, unsigned int addr)	\
- 	_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %w0)			\
- 	: "=&r" (err), "+r" (*data), "=&r" (temp), "=&r" (temp2)\
- 	: "r" ((unsigned long)addr), "i" (-EAGAIN),		\
--	  "i" (__SWP_LL_SC_LOOPS)				\
-+	  "i" (__SWP_LOOPS)					\
- 	: "memory");						\
- 	uaccess_disable_privileged();				\
- 								\
-@@ -128,9 +193,9 @@ LLSC_USER_SWPX()
- LLSC_USER_SWPX(b)
- 
- #define __user_swp_asm(data, addr) \
--	__llsc_user_swp_asm(data, addr)
-+	__lsui_llsc_body(user_swp_asm, data, addr)
- #define __user_swpb_asm(data, addr) \
--	__llsc_user_swpb_asm(data, addr)
-+	__lsui_llsc_body(user_swpb_asm, data, addr)
- 
- /*
-  * Bit 22 of the instruction encoding distinguishes between
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+On Wed, 15 Oct 2025, Mark Brown wrote:
 
+> On Tue, Sep 23, 2025 at 07:55:13PM +0530, hariconscious@gmail.com wrote:
+> > From: HariKrishna Sagala <hariconscious@gmail.com>
+> >
+> > Documentation/process/deprecated.rst recommends to avoid the use of
+> > kmalloc with dynamic size calculations due to the risk of them
+> > overflowing. This could lead to values wrapping around and a
+>
+> Please submit patches using subject lines reflecting the style for the
+> subsystem, this makes it easier for people to identify relevant patches.
+> Look at what existing commits in the area you're changing are doing and
+> make sure your subject lines visually resemble what they're doing.
+> There's no need to resubmit to fix this alone.
+>
+Just reminding for an opportunity to check this patch.
+Thank you.
 
