@@ -1,49 +1,47 @@
-Return-Path: <linux-kernel+bounces-888161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35AF0C39FC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2B7C39FFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 11:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FF9188885E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE09A188F846
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 10:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F6030CDA8;
-	Thu,  6 Nov 2025 10:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF80630C628;
+	Thu,  6 Nov 2025 10:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="NHHG58p4"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEAu6+aR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0632D8379;
-	Thu,  6 Nov 2025 10:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEB7225760
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 10:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762423258; cv=none; b=XQLENm1zdARMhynHEEl7aYJZR4ISBe7jQUoJ9uzD95n1KhcnEck9m4pyhbX6/tfSnTHLx7Z/n6GKedHZg7sQfMrCVCvFLOLvO+tv1xPy+NM76TmXLtFnIwJsq/MfX3kQ3yWL0NeYMLZ1evOIR+C3xU0jv7awtG5vtPmvl9JID3A=
+	t=1762423285; cv=none; b=Sy6NUKITXmNGP49Xl+ErVE6XaWngWb/B7trJRUoO4j8ezlxuucr56IvSY8Ihf17akK41dq2a0NuSOvqZ2bP/uZ4g+wNyAjnrdHq82e1wlDEOERiTAaEThM7FijqMbkUZXIjl8zcKTrBhT/QFlYrkG9WHwawwlkF1RG0cuU9Gzd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762423258; c=relaxed/simple;
-	bh=uph84l1p2vMYf1OKlZ++OkFEZdA0lZxvO6IihMHL0Ko=;
+	s=arc-20240116; t=1762423285; c=relaxed/simple;
+	bh=iesv8rC4QL3CIngwo4NyosSS6ta4t5WL2Exyy3yA59w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=damys9C2hVUxv1nIMFZhOf0Uggw1qb0zQA3gEHQ49Ph7t0iH3ANmmwegAK5ExrN1iFlNf1D1uWmJT71bbC6VSWghU4KkMO+3UkPGvx7qvMxwc2DnC/4weAIY45+CMkKXQKamEn1xmLHY6nuuq6rJ8f+MKaUb913Z6MxUp0HNQHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=NHHG58p4; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from [172.31.100.153] ([172.31.100.153])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 5A6A0h5s011136
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 6 Nov 2025 11:00:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1762423244;
-	bh=uph84l1p2vMYf1OKlZ++OkFEZdA0lZxvO6IihMHL0Ko=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=NHHG58p4JXfq1ZbV6y29+dFlgpSJ5Uyeosnca4fqi9dfyAkvbmlkOc1+JJOvwEgSP
-	 LOY0Tunrmn7EURLQ9A6wwT0sQFqJc11Dh4XejRmzcc+QBZjieDis77tEi/8Ej07fhR
-	 Dp1kBfbNesSiMTNllUVF/30dlKDyL6/N+diImZEQ=
-Message-ID: <676869a2-2e0d-4527-8494-db910b3a0018@tu-dortmund.de>
-Date: Thu, 6 Nov 2025 11:00:43 +0100
+	 In-Reply-To:Content-Type; b=FxtVVbyBM4sgMFJaOkPtnsjrmYOE+CJ8EIf+q8sEyjzcaqh2NkOnj0hFDjZ1vZqGU8DTXNordh1yV/u8qQhZdS5W0V2E93na7mSjPCHb6oq8gDwSdnWLNrD956XzfMzvDVi/9uTaGeT87Rtp0AIjSfYfnnj5+5sDbKmb0iWsD/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEAu6+aR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53586C4AF09;
+	Thu,  6 Nov 2025 10:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762423284;
+	bh=iesv8rC4QL3CIngwo4NyosSS6ta4t5WL2Exyy3yA59w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fEAu6+aRo3d5d8m/ufEdiQ9WpLry8x99RB9cJihQTwfgbp2i5L3HqpCsuP9B9mRK1
+	 zTOKLwgeHpWHHE0BD36pWhDu7aktyGUsbedSntOskcbGOuW3pUqFaVXj6zSCAgraZ/
+	 ZJ+qJGLf9SRH9rgph2nn7KV8fzB03B2ZG0RSOmFUSWO05RMmIYXI4oPP9QcxNU/SSx
+	 UO+09a3UNwkW7dXkZ7+3hmsWWCiYVzRym8aK1kGnzIQW6M+1M6/oUPFbtavKwmKyiP
+	 ++sOVeS+c3yKZLlOCl8CTRcwPyoHrtTPA7xLizpV+AI/LpNiQgSfm1fdAAsqHv6dAr
+	 B4AVLpt7gsNfA==
+Message-ID: <5c7c607e-079e-4650-be8d-6a1210730b57@kernel.org>
+Date: Thu, 6 Nov 2025 11:01:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,180 +49,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH net-next v1 0/1] usbnet: Add support for Byte Queue Limits
- (BQL)
-To: Daniele Palmas <dnlplm@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, oneukum@suse.com,
-        andrew+netdev@lunn.ch, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251104161327.41004-1-simon.schippers@tu-dortmund.de>
- <CANn89iLLwWvbnCKKRrV2c7eo+4UduLVgZUWR=ZoZ+SPHRGf=wg@mail.gmail.com>
- <f2a363d3-40d7-4a5f-a884-ec147a167ef5@tu-dortmund.de>
- <CAGRyCJERd93kE3BsoXCVRuRAVuvubt5udcyNMuEZBTcq2r+hcw@mail.gmail.com>
- <c29f8763-6e0e-4601-90be-e88769d23d2a@tu-dortmund.de>
- <CAGRyCJE1_xQQDfu1Tk3miZX-5T-+6rarzgPGo3=K-1zsFKpr+g@mail.gmail.com>
+Subject: Re: [RFC] hugetlb: add memory-hotplug notifier to only allocate for
+ online nodes
+To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "open list:HUGETLB SUBSYSTEM" <linux-mm@kvack.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+References: <20251106085645.13607-1-swarajgaikwad1925@gmail.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
 Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <CAGRyCJE1_xQQDfu1Tk3miZX-5T-+6rarzgPGo3=K-1zsFKpr+g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251106085645.13607-1-swarajgaikwad1925@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 11/6/25 09:38, Daniele Palmas wrote:
-> Hi Simon,
+On 06.11.25 09:56, Swaraj Gaikwad wrote:
+> This patch is a RFC on a proposed change to the hugetlb cgroup subsystem’s
+> css allocation function.
 > 
-> Il giorno mer 5 nov 2025 alle ore 12:05 Simon Schippers
-> <simon.schippers@tu-dortmund.de> ha scritto:
->>
->> On 11/5/25 11:35, Daniele Palmas wrote:
->>> Hello Simon,
->>>
->>> Il giorno mer 5 nov 2025 alle ore 11:40 Simon Schippers
->>> <simon.schippers@tu-dortmund.de> ha scritto:
->>>>
->>>> On 11/4/25 18:02, Eric Dumazet wrote:
->>>>> On Tue, Nov 4, 2025 at 8:14 AM Simon Schippers
->>>>> <simon.schippers@tu-dortmund.de> wrote:
->>>>>>
->>>>>> During recent testing, I observed significant latency spikes when using
->>>>>> Quectel 5G modems under load. Investigation revealed that the issue was
->>>>>> caused by bufferbloat in the usbnet driver.
->>>>>>
->>>>>> In the current implementation, usbnet uses a fixed tx_qlen of:
->>>>>>
->>>>>> USB2: 60 * 1518 bytes = 91.08 KB
->>>>>> USB3: 60 * 5 * 1518 bytes = 454.80 KB
->>>>>>
->>>>>> Such large transmit queues can be problematic, especially for cellular
->>>>>> modems. For example, with a typical celluar link speed of 10 Mbit/s, a
->>>>>> fully occupied USB3 transmit queue results in:
->>>>>>
->>>>>> 454.80 KB / (10 Mbit/s / 8 bit/byte) = 363.84 ms
->>>>>>
->>>>>> of additional latency.
->>>>>
->>>>> Doesn't 5G need to push more packets to the driver to get good aggregation ?
->>>>>
->>>>
->>>> Yes, but not 455 KB for low speeds. 5G requires a queue of a few ms to
->>>> aggregate enough packets for a frame but not of several hundred ms as
->>>> calculated in my example. And yes, there are situations where 5G,
->>>> especially FR2 mmWave, reaches Gbit/s speeds where a big queue is
->>>> required. But the dynamic queue limit approach of BQL should be well
->>>> suited for these varying speeds.
->>>>
->>>
->>> out of curiosity, related to the test with 5G Quectel, did you test
->>> enabling aggregation through QMAP (kernel module rmnet) or simply
->>> qmi_wwan raw_ip ?
->>>
->>> Regards,
->>> Daniele
->>>
->>
->> Hi Daniele,
->>
->> I simply used qmi_wwan. I actually never touched rmnet before.
->> Is the aggregation through QMAP what you and Eric mean with aggregation?
->> Because then I misunderstood it, because I was thinking about aggregating
->> enough (and not too many) packets in the usbnet queue.
->>
+> The existing hugetlb_cgroup_css_alloc() uses for_each_node() to allocate
+> nodeinfo for all nodes, including those which are not online yet
+> (or never will be). This can waste considerable memory on large-node systems.
+> The documentation already lists this as a TODO.
+
+We're talking about the
+
+kzalloc_node(sizeof(struct hugetlb_cgroup_per_node), GFP_KERNEL, node_to_alloc);
+
+$ pahole mm/hugetlb_cgroup.o
+
+struct hugetlb_cgroup_per_node {
+         long unsigned int          usage[2];             /*     0    16 */
+
+         /* size: 16, cachelines: 1, members: 1 */
+         /* last cacheline: 16 bytes */
+};
+
+16 bytes on x86_64. So nobody should care here.
+
+Of course, it depends on HUGE_MAX_HSTATE.
+
+IIRC only HUGE_MAX_HSTATE goes crazy on that with effectively 15 entries.
+
+15*8 ~128 bytes.
+
+So with 1024 nodes we would be allocating 128 KiB.
+
+
+And given that this is for each cgroup (right?) I assume it can add up.
+
 > 
-> I can't speak for Eric, but, yes, that is what I meant for
-> aggregation, this is the common way those high-cat modems are used:
+> Proposed Change:
+>      Introduce a memory hotplug notifier that listens for MEM_ONLINE
+>      events. When a node becomes online, we call the same allocation function
+>      but insted of for_each_node(),using for_each_online_node(). This means
+>      memory is only allocated for nodes which are online, thus reducing waste.
 
-Hi Daniele,
+We have a NODE_ADDING_FIRST_MEMORY now, I'd assume that is more suitable?
 
-I think I *really* have to take a look at rmnet and aggregation through
-QMAP for future projects :)
-
-> it's not clear to me if the change you are proposing could have any
-> impact when rmnet is used, that's why I was asking the test
-> conditions.
 > 
-> Thanks,
-> Daniele
-> 
+> Feedback Requested:
+>      - Where in the codebase (which file or section) is it most appropriate to
+>        implement and register the memory hotplug notifier for this subsystem?
 
-This patch has an impact on the underlying USB physical transport of
-rmnet. From my understanding, the call stack is as follows:
+I'd assume you would have to register in hugetlb_cgroup_css_alloc() and
+free in hugetlb_cgroup_css_free().
 
-rmnet_map_tx_aggregate or rmnet_send_skb
+>      - Are there best practices or patterns for handling the notifier lifecycle,
+>        especially for unregistering during cgroup or subsystem teardown?
 
-|
-| Calling dev_queue_xmit(skb)
-V
+Not that I can think of some :)
 
-qmi_wwan used for USB modem
+>      - What are the standard methods or tools to test memory hotplug scenarios
+>        for cgroups? Are there ways to reliably trigger node online/offline events
+>        in a development environment?
 
-|
-|  ndo_start_xmit(skb, net) is called
-V
+You can use QEMU to hotplug memory (pc-dimm device) to a CPU+memory-less node and
+to then remove it again. If you disable automatic memory onlining, you should be able to
+trigger this multiple times without any issues.
 
-usbnet_start_xmit is executed where the size of the internal queue is
-dynamically changed using the Byte Queue Limits algorithm by this patch.
+>      - Are there existing test cases or utilities in the kernel tree that would help
+>        to verify correct behavior of this change?
 
-Correct me if I am wrong, but I think in the end usbnet is used.
+Don't think so.
 
-Thanks,
-Simon
+>      - Any suggestions for implementation improvements or cleaner API usage?
 
->> Thanks
->>
->>>>>>
->>>>>> To address this issue, this patch introduces support for
->>>>>> Byte Queue Limits (BQL) [1][2] in the usbnet driver. BQL dynamically
->>>>>> limits the amount of data queued in the driver, effectively reducing
->>>>>> latency without impacting throughput.
->>>>>> This implementation was successfully tested on several devices as
->>>>>> described in the commit.
->>>>>>
->>>>>>
->>>>>>
->>>>>> Future work
->>>>>>
->>>>>> Due to offloading, TCP often produces SKBs up to 64 KB in size.
->>>>>
->>>>> Only for rates > 500 Mbit. After BQL, we had many more improvements in
->>>>> the stack.
->>>>> https://lwn.net/Articles/564978/
->>>>>
->>>>>
->>>>
->>>> I also saw these large SKBs, for example, for my USB2 Android tethering,
->>>> which advertises a network speed of < 500 Mbit/s.
->>>> I saw these large SKBs by looking at the file:
->>>>
->>>> cat /sys/class/net/INTERFACE/queues/tx-0/byte_queue_limits/inflight
->>>>
->>>> For UDP-only traffic, inflight always maxed out at MTU size.
->>>>
->>>> Thank you for your replies!
->>>>
->>>>>> To
->>>>>> further decrease buffer bloat, I tried to disable TSO, GSO and LRO but it
->>>>>> did not have the intended effect in my tests. The only dirty workaround I
->>>>>> found so far was to call netif_stop_queue() whenever BQL sets
->>>>>> __QUEUE_STATE_STACK_XOFF. However, a proper solution to this issue would
->>>>>> be desirable.
->>>>>>
->>>>>> I also plan to publish a scientific paper on this topic in the near
->>>>>> future.
->>>>>>
->>>>>> Thanks,
->>>>>> Simon
->>>>>>
->>>>>> [1] https://medium.com/@tom_84912/byte-queue-limits-the-unauthorized-biography-61adc5730b83
->>>>>> [2] https://lwn.net/Articles/469652/
->>>>>>
->>>>>> Simon Schippers (1):
->>>>>>   usbnet: Add support for Byte Queue Limits (BQL)
->>>>>>
->>>>>>  drivers/net/usb/usbnet.c | 8 ++++++++
->>>>>>  1 file changed, 8 insertions(+)
->>>>>>
->>>>>> --
->>>>>> 2.43.0
->>>>>>
->>>>
+I'd assume you'd want to look into NODE_ADDING_FIRST_MEMORY.
+
+-- 
+Cheers
+
+David
 
