@@ -1,329 +1,177 @@
-Return-Path: <linux-kernel+bounces-889228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF350C3D05C
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:08:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCF2C3D05F
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 19:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1540142104F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E00C3AE7BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 18:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753E534FF6A;
-	Thu,  6 Nov 2025 18:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B59A34C127;
+	Thu,  6 Nov 2025 18:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lobfpZOC"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Sf8we5YV"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010052.outbound.protection.outlook.com [52.101.56.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF17534AAF3
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762452330; cv=none; b=YExPW8FQMkmipu4OUMSTKQhvHzPXcqnB9RZSEyFeW+i+Ng8Th8oooTcsi/753mI67eMgD7YabD7lqWIk4769o17NceT20KJCCZypU6lyO+6pJoTy4x3WvQEopnxnNkeJ6GjTxlbDEkfGxtHjgN6XEomZMgXA0x+7JOPUTkzjp5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762452330; c=relaxed/simple;
-	bh=G47cfKBtSfZeevthWSR31ey4bcEFvS7hwzCYBKn7lcw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CCsWcBssa7Jd4P5lgZJHpHNWgcnkJyjJ193lYoYUZqWI8JkueEfAssJBh9tCXPk1y0Ey5dQGxOQrNnEDiarwmJkqPZA3LUozZaU14omxVOZR1jP0AUPfZS0E6t8L9VMhGzGRoq/ARAJqkmULZhM91cm+lX0j12ZEEgEUIVP2reg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lobfpZOC; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27d67abd215so7055ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 10:05:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762452328; x=1763057128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rxC183go+CfSntXz4o3OVXMqZhSkssDjJAownxyD7QI=;
-        b=lobfpZOC73i18KElFeGlZ4j4eSfgJy+qQY4Wows9VAjLIhaMxzIIxjXzogqhLQKs33
-         QYYZxtsLORP+GnQaC79fogb3RPqxXABMtUd7UEJh6GnA+OKdTK/jsZYJkGs8nvxThs7Z
-         Vxw461d8gEcAjx2+QLKvicdNykU0OZlBOAbHY+57pE1ZOObLXPdCEz5EALXAaGbds8ud
-         LfK83FA5HGsqV11fPwD7TvBOOJ4N4GO/dw3m29JIShxRawQGSBjbc/1PUyolsRsiF56H
-         pT+s8HOK9xABZ2udiYPKBHNnzB5wfG1VNHzE2Qmy79UIO4y1ick/eijldbO20AKQ3YLN
-         AI6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762452328; x=1763057128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rxC183go+CfSntXz4o3OVXMqZhSkssDjJAownxyD7QI=;
-        b=I3xh26MvG84nSp9cF/UnLDm1VxWfZ69qYIqHJcI6sUOUD4yAql0pHFpW9xFVc00hqb
-         C2sfZrwGX8iYXtG+CBFAvsjvUNdwHmm/tsB5WiztOT7jSpgzPnbNsVO3xsgoTK8plv97
-         28EAeRwXN9s1f1Dxhjdxa70NdgGAk4QhG9n+LnSnfyCFI99aAfqh7za7Iz59gr9vjrlK
-         owFsWUhTReiUAFEeuiyeH35vce3cAXVzl1o8bB1RfE89EIkx3tG6U7hDe5E5ZxM6SRZn
-         JnvMsIs3RQiX1rrnfHB+IJon/tgSBeXr0wc9tSAJ4+Lc6NI7++ar+Ht/zh8pzXv77UKS
-         xLkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSrxteQxIB8zvggEfnEAsdiCum2W42W+nSfa50QUyTtBejVsI2CvmVZuIzmNea7D8Zw+fpM3OmO5762MQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydy0T1lxdHAljsdbZBoP768iZdR6+URviFwgaKvcn4BPddYO+5
-	GJW/dL30ctItd3JHWx76xC7MrEIvKAsXzj1s9QUl8YWx1Mhfju8ledu2LDD8xX/h0qr1FUCwv8U
-	3PHwTla4Uth1eDbO3dhNFl+6YlnazoNixs8iqrlHT
-X-Gm-Gg: ASbGncsUWt4WuksuXbMt1RYogeRXGZBu4HMh9m/6cnDCnuSuCC6D7hrc9+G51r3qxEc
-	8dxbdG2FLdXWpUdmDzq1MYBx45DtSyjx7y5nvvaOF3E6vjgKtrVJwmCBKCYpH+Sa65B6233f6j5
-	kDLOTiNa2ZQ4+Fupcp3DKGqhbgt1LSKvWgXKpZIIWUdcyzyTYtQUTA/02cctHS7J+RuwhqVbuQ6
-	7xms3/wK1UDmaN4vo/9rXnksCMrNKCIVUiq47Q74Hk6h7dGiiQ+dhP7itCYAHzht6C/PEHg8uoB
-	QhbUMTGj1yHssE0=
-X-Google-Smtp-Source: AGHT+IEt3zVmqnMpB8NLx+TNlgsH2bLYgu655fL8Gu0bJ3DdI4KuqTrAFcNRX1jdNBZgaD3q4DilbxV89vWJ3zwGJ74=
-X-Received: by 2002:a17:902:c405:b0:291:6488:5af5 with SMTP id
- d9443c01a7336-297c12ff719mr393215ad.1.1762452327318; Thu, 06 Nov 2025
- 10:05:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B8B286413
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 18:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762452328; cv=fail; b=K7jvT6q/YMN0TDqd1Z2jtf4LIba6eZ16Ad61N443H5su0L9Ed8OVdJOedLdLBRgq8LP0QvOAcGw6prALBnKdnhcwuII4u4p9VGhI5QdoQ6kfi9uh/unWfW2URX4wBCVcd98ypQ+/qEQmFYQSFom1BRkYDDr5T+WMAtYFXyNV/j4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762452328; c=relaxed/simple;
+	bh=+L8NZ/uPCvoWldT5xa5pwTtmZwoIeesexUBqGpvdRPc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=djUpnto2k/CTiKBKg2JYLIdGijYMe4UWxEaJS8gWa3Nf73ofPOwVbFVtEcbUnxHqtfQQJrK5wp9oKkn/RnctKaMEZdvCiNNCKdE6xbj2UFMztoZjuE5BrHeA7dUMQ2DMU+BGUJGyRdLSvy58IV1Oyi6H2Dq6kEZOL977/NjJ/aI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Sf8we5YV; arc=fail smtp.client-ip=52.101.56.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aMj3/io1z0W+oWAAplpJX834pHNLgyLZEga7fDvPvYRfyib/JP1DO7xAcUvBEAffJrWLey6qixYn3cMBLptfQ4Kf1EbzAcQK9glG/kKTpuKMiA8PxIaxaLsMS8kfEQbvaQvewetHrpWu+J9BhtuafSeg0+HDAkwqjI0f3JVYw2rrYHHy8eU8a5syZgSv1b86PmcwSiXF4im/OxhLY8b7LbEXK6JbNeq9pBzyZQLzp3UoUCxf5+fCADSPycn2e7WAOJ2pDKvVuI4W3xDA0iA0j9iUCSaqLfDIfNKJPW2XrGEQ2T8kP+edDHDqdOC9PWRveRHH4VvHVH2GKxoG3jQ1Yw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nI1klkb/MfxbAwNpwsMC6xzO+lC4p/3IUdE098BucY4=;
+ b=HQfkS2KqEHrh/u7ww7Za8JhKL1qe9t8rn84YocPIM4q71O35H+uoX+R0KR0Lc0/chs0oUu9cUGiL7Lfd+YIfNPuEp9KlmzoCuIWyFjkSjOK6Mmv8zA3y002XjJcCLchb0QwVLh4eW3SYmsEgs2mZ3mh0Iqk3McDy7On+sJJ0Izinzrg6kUJYZS7KMJjT48pdiGDN1Ea/80V7Y3X9Aj/to7KRUycVxwd6WZeGjnO1py6+WxIpjE3X8ePpHeKrHZilXxpAekw+m9A8GrTw16MKMNqlHjfYyMq/DSrirFtQQkjh4HgSQdcYsbYw96P4Q/q1IWoOw9G/nmxaQelhYAVm/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nI1klkb/MfxbAwNpwsMC6xzO+lC4p/3IUdE098BucY4=;
+ b=Sf8we5YVdbKbzCM4eJ3bnNWl+87BFNBW0F1B9Anz/HkY7JmAKpTb/cGdNr4RX9KRP+79DYPjjImiuPIXieQdfABK1XzDX+kC2tmn9rk5Vk4WZ7jnKXd2P5/F+mJ6jLwmvsA1K07qlg3l1RxKkJoF5g/nQZUuF4MciBbHpPOAXVg=
+Received: from DM6PR10CA0030.namprd10.prod.outlook.com (2603:10b6:5:60::43) by
+ DS2PR12MB9823.namprd12.prod.outlook.com (2603:10b6:8:2ad::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.12; Thu, 6 Nov 2025 18:05:24 +0000
+Received: from DS3PEPF000099D7.namprd04.prod.outlook.com
+ (2603:10b6:5:60:cafe::63) by DM6PR10CA0030.outlook.office365.com
+ (2603:10b6:5:60::43) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Thu,
+ 6 Nov 2025 18:05:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS3PEPF000099D7.mail.protection.outlook.com (10.167.17.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 18:05:23 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 6 Nov
+ 2025 10:05:23 -0800
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 6 Nov 2025 10:05:22 -0800
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>
+Subject: [PATCH] accel/amdxdna: Treat power-off failure as unrecoverable error
+Date: Thu, 6 Nov 2025 10:05:21 -0800
+Message-ID: <20251106180521.1095218-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024175857.808401-1-irogers@google.com> <20251024175857.808401-9-irogers@google.com>
- <aQw-qsVuWf8IHUrL@google.com>
-In-Reply-To: <aQw-qsVuWf8IHUrL@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 6 Nov 2025 10:05:15 -0800
-X-Gm-Features: AWmQ_bmnHR5yZCN2N41QWYjWH64lVy0nNbdqLSAzzwWVEDb2cNmFAqTtrjMe-P0
-Message-ID: <CAP-5=fWx6H9g1c63wmXHRsBfEYYQNQ3p1uBviAzMtchuGB7oog@mail.gmail.com>
-Subject: Re: [PATCH v1 08/22] perf jevents: Add set of common metrics based on
- default ones
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D7:EE_|DS2PR12MB9823:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56812687-dcab-40e2-6285-08de1d5f0ec7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JrpsN+IbL/Olo78BATkwVEYGJRr4D1QY4dyFZVcsDDIjol5M2s25NfLxE+Z3?=
+ =?us-ascii?Q?bRmQXe6shmjYFAl6imkCmWIxp6dQgXq4VSen3vN6zoc5O6r8u2V3N41c/766?=
+ =?us-ascii?Q?OEcUHk62EyBHhgf+2gzfKyxWBrqby3V+/8ggnvEZyfft/q5mpr1MMDyZj4qq?=
+ =?us-ascii?Q?sFjyn2nL6ZhM9Zh49cpi1q/ojLN3fbvI+OBfH4eBOV2uj0pU8YyCYtb6KEv4?=
+ =?us-ascii?Q?mo1RvYLFwKr+tFiIork+5o/b+BZGxLPfIgZuAS8v77i79M6rreAJoMKyjjRj?=
+ =?us-ascii?Q?k8kGYXPfS5MOwxTA6LOuP58ZF37pxGG3sdXC1i44GbLXiFI6h6GyTXO5/BBi?=
+ =?us-ascii?Q?Ba1Vbs0ZPskKDiIgffd8gS1l6QLezUlWgsIdXeJQNPeDBbphA2U0tTT3jCR8?=
+ =?us-ascii?Q?RGNxHu+8m3uz0JK2DVjX5SQz0+HLJCab5GoQizw46lG0xJMf8mtzALcDTwDi?=
+ =?us-ascii?Q?hS403MOFeQ5T46BtB6CoxjmyNN62QLZHafyUyW7ESNUpmY4QbPs3jhn4Xsa2?=
+ =?us-ascii?Q?4ktFm7CsiX5QcaY17SC0V5ugLRhhFKA9tEOO/jZeLX36lqkQtP/ea9JmSbrG?=
+ =?us-ascii?Q?qgvJJru9qAdwA0iks5VKvvoiI0y4Ybo67jPPypSWTWPuu9uB8XmvpDlLFR1I?=
+ =?us-ascii?Q?PDI0XtFnD8/mJhWX+AEK/S5fFXrkoSRw8Iz9OyJNM2Ze4QRnVDeSwoipIDxK?=
+ =?us-ascii?Q?1/dGP2VpMAflmOpBazT5MXqMdWpDP6vtWe3xZca8UHuuBmv6No048tZQWHcl?=
+ =?us-ascii?Q?wNkxrVxLSt4x7ORc7NYj2O48jza2F9uFnrTHUscHG5pXVLYw55owTdwQBhby?=
+ =?us-ascii?Q?CLZr47LXCiCpIILxSb1+PHn3NuqVtxcWt3/hp9Wqx8SA3/kjMdOXoOWPIJxR?=
+ =?us-ascii?Q?9jHhX/CbhwbSVM5eUakojGWiWwVWR1Us/Yt6StGlwd8BwG90C2cDdGCxs2mK?=
+ =?us-ascii?Q?EfWm1/gPiGoyynmGdzi/KeVZpsYL67nu763Rntw8j0hjYMoLDpFpolDeiAip?=
+ =?us-ascii?Q?rh+sku6m877oA3yjamnvqZRTuMr3oz6ltCE/Dzz5nabxIZy9LLJjy1b16fNr?=
+ =?us-ascii?Q?R1GZqXtkUFQAUcr/FvK2Fm6jhJGye4LsbBCETcV1gEEmyMb0zUn6rfprXc1v?=
+ =?us-ascii?Q?x29k7QuSUpDBTbJ8gxn0fBLhVKBrrgq+u1tNNBfvnUKPa9R2XDezPV7kuOkm?=
+ =?us-ascii?Q?IXVtjaTiM9vlm6+MY4OFL8KtXSiieTRcW/7/rpq0c8qcioJT4r098To8q/q3?=
+ =?us-ascii?Q?dE346RmfQI3JZ6et5HG1wj7ORTRWDfqOTceL7uoYTT6/aUhZzSGpTAdu8Hhz?=
+ =?us-ascii?Q?H2zOfsdIbq3dobEYYfmvmChbMKNnu90gAPqi/1WcfQMTlJpsg5SpDMvCTy6E?=
+ =?us-ascii?Q?CHrHacLklemyOADcd1DZNFkF7Mx+XgTZJfToBA6rZkR63EpjvqJrwqK6G40J?=
+ =?us-ascii?Q?bFJgPja+6ROFIx40tSWvZwX7KnnSPWh7c1r96+n+3zJTFeeac49E6t4Tocm3?=
+ =?us-ascii?Q?Zm4iaAWQibzVPPFZI2aZw3DOmvErnGcNeIILnzxYqEYaiL/I2G+JwlJCXXjx?=
+ =?us-ascii?Q?K58teBvDsMO5BuBtemg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 18:05:23.9489
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56812687-dcab-40e2-6285-08de1d5f0ec7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9823
 
-On Wed, Nov 5, 2025 at 10:22=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Fri, Oct 24, 2025 at 10:58:43AM -0700, Ian Rogers wrote:
-> > Add support to getting a common set of metrics from a default
-> > table. It simplifies the generation to add json metrics at the same
-> > time. The metrics added are CPUs_utilized, cs_per_second,
-> > migrations_per_second, page_faults_per_second, insn_per_cycle,
-> > stalled_cycles_per_instruction, frontend_cycles_idle,
-> > backend_cycles_idle, cycles_frequency, branch_frequency and
-> > branch_miss_rate based on the shadow metric definitions.
-> >
-> > Following this change the default perf stat output on an alderlake look=
-s like:
-> > ```
-> > $ perf stat -a -- sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >     28,165,735,434      cpu-clock                        #   27.973 CPU=
-s utilized
-> >             23,220      context-switches                 #  824.406 /se=
-c
-> >                833      cpu-migrations                   #   29.575 /se=
-c
-> >             35,293      page-faults                      #    1.253 K/s=
-ec
-> >        997,341,554      cpu_atom/instructions/           #    0.84  ins=
-n per cycle              (35.63%)
-> >     11,197,053,736      cpu_core/instructions/           #    1.97  ins=
-n per cycle              (58.21%)
-> >      1,184,871,493      cpu_atom/cycles/                 #    0.042 GHz=
-                         (35.64%)
-> >      5,676,692,769      cpu_core/cycles/                 #    0.202 GHz=
-                         (58.22%)
-> >        150,525,309      cpu_atom/branches/               #    5.344 M/s=
-ec                       (42.80%)
-> >      2,277,232,030      cpu_core/branches/               #   80.851 M/s=
-ec                       (58.21%)
-> >          5,248,575      cpu_atom/branch-misses/          #    3.49% of =
-all branches             (42.82%)
-> >         28,829,930      cpu_core/branch-misses/          #    1.27% of =
-all branches             (58.22%)
-> >                        (software)                 #    824.4 cs/sec  cs=
-_per_second
-> >              TopdownL1 (cpu_core)                 #     12.6 %  tma_bad=
-_speculation
-> >                                                   #     28.8 %  tma_fro=
-ntend_bound       (66.57%)
-> >              TopdownL1 (cpu_core)                 #     25.8 %  tma_bac=
-kend_bound
-> >                                                   #     32.8 %  tma_ret=
-iring             (66.57%)
-> >                        (software)                 #   1253.1 faults/sec=
-  page_faults_per_second
-> >                                                   #      0.0 GHz  cycle=
-s_frequency       (42.80%)
-> >                                                   #      0.2 GHz  cycle=
-s_frequency       (74.92%)
-> >              TopdownL1 (cpu_atom)                 #     22.3 %  tma_bad=
-_speculation
-> >                                                   #     17.2 %  tma_ret=
-iring             (49.95%)
-> >              TopdownL1 (cpu_atom)                 #     30.6 %  tma_bac=
-kend_bound
-> >                                                   #     29.8 %  tma_fro=
-ntend_bound       (49.94%)
-> >                        (cpu_atom)                 #      6.9 K/sec  bra=
-nch_frequency     (42.89%)
-> >                                                   #     80.5 K/sec  bra=
-nch_frequency     (74.93%)
-> >                                                   #     29.6 migrations=
-/sec  migrations_per_second
-> >                                                   #     28.0 CPUs  CPUs=
-_utilized
-> >                        (cpu_atom)                 #      0.8 instructio=
-ns  insn_per_cycle  (42.91%)
-> >                                                   #      2.0 instructio=
-ns  insn_per_cycle  (75.14%)
-> >                        (cpu_atom)                 #      3.8 %  branch_=
-miss_rate         (35.75%)
-> >                                                   #      1.2 %  branch_=
-miss_rate         (66.86%)
-> >
-> >        1.007063529 seconds time elapsed
-> > ```
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  .../arch/common/common/metrics.json           |  86 +++++++++++++
-> >  tools/perf/pmu-events/empty-pmu-events.c      | 115 +++++++++++++-----
-> >  tools/perf/pmu-events/jevents.py              |  21 +++-
-> >  tools/perf/pmu-events/pmu-events.h            |   1 +
-> >  tools/perf/util/metricgroup.c                 |  31 +++--
-> >  5 files changed, 212 insertions(+), 42 deletions(-)
-> >  create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.js=
-on
-> >
-> > diff --git a/tools/perf/pmu-events/arch/common/common/metrics.json b/to=
-ols/perf/pmu-events/arch/common/common/metrics.json
-> > new file mode 100644
-> > index 000000000000..d1e37db18dc6
-> > --- /dev/null
-> > +++ b/tools/perf/pmu-events/arch/common/common/metrics.json
-> > @@ -0,0 +1,86 @@
-> > +[
-> > +    {
-> > +        "BriefDescription": "Average CPU utilization",
-> > +        "MetricExpr": "(software@cpu\\-clock\\,name\\=3Dcpu\\-clock@ i=
-f #target_cpu else software@task\\-clock\\,name\\=3Dtask\\-clock@) / (durat=
-ion_time * 1e9)",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "CPUs_utilized",
-> > +        "ScaleUnit": "1CPUs",
-> > +        "MetricConstraint": "NO_GROUP_EVENTS"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Context switches per CPU second",
-> > +        "MetricExpr": "(software@context\\-switches\\,name\\=3Dcontext=
-\\-switches@ * 1e9) / (software@cpu\\-clock\\,name\\=3Dcpu\\-clock@ if #tar=
-get_cpu else software@task\\-clock\\,name\\=3Dtask\\-clock@)",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "cs_per_second",
-> > +        "ScaleUnit": "1cs/sec",
-> > +        "MetricConstraint": "NO_GROUP_EVENTS"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Process migrations to a new CPU per CPU s=
-econd",
-> > +        "MetricExpr": "(software@cpu\\-migrations\\,name\\=3Dcpu\\-mig=
-rations@ * 1e9) / (software@cpu\\-clock\\,name\\=3Dcpu\\-clock@ if #target_=
-cpu else software@task\\-clock\\,name\\=3Dtask\\-clock@)",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "migrations_per_second",
-> > +        "ScaleUnit": "1migrations/sec",
-> > +        "MetricConstraint": "NO_GROUP_EVENTS"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Page faults per CPU second",
-> > +        "MetricExpr": "(software@page\\-faults\\,name\\=3Dpage\\-fault=
-s@ * 1e9) / (software@cpu\\-clock\\,name\\=3Dcpu\\-clock@ if #target_cpu el=
-se software@task\\-clock\\,name\\=3Dtask\\-clock@)",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "page_faults_per_second",
-> > +        "ScaleUnit": "1faults/sec",
-> > +        "MetricConstraint": "NO_GROUP_EVENTS"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Instructions Per Cycle",
-> > +        "MetricExpr": "instructions / cpu\\-cycles",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "insn_per_cycle",
-> > +        "MetricThreshold": "insn_per_cycle < 1",
-> > +        "ScaleUnit": "1instructions"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Max front or backend stalls per instructi=
-on",
-> > +        "MetricExpr": "max(stalled\\-cycles\\-frontend, stalled\\-cycl=
-es\\-backend) / instructions",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "stalled_cycles_per_instruction"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Frontend stalls per cycle",
-> > +        "MetricExpr": "stalled\\-cycles\\-frontend / cpu\\-cycles",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "frontend_cycles_idle",
-> > +        "MetricThreshold": "frontend_cycles_idle > 0.1"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Backend stalls per cycle",
-> > +        "MetricExpr": "stalled\\-cycles\\-backend / cpu\\-cycles",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "backend_cycles_idle",
-> > +        "MetricThreshold": "backend_cycles_idle > 0.2"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Cycles per CPU second",
-> > +        "MetricExpr": "cpu\\-cycles / (software@cpu\\-clock\\,name\\=
-=3Dcpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=3Dtask\\=
--clock@)",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "cycles_frequency",
-> > +        "ScaleUnit": "1GHz",
-> > +        "MetricConstraint": "NO_GROUP_EVENTS"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Branches per CPU second",
-> > +        "MetricExpr": "branches / (software@cpu\\-clock\\,name\\=3Dcpu=
-\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=3Dtask\\-clock=
-@)",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "branch_frequency",
-> > +        "ScaleUnit": "1000K/sec",
->
-> Wouldn't it be "1000M/sec" ?
+Failing to set power off indicates an unrecoverable hardware or firmware
+error. Update the driver to treat such a failure as a fatal condition
+and stop further operations that depend on successful power state
+transition.
 
-Agreed. Will fix in v2. The existing logic does multiple by 1e9 in one
-place and then divide by 1e3 in another. It would be good if we could
-do better units, based on metric value, but I'll leave that for
-another day.
+This prevents undefined behavior when the hardware remains in an
+unexpected state after a failed power-off attempt.
 
-> > +        "MetricConstraint": "NO_GROUP_EVENTS"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Branch miss rate",
-> > +        "MetricExpr": "branch\\-misses / branches",
-> > +        "MetricGroup": "Default",
-> > +        "MetricName": "branch_miss_rate",
-> > +        "MetricThreshold": "branch_miss_rate > 0.05",
->
-> Is MetricThreshold evaluated before scaling?
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+---
+ drivers/accel/amdxdna/aie2_smu.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Yep. Primarily to help share most of the events/calculation with the
-metric being created. Fwiw, the 5% here comes from the existing
-stat-shadow metric threshold.
+diff --git a/drivers/accel/amdxdna/aie2_smu.c b/drivers/accel/amdxdna/aie2_smu.c
+index 11c0e9e7b03a..bd94ee96c2bc 100644
+--- a/drivers/accel/amdxdna/aie2_smu.c
++++ b/drivers/accel/amdxdna/aie2_smu.c
+@@ -147,6 +147,16 @@ int aie2_smu_init(struct amdxdna_dev_hdl *ndev)
+ {
+ 	int ret;
+ 
++	/*
++	 * Failing to set power off indicates an unrecoverable hardware or
++	 * firmware error.
++	 */
++	ret = aie2_smu_exec(ndev, AIE2_SMU_POWER_OFF, 0, NULL);
++	if (ret) {
++		XDNA_ERR(ndev->xdna, "Access power failed, ret %d", ret);
++		return ret;
++	}
++
+ 	ret = aie2_smu_exec(ndev, AIE2_SMU_POWER_ON, 0, NULL);
+ 	if (ret) {
+ 		XDNA_ERR(ndev->xdna, "Power on failed, ret %d", ret);
+-- 
+2.34.1
 
-Thanks,
-Ian
-
-> Thanks,
-> Namhyung
->
->
-> > +        "ScaleUnit": "100%"
-> > +    }
-> > +]
 
