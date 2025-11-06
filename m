@@ -1,401 +1,310 @@
-Return-Path: <linux-kernel+bounces-889409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5A4C3D7EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:27:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C995FC3D7FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 22:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6CB14E3598
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF813B036B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 21:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA00D306B0A;
-	Thu,  6 Nov 2025 21:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F34307486;
+	Thu,  6 Nov 2025 21:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eEnrZTuC"
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UZQIBwkW"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012000.outbound.protection.outlook.com [52.101.43.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145E2303A32
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 21:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762464433; cv=none; b=ZwvDVZjpc0p58CIfh3usiBxuuaV2BezN5DoJ0CyGqS7nv2Me/7Qu5pqjx/1Xwa9cBNHThf7uvtPn1h6cmfq4A47d1QEBVoRdVDmk1+CGkkWfDvq8sozmi3fwcd4Wzxs/ZmTd0kC0y1XL3KcEIpD4U0ZdqJhUGCZan3muNpN2gmA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762464433; c=relaxed/simple;
-	bh=FYSKozxsphHhSnFuMlU6acNkyuBXeYvex6fsRdvNKxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tg2s2afPFVCpAnxLIjw2FCuFdPu66Vafw/vKu8Vi6NgS2cDK9Y3Hc9J+u6LHBAGhRYO6bQpFsVBmrj9c5wvw9UX/bTohm8SNPGZMbs3kCSzCUXR84Qa3dgX+l84euYRIq1ELSLFmfslCXmbvLQcqvxunMR3ibU5AphxloRChlFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eEnrZTuC; arc=none smtp.client-ip=209.85.214.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-2957850c63bso873005ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:27:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762464431; x=1763069231;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Bq1kDHzzeUC5/5qzBKK+XJi+hezEO+Qt7PAq3T7/Vv8=;
-        b=e0PYgP/vQmV3P1CGynuE3VgQpcNS9Mp0oQspo3dymNbETVPHZnsGTzJTtVHKuy5gwL
-         qDhF0wqWLX7T2XsUCAcxLgOG6hyfrjvSELce6LWN+agvO3JoxkFtRWfpZzpViA5Lky8F
-         eSWuFecBdBMeuL11HVzT1hoUspmWjcghPcJNLDbLLagBHxq2BNlvysX+5JiXDsc8Iq96
-         LK01QkJspHzoO0McYEUJexEX522XAmetA34RJDiY8ZPNr+ZUy9iw0YIt9TPoAUi+ah1F
-         Vj7XiK9zUp0dpIpaMekgFCH03NurmSP5Og18AzDNRRFptzfwtDeWLtBfqPWLl6R2mhLX
-         eKkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVW9KPwlaq6FBYoDl7lGc4K8FF08yCTm4+HAaQ495U8fLFG1Paz+QMgwXD2g6ktbBmu8uyy0cgVlyT8EWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2NyMX0oZXknrTdU4cpg0B54tqfkeGiYwspX6F27EwQaTJFxXU
-	Rb/iSEHtjGHfAYbwpGq6dm8fvrHyWGcO0yGffgKPtl3uswAgUO6G98Wy6BFxLlAzmjCY1we5HfK
-	CYunhl8lMijYZPFeHi0LhDe3OOqy7LhvGq1b7XglGcOvrDg8uWygT3P3DazmESvOzP5lTt2zOMO
-	FlAKgvhQZA+0FwVLXvkn/VNeIHH/IgQIBojf0AVAD3mglhmVm+JGuQz04VqUBPjvTBrp82DOPxX
-	wozQLz0JM8xYRTcwB9KEZTM
-X-Gm-Gg: ASbGncsfU+o9Ava4cyNF3xow6B/GRHDCTossTBG+MQUonz2u5f9gzn4qcGPrbBIV1dH
-	fTwviN3m7qjx7N1ANmhWd7om2G4tKL38ZsuicMpH/I+vrauw6b9okhxjC5YnDuCsN3z+eu9MWtw
-	z8tnU0RcNkq4NDTKLjU/ZiutkVP+etZQg3WmO/QebSMTy4/4M/YfTQm88tKzIHZO3dwMg2xEmND
-	u0r1GBK3Mh4gyh4URihMvuRhkuR2ixiwR8GsYq0j5FQYwxH0YHR8S3WOIQEH3i05iAiUERvckaX
-	CkkXHgNhFG85k2jaJSSP7+6Mo0HoyOjWO3nb5AVi9/NAwQaBY8bjbTJZ9fas3Vyyu3BYXDMCZQO
-	9fbtDigo1jDGB8rzOxowE2yURJOy1eqkxXWEWRFjpU+dR3IdUdDulVFn9edftswJ16okpr/oOog
-	Pqhsu4ZbOK3ODlwLfeGpV/4TBobshggx19ZQJPq1A=
-X-Google-Smtp-Source: AGHT+IE62x0sGQPEDmMg/5BthVPOSUdeGrDr3XIqRs3DQw1GdA7ug+RrD+ybV4NAvpM1p/EIquwyceTznCNB
-X-Received: by 2002:a17:903:37cd:b0:294:8c99:f318 with SMTP id d9443c01a7336-297bff0efc2mr14457025ad.3.1762464431287;
-        Thu, 06 Nov 2025 13:27:11 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29651c6a5cbsm3420135ad.33.2025.11.06.13.27.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Nov 2025 13:27:11 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8a5b03118f4so19306885a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 13:27:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1762464430; x=1763069230; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bq1kDHzzeUC5/5qzBKK+XJi+hezEO+Qt7PAq3T7/Vv8=;
-        b=eEnrZTuChap+j/p/IiY3zpxskuA7ZkTkWyKIAjedHww7AFNCUxQoav35JEziWm7MEo
-         3307a3/nQLoZE7pedUXpRKPQlZzmqzMl0drRdloiXTUNaU45mTcI0rrJcPxHAeyby4E1
-         leFdFrRu0D/YRMSrGMFujWpbwjyV37ugxEvA0=
-X-Forwarded-Encrypted: i=1; AJvYcCV7U9Fst0jxBrxNsiqN2PYKc+MAIHJ9Bu6QJ8oqOldqRbHZwHV2CscxJGIgNEONsbyjdljtli1R3uTEnpY=@vger.kernel.org
-X-Received: by 2002:a05:620a:2905:b0:7fe:e18:d4b7 with SMTP id af79cd13be357-8b235122dbamr574932485a.13.1762464429745;
-        Thu, 06 Nov 2025 13:27:09 -0800 (PST)
-X-Received: by 2002:a05:620a:2905:b0:7fe:e18:d4b7 with SMTP id af79cd13be357-8b235122dbamr574928785a.13.1762464429253;
-        Thu, 06 Nov 2025 13:27:09 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2355e615bsm271777385a.19.2025.11.06.13.27.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 13:27:06 -0800 (PST)
-Message-ID: <f5c2f410-36da-41a0-8d61-ffdd88096513@broadcom.com>
-Date: Thu, 6 Nov 2025 13:27:04 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3C22FDC24;
+	Thu,  6 Nov 2025 21:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762464511; cv=fail; b=n6ELo+J7k+pZCqJ0tjlOrXsMykW0zVZutKknus36+vy30m+wkYLf3sqRZtoObBsCq3hjpX4UTvFbNXMllDMf8iLMPXnpR79Yv8F1VLZz3h18FJMMz1lnRLJ+utENqdu2m6KJEhxZYBZC4F6iOdkLjZSfv06TO3MaUYLR63Req44=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762464511; c=relaxed/simple;
+	bh=Sc3WJcmkcU/aco6CXcwhR8Ki9aoNYmE5nLv3ms6LjyU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oZeo0jC8TRdrRRp9I5s2Og2Qj2zpK3tbyMhxTbO12YvoPDje8kAxy57waFEj7BFxqiWw7vlTrIpY3aQkgf7AbhtqJy/RYlH3ocG1DmFfd4iFxwnaEMcMqxxWoKvAPla+zAq828rYQLC1Sb3VGaGvCElUha9BWtONK8ZlXGQ6IQs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UZQIBwkW; arc=fail smtp.client-ip=52.101.43.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eufhL2yBuynUDdrv2h7YwJvUwEoq2CY82SqAXavMMjEs0dom3DcFOrFznYHi4GskQHlHK7SEsD2BKu7G7egrISOey5RbO/IHxR7S1WxbSJqX3Fl+rsGXIdJd3GJCWSM0e2oDV+nO2Qycvr9lqfTBZdruyC53pwDdBEGiDZi8oy6s4ruINey6IWs9IyngbP/5F9hMGCsbeVuokrRLVmQnl/KCpFf/tsfzuHku02BrxEcHbdU+pYdKvPX3gmUA73mn8wXr9S7D9ASEvqKp+CFFgdnTmtN8PvYplJ1WywxPTvVX7PwgQS01HwSD+k2D4pOOeChHKZusi8rBVWSCKVJTNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YpciNXXDLsL05UdzUqE3O9Mh8vL38ksZt8mM/fnJ0ms=;
+ b=FoOJXimodYbkzFmfQQInRXefGJ63jzyR0tVQZJloa4SrK8M1szexqu5NuydEKZ3k2jkEGrMVvYyOeGxP8+Zyrl1m1iJirr7L85zBnXze1EBVkySOwRnPpSvvjzwZYSRW1euu0oHpchVZX45F+DlceXrKd6MrZUaeZvIuzisQsCOQxkJnt8bL7iCWZHADdxJeDRnMkmn6YdSVttMXIk4qxzwn54wtiZhIt3N3wtj8/v8Z4pB1hj4xnrvNRd2d2e6D4hFVJ4HfoZ+BEzea8wLPLe/Id2d6orGXq3F5o6jS4GdPYEY45h+N4c95yVoY9WQQ7MZ84eioDDOYTcSjrvQC4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YpciNXXDLsL05UdzUqE3O9Mh8vL38ksZt8mM/fnJ0ms=;
+ b=UZQIBwkWuAoPevow3aS7t8Facw0tWb4T0/44qElpJpZ7bzWxZ++xNSBG0RizaHszce/fi7R+Cl2FjmLQ5ttqxD3EH/KkWyu/6WhK0URDuOZm4MF7JHrUtBQ7pP8hffFS3kk7PvawE5lj4/lUtE6pdwj9Pyaiy7F/8fRoFZ7ZAqw7y8vwfXcRRRpfa1K+ASHhBxgLMN/y0GWex7uKruNTgnDKZq+S3PnBMQgZpaB1On/1Np7It8UDolj8M6793hjfuX/DmXTwalOGehRaz4Q8VbUrYq26/ylkphs45mGtdZrKietoU4YenP/mdusLHIrrZwrEvTuOptJn7cVVAcp5oQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by IA0PR12MB7775.namprd12.prod.outlook.com (2603:10b6:208:431::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Thu, 6 Nov
+ 2025 21:28:25 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9298.010; Thu, 6 Nov 2025
+ 21:28:25 +0000
+Message-ID: <c64e59cc-6a09-4107-8b98-f5f40a4b95c7@nvidia.com>
+Date: Thu, 6 Nov 2025 13:27:24 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] gpu: nova-core: add boot42 support for next-gen
+ GPUs
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Danilo Krummrich <dakr@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
+ Zhi Wang <zhiw@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20251106012754.139713-1-jhubbard@nvidia.com>
+ <20251106012754.139713-4-jhubbard@nvidia.com>
+ <DE1FKDK4YMH2.31M2ZHUOKEC1I@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DE1FKDK4YMH2.31M2ZHUOKEC1I@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR05CA0202.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::27) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/2] net: ethernet: Allow disabling pause on
- panic
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- Doug Berger <opendmb@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Antoine Tenart <atenart@kernel.org>, Yajun Deng <yajun.deng@linux.dev>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251104221348.4163417-1-florian.fainelli@broadcom.com>
- <20251104221348.4163417-2-florian.fainelli@broadcom.com>
- <CAAVpQUAXPadkvRa7Rdo-_bQOpH5XRr+GST4cdv6G-be=SQ5sAQ@mail.gmail.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <CAAVpQUAXPadkvRa7Rdo-_bQOpH5XRr+GST4cdv6G-be=SQ5sAQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|IA0PR12MB7775:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12e4ac1e-11d0-47b4-4a1e-08de1d7b6b59
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TllEbjdhZmQ3MGNESktGMVRWRlI3RzFiNVpscGYwNXI5cEkvNWlSZjdlU2di?=
+ =?utf-8?B?dyt1ckdpb1UyTURFYUJsU0N5bjdROTRQc08xVmxxdnBDNTZrd3NETjhYM3NC?=
+ =?utf-8?B?aVhOd3VkQ3VEMzkwSGYvUWpQSW5hZG9KaHJid0hRTWRMMjRqM2FiSlFWQWkx?=
+ =?utf-8?B?blA0dG5DU3dCSjVwNE5HcS9rMm5RUVdSZjdlVFFMRlY1RUVyczlWVllNWm9L?=
+ =?utf-8?B?MlVHM1hTa0NmdUdNVUxvaVp2S2x6MWhMTHgxM0JHY2JjaUVjaHFmSkQwUm9p?=
+ =?utf-8?B?T2FwR3NGekVKZEhQSm5pdFpoeExObURMU0dHZ1d5OU5DWE9XMk5NMzhFcXZW?=
+ =?utf-8?B?YUV1NTBlalpUNnhTY1RSNjhkVXZSc0IzVWYyYjloekFOTlE1UGFWTTcyaVIw?=
+ =?utf-8?B?NlhseFhlazRuZHFYajVqRnhPZ2doejVkSWErV3ZVZ1JaZFRrUEpkSVJrL2kv?=
+ =?utf-8?B?WUNkVzBTYVFNVDNPQm94K0RiTHRibG95dWQ0Qm1zaHcwQXNkT1VNQlpqMVRl?=
+ =?utf-8?B?eWFic3ZzTDRFMUE0YXVqT01sZWdidmJVMlhpRnhUaHdrQUloSFJZd3crK0xX?=
+ =?utf-8?B?SHd0N3l1Y1hENTg4YkFiU21NWWM3TzFzU0RrTVlHakxmVk1abyt2NlhwZFFS?=
+ =?utf-8?B?YmlpdHFlRFdMZ050SHd3NXN5V0VqUlZlMGJqUVJycGcyU3JNVys0STdNM3FV?=
+ =?utf-8?B?UGEwUmo5amZDTTdnTGtiWGtoTWhIemhDQVAxOWswVXRlM3diWU40OUM1NGtI?=
+ =?utf-8?B?V2xFckNpdlpEeERWNjNaUmplVWhtOU1rOUVFc0VOaDF6RlB2dThRMXNiSGVI?=
+ =?utf-8?B?RmR4NFcvQ1VPdkhwR1lvN3FlZ0pvNTk3OXllb0Nvblo2aS9VaUFMcTd5MmlN?=
+ =?utf-8?B?RnVWK2NDZ2h0MWdjaUIwQUxZUkxselk0ZE55MVZLK2l0YjR1MGJCbS9OZEM4?=
+ =?utf-8?B?aWRCWFVmaUZUdDR5bWNlRWRVRUxIZzNsZXg2RGtzM2ZmRGU3Z1l2Y0RHTmxG?=
+ =?utf-8?B?QkpWZEVrMXJuNDdteWhha3Y3Rm1jYmpNUloxeWlFRDIzUVpMYUliVG5zWExw?=
+ =?utf-8?B?UmdHWkVsRTBjUXVsZDNKamFWeWNGaHMvcEl5d2lvWTR4VWN2eHF1WGdGbHBL?=
+ =?utf-8?B?QmFxWUpweFBmeVhYaVRQdVEzZERMc2VCcWdsc05SNDJVSUdrR1kxSGg3bWhY?=
+ =?utf-8?B?RHdKTGdxZVRPc2tzU1NRZDFYWUtlVXRTTEhEbmRVRitQdE5KQ2NvUWMrSmVG?=
+ =?utf-8?B?eVlQVUFRaGY3b0hBaklnYzVSWGtCdUc1S2U5VUdzeHB3c3dnOCs0c3diMkM2?=
+ =?utf-8?B?YjVYTlJ1VUR0em1vdFpJSHVPWmxjSTJGMXdIanlVbndMczJtM1N2S1JXZEI1?=
+ =?utf-8?B?VTVZZzdMdFBvaW9WeVdEbHo1aU11RFh5RnlTeWZtQ1hnbzcvbk1HWlBsRncy?=
+ =?utf-8?B?K2J6UGd1UVFYVW55Q1lCUEUxUFFaY0Fzd0RtTWI4NzZPeE9PdUg2cEZiWUY3?=
+ =?utf-8?B?SEh1NHBwcnl3MDJYbk1tYTlsbGZpY0NWblBUWnM4Y2VoVlhPRVF3WC9YRVY2?=
+ =?utf-8?B?aCtEL0sraFZtektNU3l1M0JRVXQ0YkN3WVdDcWNPQy9zUDh2RHcwTTJhMVRz?=
+ =?utf-8?B?Z3FRc0IxUW1pMzVlMGgxY2lTQU8zWUlTN1dYWFdYdHEyTXVGcHZHSTBsem9s?=
+ =?utf-8?B?NUdlaFd0Q1RYVFNWUXlaUUtqcDRBUTVWaTlGb3RVSUFta3pGSDNTSG5wV01n?=
+ =?utf-8?B?U2xiVWIzOFBWRkhQczNZYnBSSVMwSGZJVE1qaXNJZ0JFUkYyWFp1MHZubnZP?=
+ =?utf-8?B?UTVoR1dVeEtOM3NIbldxcnpOWURHY3dDWFdNRXpqMWJzWElvYW9ZR25EN3py?=
+ =?utf-8?B?MVltMkU0ZDdOQ2piTjhMK2FqMWdGV3p3M1NRbjhzOWVJWERoU2VTY0gvRmNj?=
+ =?utf-8?Q?V0yXk57DUR2IWVcjddxVk3oblttKjrw2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QVdnYStHTHZZUmxQWW9vMmhud0oxbGRCTzY3TC95cHdSUms5YThCRVJia3ZJ?=
+ =?utf-8?B?WGNRbHhlWXVlM2x3b1htZVM1eFYydEZNcFBwRENFdWkvMXJ2QUZ6ZjRFeFdZ?=
+ =?utf-8?B?TmNndE13cGJpYmo3cUR2cTBJZGdpdUZTZWYvbkVjSHMxNGk3N3pCc21DRi9h?=
+ =?utf-8?B?TFF0cG5rS20yS0VDc3hZMlhWSWtRQzlNK21OcjJKYVphc2R6TktzdXJBc1Fv?=
+ =?utf-8?B?TjdWWUJiVlFtNUhXMFBKWU9DYnN6M1dNSXNuS3RPV3c2L2ZpSmt4dVdlTHVr?=
+ =?utf-8?B?RkM1OUtTZTE1SC84ZzJtU0QxSmNOUWR3dWZjVGxSd20zdUtmTEJ2aWJvSjFK?=
+ =?utf-8?B?bDVScHFIeVo5OXBVUE53bHQ5QlQ1c2NLVHBCWmJHNE1vQ2ZVWDdjeHNkYTB5?=
+ =?utf-8?B?cFBkZ0VpSEI0TVcrdy9kcW03ZTM0NktJQit4WW5wa1BDMVRCWlloYm54SjVC?=
+ =?utf-8?B?RS9HYjFYTjh4VkEyaUtTbEZERFNtUXdIWWRUUGZKZU9KMmxzSlRqNnJrQkhT?=
+ =?utf-8?B?a21RRi9IM2tOSU83N1RZK1dWT1NnN0IrWkdnUVNYdXZZcUZySmYzdGwzZDR0?=
+ =?utf-8?B?YjV0MzAwaWE0NUdFSXc0aG9IbDh3dTFvUkwvbnNCR2JpbzhCOE1TbVZESGZ1?=
+ =?utf-8?B?b1hrclVXeEQ2RXdlYzdSUzJNL2o0L0VhR2ExWjlBN28yNEk4NW8wcFMyRTQ4?=
+ =?utf-8?B?aFl3ZHF5Y0U0bEY4a3VpRHMrOEpzQThpb2MwUFRPcWVrSVk1K2Q1QWdUY0hZ?=
+ =?utf-8?B?N09YcExkQ3BiZ3I2OUpEakU0dkhxRUozaEVNbzM4WXk4aEJBcFdYMVFQa05B?=
+ =?utf-8?B?RkpqL3FZQkVXUGNYdDNPc3hBM0lLMHJpRDdUYjVaT2FqWHh6NXBqb0p4ZW9t?=
+ =?utf-8?B?ejAyQzhldVRWNSsrUWZJQm9LZko2R3hvZ3JaTWd0dzE4VGVabkF6OFMrUG5T?=
+ =?utf-8?B?ckFwcCt1Yy9Oa3plMUk3NG5DZm9EczZzV2VvMHlpcnFZenY3UGJRRlVzMzln?=
+ =?utf-8?B?WDlkQzVxekNmRzdRb0s0ZkNZZkIyanNrSy9OREJFUWNXakVHeWV3dytHaGl6?=
+ =?utf-8?B?Sm93bDRUejJvY0lnQk5qam9HSjRrUWF5dWpkdjN6R2hYUU5yd0VjSnpXT2dm?=
+ =?utf-8?B?UWNRcFJMQ3I5dkg0WWNzcmR2cVJBM3IyTEdKWFZSVnBnSzJJNXp5am02VjlO?=
+ =?utf-8?B?WDlmbFVJTWNSaDQrOUF2dGNQb2NYZmYrWkFoZGpkQXZRSXFiUXV1NjZsaXl4?=
+ =?utf-8?B?MXdaUFE0NWNUVytlczcxcldwZWl5Q3JnWllzMlVhMm9xYk1Ba25VY1VBS0Ra?=
+ =?utf-8?B?YkQ3ZjJsNkZNdDJKVWlrVitoOWxzbGgxL25tVjJyYnE3aW9YdHd2QXhrc002?=
+ =?utf-8?B?T2lSdzhtenFzUCtoczdqam9neXc3RktMZ0FQYUNXd3FiYUdKbStyY2ppQkFo?=
+ =?utf-8?B?YzhSVkxjTEJ4a0Z0RVl2NmV3Q1dsWm1DOCtpMVBSRWJCS2thMmhab3hFemZa?=
+ =?utf-8?B?bzAzejdYOGFuWEMxZzQyWjdmT3N2QVJWc1ZLZUJYaUFlWmZJL3g0TVYzTGNH?=
+ =?utf-8?B?bmpCdFkyeWFoc0Uyb21XNThUckRXVGMrbmVoODlmdkdiZVhEOXh2c1FYMDNZ?=
+ =?utf-8?B?K2QrQTV1b3pXKzkzb2ozL2phVVl2RGVKazJjVWtnZTNwL3EzVmV6S2Y5TEFZ?=
+ =?utf-8?B?a1ZtY20zVklnZUx3akhvRTRBRmc0MitrOEdXOWhsNmZuU0RhYlRhcU9lcEUw?=
+ =?utf-8?B?TUlFc1Bibi9MMy81MUlkaG9Vam5pdHZUWTBkYTJ6T3NROFh5c0E5SHRZZDFO?=
+ =?utf-8?B?Zkp5RWJVS3o3L3NQSTJLVGRoQk1ES0dRSjJ0Y0p6YnZnZ1RzUHp5V012dHF6?=
+ =?utf-8?B?WndPTFR3YjBYd1JhSnVMK1IwczFVbHdERnNtMXpnQnpna3YwRXFmcTFNNytn?=
+ =?utf-8?B?ME4yVXdsakU4RWFwUU9NaDJ3VnlOMGRZZnozcllnVnpQdnR0Y2N3YTZNSEpi?=
+ =?utf-8?B?UTRyWHZzZmg3QVZ2TTZBY0h0UWZGMml3c09MZ1dNUUE3YVVMOFJnY2xST1p5?=
+ =?utf-8?B?SnZxbUFpV01ZYzRuSENwUFZHeGNNUUYwUmtVbVNIK3YvNGx6NGV6U1BBcVhm?=
+ =?utf-8?Q?RqyJBuu8IcrChPtPQydBugrVX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12e4ac1e-11d0-47b4-4a1e-08de1d7b6b59
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 21:28:25.3776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zVKhP8JkNeQzhGayTMG1eJHdHiGXlXv8uQzqDICR6XjKLlLpapaeJZ3zaZL+Kjip/E2nHKnrdCP6GKNiC771pA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7775
 
-On 11/4/25 14:44, Kuniyuki Iwashima wrote:
-> On Tue, Nov 4, 2025 at 2:13 PM Florian Fainelli
-> <florian.fainelli@broadcom.com> wrote:
+On 11/5/25 11:24 PM, Alexandre Courbot wrote:
+> On Thu Nov 6, 2025 at 10:27 AM JST, John Hubbard wrote:
+>> NVIDIA GPUs are moving away from using NV_PMC_BOOT_0 to contain
+>> architecture and revision details, and will instead use NV_PMC_BOOT_42
+>> in the future. NV_PMC_BOOT_0 will contain a specific set of values
+>> that will mean "go read NV_PMC_BOOT_42 instead".
 >>
->> Development devices on a lab network might be subject to kernel panics
->> and if they have pause frame generation enabled, once the kernel panics,
->> the Ethernet controller stops being serviced. This can create a flood of
->> pause frames that certain switches are unable to handle resulting a
->> completle paralysis of the network because they broadcast to other
->> stations on that same network segment.
+>> Change the selection logic in Nova so that it will claim Turing and
+>> later GPUs. This will work for the foreseeable future, without any
+>> further code changes here, because all NVIDIA GPUs are considered, from
+>> the oldest supported on Linux (NV04), through the future GPUs.
 >>
->> To accomodate for such situation introduce a
->> /sys/class/net/<device>/disable_pause_on_panic knob which will disable
->> Ethernet pause frame generation upon kernel panic.
+>> Add some comment documentation to explain, chronologically, how boot0
+>> and boot42 change with the GPU eras, and how that affects the selection
+>> logic.
 >>
->> Note that device driver wishing to make use of that feature need to
->> implement ethtool_ops::set_pauseparam_panic to specifically deal with
->> that atomic context.
->>
->> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+>> Cc: Alexandre Courbot <acourbot@nvidia.com>
+>> Cc: Danilo Krummrich <dakr@kernel.org>
+>> Cc: Timur Tabi <ttabi@nvidia.com>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 >> ---
->>   Documentation/ABI/testing/sysfs-class-net | 16 +++++
->>   include/linux/ethtool.h                   |  3 +
->>   include/linux/netdevice.h                 |  1 +
->>   net/core/net-sysfs.c                      | 34 ++++++++++
->>   net/ethernet/Makefile                     |  3 +-
->>   net/ethernet/pause_panic.c                | 81 +++++++++++++++++++++++
->>   6 files changed, 137 insertions(+), 1 deletion(-)
->>   create mode 100644 net/ethernet/pause_panic.c
+>>  drivers/gpu/nova-core/gpu.rs  | 38 ++++++++++++++++++++++++++++++++++-
+>>  drivers/gpu/nova-core/regs.rs | 33 ++++++++++++++++++++++++++++++
+>>  2 files changed, 70 insertions(+), 1 deletion(-)
 >>
->> diff --git a/Documentation/ABI/testing/sysfs-class-net b/Documentation/ABI/testing/sysfs-class-net
->> index ebf21beba846..f762ce439203 100644
->> --- a/Documentation/ABI/testing/sysfs-class-net
->> +++ b/Documentation/ABI/testing/sysfs-class-net
->> @@ -352,3 +352,19 @@ Description:
->>                  0  threaded mode disabled for this dev
->>                  1  threaded mode enabled for this dev
->>                  == ==================================
+>> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+>> index 27b8926977da..8d2bad0e27d1 100644
+>> --- a/drivers/gpu/nova-core/gpu.rs
+>> +++ b/drivers/gpu/nova-core/gpu.rs
+>> @@ -154,6 +154,17 @@ fn try_from(boot0: regs::NV_PMC_BOOT_0) -> Result<Self> {
+>>      }
+>>  }
+>>  
+>> +impl TryFrom<regs::NV_PMC_BOOT_42> for Spec {
+>> +    type Error = Error;
 >> +
->> +What:          /sys/class/net/<iface>/disable_pause_on_panic
->> +Date:          Nov 2025
->> +KernelVersion: 6.20
->> +Contact:       netdev@vger.kernel.org
->> +Description:
->> +               Boolean value to control whether to disable pause frame
->> +               generation on panic. This is helpful in environments where
->> +               the link partner may incorrect respond to pause frames (e.g.:
->> +               improperly configured Ethernet switches)
->> +
->> +               Possible values:
->> +               == ==================================
->> +               0  threaded mode disabled for this dev
->> +               1  threaded mode enabled for this dev
-> 
-> nit: These lines need to be updated.
-> 
-> 
->> +               == ==================================
->> diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
->> index c2d8b4ec62eb..e014d0f2a5ac 100644
->> --- a/include/linux/ethtool.h
->> +++ b/include/linux/ethtool.h
->> @@ -956,6 +956,8 @@ struct kernel_ethtool_ts_info {
->>    * @get_pauseparam: Report pause parameters
->>    * @set_pauseparam: Set pause parameters.  Returns a negative error code
->>    *     or zero.
->> + * @set_pauseparam_panic: Set pause parameters while in a panic context. This
->> + *     call is not allowed to sleep. Returns a negative error code or zero.
->>    * @self_test: Run specified self-tests
->>    * @get_strings: Return a set of strings that describe the requested objects
->>    * @set_phys_id: Identify the physical devices, e.g. by flashing an LED
->> @@ -1170,6 +1172,7 @@ struct ethtool_ops {
->>                                    struct ethtool_pauseparam*);
->>          int     (*set_pauseparam)(struct net_device *,
->>                                    struct ethtool_pauseparam*);
->> +       void    (*set_pauseparam_panic)(struct net_device *);
->>          void    (*self_test)(struct net_device *, struct ethtool_test *, u64 *);
->>          void    (*get_strings)(struct net_device *, u32 stringset, u8 *);
->>          int     (*set_phys_id)(struct net_device *, enum ethtool_phys_id_state);
->> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
->> index e808071dbb7d..2d4b07693745 100644
->> --- a/include/linux/netdevice.h
->> +++ b/include/linux/netdevice.h
->> @@ -2441,6 +2441,7 @@ struct net_device {
->>          bool                    proto_down;
->>          bool                    irq_affinity_auto;
->>          bool                    rx_cpu_rmap_auto;
->> +       bool                    disable_pause_on_panic;
->>
->>          /* priv_flags_slow, ungrouped to save space */
->>          unsigned long           see_all_hwtstamp_requests:1;
->> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
->> index ca878525ad7c..c01dc3e200d8 100644
->> --- a/net/core/net-sysfs.c
->> +++ b/net/core/net-sysfs.c
->> @@ -770,6 +770,39 @@ static ssize_t threaded_store(struct device *dev,
->>   }
->>   static DEVICE_ATTR_RW(threaded);
->>
->> +static ssize_t disable_pause_on_panic_show(struct device *dev,
->> +                                           struct device_attribute *attr,
->> +                                           char *buf)
->> +{
->> +       struct net_device *ndev = to_net_dev(dev);
->> +       ssize_t ret = -EINVAL;
->> +
->> +       rcu_read_lock();
->> +       if (dev_isalive(ndev))
->> +               ret = sysfs_emit(buf, fmt_dec, READ_ONCE(ndev->disable_pause_on_panic));
->> +       rcu_read_unlock();
->> +
->> +       return ret;
+>> +    fn try_from(boot42: regs::NV_PMC_BOOT_42) -> Result<Self> {
+>> +        Ok(Self {
+>> +            chipset: boot42.chipset()?,
+>> +            revision: boot42.revision(),
+>> +        })
+>> +    }
 >> +}
 >> +
->> +static int modify_disable_pause_on_panic(struct net_device *dev, unsigned long val)
->> +{
->> +       if (val != 0 && val != 1)
->> +               return -EINVAL;
-> 
-> Should we validate !ops->set_pauseparam_panic here
-> rather than disable_pause_on_device() ?
+>>  impl fmt::Display for Revision {
+>>      fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>>          write!(f, "{:x}.{:x}", self.major, self.minor)
+>> @@ -169,9 +180,34 @@ pub(crate) struct Spec {
+>>  
+>>  impl Spec {
+>>      fn new(bar: &Bar0) -> Result<Spec> {
+>> +        // Some brief notes about boot0 and boot42, in chronological order:
+>> +        //
+>> +        // NV04 through Volta:
+>> +        //
+>> +        //    Not supported by Nova. boot0 is necessary and sufficient to identify these GPUs.
+>> +        //    boot42 may not even exist on some of these GPUs.
+>> +        //
+>> +        // Turing through Blackwell:
+>> +        //
+>> +        //     Supported by both Nouveau and Nova. boot0 is still necessary and sufficient to
+>> +        //     identify these GPUs. boot42 exists on these GPUs but we don't need to use it.
+>> +        //
+>> +        // Rubin:
+>> +        //
+>> +        //     Only supported by Nova. Need to use boot42 to fully identify these GPUs.
 
-Yes we should certainly do it here to give an early warning to users 
-whether this will work or not. To keep things simple however, we would 
-still need to check set_pauseparam_panic in the panic handler, otherwise 
-we would have to construct a list of network devices that do support the 
-operation and use that.
+Ohh, I scrambled the comment when I added Rubin to the discussion. Actually,
+the first sentence is correct, but the second is dead wrong. :)
+
+Rubin will still key off of boot0.
+
+I'll fix this up.
+
+>> +        //
+>> +        // "Future" (after Rubin) GPUs:
+>> +        //
+>> +        //    Only supported by Nova. NV_PMC_BOOT's ARCH_0 (bits 28:24) will be zeroed out, and
+>> +        //    ARCH_1 (bit 8:8) will be set to 1, which will mean, "refer to NV_PMC_BOOT_42".
+> 
+> From the code it looks like Rubin and "Future" GPUs are handled exactly
+> the same - do we need two paragraphs to describe them, or can we just
+> have one for "Rubing and future GPUs"?
+
+They are not. The code is correct but the comment is wrong. 
 
 > 
-> ops = dev->ethtool_ops;
-> if (!ops || !ops->set_pauseparam_panic)
->      return -EOPNOTSUPP;
+>> +
+>>          let boot0 = regs::NV_PMC_BOOT_0::read(bar);
+>>  
+>> -        Spec::try_from(boot0)
+>> +        if boot0.use_boot42_instead() {
+>> +            Spec::try_from(regs::NV_PMC_BOOT_42::read(bar))
+>> +        } else {
+>> +            Spec::try_from(boot0)
+>> +        }
+>>      }
+>>  }
+>>  
+>> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
+>> index 207b865335af..8b5ff3858210 100644
+>> --- a/drivers/gpu/nova-core/regs.rs
+>> +++ b/drivers/gpu/nova-core/regs.rs
+>> @@ -25,6 +25,13 @@
+>>  });
+>>  
+>>  impl NV_PMC_BOOT_0 {
+>> +    pub(crate) fn use_boot42_instead(self) -> bool {
+>> +        // "Future" GPUs (some time after Rubin) will set `architecture_0`
+>> +        // to 0, and `architecture_1` to 1, and put the architecture details in
+>> +        // boot42 instead.
 > 
-> 
->> +
->> +       WRITE_ONCE(dev->disable_pause_on_panic, val);
->> +
->> +       return 0;
->> +}
->> +
->> +static ssize_t disable_pause_on_panic_store(struct device *dev,
->> +                                            struct device_attribute *attr,
->> +                                            const char *buf, size_t len)
->> +{
->> +       return netdev_store(dev, attr, buf, len, modify_disable_pause_on_panic);
->> +}
->> +static DEVICE_ATTR_RW(disable_pause_on_panic);
->> +
->>   static struct attribute *net_class_attrs[] __ro_after_init = {
->>          &dev_attr_netdev_group.attr,
->>          &dev_attr_type.attr,
->> @@ -800,6 +833,7 @@ static struct attribute *net_class_attrs[] __ro_after_init = {
->>          &dev_attr_carrier_up_count.attr,
->>          &dev_attr_carrier_down_count.attr,
->>          &dev_attr_threaded.attr,
->> +       &dev_attr_disable_pause_on_panic.attr,
->>          NULL,
->>   };
->>   ATTRIBUTE_GROUPS(net_class);
->> diff --git a/net/ethernet/Makefile b/net/ethernet/Makefile
->> index e03eff94e0db..9b1f3ff8695a 100644
->> --- a/net/ethernet/Makefile
->> +++ b/net/ethernet/Makefile
->> @@ -3,4 +3,5 @@
->>   # Makefile for the Linux Ethernet layer.
->>   #
->>
->> -obj-y                                  += eth.o
->> +obj-y                                  += eth.o \
->> +                                          pause_panic.o
->> diff --git a/net/ethernet/pause_panic.c b/net/ethernet/pause_panic.c
->> new file mode 100644
->> index 000000000000..8ef61eb768a0
->> --- /dev/null
->> +++ b/net/ethernet/pause_panic.c
->> @@ -0,0 +1,81 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Ethernet pause disable on panic handler
->> + *
->> + * This module provides per-device control via sysfs to disable Ethernet flow
->> + * control (pause frames) on individual Ethernet devices when the kernel panics.
->> + * Each device can be configured via /sys/class/net/<device>/disable_pause_on_panic.
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/init.h>
->> +#include <linux/panic_notifier.h>
->> +#include <linux/netdevice.h>
->> +#include <linux/ethtool.h>
->> +#include <linux/notifier.h>
->> +#include <linux/if_ether.h>
->> +#include <net/net_namespace.h>
->> +
->> +/*
->> + * Disable pause/flow control on a single Ethernet device.
->> + */
->> +static void disable_pause_on_device(struct net_device *dev)
->> +{
->> +       const struct ethtool_ops *ops;
->> +
->> +       /* Only proceed if this device has the flag enabled */
->> +       if (!READ_ONCE(dev->disable_pause_on_panic))
->> +               return;
->> +
->> +       ops = dev->ethtool_ops;
->> +       if (!ops || !ops->set_pauseparam_panic)
->> +               return;
->> +
->> +       /*
->> +        * In panic context, we're in atomic context and cannot sleep.
->> +        */
->> +       ops->set_pauseparam_panic(dev);
->> +}
->> +
->> +/*
->> + * Panic notifier to disable pause frames on all Ethernet devices.
->> + * Called in atomic context during kernel panic.
->> + */
->> +static int eth_pause_panic_handler(struct notifier_block *this,
->> +                                       unsigned long event, void *ptr)
->> +{
->> +       struct net_device *dev;
->> +
->> +       /*
->> +        * Iterate over all network devices in the init namespace.
->> +        * In panic context, we cannot acquire locks that might sleep,
->> +        * so we use RCU iteration.
->> +        * Each device will check its own disable_pause_on_panic flag.
->> +        */
->> +       rcu_read_lock();
->> +       for_each_netdev_rcu(&init_net, dev) {
->> +               /* Reference count might not be available in panic */
->> +               if (!dev)
->> +                       continue;
-> 
-> This seems unnecessary unless while() + next_net_device_rcu()
-> is used instead of for_each_netdev_rcu().
-> 
-> Or are we assuming that something could overwrite NULL to
-> dev->dev_list.next and panic ?
+> If this is "some time after Rubin", how do we infer that we must use
+> boot42 for Rubin, as the previous comment suggests?
 
-In panic context not much can happen by this point, so I presume we can 
-just walk the list of network devices in the init space with no specific 
-locking or protection of any sort.
+Right, we will actually use boot0 for Rubin. Thanks for catching
+the inconsistency! 
 
-Thanks for your review!
+thanks,
 -- 
-Florian
+John Hubbard
+
 
