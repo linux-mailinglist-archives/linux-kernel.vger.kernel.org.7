@@ -1,292 +1,180 @@
-Return-Path: <linux-kernel+bounces-888743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-888747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73F4C3BD09
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:41:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A7FC3BCF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 15:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC1342580F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2DC1888735
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 14:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48D2340279;
-	Thu,  6 Nov 2025 14:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B80633FE33;
+	Thu,  6 Nov 2025 14:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wU7eIE/a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g92+yCEe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wU7eIE/a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g92+yCEe"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="COi4CY7i"
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7320D340A4F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Nov 2025 14:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E1033EAEC;
+	Thu,  6 Nov 2025 14:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439621; cv=none; b=bIL5OGZJXsMxSR7D6X3Gp0/YsUlzMgEAqg9c91uuqLKve96Yjqeej9c12+kY4TkeUr0FtBIN0mtleBzU43h8Nep4y4k4tB0FJYeMgRm5TsCEaa16KhBkirl3hYzFN4ILB/QsQ2GhJ5X9Bx0IbeYrfepYtawit1+n/Vxq0+krAs0=
+	t=1762439722; cv=none; b=rj4PB8nswD7UoFuxW7VkVboMgpnSM51PYLW+RPoHBduIIQ9+DZd4zNc6gCQ/3CpGLK4Wnsrs+X7Cpk7oYBB7GoyuQjcdP6zm3KjChkPZKMaw1K1/NMF+9TOejGX3L2xmjOM62urxMgWVr8g4EcXVKvVO4J2L2U20UDd040c6wCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439621; c=relaxed/simple;
-	bh=fQilJNipyxT/q8/9Js36Vv+5fgeLdeP3OrbGvCTyEBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kqVNAdArNzebLwo9yj5lnWJK3tZe31QRg3rjKeCJJ5CJWlj++X9h4kl+U1Xm3psvOJzAyByJuENmPTK5hQBl1o5+VBEkhxLZHUke74XtnI7fLvJCpu2ZjYzh8pqhGPuSJWa99fli6BuPKviBzqRdgUBQGcGbGIp8qV2F4ri+v8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wU7eIE/a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g92+yCEe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wU7eIE/a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g92+yCEe; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 95473211FA;
-	Thu,  6 Nov 2025 14:33:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762439616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCIJX8/iWnVUuvfe1rGXnP2363EkjNZoIa3wD0HTysg=;
-	b=wU7eIE/awNdBW9X0M+guihUvpSfwGtZp7sB+FdVnnc6rp86D7PwrERWDsdMq2nV0SfheuJ
-	vS9mKCpsNreHzq7FzmTwbH14vUAGfSDnBvcPCAX7tDFa0UUGNH1/VLnRzCEJm0PS+fzlpK
-	6OrczvGIPmpeAZtqXCDUTI8lMGChIyo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762439616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCIJX8/iWnVUuvfe1rGXnP2363EkjNZoIa3wD0HTysg=;
-	b=g92+yCEeQzeK7H/xtQ8RxX0mcYggPveuauVX45NrFsRXUHQWem3OBmr8NhE0PaChlFqnfi
-	DcxekCE+Z6GhaBDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="wU7eIE/a";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=g92+yCEe
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762439616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCIJX8/iWnVUuvfe1rGXnP2363EkjNZoIa3wD0HTysg=;
-	b=wU7eIE/awNdBW9X0M+guihUvpSfwGtZp7sB+FdVnnc6rp86D7PwrERWDsdMq2nV0SfheuJ
-	vS9mKCpsNreHzq7FzmTwbH14vUAGfSDnBvcPCAX7tDFa0UUGNH1/VLnRzCEJm0PS+fzlpK
-	6OrczvGIPmpeAZtqXCDUTI8lMGChIyo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762439616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCIJX8/iWnVUuvfe1rGXnP2363EkjNZoIa3wD0HTysg=;
-	b=g92+yCEeQzeK7H/xtQ8RxX0mcYggPveuauVX45NrFsRXUHQWem3OBmr8NhE0PaChlFqnfi
-	DcxekCE+Z6GhaBDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 65FC913A31;
-	Thu,  6 Nov 2025 14:33:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EcLNF8CxDGlwSgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 06 Nov 2025 14:33:36 +0000
-Message-ID: <3ba49b47-91a5-4a73-9dbd-b27f3956ae16@suse.cz>
-Date: Thu, 6 Nov 2025 15:33:36 +0100
+	s=arc-20240116; t=1762439722; c=relaxed/simple;
+	bh=57fdUNIOFbvLlfOS1BtY/XcfitZ1Mmlbw0An1LdVwsc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dmeAooON5o6f8/odICDW4TvOdiZIy50jVlqC25dv03p40rl6d7+e5nA3378bnAd6nzpnw7DWy3kdKm2Dvd5YG0WdNWH7H0UGBTsMuYZyOhvEQAJkhnOL74I7Zm31LI2gNtlaLhdN01WtlTVlX1CmmM/y9iF+1HGcsI0QkfJ915E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=COi4CY7i; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6ANcRb832900;
+	Thu, 6 Nov 2025 14:35:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	PPS06212021; bh=e07CdbUuMcpazLb8YhQmHovdkB5Hk9FWCovi1Xt6lxo=; b=
+	COi4CY7iNZ88TwEGpvl1OYck5Abb9osB0f86G0ENPdaFddufFNOWFDScpfeEdqJs
+	I3hx6jWuORtApbhN8IkgTKUPp2ZP+sCuSOz6OLwOSZRKguAresDS9KhBflroElXY
+	DeYLFsUsUE18bgRLCn82cW2p8qQwF/GwX47xkf4ubUWYEzSWJHHCqYFpTdDz+MOv
+	aSeATxjX3CN28jUOGS1OvhZuNZiULx5GGJUlRFAQQvA2XtGin6pePDMi+IBSY6PU
+	KTJIwf/8HjnstO5rYGZltUAHmbJdktqBFJx8e8DAUPxpMoW/zxz/ALAlXa4bWbMi
+	GLO41785bC57CaY1fX1Low==
+Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4a8b4csqb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 06 Nov 2025 14:35:09 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.61; Thu, 6 Nov 2025 06:35:09 -0800
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.61 via Frontend Transport; Thu, 6 Nov 2025 06:35:06 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <tiwai@suse.de>
+CC: <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <perex@perex.cz>,
+        <syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <tiwai@suse.com>
+Subject: Re: [PATCH] ALSA: usb-audio: Prevent urb from writing out of bounds
+Date: Thu, 6 Nov 2025 22:35:06 +0800
+Message-ID: <20251106143506.720545-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <87v7jnfkio.wl-tiwai@suse.de>
+References: <87v7jnfkio.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] mm: implement sticky, copy on fork VMA flags
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Andrei Vagin <avagin@gmail.com>
-References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
- <9c9e9fb6b767556594b2cef023db01d45d8f8463.1762422915.git.lorenzo.stoakes@oracle.com>
- <3d423848-2b55-4797-bdab-a9b42a373a45@suse.cz>
- <402256c9-8cfe-4943-9b3f-40f21c17292e@lucifer.local>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <402256c9-8cfe-4943-9b3f-40f21c17292e@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 95473211FA
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,redhat.com,oracle.com,kernel.org,google.com,suse.com,goodmis.org,efficios.com,suse.de,vger.kernel.org,kvack.org,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Qq1t3bSpdbfWqxKO3wd3QNfd3NF2t7iW
+X-Proofpoint-GUID: Qq1t3bSpdbfWqxKO3wd3QNfd3NF2t7iW
+X-Authority-Analysis: v=2.4 cv=M6hA6iws c=1 sm=1 tr=0 ts=690cb21e cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8
+ a=t7CeM3EgAAAA:8 a=v4leo8fFWbreTTM7-MYA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=poXaRoVlC6wW9_mwW8W4:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDExNSBTYWx0ZWRfX+W8jDiDDJPzN
+ ObOoa72l+ngVAUrrLIEab8d1WsSfYGTD816wxadtAX3UG0lN35J1G0sVYFDeQYrFPIcvYZzwaZ3
+ z1GVH7VLNMxJuWE6u7NqEy4aG3Qxlv+LVQk4j8kY3nI2narM9Qz31RnAzacUU/wIjOSFUjeKqFs
+ UMhqLZeKloo17zjzjs+UzEe7B7YvLURXSs3CbR+ihocwzxJmwqwHvsUcFwGJL+qxlCAEKXfw8xp
+ YxB87vk5AJBDWsW+3YlqlZ96ZCvxkzOhZ0+yevuXICGCKJjTOxzI1QMFqEW9HVRrEAdSykKObDm
+ PpbQYslrRDy1vhghCS20bfTxCBcx1OfHGKGe7a35ARr7g/I8hL45N0soVi6ooBHZ/LfklTZdB9H
+ OVRU0p8JDHaxrGwivck6NblGfowpgg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_03,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 spamscore=0 suspectscore=0 bulkscore=0 phishscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511060115
 
-On 11/6/25 15:18, Lorenzo Stoakes wrote:
-> On Thu, Nov 06, 2025 at 02:46:38PM +0100, Vlastimil Babka wrote:
->> On 11/6/25 11:46, Lorenzo Stoakes wrote:
->> > diff --git a/include/linux/mm.h b/include/linux/mm.h
->> > index 2ea65c646212..4d80eaf4ef3b 100644
->> > --- a/include/linux/mm.h
->> > +++ b/include/linux/mm.h
->> > @@ -527,6 +527,38 @@ extern unsigned int kobjsize(const void *objp);
->> >  #endif
->> >  #define VM_FLAGS_CLEAR	(ARCH_VM_PKEY_FLAGS | VM_ARCH_CLEAR)
->> >
->> > +/* Flags which should result in page tables being copied on fork. */
->> > +#define VM_COPY_ON_FORK VM_MAYBE_GUARD
->> > +
->> > +/*
->> > + * Flags which should be 'sticky' on merge - that is, flags which, when one VMA
->> > + * possesses it but the other does not, the merged VMA should nonetheless have
->> > + * applied to it:
->> > + *
->> > + * VM_COPY_ON_FORK - These flags indicates that a VMA maps a range that contains
->> > + *                   metadata which should be unconditionally propagated upon
->> > + *                   fork. When merging two VMAs, we encapsulate this range in
->> > + *                   the merged VMA, so the flag should be 'sticky' as a result.
->> > + */
->> > +#define VM_STICKY VM_COPY_ON_FORK
->>
->> TBH I don't see why there should be always an implication that copying on
->> fork implies stickiness in merging. Yeah, VM_MAYBE_GUARD is both, but in
->> general, is there any underlying property that makes this a rule?
+On Thu, 06 Nov 2025 12:49:51 +0100, Takashi Iwai wrote:
+> > > > The calculation rule for the actual data length written to the URB's
+> > > > transfer buffer differs from that used to allocate the URB's transfer
+> > > > buffer, and in this problem, the value used during allocation is smaller.
+> > > >
+> > > > This ultimately leads to write out-of-bounds errors when writing data to
+> > > > the transfer buffer.
+> > > >
+> > > > To prevent out-of-bounds writes to the transfer buffer, a check between
+> > > > the size of the bytes to be written and the size of the allocated bytes
+> > > > should be added before performing the write operation.
+> > > >
+> > > > When the written bytes are too large, -EPIPE is returned instead of
+> > > > -EAGAIN, because returning -EAGAIN might result in push back to ready
+> > > > list again.
+> > > >
+> > > > Based on the context of calculating the bytes to be written here, both
+> > > > copy_to_urb() and copy_to_urb_quirk() require a check for the size of
+> > > > the bytes to be written before execution.
+> > > >
+> > > > syzbot reported:
+> > > > BUG: KASAN: slab-out-of-bounds in copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
+> > > > Write of size 264 at addr ffff88801107b400 by task syz.0.17/5461
+> > > >
+> > > > Call Trace:
+> > > >  copy_to_urb+0x261/0x460 sound/usb/pcm.c:1487
+> > > >  prepare_playback_urb+0x953/0x13d0 sound/usb/pcm.c:1611
+> > > >
+> > > > Reported-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
+> > > > Closes: https://syzkaller.appspot.com/bug?extid=bfd77469c8966de076f7
+> > > > Tested-by: syzbot+bfd77469c8966de076f7@syzkaller.appspotmail.com
+> > > > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > >
+> > > I'm afraid that this doesn't address the root cause at all.
+> > > The description above sounds plausible, but not pointing to "why".
+> > >
+> > > The bytes is frames * stride, so the question is why a too large
+> > > frames is calculated.  I couldn't have time to check the details, but
+> > > there should be rather some weird condition / parameters to trigger
+> > > this, and we should check that at first.
+> > During debugging, I discovered that the value of ep->packsize[0] is 22,
+> > which causes the counts calculated by
+> > counts = snd_usb_endpoint_next_packet_size(ep, ctx, i, avail);
+> > to be 22, resulting in a frames value of 22 * 6 = 132;
+> > Meanwhile, the stride value is 2, which ultimately results in
+> > bytes = frames * stride = 132 * 2 = 264;
+> > @@ -1241,6 +1252,10 @@ static int data_ep_set_params(struct snd_usb_endpoint *ep)
+> > 	u->buffer_size = maxsize * u->packets;
+> > 	...
+> > 	u->urb->transfer_buffer =
+> >                 usb_alloc_coherent(chip->dev, u->buffer_size,
+> >                                    GFP_KERNEL, &u->urb->transfer_dma);
+> >
+> > Here, when calculating u->buffer_size = maxsize * u->packets;
+> > maxsize = 9, packets = 6, which results in only 54 bytes allocated to
+> > transfer_buffer;
 > 
-> Why do you copy on fork? It's because the page tables contain data that won't be
-> reconstructed on fault.
+> Hm, so the problem is rather the calculation of the buffer size.
+> The size sounds extremely small.  Which parameters (rates, formats,
+> etc) are used for achieving this?
+rates: 22050
+format: 2
+channels: 1
+/////////////////////////////
+stride: 2
+packets: 6
+data interval: 0
+frame_bits: 16
 > 
-> If that is the case, that applies to any VMA which is merged, and also - since
-> you can't be sure precisely which page tables contain the data we need to
-> propagate - on split too.
-> 
-> This is why copy on fork implies sticky IMO.
+> The calculation of u->buffer_size is a bit complex, as maxsize is
+> adjusted in many different ways.  Is it limited due to wMaxPacketSize
+> setup?
+Yes, it's because the value of ep->maxpacksize is 9 that the maxsize
+value is 9.
 
-Hmm I guess that makes some sense.
-> I can update the commit message to make this clear if this makes sense?
-
-It would help, thanks. Let's see if future will surprise us with some flag
-where this won't be true :)
-
->>
->> > +/*
->> > + * VMA flags we ignore for the purposes of merge, i.e. one VMA possessing one
->> > + * of these flags and the other not does not preclude a merge.
->> > + *
->> > + * VM_SOFTDIRTY - Should not prevent from VMA merging, if we match the flags but
->> > + *                dirty bit -- the caller should mark merged VMA as dirty. If
->> > + *                dirty bit won't be excluded from comparison, we increase
->> > + *                pressure on the memory system forcing the kernel to generate
->> > + *                new VMAs when old one could be extended instead.
-> 
-> Note that I'm literally just moving the comment from is_mergeable_vma():
-> 
-> -	 * VM_SOFTDIRTY should not prevent from VMA merging, if we
-> -	 * match the flags but dirty bit -- the caller should mark
-> -	 * merged VMA as dirty. If dirty bit won't be excluded from
-> -	 * comparison, we increase pressure on the memory system forcing
-> -	 * the kernel to generate new VMAs when old one could be
-> -	 * extended instead.
-> 
-> (OK I see you realised that below :P)
-> 
->>
->> So I wonder if VM_SOFTDIRTY should be actually also sticky and not just
->> VM_IGNORE_MERGE. The way I understand the flag suggests it should.
->> Right now AFAICS its rather undefined if the result of vma merge has the
->> flag - depending on which of the two VMA's stays and which is removed by the
->> merge. "the caller should mark merged VMA as dirty" in the comment you're
->> moving here seems not really happening or I'm missing it. __mmap_complete()
-> 
-> No it's not happening, but I can't be blamed for existing incorrect comments :)
-> 
->> and do_brk_flags() do it, so any new areas are marked, but on pure merge of
->> two vma's due to e.g. mprotect() this is really nondetermintic? AFAICT the
->> sticky flag behavior would work perfectly for VM_SOFTDIRTY.
-> 
-> Maybe we inavertantly changed this somehow or maybe it was just wrong, but we're
-> not doing this on merge in general afaict.
-
-Yeah wouldn't surprised me if we subtly changed it during some refactoring
-and it's not causing such obvious issues to be noticed easily.
-
-> I think you're right that we should make this sticky, but I'd rather deal with
-> that in a follow-up series/patch as this is out of scope here.
-> 
-> Equally so I'd rather fix the comment in a follow up too for the same reason.
-
-Sure it's just something I noticed and seems like a good fit for the new
-concept.
-
+BR,
+Lizhi
 
