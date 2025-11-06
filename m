@@ -1,92 +1,161 @@
-Return-Path: <linux-kernel+bounces-889117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6825C3CC32
-	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:15:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404EBC3CC3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 06 Nov 2025 18:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 97A2F4EDEFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:10:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BB9C4F5703
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Nov 2025 17:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9834134D928;
-	Thu,  6 Nov 2025 17:10:19 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C51B34DB50;
+	Thu,  6 Nov 2025 17:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkBZ2i+/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3C3242D84;
-	Thu,  6 Nov 2025 17:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3D133A01E;
+	Thu,  6 Nov 2025 17:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762449019; cv=none; b=KpzoCrEut02460JsGDRWUDqxQ91q54616P0e0NwYzGqNi1V7UdKpbrOvN5jbLrtOGiGZ6S59HQfAxxc4kDW11LOCR1DfS+xhTjQLcsqBuLmPSqEeSeiQ3wNemMi2eB6CaFWGkmy2AW0UQo9ekYdI8XzgfipkjnzDr7RU7lbo8oQ=
+	t=1762449046; cv=none; b=Q/S+xYoJ/AvXP5m6Z6BehdcWdmgzr03cpG/VckHnZxjlM6hHFOSR71mN3UL4lbNrJvbngCBu64INZnEPIPCnwppBsVCv4d6EMIV3rqFDe6GkMTm4ihsiF6/uQO3Hn9i+VxyGcaEtXSiED63a8YbIHTon2IxiJWIZRiME1nEjLuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762449019; c=relaxed/simple;
-	bh=5ucxmab8Lnmq1UWSzk6BYjvOan85ga1kRoY9hCZvgTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S8vtTtm/7eZb5WgEfcT3/ZFmRHMFCm8gqUZ/isi0SK/RWuIMGEnxZqRTDur1H1UbslpfCDWuU8zj0ZYpRU8uY4fihsZU3swWk4vtOWKx7gZFVXdorldq4iV0YDo7pPnIMB1loKiBTuhmz21OvBBgZao93qj4qnIv5sud3CVLG2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 6BD19535C5;
-	Thu,  6 Nov 2025 17:10:08 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 76FB020029;
-	Thu,  6 Nov 2025 17:10:06 +0000 (UTC)
-Date: Thu, 6 Nov 2025 12:10:05 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
- Siewior <bigeasy@linutronix.de>, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
- __DO_TRACE_CALL() with SRCU-fast
-Message-ID: <20251106121005.76087677@gandalf.local.home>
-In-Reply-To: <522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
-References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
-	<20251105203216.2701005-10-paulmck@kernel.org>
-	<20251106110230.08e877ff@batman.local.home>
-	<522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762449046; c=relaxed/simple;
+	bh=5RJd2yoe7u43AeupxdyVCQ4K/Vt3gB+8I1S4CehziNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6dFYXAtman14XrNWBl41peA+qjWgOCr41GwU798ddWHkztYXN/KJOg2KOpwbbx4MoZNgjPD3aWZa8QoKvBjTRs/+aCu+2DNLXsuPUGiRx8YxLg2DRH7GPcoNxTNjGBEbcgGp1Pe6jdEOgGLdsXpoSomFBOhitqJdkpmJOCi5NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkBZ2i+/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A649C4CEF7;
+	Thu,  6 Nov 2025 17:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762449045;
+	bh=5RJd2yoe7u43AeupxdyVCQ4K/Vt3gB+8I1S4CehziNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lkBZ2i+/mwOOuX9GhGdECytYLR4ZoDkJl849J2hQtO1L+/oDFNXYCeNt174ancQT3
+	 xbCnN9sPThUf3r7wQHPF8iYrx9QE8ByQfGeeXHSpXSc7X1ozl146yDIHzIyhN477Zl
+	 24roSdsWpljUoU1b1XPiOx3tQ9nNpNF0qwmsuiok+l3p312VCp83G1KCMDxzYj3j4R
+	 V6CN2ulyVc4L6VZFinUoMZZKTE8+9ekl/LsZXnN1C4wR4qq87Iee247p9DqgX4zpQx
+	 Mdo/2h36rXZ5gLXNVAuKxGQMnTO8WdbmjhK4ji+z1/V5GYGE6HlP6rgt50139EhDg6
+	 7lEF3XunOSRJA==
+Date: Thu, 6 Nov 2025 17:10:38 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Junhui Liu <junhui.liu@pigmoral.tech>, tglx@linutronix.de
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org,
+	Inochi Amaoto <inochiama@outlook.com>, sophgo@lists.linux.dev,
+	linux-serial@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 00/13] riscv: Add initial support for Anlogic DR1V90
+Message-ID: <20251106-tinfoil-primer-30ff181203f4@spud>
+References: <20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech>
+ <20251028-busybody-disallow-e068b221db6c@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 76FB020029
-X-Stat-Signature: g9ewkjshygs6urjbmnzwhwe413z4pszx
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19lvO1dk902l+gpXe7PJIH/wgh8D4MBBBI=
-X-HE-Tag: 1762449006-740227
-X-HE-Meta: U2FsdGVkX195THmePf1i2pCYkYQF/PnTwlzGgMWbfGrHan8pKMbnvuQeaBh6mU2eSLIL0ZV1fgCFYt9ainwuzOgvvvpplR9QX85CjoZY609kzMbskj3jq7OeFdzSlOwHUSONfwHe2caR8qAyEIQrc46kskBfu2RKN8R/bxIGIL+dicleTaPuU/Cp/bAvjCEjVRfoqZkY25NVT7aiRX+Bwo+nHsx3Z56IGLptAf40JYyenFgtVSbqYXpyYMjzi1UQ56Jc9PBvJHiSBYR4I9ADSFtKI+pS5npU9hWNXL77gYuvOMMt9Ie2BYLVTNzKDHyH6qTqIdqxA+ws6MXguvZ1w627PipE42cI
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RxsOAUIaAk6EjGuV"
+Content-Disposition: inline
+In-Reply-To: <20251028-busybody-disallow-e068b221db6c@spud>
 
-On Thu, 6 Nov 2025 09:01:30 -0800
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-> On Thu, Nov 06, 2025 at 11:02:30AM -0500, Steven Rostedt wrote:
-> > On Wed,  5 Nov 2025 12:32:10 -0800
-> > "Paul E. McKenney" <paulmck@kernel.org> wrote:  
-> > > 
-> > > The current commit can be thought of as an approximate revert of that
-> > > commit, with some compensating additions of preemption disabling pointed
-> > > out by Steven Rostedt (thank you, Steven!).  This preemption disabling  
-> >   
-> > > uses guard(preempt_notrace)(), and while in the area a couple of other
-> > > use cases were also converted to guards.  
-> > 
-> > Actually, please don't do any conversions. That code is unrelated to
-> > this work and I may be touching it. I don't need unneeded conflicts.  
-> 
-> OK, thank you for letting me know.  Should I set up for the merge window
-> after this coming one (of course applying your feedback below), or will
-> you be making this safe for PREEMPT_RT as part of your work?
+--RxsOAUIaAk6EjGuV
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just don't convert the open coded preempt_disable() to a guard(). That's
-the code I plan on touching. The rest is fine (with my suggestions ;-)
+Thomas,
 
--- Steve
+On Tue, Oct 28, 2025 at 07:39:07PM +0000, Conor Dooley wrote:
+> Thomas, Junhui,
+>=20
+> On Tue, Oct 21, 2025 at 05:41:35PM +0800, Junhui Liu wrote:
+> > This introduces initial support for the Anlogic DR1V90 SoC [1] and the
+> > Milianke MLKPAI-FS01 [2] board.
+> >=20
+> > The DR1V90 is a RISC-V based FPSoC from Anlogic, featuring a Nuclei
+> > UX900 [3] core as its processing system (PS) and 94,464 LUTs in the
+> > programmable logic (PL) part. The Milianke MLKPAI-FS01 board is one of
+> > the first platforms based on this SoC, with UART1 routed to a Type-C
+> > interface for console access.
+> >=20
+> > Tested on the Milianke MLKPAI-FS01 board with both the vendor's OpenSBI
+> > and the not-yet-upstreamed mainline OpenSBI [4], as well as the vendor=
+=E2=80=99s
+> > U-Boot. Because the vendor=E2=80=99s OpenSBI is loaded at 0x1f300000, w=
+e have
+> > to additionally reserve the DRAM region 0x1fe00000=E2=80=930x1fffffff t=
+o prevent
+> > overlap if using vendor's OpenSBI.
+> >=20
+> > Link: https://www.anlogic.com/product/fpga/saldragon/dr1 [1]
+> > Link: https://www.milianke.com/product-item-104.html [2]
+> > Link: https://nucleisys.com/product/900.php [3]
+> > Link: https://github.com/pigmoral/opensbi/tree/dr1v90 [4]
+> > ---
+> > Changes in v3:
+> > - Update DT binding to use ACLINT instead of CLINT
+> > - Drop MAINTAINERS patch
+> > - Rebase on v6.18-rc1
+> > - Link to v2: https://lore.kernel.org/r/20250922-dr1v90-basic-dt-v2-0-6=
+4d28500cb37@pigmoral.tech
+> >=20
+> > Changes in v2:
+> > - Add MAINTAINERS entry for the DR1V90 platform
+> > - Remove the riscv,isa property of cpu and reorder propertyies
+> > - Fix clint base address in the dtsi
+> > - Change the memory node to cover the full 512MB RAM in board dts
+> > - Link to v1: https://lore.kernel.org/r/20250721-dr1v90-basic-dt-v1-0-5=
+740c5199c47@pigmoral.tech
+> >=20
+> > ---
+> > Junhui Liu (13):
+> >       dt-bindings: vendor-prefixes: Add Anlogic, Milianke and Nuclei
+> >       dt-bindings: riscv: Add Nuclei UX900 compatibles
+> >       dt-bindings: riscv: Add Anlogic DR1V90
+> >       dt-bindings: interrupt-controller: Add Anlogic DR1V90 PLIC
+> >       dt-bindings: interrupt-controller: Add Anlogic DR1V90 ACLINT MSWI
+> >       dt-bindings: interrupt-controller: Add Anlogic DR1V90 ACLINT SSWI
+> >       dt-bindings: timer: Add Anlogic DR1V90 ACLINT MTIMER
+> >       dt-bindings: serial: snps-dw-apb-uart: Add Anlogic DR1V90 uart
+> >       irqchip/aclint-sswi: Add Nuclei UX900 support
+>=20
+> I'm happy enough with this series to grab it, but while I don't mind
+> taking some trivial binding changes with it, I don't want to take an
+> irqchip driver patch. Would you be able to apply the irqchip stuff
+> Thomas?
+
+
+Could you pick up 4-6 and 9 here please?
+
+--RxsOAUIaAk6EjGuV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQzWjgAKCRB4tDGHoIJi
+0pjLAP4i3LKjrcugZ1SHa8IN8d1ahJjzKig/a42m3C3BLhx/6AD8CjGNPrqdnGjb
+X9OAq+b6bdQXfUDl2Y1epPRbb3x1AwE=
+=g1P8
+-----END PGP SIGNATURE-----
+
+--RxsOAUIaAk6EjGuV--
 
