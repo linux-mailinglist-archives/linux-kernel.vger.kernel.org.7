@@ -1,164 +1,215 @@
-Return-Path: <linux-kernel+bounces-890532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CCAC40457
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:15:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D362BC40460
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:15:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C9A24E8A14
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:15:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEE44250C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99CB2F1FD8;
-	Fri,  7 Nov 2025 14:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C489B328B6D;
+	Fri,  7 Nov 2025 14:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HxABlOEK"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sP83pP32"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011010.outbound.protection.outlook.com [40.93.194.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D418328637
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524911; cv=none; b=OjZULsqbPzMDk73F/MD73Wus/LWQ9irzv6WUzhrWXd/yySZe6JhHpWtW2l4Vvph42n8yY0spOsp7yIwlbOpYOX4eWTOOMpWlHMx9lB+qkF59zlkjyQ95xYcZKBT8zg1d0xaLPUbSh90A+7U7HLdlUU4Cow+diDJ2jZOSgekvQxA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524911; c=relaxed/simple;
-	bh=XHqib5P0luygOlwFQcX5ex0tga7jkw3zWlEHHEXkhCw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VDxLFP6nuxbAWr3fFXu3quxjNitXvRrawilraFL46ayN6y6MpFAYgyOOkjrkmaoTcHzn8tsBN1JbzaJtWxqmW19wZ5dJrN7sUIWZxLYYvrgXkvZKOP+RAPazMEGLzltx2tHZyw05UdG6waDEFJD1W2l6jvQPQCWO7sIySGF+SLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HxABlOEK; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so526887f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:15:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762524905; x=1763129705; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G3gFQ6/5N2I+HN14q/CvmXF68f+oweRzkemP/li43qI=;
-        b=HxABlOEKJZjAZSHKmEdgyOkBVpeeBq9S8DcZfmrW+ufakKnnlRB3SfJmcSQsTNU7oa
-         5v9YdoO1g4OSgXO7RmjCCVeFcjq0QDxNls7ECMJNuxRRYLtb4F5j8PR871Px/0oGa/44
-         Pl3ccu0ndnw+nUfa5wOQu42hm7kl888z9B9fETclg/pceSJFOfFf/NTGfmya8ZlIMbfu
-         9r3VvQoDxOI85/rtqLUf1ODxShuWOgfejPj3H1+Q8nfKMomhfep+ywFwLir+7HMBqlGQ
-         TWaPvtwP/8J8q/15WY7wUB/gCiWP8WyBfb3bibmUT7Tjym6AsLmK4bFvOyGigotK+Pvz
-         /8Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762524905; x=1763129705;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G3gFQ6/5N2I+HN14q/CvmXF68f+oweRzkemP/li43qI=;
-        b=ZESsZHchphRVNhvoDoGZWSZs9OVyP6wfGW28WU7rqccnw2JLbI3sz3X05JuigRPDzg
-         xbGdki5ZPcsxxV5LGIC/GDI54ecgMBq6Q20M15vsOLA8Y2PuNG6OOYW7brOXsAaXTz/L
-         P4hVQfMh78cxRhOG3nS6ZQvEE+CmAs6SRAD7SmER5n6C8G+Ij699eQ8W7Md1BwqR4mrN
-         y/By4tBS+4d0hXd8Wrst5AWZePwzPnOlU3sdGNEhvGQuxBe1/wm+LXVJ2AztMtVPAKtM
-         zP9oojgYGnFVjSE7tm5wwQN0BYRwj+rwX4XTAcBbPCqDz6b0U6aACOmVk1loPFj5SRkh
-         vBaw==
-X-Gm-Message-State: AOJu0Yye6Zfw5PB6+ffQPGb/5AqUYfTscICzfJvAekNflfysI+nbuXJn
-	GA630GKlwbVdtUMLhzj0PBfidNKhVpzNPGwPb6u2djA96Zg+ERys9laTCB4nLCoUs93+5EqxAt/
-	UwpPc
-X-Gm-Gg: ASbGncuJvugqWwWHPTXLWG6Qxir1eozR7jJqN5KltbAhv82XQIijSY/KTBszLTKIKPa
-	k8+0RSdm2X7lqf9uJfi0Y50b9ejdqi4ZlvEivGjiccvXdEjrczbQY//60NdbpX8XIgNdZPZ3zSf
-	YUW7uZti0vbjOJ8EHw5IUq7rkr4I8S8HT+Som9qg8lSP0idmcR9uwJG5QV/I5POPcgIOxx4MCPy
-	u38AeUWHcs7ndF79wDit53iwj9KTCEs5WvijStmUqChTj5MBlG1eehYG/FsW4TuE8JZ3FX4vLs+
-	Pb7suo+abiDUP2ct/4qLTdz6VKkvEvJTAkJy26XWNt1tRrxWcUaHTlkEaHuDx0k/J73L+e551Tf
-	24U5dm2xI+sUWXLyztnG/RNpg9DHNItFbgagtLmEQYsUgNf1QPYNmTxmTtKwh7rsNzMBeAlWtCZ
-	NkI0c1x9WoiXBp2RbASLQ5dGcy
-X-Google-Smtp-Source: AGHT+IFfPXb8HgIu4Qd7GLXW/DH6761f/EmuF1ghCqH/M0Tj6NvO7VdNax1IVyh6UEpfUQabKmLlew==
-X-Received: by 2002:a05:6000:2906:b0:426:d82f:889e with SMTP id ffacd0b85a97d-42ae5880c72mr2981260f8f.14.1762524905242;
-        Fri, 07 Nov 2025 06:15:05 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac677abeasm5493343f8f.33.2025.11.07.06.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 06:15:04 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Subject: [PATCH] scsi: message: fusion: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 15:14:58 +0100
-Message-ID: <20251107141458.225119-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E996F2EC08D;
+	Fri,  7 Nov 2025 14:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762524915; cv=fail; b=J6jLMtzjSfmoormHKVkC6QhpiUpcjOiTF+mpgHXmuKbItotw25j0VUhif6/u3g4syBcGYQ90PwII8xKhTxjl++ih8vxlZOSjb+fF6GsmyuVcg6r7l8fPYqi8WlJdv4GcXTWpFH7DLWPv7Tuai7dW8AvVkBh2qp5AOS+sZ8KNxMo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762524915; c=relaxed/simple;
+	bh=K51Rl/yXSPcDOVe2PijEejZUdAtXxR6kdMUgm5qiC8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kW53jReWgBy3ek4lOCuzm7t2e9Umsh90PhCrgEQmT+7gg/u+REMr0vrX+miuQ/yNOpw9ca/hkwx2ybrxxpvoIHxXJfTX2WydcbyjqR3o+qmktICwFU2B5Nu7QmerDJIC9yZPVEhFqd+gF5iXX1ER2S8O3/AZ7+Io1N+BL7VO+8k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sP83pP32; arc=fail smtp.client-ip=40.93.194.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rvamxqjFfuCj/s7VN4x3iTsPuaHC5uJI0EO19tE0VWMhnYPQ4o5wmG6M7SyzTijSGqvy4nu8StYpTqRkR8Z1iZHf7SgXwORv/i5iGkcZ1A+Dqdm492wlUClJk2JL7KwcwWz/0XL4WAwEzGt2wp+Gc8JcFGuHnV2j5puFuGc5HtyiHLMuG4kjW9AWs/vsY9FJ4nqfKSjLgNzmjM5wEwpmr7IN5DWV9nlC/GYDyJ/ISmOE8/ldRQyhT9+iBnkGABBiPfl+YJveL02WlcWhPcAI1Us59JYYhV1XfvVso/TJfgUbvn893NVDATOlvs/q0JGEX1F8O/77hR9GCNeLU+pslQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+MfeT+sv7eGT1ANFFiMdmHy9YfqCkb/m2nuKjAyF/+0=;
+ b=BGOEJ3hfIcOoX055qw1lubDy3a2XkJsUuMkxNX6/qNS0jT4DSCiY6DG4+zLA1afOAPelbsL3onCEFOLEkM3mAcDo4YcFnKdAWjHZ4OKasBa4FBFWZI7HfY2LJiTg2Ejmwl0umNAKY+Cg38dyK8sSRs+UH24sdVexkGPAE6oPk/6o7AD6LOXlsq8TmeU+0H/y3net4aeM6c3ZmyczLl7FBOVtltSFhG+yNORSZnUaAXtWBkdFYSpDtCVwpUkTHlQqQRblzBC2I8ouzXGqlviXpX4ZMgHGUcnEroC1RhoDWo6GG0IDuGGejsL9ezkpsN6ACDWBoyK159Mk+vixUlZfNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+MfeT+sv7eGT1ANFFiMdmHy9YfqCkb/m2nuKjAyF/+0=;
+ b=sP83pP32ifVDvopIdt9dp48vp1Rrc7lBTywKW12dC3ZCa5ygiWKB4SJ4uEtEp3LeDs049lcjH4HfjUt0vOikKLqUzYbkDtpESwrX09JJHnLcUUzfMbiUIWVqPMz7BJezEVX4fPbePgiqKjcoC3YxdS5Wxau8qW4FHZi6ITb79cpC4OXlNsoLXJXgy05yO6QHEGzCVpwAqGxnyB6DsiEuztCx+tVEz/EnaVWs++87a7o7iv7doQX1Jr6XDLAp+rTBoYTaNhxjg458d4F2DIKSuFhPn0YPShiQRPl4LyWFUOM7sLyhEYSewA3g8ZfrGkrFLTRbzIL/+nmBPHt56Y+G2A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by SA3PR12MB9108.namprd12.prod.outlook.com (2603:10b6:806:37d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
+ 2025 14:15:10 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Fri, 7 Nov 2025
+ 14:15:10 +0000
+Date: Fri, 7 Nov 2025 10:15:09 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v6 1/3] revocable: Add fops replacement
+Message-ID: <20251107141509.GK1732817@nvidia.com>
+References: <20251106152712.11850-1-tzungbi@kernel.org>
+ <20251106152712.11850-2-tzungbi@kernel.org>
+ <20251106154715.GB1732817@nvidia.com>
+ <aQ1-qj0ztQ29h-oc@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ1-qj0ztQ29h-oc@google.com>
+X-ClientProxiedBy: MN2PR06CA0017.namprd06.prod.outlook.com
+ (2603:10b6:208:23d::22) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|SA3PR12MB9108:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4ef0919-4a17-4289-3f18-08de1e080f91
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7dd1zz+XNPgtCrStXOHmdQR2CC8H1NyFhu8Ds0QA5/Dw4ADvDlGLYrkw2A0z?=
+ =?us-ascii?Q?OEBbbeqCHKhPM9ASOk+sLfiRJvtFdlShDgdZSlb5nDezWvEVBjLhFvL0v5of?=
+ =?us-ascii?Q?YjXWmNBrazhQLgketByL+jsGDicK3gpBxE0v+bmUUAQ10/0IwwFLOXQhF0kq?=
+ =?us-ascii?Q?p9CwbR0VtALol7ACqr+gFj5+qJiDI0uvzNTxo/zaA8AiJTR1IXAhooGHpYAX?=
+ =?us-ascii?Q?BlSPYubKlWwNym1Gy+D/IrCsMSwz109Et/cXVJZCIJ2mrNPBQQM8ZZ7rnXeE?=
+ =?us-ascii?Q?ZWn0WAIQBm6ile+etcBtk/T47sWDV/ykbhGOE8B8/EqW/jxXGIbyStrQqANE?=
+ =?us-ascii?Q?fZuRacXZ92ykmdpIGAPxWsaS7RXMxftTwmZGySI1HfdX2MUASHpRcHVuZqkx?=
+ =?us-ascii?Q?KBQ3dZaW6ZXZrHuOtAlU297uksxiR0nOwvhszpvyhvG6b6dekzOx6ON1J/RZ?=
+ =?us-ascii?Q?DRjNMk8iHw1DogT0r+VuBNqltnN1uZeGGFu68V+83+MVQpnH78wIdh9abMvo?=
+ =?us-ascii?Q?mWs6JZYb0IApSp+SF9vsR5wE5Y60gxW8MXbdgu+yYzXe3FfrK62QcQ2Nugoz?=
+ =?us-ascii?Q?SVyORCsoTFMUXbbBon2QZ8UIhcBxsnFaNdOnhx+XsB2z0DOfv/ZiBXIoDTcq?=
+ =?us-ascii?Q?yYggmKrib91+18gQCUtyvUL4xo9md5MqefpEYKF3+PHlT+5W17aylmu1f+6Z?=
+ =?us-ascii?Q?OjS2OINvVZfDvlS3A4HQSV7rShS2xyNvDwX6yREhdZYpKt5bPkNBoBrf9G3n?=
+ =?us-ascii?Q?2snOSsGhFtnMaP7wDGg7HbyXbI3gPO5KDvt7yfyeXG0a1qqY8jBsoK/MnQod?=
+ =?us-ascii?Q?AhgXed1UvQk43hO4020StGARpcr2AuZdFpU02T14EkDGRmEqRYK6v23Opkln?=
+ =?us-ascii?Q?fu1Q03m+lF4VAog2DYpZozNJI40cKLjYWPa+sqkar/9It5YZFqNATlqAXph4?=
+ =?us-ascii?Q?ZESSU+b9WXiZHFbm1TKV+tQ8jnKPJp1q7+sqAmLY5g061o/MmbmetrNK4t+3?=
+ =?us-ascii?Q?L11Yf1WllaN1Ca6YB+Whl2yYuCrPNgnxonnL8toJPP2P5zHeoILoMJdfdrU5?=
+ =?us-ascii?Q?a2dzObePqEkqXYOv83eYmYX+vdq1XuNvyNTqh8ZzFqF2yfAc0izegORRV5Ta?=
+ =?us-ascii?Q?T3xEdu9UmF9ntnQray0r2oU3hTloH0V+MIYw8QiIhrZHx3Y91SSyPBtv64Ct?=
+ =?us-ascii?Q?n82JyFcM7Cqk5KX8KNBs3zV1zY6gV+eujbV1WHk3MStYX2yQrXExJ09L+Khv?=
+ =?us-ascii?Q?iEW9aCdrTk4YyI9jEfa4btHkNG0J5mraBkNtvBL9J3ZR1j/7g6lIvgWz9Fpk?=
+ =?us-ascii?Q?bHahC1HUTP6gweV7HrX5UspZfDH+9wfArHO3QDxqUVZDuVoN09/fpU4XCFFv?=
+ =?us-ascii?Q?YMcRyn8j27E4kt0XrhnwlBBP8YaSGR04YJjBt9H4n8HbtVXlCONm598KsGqx?=
+ =?us-ascii?Q?4drkTYuTUNsInjDVRqfoTsneMyC2jJnq?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BMtTh8aFhWIN9+bVTMFJNMHenqGrikynu17UNGgyjc12iPO3L77031xII0jy?=
+ =?us-ascii?Q?TiqEcjbXWxy219m9a4hsaJtX8HHzVX+fhRFLDTihqjtFQG2Ez+9KJofUSl+L?=
+ =?us-ascii?Q?4reYR9/89exzfBdamBvWj39pDwos8imiUgCt12p5291oKdoGGSTw6y162BIP?=
+ =?us-ascii?Q?YKxHUaw1AxA7PjbU9fnXiQeH1fKNWXr55obtZlk0jK8fXwBcUqf95McicIFg?=
+ =?us-ascii?Q?yNFv8A7CTgRzirqu6tT1nok7y0FG3rVcXH7itZGoJ3k0MoVbZM000BmyjKcp?=
+ =?us-ascii?Q?1nALm6vZdhNDfAjoskpktch6E7Et3JqdqvNTHHLIIE76BomgfkM8S2Jr98Bt?=
+ =?us-ascii?Q?Nvw67+XaPe5QexMls71A9mWF91fL+7MR5Q8MvTGEwSQbPA7F1BVQ22hT9rxd?=
+ =?us-ascii?Q?s256Bh+HIKCAXXXYYepqhDlQqJzP3U1Lwl3XzrcmaW0lUmPbRPSLu5m8lKHA?=
+ =?us-ascii?Q?DjkLkLsaLQlARQ1fq7ITSUUwoAiFRzgKa6gjSJnPNxbwPT/E0IUyjetty8m8?=
+ =?us-ascii?Q?NoCS2bW/jrCEgebsG/0oJqNytQyC+e7PuLImG7sQXFAdY6ruFFdZ6zAUECcC?=
+ =?us-ascii?Q?OY2lDTWmOq5Nu4YzJZidFjdXcPRTuCPm82k/IcNOi7IpxuS+7g3FpnQfV3Qk?=
+ =?us-ascii?Q?kx6/fLkCBjFol9CKfLqY6kgPe5GS5CkbjbtFUWWIyCHYjIxE9Yt/29kqhlIG?=
+ =?us-ascii?Q?fsamkqMBx7wRMjZFQiYSuvzrtXEXpYcC4IvVrbiayMsSlO8QGs0S6YwD5Ubq?=
+ =?us-ascii?Q?Fo/pRAttH3oaVYzD7aMOhL4y+7z6Fpb/J1xiHDIaGpEZMVmokrKWMlc5ygPG?=
+ =?us-ascii?Q?c9zFf73zdYEdsp3zrdzTIKMdkrBxSvE/BnwejdNNQ8qN3xooiLOK0tsul8k8?=
+ =?us-ascii?Q?Fc8tm/7QJzOzjlQz/NcercmGjAxeCVwOZeY2OUOA1iaHq2IcCvJywlo9Ejqh?=
+ =?us-ascii?Q?RKWaG0QwwSEmMZBnlSnPZ7ffBMNhOayvR7ky2+4bMAg8jqkVUYSz+L2+kS/f?=
+ =?us-ascii?Q?NDJDYRQQxD/C3ZjA0DZWGi/XUKDGOUe3bMf5AvXE2Cn5/2VVPgVfNBwyiKeh?=
+ =?us-ascii?Q?7Kt0OZC60Fx+BaTXAtFUun99aaeflHbm4QjQx2je1Hih/z2vBOHng1s+JkPp?=
+ =?us-ascii?Q?cJiXOrrE1+QXEVr3HrHqKDJyA6LPQC+CSuUzOWHC27DqeRPHrqETwpIQ2p18?=
+ =?us-ascii?Q?Rm0SYHiAWyqDC8p+/i2gsjfRj8pTyt91IF7NbjPYG32CGHxIUtzMaYS7bXdw?=
+ =?us-ascii?Q?GC/3Pwk7kV/NY10Qa6C8k7Uvr4rEtxUAbTZsDxGIujIwRfysBsLawPwLvcSO?=
+ =?us-ascii?Q?mVngolLoZQ2obINbFc1PgJ3zLd4Wlbvj5XCcinMCnb9PobXqGd4GbrA34jLa?=
+ =?us-ascii?Q?qDmncCNpiE3jTQrB5mt4WMdy5DN9ah1SLzUxGrfcKFz/BiPEohgWzP4HUt/L?=
+ =?us-ascii?Q?6wjFhW5xyAr/zzL27Fn9sDNOrnGusZvQXj/q0O1tPpDag9laEnutRUU9Mb+B?=
+ =?us-ascii?Q?r9UcVtfC1+cqzKRRb2rXiShIU3ev8CdI7YKnH5185XHY7+vJYWF/KsQJ5R2h?=
+ =?us-ascii?Q?5zKcnQBApsaPp8z7b1I=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4ef0919-4a17-4289-3f18-08de1e080f91
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 14:15:10.4306
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4rG8DqM6de70l3y8/5N0WNsHBf5/DYSsjj0rvho0VMKVUKH4WEfb9GdSYYiXOYKy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9108
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+On Fri, Nov 07, 2025 at 05:07:54AM +0000, Tzung-Bi Shih wrote:
+> On Thu, Nov 06, 2025 at 11:47:15AM -0400, Jason Gunthorpe wrote:
+> > On Thu, Nov 06, 2025 at 11:27:10PM +0800, Tzung-Bi Shih wrote:
+> > > +/*
+> > > + * Recover the private_data to its original one.
+> > > + */
+> > > +static struct fops_replacement *_recover_private_data(struct file *filp)
+> > > +{
+> > > +	struct fops_replacement *fr = filp->private_data;
+> > > +
+> > > +	filp->private_data = fr->orig_private_data;
+> > > +	return fr;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Replace the private_data to fops_replacement.
+> > > + */
+> > > +static void _replace_private_data(struct fops_replacement *fr)
+> > > +{
+> > > +	fr->filp->private_data = fr;
+> > > +}
+> > 
+> > This switching of private_data isn't reasonable, it breaks too much
+> > stuff. I think I showed a better idea in my sketch.
+> 
+> The approach assumes the filp->private_data should be set once by the
+> filp->f_op->open() if any.  Is it common that the filp->private_data
+> be updated in other file operations?
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+You can set it once during open, but you can't change it around every
+fops callback. This stuff is all concurrent.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+> > This probably doesn't work out, is likely to make a memory leak.
+> > It will be hard for the owning driver to free its per-file memory
+> > without access to release.
+> 
+> Ah, I think this reveals a drawback of the approach.
+> - Without calling ->release(), some memory may leak.
+> - With calling ->release(), some UAF may happen. 
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
+It just means the user of this needs to understand there are
+limitations on what release can do. Usually release just frees memory,
+that is fine.
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+I think it would be strange for a release to touch revocable data,
+that might suggest some larger problem.
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/message/fusion/mptbase.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index 738bc4e60a18..e60a8d3947c9 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -1857,7 +1857,8 @@ mpt_attach(struct pci_dev *pdev, const struct pci_device_id *id)
- 	INIT_DELAYED_WORK(&ioc->fault_reset_work, mpt_fault_reset_work);
- 
- 	ioc->reset_work_q =
--		alloc_workqueue("mpt_poll_%d", WQ_MEM_RECLAIM, 0, ioc->id);
-+		alloc_workqueue("mpt_poll_%d", WQ_MEM_RECLAIM | WQ_PERCPU, 0,
-+				ioc->id);
- 	if (!ioc->reset_work_q) {
- 		printk(MYIOC_s_ERR_FMT "Insufficient memory to add adapter!\n",
- 		    ioc->name);
-@@ -1984,7 +1985,9 @@ mpt_attach(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	INIT_LIST_HEAD(&ioc->fw_event_list);
- 	spin_lock_init(&ioc->fw_event_lock);
--	ioc->fw_event_q = alloc_workqueue("mpt/%d", WQ_MEM_RECLAIM, 0, ioc->id);
-+	ioc->fw_event_q = alloc_workqueue("mpt/%d",
-+					  WQ_MEM_RECLAIM | WQ_PERCPU, 0,
-+					  ioc->id);
- 	if (!ioc->fw_event_q) {
- 		printk(MYIOC_s_ERR_FMT "Insufficient memory to add adapter!\n",
- 		    ioc->name);
--- 
-2.51.1
-
+Jason
 
