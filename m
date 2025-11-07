@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-890413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CEEC40006
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:54:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C33C40009
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81BC2189B29A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:55:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 110764EC38A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB08D2D4805;
-	Fri,  7 Nov 2025 12:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19552D738B;
+	Fri,  7 Nov 2025 12:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g2ihpT5L"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NN5WzBuY"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6752F502BE;
-	Fri,  7 Nov 2025 12:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850F52D8379
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 12:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762520058; cv=none; b=fy8g//1z6wScJuIT5JrI/lhoDFR1WbAF5GLjGG6hTF+g88vAipbhGgMts13kaBZSYCwxxPjIu0ooVhgmz0Z8WmdfDyZQE8WXD0w3vqoU3GMncC2FtZiGec2M8JToIjQR0DRi9bLD9XOWBIr76VvjVend7AnOrvHjZM9Apn3aclk=
+	t=1762520061; cv=none; b=kBwbYilImUtImKPDt8xqp87RKRPgPiph8SSovquOyvyFMGW+jWrRgCVESnOgA+SDh4moHcMWAXqX0mb+nFEqW18tjDg+o5XW3Pub/H7/8jipFZfsyKTsDi134GPiys1ixeiTQesTv+EGQVnFEu2mSme6LwxFrXTJ9cQ/KC40BKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762520058; c=relaxed/simple;
-	bh=3rBTFftEx9yZP0caOfMTuZ/B607GriXUCwwanemc1Ow=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CnbvYhMAb8/pd6/KMIekXEU+dNVpsYH2a15173fIdSCQ8Vk0SP3atoMFZ7LWwRRrwBMrtHfAly6jPgtQ+540lHhQTKb3a0wprqvy6kski4dnIKcDfDi+NBt/Qr1azy0/K8Td7JDYHD11931/IhT6FNBWQM+NdZMfasQP1uT3hXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g2ihpT5L; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A7B0Rw42878614;
-	Fri, 7 Nov 2025 12:54:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=+sqidDvvAIg
-	6DJnB2CrMhAwtro3M0D/wEBD0FhheAWo=; b=g2ihpT5LoRItix1LQJ1aTRdAfHn
-	sUQvZHue4Tix/0/xqQ/WjGtTJlkt3ibGCTzMcSH+N6ppqtywBmw5UoJsU1jyWmpU
-	gq/5P5E/DH5jAsx5MsZnHvnfJapkz23g2fRCGA5oi1L/NBQ5n6tTHJo9LTcvz2dH
-	zNOIcQM3LtaOLChhpvltT9hoQwnCgzU+34BA6RKzmIAzR6mF7QIP4MvggnT1/IQG
-	OG+jKjlPphIIA5JwTnQKPxZ3k0+hdEsQk4hcR/2usk++AP+gyhA3HJ2uUchD7Dm0
-	9ml/lXFAb0EQXiMgbNp6mKz5+xxvZjWhBCLGD0SsMilq4bZUAiwRZX8tKuw==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9fh1r97c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 12:54:12 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7CsAG1028624;
-	Fri, 7 Nov 2025 12:54:10 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a5b9nesq7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 12:54:10 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A7Cs9rV028619;
-	Fri, 7 Nov 2025 12:54:09 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 5A7Cs9mT028614
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 12:54:09 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id A076A22C78; Fri,  7 Nov 2025 20:54:07 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org,
-        luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, stable@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_chejiang@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
-Subject: [PATCH v2 1/1] Bluetooth: btusb: add new custom firmwares
-Date: Fri,  7 Nov 2025 20:54:05 +0800
-Message-Id: <20251107125405.1632663-2-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251107125405.1632663-1-quic_shuaz@quicinc.com>
-References: <20251107125405.1632663-1-quic_shuaz@quicinc.com>
+	s=arc-20240116; t=1762520061; c=relaxed/simple;
+	bh=9ihomJcdzMlqUxpOAoozbesot84OU3iYnyVg59ka2h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doriW0znvNUd7J3SBrU5V25yI2Bd1eJE42q8mr+kxXrI6hJFRWochDeyenSW/C66ovqShtbBaEcM2abxRdHM78HtFjPVFeX0oNQQkoV+TQJoDSYXIhU4hH+QimNf5MkC6u1tMLEWrNE2yv42SnvgzJJfgm22/b1q0TLlZ+a4ADc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NN5WzBuY; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e89c433c00so7264821cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 04:54:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1762520058; x=1763124858; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9dnAfHO8i/KYJkiCOYppyzpEdu6RpKbs1p1aPTZkM1k=;
+        b=NN5WzBuYc5NCm+weMPLRZKILmn1ge70SVr6/cS7eKKtogpgA7dOFY2By8KheLnmmns
+         wuADMjDNY+P7nptkwpdeuRUSjyoK60JaJhvXryX4/2N6BkZquSgT8b1ai/NlwiyaMTf1
+         PXMcHR24FgW4qZV68spK0tRnxDrjDwc1xTU/lcyT42AcfOMj5D7r8THiY3OWYeb9cO6C
+         HY8NDakeFUEa9iGKLMoUpbFyetku73onZQ41Vgbq3Xzkg5HgV799N8NB9TNUXmAmwdM3
+         p+GRtCkeBNn1mqmdTzwH0t4BhMTk03Sq5hYl2qZpCjwGr8wIQwrc81EdfDd+EraY7gMF
+         /BpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762520058; x=1763124858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9dnAfHO8i/KYJkiCOYppyzpEdu6RpKbs1p1aPTZkM1k=;
+        b=fHIhUGbtGvHN2w77pkQd3qfuMG0q8es8rT65pzfx14Z1nDwftuI9EVAfh1Q8uCu3lp
+         MfuHA9rS2txyEp027lDKZcqfn2ESo+zLirXdVmNiMfLgTsOnAtfzpkQKW/R29R+VRM4H
+         jXPdA5/UB+C4kkdALdBG77zha8cxTlls3nAwM1mDAfKP/1F8Qyz9o6r/pcXfBNvnbEyA
+         slCnJf5PjRsHSDBubeYlYj/FZBe7SteBkZmoNRBhlvqEOLcA48bcyBFGFLMKktwxxAxO
+         MyMjNIRdQCgrj93wP4gWfNSZSx+D4ZYW+dsCEzJASfF9yoQZQNG1JAVaR4UifV70PnL5
+         Kkbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8nyrLa2PEVECrpTVx3VoHsov8pu/uP9eIKNlgR2K4YPKPqv+0ZE1aYNtHqWu9hnbMjhf4luKDE8wMYok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOwAbOR7tj3BxcCphbSt5KHuSJ82F9fHfktPA6cpnHGrxF5MRv
+	cxy/AhrTQhHhAflNwO2qzZCQ1lvhTn2yfxZxgLdL+ppY1g1VJwi7iHYSYJpfuL/2tPI=
+X-Gm-Gg: ASbGncuHms01k0k43sJ7Pxdtp1TFMlSctFTCmqSh4sHGty5tssqBXbkhwybv6ezdmDt
+	InoEEArBRYBh1BlBjRx/OszuRDvG63Mil5a5CINWJfvOIr8xr15XBmUOXadxEUQ/xXK+lGXbddY
+	s/NXJDoNlJoYaji5duo+li1iLGiZxfLUIeSDCnEBlYML3wEJc7wKZVGio6yzQmJg0MYsTCyphuO
+	bQ8ET7Eq96Sm/UEUQlR3WgaNoM1Nun88cWRfgKX8E/DFDFVn7CxNY0lf6YNkNvp+eJ4oygFtXdX
+	TVYSlLP2AtV8Op1qNenfqT3D04mwouxLXAONRqQcFzhUX8YEHxtar1tLdyptdn4sOkWrZcCXPiY
+	0F2hszvBHhtNy87uWkuwXX6N3GKWVFhKnNiJO5kZPwXYP3fctmQs6vkI1SLEMUmJSrgaROSd1K9
+	VpIOYUOzjWzXw6mBqu7AfBSvX0w7Ox590Qv+JFRyde3wLMeQ==
+X-Google-Smtp-Source: AGHT+IGA66AV0haBXQu8f19fLfBmH0ZQoB8IASgfsT0yBpQE9xCMaY7CQY2kajYY+Xnux41hly8RYQ==
+X-Received: by 2002:a05:622a:146:b0:4e8:ad2a:b0d8 with SMTP id d75a77b69052e-4ed949abe66mr35785681cf.30.1762520058362;
+        Fri, 07 Nov 2025 04:54:18 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880828c5101sm40660146d6.6.2025.11.07.04.54.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 04:54:17 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vHLyr-00000007mZY-0tQa;
+	Fri, 07 Nov 2025 08:54:17 -0400
+Date: Fri, 7 Nov 2025 08:54:17 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
+	Joerg Roedel <joerg.roedel@amd.com>,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH] iommu/iommupt: Fix build error in genericpt unit-tests
+Message-ID: <20251107125417.GB1792527@ziepe.ca>
+References: <20251107104701.237041-1-joro@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDEwNSBTYWx0ZWRfXy61vmH+Dyw1J
- UHigIkmHdF4A7gDyDYN8Uf8whDg3Asw9ulyKWk5utSklpgqWgs0YN8OIrr9q2P+2qJKRgEr+1Dn
- 7SXBXosrDC7Fk3au4A5Kw++jiYPM7GEAM6RzO59+/Unx0lqYOq6+tmzgADSwJy6ckngnj3wxDEr
- pXCvykDXavrV5gAsWxAZnWjmYWDHScfTnxD5C0VT13ZvNd5GbSm6+LtlCW6b4i4celFEY8oAcrV
- 9GqHXH6nh9DIzJE/RVHVmztznwG4LX7/Xfao3ZVoDsOKaq5uoIsw9uOdUdrdehTvfnVH+gsnehB
- YjhlfL+2UD3yrR8SBK/V6TPyPLxBiC3YBzQ9QJmJdyQ6KiS9FGYN0rBMivNHoSQPC9SsL3finzH
- FIBSlTAJUIWAZVtU1IXe3LJIAp0bdA==
-X-Proofpoint-GUID: bEYlc5YOwrWmo9koraIIxAEja-p9lBIw
-X-Proofpoint-ORIG-GUID: bEYlc5YOwrWmo9koraIIxAEja-p9lBIw
-X-Authority-Analysis: v=2.4 cv=IcuKmGqa c=1 sm=1 tr=0 ts=690debf4 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8
- a=HSaFlmFXjmI1jj9ufZ4A:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- phishscore=0 clxscore=1015 impostorscore=0 adultscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070105
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107104701.237041-1-joro@8bytes.org>
 
-The new platform uses the QCA2066 chip along with a new board ID, which
-requires a dedicated firmware file to ensure proper initialization.
-Without this entry, the driver cannot locate and load the correct
-firmware, resulting in Bluetooth bring-up failure.
+On Fri, Nov 07, 2025 at 11:47:01AM +0100, Joerg Roedel wrote:
+> From: Joerg Roedel <joerg.roedel@amd.com>
+> 
+> Fix the include of iommu-pages.h in the KUnit tests for the IOMMU
+> generic page-table code to make the tests compile again.
+> 
+> Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
+> Closes: https://lore.kernel.org/all/9844d4cb-f517-478b-9911-b6dc1a963b8e@leemhuis.info/
+> Fixes: 1dd4187f53c3 ("iommupt: Add a kunit test for Generic Page Table")
+> Signed-off-by: Joerg Roedel <joerg.roedel@amd.com>
+> ---
+>  drivers/iommu/generic_pt/kunit_iommu.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch adds a new entry to the firmware table for QCA2066 so that
-the driver can correctly identify the board ID and load the appropriate
-firmware from 'qca/QCA2066/' in the linux-firmware repository.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
----
- drivers/bluetooth/btusb.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index dcbff7641..7175e9b2d 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3273,6 +3273,7 @@ static const struct qca_device_info qca_devices_table[] = {
- 
- static const struct qca_custom_firmware qca_custom_btfws[] = {
- 	{ 0x00130201, 0x030A, "QCA2066" },
-+	{ 0x00130201, 0x030B, "QCA2066" },
- 	{ },
- };
- 
--- 
-2.34.1
-
+Jason
 
