@@ -1,136 +1,159 @@
-Return-Path: <linux-kernel+bounces-890177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE7BC3F65C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFEEC3F674
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:24:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A8618860B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:21:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69AD51884FE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502193043D5;
-	Fri,  7 Nov 2025 10:21:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977D9304BDA;
+	Fri,  7 Nov 2025 10:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="GLewI4R3";
+	dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b="5/2WW30r"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613BD28F5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762510889; cv=none; b=lYRyPC5KOY8jUMGWh2kQpOX6f+GJ3RlxatmuWyrIgORHTxEb8ltCPlsjMrY/nCFdLGtZw0lXzBb/Iyk+DHDmyNZWvUyy4B/hEspKt3PsgdQvfzmHl8tI1JPF+JkkewHdiqc65HLUnbZlSKXL0aZUGeYuatTe+Ii8Evq413RnKNw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762510889; c=relaxed/simple;
-	bh=nkmGhbGW8pKVCxDFuoejFH9cugM0ea3WIosDH7YzLQs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qO4Ka9OCBIO+aDMqTyH1Z0bZrWeBrJvTOXF85n9c1TrN/+15RX4hG9d9qTuouQXEHFm1zpkIR8MOX+BlXH8EiPVP/+biyfaVX/m2OWQTg/O39ecFcWo/eEPPYx19gzhXpTRDSUogZuuRTYQWN1WXOz+mnaosAwYU1s51j/IlZaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4331d49b5b3so17889375ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:21:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762510887; x=1763115687;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nkmGhbGW8pKVCxDFuoejFH9cugM0ea3WIosDH7YzLQs=;
-        b=GoMyzyuoI8Jz5IRKYguRjqS3ICtEyZhn6pAETySZad0DoPPRNOBFv+U2z+ffro57/b
-         pjur00DuR02H1T7c63IGrYjRho+Cc2NkE3kYD8dqEsrrv0UxppLS2CY/hfL5cqt9ne0/
-         3yCCK7RAmRIF6c8qVghmwcSySDCEJFU3xMj6PoI/8914O31jOZMe5LfCTXR6DWCTozGa
-         A429KF4dg8KBVQoqK8ii29zUppNG0131+77hFgWCkV4Y9DvZYwT1f32tpEomkt85Wytw
-         bJNtf3pzrilFTYFRnApuhiXYrBijgOwbYQeEe/vGyh/x4Ds2mjwDlW9zr3Cpie6O0t6X
-         kp0g==
-X-Gm-Message-State: AOJu0YxfVRGLT8qLojZdLdWhnJu7clJxaZ38mLeMM8JcwgH8h9bzu6hw
-	Op+2oRmwcPOeDsQZoBSWAcCynb2Vibi7NBMav9N9/RQoDo5VsVa/X+dyqDmukaScmcswY//VG7M
-	XoLbizvzCn1E5MB7tCEbHMfr+sOuuyTgTphu/AJr6jO6DCfqtwKkFMvilb/4=
-X-Google-Smtp-Source: AGHT+IGBGn7KCVbF5MN+cHh87+lQHia+jot1uFytEKC+uYrUSDnEWM+x/G+bS6YwJLTcqIhIEwvKocS8pgOw5wPVP+EH2jfSi2xo
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69AC1E51EE;
+	Fri,  7 Nov 2025 10:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762511039; cv=pass; b=PIxBnUXUxGDleI8IkqIDKEVtVEFDZWs7tUE5ZJGRsjJoHjfWPGI7MY2Xpm16TTHsSlV3kVUVFpumXZ4TwSsQxCn1d4oQB7QAt6JnE1ca9QBiTueDjrOLhKKJvKGubD+PvOtO79Bb+8jD9/paykLmFtmFA7T5YIO22kny9Gg/t00=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762511039; c=relaxed/simple;
+	bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JgaGsw8oZ57duyx0KQZlJ5g3K0gQbdkSNiUDUBky88dtbraOBvj/gyBAiyJ5WTo4sy/9j/jjNIxgEusb7psPxfUyuBT0nJ8p9aAQcH3cyKVu6XcU3pyPZRzI9UL/qfT7THNcvsT9J59rckiFCdhSBGV8XdsSCbD/Q6swlLkJkuM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=GLewI4R3; dkim=permerror (0-bit key) header.d=chronox.de header.i=@chronox.de header.b=5/2WW30r; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
+ARC-Seal: i=1; a=rsa-sha256; t=1762511028; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=WSeKpbqRA32meDqqfKW/ORlMun85BL1twqUu1y85rsAhXWyY1KYvmTZYRVo82Y0XA3
+    6jv/DGLSoEinkXr658eqYUU4B1fCnV/KCXqXjtiROFMdiqBZzddbuwYANkWZyokacsa2
+    pydkzy0jh9YIfeW5PsjqAr0OFeBW5wTNI4/P54K7T6UEEdG2OU8l9mGNmEyKsCgRlu5m
+    sC2oJ7ZX0PwN5/rUoG6a3yhKw/HApmGZjGPIABYIqn2hTS1tqYVU2rcvPe160DDvMy4K
+    7QupM1WpESsE/Fl4GS5t2CPPm9u1LHQ72sxMPDozuhV522NbO5z4IYxUtyjXZfEijmDV
+    OkXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1762511028;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
+    b=Ez0gm3GOcB2gjfv3NDznTRXPM99Y8g9U+Fi8lVH1zc6b3fD8rYxjtrVv1IMPN2aJ8r
+    kinMhJ68hA2dnIWWQvSzGeKLnBoSFtIMYYICLn2xxA5yl6QoGh1bW7oDBWrkK9VlslG3
+    wwQQ4nGbiq6TgWHY+MfT7C+KQ7purwGqEdBocsOGNlew6SiivNuVAFxCW3HjCHGZO009
+    JsCvH1T959YrmYr0B4zHHTZ6j57uttIL2M4JdlLsIZ+++kPd4Qmvox3GI+wozTBQeyLV
+    L2vJ/Q5GW0+AXZi15jSJ3KgwMN+331Qayih+9ZXBh6OIWLngH4RUFzvf8rO0u441WGpw
+    xF3A==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1762511028;
+    s=strato-dkim-0002; d=chronox.de;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
+    b=GLewI4R3yTbYgXfczGE7AmPhjvr6QGNbEzKiRa7E60fnGMh8wsyBdRiwtAbmh8W7WF
+    FhhvZphdMEPrI1Otf0xIaUUaST9A38fsn3gMOwcHL5mHvzlXq6IAzwJp0jPdvfbif7xs
+    WtKhvboSsmBnPZAJlqfbkPlxSmzVgQWQiavbWFEjlk8d2cPX6/YgSJoZhuVDblwkxRDF
+    LwNiv88+wgyIOMwGn5ec0aXt6Hkow5IVHFMZ1qEqO4ynH7qZDIzVabdUhxCwLV3aXmvn
+    LN1Gsm+YNPXbe8KFtntm4XgSz1e3CCWKCwPkRhr2ZX3XallLmbQGa/+tH0wIH/TsYmoV
+    YNAg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1762511028;
+    s=strato-dkim-0003; d=chronox.de;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=IfvDo4DJe7UiNB3LGseK57aJdtQyepnmkpfrGIgJmqo=;
+    b=5/2WW30rYplD9tb1hPieiFCvpVFLWwvGcnQpXmAsjAHqiW/lpH5r/5Larq5QBgL9lh
+    lgmZFjUM7CQt/Lg9O2Bg==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDYJPSfOH7S"
+Received: from tauon.localnet
+    by smtp.strato.de (RZmta 54.0.0 DYNA|AUTH)
+    with ESMTPSA id fd5b701A7ANk3FS
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Fri, 7 Nov 2025 11:23:46 +0100 (CET)
+From: Stephan Mueller <smueller@chronox.de>
+To: Stefan Berger <stefanb@linux.ibm.com>, David Howells <dhowells@redhat.com>
+Cc: dhowells@redhat.com, Simo Sorce <simo@redhat.com>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>,
+ Ignat Korchagin <ignat@cloudflare.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, torvalds@linux-foundation.org,
+ Paul Moore <paul@paul-moore.com>, Lukas Wunner <lukas@wunner.de>,
+ Clemens Lang <cllang@redhat.com>, David Bohannon <dbohanno@redhat.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: Module signing and post-quantum crypto public key algorithms
+Date: Fri, 07 Nov 2025 11:23:46 +0100
+Message-ID: <3917048.kQq0lBPeGt@tauon>
+In-Reply-To: <61528.1762509829@warthog.procyon.org.uk>
+References:
+ <53e81761-47e1-400e-933d-0a53018c9cab@linux.ibm.com>
+ <3d650cc9ff07462e5c55cc3d9c0da72a3f2c5df2.camel@redhat.com>
+ <61528.1762509829@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1685:b0:433:217a:a25c with SMTP id
- e9e14a558f8ab-4335f4a2cb4mr31854305ab.28.1762510887610; Fri, 07 Nov 2025
- 02:21:27 -0800 (PST)
-Date: Fri, 07 Nov 2025 02:21:27 -0800
-In-Reply-To: <690d9fd4.a70a0220.22f260.0022.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690dc827.a70a0220.22f260.0035.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [jfs?] BUG: unable to handle kernel paging
- request in diUpdatePMap
-From: syzbot <syzbot+7fc112f7a4a0546731c5@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Am Freitag, 7. November 2025, 11:03:49 Mitteleurop=C3=A4ische Normalzeit sc=
+hrieb=20
+David Howells:
 
-***
+Hi David,
 
-Subject: Re: [syzbot] [jfs?] BUG: unable to handle kernel paging request in=
- diUpdatePMap
-Author: yun.zhou@windriver.com
+> Stefan Berger <stefanb@linux.ibm.com> wrote:
+> > On 6/16/25 1:27 PM, Simo Sorce wrote:
+> > > Of course we can decide to hedge *all bets* and move to a composed
+> > > signature (both a classic and a PQ one), in which case I would suggest
+> > > looking into signatures that use ML-DSA-87 + Ed448 or ML-DSA-87 + P-5=
+21
+> > > ,ideally disjoint, with a kernel policy that can decide which (or bot=
+h)
+> > > needs to be valid/checked so that the policy can be changed quickly v=
+ia
+> > > configuration if any of the signature is broken.
+> >=20
+> > FYI: based on this implementation of ML-DSA-44/65/87
+> >=20
+> > https://github.com/IBM/mlca/tree/main/qsc/crystals
+>=20
+> The problem with that is that the Apache-2 licence is incompatible with
+> GPLv2. Now, it might be possible to persuade IBM to dual-license their
+> code.
 
-#syz test
+The code used as a basis for the current approach (leancrypto.org) offers=20
+hybrids with ED25519 and ED448) including the X.509/PKCS7 support.
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 871cf4fb3636..0d6c40e7e551 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -270,6 +270,7 @@ static inline struct metapage *alloc_metapage(gfp_t=20
-gfp_mask)
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mp->clsn =3D 0;
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mp->log =3D NULL;
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 init_waitqueue_hea=
-d(&mp->wait);
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0INIT_LIST_HEAD(&mp-=
->synclist);
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 return mp;
- =C2=A0}
-@@ -379,7 +380,7 @@ static void remove_from_logsync(struct metapage *mp)
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mp->lsn =3D 0;
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mp->clsn =3D 0;
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 log->count--;
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0list_del(&mp->syncl=
-ist);
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0list_del_init(&mp->=
-synclist);
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 LOGSYNC_UNLOCK(log, flags);
- =C2=A0}
-diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-index 7840a03e5bcb..a5a5bc0a266d 100644
---- a/fs/jfs/jfs_txnmgr.c
-+++ b/fs/jfs/jfs_txnmgr.c
-@@ -275,6 +275,7 @@ int txInit(void)
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 for (k =3D 0; k < nTxBlock; k++) {
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 init_waitqueue_hea=
-d(&TxBlock[k].gcwait);
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 init_waitqueue_hea=
-d(&TxBlock[k].waitor);
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0INIT_LIST_HEAD(&TxB=
-lock[k].synclist);
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+However, please note that the X.509 specification for storing hybrid public=
+=20
+keys is not yet completed and there is still some work on the draft IETF=20
+standard [1].
 
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 for (k =3D 1; k < nTxBlock - 1; k++) {
-@@ -974,7 +975,7 @@ static void txUnlock(struct tblock * tblk)
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (tblk->lsn) {
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 LOGSYNC_LOCK(log, =
-flags);
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 log->count--;
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0list_del(&tblk->syn=
-clist);
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0list_del_init(&tblk=
-->synclist);
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 LOGSYNC_UNLOCK(log=
-, flags);
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
- =C2=A0}
+Side note: the leancrypto code base uses the Linux kernel X.509/PKCS7 parse=
+r=20
+code where the relevant handler functions (see [2]) could be relatively=20
+quickly transplanted into the kernel if needed.
+
+[1] https://lamps-wg.github.io/draft-composite-sigs/draft-ietf-lamps-pq-com=
+posite-sigs.html
+
+[2] https://github.com/smuellerDD/leancrypto/blob/master/asn1/src/
+x509_cert_parser.c
+
+Ciao
+Stephan
+
 
 
