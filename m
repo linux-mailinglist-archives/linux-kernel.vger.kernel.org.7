@@ -1,250 +1,270 @@
-Return-Path: <linux-kernel+bounces-889883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975E8C3EC17
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:30:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4427DC3EC29
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65E034EB6D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:30:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D353B124F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F393090E4;
-	Fri,  7 Nov 2025 07:30:32 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D556C307487;
+	Fri,  7 Nov 2025 07:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2D0UnXs"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8327B4FB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA542853F7
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500631; cv=none; b=R27uK/6Pc46eyDik24V+dpdk8lDCUfbfvjfiJqWuU+YRqtWjUYeCye7ljVyPyNpKDgakVUiDDj2lB2u+ZevcM3WoUC0vle6OrQ/M3WBafJTcutsq0bB1Xrdld/ea3bl/CnIeDisbFxdf/UmaD59sEb48xgzmW50LKqVcbE8r+Q4=
+	t=1762500652; cv=none; b=s4+brVMurPZcFpkfJuopr/mh+1BxP7tCwPXtXAQ+a2eppsFTQIM42343bTPYDJC9Ygo4DsyAkDwfQrr3QiBfnec/NQH6tFZAY5q0jf0ju+314vhVdB3Xgw+tT/KEkoVS6h3jn6au7qq4ewt8kcBjMY1IO0UYtPDszaSf4uCJEsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500631; c=relaxed/simple;
-	bh=PmuoT3c8H1nbh0QIg54m2H7tK1X89lomLu0DJ4gC6vk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BsFvsaAZk88CTS7ErJXeyvlfcwi3nJHZsFB85asJA2qmFffj/d3VJcpNHKUR9+/TWFEHlblLqYOJUxVZ+s+nHxu7+tFOx7A45vhtsFH2xSAPKBn0rUirbhYkuJbMqg66X6uCArzJ/7LzxwIICpEhNPiut9J7oqPirIEFx8oX+7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-431d84fdb91so9625585ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:30:28 -0800 (PST)
+	s=arc-20240116; t=1762500652; c=relaxed/simple;
+	bh=f35DbpZpPqMDzZoRIqs7Osgf1PM69yqyjWw/dglp96Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ifzP+daw+HsvjMdofRBRdTRSEhEyL2wNhAehjmVghP6rniHjdpVclzjDEYOBUwK3Ox6NrFO1zhP3SJ87bb+BZIfQBYpsy3mAO1ajIvj1A7NN/wyid7tE6OJL1c+4KpHAAbOg2f4L2+hjQbTJlc+EvdOaHtJeq1pjxKzR6E8uDzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2D0UnXs; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-378cffe5e1aso4369971fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:30:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762500649; x=1763105449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4M6PwHQesX19scpYMiKXrQJ0jxJ0uMLe/ADSgAzPkxs=;
+        b=F2D0UnXsBgpmz9PNRt+ECrBo4w7erhNmC97oPwsP4TrPXiT14dHqq1/xwaj+v/WXO3
+         tHFp84/rByrCXxBUz7fDOdtbDrlP6pOBRliRMEUotcj48DiJN/1ogIHVQ4+FSWwYzMPn
+         zPKQ/2396+5I0b9LDc83IOETtz5ZsdI5gyhM1K+yTuYYFpCRnP5S7Yor2h0zEDlUZ/6I
+         eMm8300+YF5g5uhzKCDZWo4SdIWgHN2v+QlSHfowa4PL/VVKSUS6BI46l0rMy2a6jYiB
+         pMZEnOZmACDqwa1ng5wPhfwYHuPxHzpKJA9PI4eKEhzw6nxG2PEfDgcPYByafJCw7r/7
+         2vzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762500628; x=1763105428;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wvhS3yJ5RI+iBD3kWFB7/BHHupDd3V14Ik9agSFoCEU=;
-        b=JKDe1xYAPdF5E+5OH0FfwTayTWQa+jiv+QbA8I3PgJc/tcff/QZaSUSYJV1aS3o1vB
-         OCqUtwzC/8mCr4rL50RMxZ+NmcEpi5EP9mUZFiHPg2dI+gdP2AXvoFg7mHz/H8oyw+f6
-         FCxxW77vYMXbjKoekQMTMO93HavkqOTuaRZwL5VsVd+JXW9BZDnsKDjVCNcqcnVHZPQK
-         w6yxSn49xHIc9ald0+zFyVx+pXtREQPVw9Cht0l6wLNmO/EYWoZkxHoR0wvOCuE0XMzC
-         z7LHHpvljvYeDvJqssVAlaGXXll6Fs3GCO17d5qjl8kCG2Ax03bTR+vfHfchnULA+s2E
-         P0CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyKKGH6GxiffsN9aUeClGaRkUzwZNCFCmQlCAUH135tK5j7Qle4p2ShD1j7DbnbQmOrX8mn42EFhamLmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYxGhrweZ45syV7+8Xx6f99rWXa1nS8bsNsFxcL3i1I7qKD2Xd
-	x5WloDQHgWAQ7WMOVIxuA788z/O9ZzJ0CJb0UVSxWeLmrpbka9P/uuXDuRJbMZqcPtCQ73staoo
-	OxxIgNvSjf/o7sQewnFMaOEkTd4pXVfdHSsyyyLP/wJdCK2MLOh2qoSt4/ho=
-X-Google-Smtp-Source: AGHT+IFJk0Ewu+jeYb+KnQD2z6NrRThAVFqW/pLK+NL0wuCeR3kb4YjsvP6XIDWgVBnDoviUPxi+rly+NBHelhzxQuqwhXQ+GFhj
+        d=1e100.net; s=20230601; t=1762500649; x=1763105449;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4M6PwHQesX19scpYMiKXrQJ0jxJ0uMLe/ADSgAzPkxs=;
+        b=mDJaJ8CUWoN4Iifpmqm8aN9306XeYw15yZZOAAU0gfjsPGuo0u3Z+NP5UA5E5MMK7j
+         QGMWjB8o43ieV7ue1bVRxcFIa1LWU5UCqLI3ulVCIfk3s5raifndSP0CE1VCpBtKCucH
+         56gDj4NHdpeyWZ3/anSrvLffHwENQAeVTqzfC/to+BDKe2TRGiPtoPlo3WnFgo/oK0yZ
+         H1HZxFq4EGbc6+CEKc5Bbuvv3jPxlmuPG2oDQw12w26GO7fGxzXc2uBW1Y516um9Ti4L
+         3ex233RWea1ucq3ECmdM2yrFRJuLuqT7lKMoDqkf5OvlUsesrX/n0xHTl7cj55+v5M2E
+         3uOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXV5WrUlitLlNwhEzbMJZUbltEyU4lxDMCc7uwDG+b7Pe4gxe/e9emlTvaNHPVsSGpIh07wES1TFpq3wy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQhNbv3raEErZeUDCxb8g2iX7mZY+elr5BNG0H0tPg7zvxYMzn
+	WhigxhOFhm4BuAF0ctY8O8PF25Qc6f7rHEGSvltHgYao/aKFGoDBp/yW
+X-Gm-Gg: ASbGnctJHKiBWiViLSbEqsr1z51QVF6NauUXSLaYn4rF9Z7Q/gnXzp7YzYwni/0GKRW
+	IiwfNXdTZS+3kmbdfbuur0wXWz+K6+wcCyQ/hgPG5UIT1APCXe7dg4z/pE/YRiJcBQOUq5gpvcf
+	ggJ4wpy9k5cHRwxvSsWrNnA2hjOAfH9C3leSAArzsU2xXfWHSVvROYqtKtqZ3xK8FueX4TiEhta
+	kP+bu3CkvtSQvZyApp6hwas747T9CTfksORrRmmSNmdR+vhSdGZG/d7wbbr9YSnVqvNIQFEoXPj
+	ooJMWhEktSTxfWvp6mLlvXa1rcxXKZJhRYlXOEFIUSNWPDotiTZVPJBFNG6NnNCrzulnKMHfMtp
+	zf2kUP9dPchB3vfY1G5CCXs/+p0SY2WuG7TdMXZKL2aM3uKd197NjE5Irn3EvUcwf7C4Ks6O4VO
+	lXsAFUKtcycglXVAkA
+X-Google-Smtp-Source: AGHT+IEM6jJW7S0zoNmv87VOalpMKNhTySFhZbseoiHIzvl3ywyxFEtICW2fvawnuW/rzdA1JD3pIA==
+X-Received: by 2002:a05:651c:4194:b0:37a:2e2a:da6f with SMTP id 38308e7fff4ca-37a742ce607mr4452981fa.44.1762500648643;
+        Thu, 06 Nov 2025 23:30:48 -0800 (PST)
+Received: from NB-6746.corp.yadro.com ([188.243.183.84])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a013bd8sm1284123e87.1.2025.11.06.23.30.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 23:30:47 -0800 (PST)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: mika.westerberg@linux.intel.com
+Cc: a.shimko.dev@gmail.com,
+	andi.shyti@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	jsd@semihalf.com,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v3] i2c: designware: Replace magic numbers with named constants
+Date: Fri,  7 Nov 2025 10:30:39 +0300
+Message-ID: <20251107073039.2646048-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <202511071402.qHS6LLi9-lkp@intel.com>
+References: <202511071402.qHS6LLi9-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2283:b0:433:4f00:5d0c with SMTP id
- e9e14a558f8ab-4335f441229mr27971185ab.20.1762500628341; Thu, 06 Nov 2025
- 23:30:28 -0800 (PST)
-Date: Thu, 06 Nov 2025 23:30:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690da014.a70a0220.22f260.0026.GAE@google.com>
-Subject: [syzbot] [cifs?] memory leak in smb3_fs_context_parse_param
-From: syzbot <syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com>
-To: bharathsm@microsoft.com, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pc@manguebit.org, ronniesahlberg@gmail.com, 
-	samba-technical@lists.samba.org, sfrench@samba.org, sprasad@microsoft.com, 
-	syzkaller-bugs@googlegroups.com, tom@talpey.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Replace various magic numbers with properly named constants to improve
+code readability and maintainability. This includes constants for
+register access, timing adjustments, timeouts, FIFO parameters,
+and default values.
 
-syzbot found the following issue on:
+The change makes the code more self-documenting without altering any
+functionality.
 
-HEAD commit:    c2c2ccfd4ba7 Merge tag 'net-6.18-rc5' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=127d2a58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
-dashboard link: https://syzkaller.appspot.com/bug?extid=72afd4c236e6bc3f4bac
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104c7012580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1206e17c580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b0451ba3fe41/disk-c2c2ccfd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d3e8c67119ab/vmlinux-c2c2ccfd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1d8e176e5054/bzImage-c2c2ccfd.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
-
-2025/11/07 05:48:37 executed programs: 5
-BUG: memory leak
-unreferenced object 0xffff888108910420 (size 96):
-  comm "syz.0.17", pid 6085, jiffies 4294942570
-  hex dump (first 32 bytes):
-    2f 2f f2 62 06 08 ba df 58 6f dc ea 95 9a 9b 2f  //.b....Xo...../
-    51 39 f9 0d 6d 44 94 29 55 db 15 58 2e 49 0a 7d  Q9..mD.)U..X.I.}
-  backtrace (crc 79c9c7ba):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4975 [inline]
-    slab_alloc_node mm/slub.c:5280 [inline]
-    __do_kmalloc_node mm/slub.c:5641 [inline]
-    __kmalloc_node_track_caller_noprof+0x3aa/0x6b0 mm/slub.c:5751
-    __kmemdup_nul mm/util.c:64 [inline]
-    kstrdup+0x3c/0x80 mm/util.c:84
-    smb3_fs_context_parse_param+0x229b/0x36c0 fs/smb/client/fs_context.c:1444
-    vfs_parse_fs_param+0xf4/0x190 fs/fs_context.c:146
-    vfs_fsconfig_locked fs/fsopen.c:303 [inline]
-    __do_sys_fsconfig+0x7d3/0x900 fs/fsopen.c:473
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff888128afa060 (size 96):
-  comm "syz.0.18", pid 6087, jiffies 4294942571
-  hex dump (first 32 bytes):
-    2f 2f f2 62 06 08 ba df 58 6f dc ea 95 9a 9b 2f  //.b....Xo...../
-    51 39 f9 0d 6d 44 94 29 55 db 15 58 2e 49 0a 7d  Q9..mD.)U..X.I.}
-  backtrace (crc 79c9c7ba):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4975 [inline]
-    slab_alloc_node mm/slub.c:5280 [inline]
-    __do_kmalloc_node mm/slub.c:5641 [inline]
-    __kmalloc_node_track_caller_noprof+0x3aa/0x6b0 mm/slub.c:5751
-    __kmemdup_nul mm/util.c:64 [inline]
-    kstrdup+0x3c/0x80 mm/util.c:84
-    smb3_fs_context_parse_param+0x229b/0x36c0 fs/smb/client/fs_context.c:1444
-    vfs_parse_fs_param+0xf4/0x190 fs/fs_context.c:146
-    vfs_fsconfig_locked fs/fsopen.c:303 [inline]
-    __do_sys_fsconfig+0x7d3/0x900 fs/fsopen.c:473
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff888128afa300 (size 96):
-  comm "syz.0.19", pid 6090, jiffies 4294942572
-  hex dump (first 32 bytes):
-    2f 2f f2 62 06 08 ba df 58 6f dc ea 95 9a 9b 2f  //.b....Xo...../
-    51 39 f9 0d 6d 44 94 29 55 db 15 58 2e 49 0a 7d  Q9..mD.)U..X.I.}
-  backtrace (crc 79c9c7ba):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4975 [inline]
-    slab_alloc_node mm/slub.c:5280 [inline]
-    __do_kmalloc_node mm/slub.c:5641 [inline]
-    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
-    kmalloc_noprof include/linux/slab.h:961 [inline]
-    smb3_fs_context_fullpath+0x70/0x1b0 fs/smb/client/fs_context.c:629
-    smb3_fs_context_parse_param+0x2266/0x36c0 fs/smb/client/fs_context.c:1438
-    vfs_parse_fs_param+0xf4/0x190 fs/fs_context.c:146
-    vfs_fsconfig_locked fs/fsopen.c:303 [inline]
-    __do_sys_fsconfig+0x7d3/0x900 fs/fsopen.c:473
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff888128afa360 (size 96):
-  comm "syz.0.19", pid 6090, jiffies 4294942572
-  hex dump (first 32 bytes):
-    2f 2f f2 62 06 08 ba df 58 6f dc ea 95 9a 9b 2f  //.b....Xo...../
-    51 39 f9 0d 6d 44 94 29 55 db 15 58 2e 49 0a 7d  Q9..mD.)U..X.I.}
-  backtrace (crc 79c9c7ba):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4975 [inline]
-    slab_alloc_node mm/slub.c:5280 [inline]
-    __do_kmalloc_node mm/slub.c:5641 [inline]
-    __kmalloc_node_track_caller_noprof+0x3aa/0x6b0 mm/slub.c:5751
-    __kmemdup_nul mm/util.c:64 [inline]
-    kstrdup+0x3c/0x80 mm/util.c:84
-    smb3_fs_context_parse_param+0x229b/0x36c0 fs/smb/client/fs_context.c:1444
-    vfs_parse_fs_param+0xf4/0x190 fs/fs_context.c:146
-    vfs_fsconfig_locked fs/fsopen.c:303 [inline]
-    __do_sys_fsconfig+0x7d3/0x900 fs/fsopen.c:473
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff888112c7d900 (size 96):
-  comm "syz.0.21", pid 6128, jiffies 4294943114
-  hex dump (first 32 bytes):
-    2f 2f f2 62 06 08 ba df 58 6f dc ea 95 9a 9b 2f  //.b....Xo...../
-    51 39 f9 0d 6d 44 94 29 55 db 15 58 2e 49 0a 7d  Q9..mD.)U..X.I.}
-  backtrace (crc 79c9c7ba):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4975 [inline]
-    slab_alloc_node mm/slub.c:5280 [inline]
-    __do_kmalloc_node mm/slub.c:5641 [inline]
-    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
-    kmalloc_noprof include/linux/slab.h:961 [inline]
-    smb3_fs_context_fullpath+0x70/0x1b0 fs/smb/client/fs_context.c:629
-    smb3_fs_context_parse_param+0x2266/0x36c0 fs/smb/client/fs_context.c:1438
-    vfs_parse_fs_param+0xf4/0x190 fs/fs_context.c:146
-    vfs_fsconfig_locked fs/fsopen.c:303 [inline]
-    __do_sys_fsconfig+0x7d3/0x900 fs/fsopen.c:473
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff888112c7d420 (size 96):
-  comm "syz.0.21", pid 6128, jiffies 4294943114
-  hex dump (first 32 bytes):
-    2f 2f f2 62 06 08 ba df 58 6f dc ea 95 9a 9b 2f  //.b....Xo...../
-    51 39 f9 0d 6d 44 94 29 55 db 15 58 2e 49 0a 7d  Q9..mD.)U..X.I.}
-  backtrace (crc 79c9c7ba):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4975 [inline]
-    slab_alloc_node mm/slub.c:5280 [inline]
-    __do_kmalloc_node mm/slub.c:5641 [inline]
-    __kmalloc_node_track_caller_noprof+0x3aa/0x6b0 mm/slub.c:5751
-    __kmemdup_nul mm/util.c:64 [inline]
-    kstrdup+0x3c/0x80 mm/util.c:84
-    smb3_fs_context_parse_param+0x229b/0x36c0 fs/smb/client/fs_context.c:1444
-    vfs_parse_fs_param+0xf4/0x190 fs/fs_context.c:146
-    vfs_fsconfig_locked fs/fsopen.c:303 [inline]
-    __do_sys_fsconfig+0x7d3/0x900 fs/fsopen.c:473
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
-
-
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202511071402.qHS6LLi9-lkp@intel.com/
+Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Hello
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--
+Best regards,
+Artem Shimko
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ChangeLog:
+  v1:
+    * https://lore.kernel.org/all/20251105161845.2535367-1-a.shimko.dev@gmail.com/T/#u
+  v2:
+    * Move register-related constants to i2c-designware-core.h
+    * Remove unnecessary comments to reduce clutter  
+    * Keep only essential timeouts and default parameters in .c file
+    * Use FIELD_GET() for FIFO depth extraction as suggested
+  v3:
+    * Add missing include for linux/bitfield.h
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ drivers/i2c/busses/i2c-designware-common.c | 33 ++++++++++++++--------
+ drivers/i2c/busses/i2c-designware-core.h   | 13 +++++++++
+ 2 files changed, 35 insertions(+), 11 deletions(-)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index 5b1e8f74c4ac..3bc55068da03 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -12,6 +12,7 @@
+ #define DEFAULT_SYMBOL_NAMESPACE	"I2C_DW_COMMON"
+ 
+ #include <linux/acpi.h>
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/device.h>
+@@ -34,6 +35,14 @@
+ 
+ #include "i2c-designware-core.h"
+ 
++#define DW_IC_DEFAULT_BUS_CAPACITANCE_PF	100
++
++#define DW_IC_ABORT_TIMEOUT_US			10
++#define DW_IC_ABORT_TOTAL_TIMEOUT_US		100
++
++#define DW_IC_BUSY_POLL_TIMEOUT_US		1100
++#define DW_IC_BUSY_TOTAL_TIMEOUT_US		20000
++
+ static const char *const abort_sources[] = {
+ 	[ABRT_7B_ADDR_NOACK] =
+ 		"slave address not acknowledged (7bit mode)",
+@@ -106,7 +115,7 @@ static int dw_reg_read_word(void *context, unsigned int reg, unsigned int *val)
+ 	struct dw_i2c_dev *dev = context;
+ 
+ 	*val = readw(dev->base + reg) |
+-		(readw(dev->base + reg + 2) << 16);
++		(readw(dev->base + reg + DW_IC_REG_STEP_BYTES) << DW_IC_REG_WORD_SHIFT);
+ 
+ 	return 0;
+ }
+@@ -116,7 +125,7 @@ static int dw_reg_write_word(void *context, unsigned int reg, unsigned int val)
+ 	struct dw_i2c_dev *dev = context;
+ 
+ 	writew(val, dev->base + reg);
+-	writew(val >> 16, dev->base + reg + 2);
++	writew(val >> DW_IC_REG_WORD_SHIFT, dev->base + reg + DW_IC_REG_STEP_BYTES);
+ 
+ 	return 0;
+ }
+@@ -165,7 +174,7 @@ int i2c_dw_init_regmap(struct dw_i2c_dev *dev)
+ 	if (reg == swab32(DW_IC_COMP_TYPE_VALUE)) {
+ 		map_cfg.reg_read = dw_reg_read_swab;
+ 		map_cfg.reg_write = dw_reg_write_swab;
+-	} else if (reg == (DW_IC_COMP_TYPE_VALUE & 0x0000ffff)) {
++	} else if (reg == lower_16_bits(DW_IC_COMP_TYPE_VALUE)) {
+ 		map_cfg.reg_read = dw_reg_read_word;
+ 		map_cfg.reg_write = dw_reg_write_word;
+ 	} else if (reg != DW_IC_COMP_TYPE_VALUE) {
+@@ -384,7 +393,7 @@ int i2c_dw_fw_parse_and_configure(struct dw_i2c_dev *dev)
+ 	i2c_parse_fw_timings(device, t, false);
+ 
+ 	if (device_property_read_u32(device, "snps,bus-capacitance-pf", &dev->bus_capacitance_pF))
+-		dev->bus_capacitance_pF = 100;
++		dev->bus_capacitance_pF = DW_IC_DEFAULT_BUS_CAPACITANCE_PF;
+ 
+ 	dev->clk_freq_optimized = device_property_read_bool(device, "snps,clk-freq-optimized");
+ 
+@@ -539,8 +548,9 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ 
+ 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+ 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+-					       !(enable & DW_IC_ENABLE_ABORT), 10,
+-					       100);
++					       !(enable & DW_IC_ENABLE_ABORT),
++					       DW_IC_ABORT_TIMEOUT_US,
++					       DW_IC_ABORT_TOTAL_TIMEOUT_US);
+ 		if (ret)
+ 			dev_err(dev->dev, "timeout while trying to abort current transfer\n");
+ 	}
+@@ -552,7 +562,7 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ 		 * in that case this test reads zero and exits the loop.
+ 		 */
+ 		regmap_read(dev->map, DW_IC_ENABLE_STATUS, &status);
+-		if ((status & 1) == 0)
++		if (!(status & 1))
+ 			return;
+ 
+ 		/*
+@@ -635,7 +645,8 @@ int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
+ 
+ 	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+ 				       !(status & DW_IC_STATUS_ACTIVITY),
+-				       1100, 20000);
++				       DW_IC_BUSY_POLL_TIMEOUT_US,
++				       DW_IC_BUSY_TOTAL_TIMEOUT_US);
+ 	if (ret) {
+ 		dev_warn(dev->dev, "timeout waiting for bus ready\n");
+ 
+@@ -699,12 +710,12 @@ int i2c_dw_set_fifo_size(struct dw_i2c_dev *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	tx_fifo_depth = ((param >> 16) & 0xff) + 1;
+-	rx_fifo_depth = ((param >> 8)  & 0xff) + 1;
++	tx_fifo_depth = FIELD_GET(DW_IC_FIFO_TX_FIELD, param) + 1;
++	rx_fifo_depth = FIELD_GET(DW_IC_FIFO_RX_FIELD, param) + 1;
+ 	if (!dev->tx_fifo_depth) {
+ 		dev->tx_fifo_depth = tx_fifo_depth;
+ 		dev->rx_fifo_depth = rx_fifo_depth;
+-	} else if (tx_fifo_depth >= 2) {
++	} else if (tx_fifo_depth >= DW_IC_FIFO_MIN_DEPTH) {
+ 		dev->tx_fifo_depth = min_t(u32, dev->tx_fifo_depth,
+ 				tx_fifo_depth);
+ 		dev->rx_fifo_depth = min_t(u32, dev->rx_fifo_depth,
+diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+index 347843b4f5dd..a699953bf5ae 100644
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@ -41,6 +41,19 @@
+ #define DW_IC_DATA_CMD_DAT			GENMASK(7, 0)
+ #define DW_IC_DATA_CMD_FIRST_DATA_BYTE		BIT(11)
+ 
++/*
++ * Register access parameters
++ */
++#define DW_IC_REG_STEP_BYTES			2
++#define DW_IC_REG_WORD_SHIFT			16
++
++/*
++ * FIFO depth configuration
++ */
++#define DW_IC_FIFO_TX_FIELD			GENMASK(23, 16)
++#define DW_IC_FIFO_RX_FIELD			GENMASK(15, 8)
++#define DW_IC_FIFO_MIN_DEPTH			2
++
+ /*
+  * Registers offset
+  */
+-- 
+2.43.0
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
