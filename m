@@ -1,215 +1,450 @@
-Return-Path: <linux-kernel+bounces-890533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D362BC40460
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:15:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC72C40466
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEE44250C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD95C5615FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C489B328B6D;
-	Fri,  7 Nov 2025 14:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sP83pP32"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011010.outbound.protection.outlook.com [40.93.194.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D328222599;
+	Fri,  7 Nov 2025 14:16:10 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E996F2EC08D;
-	Fri,  7 Nov 2025 14:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524915; cv=fail; b=J6jLMtzjSfmoormHKVkC6QhpiUpcjOiTF+mpgHXmuKbItotw25j0VUhif6/u3g4syBcGYQ90PwII8xKhTxjl++ih8vxlZOSjb+fF6GsmyuVcg6r7l8fPYqi8WlJdv4GcXTWpFH7DLWPv7Tuai7dW8AvVkBh2qp5AOS+sZ8KNxMo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524915; c=relaxed/simple;
-	bh=K51Rl/yXSPcDOVe2PijEejZUdAtXxR6kdMUgm5qiC8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kW53jReWgBy3ek4lOCuzm7t2e9Umsh90PhCrgEQmT+7gg/u+REMr0vrX+miuQ/yNOpw9ca/hkwx2ybrxxpvoIHxXJfTX2WydcbyjqR3o+qmktICwFU2B5Nu7QmerDJIC9yZPVEhFqd+gF5iXX1ER2S8O3/AZ7+Io1N+BL7VO+8k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sP83pP32; arc=fail smtp.client-ip=40.93.194.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rvamxqjFfuCj/s7VN4x3iTsPuaHC5uJI0EO19tE0VWMhnYPQ4o5wmG6M7SyzTijSGqvy4nu8StYpTqRkR8Z1iZHf7SgXwORv/i5iGkcZ1A+Dqdm492wlUClJk2JL7KwcwWz/0XL4WAwEzGt2wp+Gc8JcFGuHnV2j5puFuGc5HtyiHLMuG4kjW9AWs/vsY9FJ4nqfKSjLgNzmjM5wEwpmr7IN5DWV9nlC/GYDyJ/ISmOE8/ldRQyhT9+iBnkGABBiPfl+YJveL02WlcWhPcAI1Us59JYYhV1XfvVso/TJfgUbvn893NVDATOlvs/q0JGEX1F8O/77hR9GCNeLU+pslQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+MfeT+sv7eGT1ANFFiMdmHy9YfqCkb/m2nuKjAyF/+0=;
- b=BGOEJ3hfIcOoX055qw1lubDy3a2XkJsUuMkxNX6/qNS0jT4DSCiY6DG4+zLA1afOAPelbsL3onCEFOLEkM3mAcDo4YcFnKdAWjHZ4OKasBa4FBFWZI7HfY2LJiTg2Ejmwl0umNAKY+Cg38dyK8sSRs+UH24sdVexkGPAE6oPk/6o7AD6LOXlsq8TmeU+0H/y3net4aeM6c3ZmyczLl7FBOVtltSFhG+yNORSZnUaAXtWBkdFYSpDtCVwpUkTHlQqQRblzBC2I8ouzXGqlviXpX4ZMgHGUcnEroC1RhoDWo6GG0IDuGGejsL9ezkpsN6ACDWBoyK159Mk+vixUlZfNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+MfeT+sv7eGT1ANFFiMdmHy9YfqCkb/m2nuKjAyF/+0=;
- b=sP83pP32ifVDvopIdt9dp48vp1Rrc7lBTywKW12dC3ZCa5ygiWKB4SJ4uEtEp3LeDs049lcjH4HfjUt0vOikKLqUzYbkDtpESwrX09JJHnLcUUzfMbiUIWVqPMz7BJezEVX4fPbePgiqKjcoC3YxdS5Wxau8qW4FHZi6ITb79cpC4OXlNsoLXJXgy05yO6QHEGzCVpwAqGxnyB6DsiEuztCx+tVEz/EnaVWs++87a7o7iv7doQX1Jr6XDLAp+rTBoYTaNhxjg458d4F2DIKSuFhPn0YPShiQRPl4LyWFUOM7sLyhEYSewA3g8ZfrGkrFLTRbzIL/+nmBPHt56Y+G2A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by SA3PR12MB9108.namprd12.prod.outlook.com (2603:10b6:806:37d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
- 2025 14:15:10 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Fri, 7 Nov 2025
- 14:15:10 +0000
-Date: Fri, 7 Nov 2025 10:15:09 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v6 1/3] revocable: Add fops replacement
-Message-ID: <20251107141509.GK1732817@nvidia.com>
-References: <20251106152712.11850-1-tzungbi@kernel.org>
- <20251106152712.11850-2-tzungbi@kernel.org>
- <20251106154715.GB1732817@nvidia.com>
- <aQ1-qj0ztQ29h-oc@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQ1-qj0ztQ29h-oc@google.com>
-X-ClientProxiedBy: MN2PR06CA0017.namprd06.prod.outlook.com
- (2603:10b6:208:23d::22) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC2B5478D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762524969; cv=none; b=XojGqisdu7469RD6yH9nXJ9Ye9QHejEq0fVTqMjJpCul4OVShsq3QHSQYPlyG8I3e0hqK7UhxOtFfOrh7aKTVyj+g8Zf8lLcU5/U7iGqIL/OE+ZUBP4/2e3f3RFxaI7GqmHS53ETFGzfMGfgA9j+fv6hbH8o8v9vCnpH46uz+WM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762524969; c=relaxed/simple;
+	bh=lZsKXULxOS8scgIR5lVWKZChe9T5cJRTFxqFIGC3G3o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GyecUglGo2aJx2bNDciB396Rh7JCZBL4qtS2L94AQfhZzYOn4AQw5CXbNe6P+5h2/TrtlvTy9vIgRtclVykhbc+lJOg862rBfq2gbfuqnZPF+bQhGqQWrpkZsiOZbteCr7MlBk6TToBis/Zx+tFvHfdEjkRDXKF/j9S5HevksRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-940d88b8c15so67176839f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:16:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762524963; x=1763129763;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/5EkwyXIa+ZDrLvkJpxqeU3VY4hPjXjDEMUXybsK4Eg=;
+        b=ZV8TaShEQztoQNw+9x2Ih8OOt93BRS8uKfG4JbmLTPN13ooVDNSFEFafG2ytFv0dWd
+         gVI6glx4WjX/YoxiNr2ekUm60EhazbN6IgUqdEw3xcp/vxGRHb7wcXXM59D3nhrSmdO7
+         UCciNSUTSYaLO0GJ33DGmBq4hPItSSMeJdi6yzb9cQVXFwXWePclq4uk976gb9PmKVH9
+         uoklpT3LNW1eDYNHZqabeCV+TnGbm9M4bHrJlbKG7ZiSaA1whH11V4iSAokV99gmC0p9
+         l6Gl6ca+oK5pL++XvvimBDrAot+eopaZPym6ubjMmAbCCkvDocirECESKQAlseRUxQE/
+         3Zlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV5bB/w4kcfekP4hmGRbiColh05U/wLfK/SJI92z1wqAE4W45f7eoQfvrU90C7WebzyMAKCrhT3Ge3Yb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLvdPUm7CD6A5mpj9bCjhbirOudgGDeyXysdx0GAMjphIPlP8n
+	fEMjap7MhE9izTtZ1Mw16wXm+W1sJcf+OBozB62VmMrJ6sLtUJpcZGTjoANhZ8bNXw4qoYuv9cv
+	e+KE7iChBBqC2ru+IKpXKCtly54Qiu1nDR/LjgN6LIOSg1+kcYE1C8lfHP3k=
+X-Google-Smtp-Source: AGHT+IH2FD3nHQzIMnm0n48PVFWHE83esLE4gDv8ZJ/9uORohHlvumk2TzHdqmlapchFqzXTu9wz0apqFi6d/QNIoz4baQChTZ1A
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|SA3PR12MB9108:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4ef0919-4a17-4289-3f18-08de1e080f91
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7dd1zz+XNPgtCrStXOHmdQR2CC8H1NyFhu8Ds0QA5/Dw4ADvDlGLYrkw2A0z?=
- =?us-ascii?Q?OEBbbeqCHKhPM9ASOk+sLfiRJvtFdlShDgdZSlb5nDezWvEVBjLhFvL0v5of?=
- =?us-ascii?Q?YjXWmNBrazhQLgketByL+jsGDicK3gpBxE0v+bmUUAQ10/0IwwFLOXQhF0kq?=
- =?us-ascii?Q?p9CwbR0VtALol7ACqr+gFj5+qJiDI0uvzNTxo/zaA8AiJTR1IXAhooGHpYAX?=
- =?us-ascii?Q?BlSPYubKlWwNym1Gy+D/IrCsMSwz109Et/cXVJZCIJ2mrNPBQQM8ZZ7rnXeE?=
- =?us-ascii?Q?ZWn0WAIQBm6ile+etcBtk/T47sWDV/ykbhGOE8B8/EqW/jxXGIbyStrQqANE?=
- =?us-ascii?Q?fZuRacXZ92ykmdpIGAPxWsaS7RXMxftTwmZGySI1HfdX2MUASHpRcHVuZqkx?=
- =?us-ascii?Q?KBQ3dZaW6ZXZrHuOtAlU297uksxiR0nOwvhszpvyhvG6b6dekzOx6ON1J/RZ?=
- =?us-ascii?Q?DRjNMk8iHw1DogT0r+VuBNqltnN1uZeGGFu68V+83+MVQpnH78wIdh9abMvo?=
- =?us-ascii?Q?mWs6JZYb0IApSp+SF9vsR5wE5Y60gxW8MXbdgu+yYzXe3FfrK62QcQ2Nugoz?=
- =?us-ascii?Q?SVyORCsoTFMUXbbBon2QZ8UIhcBxsnFaNdOnhx+XsB2z0DOfv/ZiBXIoDTcq?=
- =?us-ascii?Q?yYggmKrib91+18gQCUtyvUL4xo9md5MqefpEYKF3+PHlT+5W17aylmu1f+6Z?=
- =?us-ascii?Q?OjS2OINvVZfDvlS3A4HQSV7rShS2xyNvDwX6yREhdZYpKt5bPkNBoBrf9G3n?=
- =?us-ascii?Q?2snOSsGhFtnMaP7wDGg7HbyXbI3gPO5KDvt7yfyeXG0a1qqY8jBsoK/MnQod?=
- =?us-ascii?Q?AhgXed1UvQk43hO4020StGARpcr2AuZdFpU02T14EkDGRmEqRYK6v23Opkln?=
- =?us-ascii?Q?fu1Q03m+lF4VAog2DYpZozNJI40cKLjYWPa+sqkar/9It5YZFqNATlqAXph4?=
- =?us-ascii?Q?ZESSU+b9WXiZHFbm1TKV+tQ8jnKPJp1q7+sqAmLY5g061o/MmbmetrNK4t+3?=
- =?us-ascii?Q?L11Yf1WllaN1Ca6YB+Whl2yYuCrPNgnxonnL8toJPP2P5zHeoILoMJdfdrU5?=
- =?us-ascii?Q?a2dzObePqEkqXYOv83eYmYX+vdq1XuNvyNTqh8ZzFqF2yfAc0izegORRV5Ta?=
- =?us-ascii?Q?T3xEdu9UmF9ntnQray0r2oU3hTloH0V+MIYw8QiIhrZHx3Y91SSyPBtv64Ct?=
- =?us-ascii?Q?n82JyFcM7Cqk5KX8KNBs3zV1zY6gV+eujbV1WHk3MStYX2yQrXExJ09L+Khv?=
- =?us-ascii?Q?iEW9aCdrTk4YyI9jEfa4btHkNG0J5mraBkNtvBL9J3ZR1j/7g6lIvgWz9Fpk?=
- =?us-ascii?Q?bHahC1HUTP6gweV7HrX5UspZfDH+9wfArHO3QDxqUVZDuVoN09/fpU4XCFFv?=
- =?us-ascii?Q?YMcRyn8j27E4kt0XrhnwlBBP8YaSGR04YJjBt9H4n8HbtVXlCONm598KsGqx?=
- =?us-ascii?Q?4drkTYuTUNsInjDVRqfoTsneMyC2jJnq?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BMtTh8aFhWIN9+bVTMFJNMHenqGrikynu17UNGgyjc12iPO3L77031xII0jy?=
- =?us-ascii?Q?TiqEcjbXWxy219m9a4hsaJtX8HHzVX+fhRFLDTihqjtFQG2Ez+9KJofUSl+L?=
- =?us-ascii?Q?4reYR9/89exzfBdamBvWj39pDwos8imiUgCt12p5291oKdoGGSTw6y162BIP?=
- =?us-ascii?Q?YKxHUaw1AxA7PjbU9fnXiQeH1fKNWXr55obtZlk0jK8fXwBcUqf95McicIFg?=
- =?us-ascii?Q?yNFv8A7CTgRzirqu6tT1nok7y0FG3rVcXH7itZGoJ3k0MoVbZM000BmyjKcp?=
- =?us-ascii?Q?1nALm6vZdhNDfAjoskpktch6E7Et3JqdqvNTHHLIIE76BomgfkM8S2Jr98Bt?=
- =?us-ascii?Q?Nvw67+XaPe5QexMls71A9mWF91fL+7MR5Q8MvTGEwSQbPA7F1BVQ22hT9rxd?=
- =?us-ascii?Q?s256Bh+HIKCAXXXYYepqhDlQqJzP3U1Lwl3XzrcmaW0lUmPbRPSLu5m8lKHA?=
- =?us-ascii?Q?DjkLkLsaLQlARQ1fq7ITSUUwoAiFRzgKa6gjSJnPNxbwPT/E0IUyjetty8m8?=
- =?us-ascii?Q?NoCS2bW/jrCEgebsG/0oJqNytQyC+e7PuLImG7sQXFAdY6ruFFdZ6zAUECcC?=
- =?us-ascii?Q?OY2lDTWmOq5Nu4YzJZidFjdXcPRTuCPm82k/IcNOi7IpxuS+7g3FpnQfV3Qk?=
- =?us-ascii?Q?kx6/fLkCBjFol9CKfLqY6kgPe5GS5CkbjbtFUWWIyCHYjIxE9Yt/29kqhlIG?=
- =?us-ascii?Q?fsamkqMBx7wRMjZFQiYSuvzrtXEXpYcC4IvVrbiayMsSlO8QGs0S6YwD5Ubq?=
- =?us-ascii?Q?Fo/pRAttH3oaVYzD7aMOhL4y+7z6Fpb/J1xiHDIaGpEZMVmokrKWMlc5ygPG?=
- =?us-ascii?Q?c9zFf73zdYEdsp3zrdzTIKMdkrBxSvE/BnwejdNNQ8qN3xooiLOK0tsul8k8?=
- =?us-ascii?Q?Fc8tm/7QJzOzjlQz/NcercmGjAxeCVwOZeY2OUOA1iaHq2IcCvJywlo9Ejqh?=
- =?us-ascii?Q?RKWaG0QwwSEmMZBnlSnPZ7ffBMNhOayvR7ky2+4bMAg8jqkVUYSz+L2+kS/f?=
- =?us-ascii?Q?NDJDYRQQxD/C3ZjA0DZWGi/XUKDGOUe3bMf5AvXE2Cn5/2VVPgVfNBwyiKeh?=
- =?us-ascii?Q?7Kt0OZC60Fx+BaTXAtFUun99aaeflHbm4QjQx2je1Hih/z2vBOHng1s+JkPp?=
- =?us-ascii?Q?cJiXOrrE1+QXEVr3HrHqKDJyA6LPQC+CSuUzOWHC27DqeRPHrqETwpIQ2p18?=
- =?us-ascii?Q?Rm0SYHiAWyqDC8p+/i2gsjfRj8pTyt91IF7NbjPYG32CGHxIUtzMaYS7bXdw?=
- =?us-ascii?Q?GC/3Pwk7kV/NY10Qa6C8k7Uvr4rEtxUAbTZsDxGIujIwRfysBsLawPwLvcSO?=
- =?us-ascii?Q?mVngolLoZQ2obINbFc1PgJ3zLd4Wlbvj5XCcinMCnb9PobXqGd4GbrA34jLa?=
- =?us-ascii?Q?qDmncCNpiE3jTQrB5mt4WMdy5DN9ah1SLzUxGrfcKFz/BiPEohgWzP4HUt/L?=
- =?us-ascii?Q?6wjFhW5xyAr/zzL27Fn9sDNOrnGusZvQXj/q0O1tPpDag9laEnutRUU9Mb+B?=
- =?us-ascii?Q?r9UcVtfC1+cqzKRRb2rXiShIU3ev8CdI7YKnH5185XHY7+vJYWF/KsQJ5R2h?=
- =?us-ascii?Q?5zKcnQBApsaPp8z7b1I=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4ef0919-4a17-4289-3f18-08de1e080f91
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 14:15:10.4306
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4rG8DqM6de70l3y8/5N0WNsHBf5/DYSsjj0rvho0VMKVUKH4WEfb9GdSYYiXOYKy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9108
+X-Received: by 2002:a05:6e02:1aa9:b0:433:51fd:4cd5 with SMTP id
+ e9e14a558f8ab-4335f2c080bmr47223315ab.0.1762524963491; Fri, 07 Nov 2025
+ 06:16:03 -0800 (PST)
+Date: Fri, 07 Nov 2025 06:16:03 -0800
+In-Reply-To: <20251107114435.22442-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690dff23.a70a0220.22f260.004e.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_get
+From: syzbot <syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 05:07:54AM +0000, Tzung-Bi Shih wrote:
-> On Thu, Nov 06, 2025 at 11:47:15AM -0400, Jason Gunthorpe wrote:
-> > On Thu, Nov 06, 2025 at 11:27:10PM +0800, Tzung-Bi Shih wrote:
-> > > +/*
-> > > + * Recover the private_data to its original one.
-> > > + */
-> > > +static struct fops_replacement *_recover_private_data(struct file *filp)
-> > > +{
-> > > +	struct fops_replacement *fr = filp->private_data;
-> > > +
-> > > +	filp->private_data = fr->orig_private_data;
-> > > +	return fr;
-> > > +}
-> > > +
-> > > +/*
-> > > + * Replace the private_data to fops_replacement.
-> > > + */
-> > > +static void _replace_private_data(struct fops_replacement *fr)
-> > > +{
-> > > +	fr->filp->private_data = fr;
-> > > +}
-> > 
-> > This switching of private_data isn't reasonable, it breaks too much
-> > stuff. I think I showed a better idea in my sketch.
-> 
-> The approach assumes the filp->private_data should be set once by the
-> filp->f_op->open() if any.  Is it common that the filp->private_data
-> be updated in other file operations?
+Hello,
 
-You can set it once during open, but you can't change it around every
-fops callback. This stuff is all concurrent.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> > This probably doesn't work out, is likely to make a memory leak.
-> > It will be hard for the owning driver to free its per-file memory
-> > without access to release.
-> 
-> Ah, I think this reveals a drawback of the approach.
-> - Without calling ->release(), some memory may leak.
-> - With calling ->release(), some UAF may happen. 
+3.654920][    T1] Loaded X.509 cert 'Build time autogenerated kernel key: 2=
+b1e50eda567f48aae3b59ba5ce868b06b486d7e'
+[   23.982352][    T1] zswap: loaded using pool 842
+[   23.991410][    T1] Demotion targets for Node 0: null
+[   23.996985][    T1] Demotion targets for Node 1: null
+[   24.002328][    T1] debug_vm_pgtable: [debug_vm_pgtable         ]: Valid=
+ating architecture page table helpers
+[   26.824926][    T1] Key type .fscrypt registered
+[   26.829883][    T1] Key type fscrypt-provisioning registered
+[   26.839281][    T1] kAFS: Red Hat AFS client v0.1 registering.
+[   26.865411][    T1] Btrfs loaded, assert=3Don, zoned=3Dyes, fsverity=3Dy=
+es
+[   26.872528][    T1] Key type big_key registered
+[   26.877283][    T1] Key type encrypted registered
+[   26.882161][    T1] AppArmor: AppArmor sha256 policy hashing enabled
+[   26.888954][    T1] ima: No TPM chip found, activating TPM-bypass!
+[   26.895372][    T1] Loading compiled-in module X.509 certificates
+[   26.922050][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
+ey: 2b1e50eda567f48aae3b59ba5ce868b06b486d7e'
+[   26.932919][    T1] ima: Allocated hash algorithm: sha256
+[   26.938925][    T1] ima: No architecture policies found
+[   26.944865][    T1] evm: Initialising EVM extended attributes:
+[   26.950942][    T1] evm: security.selinux (disabled)
+[   26.956088][    T1] evm: security.SMACK64 (disabled)
+[   26.961183][    T1] evm: security.SMACK64EXEC (disabled)
+[   26.966630][    T1] evm: security.SMACK64TRANSMUTE (disabled)
+[   26.972527][    T1] evm: security.SMACK64MMAP (disabled)
+[   26.978060][    T1] evm: security.apparmor
+[   26.982473][    T1] evm: security.ima
+[   26.986261][    T1] evm: security.capability
+[   26.990651][    T1] evm: HMAC attrs: 0x1
+[   26.997017][    T1] PM:   Magic number: 1:107:131
+[   27.002026][    T1] video4linux video31: hash matches
+[   27.007554][    T1] block nbd10: hash matches
+[   27.012543][    T1] acpi device:06: hash matches
+[   27.017647][    T1] netconsole: network logging started
+[   27.023759][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
+[   27.035896][    T1] rdma_rxe: loaded
+[   27.041816][    T1] cfg80211: Loading compiled-in X.509 certificates for=
+ regulatory database
+[   27.052989][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   27.060977][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06=
+c7248db18c600'
+[   27.072219][    T1] clk: Disabling unused clocks
+[   27.073861][   T63] faux_driver regulatory: Direct firmware load for reg=
+ulatory.db failed with error -2
+[   27.077172][    T1] ALSA device list:
+[   27.087180][   T63] faux_driver regulatory: Falling back to sysfs fallba=
+ck for: regulatory.db
+[   27.090785][    T1]   #0: Dummy 1
+[   27.103854][    T1]   #1: Loopback 1
+[   27.107903][    T1]   #2: Virtual MIDI Card 1
+[   27.115574][    T1] check access for rdinit=3D/init failed: -2, ignoring
+[   27.122507][    T1] md: Waiting for all devices to be available before a=
+utodetect
+[   27.130224][    T1] md: If you don't use raid, use raid=3Dnoautodetect
+[   27.136785][    T1] md: Autodetecting RAID arrays.
+[   27.141856][    T1] md: autorun ...
+[   27.145572][    T1] md: ... autorun DONE.
+[   27.254350][    T1] EXT4-fs (sda1): orphan cleanup on readonly fs
+[   27.262975][    T1] EXT4-fs (sda1): mounted filesystem 4f91c6db-4997-4bb=
+4-91b8-7e83a20c1bf1 ro with ordered data mode. Quota mode: none.
+[   27.275897][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
+ce 8:1.
+[   27.285690][    T1] devtmpfs: mounted
+[   27.362347][    T1] Freeing unused kernel image (initmem) memory: 26112K
+[   27.373258][    T1] Write protecting the kernel read-only data: 212992k
+[   27.392412][    T1] Freeing unused kernel image (text/rodata gap) memory=
+: 1436K
+[   27.405281][    T1] Freeing unused kernel image (rodata/data gap) memory=
+: 1240K
+[   27.510532][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   27.518752][    T1] x86/mm: Checking user space page tables
+[   27.608528][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   27.622261][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
+ic=3D1': parameter not found
+[   27.632373][    T1] Run /sbin/init as init process
+[   27.899076][ T5159] mount (5159) used greatest stack depth: 23624 bytes =
+left
+[   27.967399][ T5160] EXT4-fs (sda1): re-mounted 4f91c6db-4997-4bb4-91b8-7=
+e83a20c1bf1 r/w.
+mount: mounting devtmpfs on /dev failed: Device or resource busy
+mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
+y
+mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
+ory
+[   28.105113][ T5164] mount (5164) used greatest stack depth: 21672 bytes =
+left
+Starting syslogd: OK
+Starting acpid: OK
+Starting klogd: OK
+Running sysctl: OK
+Populating /dev using udev: [   29.176871][ T5194] udevd[5194]: starting ve=
+rsion 3.2.14
+[   29.365166][ T5195] udevd[5195]: starting eudev-3.2.14
+[   29.367815][ T5194] udevd (5194) used greatest stack depth: 18696 bytes =
+left
+done
+Starting system message bus: done
+Starting iptables: OK
+Starting network: OK
+Starting dhcpcd...
+dhcpcd-10.2.0 starting
+[   49.444742][ T5489] ------------[ cut here ]------------
+[   49.450246][ T5489] WARNING: ./include/linux/ns_common.h:314 at nsfs_evi=
+ct+0x18e/0x200, CPU#1: dhcpcd/5489
+[   49.461849][ T5489] Modules linked in:
+[   49.465873][ T5489] CPU: 1 UID: 0 PID: 5489 Comm: dhcpcd Not tainted syz=
+kaller #0 PREEMPT(full)=20
+[   49.475268][ T5489] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[   49.485891][ T5489] RIP: 0010:nsfs_evict+0x18e/0x200
+[   49.491026][ T5489] Code: 4d 8b 1e 48 89 df 5b 41 5c 41 5d 41 5e 41 5f 5=
+d 41 ff e3 cc cc cc e8 01 c7 76 ff 90 0f 0b 90 e9 1f ff ff ff e8 f3 c6 76 f=
+f 90 <0f> 0b 90 e9 42 ff ff ff e8 e5 c6 76 ff 90 0f 0b 90 e9 72 ff ff ff
+[   49.511222][ T5489] RSP: 0018:ffffc90003adfa28 EFLAGS: 00010293
+[   49.517709][ T5489] RAX: ffffffff824b0e3d RBX: ffffffff9a180fd8 RCX: fff=
+f88802f9f5b80
+[   49.526255][ T5489] RDX: 0000000000000000 RSI: 00000000effffff8 RDI: 000=
+00000effffff8
+[   49.535159][ T5489] RBP: 00000000effffff8 R08: ffffffff9a181093 R09: 1ff=
+ffffff3430212
+[   49.543377][ T5489] R10: dffffc0000000000 R11: fffffbfff3430213 R12: dff=
+ffc0000000000
+[   49.551608][ T5489] R13: 1ffffffff34301fe R14: ffff88807a78f740 R15: fff=
+fffff9a180ff0
+[   49.559609][ T5489] FS:  00007f34c5e7d740(0000) GS:ffff888125b78000(0000=
+) knlGS:0000000000000000
+[   49.568761][ T5489] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   49.575391][ T5489] CR2: 000055fd54bd54a0 CR3: 0000000050a6a000 CR4: 000=
+00000003526f0
+[   49.583450][ T5489] Call Trace:
+[   49.586856][ T5489]  <TASK>
+[   49.589790][ T5489]  ? __pfx_nsfs_evict+0x10/0x10
+[   49.594786][ T5489]  evict+0x5f4/0xae0
+[   49.598708][ T5489]  ? __pfx_evict+0x10/0x10
+[   49.603192][ T5489]  ? _raw_spin_unlock+0x28/0x50
+[   49.608075][ T5489]  ? iput+0xce7/0x1050
+[   49.612199][ T5489]  __dentry_kill+0x209/0x660
+[   49.616894][ T5489]  ? dput+0x37/0x2b0
+[   49.620853][ T5489]  dput+0x19f/0x2b0
+[   49.625240][ T5489]  path_put+0x39/0x60
+[   49.629332][ T5489]  vfs_statx+0x36e/0x550
+[   49.633784][ T5489]  ? __pfx_vfs_statx+0x10/0x10
+[   49.638565][ T5489]  ? strncpy_from_user+0x150/0x2c0
+[   49.643871][ T5489]  ? getname_flags+0x1e5/0x540
+[   49.648659][ T5489]  vfs_fstatat+0x118/0x170
+[   49.653220][ T5489]  __x64_sys_newfstatat+0x116/0x190
+[   49.658872][ T5489]  ? __pfx___x64_sys_newfstatat+0x10/0x10
+[   49.664675][ T5489]  ? do_syscall_64+0xbe/0xfa0
+[   49.669371][ T5489]  do_syscall_64+0xfa/0xfa0
+[   49.674260][ T5489]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   49.680359][ T5489]  ? clear_bhb_loop+0x60/0xb0
+[   49.685201][ T5489]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   49.691150][ T5489] RIP: 0033:0x7f34c5f71b0a
+[   49.695754][ T5489] Code: 48 8b 15 f1 f2 0d 00 f7 d8 64 89 02 b8 ff ff f=
+f ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 41 89 ca b8 06 01 00 00 0=
+f 05 <3d> 00 f0 ff ff 77 07 31 c0 c3 0f 1f 40 00 48 8b 15 b9 f2 0d 00 f7
+[   49.715431][ T5489] RSP: 002b:00007ffd494b4028 EFLAGS: 00000246 ORIG_RAX=
+: 0000000000000106
+[   49.724018][ T5489] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000=
+07f34c5f71b0a
+[   49.732166][ T5489] RDX: 00007ffd494b4030 RSI: 000055fd54bfd557 RDI: 000=
+00000ffffff9c
+[   49.740133][ T5489] RBP: 00007ffd494b67c8 R08: 0000000000000000 R09: 000=
+0000000000000
+[   49.748181][ T5489] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
+07ffd494b51a0
+[   49.756207][ T5489] R13: 000055fd7bac88a0 R14: 0000000000001000 R15: 000=
+07f34c5e7d6c8
+[   49.764232][ T5489]  </TASK>
+[   49.767259][ T5489] Kernel panic - not syncing: kernel: panic_on_warn se=
+t ...
+[   49.774523][ T5489] CPU: 1 UID: 0 PID: 5489 Comm: dhcpcd Not tainted syz=
+kaller #0 PREEMPT(full)=20
+[   49.783536][ T5489] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/02/2025
+[   49.793664][ T5489] Call Trace:
+[   49.796937][ T5489]  <TASK>
+[   49.799886][ T5489]  dump_stack_lvl+0x99/0x250
+[   49.804503][ T5489]  ? __asan_memcpy+0x40/0x70
+[   49.809232][ T5489]  ? __pfx_dump_stack_lvl+0x10/0x10
+[   49.814434][ T5489]  ? __pfx__printk+0x10/0x10
+[   49.819062][ T5489]  vpanic+0x237/0x6d0
+[   49.823042][ T5489]  ? __pfx_vpanic+0x10/0x10
+[   49.827540][ T5489]  ? is_bpf_text_address+0x292/0x2b0
+[   49.832910][ T5489]  ? is_bpf_text_address+0x26/0x2b0
+[   49.838109][ T5489]  panic+0xb9/0xc0
+[   49.841907][ T5489]  ? __pfx_panic+0x10/0x10
+[   49.846325][ T5489]  __warn+0x334/0x4c0
+[   49.850307][ T5489]  ? nsfs_evict+0x18e/0x200
+[   49.854809][ T5489]  ? nsfs_evict+0x18e/0x200
+[   49.859319][ T5489]  report_bug+0x2be/0x4f0
+[   49.863803][ T5489]  ? nsfs_evict+0x18e/0x200
+[   49.868590][ T5489]  ? nsfs_evict+0x18e/0x200
+[   49.873445][ T5489]  ? nsfs_evict+0x190/0x200
+[   49.877981][ T5489]  handle_bug+0x84/0x160
+[   49.882217][ T5489]  exc_invalid_op+0x1a/0x50
+[   49.886826][ T5489]  asm_exc_invalid_op+0x1a/0x20
+[   49.891681][ T5489] RIP: 0010:nsfs_evict+0x18e/0x200
+[   49.896878][ T5489] Code: 4d 8b 1e 48 89 df 5b 41 5c 41 5d 41 5e 41 5f 5=
+d 41 ff e3 cc cc cc e8 01 c7 76 ff 90 0f 0b 90 e9 1f ff ff ff e8 f3 c6 76 f=
+f 90 <0f> 0b 90 e9 42 ff ff ff e8 e5 c6 76 ff 90 0f 0b 90 e9 72 ff ff ff
+[   49.916792][ T5489] RSP: 0018:ffffc90003adfa28 EFLAGS: 00010293
+[   49.922856][ T5489] RAX: ffffffff824b0e3d RBX: ffffffff9a180fd8 RCX: fff=
+f88802f9f5b80
+[   49.930820][ T5489] RDX: 0000000000000000 RSI: 00000000effffff8 RDI: 000=
+00000effffff8
+[   49.938872][ T5489] RBP: 00000000effffff8 R08: ffffffff9a181093 R09: 1ff=
+ffffff3430212
+[   49.947351][ T5489] R10: dffffc0000000000 R11: fffffbfff3430213 R12: dff=
+ffc0000000000
+[   49.955403][ T5489] R13: 1ffffffff34301fe R14: ffff88807a78f740 R15: fff=
+fffff9a180ff0
+[   49.963463][ T5489]  ? nsfs_evict+0x18d/0x200
+[   49.969170][ T5489]  ? nsfs_evict+0x18d/0x200
+[   49.973769][ T5489]  ? __pfx_nsfs_evict+0x10/0x10
+[   49.978624][ T5489]  evict+0x5f4/0xae0
+[   49.982525][ T5489]  ? __pfx_evict+0x10/0x10
+[   49.986950][ T5489]  ? _raw_spin_unlock+0x28/0x50
+[   49.992068][ T5489]  ? iput+0xce7/0x1050
+[   49.996224][ T5489]  __dentry_kill+0x209/0x660
+[   50.000806][ T5489]  ? dput+0x37/0x2b0
+[   50.004864][ T5489]  dput+0x19f/0x2b0
+[   50.008661][ T5489]  path_put+0x39/0x60
+[   50.012634][ T5489]  vfs_statx+0x36e/0x550
+[   50.016905][ T5489]  ? __pfx_vfs_statx+0x10/0x10
+[   50.021714][ T5489]  ? strncpy_from_user+0x150/0x2c0
+[   50.026926][ T5489]  ? getname_flags+0x1e5/0x540
+[   50.031689][ T5489]  vfs_fstatat+0x118/0x170
+[   50.036099][ T5489]  __x64_sys_newfstatat+0x116/0x190
+[   50.041293][ T5489]  ? __pfx___x64_sys_newfstatat+0x10/0x10
+[   50.047113][ T5489]  ? do_syscall_64+0xbe/0xfa0
+[   50.051797][ T5489]  do_syscall_64+0xfa/0xfa0
+[   50.056316][ T5489]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   50.062385][ T5489]  ? clear_bhb_loop+0x60/0xb0
+[   50.067083][ T5489]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   50.072967][ T5489] RIP: 0033:0x7f34c5f71b0a
+[   50.077370][ T5489] Code: 48 8b 15 f1 f2 0d 00 f7 d8 64 89 02 b8 ff ff f=
+f ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 41 89 ca b8 06 01 00 00 0=
+f 05 <3d> 00 f0 ff ff 77 07 31 c0 c3 0f 1f 40 00 48 8b 15 b9 f2 0d 00 f7
+[   50.096988][ T5489] RSP: 002b:00007ffd494b4028 EFLAGS: 00000246 ORIG_RAX=
+: 0000000000000106
+[   50.105404][ T5489] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000=
+07f34c5f71b0a
+[   50.113378][ T5489] RDX: 00007ffd494b4030 RSI: 000055fd54bfd557 RDI: 000=
+00000ffffff9c
+[   50.121341][ T5489] RBP: 00007ffd494b67c8 R08: 0000000000000000 R09: 000=
+0000000000000
+[   50.129389][ T5489] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
+07ffd494b51a0
+[   50.137355][ T5489] R13: 000055fd7bac88a0 R14: 0000000000001000 R15: 000=
+07f34c5e7d6c8
+[   50.145417][ T5489]  </TASK>
+[   50.148770][ T5489] Kernel Offset: disabled
+[   50.153141][ T5489] Rebooting in 86400 seconds..
 
-It just means the user of this needs to understand there are
-limitations on what release can do. Usually release just frees memory,
-that is fine.
 
-I think it would be strange for a release to touch revocable data,
-that might suggest some larger problem.
+syzkaller build log:
+go env (err=3D<nil>)
+AR=3D'ar'
+CC=3D'gcc'
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_ENABLED=3D'1'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+CXX=3D'g++'
+GCCGO=3D'gccgo'
+GO111MODULE=3D'auto'
+GOAMD64=3D'v1'
+GOARCH=3D'amd64'
+GOAUTH=3D'netrc'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOCACHEPROG=3D''
+GODEBUG=3D''
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFIPS140=3D'off'
+GOFLAGS=3D''
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build3406885182=3D/tmp/go-build -gno-record-gc=
+c-switches'
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.24.4'
+GOWORK=3D''
+PKG_CONFIG=3D'pkg-config'
 
-Jason
+git status (err=3D<nil>)
+HEAD detached at a6c9c731229
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' -ldflags=3D"-s -w -X github.com/google/syzkaller/pr=
+og.GitRevision=3Da6c9c7312290da5bca2fc1be4872a7aeefb6e3ea -X github.com/goo=
+gle/syzkaller/prog.gitRevisionDate=3D20251104-181356"  ./sys/syz-sysgen | g=
+rep -q false || go install -ldflags=3D"-s -w -X github.com/google/syzkaller=
+/prog.GitRevision=3Da6c9c7312290da5bca2fc1be4872a7aeefb6e3ea -X github.com/=
+google/syzkaller/prog.gitRevisionDate=3D20251104-181356"  ./sys/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Da6c9c7312290da5bca2fc1be4872a7aeefb6e3ea -X g=
+ithub.com/google/syzkaller/prog.gitRevisionDate=3D20251104-181356"  -o ./bi=
+n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"a6c9c7312290da5bca2fc1be4872a7aeef=
+b6e3ea\"
+/usr/bin/ld: /tmp/cc7wkuO8.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+./tools/check-syzos.sh 2>/dev/null
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D12e510b4580000
+
+
+Tested on:
+
+commit:         9c0826a5 Add linux-next specific files for 20251107
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4f8fcc6438a785e=
+7
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D0a8655a80e1892784=
+87e
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-=
+1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D12c5e17c5800=
+00
+
 
