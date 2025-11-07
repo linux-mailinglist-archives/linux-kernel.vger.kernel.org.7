@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-890636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42377C40826
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:03:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CDEC40823
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BAC84F50FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF50189B965
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110AA32D0C0;
-	Fri,  7 Nov 2025 15:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FFE32B98B;
+	Fri,  7 Nov 2025 15:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SjTBB9p3"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QAlQa3Z6"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F42B2405ED
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067D632B98D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762527730; cv=none; b=XWbypYbi1eQ7APXSXgRy4F2kOebbzz7QW+47hMf4fq9FUB5o5fsteWb7CR5AVpcJG/8TsoRhJhV6fEtPcFH8/pWUsi2SpGoA1ZpkFjuwYDTnGxBrb/5pSIBwzryAFf3vHZKd0be4+U6YY0ah75/8z3QYEg3+U5WwVBU9y09rqpo=
+	t=1762527730; cv=none; b=YFqNgabEOrdIilokhmIxvvbNVB8Bc/MPCOgJeExo1b956iGeWYCMLy0TOR8zB8PCo4pODmTbt/8mj9ziU58U8VxiGz55lgDkFKSrf0sn2/OiqqPbsUfwp724L3pDumi+yZlrLY11ivC08Fu0/s4to0BywQwD8BUT0EVnmrBkqw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762527730; c=relaxed/simple;
-	bh=/MyQgTeg/kRKghyemlvvfpC1rLwcUH1vky5ONwwjHpI=;
+	bh=neIM7QVQVzi+YLKvjx9mqdZ6zG6p4nF2fOHuVl49jL8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sra98PIp/sWviW1xxzViBHpRtqjD8VNP+/WBY9s2olkpmsuEhMAvIzlUk6gR4+pSEBdAhzgd/Q0oB/zppMG3LNWLfB7hnbfDCsZVDNSrZNABljW9NEW086IgUu1RepnkfpuMmyAR+/hF7eWeNg/6zYIXcYeeZuWjQxr9srynsA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SjTBB9p3; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version:Content-Type; b=grNFHJWEp2GuCRukZ4tXlxDhGZKMqEvZo8+fYN/1kCgekATHrqkXhBlkV7836xFX+TKVGG7ONwBQDCJt0X7HUWYujYRVobE+0aexV3F4vpYUJHxOsAFaEWTZdllSY5/P/RDpxkQPrS6hTbOxK5BMYMKSI8lbbmkek9LSYsJTXlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QAlQa3Z6; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-477632cc932so3742575e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:02:08 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47754547a38so6958235e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:02:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=suse.com; s=google; t=1762527726; x=1763132526; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vyt/356haOFVo0WC/XQ0zOlNsdbCiUi9taT5WCt+m6s=;
-        b=SjTBB9p3ApA94Ogdsmtjr6vhVgoTneODzXq7zF+3A6kts6/LoX8ICZOxq/puzgelO8
-         REboWuZ6JzCeGUn/HwvYPcNcTvrXjSC5smKWE2cdw7HfqujJPmIMOz288c53uBOXSYKh
-         CHGQNfk3JvdWRohJ029SIKihy57tnTreYg07bZ2M/Q0qlBW015wC/Abzv0l3VVzsx3iM
-         RgWxChTkxqKCLg6nc8qii7eqLIKLTB7p2Xf60xpbeaU6Q1zAw0FDI5kMXj8hxNkprt0u
-         daDO1qMyjElSMoFB9KbdfJA92LRwF/aqyGhMnzTXt0Z4F8wjgd3bMy/HnkjQDXgMgCvh
-         RYig==
+        bh=O69j8p6POFkrpweTBOpwpVXxQ7WR8S2t/JBSoUi6DYU=;
+        b=QAlQa3Z6xe/zc8yAFPJRLiNzwI4/aDxC4lqc4e+R+2EO/F7uawzAn+BmpXFFZ+wt5P
+         YdEYHMEkeb/kZrsPrQbghJyTnyAq8DtIcw+muGs4DJkYz/tXOzdAXKSZjB1xN4D7DfLQ
+         /J5PpM+1smoNAOueqh26io/+Im7Fjqkdtx4vRo4nkvrnui4jL7VeAjmpgRHQRZNU3x4b
+         7lg1We606uAa00SWIFKRGO4SBTRCOiWBQnuoImRaJ4p2hbKuzpKWtfcMXQon4DAN8uov
+         lFA7aZ6e6OYwfWmNqlt0POpLz0vkoCzn+jebOmvbrldiLscx2H8h/9K178ab2Psb0b7u
+         cGtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1762527726; x=1763132526;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=vyt/356haOFVo0WC/XQ0zOlNsdbCiUi9taT5WCt+m6s=;
-        b=U2QpCyEbAS3a+DdqvY9qV2uAh96N8K1SexqtRIrXMT1sYC6eyTgUkJO5mfcSSZBkya
-         fvA306bO/TfapjsgMUNBnrZc3XiypqugIOiDpxMtD9WjYOTQuGSC6Fyfnzbbg3FyYdqO
-         ZKotTqWnxS+Pn2+cJEred4CBkP9lCn17udi4S18aGOy/Kq1uAezZALK2tqWx083sh+2z
-         79kjJ9z44UZVdMptDPypMWgtBQmtzch9Zz5y2JqHM63rfa0IBEsGD6ILYGl8t1TcHOOG
-         58DiAQkTfldU52aR3fi/caPn0L7JJN4FOdJGgefTYhvcQO8b1fpD5sGHixlHYv7lBaYA
-         uROg==
-X-Gm-Message-State: AOJu0Yxf/uQ3fuACakD8fO+5xk3t3z9cXz6mj9FUTQ0zM3qwkPHOu/X9
-	CRiuaphjoYvWo6TY7unwBYTM77RTU5MBT/o0h2/ETTRTLoFCFdGJM4zucfkOhs8AV238/Nl69Kx
-	gRqWi
-X-Gm-Gg: ASbGncteQT+kl68P4JKBcndeU0FYHElX4KAno/4kFMSyVFY6a9YLsbPJLkIOefd1HPQ
-	F6M+uyG9WhbMtFaSa+aSeCmrz5AUqophjrs592DqUmLWT5HquHzWWYZmTgbECWWo7PjTwpQdIt4
-	dcEcMoLlHDaizC55S8+V+LbHvLrqmczAW5oX8qZ5B7vcuNgjDtXgYVd514ILtChL8eQ6usBl6bV
-	mmy/SllUtVdEe2i8Y8tEyMqE0MqUDzyP3/xLAXrGrrgcYKCxHP1rEMQ9bFVJtUXNaVH/EkddCbA
-	3Gh0XrSGNqb2iONTiWyep2eXwMiZiZ0ZAM6lEv492yfcngxZ6wFy7kOJ5tJuLhucAXbdUrnAnMV
-	zm9iciyBoLUL+/seKH2j553H8PS7QM1IRlPZgwaBPV0gWX44/eA14gVAocgbJLP51Jb4k69Jfm+
-	ANVYqOoD2e4XuYQBZelBX9caVm
-X-Google-Smtp-Source: AGHT+IH5Ey9B0iwSNCwyc1V8tclibBQXC7NnuyOaWnZdTUkdNZ9mMv2vosr2W3a789JDeZcYYQKCgw==
-X-Received: by 2002:a05:600c:5813:b0:477:5c45:8117 with SMTP id 5b1f17b1804b1-4776bcc98bbmr17320205e9.41.1762527724463;
-        Fri, 07 Nov 2025 07:02:04 -0800 (PST)
+        bh=O69j8p6POFkrpweTBOpwpVXxQ7WR8S2t/JBSoUi6DYU=;
+        b=h/21yuyVNbDE9rhfCJm/TePTB7njuwLGqb5wzBUnIgqL4wd0IUpbGKvvizWcpWLKPH
+         7l4gwBB0+bM2M7ZvaHTh7oT1g4Q6OjaCmwxXrMGfgEx/F88jpqjkPbLL53mr6PJbDJUn
+         NUDdmhaiNNuCmAGXTe68dfqqzUtDEH3gBxQi+A/mQ88rZn0AiWtbUaza1jQswnjDuZ8Q
+         9JJM0tjJrWBe290yNXl81e9/MmwdZl2iCUM0WkOxyuKz+0Ikr9um7t388RdzOEcz35ky
+         XAcJ/RySJEqxBoHH4hR+7rdZKFCQO6kDpysjayHmUcvwsUWfNlmOXBSlynF13q9Qy8rN
+         DlFg==
+X-Gm-Message-State: AOJu0YyUSMub/ozM3l1ylh5gg18xhyalrV+15A+oKbWqr6LciDiG0JEN
+	pQ8HpH7R70W+aqx8PgxUf4ZyiYDC8UEboL6cS/7KZiHqC35Rn+jUBKReaAROtV80ZgcJr6TQgy5
+	6IT6j
+X-Gm-Gg: ASbGnctMvypHC93ebXSvm8asQv5Zpp0nYBCuuaw36OiJ2mAfE1FpRbtuNIlqDemt25D
+	UaFbQ1as/RSMoDVTzPgEA3S3q1Zj6qOolQhl7/1ApEkZLddYUE6szMWgb38mAju1zNWb0z9LjjN
+	1Hp6fU6S8rq1sr4oKUzIaj9488AdqLC55mM0tSvS2kyj9/03I020ZXZEfKRa2LPtCDkh4pRqzve
+	c89obkCBgaLL6qPKtoF4uxjxdJYPHAUvjE2YFapNcXACrtgzIp+RFV7HNGOVgFM5JpDJpptGkda
+	QTGoeH33W/My4nDUggen0myQB8rgpJo/O1B/JTJ6/nBK3xu1XyqM510/9/+3iDLexeCd1F9t7eX
+	g1P96Y8O5GVHel+/o9KPCrx0IrXPsrXopL4EMUUny/vY22vc6Gz9hA0GVe4FdTQGb2tCvOsxkge
+	M9bKbZUK6BbZ91p6wXZEpV2ITi
+X-Google-Smtp-Source: AGHT+IHjMq1QJ7HYQ/kS/Qhb3uXFesgKIN2s46CxCh7W140FLJQZ4eDZpV2W+DDmBxiZua0HLfkCFg==
+X-Received: by 2002:a05:600c:4694:b0:471:13fa:1b84 with SMTP id 5b1f17b1804b1-4776bc959f6mr29006635e9.12.1762527725719;
+        Fri, 07 Nov 2025 07:02:05 -0800 (PST)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675ca52sm5777830f8f.25.2025.11.07.07.02.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675ca52sm5777830f8f.25.2025.11.07.07.02.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:02:03 -0800 (PST)
+        Fri, 07 Nov 2025 07:02:05 -0800 (PST)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	linux-scsi@vger.kernel.org
@@ -87,9 +87,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	GR-QLogic-Storage-Upstream@marvell.com,
 	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 1/2] scsi: bnx2fc: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 16:01:54 +0100
-Message-ID: <20251107150155.267651-2-marco.crivellari@suse.com>
+Subject: [PATCH 2/2] scsi: qedf: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 16:01:55 +0100
+Message-ID: <20251107150155.267651-3-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251107150155.267651-1-marco.crivellari@suse.com>
 References: <20251107150155.267651-1-marco.crivellari@suse.com>
@@ -135,22 +135,63 @@ become the implicit default.
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qedf/qedf_main.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index 58da993251e9..0f68739d380a 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -2695,7 +2695,7 @@ static int __init bnx2fc_mod_init(void)
- 	if (rc)
- 		goto detach_ft;
+diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+index 6b1ebab36fa3..7792e00800ae 100644
+--- a/drivers/scsi/qedf/qedf_main.c
++++ b/drivers/scsi/qedf/qedf_main.c
+@@ -3374,7 +3374,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 	QEDF_INFO(&(qedf->dbg_ctx), QEDF_LOG_INFO, "qedf->io_mempool=%p.\n",
+ 	    qedf->io_mempool);
  
--	bnx2fc_wq = alloc_workqueue("bnx2fc", 0, 0);
-+	bnx2fc_wq = alloc_workqueue("bnx2fc", WQ_PERCPU, 0);
- 	if (!bnx2fc_wq) {
- 		rc = -ENOMEM;
- 		goto release_bt;
+-	qedf->link_update_wq = alloc_workqueue("qedf_%u_link", WQ_MEM_RECLAIM,
++	qedf->link_update_wq = alloc_workqueue("qedf_%u_link",
++					       WQ_MEM_RECLAIM | WQ_PERCPU,
+ 					       1, qedf->lport->host->host_no);
+ 	INIT_DELAYED_WORK(&qedf->link_update, qedf_handle_link_update);
+ 	INIT_DELAYED_WORK(&qedf->link_recovery, qedf_link_recovery);
+@@ -3585,7 +3586,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 	ether_addr_copy(params.ll2_mac_address, qedf->mac);
+ 
+ 	/* Start LL2 processing thread */
+-	qedf->ll2_recv_wq = alloc_workqueue("qedf_%d_ll2", WQ_MEM_RECLAIM, 1,
++	qedf->ll2_recv_wq = alloc_workqueue("qedf_%d_ll2",
++					    WQ_MEM_RECLAIM | WQ_PERCPU, 1,
+ 					    host->host_no);
+ 	if (!qedf->ll2_recv_wq) {
+ 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to LL2 workqueue.\n");
+@@ -3628,7 +3630,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 	}
+ 
+ 	qedf->timer_work_queue = alloc_workqueue("qedf_%u_timer",
+-				WQ_MEM_RECLAIM, 1, qedf->lport->host->host_no);
++				WQ_MEM_RECLAIM | WQ_PERCPU, 1,
++				qedf->lport->host->host_no);
+ 	if (!qedf->timer_work_queue) {
+ 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to start timer "
+ 			  "workqueue.\n");
+@@ -3641,7 +3644,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 		sprintf(host_buf, "qedf_%u_dpc",
+ 		    qedf->lport->host->host_no);
+ 		qedf->dpc_wq =
+-			alloc_workqueue("%s", WQ_MEM_RECLAIM, 1, host_buf);
++			alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_PERCPU, 1,
++					host_buf);
+ 	}
+ 	INIT_DELAYED_WORK(&qedf->recovery_work, qedf_recovery_handler);
+ 
+@@ -4177,7 +4181,8 @@ static int __init qedf_init(void)
+ 		goto err3;
+ 	}
+ 
+-	qedf_io_wq = alloc_workqueue("%s", WQ_MEM_RECLAIM, 1, "qedf_io_wq");
++	qedf_io_wq = alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_PERCPU, 1,
++				     "qedf_io_wq");
+ 	if (!qedf_io_wq) {
+ 		QEDF_ERR(NULL, "Could not create qedf_io_wq.\n");
+ 		goto err4;
 -- 
 2.51.1
 
