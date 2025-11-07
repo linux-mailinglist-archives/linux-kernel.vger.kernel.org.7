@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-890917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA65C41616
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:06:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7DAC41623
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D9E3A182E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:05:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C1F54E472E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B9F281370;
-	Fri,  7 Nov 2025 19:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBFC2D0610;
+	Fri,  7 Nov 2025 19:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XmWfL3hV"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBhrDtkL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87716239E88;
-	Fri,  7 Nov 2025 19:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51981DB125;
+	Fri,  7 Nov 2025 19:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762542352; cv=none; b=f5DKK9x0GrYHFdD/tcYjD4y8SPsFIlIjR9ItdASwkUbcs/MGy1V9FSyclw9YEduzycD+UClpQBu6wS1/s36PvnPjYtI8ozCK0ZMtoSGcBtyMZbofF+w1mU5K4g8dYn8n0wneM0RFLjs1xeD2us3w3pEnHmkT/UW7xQdYPuLoI90=
+	t=1762542453; cv=none; b=pHLml3CALBirXZTsXQC/mNH3BvVByNK2m01QVkMIfwoycGLAr3qAhysLJ+zQGnwnKLTLPZR0YiTj5wxdgxdYZ1VkIXa6ur6nlbjlrfQNNblMYtScneyc63P78T0/pGpasWL6D1fGO9bvTNzRnm2coWQbkMmu/9HpxqPV/vvB63E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762542352; c=relaxed/simple;
-	bh=mXFR1PhmKgmSVMFeCXXi28Wz72C3jBWODvB+di636gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5D/a7FErE3tMP/p5e37T3hs6lkpl5N48qz7R81lGHSwXI98V3WY0Vkg3D/xZFcYjLysQ+4CIsCDRRguadVT+WOLnh4aT0VRhfIW+m6ur/ycvMzeduZH2fgHmrtVzTama03hFwfMldr7iniZhgPGrjQPF03OUaT7QMxkYO0dqPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XmWfL3hV; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 47D2140E019D;
-	Fri,  7 Nov 2025 19:05:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 6kqq-evhot0V; Fri,  7 Nov 2025 19:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762542344; bh=lujgfbqZ4qlRCiqTlaXxcoUU22N7BBwu48Sd8U8jwCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XmWfL3hVNM+7GgDM7O4LUM10o5oZxOwNMcMYFdL70WGMKfQrcKGEaZLgGZjZP7Jwk
-	 v0cdEL+w1ykgG7nAn0zAh3g+P6ip0qJZkT/cqu8OGsLyaOH5ruBD8ymHemYR6P7QmQ
-	 i1zaGx5Ps5mlRtYja4PZQc69fGAGVCuiMnwwBTlMX2mfLsqXdX9RJmUprU0VIZmInq
-	 3KNcX+Imb8dGzwlYxflOd9Elt12TAgJyRBZgj5OhZuev519s/KkX7wvYog/1GkonUh
-	 hZk9DP+F3Amxyc7q6h7NBUwIFVLnTaaLg1JfDKqdegNDa0Kgprs5c1bs1oFLsgKqzn
-	 6QUa1hH5wT1Zs2oI6IWb4shqWcvnbCJ9uwrLuF3LG4oIildrK/OdWTO8mOEDaQwp7m
-	 GamvI5na+K+2MRJSxhZfmtTAHxrP2F3+PGEHpRET+g6Wg6JxtSpWA309a08i7wBBjD
-	 2lrigkC5WwwYJS8CCfIjNSu2e5rnc7fcwDfar1PckSeNhr3FH+hWUQJ6VpmOslyjMc
-	 I5+cGfYsJArRmpnIWaouL+f3nr0tAPIBRN52Jlez4EPmwpCV/678TT/41tjQ8FEzOW
-	 fX+V5y/SqamrXJm0pH67AE/jK4qH7/TOJbPvJtneREzk+egzTvfwX5SrwXQPJ08MM6
-	 kylKx3g3vKhgouhhMyfnea4w=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 90F9B40E0191;
-	Fri,  7 Nov 2025 19:05:35 +0000 (UTC)
-Date: Fri, 7 Nov 2025 20:05:34 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 1/8] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
-Message-ID: <20251107190534.GTaQ5C_l_UsZmQR1ph@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-2-seanjc@google.com>
- <20251103181840.kx3egw5fwgzpksu4@desk>
+	s=arc-20240116; t=1762542453; c=relaxed/simple;
+	bh=sryXcWbfbtKjRhof6o+o8YX3yFfe5opZuYDtIKsbm60=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m3ED+qEl0OGkOPNNhA3YOIC8HJet7f9aJI3zAM5aq6NB5A5/6+KX0ZpSbAQf+lcOTKTQYJ2AJ+1MK/oFAAGUJ1HvSrSUlkRc+7gokyM4/ptr9nUUi2XW2nj4MdHGhDpIgFgEjIqah9YyhPfnv1+i9TDYQXaJ/+bnJRpHRa+PruQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBhrDtkL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD42C4CEF8;
+	Fri,  7 Nov 2025 19:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762542453;
+	bh=sryXcWbfbtKjRhof6o+o8YX3yFfe5opZuYDtIKsbm60=;
+	h=From:To:Cc:Subject:Date:From;
+	b=vBhrDtkLzYRm/MJdhjPL6tLdpXslkDBcJKP5fty38Lu4v2z470PKURpRjuueEt2C4
+	 Os6l8FPmzZmGVLVjxv0FXFOHMjifKxrFYYEHZO0YucLG52WFkZ38df/0/8WIrtX/1U
+	 nCx3ZDUCk3T9POoXZuNLwgxCgWZKuGK7/a+XD5sCUwXKXy2a0uByEMT0RX2cir7ZUF
+	 agMFrtbZ3cTiRp5JMhygrmjYTv9tu2O/G4VySOf+T+cdWhbk5ulRz9qPTmtmYIb5LR
+	 uYfO5+NPFsmFprcLL3AgZ2xhJh6dWW9NJRvIMqwIw3CLgv0jVhoB58jy299x6M6L70
+	 hg2UyftlSczvQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject:
+ [PATCH v2] cpuidle: Add sanity check for exit latency and target residency
+Date: Fri, 07 Nov 2025 20:07:28 +0100
+Message-ID: <12779486.O9o76ZdvQC@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251103181840.kx3egw5fwgzpksu4@desk>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 03, 2025 at 10:18:40AM -0800, Pawan Gupta wrote:
-> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-> index 08ed5a2e46a5..2be9be782013 100644
-> --- a/arch/x86/include/asm/nospec-branch.h
-> +++ b/arch/x86/include/asm/nospec-branch.h
-> @@ -321,9 +321,11 @@
->  #endif
->  .endm
->  
-> +/* Primarily used in exit-to-userspace path */
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-What does "primarily" mean here?
+Make __cpuidle_driver_init() fail if the exit latency of one of the
+driver's idle states is less than its exit latency which would break
+cpuidle assumptions.
 
-$ git grep -w CLEAR_CPU_BUFFERS
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-says *only* the kernel->user vector.
+v1 -> v2: Make __cpuidle_driver_init() fail if the check is not passed (Artem).
 
->  #define CLEAR_CPU_BUFFERS \
->  	__CLEAR_CPU_BUFFERS X86_FEATURE_CLEAR_CPU_BUF
->  
-> +/* For use in KVM */
+---
+ drivers/cpuidle/driver.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-That's why the "VM_" prefix is there.
+--- a/drivers/cpuidle/driver.c
++++ b/drivers/cpuidle/driver.c
+@@ -152,7 +152,7 @@ static void cpuidle_setup_broadcast_time
+  * __cpuidle_driver_init - initialize the driver's internal data
+  * @drv: a valid pointer to a struct cpuidle_driver
+  */
+-static void __cpuidle_driver_init(struct cpuidle_driver *drv)
++static int __cpuidle_driver_init(struct cpuidle_driver *drv)
+ {
+ 	int i;
+ 
+@@ -193,7 +193,17 @@ static void __cpuidle_driver_init(struct
+ 			s->exit_latency_ns =  0;
+ 		else
+ 			s->exit_latency = div_u64(s->exit_latency_ns, NSEC_PER_USEC);
++
++		/*
++		 * Ensure that the exit latency of a CPU idle state does not
++		 * exceed its target residency which is assumed in cpuidle in
++		 * multiple places.
++		 */
++		if (s->exit_latency_ns > s->target_residency_ns)
++			return -EINVAL;
+ 	}
++
++	return 0;
+ }
+ 
+ /**
+@@ -223,7 +233,9 @@ static int __cpuidle_register_driver(str
+ 	if (cpuidle_disabled())
+ 		return -ENODEV;
+ 
+-	__cpuidle_driver_init(drv);
++	ret = __cpuidle_driver_init(drv);
++	if (ret)
++		return ret;
+ 
+ 	ret = __cpuidle_set_driver(drv);
+ 	if (ret)
 
-The comments in arch/x86/include/asm/cpufeatures.h actually already explain
-that, you could make them more explicit but let's not sprinkle comments
-willy-nilly.
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
