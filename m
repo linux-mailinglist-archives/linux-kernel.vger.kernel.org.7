@@ -1,77 +1,119 @@
-Return-Path: <linux-kernel+bounces-890226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90013C3F8F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:46:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9427C3F8B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD8C3B1674
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541B2188FC2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D25A30CD86;
-	Fri,  7 Nov 2025 10:42:27 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D979E2652AF;
+	Fri,  7 Nov 2025 10:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVmdsALw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64AF29E115
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59282DEA89;
+	Fri,  7 Nov 2025 10:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762512146; cv=none; b=IojMt/vzdvHL8LKufIcSpB25UEyQzB7hsZPEKSKDMao37SzlzjpS1kee6PIbKAh1/Ths2gLnQrKzKd9L7l6V/8OueEhnZrM4FKKXX2kgXI+WhSDfnBlyDZQiaJV87+4FjWUA+h93Cxy+OTjwXH22NOXAdXQXWONCczVIgaDF81M=
+	t=1762512165; cv=none; b=nrREXRLv+wyYdBjZD7F5FEOeVWs66YC/KZGTWvNFa4Z0+8Z0pPmpSigsGxpspE7QikkgpE/Ur0GZSJEnCbbNJDaVFsKowS9o1XmI5u/8nEqwjxOSm0N/OtSV2na4K1LstvlpGuiBtd2QXx+yzB4B3OcqGPidWzci2wDJVf6FnY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762512146; c=relaxed/simple;
-	bh=8nx4zn0Dw8yK3JFLS2n5BbMBZbNLMaORustX6JMLfpM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CiF29N4lVtN3XbSpPVTVT1so+5hF1Vg6hmlk6qujpmDdPRpOpFAC//nFDAaZrqdBSHmhTGp2w2nqvhvWo6pLhpXJycwQAdJx608XC6NJud8DxC/wWYD123MAHpNunaX3jpgPwjXdpiSGlWRuY3AjxmXCjrre+OPMmCdJfMryfvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9487727ded6so39007239f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:42:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762512144; x=1763116944;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8nx4zn0Dw8yK3JFLS2n5BbMBZbNLMaORustX6JMLfpM=;
-        b=d1XaBM21G+d+ujvzwFU+PTbKps7FHIlOstogxyXOCPMBzpTHD6/RZa6nrRaY7vjNqo
-         ptDMmNEQTrd+sEXj4dpSISsgaFwj1m90gs1qc/Z5Dfi5K4xS6/iOxEdF6h/N0yYmqMhH
-         C4lbl+Z74OHfDocucKbAJ/jJcsk/H1/K9ZlwSVzLB90ThQPX9DKrjHxa8K1/8vs3tuoZ
-         NzT0vaBcOFlF4/7uL0bVn6Si/oJx7uMe0cM97llDOaUxEFlDlfLafI402ILA4S3j08JR
-         9dWaxz6KvT7ahf8PXzR0DLzOUxwCOvz6XfXLrwvLywos+rQ7vj5cHSq/3X3hXKQmLB8K
-         fu8Q==
-X-Gm-Message-State: AOJu0Yw3FOCQ4tQBA78Bb8RVgaXTAmx2TYWZ4npEQqZgRD8agfSeZ2uH
-	Jq50dhx5Yt6p9LwTzMsrEE+jUuSzUyPF8Xp3XPyUXkph8rUMoW5kmLrB8VVrs33iO66e22BaDvo
-	7zoAqI5Ubks6NuvfUxqb5uY9HZyCEoOY6bOXSarAlRmW8Xdnv9Y0hadSmBwo=
-X-Google-Smtp-Source: AGHT+IGE56l9pyiyD0vMRHyVUD6tbTRNEC4Q5whBC1XyrmjW50snMVIOuXb6y7HP68NNzTi8xLSSqPDgVtcdgoqmIOVXEYHZR5yx
+	s=arc-20240116; t=1762512165; c=relaxed/simple;
+	bh=4f+tv6YmDv9PHhPG9r8au2y8HaBkG3+zpurKt4CAx+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdAV9TzCQfZPbz6uQnS1fHKPIdRQlK6s+ixorzhK4deG71V1wShoGIULXQeZrMQWjM43FP8El7NZ+HB1MPlVO2MDI3yQCttDxe6oCk0xv7E7CS37HRPOPPESSNWMzFWpUqIg7oOxO6aCzgh9WoaOkzUslfVhI/YkCvBdAlvUvcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVmdsALw; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762512164; x=1794048164;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4f+tv6YmDv9PHhPG9r8au2y8HaBkG3+zpurKt4CAx+8=;
+  b=TVmdsALw9ECw3XdK3NDFR+vnS69H/Gc7gmW8T+ZCfmrMb+OmjSAMdrWt
+   uu1yE9fFTHXkOEtt6w3SRrII0mljKSl9eipiRwCRs/lrHYuhvg0pcgKmq
+   6OW2F1BT+2675UVetsUAoMopWlgu3Goad7dYd7oslEf+uGXLr34xC3aUu
+   lI2kk018LKhHfInvhdR4UTnj+YWqkP6TtLd8jQmq27SeElxPJC8g3CBba
+   PmSAnWVvOdnAICHIaqbCIR4Zzq1MsI0o00xhhfUk+HZCQ8YnPOeKYXv6h
+   pEZmEW3kEWAdMfNl0WBOXHNqaXIIYpzAWWYXPgWoBxEB56/FQWtOuCvxH
+   w==;
+X-CSE-ConnectionGUID: 2rBJ/9buRM6dP+Fscz2MoQ==
+X-CSE-MsgGUID: HCSwHV+7SdeDhJLX4/r91A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="64360065"
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="64360065"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 02:42:43 -0800
+X-CSE-ConnectionGUID: /eQh7fCnQ8mgdZ9jOUNjYg==
+X-CSE-MsgGUID: 647+2PqiT6i1cXPVy5ZACg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="187666695"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.27])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 02:42:41 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vHJvS-00000006RYH-1AIP;
+	Fri, 07 Nov 2025 12:42:38 +0200
+Date: Fri, 7 Nov 2025 12:42:38 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: Ma Ke <make24@iscas.ac.cn>, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v3] iio: trigger: Fix error handling in viio_trigger_alloc
+Message-ID: <aQ3NHnL2rF0wkqeo@smile.fi.intel.com>
+References: <20251107020200.6285-1-make24@iscas.ac.cn>
+ <9aac9a66c02c691e073043f918fef055dca888e9.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:23c1:b0:433:5736:96a2 with SMTP id
- e9e14a558f8ab-4335f3b4479mr38515345ab.12.1762512143887; Fri, 07 Nov 2025
- 02:42:23 -0800 (PST)
-Date: Fri, 07 Nov 2025 02:42:23 -0800
-In-Reply-To: <690d9fd4.a70a0220.22f260.0022.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690dcd0f.a70a0220.22f260.0039.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [jfs?] BUG: unable to handle kernel paging
- request in diUpdatePMap
-From: syzbot <syzbot+7fc112f7a4a0546731c5@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9aac9a66c02c691e073043f918fef055dca888e9.camel@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Nov 07, 2025 at 10:26:10AM +0000, Nuno Sá wrote:
+> On Fri, 2025-11-07 at 10:02 +0800, Ma Ke wrote:
+> > viio_trigger_alloc() initializes the device with device_initialize()
+> > but uses kfree() directly in error paths, which bypasses the device's
+> > release callback iio_trig_release(). This could lead to memory leaks
+> > and inconsistent device state.
 
-***
+...
 
-Subject: Re: [syzbot] [jfs?] BUG: unable to handle kernel paging request in diUpdatePMap
-Author: yun.zhou@windriver.com
+> > -free_descs:
+> > -	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
+> >  free_trig:
+> > -	kfree(trig);
+> > +	put_device(&trig->dev);
+> 
+> Yes, device_initialize() docs do say that we should give the reference instead of
+> freeing the device but I'm not see how that helps in here. Maybe initializing the
+> device should be done only after all the resources are allocated so the code is a bit
+> more clear... But doing it like you're doing just means that we might get into the
+> release function with things that might or might not be allocated which is a pattern
+> I would prefer to avoid.
 
-#syz dup: stack segment fault in diUpdatePMap
+The put_device() here is the correct (and must) thing to do independently on
+the preferences. The problem is that device_initialise() and followed calls
+may do much more than just some initialisation.
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
