@@ -1,135 +1,188 @@
-Return-Path: <linux-kernel+bounces-890517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8428C403DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:02:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDD9C403E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105C03A2E49
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF2F3AE9CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8212231B814;
-	Fri,  7 Nov 2025 14:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zqgispbW"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98390322DBB;
+	Fri,  7 Nov 2025 14:04:08 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564AE23B638;
-	Fri,  7 Nov 2025 14:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0C62F0C45
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524117; cv=none; b=iIzI/oTaWaFUwcWVFgzR7uR7hOSFcO36cXeluCcVOmTquTGL4039XYlMyaM+gIY855YyBn6NcJcyjFhv7/8zGV8Da580Wwr5wxNYNbZoXkW+I1vbBPJ2mXin2Mnajd+O61Cg4NNRHTYYvgSpsjWRz/trA4rHypwtXHBeUdniioU=
+	t=1762524248; cv=none; b=RSMPkZfWqIzFxkkVm84wjLxh0Sd6aRjxhiNdzm6rKo8xEyztOPHNLUc28FTuqJJ/ecivkvEE4QLT7RkXQueOqx0Ovr6gc6GpzbFBosY7RlTKgI1T1Jza7zhV5kuBbL5hb4Ae5cuKRIgNaXOsx1LqOqyp+86bmIx+XmC22GDPywo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524117; c=relaxed/simple;
-	bh=scUDJhF4SHxD2LeiWfW3HwnUCLV+2kXA/sCsExXtlQk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Y2a5ibrGPtO11wtDqRp91LMzYsO8QLjxx1XOd6rDgdV+j5X1xI31ZYOJhfyc4/tV628M4WFgQH4Z6GOiaFnw04/oe8CfsogmDUx+vzQNbw4FPNmkGDlnoJfYzpqIPiMoWhPx1v4K/cTD7habbJN+f0+YemWCkNmBXHrJ+x3693I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zqgispbW; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1762524103; bh=88CqQVoCZpXl6pSXFcKCKbx0xO7QSECEV3gJ41owLVk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=zqgispbW0ScL2ZjE/E5kOHNOfXvA0DDHQHwAXf2rdpJOHZPAlfPiqdSZglw13HChc
-	 ph8TB0ouvnReFHvjuPPWu752e6+zwEQ+a2cMGX9D/64abhBdgyhAltab7U0CCiz2cq
-	 CKZNTZ8tAYtX1qLJK/5na0fPPflzh7KVi5k33nRg=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
-	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
-	id 66A52E7; Fri, 07 Nov 2025 22:01:38 +0800
-X-QQ-mid: xmsmtpt1762524098tieus4ud2
-Message-ID: <tencent_5D8667DBC6ECD2FF464349ADEEFD2EE84C06@qq.com>
-X-QQ-XMAILINFO: OATpkVjS499umwbUbosFTV8W9DlQ4fIB7LhH/l3DvwepTwAyzZSNNU1xNKNPVg
-	 6ZM4X473+wmg/vPAaAHn6Zqux+UuRkfxGegVmtCIMYhx4voCCpZ04LOZAQ93mQswPEr7mZRY3jW4
-	 JXgdo54IKJRy515P5fclUo1nw9CfemOwFtvGdE+yKiOx4fAofA0VEDhom5o75bVztVwtSLSs4y8s
-	 YHzMoH+/zA7khfmXm4EtqJpLz831Ph1DT0sAUY+XQd8Bww/RfuQBm1nPtDwdwBCRXAIiYVBQpIUO
-	 krRyMMG56uUvBEVHg5AwZBny3jSYBilY3WV8IQXUtsgVfrzKVrUQp1QZJ+bQ37/d2idoD5gmyR7j
-	 fhJ7sO96oS3yf/hE/Hp2izo9VPwBRn8Ak4dhhtseid5IZ1ScE4i7OVbycH7yf5yZzXCuJWxczkM1
-	 n4TrLKyoo0cBetKitcGCCeEPH4emY9c/t27TovpWYan+FMKoy7CioDrS3TfhDkHoFpZkkLTmGd0u
-	 Wg8+r25iC4E+BThN5Xap//nhQwkO5RtzCUILw5dtp/LXFjOeHTvxOmsKCDsqy40+QoajawgiRTuN
-	 SY75TayfIcuvfJe5bf+6HYPlP7rgyVddvBKdU933Ay1tjyU/czcWGD/Yq2RV1MovLSUX68VGdDYi
-	 ktcrGZGdPXe8BXmOVSP6XYlE86MwYHwC8HfeGmiI6TJhfrK6BV+TM9pSPb8e2MtOVOaeu9Qccoqb
-	 yzB+7DmEUgA53W8d/4VyoTgxxnbHf0gwy2wCdF/trKOfKrx68b6mdpoCqnvBkor6qGSQGsLhxvNW
-	 pmALaNnN3OucFllBod8wEAglS27fLOws4p2VGh0qaya3CXQvTd3QFtZhbkPm7Tj1sKGnppJRJQf7
-	 GZ+6axeNLbr4hplmP/ntSjVvV5JBarj7AUdEgFeCfHoGL8ovdRIkBIVPC1cvanbq5mevTCrc4Wmb
-	 C7oIilLL+8gmxkWX5EGZxh59AE3UPw/NGqyvtOHZMrPtNr3rTiMz3pduP+nPTqbEnLx7ZTr2U=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
-Cc: bharathsm@microsoft.com,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pc@manguebit.org,
-	ronniesahlberg@gmail.com,
-	samba-technical@lists.samba.org,
-	sfrench@samba.org,
-	sprasad@microsoft.com,
-	syzkaller-bugs@googlegroups.com,
-	tom@talpey.com
-Subject: [PATCH] cifs: client: fix memory leak in smb3_fs_context_parse_param
-Date: Fri,  7 Nov 2025 22:01:39 +0800
-X-OQ-MSGID: <20251107140138.3897816-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <690da014.a70a0220.22f260.0026.GAE@google.com>
-References: <690da014.a70a0220.22f260.0026.GAE@google.com>
+	s=arc-20240116; t=1762524248; c=relaxed/simple;
+	bh=JECiORkdcpkewxWLEiioBSAJJFxfkUiJgv1GwsZQ3lw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P1HRUDhpDxreMZvdPx5VYj6nMOMnDd2NR/fW+eSwiV75jsno+vIwGRwhKdD+UNv0E6E6dO5PQDDOBCvc2ldjgPAKkCrISmfRii3P/DKKjqEWX00IzbaG0ooPy20Wh7nonRJ9B/IR/gfNwQr9r+9XsWcKE8MQKGyEGuXVfuumWo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b714b1290aeso131866766b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:04:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762524244; x=1763129044;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0vBKMf5oaurBjhFxiKcMnzmBVlIaxyaSJ4JouDbHbIA=;
+        b=MAG5U3nFW0MVk/2cruORY+5KUNaSPb0Uv+BoWr2s3oNbIqNp/shRB2vNCkBvOuc9C5
+         ZknI2HwBZNycZj1/xMluTW/r/mws11W10kY8QX8zThU2odE/zi0CFgfvNnDm4NEXgq7w
+         mSvSEx8Qi5HY7imxPAtjxxWPNUQdVqh4MWgXd44okeqyWOYhmvkaXq0wocNNuFCfbhns
+         oVpv4N8YfhYC+QvYtHq6RU7atCgkNa+6qMPWiGYE91bXPpNHaGbpvfs2AGSGn0mbA0j7
+         hJRMpGtTbplLEDGFGZRh3rCDbVuo5FBHfAK7RaIRQoCLWk0pUkERG9KjvuWf01VDjVdB
+         Nq0A==
+X-Gm-Message-State: AOJu0YwSBMlXFjsW2lOrRCWyKI/T4FpU6rLE+7k8e7yTo5q7+P8mu+Ng
+	Jya6jB0Vm+oml/Tf4hfpkpGkMm6rbNpMOpvqM2z9u+TtNK47gpetD/dj
+X-Gm-Gg: ASbGnctZIizn0NUmKfqWCjNPWwx9ih5+qJxKJJDpYhe7ndndM/Y2RTNqxyT/FhHMHnT
+	aAa1AFhTHMHb5EOAGvZlIsDxgk266VMcLABALGhms63Il2fDUVAe87zZUbyXDP7Mo5f565+d+MJ
+	oFVq/ue0xllqWwEW+NJLrbXJcLjb4r2RiOV/WPv1dPWu99oUDzjyM1LF6Ur7sdPYrXIT4C/uvY7
+	BzdINRAkvxCez05flato9p6PMZkBo/gfJmQjdwb8u7Q2o25/raIXdEYi10pox7Hyb16+nsajack
+	wFtr7hv3RA9qyEQnTf0rCTLIrTanivoUrymOWdmZs0CZ1q8ueglUUjccsg7P2o6SDUKDmJwlEH+
+	MzAYD1wr2iJ2ktnXLkD02YJjfzbxPatS+HkbBfVveaZMJIjvzfSMbJhFSC7h4D0J7Jw==
+X-Google-Smtp-Source: AGHT+IEilfeetvESNE+Ii2ZLx3CgVjOEN10OP2+ornEp/KkNTzAwKv6EVIrG8aSFNaGP9ZebkNMx+A==
+X-Received: by 2002:a17:907:6ea5:b0:b6d:4fe5:ead8 with SMTP id a640c23a62f3a-b72c096d4fbmr358591766b.25.1762524243396;
+        Fri, 07 Nov 2025 06:04:03 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff:7::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72d7996c4csm60253966b.5.2025.11.07.06.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 06:04:02 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net v10 0/4] net: netpoll: fix memory leak and add
+ comprehensive selftests
+Date: Fri, 07 Nov 2025 06:03:36 -0800
+Message-Id: <20251107-netconsole_torture-v10-0-749227b55f63@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADj8DWkC/33RTWrDMBAF4KsYrTNl9C9l1XuUUiR5lAiKHWTXt
+ ITcvcSL1kVO1wPfPN67solqoYkduyurtJSpjAM7dhwPHUvnMJwISs+OHRMoNHoUMNCcxmEa3+l
+ tHuv8UQlcTkJmDCl4zw4du1TK5XNVX9hAM3s9dOxcpnmsX+unha+n/8yFAweUyaAx2jvyzz3FE
+ oansZ5WbxFbQ+0aAhC0tZp63SdpTGPIraF3DQkIzupkM8Ve8tZQG4PbXUMBAgYdZXTZ8USNobe
+ G2zU0IFhLQhMGRbHNYX4Mjg86Nfc+lIxZi2yiag27NeSuYQEhBC9ySmREaHdxvwZ/sIu75xDOK
+ YUkcsDG8FvD7BoeELKVqefKJi7TH+N2u30DzzZaBNsCAAA=
+X-Change-ID: 20250902-netconsole_torture-8fc23f0aca99
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+ david decotigny <decot@googlers.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, 
+ calvin@wbinvd.org, kernel-team@meta.com, calvin@wbinvd.org, 
+ jv@jvosburgh.net, Breno Leitao <leitao@debian.org>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3548; i=leitao@debian.org;
+ h=from:subject:message-id; bh=JECiORkdcpkewxWLEiioBSAJJFxfkUiJgv1GwsZQ3lw=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpDfxRCKuoWI+DWDMbqIWf+0GIEVxySrWtDWzPO
+ Wp4tk+b1LSJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaQ38UQAKCRA1o5Of/Hh3
+ bWs3D/9iBeBX9U4wZvAwjbA3AWioue3lcQn6Q02PlTsC3s41PwDKMiFcvJNkJKlOHVlOErwKO9/
+ 2pJ7uuDx620xwT1t/4UUMX4qlDId5kj/0i5mcOgOcqjO5nXEOORoDG4RkvJMR1+RKaFu0TWgZim
+ SR43wWBqL6UPJ+cfRS3WD49xKMwhI9Y7pf1Z0yLDkYg6hCM/Uk1KJwvb5K7llSI/18bxIQeoMY+
+ af8GFk+6RaYSUgym1W38hF28ougDsPZf6Hv0TOGz55gOaU4uw7N6YeOR9o9iTigW/LNG3pTufdg
+ pbvCka/7KFDE7vc1q1xScTyfURvWVxTmYcjdHM5KIFue7eE4d3VjtkPmO4HihNxDziprc5WP9mu
+ XAXUuQ1GxiyAwVkHMBfL4sgZYJ/dQt1GtUCPD7hRoWMLMim2TjpSdHolB5tqa4pmuLQEA0sEoI6
+ vK6JoqQZSBQcJ7DZd4Q1BB7parhwVe/oaA1g30OKS3fo5Y90yEPz0zddRRqI2C4Q8zlmNTma6l1
+ vC4ssiDSI9L2z3MeGGwCwSOF4+iePkN2vOeJYd68vPKNre/1z4wm8nEJ+Lb5Q7Ro/OUggW2udAT
+ OFsm8fo/+FITi9L8nIsxr06YuzQkaxO/x6AVfyCtQoXUegw7WSALxVt3Omd37zHhj5Tj1ZQv5f6
+ JxPvoAWSmKPX6BA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-The user calls fsconfig twice, but when the program exits, free() only
-frees ctx->source for the second fsconfig, not the first.
-Regarding fc->source, there is no code in the fs context related to its
-memory reclamation.
+Fix a memory leak in netpoll and introduce netconsole selftests that
+expose the issue when running with kmemleak detection enabled.
 
-To fix this memory leak, release the source memory corresponding to ctx
-or fc before each parsing.
+This patchset includes a selftest for netpoll with multiple concurrent
+users (netconsole + bonding), which simulates the scenario from test[1]
+that originally demonstrated the issue allegedly fixed by commit
+efa95b01da18 ("netpoll: fix use after free") - a commit that is now
+being reverted.
 
-syzbot reported:
-BUG: memory leak
-unreferenced object 0xffff888128afa360 (size 96):
-  backtrace (crc 79c9c7ba):
-    kstrdup+0x3c/0x80 mm/util.c:84
-    smb3_fs_context_parse_param+0x229b/0x36c0 fs/smb/client/fs_context.c:1444
+Sending this to "net" branch because this is a fix, and the selftest
+might help with the backports validation.
 
-BUG: memory leak
-unreferenced object 0xffff888112c7d900 (size 96):
-  backtrace (crc 79c9c7ba):
-    smb3_fs_context_fullpath+0x70/0x1b0 fs/smb/client/fs_context.c:629
-    smb3_fs_context_parse_param+0x2266/0x36c0 fs/smb/client/fs_context.c:1438
+Link: https://lore.kernel.org/lkml/96b940137a50e5c387687bb4f57de8b0435a653f.1404857349.git.decot@googlers.com/ [1]
 
-Reported-by: syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=72afd4c236e6bc3f4bac
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- fs/smb/client/fs_context.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v10:
+- Get rid of the create_and_enable_dynamic_target() (Simon)
+- Link to v9: https://lore.kernel.org/r/20251106-netconsole_torture-v9-0-f73cd147c13c@debian.org
 
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index e60927b2a7c8..0e1949bcd6ea 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -1435,12 +1435,14 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
- 			cifs_errorf(fc, "Unknown error parsing devname\n");
- 			goto cifs_parse_mount_err;
- 		}
-+		kfree(ctx->source);
- 		ctx->source = smb3_fs_context_fullpath(ctx, '/');
- 		if (IS_ERR(ctx->source)) {
- 			ctx->source = NULL;
- 			cifs_errorf(fc, "OOM when copying UNC string\n");
- 			goto cifs_parse_mount_err;
- 		}
-+		kfree(fc->source);
- 		fc->source = kstrdup(ctx->source, GFP_KERNEL);
- 		if (fc->source == NULL) {
- 			cifs_errorf(fc, "OOM when copying UNC string\n");
--- 
-2.43.0
+Changes in v9:
+- Reordered the config entries in tools/testing/selftests/drivers/net/bonding/config (NIPA)
+- Link to v8: https://lore.kernel.org/r/20251104-netconsole_torture-v8-0-5288440e2fa0@debian.org
+
+Changes in v8:
+- Sending it again, now that commit 1a8fed52f7be1 ("netdevsim: set the
+  carrier when the device goes up") has landed in net
+- Created one namespace for TX and one for RX (Paolo)
+- Used additional helpers to create and delete netdevsim (Paolo)
+- Link to v7: https://lore.kernel.org/r/20251003-netconsole_torture-v7-0-aa92fcce62a9@debian.org
+
+Changes in v7:
+- Rebased on top of `net`
+- Link to v6: https://lore.kernel.org/r/20251002-netconsole_torture-v6-0-543bf52f6b46@debian.org
+
+Changes in v6:
+- Expand the tests even more and some small fixups
+- Moved the test to bonding selftests
+- Link to v5: https://lore.kernel.org/r/20250918-netconsole_torture-v5-0-77e25e0a4eb6@debian.org
+
+Changes in v5:
+- Set CONFIG_BONDING=m in selftests/drivers/net/config.
+- Link to v4: https://lore.kernel.org/r/20250917-netconsole_torture-v4-0-0a5b3b8f81ce@debian.org
+
+Changes in v4:
+- Added an additional selftest to test multiple netpoll users in
+  parallel
+- Link to v3: https://lore.kernel.org/r/20250905-netconsole_torture-v3-0-875c7febd316@debian.org
+
+Changes in v3:
+- This patchset is a merge of the fix and the selftest together as
+  recommended by Jakub.
+
+Changes in v2:
+- Reuse the netconsole creation from lib_netcons.sh. Thus, refactoring
+  the create_dynamic_target() (Jakub)
+- Move the "wait" to after all the messages has been sent.
+- Link to v1: https://lore.kernel.org/r/20250902-netconsole_torture-v1-1-03c6066598e9@debian.org
+
+---
+Breno Leitao (4):
+      net: netpoll: fix incorrect refcount handling causing incorrect cleanup
+      selftest: netcons: refactor target creation
+      selftest: netcons: create a torture test
+      selftest: netcons: add test for netconsole over bonded interfaces
+
+ net/core/netpoll.c                                 |   7 +-
+ tools/testing/selftests/drivers/net/Makefile       |   1 +
+ .../testing/selftests/drivers/net/bonding/Makefile |   2 +
+ tools/testing/selftests/drivers/net/bonding/config |   4 +
+ .../drivers/net/bonding/netcons_over_bonding.sh    | 361 +++++++++++++++++++++
+ .../selftests/drivers/net/lib/sh/lib_netcons.sh    |  78 ++++-
+ .../selftests/drivers/net/netcons_torture.sh       | 130 ++++++++
+ 7 files changed, 566 insertions(+), 17 deletions(-)
+---
+base-commit: 7d1988a943850c584e8e2e4bcc7a3b5275024072
+change-id: 20250902-netconsole_torture-8fc23f0aca99
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 
