@@ -1,133 +1,90 @@
-Return-Path: <linux-kernel+bounces-891143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1768C41F1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:23:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E3AC41F20
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:24:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C492189565E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD253B7BB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7164B3101C5;
-	Fri,  7 Nov 2025 23:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p8UyO+at"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D062130FF3C;
+	Fri,  7 Nov 2025 23:24:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3117E30FC24;
-	Fri,  7 Nov 2025 23:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C932F0678
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 23:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762557818; cv=none; b=LCitBVSlXvtklNeJ7V3ut/c6YT5G1qAXi/pFnHHwwjrkGO+17Jg2C/V0BA9Zt1mp0XxEglbmz9XRxIcJadQPrXkrYvkjRaAdVF8/qzIs60a+HA/uLlcl8OWoMJNNkxiYv09Y7Rze8aNHx8ghS8WBVk22HbyBNQH87qxoeG6gmmw=
+	t=1762557845; cv=none; b=FQEhPqQrhLyvn11f29qjcPMsqWmFyB1lZLl2fKTHDXNsxKr5NucoSVl+7lzHDL0w6if42CpphdIDgT9YvNZp1iPIeYl/iLK6FrbA6sEaHGsdGa7Ak3Bn4xhTu07AAwnFvLb7LEDqhdkBpyKeck1MRIHslM+GPmLJ6P7oB9E+7io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762557818; c=relaxed/simple;
-	bh=ckYpq461PfsLtpuZRSdnO1Hpr8pG5yQGPSwPZgGzK/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSJFbY5/2JCMWN3RbOBldITVt3SOXYe43/9KC0lRrTBiFZ8lf/plWB9m5WuN1XkM+DXzTRmbIuhlxXgLCC036NVFjzfDn7bs0doOCY23uYQpbrKF1rr6EiUzXFA3VSVy0teslRssHs8V2ELd/S6JrTsq9KiQiCh5K1+l2npJ+xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p8UyO+at; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-95.bb.dnainternet.fi [82.203.161.95])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 641187E4;
-	Sat,  8 Nov 2025 00:21:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762557698;
-	bh=ckYpq461PfsLtpuZRSdnO1Hpr8pG5yQGPSwPZgGzK/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p8UyO+atuJKTkeCoAICUyTPcilTtuIckKBlivjMAwUSQ/Q0C8T0T1Z7aZ8zCk3CaU
-	 0nt+f6cZ9nDryYzBbkXlr5hOLc+bVRQ9kJNfdhccwGYWgaIVLaHZ5DBJucROqkwjrA
-	 6ckisRlHFq5A5SNvaHGl/LtUFZz1tfTez0ce2JnA=
-Date: Sat, 8 Nov 2025 01:23:29 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] drm/rcar-du: dsi: Handle both DRM_MODE_FLAG_N.SYNC and
- !DRM_MODE_FLAG_P.SYNC
-Message-ID: <20251107232329.GI5558@pendragon.ideasonboard.com>
-References: <20251107230419.471866-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1762557845; c=relaxed/simple;
+	bh=waTYczCQEgp17pu5N8pY2p4t7LpMf8ihAJm6REHY4gs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=f4fa/efaeKR1/Za77qal/4zUyF0tKInxIA5lYuu2lbbF0bU6BfTuc8Tsu0GSgzVRIKSQTJGDYL98TgtCM03KQ8uC2pe3h/MuOjFysVBZb6XaS8xYNxMREqDFRMBHOQE5Q0bhwiGs+JpdSXOKF2q6bdNlSE8BaOH8l/6cpfSCPFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-43335646758so15028875ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 15:24:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762557843; x=1763162643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4fzLpJRcmjKGxH9fQR+AOad1wVu2LzjX8BEl1l90zEM=;
+        b=w1oQQGCjA9KfJMWiT6qLW/BXK4iDO6NMq2a8UWvzl5wnXH/7xTswQ9UVtGZEYztW78
+         yw1TUIEvq7pRQEb8i9D2Srm/21GOdNiR+IG4JC00Dw+jKqglgZeHKpBhTp86e6A4Dyvh
+         v1N1wQzN5qSxPxu7wSw0hUrAS08OG/meKvxGgLHRUTXgUNpAl5Zhh5rbAX2SMvtC8jii
+         /2SheatvEE2WTFEYCNNF3iWD2K9pZFJ9dWFCH3SUcNHp8arTP+z54vr7aJKIkO3xrU4c
+         Os0QPquTENUMpEn3ZVIkx5V/qXakIQgY7V8HYMirA7shPFv7TPkNGL7DdXpukvADWuZr
+         OGGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWp7441FfuLr70fje7OvEpZZY+Cc2WDmA1kYJfto0DvxuWNQZLiutQmsyFL34OvYmqHW30mWYYijaTryrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydu2gT3HYnNJFeibEsjaXmEyN4y62i2JXrgtAyF50l/MLPdk1a
+	KazMel7EKgPhfZnEgrZnbw6X6XVTql2BujFi+lTa4y1fzNwzhHCggX7Wn2eb3e9wojF7SC3s69i
+	hkJ6z1JXcLmDvvGVAMgmLk2oyoanWC1x+5YK1SBWe6VEgsPgUmhxrHzQlxTc=
+X-Google-Smtp-Source: AGHT+IGV0J6I+DXJpQfF6fhES1GNQ/0RgjaURIuPZSNGK8AGa3ZXgVse0VcqsgsbPM/KO2jufdcsY4DjyxH+Xk1q19cuIKHo/m5L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251107230419.471866-1-marek.vasut+renesas@mailbox.org>
+X-Received: by 2002:a05:6e02:180d:b0:433:306e:2c83 with SMTP id
+ e9e14a558f8ab-43367e6744dmr15574045ab.28.1762557843164; Fri, 07 Nov 2025
+ 15:24:03 -0800 (PST)
+Date: Fri, 07 Nov 2025 15:24:03 -0800
+In-Reply-To: <68ac2451.050a0220.37038e.008b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690e7f93.a70a0220.22f260.006a.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: slab-out-of-bounds Read in igrab
+From: syzbot <syzbot+a77d690840e60bc2ddd8@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, dmantipov@yandex.ru, heming.zhao@suse.com, 
+	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	mark@fasheh.com, ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Nov 08, 2025 at 12:04:10AM +0100, Marek Vasut wrote:
-> Since commit 94fe479fae96 ("drm/rcar-du: dsi: Clean up handling of DRM mode flags")
-> the driver does not set TXVMVPRMSET0R_VSPOL_LOW and TXVMVPRMSET0R_HSPOL_LOW
-> for modes which set neither DRM_MODE_FLAG_[PN].SYNC.
+syzbot suspects this issue was fixed by commit:
 
-Could you please explain what broke ? What panel are you using ?
+commit fe7a283b39160153b6d1bd7f61b0a9d5d44987a8
+Author: Dmitry Antipov <dmantipov@yandex.ru>
+Date:   Tue Aug 26 09:51:06 2025 +0000
 
-> The previous behavior
-> was to assume that neither flag means DRM_MODE_FLAG_N.SYNC . Restore the
-> previous behavior for maximum compatibility.
-> 
-> Fixes: 94fe479fae96 ("drm/rcar-du: dsi: Clean up handling of DRM mode flags")
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> index 9413b76d0bfce..98bd7f40adbea 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> @@ -492,9 +492,11 @@ static void rcar_mipi_dsi_set_display_timing(struct rcar_mipi_dsi *dsi,
->  
->  	/* Configuration for Video Parameters, input is always RGB888 */
->  	vprmset0r = TXVMVPRMSET0R_BPP_24;
-> -	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-> +	if ((mode->flags & DRM_MODE_FLAG_NVSYNC) ||
-> +	    !(mode->flags & DRM_MODE_FLAG_PVSYNC))
->  		vprmset0r |= TXVMVPRMSET0R_VSPOL_LOW;
+    ocfs2: add suballoc slot check in ocfs2_validate_inode_block()
 
-I don't think this restores the previous behaviour. You would need to
-write
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14c14412580000
+start commit:   6debb6904172 Merge tag 'drm-fixes-2025-08-23-1' of https:/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=a77d690840e60bc2ddd8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1248cc42580000
 
-	if (!(mode->flags & DRM_MODE_FLAG_PVSYNC))
-		vprmset0r |= TXVMVPRMSET0R_VSPOL_LOW;
+If the result looks correct, please mark the issue as fixed by replying with:
 
-> -	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-> +	if ((mode->flags & DRM_MODE_FLAG_NHSYNC) ||
-> +	    !(mode->flags & DRM_MODE_FLAG_PHSYNC))
->  		vprmset0r |= TXVMVPRMSET0R_HSPOL_LOW;
+#syz fix: ocfs2: add suballoc slot check in ocfs2_validate_inode_block()
 
-Same here.
-
->  
->  	vprmset1r = TXVMVPRMSET1R_VACTIVE(mode->vdisplay)
-
--- 
-Regards,
-
-Laurent Pinchart
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
