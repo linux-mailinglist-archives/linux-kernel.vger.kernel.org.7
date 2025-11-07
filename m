@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-889667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F23C3E308
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4604C3E311
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:02:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C14B4E6777
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:01:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C9FD74E40B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CD32DA76C;
-	Fri,  7 Nov 2025 02:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="a8anxoyB"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978BE2D9EF2;
+	Fri,  7 Nov 2025 02:02:37 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85F51FAC42;
-	Fri,  7 Nov 2025 02:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7BA1F8AC5;
+	Fri,  7 Nov 2025 02:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762480911; cv=none; b=NU6l7Al9473Ytao1ZBArekUJWqYaIenpGuttzmTdNX8mCNY7aNqW0ocUi5GxuCV0NmSvHTa03jR3hS8zKI0nhLzc2wiLKZDLMhe8EeGiuYNcJWavUIdF2kC5fFyjwcnB3SCldco9ejAf+DkgXRh6felTOiTyzBrA8L+Q+Xrx4N8=
+	t=1762480957; cv=none; b=HzWaG1p93rm9Goma5nivGgKtXm7zcoIzLmg5j3AYWmvBFfGV8LuxntQdLAFf3dC5sJZfHpL1YSOV3zAvN1vV9M/XGXIZQ7GAAis3rLCb1/ZruLqV3yZ+Qe4LtHwV0KJB3cgR3IGH0EhICTy5vUHIr7Uczmp3KU9cTI/5QLmymxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762480911; c=relaxed/simple;
-	bh=wO+jO5+m/GOZfMH52JEzzrT8LmPH589gJSnrLAgCL8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HrHe2p05nXy+rBA0+6a1aENhN1/vDW7eZGgMhmp6+5HNF3eJ4W2pwm4Ic2HoZh2Z8te+DhMkEtu2ZcmCKVMck8tmUjqE1P/BXfeChuXsL1zlFGVFAvo297pZiQNtVS79Rw1nZ/IlXMD3f/aBrBsMKp4C5RMtDx8McCACNhQ/Er8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=a8anxoyB; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8N27r7Oyc3ywyYoactwLwAQqQuBjFkaj2XYsC9wqqK8=; b=a8anxoyBx7wvtgUTEJpLKERgMl
-	V+UTcgG4iGjmD2EgxRzkEjCoc7DoHYXIuQHqcF0m9ASAg/1S5j9bxDOoEd4U72iMpsPLAN93IpNUE
-	CR3416YcFDWFVvbfyoiq3ftgKJA+x2HK0P9NJwc4bEsCP7cu9fEDb/it4hufMRwquxBo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vHBn3-00DAwe-UJ; Fri, 07 Nov 2025 03:01:25 +0100
-Date: Fri, 7 Nov 2025 03:01:25 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Po-Yu Chuang <ratbert@faraday-tech.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"taoren@meta.com" <taoren@meta.com>
-Subject: Re: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
- properties for AST2600
-Message-ID: <8b2f985f-d24e-427e-88cc-94d9bc5815b2@lunn.ch>
-References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
- <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
- <20251104-victorious-crab-of-recreation-d10bf4@kuoka>
- <SEYPR06MB5134B91F5796311498D87BE29DC4A@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <9ae116a5-ede1-427f-bdff-70f1a204a7d6@kernel.org>
- <SEYPR06MB5134004879B45343D135FC4B9DC2A@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <1f3106e6-c49f-4fb3-9d5a-890229636bcd@kernel.org>
- <SEYPR06MB51346AEB8BF7C7FA057180CE9DC3A@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <44776060-6e76-4112-8026-1fcd73be19b8@lunn.ch>
- <SEYPR06MB5134F0CF51189317B94377C09DC3A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1762480957; c=relaxed/simple;
+	bh=kCB4KWLVe36DQ6wTdgNiQBnbTyRXqUgiTbvbgnzh0jc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=jgJEscmK5PkrdhdcrhtxCqesIffZ1uisNUNIg3VBHfaTCkHFAl/FiAmggy6pqzHABdNHe25bMOkRDWQy4Ty1l2STeM7MIxtWPTet+RDwS5zIzRCVk2Rm+I5epEZom1BbmRJfTWsRz2BC5WdXs+QDvy9hl2g9ZSGol2gX39hmDec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowAD3ZvUZUw1plVrWAQ--.41683S2;
+	Fri, 07 Nov 2025 10:02:11 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH v3] iio: trigger: Fix error handling in viio_trigger_alloc
+Date: Fri,  7 Nov 2025 10:02:00 +0800
+Message-Id: <20251107020200.6285-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowAD3ZvUZUw1plVrWAQ--.41683S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFWkCF1kGF18ZryxKFy3Jwb_yoW8ZFWUpa
+	n7Z3yUtFWkJF1kXF47Zry8Xa4fKa1rK3W5KFW0934ak3y5XryrKFyxAFWUAw18JrW8XrsF
+	qF9rXa45Cr17XF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUkHUDUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEYPR06MB5134F0CF51189317B94377C09DC3A@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
-On Fri, Nov 07, 2025 at 01:12:08AM +0000, Jacky Chou wrote:
-> Hi Andrew
-> 
-> > > There are four MACs in the AST2600. In the DT bindings and DTS files,
-> > > what would be the recommended way to identify which MAC is which?
-> > > In version 3 of my patches, I used the aliases in the DTSI file to
-> > > allow the driver to get the MAC index.
-> > 
-> > It is a bit ugly, but you are working around broken behaviour, so sometimes you
-> > need to accept ugly. The addresses are fixed. You know
-> > 1e660000 is mac0, 1e680000 is mac1, etc. Put the addresses into the driver,
-> > for compatible aspeed,ast2600-mac.
-> > 
-> 
-> I used this fixed address as MAC index in the first version of this series.
-> But the other reviewer mentioned maybe there has the other better way to 
-> identify index.
-> https://lore.kernel.org/all/20250317095229.6f8754dd@fedora.home/
-> I find the "aliase", on preparing the v2 and v3, I think it may be a way to
-> do that. But I am not sure.
-> So, I would like to confirm the other good way before submitting the next
-> version.
+viio_trigger_alloc() initializes the device with device_initialize()
+but uses kfree() directly in error paths, which bypasses the device's
+release callback iio_trig_release(). This could lead to memory leaks
+and inconsistent device state.
 
-The problem with alias is that it normally a board property, in the
-.dts file. A board might want a different mapping, which could then
-break delays.
+Additionally, the current error handling has the following issues:
+1. Potential double-free of IRQ descriptors when kvasprintf() fails.
+2. The release function may attempt to free negative subirq_base.
+3. Missing mutex_destroy() in release function.
 
-	Andrew
+Fix these issues by:
+1. Replacing kfree(trig) with put_device(&trig->dev) in error paths.
+2. Removing the free_descs label and handling IRQ descriptor freeing
+   directly in the kvasprintf() error path.
+3. Adding missing mutex_destroy().
+
+Found by code review.
+
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/iio/industrialio-trigger.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
+index 54416a384232..7576dedee68e 100644
+--- a/drivers/iio/industrialio-trigger.c
++++ b/drivers/iio/industrialio-trigger.c
+@@ -524,6 +524,7 @@ static void iio_trig_release(struct device *device)
+ 			       CONFIG_IIO_CONSUMERS_PER_TRIGGER);
+ 	}
+ 	kfree(trig->name);
++	mutex_destroy(&trig->pool_lock);
+ 	kfree(trig);
+ }
+ 
+@@ -575,8 +576,10 @@ struct iio_trigger *viio_trigger_alloc(struct device *parent,
+ 		goto free_trig;
+ 
+ 	trig->name = kvasprintf(GFP_KERNEL, fmt, vargs);
+-	if (trig->name == NULL)
+-		goto free_descs;
++	if (trig->name == NULL) {
++		irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
++		goto free_trig;
++	}
+ 
+ 	INIT_LIST_HEAD(&trig->list);
+ 
+@@ -594,10 +597,8 @@ struct iio_trigger *viio_trigger_alloc(struct device *parent,
+ 
+ 	return trig;
+ 
+-free_descs:
+-	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
+ free_trig:
+-	kfree(trig);
++	put_device(&trig->dev);
+ 	return NULL;
+ }
+ 
+-- 
+2.17.1
+
 
