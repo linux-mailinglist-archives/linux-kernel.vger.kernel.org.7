@@ -1,206 +1,237 @@
-Return-Path: <linux-kernel+bounces-889855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37595C3EB3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:09:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA78DC3EB32
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:08:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA3E3AE3EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15113AE708
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBDD308F3D;
-	Fri,  7 Nov 2025 07:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54DE307ADA;
+	Fri,  7 Nov 2025 07:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EacKgLBs"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w3PA2YOQ"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F5E308F1D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FA5307AD0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762499322; cv=none; b=LQ16kXEwx/YrSlrwybL+3l3DzZczLbfwP8yM4nqEPyt7EWESNnM+eQx1P7r9En4EtpjOuSxnnRKR7lEuMZ0fD5uzPNHTDoDWEl6qoByd0I/tPGK5cLzhCjft9z0HbiRIoCn49W/vBhTHIqwvgZHJOE1Fik9LYr++zCb88PB9+LQ=
+	t=1762499316; cv=none; b=FhCWZZX7KigOklUDuwVMegpKPgs04/mZicyn99QI5a0zfHnOx+wIaUCZ/ZrVShvuMmcyUaURbfGAfk6+AR4WrMRhhVnHH5itpgH0mvTw5E+qlrHU9e49BUGkQOZH9fO6SLYJKMPoFKUcHcCKfP9CzZsYgNxTzY6UYVxy3X/2YR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762499322; c=relaxed/simple;
-	bh=XsDDITV8OWmQdCapUaa2dsxiNW0QLHRYrY4nSY8eIBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ba/YNSVUp5RT3JBFQrh4ht9D3sFGIzmpw3CF8v6d+RsegoX/y3SSl0Hf9DRa9XXN/LDuN/ekHJJj2w+5Ria68KW9Zg4IQOGhxE/XPKsmXinoPhNrAJPAGyk/DC9h1TPj8dtl2fZXBX7ZNIyZb4SFXinMxn9uhtzSArzMoKeq79Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EacKgLBs; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b72cbc24637so52819266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:08:40 -0800 (PST)
+	s=arc-20240116; t=1762499316; c=relaxed/simple;
+	bh=md0Aa/YTnfNW4R97P4UMHUVOISoMcFKjUWy0BEnbyH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sOAiOgsW/+egn0u/aDudVmv3s8chWjeQPU20VTbYrHxzNy3TZb1d4fsX+XfJ8LP+nSOcRGMBWr4QCBUdSJ0rNSnp9PKBDqP+RWvEQPX2YDH8uYu5Jqni2LFcJXwixFJaOCqDd24AEEFjHOO0oZDlxHprOdYy0/ijs4nyxIPvyeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w3PA2YOQ; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429b6e25316so57288f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:08:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762499319; x=1763104119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kkkoa0Qtmx3EewntMjJGazvW7ZNLbuHZXYNylL6HWdY=;
-        b=EacKgLBs/Km8PdU4SQOIYrLzY06I87tOqLMeQryBT5sMmHRlRe91jrSodI79khJYdZ
-         bSfUCLYuBfjGpC/7YTQcDMaLc/a2zfNA3rZMUrx0fcS4ZM7aYkjmt0zjI4NSK2YknJpQ
-         iEvWF7YexpLRr6LGfUyOPVqcvnEZxaDOy517ooh/BXzDck/ylk/e5zmfsgXqGQaQ4LEh
-         XVCgNN456IpnSmyproE3X/02t09lxKiAZE5oH/qh1spgo7AYgCoRnZEkCO0qGoUiUBTu
-         j4HcrgMLL0Z76rIl0QXv+8PSQTm3uHR7Y3XUg8sqckDynrDwo6qZG8ULUVwS+fjXuTJL
-         7FNg==
+        d=linaro.org; s=google; t=1762499312; x=1763104112; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qtwNZ51TOe1KmMbJGFmq0uDZnSOTzBAwW5XE8OEKres=;
+        b=w3PA2YOQBeQnIJJFJ7xkBLlS+Ghvl743UPYVYkkReKHF9Di1zG3Z/rNq1ZC0xwBxyT
+         Mor0eG9CoB6rzW4+nXpRvVR+RMBXZ52DzSo+I6riuqmucRDFZTCJxH03jS4jcYcPHobn
+         h7TqvpYvcdw/D3ZDbQPKIgZwgmz/FHpmz/Xf2WNRpdzGopd9mSPlNih3ucbLTNXpU4bP
+         a82IX4TY5V7I4bK0MWRPGUY6nI3QsGnwF2hv8+plEaISH9RVhvGLw5E/JtuOoJU69gtl
+         Kc1Z/sXTOn8gjBpZR8blKJirwebi/PY5+5U2JXPJNqcNIrwTmMsV6h37s8E1A8i3MeTT
+         Zrow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762499319; x=1763104119;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Kkkoa0Qtmx3EewntMjJGazvW7ZNLbuHZXYNylL6HWdY=;
-        b=Sl4UccgxlgOKL45zGhJe+dHCwj0CwxXiiIaYFu1AOf3NwcatfQCv2vuNXX5FqFaX4J
-         5OkUHK6n73TEIJ60H6LDa+v73SoylYIIdPcgRNrlQjZKD5tQFqDAA10CjI02tiyrTWFR
-         AwlxsbCr6e4nIT6hN52oJWPEmMeGKO98Ridgab3Gw+mWMYLMZ3Fb4LDo/I2ArH8yAGPX
-         WXEj4Yws2K+fHXnard+/soi44X5kTrJemlIImUfdcqQu4c8YLKDnvZRyXredBBVUS1AQ
-         GTCgBaovv0mNlgbJNXxU89En+kDiXUI4zJsjXWYHbbgH12J+YQdJgbg45Fx/4TMKKzHV
-         OaqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUXfIfOBU/VFYnN/gk3dpO3XYx7F0FqIYU0mcg67boLmTEI3Mkig3/c9q0BiV7n1E/ev0m4AtpnDAj7Qc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUwp3JsxDhhAeNbYFw29Qz+7jMwR7YqNPvjeRGfe0AcLOck5aH
-	BnHIwR4xkn7n7rCQBIrOxuADdtkV7DC+8qipKinXORIQ6DLWGm3I+RS5l/JDoCoja064BpVPM2y
-	5gQYflNGWDPza5YVu3z6+c+ucoPuINQw=
-X-Gm-Gg: ASbGncsM07OyuwtxEcKn11LHxNxaoYMeDo/Clsd3cFiaKrjx9t35krzE/0YtIUCBnDv
-	XgJuqTVgYhaQyWb2gUGg4LQ2PBRaPAZus3eTtEcvgIqfPfFBwx0khb2YZZNb8DVC7RD/q7+o9W9
-	QcQxRRrwWCkECnrYBbyQVJSED6sxFqNNQ/MuksBWSD58dCpjYRHkhvxWhH9s7QtuFugj/RCGma/
-	kZ9WToc1BwYZA6O98FmURgwmyc2yJ6/O7IvFtSsNLGSxYg9D8YIXZm+1/0/6CUBfJMNSMrw
-X-Google-Smtp-Source: AGHT+IEta83ao05iVpNzKODH8xVEHJalzn8VVP1Sd2bSnfeqnAj1ZAytCVOc5BXM7WjM0JApQ6Cm2A38MOUKcYS6tV8=
-X-Received: by 2002:a17:907:d91:b0:b6d:6b56:bd7d with SMTP id
- a640c23a62f3a-b72c078d4d7mr197261466b.16.1762499319040; Thu, 06 Nov 2025
- 23:08:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762499312; x=1763104112;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qtwNZ51TOe1KmMbJGFmq0uDZnSOTzBAwW5XE8OEKres=;
+        b=KVb17KFnFuL5FEZhDjdyjsLW5Z7q+FmpY0CMYGqdNNYWjtZZ5+MY0MF9WeIeQhHIMP
+         mCxcJKbIEsmjemOrAcffnvSUougSZKp2KS9HJN0UoNjCGMQxU8LBmHCKd4nArO6FChMX
+         CwLjxiY9RqfLhNleXe8SnR6K9Nah3ApoeMWtMIH6Z4kTtyRItfOJIN6XWE8dvlNY2w0j
+         iJYUn30/w5/OZgV277zgqZlpGtHEMIWewCtcof3VvQLfvEuMOorvRLAoe0fqznJTeKzl
+         Mvo1xAhbV/bFk5ObRfS5bhm1n/vGhjEfZhDfvbLQda10JpnaV9LV/QVBumUam/AZFiNq
+         2Qvw==
+X-Forwarded-Encrypted: i=1; AJvYcCV50ersITgYXwy0VInfASwAq+7M7IGLs35S/fAM1b9AYxMoThOVdDuIqFLL9Z782umi9+vDcMjyheo1qhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuEU833tamlyV8Q7EWB2VY7dauteD4Zb8AbcT1HvhWOhNXhtPl
+	PaHkk4nJAlY0BZORxHfSY76uhgBMwddaKw65YBG0SDwU9KfrNEM5S1OdRakfLXWyPHw=
+X-Gm-Gg: ASbGncuYjrQvco30X3FdgGqpenuW0M5nwhOmirSzgIsT/IW+v+QEFuvLbAs1keLZkQZ
+	1Lfv4kFAzM8buK+mWmASH69fuyy+VlI8O8q+SLdP5+mCUI4dBqIkLlKFKeSqsYM5c4VWRvwLBVF
+	9k8bKnUEjfM87rBt/HYEuHvsfY36ovh6bvdlIa27HHOhzcmdoBewKlI3emA85ySdKM/wiwN7c8A
+	nmQyG3HsDbMpc2GO2IFdsWiRk2EgG1I1JBc7ZhT7NWwiN3UqRrjuCHkArpvnx3/V3+7L1JJAhDA
+	jtcg/I+ErZc3SFdFiwaUZJ2a0x7wUuY0zgjbm7jyAimEgoGzx+ThX5l+TxvyDdu5yVAYI4z0hwM
+	aXkcMrmuXQd3Y9Fh6sH3AxabpMDQzRjkA3KzEC47kuvzD4gGgcLv19e7rBnb76luSgOv6fZ82+w
+	IDhfZHfaFGrV2pHLgX59hWZ0Mgk8Xo1M0=
+X-Google-Smtp-Source: AGHT+IE77T5dGr6wx+Zi4AgBBU0bj3shUSkAGD10kNklEOoD/4TJ7x49hYuoTtpTUQ6bFauuSPanLw==
+X-Received: by 2002:a05:600c:46c6:b0:477:54cd:2019 with SMTP id 5b1f17b1804b1-4776bc81647mr9463155e9.1.1762499312082;
+        Thu, 06 Nov 2025 23:08:32 -0800 (PST)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62bf40sm3513388f8f.9.2025.11.06.23.08.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 23:08:31 -0800 (PST)
+Message-ID: <a06ed143-c497-4141-8b4d-98fcb322e130@linaro.org>
+Date: Fri, 7 Nov 2025 08:08:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106131956.1222864-7-dolinux.peng@gmail.com> <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
-In-Reply-To: <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Fri, 7 Nov 2025 15:08:27 +0800
-X-Gm-Features: AWmQ_bmYxR0hfZziNSab6vyfXndKEp02ZgMWIAFGdrY3CGiXT8463JKVPu3nV5I
-Message-ID: <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
-Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary search
-To: bot+bpf-ci@kernel.org, ast@kernel.org, andrii.nakryiko@gmail.com
-Cc: eddyz87@gmail.com, zhangxiaoqin@xiaomi.com, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, alan.maguire@oracle.com, song@kernel.org, 
-	pengdonglin@xiaomi.com, andrii@kernel.org, daniel@iogearbox.net, 
-	martin.lau@kernel.org, yonghong.song@linux.dev, clm@meta.com, 
-	ihor.solodrai@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/13] soc: qcom: Simplify with
+ of_machine_get_match_data()
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org>
+ <20251106-b4-of-match-matchine-data-v1-11-d780ea1780c2@linaro.org>
+ <odmsib3dsxzzggq4gcx7gmh6vq3crlv25fz4z2l2ntezvx6gbi@uelqojwjjait>
+ <a8952b46-94b6-4fe5-a5be-d69aa41d44cd@kernel.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <a8952b46-94b6-4fe5-a5be-d69aa41d44cd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 6, 2025 at 9:47=E2=80=AFPM <bot+bpf-ci@kernel.org> wrote:
->
-> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> > index 66cb739a0..33c327d3c 100644
-> > --- a/kernel/bpf/btf.c
-> > +++ b/kernel/bpf/btf.c
-> > @@ -552,6 +552,70 @@ u32 btf_nr_types(const struct btf *btf)
-> >       return total;
-> >  }
-> >
-> > +/* Verifies that BTF types are sorted in ascending order according to =
-their
-> > + * names, with named types appearing before anonymous types. If the or=
-dering
-> > + * is correct, counts the number of named types and updates the BTF ob=
-ject's
-> > + * nr_sorted_types field.
-> > + *
-> > + * Return: true if types are properly sorted, false otherwise
-> > + */
-> > +static bool btf_check_sorted(struct btf *btf)
-> > +{
-> > +     const struct btf_type *t;
-> > +     int i, n, k =3D 0, nr_sorted_types;
-> > +
-> > +     if (likely(btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK))
-> > +             goto out;
-> > +     btf->nr_sorted_types =3D 0;
->                             ^
->
-> Can multiple threads race when writing to btf->nr_sorted_types here?
-> Looking at btf_find_by_name_kind()->btf_check_sorted(), I see that
-> btf_find_by_name_kind() receives a const pointer but casts away the const
-> to call btf_check_sorted(). The function bpf_find_btf_id() calls
-> btf_find_by_name_kind() without holding any locks (line 737), and later
-> explicitly unlocks before calling it again (lines 756-757).
->
-> This means multiple threads can concurrently enter btf_check_sorted() and
-> write to btf->nr_sorted_types. While the validation logic is idempotent
-> and all threads would compute the same value, the concurrent writes to th=
-e
-> same memory location without synchronization could trigger KCSAN warnings=
-.
->
-> Should this use atomic operations, or should the validation be performed
-> under a lock during BTF initialization before the BTF becomes visible to
-> multiple threads?
+On 07/11/2025 08:02, Krzysztof Kozlowski wrote:
+> On 07/11/2025 04:19, Dmitry Baryshkov wrote:
+>> On Thu, Nov 06, 2025 at 08:07:18PM +0100, Krzysztof Kozlowski wrote:
+>>> Replace open-coded getting root OF node, matching against it and getting
+>>> the match data with new of_machine_get_match_data() helper.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>> ---
+>>>
+>>> Depends on the first OF patch.
+>>> ---
+>>>  drivers/soc/qcom/qcom_pd_mapper.c | 17 ++---------------
+>>>  1 file changed, 2 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/drivers/soc/qcom/qcom_pd_mapper.c b/drivers/soc/qcom/qcom_pd_mapper.c
+>>> index 1bcbe69688d2..07198d44b559 100644
+>>> --- a/drivers/soc/qcom/qcom_pd_mapper.c
+>>> +++ b/drivers/soc/qcom/qcom_pd_mapper.c
+>>> @@ -613,25 +613,12 @@ static void qcom_pdm_stop(struct qcom_pdm_data *data)
+>>>  static struct qcom_pdm_data *qcom_pdm_start(void)
+>>>  {
+>>>  	const struct qcom_pdm_domain_data * const *domains;
+>>> -	const struct of_device_id *match;
+>>>  	struct qcom_pdm_data *data;
+>>> -	struct device_node *root;
+>>>  	int ret, i;
+>>>  
+>>> -	root = of_find_node_by_path("/");
+>>> -	if (!root)
+>>> -		return ERR_PTR(-ENODEV);
+>>> -
+>>> -	match = of_match_node(qcom_pdm_domains, root);
+>>> -	of_node_put(root);
+>>> -	if (!match) {
+>>> -		pr_notice("PDM: no support for the platform, userspace daemon might be required.\n");
+>>> -		return ERR_PTR(-ENODEV);
+>>> -	}
+>>> -
+>>> -	domains = match->data;
+>>> +	domains = of_machine_get_match_data(qcom_pdm_domains);
+>>>  	if (!domains) {
+>>> -		pr_debug("PDM: no domains\n");
+>>> +		pr_notice("PDM: no support for the platform or no domains, userspace daemon might be required.\n");
+>>>  		return ERR_PTR(-ENODEV);
+>>>  	}
+>>
+>> Here you are mixing two cases:
+>> - There is not match in the table (in which case the driver should print
+>>   a notice)
+>>
+>> - There is a match in the table, but the data is NULL (the platform
+>>   doesn't have PDM domains). In this case there should be no notice.
+> 
+> 
+> Why? Existing code printed notice in both cases. Why refactoring which
+> tries to keep code functionally equivalent should change it?
 
-Hi, is it necessary to address this issue?
-For example, by using atomic_try_cmpxchg or WRITE/READ_ONCE? Using
-atomic_try_cmpxchg can prevent race conditions on writes but requires an at=
-omic
-variable, while WRITE_ONCE/READ_ONCE can avoid KCSAN warnings. Since
-the race condition is unlikely to cause critical issues, I suggest using
-WRITE_ONCE/READ_ONCE.
+Ah, you mean there was a debug before. Well, then I am a bit confused
+because table has entries without data (so expected condition) but old
+code returned ERRNO in such case - so unexpected condition.
 
->
-> > +
-> > +     if (btf->nr_types < 2)
-> > +             goto out;
-> > +
-> > +     nr_sorted_types =3D 0;
-> > +     n =3D btf_nr_types(btf) - 1;
-> > +     for (i =3D btf_start_id(btf); i < n; i++) {
-> > +             k =3D i + 1;
-> > +             if (btf_compare_type_names(&i, &k, btf) > 0)
-> > +                     goto out;
-> > +
-> > +             t =3D btf_type_by_id(btf, i);
-> > +             if (t->name_off)
-> > +                     nr_sorted_types++;
-> > +     }
-> > +
-> > +     t =3D btf_type_by_id(btf, k);
-> > +     if (t->name_off)
-> > +             nr_sorted_types++;
-> > +     if (nr_sorted_types)
-> > +             btf->nr_sorted_types =3D nr_sorted_types;
->                              ^
->
-> The same race condition applies to this write of nr_sorted_types as well.
->
-> > +
-> > +out:
-> > +     return btf->nr_sorted_types > 0;
-> > +}
->
-> [ ... ]
->
-> > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const struct btf *btf, co=
-nst char *name, u8 kind)
-> >                       goto out;
-> >       }
-> >
-> > -     if (btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK) {
-> > +     if (btf_check_sorted((struct btf *)btf)) {
->                                   ^
->
-> The const cast here enables the concurrent writes discussed above. Is
-> there a reason to mark the btf parameter as const if we're modifying it?
+Wail failing the probe on expected condition?
 
-Hi team, is casting away const an acceptable approach for our codebase?
+Unless it is not really expected and notice in second case is valid as well.
 
->
->
-> ---
-> AI reviewed your patch. Please fix the bug or email reply why it's not a =
-bug.
-> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/READM=
-E.md
->
-> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/191371=
-95500
+
+Best regards,
+Krzysztof
 
