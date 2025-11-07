@@ -1,173 +1,132 @@
-Return-Path: <linux-kernel+bounces-889775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23EDC3E7CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:09:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B27C3E7C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:08:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 56D2F34A1D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:08:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 672AF4E5BB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB0925A2A4;
-	Fri,  7 Nov 2025 05:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A963625A2A4;
+	Fri,  7 Nov 2025 05:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OIOdXUTY"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxgTDjie"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4B01DA60D;
-	Fri,  7 Nov 2025 05:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CFE1DA60D;
+	Fri,  7 Nov 2025 05:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762492131; cv=none; b=pnrAkqTnBXaMeI1LKwMckICDOs3MHX4weEPLY69AeI6nBeEmsMK/sxsp+2KjJl4MbMqs53Y27JTbVDV6+VNPoegnQSs2CQpNR/6q5J6K0JDXMECppNHYb+++fv3mgLnPW0lxayM0/NWZX0VzcDC6ySszRf7WoLHJdklM1Eyz9ps=
+	t=1762492079; cv=none; b=Cqjmvpkunl31X6pU6/5f/EZHqvHO18N4+ncB/iizwn/UuULVubxL8TdbP01XjdDMwMcx4pHWTraqi79u+5AYfQEmGDh2kRtIMF7Y6DNu3IJo+NbAc/uO9S/BoK7oCaeJa2DtA+z6oMP3xT4pOVCbKktEqDt2SsB1Mwa2xlsjFqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762492131; c=relaxed/simple;
-	bh=wz0RbXvDANs4xP0BLLV/sMIOmtF2tGmZKTNplvZYyNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UclS8SS71IHMbi6BQGz2HVHPtS40VeUo61JjVftgCyRss6DCPoLpCcl6HuoHqSgtzmP5az/th+Pd8jui9kvnnrAKKJyGktHQRJ99nEjrrfQ4/8jWzHvxRqDKPYTcVXGNhvygISUqMdVSKBm0lIk3grc1tu2w4a/kwY7SJ0KkbbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OIOdXUTY; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Zc
-	gaUWkAGv8CNfCH//KMQiCLJzuISS/tabOyOTpq+Bg=; b=OIOdXUTYa45sOU/PF3
-	9EtnkX+r8hLhU/bAzRplBg80qyXrf7MzkhWCMibWG/ZdQhKrQ6LL+Ulxsf0ddvkb
-	7KYpOOW09j18HpXc6NaTCakybVKjKtkppAh41uqybhajlLGgPfKlfkZg0GE0B1f9
-	4VbL1H+bo7c+uRl9H6kcParMw=
-Received: from ubuntu.. (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3d9CBfg1p6iv4CA--.2027S2;
-	Fri, 07 Nov 2025 13:07:15 +0800 (CST)
-From: Hang Shu <m18080292938@163.com>
-To: ojeda@kernel.org
-Cc: Hang Shu <hangshu847@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
+	s=arc-20240116; t=1762492079; c=relaxed/simple;
+	bh=Mw1hYzJPmBlRa1P9Q6n6jjczl4NnDGxr14+eAsBq9wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EuGMh1q8cvcoc6iCzobsGxVoeogRbr4HczVZlHfNHgfeDVAHG/OVKBKaw95HOWlcV8K97B8P5wsi4K2dSN44YxHrTIAO+BobJhEUwzjZRTj2VwD/wOtkv0cPb1eLCGfA00U3aObkuf5NON7GMPiLdKnOpvHiubHlgTrkjdG66Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxgTDjie; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A76C116B1;
+	Fri,  7 Nov 2025 05:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762492078;
+	bh=Mw1hYzJPmBlRa1P9Q6n6jjczl4NnDGxr14+eAsBq9wc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PxgTDjie/RD0tJnwGg1tf/oiZCNgCBnM5h+8TF2R20VZ3hytBswUTVHddDufT761w
+	 hJGHowtzUpBK+CsH1s7gKs61gH3tsxUouBstyPv8e/j2C8ghVNpTccXaBy9vTNP1RF
+	 zfcek9YB//SZQYcb0vIZCHaikcQaaAym4Xfs1R5yS4nsMLZgvDnqWIvPeVXLedVM0C
+	 K2thDxvOWwxJrSpJf5FPJoKvp09V5jGFnvm9dNjqh//VdQNjzWY+JDii+D5StyS4Vx
+	 u3I2xtUOYnt/kVQU02PwkU2zMtbueP4+8KhPwawkqmqU1gDNv2JvsXiNhEfaQn3XJy
+	 RK/Eu5bGz0uPw==
+Date: Fri, 7 Nov 2025 05:07:54 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
 	Danilo Krummrich <dakr@kernel.org>,
-	Hang Shu <m18080292938@163.com>,
-	Charalampos Mitrodimas <charmitro@posteo.net>,
-	Borys Tyran <borys.tyran@protonmail.com>,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
-	Daniel Sedlak <daniel@sedlak.dev>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Matt Gilbride <mattgilbride@google.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: rbtree: fix cursor method lifetimes to match tree lifetime
-Date: Fri,  7 Nov 2025 05:06:56 +0000
-Message-ID: <20251107050700.1086059-1-m18080292938@163.com>
-X-Mailer: git-send-email 2.43.0
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v6 1/3] revocable: Add fops replacement
+Message-ID: <aQ1-qj0ztQ29h-oc@google.com>
+References: <20251106152712.11850-1-tzungbi@kernel.org>
+ <20251106152712.11850-2-tzungbi@kernel.org>
+ <20251106154715.GB1732817@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3d9CBfg1p6iv4CA--.2027S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxur15Cw1rKw1DKrW7WF1Dtrb_yoW5try8pr
-	s0g347JwnxAF4xWrn0vF18uF13X3y8Xw45CF4DCw48Aw43JFZ7t3WUtFWY9ryUurn5Zr4r
-	ZryIgwsrCw45AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziO6pDUUUUU=
-X-CM-SenderInfo: bpryimqqszjmity6il2tof0z/1tbiPRH+kWkNdid6kQAAsd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106154715.GB1732817@nvidia.com>
 
-From: Hang Shu <hangshu847@gmail.com>
+On Thu, Nov 06, 2025 at 11:47:15AM -0400, Jason Gunthorpe wrote:
+> On Thu, Nov 06, 2025 at 11:27:10PM +0800, Tzung-Bi Shih wrote:
+> > +/*
+> > + * Recover the private_data to its original one.
+> > + */
+> > +static struct fops_replacement *_recover_private_data(struct file *filp)
+> > +{
+> > +	struct fops_replacement *fr = filp->private_data;
+> > +
+> > +	filp->private_data = fr->orig_private_data;
+> > +	return fr;
+> > +}
+> > +
+> > +/*
+> > + * Replace the private_data to fops_replacement.
+> > + */
+> > +static void _replace_private_data(struct fops_replacement *fr)
+> > +{
+> > +	fr->filp->private_data = fr;
+> > +}
+> 
+> This switching of private_data isn't reasonable, it breaks too much
+> stuff. I think I showed a better idea in my sketch.
 
-The returned keys and values of cursor methods should be bound by
-the lifetime of the rbtree itself ('a), not the lifetime of the cursor.
+The approach assumes the filp->private_data should be set once by the
+filp->f_op->open() if any.  Is it common that the filp->private_data
+be updated in other file operations?
 
-Without this adjustment, examples like the following fail to compile:
+> I still think this is a bad use case of revocable, we don't need to
+> obfuscate very simple locks in *core* kernel code like this. I'd rather
+> see you propose this series without using it.
+> 
+> > +static int fs_revocable_release(struct inode *inode, struct file *filp)
+> > +{
+> > +	struct fops_replacement *fr = _recover_private_data(filp);
+> > +	int ret = 0;
+> > +	void *any;
+> > +
+> > +	filp->f_op = fr->orig_fops;
+> > +
+> > +	if (!fr->orig_fops->release)
+> > +		goto leave;
+> > +
+> > +	REVOCABLE_TRY_ACCESS_SCOPED(fr->rev, any) {
+> > +		if (!any) {
+> > +			ret = -ENODEV;
+> > +			goto leave;
+> > +		}
+> > +
+> > +		ret = fr->orig_fops->release(inode, filp);
+> > +	}
+> 
+> This probably doesn't work out, is likely to make a memory leak.
+> It will be hard for the owning driver to free its per-file memory
+> without access to release.
 
-fn test_rbtree_cursor(rbtree: &mut RBTree<i32, i32>) -> &i32 {
-    rbtree.try_create_and_insert(1, 1, GFP_KERNEL).unwrap();
-    let mut cursor = rbtree.cursor_front().unwrap();
-    // compile error
-    // cannot return value referencing local variable `cursor`
-    cursor.peek_next().unwrap().1
-}
-
-This modification ensures that references to tree elements remain valid
-independently of the cursor's scope,
-aligning with the actual lifetime dependencies in the data structure.
-
-The changes will be applied to multiple similar methods
-throughout the Cursor implementation to maintain consistency.
-
-Fixes: 98c14e40e07a ("rust: rbtree: add cursor")
-Signed-off-by: Hang Shu <hangshu847@gmail.com>
----
- rust/kernel/rbtree.rs | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index 9e178dacddf1..702a1b6ef7a9 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -742,7 +742,7 @@ unsafe impl<'a, K: Sync, V: Sync> Sync for Cursor<'a, K, V> {}
- 
- impl<'a, K, V> Cursor<'a, K, V> {
-     /// The current node
--    pub fn current(&self) -> (&K, &V) {
-+    pub fn current(&self) -> (&'a K, &'a V) {
-         // SAFETY:
-         // - `self.current` is a valid node by the type invariants.
-         // - We have an immutable reference by the function signature.
-@@ -750,7 +750,7 @@ pub fn current(&self) -> (&K, &V) {
-     }
- 
-     /// The current node, with a mutable value
--    pub fn current_mut(&mut self) -> (&K, &mut V) {
-+    pub fn current_mut(&mut self) -> (&'a K, &'a mut V) {
-         // SAFETY:
-         // - `self.current` is a valid node by the type invariants.
-         // - We have an mutable reference by the function signature.
-@@ -831,16 +831,16 @@ fn mv(self, direction: Direction) -> Option<Self> {
-     }
- 
-     /// Access the previous node without moving the cursor.
--    pub fn peek_prev(&self) -> Option<(&K, &V)> {
-+    pub fn peek_prev(&self) -> Option<(&'a K, &'a V)> {
-         self.peek(Direction::Prev)
-     }
- 
-     /// Access the next node without moving the cursor.
--    pub fn peek_next(&self) -> Option<(&K, &V)> {
-+    pub fn peek_next(&self) -> Option<(&'a K, &'a V)> {
-         self.peek(Direction::Next)
-     }
- 
--    fn peek(&self, direction: Direction) -> Option<(&K, &V)> {
-+    fn peek(&self, direction: Direction) -> Option<(&'a K, &'a V)> {
-         self.get_neighbor_raw(direction).map(|neighbor| {
-             // SAFETY:
-             // - `neighbor` is a valid tree node.
-@@ -850,16 +850,16 @@ fn peek(&self, direction: Direction) -> Option<(&K, &V)> {
-     }
- 
-     /// Access the previous node mutably without moving the cursor.
--    pub fn peek_prev_mut(&mut self) -> Option<(&K, &mut V)> {
-+    pub fn peek_prev_mut(&mut self) -> Option<(&'a K, &'a mut V)> {
-         self.peek_mut(Direction::Prev)
-     }
- 
-     /// Access the next node mutably without moving the cursor.
--    pub fn peek_next_mut(&mut self) -> Option<(&K, &mut V)> {
-+    pub fn peek_next_mut(&mut self) -> Option<(&'a K, &'a mut V)> {
-         self.peek_mut(Direction::Next)
-     }
- 
--    fn peek_mut(&mut self, direction: Direction) -> Option<(&K, &mut V)> {
-+    fn peek_mut(&mut self, direction: Direction) -> Option<(&'a K, &'a mut V)> {
-         self.get_neighbor_raw(direction).map(|neighbor| {
-             // SAFETY:
-             // - `neighbor` is a valid tree node.
--- 
-2.43.0
-
+Ah, I think this reveals a drawback of the approach.
+- Without calling ->release(), some memory may leak.
+- With calling ->release(), some UAF may happen. 
 
