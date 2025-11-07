@@ -1,214 +1,263 @@
-Return-Path: <linux-kernel+bounces-890873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D2DC4140E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:17:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C85C4141D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D1F3A3EEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:17:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBF484F4B2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE27033B6D1;
-	Fri,  7 Nov 2025 18:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E732133A011;
+	Fri,  7 Nov 2025 18:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="Ev0OBI+G"
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFNFhJgp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E82E326D4F;
-	Fri,  7 Nov 2025 18:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CB6337BA7;
+	Fri,  7 Nov 2025 18:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539408; cv=none; b=oigPT8nMn112amXV6zA8xBIF18H0arFyFPQo59JR5+gz9GAlaNmokOKThQLR7uL8VgXp6H8QUzCeR7kClL8B4QUN7WVih6d27wScIKCkM/37032qIx5bIT6FZJHDef+d0f7d7X6q7DMtpS0dhvtqAFHnyeHkLHV57MNn1OPPO6U=
+	t=1762539414; cv=none; b=PI3+rykFyJDyMqKlEPpfv5rWswVnhXRzVBBZ5GxBT98eVEVNKg2BGP7o8091F4E4eqtYhs30J6v98qHW6Ojfj3pcIFkCCLQ8X+vKDTVeFHwETjlsBnqxpkV0SLc+fMm8dHo0Q0TeWhG2aafCj/7JFmC/OsiP2lQ1brWOmSv0fco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539408; c=relaxed/simple;
-	bh=7n7dygXaM6PNko3nKsAyTww0Dj5GjeSMP13Z74c0A0s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZtrXRTTYFF2k5Rl3Z7YvhIbU+qcZQlLqRrMd8tj+rXYncmdIkgnA4mIC41EP16pamt/MZ+5+wGXUwcryRVsbrE53iAmeAeOoqzftNsZwgcIzNMSJsHSTMvYGlxBulLxLE+1lMUbKtea5Lb6acl5QjULRXSwNwaYlawvK63Krjws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=Ev0OBI+G; arc=none smtp.client-ip=91.103.66.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1762539403;
-	bh=HEOhTGhATkpzXubqKtEV5G+vukgp3gRaraSTHVJjEqc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=Ev0OBI+G3sQTn6n6O6JgqKn8a/aGlDPCmWoeyPOEK+mJrrCNzE6WrEIPB9jyWJ3lx
-	 0YF24Mqh3jkcsDb7V9CrOG0GXW7691nvRqCxnGVw7U9jKXUcUJdGfNFUkVwfuGhzam
-	 M+XVKNNROUai+G7SNdY7OWJjy+Kp8+CDr8Kt9LgP17NkUVmVlB2t+C7ywdHLPOROBj
-	 UsKxH/CIS3bmAsl1QAMfw5T3bE0Ct9eHzkNtIKdP3RIjkbHm8T5h0fNY9Zadd3Pdfc
-	 GdCtuhpv6s4lD0iwo+TtTvmtVeJFZtnZVzV2UssEXMXxlP4Z0DsS5TO08K5mguoCI+
-	 TidbZh+LIysaQ==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 477733E2690;
-	Fri,  7 Nov 2025 21:16:43 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id C98F93E52BC;
-	Fri,  7 Nov 2025 21:16:42 +0300 (MSK)
-Received: from Nalivayko.avp.ru (10.16.105.14) by HQMAILSRV3.avp.ru
- (10.64.57.53) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Fri, 7 Nov
- 2025 21:16:42 +0300
-From: Nalivayko Sergey <Sergey.Nalivayko@kaspersky.com>
-To: <linux-media@vger.kernel.org>
-CC: Nalivayko Sergey <Sergey.Nalivayko@kaspersky.com>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Michael Krufky <mkrufky@linuxtv.org>,
-	<syzbot+f9f5333782a854509322@syzkaller.appspotmail.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2 2/2] media: mxl111sf: fix i2c race condition during device  probe
-Date: Fri, 7 Nov 2025 21:16:23 +0300
-Message-ID: <20251107181623.2139080-3-Sergey.Nalivayko@kaspersky.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251107181623.2139080-1-Sergey.Nalivayko@kaspersky.com>
-References: <20251107181623.2139080-1-Sergey.Nalivayko@kaspersky.com>
+	s=arc-20240116; t=1762539414; c=relaxed/simple;
+	bh=+3LGRZ/i95R9G46DjnQ4oDzhvETIPYCKtlLIAK2PNBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdV5J0n0LtDuoelFfJdskM8Xyzc9jvpqUof2r25nY5cQvvoSAO7rOVcvyc47fLQqOA6w04dbg2Z0OSHQjND6z2qgeP4aapX8znoNQ8JE7qiPFypgJdDXJe9DiJbVrVf+0BVvW1gzsiXazhlrENt1AIBjjzpw6A7yxxL0vz5n8Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFNFhJgp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B05AC4CEF8;
+	Fri,  7 Nov 2025 18:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762539413;
+	bh=+3LGRZ/i95R9G46DjnQ4oDzhvETIPYCKtlLIAK2PNBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PFNFhJgp1kZkEshiNLZQa1cH8HdVHFyKXEiX2/j3WpQOAshi2ICDcRGNrbQvnzZIu
+	 Ev1WbzWkDfvPNUzHcb4LcvA+ipD97IetYPlu+Bb/1dqxVuqvBFDJ0TR79zhIOy0Vu9
+	 6M0+Xp272845UHA5ZY1C92R9+tlxfcQg+IA7NhONIBlu+HLKAzySAQs1ZgZKmkrIAW
+	 nAx7tA+IWU5iFp+Stamqd8v3/LebxTy/Asu4r/w29O/xHPtjqKMr1d1eP4Xd2UO6Kk
+	 M84g2J9d8qCpEK3SHXStSFYcTiUKJWx9JKd1a9QHRZ4kfUrH3VuOINxiFdGueKP44C
+	 8MZdLTWnobWpA==
+Date: Fri, 7 Nov 2025 18:16:47 +0000
+From: Conor Dooley <conor@kernel.org>
+To: maudspierings@gocontroll.com
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 1/4] dt-bindings: backlight: Add max25014 support
+Message-ID: <20251107-qualified-varsity-78953d06d7c6@spud>
+References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
+ <20251107-max25014-v5-1-9a6aa57306bf@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV3.avp.ru (10.64.57.53) To HQMAILSRV3.avp.ru
- (10.64.57.53)
-X-KSE-ServerInfo: HQMAILSRV3.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/07/2025 18:01:40
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 197893 [Nov 07 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Sergey.Nalivayko@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 75 0.3.75
- aab2175a55dcbd410b25b8694e49bbee3c09cdde
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_one_url}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: syzkaller.appspot.com:7.1.1,5.0.1;kaspersky.com:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/07/2025 18:04:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/7/2025 4:59:00 PM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/11/07 18:01:00
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/07 16:52:00 #27893595
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/11/07 18:00:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8J53olo9onoOkYiP"
+Content-Disposition: inline
+In-Reply-To: <20251107-max25014-v5-1-9a6aa57306bf@gocontroll.com>
 
-syzbot reports a KASAN issue as below:
 
-Oops: general protection fault, probably for non-canonical 
-  address 0xdffffc0000000019: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x00000000000000c8-0x00000000000000cf]
-CPU: 1 UID: 0 PID: 5849 Comm: syz-executor279 
-  Not tainted 6.15.0-rc2-syzkaller #0 PREEMPT(full)
-Hardware name: Google Compute Engine/Google Compute Engine, 
-  BIOS Google 02/12/2025
-RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:580 [inline]
-RIP: 0010:__mutex_lock+0x15d/0x10c0 kernel/locking/mutex.c:746
-Call Trace:
- <TASK>
- dvb_usbv2_generic_write+0x26/0x50 
- mxl111sf_ctrl_msg+0x172/0x2e0
- mxl111sf_write_reg+0xda/0x1f0
- mxl111sf_i2c_start
- mxl111sf_i2c_sw_xfer_msg
- mxl111sf_i2c_xfer+0x923/0x8aa0
- __i2c_transfer+0x859/0x2250
- i2c_transfer+0x2c2/0x430
- i2c_transfer_buffer_flags+0x182/0x260
- i2c_master_recv
- i2cdev_read+0x10a/0x220
- vfs_read+0x21f/0xb90
- ksys_read+0x19d/0x2d0
- do_syscall_x64
- do_syscall_64+0xf3/0x230
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
- </TASK>
+--8J53olo9onoOkYiP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This occurs due to a race condition during DVB-USB-V2 device 
-initialization. While initialization is in progress, I2C data may be read 
-from userspace, leading to a NULL pointer dereference in 
-dvb_usbv2_generic_write and a kernel panic.
+On Fri, Nov 07, 2025 at 01:49:58PM +0100, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
+>=20
+> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+> with integrated boost controller.
+>=20
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+>=20
+> ---
+>=20
+> In the current implementation the control registers for channel 1,
+> control all channels. So only one led subnode with led-sources is
+> supported right now. If at some point the driver functionality is
+> expanded the bindings can be easily extended with it.
 
-      Thread 1 (probe device)             Thread 2 (receive i2c data)
-    ...
-    dvb_usbv2_probe()
-      ...
-      d->priv = kzalloc(
-          d->props->size_of_priv,
-          GFP_KERNEL);
-      ...
-      dvb_usbv2_init()
-      ...
-        // can read data from i2c
-        dvb_usbv2_i2c_init()
-      ...
-                                        ...
-                                        i2cdev_read()
-                                        ...
-                                          // d->priv data is invalid. UB
-                                          mxl111sf_i2c_xfer()
-                                            ...
-                                            mxl111sf_ctrl_msg()
-                                              ...
-                                              // null ptr deref
-                                              dvb_usbv2_generic_write()
-                                        ...
-      ...
-      // d->priv data is valid
-      dvb_usbv2_adapter_init()
-      ...
+I'm sorry if I asked this before and forgot or w/e, but how backwards
+compatible is this? If they control all channels and it gets changed to
+only control channel one, how will a changed kernel understand the
+difference between a new devicetree that only wants to control channel 1
+and an old devicetree that is trying to use channel 1 to control all
+channels?
 
-Add init_ready flag check to prevent I/O on uninitialized DVB-USB-V2 
-device.
+Cheers,
+Conor.
 
-Reported-by: syzbot+f9f5333782a854509322@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f9f5333782a854509322
-Fixes: 4c66c9205c07 ("[media] dvb-usb: add ATSC support for the Hauppauge WinTV-Aero-M")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nalivayko Sergey <Sergey.Nalivayko@kaspersky.com>
----
- drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  .../bindings/leds/backlight/maxim,max25014.yaml    | 107 +++++++++++++++=
+++++++
+>  MAINTAINERS                                        |   5 +
+>  2 files changed, 112 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/maxim,max25=
+014.yaml b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.=
+yaml
+> new file mode 100644
+> index 000000000000..e83723224b07
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Maxim max25014 backlight controller
+> +
+> +maintainers:
+> +  - Maud Spierings <maudspierings@gocontroll.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - maxim,max25014
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  enable-gpios:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  power-supply:
+> +    description: Regulator which controls the boost converter input rail.
+> +
+> +  pwms:
+> +    maxItems: 1
+> +
+> +  maxim,iset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    maximum: 15
+> +    default: 11
+> +    description:
+> +      Value of the ISET field in the ISET register. This controls the cu=
+rrent
+> +      scale of the outputs, a higher number means more current.
+> +
+> +  led@0:
+> +    type: object
+> +    description: Properties for a string of connected LEDs.
+> +    $ref: common.yaml#
+> +
+> +    properties:
+> +      reg:
+> +        const: 0
+> +
+> +      led-sources:
+> +        allOf:
+> +          - minItems: 1
+> +            maxItems: 4
+> +            items:
+> +              minimum: 0
+> +              maximum: 3
+> +            default: [0, 1, 2, 3]
+> +
+> +      default-brightness:
+> +        minimum: 0
+> +        maximum: 100
+> +        default: 50
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        backlight@6f {
+> +            compatible =3D "maxim,max25014";
+> +            reg =3D <0x6f>;
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +            enable-gpios =3D <&gpio1 4 GPIO_ACTIVE_HIGH>;
+> +            interrupt-parent =3D <&gpio1>;
+> +            interrupts =3D <2 IRQ_TYPE_EDGE_FALLING>;
+> +            power-supply =3D <&reg_backlight>;
+> +            pwms =3D <&pwm1>;
+> +            maxim,iset =3D <7>;
+> +
+> +            led@0 {
+> +                reg =3D <0>;
+> +                led-sources =3D <0 1 2 3>;
+> +                default-brightness =3D <50>;
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 58c7e3f678d8..606ce086f758 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15261,6 +15261,11 @@ F:	Documentation/userspace-api/media/drivers/max=
+2175.rst
+>  F:	drivers/media/i2c/max2175*
+>  F:	include/uapi/linux/max2175.h
+> =20
+> +MAX25014 BACKLIGHT DRIVER
+> +M:	Maud Spierings <maudspierings@gocontroll.com>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+> +
+>  MAX31335 RTC DRIVER
+>  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+>  L:	linux-rtc@vger.kernel.org
+>=20
+> --=20
+> 2.51.2
+>=20
+>=20
 
-diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c b/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
-index 100a1052dcbc..b7bad90b16dc 100644
---- a/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
-+++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c
-@@ -804,7 +804,7 @@ int mxl111sf_i2c_xfer(struct i2c_adapter *adap,
- 	int hwi2c = (state->chip_rev > MXL111SF_V6);
- 	int i, ret;
- 
--	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
-+	if (!atomic_read(&d->init_ready) || mutex_lock_interruptible(&d->i2c_mutex) < 0)
- 		return -EAGAIN;
- 
- 	for (i = 0; i < num; i++) {
--- 
-2.39.5
+--8J53olo9onoOkYiP
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ43jwAKCRB4tDGHoIJi
+0tpBAP9NLDHquHkJaGHZdDJjqdtnkqN8QoB5tbL4dVfi7f3PDwD/aSxRFOqlWV2V
+MTS/83/dLZduN46XgS8bQuVOD/bkww8=
+=ExWz
+-----END PGP SIGNATURE-----
+
+--8J53olo9onoOkYiP--
 
