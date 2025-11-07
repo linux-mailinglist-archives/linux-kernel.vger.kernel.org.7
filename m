@@ -1,136 +1,172 @@
-Return-Path: <linux-kernel+bounces-890660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025E8C40996
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:33:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51B5C409B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC0A3BF5E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:33:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1AE561246
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83B3329380;
-	Fri,  7 Nov 2025 15:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B9A2F0C45;
+	Fri,  7 Nov 2025 15:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fWkvLxd4"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DmR+SrlZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45665239E7F;
-	Fri,  7 Nov 2025 15:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A56A32C932;
+	Fri,  7 Nov 2025 15:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762529620; cv=none; b=irEZ31YcHU/iaFyrABY6uPYbjEjBOTRpKCwD4ous/lKvoG+q2Cxt56ahgx+CBAbGshOIgwYIFMUxR7yR8iV3Dy+RCnjuCMHq2GggMorxlDr3t9Kv266WD2CwmeBfZQ+p2PnagXgpI+CkvSClfGhRqGhp5mtExRIcHOq27B2KFpc=
+	t=1762529687; cv=none; b=PZtYdeh3Zn0OfCuZeaybfmtpiw1R1D5g6TrAeDjGX3BZtcUwwByx7Eeyqc6I9CG7MIEpyxfbcabWFuIGFa4Mwozkyt4KaxNWRWIxf43faRROWxxlbRRd78SAUo+p4EAikBToqsa4kILQUNke/+UxR/4YpkgRiB52aTYD8mjv6cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762529620; c=relaxed/simple;
-	bh=P3ab668+SgsSZopmzQ6luLdGMiRFYv+zhm5ze83iYCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/t1MM8DarFQf21O7g6DNG6xL0mU/HQzrpnjXnqSdcPfiva2wpaTzv5/T+QKqHCapyABzRmxAT70GuUuTcmbJVmR0Qsu+ohssr9FwBn2aXXfsy7w8dyKx7T3dIpkKqRod6KXmIDg05enapNUYVSImseCp7gAqYP+I3ZtwVazsZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fWkvLxd4; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HD/Q7fVnxSxfev0yk/VhBnw0ldUa9+lYqYF4QzV4RV4=; b=fWkvLxd49Wjnh2n2/9JPLxpAgH
-	W4EX+IEXmwmxM1+0Yy5nVbc5Yjnd7ibQMKQQ2sMOC0AFZ9vFDDtTulhJ8kN0tm0Y56n8RvyXlQQWG
-	zjH4oYaw47mbN5y7l4fjzbHTCYXzyMm7wDR3QbrAv90Bd5Q0DQJ8oAwSXoG4yUx3Z8qvPfeIKPDh3
-	D4rckrNiQ2S53gGU82Fc6+RtX4QF5am4NAgvgIo7F0I7O6hwEvTYY0POkoqsgbTVid+Org/zkDWzD
-	L4dnPOs3iHy1dFnUUs5knxxWRQiUuQPwJyiqV27pXJMC7FHmez4BQ09NkWHWBVHJ+ts/8xLfuAm2t
-	jdEJMxoA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49970)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vHOSw-000000006pZ-1u8J;
-	Fri, 07 Nov 2025 15:33:30 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vHOSt-000000007gr-2tdD;
-	Fri, 07 Nov 2025 15:33:27 +0000
-Date: Fri, 7 Nov 2025 15:33:27 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jonas Gorski <jonas.gorski@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
-Subject: Re: [PATCH net v2] net: dsa: b53: bcm531x5: fix cpu rgmii mode
- interpretation
-Message-ID: <aQ4RR4OQI9f2bBOG@shell.armlinux.org.uk>
-References: <20251107083006.44604-1-jonas.gorski@gmail.com>
- <ce95eb8c-0d40-464d-b729-80e1ea71051c@lunn.ch>
- <CAOiHx=kt+pMVJ+MCUKC3M6QeMg+gamYsnhBAHkG3b6SGEknOuw@mail.gmail.com>
- <ec456ae4-18ea-4f77-ba9a-a5d35bf1b1fd@lunn.ch>
- <20251107144515.ybwcfyppzashtc5c@skbuf>
+	s=arc-20240116; t=1762529687; c=relaxed/simple;
+	bh=PVOMoLsv/C8FHk8RKmDDwOhTloxRr5gc06LUKvLyMCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pw+n0AUeLooG1pb4Xjq5M5Z1RcP6w4vgDBAmFvUWitx0aBTaebx5YjDPuxaJVSnV2GYXgGyqMEQeqo6JTnltpwxP1uOEsiyitlEJcam9G/C5XW2qat+sosCfXmgxlZ8dvRt/AIaZ7HjwuVubJfrDGI415LKtHdKDmK5R/ksaJPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DmR+SrlZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7Esa9i030417;
+	Fri, 7 Nov 2025 15:34:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YmobMJ
+	csCJcwwI8/kU9x3dKjZAgMtB9UEjqodE7qgtQ=; b=DmR+SrlZ3fFDk5y5DrqJaT
+	3VNAlrbHI3fbIVIIfQuSOUZmaDcmiW5rtMKGQHOzzJ04wFm8YLMkYv1NcL+KQaJE
+	lPEDYOcTmjFNF/p0YFfCNvmROk0oQEsMOZDvOooongidOY5M2cHVPPAmuLKcSrtv
+	CWF/ZGW/Bi3qlJlf31e6dk8MlfcHFFKuE3yvkdga3zL8u9agbXVY4g9lWbeWVWoN
+	lE17cVSDpz2AhE67XGImcDDsLZeFYoFPDxLCzVQiUV0gbyjYPaIgiRb4oywkLLH3
+	Bwa2yq0OkfHrCI7XuSZhjvG17bg0R4Ty5vqMtj3CS7S8CVGYSLpXVikWDmd82m6A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9jxmr7v7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 15:34:39 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A7FX6mu020594;
+	Fri, 7 Nov 2025 15:34:38 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9jxmr7v3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 15:34:38 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7CTAXt021482;
+	Fri, 7 Nov 2025 15:34:37 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrk37jq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 15:34:37 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7FYYFb52167018
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Nov 2025 15:34:34 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0097720043;
+	Fri,  7 Nov 2025 15:34:34 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0222A20040;
+	Fri,  7 Nov 2025 15:34:33 +0000 (GMT)
+Received: from [9.111.68.113] (unknown [9.111.68.113])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Nov 2025 15:34:32 +0000 (GMT)
+Message-ID: <72ec25d5-e077-4a84-9eca-ce886e2aaffb@linux.ibm.com>
+Date: Fri, 7 Nov 2025 16:33:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107144515.ybwcfyppzashtc5c@skbuf>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] s390/fpu: Fix kmsan in fpu_vstl function
+To: Alexander Potapenko <glider@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Juergen Christ <jchrist@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+References: <20251106160845.1334274-2-aleksei.nikiforov@linux.ibm.com>
+ <20251106160845.1334274-6-aleksei.nikiforov@linux.ibm.com>
+ <CAG_fn=WufanV2DAVusDvGviWqc6woNja-H6WAL5LNgAzeo_uKg@mail.gmail.com>
+ <20251107104926.17578C07-hca@linux.ibm.com>
+ <CAG_fn=W5TxaPswQzRYO=bJzv6oGNt=_9WVf2nSstsPGd5a5mNw@mail.gmail.com>
+Content-Language: en-US
+From: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+In-Reply-To: <CAG_fn=W5TxaPswQzRYO=bJzv6oGNt=_9WVf2nSstsPGd5a5mNw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=BZvVE7t2 c=1 sm=1 tr=0 ts=690e118f cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=ZY0oy1BPkzOObeRiG5MA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDEyMiBTYWx0ZWRfX1RZyKuD66vMJ
+ eIa01JZb2JMXI/qy3VPM6vE5n8WCXkhlk7uNzUQ3CKuEowwO9zxk+mUQHNTenHEnZ+p6IGqc6XI
+ lUSONTvT7bnW9zpujYYljr33v16OeLUdaS47nBkbkEawXqKMz+XDgEPAAfytDy3dTbxtxnDgrJW
+ ovTJPyF1HIZj5T6PXTLwZtfN48J6n6gnrTiOCV8S5zcl4D6OLSQG40jW+WsojAHelO+5LE97xNY
+ VW4Z6HZst5bBxX/cmR2T36OPbKrYqdy5hBbRAhKslspln/Fq07HojJBxxsdOJzYTmiXz3Rfoeo1
+ /p7hLGZymH4A9y/e010XxdUHZrGjT/Book/aNbVF+ojiUDTZ1VdTdQ78J87+EjqUY4wXEmmM/cm
+ wq98K0wWihWsN9KYPgB0EC/bfr9+Hg==
+X-Proofpoint-GUID: 9qF3Hk4uKD18vkj_pkFjCP3ioH97AV6j
+X-Proofpoint-ORIG-GUID: b4Vc7OTegufQwkjfSDN4buqtpdpRwd5v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 phishscore=0 suspectscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511070122
 
-On Fri, Nov 07, 2025 at 04:45:15PM +0200, Vladimir Oltean wrote:
-> On Fri, Nov 07, 2025 at 03:07:48PM +0100, Andrew Lunn wrote:
-> > > There is allwinner/sun7i-a20-lamobo-r1.dts, which uses "rgmii-txid",
-> > > which is untouched by this patch. The ethernet interface uses "rgmii".
-> > 
-> > Which is odd, but lets leave it alone.
-> > 
-> > > And there is arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts,
-> > > where a comment says that it has a BCM53134, but there is no such
-> > > node. The ethernet node uses "rgmii".
-> > 
-> > aspeed pretty much always get phy-mode wrong. So i would not worry too
-> > much about this.
-> > 
-> > > So one doesn't define one, one uses rgmii-id on the switch / phy side
-> > > and rgmii on the ethernet mac side, and one only defines the ethernet
-> > > mac side as rgmii.
-> > 
-> > That is reasonable. It is a lot less clear what is correct for a
-> > MAC-MAC connection. For a MAC-PHY connection we do have documentation,
-> > the preference is that the PHY adds the delays, not the MAC. If the
-> > switch is playing PHY, then having it add delays is sensible.
-> > 
-> > > > I would maybe add a dev_warn() here, saying the DT blob is out of date
-> > > > and needs fixing. And fix all the in kernel .dts files.
-> > > 
-> > > Sure I can add a warning.
-> > 
-> > Great, thanks.
-> > 
-> > 	Andrew
+On 11/7/25 14:32, Alexander Potapenko wrote:
+> On Fri, Nov 7, 2025 at 11:49 AM Heiko Carstens <hca@linux.ibm.com> wrote:
+>>
+>> On Fri, Nov 07, 2025 at 11:26:50AM +0100, Alexander Potapenko wrote:
+>>> On Thu, Nov 6, 2025 at 5:09 PM Aleksei Nikiforov
+>>> <aleksei.nikiforov@linux.ibm.com> wrote:
+>>>> @@ -409,6 +410,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index, const void *vxr)
+>>>>                  : [vxr] "=R" (*(u8 *)vxr)
+>>>>                  : [index] "d" (index), [v1] "I" (v1)
+>>>>                  : "memory", "1");
+>>>> +       instrument_write_after(vxr, size);
+>>>>   }
+>>>
+>>> Wouldn't it be easier to just call kmsan_unpoison_memory() here directly?
+>>
+>> I guess that's your call. Looks like we have already a couple of
+>> kmsan_unpoison_memory() behind inline assemblies.
+>>
+>> So I guess we should either continue using kmsan_unpoison_memory()
+>> directly, or convert all of them to such a new helper. Both works of
+>> course. What do you prefer?
 > 
-> +Russell
+> Upon reflection, I think adding instrument_write_after() is not the best idea.
+> For tools like KASAN and KCSAN, every write has the same semantics,
+> and the instrumentation just notifies the tool that the write
+> occurred.
+> For KMSAN, however, writes may affect metadata differently, requiring
+> us to either poison or unpoison the destination.
+> In certain special cases, like instrument_get_user() or
+> instrument_copy_from_user() the semantics are always fixed, but this
+> is not true for arbitrary writes.
+> 
+> We could make the new annotation's name more verbose, but it will just
+> become a synonym of kmsan_unpoison_memory().
+> So I suggest sticking with kmsan_unpoison_memory() for now.
+> 
+> 
 
-As this is discussing the applicability of RGMII delays for DSA
-switches, I've long held out that the situation is a mess, and
-diverges from what we decide to do for MACs - so I'd prefer not
-to get involved in this, except to say...
-
-> Since there is no 'correct' way to apply RGMII delays on a MAC according
-> to phy-mode, my advice, if possible, would be to leave sleeping dogs lie
-> and fix broken setups by adding the explicit device tree properties in
-> the MAC, and adding driver support for parsing these.
-
-Indeed - let's not break existing working setups. If there is a
-problem with them, then that's the time to start thinking about
-changing them.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+I'll rework changes with that suggestion. Thank you.
 
