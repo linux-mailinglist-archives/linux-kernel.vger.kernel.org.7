@@ -1,83 +1,134 @@
-Return-Path: <linux-kernel+bounces-891005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E53C41905
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:16:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0466C41921
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8104274F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35573AC8F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95F73370E0;
-	Fri,  7 Nov 2025 20:13:47 +0000 (UTC)
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F723081B1;
+	Fri,  7 Nov 2025 20:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awGnFpZr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D47337B9D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8FE2D3EDC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762546427; cv=none; b=pVYdT0DBRM6trp5DsO8SPWhgc1AAAMXZ7ZLnHZc168qQroZtgadz0UttWFEOyUGY55bW6+A4Aruh26oD/mC+GiAmgp2r9TopKxAIOqivtglzREf7miP9iTfpQpMKnPe+TSG+okrJe6EByDE6vqLWbfRm7mMq3ZQksY81gABRn8I=
+	t=1762546755; cv=none; b=kJN6GK3m0Z6ntHAXLbFy5crw1BQgIq2v4vNuz2r5qgC7JgvmZ0gl26NDCrXu4H3RbD87hpRAd+ZVyyauvy8PV41tDPQenxHj1QerdVY1o4JhKrqymOapeFp2Mfw3ll5WLbXz/jRo8ajtDt4ftsFprvk15hnI7mvGg0pQ/TsOboc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762546427; c=relaxed/simple;
-	bh=09eUTTlY2G0jdVjelC0cqh/VHK7FqJOXK65qTcB6Hvc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=vGlksm28kOgsGQ5kDlPJKE6E/2ljAXg14JRuNokFBUrmMwVo8SC8ZI45NX6JhAv430e9CttW/iootlLbkIgAcwwK9siu4kwfmgydHe0cG4LpBFn/EQw2FLCajr9/TZmjE0pIiP+0qv3j5oRMpwZgUEsOGMhhUyShNr5liZxF8yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-43326c74911so5306145ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:13:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762546424; x=1763151224;
-        h=to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gS1PgCh01Jm1QkTVUHmieEXJsyrh4GhNpZPiTdUvss=;
-        b=Ti16J0gajf3rtpv+iptiADSJC70E6cChnrmIJ/Q8S1EdhosyL8A0kdflMv9ypr+UAU
-         UflSOzbiIOfQoQkB7RUTI31ODa5CnAt5pNqhQ0pepadFvjjAihDvqfPFDNd1iGXalpUb
-         9x5r0KcxX/66hsp2vFAk75UO7zN6oINy12hOlgaEr1IH64fADmqqv2tMh62T5EyDYvqv
-         2BarL9ltTX0nrFSUE4VKHCVvJtjTJq5gP+gkmPRMauuDFqTyb7MQjWil2vaWNQtbANAC
-         NypPOerBaC9hnuIiywYOj+rd+OjCYhyJgEhHT0zhx7E7+YZ0JMOpp8RDdcKfdhO24dzH
-         lPSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwx/Pp4fsqBMhQyJBf25/U02+wZRht04XPH2nbdtaybcUlEaYD4gowN/vZvf6THcrmpXTZxpdz8fPn74g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiLhOfq94uCuU5B9XFnbHX9vVU+b4BSJJBBS/hl1zGBsphCdAr
-	l9Ey8xDhJrRqa4BAV6jBZAiZyVBpjaXexC3s3/Y9hH8sO3mXO0BzBfcfjpFERG+Ptnv5ZkR4TPH
-	8xutzcExk3qWFLBHVvllOjFmbOKF4rrzlpL0PGB1ZhOP9dKB6wyDMvK1/
-X-Gm-Gg: ASbGncstmeAg5tjHL/r/NqwD844PyguIey0hFIb4vl6Axz6mrrOjBl0fSwIQuHXQ/ls
-	TozlmVRuS6JStGoBQaS5495NYbdvuseI6jlelK2D5v9gZg+aNBrZgoo74ZIkg0eWdOwLCR4xBK3
-	09hkBn01WnlANo3oYMFfKIP2CZzDarSp129t6pd+JSV2fLolv72XYHfVcGgWqyctp6DhIvmhf8E
-	Hih3xzVmqBZVswb7o3FYqXnajj3+Bw6JYrtVXKKJm43/DPjlK4MgJzVmAtZDfs=
-X-Google-Smtp-Source: AGHT+IHAK/qPwgSmSCJLGfBjqQM2vcUyaaK0ElRhJneu5Nk0cEvEXK8xDHWJ+dBfVz1IUtf47kFhuUgyIobaaTUvn30=
-X-Received: by 2002:a05:6e02:3710:b0:433:27b5:1faa with SMTP id
- e9e14a558f8ab-43367dca877mr12429685ab.1.1762546421338; Fri, 07 Nov 2025
- 12:13:41 -0800 (PST)
+	s=arc-20240116; t=1762546755; c=relaxed/simple;
+	bh=17TsjTD9vWN3vxnRR6ra2LaUXASrfs1y4D40Ies1qAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XCXE56ikKyshxRv6V5HXmpPzfSCeGQhCZbjQ9289hWb5HgCFF9qc+OYIE9MIV/q0J/lZ+YNIcDuLnHBl62ujuKL5xm4l++f6zgiH/bZB9XlUTCTlbmJpDLfGoK3op6+YQ7iTW1rEc4NUKlZfPRkb92HkoTliqN2uLtOSbjbiM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awGnFpZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD12DC4CEF5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762546754;
+	bh=17TsjTD9vWN3vxnRR6ra2LaUXASrfs1y4D40Ies1qAk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=awGnFpZrCcROEqMsUDRzchPQCiL3ASAyi34ZIJ8VSEkySW/83zMREveqRUs4wDhD0
+	 hm8QSeKgD/QxU3Y6s62gPWrMvxHPhuKvcghVA2sMKXSXyhjgNn4AWNsg38TWD/J2BZ
+	 x9/MKY+q/doANVFdMhngcwDqh9IClgD4eHWmRcosuz9kDATKbn937mZQ+0MKPGSpeD
+	 XdxkgNdRXnddSUQJVMIIrZ5efd5voS4kzdWe4ock6IQ02pPzg3sf8vTSFmHlc6yDaQ
+	 lD9dR8NZRp3fTMAxGPAymRoSCwvHjSR4MHWq2hlvCGsM6n008XwlFmtLKdeXY9QYmb
+	 lDwzt6j8RlG/w==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7c28ff7a42eso349593a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:19:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVOpDrAff4VjNCaCZFZgByUyuqoop+EVTFvQyRoVVsFvEkGymsPSMReIRAuVcMbYTDTPAyXfW5T4CEvImU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoGh8USLdsF8qs/nHJSM78qvwfheipssO0YyAFdsxMG6+omL7r
+	nyNLTQd37j4aVDZTfL8lq3pt9yhwmwNmXTd5eS5jZcLnwJiUvnyHXJ4q6hcDWahmplfn0s+l5Ac
+	XNWX/GjxIBuEzB6lM8Lyak7As0/9jK9E=
+X-Google-Smtp-Source: AGHT+IG17jvOmL905CDn6ZhcH+amHb2vD+8gvkPXfGOKhCm0vT/i2vT+f6eQf338SgjblQyGQ6Xdcf5mmxanKX3VgKE=
+X-Received: by 2002:a05:6808:30a9:b0:44d:a805:1218 with SMTP id
+ 5614622812f47-4502a3b6b11mr327221b6e.55.1762546754125; Fri, 07 Nov 2025
+ 12:19:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Justin Forbes <jforbes@fedoraproject.org>
-Date: Fri, 7 Nov 2025 13:13:30 -0700
-X-Gm-Features: AWmQ_bnxn5ZTxbSrTPWI-CI3rLMS0B7sroSBMNjVbv-EBLTdopH_YiIu0paJ5Co
-Message-ID: <CAFxkdArGv91enmUpsuuARGLGZXNJjGZE3Cjsk3NfZS5nCRsgYA@mail.gmail.com>
-Subject: Build failure with rust 1.91 and CONFIG_EXTENDED_MODVERSIONS
-To: rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20251106113938.34693-1-adelodunolaoluwa@yahoo.com>
+ <20251106113938.34693-2-adelodunolaoluwa@yahoo.com> <CAJZ5v0gG3C4r-d+v2xGPqcF1Hn927NR7yBA7kLx4t6TjEo0rGA@mail.gmail.com>
+ <b6f467c5-4a70-46a2-8497-1c351b3bfea9@yahoo.com>
+In-Reply-To: <b6f467c5-4a70-46a2-8497-1c351b3bfea9@yahoo.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 7 Nov 2025 21:19:02 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jga6AtyWnAgKhcKYFJagEf+ZQmnm5y92zaPXGAkXHQZg@mail.gmail.com>
+X-Gm-Features: AWmQ_bknLYx82HZHH_AyTndZcLC4yRAXR2uLAm_FlX8-cm4oHIXwoNmPdd46gP4
+Message-ID: <CAJZ5v0jga6AtyWnAgKhcKYFJagEf+ZQmnm5y92zaPXGAkXHQZg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] power/swap: add missing params and Return:
+ descriptions to kernel-doc comments
+To: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, pavel@kernel.org, 
+	anna-maria@linutronix.de, frederic@kernel.org, mingo@kernel.org, 
+	tglx@linutronix.de, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It seems that building withe CONFIG_EXTENDED_MODVERSIONS  and rust
-1.91 gets us to the following error:
+On Fri, Nov 7, 2025 at 9:09=E2=80=AFPM Sunday Adelodun
+<adelodunolaoluwa@yahoo.com> wrote:
+>
+> On 11/7/25 16:36, Rafael J. Wysocki wrote:
+> > On Thu, Nov 6, 2025 at 12:40=E2=80=AFPM Sunday Adelodun
+> > <adelodunolaoluwa@yahoo.com> wrote:
+> >> Kernel-doc checks (scripts/kernel-doc) reported a number of warnings
+> >> for missing parameters and `Return:` descriptions in kernel/power/swap=
+.c.
+> >> These missing return descriptions make the generated documentation
+> >> noisy and break doc-build when -Werror is used.
+> >>
+> >> Update the kernel-doc comment blocks to add explicit
+> >> Return: lines (and a few parameter tags where helpful) for the functio=
+ns
+> >> that were triggering warnings. No functional code changes are made.
+> >>
+> >> Example warnings that motivated this change:
+> >>   - Warning: kernel/power/swap.c:535 No description found for return v=
+alue
+> >>     of 'save_image'
+> >>   - Warning: kernel/power/swap.c:687 No description found for return v=
+alue
+> >>    of 'save_compressed_image'
+> >>   - Warning: kernel/power/swap.c:941 No description found for return v=
+alue
+> >>     of 'swsusp_write'
+> >>
+> >> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+> > These comments need more changes to become proper kerneldocs and in
+> > some cases it is not even necessary because the functions in question
+> > are static.
+> >
+> > If the goal is to avoid warnings, why don't you change them all to
+> > non-kerneldoc regular comments?
+>
+> Thank you very much for the feedback.
+>
+> For the functions that are not static, could you please suggest the
+> appropriate changes needed to make their comments proper? I would like
+> to improve them accordingly.
 
-error: gendwarfksyms: process_module: dwarf_get_units failed: no
-debugging information?
-make[2]: *** [rust/Makefile:552: rust/bindings.o] Error 1
-make[2]: *** Deleting file 'rust/bindings.o'
+There are some white space changes to be made and general formatting
+needs to be improved in some cases.
 
-Turning off CONFIG_EXTENDED_MODVERSIONS gives us a successful build, even with:
-CONFIG_BASIC_MODVERSIONS=y
-# CONFIG_EXTENDED_MODVERSIONS is not set
-CONFIG_MODVERSIONS=y
+> My initial goal was to address the warnings, but if converting them to
+> regular comments
+>
+> is the preferred approach, I will go ahead and update them that way in v2=
+.
 
-Justin
+I would split this into 2 patches, one changing the comments on the
+static functions to non-kerneldoc (and maybe dropping some of them
+entirely) and the other changing the remaining comments into proper
+kerneldoc ones.
+
+Thanks!
 
