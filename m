@@ -1,126 +1,131 @@
-Return-Path: <linux-kernel+bounces-890868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8206AC413EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:14:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68758C413F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:15:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C103C4E21A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:14:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6243BC90F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8861D338F39;
-	Fri,  7 Nov 2025 18:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD1627145F;
+	Fri,  7 Nov 2025 18:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEg7c6eK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ex7uFGyx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DB327145F;
-	Fri,  7 Nov 2025 18:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C76220F2C;
+	Fri,  7 Nov 2025 18:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539276; cv=none; b=uD6/UEjNx6e88/gxcE90idXG1aChzzMGXD9FUG66NVEWngdNraCgO9ItwQ8s06CqwprsyACzho4/z7+3Fmvj30pMpqARTlPWPPFqU6WnRnR5g9mQ3JZdh2W3OoTMBwRoJoo5RmllIkgnhfMVw3+s3GAro07gGhcyBORgk+zWov0=
+	t=1762539299; cv=none; b=dswhipbUF00sv5BvLx6Vqe1Dsftg4vGuNP66nh8Mlo2qSO3s6Ik+UtvncpRP/QHJwj73JjnUATNYyd3N8ZFRUW0TrVYq07mY0mP4mQK7SXg8un/Vz1T4D9ZNFtAy0GWBh6Y9QohVTg3vYbk96HdtXTEMfflM6b23fLI7wF7vaBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539276; c=relaxed/simple;
-	bh=eM5ZneuspMh6fY9/LR7skAboL0fd0yKYb5cCgw95hAU=;
+	s=arc-20240116; t=1762539299; c=relaxed/simple;
+	bh=yYukpopBNcB5pj9s1/ex82dxZOSh9SeOKr0wtFTyyck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SF/d1tdc4RyGZ16Ru0jBpOyQwMQMqQWQPXSz/O+L9LmTS1bIi1WYuzRp/mx7r9kRTYTf9UND4BxcxniwTTVHLvTlmoS0qoh8Rd7ADguyROlPLbdHrN7IP1wLDfkqmfXlXo9RnVx4YrccwLBYJtjxGbXKFtjiEehRPTNths4STbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEg7c6eK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE79C4CEF8;
-	Fri,  7 Nov 2025 18:14:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTHYm8GAwvYcZwvcV7nd9zubz8utJm4UeZOjkY5OLB0RkO7RDYTono8fFEWNmUYxb78T49MvM5qhR6VQtkjK6MTJZ2LuNsSgpqI9eivMs4HrJZfCiF90wxXhow6I40rcSgpUXdJUVmcSliT7mUYZgum8ZWdt9n/wL8Pn0XrQhPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ex7uFGyx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88403C4CEF7;
+	Fri,  7 Nov 2025 18:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762539275;
-	bh=eM5ZneuspMh6fY9/LR7skAboL0fd0yKYb5cCgw95hAU=;
+	s=k20201202; t=1762539298;
+	bh=yYukpopBNcB5pj9s1/ex82dxZOSh9SeOKr0wtFTyyck=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nEg7c6eKO3PokMvzhrEFP+XY4vIY2iKjkO80GM96kGs1U0+YMRWG3tSCi4XBPuX6T
-	 eUub83RPNHQBs4JkaQO2jysWe+i3nrm7BtZ+d9NMVvBrTRmDZGSl4FwkoRXNmbLISN
-	 G8Wpm2uFNFNkH8+4WOBPkKctxLPPzD4toZ2qxmfF3K2vkYntfzj8NmnFpWiiE90EAV
-	 hzaZeIDuc5zDGjnd9M5dMDnEdh0YEdbg7MddjZJ0L6CUemqf5Elgr9CNMCuIXywGQO
-	 Ty3EPWdUWY4yVenQh9DGpmI6NOn4/uuCUVLC4yqAlOEszIddU9fL191pPGfeGFzIan
-	 kFA6ZatjmFjYQ==
-Date: Fri, 7 Nov 2025 18:14:31 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: soc: Add bindings for Airoha SCU
- Serdes lines
-Message-ID: <20251107-crisping-doable-365d6b7d60a6@spud>
-References: <20251107160251.2307088-1-ansuelsmth@gmail.com>
- <20251107160251.2307088-2-ansuelsmth@gmail.com>
+	b=ex7uFGyxHtpiYIYVkb2bLv0xd14hQzwKNoa5BmsodlSsQfflkK8CLRtCoxIzRmPFc
+	 sof+pFvpPo5JKPSXHdYinXzbha4Tdukz2XzD8q2qiIeYzoM04VOxvYkiyc66LNWxaw
+	 83xGlTjBf6aOxC6fGHy/ynK3vmw7A4AwW+R9GYy0yZmjpr6lnn498SkPGof3GzVKci
+	 RkHHDfWq1qD5nu+QqnOsTSHV5iAoRLh6LlT9WbZcBCDegxLL0MVrRkXifpwqon0Iq6
+	 HUwUK/Be39c8U6f0togzdOzl0XHsR0JK5kfhwIHrRuo12Z/jyBdDvLqPoBJbPtFaGd
+	 sq7gCkyMpYA0w==
+Date: Fri, 7 Nov 2025 18:14:57 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, muislam@microsoft.com,
+	kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
+	longli@microsoft.com, mhklinux@outlook.com,
+	skinsburskii@linux.microsoft.com, romank@linux.microsoft.com,
+	Jinank Jain <jinankjain@microsoft.com>
+Subject: Re: [PATCH v2] mshv: Extend create partition ioctl to support cpu
+ features
+Message-ID: <20251107181457.GC4041739@liuwe-devbox-debian-v2.local>
+References: <1761860431-11208-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <20251031183109.GC2612078@liuwe-devbox-debian-v2.local>
+ <28ab51c0-fe14-4122-8828-3f680207865d@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="B39WCCiVv17+HjH0"
-Content-Disposition: inline
-In-Reply-To: <20251107160251.2307088-2-ansuelsmth@gmail.com>
-
-
---B39WCCiVv17+HjH0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <28ab51c0-fe14-4122-8828-3f680207865d@linux.microsoft.com>
 
-On Fri, Nov 07, 2025 at 05:02:43PM +0100, Christian Marangi wrote:
-> The Airoha AN7581 SoC can configure the SCU serdes lines for multiple
-> purpose. For example the Serdes for the USB1 port can be both
-> used for USB 3.0 operation or for Ethernet. Or the USB2 serdes can both
-> used for USB 3.0 operation or for PCIe.
->=20
-> The PCIe Serdes can be both used for PCIe operation or for Ethernet.
->=20
-> Add bindings to permit correct reference of the different ports in DT,
-> mostly to differentiate the different supported modes internally to the
-> drivers.
->=20
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  include/dt-bindings/soc/airoha,scu-ssr.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
->=20
-> diff --git a/include/dt-bindings/soc/airoha,scu-ssr.h b/include/dt-bindin=
-gs/soc/airoha,scu-ssr.h
-> new file mode 100644
-> index 000000000000..a14cef465dad
-> --- /dev/null
-> +++ b/include/dt-bindings/soc/airoha,scu-ssr.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +
-> +#ifndef __DT_BINDINGS_AIROHA_SCU_SSR_H
-> +#define __DT_BINDINGS_AIROHA_SCU_SSR_H
-> +
-> +#define AIROHA_SCU_SERDES_PCIE1		0
-> +#define AIROHA_SCU_SERDES_PCIE2		1
-> +#define AIROHA_SCU_SERDES_USB1		0
-> +#define AIROHA_SCU_SERDES_USB2		1
+On Fri, Oct 31, 2025 at 01:08:45PM -0700, Nuno Das Neves wrote:
+> On 10/31/2025 11:31 AM, Wei Liu wrote:
+> > On Thu, Oct 30, 2025 at 02:40:31PM -0700, Nuno Das Neves wrote:
+> >> From: Muminul Islam <muislam@microsoft.com>
+> >>
+> >> The existing mshv create partition ioctl does not provide a way to
+> >> specify which cpu features are enabled in the guest. This was done
+> >> to reduce unnecessary complexity in the API.
+> >>
+> >> However, some new scenarios require fine-grained control over the
+> >> cpu feature bits.
+> >>
+> >> Define a new mshv_create_partition_v2 structure which supports passing
+> >> through the disabled cpu flags and xsave flags to the hypervisor
+> >> directly.
+> >>
+> >> When these are not specified (pt_num_cpu_fbanks == 0) or the old
+> >> structure is used, define a set of default flags which cover most
+> >> cases.
+> >>
+> >> Retain backward compatibility with the old structure via a new flag
+> >> MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES which enables the new struct.
+> >>
+> >> Co-developed-by: Jinank Jain <jinankjain@microsoft.com>
+> >> Signed-off-by: Jinank Jain <jinankjain@microsoft.com>
+> >> Signed-off-by: Muminul Islam <muislam@microsoft.com>
+> >> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> >> ---
+> >> Changes in v2:
+> >> - Fix compilation issues [kernel test robot]
+> >>
+> >> ---
+> >>  drivers/hv/mshv_root_main.c | 176 ++++++++++++++++++++++++++++++++----
+> >>  include/hyperv/hvhdk.h      |  86 +++++++++++++++++-
+> > 
+> > There is no mention of updating hvhdk.h in the commit message.
+> > 
+> Ah, that's true..
+> 
+> > Can you split out this part to a separate commit?
+> 
+> I put the header changes in this patch because a patch containing
+> those alone doesn't have much merit on its own.
+> 
+> I know we have split header changes into separate patches in the
+> past but I'm not sure it's always the right choice.
+> 
 
-I'm going to assume that 01 01 is correct here.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+This makes it easier for me or other maintainers to track specifically
+the header changes.
 
---B39WCCiVv17+HjH0
-Content-Type: application/pgp-signature; name="signature.asc"
+> Thinking about this, I could also split it up another way: one
+> patch to introduce the new cpu features flags and use them in the
+> driver, and one patch to introduce mshv_create_partition_v2.
 
------BEGIN PGP SIGNATURE-----
+That's fine by me.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ43BwAKCRB4tDGHoIJi
-0pVWAP9yALGNfDaXdkKA0VA1cacvoNV1NxfUwR0SjRIKBvFBMQD/VKW6hr/1aS99
-fczYQ2vBgCBT3a/Ft3Xpx4X/XlQ8kAU=
-=mERD
------END PGP SIGNATURE-----
+Wei
 
---B39WCCiVv17+HjH0--
+> 
+> Nuno> 
+> > Wei
+> 
 
