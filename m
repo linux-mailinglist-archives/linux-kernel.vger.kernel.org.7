@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-890436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4B1C400C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:10:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381BAC400C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D353C4E606E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:10:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185DC188E1AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4432C15A0;
-	Fri,  7 Nov 2025 13:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443B72D7D59;
+	Fri,  7 Nov 2025 13:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ic3s8Zsr"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1pL5YGY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA0F22F14D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBA072604;
+	Fri,  7 Nov 2025 13:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762521050; cv=none; b=vD9xw+QEpxtuU3rs5rFxwEzyNcCG8HeXAEaP1tw72oddfEYncKsqANSSmrr+ApU73ZNe576QDKZue13cbsyuj9CIcNmOx+rZZT+PGHFaYxH1UX7H4udBRgQR6odfmz+0pl9MAm2bcQqlpAyaq1JIsgrrNlcEKD+sJO1P4BTytlU=
+	t=1762521056; cv=none; b=hOSw9iStdsrpxr8tm+z5IFg2hqvPP86/BT9PZrwH48X1FSy6uKo18dVXh2GsQDwUOnREETYY2vfRutwKnnefH7V2G3xq40ENn9On3Bz6DXeUSEi2xM2DRRHeOAEbQ3NmOy92/6sBAHp+67KokbLTIqHa6nE/jKcA1fp7YzreKYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762521050; c=relaxed/simple;
-	bh=X9iTnwju2qFdxCnEg0NR9GAe26HVn4rmc+Xg59b/xTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CbVGG+LwCTXixEVcXRYQ6h1M/8So8EhxKk7Y0668/RppiAucOPAPI8hL38xww5eWDf+aQ4iuhBwU8ek2bFGaKLT/pMW1lk4BRv4ECKrGUifFM/pxUFANd+1wm54kY/NextAnieEfkPawwgb/bmLINlFbp5I3LCsokkrdW26tNj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ic3s8Zsr; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6407e617ad4so775303a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:10:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762521047; x=1763125847; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gYHHRwUPFMx2o7hSDNrrgKGsA3wEJmqOL2og+5hJ+F4=;
-        b=ic3s8Zsrq/cpSWPimMQl7eXeyy7bURpkZUATf/NTYwHwXoHDzY5lr03vozTpwbOVFd
-         n84WUEsWfs+PSzjpBeJGdJcRmKb+t1fHx9jXXcoqfVGZ0WdYOnuG7UXxvoEDmWhBTiXY
-         zYjAbRzvKUkKKqDqVPZv6lSjRfVHAobhdj957364p4mtfXn9e79Scq4G4AlGVT5LBcE3
-         Hb5KdxI5WKe8TvkS6pvnv+3ci+FulVJK+FXNu8Chn3x1uR690jFaKrFkbQG1MGIzqghS
-         RxQ9emH7WgYdIIiHqNgcePT6jj6tl7aGpMhtuZ4u2WwaGMneJ7QTfDTYc4xJjkut4W34
-         Dm7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762521047; x=1763125847;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gYHHRwUPFMx2o7hSDNrrgKGsA3wEJmqOL2og+5hJ+F4=;
-        b=s1Gg/cgLzn+ePB/a49/PmZjqMdcNhkskSMf5tS+6Ex5hhm4/ApmXPRhLjERvvkikgR
-         ayfDOUDGrg+wub25a7q8DE8ivqR1mIZ+RKuqhlfaSUtCCJkm69lnFlzp2s2V+SxnbTRk
-         KaNhG4AQyUix4aWwwwvWYqVNsDlI6wRp18mV/Z/JpMWMtN7C+PqrO/fG66fImr6biXTS
-         H6CCoIv+VQoCzA0SWPhkcu9JVZVtoykdCXQZNc6FZhbdXxQg9414sioNAz5f2l5nUHql
-         t1ufSqAHtLwjFpIivpBg+Qd2RZarkBp/TMO46QvDcDJQb5myOJsFtv7zgQmB6Gq86NYu
-         I9tw==
-X-Forwarded-Encrypted: i=1; AJvYcCViWarms1Ykpa6LCoSE9a5d5Weje/ToPfGjYV4NI7DWi/Q5ivRBKH6YQXGRrj66WQnPlAuFFO4zl9dWmS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFVXpcELAIKOFPr8i8RLmRhoMvu/lylViRMERS7RrjYTrMWeqA
-	D4xUeBbTB992q37h41T72lIcI9h1VHv+u40ypUwozXrAm05gKkFOPpWa69ewB8JX750=
-X-Gm-Gg: ASbGncuhInghp6mdL5+3V6ArWP8JTdPaze28dbdVh51UaLR9yltxECVWI0xH2hr0cT1
-	Ez30675KhDCfsChggaTGDwPW/7ibzy5jxW4Vn8Gy3eShN6MwMoOx5pUnh+iUTjJKM9ndNLbv68w
-	FRO6/MN9M0OCYYBpMPOH9fNgqT3o4/Yxdr9K/ecUR2RpuF98CYE7CAFgULOGNWYCrlEAi9qP3EK
-	52NOhXkZxuie9kUI4fK3WIYOEJbEro8/4yirwF3L4kM16z7Gl4hdzJnpyKgXWd7B6JsztKRJoGU
-	0M2Fg1aMnHzWYgQjbK/+XqR+7itLjT4U58WqC3O2xG3+TXP8p5PulsCLc52OaGhdxAhs51BNYkI
-	ah2UrphZ1C27M6GVqWmxX+Fam2JtWJSabgVZVah1T6acBEzIuzXu8NyijgxKhaxkbnOMMfyfG56
-	GlQT1SOLetOfJlJJOxurKlvi46
-X-Google-Smtp-Source: AGHT+IGg1Zbnws8cxX7orORuWlbhSBF5v/XmuMbF1BaB1hdo3oYtaWYVQbZOezZs+ceawiJZq7x26A==
-X-Received: by 2002:a05:6402:461b:10b0:641:1cbe:a5bf with SMTP id 4fb4d7f45d1cf-64147094e1fmr1299694a12.9.1762521046750;
-        Fri, 07 Nov 2025 05:10:46 -0800 (PST)
-Received: from [172.20.148.153] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813e9fsm3999374a12.16.2025.11.07.05.10.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 05:10:46 -0800 (PST)
-Message-ID: <db9ea6f8-810e-4143-9e09-84536145999a@linaro.org>
-Date: Fri, 7 Nov 2025 14:10:45 +0100
+	s=arc-20240116; t=1762521056; c=relaxed/simple;
+	bh=9yNpA1SE+6LUazhxfaVM0P+KTY2xAhLSO9vXTnuC8wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E+RRB4j7ehgvHkpUT6gT6uNiESXdHMpnjO2VF43yEQLgCZcBLKE+YvJ09sdBnA2yq4zGOQSwYO013IZtGVHgXJI/SDlmvgXWYsVrd+FvfhcbF6ojz0NMkVeWlCae/UArDL6FFTYS4+cEDIUbty5HT7P34DtD8Roa314JORzkgr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1pL5YGY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84724C19421;
+	Fri,  7 Nov 2025 13:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762521056;
+	bh=9yNpA1SE+6LUazhxfaVM0P+KTY2xAhLSO9vXTnuC8wg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K1pL5YGYFuG6hxkKpIelSp4d5IkSoL6mbBtbq2kEckqm8NKtXk0sV5yE4uZEwNt1q
+	 ethdg2+fJxg4IQ7wEAJCWBsr3M4QlRFC7sKNaUDJXDpXrb0nfCOAbjbv0gQI6Bru4h
+	 fydJwyetpw3hex5Orwn9R0FuIcYMuiERvBPHxKwFDX6pnNRSlfwUb95i792MUyccOa
+	 O9tAxtas6uw8A1dp02fOK28qXtF/zEGda7ciCQzGk07YYgKSw4/Oe51Xdq2hvdAj40
+	 vHZ4hzLyNf5jfkxq0b0gGTPJw99/B9LhRb33I8h/Xl0Ebl2LMSB+9pgDUEbMvSEIE1
+	 q358Q5AwLVEig==
+Date: Fri, 7 Nov 2025 13:10:47 +0000
+From: Will Deacon <will@kernel.org>
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: akpm@linux-foundation.org, alex@ghiti.fr, anup@brainfault.org,
+	aou@eecs.berkeley.edu, atish.patra@linux.dev,
+	catalin.marinas@arm.com, dianders@chromium.org,
+	johannes@sipsolutions.net, lihuafei1@huawei.com,
+	mark.rutland@arm.com, masahiroy@kernel.org, maz@kernel.org,
+	mingo@kernel.org, nicolas.schier@linux.dev, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, suzuki.poulose@arm.com,
+	thorsten.blum@linux.dev, wangjinchao600@gmail.com,
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [External] Re: [PATCH v4 1/2] watchdog: move arm64 watchdog_hld
+ into common code
+Message-ID: <aQ3v15yrm9JaWgrm@willie-the-truck>
+References: <20251014031425.93284-1-cuiyunhui@bytedance.com>
+ <20251014031425.93284-2-cuiyunhui@bytedance.com>
+ <aQixsIQXTjYyhRVj@willie-the-truck>
+ <CAEEQ3wk5Ru4-=4Ecnc6kQAAbR57806xxYTz0o1z4KfgZE6Cg6w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] dt-bindings: panel: Add Samsung SOFEF00 DDIC with
- panel
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, David Heidelberg <david@ixit.cz>
-Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251104-sofef00-rebuild-v1-0-dfcfa17eb176@ixit.cz>
- <20251104-sofef00-rebuild-v1-1-dfcfa17eb176@ixit.cz>
- <20251106-enlightened-centipede-of-tempering-3cfa50@kuoka>
- <be1b6e34-40ab-4587-8dbe-84e08bf83dcb@linaro.org>
- <108b8631-6d92-4b2f-a59d-3c9e0c607e5d@kernel.org>
-Content-Language: en-US, en-GB
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <108b8631-6d92-4b2f-a59d-3c9e0c607e5d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEEQ3wk5Ru4-=4Ecnc6kQAAbR57806xxYTz0o1z4KfgZE6Cg6w@mail.gmail.com>
 
-
-
-On 11/7/25 12:27, Krzysztof Kozlowski wrote:
-> On 07/11/2025 12:23, Neil Armstrong wrote:
->> On 11/6/25 09:48, Krzysztof Kozlowski wrote:
->>> On Tue, Nov 04, 2025 at 11:16:09PM +0100, David Heidelberg wrote:
->>>> Basic description for S6E3FC2X01 DDIC with attached panels
->>>>
->>>>    - Samsung AMS601NT22 6.01 inch, 1080x2160 pixels, 18:9 ratio
->>>>    - Samsung AMS628NW01 6.28 inch, 1080x2280 pixels, 19:9 ratio
->>>>
->>>> This panel has three supplies, while panel-simple-dsi is limited to one.
->>>> There is no user of this compatible, nor the compatible make sense.
->>>
->>> There are. git grep samsung,sofef00, gives me two users.
->>
->> Hmm, on -next I only see a single one:
->>
->> $ grep samsung,sofef00 arch/*/boot/dts/ -R
->> arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts:  compatible = "samsung,sofef00";
->>
+On Fri, Nov 07, 2025 at 10:42:25AM +0800, yunhui cui wrote:
+> On Mon, Nov 3, 2025 at 9:44 PM Will Deacon <will@kernel.org> wrote:
+> >
+> > On Tue, Oct 14, 2025 at 11:14:24AM +0800, Yunhui Cui wrote:
+> > > @@ -306,3 +307,85 @@ void __init hardlockup_config_perf_event(const char *str)
+> > >       wd_hw_attr.type = PERF_TYPE_RAW;
+> > >       wd_hw_attr.config = config;
+> > >  }
+> > > +
+> > > +#ifdef CONFIG_WATCHDOG_PERF_ADJUST_PERIOD
+> > > +/*
+> > > + * Safe maximum CPU frequency in case a particular platform doesn't implement
+> > > + * cpufreq driver. Although, architecture doesn't put any restrictions on
+> > > + * maximum frequency but 5 GHz seems to be safe maximum given the available
+> > > + * CPUs in the market which are clocked much less than 5 GHz. On the other
+> > > + * hand, we can't make it much higher as it would lead to a large hard-lockup
+> > > + * detection timeout on parts which are running slower (eg. 1GHz on
+> > > + * Developerbox) and doesn't possess a cpufreq driver.
+> > > + */
+> > > +#define SAFE_MAX_CPU_FREQ    5000000000UL // 5 GHz
+> > > +__weak u64 hw_nmi_get_sample_period(int watchdog_thresh)
+> > > +{
+> > > +     unsigned int cpu = smp_processor_id();
+> > > +     unsigned long max_cpu_freq;
+> > > +
+> > > +     max_cpu_freq = cpufreq_get_hw_max_freq(cpu) * 1000UL;
+> > > +     if (!max_cpu_freq)
+> > > +             max_cpu_freq = SAFE_MAX_CPU_FREQ;
+> > > +
+> > > +     return (u64)max_cpu_freq * watchdog_thresh;
+> > > +}
+> >
+> > Why does this function become __weak? Neither arm64 nor riscv override
+> > it afaict.
 > 
-> These are the users:
-> 
-> arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
-> drivers/gpu/drm/panel/panel-samsung-sofef00.c
-> 
->>>
->>>> Remove it from simple DSI panel definitions.
->>
->> Can't you mark is deprecated at first ?
-> 
-> Not sure what would be the benefit here. There is no negative ABI impact
-> here.
+> Would you say there’s any particular issue here? If some architectures
+> might need to override the hw_nmi_get_sample_period() function later
+> on, wouldn’t __weak be a more reasonable choice?
 
-If we want to acknowledge the potential scenario where someone is 
-booting a newer kernel with an older DT then we should keep the old 
-compatible in the driver right? And marking it deprecated in bindings 
-would make sense.
+__weak is pretty brittle (it can depend on link order if you have multiple
+targets) and I suspect it prevents inlining when LTO isn't enabled. It's
+cleaner and more robust for architectures to provide their hooks by
+#defining the symbol, as is done commonly in other parts of the kernel.
 
-It could be removed from the driver in the future if there is another 
-variant of the panel added or we decide to cleanup.
+But in this particular case, it's completely unnecessary because there
+isn't an architectural override and so this function should simply be
+static.
 
-It's still not entirely clear to what extent we care about DT/kernel 
-backwards compatibility though.
-> 
-> Best regards,
-> Krzysztof
-
+Will
 
