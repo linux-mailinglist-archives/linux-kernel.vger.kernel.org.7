@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-890502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D59C40343
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:54:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1397EC4034C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEB2C4F0DB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:53:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8C634F51A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2401D31B9;
-	Fri,  7 Nov 2025 13:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7671231D387;
+	Fri,  7 Nov 2025 13:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aZkupkSb";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="R9fmVyeP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RFms1geu";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HJEWhZf1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B66E30E82D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBF431A053
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523587; cv=none; b=lOUyssx8l/SPdw0QLyje/HNZaHe80lb07/yG8GXId5ejAxUbWIWTVLEtTQifrw1ciGLepGhzDCTon7kLt2dYWXellQ9xrbBHxUAY6mo0B5JF4FWILmmVw1FeCvJfhWQK8849vSAUWGqSp1j8hxI65d0q9ivua6oJUdCufpLWqSU=
+	t=1762523590; cv=none; b=hLnMKPNNTDd/Tok8sEhSdu1luVKzFj8j9yp13vE9+/YX6dYttJJMHaHPiUQdCIBXQKOTiH7nicD4w/1Yen9LRADkpaFlaSN3aWbQ7Qc7bx6Pc0hG/AnnOEKcP6yZCwdY/fImoU8mR1qjqpa4sK4f5UoNYnjv7fo1DvRpQvdQ3UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523587; c=relaxed/simple;
-	bh=cAbflNaU1jJlHuDwNHN5CyfiHqVWUEWBVibq6fQD71c=;
+	s=arc-20240116; t=1762523590; c=relaxed/simple;
+	bh=kxMIDSfnPpf8djuYkxMRQ5vJUJ7jfPruX9KKD/WvQKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWt6cUvYyQypsLrMZCtUImUk5MJukHJEX8ZmEeqXWFwr2NyCtmAtR2cR7u02iozGOwAbZ0toUzrIhxgXHQWnZqzF63u7elpaxSYoS2kXAX7AgTJC16EbVfdfA7WFBG6Vt3YDzfuRkrKq1pzxv8NKDuk1cSmHLfv+AJlKbvfMGK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aZkupkSb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=R9fmVyeP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A7DPQ893129784
-	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 13:53:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=/VVmRg18NY3wj2ZYE0m3Jiqj
-	XMFW7uHzd+kVJOSzKrY=; b=aZkupkSbWyTHdHRM8bQYeP9AqR0UZ0zH4tq3AtYE
-	4Sdz0i9IJmA96W8xvTYSnFnbfMZksavsZWtm3bBtdBck0lO0+UhokJj5WDoL0SE6
-	Ifb6YuqmuDEhlP2KcBMTm+7dTi84Q1rffRPYrc7uh6IHTXIAoVVx2MNk5BwuIMrz
-	Lqu1VWiaIKCChJyQnj+E+W2qOwZYJepNfOuXOinKGF29s4BWRZSG725ISQ0q58C8
-	Dg7QFWeY3or/EoTDoxByrSi0Ev079uXY3pZqbpQw4o+yS0CESAVVm//101Yv1jvI
-	qohadK+9fXx1cFXWPGrt75E5p+Kid2UK1qVJzzP7vk1Vfw==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9hn081yv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 13:53:04 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a43210187cso792785b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:53:04 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvcWuuaPba45CBVqobv2sR4dieWfWoBSpwS1KNRhgnknaJysKmGAZJTURpZb5wUBaxVWjKvSill+6S6A0Jy/8PXpnnAgcJTMzZtk+TF1Ptc9JxjqXyysduKws9DfG8SeH4GyGA5EbCQ+JzuJur65WyiTbT8qkeHxbA5HGNZhfKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RFms1geu; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HJEWhZf1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762523587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z9/c4QtcuY4C0Ku7AdMAA0akvvVLyJC2D5AYMWNX6jI=;
+	b=RFms1geuhihosBv/1rmmXnIZfDKYWEtnOXw/m+AdF5EC9xAiUm6sTgOAQU/H8Do7uxJh//
+	mLmmk0kwSXmgpNnSREdyxIyd9qfZVI7xmNA5kR2xAA8VZfPbrv9kIRXTjhZyxqb4hS7KxQ
+	jUgIKMTFoWWR3n54920bZNCCZVslUCQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-168-jMQfEf3nOTCajw1ALdnwpw-1; Fri, 07 Nov 2025 08:53:06 -0500
+X-MC-Unique: jMQfEf3nOTCajw1ALdnwpw-1
+X-Mimecast-MFC-AGG-ID: jMQfEf3nOTCajw1ALdnwpw_1762523585
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-477632ef599so3867615e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:53:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762523584; x=1763128384; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1762523585; x=1763128385; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VVmRg18NY3wj2ZYE0m3JiqjXMFW7uHzd+kVJOSzKrY=;
-        b=R9fmVyePD89sbAK31zmIkKp755zP+rQ91ITVD+KFu5lUINBQUh4x5Xv97UZVJpgCZ0
-         5ghO9zEx1aA2lapsD+CSIVSb2qjhIi2sRIjM+Bqmn5OMJ5I4z/dWuGRW3rBmM7D3vlXW
-         x5I3H/lS1CmrOvS7kghGy4qBWB4FC4MtE1ixKonzmU3OtwpCAD75xa89C7j/xf4a4NhY
-         1OPQPzavT6dxN04hZyx7CT0BE0C0gcueA2kbUsdFvN71lwTQ6tFtOkkqK52AOa9qOYv8
-         l9OATfgjCVcYT2Nhp32AiUiPY5bcL1PtP0gznzEm0Qx2OPxeFokc/xNYQCPb4si1z58o
-         E6lg==
+        bh=Z9/c4QtcuY4C0Ku7AdMAA0akvvVLyJC2D5AYMWNX6jI=;
+        b=HJEWhZf1mrcBFmIn/IGmw/7+PGd9SJPHatOOh8iTLUNs42StTD3mOnU1mDa8hObqso
+         pigOhfyUjkJtSmemaBuouxGNUohWpb/iw0L5ENjM6mIcsRLjfC3sHCM5XchLSSfED/Bi
+         7V00aCz4vIp0GAcyCI5s5LPWHnKrt9gkBBE6ejtLyvOrwq8qUwPMf9fvsg6g+Ci7IZTQ
+         KdnIjbMx9zcDI8k0zOd86q/vHD/COhEhxW/NUsjoTRcv77MAx3bfXR066F24aHyKmgqD
+         2TJyUR5hx6FTiKvhneHtcpbn2on9tb5XmWDo4SGBjiauz70qtGje5FtSRhvfIaFm0DHl
+         vkBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762523584; x=1763128384;
+        d=1e100.net; s=20230601; t=1762523585; x=1763128385;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/VVmRg18NY3wj2ZYE0m3JiqjXMFW7uHzd+kVJOSzKrY=;
-        b=BxOPOzlhoE5iKjAm37uFgXJ9X9E60XT3s9xtnVzNIbUT0t4dQQj1Rrt4sWGO8iyFCv
-         yyjSUKJAdjh5v6kMUhB/QwQPZ1oKmpEmnZfp3GeAv+ynhQxpTcFjuq6yxkKWAcElXaPK
-         b1hAxCYTvSCLJEPBs792XGp/kdBXmPCrrf8R9+w5e3GgGUO0bUsMTTORogUVptfnoWxJ
-         7K140PfX7lAytwi5b382gcPOARhHY9V8ciM2Zkc4i3nKDpgNOZdKP1Y5qFFVOWZqfRp9
-         JawJeH2YaNy0707bmqAA5XZ72CB8gz3/uOknnhaPQgsqj7bzTIQbWZQiOJxwo5pgLii9
-         F9Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzajNkgomp8gQXFsxtf+pNNK1I8hJ4UdDfpw9l1rOVl2cRmFjdgHe5jfrxhODgj8/kSQ6FAZ+Wwt3quXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmgp51jwBUQo6aqT9e+PgBnX6qimw1kvsU86v0Scgjf4rkdk3h
-	MgaRnlN4nnHY/3Pq/JxJ7etWJKBnfhPvOyC4kjdZndYE5uywS5jani4pTx2pEF1BzUdEjw+QQtD
-	+7m4e8Q/L+nbOGLXswC7VVMyIj4eZ67mTLE3jidXiOvIvZvo3Twjciy0izizNzmrXQQ==
-X-Gm-Gg: ASbGncusmS2CSCIcM9Ki6+Ur4bUsZ3o/mT0hZG3dj8WzGX5qPXYHwgyFwi+aUAxiSMo
-	1qTTzAesod//Km4jBZMQvBIeBxASv2yAK9ZQOH33WI+fUXiHWwBByvZ0MC08DgSjoOqgE+QIAx0
-	2/y1QsymCKWIPNdo5fv/DrNWpjwXo1ThOiMY1TToNZ4yII12QSgH8iFiMNJLSTjR8kG7Jlwb3WZ
-	YAKlvIVc8o5L3oNkQg5+XclcifsDtDJcLUwZcFF1cd2Hs+YhDlQB3FF+5JwyOfedtF7giDrIUD8
-	dbjY4mx3mmnNUVX8yhZB+5PwfvuKKUA2mJt4T8bkE1Who6oVkiPYUJSCS+Ix1s3JZLQQ1wk0f4g
-	49g/3ona9WzHQC99bLVr+4WlT
-X-Received: by 2002:a05:6a00:3cd1:b0:7ab:6fdb:1d1f with SMTP id d2e1a72fcca58-7b0bdf66564mr4419015b3a.29.1762523583559;
-        Fri, 07 Nov 2025 05:53:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH2KL3sD5hZ70NkXwEbmWRrK4jE3iJ9mGDdh1VUXj2/vuQfkmiiPTTaWojwx6gzMqeCFkjGnw==
-X-Received: by 2002:a05:6a00:3cd1:b0:7ab:6fdb:1d1f with SMTP id d2e1a72fcca58-7b0bdf66564mr4418992b3a.29.1762523583018;
-        Fri, 07 Nov 2025 05:53:03 -0800 (PST)
-Received: from hu-nlaad-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0c953e2a4sm3160357b3a.6.2025.11.07.05.52.56
+        bh=Z9/c4QtcuY4C0Ku7AdMAA0akvvVLyJC2D5AYMWNX6jI=;
+        b=u/Vqcjz19WoUN1XO+ciw3cyadoGrWAx+IEFlUv5364+1QhGpWFYVVZL8fCg7Ii5YQl
+         83LGOtBWLYCnpv3/EQq7CO9zqnabrdSTeLEpPv75OapRjhSlXTyfo8bvcuyxYSOsj0Qg
+         zVggzCpm++yZ0NRw+Bpi8xxpMb3lMsJYlfJGgfLMEUgqzlOHhN8VjGss46Px9+AI3Db9
+         dl/iqCYig3jaeb6CZyipMeGf0X2qr/ccCLwvFwKNVez8QJADizUeJwIHRw7OeQNeurZy
+         n0u6xfSh9c1+1ftpTXiGLpmKXtjrzI6qRzN3MTw2AmCcAff+sACti0KERkxPKkODDLBo
+         lPyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMGqur099vNhCxFdZXprtK1cNQVO9vrHhMu6w+83tVU8/I40m9fZAf2Kkh1EYvlSCbbBFKYgJ6rZq8ewc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9Z85htbqyBhR6h2uLQWmiYfg/pJkhv5ufqbmfNpGufxeEmJ95
+	MDCkrgl+3Is0+I4teBXwLW5AMxliCtXlg5mMeBSjgG95znlyHdhfF6IqameUPL/9P/e3l+cYbZD
+	FzruMQnOOHSyqer0HWSPdF/TS4l6x7QRlVfvf02ExKeMaQ8iWkQEl6+fcKQPmGGioqA==
+X-Gm-Gg: ASbGncuIiRcZLkKit2WIP2GAZVOhMhWe6zY1QXAgx2TQqkF7WMfj0yso4q7mnzbskz6
+	amOUiBv/OgYJ4CwD0uk5MPUsES7JV12MO0i9duXTp2AQ/hb+uxhi5f3tCM1DEV2nk6g4UvCPqWO
+	KQV9HhFUm6HcNduu58GTP0Xhd+TFoTeajK10xVcBsTVMaBxMYiS0p+9LpCkfyfaIZWPNepDtsZY
+	qjZX/XVc8S9wuqRROlh9+2CVzYg7EMLfue067+TQVACbIwXX/hrj+0//VB9Wor9qRyzzcfBYHaS
+	0I7AkmldYZiSt9nFXAHWyb/54d90omIHxZnSGyPMdjsi4JBhOTP6nnMsOS1OmjKe+0g890hNwWi
+	6SRQNa2v14RrIi8KPkA+pHP354a8p6w==
+X-Received: by 2002:a05:600c:4251:b0:475:de06:dbaf with SMTP id 5b1f17b1804b1-4776dcd61dfmr10468945e9.17.1762523585202;
+        Fri, 07 Nov 2025 05:53:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IENPFcHgZiedoxSNj/gTHG7HP1mQbGAIXAVzUnhmQo6HdEVRWpGRzBdctMGVXrL+4rI+OT13Q==
+X-Received: by 2002:a05:600c:4251:b0:475:de06:dbaf with SMTP id 5b1f17b1804b1-4776dcd61dfmr10468765e9.17.1762523584724;
+        Fri, 07 Nov 2025 05:53:04 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.129.40])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcd51dfsm49260135e9.5.2025.11.07.05.53.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 05:53:02 -0800 (PST)
-Date: Fri, 7 Nov 2025 19:22:54 +0530
-From: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, venkata.valluru@oss.qualcomm.com,
-        jessica.zhang@oss.qualcomm.com, Yi Zhang <zhanyi@qti.qualcomm.com>,
-        Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/2] drm/bridge: add support for lontium lt9211c bridge
-Message-ID: <aQ35tvwp90qm57Cl@hu-nlaad-hyd.qualcomm.com>
-References: <20251107-add-lt9211c-bridge-v2-0-b0616e23407c@oss.qualcomm.com>
- <20251107-add-lt9211c-bridge-v2-2-b0616e23407c@oss.qualcomm.com>
- <30b5f19b-1ce9-4239-bf0a-d83d647608ce@mailbox.org>
+        Fri, 07 Nov 2025 05:53:03 -0800 (PST)
+Date: Fri, 7 Nov 2025 14:53:01 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Luigi De Matteis <ldematteis123@gmail.com>,
+	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] sched/deadline: Add support to initialize and
+ remove dl_server bandwidth
+Message-ID: <aQ35vUAOD6CflvCA@jlelli-thinkpadt14gen4.remote.csb>
+References: <20251029191111.167537-1-arighi@nvidia.com>
+ <20251029191111.167537-5-arighi@nvidia.com>
+ <aQxvIBIwOCDDu60b@jlelli-thinkpadt14gen4.remote.csb>
+ <aQzWM4vv30etfhok@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,43 +122,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30b5f19b-1ce9-4239-bf0a-d83d647608ce@mailbox.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDExNCBTYWx0ZWRfX/myJ2kVm2C/T
- S3QaircwrAx9LwlwiQI4rJIRkolGTokyb55A91tURtjNxAGpYiaXjANnw3rF9wOobYKtk+LaXqu
- OWeXVDGMR/4YgQibTteFL9HJ6fXBMCw9SdorsvwUiutf3errrxpWNST4b1WYjpNbar2HA+Awkhf
- KEhk7nOGxN2+P+TBcr+8ApgFAEZZYjA2NlJ+q+XNCUsflpRonvZp2BUm/IVC4Dlms5GyNPmz+o2
- e0Vo2616OBy+WV1dXHqYfIMOxrE7b4INkhdAlKlhpRzqkhFrhijhnySdRsK5BqBMlCHH9ssVhYW
- dITCbcqogj5sa7sYk7DLcG/uhWu9bkVmcdbQ//WUtT8/B4R6fadsNqlPnINjsty4Bbn4/hevT1s
- V8UKUAGZ105RITQn1rAmKrLEytHUWg==
-X-Proofpoint-GUID: NbmazkQmxg6ftaRJw7NohHou325klEN9
-X-Authority-Analysis: v=2.4 cv=MsJfKmae c=1 sm=1 tr=0 ts=690df9c0 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=zAaMOjnD8X0J8WzHdTwA:9
- a=CjuIK1q_8ugA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: NbmazkQmxg6ftaRJw7NohHou325klEN9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 clxscore=1015 phishscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070114
+In-Reply-To: <aQzWM4vv30etfhok@gpd4>
 
-On Fri, Nov 07, 2025 at 02:20:58PM +0100, Marek Vasut wrote:
-> On 11/7/25 2:02 PM, Nilesh Laad wrote:
-> > From: Yi Zhang <zhanyi@qti.qualcomm.com>
+On 06/11/25 18:09, Andrea Righi wrote:
+> On Thu, Nov 06, 2025 at 10:49:20AM +0100, Juri Lelli wrote:
+> > Hi,
 > > 
-> > LT9211c is a Single/Dual-Link DSI/LVDS or Single DPI input to
-> > Single-link/Dual-Link DSI/LVDS or Single DPI output bridge chip.
-> > Add support for DSI to LVDS bridge configuration.
-> How does this differ from existing drivers/gpu/drm/bridge/lontium-lt9211.c ?
-> Can existing lt9211 driver be extended instead ? If not, why ? Details
-> please ...
-LT9211 and LT9211C differ completely in register programming sequences.
-Even lontium mentioned that register configuration are different for lt9211 and lt9211c.
-Nearly every function would require duplicated logic with if (chip_type) branching,
-as register sequence are completely different.
-Having both sequences in single file is not looking good, hence want to merge as separate driver.
+> > On 29/10/25 20:08, Andrea Righi wrote:
+> > > During switching from sched_ext to fair tasks and vice-versa, we need
+> > > support for intializing and removing the bandwidth contribution of
+> > > either DL server.
+> > 
+> > My first and more general/design question is do we strictly need this
+> > automagic bandwidth management. We seem to agree [1] that we want to
+> > move towards explicit dl-server(s) and tasks bandwidth handling, so we
+> > might want to consider leaving the burden completely to whomever might
+> > be configuring the system.
+> 
+> I think we decided to take this approach because, once a sched_ext
+> scheduler is loaded and all tasks are moved to the ext class, the fair
+> class becomes "empty", but the fair dl-server would still keep its
+> bandwidth reserved, so somehow we need to release that reservation,
+> right?
+
+Right. I was just alluding to the fact that keeping the "empty"
+fair_server reservations is not wrong, but indeed sub-optimal. I didn't
+want to block this series if we don't get the automagical removal right,
+so wondered if it could be left for later (as we will still have a
+manual way to remove the empty reservations anyway :).
+
+...
+
+> > > +
+> > > +		hrtimer_cancel(&dl_se->inactive_timer);
+> > 
+> > I am not sure we actually need to force cancel the timer (but still
+> > contradicting myself every time I go back at staring at code :). The way
+> > I believe this should work 'in theory' is
+> > 
+> >  - we remove a server (either automagic or user sets runtime to 0 -
+> >    which is probably to fix/look at in current implementation as well
+> >    btw)
+> >  - current bandwidth is retained and only freed (and server reset) at
+> >    0-lag (when inactive_timer fires)
+> >  - if server is activated back before 0-lag it will use it's current
+> >    parameters
+> >  - after 0-lag it's a new instance with new parameters
+> 
+> Hm... that means just setting the runtime to 0 IIUC. I think I tried that
+> approach in the past, but I was seeing some inconsistencies with the
+> total_bw kselftest, starting/stopping an scx scheduler multiple times
+> seemed to gradually consume all the available bandwidth.
+> 
+> But I can give it another try, maybe that behavior was caused by other
+> issues, since we've fixed quite a few things since then.
+
+Or maybe it could be inactive_timer/dl_non_contending handling that
+still has some problems.
+
+Anyway, I noticed that it is still possible to write runtime values of
+fair_server while/after scx_server took over. Those values get
+overridden when scx_server switches off. Guess we want to prevent writes
+while scx_server has full control?
+
 
