@@ -1,237 +1,186 @@
-Return-Path: <linux-kernel+bounces-890133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA1FC3F4B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:01:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82DBC3F4CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:02:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 227CF34D719
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:01:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25A6C4EDB78
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF86248886;
-	Fri,  7 Nov 2025 10:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="NzQFRO5G"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63518747F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590D62F3C18;
+	Fri,  7 Nov 2025 10:01:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D90156661;
+	Fri,  7 Nov 2025 10:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509670; cv=none; b=QWfWK0lWzYapk5dw0MuLeyJIpRdzwcy+YYSnry8BzdRP659W1V/AvbH4CuxVFzxRerIMvIu9L0bOCvdqE25+QIqOKAPWPcQmuK8pdry1L/N2x7oPvdW+oGSnqxVl+TNFZKqP5cfYl/trwZPmJ+nTZPflxbBFs6eRTZvx5qyrrm4=
+	t=1762509696; cv=none; b=U5Cfh42UeK23H+AywrVydX78SS5mgFCKocbG9l9PsiZYHXo09GmueknRwonILg/syk/cv/ZjYG6r6dkm/BddnMWbPhbn6RSlpMsukCVro03rTaORfm6dz0yIVQE5p+5fMHmF/FZOS+xg34m43D1GLSbqerYYUOpq7ZTVLxxPfic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509670; c=relaxed/simple;
-	bh=HepG1Ng1Ue+PZAfCqDvp/p2r9nrcrYxZdxz+BaGJxT8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FM503Aafg8hOt9EGcQfG48G+sn6RS7E9mdz7Va8AznbvvObk6Ec0JfDYhiGrIv9pGRCueXljTeM8WZtYkvEAN/eBF2W31tqjpSWMq4p4rY6uorzzxlvwHK6eSND2HMNIG311XzncyoLAVFxS7F7jv6ehJPGJGHa6HPfc9VFYl7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=NzQFRO5G; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=7kX1Xy2V1MN3IMg82+bocMlGGOsUiexNBkEAtBouJgU=;
-	b=NzQFRO5Gm300s7UctdcQgLIGYzyHgX6kdO8MUmXHveqhUE/YrMrn0ZyOV/E4bg2iWkPI2EHD/
-	ltJWoV/VSBpfpe6X4Y165XAbaJ1wMvnUBuDMgR6pE1iZS92N+siBr0sgk9keQvnL33vQCw3mZK8
-	4CphrojZy9QXAtvf+u6uYII=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d2vfk0xVGz1prlB;
-	Fri,  7 Nov 2025 17:59:26 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 344CB1402FC;
-	Fri,  7 Nov 2025 18:01:03 +0800 (CST)
-Received: from kwepemq100008.china.huawei.com (7.202.195.91) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Nov 2025 18:01:03 +0800
-Received: from DESKTOP-DKE2JV6.huawei.com (10.67.110.146) by
- kwepemq100008.china.huawei.com (7.202.195.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Nov 2025 18:01:02 +0800
-From: Liyuan Pang <pangliyuan1@huawei.com>
-To: <richard@nod.at>, <chengzhihao1@huawei.com>, <miquel.raynal@bootlin.com>,
-	<vigneshr@ti.com>, <mcoquelin.stm32@gmail.com>,
-	<alexandre.torgue@foss.st.com>, <markus.elfring@web.de>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <wanqian10@huawei.com>,
-	<young.liuyang@huawei.com>, Liyuan Pang <pangliyuan1@huawei.com>
-Subject: [PATCH v2] ubi: fastmap: fix ubi->fm memory leak
-Date: Fri, 7 Nov 2025 18:00:57 +0800
-Message-ID: <20251107100057.1091153-1-pangliyuan1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762509696; c=relaxed/simple;
+	bh=I3SvcWbt5UCgbtrbH4LHKbVopaxMAOlYurhZkaJBqkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRvN+iqmViyfEyOl/ZHqUTN4InRczjwMGsZCANu+9W7VoG3yOaC7VROQzKvEZPBNMAixILhb9vKuAX4xc4izDIqu0p9GQ4SlJjfwGbV24BUrrG1IG1fTOcHHL7H5L4Le9JCWIsZlNQmOb+pLJ2WIJOU+P6WQsrmKjEKPsDJxkwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88C5614BF;
+	Fri,  7 Nov 2025 02:01:25 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC1013F66E;
+	Fri,  7 Nov 2025 02:01:28 -0800 (PST)
+Message-ID: <44ce4a5b-b210-4fd0-9676-51173d5f5b8c@arm.com>
+Date: Fri, 7 Nov 2025 10:01:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemq100008.china.huawei.com (7.202.195.91)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 23/29] arm_mpam: Add mpam_msmon_read() to read monitor
+ value
+To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+ 'James Morse' <james.morse@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+ "lcherian@marvell.com" <lcherian@marvell.com>,
+ "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ Jamie Iles <quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+ "peternewman@google.com" <peternewman@google.com>,
+ "dfustini@baylibre.com" <dfustini@baylibre.com>,
+ "amitsinght@marvell.com" <amitsinght@marvell.com>,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+ "baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+ Gavin Shan <gshan@redhat.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-24-james.morse@arm.com>
+ <OSZPR01MB8798C425E5A820C2E0AAA7BC8BC5A@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+ <597d479f-4f1d-4cae-b15f-21ecc73a35bf@arm.com>
+ <OSZPR01MB8798EEEF42B16AD8F35DE8EE8BC3A@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <OSZPR01MB8798EEEF42B16AD8F35DE8EE8BC3A@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The problem is that scan_fast() allocate memory for ubi->fm
-and ubi->fm->e[x], but if the following attach process fails
-in ubi_wl_init or ubi_read_volume_table, the whole attach
-process will fail without executing ubi_wl_close to free the
-memory under ubi->fm.
+Hi Shaopeng,
 
-Fix this by add a new ubi_free_fastmap function in fastmap.c
-to free the memory allocated for fm.
+On 11/7/25 05:01, Shaopeng Tan (Fujitsu) wrote:
+> Hi Ben,
+> 
+>> Hi Shaopeng,
+>>
+>> On 11/5/25 08:32, Shaopeng Tan (Fujitsu) wrote:
+>>> Hello James,
+>>>
+>>>> Reading a monitor involves configuring what you want to monitor, and
+>>>> reading the value. Components made up of multiple MSC may need values
+>>>> from each MSC. MSCs may take time to configure, returning 'not ready'.
+>>>> The maximum 'not ready' time should have been provided by firmware.
+>>>>
+>>>> Add mpam_msmon_read() to hide all this. If (one of) the MSC returns
+>>>> not ready, then wait the full timeout value before trying again.
+>>>>
+>>>> CC: Shanker Donthineni <sdonthineni@nvidia.com>
+>>>> Signed-off-by: James Morse <james.morse@arm.com>
+>> [...]
+>>>> +/* Call with MSC lock held */
+>>>> +static void __ris_msmon_read(void *arg) {
+>>>> +	u64 now;
+>>>> +	bool nrdy = false;
+>>>> +	struct mon_read *m = arg;
+>>>> +	struct mon_cfg *ctx = m->ctx;
+>>>> +	struct mpam_msc_ris *ris = m->ris;
+>>>> +	struct mpam_props *rprops = &ris->props;
+>>>> +	struct mpam_msc *msc = m->ris->vmsc->msc;
+>>>> +	u32 mon_sel, ctl_val, flt_val, cur_ctl, cur_flt;
+>>>> +
+>>>> +	if (!mpam_mon_sel_lock(msc)) {
+>>>> +		m->err = -EIO;
+>>>> +		return;
+>>>> +	}
+>>>> +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL,
+>>>> ctx->mon) |
+>>>> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, ris->ris_idx);
+>>>> +	mpam_write_monsel_reg(msc, CFG_MON_SEL, mon_sel);
+>>>> +
+>>>> +	/*
+>>>> +	 * Read the existing configuration to avoid re-writing the same values.
+>>>> +	 * This saves waiting for 'nrdy' on subsequent reads.
+>>>> +	 */
+>>>> +	read_msmon_ctl_flt_vals(m, &cur_ctl, &cur_flt);
+>>>> +	clean_msmon_ctl_val(&cur_ctl);
+>>>> +	gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
+>>>> +	if (cur_flt != flt_val || cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN))
+>>>> +		write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
+>>>
+>>> When reading the CSU counter of a different control group, the counter is
+>> cleared to 0 by the write_msmon_ctl_flt_vals().
+>>>
+>>>> +	switch (m->type) {
+>>>> +	case mpam_feat_msmon_csu:
+>>>> +		now = mpam_read_monsel_reg(msc, CSU);
+>>>> +		if (mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy,
+>>>> rprops))
+>>>> +			nrdy = now & MSMON___NRDY;
+>>>> +		break;
+>>>
+>>> The first time read the counter(MSMON_CSU), all bits except nrdy are 0.
+>>
+>>
+>> I'm trying to understand your problem. Isn't what you are describing the
+>> intended behaviour of the nrdy bit? It takes some time to get a count of the
+>> cache utilization so if it's not ready this is set and the driver retries.
+> 
+> I apologize for not explain it correctly.
+> The key point is that for some SOC chip, if `mpam_feat_msmon_csu_hw_nrdy` is false,
+> the NRDY bit value of counter(MSMON_CSU) cannot be set to 'nrdy'.
+> 'nrdy' will keep its initial value(false).
 
-If SLUB_DEBUG and KUNIT are enabled, the following warning messages
-will show:
-ubi0: detaching mtd0
-ubi0: mtd0 is detached
-ubi0: default fastmap pool size: 200
-ubi0: default fastmap WL pool size: 100
-ubi0: attaching mtd0
-ubi0: attached by fastmap
-ubi0: fastmap pool size: 200
-ubi0: fastmap WL pool size: 100
-ubi0 error: ubi_wl_init [ubi]: no enough physical eraseblocks (4, need 203)
-ubi0 error: ubi_attach_mtd_dev [ubi]: failed to attach mtd0, error -28
-UBI error: cannot attach mtd0
-=================================================================
-BUG ubi_wl_entry_slab (Tainted: G    B      O L   ): Objects remaining in ubi_wl_entry_slab on __kmem_cache_shutdown()
------------------------------------------------------------------------------
+Ok, so if I understand correctly, your hardware takes some time to
+generate the csu monitor value but doesn't have a hardware control of
+the nrdy bit to mark the value as unreliable. When this bit is under
+software control then the behaviour is implementation defined. Some what
+wierdly the spec says "If a monitor does not support automatic behavior
+of NRDY, software can use this bit for any purpose.". I would expect a
+quirk for your platform could be added to delay after CSU configuration
+but this is out of scope for this series.
 
-Slab 0xffff2fd23a40cd00 objects=22 used=1 fp=0xffff2fd1d0334fd8 flags=0x883fffc010200(slab|head|section=34|node=0|zone=1|lastcpupid=0x7fff)
-CPU: 0 PID: 5884 Comm: insmod Tainted: G    B      O L    5.10.0 #1
-Hardware name: LS1043A RDB Board (DT)
-Call trace:
- dump_backtrace+0x0/0x198
- show_stack+0x18/0x28
- dump_stack+0xe8/0x15c
- slab_err+0x94/0xc0
- __kmem_cache_shutdown+0x1fc/0x39c
- kmem_cache_destroy+0x48/0x138
- ubi_init+0x1d4/0xf34 [ubi]
- do_one_initcall+0xb4/0x24c
- do_init_module+0x4c/0x1dc
- load_module+0x212c/0x2260
- __se_sys_finit_module+0xb4/0xd8
- __arm64_sys_finit_module+0x18/0x28
- el0_svc_common.constprop.0+0x78/0x1a0
- do_el0_svc+0x78/0x90
- el0_svc+0x20/0x38
- el0_sync_handler+0xf0/0x140
- normal+0x3d8/0x400
-Object 0xffff2fd1d0334e68 @offset=3688
-Allocated in ubi_scan_fastmap+0xf04/0xf40 [ubi] age=80 cpu=0 pid=5884
-	__slab_alloc.isra.21+0x6c/0xb4
-	kmem_cache_alloc+0x1e4/0x80c
-	ubi_scan_fastmap+0xf04/0xf40 [ubi]
-	ubi_attach+0x1f0/0x3a8 [ubi]
-	ubi_attach_mtd_dev+0x810/0xbc8 [ubi]
-	ubi_init+0x238/0xf34 [ubi]
-	do_one_initcall+0xb4/0x24c
-	do_init_module+0x4c/0x1dc
-	load_module+0x212c/0x2260
-	__se_sys_finit_module+0xb4/0xd8
-	__arm64_sys_finit_module+0x18/0x28
-	el0_svc_common.constprop.0+0x78/0x1a0
-	do_el0_svc+0x78/0x90
-	el0_svc+0x20/0x38
-	el0_sync_handler+0xf0/0x140
-	normal+0x3d8/0x400
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=220744
+> 
+>>> This means when check the cache monitoring value the first time, cat
+>>> mon_data/mon_L3_0*/llc_occupancy the result will be 0.
+>>> From the second time, the result will return to normal.
+>>
+>> This is not expected. On creating a new ctrl_mon group, generating some
+>> memory traffic and checking the llc_occumpancy I see a non-zero value on my
+>> setup. Not sure why you wouldn't.
+> 
+> Best regards,
+> Shaopeng TAN
+> 
 
-Signed-off-by: Liyuan Pang <pangliyuan1@huawei.com>
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
+Thanks,
 
-Changes in v2:
-* reduce the scope of variable "i" to the code block of the if branch
-* make ubi_free_fastmap an static inline function
-* link to v1:
-  https://lore.kernel.org/linux-mtd/20251107093843.1077536-1-pangliyuan1@huawei.com/T/#t
----
- drivers/mtd/ubi/attach.c     |  4 +++-
- drivers/mtd/ubi/fastmap-wl.c |  8 +-------
- drivers/mtd/ubi/ubi.h        | 12 ++++++++++++
- 3 files changed, 16 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
-index adc47b87b38a..884171871d0e 100644
---- a/drivers/mtd/ubi/attach.c
-+++ b/drivers/mtd/ubi/attach.c
-@@ -1600,7 +1600,7 @@ int ubi_attach(struct ubi_device *ubi, int force_scan)
- 
- 	err = ubi_read_volume_table(ubi, ai);
- 	if (err)
--		goto out_ai;
-+		goto out_fm;
- 
- 	err = ubi_wl_init(ubi, ai);
- 	if (err)
-@@ -1642,6 +1642,8 @@ int ubi_attach(struct ubi_device *ubi, int force_scan)
- out_vtbl:
- 	ubi_free_all_volumes(ubi);
- 	vfree(ubi->vtbl);
-+out_fm:
-+	ubi_free_fastmap(ubi);
- out_ai:
- 	destroy_ai(ai);
- 	return err;
-diff --git a/drivers/mtd/ubi/fastmap-wl.c b/drivers/mtd/ubi/fastmap-wl.c
-index 9bdb6525f128..e2bc1122bfd3 100644
---- a/drivers/mtd/ubi/fastmap-wl.c
-+++ b/drivers/mtd/ubi/fastmap-wl.c
-@@ -530,8 +530,6 @@ int ubi_is_erase_work(struct ubi_work *wrk)
- 
- static void ubi_fastmap_close(struct ubi_device *ubi)
- {
--	int i;
--
- 	return_unused_pool_pebs(ubi, &ubi->fm_pool);
- 	return_unused_pool_pebs(ubi, &ubi->fm_wl_pool);
- 
-@@ -540,11 +538,7 @@ static void ubi_fastmap_close(struct ubi_device *ubi)
- 		ubi->fm_anchor = NULL;
- 	}
- 
--	if (ubi->fm) {
--		for (i = 0; i < ubi->fm->used_blocks; i++)
--			kfree(ubi->fm->e[i]);
--	}
--	kfree(ubi->fm);
-+	ubi_free_fastmap(ubi);
- }
- 
- /**
-diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
-index c792b9bcab9b..44803d3329f4 100644
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -969,10 +969,22 @@ int ubi_scan_fastmap(struct ubi_device *ubi, struct ubi_attach_info *ai,
- 		     struct ubi_attach_info *scan_ai);
- int ubi_fastmap_init_checkmap(struct ubi_volume *vol, int leb_count);
- void ubi_fastmap_destroy_checkmap(struct ubi_volume *vol);
-+static inline void ubi_free_fastmap(struct ubi_device *ubi)
-+{
-+	if (ubi->fm) {
-+		int i;
-+
-+		for (i = 0; i < ubi->fm->used_blocks; i++)
-+			kmem_cache_free(ubi_wl_entry_slab, ubi->fm->e[i]);
-+		kfree(ubi->fm);
-+		ubi->fm = NULL;
-+	}
-+}
- #else
- static inline int ubi_update_fastmap(struct ubi_device *ubi) { return 0; }
- static inline int ubi_fastmap_init_checkmap(struct ubi_volume *vol, int leb_count) { return 0; }
- static inline void ubi_fastmap_destroy_checkmap(struct ubi_volume *vol) {}
-+static inline void ubi_free_fastmap(struct ubi_device *ubi) { }
- #endif
- 
- /* block.c */
--- 
-2.34.1
+Ben
 
 
