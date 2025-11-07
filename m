@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-889871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70B1C3EBC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:26:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08BBC3EBD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:26:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 627C234B0E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F08C3AEF0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9708726462E;
-	Fri,  7 Nov 2025 07:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D19308F24;
+	Fri,  7 Nov 2025 07:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqMuzZ4g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihHs0DEL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EA72D063C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140FB302745;
+	Fri,  7 Nov 2025 07:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500377; cv=none; b=d4ZmO/dPrgc5OV3LwfdPRVfluDVDR9oSmVM1I3SuDwxcFqD6wsL3zjyb2MgSqE3LGoYinmBAnA3W0pSJ7mMRvlN2z8q6yqjeiw6o3k8V8jtuAYO89M+LikbmJPERBiIYjOOT3Lo4PM6RQ2sNBbXQ6bWjGyj6qrxGUeGy0gKp9d8=
+	t=1762500397; cv=none; b=NpfHmd+jqE1tUQ11vrm0EwVo7HIU2uBxT5S8UpjbTyhKSPKmUOLFS9ybs1XYMa4+GQRH0xDJiXAYFK52PK63eabzJMh6hZw5amEW9zkIh2lp0pqG9/uv8fEjEZgaLXP7oBjU3PakpXtLjRn1AIAd39YWoIrModrIX/t53/+wbuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500377; c=relaxed/simple;
-	bh=NTCkAr7CCC3V4KXMLky1Q53LUYY+hgHt+cfzOEtykj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L9jraKjcSrZ518Ap1Sgspbq74SmpmYBtn5gJtxNjetZXLfqsoYuGLp79zlvF41XwmGSI/klUG9sSsXvA1WyGeUCXBZG5qOX3RJDmonZucmDth7I4+XYzaYFcb2sejf2h+ZXjyrAdcgxjEMifRnwFDqxWYg46DK2TkozIAF5sWPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqMuzZ4g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8981EC4AF0D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:26:16 +0000 (UTC)
+	s=arc-20240116; t=1762500397; c=relaxed/simple;
+	bh=jIST4hjxq5HplSFzRwdaLH4nRDcRq+Ij0iiF33GFWmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1/g0kG6kFtKSHSCAhKZwLyKN4H/Da7aMLcF4Cih0qDs0v1HMFsC/Jo6niWdUpyzAKDAZdGR1I1UELJ7uJwjUTAbiNV0KIBU0/IdUbhxKRrjXe6Uh1D7DrZnNQb+E+3lST43vuqH+j3v1fmeqR1sMrcGcbgnh/4g9ec1qbOQpFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihHs0DEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10497C113D0;
+	Fri,  7 Nov 2025 07:26:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762500376;
-	bh=NTCkAr7CCC3V4KXMLky1Q53LUYY+hgHt+cfzOEtykj0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WqMuzZ4gSWWpeASCfXcfQn/L1aWYNWsMeRDGJ6o/GnRbOI4pvQyUCv4SspE5NrYMQ
-	 1Sw/ZVg1dJs85BvWl93R90pggeOOaQp+KT+P8/MXixM17BaRa7fuoIzfFdTTB0QqB4
-	 1XHSsKjU7asRJCfMgVFwNu7opcaFBChpt1rRfTYgYYaVVh2npN4LVhrOXweKCwq79s
-	 Zyb9gXNNVHcdB5iA9MAhBc1sbOvrcoIjfDq09iC4dV3aFtPebKEt60bxvHsxnMVywM
-	 4HcQWAtRRdh1cTAPsj4lurIB7ca8EvW8hbDQuY7Pd/FqOz1y1/Qo+Kcj9dLHFBmyep
-	 VhxAub5fBRyww==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b726997b121so68278066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:26:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWfVuVJumt72jX5wv9XOWhN7g3TSF7cdcMvj459df/521X8Qa3TGOirDtNua2jN+HOCrm24FWIzCsTfPpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsIXer0s/4tOzbQujy9B/a7Gkckj3jM/rcnrH7lp4xe7j1VePa
-	f5keh0HhydWcG65CTlvZBD6s43tiiiN5nMdfMI8nn69rjGqBc4RSxfzUQ2AzC/k5hk8GTAXyto1
-	81sQ03UyDvhaIX1VGhK7bgScN4A9cIGM=
-X-Google-Smtp-Source: AGHT+IH1D3L7YSycRpWTDk4GBHk+/sA91OgbnjSfYLSPp6w9J3OvGmeptBOdkhYe4F1fk1Hq1SP5no/0if72Xe9b+3Q=
-X-Received: by 2002:a17:907:9489:b0:b4a:e7c9:84c1 with SMTP id
- a640c23a62f3a-b72d08e8bbfmr86879466b.7.1762500375178; Thu, 06 Nov 2025
- 23:26:15 -0800 (PST)
+	s=k20201202; t=1762500396;
+	bh=jIST4hjxq5HplSFzRwdaLH4nRDcRq+Ij0iiF33GFWmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ihHs0DELxwvTDxAejhC7XR/P/lOOp9kNziuIGKr0/hKdLMvVafh8sWYxq1aSBHsBM
+	 Ir5qPxk9ttx7nJXnowB3Fm5V8OU1Q7kLtLBxAgcCTdu89igvTwN8N9thlolYnOoAsm
+	 /Nb9fI7W0UGw6ZONWsmpwuGCZJFWuvMcrKnDfXTpaxyS8TkGVNZPc8ML6adS52xHnl
+	 vJgCvw+RoUgKqQ6H9GWgvZcpjlNNFa1X76UB04ocACm4X3jdxgwDL4rDBbfMwhubzE
+	 tFUqqen+YkPk7HMxNJdQErgBR4YckhJSxcBGeJr6fEz01PJOPxewe+t+GA9StzmMS3
+	 tkSPhTv2RLDyw==
+Date: Fri, 7 Nov 2025 08:26:34 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, 
+	"irving.ch.lin" <irving-ch.lin@mediatek.com>, linux-kernel@vger.kernel.org, sirius.wang@mediatek.com, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, netdev@vger.kernel.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, jh.hsu@mediatek.com, 
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	Qiqi Wang <qiqi.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, 
+	vince-wl.liu@mediatek.com, Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v3 02/21] dt-bindings: power: mediatek: Add MT8189 power
+ domain definitions
+Message-ID: <20251107-polar-satisfied-kestrel-8bd72b@kuoka>
+References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
+ <20251106124330.1145600-3-irving-ch.lin@mediatek.com>
+ <176243607706.3652517.3944575874711134298.robh@kernel.org>
+ <20251106-spearhead-cornmeal-1a03eead6e8a@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107035805.3094024-1-zhangtianyang@loongson.cn>
-In-Reply-To: <20251107035805.3094024-1-zhangtianyang@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 7 Nov 2025 15:26:11 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6CyWCqgp_x1OQ0o_UPKeom1CoLgkebwEOPPHS=KGfHmw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkg92nWYYDP41MKJNq77vdxVMVUjuudLq9Q2Awhp9wZxCUZayTgvOP8lC4
-Message-ID: <CAAhV-H6CyWCqgp_x1OQ0o_UPKeom1CoLgkebwEOPPHS=KGfHmw@mail.gmail.com>
-Subject: Re: [PATCH v2] LoongArch: Let {pte,pmd}_modify() record the status of _PAGE_DIRTY
-To: Tianyang Zhang <zhangtianyang@loongson.cn>
-Cc: kernel@xen0n.name, akpm@linux-foundation.org, willy@infradead.org, 
-	david@redhat.com, linmag7@gmail.com, thuth@redhat.com, maobibo@loongson.cn, 
-	apopple@nvidia.com, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Liupu Wang <wangliupu@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251106-spearhead-cornmeal-1a03eead6e8a@spud>
 
-Applied, thanks.
+On Thu, Nov 06, 2025 at 05:17:39PM +0000, Conor Dooley wrote:
+> On Thu, Nov 06, 2025 at 07:34:37AM -0600, Rob Herring (Arm) wrote:
+> > 
+> > On Thu, 06 Nov 2025 20:41:47 +0800, irving.ch.lin wrote:
+> > > From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> > > 
+> > > Add device tree bindings for the power domains of MediaTek MT8189 SoC.
+> > > 
+> > > Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> > > ---
+> > >  .../power/mediatek,power-controller.yaml      |  1 +
+> > >  .../dt-bindings/power/mediatek,mt8189-power.h | 38 +++++++++++++++++++
+> > >  2 files changed, 39 insertions(+)
+> > >  create mode 100644 include/dt-bindings/power/mediatek,mt8189-power.h
+> > > 
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> > 
+> > yamllint warnings/errors:
+> > ./Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml:25:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+> 
+> pw-bot: changes-requested
 
-Huacai
+I think this was bot's false positive - that's a different file, not
+changed here. The patch seems fine.
 
-On Fri, Nov 7, 2025 at 11:58=E2=80=AFAM Tianyang Zhang
-<zhangtianyang@loongson.cn> wrote:
->
-> Now, if the pte is dirty _PAGE_DIRTY but without _PAGE_MODIFIED, after
-> pte_modify() we lose _PAGE_DIRTY, then pte_dirty() returns false. So
-> we need _PAGE_MODIFIED to record _PAGE_DIRTY here.
->
-> The new modification involves checking whether the original PTE has the
-> _PAGE_DIRTY flag. If it exists, the _PAGE_MODIFIED bit is set, ensuring
-> that the pte_dirty interface can return accurate information.
->
-> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
-> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
-> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-> ---
->  arch/loongarch/include/asm/pgtable.h | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/includ=
-e/asm/pgtable.h
-> index bd128696e96d..e0b92fe850b3 100644
-> --- a/arch/loongarch/include/asm/pgtable.h
-> +++ b/arch/loongarch/include/asm/pgtable.h
-> @@ -424,6 +424,9 @@ static inline unsigned long pte_accessible(struct mm_=
-struct *mm, pte_t a)
->
->  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->  {
-> +       if (pte_val(pte) & _PAGE_DIRTY)
-> +               pte_val(pte) |=3D _PAGE_MODIFIED;
-> +
->         return __pte((pte_val(pte) & _PAGE_CHG_MASK) |
->                      (pgprot_val(newprot) & ~_PAGE_CHG_MASK));
->  }
-> @@ -547,6 +550,9 @@ static inline struct page *pmd_page(pmd_t pmd)
->
->  static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->  {
-> +       if (pmd_val(pmd) & _PAGE_DIRTY)
-> +               pmd_val(pmd) |=3D _PAGE_MODIFIED;
-> +
->         pmd_val(pmd) =3D (pmd_val(pmd) & _HPAGE_CHG_MASK) |
->                                 (pgprot_val(newprot) & ~_HPAGE_CHG_MASK);
->         return pmd;
-> --
-> 2.41.0
->
->
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
