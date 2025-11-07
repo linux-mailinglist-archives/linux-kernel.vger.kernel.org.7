@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-890188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BDDC3F6DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:28:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C52C3F743
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:31:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 272264EF37D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 587E23B5273
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F15305942;
-	Fri,  7 Nov 2025 10:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB1830748B;
+	Fri,  7 Nov 2025 10:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QSVC1dyB"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W6xtD6PM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C4E305940;
-	Fri,  7 Nov 2025 10:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5365C308F2A;
+	Fri,  7 Nov 2025 10:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511283; cv=none; b=LWXYqd3pZNb6209vYwwi5V8f/Q0uoy6a7ZTzS5ozP2KplHjIQ0w84J0fpVL8WsgPTIQbmtzQcHrBA5iDBGrpEJQC42yDoCYJGr5qhBk7Z/rEJ1S/6Y3n6xKIVTMoBS6H1hGARZJFWvushtJkZoY4Shuy9Fv+XSBUPytsNmrQ8BA=
+	t=1762511401; cv=none; b=A/o2iIvmUukNt5wty0FkWY1kaSqkCPO4Nfg/mG7eobdcv+sN8pmDtqHYgWhq96e6B9BPYbDprrJ7TL+OHuz/LJKB++GgrKjZhPA3RvXiq9NwjJObXIX4lpw5AyDjpbWwRLGck6Jy9EsArgA0nqYl/BKmYEY7oKXX9U8VV5oHlI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511283; c=relaxed/simple;
-	bh=ao1huc81LhbI7M7V+Lmw7sAVNImuD4foYke1+Hng3lI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awgVKZCC0GrCeHtPgqFdHPmSP//up9FGX//4cq8VqnJnE3yVHf/Z0P/R9Fnu1w6nTenY7teiUssvPTSnF3asWLC2JbUKRIxbjEqPl6wTUcLcWfFhr8F4tlDr1cm38vl+3SxLT7luKys5VL9Zel6JSg2jKeb4+nUuidD8d8JcwFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QSVC1dyB; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rUEiTpU7HDDR8xMFqOe2EDvAunYxBiPHehj76UNcJvY=; b=QSVC1dyBVq9iOjDUlh61G8KGft
-	apfvjGnw3TRhtW3UGKL1sovVkDGWzQpQIn/liVJrV82JFl9AwrM673VsvTrWDEpeOXvMdulJsnaOZ
-	zABWuolDlh+YxMKGXuOeXPM4UnjK2Ie2JLs902MAPKOVY15MCYjgM54HecdEinsD8R7UMM4CiPUSh
-	AHGQHmBsP2ItnH8zopdbipVsoI0sHOyBWXTAaiiQVzEkU2aOS+YLXtd8lOG0y/SWpShji3riP9Z8M
-	NNAaIZ2nfbc/O2OFGIT3QtTEpe+FrxsN98ckdXs0Lyr8OqOS0fiLQ4LsF/G1BZf9c99u34MYBuakw
-	w3jhpeTA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vHIpN-00000006AtS-2BCf;
-	Fri, 07 Nov 2025 09:32:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3E2993001D4; Fri, 07 Nov 2025 11:27:45 +0100 (CET)
-Date: Fri, 7 Nov 2025 11:27:45 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Jonathan Corbet <corbet@lwn.net>, "H. Peter Anvin" <hpa@zytor.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Sean Christopherson <seanjc@google.com>,
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-doc@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v11 5/9] x86/efi: Disable LASS while mapping the EFI
- runtime services
-Message-ID: <20251107102745.GC1618871@noisy.programming.kicks-ass.net>
-References: <20251029210310.1155449-6-sohil.mehta@intel.com>
- <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com>
- <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com>
- <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com>
- <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com>
- <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com>
- <20251107090406.GU3245006@noisy.programming.kicks-ass.net>
- <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com>
- <20251107094008.GA1618871@noisy.programming.kicks-ass.net>
- <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com>
+	s=arc-20240116; t=1762511401; c=relaxed/simple;
+	bh=txXIGE/eQ4897oeFLXT+Tc1XOy8dh4lQrnt09P4gSbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XF0HnXBmTxtjp0k0MPocD22yiZ3F1Wr1pEK4ViUveuyF4flHfzCc4lSAffyZruuzy2qIY/hN2LTpTxw2Vv0ryK4Jqa+1tVOuz7miXGm64yVLfNuN+DYENnYnQ2GR8/lg+DFZlKuUOu/s+HTqvxx6SdqRgp7M7NDw0hKd8LWXn0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W6xtD6PM; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762511399; x=1794047399;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=txXIGE/eQ4897oeFLXT+Tc1XOy8dh4lQrnt09P4gSbQ=;
+  b=W6xtD6PMmwtUVTHtRZ0cErrKyMhCZI26bQDHYFDqVC+5vR92Qq4BnTAp
+   VRJO7HZ5THXO0Dk4cBkjZ60FUSCOXBKr0ZbyxTaND3dngkkSpVaEbBP3o
+   p7BcY4kwgH5J/UmL90I833Fvpz9d6VvRY7jVP40BZ5PPMOt4Y4ElMEKNy
+   nfprKpwkAmANEzn449nTaQYWUao5LFCJ9s8rw9SIsC+HT1pe6RN08qI4C
+   TkcMnOEFKa4gyr1kOlbwkw0IRBFUKOpZWsDBZUHrx+ELi1r9r0K6RUB6C
+   j7aTJxEbWsX8GHSDM8g49R+CWr1rCxp/R7ykULeLH/qNw+GUMufSS3PZ9
+   A==;
+X-CSE-ConnectionGUID: 649ds+HfQAys6hkY8J3zXg==
+X-CSE-MsgGUID: WoK4wLPFSwWIgrEW3/Mr9Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="63867832"
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="63867832"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 02:29:50 -0800
+X-CSE-ConnectionGUID: UneBQM/oSbub14+VgnqhBg==
+X-CSE-MsgGUID: yP1jfGzpScKYNEFY2wOVfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="192268182"
+Received: from alc-gnrsp.sh.intel.com (HELO [10.239.53.13]) ([10.239.53.13])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 02:29:46 -0800
+Message-ID: <48341947-dd12-4a89-870d-fb73f5121888@linux.intel.com>
+Date: Fri, 7 Nov 2025 18:28:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/readahead: Skip fully overlapped range
+To: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Nanhai Zou <nanhai.zou@intel.com>,
+ Gang Deng <gang.deng@intel.com>, Tianyou Li <tianyou.li@intel.com>,
+ Vinicius Gomes <vinicius.gomes@intel.com>,
+ Tim Chen <tim.c.chen@linux.intel.com>, Chen Yu <yu.c.chen@intel.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Roman Gushchin <roman.gushchin@linux.dev>
+References: <20250923035946.2560876-1-aubrey.li@linux.intel.com>
+ <20250922204921.898740570c9a595c75814753@linux-foundation.org>
+ <93f7e2ad-563b-4db5-bab6-4ce2e994dbae@linux.intel.com>
+ <cghebadvzchca3lo2cakcihwyoexx7fdqtibfywfm4xjo7eyp2@vbccezepgtoe>
+ <6bcf9dfe-c231-43aa-8b1c-f699330e143c@linux.intel.com>
+ <20251011152042.d0061f174dd934711bc1418b@linux-foundation.org>
+ <mze6nnqy2xwwqaz5xpwkthx3x4n6yd5vgbnyateyjlyjefiwde@qclv7inpacqe>
+Content-Language: en-US
+From: Aubrey Li <aubrey.li@linux.intel.com>
+In-Reply-To: <mze6nnqy2xwwqaz5xpwkthx3x4n6yd5vgbnyateyjlyjefiwde@qclv7inpacqe>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 07, 2025 at 11:09:44AM +0100, Ard Biesheuvel wrote:
+Really sorry for the late, too. Thunderbird collapsed this thread, but didn't
+highlight it as unread, I thought no one response, :(
 
-> As long as you install with EFI enabled, the impact of efi=noruntime
-> should be limited, given that x86 does not rely on EFI runtime
-> services for the RTC or for reboot/poweroff. But you will lose access
-> to the EFI variable store. (Not sure what 'noefi' does in comparison,
-> but keeping EFI enabled at boot time for things like secure/measured
-> boot and storage encryption will probably result in a net positive
-> impact on security/hardening as long as you avoid calling into the
-> firmware after boot)
-
-I would say it should all stay before we start userspace, because that's
-where our trust boundary is. We definitely do not trust userspace.
-
-Also, if they all think this is 'important' why not provide native
-drivers for this service?
-
-> > At the very least I think we should start printing scary messages about
-> > disabling security to run untrusted code. This is all quite insane :/
+On 10/17/25 12:21 AM, Jan Kara wrote:
+> Sorry for not replying earlier. I wanted make up my mind about this and
+> other stuff was keeping preempting me...
 > 
-> I agree in principle. However, calling it 'untrusted' is a bit
-> misleading here, given that you already rely on the same body of code
-> to boot your computer to begin with. 
+> On Sat 11-10-25 15:20:42, Andrew Morton wrote:
+>> On Tue, 30 Sep 2025 13:35:43 +0800 Aubrey Li <aubrey.li@linux.intel.com> wrote:
+>>
+>>> file_ra_state is considered a performance hint, not a critical correctness
+>>> field. The race conditions on file's readahead state don't affect the
+>>> correctness of file I/O because later the page cache mechanisms ensure data
+>>> consistency, it won't cause wrong data to be read. I think that's why we do
+>>> not lock file_ra_state today, to avoid performance penalties on this hot path.
+>>>
+>>> That said, this patch didn't make things worse, and it does take a risk but
+>>> brings the rewards of RocksDB's readseq benchmark.
+>>
+>> So if I may summarize:
+>>
+>> - you've identifed and addressed an issue with concurrent readahead
+>>   against an fd
+> 
+> Right but let me also note that the patch modifies only
+> force_page_cache_ra() which is a pretty peculiar function. It's used at two
+> places:
+> 1) When page_cache_sync_ra() decides it isn't worth to do a proper
+> readahead and just wants to read that one one.
+> 
+> 2) From POSIX_FADV_WILLNEED - I suppose this is Aubrey's case.
+> 
+> As such it seems to be fixing mostly a "don't do it when it hurts" kind of
+> load from the benchmark than a widely used practical case since I'm not
+> sure many programs call POSIX_FADV_WILLNEED from many threads in parallel
+> for the same range.
+> 
+>> - Jan points out that we don't properly handle concurrent access to a
+>>   file's ra_state.  This is somewhat offtopic, but we should address
+>>   this sometime anyway.  Then we can address the RocksDB issue later.
+>>
+>> Another practicality: improving a benchmark is nice, but do we have any
+>> reasons to believe that this change will improve any real-world
+>> workload?  If so, which and by how much?
 
-That PRM stuff really doesn't sound like its needed to boot. And it
-sounds like it really should be part of the normal Linux driver, but
-isn't for $corp reasons or something.
+I only have RocksDB on my side, but this isn't a lab case but a real case.
+It's an issue reported by a customer. They use this case to stress test the
+system under high-concurrency data workloads, it could have business impact.
 
-> I.e., if you suspect that the
-> code in question is conspiring against you, not calling it at runtime
-> to manipulate EFI variables is not going to help with that.
+> 
+> The problem I had with the patch is that it adds more racy updates & checks
+> for the shared ra state so it's kind of difficult to say whether some
+> workload will not now more often clobber the ra state resulting in poor
+> readahead behavior. Also as I looked into the patch now another objection I
+> have is that force_page_cache_ra() previously didn't touch the ra state at
+> all, it just read the requested pages. After the patch
+> force_page_cache_ra() will destroy the readahead state completely. This is
+> definitely something we don't want to do.
 
-Well, the problem is the disabling of all the hardware and software
-security measures to run this crap. This makes it a prime target to take
-over stuff. Also, while EFI code might be good enough to boot the
-machine, using it at runtime is a whole different league of security.
+This is also something I worried about, so I added two trace points at the
+entry and exit of force_page_cache_ra(), and I got all ZEROs.
 
-What if they have a 'bug' in the variable name parser and a variable
-named "NSAWantsAccess" gets you a buffer overflow and random code
-execution.
+test-9858    [018] .....   554.352691: force_page_cache_ra: force_page_cache_ra entry: ra->start = 0, ra->size = 0
+test-9858    [018] .....   554.352695: force_page_cache_ra: force_page_cache_ra exit: ra->start = 0, ra->size = 0
+test-9855    [009] .....   554.352701: force_page_cache_ra: force_page_cache_ra entry: ra->start = 0, ra->size = 0
+test-9855    [009] .....   554.352705: force_page_cache_ra: force_page_cache_ra exit: ra->start = 0, ra->size = 0
 
-Trusting it to boot the machine and trusting it to be safe for general
-runtime are two very different things.
+I think for this code path, my patch doesn't break anything. Do we have any
+other code paths I can check?
 
-> Question is though whether on x86, sandboxing is feasible: can VMs
-> call into SMM? Because that is where 95% of the EFI variable services
-> logic resides - the code running directly under the OS does very
-> little other than marshalling the arguments and passing them on.
+Anyway, thanks Andrew and Jan for the detailed feedback and discussion. if
+we later plan to make file_ra_state concurrency-safe first, I'd be happy to
+help test or rebase this optimization on top of that work.
 
-I just read in that PRM document that they *REALLY* want to get away
-from SMM because it freezes all CPUs in the system for the duration of
-the SMI. So this variable crud being in SMM would be inconsistent.
-
-Anyway, I'm all for very aggressive runtime warnings and pushing vendors
-that object to provide native drivers. I don't believe there is any real
-technical reason for any of this.
+Thanks,
+-Aubrey
 
