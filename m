@@ -1,102 +1,121 @@
-Return-Path: <linux-kernel+bounces-890951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCD3C41719
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:30:53 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35BAC41716
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 320EA4E9A34
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:30:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2FC4834A6B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4178D3054EE;
-	Fri,  7 Nov 2025 19:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCED305E10;
+	Fri,  7 Nov 2025 19:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="k8jTzFPQ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ow+LvC77"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A72D2DEA80;
-	Fri,  7 Nov 2025 19:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDCC304BB8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543849; cv=none; b=S2KzkPbWsCkdSY5jwWNuunqmW0Mh8VM+tq5piQgMqBIIAd/yOzTL607BYyy4uF+K6X7BTPWxefzfk6WoLhdsL6DuVLcL82lJnGSl9eSp4xYwIbLHmabU+QVtSOU2kvM8T5JmOEj4khYk8FpXjheiVwzaVvhzNC0FQmW1tNh9kGE=
+	t=1762543837; cv=none; b=X+RbgIz+P2Gd47jr8OBPIcMPRxt+o6KD/LO5m9s7tN+UuHnUuTMkZndRMU02SdWuTxCh05cI6V6mR/lTlfUBOFId1b7ZTkxRkjJYzDLfOii/pNKoreIIcCm6EhEgxQtL/X2oyOT7idd2tcDjRzVrt08wFqgmUg8F7ZSr6Aa+vOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543849; c=relaxed/simple;
-	bh=GskO2h9wIb6SPHoA/5pHXkzC4O6zASQ0Yt8CLP+3dAs=;
+	s=arc-20240116; t=1762543837; c=relaxed/simple;
+	bh=XygVhSD3HlTOEAa9BQJmws4+jogICxDOzJiVToEZzsA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BfUfLZ9RKH0AoV7QWDZeErw0HWgOtEGFgIlo/8Q9lwJJcOLGKLXhMVtldcjSMYAgvPZmb0NDbiDNIKRWAB3V8JfO5Y2aZwn4uhYJYM45Lnfp5+HyKRpbvj+YicWx9MKE01WJSaG6SmjREb9ft7c9XH8yCcfXZXB4C6CMX/Pl1xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=k8jTzFPQ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6557740E019D;
-	Fri,  7 Nov 2025 19:30:44 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id hRwvGZIqEm7N; Fri,  7 Nov 2025 19:30:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762543841; bh=nvfMzttWB81WPeHCL4vBFk6WtiBVPUZbizCeeSkxrD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k8jTzFPQxp6Yo+2WcT1jnavsVJTjyoxaXklgkN1iZ8JuPx6miIx69p8aZ4OywKuNl
-	 E7SImcN+nw438lcms7htdMDwUosjeul2nwwLT2bZLkAg4BKdXQj5w8MCKbNlVpyMCK
-	 wmVtWo/OnHRw2J4WVCJbQ/BQneM8IplSJqRBGxdarYZV/AjBnN+0vSCbm2I3nxJDiK
-	 f5wGm6CsXas+ps71ifjM8lZiUKu5fksgjnaQX5Ri66uqW9LMg2D1HwlFyAEIEAyTl7
-	 ZD8d+/R286B1QRQhQXzb710hOwLlwxxTfBz0+3FI23MQil00pdNH2aYcHBsyBFx/Ft
-	 g1KFNbWv/GvvrGlq9zDFKXKaKnflU5F4hFZh7De3dHU6w6a1+JJmkW/Vo3+E1Atbn4
-	 RioElPa0gLY6Niv7kYlHbfrR6P+9l9T/MXNsyuIuAIgJ31Eskbp2wL+mvqeQY32DVR
-	 T9ZjYwmjLlEoKzvENaFWddbTXsUMveoeK+h6JxtEMjsiFSbLcmgYbIUbHr9zP/qH2q
-	 MJRqzB+khgf5AWEtsahmpRYq282bDgXbPK9ri7fRz/vM2AgtIkCPGbA/7BdZ0o+nSc
-	 fXVlpJZK6tGT7FyGZBiWuLpeC8XUetYGBU6NGMsBGUWhj2SGqyuCzf445hd5l8NjJ3
-	 2ZdSJkmKGGmhrrGcbKXZr0xA=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id EFCF640E015B;
-	Fri,  7 Nov 2025 19:30:31 +0000 (UTC)
-Date: Fri, 7 Nov 2025 20:30:24 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"shubhrajyoti.datta@gmail.com" <shubhrajyoti.datta@gmail.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>
-Subject: Re: [PATCH] EDAC/versalnet: Handle split messages for non-standard
- errors
-Message-ID: <20251107193024.GDaQ5I0J7-T-HvZqr9@fat_crate.local>
-References: <20251023113108.3467132-1-shubhrajyoti.datta@amd.com>
- <20251029130832.GBaQIR0CF8kSl6exi7@fat_crate.local>
- <LV5PR12MB9828A123A3ADFA1EB177E58681F8A@LV5PR12MB9828.namprd12.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JwTo0Ili1UtfgDd3/g2Yu+8XC+NbQgl2RtuQHLz6vubGjXjtX1TZmQqPJ85aCW21fms3gmAJQ7iS3EcMaeow8MfRJTWtjL4tSdZXNe4r+sosu3lmcJZFS1cZ9NWOrjdRqeinYzsHQOo2S+fS4sLFsf9gINxQB9Di64ThmaZssDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ow+LvC77; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-297e13bf404so21055ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:30:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762543836; x=1763148636; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ii2K5/lD+aBTxicdOXZF0Rxje4qtvj62/HMAMykB+YY=;
+        b=ow+LvC77nX6ApsyVqnZeTG8wgfO/nJviKPmnOV5LP2i7249MOJGDepmPKWqT4vcwqF
+         q6B9l/G9oKffG/M7Ji0BD+jvV0XqZxUQJI6FHAtd8ov/YEhcXDuQCuLZO1770ZXBWs0I
+         CzrISVwmiXFgilZwp6keY6oN2aznws+92SZQITFEMKTyhU+fU+qYZ2DURvcDfVu05KFp
+         Ch2RdAdSrXqy8EkJ0myPDf7EbQaJxPwf+fuI4mhuBT+Q1LPD70WCgdV7ANlRNvPwIduw
+         hf2s+LV/whVcYiX/yCF7hMFGmxq7fxFrn+5m6nPAO4lmwPv8dhtc3MYO5O7MYPUZb7bL
+         2pJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762543836; x=1763148636;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ii2K5/lD+aBTxicdOXZF0Rxje4qtvj62/HMAMykB+YY=;
+        b=Yl075+JJQSZ9woL23GycCAGkvmWqPI4c/PKWA57BmyBOeluBkOY/J9rGDsf+MgeoXz
+         Q9oiGMSTufgIrPvhIpDQQlWDcpTEtvMwra1mP9SVFCsGMUjkWSI4zGKOHYwnCz5t3pLh
+         w40nukIqIIFLOAQ3Vxu3O+k7kXbHSMmi86AFU8OcEJmv9lWVvOf5ePtswp0+k/yH/AEE
+         UE3OK2RmJOphHsj7Wrq63H+q7PEV/QceSxQHEKEWDyYp6anJzzvf/og7KFiwUS7V7P+r
+         Ueoh5wdWt2THlMwCjmQP3IIzCo0jIq1db0EKCUY5m6ZrXbax6pYMZekaFP6X1Q6COQZr
+         guCA==
+X-Forwarded-Encrypted: i=1; AJvYcCULg2MiONxRqwOjcvCmw6N8/Gf0cASAJF6kTIFOenSv8VF/RcsFvBNaqMcNC/5mbiA0gGS42Z5OBUeUz48=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyby6VaywjCPV8praO6pfS16Iq50u3hEGOln/iqbS7yzyqDWJ12
+	o5x5M0JlnDsKtHBGYulN3eH2FtEXUNPB9QUo5LDqK41XgwN3c8kaJlaxsZIwwlMR6w==
+X-Gm-Gg: ASbGncs37XjaD8hq6s/WQbnbBd+9yJaZhIhwcCieNxa6RSh5YPUhWDWx5j7hxE3kkmZ
+	IiyzP7kfRSyhESE+xEULDxTmw+6m3YpIrlOefoy3t4A7CXRc4sCoAHj1a/oLZT/3Kyo4hci8Eg0
+	nPRcfVnsHRhEWVgCZZgUfFK2on/GviMHqaR2UsQrE4GYEo7WOIQej6sLJH065XfzBtF/L5jDw+D
+	keEMrb8SsqcRkM67ya3yDNQTSYWMNF7OW0lpsGRvZPlO/jZpJ4v13gQls1JC3Fi5ydm+kj1F8y1
+	WZ6ji4CROHkQ4PzheRuZuvnbNSe/5qlaN/NhdaP9b3c7COuvDkIVau0wbDWi5f2OsyRVPsZ/11f
+	Wz8ZeZBfKolmPk8T15cCCHjFieuEW+OMEReIvm3gpBCb53WWV4sqKvgVGmvnOKixp7ZDTT2UTT2
+	SQmGloGyAP3Z2SaNcHBkNFfwm1p46Ix/Hye6NUtjwMyl8PS04C
+X-Google-Smtp-Source: AGHT+IGrZxEpsvavP2SSGDlxEEDNvgmombMxNJOrhRHYLBt6v8Cu6925mPYDaXVNFvL+7VqE7SGZkQ==
+X-Received: by 2002:a17:903:32c1:b0:297:d83c:9c37 with SMTP id d9443c01a7336-297e56624e7mr492925ad.12.1762543834993;
+        Fri, 07 Nov 2025 11:30:34 -0800 (PST)
+Received: from google.com (164.210.142.34.bc.googleusercontent.com. [34.142.210.164])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a68aa1edsm10072092a91.1.2025.11.07.11.30.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 11:30:34 -0800 (PST)
+Date: Fri, 7 Nov 2025 19:30:28 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Ryan Huang <tzukui@google.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Daniel Mentz <danielmentz@google.com>
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix error check in
+ arm_smmu_alloc_cd_tables
+Message-ID: <aQ5I1OYwWbfbA95X@google.com>
+References: <20251107190917.2858684-1-tzukui@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <LV5PR12MB9828A123A3ADFA1EB177E58681F8A@LV5PR12MB9828.namprd12.prod.outlook.com>
+In-Reply-To: <20251107190917.2858684-1-tzukui@google.com>
 
-On Fri, Oct 31, 2025 at 09:41:58AM +0000, Datta, Shubhrajyoti wrote:
-> > I'm guessing you want to move that comment too?
-> >
-> > If so, I can move it - you don't have to resend.
+On Fri, Nov 07, 2025 at 11:09:17AM -0800, Ryan Huang wrote:
+> In arm_smmu_alloc_cd_tables(), the error check following the
+> dma_alloc_coherent() for cd_table->l2.l1tab incorrectly tests
+> cd_table->l2.l2ptrs.
 > 
-> Thanks for the catch . I agree.
+> This means an allocation failure for l1tab goes undetected, causing
+> the function to return 0 (success) erroneously.
+> 
+> Correct the check to test cd_table->l2.l1tab.
+> 
+> Fixes: e3b1be2e73db ("iommu/arm-smmu-v3: Reorganize struct arm_smmu_ctx_desc_cfg")
+> Signed-off-by: Daniel Mentz <danielmentz@google.com>
+> Signed-off-by: Ryan Huang <tzukui@google.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Queued, thanks.
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks for the fix!
+-Praan
 
