@@ -1,84 +1,97 @@
-Return-Path: <linux-kernel+bounces-891129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4D9C41E83
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:04:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03543C41E8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C5F84E558E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:04:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F4B74E946B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09592DC328;
-	Fri,  7 Nov 2025 23:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD34E2E8B86;
+	Fri,  7 Nov 2025 23:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="k3zgUdcj";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="txLJF6+K"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="Kdq9/bP0";
+	dkim=permerror (0-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="UpNdSuIp"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB3B6A33B;
-	Fri,  7 Nov 2025 23:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762556670; cv=none; b=ipOTL6oBk0Ta6ctDFo0fAKy9zMHVNxsSLgtiLClmvqBV2xr8OuBnWd/U98rlKPcvETCX1TSSKAql3WcbYCvDNC+riGROedW+Sel9Mkehv13sIPPaXQwpRthKeGd4GV7YbDI2RAqf7BrhsCCny8B/LrVCVubsXn4KVR03MBb8lpM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762556670; c=relaxed/simple;
-	bh=1itBNKxvB8gKjd/v4bwE2PMFH4zdgibKRCKVc8YZEKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EnNc0XvKGMRPwRvTf96X40CzkVWwmm9bpftQuLfLw3kos6k+Af2RDQq8L/jD6LpzcX1CFEZnu8tIHBS0jP05d9b0y+kKP+ZbtEROVNzd7Re2Twb08Z9dZ55ltDpKi647bXJ5FfT/+8PYYHHVPyRo8YGonXET9/zNYqyAXBL6NLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=k3zgUdcj; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=txLJF6+K; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4d3F4V1sJPz9tky;
-	Sat,  8 Nov 2025 00:04:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762556666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KOA+hwUJRwzGvUxdumSct2dsv0UMU4LHAXdtncVDhPY=;
-	b=k3zgUdcjTWMufyhpZdoohbSuZZXkg2ba4gDJIKdoVlk+2tvioFukLLbqgM2+VHccTRKDSQ
-	z7LkFT15ZeZ34mAhOM8wbNkj6xwy88FAXvPmKeEsl48YEW3lha8t6xc7V3DbHyjr7nCT9p
-	0TpWURIDfInM1LzsB6+sf3UIR7vo4q5lrs7JTuytvNxWFrOa/h/CvSpBRWtc4vGIHBmfSN
-	3oAfjFpQIcU0FTvdOnj21T6A92aqbRUdWEo4YZvqRS4kI9hiaY1DNYEIr+He/ZMTVs67Le
-	bk1sEm09DCSVIc8+0EYw1fUYX/8kyWKJDuIununGA+z14YxQQat6Kttl0XNgYg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=txLJF6+K;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762556664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KOA+hwUJRwzGvUxdumSct2dsv0UMU4LHAXdtncVDhPY=;
-	b=txLJF6+K7WeSnsTLyO1Bnh/teX0M9Be8jRJ91wOv7t09SOyBGl/sTWhw8YWYfgu1+b/tIY
-	6jQE2o+jmYHb5QFwDmrqHXiH09Xru/VuncngabvOxgPRlZ4EXdIizeCe4w0Z0YNfssqYBQ
-	cLas0AQeX43GWvW/rNAH4WQ9x2XI8LJ5IGihWLS7iCjLstpIQd8UZfEXBG0ar6vetEDnN4
-	Z7kFLYzYEWLocr3z0IJkFeGsrFuGu1VP37ICjmNXchXNEXzqBCnY1m93FChG+Um8Li0dFX
-	8TcD9niFTRmqHiQ5W1E9ob9Na8qNyCVmSswyEjTiGKPTVEFWOE8sRWPDT1UAgg==
-To: dri-devel@lists.freedesktop.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	David Airlie <airlied@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9736A33B;
+	Fri,  7 Nov 2025 23:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762556739; cv=pass; b=UfZoDrYJFZEbXihOStKPTpqNnBAh5da5TUNrc8HoEmJqO07/l0KTUeGHlSFUsuLYOh0hXF76ugWlQS/D5gYRuk9YKpjIWMzP4XDWzVudOQkl/+SHYLmDxTWzQcEXl4eIMV+2vECJtba0tToiNTjcPgwlF6NX7qjol/rCyaNFy9c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762556739; c=relaxed/simple;
+	bh=HERjydC7hjmSPxAtbV5QPk9ebxj2IFNWSjMYJNOKI+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=foGYUcYwGolOk0losHMz6ADf7s0evcfiaHxkIgT0+BtUstR575xW0hkBmVEBmzlDCBrdVaDb1EL7nJ0vxx+75ALlNMnS+ksIxD75JwS21cDFXIxI/UszERqkVr1TY4xiE3r/o4l7BkmwqWo1iTLpF1QuIooSbItNaQxzRXsJRMU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=Kdq9/bP0; dkim=permerror (0-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=UpNdSuIp; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1762556732; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=mlUalYxnZXYn+XinxCbw4vUbALTAunI+hPLoOE/8XoMKNtQStfdN+EBj4K9vp4bL7t
+    yzmMOgbkFM44hy45jknbsJFR/w2N32UaihmwC2G4zbKwg9pps/q8KHv011kpV7kj1wK1
+    Eextdc8OQYOQ19EfQd/PXlF6JN1uk3LYODVMOEFAtMs6T05XASHEpkk3g+OM5C4siIyR
+    6dxPOC6fmn/hWc4jOSdB2o6Fl5nFhjzi2Kn7yJ5THB08iEfnrkuTeRVXhJVRVewY3EKd
+    M+k6QM/2LqiLl/tbdWTzwjSbOJEu9V8DK7BD3MO5GYNX/hAx7tVhp7NmybPhXP20fBh+
+    PpMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1762556732;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=uotiEQ+QC7NYTRRNNCoNIgCZoNMIJV0bTwBn4JbEs9c=;
+    b=L/Bxpo3ySBuFI1S/lu7i/49KJtNx2Yi44Wix6vnqjeUtKBRXK1cg7zgvZ4ZHey1/zJ
+    FC0hmMTrX8TnFPLxXX/0n3CBRujaobvZYRW7xoeFqy4YMYB1IQl4k9Whdzr2oIGudtTt
+    Bx+kQlKCiAIrYl0/emciftZcRnWGbNyd7VCVOZoOKhzxXeOgVFQz4r0BYcizzhn3J7ey
+    GY2Tb224iFmTQL6Ybd0PAwULQQMdGGye6T41iFK3KAyLs1faVc2a9vOtTOkceYnxZJI8
+    jeydmiwHBF5GusZw4dOHdZUfCNwScuAyGyy0gRm0/PAWr8m5Rj/wpEYwtOPKjagVk+Ab
+    oSGw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1762556732;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=uotiEQ+QC7NYTRRNNCoNIgCZoNMIJV0bTwBn4JbEs9c=;
+    b=Kdq9/bP0i1uH5WpVnOUExWanA+EIX7la+dyUi2y4rGhP3bmOSFBVbKLOsApGRaGeLY
+    uxIvFWJznPsLWTu0gooZEAAGpd+GG6CPtix7FIcUARbXe8nOlo10+vhQ97NW9s5CghMP
+    Q/Cf2ZhT4i7Hq7oNDgDEQLJxkhGkNxaYHUpWxMF47jyvJviDiHcJYHDPg8qpHGoI7t+7
+    Dnk5/v15mvdHT6FC6jflBuVOSpp53yeHI0J1AV6pZKov8bWRKPyGZbeo2DtfcOIHyTVd
+    c3tkWasYM73KfBdc++ue5RCa3Sf7bx29UVhnoBTFucIY22TIgobsG5v4vdeGxlLTeaKG
+    NdKA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1762556732;
+    s=strato-dkim-0003; d=iokpp.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=uotiEQ+QC7NYTRRNNCoNIgCZoNMIJV0bTwBn4JbEs9c=;
+    b=UpNdSuIpJY3ZMp0hquhlZRVLMSk2ClhQ9LYC6LRl9UhWJwJL6JriNRfGy4PknwHq8O
+    wtnlF67NbRgdORXRZHAA==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSfNuhhDSDt3O256fJ4HnWXON1RCk6IvFmDk3pfNYaBAA9V8VVg9RNybYRrdPP/A="
+Received: from Munilab01-lab.speedport.ip
+    by smtp.strato.de (RZmta 54.0.0 AUTH)
+    with ESMTPSA id zd76761A7N5WNXW
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sat, 8 Nov 2025 00:05:32 +0100 (CET)
+From: Bean Huo <beanhuo@iokpp.de>
+To: avri.altan@wdc.com,
+	bvanassche@acm.org,
+	alim.akhtar@samsung.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	can.guo@oss.qualcomm.com,
+	ulf.hansson@linaro.org,
+	beanhuo@micron.com,
+	jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] drm/rcar-du: dsi: Handle both DRM_MODE_FLAG_N.SYNC and !DRM_MODE_FLAG_P.SYNC
-Date: Sat,  8 Nov 2025 00:04:10 +0100
-Message-ID: <20251107230419.471866-1-marek.vasut+renesas@mailbox.org>
+	Bean Huo <beanhuo@iokpp.de>
+Subject: [PATCH v7 0/3] Add OP-TEE based RPMB driver for UFS devices
+Date: Sat,  8 Nov 2025 00:05:15 +0100
+Message-Id: <20251107230518.4060231-1-beanhuo@iokpp.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,55 +99,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 2e5fe89e8ece91143de
-X-MBO-RS-META: 7qbcnczhz7r1s9zthm5qjinkkzpqtb6s
-X-Rspamd-Queue-Id: 4d3F4V1sJPz9tky
+Content-Type: text/plain; charset="us-ascii"
 
-Since commit 94fe479fae96 ("drm/rcar-du: dsi: Clean up handling of DRM mode flags")
-the driver does not set TXVMVPRMSET0R_VSPOL_LOW and TXVMVPRMSET0R_HSPOL_LOW
-for modes which set neither DRM_MODE_FLAG_[PN].SYNC. The previous behavior
-was to assume that neither flag means DRM_MODE_FLAG_N.SYNC . Restore the
-previous behavior for maximum compatibility.
+his patch series introduces OP-TEE based RPMB (Replay Protected Memory Block)
+support for UFS devices, extending the kernel-level secure storage capabilities
+that are currently available for eMMC devices.
 
-Fixes: 94fe479fae96 ("drm/rcar-du: dsi: Clean up handling of DRM mode flags")
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: David Airlie <airlied@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Previously, OP-TEE required a userspace supplicant to access RPMB partitions,
+which created complex dependencies and reliability issues, especially during
+early boot scenarios. Recent work by Linaro has moved core supplicant
+functionality directly into the Linux kernel for eMMC devices, eliminating
+userspace dependencies and enabling immediate secure storage access. This series
+extends the same approach to UFS devices, which are used in enterprise and mobile
+applications that require secure storage capabilities.
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-index 9413b76d0bfce..98bd7f40adbea 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-@@ -492,9 +492,11 @@ static void rcar_mipi_dsi_set_display_timing(struct rcar_mipi_dsi *dsi,
- 
- 	/* Configuration for Video Parameters, input is always RGB888 */
- 	vprmset0r = TXVMVPRMSET0R_BPP_24;
--	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-+	if ((mode->flags & DRM_MODE_FLAG_NVSYNC) ||
-+	    !(mode->flags & DRM_MODE_FLAG_PVSYNC))
- 		vprmset0r |= TXVMVPRMSET0R_VSPOL_LOW;
--	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-+	if ((mode->flags & DRM_MODE_FLAG_NHSYNC) ||
-+	    !(mode->flags & DRM_MODE_FLAG_PHSYNC))
- 		vprmset0r |= TXVMVPRMSET0R_HSPOL_LOW;
- 
- 	vprmset1r = TXVMVPRMSET1R_VACTIVE(mode->vdisplay)
+Benefits:
+- Eliminates dependency on userspace supplicant for UFS RPMB access
+- Enables early boot secure storage access (e.g., fTPM, secure UEFI variables)
+- Provides kernel-level RPMB access as soon as UFS driver is initialized
+- Removes complex initramfs dependencies and boot ordering requirements
+- Ensures reliable and deterministic secure storage operations
+- Supports both built-in and modular fTPM configurations.
+
+
+ Prerequisites:
+  --------------
+  This patch series depends on commit 7e8242405b94 ("rpmb: move struct rpmb_frame to
+  common header") which has been merged into mainline v6.18-rc2:
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7e8242405b94ceac6db820de7d4fd9318cbc1219
+
+v6 --v7:
+      1. Rebased patch.
+
+v5 -- v6:
+      1. Added a comment in ufshcd_create_device_id() to warn against modifying the
+        device ID format without understanding its impact.
+
+v4 -- v5:
+      1. Added helper function ufshcd_create_device_id() to generate unique device
+      	 identifier by combining manufacturer ID, specification version, model name,
+	 serial number (as hex), device version, and manufacture date.
+      2. Added device_id field to struct ufs_dev_info for storing allocated unique device
+      	 identifier string.
+      3. Modified UFS RPMB driver to use device_id instead of just serial_number for creating
+         unique RPMB device identifiers
+v3 -- v4:
+    1. Replaced patch "scsi: ufs: core: Remove duplicate macro definitions" with
+       "scsi: ufs: core: Convert string descriptor format macros to enum" based on
+       feedback from Bart Van Assche
+    2. Converted SD_ASCII_STD and SD_RAW from boolean macros to enum type for
+       improved code readability
+    3. Moved ufshcd_read_string_desc() declaration from include/ufs/ufshcd.h to
+       drivers/ufs/core/ufshcd-priv.h since it's not exported
+
+v2 -- v3:
+    1. Removed patch "rpmb: move rpmb_frame struct and constants to common header". since it
+       has been queued in mmc tree, and added a new patch:
+       "scsi: ufs: core: Remove duplicate macro definitions"
+    2. Incorporated suggestions from Jens
+    3. Added check if Advanced RPMB is enabled, if enabled we will not register UFS OP-TEE RPMB.
+
+v1 -- v2:
+    1. Added fix tag for patch [2/3]
+    2. Incorporated feedback and suggestions from Bart
+
+RFC v1 -- v1:
+    1. Added support for all UFS RPMB regions based on https://github.com/OP-TEE/optee_os/issues/7532
+    2. Incorporated feedback and suggestions from Bart
+
+Bean Huo (3):
+  scsi: ufs: core: Convert string descriptor format macros to enum
+  scsi: ufs: core: fix incorrect buffer duplication in
+    ufshcd_read_string_desc()
+  scsi: ufs: core: Add OP-TEE based RPMB driver for UFS devices
+
+ drivers/misc/Kconfig           |   2 +-
+ drivers/ufs/core/Makefile      |   1 +
+ drivers/ufs/core/ufs-rpmb.c    | 254 +++++++++++++++++++++++++++++++++
+ drivers/ufs/core/ufshcd-priv.h |  27 +++-
+ drivers/ufs/core/ufshcd.c      |  96 +++++++++++--
+ include/ufs/ufs.h              |   5 +
+ include/ufs/ufshcd.h           |  12 +-
+ 7 files changed, 376 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/ufs/core/ufs-rpmb.c
+
 -- 
-2.51.0
+2.34.1
 
 
