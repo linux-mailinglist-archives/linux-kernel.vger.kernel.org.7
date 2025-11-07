@@ -1,86 +1,147 @@
-Return-Path: <linux-kernel+bounces-889631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D07C3E1AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:16:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42841C3E1FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D083ABE7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:16:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBAE3AD28A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A343B2F5472;
-	Fri,  7 Nov 2025 01:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HVTN6yAR"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55C62F60D1;
+	Fri,  7 Nov 2025 01:25:43 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714E03D6F;
-	Fri,  7 Nov 2025 01:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347372D3A77;
+	Fri,  7 Nov 2025 01:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762478194; cv=none; b=pLXeUMMsA6jZuP7CYMfKxGN1+n0DpePWbgcGjOo2/XzBtKh2gqVL0GmObbRYZ2x3953KOQMbf0LKTUqTkdugkTkCVp6nR4NBmhle1kiBohu3ylTBglNbbrhNpoOmfxzuUaz87BNRRebIf9iFp7AaEggJvwFFApBBnNJX3fVsVa4=
+	t=1762478743; cv=none; b=fzoz1L9UBk3IanOmxFnL2k5G7ONdsoADC09qJTaKEyc/xAjEym10n+eJ64oEHHHlRq3yhwEP4FP0DW/KzMekXCMHwcsEzEtevzu9xl1fld7quJRGatFnCDJNCgRy1X+Uq4wjs9WrctSCmUEc6QTT+LHWP1vyGXYghn2Nx6kCLP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762478194; c=relaxed/simple;
-	bh=oRGd3RtIX3gjEjwMa7vHSaMXXF8+AcujGJswpuabMIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImDOHrHYTn+4rIC/ku1WkyatDpbh+rr0SZ5gxB6Dka36gBxYbV1kLDykkiaGXiadApYZSgDmrS6HmZlPF5db1m3j9H5FiQevyzIRkskEgfh193Co+yHladi7YsvdFWpGkgKXym1D6CijjdLw1KOODk/MWRrGKPwWW80S6s1U2iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HVTN6yAR; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xSn6sQyEp8F+TSgDXArYJ+Bzx7HU8Abi3PsklIJKrZU=; b=HVTN6yARUqOvNDNIamnQo9XtuJ
-	CZ7YBhqW5xGq1vLjJIhwNwmXifyvkmM2f+LfalgjL2tSp8TPOxs0FXWTAy1Ik9RI1qrgmEfjFavle
-	uVfp+RVy8BJ1P5pzbZlLcevpo6Molc0REMC2yCP6KuW9O8ZFMwG5pYxitdkatmTaeH0c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vHB5N-00DAie-4v; Fri, 07 Nov 2025 02:16:17 +0100
-Date: Fri, 7 Nov 2025 02:16:17 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Dege <michael.dege@renesas.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Paul Barker <paul@pbarker.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH net-next 02/10] net: renesas: rswitch: enable Phy link
- status pin
-Message-ID: <eda96e9b-2a35-42e8-b1dd-ffde39644fbf@lunn.ch>
-References: <20251106-add_l3_routing-v1-0-dcbb8368ca54@renesas.com>
- <20251106-add_l3_routing-v1-2-dcbb8368ca54@renesas.com>
+	s=arc-20240116; t=1762478743; c=relaxed/simple;
+	bh=l+HkW8boKXXIbvN9jqeLG3k3Gf7ksT07ZL9Tg4hUtyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jiv8jbkxeBtZwF1iseltb2Jw3kti7farGq718DcUdDQfITCTlv1bR7cZmlIlcJRajsLf/MnqdmQAlbX8v3ZxH/67jyH3twd3YyHavccQKd8a5WtHDo1imIFvTvorLQ9Ukm7vuNaUY3z0v563LbbmKRhrUxLjY0dzSLxpS1dkk+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 5C2D487C3A;
+	Fri,  7 Nov 2025 01:16:48 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 535202000F;
+	Fri,  7 Nov 2025 01:16:46 +0000 (UTC)
+Date: Thu, 6 Nov 2025 20:16:44 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
+ Siewior <bigeasy@linutronix.de>, bpf@vger.kernel.org, frederic@kernel.org
+Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
+ __DO_TRACE_CALL() with SRCU-fast
+Message-ID: <20251106201644.3eef6a4a@batman.local.home>
+In-Reply-To: <46365769-2b3a-4da1-a926-1b3e489d434a@paulmck-laptop>
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+	<20251105203216.2701005-10-paulmck@kernel.org>
+	<20251106110230.08e877ff@batman.local.home>
+	<522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
+	<20251106121005.76087677@gandalf.local.home>
+	<eb59555d-f3e8-47c9-b519-a7b628e68885@paulmck-laptop>
+	<20251106190314.5a43cc10@gandalf.local.home>
+	<46365769-2b3a-4da1-a926-1b3e489d434a@paulmck-laptop>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106-add_l3_routing-v1-2-dcbb8368ca54@renesas.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 535202000F
+X-Stat-Signature: ujusm8xsq5jngca3san18n6facuf7mr7
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18J1tqfJ/0WoJd3jGL9TNSLJ6HHk3PrGPk=
+X-HE-Tag: 1762478206-621186
+X-HE-Meta: U2FsdGVkX195KBIqfQ3B8KODLF1oxlJRib/7IceoXWErrBQMnYcdQn8apKV3ByQ7rgJwWG77VJz0PBudH/QbiZYvogdwtJx7QjKJnsS4rvzUZlFVcrAZ3Enr3Nik8saTDhNiEgflpxoe8mvH7hBLEv0uxwiZJR4cLIvVQ/9QgWAH//sN8PuLun8ErOwWFV5AjYANzLhKZcxKiHWiEy3+L7yYgWOfetuu2OZYheQUwlHyknJMl2UfHhN6CgQAGjFDVNK+IgVqtOSoVAdGO6mo6FOQa3VHz9RzKvV9e45hAulDTmDJRfXp6L97/MPcLTjX2i3XSJ8WGtpoSzxzyimneqCEfwejvTcCHycjaJZ80sVQo737aosBJXtowhFr6/9nUrwTh8+zWBeDvGIdOT+Y8Q==
 
-On Thu, Nov 06, 2025 at 01:55:26PM +0100, Michael Dege wrote:
-> Enable Phy link status pin for boards which support this feature.
+On Thu, 6 Nov 2025 17:04:33 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > 
+> > It gets a bit more confusing. We see "migrate disabled" (the last number)
+> > except when preemption is enabled.  
+> 
+> Huh.  Would something like "...11" indicate that both preemption and
+> migration are disabled?
 
-Probably repeating what others have said. Please zoom out and give us
-an idea what a link-status pin is? I don't remember seeing this term
-used before.
+Preemption was disabled when coming in.
 
-	Andrew
+> 
+> >                                    That's because in your code, we only do
+> > the migrate dance when preemption is disabled:
+> >   
+> > > +			if (IS_ENABLED(CONFIG_PREEMPT_RT) && preemptible()) {	\  
+> 
+> You lost me on this one.  Wouldn't the "preemptible()" condition in that
+> "if" statement mean that migration is disabled only when preemption
+> is *enabled*?
+> 
+> What am I missing here?
+
+So preemption is disabled when the event was hit. That would make
+"preemptible()" false, and we will then up the preempt_count again and
+not disable migration.
+
+The code that records the preempt count expects the tracing code to
+increment the preempt_count, so it decrements it by one. Thus it records;
+
+  ...1.
+
+As migrate disable wasn't set.
+
+> 
+> > > +				guard(srcu_fast_notrace)(&tracepoint_srcu);	\
+> > > +				guard(migrate)();				\
+> > > +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> > > +			} else {						\
+> > > +				guard(preempt_notrace)();			\
+> > > +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> > > +			}  
+> > 
+> > And that will make accounting in the trace event callback much more
+> > difficult, when it's sometimes disabling migration and sometimes disabling
+> > preemption. It must do one or the other. It can't be conditional like that.
+> > 
+> > With my update below, it goes back to normal:
+> > 
+> >             bash-1040    [004] d..2.    49.339890: lock_release: 000000001d24683a tasklist_lock
+> >             bash-1040    [004] d..2.    49.339890: irq_enable: caller=_raw_write_unlock_irq+0x28/0x50 parent=0x0
+> >             bash-1040    [004] ...1.    49.339891: lock_release: 00000000246b21a5 rcu_read_lock
+> >             bash-1040    [004] .....    49.339891: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+> >             bash-1040    [004] .....    49.339892: lock_release: 0000000084e3738a &mm->mmap_lock
+> >             bash-1040    [004] .....    49.339892: lock_acquire: 00000000f5b22878 read rcu_read_lock_trace
+> >             bash-1040    [004] .....    49.339892: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+> >             bash-1040    [004] .....    49.339893: lock_release: 0000000084e3738a &mm->mmap_lock
+> >             bash-1040    [004] .....    49.339893: sys_exit: NR 109 = 0
+> >             bash-1040    [004] .....    49.339893: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+> >             bash-1040    [004] .....    49.339894: lock_release: 0000000084e3738a &mm->mmap_lock
+> >             bash-1040    [004] .....    49.339894: sys_setpgid -> 0x0
+> >             bash-1040    [004] .....    49.339895: lock_release: 00000000f5b22878 rcu_read_lock_trace
+> >             bash-1040    [004] d....    49.339895: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
+> >             bash-1040    [004] d....    49.339895: irq_enable: caller=do_syscall_64+0x167/0x9a0 parent=0x0
+> >             bash-1040    [004] d....    49.339897: irq_disable: caller=irqentry_enter+0x57/0x60 parent=0x0
+> > 
+> > I did some minor testing of this patch both with and without PREEMPT_RT
+> > enabled. This replaces this current patch. Feel free to use it.  
+> 
+> OK, I will add it with your SoB and give it a spin.  Thank you!
+
+Signed-off-by: Steve Rostedt (Google) <rostedt@goodmis.org>
+
+Cheers,
+
+-- Steve
 
