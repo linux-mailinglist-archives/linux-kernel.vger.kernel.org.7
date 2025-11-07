@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-890786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1308DC40F67
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:59:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7602C40F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:59:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF96421CFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E07E422CB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF593333741;
-	Fri,  7 Nov 2025 16:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4284E333740;
+	Fri,  7 Nov 2025 16:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RG1x+TTA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DT62PiDh"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D9C2C21EA;
-	Fri,  7 Nov 2025 16:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DFB33372D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762534726; cv=none; b=lKwiSwXLvn/s818wWNSF/4n8Y1xTx22lmjttdfwznCRmGZVAMN/nORnnvKAUSefVJHb5kQGieolb88m/ADRy/DMozlUuFApmARtRz7cD/LicStb/CqbOVDV7Qr6dMmiOUVlw5RROBS1lEd1piEW9xbRAD/b3QrEpfqcQsBNX4oI=
+	t=1762534744; cv=none; b=iZ+5e/eUG0ir3JV0Uo8oJEQtMZovHnH7AtsTss9MECaQObPToLj7k2x98eJ06YjsYJRd0ya2tGoUE1/fEZZPoo7dyfB4wROpAI9QmI0lMG64RGG4Fc5kxXcS91ArO4DB3mFKAYQSflKU5njodvdJp61vHhZzAMnO7v55prD/uhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762534726; c=relaxed/simple;
-	bh=Deg5hP1tnfyqQJxvp93MwJaREyzV5XSriYRCDYcaoIw=;
+	s=arc-20240116; t=1762534744; c=relaxed/simple;
+	bh=cJuEyJBd8vNxec7ils9DOazLPyWiTBMKYf6Z8sfY0UY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avE3fuP95J+J/6SaQzrnV9scZmk7Vn785IHDNjJrXCauXClv8xOANgbzHEa61pbqHbgroqK9VRs73IlgOH6UGmQIIIAMA/ewqwYj9cpetXtG4APKDk67sGcxzlAkO6qG8WiXZDrRPv/eO8XxHOjdXPNZYrsuwEAiSycyTbHAk4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RG1x+TTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6264C116B1;
-	Fri,  7 Nov 2025 16:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762534725;
-	bh=Deg5hP1tnfyqQJxvp93MwJaREyzV5XSriYRCDYcaoIw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RG1x+TTAKKD/cyeabvnyLQecTtAkAoJJdfXtmDUm8y4WRJwTUuGfS1kSik8J3F0Ng
-	 ltIw6btFhrVQVWmeGr2l5UxLm5IdNDaO1rPcBm1232Oxohl3Mwp+KeF5/hHO+mymBy
-	 7TrK5Dnl1il/lZUrOS9g5Bph4wy9DNDEhePBGtYuHJryAlcE4i60yxGO0glFbIS88F
-	 fmdw2CUEV6Bvobj4VvUnWGwoeBpx5A1HE2dYzDRXHPQpiAIGssEQ6yi/7jrG8c9voT
-	 C+Xj2YNNwOtzX0gUk5GA442O5BfZl3ULta/AU5KWYtthWMy6gZ0A7FnVsbP040WX98
-	 zB7gyNcFs5ERQ==
-Date: Fri, 7 Nov 2025 16:58:39 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	"irving.ch.lin" <irving-ch.lin@mediatek.com>,
-	linux-kernel@vger.kernel.org, sirius.wang@mediatek.com,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, netdev@vger.kernel.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>, jh.hsu@mediatek.com,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	Qiqi Wang <qiqi.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	vince-wl.liu@mediatek.com,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v3 02/21] dt-bindings: power: mediatek: Add MT8189 power
- domain definitions
-Message-ID: <20251107-fabric-handbook-fa4aea68e64e@spud>
-References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
- <20251106124330.1145600-3-irving-ch.lin@mediatek.com>
- <176243607706.3652517.3944575874711134298.robh@kernel.org>
- <20251106-spearhead-cornmeal-1a03eead6e8a@spud>
- <20251107-polar-satisfied-kestrel-8bd72b@kuoka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjNmbrq1Pd+Yx1zRNRBxzV0rK78PwUWCtPh8j9rjOlBbBzSf7xrP25Vb6j5MNKqJ91PsW7zLlRjJyUHWqMJpGkUsfEYfTakXm0SuL3bC6fRy50t6ZtU8lPzRMKhrRzqWWWAWu98eaA44pUH6vt1mLYlfTM2N7rk1+HPbbUmJ3LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DT62PiDh; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33be037cf73so948874a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:59:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762534742; x=1763139542; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t4sd5p9K6Q7d7iLpd9Xn8vyRDq9SyY6gsIqiEGANBmA=;
+        b=DT62PiDhor/0JlwSqPbIOUpWd7T3WeVdwYryLsv+gd1/o/WaSI0y8EuuX3i8j4eiJy
+         Qe7oans013JeczyduMoN8WVd3bZTPtgtaiBI0Kki6cAQpZ+1BLrkLvOuB4ltztpZ63oC
+         rTbsJerAIVj/cayccEVgNwvGrGTMhNFcTTd5WTtoLHnC9e5hoz+A5UmTPDtInXmo6FAt
+         cyqY+2AAQOuPsbOrpTWBdDrN8bp6/jl32MfVQpN+Cx4kHU0S5Rdcs6JJmRzLu/MPxzlU
+         auBk9jolBJdvBTPMNU0dWI3ul/AKoRrD/uikzx0nL6FJaQ+Ya7clvbpFoCg5i3GQBCgi
+         phGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762534742; x=1763139542;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t4sd5p9K6Q7d7iLpd9Xn8vyRDq9SyY6gsIqiEGANBmA=;
+        b=uVA+w4iTvHe3SY3LkRbcaEA2vjjue9nu2xJwkjnzj43SNRFq9eYXLApWdLEdqdS6hr
+         Vcx+NzeK96ed4aFb6zLv2n4MnU8r3SCCs0f5oLgCMtxjfZbOSAnbtmh4pgO6XQ82euV3
+         YrN909uC7QbLDIDBoNRgE3G5tKITAPA0bh5/tve4bnihYSzuQaMyCmwvIfLlGAPf6MuM
+         cLeGHA30AcIOBPO5dDInYNjLpoUMXsiMOroND4PWuOaqsyKwj26MbHFoAXN2yk6p9jat
+         0jUHGMYoyvsH5CCKZOwOoocowXI3I5EI6wW4K4KWYZo1AoAMANy76b9CII5eZ5EYqha2
+         zdDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVR9lzCTqDIsgi0BgAnlQG1IYqR7PiL1XDnFmdmDQ+EhDrFtdLoc7je8BQIuEfbfvvG8aE/ZmnQOHwU0Jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHikobbMEWRp3Cb0WDRig29kpfK6AWqWHmUjZXZTdVeiauj6wZ
+	icavWsyQvE6S1MmU/0OZbzXgXiuUs2bz/BVIXDI53IVrwGH8eHXkBoUM
+X-Gm-Gg: ASbGncvDXUELEkVMD915KXBcn0joi9QfsU4ksD6ShV+946z5OPDL54HuIFuZhtVmYg5
+	iSDpB3927Cj3U2VOQmv6k0fOxeScRa8x6gtIsDGVNDm4eQ4Yw15rHiXMarLZMoMo1nLZgDR2hRJ
+	F2Cr/1H8822D5eEe99jUV1w7/u9SKn9bbVgX3J1Wba3K5zt94+wW0odRx1vSwc3NzoAlsVn7yyX
+	deZ0IQrgZ07rTQckigmnVp0iH3FmrbPaiBgbe4ceh2NviEOyMDRyQMj+bVnppqPRUYs+dSmjlXm
+	b/BCaYZX46xtpCCQ2h8zepQISwBmT30jxnrDoLFWh8YXZu2mEYXfUL0EUDyienW8lQBlvxoOuSu
+	664g4C2JmxLduBkYJf7IkCkBP5SyrC3W2y5k8MqYf4mvxVHJRZWUSXfjzzb1xre0UsQt083Sea8
+	CEjBGhfhEAdLiLL/QEEm2epjuNnfkWWQHN
+X-Google-Smtp-Source: AGHT+IHMVwIIf/5HSM26FvAI00bqSm2Te209tly41PcGS5bZmMWGwjGv3U8TNmpLDYqzMgZOpWO5tg==
+X-Received: by 2002:a17:90b:2547:b0:340:ecad:414 with SMTP id 98e67ed59e1d1-3434c575537mr4058720a91.27.1762534742462;
+        Fri, 07 Nov 2025 08:59:02 -0800 (PST)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a67e2f82sm10072766a91.0.2025.11.07.08.59.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 08:59:01 -0800 (PST)
+Date: Fri, 7 Nov 2025 08:58:59 -0800
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Brodsky <kevin.brodsky@arm.com>, Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH Resend] mm: Refine __{pgd,p4d,pud,pmd,pte}_alloc_one_*()
+ about HIGHMEM
+Message-ID: <aQ4lU02gPNCO9eXB@fedora>
+References: <20251107095922.3106390-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="T8z4/ZRRt2Y/34dZ"
-Content-Disposition: inline
-In-Reply-To: <20251107-polar-satisfied-kestrel-8bd72b@kuoka>
-
-
---T8z4/ZRRt2Y/34dZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251107095922.3106390-1-chenhuacai@loongson.cn>
 
-On Fri, Nov 07, 2025 at 08:26:34AM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Nov 06, 2025 at 05:17:39PM +0000, Conor Dooley wrote:
-> > On Thu, Nov 06, 2025 at 07:34:37AM -0600, Rob Herring (Arm) wrote:
-> > >=20
-> > > On Thu, 06 Nov 2025 20:41:47 +0800, irving.ch.lin wrote:
-> > > > From: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> > > >=20
-> > > > Add device tree bindings for the power domains of MediaTek MT8189 S=
-oC.
-> > > >=20
-> > > > Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> > > > ---
-> > > >  .../power/mediatek,power-controller.yaml      |  1 +
-> > > >  .../dt-bindings/power/mediatek,mt8189-power.h | 38 +++++++++++++++=
-++++
-> > > >  2 files changed, 39 insertions(+)
-> > > >  create mode 100644 include/dt-bindings/power/mediatek,mt8189-power=
-=2Eh
-> > > >=20
-> > >=20
-> > > My bot found errors running 'make dt_binding_check' on your patch:
-> > >=20
-> > > yamllint warnings/errors:
-> > > ./Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml:=
-25:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-> >=20
-> > pw-bot: changes-requested
->=20
-> I think this was bot's false positive - that's a different file, not
-> changed here. The patch seems fine.
->=20
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Fri, Nov 07, 2025 at 05:59:22PM +0800, Huacai Chen wrote:
+> __{pgd,p4d,pud,pmd,pte}_alloc_one_*() always allocate pages with GFP
+> flag GFP_PGTABLE_KERNEL/GFP_PGTABLE_USER. These two macros are defined
+> as follows:
+> 
+>  #define GFP_PGTABLE_KERNEL	(GFP_KERNEL | __GFP_ZERO)
+>  #define GFP_PGTABLE_USER	(GFP_PGTABLE_KERNEL | __GFP_ACCOUNT)
+> 
+> There is no __GFP_HIGHMEM in them, so we needn't to clear __GFP_HIGHMEM
+> explicitly.
+> 
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
 
-
-Oh dear, my bad! Good thing I sent the mail, so you noticed, rather than
-just setting the status in patchwork. I saw "mediatek,mt8189" and read
-nothing else in the error, I suppose.
-
---T8z4/ZRRt2Y/34dZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ4lOwAKCRB4tDGHoIJi
-0sKSAPwKZVe3dwNNrDJA98CxIbR5p1CvuU/zHuxccA9twIforwEA80yya84iofrG
-AhtlRaBMllXkasNygF6wjSxLj+4AYwU=
-=hCrv
------END PGP SIGNATURE-----
-
---T8z4/ZRRt2Y/34dZ--
+I'm not really sure what "Refine ... about HIGHMEM" is supposed to mean.
+Might it be clearer to title this something like "Remove unnecessary
+highmem in ..."?
 
