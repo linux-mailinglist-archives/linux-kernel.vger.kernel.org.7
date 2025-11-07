@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-890579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1301C40650
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:36:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60EEC4067A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35BBE4EAAB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F933AB6FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BFD31B110;
-	Fri,  7 Nov 2025 14:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFB1329C4B;
+	Fri,  7 Nov 2025 14:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PCzMHG7O"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VDlLkj9U"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25752765C5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04CC322C98
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762526196; cv=none; b=hiM/qD73S3Y2AkWnv1UmE4/WO+IXgXTXvI2+KeWM/WocmlwOymQGUZGSn9LdX6yucMiNyA/6E9DEkUmxvfe6njP7RlcaqxTHNdsIoScnePOqb9ihP6Y60BWdI073jZsrDAh1hftu6TApKMHh7P7IhgrWu+fKobkej2F0PPSR180=
+	t=1762526327; cv=none; b=YtvmWcnEgoL1nyX0kY/qFxTNbJwG1l5TKupXqUDyNfix+uio4GIzOstb7uRJpfeEZV1QqSM/mcSfukURmimld4V12uFBiRJGvrTRXcDwR+3nGNNGlYcWmQJMbwbYhkE3os4e45FxfbigX0jta8iTKiM5uIw1uxDbSg7Jtx/zqdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762526196; c=relaxed/simple;
-	bh=pdHuz77C77QQbe4jiVt9Kjyj6f+b9ix2y21sqpxtAxg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AA32uEK3vOQ8JJBL19SzQGHs3uYXrV3GpDlaAD7GuBM9TiQufM//vi+NMZLEZmrC6xW2N+pzcEHX+mGV5PkTtK+EQNzc8xT3nNjmhRyXMwfEulYEavUVlIyAR01Z8ewnfH/5UDWtVmO000/u7uAkHmj8SH+yJ4tjUP1TeU6GeGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PCzMHG7O; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1762526327; c=relaxed/simple;
+	bh=9Eu3yarqsEXMS8lVYC67u2tBOt3nsWm7YB99GQ+qa3E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jd+pfR9NDrLQch16NkvfZ1uRs/8ERJMQCMuuJuvDR3Wr94i0FDKS9iZl4NYirMsC1rYCcbvJEQ4j2aXpzP1ftADWyu+f5EjawSNzKdrFWzydmY3EofVRl6+0u0a1kl2m/WdE3yF3D2qNor+4Pvg6JMdGrF6Jp8I8EewgNgtipn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VDlLkj9U; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so4564285e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:36:34 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-429c82bf86bso430940f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:38:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762526193; x=1763130993; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1762526324; x=1763131124; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uFwY4O/H3CLtrImG4wiLUJMhAuKJ/ASp7QcQ+wm2Eik=;
-        b=PCzMHG7OMUW9AAhRiqsz9lZ1+jFQIQjlHxf1iEXw3nXkDIWTaB8mKMEDw+1HKUgup4
-         9H2w9BgaJaimo+agAWCfiscnV85E1jucTu1UTfcGGJHJRiRaLkdgSyAI600G7xDbBQBc
-         aMvxb89vq/iatTJzeu/LeqavLqaXuy9iYcn46ZXruCgFFeTLaS4RWDiwjWNklNotM8HK
-         TNTgl+WUK0vJL/nTUVO2gddvoYiqtuoZ+UcLbfGHdG3l5nMANq/8I0p9z1v6i0O1khzh
-         PMJ8L+sCoPy604RIbjq1MPFvc7lQ2St3lQPuch8Lr7OSCOBPZEYG7H0O3KRcfI2xoR8g
-         fipg==
+        bh=+M2nfWocWAp3mZ4tDZ/NECiHNbUMiwpyH/iW4S7LXgE=;
+        b=VDlLkj9UEgiEtajcShLdJTpoKnYWzuUjxXIPD2/ybqpP2LkrNFPbLuMLSgjR7zqLe7
+         vFB+6XP/BIdeQrBXihiAPWkja1sbzWv33bpYoKxo6V/0Zdow5aPeSkX8cGX5SJrV4Cl9
+         Vylq+dKMT0HaEWDgI6KqYMEhb6BpLN28ZxZrjS3G3e1QOpQGK4s0eFqnkvq4zUrGpqJt
+         Rl0Ikqs5Tko2p599W+2BqXaerA2xsZH1o2PAHqidKN7vRKkdn6Fyn7tvNqLtq+iaCFBM
+         OXca6hTOA5HBoWfX+5yg1IlwbgQkm1ckkapK5PGyuN3zibdlnJGkOPxQXabOVlxgdFqq
+         GAaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762526193; x=1763130993;
+        d=1e100.net; s=20230601; t=1762526324; x=1763131124;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uFwY4O/H3CLtrImG4wiLUJMhAuKJ/ASp7QcQ+wm2Eik=;
-        b=Sqd6mHMu8cQUpa42zhfQWV2y0KAprtjnBQRJ/EXK/Oulij8uRI+8CdfUC4eZn+dxFJ
-         tgE7RY5v5kXBiLv6jktIPv1c2h5ozmOTp0Y4pOMxVlaxqFc8cWYVLVy2COXQljC2Kmgw
-         299+K1Drmq39HMvAzliJX4eKGrabOU/QVVdyq8C7IQ4sfj2XOR2DyGSn2Gs9BjTOwogO
-         cPtyAo7MveLvrIxQr9A5pONhHmk1/pMyYLHn7v9gE6l0r3VnqBzjX02wizyXrNmDps1Z
-         Of3JO22QWtaM7RJpHAOEXE/uynUABK6ni5CIKMbsm8Y9vvxFf3HKdZVeqvSpy/3g8dDx
-         BblQ==
-X-Gm-Message-State: AOJu0Yxvzq03AtNG6/HGl1fgNc1E3rpCGEsYrA124MBHVFqGzqUvtpY8
-	tqV7GNtOYcvaFwZK9g6begKQxdWbOi5oIYoDYSYx++31i6qzM/exP219f//J3UNU/6oLYzhmmjz
-	YtuYq
-X-Gm-Gg: ASbGncvXetLySA7vdK8kdJwpBphuM4k7+ZbKCsRJyPBs5wYoWkJ/AOXzy/C/tzIcIsn
-	dYH8GXimZtE73JQJ282NJeU3MMWtRGWtPjUVbrj48o5/riYjNjiwy7ZBqOgoR6zQXKOZ1K9vK/T
-	mh9ENrBnJOgL79svJJEsGPLjV129ywuR0N4zvQTfTo3Bwr0Rt6zYhMUO5frCa5RddlU2Sz2KnPd
-	dyYsZ8l1q5SRTfL7CebeuILDcvB8u+E7dcPMfWSR35/VfjTPF5+KE2THi/3FqYljkzeVAhn/vvS
-	09YY53lHCYKaEALAXyAmBa+ljReeVJH5w4yu/+YCyfyNR3ivS1kZftPbcpLWKsZ/f3VVz9/LP6W
-	XESG5xgp3CA41Zi2XSF0r8wH2S+84R6S9XHmq3Vkd+SbIMfpYjW33sem7vmQMk5IYITkjUPOyE9
-	gkVyrw1YvB/J2AQ2fG6wrce9nL
-X-Google-Smtp-Source: AGHT+IHL2HFnWDwMb99ufUmB+DUpAFr4iCYh9KkrH1cwe+zCzO13bcOb9zFiLCvpx2y50z1jrx5Ykg==
-X-Received: by 2002:a05:600c:46ce:b0:46e:506b:20c5 with SMTP id 5b1f17b1804b1-4776bcd5a8cmr21733555e9.26.1762526192667;
-        Fri, 07 Nov 2025 06:36:32 -0800 (PST)
+        bh=+M2nfWocWAp3mZ4tDZ/NECiHNbUMiwpyH/iW4S7LXgE=;
+        b=oWGW6fJht5d7kd514Hoc57H61Ukfg/P5Nh5UQJE6yqAaCD//6SdYSricDoR8xgrnmz
+         1mOKTQpEc41WbU3mV8BnV84aaocPHHvzGQf4/n9bvy7GVczgbrjYp6Xz1HjHDEdPLRuw
+         7u84/P7zVxll2+9iaPPH1hjfSLHcvzR1di17EYDzotmmO2/QUQIHL5pmWVhdQPY3SM+9
+         chFrpUI6sfeWJu8iViDNWs9VyZW/RqJj1fKytM5oIGWJk+HPXpCUo+tkGYKwJG+LyGQs
+         gcJfI4NrB1uv6MT5gLikdrQ0R3ruR1/GKMaw+LxY14udp/X3XwU2RLOYiuZAJ344dsjP
+         lCUg==
+X-Gm-Message-State: AOJu0YxxNVGBFAH0dl24FTkBUU1EbS5XUKLNjNLE4RMk0cB/8IOlX0tu
+	7aIbeOFkCdK+bgSi/bCweBkPcXVG37O3ow7vB+JpactdmU7nJrrmrlyupfL5Rf1/bwQFSD+Q8J5
+	nyGrG
+X-Gm-Gg: ASbGncvev6jr38w9QdZGP/ycy3CADwMTvVtstwycsAnJJdZYWLmLk7cTsJBflX4DdR/
+	9fk1hssBjeg0DOY9PaiiQahXCd6+wpZS7bcJCM22sxJxVYj5ZM9iO8HloT5hQMABGYuxGTkyMcq
+	x8mObrHqqIMiiYfEuVVxbZNrL2e6IxphoFvIXCMjhjO8NK2z9esb9GpNCrZPvwwqanwF+qa4LLs
+	qKYUjnOlia5hM0Jcqph8b6yJlRzGKGaEcP3ARDUD0c0jPVNiNsg1oGBlNYBDE4VdbxGuE7q7gxv
+	Zm2b1BIfYL51Mu+Ryrd2LKjDx/LCbOsPOaGpMb/p36qyufx8rCORMkLEEN1yjsInfCsN+Hd9cVs
+	JA6E538y5Gk5wOECbZ7ifLyBoTGMm1yWEGMHrCjxRRd3/MRRcS2YRQe7m72y3N0/OEPKc+VT8Pw
+	cqNfO/yQ8yZANIIdfdwBn3fpZE
+X-Google-Smtp-Source: AGHT+IErAG7umGXc3Q32btkC2X/NwPm9eeE2SBi6Qlb6E6Dsctm3C4mBATHE2WTygUj7Gi1bpdmGng==
+X-Received: by 2002:a05:6000:178b:b0:426:dbee:3d06 with SMTP id ffacd0b85a97d-42adce35cffmr2917437f8f.22.1762526323850;
+        Fri, 07 Nov 2025 06:38:43 -0800 (PST)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd08834sm52478435e9.15.2025.11.07.06.36.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63df69sm5798411f8f.13.2025.11.07.06.38.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 06:36:32 -0800 (PST)
+        Fri, 07 Nov 2025 06:38:43 -0800 (PST)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
+	platform-driver-x86@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Marco Crivellari <marco.crivellari@suse.com>,
 	Michal Hocko <mhocko@suse.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
 	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH] PCI: shpchp: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 15:36:24 +0100
-Message-ID: <20251107143624.244978-1-marco.crivellari@suse.com>
+Subject: [PATCH] platform/surface: acpi-notify: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 15:38:37 +0100
+Message-ID: <20251107143837.247085-1-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -128,23 +129,22 @@ become the implicit default.
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/pci/hotplug/shpchp_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/platform/surface/surface_acpi_notify.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
-index 0c341453afc6..56308515ecba 100644
---- a/drivers/pci/hotplug/shpchp_core.c
-+++ b/drivers/pci/hotplug/shpchp_core.c
-@@ -80,7 +80,8 @@ static int init_slots(struct controller *ctrl)
- 		slot->device = ctrl->slot_device_offset + i;
- 		slot->number = ctrl->first_slot + (ctrl->slot_num_inc * i);
+diff --git a/drivers/platform/surface/surface_acpi_notify.c b/drivers/platform/surface/surface_acpi_notify.c
+index 3b30cfe3466b..a9dcb0bbe90e 100644
+--- a/drivers/platform/surface/surface_acpi_notify.c
++++ b/drivers/platform/surface/surface_acpi_notify.c
+@@ -862,7 +862,7 @@ static int __init san_init(void)
+ {
+ 	int ret;
  
--		slot->wq = alloc_workqueue("shpchp-%d", 0, 0, slot->number);
-+		slot->wq = alloc_workqueue("shpchp-%d", WQ_PERCPU, 0,
-+					   slot->number);
- 		if (!slot->wq) {
- 			retval = -ENOMEM;
- 			goto error_slot;
+-	san_wq = alloc_workqueue("san_wq", 0, 0);
++	san_wq = alloc_workqueue("san_wq", WQ_PERCPU, 0);
+ 	if (!san_wq)
+ 		return -ENOMEM;
+ 	ret = platform_driver_register(&surface_acpi_notify);
 -- 
 2.51.1
 
