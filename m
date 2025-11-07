@@ -1,155 +1,157 @@
-Return-Path: <linux-kernel+bounces-890778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD18C40E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:43:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F4BC40E9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F177418840B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06203B7646
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C989C3321BD;
-	Fri,  7 Nov 2025 16:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771603321B9;
+	Fri,  7 Nov 2025 16:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OmKJto0l"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="croOijXs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B533321A7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA26F2D0C7F;
+	Fri,  7 Nov 2025 16:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762533786; cv=none; b=bd28HxJTmhb/nGBVrNKRAHpjgl27sPmLPiNjMbUm+CLWEYMZgp8KgkHd2j8BwJmN+5wUi2vJ/2kU+4oICxy8Jx1uanDa0FENjxYQsJeweLmMnuaVqkHSow5jL9xmfiNSARRsz4AAHQgqSjMvnzQaB5jtRAGHDIR7iyFo0+/6A8A=
+	t=1762533864; cv=none; b=o3xiRU46w3YfMF1DI4vm0JPPNWpmu3eapRK8c9sYuU5h2r5Jk1gECmJrjcrX9NJk3jakkVf5xnJhOT8R+KWOT79fZ+HSg863FPxVOsD9/3w8ugOBLQIjfoNKgmCDnc8+rlvnfe0c9v/0/3dwtabkfmPZ8ztqOy1hMbBarunmXpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762533786; c=relaxed/simple;
-	bh=x1aBY8u88X0nutnqASK2cYZrDArpC2SWwtkeHNj5ygs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tXrceAlZitV100CfNvPNHZw6Gdmw3ENFsjf4ZEta0RYvEA41UbLDHtOTojrvlGMj9sbmf2u6oTH7rhEwEdb4stLdI8/RU9p3lR4caPqeD5AIfoCbR7m0ADg5YMcUF3G8tsRQ2cUaUD3Gxpt/pMNW/3oIpGM3FY2b+RggC0VnmcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OmKJto0l; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42b2c8fb84fso2095f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762533783; x=1763138583; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=on8bewL1RI4N4l+sU7wrnJnMvJdHM/hSBq36uJM+rEs=;
-        b=OmKJto0lOHCfjcwkBDnzhUGq5DpLuhAFhYJBraOhyEsuar8mOXRUW9W90rRPaVT3ms
-         q7pRmxZFnH9t25pn6K/khLNd4yVnl9Zk8nPrMmMUYCLuH6XbjPlIgRKTM5oMMRe+NYqr
-         YUCxTI9njzWBMMi2lHgZjWzXDCdIK1VsQYP1GGW6JEYAjzPKD5y1uhYSgYkB2Of8+8G4
-         nhnt7RV2qrQqcjZKAeih8FBP40JaUfn/kU2eyqxWeChhKfCQKt+bbVNAM1Wa2QYwOygT
-         j7BEnEER9u4A6/XIROTUVd6q8MWIpbSODwGRX3IeEEvrualaUk1NMrztIq9EiC6KImTH
-         EbRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762533783; x=1763138583;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=on8bewL1RI4N4l+sU7wrnJnMvJdHM/hSBq36uJM+rEs=;
-        b=gKGDmg/INppWH7Z2j/BhhQ3dKKB50eNBIXGKEZ9XDc5kJmopUFQ32ysJ3gU9kNE3FP
-         YC8dQB3ls9gpXE7/ibw6EQOsw0zdV8jjCxRHA8km+Q4fVNmeozTYSuLUO65Jx6PhWfyA
-         nq3Pf75RbLNoMz+7AGIuNxr6W3+c4UN/ZpTG0XvLr/m0rScGW/jSWwuSECYjqSTdif97
-         K03nDWDAB4jxHoRbgk/FbBrYBPQ4SyFYEwyiynGKhDkOV12aOQs0B61qPR1FtDANNFXh
-         t0lKIl5Mkbrmoxo2E2YLEG/7S5aqUEPkItfUQp/cFE27dhektkZtXIrj5KdUv1ZaT69T
-         yxUw==
-X-Gm-Message-State: AOJu0YzMqeVSfLNn46n5fJBG38De+6fzyW0IbltShE8b9YLGshiC8LiR
-	IVBtxHX02nH9I7KhDE4vp6gSujk7k9oSQhxd+NjbcgPkH15JQ8N6K+wxZPpmQrTLim4//x02no4
-	dsOmIo0YbGqvjIaSZ2IEHglAAAMyW9+8Hl7bKuKvX+fhFyoD4TUVedFQvRjTUZW7uvyI19kWP8m
-	AUGeXP58V/9L8lyowQXFMe+cmqkEdW8OBQsA==
-X-Google-Smtp-Source: AGHT+IErWQ/bAs6sgLKAGNRJ/4CQ20iQCILHo6B+nhBcFHGoZnZeYmzcBl/waJrrk8dDdmr4ZnLdN3g5
-X-Received: from wrzd3.prod.google.com ([2002:a5d:6dc3:0:b0:428:4fa9:ac7d])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:25c7:b0:426:d60f:746f
- with SMTP id ffacd0b85a97d-42ae5ac329dmr3140724f8f.30.1762533782550; Fri, 07
- Nov 2025 08:43:02 -0800 (PST)
-Date: Fri,  7 Nov 2025 17:42:41 +0100
+	s=arc-20240116; t=1762533864; c=relaxed/simple;
+	bh=uN5A0nfxCBtgRmilzRno1RSWZ+t8ZYSS8FZKDPXJoc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZM2apvGYSMvs2I2UCstOYopBlbv0EAjfjtLpU0u2uSJXF0poLHTLTCO2uMaa3UlsqrBhE2v7Jhau9EPVYtHKVDGWBX6ekLErTK5pDd1f0EuL8RGlTAIajr6gT35i46cl3CWg4vIa62kILJ850yBJPGI8lTFKeF8lwGKM7b330wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=croOijXs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0F1C19422;
+	Fri,  7 Nov 2025 16:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762533864;
+	bh=uN5A0nfxCBtgRmilzRno1RSWZ+t8ZYSS8FZKDPXJoc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=croOijXsOaCmraSCWpta1rmINCRaCuf5KW5aJJU5atJfo0PR9mbFiaLvL8CWXQMIn
+	 opjlUvQx0rRojJxT7nat/CcUPcV95JVwKC/c7v9S0UPtJQETb+NZDs+FDsIJxwJ6eU
+	 uRf4DVTquyXfH8W9aXd4NJ4uvyfyPoBvapIndYIRGaj8z/jPSPm2UJOJiAnpbopcQd
+	 JS0Wm/a01aO6B9yqNqtQibaKTFuf56emg7oT2WFssR1nLs8wFvSgcX+5EyLSKaat/q
+	 5jRZi1woXrmtsJyyxfGtSlOsVOpdYFEj3e3QWDpEorKb17sRkKn+T4f/iimf+4W5Ef
+	 9uZ2njDc9KaaQ==
+Date: Fri, 7 Nov 2025 17:44:21 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Sami Tolvanen <samitolvanen@google.com>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Daniel Gomez <da.gomez@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+Message-ID: <f374sh5rsbxvboowft6xpiimxlzw264i32txgiok53on2vxxu7@lpetaklaofzb>
+References: <20251104104827.1de36ea0@canb.auug.org.au>
+ <20251104105415.68bfb090@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2688; i=ardb@kernel.org;
- h=from:subject; bh=fwiBdr2UguIhUnvRRI7uFyScWi3GAhl3ehVZMRQfNi8=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIZNPsfETS8sT+bOnqzxSTleu8262DO08KLiGPZ7zEpuqR
- 7BbP39HKQuDGBeDrJgii8Dsv+92np4oVes8SxZmDisTyBAGLk4BmMgVVoZ/qkd7Dn76GcJq1qrt
- +mN7veu1Dxn/uqTmP7376OzXF98PNjH8L3QIvnNR8eVcj1u3Clb/+Kx5addtUe/GiMOC95nOxq/ dzwAA
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251107164240.2023366-2-ardb+git@google.com>
-Subject: [PATCH] drm/i195: Fix format string truncation warning
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="djey23n36i4u7ctk"
+Content-Disposition: inline
+In-Reply-To: <20251104105415.68bfb090@canb.auug.org.au>
+
+
+--djey23n36i4u7ctk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+MIME-Version: 1.0
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Daniel,
 
-GCC notices that the 16-byte uabi_name field could theoretically be too
-small for the formatted string if the instance number exceeds 100.
+On Tue, Nov 04, 2025 at 10:54:15AM +1100, Stephen Rothwell wrote:
+> [adding the modules tree contacts]
+>=20
+> On Tue, 4 Nov 2025 10:48:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > Today's linux-next merge of the pwm tree got a conflict in:
+> >=20
+> >   rust/macros/module.rs
+> >=20
+> > between commits:
+> >=20
+> >   3809d7a89fe5 ("rust: module: use a reference in macros::module::modul=
+e")
+> >   0b24f9740f26 ("rust: module: update the module macro with module para=
+meter support")
+> >=20
+> > from the modules tree and commit:
+> >=20
+> >   927687809649 ("rust: macros: Add support for 'imports_ns' to module!")
 
-Given that there are apparently ABI concerns here, this is the minimal
-fix that shuts up the compiler without changing the output or the
-maximum length for existing values < 100.
+I reshuffled my tree such that the import_ns commit sits directly on top
+of 6.18-rc1. The new commit-id is 739ad9be61e5.
 
-drivers/gpu/drm/i915/intel_memory_region.c: In function =E2=80=98intel_memo=
-ry_region_create=E2=80=99:
-drivers/gpu/drm/i915/intel_memory_region.c:273:61: error: =E2=80=98%u=E2=80=
-=99 directive output may be truncated writing between 1 and 5 bytes into a =
-region of size between 3 and 11 [-Werror=3Dformat-truncation=3D]
-  273 |         snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u",
-      |                                                             ^~
-drivers/gpu/drm/i915/intel_memory_region.c:273:58: note: directive argument=
- in the range [0, 65535]
-  273 |         snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u",
-      |                                                          ^~~~~~
-drivers/gpu/drm/i915/intel_memory_region.c:273:9: note: =E2=80=98snprintf=
-=E2=80=99 output between 7 and 19 bytes into a destination of size 16
-  273 |         snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u",
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  274 |                  intel_memory_type_str(type), instance);
-      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > from the pwm tree.
+> > [...]
+> >  -    if let Some(imports) =3D info.imports_ns {
+> > ++    if let Some(imports) =3D &info.imports_ns {
+> > +         for ns in imports {
+> > +             modinfo.emit("import_ns", &ns);
+> > +         }
+> > +     }
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
+Given that the conflict resolution is non-trivial and we already know
+what to do, I suggest you merge my commit into the modules tree.
 
-This is unlikely to be the right fix, but sending a wrong patch is
-usually a better way to elicit a response than just sending a bug
-report.
+I created a signed tag for that:
 
- drivers/gpu/drm/i915/intel_memory_region.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-diff --git a/drivers/gpu/drm/i915/intel_memory_region.c b/drivers/gpu/drm/i=
-915/intel_memory_region.c
-index 59bd603e6deb..ad4afcf0c58a 100644
---- a/drivers/gpu/drm/i915/intel_memory_region.c
-+++ b/drivers/gpu/drm/i915/intel_memory_region.c
-@@ -271,7 +271,7 @@ intel_memory_region_create(struct drm_i915_private *i91=
-5,
- 	mem->instance =3D instance;
-=20
- 	snprintf(mem->uabi_name, sizeof(mem->uabi_name), "%s%u",
--		 intel_memory_type_str(type), instance);
-+		 intel_memory_type_str(type), instance % 100);
-=20
- 	mutex_init(&mem->objects.lock);
- 	INIT_LIST_HEAD(&mem->objects.list);
---=20
-2.51.2.1041.gc1ab5b90ca-goog
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/r=
+ust-module-namespace
+
+for you to fetch changes up to 739ad9be61e5f53dbd8d7d7e80723d0799ff077c:
+
+  rust: macros: Add support for 'imports_ns' to module! (2025-11-07 10:01:5=
+3 +0100)
+
+----------------------------------------------------------------
+immutable branch containing module namespace support for Rust
+
+----------------------------------------------------------------
+Michal Wilczynski (1):
+      rust: macros: Add support for 'imports_ns' to module!
+
+ rust/macros/module.rs | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+Thanks
+Uwe
+
+--djey23n36i4u7ctk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkOIeIACgkQj4D7WH0S
+/k48Dwf/XwTQyOW10DFqp/toUtUVKYM5NnP6sLsp4aJdbAiHGLES5Yy3G5sFiW45
+5sgiUx10f4mWugPng7agkY8N3uI+YA2iLyP49i8mM3nynnxHWhw4B8v8f8OUyaar
+xBKbAaNhobqlbi54vLKfzOAKWmxV0bUUs+ORtZuoBqN4KPcEvp2FpcLOJ5MFAeAn
+DGljgdJn6dpN7GEeXduGZruz48aDTdRpXW2c3E6cF2XIE194y/hDRe/Wbl2BkG7I
+MCqBBBMAbce5XP6NNiuENbwx2H5dWSG1oGVxM7kAjAJ81/JGeiuQFyy6th/Hmihj
+PLhYLgBbpoZlkngCPPg7zuUf7/0ASw==
+=ZI6z
+-----END PGP SIGNATURE-----
+
+--djey23n36i4u7ctk--
 
