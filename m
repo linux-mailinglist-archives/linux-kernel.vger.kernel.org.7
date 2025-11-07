@@ -1,131 +1,284 @@
-Return-Path: <linux-kernel+bounces-890217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C83C1C3F866
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:40:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABEFC3F821
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2EF53B5824
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:34:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 488BC4F47FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B4832AAD6;
-	Fri,  7 Nov 2025 10:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8A832ABCA;
+	Fri,  7 Nov 2025 10:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h8T10DCd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iaz+n0YZ"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A71A32AAD9
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023D232C333
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511663; cv=none; b=TXMjDXAeStO9dStr6do/GmG/OkimVKUh0LZrwosYQG2VWocwFs3y7ROTUWqTsoT2jkuFMHxWvmDBKjwhlSLYVAz/N7ve5alSsQFiopZIUdUgSbqXmu5KvgsPJlqxx4U1dBHA6gr7oiy8LlcoAd0ldzJcxdt4boo7lREtQxOuoiQ=
+	t=1762511703; cv=none; b=ilXjiAywp1CQUzERKRnRYnFrPl0DkJRHTVp7fIWTrvb7LbTu3qP1dnznWFRGPELtCNWqhzlqs5O9z6VOuj0XZWKEdFHdWP1uokwXaylnTGJ9YXzAogTf6NAotzvlf25AROT+lQuN6DQZiar9ds0uZwNhJ3QEERrcs4iKC70T/7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511663; c=relaxed/simple;
-	bh=cOCGVKmVEovJesU3WW8kK1oX09gBBIpX3J0LJkfvNN8=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=eWXyfMuj8J6YHii2pp/W9w3xyGUrFwlevjcMuwFORI3HVnJx2O+AmhrI24Gu+mEYeQroxkJ88yo2i+zGuBWlkAYb4H/ALRajx1egjqrsCViyDoiSNdEb2z4lUq92wWIvwHpUWjSJ35jCtpZxC09SZEAhanPSozBoRYBIoELzYUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h8T10DCd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762511660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mRnffMyHiAhteHPeQJ+/psTcXTA9GHmSEDbZPxSCiXA=;
-	b=h8T10DCdX3S0J928wLsJDe/hqBrFrMD+G9OElKRUjEZ06LVFGlgYZJGlw8zkgIFQy+jUmR
-	IlFOZTNbe69PFCMxKmNrckHAzloZIfGr4rKA0OU1h1O9o7ECel1ET851kK6u+9KG7OG9v4
-	goguFb1p8zElbwzys+FTV8EyENxs3yo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-kFb5TB9lMOqKe88aYlyBOA-1; Fri,
- 07 Nov 2025 05:34:17 -0500
-X-MC-Unique: kFb5TB9lMOqKe88aYlyBOA-1
-X-Mimecast-MFC-AGG-ID: kFb5TB9lMOqKe88aYlyBOA_1762511655
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24E7E1956063;
-	Fri,  7 Nov 2025 10:34:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9EC2B1945110;
-	Fri,  7 Nov 2025 10:34:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251106192016.GA3318@quark>
-References: <20251106192016.GA3318@quark> <20251106174456.31818-1-dhowells@redhat.com> <20251106174456.31818-3-dhowells@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-    Luis Chamberlain <mcgrof@kernel.org>,
-    Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>,
-    Sami Tolvanen <samitolvanen@google.com>,
-    "Jason A .
- Donenfeld" <Jason@zx2c4.com>,
-    Ard Biesheuvel <ardb@kernel.org>,
-    Stephan Mueller <smueller@chronox.de>,
-    Lukas Wunner <lukas@wunner.de>,
-    Ignat Korchagin <ignat@cloudflare.com>, linux-crypto@vger.kernel.org,
-    keyrings@vger.kernel.org, linux-modules@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/8] crypto: Add ML-DSA/Dilithium verify support
+	s=arc-20240116; t=1762511703; c=relaxed/simple;
+	bh=x0GmuhpPcEAXviJQIjJNh2Y6Rg2wvGAtp3KxPWMqZ9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EdxOMMdlIAsbib3VMpAeCIINJ/TIWVv7gcYCNyyzawCaehxGw3sNI4y3SbRW+HpdbXcGP8GEk2TQMM4Ecme5UExHbP9Fzk6oUoa4P8bfDpbZ1T5uvfxjVKnLWHqx1qvRaplKaNeCD7MJGQhGlWKH+c5Cm05j5Og4MwEq5ehYWbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iaz+n0YZ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-477632b0621so3963615e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:35:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762511700; x=1763116500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RQVjJ8VIubBEHnwfULYYTdZ6WDAP2MN1tczKjiZ/yyY=;
+        b=Iaz+n0YZrhwdXBhYDJcIR8jhrGWLom7VCy5jwtmaQOqWsgtBlXkUaRnSVwf13Ifuay
+         5iUNn7DtBK33OGKQLUVsXSVdVRtutsRNgzWa3mqwWoNVAPGQKnVWfLm78X4nDKodI1JN
+         ZFEOHzVBYL/4RCN9LhSIQ7mgPvQmZhE58ZH5BdJ7/dRzsgFmzhARV+6OqrhGd3MXpWBm
+         u83pPRuFsa6vWZWWd65M6bzrR3IWOzunz+rf6NVR1bwZtwpcSf4303Iou8b33KF0zUU+
+         ZK46eTlqe3uWwZXH0H2lUOsliXTyQeZHzzj4zUD3lqzVhEPGyBRHOD51HJaO81Dx4nt4
+         5TQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762511700; x=1763116500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RQVjJ8VIubBEHnwfULYYTdZ6WDAP2MN1tczKjiZ/yyY=;
+        b=UpwMEIQ+qQk1PhfHfrjFwzo2LszjtwiLNMnrN8EH8vExvgy9/VOYSQFX3onlMNccxj
+         kvFU5UCBOsy6MAIQaWuKKbFDWilzoDoxfUTX8SDYN08l56IIHfNJpc/9TBDKSpyQiaZT
+         KWAAeHQJ08CpYxUqXKef0+Jbf2FCovSpDWUykouxkW86PGTwijl8UN8PZDYzD4zubDZ8
+         6Hf4RVgrD5Fm4tjUhX+OkK6zSxuzoFFpUXn4UR0PpCe+lKuhL71V4ZohyMFir72L6Qc+
+         d6za4vnv0p5eMiMAUzBrozX7JGKFOl1tq0zJh/kKGTzuE/kDy/pby08rTccJv43RU2Fp
+         tYvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdfMxmL+MDgFt38681j457fe2siajA/naKONIG8BiN0v40NFAeljiMOEw1rZ6W4uyoc8ypTyZjdrRV7kQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywWuwJ3cz18ZyAwRlTCTa3n4lrsPC6uRLBVUPSkHJgq9Sm1n5x
+	qKVdC7UFle1W0XJ7g6h01l00D5yjBIG0kT/PlAX/+G7ilUILx3Ik1Yhx5yAqvUeQGd+tlX/014k
+	TBp4t+jut1ZgMOx+NCSh/6+CxZjLExSI=
+X-Gm-Gg: ASbGnct53u0Xd6tBhqxXYvkRuUloHjA/CUjWV0cbTNp3uHsZ3ZCF1gFdix8957H5xoN
+	MhPcCqc7m0GOjNJV4aBGn3gX1py4vd87QoAWI7piVJM+CdoHa2WlGapKMDBWFXOLFmMDTE/BXkO
+	YtJogKCkn9ql+1TYpaowTx5hEbv2R9iR83xKhqzMBauARhprm/Bu5cMQBQgqwOim9BzA6NwukLr
+	Tk7xXOJ0t33y4v5nlPZ8VlUsr1+EQ8Vril2Rts5P0CJvtEJZYJMY4CCt6/M
+X-Google-Smtp-Source: AGHT+IFgzK9jRSXUa8PZiGhgZmWEhjhBpVxj/gvGkqKedymR11sElsC/BxxuT8v/TKCY9EX4wCAmUyIFQyctkLw0ero=
+X-Received: by 2002:a05:6000:2510:b0:429:c989:cec0 with SMTP id
+ ffacd0b85a97d-42aefb43ca4mr2089505f8f.48.1762511699907; Fri, 07 Nov 2025
+ 02:34:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <62629.1762511649.1@warthog.procyon.org.uk>
+References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch>
+In-Reply-To: <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 7 Nov 2025 10:34:32 +0000
+X-Gm-Features: AWmQ_bmPT9XwqbmFCYebnP8Ga-hWLGwsMeFM_kjFF85aGBYiWla-RfJ-XS_PHMs
+Message-ID: <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on VSC8541
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 07 Nov 2025 10:34:09 +0000
-Message-ID: <62630.1762511649@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Eric Biggers <ebiggers@kernel.org> wrote:
+Hi Andrew,
 
-> On Thu, Nov 06, 2025 at 05:44:46PM +0000, David Howells wrote:
-> > The interface to this code is through the crypto_sig API as the PKCS#7=
- code
-> > wants to use that rather than calling it directly.  As such, I've plac=
-ed it
-> > in crypto/ rather than lib/crypto/.  Only the verification hooks are
-> > implemented; the signing hooks return an error.
-> =
+Thank you for the review.
 
-> As I mentioned before
-> (https://lore.kernel.org/linux-crypto/20250613170456.GA1284@sol/), this
-> code should go in lib/crypto/.  There seems to be a clean API in
-> crypto/ml_dsa/dilithium.h already.  Just make that the library API.
+On Thu, Nov 6, 2025 at 8:45=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > +static int vsc85xx_led_cntl_set_lock_unlock(struct phy_device *phydev,
+> > +                                         u8 led_num,
+> > +                                         u8 mode, bool lock)
+> >  {
+> >       int rc;
+> >       u16 reg_val;
+> >
+> > -     mutex_lock(&phydev->lock);
+> > +     if (lock)
+> > +             mutex_lock(&phydev->lock);
+> >       reg_val =3D phy_read(phydev, MSCC_PHY_LED_MODE_SEL);
+> >       reg_val &=3D ~LED_MODE_SEL_MASK(led_num);
+> >       reg_val |=3D LED_MODE_SEL(led_num, (u16)mode);
+> >       rc =3D phy_write(phydev, MSCC_PHY_LED_MODE_SEL, reg_val);
+> > -     mutex_unlock(&phydev->lock);
+> > +     if (lock)
+> > +             mutex_unlock(&phydev->lock);
+> >
+> >       return rc;
+> >  }
+>
+> The normal way to do this is have _vsc85xx_led_cntl_set() manipulate
+> the hardware, no locking. And have vsc85xx_led_cntl_set() take the
+> lock, call _vsc85xx_led_cntl_set(), and then release the lock. You can
+> then call _vsc85xx_led_cntl_set() if needed.
+>
+Ok, I will add _vsc85xx_led_cntl_set() helper and use it in
+vsc85xx_led_cntl_set() and led functions (for example
+vsc85xx_mdix_get).
 
-Fine.  Is it ever likely to be used directly, I wonder?
+> > +static int vsc8541_led_combine_disable_set(struct phy_device *phydev, =
+u8 led_num,
+> > +                                        bool combine_disable)
+> > +{
+> > +     u16 reg_val;
+> > +
+> > +     reg_val =3D phy_read(phydev, MSCC_PHY_LED_BEHAVIOR);
+>
+> phy_read() can return a negative value. You should not assign that to
+> a u16.
+>
+Agreed, I will check the return value of this. I followed the approach
+which was currently used in the driver.
 
-There is a downside of moving stuff to lib/crypto/: dynamically loadable
-algorithms now need two modules instead of one.  For initial module signin=
-g,
-granted, the algorithms for that must be built in.
+> Also, BEHAVIOUR.
+>
+> > +     reg_val &=3D ~LED_COMBINE_DIS_MASK(led_num);
+> > +     reg_val |=3D LED_COMBINE_DIS(led_num, combine_disable);
+> > +
+> > +     return phy_write(phydev, MSCC_PHY_LED_BEHAVIOR, reg_val);
+>
+> You can probably use phy_modify() here.
+>
+Agreed, that will simplify the code.
 
-> If "crypto_sig" support is really needed too, then put that in
-> crypto/ml-dsa.c, built on top of the library API.  It's not clear the
-> crypto_sig support is very useful, though.  For one, you had to add
-> ML-DSA specific logic to the calling code anyway (see "pkcs7: Allow the
-> signing algo to calculate the digest itself").
+> > +static int vsc8541_led_hw_is_supported(struct phy_device *phydev, u8 i=
+ndex,
+> > +                                    unsigned long rules)
+> > +{
+> > +     struct vsc8531_private *vsc8531 =3D phydev->priv;
+> > +     static const unsigned long supported =3D BIT(TRIGGER_NETDEV_LINK)=
+ |
+> > +                                            BIT(TRIGGER_NETDEV_LINK_10=
+00) |
+> > +                                            BIT(TRIGGER_NETDEV_LINK_10=
+0) |
+> > +                                            BIT(TRIGGER_NETDEV_LINK_10=
+) |
+> > +                                            BIT(TRIGGER_NETDEV_RX) |
+> > +                                            BIT(TRIGGER_NETDEV_TX);
+> > +
+>
+> Reverse Christmas tree. The lines should be sorted, longest first,
+> shortest last.
+>
+Agreed.
 
-The actual signature check still goes through the same code path as everyt=
-hing
-else, so crypto_sig will remain the API.  Otherwise I have to basically
-reimplement crypto_sig inside crypto/asymmetric_keys/, including the on-de=
-mand
-algorithm loading.
+> > +static int vsc8541_led_hw_control_get(struct phy_device *phydev, u8 in=
+dex,
+> > +                                   unsigned long *rules)
+> > +{
+> > +     struct vsc8531_private *vsc8531 =3D phydev->priv;
+> > +     u16 reg;
+> > +
+> > +     if (index >=3D vsc8531->nleds)
+> > +             return -EINVAL;
+> > +
+> > +     reg =3D phy_read(phydev, MSCC_PHY_LED_MODE_SEL) & LED_MODE_SEL_MA=
+SK(index);
+>
+> Another cause of u16, when int should be used. Please check all
+> instances of phy_read().
+>
+Ok.
 
-David
+> > +     reg >>=3D LED_MODE_SEL_POS(index);
+> > +     switch (reg) {
+> > +     case VSC8531_LINK_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+> > +
+> > +     case VSC8531_LINK_1000_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_1000) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+> > +
+> > +     case VSC8531_LINK_100_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_100) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+> > +
+> > +     case VSC8531_LINK_10_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_10) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+> > +
+> > +     case VSC8531_LINK_100_1000_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_100) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_1000) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+> > +
+> > +     case VSC8531_LINK_10_1000_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_10) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_1000) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+> > +
+> > +     case VSC8531_LINK_10_100_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_10) |
+> > +                      BIT(TRIGGER_NETDEV_LINK_100) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+> > +
+> > +     case VSC8531_ACTIVITY:
+> > +             *rules =3D BIT(TRIGGER_NETDEV_LINK) |
+> > +                      BIT(TRIGGER_NETDEV_RX) |
+> > +                      BIT(TRIGGER_NETDEV_TX);
+> > +             break;
+>
+> Should the combine bit be taken into account here?
+>
+Agreed, I will drop setting TRIGGER_NETDEV_RX/TRIGGER_NETDEV_TX from
+all the above case and set it based on the combined bit like below:
 
+if (!behavior && *rules)
+        *rules |=3D BIT(TRIGGER_NETDEV_RX) | BIT(TRIGGER_NETDEV_TX);
+
+
+
+> > @@ -2343,6 +2532,26 @@ static int vsc85xx_probe(struct phy_device *phyd=
+ev)
+> >       if (!vsc8531->stats)
+> >               return -ENOMEM;
+> >
+> > +     phy_id =3D phydev->drv->phy_id & phydev->drv->phy_id_mask;
+> > +     if (phy_id =3D=3D PHY_ID_VSC8541) {
+>
+> The VSC8541 has its own probe function, vsc8514_probe(). Why is this
+> needed?
+>
+vsc85xx_probe() is used for other PHYs along with VSC8541 hence this
+check, vsc8514_probe() is for 8514 PHY.
+
+Cheers,
+Prabhakar
 
