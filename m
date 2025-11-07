@@ -1,124 +1,151 @@
-Return-Path: <linux-kernel+bounces-890578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECC5C40644
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:35:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1301C40650
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E2874F0E2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:35:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35BBE4EAAB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885973168FD;
-	Fri,  7 Nov 2025 14:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BFD31B110;
+	Fri,  7 Nov 2025 14:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZ6HY9oW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PCzMHG7O"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D868B1F5437;
-	Fri,  7 Nov 2025 14:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25752765C5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762526107; cv=none; b=gQ8wWtc6cShwMhi4CqpTUyrZK/NHaAzzHObMjPhMWEgfdYZ1710jf2c32K11cpHgU8t8JLrDeowxyCr9lN+dwK0csyWOLlDdOfzh5ko10LQ2/Ay67mk7VgR8hj5oKywJuTbcnksVWROsZSPn6FYLuxf5uwWsAgO2ST8GqKwzGWk=
+	t=1762526196; cv=none; b=hiM/qD73S3Y2AkWnv1UmE4/WO+IXgXTXvI2+KeWM/WocmlwOymQGUZGSn9LdX6yucMiNyA/6E9DEkUmxvfe6njP7RlcaqxTHNdsIoScnePOqb9ihP6Y60BWdI073jZsrDAh1hftu6TApKMHh7P7IhgrWu+fKobkej2F0PPSR180=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762526107; c=relaxed/simple;
-	bh=4WxZ3LELg5mcq0Cf6czbnjewj3p8Wpjhfzv3KyuE0Qs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SJxVvLReK+es4FiSM1T4gsKkkEavcfR0dobAwiP00pWUewW8t0wg1Kmw4eAKO/C1QuJVznxtolW7f6VJC9NYQhD9NKt/YpiqnwNVSizo3lfZPfyPOd3+hCZqgldt8meZ+qgypmd9y9E32pVyRwvBUTshzXC9N8iTHN45BLcn4DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZ6HY9oW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C3EC4CEF7;
-	Fri,  7 Nov 2025 14:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762526106;
-	bh=4WxZ3LELg5mcq0Cf6czbnjewj3p8Wpjhfzv3KyuE0Qs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rZ6HY9oWMDLs4sKC636BgUJ3shrDAORr4y9nl8IEHEFQUkjYIbl1usP7n5DMkq/yX
-	 piXUq9g5Q8BUx1wtNC5Cfc9GTCPBfOOrEk/gpTtqFr3fwSSEY9XLOIimUkgexO74HT
-	 vMPS07UJyPSl7y8vopWbM2cTA0ZkPey34HfYrVfTWTC1jNuR4TkmJKnna92hvoTQ5L
-	 r6kLfMD8sy7tW2LG5bE37smpRTI+85Av235q9sjcQWk9E3VdFIbISxSaIUQubsnycI
-	 MpObhyawtyI9Mys/rqKmROaFpQxa63j0FezQKZtZp8SlAS5QvSJrjhFiqDXQpoKVDr
-	 XNXLVClpoPHOQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] selftests: tracing: Add tprobe enable/disable testcase
-Date: Fri,  7 Nov 2025 23:35:01 +0900
-Message-ID: <176252610176.214996.3978515319000806265.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1762526196; c=relaxed/simple;
+	bh=pdHuz77C77QQbe4jiVt9Kjyj6f+b9ix2y21sqpxtAxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AA32uEK3vOQ8JJBL19SzQGHs3uYXrV3GpDlaAD7GuBM9TiQufM//vi+NMZLEZmrC6xW2N+pzcEHX+mGV5PkTtK+EQNzc8xT3nNjmhRyXMwfEulYEavUVlIyAR01Z8ewnfH/5UDWtVmO000/u7uAkHmj8SH+yJ4tjUP1TeU6GeGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PCzMHG7O; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so4564285e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:36:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762526193; x=1763130993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uFwY4O/H3CLtrImG4wiLUJMhAuKJ/ASp7QcQ+wm2Eik=;
+        b=PCzMHG7OMUW9AAhRiqsz9lZ1+jFQIQjlHxf1iEXw3nXkDIWTaB8mKMEDw+1HKUgup4
+         9H2w9BgaJaimo+agAWCfiscnV85E1jucTu1UTfcGGJHJRiRaLkdgSyAI600G7xDbBQBc
+         aMvxb89vq/iatTJzeu/LeqavLqaXuy9iYcn46ZXruCgFFeTLaS4RWDiwjWNklNotM8HK
+         TNTgl+WUK0vJL/nTUVO2gddvoYiqtuoZ+UcLbfGHdG3l5nMANq/8I0p9z1v6i0O1khzh
+         PMJ8L+sCoPy604RIbjq1MPFvc7lQ2St3lQPuch8Lr7OSCOBPZEYG7H0O3KRcfI2xoR8g
+         fipg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762526193; x=1763130993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uFwY4O/H3CLtrImG4wiLUJMhAuKJ/ASp7QcQ+wm2Eik=;
+        b=Sqd6mHMu8cQUpa42zhfQWV2y0KAprtjnBQRJ/EXK/Oulij8uRI+8CdfUC4eZn+dxFJ
+         tgE7RY5v5kXBiLv6jktIPv1c2h5ozmOTp0Y4pOMxVlaxqFc8cWYVLVy2COXQljC2Kmgw
+         299+K1Drmq39HMvAzliJX4eKGrabOU/QVVdyq8C7IQ4sfj2XOR2DyGSn2Gs9BjTOwogO
+         cPtyAo7MveLvrIxQr9A5pONhHmk1/pMyYLHn7v9gE6l0r3VnqBzjX02wizyXrNmDps1Z
+         Of3JO22QWtaM7RJpHAOEXE/uynUABK6ni5CIKMbsm8Y9vvxFf3HKdZVeqvSpy/3g8dDx
+         BblQ==
+X-Gm-Message-State: AOJu0Yxvzq03AtNG6/HGl1fgNc1E3rpCGEsYrA124MBHVFqGzqUvtpY8
+	tqV7GNtOYcvaFwZK9g6begKQxdWbOi5oIYoDYSYx++31i6qzM/exP219f//J3UNU/6oLYzhmmjz
+	YtuYq
+X-Gm-Gg: ASbGncvXetLySA7vdK8kdJwpBphuM4k7+ZbKCsRJyPBs5wYoWkJ/AOXzy/C/tzIcIsn
+	dYH8GXimZtE73JQJ282NJeU3MMWtRGWtPjUVbrj48o5/riYjNjiwy7ZBqOgoR6zQXKOZ1K9vK/T
+	mh9ENrBnJOgL79svJJEsGPLjV129ywuR0N4zvQTfTo3Bwr0Rt6zYhMUO5frCa5RddlU2Sz2KnPd
+	dyYsZ8l1q5SRTfL7CebeuILDcvB8u+E7dcPMfWSR35/VfjTPF5+KE2THi/3FqYljkzeVAhn/vvS
+	09YY53lHCYKaEALAXyAmBa+ljReeVJH5w4yu/+YCyfyNR3ivS1kZftPbcpLWKsZ/f3VVz9/LP6W
+	XESG5xgp3CA41Zi2XSF0r8wH2S+84R6S9XHmq3Vkd+SbIMfpYjW33sem7vmQMk5IYITkjUPOyE9
+	gkVyrw1YvB/J2AQ2fG6wrce9nL
+X-Google-Smtp-Source: AGHT+IHL2HFnWDwMb99ufUmB+DUpAFr4iCYh9KkrH1cwe+zCzO13bcOb9zFiLCvpx2y50z1jrx5Ykg==
+X-Received: by 2002:a05:600c:46ce:b0:46e:506b:20c5 with SMTP id 5b1f17b1804b1-4776bcd5a8cmr21733555e9.26.1762526192667;
+        Fri, 07 Nov 2025 06:36:32 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd08834sm52478435e9.15.2025.11.07.06.36.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 06:36:32 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH] PCI: shpchp: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 15:36:24 +0100
+Message-ID: <20251107143624.244978-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-Commit 2867495dea86 ("tracing: tprobe-events: Register tracepoint when
-enable tprobe event") caused regression bug and tprobe did not work.
-To prevent similar problems, add a testcase which enables/disables a
-tprobe and check the results.
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
+
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- .../test.d/dynevent/enable_disable_tprobe.tc       |   40 ++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/enable_disable_tprobe.tc
+ drivers/pci/hotplug/shpchp_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/enable_disable_tprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/enable_disable_tprobe.tc
-new file mode 100644
-index 000000000000..c1f1cafa30f3
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/dynevent/enable_disable_tprobe.tc
-@@ -0,0 +1,40 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Generic dynamic event - enable/disable tracepoint probe events
-+# requires: dynamic_events "t[:[<group>/][<event>]] <tracepoint> [<args>]":README
-+
-+echo 0 > events/enable
-+echo > dynamic_events
-+
-+TRACEPOINT=sched_switch
-+ENABLEFILE=events/tracepoints/myprobe/enable
-+
-+:;: "Add tracepoint event on $TRACEPOINT" ;:
-+
-+echo "t:myprobe ${TRACEPOINT}" >> dynamic_events
-+
-+:;: "Check enable/disable to ensure it works" ;:
-+
-+echo 1 > $ENABLEFILE
-+
-+grep -q $TRACEPOINT trace
-+
-+echo 0 > $ENABLEFILE
-+
-+echo > trace
-+
-+! grep -q $TRACEPOINT trace
-+
-+:;: "Repeat enable/disable to ensure it works" ;:
-+
-+echo 1 > $ENABLEFILE
-+
-+grep -q $TRACEPOINT trace
-+
-+echo 0 > $ENABLEFILE
-+
-+echo > trace
-+
-+! grep -q $TRACEPOINT trace
-+
-+exit 0
+diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
+index 0c341453afc6..56308515ecba 100644
+--- a/drivers/pci/hotplug/shpchp_core.c
++++ b/drivers/pci/hotplug/shpchp_core.c
+@@ -80,7 +80,8 @@ static int init_slots(struct controller *ctrl)
+ 		slot->device = ctrl->slot_device_offset + i;
+ 		slot->number = ctrl->first_slot + (ctrl->slot_num_inc * i);
+ 
+-		slot->wq = alloc_workqueue("shpchp-%d", 0, 0, slot->number);
++		slot->wq = alloc_workqueue("shpchp-%d", WQ_PERCPU, 0,
++					   slot->number);
+ 		if (!slot->wq) {
+ 			retval = -ENOMEM;
+ 			goto error_slot;
+-- 
+2.51.1
 
 
