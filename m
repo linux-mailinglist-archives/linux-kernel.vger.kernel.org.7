@@ -1,238 +1,115 @@
-Return-Path: <linux-kernel+bounces-889666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28060C3E2F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F23C3E308
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3B0C4E664A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:00:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C14B4E6777
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C651F8AC5;
-	Fri,  7 Nov 2025 02:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CD32DA76C;
+	Fri,  7 Nov 2025 02:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lryL4Pjc"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="a8anxoyB"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495C05695
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85F51FAC42;
+	Fri,  7 Nov 2025 02:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762480830; cv=none; b=u8Mr/XmWa23TJg7oY6ilx0Wy9KxXjd3iZL6tfhohqBR5bZjwTn5brOSvLBjDYtRBdj5LhS/rnwEnMv4l9frjBrYb/ygRaTTmzoSVn8bNqoWAO/JLGNXY2EVBiiMCjQ6c4FsSMbPHmZkiAcvcQYn21v+AnG7vJn7PJp3bLoUCPCw=
+	t=1762480911; cv=none; b=NU6l7Al9473Ytao1ZBArekUJWqYaIenpGuttzmTdNX8mCNY7aNqW0ocUi5GxuCV0NmSvHTa03jR3hS8zKI0nhLzc2wiLKZDLMhe8EeGiuYNcJWavUIdF2kC5fFyjwcnB3SCldco9ejAf+DkgXRh6felTOiTyzBrA8L+Q+Xrx4N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762480830; c=relaxed/simple;
-	bh=l1APtHG7nyKthnsB6Dpo0ioWvJx4fIPPEtLcFliwVnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TyRh1RPnxc77ik5oxeU4ITEfv1suMtOB3TZoEgjJoaL3BGbAWhMOt2L1Krom5w51bSsyE5bxf7hLsXFWnZRdmwudLva27TDNYHE1a7JivHSabtLowdWptYwTusURd8VGfYpbgrEVaVGoRj8KyGI7PkrRQxLaIY5WQQbX8UeZ6FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lryL4Pjc; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9f662e2c-7370-4f99-bdec-bc123495e1c5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762480826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZNhsVywyT7lcCq3rJ86s3fFpmqzt3mLICMXhAupeVE4=;
-	b=lryL4PjcLr2/8OwCkdAtMVoDM65Ga5Txb1eNj9xYXA/UogiTwytyxWh4ur3bZDIwvnQBVO
-	huJYa/KcwvpZJypWHrcMcOpd01eHDTJcZ4iq+TGgE17oRuXitaA9oQ9uL4MVcrzVHVgr7j
-	2Rrjw6yq+aQmDMiRQq14RsSi0W7yHUg=
-Date: Thu, 6 Nov 2025 18:00:17 -0800
+	s=arc-20240116; t=1762480911; c=relaxed/simple;
+	bh=wO+jO5+m/GOZfMH52JEzzrT8LmPH589gJSnrLAgCL8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HrHe2p05nXy+rBA0+6a1aENhN1/vDW7eZGgMhmp6+5HNF3eJ4W2pwm4Ic2HoZh2Z8te+DhMkEtu2ZcmCKVMck8tmUjqE1P/BXfeChuXsL1zlFGVFAvo297pZiQNtVS79Rw1nZ/IlXMD3f/aBrBsMKp4C5RMtDx8McCACNhQ/Er8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=a8anxoyB; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=8N27r7Oyc3ywyYoactwLwAQqQuBjFkaj2XYsC9wqqK8=; b=a8anxoyBx7wvtgUTEJpLKERgMl
+	V+UTcgG4iGjmD2EgxRzkEjCoc7DoHYXIuQHqcF0m9ASAg/1S5j9bxDOoEd4U72iMpsPLAN93IpNUE
+	CR3416YcFDWFVvbfyoiq3ftgKJA+x2HK0P9NJwc4bEsCP7cu9fEDb/it4hufMRwquxBo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vHBn3-00DAwe-UJ; Fri, 07 Nov 2025 03:01:25 +0100
+Date: Fri, 7 Nov 2025 03:01:25 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Po-Yu Chuang <ratbert@faraday-tech.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"taoren@meta.com" <taoren@meta.com>
+Subject: Re: [PATCH net-next v3 1/4] dt-bindings: net: ftgmac100: Add delay
+ properties for AST2600
+Message-ID: <8b2f985f-d24e-427e-88cc-94d9bc5815b2@lunn.ch>
+References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
+ <20251103-rgmii_delay_2600-v3-1-e2af2656f7d7@aspeedtech.com>
+ <20251104-victorious-crab-of-recreation-d10bf4@kuoka>
+ <SEYPR06MB5134B91F5796311498D87BE29DC4A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+ <9ae116a5-ede1-427f-bdff-70f1a204a7d6@kernel.org>
+ <SEYPR06MB5134004879B45343D135FC4B9DC2A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+ <1f3106e6-c49f-4fb3-9d5a-890229636bcd@kernel.org>
+ <SEYPR06MB51346AEB8BF7C7FA057180CE9DC3A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+ <44776060-6e76-4112-8026-1fcd73be19b8@lunn.ch>
+ <SEYPR06MB5134F0CF51189317B94377C09DC3A@SEYPR06MB5134.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v6 2/2] selftests/bpf: Add test to verify freeing
- the special fields when update [lru_,]percpu_hash maps
-Content-Language: en-GB
-To: Leon Hwang <leon.hwang@linux.dev>, bpf@vger.kernel.org
-Cc: ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, ameryhung@gmail.com,
- linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
-References: <20251105151407.12723-1-leon.hwang@linux.dev>
- <20251105151407.12723-3-leon.hwang@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20251105151407.12723-3-leon.hwang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SEYPR06MB5134F0CF51189317B94377C09DC3A@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
+On Fri, Nov 07, 2025 at 01:12:08AM +0000, Jacky Chou wrote:
+> Hi Andrew
+> 
+> > > There are four MACs in the AST2600. In the DT bindings and DTS files,
+> > > what would be the recommended way to identify which MAC is which?
+> > > In version 3 of my patches, I used the aliases in the DTSI file to
+> > > allow the driver to get the MAC index.
+> > 
+> > It is a bit ugly, but you are working around broken behaviour, so sometimes you
+> > need to accept ugly. The addresses are fixed. You know
+> > 1e660000 is mac0, 1e680000 is mac1, etc. Put the addresses into the driver,
+> > for compatible aspeed,ast2600-mac.
+> > 
+> 
+> I used this fixed address as MAC index in the first version of this series.
+> But the other reviewer mentioned maybe there has the other better way to 
+> identify index.
+> https://lore.kernel.org/all/20250317095229.6f8754dd@fedora.home/
+> I find the "aliase", on preparing the v2 and v3, I think it may be a way to
+> do that. But I am not sure.
+> So, I would like to confirm the other good way before submitting the next
+> version.
 
+The problem with alias is that it normally a board property, in the
+.dts file. A board might want a different mapping, which could then
+break delays.
 
-On 11/5/25 7:14 AM, Leon Hwang wrote:
-> Add test to verify that updating [lru_,]percpu_hash maps decrements
-> refcount when BPF_KPTR_REF objects are involved.
->
-> The tests perform the following steps:
->
-> 1. Call update_elem() to insert an initial value.
-> 2. Use bpf_refcount_acquire() to increment the refcount.
-> 3. Store the node pointer in the map value.
-> 4. Add the node to a linked list.
-> 5. Probe-read the refcount and verify it is *2*.
-> 6. Call update_elem() again to trigger refcount decrement.
-> 7. Probe-read the refcount and verify it is *1*.
->
-> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
-
-LGTM with a few nits below.
-
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-
-> ---
->   .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
->   .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
->   2 files changed, 117 insertions(+)
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> index d6bd5e16e6372..086f679fa3f61 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
-> @@ -44,3 +44,60 @@ void test_refcounted_kptr_wrong_owner(void)
->   	ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
->   	refcounted_kptr__destroy(skel);
->   }
-> +
-> +void test_percpu_hash_refcounted_kptr_refcount_leak(void)
-> +{
-> +	struct refcounted_kptr *skel;
-> +	int cpu_nr, fd, err, key = 0;
-> +	struct bpf_map *map;
-> +	size_t values_sz;
-> +	u64 *values;
-> +	LIBBPF_OPTS(bpf_test_run_opts, opts,
-> +		    .data_in = &pkt_v4,
-> +		    .data_size_in = sizeof(pkt_v4),
-> +		    .repeat = 1,
-> +	);
-> +
-> +	cpu_nr = libbpf_num_possible_cpus();
-> +	if (!ASSERT_GT(cpu_nr, 0, "libbpf_num_possible_cpus"))
-> +		return;
-> +
-> +	values = calloc(cpu_nr, sizeof(u64));
-> +	if (!ASSERT_OK_PTR(values, "calloc values"))
-> +		return;
-> +
-> +	skel = refcounted_kptr__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load")) {
-> +		free(values);
-> +		return;
-> +	}
-> +
-> +	values_sz = cpu_nr * sizeof(u64);
-> +	memset(values, 0, values_sz);
-> +
-> +	map = skel->maps.percpu_hash;
-> +	err = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, 0);
-> +	if (!ASSERT_OK(err, "bpf_map__update_elem"))
-> +		goto out;
-> +
-> +	fd = bpf_program__fd(skel->progs.percpu_hash_refcount_leak);
-> +	err = bpf_prog_test_run_opts(fd, &opts);
-> +	if (!ASSERT_OK(err, "bpf_prog_test_run_opts"))
-> +		goto out;
-> +	if (!ASSERT_EQ(opts.retval, 2, "opts.retval"))
-> +		goto out;
-> +
-> +	err = bpf_map__update_elem(map, &key, sizeof(key), values, values_sz, 0);
-> +	if (!ASSERT_OK(err, "bpf_map__update_elem"))
-> +		goto out;
-> +
-> +	fd = bpf_program__fd(skel->progs.check_percpu_hash_refcount);
-> +	err = bpf_prog_test_run_opts(fd, &opts);
-> +	ASSERT_OK(err, "bpf_prog_test_run_opts");
-> +	ASSERT_EQ(opts.retval, 1, "opts.retval");
-> +
-> +out:
-> +	refcounted_kptr__destroy(skel);
-> +	free(values);
-> +}
-> +
-
-Empty line here.
-
-> diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-> index 893a4fdb4b6e9..1aca85d86aebc 100644
-> --- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-> +++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
-> @@ -568,4 +568,64 @@ int BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
->   	return 0;
->   }
->   
-> +private(kptr_ref) u64 ref;
-> +
-> +static int probe_read_refcount(void)
-> +{
-> +	u32 refcount;
-> +
-> +	bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
-> +	return refcount;
-> +}
-> +
-> +static int __insert_in_list(struct bpf_list_head *head, struct bpf_spin_lock *lock,
-> +			    struct node_data __kptr **node)
-> +{
-> +	struct node_data *node_new, *node_ref, *node_old;
-> +
-> +	node_new = bpf_obj_new(typeof(*node_new));
-> +	if (!node_new)
-> +		return -1;
-> +
-> +	node_ref = bpf_refcount_acquire(node_new);
-> +	node_old = bpf_kptr_xchg(node, node_new);
-
-Change the above to node_old = bpf_kptr_xchg(node, node_node_ref); might 
-be better for reasoning although node_ref/node_new are the same.
-
-> +	if (node_old) {
-> +		bpf_obj_drop(node_old);
-> +		bpf_obj_drop(node_ref);
-> +		return -2;
-> +	}
-> +
-> +	bpf_spin_lock(lock);
-> +	bpf_list_push_front(head, &node_ref->l);
-> +	ref = (u64)(void *) &node_ref->ref;
-> +	bpf_spin_unlock(lock);
-> +	return probe_read_refcount();
-> +}
-> +
-> +struct {
-> +	__uint(type, BPF_MAP_TYPE_PERCPU_HASH);
-> +	__type(key, int);
-> +	__type(value, struct map_value);
-> +	__uint(max_entries, 1);
-> +} percpu_hash SEC(".maps");
-> +
-> +SEC("tc")
-> +int percpu_hash_refcount_leak(void *ctx)
-> +{
-> +	struct map_value *v;
-> +	int key = 0;
-> +
-> +	v = bpf_map_lookup_elem(&percpu_hash, &key);
-> +	if (!v)
-> +		return 0;
-> +
-> +	return __insert_in_list(&head, &lock, &v->node);
-> +}
-> +
-> +SEC("tc")
-> +int check_percpu_hash_refcount(void *ctx)
-> +{
-> +	return probe_read_refcount();
-> +}
-> +
->   char _license[] SEC("license") = "GPL";
-
+	Andrew
 
