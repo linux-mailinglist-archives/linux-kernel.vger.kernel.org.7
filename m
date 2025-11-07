@@ -1,130 +1,135 @@
-Return-Path: <linux-kernel+bounces-890516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A529C403D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:01:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8428C403DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 128884F2632
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105C03A2E49
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915DD31E0E1;
-	Fri,  7 Nov 2025 13:59:18 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8212231B814;
+	Fri,  7 Nov 2025 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zqgispbW"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5753B1FF7C8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564AE23B638;
+	Fri,  7 Nov 2025 14:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523958; cv=none; b=Brl6P1Kd7bjRayw60Uk5UMByz5Qfa/3bi4OCIwS8dhVR3FSVGsnkFgYZx4pITJ2/vkyTwk1C4sFqUVTj3X+pIUaA4K6nkL9FNTax6naMnidE+KPTRnyKokKFwvKlwUxn/ydLkcIKkBAqZzgh9XY/W8+VUqX2esnnhmLHmdJeD80=
+	t=1762524117; cv=none; b=iIzI/oTaWaFUwcWVFgzR7uR7hOSFcO36cXeluCcVOmTquTGL4039XYlMyaM+gIY855YyBn6NcJcyjFhv7/8zGV8Da580Wwr5wxNYNbZoXkW+I1vbBPJ2mXin2Mnajd+O61Cg4NNRHTYYvgSpsjWRz/trA4rHypwtXHBeUdniioU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523958; c=relaxed/simple;
-	bh=8JxOVPMisbF56oYxS5Y+sDye3oJBmOCWA+veCsBSQt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKJwhO0qgJUmprMg2Hw+XBZN21AGwDRv15t2WJR5viC42I9ijqTuqmpyF/KIObjnjHaDyc4d5uDW2XH5ZlAsAeolRcZv++PmhrpNMLWUkzq/ZZ5ctsSxHhCmV5mIoojx8uQRxeUuQ4j9L24XNIo+pYJDhQDS8TFLUjSZyh7Aw8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63bdfd73e6eso1246509a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:59:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762523954; x=1763128754;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zJVwwG9Ykxrpv2wC8GWxsRY2S8SK8LdQYPdOrnHuv/4=;
-        b=tQRbd3m62hpLyF8w9SR4l+C3rPKV3F5ronjiwFBhiidl408Ps6KjRfGO6kyIPlZctu
-         V2ZR3k3ii4K/w90AdohKX7AnI7Q6jrCxeAWuVFEN5xFBld0P0oxk0XhOxBhucO9ALl8j
-         5HLrx5r4O0crbL/3lMArbwjKfPWBx2H/7Y7TMp1JpJhyq0miWgNGNYuN4QrinKaEFXZs
-         D+BLhlwJjDirh6y+yeaExAF41wqjtAbfq7RQHduN4ynhTiP3AK8nUAxbC8D9Sw/Zd4YX
-         ggGTwiLLUyRFOokbCOkFzinI0IQwfq7dr7UJG1JX1UeCLj0+//yJ7RG/9VehR+SITqfN
-         SrYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/75p9jzOOS75Ism441VHIMHbxjOXOb9hTY9vveChtMDf7n+NinA8jDyYb331eICXvT02JvL+3CsNDvoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfvBY8yiZ6iLrKnnNJjT87I6QnryQus/pWolTVPbfXgSjpbRqE
-	TM6ZRLSJypoluMSu5rxTQ4g5c9nUCjn50WICEWbhUw7ceGbFPVayZKo/
-X-Gm-Gg: ASbGncub+LlK6plnL1GId3gS5CcCdP5DtYsBIfxxe52EbQS0JDBDUlDxOvkom3BpcgO
-	0F3+bt9n0yC93gMFLYkPP3igaoWbbXtl3HhTdkdhVxT7qr18VAZHMy21Mn5CA0HD68zDdbWrfXX
-	BCzg6bKZk+cIazcRMXV3ADphmaPALH7Uj1W6gB1mvvDNnpGx7bMookDQMIXzrBpDhF/wkabzf9h
-	UrzebjVomZRu6GMxhLFqtYeIOuiLOKYhew+DTMlbEzSyE5UfjBHisZtw6U0OK8X6H+f5afND1RD
-	asA8v0Rj+89YOrmjnC1X7dWw7fvJBpGIxc4s5ZVF7guNxdd+bp7fmKYY0YV9OmCxzDzTu73xmkD
-	faOyagOTdMIsKL6Kb1WjgN1pDzS2SSwXA0qUEAgI/xjOFwpW/MPbTF2SJE+0tSwLPWpXnVGCIre
-	X1
-X-Google-Smtp-Source: AGHT+IEnql9f6VQXY9z+xJPuqmV/UVO/NZG7OfzcZVuiSrpqgNziJ9vCyEN3HJ1eqE7qwBWjWJ2N/A==
-X-Received: by 2002:a17:907:3f99:b0:b6d:f416:2f3 with SMTP id a640c23a62f3a-b72d0ad0b7amr205260966b.19.1762523953394;
-        Fri, 07 Nov 2025 05:59:13 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bc214sm261464466b.52.2025.11.07.05.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 05:59:13 -0800 (PST)
-Date: Fri, 7 Nov 2025 05:59:10 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Simon Horman <horms@kernel.org>
-Cc: Michael Chan <michael.chan@broadcom.com>, 
-	Pavan Chebbi <pavan.chebbi@broadcom.com>, Michael Chan <mchan@broadcom.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next] tg3: extract GRXRINGS from .get_rxnfc
-Message-ID: <pj3m2f53zs47z2i6se4qaqs6izwfsgssnslna7ik7t2my3lpcr@7jyvaialnjxq>
-References: <20251105-grxrings_v1-v1-1-54c2caafa1fd@debian.org>
- <CACKFLim7ruspmqvjr6bNRq5Z_XXVk3vVaLZOons7kMCzsEG23A@mail.gmail.com>
- <4abcq7mgx5soziyo55cdrubbr44xrscuqp7gmr2lys5eilxfcs@u4gy5bsoxvrt>
- <CACKFLinyjqWRue89WDzyNXUM2gWPbKRO8k9wzN=JjRqdrHz_fA@mail.gmail.com>
- <aQ3SNvSigJwffoQK@horms.kernel.org>
+	s=arc-20240116; t=1762524117; c=relaxed/simple;
+	bh=scUDJhF4SHxD2LeiWfW3HwnUCLV+2kXA/sCsExXtlQk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Y2a5ibrGPtO11wtDqRp91LMzYsO8QLjxx1XOd6rDgdV+j5X1xI31ZYOJhfyc4/tV628M4WFgQH4Z6GOiaFnw04/oe8CfsogmDUx+vzQNbw4FPNmkGDlnoJfYzpqIPiMoWhPx1v4K/cTD7habbJN+f0+YemWCkNmBXHrJ+x3693I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zqgispbW; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1762524103; bh=88CqQVoCZpXl6pSXFcKCKbx0xO7QSECEV3gJ41owLVk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=zqgispbW0ScL2ZjE/E5kOHNOfXvA0DDHQHwAXf2rdpJOHZPAlfPiqdSZglw13HChc
+	 ph8TB0ouvnReFHvjuPPWu752e6+zwEQ+a2cMGX9D/64abhBdgyhAltab7U0CCiz2cq
+	 CKZNTZ8tAYtX1qLJK/5na0fPPflzh7KVi5k33nRg=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
+	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
+	id 66A52E7; Fri, 07 Nov 2025 22:01:38 +0800
+X-QQ-mid: xmsmtpt1762524098tieus4ud2
+Message-ID: <tencent_5D8667DBC6ECD2FF464349ADEEFD2EE84C06@qq.com>
+X-QQ-XMAILINFO: OATpkVjS499umwbUbosFTV8W9DlQ4fIB7LhH/l3DvwepTwAyzZSNNU1xNKNPVg
+	 6ZM4X473+wmg/vPAaAHn6Zqux+UuRkfxGegVmtCIMYhx4voCCpZ04LOZAQ93mQswPEr7mZRY3jW4
+	 JXgdo54IKJRy515P5fclUo1nw9CfemOwFtvGdE+yKiOx4fAofA0VEDhom5o75bVztVwtSLSs4y8s
+	 YHzMoH+/zA7khfmXm4EtqJpLz831Ph1DT0sAUY+XQd8Bww/RfuQBm1nPtDwdwBCRXAIiYVBQpIUO
+	 krRyMMG56uUvBEVHg5AwZBny3jSYBilY3WV8IQXUtsgVfrzKVrUQp1QZJ+bQ37/d2idoD5gmyR7j
+	 fhJ7sO96oS3yf/hE/Hp2izo9VPwBRn8Ak4dhhtseid5IZ1ScE4i7OVbycH7yf5yZzXCuJWxczkM1
+	 n4TrLKyoo0cBetKitcGCCeEPH4emY9c/t27TovpWYan+FMKoy7CioDrS3TfhDkHoFpZkkLTmGd0u
+	 Wg8+r25iC4E+BThN5Xap//nhQwkO5RtzCUILw5dtp/LXFjOeHTvxOmsKCDsqy40+QoajawgiRTuN
+	 SY75TayfIcuvfJe5bf+6HYPlP7rgyVddvBKdU933Ay1tjyU/czcWGD/Yq2RV1MovLSUX68VGdDYi
+	 ktcrGZGdPXe8BXmOVSP6XYlE86MwYHwC8HfeGmiI6TJhfrK6BV+TM9pSPb8e2MtOVOaeu9Qccoqb
+	 yzB+7DmEUgA53W8d/4VyoTgxxnbHf0gwy2wCdF/trKOfKrx68b6mdpoCqnvBkor6qGSQGsLhxvNW
+	 pmALaNnN3OucFllBod8wEAglS27fLOws4p2VGh0qaya3CXQvTd3QFtZhbkPm7Tj1sKGnppJRJQf7
+	 GZ+6axeNLbr4hplmP/ntSjVvV5JBarj7AUdEgFeCfHoGL8ovdRIkBIVPC1cvanbq5mevTCrc4Wmb
+	 C7oIilLL+8gmxkWX5EGZxh59AE3UPw/NGqyvtOHZMrPtNr3rTiMz3pduP+nPTqbEnLx7ZTr2U=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
+Cc: bharathsm@microsoft.com,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pc@manguebit.org,
+	ronniesahlberg@gmail.com,
+	samba-technical@lists.samba.org,
+	sfrench@samba.org,
+	sprasad@microsoft.com,
+	syzkaller-bugs@googlegroups.com,
+	tom@talpey.com
+Subject: [PATCH] cifs: client: fix memory leak in smb3_fs_context_parse_param
+Date: Fri,  7 Nov 2025 22:01:39 +0800
+X-OQ-MSGID: <20251107140138.3897816-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <690da014.a70a0220.22f260.0026.GAE@google.com>
+References: <690da014.a70a0220.22f260.0026.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQ3SNvSigJwffoQK@horms.kernel.org>
 
-On Fri, Nov 07, 2025 at 11:04:22AM +0000, Simon Horman wrote:
-> On Thu, Nov 06, 2025 at 10:45:21AM -0800, Michael Chan wrote:
-> > On Thu, Nov 6, 2025 at 9:06 AM Breno Leitao <leitao@debian.org> wrote:
-> > >     tg3: Fix num of RX queues being reported by ethtool
-> > >
-> > >     Using num_online_cpus() to report number of queues is actually not
-> > >     correct, as reported by Michael[1].
-> > >
-> > >     netif_get_num_default_rss_queues() was used to replace num_online_cpus()
-> > >     in the past, but tg3 ethtool callbacks didn't get converted. Doing it
-> > >     now.
-> > >
-> > >     Link: https://lore.kernel.org/all/CACKFLim7ruspmqvjr6bNRq5Z_XXVk3vVaLZOons7kMCzsEG23A@mail.gmail.com/#t [1]
-> > >
-> > >     Signed-off-by: Breno Leitao <leitao@debian.org>
-> > >     Suggested-by: Michael Chan <michael.chan@broadcom.com>
-> > >
-> > > diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-> > > index fa58c3ffceb06..5fdaee7ef9d7a 100644
-> > > --- a/drivers/net/ethernet/broadcom/tg3.c
-> > > +++ b/drivers/net/ethernet/broadcom/tg3.c
-> > > @@ -12729,7 +12729,7 @@ static u32 tg3_get_rx_ring_count(struct net_device *dev)
-> > >         if (netif_running(tp->dev))
-> > >                 return tp->rxq_cnt;
-> > >
-> > > -       return min(num_online_cpus(), TG3_RSS_MAX_NUM_QS);
-> > > +       return min((u32) netif_get_num_default_rss_queues(), tp->rxq_max);
-> > 
-> > Isn't it better to use min_t()?
-> 
-> FWIIW, umin() seems appropriate to me.
-> 
-> Commit 80fcac55385c ("minmax: add umin(a, b) and umax(a, b)")
-> includes quite a long explanation of why it exists.
-> And that does seem to match this case.
+The user calls fsconfig twice, but when the program exits, free() only
+frees ctx->source for the second fsconfig, not the first.
+Regarding fc->source, there is no code in the fs context related to its
+memory reclamation.
 
-I've send the patch using `min_t` in [1] before this reply, and if
-I don't hear any concern about replacing min_t by umin(), I will update
-that patch with umin().
+To fix this memory leak, release the source memory corresponding to ctx
+or fc before each parsing.
 
-Link: https://lore.kernel.org/all/20251107-tg3_counts-v1-1-337fe5c8ccb7@debian.org/ [1]
+syzbot reported:
+BUG: memory leak
+unreferenced object 0xffff888128afa360 (size 96):
+  backtrace (crc 79c9c7ba):
+    kstrdup+0x3c/0x80 mm/util.c:84
+    smb3_fs_context_parse_param+0x229b/0x36c0 fs/smb/client/fs_context.c:1444
+
+BUG: memory leak
+unreferenced object 0xffff888112c7d900 (size 96):
+  backtrace (crc 79c9c7ba):
+    smb3_fs_context_fullpath+0x70/0x1b0 fs/smb/client/fs_context.c:629
+    smb3_fs_context_parse_param+0x2266/0x36c0 fs/smb/client/fs_context.c:1438
+
+Reported-by: syzbot+72afd4c236e6bc3f4bac@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=72afd4c236e6bc3f4bac
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/smb/client/fs_context.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+index e60927b2a7c8..0e1949bcd6ea 100644
+--- a/fs/smb/client/fs_context.c
++++ b/fs/smb/client/fs_context.c
+@@ -1435,12 +1435,14 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
+ 			cifs_errorf(fc, "Unknown error parsing devname\n");
+ 			goto cifs_parse_mount_err;
+ 		}
++		kfree(ctx->source);
+ 		ctx->source = smb3_fs_context_fullpath(ctx, '/');
+ 		if (IS_ERR(ctx->source)) {
+ 			ctx->source = NULL;
+ 			cifs_errorf(fc, "OOM when copying UNC string\n");
+ 			goto cifs_parse_mount_err;
+ 		}
++		kfree(fc->source);
+ 		fc->source = kstrdup(ctx->source, GFP_KERNEL);
+ 		if (fc->source == NULL) {
+ 			cifs_errorf(fc, "OOM when copying UNC string\n");
+-- 
+2.43.0
+
 
