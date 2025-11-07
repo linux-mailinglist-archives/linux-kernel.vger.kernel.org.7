@@ -1,219 +1,222 @@
-Return-Path: <linux-kernel+bounces-890263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA73FC3FA54
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:06:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1404C3FAB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08A474F088C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:06:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E113BB896
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D56231CA54;
-	Fri,  7 Nov 2025 11:06:20 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7A5310782;
+	Fri,  7 Nov 2025 11:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kTVL2uNA";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kesRY2/m"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A5231BC96
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FCE31D366
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762513579; cv=none; b=X2YnuQaBo36a42ed2k4mquTkg/7mnoOxmhJkq50gabZRCgYVOCEjodsHZsjQWmX99VotPd05Xo890flCeMm+HLtZ6CwBKZfjWr5aw+sWrTkLBaw2H3iYiNR0Qwyb4iz/Oma4fnI2jwKzCxzS0YuYFRwdvQHgBl/uPipakT/TC+o=
+	t=1762513815; cv=none; b=ZKZgCjd7S4rGlEAukl1KzkCcjwER+5OQ2BR+MOSwr5jMZZ+QJkMcfRmj9uqi4tOrcscB250bTpvceDg0MzreVUPMiQ2G7Kpu2K9ePrelYUeoG94qUIbZQVoT7tYVydpZamn8wda8TJWP8MQxSCnkYm9namLAZxNrmYashStstHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762513579; c=relaxed/simple;
-	bh=3vB+SlHxUbkkRzKoqMns9VRF4uBIh29actxYlHhBAMI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Ti6uCv+MN1XzNSaTHU3Sh87bZc44C5qcUOzICfiLKZWw0UGIXI0M5Dcm3pOa+keJl2jU5oei2gycQbIbrbNksvjawimX3xnh6pJ7wXfM60yBKNkvKFrByEvVJEN/3UqOLZSzjPBtTW2+JoNHGZafaJrBqnAqfHK0JnpQh5PxiRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e8839f138so49567539f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:06:16 -0800 (PST)
+	s=arc-20240116; t=1762513815; c=relaxed/simple;
+	bh=uvdSLrRqeSgJ29fmx5TFOH169Lf+Eo9jUOrniAkdVq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bj0CU3KjlbkPUwM/6QJtWgu/JY7xN/SDe0kSu3B29Y1bBsaDhve1sJIMbJBJQDz38YgmE8zVfAuWnn3XxayQcfAfNJQpRzS9jKnWQYcDKRoWd0XpWob0GwtQHu4ESV3W0eD8zJkzHMJPg60g9bKTuCBo1I24o8EXikGwUrFMFHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kTVL2uNA; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kesRY2/m; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A77CGfT630895
+	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 11:10:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vP5CsM5g0HeHOTSJ0OMxMqeLtmj8J5VZdu7ouInriPk=; b=kTVL2uNAU7+oNJ0t
+	NR/5a4pLbFGYY5wf72iiXu3Aa4fetjFKQ9zdlH8oYDu1NewO8kjuYZOdjhXjdvUv
+	bf9H5CrpXtD3FxEPcZGGEe/I7iM/0aRRpxXoXCHoPjp7StVXZ72j9UVDYvOKO9PK
+	dM6P/R36KX94fYH/c+vCqaqes2PvZ/LrkNM01vU7XAbdqPBV6FVSt3SDB1O09pk8
+	SELlf5XSIHWr6/eEojdjY43BaCIsGJtdJhRfz412+r7RW1eoyiS4nL6TQwJhxIf7
+	B3ni+nzSCZoHdKpoDZxL3P9Eh96zOXP7YNsyWVkUNd24P1KuGRuBYPvKnw4TQFFq
+	CgY3uQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a92232cnx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:10:12 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ed73c9e3aaso816641cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:10:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762513812; x=1763118612; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vP5CsM5g0HeHOTSJ0OMxMqeLtmj8J5VZdu7ouInriPk=;
+        b=kesRY2/m6/Ql5d99ElFud0oWw0VkJ5waHJ+m95Yknp5polEBeCjAFhrRUUJpzLV55I
+         4YyGYsI3GspN8ZWgBGHKG+pXFP6RUTDKgxXZl/D1ElccuIbKNdfJURsUEZVuloFXcxPO
+         iabWhHZIVHsTh+IIKlq/ecRv4x2XrwPpKTuPYLZove3XZY6JRAFs74gar3Yv31gJH/Aj
+         ufusMx9PGabtOiyP4YfT+sAJmn/fZaIT9yofNnte+loATYPysMwrsRYAYd4AeKwITkCl
+         t2w3QAkoCw00nl/NCNzwMJWV+gw5fOVXZNCPgZ9FS03OIY71gnKwmffWgRsp7hHyQQWR
+         iGdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762513576; x=1763118376;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BlZiSo9idK2j7S97qoxkiQFU6gD7Ty00a+sM4XvvUvQ=;
-        b=BQI/ATYzLDEAaXBYVNymsKsJSsgGQbwh53JRIuNBUgJMdyVYpuqQXFI4p+QOGGHuX1
-         ocHKffHExfeAWIH6ZnEXNgslBZGgbGxWu+JCwBoTJFRQF1qzJHXrfbNp4E8hFukMSa4g
-         zN5LgmbwWMuW6SBnYXUmL5kCy5KPilggpSwfXgMJSzEJyjVoERNko5JAAjqPne/66G4G
-         fpPBp3mkdE/q4+i0EbQc7aeTmXjhZjaRC6Qt4KYkiPZ8GPa2Ysx/AoTM0pvDItcLh0Xs
-         2NMu2QOV+YsBBHY4I2oL4DTX9QM7CmuNr5Ca5f7FrB5fA6eyKjlnTrlZjFNgZZOPN4gL
-         TnBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVe+Uo1op7o4+6dgox6uhVcErJP6HmIKv674L7loNFgFXJgXhrwOGJ1Vh/H1cNGO+y1OsdklyyffLZJhd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1Cpz2pwh9tWHOtQxywiukB4n18GBqHK02xsNJ9MZ/EVpDzI2v
-	+BBFfvpbEaA59VIwFOAcipOhI6k0tw/jyEXiSezv87wv+Esa9RgBRqS0/NFuUTZiaPX6vU6jeH+
-	qGm2x812rk/BXkLNslBfaMiur9IELcFNe9RS5EUUwNzcxmKc/fbuzGQcRkXE=
-X-Google-Smtp-Source: AGHT+IFtq8vti0VVMqqLFM0bv4gUTSBe4hTPp5evTjvIF5wiTxqgsOFnnguZogDuOBM7v8Hwi4ZtDTN1tvpIai1XWk5jXBtYFQJY
+        d=1e100.net; s=20230601; t=1762513812; x=1763118612;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vP5CsM5g0HeHOTSJ0OMxMqeLtmj8J5VZdu7ouInriPk=;
+        b=ZixQHvs8RDN8PEkrONHNGbiNxCEwhsy/mmj/ohoqxg0WA8eOYEEgwjp5Ehl52VxtCv
+         ag2N5TupmI3Dk/yz3DRX1LuyMQMiXyRBYBgmCKYEVrqQ+Cvf3YhYf6DHxlUacOWfdRVW
+         fRicHeWOjRsaxyj7oVgTTHPIoMig0kaKrKbX/iA2W5az1icagGEonglotUNXaoXPVmry
+         veEHockNRhqIWR3xFGbhAynOlS0O6JdnSE9KNSuZmmS9E3FZviXSW5wOJvIkkPakmMrQ
+         R8jdtwESGvwRrAcrxomiOih0iewuOaOI3lwmAJS+b6Yq5X87whglQesNHdIPxypcbxcL
+         KX/w==
+X-Forwarded-Encrypted: i=1; AJvYcCX5JWx/GCXaJAlIt3XDDxHLhqvz+QBbugPuMVdr7W+1A+hOnr2gtMGXPLzLe93SVtipxYtPECXIW8qBH/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA6HLWnzKxynUh7WO0gbb1QKseUwEd8CxhLCqGnnhDCxCQuCB4
+	JXHaJmF9170BkDt30HHv4y9jSAC5ZWYktOQWSWZOzihj9gudNZN3fW9Pwdr+lU4ErmMeJmk4MiA
+	O3Lfyqp0RzLFNK7UXAitYrBWDqiWo3Ok6AKIu8QpmHH9BjWebYeKwy/QHlWM7d1CGc5w=
+X-Gm-Gg: ASbGncsBSGjRJCbFiVJL9GHQfraXilizTtYw0R2GDWcIPOxPQ6NDA5OdkOi6S3DNzBe
+	2KgQqEdMQfipoLCcpCmqCz9d8Euy0z0TxhYPpvtyQGCXwM1sgYJr4lqQXAbijO1Db2ChITlCtEv
+	3Rrtpyf4k8RxA6s795NV+LXtl6RECARxWCahjK6J86mGyZhDa/a/SfuqDH8HS5pdeVsi39WYF44
+	iw3Vla5jMxA+cZdUywLqsaWqFEhY+1hStAIMB1iyLBVUjcWY1kK/1osKutl5OmqmvlVsrOnEu5p
+	CYczt3x71CFw5M+3O0WavnH4B+DXiKC5OVn53TH1HetuIBmKtQxBzD1cqns1cg1nLE9s/sYcx/M
+	xmYsKgXoEmkJ+oG7clCD3xzQvdTewAKeGCFBL73i6qR2b2PDe/6Qxkfpw
+X-Received: by 2002:ac8:108f:0:b0:4ed:94e7:97bc with SMTP id d75a77b69052e-4ed94e79806mr13951551cf.3.1762513811868;
+        Fri, 07 Nov 2025 03:10:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG+oSsE67XF0MhznsqL3RMh0VmCG7Jg2iUSdY+a5r8YCwj9SfReJWThGgi5T1OFd6OFN1sfjw==
+X-Received: by 2002:ac8:108f:0:b0:4ed:94e7:97bc with SMTP id d75a77b69052e-4ed94e79806mr13951281cf.3.1762513811430;
+        Fri, 07 Nov 2025 03:10:11 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf31286esm217650966b.21.2025.11.07.03.10.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 03:10:10 -0800 (PST)
+Message-ID: <5fea976c-a047-43a4-a062-fee1d40447b4@oss.qualcomm.com>
+Date: Fri, 7 Nov 2025 12:10:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3485:b0:433:2943:3a78 with SMTP id
- e9e14a558f8ab-4335f478e35mr38087315ab.31.1762513576045; Fri, 07 Nov 2025
- 03:06:16 -0800 (PST)
-Date: Fri, 07 Nov 2025 03:06:16 -0800
-In-Reply-To: <20251107080117.15099-1-make24@iscas.ac.cn>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690dd2a8.a70a0220.22f260.003d.GAE@google.com>
-Subject: [syzbot ci] Re: net: Fix error handling in netdev_register_kobject
-From: syzbot ci <syzbot+ci348771c1c9b7511f@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, atenart@kernel.org, davem@davemloft.net, 
-	ebiederm@xmission.com, edumazet@google.com, gregkh@suse.de, horms@kernel.org, 
-	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
-	make24@iscas.ac.cn, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sdf@fomichev.me, stable@vger.kernel.org, yajun.deng@linux.dev
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 8/8] net: stmmac: qcom-ethqos: add support for sa8255p
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+ <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>, Chen-Yu Tsai <wens@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthew Gerlach <matthew.gerlach@altera.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jan Petrous <jan.petrous@oss.nxp.com>, s32@nxp.com,
+        Romain Gantois <romain.gantois@bootlin.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Heiko Stuebner <heiko@sntech.de>, Chen Wang <unicorn_wang@outlook.com>,
+        Inochi Amaoto <inochiama@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Minda Chen <minda.chen@starfivetech.com>,
+        Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Fu Wei <wefu@redhat.com>,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Shuang Liang <liangshuang@eswincomputing.com>,
+        Zhi Li <lizhi2@eswincomputing.com>,
+        Shangjuan Wei <weishangjuan@eswincomputing.com>,
+        "G. Jaya Kumaran" <vineetha.g.jaya.kumaran@intel.com>,
+        Clark Wang <xiaoning.wang@nxp.com>, Linux Team <linux-imx@nxp.com>,
+        Frank Li <Frank.Li@nxp.com>, David Wu <david.wu@rock-chips.com>,
+        Samin Guo <samin.guo@starfivetech.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Swathi K S <swathi.ks@samsung.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Drew Fustini
+ <dfustini@tenstorrent.com>, linux-sunxi@lists.linux.dev,
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, sophgo@lists.linux.dev,
+        linux-riscv@lists.infradead.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20251107-qcom-sa8255p-emac-v5-0-01d3e3aaf388@linaro.org>
+ <20251107-qcom-sa8255p-emac-v5-8-01d3e3aaf388@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251107-qcom-sa8255p-emac-v5-8-01d3e3aaf388@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA4OSBTYWx0ZWRfX0XwDrUt4Vtmj
+ 0OQRnvuW4Dz5nX+Z1Eaxvt2df/WBtHHMwJTE8+01KA6jeXEix5yNAVBF2vs7TORmjDyfV66OQmb
+ 7WoeavGXYk+E3/Q3jU+7DASYOV0B2GdcCU7bKRjSptohIjqdVu+wptbBgPsquLD5+n3xo0q73PO
+ 346xnC+MISvPpjsncPC4T4+HmubYV13ghi9ltvRl5TM4IkynSJ9SCk8cVXhoDNbvpkC51x6oapt
+ bvkKqL0S0MMh/lMC2DTj28NkxHzbH0PYZGXBm0AdTtDaTkXvnkVfU67mSaiYpn8N0yfs8wAW7Kb
+ C1gT5m8ejkp4pM5fn8Uv1BFG+Ru+td06LJ5vfkcZFlBxG1Rwc/DhTbemGpexskm8p6bP/HKX7Ok
+ KlqmdWGSp+F7QJ4aYG+AZDjkSw3aiQ==
+X-Authority-Analysis: v=2.4 cv=Csmys34D c=1 sm=1 tr=0 ts=690dd394 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=hDgXwu4zDwT_Ch0b-w8A:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: adZCmFSVSZ7bfX2XFuG84-8C6WyscYZj
+X-Proofpoint-ORIG-GUID: adZCmFSVSZ7bfX2XFuG84-8C6WyscYZj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070089
 
-syzbot ci has tested the following series
+On 11/7/25 11:29 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Extend the driver to support a new model - sa8255p. Unlike the
+> previously supported variants, this one's power management is done in
+> the firmware using SCMI. This is modeled in linux using power domains so
+> add support for them.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-[v1] net: Fix error handling in netdev_register_kobject
-https://lore.kernel.org/all/20251107080117.15099-1-make24@iscas.ac.cn
-* [PATCH] net: Fix error handling in netdev_register_kobject
+[...]
+> +static void qcom_ethqos_pd_serdes_powerdown(struct net_device *ndev, void *priv)
+> +{
+> +	struct qcom_ethqos *ethqos = priv;
+> +
+> +	/* TODO set level */
+> +	qcom_ethqos_domain_off(ethqos, ETHQOS_PD_SERDES);
 
-and found the following issue:
-KASAN: slab-use-after-free Read in netdev_run_todo
+dev_pm_opp_set_level(dev, 0);?
 
-Full report is available here:
-https://ci.syzbot.org/series/29bd058e-ea85-48e2-9bb9-ff9c0214f12e
+perhaps with _index?
 
-***
-
-KASAN: slab-use-after-free Read in netdev_run_todo
-
-tree:      net-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
-base:      8a25a2e34157d882032112e4194ccdfb29c499e8
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/2f985280-f9ef-47c8-b4ec-80d44968222b/config
-
-==================================================================
-BUG: KASAN: slab-use-after-free in kobject_put+0x2ab/0x480
-Read of size 1 at addr ffff888113992714 by task kworker/u8:0/12
-
-CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Workqueue: netns cleanup_net
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250
- print_report+0xca/0x240
- kasan_report+0x118/0x150
- kobject_put+0x2ab/0x480
- netdev_run_todo+0xd2e/0xea0
- ops_undo_list+0x3e1/0x990
- cleanup_net+0x4d8/0x820
- process_scheduled_works+0xae1/0x17b0
- worker_thread+0x8a0/0xda0
- kthread+0x711/0x8a0
- ret_from_fork+0x4bc/0x870
- ret_from_fork_asm+0x1a/0x30
- </TASK>
-
-Allocated by task 5810:
- kasan_save_track+0x3e/0x80
- __kasan_kmalloc+0x93/0xb0
- __kvmalloc_node_noprof+0x5cd/0x910
- alloc_netdev_mqs+0xa6/0x11b0
- ip6gre_init_net+0xb5/0x3c0
- ops_init+0x35c/0x5c0
- setup_net+0xfe/0x320
- copy_net_ns+0x34e/0x4e0
- create_new_namespaces+0x3f3/0x720
- unshare_nsproxy_namespaces+0x11c/0x170
- ksys_unshare+0x4c8/0x8c0
- __x64_sys_unshare+0x38/0x50
- do_syscall_64+0xfa/0xfa0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 12:
- kasan_save_track+0x3e/0x80
- __kasan_save_free_info+0x46/0x50
- __kasan_slab_free+0x5c/0x80
- kfree+0x19a/0x6d0
- device_release+0x9c/0x1c0
- kobject_put+0x22b/0x480
- netdev_run_todo+0xd0c/0xea0
- ops_undo_list+0x3e1/0x990
- cleanup_net+0x4d8/0x820
- process_scheduled_works+0xae1/0x17b0
- worker_thread+0x8a0/0xda0
- kthread+0x711/0x8a0
- ret_from_fork+0x4bc/0x870
- ret_from_fork_asm+0x1a/0x30
-
-The buggy address belongs to the object at ffff888113992000
- which belongs to the cache kmalloc-cg-4k of size 4096
-The buggy address is located 1812 bytes inside of
- freed 4096-byte region [ffff888113992000, ffff888113993000)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x113990
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x17ff00000000040(head|node=0|zone=2|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 017ff00000000040 ffff88810004b500 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 017ff00000000040 ffff88810004b500 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 017ff00000000003 ffffea00044e6401 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5810, tgid 5810 (syz-executor), ts 65154411256, free_ts 60842795356
- post_alloc_hook+0x240/0x2a0
- get_page_from_freelist+0x2365/0x2440
- __alloc_frozen_pages_noprof+0x181/0x370
- alloc_pages_mpol+0x232/0x4a0
- allocate_slab+0x96/0x350
- ___slab_alloc+0xe94/0x18a0
- __slab_alloc+0x65/0x100
- __kmalloc_noprof+0x471/0x7f0
- __register_sysctl_table+0x72/0x1340
- __addrconf_sysctl_register+0x328/0x4c0
- addrconf_sysctl_register+0x168/0x1c0
- ipv6_add_dev+0xd46/0x1370
- addrconf_notify+0x794/0x1010
- notifier_call_chain+0x1b6/0x3e0
- register_netdevice+0x1608/0x1ae0
- register_netdev+0x40/0x60
-page last free pid 15 tgid 15 stack trace:
- __free_frozen_pages+0xbc4/0xd30
- __folio_put+0x21b/0x2c0
- skb_release_data+0x49a/0x7c0
- napi_consume_skb+0x158/0x1e0
- skb_defer_free_flush+0x18f/0x250
- net_rx_action+0x804/0xe50
- handle_softirqs+0x286/0x870
- run_ksoftirqd+0x9b/0x100
- smpboot_thread_fn+0x542/0xa60
- kthread+0x711/0x8a0
- ret_from_fork+0x4bc/0x870
- ret_from_fork_asm+0x1a/0x30
-
-Memory state around the buggy address:
- ffff888113992600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888113992680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888113992700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                         ^
- ffff888113992780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888113992800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+Konrad
 
