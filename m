@@ -1,240 +1,329 @@
-Return-Path: <linux-kernel+bounces-891027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6702C41A37
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:53:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1E7C41AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A271A4EDB1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:53:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331EB3BF836
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF2B31961C;
-	Fri,  7 Nov 2025 20:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017BC30F7EB;
+	Fri,  7 Nov 2025 20:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHjxLduA"
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVF7aB53"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C13230EF87
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06612248867
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762548811; cv=none; b=ncfLnQByJwJcD91DsCaIPhBHSCpwUWwFv745XUGz5bZERgC/l+2iDTQxhkkalXVfmemUZ6gH/NRaRZFEjoH4kVm34nN2T9UG36+YE09fhO71P//EUFO1YP7FSCqgBSftGr43UpVCztr1NJyXHuuBvpdABWgThBERZc1eSbEuUDg=
+	t=1762549115; cv=none; b=JR6tw/UKSXotksDfGs3GRv4odUN5rjytRMoneF3m7N1oHk/7r4dXLISc4O2h69OYmHXocDoo34KHAPh3xHQcaqQun3nBZXks/A5QtAcffUFk4Obil6acrDj+cB6jXVxkM0gXQEhYygIELBiIdAKDiT4RGia1NFC+rFC/BsQ21M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762548811; c=relaxed/simple;
-	bh=ljO4JvzYez1krH2vOKDSHh0LKeuwRchWTqG+Aa5yOl4=;
+	s=arc-20240116; t=1762549115; c=relaxed/simple;
+	bh=iUq0bsAV3M+TRuQJgO2p1d6Al5A/ILBH5+OR693PeGk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZQPvlM4avrnO/DXSp83HluXB0b5LwaoTk8+V8wZ3eT5NOvT71mgW6vLMT+pHkmiD7sP/hMmsHuqrsUv/mbnF9a8aTBqW9OrVKH4QLO6K8R0gh5ftnGCiNXVhlbZ3u484DniFQfW5bK4HTYrESSyCHu/2XHmRzOL4QfXUiQgX6Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHjxLduA; arc=none smtp.client-ip=74.125.224.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-63f2f1ac9feso190132d50.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:53:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762548809; x=1763153609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ndAmh0MjfxVBBMOro9qnccRFjet8LAlaiu54q/obIYI=;
-        b=KHjxLduA0yJRF9gYLLhzLwSA3XQnvK8Umf+c8k/NcwFCLaz7HlWp6KD/O271uYQ6sc
-         vpyDmCs+Gywp3opLba6Vdc/lsMqjWOoruiqOysJ9KxfWH2zmwQz/XK0OfeB1qB//yMp3
-         y5Nn+pzbqs3apkQlT8zGQ5refWJXFxbl/9Mmc8Rp8O3wDzp9POOhUGdyTixMbDFVTgi2
-         Dhgz9qhXlzzan5J76fdyU3RHQGozEFIF7LLdOcnbW6izx7aCuqvNGXGtTYFK/xMJQ2Yd
-         FjGdwIzG0AN5pObeDa6aDa2g7t2hR34uGCOSOSxHeXjnSIowi7pYQO6K85E4I0LV6KeW
-         WTmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762548809; x=1763153609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ndAmh0MjfxVBBMOro9qnccRFjet8LAlaiu54q/obIYI=;
-        b=jimt82usdx1NtDB9eJ7otYfbo6XSr1F/QTcjdTCXYJJf3oa3cW2vwy7HVtZR3vdfCD
-         CZ23LSEOl8RNijqX17ThqILru4hI+QlN7AvEub2lBsugIPN9jveUhk0ZdLo/0sg8hT2A
-         eOM2oeI/qSDD4jev6bLAoJMuLIilFRBF9ioqn0g5PipGNokOih/FR5v65wlqU6K4yp9Z
-         XNCkaFXhCAQso0Da60t1Y1VvHVxwXJg06A2fwOZtW1/by6IMyCsKVHVEnPwnpzJ1E0TN
-         S2kV00Wbu/TZrHj5Md/5QDAjI6wXZZMXbqHoUSt7zeajMi9kCvUTGtLFeBFDJDz5V5Wm
-         YnRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBaEiHDeDzjXBtW4U7yw7+zh5yKNHw+sVMnlF4s5wHNuTXhnQD/9tzx5f2B17abJLFkahcAtTh8c/VvC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Sck0tnJfedsezUgZZ4guHdP/R63hP6GDjqN+QoZxH/cc8lKn
-	3ejFFIUkDFwHBo98z7FPxA8zydj+/pk2tuV3lH3XtstNkv0yWiOrcjVAX7x4BxSGE6voQeGqnmQ
-	vMYGo4jCiRgodj8/T90yj2MDSng0qB4E=
-X-Gm-Gg: ASbGncsdVqdA8hr5ixjDxjg64y59vxrrFwAQ974Chox1aW0ajbjRb1r5cfXCFQA1hqz
-	8UfZtppmY6S6EC4BW5iFebNeKPxJKJZXW2NDLZcij3WlHMHdi/QT1P+JqLjjCyopJNeU0RMGeBs
-	1v7UK7KhW4PysvS0EkLGFFw7g2De/xth2guWYezlMHsZMk13nxstv1mrw6uRoBb9xazMEuWXfgN
-	E6kHop2iQflk+q58qXdQjIDZxLZshbiZjk42Tt7tBXL3D31UUMkwRi7gs0xUYRJw0hhgkW6VHIq
-	xNZnJADT7kiz3s9f10r5jA==
-X-Google-Smtp-Source: AGHT+IFA5LRJyKMNpiLJ6acp+jtqn28437tPxYxfpfcUscZsu2WEuoubDNLDYs74uabDBYBM/7EmlyOaY/35gs8ZEr4=
-X-Received: by 2002:a05:690c:a:b0:786:4fd5:e5d4 with SMTP id
- 00721157ae682-787d54166b6mr4447577b3.6.1762548808930; Fri, 07 Nov 2025
- 12:53:28 -0800 (PST)
+	 To:Cc:Content-Type; b=sTmWO21iA16L9OJNXEO1A7zXPX/US8L2e7TIfxFCUSlhOG5gq2t3w2EaYfdRHba3yI+S94d/BEzV8dq+b2V7odfsqKz417cZDJd4xEgUwN2B0PzSNwNtZYxUdoGkrC6OZcJ7PpJ3/mwBeviF+1fnKRrHhOwpoL7pTWAJmxdguSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVF7aB53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB77C116C6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:58:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762549114;
+	bh=iUq0bsAV3M+TRuQJgO2p1d6Al5A/ILBH5+OR693PeGk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RVF7aB53pdDgGCGtPAw++52vi+KAK578Lyb1qga/ht6SUD9w87O+IkOuhUbLm1/VD
+	 ARSrpdCS1kNiWQ/+yVfg5D2ugW6/khSgn+kb3oUTD3ZjVU0hr7U8Y1/kqRLDQ7shvm
+	 0j6Do0F31Pf4M601H56IgHvoydDxdZ6+wONNwN4BEjLA9BHySynfoFRdVCHcvI1g6s
+	 kP+7ZNJkaZPnuxykh7HxRoxGjvD9bWVtd1R86TtgmIWbie2HbcvMsd60aOXW85N58P
+	 M6ZBxI6gi5R4dmawkvbLbA+U76uMZdEjKTvetSM4suOmEU9AlRSYxT1+Zfdy9CYRuv
+	 5wqJos0DInUpg==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-44fe4bf7887so219852b6e.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:58:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZoRFmxZEHHqftrrl8Za1edZ9mN1kltsUANNqpns9eXoaErCRZUPyQWdR+pPEY5fYRuXouoGd/QeoNOwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFm55/2Sltbcfk4pMs4FuTgbfyme+zJA9K5+HOgCr2tZODN9ty
+	rLu0I1KSq79NTt99bnBRUVzED/7wIir6gJr7LYT1P2LQQq3F3s7lUPFxgP//iyJwaRuB6DtBF0C
+	A/xy2euKSbkjBIG8uvQggv75laGUBhu0=
+X-Google-Smtp-Source: AGHT+IGO+47BAZKtpv7PN90zNrlKFOfKGAVtIiUUWQdWGLi0JsCvuPgSS/0JSI1e6C4DpbY+MVmZXTHIscDGD5ggRFo=
+X-Received: by 2002:a05:6808:c148:b0:43f:64bc:8b7e with SMTP id
+ 5614622812f47-4502a1d85e0mr415404b6e.15.1762549113720; Fri, 07 Nov 2025
+ 12:58:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105-netconsole_dynamic_extradata-v1-0-142890bf4936@meta.com>
- <20251105-netconsole_dynamic_extradata-v1-2-142890bf4936@meta.com> <jejsptfg7cqmbcm467tb72gg3mwsqge6iz4qy4wy5ifev2sgim@hukyfgsr74xj>
-In-Reply-To: <jejsptfg7cqmbcm467tb72gg3mwsqge6iz4qy4wy5ifev2sgim@hukyfgsr74xj>
-From: Gustavo Luiz Duarte <gustavold@gmail.com>
-Date: Fri, 7 Nov 2025 20:53:18 +0000
-X-Gm-Features: AWmQ_bmKloNJpWlaMH-L-FWBG3Z5z2qrAABsdDUdzzHSOuB9z0bXDZ5dbKaYqbQ
-Message-ID: <CAGSyskXmLQi7urQodZVNF7n6j2OTVB4yGoXDQrHccsM0kniSkA@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/4] netconsole: Split userdata and sysdata
-To: Breno Leitao <leitao@debian.org>
-Cc: Andre Carvalho <asantostc@gmail.com>, Simon Horman <horms@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
+References: <20251030210110.298612-1-wusamuel@google.com> <CAJZ5v0gzKN1cXfj508G4_9O2hKR0HncW4et3BNbaV+5Erh=LMA@mail.gmail.com>
+ <CAG2KctonFbbN9KrKWweQWaRKNN=rZkpWQCmyyY2rKfcAUzF=sA@mail.gmail.com>
+In-Reply-To: <CAG2KctonFbbN9KrKWweQWaRKNN=rZkpWQCmyyY2rKfcAUzF=sA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 7 Nov 2025 21:58:22 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g6F+iEdicqSBb5M6-EfKfdW3vfwsxa98H2mrn5by6hPA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnAouEQQKPJ4YOtDONxAXNKBzmg44egm746mG12focbDzwPedbl84e4Pg0
+Message-ID: <CAJZ5v0g6F+iEdicqSBb5M6-EfKfdW3vfwsxa98H2mrn5by6hPA@mail.gmail.com>
+Subject: Re: [PATCH v6] PM: Support aborting sleep during filesystem sync
+To: Samuel Wu <wusamuel@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, tuhaowen@uniontech.com, 
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 7, 2025 at 1:23=E2=80=AFPM Breno Leitao <leitao@debian.org> wro=
-te:
-> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> > index 0a8ba7c4bc9d..e780c884db83 100644
-> > --- a/drivers/net/netconsole.c
-> > +++ b/drivers/net/netconsole.c
-> > @@ -50,7 +50,8 @@ MODULE_LICENSE("GPL");
-> >  /* The number 3 comes from userdata entry format characters (' ', '=3D=
-', '\n') */
-> >  #define MAX_EXTRADATA_NAME_LEN               (MAX_EXTRADATA_ENTRY_LEN =
-- \
-> >                                       MAX_EXTRADATA_VALUE_LEN - 3)
-> > -#define MAX_EXTRADATA_ITEMS          16
-> > +#define MAX_USERDATA_ITEMS           16
+On Wed, Nov 5, 2025 at 2:20=E2=80=AFAM Samuel Wu <wusamuel@google.com> wrot=
+e:
 >
-> Do we still need to have MAX_USERDATA_ITEMS cap with your new approach?
-
-That is a good point. I did think about this and ended up deciding to
-keep a limit as a safety measure against userspace creating a boatload
-of items until we run out of memory.
-
->
-> > +#define MAX_SYSDATA_ITEMS            4
->
-> Can we have this one inside enum sysdata_feature?
->
-> Something as:
->
->   enum sysdata_feature {
->       SYSDATA_CPU_NR =3D BIT(0),
->       SYSDATA_TASKNAME =3D BIT(1),
->       SYSDATA_RELEASE =3D BIT(2),
->       SYSDATA_MSGID =3D BIT(3),
->       MAX_SYSDATA_ITEMS =3D 4  /* Sentinel: highest bit position */
->   };
-
-Sure, I will do this in v2.
-
-
-> > @@ -1353,22 +1311,21 @@ static void populate_configfs_item(struct netco=
-nsole_target *nt,
+> On Tue, Nov 4, 2025 at 10:52=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
 > >
-> >  static int sysdata_append_cpu_nr(struct netconsole_target *nt, int off=
-set)
-> >  {
-> > -     /* Append cpu=3D%d at extradata_complete after userdata str */
-> > -     return scnprintf(&nt->extradata_complete[offset],
-> > +     return scnprintf(&nt->sysdata[offset],
-> >                        MAX_EXTRADATA_ENTRY_LEN, " cpu=3D%u\n",
->
-> This is confusing. It is writing to sysdata but checking extradata entry =
-len.
-
-My understanding is that extradata is a way to refer to both userdata
-and sysdata, and MAX_EXTRADATA_ENTRY_LEN is the maximum size for both
-(and the arithmetic used to define MAX_EXTRADATA_VALUE_LEN and
-MAX_EXTRADATA_NAME_LEN also applies to both). Do you want to define
-separate maximum sizes for userdata items and sysdata items?
-
-> > @@ -1533,11 +1475,11 @@ static void send_msg_no_fragmentation(struct ne=
-tconsole_target *nt,
-> >               memcpy(nt->buf, msg, msg_len);
-> >       }
+> > On Thu, Oct 30, 2025 at 10:01=E2=80=AFPM Samuel Wu <wusamuel@google.com=
+> wrote:
+> > >
+> > > At the start of suspend and hibernate, filesystems will sync to save =
+the
+> > > current state of the device. However, the long tail of the filesystem
+> > > sync can take upwards of 25 seconds. If during this filesystem sync
+> > > there is some wakeup or abort signal, it will not be processed until =
+the
+> > > sync is complete; from a user's perspective, this looks like the devi=
+ce
+> > > is unresponsive to any form of input.
+> > >
+> > > This patch adds functionality to handle a sleep abort signal when in
+> > > the filesystem sync phase of suspend or hibernate. This topic was fir=
+st
+> > > discussed by Saravana Kannan at LPC 2024 [1], where the general
+> > > consensus was to allow filesystem sync on a parallel thread. In case =
+of
+> > > abort, the suspend process will stop waiting on an in-progress
+> > > filesystem sync, and continue by aborting suspend before the filesyst=
+em
+> > > sync is complete.
+> > >
+> > > Additionally, there is extra care needed to account for back-to-back
+> > > sleeps while maintaining functionality to immediately abort during th=
+e
+> > > filesystem sync stage. Furthermore, in the case of the back-to-back
+> > > sleeps, a subsequent filesystem sync is needed to ensure the latest
+> > > files are synced right before sleep. If necessary, a subsequent sleep=
+'s
+> > > filesystem sync will be queued, and will only start when the previous
+> > > sleep's filesystem sync has finished. While waiting for the previous
+> > > sleep's filesystem sync to finish, the subsequent sleep will still ab=
+ort
+> > > early if a wakeup event is triggered, solving the original issue of
+> > > filesystem sync blocking abort.
+> > >
+> > > [1]: https://lpc.events/event/18/contributions/1845/
+> > >
+> > > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > > Signed-off-by: Samuel Wu <wusamuel@google.com>
+> > > ---
+> > > Changes in v6:
+> > > - Use spin_lock_irq() in thread context
+> > > - Use dedicated ordered workqueue for sync work items
+> > > - Use a counter instead of two bools for synchronization
+> > > - Queue fs_sync if it's not already pending on workqueue
+> > > - pm_wakeup_clear(0) is prequisite to this feature, so move it within=
+ function
+> > > - Updated commit text for motive of back-to-back fs syncs
+> > > - Tighter lock/unlock around setup, checks, and loop
+> > > - Fix function definitions for CONFIG_PM_SLEEP=3Dn
+> > > - v5 link: https://lore.kernel.org/all/20251017233907.2305303-1-wusam=
+uel@google.com/
+> > >
+> > > Changes in v5:
+> > > - Update spin_lock() to spin_lock_irqsave() since abort can be in IRQ=
+ context
+> > > - Updated changelog description to be more precise regarding continui=
+ng abort
+> > >   sleep before fs_sync() is complete
+> > > - Rename abort_sleep_during_fs_sync() to pm_stop_waiting_for_fs_sync(=
+)
+> > > - Simplify from a goto to do-while in pm_sleep_fs_sync()
+> > > - v4 link: https://lore.kernel.org/all/20250911185314.2377124-1-wusam=
+uel@google.com
+> > >
+> > > Changes in v4:
+> > > - Removed patch 1/3 of v3 as it is already picked up on linux-pm
+> > > - Squashed patches 2/3 and 3/3 from v3 into this single patch
+> > > - Added abort during fs_sync functionality to hibernate in addition t=
+o suspend
+> > > - Moved variables and functions for abort from power/suspend.c to pow=
+er/main.c
+> > > - Renamed suspend_fs_sync_with_abort() to pm_sleep_fs_sync()
+> > > - Renamed suspend_abort_fs_sync() to abort_sleep_during_fs_sync()
+> > > - v3 link: https://lore.kernel.org/all/20250821004237.2712312-1-wusam=
+uel@google.com/
+> > >
+> > > Changes in v3:
+> > > - Split v2 patch into 3 patches
+> > > - Moved pm_wakeup_clear() outside of if(sync_on_suspend_enabled) cond=
+ition
+> > > - Updated documentation and comments within kernel/power/suspend.c
+> > > - v2 link: https://lore.kernel.org/all/20250812232126.1814253-1-wusam=
+uel@google.com/
+> > >
+> > > Changes in v2:
+> > > - Added documentation for suspend_abort_fs_sync()
+> > > - Made suspend_fs_sync_lock and suspend_fs_sync_complete declaration =
+static
+> > > - v1 link: https://lore.kernel.org/all/20250815004635.3684650-1-wusam=
+uel@google.com
+> > >
+> > >  drivers/base/power/wakeup.c |  8 ++++
+> > >  include/linux/suspend.h     |  4 ++
+> > >  kernel/power/hibernate.c    |  5 ++-
+> > >  kernel/power/main.c         | 81 +++++++++++++++++++++++++++++++++++=
+++
+> > >  kernel/power/suspend.c      |  4 +-
+> > >  5 files changed, 100 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.=
+c
+> > > index d1283ff1080b..689c16b08b38 100644
+> > > --- a/drivers/base/power/wakeup.c
+> > > +++ b/drivers/base/power/wakeup.c
+> > > @@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup=
+_source *ws)
+> > >
+> > >         /* Increment the counter of events in progress. */
+> > >         cec =3D atomic_inc_return(&combined_event_count);
+> > > +       /*
+> > > +        * wakeup_source_activate() aborts sleep only if events_check=
+_enabled
+> > > +        * is set (see pm_wakeup_pending()). Similarly, abort sleep d=
+uring
+> > > +        * fs_sync only if events_check_enabled is set.
+> > > +        */
+> > > +       if (events_check_enabled)
+> > > +               pm_stop_waiting_for_fs_sync();
+> > >
+> > >         trace_wakeup_source_activate(ws->name, cec);
+> > >  }
+> > > @@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
+> > >  void pm_system_wakeup(void)
+> > >  {
+> > >         atomic_inc(&pm_abort_suspend);
+> > > +       pm_stop_waiting_for_fs_sync();
+> > >         s2idle_wake();
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(pm_system_wakeup);
+> > > diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+> > > index b02876f1ae38..4795f55f9cbe 100644
+> > > --- a/include/linux/suspend.h
+> > > +++ b/include/linux/suspend.h
+> > > @@ -450,6 +450,8 @@ void restore_processor_state(void);
+> > >  extern int register_pm_notifier(struct notifier_block *nb);
+> > >  extern int unregister_pm_notifier(struct notifier_block *nb);
+> > >  extern void ksys_sync_helper(void);
+> > > +extern void pm_stop_waiting_for_fs_sync(void);
+> > > +extern int pm_sleep_fs_sync(void);
+> > >  extern void pm_report_hw_sleep_time(u64 t);
+> > >  extern void pm_report_max_hw_sleep(u64 t);
+> > >  void pm_restrict_gfp_mask(void);
+> > > @@ -505,6 +507,8 @@ static inline void pm_restrict_gfp_mask(void) {}
+> > >  static inline void pm_restore_gfp_mask(void) {}
+> > >
+> > >  static inline void ksys_sync_helper(void) {}
+> > > +static inline void pm_stop_waiting_for_fs_sync(void) {}
+> > > +static inline int pm_sleep_fs_sync(void) { return 0; }
+> > >
+> > >  #define pm_notifier(fn, pri)   do { (void)(fn); } while (0)
+> > >
+> > > diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> > > index 53166ef86ba4..1874fde4b4f3 100644
+> > > --- a/kernel/power/hibernate.c
+> > > +++ b/kernel/power/hibernate.c
+> > > @@ -820,7 +820,10 @@ int hibernate(void)
+> > >         if (error)
+> > >                 goto Restore;
+> > >
+> > > -       ksys_sync_helper();
+> > > +       error =3D pm_sleep_fs_sync();
+> > > +       if (error)
+> > > +               goto Restore;
+> > > +
+> > >         if (filesystem_freeze_enabled)
+> > >                 filesystems_freeze();
+> > >
+> > > diff --git a/kernel/power/main.c b/kernel/power/main.c
+> > > index a6cbc3f4347a..23ca87a172a4 100644
+> > > --- a/kernel/power/main.c
+> > > +++ b/kernel/power/main.c
+> > > @@ -582,6 +582,84 @@ bool pm_sleep_transition_in_progress(void)
+> > >  {
+> > >         return pm_suspend_in_progress() || hibernation_in_progress();
+> > >  }
+> > > +
+> > > +static int pm_sleep_fs_syncs_queued;
+> > > +static DEFINE_SPINLOCK(pm_sleep_fs_sync_lock);
+> > > +static DECLARE_COMPLETION(pm_sleep_fs_sync_complete);
+> > > +static struct workqueue_struct *pm_fs_sync_wq;
+> > > +
+> > > +static int __init pm_start_fs_sync_workqueue(void)
+> > > +{
+> > > +       pm_fs_sync_wq =3D alloc_ordered_workqueue("pm_fs_sync_wq", 0)=
+;
+> > > +
+> > > +       return pm_fs_sync_wq ? 0 : -ENOMEM;
+> > > +}
+> > > +
+> > > +/**
+> > > + * pm_stop_waiting_for_fs_sync - Abort fs_sync to abort sleep early
+> > > + *
+> > > + * This function causes the suspend process to stop waiting on an in=
+-progress
+> > > + * filesystem sync, such that the suspend process can be aborted bef=
+ore the
+> > > + * filesystem sync is complete.
+> > > + */
+> > > +void pm_stop_waiting_for_fs_sync(void)
+> > > +{
+> > > +       unsigned long flags;
+> > > +
+> > > +       spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> > > +       complete(&pm_sleep_fs_sync_complete);
+> > > +       spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
+> > > +}
 > >
-> > -     if (extradata)
-> > -             msg_len +=3D scnprintf(&nt->buf[msg_len],
-> > -                                  MAX_PRINT_CHUNK - msg_len,
-> > -                                  "%s", extradata);
-> > -
-> > +#ifdef CONFIG_NETCONSOLE_DYNAMIC
-> > +     msg_len +=3D scnprintf(&nt->buf[msg_len],
-> > +                          MAX_PRINT_CHUNK - msg_len,
-> > +                          "%s%s", nt->userdata, nt->sysdata);
-> > +#endif
+> > Apart from the kernel test robot reports,
 >
-> I am not sure I like this ifdef in here. Can you if userdata or sysdata a=
-re
-> valid, and then scnprintf() instead of using ifdef?
-
-OK, will do that in v2.
-
-
-> > @@ -1594,12 +1547,20 @@ static void send_fragmented_body(struct netcons=
-ole_target *nt,
-> >               msgbody_offset +=3D this_chunk;
-> >               this_offset +=3D this_chunk;
-> >
-> > -             /* after msgbody, append extradata */
-> > -             this_chunk =3D min(extradata_len - extradata_offset,
-> > +             /* after msgbody, append userdata */
-> > +             this_chunk =3D min(userdata_len - userdata_offset,
+> Of course, I'll fix this in v7.
 >
-> Please assign this "userdata_len - userdata_offset" to a variable and giv=
-e it a
-> name, so, it help us to reason about the code.
-
-What about:
-
-int data_remaining =3D userdata_len - userdata_offset;
-int buffer_remaining =3D MAX_PRINT_CHUNK - this_header - this_offset;
-this_chunk =3D min(data_remaining, buffer_remaining);
-
+> > pm_stop_waiting_for_fs_sync() has become slightly too heavy for
+> > calling it from wakeup_source_activate().
 >
-> >                                MAX_PRINT_CHUNK - this_header - this_off=
-set);
-> >               memcpy(nt->buf + this_header + this_offset,
-> > -                    extradata + extradata_offset, this_chunk);
-> > -             extradata_offset +=3D this_chunk;
-> > +                    userdata + userdata_offset, this_chunk);
-> > +             userdata_offset +=3D this_chunk;
-> > +             this_offset +=3D this_chunk;
-> > +
-> > +             /* after userdata, append sysdata */
-> > +             this_chunk =3D min(sysdata_len - sysdata_offset,
-> > +                              MAX_PRINT_CHUNK - this_header - this_off=
-set);
-> > +             memcpy(nt->buf + this_header + this_offset,
-> > +                    sysdata + sysdata_offset, this_chunk);
+> Trying to understand- are you saying spin_lock_irqsave() makes
+> pm_stop_waiting_for_fs_sync() too slow?
 
-I realize we have the same NULL pointer arithmetic problem here. I
-will fix it by checking if sysdata or userdata is NULL.
+Spin lock and the completion handling.
 
+This function has been designed to be as lightweight as reasonably
+possible and the $subject patch is adding a branch and a global
+spinlock locking to it.
+
+> > Waking up the suspend process from there should be sufficient.  The
+> > completion is not necessary for that in principle.
 >
-> s/this_header/this_header_offset?
+> Can you elaborate more on what "there" means and why completion isn't
+> necessary? From what I can see, the only way to abort the suspend
+> _early_ is with the completion.
 
-I just realized that this_header is not even necessary. I can simply
-add header_len to this_offset and get rid of this variable altogether.
+Well, there are wait queues.
 
->
-> Now that you are touching this code, please review these variable to keep=
- them named correct.
->
-> Maybe adding _ptr for pointer, and _offset for offsets and _len for lengh=
-ts?
+In the first place though, do you really need to stop the suspend
+process immediately after a wakeup event?
 
-Once I get rid of this_header and add the _ptr suffix, I think it will
-be much clearer.
+This generally does not happen and wakeup sources are designed with
+the assumption that it need not happen: The suspend process will check
+if there is a pending wakeup at some places and wakeup sources just
+need to update the counters.
 
-Also, I find offset and this_offset confusing. What about replacing by
-msg_offset and buffer_offset ?
-
->
-> Thank you for your work reasong about all of this!
-
-Thanks for the review!
+Quite frankly, I don't see why the filesystem sync period needs to be
+special in that respect.  And if it need not be special, nothing needs
+to be added to wakeup_source_activate().
 
