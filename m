@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-889698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E237C3E457
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:42:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80254C3E45D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9E86C34AF9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:42:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0C9E188AD95
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E5E2F3614;
-	Fri,  7 Nov 2025 02:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F712F658E;
+	Fri,  7 Nov 2025 02:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="n+AUUfLb"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzRfi/MB"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D7D2EF654;
-	Fri,  7 Nov 2025 02:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EC52F5472
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762483317; cv=none; b=KHtZAOUHswkY4pv+DaReLaQt+5Ympq2SMBbeD+Z+E8eNPVruE9wb0b2C5kksLmh2laEZofJmEyq+8UYjYQih+oG4Aqv9222f6ex46ztJzWO35jzdZXQJTzfA9OEPIqBcSD5rgo1VTtr8PBZoAOEyb3OHumwNmX3JoGfX+P/ptSo=
+	t=1762483320; cv=none; b=rB0YLHHNLLe6TEtUVz5esTwXawVlzLRwRXvT+xSy6WAOo7I7XAvmRSy3/MEO49SPgmlaIfxUn/fSahEutLAMF4PNnei/K1yWbETKOr3ABdX4jp4avc1EUxADqg2omi0y8FeS1rQ+LPEY1r3QzYdD/63+aVzsSiyg6pK5d0jxepY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762483317; c=relaxed/simple;
-	bh=FmruP6J7ngIFA2fOydOR4seJY2QbN+NMV+7QTiYajz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YOnSm3tScwY6GAbG9WMRYu/q88TNzZlgLxdu605papvn6Nk96mYHmMUOukFJQ1akRd+OYQR8ks79FLwRjKK4MOO6iaZ4LchD63rCa9UEntzIlnGEA0Hr2DXY4GwCCkBDOl3v+vTsuCb0veQWtNv/aTqssf57prIRK6Fcrf0gmV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=n+AUUfLb; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762483305;
-	bh=RPXZG/rFL8T2xBBHG/8KBw0So2faMzolPkqooXqMCDI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=n+AUUfLb6HNxKt/Q4iOqFKazwGBJFY0Rl80nV8TNfdpJO073HTvU21lhbWLJ6sEul
-	 IAXENSoUfpe3bQy7q8Jdvx8mSjC/WFxi4ZZJiw+82CPSe0zgN2RcPvapQa9DoHd2ej
-	 +r7m8C6yd7PZALHfTAZEFVXvyKajp+R9ZzLcvAlgcRsGRj/YOWaHcN8PmGiB0qGKE/
-	 DbrdJiTdj3paD52VM+gJTk0U4YMCZAkbyxNuiKd+dyKwJ5urA6LlVAGmGdxVfAcnAQ
-	 sQ67IgCzuQfSCb83CDYmUr76w0SZKPEtJBpeF0hcGbhoPkPEV8jalrvouQGdTJN0JH
-	 S8jj/2G5NEoBA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d2jxj2LMXz4wM7;
-	Fri, 07 Nov 2025 13:41:45 +1100 (AEDT)
-Date: Fri, 7 Nov 2025 13:41:44 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the driver-core tree
-Message-ID: <20251107134144.117905bd@canb.auug.org.au>
+	s=arc-20240116; t=1762483320; c=relaxed/simple;
+	bh=Q7q+6HE3gBACuPDLSuVD5gMut5hwjMOGYzMwDa2J+qs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ycp0ZnswMa2pyOM8OuxuN3+LTCs3Sw3VzjNms32ANTK4ncejXFTwdNbi8n20sLNMy57opgpmPd+NtRjKNcohtg02UYNJ7c/z779/e8vzA7+l8jpruMKlEj2bGcTddE5HcuJ9TWqzW/HXgftaFYby9yYgmzufKSs4/0nUnNLMpDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzRfi/MB; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4e896e91368so3126161cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 18:41:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762483317; x=1763088117; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GuX6ozITqfxTr69Iutw4PA8KBIRjaj56s+0CHhG7Hc4=;
+        b=ZzRfi/MBNUwy62nCl2LQuaeBgZf9QuIwgXlmifrcxiQ9wQB2hZceILSCyyyq5a3NSH
+         Qkl1Dlrz8VxlR9as6rlFKGXexn6tpwNDxmuycuLN/ehan6Cnxv0nc/b3CS1J6AI93kOz
+         UFISTpAWS6SLjz5MN4OOYDSiVFeSYhfFkIWXse4bQUQmsySjKdmmISNgcqTVlXp577HP
+         dhx8HN2jY3PtuuaKc9iRSou36LhclmqAxe2pm1OYS58CRY1QT/k5ihPOmjlHQOTLf1Ko
+         YtHX3c3+/SsWckO451NgSrYftoILqYG8H2l3vl+Lh30c0v24aotHlGe/hVDRt/Brv6rw
+         Jd5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762483317; x=1763088117;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GuX6ozITqfxTr69Iutw4PA8KBIRjaj56s+0CHhG7Hc4=;
+        b=em5vJcRTIlZrOq68tjcoWAD6EUPizO5ngvSt9ex7hAUzOGFdhtqJ74pmp8GFtUcGca
+         XZNsh6SzDRtRcFpnJGkkfXo9jJymqlVo78QwRZNDmoRzoEn82IM7JybkjvoMn270hxOX
+         BjnH8T/v+LRJfaWVsWj1I8/Tnt6YqFFPZ9vJR1aErL8oIFkBetYxI5VRSd6g0bCwtPHb
+         iI7NiAojYlTodb/EC0edQ5e1NmumtaFJLZ/4fkqIqF2UKiMQm9PizVJnDMiAujpt3KIC
+         SroHk8sZ/yI2txCshHGQ/NDcpxak7jZdCmBL0Gd7ZzICx5WwyFUI0kgfcR8oR/KfB6cf
+         p3+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ6qQK60Jjs52HAGT/ISeQwE/eXbS7D46ssZMS8xcC4edK5l2PV3/i0XhDEhVSoHSw1jcFxTI7rZSFKN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjucQ1v489of9dVqLkKeZ6m9m2nd9Ozg2rky+ChGdxwnJzqroj
+	GYaeA3Yop3XVgeKXIct4KKDh4REWdb6hoDUYmuWIcw6OV7JHPQXimPYzVW7Nm1OSja6kZOPYR5/
+	f85pZFc/sKwWKSOm2PkVwZuzZrW8Hyu9acyxv+WQ=
+X-Gm-Gg: ASbGnctlRJSZjqtIO67Gog16b5ca5opJgERD0kVHLXoYTXOhHm58G0Gv1PK49Q3Cl3G
+	PeWT+/aMbWBtRyq5lKg26Wg6PxADFpegaZl1YGSD7FlLIdagST7EiFYqPr18eGxz9+uz3OLp+2X
+	u2jwiaNeul+xxKmIsCqB2STB3NuWc5w1/Fmrn+bVLkObGDzrW9ntsSGqMB0gryZjLtcG56CQp4h
+	s65R+mr3jiO2+FDNFViuDw+PGk9Svs5VK1E7QiDGn9N0IMO3bZLTvHkFAtbl5cnWsL3WKUUVk7u
+	2KEjjCVt8UU07+LQxaO7iiKczA1x5ip5FKse74b6cFT3U1zbAdO3xEzk1pn2ZtjhynA0/AVbtd3
+	8MNQ+/ERP022mrp6GxTsOSUkMvyoBYPiCBhsdTJP3YKtPBFrnIrPds4Y2A2M6cVeTx0MlVtOc8m
+	Hmy5lB1FwlKK/WmHr1ppc=
+X-Google-Smtp-Source: AGHT+IG8du6mXS4YIE7YkG3FvWVLy9rkbo78r1iMccu8LGwiFJHEj4xS/Hg+LBgGfZTkQH+wVD0xqjBucNgSkcKvQgw=
+X-Received: by 2002:ac8:7f4f:0:b0:4ec:f486:9f27 with SMTP id
+ d75a77b69052e-4ed94a96916mr17252291cf.75.1762483317518; Thu, 06 Nov 2025
+ 18:41:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xwV4ge5l7_2S=LCvc7odwz/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 6 Nov 2025 20:41:45 -0600
+X-Gm-Features: AWmQ_bldFeideAXahC5S_-_FMH2uBiWUtixisdc9C4fudEWjXpTcI-FD3T_b3Uc
+Message-ID: <CAH2r5mujzgdeMzwHrTaeK8fBNrpjcWyHCQkNq5Lm85ADL2pYew@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/xwV4ge5l7_2S=LCvc7odwz/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Please pull the following changes since commit
+6146a0f1dfae5d37442a9ddcba012add260bceb0:
 
-Hi all,
+  Linux 6.18-rc4 (2025-11-02 11:28:02 -0800)
 
-After merging the driver-core tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+are available in the Git repository at:
 
-error: variable does not need to be mutable
-   --> rust/kernel/debugfs/traits.rs:266:13
-    |
-266 |         let mut this =3D self.lock();
-    |             ----^^^^
-    |             |
-    |             help: remove this `mut`
-    |
-    =3D note: `-D unused-mut` implied by `-D warnings`
-    =3D help: to override `-D warnings` add `#[allow(unused_mut)]`
+  git://git.samba.org/ksmbd.git tags/v6.18-rc4-smb-server-fixes
 
-error[E0596]: cannot borrow data in dereference of `lock::Guard<'_, T, Mute=
-xBackend>` as mutable
-   --> rust/kernel/debugfs/traits.rs:268:9
-    |
-268 |         this.read_from_slice_mut(reader, offset)
-    |         ^^^^ cannot borrow as mutable
-    |
-    =3D help: trait `DerefMut` is required to modify through a dereference,=
- but it is not implemented for `lock::Guard<'_, T, MutexBackend>`
+for you to fetch changes up to e6187655acfa2dd566ea2aed4522083f0bb940c3:
 
-error: aborting due to 2 previous errors
+  ksmbd: detect RDMA capable netdevs include IPoIB (2025-11-04 08:47:55 -0600)
 
-For more information about this error, try `rustc --explain E0596`.
+----------------------------------------------------------------
+Two ksmbd server fixes
+- More safely detect RDMA capable devices correctly
+----------------------------------------------------------------
+Namjae Jeon (2):
+      ksmbd: detect RDMA capable lower devices when bridge and vlan
+netdev is used
+      ksmbd: detect RDMA capable netdevs include IPoIB
 
-Caused by commit
+ fs/smb/server/transport_rdma.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-  a9fca8a7b2c5 ("rust: debugfs: support blobs from smart pointers")
+-- 
+Thanks,
 
-(maybe interacting with some other change).
-
-I have used the driver-core tree from next-20251106 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xwV4ge5l7_2S=LCvc7odwz/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkNXGgACgkQAVBC80lX
-0Gwb4Qf/brtE7UCUQSYQb+9sHcQBhpNIckaZfXM1aUs4OO9pFalmWEJEA4MKTK/w
-AanCKQV9bVt4T+KV5vl37tJsBp1D2RgTeRJV0QhEAVtMabRUcDd1/yBCbd6haVic
-/8nlk8Bw2Q7CZiAF3QAd5/f40NXSZiH3mA+41Vc4ZkZwqjUnETsU8eTcQl0zae9L
-zmtZSMjRSr6O0p/mstqLBbcpmOgRpxg4zcfdz6OBUtE9ZM4ggOFyV9U02z2YxLzQ
-oFWxNXpb0FwjPnhwHV0UTzTQj5PknrfJTnN84X7oL7kob0PC0jUFytscQfjVjr1p
-sqPuAlb7EFyWREfSVh/5YAEq/Kktxw==
-=xB/d
------END PGP SIGNATURE-----
-
---Sig_/xwV4ge5l7_2S=LCvc7odwz/--
+Steve
 
