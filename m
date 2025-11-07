@@ -1,266 +1,171 @@
-Return-Path: <linux-kernel+bounces-890046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE85C3F242
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:24:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DADE7C3F245
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:25:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4725188E340
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FE7D188E368
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AB72BDC00;
-	Fri,  7 Nov 2025 09:24:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065F71EE033
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1295F2BDC00;
+	Fri,  7 Nov 2025 09:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NUtESZYw"
+Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A12B1EE033
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507477; cv=none; b=QHFz6jUWFumvbLX7ua1iKEnaFg30/cyfq1u3mmJu2zsMor394sFW+dh84FwEOptiJ8LJIzV3nsVNhRG8FUfMwGP4c6ue7vkMdgT6qp84cn7i9akUYxa4Ge1gGvh0hbjPk2CeEQQfmCehYw+roVI12YNzGkc+MSt5bTp80TW8NAQ=
+	t=1762507509; cv=none; b=P3cmsVkCymr7dWIlEabIXWAyIx+9w0BX4Ugs6cUbfoxLjxCtk+VV8aOoq8cAx7XnUVtxotH2uv86F5kWLQYKYK9JOAsS9i36yiFD824lNYlI1AzeEmMtMwhGRNi7str6zOEsL8dJ/gaIkBiijgL+gUEEstmrxj0oz3V6dq6PRfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507477; c=relaxed/simple;
-	bh=skp9P7Drz50bN4jaSLK+mnXwvhJ7EBjzCtaY6zhs544=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tbL7t2ar/vvDCZTC0CAIwYyHVyAUzeOhDzynbWymp6qkxCGxpu8t1pBsBqw5aZFA4t27gtZcvbWnjL/nSO0o5E2cIlTcCPbnHsWpS4WA0gqS7yfB02jy5RKTeMRuPyuAj8MXT1q2B5TnnZNWUTMkSGAf9Uhlfrm/Wi8wtedMlHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13F721007;
-	Fri,  7 Nov 2025 01:24:26 -0800 (PST)
-Received: from [10.57.72.216] (unknown [10.57.72.216])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B59683F63F;
-	Fri,  7 Nov 2025 01:24:31 -0800 (PST)
-Message-ID: <93055453-1177-4840-86cf-1a6fc8836470@arm.com>
-Date: Fri, 7 Nov 2025 09:24:29 +0000
+	s=arc-20240116; t=1762507509; c=relaxed/simple;
+	bh=o2QA6NFW2gjwjK1bP1ddC1mkAJO2AlUTvrMzla0pcn8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gxuUADOciClQGjoUH+gimSrHfjkkjh313lFjlSeaj7CsPTr5Y3UlLjJpAbTSdeBD7e4PMCZ9ZnIHjcT4rjLJbIIkbJnBfmHT4cWL3ysJhq0bYwj0413RHsJqoW6i1RI0IdY8vCn8T3aEnTu2Ze/C84DnCAS9hHL9WZ815R9IOjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NUtESZYw; arc=none smtp.client-ip=209.85.221.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso470338f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762507504; x=1763112304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+fzNhn5ZPLBwwlnPL/X9jgIx3/DiIULE7dla0BVHUg=;
+        b=NUtESZYw7qjJ3QWIikMF6GkEj49SVaFKtH1GKzRXXP1WWlnHNGMFK6x8N1gihaufIm
+         vydbRLkDgBwESitTJZgn38+cg+xGmUXrWVBRTEqXWiMqScbVRznLJnfcaua0MD9O+0tU
+         g4GspN8mvI9eI6pavxwQ/WjXbs07sSkeRZ91gPEmkZ5c9lXUojoaHwpTJLMiJcuNVxaS
+         t3ujvhlfQK6FCZNdz+/7dpM1vv7yrwqNAnaHGwyhlzxh1EpcaBaXL6MNepr+m9B3oIfu
+         iYMl3dDcu/lWC/or2Hs0WLffcWZ14XSeUZ1cUtEzrMfyTlyPCj+5MhOXEmHsK199vkYv
+         WGHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762507504; x=1763112304;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1+fzNhn5ZPLBwwlnPL/X9jgIx3/DiIULE7dla0BVHUg=;
+        b=CyFoRG7bdq0wP235YljIuDFBEtE/znuX0DxuZT05swPdMQQm/CQWdA4GNF+akTyq90
+         JY1zV3ptzHG1OkrREj/RhukPZWbQvDgFD+QUNx7bEKjMenJmKSGb+hOfDCaeiC/saoUN
+         jJraBfgRx940IpCgVFmtQ3/T0Rr0JX40Bf/8O1ALOosbDvkAvQgIqHt6wyv7I3b/5/4P
+         F1nF3b5og7Ng3mpHqlNV3n2vkWWHGJu5Ox252NdmikLAGrWpbFwOOALqBM5q8TeNZG6Z
+         5rV1Mtdj5DylKkTdFuKc+7jJ0u7cdWb48h6Bl7lgg5fiDnCdD+lnQxY/pgOlV95hYAnM
+         T/wQ==
+X-Gm-Message-State: AOJu0Yx4FbaoHy7sMvoPzxaN5nAfUElobWYU9utS+kpGqqC1SnG/Tftj
+	WizQGghpLniwrecRwCTB/jiMBD36rEXhX0qRTq81uohOin6GGiQ3ox4dDQju3vY5rbZrv2T3M9R
+	mudWL
+X-Gm-Gg: ASbGncsuFOit7igcQjA6HVDHNz9pcMxS7BCKluEHKkAGc6JaCws87stQ3ayn1ZD28V+
+	lv/HIIyyY3ub2B9qnJcoKVk8ucVzQsA81Faw8oGNqyQArFR2FHVczQl2BwqVLyPE3OdPiOtT7ZR
+	CDSnkZoFgJwHsTrsi+/sbl/IkJk4IUzATemMR8YuVu1uXeRkr/qd9Ast2TUifKn7yO2tiqqoefr
+	TY6H/2X4agYiSEjEIWJAwc5g1KGBIYa7HkL1zHpoIJALub3Q/i4ERZm1blVkXe1PKbPgE3HpBQT
+	FR5Q0+Lg+1vICabVl7UwHC4lEyeXoHLspt61bkWQD5ZrYBak7/rhqjdQqjzjyHYVD8qcPFSfnIb
+	qA+uB5c/TBGdrZI7u8ytkwRfGNI1Mhty8xh/W+HRMntDf65dYWGf4pNxUpN7qIe1h8POSZHBBLa
+	2EyfZqxjqC8XtLeQKHXtHrJgQc
+X-Google-Smtp-Source: AGHT+IHccDjY6gkmAw3mgOK/2zGmir0et5vCzxlS04Z450pmXNLCTBS1eVFiwd/RWp09DXm21qAYJg==
+X-Received: by 2002:a05:6000:430e:b0:429:c4bb:fbd1 with SMTP id ffacd0b85a97d-42ae587f47fmr1717117f8f.18.1762507504062;
+        Fri, 07 Nov 2025 01:25:04 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675c9fdsm4150413f8f.28.2025.11.07.01.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 01:25:03 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v2] sched: replace use of system_unbound_wq with system_dfl_wq
+Date: Fri,  7 Nov 2025 10:24:52 +0100
+Message-ID: <20251107092452.43399-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] drm/panthor: Add arch-specific panthor_hw binding
-To: Liviu Dudau <liviu.dudau@arm.com>, Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20251027161334.854650-1-karunika.choo@arm.com>
- <20251027161334.854650-2-karunika.choo@arm.com>
- <aQDsW3xf2NNUvBN-@e110455-lin.cambridge.arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <aQDsW3xf2NNUvBN-@e110455-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/10/2025 16:16, Liviu Dudau wrote:
-> Hello,
-> 
-> On Mon, Oct 27, 2025 at 04:13:27PM +0000, Karunika Choo wrote:
->> This patch adds the framework for binding to a specific panthor_hw
->> structure based on the architecture major value parsed from the GPU_ID
->> register. This is in preparation of enabling architecture-specific
->> behaviours based on GPU_ID. As such, it also splits the GPU_ID register
->> read operation into its own helper function.
->>
->> This framework allows a single panthor_hw structure to be shared across
->> multiple architectures should there be minimal changes between them via
->> the arch_min and arch_max field of the panthor_hw_entry structure,
->> instead of duplicating the structure across multiple architectures.
->>
->> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+This lack of consistency cannot be addressed without refactoring the API.
+For more details see the Link tag below.
 
->> ---
->> v2:
->>  * merged GPU_ID refactoring patch with the arch-specific panthor_hw
->>    binding patch (PATCH 01/10 and PATCH 02/10 in v1).
->> ---
->>  drivers/gpu/drm/panthor/panthor_device.h |  4 ++
->>  drivers/gpu/drm/panthor/panthor_hw.c     | 65 +++++++++++++++++++++++-
->>  drivers/gpu/drm/panthor/panthor_hw.h     |  6 +++
->>  3 files changed, 74 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
->> index a764111359d2..1457c1255f1f 100644
->> --- a/drivers/gpu/drm/panthor/panthor_device.h
->> +++ b/drivers/gpu/drm/panthor/panthor_device.h
->> @@ -26,6 +26,7 @@ struct panthor_device;
->>  struct panthor_gpu;
->>  struct panthor_group_pool;
->>  struct panthor_heap_pool;
->> +struct panthor_hw;
->>  struct panthor_job;
->>  struct panthor_mmu;
->>  struct panthor_fw;
->> @@ -122,6 +123,9 @@ struct panthor_device {
->>  	/** @csif_info: Command stream interface information. */
->>  	struct drm_panthor_csif_info csif_info;
->>
->> +	/** @hw: GPU-specific data. */
->> +	struct panthor_hw *hw;
->> +
->>  	/** @gpu: GPU management data. */
->>  	struct panthor_gpu *gpu;
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
->> index 4f2858114e5e..b6e7401327c3 100644
->> --- a/drivers/gpu/drm/panthor/panthor_hw.c
->> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
->> @@ -8,6 +8,28 @@
->>  #define GPU_PROD_ID_MAKE(arch_major, prod_major) \
->>  	(((arch_major) << 24) | (prod_major))
->>
->> +/** struct panthor_hw_entry - HW arch major to panthor_hw binding entry */
->> +struct panthor_hw_entry {
->> +	/** @arch_min: Minimum supported architecture major value (inclusive) */
->> +	u8 arch_min;
->> +
->> +	/** @arch_max: Maximum supported architecture major value (inclusive) */
->> +	u8 arch_max;
-> 
-> I'm not a big fan of this [min, max] range definition. I would expect that,
-> unless a new panthor_hw_entry is defined, the one covering arch X will also
-> cover arch X+1 automatically. With the current implementation we will have
-> to add a patch extending arch_max for an existing panthor_hw_entry when a new
-> GPU architecture is released that is compatible with the previous one at the
-> panthor_hw level *and backport the patch* for older kernels if they can
-> support that hardware.
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-I see your point, but I'm not sure it's necessarily a good idea for
-kernels to pretend to support architectures that haven't been released
-yet. Historically we haven't been great at keeping compatibility with
-newer hardware and we might otherwise end up backporting patches just to
-explicitly break compatibility if we didn't have a max.
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-Of course you have a much better idea of what's in the pipeline and
-whether future GPUs are going to be better at backwards compatiblity...
+Switch to using system_dfl_wq because system_unbound_wq is going away as part of
+a workqueue restructuring.
 
-> My suggestion is to drop this structure entirely and change panthor_hw_bind_device()
-> to a cascade of if()s starting with the latest arch to have a struct panthor_hw
-> defined. For this patch the function will actually just set ptdev->hw to panthor_hw_arch_v10
-> without any ifs.
+Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ kernel/sched/core.c | 4 ++--
+ kernel/sched/ext.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-I'm not a fan of cascades of if()s. If we can express it as a simple
-table it will be much easier to read and maintain.
-
-> Also (this is my personal preference) I would merge patch 1/8 and 2/8 so that we
-> don't have just empty structures defined.
-
-I'd usually agree, but there's a rename in the following patch which I
-think should be kept separate from these changes. So I think you'd still
-need a rename patch (panthor_gpu_soft_reset => panthor_hw_soft_reset
-etc) separate.
-
-Thanks,
-Steve
-
-> Best regards,
-> Liviu
-> 
->> +
->> +	/** @hwdev: Pointer to panthor_hw structure */
->> +	struct panthor_hw *hwdev;
->> +};
->> +
->> +static struct panthor_hw panthor_hw_arch_v10 = {};
->> +
->> +static struct panthor_hw_entry panthor_hw_match[] = {
->> +	{
->> +		.arch_min = 10,
->> +		.arch_max = 13,
->> +		.hwdev = &panthor_hw_arch_v10,
->> +	},
->> +};
->> +
->>  static char *get_gpu_model_name(struct panthor_device *ptdev)
->>  {
->>  	const u32 gpu_id = ptdev->gpu_info.gpu_id;
->> @@ -62,7 +84,6 @@ static void panthor_gpu_info_init(struct panthor_device *ptdev)
->>  {
->>  	unsigned int i;
->>
->> -	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
->>  	ptdev->gpu_info.csf_id = gpu_read(ptdev, GPU_CSF_ID);
->>  	ptdev->gpu_info.gpu_rev = gpu_read(ptdev, GPU_REVID);
->>  	ptdev->gpu_info.core_features = gpu_read(ptdev, GPU_CORE_FEATURES);
->> @@ -117,8 +138,50 @@ static void panthor_hw_info_init(struct panthor_device *ptdev)
->>  		 ptdev->gpu_info.tiler_present);
->>  }
->>
->> +static int panthor_hw_bind_device(struct panthor_device *ptdev)
->> +{
->> +	struct panthor_hw *hdev = NULL;
->> +	const u32 arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
->> +	int i = 0;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(panthor_hw_match); i++) {
->> +		struct panthor_hw_entry *entry = &panthor_hw_match[i];
->> +
->> +		if (arch_major >= entry->arch_min && arch_major <= entry->arch_max) {
->> +			hdev = entry->hwdev;
->> +			break;
->> +		}
->> +	}
->> +
->> +	if (!hdev)
->> +		return -EOPNOTSUPP;
->> +
->> +	ptdev->hw = hdev;
->> +
->> +	return 0;
->> +}
->> +
->> +static int panthor_hw_gpu_id_init(struct panthor_device *ptdev)
->> +{
->> +	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
->> +	if (!ptdev->gpu_info.gpu_id)
->> +		return -ENXIO;
->> +
->> +	return 0;
->> +}
->> +
->>  int panthor_hw_init(struct panthor_device *ptdev)
->>  {
->> +	int ret = 0;
->> +
->> +	ret = panthor_hw_gpu_id_init(ptdev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = panthor_hw_bind_device(ptdev);
->> +	if (ret)
->> +		return ret;
->> +
->>  	panthor_hw_info_init(ptdev);
->>
->>  	return 0;
->> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
->> index 0af6acc6aa6a..39752de3e7ad 100644
->> --- a/drivers/gpu/drm/panthor/panthor_hw.h
->> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
->> @@ -6,6 +6,12 @@
->>
->>  struct panthor_device;
->>
->> +/**
->> + * struct panthor_hw - GPU specific register mapping and functions
->> + */
->> +struct panthor_hw {
->> +};
->> +
->>  int panthor_hw_init(struct panthor_device *ptdev);
->>
->>  #endif /* __PANTHOR_HW_H__ */
->> --
->> 2.49.0
->>
-> 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f1ebf67b48e2..c878be03236a 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5709,7 +5709,7 @@ static void sched_tick_remote(struct work_struct *work)
+ 	os = atomic_fetch_add_unless(&twork->state, -1, TICK_SCHED_REMOTE_RUNNING);
+ 	WARN_ON_ONCE(os == TICK_SCHED_REMOTE_OFFLINE);
+ 	if (os == TICK_SCHED_REMOTE_RUNNING)
+-		queue_delayed_work(system_unbound_wq, dwork, HZ);
++		queue_delayed_work(system_dfl_wq, dwork, HZ);
+ }
+ 
+ static void sched_tick_start(int cpu)
+@@ -5728,7 +5728,7 @@ static void sched_tick_start(int cpu)
+ 	if (os == TICK_SCHED_REMOTE_OFFLINE) {
+ 		twork->cpu = cpu;
+ 		INIT_DELAYED_WORK(&twork->work, sched_tick_remote);
+-		queue_delayed_work(system_unbound_wq, &twork->work, HZ);
++		queue_delayed_work(system_dfl_wq, &twork->work, HZ);
+ 	}
+ }
+ 
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index ecb251e883ea..78da6ab5259e 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -2653,7 +2653,7 @@ static void scx_watchdog_workfn(struct work_struct *work)
+ 
+ 		cond_resched();
+ 	}
+-	queue_delayed_work(system_unbound_wq, to_delayed_work(work),
++	queue_delayed_work(system_dfl_wq, to_delayed_work(work),
+ 			   scx_watchdog_timeout / 2);
+ }
+ 
+@@ -4659,7 +4659,7 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 
+ 	WRITE_ONCE(scx_watchdog_timeout, timeout);
+ 	WRITE_ONCE(scx_watchdog_timestamp, jiffies);
+-	queue_delayed_work(system_unbound_wq, &scx_watchdog_work,
++	queue_delayed_work(system_dfl_wq, &scx_watchdog_work,
+ 			   scx_watchdog_timeout / 2);
+ 
+ 	/*
+-- 
+2.51.1
 
 
