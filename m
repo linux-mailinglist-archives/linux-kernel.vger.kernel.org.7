@@ -1,98 +1,156 @@
-Return-Path: <linux-kernel+bounces-890065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE279C3F2F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:35:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19240C3F302
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423E1188E9DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:35:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD2D3B0DCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7B8302143;
-	Fri,  7 Nov 2025 09:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5DD30170C;
+	Fri,  7 Nov 2025 09:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koCdZds9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSXstW+t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8653019DA;
-	Fri,  7 Nov 2025 09:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A012F6574
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762508071; cv=none; b=kS74S07Vv/Zmgw1oa4DWBU1OI4GIEb9fd3T7G16bembAsvq2fvjQSyhzgOWHW4Tx6SJIldDV++97eo0ttev0u6Wg0I8dveEQqEAVxeJMGibcIkiQxM6NxJE0qkNe/nDjm9Pr2lnPb8IYWPuFgOCqlGxRJQG+2Iz+7bCbbNdath8=
+	t=1762508136; cv=none; b=YM52akXIMnvNFkLF4mPxcI+Ya6uGmCSIGMJroyEw3DNzEcc5tJPgOb8Bxk0izFCctbvqFfqKdHvDLSJVb1PJbhoiAOBCtNp7p3m3L6GkD3jlmvjz/+i5R3XFa3cNpFygLqT/oIBXUcil7lac6y94eLPIelYs5GggZaml6n71Yk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762508071; c=relaxed/simple;
-	bh=NtX+5fn+kE5HkWQvbOADti+9aZQIyL4Npwg2RYFPXmc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JGW3cSnicfcjLXPYLu88bU3una7LBcYQEXqMRq0u10ejqjxXKMkdk8/zTjtfXKLQuPj0e7pY+Fk4POV+xhCBiXkrQ4K2dsQ74oyKCoY4KoBhFQvUdCN3l2v0Oi3yt7xgw1mevjAJTZsKLFxiiJtnl6iMySZ4WypNz04MLa5Jl04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koCdZds9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C38C116C6;
-	Fri,  7 Nov 2025 09:34:27 +0000 (UTC)
+	s=arc-20240116; t=1762508136; c=relaxed/simple;
+	bh=NVoYWeVScpvJljXLBzL5Wf4kTXgRZIIu1lMlpYQfVSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=poez6Ri0lrb++XP/JViUGMYiRfv300S6Qn2M7R5x7DvSRWDgXSCBkdZ1CSh2buqBWHP9J0+VJUZ+tO1DI6qkPriW67c5i1Ny7dDARLTh0t41hRmwc7QghZzThffvOIzDBCBioowVAsYITS/jnwOy6FH8VsKgy4ct7oyLT6ItACo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSXstW+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E768C2BCB0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762508070;
-	bh=NtX+5fn+kE5HkWQvbOADti+9aZQIyL4Npwg2RYFPXmc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=koCdZds9yXGyuaAF7TL5P29yTmWzu4zDko5m6Zm6K7xhvAD2Wr2tUXMXbSBe56IjA
-	 R8+/rLbgfrEbihBBMjJKEOkEzCn7veYpBXFfhAgGyFdKPTjPVRKp1mzrPNQBFGI3GP
-	 1b9GFs5PT5ZcBcwG9gdUjKTnb8XFpzNt4o5Z7cikBwuy+wAq4vDud4GZE7AJxJRRGj
-	 lCxn0YcK1izSOclHMxnZjN4vaw/orLZsnD0UUETXf7O0dglJruRySPALQlACmbblRV
-	 sevhOG2VrslPfEZCY9KkScWZx7oKfIijzALVemZS+Sg0O+QUlzv3FSspi1SKGWplaF
-	 uXt1Jc+0L6Lkw==
-From: Mark Brown <broonie@kernel.org>
-To: mkl@pengutronix.de, frank.li@nxp.com, shawnguo@kernel.org, 
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
- carlos.song@nxp.com
-Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251027110256.543314-1-carlos.song@nxp.com>
-References: <20251027110256.543314-1-carlos.song@nxp.com>
-Subject: Re: [PATCH v2] spi: imx: add i.MX51 ECSPI target mode support
-Message-Id: <176250806608.2489052.17181780089794986836.b4-ty@kernel.org>
-Date: Fri, 07 Nov 2025 09:34:26 +0000
+	s=k20201202; t=1762508136;
+	bh=NVoYWeVScpvJljXLBzL5Wf4kTXgRZIIu1lMlpYQfVSc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pSXstW+tV1+e3bw+twL5rAupw7PovWLXTzkJAa96tHzryOSK/t/aGkvb4X29IiXPs
+	 OnrLAYMOEtRiAxwasguwdGQ/9Z+VQvqXfXpSF7q7GKbEuXfpZCc9SrYshHAPLyiN9q
+	 uRNjB2s2a5hx+19o0ZrCpA5mLDIZB8YEClSSoGB//EPdIPaDQcSjyiejpk8gDaNbef
+	 hWiX6OWRIYcQ6SJC6WHkTxbyQNgQjKoxC/6DHLA8Abqo8QMuZq2EYXJ8Y+2BrTIXQv
+	 8YyS5JPXzG5rGEucX6RwQdYBb9KEvd0PCkayZBchthcLf8AfjkE8itihxtxvupYW4j
+	 lr9biLTwfDUeg==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5943b62c47dso465812e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:35:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXUL+REzcTCDI/eIyuLLQekL0rshYjgdktIekUIGGWSbDdl+NjBYm2rB3k9bZZp+XamI+8yBfiMHZ+kdXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV9wRvh7TlENpx3sXF8u674RfUDcDfPwpKqqe8V591uqYRb2OL
+	hE9saCxWN4lQE8Sl2+zip8OANthFVjSyGRYQnuUSEMDk5UIEJsyPyA2MgEl59fmUVSU5l2PlOtz
+	zm3SeXi7gMjASW9r50wQq8yBTgckSY+k=
+X-Google-Smtp-Source: AGHT+IFNQTFCA/If05U//klZPRIABmvrEFu/spwRoc1T0DLKjKQBGpzpC/PyVvPCfqBylErtA6cu84fbj48MkbPUHWk=
+X-Received: by 2002:a05:6512:224e:b0:592:f773:3cc2 with SMTP id
+ 2adb3069b0e04-59456ba0c0bmr666085e87.43.1762508134566; Fri, 07 Nov 2025
+ 01:35:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a6db3
+References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+ <20251029210310.1155449-6-sohil.mehta@intel.com> <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com>
+ <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com> <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com>
+ <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com> <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com>
+ <20251107090406.GU3245006@noisy.programming.kicks-ass.net>
+ <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com> <1962E702-8F75-4137-9000-A607E164914B@zytor.com>
+In-Reply-To: <1962E702-8F75-4137-9000-A607E164914B@zytor.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 7 Nov 2025 10:35:23 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFLi2RP0kH3Aaqy038g+_AsS8V8DMbCBbHE_NSuKeU4Fw@mail.gmail.com>
+X-Gm-Features: AWmQ_bnPEGbCSGnTnfDtgbCWL60niCWxl9ZyqdISDzphBDZ9ZWJOyOwDsRHt1Pc
+Message-ID: <CAMj1kXFLi2RP0kH3Aaqy038g+_AsS8V8DMbCBbHE_NSuKeU4Fw@mail.gmail.com>
+Subject: Re: [PATCH v11 5/9] x86/efi: Disable LASS while mapping the EFI
+ runtime services
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Dave Hansen <dave.hansen@intel.com>, 
+	Sohil Mehta <sohil.mehta@intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	"the arch/x86 maintainers" <x86@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Sean Christopherson <seanjc@google.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-doc@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 27 Oct 2025 19:02:56 +0800, carlos.song@nxp.com wrote:
-> ECSPI in i.MX51 and i.MX53 support target mode. Current code only support
-> i.MX53. Remove is_imx53_ecspi() check for target mode to support i.MX51.
-> 
-> 
+On Fri, 7 Nov 2025 at 10:27, H. Peter Anvin <hpa@zytor.com> wrote:
+>
+> On November 7, 2025 1:22:30 AM PST, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >On Fri, 7 Nov 2025 at 10:04, Peter Zijlstra <peterz@infradead.org> wrote:
+> >>
+> >> On Fri, Oct 31, 2025 at 11:12:53AM -0700, Dave Hansen wrote:
+> >>
+> >> > But there's a pretty broad set of things that are for "security" that
+> >> > aren't necessary while you're just running trusted ring0 code:
+> >> >
+> >> >  * SMAP/SMEP
+> >> >  * CR pinning itself
+> >> >  * MSR_IA32_SPEC_CTRL
+> >> >  * MSR_IA32_TSX_CTRL
+> >> >
+> >> > They just haven't mattered until now because they don't have any
+> >> > practical effect until you actually have code running on _PAGE_USER
+> >> > mappings trying to attack the kernel.
+> >>
+> >> But that's just the thing EFI is *NOT* trusted! We're basically
+> >> disabling all security features (not listed above are CET and CFI) to
+> >> run this random garbage we have no control over.
+> >>
+> >> How about we just flat out refuse EFI runtime services? What are they
+> >> actually needed for? Why are we bending over backwards and subverting
+> >> our security for this stuff?
+> >
+> >On x86, it is mostly the EFI variable services that user space has
+> >come to rely on, not only for setting the boot path (which typically
+> >happens only once at installation time, when the path to GRUB is set
+> >as the first boot option). Unfortunately, the systemd folks have taken
+> >a liking to this feature too, and have started storing things in
+> >there.
+> >
+> >There is also PRM, which is much worse, as it permits devices in the
+> >ACPI namespace to call firmware routines that are mapped privileged in
+> >the OS address space in the same way. I objected to this at the time,
+> >and asked for a facility where we could at least mark such code as
+> >unprivileged (and run it as such) but this was ignored, as Intel and
+> >MS had already sealed the deal and put this into production. This is
+> >much worse than typical EFI routines, as the PRM code is ODM/OEM code
+> >rather than something that comes from the upstream EFI implementation.
+> >It is basically a dumping ground for code that used to run in SMM
+> >because it was too ugly to run anywhere else. </rant>
+> >
+> >It would be nice if we could
+> >
+> >a) Get rid of SetVirtualAddressMap(), which is another insane hack
+> >that should never have been supported on 64-bit systems. On arm64, we
+> >no longer call it unless there is a specific need for it (some Ampere
+> >Altra systems with buggy firmware will crash otherwise). On x86,
+> >though, it might be tricky because there so much buggy firmware.
+> >Perhaps we should phase it out by checking for the UEFI version, so
+> >that future systems will avoid it. This would mean, however, that EFI
+> >code remains in the low user address space, which may not be what you
+> >want (unless we do c) perhaps?)
+> >
+> >b) Run EFI runtime calls in a sandbox VM - there was a PoC implemented
+> >for arm64 a couple of years ago, but it was very intrusive and the ARM
+> >intern in question went on to do more satisyfing work.
+> >
+> >c) Unmap the kernel KPTI style while the runtime calls are in
+> >progress? This should be rather straight-forward, although it might
+> >not help a lot as the code in question still runs privileged.
+>
+> Firmware update is a big one.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: imx: add i.MX51 ECSPI target mode support
-      commit: 4e92abd0a11b91af3742197a9ca962c3c00d0948
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Firmware update does not run under the OS.
 
