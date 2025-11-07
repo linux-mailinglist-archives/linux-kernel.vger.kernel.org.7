@@ -1,154 +1,159 @@
-Return-Path: <linux-kernel+bounces-890056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301B8C3F283
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:28:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C31C3F27E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A78734CA55
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80529188E4D1
 	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A092F90CE;
-	Fri,  7 Nov 2025 09:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2981D30146F;
+	Fri,  7 Nov 2025 09:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qEFdDK6z"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2RM+Ujcj"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B652F5A05;
-	Fri,  7 Nov 2025 09:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230072FB612
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507691; cv=none; b=cV/gZljGsm85TGK88SQkWPcYIS8BWHn62TF5Gu42gxghXg9yXDqlLizg5i779KdQEKdjQvYvWsncUhh0K7Uy0GTdTQ7M+WZaF/LGNtv9XdVH91qAFJea+LTNahMENcCwLlVdEeTH2nq4gRBpT9ECeqV9Dl8oKpN+fzTrsusf0Ic=
+	t=1762507656; cv=none; b=bJ1yLpEicA9AZnfhSRjZjI4cg0XfWlmdLEvyf1B7w+8k2FaHw3r05M5Mv1Cq0pD7JA6nExOScPWoODc/QVL5ORfjjDKrhz8dAcmElFf/VKE+xTRL1n3iRK216o9BrywT04fZzdnM2JA9rgyt6eqGp2dHdfy3jMH/BLAQeHp5KHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507691; c=relaxed/simple;
-	bh=SOUrjOhn2uKWfQ/3III226IBTXZkQ6YU1jH7jBjGG6c=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=c+RPPRJUaBKerZ1fQ8nGzrKQGeC01iF4BoMYtehugY9c00koZkzERaMkxwxaAjefdd5QO57IDH1iUgXMwVpfy+0zNEvPUW69ubAngI7F1XFoE5FFZtvoOh9CmHxu4yqmpPtEiBJDV0e8xdN72oVlW7NT9Q+VwcPRthPs0vh0REE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qEFdDK6z; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5A79RDlh1577553
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 7 Nov 2025 01:27:13 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5A79RDlh1577553
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762507635;
-	bh=A/GHzIdqHzaEgpQHWH1jJVSfUcqO6eL8TAku4GgO3gQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=qEFdDK6zKyiC95s+gOLT1gu6Pom3pWMItFd/VKmgBhXKkrM39WF3UwQS0WBzMkksr
-	 s6/s6dBIHuufYhYbpHsYkeybUiyQiVNcVOhs6w0BSzQVypPGxZTqctzTn6izQ08MpL
-	 EijFEUD5MipD/BIdvYk41rrseSGHuWM81WSL4Nvvj5eAKR54WzDWHJIshf4MsKWcVj
-	 9Fzpups0QV8XVFJdjL4UMhbEoh1dH9tEGfX29hdDznsCYco43RXjY5O9ttH9aPbFD5
-	 0/qj7oGgNHYxpCLU1lxS2YwRfVZJ+fJ1b9Xh88AFw+CwkcQjn34A6KJOhdfsKuG+nt
-	 T1/aa1faRu0ig==
-Date: Fri, 07 Nov 2025 01:27:12 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Ard Biesheuvel <ardb@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-CC: Dave Hansen <dave.hansen@intel.com>, Sohil Mehta <sohil.mehta@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Sean Christopherson <seanjc@google.com>,
-        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_5/9=5D_x86/efi=3A_Disable_LAS?=
- =?US-ASCII?Q?S_while_mapping_the_EFI_runtime_services?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com>
-References: <20251029210310.1155449-1-sohil.mehta@intel.com> <20251029210310.1155449-6-sohil.mehta@intel.com> <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com> <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com> <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com> <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com> <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com> <20251107090406.GU3245006@noisy.programming.kicks-ass.net> <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com>
-Message-ID: <1962E702-8F75-4137-9000-A607E164914B@zytor.com>
+	s=arc-20240116; t=1762507656; c=relaxed/simple;
+	bh=zql2idMxKn9IZQQNYisWu3dktGhNGu+7zZEYNX+6VNk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PguqVHyVAbbXyhaxUq9CVTCwv5ALQwv5OxWLJHIGq2ex9tRYlASWCRDCdtS4ysV98j3oQipPbnOToyW24+MsfPJopQiH5lPFLEc14UlN1pPgQnZevT/9wCBmuF0BJ+40c7FvOtM991U9M6fYJGbJj8GSdwDdDWPxx06sraWpDG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2RM+Ujcj; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4775e891b5eso2388135e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:27:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762507651; x=1763112451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oJkdEVxT25O3GXjohNk3p6mQ6FsJrtPAoSVYfYSIvHw=;
+        b=2RM+UjcjaqTLAVafLXzNXwiKtbPjfqz9ynfem20WPAOHycMxyVnEijfrZDrfEYR1AL
+         uJ66LX6xQDX5R1UJd/lCY0YeaqPoZJM8JUBtxjlr43xPsbBR71Qy5w3E25aepGT5SI+6
+         AMQVWmr2ygA4MNQGlfWOeUVxVjFqP9t65Uo/DXCQxtlxB7AVBQerL+9XO4PBVKeg250Q
+         VMR+tD5Td0ou829j16Ma9EOmou3MG7xUA/pbW6Jo7XucieQOMqqVkqz58m6Q2lnE5Hfh
+         bKrKbLk6+S1EdgOeB9L9xbR/zbfk/ekM+UYyeHMBiLw0DpcwM5HZfAkPHHimkBd/92bR
+         6wDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762507651; x=1763112451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oJkdEVxT25O3GXjohNk3p6mQ6FsJrtPAoSVYfYSIvHw=;
+        b=hhkbdWjs6tkur4/bmUeFVcYVA8j/Efk2uxS+f+FEieIXuC+z/anWs0UzDtkc7OdTN0
+         t0171fHJbCUnVGE16KtSf6w05Hlnz40L4cPr47qZwiXPkAwHSSEicRXKJqmx4FhBTRQ5
+         e5IsGqEu2QjnAjjV2RIsLSOWSrnntHu6UFe+ZbXbasRBdCdv16HLids3cMjrA8V2C3Gy
+         lVCO6XL0Su117NmUlUC9WbiAeLHFckPZYU+zofc9Ki2GnVq+BM1XlgCltf4ncoI1l5Rc
+         tVzIUnlM/CIMJhe0T0Ulk5NRlLyqxTW2EozkEw1rRDS45hKvXtzo9nDTRh8HIuBKetFv
+         ngBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbsa1hBMPvS7Pqop5RUacijHgJc3jOszQgm2dM9Ztzrp1CbHCE4KlJgnPPtpkuCKC79WfCdHDEOZNHeRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2+1il+DYVudRgLUg3NHrA8FfuApPKMgjCGcMWnnC1Xrp+Ii7M
+	vET7u7+ApJkdEkmVtIT+3Q8uo9ZrwzzvI+fGdjxzVm7nhsbP1fPDLNkiHKl3JQW0AbgA49rmKSW
+	u8jCJuyfSjsg1da/HydwGbpJ84ZZGo02RdYLmX22G
+X-Gm-Gg: ASbGncvokm+b6/fD3lpIq2G9N03AVMegyBErebOIV7+4VXk8bi8q7vl9c58KHU8voOV
+	K/ISCNYSaI1vJNK6AoMZ91v+P9Ioe+htQG6Lnjxyv8FWN3UIlsghtOp1nH+LC03Xi/MTC+B3MYG
+	PJ+a+TXntKFT19CMc8/drkFNlStFy5ZYvHF70kFOt3R1VQ+NzBfG1qpaCWpGG6XdsGWInHwqxUF
+	BbgaQ5rKfydepnwIRCAY812sEqbRA+ZPiMUYaTMcI8wFuYV25QrKY9ADEsB97aV3Ve0teMVk5Xd
+	biusSMbIPCuskQ==
+X-Google-Smtp-Source: AGHT+IFle/w4e+aky9dDN00u9w5qMqMYp4+iwTBMRCAFPTApgJKqffnTXa0XQ44LPOLkMtHMiEidtNEEmO7onsmHZ4k=
+X-Received: by 2002:a05:600c:474a:b0:477:55c9:c3ea with SMTP id
+ 5b1f17b1804b1-4776bcdb495mr21615615e9.35.1762507651253; Fri, 07 Nov 2025
+ 01:27:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20251107050700.1086059-1-m18080292938@163.com>
+In-Reply-To: <20251107050700.1086059-1-m18080292938@163.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 7 Nov 2025 10:27:16 +0100
+X-Gm-Features: AWmQ_bn0_YpyoyCmwHnyMVeVnDhIAwFUr0Y5LT4OlVSRZWa7nbsVmxfJKIuTnIQ
+Message-ID: <CAH5fLgirP4=RrDcuF0n74KvN05K4FkAm9uZUfwX0WYfM+pKP8g@mail.gmail.com>
+Subject: Re: [PATCH] rust: rbtree: fix cursor method lifetimes to match tree lifetime
+To: Hang Shu <m18080292938@163.com>
+Cc: ojeda@kernel.org, Hang Shu <hangshu847@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Charalampos Mitrodimas <charmitro@posteo.net>, Borys Tyran <borys.tyran@protonmail.com>, 
+	=?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+	Daniel Sedlak <daniel@sedlak.dev>, Tamir Duberstein <tamird@gmail.com>, 
+	Matt Gilbride <mattgilbride@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On November 7, 2025 1:22:30 AM PST, Ard Biesheuvel <ardb@kernel=2Eorg> wrot=
+On Fri, Nov 7, 2025 at 6:07=E2=80=AFAM Hang Shu <m18080292938@163.com> wrot=
 e:
->On Fri, 7 Nov 2025 at 10:04, Peter Zijlstra <peterz@infradead=2Eorg> wrot=
-e:
->>
->> On Fri, Oct 31, 2025 at 11:12:53AM -0700, Dave Hansen wrote:
->>
->> > But there's a pretty broad set of things that are for "security" that
->> > aren't necessary while you're just running trusted ring0 code:
->> >
->> >  * SMAP/SMEP
->> >  * CR pinning itself
->> >  * MSR_IA32_SPEC_CTRL
->> >  * MSR_IA32_TSX_CTRL
->> >
->> > They just haven't mattered until now because they don't have any
->> > practical effect until you actually have code running on _PAGE_USER
->> > mappings trying to attack the kernel=2E
->>
->> But that's just the thing EFI is *NOT* trusted! We're basically
->> disabling all security features (not listed above are CET and CFI) to
->> run this random garbage we have no control over=2E
->>
->> How about we just flat out refuse EFI runtime services? What are they
->> actually needed for? Why are we bending over backwards and subverting
->> our security for this stuff?
 >
->On x86, it is mostly the EFI variable services that user space has
->come to rely on, not only for setting the boot path (which typically
->happens only once at installation time, when the path to GRUB is set
->as the first boot option)=2E Unfortunately, the systemd folks have taken
->a liking to this feature too, and have started storing things in
->there=2E
+> From: Hang Shu <hangshu847@gmail.com>
 >
->There is also PRM, which is much worse, as it permits devices in the
->ACPI namespace to call firmware routines that are mapped privileged in
->the OS address space in the same way=2E I objected to this at the time,
->and asked for a facility where we could at least mark such code as
->unprivileged (and run it as such) but this was ignored, as Intel and
->MS had already sealed the deal and put this into production=2E This is
->much worse than typical EFI routines, as the PRM code is ODM/OEM code
->rather than something that comes from the upstream EFI implementation=2E
->It is basically a dumping ground for code that used to run in SMM
->because it was too ugly to run anywhere else=2E </rant>
+> The returned keys and values of cursor methods should be bound by
+> the lifetime of the rbtree itself ('a), not the lifetime of the cursor.
 >
->It would be nice if we could
+> Without this adjustment, examples like the following fail to compile:
 >
->a) Get rid of SetVirtualAddressMap(), which is another insane hack
->that should never have been supported on 64-bit systems=2E On arm64, we
->no longer call it unless there is a specific need for it (some Ampere
->Altra systems with buggy firmware will crash otherwise)=2E On x86,
->though, it might be tricky because there so much buggy firmware=2E
->Perhaps we should phase it out by checking for the UEFI version, so
->that future systems will avoid it=2E This would mean, however, that EFI
->code remains in the low user address space, which may not be what you
->want (unless we do c) perhaps?)
+> fn test_rbtree_cursor(rbtree: &mut RBTree<i32, i32>) -> &i32 {
+>     rbtree.try_create_and_insert(1, 1, GFP_KERNEL).unwrap();
+>     let mut cursor =3D rbtree.cursor_front().unwrap();
+>     // compile error
+>     // cannot return value referencing local variable `cursor`
+>     cursor.peek_next().unwrap().1
+> }
 >
->b) Run EFI runtime calls in a sandbox VM - there was a PoC implemented
->for arm64 a couple of years ago, but it was very intrusive and the ARM
->intern in question went on to do more satisyfing work=2E
+> This modification ensures that references to tree elements remain valid
+> independently of the cursor's scope,
+> aligning with the actual lifetime dependencies in the data structure.
 >
->c) Unmap the kernel KPTI style while the runtime calls are in
->progress? This should be rather straight-forward, although it might
->not help a lot as the code in question still runs privileged=2E
+> The changes will be applied to multiple similar methods
+> throughout the Cursor implementation to maintain consistency.
+>
+> Fixes: 98c14e40e07a ("rust: rbtree: add cursor")
+> Signed-off-by: Hang Shu <hangshu847@gmail.com>
+> ---
+>  rust/kernel/rbtree.rs | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+> index 9e178dacddf1..702a1b6ef7a9 100644
+> --- a/rust/kernel/rbtree.rs
+> +++ b/rust/kernel/rbtree.rs
+> @@ -742,7 +742,7 @@ unsafe impl<'a, K: Sync, V: Sync> Sync for Cursor<'a,=
+ K, V> {}
+>
+>  impl<'a, K, V> Cursor<'a, K, V> {
+>      /// The current node
+> -    pub fn current(&self) -> (&K, &V) {
+> +    pub fn current(&self) -> (&'a K, &'a V) {
+>          // SAFETY:
+>          // - `self.current` is a valid node by the type invariants.
+>          // - We have an immutable reference by the function signature.
+> @@ -750,7 +750,7 @@ pub fn current(&self) -> (&K, &V) {
+>      }
+>
+>      /// The current node, with a mutable value
+> -    pub fn current_mut(&mut self) -> (&K, &mut V) {
+> +    pub fn current_mut(&mut self) -> (&'a K, &'a mut V) {
 
-Firmware update is a big one=2E
+This would allow me to call current_mut() twice on the same cursor to
+get two mutable references to the same value. That is not okay.
+
+If you want to have methods that return a reference with the tree's
+lifetime instead of the cursor's, then you need to add new methods
+(probably called into_*) rather than modify the existing ones.
+
+Alice
 
