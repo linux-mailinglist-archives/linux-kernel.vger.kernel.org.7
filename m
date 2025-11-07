@@ -1,147 +1,190 @@
-Return-Path: <linux-kernel+bounces-890136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32195C3F4C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:02:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309B1C3F4D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9B96188C3FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:02:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E7E84ED302
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CB21E51EE;
-	Fri,  7 Nov 2025 10:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="fPL4W9M9"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3962C326A;
+	Fri,  7 Nov 2025 10:02:10 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053E826E6E8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5441E51EE
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509731; cv=none; b=n9roYWNPALRgb+hpWVnyrCIeAEM81+W7QCAkEYZl21wGfvEV/ZG3UFc5b1eXOAWSOgRMjbQnQ+tM6aueuEg7xrpltjYkK9GjQhjQ595eMgP6/+cFFiz7FQ2GgNnQXJ9xr3scdHFF1ZjQfHSRL9xnBs18XG7aJ6U3nKPwbuuP6sU=
+	t=1762509729; cv=none; b=BPoGWfIdDTWeRV2lONEfPJZVb7wIhQIaX0PYOa+luVHa9pGU7SkLKYEEB9nR4Mqn0gqunrH5+EX79zJ+NXhcIJf9QrFU2wf+SFMTNE8tTM6KHM1yYENZ7pBHbwv1qNqfySKYyv004gCGgtUA5iF4CfjK57OPUlnccil961T0iVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509731; c=relaxed/simple;
-	bh=JJGs4zIda6s1YsKiNN6VSjbE0TevdnhAVZj4houk4zg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CZRQK6boss37GnTrsbqcd15xnAys82KtQ9moBcKhbeTKXukHcIczv9g4trTZvrk49rOLBbkSn52nehR60ie/Xr+5meBv5IPYRrclZ2heLtrIbVzmQR+17ftG+dm1i4ZJum7W8Oc2PxEDeLz8T0cvf8rk/5c06f+CNOxN6ByfFps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=fPL4W9M9; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-640f8a7aba2so908235a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:02:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1762509728; x=1763114528; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sI3AaX9grHbjP5KjZYhTK6oQKUD2yVQSwBL3X3Q60WM=;
-        b=fPL4W9M9YNIXN2+La4AF8emD2uG6M7TzB7mAg2wTgGhvckbXIXf6/8NJBdfPly1rM+
-         a+q6hjcQn7G8Th/4D7HnLPIxv37Gf2Ty69LwmY2VXVnSWp8ZFJL90QhqfvgVnAWman7U
-         fKkGaTfGbxG/7Eu6myq5wLxpQMFXsfplrsva4i8uXG6JWMFJIstyqlgP+ybUcNWiBkYy
-         sEn1GAZgeGxDr02ZaN05DTORM6HIpHjKc3Efe9fteq80TzkRDBnQ4C5l4C1ZUNtj45QO
-         ijtHpiWb6+h5I9zDa3OcEJ1WTiwr/z3oK7JV5QUAWvgwRLwdYYgB1QNiV0XPHJhgFW51
-         DxFA==
+	s=arc-20240116; t=1762509729; c=relaxed/simple;
+	bh=AXoPaWwa8ffVqk2Zkke/0dlXQ1Oi+zDs/OLq3UQGh6I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=ayJtd6ifEjuoNCMZ16BtFWdR5nmgy1iwfNUUXz5e4Ih2TeQNfBiy5bfmhTsbUD93aWxvak5pawM7MidpBUmT181DNvlRX1IQ5ZplK2JmJt9YvHMdueqFoSrxLa7Ldh6QYlf3p8xmY3kGfbE5hDa3dHxjsuhNInRLcXh72nro1Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-4332987de75so16166355ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:02:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762509728; x=1763114528;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sI3AaX9grHbjP5KjZYhTK6oQKUD2yVQSwBL3X3Q60WM=;
-        b=OLtQNiHslq0p1pxjRyD0TkgIOHpPV8OmnPvAiBM6vp/v2n34rAhjFYadXncXHJjWXc
-         eMGCwHwlf5zZYQ4pwYIJ93cwv94jNIgkiA087GkCyZ6HKMsih6o1jKpasHg7bneEK7/3
-         Nb99K8D10Dzh2uK0Z1q5+wDNyrIeDoyGsHJDS9/BqqmIGC08C97A90FUAPOf74N1wpkS
-         3f5uqtsa4cobC3vBtXgkHL89xuJxJNhFBHBXo6mQ1kd3hC1cwreuZQBFqsk6QrQ9HUr4
-         z6QRkQWkt2X7/FsQgpFHOV/984mFMMmzlZ4X45D5Fhk7DXR3GXreOoRZ3lmEl8+phlk6
-         xcZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJC4DCuhqZKdMYuP7PI5XW7JhDwPEqlto69tXVW2Z4so68MjTzHN2KG4gGdLQ4GK6JvaTaWSntVTMWN9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoAgINrequAcAnWkEspgv33RXpSu+g27YvH5tximA0qCmR48qJ
-	n8s2nC0beRjRvgC5M/r10t+PILvhfjHcEYzSKtBin61Gz2LUY2uS93uw0ApBDP+7uqg=
-X-Gm-Gg: ASbGncsnUmZtBEHe+H73KXmOzcLp6qkuRAEwGFj7GxmOpjq4erx4303yHsqIHs3bo4k
-	P5BZvaBhlZ8yQZHKz4u1802qoRnHJ2hN8BpZxdDXXwV6zmzPyC7Fuj9blRHtAKM8ynAzrVWB5hS
-	K095wFmqJN/wGtmEjVkLEEhmtfrnTVKOzR6zkTT4boL2tcJjjjJZw0k7hLNDTJ3fTOVsQysvNf/
-	liPj2MeQvJDlq8sdXpZDKBwQThiS37TfDubwwIPPb+L4TD5/xsRUQphakFq8IdqpjYbSATu3Jsf
-	Ls4/yOAlLg7eImF3qT3hYAYQALL3Q2PhTB7tK0aKU7jjoUZae70eqwkanuI7TAFn273T8JSffgx
-	M2SycMr3P3Zvzq1ssKlaPTd+oFXt7T91Xd1h7wHzowJBxmekkRb9d0LYA+XXjauqIVUXbhCLpY1
-	rrJ4Q+NdBZLY5lGIkhcSAbb2HkzrJ6FvUV6aeV
-X-Google-Smtp-Source: AGHT+IHlT54Zkq9G78xurNR3OQ80FwPe+AHLLB41tVK7/67rPq4iDsWAMcHtSavKQD8aOgkIUNYv2g==
-X-Received: by 2002:a05:6402:40d1:b0:640:b1cf:f800 with SMTP id 4fb4d7f45d1cf-6413f059b97mr2381350a12.4.1762509728210;
-        Fri, 07 Nov 2025 02:02:08 -0800 (PST)
-Received: from ?IPV6:2a02:810a:b98:a000::4e88? ([2a02:810a:b98:a000::4e88])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f8575eesm3693449a12.22.2025.11.07.02.02.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 02:02:07 -0800 (PST)
-Message-ID: <03012c3b-ae9d-4591-8ac5-8cf302b794a5@cogentembedded.com>
-Date: Fri, 7 Nov 2025 11:02:04 +0100
+        d=1e100.net; s=20230601; t=1762509727; x=1763114527;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UDveRKSshYf6kCEVOVLqSVKq5ABZtY5Meh/gvwhSx0E=;
+        b=lZppS6zDgl4xsaI4r1xCG5qEfQ7jG+VUOao8KO1dkpluXOgr16mRVA54haoNXKr7vI
+         WfyHI+0PN7g7bnMQwtq7BNDddOqeKFYgBMLwGDZP2gSvPzySHdtvGcLIFAIopRQX+WfC
+         m3+OecdmEITBgER0NgolVdiPuchnW5BFlRxtHB7U9izke87E5gKyzHtrN8ZTiglLw8nQ
+         KND/QqtOLkY2kgF6Jh1MWVuhDgVNlFRoGK2uDTW4gKS7+9amJ/EAWHXL26xwjv0zOh/6
+         id96PLIX60qvU7TsrjcUMMSkBetGuPdmKzj8ZlX+8C23r5n4jCu3XrfXeBmvxyi2APnB
+         25Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyLF1W3VJXeMP6a7qvgGlKd/FwsiUyOl4Lt8hXO2KKy/t0l2F2xrPwLjoagYZhgcc6EUc4O3FoFiroWy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrBq0WxK+VkH8dqWsHcdtmi8qFyCBwGJU7U0SHvueF6RVH30+d
+	4lqb326cSNvaxD4BwsLttHSmmPiXZwsipa1pS3oMhK5t+AnuNzfil1VSeQxCWLN6Kn9jWFdJVDn
+	yectLZVtqGetwhxyoN1r9jCfJ+rcUdTeDMUu5QhqJixOTO0aNvo1s7m4JSbs=
+X-Google-Smtp-Source: AGHT+IH2TF2NA0RFSxK5mfyJKpEdaRibhB1Ptd85yj66t+jzErujuDzhPTfHsVzWGV4tHuYgAoM0nHhMnhA4RbU8iX+KXxrqfKmM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 09/10] net: renesas: rswitch: add simple l3
- routing
-To: Andrew Lunn <andrew@lunn.ch>, Michael Dege <michael.dege@renesas.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Richard Cochran <richardcochran@gmail.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Paul Barker <paul@pbarker.dev>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <20251106-add_l3_routing-v1-0-dcbb8368ca54@renesas.com>
- <20251106-add_l3_routing-v1-9-dcbb8368ca54@renesas.com>
- <06213fb1-12dc-4045-803e-d2a65c7e9fc6@lunn.ch>
-Content-Language: en-US, ru-RU
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-In-Reply-To: <06213fb1-12dc-4045-803e-d2a65c7e9fc6@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:258d:b0:42f:8b0f:bad2 with SMTP id
+ e9e14a558f8ab-4335f484de4mr41419075ab.10.1762509726989; Fri, 07 Nov 2025
+ 02:02:06 -0800 (PST)
+Date: Fri, 07 Nov 2025 02:02:06 -0800
+In-Reply-To: <e95c7d57-affe-430f-ae18-9c82aea9133d@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690dc39e.a70a0220.22f260.0031.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] BUG: unable to handle kernel paging request in diUpdatePMap
+From: syzbot <syzbot+7fc112f7a4a0546731c5@syzkaller.appspotmail.com>
+To: yun.zhou@windriver.com
+Cc: yun.zhou@windriver.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
->> +static bool rmon_ipv4_dst_offload_hw_op(struct rswitch_route_monitor *rmon,
->> +					struct rmon_ipv4_dst_offload *offload,
->> +					u8 frame_type, bool install)
-> 
-> Why all this bool functions? Especially when you have calls returning
-> error codes you are throwing away.
+> #syz dup: https://syzkaller.appspot.com/bug?extid=4d0a0feb49c5138cac46
 
-The original idea behind that was - this is "not success" from an optional optimization step, that is 
-not exposed outside. If it fails to offload - then the stream will remain handled by software.
+can't find the dup bug
 
-
-But, there is a more interesting question about this patchset (that actually stopped me from submitting 
-it when it was originally developed).
-
-What do people thing about the entire approach used to detect streams to offload?
-
-The situation is:
-- hardware is capable of doing L3 routing, with some (limited) packet update capabilities - rewrite DST 
-MAC, decrease TTL,
-- there is interest to use that, because software L3 routing even at 1Gbps consumes significant CPU 
-load, and for 5Gbps will likely not keep the speed at all (we did not have hw to try),
-- but - given the capabilities of hw are incomparably weaker than capabilities of linux networking, 
-which approach to take to detect streams for offloading?
-
-Second question - how exactly to get the routing decision from the kernel stack, to apply it in 
-hardware? I was not able to find any existing implementations of something similar...
-
-What the patchset actually implements is - maintains it's own shadow structures for (subset of) routing 
-information, and generate offload rules based on that. This is definitely not elegant (because the same 
-kernel where this code runs maintains full-scale routing structures).  Also this is definitely breaking 
-any complex cases - actually anything more complex than simple destination mask based routing.
-
-I was going to post this approach as RFC at some point, raising all these questions...  but 
-unfortunately I did not have a resource to complete that :(
-
-Nikita
+>
+>
+> On 11/7/25 15:29, syzbot wrote:
+>> CAUTION: This email comes from a non Wind River email account!
+>> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+>>
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    dcb6fa37fd7b Linux 6.18-rc3
+>> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1451a532580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=b8b659f0cab27b22
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=7fc112f7a4a0546731c5
+>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>> userspace arch: arm64
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17fc5812580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=110f3012580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/ae6bec0d0398/disk-dcb6fa37.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/dcc732da66c3/vmlinux-dcb6fa37.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/301d1bbdecc2/Image-dcb6fa37.gz.xz
+>> mounted in repro: https://storage.googleapis.com/syzbot-assets/94e5a8b9504e/mount_0.gz
+>>    fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=1051a532580000)
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+7fc112f7a4a0546731c5@syzkaller.appspotmail.com
+>>
+>> Unable to handle kernel paging request at virtual address fbd5200000000021
+>> KASAN: maybe wild-memory-access in range [0xdead000000000108-0xdead00000000010f]
+>> Mem abort info:
+>>    ESR = 0x0000000096000004
+>>    EC = 0x25: DABT (current EL), IL = 32 bits
+>>    SET = 0, FnV = 0
+>>    EA = 0, S1PTW = 0
+>>    FSC = 0x04: level 0 translation fault
+>> Data abort info:
+>>    ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>>    CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>>    GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> [fbd5200000000021] address between user and kernel address ranges
+>> Internal error: Oops: 0000000096000004 [#1]  SMP
+>> Modules linked in:
+>> CPU: 0 UID: 0 PID: 100 Comm: jfsCommit Not tainted syzkaller #0 PREEMPT
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/03/2025
+>> pstate: 834000c5 (Nzcv daIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+>> pc : __list_add_valid_or_report+0x3c/0x148 lib/list_debug.c:29
+>> lr : __list_add_valid include/linux/list.h:96 [inline]
+>> lr : __list_add include/linux/list.h:158 [inline]
+>> lr : list_add include/linux/list.h:177 [inline]
+>> lr : diUpdatePMap+0x4e8/0xb90 fs/jfs/jfs_imap.c:2831
+>> sp : ffff800099e67b50
+>> x29: ffff800099e67b50 x28: dfff800000000000 x27: 00000000c0000000
+>> x26: 0000000000000000 x25: dead000000000100 x24: 1bd5a00000000021
+>> x23: dfff800000000000 x22: dead000000000108 x21: ffff0000e21152f8
+>> x20: ffff80009b403120 x19: dead000000000100 x18: 0000000000000000
+>> x17: ffff80010ca0e000 x16: ffff800080536ef4 x15: ffff7000133ccf58
+>> x14: 1ffff000133ccf58 x13: 0000000000000004 x12: ffffffffffffffff
+>> x11: ffff7000133ccf58 x10: 0000000000ff0100 x9 : 0000000000000000
+>> x8 : 0000000000000000 x7 : ffff800081c11594 x6 : 0000000000000000
+>> x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff80008053700c
+>> x2 : dead000000000100 x1 : ffff80009b403120 x0 : ffff0000e21152f8
+>> Call trace:
+>>   __list_add_valid_or_report+0x3c/0x148 lib/list_debug.c:29 (P)
+>>   __list_add_valid include/linux/list.h:96 [inline]
+>>   __list_add include/linux/list.h:158 [inline]
+>>   list_add include/linux/list.h:177 [inline]
+>>   diUpdatePMap+0x4e8/0xb90 fs/jfs/jfs_imap.c:2831
+>>   txUpdateMap+0x708/0x8d0 fs/jfs/jfs_txnmgr.c:2357
+>>   txLazyCommit fs/jfs/jfs_txnmgr.c:2665 [inline]
+>>   jfs_lazycommit+0x394/0x94c fs/jfs/jfs_txnmgr.c:2734
+>>   kthread+0x5fc/0x75c kernel/kthread.c:463
+>>   ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+>> Code: aa0103f4 d343fed8 f2fbfff7 aa0003f5 (38776b08)
+>> ---[ end trace 0000000000000000 ]---
+>> ----------------
+>> Code disassembly (best guess):
+>>     0:   aa0103f4        mov     x20, x1
+>>     4:   d343fed8        lsr     x24, x22, #3
+>>     8:   f2fbfff7        movk    x23, #0xdfff, lsl #48
+>>     c:   aa0003f5        mov     x21, x0
+>> * 10:   38776b08        ldrb    w8, [x24, x23] <-- trapping instruction
+>>
+>>
+>> ---
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>
+>> If the report is already addressed, let syzbot know by replying with:
+>> #syz fix: exact-commit-title
+>>
+>> If you want syzbot to run the reproducer, reply with:
+>> #syz test: git://repo/address.git branch-or-commit-hash
+>> If you attach or paste a git patch, syzbot will apply it before testing.
+>>
+>> If you want to overwrite report's subsystems, reply with:
+>> #syz set subsystems: new-subsystem
+>> (See the list of subsystem names on the web dashboard)
+>>
+>> If the report is a duplicate of another one, reply with:
+>> #syz dup: exact-subject-of-another-report
+>>
+>> If you want to undo deduplication, reply with:
+>> #syz undup
+>>
+>> --
+>> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+>> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+>> To view this discussion visit https://groups.google.com/d/msgid/syzkaller-bugs/690d9fd4.a70a0220.22f260.0022.GAE%40google.com.
+>
 
