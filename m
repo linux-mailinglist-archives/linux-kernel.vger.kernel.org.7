@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-890049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00F4C3F25D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:25:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8E2C3F264
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC3D188E4AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5809D3B0723
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32CD30148A;
-	Fri,  7 Nov 2025 09:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6882E7178;
+	Fri,  7 Nov 2025 09:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrZR2l72"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DiKODaXt"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EFA2FFDCC;
-	Fri,  7 Nov 2025 09:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A9129B8E0;
+	Fri,  7 Nov 2025 09:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507517; cv=none; b=R1cj3nDuHaGH1EXtRrzUbQSsb5j05cqk8HXXm+T81xeQHgVhgNrV5CAlHQXEA2VNgkkBihP4VbwBzmPNYWbYwEF688LP57oFxYvmRnzkddm1uvsL/Gd0mEB1oYzFpn0rTfcogupzZpsQbSz8xxReO+AIUMRk9jy2iQ6GFZxXYV0=
+	t=1762507539; cv=none; b=b2zINVFeHUWLG9T8DpG+hV6JvG3S55ZVCWWtu8xZGdPdBrmYf1WVwnokQparBxgu/F2QoVf7mvTme4+fkfojEwBp7udMPIYWbT01fQVcqs7CD6FqZtmRK6nym8Uz8Zn6v4AOvPV/N6JWXlaKP8yOgbRTfua93gXGYWTZPVJbkpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507517; c=relaxed/simple;
-	bh=tcPCB2yEkM2XmDWImXI5XyTWoD11UnAI1EYhECSXkEE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LSCHNQA4EKfZwEauyKklOEd5WMVZQxMYpmw5QXRm8v2YlobaMWVi1fLvsRL5L/jyrTCqyKk4TRdyMMPV3giD2SkiPWpaPg1KPOQXAaQbBVdD3E94M9KDNS1wXff5M1i8iDPPZUJOc/1OfVnZenyPr1+ZjhuMMZxA+aNELQ9/LWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrZR2l72; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA49C113D0;
-	Fri,  7 Nov 2025 09:25:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762507516;
-	bh=tcPCB2yEkM2XmDWImXI5XyTWoD11UnAI1EYhECSXkEE=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=nrZR2l7287WcvaYq6yQO4Jv8DXdxURFeeseNX6jUIgA/7dqvrcFb1CrDNPr1kc2Wi
-	 EQvaMb51TCgFUNnFMrRE+PCq/5ezkSO9OEMC4dyqJLEnzA6QgWIzCnc+iha07xAmK1
-	 N8cImuJfm0Hse/aDF71NKfhFFe8y/DD8m2ZTjruQjI0dfDCj3L+I7t+5stA+7dnQCs
-	 OnrB+EB+C6Dgt60W3qx8NjNSNHP8QBuiJss1/ETi3uF90WzHq8acCM73Pgio/bqSHD
-	 fRC15SBORzU1G9clIMv745CmL+E28kZXoYnuQMNR8TQLnibyCftXwfeofn2omU3GjV
-	 r4AEVQMLcOK1w==
-Message-ID: <43938312-ae0a-4a29-9fab-9cb3920b8335@kernel.org>
-Date: Fri, 7 Nov 2025 10:25:11 +0100
+	s=arc-20240116; t=1762507539; c=relaxed/simple;
+	bh=/AGNW71S4Yk/RK26qQSj8YrNbE16Egqb8P/usljzDio=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HEswPhbRSpDHfbP47/jnzGsGScU4zJ36oa4IzLfRID1e7nellDh8HaxWZ0FwzexUiXCCi48yKFhv0T6zv2YqoUIk51ImKbuX/xtu8WYDkIyrOHIVFQ17NY5TV1IjLM+R++34HNP02kmNysGSd60roFqes8SnWQxkyn0JKqTQCzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DiKODaXt; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/x4l+A0jDSFdktd3t5ashjObRl7Kwga0z+/ilUukgS0=; b=DiKODaXtdUn1nt9dQCN5rnvlsV
+	br+tLYih0okDtPfimNQjBtdgRkMCPtyFH3TLYsJ4UV8n0Gyl3+nERXhfaZWK/DxsBBfI/YxHb/2u2
+	lO7Lpf0zxsEnI+CczxCCaXGC2DhXUOFihlG/vDITn3NmZyo6U39qSmWPcqTXckyrQjGIxMiWTyQb8
+	m5nxlpJD85gK7mjDR7bWZPctqsyvOazc4VqCcdEREUxDqWEvqlVfWG0f+l0wlG8gMSk4FvHR7IJC8
+	8ODGrloxjm5/TEckul52a93TZuU2fhK/CpqQUOUCf7jrz30BmYHevIASvqQIJ0W1e55NyoF52mZoB
+	vJoTL4Ig==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vHIig-003Nko-V7; Fri, 07 Nov 2025 10:25:23 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Stef Bon <stefbon@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,  Amir Goldstein
+ <amir73il@gmail.com>,  Bernd Schubert <bschubert@ddn.com>,  Bernd Schubert
+ <bernd@bsbernd.com>,  "Theodore Ts'o" <tytso@mit.edu>,  Miklos Szeredi
+ <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Kevin Chen <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+In-Reply-To: <CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
+	(Stef Bon's message of "Thu, 6 Nov 2025 17:08:00 +0100")
+References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+	<CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+	<20250916025341.GO1587915@frogsfrogsfrogs>
+	<CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
+	<87ldkm6n5o.fsf@wotan.olymp>
+	<CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
+	<7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
+	<20251105224245.GP196362@frogsfrogsfrogs>
+	<d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
+	<CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
+	<20251106154940.GF196391@frogsfrogsfrogs>
+	<CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
+Date: Fri, 07 Nov 2025 09:25:17 +0000
+Message-ID: <87ecqary82.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v4 2/5] media: v4l2: Add description for V4L2_PIX_FMT_AV1
- in v4l_fill_fmtdesc()
-To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>
-References: <20251103-av1d_stateful_v3-v4-0-33cc1eaa83f2@oss.qualcomm.com>
- <20251103-av1d_stateful_v3-v4-2-33cc1eaa83f2@oss.qualcomm.com>
-Content-Language: en-US, nl
-In-Reply-To: <20251103-av1d_stateful_v3-v4-2-33cc1eaa83f2@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 03/11/2025 14:24, Deepa Guthyappa Madivalara wrote:
-> Add a descriptive string for the AV1 pixel format to v4l_fill_fmtdesc(),
-> enabling proper reporting of AV1 support via VIDIOC_ENUM_FMT.
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ioctl.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 01cf52c3ea33e1a01e1b306036ba4e57ef5c95d0..bdfdf45c5de2f2ce885f219007718a54b5c86251 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1542,6 +1542,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  		case V4L2_PIX_FMT_QC10C:	descr = "QCOM Compressed 10-bit Format"; break;
->  		case V4L2_PIX_FMT_AJPG:		descr = "Aspeed JPEG"; break;
->  		case V4L2_PIX_FMT_AV1_FRAME:	descr = "AV1 Frame"; break;
-> +		case V4L2_PIX_FMT_AV1:		descr = "AV1 OBU stream"; break;
+Hi Stef,
 
-stream -> Stream
+On Thu, Nov 06 2025, Stef Bon wrote:
 
-Regards,
+> Hi,
+>
+> is implementing a lookup using a handle to be in the kernel?
 
-	Hans
+What we're talking here is a new FUSE operation, FUSE_LOOKUP_HANDLE.  The
+scope here is mostly related to servers restartability: being able to
+restart a FUSE server without unmounting the file system.  But other
+scopes are also relevant (e.g. NFS exports).
 
->  		case V4L2_PIX_FMT_MT2110T:	descr = "Mediatek 10bit Tile Mode"; break;
->  		case V4L2_PIX_FMT_MT2110R:	descr = "Mediatek 10bit Raster Mode"; break;
->  		case V4L2_PIX_FMT_HEXTILE:	descr = "Hextile Compressed Format"; break;
-> 
+Just in case you missed it, here's a link to the full discussion:
+
+https://lore.kernel.org/all/8734afp0ct.fsf@igalia.com/
+
+and to an older discussion, also relevant:
+
+https://lore.kernel.org/all/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKx=
+EwOQ@mail.gmail.com/
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> I've written a FUSE fs for sftp using SSH as transport, where the
+> lookup call normally has to create a path (relative to the root of the
+> sftp) and send that to the remote server.
+> It saves the creation of this path if there is a handle available.
+> When doing an opendir, this is normally followed by a lookup for every
+> dentry. (sftp does not support readdirplus) Now in this case there is
+> a handle available (the one used by opendir, or one created with
+> open), so the fuse daemon I wrote used that to proceed. (and so not
+> create a path).
+>
+> So it can also go in userspace.
+>
+> Stef
+>
 
 
