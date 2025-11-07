@@ -1,97 +1,146 @@
-Return-Path: <linux-kernel+bounces-890915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F82C41607
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:01:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CABC9C4160B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:02:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDED424C3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 637393A36DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649012580DE;
-	Fri,  7 Nov 2025 19:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D846F2641C6;
+	Fri,  7 Nov 2025 19:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Vm/vdScp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LPzEBZAc"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183CB2206A7;
-	Fri,  7 Nov 2025 19:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84875239E88
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762542105; cv=none; b=iFeAAW1Dokdib4yE4SlurXHeogCSTtvgzXKRIlFs15xB4kpHz7OlF6mq1N+J1QlprbkMqah+jWGNMfKlchxwGuw14+YFDieBUL7vSZjmY3pA7tr1RORHO1vrUYzkPUJ7hQcMcVvTXcw8Q42u9skjSDGg6wJRIY1m29G3c6MTOYE=
+	t=1762542117; cv=none; b=eKGWnPcuelL3MAWWxIS043Lu8FQwheOd9FQwElQv8TTPkqjdKkQQNInioX6GhR58nEZtOx1BedAq5XiKJk3l+EljqrSzBNbSkPO6yzJar6U5rIpA5Y81AzO1bXyMWBbdiPtayU6XMc2JajN+FXCvj6LHs278dWUjgBKOyS/pQIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762542105; c=relaxed/simple;
-	bh=UF2IWmAQDO1X410z/PEbaUPD3GkoRYJG5/Gzv8WH+zA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u33c/TtJaj+c9Ua69RqfmD1IYsN1sj1XvsEBzdjSnJx2u3mI3fa4Q01dHBe6glvXA6C/FErloM1tZGgFsIAt33vPRWlAarwff79OIvZY39R1vzpUspCdfNVez1EQ4Vpn9qpSFwJ6LjgMIZXOXcs551sj7VUXLyvmOWPmyyWoYoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Vm/vdScp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=dmnU+NL/eOaWWwyUapILw4TvGX9F7hjLcTmUpXNjT/k=; b=Vm/vdScphQjeXHY9UIUIfdxx0g
-	5Ab7Zw42SRbmBnh8WFIlTdvmz5p65Nt+neQW1u5YxD/gh7WtR2PkS/YuETgQCF55hhc72sSOzY9UN
-	e5zBKjNC4rPDMsnMU32yoH7wqWjcB3XPbhbnzFGW9L4SlK9iwO2gNIJH0QK9DUxfViiQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vHRi1-00DGHz-DH; Fri, 07 Nov 2025 20:01:17 +0100
-Date: Fri, 7 Nov 2025 20:01:17 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on
- VSC8541
-Message-ID: <caef6e6e-b81e-45d7-ac92-ed6adc652aa2@lunn.ch>
-References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch>
- <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
- <2dabb0d5-f28f-4fdc-abeb-54119ab1f2cf@lunn.ch>
- <CA+V-a8uk-9pUrpXF3GDjwuDJBxpASpW8g5pHNBkd44JhF8AEew@mail.gmail.com>
+	s=arc-20240116; t=1762542117; c=relaxed/simple;
+	bh=3UEsLXz42p5VYvphPtcGmcpAmWx2sXLq3igNjcYIM30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fVNdGR+6Z9kIsVEOTCSLP2XRooxIynsCpvqnnZh/ZmC8xw+wH051IPIISb5LMAEg8V8pIB/vM/otkie/WGVqyAkIvrKgg9dXWxAKF7J9iPskIy/Pml1u5PWVjVIuiTiZrh/n5uxQiN/p81tzz/PGSUHLaN21Cxhhs0xF3IYODpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LPzEBZAc; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso1936073a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:01:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762542114; x=1763146914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zJVrVAk2TgA324H1MpYTwNs3mN4/yel0i6B4XK2Zvcc=;
+        b=LPzEBZAcI63FZpGO6CanNBpMaz1VQhbJs0dNejN5Bkgip8Mzv3BBp1Myqnk65rEHdj
+         sOcxGNw3PzxPTX3a+kFD084fqD1X8wvSUsz053AbAl9uKEvwpmOOihyEQzITQNVC3JWK
+         PubIShXqP1pbRF9NRJ+b6Vhu4qLI85g0Uz4mKuReVoDekZF9i7Qn1c0HHddQmaViSINp
+         KrjrrOpYWrIa1alUzfnym2sP8xG6ciI4nzpVQfeCN2nM814dI4+PyFuJLok1g+hyQcV1
+         2rn638SoPFejCfnOI9x7g3/ufjxyO4Gye9+15T8ggAceyK32Gbjhp7WkjCaZ0jnP9b3Z
+         dy3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762542114; x=1763146914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=zJVrVAk2TgA324H1MpYTwNs3mN4/yel0i6B4XK2Zvcc=;
+        b=FdR7vxh/IPDN1q+wNlr61KVeeMiZb4y72xfu3XLFG8SwNdKNgXQ8UArSC61XacTyMf
+         ESq8ex9ZfEh08z2PGC75OSsoGzZSqYRoQyAEG/NzKe2YZLtYN/mZUQ7IFTAkqEe1tfdg
+         v7Cg+N70QM4DueFEBPic7WxqlftcRMjAU2Pc7NjpstUOKeMFAa27ttB3cC/+W3mKV2ja
+         eJ7tUln6HRRC07yVk6Qrf0TMnVQxuJ4SEWUfINj1yXGNl/IpXSnXAa59sV4nntJzV8+H
+         zFZ9rbriTSJ87pCGzeN6UsOeYccf8nsoFafna1UmlJ0XoEmq2NDIMSPlWdkiqwZQBMQt
+         3fPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXf/gQuQE3L3Ii1a5qQY99x9iNl5r/ANQ6f3EbxhfSCxBZ5+lkydrH+DQqMuFDPLsIhOPtWax6Wyw4545E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRq6w0ujnai6jSY33kgs8yrRzKdquLb8Gi512QE/oC0sKWnyXT
+	g8h7mMHnnDTvlG8ZMLbM3TL4CHWkoLKeVfoMYa0oi0tb0QKgHjy809mOIqcm3zmrcA+pwY7xc9T
+	0NfIl2+kW2nXmB/96xypMFflHJziLF74=
+X-Gm-Gg: ASbGncu0ww4EOqmnm9WUvSDtj+A9wRc5wmKvhMiSCXenEeFzZVuey5vO65uid1JPwS7
+	vnUNkus/nK7AGyRlksp/q0zfmWujFohAX4cfgZMapbFxzehDS+0/MZl7UEK3Sob3vgZGUb9IqU2
+	lmF2wFvyxqQK3bQTHCCiwUicSkiNuRFGsW1PdCZmvhN4a/AriCzX5wTzXCPeFXgBVVx2qZIGfMz
+	9gRQiN4QNKtyE1cL1A6phBSJIu6/fxV2kJCISqBAevwc85+LNmQ04PeCZIOItHfvNThTpl1YewF
+	PEZTY8Yv0qezs2C07Rb6zxEhSHc0
+X-Google-Smtp-Source: AGHT+IF7dq1hPfdyIJA5UzFH4+spgH6fajLAhisNInsc6hlrf0h6+FGpZpH4bHnV0wqnVESL0TVGtLLtE+7Mijxjp9M=
+X-Received: by 2002:a17:907:3e12:b0:b3c:bd91:28a4 with SMTP id
+ a640c23a62f3a-b72e031c6a7mr36894966b.28.1762542113615; Fri, 07 Nov 2025
+ 11:01:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8uk-9pUrpXF3GDjwuDJBxpASpW8g5pHNBkd44JhF8AEew@mail.gmail.com>
+References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
+ <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
+ <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
+ <74d4c8e40e61dad369607ecd8b98f58a515479f0.camel@gmail.com>
+ <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com> <5a8c765f8e2b4473d9833d468ea43ad8ea7e57b6.camel@gmail.com>
+In-Reply-To: <5a8c765f8e2b4473d9833d468ea43ad8ea7e57b6.camel@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 7 Nov 2025 11:01:41 -0800
+X-Gm-Features: AWmQ_bmT3MVaf-ueo8Pl4FvQPz-FBP_Cv3IYAyt6Hf9mfm1PZnZzLEoX2Fni7FY
+Message-ID: <CAADnVQKbgno=yGjshJpo+fwRDMTfXXVPWq0eh7avBj154dCq_g@mail.gmail.com>
+Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary search
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Donglin Peng <dolinux.peng@gmail.com>, bot+bpf-ci@kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, zhangxiaoqin@xiaomi.com, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Chris Mason <clm@meta.com>, 
+	Ihor Solodrai <ihor.solodrai@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Certainly the probes can be simplified into a single function. I'll
-> create a patch for this.
-
-Please do make sure of each device having its own .probe
-pointer. Don't have one probe function with lots of if/else
-clauses. Put what is device specific into a device specific probe, and
-what is common into helpers.
-
-> > Also, is the LED handling you are adding here specific to the 8541? If
-> > you look at the datasheets for the other devices, are any the same?
+On Fri, Nov 7, 2025 at 10:58=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
+> wrote:
+>
+> On Fri, 2025-11-07 at 10:54 -0800, Alexei Starovoitov wrote:
+>
+> [...]
+>
+> > > > > > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const struct
+> > > > > > btf
+> > > > > > *btf, const char *name, u8 kind)
+> > > > > >                       goto out;
+> > > > > >       }
+> > > > > >
+> > > > > > -     if (btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK) {
+> > > > > > +     if (btf_check_sorted((struct btf *)btf)) {
+> > > > >                                   ^
+> > > > >
+> > > > > The const cast here enables the concurrent writes discussed
+> > > > > above.
+> > > > > Is
+> > > > > there a reason to mark the btf parameter as const if we're
+> > > > > modifying it?
+> > > >
+> > > > Hi team, is casting away const an acceptable approach for our
+> > > > codebase?
+> > >
+> > > Casting away const is undefined behaviour, e.g. see paragraph
+> > > 6.7.3.6
+> > > N1570 ISO/IEC 9899:201x Programming languages =E2=80=94 C.
+> > >
+> > > Both of the problems above can be avoided if kernel will do sorted
+> > > check non-lazily. But Andrii and Alexei seem to like that property.
 > >
-> Looking at the below datasheets the LED handlings seem to be the same.
+> > Ihor is going to move BTF manipulations into resolve_btfid.
+> > Sorting of BTF should be in resolve_btfid as well.
+> > This way the build process will guarantee that BTF is sorted
+> > to the kernel liking. So the kernel doesn't even need to check
+> > that BTF is sorted.
+>
+> This would be great.
+> Does this imply that module BTFs are sorted too?
 
-That is common. So yes, please add it to them all. It does not matter
-if you can only test one device.
-
-	Andrew
+Yes. The module build is supposed to use the kernel build tree where
+kernel BTF expectations will match resolve_btfid actions.
+Just like compiler and config flags should be the same.
 
