@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-890792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7768C40F9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:03:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B341AC40FA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CFDB4E28EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:03:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8F14232C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013BC2E54A3;
-	Fri,  7 Nov 2025 17:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2270326D4F;
+	Fri,  7 Nov 2025 17:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3eWvVIs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FRuiTEgg"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5458F19C556;
-	Fri,  7 Nov 2025 17:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310AA2DF148
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762534991; cv=none; b=AZcYrPNgSAY5+Xhy3kVqj0jEa0xIe5SCM0N67sGfuSzrGgpb8JsqcpPCyY/nKTT9cnxdoG5IQ1reqFzUJ31H3n/YzAmzXIcixFraiqtAj00x0rqXLiK7VM9Um9xWFrqxIvU613vrOA0zZkpOnLz/gETmYk1Wf/4objPI55r2Y/c=
+	t=1762535062; cv=none; b=ud2DxBu0CJllio29wN23lXTyI11AIebQT+Gk4kSh6EoqoBPjqYZ495sL7noNHSHtS/X5n3WazsNaDZcwePwZoj8Oe57YjPcHDRFcglWIkM/EBKDRfTZGa0OLUC8ivxzZmO60dcoOhYEFsXedR8gZeHZhwLJNTUxtLJ2se1T+9iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762534991; c=relaxed/simple;
-	bh=lULDnj+N73bfnuv+dqOPfQ5f4QFHttv6nBSeFv4MoHE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rNS9+9IDc/usz1k1v/GcL9Tqof+mlnLQHWXQzDyiw2tjFt4TWTEAz1zUbCpUwgL3JdxNRd/63RBrO0ASby2XuA7epEjcucTQ2BGV+misCClED7/aBH94HZG/HyLZh9BUi53QPdNdbrLYYzf4GDKhyw1g5ztcLhxYNPifRs99BT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3eWvVIs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74BCBC4CEF8;
-	Fri,  7 Nov 2025 17:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762534990;
-	bh=lULDnj+N73bfnuv+dqOPfQ5f4QFHttv6nBSeFv4MoHE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=g3eWvVIsv7lPjVlkjSjVcQhetR7dAAn8a59StRYiXrByDgsckyNHsNXJZlfMZknku
-	 KgW62hngSpYA03Up0nTtlObK7VrOYVP46gjl7YALEFBESN/+2iMqPM3w+ChFZzeP6m
-	 5ARnYeRPFxJMxO/WshboZtVK3V3yIeb9D64Ou8GG6g3MzirJKfhxNjoiS3eJ7dsWFO
-	 EN3VDlfXR8WqAvmfLQYyJIaVCg3+x3cvD2aJM2bCH7tLk/yPSiR6U8yUyiPg7C8BsB
-	 EKz9LYVyz/3M/77cVNLGF2MVU+mPQkXBkTqexe3YvmU/DI37woLpWhCLFuJf6aPCtJ
-	 RygNSY7rTY/iw==
-Date: Fri, 7 Nov 2025 18:03:08 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
-    Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-    Frederic Weisbecker <frederic@kernel.org>, 
-    Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-    Michal Hocko <mhocko@suse.com>, 
-    "Daniel J . Ogorchock" <djogorchock@gmail.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>
-Subject: Re: [PATCH] HID: nintendo: add WQ_PERCPU to alloc_workqueue users
-In-Reply-To: <20251107132443.180151-1-marco.crivellari@suse.com>
-Message-ID: <50rq8s8q-q098-rrs5-r1rp-p5p5r7929psq@xreary.bet>
-References: <20251107132443.180151-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1762535062; c=relaxed/simple;
+	bh=jAXZwY1JFAlSau7Sh36qtfmk425lQGaaTTdIu/DKZnA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qm/5NrE+Nen1eHlzZ+1D3PI1+UVrWPwJGiM1SAwmHIyryzUF67SCPq+yncDlhUW04Pj57A6AVVONgUIjLKPCMqLakAYI8Lfy5fz/z/+pA33ZRpSEgDjg8PNozT++kj4NHCjmssY06QU3H1EuuhJWubvwHp/02kx9CZm7cQCeHXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FRuiTEgg; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-592ff1d80feso1133726e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:04:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762535057; x=1763139857; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jAXZwY1JFAlSau7Sh36qtfmk425lQGaaTTdIu/DKZnA=;
+        b=FRuiTEggRGAS7Vfo1Uagld0Lf18jRFnzxorwEG4ByBp6/oEbLGLvr35XYZm49IZt2v
+         O2aqnvp0W+uFG8/pyOSl8K31LpKFMOgvGw+YQpYgwM/iwiuXQiOcqbPVxV+IsOltV+jf
+         Nsn5u3IAKa2qCGCwh+/a1oKYKYY7s7A5aQGwCSkdQaQVPX52nQ4AGN7ROYY4l40uu0iI
+         eSfmAJq8W93JiOLnxDBTobKE4tF/E7UKkbJS7Vyw+m5JskPebMWujC1Qj6aMUWUhlUR0
+         2Y5VJZeu7Bh+uXBgl3TvtCSc3gkQx9cxojtd03G+O0xYt7wX/dIEas6mBjqDUC1WzYXI
+         eueA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762535057; x=1763139857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jAXZwY1JFAlSau7Sh36qtfmk425lQGaaTTdIu/DKZnA=;
+        b=mFabKT71ugju/tI+WC7eigobi4TVQbouN07KrbfPgyA4spc9BP6fIJi4RoK8yjGOes
+         CkXxipyMEfMuCrCg06SvUohuFFfcrdre3nbCayri/ocYACWJ5x7MSzzahMZRQR4R+CBl
+         Vd6wQfGfWWFHGc7M4WBWNmD1FlT4WtFkpD1gl82OaN6nOlgnooQsJ5CXNoeg+cdrRcvx
+         tLzaep6snfAKR6j8Uno+NakkaBIFsXjsebTrN1YXp3bG07uar7nXOlILKT+Njk+thxkY
+         BhZDRWxyxlDZxA1fq7SvkM+hpoCfEHeWXQmLiXw+bd/m9UPFrufVfYx3Br5j7jGcc4jm
+         7uPA==
+X-Gm-Message-State: AOJu0Yzya2jF0ievDJUel0p9sQncqpnO9PyaAU8a0OsTWmqvNFGycuLy
+	K++b4DxDinxXHW6BzJbXSZ6qP1+wxoQnrK3UVEucy7dQYz0OTGPkoc74rSS1VV/TfRbU444HHaj
+	phl0SfFcAk662K5Qs0rNcSotlQu2CryKz8E8DVWg9gw==
+X-Gm-Gg: ASbGncuOyGQnjU7Mu20EwrdrCn5kUGJp975qwqpozpE3DATm3XnPE/ryXUAAuh1DFGg
+	gnUAVLE9JRkKkcgvwZwn6SlfTy5l2ZQA0Sbri39sPNvjyvHs9K/QX0J//kXupkae4rDzULJnh3W
+	5rWvET14krAbspZ8MZi1de54DKvDLoi0gNtQX0HWwVnAiYc0MwFXhjY+ExpU7GXKSEr020bV/yM
+	0LQOpFHUHAk6TtyUI65laIwaUIzwD8kTtc2VFzmtrpFAAK14+wrVzNOH16Ua3VYV5sswdmtrKqv
+	n5VOPtUTBMFeQefzEw==
+X-Google-Smtp-Source: AGHT+IEYqlVxvx1AEblNqiEQwOeS/KsDd3n8m7JMMGSQrBI5xG6zdz7o0UWJc+8B7rV9L/oXAJXTHffVLD7ZrMBGPJ4=
+X-Received: by 2002:a05:6512:3a86:b0:594:2c1f:75cf with SMTP id
+ 2adb3069b0e04-59456cadbffmr1263195e87.57.1762535057489; Fri, 07 Nov 2025
+ 09:04:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+References: <20251107132443.180151-1-marco.crivellari@suse.com> <50rq8s8q-q098-rrs5-r1rp-p5p5r7929psq@xreary.bet>
+In-Reply-To: <50rq8s8q-q098-rrs5-r1rp-p5p5r7929psq@xreary.bet>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Fri, 7 Nov 2025 18:04:06 +0100
+X-Gm-Features: AWmQ_bl64GFB67e5z_8H7PGOfSgSCx7BB9bx-w6X3bq96IM3M1Sp-Wq2cLF8vi8
+Message-ID: <CAAofZF6OBZsD+3PA98dwWEAMmEhOzBTjisHt6daaW_hik2L60Q@mail.gmail.com>
+Subject: Re: [PATCH] HID: nintendo: add WQ_PERCPU to alloc_workqueue users
+To: Jiri Kosina <jikos@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, "Daniel J . Ogorchock" <djogorchock@gmail.com>, 
+	Benjamin Tissoires <bentiss@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 7 Nov 2025, Marco Crivellari wrote:
+On Fri, Nov 7, 2025 at 6:03=E2=80=AFPM Jiri Kosina <jikos@kernel.org> wrote=
+:
+>[...]
+> Applied to hid.git#for-6.19/nintendo, thanks Marco.
 
-> Currently if a user enqueues a work item using schedule_delayed_work() th=
-e
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> This lack of consistency cannot be addressed without refactoring the API.
->=20
-> alloc_workqueue() treats all queues as per-CPU by default, while unbound
-> workqueues must opt-in via WQ_UNBOUND.
->=20
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they=E2=80=99re need=
-ed and
-> reducing noise when CPUs are isolated.
->=20
-> This continues the effort to refactor workqueue APIs, which began with
-> the introduction of new workqueues and a new alloc_workqueue flag in:
->=20
-> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
->=20
-> This change adds a new WQ_PERCPU flag to explicitly request
-> alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
->=20
-> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-> any alloc_workqueue() caller that doesn=E2=80=99t explicitly specify WQ_U=
-NBOUND
-> must now use WQ_PERCPU.
->=20
-> Once migration is complete, WQ_UNBOUND can be removed and unbound will
-> become the implicit default.
->=20
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Many thanks, Jiri!
 
-Applied to hid.git#for-6.19/nintendo, thanks Marco.
 
 --=20
-Jiri Kosina
-SUSE Labs
 
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
