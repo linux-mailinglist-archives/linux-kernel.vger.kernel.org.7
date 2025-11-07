@@ -1,189 +1,187 @@
-Return-Path: <linux-kernel+bounces-889639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B106BC3E1EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5683EC3E263
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273383AC5EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:24:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A23A3AE311
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A252F690B;
-	Fri,  7 Nov 2025 01:24:17 +0000 (UTC)
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021130.outbound.protection.outlook.com [52.101.95.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344492F746F;
+	Fri,  7 Nov 2025 01:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="i8obIctg"
+Received: from mail-m15577.qiye.163.com (mail-m15577.qiye.163.com [101.71.155.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4622F6195
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 01:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.130
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762478656; cv=fail; b=e6Vly3jmwny6CX9StHcoLPVPCvbn2o/zTxOhD5abwPlUWIpW5oTa/McHlECzsQ+iX1zq8ZOsHuEPt8SKioAjIrSaSmL4jk50D5STf1bMFuTwlzpcBWrLL0OpqaDiymiAX++13vFh8eAC0q49W0RzeH/4phfk0E8+DrZ2xWkvt7E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762478656; c=relaxed/simple;
-	bh=r5bK62pE3hfI+/LWucCNGGw5qthNzh6zzLgH+L6Oz3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O9CJNhqT4SM6NgcpbjTYLYeihGJ4B7WLtRAzvCVVjGn1UPhJ2ho2PkDuw5Mq4woQL/f8ZniepF5JFlAWxeybPVfXWCAmNc406mpRF4ORp7P643wTAoqAPvTf4lBx+qvccLoJTdmkXwhNYm/3Pyf3jA3fxkm2DXqT0wHZb6g3e3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.95.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X8dtV3eaCVnNOAvY1VhZErJ8n0TkGQfdK3N+mpWWR0y1pLVFHQn0Oy+JSwEguPGgVT48roKxYHNAUgbsOYoWkpdeSOV2Iiv3Bnqdh6yi3IilBV4lkCfLvSzsE0FajljwyJFqsyzOWNtBFG07uvpDxWvfoaZg8jrFKKGPdzYwFTlaod1MZavRshHrGyfhs2EPgqBLUopCSe6Rm2gdwKnk8Gf/cOUy6bPPschAwTHWvwylH9iedy3D94c59oXkXNYgvnRwWy6C602V/lw5vKCf4H9cJ/O4LHiXYDJb2NhE0QWKC+8OiNBIjrYVzw2ZFRQsLTBMey8hA1TfbuZxkxrFXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kUDSzFREbHbkH7IEoBm/8XH5uGkbgmuIm455p5eVUZQ=;
- b=ouZF485hwSdxqOXO5DtDgBoKH1kvIgxKmaIsYzXqygMntO6gs0HEowk+YzARxJ+qf5QXFYE7LK5+lPnuilx9Kd73sNLQLmFELISrF9N6LiHeTB3zDIOZp5ibkYhJd2jmZmoeLQRtzmfw7Ng6qsdJ57GH0C8sgz9GTaIEZTgbHBuPLA3Su6QsucXFy0kP1jURDf0KPdZz1KEDDCQqf/CzE8KM8cEdCqscuY2jrJyZnhSJk7cwVhV/+h6WYHhN1y8aEC7cl7N8S4u0sq2jiS0TjGtYjbNk7l/Ukh3tbk2l+slSUC7jlKB+WpsLcIF3lnLOMfpKeR9LwfVUCERLrLpd/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LO0P123MB6922.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:2ef::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 01:24:14 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
- 01:24:14 +0000
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: tony.luck@intel.com,
-	reinette.chatre@intel.com,
-	Dave.Martin@arm.com,
-	james.morse@arm.com,
-	babu.moger@amd.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com
-Cc: dave.martin@arm.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] fs/resctrl: resctrl: Return -EINVAL for a missing seq_show implementation
-Date: Thu,  6 Nov 2025 20:24:01 -0500
-Message-ID: <20251107012401.224515-3-atomlin@atomlin.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251107012401.224515-1-atomlin@atomlin.com>
-References: <20251107012401.224515-1-atomlin@atomlin.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0910.namprd03.prod.outlook.com
- (2603:10b6:408:107::15) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593ED2E5405;
+	Fri,  7 Nov 2025 01:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762479628; cv=none; b=qxYszHy1xAAnXv8qlibzyHdI32hmKdkeOZbx6XzCo/TA62Jy7NnXn6FaKOY+Uw7Sl1vGdCB+ngHHg2sZ9WZsyzTVJzVGBwCGKEOrVbBRoH3lRKDSotSeYNh6KOnUbJXk1VwX2mw0Bo7AlcPt79JSLE8hQnJq4Wm4tKELf2cF4PA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762479628; c=relaxed/simple;
+	bh=x3ee7MPdOGqj9S4iiDxNfC1Dqwh6Q/oHmHbk3UsgQw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RBCnZ6v/zuBylIqa26VqbgiaQsUqPDrChfymZSKJCKRO8h+zoxKyQ5VlOBj+9vHuE2QWPQSgCmc2ny6Kh2UvxEHLjyUav/+i1R2RrpjawSElWvxxcbFg3OCqBF9EmFU3hM1Udgs2VaNbrhj+m3xsemRBS1/H+czWZf0IEjJj7Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=i8obIctg; arc=none smtp.client-ip=101.71.155.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.30] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28b3fcd75;
+	Fri, 7 Nov 2025 09:24:58 +0800 (GMT+08:00)
+Message-ID: <f39d34b3-5e52-4490-99d8-db9b32f1324e@rock-chips.com>
+Date: Fri, 7 Nov 2025 09:24:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LO0P123MB6922:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8474d4b8-88d3-4f44-4c94-08de1d9c5c80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VzcZLQdRg8PVwTm0lgWyqtzzmArb7ORQqz3XZHaD7SK/uIR6k3sHIO+0nQg2?=
- =?us-ascii?Q?BWBFC79HPRpmsnN0HNcbZzt0dcksKSGsL/tSM/AsP0JwraqovT9MTQbYhF7X?=
- =?us-ascii?Q?bP4b3kbAt3CHqunU2We8+EdA1AUOmgYr4e/B9R/YVZW0nKqlSeEOIWRGMnNq?=
- =?us-ascii?Q?IYOFHaHmqYf6X+bvFQ2/1ZfjfDagAkIOCj/RnkUEXsRWmlf+xaTt8g33tJ9i?=
- =?us-ascii?Q?aqhccf+mKkd2gEFWH42JL2evpkw572B25eCsiKAZnbf5q0szy9wKHA8HFFc/?=
- =?us-ascii?Q?O0EsQj6mDDRxj1am8Yw3WUmXHjz6maOJRg9rJe5WT/nuCc8AX4asp3e0Tawm?=
- =?us-ascii?Q?KurhLA44ghVQBmgSRZM2nmurXN6SyX6jz6SSuRS4Z+s9m6zyna5oFOqK1dxW?=
- =?us-ascii?Q?60Rx6MqagKpfOm8shwNENf6a1A13N9VgsALONwPOSXjR6NFtIzZTebvG1aDt?=
- =?us-ascii?Q?Yb+D5Z3l3syf9HRlyEkMcUOrPr220facXioaql1wJ+ZMCrbG3UOw4sW0TJxj?=
- =?us-ascii?Q?FpDRgXhoUvlhFp+xfllKvjcUrU4IpNh8yAWdXT3HIAZW7AbZp6rQKb/RSRQY?=
- =?us-ascii?Q?oAb9KnA281axHulC4ftL8TVn+FNtS0hI1IUJEywZ+3pJGv7QqwC4y1lsn/gG?=
- =?us-ascii?Q?wlzi/nO+642pSCcsEXpqXLs49LuNEgvYc/JdYrUgrBmKualklJy8Rp8l66L+?=
- =?us-ascii?Q?0O1LK4iQ6lHLDqQJ2OMgGhU62N7YfKtRxVJM56jlLRWPWPBBb6LcWsBNRJ6G?=
- =?us-ascii?Q?jltQHyPH65Y+VFplB83K819qGR98QyNGgRsE/CdlArjx06BnDIfRwGCzjFeS?=
- =?us-ascii?Q?RHkPiEu0R+nY6PzxELpzh5a2BPaNXuraFO/dxV9nBASQ7RNNySkfpdUixnhK?=
- =?us-ascii?Q?q+y20Bw11ZJhOdmlMIg8kjrM4NC92shnkuf8HuzPTkMskCLKWEyqPY+RF74k?=
- =?us-ascii?Q?N1NG4WYjcH7A7N832I3uHfz5mjpf6peONuXR4nteqQrh3pw3dgC4Y/SFMalS?=
- =?us-ascii?Q?i2YAb3KnTE5m2djh1krqiTysIixxiBNqZLGJBl+iL9+vy1JlB17LgPASrkrI?=
- =?us-ascii?Q?5zDtJK0peXP9RiC0XY2/S0BdzjZ67gcxf2t0Sm8eC83BhU8V5fdyjjqrMSlg?=
- =?us-ascii?Q?Z96U+WwmkQBJqFiwbhMfiO2ZIMVZR0wEEkL2XskwjFBNXaJFDyyNaXB/QM4A?=
- =?us-ascii?Q?Gh2mluttoqsW9M7C+HMTwsnII+wac1A4UYHt20+S9zRjP3vV+PvekX2L+qyt?=
- =?us-ascii?Q?WC6fjy9wX+DYQHeyYuREfgwm1IvvxSURYyOZI8kdiDC4+hp4yQ+On1h/9qKL?=
- =?us-ascii?Q?OFvJRrQURP8Oh0/yXXCcUf0l+bKtHgP9b1FfKEaWMl4NiUYVhuNml23Xfw6w?=
- =?us-ascii?Q?eJ6NGSAOMrqAm+Yhf8fKnFTLo4LcdomZtdIzpsqyINSdC2MkzwoFi9sYDwBV?=
- =?us-ascii?Q?B3JnHx3E8WnV/VMwiHGifuk0Sq6L50ZC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2qBXIoJwELJUtiwGDUe93C7bnEEwQkLscyepv19MBGxmYSYkDtkbUiXslP7j?=
- =?us-ascii?Q?gdr8tl1Hr6Utvjk/Z7EU7pLUCl23TA7LmRjjaXKaO3roiTlKBIzRPVbkD1EN?=
- =?us-ascii?Q?l7pxdHnV/vQPluhzu442e61mkxBT0QzjgYZkSMzkdIAJEhrQwFr7gDw4dmUu?=
- =?us-ascii?Q?SPSndKPGhB0UQ0NlWNw1rTljzgPqEQ964pjH+1dyMr0DvJUWJOxetX0tdjXu?=
- =?us-ascii?Q?HPu4dz/riJdj62qIfsSVMYCOzua9sm+8CUPu8do+0fldM+Tt1FB832V75wfk?=
- =?us-ascii?Q?rS/rx+5/s6jMJl2tNkui9nWvcey7lSfIWBegEexoearXHq1gkflYJxNNps05?=
- =?us-ascii?Q?a1U4OZb2BK3pLdQJOU0kONFbuS3SOXO1bdrvwHEeUI7oIpADp1sHEJeVJ/x+?=
- =?us-ascii?Q?wVu4yJo2A8rOnIgwM8Fz1DOyAzZkbHo9g5sWwVRBmccyGha9TJR24WCyxfGU?=
- =?us-ascii?Q?1onm6k8R5vMLKiTvc24Nu+bOkeVj00SdKDiEqfKf5iqz5hEQJwDjXETOSJYu?=
- =?us-ascii?Q?a2BqxwaZceMf9ToR4ENwFxNyhDGH7S/KO82G0oH6PItKZx8TSFL1/kIFjhGJ?=
- =?us-ascii?Q?bs4uGtC9jdUW0rLwr1h39ceZyfKYWpZlefIzS8awJ2KrQ4exDvhykiJ2sOc9?=
- =?us-ascii?Q?90kBBMvASHPHkHryULCp4cSesSGGOgR8Ll1CUMR1X3vT8kqKMhvZdDpQLnFL?=
- =?us-ascii?Q?t2B96RZ+pEq0WLsH8/PXPo/RG0Rx2FrGYAVCY6AoxC9Uaz7DdXyuvBxpWuZW?=
- =?us-ascii?Q?tSAZAfEY4QTjSerH5/4MP1aqgFHaMOTUu2gOiPeF740nzRrIn0nTlHJs9HhB?=
- =?us-ascii?Q?y3pIaq0amICHINNw0/U6c8ruxLKlK+WUHRNLipeOv4VnxI7kXbJHYl+oubfK?=
- =?us-ascii?Q?WBivW2oZQSpStwbFB1ElSAnmBWsxyNlvN9IBUklHHBCoG9symH/ZcfkFnJLY?=
- =?us-ascii?Q?1jNPBbKGO0D9G3J0zi+YEyZWOlq8F0nQFxNoRnNwqzMWiWRTja5YD4RQBnd0?=
- =?us-ascii?Q?oo9ZJSo720BRJOsoXi6ES15SHxgu9PlqGhcvwGX7NGwnLPdf24zKnjyi+8a8?=
- =?us-ascii?Q?f5eqtFwjZ2nbwhoUbqcI4EJSrs+qMehc7c5BJOKvZJ8JzQhZUQr7LZ8X00I8?=
- =?us-ascii?Q?V28rVo+IFgqFUYJD4FU5NZEpPJiqYrGICmUsVKuD9dvXTqkCYD8ZgU0N6P3j?=
- =?us-ascii?Q?QQsIt7APBqGZD69evyTE4jyrFrHC6s7RE+cZLbWL4DbHfRDy1e5jUTCodek0?=
- =?us-ascii?Q?D44zQNauoKl4lO1DNnHYqQ/BWPg/0Gn2LDdFNBtyyXW2vs926CM2HrYrOB00?=
- =?us-ascii?Q?r9XxITMU9QW0/lp0cFo+dcI7awdy5GBBrUT1iLAe70BfexbaRGOc287cVuxP?=
- =?us-ascii?Q?DGQZlPgf5BPNaoNM+FrvxuQBEYhEbQJWw8PeCojiwdLR49B9YcmwJDN1NEVF?=
- =?us-ascii?Q?RniXuTG9Ttc4+pt/pUvLul+tpfrD/VJLTMM01feMcApjCGqNsj99wXoAyQY/?=
- =?us-ascii?Q?mKEZ4kuiTHI5xB6f95tDSIbSKizQgpvlJrqEYCBr11iD1r9DJiOaQMK9KsqM?=
- =?us-ascii?Q?MRbmu35xCCt0qUdGaSo4dVcmvUF10yJuJLt+GQtF?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8474d4b8-88d3-4f44-4c94-08de1d9c5c80
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 01:24:13.9245
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +UZqnR+JHZW5BqmvCeCsTzgMZg+uXurcTbQSIZBJ3JAYIRtCQ/X29+Z3FZG/yS+ePqtpdGNDbtc1QTKIK5sZGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P123MB6922
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] dt-bindings: clock: rockchip: Add RK3506 clock and
+ reset unit
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ huangtao@rock-chips.com, finley.xiao@rock-chips.com
+References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
+ <20251027084147.4148739-7-zhangqing@rock-chips.com>
+ <241e4a1d-039c-4738-b492-6325ad354b2e@kwiboo.se>
+From: zhangqing <zhangqing@rock-chips.com>
+In-Reply-To: <241e4a1d-039c-4738-b492-6325ad354b2e@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a5beaae2203a3kunm52616c82d042dd
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxpLQ1YZTklLHRoZQxkaGh5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=i8obIctgp8PJQDzcSsl2yOaii93gYF/sd2SGLm2fBTKLXepQGj96EsKc9vZxFSs2R+cxyt5utlBL9WeBLT1in7BIZuTmtHSxAf+c2xZvlw+12j4KNs7jUIjsb+/tjhs4OVWDczanwxQx8PLDqO+ovB6kzJPmSTiEtrw91bj+9Ps=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=JrcLPjYRMh28B+ghpJStH6nxi8FMijAngji3KjqZsv8=;
+	h=date:mime-version:subject:message-id:from;
 
-The rdtgroup_seqfile_show() function, which is the sequence file handler
-for reading data from resctrl files, previously returned 0 (success) if
-the file's associated rftype did not define a .seq_show implementation.
 
-This behavior is incorrect and confusing, as a read operation that
-does not define a display function should be treated as an error.
+在 2025/10/30 21:55, Jonas Karlman 写道:
+> Hi Elaine,
+>
+> On 10/27/2025 9:41 AM, Elaine Zhang wrote:
+>> From: Finley Xiao <finley.xiao@rock-chips.com>
+>>
+>> Add device tree bindings for clock and reset unit on RK3506 SoC.
+>> Add clock and reset IDs for RK3506 SoC.
+>>
+>> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+>> ---
+>>   .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
+>>   .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
+>>   .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
+>>   3 files changed, 547 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+>>   create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+>>   create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+> [snip]
+>
+>> diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+>> new file mode 100644
+>> index 000000000000..f38cc066009b
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+>> @@ -0,0 +1,211 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>> +/*
+>> + * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
+>> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
+>> +#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
+>> +
+>> +/* CRU-->SOFTRST_CON00 */
+>> +#define SRST_NCOREPORESET0_AC		0
+>> +#define SRST_NCOREPORESET1_AC		1
+>> +#define SRST_NCOREPORESET2_AC		2
+>> +#define SRST_NCORESET0_AC		3
+>> +#define SRST_NCORESET1_AC		4
+>> +#define SRST_NCORESET2_AC		5
+>> +#define SRST_NL2RESET_AC		6
+>> +#define SRST_ARESETN_CORE_BIU_AC	7
+>> +#define SRST_HRESETN_M0_AC		8
+>> +
+>> +/* CRU-->SOFTRST_CON02 */
+>> +#define SRST_NDBGRESET			9
+>> +#define SRST_PRESETN_CORE_BIU		10
+>> +#define SRST_RESETN_PMU			11
+>> +
+>> +/* CRU-->SOFTRST_CON03 */
+>> +#define SRST_PRESETN_DBG		12
+>> +#define SRST_POTRESETN_DBG		13
+>> +#define SRST_PRESETN_CORE_GRF		14
+>> +#define SRST_RESETN_CORE_EMA_DETECT	15
+>> +#define SRST_RESETN_REF_PVTPLL_CORE	16
+>> +#define SRST_PRESETN_GPIO1		17
+>> +#define SRST_DBRESETN_GPIO1		18
+>> +
+>> +/* CRU-->SOFTRST_CON04 */
+>> +#define SRST_ARESETN_CORE_PERI_BIU	19
+>> +#define SRST_ARESETN_DSMC		20
+>> +#define SRST_PRESETN_DSMC		21
+>> +#define SRST_RESETN_FLEXBUS		22
+>> +#define SRST_ARESETN_FLEXBUS		23
+>> +#define SRST_HRESETN_FLEXBUS		24
+>> +#define SRST_ARESETN_DSMC_SLV		25
+>> +#define SRST_HRESETN_DSMC_SLV		26
+>> +#define SRST_RESETN_DSMC_SLV		27
+>> +
+>> +/* CRU-->SOFTRST_CON05 */
+>> +#define SRST_ARESETN_BUS_BIU		28
+>> +#define SRST_HRESETN_BUS_BIU		29
+>> +#define SRST_PRESETN_BUS_BIU		30
+>> +#define SRST_ARESETN_SYSRAM		31
+>> +#define SRST_HRESETN_SYSRAM		32
+>> +#define SRST_ARESETN_DMAC0		33
+>> +#define SRST_ARESETN_DMAC1		34
+>> +#define SRST_HRESETN_M0			35
+>> +#define SRST_RESETN_M0_JTAG		36
+>> +#define SRST_HRESETN_CRYPTO		37
+> Is there a reason why this (and the RV1126B) reset names now include the
+> RESETN name in all reset constant?
+>
+> For RK3528 and prior mainline SoCs the RESETN part of the name has been
+> striped from the constant, suggest we also strip the RESETN part for
+> RK3506 and RV1126B for consistency with other RK SoCs.
 
-This patch change the function to return -EINVAL if the file type
-handler (i.e., rft->seq_show) is NULL, providing proper feedback that
-the operation is invalid for that file.
+The current practice is to separate the reset id from the clk id.
 
-Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
----
- fs/resctrl/rdtgroup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index bd41ab5a8eb4..661a38176d19 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -314,7 +314,8 @@ static int rdtgroup_seqfile_show(struct seq_file *m, void *arg)
- 
- 	if (rft->seq_show)
- 		return rft->seq_show(of, m, arg);
--	return 0;
-+
-+	return -EINVAL;
- }
- 
- static ssize_t rdtgroup_file_write(struct kernfs_open_file *of, char *buf,
+Follow with others RK socs(RK3528、RK3588、RK3576.....)
+>
+> Regards,
+> Jonas
+>
+> [snip]
+>
 -- 
-2.51.0
+张晴
+瑞芯微电子股份有限公司
+Rockchip Electronics Co.,Ltd
+地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
+Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
+Tel:+86-0591-83991906-8601
+邮编：350003
+E-mail:elaine.zhang@rock-chips.com
+****************************************************************************
+保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
+
+IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
+
+****************************************************************************
 
 
