@@ -1,128 +1,131 @@
-Return-Path: <linux-kernel+bounces-890653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9822C40936
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05DCCC4095A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 067384F10CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:25:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47A894E9706
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70D932B9A1;
-	Fri,  7 Nov 2025 15:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E8732C930;
+	Fri,  7 Nov 2025 15:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRF8DAfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpAAEzE6"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2997943AA6;
-	Fri,  7 Nov 2025 15:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D35D32B9BC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762529149; cv=none; b=YGgsdp8YON6KnIruL6LYPFa9NXAM115Ao10DhpNoII3XpIF10uo/yXsm4Bc5dSpi2I7MCUK1ZKQpDpwZEN95mW/4eKzgzwuxANk4X8CwHq+awIZ10NYqi+s33vNEW2AOZhp8tHIo9GSnsrRzR5NUS0d/pSsQ5H1gWs/tNDMCAac=
+	t=1762529329; cv=none; b=Xr/BRjFeXXwTT2w8lH894jSIngUEzl7+pCoK1AwNbsljiNJDv7/P5ejOoFFpTQ1rcfhvvcw1jd2CgF3+DwY5glM36Ng1h94BLqVHOCIA3lOl06hFiFu/xYP7mjKU+69i79JyjFV7idppdZNatXQdymCCBKijl/foTu7HwkDrS6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762529149; c=relaxed/simple;
-	bh=02om1vHeyZwGMIMBSLhYVHI4vekhj/hDXVqaAGTaRb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=M/Bomj6AS3nZtlxeq4sn4kklEPgKWP+ug3ZRkhHgkB0HHku5kHh1k2tXlRxTjid4m1zqYeC9OEwB6aj2+fsKJV0NAAGJCRZcMsFyFex92rGXHnq64XkQfiCon5rVO0IiuEanfY2RsgjIfzN8SMW5Ak9Ryi/AK99JqBnkmT8pIoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRF8DAfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D386C4CEF7;
-	Fri,  7 Nov 2025 15:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762529148;
-	bh=02om1vHeyZwGMIMBSLhYVHI4vekhj/hDXVqaAGTaRb4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TRF8DAfeP1FRnLZkPGRCooI/SbGKUFf2sXqBTy73FxI/w3uLNiqGlPB+YtdbErEsa
-	 FHRT1EOCI6FKIbyMgcZ2/SXRLgCJYzp+WMYUOzVgogq2g3nwOpQbATUK0HyFPKZAOa
-	 ack/Hw+l6Q1CA7z0AEmf9VKR9RmqeLvueeeGZxbkXvsWLez6kF1k3C1vwzMEa3j1fh
-	 NIGCLKlGbK7ouBbayfER4k4Ut0siSqxMUBjE2JGMZ3LD7M+xGRjA003CGeCxO40iyQ
-	 IyBKh0XDj4WwUyHH6AfmSWs0kvtDXjtesPcIelaInaCOWNpMhAm1+FTFJgG8E2lb1S
-	 U7y5SY5hM/XcQ==
-Date: Fri, 7 Nov 2025 09:25:47 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: linux-pci@vger.kernel.org, Christian Zigotzky <chzigotzky@xenosoft.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	mad skateman <madskateman@gmail.com>,
-	"R . T . Dickinson" <rtd2@xtra.co.nz>,
-	Darren Stevens <darren@stevens-zone.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>,
-	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
-	hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org,
-	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 1/2] PCI/ASPM: Cache Link Capabilities so quirks can
- override them
-Message-ID: <20251107152547.GA1998555@bhelgaas>
+	s=arc-20240116; t=1762529329; c=relaxed/simple;
+	bh=on+0lfNYd2qRQ5EohElifDfUVwjZgh8Fp9lemjJw8Q8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fvs50QOmuqPeOO9coT4nTkRbTDCEzLzHT3dUHa8QP0uoBH70RBWtuLn9yQdO0+Y0q1krkE2z8NLvruGhXB8wWGPUBjzmIGGzNnm9Z3/l1t3/d7lk6IAWB4ea5GosgOq0NaePeXWWPAzXli1sg9ttowOpppHw1henFTFvOwlFMvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpAAEzE6; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso1576022a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:28:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762529326; x=1763134126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=om+pxjglHnG3GE2SnITLVrnlYEBEuJnFX0jyMAWe+ik=;
+        b=bpAAEzE6qugsHG/BSG5H8YDNfQdbVpYCURVVZFBpr0zX+VRrgykhf4a/mNpFwXdRKO
+         YJh93b4TumbET357txnsS8CfJ0JjnbG3XpAaQiJ5FDjmS8WE/Z1IcK42FX1dPtwVpw3K
+         g1vQrcNgge8sXiaYzION+suRV8WKwuWpkOwiH2FJ1P3FxyQ4zC7EAeN2zKgWj9hyOj0N
+         UF0IXTL6UKB/JO3nQuN91wTsXXnwnrGQ/Er5WdXCXy/C3ZBuW69xeGvJz3NVyYQ+fRQ0
+         LxFDU27vEbjDGgzK8RIJX14OPWEabCSlcWXvRlRdvhhrtyJBccJZLhBG+TSeCcXWj+vR
+         NtXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762529326; x=1763134126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=om+pxjglHnG3GE2SnITLVrnlYEBEuJnFX0jyMAWe+ik=;
+        b=vdSxCZN1iZrulAkgVnVIVvdTlKdmBZtNLd0fTOiPK5uEKtfCjamqFhUQYYKeCDtUCx
+         5HDo6l8jKCK0j0uJv0FtOTaDtimWgaP2k1Kf2YMo0zW2e8wpzKiQU8ScdR2xVzG+xw04
+         7JJe3weU2IwZe52pC+FQnBUWQ5r0g/7IAtgf2id5q6eNaIiKut8hCzlk2SXSXP0P4fab
+         uxg4bsmZKsWxcgW8EtU5N8wLyLDShIuw+YqYLffCvuogMEAbZmUvAHTPCPoq7aVblOLV
+         YzcFtuUtroqOa8Mbp3KJCLaUwoX3i5nkVU/nQFNE8vgnwbtT1rsa9nOsfvmdPP1MdOhC
+         HQ5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXGVXrvCri3tcIQBEfEHJTjFAk5tw/fZaNEwM3Qrotj3HpixkWWEUvPViCY052ehjKyuviQeUcBygJwiWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwdCNuNdOKJgc9lMHPSBxTTuF1G4pZaAC4+/97bxMp1ECrBhei
+	Tu4u92cVN+Ldkk5NraAuTdCVMb0WhC7Be1HrTePEBUCneXFZ4eNx3CbFyrPs6MUg7iKWijzFmUm
+	VqjNN2tPFynoKYSjcOFrTytIwuDsxN9U=
+X-Gm-Gg: ASbGncvGfahOo2/oGOpSw2n0ke/9XdnYnhuPVh9fansPOdUe3KH8b5Tai+79wSOC1f+
+	6MWZl8DVOTBZWp097o3o2CXkFJE0HO5U08NQheQVv39h6rZIqaw+/ZXT6PujDjyJhY6ruFPmxoD
+	RnD4H6qsoSaFnL0OUuGCwg/xhcuWZhGPrcMjdo7H2VgTMVyERM824pkuWyqzhBFLgJZahiLsnlJ
+	L7GFD7PkNgQN2saG2laS3crV6x2wgpFJHjWhnHmAX1g3CHg2KihXTumW8TXQw==
+X-Google-Smtp-Source: AGHT+IHmZEpx6M0+J5OC7HbsnR5hvwcdGVfSYgbkWyKHi0+xhyzqEEx/b9s9Gbx2PtIhusPWTRG7qVzmkQemfsoLTks=
+X-Received: by 2002:a17:907:7ba9:b0:b6d:a7ad:2fda with SMTP id
+ a640c23a62f3a-b72c093316fmr378400366b.12.1762529326176; Fri, 07 Nov 2025
+ 07:28:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQ2EXqDvnxjyXq_7@wunner.de>
+References: <20251106-ltm8054-driver-v3-0-fd1feae0f65a@bootlin.com>
+ <20251106-ltm8054-driver-v3-5-fd1feae0f65a@bootlin.com> <aQzpvR-030zgA82E@smile.fi.intel.com>
+ <13882660.uLZWGnKmhe@fw-rgant>
+In-Reply-To: <13882660.uLZWGnKmhe@fw-rgant>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 7 Nov 2025 17:28:10 +0200
+X-Gm-Features: AWmQ_bnZqZC5EGS_uMqpAyoFV3kaYI0hktuWm533W__Dt4Ccx-T9uGAY1_3i4NQ
+Message-ID: <CAHp75VcxpoYOgMLOVZ6LvPNGrvws1vnL9gDPVuK=xJjLHsGJqw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] regulator: ltm8054: Support output current limit control
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 06:32:14AM +0100, Lukas Wunner wrote:
-> On Thu, Nov 06, 2025 at 12:36:38PM -0600, Bjorn Helgaas wrote:
-> > Cache the PCIe Link Capabilities register in struct pci_dev so quirks can
-> > remove features to avoid hardware defects.  The idea is:
-> > 
-> >   - set_pcie_port_type() reads PCIe Link Capabilities and caches it in
-> >     dev->lnkcap
-> > 
-> >   - HEADER quirks can update the cached dev->lnkcap to remove advertised
-> >     features that don't work correctly
-> > 
-> >   - pcie_aspm_cap_init() relies on dev->lnkcap and ignores any features not
-> >     advertised there
-> 
-> I realize that memory is cheap, but it still feels a bit wasteful
-> to cache the entire 32-bit register wholesale.  It contains
-> reserved bits as of PCIe r7.0, various uninteresting bits and
-> portions of it are already cached elsewhere and thus now duplicated.
-> I'm wondering if it would make sense to instead only cache the ASPM bits
-> that are relevant here?  That's the approach we've followed so far.
+On Fri, Nov 7, 2025 at 4:54=E2=80=AFPM Romain Gantois
+<romain.gantois@bootlin.com> wrote:
+> On Thursday, 6 November 2025 19:32:29 CET Andy Shevchenko wrote:
+> > On Thu, Nov 06, 2025 at 03:11:50PM +0100, Romain Gantois wrote:
 
-My first try (which I didn't post) cached only the two bits we need
-for this.  It's not awful, and the aspm.c patch was smaller, so maybe
-it's the right approach, at least for v6.18.
+...
 
-One thing I didn't like about pci_disable_aspm_cap() (which I know you
-said you *did* like :)) is that it adds a layer of indirection.  I
-like having PCI_EXP_LNKCAP_ASPM_L0S in the quirk because it's more
-directly connected to the spec and the hardware register, and grep
-works better for code readers.
+> > > +   ctl_dac =3D devm_iio_channel_get(&pdev->dev, "ctl");
+> > > +   if (IS_ERR(ctl_dac)) {
+> > >
+> > > +           if (PTR_ERR(ctl_dac) =3D=3D -ENODEV)
+> > > +                   return ERR_PTR(-EPROBE_DEFER);
+> >
+> > Hmm... Are you sure about this?
+>
+> The only case where I want to defer is if the IO channel hasn't been crea=
+ted
+> yet. From what I've read in iio_channel_get(), -ENODEV is returned specif=
+ically
+> in this case. For example in fwnode_iio_channel_get_by_name() you have:
+>
+> ```
+> if (!IS_ERR(chan) || PTR_ERR(chan) !=3D -ENODEV)
+>                 return chan;
 
-But if we only cache the ASPM cap bits, we would need
-pci_disable_aspm_cap() to manage converting PCI_EXP_LNKCAP_ASPM_L0S or
-PCIE_LINK_STATE_L0S to the right place.
 
-(A bit of a tangent, but I've never liked the PCIE_LINK_STATE_* bits
-because they look like they ought to be register bits, but they're
-not.  I think the code would be improved overall if we could remove
-them.)
+Yes, but my point is that -ENODEV !=3D -EPROBE_DEFER.
+The latter may create an unbound driver in some cases. This needs a
+very good justification explaining the metamorphoses.
 
-> You're initializing the link_active_reporting bit from the newly
-> cached lnkcap register, I'd prefer having a static inline instead
-> which extracts the bit from the cached register on demand,
-> thus obviating the need to have a duplicate cached copy of the bit.
-> 
-> pci_set_bus_speed() caches bus->max_bus_speed from the Link
-> Capabilities register and isn't converted by this patch to use
-> the cached register.  There are various others, e.g.
-> get_port_device_capability() in drivers/pci/pcie/portdrv.c
-> could also get PCI_EXP_LNKCAP_LBNC from the cached lnkcap
-> register.  Same for pcie_get_supported_speeds().  If the
-> intention is to convert these in a separate step in v6.19,
-> it would be good to mention that in the changelog.
-
-I agree with all of that, and there are several other PCI_EXP_LNKCAP
-reads that could be replaced, but that would have to be for v6.19.
-
-Bjorn
+--=20
+With Best Regards,
+Andy Shevchenko
 
