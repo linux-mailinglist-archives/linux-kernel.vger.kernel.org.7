@@ -1,396 +1,122 @@
-Return-Path: <linux-kernel+bounces-890802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08397C40FEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:14:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC0CC40FF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F78434FAB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CD742678D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B3B333448;
-	Fri,  7 Nov 2025 17:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75277334C05;
+	Fri,  7 Nov 2025 17:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OWYsVaza";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UpkxQiRx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ch4WLeyk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8931CAA4
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD603334695;
+	Fri,  7 Nov 2025 17:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762535682; cv=none; b=p4OVh1jzI5A8j9ttm1vPZk4PPJcdFDfAtnj5vof8gxgR2WFTaTtfNmWOQwtlG0B5w9bNYx8SHv1PalQYq0AU9wgHOjaBADPzjEjJGDB+EMtM8dJERE6fu7zDWt6uwKCTnPPSbGMak1GhpVZqtXVvs0DMvGdEdvV6T1ejlnE9Yi8=
+	t=1762535685; cv=none; b=G3uWApnNN3QGt38TPH66ekAo+WxHLHF0sd1abGkNTwJeMCp9Xmy1Z71vkk0Wjo2M44TO6rfVnSG+WxgNhsh9TBkYoIuzfrbBxbIWqMfeaIWkQXi2pSC+VzlKdk1n7ldJIvdgYNCGv15AiDU+0AejhfkEwXjfjPN5sLuiYmu2H4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762535682; c=relaxed/simple;
-	bh=3wlTv4phN7CVcv3vssAHD4JPd1JZYg4dSxbTxEbEGHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=goKWhcqb0yv38tGxMGGuYqpiKDqF0TOUVZ/UEz86Lmr2EYGL7xMylF6gFpjmA7INvfC/dQ8KjHea11AwWfGp7nQ4C8+15Z8vRBuMpc9/3nkXv+KZ2YCodNmpVL5TZg9KPFaAGGZiIdqpnAJV5BR2dOdLrz8VeJVGXEwOxH3rQlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OWYsVaza; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UpkxQiRx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762535679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lsGhcNk2ubFrqi2YFZgLMZLjo4nT4sZ1uICkDs7Vo+k=;
-	b=OWYsVazaIhlreai+rmh96D4sysHY45FtItorLND2BZvva8VocYiVMfFOz/GYgbl5e5CmIS
-	5b/3XYiQbPo3ZIPpvq/a05SiqjP0TIqHhx9xOy3U/O7RalRmZvEbsX5KNCDvD0OJyJE5ZG
-	4ahHlf7b8IWvR71PQD6C3yZRdSIUW0Q=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-dm1zga4dN3ml-gjnnA29lA-1; Fri, 07 Nov 2025 12:14:38 -0500
-X-MC-Unique: dm1zga4dN3ml-gjnnA29lA-1
-X-Mimecast-MFC-AGG-ID: dm1zga4dN3ml-gjnnA29lA_1762535677
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-787c89305a2so9912537b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:14:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762535677; x=1763140477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lsGhcNk2ubFrqi2YFZgLMZLjo4nT4sZ1uICkDs7Vo+k=;
-        b=UpkxQiRxwrukK3oqKM/UhAKyUiEJhgJXmkMVEoYWNclnWkD8855VDMD69tk1GEwxlr
-         IcRFdrQRR1txDvqZEaAmVlQ6tL6KuNkpKCf1FGLG+McWXs1BIlDIOYOAhvJc4bMJvpeO
-         FbI1j8dyC+wG56ixjgSNqLRSu71WW2W2RIw/ZqxRBv5Zut1aKWy83vUcuS3B0yO7GXqZ
-         kA6UuX8rBuxd9vtc8z526NdXi6bPpK7QAq1tUWrO2Xe6Q49iq5+2IX+lwyXZ3Vo4Pr/4
-         ZEUHN0Ym10ZmgdXabMyanTBrTaGuUP+JcJDzSKHCLL3h5Vuefs/EIjh5MlOPuU3igjL/
-         BHAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762535677; x=1763140477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lsGhcNk2ubFrqi2YFZgLMZLjo4nT4sZ1uICkDs7Vo+k=;
-        b=T+6kUsWMtyzzolf51VTOGUT6k1LqJfIVE0ro4EKYIjMy3DaEJBwMxoI/SUS+RQo0uy
-         OT7s7M+8N8WziQ9WjhK9UAnRz9bIlQi2kYgTi6Qh0ZBUN7bQxhMj7Hpto5Nij+FJp4E3
-         U48+c0jRNtWF5GcU4PMIv0qKWNu30c14y7u9B8UoxOGFPvlGzffmCeU1+pazWmESqvgq
-         GtgnI4a6d9NNl5TYuApqC9bAzd1OC14tVLgqdR26njWGqit2kXPvUQ+ujBbrnW7cwWnB
-         p3JR5oVuN/aa2P4aY9DxjpmgSjbXB3sdVTYfmkDbmtqLpjImS0+xebIOMK0qHhabl2OT
-         +lfQ==
-X-Gm-Message-State: AOJu0Ywm+tqzhxLbnqAEZQ0kNusdeXe5H1KZb+ZczfF/1X4l7dUFhkWI
-	uO0uRu+6v8w2JahSz7+UcR+1wY5ids/NvPSaIsPscgX2dqyLLFujlOvHlizKDj2YZHP1XetcYUJ
-	Vzc4C97pSFG9ztf9JZtuIemZ6TbuQ2vOX0LKFx1vCkRLFyv7NIcaI0JDt+Ek+MaeeCcex3u2IxT
-	nvi6Y/ZDIty+YbfG82sFHXy7craYEmnCWx+nPAXSmU
-X-Gm-Gg: ASbGncujabeugKmH4erZWHCc04ZriiFXoTNeUTt+XAfhAUV53i2o9+z6GNuhD246icq
-	UJMlOGKqRvFbUYtTGNm0N+B0v0MY8Gs8FtojgxCe+MTLsevpJArIB7Obu+ACGbVazY1blAoVLFA
-	LZ9bZca9SI4Tbow19vgy/lbWsA1z6fGmqSRFBgaQc0hW9Dlj80XcN1jgyofAzKkk3CiukNGA==
-X-Received: by 2002:a05:690c:868d:20b0:787:c2be:33ff with SMTP id 00721157ae682-787d537693fmr714657b3.20.1762535677331;
-        Fri, 07 Nov 2025 09:14:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFQek+0t4w48azAVl2zrNoGHztFPdW8lJvf083PafgskTvQqA5rrsO6WLqA1i+ny2NLFGpojXq6gxXmP3Am90Y=
-X-Received: by 2002:a05:690c:868d:20b0:787:c2be:33ff with SMTP id
- 00721157ae682-787d537693fmr714427b3.20.1762535676754; Fri, 07 Nov 2025
- 09:14:36 -0800 (PST)
+	s=arc-20240116; t=1762535685; c=relaxed/simple;
+	bh=iZ+FrXmrNg9m+vRphS3VtQYquQLEkFINHFmKNJIzHf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HCZiOLc/doG+UrfZ+OIAnsQvM4w3jbcsYg7w5cdDBrG6KzOVZE2l9KWVacLnanDm5itnJW6oe0PA/lhINEbEL3+RNv9ipP1NvB3LHp0h3iQXiulxvE8Iux7WZoXtxzOOiU8UHqQBaCC5TXsycOUh+NSa1MyyO/vt/5bqKp0lEnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ch4WLeyk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A450C19423;
+	Fri,  7 Nov 2025 17:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762535685;
+	bh=iZ+FrXmrNg9m+vRphS3VtQYquQLEkFINHFmKNJIzHf0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ch4WLeykxW0UEitLCeqR5iRGkb3N1IvMlWvvO2kVip+YATE5uJqoryTiLs1VKE1c4
+	 fOC0t29HS+RHFklWe+3LyA7a2BxHfqj3W1RwbHeiDrm/5kyIwLpXQsc1sHJi+hz/L2
+	 vMfcZjUHYTkie+9w5AnCxlBH3l9a/hJtW2aRHmw3f09supzpeDBGKKuebZ3AeNUO4n
+	 bnTFhrXQcQZR6jKAAMjVav+lmBCLgNqK38earv+Fl7ngPVI5a4XpHWqO2bPI/E2p4y
+	 Zr56knLQp23Wfz/chOhb1p5d7lCZnOBVSzohujEStOWZO2oZ92kNvv6n4lXkqFvMpi
+	 DqPmX21yGYLLQ==
+Date: Fri, 7 Nov 2025 17:14:38 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: maudspierings@gocontroll.com, Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 1/4] dt-bindings: backlight: Add max25014 supporty
+Message-ID: <20251107-estimator-flap-158b1dc054af@spud>
+References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
+ <20251107-max25014-v5-1-9a6aa57306bf@gocontroll.com>
+ <aQ4RqNiGsngOWrV5@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022183717.70829-1-npache@redhat.com> <20251022183717.70829-10-npache@redhat.com>
- <ffcf2c28-d0ae-4a45-8693-10fb4dff8479@lucifer.local>
-In-Reply-To: <ffcf2c28-d0ae-4a45-8693-10fb4dff8479@lucifer.local>
-From: Nico Pache <npache@redhat.com>
-Date: Fri, 7 Nov 2025 10:14:10 -0700
-X-Gm-Features: AWmQ_blPYWAWamFBzA1ly_X3usXllN1louZ3uBjkPVp_-hEefXw_Vu-oIqBHt-w
-Message-ID: <CAA1CXcDT19rV_08pVP7CLuUZiVHW_1rSOv2oMXUHyRxh5sGCcA@mail.gmail.com>
-Subject: Re: [PATCH v12 mm-new 09/15] khugepaged: add per-order mTHP collapse
- failure statistics
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, david@redhat.com, 
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, 
-	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org, 
-	peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com, 
-	sunnanyong@huawei.com, vishal.moola@gmail.com, 
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, kas@kernel.org, 
-	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com, 
-	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org, 
-	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, jglisse@google.com, 
-	surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com, 
-	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, 
-	rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s6RySbGPqQzAw7m8"
+Content-Disposition: inline
+In-Reply-To: <aQ4RqNiGsngOWrV5@lizhi-Precision-Tower-5810>
+
+
+--s6RySbGPqQzAw7m8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 6, 2025 at 11:47=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Wed, Oct 22, 2025 at 12:37:11PM -0600, Nico Pache wrote:
-> > Add three new mTHP statistics to track collapse failures for different
-> > orders when encountering swap PTEs, excessive none PTEs, and shared PTE=
-s:
+On Fri, Nov 07, 2025 at 10:35:04AM -0500, Frank Li wrote:
+> On Fri, Nov 07, 2025 at 01:49:58PM +0100, Maud Spierings via B4 Relay wro=
+te:
+> > From: Maud Spierings <maudspierings@gocontroll.com>
 > >
-> > - collapse_exceed_swap_pte: Increment when mTHP collapse fails due to s=
-wap
-> >       PTEs
+> > The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+> > with integrated boost controller.
 > >
-> > - collapse_exceed_none_pte: Counts when mTHP collapse fails due to
-> >       exceeding the none PTE threshold for the given order
-> >
-> > - collapse_exceed_shared_pte: Counts when mTHP collapse fails due to sh=
-ared
-> >       PTEs
-> >
-> > These statistics complement the existing THP_SCAN_EXCEED_* events by
-> > providing per-order granularity for mTHP collapse attempts. The stats a=
-re
-> > exposed via sysfs under
-> > `/sys/kernel/mm/transparent_hugepage/hugepages-*/stats/` for each
-> > supported hugepage size.
-> >
-> > As we currently dont support collapsing mTHPs that contain a swap or
-> > shared entry, those statistics keep track of how often we are
-> > encountering failed mTHP collapses due to these restrictions.
-> >
-> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > Signed-off-by: Nico Pache <npache@redhat.com>
-> > ---
-> >  Documentation/admin-guide/mm/transhuge.rst | 23 ++++++++++++++++++++++
-> >  include/linux/huge_mm.h                    |  3 +++
-> >  mm/huge_memory.c                           |  7 +++++++
-> >  mm/khugepaged.c                            | 16 ++++++++++++---
-> >  4 files changed, 46 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
-/admin-guide/mm/transhuge.rst
-> > index 13269a0074d4..7c71cda8aea1 100644
-> > --- a/Documentation/admin-guide/mm/transhuge.rst
-> > +++ b/Documentation/admin-guide/mm/transhuge.rst
-> > @@ -709,6 +709,29 @@ nr_anon_partially_mapped
-> >         an anonymous THP as "partially mapped" and count it here, even =
-though it
-> >         is not actually partially mapped anymore.
-> >
-> > +collapse_exceed_none_pte
-> > +       The number of anonymous mTHP pte ranges where the number of non=
-e PTEs
->
-> Ranges? Is the count per-mTHP folio? Or per PTE entry? Let's clarify.
+> > Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
-I dont know the proper terminology. But what we have here is a range
-of PTEs that is being considered for mTHP folio collapse; however, it
-is still not a mTHP folio which is why I hesitated to call it that.
 
-Given this counter is per mTHP size I think the proper way to say this woul=
-d be:
-
-The number of collapse attempts that failed due to exceeding the
-max_ptes_none threshold.
-
->
-> > +       exceeded the max_ptes_none threshold. For mTHP collapse, khugep=
-aged
-> > +       checks a PMD region and tracks which PTEs are present. It then =
-tries
-> > +       to collapse to the largest enabled mTHP size. The allowed numbe=
-r of empty
->
-> Well and then tries to collapse to the next and etc. right? So maybe wort=
-h
-> mentioning?
->
-> > +       PTEs is the max_ptes_none threshold scaled by the collapse orde=
-r. This
->
-> I think this needs clarification, scaled how? Also obviously with the pro=
-posed
-> new approach we will need to correct this to reflect the 511/0 situation.
->
-> > +       counter records the number of times a collapse attempt was skip=
-ped for
-> > +       this reason, and khugepaged moved on to try the next available =
-mTHP size.
->
-> OK you mention the moving on here, so for each attempted mTHP size which =
-exeeds
-> max_none_pte we increment this stat correct? Probably worth clarifying th=
-at.
->
+> > +  led@0:
+> > +    type: object
+> > +    description: Properties for a string of connected LEDs.
+> > +    $ref: common.yaml#
 > > +
-> > +collapse_exceed_swap_pte
-> > +       The number of anonymous mTHP pte ranges which contain at least =
-one swap
-> > +       PTE. Currently khugepaged does not support collapsing mTHP regi=
-ons
-> > +       that contain a swap PTE. This counter can be used to monitor th=
-e
-> > +       number of khugepaged mTHP collapses that failed due to the pres=
-ence
-> > +       of a swap PTE.
->
-> OK so as soon as we encounter a swap PTE we abort and this counts each in=
-stance
-> of that?
->
-> I guess worth spelling that out? Given we don't support it, surely the op=
-ening
-> description should be 'The number of anonymous mTHP PTE ranges which were=
- unable
-> to be collapsed due to containing one or more swap PTEs'.
->
-> > +
-> > +collapse_exceed_shared_pte
-> > +       The number of anonymous mTHP pte ranges which contain at least =
-one shared
-> > +       PTE. Currently khugepaged does not support collapsing mTHP pte =
-ranges
-> > +       that contain a shared PTE. This counter can be used to monitor =
-the
-> > +       number of khugepaged mTHP collapses that failed due to the pres=
-ence
-> > +       of a shared PTE.
->
-> Same comments as above.
->
-> > +
-> >  As the system ages, allocating huge pages may be expensive as the
-> >  system uses memory compaction to copy data around memory to free a
-> >  huge page for use. There are some counters in ``/proc/vmstat`` to help
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 3d29624c4f3f..4b2773235041 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -144,6 +144,9 @@ enum mthp_stat_item {
-> >       MTHP_STAT_SPLIT_DEFERRED,
-> >       MTHP_STAT_NR_ANON,
-> >       MTHP_STAT_NR_ANON_PARTIALLY_MAPPED,
-> > +     MTHP_STAT_COLLAPSE_EXCEED_SWAP,
-> > +     MTHP_STAT_COLLAPSE_EXCEED_NONE,
-> > +     MTHP_STAT_COLLAPSE_EXCEED_SHARED,
-> >       __MTHP_STAT_COUNT
-> >  };
-> >
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 0063d1ba926e..7335b92969d6 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -638,6 +638,10 @@ DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLI=
-T_FAILED);
-> >  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
-> >  DEFINE_MTHP_STAT_ATTR(nr_anon, MTHP_STAT_NR_ANON);
-> >  DEFINE_MTHP_STAT_ATTR(nr_anon_partially_mapped, MTHP_STAT_NR_ANON_PART=
-IALLY_MAPPED);
-> > +DEFINE_MTHP_STAT_ATTR(collapse_exceed_swap_pte, MTHP_STAT_COLLAPSE_EXC=
-EED_SWAP);
-> > +DEFINE_MTHP_STAT_ATTR(collapse_exceed_none_pte, MTHP_STAT_COLLAPSE_EXC=
-EED_NONE);
-> > +DEFINE_MTHP_STAT_ATTR(collapse_exceed_shared_pte, MTHP_STAT_COLLAPSE_E=
-XCEED_SHARED);
-> > +
-> >
-> >  static struct attribute *anon_stats_attrs[] =3D {
-> >       &anon_fault_alloc_attr.attr,
-> > @@ -654,6 +658,9 @@ static struct attribute *anon_stats_attrs[] =3D {
-> >       &split_deferred_attr.attr,
-> >       &nr_anon_attr.attr,
-> >       &nr_anon_partially_mapped_attr.attr,
-> > +     &collapse_exceed_swap_pte_attr.attr,
-> > +     &collapse_exceed_none_pte_attr.attr,
-> > +     &collapse_exceed_shared_pte_attr.attr,
-> >       NULL,
-> >  };
-> >
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index d741af15e18c..053202141ea3 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -592,7 +592,9 @@ static int __collapse_huge_page_isolate(struct vm_a=
-rea_struct *vma,
-> >                               continue;
-> >                       } else {
-> >                               result =3D SCAN_EXCEED_NONE_PTE;
-> > -                             count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> > +                             if (order =3D=3D HPAGE_PMD_ORDER)
-> > +                                     count_vm_event(THP_SCAN_EXCEED_NO=
-NE_PTE);
-> > +                             count_mthp_stat(order, MTHP_STAT_COLLAPSE=
-_EXCEED_NONE);
-> >                               goto out;
-> >                       }
-> >               }
-> > @@ -622,10 +624,17 @@ static int __collapse_huge_page_isolate(struct vm=
-_area_struct *vma,
-> >                        * shared may cause a future higher order collaps=
-e on a
-> >                        * rescan of the same range.
-> >                        */
-> > -                     if (order !=3D HPAGE_PMD_ORDER || (cc->is_khugepa=
-ged &&
-> > -                         shared > khugepaged_max_ptes_shared)) {
-> > +                     if (order !=3D HPAGE_PMD_ORDER) {
->
+> > +    properties:
+> > +      reg:
+> > +        const: 0
+>=20
+> If reg is const 0, why need use led@0?
 
-Thanks for the review! I'll go clean these up for the next version
+> > In the current implementation the control registers for channel 1,
+> > control all channels. So only one led subnode with led-sources is
+> > supported right now. If at some point the driver functionality is
+> > expanded the bindings can be easily extended with it.
 
-> A little nit/idea in general for series - since we do this order !=3D
-> HPAGE_PMD_ORDER check all over, maybe have a predict function like:
->
-> static bool is_mthp_order(unsigned int order)
-> {
->         return order !=3D HPAGE_PMD_ORDER;
-> }
+--s6RySbGPqQzAw7m8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-sure!
+-----BEGIN PGP SIGNATURE-----
 
->
-> > +                             result =3D SCAN_EXCEED_SHARED_PTE;
-> > +                             count_mthp_stat(order, MTHP_STAT_COLLAPSE=
-_EXCEED_SHARED);
-> > +                             goto out;
-> > +                     }
-> > +
-> > +                     if (cc->is_khugepaged &&
-> > +                         shared > khugepaged_max_ptes_shared) {
-> >                               result =3D SCAN_EXCEED_SHARED_PTE;
-> >                               count_vm_event(THP_SCAN_EXCEED_SHARED_PTE=
-);
-> > +                             count_mthp_stat(order, MTHP_STAT_COLLAPSE=
-_EXCEED_SHARED);
->
-> OK I _think_ I mentioned this in a previous revision so forgive me for be=
-ing
-> repetitious but we also count PMD orders here?
->
-> But in the MTHP_STAT_COLLAPSE_EXCEED_NONE and MTP_STAT_COLLAPSE_EXCEED_SW=
-AP
-> cases we don't? Why's that?
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ4o/gAKCRB4tDGHoIJi
+0jIvAQD0+hh9svmOHdU5hyVROE565agXP34VdWQ0eWMxVyOYNAD9GBNH6x0Xyw93
+6zQVoS9McvIgls8VBa4UvQeukIIKJg4=
+=JBJl
+-----END PGP SIGNATURE-----
 
-Hmm I could have sworn I fixed that... perhaps I reintroduced the
-missing stat update when I had to rebase/undo the cleanup series by
-Lance. I will fix this.
-
-
-Cheers.
--- Nico
->
->
-> >                               goto out;
-> >                       }
-> >               }
-> > @@ -1073,6 +1082,7 @@ static int __collapse_huge_page_swapin(struct mm_=
-struct *mm,
-> >                * range.
-> >                */
-> >               if (order !=3D HPAGE_PMD_ORDER) {
-> > +                     count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_=
-SWAP);
-> >                       pte_unmap(pte);
-> >                       mmap_read_unlock(mm);
-> >                       result =3D SCAN_EXCEED_SWAP_PTE;
-> > --
-> > 2.51.0
-> >
->
-> Thanks, Lorenzo
->
-
+--s6RySbGPqQzAw7m8--
 
