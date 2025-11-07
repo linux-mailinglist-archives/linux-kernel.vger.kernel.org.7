@@ -1,305 +1,149 @@
-Return-Path: <linux-kernel+bounces-890451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB0FC40163
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:23:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AFCEC4013C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1581E4E6389
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:23:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49F684E333B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C242E62B4;
-	Fri,  7 Nov 2025 13:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAC52D7DDA;
+	Fri,  7 Nov 2025 13:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jQ7LM9dN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KXXAg/fb"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5161E2E5B05;
-	Fri,  7 Nov 2025 13:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287932D3EF6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762521761; cv=none; b=P3wkri+4yR+NER0rpFQ+wTIQmh+koUWPlH3mf+nQj1kWdtT9Rw11filzrCWT2hi8/VsZr/hdGcrPZxBl7LW+mqDhr4lZXQkcvFZX6/sRIcUDGcBoqXTUs2/IwjgPS/i07MVWgZ65h+8Zrk5/qpWp8awl1qcFkHB7hN/nP8bSsUY=
+	t=1762521739; cv=none; b=ImahDn5Vxt/P6S2B+bSG80uaC9HiiUE+Hlla9AiDYGIiL486WNcMxwGRPXlJvENXZm994wzc/5zjML859FKms32rvhYO+VrKr3Ze1rNjGRSt1D0EEWuak6LVSeT0/xKrWBpm1jLi3NdswJxrw0ft5mWlmYk76Mq2KzCO/RyyBj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762521761; c=relaxed/simple;
-	bh=zAUrVGjn3Z1UGwi3G8DZAISU+Y1hweIcpO3HfjAcduQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B6fQn8PPtygxnydDPa+82NKNSb5ZrdhEC2Tz8aj8Wykl2emZRDBeIrnTWSMdVda4KSb7WyoCT+6DoIwSaE0ldqXgcyYY2EJlbCGYP+DROX8ZTkI1Brok6gYAAQe0jzbSFngXqgT+pEhjorVGho5IoLTx4uBD9tKjiS+OMDldtTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jQ7LM9dN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A76pc46629578;
-	Fri, 7 Nov 2025 13:22:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XGcOu4dm6gh+KtQti15yeZGYrxuK1OKN7l2ciyc6NFM=; b=jQ7LM9dN815o0GXz
-	pivhYv0gphHGE9hE0qNb1pTqhH1o3LsPn+2/Z/uYniufTUmRnu/f0gXW0u2gpeGV
-	ZyBYQO9lJVHr0uBFh0lKNMXK4ZreBfIt6pjgszRn91a7QRu9rennY6qKmMNZy03e
-	iVZSfFefbl1ixD4kEePHVGYYIA53tRyW3yULiG2cj2xgRblq6o6Vl50JPlC3Q2HS
-	sUb2s5Z3po1HLRyzprdb6OW3uPvhM0DRHGld6XhbOIX1pSW5zeVkuikMq5+171B4
-	aN8HK1Y6wBPWVUMsLvgIiGY/MnZgVEcXu3y4HhC82mG+z5IGx0Ayftm7AWo3hoA4
-	7/ktMQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a92232q3v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 13:22:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5A7DMTL7027147
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Nov 2025 13:22:29 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Fri, 7 Nov 2025 05:22:23 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <bryan.odonoghue@linaro.org>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_nihalkum@quicinc.com>, <quic_vikramsa@quicinc.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v5 2/2] arm64: dts: qcom: qcs8300: Add support for camss
-Date: Fri, 7 Nov 2025 18:51:54 +0530
-Message-ID: <20251107132154.436017-3-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251107132154.436017-1-quic_vikramsa@quicinc.com>
-References: <20251107132154.436017-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1762521739; c=relaxed/simple;
+	bh=jVylRwWjsZJx3w4jWSgnkfUgxa87TYOD4vgdP4YM9Vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgTUPfbdQbGSd6cHJu5q9Na5087quErTN5mu9qjHFftmKh+M6d93/sgXrfvRUotYuZ849sklTXcwCW/Xud/DViFP7Zfg4TEnkdYQQDYyFdgm/Gh+1Yjs35Fv5k9IA8WVC6SizQLkhxSR5musOHdlvI4ja+92eLu4JGinApgj3Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KXXAg/fb; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so140805366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:22:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762521735; x=1763126535; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BW73tny/rNjGjbXRK/CCOTxvH5raxzJjwlFOSIFvCv4=;
+        b=KXXAg/fbaA8b+Ku8JnYZrK3mczpKJfAPYS9Spni8Q+NNGrP77RYnBHLD15u2hMMKo4
+         CXxPwwVAxgGDNhrp3rOpIBAoEJ0ySE9bN2De7kYI5LWNwh6Vlu/oJ5gKqQjZHN8BaBTq
+         RNbM9HrAYxmo1VVps+cgN6/Nvi+Ed2D2lr+X7Dd/vG5UflAkgbzP21V+RcGIlZvB56Ev
+         jR0Low5QFRTQj0dEv2fNro0dTiQFXwOecTsvLbIjf7YeSgSvusEE7kAMwNS4XuZMtlLD
+         8rTBU0CAvmagm+E7YHsxPdCmPpuxA5xg0xgUz4cwTcEdP5vrMX9hRz66XgYvnTrbYyt2
+         WhYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762521735; x=1763126535;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BW73tny/rNjGjbXRK/CCOTxvH5raxzJjwlFOSIFvCv4=;
+        b=Wj3t51EieOmwxWDf+P3Y5Ap9hltKDOBgOpJAFrClkCJqOln0bINrs/9M6KwKpRNZ3q
+         vZRPbgUEAnQRAJk/+dcAjRh6xTNXqUQWTyomeMBbS9T6yr/i8Z7aEvzW8KSWh4CLsiNG
+         PDCger2Vl6wJ9JdaG7tMhHYvk86uEbgfbkCFrC9ZNP545G7/sVxwrYwRg05tCvKdW6Aw
+         pe4qpBGKmATfTpH3dLp15K4A+AoWnWHul59CIW6AlaPwOPLkoGK3IBJM7fEnlKMN/GnW
+         rjxs8xUkZZZ/4kW6EXw4ryuRkdRU2MKH/HhQWysRXct0mJCt4IG1ALHEv3OsCmGQ9KiW
+         wQpw==
+X-Forwarded-Encrypted: i=1; AJvYcCX50gX/9GSZbLzSCVnhLe21N81marbDPAj90L8B81DaNePb5c3tis8yfUsoFdpQy3SeKx5+lERtUKkI1Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOqeSytmhNlD9jB53vNVHXjRt3untqsqM8lORAOklLDVFaEEvr
+	EdkyJOrwASLNvPNPbs2n6IR2ZjKVXlC5ywAya7c7OHzM6+lXfXLB4LbVe3c6LsYd99sgnxfqSOW
+	s/8VS
+X-Gm-Gg: ASbGncsohEyZZQa2NS/XBXjSFglKiWvzwlu9qVyo7IZy1PH+6KgL18ftgYzhv2YUfjr
+	vnxDRdjLAPkOo51hpfb6CnODuxhrq1oNs+zcjdARQB6iB37x6KsKboKvWjV6SgdEX6usnzOcRRh
+	5ufcZKXbq12YntvQIi1Kgd4ryzTOyxmidTYKCsiCQVPBbb9gbXYKWovAb18DjTM8ornQxTPuqgL
+	Q64to6afE/ZN4QBENe6FBXNSDdjulbjCSMY+h7NWaWAtzmk9JbpccvsP38C5I9pTGx3LCaUyUQY
+	/v10zsNigcCDL9ULiNATN8t0o2As4JI3zExaHqCUIauOcd4+yZV/yp4o9bSxEnJqZvwwfXI0Atk
+	VqmZigLJMbh11lZVYxfBevcCqlxB34ev7W82DonxT4Epizea6aFPN79tvXqQTPKr7BmR3jY4GA9
+	QPW9cQk4S8d6gwcJRoLNhG1TDG
+X-Google-Smtp-Source: AGHT+IH+ShbDcZE+qh4SZkqFEhzUdrx2v7L/xU+R5lqvkQSu+xhB2RSlNKbrKOFBDGQaTsFsa5ikmw==
+X-Received: by 2002:a17:907:971b:b0:b4a:ed12:ce51 with SMTP id a640c23a62f3a-b72c096d5b2mr296847766b.23.1762521735393;
+        Fri, 07 Nov 2025 05:22:15 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf312271sm239966466b.19.2025.11.07.05.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:22:15 -0800 (PST)
+Date: Fri, 7 Nov 2025 14:22:14 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mm/vmscan: Add retry logic for cgroups with
+ memory.low in kswapd
+Message-ID: <aQ3yhmsT2NHeNwLi@tiehlicka>
+References: <20251014081850.65379-1-jiayuan.chen@linux.dev>
+ <aO4Y35l12Cav-xr4@tiehlicka>
+ <a6cd4eb712f3b9f8898e9a2e511b397e8dc397fc@linux.dev>
+ <aPEGDwiA_LhuLZmX@tiehlicka>
+ <46df65477e0580d350e6e14fea5e68aee6a2832b@linux.dev>
+ <aPE84XfToVH4eAbs@tiehlicka>
+ <db4d9e73e6a70033da561ed88aef32c1ebe411dd@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDEwOSBTYWx0ZWRfXwNPzimRGKfJm
- Lv43/F8/l88yBld6NMFNUPwp8FLEOacRi56o1so2PsyXfImz5WuCyP9DZy/tyBrVO8RqCLwgrAa
- VbsQPu6wdarV4neHqFPTEuI+nuEfRG5ZWC005G/ZYokLhQ3t7s+9aJW+18oFNNjowl11OnQ9cRO
- yjy0AaGnkBJCeEQdRPzurAPyM6K3AU+FH5dlP521bLyKkfPhp8+QN0X9Jw4/xKIKapPUDs5+HI1
- xIHTxKtWALq67N//toM3L/b1yrJlgEvAOznsINCgAwApDahQzyXSE/PE8I8LKcIknHiozupdRMp
- lBPu4GG9l6Z5x0JkURFLPMWJcMAN00m255unXsZWl4Vn4OFDSPGCmkB85/47WU+ff6X4S32cruk
- BJmzY3PfL/yUigzqwliEGn9VSnLauQ==
-X-Authority-Analysis: v=2.4 cv=Csmys34D c=1 sm=1 tr=0 ts=690df296 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=49fK2wAub7YDTLIv2YQA:9
- a=FOEl7-wtY1rPn7cj:21 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: KmjCYbZTsYE0Kp6n8qG-EPYohh_UUkN2
-X-Proofpoint-ORIG-GUID: KmjCYbZTsYE0Kp6n8qG-EPYohh_UUkN2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_03,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070109
+In-Reply-To: <db4d9e73e6a70033da561ed88aef32c1ebe411dd@linux.dev>
 
-Add changes to support the camera subsystem on the QCS8300.
+Sorry for late reply.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
----
- arch/arm64/boot/dts/qcom/monaco.dtsi | 170 +++++++++++++++++++++++++++
- 1 file changed, 170 insertions(+)
+On Mon 20-10-25 10:11:23, Jiayuan Chen wrote:
+[...]
+> To provide more context about our specific setup:
+> 
+> 1. The memory.low values set on host pods are actually quite large,
+>    some pods are set to 10GB, others to 20GB, etc.
+> 2. Since most pods have memory limits configured, each time kswapd
+>    is woken up, if a pod's memory usage hasn't exceeded its own
+>    memory.low, its memory won't be reclaimed.
+> 3. When applications start up, rapidly consume memory, or experience
+>    network traffic bursts, the kernel reaches steal_suitable_fallback(),
+>    which sets watermark_boost and subsequently wakes kswapd.
+> 4. In the core logic of kswapd thread (balance_pgdat()), when reclaim is
+>    triggered by watermark_boost, the maximum priority is 10. Higher priority
+>    values mean less aggressive LRU scanning, which can result in no pages
+>    being reclaimed during a single scan cycle:
+> 
+> if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
+>     raise_priority = false;
+> 
+> 5. This eventually causes pgdat->kswapd_failures to continuously accumulate,
+>    exceeding MAX_RECLAIM_RETRIES, and consequently kswapd stops working.
+>    At this point, the system's available memory is still significantly above
+>    the high watermark—it's inappropriate for kswapd to stop under these
+>    conditions.
+> 
+> The final observable issue is that a brief period of rapid memory allocation
+> causes kswapd to stop running, ultimately triggering direct reclaim and
+> making the applications unresponsive.
 
-diff --git a/arch/arm64/boot/dts/qcom/monaco.dtsi b/arch/arm64/boot/dts/qcom/monaco.dtsi
-index 816fa2af8a9a..3afb5e5f7d5e 100644
---- a/arch/arm64/boot/dts/qcom/monaco.dtsi
-+++ b/arch/arm64/boot/dts/qcom/monaco.dtsi
-@@ -4776,6 +4776,176 @@ videocc: clock-controller@abf0000 {
- 			#power-domain-cells = <1>;
- 		};
- 
-+		camss: isp@ac78000 {
-+			compatible = "qcom,qcs8300-camss";
-+
-+			reg = <0x0 0xac78000 0x0 0x1000>,
-+			      <0x0 0xac7a000 0x0 0xf00>,
-+			      <0x0 0xac7c000 0x0 0xf00>,
-+			      <0x0 0xac84000 0x0 0xf00>,
-+			      <0x0 0xac88000 0x0 0xf00>,
-+			      <0x0 0xac8c000 0x0 0xf00>,
-+			      <0x0 0xac90000 0x0 0xf00>,
-+			      <0x0 0xac94000 0x0 0xf00>,
-+			      <0x0 0xac9c000 0x0 0x2000>,
-+			      <0x0 0xac9e000 0x0 0x2000>,
-+			      <0x0 0xaca0000 0x0 0x2000>,
-+			      <0x0 0xacac000 0x0 0x400>,
-+			      <0x0 0xacad000 0x0 0x400>,
-+			      <0x0 0xacae000 0x0 0x400>,
-+			      <0x0 0xac4d000 0x0 0xf000>,
-+			      <0x0 0xac60000 0x0 0xf000>,
-+			      <0x0 0xac85000 0x0 0xd00>,
-+			      <0x0 0xac89000 0x0 0xd00>,
-+			      <0x0 0xac8d000 0x0 0xd00>,
-+			      <0x0 0xac91000 0x0 0xd00>,
-+			      <0x0 0xac95000 0x0 0xd00>;
-+			reg-names = "csid_wrapper",
-+				    "csid0",
-+				    "csid1",
-+				    "csid_lite0",
-+				    "csid_lite1",
-+				    "csid_lite2",
-+				    "csid_lite3",
-+				    "csid_lite4",
-+				    "csiphy0",
-+				    "csiphy1",
-+				    "csiphy2",
-+				    "tpg0",
-+				    "tpg1",
-+				    "tpg2",
-+				    "vfe0",
-+				    "vfe1",
-+				    "vfe_lite0",
-+				    "vfe_lite1",
-+				    "vfe_lite2",
-+				    "vfe_lite3",
-+				    "vfe_lite4";
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_CORE_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-+				 <&camcc CAM_CC_CSID_CLK>,
-+				 <&camcc CAM_CC_CSIPHY0_CLK>,
-+				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY1_CLK>,
-+				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY2_CLK>,
-+				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-+				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
-+				 <&gcc GCC_CAMERA_SF_AXI_CLK>,
-+				 <&camcc CAM_CC_ICP_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CLK>,
-+				 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CLK>,
-+				 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
-+			clock-names = "camnoc_axi",
-+				      "core_ahb",
-+				      "cpas_ahb",
-+				      "cpas_fast_ahb_clk",
-+				      "cpas_vfe_lite",
-+				      "cpas_vfe0",
-+				      "cpas_vfe1",
-+				      "csid",
-+				      "csiphy0",
-+				      "csiphy0_timer",
-+				      "csiphy1",
-+				      "csiphy1_timer",
-+				      "csiphy2",
-+				      "csiphy2_timer",
-+				      "csiphy_rx",
-+				      "gcc_axi_hf",
-+				      "gcc_axi_sf",
-+				      "icp_ahb",
-+				      "vfe0",
-+				      "vfe0_fast_ahb",
-+				      "vfe1",
-+				      "vfe1_fast_ahb",
-+				      "vfe_lite",
-+				      "vfe_lite_ahb",
-+				      "vfe_lite_cphy_rx",
-+				      "vfe_lite_csid";
-+
-+			interrupts = <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 759 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 758 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 761 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 760 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid_lite0",
-+					  "csid_lite1",
-+					  "csid_lite2",
-+					  "csid_lite3",
-+					  "csid_lite4",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "csiphy2",
-+					  "tpg0",
-+					  "tpg1",
-+					  "tpg2",
-+					  "vfe0",
-+					  "vfe1",
-+					  "vfe_lite0",
-+					  "vfe_lite1",
-+					  "vfe_lite2",
-+					  "vfe_lite3",
-+					  "vfe_lite4";
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "ahb",
-+					     "hf_0";
-+			iommus = <&apps_smmu 0x2400 0x20>;
-+
-+			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-+			power-domain-names = "top";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+				};
-+			};
-+		};
-+
- 		camcc: clock-controller@ade0000 {
- 			compatible = "qcom,qcs8300-camcc";
- 			reg = <0x0 0x0ade0000 0x0 0x20000>;
+This to me sounds like something to be addressed in the watermark
+boosting code. I do not think we should be breaching low limit for that
+(opportunistic) reclaim.
+
 -- 
-2.34.1
-
+Michal Hocko
+SUSE Labs
 
