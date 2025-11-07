@@ -1,208 +1,385 @@
-Return-Path: <linux-kernel+bounces-890887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E57C414AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:32:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A991BC414BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969EE189C52F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C903BC402
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEF3331A51;
-	Fri,  7 Nov 2025 18:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D0732A3D7;
+	Fri,  7 Nov 2025 18:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AWiu0LaS"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013060.outbound.protection.outlook.com [40.93.196.60])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JR2vxmRA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B88274B58
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762540336; cv=fail; b=YtdEu6xm+g80hpjoA8Jh7EiVbe19Q/FAC+G5LTVfc9i4KMysVW8QcYVnSkBsN0r32FIEhY0QZSJlghNaQdLzl6iQIJi8VyDA8ErrM1KT+fk+6GKjX2NxjSRNQn3NY6mT0sBjOwPkHeuHXN17GVNZhqU2IAPRDIZsrjw5kk0Tr6A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762540336; c=relaxed/simple;
-	bh=f1DVmQj6fFCoGFtqDRKNtSh98aJT7gwGI/0DhRNG7Lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AGpgPP8+xNZ1Mx9siUkT4B5SOeF2ONmxWhyfEuqmnTyeNAZDicoGJ6w1iHLNMVUjO9O+wWl0OwDd3+60rWQvi0k4ontJmFAAgzgLrMiDPbIsULUyG8dlHFGkfoJ0K0GzKmgtH1SFXiQ4P2z1sfHlyCV6+aRrfCBA/n/OqDZhV3g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AWiu0LaS; arc=fail smtp.client-ip=40.93.196.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pveJkpwbp/qr3LeR+YEgrI9ccM1jOeiNOZxnPl4Kcg9hWPSddrhScPB3y61igO7+uPPMPvc3/aldmKUOj30lumstMzmpA+swqHL/4FwOSKBOijB0uzkJp3/cXXEt0/q3u4tU80y5ty3WEYFLwtJw9RZbzyhH1qUm3W15COmUU+5OwWv8oUAC9aTJ/+lZhyNKQ4OVWApekjYSbzQuAmYoIX9aAl4YaatElIhLdQ/LX0YTPJGtdtNTsX/F7Jlu0nSO2jMiaFpwF3caKCzadOU0A5COOA96Wkj+bPWdjW8sMaE8JqkqkaQoihyIWmUR0AjrgScvy9Z5zW4tOPvnls6fFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GOJvyRHng1SpKmMK9rR5qX3xPmvQsgLf77BPgMeM6II=;
- b=tVzDNoTfD2p2wSuCSskX+FH69Bk3Cxmxi5arOXpFuh3xG6C0DBGpvRsJ1EUR5rwAt3d36apjfn2p7W8QymKcgVlo3Hioa8U6OOZ+jrTQGoBvLYDDWjvD8Mlx0y3wqMOIae0F+KhjEgATaql/gXeB5G49qHmd3GzCQoqATFrghCt05xmuxfcZjElwr/krOdmRf67/e3oz+UpXcIbeO4WC8nPAQ76IlWtvM87Cn6Lf/EQZYaDgiuVymM1+r5g1m66J8xwyEmCGux3EQnBFYlbWUSimyh+trGe0SYeHc5021e33N0P5vCm6EGDBlSxHLbu1o2m6SiqGPQmA+qCyJHhhuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GOJvyRHng1SpKmMK9rR5qX3xPmvQsgLf77BPgMeM6II=;
- b=AWiu0LaSJfkxaGl02sJJsvROdZt9ySfZJ/uU0TdQ6T/zG5hrEMV1h2xOVjbb+z8XW9EtVIRvWGPyP4iNDKJ4JVKkVOqh9RHqI45nZWaQD28EQPRef06at5ZZKqVXqeoHqsXSqvL3G+idszt5pcRiLK9yF3y28KqAiYA5qGrwmEtNMLQByPFvWypuqqUyE9vx+9MyFo6Wueywuaj1Iqgn/btZ12vAJEYgRYiidi5M1+uRr31l4uF+qLGm6jJP0Wl/Agy9aAvDYVJrm85QpOw2x4iS04R4MF43KstB1uvbBnEPiwxcKDy86WSYCf6DhsAoIvNXukTxhuyKKnlY964Zjg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by PH7PR12MB6718.namprd12.prod.outlook.com (2603:10b6:510:1b1::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Fri, 7 Nov
- 2025 18:32:11 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Fri, 7 Nov 2025
- 18:32:11 +0000
-Date: Fri, 7 Nov 2025 14:32:09 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Wei Wang <wei.w.wang@hotmail.com>,
-	"alex@shazbot.org" <alex@shazbot.org>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	Alexey Kardashevskiy <aik@amd.com>
-Subject: Re: [PATCH v2 2/2] vfio/type1: Set IOMMU_MMIO in dma->prot for
- MMIO-backed addresses
-Message-ID: <20251107183209.GP1732817@nvidia.com>
-References: <SI2PR01MB439373CA7A023D8EC4C42040DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <SI2PR01MB4393DFDCB2788CB823DAEC64DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <20251107010349.GD1708009@nvidia.com>
- <SI2PR01MB43930E5D802B02D3FCD5ED9ADCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <20251107141632.GL1732817@nvidia.com>
- <SI2PR01MB4393E04163E5AC9FD45D56EFDCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <20251107155704.GM1732817@nvidia.com>
- <SI2PR01MB4393E3BBA776A1B9FC6400D4DCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <20251107163614.GN1732817@nvidia.com>
- <087b3567-5c74-4472-827d-e5a47761a994@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <087b3567-5c74-4472-827d-e5a47761a994@amd.com>
-X-ClientProxiedBy: BN0PR04CA0203.namprd04.prod.outlook.com
- (2603:10b6:408:e9::28) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DDA324B3B;
+	Fri,  7 Nov 2025 18:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762540392; cv=none; b=XqhTQHySiA6i1IqCBa4hCjD8fDImuDTKS+q7op160bkBPm/R0YnIsQMabLNLj0BNPR9rHw0k64v80Gi/RY0R4UXlPD3Qkol35qFsGCyVugODezRo9jLtc/SPPaQr68GJEFsqwnnivryUwfADQeI/v1nbEcxkbE/Xjih9tbqQ+rU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762540392; c=relaxed/simple;
+	bh=5lGjanlwX7NUxIGHIf8/HZoprAcOr26JX7GbBooYSbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l4aUdb3Va4BrUcSDGyrbEYiAQYr0H+xC4t9Jeyf/mHBjt5sBMCb8Ax5WKHfHyZXRVxX1APMlvVoaWV3xmcQHozR6gnYiCAMCcX50t9SMxpFPMt4IBCEqp3Fv5GgNRUbcDqMHOc9IvkvKpQmC3AF0x4IwinZHUP3ZrO8nC/niqrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JR2vxmRA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7HsvTm026723;
+	Fri, 7 Nov 2025 18:32:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=g2MT83
+	RsUGq3MDb70m7r4uO8EpQv3DhlNJizpmSHRTM=; b=JR2vxmRAbFmVQQXR9hdNBO
+	hh0Y6NEgJrbFRVvOvaXc1FmxD98c9vpt7lxAvfzhWjnQJBcwKsmXtibfRDWHjmwe
+	w7Hx0I9N2e7gBZtRCr7ZhNyyORgf2QKqly328sKzTtbeWv2FPbQwT3HNDJL3h3sw
+	DnN2u64ACf2ENCFLwRAF2oaxOLaJA8tDNT4gKd62jW55gNkk/ZZ4gSjPEgS+K7CJ
+	k11kzJVG66oCX0k3rqqedlHICmbWap229fOOxp3gVpmAUbv/+MIl39MHkF/eF/++
+	bUb+AN+0bIDk3ttDo06qSple6XMz3GVkD87E9npKMTil4atltNCIBG4Mmgrmplcg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9nk5g6gq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 18:32:56 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A7IUFO3009838;
+	Fri, 7 Nov 2025 18:32:56 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9nk5g6gm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 18:32:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7IHrsX018738;
+	Fri, 7 Nov 2025 18:32:55 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5whnv9fh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 18:32:55 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7IWsgY30278176
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Nov 2025 18:32:55 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DAD875803F;
+	Fri,  7 Nov 2025 18:32:54 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4CA2558054;
+	Fri,  7 Nov 2025 18:32:53 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Nov 2025 18:32:53 +0000 (GMT)
+Message-ID: <9ffd806d-1a90-46da-b9c6-3a5914ef1ba6@linux.ibm.com>
+Date: Fri, 7 Nov 2025 13:32:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|PH7PR12MB6718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34bca4c6-2c4b-4d5c-c0ea-08de1e2bf695
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UAcg6+SOx5P+1W52O9s5I4aIBpNv7/sB3avJjuOqyYqhc/1lnAdNZasY18se?=
- =?us-ascii?Q?xFhVdOg2td/EDJXsscaQZPvpki9h1KmBv9fyI8oY4+e4O2vZoStRkpRG+5Yw?=
- =?us-ascii?Q?K+EvYhvgbGWX2U/N7TE4oUlLYuqj6C2bS+TK4lKRYvowe7pRsS5PkG4ociQQ?=
- =?us-ascii?Q?tfWOPHrOwActkmrgJCFM0LfNJaiGZOcIRHFd57M9rKzJKhZ5Ajs+druD3hIB?=
- =?us-ascii?Q?BhkDazE9Lnw+YbR9gO1+iOGjxJ6WT8Fq1pK0GT+Dz1IBcXxUZSGHRMqCfQ7p?=
- =?us-ascii?Q?SUJWxQjRiLz0nDEObAeydi8B+xYouN10qtSh+u25mmmNhFVhvMjUvvYrBV7q?=
- =?us-ascii?Q?ziGxOMEq5nmj3FokYRXapbVlKMjvLTxpcz1Z3t8/bQqBIZ9NFkz9YQcPcoSf?=
- =?us-ascii?Q?+Oyg1J4K/DJjPiHDO+sP0u1RqQTbYD5FFOUolvLyuKhqHdD0cu329eoXAWkP?=
- =?us-ascii?Q?BkBHpOQQWDNYmnIM943OFmPRPGLyuWiKpgYnLQSu5YG0Jrxsfn8oZ+Kn0iIX?=
- =?us-ascii?Q?IN5gvMmdNVe8pEsNmF5coYn62d3u5kPhKDzlBFEk+weWZR3HqpdeoqtDs2QQ?=
- =?us-ascii?Q?ARRYwJZl69DRchBGhZvkGW7OYb9KshBA4mp7EEskYYkHNHpkXbUs03aaVtZs?=
- =?us-ascii?Q?fwoxic1296dhzzPsX1LorG+zjc3Vi0Rel2GHJq0OiYoJygZN3qiAqzWFTeaN?=
- =?us-ascii?Q?0XoSD1TVnHgfQ5GMg/WOexPb4gYTcw9Okl8HEpSSloApH+1zhhOVKiAiJBRI?=
- =?us-ascii?Q?DOxnF5dZEr5wPX3402edMfoqYSH6MQw1SEUoodrROmm14Zp69nKRqDh2UFBI?=
- =?us-ascii?Q?b4XmkUfDFqzSiv/IVU2luNlZAJ73nGEYCdj4KT0SzlYttAx/faUv8zjz8IQV?=
- =?us-ascii?Q?1YHPb7NsTUt9UBMldncn9dudA6zNypZsb1KgkV3Cp6+czD1t/Qp8fdlaM6lw?=
- =?us-ascii?Q?ZT8ezWsoN1czgU+wX7rvHhbcmShQb66ZxnNYFPd9pk/oVGywCOgsA+r4ITDW?=
- =?us-ascii?Q?fUqQfZR1ASIjamxUECEjdz0mQ0sNFv6gERAVKZOet9x+F16muh9m1pqGsJAe?=
- =?us-ascii?Q?oczAFNQI7HS8V3SnWOPLCmiQfPQLGtZES6R+KXBWrtroUOMdPn8/q+dSATun?=
- =?us-ascii?Q?/VHVmy1NQlcwesZi9VgKwng9pUSc8o0zxJ32/VC5bZkPCAhKqDIBOcLx1RHO?=
- =?us-ascii?Q?Q7kzrCfx6ltub83XcdQENOT3LFkx/pf9TdJ2n40ESAZAHTK101YbaqQNsfhi?=
- =?us-ascii?Q?/vndAPUeUKotYmiSeMB9/XsXrqoBMuPYixYt+VZKO8Hk7evU5Dib1zu/UiiL?=
- =?us-ascii?Q?7MjRmnoVU+2ViaQXLIbicPHSB5arV6SqhzN+uASSnmZMGdPKOqxQ5lYfznmx?=
- =?us-ascii?Q?RpKjAl4NLnEtDDYE7wqLFDUX86enl6wtdLedBYuI2/1lO0KgW3ABifmEQ7ci?=
- =?us-ascii?Q?ExhJMyGnBZauVrIkmF1xozUi54NMIXmU?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0qJbeQW3wvuYpAdJjgrVuSMo1lIOUvO/oMAQn+jFqe2MhC1VGKB+PnCNTDgN?=
- =?us-ascii?Q?NkayNLypG9SLmisaZGrPEyEbDZ0pfOQDFKG3XX40yuAkkgjrn/UtrAXdn8m1?=
- =?us-ascii?Q?7qHkiE44FtvBZ5/6P90MOyzCVI3pmwuHidmUTgo0pRBQ6hEAONMmtzzBlp21?=
- =?us-ascii?Q?lB4mYE35kOuTKyiFqk7jgFIeLmoL5SNacn7zF80AcEeofAUnmaOAQosiWwSn?=
- =?us-ascii?Q?6oGXLX+B0VSGQwDYrr9HTqo0+LmJj9od0337pOJVfx+9pcbMooV6mK0Tzejr?=
- =?us-ascii?Q?9m3DZECEPvDAMvw9wjSUq13awTpJCvrZJ32juvdE6SkcnLnz0hLHViXgwCVq?=
- =?us-ascii?Q?L9wV4YiIOXp8M6k+mz4v/8/nMQS1ZW8tbvb20KgRb0+jueBBKq5xoAjXKJcH?=
- =?us-ascii?Q?kIaJpDBgPcftu/wDiT9uFCqNAxxqI/qPpF94+ihwpWpSbKBtKL1MpqwuoZSd?=
- =?us-ascii?Q?LYYpwYPkPYnH0Yjbdei4vGTE6WGWKyvsRcWtsIRufS/FuUEmqNTvXOkLuFMd?=
- =?us-ascii?Q?mpKl5pFwbnuTuBRKGn+BIpn2G9DcNsmbbKeCHns50OUdlFh7JdpPYbAXwoOu?=
- =?us-ascii?Q?fWcXpMOFznmzBC3DRzjm9MAdd7xoP/r7W90jC9HEkquIqtdGavGb0EP+vwpv?=
- =?us-ascii?Q?hu66SZ5q+87gfQ9X67YkVHe4Eia6+Uy+oAz8jlM8oOdAaRFsmaeTixiDowTt?=
- =?us-ascii?Q?bG9sBluHk9pqD8HgqT7bRb3FfrHafo91WgxuP5D97MrI3OlQWsiOu7I5gKLE?=
- =?us-ascii?Q?N0bvRQki1nQWA9lwpVsLxKAXvBWhbZmt7W1pkEy8KMLo+G/yy5Jq/uZLOIub?=
- =?us-ascii?Q?Kmxhfb7Z1YFLOGbxDrSO9fKMWnUAaq6XHGDxSAJuaU8s2NuS+mV8OXkxCHUv?=
- =?us-ascii?Q?Gnw4Ll6TGKPjGdbOL2GXhizNUPk1lvxURbenv7mJoFqqnwDHmYCXN53SzLiq?=
- =?us-ascii?Q?oOM7y5YIPSIr8sdz9RuRCS+CyQywFv/9Bv6cFDWbG+F7fk799rFqt1EMxiQN?=
- =?us-ascii?Q?TfEvJMUT1Xc84f1a6HFTc+EUdt0LqxNRLpHXcdENU7lGgqogtyrMuGg1evyL?=
- =?us-ascii?Q?ZvXp0ATtWuoO+qDWXd7JqU3xO1ZbfFeR00okH/Xi/ae2H4ZzJj38i3b1Vay3?=
- =?us-ascii?Q?hLFizjsUobWkQeEmfAg3E38JsWDaZRH8toQSE8/gDEgX6U5okjsZxEtipQbk?=
- =?us-ascii?Q?OoUtz1S0p276RuiOj3UuVgT1S3BJt8PHtV+/WD42YRScDpoBRFk8rtY9li/7?=
- =?us-ascii?Q?NE5XqFAalp4VF99wMTSm7RQJy3hl9/tFnlsqO9W5PFgkm5iHdLcXju3yFcsr?=
- =?us-ascii?Q?se9fqgklvrkofLzRst88q+hjqk5wfyW6UtjLWOwX0gCU4cfA+Tt0VD8VSehT?=
- =?us-ascii?Q?ea4hGbXFwk/wmiUnN+eAM8YNNTV6OzZIUmJ12Ls+8Sn51+44RqyzCOdPbXrN?=
- =?us-ascii?Q?3SaIXnfsixvA4bAiVML7HtXC73BEDPuQeFvk2lhaKM9+Eoe8p+Ua2OoOM8KE?=
- =?us-ascii?Q?cckoHBldIBIXuaP0y/9w31wUeemt0VxKEYaUH8uOLpUbPro2PnUe0eYDoXSO?=
- =?us-ascii?Q?b+XBLHbJK9fEchiOY30=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34bca4c6-2c4b-4d5c-c0ea-08de1e2bf695
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 18:32:11.0925
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kn7iH3O2xdPUINCKNA27IYd9AfKB1keIiICSbH8CJwDcxA23ha+xYrIQONV5Kl22
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6718
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/8] lib/crypto: Add ML-DSA signing
+To: David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Eric Biggers <ebiggers@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+        Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Stephan Mueller <smueller@chronox.de>, Lukas Wunner <lukas@wunner.de>,
+        Ignat Korchagin <ignat@cloudflare.com>, linux-crypto@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251106174456.31818-1-dhowells@redhat.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20251106174456.31818-1-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDE0OCBTYWx0ZWRfXxV3pOyMu0T2W
+ CKeqLxJ10yBWpg3AvARlKwyfFz6/kQRwMngItCtki5s1aLN0e+cbkotJ6E17N+zSyUsEVnaqKG2
+ ghuiXm1mBcjtsu5tpab8xhO1S03C1s7wb/a6HN0bYXV48w+sbxqzjK2pXGWu9i48E7voaP6PxFz
+ C3rHGnluw3XsVs6VQLjDOpUNIXWmC17CwgjDBXnp6jLcK3MFDfhk+533p9XunlqZvGVe+zSDdZJ
+ j2C/t8pP+hXsKY4whACwpS00f8iJ52Om4zJdJ4x9YdNgn273D0xUkMZ6hs3GzLJPAghN8bfoWiv
+ cRQYN1fFov5YVgREw4RhmttKKsv6Ckqlz7m6Zf6BTRfvLTM3FZGJj5bFNryUhAD6zr8SaJM0ob4
+ MJ0hmxfht5w9a/a/7RxMv3XHzoKQiQ==
+X-Proofpoint-GUID: bN-RPCJr7eAHBUlUnP9hGvrRIaKdqmrp
+X-Authority-Analysis: v=2.4 cv=epnSD4pX c=1 sm=1 tr=0 ts=690e3b58 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=w4sDDSwb_dBvIumLC4MA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: TfbrkoKnMI4Y-DnMpXkzodB4w47Y-Y7r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_05,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ spamscore=0 malwarescore=0 clxscore=1011 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511070148
 
-On Fri, Nov 07, 2025 at 11:56:51AM -0600, Tom Lendacky wrote:
+On 11/6/25 12:44 PM, David Howells wrote:
+> Hi Herbert, Eric, et al.,
+> 
+> Building on the SHA-3 lib-crypto patches now in Eric's tree, here's a set of
+> patches does the following:
+> 
+>   (1) Add SHAKE-256 crypto_sig support, generating 32-byte fixed output.  The
+>       XOF features aren't available through this.  SHAKE-128 crypto_sig support
+>       isn't required for ML-DSA, so I haven't implemented that at this time.
+> 
+>   (2) Add ML-DSA signature verification code, extracted from Stephan Mueller's
+>       Leancrypto project.  It is accessed through crypto_sig.
+> 
+>   (3) Add a kunit test in three installments (due to size) to add some
+>       testing for the three different levels of ML-DSA (44, 65 and 87).
+> 
+>   (4) Modify PKCS#7 support to allow kernel module signatures to carry
+>       authenticatedAttributes as OpenSSL refuses to let them be opted out of
+>       for ML-DSA (CMS_NOATTR).  This adds an extra digest calculation to the
+>       process.
+> 
+>   (5) Modify PKCS#7 to pass the authenticatedAttributes directly to the
+>       ML-DSA algorithm rather than passing over a digest as is done with RSA
+>       as ML-DSA wants to do its own hashing and will add other stuff into
+>       the hash.  We could use hashML-DSA or an external mu instead, but they
+>       aren't standardised for CMS yet.
+> 
+>   (6) Add support to the PKCS#7 and X.509 parsers for ML-DSA.
+> 
+>   (7) Modify sign-file to handle OpenSSL not permitting CMS_NOATTR with
+>       ML-DSA.
+ > >   (8) Allow SHA-3 algorithms, including SHAKE256, to be used for 
+the message
+>       digest and add ML-DSA to the choice of algorithm with which to sign.
 
-> When you are on bare-metal, or in the hypervisor, System Memory Encryption
-> (SME) deals with the encryption bit set in the page table entries
-> (including the nested page table entries for guests). 
+Hi David,
 
-So "decrypted" means something about AMD's unique memory encryption
-scheme on bare metal but in a CC guest it is a cross arch 'shared with
-hypervisor' flag?
+if you are interested in picking patches from my effort in this 
+direction, let me know. I have a test suite in user space at
 
-What about CXL memory? What about ZONE_DEVICE coherent memory? Do
-these get the C bit set too?
+https://github.com/stefanberger/mldsa-testing
 
-:( :( :(
+User space patches interfacing with the kernel (prefix 'keyctl:') are in 
+this series here:
 
-> In the guest (prior to Trusted I/O / TDISP), decrypted (or shared) memory
-> is used because a device cannot DMA to or from guest memory using the
-> guest encryption key. So all DMA must go to "decrypted" memory or be
-> bounce-buffered through "decrypted" memory (SWIOTLB) - basically memory
-> that does not get encrypted/decrypted using the guest encryption key.
+https://github.com/stefanberger/linux-ima-namespaces/commits/mldsa.10312025/
 
-Where is the code for this? As I wrote we always do sme_set in the
-iommu driver, even on guests, even for "decrypted" bounce buffered
-memory.
+Either way, great work!
 
-That sounds like a bug by your explanation?
+> 
+> With that, ML-DSA signing appears to work.
+> 
+> This is based on Eric's libcrypto-next branch.
+> 
+> The patches can also be found here:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-pqc
+> 
+> David
+> 
+> Changes
+> =======
+> ver #7)
+>   - Rebased on Eric's tree as that now contains all the necessary SHA-3
+>     infrastructure and drop the SHA-3 patches from here.
+>   - Added a minimal patch to provide shake256 support for crypto_sig.
+>   - Got rid of the memory allocation wrappers.
+>   - Removed the ML-DSA keypair generation code and the signing code, leaving
+>     only the signature verification code.
+>   - Removed the secret key handling code.
+>   - Removed the secret keys from the kunit tests and the signing testing.
+>   - Removed some unused bits from the ML-DSA code.
+>   - Downgraded the kdoc comments to ordinary comments, but keep the markup
+>     for easier comparison to Leancrypto.
+> 
+> ver #6)
+>   - Added a patch to make the jitterentropy RNG use lib/sha3.
+>   - Added back the crypto/sha3_generic changes.
+>   - Added ML-DSA implementation (still needs more cleanup).
+>   - Added kunit test for ML-DSA.
+>   - Modified PKCS#7 to accommodate ML-DSA.
+>   - Modified PKCS#7 and X.509 to allow ML-DSA to be specified and used.
+>   - Modified sign-file to not use CMS_NOATTR with ML-DSA.
+>   - Allowed SHA3 and SHAKE* algorithms for module signing default.
+>   - Allowed ML-DSA-{44,65,87} to be selected as the module signing default.
+> 
+> ver #5)
+>   - Fix gen-hash-testvecs.py to correctly handle algo names that contain a
+>     dash.
+>   - Fix gen-hash-testvecs.py to not generate HMAC for SHA3-* or SHAKE* as
+>     these don't currently have HMAC variants implemented.
+>   - Fix algo names to be correct.
+>   - Fix kunit module description as it now tests all SHA3 variants.
+> 
+> ver #4)
+>   - Fix a couple of arm64 build problems.
+>   - Doc fixes:
+>     - Fix the description of the algorithm to be closer to the NIST spec's
+>       terminology.
+>     - Don't talk of finialising the context for XOFs.
+>     - Don't say "Return: None".
+>     - Declare the "Context" to be "Any context" and make no mention of the
+>       fact that it might use the FPU.
+>     - Change "initialise" to "initialize".
+>     - Don't warn that the context is relatively large for stack use.
+>   - Use size_t for size parameters/variables.
+>   - Make the module_exit unconditional.
+>   - Dropped the crypto/ dir-affecting patches for the moment.
+> 
+> ver #3)
+>   - Renamed conflicting arm64 functions.
+>   - Made a separate wrapper API for each algorithm in the family.
+>   - Removed sha3_init(), sha3_reinit() and sha3_final().
+>   - Removed sha3_ctx::digest_size.
+>   - Renamed sha3_ctx::partial to sha3_ctx::absorb_offset.
+>   - Refer to the output of SHAKE* as "output" not "digest".
+>   - Moved the Iota transform into the one-round function.
+>   - Made sha3_update() warn if called after sha3_squeeze().
+>   - Simplified the module-load test to not do update after squeeze.
+>   - Added Return: and Context: kdoc statements and expanded the kdoc
+>     headers.
+>   - Added an API description document.
+>   - Overhauled the kunit tests.
+>     - Only have one kunit test.
+>     - Only call the general hash tester on one algo.
+>     - Add separate simple cursory checks for the other algos.
+>     - Add resqueezing tests.
+>     - Add some NIST example tests.
+>   - Changed crypto/sha3_generic to use this
+>   - Added SHAKE128/256 to crypto/sha3_generic and crypto/testmgr
+>   - Folded struct sha3_state into struct sha3_ctx.
+> 
+> ver #2)
+>    - Simplify the endianness handling.
+>    - Rename sha3_final() to sha3_squeeze() and don't clear the context at the
+>      end as it's permitted to continue calling sha3_final() to extract
+>      continuations of the digest (needed by ML-DSA).
+>    - Don't reapply the end marker to the hash state in continuation
+>      sha3_squeeze() unless sha3_update() gets called again (needed by
+>      ML-DSA).
+>    - Give sha3_squeeze() the amount of digest to produce as a parameter
+>      rather than using ctx->digest_size and don't return the amount digested.
+>    - Reimplement sha3_final() as a wrapper around sha3_squeeze() that
+>      extracts ctx->digest_size amount of digest and then zeroes out the
+>      context.  The latter is necessary to avoid upsetting
+>      hash-test-template.h.
+>    - Provide a sha3_reinit() function to clear the state, but to leave the
+>      parameters that indicate the hash properties unaffected, allowing for
+>      reuse.
+>    - Provide a sha3_set_digestsize() function to change the size of the
+>      digest to be extracted by sha3_final().  sha3_squeeze() takes a
+>      parameter for this instead.
+>    - Don't pass the digest size as a parameter to shake128/256_init() but
+>      rather default to 128/256 bits as per the function name.
+>    - Provide a sha3_clear() function to zero out the context.
+> 
+> David Howells (8):
+>    crypto: Add support for shake256 through crypto_shash
+>    crypto: Add ML-DSA/Dilithium verify support
+>    crypto: Add ML-DSA-44 pure rejection test vectors as a kunit test
+>    crypto: Add ML-DSA-65 pure rejection test vectors as a kunit test
+>    crypto: Add ML-DSA-87 pure rejection test vectors as a kunit test
+>    pkcs7: Allow the signing algo to calculate the digest itself
+>    pkcs7, x509: Add ML-DSA support
+>    modsign: Enable ML-DSA module signing
+> 
+>   Documentation/admin-guide/module-signing.rst  |   15 +-
+>   certs/Kconfig                                 |   24 +
+>   certs/Makefile                                |    3 +
+>   crypto/Kconfig                                |    1 +
+>   crypto/Makefile                               |    1 +
+>   crypto/asymmetric_keys/pkcs7_parser.c         |   19 +-
+>   crypto/asymmetric_keys/pkcs7_verify.c         |   52 +-
+>   crypto/asymmetric_keys/public_key.c           |    7 +
+>   crypto/asymmetric_keys/x509_cert_parser.c     |   24 +
+>   crypto/ml_dsa/Kconfig                         |   32 +
+>   crypto/ml_dsa/Makefile                        |   20 +
+>   crypto/ml_dsa/dilithium.h                     |  547 ++
+>   crypto/ml_dsa/dilithium_44.c                  |   33 +
+>   crypto/ml_dsa/dilithium_44.h                  |  282 +
+>   crypto/ml_dsa/dilithium_65.c                  |   33 +
+>   crypto/ml_dsa/dilithium_65.h                  |  282 +
+>   crypto/ml_dsa/dilithium_87.c                  |   33 +
+>   crypto/ml_dsa/dilithium_87.h                  |  282 +
+>   crypto/ml_dsa/dilithium_api.c                 |  429 ++
+>   crypto/ml_dsa/dilithium_debug.h               |   49 +
+>   crypto/ml_dsa/dilithium_ntt.c                 |   89 +
+>   crypto/ml_dsa/dilithium_ntt.h                 |   35 +
+>   crypto/ml_dsa/dilithium_pack.h                |  119 +
+>   crypto/ml_dsa/dilithium_poly.c                |  377 +
+>   crypto/ml_dsa/dilithium_poly.h                |  181 +
+>   crypto/ml_dsa/dilithium_poly_c.h              |  141 +
+>   crypto/ml_dsa/dilithium_poly_common.h         |   35 +
+>   crypto/ml_dsa/dilithium_polyvec.h             |  343 +
+>   crypto/ml_dsa/dilithium_polyvec_c.h           |   81 +
+>   .../dilithium_pure_rejection_vectors_44.h     |  489 ++
+>   .../dilithium_pure_rejection_vectors_65.h     | 4741 ++++++++++++
+>   .../dilithium_pure_rejection_vectors_87.h     | 6456 +++++++++++++++++
+>   crypto/ml_dsa/dilithium_reduce.h              |   85 +
+>   crypto/ml_dsa/dilithium_rounding.c            |  128 +
+>   crypto/ml_dsa/dilithium_selftest.c            |  142 +
+>   crypto/ml_dsa/dilithium_service_helpers.h     |   99 +
+>   crypto/ml_dsa/dilithium_sig.c                 |  334 +
+>   crypto/ml_dsa/dilithium_signature_c.c         |  102 +
+>   crypto/ml_dsa/dilithium_signature_c.h         |   37 +
+>   crypto/ml_dsa/dilithium_signature_helper.c    |   97 +
+>   crypto/ml_dsa/dilithium_signature_impl.h      |  370 +
+>   crypto/ml_dsa/dilithium_type.h                |  102 +
+>   crypto/ml_dsa/dilithium_zetas.c               |   67 +
+>   crypto/ml_dsa/signature_domain_separation.c   |  203 +
+>   crypto/ml_dsa/signature_domain_separation.h   |   30 +
+>   crypto/sha3.c                                 |   42 +
+>   include/crypto/public_key.h                   |    1 +
+>   include/linux/oid_registry.h                  |    5 +
+>   kernel/module/Kconfig                         |    5 +
+>   scripts/sign-file.c                           |   26 +-
+>   50 files changed, 17094 insertions(+), 36 deletions(-)
+>   create mode 100644 crypto/ml_dsa/Kconfig
+>   create mode 100644 crypto/ml_dsa/Makefile
+>   create mode 100644 crypto/ml_dsa/dilithium.h
+>   create mode 100644 crypto/ml_dsa/dilithium_44.c
+>   create mode 100644 crypto/ml_dsa/dilithium_44.h
+>   create mode 100644 crypto/ml_dsa/dilithium_65.c
+>   create mode 100644 crypto/ml_dsa/dilithium_65.h
+>   create mode 100644 crypto/ml_dsa/dilithium_87.c
+>   create mode 100644 crypto/ml_dsa/dilithium_87.h
+>   create mode 100644 crypto/ml_dsa/dilithium_api.c
+>   create mode 100644 crypto/ml_dsa/dilithium_debug.h
+>   create mode 100644 crypto/ml_dsa/dilithium_ntt.c
+>   create mode 100644 crypto/ml_dsa/dilithium_ntt.h
+>   create mode 100644 crypto/ml_dsa/dilithium_pack.h
+>   create mode 100644 crypto/ml_dsa/dilithium_poly.c
+>   create mode 100644 crypto/ml_dsa/dilithium_poly.h
+>   create mode 100644 crypto/ml_dsa/dilithium_poly_c.h
+>   create mode 100644 crypto/ml_dsa/dilithium_poly_common.h
+>   create mode 100644 crypto/ml_dsa/dilithium_polyvec.h
+>   create mode 100644 crypto/ml_dsa/dilithium_polyvec_c.h
+>   create mode 100644 crypto/ml_dsa/dilithium_pure_rejection_vectors_44.h
+>   create mode 100644 crypto/ml_dsa/dilithium_pure_rejection_vectors_65.h
+>   create mode 100644 crypto/ml_dsa/dilithium_pure_rejection_vectors_87.h
+>   create mode 100644 crypto/ml_dsa/dilithium_reduce.h
+>   create mode 100644 crypto/ml_dsa/dilithium_rounding.c
+>   create mode 100644 crypto/ml_dsa/dilithium_selftest.c
+>   create mode 100644 crypto/ml_dsa/dilithium_service_helpers.h
+>   create mode 100644 crypto/ml_dsa/dilithium_sig.c
+>   create mode 100644 crypto/ml_dsa/dilithium_signature_c.c
+>   create mode 100644 crypto/ml_dsa/dilithium_signature_c.h
+>   create mode 100644 crypto/ml_dsa/dilithium_signature_helper.c
+>   create mode 100644 crypto/ml_dsa/dilithium_signature_impl.h
+>   create mode 100644 crypto/ml_dsa/dilithium_type.h
+>   create mode 100644 crypto/ml_dsa/dilithium_zetas.c
+>   create mode 100644 crypto/ml_dsa/signature_domain_separation.c
+>   create mode 100644 crypto/ml_dsa/signature_domain_separation.h
+> 
+> 
 
-Does this mean vIOMMU has never worked in AMD CC guests?
 
-> It is not until we get to Trusted I/O / TDISP where devices will be able
-> to DMA directly to guest encrypted memory and guests will require secure
-> MMIO addresses which will need the encryption bit set (Alexey can correct
-> me on the TIO statements if they aren't correct, as he is closer to it all).
-
-So in this case we do need to do sme_set on MMIO even though that MMIO
-is not using the dram encryption key?
-
-Jason
 
