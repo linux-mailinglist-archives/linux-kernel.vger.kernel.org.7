@@ -1,225 +1,130 @@
-Return-Path: <linux-kernel+bounces-890030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE26C3F1BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:14:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417C7C3F1C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFA73B08D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:13:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B8854EC999
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDDA3191A8;
-	Fri,  7 Nov 2025 09:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37351318146;
+	Fri,  7 Nov 2025 09:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o+8kokxi"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUvtwmJe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95F9318146
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A8B31771E;
+	Fri,  7 Nov 2025 09:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762506785; cv=none; b=o6lrwZLiOR8apougHF6/Ys0usPRzgxs4p6L98v4Nyk/Ivpu+q4/NJQAoFfL/zeP9zNHZj18BqtaHgGmymvFxXE6J3K7xjtHCl7pyNHcTs83+TT1ssHF/Ts09TnKSFigJdl/A6nB/4Nbf6q8bFLDs6rOvtZZfjyzEQrs8TbuwwSg=
+	t=1762506842; cv=none; b=WvMhUMOwNZ0Ap1+wACktIF9mIfyHvEsQirt6XSLkUAI7+9Kj2WKwGQjIhCMbwsuRRftKosg42XfJ4snMbgaUcW8x5oMoDo9MWx0ZxTNijlpv8Rj/4lA3c7Zc0kIjLst9qDtG7/e2Cwdz5UDXikWHLVDJf+sCMQNRBGV8cL0BdzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762506785; c=relaxed/simple;
-	bh=+R07ubDuBhff2ujrABNBpUwsrjtH0A9CyxuTQ0jmk/4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FGro05gIxqvJ8Fj4LqKwnOsHllxNTAiYY83iCuUHVbMHXawL9QPMe3SLpCLPtO9+lHw0b21Lgn9ZGYi/mTBCBrdUC90lKWqOPgU5wA2jLSO+jZ9/A7qdWIDgqU71YV1PnGI543p3NCqeY2gJ3kH2NWHnWyVA+zcD9qlrOqqGx/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o+8kokxi; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4775f51ce36so4840965e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762506781; x=1763111581; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6hr5KyHBQ4i3KpvRUNSLwzvnbvgDhJcoWyAtNcMbQg=;
-        b=o+8kokxiq8sV7eembw85qpl/iqp7HCScn0Plv9OSCqxXkMrZYV5YYb3pHXCsGn/VwQ
-         DbRpL6BeW6hgXoFdsJJSgzf6HRL9m3pyCfDp+zJNQbfbp0KsRAsz/sxoHzXCDZ55L0BL
-         xigvoBUKNvmYrRNu3QOGd6GzT/GB/1XrdjgE3nKBIhyVfJlm+DZqsn1/SxMEw83Sz8TD
-         o4X8EBshU6VrvdtW2TBXu9FAeNR8qc4sJXcAc+zFGKB/eYpXo6ac3uLqCO/zWmTZ+pQ5
-         hGUZsyjSoSeehI8uXQ7jYGwplcBaxCzxjYEt4SBAfTNUGjx2PE40cTpZPH+quhq0Wx6L
-         +9vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762506781; x=1763111581;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6hr5KyHBQ4i3KpvRUNSLwzvnbvgDhJcoWyAtNcMbQg=;
-        b=lJWGJQlJTBgiApCr5ez5UXRia2NuwzBng71OKSLsLl1mkEkCApm2W156pNIwbcDmqM
-         QoLjDEXjgfqZJR/Bh6bAVRl3wZMrnMMr/XO/UTK/P4EOhNEf2abJJDfL+tnbGJ/Ymn+A
-         BhsFrkevS8DwLkpTgMdnidFH6gJLyBtxdUQbT9w0yKFtyxt9cvdpAGsHJ6eMuANz4l96
-         uvTM4ZKdwYOtnHlS7yQqZMtXTjkacWYL7LUpzCFi74oO0hiRmL0nWSG4smzu9tJPbX0X
-         vDSy3P9h4lDEM/TDHEvSfDTnmORt8Po7VlspQRWPel6SmBM+FB3M1SdA7xHiiHldTyAs
-         x+iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0SmGtvxCRMWs3/v5uh6voRLD6c0utcAMYae+shcEsBVZfz486wWzZVYOt0lNSx21nG1SZ0w5iOL4NcwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwabwCr/objBeaeM12HBfVPkLXaqSfgptJEzKNLTFr1+U6qB5ZS
-	06P1RDu+gYjSjeh0PKc4KEqkkqBk9FOaVr5cFLEc8e+M9VYi8yrKK68UNhrb7vbJHqKxW+Sh1kI
-	QfFJK4HnvB4/ljJm4wg==
-X-Google-Smtp-Source: AGHT+IHUZEz+bT2nDPlYtV/C/QNEpv2U8khomuJk8Z2Iy1Z4Tlg4ge5tYPMjbGtCECv4gTvvdLMJU3QqC9ERcYo=
-X-Received: from wmcu6.prod.google.com ([2002:a7b:c046:0:b0:476:4b14:2edf])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4592:b0:477:3e07:217a with SMTP id 5b1f17b1804b1-4776bcc9c7emr20623525e9.36.1762506781268;
- Fri, 07 Nov 2025 01:13:01 -0800 (PST)
-Date: Fri, 7 Nov 2025 09:13:00 +0000
-In-Reply-To: <043dcbdb-e069-46e7-8f79-8fdaf354fb44@lucifer.local>
+	s=arc-20240116; t=1762506842; c=relaxed/simple;
+	bh=sk262LJaEte1LxYrOZlRv+oGbDTDbh+k0NKy4pPUswA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I3ETNPN6s3Ev3hYkbQ0T7QxWAhcfDbwnG5fYRv292MeIw9nOfqAys9WSsSo0yo+ffZzCJcmiOXkl4cSHpeJasqjcOdm9GOlmh98wqncI+d1O74rRdKGddbC11dkvJdWVpZd+covTG20nW8qzKrHlX6DtpNBmplGcsPDqQjezYRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUvtwmJe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 096A3C19423;
+	Fri,  7 Nov 2025 09:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762506841;
+	bh=sk262LJaEte1LxYrOZlRv+oGbDTDbh+k0NKy4pPUswA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=iUvtwmJejdOZgFPeNehQY+c3cyWnFkGAWMBhKF7C09z7ZYvwXtPUgJR3BZQnxRFJS
+	 qLk8/7o4RisD80I2MTaYJUmxpZJBeYDWynRHAHkMaXjpinGV/DKOjeG+vmZN4zn2eG
+	 StX87CiBnkbPasOrMNdV8XPtVOJiyO+S+6No6LBn9vIbmiIOsmNW94vWzOSHTpibHc
+	 2zXLdIrLAvuM/37+Z8FpFvQMCuAMPjkyzB1TqdpaDmvqEkOLUiWrKdYPmSOxX4qAyr
+	 r1gnD5tp4ra7mtvPxiudyQUiJmsqAxP6YL0Bcn8vlxfPQcrQgHWaK2xzTKvhStA4me
+	 6O6cTs3fYkDZw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02C0CCFA05;
+	Fri,  7 Nov 2025 09:14:00 +0000 (UTC)
+From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Date: Fri, 07 Nov 2025 09:13:58 +0000
+Subject: [PATCH v4] iio: imu: inv_icm45600: Initializes
+ inv_icm45600_buffer_postdisable sleep
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1762422915.git.lorenzo.stoakes@oracle.com>
- <fe38b1a43364f72d1ce7a6217e53a33c9c0bb0c5.1762422915.git.lorenzo.stoakes@oracle.com>
- <yja2mhwa4bzatbthjjq5rolqlkfgcbmppic3caaiwi6jc63rbc@cims6rqnotvj> <043dcbdb-e069-46e7-8f79-8fdaf354fb44@lucifer.local>
-Message-ID: <aQ24HAAxYLhIvV5U@google.com>
-Subject: Re: [PATCH v2 1/5] mm: introduce VM_MAYBE_GUARD and make visible in /proc/$pid/smaps
-From: Alice Ryhl <aliceryhl@google.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Pedro Falcato <pfalcato@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jann Horn <jannh@google.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Andrei Vagin <avagin@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251107-icm45600_fix_buffer_sleep_init-v4-1-5648fbfb57ad@tdk.com>
+X-B4-Tracking: v=1; b=H4sIAFW4DWkC/5XNQQ7CIBCF4asY1mIYoFhdeQ9jGqCDTrStgdpoT
+ O8u7ca4Upf/ZPK9J0sYCRPbLp4s4kCJujaHXi6YP9n2iJzq3EwKWYBQwMk3ujBCVIHulbuFgLF
+ KF8RrRS31vBRGBoNiHUrNMnKNmB/ngf0h94lS38XHvDfAdP2ZHoAD30iNwTkwBZa7vj6vfNewC
+ R7kf5jMWOFrLzSC885+YuqNgTBfMZUxtMoGU1qFBt7YOI4vu8A4cWQBAAA=
+X-Change-ID: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Remi Buisson <remi.buisson@tdk.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762506840; l=1865;
+ i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
+ bh=KHYZL4PBkFcdTzaWag6cVizPSRawbM+rQCJdwDIqyec=;
+ b=LJrkBuBn+oJJ4i6+c9a1Glm0edUU8D+kxrkVzMQbuHuC6IkPGp5tssgL2dXIty231dS0qARbJ
+ Z6v8TApjoFpDqyt4gKR2tKvzRy9Ggs1UlGsYuN5dYrIvtKHizzqTyO4
+X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
+ pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
+X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
+ auth_id=372
+X-Original-From: Remi Buisson <remi.buisson@tdk.com>
+Reply-To: remi.buisson@tdk.com
 
-On Thu, Nov 06, 2025 at 02:54:33PM +0000, Lorenzo Stoakes wrote:
-> +cc Alice for rust stuff
-> 
-> On Thu, Nov 06, 2025 at 02:27:56PM +0000, Pedro Falcato wrote:
-> > On Thu, Nov 06, 2025 at 10:46:12AM +0000, Lorenzo Stoakes wrote:
-> > > Currently, if a user needs to determine if guard regions are present in a
-> > > range, they have to scan all VMAs (or have knowledge of which ones might
-> > > have guard regions).
-> > >
-> > > Since commit 8e2f2aeb8b48 ("fs/proc/task_mmu: add guard region bit to
-> > > pagemap") and the related commit a516403787e0 ("fs/proc: extend the
-> > > PAGEMAP_SCAN ioctl to report guard regions"), users can use either
-> > > /proc/$pid/pagemap or the PAGEMAP_SCAN functionality to perform this
-> > > operation at a virtual address level.
-> > >
-> > > This is not ideal, and it gives no visibility at a /proc/$pid/smaps level
-> > > that guard regions exist in ranges.
-> > >
-> > > This patch remedies the situation by establishing a new VMA flag,
-> > > VM_MAYBE_GUARD, to indicate that a VMA may contain guard regions (it is
-> > > uncertain because we cannot reasonably determine whether a
-> > > MADV_GUARD_REMOVE call has removed all of the guard regions in a VMA, and
-> > > additionally VMAs may change across merge/split).
-> > >
-> > > We utilise 0x800 for this flag which makes it available to 32-bit
-> > > architectures also, a flag that was previously used by VM_DENYWRITE, which
-> > > was removed in commit 8d0920bde5eb ("mm: remove VM_DENYWRITE") and hasn't
-> > > bee reused yet.
-> > >
-> > > We also update the smaps logic and documentation to identify these VMAs.
-> > >
-> > > Another major use of this functionality is that we can use it to identify
-> > > that we ought to copy page tables on fork.
-> > >
-> > > We do not actually implement usage of this flag in mm/madvise.c yet as we
-> > > need to allow some VMA flags to be applied atomically under mmap/VMA read
-> > > lock in order to avoid the need to acquire a write lock for this purpose.
-> > >
-> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > ---
-> > >  Documentation/filesystems/proc.rst | 1 +
-> > >  fs/proc/task_mmu.c                 | 1 +
-> > >  include/linux/mm.h                 | 3 +++
-> > >  include/trace/events/mmflags.h     | 1 +
-> > >  mm/memory.c                        | 4 ++++
-> > >  tools/testing/vma/vma_internal.h   | 3 +++
-> > >  6 files changed, 13 insertions(+)
-> > >
-> > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> > > index 0b86a8022fa1..b8a423ca590a 100644
-> > > --- a/Documentation/filesystems/proc.rst
-> > > +++ b/Documentation/filesystems/proc.rst
-> > > @@ -591,6 +591,7 @@ encoded manner. The codes are the following:
-> > >      sl    sealed
-> > >      lf    lock on fault pages
-> > >      dp    always lazily freeable mapping
-> > > +    gu    maybe contains guard regions (if not set, definitely doesn't)
-> > >      ==    =======================================
-> >
-> > The nittiest
-> > of nits:     =============================================================
-> 
-> Sigh :) OK will fix.
-> 
-> >
-> >
-> > >
-> > >  Note that there is no guarantee that every flag and associated mnemonic will
-> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > index 8a9894aefbca..a420dcf9ffbb 100644
-> > > --- a/fs/proc/task_mmu.c
-> > > +++ b/fs/proc/task_mmu.c
-> > > @@ -1147,6 +1147,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> > >  		[ilog2(VM_MAYSHARE)]	= "ms",
-> > >  		[ilog2(VM_GROWSDOWN)]	= "gd",
-> > >  		[ilog2(VM_PFNMAP)]	= "pf",
-> > > +		[ilog2(VM_MAYBE_GUARD)]	= "gu",
-> > >  		[ilog2(VM_LOCKED)]	= "lo",
-> > >  		[ilog2(VM_IO)]		= "io",
-> > >  		[ilog2(VM_SEQ_READ)]	= "sr",
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 6e5ca5287e21..2a5516bff75a 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -271,6 +271,8 @@ extern struct rw_semaphore nommu_region_sem;
-> > >  extern unsigned int kobjsize(const void *objp);
-> > >  #endif
-> > >
-> > > +#define VM_MAYBE_GUARD_BIT 11
-> > > +
-> > >  /*
-> > >   * vm_flags in vm_area_struct, see mm_types.h.
-> > >   * When changing, update also include/trace/events/mmflags.h
-> > > @@ -296,6 +298,7 @@ extern unsigned int kobjsize(const void *objp);
-> > >  #define VM_UFFD_MISSING	0
-> > >  #endif /* CONFIG_MMU */
-> > >  #define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
-> > > +#define VM_MAYBE_GUARD	BIT(VM_MAYBE_GUARD_BIT)	/* The VMA maybe contains guard regions. */
-> >
-> > Don't we also need an adjustment on the rust side for this BIT()? Like we
-> > for f04aad36a07c ("mm/ksm: fix flag-dropping behavior in ksm_madvise").
-> 
-> That's a bit unhelpful if rust can't cope with extremely basic assignments like
-> that and we just have to know to add helpers :/
-> 
-> We do BIT() stuff for e.g. VM_HIGH_ARCH_n, VM_UFFD_MINOR_BIT,
-> VM_ALLOW_ANY_UNCACHED_BIT, VM_DROPPABLE_BIT and VM_SEALED_BIT too and no such
-> helpers there, So not sure if this is required?
-> 
-> Alice - why is it these 'non-trivial' defines were fine but VM_MERGEABLE was
-> problematic? That seems strange.
-> 
-> I see [0], so let me build rust here and see if it moans, if it moans I'll add
-> it.
-> 
-> [0]:https://lore.kernel.org/oe-kbuild-all/CANiq72kOhRdGtQe2UVYmDLdbw6VNkiMtdFzkQizsfQV0gLY1Hg@mail.gmail.com/
+From: Remi Buisson <remi.buisson@tdk.com>
 
-When you use #define to declare a constant whose right-hand-side
-contains a function-like macro such as BIT(), bindgen does not define a
-Rust version of that constant. However, VM_MAYBE_GUARD is not referenced
-in Rust anywhere, so that isn't a problem.
+The sleep variable in inv_icm45600_buffer_postdisable could be used without
+being assigned in case of error. It must be initialized to 0 by default.
 
-It was a problem with VM_MERGEABLE because rust/kernel/mm/virt.rs
-references it.
+Fixes: 06674a72cf7a ("iio: imu: inv_icm45600: add buffer support in iio devices")
+Closes: https://lore.kernel.org/linux-iio/aPi6Xw-ZoUkW76zR@stanley.mountain/
+Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+---
+Changes in v4:
+- Add space in closse tag in commit message
+- Remove extra blank line in commit message
+- Link to v3: https://lore.kernel.org/r/20251106-icm45600_fix_buffer_sleep_init-v3-1-ea3af68a3e61@tdk.com
 
-Note that it's only the combination of #define and function-like macro
-that triggers this condition. If the constant is defined using another
-mechanism such as enum {}, then bindgen will generate the constant no
-matter how complex the right-hand-side is. The problem is that bindgen
-can't tell whether a #define is just a constant or not.
+Changes in v3:
+- Fix commit message: fix and closes moved to SoB
+- Fix assignement of sleep variable after declaration.
+- Link to v2: https://lore.kernel.org/r/20251031-icm45600_fix_buffer_sleep_init-v2-1-5cdc04e1bcba@tdk.com
 
-Alice
+Changes in v2:
+- Moving pacth description from cover-letter to single commit
+- Link to v1: https://lore.kernel.org/r/20251031-icm45600_fix_buffer_sleep_init-v1-1-924efbb165e8@tdk.com
+---
+ drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+index 2efcc177f9d60a6a2509e448c0ddaf4b9e1fd755..2b9ea317385ceb680f013c4c1b2a6a74fbe5d7e7 100644
+--- a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
++++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+@@ -370,6 +370,7 @@ static int inv_icm45600_buffer_postdisable(struct iio_dev *indio_dev)
+ 		return -EINVAL;
+ 	}
+ 
++	sleep = 0;
+ 	scoped_guard(mutex, &st->lock)
+ 		ret = _inv_icm45600_buffer_postdisable(st, sensor, watermark, &sleep);
+ 
+
+---
+base-commit: 70437bbd7529e9860fb7f0c92a89e0e6abaa994e
+change-id: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
+
+Best regards,
+-- 
+Remi Buisson <remi.buisson@tdk.com>
+
+
 
