@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-889610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55069C3E0B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:52:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95250C3E0CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E280188BCE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A7F188E30E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77399301037;
-	Fri,  7 Nov 2025 00:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDC93054FA;
+	Fri,  7 Nov 2025 00:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i51rLpjR"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtLhWvLj"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E37F2F7ADA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EDC2FB0A7
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762476603; cv=none; b=V1/YsouOC6fKhgfev3gbrBl+8N+GSk2YvopHaas/pPeUkpM39HEpOpP/lEnkSPnL94MQgmpyB0Al0JkerGKWr0rliUuhZIfFAtZ0IAnigr/qbRQaDWwDTVrC1+C3rIMWT2xleQK0/uJrQdFQGfTStFiVpA1DqJiMV80k8k4PYSw=
+	t=1762476605; cv=none; b=ZxPZqD03TiPsHb9Z3vXFmVXd9k0Vf+5v823FKiSlglxEv7JI/JQ8TtzPJdQUA1+P936HCgJgU7eBxtfn1avhOlpBRkIBmOXmu/LBny6fzEpGPtDqRbrtdj3gUMZcJoM9WhblO4bwvl8eO10NmHtv5Qe2CfL1pzr63bDxHmu4nTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762476603; c=relaxed/simple;
-	bh=3X7FcSuFEkDk3JDUhogHRIfC2C0s4TSTiHdkuzapQSE=;
+	s=arc-20240116; t=1762476605; c=relaxed/simple;
+	bh=GxjWMLryYjjKJpr6TT3LeDbeqAWdzd/wbLS6W72CbIU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZRLufmgKzngkumtdf/1CJ+Je1XqeC+6QTV/4+EBW5VDIhaKjkBl41qJIYcjpFwbfuyoc1ZfmW6WHFBHAplSk8rpCd8MGO6cZI7KHxP956KrHFN09fbhVpzGmHiZLVS2K9wlJZsk+SrdywtDUdsc6TsD8Ldea3Utc7VwPOl1GPiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i51rLpjR; arc=none smtp.client-ip=209.85.214.173
+	 In-Reply-To:To:Cc; b=dm0eklxXIVYnEKIcb61fw/aRhsCVGxc4KEXUYVizOqNsr2OVJDSIEvKiTJIFFgW8nsSH5esJ+PVKHm+b7Q58CSCrhgxoEMt9VCnrTYtz7r+tbJl29uSk8yLWFwuIjxad1OTJzWFyvLZAULzJW5vEUwpkk33TMozOLoXlUpjtFmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtLhWvLj; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2953ad5517dso2045485ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:50:01 -0800 (PST)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b608df6d2a0so181699a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:50:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762476601; x=1763081401; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762476602; x=1763081402; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=08hYWGEnuRuvo8cclYTSCBGU9hHXXt88CsOLxaqCDS4=;
-        b=i51rLpjRl+DgspFfmCBoDYbYLiR68qY1vwHrcSPjsf8dYDREDmmBaHfN9hAUik6foc
-         Gt1efzeGb1H9sjKH6Z3NoUff+iaG+/rKoo97q2/dZVphMKL0CIwImBkzDfdK6QbDIuIj
-         7xa8dgx9H8zxnUPrYGTw4E3pbFKDbB081c5I1XYF7Y0+NJYk9jCWjN3vSCWnSv2x9YCx
-         Bp/h79fRZRjpMrfrGsHytvUQIocM+XeAouur1gJZ2cdr/k1DWAkPtgFm61Vcpfb6/IfJ
-         PkgLEPUq/LH2AeFLDb7V0mOYZAHUVTJmI9NM73XRDZdurqlBwHjGXtRDle8T8HkRzIlY
-         lo1A==
+        bh=9DCFKi0aY+3dE4R9e8oh4CcU6zhkT3ckh+srhUdXmfc=;
+        b=BtLhWvLjh5egr8867jTIYFHKmFh8IGhbzvAGpiDirzMN0iBfyyhq68ULn/qBkfl4ys
+         q+Tnq+nEo4jBLfXJQ/2CgThpT8vsularfbuN+Ig4iN2tGbEYl3myOBvlfFA0Mxh5qPoG
+         7eZ3EHc8JCQLGim33EqOhpB/8NPFZTXVyxWqrkGDcCfTDciFHDxrZaVMrfLTy2GbQ722
+         Sd3VbK5Npl7PfAvWgDV9GZ1UWNPLkfHZ0d1yJVEuE74+IywQN34iD9j1fFLMWM0Cijgn
+         mjd+pE7jqZ9FLXp7ttpR68uXzaqp7eRYtbJZvHfQpQdPM0Og/ZYwFToa+6odyxfw67Sd
+         fTww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762476601; x=1763081401;
+        d=1e100.net; s=20230601; t=1762476602; x=1763081402;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=08hYWGEnuRuvo8cclYTSCBGU9hHXXt88CsOLxaqCDS4=;
-        b=X+l8hWuAI1NbJdc4HI4PmmQCNbl7sAmCxAIqXe7SSVt/j5Xo5n/nsceuEDg92Enced
-         OAqgIntYF9GYlYp2laEF14D4M2G/fZwceyT0BFusp1OBHf4cX9D+3iwv1OixrykuMgfg
-         Y4H/GnO5lLJvR6hwlQtasryQ54odJcEZxiks8VNldlt66k5/TQuaCBuCMu3JCbyOkJru
-         TiwZ4zaKwZ4jxlMrEg0RwE5Or+gWxHrQDGWfI2ya4zVk+4KxQSYHus8nU31eZZUb/eJx
-         EboEDe/YIBo4jt7s/b3IoSU9pQElJas0y88JVB3Ik9CG4BbRsdCwYLs/lOufz7qhKDjG
-         rkqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqKHH0seBXDtF/mr9HrKX01KJYUUEcvTROCiF3xFuRI1+LF9DU0KL/obO7XqIl1g2qls1AUL24we+NuHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVyGVa89pJ3QcSWP028OHdpgJ214wfk/qqIP6nZi3S5p9ApiMg
-	RtJhU1VHy4yhEeWXwWep9SPENUtLgDOErUEzQzeOdcRTcBFrw3bilA/5boOmYQ==
-X-Gm-Gg: ASbGncuWMEyQq3gkk+fZeYA7uwCHotnshXNDF6NhMC3Vzqc6jE1qDaEIvJ4VfBLJq6U
-	FSG7ZQ463vpphRfd/CnTnf5D1RQn+pPdVBWSRtGW8CGyT8jOl2rFBDV69OohhukyY+0MjMUOkbu
-	E0T39nVz8/inl26xrkHmX1NQ1HQPKzONWzRM7tPRM9MbJpcSM8S5IH0m7/nJhvl6QVpI5LNtfiq
-	cy3CnXO79vwT8WTg9VKTPyVcD+V1m+17gxdAIOSePPMnuEO9UmxNCRpbzAwJBB1hgLDG31udhJz
-	tQEqABWZ/UCX8X2ew6tc0co0xZFBDlPDZMVV2yssYjt2z76aiNg/cIV+LxmW2aTIjxPg9mY1/wW
-	I59flT/EIDtNweciVKEgBFpU0rF0zn/qKx0YyCZ5OwjcypCmIncyTrKhDnAoGngdGHWkFsKpEaw
-	==
-X-Google-Smtp-Source: AGHT+IGJA+8g6wRjaGXZk+uvhQ1e9D6dzx/VUNrIZDpEGW28OcBzHMx9m6/c+9slJaL7jTXyZDCNaQ==
-X-Received: by 2002:a17:903:384f:b0:270:e595:a440 with SMTP id d9443c01a7336-297c040a72bmr17286965ad.25.1762476600328;
-        Thu, 06 Nov 2025 16:50:00 -0800 (PST)
-Received: from localhost ([2a03:2880:2ff:73::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c7409esm40775685ad.64.2025.11.06.16.49.59
+        bh=9DCFKi0aY+3dE4R9e8oh4CcU6zhkT3ckh+srhUdXmfc=;
+        b=iZTYSMKGzm2ljbk4qLZGezGdiiU/lwqnqVTMQwAQj4ZpQIShJaMoZeia6/mjSgxkvj
+         SwjLp9O86L6mghMyGgto4Kwu8TOe7cq4MCts13lnfUDjnGkjOesIG6ysGY1zXST+SqQx
+         B32Y9qMcYU0nqbjZYHiCSXR6w9o+UFYDoOt3v1U9ggG2L+zwEc/5oQglrdzsYS4qHpgq
+         neNWuBjNP+qhYsCy+Rv9GAgblOdYmV4Enni+YHVFZtrGOUpQZnyufQOXWP7LEReAQ4gk
+         J/e3wPeQWSAJG3egttQOx4viZ9jkBfZ5ArNtBl7xa7UiwVgyplGNW3ugZWiWFtZat/4Y
+         ZS4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXOoqHus3/6noiKNRANJyWDEBAWfkHYoSBOFNpk2pV6HTnTeeWbGPd7fPoQBAuoj3EUz9Xhy3HPG4F1jU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQCgqsmg+WraecH7i+ZtEH5n30hkQH52Tixx0wxYDkVdqm6nYp
+	/66z3ZPxrphzdOIK50XOQ6xh6eOPYv5TQ1BVUB1WcdizCWH+YfaQ8HO1
+X-Gm-Gg: ASbGnctZ6GkKgQM5QWyD+yoyr5bMtOXO5uFsAZ1tOWnzs001B3Z8sRgdqk3Eh89Q01z
+	GmTwxgJn+djCKA12+9pC1LWT/Krkg+ky6O+e+shE5YtWzfSYld2FhFnLaa4nTz4Nicvgm4dS31S
+	fdQycVx6lZ0W2EJ9JqwZNva404t//56U5TdtsDdaQq5EfxzeTtK/qKchZAYGZQkH/md2GQKmDRN
+	0M7nmfh6i069obAZLgrC7eLk5CYlJoOqENZD6VFKTmEfgRUoXwgqB1OMPqYC9kF9OTq/0VdOOBO
+	mr6M11KT3WAHFIo4/SBaPi/SByXnAp1DA5T+13iZZKd8FmvtS9eAZQomFAQ5fMKrKk8C9s0zIce
+	mVYrmq4YjgDNW6JMkBcBbD6MWFGpLi0FnQM9bwEVxIaZGp/Q/xGeXbfnZnculdvgQ92Gvr5oL
+X-Google-Smtp-Source: AGHT+IGEV5/i8frm9hdbKMaepp45D3BIIaGPeZxpCw61DZpaDradXH7/QyynY840Xwr3dtOtnTjxPg==
+X-Received: by 2002:a17:903:943:b0:295:82d0:9ba2 with SMTP id d9443c01a7336-297c0389dd7mr18651925ad.1.1762476601515;
+        Thu, 06 Nov 2025 16:50:01 -0800 (PST)
+Received: from localhost ([2a03:2880:2ff:5::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ccec04sm40921705ad.102.2025.11.06.16.50.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 06 Nov 2025 16:50:00 -0800 (PST)
 From: Bobby Eshleman <bobbyeshleman@gmail.com>
-Date: Thu, 06 Nov 2025 16:49:53 -0800
-Subject: [PATCH net-next v3 09/11] selftests/vsock: add 1.37 to tested
- virtme-ng versions
+Date: Thu, 06 Nov 2025 16:49:54 -0800
+Subject: [PATCH net-next v3 10/11] selftests/vsock: add vsock_loopback
+ module loading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,45 +84,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251106-vsock-selftests-fixes-and-improvements-v3-9-519372e8a07b@meta.com>
+Message-Id: <20251106-vsock-selftests-fixes-and-improvements-v3-10-519372e8a07b@meta.com>
 References: <20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com>
 In-Reply-To: <20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com>
 To: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>
 Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bobby Eshleman <bobbyeshleman@meta.com>, Simon Horman <horms@kernel.org>
+ Bobby Eshleman <bobbyeshleman@meta.com>
 X-Mailer: b4 0.14.3
 
 From: Bobby Eshleman <bobbyeshleman@meta.com>
 
-Testing with 1.37 shows all tests passing but emits the warning:
+Add vsock_loopback module loading to the loopback test so that vmtest.sh
+can be used for kernels built with loopback as a module.
 
-warning: vng version 'virtme-ng 1.37' has not been tested and may not function properly.
-	The following versions have been tested: 1.33 1.36
+This is not technically a fix as kselftest expects loopback to be
+built-in already (defined in selftests/vsock/config). This is useful
+only for using vmtest.sh outside of kselftest.
 
-This patch adds 1.37 to the virtme-ng versions to get rid of the above
-warning.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
 Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 ---
- tools/testing/selftests/vsock/vmtest.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/vsock/vmtest.sh | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
-index 7962bc40d055..a5c33b475a39 100755
+index a5c33b475a39..cde048bd7fe6 100755
 --- a/tools/testing/selftests/vsock/vmtest.sh
 +++ b/tools/testing/selftests/vsock/vmtest.sh
-@@ -170,7 +170,7 @@ check_vng() {
- 	local version
- 	local ok
+@@ -463,6 +463,8 @@ test_vm_client_host_server() {
+ test_vm_loopback() {
+ 	local port=60000 # non-forwarded local port
  
--	tested_versions=("1.33" "1.36")
-+	tested_versions=("1.33" "1.36" "1.37")
- 	version="$(vng --version)"
- 
- 	ok=0
++	vm_ssh -- modprobe vsock_loopback &> /dev/null || :
++
+ 	if ! vm_vsock_test "server" 1 "${port}"; then
+ 		return "${KSFT_FAIL}"
+ 	fi
 
 -- 
 2.47.3
