@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-890185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A11C3F6BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:27:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747D7C3F6D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A10F4ED496
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:27:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FDFF4E9BB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCC0305065;
-	Fri,  7 Nov 2025 10:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430BF305071;
+	Fri,  7 Nov 2025 10:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rftim6RO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="LTXY4niJ"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F1F21D3F8;
-	Fri,  7 Nov 2025 10:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EE9302153
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511244; cv=none; b=Thjpl4P1y5HB6T2ak2b3OEqFp3hHSglZ7zgNtyWOUPSrnnBHew0+DKtezoyKQrWmpWnIgqes0Gm72wAdpOAexz9DYR21olcUUGzekrKUY2ybyCL/5ZnFUPbEhYCe+a4jv3t7Gvcj0mo2T3iv/Kdm9JM1ApJKrSZ/j6pIjvvfjdI=
+	t=1762511278; cv=none; b=dwDOv+rkJcaCI5V6GHgnMWMms/5cEe+hZLn/+IOV0rRnsuuNIeohDFzWVVmxVnecz9PajyJxdg+9xWlGbwne52EOHN9abznDdQCm6ShEUKs9+GhKKyvQ5rHFGj/CmPX7EAiu8IMopq7Kdyi9UkV4+SnsOJWHhccCAYIwJudBNaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511244; c=relaxed/simple;
-	bh=Gnt42O9rhYijO4KUfbQ9JnF/NlAmgpbQr2e14VAYYvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S2/Ll/7LN71z4xG2vyNLqu0LpOWbgJA2AHoDE1ni64i0CWJJh3iIvSNVl2dFTGB/fJcEsyI3e7giDRdJv0a2ikKC+U8Dx8IWxYhUcYr/+Fk+9m/efbusgD/EHII3ua4MJvcV6XtuT0lQD5NFeRtiwZ6OKFR8mE/TC0un3WY38lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rftim6RO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2834FC19421;
-	Fri,  7 Nov 2025 10:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762511243;
-	bh=Gnt42O9rhYijO4KUfbQ9JnF/NlAmgpbQr2e14VAYYvU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rftim6ROXWpzJBZgVSz7zVyo94O04XFude0SiLMqtdwZRJ1Ij/wpPWMIzySd6CMed
-	 C0ZPZnrnGiQhGB6BqvFZ1mKxH90m0CJ2+CXC+C2K2JoL4QE5+28eaBdBHGC/8ioCy+
-	 ddEbkATVtPf+gcW3J6cE7KI+FXuW5d+y4HnjLa21c+uZ4fVLC1SD9f18gu9fCy4uoF
-	 bwRzifCR0iFL9lq5mrDBvZcFirSim14qFqVB3pfCBHABQliJPyyG8A8QdmP4TyTHef
-	 Uo3lYvnHbnA8uVXlxEMZhcmsnrM3XCnAnkdv0RBC8hyBkSZndAwaEKYE3wxWjbWqX/
-	 CLWgj8ZjhAmyg==
-Date: Fri, 7 Nov 2025 07:27:18 -0300
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Akira Yokosawa <akiyks@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Jani
- Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v3 0/8] Collect documentation-related tools under
- /tools/docs
-Message-ID: <20251107072718.36bbda53@sal.lan>
-In-Reply-To: <87h5visjn5.fsf@trenco.lwn.net>
-References: <20251024200834.20644-1-corbet@lwn.net>
-	<d3f4c7ee-6351-4c6f-ae93-f423245c4c9e@gmail.com>
-	<20251026073405.0672c9dd@sal.lan>
-	<874irkp97o.fsf@trenco.lwn.net>
-	<87h5visjn5.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1762511278; c=relaxed/simple;
+	bh=TP2dy+fVEjwce+7ZoFimG80olGzbpEy03H4vsRCTukg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=K+Y6+cADSsH2bRLoboHSxaMvRssV3XExXGUJfb3XdJ1puSwlnR0GOwk7Btx+fV5opuP3wn8pgwSPi0+0eQzjC8HFooutkI+12ohZ26LNo0FFhcTqNVpfuHqjWDpZZZaqpM46g+uB7nakh61wIK7EYeltjvMTFRR43KrMjlv5KbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=LTXY4niJ; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1762511271;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WXxxLdb7XheOy75RFTu6qpzQ1CR6/qzHUiLBzTJbIfo=;
+	b=LTXY4niJ2Q4v9blFZDDIDMhmT6YuANss37XVrUPjaWkBRYbGPvukGIrKWMjfMtjCz9X4y2
+	D0icX131qTv+kScD53gosbMyEh9nKGD7IdwIhnbkx9kmiVcrc3fXJVV8w0StZO3YlSuV6u
+	N0fDkWwwzBQPhuNam3hUStygGtLEykiDTBETx/DGwquha8F2AIUK55iJQQjrfXkvH8ri19
+	JWvm9c3kuu8nOS8c0V9jSfOMNKS9NziiYCuireCSED3VE6TV87pkiPaoZ/tU7QArHk1qe1
+	UkRkKnx8n4UE05b8wzlOpUbvsSK+LAJmaMEErMTaPXGlZ7HCyBphXEv2Ab2MQw==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 07 Nov 2025 11:27:45 +0100
+Message-Id: <DE2E3LND1O81.25N3JM01890FT@cknow-tech.com>
+Cc: "Bjorn Helgaas" <helgaas@kernel.org>,
+ <linux-rockchip@lists.infradead.org>, "Shawn Lin"
+ <shawn.lin@rock-chips.com>, "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Manivannan
+ Sadhasivam" <mani@kernel.org>, "Rob Herring" <robh@kernel.org>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, "Heiko Stuebner" <heiko@sntech.de>,
+ <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Johan Jonker" <jbx6244@gmail.com>
+Subject: Re: [RFC PATCH 2/2] PCI: rockchip-host: drop wait on PERST# toggle
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+To: "Geraldo Nascimento" <geraldogabriel@gmail.com>
+References: <d3d0c3a387ff461e62bbd66a0bde654a9a17761e.1762150971.git.geraldogabriel@gmail.com> <20251103181038.GA1814635@bhelgaas> <aQrKtFT0ldc70gKj@geday> <DE0N4LA8MOJD.236O12UZ3I3C4@cknow-tech.com> <aQu_-JDy7qqeviUm@geday>
+In-Reply-To: <aQu_-JDy7qqeviUm@geday>
+X-Migadu-Flow: FLOW_OUT
 
-Em Tue, 28 Oct 2025 17:15:26 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+Hi Geraldo,
 
-> Jonathan Corbet <corbet@lwn.net> writes:
-> 
-> >> 3. change the core of the logic to be something like:
-> >> 
-> >> 	# kerneldoc_bin = env.config.kerneldoc_bin
-> >> 	kerneldoc_bin = os.environ.get("KERNELDOC")
-> >> 
-> >> 	if not kerneldoc_bin:
-> >> 	   out_style = RestFormat()
-> >> 	   kfiles = KernelFiles(out_style=out_style, logger=logger)
-> >> 	else:
-> >> 	    print(f"Generating C documentation by running {kerneldoc_bin} binary")
-> >> 
-> >>    this would still allow using KERNELDOC to point to a binary
-> >>    that will handle C files executed as a separate process.  
-> >
-> > This seems like an obvious improvement, and one that, perhaps, should go
-> > in ahead of my current series in the perhaps vain hope that we're
-> > finally getting to the end of the list of things I can find to break...
-> >
-> > I can send a patch around in the next couple of days if you don't beat
-> > me to it.  
-> 
-> So I have that change working just fine ... only one problem.
-> 
-> For this to work, we have to take out the definition of KERNELDOC in the
-> top-level Makefile, otherwise we'll never go the import path.  But there
-> are a few other Makefiles, mostly in the DRM area, that need that
-> definition.
+On Wed Nov 5, 2025 at 10:22 PM CET, Geraldo Nascimento wrote:
+> On Wed, Nov 05, 2025 at 10:06:53AM +0100, Diederik de Haas wrote:
+>> I have a Samsung PM981 (without the 'a') and AFAICT it works fine.
+>> I had noticed that the PERST# (pinctrl) was missing, but 'ep-gpios'
+>> was/is new to me and I hadn't had time to research that properly yet.
+>> Good to see you already found it yourself :-)
+>
+> Would you mind testing the following DT change to make sure your PM981
+> continues to work fine?
 
-True, DRM makefiles run kernel-doc to check for warnings within the
-DRM subsystem. 
+I just learned the the PCIe system on rk3399 is indeed different from
+the systems where I use it with (rk3568 & rk3588). And 'ep-gpios' is
+only used with rk3399 based devices (in the Rockchip dts tree), which
+explains why I hadn't seen that before.
+Which in turn means I can't test your proposed change.
 
->  So I have the docs build working, but I've broken other
-> things, and I think people are getting tired of me breaking things.
-> 
-> Possible solutions:
-> 
-> - Add a new FORCE_KDOC environment variable that is used instead of
->   KERNELDOC to set the program to run in the docs build.
+I guess I was triggered by RFC patch 2 which said 'a known quirky
+device' while my Samsung PM981's are working fine ... but with DW based
+IP. You did specify in your cover letter the connection with Rockchip
+PCI IP, which apparently can make a (lot of?) difference.
+Me finding the PERST# pinctrl in a few minutes and we finding
+improvements in RockPro64's PCI 'config' recently, indicated to me that
+a new look into the dts definition may be warranted, before changing
+``drivers/pci/controller/pcie-rockchip-host.c`` for everyone.
 
-Works for me.
+Cheers,
+  Diederik
 
-> - Keep the current logic that special-cases setting KERNELDOC to
->   scripts/kernel-doc.py and really runs in the imported mode in that
->   case.
+> Thank you,
+> Geraldo Nascimento
+>
+> ---
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi b/arch=
+/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+> index aa70776e898a..b3d19dce539f 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+> @@ -383,7 +383,7 @@ &pcie_phy {
+>  };
+> =20
+>  &pcie0 {
+> -	ep-gpios =3D <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
+> +	ep-gpios =3D <&gpio0 RK_PB4 (GPIO_ACTIVE_HIGH | GPIO_SINGLE_ENDED)>;
+>  	num-lanes =3D <4>;
+>  	pinctrl-0 =3D <&pcie_clkreqnb_cpm>;
+>  	pinctrl-names =3D "default";
 
-Not sure if I got what you meant. Do you mean not running the classes
-but always run exec() syscall? This will likely affect build time,
-and prevent further speedup optimizations. It will also duplicate
-warnings if we drop the output filter logic for warnings.
-
-> 
-> - Go into retirement and let it be somebody else's problem
-> 
-> Anybody have any other great ideas?
-> 
-> Thanks,
-> 
-> jon
 
