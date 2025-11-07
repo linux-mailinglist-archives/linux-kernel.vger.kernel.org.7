@@ -1,325 +1,214 @@
-Return-Path: <linux-kernel+bounces-890664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FB3C409CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:35:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C172C409BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE251A44732
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:36:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F11A4F1521
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6318332E13C;
-	Fri,  7 Nov 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38FD32B9BA;
+	Fri,  7 Nov 2025 15:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MEq4rgTh"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013038.outbound.protection.outlook.com [40.107.162.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBjXHOYy"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0100832D45C;
-	Fri,  7 Nov 2025 15:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762529719; cv=fail; b=ErlxxXU1XYy5E8gXeCNL4x48LyGhozSs56R/k2iEQ1SI2g/xlXJ12eqjHI88Cyufyjnbid61hyWtHuyLgirUfCxziU6RDoGq3+MFciswZH6l5ZZFtJAfPb8jixhEIpfYNqMVaq6J73matQEHGQPEMHmm3UOe9VTFovLB70YkG28=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762529719; c=relaxed/simple;
-	bh=50hXVWS2cnKWlIdkes7/7HdouFNDbOoicEPEa7rrWgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Rhh8lZ+muCn2QX2KrY5EjoCv/piRaEJ5aRSI/XJlFvB7fCrOFjyo6UKjKtPLO8jcdtPUaMlISarCi0MV1f7W/T25ZlFIxPmtvKnPxHKNPFbM8RRSsJZKfjmywv/+weyTrnI1I3m0hwoPEwveO8zdKWwdN4TwSZTY4YPhMgHUpNk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MEq4rgTh; arc=fail smtp.client-ip=40.107.162.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GxYgbaWsBffjhAKxZvEbIngCcQrCYzQisOsWVwQffPSIYMFGEz4wDztPXmzqka8YGx2AOktCNQ74qolDR6dAjzdXSNRjxXFvTQw8ehTmHAV0HnzLmxyV0YD6K/SwrhgANP4oPfZcs4PahDmwZvLmnzVYzTv50HMHXiZ9qcv+OMSQtkAfvFyuvvAWNnJnzPfXR8Vgz44WJMuqWuAZjRMpQlTs1di8DJODN677R2Y9hdD+aOL97MKz+6/uSO+pZiMFUfEvhsGFxQVhtrnzCq6YMs5r4p30r+CScyndB5QL805vKZXy3R+8W01ZIDiRD1iXcBIcX0nx8i232P+w1T05hA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fxdY7zx2Lcq6leZZ6u+7BHY3IvlcL6bHKJEGfWYK4jg=;
- b=PZbEEY9+9cKp6lMOZfcZ3XoYJDVlJgix95vxP5Z6IgCHh2Co97mTxTj017rg8eJCk3HxR3FiJS1Ry251QIe1bPb2yUwGA5HQeClELNl+NDaq4xdhZa9NPiL5zUYYEthWVigOeMNoCpj+NiiJl+hT2XuZSUGpBn38SeKN5RfAR62bRjbJdwtDn5RY8EbfPVArQ1fOb1bLAv+RP/PNHMFn3SIf4Pr/G3H6OrHPN8x+WFd/BlZJJjNVhpFG6CRqSycrJrrXtMzaOTbjentaYy1/2T9OpH+8CirK4iyDSABnLkseX9wo7KpT1CwYxQRTVXHZtZf17th09R0EO+sDcEQqjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fxdY7zx2Lcq6leZZ6u+7BHY3IvlcL6bHKJEGfWYK4jg=;
- b=MEq4rgTh7ppdfkph/GGngIGaJSFdJA0zGWiLwiXoTSojPZODhhql9etQY1QJgdKON0lYQIfoZDzMM8q4hHMwBP/hikUiaHmxDN0T/ZcB4c9JJCmLzmhgho6tN9Sn/ubx4FR0eUwUxItBp/GaPFRluQ7w8mUQ7kLFm+9YpNfGfZV7BlX3BzRb9tNfmHCp+Wt1XQG+V9rm0LVbqk2Z2BNYfmx9Z9+IW+8f+UWATU7LE7eh0+W09MVUiNNrKwDe7ksSL6SOyFuCLt3WupTQxeSM+qt4W0nNil9w3v9IhVW+Cj9r9+o4GYWi59gU7P3THSNMIA9U+Z8Ui1VPcW7eA38lpQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by DU2PR04MB8678.eurprd04.prod.outlook.com (2603:10a6:10:2dd::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Fri, 7 Nov
- 2025 15:35:14 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
- 15:35:14 +0000
-Date: Fri, 7 Nov 2025 10:35:04 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: maudspierings@gocontroll.com
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 1/4] dt-bindings: backlight: Add max25014 supporty
-Message-ID: <aQ4RqNiGsngOWrV5@lizhi-Precision-Tower-5810>
-References: <20251107-max25014-v5-0-9a6aa57306bf@gocontroll.com>
- <20251107-max25014-v5-1-9a6aa57306bf@gocontroll.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-max25014-v5-1-9a6aa57306bf@gocontroll.com>
-X-ClientProxiedBy: PH7P221CA0009.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:510:32a::28) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7810E3081B5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762529714; cv=none; b=lLKZAcaV9RZXIy7w6VDGfbL6nPllr9UH/W/MehjG8mOI2K2GGGvQNQZAuYxZaV4xBiPKa3nTejr0cV+OdOq8T53otxjSLgcxhosZ5gH8yWzznmd5acDxoPOhjBMo5ea0XooU1h4Fmq5bt8faqRe7RD8bOcQMIhYjjdDUyS/rJV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762529714; c=relaxed/simple;
+	bh=7m90U4fRlmTtbaduAz/n40bucosBtxg2Nlzb525AIWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aySE8UQABkqY8Re4WtmwwXc28Sava8dq0m0dl8bRYmTOq/E2NBu4BK47oOgzqmXzohN9te8Yl01lMmEX22pX7zOFCqNMAmC2NDWPxK55Eu7OpNi6q/gIOUW7vvPgh/eJ09mG47Qj9oD/4vvTKofCwJ9gaqN5Xr7NxwEphaR7Aaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CBjXHOYy; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d71bcac45so8457537b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:35:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762529711; x=1763134511; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hg5UfzPKclS12jZ/MM0cVARNy4+o8xhJZIOiFJg4L64=;
+        b=CBjXHOYykeExWbAdUzaTfxbv+hYeDnJ4OE6LMEsIQ+j1HllMQbTwIrF1ZEDn7jXbaG
+         lDM2Uj71u4sDtbD+vGnxUFHY34GPfx3h1iW1JsUxF8CYD3oxAyQxZbZplmBquMOloTwP
+         oRPywO8QmaIR6yh3L4Hcuck/OkBnD05U+hfOWzV/GEhqkGUyL0NYgE2trQfhP5MA7DoZ
+         LQpahZrpYOlvRREH+zpYiz2WBgdGz4j+YhGxFHwBjcPyqqb7GU/IMiM7XEpmL1F9pPbk
+         H1bgVT9cQsFpWEguqlEo19mGxZbreY0161jBsEn/zIuo0yFqfn26o9DZH7p0Aat4utdn
+         RyuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762529711; x=1763134511;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hg5UfzPKclS12jZ/MM0cVARNy4+o8xhJZIOiFJg4L64=;
+        b=HtLGkqxnvV/cTJxt2l5uiHBjFKxuNxlXk1yyvy5UI46y8qng+DzZ091rn++wqCSTBL
+         7okGVtmxFuxk7pmrpoPpkF6+Z8jEAqcvQtZoIUNk5cWBWSqT0RmMsRcD1aHsv4WKdg94
+         Ll29wsyE+pol1eiK05QqoPz1NulRGBwboid8CT2gCAze0dZGb1/id6B1eF7LW8qLa+mf
+         SkgywTDQ1QuvfF+Fb6ojZHXlxBo9wyph2dc6WYIJwDIwCBo3Fjj29hXBlM6yLtfyrxSL
+         OnDHAWn9QFt4p/EPye15W0b7UmFgLLvUCvDW9w1p5Quvxv3oS6NZQdJb+U6OLAv0+zd5
+         Y3NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXfgbqmAhmwV5jkPzxyxMERUm7AfPwKmMcwsWO+/dh+37mMsLAU8oT8AaI5w34DfLuli3i55sWqyUPPrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDgERnhXY63kaTy8mluZH6Y+Esg/3BDAaZHmUUil7MvGI36kzN
+	8SR33j2mrQWHmK/il9+Dtf5LRunWgXj12bPwYeUvLkb/TN078cYMDNti
+X-Gm-Gg: ASbGnctJ/EBL09qGiskct+bbw3FWFS0FRm+heLdHMqsIiPxxrSE8/4VFozT8qvrBg7O
+	No6zeeLzBtYoa2ID86Jhs99OnB4CjawO25RfpmRzjxQtCx4M+mbyqCKTm9IKeP7GJbcdAusM4/s
+	d29H0kVX3GjOIVryC8GEaTX9NSMO9xdNUslCRgFpTQjKcq5zDEjjqWl+p0yWPTfgozLksgQ5FyP
+	ACc4idrNkgmU1sOcdgtfWngZqpqTNqkQcicGDRTe7oDOOGNvf98plQf6aZ3Bp5MCNAOLb+I8W4j
+	c3+A/8hEVmALTeIHogG1NbYKJ2rYADgFp7/mfFN9nQHT6qQKDORuYBsOWtTdsxi7/kUuSA8cM4S
+	6C5RKI5VLWdwtk/MhzRsAqtJxHfp5+oXFGdHxyGXRUkeCA+T6zBeknUUjibjVLwEc7omrWavnEl
+	fhL9GrDpcqexhdFcz2E2i6SzizXOEXL7SZVGUZ
+X-Google-Smtp-Source: AGHT+IFwUXomSgFrXOP5T+Zd2zXzyVOrxyGJXDnXPE08lhO8nln1/YwLRBm5iwzEweMUqR/HaaHj6g==
+X-Received: by 2002:a05:690c:360e:b0:786:a984:c064 with SMTP id 00721157ae682-787c53f0603mr27190947b3.35.1762529711161;
+        Fri, 07 Nov 2025 07:35:11 -0800 (PST)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:70::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787cb4db618sm4770327b3.32.2025.11.07.07.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 07:35:10 -0800 (PST)
+Date: Fri, 7 Nov 2025 07:35:09 -0800
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v3 04/11] selftests/vsock: avoid multi-VM
+ pidfile collisions with QEMU
+Message-ID: <aQ4RrcB0tzMWch1S@devvm11784.nha0.facebook.com>
+References: <20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com>
+ <20251106-vsock-selftests-fixes-and-improvements-v3-4-519372e8a07b@meta.com>
+ <aQ4LaUi9wTnEN8KA@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DU2PR04MB8678:EE_
-X-MS-Office365-Filtering-Correlation-Id: b91d1534-99a9-46e3-485d-08de1e133ec7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|19092799006|7416014|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1jjV/zd1wp+BAG12hsPVj2OBns4xmWKmaVt1g3Gt359ntAe0femZq/VJApd4?=
- =?us-ascii?Q?3M/xFgCp0sj/ANlA5ljYlnnASKEkPRuy7krO1tsv8E/V9CCrgRwDjo+A6tSa?=
- =?us-ascii?Q?P9O4rI1PbfhS81I3sD+7MruyCGVtJa0Gxag8l/XQ6CdWx7xJzED/NBJhlM0+?=
- =?us-ascii?Q?zf1XqtGJlafp8o71XtipddFb9ed7UXMimzG0u9jR8TKG8J2KKD6l0jNP9TYO?=
- =?us-ascii?Q?zUAMgZXKNY7VpjPy+L/AXfDHWMiiLXXNcB2c2QFH+ize5xCePoyPdmOsXk8o?=
- =?us-ascii?Q?ed1tXzm0OcEZMdQutGLAayawAwoE2w/ug4jbG8asIZ1gMTfgJ6wfTb2QeRCi?=
- =?us-ascii?Q?t3L0tQNKRJbMi7OJD74/DwqKn4XWfFy+F+A9OziTuy0v8jCp/ANfsTL70tkt?=
- =?us-ascii?Q?pyFe/iQH1720syvGdN6SZDzzdPY6hQwcCMRZICz+sl44ORX5bYjuUj34m+1z?=
- =?us-ascii?Q?ERZQUiwS8orogXeMGHL7/1qrbpa7xshfpYHwvUcOTsHnmXtoAV4DQXego9Kk?=
- =?us-ascii?Q?uMB0iU7N4TIQxNx9E9mcvyaRAT/N385CrqIPX5O7CCzB7Ogow0Qb0kLU8NgJ?=
- =?us-ascii?Q?eedffQKohEkdtBvVA3iZ1DMyW2A5RK4GvKOCWS8FTG4jVL8R9nv9suZfEvdv?=
- =?us-ascii?Q?6aYJVuYBtLoEnheN51glabOvqqIxRb+IJP2x4IKhn16ItiPG1aTFN4ykNpow?=
- =?us-ascii?Q?Fy7nIOcJF/R8aU9w4d2xvd53LtY3oLKFNmnTJoya0bIZ7Xxm9xpQbdMcG4OL?=
- =?us-ascii?Q?A+nW8R8T5akr1upgU3iV4fUrvLdQW7ey34c7zOnQ9YyYzUjA9froqp78ER79?=
- =?us-ascii?Q?j067vlRkMYwm6/PJpPuiiKH+M6RGUeux1ycMD9fO5GrcfaDPHBLEb8fhM2oy?=
- =?us-ascii?Q?F1j22RgVtLYc7qut3j9NqT3ZLAwnKm8QX5r1+nmpgHnD5vlPjDRe/kP4ZOKk?=
- =?us-ascii?Q?KfZiXs59m4qe78uR21qEFp58FEPigxm6mqhrOpEq+He4YhuPMaXoffEURcyC?=
- =?us-ascii?Q?TRo9yrJpOY7cY9CRXDfJUXP5H13AwmKCAlkMdKV6QdSVHD5lM5Cz3OI1cyeg?=
- =?us-ascii?Q?biY0e+MV/vOIVZuiur1S8bjPEal5OjsX+Sa99kzXiu/0uDrkFEyKkPkw0JNT?=
- =?us-ascii?Q?HZoB4c7KCEdOpANGWIDyBsVunNbgq9vNmNzQpQKBsDFIeqD0GlEQtkQ05sTg?=
- =?us-ascii?Q?sl9nWXSCLFN/wI7nH/5Y4yr4Phg3Xqvo/usmQGlvwbidRrNE5EH+Oj0fW+I+?=
- =?us-ascii?Q?N9EtoBflIlLzka/HaUgFHz//kJPeDkQxflEC2dfOy3y8quE0BlNhJGr+TRPk?=
- =?us-ascii?Q?keljw0u0VDYlOE/XZfF5V1AY+GF9mhXvbrcLV3A4Z+Ci/P1cbD3IQC1MP3DP?=
- =?us-ascii?Q?ABXIvOZg24XXLA9ESol7a6WNCN7X+KxzYwojK+MMc4+enT3OemWKvIfa1RiO?=
- =?us-ascii?Q?so+LVVtQuOGFgMZ8WlRNijeXMOJXYxvnlYVpoQZBEjDmV7uOArHJVQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(19092799006)(7416014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5yHpDm0E3kp9MZG/kEvQw+ByFUWCnpD/SLJQ//+2YgJTIqooR4e5XByiR8f0?=
- =?us-ascii?Q?kHLyWFLgnW1HAnCQQbzuLBBlUSxgOLmBEyD8vnA8tYqa82KI9yf8X2enRVuz?=
- =?us-ascii?Q?oerS5upgt50mLwgnU+WJq7EEs/+AAPlpIgUaHB0zbUEmVeKXNTmT9bNcaaKX?=
- =?us-ascii?Q?XUIvS/039ZbBNLhd+jZiJmHU/34X+nzcN2Vk7jUFvGGX9P5Tnk9C0BrbAXY6?=
- =?us-ascii?Q?29MdPSbW50UoBfQtqThF0CvESzM3LuVVNgXiea8YwsJ1MRuWcWM8tu+B5Yje?=
- =?us-ascii?Q?mw7kQJfw0uWMnyyCeq1an26D6fM5zTn7NNc6cAe7jH5uxVsWXkgUcwj145oy?=
- =?us-ascii?Q?8VYhh+u5Fb9M7yu6X3jytR+XvBTC0G+Um6517WCWwoqpHE9eA6jq1rpI28Ki?=
- =?us-ascii?Q?k79t5YVCXWCYaLcbazvYfEJ0yFGzI48/oSRRCRcwNUIrI8yk90Gf8sLZChKw?=
- =?us-ascii?Q?B10vpF/gmz9APy9DAq04cNFgYRn32w6/FmWqhY0qsOqvwq/536jOlOaeQ8F5?=
- =?us-ascii?Q?Y/f8+RUaaWKOMq3obP1KcvGhHFl7DPlJMERqAunzUwXoUv4kTSbQma9at6pB?=
- =?us-ascii?Q?buSBLGs7gHYIgrORTD6Bs32DuvecxWxzSbxmqSak2zYidehtW0V0paMvRDfE?=
- =?us-ascii?Q?syaNiUkr0bPyhV/MGGUtltNj/LNNgqh+2mQ9YU1Fm2m1e0Jr22hhP2JEjSJJ?=
- =?us-ascii?Q?LLbBYmJNP96yKtB/KUkaNcQ1+HbTQbQZrgTP3ceMBWfq5O92rdgMB4AodEXg?=
- =?us-ascii?Q?SkGrnKnGuAIfgD4Y4lrYq/AYgl9UF5q4Bxrif11hiuz//Mb50UhG7zNm92ce?=
- =?us-ascii?Q?kuT3U7sTDmYXZm5OLxEtbYg09fbKZJ+91ehkqIPh46qbNJG/ytJZvom7+yGd?=
- =?us-ascii?Q?/JUmaN59PTbUvTsku1CZ2+8btpTUmEsZnnKdc38mhzBibEqNfJc/TIBmoa+5?=
- =?us-ascii?Q?RQ9YWeZjPazeM6csXLY7ZCada4QjX1KYPBy7YeTM3BDCDYu2dpX+grV6wFIH?=
- =?us-ascii?Q?0pdSJ20iWSCwxDGpk1LoRNne73S+iwxTjt90boa/3IzdP9ql3xC6VJAPlCbu?=
- =?us-ascii?Q?m4oMdC7FGx8yHgc7CCul+DwwM3xhg3B37cbaQKqE+A9J7egy50erFtjjBUZW?=
- =?us-ascii?Q?PBfktyyyw8qozfhJXeLUv62egX3AZ9fZNFNnCQEH74tP8dxySEotQO7jjkno?=
- =?us-ascii?Q?oimfbQhf4EwMKc69kayN9qVw2/jJ+bmTLbYl+Vdl7Yq1bpVuYuAK9X7ZWi1O?=
- =?us-ascii?Q?dW2DRtDNzBvYEdn1aeJl2E18tln2V5wldvLmnt0gDZp46KyoNqrUG7D7r/6m?=
- =?us-ascii?Q?GGGzJ6b/h2Yz+y5HtsDzIlQ4gXKI81r6uRKElcyiykGgLhYQbpU2yLacxjBb?=
- =?us-ascii?Q?tT+mP68vCy2ZQK5/IKU7JRKJHgSEYkOEDooSdP0dYlXLp5vOxa6YhfNVZA7W?=
- =?us-ascii?Q?Ny3o9dc5FMKCuqsKoQ4prSW3DRweSSfKdm/oT4mg/0oDgwBDfahf57kvxSKs?=
- =?us-ascii?Q?A8ex4sHsHg7VrjjIYzYOL0sSOzzhbxW86GZgXh1f7qf3bql3UdcbjLDxyXh1?=
- =?us-ascii?Q?YXmt/8cedWSyCDzQDImpAmuJAJWj/Ek0c2xN1rej?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b91d1534-99a9-46e3-485d-08de1e133ec7
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 15:35:14.1050
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i6FxjrVkt4O6LYxbvDIz+Bn6geZHK4ShUX47ySzRizXvGgtBO1c+xZe+d1NfnLaffJhHlda3znCkFn10eeG2Kg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8678
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ4LaUi9wTnEN8KA@horms.kernel.org>
 
-On Fri, Nov 07, 2025 at 01:49:58PM +0100, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
->
-> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
-> with integrated boost controller.
->
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
->
-> ---
->
-> In the current implementation the control registers for channel 1,
-> control all channels. So only one led subnode with led-sources is
-> supported right now. If at some point the driver functionality is
-> expanded the bindings can be easily extended with it.
-> ---
->  .../bindings/leds/backlight/maxim,max25014.yaml    | 107 +++++++++++++++++++++
->  MAINTAINERS                                        |   5 +
->  2 files changed, 112 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
-> new file mode 100644
-> index 000000000000..e83723224b07
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
-> @@ -0,0 +1,107 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim max25014 backlight controller
-> +
-> +maintainers:
-> +  - Maud Spierings <maudspierings@gocontroll.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - maxim,max25014
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  enable-gpios:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-supply:
-> +    description: Regulator which controls the boost converter input rail.
-> +
-> +  pwms:
-> +    maxItems: 1
-> +
-> +  maxim,iset:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    maximum: 15
-> +    default: 11
-> +    description:
-> +      Value of the ISET field in the ISET register. This controls the current
-> +      scale of the outputs, a higher number means more current.
-> +
-> +  led@0:
-> +    type: object
-> +    description: Properties for a string of connected LEDs.
-> +    $ref: common.yaml#
-> +
-> +    properties:
-> +      reg:
-> +        const: 0
+On Fri, Nov 07, 2025 at 03:08:25PM +0000, Simon Horman wrote:
+> On Thu, Nov 06, 2025 at 04:49:48PM -0800, Bobby Eshleman wrote:
+> 
+> ...
+> 
+> > @@ -90,15 +85,19 @@ vm_ssh() {
+> >  }
+> >  
+> >  cleanup() {
+> > -	if [[ -s "${QEMU_PIDFILE}" ]]; then
+> > -		pkill -SIGTERM -F "${QEMU_PIDFILE}" > /dev/null 2>&1
+> > -	fi
+> > +	local pidfile
+> >  
+> > -	# If failure occurred during or before qemu start up, then we need
+> > -	# to clean this up ourselves.
+> > -	if [[ -e "${QEMU_PIDFILE}" ]]; then
+> > -		rm "${QEMU_PIDFILE}"
+> > -	fi
+> > +	for pidfile in "${PIDFILES[@]}"; do
+> > +		if [[ -s "${pidfile}" ]]; then
+> > +			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
+> > +		fi
+> > +
+> > +		# If failure occurred during or before qemu start up, then we need
+> > +		# to clean this up ourselves.
+> > +		if [[ -e "${pidfile}" ]]; then
+> > +			rm "${pidfile}"
+> > +		fi
+> > +	done
+> >  }
+> 
+> Hi Bobby,
+> 
+> This is completely untested, but it looks to me
+> like cleanup() could be implemented more succinctly like this.
+> 
+> cleanup() {
+> 	terminate_pidfiles "${PIDFILES[@]}"
+> }
+> 
 
-If reg is const 0, why need use led@0?
+Oh right! I reverted the deletion and completely forgot about
+terminate_pidfiles().
 
-Frank
+> >  
+> >  check_args() {
+> > @@ -188,10 +187,35 @@ handle_build() {
+> >  	popd &>/dev/null
+> >  }
+> >  
+> > +create_pidfile() {
+> > +	local pidfile
+> > +
+> > +	pidfile=$(mktemp "${PIDFILE_TEMPLATE}")
+> > +	PIDFILES+=("${pidfile}")
+> > +
+> > +	echo "${pidfile}"
+> > +}
+> > +
+> > +terminate_pidfiles() {
+> > +	local pidfile
+> > +
+> > +	for pidfile in "$@"; do
+> > +		if [[ -s "${pidfile}" ]]; then
+> > +			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
+> > +		fi
+> > +
+> > +		if [[ -e "${pidfile}" ]]; then
+> > +			rm -f "${pidfile}"
+> > +		fi
+> > +	done
+> 
+> I think it would be useful to remove $pidfile from $PIDFILES.
+> This might be easier to implement if PIDFILES was an associative array.
+> 
 
-> +
-> +      led-sources:
-> +        allOf:
-> +          - minItems: 1
-> +            maxItems: 4
-> +            items:
-> +              minimum: 0
-> +              maximum: 3
-> +            default: [0, 1, 2, 3]
-> +
-> +      default-brightness:
-> +        minimum: 0
-> +        maximum: 100
-> +        default: 50
-> +
-> +    required:
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        backlight@6f {
-> +            compatible = "maxim,max25014";
-> +            reg = <0x6f>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            enable-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-> +            interrupt-parent = <&gpio1>;
-> +            interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> +            power-supply = <&reg_backlight>;
-> +            pwms = <&pwm1>;
-> +            maxim,iset = <7>;
-> +
-> +            led@0 {
-> +                reg = <0>;
-> +                led-sources = <0 1 2 3>;
-> +                default-brightness = <50>;
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 58c7e3f678d8..606ce086f758 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15261,6 +15261,11 @@ F:	Documentation/userspace-api/media/drivers/max2175.rst
->  F:	drivers/media/i2c/max2175*
->  F:	include/uapi/linux/max2175.h
->
-> +MAX25014 BACKLIGHT DRIVER
-> +M:	Maud Spierings <maudspierings@gocontroll.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
-> +
->  MAX31335 RTC DRIVER
->  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
->  L:	linux-rtc@vger.kernel.org
->
-> --
-> 2.51.2
->
->
+Using an associative makes sense, this way we can trim the set.
+
+> > +}
+> > +
+> 
+> ...
+> 
+> > @@ -498,7 +529,8 @@ handle_build
+> >  echo "1..${#ARGS[@]}"
+> >  
+> >  log_host "Booting up VM"
+> > -vm_start
+> > +pidfile="$(create_pidfile)"
+> > +vm_start "${pidfile}"
+> >  vm_wait_for_ssh
+> >  log_host "VM booted up"
+> >  
+> 
+> > @@ -522,6 +554,8 @@ for arg in "${ARGS[@]}"; do
+> >  	cnt_total=$(( cnt_total + 1 ))
+> >  done
+> >  
+> > +terminate_pidfiles "${pidfile}"
+> 
+> I am assuming that there will be more calls to terminate_pidfiles
+> in subsequent patch-sets.
+> 
+> Else I think terminate_pidfiles can be removed
+> and instead we can rely on cleanup().
+> 
+
+Indeed, later patches will use terminate_pidfiles() in between spin up /
+shut down of multiple VMs.
+
+
+Thanks again, will incorporate your feedback in the next!
+
+Best,
+Bobby
 
