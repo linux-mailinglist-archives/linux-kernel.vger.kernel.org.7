@@ -1,270 +1,193 @@
-Return-Path: <linux-kernel+bounces-889884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4427DC3EC29
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:32:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54C3C3EC3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D353B124F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D2D3B00DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D556C307487;
-	Fri,  7 Nov 2025 07:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2D0UnXs"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF353093BF;
+	Fri,  7 Nov 2025 07:31:32 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA542853F7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CB12D3A6D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500652; cv=none; b=s4+brVMurPZcFpkfJuopr/mh+1BxP7tCwPXtXAQ+a2eppsFTQIM42343bTPYDJC9Ygo4DsyAkDwfQrr3QiBfnec/NQH6tFZAY5q0jf0ju+314vhVdB3Xgw+tT/KEkoVS6h3jn6au7qq4ewt8kcBjMY1IO0UYtPDszaSf4uCJEsc=
+	t=1762500691; cv=none; b=SbJxuz7rfHoug6+NtY3v7E0nIT85MFjMbQ2xu0TVewhe+DAwsGZAjOcvywYVClsZamB4/XSBfbd7nfzB+gipQTmty3PMRK0WNZI4iR7Cb6YHMOMu73Y7nhSD/XGK6qaaMcFP8yKXwOq/xZ6VcnVbE7auZ8jtzK3XDLIwk/6t+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762500652; c=relaxed/simple;
-	bh=f35DbpZpPqMDzZoRIqs7Osgf1PM69yqyjWw/dglp96Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ifzP+daw+HsvjMdofRBRdTRSEhEyL2wNhAehjmVghP6rniHjdpVclzjDEYOBUwK3Ox6NrFO1zhP3SJ87bb+BZIfQBYpsy3mAO1ajIvj1A7NN/wyid7tE6OJL1c+4KpHAAbOg2f4L2+hjQbTJlc+EvdOaHtJeq1pjxKzR6E8uDzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2D0UnXs; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-378cffe5e1aso4369971fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:30:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762500649; x=1763105449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4M6PwHQesX19scpYMiKXrQJ0jxJ0uMLe/ADSgAzPkxs=;
-        b=F2D0UnXsBgpmz9PNRt+ECrBo4w7erhNmC97oPwsP4TrPXiT14dHqq1/xwaj+v/WXO3
-         tHFp84/rByrCXxBUz7fDOdtbDrlP6pOBRliRMEUotcj48DiJN/1ogIHVQ4+FSWwYzMPn
-         zPKQ/2396+5I0b9LDc83IOETtz5ZsdI5gyhM1K+yTuYYFpCRnP5S7Yor2h0zEDlUZ/6I
-         eMm8300+YF5g5uhzKCDZWo4SdIWgHN2v+QlSHfowa4PL/VVKSUS6BI46l0rMy2a6jYiB
-         pMZEnOZmACDqwa1ng5wPhfwYHuPxHzpKJA9PI4eKEhzw6nxG2PEfDgcPYByafJCw7r/7
-         2vzQ==
+	s=arc-20240116; t=1762500691; c=relaxed/simple;
+	bh=XjB0m3lhpum+kNFv1N6CbMC3QAg71MXUb9/tvtzc4sY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aL74PyspnmQAiDtvGlJDlKuym/Ctk/qR3iw++bP69XZ0byXamRkHaR5IylcnCCYnjNA9W4Y+rvJJInDY6rbt36ZKyeM9VSqW8xlbVhbNJnVr5waA+RGx4FNqxWuMeEL2Rn+FKfFy+ZzGxLwbCvYFGhvpmnTTQ8GZBhoN/C90Tm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-94866b3853cso40737539f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:31:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762500649; x=1763105449;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4M6PwHQesX19scpYMiKXrQJ0jxJ0uMLe/ADSgAzPkxs=;
-        b=mDJaJ8CUWoN4Iifpmqm8aN9306XeYw15yZZOAAU0gfjsPGuo0u3Z+NP5UA5E5MMK7j
-         QGMWjB8o43ieV7ue1bVRxcFIa1LWU5UCqLI3ulVCIfk3s5raifndSP0CE1VCpBtKCucH
-         56gDj4NHdpeyWZ3/anSrvLffHwENQAeVTqzfC/to+BDKe2TRGiPtoPlo3WnFgo/oK0yZ
-         H1HZxFq4EGbc6+CEKc5Bbuvv3jPxlmuPG2oDQw12w26GO7fGxzXc2uBW1Y516um9Ti4L
-         3ex233RWea1ucq3ECmdM2yrFRJuLuqT7lKMoDqkf5OvlUsesrX/n0xHTl7cj55+v5M2E
-         3uOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXV5WrUlitLlNwhEzbMJZUbltEyU4lxDMCc7uwDG+b7Pe4gxe/e9emlTvaNHPVsSGpIh07wES1TFpq3wy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQhNbv3raEErZeUDCxb8g2iX7mZY+elr5BNG0H0tPg7zvxYMzn
-	WhigxhOFhm4BuAF0ctY8O8PF25Qc6f7rHEGSvltHgYao/aKFGoDBp/yW
-X-Gm-Gg: ASbGnctJHKiBWiViLSbEqsr1z51QVF6NauUXSLaYn4rF9Z7Q/gnXzp7YzYwni/0GKRW
-	IiwfNXdTZS+3kmbdfbuur0wXWz+K6+wcCyQ/hgPG5UIT1APCXe7dg4z/pE/YRiJcBQOUq5gpvcf
-	ggJ4wpy9k5cHRwxvSsWrNnA2hjOAfH9C3leSAArzsU2xXfWHSVvROYqtKtqZ3xK8FueX4TiEhta
-	kP+bu3CkvtSQvZyApp6hwas747T9CTfksORrRmmSNmdR+vhSdGZG/d7wbbr9YSnVqvNIQFEoXPj
-	ooJMWhEktSTxfWvp6mLlvXa1rcxXKZJhRYlXOEFIUSNWPDotiTZVPJBFNG6NnNCrzulnKMHfMtp
-	zf2kUP9dPchB3vfY1G5CCXs/+p0SY2WuG7TdMXZKL2aM3uKd197NjE5Irn3EvUcwf7C4Ks6O4VO
-	lXsAFUKtcycglXVAkA
-X-Google-Smtp-Source: AGHT+IEM6jJW7S0zoNmv87VOalpMKNhTySFhZbseoiHIzvl3ywyxFEtICW2fvawnuW/rzdA1JD3pIA==
-X-Received: by 2002:a05:651c:4194:b0:37a:2e2a:da6f with SMTP id 38308e7fff4ca-37a742ce607mr4452981fa.44.1762500648643;
-        Thu, 06 Nov 2025 23:30:48 -0800 (PST)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a013bd8sm1284123e87.1.2025.11.06.23.30.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 23:30:47 -0800 (PST)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: mika.westerberg@linux.intel.com
-Cc: a.shimko.dev@gmail.com,
-	andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	jsd@semihalf.com,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v3] i2c: designware: Replace magic numbers with named constants
-Date: Fri,  7 Nov 2025 10:30:39 +0300
-Message-ID: <20251107073039.2646048-1-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202511071402.qHS6LLi9-lkp@intel.com>
-References: <202511071402.qHS6LLi9-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1762500688; x=1763105488;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aHi0GSDWw+DFPzwz+Hy0dteO68RU8wWgdmOIcy+/qFc=;
+        b=jK0Cx7z0bPvMG8K1X18b1r5w0N2Yr0i83Cf9VouM6aZdWXWtAtl8BvNEf3Th4EDOOU
+         Q3KKQvxNpxS/l/Uioh078TW5dV0E1+FfnLxtobcxs5gdaJ1W655KGr9sm+fHnu79+Gck
+         JM0T1dLC2nLNfXTTeE6/Pbuy5UEA3tKHRorSWr61uGGBKDpB57A3+IpyovR6I5OpEY+L
+         Fp6aRYo7LPegiyXqyxTultxIc7yo8OYg3GbN95aUXjcCoVmrui1hP5E3NnOf++KJst/J
+         s+issndqIuFwnrmLKHDejFF48Ask6HPIPU9IJxypPgZ6Hp4RzwTQ/ryP7rp2nlcUP+vw
+         MbWw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+I/wvZEoNOs4HdaJlGdaf7LZiwOGYObG3V5P80JLAP6kCpzglpWGhVtJDdAM9RjqwsXb3MQvkubAEbGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ0orHog/xs41yxiuyXMg5ABBMYLJCWZptPnhCQ6gFyHqHVDVA
+	3lOqSyVFQKno39C72ys120im+AQmvZyteqYWL7VdPpZP17a32xWe7HNuoFwgVWjL1GWGLwnDuM7
+	kokgRnnuRZrWfaXVMbxtkO8E8wQ47zeT31Fv3GdCEdXx8bSCBdq8cILaiL0I=
+X-Google-Smtp-Source: AGHT+IE8e6TZwBMJKL7y90nEbznBhuBiS/GtlVHJKR1ml/b1KG3VAoMOrpAzwKfMju3KxqSIT3PgxZH9QyyiaDLlAFUqlAPy4kZp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3486:b0:433:3315:e9ee with SMTP id
+ e9e14a558f8ab-4335f41dccamr34232925ab.10.1762500687896; Thu, 06 Nov 2025
+ 23:31:27 -0800 (PST)
+Date: Thu, 06 Nov 2025 23:31:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690da04f.a70a0220.22f260.0028.GAE@google.com>
+Subject: [syzbot] [net?] [mm?] INFO: rcu detected stall in rescuer_thread (2)
+From: syzbot <syzbot+d5f7a5097c24c7c2dbbb@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Replace various magic numbers with properly named constants to improve
-code readability and maintainability. This includes constants for
-register access, timing adjustments, timeouts, FIFO parameters,
-and default values.
+Hello,
 
-The change makes the code more self-documenting without altering any
-functionality.
+syzbot found the following issue on:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202511071402.qHS6LLi9-lkp@intel.com/
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+HEAD commit:    b1d9154878ce Merge branch 'net-mlx5e-shampo-fixes-for-64kb..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=15cc5bcd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=d5f7a5097c24c7c2dbbb
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134820b4580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bef31d61ceb8/disk-b1d91548.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/67c31be6c377/vmlinux-b1d91548.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7b9f62743e14/bzImage-b1d91548.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d5f7a5097c24c7c2dbbb@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	(detected by 0, t=12991 jiffies, g=11121, q=1246 ncpus=2)
+rcu: All QSes seen, last rcu_preempt kthread activity 3112 (4294972946-4294969834), jiffies_till_next_fqs=1, root ->qsmask 0x0
+rcu: rcu_preempt kthread starved for 3112 jiffies! g11121 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:27288 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00080000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7026
+ schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
+ rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
+ rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 6005 Comm: kworker/R-wg-cr Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: wg-crypt-wg2 wg_packet_tx_worker
+RIP: 0010:rb_erase+0xb/0xe60 lib/rbtree.c:441
+Code: ca 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 41 57 41 56 41 55 <41> 54 53 48 83 ec 28 48 89 f3 49 89 fd 48 b9 00 00 00 00 00 fc ff
+RSP: 0018:ffffc90000a08ce0 EFLAGS: 00000046
+RAX: 0000000000000000 RBX: ffff8880b8927c90 RCX: ffff88801f7a5ac0
+RDX: 0000000000010000 RSI: ffff8880b8927c90 RDI: ffff88807de66340
+RBP: 1ffff1100fbccc68 R08: ffffffff8f7cdc77 R09: 1ffffffff1ef9b8e
+R10: dffffc0000000000 R11: fffffbfff1ef9b8f R12: ffff8880b8927c98
+R13: dffffc0000000000 R14: ffff88807de66340 R15: 1ffff11017124f93
+FS:  0000000000000000(0000) GS:ffff88812623c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056323a462a38 CR3: 000000002891e000 CR4: 00000000003526f0
+Call Trace:
+ <IRQ>
+ rb_erase_cached include/linux/rbtree.h:126 [inline]
+ timerqueue_del+0xae/0x100 lib/timerqueue.c:57
+ __remove_hrtimer kernel/time/hrtimer.c:1114 [inline]
+ __run_hrtimer kernel/time/hrtimer.c:1757 [inline]
+ __hrtimer_run_queues+0x364/0xc60 kernel/time/hrtimer.c:1841
+ hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
+ __sysvec_apic_timer_interrupt+0x10b/0x410 arch/x86/kernel/apic/apic.c:1058
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
+ sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
+RIP: 0010:queued_write_lock_slowpath+0x125/0x260 kernel/locking/qrwlock.c:85
+Code: 00 01 00 00 43 0f b6 04 27 84 c0 74 35 89 d9 80 e1 07 80 c1 03 38 c1 7c 29 48 89 df e8 e4 b8 dc f6 eb 1f f3 90 43 0f b6 04 27 <84> c0 74 14 89 d9 80 e1 07 80 c1 03 38 c1 7c 08 48 89 df e8 c3 b8
+RSP: 0018:ffffc90003337300 EFLAGS: 00000206
+RAX: 0000000000000000 RBX: ffffffff8f3dd900 RCX: ffffffff8b490058
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffffffff8f3dd900
+RBP: ffffc900033373b0 R08: ffffffff8f3dd903 R09: 1ffffffff1e7bb20
+R10: dffffc0000000000 R11: fffffbfff1e7bb21 R12: dffffc0000000000
+R13: 1ffff92000666e64 R14: ffffc90003337350 R15: 1ffffffff1e7bb20
+ queued_write_lock include/asm-generic/qrwlock.h:101 [inline]
+ do_raw_write_lock+0x1f2/0x260 kernel/locking/spinlock_debug.c:211
+ ___neigh_create+0xe81/0x2260 net/core/neighbour.c:690
+ ip6_finish_output2+0x1175/0x1480 net/ipv6/ip6_output.c:128
+ NF_HOOK_COND include/linux/netfilter.h:307 [inline]
+ ip6_output+0x340/0x550 net/ipv6/ip6_output.c:247
+ ip6tunnel_xmit include/net/ip6_tunnel.h:162 [inline]
+ udp_tunnel6_xmit_skb+0x68d/0xb30 net/ipv6/ip6_udp_tunnel.c:112
+ send6+0x5ac/0x8d0 drivers/net/wireguard/socket.c:152
+ wg_socket_send_skb_to_peer+0x111/0x1d0 drivers/net/wireguard/socket.c:178
+ wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
+ wg_packet_tx_worker+0x1c8/0x7c0 drivers/net/wireguard/send.c:276
+ process_one_work kernel/workqueue.c:3263 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+ rescuer_thread+0x53c/0xdd0 kernel/workqueue.c:3523
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
 ---
-Hello
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---
-Best regards,
-Artem Shimko
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-ChangeLog:
-  v1:
-    * https://lore.kernel.org/all/20251105161845.2535367-1-a.shimko.dev@gmail.com/T/#u
-  v2:
-    * Move register-related constants to i2c-designware-core.h
-    * Remove unnecessary comments to reduce clutter  
-    * Keep only essential timeouts and default parameters in .c file
-    * Use FIELD_GET() for FIFO depth extraction as suggested
-  v3:
-    * Add missing include for linux/bitfield.h
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
- drivers/i2c/busses/i2c-designware-common.c | 33 ++++++++++++++--------
- drivers/i2c/busses/i2c-designware-core.h   | 13 +++++++++
- 2 files changed, 35 insertions(+), 11 deletions(-)
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index 5b1e8f74c4ac..3bc55068da03 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -12,6 +12,7 @@
- #define DEFAULT_SYMBOL_NAMESPACE	"I2C_DW_COMMON"
- 
- #include <linux/acpi.h>
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -34,6 +35,14 @@
- 
- #include "i2c-designware-core.h"
- 
-+#define DW_IC_DEFAULT_BUS_CAPACITANCE_PF	100
-+
-+#define DW_IC_ABORT_TIMEOUT_US			10
-+#define DW_IC_ABORT_TOTAL_TIMEOUT_US		100
-+
-+#define DW_IC_BUSY_POLL_TIMEOUT_US		1100
-+#define DW_IC_BUSY_TOTAL_TIMEOUT_US		20000
-+
- static const char *const abort_sources[] = {
- 	[ABRT_7B_ADDR_NOACK] =
- 		"slave address not acknowledged (7bit mode)",
-@@ -106,7 +115,7 @@ static int dw_reg_read_word(void *context, unsigned int reg, unsigned int *val)
- 	struct dw_i2c_dev *dev = context;
- 
- 	*val = readw(dev->base + reg) |
--		(readw(dev->base + reg + 2) << 16);
-+		(readw(dev->base + reg + DW_IC_REG_STEP_BYTES) << DW_IC_REG_WORD_SHIFT);
- 
- 	return 0;
- }
-@@ -116,7 +125,7 @@ static int dw_reg_write_word(void *context, unsigned int reg, unsigned int val)
- 	struct dw_i2c_dev *dev = context;
- 
- 	writew(val, dev->base + reg);
--	writew(val >> 16, dev->base + reg + 2);
-+	writew(val >> DW_IC_REG_WORD_SHIFT, dev->base + reg + DW_IC_REG_STEP_BYTES);
- 
- 	return 0;
- }
-@@ -165,7 +174,7 @@ int i2c_dw_init_regmap(struct dw_i2c_dev *dev)
- 	if (reg == swab32(DW_IC_COMP_TYPE_VALUE)) {
- 		map_cfg.reg_read = dw_reg_read_swab;
- 		map_cfg.reg_write = dw_reg_write_swab;
--	} else if (reg == (DW_IC_COMP_TYPE_VALUE & 0x0000ffff)) {
-+	} else if (reg == lower_16_bits(DW_IC_COMP_TYPE_VALUE)) {
- 		map_cfg.reg_read = dw_reg_read_word;
- 		map_cfg.reg_write = dw_reg_write_word;
- 	} else if (reg != DW_IC_COMP_TYPE_VALUE) {
-@@ -384,7 +393,7 @@ int i2c_dw_fw_parse_and_configure(struct dw_i2c_dev *dev)
- 	i2c_parse_fw_timings(device, t, false);
- 
- 	if (device_property_read_u32(device, "snps,bus-capacitance-pf", &dev->bus_capacitance_pF))
--		dev->bus_capacitance_pF = 100;
-+		dev->bus_capacitance_pF = DW_IC_DEFAULT_BUS_CAPACITANCE_PF;
- 
- 	dev->clk_freq_optimized = device_property_read_bool(device, "snps,clk-freq-optimized");
- 
-@@ -539,8 +548,9 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 
- 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
- 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
--					       !(enable & DW_IC_ENABLE_ABORT), 10,
--					       100);
-+					       !(enable & DW_IC_ENABLE_ABORT),
-+					       DW_IC_ABORT_TIMEOUT_US,
-+					       DW_IC_ABORT_TOTAL_TIMEOUT_US);
- 		if (ret)
- 			dev_err(dev->dev, "timeout while trying to abort current transfer\n");
- 	}
-@@ -552,7 +562,7 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 		 * in that case this test reads zero and exits the loop.
- 		 */
- 		regmap_read(dev->map, DW_IC_ENABLE_STATUS, &status);
--		if ((status & 1) == 0)
-+		if (!(status & 1))
- 			return;
- 
- 		/*
-@@ -635,7 +645,8 @@ int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
- 
- 	ret = regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
- 				       !(status & DW_IC_STATUS_ACTIVITY),
--				       1100, 20000);
-+				       DW_IC_BUSY_POLL_TIMEOUT_US,
-+				       DW_IC_BUSY_TOTAL_TIMEOUT_US);
- 	if (ret) {
- 		dev_warn(dev->dev, "timeout waiting for bus ready\n");
- 
-@@ -699,12 +710,12 @@ int i2c_dw_set_fifo_size(struct dw_i2c_dev *dev)
- 	if (ret)
- 		return ret;
- 
--	tx_fifo_depth = ((param >> 16) & 0xff) + 1;
--	rx_fifo_depth = ((param >> 8)  & 0xff) + 1;
-+	tx_fifo_depth = FIELD_GET(DW_IC_FIFO_TX_FIELD, param) + 1;
-+	rx_fifo_depth = FIELD_GET(DW_IC_FIFO_RX_FIELD, param) + 1;
- 	if (!dev->tx_fifo_depth) {
- 		dev->tx_fifo_depth = tx_fifo_depth;
- 		dev->rx_fifo_depth = rx_fifo_depth;
--	} else if (tx_fifo_depth >= 2) {
-+	} else if (tx_fifo_depth >= DW_IC_FIFO_MIN_DEPTH) {
- 		dev->tx_fifo_depth = min_t(u32, dev->tx_fifo_depth,
- 				tx_fifo_depth);
- 		dev->rx_fifo_depth = min_t(u32, dev->rx_fifo_depth,
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index 347843b4f5dd..a699953bf5ae 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -41,6 +41,19 @@
- #define DW_IC_DATA_CMD_DAT			GENMASK(7, 0)
- #define DW_IC_DATA_CMD_FIRST_DATA_BYTE		BIT(11)
- 
-+/*
-+ * Register access parameters
-+ */
-+#define DW_IC_REG_STEP_BYTES			2
-+#define DW_IC_REG_WORD_SHIFT			16
-+
-+/*
-+ * FIFO depth configuration
-+ */
-+#define DW_IC_FIFO_TX_FIELD			GENMASK(23, 16)
-+#define DW_IC_FIFO_RX_FIELD			GENMASK(15, 8)
-+#define DW_IC_FIFO_MIN_DEPTH			2
-+
- /*
-  * Registers offset
-  */
--- 
-2.43.0
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
