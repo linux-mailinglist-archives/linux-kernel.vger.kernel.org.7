@@ -1,119 +1,121 @@
-Return-Path: <linux-kernel+bounces-889810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30F0C3E976
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD63DC3E982
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBFC44E7425
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:10:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C19604E9600
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6902D594B;
-	Fri,  7 Nov 2025 06:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FAE2D5C74;
+	Fri,  7 Nov 2025 06:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfRhim6y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fwswkhzZ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6559D17A2E8;
-	Fri,  7 Nov 2025 06:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558942D063C;
+	Fri,  7 Nov 2025 06:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762495807; cv=none; b=iNhiyevmiuENg4grBxF3nVWo0Ln+kspiqZ6Bx5lJRDcd623SUpZvI6I5y5cM6KrgZANY/BwXFLW+ZD8oczVqdfHjL/UZWr8OsYELtsXUzhlulOXnvvj3eBeuUr/+RtyBfIwHASKMVNHjHSXt1VVF2QMuj6pf9VoYwqCt7dwW6hs=
+	t=1762495893; cv=none; b=NxVt/Ziu5OajhyfZdsVQhitwGVvNOhT32hJ58aOBD4oqHGmYf14wU2PbjnuKNCpsxCcdDb97DnAII4RmouhFsFghV5wjj/EEQgz86nTcqlT1Qoez2JQqEjeei1jDlhZHeXWn8aB+j1tEHOEo36m4nopcdc7HVC5/XwLVBanokds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762495807; c=relaxed/simple;
-	bh=Qw47Ypxh6hCFBJwUZNmfzHzoZf62V55gj0I8Wbneo2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vCIL/5qcgP0jsGmyjW+rTiNeHNzCphPgCsJEvrba6uEmcFvyi8ULWgGIdJeMt7yuu8TmxlyUx6f1ucoZUms79jfZe5T2d8baf0e36Q5MQH2JMfR0awNaDh7ux4cVqQjcHoPnoIzUY3KRVjkYZ03+gSeAcOtmWiMAXw4XmH7VfXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfRhim6y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E86FDC4CEF5;
-	Fri,  7 Nov 2025 06:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762495805;
-	bh=Qw47Ypxh6hCFBJwUZNmfzHzoZf62V55gj0I8Wbneo2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tfRhim6ylIxts3xnNHkB7gm6zcHD1Jy69uXevGxzCCF5oaN9yLlEmGqGMbxxR3QEx
-	 iIBh9pgnRsEW0eNMazmYNzfUSgJwAo1q/4BvoIB/jqAAjBLaYS4Ye4E1nsaP36ts4f
-	 y7XFx+Rg14Bbj53V2bW+o7vqINfIoSP/T5bio6AQhzQSFiqFQh1lvWLGnR9gn34wcS
-	 hqC8UTGRWfHwJ0tvepmuc/82HNuOgjpHHOg4LD31RyqUW+2fQU2dC74qw9Pb15Gr3e
-	 3Q1GfGhHowctqQ5cTa4XVftpSx/EQbL00AC6qMJ8heP6jaiBiMzrcVuY7KQ7a+58o2
-	 P/FdDkL7E/yvg==
-Date: Fri, 7 Nov 2025 11:39:50 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Christian Zigotzky <chzigotzky@xenosoft.de>, 
-	mad skateman <madskateman@gmail.com>, "R . T . Dickinson" <rtd2@xtra.co.nz>, 
-	Darren Stevens <darren@stevens-zone.net>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Lukas Wunner <lukas@wunner.de>, luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>, 
-	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>, hypexed@yahoo.com.au, 
-	linuxppc-dev@lists.ozlabs.org, debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 2/2] PCI/ASPM: Avoid L0s and L1 on Freescale Root Ports
-Message-ID: <ogkty663ld7fe3qmbxyil47pudidenqeikol5prk7n3qexpteq@h77qi3sg5xo4>
-References: <20251106183643.1963801-1-helgaas@kernel.org>
- <20251106183643.1963801-3-helgaas@kernel.org>
+	s=arc-20240116; t=1762495893; c=relaxed/simple;
+	bh=lOpOxoKvkhQOdKC2q5dlK2OnJGPYLZ1QfoWs/zT0E34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IBftB5bMOhFzUX4hvsQMmfNrZ61SlwB6c6NbkLgGzAo0iwZ9Y6stKD4QwiR8s/6daoqQVm89GKqh+aQ7+wbXH3hPTSQIt3pTQ/XwJeThFXVoELKQ4coNtYJfjBv//HR8vjjVmTT5niINsVtY9foaaMqW0fROG+XZhGFiTB54A1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fwswkhzZ; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=PO
+	/1F22LyRnQppxy3e+nd1++VbIYO9chSNDlRIEVrNw=; b=fwswkhzZktD6I1rsAK
+	pbmU8r/yKG6mE7hWrNIPnIOVe80066SQGpCKa7O8dl22OjH2wwxu734r+dS5d8Xa
+	zx8dyG0RNeQ9sNPrMZGMeAb0bB/bVy2qw9nbiSUnCQwpd9URfTT8gdOTvJwHMIuL
+	tl8ioxK+8/bUUA8qmfMMmpKuE=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgDHYMFojQ1pXhliCw--.29130S2;
+	Fri, 07 Nov 2025 14:10:48 +0800 (CST)
+From: ccc194101@163.com
+To: stern@rowland.harvard.edu,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org,
+	Chen Changcheng <chenchangcheng@kylinos.cn>
+Subject: [PATCH] usb: usb-storage: No additional quirks need to be added to the ECD819-SU3 optical drive.
+Date: Fri,  7 Nov 2025 14:10:46 +0800
+Message-Id: <20251107061046.32339-1-ccc194101@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251106183643.1963801-3-helgaas@kernel.org>
+X-CM-TRANSID:PCgvCgDHYMFojQ1pXhliCw--.29130S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw1UurW8Xr4fZF47GF48Zwb_yoW5JF43pr
+	WUArs8CrWkGF1Sgwn7tFWUZFyft3WkAF48GayUG3y5Xr1Yya1kJr98Aa48J347Cw43ZF4I
+	gayqvry8KFy8J3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYsjUUUUUU=
+X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiQRj+3mkNhLu6qQAAsx
 
-On Thu, Nov 06, 2025 at 12:36:39PM -0600, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Christian reported that f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and
-> ASPM states for devicetree platforms") broke booting on the A-EON X5000.
-> 
-> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
-> Fixes: df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms"
-> )
-> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/quirks.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 214ed060ca1b..44e780718953 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -2525,6 +2525,18 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
->   */
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
->  
-> +/*
-> + * Remove ASPM L0s and L1 support from cached copy of Link Capabilities so
-> + * aspm.c won't try to enable them.
-> + */
-> +static void quirk_disable_aspm_l0s_l1_cap(struct pci_dev *dev)
-> +{
-> +	dev->lnkcap &= ~PCI_EXP_LNKCAP_ASPM_L0S;
-> +	dev->lnkcap &= ~PCI_EXP_LNKCAP_ASPM_L1;
-> +	pci_info(dev, "ASPM: L0s L1 removed from Link Capabilities to work around device defect\n");
-> +}
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x0451, quirk_disable_aspm_l0s_l1_cap);
+From: Chen Changcheng <chenchangcheng@kylinos.cn>
 
-From the commit message of the earlier version [1] you shared:
+The optical drive of ECD819-SU3 has the same vid and pid as INIC-3069,
+as follows:
+T:  Bus=02 Lev=02 Prnt=02 Port=01 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
+D:  Ver= 3.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
+P:  Vendor=13fd ProdID=3940 Rev= 3.10
+S:  Manufacturer=HL-DT-ST
+S:  Product= DVD+-RW GT80N
+S:  SerialNumber=423349524E4E38303338323439202020
+C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=144mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=02 Prot=50 Driver=usb-storage
+E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=0a(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
 
-    Removing advertised features prevents aspm.c from enabling them, even if
-    users try to enable them via sysfs or by building the kernel with
-    CONFIG_PCIEASPM_POWERSAVE or CONFIG_PCIEASPM_POWER_SUPERSAVE.
+This will result in the optical drive device also adding
+the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
+it will fail, and the reason for the failure is as follows:
+[  388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd 0x00000000d20c33a7
+[  388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+[  388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result: hostbyte=DID_TARGET_FAILURE driverbyte=DRIVER_OK cmd_age=0s
+[  388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+[  388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request [current]
+[  388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in cdb
+[  388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
+[  388.967803] sr 5:0:0:0: Notifying upper driver of completion (result 8100002)
+[  388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes done.
 
-Going by this reasoning, shouldn't we be doing this for the other quirks
-(quirk_disable_aspm_l0s_l1/quirk_disable_aspm_l0s) as well?
+Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
+---
+ drivers/usb/storage/unusual_uas.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-- Mani
+diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
+index 1477e31d7763..6d32b787bff8 100644
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -97,6 +97,12 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_NO_ATA_1X),
+ 
++UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
++		"Initio Corporation",
++		"external DVD burner ECD819-SU3",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		NULL),
++
+ /* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> */
+ UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
+ 		"Initio Corporation",
 
-[1] https://lore.kernel.org/linux-pci/20251105220925.GA1926619@bhelgaas
-
+base-commit: 284922f4c563aa3a8558a00f2a05722133237fe8
 -- 
-மணிவண்ணன் சதாசிவம்
+2.25.1
+
 
