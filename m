@@ -1,145 +1,132 @@
-Return-Path: <linux-kernel+bounces-890102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52498C3F3B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:45:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF49C3F398
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FBCE3A3A56
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:44:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD78A188EA7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D6D3168EF;
-	Fri,  7 Nov 2025 09:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EFB303C96;
+	Fri,  7 Nov 2025 09:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BC+tbVG7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b1W3K4zj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1E2302756;
-	Fri,  7 Nov 2025 09:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BE1302143;
+	Fri,  7 Nov 2025 09:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762508469; cv=none; b=saa1XNu7K0AlorOxv9Nkw+sHz1OJbm//YxUgcOhNpXg+9Md0lj39jNtKCknIBNHJvSPJUjuqCZl0QuK41kjo6A6iez5Jfj7hHacw1acVDJhRGsjxiqi7AgovfVRSx9c9277sb52XKyvvZPIdcAQTeSJIZY3BQvXUNbd10iM+dHM=
+	t=1762508569; cv=none; b=T4K2j3z1StL1aTt/9hu1w6ed3eBplX6rCssk919EZLG6JnCgcn6n4Zx4M54uFncHf8v26bRmPv/jCRRWbtEK6whbbbny9E0ojdLOhMSh5CjbL1xY2BbX05RLFYv/k7rWlKL7bkUgoAt4KnblKopz7KSOsYHt2q0RPSRGIuxcz74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762508469; c=relaxed/simple;
-	bh=UtTf9hJf9opUF8mRymLZsocYE6Cnuzz56eNW1DnxA80=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Sex1sEuXGxhoCI9QXjk/8VAMCYup81y1bQCG/nTbmMo6Ux/Kpt5ouX8C63F5VSdzT1W4F3dKbrspplbNo4/YdFZxONjLbAvwvWSkkCLGTzC5CwKruDcpHgcCnFjwFmyf4a9MVH18RmrdYfK4RZUNh332X4dvKa8KTSOnwwTrHbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BC+tbVG7; arc=none smtp.client-ip=192.198.163.12
+	s=arc-20240116; t=1762508569; c=relaxed/simple;
+	bh=WJXOLztqSo4giTqFOw8G/lBkaE8BpltWb1JC16Iyvfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg1T9xmJWySa1vhDvtDA8i3UvdGMhJoi6pi0ODy0zrfSZiPJ/DzQb8Sy2q0QS7TT2O3cwggbhN9m1QF8vykb89mV5krxktQ64oYhWzAbeJCHxC21rvdCxf34ldOuakrQuM/92+XT/+EdeWiOsqRzIfjp6o1cq2fswWRRvVDJs5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b1W3K4zj; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762508463; x=1794044463;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=UtTf9hJf9opUF8mRymLZsocYE6Cnuzz56eNW1DnxA80=;
-  b=BC+tbVG7n17X7BHbWADDqXUSP8kwC5Hh/yTWxpB/8qzAqcAsObGKnJZJ
-   wkHUgVi47L3HYRvAthwmt/2Ku0noVGV5PQsORc5mdV9sN2LLpQOxiJS9q
-   S7OrO20kck1n6lM0xF+D5jAtvoPJgZJji2UXpRNWJUk0QWbPgkdQD4PgJ
-   okJaokButWBWVR1hAdevrqANyGoaJ47MfxBIP4n8bbNgAX9aqykyJeJNE
-   5PIg35dWPoiE15WwP3ZHkdUu3Jr8PApwTAtdxUT7vGzrqeeIXtHpq4W2y
-   6EomOzILie6hzqldLYkCRRJ/gM788AB7cWATCNb8LSwRWu4P1l7yh8ZQU
+  t=1762508568; x=1794044568;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WJXOLztqSo4giTqFOw8G/lBkaE8BpltWb1JC16Iyvfc=;
+  b=b1W3K4zjOXJUrVFks0odcScGM8Dape/G3yLyyNc06CzWStiNePvlDi36
+   tSkwy0g5p4AC6xz4BOdHQssSYZlUUXSmH64psa2kaFgozADHbfz9lvkSV
+   SwfMMBbkFZQiLDBx/8FP+LoUM4Mldf6F/DE4POAZD/B2szS7tineInY2i
+   Bbe/jq8c/+RcQ/y8CF4ubTRrzFd131MwOqoY77+7NwCniZtndcl2e739d
+   xjU3krZSReC4UmLE5pFQy6VkrRYxYyPk0DBQ26He8ecuj/TS3cLXx/1hN
+   aSEXxxp9RofsLGbrzYtlv7fGigj1Nl2tuuG5mlTR8xYhhcNaL4RnCdvNm
    Q==;
-X-CSE-ConnectionGUID: kiJAvG0QQcWOP2Tvv4kyyQ==
-X-CSE-MsgGUID: /CV5/uOVQySpFRFDAMhH/w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="68517648"
+X-CSE-ConnectionGUID: MaXwSwOIQpm4tP0PJKOtbQ==
+X-CSE-MsgGUID: aNu06NvYS8iKx+oYTEJelQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="63668030"
 X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="68517648"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:41:03 -0800
-X-CSE-ConnectionGUID: /mmooqtbRN+faEpSdUcJ/g==
-X-CSE-MsgGUID: jW5SlXnWS0S7HmSIlbm1OQ==
+   d="scan'208";a="63668030"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:42:47 -0800
+X-CSE-ConnectionGUID: oCQK/vHQQpCJVDh93eyUgw==
+X-CSE-MsgGUID: jz6q+Cp+QiGNuEuTne9Otg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="188718242"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.71])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:40:59 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 7 Nov 2025 11:40:55 +0200 (EET)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: Alex Davis <alex47794@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-    Borislav Petkov <bp@alien8.de>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, John Ogness <john.ogness@linutronix.de>, 
-    linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
-In-Reply-To: <aQ2rM3KOrCaMqXi6@smile.fi.intel.com>
-Message-ID: <df393daf-c4c6-33b7-c2ab-6f6ccf0c8ebd@linux.intel.com>
-References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com> <20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local> <aQzJveMYT6O3EHeK@smile.fi.intel.com> <20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local> <3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
- <ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com> <aQzliw1B5DPKcwi5@smile.fi.intel.com> <aQ2rM3KOrCaMqXi6@smile.fi.intel.com>
+   d="scan'208";a="187253469"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.27])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:42:43 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vHIzQ-00000006QDe-05pD;
+	Fri, 07 Nov 2025 11:42:40 +0200
+Date: Fri, 7 Nov 2025 11:42:39 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>,
+	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"jk@codeconstruct.com.au" <jk@codeconstruct.com.au>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"naresh.solanki@9elements.com" <naresh.solanki@9elements.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v21 3/4] i2c: ast2600: Add controller driver for new
+ register layout
+Message-ID: <aQ2_D6vs4m1brNk0@smile.fi.intel.com>
+References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
+ <20251027061240.3427875-4-ryan_chen@aspeedtech.com>
+ <f08b1078-fc8c-4834-984c-813e01291033@kernel.org>
+ <TY2PPF5CB9A1BE64FEBCCCDC7631B355135F2C3A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1671782446-1762508455=:1070"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY2PPF5CB9A1BE64FEBCCCDC7631B355135F2C3A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Nov 07, 2025 at 06:26:39AM +0000, Ryan Chen wrote:
+> > On 27/10/2025 07:12, Ryan Chen wrote:
 
---8323328-1671782446-1762508455=:1070
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+...
 
-On Fri, 7 Nov 2025, Andy Shevchenko wrote:
+> Add new file i2c-aspeed-core.c to do legacy probe and i2c-ast2600 probe.
+> 
+> 	if (of_device_is_compatible(dev_of_node(dev), "aspeed,ast2600-i2c-bus") &&
 
-> On Thu, Nov 06, 2025 at 08:14:35PM +0200, Andy Shevchenko wrote:
-> > On Thu, Nov 06, 2025 at 08:00:36PM +0200, Ilpo J=E4rvinen wrote:
-> > > On Thu, 6 Nov 2025, Ilpo J=E4rvinen wrote:
-> > > > On Thu, 6 Nov 2025, Borislav Petkov wrote:
-> > > > > On Thu, Nov 06, 2025 at 06:15:57PM +0200, Andy Shevchenko wrote:
-> > > > > > > So I'm seeing this with an allmodconfig build too:
-> > > > > =09=09=09       ^^^^^^^^^^^^
-> > > > > > > depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> > > > > > > depmod: ERROR: Found 2 modules in dependency cycles!
-> > > > > >=20
-> > > > > > I'm surprised it took so long to people to start complaining.
-> > > > > >=20
-> > > > > > So, some of those are modules? Can you share the
-> > > > > >=20
-> > > > > > =09grep 8250 .config
-> > > > > >=20
-> > > > > > part?
-> > > > >=20
-> > > > > See above.
-> > > >=20
-> > > > https://lore.kernel.org/all/87frc3sd8d.fsf@posteo.net/
-> > > >=20
-> > > > I wonder if 8250_rsa.o can be put into 8250_base.o where most of it=
-s=20
-> > > > callers are anyway?
-> > >=20
-> > > This seems to resolve the build issue for me:
-> >=20
-> > I prefer this solution to anything that suggests to merge the 8250_rsa =
-in
-> > another module.
->=20
-> Oh, I meant "merge the source of the 8250_rsa", and here we are talking a=
-bout
-> merging the object file, which is totally fine! Sorry for the confusion i=
-t
-> might made.
+	if (device_is_compatible(dev, "aspeed,ast2600-i2c-bus") &&
 
-The suggestion in that link was to merge the modules (8250.ko with=20
-8250_base.ko) and that certainly isn't a great idea.
+> 	    of_parse_phandle(dev_of_node(dev), "aspeed,global-regs", 0)) {
 
-My patch only moves 8250_rsa.o from 8250.ko to 8250_base.ko and breaks=20
-the symbol loop by passing what is needed from 8250.ko in function=20
-arguments instead of directly referencing them in 8250_rsa.o.
+Not sure why do you need this. Isn't it as simple as
 
-> > If it fixes for the reporters, feel free to add my
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->=20
->=20
+	    device_property_present(dev, "aspeed,global-regs", 0)) {
 
---=20
- i.
+or something between these lines?
 
---8323328-1671782446-1762508455=:1070--
+> 		ret = ast2600_i2c_probe(pdev);
+> 	} else {
+> 		ret = aspeed_i2c_probe(pdev);
+> 	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
