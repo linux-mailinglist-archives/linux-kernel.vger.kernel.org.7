@@ -1,373 +1,237 @@
-Return-Path: <linux-kernel+bounces-889652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6F1C3E25A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:39:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA821C3E269
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9AE188C239
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6643AE690
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3D02F7479;
-	Fri,  7 Nov 2025 01:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF632F746F;
+	Fri,  7 Nov 2025 01:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6hSO4zb"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TDAjrOl6";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MJ+zDAOG"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B072F692C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 01:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762479575; cv=none; b=J1L0YEmK3v842Sa2x+e6SySbtgKkBJ4tRC1DtcOH1EJEbNl8RZzSUfpQOtxil4K9micvYDoL263TtO+8Ly+QCjnYKCGJOPe7b96GWXtBzsM7o7He6hnXacjLLY/vgH3WOEJiFX4llkspw0bAGzvavp6zGD37NJ8Yb/Pka1KzeO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762479575; c=relaxed/simple;
-	bh=M01wkyOb9FzkQm4Lzp5/+nSeqaI8EEeWqov0YfEb9Jk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OvyjC+L5KlWK2GtuLNqdj+jvTFoGZMs8Jq66KnE3D3YQTPIgiOTM19aDgPSGj2B0kGnYPUK/MKm7b770c5tH4v/ewhp3oLn4gi55JOBeODJap0BtVK/GmA9E8mJTg8r6/2hS9CTjT2YtdyMclKv5BqK7sEJ07dGyHWe6DQ1MWh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6hSO4zb; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so47644266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 17:39:33 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2482E5405;
+	Fri,  7 Nov 2025 01:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762479672; cv=fail; b=VRcHrZ2aG/kJEXjXDBBAzP5Koe98UwlpjCIgptqdUx20SnBXS99ulCl+7qI8OPH3yjrqkmj3m4FMNuWBq3RHHjBhkipEfcKNhkccMO8u4KqHXWE9ksNLr1LbhfcXO8m/JanMRELoJXFlRMwAGHx+0kcpNYnY10pAchbecg+G5Fg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762479672; c=relaxed/simple;
+	bh=0aF+KIn7mATGO3H3bR21kVJ1bN0oQB0eEgJ8jG6v0SI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GVXvhkGU4uPFn3bI0+/s1V5tVE+JL0tP8wPwJcy31VEvKvbYSSC1SgvZ8QoM0OFsHcpb1rHIzMFzfMxZANv+AHWxWAuXd6cqoX4gzOBarSTtI7DiB12NAxgUAOJHJqLUeAAQbeo8kFor7GyIjSXt0pwX8JGzxopuZz2BuPWO3T0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TDAjrOl6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MJ+zDAOG; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6LNmb6017701;
+	Fri, 7 Nov 2025 01:40:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=osilLwMfWEe+NPmWlb
+	RWIfI+fgZacPlpdNlNTD0RSkA=; b=TDAjrOl6ktl0Dz87EtVjvxtOJISRbp4ZiH
+	ZZWJ9ZU8DZ2yutzc+Rmg0b8m4NYnKVlqlPUg2WWsAO8XzyWf/5WwfIixgf3WRMkb
+	KZ7AvUrAN3QIL6mMtPOUPgYgF6M28CgMX8DyPXhaNuxcg6uwz/v5p+zeGIWN0YGw
+	CGBFqz8VfOWKwD3k6y8EYp1YRHI/w29IGO6egZmBZzjkKUjXwLFPvTsttUz1KFuw
+	+5NLCjodzzPj0NpiWHYSZ5Ent9rCJkihEtdVje/sakWJKQzbkFgN+Fw5/bXjGbKN
+	0l5hPCa5bls/lg8gdmlgMFUxxoaYK3OYNmqmNq1/RSvzlMq9jq3A==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a8ytw8usg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 07 Nov 2025 01:40:45 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A6Nh9JZ002730;
+	Fri, 7 Nov 2025 01:40:44 GMT
+Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013002.outbound.protection.outlook.com [40.93.201.2])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ngrvm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 07 Nov 2025 01:40:44 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yt1MFV/tlRlPyttJOrBCak8bPnfKHnbtsBsOH2Gx7a6rP+D5W2KqjciBLuam7XokGSf+LFnXVOd7yRkrBY/BPQ0/4AyBb6FlcVlStaYWsNAgysamCAtvzsYv9ukh5RT1aLHjCKX6ZlTEiU6+icwyEqO3bEwxkHrDtKUDFrrGf35Hpb15u0gb9FxijsM9fITWwUJi0+Gn3fOlBcwg9J2W3SHoGG1WOa5D3G22YMm27Jjza4wygSBiWEwoojpg93aKzxKY9VuZI2ux51XCo/elWxsh5HClxJVxX7v5YKvYt9DGuIez8nyxeYDWYtqMN5zabRbQcS0EWlVt8p8lAKjpaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=osilLwMfWEe+NPmWlbRWIfI+fgZacPlpdNlNTD0RSkA=;
+ b=uUyZypZRqagl3aB6O9S0tvbuEePNXjQ91RsR9a8I/VfAgi+QtF8TWAZ1A4dlJuomOxIlTYV4g1Z5K2Im7mPUlJTRBAM9pT7F750m3u7kkl0qJJ3IXtAo13onE2np/nGZH7hevMWUg8eC6D0M+iEvtg6qFv7ZbcO7/3kCOi0+DZ54JFatx/gjxp5bbzYZZgvKKOpY0bYJsjFhruOLvvfKohBAQpznfodCM4G90n643ADgEx7frhf8ULCUgxjXb1j9sMYZEOp7Lp9p2BJVYitmsCFOtqEU5dSP4262C5ipe0NI6Jl1ZP/dat3bkz67ujv+rznT9L6jeblU8r+UTklZqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762479572; x=1763084372; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XIpITV5yEZrESiQ2Z+qYNEuXuM9HjJI30TVH+Lhv/e8=;
-        b=T6hSO4zb0Ey5nRDnEiH2qZVDi4wBs73CiOzbGBj+6TihNL4597KZfFmBd1hqWRr6YF
-         +6Ud1Z5RugqK8hrddL6zWKrR45TZT6ZOlUemvBlPazDFjZPt4HZ33PCyawk2/s+LRNaE
-         rMSQWEVYwh/S97sarCdjTDkfe3wAb1gL6Tosz6ssyyobKbVCwwg6vF3Ue7obkBgcCxCj
-         Sn0p5jgOm5hV8pIk2ycgffEFuL1LQjlSlk2YymFf+IpHt+N0Zjnpv8A0UvYdvz23Nb6k
-         5Kx2RlGANCUrAY3pEat9NRIIXT0vErvpP3Ryy2Tz/XIDniSHlsSagfexeUGjjhNyC0zC
-         2+0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762479572; x=1763084372;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XIpITV5yEZrESiQ2Z+qYNEuXuM9HjJI30TVH+Lhv/e8=;
-        b=CQuTc2Cy6YBW6+yXxTfA4o9gXk8wkKIvRJ+A+FAXfUAw2b3Xge801nUMGCfIgCpwGO
-         g6DofZLeFFe1uTAHjl0heDmpdmQ49AYbMgB+aAFZbpZHLLwCSzG4dupfinJA1PFRl6uA
-         oY7Lbx4Xfw3ek3NPl/Q4PExkaEpAHCnv3zX+N+gZKilP+bnZfrFLw6Ezv7+i6yrgKv57
-         qIXgUsa9VbrVzwFqnygiHvsDqo1MwxjlARekDd450OVu/AtmcmYRF8fssujrFmbKvCUx
-         xxoyvUVDx9fEdiY8bzv7aKGWVwch1W1mYHlbTt2+bFIJJsMY7Vdhjg4sErMbn1yqaJxQ
-         Crrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDhut4CuuinLV0UKRf+D0wGdpord7xFHqS875QEfF/tOVMApinkb06Bg+dgkwq9BLzvYXS5PXuqFI2QEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUCVfFTNgwSnBiQPjmBAC/WV60EkarTCSYzde+J3m9CNf72/jx
-	t0jkp4OSeff3Tf59MUp6S7KhivtvyqqCiAHLI/j94xRCxhWwcMU7JHhR+AQYUPAX1619OnKEX/u
-	VLaccYmFmeNrORidnK0fPV8BAvtD5++o=
-X-Gm-Gg: ASbGncuSd5Qe3wnXvF2HZI4hvcHe8zPQQuNIYeujknbKo0GBXEQqFyhpPaxN1B4Y2bF
-	FikG2wNVDYQpmdQ2WyhbnNZonaD2CUBzxpI6HWMZEOr5eJvrq3d2V2cZcjgoiLDoYKAL1VRdUXN
-	LoEkpFb99NKQ0E9wHHgMYn3VIHv6GLzdl2GmYiTU+HCicFW5kpMQrvmLmxt44qG+CIAUk5PEL7+
-	EvV2dGGMJO8ZN0GhI+mqjT03of6Yoa9cjddBFfrJiR5aMrzZP37k4u9+QVPgKZ/7Ev/rTP0
-X-Google-Smtp-Source: AGHT+IErykCug47DPG+pbRzVCLvgs3mgf39hQlr89bm6GLJnz/NPKiMSuO7mrmXHMF3FKPpf6RYEtJAUqbjLG8fIFH0=
-X-Received: by 2002:a17:907:d644:b0:b71:88eb:e60c with SMTP id
- a640c23a62f3a-b72c0cfe237mr124818366b.44.1762479571452; Thu, 06 Nov 2025
- 17:39:31 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=osilLwMfWEe+NPmWlbRWIfI+fgZacPlpdNlNTD0RSkA=;
+ b=MJ+zDAOGdu8NuusF04g+9ruGka7yGbZ+ZPpLHEGbpVuj71WKWnMD4JD8z/7v3oKZAzgsfvMAEsZDvuVOcHxa5M3eLVL1Qtx4EJKpnimdANo5cnM4jWJ1St16e9MQNGMkaWbRZ+6+NJ+hfnUV6AXg0/Mczn060eY2MzGYgiARCEs=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by PH3PPFF0D9ABED1.namprd10.prod.outlook.com (2603:10b6:518:1::7d8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 01:40:41 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9298.007; Fri, 7 Nov 2025
+ 01:40:41 +0000
+Date: Fri, 7 Nov 2025 10:40:24 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Qi Zheng <qi.zheng@linux.dev>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+        roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+        muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com,
+        ziy@nvidia.com, imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
+        axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: Re: [PATCH v1 01/26] mm: memcontrol: remove dead code of checking
+ parent memory cgroup
+Message-ID: <aQ1OCBo87ZkIJng9@harry>
+References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+ <b13ff669bc3f52922e97fa0cc99e54df05585810.1761658310.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b13ff669bc3f52922e97fa0cc99e54df05585810.1761658310.git.zhengqi.arch@bytedance.com>
+X-ClientProxiedBy: SE2P216CA0192.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:2c5::10) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-3-dolinux.peng@gmail.com> <CAEf4BzaQ9k=_JwpmkjnbN8o0XaA=EGcP-=CBxmXLc3kzh3aY3A@mail.gmail.com>
- <CAErzpmv8eBjuX-RO0nopuy8qMV7wzVxa2e+HteXfFodwbBoALg@mail.gmail.com>
- <CAEf4Bza+pHVSGTC2vcjF-DmsVxKq2Ksq321E9CJEGdyT8hQn3g@mail.gmail.com>
- <CAErzpmvDk0Tvr9h772EDZk_4tRtLtAZv-r4yKCxEOM+_gc+G7A@mail.gmail.com> <CAEf4BzbYc+2T8BAyLyvT3kRWbJ8m1qxxwO6ZBHm=fsCucoWVQw@mail.gmail.com>
-In-Reply-To: <CAEf4BzbYc+2T8BAyLyvT3kRWbJ8m1qxxwO6ZBHm=fsCucoWVQw@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Fri, 7 Nov 2025 09:39:19 +0800
-X-Gm-Features: AWmQ_bmAxgZi5GdkV1bT-nnjE-9J8IE-njxXsmD0kpR1sb0XXV68cJuNHuVTveM
-Message-ID: <CAErzpmvZTc+jn4Xwp7pc_x9Xgduk+NW_5FNFzrDCT+EGeLOoig@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 2/7] libbpf: Add BTF permutation support for type reordering
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|PH3PPFF0D9ABED1:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1992f681-7114-49fa-5254-08de1d9ea8bf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GuZ6ax0A+h5E58byXHSNEW3vudjF+UAgErk9Or7cDfcebc7OYqG9GaADUH3P?=
+ =?us-ascii?Q?Ydiau4Ju7lei77tP0UjjI2PGHPicqEIR9Tsk4sOaXgAlQksRSNsz9PgIQKEJ?=
+ =?us-ascii?Q?dJFDErjfsmdXgXfmft24A1ZTZCHG7IJ7wxC0ruVZdaev4HfGne9P2DbpdM+a?=
+ =?us-ascii?Q?6FaGHe6bq7EUlI52WogxBScvuPBcoipWrdUrkw4EBBCrmCSXCConPcLcxrUZ?=
+ =?us-ascii?Q?veoDE+LO6mF+wuxWCs+2EmTd3PDD8IE+ODxVppQW4MJySADkqmQOw3r0UjCG?=
+ =?us-ascii?Q?QwpQN8N/aGIGhIqMlpFU83LrPxwrYf4T2GWa7oZ0/Bzh+8Yehvl3pvGWOBrq?=
+ =?us-ascii?Q?Ox0QsEfPfX8PAYa8hDc54V59C9xUUuYejBvqjlZZll3ezc9nU+WrCOGU0M/7?=
+ =?us-ascii?Q?kkbyfgJLjWCHmnX5DvOVWvPtnbeV/ylFOxtSHFV3R3k8KAF1mKmsk/Ckl3Qk?=
+ =?us-ascii?Q?wwAzghfIvF4rofxPPuQ93XFlpWSDiX4MSNOdofrMQiTp8vD9G+QAFlf9LcwF?=
+ =?us-ascii?Q?hIkbw08Rqpe89DiaBsi+Tlb4Kqr+jWP8zzJBVSMvSMCykRTC8GbGR/TMnItD?=
+ =?us-ascii?Q?nvSlmbT9Mt+4YkJs72Lf971QYJ/tlndeSelQeCqV4gaBTDPIO2lal0I78DhE?=
+ =?us-ascii?Q?CkoXUef7ERLZ7l/cdzh0fgIXmzWCruK86Z9GQfGzVkk5CWu2WBBCZKQQMcEm?=
+ =?us-ascii?Q?cG3lUMBEiUO6Sq5LSsBED2/EFPDdmrHkXW2dgDbJYxBTBEILH4kCcqxAIpoi?=
+ =?us-ascii?Q?jQ5DtmYhYZMi2TvdKaqQFPYipottES0r7urzzg4/YJheHTCxi9BTAStoyyth?=
+ =?us-ascii?Q?Vkk1OBs6S6iK3iLPuY4+4VPgcuQj2nqx16vZTTQ1u5Esy/Jrk26VQJymdgDm?=
+ =?us-ascii?Q?pMj2j05KeHNNlO8Ht+HuScR2NiAvFLkeYfaWxoRa+cCoCyDS3OAOYTy97lUt?=
+ =?us-ascii?Q?J1l+sxsFfIxadJ4hy2U/fw7xrG1ZJbQ+tXhaWLp548bO6IlodOVSiEZGLCM6?=
+ =?us-ascii?Q?ZBC2X4bQwqwzW5/uAAknqI1aeN3YvlvjIissb6Zjt19mVg1Bi8fhcKKtueSM?=
+ =?us-ascii?Q?ARKn13DRoq1RJvObsBin9LIdi+bvgCn+PGMR3uwPOfy+siXWMHzb+v6buALz?=
+ =?us-ascii?Q?0vfQCfaXODixLwnzAMEwXnPVfSThzIuipC4EuDTvyc+1tw9J0O9FKZ8tDGCb?=
+ =?us-ascii?Q?KnMELpFD0vJ2LD7nScsUY5gy1pqg+y8yCoPtuqjFdOtgOz6jpSohYJZ1tEs3?=
+ =?us-ascii?Q?Cnf+T/Kl3Pfma5D1gxQdZiyjuWjCnxY6VTebJfkw+pKdBZ8FZWWlTAiRLchx?=
+ =?us-ascii?Q?AGQKWXrjdjbrFvoKuX/TEkMce6v6ldfEbWvwFcW/1k4EM8H81bG+8lQzXJKG?=
+ =?us-ascii?Q?quDdjgZFHj4DL2jxwMzDFx4mYlWgc9zopKNYFSxndVors1rw+t0BowMYdeiy?=
+ =?us-ascii?Q?6VlvlRwV2VcHwlKrawT4dDCVDn0XCjBe?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FAqORABdYzdTzJRMcC3+vBMOFN/4lxQKKnIHFZ1UlXuPSGThHjvcEvy7sb3k?=
+ =?us-ascii?Q?na9+V1elHAZHeCUhsb+PMkv2iKdQLuV7230dG/sSziU4dsFGLTHo3uuwU5mV?=
+ =?us-ascii?Q?/drzZLo4D+RWTtVdKv1TykW9ffNQIePI+v+6K6KYmnuJ5LOiEFYK0FwXk9LJ?=
+ =?us-ascii?Q?jEUPoso1lTOgP7ofLA6jS/05Rs9aIy6lEm4WqsmkJIwxo2XIVB9P8Cic3DQj?=
+ =?us-ascii?Q?oPrAzxgzM38mdYynA1zw5T7k6CUQmiYaGB4OvjP8dkJYmDxhhe5xJ/hS9m4D?=
+ =?us-ascii?Q?8hBIA5Wkc3fUCsOp/ev2lBB/cZDnmb7T2dDWVYdawt1M3bQGAYDdRVsYuIc9?=
+ =?us-ascii?Q?P3dzRY+6KXtjE0s3tVFMOji9OsK11EDLwpQM/ypfzvil4OIa11mGwT6OtNuL?=
+ =?us-ascii?Q?AUQkATDUl8ivQET35ZiTBjUh0HaOj9f45y1uBxM+rHuFKZH73wwG+uvCGwkx?=
+ =?us-ascii?Q?QnFxtTWUMd2waTZLYDclSEWJN7iczhDLazANoiMZTkv6TMuMle1UJv2HqM7Z?=
+ =?us-ascii?Q?BsTbpVCiLokV5TTNMgZ8EMJ5BZGpBsT9OHZSAx3UbVb2y10r0UXQAYuvBnTX?=
+ =?us-ascii?Q?CtrLle0qlKCMdZdrDIJIl8iKwklx1+O5c5weSwadsIrseLzttBIl1i/NoKSc?=
+ =?us-ascii?Q?n/PPPhlk5ChS5U0nggRb0KPShcFc3Hg4+/x/QTSEvbeeY/iUnb5QNj10MZay?=
+ =?us-ascii?Q?Hyz3YDuV59t9P3JDrsZCENWRmn0q4xUKgw71oRrQCOn5Keoda7hxUf8ZeBNh?=
+ =?us-ascii?Q?CRVZqUSZcl6NRSNb4aF64Bf5oUTBwkLfGk7he9CQgUu1nbRv5HYFh74S2Tyd?=
+ =?us-ascii?Q?6xZfhVthtHhvs8y7liH3pAB6rRH9H5Iq72/+BUWWJI1o7M+qWMZDCEbrtjTU?=
+ =?us-ascii?Q?1J5pzYdZQLheRF/bLQ8fxUZQvQHK/MSyJ44kF5Y1uTDsiPBMed/FM9z6TEJT?=
+ =?us-ascii?Q?OjKS1fiMKlh6gwoFRqV0HWPrdqXskg9j6BpHTFyAluEFJeWzMR1QkXbiyL1w?=
+ =?us-ascii?Q?b7dtzyJJxh0M/L4wdiObXnEwb5kai6iNypPRZxrFbYCuW1S6Z4I2Ho42XmwY?=
+ =?us-ascii?Q?kTi2bbGgzQ2hVED7LWz7adCASqiJmmDSEe9S4edPKpyPZTEvE511HgI3542P?=
+ =?us-ascii?Q?zpew72+yWxz/+fjpNdcY0MWRxcZOrBu7Qo+BOqFSBCldULqEJ1+0reOcXKQA?=
+ =?us-ascii?Q?EvVV7WQQ2VCFzOynP0gsfUnwE0RZ87Je4tiYJbscXrlzIWtIp8XrvYqmmEkN?=
+ =?us-ascii?Q?zxuGml8F/o/N9hHhzp0oV5o6qBq57T60LqgQtJG2Q8Yf9cyFWok2mFO/CYmt?=
+ =?us-ascii?Q?w4OTOgZQ+0inwoJRYx5dyIPa5BrTWAaI5ghpOhJh1TugKRZ4wCE0MByEfoI2?=
+ =?us-ascii?Q?mAHxQM+Qgr1mIKXPwxe8uq8CKD8D+yVnVWMcBBYTox41z8QiZ/xZJ0KTN9Ta?=
+ =?us-ascii?Q?gPq0Qr+vWp6QwQiADH3RBNVNuptiqo642Lvszmtp02qxS4QC1aqXOPr5Rtly?=
+ =?us-ascii?Q?zz3dor7dxyiv33E7FowbTDPuCz8Py11Kh0+pxq7FaBQR97tpVQL9uX7Iaa2o?=
+ =?us-ascii?Q?hZglEcJFt/b87A65qjrZMS43OoJ63Iji7OTFXRl8DLml9wyUeXAQFy6f31SL?=
+ =?us-ascii?Q?CA6KftatzhZF3AJASetXR4+6Am/FDrdUw46UsCD6UP75?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	w+nTrGtZLIsEj1LC4hRMEfvfbx64IserboY8nE40BsQY/XIOvFikKyI6R9gI/PrMO352ZEtyF94scDzINW5zb71Epn5svL4Z8Wr5wyYXxC/w7rh42XOhpTnE67tUAr2D+24iMxGA+eVj2rdAp/J0lr36zgD3bKemX+PCnGZCZkDtcFJL76T1ZTcymy5aoZyr+QYx3QVAUrsyKLIsdvA1Z+EYrsZVgTBtQ9HWMsRJKSiX1KsdGG2ur9yqKxvAmHz3WmPpgsABuDe8Og/NMPPQ5m+s25DvcAfy0wK13hIEJLfsiluIMAOR03wf4cksr3z8MGze+tRZ16CczeIVxHPGNZoQFQK4P92vnrJ35GOv19PdKlWJrp3kAicNevxNYSgI2N3CnRtvxm48t/iqzijzUyNOPvguBS+SCXHys9lU2S9PD+FDtLUnFolV2P+1JFdnyzNF/9/qac4LXoJRf+T1RfBgzfGzYOdUsr244Hlxmg4m1s67NBPWRxmpbPCNg9tgfe2Xwy/q7uaPrjyh0twQ0UG2WzuthD+a9WlATK/XDMCOY2H+mCPlytLpsnKUEqdsUeNG262TPND7zJT0x7z5qg6+J5Z6QNynTaHO3z2+LoQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1992f681-7114-49fa-5254-08de1d9ea8bf
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 01:40:40.9418
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O4d7j5jkI06/8p/YkWQVJdMLFe1ndgA7tEO2qfSz7JCU43+G72LNt0KGJia1pl7kqM+mkJk7rvMkn3rStV2Pcw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPFF0D9ABED1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_05,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511070011
+X-Authority-Analysis: v=2.4 cv=L/wQguT8 c=1 sm=1 tr=0 ts=690d4e1d b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=968KyxNXAAAA:8 a=ufHFDILaAAAA:8 a=yPCof4ZbAAAA:8 a=blUTA6d1koVuR4A4kw8A:9
+ a=CjuIK1q_8ugA:10 a=ZmIg1sZ3JBWsdXgziEIF:22 cc=ntf awl=host:13634
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDEzOCBTYWx0ZWRfX/ffzUnxnUWef
+ ll5Iku3+R/fM8+U095AIfrkk1NmgPMOUn9nHd8kV59xLIgx/lVOMGywuTTbxlmsu58GvrHIfBbQ
+ /5DTULNpUpRqNcsxvEK4p6p7E0aa0NWuttJVHfiK/jKzHM97gxA1CgCS3a+RDlW9nbajknDCTmL
+ pbPYBEoNRDdk3PaO7O9rWcXEFIBs1P+fOtdixS8P5mqlytviHHHYB+Z0PeLJgV8xGNB2+74VqHW
+ J+VjH2iF4ZNng6H/iYcS+GOiN8AD+hlSd9YqFpxdRbZKnDArYcYgsoJbnkasy3lgAQNvLAnKgUq
+ 85xIuNXDmT0cVYuXbGJkmGqw/OKg3nQUD2NFStbUv4rF6gjVLbdcIZoyYpBbstyQLdsU6lRaH7k
+ qM1enZrX0YRdwk9DABoVJdAuA/apyHd/py7bNnibeSU6L3pjw78=
+X-Proofpoint-ORIG-GUID: AodfAry1d6YxXb_PmtdIZ7ExN62PqzCx
+X-Proofpoint-GUID: AodfAry1d6YxXb_PmtdIZ7ExN62PqzCx
 
-On Fri, Nov 7, 2025 at 1:13=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Wed, Nov 5, 2025 at 11:31=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.=
-com> wrote:
-> >
-> > On Thu, Nov 6, 2025 at 2:29=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > On Wed, Nov 5, 2025 at 4:53=E2=80=AFAM Donglin Peng <dolinux.peng@gma=
-il.com> wrote:
-> > > >
-> > > > On Wed, Nov 5, 2025 at 8:11=E2=80=AFAM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > On Tue, Nov 4, 2025 at 5:40=E2=80=AFAM Donglin Peng <dolinux.peng=
-@gmail.com> wrote:
-> > > > > >
-> > > > > > From: pengdonglin <pengdonglin@xiaomi.com>
-> > > > > >
-> > > > > > Introduce btf__permute() API to allow in-place rearrangement of=
- BTF types.
-> > > > > > This function reorganizes BTF type order according to a provide=
-d array of
-> > > > > > type IDs, updating all type references to maintain consistency.
-> > > > > >
-> > > > > > The permutation process involves:
-> > > > > > 1. Shuffling types into new order based on the provided ID mapp=
-ing
-> > > > > > 2. Remapping all type ID references to point to new locations
-> > > > > > 3. Handling BTF extension data if provided via options
-> > > > > >
-> > > > > > This is particularly useful for optimizing type locality after =
-BTF
-> > > > > > deduplication or for meeting specific layout requirements in sp=
-ecialized
-> > > > > > use cases.
-> > > > > >
-> > > > > > Cc: Eduard Zingerman <eddyz87@gmail.com>
-> > > > > > Cc: Alexei Starovoitov <ast@kernel.org>
-> > > > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > > > > Cc: Alan Maguire <alan.maguire@oracle.com>
-> > > > > > Cc: Song Liu <song@kernel.org>
-> > > > > > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> > > > > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> > > > > > ---
-> > > > > >  tools/lib/bpf/btf.c      | 161 +++++++++++++++++++++++++++++++=
-++++++++
-> > > > > >  tools/lib/bpf/btf.h      |  34 +++++++++
-> > > > > >  tools/lib/bpf/libbpf.map |   1 +
-> > > > > >  3 files changed, 196 insertions(+)
-> > > > > >
-> > > > > > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > > > > > index 5e1c09b5dce8..3bc03f7fe31f 100644
-> > > > > > --- a/tools/lib/bpf/btf.c
-> > > > > > +++ b/tools/lib/bpf/btf.c
-> > > > > > @@ -5830,3 +5830,164 @@ int btf__relocate(struct btf *btf, cons=
-t struct btf *base_btf)
-> > > > > >                 btf->owns_base =3D false;
-> > > > > >         return libbpf_err(err);
-> > > > > >  }
-> > > > > > +
-> > > > > > +struct btf_permute {
-> > > > > > +       /* .BTF section to be permuted in-place */
-> > > > > > +       struct btf *btf;
-> > > > > > +       struct btf_ext *btf_ext;
-> > > > > > +       /* Array of type IDs used for permutation. The array le=
-ngth must equal
-> > > > >
-> > > > > /*
-> > > > >  * Use this comment style
-> > > > >  */
-> > > >
-> > > > Thanks.
-> > > >
-> > > > >
-> > > > > > +        * the number of types in the BTF being permuted, exclu=
-ding the special
-> > > > > > +        * void type at ID 0. For split BTF, the length corresp=
-onds to the
-> > > > > > +        * number of types added on top of the base BTF.
-> > > > >
-> > > > > many words, but what exactly ids[i] means is still not clear, act=
-ually...
-> > > >
-> > > > Thanks. I'll clarify the description. Is the following parameter
-> > > > explanation acceptable?
-> > > >
-> > > > @param ids Array containing original type IDs (excluding VOID type =
-ID
-> > > > 0) in user-defined order.
-> > > >                     The array size must match btf->nr_types, which
-> > >
-> > > Users don't have access to btf->nr_types, so referring to it in API
-> > > description seems wrong.
-> > >
-> > > But also, this all will change if we allow removing types, because
-> > > then array size might be smaller. But is it intentionally smaller or
-> > > user made a mistake? Let's go with the ID map approach, please.
-> >
-> > Thanks. I can implement both approaches, then we can assess their
-> > pros and cons.
-> >
-> > >
-> > > > also excludes VOID type ID 0.
-> > > >
-> > > >
-> > > > >
-> > > > > > +        */
-> > > > > > +       __u32 *ids;
-> > > > > > +       /* Array of type IDs used to map from original type ID =
-to a new permuted
-> > > > > > +        * type ID, its length equals to the above ids */
-> > > > >
-> > > > > wrong comment style
-> > > >
-> > > > Thanks, I will fix it in the next version.
-> > > >
-> > > > >
-> > > > > > +       __u32 *map;
-> > > > >
-> > > > > "map" is a bit generic. What if we use s/ids/id_map/ and
-> > > > > s/map/id_map_rev/ (for reverse)? I'd use "id_map" naming in the p=
-ublic
-> > > > > API to make it clear that it's a mapping of IDs, not just some ar=
-ray
-> > > > > of IDs.
-> > > >
-> > > > Thank you for the suggestion. While I agree that renaming 'map' to =
-'id_map'
-> > > > makes sense for clarity, but 'ids' seems correct as it denotes a co=
-llection of
-> > > > IDs, not a mapping structure.
-> > > >
-> > > > >
-> > > > > > +};
-> > > > > > +
-> > > > > > +static int btf_permute_shuffle_types(struct btf_permute *p);
-> > > > > > +static int btf_permute_remap_types(struct btf_permute *p);
-> > > > > > +static int btf_permute_remap_type_id(__u32 *type_id, void *ctx=
-);
-> > > > > > +
-> > > > > > +int btf__permute(struct btf *btf, __u32 *ids, const struct btf=
-_permute_opts *opts)
-> > > > >
-> > > > > Let's require user to pass id_map_cnt in addition to id_map itsel=
-f.
-> > > > > It's easy to get this wrong (especially with that special VOID 0 =
-type
-> > > > > that has to be excluded, which I can't even make up my mind if th=
-at's
-> > > > > a good idea or not), so having user explicitly say what they thin=
-k is
-> > > > > necessary for permutation is good.
-> > > >
-> > > > Thank you for your suggestion. However, I am concerned that introdu=
-cing
-> > > > an additional `id_map_cnt` parameter could increase complexity. Spe=
-cifically,
-> > > > if `id_map_cnt` is less than `btf->nr_types`, we might need to cons=
-ider whether
-> > > > to resize the BTF. This could lead to missing types, potential ID r=
-emapping
-> > > > failures, or even require BTF re-deduplication if certain name stri=
-ngs are no
-> > > > longer referenced by any types.
-> > > >
-> > >
-> > > No, if the user provided a wrong id_map_cnt, it's an error and we
-> > > return -EINVAL. No resizing.
-> > >
-> > > > >
-> > > > > > +{
-> > > > > > +       struct btf_permute p;
-> > > > > > +       int i, err =3D 0;
-> > > > > > +       __u32 *map =3D NULL;
-> > > > > > +
-> > > > > > +       if (!OPTS_VALID(opts, btf_permute_opts) || !ids)
-> > > > >
-> > >
-> > > [...]
-> > >
-> > > > > > +               goto done;
-> > > > > > +       }
-> > > > > > +
-> > > > > > +done:
-> > > > > > +       free(map);
-> > > > > > +       return libbpf_err(err);
-> > > > > > +}
-> > > > > > +
-> > > > > > +/* Shuffle BTF types.
-> > > > > > + *
-> > > > > > + * Rearranges types according to the permutation map in p->ids=
-. The p->map
-> > > > > > + * array stores the mapping from original type IDs to new shuf=
-fled IDs,
-> > > > > > + * which is used in the next phase to update type references.
-> > > > > > + *
-> > > > > > + * Validates that all IDs in the permutation array are valid a=
-nd unique.
-> > > > > > + */
-> > > > > > +static int btf_permute_shuffle_types(struct btf_permute *p)
-> > > > > > +{
-> > > > > > +       struct btf *btf =3D p->btf;
-> > > > > > +       const struct btf_type *t;
-> > > > > > +       __u32 *new_offs =3D NULL, *map;
-> > > > > > +       void *nt, *new_types =3D NULL;
-> > > > > > +       int i, id, len, err;
-> > > > > > +
-> > > > > > +       new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
-> > > > >
-> > > > > we don't really need to allocate memory and maintain this, we can=
- just
-> > > > > shift types around and then do what btf_parse_type_sec() does -- =
-just
-> > > > > go over types one by one and calculate offsets, and update them
-> > > > > in-place inside btf->type_offs
-> > > >
-> > > > Thank you for the suggestion. However, this approach is not viable =
-because
-> > > > the `btf__type_by_id()` function relies critically on the integrity=
- of the
-> > > > `btf->type_offs` data structure. Attempting to modify `type_offs` t=
-hrough
-> > > > in-place operations could corrupt memory and lead to segmentation f=
-aults
-> > > > due to invalid pointer dereferencing.
-> > >
-> > > Huh? By the time this API returns, we'll fix up type_offs, users will
-> > > never notice. And to recalculate new type_offs we don't need
-> > > type_offs. One of us is missing something important, what is it?
-> >
-> > Thanks, however the bad news is that the btf__type_by_id is indeed call=
-ed
-> > within the API.
-> >
-> > static int btf_permute_shuffle_types(struct btf_permute *p)
-> > {
-> >         struct btf *btf =3D p->btf;
-> >         const struct btf_type *t;
-> >         __u32 *new_offs =3D NULL, *ids_map;
-> >         void *nt, *new_types =3D NULL;
-> >         int i, id, len, err;
-> >
-> >         new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
-> >         new_types =3D calloc(btf->hdr->type_len, 1);
-> >         ......
-> >         nt =3D new_types;
-> >        for (i =3D 0; i < btf->nr_types; i++) {
-> >                 id =3D p->ids[i];
-> >                 ......
-> >                 /* must be a valid type ID */
-> >                 t =3D btf__type_by_id(btf, id);  <<<<<<<<<<<<<
->
-> You are still on the old types layout and old type_offs at that point.
-> You are not using your new_offs here *anyways*
->
-> >                 ......
-> >                 len =3D btf_type_size(t);
-> >                 memcpy(nt, t, len);
-> >                 new_offs[i] =3D nt - new_types;
-> >                 *ids_map =3D btf->start_id + i;
-> >                 nt +=3D len;
-> >         }
-> > ......
->
-> ... you will recalculate and update type_offs here ... well past
-> btf__type_by_id() usage ...
+On Tue, Oct 28, 2025 at 09:58:14PM +0800, Qi Zheng wrote:
+> From: Muchun Song <songmuchun@bytedance.com>
+> 
+> Since the no-hierarchy mode has been deprecated after the commit:
+> 
+>   commit bef8620cd8e0 ("mm: memcg: deprecate the non-hierarchical mode").
+> 
+> As a result, parent_mem_cgroup() will not return NULL except when passing
+> the root memcg, and the root memcg cannot be offline. Hence, it's safe to
+> remove the check on the returned value of parent_mem_cgroup(). Remove the
+> corresponding dead code.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> ---
 
-Thanks, I see. We need to add another for loop for this update, but
-the cost is minimal compared to the memory savings. I will fix it in
-v6.
+Looks good to me,
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 
->
-> > }
-> >
-> > >
-> > > [...]
+-- 
+Cheers,
+Harry / Hyeonggon
 
