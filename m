@@ -1,234 +1,295 @@
-Return-Path: <linux-kernel+bounces-890808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF4BC4102F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:20:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F7CC4104A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB2544E2BF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:20:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9524A3B0718
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD3732BF4B;
-	Fri,  7 Nov 2025 17:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2453233506B;
+	Fri,  7 Nov 2025 17:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5DqYg68"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="oivdVo0f"
+Received: from fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.75.33.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF22261581;
-	Fri,  7 Nov 2025 17:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F35D320385;
+	Fri,  7 Nov 2025 17:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.75.33.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762536025; cv=none; b=Bm4sVLUeYX/0je2pNHUxRYFY9gSyocWI7Ph07QC7tnIBMG1y+nuic8Xwdb0a4nP+ZTHe6cHWQWIMyLiL/gJGx1iUnGqjQrvmG6LEnE+DrUryqEQeSDpSp8HIhSugdXclbizQTJs8bRbcYfOW/Y2OlwTO99/Tm0abBj1ecy4UkWw=
+	t=1762536145; cv=none; b=mev/RYEPiusAJFix5z1/FgtfygRLCDkCbxwMjyNM4pqeuTH7yt7VJ76BcS6AXEepIcM591QGZBTTxJHDXhn5vk6NyoT4TcLlQN12Eg2ic7+tdm7k21FCClxUbu+UAcshcJ3GLeIra/qvdtlhu/k757+Gp7WO9o32l98WGF7ym2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762536025; c=relaxed/simple;
-	bh=oxDwYCkrdj5zrZ8eK9rx/ixf+coTfobB+mmKr0plunM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5uH0UsEOhGgiFLj8rePmhxLYkF5zvshjzLH4zeWp0hxeU8sQdQngz3MxwoIitmGn/0JH69+Akr3Nkptv2m1FGxDz6BkqNWX1VLTSMTF+CoP1yweTdVQ7EEDpqzDsVRRr1KE9SMvaqqKrp6CG0ANAv/rgd4Escju+8R4e4cVlwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5DqYg68; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8F5DC4CEF7;
-	Fri,  7 Nov 2025 17:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762536025;
-	bh=oxDwYCkrdj5zrZ8eK9rx/ixf+coTfobB+mmKr0plunM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H5DqYg68rq3zVGZMHb1G+n9EpqbvDQKJrpFVNHiVJLLFbZ5pY6AViB9hzMd9VqC5M
-	 mGKjRFnWZnyQf3T+SFj/OvyzEJ8mg297kyCDFXE8zqDRflD3BtHcB9pBRu9hxSBaOr
-	 pHXELra7/krwGXctjJ24pwXMVHH+dquYdiHz56qvXcVCJQhbVCxGqNnlFaBZ/EItv7
-	 DWCCMZrrJnLsBlmLOUdloFLYrlZ5bzI+xKmCmxRnQeEsPMZPlfpEBGYLMliTYsQVI8
-	 NNolAV9+5w7V/+MtAMJ8LA6bjUaFChAq1Lk/AtvtxGz+llwFdFOxuOBd0wZKT3M1T4
-	 t1NH4Y2MCHWAA==
-Date: Fri, 7 Nov 2025 17:20:19 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-Cc: E Shattow <e@freeshell.de>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Subject: Re: [PATCH v2 0/8] Add support for StarFive VisionFive 2 Lite board
-Message-ID: <20251107-frenzy-cloning-4b279cfe932c@spud>
-References: <20251107095530.114775-1-hal.feng@starfivetech.com>
- <c05d8bcc-3024-45cd-8630-b0595682e778@freeshell.de>
- <6d0fb6aa-6d88-4069-a5e5-9e910523888e@canonical.com>
+	s=arc-20240116; t=1762536145; c=relaxed/simple;
+	bh=pHNLLfqbYumlAme2jvMWvv2Y3hjJio/f8OMxN+Ru/vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FdZvMde/u+xv5nbzr/mtFgM1m4poFSsvfAWwAy0nfYFF3PwX7wX43GbOBbCJWKUUE4rHEapgo1Kgq/TLOvqMscAZV1yKOW2E5N+9CdGC9f25y6wzKs4n7s7kIdOqBvmAVw4oCI67CwoVWxZKvMN3ps9lrqIPe/eUEagHSzs35/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=oivdVo0f; arc=none smtp.client-ip=3.75.33.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1762536139; x=1794072139;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=zeq9wpmkvH2UHLy5H6u2LRXPndXmWsiN26yYiLqvdkA=;
+  b=oivdVo0fZqFMZ4Xjj3VIAdsA6QPvyp99qBxkOQSEtHZhAXcgXg+7+1hr
+   vrsJQRZ0LA9YaQ6hEsUSn2lEiMa3d8mBJAq9KrkjDeREw/luuwD2T6K+H
+   6bpmjNqgt9yIeSM14DeEzfvxgWb6lEgJWUePaR7aTjgAzilH7kFcgMYMX
+   ZYWZVwQ492Xdkxo75Ye8vXq2bHHKyEy1RX2e6MbCLPKy/FJUqx8bMrkpv
+   9PT6gCtNQd/qgvXq7MaC+Q/wQulrH7e+eCixpWy8Vf9TsTs5nWOu1YQ3e
+   WMH6oyajCAN2xp+5XQE/ry9i/f3N957rR1PHjjfMfzzzsadsAb/YFnGRO
+   g==;
+X-CSE-ConnectionGUID: eADlVNDWRVSnPzMvuX45Hg==
+X-CSE-MsgGUID: u80Q1nSiRxS18+LvWHhDZQ==
+X-IronPort-AV: E=Sophos;i="6.19,287,1754956800"; 
+   d="scan'208";a="4849265"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-007.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 17:21:59 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:19579]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.36.34:2525] with esmtp (Farcaster)
+ id da86097e-7b6d-4b55-a5fe-596b9a5cc565; Fri, 7 Nov 2025 17:21:59 +0000 (UTC)
+X-Farcaster-Flow-ID: da86097e-7b6d-4b55-a5fe-596b9a5cc565
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Fri, 7 Nov 2025 17:21:59 +0000
+Received: from [192.168.9.244] (10.106.83.15) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
+ 17:21:56 +0000
+Message-ID: <3a87167e-32fb-4ce7-8c70-40dfa9d0f2a2@amazon.com>
+Date: Fri, 7 Nov 2025 17:21:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="98XJ8Lpr/rFGdbIm"
-Content-Disposition: inline
-In-Reply-To: <6d0fb6aa-6d88-4069-a5e5-9e910523888e@canonical.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+To: Will Deacon <will@kernel.org>, Dave Hansen <dave.hansen@intel.com>
+CC: "Roy, Patrick" <roypat@amazon.co.uk>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org"
+	<maz@kernel.org>, "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com"
+	<suzuki.poulose@arm.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"luto@kernel.org" <luto@kernel.org>, "peterz@infradead.org"
+	<peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
+	<vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
+	<surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, "song@kernel.org"
+	<song@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org"
+	<ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
+	<martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org"
+	<kpsingh@kernel.org>, "sdf@fomichev.me" <sdf@fomichev.me>,
+	"haoluo@google.com" <haoluo@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com"
+	<peterx@redhat.com>, "jannh@google.com" <jannh@google.com>,
+	"pfalcato@suse.de" <pfalcato@suse.de>, "shuah@kernel.org" <shuah@kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali,
+ Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+	"Thomson, Jack" <jackabt@amazon.co.uk>, "derekmn@amazon.co.uk"
+	<derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>,
+	"ackerleytng@google.com" <ackerleytng@google.com>, Patrick Roy
+	<patrick.roy@linux.dev>, David Hildenbrand <david@redhat.com>
+References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+ <20250924152214.7292-1-roypat@amazon.co.uk>
+ <20250924152214.7292-3-roypat@amazon.co.uk>
+ <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
+ <c1875a54-0c87-450f-9370-29e7ec4fea3d@redhat.com>
+ <82bff1c4-987f-46cb-833c-bd99eaa46e7a@intel.com>
+ <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
+ <c88514c3-e15f-4853-8acf-15e7b4b979f4@linux.dev>
+ <aNZwmPFAxm_HRYpC@willie-the-truck>
+ <5d11b5f7-3208-4ea8-bbff-f535cf62d576@redhat.com>
+ <be89abc6-97ca-47d8-b8e7-95f58ab9cc67@linux.dev>
+ <f13e06f3-3c7b-4993-b33a-a6921c14231b@redhat.com>
+ <d25340e3-2017-4614-a472-c5c7244c7ce4@linux.dev>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <d25340e3-2017-4614-a472-c5c7244c7ce4@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D003EUB003.ant.amazon.com (10.252.51.36) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
 
---98XJ8Lpr/rFGdbIm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 12:21:46PM +0100, Heinrich Schuchardt wrote:
-> On 11/7/25 12:11, E Shattow wrote:
-> >=20
-> >=20
-> > On 11/7/25 01:55, Hal Feng wrote:
-> > > VisionFive 2 Lite is a mini SBC based on the StarFive JH7110S industr=
-ial
-> > > SoC which can run at -40~85 degrees centigrade and up to 1.25GHz.
-> > >=20
-> > > Board features:
-> > > - JH7110S SoC
-> > > - 4/8 GiB LPDDR4 DRAM
-> > > - AXP15060 PMIC
-> > > - 40 pin GPIO header
-> > > - 1x USB 3.0 host port
-> > > - 3x USB 2.0 host port
-> > > - 1x M.2 M-Key (size: 2242)
-> > > - 1x MicroSD slot (optional non-removable 64GiB eMMC)
-> > > - 1x QSPI Flash
-> > > - 1x I2C EEPROM
-> > > - 1x 1Gbps Ethernet port
-> > > - SDIO-based Wi-Fi & UART-based Bluetooth
-> > > - 1x HDMI port
-> > > - 1x 2-lane DSI
-> > > - 1x 2-lane CSI
-> > >=20
-> > > VisionFive 2 Lite schematics: https://doc-en.rvspace.org/VisionFive2L=
-ite/PDF/VF2_LITE_V1.10_TF_20250818_SCH.pdf
-> > > VisionFive 2 Lite Quick Start Guide: https://doc-en.rvspace.org/Visio=
-nFive2Lite/VisionFive2LiteQSG/index.html
-> > > More documents: https://doc-en.rvspace.org/Doc_Center/visionfive_2_li=
-te.html
-> > >=20
-> > > Changes since v1:
-> > > - Drop patch 1 because it is applied.
-> > > - Rename jh7110.dtsi to jh711x.dtsi.
-> > > - Move the content of jh7110-common.dtsi to the new file
-> > >    jh711x-common.dtsi and move opp table to jh7110-common.dtsi.
-> > > patch 4:
-> > > - Move the uncommon nodes to jh7110-common.dtsi instead of board dts.
-> > > patch 5:
-> > > - Add jh7110s-common.dtsi and include it in jh7110s-starfive-visionfi=
-ve-2-lite.dtsi.
-> > >=20
-> > > Changes since RFC:
-> > > - Add jh7110s compatible to the generic cpufreq driver.
-> > > - Fix the dtbs_check error by adding the missing "enable-gpios" prope=
-rty
-> > >    in jh7110 pcie dt-bindings.
-> > > - Rebase on the latest mainline.
-> > > - Add VisionFive 2 Lite eMMC board device tree and add a common board=
- dtsi
-> > >    for VisionFive 2 Lite variants.
-> > > - Add usb switch pin configuration (GPIO62).
-> > > - Improve the commit messages.
-> > >=20
-> > > History:
-> > > v1: https://lore.kernel.org/all/20251016080054.12484-1-hal.feng@starf=
-ivetech.com/
-> > > RFC: https://lore.kernel.org/all/20250821100930.71404-1-hal.feng@star=
-fivetech.com/
-> > >=20
-> > > Hal Feng (8):
-> > >    dt-bindings: PCI: starfive,jh7110-pcie: Add enable-gpios property
-> > >    dt-bindings: riscv: Add StarFive JH7110S SoC and VisionFive 2 Lite
-> > >      board
-> > >    riscv: dts: starfive: Rename jh7110.dtsi to jh711x.dtsi
-> > >    riscv: dts: starfive: Split jh7110-common.dtsi and move opp table =
-to
-> > >      it
-> > >    riscv: dts: starfive: jh711x-common: Move out some nodes to jh7110
-> > >      common dtsi
-> > >    riscv: dts: starfive: Add common board dtsi for JH7110s and Vision=
-Five
-> > >      2 Lite variants
-> > >    riscv: dts: starfive: Add VisionFive 2 Lite board device tree
-> > >    riscv: dts: starfive: Add VisionFive 2 Lite eMMC board device tree
-> > >=20
-> > >   .../bindings/pci/starfive,jh7110-pcie.yaml    |   4 +
-> > >   .../devicetree/bindings/riscv/starfive.yaml   |   6 +
-> > >   arch/riscv/boot/dts/starfive/Makefile         |   3 +
-> > >   .../boot/dts/starfive/jh7110-common.dtsi      | 653 +--------------=
---
-> > >   .../boot/dts/starfive/jh7110s-common.dtsi     |  27 +
-> > >   ...h7110s-starfive-visionfive-2-lite-emmc.dts |  22 +
-> > >   .../jh7110s-starfive-visionfive-2-lite.dts    |  20 +
-> > >   .../jh7110s-starfive-visionfive-2-lite.dtsi   | 126 ++++
-> > >   .../boot/dts/starfive/jh711x-common.dtsi      | 656 +++++++++++++++=
-+++
-> > >   .../dts/starfive/{jh7110.dtsi =3D> jh711x.dtsi} |  16 -
-> > >   10 files changed, 879 insertions(+), 654 deletions(-)
-> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-common.dtsi
-> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-vi=
-sionfive-2-lite-emmc.dts
-> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-vi=
-sionfive-2-lite.dts
-> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh7110s-starfive-vi=
-sionfive-2-lite.dtsi
-> > >   create mode 100644 arch/riscv/boot/dts/starfive/jh711x-common.dtsi
-> > >   rename arch/riscv/boot/dts/starfive/{jh7110.dtsi =3D> jh711x.dtsi} =
-(99%)
-> > >=20
-> > >=20
-> > > base-commit: df5d79720b152e7ff058f11ed7e88d5b5c8d2a0c
-> >=20
-> > Small nit that "lite-emmc" is confusing together. In patches to U-Boot
-> > dev mailing list the EEPROM product id is demonstrated to be with "SL"
-> > suffix when compared to VisionFive 2 (JH7110) so I suggest avoid
-> > confusion in upstream and use for VisionFive 2 Lite (JH7110S) these
-> > compatible names:
-> >=20
-> > starfive,visionfive-2sl-lite
-> > starfive,visionfive-2sl-emmc
-> >=20
-> > Also filenames:
-> >=20
-> > jh7110s-starfive-visionfive-2sl-lite.dts
-> > jh7110s-starfive-visionfive-2sl.dtsi
-> > jh7110s-starfive-visionfive-2sl-emmc.dts
-> >=20
-> > What do you think?
-> >=20
->=20
-> This is a serial number for the Lite board:
-> VF7110SL-2310-D002E000-xxxxxxxx
->=20
-> Here E000 encodes that we have no eMMC.
->=20
-> The S is part of 7110S which we already have in 'jh7110s'. And the L is
-> already decoded as 'lite' in this patch series. Duplicating this informat=
-ion
-> as 'sl' as you suggested provides no benefit.
->=20
-> Let's just stick with Hal's suggestion.
+On 11/10/2025 15:32, Patrick Roy wrote:
+> Hey all,
+> 
+> sorry it took me a while to get back to this, turns out moving
+> internationally is move time consuming than I expected.
+> 
+> On Mon, 2025-09-29 at 12:20 +0200, David Hildenbrand wrote:
+>> On 27.09.25 09:38, Patrick Roy wrote:
+>>> On Fri, 2025-09-26 at 21:09 +0100, David Hildenbrand wrote:
+>>>> On 26.09.25 12:53, Will Deacon wrote:
+>>>>> On Fri, Sep 26, 2025 at 10:46:15AM +0100, Patrick Roy wrote:
+>>>>>> On Thu, 2025-09-25 at 21:13 +0100, David Hildenbrand wrote:
+>>>>>>> On 25.09.25 21:59, Dave Hansen wrote:
+>>>>>>>> On 9/25/25 12:20, David Hildenbrand wrote:
+>>>>>>>>> On 25.09.25 20:27, Dave Hansen wrote:
+>>>>>>>>>> On 9/24/25 08:22, Roy, Patrick wrote:
+>>>>>>>>>>> Add an option to not perform TLB flushes after direct map manipulations.
+>>>>>>>>>>
+>>>>>>>>>> I'd really prefer this be left out for now. It's a massive can of worms.
+>>>>>>>>>> Let's agree on something that works and has well-defined behavior before
+>>>>>>>>>> we go breaking it on purpose.
+>>>>>>>>>
+>>>>>>>>> May I ask what the big concern here is?
+>>>>>>>>
+>>>>>>>> It's not a _big_ concern.
+>>>>>>>
+>>>>>>> Oh, I read "can of worms" and thought there is something seriously problematic :)
+>>>>>>>
+>>>>>>>> I just think we want to start on something
+>>>>>>>> like this as simple, secure, and deterministic as possible.
+>>>>>>>
+>>>>>>> Yes, I agree. And it should be the default. Less secure would have to be opt-in and documented thoroughly.
+>>>>>>
+>>>>>> Yes, I am definitely happy to have the 100% secure behavior be the
+>>>>>> default, and the skipping of TLB flushes be an opt-in, with thorough
+>>>>>> documentation!
+>>>>>>
+>>>>>> But I would like to include the "skip tlb flushes" option as part of
+>>>>>> this patch series straight away, because as I was alluding to in the
+>>>>>> commit message, with TLB flushes this is not usable for Firecracker for
+>>>>>> performance reasons :(
+>>>>>
+>>>>> I really don't want that option for arm64. If we're going to bother
+>>>>> unmapping from the linear map, we should invalidate the TLB.
+>>>>
+>>>> Reading "TLB flushes result in a up to 40x elongation of page faults in
+>>>> guest_memfd (scaling with the number of CPU cores), or a 5x elongation
+>>>> of memory population,", I can understand why one would want that optimization :)
+>>>>
+>>>> @Patrick, couldn't we use fallocate() to preallocate memory and batch the TLB flush within such an operation?
+>>>>
+>>>> That is, we wouldn't flush after each individual direct-map modification but after multiple ones part of a single operation like fallocate of a larger range.
+>>>>
+>>>> Likely wouldn't make all use cases happy.
+>>>>
+>>>
+>>> For Firecracker, we rely a lot on not preallocating _all_ VM memory, and
+>>> trying to ensure only the actual "working set" of a VM is faulted in (we
+>>> pack a lot more VMs onto a physical host than there is actual physical
+>>> memory available). For VMs that are restored from a snapshot, we know
+>>> pretty well what memory needs to be faulted in (that's where @Nikita's
+>>> write syscall comes in), so there we could try such an optimization. But
+>>> for everything else we very much rely on the on-demand nature of guest
+>>> memory allocation (and hence direct map removal). And even right now,
+>>> the long pole performance-wise are these on-demand faults, so really, we
+>>> don't want them to become even slower :(
+>>
+>> Makes sense. I guess even without support for large folios one could implement a kind of "fault" around: for example, on access to one addr, allocate+prepare all pages in the same 2 M chunk, flushing the tlb only once after adjusting all the direct map entries.
+>>
+>>>
+>>> Also, can we really batch multiple TLB flushes as you suggest? Even if
+>>> pages are at consecutive indices in guest_memfd, they're not guaranteed
+>>> to be continguous physically, e.g. we couldn't just coalesce multiple
+>>> TLB flushes into a single TLB flush of a larger range.
+>>
+>> Well, you there is the option on just flushing the complete tlb of course :) When trying to flush a range you would indeed run into the problem of flushing an ever growing range.
+> 
+> In the last guest_memfd upstream call (over a week ago now), we've
+> discussed the option of batching and deferring TLB flushes, while
+> providing a sort of "deadline" at which a TLB flush will
+> deterministically be done.  E.g. guest_memfd would keep a counter of how
+> many pages got direct map zapped, and do a flush of a range that
+> contains all zapped pages every 512 allocated pages (and to ensure the
+> flushes even happen in a timely manner if no allocations happen for a
+> long time, also every, say, 5 seconds or something like that). Would
+> that work for everyone?
 
-The marketing materials etc call it the visionfive 2 lite, for example
-on kickstarter: https://www.kickstarter.com/projects/starfive/visionfive-2-=
-lite-unlock-risc-v-sbc-at-199
-I'm happy enough with what Hal has here as a result.
+Hi Dave, Will,
 
---98XJ8Lpr/rFGdbIm
-Content-Type: application/pgp-signature; name="signature.asc"
+We have been exploring ways to improve performance while still making 
+sure stale entries are wiped out from the TLBs in a timely manner.  What 
+we came up with is flushing all entries in the local TLBs (without 
+broadcasting) whenever a VM enter occurs on the CPU or a vCPU is 
+migrated to another pCPU.  Thus we will guarantee that the VM will never 
+see stale entries in its TLB and won't be able to access pages that were 
+removed from the direct map.  In my experiment, such flushes take ~100 
+ns on x86 and ~220 ns on ARM, which is acceptable from the performance 
+point of view.  Would you be open to considering this solution?
 
------BEGIN PGP SIGNATURE-----
+Nikita
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ4qUwAKCRB4tDGHoIJi
-0syIAQD+Er+PMhGz0kEbUyrWG+rkw0VQZymPYFA4k1wpI8zTpQD/c/7P+rG/2fm/
-YoL8btigKOHdPBIBOGqtNCtKrN3/QAI=
-=NTsO
------END PGP SIGNATURE-----
+> that work for everyone? I briefly tested the performance of> batch-flushes with secretmem in QEMU, and its within of 30% of the "no
+> TLB flushes at all" solution in a simple benchmark that just memsets
+> 2GiB of memory.
+> 
+> I think something like this, together with the batch-flushing at the end
+> of fallocate() / write() as David suggested above should work for
+> Firecracker.
+> 
+>>> There's probably other things we can try. Backing guest_memfd with
+>>> hugepages would reduce the number TLB flushes by 512x (although not all
+>>> users of Firecracker at Amazon [can] use hugepages).
+>>
+>> Right.
+>>
+>>>
+>>> And I do still wonder if it's possible to have "async TLB flushes" where
+>>> we simply don't wait for the IPI (x86 terminology, not sure what the
+>>> mechanism on arm64 is). Looking at
+>>> smp_call_function_many_cond()/invlpgb_kernel_range_flush() on x86, it
+>>> seems so? Although seems like on ARM it's actually just handled by a
+>>> single instruction (TLBI) and not some interprocess communication
+>>> thingy. Maybe there's a variant that's faster / better for this usecase?
+>>
+>> Right, some architectures (and IIRC also x86 with some extension) are able to flush remote TLBs without IPIs.
+>>
+>> Doing a quick search, there seems to be some research on async TLB flushing, e.g., [1].
+>>
+>> In the context here, I wonder whether an async TLB flush would be
+>> significantly better than not doing an explicit TLB flush: in both
+>> cases, it's not really deterministic when the relevant TLB entries
+>> will vanish: with the async variant it might happen faster on average
+>> I guess.
+> 
+> I actually did end up playing around with this a while ago, and it made
+> things slightly better performance wise, but it was still too bad to be
+> useful :(
+> 
+>>
+>> [1] https://cs.yale.edu/homes/abhishek/kumar-taco20.pdf
+>>
+> 
+> Best,
+> Patrick
 
---98XJ8Lpr/rFGdbIm--
 
