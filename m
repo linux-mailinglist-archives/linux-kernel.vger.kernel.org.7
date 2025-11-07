@@ -1,212 +1,168 @@
-Return-Path: <linux-kernel+bounces-889588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E45C3DF99
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:27:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD33C3DFAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D48874EAC01
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:26:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7366D34B019
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528602D0C68;
-	Fri,  7 Nov 2025 00:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E872D46BD;
+	Fri,  7 Nov 2025 00:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAExQ052"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="vz1xJ4ZN"
+Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2102C08BA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDE41F19A;
+	Fri,  7 Nov 2025 00:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762475136; cv=none; b=BP3QR/gbBtTM4fWQSE08Vy1uwP2P16b4ltq7E1vX0IJ5uKIbwpd7HCcaddHKn9PP5tugx3DnzlWwzB5FxjBGmqURh6GTsRaNGxuylL7F7oAODWPaD7DFMqNc/GUijLGdx1K1G29O3OYHbeawPQJpBdDI1WpSFItiW6gLMiGz8U8=
+	t=1762475452; cv=none; b=CuUoces3pkumgL6vx9T712wNo+0TvplQqzb3gXom0pAYRe8ZHtFzzx2KvE3jwodsGOcDgh5xkz39o5henZ0NpSmIvIlIjrRglNoFGyLR+urOiBu5D6RTAlYvVKfNMhBB2e+nlUBYiUadDw2LL6G9oIRPVUloXRDhFJDeqIWqgZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762475136; c=relaxed/simple;
-	bh=2OYTQxpg9nb0ECcvWiDf5s06kwrR/GHJEK7e2Ia8Npo=;
+	s=arc-20240116; t=1762475452; c=relaxed/simple;
+	bh=rbYZFDhnLDpEpqh6sqUJeLRBPVCKU6SN6dWVJ2axnoc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZazY7tYUw5uvGzAlALEHjYH9u7N1dxP/625j73bbnjPRC+eODW3+RfvOvYoKDgZOOJ4oSKDPnIGyoPhQSmb9Qy4hojnCqnZ5d02Mz2fdC1vy7C0+sUv2KzC6LI+vTwj//k5XSUA/sJE2d+eZ7rHjXrVgV9869PTknTdVa57eDtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAExQ052; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-89e8a3fa70fso15365785a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:25:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762475130; x=1763079930; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eDrGyP4KsggNDtgfNXCVvLL5On0RJHEibXmC0ga7f1Y=;
-        b=XAExQ052D5vV0ETkdo9kS4OVmh2x4pDuMJYlUhK/Ol6Wd+wrKhYo0klGF30/ZoOjQI
-         4t2dICuowjIw73Yxwbj5AvcsQD2Y0ux8RmjAu+PMTYqXy9gNaZIuZ/JJh78KenaPEwdv
-         nM3w+XU2HT9reieD7gWIhMO6sX9/LEr1rkSaeg72pGkH0pEC7UGwtD7J1Ir20GrC3rx8
-         V+7hIIykgRumIquNoXOlBHJ6rQW8rlbGck4wL4mN6fPLCErWBgWaq6wR9PurYD/dtfJf
-         LLbQHrSYbwiYS/NIPFQgW7LAGkoJSD6z+q73Q/C/Xwb7ovB6ZnAdlqpXZEugTVZOozO8
-         5PEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762475130; x=1763079930;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eDrGyP4KsggNDtgfNXCVvLL5On0RJHEibXmC0ga7f1Y=;
-        b=JYxEySe9pHTFd/7EJW9qlO2Ag2VIkpRyGxg78QVwYG2hWt8KKw5FV43Jkqp4EEoZcH
-         pmuU/cS14PgCmPZrK75VsZP1ZSnkeQCIJEzvIuuNubwXwzUC1BAwx5mIQbsOaH6AHiFs
-         6y0ccLtyoRtPd64rDjfWgLDVRlsZsnoXPYkVHxBfiY6FxRTfGSOf4FnO9WnleUMp2Nxc
-         GOJAvS4z+2w+U9U1nz9M5YHAxNE1aQci6gTjNN8ByDcXImCg7GMYBKHL/5xhuome+rbw
-         cwe6pJm0S3/nXmU+uhie4Wyl+v+B13lAmqSv2YQeJhJbICYuVUeEXgW7FVF9E7Bq0JTQ
-         FNKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYaPl/WRVCi99S98J4NS7yKdl1TdVb1PuroiwUG5QyyZLfwxmItmEOUy+IWfOA4qRDImHQVegVwdztRCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnHQLu4mgQv9bHuG2ZZNsGZrg5YcjVbFchO3elRiyDD5JAqgo4
-	n833myn1WbhM67WFOQ0d409tGWuda0JSIt6dxUUOFvn+dHJNOqGQKHbe
-X-Gm-Gg: ASbGncuG0ZkI4bBwIEVB2WbTptSlj0A+mVfi0w7LkOFFWp4d4JezGDGTsbxocCIdHQe
-	iLaRHOIccboGMvyXLZfH7+l0YUjl7++ucjStqA5LjuVVytsAKDoOF2oTYQPzsEmAOKkb36Bmi6B
-	qZBQ1ymk2tzTEb38xyImP3G4cpfFYaD0R/fGUSESWOieLRA6Ho1S5H1IZiyglJDqdGfNc7HgTKt
-	BAp8PR/w1G7u4hnx2S9tdmhFBF8BLX7qpha/VA27RKQkNpbLY+Sg4HCgvcTKWtgHnaAqg/2ns8q
-	cBlxzyK51257RozjvxRLDJedyg7cDFwP+mPRF5Nj1lTKtSS5ajdXse2JRj0D7lLJs+D1OjiYdHY
-	vJmCirFgJjCQ54uWD/wvQl5shnVxkg9I7+DpxjohaSSYQVzToF3bhG6McexaM4KiUmVvxudOz
-X-Google-Smtp-Source: AGHT+IE3wHS1UJmfiT2G9cUOC3xFxU6u/uO+VhHYvECIZct+pRXqPd9d6g9YleM22aR0m7kB5P9qtQ==
-X-Received: by 2002:a05:620a:2943:b0:89e:da49:7967 with SMTP id af79cd13be357-8b245286758mr198236785a.18.1762475130279;
-        Thu, 06 Nov 2025 16:25:30 -0800 (PST)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2357de61esm299869785a.32.2025.11.06.16.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 16:25:29 -0800 (PST)
-Date: Thu, 6 Nov 2025 19:25:27 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Mitchell Levy <levymitchell0@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Tyler Hicks <code@tyhicks.com>,
-	Allen Pais <apais@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v4 1/9] rust: cpumask: Add a `Cpumask` iterator
-Message-ID: <aQ08d2NUVsIf5ukH@yury>
-References: <20251105-rust-percpu-v4-0-984b1470adcb@gmail.com>
- <20251105-rust-percpu-v4-1-984b1470adcb@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QdfzDn1Kpnkp1oC4pk0K8caxZ5K+xr0/fcjOIY1dzDLiC3eh8kwMV6eVcLQ6VE3TAzlvcLEIYnwPJ7XvJWscT3vG9fhHxrWga0fDtnq7WUOEcxYDguKCn7Whu8DFD0kerciprbeDmTjsCVEUVqtMuxnUw05/ddpB8YVuy/RHBTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=vz1xJ4ZN; arc=none smtp.client-ip=172.105.74.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
+Received: from lipo.home.arpa (unknown [IPv6:2a02:2f0e:3e0c:5b00:f1e0:3f4b:286c:9ddb])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.subdimension.ro (Postfix) with ESMTPSA id DC9B6160209;
+	Fri, 07 Nov 2025 02:30:39 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
+	s=mail; t=1762475440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gu0/BUJoXynDAUB8R6H/4sFrLhmyaLY5XvHLuteKYUA=;
+	b=vz1xJ4ZNN0Oc8OJ8PUha5ATdtvhD8CjOaIDgZoLRb9iPzi5r2nPhCDp5sPlsaTC1yD80mG
+	K3T9nunvb6l5iQI+A6CYLO8xCZ3cZSazrrrsGXxZCTDTZZo0oac8y3NfZv8PlZD2drU+C8
+	8pFwVnLyHKIJwqLUVshHMN3TX43jQknjBMTi5vZHKmbJWMtcK0Wa92DYsObTiHKwpaw9nt
+	9iSsuLdCHPRQPTTXxANeAEHdHU2fNMcGhW1zGabQpA36B5S6ezxkObhV5cuqlzsqvz09gn
+	FFe+ILx8L3j0O3lg2TG6bybX8UB7zePRa3l82mWColM4Np/EkffJ0gHYrSUP1g==
+Date: Fri, 7 Nov 2025 02:30:33 +0200
+From: Petre Rodan <petre.rodan@subdimension.ro>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jagath Jog J <jagathjog1996@gmail.com>
+Subject: Re: [PATCH 3/6] iio: accel: bma220: add tap detection
+Message-ID: <aQ09qTYr0gqlb0If@lipo.home.arpa>
+References: <20251014-bma220_events-v1-0-153424d7ea08@subdimension.ro>
+ <20251014-bma220_events-v1-3-153424d7ea08@subdimension.ro>
+ <20251018181632.76851d4e@jic23-huawei>
+ <aQW9OnJSrOzn_Sws@lipo.home.arpa>
+ <20251102122053.49ee2632@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VSn+NfuX/JxFTYS/"
+Content-Disposition: inline
+In-Reply-To: <20251102122053.49ee2632@jic23-huawei>
+
+
+--VSn+NfuX/JxFTYS/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251105-rust-percpu-v4-1-984b1470adcb@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 05, 2025 at 03:01:13PM -0800, Mitchell Levy wrote:
-> Add an iterator for `Cpumask` making use of C's `cpumask_next`.
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
-> ---
->  rust/helpers/cpumask.c |  5 +++++
->  rust/kernel/cpumask.rs | 48 +++++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 52 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/helpers/cpumask.c b/rust/helpers/cpumask.c
-> index eb10598a0242..d95bfa111191 100644
-> --- a/rust/helpers/cpumask.c
-> +++ b/rust/helpers/cpumask.c
-> @@ -42,6 +42,11 @@ bool rust_helper_cpumask_full(struct cpumask *srcp)
->  	return cpumask_full(srcp);
->  }
->  
-> +unsigned int rust_helper_cpumask_next(int n, struct cpumask *srcp)
-> +{
-> +	return cpumask_next(n, srcp);
-> +}
-> +
->  unsigned int rust_helper_cpumask_weight(struct cpumask *srcp)
->  {
->  	return cpumask_weight(srcp);
-> diff --git a/rust/kernel/cpumask.rs b/rust/kernel/cpumask.rs
-> index 3fcbff438670..b7401848f59e 100644
-> --- a/rust/kernel/cpumask.rs
-> +++ b/rust/kernel/cpumask.rs
-> @@ -6,7 +6,7 @@
->  
->  use crate::{
->      alloc::{AllocError, Flags},
-> -    cpu::CpuId,
-> +    cpu::{self, CpuId},
->      prelude::*,
->      types::Opaque,
->  };
-> @@ -161,6 +161,52 @@ pub fn copy(&self, dstp: &mut Self) {
->      }
->  }
->  
-> +/// Iterator for a `Cpumask`.
-> +pub struct CpumaskIter<'a> {
-> +    mask: &'a Cpumask,
-> +    last: Option<u32>,
+On Sun, Nov 02, 2025 at 12:20:53PM +0000, Jonathan Cameron wrote:
+> On Sat, 1 Nov 2025 09:56:42 +0200
+> Petre Rodan <petre.rodan@subdimension.ro> wrote:
+>=20
+> > Hello Jonathan,
+> >=20
+> > thank you for the review.
+> >=20
+> > On Sat, Oct 18, 2025 at 06:16:32PM +0100, Jonathan Cameron wrote:
+> > > > +			ret =3D regmap_read(data->regmap, BMA220_REG_CONF3, &reg_val);
+> > > > +			if (ret)
+> > > > +				return ret;
+> > > > +			*val =3D FIELD_GET(BMA220_TT_DUR_MSK, reg_val); =20
+> > >=20
+> > > This needs to be in second if you are using duration. Is the register=
+ really in seconds? =20
+> >=20
+> > this IC has a very small number of bits that configure
+> > duration/hysteresis/threshold levels. it's between 2 and 6 for each
+> > of them. in the case of high and low G events the duration is not
+> > even directly defined as a time interval, but as a count of samples
+> > that are over a threshold value.
+>=20
+> The ABI is in seconds, so you have to deal with scaling wrt to the sampli=
+ng
+> frequency at the time.  I know it can be a pain to do, but consistent use=
+rspace
+> is the aim and so we need to match the ABI.
 
-This is not the last, it's a current CPU.
+on this bma220 chip, when someone modifies the cut off frequency of the fil=
+ter then the ic automatically adjusts the sampling rate. and this sample ra=
+te is not exposed on any of the registers.
+since duration parameters are defined as a count of samples and the sample =
+rate looks to be unknown I don't see how I could adapt to an API that is ba=
+sed on a unit of seconds.
 
-> +}
-> +
-> +impl<'a> CpumaskIter<'a> {
-> +    /// Creates a new `CpumaskIter` for the given `Cpumask`.
-> +    fn new(mask: &'a Cpumask) -> CpumaskIter<'a> {
-> +        Self { mask, last: None }
-> +    }
-> +}
-> +
-> +impl<'a> Iterator for CpumaskIter<'a> {
-> +    type Item = CpuId;
-> +
-> +    fn next(&mut self) -> Option<Self::Item> {
-> +        // SAFETY: By the type invariant, `self.mask.as_raw` is a `struct cpumask *`.
-> +        let next = unsafe {
-> +            bindings::cpumask_next(
-> +                if let Some(last) = self.last {
-> +                    last.try_into().unwrap()
-> +                } else {
-> +                    -1
-> +                },
-> +                self.mask.as_raw(),
-> +            )
-> +        };
-> +
-> +        if next == cpu::nr_cpu_ids() {
-> +            None
+> > I was hoping that simply passing along a unitless value between 0 and
+> > parameter_max would be enough to customize all the event parameters.
+> > this does mean that the driver makes the assumption that the user is
+> > familiar with the device datasheet and knows the number of bits every
+> > parameter has been allocated. should the driver provide a conversion
+> > table for tt_duration just like for _scale_table and
+> > _lpf_3dB_freq_Hz_table?
+>=20
+> Exactly.
 
-Please:    if next >= cpu::nr_cpu_ids() {
+I was thinking today of a more analog-feeling API, one in which a variable =
+that can take values linearly between min and max can be set to a percentag=
+e of it's scale. think of stereo systems - most of us don't want to set a p=
+recise amount of decibels of attenuation when operating the volume knob, we=
+ just want to set it lower or higher until a condition matches. in this API=
+ the primary unit of measurement would not be dBs but notches or ticks - ca=
+lculated based on min, max and the native resolution of the control (how ma=
+ny bits are allocated for it in the ic's memory map). this has also the ben=
+efit of translating nicely when the control is rendered as a widget in a GU=
+I. think about a 0 to 11 volume knob.
+is there anything like this already implemented? is there any merit to this=
+ idea?
 
-> +        } else {
-> +            self.last = Some(next);
-> +            // SAFETY: `cpumask_next` returns either `nr_cpu_ids` or a valid CPU ID.
+ I will shelve the event part of this driver for another time, just got som=
+e Honeywell pressure sensors that need a new driver.
 
-Now that you've handled the no-found case in the previous block, the
-comment doesn't look correct. Can you either move it on top of the
-if-else, or just drop entirely?
+best regards,
+peter
 
-> +            unsafe { Some(CpuId::from_u32_unchecked(next)) }
-> +        }
-> +    }
-> +}
-> +
-> +impl Cpumask {
-> +    /// Returns an iterator over the set bits in the cpumask.
-> +    pub fn iter(&self) -> CpumaskIter<'_> {
-> +        CpumaskIter::new(self)
-> +    }
-> +}
-> +
->  /// A CPU Mask pointer.
->  ///
->  /// Rust abstraction for the C `struct cpumask_var_t`.
-> 
-> -- 
-> 2.34.1
+--VSn+NfuX/JxFTYS/
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEGiKYHD4NvFCkTqJ3dCsnp2M6SWMFAmkNPaIACgkQdCsnp2M6
+SWM73w//WsL6yDvpxuWQzPxfjXZHsBJoah8ojgxzS2EvrD7ijEyBCpI/tgrljytM
+EksqfXO29+YQYLM+z+xru5W/lMC7w8xM1J0UCgJZMJ38hi6zrbGlXGxqGW5cAgDy
+BfR6tWjKixPaDJV6D5t9M+gTmJMVDJxnQ1FuKoAggpBKg+f/3/rZdTkdF8GIe7Wl
+/b8v9bvZ4RtCsETl2ithaOLC3CUdJj38Z3Pc4YNDpViMxCpZ/Cjm4IkCTnCRviBu
+6h0bx7hYEGwOA4SirzMtJj+xTfkHWeKzfw/KxYc1TrGayKgjCaq3yiYurosuwtw6
+Wr0dO/U2iQPHPEyYz486pVx84O34AnfRczQZWS6Gw8e4kYUjzZYv6iFRYncGjg2S
+2CBTjSZqurNhrIbw6S8U7A4K44OZr3AR4cHgI+AQvou5Oss8NX+INrlZSLF8dsqV
+oAiVZUTUulWXDriZM6iZXOBwU8C/M4Qp1IkVlsnhHva/4bqxusa//TAQCTCF7N3N
+cjPgW8T2VoyC1bwGZRkV1JWLWbyoHXpCbNGq/Bu9+KXgAuiWGb6cKd+4rWxZmjA2
+onP5MqTS1gkAsDtXjoKkim1SgJnsW5kEMFcJpdHGXBLxZvvRqyVRGMz+Bwd/qE6j
+DXXss8o/WznLIFkRI+96iSzW6ZRYXz3kL9/+YGfqiEFw5kKuQVI=
+=QZSc
+-----END PGP SIGNATURE-----
+
+--VSn+NfuX/JxFTYS/--
 
