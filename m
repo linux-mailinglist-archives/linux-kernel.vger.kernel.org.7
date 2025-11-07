@@ -1,140 +1,206 @@
-Return-Path: <linux-kernel+bounces-889856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84680C3EB3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:09:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37595C3EB3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05ADE188C8C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA3E3AE3EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32349308F1D;
-	Fri,  7 Nov 2025 07:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBDD308F3D;
+	Fri,  7 Nov 2025 07:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="As1N7s9I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EacKgLBs"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4A4306D26;
-	Fri,  7 Nov 2025 07:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F5E308F1D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762499331; cv=none; b=u0AGIeTpbvBY4s1vRjSVcxlNrjonJKjv2xwJVKflHU4cmSqloZfsKE1iRXu02G+YZpfjylJQekJUTImBQytW7AMm7UOkgSEGoNWmJn7JLsc4zbxytVT8KWRk52RNJ2+aZyHxYmjefeuaqHqEH+GEozs1vn7JFXcqpFA/B63PD08=
+	t=1762499322; cv=none; b=LQ16kXEwx/YrSlrwybL+3l3DzZczLbfwP8yM4nqEPyt7EWESNnM+eQx1P7r9En4EtpjOuSxnnRKR7lEuMZ0fD5uzPNHTDoDWEl6qoByd0I/tPGK5cLzhCjft9z0HbiRIoCn49W/vBhTHIqwvgZHJOE1Fik9LYr++zCb88PB9+LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762499331; c=relaxed/simple;
-	bh=6pC1aVA3xA1nxoweNiGPgc8b4jvGQAisOMaVoBdaHcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcCyjsz/OAFO6fUZSAu6VLKVbuF4UV+VRTaXRkDTzixxRdpufdyoleTb9GGx+p57zQIhYGntPTIJ1+jC5A7eXS+X7+3TB8ITClv1MWj+8YqXKVWWD9miT8AIHbKZZxDEAvChhJzSDNmaaruOb0+H0EjObjyFKthcH4eRm0cBMGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=As1N7s9I; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762499330; x=1794035330;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6pC1aVA3xA1nxoweNiGPgc8b4jvGQAisOMaVoBdaHcI=;
-  b=As1N7s9IGvhDPAKnFO7winxqvf2Sl3/7b7SXGBQx1V9L747d5S1eqUYj
-   qbGHxw0JxoO52V05b6z/aVjafImaHFqmRyJFz5eItP2FLIpbFd3ODSrDx
-   lJn5Gqch92Vi+NheQWJ5hkI/FJPoeYjQaXM9mZjgtMuUDpeUjvVin1F5E
-   4DulgX+m6QNBoiiZDRNgLrAH8lnVh/Ajj20036HeoPeuLOh+IPTki6GCQ
-   AvAkdl0V3/aN0dmoJE1qz42cxkRS4JTDvhA7rsp4cOpBPjgLOC2ywcbl8
-   v0OtjlKrio6vWUyomtsCM4jcoaCN8El1XBXgZ4xF3inXueRfye/ZDYkU2
-   Q==;
-X-CSE-ConnectionGUID: BnJMRUkYRzqCNETaks+83Q==
-X-CSE-MsgGUID: idqFcyylSUiy/17KuGGduw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="90117792"
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="90117792"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 23:08:49 -0800
-X-CSE-ConnectionGUID: VBfncNcWSPuus2De3BboJw==
-X-CSE-MsgGUID: xwDWvYGISIeyoSEGOD0mCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="187810922"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 06 Nov 2025 23:08:44 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHGaQ-000UpE-2R;
-	Fri, 07 Nov 2025 07:08:42 +0000
-Date: Fri, 7 Nov 2025 15:07:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kselftest@vger.kernel.org, tzungbi@kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v6 1/2] platform/chrome: Protect cros_ec_device lifecycle
- with revocable
-Message-ID: <202511071425.qwhK2D9r-lkp@intel.com>
-References: <20251106152602.11814-2-tzungbi@kernel.org>
+	s=arc-20240116; t=1762499322; c=relaxed/simple;
+	bh=XsDDITV8OWmQdCapUaa2dsxiNW0QLHRYrY4nSY8eIBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ba/YNSVUp5RT3JBFQrh4ht9D3sFGIzmpw3CF8v6d+RsegoX/y3SSl0Hf9DRa9XXN/LDuN/ekHJJj2w+5Ria68KW9Zg4IQOGhxE/XPKsmXinoPhNrAJPAGyk/DC9h1TPj8dtl2fZXBX7ZNIyZb4SFXinMxn9uhtzSArzMoKeq79Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EacKgLBs; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b72cbc24637so52819266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:08:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762499319; x=1763104119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kkkoa0Qtmx3EewntMjJGazvW7ZNLbuHZXYNylL6HWdY=;
+        b=EacKgLBs/Km8PdU4SQOIYrLzY06I87tOqLMeQryBT5sMmHRlRe91jrSodI79khJYdZ
+         bSfUCLYuBfjGpC/7YTQcDMaLc/a2zfNA3rZMUrx0fcS4ZM7aYkjmt0zjI4NSK2YknJpQ
+         iEvWF7YexpLRr6LGfUyOPVqcvnEZxaDOy517ooh/BXzDck/ylk/e5zmfsgXqGQaQ4LEh
+         XVCgNN456IpnSmyproE3X/02t09lxKiAZE5oH/qh1spgo7AYgCoRnZEkCO0qGoUiUBTu
+         j4HcrgMLL0Z76rIl0QXv+8PSQTm3uHR7Y3XUg8sqckDynrDwo6qZG8ULUVwS+fjXuTJL
+         7FNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762499319; x=1763104119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Kkkoa0Qtmx3EewntMjJGazvW7ZNLbuHZXYNylL6HWdY=;
+        b=Sl4UccgxlgOKL45zGhJe+dHCwj0CwxXiiIaYFu1AOf3NwcatfQCv2vuNXX5FqFaX4J
+         5OkUHK6n73TEIJ60H6LDa+v73SoylYIIdPcgRNrlQjZKD5tQFqDAA10CjI02tiyrTWFR
+         AwlxsbCr6e4nIT6hN52oJWPEmMeGKO98Ridgab3Gw+mWMYLMZ3Fb4LDo/I2ArH8yAGPX
+         WXEj4Yws2K+fHXnard+/soi44X5kTrJemlIImUfdcqQu4c8YLKDnvZRyXredBBVUS1AQ
+         GTCgBaovv0mNlgbJNXxU89En+kDiXUI4zJsjXWYHbbgH12J+YQdJgbg45Fx/4TMKKzHV
+         OaqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUXfIfOBU/VFYnN/gk3dpO3XYx7F0FqIYU0mcg67boLmTEI3Mkig3/c9q0BiV7n1E/ev0m4AtpnDAj7Qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUwp3JsxDhhAeNbYFw29Qz+7jMwR7YqNPvjeRGfe0AcLOck5aH
+	BnHIwR4xkn7n7rCQBIrOxuADdtkV7DC+8qipKinXORIQ6DLWGm3I+RS5l/JDoCoja064BpVPM2y
+	5gQYflNGWDPza5YVu3z6+c+ucoPuINQw=
+X-Gm-Gg: ASbGncsM07OyuwtxEcKn11LHxNxaoYMeDo/Clsd3cFiaKrjx9t35krzE/0YtIUCBnDv
+	XgJuqTVgYhaQyWb2gUGg4LQ2PBRaPAZus3eTtEcvgIqfPfFBwx0khb2YZZNb8DVC7RD/q7+o9W9
+	QcQxRRrwWCkECnrYBbyQVJSED6sxFqNNQ/MuksBWSD58dCpjYRHkhvxWhH9s7QtuFugj/RCGma/
+	kZ9WToc1BwYZA6O98FmURgwmyc2yJ6/O7IvFtSsNLGSxYg9D8YIXZm+1/0/6CUBfJMNSMrw
+X-Google-Smtp-Source: AGHT+IEta83ao05iVpNzKODH8xVEHJalzn8VVP1Sd2bSnfeqnAj1ZAytCVOc5BXM7WjM0JApQ6Cm2A38MOUKcYS6tV8=
+X-Received: by 2002:a17:907:d91:b0:b6d:6b56:bd7d with SMTP id
+ a640c23a62f3a-b72c078d4d7mr197261466b.16.1762499319040; Thu, 06 Nov 2025
+ 23:08:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106152602.11814-2-tzungbi@kernel.org>
+References: <20251106131956.1222864-7-dolinux.peng@gmail.com> <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
+In-Reply-To: <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Fri, 7 Nov 2025 15:08:27 +0800
+X-Gm-Features: AWmQ_bmYxR0hfZziNSab6vyfXndKEp02ZgMWIAFGdrY3CGiXT8463JKVPu3nV5I
+Message-ID: <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
+Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary search
+To: bot+bpf-ci@kernel.org, ast@kernel.org, andrii.nakryiko@gmail.com
+Cc: eddyz87@gmail.com, zhangxiaoqin@xiaomi.com, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, alan.maguire@oracle.com, song@kernel.org, 
+	pengdonglin@xiaomi.com, andrii@kernel.org, daniel@iogearbox.net, 
+	martin.lau@kernel.org, yonghong.song@linux.dev, clm@meta.com, 
+	ihor.solodrai@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tzung-Bi,
+On Thu, Nov 6, 2025 at 9:47=E2=80=AFPM <bot+bpf-ci@kernel.org> wrote:
+>
+> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > index 66cb739a0..33c327d3c 100644
+> > --- a/kernel/bpf/btf.c
+> > +++ b/kernel/bpf/btf.c
+> > @@ -552,6 +552,70 @@ u32 btf_nr_types(const struct btf *btf)
+> >       return total;
+> >  }
+> >
+> > +/* Verifies that BTF types are sorted in ascending order according to =
+their
+> > + * names, with named types appearing before anonymous types. If the or=
+dering
+> > + * is correct, counts the number of named types and updates the BTF ob=
+ject's
+> > + * nr_sorted_types field.
+> > + *
+> > + * Return: true if types are properly sorted, false otherwise
+> > + */
+> > +static bool btf_check_sorted(struct btf *btf)
+> > +{
+> > +     const struct btf_type *t;
+> > +     int i, n, k =3D 0, nr_sorted_types;
+> > +
+> > +     if (likely(btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK))
+> > +             goto out;
+> > +     btf->nr_sorted_types =3D 0;
+>                             ^
+>
+> Can multiple threads race when writing to btf->nr_sorted_types here?
+> Looking at btf_find_by_name_kind()->btf_check_sorted(), I see that
+> btf_find_by_name_kind() receives a const pointer but casts away the const
+> to call btf_check_sorted(). The function bpf_find_btf_id() calls
+> btf_find_by_name_kind() without holding any locks (line 737), and later
+> explicitly unlocks before calling it again (lines 756-757).
+>
+> This means multiple threads can concurrently enter btf_check_sorted() and
+> write to btf->nr_sorted_types. While the validation logic is idempotent
+> and all threads would compute the same value, the concurrent writes to th=
+e
+> same memory location without synchronization could trigger KCSAN warnings=
+.
+>
+> Should this use atomic operations, or should the validation be performed
+> under a lock during BTF initialization before the BTF becomes visible to
+> multiple threads?
 
-kernel test robot noticed the following build errors:
+Hi, is it necessary to address this issue?
+For example, by using atomic_try_cmpxchg or WRITE/READ_ONCE? Using
+atomic_try_cmpxchg can prevent race conditions on writes but requires an at=
+omic
+variable, while WRITE_ONCE/READ_ONCE can avoid KCSAN warnings. Since
+the race condition is unlikely to cause critical issues, I suggest using
+WRITE_ONCE/READ_ONCE.
 
-[auto build test ERROR on chrome-platform/for-next]
-[also build test ERROR on chrome-platform/for-firmware-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus linus/master v6.18-rc4 next-20251107]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> > +
+> > +     if (btf->nr_types < 2)
+> > +             goto out;
+> > +
+> > +     nr_sorted_types =3D 0;
+> > +     n =3D btf_nr_types(btf) - 1;
+> > +     for (i =3D btf_start_id(btf); i < n; i++) {
+> > +             k =3D i + 1;
+> > +             if (btf_compare_type_names(&i, &k, btf) > 0)
+> > +                     goto out;
+> > +
+> > +             t =3D btf_type_by_id(btf, i);
+> > +             if (t->name_off)
+> > +                     nr_sorted_types++;
+> > +     }
+> > +
+> > +     t =3D btf_type_by_id(btf, k);
+> > +     if (t->name_off)
+> > +             nr_sorted_types++;
+> > +     if (nr_sorted_types)
+> > +             btf->nr_sorted_types =3D nr_sorted_types;
+>                              ^
+>
+> The same race condition applies to this write of nr_sorted_types as well.
+>
+> > +
+> > +out:
+> > +     return btf->nr_sorted_types > 0;
+> > +}
+>
+> [ ... ]
+>
+> > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const struct btf *btf, co=
+nst char *name, u8 kind)
+> >                       goto out;
+> >       }
+> >
+> > -     if (btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK) {
+> > +     if (btf_check_sorted((struct btf *)btf)) {
+>                                   ^
+>
+> The const cast here enables the concurrent writes discussed above. Is
+> there a reason to mark the btf parameter as const if we're modifying it?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tzung-Bi-Shih/platform-chrome-Protect-cros_ec_device-lifecycle-with-revocable/20251106-233349
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
-patch link:    https://lore.kernel.org/r/20251106152602.11814-2-tzungbi%40kernel.org
-patch subject: [PATCH v6 1/2] platform/chrome: Protect cros_ec_device lifecycle with revocable
-config: hexagon-randconfig-002-20251107 (https://download.01.org/0day-ci/archive/20251107/202511071425.qwhK2D9r-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d2625a438020ad35330cda29c3def102c1687b1b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251107/202511071425.qwhK2D9r-lkp@intel.com/reproduce)
+Hi team, is casting away const an acceptable approach for our codebase?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511071425.qwhK2D9r-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/i2c/busses/i2c-cros-ec-tunnel.c:10:
->> include/linux/platform_data/cros_ec_proto.h:15:10: fatal error: 'linux/revocable.h' file not found
-      15 | #include <linux/revocable.h>
-         |          ^~~~~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +15 include/linux/platform_data/cros_ec_proto.h
-
-    10	
-    11	#include <linux/device.h>
-    12	#include <linux/lockdep_types.h>
-    13	#include <linux/mutex.h>
-    14	#include <linux/notifier.h>
-  > 15	#include <linux/revocable.h>
-    16	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+>
+> ---
+> AI reviewed your patch. Please fix the bug or email reply why it's not a =
+bug.
+> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/READM=
+E.md
+>
+> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/191371=
+95500
 
