@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-889859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26774C3EB62
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:12:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D9FC3EAAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1E10349D84
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69E53A6966
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19DA3074B1;
-	Fri,  7 Nov 2025 07:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81D630504D;
+	Fri,  7 Nov 2025 06:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CmEEzx0w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="fak4xDyk"
+Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE542C325F;
-	Fri,  7 Nov 2025 07:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569EB30497C;
+	Fri,  7 Nov 2025 06:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762499543; cv=none; b=q2D0ls8LE2GjcQRioDgOfb87fApH6BHU07YolxzZlZY3Xc5xWdGchDusj7+/Iv+MVLS2F+jDJAMp/3eCHC/7a9wlD1SXpJKaj33BXLmjtmn3hAu1fGolJf2/s6vAPF+Ts9Y+m/GyMwHV6oprjSvc5ml58sanqwfleEvmkJjXR6E=
+	t=1762498716; cv=none; b=jucjaFPDBomSFAxY8VE7hWqXJoYt9A6biQVA8SYzbHD/BscBDqhwJm+9m3wI7peYC0pR7nf9xfaIiWb7xVltXOj8RWGyDd4FbWXeWqQExsvlq2leC194YunpXoR43+tXIPXwi2pgis6UNWlNA+PKYgY4WjsP8/EC0RI/a6sDBYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762499543; c=relaxed/simple;
-	bh=PrudV2jAOie1dt1jMSBj4uL3MDg1leyyQ1JSB+kumCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZCUQuyVWRJrlNglHl6Zlig1HUy8QZbXK4o2I484/hJgfMeIHV5P/XmTpghQ0mo25dxYoMzN7gY0/8dHWS1jwv688iAHqIeOjfQF6I3U9EDMa49Exz02tonPW79fRaYFV5uqsR8GtENJtoS/kbgGPw3raem01ghbO39jqAvHQc9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CmEEzx0w; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762499542; x=1794035542;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PrudV2jAOie1dt1jMSBj4uL3MDg1leyyQ1JSB+kumCE=;
-  b=CmEEzx0wnxMqCCZ5OtvvadqFjrN15NxqADw1po7tdRDPzcxRT16oFctv
-   6ymDqtzRW6yb8JTHSsaZOHcEEe9TRlhEtHK5Osd3cRF2l2I89QTm+M5eF
-   awt2eRS5v4REGalb2Ddpj1ytpmJNr058OUU4Pi+nSun+F6sveGNIWLHjz
-   ARzit9USvDmKDExTu24T435Pq4cFt9pcHvqaoaVdrPqa2vcG1+T7Phd2k
-   4aya7WiKB6GQU4H2yI5S4n5Jv+BGBC/BsIR5ipVALfdjLVqjtFGiQ9V5J
-   NBHO6cUJ9Wj7362KvQGAncmVm+kcWDqqc+vT+fx+z4jNR9gZrnHYa+Rab
-   A==;
-X-CSE-ConnectionGUID: XbXolToQSAGaoSr2j4Svkg==
-X-CSE-MsgGUID: 2P7UAmTiQxig3urhuUGWBw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="90117899"
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="90117899"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 23:12:21 -0800
-X-CSE-ConnectionGUID: geqqei3bSbKyDLpA8UsGag==
-X-CSE-MsgGUID: SmxjGJT1RrKBPSjoHdSttw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="218625722"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa002.jf.intel.com with ESMTP; 06 Nov 2025 23:12:19 -0800
-Date: Fri, 7 Nov 2025 14:58:06 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-fpga@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] fpga: stratix10-soc: add missing header
-Message-ID: <aQ2Yfh5kWCIJ4VsN@yilunxu-OptiPlex-7050>
-References: <20251106185938.6419-1-rosenp@gmail.com>
- <20251106185938.6419-2-rosenp@gmail.com>
+	s=arc-20240116; t=1762498716; c=relaxed/simple;
+	bh=WB/W09ZH7AM/kwynGqLiO2jAqRASpyMZeZ3DfMpSwqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WjyKHTOntbz0zPP+O8CP0+/kgOwMGhqtn7HCEI+hZKMRpweFJHL7so7jRx8k1Yvipc8E9UvntWne1RP2Li+gEqYFDz0jseJYwMlmJychGsoJGUN1JCReQk2RSn+Yy11SCg16EpI0/2QmVgEuHmm71lfR8l8fXwwNIFnROMjKgl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=fak4xDyk; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
+Received: from mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:6518:0:640:e091:0])
+	by forward502d.mail.yandex.net (Yandex) with ESMTPS id 07260C1E42;
+	Fri, 07 Nov 2025 09:58:19 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id GwgPjWGL4Gk0-lavljUaz;
+	Fri, 07 Nov 2025 09:58:18 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
+	t=1762498698; bh=k8RMyoSQNMrDyOfpu6xvqgm3N84tfDfzdVd1J0QkfjI=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=fak4xDykBdwnWTKXd2nYStK3b/oXR30px9jIjiXc8JVIyukgU1R7+32ZZonjON+pQ
+	 +VpxjtozYGpMa4BZ9zE83ZU+BhEte+8//kVRRCAf93DQxsCQIWWuFEbmWiAr1htCg7
+	 roO8j2PYApDOgwdvF2XLMNtriqDUfb6fgGlrYK6o=
+Authentication-Results: mail-nwsmtp-smtp-production-main-59.iva.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
+Message-ID: <afcb878e-d233-4c87-a0fc-803612c8c91f@rosa.ru>
+Date: Fri, 7 Nov 2025 09:58:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106185938.6419-2-rosenp@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bpf: hashtab: fix 32-bit overflow in memory usage
+ calculation
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org,
+ stable@vger.kernel.org
+References: <20251106205852.45511-1-a.safin@rosa.ru>
+ <CALOAHbCcfszFFDuABhPHoMioT26GAXOKZzMqww0QY1wKogNm1g@mail.gmail.com>
+Content-Language: ru
+From: =?UTF-8?B?0JDQu9C10LrRgdC10Lkg0KHQsNGE0LjQvQ==?= <a.safin@rosa.ru>
+In-Reply-To: <CALOAHbCcfszFFDuABhPHoMioT26GAXOKZzMqww0QY1wKogNm1g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 06, 2025 at 10:59:37AM -0800, Rosen Penev wrote:
-> linux/sizes.h is needed for SZ_512K.
+Yes, that looks even better to me. Changing value_size to u64 at declaration
+makes the arithmetic safe everywhere and keeps the code cleaner.
 
-Does it always fail or only with COMPILE_TEST?
+I agree with this version.
 
-Please add "fixes" & Cc stable kernel if it always fail.
+Should I prepare a v2 patch with this modification, or will you take it 
+from here?
 
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/fpga/stratix10-soc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/fpga/stratix10-soc.c b/drivers/fpga/stratix10-soc.c
-> index 0a295ccf1644..ab309cbf21c6 100644
-> --- a/drivers/fpga/stratix10-soc.c
-> +++ b/drivers/fpga/stratix10-soc.c
-> @@ -11,6 +11,7 @@
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> +#include <linux/sizes.h>
->  
->  /*
->   * FPGA programming requires a higher level of privilege (EL3), per the SoC
-> -- 
-> 2.51.2
-> 
-> 
+07.11.2025 04:58, Yafang Shao пишет:
+> On Fri, Nov 7, 2025 at 4:59 AM Alexei Safin <a.safin@rosa.ru> wrote:
+>> The intermediate product value_size * num_possible_cpus() is evaluated
+>> in 32-bit arithmetic and only then promoted to 64 bits. On systems with
+>> large value_size and many possible CPUs this can overflow and lead to
+>> an underestimated memory usage.
+>>
+>> Cast value_size to u64 before multiplying.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>
+>> Fixes: 304849a27b34 ("bpf: hashtab memory usage")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Alexei Safin <a.safin@rosa.ru>
+>> ---
+>>   kernel/bpf/hashtab.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+>> index 570e2f723144..7ad6b5137ba1 100644
+>> --- a/kernel/bpf/hashtab.c
+>> +++ b/kernel/bpf/hashtab.c
+>> @@ -2269,7 +2269,7 @@ static u64 htab_map_mem_usage(const struct bpf_map *map)
+>>                  usage += htab->elem_size * num_entries;
+>>
+>>                  if (percpu)
+>> -                       usage += value_size * num_possible_cpus() * num_entries;
+>> +                       usage += (u64)value_size * num_possible_cpus() * num_entries;
+>>                  else if (!lru)
+>>                          usage += sizeof(struct htab_elem *) * num_possible_cpus();
+>>          } else {
+>> @@ -2281,7 +2281,7 @@ static u64 htab_map_mem_usage(const struct bpf_map *map)
+>>                  usage += (htab->elem_size + LLIST_NODE_SZ) * num_entries;
+>>                  if (percpu) {
+>>                          usage += (LLIST_NODE_SZ + sizeof(void *)) * num_entries;
+>> -                       usage += value_size * num_possible_cpus() * num_entries;
+>> +                       usage += (u64)value_size * num_possible_cpus() * num_entries;
+>>                  }
+>>          }
+>>          return usage;
+>> --
+>> 2.50.1 (Apple Git-155)
+>>
+> Thanks for the fix. What do you think about this change?
+>
+> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+> index 4a9eeb7aef85..f9084158bfe2 100644
+> --- a/kernel/bpf/hashtab.c
+> +++ b/kernel/bpf/hashtab.c
+> @@ -2251,7 +2251,7 @@ static long bpf_for_each_hash_elem(struct
+> bpf_map *map, bpf_callback_t callback_
+>   static u64 htab_map_mem_usage(const struct bpf_map *map)
+>   {
+>          struct bpf_htab *htab = container_of(map, struct bpf_htab, map);
+> -       u32 value_size = round_up(htab->map.value_size, 8);
+> +       u64 value_size = round_up(htab->map.value_size, 8);
+>          bool prealloc = htab_is_prealloc(htab);
+>          bool percpu = htab_is_percpu(htab);
+>          bool lru = htab_is_lru(htab);
+>
+>
 
