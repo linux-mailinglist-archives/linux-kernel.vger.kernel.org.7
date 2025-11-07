@@ -1,198 +1,120 @@
-Return-Path: <linux-kernel+bounces-890635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CDEC40823
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C89FFC40833
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF50189B965
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45181A408E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FFE32B98B;
-	Fri,  7 Nov 2025 15:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D28632779A;
+	Fri,  7 Nov 2025 15:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QAlQa3Z6"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="V4y/l3GR"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067D632B98D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDA62D97A1
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762527730; cv=none; b=YFqNgabEOrdIilokhmIxvvbNVB8Bc/MPCOgJeExo1b956iGeWYCMLy0TOR8zB8PCo4pODmTbt/8mj9ziU58U8VxiGz55lgDkFKSrf0sn2/OiqqPbsUfwp724L3pDumi+yZlrLY11ivC08Fu0/s4to0BywQwD8BUT0EVnmrBkqw4=
+	t=1762527857; cv=none; b=Ghq498QNm5O4n8FFID1il+l/JMX+bGz24c2LwdnNBpSf0T+JwHEZuuTwyHpXdVW2YZPMuDnAquECbExoCQ0gXywLLkH37S/H6qIoE46mZhY0be6AwTH/ajJiqp6LHKal3VGzWVULIiLlXlBUa3J6/ozWHoWMBg4f5XJ1UtjYGN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762527730; c=relaxed/simple;
-	bh=neIM7QVQVzi+YLKvjx9mqdZ6zG6p4nF2fOHuVl49jL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=grNFHJWEp2GuCRukZ4tXlxDhGZKMqEvZo8+fYN/1kCgekATHrqkXhBlkV7836xFX+TKVGG7ONwBQDCJt0X7HUWYujYRVobE+0aexV3F4vpYUJHxOsAFaEWTZdllSY5/P/RDpxkQPrS6hTbOxK5BMYMKSI8lbbmkek9LSYsJTXlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QAlQa3Z6; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47754547a38so6958235e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:02:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762527726; x=1763132526; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O69j8p6POFkrpweTBOpwpVXxQ7WR8S2t/JBSoUi6DYU=;
-        b=QAlQa3Z6xe/zc8yAFPJRLiNzwI4/aDxC4lqc4e+R+2EO/F7uawzAn+BmpXFFZ+wt5P
-         YdEYHMEkeb/kZrsPrQbghJyTnyAq8DtIcw+muGs4DJkYz/tXOzdAXKSZjB1xN4D7DfLQ
-         /J5PpM+1smoNAOueqh26io/+Im7Fjqkdtx4vRo4nkvrnui4jL7VeAjmpgRHQRZNU3x4b
-         7lg1We606uAa00SWIFKRGO4SBTRCOiWBQnuoImRaJ4p2hbKuzpKWtfcMXQon4DAN8uov
-         lFA7aZ6e6OYwfWmNqlt0POpLz0vkoCzn+jebOmvbrldiLscx2H8h/9K178ab2Psb0b7u
-         cGtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762527726; x=1763132526;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=O69j8p6POFkrpweTBOpwpVXxQ7WR8S2t/JBSoUi6DYU=;
-        b=h/21yuyVNbDE9rhfCJm/TePTB7njuwLGqb5wzBUnIgqL4wd0IUpbGKvvizWcpWLKPH
-         7l4gwBB0+bM2M7ZvaHTh7oT1g4Q6OjaCmwxXrMGfgEx/F88jpqjkPbLL53mr6PJbDJUn
-         NUDdmhaiNNuCmAGXTe68dfqqzUtDEH3gBxQi+A/mQ88rZn0AiWtbUaza1jQswnjDuZ8Q
-         9JJM0tjJrWBe290yNXl81e9/MmwdZl2iCUM0WkOxyuKz+0Ikr9um7t388RdzOEcz35ky
-         XAcJ/RySJEqxBoHH4hR+7rdZKFCQO6kDpysjayHmUcvwsUWfNlmOXBSlynF13q9Qy8rN
-         DlFg==
-X-Gm-Message-State: AOJu0YyUSMub/ozM3l1ylh5gg18xhyalrV+15A+oKbWqr6LciDiG0JEN
-	pQ8HpH7R70W+aqx8PgxUf4ZyiYDC8UEboL6cS/7KZiHqC35Rn+jUBKReaAROtV80ZgcJr6TQgy5
-	6IT6j
-X-Gm-Gg: ASbGnctMvypHC93ebXSvm8asQv5Zpp0nYBCuuaw36OiJ2mAfE1FpRbtuNIlqDemt25D
-	UaFbQ1as/RSMoDVTzPgEA3S3q1Zj6qOolQhl7/1ApEkZLddYUE6szMWgb38mAju1zNWb0z9LjjN
-	1Hp6fU6S8rq1sr4oKUzIaj9488AdqLC55mM0tSvS2kyj9/03I020ZXZEfKRa2LPtCDkh4pRqzve
-	c89obkCBgaLL6qPKtoF4uxjxdJYPHAUvjE2YFapNcXACrtgzIp+RFV7HNGOVgFM5JpDJpptGkda
-	QTGoeH33W/My4nDUggen0myQB8rgpJo/O1B/JTJ6/nBK3xu1XyqM510/9/+3iDLexeCd1F9t7eX
-	g1P96Y8O5GVHel+/o9KPCrx0IrXPsrXopL4EMUUny/vY22vc6Gz9hA0GVe4FdTQGb2tCvOsxkge
-	M9bKbZUK6BbZ91p6wXZEpV2ITi
-X-Google-Smtp-Source: AGHT+IHjMq1QJ7HYQ/kS/Qhb3uXFesgKIN2s46CxCh7W140FLJQZ4eDZpV2W+DDmBxiZua0HLfkCFg==
-X-Received: by 2002:a05:600c:4694:b0:471:13fa:1b84 with SMTP id 5b1f17b1804b1-4776bc959f6mr29006635e9.12.1762527725719;
-        Fri, 07 Nov 2025 07:02:05 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675ca52sm5777830f8f.25.2025.11.07.07.02.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:02:05 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Saurav Kashyap <skashyap@marvell.com>,
-	Javed Hasan <jhasan@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 2/2] scsi: qedf: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 16:01:55 +0100
-Message-ID: <20251107150155.267651-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251107150155.267651-1-marco.crivellari@suse.com>
-References: <20251107150155.267651-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1762527857; c=relaxed/simple;
+	bh=oSBv0A71CU85/YPsMg4XLU+W0wcrWdsr9t6iVZ2w9cw=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=ESGwR4udOn5DfVJl3NWHbtHciqQpXqWGYf5KzAIUfzkJLhTYIz2DKVCcm9TZ3v2kJBmD48ytrEqr/ZPjZdA2vt4ghEtuzxojT7ttiClFssK29ROmzvj5uC5cTayaTW/TxruRnOl8i1yHlClV27VvE/0VYglEngF06Dp6c7YGkdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com; spf=pass smtp.mailfrom=korsgaard.com; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=V4y/l3GR; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
+DKIM-Signature: a=rsa-sha256; b=V4y/l3GRUld2BHT2f4Yw4ZugWu/+XCTD8oZKJTDrj+Ut1yi3E9v0Fft9xurY/ffxSNaL4VKqcVNCei966CKY40RZucEXaLYqD6MQfUVP0W0Lr/VI/vQZLbSBPJORBTbuSx+8lqQ1N6CJTEvyt2NKLNp0CtdOpFPvcx9Qs67qup+qb3ec7fOKonoIishmjYH3tq/lAhMhBqnnfUEFIimUUxPuYQX4hkv3yHjRY7Z9Wo5H1434Isnx9XdYAeHxpb1bDJwsqGjtdFjqze9fSlvt9BYDN3EUye3VaSFWKQWClqr556xvX/8t1KbbIea4Thsl9CR8GSG3SmSjOfmK/yt1jg==; s=purelymail2; d=purelymail.com; v=1; bh=oSBv0A71CU85/YPsMg4XLU+W0wcrWdsr9t6iVZ2w9cw=; h=Feedback-ID:Received:Received:From:To:Subject:Date;
+Feedback-ID: 21632:4007:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1430717498;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Fri, 07 Nov 2025 15:03:38 +0000 (UTC)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.96)
+	(envelope-from <peter@korsgaard.com>)
+	id 1vHO00-008jXJ-2N;
+	Fri, 07 Nov 2025 16:03:36 +0100
+From: Peter Korsgaard <peter@korsgaard.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: javier.carrasco@wolfvision.net,  heikki.krogerus@linux.intel.com,
+  neal@gompa.dev,  linux-usb@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tipd: drop double register read in
+ tps6598x_interrupt
+References: <20251106164850.1703648-1-peter@korsgaard.com>
+	<2025110750-diminish-film-f952@gregkh>
+Date: Fri, 07 Nov 2025 16:03:36 +0100
+In-Reply-To: <2025110750-diminish-film-f952@gregkh> (Greg KH's message of
+	"Fri, 7 Nov 2025 17:36:10 +0900")
+Message-ID: <87bjld51h3.fsf@dell.be.48ers.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+>>>>> "Greg" == Greg KH <gregkh@linuxfoundation.org> writes:
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+ > On Thu, Nov 06, 2025 at 05:48:49PM +0100, Peter Korsgaard wrote:
+ >> Commit 409c1cfb5a80 ("usb: typec: tipd: fix event checking for tps6598x")
+ >> added (by accident?) a double read of the TPS_REG_INT_EVENT1 register.  Drop
+ >> that.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+ > Are you sure?  Sometimes 2 reads are required.  How was this tested?
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
+Hard to be 100% sure, but the code did not have a double read before the
+above commit and sticking a printk in the driver like this:
 
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+index 01db27cbf1d1..6687d192dbd4 100644
+--- a/drivers/usb/typec/tipd/core.c
++++ b/drivers/usb/typec/tipd/core.c
+@@ -536,8 +536,9 @@ static irqreturn_t tps6598x_interrupt(int irq, void *data)
+                intev_len = TPS_65987_8_INTEVENT_LEN;
 
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+        ret = tps6598x_block_read(tps, TPS_REG_INT_EVENT1, event1, intev_len);
+-
++       printk(KERN_ERR "1st: %llx %llx\n", event1[0], event1[1]);
+        ret = tps6598x_block_read(tps, TPS_REG_INT_EVENT1, event1, intev_len);
++       printk(KERN_ERR "2nd: %llx %llx\n", event1[0], event1[1]);
+        if (ret) {
+                dev_err(tps->dev, "%s: failed to read event1\n", __func__);
+                goto err_unlock;
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
+and (un)plugging the USB cable I see:
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/scsi/qedf/qedf_main.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+[ 3267.257341] 1st: 3000008 0
+[ 3267.262097] 2nd: 3000008 0
 
-diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-index 6b1ebab36fa3..7792e00800ae 100644
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -3374,7 +3374,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
- 	QEDF_INFO(&(qedf->dbg_ctx), QEDF_LOG_INFO, "qedf->io_mempool=%p.\n",
- 	    qedf->io_mempool);
- 
--	qedf->link_update_wq = alloc_workqueue("qedf_%u_link", WQ_MEM_RECLAIM,
-+	qedf->link_update_wq = alloc_workqueue("qedf_%u_link",
-+					       WQ_MEM_RECLAIM | WQ_PERCPU,
- 					       1, qedf->lport->host->host_no);
- 	INIT_DELAYED_WORK(&qedf->link_update, qedf_handle_link_update);
- 	INIT_DELAYED_WORK(&qedf->link_recovery, qedf_link_recovery);
-@@ -3585,7 +3586,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
- 	ether_addr_copy(params.ll2_mac_address, qedf->mac);
- 
- 	/* Start LL2 processing thread */
--	qedf->ll2_recv_wq = alloc_workqueue("qedf_%d_ll2", WQ_MEM_RECLAIM, 1,
-+	qedf->ll2_recv_wq = alloc_workqueue("qedf_%d_ll2",
-+					    WQ_MEM_RECLAIM | WQ_PERCPU, 1,
- 					    host->host_no);
- 	if (!qedf->ll2_recv_wq) {
- 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to LL2 workqueue.\n");
-@@ -3628,7 +3630,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
- 	}
- 
- 	qedf->timer_work_queue = alloc_workqueue("qedf_%u_timer",
--				WQ_MEM_RECLAIM, 1, qedf->lport->host->host_no);
-+				WQ_MEM_RECLAIM | WQ_PERCPU, 1,
-+				qedf->lport->host->host_no);
- 	if (!qedf->timer_work_queue) {
- 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to start timer "
- 			  "workqueue.\n");
-@@ -3641,7 +3644,8 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
- 		sprintf(host_buf, "qedf_%u_dpc",
- 		    qedf->lport->host->host_no);
- 		qedf->dpc_wq =
--			alloc_workqueue("%s", WQ_MEM_RECLAIM, 1, host_buf);
-+			alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_PERCPU, 1,
-+					host_buf);
- 	}
- 	INIT_DELAYED_WORK(&qedf->recovery_work, qedf_recovery_handler);
- 
-@@ -4177,7 +4181,8 @@ static int __init qedf_init(void)
- 		goto err3;
- 	}
- 
--	qedf_io_wq = alloc_workqueue("%s", WQ_MEM_RECLAIM, 1, "qedf_io_wq");
-+	qedf_io_wq = alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_PERCPU, 1,
-+				     "qedf_io_wq");
- 	if (!qedf_io_wq) {
- 		QEDF_ERR(NULL, "Could not create qedf_io_wq.\n");
- 		goto err4;
+[ 3267.345179] 1st: 1000000 0
+[ 3267.350512] 2nd: 1000000 0
+
+[ 3267.388947] 1st: 1000000 0
+[ 3267.393707] 2nd: 1000000 0
+
+[ 3267.912112] 1st: 1000000 0
+[ 3267.916872] 2nd: 1000000 0
+
+[ 3268.049505] 1st: 1000000 0
+[ 3268.054773] 2nd: 1000000 0
+
+[ 3269.105173] 1st: 1000000 0
+[ 3269.109970] 2nd: 1000000 0
+
+[ 3280.049111] 1st: 3000008 0
+[ 3280.053865] 2nd: 3000008 0
+
+So I am fairly sure it is not needed.
+
 -- 
-2.51.1
-
+Bye, Peter Korsgaard
 
