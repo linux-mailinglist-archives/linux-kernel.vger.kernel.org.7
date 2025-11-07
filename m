@@ -1,325 +1,376 @@
-Return-Path: <linux-kernel+bounces-890140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F18C3F4F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:06:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B8AC3F512
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80BB83AF989
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:05:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E773B0BB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4061E51EE;
-	Fri,  7 Nov 2025 10:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32882DC33D;
+	Fri,  7 Nov 2025 10:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZNCxecBp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IPlxFBXr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9KC+R6t+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IPlxFBXr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9KC+R6t+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DD925CC74
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892FB1A0BF3
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509954; cv=none; b=Mbd/OiqQh4VXhQuUBDX/GfyXKw7XHEhSw7Ughhw7bU8aCvTU2WQVt5XnRcqTaVeFaUSDBwOCuVSTrD6tMS3s+Biy048jzBt03BOkMHBFIXB/ecFUejD7I/3AvtNAiY71c0YOOb2aEbMjH+09fGi6IcP5dn9fC10fk8mbxClpQdo=
+	t=1762509980; cv=none; b=NW8qS+GOf/XIeP0QrBwxZJRbfFJkmqQKnzLffTpUdNwO2n3rouX707d0cnIhAPoOOH+2l0fbgLWOhVdNq8B52SFKoP18F7ip0/kA0xI7noEObTCFSVuus6ezr4gtuFJW/iM6icBhdH25GlcwBqf7G6bWNJyWp0aHqWdV6WP3op0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509954; c=relaxed/simple;
-	bh=h9z28y0YXaSoCRfDL4rjhIPmp6uSb1t7HivBNV4Rchg=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=WgFisSo1cbHLva3vcCq/+a7tNx8wZpONDnOeTQqJGr5T+fk8tzADRUWUVIAeevR/tO/LDAxp4YxNpdakjQZ6n+Tn8n28Hdp9taufmnxmimiMwmAPQCQneEpN9Jf8Bzo1BXg8DPRsAj9euisUiq0U6rDvDnEMRSauYMC+zdi/ayg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZNCxecBp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762509951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d2iFp6mDvWDTtLkd9rZC+JAkBE2LytPdd3avlx4HUqs=;
-	b=ZNCxecBpRIODptnFkO4iDkTTOckNYW4sdJ4iow+dWnvyPJHMR+0I78ZmhvSGgzmsZPNYwo
-	DAOeUEALJRjerl77g0VasGdHBRASFXuiaWlDRyRgpkM5yUuvVZq+FrkebDQ0tTpeSb5/9F
-	DtG8MQRrwXYSBzH+asL/dYEcwZXc/Sg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-153-oQPbeBJIMvKWtug6NngSPQ-1; Fri,
- 07 Nov 2025 05:05:48 -0500
-X-MC-Unique: oQPbeBJIMvKWtug6NngSPQ-1
-X-Mimecast-MFC-AGG-ID: oQPbeBJIMvKWtug6NngSPQ_1762509946
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	s=arc-20240116; t=1762509980; c=relaxed/simple;
+	bh=BH8P5lH41gVhKzM/QXfV+sWLmr0P2HiAbR8O9n15XUc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Upz7NQxBpWPBER6LqcFTFvCm9so0jlnmra/reR0/kycJapmSl47UClihZAt3+UdShar1Q3ezUGLk53c4CX5Y4CgpKkF7FogbXjULnzlw7Kvavk6HV6JYJx+Luyh1S4duUL9FehKzsW4v8SEcUv7a8g45w4TspuhYEVBgxP70BWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IPlxFBXr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9KC+R6t+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IPlxFBXr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9KC+R6t+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 821D01956094;
-	Fri,  7 Nov 2025 10:05:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4E7A11945110;
-	Fri,  7 Nov 2025 10:05:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251106174456.31818-1-dhowells@redhat.com>
-References: <20251106174456.31818-1-dhowells@redhat.com>
-Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-    Eric Biggers <ebiggers@kernel.org>,
-    Luis Chamberlain <mcgrof@kernel.org>,
-    Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>,
-    Sami Tolvanen <samitolvanen@google.com>,
-    "Jason A . Donenfeld" <Jason@zx2c4.com>,
-    Ard Biesheuvel <ardb@kernel.org>,
-    Stephan Mueller <smueller@chronox.de>,
-    Lukas Wunner <lukas@wunner.de>,
-    Ignat Korchagin <ignat@cloudflare.com>, linux-crypto@vger.kernel.org,
-    keyrings@vger.kernel.org, linux-modules@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v7 8/8] modsign: Enable ML-DSA module signing
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 88E89211D2;
+	Fri,  7 Nov 2025 10:06:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762509975; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gmE7nmZzFAddhz4V2SGkGQ3Br9XnY0OIrXjc2Zpj8HI=;
+	b=IPlxFBXr05kW+w8tZvsxXAzTxKjQjuPFJplN0sbpRPQ0GpItZm8opG9FV0plXyjN1Z3rfL
+	0He4XUSS2WbL0DSpNx4ykdxKCISUS8tZE7KlbvDWc6snaUOWCmxAL+K7LddWMMu9PBgCT0
+	4aKRamKHzHDbZTBcc9h+mo/08amcmCU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762509975;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gmE7nmZzFAddhz4V2SGkGQ3Br9XnY0OIrXjc2Zpj8HI=;
+	b=9KC+R6t+vog4t6blN0Yjzk02hvYTpWwrsMIrbCKtZwbDpyrIuYSqHGtwD2pqQZH0/2+wQQ
+	SDDY/3o3pMBbDbCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762509975; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gmE7nmZzFAddhz4V2SGkGQ3Br9XnY0OIrXjc2Zpj8HI=;
+	b=IPlxFBXr05kW+w8tZvsxXAzTxKjQjuPFJplN0sbpRPQ0GpItZm8opG9FV0plXyjN1Z3rfL
+	0He4XUSS2WbL0DSpNx4ykdxKCISUS8tZE7KlbvDWc6snaUOWCmxAL+K7LddWMMu9PBgCT0
+	4aKRamKHzHDbZTBcc9h+mo/08amcmCU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762509975;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gmE7nmZzFAddhz4V2SGkGQ3Br9XnY0OIrXjc2Zpj8HI=;
+	b=9KC+R6t+vog4t6blN0Yjzk02hvYTpWwrsMIrbCKtZwbDpyrIuYSqHGtwD2pqQZH0/2+wQQ
+	SDDY/3o3pMBbDbCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 46BAD1395F;
+	Fri,  7 Nov 2025 10:06:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IS7TD5fEDWkbKgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 07 Nov 2025 10:06:15 +0000
+Message-ID: <15166a78-b603-464a-8fa5-b7dd43d55029@suse.de>
+Date: Fri, 7 Nov 2025 11:06:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <61636.1762509938.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 07 Nov 2025 10:05:38 +0000
-Message-ID: <61637.1762509938@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/fb-helper: add fbdev screen expended mode display
+ support
+To: oushixiong1025@163.com,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>,
+ Tiger Liu <liuyihu@kylinos.cn>
+References: <20251107092641.111431-1-oushixiong1025@163.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251107092641.111431-1-oushixiong1025@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[163.com,linux.intel.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-    =
 
-Allow ML-DSA module signing to be enabled.
 
-Note that openssl's CMS_*() function suite does not, as of openssl-3.5.1,
-support the use of CMS_NOATTR with ML-DSA, so the prohibition against usin=
-g
-authenticatedAttributes with module signing has to be removed.  The select=
-ed
-digest then applies only to the algorithm used to calculate the digest
-stored in the messageDigest attribute.
+Am 07.11.25 um 10:26 schrieb oushixiong1025@163.com:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
+>
+> Add fbdev screen extended mode display support
 
-The ML-DSA algorithm uses its own internal choice of digest (SHAKE256)
-without regard to what's specified in the CMS message.  This is, in theory=
-,
-configurable, but there's currently no hook in the crypto_sig API to do
-that, though possibly it could be done by parameterising the name of the
-algorithm, e.g. ("ml-dsa87(sha512)").
+What? What is this about?
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Lukas Wunner <lukas@wunner.de>
-cc: Ignat Korchagin <ignat@cloudflare.com>
-cc: Stephan Mueller <smueller@chronox.de>
-cc: Eric Biggers <ebiggers@kernel.org>
-cc: Herbert Xu <herbert@gondor.apana.org.au>
-cc: keyrings@vger.kernel.org
-cc: linux-crypto@vger.kernel.org
----
- Documentation/admin-guide/module-signing.rst |   15 ++++++++-------
- certs/Kconfig                                |   24 +++++++++++++++++++++=
-+++
- certs/Makefile                               |    3 +++
- crypto/asymmetric_keys/pkcs7_verify.c        |    4 ----
- kernel/module/Kconfig                        |    5 +++++
- scripts/sign-file.c                          |   26 ++++++++++++++++++---=
------
- 6 files changed, 58 insertions(+), 19 deletions(-)
+>
+> Signed-off-by: Tiger Liu <liuyihu@kylinos.cn>
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+> ---
+>   drivers/gpu/drm/drm_fb_helper.c | 143 ++++++++++++++++++++++++++++++--
+>   1 file changed, 135 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index 53e9dc0543de..a6ec03bf3aef 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -78,6 +78,17 @@ MODULE_PARM_DESC(drm_leak_fbdev_smem,
+>   		 "Allow unsafe leaking fbdev physical smem address [default=false]");
+>   #endif
+>   
+> +#define SCREEN_CLONE			0x0
+> +#define SCREEN_EXPAND_HORIZONTAL	0x1
+> +#define SCREEN_EXPAND_VERTICAL		0x2
+> +
+> +static bool drm_fbdev_screen_expand_mode_enabled;
+> +static int drm_fbdev_screen_mode = SCREEN_CLONE;
+> +module_param_named(screen_mode, drm_fbdev_screen_mode, int, 0444);
+> +MODULE_PARM_DESC(screen_mode,
+> +		 "Screen display of the fbdev. [0 = clone(default), 1 = expand horizontally,"
+> +		 "2 = expand vertically]");
+> +
+>   static LIST_HEAD(kernel_fb_helper_list);
+>   static DEFINE_MUTEX(kernel_fb_helper_lock);
+>   
+> @@ -1345,15 +1356,35 @@ int drm_fb_helper_set_par(struct fb_info *info)
+>   }
+>   EXPORT_SYMBOL(drm_fb_helper_set_par);
+>   
+> -static void pan_set(struct drm_fb_helper *fb_helper, int dx, int dy)
+> +static void pan_set_locked(struct drm_client_dev *client,
+> +			   int dx, int dy)
+>   {
+>   	struct drm_mode_set *mode_set;
+> +	int screen_x_offset = dx;
+> +	int screen_y_offset = dy;
+>   
+> -	mutex_lock(&fb_helper->client.modeset_mutex);
+> -	drm_client_for_each_modeset(mode_set, &fb_helper->client) {
+> -		mode_set->x += dx;
+> -		mode_set->y += dy;
+> +	drm_client_for_each_modeset(mode_set, client) {
+> +		if (drm_fbdev_screen_expand_mode_enabled) {
+> +			if (drm_fbdev_screen_mode == SCREEN_EXPAND_HORIZONTAL) {
+> +				mode_set->x += screen_x_offset;
+> +				mode_set->y += screen_y_offset;
+> +				screen_x_offset += mode_set->mode->hdisplay;
+> +			} else if (drm_fbdev_screen_mode == SCREEN_EXPAND_VERTICAL) {
+> +				mode_set->x += screen_x_offset;
+> +				mode_set->y += screen_y_offset;
+> +				screen_y_offset += mode_set->mode->vdisplay;
+> +			}
+> +		} else {
+> +			mode_set->x = screen_x_offset;
+> +			mode_set->y = screen_y_offset;
+> +		}
+>   	}
+> +}
+> +
+> +static void pan_set(struct drm_fb_helper *fb_helper, int dx, int dy)
+> +{
+> +	mutex_lock(&fb_helper->client.modeset_mutex);
+> +	pan_set_locked(&fb_helper->client, dx, dy);
+>   	mutex_unlock(&fb_helper->client.modeset_mutex);
+>   }
+>   
+> @@ -1387,10 +1418,8 @@ static int pan_display_legacy(struct fb_var_screeninfo *var,
+>   
+>   	mutex_lock(&client->modeset_mutex);
+>   	drm_modeset_lock_all(fb_helper->dev);
+> +	pan_set_locked(client, var->xoffset, var->yoffset);
+>   	drm_client_for_each_modeset(modeset, client) {
+> -		modeset->x = var->xoffset;
+> -		modeset->y = var->yoffset;
+> -
+>   		if (modeset->num_connectors) {
+>   			ret = drm_mode_set_config_internal(modeset);
+>   			if (!ret) {
+> @@ -1461,6 +1490,94 @@ static uint32_t drm_fb_helper_find_format(struct drm_fb_helper *fb_helper, const
+>   	return DRM_FORMAT_INVALID;
+>   }
+>   
+> +/*
+> + * Check if the device supports extended mode
+> + *
+> + * return true if the device supports extended mode,
+> + * otherwise return false.
+> + */
+> +static bool drm_fb_helper_validate_extended_mode(struct drm_fb_helper *fb_helper,
+> +						 struct drm_fb_helper_surface_size *sizes)
+> +{
+> +	struct drm_client_dev *client = &fb_helper->client;
+> +	struct drm_device *dev = fb_helper->dev;
+> +	struct drm_mode_config *config = &dev->mode_config;
+> +	struct drm_mode_set *mode_set;
+> +	u32 crtc_count;
+> +
+> +	drm_client_for_each_modeset(mode_set, client) {
+> +		crtc_count++;
+> +
+> +		for (int j = 0; j < mode_set->num_connectors; j++) {
+> +			struct drm_connector *connector = mode_set->connectors[j];
+> +
+> +			if (connector->has_tile) {
+> +				drm_dbg_kms(client->dev,
+> +					    "Don't support extended with tile mode connector yet\n");
+> +				return false;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (crtc_count < 2) {
+> +		drm_dbg_kms(client->dev,
+> +			    "Only support extended mode when device have mult-crtcs\n");
+> +		return false;
+> +	}
+> +
+> +	if (drm_fbdev_screen_mode == SCREEN_EXPAND_HORIZONTAL) {
+> +		u32 x = 0;
+> +
+> +		drm_client_for_each_modeset(mode_set, client) {
+> +			struct drm_display_mode *desired_mode;
+> +
+> +			desired_mode = mode_set->mode;
+> +			x = mode_set->x;
+> +			sizes->fb_width = sizes->surface_width  += desired_mode->hdisplay;
+> +			sizes->surface_height =
+> +				min_t(u32, desired_mode->vdisplay + mode_set->y,
+> +				      sizes->surface_height);
+> +			sizes->fb_height = min_t(u32, desired_mode->vdisplay + mode_set->y,
+> +						 sizes->fb_height);
+> +		}
+> +		sizes->fb_width = sizes->surface_width += x;
+> +
+> +		if (sizes->fb_width > config->max_width) {
+> +			drm_dbg_kms(client->dev,
+> +				    "screen_buffer total width %d > config width %d\n",
+> +				    sizes->fb_width, config->max_width);
+> +			return false;
+> +		}
+> +	} else if (drm_fbdev_screen_mode == SCREEN_EXPAND_VERTICAL) {
+> +		u32 y = 0;
+> +
+> +		drm_client_for_each_modeset(mode_set, client) {
+> +			struct drm_display_mode *desired_mode;
+> +
+> +			desired_mode = mode_set->mode;
+> +			y = mode_set->y;
+> +			sizes->fb_height = sizes->surface_height += desired_mode->vdisplay;
+> +			sizes->surface_width =
+> +				min_t(u32, desired_mode->hdisplay + mode_set->x,
+> +				      sizes->surface_width);
+> +			sizes->fb_width = min_t(u32, desired_mode->hdisplay + mode_set->x,
+> +						sizes->fb_width);
+> +		}
+> +		sizes->fb_height = sizes->surface_height += y;
+> +
+> +		if (sizes->fb_height > config->max_height) {
+> +			drm_dbg_kms(client->dev,
+> +				    "screen_buffer_total_height %d > config height %d\n",
+> +				    sizes->fb_height, config->max_height);
+> +			return false;
+> +		}
+> +	} else {
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>   static int __drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper,
+>   				      struct drm_fb_helper_surface_size *sizes)
+>   {
+> @@ -1527,6 +1644,16 @@ static int __drm_fb_helper_find_sizes(struct drm_fb_helper *fb_helper,
+>   
+>   	/* first up get a count of crtcs now in use and new min/maxes width/heights */
+>   	crtc_count = 0;
+> +
+> +	/* Check if we support extended mode. If we do, we will adjust the sizes accordingly. */
+> +	if (drm_fbdev_screen_mode &&
+> +		drm_fb_helper_validate_extended_mode(fb_helper, sizes)) {
+> +		drm_fbdev_screen_expand_mode_enabled = true;
+> +		drm_dbg_kms(dev, "Extended mode: horizontal expansion, width: %d, height: %d\n",
+> +			    sizes->surface_width, sizes->surface_height);
+> +		return 0;
+> +	}
+> +
+>   	drm_client_for_each_modeset(mode_set, client) {
+>   		struct drm_display_mode *desired_mode;
+>   		int x, y, j;
 
-diff --git a/Documentation/admin-guide/module-signing.rst b/Documentation/=
-admin-guide/module-signing.rst
-index a8667a777490..6daff80c277b 100644
---- a/Documentation/admin-guide/module-signing.rst
-+++ b/Documentation/admin-guide/module-signing.rst
-@@ -28,10 +28,11 @@ trusted userspace bits.
- =
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
 
- This facility uses X.509 ITU-T standard certificates to encode the public=
- keys
- involved.  The signatures are not themselves encoded in any industrial st=
-andard
--type.  The built-in facility currently only supports the RSA & NIST P-384=
- ECDSA
--public key signing standard (though it is pluggable and permits others to=
- be
--used).  The possible hash algorithms that can be used are SHA-2 and SHA-3=
- of
--sizes 256, 384, and 512 (the algorithm is selected by data in the signatu=
-re).
-+type.  The built-in facility currently only supports the RSA, NIST P-384 =
-ECDSA
-+and NIST FIPS-204 ML-DSA (Dilithium) public key signing standards (though=
- it is
-+pluggable and permits others to be used).  For RSA and ECDSA, the possibl=
-e hash
-+algorithms that can be used are SHA-2 and SHA-3 of sizes 256, 384, and 51=
-2 (the
-+algorithm is selected by data in the signature); ML-DSA uses SHAKE256.
- =
-
- =
-
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-@@ -146,9 +147,9 @@ into vmlinux) using parameters in the::
- =
-
- file (which is also generated if it does not already exist).
- =
-
--One can select between RSA (``MODULE_SIG_KEY_TYPE_RSA``) and ECDSA
--(``MODULE_SIG_KEY_TYPE_ECDSA``) to generate either RSA 4k or NIST
--P-384 keypair.
-+One can select between RSA (``MODULE_SIG_KEY_TYPE_RSA``), ECDSA
-+(``MODULE_SIG_KEY_TYPE_ECDSA``) and ML-DSA (``MODULE_SIG_KEY_TYPE_ML_DSA`=
-`) to
-+generate an RSA 4k, a NIST P-384 keypair or an ML-DSA keypair.
- =
-
- It is strongly recommended that you provide your own x509.genkey file.
- =
-
-diff --git a/certs/Kconfig b/certs/Kconfig
-index 78307dc25559..f647b944f5da 100644
---- a/certs/Kconfig
-+++ b/certs/Kconfig
-@@ -39,6 +39,30 @@ config MODULE_SIG_KEY_TYPE_ECDSA
- 	 Note: Remove all ECDSA signing keys, e.g. certs/signing_key.pem,
- 	 when falling back to building Linux 5.14 and older kernels.
- =
-
-+config MODULE_SIG_KEY_TYPE_ML_DSA_44
-+	bool "ML-DSA (Dilithium) 44"
-+	select CRYPTO_ML_DSA
-+	select LIB_SHA3
-+	help
-+	  Use an ML-DSA (Dilithium) 44 key (NIST FIPS 204) for module signing
-+	  with a SHAKE256 'hash' of the message.
-+
-+config MODULE_SIG_KEY_TYPE_ML_DSA_65
-+	bool "ML-DSA (Dilithium) 65"
-+	select CRYPTO_ML_DSA
-+	select LIB_SHA3
-+	help
-+	  Use an ML-DSA (Dilithium) 65 key (NIST FIPS 204) for module signing
-+	  with a SHAKE256 'hash' of the message.
-+
-+config MODULE_SIG_KEY_TYPE_ML_DSA_87
-+	bool "ML-DSA (Dilithium) 87"
-+	select CRYPTO_ML_DSA
-+	select LIB_SHA3
-+	help
-+	  Use an ML-DSA (Dilithium) 87 key (NIST FIPS 204) for module signing
-+	  with a SHAKE256 'hash' of the message.
-+
- endchoice
- =
-
- config SYSTEM_TRUSTED_KEYRING
-diff --git a/certs/Makefile b/certs/Makefile
-index f6fa4d8d75e0..231379c91b86 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -43,6 +43,9 @@ targets +=3D x509_certificate_list
- ifeq ($(CONFIG_MODULE_SIG_KEY),certs/signing_key.pem)
- =
-
- keytype-$(CONFIG_MODULE_SIG_KEY_TYPE_ECDSA) :=3D -newkey ec -pkeyopt ec_p=
-aramgen_curve:secp384r1
-+keytype-$(CONFIG_MODULE_SIG_KEY_TYPE_ML_DSA_44) :=3D -newkey ml-dsa-44
-+keytype-$(CONFIG_MODULE_SIG_KEY_TYPE_ML_DSA_65) :=3D -newkey ml-dsa-65
-+keytype-$(CONFIG_MODULE_SIG_KEY_TYPE_ML_DSA_87) :=3D -newkey ml-dsa-87
- =
-
- quiet_cmd_gen_key =3D GENKEY  $@
-       cmd_gen_key =3D openssl req -new -nodes -utf8 -$(CONFIG_MODULE_SIG_=
-HASH) -days 36500 \
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_key=
-s/pkcs7_verify.c
-index 0f9f515b784d..f7ea1d41771d 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -424,10 +424,6 @@ int pkcs7_verify(struct pkcs7_message *pkcs7,
- 			pr_warn("Invalid module sig (not pkcs7-data)\n");
- 			return -EKEYREJECTED;
- 		}
--		if (pkcs7->have_authattrs) {
--			pr_warn("Invalid module sig (has authattrs)\n");
--			return -EKEYREJECTED;
--		}
- 		break;
- 	case VERIFYING_FIRMWARE_SIGNATURE:
- 		if (pkcs7->data_type !=3D OID_data) {
-diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-index 2a1beebf1d37..4b5d1601d537 100644
---- a/kernel/module/Kconfig
-+++ b/kernel/module/Kconfig
-@@ -327,6 +327,10 @@ config MODULE_SIG_SHA3_512
- 	bool "SHA3-512"
- 	select CRYPTO_SHA3
- =
-
-+config MODULE_SIG_SHAKE256
-+	bool "SHAKE256"
-+	select CRYPTO_SHA3
-+
- endchoice
- =
-
- config MODULE_SIG_HASH
-@@ -339,6 +343,7 @@ config MODULE_SIG_HASH
- 	default "sha3-256" if MODULE_SIG_SHA3_256
- 	default "sha3-384" if MODULE_SIG_SHA3_384
- 	default "sha3-512" if MODULE_SIG_SHA3_512
-+	default "shake256" if MODULE_SIG_SHAKE256
- =
-
- config MODULE_COMPRESS
- 	bool "Module compression"
-diff --git a/scripts/sign-file.c b/scripts/sign-file.c
-index 7070245edfc1..b726581075f9 100644
---- a/scripts/sign-file.c
-+++ b/scripts/sign-file.c
-@@ -315,18 +315,28 @@ int main(int argc, char **argv)
- 		ERR(!digest_algo, "EVP_get_digestbyname");
- =
-
- #ifndef USE_PKCS7
-+
-+		unsigned int flags =3D
-+			CMS_NOCERTS |
-+			CMS_PARTIAL |
-+			CMS_BINARY |
-+			CMS_DETACHED |
-+			CMS_STREAM  |
-+			CMS_NOSMIMECAP |
-+			CMS_NO_SIGNING_TIME |
-+			use_keyid;
-+		if (!EVP_PKEY_is_a(private_key, "ML-DSA-44") &&
-+		    !EVP_PKEY_is_a(private_key, "ML-DSA-65") &&
-+		    !EVP_PKEY_is_a(private_key, "ML-DSA-87"))
-+			flags |=3D use_signed_attrs;
-+
- 		/* Load the signature message from the digest buffer. */
--		cms =3D CMS_sign(NULL, NULL, NULL, NULL,
--			       CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY |
--			       CMS_DETACHED | CMS_STREAM);
-+		cms =3D CMS_sign(NULL, NULL, NULL, NULL, flags);
- 		ERR(!cms, "CMS_sign");
- =
-
--		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo,
--				     CMS_NOCERTS | CMS_BINARY |
--				     CMS_NOSMIMECAP | use_keyid |
--				     use_signed_attrs),
-+		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo, flags),
- 		    "CMS_add1_signer");
--		ERR(CMS_final(cms, bm, NULL, CMS_NOCERTS | CMS_BINARY) !=3D 1,
-+		ERR(CMS_final(cms, bm, NULL, flags) !=3D 1,
- 		    "CMS_final");
- =
-
- #else
 
 
