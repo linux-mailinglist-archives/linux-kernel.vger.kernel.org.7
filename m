@@ -1,59 +1,76 @@
-Return-Path: <linux-kernel+bounces-890724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1701C40C1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:07:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB85C40D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:16:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D68E4F3E10
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:07:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 102CE4EB59F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315B02EBDF0;
-	Fri,  7 Nov 2025 16:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9CC335081;
+	Fri,  7 Nov 2025 16:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRZ7r4cT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="pb1KkEXj"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3A82836A6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6F132E147;
+	Fri,  7 Nov 2025 16:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762531640; cv=none; b=Kgzu9DqKn8P9YOwdX7vWkJYK7hC59cL7EsDmovDqPFGtZCPH2uxP4oUjzFSNYQBpPSumZ++bvCyro3B434lQE54WN/rwx4YkJQUeyqiIFg0cxfzytMpWmVX4Rg+6dYpRpV1i8lYblHTS9QCO/dOTLmDhOZ1x6Xr1MYeiHNhf9Ow=
+	t=1762531998; cv=none; b=bXeUeUaDXC15T1Tg55kYryYg4D3dl7WHGzNNZNgnXXO7jssW3u1+h6B9vfdZHHk38PkB+lRnazdPtZYIBX0nlGI8C0Xp2EAO4P+DMzsTFjUxQ0DcAJCGL8sR/bcVW/JsoEyZgXQeRdnmstOG+oW7rPui/Us2bR5oigpI2jgPOf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762531640; c=relaxed/simple;
-	bh=KmNg0IbiQSMgIBfWpyOISbt53znceGdIygj3J1+GoFo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MIXOdixUV/6Sm6VmESyla3rmbRNf3WnA9alv4+E9B4DZ6Vma0tzYF6b1m8Kk5ShvXZmY+Y/YOpxundHXu4cC8VbO+kTjaAZTWCqZ5iIaQFY9epdcjQ88r2iYRyjDvaM49sJb1y7VBkrIxy3SbsmtHaVHBny8ZZo/NKTM8lSqtCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRZ7r4cT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4214CC116B1;
-	Fri,  7 Nov 2025 16:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762531640;
-	bh=KmNg0IbiQSMgIBfWpyOISbt53znceGdIygj3J1+GoFo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=fRZ7r4cTjf5cb+wQfQZKSi3nxrTbj66GE5KbiX42htXpJ44IXf3nBmo+xC4o+q7TA
-	 BRXzD67osZZSe5TEP3UnkDASXEMhdSAiGFcXkjedQ7CCSsHMJlwH57SJmRIb/XCc+V
-	 sa8Wvr4hF1Jw3bYrpn3i2K6GJEMueq3rSmlNZQiOu89kvKXq8kl+xoD56DiPOKor8h
-	 XPHuYlvf27NrmVcpFt+gtjOFbxd/4hbMJbfWr+jh5UFLH2X2tiLpibtfSo2h7LWloB
-	 eGQNAROrX3tSYtgs66K6dFgmfjbzrkO5Jm79bK1xZlxpbl2e+L4DUnV41N81eAfEqB
-	 gOE15k6fuoYGQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  akpm@linux-foundation.org,
-  rppt@kernel.org,  graf@amazon.com,  linux-kernel@vger.kernel.org,
-  kexec@lists.infradead.org,  linux-mm@kvack.org
-Subject: Re: [PATCH] lib/test_kho: Check if KHO is enabled
-In-Reply-To: <CA+CK2bB+EpZg7MTKZhFtaGoYfLN5JNeaH9HDv_Avq9Qm+3e2ig@mail.gmail.com>
-	(Pasha Tatashin's message of "Fri, 7 Nov 2025 06:15:37 -0500")
-References: <20251106220635.2608494-1-pasha.tatashin@soleen.com>
-	<mafs0cy5ub0nc.fsf@kernel.org>
-	<CA+CK2bB+EpZg7MTKZhFtaGoYfLN5JNeaH9HDv_Avq9Qm+3e2ig@mail.gmail.com>
-Date: Fri, 07 Nov 2025 17:07:18 +0100
-Message-ID: <mafs08qghbzd5.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762531998; c=relaxed/simple;
+	bh=5Nqh1Cm15+XPj5WliYS/sGVMlMkUi6oRuZu4jad3Ovw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=RboC+T5m/89J5nHaLE4WJ6hEvTBbotYhEgMNI/N0bBOvH91XakRMhfjXe4ZJgPspyxKzCsXC78CzDHgcIxAwKobKfPJyrxmyaKCEHWKHneQezpZTkHHgU0nd4cEnymaqFWIO3gewJeDDgJf0rah3l6lk//GHxX/mbz6iiRCdtrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=pb1KkEXj; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id C283077908A1;
+	Fri,  7 Nov 2025 10:07:22 -0600 (CST)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 21dgOA9Zntfu; Fri,  7 Nov 2025 10:07:20 -0600 (CST)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id BB3857791950;
+	Fri,  7 Nov 2025 10:07:20 -0600 (CST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com BB3857791950
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1762531640; bh=5hxGhzBJs6gJa/ASFK5SjIMdAdt+bdzNzMEFXUGcp8g=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=pb1KkEXjGw/I4q36LwOmPSLTVqKvP8AyRnqDq7fubf8C4qeiHO0Nr9G7MGGYHpFqN
+	 810OC5KBlUEQX0b/KDvOq7EfTnswx9Du5/x25F9dgecOI7H1EMgMp71s0AHb391kpx
+	 DaWsfU7flNSmjb3ywxhFjFqWsa/ocOCaQNQfsNVY=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Npboz4zOJH1J; Fri,  7 Nov 2025 10:07:20 -0600 (CST)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 9050377908A1;
+	Fri,  7 Nov 2025 10:07:20 -0600 (CST)
+Date: Fri, 7 Nov 2025 10:07:20 -0600 (CST)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-pci <linux-pci@vger.kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, 
+	christophe leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Message-ID: <1801829574.18016.1762531640458.JavaMail.zimbra@raptorengineeringinc.com>
+In-Reply-To: <2d00ed57-3c74-492e-83ae-88ca1ce98311@kernel.org>
+References: <1268570622.1359844.1752615109932.JavaMail.zimbra@raptorengineeringinc.com> <2013845045.1359852.1752615367790.JavaMail.zimbra@raptorengineeringinc.com> <bf390f9e-e06f-4743-a9dc-e0b995c2bab2@kernel.org> <304758063.1694752.1757427687463.JavaMail.zimbra@raptorengineeringinc.com> <97746540.1782404.1759973048120.JavaMail.zimbra@raptorengineeringinc.com> <2d00ed57-3c74-492e-83ae-88ca1ce98311@kernel.org>
+Subject: Re: [PATCH] PCI: pnv_php: Fix potential NULL dereference in slot
+ allocator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,37 +78,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC141 (Linux)/8.5.0_GA_3042)
+Thread-Topic: pnv_php: Fix potential NULL dereference in slot allocator
+Thread-Index: CtRjw05oWZGOt/qVaF0yP9/m4nCNzA==
 
-On Fri, Nov 07 2025, Pasha Tatashin wrote:
 
-> On Fri, Nov 7, 2025 at 5:24=E2=80=AFAM Pratyush Yadav <pratyush@kernel.or=
-g> wrote:
->>
->> On Thu, Nov 06 2025, Pasha Tatashin wrote:
->>
->> > We must check whether KHO is enabled prior to issuing KHO commands,
->> > otherwise KHO internal data structures are not initialized.
->>
->> Should we have this check in the KHO APIs instead? This check is easy
->> enough to miss.
->
-> I considered adding a kho_is_enabled() check to every KHO API, but it
-> seems unnecessary.
->
-> In-kernel users of KHO, like reserve_mem and the upcoming LUO, are
-> already expected to check if KHO is enabled before doing extra
-> preservation work. I anticipate any future in-kernel users will follow
-> the same pattern.
 
-Hmm, fair enough. I suppose we can always change this later if it causes
-more pain.
+----- Original Message -----
+> From: "Jiri Slaby" <jirislaby@kernel.org>
+> To: "Timothy Pearson" <tpearson@raptorengineering.com>
+> Cc: "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-pci"
+> <linux-pci@vger.kernel.org>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
+> "christophe leroy" <christophe.leroy@csgroup.eu>, "Naveen N Rao" <naveen@kernel.org>, "Bjorn Helgaas"
+> <bhelgaas@google.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
+> Sent: Thursday, October 9, 2025 12:54:19 AM
+> Subject: Re: [PATCH] PCI: pnv_php: Fix potential NULL dereference in slot allocator
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+> On 09. 10. 25, 3:24, Timothy Pearson wrote:
+>> A highly unlikely NULL dereference in the allocation error handling path was
+>> introduced in 466861909255.  Avoid dereferencing php_slot->bus by using
+>> dev_warn() instead of SLOT_WARN() in the error path.
+>> 
+>> Fixes: 466861909255 ("PCI: pnv_php: Clean up allocated IRQs on unplug")
+>> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
+> 
+> LGTM, perhaps also a lnk to the report:
+> Link:
+> https://lore.kernel.org/all/304758063.1694752.1757427687463.JavaMail.zimbra@raptorengineeringinc.com/
+> 
+> 
+> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+> 
+> thanks,
+> --
+> js
+> suse labs
 
-[...]
-
---=20
-Regards,
-Pratyush Yadav
+Just a quick follow up on this to see if we could get it merged?  Thanks!
 
