@@ -1,104 +1,298 @@
-Return-Path: <linux-kernel+bounces-891105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691B6C41D9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 23:45:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F67EC41DBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 23:46:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 154E6351A38
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 22:45:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA1A0351CBA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 22:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91FF262FD1;
-	Fri,  7 Nov 2025 22:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60953009EE;
+	Fri,  7 Nov 2025 22:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3pvny9V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Y37ErSiH"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B161E51EE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 22:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303772D94B9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 22:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762555544; cv=none; b=icjlo0LjE8QiAZFMq1Jpgdcj4mSdwHwsrkkPRYkN39G+aGm5jLfmYCHXW1A2+aqQgF5hlB5CjoEl+P/FOaMV/3n7zKx/zAn3SNy0OKfmRacX7/p5kFJyQdFrJr1EisT4Lha9IziJsdHTidjjnSEVchmY2dKAtVNfcRzjVRZeQsY=
+	t=1762555583; cv=none; b=uu0A8vNpAl3JP8RPhym0oTqomYIt4cU3AqWsSy24L9zsOalurKOT/KBFNolwoisguM3hfELMw58gEJ0W7be7DKAiPagRlN5J10vysEqJzHrQ8Dmx/M6ouFuoIGJV9ILXlJna40Gfd8WyZ0rGriqva/l6Gcg/gxtLs29wCIS1BnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762555544; c=relaxed/simple;
-	bh=9QhhIlDZu/g49an2sK+fQ727AFyd6RN3xnybq/gbwUA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c7L1EHNNjKwPxCjtC7IbLw6K205OYQtAzx5Z9r+uQiLeoDApKpEQFB8xEJZpWwjKYArFGtfukNYWuYsTb9WAw6TfgH2gDs+UFsAVxg8jAkN+IbNmf8nIgkZIrwaN//4rHglT5X4N/YccFK/Bf1HL2u4DkB9hwT8HYnD5TkNPlvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3pvny9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C812AC16AAE;
-	Fri,  7 Nov 2025 22:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762555543;
-	bh=9QhhIlDZu/g49an2sK+fQ727AFyd6RN3xnybq/gbwUA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Z3pvny9VpovEaN57eoIGkaiZ09jT/HJ1rVErngbyPra8IKtmEDp7p1Db4Wdu0YLDT
-	 v8wYHFMPtyP9UWCjnrER5CYhiPtGn19i532j+SX6zWQqjJA7oVnvHIS6TLPYv1CeK7
-	 2I+3hgxOn+w/0/90vlBioOi6+IzmKi4dWfpvcqvAuD4ylsCRlwEGuFwGdYFZBpPcPN
-	 CpBT/Vm2973XG5krizIidwg8GxdntkdgnTZaYSpgAr7dFT55qPp9/67iMDEc7Swk55
-	 HgfOwSHFwOH4DLbmJz2UQLGfy3OWS4hfF/KXiVnxPCXaHn08jQlQJxgmMgYykM830U
-	 dgOntL25lyJLQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Douglas Anderson <dianders@chromium.org>, Gabor Juhos <j4g8y7@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20251107-regulator-disable-supply-v1-1-c95f0536f1b5@gmail.com>
-References: <20251107-regulator-disable-supply-v1-1-c95f0536f1b5@gmail.com>
-Subject: Re: [PATCH] regulator: core: disable supply if enabling main
- regulator fails
-Message-Id: <176255554171.22584.17620313954221457974.b4-ty@kernel.org>
-Date: Fri, 07 Nov 2025 22:45:41 +0000
+	s=arc-20240116; t=1762555583; c=relaxed/simple;
+	bh=Iw0djrGj0E1EeAmzCQwmf4P9quCFdn1G1qnajo2IswA=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=gcWpB3pcD7iwhJP4hqX7IEcei8FxPCUldqPVaHtTXJrn8En2+GCJ4jBdGIUXHD2bkkXUTXxDnO4F8BeJnY02HspfE4Zcw9LUSLvu0xb7cfuUh5U1fkN20+DA2WxWCv3wdRdFtO90RICjTIEfKq7ZBpOvuTWBd9LwIzRlOrYCiqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Y37ErSiH; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4e89de04d62so10130301cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 14:46:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1762555580; x=1763160380; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LLmOflXkVRsPG430Y/bM1DxcagZMiyutQotB6mJKGqY=;
+        b=Y37ErSiH4Isan3caNYKDLIEIsV77MBpWe/YiN+tvF/g0CpXXvUE3DSr4FHkaDjvm37
+         HU25KiqHTNV60ZiCsYzOMvS1HJruZknV8Pwwfro4xSXUV/nWQg8uSd7UfWvLjYOq58bF
+         yQUClq9RlHRYpObM41GxH9NnxWe+wMg2j77RDBWG1zExYLuh+dPNWC9Lj3U2AOqK+DMx
+         KVknOFKG3FceXGCpSQEYE0ux3POONuMPreTSV2q+q1D29sc5EBuoOMRJfAzVGR0mWKvL
+         LpYT1KBfsIpV3HbpzGgZAtVseewMON6p3Kog9y+tFzi5/hzsn1B+/O5Noe/OqS6ngot1
+         tshQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762555580; x=1763160380;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LLmOflXkVRsPG430Y/bM1DxcagZMiyutQotB6mJKGqY=;
+        b=UOBDGzj38bY4n3xF754VPqztaHyqGRchMwsCJVO+5qvMMHM99MQ+2/+cfOwQjxAdW0
+         ZKQ0WnPkcLZMJJph3QHLa5sIkQmhZM4m3C3KahB7StgXvP9KYu04ZQvq9gEZQ0hD4hdX
+         I+NPwpoC/7eKzKvO7dcfEh1bQ0662WZCVCW5dZUGbgKTNtp7F9FAtYA2lvhqf+oXJJlf
+         wi4yPXvlsesAYkEO10dA/Li0maMyjEtHZ8eE7Z0OknzBYfWLvpmOV4t7zGqJLJ8Xw4OQ
+         +Y5h+RZeslCgNcEY05uTaAStnXPDPGvIO9FkD+65Z/s5m1DqID+F/XfYwIDFtdJT8b/2
+         F3Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMcrwyGrPm9w00NalXy33oS7Bvd9rDckYRiXGnD0P49tN/zuuIujhsSxzdKcrDCzf99nY5tQHl8aC/Hps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4Hsml0sLxKzmDj60oxvNLMO9keQVsAQLNii3TgVPFe+hP8r4D
+	sZ8QdQ3LpPw9gO+8EYXgb33JPdKXo0fncVnNB6ieUWz70PNQGvduhmbW7WsUzR7tEw==
+X-Gm-Gg: ASbGncsAuvUogTP815KloCOJUCYOBAUotNO63LJ8rr+RiVFXYVVPXH5WQ7eTOnxng+u
+	MpRoJn38a0hWla1WozZV2BdsjESqoOu7uJqFKIb21tDFnqZqmlOXKBZ71ioHo7Us1aMjdxNO7PZ
+	/HkOSd5rdfHAQPhUXnkCfNr0jvX08WFvKJTai26DoG2ovEYw0+NeaixCdm9AJPTFuHOlUViMXAj
+	GhMHG7XdwqbSTFJWE4uK8u9UkDWUIgTEMX76dUmSgeEffFsuzkCe84cRSaRt4k0gJzigS3xzso2
+	H+cAFSQWdF+0xn+ef4aZ4cfJX+AbzFRs0LssuxvOjX0+52KgPjiaaYwm1YPeoiKdRRfT29AOsIw
+	hFhri0GV4eOf+y9VPDWz6vXyj8WQ7raL++Vaz6ZlMREZo3jinvXhbG48R+yfSxfFKvGIz3GGUbS
+	dUJgGXRPSe449TOTH8TBsGyQCTVxPSCHQrXFAd9I5U40e12jwkVNCinOVO
+X-Google-Smtp-Source: AGHT+IHrQn8HXQkHpkHyR17I/vgJvQDZ3PvcxfyB/9NyJzEb8+tk8bEQSW8kbFzruHMF1M4pLru8Dw==
+X-Received: by 2002:a05:622a:1455:b0:4eb:a2ab:4175 with SMTP id d75a77b69052e-4eda4fa3eebmr10623901cf.39.1762555579930;
+        Fri, 07 Nov 2025 14:46:19 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda56132c0sm3554831cf.7.2025.11.07.14.46.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 14:46:19 -0800 (PST)
+Date: Fri, 07 Nov 2025 17:46:18 -0500
+Message-ID: <e92df5b09f0907f78bb07467b38d2330@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a6db3
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20251107_1632/pstg-lib:20251107_1737/pstg-pwork:20251107_1632
+From: Paul Moore <paul@paul-moore.com>
+To: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Cc: eparis@redhat.com, fw@strlen.de, pablo@netfilter.org, kadlec@netfilter.org, Ricardo Robaina <rrobaina@redhat.com>
+Subject: Re: [PATCH v5 1/2] audit: add audit_log_packet_ip4 and  audit_log_packet_ip6 helper functions
+References: <acd8109245882afd78cdf2805a2344c20fef1a08.1762434837.git.rrobaina@redhat.com>
+In-Reply-To: <acd8109245882afd78cdf2805a2344c20fef1a08.1762434837.git.rrobaina@redhat.com>
 
-On Fri, 07 Nov 2025 18:10:08 +0100, Gabor Juhos wrote:
-> For 'always-on' and 'boot-on' regulators, the set_machine_constraints()
-> may enable supply before enabling the main regulator, however if the
-> latter fails, the function returns with an error but the supply remains
-> enabled.
+On Nov  6, 2025 Ricardo Robaina <rrobaina@redhat.com> wrote:
 > 
-> When this happens, the regulator_register() function continues on the
-> error path where it puts the supply regulator. Since enabling the supply
-> is not balanced with a disable call, a warning similar to the following
-> gets issued from _regulator_put():
+> Netfilter code (net/netfilter/nft_log.c and net/netfilter/xt_AUDIT.c)
+> have to be kept in sync. Both source files had duplicated versions of
+> audit_ip4() and audit_ip6() functions, which can result in lack of
+> consistency and/or duplicated work.
 > 
-> [...]
+> This patch adds two helper functions in audit.c that can be called by
+> netfilter code commonly, aiming to improve maintainability and
+> consistency.
+> 
+> Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
+> Acked-by: Florian Westphal <fw@strlen.de>
+> ---
+>  include/linux/audit.h    | 12 +++++++++++
+>  kernel/audit.c           | 39 ++++++++++++++++++++++++++++++++++++
+>  net/netfilter/nft_log.c  | 43 ++++------------------------------------
+>  net/netfilter/xt_AUDIT.c | 43 ++++------------------------------------
+>  4 files changed, 59 insertions(+), 78 deletions(-)
 
-Applied to
+...
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+> diff --git a/net/netfilter/nft_log.c b/net/netfilter/nft_log.c
+> index e35588137995..f53fb4222134 100644
+> --- a/net/netfilter/nft_log.c
+> +++ b/net/netfilter/nft_log.c
+> @@ -26,41 +26,6 @@ struct nft_log {
+>  	char			*prefix;
+>  };
+>  
+> -static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
+> -{
+> -	struct iphdr _iph;
+> -	const struct iphdr *ih;
+> -
+> -	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_iph), &_iph);
+> -	if (!ih)
+> -		return false;
+> -
+> -	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
+> -			 &ih->saddr, &ih->daddr, ih->protocol);
+> -
+> -	return true;
+> -}
+> -
+> -static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+> -{
+> -	struct ipv6hdr _ip6h;
+> -	const struct ipv6hdr *ih;
+> -	u8 nexthdr;
+> -	__be16 frag_off;
+> -
+> -	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_ip6h), &_ip6h);
+> -	if (!ih)
+> -		return false;
+> -
+> -	nexthdr = ih->nexthdr;
+> -	ipv6_skip_exthdr(skb, skb_network_offset(skb) + sizeof(_ip6h), &nexthdr, &frag_off);
+> -
+> -	audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
+> -			 &ih->saddr, &ih->daddr, nexthdr);
+> -
+> -	return true;
+> -}
+> -
+>  static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
+>  {
+>  	struct sk_buff *skb = pkt->skb;
+> @@ -80,18 +45,18 @@ static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
+>  	case NFPROTO_BRIDGE:
+>  		switch (eth_hdr(skb)->h_proto) {
+>  		case htons(ETH_P_IP):
+> -			fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+> +			fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+>  			break;
+>  		case htons(ETH_P_IPV6):
+> -			fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+> +			fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+>  			break;
+>  		}
+>  		break;
+>  	case NFPROTO_IPV4:
+> -		fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+> +		fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+>  		break;
+>  	case NFPROTO_IPV6:
+> -		fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+> +		fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+>  		break;
+>  	}
 
-Thanks!
+We can probably take this a step further by moving the case statements
+into the audit functions too.  I think this will make some of the other
+changes a bit cleaner and should reduce the amount of audit code in the
+NFT code.
 
-[1/1] regulator: core: disable supply if enabling main regulator fails
-      commit: fb1ebb10468da414d57153ddebaab29c38ef1a78
+If we don't want to do that, it might be worthwhile to take the
+NFPROTO_BRIDGE protocol family reset shown below in audit_log_nft_skb()
+and use that in the nft_log_eval_audit() function so we aren't
+duplicating calls into the audit code.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+[WARNING: completely untested code, but you should get the basic idea]
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 26a332ffb1b8..72ba3f51f859 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2538,6 +2538,59 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
+        audit_log_end(ab);
+ }
+ 
++int audit_log_nft_skb(struct audit_buffer *ab,
++                     struct sk_buff *skb, u8 nfproto)
++{
++       /* find the IP protocol in the case of NFPROTO_BRIDGE */
++       if (nfproto == NFPROTO_BRIDGE) {
++               switch (eth_hdr(skb)->h_proto) {
++               case htons(ETH_P_IP):
++                       nfproto = NFPROTO_IPV4;
++               case htons(ETH_P_IPV6):
++                       nfproto = NFPROTO_IPV6;
++               default:
++                       goto unknown_proto;
++               }
++       }
++
++       switch (nfproto) {
++       case NFPROTO_IPV4: {
++               struct iphdr iph;
++               const struct iphdr *ih;
++
++               ih = skb_header_pointer(skb, skb_network_offset(skb),
++                                       sizeof(_iph), &_iph);
++               if (!ih)
++                       return -ENOMEM;
++
++               audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
++                                &ih->saddr, &ih->daddr, ih->protocol);
++               break;
++       }
++       case NFPROTO_IPV6: {
++               struct ipv6hdr iph;
++               const struct ipv6hdr *ih;
++
++               ih = skb_header_pointer(skb, skb_network_offset(skb),
++                                       sizeof(_iph), &_iph);
++               if (!ih)
++                       return -ENOMEM;
++
++               audit_log_format(ab, " saddr=%pI6 daddr=%pI6 proto=%hhu",
++                                &ih->saddr, &ih->daddr, ih->protocol);
++               break;
++       }
++       default:
++               goto unknown_proto;
++       }
++
++       return 0;
++
++unknown_proto:
++       audit_log_format(ab, " saddr=? daddr=? proto=?");
++       return -EPFNOSUPPORT;
++}
++
+ /**
+  * audit_set_loginuid - set current task's loginuid
+  * @loginuid: loginuid value
+diff --git a/net/netfilter/nft_log.c b/net/netfilter/nft_log.c
+index e35588137995..6f444e2ad70a 100644
+--- a/net/netfilter/nft_log.c
++++ b/net/netfilter/nft_log.c
+@@ -75,28 +75,7 @@ static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
+                return;
+ 
+        audit_log_format(ab, "mark=%#x", skb->mark);
+-
+-       switch (nft_pf(pkt)) {
+-       case NFPROTO_BRIDGE:
+-               switch (eth_hdr(skb)->h_proto) {
+-               case htons(ETH_P_IP):
+-                       fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+-                       break;
+-               case htons(ETH_P_IPV6):
+-                       fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+-                       break;
+-               }
+-               break;
+-       case NFPROTO_IPV4:
+-               fam = audit_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+-               break;
+-       case NFPROTO_IPV6:
+-               fam = audit_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+-               break;
+-       }
+-
+-       if (fam == -1)
+-               audit_log_format(ab, " saddr=? daddr=? proto=-1");
++       audit_log_nft_skb(ab, skb, nft_pf(pkt));
+ 
+        audit_log_end(ab);
+ }
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--
+paul-moore.com
 
