@@ -1,277 +1,231 @@
-Return-Path: <linux-kernel+bounces-891119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92799C41E21
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 23:51:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CA5C41DDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 23:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBCDD4267B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 22:51:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8EE3B9717
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 22:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8844F31AF25;
-	Fri,  7 Nov 2025 22:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DB2302768;
+	Fri,  7 Nov 2025 22:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="OTh2wwn1"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="iu3sfu2+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yWmg7GrN"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D838314D1F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 22:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A682FFDF4;
+	Fri,  7 Nov 2025 22:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762555816; cv=none; b=O9YZafg6gBSGcoSXEHqVoITQf3NAEY1rBbZWZvgP0qKwCIwcntFT4QCfgebRpOt0XeIg/pEqiKdH0ktz3ZfsnPRLR5tGfQ4H6qgtt0lTTPViKPPwvbPHO9VB/zufTdTAx3l2g+GLpNHKCCcCXQmQdMJSNHilXee9pN2soKJ8DBs=
+	t=1762555802; cv=none; b=mEiBf07PZbHM/RpSQtm2C+qKEsHONefXwLnnHuneiKhOWYtyi5R1zvd8HiQmpyGUdjyQU8TRe4zHkcZFdEdKVaEBkfIrYd93WbR5vO/rFMHSERDGAB4bX1uUpTJe6XuWq9HS2fYQDpKV7gF4Jh9J7EGPiqioLUJYxMWsrPMRkHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762555816; c=relaxed/simple;
-	bh=t1PWd9W4F3MKCeCrtb+bV5TXG4Q3iLBygfAXlk1bL90=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sNtAVqPK0Z1hWmbpLIIMdKOQQT/yDbNwlnSHfwisd1ox/n3zFJ1nGGnN7XYSPAfWpK2408FY1ZVY8yleS5XKO+R9T9DiG/GTEyrPMl9arWWGy1byu4v1I49jWumD/rIQvFRqTCIwSpwj0nA94mTixZ8q9AnrGBR5uh6KECYhkvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=OTh2wwn1; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-791fd6bffbaso12940326d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 14:50:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762555812; x=1763160612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R64FiI16+WP3yeCxBiatrBL599beZnZfURxXJrYPjuA=;
-        b=OTh2wwn1I/0SNSvdVBqTHB/Nlje+NO948PsSdWEn+zdjCupnVffmXKYIY6hp+TXz54
-         sZSbvULt6INIZ6csadKvFEfoONa7nBFUdgIwVL2lxiKFcA2lWlzk2qxGpWpH4nbMvxYy
-         XVn1EmepFfBqIX5IlaMfANeOg2cVRARiAWszZJ6tj+kQICVWRi15ycVEc85GW+HYdLaE
-         ZWaTeUzaGEnerultDa6f9RXzS1N4aHU5TTMfXR3ARwnf1WcnELFRm2tdN/4sPBRglGVP
-         XB2ef4xPqkDxTPP7vkVBMmHjz5tIZnMOk5emrkhdvObKN28cfGQpbgHYcgq2PVdGZEBW
-         3j4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762555812; x=1763160612;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=R64FiI16+WP3yeCxBiatrBL599beZnZfURxXJrYPjuA=;
-        b=v+Up1HGabVT/VqIpF8pI+ZX7lDmx8p5fPcxPA/sraCvzUDTKN18aWszSo/pvVVKeFR
-         +I/ZpmFadZrWxWshUDyMwUUmSZwAOha44/nQuTXHu2Gu6/YI3LGCyzwKungxxdFvPiVa
-         rP9Yrt10ufp1IHj+gZsY+51kt914X0xhcsJBWumxI6pk2X4ro7m826/UEpoB3gGAGxkP
-         Ws4LTmp5sKHtUBI68Mdo4sdgKWWgjy29qeDKhuXWkIMLXonrj6qr902viPKN36mIf9VV
-         nrTBzLsGA6L8dThfoXbCKwy0YOyoJJDeH+H2v4k40MhGcio5283411QKLgSjkyGlLU4T
-         TORg==
-X-Forwarded-Encrypted: i=1; AJvYcCXahLMTUGpmErcm3VBvyBfsJ6JBrjqyHQpFwP8/O0qFFh8whja3i18JJsDlKF1oV1SxiH4B0Zi51w8g3eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl7I+8YFkq7Y9wMB/hFsmFPjpQ8kC9KjOZWSLyo9Iwnl73UNu5
-	eeOWS9w27K4P4oDKgYWZYog8iZbMVi70IVXu2Ow4a4NRTdt0ta6+sqGl5YHbjiHX5Pk=
-X-Gm-Gg: ASbGncvPWIFa1vow/AdQETMqyCfqLWgiFLdZBz7SU7hrqb0b7Hthn3YfcSJTHrAXulD
-	WOp79tswfsYswl9nqMslsvPHyquoLhY+OrAjwGsQn+YaOb9vejrM9lZqR3N267pXqFYDVoZDkun
-	i6zTK9wnbIoUVrsw1IPHXEysfFllWmLX/KwwVpTCCqRi7+xrQLI83wT7mjXmmLRYtMbRyOq+Fx9
-	bOx4hLHzZCXVcKDuDCEnIOZIvI8mxL5VDTPZ9wyJB/5kJgPzqp1Ci4TdHB6DhnghCpwpmx1OyWE
-	IHc7dLWi7TCOfhdaahM26M85Rpxprtdjc5B1KGSs6q9pKE4FHfV/HABPXkyeeE6JMZCAxtRsRNX
-	QJfJP561Dcv2DS3ACVtRFgNfjVIVnShkUvIvspuravOhbmF1mnd1R/t4s7I1JR51EgJYH2WQk9d
-	JhqguPzwXUnvG3TFWjI4PyTwRcW2hb9wmcXjM1AkfdKtFLxgEAoUq3WiqlRDhjEnwAdnJqd150R
-	f8Bz7XkwoqSvA==
-X-Google-Smtp-Source: AGHT+IG4CM60aE94hoVAm6WlLLrQN78GzB6+sZgYXWXWNkYKc0tId9Jl3T1QS1663TlSzExe8IcNow==
-X-Received: by 2002:a05:6214:20eb:b0:882:36d3:2c60 with SMTP id 6a1803df08f44-88238616f43mr9660116d6.19.1762555812276;
-        Fri, 07 Nov 2025 14:50:12 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda57ad8e6sm3293421cf.27.2025.11.07.14.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 14:50:11 -0800 (PST)
-From: Gregory Price <gourry@gourry.net>
-To: linux-mm@kvack.org
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	longman@redhat.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	osalvador@suse.de,
-	ziy@nvidia.com,
-	matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com,
-	rakie.kim@sk.com,
-	byungchul@sk.com,
-	gourry@gourry.net,
-	ying.huang@linux.alibaba.com,
-	apopple@nvidia.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	kees@kernel.org,
-	muchun.song@linux.dev,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	rientjes@google.com,
-	jackmanb@google.com,
-	cl@gentwo.org,
-	harry.yoo@oracle.com,
-	axelrasmussen@google.com,
-	yuanchu@google.com,
-	weixugc@google.com,
-	zhengqi.arch@bytedance.com,
-	yosry.ahmed@linux.dev,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	fabio.m.de.francesco@linux.intel.com,
-	rrichter@amd.com,
-	ming.li@zohomail.com,
-	usamaarif642@gmail.com,
-	brauner@kernel.org,
-	oleg@redhat.com,
-	namcao@linutronix.de,
-	escape@linux.alibaba.com,
-	dongjoo.seo1@samsung.com
-Subject: [RFC PATCH 3/9] mm: default slub, oom_kill, compaction, and page_alloc to sysram
-Date: Fri,  7 Nov 2025 17:49:48 -0500
-Message-ID: <20251107224956.477056-4-gourry@gourry.net>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251107224956.477056-1-gourry@gourry.net>
-References: <20251107224956.477056-1-gourry@gourry.net>
+	s=arc-20240116; t=1762555802; c=relaxed/simple;
+	bh=Aeo/VzE1/UV207VY7Gch3A/3nfTb68ooL8dPoD/Cfgk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=lG9Sp7m19ZgC92YogBUF+xX8tQlzn7ENci82l99xy7Xwr0yzZi8kTqWSdxlx/rO+HMsKPF7aFk/POvCT6HPdJxt+Osu2dLlIVgBAIH13wLyux8I1T05fgJreFwoKleCzbbPjn/j+85asqYlggGHdLCvBWh3bfEDxC6MaJkMtWAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=iu3sfu2+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yWmg7GrN; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 15C9C7A01B6;
+	Fri,  7 Nov 2025 17:49:59 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Fri, 07 Nov 2025 17:49:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1762555798; x=1762642198; bh=aCExvVff/T1beCIBhfJtcWSIpIUbwYfLTD4
+	NHxXGVdI=; b=iu3sfu2+YJ7TYN2VUmigtGfTH6CAMsDtvQD4TAhwLUVySVkqkpJ
+	QGUMOHAORfsvpT4qVHU8fgcgWuhWEQu7LMu+CAKvU0MANY24xEFhQ8xsEaUbnzWx
+	seyCzCPRbb5ulphgJ7HfL8KgdOMzAcj6LZTba3B0QLO4RGv+1GhINuN2blWSFCI1
+	ivqS4UQOvvrYkOmPeCIS7XQWTQIzHDMnqk+lBmck47W6KCiP7RrBwFLI5zACLlvc
+	8U3YBhj0n1g+Gx7OR4Aey3RQkLRZCa4+hkZjZZjMBFOiOdjmmckw43n9rfJo7qck
+	jzeAI5dyCkpuEX+75UOXBBhe6kkojcwlaSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762555798; x=
+	1762642198; bh=aCExvVff/T1beCIBhfJtcWSIpIUbwYfLTD4NHxXGVdI=; b=y
+	Wmg7GrNix50DzyxmmMWAJUoJyrI3nwULpuLdidrebuh9iswgamFWc0BgPE105k+L
+	VCSlOAH+QT2nt39mYC4nq/JiJsdqoSiYv7x6QAYS6joHqaWdhw/v5PHjAttJz2YH
+	eBCblF14XzqdXzeS5ggIhwopdUbV3KrWxxjkxmqI21LzYAOIXynAyGncq4oHGRFW
+	7mzqzMj+3zilAEXuvmLykreM4AJybeek38fwU2HCdDcPQXxQ2XuXlEWrGbhJQdOq
+	lKMThsAxIWA+0FRYyQCVGMpR3736QUjbTl5+aORhUQXzxRKaS0MP6ZsMTfQOcvdQ
+	hmhattUrbaXkgM+yIuO+w==
+X-ME-Sender: <xms:lncOaRzQIDkTa-CRCRh4xZmJ2SYpjHrmJHTDfxrmT_PXKDRe58KOyg>
+    <xme:lncOadTBedDKvxcHedF0VgEA7eu5ZvaLJ-o0yCVL2eTe0OAfNk-Xm1g9hzlu0WrfY
+    AWaH0hmazOqWBvjPZROQHI15pzS5sSBNavC6LLielthZdJbWJI>
+X-ME-Received: <xmr:lncOadhPLzKIB0pEmS33mhes9fK5QTTvGX2CJhSAlfIHJqE9bfxGoaF0F8Ol-gjUNh-0JK0LDARj8r1CIoUHq9XW0q74bq9UUZbunGSwSY8R>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduledtledtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epgeehfeevheehteetudehjeduiefhueehieevvdejkeeufeevkeelieffffduhfevnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgrsghlvg
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhf
+    ohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegtvghlsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehsphgvvggutghrrggtkhgvrheshhhothhmrghilhdrtghomhdprhgt
+    phhtthhopegurghvihgurdhlrghighhhthdrlhhinhhugiesghhmrghilhdrtghomhdprh
+    gtphhtthhopegurghvihgurdhlrghighhhthesrggtuhhlrggsrdgtohhm
+X-ME-Proxy: <xmx:lncOaUnvtP20W8uSG4C8mVFJ6jFF0wSgG_yWQ1P13vF9czCfqZCR5g>
+    <xmx:lncOaQtNbwFjr7hXu8207q0mYuOO9iPywfuQAPT0iCX5mHBhFWfM2A>
+    <xmx:lncOaSZlTDlM_1AWJvzq4pzotmDI5dOcEU6hqOlazDo6YTbvctdNEQ>
+    <xmx:lncOaQBl77wqtwFAkQDUI6In3xYAZaWblNM_I_TrP3679hKJNdn6eg>
+    <xmx:lncOaVLv1GPoSSc8pWS15F-PsDNKcMz8lR1C0ds9hUl1c4l49aMkoaot>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Nov 2025 17:49:55 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: NeilBrown <neilb@ownmail.net>
+To: "David Laight" <david.laight.linux@gmail.com>
+Cc: "Chuck Lever" <cel@kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "David Laight" <David.Laight@ACULAB.COM>,
+ "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
+ "Linux List Kernel Mailing" <linux-kernel@vger.kernel.org>,
+ speedcracker@hotmail.com
+Subject: Re: Compile Error fs/nfsd/nfs4state.o - clamp() low limit slotsize
+ greater than high limit total_avail/scale_factor
+In-reply-to: <20251107114324.33fd69f3@pumpkin>
+References: <bbba88825d7b2b06031c1b085d76787a2502d70e.camel@kernel.org>,
+ <37bc1037-37d8-4168-afc9-da8e2d1dd26b@kernel.org>,
+ <20251106192210.1b6a3ca0@pumpkin>,
+ <176251424056.634289.13464296772500147856@noble.neil.brown.name>,
+ <20251107114324.33fd69f3@pumpkin>
+Date: Sat, 08 Nov 2025 09:49:49 +1100
+Message-id: <176255578949.634289.10177595719141795960@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Constrain core users of nodemasks to the default_sysram_nodemask,
-which is guaranteed to either be NULL or contain the set of nodes
-with sysram memory blocks.
+On Fri, 07 Nov 2025, David Laight wrote:
+> On Fri, 07 Nov 2025 22:17:20 +1100
+> NeilBrown <neilb@ownmail.net> wrote:
+> 
+> > On Fri, 07 Nov 2025, David Laight wrote:
+> > > On Thu, 6 Nov 2025 09:33:28 -0500
+> > > Chuck Lever <cel@kernel.org> wrote:
+> > >   
+> > > > FYI
+> > > > 
+> > > > https://bugzilla.kernel.org/show_bug.cgi?id=220745  
+> > > 
+> > > Ugg - that code is horrid.
+> > > It seems to have got deleted since, but it is:
+> > > 
+> > > 	u32 slotsize = slot_bytes(ca);
+> > > 	u32 num = ca->maxreqs;
+> > > 	unsigned long avail, total_avail;
+> > > 	unsigned int scale_factor;
+> > > 
+> > > 	spin_lock(&nfsd_drc_lock);
+> > > 	if (nfsd_drc_max_mem > nfsd_drc_mem_used)
+> > > 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
+> > > 	else
+> > > 		/* We have handed out more space than we chose in
+> > > 		 * set_max_drc() to allow.  That isn't really a
+> > > 		 * problem as long as that doesn't make us think we
+> > > 		 * have lots more due to integer overflow.
+> > > 		 */
+> > > 		total_avail = 0;
+> > > 	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
+> > > 	/*
+> > > 	 * Never use more than a fraction of the remaining memory,
+> > > 	 * unless it's the only way to give this client a slot.
+> > > 	 * The chosen fraction is either 1/8 or 1/number of threads,
+> > > 	 * whichever is smaller.  This ensures there are adequate
+> > > 	 * slots to support multiple clients per thread.
+> > > 	 * Give the client one slot even if that would require
+> > > 	 * over-allocation--it is better than failure.
+> > > 	 */
+> > > 	scale_factor = max_t(unsigned int, 8, nn->nfsd_serv->sv_nrthreads);
+> > > 
+> > > 	avail = clamp_t(unsigned long, avail, slotsize,
+> > > 			total_avail/scale_factor);
+> > > 	num = min_t(int, num, avail / slotsize);
+> > > 	num = max_t(int, num, 1);
+> > > 
+> > > Lets rework it a bit...
+> > > 	if (nfsd_drc_max_mem > nfsd_drc_mem_used) {
+> > > 		total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
+> > > 		avail = min(NFSD_MAX_MEM_PER_SESSION, total_avail);
+> > > 		avail = clamp(avail, n + sizeof(xxx), total_avail/8)
+> > > 	} else {
+> > > 		total_avail = 0;
+> > > 		avail = 0;
+> > > 		avail = clamp(0, n + sizeof(xxx), 0);
+> > > 	}
+> > > 
+> > > Neither of those clamp() are sane at all - should be clamp(val, lo, hi)
+> > > with 'lo <= hi' otherwise the result is dependant on the order of the
+> > > comparisons.
+> > > The compiler sees the second one and rightly bleats.  
+> > 
+> > In fact only gcc-9 bleats.
+> 
+> That is probably why it didn't get picked up earlier.
+> 
+> > gcc-7 gcc-10 gcc-13 gcc-15
+> > all seem to think it is fine.
+> 
+> Which, of course, it isn't...
 
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- mm/oom_kill.c   |  5 ++++-
- mm/page_alloc.c | 12 ++++++++----
- mm/slub.c       |  4 +++-
- 3 files changed, 15 insertions(+), 6 deletions(-)
+I've now had a proper look at your analysis of the code - thanks.
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index c145b0feecc1..e0b6137835b2 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -34,6 +34,7 @@
- #include <linux/export.h>
- #include <linux/notifier.h>
- #include <linux/memcontrol.h>
-+#include <linux/memory-tiers.h>
- #include <linux/mempolicy.h>
- #include <linux/security.h>
- #include <linux/ptrace.h>
-@@ -1118,6 +1119,8 @@ EXPORT_SYMBOL_GPL(unregister_oom_notifier);
- bool out_of_memory(struct oom_control *oc)
- {
- 	unsigned long freed = 0;
-+	if (!oc->nodemask)
-+		oc->nodemask = default_sysram_nodes;
- 
- 	if (oom_killer_disabled)
- 		return false;
-@@ -1154,7 +1157,7 @@ bool out_of_memory(struct oom_control *oc)
- 	 */
- 	oc->constraint = constrained_alloc(oc);
- 	if (oc->constraint != CONSTRAINT_MEMORY_POLICY)
--		oc->nodemask = NULL;
-+		oc->nodemask = default_sysram_nodes;
- 	check_panic_on_oom(oc);
- 
- 	if (!is_memcg_oom(oc) && sysctl_oom_kill_allocating_task &&
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index fd5401fb5e00..18213eacf974 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -34,6 +34,7 @@
- #include <linux/cpuset.h>
- #include <linux/pagevec.h>
- #include <linux/memory_hotplug.h>
-+#include <linux/memory-tiers.h>
- #include <linux/nodemask.h>
- #include <linux/vmstat.h>
- #include <linux/fault-inject.h>
-@@ -4610,7 +4611,7 @@ check_retry_cpuset(int cpuset_mems_cookie, struct alloc_context *ac)
- 	 */
- 	if (cpusets_enabled() && ac->nodemask &&
- 			!cpuset_nodemask_valid_mems_allowed(ac->nodemask)) {
--		ac->nodemask = NULL;
-+		ac->nodemask = default_sysram_nodes;
- 		return true;
- 	}
- 
-@@ -4794,7 +4795,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 	 * user oriented.
- 	 */
- 	if (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
--		ac->nodemask = NULL;
-+		ac->nodemask = default_sysram_nodes;
- 		ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
- 					ac->highest_zoneidx, ac->nodemask);
- 	}
-@@ -4946,7 +4947,8 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
- 			ac->nodemask = &cpuset_current_mems_allowed;
- 		else
- 			*alloc_flags |= ALLOC_CPUSET;
--	}
-+	} else if (!ac->nodemask) /* sysram_nodes may be NULL during __init */
-+		ac->nodemask = default_sysram_nodes;
- 
- 	might_alloc(gfp_mask);
- 
-@@ -5190,8 +5192,10 @@ struct page *__alloc_frozen_pages_noprof(gfp_t gfp, unsigned int order,
- 	/*
- 	 * Restore the original nodemask if it was potentially replaced with
- 	 * &cpuset_current_mems_allowed to optimize the fast-path attempt.
-+	 *
-+	 * If not set, default to sysram nodes.
- 	 */
--	ac.nodemask = nodemask;
-+	ac.nodemask = nodemask ? nodemask : default_sysram_nodes;
- 
- 	page = __alloc_pages_slowpath(alloc_gfp, order, &ac);
- 
-diff --git a/mm/slub.c b/mm/slub.c
-index d4367f25b20d..b8358a961c4c 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -28,6 +28,7 @@
- #include <linux/cpu.h>
- #include <linux/cpuset.h>
- #include <linux/mempolicy.h>
-+#include <linux/memory-tiers.h>
- #include <linux/ctype.h>
- #include <linux/stackdepot.h>
- #include <linux/debugobjects.h>
-@@ -3570,7 +3571,8 @@ static struct slab *get_any_partial(struct kmem_cache *s,
- 	do {
- 		cpuset_mems_cookie = read_mems_allowed_begin();
- 		zonelist = node_zonelist(mempolicy_slab_node(), pc->flags);
--		for_each_zone_zonelist(zone, z, zonelist, highest_zoneidx) {
-+		for_each_zone_zonelist_nodemask(zone, z, zonelist, highest_zoneidx,
-+						default_sysram_nodes) {
- 			struct kmem_cache_node *n;
- 
- 			n = get_node(s, zone_to_nid(zone));
--- 
-2.51.1
+I agree that the code is unclear (at best) and that if it were still
+upstream I would want to fix it.  However is does function correctly.
 
+As you say, when min > max, the result of clamp(val, min, max) depends
+on the order of comparison, and we know what the order of comparison is
+because we can look at the code for clamp().
+
+Currently it is 
+
+	((val) >= (hi) ? (hi) : ((val) <= (lo) ? (lo) : (val)))
+
+which will use max when max is below val and min.
+Previously it was 
+	min((typeof(val))max(val, lo), hi)
+which also will use max when it is below val and min
+
+Before that it was 
+#define clamp_t(type, val, min, max) ({                \
+       type __val = (val);                     \
+       type __min = (min);                     \
+       type __max = (max);                     \
+       __val = __val < __min ? __min: __val;   \
+       __val > __max ? __max: __val; })
+
+which also uses max when that is less that val and min.
+
+So I think the nfsd code has always worked correctly.  That is not
+sufficient for mainline - there we want it to also be robust and
+maintainable. But for stable kernels it should be sufficient.
+Adding a patch to "stable" kernels which causes working code to fail to
+compile does not seem, to me, to be in the spirit of "stability".
+(Have the "clamp" checking in mainline, finding problems there,
+and backporting the fixes to stable seems to me to be the best way
+to use these checking improvements to improve "stable").
+
+Thanks,
+NeilBrown
 
