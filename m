@@ -1,448 +1,128 @@
-Return-Path: <linux-kernel+bounces-890954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E17BC41737
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1436C416F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D7FE934E341
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:32:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E462349F15
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D21305E1B;
-	Fri,  7 Nov 2025 19:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F9C3009EC;
+	Fri,  7 Nov 2025 19:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QOOqxNLd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGWEYpme"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B3A3054FA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6A42ECE9D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543962; cv=none; b=BPawUEhlvfVlAkCYVI6RTBKWyX1v9lpNuCwYvgAA6n7fmcOjJZAKtwzBYGU1tCGxZoWyRedj4YL+VkKiXC1UIHpklZ7S4ZHhFBi4pCNdE2rMgEMWd7dDyibYaJsilUyXBoBCaHD4+EifOyt2zkfJ2lSoufoeGdqRWob8V+1v3wA=
+	t=1762543636; cv=none; b=isZ+6G/bHkYhZL1aWwBNrgizUHJnHN/JtELjm0nOGSiLo1l4fO749/CYSmB4+n5PJ8UANSFmP3VzpVkyauYKpgLNcDIMlseJ3G2E3agTGr/zsyQcRdJ88QO7yEdhbNrTSYgxMN81MU6/wf1kQxgA0S0BFaYiko7p5RyGGP3KUOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543962; c=relaxed/simple;
-	bh=vEpDgZ/NBDkSOkeh/jsY9K5RRJa6CdIyNseOkZKsDn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dM1+9fPMhjz2QCZEDofIJ0oSMcnufnfN2JflgvYoImjvIlXyj8PW2hoYWgGedBaZgFic4D55akC5U0yQrI5IEqzmBYT3FbbiLRy4NpLMFfSa1piEYGjg+39IMkJ64wwsgtyIvns8rYoGdZGlad4emJHZRnwVd8HrlFohzixNHj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QOOqxNLd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762543959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZMQ6c8QUhUu3sZavPYjgSB0Ce6fm5eV+7cMYeD6UdFs=;
-	b=QOOqxNLdE52dfi6/gxm/+1iSz0CIKYVuWFDV9R3cxnfndfV/aMNhgCW5QALQHGvtbS8XqP
-	V43t1PPdea72DMTZiZGfRy7KiHEXgIuE0F+uxHD9bUUgJQohs0iTLP7V1n6g+PedU+/Nw/
-	8M66oCCRSAyhfjmTT1v5RvNycQbDk+c=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-438-1QvkTD7VMnqoqtgpOjAteg-1; Fri,
- 07 Nov 2025 14:32:33 -0500
-X-MC-Unique: 1QvkTD7VMnqoqtgpOjAteg-1
-X-Mimecast-MFC-AGG-ID: 1QvkTD7VMnqoqtgpOjAteg_1762543949
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF9F519560A7;
-	Fri,  7 Nov 2025 19:32:28 +0000 (UTC)
-Received: from chopper.lan (unknown [10.22.81.9])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A9D3B1945110;
-	Fri,  7 Nov 2025 19:32:23 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Asahi Lina <lina+kernel@asahilina.net>,
-	Shankari Anand <shankari.ak0208@gmail.com>,
-	nouveau@lists.freedesktop.org (open list:DRM DRIVER FOR NVIDIA GPUS [RUST])
-Subject: [PATCH 2/2] rust/drm/gem: Use DeviceCtx with GEM objects
-Date: Fri,  7 Nov 2025 14:23:54 -0500
-Message-ID: <20251107193204.398657-3-lyude@redhat.com>
-In-Reply-To: <20251107193204.398657-1-lyude@redhat.com>
-References: <20251107193204.398657-1-lyude@redhat.com>
+	s=arc-20240116; t=1762543636; c=relaxed/simple;
+	bh=+uAue8VHRfE5bDhEEpaOZp67/N7yEWNDOOmylvy8lLY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bt4pyx1XtJsbIxuUfNWP3OD3KHZg0yM/P2gntWEWj0gjWmw1E50VkMUf+yylxPLN3wj3OlBjkr0zDsDxFbdODKQjh/OvD60xzHDHNHLMBzhZmwYW4/tvWcTjTK8iTAhZhB236W3f5TJ5fgepLuBRPRK7DLdmfSqDTGFnnMWiODc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGWEYpme; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7869dee42cdso13163257b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:27:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762543634; x=1763148434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VdkaJh3hOfI8XOdwUl8MBmH4/W03UBCDbQt0lHkUPho=;
+        b=WGWEYpmeoXuAZteZ8b/au6G9jguPOKrEJNNUynZMe0KRNmO6jU4C7FemqqMcA120wu
+         89XkAGh35E6CgkjzPFWLsfHBtfkdzMGD4l7K3bI7vO7/f0ZgCOSgvFadOwfbRHDnUbkX
+         sI96KOnAXawHRrychYZtKkQcqWSOT3fpllmBzMPsY/m+3IBin6YocTi8y38ioOaHqG20
+         iwoAX1kSzXu6o+fESfrQjH64vG8wZXxEPH2IFuV0VTmX0we4b42Zm8qzyqhcz9g8VkNn
+         H5/MBtGbFn/4iagZGMO936jSoGvwIL5ETOn5s2+Ie9NdiQ5LkaO59vKcaol/+gncttOa
+         iPEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762543634; x=1763148434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VdkaJh3hOfI8XOdwUl8MBmH4/W03UBCDbQt0lHkUPho=;
+        b=QY98+X5LIgn3KOQ/RM1/0FI4Ibt0MxZwwxuvCwcMRC166+folc9c23x6cBtsKbvONZ
+         pVuxkFAT65Xggw5Y4yClNMA7sYCeb1itcgXiu34YzM0K+EAGGGJiGmV0XeH1Li0u4GjI
+         wmNynaefUAonkqtWykDZ73b6PYNrbN16HnLdyzdcjDuzceSVXeqdZVt6J4cpuQz0iva7
+         IcoYiGEpwYrwfrmsJqIlm0BKaTpq9am6387XVKDpfZ8fQCnRCs7tZnK5rmwqT1BNWBbt
+         Qe5JB4+58jqQZcOdFXjFLQt0/bigZXM5KbZfJn8eJWkpu9nVCEXEG2CiqZvidckaYB5b
+         kRpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfh6051rJlOym1v6BZ5tFTJyFtAAZ+78E316r2fSkWoFz9x01/sWe9DqqAdCi9VSHri6dixkWZNguHX6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOYPr8j7asLINIg+q85f78z7blyNX9QUWFPjguPW+ELH27WZj+
+	K0oFEYEWHT0d/0GbNr2Jshslp6mQmN8xuNNyRcaBU4U4ukGM2AXggOl36ZdzV6CuFlMBLgddzDg
+	gSUr+IBcfIpCIDD5Ax3RntziTgxUz3LA=
+X-Gm-Gg: ASbGncs3mjZMpcDheUCAsHpqhvr2nLd2f9aIjFtDFjg8EnboNDaC6+0qM7LRdI1qX3H
+	sv391L7YTOQnsQXjO3gSy/H96Cc2phhYx9Tty+g0fNh5kXJZTRO4M5Z6Q95xSC3h58yQp7TdERN
+	jjLlDNrLWK21MbePwRJMXv2ZR9nwZVuZoQM3xb9+k4S/ZyS5P+HSeJ+w6BROzgVIj0aC/Fpckd2
+	adnODp1fQQ4JOSBoEGepDpw5Fo/A1Nm1NaSsHKyof3dvsWtvSxe7fmC8Euv
+X-Google-Smtp-Source: AGHT+IGeohnsbh7G27YZJaehGvu2qH71sfz6HWBE6/RSVbMiMu4Y/cvxYKirNRHOMRu2qi2AdGwlTzwh8RFon6gWf3k=
+X-Received: by 2002:a05:690e:150f:b0:63f:bb1b:b63a with SMTP id
+ 956f58d0204a3-640c9caaeb8mr2820507d50.11.1762543633869; Fri, 07 Nov 2025
+ 11:27:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20251106185938.6419-1-rosenp@gmail.com> <20251106185938.6419-2-rosenp@gmail.com>
+ <aQ2Yfh5kWCIJ4VsN@yilunxu-OptiPlex-7050>
+In-Reply-To: <aQ2Yfh5kWCIJ4VsN@yilunxu-OptiPlex-7050>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Fri, 7 Nov 2025 11:27:02 -0800
+X-Gm-Features: AWmQ_bkRmJusENLuMOSMfnN-lD4DTZAtuXFfHGCZoTIfniusVPZI_FOqYokHCxo
+Message-ID: <CAKxU2N-awq-7HRnobmMzssxX6Noo4Y2b3EyFveB0nSOkvXSNMg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fpga: stratix10-soc: add missing header
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: linux-fpga@vger.kernel.org, Moritz Fischer <mdf@kernel.org>, 
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that we have the ability to represent the context in which a DRM device
-is in at compile-time, we can start carrying around this context with GEM
-object types in order to allow a driver to safely create GEM objects before
-a DRM device has registered with userspace.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/nova/driver.rs |  2 +-
- drivers/gpu/drm/nova/gem.rs    | 11 +++---
- drivers/gpu/drm/tyr/driver.rs  |  2 +-
- drivers/gpu/drm/tyr/gem.rs     |  3 +-
- rust/kernel/drm/device.rs      | 14 ++++----
- rust/kernel/drm/driver.rs      |  2 +-
- rust/kernel/drm/gem/mod.rs     | 66 ++++++++++++++++++++++------------
- 7 files changed, 63 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/gpu/drm/nova/driver.rs b/drivers/gpu/drm/nova/driver.rs
-index c78d69d5f045a..54245ee439042 100644
---- a/drivers/gpu/drm/nova/driver.rs
-+++ b/drivers/gpu/drm/nova/driver.rs
-@@ -59,7 +59,7 @@ fn probe(adev: &auxiliary::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBo
- impl drm::Driver for NovaDriver {
-     type Data = NovaData;
-     type File = File;
--    type Object = gem::Object<NovaObject>;
-+    type Object<Ctx: drm::DeviceCtx> = gem::Object<NovaObject, Ctx>;
- 
-     const INFO: drm::DriverInfo = INFO;
- 
-diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
-index 2760ba4f3450b..14d275dc74ce7 100644
---- a/drivers/gpu/drm/nova/gem.rs
-+++ b/drivers/gpu/drm/nova/gem.rs
-@@ -2,7 +2,7 @@
- 
- use kernel::{
-     drm,
--    drm::{gem, gem::BaseObject},
-+    drm::{gem, gem::BaseObject, DeviceCtx},
-     prelude::*,
-     sync::aref::ARef,
- };
-@@ -19,21 +19,24 @@ pub(crate) struct NovaObject {}
- impl gem::DriverObject for NovaObject {
-     type Driver = NovaDriver;
- 
--    fn new(_dev: &NovaDevice, _size: usize) -> impl PinInit<Self, Error> {
-+    fn new<Ctx: DeviceCtx>(_dev: &NovaDevice<Ctx>, _size: usize) -> impl PinInit<Self, Error> {
-         try_pin_init!(NovaObject {})
-     }
- }
- 
- impl NovaObject {
-     /// Create a new DRM GEM object.
--    pub(crate) fn new(dev: &NovaDevice, size: usize) -> Result<ARef<gem::Object<Self>>> {
-+    pub(crate) fn new<Ctx: DeviceCtx>(
-+        dev: &NovaDevice<Ctx>,
-+        size: usize,
-+    ) -> Result<ARef<gem::Object<Self, Ctx>>> {
-         let aligned_size = size.next_multiple_of(1 << 12);
- 
-         if size == 0 || size > aligned_size {
-             return Err(EINVAL);
-         }
- 
--        gem::Object::new(dev, aligned_size)
-+        gem::Object::<Self, Ctx>::new(dev, aligned_size)
-     }
- 
-     /// Look up a GEM object handle for a `File` and return an `ObjectRef` for it.
-diff --git a/drivers/gpu/drm/tyr/driver.rs b/drivers/gpu/drm/tyr/driver.rs
-index e3ea5ad85f49b..78fc08945e08e 100644
---- a/drivers/gpu/drm/tyr/driver.rs
-+++ b/drivers/gpu/drm/tyr/driver.rs
-@@ -187,7 +187,7 @@ fn drop(self: Pin<&mut Self>) {
- impl drm::Driver for TyrDriver {
-     type Data = TyrData;
-     type File = File;
--    type Object = drm::gem::Object<TyrObject>;
-+    type Object<R: drm::DeviceCtx> = drm::gem::Object<TyrObject, R>;
- 
-     const INFO: drm::DriverInfo = INFO;
- 
-diff --git a/drivers/gpu/drm/tyr/gem.rs b/drivers/gpu/drm/tyr/gem.rs
-index 1273bf89dbd5d..5e1403409f468 100644
---- a/drivers/gpu/drm/tyr/gem.rs
-+++ b/drivers/gpu/drm/tyr/gem.rs
-@@ -3,6 +3,7 @@
- use crate::driver::TyrDevice;
- use crate::driver::TyrDriver;
- use kernel::drm::gem;
-+use kernel::drm::DeviceCtx;
- use kernel::prelude::*;
- 
- /// GEM Object inner driver data
-@@ -12,7 +13,7 @@ pub(crate) struct TyrObject {}
- impl gem::DriverObject for TyrObject {
-     type Driver = TyrDriver;
- 
--    fn new(_dev: &TyrDevice, _size: usize) -> impl PinInit<Self, Error> {
-+    fn new<Ctx: DeviceCtx>(_dev: &TyrDevice<Ctx>, _size: usize) -> impl PinInit<Self, Error> {
-         try_pin_init!(TyrObject {})
-     }
- }
-diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-index 00072984930a3..227df6bf88c31 100644
---- a/rust/kernel/drm/device.rs
-+++ b/rust/kernel/drm/device.rs
-@@ -127,13 +127,13 @@ impl<T: drm::Driver> UnregisteredDevice<T> {
-         master_set: None,
-         master_drop: None,
-         debugfs_init: None,
--        gem_create_object: T::Object::ALLOC_OPS.gem_create_object,
--        prime_handle_to_fd: T::Object::ALLOC_OPS.prime_handle_to_fd,
--        prime_fd_to_handle: T::Object::ALLOC_OPS.prime_fd_to_handle,
--        gem_prime_import: T::Object::ALLOC_OPS.gem_prime_import,
--        gem_prime_import_sg_table: T::Object::ALLOC_OPS.gem_prime_import_sg_table,
--        dumb_create: T::Object::ALLOC_OPS.dumb_create,
--        dumb_map_offset: T::Object::ALLOC_OPS.dumb_map_offset,
-+        gem_create_object: T::Object::<AnyCtx>::ALLOC_OPS.gem_create_object,
-+        prime_handle_to_fd: T::Object::<AnyCtx>::ALLOC_OPS.prime_handle_to_fd,
-+        prime_fd_to_handle: T::Object::<AnyCtx>::ALLOC_OPS.prime_fd_to_handle,
-+        gem_prime_import: T::Object::<AnyCtx>::ALLOC_OPS.gem_prime_import,
-+        gem_prime_import_sg_table: T::Object::<AnyCtx>::ALLOC_OPS.gem_prime_import_sg_table,
-+        dumb_create: T::Object::<AnyCtx>::ALLOC_OPS.dumb_create,
-+        dumb_map_offset: T::Object::<AnyCtx>::ALLOC_OPS.dumb_map_offset,
-         show_fdinfo: None,
-         fbdev_probe: None,
- 
-diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
-index fde0447566bef..4e8735e9018c4 100644
---- a/rust/kernel/drm/driver.rs
-+++ b/rust/kernel/drm/driver.rs
-@@ -104,7 +104,7 @@ pub trait Driver {
-     type Data: Sync + Send;
- 
-     /// The type used to manage memory for this driver.
--    type Object: AllocImpl;
-+    type Object<Ctx: drm::DeviceCtx>: AllocImpl;
- 
-     /// The type used to represent a DRM File (client)
-     type File: drm::file::DriverFile;
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index eb5f3feac8907..62ca11126e1c0 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -7,13 +7,16 @@
- use crate::{
-     alloc::flags::*,
-     bindings, drm,
--    drm::driver::{AllocImpl, AllocOps},
-+    drm::{
-+        device::{DeviceCtx, Registered},
-+        driver::{AllocImpl, AllocOps},
-+    },
-     error::{to_result, Result},
-     prelude::*,
-     sync::aref::{ARef, AlwaysRefCounted},
-     types::Opaque,
- };
--use core::{ops::Deref, ptr::NonNull};
-+use core::{marker::PhantomData, ops::Deref, ptr::NonNull};
- 
- /// A type alias for retrieving a [`Driver`]s [`DriverFile`] implementation from its
- /// [`DriverObject`] implementation.
-@@ -22,21 +25,30 @@
- /// [`DriverFile`]: drm::file::DriverFile
- pub type DriverFile<T> = drm::File<<<T as DriverObject>::Driver as drm::Driver>::File>;
- 
-+/// A type alias for retrieving the current [`AllocImpl`] for a given [`DriverObject`].
-+///
-+/// [`Driver`]: drm::Driver
-+pub type DriverAllocImpl<T, Ctx = Registered> =
-+    <<T as DriverObject>::Driver as drm::Driver>::Object<Ctx>;
-+
- /// GEM object functions, which must be implemented by drivers.
- pub trait DriverObject: Sync + Send + Sized {
-     /// Parent `Driver` for this object.
-     type Driver: drm::Driver;
- 
-     /// Create a new driver data object for a GEM object of a given size.
--    fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl PinInit<Self, Error>;
-+    fn new<Ctx: DeviceCtx>(
-+        dev: &drm::Device<Self::Driver, Ctx>,
-+        size: usize,
-+    ) -> impl PinInit<Self, Error>;
- 
-     /// Open a new handle to an existing object, associated with a File.
--    fn open(_obj: &<Self::Driver as drm::Driver>::Object, _file: &DriverFile<Self>) -> Result {
-+    fn open(_obj: &DriverAllocImpl<Self>, _file: &DriverFile<Self>) -> Result {
-         Ok(())
-     }
- 
-     /// Close a handle to an existing object, associated with a File.
--    fn close(_obj: &<Self::Driver as drm::Driver>::Object, _file: &DriverFile<Self>) {}
-+    fn close(_obj: &DriverAllocImpl<Self>, _file: &DriverFile<Self>) {}
- }
- 
- /// Trait that represents a GEM object subtype
-@@ -62,9 +74,12 @@ extern "C" fn open_callback<T: DriverObject>(
-     // SAFETY: `open_callback` is only ever called with a valid pointer to a `struct drm_file`.
-     let file = unsafe { DriverFile::<T>::from_raw(raw_file) };
- 
--    // SAFETY: `open_callback` is specified in the AllocOps structure for `DriverObject<T>`,
--    // ensuring that `raw_obj` is contained within a `DriverObject<T>`
--    let obj = unsafe { <<T::Driver as drm::Driver>::Object as IntoGEMObject>::from_raw(raw_obj) };
-+    // SAFETY:
-+    // * `open_callback` is specified in the AllocOps structure for `DriverObject`, ensuring that
-+    //   `raw_obj` is contained within a `DriverAllocImpl<T>`
-+    // * It is only possible for `open_callback` to be called after device registration, ensuring
-+    //   that the object's device is in the `Registered` state.
-+    let obj: &DriverAllocImpl<T> = unsafe { IntoGEMObject::from_raw(raw_obj) };
- 
-     match T::open(obj, file) {
-         Err(e) => e.to_errno(),
-@@ -81,12 +96,12 @@ extern "C" fn close_callback<T: DriverObject>(
- 
-     // SAFETY: `close_callback` is specified in the AllocOps structure for `Object<T>`, ensuring
-     // that `raw_obj` is indeed contained within a `Object<T>`.
--    let obj = unsafe { <<T::Driver as drm::Driver>::Object as IntoGEMObject>::from_raw(raw_obj) };
-+    let obj: &DriverAllocImpl<T> = unsafe { IntoGEMObject::from_raw(raw_obj) };
- 
-     T::close(obj, file);
- }
- 
--impl<T: DriverObject> IntoGEMObject for Object<T> {
-+impl<T: DriverObject, Ctx: DeviceCtx> IntoGEMObject for Object<T, Ctx> {
-     fn as_raw(&self) -> *mut bindings::drm_gem_object {
-         self.obj.get()
-     }
-@@ -94,7 +109,7 @@ fn as_raw(&self) -> *mut bindings::drm_gem_object {
-     unsafe fn from_raw<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self {
-         // SAFETY: `obj` is guaranteed to be in an `Object<T>` via the safety contract of this
-         // function
--        unsafe { &*crate::container_of!(Opaque::cast_from(self_ptr), Object<T>, obj) }
-+        unsafe { &*crate::container_of!(Opaque::cast_from(self_ptr), Object<T, Ctx>, obj) }
-     }
- }
- 
-@@ -111,7 +126,7 @@ fn size(&self) -> usize {
-     fn create_handle<D, F>(&self, file: &drm::File<F>) -> Result<u32>
-     where
-         Self: AllocImpl<Driver = D>,
--        D: drm::Driver<Object = Self, File = F>,
-+        D: drm::Driver<Object<Registered> = Self, File = F>,
-         F: drm::file::DriverFile<Driver = D>,
-     {
-         let mut handle: u32 = 0;
-@@ -126,7 +141,7 @@ fn create_handle<D, F>(&self, file: &drm::File<F>) -> Result<u32>
-     fn lookup_handle<D, F>(file: &drm::File<F>, handle: u32) -> Result<ARef<Self>>
-     where
-         Self: AllocImpl<Driver = D>,
--        D: drm::Driver<Object = Self, File = F>,
-+        D: drm::Driver<Object<Registered> = Self, File = F>,
-         F: drm::file::DriverFile<Driver = D>,
-     {
-         // SAFETY: The arguments are all valid per the type invariants.
-@@ -166,16 +181,18 @@ impl<T: IntoGEMObject> BaseObject for T {}
- ///
- /// Invariants
- ///
--/// - `self.obj` is a valid instance of a `struct drm_gem_object`.
-+/// * `self.obj` is a valid instance of a `struct drm_gem_object`.
-+/// * Any type invariants of `Ctx` apply to the parent DRM device for this GEM object.
- #[repr(C)]
- #[pin_data]
--pub struct Object<T: DriverObject + Send + Sync> {
-+pub struct Object<T: DriverObject + Send + Sync, Ctx: DeviceCtx = Registered> {
-     obj: Opaque<bindings::drm_gem_object>,
-     #[pin]
-     data: T,
-+    _ctx: PhantomData<Ctx>,
- }
- 
--impl<T: DriverObject> Object<T> {
-+impl<T: DriverObject, Ctx: DeviceCtx> Object<T, Ctx> {
-     const OBJECT_FUNCS: bindings::drm_gem_object_funcs = bindings::drm_gem_object_funcs {
-         free: Some(Self::free_callback),
-         open: Some(open_callback::<T>),
-@@ -195,11 +212,12 @@ impl<T: DriverObject> Object<T> {
-     };
- 
-     /// Create a new GEM object.
--    pub fn new(dev: &drm::Device<T::Driver>, size: usize) -> Result<ARef<Self>> {
-+    pub fn new(dev: &drm::Device<T::Driver, Ctx>, size: usize) -> Result<ARef<Self>> {
-         let obj: Pin<KBox<Self>> = KBox::pin_init(
-             try_pin_init!(Self {
-                 obj: Opaque::new(bindings::drm_gem_object::default()),
-                 data <- T::new(dev, size),
-+                _ctx: PhantomData,
-             }),
-             GFP_KERNEL,
-         )?;
-@@ -208,6 +226,8 @@ pub fn new(dev: &drm::Device<T::Driver>, size: usize) -> Result<ARef<Self>> {
-         unsafe { (*obj.as_raw()).funcs = &Self::OBJECT_FUNCS };
- 
-         // SAFETY: The arguments are all valid per the type invariants.
-+        // INVARIANT: We use `dev` for creating the GEM object, which is known to be in state `Ctx` -
-+        // ensuring that the GEM object's pointer to the DRM device is always in the same state.
-         to_result(unsafe { bindings::drm_gem_object_init(dev.as_raw(), obj.obj.get(), size) })?;
- 
-         // SAFETY: We never move out of `Self`.
-@@ -221,13 +241,15 @@ pub fn new(dev: &drm::Device<T::Driver>, size: usize) -> Result<ARef<Self>> {
-     }
- 
-     /// Returns the `Device` that owns this GEM object.
--    pub fn dev(&self) -> &drm::Device<T::Driver> {
-+    pub fn dev(&self) -> &drm::Device<T::Driver, Ctx> {
-         // SAFETY:
-         // - `struct drm_gem_object.dev` is initialized and valid for as long as the GEM
-         //   object lives.
-         // - The device we used for creating the gem object is passed as &drm::Device<T::Driver> to
-         //   Object::<T>::new(), so we know that `T::Driver` is the right generic parameter to use
-         //   here.
-+        // - Any type invariants of `Ctx` are upheld by using the same `Ctx` for the `Device` we
-+        //   return.
-         unsafe { drm::Device::from_raw((*self.as_raw()).dev) }
-     }
- 
-@@ -253,7 +275,7 @@ extern "C" fn free_callback(obj: *mut bindings::drm_gem_object) {
- }
- 
- // SAFETY: Instances of `Object<T>` are always reference-counted.
--unsafe impl<T: DriverObject> crate::types::AlwaysRefCounted for Object<T> {
-+unsafe impl<T: DriverObject, Ctx: DeviceCtx> crate::types::AlwaysRefCounted for Object<T, Ctx> {
-     fn inc_ref(&self) {
-         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-         unsafe { bindings::drm_gem_object_get(self.as_raw()) };
-@@ -268,9 +290,9 @@ unsafe fn dec_ref(obj: NonNull<Self>) {
-     }
- }
- 
--impl<T: DriverObject> super::private::Sealed for Object<T> {}
-+impl<T: DriverObject, Ctx: DeviceCtx> super::private::Sealed for Object<T, Ctx> {}
- 
--impl<T: DriverObject> Deref for Object<T> {
-+impl<T: DriverObject, Ctx: DeviceCtx> Deref for Object<T, Ctx> {
-     type Target = T;
- 
-     fn deref(&self) -> &Self::Target {
-@@ -278,7 +300,7 @@ fn deref(&self) -> &Self::Target {
-     }
- }
- 
--impl<T: DriverObject> AllocImpl for Object<T> {
-+impl<T: DriverObject, Ctx: DeviceCtx> AllocImpl for Object<T, Ctx> {
-     type Driver = T::Driver;
- 
-     const ALLOC_OPS: AllocOps = AllocOps {
--- 
-2.51.1
-
+On Thu, Nov 6, 2025 at 11:12=E2=80=AFPM Xu Yilun <yilun.xu@linux.intel.com>=
+ wrote:
+>
+> On Thu, Nov 06, 2025 at 10:59:37AM -0800, Rosen Penev wrote:
+> > linux/sizes.h is needed for SZ_512K.
+>
+> Does it always fail or only with COMPILE_TEST?
+Well, COMPILE_TEST under x86. If I had to guess, this header gets
+included from some ARM header.
+>
+> Please add "fixes" & Cc stable kernel if it always fail.
+>
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  drivers/fpga/stratix10-soc.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/fpga/stratix10-soc.c b/drivers/fpga/stratix10-soc.=
+c
+> > index 0a295ccf1644..ab309cbf21c6 100644
+> > --- a/drivers/fpga/stratix10-soc.c
+> > +++ b/drivers/fpga/stratix10-soc.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/of_platform.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/sizes.h>
+> >
+> >  /*
+> >   * FPGA programming requires a higher level of privilege (EL3), per th=
+e SoC
+> > --
+> > 2.51.2
+> >
+> >
 
