@@ -1,125 +1,98 @@
-Return-Path: <linux-kernel+bounces-890067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12A6C3F308
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:36:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245DFC3F30B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE703B1795
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:35:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABBC74EA9EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBAF302155;
-	Fri,  7 Nov 2025 09:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EFF3019C0;
+	Fri,  7 Nov 2025 09:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JxMjRvx0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pDgsktyb"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CBC2F531F;
-	Fri,  7 Nov 2025 09:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267A21578F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762508146; cv=none; b=Z63wB1yPncfTLluLEAZmaf2oGpWGHi+D2GMXsDHNMY8JdNf9M3x+SeMfKBuQ8phH1F+LMb4U2oaWnOsDdF5SohJ2xz7gnsiLY9R2tU0JhIHPaAAUfPo87nFEv0O6tfIhbJ6XA199B7/+50fTMDWf5nxbbrFD5bnPTOmFVZJBGl8=
+	t=1762508263; cv=none; b=Zl26MtaUnQ3hK8W0v0nO8YYIwUbPDcuH1GAhO23TcBnSJYrwey0QiDIbZgejsTlF83WvLU3U0E3VaiF53aRC53lrmj1QmnfCbusMu+0ZvKdKSQ1Mw8zsPmPfPdeUpbzFVChAZSmg4UPoXxlcnsIAy4zWI1BQCy0BrJkpYQM6Tew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762508146; c=relaxed/simple;
-	bh=D6+yKptFABPYFPYxyWtBQ5zOKqzK3MNINc2rvH2D/n0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ouYfM0aLKoWTbSJE6+hSt262Ea/5TfJ+Uc+rJHSpRNkl9rt8ZQAQfqHQba8YbdP1zqvcl2eEnPJAtR2zwX5c9n127sZUW52kpPAJDwin+FThq2+yu4wprQG001J+EA589XNPoxBJ3sEk3E6AtZtXw9Ta3zAX9zVzZRP/Mlwrf/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JxMjRvx0; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762508144; x=1794044144;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D6+yKptFABPYFPYxyWtBQ5zOKqzK3MNINc2rvH2D/n0=;
-  b=JxMjRvx0Z+62vaxS1jc3+6bFKL+ouYPJOMCbMZIrRUncwhvCIFa9YLDx
-   Sdpu8OiL8T1r9KagxVtmBE6qnrvpqX1BzDlhI13u5U49HIdjzS1LmFvoa
-   ZarjVfrDc9uLfviLAm7sGqGWMJ7ull8OOWHrfXAQSXyI0yPO7Hk1z/pI+
-   c/OOT38xQYtwYmmaoK7J/plXyfKC3nilN0rxUoGI3xU8z9Cut0NMAtZ5B
-   go+kl7TXUlrN3UY2t74h/rd75tmg8zdMRSnWAathtNKMC90Y5tQxZTTkl
-   4IJAo5lrPx/NxUJjYW0Kom71HmU9OlLsEMETXPYiJ/Cu45nfQpP1J6zgr
-   Q==;
-X-CSE-ConnectionGUID: 8UPIavC3Sg+ZfOGTe7XIxw==
-X-CSE-MsgGUID: 1MYkzOWESGy0mOFbzYk9HQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64562382"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64562382"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:35:43 -0800
-X-CSE-ConnectionGUID: LsAWghEFRpKKLxOW5gSDpQ==
-X-CSE-MsgGUID: ipmj13SgRROyYswd7KgaXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="192360859"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.27])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:35:39 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vHIsZ-00000006Q6y-30Zg;
-	Fri, 07 Nov 2025 11:35:35 +0200
-Date: Fri, 7 Nov 2025 11:35:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Junrui Luo <moonafterrain@outlook.com>,
-	linux-kernel@vger.kernel.org, pmladek@suse.com, rostedt@goodmis.org,
-	tiwai@suse.com, perex@perex.cz, linux-sound@vger.kernel.org,
-	mchehab@kernel.org, awalls@md.metrocast.net,
-	linux-media@vger.kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/4] lib/sprintf: add scnprintf_append() helper function
-Message-ID: <aQ29Zzajef81E2DZ@smile.fi.intel.com>
-References: <20251107051616.21606-1-moonafterrain@outlook.com>
- <SYBPR01MB788110A77D7F0F7A27F0974FAFC3A@SYBPR01MB7881.ausprd01.prod.outlook.com>
- <20251106213833.546c8eaba8aec6aa6a5e30b6@linux-foundation.org>
- <20251107091246.4e5900f4@pumpkin>
+	s=arc-20240116; t=1762508263; c=relaxed/simple;
+	bh=d+fykfbo0yVSu5PSzD1il/dNIIo186gGMyzSZ6FzhPI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jJ0UBkCxEsiTDE6/xBCu6e1rU7Qxsu8KL0qtF2CfejVSKuIRJo8+8dzM3REtWjlutVf6YHDJn5Pgwqx1XjN0StctUADpVmdUMRYuMt/LNYghf/A/QYidT7ZIINvcylrGcrLbbYxIOYFXDU5fsHPKR+GRe1BwwH28YZcfj/HjSA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pDgsktyb; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4775d8428e8so3995795e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:37:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762508260; x=1763113060; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+AnBAo1ieXfvVE9W+nwSIevZrdDCppUWTkwbf9O15Qo=;
+        b=pDgsktybRkhaxwGIrbn0QDqQ+hrQsLdJtQ4vwwhuLBBrtcaJB0eUVMAQ2Syt9Bcj2b
+         G1NBqER7+ogZabRnbvehZkXLygKAMpy96vsDVOrT/i3xeZMlWV9eMHzn2fzYs2P/2KVC
+         wPVnugSxBAi8CDIYucI7xVGF0Yl1KOVF44FtCjRWwyWMW3SnfDLBmiHF0dEn0q5UQWZ7
+         +9qn/NOmC82JVMU50ywqFTDKYBhUsx3LWNvwyJXCi1skutpsHBtAPVjWqcVaUMsnYu2G
+         EJrK6tlrLxJ/NqoGfmcexbjFfpPH2Eu8NC3Z1vt2cw+mTGXnSUUZ0G56MyG5snyz6K79
+         NQeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762508260; x=1763113060;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+AnBAo1ieXfvVE9W+nwSIevZrdDCppUWTkwbf9O15Qo=;
+        b=QghcP1KHsXGzRRRAWH9L8ocPnY+IEnVDOs5PImBmRXoGyBXjU4VkeEbIdKenmymfS7
+         KvWL+JbZm9fnIDM75Q57ZeTabIyB0LrxCA3wPgJNJT8JULMF6huG5AoUe2GfHYGTU/mn
+         9IDgfBhR0RJ6+xVGQmvUAb6P687sZQjy+Kpqn/O+fn87fE+k5MiiZYjwJMHPjU98BvCr
+         kJApwJQNB73fz8n1pFFMRi7P+tdvbZVMo0wzEzGT2xg64y31V0Qw5XIdigZLkBFqXXjy
+         OvCwNfWe5dh+l+fICP3unlZns55FMGtBw9fJMLgtr11h9ZEVqymnJ4A6prgyY4qxfWda
+         x4hw==
+X-Forwarded-Encrypted: i=1; AJvYcCU16anDB0GwMxO5dT0HRxbRPSYfOaJ3NmwycIyvS+zZL0+U4cHze6ld7nzuX7g/dgjE+XrkDYghUslGIl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfB8YQyVyBnd47gHFT4NlM6oOdq02PsjxNmmJI2wBv+pArmw8i
+	hWUHxfqTzT8qgtWISJdZqARB+fiPP4lxApdHZWnZNoQ1W/8VYS+9jclgbCugsZA6G9TcYlgN9JT
+	WThPPWQx/7lf1/DPUuA==
+X-Google-Smtp-Source: AGHT+IFx6JnB83u2hch19RaQnggflMp9yQa+OdndiPmwepxjVcH0thfA6gW27ocmbkG1cgsMwvesbWOHXfMAUhU=
+X-Received: from wmlf4.prod.google.com ([2002:a7b:c8c4:0:b0:477:5506:8a6d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:35c2:b0:46e:3550:9390 with SMTP id 5b1f17b1804b1-4776bcbbb54mr23797035e9.20.1762508260292;
+ Fri, 07 Nov 2025 01:37:40 -0800 (PST)
+Date: Fri, 7 Nov 2025 09:37:38 +0000
+In-Reply-To: <20251107091612.2557480-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107091246.4e5900f4@pumpkin>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+References: <20251107091612.2557480-1-dakr@kernel.org>
+Message-ID: <aQ294kwmW_-vu_1f@google.com>
+Subject: Re: [PATCH] rust: debugfs: Implement BinaryReader for Mutex<T> only
+ when T is Unpin
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Nov 07, 2025 at 09:12:46AM +0000, David Laight wrote:
-> On Thu, 6 Nov 2025 21:38:33 -0800
-> Andrew Morton <akpm@linux-foundation.org> wrote:
-> > On Fri,  7 Nov 2025 13:16:13 +0800 Junrui Luo <moonafterrain@outlook.com> wrote:
-
-...
-
-> That is true for all the snprintf() functions.
+On Fri, Nov 07, 2025 at 10:16:07AM +0100, Danilo Krummrich wrote:
+> Commit da123f0ee40f ("rust: lock: guard: Add T: Unpin bound to
+> DerefMut") from tip/master adds an Unpin bound to T for Mutex<T>, hence
+> also restrict the implementation of BinaryReader for Mutex<T>
+> accordingly.
 > 
-> > I wonder if we should instead implement a kasprintf() version of this
-> > which reallocs each time and then switch all the callers over to that.
-> 
-> That adds the cost of a malloc, and I, like kasprintf() probably ends up
-> doing all the work of snprintf twice.
-> 
-> I'd be tempted to avoid the strlen() by passing in the offset.
-> So (say):
-> #define scnprintf_at(buf, len, off, ...) \
-> 	scnprintf((buf) + off, (len) - off, __VA_ARGS__)
-> 
-> Then you can chain calls, eg:
-> 	off = scnprintf(buf, sizeof buf, ....);
-> 	off += scnprintf_at(buf, sizeof buf, off, ....);
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/all/20251107134144.117905bd@canb.auug.org.au/
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-I like this suggestion. Also note, that the original implementation works directly
-on static buffers.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
