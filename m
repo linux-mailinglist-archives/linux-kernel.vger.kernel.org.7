@@ -1,102 +1,109 @@
-Return-Path: <linux-kernel+bounces-890941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332C0C416D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:20:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D489EC416E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 350CB4EF207
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA3C3B3B08
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146AF2D5944;
-	Fri,  7 Nov 2025 19:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxtfJ+4t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9123009F5;
+	Fri,  7 Nov 2025 19:23:21 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8603009FA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6FB1A9F96
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543180; cv=none; b=CLni422xE3D4rbpAmZ/QwjGKpWweZU0/kBmr5DJBNd2mBSK75NBxCbwYPGrRsHqeVrRcWhG7RzK5hm7qDWHkGCLPmxJJt/HzGx7mA6Jv5MYDACyUBcMXJoNw+LpEAIcOsOAe5YbnTfpB9CRFUdoLCD2F1GAyXajwdmIjSrQq7ZM=
+	t=1762543400; cv=none; b=dd2JxbbJiyQlCBMTIUPznBkh7vP1zXG47Ir/ZwMVvR+y9sfFU1p2sOzLOf3ZIp9IczJYQet1u9O6U3z5w/pyEO6QfzN5NamG9uhp+/UHthxuofam+YrW8J+pf2IcVp4th1n0YxOzKBPqoz7/IfA3LDEtgqexw2tb5t0YrnWtZ9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543180; c=relaxed/simple;
-	bh=hNTOGT0G8LFqlfJl5zTl5sDRGSwPe+5si79U0NoK4zI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kDih6oGt9Do6f1RXqvoWagrSzURuQ+ZRM6JVuJcj0fIQJxCttQZwiJJgDv86m7iKF7fYGbvv6mFcl4rdKsOD4Iv1C0XJb9x+mKyaO1jbxLxPA5VXuo/IZJRx+Mbz/ajstuOhnmclrOVzWqv1NHhIk1RXN9FlofDE0rUyosyIQ2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxtfJ+4t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DB7C116C6;
-	Fri,  7 Nov 2025 19:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762543178;
-	bh=hNTOGT0G8LFqlfJl5zTl5sDRGSwPe+5si79U0NoK4zI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rxtfJ+4tbYays6v8eIAk1xmcLQhDQhEnWQBjtvOgERcG4o+eKOrJFYniVAZ7fLmKm
-	 K2Cn7b86QYcOsW8/zxZ5LT2FSpDRFlnuj37cBbogqmIT2a2bzKpT/xqHeeebjgqQBO
-	 t1LR0uQ367OgLVQnje5xA3noeM0PqLfaHs6WTGL74P4RBr8QYhcLsr/wlhCXg7MAgg
-	 LYX+iZ8eKJLZt5iNNverZwF9HZKg7Da3mg6/MMobJWOSPK4fX9C+n1njAQju2dmEy3
-	 EwnKZrZ/pRqoNgQneGd7RrPDaaM0etWSfNWDDvNdY3mDyj2Vc6GrgIrmtZDGOjSBxx
-	 8/h+KiYW0Y8gQ==
-From: Mark Brown <broonie@kernel.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <20251107104551.1553526-1-ckeepax@opensource.cirrus.com>
-References: <20251107104551.1553526-1-ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v2] regmap: sdw-mbq: Reorder regmap_mbq_context struct
- for better packing
-Message-Id: <176254317709.12269.17989872302995356094.b4-ty@kernel.org>
-Date: Fri, 07 Nov 2025 19:19:37 +0000
+	s=arc-20240116; t=1762543400; c=relaxed/simple;
+	bh=eXlCXSwjIH2VjjXEkoOn5qykH1tJrGt4S2/7SveqtKQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=jW5wWW6zSUkS10GvR0G8x06ESLMavtKpIvWqdVXPc/TG9dfpiVFkti43LwRZW4EYRbaOAPgMJNvZ+Mb+zO5iZ182t1Yau3iBbgJX1iTaBEY8NGkRqdPP1fX2ajD4mg2DdIgMok8t6G2HDJNRmliTTBuLp4eMsrzl6ZnTJFJiGMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id EDA862CFC9B;
+	Fri,  7 Nov 2025 20:23:14 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 2R6fOeHHtymO; Fri,  7 Nov 2025 20:23:14 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 813442CFC87;
+	Fri,  7 Nov 2025 20:23:14 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zqOd4E8HCNTp; Fri,  7 Nov 2025 20:23:14 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 4A11611C056;
+	Fri,  7 Nov 2025 20:23:14 +0100 (CET)
+Date: Fri, 7 Nov 2025 20:23:14 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-mtd <linux-mtd@lists.infradead.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linux-stm32 <linux-stm32@st-md-mailman.stormreply.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	alexandre torgue <alexandre.torgue@foss.st.com>, 
+	mcoquelin stm32 <mcoquelin.stm32@gmail.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, wanqian10@huawei.com, 
+	Yang Liu <young.liuyang@huawei.com>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	Liyuan Pang <pangliyuan1@huawei.com>
+Message-ID: <79797154.158914.1762543394141.JavaMail.zimbra@nod.at>
+In-Reply-To: <14f5091f-b647-40c9-9c32-6a705c2d6c37@web.de>
+References: <20251107100057.1091153-1-pangliyuan1@huawei.com> <7857ab09-7808-4abe-9df1-66235291436b@web.de> <DF8B15D4-4819-47E6-9BB0-268AD0204C86@nod.at> <14f5091f-b647-40c9-9c32-6a705c2d6c37@web.de>
+Subject: Re: [v2] ubi: fastmap: fix ubi->fm memory leak
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a6db3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF143 (Linux)/8.8.12_GA_3809)
+Thread-Topic: fastmap: fix ubi->fm memory leak
+Thread-Index: fBqM9AqfBycgbGob73i+cfkQqy6K6g==
 
-On Fri, 07 Nov 2025 10:45:51 +0000, Charles Keepax wrote:
-> Avoid a hole in struct regmap_mbq_context by shuffling the members
-> slightly. Pahole before:
-> 
-> struct regmap_mbq_context {
->         struct device *            dev;                  /*     0     8 */
->         struct sdw_slave *         sdw;                  /*     8     8 */
->         struct regmap_sdw_mbq_cfg  cfg;                  /*    16    32 */
->         int                        val_size;             /*    48     4 */
-> 
-> [...]
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Markus Elfring" <Markus.Elfring@web.de>
+>> > You may occasionally put more than 60 characters into text lines
+>> > of such a change description.
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.18-rc4#n658
+>=20
+>> Feel free to ignore everything Markus says.
+>=20
+> Does your feedback indicate then also that Linux development process
+> documentation may be overlooked any more?
 
-Applied to
+The only reason why you are not on my kill file is that I can protect newbi=
+es from you.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+To quote GregKH[0]:
+> Markus, you seem to have sent a nonsensical or otherwise pointless
+> review comment to a patch submission on a Linux kernel developer mailing
+> list.  I strongly suggest that you not do this anymore.  Please do not
+> bother developers who are actively working to produce patches and
+> features with comments that, in the end, are a waste of time.
 
-Thanks!
-
-[1/1] regmap: sdw-mbq: Reorder regmap_mbq_context struct for better packing
-      commit: 6985defd1d832f1dd9d1977a6a2cc2cef7632704
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> Patch submitter, please ignore Markus's suggestion; you do not need to
+> follow it at all.  The person/bot/AI that sent it is being ignored by
+> almost all Linux kernel maintainers for having a persistent pattern of
+> behavior of producing distracting and pointless commentary, and
+> inability to adapt to feedback.  Please feel free to also ignore emails
+> from them.
 
 Thanks,
-Mark
+//richard
 
+[0] https://lore.kernel.org/lkml/2025110516-cubical-drowsily-7acd@gregkh/
 
