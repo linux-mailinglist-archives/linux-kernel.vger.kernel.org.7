@@ -1,222 +1,163 @@
-Return-Path: <linux-kernel+bounces-890948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B28C41707
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:28:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55924C41713
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD083BC22C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B5643AA041
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D942A302150;
-	Fri,  7 Nov 2025 19:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E563016E7;
+	Fri,  7 Nov 2025 19:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AqmzvWXS"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="DvEh0tB5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xCoannFY"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843861D61A3;
-	Fri,  7 Nov 2025 19:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B733C221FD0;
+	Fri,  7 Nov 2025 19:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543724; cv=none; b=cP9NXhSxVWINtA9+m7ywctpwcHlbcPeBIXU9ZOp21i/0epD3PXl7tEdk3RA90ZsLSTEbNc6vq4+k/yZNILJ0WMPmxeAhjD9lmADMakobK6K2aY2da5Jpb8qcFMySTZdtFBhaDUkK80azaXD/9S+7gbNE0kQtjI4YcomXqcZN9J8=
+	t=1762543789; cv=none; b=UZ8wm3EhBPg51unzY+ok+LmtNoKk4a8BYc5WaF6vonGfMspIw9Y/Vr7Km5nRot093yCeVnGwu4f6Ac+bxX1JuDxzoPXdLCOQLAC3fSm+alDOazKzwxOVpL/74m019gBmJ5lTnDueG37J2f/F1+cnNRLZ4nrbbS+FXJT+SZnTfA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543724; c=relaxed/simple;
-	bh=ya4XpoRY6qfeCfP5tVgi2q6BSc1XdmfS1j7EHD9hYco=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=NfwVc+1Ytq3SaQAwIiBF+Otx5ql/CmVk6KIVH5I+LxYJw5FSvb36fPTz7Ke3NBnYKFQoHxFIMYoUiFtgUZ8WHxVQ01n36RLNmNtN50T9nOHrh8G/4lQoHGa+b3/BR9+XETa1qoMfDWFpzsWN0j54SA8BQixPuhIeLcW32+unk8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AqmzvWXS; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7INt3L001089;
-	Fri, 7 Nov 2025 19:28:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=CT9azk
-	Ev/aPtf/U6S3mJQlo0hHAnCMMMWFmhZQVC0Bs=; b=AqmzvWXSjxnAtcW2KlqW/b
-	uk/KEJeVYJp9G/ESqYAWuKT7YDGTQiCWwhVMH587OgAZLs8Y2saqhIU7gOkocyIG
-	C5jNzu5j+6sT8NWF1RNrNPoSLjCIY1q8IljRzZnJIGU20ZkyUa2Up05xraZedHwF
-	QhQtqyIDCVhcTR+NxNnlk+ui/qqcsO+I5R5NWGc4W8QfAu5K36G7AqbggJ05JVKR
-	bEaaYUg+7TiCW4nE1XAf1wBcc3UPNExFdHTn+XHtLoNlHNwgwX4B8ayPShmNx427
-	h4/TX4eKUxLcFNh3hKwYh0smnQiDuCEELIs/wfmQHqvSrkUDxxCsmBSvO2IYdZfw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9p0j886b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 19:28:17 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A7JSHtC001165;
-	Fri, 7 Nov 2025 19:28:17 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9p0j8869-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 19:28:17 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7J40k9012845;
-	Fri, 7 Nov 2025 19:28:16 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5y82c7t6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 19:28:16 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7JSF6U61604208
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Nov 2025 19:28:15 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7068E5805B;
-	Fri,  7 Nov 2025 19:28:15 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E701658065;
-	Fri,  7 Nov 2025 19:28:13 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.10.204])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Nov 2025 19:28:13 +0000 (GMT)
-Message-ID: <0dfec96bf98b1c18d51bf40f4329c3ede48a9f32.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] lsm,ima: new LSM hook
- security_kernel_module_read_file to access decompressed kernel module
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>,
-        James
- Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Luis
- Chamberlain	 <mcgrof@kernel.org>,
-        Petr Pavlu <petr.pavlu@suse.com>, Daniel
- Gomez	 <da.gomez@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Roberto Sassu	 <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MODULE SUPPORT"
- <linux-modules@vger.kernel.org>
-In-Reply-To: <b9eb78105115a00731b3677a5f3a39d5dde4d2ec.camel@linux.ibm.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-		 <20251031074016.1975356-1-coxu@redhat.com>
-		 <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com>
-		 <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
-		 <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
-		 <fftfj4o3kqxmfu3hb655xczqcddoeqjv55llsnwkrdu5isdm4z@6sqe3k24a6kk>
-		 <84a0e1785c7f0ff816b3246be49012092ae12126.camel@linux.ibm.com>
-		 <d24wnmefebnheerigmh6ts5yskkutz726l6a2f6g5s3s5fhhrv@osaactobwb5g>
-	 <b9eb78105115a00731b3677a5f3a39d5dde4d2ec.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 07 Nov 2025 14:28:13 -0500
+	s=arc-20240116; t=1762543789; c=relaxed/simple;
+	bh=v4+AN5rCF0WTHHGwiE3dw4ta/4S0WRMWYUuIPTbqaOs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=bsm6mZ6r2QiQLKV9on9R0orJzuNUEqNqDKdm/5CwKC4N+JWr6fZ+jWlLR1gN745Oz/tsDNRCxv+UhwIjg5Dp0Ao2r9ec+Jpaf/Yfds3bxuZvkwDYzrEzhSAFGi22bIckJHN6ESkcRd3YkJ0Ha3RymBXPJkasjScilHcRgHrqxG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=DvEh0tB5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xCoannFY; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 005F01D00175;
+	Fri,  7 Nov 2025 14:29:46 -0500 (EST)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-03.internal (MEProxy); Fri, 07 Nov 2025 14:29:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1762543786;
+	 x=1762630186; bh=uK64V1RHABwDYWcBrcO7CIMo6gQ+hXw+tDq5ENDDMdI=; b=
+	DvEh0tB5C5uwlHUN5cAgVxrM5wA8MyRL3Vg50sqnsSNlv6jU16A6OxCrqK3uKdsV
+	Xsft9Ng1z5raNgmeFMD2DNE3Z1Nn2asdG8Heo5ra40HHUuPaZQSoj+hzIyqldBJZ
+	A3kWsbYgfj3B873H4JfLFFZqqEfKwWNEKMnGk/Q2XQ2p2bYE7VTLtuuqijk/tnPE
+	vIpNHZFLysFwbmDnvBurv/B/Ws+O+GhRR5SoSGtQd5K8pVd4dZj/Er/xOAaIKe4x
+	pC6yv3Sa448czQNXTuVodxy+dkQr8+g7RbLKXsmD/JWeDUxti7r9SxMYGgibkcZb
+	BbfYBQwp1uzpOmI+ttVIeg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762543786; x=
+	1762630186; bh=uK64V1RHABwDYWcBrcO7CIMo6gQ+hXw+tDq5ENDDMdI=; b=x
+	CoannFYs5aZkDngyO/cGGTS9agZ5KL+s7dYIm74+qFkWp/kxNMVs6Vw5Z78+vFvi
+	rIQ8deTJH3UxW3QgWDABin3WxV/aVoz3gMaHhsjqMR1hsPPnm1lfiYjxflaRDhxU
+	8IahSaDnv1ynzUrkX4MF16frrj1KM80U5pjVKcOaWaAWE0U9oN2La0LANplpS9PP
+	2La2+T5Kcr0rU7LBhkGlPv7Buee11wzEAy8zi0zch1OaSnNHLl0WcEYImVzU8AUF
+	+SUFX2EucZyROZ7a9Jzrk9JSHLbRgTklp385aZMpWE87PAgdcu6rdIYt3ygwryMm
+	z+z42ccU5gOqNnBGfw5mA==
+X-ME-Sender: <xms:qkgOaQVWyrtJzFwWoX4r7UAg5bJr5Z6w9jLlYzXfQItcPBsxCIYQrQ>
+    <xme:qkgOafbxmTy71v9Zx1jxrd5Dv-8khYNupjwibHetSxoPUNYgqp0x4rbS_4y-bSt6Q
+    B6t7ZU4HzfdASVQ-74kp0sYnnU0Kx6ae-rt6cRQE8mGdvMGODCiMNKs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduledthedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedflfhirgig
+    uhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqne
+    cuggftrfgrthhtvghrnhephfethfdutdeigeelueeitddtheehudevffejtedtkedvueei
+    tddujeefieejieefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdpnhgspghrtghp
+    thhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgsohiflhgvrhesug
+    hrrggtohhngidrtggrpdhrtghpthhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdr
+    lhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:qkgOaeCMkX94klJR4Q6_76loyWJRnLr4vcazdF0HdgPm-FTxqdZk9Q>
+    <xmx:qkgOaR2r9xdAMRyKZ6HrI_MiBh5zsXVyNxTGxWfsyV3oIJl_bx2WPA>
+    <xmx:qkgOaY24YQObLI1sWl67QG5H72otGIfCwBtDBu1kPtCQQhpStHar2g>
+    <xmx:qkgOaeBgljORvxCmrM9LeCEdeqj7ZiwZZz9nxVScqlrtAwIb7BkEVg>
+    <xmx:qkgOacJhPZa5eNwnwgA7AWvX8_32TOYnESs8E_A9CZ1gUOVlL9pcVTfU>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 85BF72CE0067; Fri,  7 Nov 2025 14:29:46 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: SWk1h8H8EKXKk4tVyYBO4d8kvL87jVtJ
-X-Authority-Analysis: v=2.4 cv=J9enLQnS c=1 sm=1 tr=0 ts=690e4851 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=NEAV23lmAAAA:8 a=IliqzFzewkCn4H2RUJwA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDE1MiBTYWx0ZWRfX0NYW7h31FCur
- tbaEeK1gYjegkO4EMTERjNLsUVF6EYsogD8Idldq+fisZZuCBg468Lsbnrhqv/ClCmAtp5h3eAn
- wdVq50RbY9L3dMbBpvpMO/WSvwYsVFVKiFjpojBW/ksi5wMOanNXybrK0oYJ6ewPfuFBhpWijMP
- Ts71tqGQxV0rZW/CnFTlyalFSFGgBxbbnEr0aptuo1ptY3rtfNbuP6OZO8P4tGr09WFhBL51F+P
- +fCxcgRqQZHVlrALdu6Lu+BZHqs5nJTQ+M/8Q6vt9KYuFiTLAvU6d8M28pU4XRqNpeEUarv75zF
- ABrleeQUzUXh30hL4jm6qdpWzu5/3/S1enU/RHhshrzHj6Zvjw5S1PH5lEd0je5V7wpTzdDUket
- ttkiQPJ6uCiX2qx4jhwJHc4vKfGKNQ==
-X-Proofpoint-GUID: Aw6UjcjfIaXneqyNXx7vGWc1oBiiQAa0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_05,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 malwarescore=0 phishscore=0 suspectscore=0
- bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511070152
+X-ThreadId: AIEMUPQi-EY-
+Date: Fri, 07 Nov 2025 19:29:25 +0000
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Nick Bowler" <nbowler@draconx.ca>, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>
+Message-Id: <e4ed75c7-b108-437f-b44b-69a9b340c085@app.fastmail.com>
+In-Reply-To: 
+ <g3scb7mfjbsohdszieqkappslj6m7qu3ou766nckt2remg3ide@izgvehzcdbsu>
+References: <g3scb7mfjbsohdszieqkappslj6m7qu3ou766nckt2remg3ide@izgvehzcdbsu>
+Subject: Re: PROBLEM: boot hang on Indy R4400SC (regression)
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-11-06 at 17:15 -0500, Mimi Zohar wrote:
-> On Thu, 2025-11-06 at 21:29 +0800, Coiby Xu wrote:
-> > On Wed, Nov 05, 2025 at 03:47:25PM -0500, Mimi Zohar wrote:
-> > > On Wed, 2025-11-05 at 08:18 +0800, Coiby Xu wrote:
-> > [...]
-> > >=20
-> > > Hi Coiby,
-> > >=20
-> > > Based on the conversation with Paul, there is no reason to remove the=
- existing
-> > > security_kernel_post_read_file() call.
-> > >=20
-> > > The changes are similar to the 2nd link, but a bit different.
-> > > - Define a single enumeration named READING_MODULE_COMPRESSED.
-> > >=20
-> > > - In module/main.c add a new security_kernel_post_read_file() call im=
-mediately
-> > > after decompressing the kernel module.  Like a previous version of th=
-is patch,
-> > > call kernel_read_file() with either READING_MODULE or READING_MODULE_=
-COMPRESSED
-> > > based on MODULE_INIT_COMPRESSED_FILE.
-> > >=20
-> > > - In ima_post_read_file() defer verifying the signature when the enum=
-eration is
-> > > READING_MODULE_COMPRESSED.  (No need for a new function ima_read_kern=
-el_module.)
-> >=20
-> > Hi Mimi,
-> >=20
-> > Thanks for summarizing your conversation with Paul! I can confirm Paul'=
-s
-> > approach works
-> > https://github.com/coiby/linux/tree/in_kernel_decompression_ima_no_lsm_=
-hook_paul
-> >=20
-> > While testing the patch today, I realized there is another
-> > issue/challenge introduced by in-kernel module decompression. IMA
-> > appraisal is to verify the digest of compressed kernel module but
-> > currently the passed buffer is uncompressed module. When IMA uses
-> > uncompressed module data to calculate the digest, xattr signature
-> > verification will fail. If we always make IMA read the original kernel
-> > module data again to calculate the digest, does it look like a
-> > quick-and-dirty fix? If we can assume people won't load kernel module s=
-o
-> > often, the performance impact is negligible. Otherwise we may have to
-> > introduce a new LSM hook so IMA can access uncompressed and original
-> > module data one time.
->=20
-> ima_collect_measurement() stores the file hash info in the iint and uses =
-that
-> information to verify the signature as stored in the security xattr.=20
-> Decompressing the kernel module shouldn't affect the xattr signature
-> verification.
 
-In the case when the compressed kernel module hasn't previously been measur=
-ed or
-appraised before loading the kernel module, we need to "collect" the file d=
-ata
-hash on READING_MODULE_COMPRESSED, but defer appraising/measuring it.
 
-An alternative to your suggestion of re-reading the original kernel module =
-data
-to calculate the digest or defining a new hook, would be to define "collect=
-" as
-a new "action" and pass the kernel_read_file_id enumeration to
-process_measurement().  IMA_COLLECTED already exists.  Only IMA_COLLECT wou=
-ld
-need to be defined.  The new collect "action" should be limited to
-func=3DMODULE_CHECK.
+On Fri, 7 Nov 2025, at 7:04 AM, Nick Bowler wrote:
+> Hi,
 
-The downside of this alternative is that it requires a new collect rule:
-collect func=3DMODULE_CHECK mask=3DMAY_READ uid=3D0
-appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig
+Hi Nick,
 
---=20
-thanks,
+Many thanks for the issue report! It's pretty rare to get reports from
+hardware that old.
 
-Mimi
+Unfortunately my Indy won't go over ARCS prom so I'm not in a position
+to debug this on my side. I have inspected the code again and I can't
+see anything preventing it to work on R4000 family.
+
+Maybe we can revert this for non-MIPS64R1 system only so we can get something
+working for both old and new systems.
+
+#regzbot introduced: 35ad7e181541aa5757f9f316768d3e64403ec843
+
+Thanks
+
+>
+> After a recent 6.1.y stable kernel update, my Indy (mips64 R4400SC) now
+> just stops booting early, just before when I would normally see the
+> kernel messages about mounting the root filesystem.
+>
+> There are no further messages of any kind, and the boot process does not
+> appear to ever complete.  However, the kernel is not fully crashed, as
+> it does respond to sysrq commands from the keyboard (and I do get output
+> on the console from these).
+>
+> I bisected to the following:
+>  
+>     794b679a28bb59a4533ae39a7cf945b9d5bbe336 is the first bad commit
+>     commit 794b679a28bb59a4533ae39a7cf945b9d5bbe336
+>     Author: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>     Date:   Sat Jun 7 13:43:56 2025 +0100
+>    
+>         MIPS: mm: tlb-r4k: Uniquify TLB entries on init
+>    
+>         commit 35ad7e181541aa5757f9f316768d3e64403ec843 upstream.
+>
+> This reverts cleanly on top of 6.1.158 and the resulting kernel boots
+> normally.  I then reproduced this failure on 6.18-rc4.  Reverting
+> 35ad7e181541 on top of 6.18-rc4 also results in a normal boot.
+>
+> Let me know if you need any more info!
+>
+> Thanks,
+>   Nick
+
+-- 
+- Jiaxun
 
