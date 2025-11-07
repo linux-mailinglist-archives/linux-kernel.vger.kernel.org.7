@@ -1,96 +1,141 @@
-Return-Path: <linux-kernel+bounces-889716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1A5C3E4DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF616C3E4E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AAA44E3F33
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:07:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 940694E4BF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A9724886E;
-	Fri,  7 Nov 2025 03:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76E125A630;
+	Fri,  7 Nov 2025 03:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uPJ2hOP/"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDhAPZJr"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4902AF1B
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD412AF1B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762484866; cv=none; b=JnGpPMHqYZXnhDEl30B2nCBVuTEQPhAnR2wwMQxlcM0Br5wQrL4fN7fL8VPpcEBvDC6HFgPdtePWSjj/WYeMtIsh86GpRfXWUnffxQp9UKBanC9KZynoxt6ksY8PRET6um8TV70OvF3AM1T4IRHcNXQPk2V/AwZNr+5gqEwIYJo=
+	t=1762484872; cv=none; b=jIH7WOtQe1ElUjbKmt9oxHAfJeBCLIkJPpGg9CfdFIclAN/2kr0rcyVDLC6tc6If09uwUt4OxHvM6sTI0SDcEg8rIhV/CyIwlgSLEFtKAehYJdfiedZHkCRAEPEuVEMDKgRs/rn5ipRMsBMql8/5L2/1nH259rLuYQao6VIXpzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762484866; c=relaxed/simple;
-	bh=AQJfYkgpF8M+7ag03gUO0WbJqUQBHhZrdV7imAlPQs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cNkb+TFzW9Lv3C3buTPo6tMHhdf7s8CUBDdjKT/omEP/yp9FeXzIjP5Fx2+uVP/2pkP9kpqx36CSMsOTlSq0TZj8W4UYZ/BEfUuaknIIGZs/BZ7Uyrbq8WWtEJf1BzrcGLECUqJ2NwX1i3SJnPGTciwNUlS34ExKYemoFEvK2q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uPJ2hOP/; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d2kWW3J1sz9tWy;
-	Fri,  7 Nov 2025 04:07:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762484855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jx2bBAIXMGIZv7u/FcJ32DGgtD9uv0lkYEYQRNJYCc0=;
-	b=uPJ2hOP/+o0SiGaTgGPIiT+z3ILPYbXujp1D/JGrbmRks3K1EDPF9/Prur54HKDJfeOyYN
-	ai8+melom3FpWK8MADkv28PIXqt1gpPEy2zP0T9ULSDeGWidyWAAgWNcnys/5KRQybETMt
-	pThMr/WQv7Cnp/g8DK6qgIaz9UUSGx7bwP+0kPeO0Bdl+6T1ASimqdF+RvEqqDAKTjKp1s
-	tv5Rg7TG5zWtRQNLfs4rlqucoEj0F9pkbL6OC82Ji1P94A7R+WaqCce59ZuPq5VCxM4Xv7
-	yOM2V0qzJ0TXTMLIC0M/zSB1WrARYS3bFFl7FnAMDLDkDhsnqS4PRjjbU1lrLQ==
-Message-ID: <4ec46455-a872-45ae-963e-cb2a76f5a845@mailbox.org>
-Date: Fri, 7 Nov 2025 04:07:33 +0100
+	s=arc-20240116; t=1762484872; c=relaxed/simple;
+	bh=0lht7F0suzttGel6sZjkadZBWJ9xsrtfuoMFuni74uY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aLkb4WQAWDMDdMRhjCOwF3j/ynTGirGL2frJC7lXSfxnou26w2ZSYsZMRrBybzivqAAdSiq8A+PH4ZVUZAXCEB/dia5+vJfwaMWWjineIHd4s/cMn6Rb3qScHnjUxFJbLmvrQJ1RirUN0GAixV0xdNUCxZLxGgdJaSWc8kLbg1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDhAPZJr; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-88056cab4eeso1834026d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 19:07:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762484869; x=1763089669; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mBCUg/9XCUiNk2sm5BPZW1kXc1XAzZmmErC9z5fdCQI=;
+        b=lDhAPZJrMGjwb0Nblai+IsychJYbSvCezBkCD5YacG52wmOmSn3l+YCbrf0Lbm6hRJ
+         nOgIuPiQ2fbvIDFDIiZyQeOVHx2EMRb52a2tzEQU2oRJBi/U7haSO8TISOsARIQM5nn7
+         1gsqsw3kR3qHJv5XSVqV1xhHqNR0ce56rxH3csq2aSzLMzOUGUQRphmZcqFJgYqF65Sx
+         lv2d1Ono7c8plvXbzeeS+kIeu49FJiFXQdhaUw8fJRY0CDbcEReEUshPdFUapBsenL6M
+         jWohM5t//gWirpp9wPOUGnV3KLUNXS6aODBUm3aPlAie4PtCJSiFt+BNr7Ux/haSXEEM
+         m2PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762484869; x=1763089669;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mBCUg/9XCUiNk2sm5BPZW1kXc1XAzZmmErC9z5fdCQI=;
+        b=rwAPO4k6yNtFdHKhry45cUW17a2fVqaHCkXyg1r8/htga3sG1qsSjszWSwsw72VGY6
+         HSoBpH+vmziY0mgEdZPht1sU5Ykg7ydJholZFr6uOiP3jdOObdJ/tGiLfZ3n4GUw6s6L
+         EKW3GcdsRZo0yC32r7IKgCzMbj6DNmdFml9vqlymoJEuUmkyFHgCnF+rpBi58pEw8fRd
+         VbFmJeYvhM8O1uBBTcdWxxFS9lx2rwuznfMD4+1ifiLB3EgZGBYCm6l0YgTlaJW6ASPI
+         PvrhLqIF0h8ePzeOcaQFzVg6YEMu7uZtY6mRFOJcNSwZKunmHhl99SBMd06FDYNZwiFP
+         M3Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoJAh8GP02PxGqZsLgQugcRDwQL+vzZxyGeQoWuZCo7qcusff4vnwIdQ/ii9LhXkEgchYT7zY1zkPppHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxokWVSfdU72bGyzgy9kf53Hjv3asdG4U2gypu3zDNR4ZFkoAmI
+	reRKEruCIbkwVWbrZIIl7SP3DeGJBYkkSvQkdLQMyEva7JKyJJuOmb+bfCzfYXuaQvB6vJa5yyx
+	qH9r/6Cv693IxuivBk5gmp61BcUmZFHE=
+X-Gm-Gg: ASbGncuBJSVrG496D4ujXAWerEESBjh4BVZJ83xFlN5txbKUe/BXJVUF8gNBtpbrWBb
+	b2XY8Z/xTu9LZqvOviPbtefvSy1nij6e8SFiQ8Hmey1ruIpGJXudG3OWf6dCsu1XNnjQHa84NV1
+	XquyH6FLjO81Lf6kjvWx/x5h/nJsk9tZv17czhBeVjUbQZShvAbgBctB0pI9m2ZIpGl1C4Mb8nY
+	QKTMPzrRi0RY8u70B4Q2jEUOB8TwaZVO3m9JCpC1lJRv7Ye49HnLhTaHHMx3JWNvJzfn+LyK5hs
+	vMMilK76ukTl+GLVYW1FgD1xWoQ=
+X-Google-Smtp-Source: AGHT+IGAVK/as/fsnQC6Rzqp5n8giqY9RSCAVH0zLL61+rGwA+Bbr+alJLMG/WG+f+kye53EtjwheHwxoumU1v/Fn0M=
+X-Received: by 2002:a05:6214:240b:b0:880:4c73:9e3b with SMTP id
+ 6a1803df08f44-88167b08793mr23624806d6.15.1762484869338; Thu, 06 Nov 2025
+ 19:07:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] drm/etnaviv: add HWDB entry for GC8000 Nano Ultra VIP
- r6205
-To: Christian Gmeiner <christian.gmeiner@gmail.com>,
- Gert Wollny <gert.wollny@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
- Lucas Stach <l.stach@pengutronix.de>, Simona Vetter <simona@ffwll.ch>,
- etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250919183042.273687-1-marek.vasut@mailbox.org>
- <CAH9NwWcK_z_4CcDBRYS2nf3AxYV9-XwirvTd+O9uJtHMhyA3Og@mail.gmail.com>
- <CAH9NwWdkjpV5YHmOpuCE=f7RVm1kXzqAOgN6=Sx1s-wxO_SGGA@mail.gmail.com>
- <4ac9dd98-adc8-4be9-9f5c-4e653f656453@mailbox.org>
- <CAH9NwWd+1MSBGdn6G0zRQgmC7cHCmG3BSxeDUQV-waMG75E2KQ@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAH9NwWd+1MSBGdn6G0zRQgmC7cHCmG3BSxeDUQV-waMG75E2KQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 1f2d2d18baad58fb76b
-X-MBO-RS-META: ptcbbyfqd96su78xegda7fk6isrd8b7f
+References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com> <20251029-swap-table-p2-v1-13-3d43f3b6ec32@tencent.com>
+In-Reply-To: <20251029-swap-table-p2-v1-13-3d43f3b6ec32@tencent.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 7 Nov 2025 11:07:38 +0800
+X-Gm-Features: AWmQ_bl9OdAJp-MTk2PhcU5P1TAkG1rr8LH-PKPTp8sGVlXRVHPN5AzCsOi4VdA
+Message-ID: <CAGsJ_4xquj2Kbc2qu0vtY6Q+-q3sg56BgKEdPs8eHtKxLBk0gQ@mail.gmail.com>
+Subject: Re: [PATCH 13/19] mm, swap: remove workaround for unsynchronized swap
+ map cache state
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/5/25 2:44 PM, Christian Gmeiner wrote:
+>  struct folio *swap_cache_alloc_folio(swp_entry_t entry, gfp_t gfp_mask,
+>                                      struct mempolicy *mpol, pgoff_t ilx,
+> -                                    bool *new_page_allocated,
+> -                                    bool skip_if_exists)
+> +                                    bool *new_page_allocated)
+>  {
+>         struct swap_info_struct *si =3D __swap_entry_to_info(entry);
+>         struct folio *folio;
+> @@ -548,8 +542,7 @@ struct folio *swap_cache_alloc_folio(swp_entry_t entr=
+y, gfp_t gfp_mask,
+>         if (!folio)
+>                 return NULL;
+>         /* Try add the new folio, returns existing folio or NULL on failu=
+re. */
+> -       result =3D __swap_cache_prepare_and_add(entry, folio, gfp_mask,
+> -                                             false, skip_if_exists);
+> +       result =3D __swap_cache_prepare_and_add(entry, folio, gfp_mask, f=
+alse);
+>         if (result =3D=3D folio)
+>                 *new_page_allocated =3D true;
+>         else
+> @@ -578,7 +571,7 @@ struct folio *swapin_folio(swp_entry_t entry, struct =
+folio *folio)
+>         unsigned long nr_pages =3D folio_nr_pages(folio);
+>
+>         entry =3D swp_entry(swp_type(entry), round_down(offset, nr_pages)=
+);
+> -       swapcache =3D __swap_cache_prepare_and_add(entry, folio, 0, true,=
+ false);
+> +       swapcache =3D __swap_cache_prepare_and_add(entry, folio, 0, true)=
+;
+>         if (swapcache =3D=3D folio)
+>                 swap_read_folio(folio, NULL);
+>         return swapcache;
 
-Hello everyone,
+I wonder if we could also drop the "charged" =E2=80=94 it doesn=E2=80=99t s=
+eem
+difficult to move the charging step before
+__swap_cache_prepare_and_add(), even for swap_cache_alloc_folio()?
 
->> I _think_ I will try to respin the flop reset patchset next.
-> 
-> Gert told me on irc that he has reworked the series already and just
-> needs to do some testing. Maybe wait another 1-2 weeks
-> and/or sync with him directly.
-
-Let me add Gert on CC . I can also do that testing and provide TB if 
-that would be helpful, I already tested the previous series and have MP2 
-on my desk now.
-
--- 
-Best regards,
-Marek Vasut
+Thanks
+Barry
 
