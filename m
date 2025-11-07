@@ -1,191 +1,306 @@
-Return-Path: <linux-kernel+bounces-889655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C79C3E275
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:44:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12800C3E287
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:48:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82FF3AD0AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:44:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E364C4E3B9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AB72F8BDC;
-	Fri,  7 Nov 2025 01:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F1C2F8BCB;
+	Fri,  7 Nov 2025 01:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hjeXRbIZ"
-Received: from mail-m15599.qiye.163.com (mail-m15599.qiye.163.com [101.71.155.99])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ag2YoIxQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C5B2E040D;
-	Fri,  7 Nov 2025 01:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDFE20C037;
+	Fri,  7 Nov 2025 01:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762479877; cv=none; b=qWZ/Ni+glmcV6rc7yJIxcFm8eSGQ3HSl2e1TH3mXK0hWTxH1L+AugQqimMYuq3mT7fIkkbzwogHqQJf76vFiuvnFKJXKnmV2eUZEkcl+uQD8afZxUEUU2S2SQzSg8eywh6OcHG7Q+7R6GFxxbDlKWIM7yV5Qz4Z0fmPqcqsxGwI=
+	t=1762480094; cv=none; b=nRJxFHUR22vPpwj/tYzL0NoY5x5fk/6FuvMoxEo7gKpcvTjR7bt9u81TMzpOBO4AyM+5MTaE0GIIPKRA11Q44kJdg72rvMoNk7JoG9g1Hrv4uCmHptw5QcOBDf6YHObuXPzgChIjaT6wNLrJB+Q5kkvvs9SFtiRlCdP72pBmRRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762479877; c=relaxed/simple;
-	bh=qf+hTzZA45c36lhiHT57xugffv6kqPRnIMj+74F4Mq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Imb88FRMklw5os10XuqWxAnk4KKK2ZokXMS3RGyXVi2Nkte+m91rF+0HzQZvB7BGiN8Mhg9seAiUNKvNZWcfV0GnQVdPi+1q3fS7GhE8oqeL7pl0tyeOd4v6BnZW4Kh7acl/BfrZg+yUaBOhLFp14WXrgKP/aaSk0QqDbJ9Hqf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hjeXRbIZ; arc=none smtp.client-ip=101.71.155.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.30] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28b4dfe66;
-	Fri, 7 Nov 2025 09:44:24 +0800 (GMT+08:00)
-Message-ID: <3477bbf7-bfca-44d8-8fe1-5dadcfd59428@rock-chips.com>
-Date: Fri, 7 Nov 2025 09:44:23 +0800
+	s=arc-20240116; t=1762480094; c=relaxed/simple;
+	bh=v6zB7iF5EiKs73sB6PUObq4nGfpH3jYdCoelt/6miLs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=stEZEYS7xrTVrnKURSXTGac2FobvtonDU5UIqsaBMVj9ZguwF7g7f5hq/2bNTX6ZbzAN+aRoO3ibwGnYLJXbRgTPDGWmkH0i2ostCwtOHvJ4chz4BGMPCQ1hIp2WXDkeb/44NWfMDMw5gr6hMm5hUw7xVwOHdMQ7lVpgVWMmdT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ag2YoIxQ; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762480092; x=1794016092;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:mime-version;
+  bh=v6zB7iF5EiKs73sB6PUObq4nGfpH3jYdCoelt/6miLs=;
+  b=ag2YoIxQ50k4fGsf79jKbSeX7fV319ARFCIGJJv8Vx8F/y16l3cUwORq
+   kd3d2agyLnEZ/iEkovHSOdz2qzOyKASZdvVRXxA8vOttiOBnqvVq83iAm
+   /OXfNCZKCasXm1niSzTUXZe/SRL6m/xJBKDL3KkQvYvKpfmXJvD7RcoPF
+   8IGNTR1PY54zmTjQGLZHi401/QOS3akSRgAYSFSbrkHgFzKy9CrcPMl59
+   8Y9P1U8bpTGkS0f1MwgvKQrzquEUaHFB89+/ZnpU9P4Mzgmtr/50mkWjV
+   AgXiL7jPjnp5dUuVz+wXkBBNq4jQOPmQiLFf6zd+G8FkrQ6JUKo/FCVzd
+   w==;
+X-CSE-ConnectionGUID: zxsUaSvMQgafFaykqN0+jA==
+X-CSE-MsgGUID: DifoU98DQ8+Nv/sGUIcwMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="67241706"
+X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
+   d="scan'208,223";a="67241706"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 17:48:11 -0800
+X-CSE-ConnectionGUID: /AutPi0LR1iLAUCfBEN1LA==
+X-CSE-MsgGUID: OaLG+u0DTzeLtN74sO/HoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
+   d="scan'208,223";a="187864855"
+Received: from dwesterg-mobl1.amr.corp.intel.com ([10.125.111.51])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 17:48:11 -0800
+Message-ID: <8794c34dc127ee1bd3ed4d746ca7c1235ca3cb93.camel@linux.intel.com>
+Subject: Re: [REGRESSION] Intel Turbo Boost stuck disabled on some Clevo
+ machines (was: [PATCH] cpufreq: intel_pstate: Unchecked MSR aceess in
+ legacy mode)
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Aaron Rainbolt <arainbolt@kfocus.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org,  mmikowski@kfocus.org
+Date: Thu, 06 Nov 2025 17:48:10 -0800
+In-Reply-To: <20251106113137.5b83bb3f@kf-m2g5>
+References: <20250429210711.255185-1-srinivas.pandruvada@linux.intel.com>
+	 <CAJZ5v0h99RFF26qAnJf07LS0t-6ATm9c2zrQVzdi96x3FAPXQg@mail.gmail.com>
+	 <20250910113650.54eafc2b@kf-m2g5>
+	 <dda1d8d23407623c99e2f22e60ada1872bca98fe.camel@linux.intel.com>
+	 <20250910153329.10dcef9d@kf-m2g5>
+	 <db92b8a310d88214e2045a73d3da6d0ffe8606f7.camel@linux.intel.com>
+	 <20251106113137.5b83bb3f@kf-m2g5>
+Content-Type: multipart/mixed; boundary="=-9Wrt8BcrBEO56xUhdjM+"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] dt-bindings: clock: rockchip: Add RK3506 clock and
- reset unit
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
- heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- huangtao@rock-chips.com, finley.xiao@rock-chips.com
-References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
- <20251027084147.4148739-7-zhangqing@rock-chips.com>
- <241e4a1d-039c-4738-b492-6325ad354b2e@kwiboo.se>
-From: zhangqing <zhangqing@rock-chips.com>
-In-Reply-To: <241e4a1d-039c-4738-b492-6325ad354b2e@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a5bfc789903a3kunm7546de89d0ba50
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkxLS1YYGEIeTkMYHk1KTU9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=hjeXRbIZKGqrFICdB1kqNu3dwXdOT+P1jxNTtvyEstHWdhwoifFgOjQZSwrG10dy/VGWPY7VvdZjzRPI8s3aBYrmqWeb5QHSx4A54/3GU2T4PBh9VmTbLlayDjRSknD0tVfueUwKdeeWsTrdBgjqgLj2iyAUVe1GYEkQY8uP6AQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=sA/H1zHCsT5ahHBpYi3gh4ZWPxhCbz0Di/+yfh61YqI=;
-	h=date:mime-version:subject:message-id:from;
+
+--=-9Wrt8BcrBEO56xUhdjM+
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Aaron,
+
+Please again verify this change. This limits the scope.
+Patch attached.
+
+Thanks,
+Srinivas
+
+On Thu, 2025-11-06 at 11:31 -0600, Aaron Rainbolt wrote:
+> On Thu, 06 Nov 2025 07:23:14 -0800
+> srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
+>=20
+> > Hi Aaron,
+> >=20
+> > On Wed, 2025-09-10 at 15:33 -0500, Aaron Rainbolt wrote:
+> > > On Wed, 10 Sep 2025 10:15:00 -0700
+> > > srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
+> > > =C2=A0=20
+> > > > On Wed, 2025-09-10 at 11:36 -0500, Aaron Rainbolt wrote:=C2=A0=20
+> > > > > On Wed, 30 Apr 2025 16:29:09 +0200
+> > > > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+> > > > > =C2=A0=C2=A0=C2=A0=20
+> > > > > > On Tue, Apr 29, 2025 at 11:07=E2=80=AFPM Srinivas Pandruvada
+> > > > > > <srinivas.pandruvada@linux.intel.com> wrote:=C2=A0=C2=A0=C2=A0=
+=20
+> > > > > > >=20
+> > > > > > > When turbo mode is unavailable on a Skylake-X system,
+> > > > > > > executing
+> > > > > > > the
+> > > > > > > command:
+> > > > > > > "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"
+> > > > > > > results in an unchecked MSR access error: WRMSR to 0x199
+> > > > > > > (attempted to write 0x0000000100001300).=C2=A0=20
+> > Please try the attached patch, if this address this issue.
+>=20
+> I can confirm that this patch does resolve the issue when applied to
+> Kubuntu Focus's 6.14 kernel. CPU frequencies are available that
+> require
+> turbo boost, and `cat /sys/devices/system/cpu/intel_pstate` returns
+> `0`. The logs from `dmesg` also indicate that turbo was disabled
+> earlier in boot, but the warnings about turbo being disabled stop
+> appearing later on, even when manipulating the `no_turbo` file:
+>=20
+> [=C2=A0=C2=A0 25.893012] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 25.893019] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 25.950587] NET: Registered PF_QIPCRTR protocol family
+> [=C2=A0=C2=A0 26.599013] Realtek Internal NBASE-T PHY r8169-0-6c00:00: at=
+tached
+> PHY driver (mii_bus:phy_addr=3Dr8169-0-6c00:00, irq=3DMAC)
+> [=C2=A0=C2=A0 26.725959] ACPI BIOS Error (bug): Could not resolve symbol
+> [\_TZ.ETMD], AE_NOT_FOUND (20240827/psargs-332)
+>=20
+> [=C2=A0=C2=A0 26.725976] No Local Variables are initialized for Method [_=
+OSC]
+>=20
+> [=C2=A0=C2=A0 26.725978] Initialized Arguments for Method [_OSC]:=C2=A0 (=
+4 arguments
+> defined for method invocation)
+> [=C2=A0=C2=A0 26.725979]=C2=A0=C2=A0 Arg0:=C2=A0=C2=A0 0000000030ddf166 <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Buffer(16)
+> 5D A8 3B B2 B7 C8 42 35
+> [=C2=A0=C2=A0 26.725991]=C2=A0=C2=A0 Arg1:=C2=A0=C2=A0 0000000002bd3ac4 <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Integer
+> 0000000000000001
+> [=C2=A0=C2=A0 26.725996]=C2=A0=C2=A0 Arg2:=C2=A0=C2=A0 0000000033eb047e <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Integer
+> 0000000000000002
+> [=C2=A0=C2=A0 26.725999]=C2=A0=C2=A0 Arg3:=C2=A0=C2=A0 00000000de6cf5f1 <=
+Obj>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Buffer(8)
+> 00 00 00 00 05 00 00 00
+>=20
+> [=C2=A0=C2=A0 26.726010] ACPI Error: Aborting method \_SB.IETM._OSC due t=
+o
+> previous error (AE_NOT_FOUND) (20240827/psparse-529)
+> [=C2=A0=C2=A0 26.726056] Consider using thermal netlink events interface
+> [=C2=A0=C2=A0 26.769209] r8169 0000:6c:00.0 enp108s0: Link is Down
+> [=C2=A0=C2=A0 26.857318] zram0: detected capacity change from 0 to 195035=
+136
+> [=C2=A0=C2=A0 26.864390] vboxdrv: Found 32 processor cores/threads
+> [=C2=A0=C2=A0 26.873227] Adding 97517564k swap on /dev/zram0.=C2=A0 Prior=
+ity:-2
+> extents:1 across:97517564k SS
+> [=C2=A0=C2=A0 26.880588] vboxdrv: TSC mode is Invariant, tentative freque=
+ncy
+> 2419194640 Hz
+> [=C2=A0=C2=A0 26.880592] vboxdrv: Successfully loaded version 7.2.4 r1709=
+95
+> (interface 0x00340001)
+> [=C2=A0=C2=A0 26.895725] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 26.895730] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 26.943715] iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION:=
+ 0x20
+> [=C2=A0=C2=A0 26.943746] iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION=
+: 0x1f
+> [=C2=A0=C2=A0 26.943755] iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+> [=C2=A0=C2=A0 26.943765] iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x0
+> [=C2=A0=C2=A0 26.944901] iwlwifi 0000:00:14.3: RFIm is deactivated, reaso=
+n =3D 5
+> [=C2=A0=C2=A0 27.045437] iwlwifi 0000:00:14.3: Registered PHC clock: iwlw=
+ifi-
+> PTP, with index: 0
+> [=C2=A0=C2=A0 27.098590] VBoxNetFlt: Successfully started.
+> [=C2=A0=C2=A0 27.101687] VBoxNetAdp: Successfully started.
+> [=C2=A0=C2=A0 27.153602] bridge: filtering via arp/ip/ip6tables is no lon=
+ger
+> available by default. Update your scripts to load br_netfilter if you
+> need this.
+> [=C2=A0=C2=A0 27.851014] loop14: detected capacity change from 0 to 8
+> [=C2=A0=C2=A0 27.895706] r8169 0000:6c:00.0: invalid VPD tag 0xff (size 0=
+) at
+> offset 0; assume missing optional EEPROM
+> [=C2=A0=C2=A0 28.898015] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 28.898021] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 31.900781] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 31.900788] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 33.959448] Bluetooth: RFCOMM TTY layer initialized
+> [=C2=A0=C2=A0 33.959456] Bluetooth: RFCOMM socket layer initialized
+> [=C2=A0=C2=A0 33.959462] Bluetooth: RFCOMM ver 1.11
+> [=C2=A0=C2=A0 36.903768] intel_pstate: Turbo is disabled
+> [=C2=A0=C2=A0 36.903777] intel_pstate: Turbo disabled by BIOS or unavaila=
+ble on
+> processor
+> [=C2=A0=C2=A0 38.054345] systemd-journald[883]:
+> /var/log/journal/a9e8e3d2041547169b107e1e1a23f2ce/user-1000.journal:
+> Journal file uses a different sequence number ID, rotating.
+> [=C2=A0=C2=A0 39.799560] warning: `kded5' uses wireless extensions which =
+will
+> stop working for Wi-Fi 7 hardware; use nl80211
+> [=C2=A0=C2=A0 40.884365] wlp0s20f3: authenticate with 18:ee:86:8b:16:a2 (=
+local
+> address=3D98:bd:80:8a:e9:27)
+> [=C2=A0=C2=A0 40.885147] wlp0s20f3: send auth to 18:ee:86:8b:16:a2 (try 1=
+/3)
+> [=C2=A0=C2=A0 40.968595] wlp0s20f3: authenticate with 18:ee:86:8b:16:a2 (=
+local
+> address=3D98:bd:80:8a:e9:27)
+> [=C2=A0=C2=A0 40.968603] wlp0s20f3: send auth to 18:ee:86:8b:16:a2 (try 1=
+/3)
+> [=C2=A0=C2=A0 40.980941] wlp0s20f3: authenticated
+> [=C2=A0=C2=A0 40.981904] wlp0s20f3: associate with 18:ee:86:8b:16:a2 (try=
+ 1/3)
+> [=C2=A0=C2=A0 41.042933] wlp0s20f3: RX AssocResp from 18:ee:86:8b:16:a2
+> (capab=3D0x1431 status=3D0 aid=3D14)
+> [=C2=A0=C2=A0 41.046917] wlp0s20f3: associated
+>=20
+> If you post the patch, I'm happy to add a `Tested-by` tag for it.
+> Thank you for your help!
+>=20
+> > Thanks,
+> > Srinivas
+>=20
+>=20
 
 
-在 2025/10/30 21:55, Jonas Karlman 写道:
-> Hi Elaine,
->
-> On 10/27/2025 9:41 AM, Elaine Zhang wrote:
->> From: Finley Xiao <finley.xiao@rock-chips.com>
->>
->> Add device tree bindings for clock and reset unit on RK3506 SoC.
->> Add clock and reset IDs for RK3506 SoC.
->>
->> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
->> ---
->>   .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
->>   .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
->>   .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
->>   3 files changed, 547 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
->>   create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
->>   create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
-> [snip]
->
->> diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
->> new file mode 100644
->> index 000000000000..f38cc066009b
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
->> @@ -0,0 +1,211 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->> +/*
->> + * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
->> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
->> +#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
->> +
->> +/* CRU-->SOFTRST_CON00 */
->> +#define SRST_NCOREPORESET0_AC		0
->> +#define SRST_NCOREPORESET1_AC		1
->> +#define SRST_NCOREPORESET2_AC		2
->> +#define SRST_NCORESET0_AC		3
->> +#define SRST_NCORESET1_AC		4
->> +#define SRST_NCORESET2_AC		5
->> +#define SRST_NL2RESET_AC		6
->> +#define SRST_ARESETN_CORE_BIU_AC	7
->> +#define SRST_HRESETN_M0_AC		8
->> +
->> +/* CRU-->SOFTRST_CON02 */
->> +#define SRST_NDBGRESET			9
->> +#define SRST_PRESETN_CORE_BIU		10
->> +#define SRST_RESETN_PMU			11
->> +
->> +/* CRU-->SOFTRST_CON03 */
->> +#define SRST_PRESETN_DBG		12
->> +#define SRST_POTRESETN_DBG		13
->> +#define SRST_PRESETN_CORE_GRF		14
->> +#define SRST_RESETN_CORE_EMA_DETECT	15
->> +#define SRST_RESETN_REF_PVTPLL_CORE	16
->> +#define SRST_PRESETN_GPIO1		17
->> +#define SRST_DBRESETN_GPIO1		18
->> +
->> +/* CRU-->SOFTRST_CON04 */
->> +#define SRST_ARESETN_CORE_PERI_BIU	19
->> +#define SRST_ARESETN_DSMC		20
->> +#define SRST_PRESETN_DSMC		21
->> +#define SRST_RESETN_FLEXBUS		22
->> +#define SRST_ARESETN_FLEXBUS		23
->> +#define SRST_HRESETN_FLEXBUS		24
->> +#define SRST_ARESETN_DSMC_SLV		25
->> +#define SRST_HRESETN_DSMC_SLV		26
->> +#define SRST_RESETN_DSMC_SLV		27
->> +
->> +/* CRU-->SOFTRST_CON05 */
->> +#define SRST_ARESETN_BUS_BIU		28
->> +#define SRST_HRESETN_BUS_BIU		29
->> +#define SRST_PRESETN_BUS_BIU		30
->> +#define SRST_ARESETN_SYSRAM		31
->> +#define SRST_HRESETN_SYSRAM		32
->> +#define SRST_ARESETN_DMAC0		33
->> +#define SRST_ARESETN_DMAC1		34
->> +#define SRST_HRESETN_M0			35
->> +#define SRST_RESETN_M0_JTAG		36
->> +#define SRST_HRESETN_CRYPTO		37
-> Is there a reason why this (and the RV1126B) reset names now include the
-> RESETN name in all reset constant?
->
-> For RK3528 and prior mainline SoCs the RESETN part of the name has been
-> striped from the constant, suggest we also strip the RESETN part for
-> RK3506 and RV1126B for consistency with other RK SoCs.
-The reset id and rst-rk3506.c were automatically generated from our trm 
-using tools, while some of the previous chips were filled in manually.
+--=-9Wrt8BcrBEO56xUhdjM+
+Content-Disposition: attachment;
+	filename*0=0001-cpufreq-intel_pstate-Check-IDA-feature-only-during-M.pat;
+	filename*1=ch
+Content-Type: text/x-patch;
+	name="0001-cpufreq-intel_pstate-Check-IDA-feature-only-during-M.patch";
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-It is not recommended to manually modify the content generated by the 
-tool to avoid unnecessary errors.
+RnJvbSAxNGE3MjI1ZGVhODZkZjBmMjg4Zjk0ZGYxNzRlM2QxZmNkMGExOGVkIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTcmluaXZhcyBQYW5kcnV2YWRhIDxzcmluaXZhcy5wYW5kcnV2
+YWRhQGxpbnV4LmludGVsLmNvbT4KRGF0ZTogVGh1LCA2IE5vdiAyMDI1IDE3OjM0OjA5IC0wODAw
+ClN1YmplY3Q6IFtQQVRDSF0gY3B1ZnJlcTogaW50ZWxfcHN0YXRlOiBDaGVjayBJREEgZmVhdHVy
+ZSBvbmx5IGR1cmluZyBNU1IKIDB4MTk5IHdyaXRlCgpDb21taXQgMGZiNWJlN2ZlYTk4ICgiY3B1
+ZnJlcTogaW50ZWxfcHN0YXRlOiBVbmNoZWNrZWQgTVNSIGFjZWVzcyBpbgpsZWdhY3kgbW9kZSIp
+IGludHJvZHVjZWQgYSBjaGVjayBmb3IgZmVhdHVyZSBYODZfRkVBVFVSRV9JREEgdG8gdmVyaWZ5
+CnR1cmJvIG1vZGUgc3VwcG9ydC4gQWx0aG91Z2ggdGhpcyBpcyB0aGUgY29ycmVjdCB3YXkgdG8g
+Y2hlY2sgZm9yIHR1cmJvCm1vZGUsIGl0IGNhdXNlcyBpc3N1ZXMgb24gc29tZSBwbGF0Zm9ybXMg
+dGhhdCBkaXNhYmxlIHR1cmJvIGR1cmluZyBPUwpib290IGJ1dCBlbmFibGUgaXQgbGF0ZXIuIFdp
+dGhvdXQgdGhpcyBmZWF0dXJlIGNoZWNrLCB1c2VycyB3ZXJlIGFibGUgdG8Kd3JpdGUgMCB0byAv
+c3lzL2RldmljZXMvc3lzdGVtL2NwdS9pbnRlbF9wc3RhdGUvbm9fdHVyYm8gcG9zdC1ib290IHRv
+CmdldCB0dXJibyBtb2RlIGZyZXF1ZW5jaWVzLgoKVG8gcmVzdG9yZSB0aGUgb2xkIGJlaGF2aW9y
+IHdoaWxlIHN0aWxsIGFkZHJlc3NpbmcgdGhlIHVuY2hlY2tlZCBNU1IKaXNzdWUgb24gc29tZSBT
+a3lsYWtlLVggc3lzdGVtcywgbGltaXQgdGhlIFg4Nl9GRUFUVVJFX0lEQSBjaGVjayB0byBvbmx5
+CndoZW4gc2V0dGluZyBNU1IgMHgxOTkgVHVyYm8gRW5nYWdlIEJpdCAoYml0IDMyKS4KCkZpeGVz
+OiAwZmI1YmU3ZmVhOTggKCJjcHVmcmVxOiBpbnRlbF9wc3RhdGU6IFVuY2hlY2tlZCBNU1IgYWNl
+ZXNzIGluIGxlZ2FjeSBtb2RlIikKU2lnbmVkLW9mZi1ieTogU3Jpbml2YXMgUGFuZHJ1dmFkYSA8
+c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5jb20+Ci0tLQogZHJpdmVycy9jcHVmcmVx
+L2ludGVsX3BzdGF0ZS5jIHwgOSArKysrLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlv
+bnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcHVmcmVxL2ludGVs
+X3BzdGF0ZS5jIGIvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5jCmluZGV4IDQzZTg0N2U5
+Zjc0MS4uMzhhOGU4NzdmMjIyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2NwdWZyZXEvaW50ZWxfcHN0
+YXRlLmMKKysrIGIvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5jCkBAIC01OTgsOSArNTk4
+LDYgQEAgc3RhdGljIGJvb2wgdHVyYm9faXNfZGlzYWJsZWQodm9pZCkKIHsKIAl1NjQgbWlzY19l
+bjsKIAotCWlmICghY3B1X2ZlYXR1cmVfZW5hYmxlZChYODZfRkVBVFVSRV9JREEpKQotCQlyZXR1
+cm4gdHJ1ZTsKLQogCXJkbXNybChNU1JfSUEzMl9NSVNDX0VOQUJMRSwgbWlzY19lbik7CiAKIAly
+ZXR1cm4gISEobWlzY19lbiAmIE1TUl9JQTMyX01JU0NfRU5BQkxFX1RVUkJPX0RJU0FCTEUpOwpA
+QCAtMjAxNCw3ICsyMDExLDggQEAgc3RhdGljIHU2NCBhdG9tX2dldF92YWwoc3RydWN0IGNwdWRh
+dGEgKmNwdWRhdGEsIGludCBwc3RhdGUpCiAJdTMyIHZpZDsKIAogCXZhbCA9ICh1NjQpcHN0YXRl
+IDw8IDg7Ci0JaWYgKFJFQURfT05DRShnbG9iYWwubm9fdHVyYm8pICYmICFSRUFEX09OQ0UoZ2xv
+YmFsLnR1cmJvX2Rpc2FibGVkKSkKKwlpZiAoUkVBRF9PTkNFKGdsb2JhbC5ub190dXJibykgJiYg
+IVJFQURfT05DRShnbG9iYWwudHVyYm9fZGlzYWJsZWQpICYmCisJICAgIGNwdV9mZWF0dXJlX2Vu
+YWJsZWQoWDg2X0ZFQVRVUkVfSURBKSkKIAkJdmFsIHw9ICh1NjQpMSA8PCAzMjsKIAogCXZpZF9m
+cCA9IGNwdWRhdGEtPnZpZC5taW4gKyBtdWxfZnAoCkBAIC0yMTc5LDcgKzIxNzcsOCBAQCBzdGF0
+aWMgdTY0IGNvcmVfZ2V0X3ZhbChzdHJ1Y3QgY3B1ZGF0YSAqY3B1ZGF0YSwgaW50IHBzdGF0ZSkK
+IAl1NjQgdmFsOwogCiAJdmFsID0gKHU2NClwc3RhdGUgPDwgODsKLQlpZiAoUkVBRF9PTkNFKGds
+b2JhbC5ub190dXJibykgJiYgIVJFQURfT05DRShnbG9iYWwudHVyYm9fZGlzYWJsZWQpKQorCWlm
+IChSRUFEX09OQ0UoZ2xvYmFsLm5vX3R1cmJvKSAmJiAhUkVBRF9PTkNFKGdsb2JhbC50dXJib19k
+aXNhYmxlZCkgJiYKKwkgICAgY3B1X2ZlYXR1cmVfZW5hYmxlZChYODZfRkVBVFVSRV9JREEpKQog
+CQl2YWwgfD0gKHU2NCkxIDw8IDMyOwogCiAJcmV0dXJuIHZhbDsKLS0gCjIuNDMuMAoK
 
-It is not necessary to change SRST_HRESETN_CRYPTO to SRST_H_CRYPTO.
 
->
-> Regards,
-> Jonas
->
-> [snip]
->
--- 
-张晴
-瑞芯微电子股份有限公司
-Rockchip Electronics Co.,Ltd
-地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
-Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
-Tel:+86-0591-83991906-8601
-邮编：350003
-E-mail:elaine.zhang@rock-chips.com
-****************************************************************************
-保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
-
-IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
-
-****************************************************************************
-
+--=-9Wrt8BcrBEO56xUhdjM+--
 
