@@ -1,104 +1,400 @@
-Return-Path: <linux-kernel+bounces-891000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA3DC418CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:13:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07522C418F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A45E84EE974
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:13:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8577F4F1C00
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C54D30AABC;
-	Fri,  7 Nov 2025 20:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9579430DD35;
+	Fri,  7 Nov 2025 20:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="vaitNBo9"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5yxZYMW"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FC43090E8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B575320391
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762546356; cv=none; b=tayXwqQx7Eb6jllFfpNlXSGkdESM30vBCUNFhFhtRYe9zWSOF9ULAyahbjLaPqheWRFdkU/oSkezGOkFegJEPrWRUS3CuSuGNJeDpgYpMkAKI6RwJqvZs85Ur8OSeU+ilxhDI0X5HRdMXsnrYteVymaEdMLgM3S8t4IivA6bT+E=
+	t=1762546384; cv=none; b=FdAiFQ7vY+NLCdNnT2zi61kEmtLGIUbRiuh8tobtvmIG+t8W3oUDT5mFQcyGTRLEi9SodupcEHLbEfNsAA0xV4m9bLMctN+BT+8dDguVYMQbEt3U5wDgjaJGGAaVS1T9aOj0nF5WqXeqTJhYqGJTa1R/1R3Q3aM36GsW32miBIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762546356; c=relaxed/simple;
-	bh=xhuY738tZl353Xy0fNRI/QG1yk1TSCZTX05qyNUVL30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+FbFJ7qH7XiAwBSf9QrNB6Y/t/Z7JAr+tmp6XzcjfzmATAhf8VSWPQ64E+pbJlVulsJMQvzyKv+WaygO1/P6MSBoOMf303MuZMWrWatf31U48CNnnLrljbtCwfgW62Zsmg4NQOfdYGBupfmS/DYbVhl8slF9D3c+YD2cVB7Pwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=vaitNBo9; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-8b22efd44d8so128868985a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:12:33 -0800 (PST)
+	s=arc-20240116; t=1762546384; c=relaxed/simple;
+	bh=OJO2xSgxar2IxgfmRA7vKrNBBYE2vrWHFsE1Ua95Rbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jo6DFolzSj3iej/8mcBkaXHKheArtc5Nbhzy4aosmGSlR7Su8f7XuoZvNTJq1UC+hUHc0rwoMFafhBelpA++Z/WHPuQp94T8ezgpZ+KWlZO9WY+GqOfKQ0QiLFHK2OYqT0pgquURdgQRLzk8PknG6cDglBslY+Is02wFURE+VVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5yxZYMW; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7afd7789ccdso1165693b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:13:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1762546353; x=1763151153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WPIKY3pDWsZYiW/KD6AWR+JZdgeQXYTbfkJenmEgskU=;
-        b=vaitNBo9rBs66HultLferXYUElO/jsbDUQ8OEDAsnkQTpHqaQ22X9HIFivEMgAQ9Dt
-         q8X2xwWIdafUEBfqsiIVy9QFFTMsSc2uN1fX0YrAm46qRZhKJzbUz2XLVbUhgI+e+JXR
-         FGl67rDPCCt2X87JgJqSKeBI0xK7156IYdcfOCWV3BwyNSyILGiVXb3YRrv8mGlcmkLr
-         11codF3F3zHBxGti0S/bO3wObBNodnfo709ap2+odXUCe5hNXtXuczfLgzctGc1il5eX
-         kdk2lPC/O39Up/PTnq2lkz0cXLUgJ4qBbXmVYMVx7a0pUpX2UO9Nmyjlt1WKixTXsE4a
-         LMAA==
+        d=gmail.com; s=20230601; t=1762546381; x=1763151181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7WSv8Aw/7fkJYwtWG+mu3XdUcZ3be7F0tZpqyDku934=;
+        b=l5yxZYMWjOJ7021+gKorLrYXTsSmD9ZQQtHwPLMddB5DkCXsXy6m8ekWZ/Axyq7iN/
+         XBikO4aXvLtCinLi46T2fPE6g6pK1cmdqkpLgvnLMJ93TAIKm4w/RjtqUoJZwPizbGvO
+         hLLpdWZ0989s9ZMsb32DpyVK82FF0i2Enn3piD4ZSjyR+W935uOjMv3eTJxy+UqpFZlh
+         1C5gfNOm35qzYgkxXIgtkPx73MHBhcH9H2rFUxYsb/zafv3r3+9CQRBEkXmGEYvvqbvh
+         fYW4Jn5IEax2NqNisa+2bq9XK0VX9GWE3yclot106Q5pGDY2gJOIopwNm2IQf93X6Ujb
+         038A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762546353; x=1763151153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WPIKY3pDWsZYiW/KD6AWR+JZdgeQXYTbfkJenmEgskU=;
-        b=jp3O7Od5CT/AtB3FT813mC3jdmJUacMy7AI4rYscQs2Ezu9RXOYXaHxJ90e7svWVD5
-         j4EXNKi4hUIiKWAonjEIx4aLXu9bJ/3ZYO5ZiHOaYNC+0KXM7Rzc216Bac314URgKSHE
-         OxELZqXG1w1Z4IoUcvaTwII+UREUBxmT4NuyFckjHBW7C4Emqa2VC7OPU78Tgwttt9Qd
-         YyUOd/OVkhZk4l2hDa6zoKsyI00f51FDy/FFd7mfwGunSz7tX/6GlgO+68sD75okh/5K
-         svzrVfStqD8F5tbN3E6VgmIJScU3EZScUHWTSur9Hw59kV9v6ntLWnKl9KUV7cOPWSQK
-         lDyg==
-X-Gm-Message-State: AOJu0YyC7NG4OPsBmtYDvV/OTURsQV3CMuaJD10NHoAC9QEOhsJVcDve
-	kEMOmmfFFMZ2XDjR1S9GRLmEXhCyUiLKSkigfDN+5gGKeVcu2BT+18R9Nspjz9yKzBIcQd77Unc
-	QyK0k/hw=
-X-Gm-Gg: ASbGncsKLyRaR4rTTF9BlRkFMTPfpPdk+m1Sv4Mb8MuH6dMrnwtYptJtADc9E1kohQM
-	APy9vhOCLdZmpbslu6EzNOHa8atNSZNVCzIgW+5sVvuqahO6WCOvCI+2J2DjuEN9Smj+b1/aPtH
-	HvQA/4nKNW7l1kgm2PdXa/H5c+QRTN/h5Rpx/4eOLmOamFWQ8Skqs5W1j6DVyjYWZZf+WoKt8Ol
-	M2NZ2d1Lc6TXVMP7vJs9CfFwLkZw6Y1ShWtAQf8jJ3EWOMe1/zlp0fKL2ZgGiUM76m/B43oG5Dq
-	eiSdozG5gTxFi9XWPb286N4XzB5b1ieoFGEQ9gWv4zQN+Te4DkdPP/L4RBUTIoJWIYeik8GTzFQ
-	AfL00qc6E+vl8aidOonmslmcL8Wp/aZpEbAbyYwQMZ3x4r1cKQ50A3Cb6udr/5xvvDUE6wo6K/r
-	c3P/+H3wTX21719MI/LU6AMJO58bu4sA==
-X-Google-Smtp-Source: AGHT+IFsLLiomLTVAKf0UK7Kqv+I/lwIiIqePUIuZ3D8VSGGRtsZSWpNNzYLl1SSmqIrjJUQd1Y7Lg==
-X-Received: by 2002:a05:620a:44ce:b0:8b2:33bd:7331 with SMTP id af79cd13be357-8b257f68729mr69675385a.83.1762546353068;
-        Fri, 07 Nov 2025 12:12:33 -0800 (PST)
-Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-8b2355e9bb6sm476602085a.22.2025.11.07.12.12.32
+        d=1e100.net; s=20230601; t=1762546381; x=1763151181;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7WSv8Aw/7fkJYwtWG+mu3XdUcZ3be7F0tZpqyDku934=;
+        b=EAb78FzHrEjsGIG4W2smvyeB9enDanZgLcDZa2IOf7rA3mQghoZZ23hXyafeBzS0Fh
+         p1bNv4ZjxjalFHALBxmhl5Fy7Iw4mbqjsH0J50hakjD3Q0bT/rbadMK2I5foc79YatIe
+         nsqjI3gkmEbtijvDn5fwgLsmxw8v8ndwgqUP8UCRJJ8SlSwSVP1z5b33aYLTBIzzFJ9I
+         i1WhZoiUg3AhPz7fNMx6ACpUX6lUJcuRay+RG5oaDT0qv2HMpwX9ghpBmonPv385bcdz
+         F8kByH5uUPKwiD5tGXWUr45w/MLUBYZ8m+6U3GHDdR2tbtrAXvSVrHBW0a3kqoKNOclU
+         OgCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9MTYaNlWNQr5MF7dUkzSSShFaoZt3DO8RJnRN3m5H3eJQyRL0B+q8j7p7XiWZ1lDt6uLBRxq2dJQP+C4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/eR1QheK4FT4Vm2EsCg6NNIyqHyoKRY+WiH4X3JnKJGFoXk1c
+	a/guOZRK0UDA818mZJ620+OkVY/wqpPxJNQTJBY6rDQxWNgonNw5/VaL
+X-Gm-Gg: ASbGncsy1SsKKdmE6WVbuncVGz0giurjkx3zPJKPHLxY0L5rRP02MnL6Bb1JJPF7SBG
+	v8yiM5ADTSw9neS7WZKG9wKuZH52RZ6Bo+OT6PgZDth3INFWk3sRvIg8qPInx0L+W6N7kodisOc
+	LjmtL9+nJJ0GGdyB43oLgTqGfk4ohIBjoI2RXR6BNHifw0fCUuSG7Fh+bHWUoBGn5YchkkzP7b5
+	tE/Y3iy5HNSREbkcLLr+77Tjwocm+dtxXnbojKiYRrV40hEXOCqJHak6Kd8NziDMyxqfnxeJXV4
+	xsqcBH+Ct9LiYUWZnqw9wUjYLE+I7LyA3oCG9GlNxuDFngJlu12iowDG6cMXAaz8G9EfeqTuz+N
+	/1cmOqXwqGq4acgTSxLCLqf6xHQItIQ3XJ1uzSXn27MdRUAxCibrnVVIFsxY4R1B+u/83oBLfzr
+	Cmq11SGp/hqNUwa2ehC20cxg==
+X-Google-Smtp-Source: AGHT+IE+5yFYqM5mDxRsnnBXUa+vUiRM7ZVmLo9HA3291G0opu0viMVqZfKTydYEwq5VYS1zEOjqKA==
+X-Received: by 2002:a05:6a21:3298:b0:342:15d3:eed8 with SMTP id adf61e73a8af0-353a426f0a6mr417893637.58.1762546381442;
+        Fri, 07 Nov 2025 12:13:01 -0800 (PST)
+Received: from iku.. ([2401:4900:1c07:5fe8:9724:b1da:3d06:ab48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17784bsm3828553b3a.47.2025.11.07.12.12.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 12:12:32 -0800 (PST)
-Date: Fri, 7 Nov 2025 15:12:31 -0500
-From: Nick Bowler <nbowler@draconx.ca>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: PROBLEM: boot hang on Indy R4400SC (regression)
-Message-ID: <ea6p4efuwbrlqjiwkgjcd7ofj7aahfnnvnkooo2il36ggzrlcj@n6mcofpb2jep>
-References: <g3scb7mfjbsohdszieqkappslj6m7qu3ou766nckt2remg3ide@izgvehzcdbsu>
- <e4ed75c7-b108-437f-b44b-69a9b340c085@app.fastmail.com>
+        Fri, 07 Nov 2025 12:13:00 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v2 2/3] net: phy: mscc: Consolidate probe functions into a common helper
+Date: Fri,  7 Nov 2025 20:12:31 +0000
+Message-ID: <20251107201232.282152-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251107201232.282152-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251107201232.282152-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e4ed75c7-b108-437f-b44b-69a9b340c085@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 07, 2025 at 07:29:25PM +0000, Jiaxun Yang wrote:
-> Unfortunately my Indy won't go over ARCS prom so I'm not in a position
-> to debug this on my side. I have inspected the code again and I can't
-> see anything preventing it to work on R4000 family.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I'll try adding some extra prints to at least figure out where it is
-actually hanging.
+Unify the probe implementations of the VSC85xx PHY family into a single
+vsc85xx_probe_common() helper. The existing probe functions for the
+vsc85xx, vsc8514, vsc8574, and vsc8584 variants contained almost
+identical initialization logic, differing only in configuration
+parameters such as the number of LEDs, supported LED modes, hardware
+statistics, and PTP support.
 
-Thanks,
-  Nick
+Introduce a vsc85xx_probe_config structure to describe the per-variant
+parameters, and move all common setup code into the shared helper. Each
+variant's probe function now defines a constant configuration instance
+and calls vsc85xx_probe_common().
+
+Also mark the default LED mode array parameter as const to match its
+usage.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1->v2:
+- New patch
+---
+ drivers/net/phy/mscc/mscc_main.c | 205 ++++++++++++++++---------------
+ 1 file changed, 109 insertions(+), 96 deletions(-)
+
+diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
+index 032050ec0bc9..788344b7eb38 100644
+--- a/drivers/net/phy/mscc/mscc_main.c
++++ b/drivers/net/phy/mscc/mscc_main.c
+@@ -22,6 +22,24 @@
+ #include "mscc_serdes.h"
+ #include "mscc.h"
+ 
++struct vsc85xx_probe_config {
++	const struct vsc85xx_hw_stat *hw_stats;
++	u8 nleds;
++	u16 supp_led_modes;
++	size_t nstats;
++	bool use_package;
++	size_t shared_size;
++	bool has_ptp;
++	bool check_rate_magic;
++};
++
++static const u32 vsc85xx_default_led_modes_4[] = {
++	VSC8531_LINK_1000_ACTIVITY,
++	VSC8531_LINK_100_ACTIVITY,
++	VSC8531_LINK_ACTIVITY,
++	VSC8531_DUPLEX_COLLISION
++};
++
+ static const struct vsc85xx_hw_stat vsc85xx_hw_stats[] = {
+ 	{
+ 		.string	= "phy_receive_errors",
+@@ -436,7 +454,7 @@ static int vsc85xx_dt_led_mode_get(struct phy_device *phydev,
+ #endif /* CONFIG_OF_MDIO */
+ 
+ static int vsc85xx_dt_led_modes_get(struct phy_device *phydev,
+-				    u32 *default_mode)
++				    const u32 *default_mode)
+ {
+ 	struct vsc8531_private *priv = phydev->priv;
+ 	char led_dt_prop[28];
+@@ -2211,41 +2229,19 @@ static int vsc85xx_config_inband(struct phy_device *phydev, unsigned int modes)
+ 				reg_val);
+ }
+ 
+-static int vsc8514_probe(struct phy_device *phydev)
++static int vsc85xx_probe_common(struct phy_device *phydev,
++				const struct vsc85xx_probe_config *cfg,
++				const u32 *default_led_mode)
+ {
+ 	struct vsc8531_private *vsc8531;
+-	u32 default_mode[4] = {VSC8531_LINK_1000_ACTIVITY,
+-	   VSC8531_LINK_100_ACTIVITY, VSC8531_LINK_ACTIVITY,
+-	   VSC8531_DUPLEX_COLLISION};
+-
+-	vsc8531 = devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP_KERNEL);
+-	if (!vsc8531)
+-		return -ENOMEM;
+-
+-	phydev->priv = vsc8531;
+-
+-	vsc8584_get_base_addr(phydev);
+-	devm_phy_package_join(&phydev->mdio.dev, phydev,
+-			      vsc8531->base_addr, 0);
+-
+-	vsc8531->nleds = 4;
+-	vsc8531->supp_led_modes = VSC85XX_SUPP_LED_MODES;
+-	vsc8531->hw_stats = vsc85xx_hw_stats;
+-	vsc8531->nstats = ARRAY_SIZE(vsc85xx_hw_stats);
+-	vsc8531->stats = devm_kcalloc(&phydev->mdio.dev, vsc8531->nstats,
+-				      sizeof(u64), GFP_KERNEL);
+-	if (!vsc8531->stats)
+-		return -ENOMEM;
+-
+-	return vsc85xx_dt_led_modes_get(phydev, default_mode);
+-}
++	int ret;
+ 
+-static int vsc8574_probe(struct phy_device *phydev)
+-{
+-	struct vsc8531_private *vsc8531;
+-	u32 default_mode[4] = {VSC8531_LINK_1000_ACTIVITY,
+-	   VSC8531_LINK_100_ACTIVITY, VSC8531_LINK_ACTIVITY,
+-	   VSC8531_DUPLEX_COLLISION};
++	/* Check rate magic if needed (only for non-package PHYs) */
++	if (cfg->check_rate_magic) {
++		ret = vsc85xx_edge_rate_magic_get(phydev);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	vsc8531 = devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP_KERNEL);
+ 	if (!vsc8531)
+@@ -2253,90 +2249,107 @@ static int vsc8574_probe(struct phy_device *phydev)
+ 
+ 	phydev->priv = vsc8531;
+ 
+-	vsc8584_get_base_addr(phydev);
+-	devm_phy_package_join(&phydev->mdio.dev, phydev,
+-			      vsc8531->base_addr, 0);
+-
+-	vsc8531->nleds = 4;
+-	vsc8531->supp_led_modes = VSC8584_SUPP_LED_MODES;
+-	vsc8531->hw_stats = vsc8584_hw_stats;
+-	vsc8531->nstats = ARRAY_SIZE(vsc8584_hw_stats);
+-	vsc8531->stats = devm_kcalloc(&phydev->mdio.dev, vsc8531->nstats,
+-				      sizeof(u64), GFP_KERNEL);
+-	if (!vsc8531->stats)
+-		return -ENOMEM;
+-
+-	return vsc85xx_dt_led_modes_get(phydev, default_mode);
+-}
+-
+-static int vsc8584_probe(struct phy_device *phydev)
+-{
+-	struct vsc8531_private *vsc8531;
+-	u32 default_mode[4] = {VSC8531_LINK_1000_ACTIVITY,
+-	   VSC8531_LINK_100_ACTIVITY, VSC8531_LINK_ACTIVITY,
+-	   VSC8531_DUPLEX_COLLISION};
+-	int ret;
+-
+-	vsc8531 = devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP_KERNEL);
+-	if (!vsc8531)
+-		return -ENOMEM;
++	/* Store rate magic if it was checked */
++	if (cfg->check_rate_magic)
++		vsc8531->rate_magic = ret;
+ 
+-	phydev->priv = vsc8531;
++	/* Set up package if needed */
++	if (cfg->use_package) {
++		vsc8584_get_base_addr(phydev);
++		devm_phy_package_join(&phydev->mdio.dev, phydev,
++				      vsc8531->base_addr, cfg->shared_size);
++	}
+ 
+-	vsc8584_get_base_addr(phydev);
+-	devm_phy_package_join(&phydev->mdio.dev, phydev, vsc8531->base_addr,
+-			      sizeof(struct vsc85xx_shared_private));
++	/* Configure LED settings */
++	vsc8531->nleds = cfg->nleds;
++	vsc8531->supp_led_modes = cfg->supp_led_modes;
+ 
+-	vsc8531->nleds = 4;
+-	vsc8531->supp_led_modes = VSC8584_SUPP_LED_MODES;
+-	vsc8531->hw_stats = vsc8584_hw_stats;
+-	vsc8531->nstats = ARRAY_SIZE(vsc8584_hw_stats);
++	/* Configure hardware stats */
++	vsc8531->hw_stats = cfg->hw_stats;
++	vsc8531->nstats = cfg->nstats;
+ 	vsc8531->stats = devm_kcalloc(&phydev->mdio.dev, vsc8531->nstats,
+ 				      sizeof(u64), GFP_KERNEL);
+ 	if (!vsc8531->stats)
+ 		return -ENOMEM;
+ 
+-	if (phy_package_probe_once(phydev)) {
+-		ret = vsc8584_ptp_probe_once(phydev);
++	/* PTP setup for VSC8584 */
++	if (cfg->has_ptp) {
++		if (phy_package_probe_once(phydev)) {
++			ret = vsc8584_ptp_probe_once(phydev);
++			if (ret)
++				return ret;
++		}
++
++		ret = vsc8584_ptp_probe(phydev);
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+-	ret = vsc8584_ptp_probe(phydev);
+-	if (ret)
+-		return ret;
++	/* Parse LED modes from device tree */
++	return vsc85xx_dt_led_modes_get(phydev, default_led_mode);
++}
+ 
+-	return vsc85xx_dt_led_modes_get(phydev, default_mode);
++static int vsc8514_probe(struct phy_device *phydev)
++{
++	static const struct vsc85xx_probe_config vsc8514_cfg = {
++		.nleds = 4,
++		.supp_led_modes = VSC85XX_SUPP_LED_MODES,
++		.hw_stats = vsc85xx_hw_stats,
++		.nstats = ARRAY_SIZE(vsc85xx_hw_stats),
++		.use_package = true,
++		.shared_size = 0,
++		.has_ptp = false,
++		.check_rate_magic = false,
++	};
++
++	return vsc85xx_probe_common(phydev, &vsc8514_cfg, vsc85xx_default_led_modes_4);
+ }
+ 
+-static int vsc85xx_probe(struct phy_device *phydev)
++static int vsc8574_probe(struct phy_device *phydev)
+ {
+-	struct vsc8531_private *vsc8531;
+-	int rate_magic;
+-	u32 default_mode[2] = {VSC8531_LINK_1000_ACTIVITY,
+-	   VSC8531_LINK_100_ACTIVITY};
++	static const struct vsc85xx_probe_config vsc8574_cfg = {
++		.nleds = 4,
++		.supp_led_modes = VSC8584_SUPP_LED_MODES,
++		.hw_stats = vsc8584_hw_stats,
++		.nstats = ARRAY_SIZE(vsc8584_hw_stats),
++		.use_package = true,
++		.shared_size = 0,
++		.has_ptp = false,
++		.check_rate_magic = false,
++	};
+ 
+-	rate_magic = vsc85xx_edge_rate_magic_get(phydev);
+-	if (rate_magic < 0)
+-		return rate_magic;
++	return vsc85xx_probe_common(phydev, &vsc8574_cfg, vsc85xx_default_led_modes_4);
++}
+ 
+-	vsc8531 = devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP_KERNEL);
+-	if (!vsc8531)
+-		return -ENOMEM;
++static int vsc8584_probe(struct phy_device *phydev)
++{
++	static const struct vsc85xx_probe_config vsc8584_cfg = {
++		.nleds = 4,
++		.supp_led_modes = VSC8584_SUPP_LED_MODES,
++		.hw_stats = vsc8584_hw_stats,
++		.nstats = ARRAY_SIZE(vsc8584_hw_stats),
++		.use_package = true,
++		.shared_size = sizeof(struct vsc85xx_shared_private),
++		.has_ptp = true,
++		.check_rate_magic = false,
++	};
+ 
+-	phydev->priv = vsc8531;
++	return vsc85xx_probe_common(phydev, &vsc8584_cfg, vsc85xx_default_led_modes_4);
++}
+ 
+-	vsc8531->rate_magic = rate_magic;
+-	vsc8531->nleds = 2;
+-	vsc8531->supp_led_modes = VSC85XX_SUPP_LED_MODES;
+-	vsc8531->hw_stats = vsc85xx_hw_stats;
+-	vsc8531->nstats = ARRAY_SIZE(vsc85xx_hw_stats);
+-	vsc8531->stats = devm_kcalloc(&phydev->mdio.dev, vsc8531->nstats,
+-				      sizeof(u64), GFP_KERNEL);
+-	if (!vsc8531->stats)
+-		return -ENOMEM;
++static int vsc85xx_probe(struct phy_device *phydev)
++{
++	static const struct vsc85xx_probe_config vsc85xx_cfg = {
++		.nleds = 2,
++		.supp_led_modes = VSC85XX_SUPP_LED_MODES,
++		.hw_stats = vsc85xx_hw_stats,
++		.nstats = ARRAY_SIZE(vsc85xx_hw_stats),
++		.use_package = false,
++		.has_ptp = false,
++		.check_rate_magic = true,
++	};
+ 
+-	return vsc85xx_dt_led_modes_get(phydev, default_mode);
++	return vsc85xx_probe_common(phydev, &vsc85xx_cfg, vsc85xx_default_led_modes_4);
+ }
+ 
+ static void vsc85xx_remove(struct phy_device *phydev)
+-- 
+2.43.0
+
 
