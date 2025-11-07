@@ -1,100 +1,99 @@
-Return-Path: <linux-kernel+bounces-889912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A46C3ED0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:50:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EAEC3ED25
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA001882F9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED04188D245
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53414309EE3;
-	Fri,  7 Nov 2025 07:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD4C30E838;
+	Fri,  7 Nov 2025 07:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imw/8Vrn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="r5pOpe4t"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7D7171C9;
-	Fri,  7 Nov 2025 07:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B59171C9;
+	Fri,  7 Nov 2025 07:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762501845; cv=none; b=IFaGjkwtGwY59+WHQxgEaEzhQWrLtp+2kxdldW0MUWbFO5bXjQsnl3BTZ+ngs9AvuYPMZGgtavprH6q1Lvds6BzXZfDYDDuDnx+QJjqTY/uWIgdvRRKs32Y0h6D8WkEJQtm4xiiCEav5/242o6ZEF8OilWgy9NG5eaOgrH5W7ZE=
+	t=1762502007; cv=none; b=hcW9dr0dJkdwLcdJs1qfstuq1q1LEGVx5qzw+TDO5N4Z2CgZXSWqeW5IcpRYBWwd+JnXImqQdM+PnVdjSE+S038axv2BjZLHjRqMvhj48vvABHn+IX0QV//f7UojhH2Lvxoyoq1jbjpjgBcqcl48RwrZuohI30z3vPGPFzBG/MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762501845; c=relaxed/simple;
-	bh=ZXzKa8ciq7q/j+7BGMdEknERpfHO5K+oFihg98YcdwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvv29ZNJ4vTgvb2270MqJs47Vm+UasRYaTkpVUjVofye7SWfl4Ve/7Mv/nNwfbnoyx3M105XpOoOmVcFj75V7gcBGV+XpUEDLp2WNvmoiM67sbydQrGwGnUgYqZLz08LAfASx7nbM3CCR7isbqJm9EAw9UD1ELMEiiwS6dVfxcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imw/8Vrn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3410C4CEF5;
-	Fri,  7 Nov 2025 07:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762501845;
-	bh=ZXzKa8ciq7q/j+7BGMdEknERpfHO5K+oFihg98YcdwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=imw/8VrnU5YGb2Z8C1CEjEKTn4GkSaIhA7J8yV/eZA0dJRdpIux3cmE/ecgKoVBgU
-	 CUfNPW/R2B/3WL+/Wvix8Jwvf28ryX9hpbt+zY2T0P3HkOMqVrfinGx7MJObmHCuEu
-	 OE3y5C6iH6BNc3U/em1VvLF4O75Ph28WcDQ0nuyVkPf034qPlCUn+kDpdWVRN8u5GJ
-	 pD1jV+oHOZ7PMrEfMPsuhui25OKYFQ0lGPgoajkdOy4yWhUZu8w05jRgdcxB79v41b
-	 UyII87fQxMwE2M7tt49BGYWbw8RAFrYHl0s1DeYxYpHLUpdy+HxcOHXnSCk3bIGHiW
-	 7nPCcLuLAhRMw==
-Date: Fri, 7 Nov 2025 08:50:42 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Swamil Jain <s-jain1@ti.com>
-Cc: jyri.sarha@iki.fi, tomi.valkeinen@ideasonboard.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org, louis.chauvet@bootlin.com, 
-	aradhya.bhatia@linux.dev, devarsht@ti.com, praneeth@ti.com, h-shenoy@ti.com, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 2/5] dt-bindings: mfd: syscon: Add
- ti,am625-dss-clk-ctrl
-Message-ID: <20251107-ambrosial-soft-grebe-ebaa3b@kuoka>
-References: <20251106141227.899054-1-s-jain1@ti.com>
- <20251106141227.899054-3-s-jain1@ti.com>
+	s=arc-20240116; t=1762502007; c=relaxed/simple;
+	bh=AA6TmhKQwv4AebnM5l1TN7JJbHA4LEPZvZtXyrTR6DE=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=DXPyeTAruB8Ocukrc8PyPpUbQc3B/+Qxz7Kqmoym0owYqTnU1z7teKg4CgYSIpxgGTY2VyD17tdskcDwHFA26pnW/uvKINPEuAGU3Lall4cJmG0huU3pqDB1s2jX16S/us6R8/OX8EeT+VGr7I11gtLGzYl32sG22R+9VhcdYUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=r5pOpe4t; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5A77rNgf1535660
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 6 Nov 2025 23:53:24 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5A77rNgf1535660
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762502004;
+	bh=7r+n1p+X1cbofwYc3EO9YiEEuS/TA07k3XwXk8V2uZo=;
+	h=Date:To:From:Subject:From;
+	b=r5pOpe4t0RPCbbYghR8/88E+5UdJ7nY4ogQ8vLC4ixmp22mJlb+N2MxdKnlZbs62g
+	 EjGv3G6T4Jgk9o7UNh1sbpvA16G3EkgCTvDeHBi+KptuFZhRRK8oO8elmmvTomQJuG
+	 tSAt6hmdgwOOVgp+3GCd+CIBT9EIMh+qYZow9WX73FZEOsb0tTOsSIRJL5/CJ6BQQO
+	 TrgLhWlv/CoIoctSAA3qX4fW65M7DHEeA8WYBS2/o6w8yOn/7WV1Wl5EkzD2DrOQTr
+	 YPIItRq3G8cUQcEmVopFo/IV7xyTxdf4yoBIad1u+nFumDaOCpzXFFI//ssWD8jfl6
+	 RylYG6OlpL6Uw==
+Message-ID: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+Date: Thu, 6 Nov 2025 23:53:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251106141227.899054-3-s-jain1@ti.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US, sv-SE
+To: linux-serial@vger.kernel.org, linux-api@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: RFC: Serial port DTR/RTS - O_NRESETDEV
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 07:42:24PM +0530, Swamil Jain wrote:
-> From: Louis Chauvet <louis.chauvet@bootlin.com>
-> 
-> The dt-bindings for the multi-function device (mfd) syscon need to include
-> ti,am625-dss-clk-ctrl. On AM62X, AM62A and AM62P devicess, the display
-> controller (tidss) has external registers to control certain clock
-> properties. These registers are located in the device configuration
-> registers, so they need to be declared using syscon. They will later be
-> used with a phandle in the tidss node.
-> 
-> Fixes: ad2ac9dc9426 ("drm/tidss: Add support for AM625 DSS")
-> Fixes: 5cc5ea7b6d7b ("drm/tidss: Add support for AM62A7 DSS")
+Hi,
 
-Adding missing hardware is not a fix. Drop both.
+I recently ran into a pretty serious issue due to the Unix/Linux (mis)behavior
+of forcing DTR and RTS asserted when a serial port is set, losing the
+pre-existing status in the process. Since it is impossible probe for the
+current status or even if it is a functional serial port without a file
+descriptor, this is very problematic. This came up in the context of probing
+for serial ports from an application, so even if termios could be modified
+without a file descriptor (which it can't) it would not be safe.
 
-> Cc: stable@vger.kernel.org
+I noted there was a patchset for that on linux-serial from 2022 which
+apparently got dropped and never merged, but I think it has a pretty serious
+problem: it used a sysfs setting to control the behavior, which may be
+reasonable for a default, but at the end of it this is really something that
+is determined by the intent of the open() call, just like O_NONBLOCK replaced
+the old callout devices we once had.
 
-For sure not a stable commit. You just add new hardware.
+It seems to me that this may very well be a problem beyond ttys, in which case
+a new open flag to request to a driver that the configuration and (observable)
+state of the underlying hardware device -- whatever it may be -- should not be
+disturbed by calling open(). This is of course already the case for many
+devices, not to mention block and non-devices, in which case this flag is a
+don't care.
 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> ---
->  Documentation/devicetree/bindings/mfd/syscon.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+The best name I came up with was O_NRESETDEV, but it's not something I'm
+particularly attached to.
 
-With these fixed/dropped:
+If the opinion is that this *doesn't* have a scope beyond ttys, then perhaps
+abusing the O_DIRECT flag for this purpose would be an alternative.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thoughts?
 
-Best regards,
-Krzysztof
+	-hpa
 
 
