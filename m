@@ -1,177 +1,116 @@
-Return-Path: <linux-kernel+bounces-890356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269D7C3FE44
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3F8C3FE50
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319233BA6DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EACB3BAA8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540592D3EC7;
-	Fri,  7 Nov 2025 12:28:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5886B2C21D5;
-	Fri,  7 Nov 2025 12:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A252D5A14;
+	Fri,  7 Nov 2025 12:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="NUgdNTea"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FDF2417F0;
+	Fri,  7 Nov 2025 12:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762518534; cv=none; b=aS9iPUhurT8zsWtfLdWLglZhfrZ+/G57bBhoKKXm+uAUExzOZ6XNT86s5XZBQ44Bzig0ugywBW/a9fdyb+5nnieWYpqKzQUXGnG00lsiUImcVHrQmnNp/POBhcHSAhvp0cV9wDzHorrdFeA/X10lGOtFZS5LQge8lbxRH2jhm+U=
+	t=1762518554; cv=none; b=f671yYKnfrsSK3QAkkXKmur6495D5dcFYWTSNr7342T8RSiykeZ4QfKKYcpuPxFwMMCzIXKQq0rFz1GesShUYM3QL8bkeU+u4ssWZ153fFsFi2v8tsNmmGjVxMPdAnunUI3gHruR9l8DSiUH+fBn815Zi17/7us0fmxpe0MV4XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762518534; c=relaxed/simple;
-	bh=MtMQbLtwv24yuX917Y0IPR3WTx0g2/Bra0Rsc9lOeoY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m49KZy70RUzPjrjIRb/w9j5hcYEWxiEfzaa0D+TKmRqruyrLDX3vgXLip0v8zE6pqw5Ah6Sj+A0z7o2EUNN6Abq49jMZW7bs/T+qvFkgQse9h/KMket85iaRuIoZ13UJxeF8lcue9j7TcCJwWb2pcJCrf7GEQ7wXmtfYGzKOr2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F191B1516;
-	Fri,  7 Nov 2025 04:28:44 -0800 (PST)
-Received: from [10.57.86.134] (unknown [10.57.86.134])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0EEB03F66E;
-	Fri,  7 Nov 2025 04:28:47 -0800 (PST)
-Message-ID: <2205a5de-de14-4718-a7b8-e49accb06f03@arm.com>
-Date: Fri, 7 Nov 2025 12:28:46 +0000
+	s=arc-20240116; t=1762518554; c=relaxed/simple;
+	bh=18N4H57Jk1epoG9Sh676fcKQoOXWTEOLpm928Dvv4gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNFOfKq/zTBVW4Y1fT//edV6nfe0LkGjalBVm16YOd29mRgkQ/gDU9qdyZRwXGFc0zDqVZ3bhflNGDEUHO1lg3CqUSHgzlPvAfeob9xtEWqOlSaSW4hxm1ED5+GzWnvQl09QgqALHbybXkH7a5cSGJVBCyKjKd/5jVc1G8WnP24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=NUgdNTea; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OS9TgP69ehGD5yxqH90DzusdYBQmnfuojUpTp9rV3No=; b=NUgdNTeaodv4jwVg4hVhaAiaHQ
+	vlcyccwtXQVEGVb21aWZWqpiKW3/7l9PPgBGkM6aAqkzybjLgMMZ2nW7khhRqweETKL2hD9dNdtD8
+	HsYpzbiMHPaxd5emfuuYtbXuOmDYdc+es62/fvVyBqB4iO57dnNWhFFpG80OFd1ylsbIlYL554j/5
+	+COzmUHBw+ZWi5EOlmJVtRt1fYRcJzQva7JAeXh2OWysg5weLO8zfByMpFLoyhccDjWUTnhgn+X5b
+	m74wrGtuig7jl6mtZSVdengTJgV0klMvP+0bHPlr7efd/2y+SkewwXMfc0Lp1e6/8fH06v++H46qe
+	8KixF+fg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55958)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vHLaJ-000000006Ti-3yNM;
+	Fri, 07 Nov 2025 12:28:56 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vHLaF-000000007Zu-06g1;
+	Fri, 07 Nov 2025 12:28:51 +0000
+Date: Fri, 7 Nov 2025 12:28:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on
+ VSC8541
+Message-ID: <aQ3mAhaZQa8_99Ah@shell.armlinux.org.uk>
+References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch>
+ <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] powerpc/64s: Do not re-activate batched TLB
- flush
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-2-kevin.brodsky@arm.com>
- <daa2025c-43da-4c16-9393-a90574d74f64@arm.com>
-In-Reply-To: <daa2025c-43da-4c16-9393-a90574d74f64@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 07/11/2025 12:25, Ryan Roberts wrote:
-> On 29/10/2025 10:08, Kevin Brodsky wrote:
->> From: Alexander Gordeev <agordeev@linux.ibm.com>
->>
->> Since commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash
->> lazy mmu mode") a task can not be preempted while in lazy MMU mode.
->> Therefore, the batch re-activation code is never called, so remove it.
->>
->> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
->> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> 
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+On Fri, Nov 07, 2025 at 10:34:32AM +0000, Lad, Prabhakar wrote:
+> On Thu, Nov 6, 2025 at 8:45 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> > > +static int vsc85xx_led_cntl_set_lock_unlock(struct phy_device *phydev,
+> > > +                                         u8 led_num,
+> > > +                                         u8 mode, bool lock)
+> > >  {
+> > >       int rc;
+> > >       u16 reg_val;
+> > >
+> > > -     mutex_lock(&phydev->lock);
+> > > +     if (lock)
+> > > +             mutex_lock(&phydev->lock);
+> > >       reg_val = phy_read(phydev, MSCC_PHY_LED_MODE_SEL);
+> > >       reg_val &= ~LED_MODE_SEL_MASK(led_num);
+> > >       reg_val |= LED_MODE_SEL(led_num, (u16)mode);
+> > >       rc = phy_write(phydev, MSCC_PHY_LED_MODE_SEL, reg_val);
+> > > -     mutex_unlock(&phydev->lock);
+> > > +     if (lock)
+> > > +             mutex_unlock(&phydev->lock);
 
-I should also add, that as far as I can tell, this was dead code because the
-powerpc implementation disables preemption in a lazy mmu region. It would
-probably be preferable to understand why the preemption disabling approach was
-added in the first place. Perhaps it would be better to remove that and keep
-this code. But given you are not changing any current behaviour and this is
-removing dead code, that's probably something for the ppc folks to look into
-another day.
+If you used the provided helpers rather than open-coding a read-modify-
+write, then you wouldn't even need this lock. Please use phy_modify().
 
-Thanks,
-Ryan
-
-> 
->> ---
->>  arch/powerpc/include/asm/thread_info.h |  2 --
->>  arch/powerpc/kernel/process.c          | 25 -------------------------
->>  2 files changed, 27 deletions(-)
->>
->> diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
->> index b0f200aba2b3..97f35f9b1a96 100644
->> --- a/arch/powerpc/include/asm/thread_info.h
->> +++ b/arch/powerpc/include/asm/thread_info.h
->> @@ -154,12 +154,10 @@ void arch_setup_new_exec(void);
->>  /* Don't move TLF_NAPPING without adjusting the code in entry_32.S */
->>  #define TLF_NAPPING		0	/* idle thread enabled NAP mode */
->>  #define TLF_SLEEPING		1	/* suspend code enabled SLEEP mode */
->> -#define TLF_LAZY_MMU		3	/* tlb_batch is active */
->>  #define TLF_RUNLATCH		4	/* Is the runlatch enabled? */
->>  
->>  #define _TLF_NAPPING		(1 << TLF_NAPPING)
->>  #define _TLF_SLEEPING		(1 << TLF_SLEEPING)
->> -#define _TLF_LAZY_MMU		(1 << TLF_LAZY_MMU)
->>  #define _TLF_RUNLATCH		(1 << TLF_RUNLATCH)
->>  
->>  #ifndef __ASSEMBLER__
->> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
->> index eb23966ac0a9..9237dcbeee4a 100644
->> --- a/arch/powerpc/kernel/process.c
->> +++ b/arch/powerpc/kernel/process.c
->> @@ -1281,9 +1281,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
->>  {
->>  	struct thread_struct *new_thread, *old_thread;
->>  	struct task_struct *last;
->> -#ifdef CONFIG_PPC_64S_HASH_MMU
->> -	struct ppc64_tlb_batch *batch;
->> -#endif
->>  
->>  	new_thread = &new->thread;
->>  	old_thread = &current->thread;
->> @@ -1291,14 +1288,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
->>  	WARN_ON(!irqs_disabled());
->>  
->>  #ifdef CONFIG_PPC_64S_HASH_MMU
->> -	batch = this_cpu_ptr(&ppc64_tlb_batch);
->> -	if (batch->active) {
->> -		current_thread_info()->local_flags |= _TLF_LAZY_MMU;
->> -		if (batch->index)
->> -			__flush_tlb_pending(batch);
->> -		batch->active = 0;
->> -	}
->> -
->>  	/*
->>  	 * On POWER9 the copy-paste buffer can only paste into
->>  	 * foreign real addresses, so unprivileged processes can not
->> @@ -1369,20 +1358,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
->>  	 */
->>  
->>  #ifdef CONFIG_PPC_BOOK3S_64
->> -#ifdef CONFIG_PPC_64S_HASH_MMU
->> -	/*
->> -	 * This applies to a process that was context switched while inside
->> -	 * arch_enter_lazy_mmu_mode(), to re-activate the batch that was
->> -	 * deactivated above, before _switch(). This will never be the case
->> -	 * for new tasks.
->> -	 */
->> -	if (current_thread_info()->local_flags & _TLF_LAZY_MMU) {
->> -		current_thread_info()->local_flags &= ~_TLF_LAZY_MMU;
->> -		batch = this_cpu_ptr(&ppc64_tlb_batch);
->> -		batch->active = 1;
->> -	}
->> -#endif
->> -
->>  	/*
->>  	 * Math facilities are masked out of the child MSR in copy_thread.
->>  	 * A new task does not need to restore_math because it will
-> 
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
