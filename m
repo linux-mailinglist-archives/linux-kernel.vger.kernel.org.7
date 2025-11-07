@@ -1,470 +1,236 @@
-Return-Path: <linux-kernel+bounces-890058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C667AC3F29C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:31:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F834C3F296
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49841188E548
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:31:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 134CD4EC723
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FCF301484;
-	Fri,  7 Nov 2025 09:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C980A2F549F;
+	Fri,  7 Nov 2025 09:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zslv2Tz1";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="WCPn61p+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MMhI1e4T"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D802222A0
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD463019D8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507859; cv=none; b=jFeVI6Wb0irICU38E5bJQM2+R00FREWgA2zzC1KkRkFEwqON/iSDNTdMk7iWIg3Hj7w2VHsPXBPbOJtb8w/FhZ3qNfPypFNr7oJmfYGDSb/vC2jx/iBHzYq8jB7mhdlaxpzOAqDiomkan4M74158yc44hPqw7QtUUmrTo/GjlF8=
+	t=1762507821; cv=none; b=JXsqun2aK5RYg0MSnz1zCjT6xtDWSjjEDNVeOehlHNmV4RxbIIR/xZhCDWzIWi2bUkt+LIEduDNUvZIIeDGJotubO1RILVU/dGQd2ouUbT4V5yVt2+JkGj3sB9Z7UiHf+OCSAHCymZqtGlMPUOcSc3XWgJO0CPRA96x/7Tvduio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507859; c=relaxed/simple;
-	bh=4CZzcpxMHSZuRHsI8AlM8JSNzLEUVV4LARPB5vwqj3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SFA4S3wiWwtZmwnsQu5ThZmH5MLmlmhTanngRKyePeGGzlLGhToFxBACfrp+Z81h53Is2k9Cw3rvF91lXrG+cETu1DiRfDc6EyxGWf94NTj8jAoYIouoqTGeBsphagB8PUhInCIs/H0jj0QTNXhM8pK3onmtD8MVOgOmxBEH4TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zslv2Tz1; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=WCPn61p+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762507855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tA7UGGTMV9n+J3uPxencDL7E+I6MFvKjlNZSpspgjhg=;
-	b=Zslv2Tz1JRzruDP1l8O89MtfQMDMl7j9Rxd0+/v4MMtjGOBIpxTfMZUk2DnCjgYogwWge1
-	fTDqCvtZ3oKMfj5melb6rOJhoqwznvYncntyieSjiOqNQjwE5VHUJFX0KVprT4TW7D1Gf5
-	1Lhy2yoi0VReX237tnFWrrcQygRpuuc=
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
- [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-98-ecO4H3ctPheJMpVAMyvSjQ-1; Fri, 07 Nov 2025 04:30:52 -0500
-X-MC-Unique: ecO4H3ctPheJMpVAMyvSjQ-1
-X-Mimecast-MFC-AGG-ID: ecO4H3ctPheJMpVAMyvSjQ_1762507852
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-3c97e873c82so158099fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:30:52 -0800 (PST)
+	s=arc-20240116; t=1762507821; c=relaxed/simple;
+	bh=SwJLlE2AkOO378JrL4qmCfg4Qvay8egK8wqxu7zyKro=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KX8nt5QGan4SY3RBpYEN3HO/W+u4gbFrX6UKfO9l7tMNtcgHGN/Hr0GvGYCV2aT3EEZfJTFYP/TtSKa1PrOaBlXxnZcEBzzkft9JEBlo1OGfhxWcWWYSploAk8CCnDvw4YEadk4qpGNQyiPOPK8htTnbMzcETPAnTHYNnD4Enfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MMhI1e4T; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so887029a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:30:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762507852; x=1763112652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tA7UGGTMV9n+J3uPxencDL7E+I6MFvKjlNZSpspgjhg=;
-        b=WCPn61p+5ebEiPcnn43DCmix2eeq1gbe/nP7Dy9tC9tFtmlT+hq5/IBn+6j0p9rEbO
-         4EqUMm1KIR0HVMotqm/x5oflSW5XOQz0jBDSwRUgSXLmni8EPyQLpDqXkSbyPQwoGV4y
-         YYoX5F7c3GeZqFjHozlbh7zDos/7PZcqMMeCZ32Bl7wHyyXHkA8NPp2/dPMAE6nvZLHN
-         rMsM1DMbcKeKazrLTbrTBSOQWc8eoc8A1w/krRv+SPE/LthpmJ3vY8hQLOK2W++fDB9b
-         l7ZpI61wkNCTdpO0JRxVBUjgNESI/yoMR0alNaWtyv2ohXeK9ffRgzNliDPrMBED/JXp
-         6h9g==
+        d=suse.com; s=google; t=1762507817; x=1763112617; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gy6h5/T7M3l4IMK+9pDxE4Cljvnhz0/urOMxkuv01vE=;
+        b=MMhI1e4Tfr5KgfuODVeOKfzibomy95XxiYUDtJAStTCYe7pwMFMd6YrYoRmlx3/gyC
+         I8cjWJV3kvg8h+aOMYBdMLsUyRxNdhqZkNXyplpUPwMROGcc5biNURJcrg/0YRwCcZxG
+         pGr33JmOrTj5BOEvubejuVyNQGjjGRh96G5z+Bdk869dDCIKQY4QPNBRLmePkkwJlBxA
+         V2juagMHwg2EddZJLJNmqrXJcNL758EIkkPh0N4+mCtRDm0QvCGtklYPZZkvVzDhKW3S
+         37Lvk4ahwizJvSoxkfqVaNPqD2A6fYoj6JgF2C2TdsXm4r212CRui+dpPz1guIkX8oh6
+         VQyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762507852; x=1763112652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tA7UGGTMV9n+J3uPxencDL7E+I6MFvKjlNZSpspgjhg=;
-        b=Caw0neqRo1I5cOiXRoQFgJfpYxKz2JoxCsNmX+SYI1aQugAp32QNn7moMhoqIoX/uo
-         h/l1kE0AWY8coOLBbNtuKONIKk9zmpDONNi0f4XvzeodRhfYBsknSVPH8XSpEE35ffD4
-         mJFpFr+pUkdcgRQa4bnFOdbRU1cAazF2nHkFv2xunvwZuT2Z08Fl2T1svhlApN2p8HNH
-         3QPN8tJS4MdH/4CF2WuYZCURwLIRtzmsF5f/hTh/9H7kFsPcrC85XpDcw88REyqm142Y
-         zDwXeMn0/MSjZYMYGep+htDOAuSNb8SaaOaPwv1Fp3a4iSK9NLfYfc0XZ0osw4t1aWfD
-         owkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUNIcFXqi1tETfYYsarHq18ooloN+SSn9WrUXPdNg/K6q2wqHGJ3MaNv9YWCYPcSEpGZGWkZ60uzBdpHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7MSUrFIwvUzRkj8MDC3xUm/IYez0nHWs0VI6fE56ZZ52fRH1p
-	LHYgOZjF5EBWVupx44jdZlBDGRwQ4hhiMk5kcpNxUTo5PJxjVAu5wNW4dmrTLO1o5kz965dhSnB
-	VHnfxyYWRrGLbZIa6CJOVDIf+ZsDrrggxIeBPk/rapZejb5nOVyonbLZvwoe9liyB4Isg9AImoQ
-	5Ez2+rIeQqX9BZmugdJUUF4Zi36MxSFi15xf8c9SPj
-X-Gm-Gg: ASbGnctIRZcavUQUmbcqyjqzGnudqTdDJJzgb2ODKc/73gUT9QL8b9Y7Nml7vAr8FYU
-	1HgY39MRxUj+JpzRRVAPqbAW2QbS+faY0QfvjYo4TGODJeoPeAs3Ppw3T1snfFZgyS/QKvcxORs
-	jWAKhGrtnOu4YiRHsO6jaNz1X7oSSfjxv42SVw85N0JIjikw1QmMtx
-X-Received: by 2002:a05:6871:5b2a:b0:3c9:76e1:5e79 with SMTP id 586e51a60fabf-3e41e4ab7c7mr902881fac.3.1762507851755;
-        Fri, 07 Nov 2025 01:30:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGH/Q8quC+L/fpo6hcTLMQP4gx99UOFXxVh08gtwqrZa5RrScApwJT7teFtONr4wGdKkHXevhtdORQ01LS2SNE=
-X-Received: by 2002:a05:6871:5b2a:b0:3c9:76e1:5e79 with SMTP id
- 586e51a60fabf-3e41e4ab7c7mr902858fac.3.1762507851194; Fri, 07 Nov 2025
- 01:30:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762507817; x=1763112617;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gy6h5/T7M3l4IMK+9pDxE4Cljvnhz0/urOMxkuv01vE=;
+        b=DGXNUeL4msMpjX+e6CWYBnu0npoP1rFwAsPJwNSWYTcFJa5JUoJL/8nCVtbxa+G+t8
+         0NM9WhOj7ege063VJOm4SwOGHzufMbmWL3KkAItyU25D82MJlg9v6UTUfsWsNoM9LaVa
+         TqPGsfbb097qBX7/3zlcUy8ydMoM7PFXJ0dZq6OiRrPYI6dywOa+Op/UpUnj0h/bEy4K
+         xPsJpwUsfXESAZqwfz1KyBSQQ9YanNLYYSDX9Vp4TMeNvR5Sk92wwd/AH4B+Aouiq2KS
+         t2h4JO/GObURD6jkTpO1SgTXnsUn36VunV/GrAFbgWzI+dN3MAPhww+2KG0MdqpB5lks
+         ryWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLAgBXv3z4yWB6dpjY3OO2UEANt3uGUtGNZPCYAWFwWvNg3+rE5JgN/qDLVzX83JqRhB2DHKaDG1MqrQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygUKemf71xDI/EMZJ1c3VEs7BGileomtteUbu9xAwopCd9Il7O
+	MAIxJV/HNwMyikvCDDtZ5Shrbywm+BvH7TatIUeDuhGDumFpt/h+J0wZlfN6ceBwt/I=
+X-Gm-Gg: ASbGncudctMORLbQKHJ5k85+3wP8ayWRNmr1FUMw038QB8E2mIImLYC6O9SbgsZtxEr
+	ikwTxiHUil5JU2XoIrh4mXgbUiwaBTMx8E/AY7xV4BothmMBlTZ5lf3Ak1g2Ze60mvkZPeVNqj9
+	TzjN9kPzR5UcgPIyAPrwryGYAmtdbevMC5vWjX3mrFUdKn+PPfhgKbbW58Gn9Xtw0PHSvdFo13R
+	0yWrMa37gqZSTMtTuvQkidjZg42s0OFgzykbyh3bXRiUVSAkNsagQx4YJ7oaEClYL2jzfaSHq/Z
+	JZl4dx/Lb1/8f0oIiw4f+9wCkL84PhHRehjJIvy9l+EDcrfc50FhrZcKgzNHanfimqDPhXSYh/7
+	yDz/vNlfeaHr2NSlfhwjvS+oLEmj8MeHRUf/xZytU020m/JEFcNbORKnIb4Lqpmm0DBJris8j08
+	kI7dph0hycmOhG8YHspFPhj/RhR2qDX1cJSL4tvdXueO3K1g==
+X-Google-Smtp-Source: AGHT+IHI9DcNoJfkJq9DrDwBnkr3wsYuG0mhZSa7sa5K0gcWfHFJNf1GslBK48VvaOflc7tVk9XiGw==
+X-Received: by 2002:a17:907:3d8f:b0:b70:b93c:26cf with SMTP id a640c23a62f3a-b72c0a62ee8mr227241366b.6.1762507817063;
+        Fri, 07 Nov 2025 01:30:17 -0800 (PST)
+Received: from localhost (host-79-49-235-115.retail.telecomitalia.it. [79.49.235.115])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e54asm192846466b.34.2025.11.07.01.30.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 01:30:16 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 7 Nov 2025 10:32:35 +0100
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mbrugger@suse.com,
+	guillaume.gardet@arm.com, tiwai@suse.com,
+	Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] PCI: of: Downgrade error message on missing of_root
+ node
+Message-ID: <aQ28s57R0YfrqwdG@apocalypse>
+References: <20251106182708.03cfb6c6@bootlin.com>
+ <20251106175016.GA1960490@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212151402.159102-1-quic_bibekkum@quicinc.com>
-In-Reply-To: <20241212151402.159102-1-quic_bibekkum@quicinc.com>
-From: Enric Balletbo i Serra <eballetb@redhat.com>
-Date: Fri, 7 Nov 2025 10:28:21 +0100
-X-Gm-Features: AWmQ_blyT1f4Q3GxjMK__iwxj0lOKowHccrhgBcDwnM4U-WdAG0OXbr58R8HqnM
-Message-ID: <CALE0LRupg93WsBVc62Lqt-T9qmK5MdEYoScxyP7=ttKJYXAsUA@mail.gmail.com>
-Subject: Re: [PATCH v18 0/5] iommu/arm-smmu: introduction of ACTLR
- implementation for Qualcomm SoCs
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: robdclark@gmail.com, will@kernel.org, robin.murphy@arm.com, 
-	joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, 
-	dmitry.baryshkov@linaro.org, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, 
-	Eric Chanudet <echanude@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106175016.GA1960490@bhelgaas>
 
-On Thu, Dec 12, 2024 at 4:14=E2=80=AFPM Bibek Kumar Patro
-<quic_bibekkum@quicinc.com> wrote:
->
-> This patch series consist of six parts and covers the following:
->
-> 1. Provide option to re-enable context caching to retain prefetcher
->    settings during reset and runtime suspend.
->
-> 2. Remove cfg inside qcom_smmu structure and replace it with single
->    pointer to qcom_smmu_match_data avoiding replication of multiple
->    members from same.
->
-> 3. Add support for ACTLR PRR bit setup via adreno-smmu-priv interface.
->
-> 4. Introduce intital set of driver changes to implement ACTLR register
->    for custom prefetcher settings in Qualcomm SoCs.
->
-> 5. Add ACTLR data and support for qcom_smmu_500.
->
-> Changes in v18 from v17_RESEND:
->  - 1/5 : No changes
->  - 2/5 : No changes - reviewed-by tags collected
->  - 3/5 : Addition of
->    pm_runtime_resume_and_get()/pm_runtime_put_autosuspend()
->    around register access of PRR related private interfaces
->    as discussed in v17_RESEND.
->  - 4/5, 5/5 : No changes - reviewed-by tags collected
->  Link to v17_RESEND:
->  https://lore.kernel.org/all/20241114160721.1527934-1-quic_bibekkum@quici=
-nc.com/
->
-> Resend of v17:
->  Addition of minor fix of the build warning reported by kernel test robot=
- [1] by powerpc_random config [2].
->  [1]:https://lore.kernel.org/all/202411140748.6mcFdJdO-lkp@intel.com/#t
->  [2]:https://download.01.org/0day-ci/archive/20241114/202411140748.6mcFdJ=
-dO-lkp@intel.com/config
->
-> Changes in v17 from v16:
->  Tags provided earlier not collected yet on patch 1/5, 3/5, 4/5, 5/5
->  due to the following revisions:
->  - 1/5 : Move the CPRE workaround out of qualcomm specific logic and gate=
- with config
->          , update the silicon-errata.rst file
->  - 2/5 : No changes - reviewed-by tags collected
->  - 3/5 : Move the compatible check before assignment of callback as sugge=
-sted.
->  - 4/5 : Add the actlr setting for *adreno variant* of MMU-500 as well.
->  - 5/5 : Due to changes in 1/5, minor refactoring had to be done before a=
-dding table.
->  Link to v16:
->  https://lore.kernel.org/all/20241008125410.3422512-1-quic_bibekkum@quici=
-nc.com/
->
-> Changes in v16 from v15:
->  - Incorporate Dimitry's suggestion on patch 4/5 to use dev_dbg instead o=
-f dev_notice.
->  - Fix kernel test robot warning [1] coming for 32bit architecture config=
-uration.
->  - Updatingthe tags
->  [1]: https://lore.kernel.org/all/202409230343.Q8KnYl2w-lkp@intel.com/
->  Link to v15:
->  https://lore.kernel.org/all/20240920155813.3434021-1-quic_bibekkum@quici=
-nc.com/
->
-> Changes in v15 from v14:
->  - As discussed with Robin and Dmitry modify the actlr table and logic to=
- use
->    compatible string instead of sid, mask for device matching which is
->    similar to qcom_smmu_client_of_match mechanism.
->  - Expand the comment in qcom_smmu500_reset to document reason why CPRE b=
-it is re-enabled again
->    after arm_mmu500_reset resets the bit.
->  - Rearrange the series in order to keep prefetch setting patches in the =
-end.
->  Link to v14:
->  https://lore.kernel.org/all/20240816174259.2056829-1-quic_bibekkum@quici=
-nc.com/
->
+Hi Bjorn,
 
-Hi all,
+On 11:50 Thu 06 Nov     , Bjorn Helgaas wrote:
+> On Thu, Nov 06, 2025 at 06:27:08PM +0100, Herve Codina wrote:
+> > On Thu, 6 Nov 2025 16:21:47 +0100
+> > Andrea della Porta <andrea.porta@suse.com> wrote:
+> > > On 13:18 Thu 06 Nov     , Herve Codina wrote:
+> > > > On Thu, 6 Nov 2025 12:04:07 +0100
+> > > > Andrea della Porta <andrea.porta@suse.com> wrote:
+> > > > > On 18:23 Wed 05 Nov     , Bjorn Helgaas wrote:  
+> > > > > > On Wed, Nov 05, 2025 at 07:33:40PM +0100, Andrea della Porta wrote:    
+> Patch at https://lore.kernel.org/r/955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com,
+> added back for reference:
+> 
+>   diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+>   index 3579265f1198..872c36b195e3 100644
+>   --- a/drivers/pci/of.c
+>   +++ b/drivers/pci/of.c
+>   @@ -775,7 +775,7 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
+> 
+> 	  /* Check if there is a DT root node to attach the created node */
+> 	  if (!of_root) {
+>   -               pr_err("of_root node is NULL, cannot create PCI host bridge node\n");
+>   +               pr_info("Missing DeviceTree, cannot create PCI host bridge node\n");
+> 		  return;
+> 	  }
+> 
+> > > > > > > When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error
+> > > > > > > message is generated if no 'of_root' node is defined.
+> > > > > > > 
+> > > > > > > On DT-based systems, this cannot happen as a root DT node
+> > > > > > > is always present. On ACPI-based systems, this is not a
+> > > > > > > true error because a DT is not used.
+> > > > > > > 
+> > > > > > > Downgrade the pr_err() to pr_info() and reword the message
+> > > > > > > text to be less context specific.    
+> > > > > > 
+> > > > > > of_pci_make_host_bridge_node() is called in the very generic
+> > > > > > pci_register_host_bridge() path.  Does that mean every boot
+> > > > > > of a kernel with CONFIG_PCI_DYNAMIC_OF_NODES on a non-DT
+> > > > > > system will see this message?    
+> > > > > 
+> > > > > This is the case, indeed. That's why downgrading to info seems
+> > > > > sensible.
+> > > > >   
+> > > > > > This message seems like something that will generate user
+> > > > > > questions.  Or is this really an error, and we were supposed
+> > > > > > to have created of_root somewhere but it failed?  If so, I
+> > > > > > would expect a message where the of_root creation failed.    
+> 
+> I think we should just remove the message completely.  I don't want
+> users to enable CONFIG_PCI_DYNAMIC_OF_NODES out of curiosity or
+> willingness to test, and then ask about this message.
 
-I've been looking at the evolution of the Qualcomm SMMU driver
-(arm-smmu-qcom.c) and had a question about the design change for
-configuring the SMMU_CB_ACTLR register.
+Agreed. This would be the easy solution, the other being creating the
+empty DT so that the message will never be printed. But this require some
+careful thought. The latter solution will be needed if we'll ever want to
+make drivers like RP1 or lan96xx (which uses the runtime overlay) to work.
 
-It appears there are two different approaches:
+> 
+> "You can avoid the message by also enabling CONFIG_OF_EARLY_FLATTREE"
+> is not a very satisfactory answer.
 
-1. The "SID" Approach (Older): In some versions, a driver would use a
-large, platform-specific struct (e.g., sa8775p_apps_actlr_cfg) that
-maps individual Stream IDs (SIDs) to specific ACTLR values. This
-allowed for very granular, per-SID tuning. For example, a device with
-10 SIDs could have a specific setting for just one (0x2141), while the
-others used a default.
+Unfortunately this would work on x86, but not on arm. And who knows on
+other platforms.
 
-2. The "Compatible String" Approach (Newer/Upstream): The current
-upstream driver appears to use a client_match array (an of_device_id
-list) in qcom_smmu_init_context. This maps a device's compatible
-string to a single ACTLR value, which is then written to the device's
-assigned Context Bank.
+> 
+> A message at the point of *needing* this, i.e., when loading an
+> overlay fails for lack of this dynamic DT, is fine.
 
-I want to make sure I understand the implications of this new, simpler
-approach, as it seems to introduce a trade-off where granularity is
-lost:
+It seems fine to me.
 
-Multiple SIDs, One Device: A single device that uses many SIDs in the
-device tree (e.g., the video codec, which might list 0x2141, 0x25C1,
-0x2161, etc.) will now have one ACTLR setting applied to the Context
-Bank that serves all of those SIDs, even if the old SID-based list
-only specified a setting for one of them.
+Thanks,
+Andrea
 
-Am I correct in this analysis? I'm assuming this was an intentional
-design choice to simplify the driver, based on the assumption that all
-SIDs for a single device (and all devices with the same compatible)
-can share the same ACTLR tuning.
-
-I'm working on porting settings for an sa8775p board and just want to
-ensure I'm migrating the logic correctly to this new client_match
-method.
-
-Thanks for any clarification you can provide.
-
-Best regards,
-
-   Enric
-
-
-> Changes in v14 from v13:
->  Patch 6/6:
->  - As discussed incorprate changes to carry out PRR implementation only f=
-or
->    targets based on MMU-500 by using compat string based SMMU version det=
-ection.
->  - Split the set_actlr interface into two separate interface namely set_p=
-rr_bit
->    and set_prr_addr to set the prr enable bit and prr page address resepe=
-ctively.
->  Patch 3/6:
->   - Fix a bug in gfx actlr_config which is uncovered while testing the gf=
-x actlr setting in sc7280
->     during PRR experiment which prevented clients on certain sids of gfx =
-smmmu to be skipped during
->     setting up of the ACTLR values : Fix involves swapping the arguments =
-passed in smr_is_subset to make
->      device smr <from devicetree> a subset of actlr_config table entries =
-< defined in the driver>.
->  Patch 4/6, 5/6:
->   - Sort the actlr table values in increasing order of the SIDs.
->  Link to v13:
->  https://lore.kernel.org/all/20240628140435.1652374-1-quic_bibekkum@quici=
-nc.com/
->
-> Changes in v13 from v12:
->  - Fix the compilation issues reported by kernel test robot [1].
->  [1]: https://lore.kernel.org/all/202406281241.xEX0TWjt-lkp@intel.com/#t
->  Link to v12:
->  https://lore.kernel.org/all/20240626143020.3682243-1-quic_bibekkum@quici=
-nc.com/
->
-> Changes in v12 from v11:
->  Changes to incorporate suggestion from Rob:
->  - Fix the set and reset logic for prr bit as pointed out in v11-6/6.
->  - Rename set_actlr_bit function name to set_prr.
->  - Add extension for PRR name as Partially-Resident-Region in comments
->    for set_prr function.
->  - Add few missing sids for sc7280 in patch-5/6.
->  Link to v11:
->  https://lore.kernel.org/all/20240605121713.3596499-1-quic_bibekkum@quici=
-nc.com/
->
-> Changes in v11 from v10:
->  - Include a new patch 6/6 to add support for ACTLR PRR bit
->    through adreno-smmu-priv interface as suggested by Rob and Dmitry.
->  Link to v10:
->  https://lore.kernel.org/all/20240524131800.2288259-1-quic_bibekkum@quici=
-nc.com/
->
-> Changes in v10 from v9:
->  - Added reviewed-by tags 1/5,2/5,3/5.
->  Changes incorporated:
->  - Remove redundant PRR bit setting from gfx actlr table(patch 4/5,5/5)
->    as this bit needs special handling in the gfx driver along with
->    the associated register settings.
->  Link to discussion on PRR bit:
->  https://lore.kernel.org/all/f2222714-1e00-424e-946d-c314d55541b8@quicinc=
-.com/
->  Link to v9:
->  https://lore.kernel.org/all/20240123144543.9405-1-quic_bibekkum@quicinc.=
-com/
->
-> Changes in v9 from v8:
->  Changes to incorporate suggestions from Konrad as follows:
->  - Re-wrap struct members of actlr_variant in patch 4/5,5/5
->    in a cleaner way.
->  - Move actlr_config members to the header.
->  Link to v8:
->  https://lore.kernel.org/all/20240116150411.23876-1-quic_bibekkum@quicinc=
-.com/
->
-> Changes in v8 from v7:
->  - Added reviewed-by tags on patch 1/5, 2/5.
->  Changes to incorporate suggestions from Pavan and Konrad:
->  - Remove non necessary extra lines.
->  - Use num_smmu and num_actlrcfg to store the array size and use the
->    same to traverse the table and save on sentinel space along with
->    indentation levels.
->  - Refactor blocks containing qcom_smmu_set_actlr to remove block
->    repetition in patch 3/5.
->  - Change copyright year from 2023 to 2022-2023 in patch 3/5.
->  - Modify qcom_smmu_match_data.actlrvar and actlr_variant.actlrcfg to
->    const pointer to a const resource.
->  - use C99 designated initializers and put the address first.
->  Link to v7:
->  https://lore.kernel.org/all/20240109114220.30243-1-quic_bibekkum@quicinc=
-.com/
->
-> Changes in v7 from v6:
->  Changes to incorporate suggestions from Dmitry as follows:
->  - Use io_start address instead of compatible string to identify the
->    correct instance by comparing with smmu start address and check for
->    which smmu the corresponding actlr table is to be picked.
-> Link to v6:
-> https://lore.kernel.org/all/20231220133808.5654-1-quic_bibekkum@quicinc.c=
-om/
->
-> Changes in v6 from v5:
->  - Remove extra Suggested-by tags.
->  - Add return check for arm_mmu500_reset in 1/5 as discussed.
-> Link to v5:
-> https://lore.kernel.org/all/20231219135947.1623-1-quic_bibekkum@quicinc.c=
-om/
->
-> Changes in v5 from v4:
->  New addition:
->  - Modify copyright year in arm-smmu-qcom.h to 2023 from 2022.
->  Changes to incorporate suggestions from Dmitry as follows:
->  - Modify the defines for prefetch in (foo << bar) format
->    as suggested.(FIELD_PREP could not be used in defines
->    is not inside any block/function)
->  Changes to incorporate suggestions from Konrad as follows:
->  - Shift context caching enablement patch as 1/5 instead of 5/5 to
->    be picked up as independent patch.
->  - Fix the codestyle to orient variables in reverse xmas tree format
->    for patch 1/5.
->  - Fix variable name in patch 1/5 as suggested.
->  Link to v4:
-> https://lore.kernel.org/all/20231215101827.30549-1-quic_bibekkum@quicinc.=
-com/
->
-> Changes in v4 from v3:
->  New addition:
->  - Remove actlrcfg_size and use NULL end element instead to traverse
->    the actlr table, as this would be a cleaner approach by removing
->    redundancy of actlrcfg_size.
->  - Renaming of actlr set function to arm_smmu_qcom based proprietary
->    convention.
->  - break from loop once sid is found and ACTLR value is initialized
->    in qcom_smmu_set_actlr.
->  - Modify the GFX prefetch value separating into 2 sensible defines.
->  - Modify comments for prefetch defines as per SMMU-500 TRM.
->  Changes to incorporate suggestions from Konrad as follows:
->  - Use Reverse-Christmas-tree sorting wherever applicable.
->  - Pass arguments directly to arm_smmu_set_actlr instead of creating
->    duplicate variables.
->  - Use array indexing instead of direct pointer addressed by new
->    addition of eliminating actlrcfg_size.
->  - Switch the HEX value's case from upper to lower case in SC7280
->    actlrcfg table.
->  Changes to incorporate suggestions from Dmitry as follows:
->  - Separate changes not related to ACTLR support to different commit
->    with patch 5/5.
->  - Using pointer to struct for arguments in smr_is_subset().
->  Changes to incorporate suggestions from Bjorn as follows:
->  - fix the commit message for patch 2/5 to properly document the
->    value space to avoid confusion.
->  Fixed build issues reported by kernel test robot [1] for
->  arm64-allyesconfig [2].
->  [1]: https://lore.kernel.org/all/202312011750.Pwca3TWE-lkp@intel.com/
->  [2]:
-> https://download.01.org/0day-ci/archive/20231201/202312011750.Pwca3TWE-lk=
-p@intel.com/config
->  Link to v3:
-> https://lore.kernel.org/all/20231127145412.3981-1-quic_bibekkum@quicinc.c=
-om/
->
-> Changes in v3 from v2:
->  New addition:
->  - Include patch 3/4 for adding ACTLR support and data for SC7280.
->  - Add driver changes for actlr support in gpu smmu.
->  - Add target wise actlr data and implementation ops for gpu smmu.
->  Changes to incorporate suggestions from Robin as follows:
->  - Match the ACTLR values with individual corresponding SID instead
->    of assuming that any SMR will be programmed to match a superset of
->    the data.
->  - Instead of replicating each elements from qcom_smmu_match_data to
->    qcom_smmu structre during smmu device creation, replace the
->    replicated members with qcom_smmu_match_data structure inside
->    qcom_smmu structre and handle the dereference in places that
->    requires them.
->  Changes to incorporate suggestions from Dmitry and Konrad as follows:
->  - Maintain actlr table inside a single structure instead of
->    nested structure.
->  - Rename prefetch defines to more appropriately describe their
->    behavior.
->  - Remove SM8550 specific implementation ops and roll back to default
->    qcom_smmu_500_impl implementation ops.
->  - Add back the removed comments which are NAK.
->  - Fix commit description for patch 4/4.
->  Link to v2:
-> https://lore.kernel.org/all/20231114135654.30475-1-quic_bibekkum@quicinc.=
-com/
->
-> Changes in v2 from v1:
->  - Incorporated suggestions on v1 from Dmitry,Konrad,Pratyush.
->  - Added defines for ACTLR values.
->  - Linked sm8550 implementation structure to corresponding
->    compatible string.
->  - Repackaged actlr value set implementation to separate function.
->  - Fixed indentation errors.
->  - Link to v1:
-> https://lore.kernel.org/all/20231103215124.1095-1-quic_bibekkum@quicinc.c=
-om/
->
-> Changes in v1 from RFC:
->  - Incorporated suggestion form Robin on RFC
->  - Moved the actlr data table into driver, instead of maintaining
->    it inside soc specific DT and piggybacking on exisiting iommus
->    property (iommu =3D <SID, MASK, ACTLR>) to set this value during
->    smmu probe.
->  - Link to RFC:
-> https://lore.kernel.org/all/a01e7e60-6ead-4a9e-ba90-22a8a6bbd03f@quicinc.=
-com/
->
-> Bibek Kumar Patro (5):
->   iommu/arm-smmu: re-enable context caching in smmu reset operation
->   iommu/arm-smmu: refactor qcom_smmu structure to include single pointer
->   iommu/arm-smmu: add support for PRR bit setup
->   iommu/arm-smmu: introduction of ACTLR for custom prefetcher settings
->   iommu/arm-smmu: add ACTLR data and support for qcom_smmu_500
->
->  Documentation/arch/arm64/silicon-errata.rst   |   3 +-
->  drivers/iommu/Kconfig                         |  12 ++
->  drivers/iommu/arm/arm-smmu/arm-smmu-impl.c    |   5 +-
->  .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  |   2 +-
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c    | 120 +++++++++++++++++-
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h    |   3 +-
->  drivers/iommu/arm/arm-smmu/arm-smmu.h         |   2 +
->  include/linux/adreno-smmu-priv.h              |  14 ++
->  8 files changed, 155 insertions(+), 6 deletions(-)
->
-> --
-> 2.34.1
->
->
-
+> 
+> > > > > Not really an error per se: on ACPI system we usually don't
+> > > > > have DT, so this message just warns you that there will be no
+> > > > > pci nodes created on it.  Which, again, should be of no
+> > > > > importance on ACPI.  
+> > > > 
+> > > > I my last understanding, all architecture (even x86) have the DT
+> > > > root node set. This node is empty on architectures that don't
+> > > > use DT to describe hardware at boot (ACPI for instance).  
+> > > 
+> > > This does not seem to be the case for all arch, see below.
+> > > 
+> > > > This DT node is needed for PCI board that will be described by a
+> > > > DT overlay.  LAN966x for instance.
+> > > > 
+> > > > On v6.18-rc1 kernel, I successfully used my LAN966x board on a
+> > > > ACPI system.  This means that of_root DT node was present on my
+> > > > system.
+> > > >   
+> > > > > The only scenario in which this message is actually an error
+> > > > > would be on ACPI system that use DT as a complement to make
+> > > > > runtime overlay work,  
+> > > > 
+> > > > It is an error also if you use a PCI board that needs PCI DT
+> > > > nodes (CONFIG_PCI_DYNAMIC_OF_NODES) Lan966x for instance.  
+> > > 
+> > > Yes, I was referring exactly to that.
+> > > 
+> > > > > i.e. the overlay approach for RP1 on RPi5 with ACPI fw. AFAIK
+> > > > > this fw is more a PoC that something really widespread and
+> > > > > currntly the overlay approach is in stand-by anyway (meaning
+> > > > > no one will use it unless some major changes will be made to
+> > > > > make it work). But there may be other situations in which this
+> > > > > scenario could arise, I'm thinking about Bootlin's LAN966x
+> > > > > driver which also uses runtime overlay to describe thw hw.  On
+> > > > > ACPI system the root DT node is not created because
+> > > > > unflatten_device_tree() is not called.  
+> > > > 
+> > > > I am not so sure.  My LAN966x board is working on a x86 ACPI
+> > > > system.  
+> > > 
+> > > Indeed it depends on the architecture. On x86 an empty DT node is
+> > > created, provided you have CONFIG_OF_EARLY_FLATTREE defined (which
+> > > I guess you have, even if it's not in default config).
+> > 
+> > Indeed, I have CONFIG_OF_EARLY_FLATTREE = y.
+> > 
+> > > On arm64, ACPI and DT are mutually exclusive, unless the DT is
+> > > basically empty (i.e. only root node and chosen node). The DT root
+> > > node is not automatically created if not provided at boot, though.
+> > > This reinforces my idea of providing the only root node DT on arm
+> > > as well, but I'm not entirely sure about possible side effects.
+> > 
+> > Isn't it possible to have the same kind of operations on ARM64 ACPI
+> > and on x86?
+> > 
+> > In order to have CONFIG_PCI_DYNAMIC_OF_NODES working on ACPI, we
+> > need a DT node, even empty.
+> > 
+> > ARM64 ACPI without an empty DT node means that no PCI boards using a
+> > DT description will work on this system.
 
