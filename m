@@ -1,151 +1,150 @@
-Return-Path: <linux-kernel+bounces-890853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03556C412E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:58:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B35C412ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7926C1A41A2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:58:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9542A4E6CAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6800A337BB3;
-	Fri,  7 Nov 2025 17:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F569337BA7;
+	Fri,  7 Nov 2025 17:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="OnjRd5bi"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMXcaIBP"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9C2EBDF0;
-	Fri,  7 Nov 2025 17:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB904322774
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762538244; cv=none; b=AxaHar7pXLqxTx0PYulNUnYfE9VnSZd8kZeAQqREAYAQmkdWXFyJAsFRpWqfqJ2Brvr2AwMhqE+bz2VkIwiitA7ExUF/gd6v01d7/dfGxxwO3KIxYV1TxucrLM7h20rnlO4XrORv+/XB0mHVn8ZxZ5Xb9bivSYU+Qcsz7e1044U=
+	t=1762538325; cv=none; b=krgWXRA/k77BkxCHq/Yn8powaH/KxMgNogzqqcPwsiIBsB/zq7pxU/wW189OTDcYmWGSqQV1KTt1AFtUFujtXIaO27c8mEotlrJ0ENULwIvJRKIYP48uIwCDW/7NqDTodEjtcZM9OPvxRArOEixoPONeVfOqNd/EeD0mTY//kpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762538244; c=relaxed/simple;
-	bh=L/Eyn9JQ5eN2sTtPM3wIHo23CWqaAEii6vrSwTs3+/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LgkmJ8uegNct9yRh14bVm35SrV901qK9w3K/aUaAmztgp8tdGZEDAHaxUXLe2u3RBeY/w0Dz4DTr7+4oFLr9ANHBbLwiloo4e6sAJLoWN3Z6zSHo4Wwg+mM+tMkPO9HLvjwpooFasfiOg2TzcvLQNXF0EWmHSQKNqDC2gfKtpbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=OnjRd5bi; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p50878061.dip0.t-ipconnect.de [80.135.128.97])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 1190E2FC0057;
-	Fri,  7 Nov 2025 18:57:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762538233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xmj221kTYd7HSOB3agFGY3mXgujovHEBeY4c+UHaR6E=;
-	b=OnjRd5bixawTsEiAgPLr04Alk+TgddL+JyxoQvjAUv7UW2OiIm46iDAAhZqDufCRh4+zX7
-	KlLmN3NDQEiwQ8L/nG9P6SLk79b9mVADzlPIG+cYF6jHfGc9SXsXXYiHEjiQtzca1bJF2Z
-	mxXIhafP8QJO2d/Q2otN58L2Ge7eMrg=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <b0cd79db-16dc-448b-9426-0cf4566be70c@tuxedocomputers.com>
-Date: Fri, 7 Nov 2025 18:57:12 +0100
+	s=arc-20240116; t=1762538325; c=relaxed/simple;
+	bh=zcMWRLy2zTfSrZa7T+hCLM/4/N7QvFnX+Xx3zpNBBGo=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m0cEuq7ZvPRYeRax4hYBQxPc98mOmrG3a0HB9MJuUImf77Qi36ktkajjQ9zVm73F4j7+yAVa+sIscFxhIEE90YaP83hqzyEcx/oDlRKMOOdEP/AaNIzsI8rPVW9Rtz+2WOssp/Bbv/e9aNSwnErP91LnKdbVPUzkX2NfJ59Xayk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMXcaIBP; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-429c48e05aeso640788f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:58:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762538322; x=1763143122; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Hy8PEdE/fLtMOp8zZJDYe1K5v8P86jnmwdVl01gCF0=;
+        b=kMXcaIBP4T1ajPvHI5jq/hMge6Y30jyfxD7ylSxWWlnTwkKPXwJYlxcFt5R8hjXuk4
+         DfJP6GP7u5O1D1Mx+4pS3l3MF+yrs1E5jtt85imr7GgLu1+emYH3OoHjbJrd/YoZcHCi
+         qisvGamcAryoccGe8o6F04cDhB6+hOUV0rkcZ1qth5Zs3x6dZVYKK9OM77o4Ku/Qljie
+         f5Quju1TJA6J/FsRiy0iQs3EbYx4MgBELz7LuAZhMsGtzQJQboydhzCovQb5/gGQspFQ
+         U4HT52hsHwupqDYwIsSyEw20ElnMuIlWn1Q4vDcSs4lD/wSXrmABQTW8olaDvhRxrebl
+         FP/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762538322; x=1763143122;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Hy8PEdE/fLtMOp8zZJDYe1K5v8P86jnmwdVl01gCF0=;
+        b=NIutQ2jfqi6gtkugOpr4taWb8Xg5sW+x9FcfJkoMm0Nc6pAnV6u5BpPaFjp0RsRZzu
+         KeajsFLGOfBb0pBxP8R5RWJVvkRrVrkIQDLE8CcW3BSgK+10VW9oyLvz18c7iLPKDnAi
+         0eFARXW7wzkI9JDEUrVHZnCarv0EP53Q16hBca0hxW1uholDEPS6F/0VHOPev2kAUCJr
+         f2xfTrXLDUYfI3t+UwyCCjVKvSrFxaX1ryNKmIcYzQM2WK4CykNca1rWp55yYFfyGZ8R
+         9gJgiSdLFiBKihj87LQAMldleNBEmRCa7qGx/28bBCQb7XvW6MdBkUK9Il6hgdHU+clV
+         MYVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaNphpVFuOzOAiW3318uE3ODICjh8gNc6vxNP1gcOJsN7fcQJ9/OcCb3YhkivH3Ivk94rgvI4f1n//f8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5kofzK7sfCN1O4UfM5mHw6S4Fl7u4JiYLlVZFqTSvKKW2nCR4
+	yXvAeKmQf1kbpLnj8SXN15rodBt4J+i2eCo0H1gWcg1XsoVZMhWNXiRY
+X-Gm-Gg: ASbGncsa5UICdmC4fXoUK/Sa01LkXGZ9A5fLBfMNjeBhfAUIJGXUN0YGX/ttIbT2OHY
+	z+lRy9MDR9Jx/cNH9HPuxKOmUslvcKvlUcrXiBR9TS+BAuPXhX0968Uy1fmHRbGLXWACoGpHUJH
+	q6/D8yyoKHz22YyMZV8YB51C5a4feWqNO4+TIvW8vTg9tP4n2Th6mc4yr/P25O55+++M4zfP5/M
+	+Pyhu9JjQyosIuZ+K0b5ZkoMupjSHn8bdU17ZHzwZ1HNojIqMbz46O3en57265057SsM97IhcLo
+	F5e76JcyW0eBPHSdFJ1vrUGPQZiciVURpl/9BShWdI/+3MQijIjjUnmJMhz4QxMetVzpPf25cw/
+	prWLFgsfJik/o2nqdHX2jitDSZ52IGkluhTxJHwWv2MOwXBJjDuc6Fqr7hArlSn+FmoF5XtS3X7
+	DazBuFvc5B3yTKrh3aLpmj3cKZd4ar
+X-Google-Smtp-Source: AGHT+IHxrsG4B2duEE/+GCKG0QyJVFEsIc/yuwXnmYOAcLA/FUrE6rMl803DqisMTH4v+FhxV5j+Ag==
+X-Received: by 2002:a05:6000:26c9:b0:429:ef72:c33a with SMTP id ffacd0b85a97d-42b26f4be9dmr2506029f8f.3.1762538322141;
+        Fri, 07 Nov 2025 09:58:42 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477640fb801sm45371425e9.11.2025.11.07.09.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 09:58:41 -0800 (PST)
+Message-ID: <690e3351.050a0220.15e225.cf82@mx.google.com>
+X-Google-Original-Message-ID: <aQ4zTvBcOb-258Gg@Ansuel-XPS.>
+Date: Fri, 7 Nov 2025 18:58:38 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/5] dt-bindings: pinctrl: airoha: Document AN7583 Pin
+ Controller
+References: <20251106235713.1794668-1-ansuelsmth@gmail.com>
+ <20251106235713.1794668-5-ansuelsmth@gmail.com>
+ <20251107-washstand-motivator-c5e5e5d30dae@spud>
+ <690e311d.5d0a0220.2f18f8.2b28@mx.google.com>
+ <20251107-jasmine-unarmored-e3f5d544a1b7@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] hid/hid-multitouch: Keep latency normal on deactivate
- for reactivation gesture
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251106200752.1523111-1-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20251106200752.1523111-1-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107-jasmine-unarmored-e3f5d544a1b7@spud>
 
+On Fri, Nov 07, 2025 at 05:55:43PM +0000, Conor Dooley wrote:
+> On Fri, Nov 07, 2025 at 06:49:13PM +0100, Christian Marangi wrote:
+> > On Fri, Nov 07, 2025 at 05:24:21PM +0000, Conor Dooley wrote:
+> > > On Fri, Nov 07, 2025 at 12:57:07AM +0100, Christian Marangi wrote:
+> > > > Document Airoha AN7583 Pin Controller based on Airoha EN7581 with some
+> > > > minor difference on some function group (PCM and LED gpio).
+> > > > 
+> > > > To not bloat the EN7581 schema with massive if condition, use a
+> > > > dedicated YAML schema for Airoha AN7583.
+> > > 
+> > > You went to more effort than I would have here with that conditional!
+> > >
+> > 
+> > Well it was suggested by Rob and it's honestly a copy paste of en7581
+> > with the relevant thing changed.
+> > 
+> > > > +patternProperties:
+> > > > +  '-pins$':
+> > > > +    type: object
+> > > > +
+> > > > +    patternProperties:
+> > > > +      '^mux(-|$)':
+> > > > +        type: object
+> > > 
+> > > What's up with this regex? Why does it allow either - or $?
+> > 
+> > It's to permit either mux-* or unique node name with mux. Pattern is
+> > also used by mt7622 or other schema. Other use mux- to require a name
+> > after the mux.
+> 
+> Ah right, because you can have the config properties like drive
+> strength in the mux node, so sometimes a -pins has one mux node (mux:) if
+> all pins share settings and sometimes there could be multiple, which
+> requires a suffix.
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> pw-bot: not-applicable
 
-Am 06.11.25 um 20:59 schrieb Werner Sembach:
-> Uniwill devices have a built in gesture in the touchpad to de- and
-> reactivate it by double taping the upper left corner. This gesture stops
-> working when latency is set to high, so this patch keeps the latency on
-> normal.
-Just a heads up: For some reason this patch breaks the touchpad on Intel 
-devices. I will look into it on monday.
->
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> Cc: stable@vger.kernel.org
-> ---
-> V1->V2: Use a quirk to narrow down the devices this is applied to.
->
-> I have three Uniwill devices at hand right now that have at least two
-> physically different touchpads, but same Vendor + Product ID combination.
-> Maybe the vendor uses this product ID for all i2c connected touchpads, or
-> it is used as some kind of subvendor ID to indicate Uniwill?
->
-> To be able to really narrow it down to Uniwill only devices I would need to
-> check DMI strings, but then I will probably narrow it down to much as I
-> only know what we at TUXEDO use there.
->
->   drivers/hid/hid-multitouch.c | 17 ++++++++++++++++-
->   1 file changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> index 179dc316b4b51..470f199148057 100644
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -76,6 +76,7 @@ MODULE_LICENSE("GPL");
->   #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
->   #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
->   #define MT_QUIRK_APPLE_TOUCHBAR		BIT(23)
-> +#define MT_QUIRK_KEEP_LATENCY_ON_CLOSE	BIT(24)
->   
->   #define MT_INPUTMODE_TOUCHSCREEN	0x02
->   #define MT_INPUTMODE_TOUCHPAD		0x03
-> @@ -229,6 +230,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
->   #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
->   #define MT_CLS_SMART_TECH			0x0113
->   #define MT_CLS_APPLE_TOUCHBAR			0x0114
-> +#define MT_CLS_UNIWILL_TOUCHPAD			0x0115
->   #define MT_CLS_SIS				0x0457
->   
->   #define MT_DEFAULT_MAXCONTACT	10
-> @@ -420,6 +422,9 @@ static const struct mt_class mt_classes[] = {
->   			MT_QUIRK_APPLE_TOUCHBAR,
->   		.maxcontacts = 11,
->   	},
-> +	{ .name = MT_CLS_UNIWILL_TOUCHPAD,
-> +		.quirks = MT_QUIRK_KEEP_LATENCY_ON_CLOSE,
-> +	},
->   	{ .name = MT_CLS_SIS,
->   		.quirks = MT_QUIRK_NOT_SEEN_MEANS_UP |
->   			MT_QUIRK_ALWAYS_VALID |
-> @@ -1998,7 +2003,12 @@ static void mt_on_hid_hw_open(struct hid_device *hdev)
->   
->   static void mt_on_hid_hw_close(struct hid_device *hdev)
->   {
-> -	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
-> +	struct mt_device *td = hid_get_drvdata(hdev);
-> +
-> +	if (td->mtclass.quirks & MT_QUIRK_KEEP_LATENCY_ON_CLOSE)
-> +		mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_NONE);
-> +	else
-> +		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
->   }
->   
->   /*
-> @@ -2375,6 +2385,11 @@ static const struct hid_device_id mt_devices[] = {
->   		MT_USB_DEVICE(USB_VENDOR_ID_UNITEC,
->   			USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19) },
->   
-> +	/* Uniwill touchpads */
-> +	{ .driver_data = MT_CLS_UNIWILL_TOUCHPAD,
-> +		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-> +			   USB_VENDOR_ID_PIXART, 0x0255) },
-> +
->   	/* VTL panels */
->   	{ .driver_data = MT_CLS_VTL,
->   		MT_USB_DEVICE(USB_VENDOR_ID_VTL,
+Mhhh why not-applicable ? :(
+
+I rebased on top of linux-next, did you spot any conflict?
+
+-- 
+	Ansuel
 
