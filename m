@@ -1,166 +1,265 @@
-Return-Path: <linux-kernel+bounces-890272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A38C3FAC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D347EC3FAF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA12B3AF392
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960B33BB6AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4272E320A00;
-	Fri,  7 Nov 2025 11:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312183203AA;
+	Fri,  7 Nov 2025 11:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="luiBTTBq"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv8bkE0x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA21331DDBF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0AA2C9D;
+	Fri,  7 Nov 2025 11:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762514053; cv=none; b=mb4VU3w9yuqrBzOsuAJ5wKsT4DSJp+udY9k/9HMhW83WiSl96iGQMxem9AML49WiWMd2ZSv8KN1DojaRGXjiW24oJd1sAQCo8rTd6/NAB1CpZEqOO0EmqgYCXHoSsOYmvewD7r3+grz5giK00sEOQXgP5R0WOP/5sBtZ8KsAfQg=
+	t=1762514134; cv=none; b=eCWuyT3558mEVqtTqPoaK6szL8nLLZXA0iz/0LCwWnhZ05WN6+M/n/3cyScBOWYiesqju3+RIJqdrXANWJHZwTxe1bTcKSzLBwUdGg/kAQrP77BY6a1ibv2rD4xn2+u2GpzZRdF05W2ClcTji/VNjXxBENV3rcIpFg74m2FMdz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762514053; c=relaxed/simple;
-	bh=Z7IPw5CPkkm8JcNSROY9Rb8Po+uOfMzr3L63jIIDVFM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WIh4VobSKhx2QLcbjtF0OrzwjZ10A/l7H7EFcPoJ/6feTYsSdx0wKpf1cLbTkuhXQz5Q24cIzCFEj615a2FeMhIArIXq25zAkDpaWeJeRGB1cf87/rovzyk0VD21vizTlhphH+dI+r/X+HGzPlF+rkGqesHUqoCewX01IbtY474=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=luiBTTBq; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b70fb7b531cso112504166b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762514050; x=1763118850; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z7IPw5CPkkm8JcNSROY9Rb8Po+uOfMzr3L63jIIDVFM=;
-        b=luiBTTBqWyYVxLyfjIjqWhL/TJ+aTGylHamIgM1BRtHW5ij3i3o5qpvRxapwh7561R
-         w4GRGBK1McbigXxWw+/q6TgbJYU/E3UViPtoXds9dTCc5575WylTzZcVG+/rCsYKnQTw
-         vSrNbf1MluN1tWVqTd+CNpC9Xpf1DUXSpmjY1X34V2ZVpnn/rvI+fbAOALIfHo0hV9Bj
-         9tGlvH6KP9jreduQoMZ5wtNRU45+XI/5DCPuUKvIWmRZ3xciAee9jK+MAvSR1V5b+6o4
-         D+v1nPgUb9YPcDqWNcIVJy2IwY1VCKPsJUjvsVbTtGlc4HSGP5HmTFOSzLnYYT5srUiO
-         Ah+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762514050; x=1763118850;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7IPw5CPkkm8JcNSROY9Rb8Po+uOfMzr3L63jIIDVFM=;
-        b=bVRPAZZeJ8Yx0h/3XE7VleP4rUreLdl032hF+8Eag17Q/1VhxlqHNJtHydz3xbVr+Q
-         HtpXUqW5Gyqmjtygu9XoCzm/+dxgESjVKuVE92gv1+90IzQy9bpwmUK9cZ1gLgYE15L3
-         AWcbUGUGGm4qTVP1TqwQcKGe81S67/y9Q//o2XThd+ccbdHSl9lublKohELNR2p81lBA
-         MehmkffWy2A20AMWPoW1zqB66O2YF1QPGjAoBj8eYtXYTQZ79DgbfIuK4g6hfiZXO66U
-         Sau73BevRvhgFUTH7O3hzIuMH1RlU5oOo6PY4LajZSdpUS/QbPZBHXDGmbqEZwI9ThhH
-         nUnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWm4feBbX2iAHJUv6JHih+vZsoSpZKoQryerQuBOKnak9MTOcvJIzb8CvZAAyaNB3XILLWZvIKd7tL37no=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7ddi9oQsVL1rPpVbJXsBZiHi6fisGHgyXHwZJyrB/W+aKHGQz
-	AN8enS3gbed814hur0alNrDqX9DtGiZKzVAjBGqgmywvIS1uqrWousASSy0uOSmXp/U=
-X-Gm-Gg: ASbGncvo9t3qXi14M0PdlmQbSs6MzC1/T9Ndru9/Yf7nXA0n4pJIwIOf3FG1BepMdNb
-	3OQEt3YFtRSE8L0vkc1BTorqRPODZRRn5bdyycUQIb5mg00By6YHlyLF4doOr5DJqCOi3Ef8CCz
-	W1PFWcvKmHeq7OFt7IED4V+6/f+KRaKVq++DaD/TNhLrY1fVYwrfEpvq+GH7H+eiJYNMUsvNHhA
-	5JpzMqs7AJGHsZoaVPd/17Fv8Dcd787MmU82OImxlhpKCjIUqlsWbs7ec1E7GfxulMf1w4tu6Cl
-	zm2dwHfYFpcuc+mHZ2mU0KjpxqfmX6k1rhkZaRqvusOopig/GNmRzjAI7YwM+/LZNR06JRY2KNI
-	7pSgbK+sIGQSyMPzvGyEMg/t8Hjwd8hFB1qm61qEkBWS8ztId0mO7C3fpTxyKk63czCDSTIizyO
-	JUsGTfrg0jl42TM14/bbrhniPy7DL05BPGQg==
-X-Google-Smtp-Source: AGHT+IFXZ+Ksq+F4K5MrYL+0Ly42CejCgVP+A4n4kcnrW9kMuuDkI5VXyfDYyP5cJO6HwQMmVPf1ww==
-X-Received: by 2002:a17:907:3f28:b0:b3d:5088:213d with SMTP id a640c23a62f3a-b72c0cf643dmr254948266b.42.1762514049980;
-        Fri, 07 Nov 2025 03:14:09 -0800 (PST)
-Received: from [172.20.148.133] ([87.213.113.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e457sm212986366b.43.2025.11.07.03.14.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 03:14:09 -0800 (PST)
-Message-ID: <46b008c946e36ea0b317691356ff874c4a78882d.camel@linaro.org>
-Subject: Re: [PATCH v3 04/20] regulator: dt-bindings: add s2mpg11-pmic
- regulators
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,  Lee Jones <lee@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, 	kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org
-Date: Fri, 07 Nov 2025 11:14:09 +0000
-In-Reply-To: <20251104-zircon-lobster-of-agility-cbcbb0@kuoka>
-References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
-	 <20251103-s2mpg1x-regulators-v3-4-b8b96b79e058@linaro.org>
-	 <20251104-zircon-lobster-of-agility-cbcbb0@kuoka>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	s=arc-20240116; t=1762514134; c=relaxed/simple;
+	bh=AtjVellgJiMMxUlOBM13bMyvXugC/bdRQTnYl63LCtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WU0uqYbGPuAOF0XrJpa6SUKbY3jMu8PMhDUa37h6xI/AQHrqdrnvhOoWLQUAMEDqLclCe49Jb5GORTtfU8pnTBy9SSI9vmb1CwCirMlF2DoqOmZJroP/z7g8Y9ATIkjsjxFHDYQ/5b/pRByNhNxHV5ihm36pjV4xaH3/y76G45I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hv8bkE0x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B89E5C116B1;
+	Fri,  7 Nov 2025 11:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762514134;
+	bh=AtjVellgJiMMxUlOBM13bMyvXugC/bdRQTnYl63LCtM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hv8bkE0x2DIzpoVWBkVnXYE6tnqjItZaptk00oTAbM8tp2kArVTLfCwO9+nq5Vd+P
+	 Ixt2G5+NqtFDGZ+EvfAxEk0ArvpmjbhKk5XYVFI5oHnoUGs1LY99CzPtiYU2795JTg
+	 cahCjU1wfeOEV/7hxjug/T7NHIZgJaixd0wbbambGKA7p9aahybS9KHoiWZ8mqGa+e
+	 ReKx58+Y5HPXdydL1C/60NedhRdN3pp6JwYhcd7cf0yNXtjXQWxJCM9XKetN5pd/xH
+	 LYuhP5g0rkE5NgGfwEPUdHm48cnE5F3lDZVa3D0qhpBy0T25r7S2xtXoDGDp2w3/nb
+	 kqmEZZwfQnIZQ==
+Date: Fri, 7 Nov 2025 12:15:31 +0100
+From: Vinod Koul <vkoul@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org, krzk+dt@kernel.org, linux-iio@vger.kernel.org,
+	s32@nxp.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, chester62515@gmail.com,
+	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com,
+	dmaengine@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+Message-ID: <aQ3U0_6RM0KMP_od@vaman>
+References: <20251017164238.1908585-1-daniel.lezcano@linaro.org>
+ <20251017164238.1908585-3-daniel.lezcano@linaro.org>
+ <20251019094246.38daf7bf@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251019094246.38daf7bf@jic23-huawei>
 
-On Tue, 2025-11-04 at 10:39 +0100, Krzysztof Kozlowski wrote:
-> On Mon, Nov 03, 2025 at 07:14:43PM +0000, Andr=C3=A9 Draszik wrote:
-> > +=C2=A0 The S2MPG11 PMIC provides 12 buck, 1 buck-boost, and 15 LDO reg=
-ulators.
-> > +
-> > +=C2=A0 See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.=
-yaml for
-> > +=C2=A0 additional information and example.
-> > +
-> > +definitions:
->=20
-> defs:
+On 19-10-25, 09:42, Jonathan Cameron wrote:
+> On Fri, 17 Oct 2025 18:42:38 +0200
+> Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+> 
+> > From: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+> > 
+> > The NXP S32G2 and S32G3 platforms integrate a successive approximation
+> > register (SAR) ADC. Two instances are available, each providing 8
+> > multiplexed input channels with 12-bit resolution. The conversion rate
+> > is up to 1 Msps depending on the configuration and sampling window.
+> > 
+> > The SAR ADC supports raw, buffer, and trigger modes. It can operate
+> > in both single-shot and continuous conversion modes, with optional
+> > hardware triggering through the cross-trigger unit (CTU) or external
+> > events. An internal prescaler allows adjusting the sampling clock,
+> > while per-channel programmable sampling times provide fine-grained
+> > trade-offs between accuracy and latency. Automatic calibration is
+> > performed at probe time to minimize offset and gain errors.
+> > 
+> > The driver is derived from the BSP implementation and has been partly
+> > rewritten to comply with upstream requirements. For this reason, all
+> > contributors are listed as co-developers, while the author refers to
+> > the initial BSP driver file creator.
+> > 
+> > All modes have been validated on the S32G274-RDB2 platform using an
+> > externally generated square wave captured by the ADC. Tests covered
+> > buffered streaming via IIO, trigger synchronization, and accuracy
+> > verification against a precision laboratory signal source.
+> > 
+> > Co-developed-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
+> > Signed-off-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
+> > Co-developed-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> > Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> > Co-developed-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
+> > Signed-off-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
+> > Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+> > Co-developed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> 
+> Hi Daniel,
+> 
+> Only significant question in here is around lifetimes of the
+> dma buffer.
+> 
+> +CC Vinod and dmaengine list. Hopefully someone will rapidly tell me
+> my concern is garbage ;)
 
-All existing bindings are using definitions, not defs. Shouldn't this stay
-consistent?
-
-[...]
-
-> > +patternProperties:
-> > +=C2=A0 # 12 bucks
-> > +=C2=A0 "^buck(([1-9]|10)s|[ad])$":
-> > +=C2=A0=C2=A0=C2=A0 type: object
-> > +=C2=A0=C2=A0=C2=A0 $ref: regulator.yaml#
-> > +=C2=A0=C2=A0=C2=A0 unevaluatedProperties: false
-> > +=C2=A0=C2=A0=C2=A0 description:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Properties for a single buck regulator.
+Thanks for looping me in
+> 
+> IIO folk who are familiar with dmaengine channels etc please take
+> a look at this as well.  I think all the upstream drivers we have doing
+> similar things to this predate devm_ management being a common thing.
+> 
+> Jonathan
+> 
+> 
+> > diff --git a/drivers/iio/adc/nxp-sar-adc.c b/drivers/iio/adc/nxp-sar-adc.c
+> > new file mode 100644
+> > index 000000000000..fa390c9d911f
+> > --- /dev/null
+> > +++ b/drivers/iio/adc/nxp-sar-adc.c
+> > @@ -0,0 +1,1006 @@
+> 
 > > +
-> > +=C2=A0=C2=A0=C2=A0 allOf:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - $ref: "#/definitions/s2mpg11-ext-cont=
-rol"
->=20
-> defs
->=20
+> > +static void nxp_sar_adc_dma_cb(void *data)
+> > +{
+> > +	struct nxp_sar_adc *info = iio_priv(data);
+> > +	struct iio_dev *indio_dev = data;
+> 
+> Trivial but it would slightly more intuitive to do.
+> 	struct iio_dev *indio_dev = data;
+> 	struct nxp_sar_adc *info = iio_priv(indio_dev);
+> 
+> > +	struct dma_tx_state state;
+> > +	struct circ_buf *dma_buf;
+> > +	struct device *dev_dma;
+> > +	u32 *dma_samples;
+> > +	s64 timestamp;
+> > +	int idx, ret;
 > > +
-> > +=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regulator-ramp-delay:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum: [6250, 12500, 25000]
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default: 6250
+> > +	guard(spinlock_irqsave)(&info->lock);
 > > +
->=20
-> ....
->=20
->=20
-> > +=C2=A0=C2=A0=C2=A0 allOf:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - $ref: "#/definitions/s2mpg11-ext-cont=
-rol"
+> > +	dma_buf = &info->dma_buf;
+> > +	dma_samples = (u32 *)dma_buf->buf;
+> > +	dev_dma = info->dma_chan->device->dev;
 > > +
-> > +=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regulator-ramp-delay:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum: [6250, 12500]
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default: 6250
+> > +	dmaengine_tx_status(info->dma_chan, info->cookie, &state);
 > > +
-> > +additionalProperties: false
->=20
-> This goes to the end, after allOf, see example-schema.
+> > +	dma_sync_single_for_cpu(dev_dma, info->rx_dma_buf,
+> > +				NXP_SAR_ADC_DMA_BUFF_SZ, DMA_FROM_DEVICE);
+> > +
+> > +	/* Current head position. */
+> > +	dma_buf->head = (NXP_SAR_ADC_DMA_BUFF_SZ - state.residue) /
+> > +			NXP_SAR_ADC_DMA_SAMPLE_SZ;
+> > +
+> > +	/* If everything was transferred, avoid an off by one error. */
+> > +	if (!state.residue)
+> > +		dma_buf->head--;
+> > +
+> > +	/* Something went wrong and nothing transferred. */
+> > +	if (state.residue == NXP_SAR_ADC_DMA_BUFF_SZ)
+> > +		goto out;
+> > +
+> > +	/* Make sure that head is multiple of info->channels_used. */
+> > +	dma_buf->head -= dma_buf->head % info->channels_used;
+> > +
+> > +	/*
+> > +	 * dma_buf->tail != dma_buf->head condition will become false
+> > +	 * because dma_buf->tail will be incremented with 1.
+> > +	 */
+> > +	while (dma_buf->tail != dma_buf->head) {
+> > +		idx = dma_buf->tail % info->channels_used;
+> > +		info->buffer[idx] = dma_samples[dma_buf->tail];
+> > +		dma_buf->tail = (dma_buf->tail + 1) % NXP_SAR_ADC_DMA_SAMPLE_CNT;
+> > +		if (idx != info->channels_used - 1)
+> > +			continue;
+> > +
+> > +		/*
+> > +		 * iio_push_to_buffers_with_timestamp should not be
+> 
+> Comment needs an update as using with_ts()
+> 
+> 
+> > +		 * called with dma_samples as parameter. The samples
+> > +		 * will be smashed if timestamp is enabled.
+> > +		 */
+> > +		timestamp = iio_get_time_ns(indio_dev);
+> > +		ret = iio_push_to_buffers_with_ts(indio_dev, info->buffer,
+> > +						  sizeof(info->buffer),
+> > +						  timestamp);
+> > +		if (ret < 0 && ret != -EBUSY)
+> > +			dev_err_ratelimited(&indio_dev->dev,
+> > +					    "failed to push iio buffer: %d",
+> > +					    ret);
+> > +	}
+> > +
+> > +	dma_buf->tail = dma_buf->head;
+> > +out:
+> > +	dma_sync_single_for_device(dev_dma, info->rx_dma_buf,
+> > +				   NXP_SAR_ADC_DMA_BUFF_SZ, DMA_FROM_DEVICE);
+> > +}
+> 
+> 
+> 
+> > +static int nxp_sar_adc_dma_probe(struct device *dev, struct nxp_sar_adc *info)
+> > +{
+> > +	struct device *dev_dma;
+> > +	u8 *rx_buf;
+> > +
+> > +	info->dma_chan = devm_dma_request_chan(dev, "rx");
+> > +	if (IS_ERR(info->dma_chan))
+> > +		return PTR_ERR(info->dma_chan);
+> > +
+> > +	dev_dma = info->dma_chan->device->dev;
+> > +	rx_buf = dmam_alloc_coherent(dev_dma, NXP_SAR_ADC_DMA_BUFF_SZ,
+> > +				     &info->rx_dma_buf, GFP_KERNEL);
+> 
+> Is this setting up the right life time?  Superficially it looks to be
+> associating the buffer lifetime with a device related to the dma engine rather
+> than the device we are dealing with here.
 
-Will fix.
+Absolutely! the buffer ought to be mapped always with dmaengine device.
+The transaction are performed by the dmaengine device and that is why
+mapping should always be done with dmaengine device, it will not work
+otherwise.
 
-Thanks for your review Krzysztof.
+> This particular pattern with devm_dma_request_chan() is vanishingly rare
+> so not much prior art to rely on.
 
-Cheers,
-A.
+I personally do not like that, dmaengine channel is a shared resource
+and it should be grabbed at runtime and freed up after use. Ideally
+would be good if we grab the channel when we need i
+
+But I know people like to grab channels at startup :-(
+
+> If the info->dma_chan->device->dev is instantiated by devm_dma_request_chan()
+> and hence torn down as that is unwound it will be fine as this is simply
+> nested devm handling, but it seems a struct dma_device has many chans so
+> I think that isn't the case.
+> 
+> Given that device parameter is also needed for the buffer allocation and
+> making sure we have the right properties / iommu magic etc, I'm not sure
+> how to make this work. One option would be to use dma_alloc_coherent() and
+> tear down with a devm_add_action_or_reset() handler on dev rather than
+> dev_dma.
+> 
+> > +	if (!rx_buf)
+> > +		return -ENOMEM;
+> > +
+> > +	info->dma_buf.buf = rx_buf;
+> > +
+> > +	return 0;
+> > +}
+
+-- 
+~Vinod
 
