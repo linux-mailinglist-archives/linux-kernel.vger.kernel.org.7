@@ -1,318 +1,163 @@
-Return-Path: <linux-kernel+bounces-890876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8A2C4142C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:18:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56239C41437
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8AF3B2416
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:18:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9D2D4E9CC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80B53358C6;
-	Fri,  7 Nov 2025 18:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DBE3396E7;
+	Fri,  7 Nov 2025 18:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmhrtoES"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5FGPZ+d"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CBD332ED7;
-	Fri,  7 Nov 2025 18:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739A331985D;
+	Fri,  7 Nov 2025 18:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539510; cv=none; b=RZ+wXpu7IVumRs9W9K+eMgYchFShr5wLYvjXTp/ecDJGePHCKCYKVyHmY4UpcXLu/bOaoNyfTQN94apn3cEDBIe4AMiUhAe8DxkYyOlQNVnaErvbJBdhtDMXQ7gdBDsqnkJRaQt4nO8btvO8mIOWc3eFMmNm3hxKU3j13KOe3vI=
+	t=1762539560; cv=none; b=mfUuWx1x8/XbJZztoh/cSiXkCQmrm57uuOh6rSQPfhyi5eiAzzX47IKWSb6DbqnVcjjC705q+Ya0vnJBdZL5okPm4TBxccFbh6Wo8koYpUwSQs9JiM6Od1jSzrWJG+AcWi+5GzJVHpPAdLa1UjChUy3bed5mJJhDVoXQMkZ6/+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539510; c=relaxed/simple;
-	bh=xQVzgD7GVp4/BOHYm5HSOOyNHFn2GczjN+HJaZNJ9rQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dRACWw0MQU3q4uR8A+FJzvswaekEcZ+iCMPFI7tG7+ydQGidNwRL7e8XO9Xmh/OO4oZ8CK3FhaBLKz0fYS+QyFdOUuKpFUO4GNn0CXJvlDwkguxXreJFPfTJ2XkoniriuDb4Z3QHlJWpekf3Fo36s1p7ci4MSeiZ8a6r0Ilz88E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmhrtoES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B850C16AAE;
-	Fri,  7 Nov 2025 18:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762539509;
-	bh=xQVzgD7GVp4/BOHYm5HSOOyNHFn2GczjN+HJaZNJ9rQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YmhrtoESWEncfjf37tPDWCHbtqdtyJtTEOJEqtkkEAauFWUX5ULRZkT9eLRQ0+4dp
-	 3M/tvhxVIj1iehJavPfUh7hgLbUloLRzK1pqAHoKX3GaIPSn4dsFK34mt6RErMJ286
-	 7ImXSLjsGBmoDdVOPXiPAgJXn4Arrg3SQN6C492dB8IM7VYlphzbC+1oICTkjL5kX4
-	 GxzuimQEEoatcFbkHPMhJ75gJjRjKqE5LkSOF1JlEnsU+LGx7DWUO3mCu2dnTijI+1
-	 ZbjqtE+L+ODG8SJHtiHUGBRT2nGyeloXigNuNo//szQCVZ5RMkz1356I7ETmM3R4SW
-	 5OsiGa1L3uxzg==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v1] cpufreq: intel_pstate: Use mutex guard for driver locking
-Date: Fri, 07 Nov 2025 19:18:26 +0100
-Message-ID: <2807232.mvXUDI8C0e@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1762539560; c=relaxed/simple;
+	bh=mkYsfVEQjaAnNR7HF/dv8lbok/JW0IIU36RYIHbEj4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/9Jsy1OHQcW4Aqs6paOqkdEMYXn1jRAIDlmV6Ha5tAQQvIS+JtmU+gCEVe04UGs2Z5/FysoX1soQZRLHPQSj6EM9rCqVwyxt49KmzDe27lw8aFpfdqxkKYH9DOSL/xvrTmkguIJHyjFmU236mO7qfnNm4hD+n7geu+9mnSK2Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5FGPZ+d; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762539559; x=1794075559;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=mkYsfVEQjaAnNR7HF/dv8lbok/JW0IIU36RYIHbEj4Q=;
+  b=e5FGPZ+dbiz2qg3W6E/lDS21t1wvT0ATni66jOzl2dA1kUG3ZmTcQ0nP
+   It6cxhIGtRlkE00W/yGeTGE9CJ5aZKUhAzXYr0EK+BJEmuc2TiYXBH/yv
+   z4E7J1N+voOUbHPgJyqevUHiRrlN9gr9O5a9Eby9CNaO9oAKVJCcq6rl3
+   Lxazf2O2y66i+rqOoWIXEaj5ivO3Bxh3mSQwEsF0cdP8kjEdqLfymEobk
+   mwgG9+l+GqhgB0ZfKiTRz3Y6Zt5goQm4x+rlTcU6bWAW4M5B2KCEflEfs
+   zblO1iBr4ZcNftU55y+YtHBiteq1IttXoOBuhPKawVFca4Hb2vQToMLEQ
+   A==;
+X-CSE-ConnectionGUID: pszAQWjQQs+qHwl4N8JqjQ==
+X-CSE-MsgGUID: TyeE7XvZTIqqzJWkOrly2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="76143503"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="76143503"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 10:19:19 -0800
+X-CSE-ConnectionGUID: kTJCOPlsTcaVO4hn5KTDEw==
+X-CSE-MsgGUID: JtZZqnloSQ6FjZojeunqrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
+   d="scan'208";a="218840562"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.27])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 10:19:15 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vHR3J-00000006XfY-0Ilh;
+	Fri, 07 Nov 2025 20:19:13 +0200
+Date: Fri, 7 Nov 2025 20:19:12 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: Ma Ke <make24@iscas.ac.cn>, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v3] iio: trigger: Fix error handling in viio_trigger_alloc
+Message-ID: <aQ44IB1b7AXun_qN@smile.fi.intel.com>
+References: <20251107020200.6285-1-make24@iscas.ac.cn>
+ <9aac9a66c02c691e073043f918fef055dca888e9.camel@gmail.com>
+ <aQ3NHnL2rF0wkqeo@smile.fi.intel.com>
+ <9e96f49f3903f704e16e8dde540507b10a978951.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e96f49f3903f704e16e8dde540507b10a978951.camel@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Nov 07, 2025 at 04:48:03PM +0000, Nuno Sá wrote:
+> On Fri, 2025-11-07 at 12:42 +0200, Andy Shevchenko wrote:
+> > On Fri, Nov 07, 2025 at 10:26:10AM +0000, Nuno Sá wrote:
+> > > On Fri, 2025-11-07 at 10:02 +0800, Ma Ke wrote:
+> > > > viio_trigger_alloc() initializes the device with device_initialize()
+> > > > but uses kfree() directly in error paths, which bypasses the device's
+> > > > release callback iio_trig_release(). This could lead to memory leaks
+> > > > and inconsistent device state.
 
-Use guard(mutex)(&intel_pstate_driver_lock), or the scoped variant of
-it, wherever intel_pstate_driver_lock needs to be held.
+...
 
-This allows some local variables and goto statements to be dropped as
-they are not necessary any more.
+> > > > -free_descs:
+> > > > -	irq_free_descs(trig->subirq_base, CONFIG_IIO_CONSUMERS_PER_TRIGGER);
+> > > >  free_trig:
+> > > > -	kfree(trig);
+> > > > +	put_device(&trig->dev);
+> > > 
+> > > Yes, device_initialize() docs do say that we should give the reference instead of
+> > > freeing the device but I'm not see how that helps in here. Maybe initializing the
+> > > device should be done only after all the resources are allocated so the code is a
+> > > bit
+> > > more clear... But doing it like you're doing just means that we might get into
+> > > the
+> > > release function with things that might or might not be allocated which is a
+> > > pattern
+> > > I would prefer to avoid.
+> > 
+> > The put_device() here is the correct (and must) thing to do independently on
+> > the preferences. The problem is that device_initialise() and followed calls
+> > may do much more than just some initialisation.
+> 
+> Well, I would argue against that (at least in the context the function is now
+> implemented). To me, the right thing to do would be to move the device initialization
+> code to this point:
+> 
+> https://elixir.bootlin.com/linux/v6.17.7/source/drivers/iio/industrialio-trigger.c#L594
+> 
+> trig->dev.parent = parent;
+> trig->dev.type = &iio_trig_type;
+> trig->dev.bus = &iio_bus_type;
+> device_initialize(&trig->dev);
+> 
+> Then we would not even need to think about put_device(). Like it is, using it, it's
+> just prone to errors (I did mentioned a couple of things this patch introduced If I'm
+> not overseeing it) or we do need to have lots of care in the release function to make
+> sure we don't mess up. To me that's a bad sign on how the code is architectured. 
+> 
+> FWIW, the pattern you find for example in SPI is the natural one for me:
+> 
+> You have a spi_alloc_device() [1] that initialises struct device right in the end.
+> Above it, kfree() as usual. Then the callers, will indeed use put_device() in their
+> error paths.
+> 
+> So the pattern to me is to do device_initialize() after all resources of your device
+> are allocated. So that after that point put_device() does not get you into some odd
+> handling in the release callback.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |   99 +++++++++++++----------------------------
- 1 file changed, 33 insertions(+), 66 deletions(-)
+Sure, this can be another approach. Whatever you, folks, prefer. But at least
+the mutex_destroy() (separate) patch can be issued and accepted independently.
 
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1467,7 +1467,8 @@ static void set_power_ctl_ee_state(bool
- {
- 	u64 power_ctl;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
-+
- 	rdmsrq(MSR_IA32_POWER_CTL, power_ctl);
- 	if (input) {
- 		power_ctl &= ~BIT(MSR_IA32_POWER_CTL_BIT_EE);
-@@ -1477,7 +1478,6 @@ static void set_power_ctl_ee_state(bool
- 		power_ctl_ee_state = POWER_CTL_EE_DISABLE;
- 	}
- 	wrmsrq(MSR_IA32_POWER_CTL, power_ctl);
--	mutex_unlock(&intel_pstate_driver_lock);
- }
- 
- static void intel_pstate_hwp_enable(struct cpudata *cpudata);
-@@ -1599,13 +1599,9 @@ static int intel_pstate_update_status(co
- static ssize_t show_status(struct kobject *kobj,
- 			   struct kobj_attribute *attr, char *buf)
- {
--	ssize_t ret;
--
--	mutex_lock(&intel_pstate_driver_lock);
--	ret = intel_pstate_show_status(buf);
--	mutex_unlock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
- 
--	return ret;
-+	return intel_pstate_show_status(buf);
- }
- 
- static ssize_t store_status(struct kobject *a, struct kobj_attribute *b,
-@@ -1614,11 +1610,13 @@ static ssize_t store_status(struct kobje
- 	char *p = memchr(buf, '\n', count);
- 	int ret;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
-+
- 	ret = intel_pstate_update_status(buf, p ? p - buf : count);
--	mutex_unlock(&intel_pstate_driver_lock);
-+	if (ret < 0)
-+		return ret;
- 
--	return ret < 0 ? ret : count;
-+	return count;
- }
- 
- static ssize_t show_turbo_pct(struct kobject *kobj,
-@@ -1628,12 +1626,10 @@ static ssize_t show_turbo_pct(struct kob
- 	int total, no_turbo, turbo_pct;
- 	uint32_t turbo_fp;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
- 
--	if (!intel_pstate_driver) {
--		mutex_unlock(&intel_pstate_driver_lock);
-+	if (!intel_pstate_driver)
- 		return -EAGAIN;
--	}
- 
- 	cpu = all_cpu_data[0];
- 
-@@ -1642,8 +1638,6 @@ static ssize_t show_turbo_pct(struct kob
- 	turbo_fp = div_fp(no_turbo, total);
- 	turbo_pct = 100 - fp_toint(mul_fp(turbo_fp, int_tofp(100)));
- 
--	mutex_unlock(&intel_pstate_driver_lock);
--
- 	return sprintf(buf, "%u\n", turbo_pct);
- }
- 
-@@ -1653,38 +1647,26 @@ static ssize_t show_num_pstates(struct k
- 	struct cpudata *cpu;
- 	int total;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
- 
--	if (!intel_pstate_driver) {
--		mutex_unlock(&intel_pstate_driver_lock);
-+	if (!intel_pstate_driver)
- 		return -EAGAIN;
--	}
- 
- 	cpu = all_cpu_data[0];
- 	total = cpu->pstate.turbo_pstate - cpu->pstate.min_pstate + 1;
- 
--	mutex_unlock(&intel_pstate_driver_lock);
--
- 	return sprintf(buf, "%u\n", total);
- }
- 
- static ssize_t show_no_turbo(struct kobject *kobj,
- 			     struct kobj_attribute *attr, char *buf)
- {
--	ssize_t ret;
--
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
- 
--	if (!intel_pstate_driver) {
--		mutex_unlock(&intel_pstate_driver_lock);
-+	if (!intel_pstate_driver)
- 		return -EAGAIN;
--	}
--
--	ret = sprintf(buf, "%u\n", global.no_turbo);
--
--	mutex_unlock(&intel_pstate_driver_lock);
- 
--	return ret;
-+	return sprintf(buf, "%u\n", global.no_turbo);
- }
- 
- static ssize_t store_no_turbo(struct kobject *a, struct kobj_attribute *b,
-@@ -1696,29 +1678,25 @@ static ssize_t store_no_turbo(struct kob
- 	if (sscanf(buf, "%u", &input) != 1)
- 		return -EINVAL;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
- 
--	if (!intel_pstate_driver) {
--		count = -EAGAIN;
--		goto unlock_driver;
--	}
-+	if (!intel_pstate_driver)
-+		return -EAGAIN;
- 
- 	no_turbo = !!clamp_t(int, input, 0, 1);
- 
- 	WRITE_ONCE(global.turbo_disabled, turbo_is_disabled());
- 	if (global.turbo_disabled && !no_turbo) {
- 		pr_notice("Turbo disabled by BIOS or unavailable on processor\n");
--		count = -EPERM;
- 		if (global.no_turbo)
--			goto unlock_driver;
--		else
--			no_turbo = 1;
--	}
-+			return -EPERM;
- 
--	if (no_turbo == global.no_turbo) {
--		goto unlock_driver;
-+		no_turbo = 1;
- 	}
- 
-+	if (no_turbo == global.no_turbo)
-+		return count;
-+
- 	WRITE_ONCE(global.no_turbo, no_turbo);
- 
- 	mutex_lock(&intel_pstate_limits_lock);
-@@ -1737,9 +1715,6 @@ static ssize_t store_no_turbo(struct kob
- 	intel_pstate_update_limits_for_all();
- 	arch_set_max_freq_ratio(no_turbo);
- 
--unlock_driver:
--	mutex_unlock(&intel_pstate_driver_lock);
--
- 	return count;
- }
- 
-@@ -1789,12 +1764,10 @@ static ssize_t store_max_perf_pct(struct
- 	if (ret != 1)
- 		return -EINVAL;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
- 
--	if (!intel_pstate_driver) {
--		mutex_unlock(&intel_pstate_driver_lock);
-+	if (!intel_pstate_driver)
- 		return -EAGAIN;
--	}
- 
- 	mutex_lock(&intel_pstate_limits_lock);
- 
-@@ -1807,8 +1780,6 @@ static ssize_t store_max_perf_pct(struct
- 	else
- 		update_qos_requests(FREQ_QOS_MAX);
- 
--	mutex_unlock(&intel_pstate_driver_lock);
--
- 	return count;
- }
- 
-@@ -1822,12 +1793,10 @@ static ssize_t store_min_perf_pct(struct
- 	if (ret != 1)
- 		return -EINVAL;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
- 
--	if (!intel_pstate_driver) {
--		mutex_unlock(&intel_pstate_driver_lock);
-+	if (!intel_pstate_driver)
- 		return -EAGAIN;
--	}
- 
- 	mutex_lock(&intel_pstate_limits_lock);
- 
-@@ -1841,8 +1810,6 @@ static ssize_t store_min_perf_pct(struct
- 	else
- 		update_qos_requests(FREQ_QOS_MIN);
- 
--	mutex_unlock(&intel_pstate_driver_lock);
--
- 	return count;
- }
- 
-@@ -1863,10 +1830,10 @@ static ssize_t store_hwp_dynamic_boost(s
- 	if (ret)
- 		return ret;
- 
--	mutex_lock(&intel_pstate_driver_lock);
-+	guard(mutex)(&intel_pstate_driver_lock);
-+
- 	hwp_boost = !!input;
- 	intel_pstate_update_policies();
--	mutex_unlock(&intel_pstate_driver_lock);
- 
- 	return count;
- }
-@@ -3977,9 +3944,9 @@ hwp_cpu_matched:
- 
- 	}
- 
--	mutex_lock(&intel_pstate_driver_lock);
--	rc = intel_pstate_register_driver(default_driver);
--	mutex_unlock(&intel_pstate_driver_lock);
-+	scoped_guard(mutex, &intel_pstate_driver_lock) {
-+		rc = intel_pstate_register_driver(default_driver);
-+	}
- 	if (rc) {
- 		intel_pstate_sysfs_remove();
- 		return rc;
+The bottom line is:
+1) the current code has an issue;
+2) the proposed fix has its own flaws;
+3) but the idea in the current approach at least small (if implemented
+correctly) and makes sure that any new allocations won't be forgotten in
+the error patch, nor in the ->release() callback.
 
+> [1]: https://elixir.bootlin.com/linux/v6.17.7/source/drivers/spi/spi.c#L568
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
