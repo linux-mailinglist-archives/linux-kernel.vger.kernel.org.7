@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-889793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369C9C3E87F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:40:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D61D8C3E91C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:59:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1796188BA69
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5833A1362
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA91242D95;
-	Fri,  7 Nov 2025 05:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDB62BD5AF;
+	Fri,  7 Nov 2025 05:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuMf+jrW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Sti/zTAv"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC871482E8;
-	Fri,  7 Nov 2025 05:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB8729B799
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 05:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762494022; cv=none; b=p84dhdmADrJQU5m2qshrmyupYdAPbBxk3ntWEBtprdBz1Ful2VhxVScRcOG4pudwFOf2jIpLytsFOvNB96z4yw+OrLOgtqnFE7MnkOalrmfatbhv4LNleJxSTBk1w65ML/BHZ+i4+SuNXc9yUE8u1PqxtspPSZWC6AHij0b7g6Y=
+	t=1762495039; cv=none; b=oAJgQ/zFIBdcQwpbz9WU1GzatnvRlFkoqTQW3po2NmjuAErkt77BaMb2Zu2xHywwnUuT6bMLylIhrL5FexwGN73YUQV+vQsnKGKad3Hlpry9LRtzSmg7QLXbwdDRe/hkFsVvHGycFi/7xEvAUk+PBiCEE8iKgc9gomccwBy66ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762494022; c=relaxed/simple;
-	bh=ceGgv8K81IVqsAHEgTkbu6ASQqAG7y9+ejl8bi9wq80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOK/Y8InXrxfeRbEFKV5wadIcM4IzzvH0WvhKaEx483NCSB6bcsPBifNOQRwH2cBfAurBAm00p0N0OD7uCu+yHIjqjMiwOcylgAaXHbis5VZj9GO6/1ziZYzDyAF/DtZKcSDC3LMwPUIQJmjtVl04DHWZ3YdeTJmzbGRnuBfBi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuMf+jrW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36899C4CEF8;
-	Fri,  7 Nov 2025 05:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762494022;
-	bh=ceGgv8K81IVqsAHEgTkbu6ASQqAG7y9+ejl8bi9wq80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TuMf+jrWo2PHK9xSv9izysbZmqH9adQi6j+5C4WnVmhail9Rk8637uliSrOuoUSMs
-	 w5WqkphbBsnEaPJYNJs4vVh1DdiukiUTiRW9BHB7zUAFRerR/2zh+THjnsXniWVBXP
-	 IzKS4/tLjYagocanwtqYFh3VJfqFJ6GyO6cUEyQMZ5YKaBQ8DOwIuZ8kSVT2aDfoz4
-	 lZ3nUvicT+9F5s8e+dkD8TNqPMllRtUnOS1fLIW0RKBlAuQcu2KrV+KUrSvzWtiZ4T
-	 YzrFoHWagRwMbq1+q1Zm60IUf/5/QJlcW6a9ojM78vBVRGZGFtAMU1/5OrYad+/oxs
-	 FUMqOOAiNUO/w==
-Date: Fri, 7 Nov 2025 11:10:08 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Christian Zigotzky <chzigotzky@xenosoft.de>, 
-	mad skateman <madskateman@gmail.com>, "R . T . Dickinson" <rtd2@xtra.co.nz>, 
-	Darren Stevens <darren@stevens-zone.net>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Lukas Wunner <lukas@wunner.de>, luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>, 
-	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>, hypexed@yahoo.com.au, 
-	linuxppc-dev@lists.ozlabs.org, debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/2] PCI/ASPM: Allow quirks to avoid L0s and L1
-Message-ID: <ahhrvcqpwd3ilti5fzakaojzlkfqil6vscrqgpqt7hia3igszl@vykbk65y73fj>
-References: <20251106183643.1963801-1-helgaas@kernel.org>
+	s=arc-20240116; t=1762495039; c=relaxed/simple;
+	bh=GiY2H6YUcm7j5bH09sMB3P65y4M3A34GJjQH79Bc6/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=sxvb6Rni0EKECZT6T9K0YInySQ4MZU+Uis3i06IuzeLIIMiEPuOjthZzngzIubL7frF4ouXG+WKh4FvHlricweWRZM7JuhWYExC2kn5Ywyso6R0QdbkxnoISOYjKyo7VWn+QmvqvlUv3OIRKsOYdr9BJbPqMuQjODf8Khr0uj3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Sti/zTAv; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251107055709epoutp047858c888802ded69bc974931c9cb76bd~1o_Qf_KE82901329013epoutp04a
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 05:57:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251107055709epoutp047858c888802ded69bc974931c9cb76bd~1o_Qf_KE82901329013epoutp04a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762495029;
+	bh=qWZYwU/U8X18N7fGL8PcZJbaNWhXtqDpgvhOSFQ3vAE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Sti/zTAvj6ze1QymBNdy7GUSJMSikr6nYbYxbTelaf/LcCepi2q9/RTvky9m2HifG
+	 Jh8se23/pVQb+lv8HgOhSyw2t1FJd7EBkOKok/OLODFjeMyMjXxO8SqUep6p5w2ftX
+	 RAEi02L8A7mEQk2N9jrONZzIMI8tJOVqF+MSlMLk=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20251107055709epcas5p3efda005cb005791499ef2d6bfca78a6a~1o_QOhChH1130711307epcas5p3L;
+	Fri,  7 Nov 2025 05:57:09 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4d2pH80gnrz3hhTH; Fri,  7 Nov
+	2025 05:57:08 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20251107054645epcas5p4362017054e991cede4eabfe806aeb911~1o1Le8WU-0390103901epcas5p4D;
+	Fri,  7 Nov 2025 05:46:45 +0000 (GMT)
+Received: from node122.. (unknown [109.105.118.122]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251107054644epsmtip133fbce907b52b2551ec583b3380c2dc7~1o1KuKyH90293102931epsmtip1S;
+	Fri,  7 Nov 2025 05:46:44 +0000 (GMT)
+From: Xue He <xue01.he@samsung.com>
+To: axboe@kernel.dk, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, hexue <xue01.he@samsung.com>
+Subject: [PATCH v5] block: plug attempts to batch allocate tags multiple
+ times
+Date: Fri,  7 Nov 2025 05:42:19 +0000
+Message-Id: <20251107054219.42615-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251106183643.1963801-1-helgaas@kernel.org>
+X-CMS-MailID: 20251107054645epcas5p4362017054e991cede4eabfe806aeb911
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251107054645epcas5p4362017054e991cede4eabfe806aeb911
+References: <CGME20251107054645epcas5p4362017054e991cede4eabfe806aeb911@epcas5p4.samsung.com>
 
-On Thu, Nov 06, 2025 at 12:36:37PM -0600, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> We enabled ASPM too aggressively in v6.18-rc1.  f3ac2ff14834 ("PCI/ASPM:
-> Enable all ClockPM and ASPM states for devicetree platforms") enabled ASPM
-> L0s, L1, and (if advertised) L1 PM Substates.
-> 
-> L1 PM Substates and Clock PM in particular are a problem because they
-> depend on CLKREQ# and sometimes device-specific configuration, and none of
-> this is discoverable in a generic way.
-> 
-> df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
-> (v6.18-rc3) backed off and omitted Clock PM and L1 Substates.
-> 
-> L0s and L1 are generically discoverable, but some devices advertise them
-> even though they don't work correctly.  This series is a way to avoid L0s
-> and L1 in that case.
-> 
+This patch aims to enable batch allocation of sufficient tags after
+batch IO submission with plug mechanism, thereby avoiding the need for
+frequent individual requests when the initial allocation is
+insufficient.
 
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-Tested-by: Manivannan Sadhasivam <mani@kernel.org> # T14s
+------------------------------------------------------------
+Perf:
+base code: __blk_mq_alloc_requests() 1.31%
+patch: __blk_mq_alloc_requests() 0.7%
+------------------------------------------------------------
 
-- Mani
+---
+changes since v1:
+- Modify multiple batch registrations into a single loop to achieve
+  the batch quantity
 
-> Bjorn Helgaas (2):
->   PCI/ASPM: Cache Link Capabilities so quirks can override them
->   PCI/ASPM: Avoid L0s and L1 on Freescale Root Ports
-> 
->  drivers/pci/pcie/aspm.c | 42 ++++++++++++++++++++---------------------
->  drivers/pci/probe.c     |  5 ++---
->  drivers/pci/quirks.c    | 12 ++++++++++++
->  include/linux/pci.h     |  1 +
->  4 files changed, 36 insertions(+), 24 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
+changes since v2:
+- Modify the call location of remainder handling
+- Refactoring sbitmap cleanup time
 
+changes since v3:
+- Add handle operation in loop
+- Add helper sbitmap_find_bits_in_word
+
+changes since v4:
+- Split blk-mq.c changes from sbitmap
+
+Signed-off-by: hexue <xue01.he@samsung.com>
+---
+ block/blk-mq.c | 39 ++++++++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 17 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 09f579414161..64cd0a3c7cbf 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -467,26 +467,31 @@ __blk_mq_alloc_requests_batch(struct blk_mq_alloc_data *data)
+ 	unsigned long tag_mask;
+ 	int i, nr = 0;
+ 
+-	tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
+-	if (unlikely(!tag_mask))
+-		return NULL;
++	do {
++		tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
++		if (unlikely(!tag_mask)) {
++			if (nr == 0)
++				return NULL;
++			break;
++		}
++		tags = blk_mq_tags_from_data(data);
++		for (i = 0; tag_mask; i++) {
++			if (!(tag_mask & (1UL << i)))
++				continue;
++			tag = tag_offset + i;
++			prefetch(tags->static_rqs[tag]);
++			tag_mask &= ~(1UL << i);
++			rq = blk_mq_rq_ctx_init(data, tags, tag);
++			rq_list_add_head(data->cached_rqs, rq);
++			data->nr_tags--;
++			nr++;
++		}
++		if (!(data->rq_flags & RQF_SCHED_TAGS))
++			blk_mq_add_active_requests(data->hctx, nr);
++	} while (data->nr_tags);
+ 
+-	tags = blk_mq_tags_from_data(data);
+-	for (i = 0; tag_mask; i++) {
+-		if (!(tag_mask & (1UL << i)))
+-			continue;
+-		tag = tag_offset + i;
+-		prefetch(tags->static_rqs[tag]);
+-		tag_mask &= ~(1UL << i);
+-		rq = blk_mq_rq_ctx_init(data, tags, tag);
+-		rq_list_add_head(data->cached_rqs, rq);
+-		nr++;
+-	}
+-	if (!(data->rq_flags & RQF_SCHED_TAGS))
+-		blk_mq_add_active_requests(data->hctx, nr);
+ 	/* caller already holds a reference, add for remainder */
+ 	percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
+-	data->nr_tags -= nr;
+ 
+ 	return rq_list_pop(data->cached_rqs);
+ }
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
