@@ -1,280 +1,168 @@
-Return-Path: <linux-kernel+bounces-890863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FA9C413BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:11:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298DEC413A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25443AE3C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:11:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51EE04E9A12
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE57A33A00C;
-	Fri,  7 Nov 2025 18:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BC0337B9D;
+	Fri,  7 Nov 2025 18:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="qPMh+sGS"
-Received: from fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.74.81.189])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jW9nTRKG"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011017.outbound.protection.outlook.com [52.101.62.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99933396E1;
-	Fri,  7 Nov 2025 18:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.74.81.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539088; cv=none; b=ko1+YLk4LOl6NTIQ6rlrUzTEPALTUgdei5VDiL9jRWknUcsDNPAJkMdoH1JtgZymn+PpvTNEdcTpVMZQG3lAZTERODH1V4HsP+W7vziLsCS+iZorUgxBLwVqr3AuLWmZkispTYimZjIOugs1IpNqu3oR1cTjtl0wPFeTWu9dGdo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539088; c=relaxed/simple;
-	bh=N4gOSBeRZWqaySZxSBCtzaOl7g3HsBW0KJqcGWerLgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JHnTvsHPIMDU0vozm+cQ1p+WpvOdO93xaCFm5sWPwwYOvWmM3zSmG1Ywv/djaTFgw4kIwwkZkSqyMnF0i82IZEm7BPlBlZsfjbapDTUm7xCjrMTG0Cvba8eX9oohVzAG6dzRvXSA8BBMawk5rGnhN73PwtiDivwdq2R22PKdGmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=qPMh+sGS; arc=none smtp.client-ip=3.74.81.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1762539085; x=1794075085;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=SCkgHKsCB067+A2QKdQEeR2F/1cDYKaCmk5fyfcip00=;
-  b=qPMh+sGSJZt+z4Nc+DhY/1qTycu+jXWtJcRVfVq9aThqVfhZ7CnGrjbs
-   68J8ryCMsklugfRIIRzKfjio4AWTnd8/O16cOk7o7OJRbctMvBpisAZLd
-   nqU2bdn4xB3Q8OCfXoPqg+mifE4tBiunRgSnSKXqId8l9IYNfWHW1Sh5q
-   B09bCz0jvRk0ABD58ut3l9+naRE6voeFpiY1OBcZG8uXYktiDw/TWojP3
-   piBXzdlKm8Kz6SehvX/bTm2FndIweeX9zrmAnMvV7RYI2XG3W9V/r/YIH
-   5exIyAFKqLp0i+4B+hwJpbb7jmooRqPOnOWLbbaFatsClwVHQR/3alGJ2
-   w==;
-X-CSE-ConnectionGUID: fFJTYbfoSuanuoJNyoUMiw==
-X-CSE-MsgGUID: ItF1NJ0MQ7GmOV9vTi4D2Q==
-X-IronPort-AV: E=Sophos;i="6.19,287,1754956800"; 
-   d="scan'208";a="4852407"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 18:11:07 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:6828]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.13.118:2525] with esmtp (Farcaster)
- id 217d753f-5175-4dc1-96ad-8ed664faf6cb; Fri, 7 Nov 2025 18:11:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 217d753f-5175-4dc1-96ad-8ed664faf6cb
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 7 Nov 2025 18:11:06 +0000
-Received: from [192.168.9.244] (10.106.83.15) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
- 18:11:03 +0000
-Message-ID: <a940044f-3ae4-451f-b9ba-946ec6df5082@amazon.com>
-Date: Fri, 7 Nov 2025 18:11:01 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3699412B94
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762539082; cv=fail; b=gttGoEr/zQMrpVp1Lsh//59t4HrgA6jZd5TRig3AXG3qlfz+k+TehkGpwtzGAKBd9ujIMZk8tHtqwD9RpjUKl1B/bDgL2azNjQ/LdO9U1MvtSR3UW+ecpC+cJslygzS+VzG8gcJAqtDOY0UZwumU0rmkUro3jTfDC8J7Ehc7wOk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762539082; c=relaxed/simple;
+	bh=G0xacJGYF/EWTmspe9nnN6qBWAwj1sIBWEpuH4+bnWU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U1MNPSNScFQPusHtn/OFwatDDQV6dnAHxYfRWmpzEWkv9jXEfvJR3m6KZeD6fhh2QvpTnMReb0ZpIN/6ym8agA6RXzNIsB+pKQtsrLkYRxmUo7etbbwMECDViMJ5WN5x3wFnN+x4OyoiEFK18OiVnCtc1/ot/WSkOUtv/t72hSQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jW9nTRKG; arc=fail smtp.client-ip=52.101.62.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I04Tgfhy5Kgrf0kPJUMxzW3oJ7xATXHR18o20IAA8sntX+W6o1dcMS4WcepO4K6lEgtJbj30tdn2jC8cBGw21NEiooYAA/gJpuGbAF6CjI20YHEzJI5K//3N8EHZbQ8kdC2Z/RtwBdta7lNEhcSWNsGwsJWqXy8lkUk5yVmHkp1l+pWfRVxuQStUPsRHrHuxuqtGc7NWak396dfKpKO26poSq2VFlvFR0W0FTHfJVrJFYiG3HYRfBjE8ABrYmmiaN737oz2wLLuvy/MpDshmilT/ZBi7yuO9cDCjAiqW9ZqVgtf8Y3OUx6kRaYa5GWclC8i2Xe86uL7CbyJVcD/Few==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BRtRUxEHPAOUWt6rXL9LZA/slwG7zJxJMRF8CWShZJo=;
+ b=TgNgN0VA17buFCvXwhE2/b+WtUoKBS9H10d3cMHD6A0JWDP206Ulru8psDi8n9FmJxAkbTYqR9i0IpNCKWiTG87ZV7pVy7GbHNd8B4bp89v2Wzoutj3MnrsOa41eSsGqKmXulPraSqZ94yj/vH5sXtgcn2pxQqb34w9hBqt5xR9e+Q8TDDuDJG47wmPv/lLo79DkWeWxWAFL297NILcyvFjedT7/Otjho9gGFR48nL1rM5w4j01oD4CHuDhb3ihquXqyaSkvwIPXZ5pJtJ+h4Df56F90LdpeZS+u0/c0ShQwt4yUGLW57tj45JzUkP4IvjHPYpgMpkR8w+cUMBOq+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BRtRUxEHPAOUWt6rXL9LZA/slwG7zJxJMRF8CWShZJo=;
+ b=jW9nTRKG+J2+i1UY3cW/FZRZd6HVoWN3YgQvXabLR0qk0hyG964B/dtOv2g7amhBhZVkbR3g0ABch8LhKVb2KEo9qmNeQy/g4CzdHNO2+rnUKkRP+U8WENYktGUe8CTUoIE5WwsJ6hzj2SEoBYzjbMZuTTg3OOFXr7ndjJjn8ro=
+Received: from CH0PR03CA0363.namprd03.prod.outlook.com (2603:10b6:610:119::32)
+ by DS0PR12MB8219.namprd12.prod.outlook.com (2603:10b6:8:de::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
+ 2025 18:11:18 +0000
+Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
+ (2603:10b6:610:119:cafe::7c) by CH0PR03CA0363.outlook.office365.com
+ (2603:10b6:610:119::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
+ 7 Nov 2025 18:10:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 18:11:18 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 7 Nov
+ 2025 10:11:17 -0800
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 7 Nov 2025 10:11:17 -0800
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>
+Subject: [PATCH] accel/amdxdna: Clear mailbox interrupt register during channel creation
+Date: Fri, 7 Nov 2025 10:11:15 -0800
+Message-ID: <20251107181115.1293158-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v7 00/12] Direct Map Removal Support for guest_memfd
-To: Brendan Jackman <jackmanb@google.com>
-CC: <pbonzini@redhat.com>, <corbet@lwn.net>, <maz@kernel.org>,
-	<oliver.upton@linux.dev>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>,
-	<yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <willy@infradead.org>,
-	<akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>, <song@kernel.org>,
-	<jolsa@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <martin.lau@linux.dev>, <eddyz87@gmail.com>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@fomichev.me>, <haoluo@google.com>, <jgg@ziepe.ca>,
-	<jhubbard@nvidia.com>, <peterx@redhat.com>, <jannh@google.com>,
-	<pfalcato@suse.de>, <shuah@kernel.org>, <seanjc@google.com>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<kvmarm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <xmarcalx@amazon.co.uk>,
-	<kalyazin@amazon.co.uk>, <jackabt@amazon.co.uk>, <derekmn@amazon.co.uk>,
-	<tabba@google.com>, <ackerleytng@google.com>, Patrick Roy
-	<patrick.roy@campus.lmu.de>
-References: <20250924151101.2225820-1-patrick.roy@campus.lmu.de>
- <DE2L1SAOC55E.E4JY62WJQ2A8@google.com>
- <add94932-290c-4037-b4e6-c3c760240819@amazon.com>
- <DE2NTMZXQ1MT.2TH9VAKM6WP6I@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <DE2NTMZXQ1MT.2TH9VAKM6WP6I@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D013EUB001.ant.amazon.com (10.252.51.116) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|DS0PR12MB8219:EE_
+X-MS-Office365-Filtering-Correlation-Id: da13d04a-a765-40fa-c3ef-08de1e290c67
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gwfriBodNF6FVR7nFFWoqLquOHkL+moFZTGGPRNSSpeMtqhD69AgVcMG5p37?=
+ =?us-ascii?Q?N79Up7JS/vpaq1NUBTeb5XG4XAxD0J3dQOCubceAPJFgZtx3RCEAZu0+wJhk?=
+ =?us-ascii?Q?7+ULgInqm0xeRFQnWfBXKDQJJmBkI2bL2NkFAJvgXVJb8fKeyJRKqJNyeeyN?=
+ =?us-ascii?Q?ImEFFwbjfMArcOWA28hjbFzQVDqNkAdP0O9rkZLzkDZMRYN+ZmOCcTtGClxl?=
+ =?us-ascii?Q?D8Gd9fErPRQp3I0F+qE6WURlX0lbUavi0R315rPQZ6F/wkX6btamzr3KmvpN?=
+ =?us-ascii?Q?0XDA83ou19YrPL7dnvde22x9R4+yA4TeXFl6XIBE0COmp5EDTjj7EES9tyY2?=
+ =?us-ascii?Q?X0I/segAwnXKhdwSScMRqKqZAvz7OWbmEXUCFwzoSKUD7D5M7f2KZ+YRNGnK?=
+ =?us-ascii?Q?l2tzsMXWkaXygVDAfNCZta7C5cp166PqXGjn6vNp8FoqzKnO/nBMNDidSgwu?=
+ =?us-ascii?Q?/spdwFELSlgbbnkEn8l1N+/Tj3b0lMGVJRlzw49k/coGHei8dJERCFl9x1z2?=
+ =?us-ascii?Q?W64OtSF4NuvtUdZPTWTmCvI1C5sXyOkFbOKX1eLe7JAei2IUwhW0qvq6bZnt?=
+ =?us-ascii?Q?EzlgfTSUAtPhVWzIFJw4HarrrZuqEwcedGfJgBW1WiE1+yhcxepX5p4qUSuT?=
+ =?us-ascii?Q?fRPseNJ+L6FRMiiWykep5YISGlzDEQkPaTyvhnN1EubbtJJG6zkcL8S7JNt9?=
+ =?us-ascii?Q?6FF/JTCZEUk/LdJHpNQ444gKKPxOisMFz51GM1XCXxzprDJu90Y51Z87iKH+?=
+ =?us-ascii?Q?yf0f9ff4EPQFcBgmosVEJykTj3LhWGsuSlLFCx9TmsXRw74207eglhLBZhGz?=
+ =?us-ascii?Q?SBDKgAgSei/u7bnOhtj+8MUa6UdJzjH1Y6VR/Zi+Tp7BldGzBspg06gg2Cs7?=
+ =?us-ascii?Q?VODRUyRTeGswZhF9T/qMWvbQCBxodH4wpsLIMKXKgcUDyHNVUGUcOK5CR3+N?=
+ =?us-ascii?Q?ZTpGtX7qTp9Uly1tsyoyPVw/4dimli5kvtSP0NemiOrDveQu/oB4vgpUA6YQ?=
+ =?us-ascii?Q?2YLb6YgNNsjxg4vHLbaQyXZKIh+AQDBIuRmimTOamGugoCk8G+K0EkmmD2p9?=
+ =?us-ascii?Q?Me9wnNwaDE0Du9f2FU1SEL2SP5u/WS6cf8Jp+jny5IxV2VJzwiDlNu4feiKt?=
+ =?us-ascii?Q?vh1ulsOdxiOCq5SFbJ2XgdOITcgvesWvnvJZQl5YqyhNdiRt8WKLFFXhdvjW?=
+ =?us-ascii?Q?UaYZidb1UHGp0qzeLuuaQnXm8//8y4s0EGLl5qKE0/+s2hOZ/Psz2NeiGpP8?=
+ =?us-ascii?Q?+S5OrO2IlmJl77TeRiIpWBy1AlsoyvI76+zgjTMMavJY4c7Jt3X0iGJUBIyJ?=
+ =?us-ascii?Q?JowYhsOmCbpPurZqw+OIQgq2zWIgp8FT790TQqNAZ6+sqjC16aulQUvkNez8?=
+ =?us-ascii?Q?dfmo/4yEHjC4NKPPMaXPIscbrSz9lO6um6qMICFY2ef6C+R7Rcqx5pyVhyW/?=
+ =?us-ascii?Q?5++b4PRW0KAZlmuUXwqXGX+G33W0Ip6HAVpUXjBWSeY85XM28bGzsm5do9iH?=
+ =?us-ascii?Q?S8doxt/Fu1fu8HPXuskXtIpZk90x0kx4D6L44V89liRoNjbeXI0GWuclxdle?=
+ =?us-ascii?Q?1BjQG+dcNPJeCUl2L24=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 18:11:18.3009
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: da13d04a-a765-40fa-c3ef-08de1e290c67
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8219
 
+The mailbox interrupt register is not always cleared when a mailbox channel
+is created. This can leave stale interrupt states from previous operations.
 
+Fix this by explicitly clearing the interrupt register in the mailbox
+channel creation function.
 
-On 07/11/2025 18:04, Brendan Jackman wrote:
-> On Fri Nov 7, 2025 at 5:23 PM UTC, Nikita Kalyazin wrote:
->>
->>
->> On 07/11/2025 15:54, Brendan Jackman wrote:
->>> On Wed Sep 24, 2025 at 3:10 PM UTC, Patrick Roy wrote:
->>>> From: Patrick Roy <roypat@amazon.co.uk>
->>>>
->>>> [ based on kvm/next ]
->>>>
->>>> Unmapping virtual machine guest memory from the host kernel's direct map is a
->>>> successful mitigation against Spectre-style transient execution issues: If the
->>>> kernel page tables do not contain entries pointing to guest memory, then any
->>>> attempted speculative read through the direct map will necessarily be blocked
->>>> by the MMU before any observable microarchitectural side-effects happen. This
->>>> means that Spectre-gadgets and similar cannot be used to target virtual machine
->>>> memory. Roughly 60% of speculative execution issues fall into this category [1,
->>>> Table 1].
->>>>
->>>> This patch series extends guest_memfd with the ability to remove its memory
->>>> from the host kernel's direct map, to be able to attain the above protection
->>>> for KVM guests running inside guest_memfd.
->>>>
->>>> Additionally, a Firecracker branch with support for these VMs can be found on
->>>> GitHub [2].
->>>>
->>>> For more details, please refer to the v5 cover letter [v5]. No
->>>> substantial changes in design have taken place since.
->>>>
->>>> === Changes Since v6 ===
->>>>
->>>> - Drop patch for passing struct address_space to ->free_folio(), due to
->>>>     possible races with freeing of the address_space. (Hugh)
->>>> - Stop using PG_uptodate / gmem preparedness tracking to keep track of
->>>>     direct map state.  Instead, use the lowest bit of folio->private. (Mike, David)
->>>> - Do direct map removal when establishing mapping of gmem folio instead
->>>>     of at allocation time, due to impossibility of handling direct map
->>>>     removal errors in kvm_gmem_populate(). (Patrick)
->>>> - Do TLB flushes after direct map removal, and provide a module
->>>>     parameter to opt out from them, and a new patch to export
->>>>     flush_tlb_kernel_range() to KVM. (Will)
->>>>
->>>> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
->>>> [2]: https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
->>>
->>> I just got around to trying this out, I checked out this patchset using
->>> its base-commit and grabbed the Firecracker branch. Things seem OK until
->>> I set the secrets_free flag in the Firecracker config which IIUC makes
->>> it set GUEST_MEMFD_FLAG_NO_DIRECT_MAP.
->>>
->>> If I set it, I find the guest doesn't show anything on the console.
->>> Running it in a VM and attaching GDB suggests that it's entering the
->>> guest repeatedly, it doesn't seem like the vCPU thread is stuck or
->>> anything. I'm a bit clueless about how to debug that (so far, whenever
->>> I've broken KVM, things always exploded very dramatically).
->>>
->>> Anyway, if I then kill the firecracker process, the host sometimes
->>> crashes, I think this is the most suggestive splat I've seen:
->>>
->>> [   99.673420][    T2] BUG: unable to handle page fault for address: ffff888012804000
->>> [   99.676216][    T2] #PF: supervisor write access in kernel mode
->>> [   99.678381][    T2] #PF: error_code(0x0002) - not-present page
->>> [   99.680499][    T2] PGD 2e01067 P4D 2e01067 PUD 2e02067 PMD 12801063 PTE 800fffffed7fb020
->>> [   99.683374][    T2] Oops: Oops: 0002 [#1] SMP
->>> [   99.685004][    T2] CPU: 0 UID: 0 PID: 2 Comm: kthreadd Not tainted 6.17.0-rc7-00366-g473c46a3cb2a #106 NONE
->>> [   99.688514][    T2] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.1 11/11/2019
->>> [   99.691547][    T2] RIP: 0010:clear_page_erms+0x7/0x10
->>> [   99.693440][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
->>> [   99.700188][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
->>> [   99.702321][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
->>> [   99.705100][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
->>> [   99.707861][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
->>> [   99.710648][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
->>> [   99.713412][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
->>> [   99.716191][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
->>> [   99.719316][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   99.721648][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
->>> [   99.724421][    T2] Call Trace:
->>> [   99.725608][    T2]  <TASK>
->>> [   99.726646][    T2]  get_page_from_freelist+0x6fe/0x14b0
->>> [   99.728583][    T2]  ? fs_reclaim_acquire+0x43/0xe0
->>> [   99.730325][    T2]  ? find_held_lock+0x2b/0x80
->>> [   99.731965][    T2]  __alloc_frozen_pages_noprof+0x147/0x2d0
->>> [   99.734003][    T2]  __alloc_pages_noprof+0x5/0x50
->>> [   99.735766][    T2]  copy_process+0x1b1/0x1b30
->>> [   99.737398][    T2]  ? lock_is_held_type+0x89/0x100
->>> [   99.739157][    T2]  ? kthreadd+0x25/0x190
->>> [   99.740664][    T2]  kernel_clone+0x59/0x390
->>> [   99.742213][    T2]  ? kthreadd+0x25/0x190
->>> [   99.743728][    T2]  kernel_thread+0x55/0x70
->>> [   99.745310][    T2]  ? kthread_complete_and_exit+0x20/0x20
->>> [   99.747265][    T2]  kthreadd+0x117/0x190
->>> [   99.748748][    T2]  ? kthread_is_per_cpu+0x30/0x30
->>> [   99.750509][    T2]  ret_from_fork+0x16b/0x1e0
->>> [   99.752193][    T2]  ? kthread_is_per_cpu+0x30/0x30
->>> [   99.753992][    T2]  ret_from_fork_asm+0x11/0x20
->>> [   99.755717][    T2]  </TASK>
->>> [   99.756861][    T2] CR2: ffff888012804000
->>> [   99.758353][    T2] ---[ end trace 0000000000000000 ]---
->>> [   99.760319][    T2] RIP: 0010:clear_page_erms+0x7/0x10
->>> [   99.762209][    T2] Code: 48 89 47 18 48 89 47 20 48 89 47 28 48 89 47 30 48 89 47 38 48 8d 7f 40 75 d9 90 c3 0f 1f 80 00 00 00 00 b9 00 10 00 00 31 c0 <f3> aa c3 66 0f 1f 44 00 00 48 83 f9 40 73 2a 83 f9 08 73 0f 85 c9
->>> [   99.769129][    T2] RSP: 0018:ffff88800318fc10 EFLAGS: 00010246
->>> [   99.771297][    T2] RAX: 0000000000000000 RBX: 0000000000400dc0 RCX: 0000000000001000
->>> [   99.774126][    T2] RDX: ffffea00004a0100 RSI: ffffea00004a0200 RDI: ffff888012804000
->>> [   99.777013][    T2] RBP: 0000000000000801 R08: 0000000000000000 R09: 0000000000000000
->>> [   99.779827][    T2] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
->>> [   99.782641][    T2] R13: 0000000000000801 R14: ffffea00004a0100 R15: ffffffff81f4df80
->>> [   99.785487][    T2] FS:  0000000000000000(0000) GS:ffff8880bbf28000(0000) knlGS:0000000000000000
->>> [   99.788671][    T2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   99.791012][    T2] CR2: ffff888012804000 CR3: 0000000007583001 CR4: 0000000000372eb0
->>> [   99.793863][    T2] Kernel panic - not syncing: Fatal exception
->>> [   99.796760][    T2] Kernel Offset: disabled
->>> [   99.798296][    T2] ---[ end Kernel panic - not syncing: Fatal exception ]---
->>>
->>> This makes me suspect the kvm_gmem_folio_restore_direct_map() path isn't
->>> working or isn't getting called.
->>>
->>> If anyone wants help trying to reproduce this let me know.
->>
->> Hi Brendan,
->>
->> Thanks for trying to run it!
->>
->> Just as a sanity check, the way it is known for us to work is we apply
->> all patches from [1].  For booted VMs (as opposed to restored from
->> snapshot), apart from the v6 of the direct map removal series, the only
->> additional patch is a fix for kvmclock on x86 [2].  Please let me know
->> if you see the same issue with that patch applied too.
->>
->> Nikita
->>
->> [1]
->> https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches
->> [2]
->> https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding/resources/hiding_ci/linux_patches/11-kvm-clock
-> 
-> Ah, thanks! Seems I should have checked my inbox before sending my other
-> mail. With the kvmclock fix applied to my host kernel, I start setting
-> the other crash immediately when the VM boots. If I comment out the
-> actual unmapping of memory, it boots (before, it wouldn't boot even with
-> that commented out).
-> 
-> For the other linux_patches, I couldn't apply them on top of this
-> series, do you have a branch I can use as a reference?
+Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+---
+ drivers/accel/amdxdna/amdxdna_mailbox.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Instead of having an explicit branch, we apply all the patches on top of 
-[1].  There is a script that performs fetch/build/install end-to-end: [2].
-
-[1] 
-https://github.com/firecracker-microvm/firecracker/blob/feature/secret-hiding/resources/hiding_ci/kernel_commit_hash
-[2] 
-https://github.com/firecracker-microvm/firecracker/blob/feature/secret-hiding/resources/hiding_ci/build_and_install_kernel.sh
-
-> 
-> Anyway, the solution I'm hoping to present for your problem gets rid of
-> that explicit unmapping code (the allocator will do it for you), so in
-> the meantime I have something I can work with.
+diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c b/drivers/accel/amdxdna/amdxdna_mailbox.c
+index 24258dcc18eb..858df97cd3fb 100644
+--- a/drivers/accel/amdxdna/amdxdna_mailbox.c
++++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
+@@ -516,6 +516,7 @@ xdna_mailbox_create_channel(struct mailbox *mb,
+ 	}
+ 
+ 	mb_chann->bad_state = false;
++	mailbox_reg_write(mb_chann, mb_chann->iohub_int_addr, 0);
+ 
+ 	MB_DBG(mb_chann, "Mailbox channel created (irq: %d)", mb_chann->msix_irq);
+ 	return mb_chann;
+-- 
+2.34.1
 
 
