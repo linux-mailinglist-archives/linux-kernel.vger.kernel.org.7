@@ -1,148 +1,118 @@
-Return-Path: <linux-kernel+bounces-890909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEF8C415C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:59:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD88EC415E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C774C3AA44D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:59:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5B9189EAC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586B33F39C;
-	Fri,  7 Nov 2025 18:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB33B33DED3;
+	Fri,  7 Nov 2025 18:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxkRGH2T"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fb1sayqI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABE033CE8A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1477B33E358
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762541913; cv=none; b=hQEn+/FF0IbkiHshnikQDs4LL12T87ra2OkiVWDN38XzXfUau/MzzvUCZPY34OvjELKJhkx7c0O8mNA9eyY9Ny1wty3dlZW+ggPea0xdGkbdIu9wg5l+D5+ZFSlT0e3bc0pxIwLoxECZRS88ojF4aDPKQvkZVXpB+c28qQt78Mk=
+	t=1762541937; cv=none; b=d5D1XFtztSNon4Z5TzaWLlZI/3UbQRBFIri/+3mVx40Z31IfqI10m/UOi0uB5dJIuhr18itEyFf6lVU1zrUcf/gwiZ1ffa+bIb1pH092iYiSRSbGIjAsBqT8agFOgaoyW/11Hwo5ueczTeX4KfaAjt6683IxRm1jiQFteKVzK0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762541913; c=relaxed/simple;
-	bh=RjrzCirQRAEDbjwBlo3vQ/iH4XgQ/gFqjek9EfoLwkI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fD3kaWW7Q1JeQCHGD5Ku2iIk9iXBnJ0UH47N/Rb42YMXJAUusRaX8cOCq+ljd1w97TcsR4fDx/oyfVoxKDeeQ8ZkR02ar8y7HdQUVu5vs24aXdFVOwcwZHEVNUyK/Q+2M2ffzPIoC68KFfK+LEfCgzeHwRI2LLxx9diMy0AJujQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxkRGH2T; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-290aaff555eso10106595ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762541911; x=1763146711; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RjrzCirQRAEDbjwBlo3vQ/iH4XgQ/gFqjek9EfoLwkI=;
-        b=PxkRGH2TIiAF0PDEfx7e261KG4HHCHINVzILcYN2g3JsxpgBrE9iAKZtrwtiFKhs8H
-         HLTeK2tGIABxPeo7KZaKvq0Qrmo4ppG0xcf637oop5SrT25Y6+4Od7pdC5j9NSoTgORg
-         g7zFOtBbD1AMQoGuNubrEXs2QpxHTEZ4AoYGDXpH8Sv+6RNOphIkpgcrxameXZHtNwYD
-         NbzRGs/aPSbBX54hmOxIL0i8m+j62Xbr6RkRA7KW7ly5RNcrBWxctS99M2JSPnOQZX8N
-         ob9Ahigb7wOKIjvNAdjrkdsbw/VFRRysivR5X6L57z8/fu4SkaFL/2E/nZtPF8wrjW/G
-         UunQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762541911; x=1763146711;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RjrzCirQRAEDbjwBlo3vQ/iH4XgQ/gFqjek9EfoLwkI=;
-        b=v0c1wkuVFRv77dxGErOPr66Fr//MOUmvFH/KXa7KO2GUBl5/2AhQn2sRgdGBSCSZ7v
-         ldnz49uqrXf4oRrNOa+B6d/ShUSPWm5IV52+b/dVDneyaQzNhOxNFeUbj0hcopksCmld
-         T1FcwzswGUv9oAV1EZQTjM27UA34QyIOeeGZYPLdH3isM9EaeO2i2K4DOnnL+Zvtvxki
-         TkBVgVZJeGrbAR7Ur3yZtiHIMavTqM1PV/4MYBqaJnX1TXVZSnOvpC1/mEFMAZ+cDWWN
-         s9I2wcpl/EQQFYqDIB98IQLF3VhiDd41N+ZRtFyNEShXb8ACNGWAx3DZu0CrIo2DSiVU
-         OX/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXrywzizgYMa/maVAo1y/A6cnez7RGyNIQkHCHuErP9H7B+f0DsAwEpkMV9Tx146KTsg1o1wA7+FTTlgd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwstIwDOfV0bdI4HEd1CfcQZxdZ+04AAZOpsHZED8xQu1LUYMxL
-	gRxRZLmo1D0KP6cAjahyf8ALqypafNi4VA2zPyI96xtLO9KxK6YUxAY+ityYm0nA
-X-Gm-Gg: ASbGncs9dG31D7i732aBN2sizzYDtSahUBR4zsKkMh1DmGJ3oUdd9ytmisdT8eByRrP
-	eJG5dlOM2udNzsTkIeMxrUntxOZYOeJVkNgRHVydojW88tLf+zhuc7LLN54wz7YjIW4u+KJq+8h
-	KrzkUBwBjCrqOKh2V9q8KPP//NlzJkX3RfG4HL0Opvmr2OprEfNgsbeLj1YsTxZFN5tmqooLvm4
-	j18w6uceWrEnR7m1lUpnO0iqKZsJ1ZxUbEacsWGiXhAGn0j6ANs2R3mDOnEjNQksx9ZklhWOn6R
-	BhhZ7/iAXovHu7q42iDpDgi4wG2ekVPzr39wnGjw9/F+gCKJSCnALL2HEzZeSDrMaa/sU5hXrde
-	DkwoNx9uRu8Jbrq0JYIFTO4YMmylSCJIak6aAvXnsbig5yfSbDgeuoN+2z1cYa6t8Xp70m21O
-X-Google-Smtp-Source: AGHT+IGpMuuRbaDk+Z+7AaaKmSwq/CPtj/ja76biPbWaMcvP2DENiGEkr+xomRRcSSIxRfBq0JnZdg==
-X-Received: by 2002:a17:903:1745:b0:295:5945:2920 with SMTP id d9443c01a7336-297e56c9ea9mr1236415ad.34.1762541911527;
-        Fri, 07 Nov 2025 10:58:31 -0800 (PST)
-Received: from [192.168.0.56] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5e5bdsm66901325ad.39.2025.11.07.10.58.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 10:58:31 -0800 (PST)
-Message-ID: <5a8c765f8e2b4473d9833d468ea43ad8ea7e57b6.camel@gmail.com>
-Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary
- search
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Donglin Peng <dolinux.peng@gmail.com>, bot+bpf-ci@kernel.org, Alexei
- Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- zhangxiaoqin@xiaomi.com, LKML	 <linux-kernel@vger.kernel.org>, bpf
- <bpf@vger.kernel.org>, Alan Maguire	 <alan.maguire@oracle.com>, Song Liu
- <song@kernel.org>, pengdonglin	 <pengdonglin@xiaomi.com>, Andrii Nakryiko
- <andrii@kernel.org>, Daniel Borkmann	 <daniel@iogearbox.net>, Martin KaFai
- Lau <martin.lau@kernel.org>, Yonghong Song	 <yonghong.song@linux.dev>,
- Chris Mason <clm@meta.com>, Ihor Solodrai	 <ihor.solodrai@linux.dev>
-Date: Fri, 07 Nov 2025 10:58:27 -0800
-In-Reply-To: <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com>
-References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
-	 <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
-	 <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
-	 <74d4c8e40e61dad369607ecd8b98f58a515479f0.camel@gmail.com>
-	 <CAADnVQLkS0o+fzh8SckPpdSQ+YZgbBBwsCgeqHk_76pZ+cchXQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762541937; c=relaxed/simple;
+	bh=JY3ffK3b9GTcr8PiL6cpOTkjcyjA8THe0BXledAm0cA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fQmRZuEy/EAdHZiAluVvSBbA/426jzXKYNKUW2y4Fwrqt6juw//gbUTsEK3Kr5IfQ3O36wzIxk0pkBdJTdnJN3fpJEgyW76y8IcRi/z5d4tAxUnYP4w6F+fvr6H4uT+C24S6A4Z9INjqUf01bwOSxMCob1mLe5Ii9hbZZg/9teU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fb1sayqI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91263C16AAE
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762541936;
+	bh=JY3ffK3b9GTcr8PiL6cpOTkjcyjA8THe0BXledAm0cA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fb1sayqIpSmHJhNUvMdB7sENEBhJLQmNT3BnAoxwXizoFu9HXvmMa1x+8mD5JBEgC
+	 H6qDECqPHiMcsCmSYk4EvfxWSAdKzQmjolSL6/zqLUJuuXkHQ9l7m0yAmN16W39a/W
+	 DvVl1PDGtfbMbdoYwVGVRw/YbN0L9aEkBd/3XuoyyZKAIMPjM9qhPHx9L+043b/s/+
+	 tyAiygZHy5ToaumEAPgQqpsy8zLz/q+CQODmz6aoarw5GYLJ7EW7zTnGyRMK2n9syS
+	 EFrHc7S7h4URj2EZv1cpGGY9AVZFFsAqSFsxp8C/3Mw5lwJw+nqKYXNdVj+Jk0q8Tm
+	 MwLL7qUm8SKXg==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-656cd6c1c5eso460780eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:58:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX2Cy64h3Med7QTA6dXOfGxuH43JYbjRYk49Ul6vxh35h00j0p3s6u0bxCAYAuuphEszY/jDLNP4jW+ScA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpUxGkJSvD71Fv1V/Q6NOZgp5KJBWWR4JUcEHXY/wuhnH7YTfV
+	xPgFL8Kzh4aNfqg0Nbz+DP9QFURvjvDDyLSk4m1DByl5DRHpqAQqFreiW1ZQNH5hHLCU9pS8zlc
+	2MB07G3jE1Bi/v6Ox05xngnRMaCoUzKg=
+X-Google-Smtp-Source: AGHT+IHxdorsHFt+kPRK92oTkZiIgZZZSZc5IXKfRWQPTnaBbxj43YOS77ijVBe6ftZfCHNn4jYNDaEDCRuWKu7LM2A=
+X-Received: by 2002:a05:6820:c09c:10b0:656:77b8:9e3d with SMTP id
+ 006d021491bc7-656d873b0f7mr284668eaf.1.1762541935644; Fri, 07 Nov 2025
+ 10:58:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <5939579.DvuYhMxLoT@rafael.j.wysocki> <a8d3fe252f5ed9d513c026331eeabfe5971196b1.camel@linux.intel.com>
+In-Reply-To: <a8d3fe252f5ed9d513c026331eeabfe5971196b1.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 7 Nov 2025 19:58:44 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hVPbU__=LZA1una8+1JSmGFytpBjBEXq2EuL_VOSYw2A@mail.gmail.com>
+X-Gm-Features: AWmQ_bkcuYZN_3aiXuOj1GS8pTncdqvYhI5mHsCPvwQJeJ57BnL8AOo3PDnxS1E
+Message-ID: <CAJZ5v0hVPbU__=LZA1una8+1JSmGFytpBjBEXq2EuL_VOSYw2A@mail.gmail.com>
+Subject: Re: [PATCH v1] cpuidle: Add sanity check for exit latency and target residency
+To: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-11-07 at 10:54 -0800, Alexei Starovoitov wrote:
+On Fri, Nov 7, 2025 at 7:47=E2=80=AFPM Artem Bityutskiy
+<artem.bityutskiy@linux.intel.com> wrote:
+>
+> On Fri, 2025-11-07 at 19:19 +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Make __cpuidle_driver_init() sanitize CPU idle states so that the exit
+> > latency of a given state is not greater than its target residency which
+> > would break cpuidle assumptions.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/cpuidle/driver.c |   11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > --- a/drivers/cpuidle/driver.c
+> > +++ b/drivers/cpuidle/driver.c
+> > @@ -193,6 +193,16 @@ static void __cpuidle_driver_init(struct
+> >                       s->exit_latency_ns =3D  0;
+> >               else
+> >                       s->exit_latency =3D div_u64(s->exit_latency_ns, N=
+SEC_PER_USEC);
+> > +
+> > +             /*
+> > +              * Ensure that the exit latency of a CPU idle state does =
+not
+> > +              * exceed its target residency which is assumed in cpuidl=
+e in
+> > +              * multiple places.
+> > +              */
+> > +             if (s->exit_latency_ns > s->target_residency_ns) {
+> > +                     s->target_residency_ns =3D s->exit_latency_ns;
+> > +                     s->target_residency =3D s->exit_latency;
+> > +             }
+>
+> I suggest to error out instead of capping it. Because as soon as you
+> cap it, you may end up with the target residency of the next C-state.
 
-[...]
+Good point.
 
-> > > > > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const struct
-> > > > > btf
-> > > > > *btf, const char *name, u8 kind)
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > >=20
-> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0 if (btf->nr_sorted_types !=3D BTF_NEED_=
-SORT_CHECK) {
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (btf_check_sorted((struct btf *)btf)=
-) {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^
-> > > >=20
-> > > > The const cast here enables the concurrent writes discussed
-> > > > above.
-> > > > Is
-> > > > there a reason to mark the btf parameter as const if we're
-> > > > modifying it?
-> > >=20
-> > > Hi team, is casting away const an acceptable approach for our
-> > > codebase?
-> >=20
-> > Casting away const is undefined behaviour, e.g. see paragraph
-> > 6.7.3.6
-> > N1570 ISO/IEC 9899:201x Programming languages =E2=80=94 C.
-> >=20
-> > Both of the problems above can be avoided if kernel will do sorted
-> > check non-lazily. But Andrii and Alexei seem to like that property.
->=20
-> Ihor is going to move BTF manipulations into resolve_btfid.
-> Sorting of BTF should be in resolve_btfid as well.
-> This way the build process will guarantee that BTF is sorted
-> to the kernel liking. So the kernel doesn't even need to check
-> that BTF is sorted.
+> Just erroring out is very explicit, no surprises, and the table
+> provider will have to just fix the table.
 
-This would be great.
-Does this imply that module BTFs are sorted too?
+Alternatively, the state may just be dropped, but let's try with
+failing to begin with.
 
