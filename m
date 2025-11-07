@@ -1,230 +1,136 @@
-Return-Path: <linux-kernel+bounces-890506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBD8C4036D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:56:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89DAC4035E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 812694F30F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8843B877B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8C131A813;
-	Fri,  7 Nov 2025 13:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ro3z5yS/"
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F4531A813;
+	Fri,  7 Nov 2025 13:55:42 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3640830ACF8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE01430ACF8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523710; cv=none; b=cmyR/PhtbUbo8z1iONpm0Aj0Ybly6FyIMQh1t1wtRONjYqS7+1Zx6cj4MZc7GYaU5XlvYmlJ0LBIfG3dVAyY8YmlJSshwonacjzJHLkuh5U0rTGWuRiFci/2xWNXlgeB0+9pXcfXa4HuXUnqB+CToerPIPhkpDXdEDdNPT0YFRo=
+	t=1762523742; cv=none; b=oP/Ka49+8EmZzjPlIESoS5KB1A7hmGnydnqh0tMppwtZJnKidm07DeWOYycHd/JYMjSi/sjoUmyzlqhZHL2AcKKdS+r4OrBBFDhpx9CULjSIa/tgTVxi8lgna/MzxBC7sWwg1CmmDk22gs0MN3KCbai4LFWiLXDakCFtEYw9B7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523710; c=relaxed/simple;
-	bh=4IaHY4BKpYsxR5q7jSPPkcBrCVgWYofh/OWPcZhmCWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SPUsuKXrGfDzebckX5cmVNKxYhzpyaJ9s5KMf63YGpKe6NICk6/O5YDepr1uSHy4jqHCGbHsUQhF3gIzwlT/5s0fm6crtDAT1n2K/fTvqAn3YkvyGkC9ObI2fVYrHNPPikSLGfcJTRlMkk1d0a9M9Mv6VnEBXlfkoQuwvztKflE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ro3z5yS/; arc=none smtp.client-ip=209.85.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1762523742; c=relaxed/simple;
+	bh=Hxb/gWTOsdtHlXVI0iFMLTENSvzBdCoasJxqnUiXeIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2JuLVwo8Zchj/ZwMmibsNxzvddv+EASkMvquYeceyqp1+hyYEe9rrZ+5y735klj7h4llSKE9y8H9wl1vchxXAYnSY1sBkYGMqcygS4/zfZvDm6lMpHFS3hvbGKOkW7P/kJRl3TSB5BNFF1wJ1Pj+OItenrXueaPcKUDLQh9zC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-6317348fa4fso128091a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:55:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762523706; x=1763128506; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i1mgT8udApcgBiPObXF+Y+AIxrYHKzvdKUGLqdhuh54=;
-        b=Ro3z5yS/M2ZM9Z/lH1H7ubcGxfZvT+gbtx5KLjhRoz5v5vnGoy4oOYdj8IU7p4BM37
-         ftAvT5paUvhxa7cPCqLQGj+50VM637k3vifybEBqj4Pj+qRsPvKmPs14ZYouj2QGio5C
-         1JNf6vGzVSvR06tckRhkMUFByVBnIic+N4TRZnc5x/jdTurZ3Jhs0KJ/JVyoRPBskclU
-         ecHZMgVP6xLvNQGuWDL63WTAp4C5337lBhweVb8G30FkwZy62bgLv5J1WDpyLRq8nw4z
-         wAZd8DrGcuXQ6m3IATSCtLVgEXr14nDUA3LIaM9XHm8OlVurVIpkDIJ9ZGquN4CgmvcY
-         +nIw==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640f0f82da9so1511217a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:55:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762523706; x=1763128506;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=i1mgT8udApcgBiPObXF+Y+AIxrYHKzvdKUGLqdhuh54=;
-        b=sBGCFeUleRKcMYD/VFFs2zE3qAkZ9pmsUCnlPGFSi9CL3F1+WrDEr1bqNP24aFe1Q+
-         40hsepWLwpSFWVeKLOLteHb/skPEjiYQObGyoCTf/FfVJLrEyk5WDpAwtCESbV/cE/gx
-         7yrroL2HK/BhV0XxrJAzMuITfWJ2KZFO3BjlapOn9a+GeEpNQqlutmpS01hP2ALSO+QM
-         U2X8/c5iQsNIP9jZfap3ZL3xni0sU35Jl17PqHlL4WcID4nMvvbQgnCgD61gAB6ea6fG
-         VBT/EW7O5NrG6ommbwPPHkMf7b6mB7wtCWBjXBkVzF+0vak8kUXKehv50LUSQFGfsNpY
-         KJ4A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+J8rS3tlTdRC765Xl6qSEBPaVSQjR9sXzmC8A9cuGNLVS/Ks0Ss7SzGtBbpkwQcJe5mj6ylX5CXvUWrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5wUdqfOPOc4BiwujBT8rnN2+tT4sr/oX/WUMpmddls6UF8guw
-	Mw21Z/KfN26uBWl/oovTkWUtSuFZt0mIL6/aQ5Ofg40zSzpe7607U/vKxpuBuUkjfsrfjrAIkn2
-	rksjB6OKQ7iw3eH+6HINbZysStOSNnHE=
-X-Gm-Gg: ASbGnctLAjm5YfaIqx1FUhxNKST+VTyQU44Wa616bwu3/kFmKQNBApGVN8EgHGJXx+x
-	wWobZleL2aWIp+FJe7HlzI7Bb9OrMFYpgexVbf4/Kws9F38yzkKnPPwfiSTWmbXcYY0zr4FfJJQ
-	kS2Y3Y+pd+XUURPWjpwT673gALHQdIXqUYIBJKXQsqwl5D+iXbPbdQc2p0LMyT+XgtKTm7e9F6F
-	RfpTu2k4QVVIpk71du24beB/YP7yDVmhwM9uixF0URdT0COqDE12esw4B0=
-X-Google-Smtp-Source: AGHT+IEnDQagfCLvUpZx+7s0UUQVn+4wdwvyXbvi2WXZ9XKszyeCZ7T2q+51fITuWRiWZBdAtxHTBFEehGPrlA1uyMo=
-X-Received: by 2002:a05:6402:1456:b0:640:9aed:6ac4 with SMTP id
- 4fb4d7f45d1cf-6413f20924dmr1743445a12.3.1762523706023; Fri, 07 Nov 2025
- 05:55:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762523739; x=1763128539;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nZE6WJJFFBiJVTyI5OvLy2/eZGTZ4IdwtaNd7dO/eBE=;
+        b=ntq9ruK5a6o/xDKF5jCy8sbNU/6ECVpniSuOCSrT5fx32PvQIXSNKopZhKYaG2jZ62
+         fl8HHFSSivQxsJ/SHRJJ+ev5ne6YpVAP9VsME5+d7vztbLYMT0CitNbF6ec1bxR9BNlX
+         BU+o+eXQaJDHm+gPOhHzorSn9/talH5Ayv7lyBxfrhJPSEPBGqkvdjlWDtxXAMMk7m2j
+         OyuANyHCi7y9QwQ/WTy0qP65rFvrMfJu44Wh3d9F6c39NK2wNb1Urx+DqU5HCo1tK6IY
+         FSLHVT8HXtbZeTrEm8Fy8riiyDfvc58Aqr9iLzmN+rQiXSyL7TmE8dqfFZQ69gou+EJU
+         LDig==
+X-Forwarded-Encrypted: i=1; AJvYcCVlc6hV4+iEFrmIU+a5+ZXWqqwc/OCTB/RGaQFt7A4b+YxUe36+GKGTOsQXcoy+gyg+SE8zzkteLgixWWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8N2c7NMitQ4wjpfKQmJwv1aiymXN4R7mYkgXfqaBqteXuEbQw
+	k5GI83UZB9zzCWK25z/JzTxpw5CLNdkEDVt4ebH1ww/T0JlREbsQZwHH
+X-Gm-Gg: ASbGncvuOZtVqMPyujaFIFnxDWbayn+/UFR74jRVJ9u+SDUjskIaWsidR6biKbyME/B
+	U7GDXDtK0M265WjhrlZZA92J+GsU7GvQhcbFPbWIb4gc2OU5RcWy27JoqmRs12NhB3uC6zekBuT
+	n1F737mqV7eVfSGgUKOpNa1V+UZTaBe2r9LLogEE1lB63+VWat3b8ubZC+NfUDOM4DgeCUpVQnP
+	dWCRconToHQ3aJLnXIweq3EINuNBlsn7ptGB2+KhY5dF3u4CsfOspE3OchB6FvGv1xLqK8iHgg6
+	ts4hz8q7m9S8OoL9wgpRhzWqszxTCCdT1GeWIOmgrEDAe8hUdmHHXy6MwnRQQ2wqcMkjsg/DmS9
+	GwngG04duQq3snKqoz/hAfXh01pDFvjP5N1GLEEPJDXNrmQ5XM8N43j1B1CnEjVr8aO1+zzu/pt
+	og
+X-Google-Smtp-Source: AGHT+IHlTScJC+oO2U1HIWORq+rSxPXReipszaWTgQ3KvvBT9dPCs3MWAerxSZPOSFFxVPN9CHWH7A==
+X-Received: by 2002:a05:6402:3550:b0:640:c918:e3b with SMTP id 4fb4d7f45d1cf-6413f0f5f4cmr3131005a12.26.1762523739041;
+        Fri, 07 Nov 2025 05:55:39 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6412a27d68dsm3303524a12.9.2025.11.07.05.55.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:55:38 -0800 (PST)
+Date: Fri, 7 Nov 2025 05:55:36 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, calvin@wbinvd.org, 
+	kernel-team@meta.com, jv@jvosburgh.net
+Subject: Re: [PATCH net v9 4/4] selftest: netcons: add test for netconsole
+ over bonded interfaces
+Message-ID: <f44ccmfiiq47ecug5jyfxsi2imsytzhg25szr5yotpdry2b32h@5hxqifqyvsjz>
+References: <20251106-netconsole_torture-v9-0-f73cd147c13c@debian.org>
+ <20251106-netconsole_torture-v9-4-f73cd147c13c@debian.org>
+ <aQ3ExWwuiiN0xyBE@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106135658.866481-1-1599101385@qq.com> <20251106135658.866481-4-1599101385@qq.com>
- <aQzYJX1pDMksNLO9@krikkit>
-In-Reply-To: <aQzYJX1pDMksNLO9@krikkit>
-From: clingfei <clf700383@gmail.com>
-Date: Fri, 7 Nov 2025 21:54:54 +0800
-X-Gm-Features: AWmQ_bksbnjZ87k8jDfIudu2wjQmoqySCvs1ttxxFttTG9ZL53LlbyBGCBHZDgI
-Message-ID: <CADPKJ-5sUXaStr1TrNsgLF3vOq6+E3icGAkAh7xAWWWpGeep6g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net: key: Validate address family in set_ipsecrequest()
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com, 
-	herbert@gondor.apana.org.au, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
-	eadavis@qq.com, ssrane_b23@ee.vjti.ac.in, 
-	syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ3ExWwuiiN0xyBE@horms.kernel.org>
 
-Sabrina Dubroca <sd@queasysnail.net> =E4=BA=8E2025=E5=B9=B411=E6=9C=887=E6=
-=97=A5=E5=91=A8=E4=BA=94 01:17=E5=86=99=E9=81=93=EF=BC=9A
->
-> note: There are a few issues with the format of this patch, and the
-> subject prefix should be "[PATCH ipsec n/3]" for all the patches in
-> the series. But I'm also not sure if this is the right way to fix this
-> syzbot report.
->
->
-> 2025-11-06, 21:56:58 +0800, clingfei wrote:
-> > From: SHAURYA RANE <ssrane_b23@ee.vjti.ac.in>
->
->
-> From here:
->
-> > Hi syzbot,
-> >
-> > Please test the following patch.
-> >
-> > #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.g=
-it master
-> >
-> > Thanks,
-> > Shaurya Rane
-> >
-> > From 123c5ac9ba261681b58a6217409c94722fde4249 Mon Sep 17 00:00:00 2001
-> > From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-> > Date: Sun, 19 Oct 2025 23:18:30 +0530
-> > Subject: [PATCH] net: key: Validate address family in set_ipsecrequest(=
-)
->
-> to here should be removed.
->
+Hello Simon,
 
-Sorry for the incorrect format of this patch. I will fix it in later patche=
-s.
+On Fri, Nov 07, 2025 at 10:07:01AM +0000, Simon Horman wrote:
+> On Thu, Nov 06, 2025 at 07:56:50AM -0800, Breno Leitao wrote:
+> >  function create_dynamic_target() {
+> >  	local FORMAT=${1:-"extended"}
+> >  	local NCPATH=${2:-"$NETCONS_PATH"}
+> > -	_create_dynamic_target "${FORMAT}" "${NCPATH}"
+> > +	create_and_enable_dynamic_target "${FORMAT}" "${NCPATH}"
+> 
+> Sorry for not noticing this when I looked over v8.
+> It's not that important and I don't think it should block progress.
+> 
+> create_and_enable_dynamic_target() seems to only be used here.
+> If so, perhaps the 'enabled' line could simply be added to
+> create_dynamic_target() instead of creating adding
+> create_and_enable_dynamic_target().
 
->
-> > syzbot reported a kernel BUG in set_ipsecrequest() due to an
-> > skb_over_panic when processing XFRM_MSG_MIGRATE messages.
-> >
-> > The root cause is that set_ipsecrequest() does not validate the
-> > address family parameter before using it to calculate buffer sizes.
-> > When an unsupported family value (such as 0) is passed,
-> > pfkey_sockaddr_len() returns 0, leading to incorrect size calculations.
-> >
-> > In pfkey_send_migrate(), the buffer size is calculated based on
-> > pfkey_sockaddr_pair_size(), which uses pfkey_sockaddr_len(). When
-> > family=3D0, this returns 0, so only sizeof(struct sadb_x_ipsecrequest)
-> > (16 bytes) is allocated per entry. However, set_ipsecrequest() is
-> > called multiple times in a loop (once for old_family, once for
-> > new_family, for each migration bundle), repeatedly calling skb_put_zero=
-()
-> > with 16 bytes each time.
->
-> So the root of the problem is a mismatch between allocation size and
-> the actual size needed. Unexpected families are not good, sure, but
-> would not cause a panic if the sizes were handled correctly.
->
-> OTOH, for this old code which is being deprecated, maybe it doesn't
-> matter to fix it "properly". (but see below)
->
+This is a good catch. I _think_ it is worth fixing, in fact.
 
-I agree that the root cause of the problem is a mismatch between
- the allocation size and the actual size needed. I'm not familiar with the
-kernel network stack, and I'm unsure if unexpected families might cause
-other problems. But, regarding this specific issue, avoiding integer overfl=
-ow
-is sufficient to ensure consistency in size allocation and usage.
+I will send a v10 with this additional change.
 
->
-> > This causes the tail pointer to exceed the end pointer of the skb,
-> > triggering skb_over_panic:
-> >   tail: 0x188 (392 bytes)
-> >   end:  0x180 (384 bytes)
-> >
-> > Fix this by validating that pfkey_sockaddr_len() returns a non-zero
-> > value before proceeding with buffer operations. This ensures proper
-> > size calculations and prevents buffer overflow. Checking socklen
-> > instead of just family=3D=3D0 provides comprehensive validation for all
-> > unsupported address families.
-> >
-> > Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3Dbe97dd4da14ae88b6ba4
-> > Fixes: 08de61beab8a ("[PFKEYV2]: Extension for dynamic update of
-> > endpoint address(es)")
-> > Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-> > ---
-> >  net/key/af_key.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/net/key/af_key.c b/net/key/af_key.c
-> > index cfda15a5aa4d..93c20a31e03d 100644
-> > --- a/net/key/af_key.c
-> > +++ b/net/key/af_key.c
-> > @@ -3529,7 +3529,11 @@ static int set_ipsecrequest(struct sk_buff *skb,
-> >       if (!family)
-> >               return -EINVAL;
-> >
-> > -     size_req =3D sizeof(struct sadb_x_ipsecrequest) +
-> > +    /* Reject invalid/unsupported address families */
->
-> Steffen, AFAICT the whole migrate code has no family
-> validation. Shouldn't we check {old,new}_family to be one of
-> {AF_INET,AF_INET6} in xfrm_migrate_check? This should take care of the
-> problems that this series tries to address, and avoid having objects
-> installed in the kernel with unexpected families (which would match
-> what validate_tmpl does).
->
->
-> Looking quickly at xfrm_migrate_state_find, it also seems to compare
-> addresses without checking that both addresses are of the same
-> family. That seems a bit wrong, but changing the behavior of that old
-> code is maybe too risky.
->
->
->
-> > +    if (!socklen)
-> > +        return -EINVAL;
-> > +
-> > +    size_req =3D sizeof(struct sadb_x_ipsecrequest) +
->
-> nit: tabs should be used, not spaces
->
-> >                  pfkey_sockaddr_pair_size(family);
-> >
-> >       rq =3D skb_put_zero(skb, size_req);
->
-> --
-> Sabrina
+	diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+	index 09553ecd50e39..3f891bd68d03c 100644
+	--- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+	+++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+	@@ -147,15 +147,12 @@ function _create_dynamic_target() {
+		fi
+	}
 
-I think the check on socklen is trying to reject unexpected families,
-but I am not sure if it is too late, and this check can only take
-effect when the
-type of family is handled successfully.
+	-function create_and_enable_dynamic_target() {
+	-       _create_dynamic_target "${FORMAT}" "${NCPATH}"
+	-       echo 1 > "${NCPATH}"/enabled
+	-}
+	-
+	function create_dynamic_target() {
+		local FORMAT=${1:-"extended"}
+		local NCPATH=${2:-"$NETCONS_PATH"}
+	-       create_and_enable_dynamic_target "${FORMAT}" "${NCPATH}"
+	+
+	+       _create_dynamic_target "${FORMAT}" "${NCPATH}"
+	+       echo 1 > "${NCPATH}"/enabled
+
+		# This will make sure that the kernel was able to
+		# load the netconsole driver configuration. The console message
+
+
+Thanks for the review!
+--breno
 
