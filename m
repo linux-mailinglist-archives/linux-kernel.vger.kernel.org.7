@@ -1,100 +1,136 @@
-Return-Path: <linux-kernel+bounces-889623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF81C3E10D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:00:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B89FC3E116
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431B51887F68
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CBA61887C25
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7232EC553;
-	Fri,  7 Nov 2025 01:00:48 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5852F0C45;
+	Fri,  7 Nov 2025 01:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UahQDDQx"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331C313DDAE;
-	Fri,  7 Nov 2025 01:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8162BFC73
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 01:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762477248; cv=none; b=ByL8YePUWeNxpGhKyYxK6TDE2sI3/EBFc0T6QXm9eleHSa0dwqc1EBUAzecCdDKRKLJ69odjmUvgONF/H1PePI21mHna87fODh0ON2xBwH8C2vgx6cv9SoOh/DYhIwr0Z4vleyJGYBpyrJnM3OJoCnucUHeoU5QQeVPhqSyVbQ8=
+	t=1762477249; cv=none; b=UtsBnulg4n9U/1VeLRP+mwD7g8tPeb+Az22GjhJnu5xQkUSqWHzPLIE55o7PhkT8LXTbGrusiS/e1XzPYlsIxE40cYPQE60WIVJp6yEbAzk0LUXvzh1gYuuZCZaYit5AFg3rrkuRYy2v0Ex3z4oxxnNsjRmi9bVzg4QrhvDtlQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762477248; c=relaxed/simple;
-	bh=sh7WBtru3Ve4ZXDu5KJHFHzU7u/zFBNHXk6GubNn0cM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sLHk+nmPazB7LQgSxn4Xb7EeUgglL/j1IJyRVEPogjSkjS8K51BlgaiS8qdmHWu9Owg9Sg9bKS6QtornRGJD/KtxFgcf2HNuArah8/KBmvUccUmDVp+/XrNo9L/H3WzigvF53TPxG06ugDkWidovDPA9GoFmC2mYvk9A+ujZu3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 03A48B8103;
-	Fri,  7 Nov 2025 01:00:43 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 523E560010;
-	Fri,  7 Nov 2025 01:00:42 +0000 (UTC)
-Date: Thu, 6 Nov 2025 20:00:41 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Zhang Chujun <zhangchujun@cmss.chinamobile.com>
-Cc: linux-trace-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: fix incorrcet short option in usage text for
- --threads
-Message-ID: <20251106200041.6f21af65@batman.local.home>
-In-Reply-To: <20251106031040.1869-1-zhangchujun@cmss.chinamobile.com>
-References: <20251106031040.1869-1-zhangchujun@cmss.chinamobile.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762477249; c=relaxed/simple;
+	bh=NZ4x6TEl3CJtkTGi+wP+m0cvmfYI0RmaIhfXqjufJuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hc5cYvSFBjqFQLN8QJR4R2TJBvRSoATbWW3JcXA74PqDjCYu+V/8K90szGJLqmxxf7N3np9rPsHnNCl/V+SOrzk4Z+ElKz1b3Lf8ueHHduZGqk9IqUN1ErN8eje+bSP3BsOj20q0s4NWNAf127V0d17iMhTl9B8SBhBKYv3Dklw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UahQDDQx; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-780fe76f457so2611047b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 17:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762477246; x=1763082046; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pUVfqUQtUqV0wkzqiVXGQWjP7m/o2AcCBa4KNQ5qB/w=;
+        b=UahQDDQx2S/1+zIWEWiVhNo003fauqOQy5AgYuvhKeQE8tNtjf8bOQ5y+Fbu+luyQL
+         /OIS8kOez8tLa5sC16jyzoYGdFn0H0g7ADg+OQv5rlbIDv6y+c8nT/mwsG4dqcsBVg2+
+         Zd9J0FFDwC3yPL/myUA66ilAJp9QFkUzFpFse2pJfl0CGuA8BVmCmgivwtOmRexrgaXq
+         thw+FHED6lMejoj3tTeRJjXPPdHGR/q71Ca7fIyC+8N0/P2tYQ9pWJ4WmtpaqYZqGFLi
+         w/X4b9xDIu3VVJ7oELkLmb79HdkYAwV1XciG777JgLDOwH6lJP265XwVLwv4ncpqRjhG
+         7XEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762477246; x=1763082046;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pUVfqUQtUqV0wkzqiVXGQWjP7m/o2AcCBa4KNQ5qB/w=;
+        b=vCTLsbkCA1Ss8KEk8wNOwzEQ3eKxZlIeEPci8iriATeu8rUeplOwjHD6Eo3gzF0LIa
+         HSyFXy08uU/OVVb/yEpDzG8zmA7CO759xKgNXiJ7vZ8RU6A1Nvsyco1vn6CMfkRYaNaj
+         43KXX1giTDcGlv3EjrbT6Q0COV/hcJVi9Mk1XT7FSCcPKAcdHO+fN7cJEFofHmhMMYe8
+         2ESUcVFpPmka/qKqwwemH7e1l4jq/fxWs++L2eSQk4VmL9el2FTs84IPlD99yP+MNWzr
+         UWDFt/IHl21uYnj7rXi9iOo+bUF9TYaCBw2uszrorgVYdG8gP/YYu5Nkx/01K2U6qpEY
+         CdyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxdkE+4wLCet5awl8RkROMdt+eeQl6eqAuzS/oZjdoeR9mMrjEhGUB05NDQJiVlgaEO04+G39bDjE79Hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR/EUyFjZOI0T/Aph1yzyZqLKnEl301UTOvbSK02x1gOCNYZJ1
+	rv3pdehn/Cg9WwkKQDxEIVHm0V+AqcE6tGZd17DRZ7whchW80PpiqAy9
+X-Gm-Gg: ASbGncu90c1YK6iwEK66XSL+gUOzHnUDqDqVR8PKRnEj5PWmjzheQodb1dDeaNTN4y0
+	aGUUvi/+14KGTqvHK7XHtAVCpNlywSt9tI4IkvjuQqNqyukIM17M0ItA6lmlkXyzQnXxErMLMv/
+	9+WLmC9GiOJlAUy6DIR/S+yyOcOJoRqCjZztfjNZeAPh8tOP7dIsdmgR4qbEYaBx+Vwp4gdB6Nk
+	hp+66t6w2U0ZsAJ/oAsJQtjkdCjGnOpgZCFfDZAYIJ3tfra0hr6IK/H43BUcYVefuiM9Y1uIaDO
+	1Oam3A5HlqR4PgQh1HMh8BSKdJjb29EJ3Z+PVLPsCuM0j0iHqRf+MSSFq29V4UXOXrT1sfR1zgm
+	O2Z2kF5+bzU1kz9lki9F8KidZ4bTYuAsseoCl4Zh9/S7uC9l5PDc8KNobWLuqB2Ya+NLShmNXah
+	p1Ff1yZ9NEgYTH+e4UjRBul3vEuF+VTPmnXxc4
+X-Google-Smtp-Source: AGHT+IGXlZDS/7AIW+f4SW9AQZ+mYsEsFZB3pq1/mcaIGtLtZbgr70tzGom2CV/dzdZ26+pnChUzJQ==
+X-Received: by 2002:a05:690c:360b:b0:786:6076:e8d6 with SMTP id 00721157ae682-787c542e985mr22214027b3.57.1762477246594;
+        Thu, 06 Nov 2025 17:00:46 -0800 (PST)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:5c::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b15ffc52sm12984557b3.54.2025.11.06.17.00.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 17:00:45 -0800 (PST)
+Date: Thu, 6 Nov 2025 17:00:44 -0800
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v8 00/14] vsock: add namespace support to
+ vhost-vsock
+Message-ID: <aQ1EvN3q90v3r3RD@devvm11784.nha0.facebook.com>
+References: <20251023-vsock-vmtest-v8-0-dea984d02bb0@meta.com>
+ <k4tqyp7wlnbmcntmvzp7oawacfofnnzdi5cjwlj6djxtlo6xai@44ivtv4kgjz2>
+ <aP+rCQih4YMm1OAp@devvm11784.nha0.facebook.com>
+ <4vleifija3dfkvhvqixov5d6cefsr5wnwae74xwc5wz55wi6ic@su3h4ffnp3et>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: fkwyknonz573muhmqpiy81nr7nkjffoh
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 523E560010
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/jEbCTWv8sOAs3tljn2A8eHKTvwyf3lN4=
-X-HE-Tag: 1762477242-133882
-X-HE-Meta: U2FsdGVkX18++BX9ei/tNc2mAiu3nJAyP/S4+Eiwr08YNaBV07EJf3X2Jg3AxucuBvoUvUSzaiBNxbw8UR/CGOwwieegyNT7tbvCIuysFMQ0leUJ641Jf0ZrN576kJomVXVxDbfu4RqAgFy/OOiaddaNRCI7As0Fpk1NBF1os4FADo+3RHAWMvnBP7OE2epeaxYxJPH5HMec+Es5mdakWbLr8NiNKdbgyyqQSEXXBJvJ/9g8bv4EuJS4IuprXS/+kfOYicJlf2zMsbCH/JBK9VfVBx3F55sYtdnrtbm8Onte4G9ALmCO35hnufAqsC5SAdbOeR0Kycmj4ydYpJmDpDfggTn4GyDJ2Btx6jDBhf+kkwNlhO27JA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4vleifija3dfkvhvqixov5d6cefsr5wnwae74xwc5wz55wi6ic@su3h4ffnp3et>
 
-On Thu,  6 Nov 2025 11:10:40 +0800
-Zhang Chujun <zhangchujun@cmss.chinamobile.com> wrote:
+On Thu, Nov 06, 2025 at 05:23:53PM +0100, Stefano Garzarella wrote:
+> On Mon, Oct 27, 2025 at 10:25:29AM -0700, Bobby Eshleman wrote:
+> > On Mon, Oct 27, 2025 at 02:28:31PM +0100, Stefano Garzarella wrote:
 
-> The help message incorrectly listed '-t' as the short option for
-> --threads, but the actual getopt_long configuration uses '-e'.
-> This mismatch can confuse users and lead to incorrect command-line
-> usage. This patch updates the usage string to correctly show:
-> 	"-e, --threads NRTHR"
-> to match the implementation.
-> 
-> Note: checkpatch.pl reports a false-positive spelling warning on
-> 'Run', which is intentional.
-
-I'll pull this manually, but you sent to the wrong mailing list. It
-should go to linux-trace-kernel@vger.kernel.org and not
-linux-trace-devel. That's for user space tools that do not live in the
-kernel proper.
-
--- Steve
-
+[...]
 
 > 
-> Signed-off-by: Zhang Chujun <zhangchujun@cmss.chinamobile.com>
+> I just reviewed the code changes. I skipped the selftest, since we are still
+> discussing the other series (indeed I can't apply this anymore on top of
+> that), so I'll check the rest later.
 > 
-> diff --git a/tools/tracing/latency/latency-collector.c b/tools/tracing/latency/latency-collector.c
-> index cf263fe9deaf..ef97916e3873 100644
-> --- a/tools/tracing/latency/latency-collector.c
-> +++ b/tools/tracing/latency/latency-collector.c
-> @@ -1725,7 +1725,7 @@ static void show_usage(void)
->  "-n, --notrace\t\tIf latency is detected, do not print out the content of\n"
->  "\t\t\tthe trace file to standard output\n\n"
->  
-> -"-t, --threads NRTHR\tRun NRTHR threads for printing. Default is %d.\n\n"
-> +"-e, --threads NRTHR\tRun NRTHR threads for printing. Default is %d.\n\n"
->  
->  "-r, --random\t\tArbitrarily sleep a certain amount of time, default\n"
->  "\t\t\t%ld ms, before reading the trace file. The\n"
+> Thanks for the great work!
+> 
+> Stefano
+> 
 
+I appreciate it! Thanks again for the work on your side reviewing.
+
+I'll address your feedback and rebase onto that other series shortly.
+
+Best,
+Bobby
 
