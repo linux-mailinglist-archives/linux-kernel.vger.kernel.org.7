@@ -1,376 +1,232 @@
-Return-Path: <linux-kernel+bounces-889746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B0FC3E638
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:44:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CA1C3E63B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 778BF4E6210
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462E73A9B09
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848042F25F0;
-	Fri,  7 Nov 2025 03:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8BF1E32D3;
+	Fri,  7 Nov 2025 03:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="dIek1/f7"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUiJEjyg"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346F316132F;
-	Fri,  7 Nov 2025 03:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD5E3B2A0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762487062; cv=none; b=U+4EYs0M2Kl91Bimr/48ledeIGXpVtCjqFjmqnEmO3BPh5fhVWDmxZDyXcB1p1uK7Es8TOjwyPxEHD7zJPHPikYhXzzMmKMe033gSVJSVEftArG+V9Z9KcPuJxT0qPhH2D7Y+xVjgEVHjT97q7nkPNmXjjz6QrtKuzeIUj3EGxY=
+	t=1762487297; cv=none; b=KNty10Pr80k/q+2ngVRqxVUS7FVfs/qUpApljpnuM5Ea2bS1KM3Qtv3Z19lpq4kwfxsGmc1xTeNsvinskZ0X8yO20a5Ks5Xmjmj+Vy408F94f+/r3R0AsaK2VxXkan9spF5izxBjbJOl4QedFuhoyjE7Cdo7L/Lyl9Kq/SDjW84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762487062; c=relaxed/simple;
-	bh=7fuQRn1aRSqszY0C6oplUSNmlKClIn2MUSqb7n035C8=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=p/jgjwo4+oS6YY5qB25aZDqhXjWi/koKdjT+Y/8bEAG7QALsUuiTApl1M1Tu/Q49taJR4kMXoTxPXcgMAt77Ydai80HPP/SwGEPryTWXP+vJlhR8O7PS+sTjA4qvNS5+UiVxGIn1opmxK/yQy+iyGzFEDD6BpmYniMhBR4JmdWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=dIek1/f7; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1762487058;
-	bh=7fuQRn1aRSqszY0C6oplUSNmlKClIn2MUSqb7n035C8=;
-	h=Message-ID:Subject:From:To:Date:From;
-	b=dIek1/f7FT3CSH0TMiXR4DdMcifZX1qckyeM5PAtRPAsaxMZ7NsDuOvZkk2g+On2H
-	 yezvYUjKCuJ1DpjQjcaUZKGUMoQ+9uBdn8mZsmFKnPdJVbsRp4oiuBvV4TvcD6ry8j
-	 bjCWgWwnWbxuFUpBMaHsZSW1npInfYQ5x7ajknkk=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id EFA991C00EE;
-	Thu, 06 Nov 2025 22:44:17 -0500 (EST)
-Message-ID: <9f265f47e0b99894996b89c8d79d2e40d324ddce.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 6.18-rc4
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
-	 <linux-kernel@vger.kernel.org>
-Date: Thu, 06 Nov 2025 22:44:17 -0500
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1762487297; c=relaxed/simple;
+	bh=442eqadcHzio0qf/stWiPJed66HJJL13Xmo3zWX5t9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qJkKzKy+T9pXDoHKRSR+nw7Sht6miNIDlVKMSeW8+Xg84USyEjQ3pvaNb9T7iflyXcQj7xx8Zugl8qTTj7ecDvSb39wwGB9thlNyesjdLtgWSewgOB0dSUadFDncI+3DpMIdfGjYXXQrt3QgW1oWjFSw4Gm0XFWLIBBHKAuYZFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUiJEjyg; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34188ba567eso236443a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 19:48:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762487295; x=1763092095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MxGmPbv+36kk7i4AWF1GAropKIoZf8pJ2g2kJsx2bXg=;
+        b=aUiJEjygcQmIL34LHkQ5bwi3jduGxN+kzqtHBKRcJUTIwuJEhNhBZYrCxIRqBy/LAO
+         6pMMHHJlDgouznCsoyesHvD6uPglk2+2mx5oh0QDurDuTJe/4hn/9HLVhEyK3px4PqIH
+         wVfbs4oztbFzvZI8l0wGqxMUCJ6REajeREOiZ8Ru4pE0UuID5NkcmKz9Q8b9KCMvay96
+         J7chA6wVeS08B/OpNFQQvAu76RVn+uwBf5dIp6+yJqgIP+9ABtgV++1dtJItj+TH+WB/
+         C7rcymD0r6xG91j9Vx3dYUGP590KgzjzY0iNVYNAm9Yq6PyGRRhGr3Bd2mYP2iGLLXKj
+         NUVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762487295; x=1763092095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MxGmPbv+36kk7i4AWF1GAropKIoZf8pJ2g2kJsx2bXg=;
+        b=kL7U9I9HdXt77tVG+15Hp2H+UWe4B3XGo6zihkBmdUl7zPNmQ5tcYIIfzMFzAf81hx
+         f+3QgszQGLur7n6S18Q0/590TGYlW39bwpJauVfrJSB03wUU+J1y3wiIvKcwitRZBzXe
+         psuFSxbcYP+AjQGeAfKoULE+RS+X1GOKwVUU1dRWyDlfRYfUMlZ1x9PO7HTtMaej7oNo
+         wHZHHyQoNGrS6+c3YaceJBb9w1X4YMsqXUHY6deHYLOjEBumEs4tSz3tOAkpG/trg/1i
+         26oGUy7+37wBs0ty3WNzlUuPgM8se9KR6dgPzdO6KF2PObxY+708PU0RUqLxJZWwJklm
+         +YNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAFjKo+dwq0613D62uJGD6W9hYP83CzHG0OphCj98LfkVoJFBxvzONZjVjG2i45s1cvYekO7L1GhS9/PY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyppXv42EhTZDqeqx1zQw1nYsrYnvCh8tmwrYZ8pI3XnUEU+AFV
+	QHbnXOMoFraSGchaWFBlZqBrxBFAxx3NIAjnPoMGOK0CRa4jg9UE1RG4
+X-Gm-Gg: ASbGncuQb32Y9UiBCNQXWtc2phWZhQ/m1aT2wfwNWnnbBICLg0awR5tY8X4+JqGhn/B
+	iVyN5e5gzpa69R3P2ph2YoFsT2Qw0GHais8HbCvXoCAvAwzhfyXeupATglnUnGuqxC2zP2wvwIg
+	3d4QEOwU9JEF93sKbyLfn19IB0KkZNrTBRJ/OgABzYsaZufdO/45lPioclc2kLb2eWrEgrresjx
+	OdcXyRFAp8ndaatz+msODmem7hqumlJMgCIcmk31mu2oQalSjWvEJ2/sDesZK8IN6NkhkPEWUUr
+	3TPcF3BnzIyt9Y58wuqJFrf4G4OlaevwwW/Kd4Arx8StGF/S0JT4Sq3XR0vs0syw9RA/iirOpaB
+	gjOmkUAPuiWcotThKnFUn5BQQXluFkidtolpFmqBOM5vuZyCXVzFkf8jkH61NeCTKXVonulCy/+
+	BBHdpBSsu9l0b100ZWbw==
+X-Google-Smtp-Source: AGHT+IEsn7E1xrWwBVAA3UJlPFxnkFIozsp7ECdOPBKH4YIoxMww2ThRv51KM04jqJiCgXo74xxoJg==
+X-Received: by 2002:a17:90b:5250:b0:33e:2d0f:479c with SMTP id 98e67ed59e1d1-3434c5633cbmr1561991a91.22.1762487294718;
+        Thu, 06 Nov 2025 19:48:14 -0800 (PST)
+Received: from localhost.localdomain ([129.227.63.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c356300sm989552a91.18.2025.11.06.19.48.10
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 06 Nov 2025 19:48:14 -0800 (PST)
+From: fuqiang wang <fuqiang.wng@gmail.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: fuqiang wang <fuqiang.wng@gmail.com>,
+	yu chen <33988979@163.com>,
+	dongxu zhang <xu910121@sina.com>
+Subject: [PATCH v5 0/1] KVM: x86: fix some kvm period timer BUG
+Date: Fri,  7 Nov 2025 11:47:59 +0800
+Message-ID: <20251107034802.39763-1-fuqiang.wng@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-All fixes in the UFS driver.  The big contributor to the diffstats is
-the Intel controller S0ix/S3 fix which has to special case the
-suspend/resume patch for intel controllers in ufshcd-pci.c
+This patch fixes two issues with the period timer:
 
-The patch is available here:
+====================================================================
+issue 1: avoid hv timer fallback to sw timer if delay exceeds period 
+====================================================================
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+When the guest uses the APIC periodic timer, if the next period has already
+expired, e.g. due to the period being smaller than the delay in processing
+the timer, the delta will be negative. nsec_to_cycles() may then convert
+this delta into an absolute value larger than guest_l1_tsc, resulting in a
+negative tscdeadline. Since the hv timer supports a maximum bit width of
+cpu_preemption_timer_multi + 32, this causes the hv timer setup to fail and
+switch to the sw timer.
 
-The short changelog is:
+Moreover, due to the commit 98c25ead5eda ("KVM: VMX: Move preemption timer
+<=> hrtimer dance to common x86"), if the guest is using the sw timer
+before blocking, it will continue to use the sw timer after being woken up,
+and will not switch back to the hv timer until the relevant APIC timer
+register is reprogrammed.  Since the periodic timer does not require
+frequent APIC timer register programming, the guest may continue to use the
+software timer for an extended period.
 
-Adrian Hunter (4):
-      scsi: ufs: core: Fix invalid probe error return value
-      scsi: ufs: ufs-pci: Set UFSHCD_QUIRK_PERFORM_LINK_STARTUP_ONCE for In=
-tel ADL
-      scsi: ufs: core: Add a quirk to suppress link_startup_again
-      scsi: ufs: ufs-pci: Fix S0ix/S3 for Intel controllers
+Link [1] reproduces this issue by injecting a kernel module. This module
+creates a periodic hrtimer and adds a certain delay in its callback, making
+the delay longer than the KVM periodic timer period.
 
-Bart Van Assche (3):
-      scsi: ufs: core: Revert "Make HID attributes visible"
-      scsi: ufs: core: Reduce link startup failure logging
-      scsi: ufs: core: Fix a race condition related to the "hid" attribute =
-group
+======================================================================
+issue 2: VM hard lockup after prolonged suspend with periodic HV timer
+======================================================================
 
-Nitin Rawat (1):
-      scsi: ufs: ufs-qcom: Fix UFS OCP issue during UFS power down (PC=3D3)
+Resuming a virtual machine after it has been suspended for a long time may
+trigger a hard lockup. 
 
-And the diffstat:
+The main reason is that the KVM periodic HV timer only advances during the
+VM-exit “VMX-preemption timer expired” event and  when the vCPU is
+suspended or returns to user space for other reasons, the KVM timer stops
+advancing. Since the periodic timer expiration callback advances the timer
+by one period per invocation, this results in the callback being executed
+many times to catch up the expiration to the current timer value.
 
- drivers/ufs/core/ufs-sysfs.c  |  2 +-
- drivers/ufs/core/ufs-sysfs.h  |  1 -
- drivers/ufs/core/ufshcd.c     | 17 ++++-------
- drivers/ufs/host/ufs-qcom.c   | 15 +++++++++-
- drivers/ufs/host/ufshcd-pci.c | 70 +++++++++++++++++++++++++++++++++++++++=
-++--
- include/ufs/ufshcd.h          |  7 +++++
- 6 files changed, 95 insertions(+), 17 deletions(-)
+Due to issue 1, the KVM periodic HV timer will switch to the software
+timer, and these catch-up will be executed within a single clock interrupt.
+If this process lasts long enough, it can easily lead to a hard lockup.
 
-With full diff below.
+One of our Windows virtual machines in the production environment triggered
+this case:
+  NMI watchdog: Watchdog detected hard LOCKUP on cpu 45
+  ...
+  RIP: 0010:advance_periodic_target_expiration+0x4d/0x80 [kvm]
+  ...
+  RSP: 0018:ff4f88f5d98d8ef0 EFLAGS: 00000046
+  RAX: fff0103f91be678e RBX: fff0103f91be678e RCX: 00843a7d9e127bcc
+  RDX: 0000000000000002 RSI: 0052ca4003697505 RDI: ff440d5bfbdbd500
+  RBP: ff440d5956f99200 R08: ff2ff2a42deb6a84 R09: 000000000002a6c0
+  R10: 0122d794016332b3 R11: 0000000000000000 R12: ff440db1af39cfc0
+  R13: ff440db1af39cfc0 R14: ffffffffc0d4a560 R15: ff440db1af39d0f8
+  FS:  00007f04a6ffd700(0000) GS:ff440db1af380000(0000) knlGS:000000e38a3b8000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 000000d5651feff8 CR3: 000000684e038002 CR4: 0000000000773ee0
+  PKRU: 55555554
+  Call Trace:
+   <IRQ>
+   apic_timer_fn+0x31/0x50 [kvm]
+   __hrtimer_run_queues+0x100/0x280
+   hrtimer_interrupt+0x100/0x210
+   ? ttwu_do_wakeup+0x19/0x160
+   smp_apic_timer_interrupt+0x6a/0x130
+   apic_timer_interrupt+0xf/0x20
+   </IRQ>
 
-Regards,
+And in link [2], Marcelo also reported this issue. But I don't think it can
+reproduce the issue. Because of commit [3], as long as the KVM timer is
+running, target_expiration will keep catching up to now (unless every
+single delay from timer virtualization is longer than the period, which is
+a pretty extreme case). Also, this patch is based on the patch of link [2],
+but with some differences: In link [2], target_expiration is updated to
+"now - period"(I'm not sure why it doesn't just catch up to now -- maybe
+I'm missing something?). In this patch, I set target_expiration to catch up
+to now just like how update_target_expiration handles the remaining.
 
-James
+Link [4] provides details of the hard lockup details and as well as how to
+reproduce the KVM timer stop by pausing the virtual machine.
 
----
+=================================
+Fix both issues in a single patch
+=================================
 
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index c040afc6668e..0086816b27cd 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -1949,7 +1949,7 @@ static umode_t ufs_sysfs_hid_is_visible(struct kobjec=
-t *kobj,
- 	return	hba->dev_info.hid_sup ? attr->mode : 0;
- }
-=20
--const struct attribute_group ufs_sysfs_hid_group =3D {
-+static const struct attribute_group ufs_sysfs_hid_group =3D {
- 	.name =3D "hid",
- 	.attrs =3D ufs_sysfs_hid,
- 	.is_visible =3D ufs_sysfs_hid_is_visible,
-diff --git a/drivers/ufs/core/ufs-sysfs.h b/drivers/ufs/core/ufs-sysfs.h
-index 6efb82a082fd..8d94af3b8077 100644
---- a/drivers/ufs/core/ufs-sysfs.h
-+++ b/drivers/ufs/core/ufs-sysfs.h
-@@ -14,6 +14,5 @@ void ufs_sysfs_remove_nodes(struct device *dev);
-=20
- extern const struct attribute_group ufs_sysfs_unit_descriptor_group;
- extern const struct attribute_group ufs_sysfs_lun_attributes_group;
--extern const struct attribute_group ufs_sysfs_hid_group;
-=20
- #endif
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 9ca27de4767a..d6a060a72461 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -5066,7 +5066,8 @@ static int ufshcd_link_startup(struct ufs_hba *hba)
- 	 * If UFS device isn't active then we will have to issue link startup
- 	 * 2 times to make sure the device state move to active.
- 	 */
--	if (!ufshcd_is_ufs_dev_active(hba))
-+	if (!(hba->quirks & UFSHCD_QUIRK_PERFORM_LINK_STARTUP_ONCE) &&
-+	    !ufshcd_is_ufs_dev_active(hba))
- 		link_startup_again =3D true;
-=20
- link_startup:
-@@ -5131,12 +5132,8 @@ static int ufshcd_link_startup(struct ufs_hba *hba)
- 	ufshcd_readl(hba, REG_UIC_ERROR_CODE_PHY_ADAPTER_LAYER);
- 	ret =3D ufshcd_make_hba_operational(hba);
- out:
--	if (ret) {
-+	if (ret)
- 		dev_err(hba->dev, "link startup failed %d\n", ret);
--		ufshcd_print_host_state(hba);
--		ufshcd_print_pwr_info(hba);
--		ufshcd_print_evt_hist(hba);
--	}
- 	return ret;
- }
-=20
-@@ -8503,8 +8500,6 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 				DEVICE_DESC_PARAM_EXT_UFS_FEATURE_SUP) &
- 				UFS_DEV_HID_SUPPORT;
-=20
--	sysfs_update_group(&hba->dev->kobj, &ufs_sysfs_hid_group);
--
- 	model_index =3D desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
-=20
- 	err =3D ufshcd_read_string_desc(hba, model_index,
-@@ -10661,7 +10656,7 @@ static int ufshcd_add_scsi_host(struct ufs_hba *hba=
-)
-  * @mmio_base: base register address
-  * @irq: Interrupt line of device
-  *
-- * Return: 0 on success, non-zero value on failure.
-+ * Return: 0 on success; < 0 on failure.
-  */
- int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int=
- irq)
- {
-@@ -10891,8 +10886,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *=
-mmio_base, unsigned int irq)
- 	if (err)
- 		goto out_disable;
-=20
--	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
-+	async_schedule(ufshcd_async_scan, hba);
-=20
- 	device_enable_async_suspend(dev);
- 	ufshcd_pm_qos_init(hba);
-@@ -10902,7 +10897,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *=
-mmio_base, unsigned int irq)
- 	hba->is_irq_enabled =3D false;
- 	ufshcd_hba_exit(hba);
- out_error:
--	return err;
-+	return err > 0 ? -EIO : err;
- }
- EXPORT_SYMBOL_GPL(ufshcd_init);
-=20
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 3e83dc51d538..eba0e6617483 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -740,8 +740,21 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum =
-ufs_pm_op pm_op,
-=20
-=20
- 	/* reset the connected UFS device during power down */
--	if (ufs_qcom_is_link_off(hba) && host->device_reset)
-+	if (ufs_qcom_is_link_off(hba) && host->device_reset) {
- 		ufs_qcom_device_reset_ctrl(hba, true);
-+		/*
-+		 * After sending the SSU command, asserting the rst_n
-+		 * line causes the device firmware to wake up and
-+		 * execute its reset routine.
-+		 *
-+		 * During this process, the device may draw current
-+		 * beyond the permissible limit for low-power mode (LPM).
-+		 * A 10ms delay, based on experimental observations,
-+		 * allows the UFS device to complete its hardware reset
-+		 * before transitioning the power rail to LPM.
-+		 */
-+		usleep_range(10000, 11000);
-+	}
-=20
- 	return ufs_qcom_ice_suspend(host);
- }
-diff --git a/drivers/ufs/host/ufshcd-pci.c b/drivers/ufs/host/ufshcd-pci.c
-index b87e03777395..5f65dfad1a71 100644
---- a/drivers/ufs/host/ufshcd-pci.c
-+++ b/drivers/ufs/host/ufshcd-pci.c
-@@ -15,6 +15,7 @@
- #include <linux/pci.h>
- #include <linux/pm_runtime.h>
- #include <linux/pm_qos.h>
-+#include <linux/suspend.h>
- #include <linux/debugfs.h>
- #include <linux/uuid.h>
- #include <linux/acpi.h>
-@@ -31,6 +32,7 @@ struct intel_host {
- 	u32		dsm_fns;
- 	u32		active_ltr;
- 	u32		idle_ltr;
-+	int		saved_spm_lvl;
- 	struct dentry	*debugfs_root;
- 	struct gpio_desc *reset_gpio;
- };
-@@ -347,6 +349,7 @@ static int ufs_intel_common_init(struct ufs_hba *hba)
- 	host =3D devm_kzalloc(hba->dev, sizeof(*host), GFP_KERNEL);
- 	if (!host)
- 		return -ENOMEM;
-+	host->saved_spm_lvl =3D -1;
- 	ufshcd_set_variant(hba, host);
- 	intel_dsm_init(host, hba->dev);
- 	if (INTEL_DSM_SUPPORTED(host, RESET)) {
-@@ -425,7 +428,8 @@ static int ufs_intel_lkf_init(struct ufs_hba *hba)
- static int ufs_intel_adl_init(struct ufs_hba *hba)
- {
- 	hba->nop_out_timeout =3D 200;
--	hba->quirks |=3D UFSHCD_QUIRK_BROKEN_AUTO_HIBERN8;
-+	hba->quirks |=3D UFSHCD_QUIRK_BROKEN_AUTO_HIBERN8 |
-+		       UFSHCD_QUIRK_PERFORM_LINK_STARTUP_ONCE;
- 	hba->caps |=3D UFSHCD_CAP_WB_EN;
- 	return ufs_intel_common_init(hba);
- }
-@@ -538,6 +542,66 @@ static int ufshcd_pci_restore(struct device *dev)
-=20
- 	return ufshcd_system_resume(dev);
- }
-+
-+static int ufs_intel_suspend_prepare(struct device *dev)
-+{
-+	struct ufs_hba *hba =3D dev_get_drvdata(dev);
-+	struct intel_host *host =3D ufshcd_get_variant(hba);
-+	int err;
-+
-+	/*
-+	 * Only s2idle (S0ix) retains link state.  Force power-off
-+	 * (UFS_PM_LVL_5) for any other case.
-+	 */
-+	if (pm_suspend_target_state !=3D PM_SUSPEND_TO_IDLE && hba->spm_lvl < UFS=
-_PM_LVL_5) {
-+		host->saved_spm_lvl =3D hba->spm_lvl;
-+		hba->spm_lvl =3D UFS_PM_LVL_5;
-+	}
-+
-+	err =3D ufshcd_suspend_prepare(dev);
-+
-+	if (err < 0 && host->saved_spm_lvl !=3D -1) {
-+		hba->spm_lvl =3D host->saved_spm_lvl;
-+		host->saved_spm_lvl =3D -1;
-+	}
-+
-+	return err;
-+}
-+
-+static void ufs_intel_resume_complete(struct device *dev)
-+{
-+	struct ufs_hba *hba =3D dev_get_drvdata(dev);
-+	struct intel_host *host =3D ufshcd_get_variant(hba);
-+
-+	ufshcd_resume_complete(dev);
-+
-+	if (host->saved_spm_lvl !=3D -1) {
-+		hba->spm_lvl =3D host->saved_spm_lvl;
-+		host->saved_spm_lvl =3D -1;
-+	}
-+}
-+
-+static int ufshcd_pci_suspend_prepare(struct device *dev)
-+{
-+	struct ufs_hba *hba =3D dev_get_drvdata(dev);
-+
-+	if (!strcmp(hba->vops->name, "intel-pci"))
-+		return ufs_intel_suspend_prepare(dev);
-+
-+	return ufshcd_suspend_prepare(dev);
-+}
-+
-+static void ufshcd_pci_resume_complete(struct device *dev)
-+{
-+	struct ufs_hba *hba =3D dev_get_drvdata(dev);
-+
-+	if (!strcmp(hba->vops->name, "intel-pci")) {
-+		ufs_intel_resume_complete(dev);
-+		return;
-+	}
-+
-+	ufshcd_resume_complete(dev);
-+}
- #endif
-=20
- /**
-@@ -611,8 +675,8 @@ static const struct dev_pm_ops ufshcd_pci_pm_ops =3D {
- 	.thaw		=3D ufshcd_system_resume,
- 	.poweroff	=3D ufshcd_system_suspend,
- 	.restore	=3D ufshcd_pci_restore,
--	.prepare	=3D ufshcd_suspend_prepare,
--	.complete	=3D ufshcd_resume_complete,
-+	.prepare	=3D ufshcd_pci_suspend_prepare,
-+	.complete	=3D ufshcd_pci_resume_complete,
- #endif
- };
-=20
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 9425cfd9d00e..0f95576bf1f6 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -688,6 +688,13 @@ enum ufshcd_quirks {
- 	 * single doorbell mode.
- 	 */
- 	UFSHCD_QUIRK_BROKEN_LSDBS_CAP			=3D 1 << 25,
-+
-+	/*
-+	 * This quirk indicates that DME_LINKSTARTUP should not be issued a 2nd
-+	 * time (refer link_startup_again) after the 1st time was successful,
-+	 * because it causes link startup to become unreliable.
-+	 */
-+	UFSHCD_QUIRK_PERFORM_LINK_STARTUP_ONCE		=3D 1 << 26,
- };
-=20
- enum ufshcd_caps {
+In versions v2 and v3, I split these two issues into two separate patches
+for fixing. However, this caused patch 2 to revert some of the changes made
+by patch 1.
+
+In patch 4, I attempted to merge the two patches into one and tried to
+describe both issues in the commit message, but I did not do it well. In
+this version, I have included more details in the commit message and the
+cover letter.
+
+Changes in v5:
+- Add more details in commit messages and letters.
+- link to v4: https://lore.kernel.org/all/20251105135340.33335-1-fuqiang.wng@gmail.com/
+
+Changes in v4:
+- merge two patch into one
+- link to v3: https://lore.kernel.org/all/20251022150055.2531-1-fuqiang.wng@gmail.com/
+
+Changes in v3:
+- Fix: advanced SW timer (hrtimer) expiration does not catch up to current
+  time.
+- optimize the commit message of patch 2
+- link to v2: https://lore.kernel.org/all/20251021154052.17132-1-fuqiang.wng@gmail.com/
+
+Changes in v2:
+- Added a bugfix for hardlockup in v2
+- link to v1: https://lore.kernel.org/all/20251013125117.87739-1-fuqiang.wng@gmail.com/
+
+[1]: https://github.com/cai-fuqiang/kernel_test/tree/master/period_timer_test
+[2]: https://lore.kernel.org/kvm/YgahsSubOgFtyorl@fuller.cnet/
+[3]: commit d8f2f498d9ed ("x86/kvm: fix LAPIC timer drift when guest uses periodic mode")
+[4]: https://github.com/cai-fuqiang/md/tree/master/case/intel_kvm_period_timer
+
+fuqiang wang (1):
+  KVM: x86: Fix VM hard lockup after prolonged suspend with periodic HV
+    timer
+
+ arch/x86/kvm/lapic.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
+
+-- 
+2.47.0
 
 
