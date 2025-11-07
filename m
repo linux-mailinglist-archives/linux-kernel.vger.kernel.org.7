@@ -1,151 +1,198 @@
-Return-Path: <linux-kernel+bounces-889918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0822EC3ED52
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:57:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AEDC3ED5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:58:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD98D188C118
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:57:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F1250347339
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F238730E85D;
-	Fri,  7 Nov 2025 07:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D26530F7EE;
+	Fri,  7 Nov 2025 07:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy5FzvyF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UUT1QBuv"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3983F30E846;
-	Fri,  7 Nov 2025 07:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9D830E85E;
+	Fri,  7 Nov 2025 07:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762502217; cv=none; b=NbWBEuHGPhOskrH4oRJMgMaNY1MHFWORnk8VdJoCSQIe1p53OcRgV1Nk04bAJ0te088X0kkN3P/eJ2xNmlPRgZEqWr53NXIPPsN+MSKh6h60GAPHPekUPDpKFlOEsaqpXCOQ8eGom8VB2OqvlhCWmvjeB3uaGXa2qOrbdxdRszs=
+	t=1762502274; cv=none; b=G4yPmHuCT14iW/0gs0imC8vMwdLuq7dDGSwps1IW7YxaFianuqcCzU1dibLC2cGxw8BvCqok6D3r2ZmfwjZxS9qovcq/63PAkm3xIDYh+Dtfh+0g9znggAlkheD43VxnPkQhrUB1W3aSOAk6QGJn1r9jfL19P4YyxOZZyiKjypc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762502217; c=relaxed/simple;
-	bh=C9zHY78YX9YpdsFqsh+rj2K4+ZmMGxUYmHW2MipC68c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=I/swHTaV70n2LFIndGxYs4KrzF2YXZKOd8hf8dDHSvAjLpboCFx5Lc9P0gSM/J3r+rbPYBdcaBMy7qrG9iqxwdUKV8h1BHvCinI1NzeXAkSlntJr0fYSKh2jQ7wXzAUxMfcofcWRIUYmmagbHS30L7vUBRi3zuBnxl2FhKjbUNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cy5FzvyF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46181C4CEF5;
-	Fri,  7 Nov 2025 07:56:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762502217;
-	bh=C9zHY78YX9YpdsFqsh+rj2K4+ZmMGxUYmHW2MipC68c=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Cy5FzvyFGeGsRdbsmS/5IFvPQA91YJMfsEISDf+hoCN5A5GHQjROzrgiRSzqILqxB
-	 0gAqHcsDhZMMRmC7tUQfneWTMmNs9s1CscJzxBg+ZD5wZmxprqH7Air6j2AApsuYzn
-	 2p/mViAWhMZVIaL9zMdgNgHwrR9SK6sX8AidtWFYAmBxlh7uQoWc3L2YfyGnftePDU
-	 3/meit2xj4aPs+tNEgkrwVqakzd4wmjJdJwonebdgJ+Lh/dyaUh3qHQr/pNBFvto5e
-	 bmsPOMyEFFR4tSiKzxQvGI6wxAM7fVauur31uB3tP02+7lZqJbyAa3bXEPe1EGGf9B
-	 /8zDRraX9QKfQ==
-Message-ID: <a40e8329-0423-49a9-8675-3a3ecb9c9134@kernel.org>
-Date: Fri, 7 Nov 2025 08:56:50 +0100
+	s=arc-20240116; t=1762502274; c=relaxed/simple;
+	bh=cQsDH03FJPYsftVi0oMFM3W6o3R8lR1nwnTNNLCe2TU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KeDwlQjNIupo9AuhTKQCJKraTyMJGhmhIXJMhyC/w1QxJBnXDI8s8zcaJDeffjE4IMUt9WwXWqLx2J5sX416Md8RpdZPjFDbdxIKBhahqdOR+D/0NtgVfhWhA+dcTXhHwY6re0Zo4gxgtgHdlwPTJqDYSU25LSwk2mmxCQWnkmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UUT1QBuv; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A769cjm026493;
+	Fri, 7 Nov 2025 07:57:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=vssjy2
+	U4d/FHNJPciAEURI7aofZSMdGK0FmjHRxEZ2M=; b=UUT1QBuvrBSh+AUk+67AJl
+	f2oNAKfGYUPa34gHtA1nahtfFUixVUvFFY7ZWMXCNM0YYaT9fKdbQ2beDUE7Rab5
+	ju+7ZG45yfYVHfvgu7Oa2Mtti/BhV43Nz+gspsfvgm2IO8cEykmtB/+3ugfYsUBB
+	hQfjtHxZ/Cb0tReWIchEx4lo1sbKR1rrdoR6AlBPogNWzre8k9GsD6zB2Th7HXCF
+	WAq0kbDxs7rh1bI4EEPf+C5do5cvO0eIpZNK17Q/BYOy7c5KJac/M9dinZaXhz62
+	Wf/+pOBuX+Vhh2WvAETnhWwcDzZMsOL6Z+aaKwqiYv/RejWvgiqGfoOQCSl5ku8A
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v2a8dt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 07:57:44 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7476Sj021483;
+	Fri, 7 Nov 2025 07:57:43 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrk1f63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 07:57:43 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A77vcPI16515490
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Nov 2025 07:57:38 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3D8A12004B;
+	Fri,  7 Nov 2025 07:57:38 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D8E6520043;
+	Fri,  7 Nov 2025 07:57:37 +0000 (GMT)
+Received: from [127.0.0.1] (unknown [9.111.27.154])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Nov 2025 07:57:37 +0000 (GMT)
+Message-ID: <2d8e76d7dd3387c2a67e5cf1fa08a2874e910d78.camel@linux.ibm.com>
+Subject: Re: [PATCH 2/5] perf test java symbol: Get rid of shellcheck
+ warnings
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Heiko
+ Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander
+ Gordeev <agordeev@linux.ibm.com>
+Date: Fri, 07 Nov 2025 08:57:37 +0100
+In-Reply-To: <aQ1UaEbSM6jmjNEU@google.com>
+References: <20251105191626.34998-1-iii@linux.ibm.com>
+	 <20251105191626.34998-3-iii@linux.ibm.com> <aQ1UaEbSM6jmjNEU@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v2 2/5] dt-bindings: mfd: syscon: Add
- ti,am625-dss-clk-ctrl
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Swamil Jain <s-jain1@ti.com>
-Cc: jyri.sarha@iki.fi, tomi.valkeinen@ideasonboard.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, nm@ti.com, vigneshr@ti.com,
- kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- lee@kernel.org, louis.chauvet@bootlin.com, aradhya.bhatia@linux.dev,
- devarsht@ti.com, praneeth@ti.com, h-shenoy@ti.com,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251106141227.899054-1-s-jain1@ti.com>
- <20251106141227.899054-3-s-jain1@ti.com>
- <20251107-ambrosial-soft-grebe-ebaa3b@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251107-ambrosial-soft-grebe-ebaa3b@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xf6PdN9qzUlkdXnXGJsoNOpx70yGiG_U
+X-Proofpoint-ORIG-GUID: xf6PdN9qzUlkdXnXGJsoNOpx70yGiG_U
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX8GXYVA3Ji//C
+ xPGteIr5bS3g/CRX4jP1SbL21gazC/3T712/SZ0q/6H0hynPA1WVp+juecJaOCWtkJMUR1acUhm
+ mzrWz3EIHgxseCrCoWZ5OXJh/emBzHTuCQQaEHNsWoJOQ/pVf2QLUl6Bva77yBMYU9fl+fMVrOl
+ 10jwn/ZB/bHASWFbtsUNd38YAi8wE2v+3L3W8xAspUK6W7Bs/wn/BQ/E04PL/77SjW4gDfJNVzW
+ 3NoLjhV1HzL8664efauCFU592LPVtC+JuyDhilhnZYZRi5/wFLRnlJ+1toa7rOppGUAinOpYPck
+ UhDsTno+q/nfKO7SsoA/dwxICyCesy/af/klqJYKO4nzunTCqY8Mxq8ySQc0TR+Sv5dYw61Dwdo
+ ihy4cxpecrdBhS1A3ID4WQ0kZTeOPQ==
+X-Authority-Analysis: v=2.4 cv=H8HWAuYi c=1 sm=1 tr=0 ts=690da678 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=KKAkSRfTAAAA:8 a=8BkGDJUJpkJqDCYRLq8A:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_01,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
 
-On 07/11/2025 08:50, Krzysztof Kozlowski wrote:
-> On Thu, Nov 06, 2025 at 07:42:24PM +0530, Swamil Jain wrote:
->> From: Louis Chauvet <louis.chauvet@bootlin.com>
->>
->> The dt-bindings for the multi-function device (mfd) syscon need to include
->> ti,am625-dss-clk-ctrl. On AM62X, AM62A and AM62P devicess, the display
->> controller (tidss) has external registers to control certain clock
->> properties. These registers are located in the device configuration
->> registers, so they need to be declared using syscon. They will later be
->> used with a phandle in the tidss node.
->>
->> Fixes: ad2ac9dc9426 ("drm/tidss: Add support for AM625 DSS")
->> Fixes: 5cc5ea7b6d7b ("drm/tidss: Add support for AM62A7 DSS")
-> 
-> Adding missing hardware is not a fix. Drop both.
-> 
->> Cc: stable@vger.kernel.org
-> 
-> For sure not a stable commit. You just add new hardware.
-> 
->> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->> Signed-off-by: Swamil Jain <s-jain1@ti.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/syscon.yaml | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> With these fixed/dropped:
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Thu, 2025-11-06 at 18:07 -0800, Namhyung Kim wrote:
+> Hello,
+>=20
+> On Wed, Nov 05, 2025 at 08:10:25PM +0100, Ilya Leoshkevich wrote:
+> > Add missing quotes and suppress the $? warnings.
+>=20
+> Can you please share the actual shellcheck warnings you see?
 
-Un-acked, NAK.
+There are a lot of them, I have cut similar ones from the output:
 
-You just ignored previous feedback.
+linux/tools/perf/tests/shell$ shellcheck -x test_java_symbol.sh
 
-Best regards,
-Krzysztof
+[...]
+
+In test_java_symbol.sh line 19:
+        rm -f ${PERF_DATA}
+        ^----------------^ SC2317 (info): Command appears to be
+unreachable. Check usage (or ignore if invoked indirectly).
+              ^----------^ SC2086 (info): Double quote to prevent
+globbing and word splitting.
+
+[...]
+
+In test_java_symbol.sh line 54:
+if [ $? -ne 0 ]; then
+     ^-- SC2181 (style): Check exit code directly with e.g. 'if !
+mycmd;', not indirectly with $?.
+
+[...]
+
+> > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> > ---
+> > =C2=A0tools/perf/tests/shell/test_java_symbol.sh | 20 ++++++++++++-----=
+-
+> > --
+> > =C2=A01 file changed, 12 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/tools/perf/tests/shell/test_java_symbol.sh
+> > b/tools/perf/tests/shell/test_java_symbol.sh
+> > index 499539d1c4794..b1d7cd43af01a 100755
+> > --- a/tools/perf/tests/shell/test_java_symbol.sh
+> > +++ b/tools/perf/tests/shell/test_java_symbol.sh
+> > @@ -4,6 +4,9 @@
+> > =C2=A0# SPDX-License-Identifier: GPL-2.0
+> > =C2=A0# Leo Yan <leo.yan@linaro.org>, 2022
+> > =C2=A0
+> > +# Allow [ $? -ne 0 ], because long commands look ugly in if
+> > statements.
+> > +# shellcheck disable=3DSC2181
+> > +
+> > =C2=A0# skip if there's no jshell
+> > =C2=A0if ! [ -x "$(command -v jshell)" ]; then
+> > =C2=A0	echo "skip: no jshell, install JDK"
+> > @@ -13,11 +16,12 @@ fi
+> > =C2=A0PERF_DATA=3D$(mktemp /tmp/__perf_test.perf.data.XXXXX)
+> > =C2=A0PERF_INJ_DATA=3D$(mktemp /tmp/__perf_test.perf.data.inj.XXXXX)
+> > =C2=A0
+> > -cleanup_files()
+> > -{
+> > +# Shellcheck does not understand that this function is used by a
+> > trap.
+> > +# shellcheck disable=3DSC2317
+> > +cleanup_files() {
+>=20
+> Please minimize unnecessary changes.=C2=A0 It seems you don't need to
+> change
+> the function declaration.
+
+My bad, I ran shfmt as well and forgot about this. Interestingly
+enough, there appears to be no consensus regarding style, but { on
+the same line is a bit more popular:
+
+linux/tools/perf/tests/shell$ grep -R '^[a-zA-Z0-9_]*()$' | wc -l
+128
+
+linux/tools/perf/tests/shell$ grep -R '^[a-zA-Z0-9_]*() {$' | wc -l
+185
+
+[...]
+>=20
 
