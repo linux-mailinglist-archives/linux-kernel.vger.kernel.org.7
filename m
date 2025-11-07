@@ -1,173 +1,155 @@
-Return-Path: <linux-kernel+bounces-890641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6D0C408AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:08:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3824FC408C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:10:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD10188BCC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:09:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19E324E3AAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A956B32B995;
-	Fri,  7 Nov 2025 15:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqsNX+m5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8550732ABCE;
+	Fri,  7 Nov 2025 15:10:31 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E162D97A1;
-	Fri,  7 Nov 2025 15:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704782BE024
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762528110; cv=none; b=nrjfWRIfx/vB3BPQ7/VjbOSenj+o4xlS03rSv6sQfjQK0oIJuPauAqFPCDisWsQugvwQvyol9T5K41V5CQ/5NQDrU0T63+D3TmT7bRc6H0XhF5NALoaKRNevXM4SJy/xqgLDAvBl5dZee8khMIEZcnUpix1T8MR5ltXbKDy8/Cw=
+	t=1762528231; cv=none; b=bDN9HI38ObM7Zy4pp9I2Alk/sjLG0uWc+0hZ2qZQYbjPEu9elM/np7kLL2V4EAs6K3MJ8Zx0HvjUQmW6IiMnvC+Ad2NbF6oUMe9KWlXrVHuS5R7PV+Xgh6ndWD64Tli/UC6ul0ovHlK+KWsdHJ6SfxpkIZLXrYFKhxFT9dy1ucI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762528110; c=relaxed/simple;
-	bh=zVlScliDqQsDY47IO1XDLSMlw/CwYu7yQCTHN10PDaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEZp02pZWCJRT0pmW75Yy/uhOVWX6L84GFEq/OZPlMYU3G3xI7Pl1w4FJAOqBafytMfMgmJnctz3VrHchnEokG8FIleLF9JD2Ln0jPr9B+SPaGKfVNoGmQlFk6Ypg5RnO2j9fMZwwrXjh54U/49VHOLZqOHryvVO9cZIfPoJX6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqsNX+m5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85F8C19424;
-	Fri,  7 Nov 2025 15:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762528109;
-	bh=zVlScliDqQsDY47IO1XDLSMlw/CwYu7yQCTHN10PDaU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cqsNX+m5K1ELsjAnLaoosxRhKQJOVGzRJgM+w9qy29kHURpRyriXFVcakZuhHpFox
-	 gx42iqbZiI+X15fsyffxxDw4KGDCdj1t5IgVOZsRmvoJh9RFqXNWVnUGAzpu5Ge5rS
-	 VbysVwTHdsOKJxSebh2UcvVsYYOCRlTF0hb8lqYK1NE/O/j7CLxoa2mQloDckAELar
-	 TjTiTVz8n3UEVfL8DI6WKYb20i+WYpKGYGbGZfdZFBBbrZi8LCHnbocyCTyfIUEVLt
-	 8eGHYugNFFWi71AJFR3l1cckrqbTkevY8Z220DNLzLiVkohJM4odVlrFZQ6UJKj3zA
-	 zyNzqTj+7ccBQ==
-Date: Fri, 7 Nov 2025 15:08:25 +0000
-From: Simon Horman <horms@kernel.org>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v3 04/11] selftests/vsock: avoid multi-VM
- pidfile collisions with QEMU
-Message-ID: <aQ4LaUi9wTnEN8KA@horms.kernel.org>
-References: <20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com>
- <20251106-vsock-selftests-fixes-and-improvements-v3-4-519372e8a07b@meta.com>
+	s=arc-20240116; t=1762528231; c=relaxed/simple;
+	bh=imYJgJK3yE89xgNM6WG9I3e7kgFWg66OAp278Y3nsw8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H617OAXr3rl+/AK9N+eehcHm3E5aDQVv4w2z6zWXhDUPJNWjVKLsOShzJ2jAiFNp4DwCJeudgh5OqVPnH6DezXJ/np7NUvTs6lZYvgO7qFnUjrVEVZPOgwvgBLaCG3oJ/y3+asJAepLxRUaoz9Yj10M+HvkPAS7+Dy9SV8WnK9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-94866b3853cso76953839f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:10:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762528228; x=1763133028;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T1tqpolWM4ITEU43y70omU9y9wXcif44mofTVyALHkg=;
+        b=m4/KtoQPPXOVKmG7y34kmhomvRoN/lS79ir2hWPs/qMGlIVpyu5uTOOK/tUOtEwqL+
+         qZv/on9tjk57y3BAzuzxOi+ohjbSUbqtDB6W5WNcbLzln3B52NIS44M7mQo9JMdKnSy6
+         A5R6OlB7Ti/U7ZfYt8MByroxX3CeHfYPxheaGuXBW7qir38HTy6f8Z7DpgGMhPZ2Kj67
+         lWLPA2i03H+nZhsfH6x5o4+D+bp+IsOu9bTyy2aE3P3qa/jXybzJhUEJBocn0MuZVTLj
+         3hyzsACvjP8Ww9zH0SoGXPnOB2VQv4pfGkgWLRHSV+3EGCyVfNxab8M1gCLYqtj2I7Xi
+         QYNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaIjAK4cOCyQqM20lbNEbpYxS+tB28biewhnjimgiv3JZLwgwqUcKWXvqESijWnPMCq2knep60YG6bdpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAspm8oqT6YHQrvoD+LPpDcs50qQWm32+nC4uzeVriPqKdomWl
+	0UCvhERZeBLDMjBbKuZ6XUOSY9/mLc5NM9iXdQtdbAhAczSLZiDF5qvpHC/U4wgGqiyHh+0VnVX
+	8I0jsJkLS8WoUIwKrGYea8X09QdsCcOwLnqSNIsdXBLFbB9z+ogL7IT+P9Oc=
+X-Google-Smtp-Source: AGHT+IGh26snMwvSnJmWwk3UfazZc7x9P3W22C3UgXg6p9/OcfnQ7Bp05FUYnQ2HQw7DGG+0g1vmjX82zZRCjJZqR+k1l87kYehD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106-vsock-selftests-fixes-and-improvements-v3-4-519372e8a07b@meta.com>
+X-Received: by 2002:a05:6e02:2304:b0:433:2aad:9869 with SMTP id
+ e9e14a558f8ab-4335f4d7fcdmr52527915ab.30.1762528228583; Fri, 07 Nov 2025
+ 07:10:28 -0800 (PST)
+Date: Fri, 07 Nov 2025 07:10:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690e0be4.a70a0220.22f260.0050.GAE@google.com>
+Subject: [syzbot] [kvm-x86?] WARNING in kvm_arch_can_dequeue_async_page_present
+From: syzbot <syzbot+6bea72f0c8acbde47c55@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	pbonzini@redhat.com, seanjc@google.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 06, 2025 at 04:49:48PM -0800, Bobby Eshleman wrote:
+Hello,
 
-...
+syzbot found the following issue on:
 
-> @@ -90,15 +85,19 @@ vm_ssh() {
->  }
->  
->  cleanup() {
-> -	if [[ -s "${QEMU_PIDFILE}" ]]; then
-> -		pkill -SIGTERM -F "${QEMU_PIDFILE}" > /dev/null 2>&1
-> -	fi
-> +	local pidfile
->  
-> -	# If failure occurred during or before qemu start up, then we need
-> -	# to clean this up ourselves.
-> -	if [[ -e "${QEMU_PIDFILE}" ]]; then
-> -		rm "${QEMU_PIDFILE}"
-> -	fi
-> +	for pidfile in "${PIDFILES[@]}"; do
-> +		if [[ -s "${pidfile}" ]]; then
-> +			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
-> +		fi
-> +
-> +		# If failure occurred during or before qemu start up, then we need
-> +		# to clean this up ourselves.
-> +		if [[ -e "${pidfile}" ]]; then
-> +			rm "${pidfile}"
-> +		fi
-> +	done
->  }
+HEAD commit:    9c0826a5d9aa Add linux-next specific files for 20251107
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a67012580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4f8fcc6438a785e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=6bea72f0c8acbde47c55
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e110b4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ab1114580000
 
-Hi Bobby,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6b76dc0ec17f/disk-9c0826a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/522b6d2a1d1d/vmlinux-9c0826a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4a58225d70f3/bzImage-9c0826a5.xz
 
-This is completely untested, but it looks to me
-like cleanup() could be implemented more succinctly like this.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6bea72f0c8acbde47c55@syzkaller.appspotmail.com
 
-cleanup() {
-	terminate_pidfiles "${PIDFILES[@]}"
-}
+kvm_intel: L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for details.
+------------[ cut here ]------------
+WARNING: arch/x86/kvm/x86.c:13965 at kvm_arch_can_dequeue_async_page_present+0x1a9/0x2f0 arch/x86/kvm/x86.c:13965, CPU#0: syz.0.17/5998
+Modules linked in:
+CPU: 0 UID: 0 PID: 5998 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:kvm_arch_can_dequeue_async_page_present+0x1a9/0x2f0 arch/x86/kvm/x86.c:13965
+Code: 00 65 48 8b 0d 58 81 72 11 48 3b 4c 24 40 75 21 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 3e af 20 0a cc e8 48 e1 79 00 90 <0f> 0b 90 b0 01 eb c0 e8 4b c1 1d 0a f3 0f 1e fa 4c 8d b3 f8 02 00
+RSP: 0018:ffffc90003167460 EFLAGS: 00010293
+RAX: ffffffff8147eee8 RBX: ffff888030280000 RCX: ffff88807fda1e80
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000009
+RBP: ffffc900031674e8 R08: ffff88803028003f R09: 1ffff11006050007
+R10: dffffc0000000000 R11: ffffed1006050008 R12: 1ffff9200062ce8c
+R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000055556a8c3500(0000) GS:ffff888125a79000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000072cc2000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ kvm_check_async_pf_completion+0x102/0x3c0 virt/kvm/async_pf.c:158
+ vcpu_enter_guest arch/x86/kvm/x86.c:11209 [inline]
+ vcpu_run+0x26be/0x7760 arch/x86/kvm/x86.c:11650
+ kvm_arch_vcpu_ioctl_run+0x116c/0x1cb0 arch/x86/kvm/x86.c:11995
+ kvm_vcpu_ioctl+0x99a/0xed0 virt/kvm/kvm_main.c:4477
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1588b8f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdfcd816a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f1588de5fa0 RCX: 00007f1588b8f6c9
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000006
+RBP: 00007f1588c11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f1588de5fa0 R14: 00007f1588de5fa0 R15: 0000000000000003
+ </TASK>
 
->  
->  check_args() {
-> @@ -188,10 +187,35 @@ handle_build() {
->  	popd &>/dev/null
->  }
->  
-> +create_pidfile() {
-> +	local pidfile
-> +
-> +	pidfile=$(mktemp "${PIDFILE_TEMPLATE}")
-> +	PIDFILES+=("${pidfile}")
-> +
-> +	echo "${pidfile}"
-> +}
-> +
-> +terminate_pidfiles() {
-> +	local pidfile
-> +
-> +	for pidfile in "$@"; do
-> +		if [[ -s "${pidfile}" ]]; then
-> +			pkill -SIGTERM -F "${pidfile}" > /dev/null 2>&1
-> +		fi
-> +
-> +		if [[ -e "${pidfile}" ]]; then
-> +			rm -f "${pidfile}"
-> +		fi
-> +	done
 
-I think it would be useful to remove $pidfile from $PIDFILES.
-This might be easier to implement if PIDFILES was an associative array.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +}
-> +
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-...
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> @@ -498,7 +529,8 @@ handle_build
->  echo "1..${#ARGS[@]}"
->  
->  log_host "Booting up VM"
-> -vm_start
-> +pidfile="$(create_pidfile)"
-> +vm_start "${pidfile}"
->  vm_wait_for_ssh
->  log_host "VM booted up"
->  
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-> @@ -522,6 +554,8 @@ for arg in "${ARGS[@]}"; do
->  	cnt_total=$(( cnt_total + 1 ))
->  done
->  
-> +terminate_pidfiles "${pidfile}"
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-I am assuming that there will be more calls to terminate_pidfiles
-in subsequent patch-sets.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Else I think terminate_pidfiles can be removed
-and instead we can rely on cleanup().
-
-> +
->  echo "SUMMARY: PASS=${cnt_pass} SKIP=${cnt_skip} FAIL=${cnt_fail}"
->  echo "Log: ${LOG}"
->  
-> 
-> -- 
-> 2.47.3
-> 
-> 
+If you want to undo deduplication, reply with:
+#syz undup
 
