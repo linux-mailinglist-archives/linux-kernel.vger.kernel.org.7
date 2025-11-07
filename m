@@ -1,168 +1,185 @@
-Return-Path: <linux-kernel+bounces-889589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD33C3DFAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:30:58 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E604EC3DFC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7366D34B019
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:30:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B11334B1CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E872D46BD;
-	Fri,  7 Nov 2025 00:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E5E2D7DDF;
+	Fri,  7 Nov 2025 00:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="vz1xJ4ZN"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CZPOYo3u"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDE41F19A;
-	Fri,  7 Nov 2025 00:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F01FDE01;
+	Fri,  7 Nov 2025 00:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762475452; cv=none; b=CuUoces3pkumgL6vx9T712wNo+0TvplQqzb3gXom0pAYRe8ZHtFzzx2KvE3jwodsGOcDgh5xkz39o5henZ0NpSmIvIlIjrRglNoFGyLR+urOiBu5D6RTAlYvVKfNMhBB2e+nlUBYiUadDw2LL6G9oIRPVUloXRDhFJDeqIWqgZw=
+	t=1762475514; cv=none; b=W+wotvs+Vek/pzlKgZx5MoSLC16dxYKxfc4rOA9XvcpN+203wHi9y5o9teVPeMWRpCBmVXJFkCsPA4UAnVF+KVqoCInSaG1ajvp9vh5NO3D0YO22ln7Aq+yWDbAenltADIzXg3hPzkacKJ+JcMOnZcJjrwNWkJjULqwxxQ++oS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762475452; c=relaxed/simple;
-	bh=rbYZFDhnLDpEpqh6sqUJeLRBPVCKU6SN6dWVJ2axnoc=;
+	s=arc-20240116; t=1762475514; c=relaxed/simple;
+	bh=Bhw06MzPVitzuw9ZzTSxcfKyEvizNYpmQ1+N96EYn7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QdfzDn1Kpnkp1oC4pk0K8caxZ5K+xr0/fcjOIY1dzDLiC3eh8kwMV6eVcLQ6VE3TAzlvcLEIYnwPJ7XvJWscT3vG9fhHxrWga0fDtnq7WUOEcxYDguKCn7Whu8DFD0kerciprbeDmTjsCVEUVqtMuxnUw05/ddpB8YVuy/RHBTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=vz1xJ4ZN; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from lipo.home.arpa (unknown [IPv6:2a02:2f0e:3e0c:5b00:f1e0:3f4b:286c:9ddb])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id DC9B6160209;
-	Fri, 07 Nov 2025 02:30:39 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1762475440;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gu0/BUJoXynDAUB8R6H/4sFrLhmyaLY5XvHLuteKYUA=;
-	b=vz1xJ4ZNN0Oc8OJ8PUha5ATdtvhD8CjOaIDgZoLRb9iPzi5r2nPhCDp5sPlsaTC1yD80mG
-	K3T9nunvb6l5iQI+A6CYLO8xCZ3cZSazrrrsGXxZCTDTZZo0oac8y3NfZv8PlZD2drU+C8
-	8pFwVnLyHKIJwqLUVshHMN3TX43jQknjBMTi5vZHKmbJWMtcK0Wa92DYsObTiHKwpaw9nt
-	9iSsuLdCHPRQPTTXxANeAEHdHU2fNMcGhW1zGabQpA36B5S6ezxkObhV5cuqlzsqvz09gn
-	FFe+ILx8L3j0O3lg2TG6bybX8UB7zePRa3l82mWColM4Np/EkffJ0gHYrSUP1g==
-Date: Fri, 7 Nov 2025 02:30:33 +0200
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jagath Jog J <jagathjog1996@gmail.com>
-Subject: Re: [PATCH 3/6] iio: accel: bma220: add tap detection
-Message-ID: <aQ09qTYr0gqlb0If@lipo.home.arpa>
-References: <20251014-bma220_events-v1-0-153424d7ea08@subdimension.ro>
- <20251014-bma220_events-v1-3-153424d7ea08@subdimension.ro>
- <20251018181632.76851d4e@jic23-huawei>
- <aQW9OnJSrOzn_Sws@lipo.home.arpa>
- <20251102122053.49ee2632@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLRAcjLt1NWUWyk9iFabz14ppH74y71Wf5i4RSxDuLOg6K+R3FAvcuze8J+WRgB1/AdWiC5TjV31DPDUpS9V2gdBlPK08WeA1n8we9UiuGT81LZIlrWze8vrzGNwZPr9rBrav0PrVZ94a2b0jfU9GhHrHS6cSzWvt79LL3OaEUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CZPOYo3u; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=nm+ruK6YXpYa0FVN7vklPuk3dDu/x7WWIncBNwCg4gA=; b=CZPOYo3uFzYmwxaWAr1YlkKO9N
+	NR/Bn3Kz7EoMQNnQlc/T5FUNhctQMu99TI/7cgmTGZ4XkBRvykElfAlbzPRYS5jEPTaMqoOK4Ytjf
+	aCFJpMonKjUiYJtq02T9DdnYSn8az6Sr4FFVKJK9tGRSPIuz/Ergw4/4AJ/99Y8spqq8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vHAOD-00DAQV-VJ; Fri, 07 Nov 2025 01:31:41 +0100
+Date: Fri, 7 Nov 2025 01:31:41 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+Message-ID: <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
+References: <20251104203315.85706-1-shenwei.wang@nxp.com>
+ <20251104203315.85706-4-shenwei.wang@nxp.com>
+ <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
+ <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
+ <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VSn+NfuX/JxFTYS/"
-Content-Disposition: inline
-In-Reply-To: <20251102122053.49ee2632@jic23-huawei>
-
-
---VSn+NfuX/JxFTYS/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-On Sun, Nov 02, 2025 at 12:20:53PM +0000, Jonathan Cameron wrote:
-> On Sat, 1 Nov 2025 09:56:42 +0200
-> Petre Rodan <petre.rodan@subdimension.ro> wrote:
->=20
-> > Hello Jonathan,
-> >=20
-> > thank you for the review.
-> >=20
-> > On Sat, Oct 18, 2025 at 06:16:32PM +0100, Jonathan Cameron wrote:
-> > > > +			ret =3D regmap_read(data->regmap, BMA220_REG_CONF3, &reg_val);
-> > > > +			if (ret)
-> > > > +				return ret;
-> > > > +			*val =3D FIELD_GET(BMA220_TT_DUR_MSK, reg_val); =20
-> > >=20
-> > > This needs to be in second if you are using duration. Is the register=
- really in seconds? =20
-> >=20
-> > this IC has a very small number of bits that configure
-> > duration/hysteresis/threshold levels. it's between 2 and 6 for each
-> > of them. in the case of high and low G events the duration is not
-> > even directly defined as a time interval, but as a count of samples
-> > that are over a threshold value.
->=20
-> The ABI is in seconds, so you have to deal with scaling wrt to the sampli=
-ng
-> frequency at the time.  I know it can be a pain to do, but consistent use=
-rspace
-> is the aim and so we need to match the ABI.
+> > > > > +- **wk**: Wakeup enable.
+> > > > > +
+> > > > > +  - 0: Disable wakeup from GPIO
+> > > > > +  - 1: Enable wakeup from GPIO
+> > > >
+> > > > What do you mean by wakeup?
+> > > >
+> > >
+> > > The gpio line can be enabled as an wakeup source for the system.
+> > 
+> > Keep going.....
+> > 
+> > Does that imply if none of the lines have wakeup enabled, the GPIO controller can
+> > be suspended when Linux suspends? How does the GPIO controller know it can
+> > suspend? There is no message for that. How does it know to come out of
+> > suspension?
+> > 
+> 
+> The power state of the remote GPIO controller is entirely managed by the remote firmware. 
+> The remote firmware operates as an independent system from Linux, with its own power states 
+> and policies for transitioning between modes. The wakeup field is solely intended to inform the 
+> remote firmware whether the GPIO line should be used as a wakeup source for the Linux system.
 
-on this bma220 chip, when someone modifies the cut off frequency of the fil=
-ter then the ic automatically adjusts the sampling rate. and this sample ra=
-te is not exposed on any of the registers.
-since duration parameters are defined as a count of samples and the sample =
-rate looks to be unknown I don't see how I could adapt to an API that is ba=
-sed on a unit of seconds.
+O.K. How does the firmware use this information? How should it change
+its behaviour? 
 
-> > I was hoping that simply passing along a unitless value between 0 and
-> > parameter_max would be enough to customize all the event parameters.
-> > this does mean that the driver makes the assumption that the user is
-> > familiar with the device datasheet and knows the number of bits every
-> > parameter has been allocated. should the driver provide a conversion
-> > table for tt_duration just like for _scale_table and
-> > _lpf_3dB_freq_Hz_table?
->=20
-> Exactly.
+> > > > > +Notification Message
+> > > > > +--------------------
+> > > > > +
+> > > > > +Notifications are sent with **Type=2 (GPIO_RPMSG_NOTIFY)**:
+> > > > > +
+> > > > > +.. code-block:: none
+> > > > > +
+> > > > > +   +-----+-----+-----+-----+-----+-----------+-----+-----+-----+----+
+> > > > > +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C |0x0D|
+> > > > > +   | 5   | 1   | 0   | 2   | 0   |  0        |line |port | 0   | 0  |
+> > > > > +
+> > > > > + +-----+-----+-----+-----+-----+-----------+-----+-----+-----+---
+> > > > > + -+
+> > > > > +
+> > > > > +- **line**: The GPIO line index.
+> > > > > +- **port**: The GPIO controller index.
+> > > >
+> > > > There is no need to acknowledge the notification? How do level interrupts
+> > work?
+> > > >
+> > >
+> > > Currently, there is no need to acknowledge the message, as the
+> > > interrupt is managed entirely by the remote firmware. On the Linux
+> > > side, a single notification message is received when an interrupt is triggered.
+> > 
+> > That sounds broken.
+> > 
+> > A level interrupt is not cleared until the level changes. The typical flow is:
+> > 
+> > Interrupt fires.
+> > 
+> > Interrupt is masked
+> > 
+> > Interrupt handler is called, which reads/write registers in the device who pin is
+> > connected to the GPIO
+> > 
+> > Interrupt is unmasked
+> > 
+> 
+> The sequences you mentioned above are managed entirely by the remote firmware. On the Linux 
+> side, it only receives a notification message when a GPIO line is triggered, which then invokes the 
+> corresponding interrupt handler.
+> 
+> Since the interrupt handling sequences are implemented in the remote firmware, the Linux driver 
+> can treat level-triggered and edge-triggered types in the same manner.
 
-I was thinking today of a more analog-feeling API, one in which a variable =
-that can take values linearly between min and max can be set to a percentag=
-e of it's scale. think of stereo systems - most of us don't want to set a p=
-recise amount of decibels of attenuation when operating the volume knob, we=
- just want to set it lower or higher until a condition matches. in this API=
- the primary unit of measurement would not be dBs but notches or ticks - ca=
-lculated based on min, max and the native resolution of the control (how ma=
-ny bits are allocated for it in the ic's memory map). this has also the ben=
-efit of translating nicely when the control is rendered as a widget in a GU=
-I. think about a 0 to 11 volume knob.
-is there anything like this already implemented? is there any merit to this=
- idea?
+That is wrong. Edge and level are different and need different
+handling. That is why the GPIO framework and the interrupt core
+handles them differently.
 
- I will shelve the event part of this driver for another time, just got som=
-e Honeywell pressure sensors that need a new driver.
+The devices i mostly deal with are Ethernet PHYs. These are level
+devices, the interrupt is active low. Within the PHY there are
+multiple interrupt sources, which all get logically NORed together to
+form the interrupt output line. Talking to the PHY over MDIO is
+slow. Sometimes you need to read multiple registers to find out what
+caused the interrupt and clear it. So your initial read suggests
+interrupt source Y triggered the interrupt. While you are clearing Y,
+source X becomes active. After you have cleared Y, the NORed interrupt
+line is still active, because of X. The interrupt handler exits, the
+IRQ core reenabled the interrupt, and you expect it to fire again so
+that you go handle source X. If it does not fire again, you have lost
+an interrupt, and potentially the hardware stops working.
 
-best regards,
-peter
+There are also other use cases of level interrupts. You sometimes see
+two PHY devices sharing one level interrupt. You get the same sort of
+race condition. PHY #1 pulls the interrupt low, triggering an
+interrupt. While handling it, PHY #2 also pulls it low. When the
+handler exits, it has only handled the interrupt from PHY #1. PHY #2
+is still pulling the interrupt low, and needs its handler calling. So
+it is required the interrupt fires again when it is re-enabled.
 
---VSn+NfuX/JxFTYS/
-Content-Type: application/pgp-signature; name=signature.asc
+Given the protocol you have defined, how do you tell the firmware that
+Linux has finished handling the interrupt, and it should notify Linux
+again if the interrupt is still active?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEGiKYHD4NvFCkTqJ3dCsnp2M6SWMFAmkNPaIACgkQdCsnp2M6
-SWM73w//WsL6yDvpxuWQzPxfjXZHsBJoah8ojgxzS2EvrD7ijEyBCpI/tgrljytM
-EksqfXO29+YQYLM+z+xru5W/lMC7w8xM1J0UCgJZMJ38hi6zrbGlXGxqGW5cAgDy
-BfR6tWjKixPaDJV6D5t9M+gTmJMVDJxnQ1FuKoAggpBKg+f/3/rZdTkdF8GIe7Wl
-/b8v9bvZ4RtCsETl2ithaOLC3CUdJj38Z3Pc4YNDpViMxCpZ/Cjm4IkCTnCRviBu
-6h0bx7hYEGwOA4SirzMtJj+xTfkHWeKzfw/KxYc1TrGayKgjCaq3yiYurosuwtw6
-Wr0dO/U2iQPHPEyYz486pVx84O34AnfRczQZWS6Gw8e4kYUjzZYv6iFRYncGjg2S
-2CBTjSZqurNhrIbw6S8U7A4K44OZr3AR4cHgI+AQvou5Oss8NX+INrlZSLF8dsqV
-oAiVZUTUulWXDriZM6iZXOBwU8C/M4Qp1IkVlsnhHva/4bqxusa//TAQCTCF7N3N
-cjPgW8T2VoyC1bwGZRkV1JWLWbyoHXpCbNGq/Bu9+KXgAuiWGb6cKd+4rWxZmjA2
-onP5MqTS1gkAsDtXjoKkim1SgJnsW5kEMFcJpdHGXBLxZvvRqyVRGMz+Bwd/qE6j
-DXXss8o/WznLIFkRI+96iSzW6ZRYXz3kL9/+YGfqiEFw5kKuQVI=
-=QZSc
------END PGP SIGNATURE-----
-
---VSn+NfuX/JxFTYS/--
+	Andrew
 
