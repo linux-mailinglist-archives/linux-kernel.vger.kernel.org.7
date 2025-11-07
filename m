@@ -1,82 +1,64 @@
-Return-Path: <linux-kernel+bounces-890240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B136FC3F962
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:52:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E08C3F917
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA5B134A236
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:52:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2313A5643
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7078A31B102;
-	Fri,  7 Nov 2025 10:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B366C31A05B;
+	Fri,  7 Nov 2025 10:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCyXOSn2"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZdeRC8fY"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3AA31AF16
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E45226ED51;
+	Fri,  7 Nov 2025 10:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762512729; cv=none; b=JKSPyHYho1jvdCwRnDh2amyx3LmanrsP92XVz4es9uoB10wPI6Qz2NrO2bxeQDRYSV1CVmckgPODtr/jS+Ci1Xh3bB02MRKZzKPhLNovBTNKrwhvhi6wjQxm7K0JgDrsUOtbCIUn5aJOl1dE/0+VgvW9TIECg4XBHsJeGU1AZ3U=
+	t=1762512496; cv=none; b=YJXndxThl8d3UGolUn32OliB7cep7/00EsPE2HLvOYf0pP8HoOT8pygMgWvzj32TediDSamVm4uLMngGtdCXwhccE+6rrQ2OcixfQz73mdX0Y7fXDmw3Fz+2b7eGR7PeCJ/x1htAHs7wLE7hq6Wgpf7GT5RawoRJ5bU9ipVXUrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762512729; c=relaxed/simple;
-	bh=WuHzMktzE6gbPcCa9AaFK1s/gMpegfguRgYRmiSyxo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bVde+p5pZZlSqwKRlU2QiXZ9uH3wjG7ZiNELGUouxASR/a7Y3O9uQv99x0ng7p5Bte5GtwaVAcMjN9dIpGgNtVQfjcx+ifwtQ+6z8wRpLc6QPVUcf7NE5pWnkA5PYYMz951d12QAXaKrRjaWrCIeWm8WKLuxf8hdYFLiSRofcuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCyXOSn2; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-429bf011e6cso591728f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762512724; x=1763117524; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iTrexb0u6tSYPr3HO84uJPMTbVPfnWUR58r8WEvnPcg=;
-        b=YCyXOSn26JSpAkjThdkp+9EF6KFbaMlmVThB1xNQ+mxGSlYeg5fbBcAFcNdpwlOuFj
-         sAj+t1F/zsGYg6l+w4ixyB0NLbD0vOgAhOM/B+PPHy35DfuVKdAtujicuCr2Zk8msj20
-         JqNmbzIvgkfQMPJcPq2GgpzWWrQ/HdoygPD9ON8Keq5I3iVQRNtgIF0KB7s7Zp86q4si
-         TDlLw/OX0LjO4mD7SD7uBHVvd8gXTYJLhnFzfd/32PmoXJzNdV6g42sDFYZsX+iJ1EYh
-         4BOM6oq87rC+U1g/3Vwe24YAdDCPb66jHBduO4VvWhjC802Z5FL6L6I9+6ZNUvZN/ayr
-         gCpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762512724; x=1763117524;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iTrexb0u6tSYPr3HO84uJPMTbVPfnWUR58r8WEvnPcg=;
-        b=n31isUDUiTbnF/6AgepcGzVGIiftmSamaeH5JEvAZuAt/1j7lw43kwizf+E/NN5jK3
-         +P5hi8QoaLdRrSoPZsxqT/CVAKmtSrF/bQEfbwlmN4x1C9RIbh80JMQnH9E1QbuEjMAT
-         ZHkAV+rS+aNdUvxma2hGa3/Zs17Wyt1whlJ9Ziv+PTxHEAgsGVdE7/xO+XbZd5sKoBfm
-         BywdTRYWlxaMohJmsIfpqLycPy5syjIlnxeXNlMTleEc5PtrBpaG4/7SQMkDs6SfKfdL
-         s04gee1h4Y9MG9BmEp5zfP6npzcScJCZeJlQm6vnkGeX7jgF9WXbNN6atMKtr2fPxZfh
-         M4Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCU274X8yyW/jstSG7URezA2yKJX/QEAwkRzuiHO3tsNx3Jdb7SixBDFAWAl1mdV8eNYfwioOTfjQPpr9Sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBYpqSd7BLwYL3vK/uhRVfvxOz8q+R9/0OjS56pMvGXb1kWmz4
-	ArnP+cmnWYtf1a/91K1tvej3z6VNF7iny6ZLAcJGwwLDlZWQRtF7uA3P/HoIulHnHalDodBT7CJ
-	jy0gcxknH0w==
-X-Gm-Gg: ASbGncsG4yD90IIRtugGKLOYvZyYiJNn7dF6Rbi+WGVmHGcMdCMwWtBCE6zhpXtc1ax
-	yCAVFJSbsOEoH9Xa3Z+zDzp+drDLYHLMayDLHq4wOANqhfKcpsCS5oYxNVFsHg2IIUeriJIOY8I
-	8jKu/t7vE6CFN6ahf5986A9yl2gPYJuZ9w8x7MaozQ90mkg+qXtVWYvoCOuU7Qw087DQBtMuDHZ
-	1kKgz0KKSJNPA8G+9ts9CK4kNj3gdCGcC5/yQb8d5Kj2CoCHEI150HfRe3ATucyFllclDBLfXg1
-	Zo42BFYXlovSe4NC5guy8dNgjmrjWabiOgPEUfqiRdC8F0xGfS+Us6JmhwIHpxEHU6/2uSeVlY5
-	PhVaO0MHkmLmccAAnVDtfi0yLYbYWW+i366gQ3Lpoya1kICdQbzKjT3ZYDSSZ+P2cbxAbgUlCc8
-	EQ2qI3PeouCSZo/AT2Z60J7YOsxWSMij4FW2fj
-X-Google-Smtp-Source: AGHT+IEmQpnNBFYWzpfJdKuD1IaHFPWhGTqjX28uqEOqjFbhNv4n2SYqLCAXXGRJGGs0tqEhtXHmkw==
-X-Received: by 2002:a05:6000:40c7:b0:429:cf88:f787 with SMTP id ffacd0b85a97d-42ae5ac44ecmr2296949f8f.32.1762512723615;
-        Fri, 07 Nov 2025 02:52:03 -0800 (PST)
-Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42ac677abeasm4446514f8f.33.2025.11.07.02.52.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 02:52:03 -0800 (PST)
-Message-ID: <a0ae7361-7270-463d-864a-5f30591bd16c@linaro.org>
-Date: Fri, 7 Nov 2025 11:52:01 +0100
+	s=arc-20240116; t=1762512496; c=relaxed/simple;
+	bh=RIICj4penxJBPxqBLKJ+4qUchgJuxa5RrSSLr9xnkn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fNTo9rD0n+aZzmuWX2/6NMQxf1L+D2q0Apka3ZERZc7R9l0fVtyq5eQ2olgmuyvASw7t4u6zUxIW+/IksMaFU35pXD2SV37URNcLzpcN94GWUzBEUYP+Ro4/n6sChEZU9BQPZqNvHvpqZlJhCBrNjUt16cdpV38LkGzMjvWXQ+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZdeRC8fY; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762512494; x=1794048494;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RIICj4penxJBPxqBLKJ+4qUchgJuxa5RrSSLr9xnkn8=;
+  b=ZdeRC8fYq8JC28j+QuVWBZeyIWtYLkcjhPIYQBrAZ53Bih8xaVailqUA
+   u1zpAYHn3L7s8W4GawUgW/E49nmJCmRhyzQKc68X5/fVMMBqIgPQSLsiI
+   4TEz+WZiS4Wph3HB5PgNPTT3WqZrbQXALnS4vCSOOfmGrLhh3Sleg4gJO
+   0KVmEM4Oc+H/TsPqEj30g2O1vXBTpRYJLix5v0Snc36PuI6cAd43gVEdC
+   yB89zW4dkmNBqV4Sonk2mXNWXLHRPTNRWqa5u4irhJxrRrpi/ZbdEVdSB
+   RgrfiILVJpPh3RFJ61Ijp6OHghzfdVHgMTZ/gqdlCHG8GrcQMgod1K8Q/
+   Q==;
+X-CSE-ConnectionGUID: fJZAe2bYTL273syaeJeQIg==
+X-CSE-MsgGUID: rkdU9O4ORaqK6SACPKG9Kg==
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="49326352"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 03:48:13 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Fri, 7 Nov 2025 03:47:52 -0700
+Received: from [10.205.167.104] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 7 Nov 2025 03:47:50 -0700
+Message-ID: <427e0f16-0055-47d8-981e-7bc91ad71bfc@microchip.com>
+Date: Fri, 7 Nov 2025 10:52:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,35 +66,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] clocksource/drivers/sprd: Enable register for timer
- counter from 32 bit to 64 bit
-To: Enlin Mu <enlin.mu@linux.dev>, cixi.geng@linux.dev, tglx@linutronix.de,
- orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
- linux-kernel@vger.kernel.org, enlin.mu@unisoc.com
-References: <20251106021830.34846-1-enlin.mu@linux.dev>
+Subject: Re: [PATCH v2 3/3] spi: add support for microchip "soft" spi
+ controller
+To: Conor Dooley <conor@kernel.org>, Mark Brown <broonie@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Conor Dooley
+	<conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>, "Cyril
+ Jean" <cyril.jean@microchip.com>
+References: <20251105152823.730422-1-prajna.rajendrakumar@microchip.com>
+ <20251105152823.730422-4-prajna.rajendrakumar@microchip.com>
+ <aQt41uGfmbs7Qa7x@finisterre.sirena.org.uk>
+ <20251106-cable-generic-819b798c7068@spud>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20251106021830.34846-1-enlin.mu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+In-Reply-To: <20251106-cable-generic-819b798c7068@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 11/6/25 03:18, Enlin Mu wrote:
-> From: Enlin Mu <enlin.mu@unisoc.com>
-> 
-> Using 32 bit for suspend compensation, the max compensation time is 36
-> hours(working clock is 32k).In some IOT devices, the suspend time may
-> be long, even exceeding 36 hours. Therefore, a 64 bit timer counter
-> is needed for counting.
-> 
-> Signed-off-by: Enlin Mu <enlin.mu@unisoc.com>
-> ---
+On 06/11/2025 17:50, Conor Dooley wrote:
+> On Wed, Nov 05, 2025 at 04:18:30PM +0000, Mark Brown wrote:
+>> On Wed, Nov 05, 2025 at 03:28:23PM +0000, Prajna Rajendra Kumar wrote:
+>>
+>>>   drivers/spi/Kconfig              |   9 +
+>>>   drivers/spi/Makefile             |   1 +
+>>>   drivers/spi/spi-microchip-core.c | 442 +++++++++++++++++++++++++++++++
+>>>   3 files changed, 452 insertions(+)
+>>> +config SPI_MICROCHIP_CORE
+>>> +	tristate "Microchip FPGA SPI controllers"
+>>> +	depends on SPI_MASTER
+>> Reusing the same filename and config symbol is almost certainly going to
+>> create issues and confusion for people upgrading their kernel or doing
+>> backports.  Perhaps CoreSPI instead?
+> The qspi driver (which is shared between SoC and FPGA IP) uses
+> SPI_MICROCHIP_CORE_QSPI, so probably SPI_MICROCHIP_CORE_SPI should be
+> used here. Prajna?
 
-Applied, thanks
+Hi Mark, Conor,
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Thanks for the feedback. I’ll update the filename and config symbol to 
+use SPI_MICROCHIP_CORE_SPI in the next version.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Best regards,
+Prajna
+
 
