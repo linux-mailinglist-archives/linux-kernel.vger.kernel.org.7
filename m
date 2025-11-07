@@ -1,675 +1,420 @@
-Return-Path: <linux-kernel+bounces-890022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CAE6C3F169
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:10:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900E8C3F15D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:08:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87647188D87E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD8B3B0476
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D552F316912;
-	Fri,  7 Nov 2025 09:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7839C3176F2;
+	Fri,  7 Nov 2025 09:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KZWqYMlm"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkCR7XI7"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8054F212566
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A08A316917
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762506641; cv=none; b=i9uTRwTcT1SY6fgPtHwo2M7uWO8yNFuHMGKJsEsVbz+2iLxyuCdBa58zEJFA+Cny057yT/kMqz1C5JhabgiFYZ/9CxEKO0GnQJVq/lRig5/rjmwFR1/lYxlc6fGEzZlgOlbVKao5RuLSXNAicvLnxol/7xanT8r/k6xTZHXZJSA=
+	t=1762506472; cv=none; b=PQOEtAe37e9Qsjq83wTYbwWvQc3cF8n6lBxeK+dSFD41CQNspURvlmvyFugpyC1ZVS1kz6PkG4INR9J34TTUPXyQsmTSb65TslvNas7JRfDbcNuz8rLdXgX0sc04SUHamGHFpgzJ3cLhcEC6M2oQhSHhIithhqywU85QJAQt0BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762506641; c=relaxed/simple;
-	bh=syVPhiOYl1nrv2gAzi2pdJFOA4Kq3Tn9kh/KxrSZs54=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FWPQZRDFW9bGHUB2UL+B3gFO250ogBLAF9G2S6+10qZ4bXRATJNPXwU6PN9v5nR+Oc8l9UjrFXt1GI87HJMQYPh0whDYK+Kq0Or0Smg7avjmYt732w8YAiOjmu+R/4cRXYcHWFY9Sa90E4ftPZarDrmzBaIBUAvU+1VOlwruKEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KZWqYMlm; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A74x2Jx026450;
-	Fri, 7 Nov 2025 09:10:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=3JZuC3hQattySl6aFuHevMp7DeBcJA234Jrs7LaOE
-	YM=; b=KZWqYMlm5cT6+okbmUWeyn84MfYJlcCXbCDNbyol7N+DDsQWMpBoU0ska
-	eQXEKrnJLVye3MZWhMM+MvTOegGynqbE95kKT48zNAgxYrgY8J+4cJPbqh2GDX6D
-	n3G/POP9XxoErYCvXoCVImgJGrp3cjJPMxd2A2vQP8khEv82t6MmLScEfwflYfL8
-	/CJ3pdAvgMJR9K2WcVWw4Tweyw50HeiFkFNTHFJ0JoXUcheqt2bCkPARqLLXtB++
-	SnlgQE9XXEBB7pLLdGYKx89rETflkKeqHKAD/+EzEI1uL3Wrj4ior19fPTrdrU4Z
-	gYX1hWxrYbbA0sxizYWe+oEhLmk3w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q9bvcc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 09:10:26 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A792tuE027203;
-	Fri, 7 Nov 2025 09:10:25 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q9bvc7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 09:10:25 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A777KZM027375;
-	Fri, 7 Nov 2025 09:10:24 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5vwyt1sa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 09:10:24 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A79AMAs66322830
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Nov 2025 09:10:23 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D128258054;
-	Fri,  7 Nov 2025 09:10:22 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AFBA45803F;
-	Fri,  7 Nov 2025 09:10:21 +0000 (GMT)
-Received: from ltc-wspoon17.ltc.tadn.ibm.com (unknown [9.5.7.39])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Nov 2025 09:10:21 +0000 (GMT)
-From: Narayana Murty N <nnmlinux@linux.ibm.com>
-To: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, mahesh@linux.ibm.com, oohall@gmail.com
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        tyreld@linux.ibm.com, gregkh@linuxfoundation.org,
-        vaibhav@linux.ibm.com, sbhat@linux.ibm.com, ganeshgr@linux.ibm.com
-Subject: [RFC PATCH 1/1] powerpc/pseries: Add RTAS-based error injection support via pseries_eeh_err_inject()
-Date: Fri,  7 Nov 2025 04:10:09 -0500
-Message-ID: <20251107091009.43034-1-nnmlinux@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1762506472; c=relaxed/simple;
+	bh=Gv5JOojsJfcbiL7SWyqUiiv0JhQhaw+H+fix2oqXz7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CeAm1lz6YfV06+LjLcZkkwaX5EvmPFRTod5Fo6VClTHpp2As5qw4TMHFySwYQsPLCpxhGfVRJi7C2c3doDhFzBr+5xmYCRCf3Tv+jM2d9rGer8T40PT62bvmlPAAs3EDrXzTCUJXL7yraKeHqH0ljPU93Qf9rnla/NIsfq3+nMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SkCR7XI7; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7a4c202a30aso446027b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:07:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762506470; x=1763111270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DYs/QBXCZvq/660ODvJ+tef1LDCFmdxZ+HXurvTN9is=;
+        b=SkCR7XI7Yxo7WvmZMyW0n4nrQxc72acfXbr0ly1onB5XZlkI22Y8W/2Ebi9mQiiyaK
+         A9WgK4yWkWOiJW+kJylSq0wRmcJDIzic1MCd19R2JegYQYGuvMaNy4Zx9vihwPswxsZQ
+         0RVvYNQTrAngaKXT9g54QaD+WZaEieWG2bKzhfFShE39KjTpbQ+exDW5HBcYMwRM4Wo8
+         8GQtWiu+fSHovv/a+bZn1BbzfT3FKR9NEPe17YHs1k43KNSGCfsKBVrT7Jz7XgMrrwRH
+         yEFxaxILWYo6bxSVvjao9jHOHAVWAI7DJECWk1FmWvWzdSp5tpkQ+qlajY6fk12aROoI
+         4E7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762506470; x=1763111270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DYs/QBXCZvq/660ODvJ+tef1LDCFmdxZ+HXurvTN9is=;
+        b=eqbcKWUGJuDmf2ETvsbpbYoorudFYpuO9txuAl5QRVZAyh94JPRAmd4GDiAPvX6uAz
+         qxTVMVspTS5zQLIpnrYYp2mVvP5r7QINuAT8C1w8DcdwpHLO8SJUV9biZRf0G+3wJZva
+         9XU+4YixYL42D6yaZ4kYTMzdTX2nPTJzA9arseT/AYKYkwYq31NHN0oty+sfLIHTMv4A
+         yX68R3U73eGienljZI+8JraTdROM9jRIl0bws2iMGzoz3vZjk+1ejw1jLKKe99at/Ww9
+         zhIc6FdjK1HyopZ4ok5bqKlKgDo+RqLKFmj+/EutI5JRzm75OsMRMHjv9VIPeWFA8nH3
+         8SgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUID3jLhtEwwPQpsIwsfxWIwbhy5UVplSLDg3s7hkeRdXZ12WW8gqBRC4KgEh/4JFeSCQJyCu4/xFpnvqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYOPHgwl8zKmIiuia7Fn4VNqZfncA5O/MHcY4r91GDENd+KRjd
+	xqAfPhYchWjKEKQIF9U6CgP40b+dk+0fkYM1YZvPK2gIqkSvcYD+Tl5NUOqlyNfj95xbCFrHnu5
+	IQRHnmH+rg2Jxj00SVvaQA/mdmIXsL7A=
+X-Gm-Gg: ASbGncte1fPOBtXtYEKwmBfy0vqnNVjuFilRWOcwI97rn45xveGN8EKUniHb9qVaRB8
+	qCKILI/zYX5tZ5SpOjg7u8pv7cGNeeBPCfPWYeA+8u8fnWzBuT7OKGwty2bnauAnkXypMTRmLLT
+	7e9kX2h56d/Wfg5OS9U2tPw3/fXk4x0Qe4L8jEL+jY7lwh+vGQ65qcXIO2qkBRF9MYjVZVpBNoK
+	RqnJlM/uHg9DZxFqKmmR/GUiTZC9c7lCTFfwXYJ33qORl3GkmIZqEOBHA==
+X-Google-Smtp-Source: AGHT+IHqvZ536/L69mxHkhuF11bfPojcxN3OKrIi8t8i0qaWQH5JkzQzoCPgXqiKJrVEEFwXuBfxc+8S2r0QzJL31A8=
+X-Received: by 2002:a17:903:41ce:b0:295:bba:9734 with SMTP id
+ d9443c01a7336-297c0403d70mr38962925ad.24.1762506469467; Fri, 07 Nov 2025
+ 01:07:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=StmdKfO0 c=1 sm=1 tr=0 ts=690db782 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=-shJg61wUtsRUGQVQrwA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: rOxn40USt2TvQy9g84TwCbq1OjJGV_LU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAxOCBTYWx0ZWRfX57fIqcNSSLuC
- +dcHnQUQe+la/5c0wMMkygNpq80rMDKAECdyrOA2vPDRLfdqDcxzcWdj04x9GEhUjdv4MprPbJ9
- aYZtAS/plETFTrSu9+DZROpz9f35gkVbaD/fEPs32Zw3sqdAy4HIvmwQRxjvyhwJnKn06/jiYaW
- ZdnaChOj53ktqI0B839NmEg91GzsePtdK3OCHrrW7ZjDcx+OjPqaSQByl4+t1Ad7xn391ctNH2o
- Tt5Ik1syywcCMVHnWa3UIgT/rXCpGL5ifQxKHVcrMQhJaVtCez4GsuX7Xe9/nVJEdt1k07Sz3Sm
- iZgzb0uZ4MziY9w+CC9ylr70tm9fpvNp07rsvUvOM8FamOj0E2JIVJq9B+ZeEpQ+gjE+5dn7ege
- +Ul95Pff42rV6doFICvoFmLKTUCzEw==
-X-Proofpoint-GUID: I-r2OKYdjhntzOIf0n4hBJE8AwLiRxE0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 clxscore=1011 adultscore=0 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010018
+References: <20251031-imx95-rproc-2025-10-31-v2-0-758b2e547a55@nxp.com> <20251031-imx95-rproc-2025-10-31-v2-4-758b2e547a55@nxp.com>
+In-Reply-To: <20251031-imx95-rproc-2025-10-31-v2-4-758b2e547a55@nxp.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Fri, 7 Nov 2025 11:10:15 +0200
+X-Gm-Features: AWmQ_bm9Zcfpruky9KY1PgELNLr_sZHGvJRfTN76y_f7sFmTI8iuqFJ9SjSqPuM
+Message-ID: <CAEnQRZC8PTbzNM056WUSR-kYqdf4Sgkr88z3S87ZFk+rc=q3=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] remoteproc: imx_rproc: Add support for System
+ Manager API
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Frank Li <frank.li@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch add support for RTAS-based error injection on pseries platforms
-using a new implementation in the pseries_eeh_err_inject() function. The
-feature allows controlled injection of synthetic hardware errors for
-testing and validation purposes, such as PCI and memory faults.
+Hi Peng,
 
-Highlights of the implementation:
+Some comments inline to make this easier to understand:
 
-- Dynamically acquires RTAS tokens for ibm,open-errinjct, ibm,errinjct,
-  and ibm,close-errinjct services. A complete open-call-close session is
-  managed as per the platform firmware interface.
+On Fri, Oct 31, 2025 at 4:26=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
+> one Cortex-M7 core. The System Control Management Interface(SCMI)
+> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
+> Manager(SM) includes vendor extension protocols, Logical Machine
+> Management(LMM) protocol and CPU protocol and etc.
+>
+> There are three cases for M7:
 
-- A 1KB aligned and zero-initialized working buffer is allocated and
-  filled according to the specified error type. Buffer layouts strictly
-  follow PAPR documentation.
+Here we should specify how M7 gets into these three situations, is it
+via the ATF configuration?
 
-- Supports multiple error types:
-  * 0x03 - recovered-special-event
-  * 0x04 - corrupted-page
-  * 0x07 - ioa-bus-error (32-bit)
-  * 0x0F - ioa-bus-error-64 (64-bit)
-  * 0x09 - corrupted-dcache-start
-  * 0x0A - corrupted-dcache-end
-  * 0x0B - corrupted-icache-start
-  * 0x0C - corrupted-icache-end
-  * 0x0D - corrupted-tlb-start
-  * 0x0E - corrupted-tlb-end
+e.g
 
-- All RTAS parameters are passed in big-endian format using cpu_to_be32().
+Depending on ATF configuration, M7 can be used as follows:
 
-- Proper status code handling and detailed debug output via printk.
-  Handles special conditions like already open sessions and unsupported
-  operations.
+>  (1) M7 in a separate Logical Machine(LM) that Linux can't control it.
 
-- The error-specific buffer population logic is refactored into a helper
-  for maintainability and clarity.
+Here we should make it clear from who is M7 separate.
 
-Tested on a PowerVM guest with firmware support for RTAS error injection.
-Includes tracing support via bpftrace and in-kernel printk debugging.
+e.g
 
-Note : error injection from guest tested with the qemu patches
-https://lore.kernel.org/all/20251029150618.186803-1-nnmlinux@linux.ibm.com/
+(1) M7 in a separate Logical Machine (LM) from A55 cores, that Linux
+can't control
 
-Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
----
- arch/powerpc/include/asm/rtas.h              |   4 +
- arch/powerpc/include/uapi/asm/eeh.h          |  18 +
- arch/powerpc/kernel/rtas.c                   |   6 +
- arch/powerpc/platforms/pseries/eeh_pseries.c | 424 ++++++++++++++++++-
- 4 files changed, 434 insertions(+), 18 deletions(-)
+>  (2) M7 in a separate Logical Machine that Linux can control it using
+>      LMM protocol
 
-diff --git a/arch/powerpc/include/asm/rtas.h b/arch/powerpc/include/asm/rtas.h
-index d046bbd5017d..cb5f6475747c 100644
---- a/arch/powerpc/include/asm/rtas.h
-+++ b/arch/powerpc/include/asm/rtas.h
-@@ -519,6 +519,10 @@ int rtas_get_error_log_max(void);
- extern spinlock_t rtas_data_buf_lock;
- extern char rtas_data_buf[RTAS_DATA_BUF_SIZE];
- 
-+#define RTAS_ERRINJCT_BUF_SIZE 1024
-+extern spinlock_t rtas_errinjct_buf_lock;
-+extern char rtas_errinjct_buf[RTAS_ERRINJCT_BUF_SIZE];
-+
- /* RMO buffer reserved for user-space RTAS use */
- extern unsigned long rtas_rmo_buf;
- 
-diff --git a/arch/powerpc/include/uapi/asm/eeh.h b/arch/powerpc/include/uapi/asm/eeh.h
-index 3b5c47ff3fc4..86645cab2827 100644
---- a/arch/powerpc/include/uapi/asm/eeh.h
-+++ b/arch/powerpc/include/uapi/asm/eeh.h
-@@ -41,4 +41,22 @@
- #define EEH_ERR_FUNC_DMA_WR_TARGET	19
- #define EEH_ERR_FUNC_MAX		19
- 
-+/* RTAS PCI Error Injection Token Types */
-+#define RTAS_ERR_TYPE_FATAL                     0x1
-+#define RTAS_ERR_TYPE_RECOVERED_RANDOM_EVENT    0x2
-+#define RTAS_ERR_TYPE_RECOVERED_SPECIAL_EVENT   0x3
-+#define RTAS_ERR_TYPE_CORRUPTED_PAGE            0x4
-+#define RTAS_ERR_TYPE_CORRUPTED_SLB             0x5
-+#define RTAS_ERR_TYPE_TRANSLATOR_FAILURE        0x6
-+#define RTAS_ERR_TYPE_IOA_BUS_ERROR             0x7
-+#define RTAS_ERR_TYPE_PLATFORM_SPECIFIC         0x8
-+#define RTAS_ERR_TYPE_CORRUPTED_DCACHE_START    0x9
-+#define RTAS_ERR_TYPE_CORRUPTED_DCACHE_END      0xA
-+#define RTAS_ERR_TYPE_CORRUPTED_ICACHE_START    0xB
-+#define RTAS_ERR_TYPE_CORRUPTED_ICACHE_END      0xC
-+#define RTAS_ERR_TYPE_CORRUPTED_TLB_START       0xD
-+#define RTAS_ERR_TYPE_CORRUPTED_TLB_END         0xE
-+#define RTAS_ERR_TYPE_IOA_BUS_ERROR_64          0xF
-+#define RTAS_ERR_TYPE_UPSTREAM_IO_ERROR         0x10
-+
- #endif /* _ASM_POWERPC_EEH_H */
-diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
-index 8d81c1e7a8db..04c707100dab 100644
---- a/arch/powerpc/kernel/rtas.c
-+++ b/arch/powerpc/kernel/rtas.c
-@@ -769,6 +769,12 @@ EXPORT_SYMBOL_GPL(rtas_data_buf);
- 
- unsigned long rtas_rmo_buf;
- 
-+DEFINE_SPINLOCK(rtas_errinjct_buf_lock);
-+EXPORT_SYMBOL_GPL(rtas_errinjct_buf_lock);
-+
-+char rtas_errinjct_buf[1024] __aligned(SZ_1K);
-+EXPORT_SYMBOL_GPL(rtas_errinjct_buf);
-+
- /*
-  * If non-NULL, this gets called when the kernel terminates.
-  * This is done like this so rtas_flash can be a module.
-diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
-index b12ef382fec7..b06fcaf7282d 100644
---- a/arch/powerpc/platforms/pseries/eeh_pseries.c
-+++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
-@@ -786,6 +786,358 @@ static int pseries_notify_resume(struct eeh_dev *edev)
- }
- #endif
- 
-+/**
-+ * validate_addr_mask_in_pe - Validate that an addr+mask fall within PE's BARs
-+ * @pe:  EEH PE containing one or more PCI devices
-+ * @addr: Address to validate
-+ * @mask: Address mask to validate
-+ *
-+ * Checks that @addr is mapped into a BAR/MMIO region of any device belonging
-+ * to the PE. If @mask is non-zero, ensures it is consistent with @addr.
-+ *
-+ * Return: 0 if valid, RTAS_INVALID_PARAMETER on failure.
-+ */
-+
-+static int validate_addr_mask_in_pe(struct eeh_pe *pe, unsigned long addr,
-+				    unsigned long mask)
-+{
-+	struct eeh_dev *edev, *tmp;
-+	struct pci_dev *pdev;
-+	int bar;
-+	resource_size_t bar_start, bar_len;
-+	bool valid = false;
-+
-+	/* nothing to validate */
-+	if (addr == 0 && mask == 0)
-+		return 0;
-+
-+	eeh_pe_for_each_dev(pe, edev, tmp) {
-+		pdev = eeh_dev_to_pci_dev(edev);
-+		if (!pdev)
-+			continue;
-+
-+		for (bar = 0; bar < PCI_NUM_RESOURCES; bar++) {
-+			bar_start = pci_resource_start(pdev, bar);
-+			bar_len = pci_resource_len(pdev, bar);
-+
-+			if (!bar_len)
-+				continue;
-+
-+			if (addr >= bar_start && addr < (bar_start + bar_len)) {
-+				/* ensure mask makes sense for the addr value */
-+				if ((addr & mask) != addr) {
-+					pr_err("EEH: Mask 0x%lx invalid for addr 0x%lx in BAR[%d] range 0x%llx-0x%llx\n",
-+					       mask, addr, bar,
-+					       (unsigned long long)bar_start,
-+					       (unsigned long long)(bar_start + bar_len));
-+					return RTAS_INVALID_PARAMETER;
-+				}
-+
-+				pr_debug("EEH: addr=0x%lx with mask=0x%lx validated in BAR[%d] of %s\n",
-+					 addr, mask, bar, pci_name(pdev));
-+				valid = true;
-+			}
-+		}
-+	}
-+
-+	if (!valid) {
-+		pr_err("EEH: addr=0x%lx not valid within any BAR of any device in PE\n",
-+		       addr);
-+		return RTAS_INVALID_PARAMETER;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * validate_err_type - Basic sanity check for RTAS error type
-+ * @type: RTAS error type
-+ *
-+ * Ensures that the error type is within the valid RTAS error type range.
-+ *
-+ * Return: true if valid, false otherwise.
-+ */
-+
-+static bool validate_err_type(int type)
-+{
-+	/* sanity check */
-+	if (type < RTAS_ERR_TYPE_FATAL ||
-+	    type > RTAS_ERR_TYPE_UPSTREAM_IO_ERROR)
-+		return false;
-+
-+	return true;
-+}
-+
-+/**
-+ * validate_special_event - Validate parameters for special-event injection
-+ * @addr: Address parameter (should be zero)
-+ * @mask: Mask parameter (should be zero)
-+ *
-+ * Special-event error injection should not take addr/mask.  Rejects if either
-+ * is set.
-+ *
-+ * Return: 0 if valid, RTAS_INVALID_PARAMETER otherwise.
-+ */
-+
-+static int validate_special_event(unsigned long addr, unsigned long mask)
-+{
-+	if (addr || mask) {
-+		pr_err("EEH: Special-event should not specify addr/mask\n");
-+		return RTAS_INVALID_PARAMETER;
-+	}
-+	return 0;
-+}
-+
-+/**
-+ * validate_corrupted_page - Validate parameters for corrupted-page injection
-+ * @pe:   EEH PE (unused here, for consistency)
-+ * @addr: Physical page address (required)
-+ * @mask: Address mask (ignored if non-zero)
-+ *
-+ * Ensures a valid non-zero page address is provided. Warns if mask is set.
-+ *
-+ * Return: 0 if valid, RTAS_INVALID_PARAMETER otherwise.
-+ */
-+
-+static int validate_corrupted_page(struct eeh_pe *pe,
-+				   unsigned long addr, unsigned long mask)
-+{
-+	if (!addr) {
-+		pr_err("EEH: corrupted-page requires non-zero addr\n");
-+		return RTAS_INVALID_PARAMETER;
-+	}
-+	/* Mask not meaningful for corrupted-page */
-+	if (mask)
-+		pr_warn("EEH: corrupted-page ignoring mask=0x%lx\n", mask);
-+	return 0;
-+}
-+
-+/**
-+ * validate_ioa_bus_error - Validate parameters for IOA bus error injection
-+ * @pe:   EEH PE whose BARs are validated against
-+ * @addr: Address parameter (optional)
-+ * @mask: Mask parameter (optional)
-+ *
-+ * For IOA bus error injections, @addr and @mask are optional. If present,
-+ * they must map into the PE's MMIO/CFG space.
-+ *
-+ * Return: 0 if valid or addr/mask absent, RTAS_INVALID_PARAMETER otherwise.
-+ */
-+
-+static int validate_ioa_bus_error(struct eeh_pe *pe,
-+				  unsigned long addr, unsigned long mask)
-+{
-+	/* Must map into BAR/MMIO/CFG space of PE */
-+	return validate_addr_mask_in_pe(pe, addr, mask);
-+}
-+
-+/**
-+ * prepare_errinjct_buffer - Prepare RTAS error injection work buffer
-+ * @pe:   EEH PE for the target device(s)
-+ * @type: RTAS error type
-+ * @func: Error function selector (semantics vary by type)
-+ * @addr: Address argument (type-dependent)
-+ * @mask: Mask argument (type-dependent)
-+ *
-+ * Clears the global error injection work buffer and populates it based on
-+ * the error type and parameters provided. Performs inline validation of the
-+ * arguments for each supported error type.
-+ *
-+ * Return: 0 on success, or RTAS_INVALID_PARAMETER / -EINVAL on failure.
-+ */
-+
-+static int prepare_errinjct_buffer(struct eeh_pe *pe, int type, int func,
-+				   unsigned long addr, unsigned long mask)
-+{
-+	u64 *buf64;
-+	u32 *buf32;
-+
-+	memset(rtas_errinjct_buf, 0, RTAS_ERRINJCT_BUF_SIZE);
-+	buf64 = (u64 *)rtas_errinjct_buf;
-+	buf32 = (u32 *)rtas_errinjct_buf;
-+
-+	switch (type) {
-+	case RTAS_ERR_TYPE_RECOVERED_SPECIAL_EVENT:
-+		/* func must be 1 = non-persistent or 2 = persistent */
-+		if (func < 1 || func > 2)
-+			return RTAS_INVALID_PARAMETER;
-+		if (addr == 0 && mask == 0)
-+			return RTAS_INVALID_PARAMETER;
-+
-+		if (validate_special_event(addr, mask))
-+			return RTAS_INVALID_PARAMETER;
-+
-+		buf32[0] = cpu_to_be32(func);
-+		break;
-+
-+	case RTAS_ERR_TYPE_CORRUPTED_PAGE:
-+		/* addr required: physical page address */
-+		if (addr == 0)
-+			return RTAS_INVALID_PARAMETER;
-+
-+		if (validate_corrupted_page(pe, addr, mask))
-+			return RTAS_INVALID_PARAMETER;
-+
-+		buf32[0] = cpu_to_be32(upper_32_bits(addr));
-+		buf32[1] = cpu_to_be32(lower_32_bits(addr));
-+		break;
-+
-+	case RTAS_ERR_TYPE_IOA_BUS_ERROR:
-+		/* 32-bit IOA bus error: addr/mask optional */
-+		if (func < EEH_ERR_FUNC_LD_MEM_ADDR || func > EEH_ERR_FUNC_MAX)
-+			return RTAS_INVALID_PARAMETER;
-+
-+		if (addr || mask) {
-+			if (validate_ioa_bus_error(pe, addr, mask))
-+				return RTAS_INVALID_PARAMETER;
-+		}
-+
-+		buf32[0] = cpu_to_be32((u32)addr);
-+		buf32[1] = cpu_to_be32((u32)mask);
-+		buf32[2] = cpu_to_be32(pe->addr);
-+		buf32[3] = cpu_to_be32(BUID_HI(pe->phb->buid));
-+		buf32[4] = cpu_to_be32(BUID_LO(pe->phb->buid));
-+		buf32[5] = cpu_to_be32(func);
-+		break;
-+
-+	case RTAS_ERR_TYPE_IOA_BUS_ERROR_64:
-+		/* 64-bit IOA bus error: addr/mask optional */
-+		if (func < EEH_ERR_FUNC_MIN || func > EEH_ERR_FUNC_MAX)
-+			return RTAS_INVALID_PARAMETER;
-+
-+		if (addr || mask) {
-+			if (validate_ioa_bus_error(pe, addr, mask))
-+				return RTAS_INVALID_PARAMETER;
-+		}
-+
-+		buf64[0] = cpu_to_be64(addr);
-+		buf64[1] = cpu_to_be64(mask);
-+		buf32[4] = cpu_to_be32(pe->addr);
-+		buf32[5] = cpu_to_be32(BUID_HI(pe->phb->buid));
-+		buf32[6] = cpu_to_be32(BUID_LO(pe->phb->buid));
-+		buf32[7] = cpu_to_be32(func);
-+		break;
-+
-+	case RTAS_ERR_TYPE_CORRUPTED_DCACHE_START:
-+	case RTAS_ERR_TYPE_CORRUPTED_DCACHE_END:
-+	case RTAS_ERR_TYPE_CORRUPTED_ICACHE_START:
-+	case RTAS_ERR_TYPE_CORRUPTED_ICACHE_END:
-+		/* addr/mask optional, no strict validation */
-+		buf32[0] = cpu_to_be32(addr);
-+		buf32[1] = cpu_to_be32(mask);
-+		break;
-+
-+	case RTAS_ERR_TYPE_CORRUPTED_TLB_START:
-+	case RTAS_ERR_TYPE_CORRUPTED_TLB_END:
-+		/* only addr field relevant */
-+		buf32[0] = cpu_to_be32(addr);
-+		break;
-+
-+	default:
-+		pr_err("EEH: Unsupported error type 0x%x\n", type);
-+		return -EINVAL;
-+	}
-+
-+	pr_debug("RTAS: errinjct buffer prepared: type=%d func=%d addr=0x%lx mask=0x%lx\n",
-+		 type, func, addr, mask);
-+
-+	return 0;
-+}
-+
-+/**
-+ * rtas_open_errinjct_session - Open an RTAS error injection session
-+ *
-+ * Opens a session with the RTAS ibm,open-errinjct service.
-+ *
-+ * Return: Positive session token on success, negative error code on failure.
-+ */
-+static int rtas_open_errinjct_session(void)
-+{
-+	int open_token, args[2] = {0};
-+	int rc, status, session_token = -1;
-+
-+	open_token = rtas_function_token(RTAS_FN_IBM_OPEN_ERRINJCT);
-+	if (open_token == RTAS_UNKNOWN_SERVICE) {
-+		pr_err("RTAS: ibm,open-errinjct not available\n");
-+		return RTAS_UNKNOWN_SERVICE;
-+	}
-+
-+	/* Call open; original code treated rtas_call return as session token */
-+	rc = rtas_call(open_token, 0, 2, args);
-+	status = args[0];
-+	if (status != 0) {
-+		pr_err("RTAS: open-errinjct failed: status=%d args[1]=%d rc=%d\n",
-+		       status, args[1], rc);
-+		return status ? status : -EIO;
-+	}
-+
-+	session_token = rc;
-+	pr_info("RTAS: Opened injection session: token=%d\n", session_token);
-+	return session_token;
-+}
-+
-+/**
-+ * rtas_close_errinjct_session - Close an RTAS error injection session
-+ * @session_token: Session token returned from open
-+ *
-+ * Attempts to close a previously opened error injection session. Best-effort;
-+ * logs warnings if close fails or if service is unavailable.
-+ */
-+
-+static void rtas_close_errinjct_session(int session_token)
-+{
-+	int close_token, args[2] = {0};
-+	int rc;
-+
-+	if (session_token < 0)
-+		return;
-+
-+	close_token = rtas_function_token(RTAS_FN_IBM_CLOSE_ERRINJCT);
-+	if (close_token == RTAS_UNKNOWN_SERVICE) {
-+		pr_warn("RTAS: close-errinjct not available\n");
-+		return;
-+	}
-+
-+	args[0] = session_token;
-+	rc = rtas_call(close_token, 1, 1, args);
-+	if (rc) {
-+		pr_warn("RTAS: close-errinjct rc=%d, args[0]=%d, args[1]=%d\n",
-+			rc, args[0], args[1]);
-+	}
-+}
-+
-+/**
-+ * do_errinjct_call - Invoke the RTAS error injection service
-+ * @errinjct_token: RTAS token for ibm,errinjct
-+ * @type:           RTAS error type
-+ * @session_token:  RTAS error injection session token
-+ *
-+ * Issues the RTAS ibm,errinjct call with the prepared work buffer. Logs errors
-+ * on failure.
-+ *
-+ * Return: 0 on success, negative error code otherwise.
-+ */
-+
-+static int do_errinjct_call(int errinjct_token, int type, int session_token)
-+{
-+	int rc, status;
-+
-+	if (errinjct_token == RTAS_UNKNOWN_SERVICE)
-+		return -ENODEV;
-+
-+	/* errinjct takes: type, session_token, workbuf pointer (3 in), returns status */
-+	rc = rtas_call(errinjct_token, 3, 1, &status, type, session_token,
-+		       rtas_errinjct_buf);
-+
-+	if (rc || status) {
-+		pr_err("RTAS: errinjct failed: rc=%d, status=%d\n", rc, status);
-+		return status ? status : -EIO;
-+	}
-+
-+	pr_info("RTAS: errinjct ok: rc=%d, status=%d\n", rc, status);
-+	return 0;
-+}
-+
- /**
-  * pseries_eeh_err_inject - Inject specified error to the indicated PE
-  * @pe: the indicated PE
-@@ -799,30 +1151,66 @@ static int pseries_notify_resume(struct eeh_dev *edev)
- static int pseries_eeh_err_inject(struct eeh_pe *pe, int type, int func,
- 				  unsigned long addr, unsigned long mask)
- {
--	struct	eeh_dev	*pdev;
-+	int rc = 0;
-+	int session_token = -1;
-+	int errinjct_token;
-+
-+	/* Validate type */
-+	if (!validate_err_type(type)) {
-+		pr_err("RTAS: invalid error type 0x%x\n", type);
-+		return RTAS_INVALID_PARAMETER;
-+	}
-+	pr_debug("RTAS: error type 0x%x\n", type);
- 
--	/* Check on PCI error type */
--	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
--		return -EINVAL;
-+	/* For IOA bus errors we must validate err_func and addr/mask in PE.
-+	 * For other types: if addr/mask present we'll still validate BAR range;
-+	 * otherwise skip function checks.
-+	 */
-+	if (type == RTAS_ERR_TYPE_IOA_BUS_ERROR ||
-+	    type == RTAS_ERR_TYPE_IOA_BUS_ERROR_64) {
-+		/* Validate that addr/mask fall in the PE's BAR ranges */
-+		rc = validate_addr_mask_in_pe(pe, addr, mask);
-+		if (rc)
-+			return rc;
-+	} else if (addr || mask) {
-+		/* If caller provided addr/mask for a non-IOA type, do a BAR check too */
-+		rc = validate_addr_mask_in_pe(pe, addr, mask);
-+		if (rc)
-+			return rc;
-+	}
- 
--	switch (func) {
--	case EEH_ERR_FUNC_LD_MEM_ADDR:
--	case EEH_ERR_FUNC_LD_MEM_DATA:
--	case EEH_ERR_FUNC_ST_MEM_ADDR:
--	case EEH_ERR_FUNC_ST_MEM_DATA:
--		/* injects a MMIO error for all pdev's belonging to PE */
--		pci_lock_rescan_remove();
--		list_for_each_entry(pdev, &pe->edevs, entry)
--			eeh_pe_inject_mmio_error(pdev->pdev);
--		pci_unlock_rescan_remove();
--		break;
--	default:
--		return -ERANGE;
-+	/* Open RTAS session */
-+	session_token = rtas_open_errinjct_session();
-+	if (session_token < 0)
-+		return session_token;
-+
-+	/* get errinjct token */
-+	errinjct_token = rtas_function_token(RTAS_FN_IBM_ERRINJCT);
-+	if (errinjct_token == RTAS_UNKNOWN_SERVICE) {
-+		pr_err("RTAS: ibm,errinjct not available\n");
-+		rc = -ENODEV;
-+		goto out_close;
- 	}
- 
--	return 0;
-+	/* prepare shared buffer while holding lock */
-+	spin_lock(&rtas_errinjct_buf_lock);
-+	rc = prepare_errinjct_buffer(pe, type, func, addr, mask);
-+	if (rc) {
-+		spin_unlock(&rtas_errinjct_buf_lock);
-+		goto out_close;
-+	}
-+
-+	/* perform the errinjct RTAS call */
-+	rc = do_errinjct_call(errinjct_token, type, session_token);
-+	spin_unlock(&rtas_errinjct_buf_lock);
-+
-+out_close:
-+	/* always attempt close if we opened a session */
-+	rtas_close_errinjct_session(session_token);
-+	return rc;
- }
- 
-+
- static struct eeh_ops pseries_eeh_ops = {
- 	.name			= "pseries",
- 	.probe			= pseries_eeh_probe,
--- 
-2.50.0
+(2) M7 in a separate LM from A55 cores that Linux can control using
+LMM protocol.
 
+>  (3) M7 runs in same Logical Machine as A55, so Linux can control it
+>      using CPU protocol
+>
+
+
+> So extend the driver to using LMM and CPU protocol to manage the M7 core.
+
+
+>  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(the ID
+>    is fixed as 1 in SM firmware if M7 is in a seprate LM),
+
+s/seprate/separate
+
+One question here: Is it OK to call scmi_imx_lmm_info no matter the
+context are we in?
+
+If this call fails is it safe to assume that we are in the case (1)
+describe above? E.g Linux
+cannot reach the M7 core through LMM protocol  or CPU protocol?
+
+
+
+>    if Linux LM ID equals M7 LM ID(linux and M7 in same LM), use CPU
+>    protocol to start/stop. Otherwise, use LMM protocol to start/stop.
+>    Whether using CPU or LMM protocol to start/stop, the M7 status
+>    detection could use CPU protocol to detect started or not. So
+>    in imx_rproc_detect_mode, use scmi_imx_cpu_started to check the
+>    status of M7.
+>  - For above case (1) and (2), Use SCMI_IMX_LMM_POWER_ON to detect whethe=
+r
+>    the M7 LM is under control of A55 LM.
+>  - For above case , after using SCMI_IMX_LMM_POWER_ON to check
+>    permission, SCMI_IMX_LMM_SHUTDOWN API should be called to shutdown
+>    the M7 LM to save power only when M7 LM is going to be started by
+>    remoteproc framework. Otherwise bypass SCMI_IMX_LMM_SHUTDOWN API if
+>    M7 LM is started before booting Linux.
+>
+> Current setup relies on pre-Linux software(U-Boot) to do M7 TCM ECC
+> initialization. In future, we could add the support in Linux to decouple
+> U-Boot and Linux.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/Kconfig     |   2 +
+>  drivers/remoteproc/imx_rproc.c | 192 +++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/remoteproc/imx_rproc.h |   3 +
+>  3 files changed, 197 insertions(+)
+>
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 48a0d3a69ed08057716f1e7ea950899f60bbe0cf..ee54436fea5ad08a9c198ce74=
+d44ce7a9aa206de 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -27,6 +27,8 @@ config IMX_REMOTEPROC
+>         tristate "i.MX remoteproc support"
+>         depends on ARCH_MXC
+>         depends on HAVE_ARM_SMCCC
+> +       depends on IMX_SCMI_CPU_DRV || !IMX_SCMI_CPU_DRV
+> +       depends on IMX_SCMI_LMM_DRV || !IMX_SCMI_LMM_DRV
+>         select MAILBOX
+>         help
+>           Say y here to support iMX's remote processors via the remote
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rpro=
+c.c
+> index 232eb91e0b5dc2432131b1c140d6688b073fea1d..1fb17701964ca4ee4b73d343b=
+5ec1be8e2ee5fda 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/firmware/imx/sci.h>
+> +#include <linux/firmware/imx/sm.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mailbox_client.h>
+> @@ -22,6 +23,7 @@
+>  #include <linux/reboot.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/scmi_imx_protocol.h>
+>  #include <linux/workqueue.h>
+>
+>  #include "imx_rproc.h"
+> @@ -92,8 +94,12 @@ struct imx_rproc_mem {
+>  #define ATT_CORE_MASK   0xffff
+>  #define ATT_CORE(I)     BIT((I))
+>
+> +/* Linux has permission to handle the Logical Machine of remote cores */
+> +#define IMX_RPROC_FLAGS_SM_LMM_AVAIL   BIT(0)
+> +
+>  static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_block);
+>  static void imx_rproc_free_mbox(void *data);
+> +static int imx_rproc_sm_detect_mode(struct rproc *rproc);
+>
+>  struct imx_rproc {
+>         struct device                   *dev;
+> @@ -117,6 +123,8 @@ struct imx_rproc {
+>         u32                             core_index;
+>         struct dev_pm_domain_list       *pd_list;
+>         const struct imx_rproc_plat_ops *ops;
+> +       /* For i.MX System Manager based systems */
+> +       u32                             flags;
+
+<snip>
+
+>  static int imx_rproc_prepare(struct rproc *rproc)
+>  {
+>         struct imx_rproc *priv =3D rproc->priv;
+> @@ -994,6 +1090,102 @@ static int imx_rproc_scu_api_detect_mode(struct rp=
+roc *rproc)
+>         return 0;
+>  }
+>
+> +static const struct imx_rproc_plat_ops imx_rproc_ops_sm =3D {
+
+I think this should be called imx_rproc_ops_sm_lmm.
+
+> +       .detect_mode    =3D imx_rproc_sm_detect_mode,
+> +       .prepare        =3D imx_rproc_sm_lmm_prepare,
+> +       .start          =3D imx_rproc_sm_lmm_start,
+> +       .stop           =3D imx_rproc_sm_lmm_stop,
+> +};
+> +
+> +static const struct imx_rproc_plat_ops imx_rproc_ops_sm_cpu =3D {
+> +       .detect_mode    =3D imx_rproc_sm_detect_mode,
+> +       .start          =3D imx_rproc_sm_cpu_start,
+> +       .stop           =3D imx_rproc_sm_cpu_stop,
+> +};
+> +
+> +static int imx_rproc_sm_lmm_check(struct rproc *rproc, bool started)
+> +{
+> +       struct imx_rproc *priv =3D rproc->priv;
+> +       const struct imx_rproc_dcfg *dcfg =3D priv->dcfg;
+> +       struct device *dev =3D priv->dev;
+> +       int ret;
+> +
+> +       /*
+> +        * Use power on to do permission check. If rproc is in different =
+LM,
+> +        * and linux has permission to handle the LM, set IMX_RPROC_FLAGS=
+_SM_LMM_AVAIL.
+> +        */
+> +       ret =3D scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_POWER_ON,=
+ 0);
+
+I wonder if there is a better call to check if Linux has permissions
+to handle to other LMM. This is a bit
+strange but if no other option we can go witi it.
+> +       if (ret !=3D 0) {
+> +               if (ret =3D=3D -EACCES) {
+> +                       /* Not under Linux Control, so only do IPC betwee=
+n rproc and Linux */
+> +                       dev_info(dev, "lmm(%d) not under Linux Control\n"=
+, dcfg->lmid);
+
+Would this be an error? So if Linux cannot interact with the other LMM
+via LMM API how IPC is possible?
+via CPU protocol?
+
+Maybe we need a better explanation here.
+
+
+> +                       return 0;
+> +               }
+
+
+> +
+> +               dev_info(dev, "power on lmm(%d) failed: %d\n", dcfg->lmid=
+, ret);
+> +               return ret;
+> +       }
+> +
+> +       priv->flags |=3D IMX_RPROC_FLAGS_SM_LMM_AVAIL;
+> +
+> +       /* rproc was started before boot Linux and under control of Linux=
+, directly return */
+> +       if (started)
+> +               return 0;
+> +
+> +       /* else shutdown the LM to save power */
+> +       ret =3D scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_SHUTDOWN,=
+ 0);
+> +       if (ret) {
+> +               dev_err(dev, "shutdown lmm(%d) failed: %d\n", dcfg->lmid,=
+ ret);
+
+do we care to restore the flags field here on case of error?
+
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int imx_rproc_sm_detect_mode(struct rproc *rproc)
+> +{
+
+<snip>
+
+> +
+> +       ret =3D scmi_imx_cpu_started(dcfg->cpuid, &started);
+
+Is this CPU protocol call? So we can still use this even if Host core
+and remote core are in different LMMs?
+
+> +       if (ret) {
+> +               dev_err(dev, "Failed to detect cpu(%d) status: %d\n", dcf=
+g->cpuid, ret);
+> +               return ret;
+> +       }
+> +
+> +       if (started)
+> +               priv->rproc->state =3D RPROC_DETACHED;
+> +
+> +       /* Get current Linux Logical Machine ID */
+> +       ret =3D scmi_imx_lmm_info(LMM_ID_DISCOVER, &info);
+> +       if (ret) {
+> +               dev_err(dev, "Failed to get current LMM ID err: %d\n", re=
+t);
+> +               return ret;
+> +       }
+> +
+> +       /*
+> +        * Check whether remote processor is in same Logical Machine as L=
+inux.
+
+Is in same -> is in the same. We need to always try to be consistent.
+
+Remote processor is a hardware part while Linux is a software part.
+
+So always use the same object types: e.g /*check whether remote
+processor is in the same LM as host core (running Linux) */
+
+> +        * If yes, use CPU protocol API to manage remote processor.
+> +        * If no, use Logical Machine API to manage remote processor.
+> +        */
+> +       is_cpu_ops =3D dcfg->lmid =3D=3D info.lmid;
+
+No need for is_cpu_ops.
+
+Just go if(dcfg->lmid =3D=3D info.lmid)
+
+
+> +
+> +       if (is_cpu_ops) {
+> +               priv->ops =3D &imx_rproc_ops_sm_cpu;
+> +               dev_info(dev, "Using CPU Protocol OPS\n");
+
+I'm not sure we want to go with dev_info here. It it pollute the log
+and at least confuse people.
+But if you feel a strong need for this you can keep it.
+
+Also, shouldn't be here an else case where priv->ops gets set to LMM ops?
+
+> +               return 0;
+> +       }
+> +
+> +       dev_info(dev, "Using LMM Protocol OPS\n");
+> +
+> +       return imx_rproc_sm_lmm_check(rproc, started);
+
+If this check fails is the info message above still valid? It will
+confuse people.
+
+<snip>
+
+> @@ -52,6 +52,9 @@ struct imx_rproc_dcfg {
+>         enum imx_rproc_method           method;
+>         u32                             flags;
+>         const struct imx_rproc_plat_ops *ops;
+> +       /* For System Manager(SM) based SoCs, the IDs are from SM firmwar=
+e */
+
+Keep here:
+
+/* For System Manager(SM) based SoCs */
+
+Then comment for each of the fields:
+> +       u32                             cpuid; /* TODO.... CPU Id of the =
+remote core? */
+
+> +       u32                             lmid;
+
+But how these fields are set? Are they the cpuid and lmid of the
+remote core or local core (a55)?
 
