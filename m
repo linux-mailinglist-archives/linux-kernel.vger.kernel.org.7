@@ -1,308 +1,153 @@
-Return-Path: <linux-kernel+bounces-890018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1250CC3F142
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:06:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94CFC3F157
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E92584ED242
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA06C3AFF1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F58316904;
-	Fri,  7 Nov 2025 09:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5243176E0;
+	Fri,  7 Nov 2025 09:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cJaDXBbt";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CBdb7nwY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0rzgYZsY"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E717A3164CB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73A7212566;
+	Fri,  7 Nov 2025 09:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762506363; cv=none; b=TYdb/Rpdh1jIGjQpX6OSlxB+zgfYIukoEyvO5tyt2r40/TPfaE4zC5lRB8hYtWunGPugGPTiz8KHt4VdwT/NiEKI6TCm0p5q81KJAKQdYNRJAcAaiLCZ6oVNrpyfQHP/x4GOEXVx05Tm/KleJHKUi5KQdUJUa6L+kUIN0q2FARM=
+	t=1762506457; cv=none; b=E14OLTcoyzwF/ZhCd8oL/+RTimkeLQnz1oH0i1vmhKHKHtqw5vmJON95dbtmIZyFmfr9ZtUCYYNPPdVMrJgsH1/kBbafkJ3qLwvckX3ug7izq7qlr4zr7vT3GRG/4W3rOMAdLTbEnMzwg0BPMqhnojBpTi2GnLPCd2vcm+MzVak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762506363; c=relaxed/simple;
-	bh=lCNEOWLT+7/XeDg1YbyCpFzIANEFWFgCWrikEPbPsGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AbufW71a0Yqg+AP48f750L/d3svtUN95a7qvguOhQZ3I+nj7YRuQky7ILSi+1jmIApAZDziMmRHeY16Z4MkDGHhWR09NBqYcW4q0wQ9GGZR3mWii9uEyReCDddjiJ6vVGuBdvX5rQhTFbLCmVvTfdcIqt12+pDn9rIVBTkujgV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cJaDXBbt; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CBdb7nwY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A76pcW0629578
-	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 09:05:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cn/9gp5o7cY90sjFMFqcqEPElzL9CFdH/lnBGbpOTmk=; b=cJaDXBbthCESDqZh
-	nWtyVe0UgJ2Qh8b58GU7o33f/sE9RcO0l9Ixle7vKS9ixhpf5owMOeadT02Vg8wv
-	EoRQx19nV8OVQAwv9DPPynMQa1LdUEZlf3rbFi9VieFQF3JOMVC34NGhl6I0orAv
-	e/L8LW9G3zHaP/DC7Bfze+olz4yV9oCjAFKHl84yb6BbfGwei9h91unfZOeTe0vR
-	bA2j9S0kWpNv2JY/D/QvaufkJgdlAJItf3ryaK8P4Mkaxxh3OV4ZD1/q8Dqe3SUg
-	NsXGrgPR1VH2vX9lZkgfWptwESVlFWOxxgtellkROTY3neJ8T0jYfkVDllrPgl4K
-	twFddw==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9223201j-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:05:58 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b55443b4110so520275a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:05:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762506356; x=1763111156; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cn/9gp5o7cY90sjFMFqcqEPElzL9CFdH/lnBGbpOTmk=;
-        b=CBdb7nwYh+yBYcvn9igfN68+s+0xzZ+Tstr8M7v4K0Nd8E/9VdT4hecSuvcqFpnsQg
-         oRRwIpcq3Q7URUO5yKv6HS4+WVpaGBx0p2BFNG3cK1Z02Vz3YreiVysnjJoOyL5hGoXH
-         +9ESAP26IjkqcFa6ZGD5Y2AnU9lkm/4KJLqmOp6bH0bLzrTkYVMvS2e1Xilp5VrZVpZ5
-         1OcB91BtwCKuW/Fq9KLBhOBuLHwF6/KUNwRV48Ahyeiqp15867ZQKkLyvbU8XYHLejSE
-         tO6E2cVt1WJwUs536IMVuQfJwLMmbK788vwAW1lWuaKyL/oaIIbcSJrBhioa9AJ72KBt
-         XglA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762506356; x=1763111156;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cn/9gp5o7cY90sjFMFqcqEPElzL9CFdH/lnBGbpOTmk=;
-        b=oC1qcyxbvyLXBnwAOe0mPSmxgPoBtmjJWdpJR3JYwPcwrdTr/NTwVrYl+1PeYWci6x
-         Vv0JjsWc3wEtY36+NmL0BjIHPinFppVtI1aLCURCesygpDB2q0P414OiIki2RWgJjjOc
-         4WM9sMhk7SM90g0VI6MdjWbh9F+1phpg+1sGzwLcorNmu4h/T2NMZJZYtldt9w8ty2Ed
-         tYJjTSI8pfijaJx8RAHGT3rAFjoLJbUs2cGFNL3hjf9GfeNSh6gyBOh5KKHgxFlRYLBN
-         GWJzhO9oPtPG0TuCnmqCRit6zid1QzlqR0c6jkv8Yv9YI5WjLDF83asQ0/tuEPaCm04V
-         QY1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuDeMoV0YjSGEx5RymUQXbfyKZZvVd/UKp2wrm/KhccGbwrCmR/6N7kHACXkAFRZUT3G8tDht5ZbYwXrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw85Rs9lIBmc/sFPz7YO+e3iNAXqqiQXA+dbUOnK9qBYw3PGSro
-	IcvH9NoTnjF6FX1RWrKgXel5y4Gkj95VAJpIAP7QMeqcGr+c41HRuwJpqQ58ApnyaBfdB76WAyn
-	m2QFHBoxajoBEqOFw7Fs3bG0i+OIoqIGI58e95H+MAzuBaeHAhT33YTywrDC4nkXa184=
-X-Gm-Gg: ASbGncuJOeGdkD1c4qkQnBwQx5LmjAA4dqH5vun+9jWyr7LEpdvelI+mr/avGmXmst/
-	88Z6e+nhp56H3bMVroZBYlI/1ttcPT6dPvmnRgELXHBHPOWMhrRz7KNi7fceiypc58aPPyLRL86
-	ct0VPcQOF0zfeiUmhNJQ3NiUE6z5T9ettYhlLgGpbYUbuMsy/pcavXt1zNyTFm/WWT8lPjrER+x
-	SpbSaOLUyVMznQGsSGR5hANcyFLRnsX5JUxvb5I8YgqeEOUB9cbX7b2+LPI2t3I1czpYfEXwoUX
-	5QyqJktYIuqgaRJDdD42yuO2bpuBAdMnYdVJHeDu3DbguJwsi689Vve5u1/huq+AjeiM2rPuZf1
-	1+h0vcMbWdRvOnnSKwRr9A4gzPdKn/3w=
-X-Received: by 2002:a05:6a21:328e:b0:334:a854:64a7 with SMTP id adf61e73a8af0-352b5f0904cmr1608554637.3.1762506356438;
-        Fri, 07 Nov 2025 01:05:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFcUtnP5yaDtpiYGU+yKvPAjbntPIIVLxWawJk98uJOABN63v9LKaz2/ekuR0+CKD0lsWt6yg==
-X-Received: by 2002:a05:6a21:328e:b0:334:a854:64a7 with SMTP id adf61e73a8af0-352b5f0904cmr1608521637.3.1762506355877;
-        Fri, 07 Nov 2025 01:05:55 -0800 (PST)
-Received: from [10.0.0.3] ([106.222.229.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cd05d17asm2241017b3a.72.2025.11.07.01.05.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 01:05:55 -0800 (PST)
-Message-ID: <75d84de1-4f7c-1397-d445-42a367985991@oss.qualcomm.com>
-Date: Fri, 7 Nov 2025 14:35:51 +0530
+	s=arc-20240116; t=1762506457; c=relaxed/simple;
+	bh=0r3mLNCGrWE7hT6p6FJAIG3AhqSA9KylKzwdHZxUZpM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=j9eF/qu8ZxJg0e7c+8F1xxLlnlViB3NjzTOQgb+IcxNsF439++3UXKVFQMqCqHOK/Ne01/0oDTA7Rh5Mkllx1glBpm+ZkhcqCQyZcio7DWHq8ikhgXa9umAbEaseef41psaC8SCjQzAZlE3caz2Va1W+YgbLyByh/IWtjpmQzHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0rzgYZsY; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id DACC8C0FA9E;
+	Fri,  7 Nov 2025 09:07:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EC1B46070B;
+	Fri,  7 Nov 2025 09:07:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EA9AA11851DE5;
+	Fri,  7 Nov 2025 10:07:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762506451; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Sy63ZFPfLxeX+rkZOJprYwfHaS5jEGoCibkMAFJMUlc=;
+	b=0rzgYZsY73DyTeUngQTpshM2GBPYgAwxOp9qVrv8gZO96h4rFyI682/J7ahEUWaNzeuM9B
+	tJkWuSNE1n0ibZwbVBGXWKUpVjNcJSW3Aknslb/zrlqs/iw7h+P+t1v4uxvg1xkaglHBMQ
+	D0V7tRIG4q1UiPtBhiyqFYrlnQZvbt03vH+3LGrm+YYygSLwk9hecL0CKN1L4Ua1i/Xx4C
+	0E9RSPkqeqrwmsn1eAY17ZBAP80uozInu/RRnYqcfyWSqG4JX4ultmjT58SiAGhxUQDif/
+	2gKPHvhZm3CGlMFmzu6XjChJjyxxvhnw2BCO9Buq4zlUqrEMv1Be+AcJrkYqWA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 6/6] media: qcom: iris: Add intra refresh support for
- encoder
-Content-Language: en-US
-To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>, quic_qiweil@quicinc.com,
-        quic_renjiang@quicinc.com
-References: <20251106-iris_encoder_enhancements-v4-0-5d6cff963f1b@oss.qualcomm.com>
- <20251106-iris_encoder_enhancements-v4-6-5d6cff963f1b@oss.qualcomm.com>
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-In-Reply-To: <20251106-iris_encoder_enhancements-v4-6-5d6cff963f1b@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA3MiBTYWx0ZWRfX9vbEet3sgbvs
- 18ut23NO7n2ItIKiP48VGAJC3k5wewb1f/cKFt+C8BKmktaK6ACXLJM6XT58Bigd0DS/Y14hvwq
- 6nAoLWYLPZPRbo7sb2aE/AHSUj2D1TJ+qH29Qv6fbcMZgdbRIHtqZrc94ZlOCGXruRHfBooOyax
- FJkSxatgCz4bTbYhbM6vXiyED/FdC1AaAsMVdEC0okHfI9JFg5hU0Uq+dWg6OnRX022Rm9nWK0v
- /elMC4CdnnKv30u/ijSCZn/0tkVTBgnlwOH83HKZc7BMeC96DH+XKIrSd1cVy40ZHUP3n+Ym97u
- Jid5KnzwXdnFPZ9mlM3VwfRzWsG3H5oIi3Y9TXzDv/j0L8CChSa9ovfn1Mcdlf9VGh39BfDLGAK
- /PPGc3USPSjURABFXYqhUhJ1G95EvA==
-X-Authority-Analysis: v=2.4 cv=Csmys34D c=1 sm=1 tr=0 ts=690db676 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=jOerO3nEycnuB6UvFdUA:9 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: o7mXSkIP8farJ9j9swX6cW_hzNedjLMj
-X-Proofpoint-ORIG-GUID: o7mXSkIP8farJ9j9swX6cW_hzNedjLMj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070072
+Date: Fri, 07 Nov 2025 10:07:27 +0100
+Message-Id: <DE2CE3YY1Q9E.3HLFSD4K2CCGS@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v2 0/7] Add generic PHY driver used by MACB/GEM on EyeQ5
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
+ <benoit.monin@bootlin.com>, "Maxime Chevallier"
+ <maxime.chevallier@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Conor Dooley"
+ <conor.dooley@microchip.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Andrew Lunn" <andrew@lunn.ch>
+To: "Philipp Zabel" <p.zabel@pengutronix.de>, =?utf-8?q?Th=C3=A9o_Lebrun?=
+ <theo.lebrun@bootlin.com>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Vinod Koul" <vkoul@kernel.org>, "Kishon Vijay Abraham I"
+ <kishon@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com>
+ <56a49462312d89fd0de6da273f698c0f89e73ada.camel@pengutronix.de>
+In-Reply-To: <56a49462312d89fd0de6da273f698c0f89e73ada.camel@pengutronix.de>
+X-Last-TLS-Session-Version: TLSv1.3
 
+On Thu Nov 6, 2025 at 11:51 AM CET, Philipp Zabel wrote:
+> On Sa, 2025-11-01 at 09:53 +0100, Th=C3=A9o Lebrun wrote:
+>> About merging, it'll probably be complex. I see no build dependencies,
+>> but the board will be in an odd state if only some patches are applied.
+>> Some dev_warn() at boot and dev->of_node refcounting issues at unload.
+>>=20
+>>  - [PATCH 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY provid=
+er on EyeQ5
+>>    We touch dt-bindings because OLB becomes a PHY provider.
+>>    =3D> linux-mips (?)
+>>=20
+>>  - [PATCH 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+>>    We add the generic PHY driver in drivers/phy/phy-eyeq5-eth.c with the
+>>    usual Kconfig, Makefile and MAINTAINERS changes.
+>>    =3D> linux-phy (?)
+>>=20
+>>  - [PATCH 6/7] MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet contr=
+ollers
+>>    [PATCH 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet P=
+HYs
+>>    DTS patches to add both the #phy-cells of OLB and the MACB instances.
+>>    =3D> linux-mips
+>>=20
+>>  - [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generi=
+c PHYs
+>>    We must update clk-eyeq because it instantiates a new auxdev.
+>>    =3D> linux-clk
+>>=20
+>>  - [PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
+>>    [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by p=
+arent
+>>    With the dev->of_node assignement, we must also correct reset-eyeq.
+>>    =3D> separate them into linux-clk and linux-reset?
+>
+> Since 3 and 4 should go via clk, and 5 has a dependency on 3, I would
+> suggest merging them all together.
 
+Thanks for the feedback Philipp, and the review on [5/7]. Getting it
+merged in linux-clk will ease the process and avoid breakage. Updated
+summary:
 
-On 11/6/2025 9:00 AM, Wangao Wang wrote:
-> Add support for V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD and
-> V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE controls.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_ctrls.c      | 33 ++++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_ctrls.h      |  1 +
->  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  2 ++
->  .../platform/qcom/iris/iris_platform_common.h      |  2 ++
->  .../media/platform/qcom/iris/iris_platform_gen2.c  | 19 +++++++++++++
->  5 files changed, 57 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> index 8f74c12f2f41f23d75424819c707aff61ea61b33..14891569247318aaa7b2009b737f077d1cb45095 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> @@ -104,6 +104,10 @@ static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
->  		return HFLIP;
->  	case V4L2_CID_VFLIP:
->  		return VFLIP;
-> +	case V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE:
-> +		return IR_TYPE;
-> +	case V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD:
-> +		return IR_PERIOD;
->  	default:
->  		return INST_FW_CAP_MAX;
->  	}
-> @@ -197,6 +201,10 @@ static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
->  		return V4L2_CID_HFLIP;
->  	case VFLIP:
->  		return V4L2_CID_VFLIP;
-> +	case IR_TYPE:
-> +		return V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE;
-> +	case IR_PERIOD:
-> +		return V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD;
->  	default:
->  		return 0;
->  	}
-> @@ -944,6 +952,31 @@ int iris_set_flip(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->  					     &hfi_val, sizeof(u32));
->  }
->  
-> +int iris_set_ir_period(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
-> +{
-> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	struct vb2_queue *q = v4l2_m2m_get_dst_vq(inst->m2m_ctx);
-> +	u32 ir_period = inst->fw_caps[cap_id].value;
-> +	u32 ir_type = 0;
-> +
-> +	if (inst->fw_caps[IR_TYPE].value ==
-> +			V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM) {
-> +		if (vb2_is_streaming(q))
-> +			return 0;
-> +		ir_type = HFI_PROP_IR_RANDOM_PERIOD;
-> +	} else if (inst->fw_caps[IR_TYPE].value ==
-> +			V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_CYCLIC) {
-> +		ir_type = HFI_PROP_IR_CYCLIC_PERIOD;
-> +	} else
-> +		return -EINVAL;
+ - [PATCH 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY provider =
+on EyeQ5
+   [PATCH 6/7] MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controll=
+ers
+   [PATCH 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+   =3D> linux-mips
 
-missing braces.
+ - [PATCH 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+   =3D> linux-phy
 
-with that fixed,
+ - [PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
+   [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic P=
+HYs
+   [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by pare=
+nt
+   =3D> linux-clk
 
-Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+I might send V3 soon, with your trailers appended.
 
 Thanks,
-Dikshita
-> +
-> +	return hfi_ops->session_set_property(inst, ir_type,
-> +					     HFI_HOST_FLAGS_NONE,
-> +					     iris_get_port_info(inst, cap_id),
-> +					     HFI_PAYLOAD_U32,
-> +					     &ir_period, sizeof(u32));
-> +}
-> +
->  int iris_set_properties(struct iris_inst *inst, u32 plane)
->  {
->  	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.h b/drivers/media/platform/qcom/iris/iris_ctrls.h
-> index 355a592049f3fcc715a1b9df44b4d1398b052653..9518803577bc39f5c1339a49878dd0c3e8f510ad 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.h
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.h
-> @@ -34,6 +34,7 @@ int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->  int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->  int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->  int iris_set_flip(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
-> +int iris_set_ir_period(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
->  int iris_set_properties(struct iris_inst *inst, u32 plane);
->  
->  #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> index 0f92468dca91cbb2ca9b451ebce255180066b3a4..9e8fdddf2aef439e7f133c9bb2fafa6d95062b02 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> @@ -70,6 +70,7 @@ enum hfi_rate_control {
->  #define HFI_PROP_QP_PACKED			0x0300012e
->  #define HFI_PROP_MIN_QP_PACKED			0x0300012f
->  #define HFI_PROP_MAX_QP_PACKED			0x03000130
-> +#define HFI_PROP_IR_RANDOM_PERIOD		0x03000131
->  #define HFI_PROP_TOTAL_BITRATE			0x0300013b
->  #define HFI_PROP_MAX_GOP_FRAMES			0x03000146
->  #define HFI_PROP_MAX_B_FRAMES			0x03000147
-> @@ -108,6 +109,7 @@ enum hfi_flip {
->  #define HFI_PROP_BUFFER_MARK			0x0300016c
->  #define HFI_PROP_RAW_RESOLUTION		0x03000178
->  #define HFI_PROP_TOTAL_PEAK_BITRATE		0x0300017C
-> +#define HFI_PROP_IR_CYCLIC_PERIOD		0x0300017E
->  #define HFI_PROP_COMV_BUFFER_COUNT		0x03000193
->  #define HFI_PROP_END				0x03FFFFFF
->  
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 284d6bde6d6bcdf70016646d1c92e6ae7f067efc..30b98e769ad34c2b63dd63e7714bfeaa5b4f162c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -143,6 +143,8 @@ enum platform_inst_fw_cap_type {
->  	ROTATION,
->  	HFLIP,
->  	VFLIP,
-> +	IR_TYPE,
-> +	IR_PERIOD,
->  	INST_FW_CAP_MAX,
->  };
->  
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index e74bdd00a4bb2f457ec9352e0acaebc820dae235..ce54aac766e2bf76fa2de64c884724ca63f05dcb 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -620,6 +620,25 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
->  			CAP_FLAG_DYNAMIC_ALLOWED,
->  		.set = iris_set_flip,
->  	},
-> +	{
-> +		.cap_id = IR_TYPE,
-> +		.min = V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM,
-> +		.max = V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_CYCLIC,
-> +		.step_or_mask = BIT(V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM) |
-> +			BIT(V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_CYCLIC),
-> +		.value = V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD_TYPE_RANDOM,
-> +		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
-> +	},
-> +	{
-> +		.cap_id = IR_PERIOD,
-> +		.min = 0,
-> +		.max = INT_MAX,
-> +		.step_or_mask = 1,
-> +		.value = 0,
-> +		.flags = CAP_FLAG_OUTPUT_PORT |
-> +			CAP_FLAG_DYNAMIC_ALLOWED,
-> +		.set = iris_set_ir_period,
-> +	},
->  };
->  
->  static struct platform_inst_caps platform_inst_cap_sm8550 = {
-> 
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
