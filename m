@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-889591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743B4C3DFCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 607ACC3DFDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F8F04E3E99
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:32:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 583274E2D0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8112C0299;
-	Fri,  7 Nov 2025 00:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE002D592E;
+	Fri,  7 Nov 2025 00:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eNzBkg6K"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PeyBxaaY"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FA11ACEAF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074782DE6E3
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762475560; cv=none; b=Y51yIfcPLv8UIRZeqFCZMkTq3u1Mq/nnvuORm7LLRrDdzuZY/ok9u1mSFPtHR3rvzAcQ75+B3in/1QOaZ+WURYPaPG9N/MY8XFhxA9k8vI/4NptZJS4jO2V69AxF47j9u6Wp5i2wf2uRn5c2DbNJNruzMAG7VyKX8ncM4TAm9zk=
+	t=1762475833; cv=none; b=iV7MjLO3dV2KSrCAu/E14aZx8uU3k3z2l/82P+MdbnSI95Jxk819zX/z4iguzsmOR1RKuCBYU2YOhZCnSg2jRK6diJam2vKl0qvJVr/hOLBWMb3QZmTLU030XIZf/MxkA0ppq85/88gHUsHhUto95PRcDwca9WNAHcb+wLgJQ6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762475560; c=relaxed/simple;
-	bh=kwn44RFmF+ScDQ88lnEFKYUpvFmZuUMwZzCJpYunGhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lszwKJW//JPYAKRupvlbERiWtrkC53B3Jmfq9sXgXQ/br1wzwjH3pPoaA2LTaK5KboCnpzflv9jrf7q2izwmybECCwK1i/CM7YRsg0zH/IR60joGwGWi++XGR0D5bVic/WM1+eJ+cxK1SHRk3kGOa0A18F4aox1bGDKWdKzpBiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eNzBkg6K; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 6 Nov 2025 16:32:16 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762475546;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yS+MdoGbxE+vBEvrR0CnerAzSJJp4Z3mqFdZ5Yqa+T8=;
-	b=eNzBkg6Kp9rQ0bVoqyfWj29RngbJ3M1n/97CJR9Q36ISS02qWfS1JkYlK+aDrdOwTdJH2i
-	XjFHIdUCx4np7ciNjWCqoFw1MMs6lO4am2h3v3Wr+emlfOMM1TtBzEaqaNbgDUI2Ifzq5V
-	O0JzIJJGDKpHnupigi96k+Bnz64SUro=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	oe-lkp@lists.linux.dev, lkp@intel.com, Andrew Morton <akpm@linux-foundation.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, Martin Liu <liumartin@google.com>, 
-	David Rientjes <rientjes@google.com>, SeongJae Park <sj@kernel.org>, Michal Hocko <mhocko@suse.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Sweet Tea Dorminy <sweettea@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <liam.howlett@oracle.com>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, Yu Zhao <yuzhao@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, christian.koenig@amd.com
-Subject: Re: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large
- many-core systems
-Message-ID: <6hmgutxgdchs4qz6hprwsecwoygwszn5ywixxrvnereilegcsx@mxroaotaw2me>
-References: <20251031144232.15284-3-mathieu.desnoyers@efficios.com>
- <202511061432.4e534796-lkp@intel.com>
+	s=arc-20240116; t=1762475833; c=relaxed/simple;
+	bh=d1l9qD8XMmXnPbkbd2q3urs/Adm6B+48QfkVXhWo5WQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZauJqhB1XZlVnlb+l4PT98vXt6apHaM/X4/jwt3yyDRP2YcInVsFXA17e43k47WIncqwYYb3HbQ1J8S5Ok1P1/ovG276PF8g9M8S9XlGvDMEBeetpzsfjEpfqft1NstNbMbuM4hQlTf7Z2kL1tBR3RL9ioCcTpv3vKHYl/WxK0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PeyBxaaY; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7aa9be9f03aso202519b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:37:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762475831; x=1763080631; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EGwKa6L5Ov6plBuAr/eqPUtlUlTY9hpPNgc95wLo4Wc=;
+        b=PeyBxaaYRAJ5H3XAxCnWKN8iwQ8SPXdVJ4q5M/B8lGYFCyrmERrittV4xLZ9kwDZz5
+         ZiwvH/vxsetNCuIpEtEIfX46MbeASMLFqEFygy0f/cuxB6+TUW7kEudlcOnEbZI2X5Dy
+         zhDQiN+WMIkzkO6UKVeJ54z3Gc7Bw7bCUlP3R2Rj3XRhhE/Amr9SOF4FRgmy9E+/M6Gr
+         eRJS8Q/OZ8MYu2dQGbgOEdpSXwBSxXSpULMbISGfeCBx/vogU1QR341/+FeCH/aIdGd0
+         7rEZ4HDC8wffrNHuED4TukyxS9w8Eq+39gBxJ+LcpLMyvxCAp4t7dWHk43dXvGdEkbZf
+         kXzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762475831; x=1763080631;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EGwKa6L5Ov6plBuAr/eqPUtlUlTY9hpPNgc95wLo4Wc=;
+        b=E7rZsRuXBIJyvma+YNsNQAcXpXGnBprwqJ3jAAa/73tD0x9NSNt0QYR77lzxUWQqMp
+         OBHBleRkNfUe6fhPK4wLex4kt081EeeBjYxaziZe6is9vwBieMBRCdPx0sPsAez3BoL/
+         RLFeAZPb8URryHcKcpGTLpJOCTILDubQTBMGacvQ4yBJ+f187lS8mxEG129ojYJVo8px
+         3lBXBePir+ZwWVXEjgLjaQaLFtGkdkZqf0eDEyHeWDk54Y61PmkfP8iYuHkHyqhY2RIh
+         WxMi8bEuYsss19pZPyBJQ1mplnAlOw6C3PT/yc6wuvnBd/E3GaK3f7tNfw7fggzzngE7
+         EISA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDAR5Jd25Yf/BVIUULdvbsV03PgqMaP5JMYWP7JZvCiz4SylN/xw5Ek5KsEZuGpgItZ3gTKcIYpXQ3WJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTkaZjaGnhb+wbRQoouc3qOCbVKNb4hzCoOtoqIry9YOsryo24
+	XdRas54707KlRljAuj7zEsWeEu8SKZdQCEaruPf9qVTe73Y97w8jthXzYXo9HHSm3BI=
+X-Gm-Gg: ASbGncuHoQzws7VEGUZerq8K4LEUTIIonol2EmDyFyKFq/HMM5a4E/jFz+45E7KKuq9
+	4MaeZpWhixiF7MzZvv78FyXytpYheqnLewELlIZAe5PJVE4n1gh1Kt74x9oSGW2ROxlftdTq5vL
+	d5v9bkfSPmRI//F01xvop1wutKckSHKemAWjqjxOJp/zlCd/8JfxbXOqolVioAcv3DXNgnp2lHO
+	bhJFu9TWR3pXlLhOZhs2aLmasO37WBB9qi3B0JVLEpf+UGiTLnuXQKKU2wtNIVmegtMstzH3SgT
+	nU7tMRX1pi5LDVbqsKPr1SfXn1Aq4kafOAq0JidA1hcPo6mDim3/FI5V6jqiLN5gBHzzKI+j4uI
+	6h5mXVLgN80PcdexpWRNwFYdDLqkf2KqFxts+cGxc5jwx2WZbbndH6GA8dk5BqJ2xRpbtwx37Dp
+	DIrJ0tW92ANw==
+X-Google-Smtp-Source: AGHT+IGsX68vkUOfybe6fYTABJfgjkBDAPQcEmi2OR60iXxAl7RD78CS1D3hRiQCZfO6bdtQf8LCCQ==
+X-Received: by 2002:a17:903:22cb:b0:295:8a21:155a with SMTP id d9443c01a7336-297c045f08fmr16886375ad.35.1762475831225;
+        Thu, 06 Nov 2025 16:37:11 -0800 (PST)
+Received: from [192.168.0.125] ([189.6.209.79])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c92cddsm41715735ad.83.2025.11.06.16.37.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 16:37:10 -0800 (PST)
+Message-ID: <c39a2980-f5e5-44aa-9fd3-20e0658f62dc@gmail.com>
+Date: Thu, 6 Nov 2025 21:34:50 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202511061432.4e534796-lkp@intel.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] dt-bindings: iio: proximity: Add Lidar-lite-v2 and
+ v3
+To: Krzysztof Kozlowski <krzk@kernel.org>, robh@kernel.org,
+ krzk+dt@kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, conor+dt@kernel.org,
+ mranostay@gmail.com, wbg@kernel.org
+Cc: ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251102221643.9966-1-rodrigo.gobbi.7@gmail.com>
+ <20251102221643.9966-3-rodrigo.gobbi.7@gmail.com>
+ <d30dc192-e37d-49d6-97c7-26e90a7ae6f9@kernel.org>
+Content-Language: en-US
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+In-Reply-To: <d30dc192-e37d-49d6-97c7-26e90a7ae6f9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 02:53:09PM +0800, kernel test robot wrote:
+On 11/3/25 05:04, Krzysztof Kozlowski wrote:
+> On 02/11/2025 23:10, Rodrigo Gobbi wrote:
+>> Since v2 is not a trivial device, add it to a dedicated place. The v3 is
 > 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:kworker##Pid" on:
-> 
-> commit: 25ae03e80acad812e536694c1a07a3f57784ae23 ("[RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large many-core systems")
-> url: https://github.com/intel-lab-lkp/linux/commits/Mathieu-Desnoyers/lib-Introduce-hierarchical-per-cpu-counters/20251031-224455
-> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everything
-> patch link: https://lore.kernel.org/all/20251031144232.15284-3-mathieu.desnoyers@efficios.com/
-> patch subject: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large many-core systems
-> 
-> in testcase: boot
-> 
-> config: x86_64-randconfig-002-20251103
-> compiler: clang-20
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> in fact, we observed various BUG:Bad_rss-counter_state_mm issues for this commit
-> but clean on parent, as below
-> 
-> +------------------------------------------------------------------------+------------+------------+
-> |                                                                        | 05880dc4af | 25ae03e80a |
-> +------------------------------------------------------------------------+------------+------------+
-> | BUG:Bad_rss-counter_state_mm:#type:MM_FILEPAGES_val:#Comm:kworker##Pid | 0          | 10         |
-> | BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:kworker##Pid | 0          | 17         |
-> | BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:swapper_Pid  | 0          | 2          |
-> | BUG:Bad_rss-counter_state_mm:#type:MM_ANONPAGES_val:#Comm:modprobe_Pid | 0          | 3          |
-> | BUG:Bad_rss-counter_state_mm:#type:MM_FILEPAGES_val:#Comm:modprobe_Pid | 0          | 1          |
-> +------------------------------------------------------------------------+------------+------------+
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202511061432.4e534796-lkp@intel.com
-> 
-> 
-> [   14.858862][   T67] BUG: Bad rss-counter state mm:ffff8881000655c0 type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:67
-> [   14.894890][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 type:MM_FILEPAGES val:0 Comm:kworker/u9:0 Pid:69
-> [   14.896108][   T69] BUG: Bad rss-counter state mm:ffff888100061cc0 type:MM_ANONPAGES val:0 Comm:kworker/u9:0 Pid:69
+> What is v2 and v3? This patchset is v3, don't refer to it in the commit
+> msg. If you speak about devices then make it obvious. How anyone going
+> through `git log` can figure out what is v2. Your patch mentions some v2
+> and v3 but these are different companies, so somehow completely
+> different products?
 
-Hmm this shows that percpu_counter_tree_precise_sum() is returning 0 but
-percpu_counter_tree_approximate_sum() is off more than
-counter->inaccuracy. I have not dig deeper to find why but this needs to
-be resolved before considering this series for upstream.
+Sorry for the commit msg, I`ll make it more clear in this case. About different companies, yes,
+that is true. It turns out that this is a "special" case because lidar-lite-v2
+chipset was manufactured by Pulsedlight vendor. In other hand, the new version from
+it, v3, was manufactured by Garmin, which acquired the Pulsedlight.
+
+In previous versions of this patch I`ve reviewed both datasheets, and the pin-out 
+is almost the same, that`s why I`ve added in the same binding.
+
+Probably I`ll send a new patch version without using a patchset as pointed here and fixing the
+subject/commit msg to make it more clear.
+
+Feel free to suggest anything else or other concerns.
+Tks and regards!!! 
+
 
