@@ -1,134 +1,195 @@
-Return-Path: <linux-kernel+bounces-889823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AADC3E9EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:27:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23518C3EA1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6153AEA30
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:27:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5FF94E6EF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6EB2D59EF;
-	Fri,  7 Nov 2025 06:27:31 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E978279327;
-	Fri,  7 Nov 2025 06:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C86B2D4B68;
+	Fri,  7 Nov 2025 06:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdQfgmqC"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5808326FA6E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 06:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762496850; cv=none; b=CzsWpGwALEDAaS4+0OZEsmCNZiFxJ5Yq4lgiIxCi+sB2naWQPu18oIqq0I63MIcngjJFWUdH7ue2SVK8GOeUDWQYe6opTNO2hsuhAbxjXczIXLDCmj/EKHJZQuxU/1BRCJbAmD4CyyyexHfglAzxpaoPwubv2MBsZxpJf9svEOU=
+	t=1762497351; cv=none; b=LMf/ylKkxrJsDSmCgvGFcka7zmGbYILjLgEE0us35rRgTDO8L6hYOd94hZcrUm7MJQ0Uc2vMhrJErUaQXir94ivIpl1XX08FKbXEwZfoPeFq+xmS5PXX+w2Mr0krIqh6w89PLD2odGiRtbsZqpBF9inwIsaMihK3LAM0+ehMcbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762496850; c=relaxed/simple;
-	bh=1xjpieqHeM59LEB9+HHGl4iCAgFiOjKdAsjb4ZTHO9Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Ixv3+SaoxuS7t/Ox7w5F21+Tsjz8xFTsDhCXlNcD0HodRPB0e2ZKx4S7zzV3urjB31pivMXyddEgr6H1Bwe9Pwsc6QsYo+q/xjy/cMnbGgHHIaSgUz0nuninGuLD6FtxUIBh/qOcvqZb0N41UkDlnIpB6R9wHNsFfUK9sHo/JLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from zhangsenchuan$eswincomputing.com ( [10.12.96.83] ) by
- ajax-webmail-app2 (Coremail) ; Fri, 7 Nov 2025 14:27:15 +0800 (GMT+08:00)
-Date: Fri, 7 Nov 2025 14:27:15 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: zhangsenchuan <zhangsenchuan@eswincomputing.com>
-To: "Manivannan Sadhasivam" <mani@kernel.org>
-Cc: "Manivannan Sadhasivam" <manivannan.sadhasivam@oss.qualcomm.com>,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-	will@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: Re: [PATCH 2/3] PCI: qcom: Check for the presence of a device
- instead of Link up during suspend
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <nhjlanhzndhlbtfohnkypwuzpw6nw43cysjmoam3qv4rrs22hr@ic3hgtfoeb6e>
-References: <20251106061326.8241-1-manivannan.sadhasivam@oss.qualcomm.com>
- <20251106061326.8241-3-manivannan.sadhasivam@oss.qualcomm.com>
- <35086b08.c4e.19a58a7d6bc.Coremail.zhangsenchuan@eswincomputing.com>
- <nhjlanhzndhlbtfohnkypwuzpw6nw43cysjmoam3qv4rrs22hr@ic3hgtfoeb6e>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1762497351; c=relaxed/simple;
+	bh=ezkWKDEnzaSPdwISfdaaU281kYN3oUxiNHfWEJGMZKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mVkaVhMpaTN51SpYm2R9mic/lVuO1cOqwbsqJxGYBi8k0v3o43wZ95UyR6qilD996Py7wBpP+Cze/OVOYminVq6pLeyonU9kBIGSGPC910Dqob7oBhyg5/gTTvpkJ/QT2wtj4eE7b24JonSN+jZZ/OsgeS6od9QE0y/5dsOzWYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdQfgmqC; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b556284db11so350927a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 22:35:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762497349; x=1763102149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rUsFzqUXQZz1n2RuQCKkvAwHBLrARb82AaIwq1mZYBk=;
+        b=OdQfgmqCmCmD2x69/2hMwXdX3JXgvsbADfmroJeuWgSc5YMoCBroV6Nql/7plpTZl1
+         /qgS0FlOiLoePbDEcWFPNFlFM1FiCYNf+DL1oJ8DLRR0FDmhz9KC2JFxpWqwgVcPw4bS
+         YbuWUt/jdn0p2IEjOYJxmWnOhyIz/Fb4/nM40OmYQi2BhdmHqg8ZLladGEqu1Iu0HVf4
+         Q3Cr1mZUR4/AenrYpyuW0Cj7znAC4m+zLG/OINgFCiTbwdfg5Dbmc6TG7OoEhAgDnZ3d
+         tgD5JKcnembrbUYckW1grYjp34YjhGFbtNKlndRF9b0qxJVktnF15omI5qVJlsOiCo0P
+         rGLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762497349; x=1763102149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rUsFzqUXQZz1n2RuQCKkvAwHBLrARb82AaIwq1mZYBk=;
+        b=ZAccEimCazhT2YDL+LzE4nnos5RZ3MvaMdvQ/P8K58BWziZ6fLDPOp6ALZr2dfXUKv
+         zPL11XJj9ZPyAtNjdPZ8GJOffLAQhabZtQQSrxfowqad5pALU8ikMpWSDkIwGoEi1QYN
+         FKR0HaND9TNAHDZjYFnZkHMLWQU6RtE52M2KeJSiW+8KaengzLI26SSQMI9mkj9ZrzyR
+         qwXsqkxcUla+8IwTAfO4M34YPp4Zh0Y7MQ5V2MgxT+U5cZiLSx0aCyIMZ/UBRE97EyqW
+         OPmKnOwVlcr0AsYVHb11pbL/zIiDZgO/rru2rwtOul7yJh7UhoapdeVOlIE6hzaSSTNi
+         xIPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWP/dAfUCO+pQ4sRZoars2NTM0kfkjkq7XWW8B+oSYwogts55CGcP1KkT+61yXgI2MyEjSqHXTcZxE1YYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYPb7RcenO4NqNET9pobjQD0Z5IOSz9QRmFVNmbcsAlUSq1LV+
+	llC9n2R8tD3uS6OlVLMhtLeo9njyok2JQnhkUhro17YNb1QZ/7KiwP21KYk9h0t13dq+LFhZ7KD
+	UTibUPfHsUYOnfBlijvWK8DahiS6ziw8=
+X-Gm-Gg: ASbGncuM7Oj/PxpTKwAAonbtHfwFJSCpIHTfoYE2E6LoAm7b2zTjS3Jn8RhCw2zdIVq
+	w2CsqzwvxTCke2FbE/CvbL2VGjrYTOLkljWoFWt2wrrCJPrzE0OiHPVYhzb573fWJr4wktIjNh6
+	Q1kPxmXhlxBRXnGLDZ+ie2uPqwHy79fwUzVD6qC0Z7WXzKVKmSxNM0TJz5ftj9cqwhapVICC6Fz
+	0mgHiHpVXESJQeTfi9Ik8Hve7oEdhmq5TCqDXapFlNEmckK8h+pRGtd9GH+emqqcoieRgI=
+X-Google-Smtp-Source: AGHT+IHD2sHQ2JhFDIByYNzUhLLxTgE7g7W06cDQM3CbAV75SFpIeVUjbC/8/8que3hL5Hq3pg8yZ5zHUKC4nw41vng=
+X-Received: by 2002:a17:903:3888:b0:24b:24dc:91a7 with SMTP id
+ d9443c01a7336-297c046688fmr31835145ad.45.1762497349496; Thu, 06 Nov 2025
+ 22:35:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <311e1152.cc3.19a5cff7033.Coremail.zhangsenchuan@eswincomputing.com>
-X-Coremail-Locale: en_US
-X-CM-TRANSID:TQJkCgBnq65DkQ1peDpIAA--.1088W
-X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/1tbiAQETBmkMz
-	YETNQAAsa
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+References: <20251106054940.2728641-1-linchengming884@gmail.com>
+ <20251106054940.2728641-2-linchengming884@gmail.com> <87o6pf8r24.fsf@bootlin.com>
+In-Reply-To: <87o6pf8r24.fsf@bootlin.com>
+From: Cheng Ming Lin <linchengming884@gmail.com>
+Date: Fri, 7 Nov 2025 14:31:12 +0800
+X-Gm-Features: AWmQ_bnGg-3AHA9qjsaSFvGn8ogxToPDDBGmH9VNNkzQziibC95PuHQBA82OM_4
+Message-ID: <CAAyq3Sb8-FRC+bZt_bEvOdBNVSN4xa5F_TpBbKF__HzhVPEpTw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mtd: ubi: skip programming unused bits in ubi headers
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: richard@nod.at, chengzhihao1@huawei.com, vigneshr@ti.com, 
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	alvinzhou@mxic.com.tw, leoyu@mxic.com.tw, 
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CgoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2VzLS0tLS0KPiBGcm9tOiAiTWFuaXZhbm5hbiBTYWRo
-YXNpdmFtIiA8bWFuaUBrZXJuZWwub3JnPgo+IFNlbmQgdGltZTpUaHVyc2RheSwgMDYvMTEvMjAy
-NSAxOTo1NzoxNgo+IFRvOiB6aGFuZ3NlbmNodWFuIDx6aGFuZ3NlbmNodWFuQGVzd2luY29tcHV0
-aW5nLmNvbT4KPiBDYzogIk1hbml2YW5uYW4gU2FkaGFzaXZhbSIgPG1hbml2YW5uYW4uc2FkaGFz
-aXZhbUBvc3MucXVhbGNvbW0uY29tPiwgbHBpZXJhbGlzaUBrZXJuZWwub3JnLCBrd2lsY3p5bnNr
-aUBrZXJuZWwub3JnLCBiaGVsZ2Fhc0Bnb29nbGUuY29tLCB3aWxsQGtlcm5lbC5vcmcsIGxpbnV4
-LXBjaUB2Z2VyLmtlcm5lbC5vcmcsIGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcsIHJvYmhA
-a2VybmVsLm9yZywgbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5lbC5vcmcKPiBTdWJqZWN0OiBSZTog
-W1BBVENIIDIvM10gUENJOiBxY29tOiBDaGVjayBmb3IgdGhlIHByZXNlbmNlIG9mIGEgZGV2aWNl
-IGluc3RlYWQgb2YgTGluayB1cCBkdXJpbmcgc3VzcGVuZAo+IAo+IE9uIFRodSwgTm92IDA2LCAy
-MDI1IGF0IDA2OjEzOjA1UE0gKzA4MDAsIHpoYW5nc2VuY2h1YW4gd3JvdGU6Cj4gPiAKPiA+IAo+
-ID4gCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZXMtLS0tLQo+ID4gPiBGcm9tOiAiTWFuaXZh
-bm5hbiBTYWRoYXNpdmFtIiA8bWFuaXZhbm5hbi5zYWRoYXNpdmFtQG9zcy5xdWFsY29tbS5jb20+
-Cj4gPiA+IFNlbmQgdGltZTpUaHVyc2RheSwgMDYvMTEvMjAyNSAxNDoxMzoyNQo+ID4gPiBUbzog
-bHBpZXJhbGlzaUBrZXJuZWwub3JnLCBrd2lsY3p5bnNraUBrZXJuZWwub3JnLCBtYW5pQGtlcm5l
-bC5vcmcsIGJoZWxnYWFzQGdvb2dsZS5jb20KPiA+ID4gQ2M6IHdpbGxAa2VybmVsLm9yZywgbGlu
-dXgtcGNpQHZnZXIua2VybmVsLm9yZywgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgcm9i
-aEBrZXJuZWwub3JnLCBsaW51eC1hcm0tbXNtQHZnZXIua2VybmVsLm9yZywgemhhbmdzZW5jaHVh
-bkBlc3dpbmNvbXB1dGluZy5jb20sICJNYW5pdmFubmFuIFNhZGhhc2l2YW0iIDxtYW5pdmFubmFu
-LnNhZGhhc2l2YW1Ab3NzLnF1YWxjb21tLmNvbT4KPiA+ID4gU3ViamVjdDogW1BBVENIIDIvM10g
-UENJOiBxY29tOiBDaGVjayBmb3IgdGhlIHByZXNlbmNlIG9mIGEgZGV2aWNlIGluc3RlYWQgb2Yg
-TGluayB1cCBkdXJpbmcgc3VzcGVuZAo+ID4gPiAKPiA+ID4gVGhlIHN1c3BlbmQgaGFuZGxlciBj
-aGVja3MgZm9yIHRoZSBQQ0llIExpbmsgdXAgdG8gZGVjaWRlIHdoZW4gdG8gdHVybiBvZmYKPiA+
-ID4gdGhlIGNvbnRyb2xsZXIgcmVzb3VyY2VzLiBCdXQgdGhpcyBjaGVjayBpcyByYWN5IGFzIHRo
-ZSBQQ0llIExpbmsgY2FuIGdvCj4gPiA+IGRvd24ganVzdCBhZnRlciB0aGlzIGNoZWNrLgo+ID4g
-PiAKPiA+ID4gU28gdXNlIHRoZSBuZXdseSBpbnRyb2R1Y2VkIEFQSSwgcGNpX3Jvb3RfcG9ydHNf
-aGF2ZV9kZXZpY2UoKSB0aGF0IGNoZWNrcwo+ID4gPiBmb3IgdGhlIHByZXNlbmNlIG9mIGEgZGV2
-aWNlIHVuZGVyIGFueSBvZiB0aGUgUm9vdCBQb3J0cyB0byByZXBsYWNlIHRoZQo+ID4gPiBMaW5r
-IHVwIGNoZWNrLgo+ID4gPiAKPiA+ID4gU2lnbmVkLW9mZi1ieTogTWFuaXZhbm5hbiBTYWRoYXNp
-dmFtIDxtYW5pdmFubmFuLnNhZGhhc2l2YW1Ab3NzLnF1YWxjb21tLmNvbT4KPiA+ID4gLS0tCj4g
-PiA+ICBkcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLXFjb20uYyB8IDYgKysrKy0tCj4g
-PiA+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+ID4g
-PiAKPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaWUtcWNv
-bS5jIGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpZS1xY29tLmMKPiA+ID4gaW5kZXgg
-ODA1ZWRiYmZlN2ViLi5iMmI4OWUyZTQ5MTYgMTAwNjQ0Cj4gPiA+IC0tLSBhL2RyaXZlcnMvcGNp
-L2NvbnRyb2xsZXIvZHdjL3BjaWUtcWNvbS5jCj4gPiA+ICsrKyBiL2RyaXZlcnMvcGNpL2NvbnRy
-b2xsZXIvZHdjL3BjaWUtcWNvbS5jCj4gPiA+IEBAIC0yMDE4LDYgKzIwMTgsNyBAQCBzdGF0aWMg
-aW50IHFjb21fcGNpZV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ID4gPiAg
-c3RhdGljIGludCBxY29tX3BjaWVfc3VzcGVuZF9ub2lycShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4g
-PiA+ICB7Cj4gPiA+ICAJc3RydWN0IHFjb21fcGNpZSAqcGNpZTsKPiA+ID4gKwlzdHJ1Y3QgZHdf
-cGNpZV9ycCAqcHA7Cj4gPiA+ICAJaW50IHJldCA9IDA7Cj4gPiA+ICAKPiA+ID4gIAlwY2llID0g
-ZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gPiA+IEBAIC0yMDUzLDggKzIwNTQsOSBAQCBzdGF0aWMg
-aW50IHFjb21fcGNpZV9zdXNwZW5kX25vaXJxKHN0cnVjdCBkZXZpY2UgKmRldikKPiA+ID4gIAkg
-KiBwb3dlcmRvd24gc3RhdGUuIFRoaXMgd2lsbCBhZmZlY3QgdGhlIGxpZmV0aW1lIG9mIHRoZSBz
-dG9yYWdlIGRldmljZXMKPiA+ID4gIAkgKiBsaWtlIE5WTWUuCj4gPiA+ICAJICovCj4gPiA+IC0J
-aWYgKCFkd19wY2llX2xpbmtfdXAocGNpZS0+cGNpKSkgewo+ID4gPiAtCQlxY29tX3BjaWVfaG9z
-dF9kZWluaXQoJnBjaWUtPnBjaS0+cHApOwo+ID4gPiArCXBwID0gJnBjaWUtPnBjaS0+cHA7Cj4g
-PiA+ICsJaWYgKCFwY2lfcm9vdF9wb3J0c19oYXZlX2RldmljZShwcC0+YnJpZGdlLT5idXMpKSB7
-Cj4gPiAKPiA+IEknbSBhIGxpdHRsZSBjb25mdXNlZC4KPiA+IFRoZSBwY2lfcm9vdF9wb3J0c19o
-YXZlX2RldmljZSBmdW5jdGlvbiBjYW4gaGVscCBjaGVjayBpZiB0aGVyZSBpcyBhbnkgZGV2aWNl
-IAo+ID4gYXZhaWxhYmxlIHVuZGVyIHRoZSBSb290IFBvcnRzLCBpZiB0aGVyZSBpcyBhIGRldmlj
-ZSBhdmFpbGFibGUsIHRoZSByZXNvdXJjZSAKPiA+IGNhbm5vdCBiZSByZWxlYXNlZCwgaXMgaXQg
-YWxzbyBuZWNlc3NhcnkgdG8gcmVsZWFzZSByZXNvdXJjZXMgd2hlbiBlbnRlcmluZyAKPiA+IHRo
-ZSBMMi9MMyBzdGF0ZT8KPiA+IAo+IAo+IEl0IGlzIHVwdG8gdGhlIGNvbnRyb2xsZXIgZHJpdmVy
-IHRvIGRlY2lkZS4gT25jZSB0aGUgbGluayBlbnRlcnMgTDIvTDMsIHRoZQo+IGRldmljZSB3aWxs
-IGJlIGluIEQzQ29sZCBzdGF0ZS4gU28gdGhlIGNvbnRyb2xsZXIgY2FuIGp1c3QgZGlzYWJsZSBh
-bGwgUENJZQo+IHJlc291cmNlcyB0byBzYXZlIHBvd2VyLgo+IAo+IEJ1dCBpdCBpcyBub3QgcG9z
-c2libGUgdG8gdHJhbnNpdGlvbiBhbGwgUENJZSBkZXZpY2VzIHRvIEQzQ29sZCBkdXJpbmcgc3Vz
-cGVuZCwKPiBmb3IgaW5zdGFuY2UgTlZNZS4gSSdtIGhvcGluZyB0byBmaXggaXQgdG9vIGluIHRo
-ZSBjb21pbmcgZGF5cy4KPiAKSGksIE1hbml2YW5uYW4KClRoYW5rIHlvdSBmb3IgeW91ciBleHBs
-YW5hdGlvbi4KCkJ5IHRoZSB3YXksIGluIHY1IHBhdGNoLCBJIHJlbW92ZWQgdGhlIGR3X3BjaWVf
-bGlua191cCBqdWRnbWVudCwgYW5kIGN1cnJlbnRseQpyZXNvdXJjZXMgYXJlIGRpcmVjdGx5IHJl
-bGVhc2VkLgpBdCBwcmVzZW50LCBpIGhhdmUgY29tcGxldGVkIHRoZSBwY2llIHY1IHBhdGNoIHdp
-dGhvdXQgYWRkaW5nIHRoZSAKcGNpX3Jvb3RfcG9ydHNfaGF2ZV9kZXZpY2UgZnVuY3Rpb24uIERv
-IEkgbmVlZCB0byB3YWl0IGZvciB5b3UgdG8gbWVyZ2UgaXQgCmJlZm9yZSBzZW5kaW5nIHRoZSBW
-NSBwYXRjaD8KCktpbmQgcmVnYXJkcywKU2VuY2h1YW4gWmhhbmc=
+Hi Miquel,
+
+Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B411=E6=9C=
+=886=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:10=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> Hello,
+>
+> On 06/11/2025 at 13:49:40 +08, Cheng Ming Lin <linchengming884@gmail.com>=
+ wrote:
+>
+> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> >
+> > This patch prevents unnecessary programming of bits in ec_hdr and
+> > vid_hdr that are not used or read during normal UBI operation. These
+> > unused bits are typcially already set to 1 in erased flash and do not
+> > need to be explicitly programmed to 0 if they are not used.
+> >
+> > Programming such unused areas offers no functional benefit and may
+> > result in unnecessary flash wear, reducing the overall lifetime of the
+> > device. By skipping these writes, we preserve the flash state as much a=
+s
+> > possible and minimize wear caused by redundant operations.
+> >
+> > This change ensures that only necessary fields are written when prepari=
+ng
+> > UBI headers, improving flash efficiency without affecting functionality=
+.
+> >
+> > Additionally, the Kioxia TC58NVG1S3HTA00 datasheet (page 63) also notes
+> > that continuous program/erase cycling with a high percentage of '0' bit=
+s
+> > in the data pattern can accelerate block endurance degradation.
+> > This further supports avoiding large 0x00 patterns.
+> >
+> > Link: https://europe.kioxia.com/content/dam/kioxia/newidr/productinfo/d=
+atasheet/201910/DST_TC58NVG1S3HTA00-TDE_EN_31442.pdf
+> >
+> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+>
+> Thanks for this very clear and detailed commit log, as well as for the
+> well written cover letter. I am personally fine with the overall idea of
+> clearing these unused bits to 1. Yet, I have one concern regarding the
+> implementation, please see below.
+>
+> > ---
+> >  drivers/mtd/ubi/io.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/mtd/ubi/io.c b/drivers/mtd/ubi/io.c
+> > index a4999bce4..c21242a14 100644
+> > --- a/drivers/mtd/ubi/io.c
+> > +++ b/drivers/mtd/ubi/io.c
+> > @@ -868,6 +868,8 @@ int ubi_io_write_ec_hdr(struct ubi_device *ubi, int=
+ pnum,
+> >               return -EROFS;
+> >       }
+> >
+> > +     memset((char *)ec_hdr + UBI_EC_HDR_SIZE, 0xFF, ubi->ec_hdr_alsize=
+ - UBI_EC_HDR_SIZE);
+> > +
+> >       err =3D ubi_io_write(ubi, ec_hdr, pnum, 0, ubi->ec_hdr_alsize);
+> >       return err;
+> >  }
+> > @@ -1150,6 +1152,11 @@ int ubi_io_write_vid_hdr(struct ubi_device *ubi,=
+ int pnum,
+> >               return -EROFS;
+> >       }
+> >
+> > +     if (ubi->vid_hdr_shift)
+> > +             memset((char *)p, 0xFF, ubi->vid_hdr_alsize - UBI_VID_HDR=
+_SIZE);
+> > +     else
+> > +             memset((char *)p + UBI_VID_HDR_SIZE, 0xFF, ubi->vid_hdr_a=
+lsize - UBI_VID_HDR_SIZE);
+>
+> Here I am reaching the limits of my UBI knowledge, so I would prefer
+> Richard to (in)validate what I am saying, but AFAIU, the VID header can
+> be literally anywhere in the page, not just at the start or end of a
+> subpage, so in the vid_hdr_shift I would expect some extra maths to
+> happen, no?
+
+I understand your point now. If the VID header is not guaranteed to be
+at the start or end of a subpage, then yes, my current logic needs to be
+reworked to cover that case.
+
+>
+> Here is an excerpt of the main comment at the top of the io.c file:
+>
+>     * As it was noted above, the VID header may start at a non-aligned
+>     * offset. For example, in case of a 2KiB page NAND flash with a 512
+>     * bytes sub-page, the VID header may reside at offset 1984 which is
+>     * the last 64 bytes of the * last sub-page (EC header is always at
+>     * offset zero).
+>
+> I am not sure this is super common today though.
+>
+> Thanks,
+> Miqu=C3=A8l
+
+Thanks,
+Cheng Ming Lin
 
