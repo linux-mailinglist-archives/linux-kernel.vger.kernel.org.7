@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-890156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B7CC3F59E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:12:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A621C3F4DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8783B4352
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25597188C396
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0487302147;
-	Fri,  7 Nov 2025 10:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0AA2E88A7;
+	Fri,  7 Nov 2025 10:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="PwZDXpXG"
-Received: from forward203b.mail.yandex.net (forward203b.mail.yandex.net [178.154.239.154])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SIokT5fj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455EC30274F;
-	Fri,  7 Nov 2025 10:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124A425CC74
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762510239; cv=none; b=dgdchcpEtDPHSclCzmRLnpuuEngDj1g2gYEHJPrvj1Yo0ChagXR9hYElJs07K9arF63svZX8VWp1euBpck566xmsfB6un/nhsfeq1PB4QOSh6ShdgQmv8YsZtDhcaE+ueBSLxRWN0u8PDxWwXIy1lqiHExTLncCVuS1ueqPhKpA=
+	t=1762509849; cv=none; b=EJ6zrdybkwquDoSMDbToyZNRDzYHXGM6hg8isImTxX4gxIvcWGvTLc32IOwGi3irbj4nY/z75a5KIbdEosHzNYbqKo62EJ5F6F/pgMhjzUDc1dkA0qGelDozU5anpd7S3uapgTGxfYDAyLDgRepih+Gd3XJ6Dh5sFYj2kNPa7O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762510239; c=relaxed/simple;
-	bh=jFKc+wX+ajbmLFnPFexfoBdwC+jpUnLEIVN4MhArpzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f15Tjlt3GTvqlprB0ZkMahoilZOwNgyJjy8VCa1OhDmOxI0U6FDDDqu8GLXivlIYg5rki7L63cgPJsci+pseUBzF696F5WZ1Eef65P4ZC0EyoYU+lIlcKnCAwM4EpRTeJSMcEZqF+yYLmeJmu6hsLIdIiOHzGeKiVtZTlCLDhT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=PwZDXpXG; arc=none smtp.client-ip=178.154.239.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
-	by forward203b.mail.yandex.net (Yandex) with ESMTPS id 3DF428290F;
-	Fri, 07 Nov 2025 13:03:26 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-67.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-67.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:143b:0:640:90e9:0])
-	by forward103b.mail.yandex.net (Yandex) with ESMTPS id C262CC007D;
-	Fri, 07 Nov 2025 13:03:17 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-67.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id F3kLtoNLMGk0-vm03Z50E;
-	Fri, 07 Nov 2025 13:03:17 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
-	t=1762509797; bh=nHlNLT0QT67+z+JXyBHWIaWjzREiUAJawLJmZUp+LLU=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=PwZDXpXG6ULisdhVt9HRXFLjm+XGD3piTSYHHZUEMjnSnl+DKGnAnNXZM4uQOwHCF
-	 XlJRAEiTImJALNeoZsC7T83z1bKcnSZi+GYI4s3QkU+RaG3MVT6hvTiGoyonwqEhQA
-	 cGwr3i/RXnFQ7mTV5w+v11lJrKsx9YnoyzqRljfA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-67.sas.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
-From: Alexei Safin <a.safin@rosa.ru>
-To: Alexei Starovoitov <ast@kernel.org>
-Cc: Alexei Safin <a.safin@rosa.ru>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-patches@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] bpf: hashtab: fix 32-bit overflow in memory usage calculation
-Date: Fri,  7 Nov 2025 13:03:05 +0300
-Message-ID: <20251107100310.61478-1-a.safin@rosa.ru>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1762509849; c=relaxed/simple;
+	bh=s5d2AEg4IeHY1YjK9lRLVW8gfHm84sMMYvSA5Lcy/3M=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ue+Q/d+f6XqdkrA4JZR485EESqI5LmK/ZL4s5XdB9j+xN5tipbHYjyAoyhARjYRwGDqQioVWxkeG6ALal/JKwbfavkX4f0TiyE0Z9Xtk6lYC7yUkG/6ls9uzZy9hzXBWVvc0wwhpIt/mpInzykpuTW/2K1sQhiyZc02UzxNV1xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SIokT5fj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762509845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rur5orniOJnaYrB7Wxj6MNeN921rhBfpS5Vj838TDC0=;
+	b=SIokT5fjrXrHAPMZIWYHezY8l1whGjTKsCJYuArWKwQmseKIvVuiSsObKhnzKUCv/5ZhTw
+	e2PUYuDiqKfCpdmxHISgiEyN71fdZSBUzw/QGqoLSzYEbJepZKf0SIj+G23s4ZyPK2HKwE
+	GFwC7q1KqSDAWr8cTCzkEScyzrfUd70=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-533-lBhFBaTQN2qGhTVqgG5T7g-1; Fri,
+ 07 Nov 2025 05:03:58 -0500
+X-MC-Unique: lBhFBaTQN2qGhTVqgG5T7g-1
+X-Mimecast-MFC-AGG-ID: lBhFBaTQN2qGhTVqgG5T7g_1762509836
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28EA7193E88C;
+	Fri,  7 Nov 2025 10:03:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 24C83180094C;
+	Fri,  7 Nov 2025 10:03:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <53e81761-47e1-400e-933d-0a53018c9cab@linux.ibm.com>
+References: <53e81761-47e1-400e-933d-0a53018c9cab@linux.ibm.com> <501216.1749826470@warthog.procyon.org.uk> <CALrw=nGkM9V12y7dB8y84UHKnroregUwiLBrtn5Xyf3k4pREsg@mail.gmail.com> <de070353cc7ef2cd6ad68f899f3244917030c39b.camel@redhat.com> <3081793dc1d846dccef07984520fc544f709ca84.camel@HansenPartnership.com> <7ad6d5f61d6cd602241966476252599800c6a304.camel@redhat.com> <69775877d04b8ee9f072adfd2c595187997e59fb.camel@HansenPartnership.com> <3d650cc9ff07462e5c55cc3d9c0da72a3f2c5df2.camel@redhat.com>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: dhowells@redhat.com, Simo Sorce <simo@redhat.com>,
+    James Bottomley <James.Bottomley@HansenPartnership.com>,
+    Ignat Korchagin <ignat@cloudflare.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Stephan Mueller <smueller@chronox.de>, torvalds@linux-foundation.org,
+    Paul Moore <paul@paul-moore.com>, Lukas Wunner <lukas@wunner.de>,
+    Clemens Lang <cllang@redhat.com>,
+    David Bohannon <dbohanno@redhat.com>,
+    Roberto Sassu <roberto.sassu@huawei.com>, keyrings@vger.kernel.org,
+    linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: Module signing and post-quantum crypto public key algorithms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <61527.1762509829.1@warthog.procyon.org.uk>
+Date: Fri, 07 Nov 2025 10:03:49 +0000
+Message-ID: <61528.1762509829@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The intermediate product value_size * num_possible_cpus() is evaluated
-in 32-bit arithmetic and only then promoted to 64 bits. On systems with
-large value_size and many possible CPUs this can overflow and lead to
-an underestimated memory usage.
+Stefan Berger <stefanb@linux.ibm.com> wrote:
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> On 6/16/25 1:27 PM, Simo Sorce wrote:
+> > Of course we can decide to hedge *all bets* and move to a composed
+> > signature (both a classic and a PQ one), in which case I would suggest
+> > looking into signatures that use ML-DSA-87 + Ed448 or ML-DSA-87 + P-521
+> > ,ideally disjoint, with a kernel policy that can decide which (or both)
+> > needs to be valid/checked so that the policy can be changed quickly via
+> > configuration if any of the signature is broken.
+> 
+> FYI: based on this implementation of ML-DSA-44/65/87
+> 
+> https://github.com/IBM/mlca/tree/main/qsc/crystals
 
-Fixes: 304849a27b34 ("bpf: hashtab memory usage")
-Cc: stable@vger.kernel.org
-Suggested-by: Yafang Shao <laoar.shao@gmail.com>
-Signed-off-by: Alexei Safin <a.safin@rosa.ru>
----
-v2: Promote value_size to u64 at declaration to avoid 32-bit overflow
-in all arithmetic using this variable (suggested by Yafang Shao)
- kernel/bpf/hashtab.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The problem with that is that the Apache-2 licence is incompatible with GPLv2.
+Now, it might be possible to persuade IBM to dual-license their code.
 
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index 570e2f723144..1f0add26ba3f 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -2252,7 +2252,7 @@ static long bpf_for_each_hash_elem(struct bpf_map *map, bpf_callback_t callback_
- static u64 htab_map_mem_usage(const struct bpf_map *map)
- {
- 	struct bpf_htab *htab = container_of(map, struct bpf_htab, map);
--	u32 value_size = round_up(htab->map.value_size, 8);
-+	u64 value_size = round_up(htab->map.value_size, 8);
- 	bool prealloc = htab_is_prealloc(htab);
- 	bool percpu = htab_is_percpu(htab);
- 	bool lru = htab_is_lru(htab);
--- 
-2.50.1 (Apple Git-155)
+David
 
 
