@@ -1,171 +1,117 @@
-Return-Path: <linux-kernel+bounces-889932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE58C3EDEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FA4C3EDFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42BEF3A5AB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32F463A7766
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4135B30F819;
-	Fri,  7 Nov 2025 08:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1471B30F7EE;
+	Fri,  7 Nov 2025 08:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUkT2Yu5"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="PT+4v/lr"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD0E308F14
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1605926F29F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762502708; cv=none; b=owsDd0sx90aE6Gm/T+fNN63iPFAkcAh65gnTBM6NWII3Yx1hl4RrtKpjH/kndohYGXpoMaQvxjzMGy+4WwxeyRf0NiieyofcShxgzePYh6SjwDKr+8uuH8bkLPPFrbhl0TIaMgk2Rk6Xv8Seen6f2JBTtc1+MIydZx0hHmjR68c=
+	t=1762502737; cv=none; b=ftphwCMy5xdpfgLw7vRjuvtJ9CjMD0D8DF75tXXLc/Sk0LISwizDYM2ZAJMhtiKJOp6zhRwxNXnWwgu87Ovb3OaEd1n9cjOzPKceIXiWuq7lyCeIvYFxQuJ0W5M3oBp2eRM5GnXOYXgnGZnDHblV2GWXZNs8P+hiA6RM87+D8ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762502708; c=relaxed/simple;
-	bh=BxMoqcEL4C9okv3x3H9LfHF5qpmIrl6wzAvjResVosA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ThalbQLGpLX7F9HN9TrqoaaJAZ4oSqC+7NZmQp44SFcZ+KeAJvKvVaz6VcklyP3SG9jRtXwXEdvPeKLIoUaJ+dz/IWJqFx4yHVwAXYVkuwP3LwM18bCJdL+C2Ceu9ksRdMOtHka88IEGL80ipe+SoKAANCRBJYvO3vrXzCzMWXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUkT2Yu5; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-297d4ac44fbso375795ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 00:05:04 -0800 (PST)
+	s=arc-20240116; t=1762502737; c=relaxed/simple;
+	bh=QzOZ0+yE/RVPWJrN2vx9s751IVv37wWeCx0D+yyShHs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=o8TdJCpwx0rIHSxCCQ6ETPiYbE+pZsK/4SAb5UwNRrnEV22xF7hi0OWZxbD4o1r2IHLfW9nEQCE61lRD2k2C03Tvj+N1484fMoJ7/saidY5xKW5IaFk794eC8kvaNcjotqMDQW9DVjNicWXH9ai+88BkhzFfEAHIanR3bhzyWEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=PT+4v/lr; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762502704; x=1763107504; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9HK17ZLRWpug71WMmqP9ssM6jX/oQgX9XQzvvASGt94=;
-        b=QUkT2Yu570pW0w0fLBzHQX03ZYtYKvSpNeziHfbtN7bdYjl2MvID7tdY7UoqFIyWSl
-         saqjmKPH4g5EMwf5Huo7wRholuCtHM6EnoRdwXROirZ+iCscm7aHiedOsZ5uWKgS9a54
-         3EOk6Yn30gw+W1pTcrBb3MACX1Qil43oS76ji/Jybes/Xms2virLMyu39XmmAoBZn2sa
-         8dwrtEIBvtSmia3H1ue+l19e9AAxans3ivvqQYVoNgUthKreu9PzbNAAxcrtXhoYZK9N
-         1Rubxix92ur6yxwMMgXUW7h2YE89z06s/yGac2lcVXeCZ9emutjHMrOX9Oh0P1/ic7LW
-         5Jpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762502704; x=1763107504;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9HK17ZLRWpug71WMmqP9ssM6jX/oQgX9XQzvvASGt94=;
-        b=bhZPTQ8PMVFrN52nerTIqNnD8aLQYffa0tYhjKi+G41GHk8KKBj1PBinqVNMILwfv9
-         wVzPEoNqf6HRL2rot7Hlih6FRByJ7BnXy7kprAoHiuZt3W4jym0aIxC0umc70pruJpl7
-         ZI0DWJPnNAYvuLoN6FusgCX+BePKEo45BCi+pWNamkAutpWCb1cXkzAxvsS39sZYrl1x
-         1KRlQOf/5IPFCY6brDQgaQiqtYHUF99s/2Fcd/iQ/x/pRGcXScsFGSP26iRAHw/y8y/q
-         h0JijH292EwGH7XwfOZGbCEBxVxpGlGijHQzgsdUk5P4FtKgflKIZQyhY/OgBWB9cEUc
-         f+hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4NuRn95ceBKBTQrLpjji5eXc6rfTeWXFQMYIIV3BkWoKToEVJrCgQjFM7OllnydmIrvCGHCIxrJHxlMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHNgiflxh8yJuQu1kCBM91NWT5cBK3crnuYmtJHC+gtyAY2AOg
-	pLFMP15bgs6DIuBY+PnUEq5xJyuRu2G2cel3fUpiPA9H/neVd8VdeBMA
-X-Gm-Gg: ASbGnctBE1fIPE8fhR0JP8+Ef70gD2cpdACcvOqmx/zzxmt3fbITukxvkTW0cYW6M5Z
-	QH4yF6Tp658BRrE6XA83tpkSi3lqGMBS558dZd6Iq34s3QSJdoh0Eu0fUdQLTPTKGHJNcc2j/4u
-	rABcu21oRI07/psfY7m94VnEq9HmcNSRqXzwjEs6bJGhPeV3XvNOV/72kiLxJA7rtDeKXib7EkV
-	jPPCis0d/NGkNvqA/AClZ8uqw8ghLAc1+qTt+2pBOtQ00j1aHILzZyS3uT8yUt65TPURLUPIob6
-	WsZm8j5EYJ6PzYLxZtFTSdSAwcxmypdEV+d2JGfzIBjgbzCJ86Ye21Dp3JiLOdVE8U4TWufIn5m
-	CZmZfpNZprFzaV1l9w0kbhwz5L5Tg8TyE7QloTbXjHyphsfX+JUGmXxY2racrXkmyz35IAL4czz
-	etgNd+vgPHGnY=
-X-Google-Smtp-Source: AGHT+IGnqGapeUkxECpNH1g+yh9HToZketvAvIPxW1NFpzGon/GJ24u3Eo8L8WjOz3yRauEMYbOiWg==
-X-Received: by 2002:a17:902:f684:b0:295:6511:c0a3 with SMTP id d9443c01a7336-297c96319c1mr10565015ad.22.1762502704224;
-        Fri, 07 Nov 2025 00:05:04 -0800 (PST)
-Received: from aheev.home ([2401:4900:88f4:f6c4:d67f:d090:f2ee:1569])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc76c0e8sm2000179b3a.52.2025.11.07.00.05.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 00:05:03 -0800 (PST)
-From: Ally Heev <allyheev@gmail.com>
-Date: Fri, 07 Nov 2025 13:34:44 +0530
-Subject: [PATCH v2] net: wireless: fix uninitialized pointers with free
- attribute
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=h62J5s12u1Z3LDBp06HlNWyDoCyt78LQdWdmaRcR/Bs=;
+  b=PT+4v/lrrjmXw2vsFEn8w+x4d13E1RBqDc6hQRT0w3h59Q/m+FKLChU6
+   gMG8xm9vEhbarzAhgSWkf8VjhZOGaobJAzPhJsiDi7nSK80s8GbvAINjO
+   OdrV282s4pKU3SEWnLZ1B7Fg/LOvZ3+rkeauxoEojYEEiIjkiODJY14Hf
+   Y=;
+X-CSE-ConnectionGUID: 7EDbXYedSSenYFVhZ0PRJw==
+X-CSE-MsgGUID: iNz7rgcIRZ6sKqcIqLMiJw==
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.19,286,1754949600"; 
+   d="scan'208";a="248092612"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:05:24 +0100
+Date: Fri, 7 Nov 2025 09:05:24 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Songwei Chai <quic_songchai@quicinc.com>
+cc: Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr, 
+    linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com, 
+    quic_jinlmao@quicinc.com
+Subject: Re: [cocci] [PATCH v2] scripts: coccicheck: filter *.cocci files by
+ MODE
+In-Reply-To: <20250606060936.2756980-1-quic_songchai@quicinc.com>
+Message-ID: <f4376c72-b255-4cc-959a-8c947addb4ca@inria.fr>
+References: <20250606060936.2756980-1-quic_songchai@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251107-aheev-uninitialized-free-attr-wireless-v2-1-674fc3e5c78e@gmail.com>
-X-B4-Tracking: v=1; b=H4sIABuoDWkC/5XNTQ6CMBCG4auQrh1DG4roynsYFkMZYBIopq31h
- /TuVm7g8v0W37MJT47Ji0uxCUeRPa82hzoUwkxoRwLucwtVKi1lqQEnoggPy5YD48wf6mFwRIA
- hOHiyo5m8h66nU10NHTXSiHx2dzTwa4dube6JfVjde3ej/K1/E1GChNo0usQKz1rhdVyQ56NZF
- 9GmlL57COrx3AAAAA==
-X-Change-ID: 20251105-aheev-uninitialized-free-attr-wireless-bde764fbe81c
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, 
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2797; i=allyheev@gmail.com;
- h=from:subject:message-id; bh=BxMoqcEL4C9okv3x3H9LfHF5qpmIrl6wzAvjResVosA=;
- b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDJ5V2jLv+D37PSqzJZ813zM4vy/e+VzlvAovhMy+dPld
- vsNx+yGjlIWBjEuBlkxRRZGUSk/vU1SE+IOJ32DmcPKBDKEgYtTACYSks/IsPnanduLnF78WjTB
- ZL5uywP15Vvs+u4/k7gcXxhh1+kxUZbhD5f6jQplRT+3o727b5w986bG+kjkuSc8LvkfVPg/KCi
- dYAYA
-X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
- fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
+Content-Type: text/plain; charset=US-ASCII
 
-Uninitialized pointers with `__free` attribute can cause undefined
-behavior as the memory assigned randomly to the pointer is freed
-automatically when the pointer goes out of scope.
 
-It is better to initialize and assign pointers with `__free` attribute
-in one statement to ensure proper scope-based cleanup
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-Signed-off-by: Ally Heev <allyheev@gmail.com>
----
-Changes in v2:
-- fixed style issues
-- ignore v1 of this patch
-- Link to v1: https://lore.kernel.org/r/20251105-aheev-uninitialized-free-attr-wireless-v1-1-6c850a4a952a@gmail.com
----
- drivers/net/wireless/intel/iwlwifi/fw/uefi.c | 2 +-
- drivers/net/wireless/intel/iwlwifi/mld/d3.c  | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+On Fri, 6 Jun 2025, Songwei Chai wrote:
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-index 4ae4d215e633e0d51194d818d479349e7c502201..c31a1187f53a79aeb0837f06250410eec4e7ea6d 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-@@ -818,8 +818,8 @@ int iwl_uefi_get_dsbr(struct iwl_fw_runtime *fwrt, u32 *value)
- 
- int iwl_uefi_get_phy_filters(struct iwl_fw_runtime *fwrt)
- {
--	struct uefi_cnv_wpfc_data *data __free(kfree);
- 	struct iwl_phy_specific_cfg *filters = &fwrt->phy_filters;
-+	struct uefi_cnv_wpfc_data *data __free(kfree) = NULL;
- 
- 	data = iwl_uefi_get_verified_variable(fwrt->trans, IWL_UEFI_WPFC_NAME,
- 					      "WPFC", sizeof(*data), NULL);
-diff --git a/drivers/net/wireless/intel/iwlwifi/mld/d3.c b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
-index 1d4282a21f09e0f90a52dc02c8287ecc0e0fafe1..d3a03940b0a2c6a4b0107266cd2fc11ec9745e47 100644
---- a/drivers/net/wireless/intel/iwlwifi/mld/d3.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
-@@ -996,8 +996,6 @@ static void iwl_mld_mlo_rekey(struct iwl_mld *mld,
- 			      struct iwl_mld_wowlan_status *wowlan_status,
- 			      struct ieee80211_vif *vif)
- {
--	struct iwl_mld_old_mlo_keys *old_keys __free(kfree) = NULL;
--
- 	IWL_DEBUG_WOWLAN(mld, "Num of MLO Keys: %d\n", wowlan_status->num_mlo_keys);
- 
- 	if (!wowlan_status->num_mlo_keys)
-@@ -1785,7 +1783,7 @@ iwl_mld_send_proto_offload(struct iwl_mld *mld,
- 			   struct ieee80211_vif *vif,
- 			   u8 ap_sta_id)
- {
--	struct iwl_proto_offload_cmd_v4 *cmd __free(kfree);
-+	struct iwl_proto_offload_cmd_v4 *cmd __free(kfree) = NULL;
- 	struct iwl_host_cmd hcmd = {
- 		.id = PROT_OFFLOAD_CONFIG_CMD,
- 		.dataflags[0] = IWL_HCMD_DFL_NOCOPY,
+> Enhance the coccicheck script to filter *.cocci files based on the
+> specified MODE (e.g., report, patch). This ensures that only compatible
+> semantic patch files are executed, preventing errors such as:
+>
+>     "virtual rule report not supported"
+>
+> This error occurs when a .cocci file does not define a 'virtual <MODE>'
+> rule, yet is executed in that mode.
+>
+> For example:
+>
+>     make coccicheck M=drivers/hwtracing/coresight/ MODE=report
+>
+> In this case, running "secs_to_jiffies.cocci" would trigger the error
+> because it lacks support for 'report' mode. With this change, such files
+> are skipped automatically, improving robustness and developer
+> experience.
 
----
-base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-change-id: 20251105-aheev-uninitialized-free-attr-wireless-bde764fbe81c
+Pushed to my tree (for-6.19 branch)
 
-Best regards,
--- 
-Ally Heev <allyheev@gmail.com>
-
+>
+> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+> ---
+>  scripts/coccicheck | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/coccicheck b/scripts/coccicheck
+> index 0e6bc5a10320..89d591af5f3e 100755
+> --- a/scripts/coccicheck
+> +++ b/scripts/coccicheck
+> @@ -270,7 +270,11 @@ fi
+>
+>  if [ "$COCCI" = "" ] ; then
+>      for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
+> -	coccinelle $f
+> +        if grep -q "virtual[[:space:]]\+$MODE" "$f"; then
+> +                coccinelle $f
+> +        else
+> +                echo "warning: Skipping $f as it does not match mode '$MODE'"
+> +        fi
+>      done
+>  else
+>      coccinelle $COCCI
+>
+>
 
