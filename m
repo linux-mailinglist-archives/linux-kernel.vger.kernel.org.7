@@ -1,272 +1,140 @@
-Return-Path: <linux-kernel+bounces-890509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF82EC403A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:58:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFE8C40370
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2F644F267E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10EEA1883ABA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F406F30ACF8;
-	Fri,  7 Nov 2025 13:56:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B892F7AC4;
-	Fri,  7 Nov 2025 13:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118EA2F7AC4;
+	Fri,  7 Nov 2025 13:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fTgzuZCN"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38ECD1EB9FA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523789; cv=none; b=I4l0Piaic6gN7GXhtMfx5ZSbuSlcfZ/pTjSTMK4lenOB/PJ9Z446RqYfT8bVAH8IWqDVq1th6i/SqOrzW6XHA4OBiD7ug8h/E/zG1vHlnrnbhTEDd3twxSpCLe83lFEga6Dj5XGbFqDG7dpKw21Q7Pi2yW24mOPu7i0fKuDQfDY=
+	t=1762523803; cv=none; b=TrSpXt+tyYbIsw8G6CQJd2/nyLU2Txk8rCXCSnnUfxsGbVNovv0WfFrmbo/EpCKg9AIudpnyx2ewoaRGzqlkmHW7ua6ZqmF4dVtu0SvQN7GBedwDOursj8ShPZ6MnuN8hhz0PwHjHVWDyvyrpS4QTP6/Vt4ZyEPrlPtIhOwCzTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523789; c=relaxed/simple;
-	bh=Va4qQyTeB2jj6UdT1RZ8AmuEGlHP9zV/bkngcJuvx+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QWWwZlvDpLLsuJ2lsGfjHv1riblFMctRFmTg53qDZ90F7emjrrsGpWM8nR7S2PCq6PUiN1r5wluzI2RHLtoJSkmObXbARhwjGUG3rKgAMRvVNVN6qqHWeQI1X1PGdj+Qn/nvnWTVyYlC7fbf3rKln3k3tsTIyNvEaoh7DwGJ+2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F05461515;
-	Fri,  7 Nov 2025 05:56:18 -0800 (PST)
-Received: from [10.57.86.134] (unknown [10.57.86.134])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 235F03F66E;
-	Fri,  7 Nov 2025 05:56:22 -0800 (PST)
-Message-ID: <6a9c846f-22b6-4d5f-81dc-6cdcd4905952@arm.com>
-Date: Fri, 7 Nov 2025 13:56:20 +0000
+	s=arc-20240116; t=1762523803; c=relaxed/simple;
+	bh=1R/kTr6m6xk+J6ieD0IfKohXS4gczHqVrNFEl5eefzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ef8gNbHmcaLBQ7cITwPX+nxGkynlaS6BJtl7NsKBA99ByyqVkuLr8Jf4ziXLUzRf5R1s927A1OvCINrl45Qp0aVpuLycxJ12tQOYhAIktzioySDrKmwkgsPNWb5SufpA9ntMYGW7sygLBpWx7esQW8/LSGLpDAVZjRShQGtcdLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fTgzuZCN; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b472842981fso99576666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:56:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762523799; x=1763128599; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IcVopb2s8w+16S+g7lLVIkPkqupIqMM9/M7RBxla6g=;
+        b=fTgzuZCNr6b+ZU2qqmqn6UornEbD/eIzYLyOKiLxjAJIvMYySDaoZ8EGFweDtp/IXu
+         MFaErtlds8IWO+/HqEAMo1l77EPce0DRIk07l/o7Psi58ZXj8tUP47ZuH2eo8bY9FcNJ
+         P67lvXmXJpi5MjFqLuXeNsmoprjvJdaTqG2cPhiSHaBYs9pUIwtEkuXcefws2gI/UGcm
+         W3qbqEcd9wtHUlNmSjHDccQKO20BpKRhKqugnF+ze9MIuBlvc75tS1098WqGN89r8Gma
+         P16FAtXH5FAhPe9VWqni3GUl1EtCe4bpOrvyQG8qU3CplS6cyoTp7EY3IiEM575k2UVm
+         BKqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762523799; x=1763128599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4IcVopb2s8w+16S+g7lLVIkPkqupIqMM9/M7RBxla6g=;
+        b=AkV/zgfocpJY756UzfPNK0A05HTVwE80IVuYs9wNi7fYxs0ZhNnB77rqEEUmzQfQoA
+         mT+zStPCg7gBIS8zmmSafF9oyfnZs6cdrsGuXYZI0wLPNM8suWyyUaDVfK3h83qhw7JO
+         8mwwXNNamoCy4z4nS7SrbkSm47uTZ4lHKcbsxbZxEryl9LvW/NuwVZKZ1NC5KApoAhWC
+         ZwfUC8Dh1U3OzBEAIMBJyCpVVLAx7BLsssC2VE2zZakWtRx2vN28phaKyy7tJDzwok/z
+         SyrA8u1slqgNPtqhPuk2yHAw8lMdHoXtnBaZRSJT+S2yuMFdebUiIkxS2Mvn+2RQCjji
+         2amQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyOXpUoZZOWMKVwmId1NkEJX+MOzXyNxk0+nwdoccEMqLkukMWTCGTSqX8Bup3RuUVv1z5NakmGoqiYVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycyXhaFHyAiI7JXNHJ34z8GaoPCq2gQQTF/SYPgyr1ZAIVDIVp
+	nKqW9KxtujsIqt+hQoqitR7XySCa+EdXfU4wr9ZYOeDQJRhxqbviyVUQ/imupofLOzg=
+X-Gm-Gg: ASbGncvCvjtUkVK8pSK3zAQ7iX0pOzgZLH1c7fr3F/WG1F5xio8/sTxGB1ZO0Si9iTa
+	CreYe2kdzcnO3Uk1xAmm0iyAfuR7+4xNGEmHLLqZb1/o9oovsgBfzu1nUGf6k6TeYzZCU/ahH/r
+	PHdDUTacx9hHdjZpg1GR0oPwa+6QhghKpvcnBXZI9zJAYFQDXSAMNxoPr1GhJM8uPoaezeYAJlk
+	BjSuhp/e9bioRXaYR2Qtf52w2T3wtqW91nQbwQQUcXWbKOCObUFGt+mUJcLCJf9rQrsYBUi94S4
+	P79PFhY7ap1GL/LiueezvfrxHzRK76l/QHg3/k/Mf1VhFS1BvAQFft5na7secDoIyH8iaaXi/dX
+	q0EBuISzqmiCm2EBoXBcPrXH0joA4GiwRZFPW9jrQHW70WoLwBselYSwLPzinIlw0ZEHo7Iy1Zl
+	IVoOs2M4X18XUQtQ==
+X-Google-Smtp-Source: AGHT+IH2mdtpLAgFnDN7/ewxqyAABSf6hLPb4+RazOfaC2hkb+/b+HZf0k+E1J/zd6r3nLrolhosug==
+X-Received: by 2002:a17:907:97c7:b0:b72:1b8b:cc3 with SMTP id a640c23a62f3a-b72c0abc36fmr333150866b.33.1762523799482;
+        Fri, 07 Nov 2025 05:56:39 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbca75bsm255953766b.14.2025.11.07.05.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:56:39 -0800 (PST)
+Date: Fri, 7 Nov 2025 14:56:37 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mike Galbraith <efault@gmx.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v2 1/1] printk: nbcon: Allow unsafe write_atomic()
+ for panic
+Message-ID: <aQ36lc7bq2J5X3zd@pathway.suse.cz>
+References: <20251027161212.334219-1-john.ogness@linutronix.de>
+ <20251027161212.334219-2-john.ogness@linutronix.de>
+ <aQN-NeWzlxtWDLXF@pathway.suse.cz>
+ <87346z5u1l.fsf@jogness.linutronix.de>
+ <ofk6hbiz4wjux6k4zdlsfglvxeszlxl4at232wcbvlovwjix4i@7e6wfdsf66pj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/12] mm: introduce CONFIG_ARCH_HAS_LAZY_MMU_MODE
-Content-Language: en-GB
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-6-kevin.brodsky@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20251029100909.3381140-6-kevin.brodsky@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ofk6hbiz4wjux6k4zdlsfglvxeszlxl4at232wcbvlovwjix4i@7e6wfdsf66pj>
 
-On 29/10/2025 10:09, Kevin Brodsky wrote:
-> Architectures currently opt in for implementing lazy_mmu helpers by
-> defining __HAVE_ARCH_ENTER_LAZY_MMU_MODE.
+On Tue 2025-11-04 01:56:07, Breno Leitao wrote:
+> Hello John,
 > 
-> In preparation for introducing a generic lazy_mmu layer that will
-> require storage in task_struct, let's switch to a cleaner approach:
-> instead of defining a macro, select a CONFIG option.
+> On Fri, Oct 31, 2025 at 10:02:06AM +0106, John Ogness wrote:
+> > > I am not sure how to move forward. IMHO, the original plan was to push
+> > > this patch together with the other netconsole-related changes. In this
+> > > case, the conflicts will need to be solved when merging pull requests
+> > > from netconsole and printk trees. Well, the conflicts are trivial.
+> > >
+> > > Or I could push this patch via the printk tree and queue it for 6.19.
+> > > But this might be too late for netconsole.
+> > 
+> > @Breno: This new feature only exists for netconsole at the moment, so I
+> > am fine with it going through the netconsole tree. But we need to decide
+> > this soon because there are a lot of printk-changes queued for 6.19 that
+> > conflict with this patch and we should get those sorted out sooner
+> > rather than later. (Note that the patch in its current form will also
+> > conflict with the netconsole tree, so regardless of our decision I need
+> > to submit a new version.)
 > 
-> This patch introduces CONFIG_ARCH_HAS_LAZY_MMU_MODE and has each
-> arch select it when it implements lazy_mmu helpers.
-> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is removed and <linux/pgtable.h>
-> relies on the new CONFIG instead.
+> I would prefer you do it through the printk tree for 6.19 and I use it
+> in the next releae (6.20).
+
+OK, I have just committed the patch into printk/linux.git,
+branch rework/write_atomic-unsafe. It is intended for 6.19 merge window.
+
+
+> I do NOT have plans for integrating the port of netcon to nbcon
+> in 6.19, given I have other issues to solve first (described in [1] for
+> curious souls), and I am still a bit stuck with [2]. Given all of these
+> patch conflict, these patches are being a bit serial at this time.
 > 
-> On x86, lazy_mmu helpers are only implemented if PARAVIRT_XXL is
-> selected. This creates some complications in arch/x86/boot/, because
-> a few files manually undefine PARAVIRT* options. As a result
-> <asm/paravirt.h> does not define the lazy_mmu helpers, but this
-> breaks the build as <linux/pgtable.h> only defines them if
-> !CONFIG_ARCH_HAS_LAZY_MMU_MODE. There does not seem to be a clean
-> way out of this - let's just undefine that new CONFIG too.
-> 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> ---
->  arch/arm64/Kconfig                                 | 1 +
->  arch/arm64/include/asm/pgtable.h                   | 1 -
->  arch/powerpc/include/asm/book3s/64/tlbflush-hash.h | 2 --
->  arch/powerpc/platforms/Kconfig.cputype             | 1 +
->  arch/sparc/Kconfig                                 | 1 +
->  arch/sparc/include/asm/tlbflush_64.h               | 2 --
->  arch/x86/Kconfig                                   | 1 +
->  arch/x86/boot/compressed/misc.h                    | 1 +
->  arch/x86/boot/startup/sme.c                        | 1 +
->  arch/x86/include/asm/paravirt.h                    | 1 -
->  include/linux/pgtable.h                            | 2 +-
->  mm/Kconfig                                         | 3 +++
->  12 files changed, 10 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 6663ffd23f25..e6bf5c7311b5 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -122,6 +122,7 @@ config ARM64
->  	select ARCH_WANTS_NO_INSTR
->  	select ARCH_WANTS_THP_SWAP if ARM64_4K_PAGES
->  	select ARCH_HAS_UBSAN
-> +	select ARCH_HAS_LAZY_MMU_MODE
+> Link: https://lore.kernel.org/all/swdpckuwwlv3uiessmtnf2jwlx3jusw6u7fpk5iggqo4t2vdws@7rpjso4gr7qp/ [1]
+> Link: https://lore.kernel.org/all/20251103-fix_netpoll_aa-v4-1-4cfecdf6da7c@debian.org/ [2]
 
-nit: This list is mostly in alphabetical order. Further up the list there are a
-lot of ARCH_HAS_* entries. Perhaps move it to the correct position in that lot?
-Then ARCH_HAS_UBSAN stays out of order on its own.
+Good to know.
 
-Otherwise, all looks reasonable to me:
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
->  	select ARM_AMBA
->  	select ARM_ARCH_TIMER
->  	select ARM_GIC
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 0944e296dd4a..54f8d6bb6f22 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -80,7 +80,6 @@ static inline void queue_pte_barriers(void)
->  	}
->  }
->  
-> -#define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
->  static inline void arch_enter_lazy_mmu_mode(void)
->  {
->  	/*
-> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
-> index 7704dbe8e88d..623a8a8b2d0e 100644
-> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
-> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
-> @@ -24,8 +24,6 @@ DECLARE_PER_CPU(struct ppc64_tlb_batch, ppc64_tlb_batch);
->  
->  extern void __flush_tlb_pending(struct ppc64_tlb_batch *batch);
->  
-> -#define __HAVE_ARCH_ENTER_LAZY_MMU_MODE
-> -
->  static inline void arch_enter_lazy_mmu_mode(void)
->  {
->  	struct ppc64_tlb_batch *batch;
-> diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-> index 7b527d18aa5e..2942d57cf59c 100644
-> --- a/arch/powerpc/platforms/Kconfig.cputype
-> +++ b/arch/powerpc/platforms/Kconfig.cputype
-> @@ -93,6 +93,7 @@ config PPC_BOOK3S_64
->  	select IRQ_WORK
->  	select PPC_64S_HASH_MMU if !PPC_RADIX_MMU
->  	select KASAN_VMALLOC if KASAN
-> +	select ARCH_HAS_LAZY_MMU_MODE
->  
->  config PPC_BOOK3E_64
->  	bool "Embedded processors"
-> diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-> index a630d373e645..2bad14744ca4 100644
-> --- a/arch/sparc/Kconfig
-> +++ b/arch/sparc/Kconfig
-> @@ -112,6 +112,7 @@ config SPARC64
->  	select NEED_PER_CPU_PAGE_FIRST_CHUNK
->  	select ARCH_SUPPORTS_SCHED_SMT if SMP
->  	select ARCH_SUPPORTS_SCHED_MC  if SMP
-> +	select ARCH_HAS_LAZY_MMU_MODE
->  
->  config ARCH_PROC_KCORE_TEXT
->  	def_bool y
-> diff --git a/arch/sparc/include/asm/tlbflush_64.h b/arch/sparc/include/asm/tlbflush_64.h
-> index 925bb5d7a4e1..4e1036728e2f 100644
-> --- a/arch/sparc/include/asm/tlbflush_64.h
-> +++ b/arch/sparc/include/asm/tlbflush_64.h
-> @@ -39,8 +39,6 @@ static inline void flush_tlb_range(struct vm_area_struct *vma,
->  
->  void flush_tlb_kernel_range(unsigned long start, unsigned long end);
->  
-> -#define __HAVE_ARCH_ENTER_LAZY_MMU_MODE
-> -
->  void flush_tlb_pending(void);
->  void arch_enter_lazy_mmu_mode(void);
->  void arch_flush_lazy_mmu_mode(void);
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index fa3b616af03a..ef4332d720ab 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -804,6 +804,7 @@ config PARAVIRT
->  config PARAVIRT_XXL
->  	bool
->  	depends on X86_64
-> +	select ARCH_HAS_LAZY_MMU_MODE
->  
->  config PARAVIRT_DEBUG
->  	bool "paravirt-ops debugging"
-> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-> index db1048621ea2..cdd7f692d9ee 100644
-> --- a/arch/x86/boot/compressed/misc.h
-> +++ b/arch/x86/boot/compressed/misc.h
-> @@ -11,6 +11,7 @@
->  #undef CONFIG_PARAVIRT
->  #undef CONFIG_PARAVIRT_XXL
->  #undef CONFIG_PARAVIRT_SPINLOCKS
-> +#undef CONFIG_ARCH_HAS_LAZY_MMU_MODE
->  #undef CONFIG_KASAN
->  #undef CONFIG_KASAN_GENERIC
->  
-> diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
-> index e7ea65f3f1d6..b76a7c95dfe1 100644
-> --- a/arch/x86/boot/startup/sme.c
-> +++ b/arch/x86/boot/startup/sme.c
-> @@ -24,6 +24,7 @@
->  #undef CONFIG_PARAVIRT
->  #undef CONFIG_PARAVIRT_XXL
->  #undef CONFIG_PARAVIRT_SPINLOCKS
-> +#undef CONFIG_ARCH_HAS_LAZY_MMU_MODE
->  
->  /*
->   * This code runs before CPU feature bits are set. By default, the
-> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-> index b5e59a7ba0d0..13f9cd31c8f8 100644
-> --- a/arch/x86/include/asm/paravirt.h
-> +++ b/arch/x86/include/asm/paravirt.h
-> @@ -526,7 +526,6 @@ static inline void arch_end_context_switch(struct task_struct *next)
->  	PVOP_VCALL1(cpu.end_context_switch, next);
->  }
->  
-> -#define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
->  static inline void arch_enter_lazy_mmu_mode(void)
->  {
->  	PVOP_VCALL0(mmu.lazy_mode.enter);
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 32e8457ad535..9894366e768b 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -231,7 +231,7 @@ static inline int pmd_dirty(pmd_t pmd)
->   * held, but for kernel PTE updates, no lock is held). Nesting is not permitted
->   * and the mode cannot be used in interrupt context.
->   */
-> -#ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
-> +#ifndef CONFIG_ARCH_HAS_LAZY_MMU_MODE
->  static inline void arch_enter_lazy_mmu_mode(void) {}
->  static inline void arch_leave_lazy_mmu_mode(void) {}
->  static inline void arch_flush_lazy_mmu_mode(void) {}
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 0e26f4fc8717..5480c9a1bfb2 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1372,6 +1372,9 @@ config PT_RECLAIM
->  config FIND_NORMAL_PAGE
->  	def_bool n
->  
-> +config ARCH_HAS_LAZY_MMU_MODE
-> +	bool
-> +
->  source "mm/damon/Kconfig"
->  
->  endmenu
-
+Best Regards,
+Petr
 
