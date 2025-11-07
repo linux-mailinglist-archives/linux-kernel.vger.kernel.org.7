@@ -1,304 +1,324 @@
-Return-Path: <linux-kernel+bounces-890123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D081C3F45E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:54:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CCFC3F467
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6603C188460C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:54:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E54C4E9004
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FF72F6585;
-	Fri,  7 Nov 2025 09:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B62F7AD7;
+	Fri,  7 Nov 2025 09:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIF3Oqme"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XGCNyWGu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E195E246327
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509244; cv=none; b=GhAjYH9Yhh6aeBuLjcfMZLJ4l/751ErGX8uBRhgFHPE1GEw0oJnxIbJr0gIBp9k4JqoKswQ7DC9QYymKsfJ5xd7ZnwdWec3Ot0zXkcq40NbHyhS8iAlruASFdWJwaAM4aIe1ffaeBBjLFdTr9nQzSOFcZ04hSXcVKbm3PXXhX1M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509244; c=relaxed/simple;
-	bh=LJJEk10POdcTsPhHa19ZeOv6WD/yQjLxyWkbC1toxzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jquxnQbi6o3S/qM6hR7uJi3MO9CvQpCkSvgQpXPoiGBEAo7vNqqmqkirnrcJk9M2YgGaSN6A1yX9Ww6ll56bGX2nrOczbIqfVtj/EcwPND3eS0T7R/aDHxEXvYgUDrdD5WRwLZ00KzHYDigVLSYE+VZMuK5kqjc0WQjQYNTKS/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jIF3Oqme; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so527454b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:54:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762509242; x=1763114042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PdFrpCMgzVY+qjVrXkUkn7fFQNGJUHKXO+rmqKz+1v0=;
-        b=jIF3Oqmezwi0bkvjLvyK9FinpmRgMKMxmFSe6ydV8ke5dzJSqn2L6Imo796wsLbinB
-         QA9ih+nvrDQmQvvFwO90moH8dSWlrGJVQi/OIZ4vR/+O/3p1CPRxf5tVb1TP+L7CM1m7
-         /L+f3iq6Uc9fz2szO67I5+UZdhU69Q5mVk4mahhmdF9P6NoLq8bXCLPBo3CeJCBNroRV
-         wgV351693syWR1QwuAje3Es9lA7mnFsVwi43UZi7NI+AElE9D225LA/mqmNYycl4mBtD
-         dEDfS0OcxcmFzHGSQMzwmgezdF2K93fSekdOj20St1lLti78IcgNrm5SmcE8vssw1KjC
-         rDtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762509242; x=1763114042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PdFrpCMgzVY+qjVrXkUkn7fFQNGJUHKXO+rmqKz+1v0=;
-        b=aWDdnNtHxbd1Mh+M/uxABh96Rf0MV9tv4kTlnRWO1bznDUM2KDKBtlwiH52yrJoecD
-         x0WVc0Ayke+p58ofHk4i/oomBREcEpNWJAdhJX7VqYFRqxYMMfTXLciQrfcwqVwGt862
-         /k7rVOuxXauvQ+/vRlLg5cC4i8xeJhe4/HndoilLzla/Ek9Nd5yHBF2Cb0fHwryUUxOR
-         d5Ts21CFVl4WPKbag21jbsB3NzpcsLQ8hjeaBDIwklAoK95umUH62F2Z8a5JWGNSyiaC
-         u6suqW3xZfu6t4aP/L8W6FXZ4wN+SuqAeDeYfpIF4sf3GMRPhtJywy3SZzwdrEpsig23
-         YI+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXRJFDw/nwkmE1mbwC1FmKQuw9gx/Unn334h43qzUKUU/mqmO7ttYYRFuCZz/KRXUe8OBK892taybwXAgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdlm4nXRGc3u+VxufIs8ws8L6HTvRSrjt2lID81xP/tWcGCKXt
-	EIAvnqD5VErBphUpQg/wWl4WmZkhuatI/H4g9n1RYjxJ2ox0WotRgGdsXybHqZIC/F7ZnRvjlCI
-	rO2QIrGh5nTI2XLxILH1tcsOPX3YgiLk=
-X-Gm-Gg: ASbGncszCZDfg/5473GLT+JalQBYQ0h7SXPYVAufTzFn6eas+zJz7Ri66CXeW6wT4wl
-	3GPdwxc+TSysGpr9Op22276OtDqkboELlPiHVxUux4i8+xqB9ROITCe7XsOPOwh7B/EUTcXowRX
-	wqI4xFUBx41GStBw76mTV3O06WnzGRvtBOLfQHtOvc1gNlzMX1BvHJ/M+gZAeRAmnRjQEB3LZ+0
-	vMzl4ykG3IAAfAJFkytTDOUj5h9awa22aF9r3h+9Co9KXzB6fTaK24zTyBJXUk/uTX2gQWu
-X-Google-Smtp-Source: AGHT+IE11zhMAgi5cvIEZMVAHip/aU++LIjg8RLYkVfjpVQzr3BdfJWiu8X8UTY8why69UfvnlPjVZ1PmACNZK12Mhk=
-X-Received: by 2002:a17:902:e847:b0:292:9ac7:2608 with SMTP id
- d9443c01a7336-297c94b32a9mr15262395ad.8.1762509242005; Fri, 07 Nov 2025
- 01:54:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C002701C4;
+	Fri,  7 Nov 2025 09:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762509304; cv=fail; b=KTii3rstnkQzMfkyIHRBLmMnbW8bHc7zwBxAcKMkqB+DMAWh6SuHpXjJPA3/ibfPbcGMVchq0+lSoa3Q+jLcW9o89V7SryQ/Az1FC/0SQOjQaT/HElMb1Zyki86tAbEVnIRFP2FulhRn/a9moVRGuDoPsEYvbI2Jf7HnGMxbgUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762509304; c=relaxed/simple;
+	bh=uXxxRpEehkEy6yyOIvFDKCBN12AvCMZ21g1wZk9muwc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jSbIAWpf3KUctMpb8XEUGPokATpkSBCUdx645vQum4Gs21XjXsx1MLwIika1LaUKoo25ot3z5C9JrQc2qnx8qMJmksvPNdOP7HCFnnlpN+wKApPRMJR6U1OqMmGS1Er8vWrADap7Kqj7X26oGgCPHIRqtxbJhrGgUU1y6kBK8ac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XGCNyWGu; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762509302; x=1794045302;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=uXxxRpEehkEy6yyOIvFDKCBN12AvCMZ21g1wZk9muwc=;
+  b=XGCNyWGugiZzxu86TbmqbYVQnAMB+NRqfXjwQMkPCCzse6Eg0l/TNndM
+   sYcPHjmTAtkjtmpCbOxRWg0teU1Q9pRiNo4a/1untfkquAWvhmtO3Fzlp
+   cVbTIACDMHiIf/yEcrhWXCuU8BeWSsR2bvAL0JA1JES0KpWlV8oTE6Q5O
+   wlsHl0hmG74EXVzSiJmozVRIAZ7YO59xZCmranyQThvurS739Ycy8OtpZ
+   tw3mQd6fHQ+XJRXbOVmrmZkel8tTZfw3ms4O+2Aw5FaekQUiyH3h+l0ZW
+   oEdQKusyrTgJZM+zr6Qmt5/aiCzIRVtrNVUl34VRSfr1MHO2AQPMV0gw6
+   w==;
+X-CSE-ConnectionGUID: 9pOYp8bYTQCizqu1SXwHag==
+X-CSE-MsgGUID: vUr2shBiQUK6tqQ//w1FCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="64753399"
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="64753399"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:55:01 -0800
+X-CSE-ConnectionGUID: nudYGQXtRqaO9yfULISL1g==
+X-CSE-MsgGUID: byN5QIWmR+2A8j8gT3PD+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="218742570"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:55:00 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 7 Nov 2025 01:54:58 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 7 Nov 2025 01:54:58 -0800
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.35)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 7 Nov 2025 01:54:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JcNyI2av84GWyiyfTSTvV0/TsjAFRtfaWhpAAhtJFeMlJ+7biodQ8Yx7XdnHlr8tpNbT2p33Khjd84/FanmlorQDUxlAqFYPWC26tNPvwvAKor9QHLpNG4cH2QDE0hFFsheGiYrzbNc7vDLFqp9fGQC3kgaSYbenf2zmsxsLZWh66AEdEaJj1xL2QHmCbgzm+idi50jrv9GIJ3wRTKzn1UjPjzH4FQjLsDS8GCsvl0JJrTJwbV8C39EPV/shdnEp+qWxmwGBzYObAWTODxmcGMtW5c01IKDxhuOn9VAgeg/tbCwHVVzJfSgb2EDOqKs/1XBCVnbUvj/fRYiGcZgJIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9uAxTbvaf+8corwrAxdx/KZkoYQQ8neMlgEKudiQ3dQ=;
+ b=cf+Avf08/1ahWiNU4ynJjzjzspLJAPKcnDFfQeIdPqSpKnGIP93jA3NPDgh3SELapOpFiFduL1YTD7o17iWOT4G6ivuCeOcOCWAmIimrg87mhsbjRRUaOBYdF7o0LUrXQRwKqAsVtigJbnG52tThIiM2jmPc41U1U9jr0AuxApfel4XiMd/2/CiNfQG5TsA2dFnUiET/MA9b1/lzIpF0zshYMFSw29ktlGjmSyVklvmq2vLLVQcb65/dWJJEiYciY6EbUCXpWlVf8bzTh/PO0w9uNdY849W7YGN0fcRhS3h/G+Ruteb23MI77xgu+PQvitKg/vABYvtWpCfUy8N/uQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5365.namprd11.prod.outlook.com (2603:10b6:208:308::18)
+ by SA2PR11MB4876.namprd11.prod.outlook.com (2603:10b6:806:119::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Fri, 7 Nov
+ 2025 09:54:56 +0000
+Received: from BL1PR11MB5365.namprd11.prod.outlook.com
+ ([fe80::8637:9cfc:1235:8987]) by BL1PR11MB5365.namprd11.prod.outlook.com
+ ([fe80::8637:9cfc:1235:8987%4]) with mapi id 15.20.9298.012; Fri, 7 Nov 2025
+ 09:54:56 +0000
+Date: Fri, 7 Nov 2025 10:54:25 +0100
+From: "Winiarski, Michal" <michal.winiarski@intel.com>
+To: "Muqthyar Ahmed, Syed Abdul" <syed.abdul.muqthyar.ahmed@intel.com>
+CC: Alex Williamson <alex@shazbot.org>, "De Marchi, Lucas"
+	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, "Tian,
+ Kevin" <kevin.tian@intel.com>, Shameer Kolothum <skolothumtho@nvidia.com>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Brost, Matthew"
+	<matthew.brost@intel.com>, "Wajdeczko, Michal" <Michal.Wajdeczko@intel.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Jani
+ Nikula" <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Laguna,
+ Lukasz" <lukasz.laguna@intel.com>, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v3 28/28] vfio/xe: Add device specific vfio_pci driver
+ variant for Intel graphics
+Message-ID: <cp7slxgwbevlgifr76z2ldqihcukte6vrcr7dquat4pqmcr2ri@x3qwjrfkcmzl>
+References: <20251030203135.337696-1-michal.winiarski@intel.com>
+ <20251030203135.337696-29-michal.winiarski@intel.com>
+ <DS7PR11MB6104D1246DA5ED88325D2686EEC3A@DS7PR11MB6104.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DS7PR11MB6104D1246DA5ED88325D2686EEC3A@DS7PR11MB6104.namprd11.prod.outlook.com>
+X-ClientProxiedBy: WA0P291CA0006.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1::18) To DM4PR11MB5373.namprd11.prod.outlook.com
+ (2603:10b6:5:394::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACueBy7yNo4jq4HbiLXn0ez14w8CUTtTpPHmpSB-Ou6jhhNypA@mail.gmail.com>
- <CANn89iL9e9TZoOZ8KG66ea37bo=WztPqRPk8A9i0Ntx2KidYBw@mail.gmail.com>
- <aQtubP3V6tUOaEl5@shredder> <CACueBy6LKYmusLjQPnQGCoSZQLEVAo5_X47B-gaH-2dSx6xDuw@mail.gmail.com>
-In-Reply-To: <CACueBy6LKYmusLjQPnQGCoSZQLEVAo5_X47B-gaH-2dSx6xDuw@mail.gmail.com>
-From: chuang <nashuiliang@gmail.com>
-Date: Fri, 7 Nov 2025 17:53:51 +0800
-X-Gm-Features: AWmQ_bnKgi56ZSPNSnKawG2OgOKGBH6FrWpo36dTSyLysdWpwJuxy5qm1OA073U
-Message-ID: <CACueBy4EAuBoHDQPVSg_wdUYXYxQzToRx4Y+TSgcBwxEcODt_w@mail.gmail.com>
-Subject: Re: [PATCH net] ipv4: route: Prevent rt_bind_exception() from
- rebinding stale fnhe
-To: Ido Schimmel <idosch@idosch.org>
-Cc: Eric Dumazet <edumazet@google.com>, stable@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Networking <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5365:EE_|SA2PR11MB4876:EE_
+X-MS-Office365-Filtering-Correlation-Id: 984fef5c-8c6a-4560-8cba-08de1de3a8b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?d042b0s1WjBvK3ZEdWJDcFZJNmlKWnkyNWUyS0pEZ0c0MkdkdUkvRXJhd3lq?=
+ =?utf-8?B?S1VCNG9oeWFGbmtwNy80WEpHbjE2K05tMnJxQ3EyWDdCeXJCdTkyblp5VW5j?=
+ =?utf-8?B?YWNXa21iVC9XcXIwdmVkeUxad1pHMVAzMWUycWJPcWNraWRKcE1HazRONFF6?=
+ =?utf-8?B?cFFvRGo3VGdvdmJaRkdxZUNEdm15eVZ5U2toelRlYWhUeUpuRmh1Q2FmUWFL?=
+ =?utf-8?B?WThPMTJ2TlBlM2NIbS94dUw1M3NsRC9IYlVzVzBzdWRGN2tMQU9tOXpWWnhz?=
+ =?utf-8?B?OVNhY2hQMHhXUFFReERwN2RPNWtrUmtuOWk5c25UUE1LZnhmSjNVZXdMK2dJ?=
+ =?utf-8?B?b1Z4MHZRRWJ2bjVsc0J4SWs5VkVNazlhSnZveEtSZXU5cTVOaWVDRUFFbGxI?=
+ =?utf-8?B?SmFiZ0gweXY1ODVRbTZGaU0wd2FNMWlvZXV5QmNybjREM2l1MTh6d1VENkE3?=
+ =?utf-8?B?Zmk5YlVNSCtVbTFEazMxUmVSY0NQQlVNbnI1REZST3BTREdCd1pacVBSS1dS?=
+ =?utf-8?B?d1hoQklGWENtY3V3aU5nckRoQk9odHpubGFoVmVET1NicGJGSUZDbGtSaXlk?=
+ =?utf-8?B?QXBMWjZRcFJDK2Y3VXBiTEs4K0J4bjZwYzV5V21hRUVWQ0J3SVFXdHU4aktE?=
+ =?utf-8?B?ZmI2VmVDbE5jRjYvUUovSjBmN2I5dVpZelo3cE1CbC9nQXhEbHMxUWxLMGc4?=
+ =?utf-8?B?ZWxwb0crMUVra3E2Wi9yK0pBdXRYQmc2SFVKb05tbTh4ZVJlOTBzZjJnNU9N?=
+ =?utf-8?B?cElMRE5ZQWt0K1RseDNVQVpMZHF0UzRNM20yMHJMbEJZYjI1S0tTTXN2alJR?=
+ =?utf-8?B?TVlHOVNicjBhays3WjJrM282dTNjbzdRS3doM29LOGJ6MGpSS3ZsMVJPQWUx?=
+ =?utf-8?B?QVJ0MU1jbXZZR3ZzT3M4SzZ2R0lOOGNlREdsT3plMkRza1NkNFI3V0ZjOGFy?=
+ =?utf-8?B?bzJWbTVhZHJqdHUvKzZuOW9TWEpWZGFZV0s2enRGenJwN2xRZjZBVlVpYUgx?=
+ =?utf-8?B?cVdtanE5YVU1VEdGaitERnpBN091eHNUazZSRS9XS0oycXJhZzNVbUo1T3Ax?=
+ =?utf-8?B?aGM0WjNrcjhreHptZkhBcStBQ2tXOW9HSnliTVBzSFdDQzZEUTRtajVVeTVS?=
+ =?utf-8?B?VVlwZGVhVUEvZlcvaHVieDhDbFdxN04xczJ4UVpuR2N0ZVJORzZNd1VXV3pm?=
+ =?utf-8?B?aE5wcjU3VG13aTd2dm1VbVgza2hyYnpjZ3pyZTE1QmVTKzJBS29YcmlDZk4x?=
+ =?utf-8?B?YTJ5R0d3Mysxay9pdWptenJuSFhDZ1l3UG5WenlkN0gwcmd2OGZhdis1czhk?=
+ =?utf-8?B?Z0d4WlZ1Um5yS3dKaWxvN1oyWFlObWs0Qnhja3lYbEk1RGhaOVZMQ2haYkhn?=
+ =?utf-8?B?Z1pad1VWcGxZZDM0NG5aT0FjbXN6cE10ZEVRMVFiQVptREZaR0VHZmxJaE5I?=
+ =?utf-8?B?ejI5VHliRjNXWjZjaEVnOCsrZ3hSeHFSRWpaTU9uWnZaVFZjL3NLY3BkSWhQ?=
+ =?utf-8?B?SWQvRnBNaHJldlkwMjVxNUV5Q2x6dmwzc1ozeE8yWTJ2NDB4aDkzUGlQbmxN?=
+ =?utf-8?B?VisybXJMSUdwTlFGMHFDcEJYdHFXc2ZjN0NFakNqYUJrVUZJckQ1VzZ2ZmRq?=
+ =?utf-8?B?YjRQTlZhbTlUQkpDWUtuU1gxSUJYV09ZMklRT0lzaUtmTDRHN2d0bGVhbktF?=
+ =?utf-8?B?KzNoZHhQTzJiL00rcEhxWFpKKzdMZGhINDRqeHRhcGxTRk5uZ0UvL0QyZGJ4?=
+ =?utf-8?B?a2UxeEh1WHZZL1ByRGFsRWZxR2VLZlgvK2JNZDJlVTdlRDlyY1ZUWnYyajFN?=
+ =?utf-8?B?N3dacFM4UGRJY0ltTjhPSVF3MmhDS0ZNdDRmM0VqYXR2elNhTVpHSm4ybHJY?=
+ =?utf-8?B?ODJzMXlDckszR1QwZkxlSTBBTm5wOGI1QzBlQ3RxVEh3U3JxMGNEMTQwWTVl?=
+ =?utf-8?Q?rPyqFLaAQ9uoZCbaxgoJEgN69sV3DW7U?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5365.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Tm1NcnlBc2xQZUw4bWdyVVByY3dtMDZYMnR6Ymt1MngvT1IwRzAxbTNMNVVZ?=
+ =?utf-8?B?cWRLaERpN04vUkhFYnA1TU8vVmpseUJLZSt5ZlFhOHh3N3pGYngzT2hMeUVa?=
+ =?utf-8?B?ZUxhNkJHUy9ML0gyd2xYanVxWk1UK3I1Tm8wUTVyQWFncjl2bzNnVHkzdm9I?=
+ =?utf-8?B?T3BuSkxGbE1Xa0I4MURXTFBJYVNKSXM0MUdFT3lseWhVMk5WRWVTQTIwaitn?=
+ =?utf-8?B?YUVIYWFzVjM0a2d4SmxDTnNCYytZTlZsMnFqSmU2ZmYzNTU2MXl6ZDRoVWky?=
+ =?utf-8?B?b1pJcU5FOENkOEhtTjdRdHIvRUhpRy9PTzZBOFpheDZaVy9ZeVFoc2xZVDZY?=
+ =?utf-8?B?S1FVbHcveHoxV0ZoYUNYdUg2akgxd2FWNFJYMDNNWG5KdnlibTBsQzUzbHJ6?=
+ =?utf-8?B?UTB2WHFzWWhJWXFveDkrNEY0NUJUOU1NamdXZVcxMEs5RFBWTXhsQUNib2Vp?=
+ =?utf-8?B?ZG40SmZQMzBudHhuTG82NXJSUnIvK1NFNDNiSlpmQjN6YkVDeXZjNmlYK0tw?=
+ =?utf-8?B?TkhLU2ZCTlhYZS9lN3JDaXNHNERvYm5yN3ZtSVhBbDQwekRYdSt5RlJBMGY3?=
+ =?utf-8?B?M1REUks3ZkEyM1FuWktPcXM3S1ZWQWJRSklCWURyNFRHazBhSS9sKzFUaU43?=
+ =?utf-8?B?bzNWcjM5ek1CeXJUbEEwM1N1aW01RFBwL0JnK0V3bzR6ZC9JYklXbVFLeFZL?=
+ =?utf-8?B?RzFFcHZKbFdzSWNuSEpWNEQxZlIvZC9zMG43VHZrNFlPZ3BXRFB3WnpiTGkw?=
+ =?utf-8?B?S1NTbm9Za0pyckI4UHBUc09pSmJLWnFCZjJpR1l2eTFlR1NOR3lvQjJ1Z1dt?=
+ =?utf-8?B?akJ1cm55enlxa0l4STY2TmtCSG4wb0J6YTc3SFBzb1BmYnBjK2h0bXplN2JT?=
+ =?utf-8?B?WU9pZC9vdDBNT1ZJdkNDTjhyTExhWUphc1VzbjhCTlhvWUl4WnQ3SXd2WTlu?=
+ =?utf-8?B?U1NsR3ZqNmIzV1lUREg3cDJuQnpWZkJCYWc0LzJ4QlZCN0xWMm5XeXphM0FQ?=
+ =?utf-8?B?NUNJb1llMHF5T2ZHNVFRcEhQYThhZUhmMDU5WmhTRnJ1VHVFbys1VFFtY0ZB?=
+ =?utf-8?B?K25Ia3lmVWxZYTNBRHdib1FuVXFsVEZEWWZDcXVTelVuV1grcFRlSTdnQy9L?=
+ =?utf-8?B?ZFR6K2RYRlNRZE42T28yNkNrWHFWK1BmZHpKSjBVMFg0TGNnaStQQWxPMzUr?=
+ =?utf-8?B?TWVuTERIMDhjUjRTTVBFeDRYODRNL3dlcDdBY3Z1OFRyQVBob2hCZGFNem9O?=
+ =?utf-8?B?U1AxOTZqdmY2M1lycG90TmNRMDMySHV1NFNneWxRdGVabmNSZzJQQy9uNjJC?=
+ =?utf-8?B?ekRVNkIvcURQMnM2ZjMyakZ1OXRMSk1jdVo4TGc3WWhsOVdmZUxoUG43R2lh?=
+ =?utf-8?B?R0Fvc0I0SUJIZWxaSFRHUEJKenVyZGpRMGl0Q3hidFdXSk1ISkljbjBZNEda?=
+ =?utf-8?B?dU1kUU4wcndhZ25zQzdkdCtRZ3JlaG5OYVR1Qk5nNHdLdnlOb1hiMUZURm83?=
+ =?utf-8?B?eHY2RkltdnM0aUswWG1hOFFBVHhJcjdHWXJLVGIyVWtVVjE4cmpFbzFTUHU4?=
+ =?utf-8?B?R0daM3diOTJGM082SWxGZnJSOTBiQmtFcFBjeTcrZ2J3MXdyYW05RlNQWVdi?=
+ =?utf-8?B?cEZzTFJSRkI1YytBbWFGUWtBeWlONVpwL2VTWkxyVkFZUStPTkZQQlRZUlQw?=
+ =?utf-8?B?OUc1UUsrdzlLVDExM3RVSGNOemhkWE1adnk5N0RzR3lnTG41dFd5d293ZklO?=
+ =?utf-8?B?MFNXbFNBb2NHS285TnNGaFc3dWdQQ0lpMDVId3Y4ekpkWGN0Y0tNYUtxdXBT?=
+ =?utf-8?B?dVp5UklsMmFGWWd3QlV5Sm1KODlnTHV3RGd1RGEvSkRlMG1Id2lNd2hXSVF5?=
+ =?utf-8?B?UGdDWHJJR3pyVitWUm5EaFloQ0hRd2xUeW9xaHQvRVBPalpXQ2FqTnh5NStE?=
+ =?utf-8?B?YU1xanI3NjZZY3duZXVVWEFkUDZJOWpIVG1jZUdqdEpobWw2d2t2M3Bsa2ZH?=
+ =?utf-8?B?UVJkM08vR1hOa29FYjJzNUREL240TGZOYnJhYjNRdzBZYnJvMHUrcHNYVU1R?=
+ =?utf-8?B?UlRGNDA3dmUrWGdVNUdRZnZ4YWJVT1BPVFdQZVp3cG00TWVYVmpNNmpXTHBT?=
+ =?utf-8?B?SUk5OE9IbEtiSk1zVTdBSklrbC9HZThTU013a01JWmRwREtYbHE3YTZCV2l2?=
+ =?utf-8?B?WEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 984fef5c-8c6a-4560-8cba-08de1de3a8b5
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 09:54:56.5614
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /YOwrDhqFGZVyBFq5FE4QQE1tZeqMX7wVKjT2y6hzmO91n1xZWEPI3p1qBRyOI0oxQkF1v0ZLq6Q0lXFIpBjInp92hUzs5sjoWGCZN46Pnc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4876
+X-OriginatorOrg: intel.com
 
-Thanks for reviewing the patch. I'm providing the detailed analysis
-and debugging traces below to confirm the root cause and exact
-location of the reference count leak.
+On Fri, Nov 07, 2025 at 10:38:05AM +0100, Muqthyar Ahmed, Syed Abdul wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Intel-xe <intel-xe-bounces@lists.freedesktop.org> On Behalf Of Michał
+> > Winiarski
+> > Sent: Friday, October 31, 2025 2:02 AM
+> > To: Alex Williamson <alex@shazbot.org>; De Marchi, Lucas
+> > <lucas.demarchi@intel.com>; Thomas Hellström
+> > <thomas.hellstrom@linux.intel.com>; Vivi, Rodrigo <rodrigo.vivi@intel.com>;
+> > Jason Gunthorpe <jgg@ziepe.ca>; Yishai Hadas <yishaih@nvidia.com>; Tian,
+> > Kevin <kevin.tian@intel.com>; Shameer Kolothum
+> > <skolothumtho@nvidia.com>; intel-xe@lists.freedesktop.org; linux-
+> > kernel@vger.kernel.org; kvm@vger.kernel.org; Brost, Matthew
+> > <matthew.brost@intel.com>; Wajdeczko, Michal
+> > <Michal.Wajdeczko@intel.com>
+> > Cc: dri-devel@lists.freedesktop.org; Jani Nikula <jani.nikula@linux.intel.com>;
+> > Joonas Lahtinen <joonas.lahtinen@linux.intel.com>; Tvrtko Ursulin
+> > <tursulin@ursulin.net>; David Airlie <airlied@gmail.com>; Simona Vetter
+> > <simona@ffwll.ch>; Laguna, Lukasz <lukasz.laguna@intel.com>; Christoph
+> > Hellwig <hch@infradead.org>; Winiarski, Michal
+> > <michal.winiarski@intel.com>
+> > Subject: [PATCH v3 28/28] vfio/xe: Add device specific vfio_pci driver variant
+> > for Intel graphics
+> > 
+> > In addition to generic VFIO PCI functionality, the driver implements VFIO
+> > migration uAPI, allowing userspace to enable migration for Intel Graphics SR-
+> > IOV Virtual Functions.
+> > The driver binds to VF device, and uses API exposed by Xe driver bound to PF
+> > device to control VF device state and transfer the migration data.
+> > 
+> > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> > ---
+> >  MAINTAINERS                  |   7 +
+> >  drivers/vfio/pci/Kconfig     |   2 +
+> >  drivers/vfio/pci/Makefile    |   2 +
+> >  drivers/vfio/pci/xe/Kconfig  |  12 +
+> >  drivers/vfio/pci/xe/Makefile |   3 +
+> >  drivers/vfio/pci/xe/main.c   | 552 +++++++++++++++++++++++++++++++++++
+> >  6 files changed, 578 insertions(+)
+> >  create mode 100644 drivers/vfio/pci/xe/Kconfig  create mode 100644
+> > drivers/vfio/pci/xe/Makefile  create mode 100644 drivers/vfio/pci/xe/main.c
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index b890ff265f03f..d73348c5f3f3e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -27008,6 +27008,13 @@ L:	virtualization@lists.linux.dev
+> >  S:	Maintained
+> >  F:	drivers/vfio/pci/virtio
+> > 
+> > +VFIO XE PCI DRIVER
+> > +M:	Michał Winiarski <michal.winiarski@intel.com>
+> > +L:	kvm@vger.kernel.org
+> > +L:	intel-xe@lists.freedesktop.org
+> > +S:	Supported
+> > +F:	drivers/vfio/pci/xe
+> > +
+> >  VGA_SWITCHEROO
+> >  R:	Lukas Wunner <lukas@wunner.de>
+> >  S:	Maintained
+> > diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig index
+> > 2b0172f546652..c100f0ab87f2d 100644
+> > --- a/drivers/vfio/pci/Kconfig
+> > +++ b/drivers/vfio/pci/Kconfig
+> > @@ -67,4 +67,6 @@ source "drivers/vfio/pci/nvgrace-gpu/Kconfig"
+> > 
+> >  source "drivers/vfio/pci/qat/Kconfig"
+> > 
+> > +source "drivers/vfio/pci/xe/Kconfig"
+> > +
+> >  endmenu
+> > diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile index
+> > cf00c0a7e55c8..f5d46aa9347b9 100644
+> > --- a/drivers/vfio/pci/Makefile
+> > +++ b/drivers/vfio/pci/Makefile
+> > @@ -19,3 +19,5 @@ obj-$(CONFIG_VIRTIO_VFIO_PCI) += virtio/
+> >  obj-$(CONFIG_NVGRACE_GPU_VFIO_PCI) += nvgrace-gpu/
+> > 
+> >  obj-$(CONFIG_QAT_VFIO_PCI) += qat/
+> > +
+> > +obj-$(CONFIG_XE_VFIO_PCI) += xe/
+> > diff --git a/drivers/vfio/pci/xe/Kconfig b/drivers/vfio/pci/xe/Kconfig new file
+> > mode 100644 index 0000000000000..787be88268685
+> > --- /dev/null
+> > +++ b/drivers/vfio/pci/xe/Kconfig
+> > @@ -0,0 +1,12 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only config XE_VFIO_PCI
+> > +	tristate "VFIO support for Intel Graphics"
+> > +	depends on DRM_XE
+> > +	select VFIO_PCI_CORE
+> Shall we make it default enabled with "default m " so that config gets enabled for first timers and no need to enable explicitly. 
 
-1. Environment and Symptom
+No. The disable-by-default rule is intentional.
 
-The issue was consistently reproduced when routing TCP traffic through
-a Software IP Tunnel interface (sit0). The traffic flow  is:
+VFIO driver variants are generally not part of "Hardware or
+infrastructure that everybody expects, such as CONFIG_NET or
+CONFIG_BLOCK".
+There's nothing about xe-vfio-pci that would make it an exception.
 
-  APP -> sit0 (IP tunnel) -> outside
+For more information, see:
+https://docs.kernel.org/kbuild/kconfig-language.html#menu-attributes
 
-This leads to a reference count leak that prevents the device from
-being freed during unregistration, resulting in the kernel log
-warning:
-
-  unregister_netdevice: waiting for sit0 to become free. Usage count =3D N
-
-2. Enable refcnt_tracer
-
-Live-crash analysis identified a stale dst entry retaining a reference
-to sit0. With CONFIG_NET_DEV_REFCNT_TRACKER enabled, the allocation
-stack for the leaked reference was identified:
-
-[1279559.416854] leaked reference.
-[1279559.416955]  dst_init+0x48/0x100
-[1279559.416965]  dst_alloc+0x66/0xd0
-[1279559.416966]  rt_dst_alloc+0x3c/0xd0
-[1279559.416974]  ip_route_output_key_hash_rcu+0x1d7/0x940
-[1279559.416978]  ip_route_output_key_hash+0x6d/0xa0
-[1279559.416979]  ip_route_output_flow+0x1f/0x70
-[1279559.416980]  __ip_queue_xmit+0x415/0x480
-[1279559.416984]  ip_queue_xmit+0x15/0x20
-[1279559.416986]  __tcp_transmit_skb+0xad4/0xc50
-
-3. Pinpointing the Unmatched dst_hold()
-
-To pinpoint the specific reference not released, we added tracepoints
-to all dst_hold/put functions and used eBPF to record the full
-lifecycle. The tracing identified a hold operation with the following
-call stack:
-
-do_trace_dst_entry_inc+0x45
-rt_set_nexthop.constprop.0+0x376      /* <<<<<<<<<<<<<<<<<<<< HERE */
-__mkroute_output+0x2B7
-ip_route_output_key_hash_rcu+0xBD
-ip_route_output_key_hash+0x6D
-ip_route_output_flow+0x1F
-inet_sk_rebuild_header+0x19C
-__tcp_retransmit_skb+0x7E
-tcp_retransmit_skb+0x19
-tcp_retransmit_timer+0x3DF
-
-The address rt_set_nexthop.constprop.0+0x376 corresponds to the
-dst_hold() call inside rt_bind_exception().
-
-4. Root Cause Analysis
-
-The sit driver's packet transmission path calls: sit_tunnel_xmit() ->
-... -> update_or_create_fnhe(), which lead to fnhe_remove_oldest()
-being called to delete entries exceeding the
-FNHE_RECLAIM_DEPTH+random.
-
-The race window is between fnhe_remove_oldest() selecting fnheX for
-deletion and the subsequent kfree_rcu(). During this time, the
-concurrent path's __mkroute_output() -> find_exception() can fetch the
-soon-to-be-deleted fnheX, and rt_bind_exception() then binds it with a
-new dst using a dst_hold(). When the original fnheX is freed via RCU,
-the dst reference remains permanently leaked.
-
-5. Fix Validation with eBPF
-
-The patch mitigates this by zeroing fnhe_daddr before the
-RCU-protected deletion steps. This prevents rt_bind_exception() from
-attempting to reuse the entry.
-The fix was validated by probing the rt_bind_exception path (which in
-my environment is optimized to rt_set_nexthop.constprop.0) to catch
-any zeroed but active FNHEs being processed:
-
-bpftrace -e 'kprobe:rt_set_nexthop.constprop.0
-{
-    $rt =3D (struct rtable *)arg0;
-    $fnhe =3D (struct fib_nh_exception *)arg3;
-    $fi =3D (struct flowi *)arg4;
-
-    /* Check for an FNHE that is marked for deletion (daddr =3D=3D 0)
-     * but is still visible/valid (fnhe_expires !=3D 0 and not expired).
-     */
-    if ($fi !=3D 0 && $fnhe !=3D 0 && $fnhe->fnhe_daddr =3D=3D 0 &&
-$fnhe->fnhe_expires !=3D 0 && $fnhe->fnhe_expires >=3D jiffies) {
-        printf("rt: %llx, dev: %s, will leak before this patch\n",
-$rt, $rt->dst.dev->name);
-    }
-}'
-
-
-
-On Thu, Nov 6, 2025 at 8:31=E2=80=AFAM chuang <nashuiliang@gmail.com> wrote=
-:
->
-> Thanks, your analysis is excellent and makes perfect sense. I can
-> briefly describe the issue.
->
-> This problem took quite some time to analyze overall =E2=80=94 we enabled
-> netdev refcnt, added dst tracepoints, and eventually captured a race
-> condition between fnhe deletion and rt_bind_exception.
->
-> In our environment, we use the sit driver(ip tunnel). During the xmit
-> path, it records the PMTU for each destination, creating or updating
-> fnhe entries (even when the MTU is already appropriate). Because there
-> are many data flows, the sit driver updates PMTU very frequently,
-> which leads to the race condition mentioned above.
->
-> Sorry for the brief summary =E2=80=94 I=E2=80=99ll provide a more detaile=
-d explanation
-> later, along with the patch verification method.
->
-> On Wed, Nov 5, 2025 at 23:34 Ido Schimmel <idosch@idosch.org> wrote:
-> >
-> > On Wed, Nov 05, 2025 at 06:26:22AM -0800, Eric Dumazet wrote:
-> > > On Mon, Nov 3, 2025 at 7:09=E2=80=AFPM chuang <nashuiliang@gmail.com>=
- wrote:
-> > > >
-> > > > From 35dbc9abd8da820007391b707bd2c1a9c99ee67d Mon Sep 17 00:00:00 2=
-001
-> > > > From: Chuang Wang <nashuiliang@gmail.com>
-> > > > Date: Tue, 4 Nov 2025 02:52:11 +0000
-> > > > Subject: [PATCH net] ipv4: route: Prevent rt_bind_exception() from =
-rebinding
-> > > >  stale fnhe
-> > > >
-> > > > A race condition exists between fnhe_remove_oldest() and
-> > > > rt_bind_exception() where a fnhe that is scheduled for removal can =
-be
-> > > > rebound to a new dst.
-> > > >
-> > > > The issue occurs when fnhe_remove_oldest() selects an fnhe (fnheX)
-> > > > for deletion, but before it can be flushed and freed via RCU,
-> > > > CPU 0 enters rt_bind_exception() and attempts to reuse the entry.
-> > > >
-> > > > CPU 0                             CPU 1
-> > > > __mkroute_output()
-> > > >   find_exception() [fnheX]
-> > > >                                   update_or_create_fnhe()
-> > > >                                     fnhe_remove_oldest() [fnheX]
-> > > >   rt_bind_exception() [bind dst]
-> > > >                                   RCU callback [fnheX freed, dst le=
-ak]
-> > > >
-> > > > If rt_bind_exception() successfully binds fnheX to a new dst, the
-> > > > newly bound dst will never be properly freed because fnheX will
-> > > > soon be released by the RCU callback, leading to a permanent
-> > > > reference count leak on the old dst and the device.
-> > > >
-> > > > This issue manifests as a device reference count leak and a
-> > > > warning in dmesg when unregistering the net device:
-> > > >
-> > > >   unregister_netdevice: waiting for ethX to become free. Usage coun=
-t =3D N
-> > > >
-> > > > Fix this race by clearing 'oldest->fnhe_daddr' before calling
-> > > > fnhe_flush_routes(). Since rt_bind_exception() checks this field,
-> > > > setting it to zero prevents the stale fnhe from being reused and
-> > > > bound to a new dst just before it is freed.
-> > > >
-> > > > Cc: stable@vger.kernel.org
-> > > > Fixes: 67d6d681e15b ("ipv4: make exception cache less predictible")
-> > >
-> > > I do not see how this commit added the bug you are looking at ?
-> >
-> > Not the author, but my understanding is that the issue is that an
-> > exception entry which is queued for deletion allows a dst entry to be
-> > bound to it. As such, nobody will ever release the reference from the
-> > dst entry and the associated net device.
-> >
-> > Before 67d6d681e15b, exception entries were only queued for deletion by
-> > ip_del_fnhe() and it prevented dst entries from binding themselves to
-> > the deleted exception entry by clearing 'fnhe->fnhe_daddr' which is
-> > checked in rt_bind_exception(). See ee60ad219f5c7.
-> >
-> > 67d6d681e15b added another point in the code that queues exception
-> > entries for deletion, but without clearing 'fnhe->fnhe_daddr' first.
-> > Therefore, it added another instance of the bug that was fixed in
-> > ee60ad219f5c7.
-> >
-> > >
-> > > > Signed-off-by: Chuang Wang <nashuiliang@gmail.com>
-> > > > ---
-> > > >  net/ipv4/route.c | 5 +++++
-> > > >  1 file changed, 5 insertions(+)
-> > > >
-> > > > diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-> > > > index 6d27d3610c1c..b549d6a57307 100644
-> > > > --- a/net/ipv4/route.c
-> > > > +++ b/net/ipv4/route.c
-> > > > @@ -607,6 +607,11 @@ static void fnhe_remove_oldest(struct
-> > > > fnhe_hash_bucket *hash)
-> > > >                         oldest_p =3D fnhe_p;
-> > > >                 }
-> > > >         }
-> > > > +
-> > > > +       /* Clear oldest->fnhe_daddr to prevent this fnhe from being
-> > > > +        * rebound with new dsts in rt_bind_exception().
-> > > > +        */
-> > > > +       oldest->fnhe_daddr =3D 0;
-> > > >         fnhe_flush_routes(oldest);
-> > > >         *oldest_p =3D oldest->fnhe_next;
-> > > >         kfree_rcu(oldest, rcu);
-> > > > --
-> > >
+Thanks,
+-Michał
 
