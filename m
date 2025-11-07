@@ -1,123 +1,233 @@
-Return-Path: <linux-kernel+bounces-890050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8E2C3F264
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:26:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D447EC3F23C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5809D3B0723
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E9B188E325
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6882E7178;
-	Fri,  7 Nov 2025 09:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC602D876B;
+	Fri,  7 Nov 2025 09:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DiKODaXt"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gLti3+pi"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A9129B8E0;
-	Fri,  7 Nov 2025 09:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FAD2BDC03
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507539; cv=none; b=b2zINVFeHUWLG9T8DpG+hV6JvG3S55ZVCWWtu8xZGdPdBrmYf1WVwnokQparBxgu/F2QoVf7mvTme4+fkfojEwBp7udMPIYWbT01fQVcqs7CD6FqZtmRK6nym8Uz8Zn6v4AOvPV/N6JWXlaKP8yOgbRTfua93gXGYWTZPVJbkpI=
+	t=1762507433; cv=none; b=mV6fHk7TnWCYOVzY1wdm7PCmB1Q1sLIOgJHDj94XAOm1CBlWtymH4Fl3jbgPy1fypZsdgpUZSVsFqyf4M7NPLSzbzYGKBw1suRSSoTarRb3DvbPOs5SgmNeQjprgWYbUxvqK0IBKJLH38LQvnp7TQfQND6eDtJTFpYeMooElXbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507539; c=relaxed/simple;
-	bh=/AGNW71S4Yk/RK26qQSj8YrNbE16Egqb8P/usljzDio=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HEswPhbRSpDHfbP47/jnzGsGScU4zJ36oa4IzLfRID1e7nellDh8HaxWZ0FwzexUiXCCi48yKFhv0T6zv2YqoUIk51ImKbuX/xtu8WYDkIyrOHIVFQ17NY5TV1IjLM+R++34HNP02kmNysGSd60roFqes8SnWQxkyn0JKqTQCzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DiKODaXt; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=/x4l+A0jDSFdktd3t5ashjObRl7Kwga0z+/ilUukgS0=; b=DiKODaXtdUn1nt9dQCN5rnvlsV
-	br+tLYih0okDtPfimNQjBtdgRkMCPtyFH3TLYsJ4UV8n0Gyl3+nERXhfaZWK/DxsBBfI/YxHb/2u2
-	lO7Lpf0zxsEnI+CczxCCaXGC2DhXUOFihlG/vDITn3NmZyo6U39qSmWPcqTXckyrQjGIxMiWTyQb8
-	m5nxlpJD85gK7mjDR7bWZPctqsyvOazc4VqCcdEREUxDqWEvqlVfWG0f+l0wlG8gMSk4FvHR7IJC8
-	8ODGrloxjm5/TEckul52a93TZuU2fhK/CpqQUOUCf7jrz30BmYHevIASvqQIJ0W1e55NyoF52mZoB
-	vJoTL4Ig==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vHIig-003Nko-V7; Fri, 07 Nov 2025 10:25:23 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Stef Bon <stefbon@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,  Amir Goldstein
- <amir73il@gmail.com>,  Bernd Schubert <bschubert@ddn.com>,  Bernd Schubert
- <bernd@bsbernd.com>,  "Theodore Ts'o" <tytso@mit.edu>,  Miklos Szeredi
- <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Kevin Chen <kchen@ddn.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-In-Reply-To: <CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
-	(Stef Bon's message of "Thu, 6 Nov 2025 17:08:00 +0100")
-References: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
-	<CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
-	<20250916025341.GO1587915@frogsfrogsfrogs>
-	<CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
-	<87ldkm6n5o.fsf@wotan.olymp>
-	<CAOQ4uxg7b0mupCVaouPXPGNN=Ji2XceeceUf8L6pW8+vq3uOMQ@mail.gmail.com>
-	<7ee1e308-c58c-45a0-8ded-6694feae097f@ddn.com>
-	<20251105224245.GP196362@frogsfrogsfrogs>
-	<d57bcfc5-fc3d-4635-ab46-0b9038fb7039@ddn.com>
-	<CAOQ4uxgKZ3Hc+fMg_azN=DWLTj4fq0hsoU4n0M8GA+DsMgJW4g@mail.gmail.com>
-	<20251106154940.GF196391@frogsfrogsfrogs>
-	<CANXojcwP2jQUpXSZAv_3z5q+=Zrn7M8ffh2_KdcZpEad+XH6_A@mail.gmail.com>
-Date: Fri, 07 Nov 2025 09:25:17 +0000
-Message-ID: <87ecqary82.fsf@wotan.olymp>
+	s=arc-20240116; t=1762507433; c=relaxed/simple;
+	bh=k/i/Wu1HPmOKq4PDi4yywjLAHiF74coVwwDp1hXMDpM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEkExP/WdItQ4UkfzH8ZfqXkGppU+6Y1jNMADUEHMPHXgOPZcXC0SGM1p4AfytJ2uJgtTaJrX8RKfG17lV+FbQoLfX4c07MHQqHVo8jad6uJk+KJWfkic2voPFT3m+ERY3ycY8edAtlbv6NrMdN/pIpkGqzg0lgIULxQlegbl/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gLti3+pi; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b7042e50899so82899166b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:23:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762507430; x=1763112230; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LacQSXGw7TbWuQyoWzY6N7WYy+KmingdHmAdQBcwPC0=;
+        b=gLti3+pi0Gzk5jPU3yZGJFeB0bUJ4ksmSBql++f61gZ2lU2FrVF8FT0LLYABuh1Npt
+         7h1f9OziA/xSax68dbqzX9ju9UCl2+inomCaRka+OvM2lJ50z4yrF1RT4Vphj3j0cdxc
+         GqSoXSYyPNXbg1ctfwzdbIsPRwvmeICnKF9LPPzOVITE2g16oM+FsmXJI1H3xWExDqA4
+         zQH1d5IeCDa/sC05e8+84TwJ8gShxzU9fL2QmLp2/ZxLekHxEi8ErfTdzyUejW/i5qUO
+         YXW1v0a7COmWNRZemZzcn41P7xtEXcEs1znEEtf6cVDpYXtVgPcnyvRR5D3QiYW+oibi
+         iyzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762507430; x=1763112230;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LacQSXGw7TbWuQyoWzY6N7WYy+KmingdHmAdQBcwPC0=;
+        b=j0opVFC6zaZ0CpBHDI4IHDIPUBDYZD039gR1LJoxv/tbDOlIEwp/bLAZtf4Bt+BrOK
+         cELr8Bj28/ribJng5gTxnSjOd8/9gvUyWzzCzWAY8KehgvU2e0PFKNID93tdY5WSI46+
+         1I96/ID1FmiErjMoA0/HbAHhHeHrkGxFRHZ1BFLZQQ0a76sOJtgRx3YDEzvDYSkjjz7K
+         u8jyaHRC+aErfcnkzeq/fVb6hm+Ti5URHNmgRmBAFVHEmIWQEiJgQLLuPI+HishdK7Vs
+         F8GKv0tckkywsw3rvNuUL2/tvxtDgzgHKXaP5N++m2LTYyYsY2dhJ/6jOurUgK0mt0En
+         WBYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVq+YcfK73vcPkE5QxFBMY9Ah6TE13iRGhKNdO3T0QeHIDjPkNYoTd8lTPZuGjDRLTLz9qRWnAx6WLOwVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUQLWgzLs8OSzsHHijwtIg9kMnmEj+sILWgnnmTS7sWK1aFRuQ
+	uh2eF1tY5qL2afaTVNHQVLwrZ11fF5YACSvOg5rd07GHXjeLyA+ge2bjQP19trU3+2k=
+X-Gm-Gg: ASbGncsr1FeeukMAhOsvoPXrOivUIzTpRVhRKuY+jCDr6O4gy5RDmAOzAHevV+t8gas
+	S3mcujJx0ObKWFiGwoHvKStdEsktwK5eDuBc5vfc+MQu7u9aT8krW7RfmQviz0siqn2SyG1hSBe
+	1cwQqHi70CvzEBdRJ5UdVbHJYWk9v/wJ2zSOc0AUPeeqIDbAymLwi6OrIsbleN2j2UNImDyvhAB
+	MRGPYeHJTpV7U3TotQLD5P5z6bRSRVeQJAuMIZAsu2icVlGRuVVhk9ns9zCkhGS2qB+P2femrh2
+	N1NQm/jJdknJY1NghwS4ulfGLMG+O6Ow3I/WHXp4SJ4Mr8AAdIKxNhZuIYjb7vJxsCXjZilHiDs
+	ontVjH4bv6joue7A97Pt06Djvaz6EHXRnB6kQsibQZbltULdztLIwpkuzFQpZy5bnR7fyhSp/i4
+	hy3lhl2IRIauyWrbpN8RQUz+rudGVO0szibAeXqEA1RPHCF9LyjdtqEHW8
+X-Google-Smtp-Source: AGHT+IFi+fpxy9purLfTBg++sUcxlN2Azn7yKLv30XH2N7uE0nRjNLH/v6fkpMZZkJGpfSiMDkd+Ig==
+X-Received: by 2002:a17:906:c103:b0:b04:274a:fc87 with SMTP id a640c23a62f3a-b72c08e0249mr225878566b.4.1762507429649;
+        Fri, 07 Nov 2025 01:23:49 -0800 (PST)
+Received: from localhost (host-79-49-235-115.retail.telecomitalia.it. [79.49.235.115])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf4fbd8csm196766666b.24.2025.11.07.01.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 01:23:49 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 7 Nov 2025 10:26:07 +0100
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mbrugger@suse.com,
+	guillaume.gardet@arm.com, tiwai@suse.com,
+	Lizhi Hou <lizhi.hou@amd.com>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] PCI: of: Downgrade error message on missing of_root
+ node
+Message-ID: <aQ27L_95tgaj1qT1@apocalypse>
+References: <955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com>
+ <20251106002345.GA1934302@bhelgaas>
+ <aQyApy8lcadd-1se@apocalypse>
+ <20251106131854.0f0aa8b7@bootlin.com>
+ <aQy9C8315Gu5F5No@apocalypse>
+ <20251106182708.03cfb6c6@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251106182708.03cfb6c6@bootlin.com>
 
-Hi Stef,
+Hi Herve,
 
-On Thu, Nov 06 2025, Stef Bon wrote:
+On 18:27 Thu 06 Nov     , Herve Codina wrote:
+> Hi Andrea,
+> 
+> + CC Rob
+> 
+> On Thu, 6 Nov 2025 16:21:47 +0100
+> Andrea della Porta <andrea.porta@suse.com> wrote:
+> 
+> > Hi Herve,
+> > 
+> > On 13:18 Thu 06 Nov     , Herve Codina wrote:
+> > > Hi, Andrea, Bjorn,
+> > > 
+> > > On Thu, 6 Nov 2025 12:04:07 +0100
+> > > Andrea della Porta <andrea.porta@suse.com> wrote:
+> > >   
+> > > > [+cc Herve]
+> > > > 
+> > > > Hi Bjorn,
+> > > > 
+> > > > On 18:23 Wed 05 Nov     , Bjorn Helgaas wrote:  
+> > > > > [+cc Lizhi]
+> > > > > 
+> > > > > On Wed, Nov 05, 2025 at 07:33:40PM +0100, Andrea della Porta wrote:    
+> > > > > > When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error message
+> > > > > > is generated if no 'of_root' node is defined.
+> > > > > > 
+> > > > > > On DT-based systems, this cannot happen as a root DT node is
+> > > > > > always present. On ACPI-based systems, this is not a true error
+> > > > > > because a DT is not used.
+> > > > > > 
+> > > > > > Downgrade the pr_err() to pr_info() and reword the message text
+> > > > > > to be less context specific.    
+> > > > > 
+> > > > > of_pci_make_host_bridge_node() is called in the very generic
+> > > > > pci_register_host_bridge() path.  Does that mean every boot of a
+> > > > > kernel with CONFIG_PCI_DYNAMIC_OF_NODES on a non-DT system will see
+> > > > > this message?    
+> > > > 
+> > > > This is the case, indeed. That's why downgrading to info seems sensible.
+> > > >   
+> > > > > 
+> > > > > This message seems like something that will generate user questions.
+> > > > > Or is this really an error, and we were supposed to have created
+> > > > > of_root somewhere but it failed?  If so, I would expect a message
+> > > > > where the of_root creation failed.    
+> > > > 
+> > > > Not really an error per se: on ACPI system we usually don't have DT, so
+> > > > this message just warns you that there will be no pci nodes created on it.
+> > > > Which, again, should be of no importance on ACPI.  
+> > > 
+> > > I my last understanding, all architecture (even x86) have the DT root node
+> > > set. This node is empty on architectures that don't use DT to describe
+> > > hardware at boot (ACPI for instance).  
+> > 
+> > This does not seem to be the case for all arch, see below.
+> > 
+> > > 
+> > > This DT node is needed for PCI board that will be described by a DT overlay.
+> > > LAN966x for instance.
+> > > 
+> > > On v6.18-rc1 kernel, I successfully used my LAN966x board on a ACPI system.
+> > > This means that of_root DT node was present on my system.
+> > >   
+> > > > 
+> > > > The only scenario in which this message is actually an error would be on
+> > > > ACPI system that use DT as a complement to make runtime overlay work,  
+> > > 
+> > > It is an error also if you use a PCI board that needs PCI DT nodes
+> > > (CONFIG_PCI_DYNAMIC_OF_NODES) Lan966x for instance.  
+> > 
+> > Yes, I was referring exactly to that.
+> > 
+> > >   
+> > > > i.e. the overlay approach for RP1 on RPi5 with ACPI fw. AFAIK this fw is
+> > > > more a PoC that something really widespread and currntly the overlay
+> > > > approach is in stand-by anyway (meaning no one will use it unless some
+> > > > major changes will be made to make it work). But there may be other
+> > > > situations in which this scenario could arise, I'm thinking about Bootlin's
+> > > > LAN966x driver which also uses runtime overlay to describe thw hw.
+> > > > On ACPI system the root DT node is not created because unflatten_device_tree()
+> > > > is not called.  
+> > > 
+> > > I am not so sure.
+> > > My LAN966x board is working on a x86 ACPI system.  
+> > 
+> > Indeed it depends on the architecture. On x86 an empty DT node is created,
+> > provided you have CONFIG_OF_EARLY_FLATTREE defined (which I guess you have,
+> > even if it's not in default config).
+> 
+> Indeed, I have CONFIG_OF_EARLY_FLATTREE = y.
+> 
+> > 
+> > On arm64, ACPI and DT are mutually exclusive, unless the DT is basically empty
+> > (i.e. only root node and chosen node). The DT root node is not automatically
+> > created if not provided at boot, though. This reinforces my idea of providing
+> > the only root node DT on arm as well, but I'm not entirely sure about 
+> > possible side effects.
+> > 
+> 
+> Isn't it possible to have the same kind of operations on ARM64 ACPI and on x86?
+> 
+> In order to have CONFIG_PCI_DYNAMIC_OF_NODES working on ACPI, we need a DT
+> node, even empty.
 
-> Hi,
->
-> is implementing a lookup using a handle to be in the kernel?
+That's a good point and it's what I'm proposing, indeed. Maybe it may worth just
+standardizing that across all platforms, if it is possible. But let's get there
+step by step, and arm64 could be a good starting point. If there is an empty DT
+on x86 I think it would be logical to do the same on arm. But the if guard that calls
+unflatten_device_tree() only if acpi is disabled makes me wonder if there is some
+rationale behind it that I'm not aware of, that's why I'm asking if anyone knows
+of any possible side effects. Maybe Rob could give guidance...
 
-What we're talking here is a new FUSE operation, FUSE_LOOKUP_HANDLE.  The
-scope here is mostly related to servers restartability: being able to
-restart a FUSE server without unmounting the file system.  But other
-scopes are also relevant (e.g. NFS exports).
+> 
+> ARM64 ACPI without an empty DT node means that no PCI boards using a DT
+> description will work on this system.
 
-Just in case you missed it, here's a link to the full discussion:
+Indeed.
 
-https://lore.kernel.org/all/8734afp0ct.fsf@igalia.com/
+Regards,
+Andrea
 
-and to an older discussion, also relevant:
-
-https://lore.kernel.org/all/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKx=
-EwOQ@mail.gmail.com/
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> I've written a FUSE fs for sftp using SSH as transport, where the
-> lookup call normally has to create a path (relative to the root of the
-> sftp) and send that to the remote server.
-> It saves the creation of this path if there is a handle available.
-> When doing an opendir, this is normally followed by a lookup for every
-> dentry. (sftp does not support readdirplus) Now in this case there is
-> a handle available (the one used by opendir, or one created with
-> open), so the fuse daemon I wrote used that to proceed. (and so not
-> create a path).
->
-> So it can also go in userspace.
->
-> Stef
->
-
+> 
+> Best regards,
+> Hervé
 
