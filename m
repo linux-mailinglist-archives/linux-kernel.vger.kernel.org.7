@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-889971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CAE9C3EF0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:26:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB8CC3EF1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A8A3A34C58E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F1C3ADE9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E137830F92D;
-	Fri,  7 Nov 2025 08:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15D630FC19;
+	Fri,  7 Nov 2025 08:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="G7MIPNMi"
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="allEpq75"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFD0308F14;
-	Fri,  7 Nov 2025 08:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E27B30F7FB
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762503995; cv=none; b=EBCGlVyUMBL739vSFdFP8TdF5s/iYoMKCTmaOejGIdJLkOlq2vsx4K8OPrHmPSou9TbG2/X+15Bx7UXwABrj4tf2eV/Wgu9XG+3IHcUYa1Twqf0NPawLXjy/0wbtbqnWyttFhPB1Ptra/v1J7ClyVq/t9JOvc1g7hLmgur0CQs8=
+	t=1762504098; cv=none; b=qB69eHqwUWZCvJ1swjE6medDwEfkvJ9Bk9CFEVt29rHE/5UQk3HslzXom9pIRSf3Vm0RBXbLZq3FM/At2dZDOqY4dUGfgowNuXII1IFm2kXRFC0wKig+z6T4tFBhrGlLDS+RNT4U6tDpHvUr6oi0PDUReA1LwCjm3NrSa3P3USI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762503995; c=relaxed/simple;
-	bh=Hw7WviiLw+ywvBJebQ5O6RgAsIukfMAuZawgmFiWwas=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t+EMeUIMR/jhAKXutmArNHdSDmxmYXQVVYW7TQMX0YBURD0fGkCXSby8BuvB6u5F/N8F3ypLCXfFYFpehi4zd/Sqy73zb2LUAIh842qsBDvzLBVYbZFlYXq3Jh9Jn6m0A7b3Sbq5BdGku9PIbDbCB1Tro6CGK6HiH35+TFFf8bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=G7MIPNMi; arc=none smtp.client-ip=113.46.200.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=yJghrzhXUW4i7ez9BxpbYoOfx1uePTskE0iGZn9IjOY=;
-	b=G7MIPNMiXqXrpJtWkJbvxy966zKiXFBSiIpDtIHh4ubf3GwNV7wjC11b9YGHoigE1jiyY95jw
-	tl/T+XxzIG+OaJxN6KzueIvmArmjK5RBrhZuy+OvNcgEVxEc2QcLAcUImCa/+VdhINKXM+svCBr
-	nV5XbIP8iJ6NthiYtQmsydc=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d2sYg1wzxzpStP;
-	Fri,  7 Nov 2025 16:24:55 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 56975180B66;
-	Fri,  7 Nov 2025 16:26:29 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.188.120) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Nov 2025 16:26:28 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: <alok.a.tiwari@oracle.com>
-CC: <Markus.Elfring@web.de>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <gongfan1@huawei.com>, <guoxin09@huawei.com>,
-	<gur.stavi@huawei.com>, <horms@kernel.org>, <kuba@kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<luosifu@huawei.com>, <luoyang82@h-partners.com>, <meny.yossefi@huawei.com>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <pavan.chebbi@broadcom.com>,
-	<shenchenyang1@hisilicon.com>, <shijing34@huawei.com>, <wulike1@huawei.com>,
-	<zhoushuai28@huawei.com>, <zhuyikai1@h-partners.com>
-Subject: Re: [External] : [PATCH net-next v05 1/5] hinic3: Add PF framework
-Date: Fri, 7 Nov 2025 16:26:24 +0800
-Message-ID: <20251107082624.931-1-gongfan1@huawei.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <2321cbe4-e704-4c19-9d0d-92011f768178@oracle.com>
-References: <2321cbe4-e704-4c19-9d0d-92011f768178@oracle.com>
+	s=arc-20240116; t=1762504098; c=relaxed/simple;
+	bh=BU/Gs0JHM6CN5mC4vI6SuDD7CItkNy31jtdFXbpBBkI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CR2r5DdwmJiTUer2k9MswMMDsat35OuRg/45aqSjEWcWK1+qCIww6Pmj6mr9XuC3aK+Zb2vAoM+ON01UuHPCSkyM+68hULRUwMd/6hxLU/A4KAPhL77RcUy0DWiaQpmu7TVqhtOSJ+H856tkR1U6IczsokPbETukoe7biWsyRKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=allEpq75; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4d2sdL5n5Bz9v92;
+	Fri,  7 Nov 2025 09:28:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762504086; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6c+wR5OUX7a2v3uoQXxO3f6A3/Jg6yxUDY1v6h0RlM=;
+	b=allEpq75HTp0dm+F3EGqJbCpsw/xZ6bs1pnpHxmFyRRv40d/qrdzHEnXr8AECKK1rZxArq
+	4ClprlOnpVL5i6lKvyUvX2IYj+Bn+ohpiZPc3bGQv9SzkNgyV2csJgGDAm91wE4NN+oieu
+	qrHCkceZMafCPjuCqeq5S8oSSkE7DrDtLmR5NXsYkQrENabaom34ONWWXv54mzAlbzxiCh
+	hsUbeJpXOrUzRwxzkqDoKzgKSUwAAN9gWdI0Rj7rLbfkbLeRwCbMbIs/OeTU41NoQHD4Fr
+	sO3NCzlEYeSuyuyfUkoRLAK4Efn54FZCkv4oeh0YhG4WLNYD+bHUa1WbhWvNDg==
+Message-ID: <3b6c211d4da50273ac5441bc939dfadb537c655d.camel@mailbox.org>
+Subject: Re: [PATCH v2] drm/sched: Replace use of system_wq with
+ system_percpu_wq
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Marco Crivellari <marco.crivellari@suse.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>,  Michal Hocko <mhocko@suse.com>, Matthew Brost
+ <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Philipp
+ Stanner <phasta@kernel.org>, Christian Konig
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Date: Fri, 07 Nov 2025 09:28:00 +0100
+In-Reply-To: <20251106150121.256367-1-marco.crivellari@suse.com>
+References: <20251106150121.256367-1-marco.crivellari@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+X-MBO-RS-ID: 1d6f8abc1971d72ad65
+X-MBO-RS-META: b3x6mitjoinicedcwpy6bbgd61fqqxf5
 
-On 11/6/2025 10:19 PM, ALOK TIWARI wrote:
+On Thu, 2025-11-06 at 16:01 +0100, Marco Crivellari wrote:
+> In the general workqueue implementation, if a user enqueues a work item
+> using schedule_delayed_work() the used wq is "system_wq" (per-cpu wq)
+> while queue_delayed_work() use WORK_CPU_UNBOUND (used when a cpu is not
+> specified). The same applies to schedule_work() that is using system_wq
+> and queue_work(), that makes use again of WORK_CPU_UNBOUND.
+>=20
+> This lack of consistency cannot be addressed without refactoring the API.
+> For more details see the Link tag below.
+>=20
+> This continues the effort to refactor worqueue APIs, which has begun
+> with the change introducing new workqueues and a new alloc_workqueue flag=
+:
+>=20
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+>=20
+> Use the successor of system_wq, system_percpu_wq, for the scheduler's
+> default timeout_wq. system_wq will be removed in a few release cycles.
+>=20
+> Link: https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-> > +    if (src_func_id == MBOX_MGMT_FUNC_ID) {
-> > +        msg_ch = &mbox->mgmt_msg;
-> > +    } else if (HINIC3_IS_VF(hwdev)) {
-> > +        /* message from pf */
-> > +        msg_ch = mbox->func_msg;
-> > +        if (src_func_id != hinic3_pf_id_of_vf(hwdev) || !msg_ch)
-> > +            return NULL;
-> > +    } else if (src_func_id > hinic3_glb_pf_vf_offset(hwdev)) {
-> > +        /* message from vf */
-> > +        id = (src_func_id - 1) - hinic3_glb_pf_vf_offset(hwdev);
-> > +        if (id >= 1)
-> > +            return NULL; 
-> 
-> hard coding id >= 1, is only one VF supported?
+Applied to drm-misc-next.
 
-Hi, Alok. Thanks for your reviews.
-This is an oversight on "get_mbox_msg_desc". The part of "message from vf"
-should be removed in this patch because currently hinic3 driver does not support
-communication between VF and PF.
-Besides, as it is incorrectly placed here, it appears to support only one vf
-and pf communication. But actually pf can communicate with all vf that belongs
-to it. This part of code will be contained in future SRIOV subject.
+Thanks a lot
+P.
 
-> >   +    if (HINIC3_IS_VF(hwdev)) {
-> > +        /* VF to PF mbox message channel */
-> > +        err = hinic3_init_func_mbox_msg_channel(hwdev);
-> > +        if (err)
-> > +            goto err_uninit_mgmt_msg_ch;
-> > +    }
-> > +
-> >       err = hinic3_init_func_mbox_msg_channel(hwdev);
-> 
-> is hinic3_init_func* second init for PF and
-> VF executes both calls, is that correct? 
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
+eduler/sched_main.c
+> index c39f0245e3a9..13192e99637a 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1315,7 +1315,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,=
+ const struct drm_sched_init_
+> =C2=A0	sched->name =3D args->name;
+> =C2=A0	sched->timeout =3D args->timeout;
+> =C2=A0	sched->hang_limit =3D args->hang_limit;
+> -	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_wq;
+> +	sched->timeout_wq =3D args->timeout_wq ? args->timeout_wq : system_perc=
+pu_wq;
+> =C2=A0	sched->score =3D args->score ? args->score : &sched->_score;
+> =C2=A0	sched->dev =3D args->dev;
+> =C2=A0
 
-hinic3_init_func* only inits for VF and PF initialization is in future SRIOV
-subject. So this is oversight and we should remove the redundant initialization
-for PF.
-
-The rest comments will be solved in the next version sooner.
-
-Thanks,
-Fan Gong
 
