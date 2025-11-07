@@ -1,100 +1,219 @@
-Return-Path: <linux-kernel+bounces-890264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A36BC3FA5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:07:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA73FC3FA54
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4951E3B8B6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:06:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08A474F088C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C831B31BC96;
-	Fri,  7 Nov 2025 11:06:30 +0000 (UTC)
-Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D56231CA54;
+	Fri,  7 Nov 2025 11:06:20 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15092FFF9D;
-	Fri,  7 Nov 2025 11:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A5231BC96
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762513590; cv=none; b=AK/7wf3nZBrAvR4ICMYHqCLS+pKxEiJ6925Zyiv0PLCSTeFS3HRoc/gbpkJ9kPfpqgxMN7MfXujp3dD41Ilg7vNCNdCEN4DuqK1vm1qMNLSmEsP36j46IGhLWMRQS4OKW5da7oNX1HQfMHdQvhtybxSQQQTVtDUeZFQzyQOsAuM=
+	t=1762513579; cv=none; b=X2YnuQaBo36a42ed2k4mquTkg/7mnoOxmhJkq50gabZRCgYVOCEjodsHZsjQWmX99VotPd05Xo890flCeMm+HLtZ6CwBKZfjWr5aw+sWrTkLBaw2H3iYiNR0Qwyb4iz/Oma4fnI2jwKzCxzS0YuYFRwdvQHgBl/uPipakT/TC+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762513590; c=relaxed/simple;
-	bh=Ddn9+v5tDzKJaLK8Xu0fX61QUW0yU0QBxparbvZ+5y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X9qxRaSkdgnb6r1HlmOrliQg5aD5Hqpf4/DS2topFSi2j+Sc1lgqckzu99hLtttU3iGp89uOmlJIIUG29haDZ6GJHkmCkbqNUu1ADE4V4WZx0ZBAUFZREbAjG8HScgfumk6e7LWZTuxXWBViVU2xcB6uvROzxLAvjnbTT9MhD6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
-Received: from gardel-login.0pointer.net (gardel-mail [85.214.157.71])
-	by gardel.0pointer.net (Postfix) with ESMTP id 4A903E80C89;
-	Fri, 07 Nov 2025 11:56:24 +0100 (CET)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-	id D6672160170; Fri, 07 Nov 2025 11:56:23 +0100 (CET)
-Date: Fri, 7 Nov 2025 11:56:23 +0100
-From: Lennart Poettering <mzxreary@0pointer.de>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Tahera Fahimi <taherafahimi@linux.microsoft.com>, zohar@linux.ibm.com,
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	code@tyhicks.com
-Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
-Message-ID: <aQ3QV03_PtB4qg32@gardel-login>
-References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
- <1cc67c25a141aef8982840898a6e7397cbdf10d9.camel@huaweicloud.com>
+	s=arc-20240116; t=1762513579; c=relaxed/simple;
+	bh=3vB+SlHxUbkkRzKoqMns9VRF4uBIh29actxYlHhBAMI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Ti6uCv+MN1XzNSaTHU3Sh87bZc44C5qcUOzICfiLKZWw0UGIXI0M5Dcm3pOa+keJl2jU5oei2gycQbIbrbNksvjawimX3xnh6pJ7wXfM60yBKNkvKFrByEvVJEN/3UqOLZSzjPBtTW2+JoNHGZafaJrBqnAqfHK0JnpQh5PxiRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e8839f138so49567539f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:06:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762513576; x=1763118376;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BlZiSo9idK2j7S97qoxkiQFU6gD7Ty00a+sM4XvvUvQ=;
+        b=BQI/ATYzLDEAaXBYVNymsKsJSsgGQbwh53JRIuNBUgJMdyVYpuqQXFI4p+QOGGHuX1
+         ocHKffHExfeAWIH6ZnEXNgslBZGgbGxWu+JCwBoTJFRQF1qzJHXrfbNp4E8hFukMSa4g
+         zN5LgmbwWMuW6SBnYXUmL5kCy5KPilggpSwfXgMJSzEJyjVoERNko5JAAjqPne/66G4G
+         fpPBp3mkdE/q4+i0EbQc7aeTmXjhZjaRC6Qt4KYkiPZ8GPa2Ysx/AoTM0pvDItcLh0Xs
+         2NMu2QOV+YsBBHY4I2oL4DTX9QM7CmuNr5Ca5f7FrB5fA6eyKjlnTrlZjFNgZZOPN4gL
+         TnBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe+Uo1op7o4+6dgox6uhVcErJP6HmIKv674L7loNFgFXJgXhrwOGJ1Vh/H1cNGO+y1OsdklyyffLZJhd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1Cpz2pwh9tWHOtQxywiukB4n18GBqHK02xsNJ9MZ/EVpDzI2v
+	+BBFfvpbEaA59VIwFOAcipOhI6k0tw/jyEXiSezv87wv+Esa9RgBRqS0/NFuUTZiaPX6vU6jeH+
+	qGm2x812rk/BXkLNslBfaMiur9IELcFNe9RS5EUUwNzcxmKc/fbuzGQcRkXE=
+X-Google-Smtp-Source: AGHT+IFtq8vti0VVMqqLFM0bv4gUTSBe4hTPp5evTjvIF5wiTxqgsOFnnguZogDuOBM7v8Hwi4ZtDTN1tvpIai1XWk5jXBtYFQJY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1cc67c25a141aef8982840898a6e7397cbdf10d9.camel@huaweicloud.com>
+X-Received: by 2002:a05:6e02:3485:b0:433:2943:3a78 with SMTP id
+ e9e14a558f8ab-4335f478e35mr38087315ab.31.1762513576045; Fri, 07 Nov 2025
+ 03:06:16 -0800 (PST)
+Date: Fri, 07 Nov 2025 03:06:16 -0800
+In-Reply-To: <20251107080117.15099-1-make24@iscas.ac.cn>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690dd2a8.a70a0220.22f260.003d.GAE@google.com>
+Subject: [syzbot ci] Re: net: Fix error handling in netdev_register_kobject
+From: syzbot ci <syzbot+ci348771c1c9b7511f@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, atenart@kernel.org, davem@davemloft.net, 
+	ebiederm@xmission.com, edumazet@google.com, gregkh@suse.de, horms@kernel.org, 
+	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
+	make24@iscas.ac.cn, netdev@vger.kernel.org, pabeni@redhat.com, 
+	sdf@fomichev.me, stable@vger.kernel.org, yajun.deng@linux.dev
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fr, 07.11.25 10:44, Roberto Sassu (roberto.sassu@huaweicloud.com) wrote:
+syzbot ci has tested the following series
 
-> On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
-> > Prevent redundant IMA policy rules by checking for duplicates before insertion. This ensures that
-> > rules are not re-added when userspace is restarted (using systemd-soft-reboot) without a full system
-> > reboot. ima_rule_exists() detects duplicates in both temporary and active rule lists.
->
-> + Lennart
->
-> Hi Tahera
->
-> thanks for the patch!
->
-> Wouldn't be better to enhance systemd-soft-reboot to not send the same
-> IMA policy again?
+[v1] net: Fix error handling in netdev_register_kobject
+https://lore.kernel.org/all/20251107080117.15099-1-make24@iscas.ac.cn
+* [PATCH] net: Fix error handling in netdev_register_kobject
 
-the soft-reboot logic doesn't load the IMA policy. It's just that
-soft-reboot means we reexec PID1: the old pid1 gets replaced by the
-new one. And that new PID1 then initializes as it usually would, and
-loads security policies again. It currently has support for selinux
-policies, ima, ipe, smack.
+and found the following issue:
+KASAN: slab-use-after-free Read in netdev_run_todo
 
-These policies are supposed to *replace* whatever was loaded
-before. Looking at our IMA logic, this doesn't happen right now
-though, it just adds stuff:
+Full report is available here:
+https://ci.syzbot.org/series/29bd058e-ea85-48e2-9bb9-ff9c0214f12e
 
-https://github.com/systemd/systemd/blob/main/src/core/ima-setup.c
+***
 
-Is there a way to replace the old IMA policy with the new, with the
-current IMA userspace interface? If so, we should probably make use of
-that in systemd, and replace the policy that way. Or in other words:
-under the assumption that one can flush out the old IMA policy and
-replace it with a new one, I think this should be fixed in systemd,
-not the kernel. (of there's no api for flushing out the old
-policy/replacing it with the new, then of course we need something
-like that in the kernel first).
+KASAN: slab-use-after-free Read in netdev_run_todo
 
-My understanding of IMA is kinda limited though. I just know what we
-do in our codebase.
+tree:      net-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
+base:      8a25a2e34157d882032112e4194ccdfb29c499e8
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/2f985280-f9ef-47c8-b4ec-80d44968222b/config
 
-Lennart
+==================================================================
+BUG: KASAN: slab-use-after-free in kobject_put+0x2ab/0x480
+Read of size 1 at addr ffff888113992714 by task kworker/u8:0/12
+
+CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250
+ print_report+0xca/0x240
+ kasan_report+0x118/0x150
+ kobject_put+0x2ab/0x480
+ netdev_run_todo+0xd2e/0xea0
+ ops_undo_list+0x3e1/0x990
+ cleanup_net+0x4d8/0x820
+ process_scheduled_works+0xae1/0x17b0
+ worker_thread+0x8a0/0xda0
+ kthread+0x711/0x8a0
+ ret_from_fork+0x4bc/0x870
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+
+Allocated by task 5810:
+ kasan_save_track+0x3e/0x80
+ __kasan_kmalloc+0x93/0xb0
+ __kvmalloc_node_noprof+0x5cd/0x910
+ alloc_netdev_mqs+0xa6/0x11b0
+ ip6gre_init_net+0xb5/0x3c0
+ ops_init+0x35c/0x5c0
+ setup_net+0xfe/0x320
+ copy_net_ns+0x34e/0x4e0
+ create_new_namespaces+0x3f3/0x720
+ unshare_nsproxy_namespaces+0x11c/0x170
+ ksys_unshare+0x4c8/0x8c0
+ __x64_sys_unshare+0x38/0x50
+ do_syscall_64+0xfa/0xfa0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 12:
+ kasan_save_track+0x3e/0x80
+ __kasan_save_free_info+0x46/0x50
+ __kasan_slab_free+0x5c/0x80
+ kfree+0x19a/0x6d0
+ device_release+0x9c/0x1c0
+ kobject_put+0x22b/0x480
+ netdev_run_todo+0xd0c/0xea0
+ ops_undo_list+0x3e1/0x990
+ cleanup_net+0x4d8/0x820
+ process_scheduled_works+0xae1/0x17b0
+ worker_thread+0x8a0/0xda0
+ kthread+0x711/0x8a0
+ ret_from_fork+0x4bc/0x870
+ ret_from_fork_asm+0x1a/0x30
+
+The buggy address belongs to the object at ffff888113992000
+ which belongs to the cache kmalloc-cg-4k of size 4096
+The buggy address is located 1812 bytes inside of
+ freed 4096-byte region [ffff888113992000, ffff888113993000)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x113990
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x17ff00000000040(head|node=0|zone=2|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 017ff00000000040 ffff88810004b500 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 017ff00000000040 ffff88810004b500 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 017ff00000000003 ffffea00044e6401 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5810, tgid 5810 (syz-executor), ts 65154411256, free_ts 60842795356
+ post_alloc_hook+0x240/0x2a0
+ get_page_from_freelist+0x2365/0x2440
+ __alloc_frozen_pages_noprof+0x181/0x370
+ alloc_pages_mpol+0x232/0x4a0
+ allocate_slab+0x96/0x350
+ ___slab_alloc+0xe94/0x18a0
+ __slab_alloc+0x65/0x100
+ __kmalloc_noprof+0x471/0x7f0
+ __register_sysctl_table+0x72/0x1340
+ __addrconf_sysctl_register+0x328/0x4c0
+ addrconf_sysctl_register+0x168/0x1c0
+ ipv6_add_dev+0xd46/0x1370
+ addrconf_notify+0x794/0x1010
+ notifier_call_chain+0x1b6/0x3e0
+ register_netdevice+0x1608/0x1ae0
+ register_netdev+0x40/0x60
+page last free pid 15 tgid 15 stack trace:
+ __free_frozen_pages+0xbc4/0xd30
+ __folio_put+0x21b/0x2c0
+ skb_release_data+0x49a/0x7c0
+ napi_consume_skb+0x158/0x1e0
+ skb_defer_free_flush+0x18f/0x250
+ net_rx_action+0x804/0xe50
+ handle_softirqs+0x286/0x870
+ run_ksoftirqd+0x9b/0x100
+ smpboot_thread_fn+0x542/0xa60
+ kthread+0x711/0x8a0
+ ret_from_fork+0x4bc/0x870
+ ret_from_fork_asm+0x1a/0x30
+
+Memory state around the buggy address:
+ ffff888113992600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888113992680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888113992700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                         ^
+ ffff888113992780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888113992800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
