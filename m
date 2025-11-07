@@ -1,163 +1,89 @@
-Return-Path: <linux-kernel+bounces-890627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61F1C40791
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:57:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD82C407E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 82E9E345904
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F9E8566435
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC2932D7D3;
-	Fri,  7 Nov 2025 14:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66E52F362F;
+	Fri,  7 Nov 2025 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UabSgmvo"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qhgIRhBD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VDplipDK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CCB31B113
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9D631B113
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762527289; cv=none; b=dxMa7PT+ROR/BINzgzl8J7Uxm9lA1PH1ALO455bzhZ+X7ZyvHqRppAQ9XVS0RyL9uRh4Fo3e1xdSzQXX/9EdEPjhT6dxa2qZcVqt64K2N1TV9eGCiv7eTVBMjJCz0VOXKAHQFQqZJ7oVW9zEqofAZLk5+zLl3M3jq8t/1N1V87A=
+	t=1762527284; cv=none; b=bBpi/CHZUwB/tuqZ+SDCtHTgRluBgHgCfHRREVpaRCiFEKVnOf1iBhxuonyT51XkQT6G+TfvfPqDB+fyAZssrRtP3iaquDb0JWCU4PrrMgDQKRI5YhtZcCmt0o6eqMJV9eT819Mo5rIzOdmGcSU8YaoJhZMzFkLPYOgIo05jEYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762527289; c=relaxed/simple;
-	bh=2Zfuuwknwc5hDDwag7QjI+SHOWoLDfi1+qT/MitF9Bg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WTYuNlNY+SLdWnqz91LKMC/tDCImwcKgWvOo4gBKwhMpz+hiLPVtSaBcCauCYMmZAIGrva/w0Z5JzVlxxpT/OzwLzYdlXQe89fz6RMWPyH6QXusojXTA763WG3c8xAFIegQP9lkLsP+xXxRy5cWoEGUXnWhSjAERI5s6Ez8kqa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UabSgmvo; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id BB3704E41598;
-	Fri,  7 Nov 2025 14:54:39 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8851B606A6;
-	Fri,  7 Nov 2025 14:54:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6F2DA11852830;
-	Fri,  7 Nov 2025 15:54:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762527278; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=+RrXgoXV3dOkYMPWy7ye0LNIEtkAh8Hi3Fbrz8hJU1M=;
-	b=UabSgmvoubfdbwzci/9uOC7fJEPw6GOF8Fasdn8B7uOlMKhFhIM5ZwpUlN+9SDngbieIqZ
-	HQHt5My33IA6wAxM9AChk/cTQc0vjcq8kru7CSTvP4ecPMVY+EX8QTA0tNiEs7CrIxuU5T
-	3BJHFiZK5/VUQx/VQPU4tAIgOflU7D60845fS5V5KhnkUahbL3swn/7iK3VuKAFNQ3MKiO
-	hdaj+YbgBvcKKs/UPTR+z5IwSguHu3WyUuBVHTlKa3aQr/Gq4TBgZct//mvAcc0YYsptqF
-	i6Vl9Vkis8v3Eu5U0a5YeK1rEpnLD0miq1FgEIeFn3T6FWp0qxShSivDf+iJsg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject:
- Re: [PATCH v3 5/5] regulator: ltm8054: Support output current limit control
-Date: Fri, 07 Nov 2025 15:54:28 +0100
-Message-ID: <13882660.uLZWGnKmhe@fw-rgant>
-In-Reply-To: <aQzpvR-030zgA82E@smile.fi.intel.com>
-References:
- <20251106-ltm8054-driver-v3-0-fd1feae0f65a@bootlin.com>
- <20251106-ltm8054-driver-v3-5-fd1feae0f65a@bootlin.com>
- <aQzpvR-030zgA82E@smile.fi.intel.com>
+	s=arc-20240116; t=1762527284; c=relaxed/simple;
+	bh=NSwvFczhxtRp8oy8f5BYI85c4vjokVNjjSK8yG2UK7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h/o8+bcPQaaKih8l43r3IlmadS5FxCIZgo3Hd/lF7jmsVp4yknOZ0XvX01CdlP8CsBvBqo47e22jxAQhxVOxTtBKhcz35aUE95kAvd+352kx3zbS26k1IdM08mq46yF7ePwg//m6mCe4VlGKoUuAIvT9iMZ6zI8JDCzQE5CGETI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qhgIRhBD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VDplipDK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 7 Nov 2025 15:54:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762527279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LY0JiuU7RFFjzgWi7hy2UBf2xm89IuEPJwX9ivwTBVQ=;
+	b=qhgIRhBDkENx/qA5+PwNx1UidCsrv8dSt7Sntkt3TrgPHUVXyCi6dSOLoQyqR4GaxDfiHm
+	OPvsKIB74aZGMEZRPw0IK3UIAIta8R+IxS4OgMMT+XjcbpiaOd6ef+dFQqT9y+TIEulKnO
+	2APxCSh36+epH/dYOgQn80LA/Y+wddANeLSDLFsPKpsXeVnJkNsAodFx26Mco9bokmwB1P
+	FiScMSTxurFKTxcfzkipwo0vdlpuKL/sci6OgVyBQ0avBDOot2sbjHh1HU0zkQv3YqpgSN
+	pi5LxPfw9LLEFJd5r7BUeQ98W4R+Lg+xoAq5WK/WD82v0ulCcB/f4nEpjh4rjw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762527279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LY0JiuU7RFFjzgWi7hy2UBf2xm89IuEPJwX9ivwTBVQ=;
+	b=VDplipDKzoqVu93FRhnDF8jLjPWCp6mo+N+SuhilqwA3k1XjcAK0ejdbAsLXYf0rMWMioK
+	ksZoaXhxSuxI0UCQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: kernel test robot <lkp@intel.com>
+Cc: x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [tip:timers/vdso] BUILD SUCCESS WITH UNVERIFIED WARNING
+ 4c6736970fbf35aa65512ce7f82abd970f133c8e
+Message-ID: <20251107155158-90fb8c9c-59bf-47b3-8756-7c406166db70@linutronix.de>
+References: <202511030021.9v1mIgts-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3017360.e9J7NaK4W3";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202511030021.9v1mIgts-lkp@intel.com>
 
---nextPart3017360.e9J7NaK4W3
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Date: Fri, 07 Nov 2025 15:54:28 +0100
-Message-ID: <13882660.uLZWGnKmhe@fw-rgant>
-In-Reply-To: <aQzpvR-030zgA82E@smile.fi.intel.com>
-MIME-Version: 1.0
-
-Hello Andy,
-
-On Thursday, 6 November 2025 19:32:29 CET Andy Shevchenko wrote:
-> On Thu, Nov 06, 2025 at 03:11:50PM +0100, Romain Gantois wrote:
-> > The LTM8054 supports setting a fixed output current limit using a sense
-> > resistor connected to a dedicated pin. This limit can then be lowered
-> > dynamically by varying the voltage level of the CTL pin.
-...
-> > +	ctl_dac = devm_iio_channel_get(&pdev->dev, "ctl");
-> > +	if (IS_ERR(ctl_dac)) {
-> > 
-> > +		if (PTR_ERR(ctl_dac) == -ENODEV)
-> > +			return ERR_PTR(-EPROBE_DEFER);
+On Mon, Nov 03, 2025 at 12:58:28AM +0800, kernel test robot wrote:
+> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
+> branch HEAD: 4c6736970fbf35aa65512ce7f82abd970f133c8e  clocksource: Remove ARCH_CLOCKSOURCE_DATA
 > 
-> Hmm... Are you sure about this?
-
-The only case where I want to defer is if the IO channel hasn't been created 
-yet. From what I've read in iio_channel_get(), -ENODEV is returned specifically 
-in this case. For example in fwnode_iio_channel_get_by_name() you have:
-
-```
-if (!IS_ERR(chan) || PTR_ERR(chan) != -ENODEV)
-		return chan;
-```
-
-> > 
-> >  	priv->rdesc.type = REGULATOR_VOLTAGE;
-> >  	priv->rdesc.owner = THIS_MODULE;
-> > 
-> > +	if (ctl_dac) {
-> > +		priv->ctl_dac = ctl_dac;
-> > 
-> > +		INIT_WORK(&priv->ctl_work.work, ltm8054_do_ctl_work);
-> > +		init_completion(&priv->ctl_rw_done);
+> Unverified Warning (likely false positive, kindly check if interested):
 > 
-> Do devm-helpers.h APIs help with something here? Does
-> devm_add_action_or_reset() help with not covered cases?
+>     arch/sparc/include/uapi/../../../../lib/vdso/gettimeofday.c:325 __cvdso_clock_gettime_common() warn: bitwise AND condition is false here
+>     arch/sparc/include/uapi/../../../../lib/vdso/gettimeofday.c:325 __cvdso_clock_gettime_common() warn: right shifting more than type allows 32 vs 40
 
-I could definitely use a cleanup action to flush the ctl pin work item instead 
-of doing it in a remove() function. It would also remove the gotos below.
+While I can't reproduce this specific warning, this is most likely an issue in
+the sparse configuration in the kernel. The CHECKFLAGS are not adapted for the
+compat vDSO. Therefore sparse runs with a mixed 32-bit and 64-bit configuration. 
+Other architectures are also affected.
 
-Thanks,
+There are a few different aproaches for cleaning this up, but I'm not sure yet
+which to use.
 
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart3017360.e9J7NaK4W3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmkOCCQACgkQKCYAIARz
-eA4N4w//ZG1VoCZ4y9y5UR6dM4AuEhYD/K3kpUS7HDu/6tc4OXhOcyY0JiA/Ac+Y
-7F146YlRsdWF9djikBdjH7j4JYlioJ4VL68oSfHoQ2akSPDOzcGWWWEpJLAyLvqc
-Qincr9O2NRkEdB9mn7rza5I9o6/tQDw6ZSy4Qdy7PKLWRd579b72PUaUGCdHAD9F
-TWhdvOqpkC+Wzj7E5vF4sl62C7C3gn/Pf8JfLD6LVI1X9Wu4RyXDVfmotejBwZIO
-0XSlWCf851fKAsVr++aaz8oRAnHb3K0x3ix7nNu7Za5mI19Ur7ODGNoKfOcYHg3C
-VVQx1N6yBgZa9RSTNmmxj92AVNc/71oBuQiBt3c0VWv92VAmE7YudGRfCmXOZdix
-iDzuy0B/8C5GO+9TQnBkrz0RSzc7AAmi9hGCmYt8FHkmPBh94CBtshnyIcb7Lpqg
-NGc4AoNMXMFb1rJINlgtRIsdo14VMIOdUMGJELskYaOPwJns28UMblvDfGEKBZFE
-5MEPTQDE6QUBjTG2VzZRnWRPze0LrO5ZsQQFH55mTp8L8Kjvnpg7TxUJrpTB5LAJ
-zgPSpKju2Tz95hUFeQ7JXo8g2YfRsb3wsZQwwmaKpY8Xc2XnkwX62IHmlrRgmGhH
-N3+nEdXAYRL0zz6VGB612VYzp0PWOwfCSajMoLp6awsmqYr325s=
-=FJSm
------END PGP SIGNATURE-----
-
---nextPart3017360.e9J7NaK4W3--
-
-
-
+(...)
 
