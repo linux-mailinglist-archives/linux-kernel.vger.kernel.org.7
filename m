@@ -1,62 +1,178 @@
-Return-Path: <linux-kernel+bounces-890459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7807C40199
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:26:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D397DC401BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA2A18821B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE9E3A9D65
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE2B2DECD4;
-	Fri,  7 Nov 2025 13:26:28 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A412DE70B;
+	Fri,  7 Nov 2025 13:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfEr2VVI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E152DA76F;
-	Fri,  7 Nov 2025 13:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACB92DC76A;
+	Fri,  7 Nov 2025 13:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762521988; cv=none; b=VrW4kY0zFXrk9+0vCrzU5C9VFBq4jWbHL6MlPY95n30oWep98nT/d4g5NwIo4qFd+CZedoODvFMSdBGwEWl2EEG/dw6JPTTYR0wW7GhE8dOwDlSiGAsQU5nI+42xdg79m/VdYWMTKgRJkokd4WRXF5jMBHiPZ9Jt3QSCqNz+5BE=
+	t=1762522034; cv=none; b=O5kYjUVW5+VUeGtKkxuS0mHML7eh+QXSVJl7/w2x2bc7tYufSpKuSPUizvO+7DMWFLL3A/+zJ9u4xZeydwTt0hHzZiUckfAi7E6IyLX2ODgJ40zwSBGk4BJsY5Ld20GgmVD5ueG7E+VtYkMt4A/niKWpw0Uh7+MvjwNUwd+DBkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762521988; c=relaxed/simple;
-	bh=Ao5qcDG2x2Pk7wQJpAaZGN82Q0K+rAa5Sj+gPcX8Y54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yk4JdzCt+yHKZ2Yirme+MW6H6swyuf4Vr4NlQVwb7Y9eE95fsry99IXc7lPs4xICtzW1QIXnMCIhYiXAjkmlqgQBaQbcuAspjbNYET/MUlDAkrQFuB/wy+H2J3y6yS+er8xY8DWvjRJvlnV2DNZTSrG+bE4lDOU3leK6pXdaCQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id A20B6227AAE; Fri,  7 Nov 2025 14:26:20 +0100 (CET)
-Date: Fri, 7 Nov 2025 14:26:20 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dai Ngo <dai.ngo@oracle.com>
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, neilb@ownmail.net,
-	okorniev@redhat.com, tom@talpey.com, hch@lst.de,
-	alex.aring@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/2] locks: Introduce lm_breaker_timedout op to
- lease_manager_operations
-Message-ID: <20251107132620.GA4796@lst.de>
-References: <20251106170729.310683-1-dai.ngo@oracle.com> <20251106170729.310683-2-dai.ngo@oracle.com>
+	s=arc-20240116; t=1762522034; c=relaxed/simple;
+	bh=H2fyQgGEPrr0B9L7SM/CUSxgfDy3yr/Zqy7wNEwuzqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KYBkwgtOrtf2pFJ6Ukg/FZnlUxMM4LvDChhAbWnaZdxWBYo4UEkLH8LiVeNk2O4SWUHiq2BB/O5i9jlABBJxzwfJohpLeO5Yfvd7AyKsUANpAl2iEVv0atx/MWUws2Mc18y8clQsqe8ogtRK8aHyYaQHvQX+De+DW30qBTcW8WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfEr2VVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30246C16AAE;
+	Fri,  7 Nov 2025 13:27:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762522034;
+	bh=H2fyQgGEPrr0B9L7SM/CUSxgfDy3yr/Zqy7wNEwuzqc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=QfEr2VVIldH8VSEcCHUZXT+sXm5bJGz3KK6JCEYEz3j8yr6v17WywCGNRoVDw5jgC
+	 guGj3uWvo2uIdpFME+Q/xOLIQVnsPo2eUE2CFsRWD2LXwKFPSeOjdf9djQb5JyskZw
+	 tTYFG7w4lto3MyYMyHbjgl+QPagiMh3Y3tDzI/9yV0uMKwQBqiP93d/hd/nK72hMbe
+	 JqfS9x9tzK0DaUfgFF2GU2eP24ZEfShS05pjq3CbF7m/LESAj0WGH47C1wHiSWODhd
+	 s7V8FgQFsQED1lcAEjAhFKVvwxazzYPq5f3SBOYIU3x/CL825n+K6HtEWxANl5/xRi
+	 5NR9+eXNlOwMg==
+Message-ID: <eb86cb58-6520-4a24-9e04-f10e2466fac6@kernel.org>
+Date: Fri, 7 Nov 2025 14:27:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106170729.310683-2-dai.ngo@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: drm/bridge: Update reg-name list for
+ cdns,mhdp8546 compatible
+To: Harikrishna Shenoy <h-shenoy@ti.com>, robh@kernel.org,
+ Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+ andrzej.hajda@intel.com, conor+dt@kernel.org, devarsht@ti.com,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ jernej.skrabec@gmail.com, jonas@kwiboo.se, krzk+dt@kernel.org,
+ linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, neil.armstrong@linaro.org, rfoss@kernel.org,
+ s-jain1@ti.com, simona@ffwll.ch, sjakhade@cadence.com, tzimmermann@suse.de,
+ u-kumar1@ti.com, yamonkar@cadence.com, pthombar@cadence.com
+References: <20251107131535.1841393-1-h-shenoy@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251107131535.1841393-1-h-shenoy@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 09:05:25AM -0800, Dai Ngo wrote:
-> Fixes: f99d4fbdae67 ("nfsd: add SCSI layout support")
+On 07/11/2025 14:15, Harikrishna Shenoy wrote:
+> Remove j721e-intg register name from reg-name list for cdns,mhdp8546
+> compatible. The j721e-intg registers are specific to TI SoCs, so they
+> are not required for compatibles other than ti,j721e-mhdp8546.
+> 
+> Move the register name constraints to the appropriate compatibility
+> sections to ensure the correct register names are used with each
+> compatible value.
+> 
+> Fixes: 7169d082e7e6 ("dt-bindings: drm/bridge: MHDP8546 bridge binding changes for HDCP")
+> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+> ---
+> 
+> Links to some discussions pointing to need for a fixes patch: 
+> https://lore.kernel.org/all/20250903220312.GA2903503-robh@kernel.org/
+> https://lore.kernel.org/all/d2367789-6b54-4fc2-bb7c-609c0fe084d3@ti.com/
+> 
+>  .../bindings/display/bridge/cdns,mhdp8546.yaml      | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+> index c2b369456e4e2..2fdb4f7108ed5 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+> @@ -30,10 +30,6 @@ properties:
+>  
+>    reg-names:
+>      minItems: 1
+> -    items:
+> -      - const: mhdptx
+> -      - const: j721e-intg
+> -      - const: mhdptx-sapb
+>  
+>    clocks:
+>      maxItems: 1
+> @@ -103,7 +99,10 @@ allOf:
+>            maxItems: 3
+>          reg-names:
+>            minItems: 2
+> -          maxItems: 3
+> +          items:
+> +            - const: mhdptx
+> +            - const: j721e-intg
+> +            - const: mhdptx-sapb
+>      else:
+>        properties:
+>          reg:
+> @@ -111,7 +110,9 @@ allOf:
+>            maxItems: 2
+>          reg-names:
+>            minItems: 1
+> -          maxItems: 2
+> +          items:
+> +            - const: mhdptx
+> +            - const: mhdptx-sapb
 
-I don't think adding an operation can fix nfsd code.  This is just
-infrastructure you need for the fix that sits in the nfsd code.
+This does not match regs now. Look which entry is the second - it is
+always DSS_EDP0_INTG_CFG_VP.
 
+Optional item should be the last, not the middle. That's why DT
+maintainers ask (and it is even documented) to post complete bindings.
+Complete means all registers, entire address space.
+
+Best regards,
+Krzysztof
 
