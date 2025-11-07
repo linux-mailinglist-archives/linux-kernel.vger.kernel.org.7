@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-890914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E45EC415FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:01:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F82C41607
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:01:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 080F94EEFEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDED424C3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D692F25F0;
-	Fri,  7 Nov 2025 19:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649012580DE;
+	Fri,  7 Nov 2025 19:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kn1tNMs/"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Vm/vdScp"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D28E2D739A;
-	Fri,  7 Nov 2025 19:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183CB2206A7;
+	Fri,  7 Nov 2025 19:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762542013; cv=none; b=dK9jmP5DtbW4o6lN5EOQmUVf1CAuI1kRug4KTkFuSfrzNQvdJCiZ7fySKhwZkGXB0X+nk4LdMzphdM/DxBHLhOStbOEccPxnDgZWhm35vZWh0kJJ4vSQCLDIWSAhTOab8gJE4bqI61aM+BxFvzcb4qnBWUuU/PCqh4/s6ZeOTsw=
+	t=1762542105; cv=none; b=iFeAAW1Dokdib4yE4SlurXHeogCSTtvgzXKRIlFs15xB4kpHz7OlF6mq1N+J1QlprbkMqah+jWGNMfKlchxwGuw14+YFDieBUL7vSZjmY3pA7tr1RORHO1vrUYzkPUJ7hQcMcVvTXcw8Q42u9skjSDGg6wJRIY1m29G3c6MTOYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762542013; c=relaxed/simple;
-	bh=RmkBsbgzw/bsgShYE9MlNR3ay/KZUzgJqdKDOICgbyk=;
+	s=arc-20240116; t=1762542105; c=relaxed/simple;
+	bh=UF2IWmAQDO1X410z/PEbaUPD3GkoRYJG5/Gzv8WH+zA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AOeNVowav7UmuWWPWgDQuhCOAGp/tLj65oOtEaF1Umc+YQVBXqW3GAwu/nbrXaYaNFLbKspsHdwoEvCEeEInHSRw3SRI7p8ItxcRAGUmx6t7l8phI7fcgEEaPIClhlKQOITJgcPNn9VkNbjk0YZhX6Slzg5mQCiOPvm2LeWKKmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kn1tNMs/; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 93B5D40E0191;
-	Fri,  7 Nov 2025 19:00:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id yO9KQnm9Y2Y1; Fri,  7 Nov 2025 18:59:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762541996; bh=i0A/KoHm13SotTlocGnmigjkzV2u9vbAdXzGl0tfG90=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kn1tNMs/6kJiAKfUE1XF2XvFcfVWFbrbnmvW1BNNe+3Z9GdzCs6wgLquE8bey0VtM
-	 PCYUnM5yKV1jasz3R5TstspdpBSeZB92eWqnxEAd6YoUvx26I1suQ3p7jd/TbuVWyt
-	 jePHyku8Yit67w0grZ+Y+zt9u9bHua8iFausd+iJ1YdJ7ZdEWIRps+7nMgfabPD6y1
-	 iYfCEc0jdSk+J95O429DnKQN8hmOQjpIfa5VkkyEZW8nW5XosRsD0zGMzVJ5D3ZR5Z
-	 61GtXe+g/812YTI4aRnU9l/twm2NWt1u9Ro3+7a3fsiuL/Qlcqr8CG0vEcYDh/jj+e
-	 6GiE6oEw4asQAYhYJCgaj6yPD6nXbtUcwDdEgn3soEtx9Eu+zCJpy3fnkXf1TsWgFb
-	 Hp3zjAXa6+czzbzKjqEtTiAzQA6+ho9723c8Qoh4/enOCDuefZAiqL1gizb+UkMhwA
-	 +ov7d7UazI+gGMXeSf/26Q0eGzcaneflgvL4qTE9q+24dWnGWkkAKMITyLGHI/OJ/c
-	 ZPVjHT/wStzhHvyXrlTCQeDOgoP6tCjHlNUpgLChVrz80FFb+Pr3d9iP/iqf2U+QGA
-	 f1yNktPa6cYtEnXtskgLV/g0vCb5+UfcegQe9U/kmgTr0XODY0UE1dY7JqHKL9xMIf
-	 Zy34HWpjy1IwtJlV4wsZVHxY=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id ADDB640E01A5;
-	Fri,  7 Nov 2025 18:59:47 +0000 (UTC)
-Date: Fri, 7 Nov 2025 19:59:41 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 1/8] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
-Message-ID: <20251107185941.GSaQ5BnYzN_X9J3Qa0@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-2-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u33c/TtJaj+c9Ua69RqfmD1IYsN1sj1XvsEBzdjSnJx2u3mI3fa4Q01dHBe6glvXA6C/FErloM1tZGgFsIAt33vPRWlAarwff79OIvZY39R1vzpUspCdfNVez1EQ4Vpn9qpSFwJ6LjgMIZXOXcs551sj7VUXLyvmOWPmyyWoYoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Vm/vdScp; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dmnU+NL/eOaWWwyUapILw4TvGX9F7hjLcTmUpXNjT/k=; b=Vm/vdScphQjeXHY9UIUIfdxx0g
+	5Ab7Zw42SRbmBnh8WFIlTdvmz5p65Nt+neQW1u5YxD/gh7WtR2PkS/YuETgQCF55hhc72sSOzY9UN
+	e5zBKjNC4rPDMsnMU32yoH7wqWjcB3XPbhbnzFGW9L4SlK9iwO2gNIJH0QK9DUxfViiQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vHRi1-00DGHz-DH; Fri, 07 Nov 2025 20:01:17 +0100
+Date: Fri, 7 Nov 2025 20:01:17 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next] net: phy: mscc: Add support for PHY LEDs on
+ VSC8541
+Message-ID: <caef6e6e-b81e-45d7-ac92-ed6adc652aa2@lunn.ch>
+References: <20251106200309.1096131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ee6a79ae-4857-44e4-b8e9-29cdd80d828f@lunn.ch>
+ <CA+V-a8vFEHr+3yR7=JAki3YDe==dAUv3m4PrD-nWhVg8hXgJcQ@mail.gmail.com>
+ <2dabb0d5-f28f-4fdc-abeb-54119ab1f2cf@lunn.ch>
+ <CA+V-a8uk-9pUrpXF3GDjwuDJBxpASpW8g5pHNBkd44JhF8AEew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251031003040.3491385-2-seanjc@google.com>
+In-Reply-To: <CA+V-a8uk-9pUrpXF3GDjwuDJBxpASpW8g5pHNBkd44JhF8AEew@mail.gmail.com>
 
-On Thu, Oct 30, 2025 at 05:30:33PM -0700, Sean Christopherson wrote:
-> From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> 
-> TSA mitigation:
-> 
->   d8010d4ba43e ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
-> 
-> introduced VM_CLEAR_CPU_BUFFERS for guests on AMD CPUs. Currently on Intel
-> CLEAR_CPU_BUFFERS is being used for guests which has a much broader scope
-> (kernel->user also).
-> 
-> Make mitigations on Intel consistent with TSA. This would help handling the
+> Certainly the probes can be simplified into a single function. I'll
+> create a patch for this.
 
-"consistent" as in "use the VM-specific buffer clearing variant in VMX too"?
+Please do make sure of each device having its own .probe
+pointer. Don't have one probe function with lots of if/else
+clauses. Put what is device specific into a device specific probe, and
+what is common into helpers.
 
-In any case:
+> > Also, is the LED handling you are adding here specific to the 8541? If
+> > you look at the datasheets for the other devices, are any the same?
+> >
+> Looking at the below datasheets the LED handlings seem to be the same.
 
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+That is common. So yes, please add it to them all. It does not matter
+if you can only test one device.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+	Andrew
 
