@@ -1,51 +1,87 @@
-Return-Path: <linux-kernel+bounces-890036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FB3C3F1DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:19:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C608C3F126
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD4018829DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077E03B0244
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EEE27A900;
-	Fri,  7 Nov 2025 09:19:28 +0000 (UTC)
-Received: from mail-m49219.qiye.163.com (mail-m49219.qiye.163.com [45.254.49.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370A23168EF;
+	Fri,  7 Nov 2025 09:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Gnzrd2qJ"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012033.outbound.protection.outlook.com [40.107.200.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DB92AD04
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.219
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762507167; cv=none; b=DOsQ7SIM0JfzGPaGWpfEBM9MVfIyy1MgJf7PP+Wq6UkmWnds4rxSrjHAtlExtX2+nUGBPfKjnmYooRcldI0yzTtQly3wlbE4Xc8Fd236x5MMTolLKv4MCxhOSaUgKy6XlxM0uVykm0JsQaKvT4CKb5eqvmv+5E73ka0GWGqabGI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762507167; c=relaxed/simple;
-	bh=/RmS55EMHk9CoPzX2y/JRQSYZBorkiKegha7LSqfbxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sgY6oehK/Q/6PAUzfAZYCrZk7CCIHMHmoYi3wz1hRixTNEwYnEZP2pdVgGC+vsim7Wda025DqKwnsS1gcQM32UTDTiNkZuNXuka/mJv4UahD1r3ca/f8reWwDAjpQ9/eWYDxb8CORnjTVWHxNehtqYm6Lzzypw3q9HMsUVeVT3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=45.254.49.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
-Received: from localhost.localdomain (unknown [122.224.147.158])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28c500970;
-	Fri, 7 Nov 2025 16:43:35 +0800 (GMT+08:00)
-From: Shouping Wang <allen.wang@hj-micro.com>
-To: will@kernel.org,
-	robin.murphy@arm.com
-Cc: mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	allen.wang@hj-micro.com,
-	andy.xu@hj-micro.com,
-	peter.du@hj-micro.com
-Subject: [PATCH 2/2] perf: arm-ni: add topology debug info for the clock domain
-Date: Fri,  7 Nov 2025 16:43:19 +0800
-Message-ID: <20251107084320.555979-3-allen.wang@hj-micro.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0DD3168FD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762506294; cv=fail; b=t49y4QpAzqXP3aw7Zhbl0YVibo+uMbSlwGa1NkUghBsbGcPhSk0qeIG2l4JV3yUu1/KoWxv/KdinxOUb82dU0+/X+0Rh9MUEJth8U4USX1f75CBxZ4+L/arr+eFF3l4igW8+pyHS5QLwJ3xUyHSRPg1g9tZCVL2swLyDdeq4Oi0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762506294; c=relaxed/simple;
+	bh=y5ak1urbq3r8HZQkzDtqWQ9z8dnOuBH6pKfDJDcsYF0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YEkFLSfLkdPguEzhsk8DrhV0AB74MJHIKKiQidcbBdqX2z08+JLPAuebE6CjBUQH+7iKPNWT0ap/XEVNqOtuzF+8u+oV4Mx5qWHn8TYWdLpp9pkmaKfMj1pAsDsMvfXuzTO6N6dSaUvjUZsjBCH6iQke6uTpQYtHoEvqr47b4IY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Gnzrd2qJ; arc=fail smtp.client-ip=40.107.200.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bj5LDK4BwYQViX8A15N42k+Xj69O/Lw3WSEEFs7sDYtXncCMVSZzblCgDZF5STu4/HwpyzM0/XnQtZYQU3KuD/4QdeZdgsgZJnfIN4RPXmVKukoyWuoOn12JB8vIviDIzKh/zahEtv64hUcpmBs9idNMzqRnIi5quMdGGuFmO4dqCSL9F6AJQirhZHm0s1/h0kiSHVlQMfXd7K6/ASCQQRT13nkDqJDH0VVZgeIGXKz2Up+zubSSyWIyg4wf6vXBsdJa0ZpvMmKRoMNR7QpPMZgJdN0NEyjbT8bP7JKyRqnIgAGrE3c+mWYw/0CiTNy5P+AJ7JScUAO0aJ6IbuKZLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aOhxRjP2cYCxdCvCjRi4TFLdoVofcw4EZQiZNXXHj0o=;
+ b=E3Yer65YyYSXBLSz1lJBwE4PwCOVBfrGUoXOuvkS9P9F1Gxr0UK5sCca5AYYj/A0yP+TxXiaXUoMyk3bO9XfCkigvrJlb8uS7J+AVHL9+NnUh6iWWstQoYqVXSf7DuM6I6b0r4XSCbXSFCRVhYcbJm9HTkbc0dl0TjiiFNAdgZF1c+6QPEt4fXuHvPiJ5dGITS/vpedgd1NmvG0/IUc8tfLMLb2fNMuT1Nl9877n5YlzlJ0aOd6TnB1z6U+kZHah8odb/S7bTMMkDam3bClRnyTUDJ9rFFyMcYDJzoGMQciYGRS7m8NBP4SsfRI20UWcZkf+n+oGL6q9HrcEdZvmIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aOhxRjP2cYCxdCvCjRi4TFLdoVofcw4EZQiZNXXHj0o=;
+ b=Gnzrd2qJDG1JfaCviObVuHiwja3UZ+Ln+LmncpHAkwyuGEXC+7uNZI4MLLcNDnyNqzOX5XqgQOtqaL+8t4mGDl8G1m9P+2s6zeaOt0dwD7rBsvr5mwfsWqX3YtSFbg+POT3R4ainjBua6+QnyryLjlh9WRQqIg1b4+EZoOwBAVU=
+Received: from BN0PR04CA0037.namprd04.prod.outlook.com (2603:10b6:408:e8::12)
+ by CY1PR12MB9674.namprd12.prod.outlook.com (2603:10b6:930:106::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 09:04:48 +0000
+Received: from BN2PEPF00004FBF.namprd04.prod.outlook.com
+ (2603:10b6:408:e8:cafe::5a) by BN0PR04CA0037.outlook.office365.com
+ (2603:10b6:408:e8::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Fri,
+ 7 Nov 2025 09:04:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BN2PEPF00004FBF.mail.protection.outlook.com (10.167.243.185) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 09:04:48 +0000
+Received: from FRAPPELLOUX01-WSLPUB.amd.com (10.180.168.240) by
+ satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 7 Nov 2025 01:04:45 -0800
+From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, "Tvrtko
+ Ursulin" <tvrtko.ursulin@igalia.com>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 2/3] drm/amdgpu: increment sched score on entity selection
+Date: Fri, 7 Nov 2025 10:04:20 +0100
+Message-ID: <20251107090425.23199-2-pierre-eric.pelloux-prayer@amd.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251107084320.555979-1-allen.wang@hj-micro.com>
-References: <20251107084320.555979-1-allen.wang@hj-micro.com>
+In-Reply-To: <20251107090425.23199-1-pierre-eric.pelloux-prayer@amd.com>
+References: <20251107090425.23199-1-pierre-eric.pelloux-prayer@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,144 +89,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a5d7c3fe709d9kunm533ae5d212b2e0c
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSUhKVk1MGUkZGk9DSh9MQ1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUpPTFVKTkNZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBF:EE_|CY1PR12MB9674:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8c9c232-326f-4512-df7e-08de1ddcb432
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7zttMdGsCGY2HtzNARHYAk+kNBfJwrA3labjUjk3mPhnYhMUMTzjQV2hsDgc?=
+ =?us-ascii?Q?dVvhU+FD8CueQ4TQP067Pzy3Dc55Ces84oqIkDQuvsWYqX1DYAbVOLHrhLx8?=
+ =?us-ascii?Q?izTwAHZg/UaB0RjgitjdcbEa1P9+ktUSstLx6GdvN6qXbLlVdMU8CsE8hXMu?=
+ =?us-ascii?Q?W6HaRuo9BFO7KLOmGno6ParyL9VColAtu0qfXvtduttwegI2ZBuX9fDQplt0?=
+ =?us-ascii?Q?K5QshmHrIbm/GuHwGTQKEUSqPuPMUJwwxwKKN27vhAV2NEnPJ4TRj6b3VNea?=
+ =?us-ascii?Q?iTaaHdAKEVaOSzoc8YT/fLy1e9TqVlWMHAT7/NLbfw+aXk49YWtZtn0E0LHa?=
+ =?us-ascii?Q?bQ0XCKSm8nrhSwnrRqc6RYyFxu2e9rAwnZYeIqB7L9qWsVh7/O70/0oOkC4J?=
+ =?us-ascii?Q?kUgiJN6b5fvgpA0TI+o+auLFDfqbiVHorzY1F4IgZJFGxijcmcZhesSrLzQn?=
+ =?us-ascii?Q?W+DkZ833/Snnh1Q5/qttSCkNjniKGQ9ITjMXO/fLqTO4llZcJTZFunxlhXXj?=
+ =?us-ascii?Q?ceIgrka+Lc4T2UpFtKEIKNSfcG3ihhmxnG/xx+C4Ui8wKGfJj2fPKUMXHs8P?=
+ =?us-ascii?Q?ygM6MocK2yaNJpqhg4tu7+8EaXdZjlpx8LzNkpiZPRawHWkH6/wVV/ufBw1G?=
+ =?us-ascii?Q?Vnjd8G26uwcV5ag5OrSsKagzPcITfKwyzVEiyxm5xy3kEvKNgmYR8y9XtQcg?=
+ =?us-ascii?Q?NevEBpqmfqXnsq7xf1G8pwA6UP033gzYuZ9ah3uM7fN6D441u7aPf4EeSozY?=
+ =?us-ascii?Q?gZA3Py8blN0ilf2flvcV3mcdlGFCckgypbd1mNe1XGp2fBxjpwDBZQf3lRwn?=
+ =?us-ascii?Q?BIEYSISJuFW4wSmOi+c6G9geCR/hSFoQnFVfbNQw+XgxOMf1Z22pIOHRE47s?=
+ =?us-ascii?Q?Im18JVbAhylPsXpWaPfg2mfJuMO9u//8jzaGdPYKfbQ0LBQmerNX+Lqdtryn?=
+ =?us-ascii?Q?IXF5tg/8c++pfI7Vvqjlhu1SyaFld+aLM/P2WDvPTSiiKw6aKMfMobOKSqxi?=
+ =?us-ascii?Q?eJzguPpLm9RrvvuWZR2nd2ZQ+6IH4QvmOLRtjlyzbZ4hEecI4wXZ8zearrV1?=
+ =?us-ascii?Q?DK1EQcLsGonnMV/sbVbgwuuLaZuU9o5PhrXHWeD6M6w+UkC4vRrdk0vsMs/D?=
+ =?us-ascii?Q?0R6/owuWMMSRI6wDS08GhS/BYu/9cNgUEeOx5Yd1mK1pqFIvy1Njyxoqt8C7?=
+ =?us-ascii?Q?bTjQskzbbOZh6MfeptKWss8IrRkmNfABemKXj+u/9bLX3TxaeYgPJdKt0Dvh?=
+ =?us-ascii?Q?0QYo/hyShMOmV01gjS2tj39nGfp3tH3jCiS5IPmxA6jmy5P3n3Ii51syNYvG?=
+ =?us-ascii?Q?55IgUwsw2keysQE99nvx+3QAzQ/M9hmXWJ3C5CqXBa8YDFKN1UcMEk4sjsYb?=
+ =?us-ascii?Q?wGu4g7aDaERzVfNAuTcOrnbVBHLnlzq6IGEYo1GZEWbBnm1iPKAgY5YmyVOQ?=
+ =?us-ascii?Q?BvkkboPU/OWwBKNbm3oCWsvxr75Nkq/yHsIvInW3tbO5uweUCRs+Uk11VK3D?=
+ =?us-ascii?Q?MsqXf/Hqsnh6LyZZzRSm0tGCSCvj3E/4wBKDb76GPdaoTyJZ4G7m2c/+Ydun?=
+ =?us-ascii?Q?U+chbDS+QphP8w2gyRc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 09:04:48.6007
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8c9c232-326f-4512-df7e-08de1ddcb432
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBF.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9674
 
-When capturing PMU info with perf, it is necessary to know the nodeid of 
-the interface. Here, we add topology debug info for the clock domain to 
-display the nodeid of the interfaces.
+For hw engines that can't load balance jobs, entities are
+"statically" load balanced: on their first submit, they select
+the best scheduler based on its score.
+The score is made up of 2 parts:
+* the job queue depth (how much jobs are executing/waiting)
+* the number of entities assigned
 
-$ cat /sys/kernel/debug/arm-ni/map_1f3c06
-as shown below:
-| HSNI #5 || PMNI #6 || PMU  #14 |
+The second part is only relevant for the static load balance:
+it's a way to consider how many entities are attached to this
+scheduler, knowing that if they ever submit jobs they will go
+to this one.
 
-Signed-off-by: Shouping Wang <allen.wang@hj-micro.com>
+For rings that can load balance jobs freely, idle entities
+aren't a concern and shouldn't impact the scheduler's decisions.
+
+Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 ---
- drivers/perf/arm-ni.c | 63 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 62 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 22 +++++++++++++++++-----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h |  1 +
+ 2 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
-index 32eabdbe877a..e0f0e18d0120 100644
---- a/drivers/perf/arm-ni.c
-+++ b/drivers/perf/arm-ni.c
-@@ -13,6 +13,7 @@
- #include <linux/perf_event.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/debugfs.h>
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+index afedea02188d..4d91cbcbcf25 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
+@@ -209,6 +209,7 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, u32 hw_ip,
+ 	struct amdgpu_ctx_entity *entity;
+ 	enum drm_sched_priority drm_prio;
+ 	unsigned int hw_prio, num_scheds;
++	struct amdgpu_ring *aring;
+ 	int32_t ctx_prio;
+ 	int r;
  
- /* Common registers */
- #define NI_NODE_TYPE		0x000
-@@ -110,6 +111,7 @@ struct arm_ni_cd {
- 	struct arm_ni_unit *units;
- 	struct perf_event *evcnt[NI_NUM_COUNTERS];
- 	struct perf_event *ccnt;
-+	struct dentry *debug;
+@@ -239,11 +240,13 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, u32 hw_ip,
+ 			goto error_free_entity;
+ 	}
+ 
+-	/* disable load balance if the hw engine retains context among dependent jobs */
+-	if (hw_ip == AMDGPU_HW_IP_VCN_ENC ||
+-	    hw_ip == AMDGPU_HW_IP_VCN_DEC ||
+-	    hw_ip == AMDGPU_HW_IP_UVD_ENC ||
+-	    hw_ip == AMDGPU_HW_IP_UVD) {
++	sched = scheds[0];
++	aring = container_of(sched, struct amdgpu_ring, sched);
++
++	if (aring->funcs->engine_retains_context) {
++		/* Disable load balancing between multiple schedulers if the hw
++		 * engine retains context among dependent jobs.
++		 */
+ 		sched = drm_sched_pick_best(scheds, num_scheds);
+ 		scheds = &sched;
+ 		num_scheds = 1;
+@@ -258,6 +261,12 @@ static int amdgpu_ctx_init_entity(struct amdgpu_ctx *ctx, u32 hw_ip,
+ 	if (cmpxchg(&ctx->entities[hw_ip][ring], NULL, entity))
+ 		goto cleanup_entity;
+ 
++	if (aring->funcs->engine_retains_context) {
++		aring = container_of(sched, struct amdgpu_ring, sched);
++		entity->sched_score = aring->sched_score;
++		atomic_inc(entity->sched_score);
++	}
++
+ 	return 0;
+ 
+ cleanup_entity:
+@@ -514,6 +523,9 @@ static void amdgpu_ctx_do_release(struct kref *ref)
+ 			if (!ctx->entities[i][j])
+ 				continue;
+ 
++			if (ctx->entities[i][j]->sched_score)
++				atomic_dec(ctx->entities[i][j]->sched_score);
++
+ 			drm_sched_entity_destroy(&ctx->entities[i][j]->entity);
+ 		}
+ 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+index 090dfe86f75b..f7b44f96f374 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.h
+@@ -39,6 +39,7 @@ struct amdgpu_ctx_entity {
+ 	uint32_t		hw_ip;
+ 	uint64_t		sequence;
+ 	struct drm_sched_entity	entity;
++	atomic_t		*sched_score;
+ 	struct dma_fence	*fences[];
  };
  
- struct arm_ni {
-@@ -476,6 +478,59 @@ static irqreturn_t arm_ni_handle_irq(int irq, void *dev_id)
- 	}
- }
- 
-+static struct dentry *arm_ni_cd_debugfs;
-+
-+#ifdef CONFIG_DEBUG_FS
-+static const char *arm_ni_node_type(enum ni_node_type type)
-+{
-+	switch (type) {
-+	case NI_ASNI:
-+		return "| ASNI ";
-+	case NI_AMNI:
-+		return "| AMNI ";
-+	case NI_PMU:
-+		return "| PMU  ";
-+	case NI_HSNI:
-+		return "| HSNI ";
-+	case NI_HMNI:
-+		return "| HMNI ";
-+	case NI_PMNI:
-+		return "| PMNI ";
-+	default:
-+		return "| ???? ";
-+	}
-+}
-+
-+static int arm_ni_cd_map_show(struct seq_file *s, void *data)
-+{
-+	struct arm_ni_cd *cd = s->private;
-+
-+	cd_for_each_unit(cd, unit) {
-+		seq_printf(s, "%s#%-2d |", arm_ni_node_type(unit->type), unit->id);
-+	}
-+	seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(arm_ni_cd_map);
-+
-+static void arm_ni_cd_debugfs_init(struct arm_ni_cd *cd, u64 res_start)
-+{
-+	const char *name = "map";
-+
-+	if (res_start > 0)
-+		name = devm_kasprintf(cd_to_ni(cd)->dev, GFP_KERNEL, "map_%llx",
-+				res_start >> NI_PMU_PA_SHIFT);
-+	if (!name)
-+		return;
-+
-+	cd->debug = debugfs_create_file(name, 0444, arm_ni_cd_debugfs, cd, &arm_ni_cd_map_fops);
-+}
-+#else
-+static void arm_ni_cd_debugfs_init(struct arm_ni_cd *cd, u64 res_start) {}
-+#endif
-+
- static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_start)
- {
- 	struct arm_ni_cd *cd = ni->cds + node->id;
-@@ -563,6 +618,7 @@ static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_s
- 	name = devm_kasprintf(ni->dev, GFP_KERNEL, "arm_ni_%llx", res_start >> NI_PMU_PA_SHIFT);
- 	if (!name)
- 		return -ENOMEM;
-+	arm_ni_cd_debugfs_init(cd, res_start);
- 
- 	return perf_pmu_register(&cd->pmu, name, -1);
- }
-@@ -575,6 +631,7 @@ static void arm_ni_remove(struct platform_device *pdev)
- 		writel_relaxed(0, cd->pmu_base + NI_PMCR);
- 		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
- 		perf_pmu_unregister(&cd->pmu);
-+		debugfs_remove(cd->debug);
- 	}
- 	cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &ni->cpuhp_node);
- }
-@@ -787,9 +844,12 @@ static int __init arm_ni_init(void)
- 
- 	arm_ni_hp_state = ret;
- 
-+	arm_ni_cd_debugfs = debugfs_create_dir("arm-ni", NULL);
- 	ret = platform_driver_register(&arm_ni_driver);
--	if (ret)
-+	if (ret) {
- 		cpuhp_remove_multi_state(arm_ni_hp_state);
-+		debugfs_remove(arm_ni_cd_debugfs);
-+	}
- 	return ret;
- }
- 
-@@ -797,6 +857,7 @@ static void __exit arm_ni_exit(void)
- {
- 	platform_driver_unregister(&arm_ni_driver);
- 	cpuhp_remove_multi_state(arm_ni_hp_state);
-+	debugfs_remove(arm_ni_cd_debugfs);
- }
- 
- module_init(arm_ni_init);
 -- 
 2.43.0
 
