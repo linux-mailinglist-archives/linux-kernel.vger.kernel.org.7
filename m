@@ -1,326 +1,147 @@
-Return-Path: <linux-kernel+bounces-890797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55876C40FBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:10:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD44DC40FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D190A18893A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:11:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 62F2434EE1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A673328FE;
-	Fri,  7 Nov 2025 17:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Pw4wvoVX"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6797332ECF;
+	Fri,  7 Nov 2025 17:11:37 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CA832E735
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75FC22836C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762535429; cv=none; b=MLl7nW1HQxwY0rXt4mwDrJrFlBe6fvkdkumMeOdqLiI9pUUjbJ9/J6UOApRQ5ikanQfOZb/Zkqd7136nLt9XRHAUfvwOu+Rk4F89iBog8MvtqE1F7YnUhPaPpdtRKhYpW1FJpJulUtgy/TvsLd5NtjWHmyOng5wuQcB9ZDozpzo=
+	t=1762535497; cv=none; b=VZ8ei00BdztBTJmnKlMjhzKawc8E3z6ybv9vX91MBTktP8NwQ9gEZXXdvOWTPHQNCnTsgI5P4nF6N5MS/tbYFzpMIg+D9uPnA7z8j89Wr9UQpykA75gmoPmYE/LkBq4tITuMnUHNAmZOB8RadtfTDehp5hEQkq1ykb/rpv995l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762535429; c=relaxed/simple;
-	bh=nggFRaJMT4kxsmaafT52w1PekfmTIpa2WR3h4U3kdgY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Me9buow50muPJgr4musjOkSEj5MXtH662vcOwGNyz+OOT3o5rCO8F1JpxVDIgMSxmNn9KtQwq01nPboI2X9sIWgtZY4Ocz9Nlc/+7WX3F/ewDHFzm7uLCoyCpg66+k7KAOWigRHvvfnvFnDuDjSwJituFCIVuqu6RAh6ljdoq9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Pw4wvoVX; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47754b9b050so5531175e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:10:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762535425; x=1763140225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d75/m8OyEpl0fwQUB+HUMKmdvA/o/D0pvjuoB/XRU0Q=;
-        b=Pw4wvoVXLuz2O8jQRjxFUXTcxjqD9gzMsc54sLTyThaZ6J6eC7yZ9kC1QS/3INiTAW
-         ukyp6z01KL4oSimCBERxmCnfDpyGi8Spbb8Ugd12bUFPxxw7xMAfV/TTQOg223YknPec
-         bLeF7lxVfgs1DM0j2AP3DxzS1NqdumVGlweNdv6jiKfaZywKRwPjAgsiu65RGY6ZewwN
-         Ybdr2tNarqI5r6ASsWV3JcM7WpsQ3zoByGd5NrPcXgcCTrV1TiPN2oY4QFSlgDJXhlUU
-         GQgL3alUZ1EcwV8dPaum8jexFXojDCCBZpYJna2hknydNxyxbT7GEKh+Fnph4o/J6Pg2
-         tqVQ==
+	s=arc-20240116; t=1762535497; c=relaxed/simple;
+	bh=Ijy0mE9Bfj28iw5OFeTduBgvK0D0fRpvyf00WFIo4Mo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kbiTHRkm0qzfCL/O+BFOBOvAUy+B/IKLrxHpZTzno1UCjnNFa4DktqInSvYWCF6ewkRW+sTzqRnjSsD0K6p6GKjS965j5yDiYEBKfvvxFHpJFO1c4um8iwbGQw+UDoHvR/9blrZudOCTIfOvgZyYfsoi13YdwYiXTzmJSgHjTjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-93e8839f138so89048839f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:11:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762535425; x=1763140225;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d75/m8OyEpl0fwQUB+HUMKmdvA/o/D0pvjuoB/XRU0Q=;
-        b=ufoNp8BRRqMuLsDWCdduI1PHcMpQvXG5u23LVobbNt7YEBVQ+R3vEJUmpfJiO2RcH0
-         ysQZ5sRVO57lbZwzaW67dEO9jfQ/HmX8yttHceBL2BOVzBm75JpgYMK4Mpx/NM/vxaln
-         hffw4QNA4QImpQhjEUpes3HXeuxLjT/1etVYQ0IyJRg9E7Q0hvO7A2OF9BoSdLFx8xAU
-         pEg1BpD9SOcaqF42vX+D6Wm/CdbdRRkl9z8riPBt7tDuWoZsQ+CzsMY988BFzRwticGW
-         ey4pu/ViwF7l7gGcwOaJdwn6PVbNI+Ts7+yqcucC4Po06YRyJWGNA+ELzPEHhnjqcN4Y
-         sS0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWg85fdaQcGvKnUObbxk0UeK9zIxTMnK4ockPmQPiz9FIeczBNuACxNF4NVoAOVux+edbgEsM4UvYYbfJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBfjrmVe9lwOBqBGJLXkwloUp6NXSwtAaEJo75ZxXbD8V+EF+P
-	xt4ymrC5eVNydKtLVBMxVLFJV2H0cwd7CEhZxh32ljZp5P9ueUALvAT1G/30KT4aYW0=
-X-Gm-Gg: ASbGncudq1AxrsvN2o2Nbs3C1ymIRuTLxrUXSBzmhcrOm8RZDmPYHftIQnzpQdFTh6h
-	43rc8WnDzWYePFEhPrBt+DB1eKgMR9MfYRjLpvUOjBpz1zUc6PAyCCXVqUUJOtndo2TpFu0cNNW
-	JsrmfmB0kJL2cdtMSku6O4zZcEIGx/KpSK3IM670p896cSP39gEE05RLNZEUYMbEtZy4Ruu7O1R
-	E2/oVR6QfMsR9Y/d21Tvu0eDBSabNIZygbNjOgqxRj1b0m6oxXl6Weus78IvE2f0ddGFm2qVWug
-	S/QMviW1GdsTIZIocJEyyw5qa7Rn2ErgLaUgahp/55KTH6iMaCOUGpiOg0zlh50bvJtMNIMHmmh
-	ApLXSJVJiCUd3E75m0vvpJGrCy81rAFJM/h5yFtxHKHNUYzjdhG02yYkq7y79bEoiqydZXcbgMM
-	AKlyrrIVnW
-X-Google-Smtp-Source: AGHT+IHs0fGLj1pX9D20cd+qxJYOXVpz1DkRCoiP+yxFDAzBqmLvwRgTWCnCmwGVOrewtrpdAZ4qhA==
-X-Received: by 2002:a05:600c:4ed4:b0:471:786:94d3 with SMTP id 5b1f17b1804b1-4776bcd52bamr34376015e9.22.1762535424637;
-        Fri, 07 Nov 2025 09:10:24 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:d88d:7650:f1de:19c])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4776bcfd021sm78745585e9.11.2025.11.07.09.10.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 09:10:24 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,  Chuan Liu
- <chuan.liu@amlogic.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Kevin Hilman <khilman@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  Michael Turquette <mturquette@baylibre.com>,  Dmitry Rokosov
- <ddrokosov@sberdevices.ru>,  robh+dt <robh+dt@kernel.org>,  Rob Herring
- <robh@kernel.org>,  devicetree <devicetree@vger.kernel.org>,  linux-clk
- <linux-clk@vger.kernel.org>,  linux-amlogic
- <linux-amlogic@lists.infradead.org>,  linux-kernel
- <linux-kernel@vger.kernel.org>,  linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 5/5] clk: meson: t7: add t7 clock peripherals
- controller driver
-In-Reply-To: <236a568d-c809-4dc7-be2f-e813d0d85368@amlogic.com> (Jian Hu's
-	message of "Sat, 8 Nov 2025 00:20:33 +0800")
-References: <20251030094345.2571222-1-jian.hu@amlogic.com>
-	<20251030094345.2571222-6-jian.hu@amlogic.com>
-	<1jbjlnxuug.fsf@starbuckisacylon.baylibre.com>
-	<3b9a5978-aa02-486b-85f5-6443dc607dd5@amlogic.com>
-	<1j1pmew1cu.fsf@starbuckisacylon.baylibre.com>
-	<236a568d-c809-4dc7-be2f-e813d0d85368@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Fri, 07 Nov 2025 18:10:23 +0100
-Message-ID: <1jv7jlvke8.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1762535495; x=1763140295;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kIC83JLdaG0kr9v2fCZaiP1QsIT1/GnA9WZ2IXM/M8U=;
+        b=TKmSFayd/YFY2zRaJDh1Hu9aEo7VJlSWatB/Se4XG+Rddtm0041Ctjx5LStqSaG1M3
+         IDSXerkecPENDKv3wl4r+a+LPrdMD0USWQH4IbpD/eL9jJr2QOwF3X054kSx+3zVSN2g
+         jFgJjdx78haVEOk3UftCWwWi7QivBJmlYj/2Cv2JgqgWW8jdAetYw4h50Y2PZetrEoJF
+         ES6phREAGxdv2rk9HW8c4hviacKaEAFGEr7Bo63ECWpYkY4B9RYd1AYo6xAqhcnwrUY7
+         Ws6VpDz9mpXy7Ons5IMkKBo13Lhgyc4n+7onRuRNPqBh28A9Oz9eyItJhWv+cLmexz9L
+         rdBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqZHFdnMHxO8l838KyNB4Z6vW59TXKgw4twq5mDiFSroo7hikVDvSAyooVzuaZ6ks0/p3etc1P1YPCWaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+ze35Hw80/181ka6ufLRs9VIBsb9Zn1V1YMkNIk9oV3KSbW1
+	Dmx/EntgfnGXpwUmJad+Y8Yr4JMOkvW7LcJdOeq1TPNm/K1arOZRGDwKqDm6Qxfn2Oy21COFwpS
+	QML18WlnCZLoUVlHzcuUhvzkt4w+SqrlK1CXCBlB9IA7+L4r2WCqayRfNVn8=
+X-Google-Smtp-Source: AGHT+IHVsOrmMHH/4XX7mg0f3XuGt7DT1GNJkN+g0OFloaLQziPQryRytU+ljqU+wFh9kAMb2zYqr2B5Nfb1/lZwxxCyO2W1w26t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1c22:b0:433:2943:3a78 with SMTP id
+ e9e14a558f8ab-43367e70f05mr2674525ab.31.1762535494581; Fri, 07 Nov 2025
+ 09:11:34 -0800 (PST)
+Date: Fri, 07 Nov 2025 09:11:34 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690e2846.a70a0220.22f260.0057.GAE@google.com>
+Subject: [syzbot] [ocfs2?] memory leak in ocfs2_new_path_from_path
+From: syzbot <syzbot+cfc7cab3bb6eaa7c4de2@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat 08 Nov 2025 at 00:20, Jian Hu <jian.hu@amlogic.com> wrote:
+Hello,
 
-> On 11/4/2025 6:14 PM, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On Tue 04 Nov 2025 at 17:17, Jian Hu <jian.hu@amlogic.com> wrote:
->>
->>>>> +
->>>>> +static struct clk_regmap t7_dspa =3D {
->>>>> +     .data =3D &(struct clk_regmap_mux_data){
->>>>> +             .offset =3D DSPA_CLK_CTRL0,
->>>>> +             .mask =3D 0x1,
->>>>> +             .shift =3D 15,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data){
->>>>> +             .name =3D "dspa",
->>>>> +             .ops =3D &clk_regmap_mux_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &t7_dspa_a.hw,
->>>>> +                     &t7_dspa_b.hw,
->>>>> +             },
->>>>> +             .num_parents =3D 2,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> ......
->>>>> +
->>>>> +static struct clk_regmap t7_anakin_0 =3D {
->>>> Nitpick: for the DSP it was a/b, here it is 0/1
->>>> Could you pick one way or the other and stick to it ?
->>>
->>> ok , I will use 0/1 for DSP.
->> I think I prefer a/b if you don't mind. see below for why ...
->
->
-> Mali is named as mali_0, mali_1 in this driver.=C2=A0 =C2=A0And G12A/S4/G=
-XBB series
-> do the same.
+syzbot found the following issue on:
 
-... A1 use dspa_a dspa_b (etc ...)=20
+HEAD commit:    4a0c9b339199 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fbca92580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
+dashboard link: https://syzkaller.appspot.com/bug?extid=cfc7cab3bb6eaa7c4de2
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114be17c580000
 
->
-> If they are named as anakin_a and anakin_b here, there will be two naming
-> methods.
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bfd02a09ef4d/disk-4a0c9b33.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ed9a1334f973/vmlinux-4a0c9b33.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e503329437ee/bzImage-4a0c9b33.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/275c7c156b9c/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=11545084580000)
 
-Already have that unfortunately
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cfc7cab3bb6eaa7c4de2@syzkaller.appspotmail.com
 
-> Shall we keep consistent ?
->
+BUG: memory leak
+unreferenced object 0xffff8881286c42a0 (size 96):
+  comm "syz.3.46", pid 6293, jiffies 4294945738
+  hex dump (first 32 bytes):
+    01 00 00 00 00 00 00 00 a0 0e 30 82 ff ff ff ff  ..........0.....
+    88 b8 5b 2d 81 88 ff ff c0 f4 c3 2f 81 88 ff ff  ..[-......./....
+  backtrace (crc f97a0cdc):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4975 [inline]
+    slab_alloc_node mm/slub.c:5280 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5758
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    ocfs2_new_path fs/ocfs2/alloc.c:688 [inline]
+    ocfs2_new_path_from_path+0x4f/0x90 fs/ocfs2/alloc.c:702
+    ocfs2_get_left_path.constprop.0+0x182/0x390 fs/ocfs2/alloc.c:3491
+    ocfs2_merge_rec_left+0x426/0xe60 fs/ocfs2/alloc.c:3543
+    ocfs2_try_to_merge_extent+0x3cb/0xe90 fs/ocfs2/alloc.c:3794
+    ocfs2_split_extent+0xd2e/0x1330 fs/ocfs2/alloc.c:5139
+    ocfs2_change_extent_flag+0x2ed/0x720 fs/ocfs2/alloc.c:5230
+    ocfs2_mark_extent_written+0x1e3/0x2c0 fs/ocfs2/alloc.c:5276
+    ocfs2_dio_end_io_write+0x5bc/0xaa0 fs/ocfs2/aops.c:2350
+    ocfs2_dio_end_io+0x8c/0x180 fs/ocfs2/aops.c:2404
+    dio_complete+0x12e/0x4b0 fs/direct-io.c:281
+    __blockdev_direct_IO+0x1782/0x1b40 fs/direct-io.c:1303
+    ocfs2_direct_IO+0xf6/0x100 fs/ocfs2/aops.c:2441
+    generic_file_direct_write+0xb4/0x180 mm/filemap.c:4176
+    __generic_file_write_iter+0xa1/0x130 mm/filemap.c:4345
+    ocfs2_file_write_iter+0x68a/0x15a0 fs/ocfs2/file.c:2469
 
-Please try yes
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
 
->
-> If use 0/1 to name them.
->
-> dsp clocks are:
->
-> =C2=A0 =C2=A0 dspa_0_sel
->
-> =C2=A0 =C2=A0 dspa_0_div
->
-> =C2=A0 =C2=A0 dspa_0
->
-> =C2=A0 =C2=A0 dspa_1_sel
->
-> =C2=A0 =C2=A0 dspa_1_div
->
-> =C2=A0 =C2=A0 dspa_1
->
-> =C2=A0 =C2=A0 dspb_0_sel
->
-> =C2=A0 =C2=A0 dspb_0_div
->
-> =C2=A0 =C2=A0 dspb_0
->
-> =C2=A0 =C2=A0 dspb_1_sel
->
-> =C2=A0 =C2=A0 dspb_1_div
->
-> =C2=A0 =C2=A0 dspb_1
->
->
-> anakin clocks are:
->
-> =C2=A0 =C2=A0 anakin_0_sel
->
-> =C2=A0 =C2=A0 anakin_0_div
->
-> =C2=A0 =C2=A0 anakin_0
->
-> =C2=A0 =C2=A0 anakin_1_sel
->
-> =C2=A0 =C2=A0 anakin_1_div
->
-> =C2=A0 =C2=A0 anakin_1
->
-> =C2=A0 =C2=A0 anakin_01_sel
->
-> =C2=A0 =C2=A0 anakin
->
->
-> If use a/b to name them.
->
-> dsp clocks are:
->
-> =C2=A0 =C2=A0 dspa_a_sel
->
-> =C2=A0 =C2=A0 dspa_a_div
->
-> =C2=A0 =C2=A0 dspa_a
->
-> =C2=A0 =C2=A0 dspa_b_sel
->
-> =C2=A0 =C2=A0 dspa_b_div
->
-> =C2=A0 =C2=A0 dspa_b
->
-> =C2=A0 =C2=A0 dspb_a_sel
->
-> =C2=A0 =C2=A0 dspb_a_div
->
-> =C2=A0 =C2=A0 dspb_a
->
-> =C2=A0 =C2=A0 dspb_b_sel
->
-> =C2=A0 =C2=A0 dspb_b_div
->
-> =C2=A0 =C2=A0 dspb_b
->
->
-> anakin clocks are:
->
-> =C2=A0 =C2=A0 anakin_a_sel
->
-> =C2=A0 =C2=A0 anakin_a_div
->
-> =C2=A0 =C2=A0 anakin_a
->
-> =C2=A0 =C2=A0 anakin_b_sel
->
-> =C2=A0 =C2=A0 anakin_b_div
->
-> =C2=A0 =C2=A0 anakin_b
->
-> =C2=A0 =C2=A0 anakin_ab_sel
->
-> =C2=A0 =C2=A0 anakin
->
->
-> Which one is better?
 
-a/b or 0/1, we already have both
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Pick which ever scheme you prefer, just stick to it from now on.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
->
->>>>> +     .data =3D &(struct clk_regmap_gate_data){
->>>>> +             .offset =3D ANAKIN_CLK_CTRL,
->>>>> +             .bit_idx =3D 8,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data) {
->>>>> +             .name =3D "anakin_0",
->>>>> +             .ops =3D &clk_regmap_gate_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) { &t7_anakin_=
-0_div.hw },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
->>>>> +     },
->>>>> +};
->> [...]
->>
->>>>> +
->>>>> +static struct clk_regmap t7_anakin_clk =3D {
->>>>> +     .data =3D &(struct clk_regmap_gate_data){
->>>>> +             .offset =3D ANAKIN_CLK_CTRL,
->>>>> +             .bit_idx =3D 30,
->>>>> +     },
->>>>> +     .hw.init =3D &(struct clk_init_data) {
->>>>> +             .name =3D "anakin_clk",
->>>> Again, not a great name, especially considering the one above.
->>>> Is this really really how the doc refers to these 2 clocks ?
->>>
->>> bit30 gate clock is after bit31 mux clock,  and the gate clock is the f=
-inal
->>> output clock, it is used to gate anakin clock.
->>>
->>> I will rename bit31 as anakin_pre, rename bit30 as anakin.
->> Ok for the last element
->>
->> ... but I don't  like "_pre" for a mux selecting one the 2 glitch free
->> path. It does not help understanding the tree.
->>
->> For such mux, when it is not the last element, I would suggest
->> "_ab_sel" ... at least it is clear what it does so, "anakin_ab_sel" ?
->>
->
-> ok, anakin_ab_sel and anakin for these two clocks.
->
->
-> Maybe anakin_01_sel and anakin for these two clocks, if you agree to 0/1
-> naming convention.
->
->>>>> +             .ops =3D &clk_regmap_gate_ops,
->>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
->>>>> +                     &t7_anakin.hw
->>>>> +             },
->>>>> +             .num_parents =3D 1,
->>>>> +             .flags =3D CLK_SET_RATE_PARENT
->>>>> +     },
->>>>> +};
->>>>> +
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
---=20
-Jerome
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
