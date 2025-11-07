@@ -1,125 +1,82 @@
-Return-Path: <linux-kernel+bounces-890298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A14C3FBD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:30:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE59C3FBD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12B244E730E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:30:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC203AAB2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771121DE3C0;
-	Fri,  7 Nov 2025 11:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nXvgEGDo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lk4+2tg3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA0E21CC58;
+	Fri,  7 Nov 2025 11:31:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E002222CB;
-	Fri,  7 Nov 2025 11:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA231DED4C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762515037; cv=none; b=SrkbxzofI8FNsQW5qsoIT/4Dd6IflmaK47c6rOGKHhibmN39GoBxymjZmLEEZb9iT/XsSF5FGBN5R6LWLKqGYjyHhWRoDxjlqp57q1ALvfbwvMIpd5eUwtz3CZI0iiIO667NIa+xhE7gGKhhyedLrKcQX58IULMxgrqGOwxosHs=
+	t=1762515067; cv=none; b=QL1gzaEn8SSUD1RPpF2qbBV8g6wLrPmvoiJo3Z3gGJogjKF1UQWfq7kT+cQB1W2FHjMxpOKLOAVCDYxsvv6XhkfQCTAq9OVdJAm550LwFZ9TWcEkmay7jP68u0Wc5EMIDw2ntIYULbRBE8A0aRc5F2iBSD3h0xmhGHlidWxtJOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762515037; c=relaxed/simple;
-	bh=Iof+12xLwEi28tQXd4VoueI4a7bB7kbPWKUpfW/YvAQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LGn0TQXAmHnKNXsOWfo3H7/rvjsxRAM9DxKH4/Y7K+JlEkzobmM3pYP2n8m/c49qbUmreXmP0jy7BeDMeKF1pbYKRs9nCm6Qx8K9/CLnJdINp/hLHIUXfpJrLPm/Cf8mP3awAyJ/EhfOkFHfoQnSs0wf3XQLFRkE7ge9xaUwCsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nXvgEGDo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lk4+2tg3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 07 Nov 2025 11:30:28 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762515034;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/uXuiPuq1GWuzvLqPew7saKFbB6At6saQXmSK+nLmI=;
-	b=nXvgEGDom5OOL+0nF1lnfsHy/ekPFJuldTv5SVNxCmdREy/GLVt9iiuiur4LVwJzFFciqt
-	uG8Ck0UPaPPJ9HyHt42laXNE9QjERhJ5DkEGe6kkiDHFU6wGzv+h6D0nY1cOufDdvBAXOW
-	zeFaMvECGKX3rTSX7iacX6ieuhCWsgJWQBR/26DpgnK7sjlBweBk/mwlU00V6wOAAvIFl6
-	HOsjf0XnMA/ri1lQoABlFjLti+ZRt6MlNg1q6p0kEZ0m6X4niNOzivxEfzFKmpEvso2OAi
-	u3wcDaBkcvXhw7yhYwpt2mVoYITq7YpMFrV1P4WYoHOYb6m3OANs9EpYWNKRWQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762515034;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/uXuiPuq1GWuzvLqPew7saKFbB6At6saQXmSK+nLmI=;
-	b=lk4+2tg31ARQqS4kl0IoEwx+1T15/KnhqIWTLbazjkEm6EcNuMRAFJUIcjXDT2xK9bIaMS
-	4jiCubJYHkd0QdCg==
-From: "tip-bot2 for Mario Limonciello (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/microcode/AMD: Add more known models to entry
- sign checking
-Cc: "Mario Limonciello (AMD)" <superm1@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,  <stable@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251106182904.4143757-1-superm1@kernel.org>
-References: <20251106182904.4143757-1-superm1@kernel.org>
+	s=arc-20240116; t=1762515067; c=relaxed/simple;
+	bh=eKxVo6NezcKDET9QSkGOnF8w4Ciylkw0a6iF0CGzSUA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=vD9GOAhs5YWKRvcebzO9/CUPWmRJUaTucnDqN4MZgwwvh01KyfLcXsnGKBFdJjF/P1MMp9gsosFNLFZsZtj7TEqttUuaQYvTjBzFLzSClfIkMNpML7sCHDD6ohOhFKFSO/zC7E6FDjTWf0t8c+/R+gt7SjX3Sd3ardxv/ECNf4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-945a94ceab8so55169739f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:31:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762515063; x=1763119863;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWBe8qaRWJQPyl70+c9V6YvsBWAlbk19NM1mJVLV/hk=;
+        b=gTiRzfAM7APhc1tjuJhO/VUiIv4ihzkA3jZWDr53dUdqecEezcJZ8vxI3vpld3h5G1
+         S21qh42DZDZ+jqC7OwyBAO8+avmJZNoYxwb+7qe6to9KQ8ZmG/EkTilhihXPvA4von9A
+         Rq5R3o4zfDOhyEQ0n6G3q+7PbtUdJPAXq8XwWb9ouP6t/xfvF4UWSAMVGZE2PKmuKW5v
+         F5jam1HIGHvBDt+ZiG7y836aK3v5GGo7IpGVbvkFkY5KzsdKin5DGxb81CEnzPy1mNtH
+         SpcPfm6OXnvzGsjBu2ZE+KkCl9w1SdOgqAVaW8AhTtIQTZUTrf/lVRX0smr9w72NAKsC
+         tpVA==
+X-Gm-Message-State: AOJu0Yz9N+zSWJg2/lWQYnvGCHJQ81NvIzls/8g3y6Oe30cn9eeGJ+wR
+	XWo3xMaZ1TKRTPZ8yIWcBMvStaDEaUcZVSR2y0yPOUnEP5AR9K3zEJdxLt1haY/g7BYU2wYpmR3
+	mLDP3eSnc2o4vZDI2PkxCEl5/Fr+vaKWIHc/lFELIzc9A++wWsYomtxVI1NI=
+X-Google-Smtp-Source: AGHT+IGJpqa/dadVcX8jxvGROXNkC+a7VS2lL6ZyGEfUzf68JGvZEUBVunWZGLXdRLWhIW7XHh61zH4OIbWUec0ITs47rHu3eX44
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176251502918.2601451.14150403069865878876.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:19cf:b0:433:2d5b:96ce with SMTP id
+ e9e14a558f8ab-4335f3ee280mr38409875ab.14.1762515063324; Fri, 07 Nov 2025
+ 03:31:03 -0800 (PST)
+Date: Fri, 07 Nov 2025 03:31:03 -0800
+In-Reply-To: <690d9fd4.a70a0220.22f260.0022.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690dd877.a70a0220.22f260.0041.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [jfs?] BUG: unable to handle kernel paging
+ request in diUpdatePMap
+From: syzbot <syzbot+7fc112f7a4a0546731c5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/urgent branch of tip:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Commit-ID:     d23550efc6800841b4d1639784afaebdea946ae0
-Gitweb:        https://git.kernel.org/tip/d23550efc6800841b4d1639784afaebdea9=
-46ae0
-Author:        Mario Limonciello (AMD) <superm1@kernel.org>
-AuthorDate:    Thu, 06 Nov 2025 12:28:54 -06:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 07 Nov 2025 12:12:21 +01:00
+***
 
-x86/microcode/AMD: Add more known models to entry sign checking
+Subject: Re: [syzbot] [jfs?] BUG: unable to handle kernel paging request in diUpdatePMap
+Author: yun.zhou@windriver.com
 
-Two Zen5 systems are missing from need_sha_check(). Add them.
+#syz test
 
-Fixes: 50cef76d5cb0 ("x86/microcode/AMD: Load only SHA256-checksummed patches=
-")
-Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: <stable@kernel.org>
-Link: https://patch.msgid.link/20251106182904.4143757-1-superm1@kernel.org
----
- arch/x86/kernel/cpu/microcode/amd.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microc=
-ode/amd.c
-index b7c797d..dc82153 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -220,10 +220,12 @@ static bool need_sha_check(u32 cur_rev)
- 	case 0xaa001: return cur_rev <=3D 0xaa00116; break;
- 	case 0xaa002: return cur_rev <=3D 0xaa00218; break;
- 	case 0xb0021: return cur_rev <=3D 0xb002146; break;
-+	case 0xb0081: return cur_rev <=3D 0xb008111; break;
- 	case 0xb1010: return cur_rev <=3D 0xb101046; break;
- 	case 0xb2040: return cur_rev <=3D 0xb204031; break;
- 	case 0xb4040: return cur_rev <=3D 0xb404031; break;
- 	case 0xb6000: return cur_rev <=3D 0xb600031; break;
-+	case 0xb6080: return cur_rev <=3D 0xb608031; break;
- 	case 0xb7000: return cur_rev <=3D 0xb700031; break;
- 	default: break;
- 	}
+-- 
+You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+To view this discussion visit https://groups.google.com/d/msgid/syzkaller-bugs/11a7108a-5fc2-40ee-b1b2-37a76f7284a2%40windriver.com.
 
