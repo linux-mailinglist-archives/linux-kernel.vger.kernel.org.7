@@ -1,147 +1,179 @@
-Return-Path: <linux-kernel+bounces-890649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EF8C4090F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:23:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1EEC4091E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81461421301
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C963E1A4241D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720F932AAC3;
-	Fri,  7 Nov 2025 15:23:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A74319875;
-	Fri,  7 Nov 2025 15:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E9F32B9AF;
+	Fri,  7 Nov 2025 15:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YZKT2RWX"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E201D32860F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762528983; cv=none; b=JBHcSt2HlBhzlDYbHCDafPwKh5FvhqopMEP8IG7QatTkr/U8CcqTzQajld8FlRw8POdxbId+wKRAhBAvO7Gd7lKlDHDsPy+rLgYDfbBR0o8VbixgcRbZ2nLmeos/pD0lxLK2me7BkC+HskkKY3nO7xMcCcKh5wE6cTbHWqJd3yU=
+	t=1762529042; cv=none; b=uZ8uUFlFtwrP+1grupsHmMcPa/tNpDDYv2ncvgjULDvT6GICefnqes9WvkvaKfM2UKdRrvHYniqo4ZwjIt5EfuX2dXDoCkBOOM3HuZn9wou4CZjWsOluKsyBFR4ch081TXcmbZVhg42GKDi+PcNFB+1JmICw8aTvcMm5GUebUoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762528983; c=relaxed/simple;
-	bh=0nj5n6H/yY1SStsMOWkIej+PWF6VPJFiQaOrR7uBcZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y5szprsrkdETNQTegEBNtREHa6Z7O0WMX2vHtxrUMi/FGlUHafBYmxwv+lpE7hlxcLK2l4QxV5u6iEXP2kayCXd2XgOBmEHUw8kwcTFO5Vk0oc3l4m8bH9pfotyQ0qQ8fwpksxV0bEmFq1Rly5LtfKzK9dtosm/+bshnf1d5fxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C58F1515;
-	Fri,  7 Nov 2025 07:22:52 -0800 (PST)
-Received: from [10.57.86.134] (unknown [10.57.86.134])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0C093F694;
-	Fri,  7 Nov 2025 07:22:55 -0800 (PST)
-Message-ID: <645178fd-df4e-42fe-b55e-97d9506499be@arm.com>
-Date: Fri, 7 Nov 2025 15:22:54 +0000
+	s=arc-20240116; t=1762529042; c=relaxed/simple;
+	bh=nDb0O6dzOVMWuFDYYVHFPTwHHNQ+pWTzegor75kDLfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gPS6nBm1R5xE16Os11DCjlqhgwcIMO3Lzn7M1PBite3Oxr05jTkzVVmFO7S17QWt4cDFTZgBxuTCplAKc4D7tp1HKTqoDUcsukio6NJGPUQTnXuosbXSyVRtW6LkA7bJMKnuZCynSCy6ayVhTBXzu/R+GXWu5YmJ+Dp7/5/7jJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YZKT2RWX; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47117f92e32so7288455e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:24:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762529039; x=1763133839; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vn7GUP8McG3zK7DlEJjzjjz52xWwiXzwF/L1BD65MSE=;
+        b=YZKT2RWXXR+VOAnDkQQPgtndgLWi3Q1kwe7utMKlVLSUgzUw8A+u6cPkDcJONmxl89
+         n6H99/PGUvutnU1a7NsZTztMvkm59RunczfPY1a7JOt4K1tLV8cNtcx3aA8aI9oUnlJd
+         SKTdqjcPfNKnuWxovB2jt/km79UVKoimObsygrFCt1R+FkYzvCh/lDedrPSOQExcgGST
+         dSRO79MxYzO8IvEVl9Q+pvaquXVtNqdWe6XpFf48pNIaGaV9WYPH9OFHSUapwLsz4W36
+         A47X8Kuc7dAnsGSLtQkypWA8d17lKdItXnO2sZDjIDisx2tR7dmi8bpXSGokIklblDTh
+         RK9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762529039; x=1763133839;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vn7GUP8McG3zK7DlEJjzjjz52xWwiXzwF/L1BD65MSE=;
+        b=k1oDXV/JEy7WtnNEAKKoefaopGiEPLQH0cEqvw8Xlfy/LGN7PjgQDSSulp0VNZwn0A
+         K2+CScwZ06VbJ5GypRgJm2fVPQZrl8s4k3VPZA0NzhvHoZZ3a7Nbv0oczj6nZOLxJgWG
+         LqzkJ+t1aPsYUxnSplCPUK24Av6sx3L51rv1n9/TWeWhl2jOZA1+X8Oj49L6gWjkU97U
+         63WMiN3/kRfMRlZT9lwkksm41UHVyuaxgCbK+zaQdUhtkxFe9Ry+3LfSHndEpBQVkvTN
+         2dBjUfs80NAkknYXWsoulDToeenJQdNa0p0WM9IgruPJunYS11G6i1Wsj8Bsff3m9fQG
+         8k5w==
+X-Gm-Message-State: AOJu0YzavwaZegQR0OdjOuT1+jSvEd/TwBuXEHSS0q5/9TEKxxPaC5Up
+	3WSvbaz2VcwLIFPIHl9GPh7u9MPUn+T/c7IgaAAOmX+WuJpvpL35CqWTjNHv55+h8CfQpjoF3lb
+	HkH2rN6c=
+X-Gm-Gg: ASbGnctbFuB8oWmiuebUGetPSOGqYi2+EK322QNpB7roU/4iU5tHWkRLIHAk4RedY2e
+	5JeQsl7cb/Gv2uSYIWuH+/F6ZAK2/lkEdzhGzhjOXZWSBqLuzlArPRDVBIr7HgjxJbBg28D2n3+
+	ZOrqXnwo2aE+bbM/91+xOtsgmL6mRjOzqCOrj4xNDe5cIoyKsu2/SrSgQ4j3SH1iZb/IFsrAXog
+	Jt4fr+1ClnmxmeYGQcs1aGyDjGRI7XrkO7k3XD720a9Hv5DZ4Ch5O5iStoMZmpv0lzEKF3lltum
+	fafKBrqYDfEJqvMAZte+zHmO8lJVrJlfB7Ko75VwUWHpKdWJiR+1ADNRcnHoJfa7qZwdOdN13IW
+	daNbCENzxmGWiUcPK55HapvohmDBaPb42Jmd++yWNfhHIW9iDIalLsN/7+Qxrr1jep/IHiuZ2xt
+	iiZ0AfrFAscjTqFvTzIOQEoLIB
+X-Google-Smtp-Source: AGHT+IEuB02jHpSTzBJzUrZVFlClNFUykNNdfp7CZbsJjUOeJSALKQCmJL04EEkoidUr0XP27QRO2w==
+X-Received: by 2002:a05:600c:1c8c:b0:475:dd9a:f791 with SMTP id 5b1f17b1804b1-4776bd04d59mr27043215e9.28.1762529038867;
+        Fri, 07 Nov 2025 07:23:58 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e4f13dsm42953005e9.5.2025.11.07.07.23.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 07:23:58 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Saurav Kashyap <skashyap@marvell.com>,
+	Javed Hasan <jhasan@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH] scsi: qedf: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 16:23:49 +0100
+Message-ID: <20251107152349.288190-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/12] mm: introduce generic lazy_mmu helpers
-Content-Language: en-GB
-To: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-7-kevin.brodsky@arm.com>
- <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
- <c764489e-0626-4a50-87b5-39e15d9db733@gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <c764489e-0626-4a50-87b5-39e15d9db733@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 07/11/2025 14:34, David Hildenbrand (Red Hat) wrote:
->>>   #ifndef pte_batch_hint
->>> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
->>> index 5d2a876035d6..c49b029d3593 100644
->>> --- a/mm/kasan/shadow.c
->>> +++ b/mm/kasan/shadow.c
->>> @@ -305,7 +305,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep,
->>> unsigned long addr,
->>>       pte_t pte;
->>>       int index;
->>>   -    arch_leave_lazy_mmu_mode();
->>> +    lazy_mmu_mode_pause();
->>
->> I wonder if there really are use cases that *require* pause/resume? I think
->> these kasan cases could be correctly implemented using a new nest level instead?
->> Are there cases where the effects really need to be immediate or do the effects
->> just need to be visible when you get to where the resume is?
->>
->> If the latter, that could just be turned into a nested disable (e.g. a flush).
->> In this case, there is only 1 PTE write so no benefit, but I wonder if other
->> cases may have more PTE writes that could then still be batched. It would be
->> nice to simplify the API by removing pause/resume if we can?
-> 
-> It has clear semantics, clearer than some nest-disable IMHO.
-> 
-> Maybe you can elaborate how you would change ("simplify") the API in that
-> regard? What would the API look like?
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-By simplify, I just meant can we remove lazy_mmu_mode_pause() and
-lazy_mmu_mode_resume() ?
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-We currently have:
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-apply_to_page_range
-  lazy_mmu_mode_enable()
-    kasan_populate_vmalloc_pte()
-      lazy_mmu_mode_pause()
-      <code>
-      lazy_mmu_mode_resume()
-  lazy_mmu_mode_disable()
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-Where <code> is setting ptes. But if <code> doesn't need the effects to be
-visible until lazy_mmu_mode_resume(), then you could replace the block with:
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
 
-apply_to_page_range
-  lazy_mmu_mode_enable()
-    kasan_populate_vmalloc_pte()
-      lazy_mmu_mode_enable()
-      <code>
-      lazy_mmu_mode_disable()
-  lazy_mmu_mode_disable()
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
 
-However, looking at this more closely, I'm not really clear on why we need *any*
-special attention to lazy mmu inside of kasan_populate_vmalloc_pte() and
-kasan_depopulate_vmalloc_pte().
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
 
-I *think* that the original concern was that we were doing ptep_get(ptep) inside
-of a lazy_mmu block? So we need to flush so that the getter returns the most
-recent value? But given we have never written to that particular ptep while in
-the lazy mmu block, there is surely no hazard in the first place?
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/scsi/qedf/qedf_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-apply_to_existing_page_range() will only call kasan_depopulate_vmalloc_pte()
-once per pte, right? So given we read the ptep before writing it, there should
-be no hazard? If so we can remove pause/resume.
-
-Thanks,
-Ryan
+diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+index 6b1ebab36fa3..9c234a36dbff 100644
+--- a/drivers/scsi/qedf/qedf_main.c
++++ b/drivers/scsi/qedf/qedf_main.c
+@@ -3374,7 +3374,7 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 	QEDF_INFO(&(qedf->dbg_ctx), QEDF_LOG_INFO, "qedf->io_mempool=%p.\n",
+ 	    qedf->io_mempool);
+ 
+-	qedf->link_update_wq = alloc_workqueue("qedf_%u_link", WQ_MEM_RECLAIM,
++	qedf->link_update_wq = alloc_workqueue("qedf_%u_link", WQ_MEM_RECLAIM | WQ_PERCPU,
+ 					       1, qedf->lport->host->host_no);
+ 	INIT_DELAYED_WORK(&qedf->link_update, qedf_handle_link_update);
+ 	INIT_DELAYED_WORK(&qedf->link_recovery, qedf_link_recovery);
+@@ -3628,7 +3628,7 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 	}
+ 
+ 	qedf->timer_work_queue = alloc_workqueue("qedf_%u_timer",
+-				WQ_MEM_RECLAIM, 1, qedf->lport->host->host_no);
++				WQ_MEM_RECLAIM | WQ_PERCPU, 1, qedf->lport->host->host_no);
+ 	if (!qedf->timer_work_queue) {
+ 		QEDF_ERR(&(qedf->dbg_ctx), "Failed to start timer "
+ 			  "workqueue.\n");
+@@ -3641,7 +3641,7 @@ static int __qedf_probe(struct pci_dev *pdev, int mode)
+ 		sprintf(host_buf, "qedf_%u_dpc",
+ 		    qedf->lport->host->host_no);
+ 		qedf->dpc_wq =
+-			alloc_workqueue("%s", WQ_MEM_RECLAIM, 1, host_buf);
++			alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_PERCPU, 1, host_buf);
+ 	}
+ 	INIT_DELAYED_WORK(&qedf->recovery_work, qedf_recovery_handler);
+ 
+@@ -4177,7 +4177,7 @@ static int __init qedf_init(void)
+ 		goto err3;
+ 	}
+ 
+-	qedf_io_wq = alloc_workqueue("%s", WQ_MEM_RECLAIM, 1, "qedf_io_wq");
++	qedf_io_wq = alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_PERCPU, 1, "qedf_io_wq");
+ 	if (!qedf_io_wq) {
+ 		QEDF_ERR(NULL, "Could not create qedf_io_wq.\n");
+ 		goto err4;
+-- 
+2.51.1
 
 
