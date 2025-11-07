@@ -1,147 +1,153 @@
-Return-Path: <linux-kernel+bounces-890583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1F0C4068F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:41:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2728C405F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAD3B56F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:41:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7D78D34F3E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9882765C5;
-	Fri,  7 Nov 2025 14:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D40B265623;
+	Fri,  7 Nov 2025 14:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="WiLhOPCi"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CE+rONLp"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90352322C98
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3E22ECE9D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762526495; cv=none; b=oZcNXGlYka6toZ7rjs73cUT+JEO4+vPpxYFcYGOx/gx0PRqvRjIGixjkhV9EpAvwGcp0gHY91iUGPwsw8tKNihFSeWrvGJvz4HXd1dYvt1n6nQ3KjWAregvsFohdLn4Vn784zaJt/N0tPy3Y2Qjc+mi/WLoqBoW/8ah7ZUjOrio=
+	t=1762525880; cv=none; b=PCxRZCAvVJUoZB0dAftkwe9UOslK7jvFjMuf0ohSynn0g7B3DP1x6P+PXOfoF0eDywyPTamVj4kHumX56j3nzpEwygxthwflNFktH2lvnqTqGBlFNN+Nq8eHskTZigGnFTVjIHN9xLT3b7jsmElLHKin2hs3EU1FXIx9clyxdTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762526495; c=relaxed/simple;
-	bh=rzx2U3ZPIYKyLywBf1c4Lqbu9Kgk7+2zJBa+iQQn1cI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fNbfVBUluUhULNBTojr09pdAAdPPGzsGH3BnDCep0JqOr8oz5XNPcyPDOlA973phbaX1uHyUL9GO9MT+9I/2Hjoq2mudjoHUBpUrzcXjPR/jWaWHxgzOCqLnIMlGnNvFX2/DB1TmlkA5250sFQPvnFe50qN900FUFpAVk2stlFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=WiLhOPCi; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1762526491;
- bh=dBnEo9kQFWn16Gia7CBsD427l5/li0reZ07Ety+v/ps=;
- b=WiLhOPCiRjoV0WYthVc32NJdNtuUF5oUUE4n5uA1N4M2nM/Br3QvdOH9+2UejrjCXmbvuAKvL
- E7ckW7fAq5eZQLCbkYZjEiSSrdOAMmD/DNHw8cO0Fcyw/xDxll4Zl+5dWKjU+RZK30NkbQkglBa
- EY+ujzMBuZ9UGdG3xaPvXgv1DUF29HHcLyAyoWwpu9Fmk0gxhHov95CbyipuwIQcvPhkbqJG4Pm
- k54rsVMbCq+DkFFrV8zPUPdl5YuCiBSOE2DqK4s0z/GKLDDnAh/XKL2u2s9fiw21F1/PYwJAwot
- ibA3bV7n6csVxv2VwqVWsTLDMUQuP6sA5ZFjjjLyYUAw==
-X-Forward-Email-ID: 690e02ab07551ffa40a0e268
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.4.3
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <3be7a6e4-4025-42b4-a73f-a9d05e64191d@kwiboo.se>
-Date: Fri, 7 Nov 2025 15:31:02 +0100
+	s=arc-20240116; t=1762525880; c=relaxed/simple;
+	bh=cSdDnIXxswzbdqa2gav6B3GuVmFeRkspqdWD/8dhg5M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mFAJ/RIJldXsNHTkCOKb2Q8YHPFiD6T9jA8nGZVzst6E+QzWiPsHceIbgQGc1QbKeGi5X7hA3dFLUHRI80dnhn2mcH8SN2d22J2V4dZ51QtxWHbOux4Qsv2MI3rCUK7+jM5i29ii7nQyddj/NXyMWTWjeJdDucj+lOlKZOrO/bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CE+rONLp; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so4528935e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:31:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762525877; x=1763130677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CUBmSzOMW1hVmBvLVfhS6unxv5YlCb/+J2qrVLMEhjI=;
+        b=CE+rONLpD5X7mbnF4JMh5VVhIeZ85Z/nRhUVIxDy3k17s1C2rsXJsA7noCRQRvVNVT
+         gk9uS9IDoOkEI34dJjSTcRdkKscfGMl/erD9cqTg3l3G2eS32w4WwE1kstF95LOjNPu2
+         NMjGb4oyc9irAyC+rNhoBLkSVD0xyrPB9ub7ivovW3Lpa6dYBKWJzzfIbOGVjqRosasO
+         nrimhCt/M4jHLyQIHf55ThQZZWWbC2nfSZJIJ8SjKJSfSQiXQjukxJdz0f+W/ED+BtSJ
+         KskOjSZ3lIg+Me2thlTvC/GKd6l1yIhvP0NUHSvypEe9QsQajg3xo5IvvFZQHDjpgBkV
+         gnlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762525877; x=1763130677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CUBmSzOMW1hVmBvLVfhS6unxv5YlCb/+J2qrVLMEhjI=;
+        b=FdOC1d1UAnZ/mN8El29jYQQaW34lZsdOqsx65Z4/+I++pMm9cwAqsfmK4BvLxOm1HX
+         Yp4EF92MkKsoAO7+pLPsjw4rzjldH+Rpfyc4o/djho6DHwU4SB5oViiA763LKr4sWf+d
+         4hSn5loao+nH/IZukVwxWcdto9xerHhnFyU+pr+NhQN+DeneskBn9ADFnnfZOxPc1sCN
+         V793wA5FSGdNqg0yOS/cdWS4yAKsPZY7YQeGotpvaQ9mtnec/CPN4x9AMX7YDR5tv0IS
+         wdbr/q3cyzYnKmZNUWmLeXm/+66elNIzsN+5BafN++XsGEHEpfrxmbWb2JnBLm3fIg/a
+         8KBw==
+X-Gm-Message-State: AOJu0Yz9Y479z4FMkhEjB3LtTF3txEBBZUX8zg5rJPvENs2a6P6CQbVM
+	o9PYCcQcQInEpqqcwWEY0RJgGFbpT7dA/JqVbNhT89QLdyVmRuTGeANpTpFoQ0yLDww8o5YXIIK
+	rkRfo
+X-Gm-Gg: ASbGncvRBDLIugIC6SehVIqOdwy3JYZa+8GfL7wdy0tHcyg3l2F4DlEclpjud/COVgv
+	zZSDGXUpAqEd6LJCnIuj3aarEPLAD1oDyOoLURhOcbFHhaQB4+cVQ6MT0ubJAXHW+8+Zw3z1QXp
+	W2429YInZPPLTFsgFFl6lnq729KRqIqBoKM6RkZ5ZCwiypbHxnM2JIQZLIYbt0eMo11DloieYuv
+	TF0VzUPOYcPzlBUnXms7XytUhD+godB4fI6FqC8sDtOjJr23BLopTxWguFEszDXIONQtY6RyiKN
+	mbLFqsV61Q9uTbRzseZIlJb+uy+lC4eTuZ2p9uxZcsBJGELqUxpDU08Lrn95W0K3Sn03+uv9HYr
+	Wxeh4w1bRTtYnbd5zQ3waMhx7xmXEaMqvxUVwgryvLdIYUE2avqTvbbB7ebibZksE7fcaQVF5cN
+	Fr5F2Zs424GuPc+LiQjE2PhIL1b9xYKO8u+y8=
+X-Google-Smtp-Source: AGHT+IGSY6yDLTu3hRcVf/k/pttfkC0OQRPyNDQ0Wl+wJKGkdFmqGU/QfjbxpsGop8pwcaivmOt2vw==
+X-Received: by 2002:a05:600c:a4b:b0:471:1774:3003 with SMTP id 5b1f17b1804b1-4776bcde4d5mr31145925e9.29.1762525876714;
+        Fri, 07 Nov 2025 06:31:16 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcfd2e5sm52355795e9.13.2025.11.07.06.31.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 06:31:16 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof Wilczynski <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] PCI: endpoint: pci-epf-test: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 15:31:08 +0100
+Message-ID: <20251107143108.240025-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] dt-bindings: clock, reset: Add support for rv1126b
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
- heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- huangtao@rock-chips.com, finley.xiao@rock-chips.com,
- Conor Dooley <conor.dooley@microchip.com>
-References: <20251104030633.2721038-1-zhangqing@rock-chips.com>
- <20251104030633.2721038-3-zhangqing@rock-chips.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20251104030633.2721038-3-zhangqing@rock-chips.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Elaine,
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-On 11/4/2025 4:06 AM, Elaine Zhang wrote:
-> Add clock and reset ID defines for rv1126b.
-> Also add documentation for the rv1126b CRU core.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  .../bindings/clock/rockchip,rv1126b-cru.yaml  |  52 +++
->  .../dt-bindings/clock/rockchip,rv1126b-cru.h  | 392 +++++++++++++++++
->  .../dt-bindings/reset/rockchip,rv1126b-cru.h  | 405 ++++++++++++++++++
->  3 files changed, 849 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-[snip]
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-> diff --git a/include/dt-bindings/clock/rockchip,rv1126b-cru.h b/include/dt-bindings/clock/rockchip,rv1126b-cru.h
-> new file mode 100644
-> index 000000000000..d6040058c21f
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/rockchip,rv1126b-cru.h
-> @@ -0,0 +1,392 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> +/*
-> + * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
-> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RV1126B_H
-> +#define _DT_BINDINGS_CLK_ROCKCHIP_RV1126B_H
-> +
-> +/* pll clocks */
-> +#define PLL_GPLL				1
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
 
-The clock indices should typically start at 0 not 1.
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
 
-[snip]
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
 
-> +#define HCLK_RKRNG_NS				362
-> +#define HCLK_RKRNG_S_NS				363
-> +#define CLK_AISP_PLL_SRC			364
-> +
-> +/* secure clks */
-> +#define CLK_USER_OTPC_S				400
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
 
-And the indices should typically not contain any jumps in numbers.
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
 
-Regards,
-Jonas
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/pci/endpoint/functions/pci-epf-test.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> +#define CLK_SBPI_OTPC_S				401
-> +#define PCLK_OTPC_S				402
-> +#define PCLK_KEY_READER_S			403
-> +#define HCLK_KL_RKCE_S				404
-> +#define HCLK_RKCE_S				405
-> +#define PCLK_WDT_S				406
-> +#define TCLK_WDT_S				407
-> +#define CLK_STIMER0				408
-> +#define CLK_STIMER1				409
-> +#define PLK_STIMER				410
-> +#define HCLK_RKRNG_S				411
-> +#define CLK_PKA_RKCE_S				412
-> +#define ACLK_RKCE_S				413
-> +
-> +#endif
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 31617772ad51..46e684c0e496 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -1188,7 +1188,8 @@ static int __init pci_epf_test_init(void)
+ 	int ret;
+ 
+ 	kpcitest_workqueue = alloc_workqueue("kpcitest",
+-					     WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
++					     WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_PERCPU,
++					     0);
+ 	if (!kpcitest_workqueue) {
+ 		pr_err("Failed to allocate the kpcitest work queue\n");
+ 		return -ENOMEM;
+-- 
+2.51.1
 
-[snip]
 
