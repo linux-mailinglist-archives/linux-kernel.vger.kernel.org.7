@@ -1,238 +1,195 @@
-Return-Path: <linux-kernel+bounces-890771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E4CC40E1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:29:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2BAC40E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAF41881FCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:30:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CB404F0A65
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA75287505;
-	Fri,  7 Nov 2025 16:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035AC331A4A;
+	Fri,  7 Nov 2025 16:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwiPSA39"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="tSd55e3W"
+Received: from mail-qk1-f194.google.com (mail-qk1-f194.google.com [209.85.222.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D5527FD45
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49EB26E6E5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762532972; cv=none; b=NQQuOSi1KGe+7j5c6Xjq5qhA7wwLJ8TTIKzJJO5tj6PTeIhuRPwLGeQXKwSViLeiD4zUzRO8TrkDvWtQbIF0fyOONGKIpCK2OtqR1VZGkQjguacvQjyKWqp7B4RPHe6SWvJqcQ69h07ekh2zGWQ2s7GjVx45VzqE+cT7aHLA3Es=
+	t=1762533054; cv=none; b=K0Fo2zaasi5X3Ih1UDW+WOXysbJyhDUNCxHDWpRAbtmtV+X5b/mIE/9ydFlMSvxsnunlBf+SF6WCNTsJshQmgFQXgKkf4wXLpwVPIPVNkc+QZJ8ZD67NPvhX2MeCslzOZc0f5Q9osRV6K9gwiKvyyqQCcXtcn0gBOm030CspxoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762532972; c=relaxed/simple;
-	bh=rgcoRhyGIK5TkOpZt0kZTN7koiw5JU/Ow/kogtLB0pg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b7X8tjGpxrpzI9luIPPBWAsEAF8kxE+oOSxQ0Vf7ChVNHtWmdG1zGeUvhHfeuYEZP/znL7Q2jf9aQSNB36JmA0qyx4JrCf9BRA0NkIecg9xvF/X4PX0Inz2K3vZapRtwjDr3z9kUIt+g/Z/wB3DDuG/g9XKNDDnQI7z9KlCL+Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwiPSA39; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-43325758260so7809675ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:29:31 -0800 (PST)
+	s=arc-20240116; t=1762533054; c=relaxed/simple;
+	bh=al2zZOjy1s9k9uG0J5tQ/tOLemu8rJl5iPBRWP7bhxU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=goMUfOuHCnabECzV3lLqZUIcIeDrxc7ToS7njVi59kiPwUf70cSUWiat5bS4gIMOuZODDOUJYdQzLsrv2CWAKmBTx/oYNfkZAY/ttgEyA3wo2P4ZVoT72TIE3OX6KKKg3pKJQ4g3suwpobtLouTU6XhxBn7NyrW0nYqOuUmwFIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=tSd55e3W; arc=none smtp.client-ip=209.85.222.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f194.google.com with SMTP id af79cd13be357-88f8f346c2cso88810485a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 08:30:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762532970; x=1763137770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KpUHhwLLVw048cC2Tr3FEbA9y73h0hyI54ZDUH0t8tg=;
-        b=XwiPSA39nsnkdh5yq9hmq5Q1pQhU/l4yfBPXNq8URc3djc/fKxv8xAtGNqRydKvsJt
-         GF7Bpn6csmRSNYYywLHFyVnjvnflwb29uopg0mh8XIbOhEBsibU2nX0E+RoBUgaxZgLs
-         B6l+p5yn0YXi+SDNYzdbqb88zoD5UmG/IXfojwVE/lBy8LwpK+uiX1KH+2rvlzs2xONI
-         hqutrbyQ027+4Pje0IqvZSS/fnayj3Xtv1qV1FwsqDTdwSI2Ay1YT1vqeEHat4porGTD
-         tWFJqRmYe8+2yOUjWKWuO6IxfauB9GEYVidybLZ6IezgvNKp6ac1LTYMBDm6M2Zpob2K
-         Np/w==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1762533051; x=1763137851; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AVrp19hgKD6fn901dtJIwIEFWrRkipQPPUAVv1GRELc=;
+        b=tSd55e3Ww1TieEAWlgavJ36jxccyWd1wLl+BhxPRIzihrjcOyKL//Et6/RzSn8lv7t
+         aMhsAzdBF0qsZoIOw1wmylm4Any9yuYWimY5q6BvTsltlpWLNvHfppEcoGnO+532r/XX
+         ctzZOLGjwHFzN398rhhAM5cotqNMh6XYdWEVlrTUCVgHAoBcKzZwLpICw1Qc5qasMLjo
+         AHcrDVhWf+gkIFwTDToXxs/kZ3gTtoOZKaBhjTg0AQl8Fx3Xg++6BR5hOK4QXffcZCOq
+         JwpCDJiDgG9HQP1nf5jdIkek/Zn1WaAPQpe3QBCajal/zFOUS1f5HWRJRuGfQk8PtIpw
+         9PwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762532970; x=1763137770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KpUHhwLLVw048cC2Tr3FEbA9y73h0hyI54ZDUH0t8tg=;
-        b=J86G7rQKga+IkPMgpgLeLGe5AFn98U5qoGR4bM/qOMs5P+UUfE/ScPKOSCrbixrKfY
-         U9atfTrIpYhj2nm08vF9VCPya1Svf/hO8JdRIjF3BvgIGPtKNdWAqtlOQQb5jFIa8tyr
-         lvhRUHoDNMKsgmWKv6dLPulJ+xdjccbXZQDpdl3e5uQgNJ5BhprG0D+jwM8/AQEVm/GP
-         h7aFMMkcEwZEPleLjeVLO13/onab3Zej8yEoCLosdQHnAjm1lPzN3qQUO+R1H2UchpPa
-         qXfLY7vUHCRjcdFHPWvjVi2N7kW00R+bw378RLrneXljqrOOQpIzRIZNmOa/eYoiPOPW
-         oWRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgGN7FgLQUf2UkLDhJ5ERKWSnl28EwgSJOQoU9q7HxJANiP8fciTT5bTV2zhXmbJPNBvj0ldIcgwkeOAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkS0XhQVtRpDBbwvBgr/HnOYRa1/diVTgwOqNBAZvR+50IcZwY
-	85Cw1HOE7ILSHs7Ac6RUUCdXZzhz19iP7G25ReYlpnN0ZDWDhtQuWeLBfZcaDiENAAWM9n1A5Qb
-	rNeywQhKNTtDM62LtLMdlTw1C59L/okE=
-X-Gm-Gg: ASbGncs9wZxEJiWARQo3FnhvNglcM6RQGfwVVE6UKVOxGURvbiEvdC+UMfJ0BzNIOmU
-	DJPr6S6/EWinxljIdBDhqo0Apgrt6MDVj5QIyaAjAWLxE/kuFkw5jDjuUrpQhGNWgWAA0pd2cYj
-	eZgLcWljyfg7vhokfXxxTqew7MATVajwJ5K8tVk3+dPDytKSSX+bY/F2NmStDm88Tl2EKA0o4oI
-	EyyyG9+zd/j7ju0wXUPIqnxoV0Mt++ze6Yk7RDaMIa2psMUz7kXxXaH0LRQiG+f8bXAzx/mp9ph
-	cQyqFCxgzX6pSu7r1jsjv548LUeWFVk4/pLTOEABGYZXykzK48r+kvc/IIeIMzQGYOzKKo3j678
-	iVs41AxgdbnHskztV4O57lpXMfhnkpbCqRXFRkGdNYos3ncK1FGPcgtQXDR1LJI5j5xWCbPSbW/
-	lSEUbe1w==
-X-Google-Smtp-Source: AGHT+IHLBeBsljRup9vfyIw0zMlrDC0E78/7aLQDxLzaAjO0KjqOY+HyEIQe54ZnzvQGmNPUrUss4m9CIjqFlxlmgpc=
-X-Received: by 2002:a05:6e02:168e:b0:433:46a7:be57 with SMTP id
- e9e14a558f8ab-43367e17daamr795725ab.8.1762532970241; Fri, 07 Nov 2025
- 08:29:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762533051; x=1763137851;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AVrp19hgKD6fn901dtJIwIEFWrRkipQPPUAVv1GRELc=;
+        b=BtSVMBSBTpo2dDLmyXF2e9Q6+fZI2iQHjeGXRNQd0Q7kVpZiF89xxcyyV4NZ23V/wy
+         2JExvfi85BnrI3Y+jgw5gfKigcEKS1APTm+Tb0Z7gXtkYFtPrPzqJD0FsyANCTWB2Frx
+         KVw1bEP/KzHbqIaFkQJFfJbmE4ktuqp71gtVJiI+poiJLvygswa085OTfH+fh1hazY1U
+         9GvnUlrk9CLhe4Ab8unT1/7zrGT1dehlQnoJ3xv8LN7LB0zMGNrzo3H26tUkbAtDs1WW
+         lSQ3+6I4pEFFFI+gN5v6abn5ReVAIUJVnJjkxfq04BrpyWUvXl4bxDK7URbOBkRCtrpN
+         Y8kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpVnKEqmZZKBs9QYXjT7N9kU/g2obaDxP0PIp6Dh41oLFt2B/n6EUZu6hSEw9NUFZCSOYzChFBaoECBT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxonY7WIXkaP7oNpEwXVIBoaXtRIj9PV8g6NIPictbiYFBj/5/V
+	t37XaTy/SwedCjYi2QObnCdSzndbE7agl5q8Szht52JTF0vy8cvF0qzz+r9tJ28Q4s4=
+X-Gm-Gg: ASbGncutHrCS7sLLdFWtgRwc8+dfqc5YEC9NGTeyvY7rCDUWIWRD3mxl2mz67P8d0Tb
+	obF8kfrjBxdRkvlqinl9ysEKRWnX2rWM7/jwNBcT/koxMUaMJ6ktzM0B4HpKB7cB+h87RnC3/Uk
+	cYPgc9x5Ebdk4ghIRQOj09vRhHC5Dh5dCRy4FI6r93sWTiqGzKq7yE/zukPxHxfmVYkSQZAp7GZ
+	nrR0UkOw8uwBojLk4Xx7ATNmKGRBRVrOVAzKEDhc28qiZKfrvMklcVSu9XOVnjqcnNAs3dzYtQk
+	rTcXXs/b9IHv+irX2afQO/j2gwjgSk5muCHzu67HOajHN3gakbETJRL37vbW1LOFx01O6PusQnL
+	Ew0OcrsqoKnesW5v8B20DDjy0o3cjrBZqv8jtfHssKCoaAiRd/bU3HJAB3gLdL0AerrMmI6ZmRV
+	a2so78KQ==
+X-Google-Smtp-Source: AGHT+IFz/UlnV0OMfhq87mlorD8XvK8vi/cdNG2hzp5O044mKb/ma/Fx+Ie3hyppzhpm+e9TfHmw3g==
+X-Received: by 2002:a05:620a:1a23:b0:89e:72fa:ba8b with SMTP id af79cd13be357-8b24529f1f3mr550636985a.34.1762533051280;
+        Fri, 07 Nov 2025 08:30:51 -0800 (PST)
+Received: from ?IPv6:2606:6d00:11:ef24::c41? ([2606:6d00:11:ef24::c41])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b23580b649sm435035985a.48.2025.11.07.08.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 08:30:50 -0800 (PST)
+Message-ID: <e99ff4f12d52eee03075f911e6b904290b47a961.camel@ndufresne.ca>
+Subject: Re: [PATCH v4 2/5] media: ioctl: Add pixel formats NV12MT_COL128
+ and NV12MT_10_COL128
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, Sakari Ailus	
+ <sakari.ailus@linux.intel.com>, Laurent Pinchart	
+ <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Florian Fainelli
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list	
+ <bcm-kernel-feedback-list@broadcom.com>, John Cox
+ <john.cox@raspberrypi.com>,  Dom Cobley <dom@raspberrypi.com>, review list
+ <kernel-list@raspberrypi.com>, Ezequiel Garcia	
+ <ezequiel@vanguardiasur.com.ar>
+Cc: John Cox <jc@kynesim.co.uk>, Stefan Wahren <wahrenst@gmx.net>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Fri, 07 Nov 2025 11:30:48 -0500
+In-Reply-To: <20250701-media-rpi-hevc-dec-v4-2-057cfa541177@raspberrypi.com>
+References: <20250701-media-rpi-hevc-dec-v4-0-057cfa541177@raspberrypi.com>
+	 <20250701-media-rpi-hevc-dec-v4-2-057cfa541177@raspberrypi.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-Q5o4lQgKYevCwoTHFi6w"
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910170000.6475-1-gpaoloni@redhat.com> <2025102111-facility-dismay-322e@gregkh>
- <CA+wEVJZEho_9kvaGYstc=5f6iHGi69x=_0zT+jrC2EqSFUQMWQ@mail.gmail.com>
- <2025102124-punctuate-kilogram-da50@gregkh> <CA+wEVJajSGzb85YTiv98yAY3bcJFS0Qp_xjLc++wnU8t=wDAOg@mail.gmail.com>
- <2025102211-wolverine-cradling-b4ec@gregkh>
-In-Reply-To: <2025102211-wolverine-cradling-b4ec@gregkh>
-From: Chuck Wolber <chuckwolber@gmail.com>
-Date: Fri, 7 Nov 2025 16:29:13 +0000
-X-Gm-Features: AWmQ_bn6uEo7-A9xvlR4_AxUEmBwxnRKzTpVyrh4GYZ_AQq2WQg29VVKDwL_Wwo
-Message-ID: <CAB=6tBSaGfKq4RgV=nbw28Yq59jHMrVOkm_dx2bqD1AjU37oaw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/3] Add testable code specifications
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Gabriele Paoloni <gpaoloni@redhat.com>, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, safety-architecture@lists.elisa.tech, acarmina@redhat.com, 
-	kstewart@linuxfoundation.org, chuck@wolber.net
+
+
+--=-Q5o4lQgKYevCwoTHFi6w
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 5:13=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Wed, Oct 22, 2025 at 04:06:10PM +0200, Gabriele Paoloni wrote:
-> > > Every in-kernel api documented in a "formal" way like this?  Or a sub=
-set?
-> > > If a subset, which ones specifically?  How many?  And who is going to=
- do
-> > > that?  And who is going to maintain it?  And most importantly, why is=
- it
-> > > needed at all?
+Hi Dave,
 
-I appreciate the questions. I sense there may be some confusion over who th=
-is
-is intended to benefit.
+sorry for the long delay.
 
-The design of the Linux kernel is emergent. This is a fundamental property =
-of
-the way it is developed, and the source of its greatest strength. But it ha=
-s
-some shortcomings that place a burden on kernel maintainers, all kernel
-testing, and even people who wish to contribute.
+Le mardi 01 juillet 2025 =C3=A0 17:01 +0100, Dave Stevenson a =C3=A9crit=C2=
+=A0:
+> Add V4L2_PIXFMT_NV12MT_COL128 and V4L2_PIXFMT_NV12MT_10_COL128
+> to describe the Raspberry Pi HEVC decoder NV12 multiplanar formats.
+>=20
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+> =C2=A0drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
+> =C2=A0include/uapi/linux/videodev2.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| 4 ++++
+> =C2=A02 files changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-co=
+re/v4l2-ioctl.c
+> index 650dc1956f73..3bdcbb12bb30 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1381,7 +1381,9 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *f=
+mt)
+> =C2=A0	case V4L2_PIX_FMT_NV16M:	descr =3D "Y/UV 4:2:2 (N-C)"; break;
+> =C2=A0	case V4L2_PIX_FMT_NV61M:	descr =3D "Y/VU 4:2:2 (N-C)"; break;
+> =C2=A0	case V4L2_PIX_FMT_NV12MT:	descr =3D "Y/UV 4:2:0 (64x32 MB, N-C)"; =
+break;
+> +	case V4L2_PIX_FMT_NV12MT_COL128: descr =3D "Y/CbCr 4:2:0 (128b cols)"; =
+break;
+> =C2=A0	case V4L2_PIX_FMT_NV12MT_16X16:	descr =3D "Y/UV 4:2:0 (16x16 MB, N=
+-C)"; break;
+> +	case V4L2_PIX_FMT_NV12MT_10_COL128: descr =3D "10-bit Y/CbCr 4:2:0 (128=
+b cols)"; break;
+> =C2=A0	case V4L2_PIX_FMT_P012M:	descr =3D "12-bit Y/UV 4:2:0 (N-C)"; brea=
+k;
+> =C2=A0	case V4L2_PIX_FMT_YUV420M:	descr =3D "Planar YUV 4:2:0 (N-C)"; bre=
+ak;
+> =C2=A0	case V4L2_PIX_FMT_YVU420M:	descr =3D "Planar YVU 4:2:0 (N-C)"; bre=
+ak;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev=
+2.h
+> index 9e3b366d5fc7..f0934d647d75 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -697,6 +697,10 @@ struct v4l2_pix_format {
+> =C2=A0#define V4L2_PIX_FMT_NV12MT_16X16 v4l2_fourcc('V', 'M', '1', '2') /=
+* 12=C2=A0 Y/CbCr 4:2:0 16x16 tiles */
+> =C2=A0#define V4L2_PIX_FMT_NV12M_8L128=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v4l2=
+_fourcc('N', 'A', '1', '2') /* Y/CbCr 4:2:0 8x128 tiles */
+> =C2=A0#define V4L2_PIX_FMT_NV12M_10BE_8L128 v4l2_fourcc_be('N', 'T', '1',=
+ '2') /* Y/CbCr 4:2:0 10-bit 8x128 tiles */
+> +#define V4L2_PIX_FMT_NV12MT_COL128 v4l2_fourcc('N', 'c', '1', '2') /* 12=
+=C2=A0 Y/CbCr 4:2:0 128 pixel wide column */
+> +#define V4L2_PIX_FMT_NV12MT_10_COL128 v4l2_fourcc('N', 'c', '3', '0')
+> +			/* Y/CbCr 4:2:0 10bpc, 3x10 packed as 4 bytes in a 128 bytes / 96 pix=
+el wide column */
+> +
 
-We intend this as a tool to address those areas.
+Nothing to report here, it looks good. I can't remember, was there a reason=
+ not
+to add this format to ./drivers/media/v4l2-core/v4l2-common.c ?
 
+Nicolas
 
-> > > For some reason Linux has succeeded in pretty much every place an
-> > > operating system is needed for cpus that it can run on (zephyr for th=
-ose
-> > > others that it can not.)  So why are we suddenly now, after many deca=
-des,
-> > > requiring basic user/kernel stuff to be formally documented like this=
-?
+> =C2=A0
+> =C2=A0/* Bayer formats - see http://www.siliconimaging.com/RGB%20Bayer.ht=
+m=C2=A0*/
+> =C2=A0#define V4L2_PIX_FMT_SBGGR8=C2=A0 v4l2_fourcc('B', 'A', '8', '1') /=
+*=C2=A0 8=C2=A0 BGBG.. GRGR.. */
 
-You are correct, the kernel has succeeded over many decades, and will conti=
-nue
-succeeding for many decades to come.
+--=-Q5o4lQgKYevCwoTHFi6w
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-With the exception of some very narrow situations, the emergent design (or
-"nuanced complexity" if you prefer that term) of the Linux kernel is not
-communicated in a broadly consistent way. This affects the way the kernel i=
-s
-tested, and also the way it is developed. Even veteran kernel maintainers a=
-re
-tripping over nuance and complexity.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQ4euAAKCRDZQZRRKWBy
+9LGvAQCRyeU868ClTZ8TOWAm+66FB54e7PZmn1fgF9EQ0WmVqgD+OzrEF4eJkgtd
+36v1rz7DSr3XtmcoiIfkHMDBuatl4wA=
+=KmUC
+-----END PGP SIGNATURE-----
 
-> > Let me try to answer starting from the "why".
->
-> Let's ignore the "why" for now, and get to the "how" and "what" which you
-> skipped from my questions above.
->
-> _Exactly_ how many in-kernel functions are you claiming is needed to be
-> documented in this type of way before Linux would become "acceptable" to
-> these regulatory agencies, and which ones _specifically_ are they?
-
-Exactly zero. This is not for regulators.
-
-
-> Without knowing that, we could argue about the format all day long, and
-> yet have nothing to show for it.
-
-As this is not intended for regulators, it is not clear to me that catering=
- to
-their desires would be a good use of anyone's time.
-
-I say this as a software engineer who works in a _highly_ regulated industr=
-y,
-and who knows the relevant regulations quite well. There are good ideas bur=
-ied
-in those regulations, but (in their default form) they are _not_ appropriat=
-e
-for the Linux kernel development process.
-
-
-> And then, I have to ask, exactly "who" is going to do that work.
-
-The intent is to allow for a separate maintainer path. There is more to it =
-than
-that, but I do not want to bury the lede here.
-
-
-> I'll point at another "you must do this for reasons" type of request we h=
-ave
-> had in the past, SPDX.  Sadly that task was never actually finished as it
-> looks like no one really cared to do the real work involved.  We got othe=
-r
-> benefits out of that effort, but the "goal" that people started that effo=
-rt
-> with was never met.  Part of that is me not pushing back hard enough on t=
-he
-> "who is going to do the work" part of that question, which is important i=
-n
-> stuff like this.
-
-Well, I am sorry for that. I am not quite sure how to respond, but I certai=
-nly
-sympathize with past frustrations. I have plenty of my own.
-
-We are not offering a silver bullet here, and the work to describe the kern=
-el's
-design will be finished when the work of development is finished. This is j=
-ust
-an attempt to fill in a semantic gap that is responsible for a great deal o=
-f
-technical debt and maintainer burnout.
-
-
-> If you never complete the effort, your end goal of passing Linux off to t=
-hose
-> customers will never happen.
-
-It is not clear to me what customers you are talking about. That is certain=
-ly
-not a goal in the mind of anyone working on this project that I am aware of=
-.
-
-
-> So, try to answer that, with lots and lots of specifics, and then, if we
-> agree that it is a sane thing to attempt (i.e. you are going to do all th=
-e
-> work and it actually would be possible to complete), then we can argue ab=
-out
-> the format of the text :)
-
-I respect what you are saying here, and perhaps the point of confusion came
-from the safety related source? As is often the case in science and
-engineering, we are borrowing (and _heavily_ modifying) a technique that is
-found in a different domain.
-
-The intent is to target technical debt and maintainer burnout by filling in=
- a
-semantic gap that occurs when a human idea is turned into code. Ironically,
-this is why the safety regulations were written in the first place, but lit=
-tle
-consideration was given to development methodology during that process.
-
-Thank you,
-
-..Ch:W..
+--=-Q5o4lQgKYevCwoTHFi6w--
 
