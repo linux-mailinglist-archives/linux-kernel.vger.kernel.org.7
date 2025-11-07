@@ -1,450 +1,204 @@
-Return-Path: <linux-kernel+bounces-890534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC72C40466
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:16:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8763AC40469
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD95C5615FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:16:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0AAD4EFCFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D328222599;
-	Fri,  7 Nov 2025 14:16:10 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F11F2E5405;
+	Fri,  7 Nov 2025 14:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hQVl8qBy"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010008.outbound.protection.outlook.com [52.101.201.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC2B5478D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524969; cv=none; b=XojGqisdu7469RD6yH9nXJ9Ye9QHejEq0fVTqMjJpCul4OVShsq3QHSQYPlyG8I3e0hqK7UhxOtFfOrh7aKTVyj+g8Zf8lLcU5/U7iGqIL/OE+ZUBP4/2e3f3RFxaI7GqmHS53ETFGzfMGfgA9j+fv6hbH8o8v9vCnpH46uz+WM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524969; c=relaxed/simple;
-	bh=lZsKXULxOS8scgIR5lVWKZChe9T5cJRTFxqFIGC3G3o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GyecUglGo2aJx2bNDciB396Rh7JCZBL4qtS2L94AQfhZzYOn4AQw5CXbNe6P+5h2/TrtlvTy9vIgRtclVykhbc+lJOg862rBfq2gbfuqnZPF+bQhGqQWrpkZsiOZbteCr7MlBk6TToBis/Zx+tFvHfdEjkRDXKF/j9S5HevksRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-940d88b8c15so67176839f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:16:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762524963; x=1763129763;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/5EkwyXIa+ZDrLvkJpxqeU3VY4hPjXjDEMUXybsK4Eg=;
-        b=ZV8TaShEQztoQNw+9x2Ih8OOt93BRS8uKfG4JbmLTPN13ooVDNSFEFafG2ytFv0dWd
-         gVI6glx4WjX/YoxiNr2ekUm60EhazbN6IgUqdEw3xcp/vxGRHb7wcXXM59D3nhrSmdO7
-         UCciNSUTSYaLO0GJ33DGmBq4hPItSSMeJdi6yzb9cQVXFwXWePclq4uk976gb9PmKVH9
-         uoklpT3LNW1eDYNHZqabeCV+TnGbm9M4bHrJlbKG7ZiSaA1whH11V4iSAokV99gmC0p9
-         l6Gl6ca+oK5pL++XvvimBDrAot+eopaZPym6ubjMmAbCCkvDocirECESKQAlseRUxQE/
-         3Zlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV5bB/w4kcfekP4hmGRbiColh05U/wLfK/SJI92z1wqAE4W45f7eoQfvrU90C7WebzyMAKCrhT3Ge3Yb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLvdPUm7CD6A5mpj9bCjhbirOudgGDeyXysdx0GAMjphIPlP8n
-	fEMjap7MhE9izTtZ1Mw16wXm+W1sJcf+OBozB62VmMrJ6sLtUJpcZGTjoANhZ8bNXw4qoYuv9cv
-	e+KE7iChBBqC2ru+IKpXKCtly54Qiu1nDR/LjgN6LIOSg1+kcYE1C8lfHP3k=
-X-Google-Smtp-Source: AGHT+IH2FD3nHQzIMnm0n48PVFWHE83esLE4gDv8ZJ/9uORohHlvumk2TzHdqmlapchFqzXTu9wz0apqFi6d/QNIoz4baQChTZ1A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20715478D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762524999; cv=fail; b=cpQJuExxfUmjg/cdUkd7jxpg1Htc8CkT3xN712kNeYRW5RtdGJLIgbxyCADNShLY8p77OS0BOZ1DAz7/8s7NQXeOM4N70Z5QdQHO2JGwmsJOqbpD84or5I2wU6z+DePaf3WPy9kqi9sd1cy387OQSI1RfN6eqcqWmP+I6NtZTA0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762524999; c=relaxed/simple;
+	bh=bPI8R6gs7/zeLR3eO7kGOHNuYMqGUDYMp+/VDwQQnAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gGMc8tN5KpJNx9lKYNtBJXOtd5YVDPa//GGi7QAPYca1Ed05f6THj1HXx4AxYVJsgho++ZbgMx8KGAPifg0ysVXpQvxsJCBjC3V4IgVrUxGVe+TSmj7EQo5F6vmdyNHT8ky4BfiBGZQhjThg7j5e6y1362zF4UaS0TjRflL59ss=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hQVl8qBy; arc=fail smtp.client-ip=52.101.201.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RmqMAkAbitqJONZTyiQpreCtOfKqhFMOrYM1QdZeHGUhmnji6wl8a5V3ZPkvaXsIXpsQ4fvQBkvckq9wz1abxZAs1L3O3so3HTmY163SH5gprLX2k5mqPcGuc/wPwmMkl6FHYeqQKZlY9SO9x3F26A0uxXfUAvBfxu3AUG9liXPFqhhHqIkobcJU6gCCjdZ5007d0VMFK2lpBYidE4X2ay9nF6gWqbIc6+yONzUsh9L8FhQCp+FoO8WUN/7TNO8BkhcjwzUA6Gu4+SDJsJ6Gk3OeC6wD9aDBtOYMcnbOdM/+mAntPETRTcxV9UCkNCVPVdwuS8Vsq32+LCPL53HK0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Tp5AZsa1iN/0TW9agW8vfIqaJKxzN6hw0GPXsa7OKl0=;
+ b=ygpx8LKNC9me7MOlhE9yS3UXQiKT9HnN2V7xGfnL9Xd3dRtrcPNFpa+anKmh6SYJ/yXQdVxOAOe2i59Fhom1M8B0Ux79voe8u2bi1lEXiljuJvcGv3Yv1wTZDtBygU6yp+yhfTq9PZjoJmeqmwbeBVJv39otVVcY5Z6+H4KYRL3qCUsm9elBovIADj5i48IF2jV6Xtvkdtn9XaXZ78Tr3qLTEYwbpag2bfUGqId0cQwwXebtzJYlPWNUtnSV0Ou7KiOh7cht2TUxDey9Z7B8e20ffG3SQ2XAN/V9+HxpD8lgDWWfU1bV1FZk/wqFmevR2ayNKGy8CzbFUQsHWs2JmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tp5AZsa1iN/0TW9agW8vfIqaJKxzN6hw0GPXsa7OKl0=;
+ b=hQVl8qByXgaaGRAbjVbi7+wedzze07TmSwWmUIKnvMc/951jg0qyDInXfzKxmCxN7kmDJtVYUBRuumRR+Of4SuG04Vk7nqeskqdR8uQxjmnx1PPWVFZWgdVO2HZrArNcbUkinUnWVfbXrwI/ihhypg1yc05w4XfRSPnMVRzlny6r8TADB7izXfBh4DXpIHqIq/zGavAFNjuomYXTM4BB1dhPti5SPV625mqCVvOrlLQKx2zi+a3cKKx06h8X7sqTxnHy7MlUyq03huKJizn/3kxUoT6JmSyUCgZtEEHLL7am8DUF6zRQ1/em2BF287ayNmv74bIGMJqaGMKuOHJ3fQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by SJ2PR12MB8953.namprd12.prod.outlook.com (2603:10b6:a03:544::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 14:16:35 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Fri, 7 Nov 2025
+ 14:16:33 +0000
+Date: Fri, 7 Nov 2025 10:16:32 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Wei Wang <wei.w.wang@hotmail.com>
+Cc: "alex@shazbot.org" <alex@shazbot.org>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v2 2/2] vfio/type1: Set IOMMU_MMIO in dma->prot for
+ MMIO-backed addresses
+Message-ID: <20251107141632.GL1732817@nvidia.com>
+References: <SI2PR01MB439373CA7A023D8EC4C42040DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <SI2PR01MB4393DFDCB2788CB823DAEC64DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251107010349.GD1708009@nvidia.com>
+ <SI2PR01MB43930E5D802B02D3FCD5ED9ADCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SI2PR01MB43930E5D802B02D3FCD5ED9ADCC3A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+X-ClientProxiedBy: BN9P220CA0026.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:13e::31) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa9:b0:433:51fd:4cd5 with SMTP id
- e9e14a558f8ab-4335f2c080bmr47223315ab.0.1762524963491; Fri, 07 Nov 2025
- 06:16:03 -0800 (PST)
-Date: Fri, 07 Nov 2025 06:16:03 -0800
-In-Reply-To: <20251107114435.22442-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690dff23.a70a0220.22f260.004e.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_get
-From: syzbot <syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|SJ2PR12MB8953:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34004bd6-7b32-438f-a60c-08de1e084119
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?g07vV3qKz9VvL6aU1hyu+LUoBAszyGJoZakn1rwID7ncFhdaVKerAcdpCxLs?=
+ =?us-ascii?Q?vIJaIWA6inDgT99RfgCzr2Vgh8CE5nMovZE4iv8BEmmHmLTpUNCKQAw+Slih?=
+ =?us-ascii?Q?QJ7Cl71Gc27ZsJUvIx26TdSYE7P6xWM5nPZS7ylDp/6HrKn3I8hi2w5xRDom?=
+ =?us-ascii?Q?iWsNflyMAlt8cvBI+68BOT/Qhz/iUlAQ/pPiMkRQBPqtNpmW0ZL1AMcm/yVa?=
+ =?us-ascii?Q?YE1+9cK12+Ri35l3uOQECoBoiji72W6C9FzaPqDU8cx1rOvDSziG2VULeLXM?=
+ =?us-ascii?Q?EogFgFelcheKm1kQyWBcXT4+WuV88L/HMUVJQwdUvhS+LipXSRdDWVRzwn22?=
+ =?us-ascii?Q?tB/aWWY9TB2mCDTpvBGGwRWwv+sfINJNxRva0chZz+tX3Sf+eIngfRmRsUiH?=
+ =?us-ascii?Q?lTQX1ZC2PETFkmZigjccEZQKX/Y04WoFPrAzDxqwld1Nh1kX2zP0wMhwVkEk?=
+ =?us-ascii?Q?Ir2x/YWpQgUIwwPBtSH43X0JdkHBRHUBDG/R9/ls9a2VCjbPXNBglVI917Yk?=
+ =?us-ascii?Q?err0EOTWom1wQ63EpEOZ1m0HNALBG80Ue22qH34iMFiNVcpvlW3QEosjMFQs?=
+ =?us-ascii?Q?j/LgYVuRGTCFFHy5o9RBpUZPYg/I3bkm5jiGg3jx8c1ZTTGd6ko+ZUcEaJXy?=
+ =?us-ascii?Q?RJsAfsVS67KoSEKHCZ021g4dpa8VC5FjW8ujG33Mp4C5lJThnjrWLD9LGCJN?=
+ =?us-ascii?Q?7KLeY6MMigev10ooavtfQriJAuJxYlFGm1NZoGkqVaeYbull7hjeNT2s+gBf?=
+ =?us-ascii?Q?O/cDsraR6EolMeuBdLA550k987obP59Jb6QU/FnwWuUhHwm5JD61GG7zeg80?=
+ =?us-ascii?Q?Ox3CYFrCAyWqEa0cuGQ92DwVWiYXsJvGugg5txtHplghjwRIlovVa/5JNhGU?=
+ =?us-ascii?Q?Tl9J5p0CnPfb7gnznkuJOsISHqv3Q3XLzvUcIqcRAb3GnOXessVjevVflL7b?=
+ =?us-ascii?Q?dizETFCg+Lw/d4JDqKK6040Gzl/jvkd5us3pzxVAfuNc1me60xlzF53ZCpIl?=
+ =?us-ascii?Q?BcZSghNaqttYOHo1J6yGItUwEuxsw752zytHiYc/uVUCtEHRm6Bf9JtQLpc0?=
+ =?us-ascii?Q?84nfyBqyXVhEp2gORmPixXa3mavDWmO05HSYiALk2arD72qTXwEBPZXJewFW?=
+ =?us-ascii?Q?AJejsCkbPJzwX0Lf8we25VPTEHrlbUYyebF52VH1K5uPaMKa6zjB+2POfKQC?=
+ =?us-ascii?Q?/5/g+8w4pJYgNH6lwGBo82uYl3wqK+7S3iYAsv6rX4eN4/PSsvw7eoPU6OmW?=
+ =?us-ascii?Q?Dtv7BcJq3XSSJN+24Y3qi56k1kbL57nl6wHtOIT/R89wHhs25/vUlEiDOXUK?=
+ =?us-ascii?Q?0EDB5ZSgT2wd3cfvhAaBEWWJxgP92Kbqk2/CpEObXCdULouXcJChTcG4I5sm?=
+ =?us-ascii?Q?NQ523kR3yBDbwb7JH0Kbg/vDsuc/u3gjlZydFMICNZG6ZA8APZgqk+vXk8Zv?=
+ =?us-ascii?Q?/BhxeeVV1ceRfFZkicdiFHTtbW3f/mWk?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BYaRyt3rv+TZNnJU1Jd5WoPj9WdM9PSXlBQqGKPcg59dIRBthpFSltpx951k?=
+ =?us-ascii?Q?oCm814NgTSD1YSdmMO+Q7f2lp3040JsUxs88inGFQ+ZHUztP03CJ8eIEDA86?=
+ =?us-ascii?Q?0GutoeXpW8dXGxXJ5qviuClJ0Ug7oWEuzpKpbi6QL6sBJS3S/6UndUrp1udG?=
+ =?us-ascii?Q?EExvd0je7ktqLrqBKOpDF6mLyGXvzcvFrCPw6jvOmEn6Q8y/5qAGLcL6sYQh?=
+ =?us-ascii?Q?MtrbXPCyJWY4Tp9PFOWJeSDPkCYNbh7ZJNRWsL1zfSPDN0XqRnWW8HFaYTxp?=
+ =?us-ascii?Q?5350zIAcg+IRbLIrwQhFVrZJwtWpha75lfWk/Mf+uKY5mZhYTG4tw/CtFlnM?=
+ =?us-ascii?Q?Y+BS7m26S5N88b2+NlB0X/7K49wFuK07F4/o9rq9PSMkU3MiuMFgynF55V1/?=
+ =?us-ascii?Q?YL0s6qhSoWE4SI8Tm5QtIziMxvm3/3qhUDvGjT29drsHHC/lPIseF70Zowa1?=
+ =?us-ascii?Q?PNEfi0GfjIPksVvgTOB7wVq87Zn2eB2QqOExGFhGA/DE4ElIdfI/A55j837o?=
+ =?us-ascii?Q?Aw2zD+cIvSuDr3P4g1Z77OTDesQUzejpJ60ouM0h2ETACswAoFhTAJxwyKBw?=
+ =?us-ascii?Q?Q6wqzmkgUTX6YfrWFLxRShMRV/26nmm1xMloAZO0M/Ykj4UhrIcfLJ52EQfD?=
+ =?us-ascii?Q?04EOr7g19cevo/x582zZTJsRpcsTo7J+41u6JonUYdaJTHfC48oSBBDDG+BP?=
+ =?us-ascii?Q?pjUH+PIfVlW3GzhWh6kc7nyEIFtcETMeMq1bxHVExfAFL2Aou2a0stws9CfZ?=
+ =?us-ascii?Q?n8oLbCaS/R6xDkXPNlwsS62OVUVIyOFrtD7P8oBQApKrUpA5bZmXiZIQAeIk?=
+ =?us-ascii?Q?o/K8rm5YehhnKjtqLnXok5pVxKza1KhvaXxJ1KL6xqcngyJTE7QK4NibFIjE?=
+ =?us-ascii?Q?dJ2h6OE/qDuIDXrhc/xf4UgeMq/BhPR0iK7RMNVG7nIe+/2RUCX7gsyDnte8?=
+ =?us-ascii?Q?0QkZ0pgcJzo+1llx4QwYDtO1I/fPcgnrYZoOdbVZuebsypVEiUFPxPoo3AOh?=
+ =?us-ascii?Q?hgYOFN3vYw7e72hr/JouoCvQBQbMqiEM+K9/77xIn4didgtG1OPMm0W5OYgT?=
+ =?us-ascii?Q?gR9cuC1G5dr1goHHbh7sS+rksn1Cn8J1YJwbvA15XCwfI4NpmcxUUcaYvwGi?=
+ =?us-ascii?Q?jpsnYzcU26PmKcIojCdRpiMFxEPAWYLfMt1ucdCApEGLCGMBUvsxP18zfrSb?=
+ =?us-ascii?Q?ppiweyKdrRQxo1xvraqyRp9pWU8WVrWTQ6h1vd5fKPZoNgfdoIH12hcC8ofG?=
+ =?us-ascii?Q?TD41+S24+booAunCdIbq65FU7VuSxms/0ioPhW3Pm2RG3PH1JhI8KFcMG6MU?=
+ =?us-ascii?Q?rRSdffIUp25zf/OA3wmm3st2c+/4oVbEJeS8SuMs2dS5B/FjH4vVahRlX3St?=
+ =?us-ascii?Q?nuNwPlQGBgXmSUE8yJ7v5/FmVzUXGorGt+pGrhEKWDaUwwPMVdU4MNtnNFmJ?=
+ =?us-ascii?Q?hGr+IuH+jdwsAvroUvudQM0jTP6btKXPxGmGYBrzfXz4HTp5LWC9YVWBx7hb?=
+ =?us-ascii?Q?F6QaDtN/7bLes5TJlE9pB70UyO2m0VdAEiHR3icqKTLtvjbstZ7uaTX3E354?=
+ =?us-ascii?Q?jl24dhu1XULwCxTVpLI=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34004bd6-7b32-438f-a60c-08de1e084119
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 14:16:33.6409
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EVwzJsrt4ssUUWNrJvZ7B7+zehY/C/czmZTyEXAqWw7r9qouTc2cky6L5W9aJ5rN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8953
 
-Hello,
+On Fri, Nov 07, 2025 at 02:38:50AM +0000, Wei Wang wrote:
+> On Friday, November 7, 2025 9:04 AM, Jason Gunthorpe wrote:
+> > On Mon, Nov 03, 2025 at 10:00:34PM +0800, Wei Wang wrote:
+> > > Before requesting the IOMMU driver to map an IOVA to a physical
+> > > address, set the IOMMU_MMIO flag in dma->prot when the physical
+> > > address corresponds to MMIO. This allows the IOMMU driver to handle
+> > MMIO mappings specially.
+> > > For example, on AMD CPUs with SME enabled, the AMD IOMMU driver
+> > avoids
+> > > setting the C-bit if iommu_map() is called with IOMMU_MMIO set in prot.
+> > > This prevents issues with PCIe P2P communication, since current PCIe
+> > > switches and devices do not interpret the C-bit correctly.
+> > >
+> > > Signed-off-by: Wei Wang <wei.w.wang@hotmail.com>
+> > > ---
+> > >  drivers/vfio/vfio_iommu_type1.c | 14 +++++++++-----
+> > >  1 file changed, 9 insertions(+), 5 deletions(-)
+> > 
+> > This may be the best you can do with vfio type1, but just because the VMA is
+> > special doesn't necessarily mean it is MMIO, nor does it mean it is decrypted
+> > memory.
+> 
+> I think here vfio type1 only needs to provide the info about "MMIO or not"
+> (the decision to encrypt MMIO or not rests with the vendor IOMMU driver).
+> 
+> Why might a region not be MMIO when vma->flags includes VM_IO | VM_PFNMAP?
+> (are you aware of any real examples in use?)
 
-syzbot tried to test the proposed patch but the build/boot failed:
+VM_IO should indicate MMIO, yes, but we don't actually check that in
+this type 1 path..
 
-3.654920][    T1] Loaded X.509 cert 'Build time autogenerated kernel key: 2=
-b1e50eda567f48aae3b59ba5ce868b06b486d7e'
-[   23.982352][    T1] zswap: loaded using pool 842
-[   23.991410][    T1] Demotion targets for Node 0: null
-[   23.996985][    T1] Demotion targets for Node 1: null
-[   24.002328][    T1] debug_vm_pgtable: [debug_vm_pgtable         ]: Valid=
-ating architecture page table helpers
-[   26.824926][    T1] Key type .fscrypt registered
-[   26.829883][    T1] Key type fscrypt-provisioning registered
-[   26.839281][    T1] kAFS: Red Hat AFS client v0.1 registering.
-[   26.865411][    T1] Btrfs loaded, assert=3Don, zoned=3Dyes, fsverity=3Dy=
-es
-[   26.872528][    T1] Key type big_key registered
-[   26.877283][    T1] Key type encrypted registered
-[   26.882161][    T1] AppArmor: AppArmor sha256 policy hashing enabled
-[   26.888954][    T1] ima: No TPM chip found, activating TPM-bypass!
-[   26.895372][    T1] Loading compiled-in module X.509 certificates
-[   26.922050][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
-ey: 2b1e50eda567f48aae3b59ba5ce868b06b486d7e'
-[   26.932919][    T1] ima: Allocated hash algorithm: sha256
-[   26.938925][    T1] ima: No architecture policies found
-[   26.944865][    T1] evm: Initialising EVM extended attributes:
-[   26.950942][    T1] evm: security.selinux (disabled)
-[   26.956088][    T1] evm: security.SMACK64 (disabled)
-[   26.961183][    T1] evm: security.SMACK64EXEC (disabled)
-[   26.966630][    T1] evm: security.SMACK64TRANSMUTE (disabled)
-[   26.972527][    T1] evm: security.SMACK64MMAP (disabled)
-[   26.978060][    T1] evm: security.apparmor
-[   26.982473][    T1] evm: security.ima
-[   26.986261][    T1] evm: security.capability
-[   26.990651][    T1] evm: HMAC attrs: 0x1
-[   26.997017][    T1] PM:   Magic number: 1:107:131
-[   27.002026][    T1] video4linux video31: hash matches
-[   27.007554][    T1] block nbd10: hash matches
-[   27.012543][    T1] acpi device:06: hash matches
-[   27.017647][    T1] netconsole: network logging started
-[   27.023759][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
-[   27.035896][    T1] rdma_rxe: loaded
-[   27.041816][    T1] cfg80211: Loading compiled-in X.509 certificates for=
- regulatory database
-[   27.052989][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[   27.060977][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06=
-c7248db18c600'
-[   27.072219][    T1] clk: Disabling unused clocks
-[   27.073861][   T63] faux_driver regulatory: Direct firmware load for reg=
-ulatory.db failed with error -2
-[   27.077172][    T1] ALSA device list:
-[   27.087180][   T63] faux_driver regulatory: Falling back to sysfs fallba=
-ck for: regulatory.db
-[   27.090785][    T1]   #0: Dummy 1
-[   27.103854][    T1]   #1: Loopback 1
-[   27.107903][    T1]   #2: Virtual MIDI Card 1
-[   27.115574][    T1] check access for rdinit=3D/init failed: -2, ignoring
-[   27.122507][    T1] md: Waiting for all devices to be available before a=
-utodetect
-[   27.130224][    T1] md: If you don't use raid, use raid=3Dnoautodetect
-[   27.136785][    T1] md: Autodetecting RAID arrays.
-[   27.141856][    T1] md: autorun ...
-[   27.145572][    T1] md: ... autorun DONE.
-[   27.254350][    T1] EXT4-fs (sda1): orphan cleanup on readonly fs
-[   27.262975][    T1] EXT4-fs (sda1): mounted filesystem 4f91c6db-4997-4bb=
-4-91b8-7e83a20c1bf1 ro with ordered data mode. Quota mode: none.
-[   27.275897][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
-ce 8:1.
-[   27.285690][    T1] devtmpfs: mounted
-[   27.362347][    T1] Freeing unused kernel image (initmem) memory: 26112K
-[   27.373258][    T1] Write protecting the kernel read-only data: 212992k
-[   27.392412][    T1] Freeing unused kernel image (text/rodata gap) memory=
-: 1436K
-[   27.405281][    T1] Freeing unused kernel image (rodata/data gap) memory=
-: 1240K
-[   27.510532][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   27.518752][    T1] x86/mm: Checking user space page tables
-[   27.608528][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   27.622261][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
-ic=3D1': parameter not found
-[   27.632373][    T1] Run /sbin/init as init process
-[   27.899076][ T5159] mount (5159) used greatest stack depth: 23624 bytes =
-left
-[   27.967399][ T5160] EXT4-fs (sda1): re-mounted 4f91c6db-4997-4bb4-91b8-7=
-e83a20c1bf1 r/w.
-mount: mounting devtmpfs on /dev failed: Device or resource busy
-mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
-y
-mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
-ory
-[   28.105113][ T5164] mount (5164) used greatest stack depth: 21672 bytes =
-left
-Starting syslogd: OK
-Starting acpid: OK
-Starting klogd: OK
-Running sysctl: OK
-Populating /dev using udev: [   29.176871][ T5194] udevd[5194]: starting ve=
-rsion 3.2.14
-[   29.365166][ T5195] udevd[5195]: starting eudev-3.2.14
-[   29.367815][ T5194] udevd (5194) used greatest stack depth: 18696 bytes =
-left
-done
-Starting system message bus: done
-Starting iptables: OK
-Starting network: OK
-Starting dhcpcd...
-dhcpcd-10.2.0 starting
-[   49.444742][ T5489] ------------[ cut here ]------------
-[   49.450246][ T5489] WARNING: ./include/linux/ns_common.h:314 at nsfs_evi=
-ct+0x18e/0x200, CPU#1: dhcpcd/5489
-[   49.461849][ T5489] Modules linked in:
-[   49.465873][ T5489] CPU: 1 UID: 0 PID: 5489 Comm: dhcpcd Not tainted syz=
-kaller #0 PREEMPT(full)=20
-[   49.475268][ T5489] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 10/02/2025
-[   49.485891][ T5489] RIP: 0010:nsfs_evict+0x18e/0x200
-[   49.491026][ T5489] Code: 4d 8b 1e 48 89 df 5b 41 5c 41 5d 41 5e 41 5f 5=
-d 41 ff e3 cc cc cc e8 01 c7 76 ff 90 0f 0b 90 e9 1f ff ff ff e8 f3 c6 76 f=
-f 90 <0f> 0b 90 e9 42 ff ff ff e8 e5 c6 76 ff 90 0f 0b 90 e9 72 ff ff ff
-[   49.511222][ T5489] RSP: 0018:ffffc90003adfa28 EFLAGS: 00010293
-[   49.517709][ T5489] RAX: ffffffff824b0e3d RBX: ffffffff9a180fd8 RCX: fff=
-f88802f9f5b80
-[   49.526255][ T5489] RDX: 0000000000000000 RSI: 00000000effffff8 RDI: 000=
-00000effffff8
-[   49.535159][ T5489] RBP: 00000000effffff8 R08: ffffffff9a181093 R09: 1ff=
-ffffff3430212
-[   49.543377][ T5489] R10: dffffc0000000000 R11: fffffbfff3430213 R12: dff=
-ffc0000000000
-[   49.551608][ T5489] R13: 1ffffffff34301fe R14: ffff88807a78f740 R15: fff=
-fffff9a180ff0
-[   49.559609][ T5489] FS:  00007f34c5e7d740(0000) GS:ffff888125b78000(0000=
-) knlGS:0000000000000000
-[   49.568761][ T5489] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   49.575391][ T5489] CR2: 000055fd54bd54a0 CR3: 0000000050a6a000 CR4: 000=
-00000003526f0
-[   49.583450][ T5489] Call Trace:
-[   49.586856][ T5489]  <TASK>
-[   49.589790][ T5489]  ? __pfx_nsfs_evict+0x10/0x10
-[   49.594786][ T5489]  evict+0x5f4/0xae0
-[   49.598708][ T5489]  ? __pfx_evict+0x10/0x10
-[   49.603192][ T5489]  ? _raw_spin_unlock+0x28/0x50
-[   49.608075][ T5489]  ? iput+0xce7/0x1050
-[   49.612199][ T5489]  __dentry_kill+0x209/0x660
-[   49.616894][ T5489]  ? dput+0x37/0x2b0
-[   49.620853][ T5489]  dput+0x19f/0x2b0
-[   49.625240][ T5489]  path_put+0x39/0x60
-[   49.629332][ T5489]  vfs_statx+0x36e/0x550
-[   49.633784][ T5489]  ? __pfx_vfs_statx+0x10/0x10
-[   49.638565][ T5489]  ? strncpy_from_user+0x150/0x2c0
-[   49.643871][ T5489]  ? getname_flags+0x1e5/0x540
-[   49.648659][ T5489]  vfs_fstatat+0x118/0x170
-[   49.653220][ T5489]  __x64_sys_newfstatat+0x116/0x190
-[   49.658872][ T5489]  ? __pfx___x64_sys_newfstatat+0x10/0x10
-[   49.664675][ T5489]  ? do_syscall_64+0xbe/0xfa0
-[   49.669371][ T5489]  do_syscall_64+0xfa/0xfa0
-[   49.674260][ T5489]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   49.680359][ T5489]  ? clear_bhb_loop+0x60/0xb0
-[   49.685201][ T5489]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   49.691150][ T5489] RIP: 0033:0x7f34c5f71b0a
-[   49.695754][ T5489] Code: 48 8b 15 f1 f2 0d 00 f7 d8 64 89 02 b8 ff ff f=
-f ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 41 89 ca b8 06 01 00 00 0=
-f 05 <3d> 00 f0 ff ff 77 07 31 c0 c3 0f 1f 40 00 48 8b 15 b9 f2 0d 00 f7
-[   49.715431][ T5489] RSP: 002b:00007ffd494b4028 EFLAGS: 00000246 ORIG_RAX=
-: 0000000000000106
-[   49.724018][ T5489] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000=
-07f34c5f71b0a
-[   49.732166][ T5489] RDX: 00007ffd494b4030 RSI: 000055fd54bfd557 RDI: 000=
-00000ffffff9c
-[   49.740133][ T5489] RBP: 00007ffd494b67c8 R08: 0000000000000000 R09: 000=
-0000000000000
-[   49.748181][ T5489] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
-07ffd494b51a0
-[   49.756207][ T5489] R13: 000055fd7bac88a0 R14: 0000000000001000 R15: 000=
-07f34c5e7d6c8
-[   49.764232][ T5489]  </TASK>
-[   49.767259][ T5489] Kernel panic - not syncing: kernel: panic_on_warn se=
-t ...
-[   49.774523][ T5489] CPU: 1 UID: 0 PID: 5489 Comm: dhcpcd Not tainted syz=
-kaller #0 PREEMPT(full)=20
-[   49.783536][ T5489] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 10/02/2025
-[   49.793664][ T5489] Call Trace:
-[   49.796937][ T5489]  <TASK>
-[   49.799886][ T5489]  dump_stack_lvl+0x99/0x250
-[   49.804503][ T5489]  ? __asan_memcpy+0x40/0x70
-[   49.809232][ T5489]  ? __pfx_dump_stack_lvl+0x10/0x10
-[   49.814434][ T5489]  ? __pfx__printk+0x10/0x10
-[   49.819062][ T5489]  vpanic+0x237/0x6d0
-[   49.823042][ T5489]  ? __pfx_vpanic+0x10/0x10
-[   49.827540][ T5489]  ? is_bpf_text_address+0x292/0x2b0
-[   49.832910][ T5489]  ? is_bpf_text_address+0x26/0x2b0
-[   49.838109][ T5489]  panic+0xb9/0xc0
-[   49.841907][ T5489]  ? __pfx_panic+0x10/0x10
-[   49.846325][ T5489]  __warn+0x334/0x4c0
-[   49.850307][ T5489]  ? nsfs_evict+0x18e/0x200
-[   49.854809][ T5489]  ? nsfs_evict+0x18e/0x200
-[   49.859319][ T5489]  report_bug+0x2be/0x4f0
-[   49.863803][ T5489]  ? nsfs_evict+0x18e/0x200
-[   49.868590][ T5489]  ? nsfs_evict+0x18e/0x200
-[   49.873445][ T5489]  ? nsfs_evict+0x190/0x200
-[   49.877981][ T5489]  handle_bug+0x84/0x160
-[   49.882217][ T5489]  exc_invalid_op+0x1a/0x50
-[   49.886826][ T5489]  asm_exc_invalid_op+0x1a/0x20
-[   49.891681][ T5489] RIP: 0010:nsfs_evict+0x18e/0x200
-[   49.896878][ T5489] Code: 4d 8b 1e 48 89 df 5b 41 5c 41 5d 41 5e 41 5f 5=
-d 41 ff e3 cc cc cc e8 01 c7 76 ff 90 0f 0b 90 e9 1f ff ff ff e8 f3 c6 76 f=
-f 90 <0f> 0b 90 e9 42 ff ff ff e8 e5 c6 76 ff 90 0f 0b 90 e9 72 ff ff ff
-[   49.916792][ T5489] RSP: 0018:ffffc90003adfa28 EFLAGS: 00010293
-[   49.922856][ T5489] RAX: ffffffff824b0e3d RBX: ffffffff9a180fd8 RCX: fff=
-f88802f9f5b80
-[   49.930820][ T5489] RDX: 0000000000000000 RSI: 00000000effffff8 RDI: 000=
-00000effffff8
-[   49.938872][ T5489] RBP: 00000000effffff8 R08: ffffffff9a181093 R09: 1ff=
-ffffff3430212
-[   49.947351][ T5489] R10: dffffc0000000000 R11: fffffbfff3430213 R12: dff=
-ffc0000000000
-[   49.955403][ T5489] R13: 1ffffffff34301fe R14: ffff88807a78f740 R15: fff=
-fffff9a180ff0
-[   49.963463][ T5489]  ? nsfs_evict+0x18d/0x200
-[   49.969170][ T5489]  ? nsfs_evict+0x18d/0x200
-[   49.973769][ T5489]  ? __pfx_nsfs_evict+0x10/0x10
-[   49.978624][ T5489]  evict+0x5f4/0xae0
-[   49.982525][ T5489]  ? __pfx_evict+0x10/0x10
-[   49.986950][ T5489]  ? _raw_spin_unlock+0x28/0x50
-[   49.992068][ T5489]  ? iput+0xce7/0x1050
-[   49.996224][ T5489]  __dentry_kill+0x209/0x660
-[   50.000806][ T5489]  ? dput+0x37/0x2b0
-[   50.004864][ T5489]  dput+0x19f/0x2b0
-[   50.008661][ T5489]  path_put+0x39/0x60
-[   50.012634][ T5489]  vfs_statx+0x36e/0x550
-[   50.016905][ T5489]  ? __pfx_vfs_statx+0x10/0x10
-[   50.021714][ T5489]  ? strncpy_from_user+0x150/0x2c0
-[   50.026926][ T5489]  ? getname_flags+0x1e5/0x540
-[   50.031689][ T5489]  vfs_fstatat+0x118/0x170
-[   50.036099][ T5489]  __x64_sys_newfstatat+0x116/0x190
-[   50.041293][ T5489]  ? __pfx___x64_sys_newfstatat+0x10/0x10
-[   50.047113][ T5489]  ? do_syscall_64+0xbe/0xfa0
-[   50.051797][ T5489]  do_syscall_64+0xfa/0xfa0
-[   50.056316][ T5489]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   50.062385][ T5489]  ? clear_bhb_loop+0x60/0xb0
-[   50.067083][ T5489]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   50.072967][ T5489] RIP: 0033:0x7f34c5f71b0a
-[   50.077370][ T5489] Code: 48 8b 15 f1 f2 0d 00 f7 d8 64 89 02 b8 ff ff f=
-f ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 41 89 ca b8 06 01 00 00 0=
-f 05 <3d> 00 f0 ff ff 77 07 31 c0 c3 0f 1f 40 00 48 8b 15 b9 f2 0d 00 f7
-[   50.096988][ T5489] RSP: 002b:00007ffd494b4028 EFLAGS: 00000246 ORIG_RAX=
-: 0000000000000106
-[   50.105404][ T5489] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000=
-07f34c5f71b0a
-[   50.113378][ T5489] RDX: 00007ffd494b4030 RSI: 000055fd54bfd557 RDI: 000=
-00000ffffff9c
-[   50.121341][ T5489] RBP: 00007ffd494b67c8 R08: 0000000000000000 R09: 000=
-0000000000000
-[   50.129389][ T5489] R10: 0000000000000000 R11: 0000000000000246 R12: 000=
-07ffd494b51a0
-[   50.137355][ T5489] R13: 000055fd7bac88a0 R14: 0000000000001000 R15: 000=
-07f34c5e7d6c8
-[   50.145417][ T5489]  </TASK>
-[   50.148770][ T5489] Kernel Offset: disabled
-[   50.153141][ T5489] Rebooting in 86400 seconds..
+> > I think to really make this work fully properly going forward people are going
+> > to have to use iommufd's dmabuf.
+> 
+> Yeah, I'll also patch for iommufd. We still need to account for the
+> case that many users are still relying on legacy VFIO type1 (will
+> also have some backport work of this patch).
 
+I think my dmabuf patch for iommufd already does this properly.
 
-syzkaller build log:
-go env (err=3D<nil>)
-AR=3D'ar'
-CC=3D'gcc'
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_ENABLED=3D'1'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-CXX=3D'g++'
-GCCGO=3D'gccgo'
-GO111MODULE=3D'auto'
-GOAMD64=3D'v1'
-GOARCH=3D'amd64'
-GOAUTH=3D'netrc'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOCACHEPROG=3D''
-GODEBUG=3D''
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFIPS140=3D'off'
-GOFLAGS=3D''
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build3406885182=3D/tmp/go-build -gno-record-gc=
-c-switches'
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTELEMETRY=3D'local'
-GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.24.4'
-GOWORK=3D''
-PKG_CONFIG=3D'pkg-config'
-
-git status (err=3D<nil>)
-HEAD detached at a6c9c731229
-nothing to commit, working tree clean
-
-
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' -ldflags=3D"-s -w -X github.com/google/syzkaller/pr=
-og.GitRevision=3Da6c9c7312290da5bca2fc1be4872a7aeefb6e3ea -X github.com/goo=
-gle/syzkaller/prog.gitRevisionDate=3D20251104-181356"  ./sys/syz-sysgen | g=
-rep -q false || go install -ldflags=3D"-s -w -X github.com/google/syzkaller=
-/prog.GitRevision=3Da6c9c7312290da5bca2fc1be4872a7aeefb6e3ea -X github.com/=
-google/syzkaller/prog.gitRevisionDate=3D20251104-181356"  ./sys/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3Da6c9c7312290da5bca2fc1be4872a7aeefb6e3ea -X g=
-ithub.com/google/syzkaller/prog.gitRevisionDate=3D20251104-181356"  -o ./bi=
-n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
-_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"a6c9c7312290da5bca2fc1be4872a7aeef=
-b6e3ea\"
-/usr/bin/ld: /tmp/cc7wkuO8.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
-./tools/check-syzos.sh 2>/dev/null
-
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D12e510b4580000
-
-
-Tested on:
-
-commit:         9c0826a5 Add linux-next specific files for 20251107
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4f8fcc6438a785e=
-7
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D0a8655a80e1892784=
-87e
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-=
-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D12c5e17c5800=
-00
-
+Jason
 
