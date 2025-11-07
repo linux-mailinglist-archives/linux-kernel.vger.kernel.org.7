@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-890644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A3B1C408D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:11:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110CAC408DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ADB53B9A5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19F51890FA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA8232ABCE;
-	Fri,  7 Nov 2025 15:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746C532B995;
+	Fri,  7 Nov 2025 15:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cJZE8GZg"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="DOWjP9nZ"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE5B2E6CBC;
-	Fri,  7 Nov 2025 15:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA7F32B98B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762528299; cv=none; b=cjjWZlr8SV2rG2KzdO96grxPgm/5lFrsx/mBQ4j1W9reqrOeyUWC0mk/N9rjn+vIoXVO0RRLLmh+oLgyf9qQh26QFiXbbm3JHO+JojUzqZgOXtHViXPAXJkN+0hJKhgLw3LtQNJRSMGXvryHvmljEOcpboWVatX9Njn6vRc7mtI=
+	t=1762528416; cv=none; b=CLIRZn65bObEmAk7k95nKXEpn8RBfNFMXj+QS8+5Ei2T6/YV3+jCz1oufSSv+4uoS6C073njvuiNxExorUL39NRU7PoGctF/SKUXHKxS3os6vxH/9gpdVeZ8CHItcXT+In82BpJtD5NfnZ5Sp/AWXr097QQ7huHuD7mQd9ar4Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762528299; c=relaxed/simple;
-	bh=yJlWwZ3a12j7omKvOIsqDNOsBjKnkPkdtmc70OuHjRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rhuUxhGlELHUK90jbXRzE7bvDJdkcjXJL7Rhcerxj0XcL3PPb+aoulSk5na+c81aI52v3foBEXD4Pey2Ixh+gPTQ0v/vpmXC1o0PLPX/XncDMKkzeNKS0LiPDWixO4q5LCxtjfmoGgWOgo2fU2GM7JkomAb9SwxTPV5l7leEl44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cJZE8GZg; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4d32Zg6GRGz9tNR;
-	Fri,  7 Nov 2025 16:11:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762528284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vy+NNLP394OwYxNRijQPvvDO7IMwiwg8RBHcds0M8FQ=;
-	b=cJZE8GZg+N198UtZfYrAVmdKAtJBrrVVkioaD4ZOc9/TDy1z63PTOeAv6j+SNs8/bPzYC9
-	JOs9bWu2tpIO6uuFgG6AKrXOPYr5cteqWw+aGCwS2s2/qWM3CU7j1k1wkKJXuRv2yIGHhU
-	DK4p0zb8zrtlKhxpafKd6RV9/K4EEpYV/ahYx5idiMrpFIddLaL+V5Q3V+Cc1RhUz4jGl/
-	E/AaRx5C1kIUJU1pS9Nn8HcZujIGvbsObt1nkRrcFHviOZLerSOkKniqitprQbzSq/oEDb
-	uS0DAVnEXSiH0xp/lumQsu6fIDy2GC3b8MMUDf+FwXsA4/0CnqCC1cLaUd6dbg==
-Message-ID: <d2c9cac9-17cc-4bc6-8322-bc43edbf45d1@mailbox.org>
-Date: Fri, 7 Nov 2025 16:11:15 +0100
+	s=arc-20240116; t=1762528416; c=relaxed/simple;
+	bh=I8bOHsKF9JBWrRe/laJ06lO1WJwj5tKRZLUGW/t5oLM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LCFeCqIOr8e/OBgmdlt7gj2JeDrDS2AQwi6nTiMGcYlV6x114Vf3WmjekaCcpxSURygecWaoRJ1ItKCmKOWAKNJnJrWmx3vTWTJyfg7gBv1Fb0wHy6EZt6oikSmAWDLiz2Qy7K/XZvA79DthqGPbTbz9Gv12dAbxDgKQmMZH5pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com; spf=pass smtp.mailfrom=korsgaard.com; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=DOWjP9nZ; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=DOWjP9nZbPfwDe09aTsWO7TLZHHNPRt/yR7hy+MbZJ90wf0CHBksZ/3uU0yWNrIFLCLnApeKLAB4deanZnWvBN8qzJayIPVGC9mFXZDrI43z0V9xzCvB/XWUk35btsK4Y3fQjhYydB2ba/+kkvn27pdBrqw942yvdO/EumzRBQ8SZnVBytHDsaditgxv9yWKZZYIOk3hFgaGqrHjLaXsfJN5OmnWtNX1whr9mAl6CWuqMjhQf2TAmdlA1t6rC+hcGcbtKT+MD7gIB4ZkAgPWO1d4H6gGBB6bW9ov4ilfIago34UjEOB8VeV+8HXf1GyTarFBg7wpMNEKqlOfaVNIWQ==; s=purelymail2; d=purelymail.com; v=1; bh=I8bOHsKF9JBWrRe/laJ06lO1WJwj5tKRZLUGW/t5oLM=; h=Feedback-ID:Received:Received:From:To:Subject:Date;
+Feedback-ID: 21632:4007:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1502108556;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Fri, 07 Nov 2025 15:13:16 +0000 (UTC)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.96)
+	(envelope-from <peko@dell.be.48ers.dk>)
+	id 1vHO9K-008lf3-2N;
+	Fri, 07 Nov 2025 16:13:14 +0100
+From: Peter Korsgaard <peter@korsgaard.com>
+To: javier.carrasco@wolfvision.net,
+	heikki.krogerus@linux.intel.com,
+	neal@gompa.dev,
+	gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org
+Cc: Peter Korsgaard <peter@korsgaard.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: typec: tipd: mark as orientation aware
+Date: Fri,  7 Nov 2025 16:13:10 +0100
+Message-Id: <20251107151311.2089806-1-peter@korsgaard.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/2] drm/bridge: add support for lontium lt9211c bridge
-To: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, venkata.valluru@oss.qualcomm.com,
- jessica.zhang@oss.qualcomm.com, Yi Zhang <zhanyi@qti.qualcomm.com>,
- Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>
-References: <20251107-add-lt9211c-bridge-v2-0-b0616e23407c@oss.qualcomm.com>
- <20251107-add-lt9211c-bridge-v2-2-b0616e23407c@oss.qualcomm.com>
- <30b5f19b-1ce9-4239-bf0a-d83d647608ce@mailbox.org>
- <aQ35tvwp90qm57Cl@hu-nlaad-hyd.qualcomm.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <aQ35tvwp90qm57Cl@hu-nlaad-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: f902cdf5302f7a21187
-X-MBO-RS-META: ii1978emft34czfyu9hytrgg97y7df3e
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=UTF-8
 
-On 11/7/25 2:52 PM, Nilesh Laad wrote:
-> On Fri, Nov 07, 2025 at 02:20:58PM +0100, Marek Vasut wrote:
->> On 11/7/25 2:02 PM, Nilesh Laad wrote:
->>> From: Yi Zhang <zhanyi@qti.qualcomm.com>
->>>
->>> LT9211c is a Single/Dual-Link DSI/LVDS or Single DPI input to
->>> Single-link/Dual-Link DSI/LVDS or Single DPI output bridge chip.
->>> Add support for DSI to LVDS bridge configuration.
->> How does this differ from existing drivers/gpu/drm/bridge/lontium-lt9211.c ?
->> Can existing lt9211 driver be extended instead ? If not, why ? Details
->> please ...
-> LT9211 and LT9211C differ completely in register programming sequences.
-> Even lontium mentioned that register configuration are different for lt9211 and lt9211c.
+The driver contains orientation detection logic and correctly calls
+typec_set_orientation(), but forgets to set the orientation_aware
+capability, so the orientation value is not visible in sysfs - Fix that.
 
-Lontium seems to often suggest, that users should use their provided 
-register patches without thinking about the content at all.
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ drivers/usb/typec/tipd/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Do you have access to the register documentation, and can you compare 
-LT9211 and LT9211C register layout? Are they identical or do they differ?
+diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+index 2b1049c9a6f3..d561032a2970 100644
+--- a/drivers/usb/typec/tipd/core.c
++++ b/drivers/usb/typec/tipd/core.c
+@@ -1695,6 +1695,7 @@ tps25750_register_port(struct tps6598x *tps, struct f=
+wnode_handle *fwnode)
+ =09typec_cap.data =3D ret;
+ =09typec_cap.revision =3D USB_TYPEC_REV_1_3;
+ =09typec_cap.pd_revision =3D 0x300;
++=09typec_cap.orientation_aware =3D true;
+ =09typec_cap.driver_data =3D tps;
+ =09typec_cap.ops =3D &tps6598x_ops;
+ =09typec_cap.fwnode =3D fwnode;
+--=20
+2.39.5
 
-> Nearly every function would require duplicated logic with if (chip_type) branching,
-> as register sequence are completely different.
-> Having both sequences in single file is not looking good, hence want to merge as separate driver.
-
-Can we somehow use regmap_register_patch() and register patches in 
-driver data to avoid duplication ?
-
--- 
-Best regards,
-Marek Vasut
 
