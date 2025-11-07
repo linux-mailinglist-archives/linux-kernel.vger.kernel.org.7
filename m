@@ -1,125 +1,234 @@
-Return-Path: <linux-kernel+bounces-890966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B25EC41791
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:49:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0687CC4179A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:49:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7041892482
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:49:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F744350361
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B9233B6DA;
-	Fri,  7 Nov 2025 19:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F00332C316;
+	Fri,  7 Nov 2025 19:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ef58Lus/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEQrSQBT"
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9344F335095
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D36532ABF1
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762544913; cv=none; b=Gnn+95e34eVJGjFDUrjKA47S6F4o0iXJDl0o6eP81yVK9OXt4S1oTC4bKziA5Bqei8tycs1RTaLxnoqD6w5ast2KTn1Xn+DsbbOXRg39AmbmMfpKTJmFf2nCeFy9prkySimSEwbTEICz3Oguy4wrEbL8EZ3TXN5n3o/sjl1Btqg=
+	t=1762544950; cv=none; b=MJU6GUNu7HFbd7BGrPT//XFyD4kmld98lnHvEvHVv5sE99aMY0cp1mEndCRZQF9/RP8ofhqq0VMFq/UBSa86lOwwy9AScWIp8BW6hzwFMkZNFuLlNtQLZ5ndchJ/wB1rUdMHPYgLaLBWFZZIA1ZDK9LrQawCcX8Y6TAd1eaVros=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762544913; c=relaxed/simple;
-	bh=jVmrd4OImxyn7gwQSEP1GTQ4NDcZIuueF+51qwhy7Bs=;
+	s=arc-20240116; t=1762544950; c=relaxed/simple;
+	bh=J4wZUvXi7BlP1+Ww/G+19x0mF6vC2xky7wV/+fkku8o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FSM0tHj0CeGjfUH8xXxErWLcM0BhwDDmSBM5+NUSESjhYnAtWwMbVTebN8Eb07VHaiZbCOyZrvoKR5yG0TQJ2Hs0GygqRIJoVHNAwpAUQuYI8+yL98rySFt1Ms8wDusiBpsk4V24tROOnrEZA7b4Co4ziwgHeg0oFJOkqJyuV9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ef58Lus/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB69C19425
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:48:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762544913;
-	bh=jVmrd4OImxyn7gwQSEP1GTQ4NDcZIuueF+51qwhy7Bs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ef58Lus/T4l61OLQyp3LuWhB4ykyNSOTnZve3WeJtIWNIjIu7DtTPYdUo65b51np3
-	 5nP2Aix/uRNEDOV5f2XfNiAuSy392lJ8pE+H/4WHede8R/gBk1mnBQhAHtOFDag0Y3
-	 AYjc54nhVDMP7en0zClM8jMTStFGzRjtybyDdJCXQPQ3IC1lHuTYZpDPyGT6RmL/1d
-	 IQV0lIs6BG6DGx5XrKEihBaOL2et+TZvewZR40aTB3SELTNaNyG7+icgZvTIveuZg+
-	 ND1S3YOz0Oelwtg3vTBIjVwoRM/oorpAtqakl/9fyJTUcEgn3M0IjTZioDTwD3K2I6
-	 tfvcbpQ9uNr/Q==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4439ecf6004so549683b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:48:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1G+22xlXNU92uelVITyczICvjjwoqQxzIpSMwoYLrwqJSd48FncTjgsSgFerxdyI4YjxehyGi83FHumY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGtpSDW4FacqgcuE6eRAZIIyMiojmdjo52pJPMed/lOZ6QedQl
-	SN6XE8hixvuZv14pcNhgy/ZtTZN51/jc8/nefxUhFB0rh63RECxWlCY/jCi5ILKHCY0HzuFOz1S
-	WUNiFsZbohrFl111DcJ8NkLL+B0Tfoww=
-X-Google-Smtp-Source: AGHT+IFfjcZQMaSMf/O0E7bHDvyenSz2TU7wnFXyLVZ2U6iGaSEGM0Li0KrPZeYcaNcWs96gi7YlfQIKTtL1lzqsBTE=
-X-Received: by 2002:a05:6808:4f13:b0:43d:2e06:4e84 with SMTP id
- 5614622812f47-4501c747f7fmr1415267b6e.13.1762544912008; Fri, 07 Nov 2025
- 11:48:32 -0800 (PST)
+	 To:Cc:Content-Type; b=n7yx9WNM5okoFyRpyQ7Nvmy79Zh/kMeYp02lDHHCEXYS7xgv54U1G2Fhd9RLme7e8et7uJVZEms+S2n4xggRaO9OGBO52+S7OPdslafAcWI5yNelwAyQuPLt2tslmJmXRq0HbgtvwvXmLT+OTnBTsgYVrzopNoYOf+xNPV77zrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEQrSQBT; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-63b65530540so111481d50.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762544948; x=1763149748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SpMh/mSxXtjLHlF/+Q/QfN7xTlxrTVnWklcGRRkugvw=;
+        b=cEQrSQBTJKHEdRLeVj0p1tOF43+NDEfHF/o3bsc0OUXzwPgf+b866E14JMyARHhccu
+         AH2wi6J1QoshIeolyymQannrox6HGoRRjKfxp9Hu62SZpRI2A5yWT6XaUbyuPUFw6kKh
+         NaAysFHW+pTer9LHs8XJK3j1YDqF0mPXFH2HzNaePCN+czkiE5iw2YBcjhD98wi39U2c
+         1tfmGS5/EMTBxOSyDVBbQ8h4UxevwpndrXC5dqr2+VLpbhcXmChDRZqooNXhxAe8UnOb
+         zqvjY1DlcAc9zr7O+B6/HT59ByLiubaCsgobeM4Kv9/Wfc0feL3MJxvgDPN238tyRUuT
+         Ccww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762544948; x=1763149748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SpMh/mSxXtjLHlF/+Q/QfN7xTlxrTVnWklcGRRkugvw=;
+        b=KE7jp639x01luWy3IQwltBmgkxkz139KRfOP2f2DzJTaqa0DyndLjMiI/Q5fxRP4H1
+         BZnJjQfXFJtePl6bacCzWTr+JP+vSQ+zxGe0Uusg+lcrPSTIE+eO8Ifa8JOiIuPWcIHj
+         FaSbXTxPKK22oMd8sQZoIeqOL2oEry8ssc9hw80t8JOpj9KSSb6ghgy8G/bj2PY7lQGi
+         E8l1zQLBA7tcUwrlQMfR4aGGBtX6YauOCYLcHkMn/HVZcLvnOK0/ze5T03pxzGK4w+dQ
+         lzkRIVOUgM4dpuFXKpXN8Vc8eilHQA/bfXbcPY/E5Earr40q6ULyHbEhcfpOhqXNDRFq
+         2sQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV01Ud/K8Z+8NvTiB7FMbGl6IROfRaxSut0nGky+DwjA58r8Beg1iHq2I2nnZrkBUWFp0h9W4lNMDAxWYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxxgXscJaL9ZgjLtloOVU4SGAkI7TMvfV6NtZ+jetm9mMyn+d2
+	pX/glLEfCW5q/gDZQyYc5iDb5Cu8LOzUR+HmbBP5fIkqsZ300aOO5NPFnG51gsx51Ic1sqIpluh
+	sY4RE/jF33YmHF8mG7RhQUJMhatyFqQQ=
+X-Gm-Gg: ASbGncvIYcYy9KWPVhIp2qUi4fhpZ4eEFxRByT+dDzrtrPp2kHCtNhyIwcy09TXi7iz
+	d1tcFUjT50LKge768MvpMbxdOXWSTN/bLfvv6KbS9BfeSS36anox4jVwoPJQARo5ktIiHm9k1xh
+	zV5MKVsMj9ecFt9rpqMJSQmumfppe0pocnBhOA1GqXsIyKfM+GyBSZM4lviNf8jzO4knyJG3ZUj
+	/MdLEiyf83ceFhQoJ7F7aWDNzVQn9buolJGcjJklVuPl5jkFzhL8XthmodypLYcyokDfVspllKD
+	mf/oWQ0ma10=
+X-Google-Smtp-Source: AGHT+IHsyPGiBPpWGTmfAzt0nLOcnLYu1Vx+IbU42YfuoVbWUugKdmDuL5485A/o+78TaJSGduCD14DMWercRrYK3d4=
+X-Received: by 2002:a05:690c:4391:b0:787:c976:4dcf with SMTP id
+ 00721157ae682-787d544111dmr2749227b3.8.1762544947835; Fri, 07 Nov 2025
+ 11:49:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103162516.2606158-1-srosek@google.com>
-In-Reply-To: <20251103162516.2606158-1-srosek@google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Nov 2025 20:48:21 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jPdfut_QHz9f0x+SSexD_i8xEb5bhkzMv_m=a598Hqxw@mail.gmail.com>
-X-Gm-Features: AWmQ_bk_tz9nQGJAp7GZKrIe43u7pcO4azGS2YQ7FnFcvmD2-6KLrj0eNLfHFuw
-Message-ID: <CAJZ5v0jPdfut_QHz9f0x+SSexD_i8xEb5bhkzMv_m=a598Hqxw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] ACPI: DPTF: Move INT340X enumeration from DPTF
- scan handler to ACPI core
-To: Slawomir Rosek <srosek@google.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
-	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
-	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20251105-netconsole_dynamic_extradata-v1-0-142890bf4936@meta.com>
+ <20251105-netconsole_dynamic_extradata-v1-1-142890bf4936@meta.com> <s6zjlx2geyjlfwgp2rvw2qolgu6vnsstv5y2rdihxwkt5i45nb@y6jzzo5pvgge>
+In-Reply-To: <s6zjlx2geyjlfwgp2rvw2qolgu6vnsstv5y2rdihxwkt5i45nb@y6jzzo5pvgge>
+From: Gustavo Luiz Duarte <gustavold@gmail.com>
+Date: Fri, 7 Nov 2025 19:48:56 +0000
+X-Gm-Features: AWmQ_bk-gLlNX4oNGxsyxs2m_1vD8UMLpvR4pfZztJHvTMRqknJxZnS1hzE7vEw
+Message-ID: <CAGSyskWFhLKBE3f=rcPducGXwcUx8sFK5RuU-BLobV7wg8X8KA@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/4] netconsole: Simplify send_fragmented_body()
+To: Breno Leitao <leitao@debian.org>
+Cc: Andre Carvalho <asantostc@gmail.com>, Simon Horman <horms@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 3, 2025 at 5:25=E2=80=AFPM Slawomir Rosek <srosek@google.com> w=
-rote:
+On Fri, Nov 7, 2025 at 12:15=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> > index 5d8d0214786c..0a8ba7c4bc9d 100644
+> > --- a/drivers/net/netconsole.c
+> > +++ b/drivers/net/netconsole.c
+> > @@ -1553,13 +1553,16 @@ static void send_fragmented_body(struct netcons=
+ole_target *nt,
+> >                                const char *msgbody, int header_len,
+> >                                int msgbody_len, int extradata_len)
+> >  {
+> > -     int sent_extradata, preceding_bytes;
+> >       const char *extradata =3D NULL;
+> >       int body_len, offset =3D 0;
+> > +     int extradata_offset =3D 0;
+> > +     int msgbody_offset =3D 0;
+> >
+> >  #ifdef CONFIG_NETCONSOLE_DYNAMIC
+> >       extradata =3D nt->extradata_complete;
+> >  #endif
 >
-> The Intel Dynamic Platform and Thermal Framework (DPTF) relies on
-> the INT340X ACPI device objects. The temperature information and
-> cooling ability are exposed to the userspace via those objects.
 >
-> Since kernel v3.17 the ACPI bus scan handler is introduced to prevent
-> enumeration of INT340X ACPI device objects on the platform bus unless
-> related thermal drivers are enabled. However, using the IS_ENABLED()
-> macro in the ACPI scan handler forces the kernel to be recompiled
-> when thermal drivers are enabled or disabled, which is a significant
-> limitation of its modularity. The IS_ENABLED() macro is particularly
-> problematic for the Android Generic Kernel Image (GKI) project which
-> uses unified core kernel while SoC/board support is moved to loadable
-> vendor modules.
+> extradata could be NULL at this time if CONFIG_NETCONSOLE_DYNAMIC is
+> unset. Basically extradata=3DNULL will not be replaced.
 >
-> The DPTF requires thermal drivers to be loaded at runtime, thus
-> ACPI bus scan handler is not needed and acpi_default_enumeration()
-> may create all platform devices, regardless of the actual setting
-> of CONFIG_INT340X_THERMAL.
+> > +     if (WARN_ON_ONCE(!extradata && extradata_len !=3D 0))
+> > +             return;
 >
-> Link to v1: https://lore.kernel.org/all/20250830053404.763995-1-srosek@go=
-ogle.com/
-> Link to v2: https://lore.kernel.org/all/20250917120719.2390847-1-srosek@g=
-oogle.com/
-> Link to v3: https://lore.kernel.org/all/20251002113404.3117429-1-srosek@g=
-oogle.com/
+> And entradata_len =3D 0 for CONFIG_NETCONSOLE_DYNAMIC disabled.
 >
-> In v4 the SoC DTS thermal explicitly depends on the X86_64 and NET,
-> so the INT340X driver may safely be selected by the SoC DTS thermal
-> driver. In addition most of previously submitted patches are dropped
-> as they are not necessary, instead the ACPI bus scan handler is simply
-> removed from the kernel, thus all platform devices are enumerated by
-> the acpi_default_enumeration().
+> > +             /* write msgbody first */
+> > +             this_chunk =3D min(msgbody_len - msgbody_offset,
+> > +                              MAX_PRINT_CHUNK - this_header);
+> > +             memcpy(nt->buf + this_header, msgbody + msgbody_offset,
+> > +                    this_chunk);
+> > +             msgbody_offset +=3D this_chunk;
+> > +             this_offset +=3D this_chunk;
+> > +
+> > +             /* after msgbody, append extradata */
+> > +             this_chunk =3D min(extradata_len - extradata_offset,
+> > +                              MAX_PRINT_CHUNK - this_header - this_off=
+set);
+> > +             memcpy(nt->buf + this_header + this_offset,
+> > +                    extradata + extradata_offset, this_chunk);
 >
-> Slawomir Rosek (2):
->   ACPI: DPTF: Ignore SoC DTS thermal while scanning
->   ACPI: DPTF: Remove int340x thermal scan handler
+> then you are going to memcpy from NULL pointer (`extradata + extradata_of=
+fset` =3D=3D 0).
 
-Both patches applied as 6.19 material, but the subject of the first
-patch has been changed to "thermal: intel: Select INT340X_THERMAL from
-INTEL_SOC_DTS_THERMAL".
+I believe passing NULL to memcpy() should be safe as long as count is
+zero (which is the case here).
+However, what I didn't realize at first is that we would be doing
+pointer arithmetic with NULL, which is undefined behavior :(
+I will add a check if extradata is NULL here.
 
-Thanks!
+Thanks for the careful review!
+
+>
+> I got this my vim LSP that printed:
+>
+>         Null pointer passed as 2nd argument to memory copy function [unix=
+.cstring.NullArg]
+>
+
+On Fri, Nov 7, 2025 at 12:15=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> On Wed, Nov 05, 2025 at 09:06:43AM -0800, Gustavo Luiz Duarte wrote:
+> > Refactor send_fragmented_body() to use separate offset tracking for
+> > msgbody, and extradata instead of complex conditional logic.
+> > The previous implementation used boolean flags and calculated offsets
+> > which made the code harder to follow.
+> >
+> > The new implementation maintains independent offset counters
+> > (msgbody_offset, extradata_offset) and processes each section
+> > sequentially, making the data flow more straightforward and the code
+> > easier to maintain.
+> >
+> > This is a preparatory refactoring with no functional changes, which wil=
+l
+> > allow easily splitting extradata_complete into separate userdata and
+> > sysdata buffers in the next patch.
+> >
+> > Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
+> > ---
+> >  drivers/net/netconsole.c | 73 ++++++++++++++++------------------------=
+--------
+> >  1 file changed, 24 insertions(+), 49 deletions(-)
+> >
+> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> > index 5d8d0214786c..0a8ba7c4bc9d 100644
+> > --- a/drivers/net/netconsole.c
+> > +++ b/drivers/net/netconsole.c
+> > @@ -1553,13 +1553,16 @@ static void send_fragmented_body(struct netcons=
+ole_target *nt,
+> >                                const char *msgbody, int header_len,
+> >                                int msgbody_len, int extradata_len)
+> >  {
+> > -     int sent_extradata, preceding_bytes;
+> >       const char *extradata =3D NULL;
+> >       int body_len, offset =3D 0;
+> > +     int extradata_offset =3D 0;
+> > +     int msgbody_offset =3D 0;
+> >
+> >  #ifdef CONFIG_NETCONSOLE_DYNAMIC
+> >       extradata =3D nt->extradata_complete;
+> >  #endif
+>
+>
+> extradata could be NULL at this time if CONFIG_NETCONSOLE_DYNAMIC is
+> unset. Basically extradata=3DNULL will not be replaced.
+>
+> > +     if (WARN_ON_ONCE(!extradata && extradata_len !=3D 0))
+> > +             return;
+>
+> And entradata_len =3D 0 for CONFIG_NETCONSOLE_DYNAMIC disabled.
+>
+> > +             /* write msgbody first */
+> > +             this_chunk =3D min(msgbody_len - msgbody_offset,
+> > +                              MAX_PRINT_CHUNK - this_header);
+> > +             memcpy(nt->buf + this_header, msgbody + msgbody_offset,
+> > +                    this_chunk);
+> > +             msgbody_offset +=3D this_chunk;
+> > +             this_offset +=3D this_chunk;
+> > +
+> > +             /* after msgbody, append extradata */
+> > +             this_chunk =3D min(extradata_len - extradata_offset,
+> > +                              MAX_PRINT_CHUNK - this_header - this_off=
+set);
+> > +             memcpy(nt->buf + this_header + this_offset,
+> > +                    extradata + extradata_offset, this_chunk);
+>
+> then you are going to memcpy from NULL pointer (`extradata + extradata_of=
+fset` =3D=3D 0).
+>
+> I got this my vim LSP that printed:
+>
+>         Null pointer passed as 2nd argument to memory copy function [unix=
+.cstring.NullArg]
+>
 
