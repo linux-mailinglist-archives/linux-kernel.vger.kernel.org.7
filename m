@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-889942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A562EC3EE42
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:11:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D82C3EE45
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:11:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 267913B2472
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FE63B268A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA68313261;
-	Fri,  7 Nov 2025 08:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034F930F954;
+	Fri,  7 Nov 2025 08:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2+4ZIeQ"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WuTX3r+G"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168FC311975
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AA8312805
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 08:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762502890; cv=none; b=JLwvEnmGWHnRT7XHRe2HYxfgDs0umjVP62AQ9CekJAi9ke5NTPyx4I8M3aciY1yPViDc+QnZDP4rtWfsfwhwecsSdwJDLNoaYD8XXUg37U2z24GXHcTzApVG/j4IFTi+6kNlRJXXgH4X6MPHlSQYXz7VD3bgicGiiIi/bPMRgOA=
+	t=1762502891; cv=none; b=bcpu96PvqH+P1wgDSlZw5jFjSeblZ39uCgwJvHocubP/3vdGY6sxgw50XaN02S8Z7NUAlUvYaTOqQBnJ/eshlbvn4jwVewI7due+LaMTdEFX/SKwW4VoeeQpEtyIr4UHsbJnDZHsiQ2YoRg5Gn9lCBrFz1Bm3ZpAQTC0Ybgd4aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762502890; c=relaxed/simple;
-	bh=fn0piwHHX8ir16QQNvantQ27c+ublvYdiUMR9gXOvsw=;
+	s=arc-20240116; t=1762502891; c=relaxed/simple;
+	bh=n1o2qVzRCeAQ0PlnG+136G/ur00iG4oZfa976larNhc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TkwATZMp9UR8ugx3LfH521lg6Bn4JKOJGRWXpzIRkidRU7thQpIBWxDyJt/5hYYF7kelPEYqiIwvmPRi4+jekzy0BUMazmy3j/Hn6jvfsN23TuH9xRmdeHjff4jU6oP5HzAIblHDMwiVClg6tquftkyfMmPIO7wT8TkNQse88W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2+4ZIeQ; arc=none smtp.client-ip=209.85.208.50
+	 MIME-Version; b=O6TERJwaxN5CuYZzxcSjq5TlWe2O2hVFgwwS9rBwl3k5bdDfdcxx317+47QQhcpOagLuIGxgfn2G+C6FVmC3j4rtC9yJXWVBKAju6MTvBTKFEHHb48unYmhya8XbxQTt5F3YfXuXhPIMuyuZjb7VySqmBByJAMPielW+ik3lOMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WuTX3r+G; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-640e9f5951aso721774a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 00:08:07 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640c3940649so617203a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 00:08:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762502886; x=1763107686; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762502887; x=1763107687; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KAbW6u5pPeCbc23UbdkfRXIbK91z4t3E/qRGXTD33Cg=;
-        b=D2+4ZIeQwm7/zEgETTqykOPKMEZjtfpQQKgUSmTfouX0gkgL8eKCYE3YKZ99YzIsQa
-         Fi8vhsvCvxMy5TbjariD77vMn0ReUvot/4r7zmIwzOidGW87pZ8n6LEalD/DH3IqgZBb
-         fu2lQ+5KJuhkSvQEGA/zRAhXwksz197vsYHKJWJZpffbh2WL1OJ+QHc/pdjz+zsgzbX+
-         3b1Ibo8SxA/VxnrC8wBEArYCP25P9VxyLXovNb99JVJhR4TQRpO6EC/udAmIzolOIT2K
-         3K6ca2BsFHSgMJVxEuMrdxSiIyig9YCyBDkanG9nM3ZyIndQzn/2ME8E587l8N5zzdWJ
-         Cqbw==
+        bh=dJKILKo+cVHMeov0d3h84V9BorLUd9uzSRayOoEA/yU=;
+        b=WuTX3r+G1X1sw5OGL6vp/F501Caoy9TsxPfF4cj7yiGZUgrdp3Rj89Ghucnn8ExuKt
+         U1jT39iqVgnYyPav+BUKx5Rcfax93k0sW86hsA3yLh8J4QUVRt5j+aTGa6zMho3KeBJj
+         Jj6UZw1i/5FGoBrVjBsGzLHaQGEn3JjWa3ALr3NZZtfZdbR2RV/cGmKJjlMW9sXZPsbY
+         tpuzF8qyw1qOYj86kq8YQvYavIoMM5tn+R/XE+1fszIzMbDoNO97rMVqm9xmKVUygIsm
+         E9ULyiQd9WlGiT6ypx2t7hrZv7hRtmg7FiplBiM3292+PVdqwDI1NQeALaDpjOEynpH4
+         m8ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762502886; x=1763107686;
+        d=1e100.net; s=20230601; t=1762502887; x=1763107687;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=KAbW6u5pPeCbc23UbdkfRXIbK91z4t3E/qRGXTD33Cg=;
-        b=FlAT5ZkRjefRolM56ShYulywMjsOFgTJe0nrD4B6Ic9XvzRSKfGoLBvtjoRQPtcVhf
-         VgC1wE4fBMalpVSf9tRSRPTxI29lcLRt9c3JHg4c6t54samURi5UPpiJiHewWM8s/iER
-         V3lfR+8mRHftoSXPuI9pED4DTj5cHoy7Mn3KLrAbo7asMGVkrxmHXGBXMHbGyLUZv6g7
-         vEcJbs/ApbHfJXT5tGloYmpbo4ieOoaTJX5Ti6nRNmhGpCVwuulK8lETeGA6T4P9tBjo
-         8dLVRKSP+ludR/2S/XZkBRqZskcdenwhXJ9CODTf9byhWdNDOwPIHi6kn8HfgU8Str6n
-         1ZuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhC++j6jqEsj8uBMOs6oxHLrNRlqspm0IOEsM10U/BdV77egXzDQjH2codBGWhr9CmBG0IhLWjTlovWeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAWkkTDre+tScld36xNfC8e54UqI283TRjYGyts5TywZ3exlP4
-	rLob6C/be6Yk2vXnPhRxZT7NqeAFWTpjMj+pD1scrcqpQa51A1KAzE7P
-X-Gm-Gg: ASbGncs/m2YUJFLHEbkbzUTlk86kc7qOD+iY9LOEawJVV9VrkyX1soS3wGjC12iOUQJ
-	z98es2v98LL5i6jugcvyRstrW9Tl3wzMjFYMNjLQaEjG0D6Q3u41lEL6ojg+x0CgkVBxgWY3Ks5
-	BpE+GqDqrvLRjiSydmRVvUIAntJiaumzYRDUNKtHPhs/NxnELUPMDi1JxRAQI37lIwkU/L2GM0X
-	d3riYwlQqVgH6ZAMTT9ndkTCdGSu5lDOjNLBwFDALHmVvqv4kpvl20FBXyZX/1gBElYacm8X+eQ
-	Hng4dXittP2IQbIBzf4+yZh7zgU82tiw+GzTmhjCWli26YG1oRviC3cUmhW3fWeer6of3v4TQtj
-	oj6SdVqPj0KxUwR8NhVLPQGoSsoqw3EVnVs1/wTXnWaBPxMtVpcGe+98Nt+Icz+hVNM1ED6JqaV
-	iL9LqvwqwQ++3jvKrh73JpocXm5i1tnA/iTUgCdFX6H3I5aRljUEkUG+E/Gc9YXUOfAmY=
-X-Google-Smtp-Source: AGHT+IF7O7QJ2kAFACQQzwx2SwACX6580PsjZQMl5XtCZs1f6ZD3zs+9sKXPqkpiDb12JYf6ussacw==
-X-Received: by 2002:a17:907:3e88:b0:b5c:6e0b:3706 with SMTP id a640c23a62f3a-b72d0a3a93bmr100861766b.13.1762502886219;
-        Fri, 07 Nov 2025 00:08:06 -0800 (PST)
+        bh=dJKILKo+cVHMeov0d3h84V9BorLUd9uzSRayOoEA/yU=;
+        b=KU00eihyECxqszVOS6RGGmZgBOKx5k8xMeqXFk+9Twu0xPcv2+AC17b5NdTRonZFSo
+         W9GISPP2OQU1Ei/+dki9w7NNwNkbNbyhZgYybt2F3npqYObfgoJmSG/LyXtxOvEJc9Rm
+         3/tZH6YVb+kYw4wAd5+sVNrEwmxDg1GCcyKnaMgv5BxQ7O7mcoohZ3A7o7vp/QxA+wSK
+         IFBU/KsmV5hs13uLunG13D/HN+2EjY7iUuSHJoFqYeOOW6PTEMdCfVqZAD4duaaoSgB+
+         z1E8y/yobtnVXQtRvQgolR5pdrCL9QeySY5ijJgMTlh1nh7A9aZ6nrLnp/4C8DNneCG4
+         8U5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXYm7VimSv1UvKxtPr6O5W3jjB1UPPlapjNyX3WPTucK+gdvC3bKIEoLGUh7v+Ya9sPy2L8kdbAZLnmMdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYgKp1uCL5EFbEmmA1GpzEYwOmYk5jMJOWDXkFlvnVX+M/B28L
+	P0rBnRa+R6/+J/RfQAcxMUq7Pq6z+XEKVjCRRXHh9bZMX4GpxSseaRee
+X-Gm-Gg: ASbGnct7jKumcapKz78P6eLFQLVwyaeGsuAYa4jgVQVpNmq2GtxFw2SHg1tveXQSPuO
+	GgR01Y8LroZksnaYw/2iZNeLopgR9oCsM9EkCcuzMs+WZmIPhRQx716gspX6tWPvxxcqBLVT4qL
+	kU7JGi3M/vBrAnX81xciX+gc3maJHqO4yfR2jLUZXQQwnZC3smmSzvxLZOkb+gGC8jaUZZu9qOV
+	SEFr1UXvOV//bTama/IPCFNokaQDgmGX2fIZjbGJKsdhcrE0aaC5Q0reZlms85aHfzLxW5i+nG5
+	/qgMJKKvywpdZsir5IKnFngCs8nPaRXTjRXsFwi6ZiWs0iKQrhZ8A9Pinc3+pGmVT+gy0yLnm3g
+	3DZ+tW8CQXu+D+AeXFkx5BbZsW+/LTPgHki12W8B42EmDg96B5RJ+FSl1KCpNJdBaO6M9WYniZR
+	gsmdsBBJc7xA09XBR4vkGBIg2eDN76BcQW16qx5DnZl7c8oCGR08P885ID
+X-Google-Smtp-Source: AGHT+IEXAnb76NwN8et4HgAWUjovTDM882xzlij+ezQZc/ebJUVc4ljJCPE7t7aQ+6LIGBtYZ8MDsg==
+X-Received: by 2002:a05:6402:2712:b0:640:ae02:d7cc with SMTP id 4fb4d7f45d1cf-6413f080795mr2177261a12.3.1762502887293;
+        Fri, 07 Nov 2025 00:08:07 -0800 (PST)
 Received: from localhost (dslb-002-205-018-238.002.205.pools.vodafone-ip.de. [2.205.18.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d43bsm179882466b.45.2025.11.07.00.08.05
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713970sm3633299a12.8.2025.11.07.00.08.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 00:08:05 -0800 (PST)
+        Fri, 07 Nov 2025 00:08:06 -0800 (PST)
 From: Jonas Gorski <jonas.gorski@gmail.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -83,9 +83,9 @@ To: Florian Fainelli <florian.fainelli@broadcom.com>,
 	Paolo Abeni <pabeni@redhat.com>
 Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 6/8] net: dsa: b53: move ARL entry functions into ops struct
-Date: Fri,  7 Nov 2025 09:07:47 +0100
-Message-ID: <20251107080749.26936-7-jonas.gorski@gmail.com>
+Subject: [PATCH net-next 7/8] net: dsa: b53: add support for 5389/5397/5398 ARL entry format
+Date: Fri,  7 Nov 2025 09:07:48 +0100
+Message-ID: <20251107080749.26936-8-jonas.gorski@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251107080749.26936-1-jonas.gorski@gmail.com>
 References: <20251107080749.26936-1-jonas.gorski@gmail.com>
@@ -97,350 +97,224 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that the differences in ARL entry formats are neatly contained into
-functions per chip family, wrap them into an ops struct and add wrapper
-functions to access them.
+BCM5389, BCM5397 and BCM5398 use a different ARL entry format with just
+a 16 bit fwdentry register, as well as different search control and data
+offsets.
+
+So add appropriate ops for them and switch those chips to use them.
 
 Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
- drivers/net/dsa/b53/b53_common.c | 67 ++++++++++++++++++++++----------
- drivers/net/dsa/b53/b53_priv.h   | 30 ++++++++++++++
- 2 files changed, 76 insertions(+), 21 deletions(-)
+ drivers/net/dsa/b53/b53_common.c | 53 ++++++++++++++++++++++++++++++--
+ drivers/net/dsa/b53/b53_priv.h   | 26 ++++++++++++++++
+ drivers/net/dsa/b53/b53_regs.h   | 13 ++++++++
+ 3 files changed, 89 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index fa4cf6ceddb8..c69022cc85bf 100644
+index c69022cc85bf..73ea9adb95b7 100644
 --- a/drivers/net/dsa/b53/b53_common.c
 +++ b/drivers/net/dsa/b53/b53_common.c
-@@ -1910,10 +1910,7 @@ static int b53_arl_read(struct b53_device *dev, const u8 *mac,
- 
- 	/* Read the bins */
- 	for (i = 0; i < dev->num_arl_bins; i++) {
--		if (is5325(dev) || is5365(dev))
--			b53_arl_read_entry_25(dev, ent, i);
--		else
--			b53_arl_read_entry_95(dev, ent, i);
-+		b53_arl_read_entry(dev, ent, i);
- 
- 		if (!ent->is_valid) {
- 			set_bit(i, free_bins);
-@@ -1995,10 +1992,7 @@ static int b53_arl_op(struct b53_device *dev, int op, int port,
- 	ent.is_static = true;
- 	ent.is_age = false;
- 	memcpy(ent.mac, addr, ETH_ALEN);
--	if (is5325(dev) || is5365(dev))
--		b53_arl_write_entry_25(dev, &ent, idx);
--	else
--		b53_arl_write_entry_95(dev, &ent, idx);
-+	b53_arl_write_entry(dev, &ent, idx);
- 
- 	return b53_arl_rw_op(dev, 0);
- }
-@@ -2109,17 +2103,6 @@ static void b53_arl_search_read_95(struct b53_device *dev, u8 idx,
- 	b53_arl_to_entry(ent, mac_vid, fwd_entry);
+@@ -1870,6 +1870,31 @@ static void b53_arl_write_entry_25(struct b53_device *dev,
+ 		    mac_vid);
  }
  
--static void b53_arl_search_rd(struct b53_device *dev, u8 idx,
--			      struct b53_arl_entry *ent)
--{
--	if (is5325(dev))
--		b53_arl_search_read_25(dev, idx, ent);
--	else if (is5365(dev))
--		b53_arl_search_read_65(dev, idx, ent);
--	else
--		b53_arl_search_read_95(dev, idx, ent);
--}
--
- static int b53_fdb_copy(int port, const struct b53_arl_entry *ent,
- 			dsa_fdb_dump_cb_t *cb, void *data)
++static void b53_arl_read_entry_89(struct b53_device *dev,
++				  struct b53_arl_entry *ent, u8 idx)
++{
++	u64 mac_vid;
++	u16 fwd_entry;
++
++	b53_read64(dev, B53_ARLIO_PAGE, B53_ARLTBL_MAC_VID_ENTRY(idx),
++		   &mac_vid);
++	b53_read16(dev, B53_ARLIO_PAGE, B53_ARLTBL_DATA_ENTRY(idx), &fwd_entry);
++	b53_arl_to_entry_89(ent, mac_vid, fwd_entry);
++}
++
++static void b53_arl_write_entry_89(struct b53_device *dev,
++				   const struct b53_arl_entry *ent, u8 idx)
++{
++	u32 fwd_entry;
++	u64 mac_vid;
++
++	b53_arl_from_entry_89(&mac_vid, &fwd_entry, ent);
++	b53_write64(dev, B53_ARLIO_PAGE,
++		    B53_ARLTBL_MAC_VID_ENTRY(idx), mac_vid);
++	b53_write16(dev, B53_ARLIO_PAGE,
++		    B53_ARLTBL_DATA_ENTRY(idx), fwd_entry);
++}
++
+ static void b53_arl_read_entry_95(struct b53_device *dev,
+ 				  struct b53_arl_entry *ent, u8 idx)
  {
-@@ -2153,13 +2136,13 @@ int b53_fdb_dump(struct dsa_switch *ds, int port,
- 		if (ret)
- 			break;
+@@ -2033,6 +2058,8 @@ static void b53_read_arl_srch_ctl(struct b53_device *dev, u8 *val)
  
--		b53_arl_search_rd(priv, 0, &results[0]);
-+		b53_arl_search_read(priv, 0, &results[0]);
- 		ret = b53_fdb_copy(port, &results[0], cb, data);
- 		if (ret)
- 			break;
+ 	if (is5325(dev) || is5365(dev))
+ 		offset = B53_ARL_SRCH_CTL_25;
++	else if (dev->chip_id == BCM5389_DEVICE_ID || is5397_98(dev))
++		offset = B53_ARL_SRCH_CTL_89;
+ 	else
+ 		offset = B53_ARL_SRCH_CTL;
  
- 		if (results_per_hit == 2) {
--			b53_arl_search_rd(priv, 1, &results[1]);
-+			b53_arl_search_read(priv, 1, &results[1]);
- 			ret = b53_fdb_copy(port, &results[1], cb, data);
- 			if (ret)
- 				break;
-@@ -2688,6 +2671,24 @@ static const struct dsa_switch_ops b53_switch_ops = {
- 	.port_change_mtu	= b53_change_mtu,
+@@ -2045,6 +2072,8 @@ static void b53_write_arl_srch_ctl(struct b53_device *dev, u8 val)
+ 
+ 	if (is5325(dev) || is5365(dev))
+ 		offset = B53_ARL_SRCH_CTL_25;
++	else if (dev->chip_id == BCM5389_DEVICE_ID || is5397_98(dev))
++		offset = B53_ARL_SRCH_CTL_89;
+ 	else
+ 		offset = B53_ARL_SRCH_CTL;
+ 
+@@ -2090,6 +2119,18 @@ static void b53_arl_search_read_65(struct b53_device *dev, u8 idx,
+ 	b53_arl_to_entry_25(ent, mac_vid);
+ }
+ 
++static void b53_arl_search_read_89(struct b53_device *dev, u8 idx,
++				   struct b53_arl_entry *ent)
++{
++	u16 fwd_entry;
++	u64 mac_vid;
++
++	b53_read64(dev, B53_ARLIO_PAGE, B53_ARL_SRCH_RSLT_MACVID_89,
++		   &mac_vid);
++	b53_read16(dev, B53_ARLIO_PAGE, B53_ARL_SRCH_RSLT_89, &fwd_entry);
++	b53_arl_to_entry_89(ent, mac_vid, fwd_entry);
++}
++
+ static void b53_arl_search_read_95(struct b53_device *dev, u8 idx,
+ 				   struct b53_arl_entry *ent)
+ {
+@@ -2683,6 +2724,12 @@ static const struct b53_arl_ops b53_arl_ops_65 = {
+ 	.arl_search_read = b53_arl_search_read_65,
  };
  
-+static const struct b53_arl_ops b53_arl_ops_25 = {
-+	.arl_read_entry = b53_arl_read_entry_25,
-+	.arl_write_entry = b53_arl_write_entry_25,
-+	.arl_search_read = b53_arl_search_read_25,
++static const struct b53_arl_ops b53_arl_ops_89 = {
++	.arl_read_entry = b53_arl_read_entry_89,
++	.arl_write_entry = b53_arl_write_entry_89,
++	.arl_search_read = b53_arl_search_read_89,
 +};
 +
-+static const struct b53_arl_ops b53_arl_ops_65 = {
-+	.arl_read_entry = b53_arl_read_entry_25,
-+	.arl_write_entry = b53_arl_write_entry_25,
-+	.arl_search_read = b53_arl_search_read_65,
-+};
-+
-+static const struct b53_arl_ops b53_arl_ops_95 = {
-+	.arl_read_entry = b53_arl_read_entry_95,
-+	.arl_write_entry = b53_arl_write_entry_95,
-+	.arl_search_read = b53_arl_search_read_95,
-+};
-+
- struct b53_chip_data {
- 	u32 chip_id;
- 	const char *dev_name;
-@@ -2701,6 +2702,7 @@ struct b53_chip_data {
- 	u8 duplex_reg;
- 	u8 jumbo_pm_reg;
- 	u8 jumbo_size_reg;
-+	const struct b53_arl_ops *arl_ops;
- };
- 
- #define B53_VTA_REGS	\
-@@ -2720,6 +2722,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.arl_buckets = 1024,
- 		.imp_port = 5,
- 		.duplex_reg = B53_DUPLEX_STAT_FE,
-+		.arl_ops = &b53_arl_ops_25,
- 	},
- 	{
- 		.chip_id = BCM5365_DEVICE_ID,
-@@ -2730,6 +2733,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.arl_buckets = 1024,
- 		.imp_port = 5,
- 		.duplex_reg = B53_DUPLEX_STAT_FE,
-+		.arl_ops = &b53_arl_ops_65,
- 	},
- 	{
- 		.chip_id = BCM5389_DEVICE_ID,
-@@ -2743,6 +2747,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
+ static const struct b53_arl_ops b53_arl_ops_95 = {
+ 	.arl_read_entry = b53_arl_read_entry_95,
+ 	.arl_write_entry = b53_arl_write_entry_95,
+@@ -2747,7 +2794,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
  		.duplex_reg = B53_DUPLEX_STAT_GE,
  		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
  		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
+-		.arl_ops = &b53_arl_ops_95,
++		.arl_ops = &b53_arl_ops_89,
  	},
  	{
  		.chip_id = BCM5395_DEVICE_ID,
-@@ -2756,6 +2761,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
+@@ -2775,7 +2822,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
  		.duplex_reg = B53_DUPLEX_STAT_GE,
  		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
  		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM5397_DEVICE_ID,
-@@ -2769,6 +2775,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
+-		.arl_ops = &b53_arl_ops_95,
++		.arl_ops = &b53_arl_ops_89,
  	},
  	{
  		.chip_id = BCM5398_DEVICE_ID,
-@@ -2782,6 +2789,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
+@@ -2789,7 +2836,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
  		.duplex_reg = B53_DUPLEX_STAT_GE,
  		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
  		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
+-		.arl_ops = &b53_arl_ops_95,
++		.arl_ops = &b53_arl_ops_89,
  	},
  	{
  		.chip_id = BCM53101_DEVICE_ID,
-@@ -2795,6 +2803,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53115_DEVICE_ID,
-@@ -2808,6 +2817,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53125_DEVICE_ID,
-@@ -2821,6 +2831,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53128_DEVICE_ID,
-@@ -2834,6 +2845,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM63XX_DEVICE_ID,
-@@ -2847,6 +2859,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_63XX,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK_63XX,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE_63XX,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53010_DEVICE_ID,
-@@ -2860,6 +2873,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53011_DEVICE_ID,
-@@ -2873,6 +2887,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53012_DEVICE_ID,
-@@ -2886,6 +2901,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53018_DEVICE_ID,
-@@ -2899,6 +2915,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53019_DEVICE_ID,
-@@ -2912,6 +2929,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM58XX_DEVICE_ID,
-@@ -2925,6 +2943,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM583XX_DEVICE_ID,
-@@ -2938,6 +2957,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	/* Starfighter 2 */
- 	{
-@@ -2952,6 +2972,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM7445_DEVICE_ID,
-@@ -2965,6 +2986,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM7278_DEVICE_ID,
-@@ -2978,6 +3000,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- 	{
- 		.chip_id = BCM53134_DEVICE_ID,
-@@ -2992,6 +3015,7 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.duplex_reg = B53_DUPLEX_STAT_GE,
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+		.arl_ops = &b53_arl_ops_95,
- 	},
- };
- 
-@@ -3020,6 +3044,7 @@ static int b53_switch_init(struct b53_device *dev)
- 			dev->num_vlans = chip->vlans;
- 			dev->num_arl_bins = chip->arl_bins;
- 			dev->num_arl_buckets = chip->arl_buckets;
-+			dev->arl_ops = chip->arl_ops;
- 			break;
- 		}
- 	}
 diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
-index 458775f95164..ef2413509b5d 100644
+index ef2413509b5d..d6d25bb3945b 100644
 --- a/drivers/net/dsa/b53/b53_priv.h
 +++ b/drivers/net/dsa/b53/b53_priv.h
-@@ -58,6 +58,17 @@ struct b53_io_ops {
- 				bool link_up);
- };
+@@ -353,6 +353,18 @@ static inline void b53_arl_to_entry_25(struct b53_arl_entry *ent,
+ 	ent->vid = mac_vid >> ARLTBL_VID_S_65;
+ }
  
-+struct b53_arl_entry;
++static inline void b53_arl_to_entry_89(struct b53_arl_entry *ent,
++				       u64 mac_vid, u16 fwd_entry)
++{
++	memset(ent, 0, sizeof(*ent));
++	ent->port = fwd_entry & ARLTBL_DATA_PORT_ID_MASK_89;
++	ent->is_valid = !!(fwd_entry & ARLTBL_VALID_89);
++	ent->is_age = !!(fwd_entry & ARLTBL_AGE_89);
++	ent->is_static = !!(fwd_entry & ARLTBL_STATIC_89);
++	u64_to_ether_addr(mac_vid, ent->mac);
++	ent->vid = mac_vid >> ARLTBL_VID_S;
++}
 +
-+struct b53_arl_ops {
-+	void (*arl_read_entry)(struct b53_device *dev,
-+			       struct b53_arl_entry *ent, u8 idx);
-+	void (*arl_write_entry)(struct b53_device *dev,
-+				const struct b53_arl_entry *ent, u8 idx);
-+	void (*arl_search_read)(struct b53_device *dev, u8 idx,
-+				struct b53_arl_entry *ent);
-+};
-+
- #define B53_INVALID_LANE	0xff
- 
- enum {
-@@ -127,6 +138,7 @@ struct b53_device {
- 	struct mutex stats_mutex;
- 	struct mutex arl_mutex;
- 	const struct b53_io_ops *ops;
-+	const struct b53_arl_ops *arl_ops;
- 
- 	/* chip specific data */
- 	u32 chip_id;
-@@ -371,6 +383,24 @@ static inline void b53_arl_from_entry_25(u64 *mac_vid,
+ static inline void b53_arl_from_entry(u64 *mac_vid, u32 *fwd_entry,
+ 				      const struct b53_arl_entry *ent)
+ {
+@@ -383,6 +395,20 @@ static inline void b53_arl_from_entry_25(u64 *mac_vid,
  		*mac_vid |= ARLTBL_AGE_25;
  }
  
-+static inline void b53_arl_read_entry(struct b53_device *dev,
-+				      struct b53_arl_entry *ent, u8 idx)
++static inline void b53_arl_from_entry_89(u64 *mac_vid, u32 *fwd_entry,
++					 const struct b53_arl_entry *ent)
 +{
-+	dev->arl_ops->arl_read_entry(dev, ent, idx);
++	*mac_vid = ether_addr_to_u64(ent->mac);
++	*mac_vid |= (u64)(ent->vid & ARLTBL_VID_MASK) << ARLTBL_VID_S;
++	*fwd_entry = ent->port & ARLTBL_DATA_PORT_ID_MASK_89;
++	if (ent->is_valid)
++		*fwd_entry |= ARLTBL_VALID_89;
++	if (ent->is_static)
++		*fwd_entry |= ARLTBL_STATIC_89;
++	if (ent->is_age)
++		*fwd_entry |= ARLTBL_AGE_89;
 +}
 +
-+static inline void b53_arl_write_entry(struct b53_device *dev,
-+				       const struct b53_arl_entry *ent, u8 idx)
-+{
-+	dev->arl_ops->arl_write_entry(dev, ent, idx);
-+}
-+
-+static inline void b53_arl_search_read(struct b53_device *dev, u8 idx,
-+				       struct b53_arl_entry *ent)
-+{
-+	dev->arl_ops->arl_search_read(dev, idx, ent);
-+}
-+
- #ifdef CONFIG_BCM47XX
+ static inline void b53_arl_read_entry(struct b53_device *dev,
+ 				      struct b53_arl_entry *ent, u8 idx)
+ {
+diff --git a/drivers/net/dsa/b53/b53_regs.h b/drivers/net/dsa/b53/b53_regs.h
+index c36a3dfb2ee8..c303507d3034 100644
+--- a/drivers/net/dsa/b53/b53_regs.h
++++ b/drivers/net/dsa/b53/b53_regs.h
+@@ -346,12 +346,20 @@
+ #define   ARLTBL_STATIC			BIT(15)
+ #define   ARLTBL_VALID			BIT(16)
  
- #include <linux/bcm47xx_nvram.h>
++/* BCM5389 ARL Table Data Entry N Register format (16 bit) */
++#define   ARLTBL_DATA_PORT_ID_MASK_89	GENMASK(8, 0)
++#define   ARLTBL_TC_MASK_89		GENMASK(12, 10)
++#define   ARLTBL_AGE_89			BIT(13)
++#define   ARLTBL_STATIC_89		BIT(14)
++#define   ARLTBL_VALID_89		BIT(15)
++
+ /* Maximum number of bin entries in the ARL for all switches */
+ #define B53_ARLTBL_MAX_BIN_ENTRIES	4
+ 
+ /* ARL Search Control Register (8 bit) */
+ #define B53_ARL_SRCH_CTL		0x50
+ #define B53_ARL_SRCH_CTL_25		0x20
++#define B53_ARL_SRCH_CTL_89		0x30
+ #define   ARL_SRCH_VLID			BIT(0)
+ #define   ARL_SRCH_STDN			BIT(7)
+ 
+@@ -359,10 +367,12 @@
+ #define B53_ARL_SRCH_ADDR		0x51
+ #define B53_ARL_SRCH_ADDR_25		0x22
+ #define B53_ARL_SRCH_ADDR_65		0x24
++#define B53_ARL_SRCH_ADDR_89		0x31
+ #define  ARL_ADDR_MASK			GENMASK(14, 0)
+ 
+ /* ARL Search MAC/VID Result (64 bit) */
+ #define B53_ARL_SRCH_RSTL_0_MACVID	0x60
++#define B53_ARL_SRCH_RSLT_MACVID_89	0x33
+ 
+ /* Single register search result on 5325 */
+ #define B53_ARL_SRCH_RSTL_0_MACVID_25	0x24
+@@ -372,6 +382,9 @@
+ /* ARL Search Data Result (32 bit) */
+ #define B53_ARL_SRCH_RSTL_0		0x68
+ 
++/* BCM5389 ARL Search Data Result (16 bit) */
++#define B53_ARL_SRCH_RSLT_89		0x3b
++
+ #define B53_ARL_SRCH_RSTL_MACVID(x)	(B53_ARL_SRCH_RSTL_0_MACVID + ((x) * 0x10))
+ #define B53_ARL_SRCH_RSTL(x)		(B53_ARL_SRCH_RSTL_0 + ((x) * 0x10))
+ 
 -- 
 2.43.0
 
