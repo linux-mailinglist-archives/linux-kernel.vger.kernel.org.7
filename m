@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-890483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60F1C402A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:43:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF2DC402B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36DC01896996
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED073B7005
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957692F49FE;
-	Fri,  7 Nov 2025 13:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA032FB612;
+	Fri,  7 Nov 2025 13:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLKDg82F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APmylv60"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC18323D7DC;
-	Fri,  7 Nov 2025 13:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2912F2605;
+	Fri,  7 Nov 2025 13:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762522978; cv=none; b=kY2Vsn3WIhjb7qz9TmSfmV3kLVsxO03Qx+ETu+NfEMa+nf2gzwXmRtAhcnjBty9JPlfd5SC/HVQH3a+GvUtFftlEoVcwkHilfXAtveB9f8mv9guzLu9QtdKXLLqC2BV2Qj0GyhkSJqOGVTEMLzkCtF+dnRhDcLX9tDPGjXbkYdQ=
+	t=1762522982; cv=none; b=Qrg0H+lEzTTE82i9gyB8PX2AG0/fp0gtUmB1C35IgesyVJn6zHqbv/swYidEQT06LfNsFXr8PX6wpaim0wQmzd30JS2w0XribjNzKhJnJydQx2m/StT5hgUUvoC5yU83Ej8kX3AkkRgTVCysehR6n9rLAfZf0GVSuGl95BjQ0jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762522978; c=relaxed/simple;
-	bh=iU+jSTY15PFC8KP0f//9WuWMfuZdFJ+bqYnKTNSdgmY=;
+	s=arc-20240116; t=1762522982; c=relaxed/simple;
+	bh=mVhNPlLjxSXohTIokzVQKOtrdJswU2kcvPbGFxRD4Ig=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mz5+iBacJnbKRze5sBQO9qdfK4jfMcJZCX1UYe7imYBq9CwS1to3JgiFHKV8o+6IKJwrT8iF4si2rKakM3wxolpVGCpL2qxk8IEjdZH56cA8cr+OXv8LScgQQ10q7eQ3eMy/jRnQawK0sR+07sLTF/BLsNCenEGEXH64OUaV5zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLKDg82F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43944C4CEF8;
-	Fri,  7 Nov 2025 13:42:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=msLXmBcTpDeqfXBrzPADj1Umj4W+b+0F2eGlo0fzKE2+o+M8pKOG3pH/xIblL3XyW/yvGd3KNeaofp3aUBhhENAFkgsqfYR+R1eD7e6zUFG4erdbICBh1QFGcGvxDOuEhyKZ7GeKFf4mldQW3Ucun0mCVKH5/oGjTkFqpzKQmDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APmylv60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDA4C4CEF8;
+	Fri,  7 Nov 2025 13:42:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762522977;
-	bh=iU+jSTY15PFC8KP0f//9WuWMfuZdFJ+bqYnKTNSdgmY=;
+	s=k20201202; t=1762522982;
+	bh=mVhNPlLjxSXohTIokzVQKOtrdJswU2kcvPbGFxRD4Ig=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oLKDg82F+u91uzMjhnAP+8PToVT5X6nf7YzskN/vAKT2/FiEpU7t31+1NMX+MTFOi
-	 xMasTpiG/E4tZvngRtnIUKex3vcbcRfmXA1e/HQkYG6iQ9vBKW3szvOsI5Ni99d+U3
-	 /A5p4bfweqOFPhWcPqKNjibPu6JxSnQrGEVj32aafCpa+aWqD5WENmt20583tZfPkD
-	 aToHMHbD89j7KQwaOyycqE9hLfn+mbmg+BFRRER9YKuRaGCHqmXREAKG3uTcggvMu3
-	 JkXHzc5yJ+c7AXxBlUgyJMvCZCWGD3vwlcM0jwjUJh+fWpXbNYPB5w8+IN3WMMX1pL
-	 YGWUeqUcv/68A==
-Message-ID: <f8bc25b7-12eb-4e3c-aa47-8c949f43711b@kernel.org>
-Date: Fri, 7 Nov 2025 14:42:51 +0100
+	b=APmylv60JbvoLid/67a1Lg2RUqkHsQeS27fqWkrDCeavaJYQCdjXy8wY6ud5MU+6+
+	 a1aOqgDi7sMGJMx9JkECexe3NyIeh1RM4BxFwBCaxosUXz6bpOByK3siWzcuOVTztW
+	 7MiCzKQ5fV3SvixxCCqyDpaaOC2Yri/TI0XQ4fkRq0h6YTdNDoY7/7VyS2IIuGpJm6
+	 AbjVvRQRI3Q5QG//gwAo8ec5jyhpXynjXbvjOqZQbRjJx4sGfBy8R41S4vu6Wm7Dx9
+	 sbhf1TTMAl+05Vs1ITmxlat8ACZXKISQxktdnP9GlRl/PeqDiZMYPsOK/0IKKAS2tY
+	 S1CgLdwCgUkVw==
+Message-ID: <b9f01e64-f7cc-4f5a-9716-5767b37e2245@kernel.org>
+Date: Fri, 7 Nov 2025 14:42:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,76 +49,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: media: qcom,qcs8300-camss: Add
- missing power supplies
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, bryan.odonoghue@linaro.org,
- mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_nihalkum@quicinc.com, stable@vger.kernel.org
-References: <20251107132154.436017-1-quic_vikramsa@quicinc.com>
- <20251107132154.436017-2-quic_vikramsa@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net V3 1/2] veth: enable dev_watchdog for detecting
+ stalled TXQs
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?=
+ <toke@toke.dk>, Eric Dumazet <eric.dumazet@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ ihor.solodrai@linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
+ makita.toshiaki@lab.ntt.co.jp, toshiaki.makita1@gmail.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel-team@cloudflare.com
+References: <176236363962.30034.10275956147958212569.stgit@firesoul>
+ <176236369293.30034.1875162194564877560.stgit@firesoul>
+ <20251106172919.24540443@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251107132154.436017-2-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20251106172919.24540443@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 07/11/2025 14:21, Vikram Sharma wrote:
-> Add support for vdda-phy-supply and vdda-pll-supply in the QCS8300
-> CAMSS binding.
 
-You cannot add support for something in the binding, but regardless of
-the wording - why adding support is a fix? Please describe the bug,
-because adding support does not sound like a fix at all.
 
-Best regards,
-Krzysztof
+On 07/11/2025 02.29, Jakub Kicinski wrote:
+> On Wed, 05 Nov 2025 18:28:12 +0100 Jesper Dangaard Brouer wrote:
+>> The changes introduced in commit dc82a33297fc ("veth: apply qdisc
+>> backpressure on full ptr_ring to reduce TX drops") have been found to cause
+>> a race condition in production environments.
+>>
+>> Under specific circumstances, observed exclusively on ARM64 (aarch64)
+>> systems with Ampere Altra Max CPUs, a transmit queue (TXQ) can become
+>> permanently stalled. This happens when the race condition leads to the TXQ
+>> entering the QUEUE_STATE_DRV_XOFF state without a corresponding queue wake-up,
+>> preventing the attached qdisc from dequeueing packets and causing the
+>> network link to halt.
+>>
+>> As a first step towards resolving this issue, this patch introduces a
+>> failsafe mechanism. It enables the net device watchdog by setting a timeout
+>> value and implements the .ndo_tx_timeout callback.
+>>
+>> If a TXQ stalls, the watchdog will trigger the veth_tx_timeout() function,
+>> which logs a warning and calls netif_tx_wake_queue() to unstall the queue
+>> and allow traffic to resume.
+>>
+>> The log message will look like this:
+>>
+>>   veth42: NETDEV WATCHDOG: CPU: 34: transmit queue 0 timed out 5393 ms
+>>   veth42: veth backpressure stalled(n:1) TXQ(0) re-enable
+>>
+>> This provides a necessary recovery mechanism while the underlying race
+>> condition is investigated further. Subsequent patches will address the root
+>> cause and add more robust state handling.
+>>
+>> Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
+>> Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+>> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+> 
+> I think this belongs in net-next.. Fail safe is not really a bug fix.
+> I'm slightly worried we're missing a corner case and will cause
+> timeouts to get printed for someone's config.
+> 
+
+This is a recovery fix.  If the race condition fix isn't 100% then this
+patch will allow veth to recover.  Thus, to me it makes sense to group
+these two patches together.
+
+I'm more worried that we we're missing a corner case that we cannot
+recover from. Than triggering timeouts to get printed, for a config
+where NAPI consumer veth_poll() takes more that 5 seconds to run (budget
+max 64 packets this needs to consume packets at a rate less than 12.8
+pps). It might be good to get some warnings if the system is operating
+this slow.
+
+Also remember this is not the default config that most people use.
+The code is only activated if attaching a qdisc to veth, which isn't
+default. Plus, NAPI mode need to be activated, where in normal NAPI mode
+the producer and consumer usually runs on the same CPU, which makes it
+impossible to overflow the ptr_ring.  The veth backpressure is primarily
+needed when running with threaded-NAPI, where it is natural that
+producer and consumer runs on different CPUs. In our production setup
+the consumer is always slower than the producer (as the product inside
+the namespace have installed too many nftables rules).
+
+
+>> +static void veth_tx_timeout(struct net_device *dev, unsigned int txqueue)
+>> +{
+>> +	struct netdev_queue *txq = netdev_get_tx_queue(dev, txqueue);
+>> +
+>> +	netdev_err(dev, "veth backpressure stalled(n:%ld) TXQ(%u) re-enable\n",
+>> +		   atomic_long_read(&txq->trans_timeout), txqueue);
+> 
+> If you think the trans_timeout is useful, let's add it to the message
+> core prints? And then we can make this msg just veth specific, I don't
+> think we should be repeating what core already printed.
+
+The trans_timeout is a counter for how many times this TXQ have seen a
+timeout.  It is practical as it directly tell us if this a frequent
+event (without having to search log files for similar events).
+
+It does make sense to add this to the core message ("NETDEV WATCHDOG")
+with the same argument.  For physical NICs these logs are present in
+production. Looking at logs through Kibana (right now) and it would make
+my life easier to see the number of times the individual queues have
+experienced timeouts.  The logs naturally gets spaced in time by the
+timeout, making it harder to tell the even frequency. Such a patch would
+naturally go though net-next.
+
+Do you still want me to remove the frequency counter from this message?
+By the same argument it is practical for me to have as a single log line
+when troubleshooting this in practice.  BTW, I've already backported
+this watchdog patch to prod kernel (without race fix) and I'll try to
+reproduce the race in staging/lab on some ARM64 servers.  If I reproduce
+it will be practical to have this counter.
+
+--Jesper
 
