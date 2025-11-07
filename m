@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-890526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A57C4042A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:10:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01BCC40433
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:11:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046881888E4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:11:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9343C4EAC70
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EDD328613;
-	Fri,  7 Nov 2025 14:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B35328612;
+	Fri,  7 Nov 2025 14:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jd05a5Y0"
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="auhHcOML"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684302C3261
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB523271F9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524636; cv=none; b=IFJ4+3homg2Wp4FHV6HpgALcPp2JN/d6YOSGj9jb4q9DsrKCa1btoacDbPYtl5OmDgRBlvEy6ykMBv9AJca//A6DBpc+E8VSAP0vLQJKhQ0yzaj4xr6adqOuxQfdOKh0VZYE/cq4kaZ3cCQoO9z5V0iw5P3dQvhmHR3mgocJxFc=
+	t=1762524668; cv=none; b=aPnVdcfI7kdyPoVPjjbuYlr+EoJI9Skduw8t8ovO7DZQQfb90qbjaI4fQHE2fP1E+Jxq2GDQfbaclWyyJz3dG4qgs921SIw6z7uRJEjCgKmhwgXMpMYzjDfsdVtchZUq38/2UprZmp5Dx6dhnGPdDvXEUyAwT8TbdGeQvEV3ujQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524636; c=relaxed/simple;
-	bh=+cZzo8xco90BPe5zTjWVIqWQKXNXcQ8nK2fbETbWVGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QrFsAgx8r9fAG81KEHtgHZsJME8fwQmXWN/W4bJDLPenXQ43rlWCCbxyRqQyEN18WMifxHwoINUbwnSBsNv/9fR/tog9kNh0HcDzuxIuPKXl4Y3uzQJVGB4Nxke6nbLt9jaOnwYVSRPUdkSIgEBGkbRAdwZHjLk8iJYOgHPxU6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jd05a5Y0; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-63f976ef4bdso696584d50.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:10:34 -0800 (PST)
+	s=arc-20240116; t=1762524668; c=relaxed/simple;
+	bh=7oY4W8cvYI7cWgk2hDetziaayLxMm08O1hUX9ep82XI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MqsvMcFpEupP50jCoUQj/aa54OkVuzgXor2XicKv5BGBegkGkLv+MAASItbj523zNyU2pqrqfWG37b61zVAtmsqSSMIeNc3FNHULcYi98yQJvmMox5myj+cTFZSxDfErTVEOGlh49eTwz1yMV2DMD4RtUd0g+fnTjvyFOYhx80c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=auhHcOML; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477632cc932so3469175e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:11:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762524633; x=1763129433; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+cZzo8xco90BPe5zTjWVIqWQKXNXcQ8nK2fbETbWVGA=;
-        b=Jd05a5Y0VSWEg6+WhsNNNP8SP5sWGXlREIoQ7QL1YSRh5n+xYDYKhN3VVUF5PMauNv
-         k1oFQ4XdybJJ816WPMB9wp7ZUPFavSRX9FvwVWWlnnjzf8spk9fKGrSbfOpG51a7JYKF
-         JMpQOLl2JhJsh1qCk18sPyzOQBYZ3r135FGyQ8UNNCm2WGWYNy0sLx/uSC7sF3TMmpaJ
-         kdDNfQClpuTYwY2H8E+M3n9CfevAXenBf6j91ng0IYu8050N2PJuSKiSSAkjhtZ0pNs+
-         4FLdX11mJsMvMSMlOG/nOE9MYyShq60mBDf4ArZr1eLwyOWJw5UexKAaLmIXZWMCF56m
-         k+oQ==
+        d=suse.com; s=google; t=1762524664; x=1763129464; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=saC/xSM2GWNzn8WIqniCyfPLhsnZ0TcGnftuhkvfXXw=;
+        b=auhHcOMLR7gD0N4E3861Gj/sjnXMjFRFpmAtuUguqrZ9RTObr5luCVIJOitseYOxA5
+         87dsyTnEmmk5wQyA0WeRV6K9e4tK2lH18xnFtpsO847x6wilOjbrj/fTGa5new9G4qPn
+         Lp7roOcyC/fq1n0Kpi4GCj833dvGRmp+xrLQL2wP6HkULw6XwgaHL2dVZnHiLksdRJLU
+         cU22xFFEH+3TWo5rg/Kwe5WpFkwaZsSmqD4C1RfXhS3ay6oh+2FLPJUGu5uxyYeZvMLq
+         v9E9GxnZMk1L5VKLq7B/MKOAZtjdBgttKTv8YsXbB+W80FKFjg5/PXq7vE0XMBbt1Olm
+         4v9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762524633; x=1763129433;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+cZzo8xco90BPe5zTjWVIqWQKXNXcQ8nK2fbETbWVGA=;
-        b=nmF357NT0gMNsvQDn+B6DGCRv0Xus6Z/RRVvMJhuuQ1nonX1rflTYQkUCvvQxQz9O7
-         7e//9nBhMZwpcFSQ1mYOFbAiLY3kGNIT22Z+XharicqYR5K5GZCyai5bmZBt4wDD/qCE
-         JNzUhgW7ZEGIT3F1xt1tDQzrqQnEsBcHp5MPISGHSBRMta0Xt53XeO/qTZ6d7i0fWvz3
-         hUQTh4khPpEOwhLdltgzozq5AUqnM2vLAilwBwKde0VrtqVttQNoog9tBjaWY2Vav8mW
-         mP7bNPRG/tQlVfk3voHCLQUwdykF8YKg/nno29Kif9rZ22onz9h45K8A2PVVxY/hOTZV
-         lMLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnIFKI4ectrTjZbmV3AQfPeccmgSlWVPCXlP82LiPvT1ipTxXc24KavRP6oD5mwhJtsK/RxDLF71KP2aI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpv6xe+crNj6HGIj/CMwAn0ZVKb/8sLuAciljwaly4QXqxQ4z3
-	k5Ko7QFKNCXpa0kZJBntHwOFdl9ZBhfRzcVovBIasdEVogrzvDcVghMxrGTflayrbSKWK6JrxwR
-	13zpTZS50XkXZAT+RpR5qcKoEtf4VoP/jpECLJi5U
-X-Gm-Gg: ASbGncss1+GXElhFMXBcG9OLiQDKwUG7bFf7Z647AqifeyaDICeLTdCkNjuv3zICEIb
-	nR480avIuypO0bj/FUovqwAzu9DGIJPkpWYaGBGd4TVBK1xKqzpdVT7zPoQ9iPHuvLJNQ1lfjxM
-	jOUosMRI+A1Pq5uYT8DI8GQTwYcB+KljU5p/o12TH9kk5ZwddHywdKXvOrMpXIFsDSfJHCYRmvK
-	d1roLjtXEdMUYIvDavHrqxnWftT6PH3hd432RxpWiRbmZUI1J2l4k+wiMNS/zQe2ABI6MQ=
-X-Google-Smtp-Source: AGHT+IF4MNPjtjkI0HykYzQ/N+DjSl09Uwih8EXv3NQX/RBzR++OlV/O2BGN0tPhSnQ92UawBVQW3Cb0VrPm4WrY5A8=
-X-Received: by 2002:a05:690e:2557:b0:63f:a48d:b7ce with SMTP id
- 956f58d0204a3-640c41c6a29mr2059410d50.27.1762524633098; Fri, 07 Nov 2025
- 06:10:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762524664; x=1763129464;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=saC/xSM2GWNzn8WIqniCyfPLhsnZ0TcGnftuhkvfXXw=;
+        b=alamcYFrE8h9gfYjTEHvYbeQw5WCARRfyuUViNwufP002FfqMTH/MbxXL0Tlq9/PWX
+         a1HnMJydvi1NYXh3IPkJ9ZSXfizOBG29aEDRUd04p1fs2a0Fr2TUkGNwQMh3xUizH879
+         BMDlrieqnZV7hSaOb9568C6ZEQoD4VmwixFpRX80PHojskpRySKmQn2xMHepDmoCsDyO
+         FzFk5zme5d31+fod4inT1GUlAspdEBREU7RsTtAGooCzzUXcVkoYLVvmrW9s78HPI3Ev
+         Jn/Ulq646OZ6US/WKzFMkOOT+SdPwvH8api+e6/AqQ39TPAplzGS1iaFLDg3jP6/BPYg
+         RhGw==
+X-Gm-Message-State: AOJu0YwF/g5Cs4b1oyQGQAHXUo7mUpb9gYcKxH8aF4rI7bQZxmJnS3dO
+	e7prmwViG+BelQwaZDcZcLoXyAXGf7ALTCZSQFrKFOKWeEau2NQ3GQkn5kv0H6qtZ1P9V8ytrKm
+	ELjnB
+X-Gm-Gg: ASbGncufljPCoxhJPc0q6dG5hk+C6uWYrcfqGn+JiurdxcbHgPQLkbuFyeIw2Hp8zGp
+	cC01Jzri1iHRsUdWjGch5J2P7hheUlyo3bMDGXZrjnj31jnDGDJHm43giWPJwOGzmwobP3jsHSp
+	bk3uoHSzcX7lrkghmryFXIUjyAu9H7KbJ2mi60rW0C8zXn6rq1gjQMMAGYlWxIV+t4h1EGTwDPR
+	qxYl7KXlGMrgTp0zEw8gfqHdXhcmWqZpe5xrD+VyIUHjCY4DEUNNMFpA/SnjeedWHzb5U/VDmNW
+	N0jNLgRmkEBPyO+kMsD4UPQccu60jGBL0LmGaprwJw+fiwEVZG+FYr3PWc1nmB5bUnNr+iERPLk
+	gwocT0qM7MCGzfK6mf1AcuosXqqdDgrfTVnCzsIBI3FbXJvP9Ain3RNDoNQqaVFPDtO/7TvgKdv
+	7eHCDM7b4O8cZS7FLyRemEO1B9
+X-Google-Smtp-Source: AGHT+IGKyGh79+Bwp1DW6zyVUm25mj+TgdIHaXGyejMxXcxObw2DsmyhhvrgTD7xRs8ge4kMqfNcTw==
+X-Received: by 2002:a05:600c:1f0d:b0:46e:4586:57e4 with SMTP id 5b1f17b1804b1-4776bcb8963mr24846865e9.24.1762524663735;
+        Fri, 07 Nov 2025 06:11:03 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc552sm181174875e9.6.2025.11.07.06.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 06:11:03 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH] media: ddbridge: add WQ_PERCPU to alloc_workqueue users
+Date: Fri,  7 Nov 2025 15:10:52 +0100
+Message-ID: <20251107141052.221108-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106175615.26948-1-simon.schippers@tu-dortmund.de>
-In-Reply-To: <20251106175615.26948-1-simon.schippers@tu-dortmund.de>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 7 Nov 2025 06:10:21 -0800
-X-Gm-Features: AWmQ_blZgftDNHs4-HzNXdI8nrjDZ7hGHov3wbswer-i55xUXiO1FMu9wnhdIiA
-Message-ID: <CANn89i+Cc=y_Powx5aWC9fkASsMpuDZsL5TxDxEQiHmSjj4khw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] usbnet: Add support for Byte Queue Limits (BQL)
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, dnlplm@gmail.com, netdev@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 6, 2025 at 9:56=E2=80=AFAM Simon Schippers
-<simon.schippers@tu-dortmund.de> wrote:
->
-> In the current implementation, usbnet uses a fixed tx_qlen of:
->
-> USB2: 60 * 1518 bytes =3D 91.08 KB
-> USB3: 60 * 5 * 1518 bytes =3D 454.80 KB
->
-> Such large transmit queues can be problematic, especially for cellular
-> modems. For example, with a typical celluar link speed of 10 Mbit/s, a
-> fully occupied USB3 transmit queue results in:
->
-> 454.80 KB / (10 Mbit/s / 8 bit/byte) =3D 363.84 ms
->
-> of additional latency.
->
-> This patch adds support for Byte Queue Limits (BQL) [1] to dynamically
-> manage the transmit queue size and reduce latency without sacrificing
-> throughput.
->
-> Testing was performed on various devices using the usbnet driver for
-> packet transmission:
->
-> - DELOCK 66045: USB3 to 2.5 GbE adapter (ax88179_178a)
-> - DELOCK 61969: USB2 to 1 GbE adapter (asix)
-> - Quectel RM520: 5G modem (qmi_wwan)
-> - USB2 Android tethering (cdc_ncm)
->
-> No performance degradation was observed for iperf3 TCP or UDP traffic,
-> while latency for a prioritized ping application was significantly
-> reduced. For example, using the USB3 to 2.5 GbE adapter, which was fully
-> utilized by iperf3 UDP traffic, the prioritized ping was improved from
-> 1.6 ms to 0.6 ms. With the same setup but with a 100 Mbit/s Ethernet
-> connection, the prioritized ping was improved from 35 ms to 5 ms.
->
-> [1] https://lwn.net/Articles/469652/
->
-> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> ---
+Currently if a user enqueues a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+This lack of consistency cannot be addressed without refactoring the API.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
+
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
+
+This continues the effort to refactor workqueue APIs, which began with
+the introduction of new workqueues and a new alloc_workqueue flag in:
+
+commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+This change adds a new WQ_PERCPU flag to explicitly request
+alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+must now use WQ_PERCPU.
+
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/media/pci/ddbridge/ddbridge-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 40e6c873c36d..d240e291ba4f 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -3430,7 +3430,7 @@ int ddb_init_ddbridge(void)
+ 
+ 	if (ddb_class_create() < 0)
+ 		return -1;
+-	ddb_wq = alloc_workqueue("ddbridge", 0, 0);
++	ddb_wq = alloc_workqueue("ddbridge", WQ_PERCPU, 0);
+ 	if (!ddb_wq)
+ 		return ddb_exit_ddbridge(1, -1);
+ 
+-- 
+2.51.1
+
 
