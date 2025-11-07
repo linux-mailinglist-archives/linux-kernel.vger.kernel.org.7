@@ -1,237 +1,130 @@
-Return-Path: <linux-kernel+bounces-890835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80511C41236
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:45:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A145C41230
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F063B582F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6215618847DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D6C3376B9;
-	Fri,  7 Nov 2025 17:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EDA3370E1;
+	Fri,  7 Nov 2025 17:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKYRFBi5"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPyiuHMe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787C6253340
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35528258CE7;
+	Fri,  7 Nov 2025 17:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762537450; cv=none; b=IzL1/Yo56/cFqvzR3OiMQ5oIorl5NkM2nKsY8H1Z1BB1bTDc3ppxz52Isdv+gM2UmEy2Z+vhHko8K3QyfoTvwnpWCvlFAkCh/m2/5AJ2cnMmn24Yka9E1EW/q5OEuScKbMcyUDyuoesXZLhM8eAC9i0yIHWgGchIXTS6ycLMIAE=
+	t=1762537460; cv=none; b=oOZQlURu2Cl3V8TvJr4LBcPfth3JQ90HNqte6AkNqJtB3FnGe3wBZCpknL9fRFQORTKPCx4HRLp/SbGcWz2hBtBXkfKqY14Jb85m1QOENKe2RYHUtd1ZG3cqQRtYtiDwBksTsxcWCOgz51xj84+gX8aA5DzyelHZBsES1P+OBa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762537450; c=relaxed/simple;
-	bh=gf0l6JphSC45++jh/l/NcwDRHSom2Kf9ZMm8/TbpCjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A+Fv4agpZW70JyEJQWy/RCHxAJBthWXN4DRtvkBqmug8ba25GEph2/NulRBqS2K3kQ+5H2f/f9b/FKGtxq2zWrYkU5940oDbJEIJbRR3tOC1uoDR8b8DJogR+98id5XF0fKDPLuIX+IFTV3b6UwpMShiLwX0NacqU0nIv7J6wK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKYRFBi5; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7aad4823079so973374b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:44:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762537448; x=1763142248; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gytpHvgcd7XKnQeia/W2QSEvlqw4E93JDTWduCN6+0=;
-        b=hKYRFBi5CYSrINwS2wbWidt2iOIsR7hj0l95nuslDcWD8sSrThMK5ST4r++AvbGWJQ
-         QtPQBrX9Th8trR2vpiXWVaeYL1JMpNj6MBEoeAGZtKpAVm+HNZ0I3Ajlf694ZTW/j479
-         IoWStvJxTNka0emFEXLkirNs+7Y9xCwbt+ZYx+8Z9dxTpUl5F55bjhVwaWYUQiOOBWVO
-         6siTJ9Eh4A+vwHrI9OftPSjA0QNI4DC40jiBrDxQ0a5hImTxPaYjaJItRa9uM04ZXv40
-         7SyrvbX/ZJKpEY8pfbxffQ1rDKgMiMOKo4h80GU3+Kdeax1jclRB20zQ1P1GWog6vsXW
-         BRww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762537448; x=1763142248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9gytpHvgcd7XKnQeia/W2QSEvlqw4E93JDTWduCN6+0=;
-        b=vgMz49555KqcoL8HJD70CzDEjOUsjz/0xSlitl4kIugslaXNhDRjXuBejSQc7qtOBa
-         XZuIrAp8zW8LW4TnQCLqUGNBAiAjxOlepdhNSZIIUYkHq+HfFJpPopbCMJzDgFHB1+qw
-         u+0HCkM5kqZCXYswvu2MElO3ogwk5aREx+t0Z/NDOjPjsmFn8NXzr02Qigd+WiaCYPwH
-         HGgAAztCaWkksojOxfEh3PcnssFVTnyUc72lTxEL2AMHz2WQKK7OFUZHmqPwGquOSS0N
-         DTuni9SPmvdtlRj3XFd9A4nPxUBrOowFRr4xu1OfO8J/xdEHebo2yFexn4DkgV3ET3Ly
-         BInA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9C7kZ9K8jRrHomqS+ID64N0WULp3djHi6VSeicys/vruX/L7TTH/Tb5bFCrIAlFokS1+PWk2oMtIqrZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPOSbNwMbZAaL+r9t4gsxwmFAHmS1v865yoEnjPzngqNJTuLxn
-	66gSr0xnC5Bih78GKzvaEn4UQIchRZamGLXXZRUxYsoD2Qc10x8ZhE7PUS7linfgAH08TY4JjKq
-	6cFX9wXuRejJCj1h0PID6JsGpZG5eAoo=
-X-Gm-Gg: ASbGncs1cUlf6rGdyjTikLdTDo1pqicPiQHXlbfig0mwCgLf0jahitNsbFqoYp636Fs
-	fljsULcDIw/9tpJOKveTDz6zBf4Jn4pYvFBZK5x5wgjpKgNT5Iw/oFr/iE7ZdRuus7i1s1jwd8s
-	MKIUtcIsO7ZakBmoGj2QtoAdQC90Epz66eqAT94LHvkYj9lvMWUMTj0SnTSdyNmOk80EnzUvybk
-	LX/J6N95QSeo0XVaUZzFjwk9pktj2VYm1VgrihNzNiIfZIpXfh7jN0aqpJkP3Bb+/tVPC759pBa
-X-Google-Smtp-Source: AGHT+IFxP1rG8EXQd58nFA6ag900h3V3UtY/stl7aRRovAIClvQrijIP0ylrJdKTUURp5+6DJSYk5iDyqHnu3xcKpME=
-X-Received: by 2002:a17:90b:55cf:b0:33f:ebc2:643 with SMTP id
- 98e67ed59e1d1-3434c548d7emr3911414a91.23.1762537447658; Fri, 07 Nov 2025
- 09:44:07 -0800 (PST)
+	s=arc-20240116; t=1762537460; c=relaxed/simple;
+	bh=vUXVxSlqnlNC2tbqdDtNDX2ebfN1pxrOSHo7fEAw12Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jaApRAzSSxEhrsL1q+U+X+LEa25xMlIfYK+o7KGgTh7WS8VLCXzlqP4GcRWnRgAi+PGsTn2vDZKCtWmaGgch977J4Q/nQCDil8TOmeAcoJT1ROKXmqcGF4GWo6++FuKKdgFRjx5JOFZBHQASm2J08/FjWJBaepyq37TMzyMJefQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPyiuHMe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C74EC4CEF8;
+	Fri,  7 Nov 2025 17:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762537459;
+	bh=vUXVxSlqnlNC2tbqdDtNDX2ebfN1pxrOSHo7fEAw12Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nPyiuHMehYfo3g71SbYqe2NgLFsFFVMXj4vT7odT8obZ75hR69ps6sjFs7W80FROW
+	 hsZ6pFPi88FRX2UD5Cm6+HC771R2+6brdPgwss1tTPliJYG2gsSBF458IPzk2biX4F
+	 RNucbaE7viPNG0fA44kswLaF1vDw1xdcVm24mb9XAzFuUudPzZP2zjF7PkN8uRFPi3
+	 v/mOgSdMqYEV8CsIQEdTu+nRG2wJjym0S+q1IPuIpdL1evYiCtDNkU1SRaMYdZVVx9
+	 XorcU2JIf9Jvp9EVNM6QQghP36vq0hw9+ssncfOeRNtG4AI3En7iA7OjYAWpfAG3M0
+	 mh5MCTsRK1scA==
+Date: Fri, 7 Nov 2025 09:44:17 -0800
+From: Drew Fustini <fustini@kernel.org>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kornel =?utf-8?Q?Dul=C4=99ba?= <mindal@semihalf.com>,
+	Adrien Ricciardi <aricciardi@baylibre.com>,
+	James Morse <james.morse@arm.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Vasudevan Srinivasan <vasu@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>, guo.wenjia23@zte.com.cn,
+	liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv <linux-riscv-bounces@lists.infradead.org>
+Subject: Re: [PATCH v4 3/3] RISC-V: Add support for srmcfg CSR from Ssqosid
+ ext
+Message-ID: <aQ4v8QhQjRYrxNK3@x1>
+References: <20251007-ssqosid-v4-0-e8b57e59d812@kernel.org>
+ <20251007-ssqosid-v4-3-e8b57e59d812@kernel.org>
+ <DDDL94HT7HYF.3VU2WQYU4WZY5@ventanamicro.com>
+ <aOqjggmTr4ioHwB/@x1>
+ <DDH2Q0N2HLKF.2QSW4DB5FTJI6@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-3-dolinux.peng@gmail.com> <CAEf4BzaQ9k=_JwpmkjnbN8o0XaA=EGcP-=CBxmXLc3kzh3aY3A@mail.gmail.com>
- <3986a6b863be2ec62820ea5d2cf471f7e233fac0.camel@gmail.com>
- <CAEf4BzaLmVuPRL4V1VKBmaXtrvT=oLwo=M7sLURgoYU34BkpMQ@mail.gmail.com>
- <627795f165b1e66500b9f032ed7474125938f33a.camel@gmail.com>
- <CAEf4BzbVU2sBw4aSOB1+SdKN0Qe-WEtDKo3wn21C6UjfSKiBdQ@mail.gmail.com> <CAErzpmtnLcVXvcWCY39YHN3VWmLKbM3NJtZhRqi8BQrLCqRemA@mail.gmail.com>
-In-Reply-To: <CAErzpmtnLcVXvcWCY39YHN3VWmLKbM3NJtZhRqi8BQrLCqRemA@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 7 Nov 2025 09:43:53 -0800
-X-Gm-Features: AWmQ_bnxdmL-MIkVALPlbickAdlfDYj6hXbeVyBqOIA9Cme_jOJ8UX_rlNxe4Qo
-Message-ID: <CAEf4BzayHtTppa8GLFViRQRBW-dkYQ6JyVvG7HY1DBy8j_-OBg@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 2/7] libbpf: Add BTF permutation support for type reordering
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DDH2Q0N2HLKF.2QSW4DB5FTJI6@ventanamicro.com>
 
-On Thu, Nov 6, 2025 at 6:36=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.com=
-> wrote:
->
-> On Thu, Nov 6, 2025 at 2:23=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
+On Mon, Oct 13, 2025 at 11:06:50AM +0200, Radim Krčmář wrote:
+> 2025-10-11T11:35:46-07:00, Drew Fustini <fustini@kernel.org>:
+> > On Thu, Oct 09, 2025 at 08:47:27AM +0200, Radim Krčmář wrote:
+> >> 2025-10-07T23:21:12-07:00, Drew Fustini <fustini@kernel.org>:
+> >> > diff --git a/arch/riscv/include/asm/qos.h b/arch/riscv/include/asm/qos.h
+> >> > +static inline void __switch_to_srmcfg(struct task_struct *next)
+> >> > +{
+> >> > +	u32 *cpu_srmcfg_ptr = this_cpu_ptr(&cpu_srmcfg);
+> >> > +	u32 thread_srmcfg;
+> >> > +
+> >> > +	thread_srmcfg = READ_ONCE(next->thread.srmcfg);
+> >> > +
+> >> > +	if (thread_srmcfg != *cpu_srmcfg_ptr) {
+> >> 
+> >> Wouldn't prev->thread.srmcfg have the value of CSR_SRMCFG when executing
+> >> switch_to?
 > >
-> > On Tue, Nov 4, 2025 at 5:20=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.=
-com> wrote:
-> > >
-> > > On Tue, 2025-11-04 at 17:04 -0800, Andrii Nakryiko wrote:
-> > > > On Tue, Nov 4, 2025 at 4:16=E2=80=AFPM Eduard Zingerman <eddyz87@gm=
-ail.com> wrote:
-> > > > >
-> > > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > > > +static int btf_permute_remap_type_id(__u32 *type_id, void *c=
-tx)
-> > > > > > > +{
-> > > > > > > +       struct btf_permute *p =3D ctx;
-> > > > > > > +       __u32 new_type_id =3D *type_id;
-> > > > > > > +
-> > > > > > > +       /* skip references that point into the base BTF */
-> > > > > > > +       if (new_type_id < p->btf->start_id)
-> > > > > > > +               return 0;
-> > > > > > > +
-> > > > > > > +       new_type_id =3D p->map[*type_id - p->btf->start_id];
-> > > > > >
-> > > > > > I'm actually confused, I thought p->ids would be the mapping fr=
-om
-> > > > > > original type ID (minus start_id, of course) to a new desired I=
-D, but
-> > > > > > it looks to be the other way? ids is a desired resulting *seque=
-nce* of
-> > > > > > types identified by their original ID. I find it quite confusin=
-g. I
-> > > > > > think about permutation as a mapping from original type ID to a=
- new
-> > > > > > type ID, am I confused?
-> > > > >
-> > > > > Yes, it is a desired sequence, not mapping.
-> > > > > I guess its a bit simpler to use for sorting use-case, as you can=
- just
-> > > > > swap ids while sorting.
-> > > >
-> > > > The question is really what makes most sense as an interface. Becau=
-se
-> > > > for sorting cases it's just the matter of a two-line for() loop to
-> > > > create ID mapping once types are sorted.
-> > > >
-> > > > I have slight preference for id_map approach because it is easy to
-> > > > extend to the case of selectively dropping some types. We can just
-> > > > define that such IDs should be mapped to zero. This will work as a
-> > > > natural extension. With the desired end sequence of IDs, it's less
-> > > > natural and will require more work to determine which IDs are missi=
-ng
-> > > > from the sequence.
-> > > >
-> > > > So unless there is some really good and strong reason, shall we go
-> > > > with the ID mapping approach?
-> > >
-> > > If the interface is extended with types_cnt, as you suggest, deleting
-> > > types is trivial with sequence interface as well. At-least the way it
-> > > is implemented by this patch, you just copy elements from 'ids' one b=
-y
-> > > one.
-> >
-> > But it is way less explicit and obvious way to delete element. With ID
-> > map it is obvious, that type will be mapped to zero. With list of IDs,
-> > you effectively search for elements that are missing, which IMO is way
-> > less optimal an interface.
-> >
-> > So I still favor the ID map approach.
->
-> Hi Andrii,
->
-> I've submitted v5 implementing the sequence-based approach, and I plan
-> to introduce
-> the ID map approach in v6. However, I have a few remaining questions that=
- need
-> clarification:
->
-> 1. ID Map Array Semantics:
->
->    -  When the ID map array specifies `[2] =3D 4`, does this indicate
-> that the original type
->       at `start_id + 2` should be remapped to position `start_id + 4`?
+> > Thanks for reviewing. Yes, you are right that prev->thread.srmcfg should
+> > have same value as CSR_SRMCFG. Are you suggesting that the cpu_srmcfg is
+> > not necessary as prev->thread.srmcfg should have same value?
+> 
+> Yes, it would be more consistent with other context switched state.
+> I just wasn't sure if srmcfg doesn't have special race conditions.
 
-I'd say that 4 should be "absolute type ID" for simplicity. Because
-that's what users work with. I'd say the position ([2]) should also
-map to type ID for non-split case. So for base BTF I'd require [0]=3D0,
-i.e., id_map count should be btf__type_cnt() sized. (I can be
-convinced that's wrong and inconvenient) For split BTF the situation
-is of course more complicated, because requiring btf__type_cnt()-sized
-array for just split BTF would be super wasteful. So for split BTF [2]
-would be as you say 3rd type within split BTF, that is type
-#(btf__start_id() + 2), yes.
+I did some testing and the per-cpu cache of CSR_SRMCFG is needed. This
+is because thread.srmcfg is changed asynchronously from when CSR_SRMCFG
+is updated in __switch_to_srmcfg.
 
-> Should the following
->       mapping attempts be rejected:
->       a) If the target index `4` exceeds the total number of types (`nr_t=
-ypes`)?
+The srmcfg value for a thread is updated when a user writes the pid to a
+control group's tasks file in the resctrl virtual filesystem:
 
-yes
+void resctrl_arch_set_closid_rmid(struct task_struct *tsk, u32 closid, u32 rmid)
+{
+       u32 srmcfg;
 
->       b) If multiple source types map to the same target location
-> (e.g., both `[1] =3D 3`
->           and `[2] =3D 3`)?
+       WARN_ON_ONCE((closid & SRMCFG_RCID_MASK) != closid);
+       WARN_ON_ONCE((rmid & SRMCFG_MCID_MASK) != rmid);
 
-yes (at least for now, we can lift this if we ever have a good reason
-by adding some option)
+       srmcfg = rmid << SRMCFG_MCID_SHIFT;
+       srmcfg |= closid;
+       WRITE_ONCE(tsk->thread.srmcfg, srmcfg);
+}
 
->
->    - If [3] =3D 0, does this indicate that the type at start_id + 3 shoul=
-d
->      be dropped?
+I'm getting a full patch series ready that has both the Ssqosid and the
+CBQRI resctrl patches, and I will post that soon. I'm also preparing
+a freshly rebased Qemu series that adds the CBQRI controllers.
 
-yes, but let's not worry about deletion right now and just reject
-this. I'd like to keep this option for the future, but right now we
-should reject such case.
-
->
->    - Does this also imply that the VOID type (ID 0) cannot be remapped
->      and must always remain unchanged?
-
-yes, it must be always be zero, it's baked into BTF
-
->
->
-> 2. ID Map Array Size:
->
->    - Must the ID map array size  <=3D  the number of BTF types? If the ar=
-ray
->      is smaller, should any missing types be automatically dropped?
-
-no, it's an error, id_map size should match the number of types. For
-base it should be btf__type_cnt(), for split BTF it should be
-`btf__type_cnt() - btf__type_cnt(btf__base_btf(split_btf))`. (That's
-one of the reasons I think we should have [0] =3D 0 for base, to keep
-this consistent).
+Thanks,
+Drew
 
