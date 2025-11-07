@@ -1,168 +1,129 @@
-Return-Path: <linux-kernel+bounces-890862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298DEC413A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:11:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0288EC413D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51EE04E9A12
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:11:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64F254EEF18
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BC0337B9D;
-	Fri,  7 Nov 2025 18:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6076533858B;
+	Fri,  7 Nov 2025 18:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jW9nTRKG"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011017.outbound.protection.outlook.com [52.101.62.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfVyGJEi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3699412B94
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539082; cv=fail; b=gttGoEr/zQMrpVp1Lsh//59t4HrgA6jZd5TRig3AXG3qlfz+k+TehkGpwtzGAKBd9ujIMZk8tHtqwD9RpjUKl1B/bDgL2azNjQ/LdO9U1MvtSR3UW+ecpC+cJslygzS+VzG8gcJAqtDOY0UZwumU0rmkUro3jTfDC8J7Ehc7wOk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539082; c=relaxed/simple;
-	bh=G0xacJGYF/EWTmspe9nnN6qBWAwj1sIBWEpuH4+bnWU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U1MNPSNScFQPusHtn/OFwatDDQV6dnAHxYfRWmpzEWkv9jXEfvJR3m6KZeD6fhh2QvpTnMReb0ZpIN/6ym8agA6RXzNIsB+pKQtsrLkYRxmUo7etbbwMECDViMJ5WN5x3wFnN+x4OyoiEFK18OiVnCtc1/ot/WSkOUtv/t72hSQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jW9nTRKG; arc=fail smtp.client-ip=52.101.62.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I04Tgfhy5Kgrf0kPJUMxzW3oJ7xATXHR18o20IAA8sntX+W6o1dcMS4WcepO4K6lEgtJbj30tdn2jC8cBGw21NEiooYAA/gJpuGbAF6CjI20YHEzJI5K//3N8EHZbQ8kdC2Z/RtwBdta7lNEhcSWNsGwsJWqXy8lkUk5yVmHkp1l+pWfRVxuQStUPsRHrHuxuqtGc7NWak396dfKpKO26poSq2VFlvFR0W0FTHfJVrJFYiG3HYRfBjE8ABrYmmiaN737oz2wLLuvy/MpDshmilT/ZBi7yuO9cDCjAiqW9ZqVgtf8Y3OUx6kRaYa5GWclC8i2Xe86uL7CbyJVcD/Few==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BRtRUxEHPAOUWt6rXL9LZA/slwG7zJxJMRF8CWShZJo=;
- b=TgNgN0VA17buFCvXwhE2/b+WtUoKBS9H10d3cMHD6A0JWDP206Ulru8psDi8n9FmJxAkbTYqR9i0IpNCKWiTG87ZV7pVy7GbHNd8B4bp89v2Wzoutj3MnrsOa41eSsGqKmXulPraSqZ94yj/vH5sXtgcn2pxQqb34w9hBqt5xR9e+Q8TDDuDJG47wmPv/lLo79DkWeWxWAFL297NILcyvFjedT7/Otjho9gGFR48nL1rM5w4j01oD4CHuDhb3ihquXqyaSkvwIPXZ5pJtJ+h4Df56F90LdpeZS+u0/c0ShQwt4yUGLW57tj45JzUkP4IvjHPYpgMpkR8w+cUMBOq+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BRtRUxEHPAOUWt6rXL9LZA/slwG7zJxJMRF8CWShZJo=;
- b=jW9nTRKG+J2+i1UY3cW/FZRZd6HVoWN3YgQvXabLR0qk0hyG964B/dtOv2g7amhBhZVkbR3g0ABch8LhKVb2KEo9qmNeQy/g4CzdHNO2+rnUKkRP+U8WENYktGUe8CTUoIE5WwsJ6hzj2SEoBYzjbMZuTTg3OOFXr7ndjJjn8ro=
-Received: from CH0PR03CA0363.namprd03.prod.outlook.com (2603:10b6:610:119::32)
- by DS0PR12MB8219.namprd12.prod.outlook.com (2603:10b6:8:de::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
- 2025 18:11:18 +0000
-Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
- (2603:10b6:610:119:cafe::7c) by CH0PR03CA0363.outlook.office365.com
- (2603:10b6:610:119::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
- 7 Nov 2025 18:10:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 18:11:18 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 7 Nov
- 2025 10:11:17 -0800
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Fri, 7 Nov 2025 10:11:17 -0800
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>
-Subject: [PATCH] accel/amdxdna: Clear mailbox interrupt register during channel creation
-Date: Fri, 7 Nov 2025 10:11:15 -0800
-Message-ID: <20251107181115.1293158-1-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AB512B94;
+	Fri,  7 Nov 2025 18:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762539118; cv=none; b=gd2qmfC4puINVDB+WHm2ZB1irKtJQV8YZR7yv/eCmYvGPL8tim+uEpgL19QpA2WXw7WZL6UdZLXhBO83mbNtlhq2A0aPyzGScn0GCZLX66oo+GvpE3d23XBUsPioMj481d/vZNwSXAjXY0pHSOlzK0Kfranqvp8kcRQIkxzXWXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762539118; c=relaxed/simple;
+	bh=MjhieHuDTwnq2/h0Al1iDcokqMxDvbpcUEx6bOyTdPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXFn78JUlwBpE9L5Z8eeNs+yiQeEYlNlLgIhCKxDPh0Mr2f7d/kHfpio6E5czsIX+NW/4AgQdGoh9P8/0l644GEvtHOCjqdZbZf3ySe8seGeO/iwUuZIizFzEO2DJ+5WbCwgkMo1HAAnCktnEc7QJ2S6i5P6C5EfpRPGGvz/Ats=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfVyGJEi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12521C19423;
+	Fri,  7 Nov 2025 18:11:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762539118;
+	bh=MjhieHuDTwnq2/h0Al1iDcokqMxDvbpcUEx6bOyTdPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kfVyGJEil8dJtFsbbZ96UUWxXpNjYfiBAluSWpTiAMqTWKoiZdIk11806YuLPL0tQ
+	 95e9QrRloWJXexP42nO+CrVYcd4QXQQr2CfmjDaN3NGlXt/rycTZkfKLb0+aYB5nBx
+	 os3Bwyo14S1pQ6YOYK7y3yH8okSBP7cqN6jwRDCMNexHyHLNQWm9F1XvS2jeIpN0sI
+	 ZM3qPdeczxkgkLcC7/Ic2Av1Qh4DwFU4gJ6ynEchSh150AWOstYdLFjCIB/YPCrVct
+	 Q6ZolcPHxOYUu/QIMpnR3OR8zvuayu/Nf3VHfzDd9pqp9I9tNuqUvSqylTWgGWcu60
+	 OlLG+FB45swzw==
+Date: Fri, 7 Nov 2025 18:11:56 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>,
+	"K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
+Subject: Re: [PATCH] mshv_eventfd: add WQ_PERCPU to alloc_workqueue users
+Message-ID: <20251107181156.GA4041739@liuwe-devbox-debian-v2.local>
+References: <20251107132712.182499-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|DS0PR12MB8219:EE_
-X-MS-Office365-Filtering-Correlation-Id: da13d04a-a765-40fa-c3ef-08de1e290c67
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gwfriBodNF6FVR7nFFWoqLquOHkL+moFZTGGPRNSSpeMtqhD69AgVcMG5p37?=
- =?us-ascii?Q?N79Up7JS/vpaq1NUBTeb5XG4XAxD0J3dQOCubceAPJFgZtx3RCEAZu0+wJhk?=
- =?us-ascii?Q?7+ULgInqm0xeRFQnWfBXKDQJJmBkI2bL2NkFAJvgXVJb8fKeyJRKqJNyeeyN?=
- =?us-ascii?Q?ImEFFwbjfMArcOWA28hjbFzQVDqNkAdP0O9rkZLzkDZMRYN+ZmOCcTtGClxl?=
- =?us-ascii?Q?D8Gd9fErPRQp3I0F+qE6WURlX0lbUavi0R315rPQZ6F/wkX6btamzr3KmvpN?=
- =?us-ascii?Q?0XDA83ou19YrPL7dnvde22x9R4+yA4TeXFl6XIBE0COmp5EDTjj7EES9tyY2?=
- =?us-ascii?Q?X0I/segAwnXKhdwSScMRqKqZAvz7OWbmEXUCFwzoSKUD7D5M7f2KZ+YRNGnK?=
- =?us-ascii?Q?l2tzsMXWkaXygVDAfNCZta7C5cp166PqXGjn6vNp8FoqzKnO/nBMNDidSgwu?=
- =?us-ascii?Q?/spdwFELSlgbbnkEn8l1N+/Tj3b0lMGVJRlzw49k/coGHei8dJERCFl9x1z2?=
- =?us-ascii?Q?W64OtSF4NuvtUdZPTWTmCvI1C5sXyOkFbOKX1eLe7JAei2IUwhW0qvq6bZnt?=
- =?us-ascii?Q?EzlgfTSUAtPhVWzIFJw4HarrrZuqEwcedGfJgBW1WiE1+yhcxepX5p4qUSuT?=
- =?us-ascii?Q?fRPseNJ+L6FRMiiWykep5YISGlzDEQkPaTyvhnN1EubbtJJG6zkcL8S7JNt9?=
- =?us-ascii?Q?6FF/JTCZEUk/LdJHpNQ444gKKPxOisMFz51GM1XCXxzprDJu90Y51Z87iKH+?=
- =?us-ascii?Q?yf0f9ff4EPQFcBgmosVEJykTj3LhWGsuSlLFCx9TmsXRw74207eglhLBZhGz?=
- =?us-ascii?Q?SBDKgAgSei/u7bnOhtj+8MUa6UdJzjH1Y6VR/Zi+Tp7BldGzBspg06gg2Cs7?=
- =?us-ascii?Q?VODRUyRTeGswZhF9T/qMWvbQCBxodH4wpsLIMKXKgcUDyHNVUGUcOK5CR3+N?=
- =?us-ascii?Q?ZTpGtX7qTp9Uly1tsyoyPVw/4dimli5kvtSP0NemiOrDveQu/oB4vgpUA6YQ?=
- =?us-ascii?Q?2YLb6YgNNsjxg4vHLbaQyXZKIh+AQDBIuRmimTOamGugoCk8G+K0EkmmD2p9?=
- =?us-ascii?Q?Me9wnNwaDE0Du9f2FU1SEL2SP5u/WS6cf8Jp+jny5IxV2VJzwiDlNu4feiKt?=
- =?us-ascii?Q?vh1ulsOdxiOCq5SFbJ2XgdOITcgvesWvnvJZQl5YqyhNdiRt8WKLFFXhdvjW?=
- =?us-ascii?Q?UaYZidb1UHGp0qzeLuuaQnXm8//8y4s0EGLl5qKE0/+s2hOZ/Psz2NeiGpP8?=
- =?us-ascii?Q?+S5OrO2IlmJl77TeRiIpWBy1AlsoyvI76+zgjTMMavJY4c7Jt3X0iGJUBIyJ?=
- =?us-ascii?Q?JowYhsOmCbpPurZqw+OIQgq2zWIgp8FT790TQqNAZ6+sqjC16aulQUvkNez8?=
- =?us-ascii?Q?dfmo/4yEHjC4NKPPMaXPIscbrSz9lO6um6qMICFY2ef6C+R7Rcqx5pyVhyW/?=
- =?us-ascii?Q?5++b4PRW0KAZlmuUXwqXGX+G33W0Ip6HAVpUXjBWSeY85XM28bGzsm5do9iH?=
- =?us-ascii?Q?S8doxt/Fu1fu8HPXuskXtIpZk90x0kx4D6L44V89liRoNjbeXI0GWuclxdle?=
- =?us-ascii?Q?1BjQG+dcNPJeCUl2L24=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 18:11:18.3009
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: da13d04a-a765-40fa-c3ef-08de1e290c67
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8219
+In-Reply-To: <20251107132712.182499-1-marco.crivellari@suse.com>
 
-The mailbox interrupt register is not always cleared when a mailbox channel
-is created. This can leave stale interrupt states from previous operations.
+On Fri, Nov 07, 2025 at 02:27:12PM +0100, Marco Crivellari wrote:
+> Currently if a user enqueues a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> This lack of consistency cannot be addressed without refactoring the API.
+> 
+> alloc_workqueue() treats all queues as per-CPU by default, while unbound
+> workqueues must opt-in via WQ_UNBOUND.
+> 
+> This default is suboptimal: most workloads benefit from unbound queues,
+> allowing the scheduler to place worker threads where they’re needed and
+> reducing noise when CPUs are isolated.
+> 
+> This continues the effort to refactor workqueue APIs, which began with
+> the introduction of new workqueues and a new alloc_workqueue flag in:
+> 
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+> 
+> This change adds a new WQ_PERCPU flag to explicitly request
+> alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+> 
+> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
+> must now use WQ_PERCPU.
+> 
+> Once migration is complete, WQ_UNBOUND can be removed and unbound will
+> become the implicit default.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-Fix this by explicitly clearing the interrupt register in the mailbox
-channel creation function.
+Applied to hyperv-next. Thanks.
 
-Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/amdxdna_mailbox.c | 1 +
- 1 file changed, 1 insertion(+)
+I modified the subject prefix to "mshv" and added a new line in the
+commit message body to separate the first two paragraphs while at it.
 
-diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c b/drivers/accel/amdxdna/amdxdna_mailbox.c
-index 24258dcc18eb..858df97cd3fb 100644
---- a/drivers/accel/amdxdna/amdxdna_mailbox.c
-+++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
-@@ -516,6 +516,7 @@ xdna_mailbox_create_channel(struct mailbox *mb,
- 	}
- 
- 	mb_chann->bad_state = false;
-+	mailbox_reg_write(mb_chann, mb_chann->iohub_int_addr, 0);
- 
- 	MB_DBG(mb_chann, "Mailbox channel created (irq: %d)", mb_chann->msix_irq);
- 	return mb_chann;
--- 
-2.34.1
+Wei
 
+> ---
+>  drivers/hv/mshv_eventfd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hv/mshv_eventfd.c b/drivers/hv/mshv_eventfd.c
+> index 806674722868..2a80af1d610a 100644
+> --- a/drivers/hv/mshv_eventfd.c
+> +++ b/drivers/hv/mshv_eventfd.c
+> @@ -592,7 +592,7 @@ static void mshv_irqfd_release(struct mshv_partition *pt)
+>  
+>  int mshv_irqfd_wq_init(void)
+>  {
+> -	irqfd_cleanup_wq = alloc_workqueue("mshv-irqfd-cleanup", 0, 0);
+> +	irqfd_cleanup_wq = alloc_workqueue("mshv-irqfd-cleanup", WQ_PERCPU, 0);
+>  	if (!irqfd_cleanup_wq)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.51.1
+> 
 
