@@ -1,429 +1,187 @@
-Return-Path: <linux-kernel+bounces-889763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5E4C3E753
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 05:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 425BAC3E75C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 05:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBA93ACCC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 04:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8093AA9F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 04:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9D4289E06;
-	Fri,  7 Nov 2025 04:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70AC230D35;
+	Fri,  7 Nov 2025 04:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i2JhR1Kl"
-Received: from mail-qv1-f74.google.com (mail-qv1-f74.google.com [209.85.219.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eeG5gZ7E"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012008.outbound.protection.outlook.com [52.101.53.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1A72459D9
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 04:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762490297; cv=none; b=JwXkoIDmJgMxtgPgjVqyAuZBdxc/IlTeN98+5ck8G/sH1QMc4AoMqaQF9F+0nUn4sA7DfYMk68buZ4AeTZSeVhUEhqtaNO6BDxH8XvRiIsUGaCebX5uhcHxlvrxAPt9hUnmIFQKdtTrOZz6wkbk3thavWU1XnyIbhqKhPv7hD2k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762490297; c=relaxed/simple;
-	bh=10iLhoesYzQ1FgJMpzu8BAAG0JfBAkZ6tKI8R/+tGKk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DPQUSD3fMSY+SEU1PxbPku6zHuuNRocfJSbGDzTmIS92XMCVxrx/IMJoU+0rbIEEpZ4cVRBUZMBJZK7+9+JqkRQMQfrOKTy4n+c7D9W2CXtiAH+kYplucL+3+XxEKdtjgAzcBEOfD+Ir4lmet+aVnWuv83hS2npdhjkZpDn/g6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i2JhR1Kl; arc=none smtp.client-ip=209.85.219.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
-Received: by mail-qv1-f74.google.com with SMTP id 6a1803df08f44-88050bdc2abso11608896d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 20:38:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762490294; x=1763095094; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hc7zg0Xip4caBhiUMibaoPI31CF6EpscUiD6C+IhJbQ=;
-        b=i2JhR1KlusdoZPCbu7Tb/Le0l19w1UDlqr7sQ4EfAb6kDPiGMOlmI2ADDE1itP2I6m
-         gfL3izf0dMEySqlN9wY/FHOEY8BjdK3BgI7Mxs1SgOQBKXFhRgiMJ1b5FKW5DLXgMv+e
-         sIPTqvMrWSoQMREV9BDK5/PyBejZnH921JS19Ah44vNsAhXcECcRuVb8OSyjcNy9kf89
-         e2cjKe16aw6eLW90aNPxpvpJi3XbOpwJcOxFhzF3IXisyAuwk5FShv0iL4SE9PxcYyVe
-         P6Gvx8JHRnpoqI98q4icD1e48Cra/fROheA01KRr0uuSSe7aYqdmIr5TLLqNq38QpJti
-         FklA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762490294; x=1763095094;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hc7zg0Xip4caBhiUMibaoPI31CF6EpscUiD6C+IhJbQ=;
-        b=XjTcQ1nrz8AaFhlGpCPx74K8BW18pVxDheZ4wDZ3rqNXoWUKNT9KXNwhbeFaMv2+6l
-         FOhY7NVxI+rHANzEnYEDeamKNKQhXyiOOsmVvF64GLzf6QLeBG6Z0yIZ+URiuDWqOD56
-         3GNqnq+T+JEmvVMvTzY59dmrGf8hmB3TU2jGYvKclwi96v+DvFBvezJsP4aBeskVOMJU
-         XaLFqrrYBoPqXeaulgElx8NcEn2JhzXQMBbDYugBv0P+ds7te/EEbcGLTrY03egJ+Rac
-         +CmDcvERtYh8QR59YJ/DbYVYieA2zBQ+v5xATTXP7MP7+I0DeD8yonfUHvUkeyhyP4yu
-         LCdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYprdS3Rx+79vZxakFjoIYIn0TB/f9mxCkJ6yh//ccWHDhs1geWamUAwAIy/cQGdn9N2NTsTMiAaDwUP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFE5tVKtUYySt7EM6rdIw37N15giSdW+G4iirvu8LSQY9qI0xU
-	ZWlM/XKDzyFcp+3fygY2/xnfEI87bTk3kamIQjs2TcISMhq2TZ5rxhVOymcMU6xUupJEEWMnVPw
-	XMUgzwGc5jg==
-X-Google-Smtp-Source: AGHT+IEXXfOC6WiTmBRsaeV/hP7iJz1LUUe+hCuTmTAu+/MeSBoWRoIJxo5en8MR3W8t+cG5HEPXVs5DDs8Z
-X-Received: from qva12.prod.google.com ([2002:a05:6214:800c:b0:882:2f2f:9dc])
- (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:ad4:5f0a:0:b0:880:501f:5dd
- with SMTP id 6a1803df08f44-88167afb540mr25484026d6.14.1762490294378; Thu, 06
- Nov 2025 20:38:14 -0800 (PST)
-Date: Fri,  7 Nov 2025 04:38:05 +0000
-In-Reply-To: <20251107043807.1758889-1-zecheng@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC62208D0;
+	Fri,  7 Nov 2025 04:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762490599; cv=fail; b=cGS6XroKxnZwuKgzYmpew03rfENU20cIxkkDy7URYaO5aWqhhQZ4OOSaH+tkWmdW83EqCyvtb1wJCMKSTMdxpG1HDt16oArSv+G/SExlt2Uoop4Ph+M81hol9zz80CYCC5d/vO7alIMtdjcYS73b24TYAEaOUgBvR2TJgxX2K+I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762490599; c=relaxed/simple;
+	bh=DFSWKVDvYdxIaClqFHfdrTax2V6Lf+elkUx2slo8bCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gwxtw2p4x/rLWVwadw1wiQcMZtWSi4BOlYBLd+RkaOCSDzsnRJdD2cqzTFpgfXhlhBVhP4IG2P42TXtHmXJ0fQDJjdtlnDy6S830OcHWnwWA1ock4r1V+FQ2pviwC1vFpUwO24QngCB5obF35G8jpBXH4iNwlNA8hEngNTvx8qY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eeG5gZ7E; arc=fail smtp.client-ip=52.101.53.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u+vRAgZywrglLXwOPq644QdFBnyN1PYRy893CME+rDD99ryaHatsy0NIXdiSEEbmGC8i7w4m5o7/WYs6QLfqMERydAPbNVBLrgiTkqS2M2lGXsBXt5khUYjDwNVXcJBszBw4GZLIQuEqfLtBz2Bn2UyskabcvMdR7GHXHIgJlOx8bcNuP/Rg9H3mDI/ygocZhprW9xeMJvswBMf7EgfGtPS+qd+l0FlVC81uReAno8ABrRs0ErERckrf14LqkrGvAOym+cIZCHFL3N47dwoXvYqZXh2iermMquW6amuvtyA74xdOEChCnsx2xagl0dDlV98+F1C17kmrcPaEyoGS9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HoO6xKjH5Tte8FFUxmIS7MiyfjlffmYhQowWZZ6O+tk=;
+ b=am0KpLfzUaPplU98tlst5AYlj4WYdroGr/ia6PbBZy6Nl/gnFoujEs49kDBxlo9vNMj+vDRgPhmQ9ErYGr7jl4ByoFiVWQGJMrmTA9za2EMJNhzFGDvgbJsZMvzI+FrhH9Cwv7+XSSZ/1FTw3ZjHm9JshS4o/9DEUPyZE5xUF03oDVYGOGU3Wu80vRNp68h2xxgjSsSXplaoWIqEYiI7uxe6xfYQ/IwplRlVxTE7soxw1zxg8gtBeX/Nu1BSgp01xZjgohv90ScQSj6jnOd2gTwjIcMJ22qy7n0QhYiQ3hHKyJaOWmb2g79nn25s2sEvbUAUoxg8xWlsN9uLaWOr0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HoO6xKjH5Tte8FFUxmIS7MiyfjlffmYhQowWZZ6O+tk=;
+ b=eeG5gZ7EoOmzbuj30NjhoIVW+2MOjC5LKAH9vLn7cfbUcUxeB3XfM6bV8Du9Ik8231mpMfOT9lqCtpXJS8OmNSRrNZeAQF6xJPGUgajUYDa3R5tN3q4TS2dT1ri7ADUY0e8D00m7B5RXZrUGjTVCPc5UjFy3u57eZuZYApOiq70=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ CY8PR12MB8340.namprd12.prod.outlook.com (2603:10b6:930:7a::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.12; Fri, 7 Nov 2025 04:43:13 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 04:43:13 +0000
+Date: Fri, 7 Nov 2025 10:12:55 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Yunhui Cui <cuiyunhui@bytedance.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ionela Voinescu <ionela.voinescu@arm.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christopher Harris <chris.harris79@gmail.com>,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 0/4] ACPI: CPPC: Fixes to limit actions to online CPUs
+Message-ID: <aQ14z1P0I3WLYnEi@BLRRASHENOY1.amd.com>
+References: <20251105143851.4251-1-gautham.shenoy@amd.com>
+ <1f6c7144-9b4e-4252-b62e-71c348f11827@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f6c7144-9b4e-4252-b62e-71c348f11827@kernel.org>
+X-ClientProxiedBy: PN4PR01CA0041.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:277::7) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251107043807.1758889-1-zecheng@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251107043807.1758889-4-zecheng@google.com>
-Subject: [PATCH v5 3/3] sched/fair: Allocate both cfs_rq and sched_entity with per-cpu
-From: Zecheng Li <zecheng@google.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Rik van Riel <riel@surriel.com>, Chris Mason <clm@fb.com>, 
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Xu Liu <xliuprof@google.com>, 
-	Blake Jones <blakejones@google.com>, Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org, 
-	Zecheng Li <zecheng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|CY8PR12MB8340:EE_
+X-MS-Office365-Filtering-Correlation-Id: 808d38f8-67df-422d-9bcb-08de1db828ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?djfVkJrDxUP1KmsX66AJhHDneJJxOpzZkEL5/g2Dbo+wSBZvaX1Mr9qPms8v?=
+ =?us-ascii?Q?/t4wZq3MiCQNgRZPLHbyFWdHPBKpWWlXK/iRTa8y5wEQ/4weogIBzYO0Lrep?=
+ =?us-ascii?Q?/2LGcV4dEvpL01UZk0Ie7abd8DL6BM8s/a/CXZ3YHAUbq9CQuiF4GXt5hssc?=
+ =?us-ascii?Q?CaXUjo79r5KtCLpSzTspJgJUm2my/KpZE8frEx8adqChvwivWF6lXqTeakBy?=
+ =?us-ascii?Q?g/3RZjkfPethKYju8L4GGSy20hkIpcpbyHKZhRMX4DyDstvHBIt9sicjHEJQ?=
+ =?us-ascii?Q?7NkVuKG5KpufRlyvdJ+N1Wdv0w66YbqTFPktEeI/9KbKjdRlYwJlOxRjDADA?=
+ =?us-ascii?Q?BrmYJjMrG5Knyz0IpMzt3BHNHY8V5cjbkzrzyXEZVZcPbFLHWWSUsTdcC6P6?=
+ =?us-ascii?Q?ZjlWLhh/BIvt/hUOWT8sZO5Gub7Zmk6n0uQ3qOFJu2K99TbZGNshTCJEeYmv?=
+ =?us-ascii?Q?yFjZlL3ok1BVm2/MnnWekuQ7l9Mv0AG+l+upCvyUBYKk6JxtmYkqKovFIjyw?=
+ =?us-ascii?Q?1TrEGcVBTcIvKS/+yKOXvWloAuzkME8jo8XgGSrvUP8EmMgTcfef1BGuaaoe?=
+ =?us-ascii?Q?2qhGgMTpvUJpnGDzdFgMnpkXMFGYJ4kRhXv8D/dRSyFqEXV/FZbD44gbLzp/?=
+ =?us-ascii?Q?9HkKLfFHneS1VUarfH4zlRNHWXWvpVCGDWUmLKLKISgF8L/zlsnyf3Z2FUqT?=
+ =?us-ascii?Q?/hFnd0bpHaz14fdHVFDKpd1MRJiZY3dRrxFzgLQUwqwQKK9VFoHQGnQrNYUK?=
+ =?us-ascii?Q?9fZBDb7EG+2HVW2vovzLoyPYGhgMwR9gJ4xz/K53iWuLdq9dOoTPCGPetPdB?=
+ =?us-ascii?Q?XFYTB8pFWFPkMTWuFbrp/Xhe4QiT6aCsdhYlezPyykz3AvyWGll1eiunXsMW?=
+ =?us-ascii?Q?iTSBuA6ysjH4s471gaeo6n7cAW77QlCZ4c+jAUgjEe/Yk1xuznJ+4hUsHYw1?=
+ =?us-ascii?Q?pY8wFodg7MfW8q48QUZuHKfrldzDKsRlKsdgpifqwVOt601Zzk1e9WCzCxiE?=
+ =?us-ascii?Q?CQ78AY5CSUNnT73G6gd999HnXQWugYlxXLQ4OiZXnuG5EC/TmmUAQWXL/3Ra?=
+ =?us-ascii?Q?y/Rpd+POj5BHsDuDaIFbIuKlJ4M9ZvMvtqFi+H8c0R0d8CMZYEPzUFdMcfge?=
+ =?us-ascii?Q?ixgg0RiK5qIIIQg3noNUbtwzSTiJyUWXIO92kXKdHPpfayg8dryo+5r7snMt?=
+ =?us-ascii?Q?StwQSixKsi5YOlPwMkV6V1s8Xlom3TfKkT19JRvlBBmwDgvSPd1iTnYTiDfe?=
+ =?us-ascii?Q?3iLx9GHlokOOsLggaIPI0rtmkG7DXa/gr8g6xMwwgl08CoC0q9LsNxpZWWhU?=
+ =?us-ascii?Q?fb//XY1Ksm7V1F2pLo5jve4C5DOxIGroQH6H7lifm4NLOTszGPa2NYVDiNGf?=
+ =?us-ascii?Q?Ksd9beoc7Mx6p6hfvb5gapR4tggGLDn7xsZAZ0IW5bHEAxQaggEa8jeymbmb?=
+ =?us-ascii?Q?bB9Agxjh1n3BC4GuY976NE2Fu/fXTZG1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gNfmnpnW8KkH3x7xAkKyATeIx2bxAwQ1QbwMMI7JC9V7DxDQyQREQTbr3Zpq?=
+ =?us-ascii?Q?xun4WU+77Uf0RH6Wz5ZNoyhqvGGzX8+/D7Xkei4eVZqRmpoR8m0jdt8g/gXq?=
+ =?us-ascii?Q?cbQbxriI4wgaiAX8mg1lkfjzEMI2nwu8Y9MDMBNZLViVcGiO9QL6J6T0bnED?=
+ =?us-ascii?Q?BVDpS8kT7DnBadzWv9GkjJ+CVLAI1BMZ4HONu6GDfpFX7HPLoDDgLgRCmNcJ?=
+ =?us-ascii?Q?m26ZGk/Cakewjvvqzh25OjKGzIg5vh9MZVYSXKLXKXfWcCTyTSbX1Akv/mrT?=
+ =?us-ascii?Q?RCC+TJSlmr+hESkWAT8IP/1Gq0LWNtCphbXy+GEQz7jXTjNK8qwG0lUnn0DZ?=
+ =?us-ascii?Q?GL4Mj9ep1xm5NlS0z16MRYhr7eT5HaKIpjmxjjCKai0b9b2j5Lk3eHzhOKO7?=
+ =?us-ascii?Q?eUcI58qG3vUhnvWWPzZDtobCqPuqCam1fsoXVe++BP4N4hgHIuu+fhpYPtUE?=
+ =?us-ascii?Q?2UTbeglHDhm6ylY5h7eEczVDDk25QH54rJbqrFQ7sc7hmx+0rxaK3Bdx1ago?=
+ =?us-ascii?Q?q5gL2rZnvovUOOa/lNNpiZY6pSlHE8N3KSicTWRpMrqGcjit8EoGk4bq+Mm8?=
+ =?us-ascii?Q?ZVzyvDsFT3JLwLHpBLruWUKTdTwqMUomNfwXPWAcjudUSNuyfd0GFEgGkAdT?=
+ =?us-ascii?Q?sBD0stYIGMwm/+W16RX1skLDi/ON48MlVCAaApwB/m86LsRoMz7YN8Uvjl5a?=
+ =?us-ascii?Q?iI4MFEblS/gbpu37WFL+onBhjld1AdfLvtJLG6GflKIIFiyiYb2tErG9bxy5?=
+ =?us-ascii?Q?t+FS9/ZOEpu9zrpmoEsNwUaiJeyo/64nxMmlJ+4e1kAb93h61Hn9oBGwy8zA?=
+ =?us-ascii?Q?nTpwbxzC4Pm93nR+yWL6yqlvQTdxGGa3hwaXo4C9AFXu5rGGxxCYMQ9JYRpK?=
+ =?us-ascii?Q?dMzlcoyi0y5GiPx7mybvESjHy77htLdhGUUeMsZVdof09usrVhnRZeLK/w0b?=
+ =?us-ascii?Q?FCuMC3V+Ff0ayMZSeRrv/PdKZzhGRnR36pRsUemrqyWrCQW5K91APAhYtO2p?=
+ =?us-ascii?Q?3IwPnr4WKCCCS70UwQ3+wruAYpGooCQ452UBIfRCSY2XdZ1hEBgKZATJO0uG?=
+ =?us-ascii?Q?eLB/1fIur27aFVLAkc/v7jq0brjFc5H5vHCGX8pLasIzGelNQZ0pRQr/A0x0?=
+ =?us-ascii?Q?Mh68G4eGXK0xo4IxQpezeuk+7ZI3Ux957l67qLwPvZSSK/K9XUPvrNtjsau7?=
+ =?us-ascii?Q?ziX2QyPR3Fmc59D4iXLrnfQq3XD+9N3vevySiJ7vADPbun+vdW1u2SNCmdRd?=
+ =?us-ascii?Q?6j+2USW4TzO0dmm+piTUE8eC/VZnzQ+CHBr6pS4oZ5sjT5nFzF8FRg0Hy6mx?=
+ =?us-ascii?Q?7tQ2z80fZJn75++B/TmAylQm9Aw8xaFBnfaYdKl+5mba7IgOKDNJ5g8OZ54j?=
+ =?us-ascii?Q?e1xyjiiOwho+eaoujGSkN4bdc5+Tvh1e6MIAwol9N04k5S4Z51P0EsJg644B?=
+ =?us-ascii?Q?INssNaYwXe2xniUXyYrf7bXQgZ/t/L1DNW7pyFgTTsNuie0Jb72HkKcV/kJo?=
+ =?us-ascii?Q?BCQ0ryXoKmr7hlczGajTL5cDb+NPekVvr0E6Hv3JVvH3IGaBOOtvL1gPV2OQ?=
+ =?us-ascii?Q?lEY+8aQwgWN8GZ/jN71lO35J38M3kQ5shy5MjixM?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 808d38f8-67df-422d-9bcb-08de1db828ef
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 04:43:13.2727
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uyP3uBt8qvMQXIFN22igFoKODXtHQP5wtFwt1gE/qmCQbmHYtgm0ksZwBc+diF4sSa5rDtqq7+BJkwPjzrg7PQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8340
 
-To remove the cfs_rq pointer array in task_group, allocate the combined
-cfs_rq and sched_entity using the per-cpu allocator.
+On Wed, Nov 05, 2025 at 10:00:25AM -0600, Mario Limonciello (AMD) (kernel.org) wrote:
+> 
+> > 
+> 
+> The series looks good to me.
+> 
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
-This patch implements the following:
+Thank you!
 
-- Changes task_group->cfs_rq from struct cfs_rq ** to struct cfs_rq
-__percpu *.
+> 
+> But I would say I noticed we are also using for_each_present_cpu() in
+> amd-pstate with amd_pstate_change_mode_without_dvr_change().
+> 
+> Should that also get a similar change?
 
-- Updates memory allocation in alloc_fair_sched_group() and
-free_fair_sched_group() to use alloc_percpu() and free_percpu()
-respectively.
+Good catch! Yes, that too needs to be fixed to for_each_online_cpu().
 
-- Uses the inline accessor tg_cfs_rq(tg, cpu) with per_cpu_ptr() to
-retrieve the pointer to cfs_rq for the given task group and CPU.
+I will spin a v2 to include that patch and pick up your Reviewed-by
+tag for the earlier ones, and also Chris's Tested-by tag for the first
+two patches.
 
-- Replaces direct accesses tg->cfs_rq[cpu] with calls to the new
-tg_cfs_rq(tg, cpu) helper.
-
-- Handles the root_task_group: since struct rq is already a per-cpu
-variable (runqueues), its embedded cfs_rq (rq->cfs) is also per-cpu.
-Therefore, we assign root_task_group.cfs_rq = &runqueues.cfs.
-
-- Cleanup the code in initializing the root task group.
-
-This change places each CPU's cfs_rq and sched_entity in its local
-per-cpu memory area to remove the per-task_group pointer arrays.
-
-Signed-off-by: Zecheng Li <zecheng@google.com>
----
- kernel/sched/core.c  | 35 ++++++++++-----------------
- kernel/sched/fair.c  | 57 +++++++++++++++++---------------------------
- kernel/sched/sched.h | 13 ++++++----
- 3 files changed, 44 insertions(+), 61 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 12ebe1b4c8ae..376d27f4bbdb 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8542,7 +8542,7 @@ static struct kmem_cache *task_group_cache __ro_after_init;
- 
- void __init sched_init(void)
- {
--	unsigned long ptr = 0;
-+	unsigned long __maybe_unused ptr = 0;
- 	int i;
- 
- 	/* Make sure the linker didn't screw up */
-@@ -8558,33 +8558,24 @@ void __init sched_init(void)
- 	wait_bit_init();
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	ptr += nr_cpu_ids * sizeof(void **);
--#endif
--#ifdef CONFIG_RT_GROUP_SCHED
--	ptr += 2 * nr_cpu_ids * sizeof(void **);
--#endif
--	if (ptr) {
--		ptr = (unsigned long)kzalloc(ptr, GFP_NOWAIT);
-+	root_task_group.cfs_rq = &runqueues.cfs;
- 
--#ifdef CONFIG_FAIR_GROUP_SCHED
--		root_task_group.cfs_rq = (struct cfs_rq **)ptr;
--		ptr += nr_cpu_ids * sizeof(void **);
--
--		root_task_group.shares = ROOT_TASK_GROUP_LOAD;
--		init_cfs_bandwidth(&root_task_group.cfs_bandwidth, NULL);
-+	root_task_group.shares = ROOT_TASK_GROUP_LOAD;
-+	init_cfs_bandwidth(&root_task_group.cfs_bandwidth, NULL);
- #endif /* CONFIG_FAIR_GROUP_SCHED */
- #ifdef CONFIG_EXT_GROUP_SCHED
--		scx_tg_init(&root_task_group);
-+	scx_tg_init(&root_task_group);
- #endif /* CONFIG_EXT_GROUP_SCHED */
- #ifdef CONFIG_RT_GROUP_SCHED
--		root_task_group.rt_se = (struct sched_rt_entity **)ptr;
--		ptr += nr_cpu_ids * sizeof(void **);
-+	ptr += 2 * nr_cpu_ids * sizeof(void **);
-+	ptr = (unsigned long)kzalloc(ptr, GFP_NOWAIT);
-+	root_task_group.rt_se = (struct sched_rt_entity **)ptr;
-+	ptr += nr_cpu_ids * sizeof(void **);
- 
--		root_task_group.rt_rq = (struct rt_rq **)ptr;
--		ptr += nr_cpu_ids * sizeof(void **);
-+	root_task_group.rt_rq = (struct rt_rq **)ptr;
-+	ptr += nr_cpu_ids * sizeof(void **);
- 
- #endif /* CONFIG_RT_GROUP_SCHED */
--	}
- 
- 	init_defrootdomain();
- 
-@@ -9483,7 +9474,7 @@ static int tg_set_cfs_bandwidth(struct task_group *tg,
- 	}
- 
- 	for_each_online_cpu(i) {
--		struct cfs_rq *cfs_rq = tg->cfs_rq[i];
-+		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, i);
- 		struct rq *rq = cfs_rq->rq;
- 
- 		guard(rq_lock_irq)(rq);
-@@ -9651,7 +9642,7 @@ static u64 throttled_time_self(struct task_group *tg)
- 	u64 total = 0;
- 
- 	for_each_possible_cpu(i) {
--		total += READ_ONCE(tg->cfs_rq[i]->throttled_clock_self_time);
-+		total += READ_ONCE(tg_cfs_rq(tg, i)->throttled_clock_self_time);
- 	}
- 
- 	return total;
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f9fb07d73a03..a5403f5900d9 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -327,7 +327,7 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 	 * to a tree or when we reach the top of the tree
- 	 */
- 	if (cfs_rq->tg->parent &&
--	    cfs_rq->tg->parent->cfs_rq[cpu]->on_list) {
-+	    tg_cfs_rq(cfs_rq->tg->parent, cpu)->on_list) {
- 		/*
- 		 * If parent is already on the list, we add the child
- 		 * just before. Thanks to circular linked property of
-@@ -335,7 +335,7 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 		 * of the list that starts by parent.
- 		 */
- 		list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
--			&(cfs_rq->tg->parent->cfs_rq[cpu]->leaf_cfs_rq_list));
-+			&(tg_cfs_rq(cfs_rq->tg->parent, cpu)->leaf_cfs_rq_list));
- 		/*
- 		 * The branch is now connected to its tree so we can
- 		 * reset tmp_alone_branch to the beginning of the
-@@ -4141,7 +4141,7 @@ static void __maybe_unused clear_tg_offline_cfs_rqs(struct rq *rq)
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(tg, &task_groups, list) {
--		struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
- 
- 		clear_tg_load_avg(cfs_rq);
- 	}
-@@ -5739,7 +5739,7 @@ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
- 
- static inline int lb_throttled_hierarchy(struct task_struct *p, int dst_cpu)
- {
--	return throttled_hierarchy(task_group(p)->cfs_rq[dst_cpu]);
-+	return throttled_hierarchy(tg_cfs_rq(task_group(p), dst_cpu));
- }
- 
- static inline bool task_is_throttled(struct task_struct *p)
-@@ -5885,7 +5885,7 @@ static void enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags);
- static int tg_unthrottle_up(struct task_group *tg, void *data)
- {
- 	struct rq *rq = data;
--	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+	struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
- 	struct task_struct *p, *tmp;
- 
- 	if (--cfs_rq->throttle_count)
-@@ -5956,7 +5956,7 @@ static void record_throttle_clock(struct cfs_rq *cfs_rq)
- static int tg_throttle_down(struct task_group *tg, void *data)
- {
- 	struct rq *rq = data;
--	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+	struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
- 
- 	if (cfs_rq->throttle_count++)
- 		return 0;
-@@ -6432,8 +6432,8 @@ static void sync_throttle(struct task_group *tg, int cpu)
- 	if (!tg->parent)
- 		return;
- 
--	cfs_rq = tg->cfs_rq[cpu];
--	pcfs_rq = tg->parent->cfs_rq[cpu];
-+	cfs_rq = tg_cfs_rq(tg, cpu);
-+	pcfs_rq = tg_cfs_rq(tg->parent, cpu);
- 
- 	cfs_rq->throttle_count = pcfs_rq->throttle_count;
- 	cfs_rq->throttled_clock_pelt = rq_clock_pelt(cpu_rq(cpu));
-@@ -6625,7 +6625,7 @@ static void __maybe_unused update_runtime_enabled(struct rq *rq)
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(tg, &task_groups, list) {
- 		struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
--		struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
- 
- 		raw_spin_lock(&cfs_b->lock);
- 		cfs_rq->runtime_enabled = cfs_b->quota != RUNTIME_INF;
-@@ -6654,7 +6654,7 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(tg, &task_groups, list) {
--		struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-+		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu_of(rq));
- 
- 		if (!cfs_rq->runtime_enabled)
- 			continue;
-@@ -9357,7 +9357,7 @@ static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_
- 	struct cfs_rq *dst_cfs_rq;
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	dst_cfs_rq = task_group(p)->cfs_rq[dest_cpu];
-+	dst_cfs_rq = tg_cfs_rq(task_group(p), dest_cpu);
- #else
- 	dst_cfs_rq = &cpu_rq(dest_cpu)->cfs;
- #endif
-@@ -13094,7 +13094,7 @@ static int task_is_throttled_fair(struct task_struct *p, int cpu)
- 	struct cfs_rq *cfs_rq;
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	cfs_rq = task_group(p)->cfs_rq[cpu];
-+	cfs_rq = tg_cfs_rq(task_group(p), cpu);
- #else
- 	cfs_rq = &cpu_rq(cpu)->cfs;
- #endif
-@@ -13354,42 +13354,31 @@ static void task_change_group_fair(struct task_struct *p)
- 
- void free_fair_sched_group(struct task_group *tg)
- {
--	int i;
--
--	for_each_possible_cpu(i) {
--		if (tg->cfs_rq && tg->cfs_rq[i]) {
--			struct cfs_rq_with_se *combined =
--				container_of(tg->cfs_rq[i], struct cfs_rq_with_se, cfs_rq);
--			kfree(combined);
--		}
--	}
--
--	kfree(tg->cfs_rq);
-+	free_percpu(tg->cfs_rq);
- }
- 
- int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
- {
--	struct cfs_rq_with_se *combined;
-+	struct cfs_rq_with_se __percpu *combined;
- 	struct sched_entity *se;
- 	struct cfs_rq *cfs_rq;
- 	int i;
- 
--	tg->cfs_rq = kcalloc(nr_cpu_ids, sizeof(cfs_rq), GFP_KERNEL);
--	if (!tg->cfs_rq)
-+	combined = alloc_percpu_gfp(struct cfs_rq_with_se, GFP_KERNEL);
-+	if (!combined)
- 		goto err;
- 
-+	tg->cfs_rq = &combined->cfs_rq;
- 	tg->shares = NICE_0_LOAD;
- 
- 	init_cfs_bandwidth(tg_cfs_bandwidth(tg), tg_cfs_bandwidth(parent));
- 
- 	for_each_possible_cpu(i) {
--		combined = kzalloc_node(sizeof(struct cfs_rq_with_se),
--				      GFP_KERNEL, cpu_to_node(i));
--		if (!combined)
-+		cfs_rq = tg_cfs_rq(tg, i);
-+		if (!cfs_rq)
- 			goto err;
- 
--		cfs_rq = &combined->cfs_rq;
--		se = &combined->se;
-+		se = tg_se(tg, i);
- 		init_cfs_rq(cfs_rq);
- 		init_tg_cfs_entry(tg, cfs_rq, se, i, tg_se(parent, i));
- 		init_entity_runnable_average(se);
-@@ -13426,7 +13415,7 @@ void unregister_fair_sched_group(struct task_group *tg)
- 	destroy_cfs_bandwidth(tg_cfs_bandwidth(tg));
- 
- 	for_each_possible_cpu(cpu) {
--		struct cfs_rq *cfs_rq = tg->cfs_rq[cpu];
-+		struct cfs_rq *cfs_rq = tg_cfs_rq(tg, cpu);
- 		struct sched_entity *se = tg_se(tg, cpu);
- 		struct rq *rq = cpu_rq(cpu);
- 
-@@ -13463,8 +13452,6 @@ void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
- 	cfs_rq->rq = rq;
- 	init_cfs_rq_runtime(cfs_rq);
- 
--	tg->cfs_rq[cpu] = cfs_rq;
--
- 	/* se could be NULL for root_task_group */
- 	if (!se)
- 		return;
-@@ -13557,7 +13544,7 @@ int sched_group_set_idle(struct task_group *tg, long idle)
- 	for_each_possible_cpu(i) {
- 		struct rq *rq = cpu_rq(i);
- 		struct sched_entity *se = tg_se(tg, i);
--		struct cfs_rq *grp_cfs_rq = tg->cfs_rq[i];
-+		struct cfs_rq *grp_cfs_rq = tg_cfs_rq(tg, i);
- 		bool was_idle = cfs_rq_is_idle(grp_cfs_rq);
- 		long idle_task_delta;
- 		struct rq_flags rf;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 1133910a13c2..132e6098c058 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -477,7 +477,7 @@ struct task_group {
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	/* runqueue "owned" by this group on each CPU */
--	struct cfs_rq		**cfs_rq;
-+	struct cfs_rq __percpu	*cfs_rq;
- 	unsigned long		shares;
- 	/*
- 	 * load_avg can be heavily contended at clock tick time, so put
-@@ -1607,6 +1607,11 @@ static inline struct task_struct *task_of(struct sched_entity *se)
- 	WARN_ON_ONCE(!entity_is_task(se));
- 	return container_of(se, struct task_struct, se);
- }
-+/* Access a specific CPU's cfs_rq from a task group */
-+static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, int cpu)
-+{
-+	return per_cpu_ptr(tg->cfs_rq, cpu);
-+}
- 
- static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
- {
-@@ -1614,7 +1619,7 @@ static inline struct sched_entity *tg_se(struct task_group *tg, int cpu)
- 		return NULL;
- 
- 	struct cfs_rq_with_se *combined =
--		container_of(tg->cfs_rq[cpu], struct cfs_rq_with_se, cfs_rq);
-+		container_of(tg_cfs_rq(tg, cpu), struct cfs_rq_with_se, cfs_rq);
- 	return &combined->se;
- }
- 
-@@ -2199,8 +2204,8 @@ static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
- #endif
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	set_task_rq_fair(&p->se, p->se.cfs_rq, tg->cfs_rq[cpu]);
--	p->se.cfs_rq = tg->cfs_rq[cpu];
-+	set_task_rq_fair(&p->se, p->se.cfs_rq, tg_cfs_rq(tg, cpu));
-+	p->se.cfs_rq = tg_cfs_rq(tg, cpu);
- 	p->se.parent = tg_se(tg, cpu);
- 	p->se.depth = p->se.parent ? p->se.parent->depth + 1 : 0;
- #endif
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+Thanks and Regards
+gautham.
+
 
 
