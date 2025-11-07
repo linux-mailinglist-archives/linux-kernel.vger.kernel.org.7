@@ -1,195 +1,596 @@
-Return-Path: <linux-kernel+bounces-890114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7F9C3F3EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:49:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4BD2C3F437
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:51:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AF38634D230
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3526B3B1ECE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F612D8795;
-	Fri,  7 Nov 2025 09:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3DD3043D7;
+	Fri,  7 Nov 2025 09:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="fw1/iwM8"
-Received: from pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.68.102])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GIsqtfzt";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fk4O2mOO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B26A21767A;
-	Fri,  7 Nov 2025 09:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.68.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18E93043D6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 09:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762508989; cv=none; b=OcHYyLxXgP4PWTKcGqf6MmDvUJtidIiI/TQnV5OO3TzkDUPb8tLmssSz/JMKMsCtsMZ/x1MrHxsof+gAK4xf8IH4NxPpaCAuazBvd4kG5Xi15OJ2cmBoVPilmsBIvwFj7xEJs/dgMtljCTGW+Nxu4GAYWM0lIKkN5VuXmtHVolI=
+	t=1762509016; cv=none; b=JpAA6vgie934xO+CiLrsNRGGqN56+8dFj8dF2IlEhaGUF1O21Kbm/5nJNGQMfZBRM5VMnbojwhvpkj/SHEOXTrdl1gpPhrE3tLGzx+gwNMx0kucD9tUzC/WdMs3CCKjSjfRo0ATByHGXX/WPU51b5JRXh7rkpPqyGHCpam5//6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762508989; c=relaxed/simple;
-	bh=XkaQOlFtCI/XMXzkUTOuiDcM6Wrh7/NO7yO+DoduRBA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDnLiQxy4Va7Ne53F763yfNtsonGtJyxM3RnjCQLXQs12eeOv/uMxSF21xjKv1m5AzICDsqpiQo/eAFYheu5PjFKDBvwAndykXQOaWnUwzEOAH6wK4yQ4nF/qtXKHfeKb/c0buqJZ88Olh3cL/CTEfJg7RCemAX28zGdgckDaj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=fw1/iwM8; arc=none smtp.client-ip=44.246.68.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1762509016; c=relaxed/simple;
+	bh=MsAbpGG/bpYt/SELt7d1HSQlPaN/m6PVcKRtnM/GuYM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VLhEhA2kpHgtq28yf+Em5BofVSkmdhXKX194jfLEz/6CI8C06upLakDeuixVfW6B7VI7iCLnGVv8B7HnLsJ6agTc2stdTFKYu64WDQ68EaFIboXWPDXA9pPlqf8Z56X0UC6h7LTcIVJINoUFEfKPgw+c2DycIvPdGc/27PLl5VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GIsqtfzt; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fk4O2mOO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A757eq52273380
+	for <linux-kernel@vger.kernel.org>; Fri, 7 Nov 2025 09:50:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fh7LUQ/4CZuggKurzy9E5IZJRo0CeGSuJz41YI7fIFM=; b=GIsqtfztd5N5HNnV
+	r7Oe/l+31CjItlqpiSF6JLe76IGXTglWjzGxUgI5JKfSNfmKAuA9beG2iEcNGws9
+	3FULvRZ/FIuV0ngkhMstzYLp+IQau5ZMm17A7gJsO2hVeLxS7UMqIDAAB5oUxBEd
+	Qsql04czOVpCZcCqe4W0gZ6E41SBBAHEtywrB8yAVtlGj3DTmFxc1H7Gn53DxudL
+	wISJKo5iqitpfhm79OzvzXYTI1iTebHP/dDTFXaITR3co5ct3kP0xVLiNZjJySP3
+	rfSEjyfVEC1yZD/3D6CqmM0YSHf9gfdZ0QQt5Lix6nemAYPBzlE42SZkS/94FHbe
+	lYKY4A==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a9abmrsvn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:50:12 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-294a938fa37so13555795ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 01:50:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1762508987; x=1794044987;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tSmOMSfMDPnh2RnGvEKnRHhJf3u17n26UTMXVggCb24=;
-  b=fw1/iwM8hCUYy3+V3HKNxWtT79zPK6nNTrENA07kbg5M7vdadUzCu9Hm
-   cOfKRbUjNOendALF7/xRWKvBSbPaosYR1YW/epgK5jz8clsyCzue2WJCf
-   2EBaOC7C3DNLQ9H3n5prRPOn3rZBh8uedspWriFj7jZokMzTmN0/ggG6W
-   7vfMGblCzbraobGwVx1cIjNbTKmW1WUF6HFCwT+vjxbUNTH4iJ/qeYbsY
-   Z3VMXhx1/c7aT1IzbJ6cFMHfNmyNRbiZCr0F/kiSMhKUwlj2BZ380SUNx
-   brkXSvBaEd1r1cbADsEPhuBDYcVvzeyeMgEPflSMiJJw/gQ2UivAQAgOf
-   Q==;
-X-CSE-ConnectionGUID: Nq04Ner7T1iISROkPCGKRg==
-X-CSE-MsgGUID: QoTYeIQ2T72oQgSQfm8RBQ==
-X-IronPort-AV: E=Sophos;i="6.19,286,1754956800"; 
-   d="scan'208";a="6610224"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 09:49:43 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.234:3609]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.6.26:2525] with esmtp (Farcaster)
- id c7de7f36-394a-411d-a4d8-9f571b0cb2a5; Fri, 7 Nov 2025 09:49:43 +0000 (UTC)
-X-Farcaster-Flow-ID: c7de7f36-394a-411d-a4d8-9f571b0cb2a5
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 7 Nov 2025 09:49:43 +0000
-Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
- (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
- 09:49:41 +0000
-Date: Fri, 7 Nov 2025 09:49:38 +0000
-From: Jakub Acs <acsjakub@amazon.de>
-To: Vlastimil Babka <vbabka@suse.cz>
-CC: <linux-mm@kvack.org>, Hugh Dickins <hughd@google.com>, Jann Horn
-	<jannh@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>, <xu.xin16@zte.com.cn>,
-	<chengming.zhou@linux.dev>, <peterx@redhat.com>, <axelrasmussen@google.com>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] mm/ksm: fix flag-dropping behavior in ksm_madvise
-Message-ID: <20251107094938.GA71570@dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com>
-References: <20251001090353.57523-1-acsjakub@amazon.de>
- <20251001090353.57523-2-acsjakub@amazon.de>
- <13c7242e-3a40-469b-9e99-8a65a21449bb@suse.cz>
+        d=oss.qualcomm.com; s=google; t=1762509012; x=1763113812; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fh7LUQ/4CZuggKurzy9E5IZJRo0CeGSuJz41YI7fIFM=;
+        b=fk4O2mOOiX9obesSL51io+dcM8cuC7QRlvr7tQS2LpQd4mCJK35LlBImuUfVJQD/KN
+         C/nGqkdtlNgoo0ajhO9DTFHiTrk40T9bwf79K9bKusDcIyhy/4SNM1xhbWUlsQFYDJhB
+         t1UCuSKa1gxf9qciCY0jZkT+M/s4wsPO5kPNtix7L4PAK617EBelk5DhYLvgAuxt3QAp
+         5dhcRLfKSmOr0MScUCrMqDoOcGUfkXsEJI81hJlG5l5lhwiHkzsjPrggGAqFpfsASCDR
+         M1WqFqeFa76bvgwwZlsDRtXH9HDywngXR6WVgnovUxKoQechT8B3HBZINhoGqA/Txr1Q
+         atYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762509012; x=1763113812;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fh7LUQ/4CZuggKurzy9E5IZJRo0CeGSuJz41YI7fIFM=;
+        b=PvdsNU9TT+wNyw6I06odpd9iDHkcqqHdVzI7fXx7JwwIwgEUhustRYhtxSUyvpVBll
+         +VkWuN32HKdZWUdYWwM5Qb+0ZNUZ7NHBNj+CszYNLA8DVewysGnNiPxibWBSAme3dh0o
+         HyS6Dn2oFmBninCs2uY6xBu1NVnZf8oe19SbMyUr0JwlQiToukV07MjFhAB8vox/yWvR
+         BGd3u1T7Td+sCTBB3lMHTPTqpmDYRzOTBsOFmSogUHowAUs2QV5kr92gKS8YbNJiCdpR
+         IlCcKiXRbGkGyjqpZlk/EJhjGXsXkNtn2Yp2bvrpW8eOYl9jwR0Axt7KutDo1rGVeGje
+         ovpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBdwhBHs52EaNXKnLjEY/Ns9xfaVY8B7s83ybTd7I295JiO9G3u5HCyFSiksrW1DqMRtEpr+PqRTWwSgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXQjSoPtf+8yS4YPTJr8y2kSmuWZA9yf7Wn+PMwdjHRVHkvv6h
+	mv+Xv9Cc/LBcdyZm8WGNYk021WmHHIqv3wt64PSDh+wQC8UMV8h4zO+LbCJDyeKpMHPiRrlJIrB
+	RSNAcq9aZgtLyGZwjEW11R0HaUIedFN74lByukqvMDgc3Gck6+HRNG7RHrcZKumAwNyE=
+X-Gm-Gg: ASbGnctM7i3tQdDQscnmq8lRXt0avn8FCRl8Z0st3u2hCEWmFwRzqB51hh3uV/NenvO
+	4/8W+2BfNXCmH5AKNsUge2gTgdCTN+5KE9ca7Mbo4VZMPuEXTXiq6ZbUjO6QEHXNQ/yhO55cMfs
+	uxoXCvppZ8128iMjUs67MdEldKccT5wwqDZXg2oehTQwxCbXkIqyZgTs7rowz5FDAIafROTe0uo
+	5MAusH8fR3uSWXvvPzbipMjJiUG7UK7DpmMQPgwplP2Xv+i/JbTgTT4VnZIzKTn60C+KgE8ouIH
+	SfhQolfOArolFgzlE2J/ISt4sWOef2kXARXUMwH66Qrfq5fw2J33xphHDl4aah+POcfFgOFF3MV
+	9qn88s0rF/qf8NT1B3tC8d/E0i6MtlMh91g==
+X-Received: by 2002:a17:903:1251:b0:290:b14c:4f37 with SMTP id d9443c01a7336-297c0442f57mr35898465ad.30.1762509011462;
+        Fri, 07 Nov 2025 01:50:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHWL2YRObkGsz9d9gKyLVIvCC6/dTo1ezYo0fN60JUlxCiQVFBGvd2SgHIGhEqJcuTWaQ8qkw==
+X-Received: by 2002:a17:903:1251:b0:290:b14c:4f37 with SMTP id d9443c01a7336-297c0442f57mr35898055ad.30.1762509010824;
+        Fri, 07 Nov 2025 01:50:10 -0800 (PST)
+Received: from hu-vgarodia-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5f011sm54975895ad.25.2025.11.07.01.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 01:50:10 -0800 (PST)
+From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+Date: Fri, 07 Nov 2025 15:19:38 +0530
+Subject: [PATCH v3 3/6] media: iris: Introduce buffer size calculations for
+ vpu4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <13c7242e-3a40-469b-9e99-8a65a21449bb@suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-ClientProxiedBy: EX19D041UWB004.ant.amazon.com (10.13.139.143) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251107-knp_video-v3-3-50c86cbb0eb8@oss.qualcomm.com>
+References: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
+In-Reply-To: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
+To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vishnu Reddy <busanna.reddy@oss.qualcomm.com>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762508991; l=19337;
+ i=vikash.garodia@oss.qualcomm.com; s=20241104; h=from:subject:message-id;
+ bh=MsAbpGG/bpYt/SELt7d1HSQlPaN/m6PVcKRtnM/GuYM=;
+ b=Pp7JS5n+LXSClg40Lk01ybTl70B4qbG4W9/63Lo2Y9t31SvogEac9EHuZIiV3CQlSDxCptfGD
+ VOq0nsucFhWDtsAUsYbb0U4ENoxH0bSQt8Nr2ICLy+tJjwLUazix0Cc
+X-Developer-Key: i=vikash.garodia@oss.qualcomm.com; a=ed25519;
+ pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
+X-Proofpoint-GUID: q2sjek-ePVqoW7Jy-gBw0n7N5VEZwAAu
+X-Proofpoint-ORIG-GUID: q2sjek-ePVqoW7Jy-gBw0n7N5VEZwAAu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDA3OCBTYWx0ZWRfXwZxN9AwsG136
+ ImLGBT0mpnoVk/DlZmcSWE8yD24KLAkAUYNi1gIChfpGPzfN05BP5YgvWP9E2MB5+SOb9qIZ9Nt
+ F2sZyPx7MJAuqVuAJlnfJmFeh2vczaTVQF0bEnQq2qRfAgU9PIl6o0xuQhEjJqo6x9rGVSzWywc
+ 1w2DmGrysmKEIjyROO1ZLdnsCmqwwF6sl4cwEhSfiQl/x0Rf6OIX6xOQyKVFQtqg/SsNEdKibX5
+ JVOGqX2puA9HbUIB71wOwtS4lDD2UroP/UiEHj2S5LMCXcZWo467s5KblAvm41APuQkFmGZ8dNv
+ Oewd4+ahj3Dwc5URfDSvcLAXTT39Iv2aWIulfv9XjoWB7MVPQRpsUqIMdIQgaVR56hlHxbFskln
+ THL9ZBzPnLSBf8xy6YkOvfZb41SgsA==
+X-Authority-Analysis: v=2.4 cv=HPjO14tv c=1 sm=1 tr=0 ts=690dc0d4 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=cGz8g7xL8HyzlM8u-pkA:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070078
 
-On Thu, Nov 06, 2025 at 11:39:28AM +0100, Vlastimil Babka wrote:
-> On 10/1/25 11:03, Jakub Acs wrote:
-> > syzkaller discovered the following crash: (kernel BUG)
-> > 
-> > [   44.607039] ------------[ cut here ]------------
-> > [   44.607422] kernel BUG at mm/userfaultfd.c:2067!
-> > [   44.608148] Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-> > [   44.608814] CPU: 1 UID: 0 PID: 2475 Comm: reproducer Not tainted 6.16.0-rc6 #1 PREEMPT(none)
-> > [   44.609635] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> > [   44.610695] RIP: 0010:userfaultfd_release_all+0x3a8/0x460
-> > 
-> > <snip other registers, drop unreliable trace>
-> > 
-> > [   44.617726] Call Trace:
-> > [   44.617926]  <TASK>
-> > [   44.619284]  userfaultfd_release+0xef/0x1b0
-> > [   44.620976]  __fput+0x3f9/0xb60
-> > [   44.621240]  fput_close_sync+0x110/0x210
-> > [   44.622222]  __x64_sys_close+0x8f/0x120
-> > [   44.622530]  do_syscall_64+0x5b/0x2f0
-> > [   44.622840]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [   44.623244] RIP: 0033:0x7f365bb3f227
-> > 
-> > Kernel panics because it detects UFFD inconsistency during
-> > userfaultfd_release_all(). Specifically, a VMA which has a valid pointer
-> > to vma->vm_userfaultfd_ctx, but no UFFD flags in vma->vm_flags.
-> > 
-> > The inconsistency is caused in ksm_madvise(): when user calls madvise()
-> > with MADV_UNMEARGEABLE on a VMA that is registered for UFFD in MINOR
-> > mode, it accidentally clears all flags stored in the upper 32 bits of
-> > vma->vm_flags.
-> > 
-> > Assuming x86_64 kernel build, unsigned long is 64-bit and unsigned int
-> > and int are 32-bit wide. This setup causes the following mishap during
-> > the &= ~VM_MERGEABLE assignment.
-> > 
-> > VM_MERGEABLE is a 32-bit constant of type unsigned int, 0x8000'0000.
-> > After ~ is applied, it becomes 0x7fff'ffff unsigned int, which is then
-> > promoted to unsigned long before the & operation. This promotion fills
-> > upper 32 bits with leading 0s, as we're doing unsigned conversion (and
-> > even for a signed conversion, this wouldn't help as the leading bit is
-> > 0). & operation thus ends up AND-ing vm_flags with 0x0000'0000'7fff'ffff
-> > instead of intended 0xffff'ffff'7fff'ffff and hence accidentally clears
-> > the upper 32-bits of its value.
-> > 
-> > Fix it by changing `VM_MERGEABLE` constant to unsigned long, using the
-> > BIT() macro.
-> > 
-> > Note: other VM_* flags are not affected:
-> > This only happens to the VM_MERGEABLE flag, as the other VM_* flags are
-> > all constants of type int and after ~ operation, they end up with
-> > leading 1 and are thus converted to unsigned long with leading 1s.
-> > 
-> > Note 2:
-> > After commit 31defc3b01d9 ("userfaultfd: remove (VM_)BUG_ON()s"), this is
-> > no longer a kernel BUG, but a WARNING at the same place:
-> > 
-> > [   45.595973] WARNING: CPU: 1 PID: 2474 at mm/userfaultfd.c:2067
-> > 
-> > but the root-cause (flag-drop) remains the same.
-> > 
-> > Fixes: 7677f7fd8be76 ("userfaultfd: add minor fault registration mode")
-> 
-> Late to the party, but it seems to me the correct Fixes: should be
-> f8af4da3b4c1 ("ksm: the mm interface to ksm")
-> which introduced the flag and the buggy clearing code, no?
-> 
-> Commit 7677f7fd8be76 is just one that notices it, right? But there are other
-> flags in >32 bit area, including pkeys etc. Sounds rather dangerous if they
-> can be cleared using a madvise.
-> 
-> So we can't amend the Fixes: now but maybe could advise stable to backport
-> for even older versions than based on 7677f7fd8be76 ?
-> 
+Introduces vp4 buffer size calculation for both encoder and decoder.
+Reuse the buffer size calculation which are common, while adding the
+vpu4 ones separately.
 
-Good point. It was a bit tricky to determine the correct "fixes" tag, as
-there were more candidates:
-- the commit that initially introduced VM_MERGEABLE as a constant with
-  different inferred type to other vm_flags constants
-- the commit that first started using upper 32 bits of vm_flags and did
-  not make sure the constants are defined safely
-- f8af4da3b4c1 indeed, as the one that makes the drop actually possible
-- 7677f7fd8be76 that shows us a path where the drop manifests
+Co-developed-by: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
+Signed-off-by: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
+Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+---
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 342 +++++++++++++++++++++
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.h |  24 ++
+ 2 files changed, 366 insertions(+)
 
-Looking back, I agree f8af4da3b4c1 is the better option, but as you
-said, that won't be changed now.
-
-Nevertheless, I'll send the backports after a round of kselftests,
-thanks for pointing this out.
-
-Have a good day,
-Jakub
+diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..30d037e38cf2c6dc711c2a4a6c88c5156a58607b 100644
+--- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
++++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+@@ -1408,6 +1408,304 @@ static u32 iris_vpu_enc_vpss_size(struct iris_inst *inst)
+ 	return hfi_buffer_vpss_enc(width, height, ds_enable, 0, 0);
+ }
  
++static inline u32 size_dpb_opb(u32 height, u32 lcu_size)
++{
++	u32 max_tile_height = ((height + lcu_size - 1) / lcu_size) * lcu_size + 8;
++	u32 dpb_opb = 3 * ((max_tile_height >> 3) * DMA_ALIGNMENT);
++	u32 num_luma_chrome_plane = 2;
++
++	return ALIGN(dpb_opb, DMA_ALIGNMENT) * num_luma_chrome_plane;
++}
++
++static u32 hfi_vpu4x_vp9d_lb_size(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
++{
++	u32 vp9_top_lb, vp9_fe_left_lb, vp9_se_left_lb, dpb_opb, vp9d_qp, num_lcu_per_pipe;
++	u32 lcu_size = 64;
++
++	vp9_top_lb = ALIGN(size_vp9d_lb_vsp_top(frame_width, frame_height), DMA_ALIGNMENT);
++	vp9_top_lb += ALIGN(size_vpxd_lb_se_top_ctrl(frame_width, frame_height), DMA_ALIGNMENT);
++	vp9_top_lb += max3(DIV_ROUND_UP(frame_width, BUFFER_ALIGNMENT_16_BYTES) *
++			   MAX_PE_NBR_DATA_LCU16_LINE_BUFFER_SIZE,
++			   DIV_ROUND_UP(frame_width, BUFFER_ALIGNMENT_32_BYTES) *
++			   MAX_PE_NBR_DATA_LCU32_LINE_BUFFER_SIZE,
++			   DIV_ROUND_UP(frame_width, BUFFER_ALIGNMENT_64_BYTES) *
++			   MAX_PE_NBR_DATA_LCU64_LINE_BUFFER_SIZE);
++	vp9_top_lb = ALIGN(vp9_top_lb, DMA_ALIGNMENT);
++	vp9_top_lb += ALIGN((DMA_ALIGNMENT * DIV_ROUND_UP(frame_width, lcu_size)),
++			    DMA_ALIGNMENT) * FE_TOP_CTRL_LINE_NUMBERS;
++	vp9_top_lb += ALIGN(DMA_ALIGNMENT * 8 * DIV_ROUND_UP(frame_width, lcu_size),
++			    DMA_ALIGNMENT) * (FE_TOP_DATA_LUMA_LINE_NUMBERS +
++			    FE_TOP_DATA_CHROMA_LINE_NUMBERS);
++
++	num_lcu_per_pipe = (DIV_ROUND_UP(frame_height, lcu_size) / num_vpp_pipes) +
++			      (DIV_ROUND_UP(frame_height, lcu_size) % num_vpp_pipes);
++	vp9_fe_left_lb = ALIGN((DMA_ALIGNMENT * num_lcu_per_pipe), DMA_ALIGNMENT) *
++				FE_LFT_CTRL_LINE_NUMBERS;
++	vp9_fe_left_lb += ((ALIGN((DMA_ALIGNMENT * 8 * num_lcu_per_pipe), DMA_ALIGNMENT) *
++				FE_LFT_DB_DATA_LINE_NUMBERS) +
++				ALIGN((DMA_ALIGNMENT * 3 * num_lcu_per_pipe), DMA_ALIGNMENT) +
++				ALIGN((DMA_ALIGNMENT * 4 * num_lcu_per_pipe), DMA_ALIGNMENT) +
++				(ALIGN((DMA_ALIGNMENT * 24 * num_lcu_per_pipe), DMA_ALIGNMENT) *
++				FE_LFT_LR_DATA_LINE_NUMBERS));
++	vp9_fe_left_lb = vp9_fe_left_lb * num_vpp_pipes;
++
++	vp9_se_left_lb = ALIGN(size_vpxd_lb_se_left_ctrl(frame_width, frame_height),
++			       DMA_ALIGNMENT);
++	dpb_opb = size_dpb_opb(frame_height, lcu_size);
++	vp9d_qp = ALIGN(size_vp9d_qp(frame_width, frame_height), DMA_ALIGNMENT);
++
++	return vp9_top_lb + vp9_fe_left_lb + (vp9_se_left_lb * num_vpp_pipes) +
++			(dpb_opb * num_vpp_pipes) + vp9d_qp;
++}
++
++static u32 hfi_vpu4x_buffer_line_vp9d(u32 frame_width, u32 frame_height, u32 _yuv_bufcount_min,
++				      bool is_opb, u32 num_vpp_pipes)
++{
++	u32 lb_size = hfi_vpu4x_vp9d_lb_size(frame_width, frame_height, num_vpp_pipes);
++	u32 dpb_obp_size = 0, lcu_size = 64;
++
++	if (is_opb)
++		dpb_obp_size = size_dpb_opb(frame_height, lcu_size) * num_vpp_pipes;
++
++	return lb_size + dpb_obp_size;
++}
++
++static u32 iris_vpu4x_dec_line_size(struct iris_inst *inst)
++{
++	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
++	u32 out_min_count = inst->buffers[BUF_OUTPUT].min_count;
++	struct v4l2_format *f = inst->fmt_src;
++	u32 height = f->fmt.pix_mp.height;
++	u32 width = f->fmt.pix_mp.width;
++	bool is_opb = false;
++
++	if (iris_split_mode_enabled(inst))
++		is_opb = true;
++
++	if (inst->codec == V4L2_PIX_FMT_H264)
++		return hfi_buffer_line_h264d(width, height, is_opb, num_vpp_pipes);
++	else if (inst->codec == V4L2_PIX_FMT_HEVC)
++		return hfi_buffer_line_h265d(width, height, is_opb, num_vpp_pipes);
++	else if (inst->codec == V4L2_PIX_FMT_VP9)
++		return hfi_vpu4x_buffer_line_vp9d(width, height, out_min_count, is_opb,
++						  num_vpp_pipes);
++
++	return 0;
++}
++
++static u32 hfi_vpu4x_buffer_persist_h265d(u32 rpu_enabled)
++{
++	return ALIGN((SIZE_SLIST_BUF_H265 * NUM_SLIST_BUF_H265 + H265_NUM_FRM_INFO *
++		H265_DISPLAY_BUF_SIZE + (H265_NUM_TILE * sizeof(u32)) + (NUM_HW_PIC_BUF *
++		(SIZE_SEI_USERDATA + SIZE_H265D_ARP + SIZE_THREE_DIMENSION_USERDATA)) +
++		rpu_enabled * NUM_HW_PIC_BUF * SIZE_DOLBY_RPU_METADATA), DMA_ALIGNMENT);
++}
++
++static u32 hfi_vpu4x_buffer_persist_vp9d(void)
++{
++	return ALIGN(VP9_NUM_PROBABILITY_TABLE_BUF * VP9_PROB_TABLE_SIZE, DMA_ALIGNMENT) +
++		(ALIGN(hfi_iris3_vp9d_comv_size(), DMA_ALIGNMENT) * 2) +
++		ALIGN(MAX_SUPERFRAME_HEADER_LEN, DMA_ALIGNMENT) +
++		ALIGN(VP9_UDC_HEADER_BUF_SIZE, DMA_ALIGNMENT) +
++		ALIGN(VP9_NUM_FRAME_INFO_BUF * CCE_TILE_OFFSET_SIZE, DMA_ALIGNMENT) +
++		ALIGN(VP9_NUM_FRAME_INFO_BUF * VP9_FRAME_INFO_BUF_SIZE_VPU4X, DMA_ALIGNMENT) +
++		HDR10_HIST_EXTRADATA_SIZE;
++}
++
++static u32 iris_vpu4x_dec_persist_size(struct iris_inst *inst)
++{
++	if (inst->codec == V4L2_PIX_FMT_H264)
++		return hfi_buffer_persist_h264d();
++	else if (inst->codec == V4L2_PIX_FMT_HEVC)
++		return hfi_vpu4x_buffer_persist_h265d(0);
++	else if (inst->codec == V4L2_PIX_FMT_VP9)
++		return hfi_vpu4x_buffer_persist_vp9d();
++
++	return 0;
++}
++
++static u32 size_se_lb(u32 standard, u32 num_vpp_pipes_enc,
++		      u32 frame_width_coded, u32 frame_height_coded)
++{
++	u32 se_tlb_size = ALIGN(frame_width_coded, DMA_ALIGNMENT);
++	u32 se_llb_size = (standard == HFI_CODEC_ENCODE_HEVC) ?
++			   ((frame_height_coded + BUFFER_ALIGNMENT_32_BYTES - 1) /
++			    BUFFER_ALIGNMENT_32_BYTES) * LOG2_16 * LLB_UNIT_SIZE :
++			   ((frame_height_coded + BUFFER_ALIGNMENT_16_BYTES - 1) /
++			    BUFFER_ALIGNMENT_16_BYTES) * LOG2_32 * LLB_UNIT_SIZE;
++
++	se_llb_size = ALIGN(se_llb_size, BUFFER_ALIGNMENT_32_BYTES);
++
++	if (num_vpp_pipes_enc > 1)
++		se_llb_size = ALIGN(se_llb_size + BUFFER_ALIGNMENT_512_BYTES,
++				    DMA_ALIGNMENT) * num_vpp_pipes_enc;
++
++	return ALIGN(se_tlb_size + se_llb_size, DMA_ALIGNMENT);
++}
++
++static u32 size_te_lb(bool is_ten_bit, u32 num_vpp_pipes_enc, u32 width_in_lcus,
++		      u32 frame_height_coded, u32 frame_width_coded)
++{
++	u32 num_pixel_10_bit = 3, num_pixel_8_bit = 2, num_pixel_te_llb = 3;
++	u32 te_llb_col_rc_size = ALIGN(32 * width_in_lcus / num_vpp_pipes_enc,
++				       DMA_ALIGNMENT) * num_vpp_pipes_enc;
++	u32 te_tlb_recon_data_size = ALIGN((is_ten_bit ? num_pixel_10_bit : num_pixel_8_bit) *
++					frame_width_coded, DMA_ALIGNMENT);
++	u32 te_llb_recon_data_size = ((1 + is_ten_bit) * num_pixel_te_llb * frame_height_coded +
++				      num_vpp_pipes_enc - 1) / num_vpp_pipes_enc;
++	te_llb_recon_data_size = ALIGN(te_llb_recon_data_size, DMA_ALIGNMENT) * num_vpp_pipes_enc;
++
++	return ALIGN(te_llb_recon_data_size + te_llb_col_rc_size + te_tlb_recon_data_size,
++		     DMA_ALIGNMENT);
++}
++
++static inline u32 calc_fe_tlb_size(u32 size_per_lcu, bool is_ten_bit)
++{
++	u32 num_pixels_fe_tlb_10_bit = 128, num_pixels_fe_tlb_8_bit = 64;
++
++	return is_ten_bit ? (num_pixels_fe_tlb_10_bit * (size_per_lcu + 1)) :
++			(size_per_lcu * num_pixels_fe_tlb_8_bit);
++}
++
++static u32 size_fe_lb(bool is_ten_bit, u32 standard, u32 num_vpp_pipes_enc,
++		      u32 frame_height_coded, u32 frame_width_coded)
++{
++	u32 log2_lcu_size, num_cu_in_height_pipe, num_cu_in_width,
++	    fb_llb_db_ctrl_size, fb_llb_db_luma_size, fb_llb_db_chroma_size,
++	    fb_tlb_db_ctrl_size, fb_tlb_db_luma_size, fb_tlb_db_chroma_size,
++	    fb_llb_sao_ctrl_size, fb_llb_sao_luma_size, fb_llb_sao_chroma_size,
++	    fb_tlb_sao_ctrl_size, fb_tlb_sao_luma_size, fb_tlb_sao_chroma_size,
++	    fb_lb_top_sdc_size, fb_lb_se_ctrl_size, fe_tlb_size, size_per_lcu;
++
++	log2_lcu_size = (standard == HFI_CODEC_ENCODE_HEVC) ? 5 : 4;
++	num_cu_in_height_pipe = ((frame_height_coded >> log2_lcu_size) + num_vpp_pipes_enc - 1) /
++				 num_vpp_pipes_enc;
++	num_cu_in_width = frame_width_coded >> log2_lcu_size;
++
++	size_per_lcu = 2;
++	fe_tlb_size = calc_fe_tlb_size(size_per_lcu, 1);
++	fb_llb_db_ctrl_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_height_pipe;
++	fb_llb_db_ctrl_size = ALIGN(fb_llb_db_ctrl_size, DMA_ALIGNMENT) * num_vpp_pipes_enc;
++
++	size_per_lcu = (1 << (log2_lcu_size - 3));
++	fe_tlb_size = calc_fe_tlb_size(size_per_lcu, is_ten_bit);
++	fb_llb_db_luma_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_height_pipe;
++	fb_llb_db_luma_size = ALIGN(fb_llb_db_luma_size, DMA_ALIGNMENT) * num_vpp_pipes_enc;
++
++	size_per_lcu = ((1 << (log2_lcu_size - 4)) * 2);
++	fe_tlb_size = calc_fe_tlb_size(size_per_lcu, is_ten_bit);
++	fb_llb_db_chroma_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_height_pipe;
++	fb_llb_db_chroma_size = ALIGN(fb_llb_db_chroma_size, DMA_ALIGNMENT) * num_vpp_pipes_enc;
++
++	size_per_lcu = 1;
++	fe_tlb_size = calc_fe_tlb_size(size_per_lcu, 1);
++	fb_tlb_db_ctrl_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_width;
++	fb_llb_sao_ctrl_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_height_pipe;
++	fb_llb_sao_ctrl_size = fb_llb_sao_ctrl_size * num_vpp_pipes_enc;
++	fb_tlb_sao_ctrl_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_width;
++
++	size_per_lcu = ((1 << (log2_lcu_size - 3)) + 1);
++	fe_tlb_size = calc_fe_tlb_size(size_per_lcu, is_ten_bit);
++	fb_tlb_db_luma_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_width;
++
++	size_per_lcu = (2 * ((1 << (log2_lcu_size - 4)) + 1));
++	fe_tlb_size = calc_fe_tlb_size(size_per_lcu, is_ten_bit);
++	fb_tlb_db_chroma_size = ALIGN(fe_tlb_size, DMA_ALIGNMENT) * num_cu_in_width;
++
++	fb_llb_sao_luma_size = BUFFER_ALIGNMENT_256_BYTES * num_vpp_pipes_enc;
++	fb_llb_sao_chroma_size = BUFFER_ALIGNMENT_256_BYTES * num_vpp_pipes_enc;
++	fb_tlb_sao_luma_size = BUFFER_ALIGNMENT_256_BYTES;
++	fb_tlb_sao_chroma_size = BUFFER_ALIGNMENT_256_BYTES;
++	fb_lb_top_sdc_size = ALIGN((FE_SDC_DATA_PER_BLOCK * (frame_width_coded >> 5)),
++				   DMA_ALIGNMENT);
++	fb_lb_se_ctrl_size = ALIGN((SE_CTRL_DATA_PER_BLOCK * (frame_width_coded >> 5)),
++				   DMA_ALIGNMENT);
++
++	return fb_llb_db_ctrl_size + fb_llb_db_luma_size + fb_llb_db_chroma_size +
++		fb_tlb_db_ctrl_size + fb_tlb_db_luma_size + fb_tlb_db_chroma_size +
++		fb_llb_sao_ctrl_size + fb_llb_sao_luma_size + fb_llb_sao_chroma_size +
++		fb_tlb_sao_ctrl_size + fb_tlb_sao_luma_size + fb_tlb_sao_chroma_size +
++		fb_lb_top_sdc_size + fb_lb_se_ctrl_size;
++}
++
++static u32 size_md_lb(u32 standard, u32 frame_width_coded,
++		      u32 frame_height_coded, u32 num_vpp_pipes_enc)
++{
++	u32 md_tlb_size = ALIGN(frame_width_coded, DMA_ALIGNMENT);
++	u32 md_llb_size = (standard == HFI_CODEC_ENCODE_HEVC) ?
++			   ((frame_height_coded + BUFFER_ALIGNMENT_32_BYTES - 1) /
++			    BUFFER_ALIGNMENT_32_BYTES) * LOG2_16 * LLB_UNIT_SIZE :
++			   ((frame_height_coded + BUFFER_ALIGNMENT_16_BYTES - 1) /
++			    BUFFER_ALIGNMENT_16_BYTES) * LOG2_32 * LLB_UNIT_SIZE;
++
++	md_llb_size = ALIGN(md_llb_size, BUFFER_ALIGNMENT_32_BYTES);
++
++	if (num_vpp_pipes_enc > 1)
++		md_llb_size = ALIGN(md_llb_size + BUFFER_ALIGNMENT_512_BYTES,
++				    DMA_ALIGNMENT) * num_vpp_pipes_enc;
++
++	md_llb_size = ALIGN(md_llb_size, DMA_ALIGNMENT);
++
++	return ALIGN(md_tlb_size + md_llb_size, DMA_ALIGNMENT);
++}
++
++static u32 size_dma_opb_lb(u32 num_vpp_pipes_enc, u32 frame_width_coded,
++			   u32 frame_height_coded)
++{
++	u32 opb_packet_bytes = 128, opb_bpp = 128, opb_size_per_row = 6;
++	u32 dma_opb_wr_tlb_y_size = DIV_ROUND_UP(frame_width_coded, 16) * opb_packet_bytes;
++	u32 dma_opb_wr_tlb_uv_size = DIV_ROUND_UP(frame_width_coded, 16) * opb_packet_bytes;
++	u32 dma_opb_wr2_tlb_y_size = ALIGN((opb_bpp * opb_size_per_row * frame_height_coded / 8),
++					   DMA_ALIGNMENT) * num_vpp_pipes_enc;
++	u32 dma_opb_wr2_tlb_uv_size = ALIGN((opb_bpp * opb_size_per_row * frame_height_coded / 8),
++					    DMA_ALIGNMENT) * num_vpp_pipes_enc;
++
++	dma_opb_wr2_tlb_y_size = max(dma_opb_wr2_tlb_y_size, dma_opb_wr_tlb_y_size << 1);
++	dma_opb_wr2_tlb_uv_size = max(dma_opb_wr2_tlb_uv_size, dma_opb_wr_tlb_uv_size << 1);
++
++	return ALIGN(dma_opb_wr_tlb_y_size + dma_opb_wr_tlb_uv_size + dma_opb_wr2_tlb_y_size +
++		     dma_opb_wr2_tlb_uv_size, DMA_ALIGNMENT);
++}
++
++static u32 hfi_vpu4x_buffer_line_enc(u32 frame_width, u32 frame_height,
++				     bool is_ten_bit, u32 num_vpp_pipes_enc,
++				     u32 lcu_size, u32 standard)
++{
++	u32 width_in_lcus = (frame_width + lcu_size - 1) / lcu_size;
++	u32 height_in_lcus = (frame_height + lcu_size - 1) / lcu_size;
++	u32 frame_width_coded = width_in_lcus * lcu_size;
++	u32 frame_height_coded = height_in_lcus * lcu_size;
++
++	u32 se_lb_size = size_se_lb(standard, num_vpp_pipes_enc, frame_width_coded,
++				    frame_height_coded);
++	u32 te_lb_size = size_te_lb(is_ten_bit, num_vpp_pipes_enc, width_in_lcus,
++				    frame_height_coded, frame_width_coded);
++	u32 fe_lb_size = size_fe_lb(is_ten_bit, standard, num_vpp_pipes_enc, frame_height_coded,
++				    frame_width_coded);
++	u32 md_lb_size = size_md_lb(standard, frame_width_coded, frame_height_coded,
++				    num_vpp_pipes_enc);
++	u32 dma_opb_lb_size = size_dma_opb_lb(num_vpp_pipes_enc, frame_width_coded,
++					      frame_height_coded);
++	u32 dse_lb_size = ALIGN((256 + (16 * (frame_width_coded >> 4))), DMA_ALIGNMENT);
++	u32 size_vpss_lb_enc = size_vpss_line_buf_vpu33(num_vpp_pipes_enc, frame_width_coded,
++							frame_height_coded);
++
++	return se_lb_size + te_lb_size + fe_lb_size + md_lb_size + dma_opb_lb_size +
++		dse_lb_size + size_vpss_lb_enc;
++}
++
++static u32 iris_vpu4x_enc_line_size(struct iris_inst *inst)
++{
++	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
++	u32 lcu_size = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
++	struct v4l2_format *f = inst->fmt_dst;
++	u32 height = f->fmt.pix_mp.height;
++	u32 width = f->fmt.pix_mp.width;
++
++	return hfi_vpu4x_buffer_line_enc(width, height, 0, num_vpp_pipes,
++					 lcu_size, inst->codec);
++}
++
+ static int output_min_count(struct iris_inst *inst)
+ {
+ 	int output_min_count = 4;
+@@ -1503,6 +1801,50 @@ u32 iris_vpu33_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_typ
+ 	return size;
+ }
+ 
++u32 iris_vpu4x_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
++{
++	const struct iris_vpu_buf_type_handle *buf_type_handle_arr = NULL;
++	u32 size = 0, buf_type_handle_size = 0, i;
++
++	static const struct iris_vpu_buf_type_handle dec_internal_buf_type_handle[] = {
++		{BUF_BIN,         iris_vpu_dec_bin_size         },
++		{BUF_COMV,        iris_vpu_dec_comv_size        },
++		{BUF_NON_COMV,    iris_vpu_dec_non_comv_size    },
++		{BUF_LINE,        iris_vpu4x_dec_line_size      },
++		{BUF_PERSIST,     iris_vpu4x_dec_persist_size   },
++		{BUF_DPB,         iris_vpu_dec_dpb_size         },
++		{BUF_SCRATCH_1,   iris_vpu_dec_scratch1_size    },
++	};
++
++	static const struct iris_vpu_buf_type_handle enc_internal_buf_type_handle[] = {
++		{BUF_BIN,         iris_vpu_enc_bin_size         },
++		{BUF_COMV,        iris_vpu_enc_comv_size        },
++		{BUF_NON_COMV,    iris_vpu_enc_non_comv_size    },
++		{BUF_LINE,        iris_vpu4x_enc_line_size      },
++		{BUF_ARP,         iris_vpu_enc_arp_size         },
++		{BUF_VPSS,        iris_vpu_enc_vpss_size        },
++		{BUF_SCRATCH_1,   iris_vpu_enc_scratch1_size    },
++		{BUF_SCRATCH_2,   iris_vpu_enc_scratch2_size    },
++	};
++
++	if (inst->domain == DECODER) {
++		buf_type_handle_size = ARRAY_SIZE(dec_internal_buf_type_handle);
++		buf_type_handle_arr = dec_internal_buf_type_handle;
++	} else if (inst->domain == ENCODER) {
++		buf_type_handle_size = ARRAY_SIZE(enc_internal_buf_type_handle);
++		buf_type_handle_arr = enc_internal_buf_type_handle;
++	}
++
++	for (i = 0; i < buf_type_handle_size; i++) {
++		if (buf_type_handle_arr[i].type == buffer_type) {
++			size = buf_type_handle_arr[i].handle(inst);
++			break;
++		}
++	}
++
++	return size;
++}
++
+ static u32 internal_buffer_count(struct iris_inst *inst,
+ 				 enum iris_buffer_type buffer_type)
+ {
+diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
+index 04f0b7400a1e4e1d274d690a2761b9e57778e8b7..9aaff14c018efe243f524fec12b9d09db342ec0d 100644
+--- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
++++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
+@@ -47,7 +47,12 @@ struct iris_inst;
+ #define VP9_NUM_PROBABILITY_TABLE_BUF (VP9_NUM_FRAME_INFO_BUF + 4)
+ #define VP9_PROB_TABLE_SIZE (3840)
+ #define VP9_FRAME_INFO_BUF_SIZE (6144)
++#define VP9_FRAME_INFO_BUF_SIZE_VPU4X (6400)
++#define BUFFER_ALIGNMENT_16_BYTES 16
+ #define BUFFER_ALIGNMENT_32_BYTES 32
++#define BUFFER_ALIGNMENT_64_BYTES 64
++#define BUFFER_ALIGNMENT_256_BYTES 256
++#define BUFFER_ALIGNMENT_512_BYTES 512
+ #define CCE_TILE_OFFSET_SIZE ALIGN(32 * 4 * 4, BUFFER_ALIGNMENT_32_BYTES)
+ #define MAX_SUPERFRAME_HEADER_LEN (34)
+ #define MAX_FE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE 64
+@@ -66,6 +71,8 @@ struct iris_inst;
+ #define H265_CABAC_HDR_RATIO_HD_TOT 2
+ #define H265_CABAC_RES_RATIO_HD_TOT 2
+ #define SIZE_H265D_VPP_CMD_PER_BUF (256)
++#define SIZE_THREE_DIMENSION_USERDATA 768
++#define SIZE_H265D_ARP 9728
+ 
+ #define VPX_DECODER_FRAME_CONCURENCY_LVL (2)
+ #define VPX_DECODER_FRAME_BIN_HDR_BUDGET 1
+@@ -76,6 +83,18 @@ struct iris_inst;
+ 
+ #define SIZE_H264D_HW_PIC_T		(BIT(11))
+ 
++#define FE_LFT_CTRL_LINE_NUMBERS 4
++#define FE_LFT_DB_DATA_LINE_NUMBERS 2
++#define FE_LFT_LR_DATA_LINE_NUMBERS 4
++#define FE_TOP_CTRL_LINE_NUMBERS 3
++#define FE_TOP_DATA_LUMA_LINE_NUMBERS 2
++#define FE_TOP_DATA_CHROMA_LINE_NUMBERS 3
++#define FE_SDC_DATA_PER_BLOCK 16
++#define SE_CTRL_DATA_PER_BLOCK 2020
++
++#define MAX_PE_NBR_DATA_LCU16_LINE_BUFFER_SIZE 96
++#define MAX_PE_NBR_DATA_LCU32_LINE_BUFFER_SIZE 192
++
+ #define MAX_FE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE	64
+ #define MAX_SE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE	16
+ #define MAX_PE_NBR_DATA_LCU64_LINE_BUFFER_SIZE	384
+@@ -96,6 +115,10 @@ struct iris_inst;
+ 
+ #define HFI_BUFFER_ARP_ENC 204800
+ 
++#define LOG2_16 4
++#define LOG2_32 5
++#define LLB_UNIT_SIZE 16
++
+ #define MAX_WIDTH 4096
+ #define MAX_HEIGHT 2304
+ #define NUM_MBS_4K (DIV_ROUND_UP(MAX_WIDTH, 16) * DIV_ROUND_UP(MAX_HEIGHT, 16))
+@@ -148,6 +171,7 @@ static inline u32 size_h264d_qp(u32 frame_width, u32 frame_height)
+ 
+ u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+ u32 iris_vpu33_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
++u32 iris_vpu4x_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+ int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+ 
+ #endif
 
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Christof Hellmis
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+-- 
+2.34.1
 
 
