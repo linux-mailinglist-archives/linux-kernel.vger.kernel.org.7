@@ -1,338 +1,206 @@
-Return-Path: <linux-kernel+bounces-891076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BADC41C64
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 22:24:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32E2C41C70
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 22:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 48BCF350C1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 21:24:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1175E3AF943
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 21:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BDA2F5316;
-	Fri,  7 Nov 2025 21:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D1E2F5492;
+	Fri,  7 Nov 2025 21:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="n4fISdzb"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013036.outbound.protection.outlook.com [40.107.159.36])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dfkQqhzQ"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011046.outbound.protection.outlook.com [52.101.62.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910B92EFD90;
-	Fri,  7 Nov 2025 21:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2157624DD1F;
+	Fri,  7 Nov 2025 21:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762550646; cv=fail; b=bdvPJ+pgXn05tIwJ47bc9Fae5/pPbiD9a2QnxR1dmPgzcMOofrvMp0+gb1moavzVcoRZ12Hompuylwho1hm5/AawTahxG84PA7fHK273QqKjPp6G0r4PfzhQVsGtz0yh5fqPw7RTGAzWrNsShyQu/xycVizWTBSCflqJkqiu5+Q=
+	t=1762550718; cv=fail; b=VAmx08JLpvwGJ0Pdi6VL2O1VnEaU3uKinjYSQr0b0oPT7fy9Z7qAKWYHTjadyv6HxGWtQOPwIq3UMmMICniZBWPlyxiN6/XEeG8+spLmsGDCMp8KPeAwvdHYTrd+jShbvobxGNP45xojLPRGD7Ecg8Xs1vnLpwthugCr6l6+lCQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762550646; c=relaxed/simple;
-	bh=dm8EFEKlLmli4tB4RZks+/TK2ayFv3c6/XOxYeJHyXk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Kp4touEWiGB2Y305OeGCNJk6TzlE6DETbOqTA890d1XG0NcftT41mTQILA3T9lPLwTljpg8hDqBh0rN7GU1mrS00KVxZzUjSlzEM4T+pBgw+qjE/+TYo8gB05M/pIdLKOL47Z3LugJffe4n5yhMX3fqAhRSKLvdiuv+08GsPYUs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=n4fISdzb; arc=fail smtp.client-ip=40.107.159.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1762550718; c=relaxed/simple;
+	bh=KaO9vJ0vTzlZWgGZB3iWwMjx8FFGnPHH97qu1VoYD3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m7+x3jykWvHrrLZ3+Bxp10vfGXJZkXELDUrXATcRVb6E0nspUylDHe91jXO5R2D5jVmDqzt1tKrtbBPy486SYjYVsOByONdqrQeQptCjOZeGhiJAANfJtEnJVXfsLpHzRoVC7Ahzb7n5RI9WbM9waZVdZKI5i5KQYMBm3Qn21xc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dfkQqhzQ; arc=fail smtp.client-ip=52.101.62.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pJ32H/xJMaPoMmxxswfa1rRdZhsDzArAeTS5MqH8f0uw6OgVzaub4v+ff+ZhUN0DkXGat60/Ro4froxG6FzNdf376IQcy6J+JEYW9qQh6Yv6EHh/SV8kLgAc1JqHJSErT61vSfTs15a6kh2gpk/hKNxS6Tlrr/thSJFz4a9LkwLOaOrUu0zBaUptO+zmqWkkma3mlpLSP5z+SZkVELyMhNwr1TEOm5d0Qv25bOWRyq6+5R04bhYe+JmCN9atBKTxyP9Sa6Ao60MFn56f2ZGrJjCHrShx1Ltcd6saWIiDAE6VKNjUTxWqG6+seA4oqbfCnMEFsqHBuGKZO7ECCJAeFA==
+ b=ovu2H2buTgWc4DkotrlVOt1sF16LbQ4ETHf5jW8zQLUhj7pLCVTnWygMGYjhP89dX39i4Z/LEgkizNXtCA6nGNE9wERyz0mXhIFGvgVLfnX9dvWDMRv+y0UrRf3NZ5eMLY/7QxWehJKm4H8vVciE8bFi43XJ3KchXxVBHRNE9rxtoyysbMEJAz79KaBw3HNDpR5fAmRXV9HBut5Z1HJ0Ml/WCECaoGMKQYqjGfCG7HlRxJJHydPSGNk2WMOPSZtgiPrjdrVmjkcRzRLj2AuIG+xYUz9hDpofHgK9sL4NGcYhc6vxIT4VDh0weEFNDLRRx0P4WDh7MsaSdsJGJvqC0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uU/oOtAuSrcPqPZLUQjNRNeQBRpu9+PrYwxR7B7ThKs=;
- b=TPKLKQlnTfA3MO/b17Gr5C1c6HQrct5QDXA3ytfMQ3ZIbb/ys9FDPX4qaTBOjaoE3Y/7bZvnGHw4jpxWAEIdXBcnBrWH/2NPowVjbfMf/iqaO+lDow+iqW7bmkM/rEyQU+Vl7mQW2R451yrSjnYhBg9FC9qMns3w4vyXsrR7JhhKdnmIM8WcVOTc6PFY3OAtF3Sm5U7SHyydza0z+/VdVKEfCqdijc7mwDSgfv5iWYcRNqZgyEKyxUHSW1amxeknypboM7n03+gTDmal6nlpYJDQ0WkkyVo4esRakVBf4BIaVaJ1iRuJyEVG5xmdWBALObj/yFrxVld31KcuUPVZtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=49f/dsrE0aeRW4jFyUv4zhu7dsTAIMmUkRxf8KHWCuA=;
+ b=fs39GV1WCB11jUtFFUrg2qGQB4IBlNrGX86e71T4gzSYaRxC4lH3GZxjQQvNlOpz1NbNNGGdWhhseuYKM553I199CPeZ/OQ7BeT20PuxY2GmbAR2TnwevqSlMZUzxFVs/vtAvVj8FBClWAGQOAX1pXl7AHG0Ro33fOjCGmyiO2FkFzG1jUVHnBDaGi/QoW61HrWB+SvyBjuXveOGSK6mHOCvSb3rdQJGyVoSHpY8lUrcqTgE5J0xWwtB0puSzLe95DE71e2Ctp4CAWuno0ImIMqL7G+CNcXDep/9ERtUXf7Pyw44XH2mRO35OLScJnN8YyraP8BAm+ecibCMCus2pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uU/oOtAuSrcPqPZLUQjNRNeQBRpu9+PrYwxR7B7ThKs=;
- b=n4fISdzbWGa38gPm74fgNRxp6L8JgKyXywS7iFK0swp1w/wYDrtMxiBh2tcZWpEEThbbK6NCf20/Aw8v80SyFuiynJzGVGB3yUCBhrg139OfdnBtnHUJV+D0J/IrHlKjWyv5hZUmhIqKod08NMumpUNZlI4wEh2fblCsiexZLQZFKDAak1QeKG5rPMeUTIrhWVqOFm8+mFoYDd+1kO1S0q/UlyUJVhtMeCKfCZDGP+D0EwYpU/ce7gnol+Q+FxpjiOAHc+kfRWdBayYYUYnN8Wyi3qtXZovmqmwVsfL2lTTehuy64/6txV30k5o7zQJj6ntf4PHgJHTmESKshCRDpw==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by DU2PR04MB8727.eurprd04.prod.outlook.com (2603:10a6:10:2de::7) with
+ bh=49f/dsrE0aeRW4jFyUv4zhu7dsTAIMmUkRxf8KHWCuA=;
+ b=dfkQqhzQI4FhRcviJEB6c25BzUyljOLOxL4B6FiPKnKjKrJduNy1cPRQGuna405+ezoCW/3DmHCxl3Cp8onaaE8aEJtnU85dOZr8+OB1c1nJ9U4H8QnbLMLzOCOaBmNwXxy0z8K12mRBoCyczMegkgmQiV+rjfQegyLJbgoc3+M=
+Received: from DM6PR11CA0029.namprd11.prod.outlook.com (2603:10b6:5:190::42)
+ by DM3PPFA09EE1970.namprd10.prod.outlook.com (2603:10b6:f:fc00::c3b) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 21:24:00 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%5]) with mapi id 15.20.9298.012; Fri, 7 Nov 2025
- 21:24:00 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Jonathan Corbet
-	<corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Thread-Topic: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Thread-Index: AQHcUCzVjIrQ/GjmqEGe0Q2kpTl0+Q==
-Date: Fri, 7 Nov 2025 21:24:00 +0000
-Message-ID:
- <PAXPR04MB9185E2C3E50D365F64F10E3A89C3A@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
- <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
- <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
- <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
-In-Reply-To: <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|DU2PR04MB8727:EE_
-x-ms-office365-filtering-correlation-id: 987a0fa2-6733-4bf1-b5bc-08de1e43f80d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7416014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?GCUqt/TolqFuoiEjOEk8QDh9NExXkZW2TvWEsxcAKLtcqEq9KV8ZC95gRZVc?=
- =?us-ascii?Q?/ZIxKrU+rV0xZBV2QDx8v5mXksWjNNC3/+tj7c+du2LYAvGxso91uBetfdGu?=
- =?us-ascii?Q?5dBMpZ/XzcnWD5TGOXJAumJS+qc+nzwoOA3ctrL9Gl936VScRmt9ngOnfffe?=
- =?us-ascii?Q?cOapYLDIusrxUAnM3f7XKBAyM6bMKldC7nInXEfw2nQFgbOU3VGa14qLlOcZ?=
- =?us-ascii?Q?v+ALof/L8qowfjo6b+gFz+0Vu3n8sqD8gZ7miTOQT1RqYeD7jS2aqjfESg1v?=
- =?us-ascii?Q?C1FqoP4xG/pkCU0CmQnHHoBQqiQRJjzscXD7uiKd/bVx3MlHbczl7Wor+G5k?=
- =?us-ascii?Q?GOOzyK5nDumkTmZbYHkvZ8W4GEaNCWYU898II8VDmxZYN93kOxlw7uIrsJx7?=
- =?us-ascii?Q?ISztBsVWbqHjkIrh/SUjWPASvluwgCZOIqEh/oVvQHsOZDyFztsc+9eIvD2J?=
- =?us-ascii?Q?R0U6VIZCk3vmj+Vhjyp6PSxrm3UPM2NNZsDADauo3taLxD+VokT7PR9cLFMm?=
- =?us-ascii?Q?jK8+cyzBoRU+vS3A/L8HnF05rpk1fdTzWulMdlAFhCflxyt3vBoPUDWg+4wj?=
- =?us-ascii?Q?5PVnPDtrICXg7Wg1rIuFOEWzdYll9XB31PJqpDOmAxvcCd4hcapOy+az0lsd?=
- =?us-ascii?Q?eySlYoJsZFi984qTbwc758/fbTNwCRPR/36wBNmdQURBJ2Wgs0knSABW9WdP?=
- =?us-ascii?Q?T/EglyBcZx3u4fbFdI+If1/Oj1uruuPsACyl3uxLNeOhl5oZYUfombN8+yih?=
- =?us-ascii?Q?ecL0CSHcDauFNmEgO5Rs01epeCXXf8YbXBtquqqq1gKwtYojJelPWjZintIa?=
- =?us-ascii?Q?ylFxsPJybFV7toTQRuSHdk59vlWkfdebttzmbl6nDtcMgWOXMGadw0HlFPJz?=
- =?us-ascii?Q?ibTzsjK1nHwbtdKs4h4hQf/QOb2yu5sB5Pnjp0tp+rzRYJ6ZIMdW6MaWkz3D?=
- =?us-ascii?Q?b0K1dKBaEeLFnuH7MlWTza3iPyaHcz7B9OCHQaiC6DsATHutqFtOFoxdKiVK?=
- =?us-ascii?Q?Vqj5v3K91rW+SNWvkAHSUe64HCLadEvNvSDyVzmOJSoP3YWK0XDZ1Dq0KePm?=
- =?us-ascii?Q?EpkP5JBIa6009mvm79bRMs5Wm4GLgElRwf/nejzX3t02t39Y0KprI3oe/X9p?=
- =?us-ascii?Q?KrRu5bzSOSTgH1N6jjQa5xWSATrPODS9/nKuNJmqD3Fi+Wd1DxpSo2pyNNOv?=
- =?us-ascii?Q?0mIJU4cZA2QYPvQRMq/+2oaJHC+De+iQtUOo24Dl/aUNwWKhQrWCsgmJY5do?=
- =?us-ascii?Q?w4sr3f2Tf1LBvAK9UwqFi5Hb0TKyxvmyA0xJ6MS8Utih5IcvNowhkH735iS6?=
- =?us-ascii?Q?PFL/B8pHTOybCfw9UavS+HnLZLkJNsXRa7Gmwp8+fgr/xkDQGbIHp4a/ax6Y?=
- =?us-ascii?Q?vR6uRHNoy7rhfPZ2NOa1dSEF8/AS7mlCwsQyZQRsQYKKtmoECY2epfvzz4m8?=
- =?us-ascii?Q?wKV+LDOz2zjzsiZIyMR9ZskXx447RiiEEu6D0FRaZr9yvzn3k5QrdBP2WuOo?=
- =?us-ascii?Q?kBr2BUu1A1Eqg+47QlZj4S4bLUu22ycYj+RI?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?cjJ0fgCZdiAa8FlpQ1g9QKYgsMVVeUc+tx0yY/vkH5quNA/jtBgRrAfVYfGg?=
- =?us-ascii?Q?E+5A5FJQT0BIj6l48AkIXDEnkJXUX7JvdBUFehRGk42HivdGwz1cr2iIlxxz?=
- =?us-ascii?Q?XFVH6BhKqC2mjB14aaCQoKWGXh55bltSUC6x1kevbJS+PVBD+M3Dx1h1mmGT?=
- =?us-ascii?Q?RAggEMsnA+x6HcPwIKlariozx3r+PuWKEcCbXfsGZsSGDkQ3fJbKZN9AKBHA?=
- =?us-ascii?Q?HdGog0nDs9thLm02+RZ+IEkHis5jlCWDndZu275iXXtpwPfM8QTArVtxfW4Q?=
- =?us-ascii?Q?eXuNPOs1LteGjfpOtbBhxgLC4czVUHnFyqycQPnKhdpWUUbQaXzrxRYqt8zJ?=
- =?us-ascii?Q?ovUHnS+EZ9C3nrpKgKDT++iN0ZI4GD4uezt4AM0eQlSW6WPUCQbUwGJSmTW/?=
- =?us-ascii?Q?Zh7uB9pzG29xJx1883FbtvqASCAegC34E5b5WS/TT5jh0S/u+bUT7n0eU+NO?=
- =?us-ascii?Q?5MmujSFBlGZSElTSJlss73kNihQkZt8+3f4ptL9UmPpE9hclKPuPLbLyK+X4?=
- =?us-ascii?Q?8esA3BVTEWOAsTkK7k3E02O8P/IbFFbRhpcYI8BwEF3i/p1QkioTgTCjZxQC?=
- =?us-ascii?Q?8o5q6geuFZHFXHow7t+NwLesgU42o/cKN381A/ljsOsLbOSsijWvnG/GEK1X?=
- =?us-ascii?Q?bHCmFes18wepYdPUOfXEL3JrJjyyQbvN760/jvz58od0nkAj+ocwoJvzKQaB?=
- =?us-ascii?Q?s+MllYDSVc6Iw1jfqBCXNNSS36bks1tvTHr6QCpibtQ6Mhm4qpYTsPCqAbYz?=
- =?us-ascii?Q?xGHbeyKpjHZKxvMeSejXUZDWpoDbXwRP9z27mPIrGNHx0psuYu9LjsaCCncd?=
- =?us-ascii?Q?oyHKMjSHpIV5IYR/V+6qi7+D4F/qX5yEGEwVZxWUnBTfKoajyivGcC+gv04T?=
- =?us-ascii?Q?aovxwG4b0yd42B/lP38Q68W/llxXh62AyP0F5PIIMpCBVKaEktgqlcA0+9lW?=
- =?us-ascii?Q?TcgNEHCehT1agghNYxdEiRKZ9AgAkb78X+susWIHRzltWXDilkOGphrG/iZ0?=
- =?us-ascii?Q?176mZPO3DA8FLfqN48TsdTiuz++aPexyNwcw+r+DCnNKcw1d0YV0xPDwW4Pm?=
- =?us-ascii?Q?wC5BW/TtNFvt73kb9ooV5jVPbbMi6FrvCkqYu+rwCg3vJHdQYe6TMzuwW+QS?=
- =?us-ascii?Q?2TfUGxFe09wFsOzYEnoHMRuWyhso04YwtwAief5NM5d6f3QCQNz5X0e6hEJR?=
- =?us-ascii?Q?apKPK0eTBNaQx8ayG2AmZOIVRyTLFNwMIDcWbaoYnKDVhgZeYUVKt8D1MwIB?=
- =?us-ascii?Q?uE9YJW9RkVbIY52a8yWcq5k6RnkGQgpNAjJAKZ0rFOdnNp2ANiJf3PBF+pNV?=
- =?us-ascii?Q?KwQ3g3qwGXbwH1x5IEAmPxCY+GWk5WYLrCww9e8N/nRGK/urcosmea8z95E9?=
- =?us-ascii?Q?oY4ova+l3Id1CyRtsQqANZQy4J2ptm7Ez8jyKPsPAxOf4+d+Egm3SLkded4Q?=
- =?us-ascii?Q?u1H8W+JLSN0bqFWfEAkkosndEb1QvUELTL1ELOJJtONuYTeFOHXLEDrfNTXK?=
- =?us-ascii?Q?+M4GFkUB37gjQch96ePSvzaXPnbon2GBdV0L+8cxe8tFIs/e2H7zctWrjZU7?=
- =?us-ascii?Q?sqqA8/RygCzX/tIAEqQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 2025 21:25:12 +0000
+Received: from DS1PEPF0001709B.namprd05.prod.outlook.com
+ (2603:10b6:5:190:cafe::7a) by DM6PR11CA0029.outlook.office365.com
+ (2603:10b6:5:190::42) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
+ 7 Nov 2025 21:25:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ DS1PEPF0001709B.mail.protection.outlook.com (10.167.18.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 21:25:12 +0000
+Received: from DLEE212.ent.ti.com (157.170.170.114) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 7 Nov
+ 2025 15:25:07 -0600
+Received: from DLEE203.ent.ti.com (157.170.170.78) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 7 Nov
+ 2025 15:25:07 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE203.ent.ti.com
+ (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 7 Nov 2025 15:25:07 -0600
+Received: from [10.249.35.170] ([10.249.35.170])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A7LP6r73649310;
+	Fri, 7 Nov 2025 15:25:06 -0600
+Message-ID: <76078ce8-aec3-4a3c-b866-926fc284692e@ti.com>
+Date: Fri, 7 Nov 2025 15:25:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 987a0fa2-6733-4bf1-b5bc-08de1e43f80d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2025 21:24:00.6429
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] Enable 1GHz OPP am335x-bonegreen-eco
+To: "Kory Maincent (TI.com)" <kory.maincent@bootlin.com>, Aaro Koskinen
+	<aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman
+	<khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+	<tony@atomide.com>, Lee Jones <lee@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+CC: Andrew Davis <afd@ti.com>, Bajjuri Praneeth <praneeth@ti.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, <linux-omap@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<stable@vger.kernel.org>
+References: <20251106-fix_tps65219-v2-0-a7d608c4272f@bootlin.com>
+Content-Language: en-US
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+In-Reply-To: <20251106-fix_tps65219-v2-0-a7d608c4272f@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709B:EE_|DM3PPFA09EE1970:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f2c3631-08e7-448e-ea15-08de1e4422d0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OFFIK3BKOEo0bnVyM3loUk03bVp5ZmFCdUZySHUrL3pGd3FUa3lYSndXY01M?=
+ =?utf-8?B?ZXdFRDMyNXVxemdnVEFyOGhsbytWZzZ0eXFlT0pHYzhFYWZUcyt6QmxTeXRC?=
+ =?utf-8?B?RXJLakNBaWFTVzlQZGtiSVRtOHNPYnprSmIvYmwyampxTzhuU00yN05rSElV?=
+ =?utf-8?B?WXYza05ncDdmd01QSEo5VVdFYjNPV1dkcDBEalFJMU1qLyswaEtuTG9Kb2hp?=
+ =?utf-8?B?NjRGeHR6bXpab1d2c0h0OGxGZTFIb2U5QmVaeHhWUUxZeDFySmtNTlB2NHVn?=
+ =?utf-8?B?Ums1VlhVTlIycnphOVU2dytlWXBSbWhkbks1cmFvK00vSjlvYTkvZjU1Zm5x?=
+ =?utf-8?B?ZytqRzVFNTU3UGlyTWZWTWdSUVJha0h5d015V25ndUpaMTlqSjY5cWNaamVP?=
+ =?utf-8?B?OTZmUXplckNIRWN6MXpLUUkxMzhGS0I3L0pYTTVHakIzQ0UyZy9mWUc2NlUv?=
+ =?utf-8?B?V1lETHZSUDBUMG9tekk0M2NTZm1Pa2l3VzNaWjhoRHM1WDlIZnlRSlNKL0JK?=
+ =?utf-8?B?V0RGWGMvd0c1eUVQdkM1Q0QyWlZvZ2F1UDV2bE05K0hRSm1SbmcrRFBaRXE4?=
+ =?utf-8?B?TzZrMVhPdWZET3h4SDRrSTcxaGZFL3V2NkN5dWVHbzVBcElmdERkTE9GSnht?=
+ =?utf-8?B?RmNEUXg3VU9XSDBpTGVqakgrV2NmY3RyRGJDejdUM3JQc3dXZUJVdm4xNy83?=
+ =?utf-8?B?Rlh6Z0cwT3ZkbHpFNmZSbUlCemZZbDN2SnMzQlV0U1IxcjVUZStYc1JoWUli?=
+ =?utf-8?B?K3BFTFZ2b3h2aXE3SGk3S01aa3BVTnF0anN1ZG42Y01FQk1vT3ZvaEI0dWVk?=
+ =?utf-8?B?akhnWTgxRUVpS042NTV2UjE4dXR3SXBTcXhkenVmYTFEUmRQUzNFMDhGangv?=
+ =?utf-8?B?VWtOa3dFa1MrcE16c0tDT0VhWlBmcnoxQ1hOUGlPMU9hMnlXSTVTWjRTVi80?=
+ =?utf-8?B?elluWXpIeDhvZElzSG52TmZsVHI5cEtkNzBEMjUvc09pTHZodUJGTm1xbWlF?=
+ =?utf-8?B?RzZiazZjRlhNWEZxOFc2c3d0YXR5QWg1ZlJEekVKYm1iRlBJbW1ydHpRWUE5?=
+ =?utf-8?B?Tk0wOWgyWnE4ZEwxV1ozRDlSL0JEdVhNeEVlVUdrNE1tdDVhWm13QmNtWHZN?=
+ =?utf-8?B?V2pKUW9oUVpBUGswOVBhTnNrc3ZTMWxscjNTSnVOVlcva1NidTVkN0ZFNnJm?=
+ =?utf-8?B?eGVaYVVWbGJoaDU2a1ZYNTRtbU1oTjVSYUY0ZHhFeFFEZ1EvZG1LKzFtQ2Zn?=
+ =?utf-8?B?M0JYeU1hQ0ltVytGUlpXbG5HeWJOZTQ2K0pwVmJpSGFyM3RCVThPczNIeFEr?=
+ =?utf-8?B?WVQ5dnNCUnRNSHVEekFoUGQveFdaS3RzRU1EY0lpVkplcVZZMnhScy80bHJv?=
+ =?utf-8?B?NStzYWM1Z01zc1pDOHIzNGpMTlpjdXdlNkVoYVhMa2Zic1RNKzI1b1VDZUdz?=
+ =?utf-8?B?UTcycVlTMUZVTkhOZXNzWUIzVllYeHBLL3d0MnpQcGMvbUI1TEhsY1lHK01w?=
+ =?utf-8?B?Um00SmZYMmM2UEJpdVh2aCswUlpuUk5QMmhrYzZZN0JMb2JjcDBTY2NIU3o2?=
+ =?utf-8?B?VENaTGZpQkFsVjBsb3pxMkkxTXhsYkdxUFRjZ2pIQy82UjJ0NlAzTDJRaXBy?=
+ =?utf-8?B?eWVoTEo3aCtmS09LU0VPeGtNYUpXV0U5R3dTVHpBZDJ3ZWY1RGhrZ3F1aW1w?=
+ =?utf-8?B?ODJnSmlneEJ5bGJrODFJN0R5bU95S3ZSV1N1dFk2bFBXTmlHRGpkNlYrVENz?=
+ =?utf-8?B?amNpeDV4cGorTFZSekZtK2wyMmNpR1hZamN1dkZjZVJlam8zL3dnZ2lMc3Ix?=
+ =?utf-8?B?ZVdSd1dRZmNISnlMdDhlcDI2UHJnY2dhQXR0R0tWUjFCZXVKZ0VidTNsdm55?=
+ =?utf-8?B?N1ZCY3J1c2Vlay9NNGVMTVJUVDI1eU1JM2Zoa3AxNHFUeXNBREdkYm1MYm5l?=
+ =?utf-8?B?N1BhbUVObWtId3dSWjY0Uk1vOVZDWmcrZzNaY2hMUDVVMkpyelpPTkRuNkRJ?=
+ =?utf-8?B?QVROVEFITDROWXhWMzdYeVMxYkRFdmVXcnVHTjMwaHJRRW5lci94UHlEaTQr?=
+ =?utf-8?B?YW1PckxnQmE5ckRYODlvd3pBRkMxWlg4N3AyeTVlVkZVQ2VnWG5URlpBZURD?=
+ =?utf-8?Q?6Zk4HblER7cvLjjeDDgJHMEmZ?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 21:25:12.3334
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: D1Lx9qMpC6tLWvYXOHKMv4BhI/XJONkzC30RZ5r9R6hPLT7K/rDuUH8lBHKeN5rvSHjDWw1lvjj54oK0gtRn7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8727
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f2c3631-08e7-448e-ea15-08de1e4422d0
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001709B.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFA09EE1970
 
+Hi Kory,
 
+On 11/6/2025 4:49 AM, Kory Maincent (TI.com) wrote:
+> The vdd_mpu regulator maximum voltage was previously limited to 1.2985V,
+> which prevented the CPU from reaching the 1GHz operating point. This
+> limitation was put in place because voltage changes were not working
+> correctly, causing the board to stall when attempting higher frequencies.
+> Increase the maximum voltage to 1.3515V to allow the full 1GHz OPP to be
+> used.
+>
+> Add a TPS65219 PMIC driver fixes that properly implement the LOCK register
+> handling, to make voltage transitions work reliably.
+>
+> Changes in v2:
+> - Setup a custom regmap_bus only for the TPS65214 instead of checking
+>   the chip_id every time reg_write is called.
+> - Add the am335x-bonegreen-eco devicetree change in the same patch
+>   series.
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Thursday, November 6, 2025 6:32 PM
-> To: Shenwei Wang <shenwei.wang@nxp.com>
-> Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
-> <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
-> Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
-> Jonathan Corbet <corbet@lwn.net>; Linus Walleij <linus.walleij@linaro.org=
->;
-> Bartosz Golaszewski <brgl@bgdev.pl>; Pengutronix Kernel Team
-> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
-> <peng.fan@nxp.com>; linux-remoteproc@vger.kernel.org;
-> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> Subject: [EXT] Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rp=
-msg bus
-> >
-> > The power state of the remote GPIO controller is entirely managed by th=
-e
-> remote firmware.
-> > The remote firmware operates as an independent system from Linux, with
-> > its own power states and policies for transitioning between modes. The
-> > wakeup field is solely intended to inform the remote firmware whether t=
-he
-> GPIO line should be used as a wakeup source for the Linux system.
->=20
-> O.K. How does the firmware use this information? How should it change its
-> behaviour?
->=20
+Reviewed-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
 
-The remote system should always aim to stay in a power-efficient state by s=
-hutting down=20
-or clock-gating any blocks that aren't in use. In this wakeup scenario, if =
-no GPIO lines are=20
-requested or marked as wakeup sources for Linux, the remote firmware should=
- put the=20
-GPIO controller into a low-power state.
-
-> > > > > > +Notification Message
-> > > > > > +--------------------
-> > > > > > +
-> > > > > > +Notifications are sent with **Type=3D2 (GPIO_RPMSG_NOTIFY)**:
-> > > > > > +
-> > > > > > +.. code-block:: none
-> > > > > > +
-> > > > > > +   +-----+-----+-----+-----+-----+-----------+-----+-----+----=
--+----+
-> > > > > > +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05..0x09 |0x0A |0x0B |0x0C
-> |0x0D|
-> > > > > > +   | 5   | 1   | 0   | 2   | 0   |  0        |line |port | 0  =
- | 0  |
-> > > > > > +
-> > > > > > + +-----+-----+-----+-----+-----+-----------+-----+-----+-----+=
----
-> > > > > > + -+
-> > > > > > +
-> > > > > > +- **line**: The GPIO line index.
-> > > > > > +- **port**: The GPIO controller index.
-> > > > >
-> > > > > There is no need to acknowledge the notification? How do level
-> > > > > interrupts
-> > > work?
-> > > > >
-> > > >
-> > > > Currently, there is no need to acknowledge the message, as the
-> > > > interrupt is managed entirely by the remote firmware. On the Linux
-> > > > side, a single notification message is received when an interrupt i=
-s triggered.
-> > >
-> > > That sounds broken.
-> > >
-> > > A level interrupt is not cleared until the level changes. The typical=
- flow is:
-> > >
-> > > Interrupt fires.
-> > >
-> > > Interrupt is masked
-> > >
-> > > Interrupt handler is called, which reads/write registers in the
-> > > device who pin is connected to the GPIO
-> > >
-> > > Interrupt is unmasked
-> > >
-> >
-> > The sequences you mentioned above are managed entirely by the remote
-> > firmware. On the Linux side, it only receives a notification message
-> > when a GPIO line is triggered, which then invokes the corresponding int=
-errupt
-> handler.
-> >
-> > Since the interrupt handling sequences are implemented in the remote
-> > firmware, the Linux driver can treat level-triggered and edge-triggered=
- types in
-> the same manner.
->=20
-> That is wrong. Edge and level are different and need different handling. =
-That is
-> why the GPIO framework and the interrupt core handles them differently.
->=20
-> The devices i mostly deal with are Ethernet PHYs. These are level devices=
-, the
-> interrupt is active low. Within the PHY there are multiple interrupt sour=
-ces, which
-> all get logically NORed together to form the interrupt output line. Talki=
-ng to the
-> PHY over MDIO is slow. Sometimes you need to read multiple registers to f=
-ind out
-> what caused the interrupt and clear it. So your initial read suggests int=
-errupt
-> source Y triggered the interrupt. While you are clearing Y, source X beco=
-mes
-> active. After you have cleared Y, the NORed interrupt line is still activ=
-e, because
-> of X. The interrupt handler exits, the IRQ core reenabled the interrupt, =
-and you
-> expect it to fire again so that you go handle source X. If it does not fi=
-re again, you
-> have lost an interrupt, and potentially the hardware stops working.
->=20
-> There are also other use cases of level interrupts. You sometimes see two=
- PHY
-> devices sharing one level interrupt. You get the same sort of race condit=
-ion. PHY
-> #1 pulls the interrupt low, triggering an interrupt. While handling it, P=
-HY #2 also
-> pulls it low. When the handler exits, it has only handled the interrupt f=
-rom PHY
-> #1. PHY #2 is still pulling the interrupt low, and needs its handler call=
-ing. So it is
-> required the interrupt fires again when it is re-enabled.
->=20
-> Given the protocol you have defined, how do you tell the firmware that Li=
-nux has
-> finished handling the interrupt, and it should notify Linux again if the =
-interrupt is
-> still active?
->=20
-
-Okay. To fully simulate a level-triggered interrupt, a notification reply m=
-essage is required.
-
-Remote firmware sequence:
-Receive the level-triggered GPIO interrupt.
-Mask the interrupt for the corresponding line.
-Send a notification message to Linux.
-Wait for the notification reply, then unmask the interrupt for the line.
-
-Linux sequence:
-Receive the notification message.
-Invoke the interrupt handler for the line.
-Send a notification reply to the remote firmware to indicate End of Interru=
-pt (EOI).
-
-Thanks,
-Shenwei
-
->         Andrew
+>
+> Signed-off-by: Kory Maincent (TI.com) <kory.maincent@bootlin.com>
+> ---
+> Kory Maincent (TI.com) (2):
+>       mfd: tps65219: Implement LOCK register handling for TPS65214
+>       ARM: dts: am335x-bonegreen-eco: Enable 1GHz OPP by increasing vdd_mpu voltage
+>
+>  arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts |  2 +-
+>  drivers/mfd/tps65219.c                             | 51 +++++++++++++++++++++-
+>  include/linux/mfd/tps65219.h                       |  2 +
+>  3 files changed, 53 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 1c353dc8d962de652bc7ad2ba2e63f553331391c
+> change-id: 20251106-fix_tps65219-dd62141d22cf
+>
+> Best regards,
 
