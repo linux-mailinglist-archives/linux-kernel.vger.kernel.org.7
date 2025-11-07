@@ -1,91 +1,106 @@
-Return-Path: <linux-kernel+bounces-889758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0205CC3E738
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 05:35:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D7BC3E729
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 05:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E952188B5D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 04:35:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1FE64E21DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 04:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B99227B32C;
-	Fri,  7 Nov 2025 04:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C81218EB1;
+	Fri,  7 Nov 2025 04:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Avjy4ZVy"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="QnEmy/++";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S/PgFm1c"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BE0221DAE
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 04:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25D3208D0;
+	Fri,  7 Nov 2025 04:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762490096; cv=none; b=aUxW++kenLN7j9Oh6Y2nUgP5P2qo3u8QXs+44rQCrLKLJZxwOcVNzTFhK62Dzh3JC5WuF3feJW+X07Yh3J2PGeyjubaQMWBaeVm/tDFiYljpFIAiGLmFgNaIp+5KB8xLd3YM4m01IAZ99iR3++MVzovE/gc1iSU9rqWfv+BaH+w=
+	t=1762490071; cv=none; b=m0d+keXM3/nL5pgz5s6E4WvJJPuvnTyUGTu2Ox+WLGpsLUFRb/Ya0k6sUj4W3rHcxzc1UmDY8LfLX0gtZilsT8rXlJz0R2K0QRcD3H16xBWqdn0KAiZ8XuaLQ6fG8l0cZrNxnnZTrdY9kwJZlY5Fu6lRjZAlRoU4+zvKSiw7YnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762490096; c=relaxed/simple;
-	bh=j2VybcDqep5GTm5XHWYR/F0on0LqEt84R5Ole3I+g0A=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nyTpIXaNNST2+MfylIlqgJWZzEWwU3Hro7kchCa6hiZROCw9r3EPNuU8t2ANIA985UbmXRvw7thJxcIqJfdRLnxA5n+9UBZWeeuCoozMLo6J+HXdzp1XrKatVzpXdvyXGI2Ge3OIDofzuC6qDrcvVMvPmh+Ltjl/C2HTwutDXCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Avjy4ZVy; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-471191ac79dso3415485e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 20:34:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762490093; x=1763094893; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wsQ8+DdBhXQQJacebUZgMqys6BflOEfAmdOYN7onnYI=;
-        b=Avjy4ZVybMkm08TV6HiiJQuCQorPDPKWul/SeTTf3Ix0jjNRVxh4XD2Ai6B9/qRaWb
-         1+W7bBpw8wCpGMpYv8X1B2TDFUnMJW1dOzR9YM0PIrjb/L9x9TqAmsvkYPI/QUpuMDyH
-         oKFPAQyj1HWCFP78qSxQr3WJ85hYaTTYaHnvhAUWkJ+z6EI6qt8KgfYerz98imKxkn81
-         vx8j4lyk4lYiS+qmhegvJv7mpSShhv45DwKzKUP9khUGrrB6SjpHCCyUDKigqIy1EMZT
-         s/8TJHX8x5qcKbUpGi+1LVlqx3wtW6QJ3BOGmk9UWSfRYHzYIwaPlNwYFsyYP58TkSqx
-         IICg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762490093; x=1763094893;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wsQ8+DdBhXQQJacebUZgMqys6BflOEfAmdOYN7onnYI=;
-        b=Gr0+J+0ruQ4sVvG8TPdjrdZBI/CxUlbt8mzxA6hGd4ZkFqovKAEZVPcxPLljop9QDN
-         ciY68cOwoCsj8xfvM2i6L8/7C2VlAHT8gKVeNAuMZSa8B1Cl/QicjECmVPIZdnOdjXYZ
-         KVGgin5IKQ55F+NkmoBaD1RAAKYoIHA1GM7+XDyhRgDkmVjwFxiUvmMevJxK1cMVVP83
-         7ZiRE4CD88hzEuid4G5Q8eJtMv86DAsipEa6L7T+HlIrcLsUFql2sPWa8wVs6gS2TRc+
-         Fnt3j8opPu0mC7wtQCvEwxPUH+MlKE6kgVhZ0oIv3CRf4F4wILSFizLKzqK+IGnkJ7FZ
-         wmrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSqH1+xE6KthCV5Zgli9Gw12Ldj3VreCVUjG6NbZ1w+nN7JDT/h7CgvCgOOldP5B5ZJh7pygVBWKWkuw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtMAdpRNc05sh46EBW+903T6qR/sLxIAA4L2xHibDFVrUD2Bo7
-	azkh4C34ccQNU/EVkruTare9gPuu6bdbcEZQL4pXxx3ENYe0/RqTktEB
-X-Gm-Gg: ASbGncuKKhlozTzYl5Pe93UxFiX1bdtglb5M4WEPn0Nx6PxqmERCBFR1GhBoYicY9jP
-	yCLX9XpWABo9EaX2GUtQ0Pj7e+cvRIN5n+hByoWE3j+eLFuV2728y4xPvwG80hupEQ1NYVdU3GS
-	RVrFb3mDdyL9812s5/9IoMRIuBEVCR0RHlxDGTYCwmwdrRS9T+MGsSrnMGWgvLcza4JyGLcqPKY
-	lsqALLkTSGiUyRtveyswpJB+SDPAZ+sJyIvHHZKTJpbBQE4u7QqLOHatljHlnY5ufM4dVXKhL6U
-	PaB3/DXXdcXXHnp+0OvCGlUPOduD4P0LJECWhaW2QvOpy/fMe5vRHIG4U7DxbZH/q+MqYcAHDvy
-	Su5uIniBwWEV59g4mXbJgS0EIFnfKxLfCe0muW4jx9NN4Ek+MRehBV+0S6eQW7VtuZjy0k7qVhs
-	EW4SImNwldQd6qgw==
-X-Google-Smtp-Source: AGHT+IH8iYOa3zkzdeQ81462RWXFWW0SZmtk+MjUb5V+E2Hp+U6gTm6QWNnh28oZTtNNxpK5jLmI4A==
-X-Received: by 2002:a05:600c:354b:b0:477:a58:2d6b with SMTP id 5b1f17b1804b1-4776bc8a01emr9870455e9.7.1762490092703;
-        Thu, 06 Nov 2025 20:34:52 -0800 (PST)
-Received: from [172.23.94.183] ([147.161.143.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcfcfc7sm29496635e9.12.2025.11.06.20.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 20:34:52 -0800 (PST)
-From: HariKrishna Sagala <hariconscious@gmail.com>
-X-Google-Original-From: HariKrishna Sagala <hkrishna@gmail.com>
-Date: Fri, 7 Nov 2025 10:04:13 +0530 (IST)
-To: Shuah Khan <skhan@linuxfoundation.org>, hariconscious@gmail.com, 
-    shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
-    nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
-    perex@perex.cz, tiwai@suse.com
-cc: khalid@kernel.org, shuah@kernel.org, david.hunter.linux@gmail.com, 
-    linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: fsl: fsl_ssi: Replace deprecated strcpy() with
- strscpy()
-In-Reply-To: <0c7f307c-9de5-4d67-b9da-e728d43e00b6@linuxfoundation.org>
-Message-ID: <fc28b6c4-3495-0581-1dad-41e49ae86917@gmail.com>
-References: <20251105052113.39999-3-hariconscious@gmail.com> <0c7f307c-9de5-4d67-b9da-e728d43e00b6@linuxfoundation.org>
+	s=arc-20240116; t=1762490071; c=relaxed/simple;
+	bh=yb0DTCG1cInP1rCdVIX5ryZQqriDMPhdew/tOD6ElF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QcdYrSdRw1fJRYltp7FIjEbGsvRknqHKTLwwUik50BmyWSk0drchP9w/kmc4YkkMizYzf2YhRaeUOh2Pa6sRfqizEODKlDrNax+RVmIlLeX6ZhDfLSqkOlC+6JX49o3AgkysaKwIkQaotCQmZl3t0eSdU8lQ7FIYWZIBsOGFBMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=QnEmy/++; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S/PgFm1c; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id C518D1D00114;
+	Thu,  6 Nov 2025 23:34:26 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Thu, 06 Nov 2025 23:34:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762490066;
+	 x=1762576466; bh=tYA6R0NaI8iwcsq17fX3OvwCMuWL8pN7VRVo/MHWCRY=; b=
+	QnEmy/++yUsnJU7n1lEwPOqUJjzWDZOgZ+os4HLvC0MZV9m/oBepr7fKh2IRGwu2
+	+T94s5WHjkn020XK2/V+FZEqqQE5tCLr44F1XS+NVAYlpNhZTQjuC+/yOe7hv1XP
+	6BpRuR9x8CnAnN9CsCSacxKMwboj2DX/EWxKZ4qK8E3X+wPh04lG5oPNA1YsH+AD
+	2m2yiX2IIfsKTJE4V+EajXY/Ad2Bp1Qlr/y1hcz+nUeJyY3BbDwF3Wj6YJq/Te8V
+	Vv0LvnYGm9ODLT35/ddQOIJAxz5EBM9nTa55xoe1zEWpyWhW037CrKDMtkplYWye
+	cAhs3cr12R647sqoeI+uGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762490066; x=
+	1762576466; bh=tYA6R0NaI8iwcsq17fX3OvwCMuWL8pN7VRVo/MHWCRY=; b=S
+	/PgFm1cM7A3B1V2Hu44Q+NvJV9kKsUZYkR0S5vimxz/Iju/8aqSTJtyZTXeB5AZt
+	lllkVB32sOfJo3QU8TFuzUrRIymEYfMS8W/g8kMR8tMovMA55/EWyy7xUnMyPY+I
+	AcJ8Ltvd+IcjZh9Bz6FuSfjsyl3F3EqlRrj+9vs955fHJqyNceB2xc70xhhm+6qi
+	UY1T3A+8M3qSPOnH90Eyo45TN3fIWoyaPc06/R3xAdvHK6OMT64/3E2C2uhjl/rn
+	cQ3VZnfcmu4SbX00IzY+ajcqoPk+qJsMkKM8nWx39rBRWqWcmPcRIBDc07fGAivy
+	gcQUJVRTnjrfO4QEhzaHQ==
+X-ME-Sender: <xms:0nYNacxzXtc_fIWugndE3z7ImtFDqg1h6O6QKHy4aThemkiXahcLzA>
+    <xme:0nYNacSTCBh3qvyXcRfOv4hUl-CBLe15wRSIAIGDvnzUPzGBci3PqE8anfR29fGof
+    p5Tm4d4mDWGmz9QqQHikkKVuv3avjKzjtP5XoSfYd57b2tDLcmsFSo>
+X-ME-Received: <xmr:0nYNaQhT3KOsVyT6s4JZKw2Hk_z4Sh1HiBqYoQpKQxHhbRASaR5VLTBS>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeekjedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgigucgh
+    ihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrfgrth
+    htvghrnhepkedufeekkefggeelfeekhedvvefhueekfeegvddtffetjedvffekveeivedv
+    tdeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghlvgigsehs
+    hhgriigsohhtrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuth
+    dprhgtphhtthhopegumhgrthhlrggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohep
+    rghlvgigrdifihhllhhirghmshhonhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepug
+    grvhgvrdhjihgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepkhhvmhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshht
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepvhhinhhitghiuhhsrdhgohhmvghssehinhhtvghlrdgt
+    ohhm
+X-ME-Proxy: <xmx:0nYNablqfGWV71m5ghcZBLk5TzsAebHefSClfAzy0PWjuui16T_grA>
+    <xmx:0nYNabt7hVVE_NXpUcKkZ5zSYjqOjFbsYNRquKDyg2uppMA8sN9TEg>
+    <xmx:0nYNaRZm8J6P9LlM8fVw4yp129xdu9EnMvzQhmnORqkRGYrWIV8XuQ>
+    <xmx:0nYNaTBr21kNQ4aGc7BCcxRDz8CZR7d3z-Qb9dpDEBccADkKro8kAA>
+    <xmx:0nYNaZzrikpLlmK3bz53HyWr7pMcqpQNCtysFiIg-3PPJGmw5S4wzrBC>
+Feedback-ID: i03f14258:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Nov 2025 23:34:25 -0500 (EST)
+Date: Thu, 6 Nov 2025 21:34:22 -0700
+From: Alex Williamson <alex@shazbot.org>
+To: David Matlack <dmatlack@google.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>, Dave Jiang
+ <dave.jiang@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, Vinicius
+ Costa Gomes <vinicius.gomes@intel.com>
+Subject: Re: [PATCH] vfio: selftests: Store libvfio build outputs in
+ $(OUTPUT)/libvfio
+Message-ID: <20251106213422.1632efef.alex@shazbot.org>
+In-Reply-To: <20250922224857.2528737-1-dmatlack@google.com>
+References: <20250922224857.2528737-1-dmatlack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,53 +108,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 22 Sep 2025 22:48:57 +0000
+David Matlack <dmatlack@google.com> wrote:
 
+> Store the tools/testing/selftests/vfio/lib outputs (e.g. object files)
+> in $(OUTPUT)/libvfio rather than in $(OUTPUT)/lib. This is in
+> preparation for building the VFIO selftests library into the KVM
+> selftests (see Link below).
+> 
+> Specifically this will avoid name conflicts between
+> tools/testing/selftests/{vfio,kvm/lib and also avoid leaving behind
+> empty directories under tools/testing/selftests/kvm after a make clean.
+> 
+> Link: https://lore.kernel.org/kvm/20250912222525.2515416-2-dmatlack@google.com/
+> Signed-off-by: David Matlack <dmatlack@google.com>
+> ---
+> 
+> Note: This patch applies on top of vfio/next.
+> 
+> https://github.com/awilliam/linux-vfio/tree/next
+> 
+>  tools/testing/selftests/vfio/lib/libvfio.mk | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
 
-On Thu, 6 Nov 2025, Shuah Khan wrote:
+Applied to vfio next branch for v6.19.  Thanks,
 
-> On 11/4/25 22:21, hariconscious@gmail.com wrote:
-> > From: HariKrishna Sagala <hariconscious@gmail.com>
-> >
-> > strcpy() is deprecated,use strscpy() instead.
-> > No functional changes intended.
-> > Link: https://github.com/KSPP/linux/issues/88
-> >
-> > Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
-> > ---
-> > This patch replaces strcpy() call with the strscpy() API.
-> > strscpy() is preferred over strcpy()/strncpy() as per the
-> > kernel documentation.
->
-> Which kernel documentation and can you add why strscpy() ie
-> better than strcpy() instead saying "as per the kernel documentation."
-> >
-> > Thank you.
-> >
-> >   sound/soc/fsl/fsl_ssi.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
-> > index 320108bebf30..b2e1da1781ae 100644
-> > --- a/sound/soc/fsl/fsl_ssi.c
-> > +++ b/sound/soc/fsl/fsl_ssi.c
-> > @@ -1447,7 +1447,7 @@ static int fsl_ssi_probe_from_dt(struct fsl_ssi *ssi)
-> >   			dev_err(dev, "failed to get SSI index property\n");
-> >   			return -EINVAL;
-> >   		}
-> > -		strcpy(ssi->card_name, "ac97-codec");
-> > +		strscpy(ssi->card_name, "ac97-codec");
-> >   	} else if (!of_property_read_bool(np, "fsl,ssi-asynchronous")) {
-> >   		/*
-> >   		 * In synchronous mode, STCK and STFS ports are used by RX
-> >
-> > base-commit: 284922f4c563aa3a8558a00f2a05722133237fe8
->
-> thanks,
-> -- Shuah
->
-Please find the below reference links.
-https://github.com/KSPP/linux/issues/88
-https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
-Thank you.
+Alex
 
