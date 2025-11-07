@@ -1,114 +1,219 @@
-Return-Path: <linux-kernel+bounces-890359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8DBC3FE5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:31:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC9BC3FE7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB1A44E3FB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:31:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C25CA4E4779
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41EC1A239A;
-	Fri,  7 Nov 2025 12:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67546243954;
+	Fri,  7 Nov 2025 12:35:31 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFBA1CAA4;
-	Fri,  7 Nov 2025 12:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A811CAA4;
+	Fri,  7 Nov 2025 12:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762518711; cv=none; b=lIe9AMH8y3/DjCLKDyBGAZY8BUANhihY0pvcipeaB0d7725svUEkFEdJvV1v3RfBo9UArsgsA/R6hl9R8YxwE0SPvpt/ZkKBYi17ezPD0GX6etuGDnfIMU6SMpuhWq3ZNnEi99V2XG4h3H58faSSeGvr+om1uLqX5JW9U6UGrvc=
+	t=1762518930; cv=none; b=SbX2r32DIBQlCLlbNsK/c1Ad2rQlrRgtQCb3cE/OgIzNK5dNZROhcaMxFRAAokCyTsp879k1e3jHZggrx3fcJ4SZtd3IAA1uO2IwFGkom2WxyvySuI748AWQ+3jh9cUKCpO5r55d3vyS+sItwQLBCeOxcm1mNbQ+8pqHu0F1/rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762518711; c=relaxed/simple;
-	bh=jDhnnL1mbLxHOdUJ9Vwg0lyUo1zeA2DyfHoHkqmSSr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H3//MQv/OlKDGt3B7BeB22hKhnNA1z6Ucwv5xaCnZO2L3o2enP7+JWnKLpvkiZ67D7f9kDPrp1gNRMMrrJxf+zCxPqNGlwP/brY6nwCvpT8L5kwaOjq9BsRIMbaSNT637nNp7OlSlSdNFV0oMB+9/8Kpu8jBst+5XGxAicWx3TI=
+	s=arc-20240116; t=1762518930; c=relaxed/simple;
+	bh=5KyqyiiizOvilsPOM1t5CbBSPP+5uBRNicAAMMf/9vA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bv3B08cQcyRSgtkcBnBDvB0eKpR4R06x3eZdNcWtHRySGQJiosgTsL7+EK6FGdEBIsDvOVNKe0DApXh13XCFRv+r2ESE6vkaPQZ8mUhNr39M8DLQMk5g6Dm9UOeO6f1m3SU1ZAtARwFnWQvy/ze1LwuXkscXyvVdvczxJ3GPZo4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C3C81516;
-	Fri,  7 Nov 2025 04:31:41 -0800 (PST)
-Received: from [10.57.86.134] (unknown [10.57.86.134])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 412D63F66E;
-	Fri,  7 Nov 2025 04:31:44 -0800 (PST)
-Message-ID: <b165098a-8164-4664-aaaf-1e8c4391d797@arm.com>
-Date: Fri, 7 Nov 2025 12:31:42 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C378F1515;
+	Fri,  7 Nov 2025 04:35:20 -0800 (PST)
+Received: from e134344.cambridge.arm.com (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B6F4F3F66E;
+	Fri,  7 Nov 2025 04:35:23 -0800 (PST)
+From: Ben Horgan <ben.horgan@arm.com>
+To: james.morse@arm.com
+Cc: amitsinght@marvell.com,
+	baisheng.gao@unisoc.com,
+	baolin.wang@linux.alibaba.com,
+	bobo.shaobowang@huawei.com,
+	carl@os.amperecomputing.com,
+	catalin.marinas@arm.com,
+	dakr@kernel.org,
+	dave.martin@arm.com,
+	david@redhat.com,
+	dfustini@baylibre.com,
+	fenghuay@nvidia.com,
+	gregkh@linuxfoundation.org,
+	gshan@redhat.com,
+	guohanjun@huawei.com,
+	jeremy.linton@arm.com,
+	jonathan.cameron@huawei.com,
+	kobak@nvidia.com,
+	lcherian@marvell.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lpieralisi@kernel.org,
+	peternewman@google.com,
+	quic_jiles@quicinc.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	rohit.mathew@arm.com,
+	scott@os.amperecomputing.com,
+	sdonthineni@nvidia.com,
+	sudeep.holla@arm.com,
+	tan.shaopeng@fujitsu.com,
+	will@kernel.org,
+	xhao@linux.alibaba.com,
+	Ben Horgan <ben.horgan@arm.com>
+Subject: [PATCH 00/33] arm_mpam: Add basic mpam driver
+Date: Fri,  7 Nov 2025 12:34:17 +0000
+Message-ID: <20251107123450.664001-1-ben.horgan@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/12] x86/xen: simplify flush_lazy_mmu()
-Content-Language: en-GB
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-3-kevin.brodsky@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20251029100909.3381140-3-kevin.brodsky@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/10/2025 10:08, Kevin Brodsky wrote:
-> arch_flush_lazy_mmu_mode() is called when outstanding batched
-> pgtable operations must be completed immediately. There should
-> however be no need to leave and re-enter lazy MMU completely. The
-> only part of that sequence that we really need is xen_mc_flush();
-> call it directly.
-> 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+Hi all,
 
-This looks functionally equivalent to me, so:
+This version of the series comes to you from me as James is otherwise
+engaged. I hope I have done his work justice. I've made quite a few
+changes, rework, bugs, typos, all the usual. In order to aid review,
+as Jonathan suggested, I've split out some patches and made an effort
+to minimise the amount of churn between patches.
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+It would be great to get this taken up quickly. There are lots more
+patches to come before we have a working MPAM story and this driver is
+hidden behind the expert config. All reviews, comments, testing
+welcomed and thank you for all the feedback so far.
 
-But I don't think this tidy up is strictly necessary for your series to work?
-(perhaps I'll change my mind on that as I go through it).
+See below for a public branch. No public updated version of the
+snapshot (the rest of the driver) I'm afraid.
 
-> ---
->  arch/x86/xen/mmu_pv.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-> index 2a4a8deaf612..7a35c3393df4 100644
-> --- a/arch/x86/xen/mmu_pv.c
-> +++ b/arch/x86/xen/mmu_pv.c
-> @@ -2139,10 +2139,8 @@ static void xen_flush_lazy_mmu(void)
->  {
->  	preempt_disable();
->  
-> -	if (xen_get_lazy_mode() == XEN_LAZY_MMU) {
-> -		arch_leave_lazy_mmu_mode();
-> -		arch_enter_lazy_mmu_mode();
-> -	}
-> +	if (xen_get_lazy_mode() == XEN_LAZY_MMU)
-> +		xen_mc_flush();
->  
->  	preempt_enable();
->  }
+Changelogs in the patches.
+
+Previous cover letter from James:
+
+This is just enough MPAM driver for ACPI. DT got ripped out. If you need DT
+support - please share your DTS so the DT folk know the binding is what is
+needed.
+This doesn't contain any of the resctrl code, meaning you can't actually drive it
+from user-space yet. Because of that, its hidden behind CONFIG_EXPERT.
+This will change once the user interface is connected up.
+
+This is the initial group of patches that allows the resctrl code to be built
+on top. Including that will increase the number of trees that may need to
+coordinate, so breaking it up make sense.
+
+The locking got simplified, but is still strange - this is because of the 'mpam-fb'
+firmware interface specification that is still alpha. That thing needs to wait for
+an interrupt after every system register write, which significantly impacts the
+driver. Some features just won't work, e.g. reading the monitor registers via
+perf.
+
+I've not found a platform that can test all the behaviours around the monitors,
+so this is where I'd expect the most bugs.
+
+The MPAM spec that describes all the system and MMIO registers can be found here:
+https://developer.arm.com/documentation/ddi0598/db/?lang=en
+(Ignored the 'RETIRED' warning - that is just arm moving the documentation around.
+ This document has the best overview)
+
+The expectation is this will go via the arm64 tree.
+
+This series is based on v6.18-rc4, and can be retrieved from:
+https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/driver/v4
+
+The rest of the driver can be found here: (no updated version - based on v3)
+https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/snapshot/v6.18-rc1
+
+What is MPAM? Set your time-machine to 2020:
+https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
+
+This series was previously posted here:
+[v3] https://lore.kernel.org/linux-arm-kernel/20251017185645.26604-1-james.morse@arm.com/
+[v2] lore.kernel.org/r/20250910204309.20751-1-james.morse@arm.com
+[v1] lore.kernel.org/r/20250822153048.2287-1-james.morse@arm.com
+[RFC] lore.kernel.org/r/20250711183648.30766-2-james.morse@arm.com
+
+Ben Horgan (4):
+  ACPI / PPTT: Add acpi_pptt_cache_v1_full to use pptt cache as one
+    structure
+  platform: Define platform_device_put cleanup handler
+  ACPI: Define acpi_put_table cleanup handler and acpi_get_table_ret()
+    helper
+  arm_mpam: Consider overflow in bandwidth counter state
+
+James Morse (27):
+  ACPI / PPTT: Add a helper to fill a cpumask from a processor container
+  ACPI / PPTT: Stop acpi_count_levels() expecting callers to clear
+    levels
+  ACPI / PPTT: Find cache level by cache-id
+  ACPI / PPTT: Add a helper to fill a cpumask from a cache_id
+  arm64: kconfig: Add Kconfig entry for MPAM
+  ACPI / MPAM: Parse the MPAM table
+  arm_mpam: Add probe/remove for mpam msc driver and kbuild boiler plate
+  arm_mpam: Add the class and component structures for firmware
+    described ris
+  arm_mpam: Add MPAM MSC register layout definitions
+  arm_mpam: Add cpuhp callbacks to probe MSC hardware
+  arm_mpam: Probe hardware to find the supported partid/pmg values
+  arm_mpam: Add helpers for managing the locking around the mon_sel
+    registers
+  arm_mpam: Probe the hardware features resctrl supports
+  arm_mpam: Merge supported features during mpam_enable() into
+    mpam_class
+  arm_mpam: Reset MSC controls from cpuhp callbacks
+  arm_mpam: Add a helper to touch an MSC from any CPU
+  arm_mpam: Extend reset logic to allow devices to be reset any time
+  arm_mpam: Register and enable IRQs
+  arm_mpam: Use a static key to indicate when mpam is enabled
+  arm_mpam: Allow configuration to be applied and restored during cpu
+    online
+  arm_mpam: Probe and reset the rest of the features
+  arm_mpam: Add helpers to allocate monitors
+  arm_mpam: Add mpam_msmon_read() to read monitor value
+  arm_mpam: Track bandwidth counter state for power management
+  arm_mpam: Add helper to reset saved mbwu state
+  arm_mpam: Add kunit test for bitmap reset
+  arm_mpam: Add kunit tests for props_mismatch()
+
+Rohit Mathew (2):
+  arm_mpam: Probe for long/lwd mbwu counters
+  arm_mpam: Use long MBWU counters if supported
+
+ arch/arm64/Kconfig                  |   25 +
+ drivers/Kconfig                     |    2 +
+ drivers/Makefile                    |    1 +
+ drivers/acpi/arm64/Kconfig          |    3 +
+ drivers/acpi/arm64/Makefile         |    1 +
+ drivers/acpi/arm64/mpam.c           |  403 ++++
+ drivers/acpi/pptt.c                 |  334 +++-
+ drivers/acpi/tables.c               |    2 +-
+ drivers/resctrl/Kconfig             |   24 +
+ drivers/resctrl/Makefile            |    4 +
+ drivers/resctrl/mpam_devices.c      | 2729 +++++++++++++++++++++++++++
+ drivers/resctrl/mpam_internal.h     |  656 +++++++
+ drivers/resctrl/test_mpam_devices.c |  389 ++++
+ include/linux/acpi.h                |   26 +
+ include/linux/arm_mpam.h            |   66 +
+ include/linux/platform_device.h     |    1 +
+ 16 files changed, 4611 insertions(+), 55 deletions(-)
+ create mode 100644 drivers/acpi/arm64/mpam.c
+ create mode 100644 drivers/resctrl/Kconfig
+ create mode 100644 drivers/resctrl/Makefile
+ create mode 100644 drivers/resctrl/mpam_devices.c
+ create mode 100644 drivers/resctrl/mpam_internal.h
+ create mode 100644 drivers/resctrl/test_mpam_devices.c
+ create mode 100644 include/linux/arm_mpam.h
+
+-- 
+2.43.0
 
 
