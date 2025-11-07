@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-890187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747D7C3F6D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BDDC3F6DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FDFF4E9BB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:28:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 272264EF37D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430BF305071;
-	Fri,  7 Nov 2025 10:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F15305942;
+	Fri,  7 Nov 2025 10:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="LTXY4niJ"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QSVC1dyB"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EE9302153
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C4E305940;
+	Fri,  7 Nov 2025 10:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511278; cv=none; b=dwDOv+rkJcaCI5V6GHgnMWMms/5cEe+hZLn/+IOV0rRnsuuNIeohDFzWVVmxVnecz9PajyJxdg+9xWlGbwne52EOHN9abznDdQCm6ShEUKs9+GhKKyvQ5rHFGj/CmPX7EAiu8IMopq7Kdyi9UkV4+SnsOJWHhccCAYIwJudBNaY=
+	t=1762511283; cv=none; b=LWXYqd3pZNb6209vYwwi5V8f/Q0uoy6a7ZTzS5ozP2KplHjIQ0w84J0fpVL8WsgPTIQbmtzQcHrBA5iDBGrpEJQC42yDoCYJGr5qhBk7Z/rEJ1S/6Y3n6xKIVTMoBS6H1hGARZJFWvushtJkZoY4Shuy9Fv+XSBUPytsNmrQ8BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511278; c=relaxed/simple;
-	bh=TP2dy+fVEjwce+7ZoFimG80olGzbpEy03H4vsRCTukg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=K+Y6+cADSsH2bRLoboHSxaMvRssV3XExXGUJfb3XdJ1puSwlnR0GOwk7Btx+fV5opuP3wn8pgwSPi0+0eQzjC8HFooutkI+12ohZ26LNo0FFhcTqNVpfuHqjWDpZZZaqpM46g+uB7nakh61wIK7EYeltjvMTFRR43KrMjlv5KbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=LTXY4niJ; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1762511283; c=relaxed/simple;
+	bh=ao1huc81LhbI7M7V+Lmw7sAVNImuD4foYke1+Hng3lI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awgVKZCC0GrCeHtPgqFdHPmSP//up9FGX//4cq8VqnJnE3yVHf/Z0P/R9Fnu1w6nTenY7teiUssvPTSnF3asWLC2JbUKRIxbjEqPl6wTUcLcWfFhr8F4tlDr1cm38vl+3SxLT7luKys5VL9Zel6JSg2jKeb4+nUuidD8d8JcwFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QSVC1dyB; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rUEiTpU7HDDR8xMFqOe2EDvAunYxBiPHehj76UNcJvY=; b=QSVC1dyBVq9iOjDUlh61G8KGft
+	apfvjGnw3TRhtW3UGKL1sovVkDGWzQpQIn/liVJrV82JFl9AwrM673VsvTrWDEpeOXvMdulJsnaOZ
+	zABWuolDlh+YxMKGXuOeXPM4UnjK2Ie2JLs902MAPKOVY15MCYjgM54HecdEinsD8R7UMM4CiPUSh
+	AHGQHmBsP2ItnH8zopdbipVsoI0sHOyBWXTAaiiQVzEkU2aOS+YLXtd8lOG0y/SWpShji3riP9Z8M
+	NNAaIZ2nfbc/O2OFGIT3QtTEpe+FrxsN98ckdXs0Lyr8OqOS0fiLQ4LsF/G1BZf9c99u34MYBuakw
+	w3jhpeTA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vHIpN-00000006AtS-2BCf;
+	Fri, 07 Nov 2025 09:32:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3E2993001D4; Fri, 07 Nov 2025 11:27:45 +0100 (CET)
+Date: Fri, 7 Nov 2025 11:27:45 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Jonathan Corbet <corbet@lwn.net>, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Sean Christopherson <seanjc@google.com>,
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-doc@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v11 5/9] x86/efi: Disable LASS while mapping the EFI
+ runtime services
+Message-ID: <20251107102745.GC1618871@noisy.programming.kicks-ass.net>
+References: <20251029210310.1155449-6-sohil.mehta@intel.com>
+ <3e9c4fdd-88a8-4597-9405-d865fb837d95@intel.com>
+ <cac58a25-eda6-4738-966f-a4e42818aa6c@app.fastmail.com>
+ <6dec8398-3f7c-44db-a30d-33593af0217f@intel.com>
+ <efd6ec82-5576-41f1-a244-2f80d72e93e4@intel.com>
+ <ee2fce64-91ce-4b78-b2f9-33364ea0c52f@intel.com>
+ <20251107090406.GU3245006@noisy.programming.kicks-ass.net>
+ <CAMj1kXFQaGaz37MNKXXjhUKy_mP-5teCDj80-hjUPHw4x+TKrA@mail.gmail.com>
+ <20251107094008.GA1618871@noisy.programming.kicks-ass.net>
+ <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1762511271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WXxxLdb7XheOy75RFTu6qpzQ1CR6/qzHUiLBzTJbIfo=;
-	b=LTXY4niJ2Q4v9blFZDDIDMhmT6YuANss37XVrUPjaWkBRYbGPvukGIrKWMjfMtjCz9X4y2
-	D0icX131qTv+kScD53gosbMyEh9nKGD7IdwIhnbkx9kmiVcrc3fXJVV8w0StZO3YlSuV6u
-	N0fDkWwwzBQPhuNam3hUStygGtLEykiDTBETx/DGwquha8F2AIUK55iJQQjrfXkvH8ri19
-	JWvm9c3kuu8nOS8c0V9jSfOMNKS9NziiYCuireCSED3VE6TV87pkiPaoZ/tU7QArHk1qe1
-	UkRkKnx8n4UE05b8wzlOpUbvsSK+LAJmaMEErMTaPXGlZ7HCyBphXEv2Ab2MQw==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 07 Nov 2025 11:27:45 +0100
-Message-Id: <DE2E3LND1O81.25N3JM01890FT@cknow-tech.com>
-Cc: "Bjorn Helgaas" <helgaas@kernel.org>,
- <linux-rockchip@lists.infradead.org>, "Shawn Lin"
- <shawn.lin@rock-chips.com>, "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Manivannan
- Sadhasivam" <mani@kernel.org>, "Rob Herring" <robh@kernel.org>, "Bjorn
- Helgaas" <bhelgaas@google.com>, "Heiko Stuebner" <heiko@sntech.de>,
- <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Johan Jonker" <jbx6244@gmail.com>
-Subject: Re: [RFC PATCH 2/2] PCI: rockchip-host: drop wait on PERST# toggle
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Geraldo Nascimento" <geraldogabriel@gmail.com>
-References: <d3d0c3a387ff461e62bbd66a0bde654a9a17761e.1762150971.git.geraldogabriel@gmail.com> <20251103181038.GA1814635@bhelgaas> <aQrKtFT0ldc70gKj@geday> <DE0N4LA8MOJD.236O12UZ3I3C4@cknow-tech.com> <aQu_-JDy7qqeviUm@geday>
-In-Reply-To: <aQu_-JDy7qqeviUm@geday>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXFWCwEENyS=JM5mAON6ebfTwwJh-mRDYCY5NA+5UGzZJg@mail.gmail.com>
 
-Hi Geraldo,
+On Fri, Nov 07, 2025 at 11:09:44AM +0100, Ard Biesheuvel wrote:
 
-On Wed Nov 5, 2025 at 10:22 PM CET, Geraldo Nascimento wrote:
-> On Wed, Nov 05, 2025 at 10:06:53AM +0100, Diederik de Haas wrote:
->> I have a Samsung PM981 (without the 'a') and AFAICT it works fine.
->> I had noticed that the PERST# (pinctrl) was missing, but 'ep-gpios'
->> was/is new to me and I hadn't had time to research that properly yet.
->> Good to see you already found it yourself :-)
->
-> Would you mind testing the following DT change to make sure your PM981
-> continues to work fine?
+> As long as you install with EFI enabled, the impact of efi=noruntime
+> should be limited, given that x86 does not rely on EFI runtime
+> services for the RTC or for reboot/poweroff. But you will lose access
+> to the EFI variable store. (Not sure what 'noefi' does in comparison,
+> but keeping EFI enabled at boot time for things like secure/measured
+> boot and storage encryption will probably result in a net positive
+> impact on security/hardening as long as you avoid calling into the
+> firmware after boot)
 
-I just learned the the PCIe system on rk3399 is indeed different from
-the systems where I use it with (rk3568 & rk3588). And 'ep-gpios' is
-only used with rk3399 based devices (in the Rockchip dts tree), which
-explains why I hadn't seen that before.
-Which in turn means I can't test your proposed change.
+I would say it should all stay before we start userspace, because that's
+where our trust boundary is. We definitely do not trust userspace.
 
-I guess I was triggered by RFC patch 2 which said 'a known quirky
-device' while my Samsung PM981's are working fine ... but with DW based
-IP. You did specify in your cover letter the connection with Rockchip
-PCI IP, which apparently can make a (lot of?) difference.
-Me finding the PERST# pinctrl in a few minutes and we finding
-improvements in RockPro64's PCI 'config' recently, indicated to me that
-a new look into the dts definition may be warranted, before changing
-``drivers/pci/controller/pcie-rockchip-host.c`` for everyone.
+Also, if they all think this is 'important' why not provide native
+drivers for this service?
 
-Cheers,
-  Diederik
+> > At the very least I think we should start printing scary messages about
+> > disabling security to run untrusted code. This is all quite insane :/
+> 
+> I agree in principle. However, calling it 'untrusted' is a bit
+> misleading here, given that you already rely on the same body of code
+> to boot your computer to begin with. 
 
-> Thank you,
-> Geraldo Nascimento
->
-> ---
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi b/arch=
-/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
-> index aa70776e898a..b3d19dce539f 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
-> @@ -383,7 +383,7 @@ &pcie_phy {
->  };
-> =20
->  &pcie0 {
-> -	ep-gpios =3D <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-> +	ep-gpios =3D <&gpio0 RK_PB4 (GPIO_ACTIVE_HIGH | GPIO_SINGLE_ENDED)>;
->  	num-lanes =3D <4>;
->  	pinctrl-0 =3D <&pcie_clkreqnb_cpm>;
->  	pinctrl-names =3D "default";
+That PRM stuff really doesn't sound like its needed to boot. And it
+sounds like it really should be part of the normal Linux driver, but
+isn't for $corp reasons or something.
 
+> I.e., if you suspect that the
+> code in question is conspiring against you, not calling it at runtime
+> to manipulate EFI variables is not going to help with that.
+
+Well, the problem is the disabling of all the hardware and software
+security measures to run this crap. This makes it a prime target to take
+over stuff. Also, while EFI code might be good enough to boot the
+machine, using it at runtime is a whole different league of security.
+
+What if they have a 'bug' in the variable name parser and a variable
+named "NSAWantsAccess" gets you a buffer overflow and random code
+execution.
+
+Trusting it to boot the machine and trusting it to be safe for general
+runtime are two very different things.
+
+> Question is though whether on x86, sandboxing is feasible: can VMs
+> call into SMM? Because that is where 95% of the EFI variable services
+> logic resides - the code running directly under the OS does very
+> little other than marshalling the arguments and passing them on.
+
+I just read in that PRM document that they *REALLY* want to get away
+from SMM because it freezes all CPUs in the system for the duration of
+the SMI. So this variable crud being in SMM would be inconsistent.
+
+Anyway, I'm all for very aggressive runtime warnings and pushing vendors
+that object to provide native drivers. I don't believe there is any real
+technical reason for any of this.
 
