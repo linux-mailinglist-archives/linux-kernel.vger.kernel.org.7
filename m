@@ -1,141 +1,136 @@
-Return-Path: <linux-kernel+bounces-890665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0842BC409D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:35:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025E8C40996
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 824C534E501
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:35:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC0A3BF5E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F1132D0DA;
-	Fri,  7 Nov 2025 15:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83B3329380;
+	Fri,  7 Nov 2025 15:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YorsSntO"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fWkvLxd4"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A9329C4C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45665239E7F;
+	Fri,  7 Nov 2025 15:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762529738; cv=none; b=KKDJwk52bGHijU4yibqqAhv0jalUx4Dp8/K0mhAaF5nVF/lNiLBqy66PggWqet+ksrQ4Uv0ko5CQFA27xNIZMW/GnGnf+5F0Ie9r38S3NTsFPQkwtSYo+kO6ienfuDAy8jog+E//pZtBBq58iG4zL/HlejHUeNWR+OIItlPJyGY=
+	t=1762529620; cv=none; b=irEZ31YcHU/iaFyrABY6uPYbjEjBOTRpKCwD4ous/lKvoG+q2Cxt56ahgx+CBAbGshOIgwYIFMUxR7yR8iV3Dy+RCnjuCMHq2GggMorxlDr3t9Kv266WD2CwmeBfZQ+p2PnagXgpI+CkvSClfGhRqGhp5mtExRIcHOq27B2KFpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762529738; c=relaxed/simple;
-	bh=zJdrcgoALR0xH2DkImtOIpo+BNEvKbIMo9Z6qrx/plA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TccwXiCCdBi6xhrPmFqs/JfKB7XN7aMAPZb4ChSnY/jy8o8iRcspQq56JoiehlA8hc9LBVRANFq/9Qk7NJvGN2SNwUyDV/p9qjrwRYufJQcDHeqmJhYnIg4k+GyQv4ylR1vQFs6ochRKh5KCRVWfZih+61fFlQUtbkyF/i2mV8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YorsSntO; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7a9fb6fccabso772927b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:35:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762529736; x=1763134536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/W0MVeUMNs9wcZldJ+mVuCnE4W2Lpw3nds3hMNg6jvI=;
-        b=YorsSntOgrY+2ojMZ5H/ZumsKqvQqc9DjW0EEHYG7LhhndVeei5St8NIIUXUNbdBmL
-         BPxIEfYTVORjnBBYl1oWQw6lGQKqA+Cd4CF0qXgX/pnLmSJoTTFVvv/ZRdKih9eHdvWM
-         fyjzxYC0eIcz+4UDLjvVYI6kmvzW4KbAUW+2YjzwQyRaUdGFJd3TamScgfXHYEAYSg9+
-         +00beu3aOOF3wro6YiQc/RhGkb+7jJ5N3wnYC3bTNhJ5OBvxv/UyPX1BccBWhl0VZb4d
-         JmkFeyYc85x4wlslbbYVxALIMDqeFphCMWOrE6k7mgefz6/8MpmSjd/HYAxpR15NWcRM
-         3mFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762529736; x=1763134536;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/W0MVeUMNs9wcZldJ+mVuCnE4W2Lpw3nds3hMNg6jvI=;
-        b=b6E+hHKE6DgLcXUybnJ8ZUcXhZqVmR6dBbkH+FyabaWXkNUfz50gSt4kMxT/pAWpCC
-         Z8tdHLExfo78wgW400/UmGbaZyv/f+JLrD5HKkEcy2DwGe9sLkSDKtjF0vZGJH14elDK
-         f9Bhn/Mujgwh+CFD6t49vh7fIp4op1rEo8pvRYPchCnuRTtr7xUkuq2ISMpGeJS/nRek
-         EZVR9NpJc4aJDMlvnT2rMjBFMk5y7j7AFOc7ydu3RmyO5JFGLPu/Av15njLcfVgsr7tC
-         jxYso9WH+hfIl8m8X5ZcOVu2zzUlDm2eRXNgAPZKkkQTUsoRM3KxnQJ6z9yNhVMyE0+s
-         i/bA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHsl7jk2vc7Ymblar33ZBsH2KqOZDK/UfGhLFORy9skD/+ELt5+hwvGhj+23eagzxowdkYIq5lbhTXOxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1CO/GwcoqJOfRcLKOE1vZkLu0XiUSjMMoAQDPBM76nqHTXvEa
-	lENJYTn4aKAL/U7i9py8ebGsIv9BfGk+Uh2HMp9b9q5wQ42ycT24sGYw
-X-Gm-Gg: ASbGncuLyRpab7hfqJ8p7jTEN7xnJ8Ks5YJgDGYsIzomPXipBetU1CSw0tifbW/u5Sx
-	S0h8yerUPVNmDr8CchOewlz6PcPQiaYP4Z9yG1ksiu7oBPCT+wb1+DqRuefPHD7XvYVInP4uWAc
-	Gtnph9nSkuHzmwzJeyIis/+kG+SHIRrcmZrshfsahwFe8WyzxGlp80guSM72sTN7mfDg+Lz6+I9
-	tvsXGejJq4ahvd5YaFCmwFPLkWx4Nf9c5RkBlNF3x5vLeo1M83B1PnAu4aTjPUpzOGuFGP9KSgV
-	McHTc7VI46h7Jhejn5NWvwQU/bZq+CqveX/ktU6VYjVWRaaE6QsP+F6PLGC87iVIkkLBJzOhcuW
-	ycRFMIc8BD8/qyE0IY/3Flz5BFN/+Ed5AN5LYqZGwzSE1QpBI4KJAF5YI2VC6jN+c/2AcEHQf8B
-	0yIqv1PQULubUji5RM/wr9HcQwWLb+6ZwuupKq4iwBFvkVpLDPxamfTtwXnolF
-X-Google-Smtp-Source: AGHT+IGLW5hrLEauNfqtWP7rMnZ70eoI+w9zgxcAeBxmGbfmB2VZwOYD50GSPrR8QqMdFwFBfd70LQ==
-X-Received: by 2002:a05:6a00:1ad1:b0:7aa:8397:7750 with SMTP id d2e1a72fcca58-7b0bbef7e14mr5320351b3a.12.1762529735770;
-        Fri, 07 Nov 2025 07:35:35 -0800 (PST)
-Received: from carrot.devel.local (i114-180-53-102.s42.a014.ap.plala.or.jp. [114.180.53.102])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0c9634f56sm3360011b3a.4.2025.11.07.07.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:35:34 -0800 (PST)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: update nilfs2 entry
-Date: Sat,  8 Nov 2025 00:32:49 +0900
-Message-ID: <20251107153530.9023-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762529620; c=relaxed/simple;
+	bh=P3ab668+SgsSZopmzQ6luLdGMiRFYv+zhm5ze83iYCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/t1MM8DarFQf21O7g6DNG6xL0mU/HQzrpnjXnqSdcPfiva2wpaTzv5/T+QKqHCapyABzRmxAT70GuUuTcmbJVmR0Qsu+ohssr9FwBn2aXXfsy7w8dyKx7T3dIpkKqRod6KXmIDg05enapNUYVSImseCp7gAqYP+I3ZtwVazsZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fWkvLxd4; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HD/Q7fVnxSxfev0yk/VhBnw0ldUa9+lYqYF4QzV4RV4=; b=fWkvLxd49Wjnh2n2/9JPLxpAgH
+	W4EX+IEXmwmxM1+0Yy5nVbc5Yjnd7ibQMKQQ2sMOC0AFZ9vFDDtTulhJ8kN0tm0Y56n8RvyXlQQWG
+	zjH4oYaw47mbN5y7l4fjzbHTCYXzyMm7wDR3QbrAv90Bd5Q0DQJ8oAwSXoG4yUx3Z8qvPfeIKPDh3
+	D4rckrNiQ2S53gGU82Fc6+RtX4QF5am4NAgvgIo7F0I7O6hwEvTYY0POkoqsgbTVid+Org/zkDWzD
+	L4dnPOs3iHy1dFnUUs5knxxWRQiUuQPwJyiqV27pXJMC7FHmez4BQ09NkWHWBVHJ+ts/8xLfuAm2t
+	jdEJMxoA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49970)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vHOSw-000000006pZ-1u8J;
+	Fri, 07 Nov 2025 15:33:30 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vHOSt-000000007gr-2tdD;
+	Fri, 07 Nov 2025 15:33:27 +0000
+Date: Fri, 7 Nov 2025 15:33:27 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jonas Gorski <jonas.gorski@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
+Subject: Re: [PATCH net v2] net: dsa: b53: bcm531x5: fix cpu rgmii mode
+ interpretation
+Message-ID: <aQ4RR4OQI9f2bBOG@shell.armlinux.org.uk>
+References: <20251107083006.44604-1-jonas.gorski@gmail.com>
+ <ce95eb8c-0d40-464d-b729-80e1ea71051c@lunn.ch>
+ <CAOiHx=kt+pMVJ+MCUKC3M6QeMg+gamYsnhBAHkG3b6SGEknOuw@mail.gmail.com>
+ <ec456ae4-18ea-4f77-ba9a-a5d35bf1b1fd@lunn.ch>
+ <20251107144515.ybwcfyppzashtc5c@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107144515.ybwcfyppzashtc5c@skbuf>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Viacheslav has kindly offered to help with the maintenance of nilfs2
-by upstreaming patches, similar to the HFS/HFS+ tree.  I've accepted
-his offer, and will therefore add him as a co-maintainer and switch
-the project's git tree for that role.
+On Fri, Nov 07, 2025 at 04:45:15PM +0200, Vladimir Oltean wrote:
+> On Fri, Nov 07, 2025 at 03:07:48PM +0100, Andrew Lunn wrote:
+> > > There is allwinner/sun7i-a20-lamobo-r1.dts, which uses "rgmii-txid",
+> > > which is untouched by this patch. The ethernet interface uses "rgmii".
+> > 
+> > Which is odd, but lets leave it alone.
+> > 
+> > > And there is arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts,
+> > > where a comment says that it has a BCM53134, but there is no such
+> > > node. The ethernet node uses "rgmii".
+> > 
+> > aspeed pretty much always get phy-mode wrong. So i would not worry too
+> > much about this.
+> > 
+> > > So one doesn't define one, one uses rgmii-id on the switch / phy side
+> > > and rgmii on the ethernet mac side, and one only defines the ethernet
+> > > mac side as rgmii.
+> > 
+> > That is reasonable. It is a lot less clear what is correct for a
+> > MAC-MAC connection. For a MAC-PHY connection we do have documentation,
+> > the preference is that the PHY adds the delays, not the MAC. If the
+> > switch is playing PHY, then having it add delays is sensible.
+> > 
+> > > > I would maybe add a dev_warn() here, saying the DT blob is out of date
+> > > > and needs fixing. And fix all the in kernel .dts files.
+> > > 
+> > > Sure I can add a warning.
+> > 
+> > Great, thanks.
+> > 
+> > 	Andrew
+> 
+> +Russell
 
-At the same time, change the outdated status field to Maintained to
-reflect the current state.
+As this is discussing the applicability of RGMII delays for DSA
+switches, I've long held out that the situation is a mess, and
+diverges from what we decide to do for MACs - so I'd prefer not
+to get involved in this, except to say...
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
----
-Hi Andrew,
+> Since there is no 'correct' way to apply RGMII delays on a MAC according
+> to phy-mode, my advice, if possible, would be to leave sleeping dogs lie
+> and fix broken setups by adding the explicit device tree properties in
+> the MAC, and adding driver support for parsing these.
 
-Please add this to the queue for the merge window.
+Indeed - let's not break existing working setups. If there is a
+problem with them, then that's the time to start thinking about
+changing them.
 
-Viacheslav will help with nilfs2 maintenance (upstreaming), so change
-the entry in the MAINTAINERS file to acknowledge this.
-
-After the next merge window is over, I plan to send nilfs2 patches to
-the mainline through him.  I sincerely appreciate your cooperation in
-the upstreaming work over the years.
-
-Thank you.
-
-Ryusuke Konishi
-
- MAINTAINERS | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46bd8e033042..d5e2c1524a96 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18254,10 +18254,11 @@ F:	net/sunrpc/
- 
- NILFS2 FILESYSTEM
- M:	Ryusuke Konishi <konishi.ryusuke@gmail.com>
-+M:	Viacheslav Dubeyko <slava@dubeyko.com>
- L:	linux-nilfs@vger.kernel.org
--S:	Supported
-+S:	Maintained
- W:	https://nilfs.sourceforge.io/
--T:	git https://github.com/konis/nilfs2.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vdubeyko/nilfs2.git
- F:	Documentation/filesystems/nilfs2.rst
- F:	fs/nilfs2/
- F:	include/trace/events/nilfs2.h
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
