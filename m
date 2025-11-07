@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-889700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094DCC3E460
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:42:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5AEC3E469
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9B0C348BF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F160188AA0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8E82F12C6;
-	Fri,  7 Nov 2025 02:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9A628D8F4;
+	Fri,  7 Nov 2025 02:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LSQktzlJ"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlHBFQLh"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460D62EF655
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2600B2EF654
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762483360; cv=none; b=P+xO3Od3bkKI/KJwxjv7xAFYCMQ8GpJQi5nT3OUtE1BnaG76+kgjlhlxvzqvUce03T3WrQQ8E8Y+1vJY75BZbnTHFbWvmF7aXo5b0D65ubk5dXOAk+8StvwxBJK6qxUTnILXwIHWolICso1rKoEzm800XbgBLru8SkH5Ok4X56U=
+	t=1762483446; cv=none; b=TJK4rOZ49nAOripUvqYZDpS1fn0DiDyo6pQFwpzvvL1empzu00uOucRiL5hM2fAaTbRRWSizgpIvyamEcVHMY3BfUGb9BluqQKwBUvsuqsj2nEjHpnNOimuQR1Yt7m+Y5zipaQjfZkfO/Iut9WW+nLN1L8ehKVzDZZ6SPY0eVw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762483360; c=relaxed/simple;
-	bh=uYfqsgI+4yKP34dOe9Nf3RalYvhP+CX4KYMz72LP0Qc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ufwdT0Z5HcifLKo4rFCb7srIvezitPQLRzozO9uy4NEf8yfESMiiyHU3MJNAFiDyrelxdPp2WO/oTMMZPha6ZbED8CloIeZ9++l1GA5/TYkdQMEtN8vR+UBxX+6qAHGvCYvVcP5G2eUIIebUyrbf5/i5rSicvCc/93q3qUX5qvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LSQktzlJ; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-44fe903c1d6so67440b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 18:42:38 -0800 (PST)
+	s=arc-20240116; t=1762483446; c=relaxed/simple;
+	bh=f0zO8wvgQhxW3NMqX1Rfvdtn5DxNIhGdOq4ogpGv4Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZCxOsarNkyHsGpDUstHE3jZaF1vNT2b27xyeTWgfMQX6xBTH0hOmnLE4O+crC7FW51V3wJq1JcjfC1YGOXca9qF/71NbRPT99tpfTEY9bO0NjpiIMFk018eCZoGAnOPAByXCBMTjkTaYkZjTZnGm/2ocf6WoKeQVeDIvZzc5EX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlHBFQLh; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3c9991e6ad1so189926fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 18:44:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1762483357; x=1763088157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ta4pHybjsRd5oAb5H49GhrRgg2InYaGc8HOWjDuWw8Q=;
-        b=LSQktzlJNDOWNxrCj20o34ZHK0ILbhIKUhX1ve58RrWkfT1iCPIP1yBhfvpqOclJRL
-         /t8Sf4ZOVzCi4n93EKb2y1H27UKAjXWBt7jrPB1RLGy/Tji2iduu/HCOSMC546s12onR
-         paFkysj4nMTJWo3W9bQgnd+bq8w9jnUaFTc9P1PDZaKlvr9+qKsWKGiGXbL4/fzlx+ql
-         SG/Ku2QVjnQK2BxWzk+Oeh5n8pIQ/D73vUrZ8LXX5+ucm+nInikhsWTHlLXmWO+bbHW+
-         LNj6KssNQV1oFqgeDAqkP3CWx3XYWaEPTN0IKrwr01b1rf+Gx/nyI63KDxpoCECXf6oK
-         oUng==
+        d=gmail.com; s=20230601; t=1762483444; x=1763088244; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tQJFO3d01XRWHlItzAgkgKpAHFmrqaV2k8tk3VC7Qsk=;
+        b=BlHBFQLh/UZuO1Vd7TyJbmQiWmsQH5fEz+JdpMIVwmNjuTfmB3USdPmo577ml5MDX9
+         RNQC+4Q5khFuY7fzTzOwH5JYMlMUFoc7YQfO8Y2kYnvV1CrYlc7lSkSpKg+HSZqXarGf
+         eFXLnmVP0zZ1FsTpG7OaknTglg5nDP2UbclVZ37b7DGOs6TKfhV3tpKAGsy4S4bhg1ua
+         1Z9c7IV5hvMua0/rZqdBpdIZgmM8E7+n7WIUMd4KGshnXYduPSskKUMVQ9ZfE68pBP9i
+         V+nxtdXpvJBrmGIIwZn2o8GfefHsHbbzj3F3dasldmLjH+KX1y587ZPd/mCXGlQv8SJk
+         DXcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762483357; x=1763088157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Ta4pHybjsRd5oAb5H49GhrRgg2InYaGc8HOWjDuWw8Q=;
-        b=Lz8+EyVbpc96FK8n0N3jD4sD5advzzsZTC/moKWzQhEQ9A6dj9UH2a0SnjmXJ7X1by
-         RWyu91olt1u+hx/aaRi79Pq7Bj8aZcB1AoSyDUiCFyLDzTq0cbrJiIdnjumh3pYPdbQO
-         6b6hRMm51nx0/ufAgz+MV2P9ENMF68KAnQ9TI7PAlpYJtY3/e83X63/o4KqPAX0YwVZg
-         77vd3Ll0Gm9bsW5/CqWaZfs6nJKS9zC0O5EcPv/hVN2kQVdotcar2MaIAqIqyQHd9ngL
-         INAppBi6OP0ZRxRUJ2iZXvCa4jSKESzA75IaiGWVXYxdvSC8sd7+HG+Yp1DhQS1+U/x+
-         tABA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMM/W/k+UesPBqMEGanpv5mTBHhK/eqUMLlrs5291TQK0dAjxAOEi6LMD5I3v53+Ugjkj+bBcV9NQh86I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSP6ueVNOgVTAxAVaisrduorDH0eM2fZ/c2nFP+3gThk83Dr5E
-	scDmcE4sGabvSQigwyDomWtnNy5G0Xj4qFicTCT/3zfwGUp0vjDXgRxZbhWax5AyjGW0gacSEc/
-	qqD5WYZIbX1AwlkItB2KCghEdiAuzVOz1SYhvSbtd+A==
-X-Gm-Gg: ASbGnctWyqX2HgMsJmvWh33L+Q5gHRNABaeKesq46Izqsz/Xn4ci7JV3yVtZ83YbZqI
-	ohxwMXLdD2/98D3IKhOhaKlkcYWAfY7CP7AnAruHebTDYtpWiVE1saOeTV5YY/IGThy0kd1hMkV
-	oXOTq3Hf1+fwHGsyw0uGO3UEz8NNP0hmzIfrhXsVcY/trQzRO0k6HP8Kg0FsV+GY0Vypp0huu1O
-	EpJfqWjWNcqdZnqmNYSJfcJBwsXxVGrrluOT0kcIiiBqko4ajEpjetX4mDfcYyIzLCKchaZ5WG0
-	ChoZw7WA
-X-Google-Smtp-Source: AGHT+IGb0n2soPVhA9HW3Yi/ug81lmtTpcvsCQ9ShMeI3zEImc6F3+dHOysOTdbZsRZbSPkSfqhccOrjI+KKkLT4UmA=
-X-Received: by 2002:a05:6808:f8d:b0:44f:e3d2:59db with SMTP id
- 5614622812f47-45015d583cemr1045696b6e.16.1762483357292; Thu, 06 Nov 2025
- 18:42:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762483444; x=1763088244;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tQJFO3d01XRWHlItzAgkgKpAHFmrqaV2k8tk3VC7Qsk=;
+        b=QJT0PCJySq7whkhKpo08y2hmlF5tAEqGaREXukySE+XaKT3e1WTjBAjp1WN/Y7tsqB
+         ua02zCGBjm99yo48xcCKkWzBygAptaYioxhoEjgaE97CoFEffUNAay5sBZtyf6c6VJlg
+         Y6sf9YS9iFW38ojbCNxMFB34MMKE0DIN5M0zbI64Cabm0O9KF1NxOoj0nda8TZdv4llH
+         5ciiiWqxWW96+Z24uEK+8knUBs2VkoKevnUkqH+hgzeBXEMIG9KyLNoUpTFFcj0l8DSt
+         ZVJw20jMMroFDRrs6QAZ3myNopt8d3NYUHyfIaWwfYdytFxbAwZce0uYoP889gpLeD78
+         jfMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjPkloFT46hi8bGdjX3eSkkExKcA939hb/gscO5JzTGP+hfEx9WCzaWAfCyECBdNJrstuJblWuGzWVBBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM4HcRjEGh7lfqsQDZX85v1wMVhN6/XoxLavL67Lv1/ic3WY3f
+	RwXxuMrcrOnhu5EDeYS5kipMsLLj6JQ06cKCKC8wrPkUf0hyRaRkrA6N
+X-Gm-Gg: ASbGncuEU54l/6X26SI62B1nIa/0w+zgYJELCVgnr0c0A0bnJo92p2iiAFNKgkqZedi
+	KV3ZsOfMO+iUGc/kcROeXDsr8sxJbIQIyxEIVeorNhC9UyhOO2U6ZmdTj3nXZ4iwJ0p7U18JKIS
+	D7jHVtqxC3KyxH/Fb4DkjOR9weMN6LCSAahSfrmlQFHmeerdfp/JvUmZPvWOYG1cTDKbxnRieXk
+	e1SuH/lJtDYKnuc2PB6EcDhItCXsZOO4XVAU3Jv3t0AXZ097cDqMNjf2+8jk51dVUjpl9ybNDPb
+	G8+YVy3iEaik8AWjADxz4GUVDI/udRdzKoopZerzkIcOO+Hh5c2M2ohpVclbOf8d9Buv8kRk6BD
+	tJgbHidLnAxlokKHEH3rZyLDVI4RC9/kaBv5FehqxFqjQJgzW40VV6p1/hfxZug==
+X-Google-Smtp-Source: AGHT+IFD2D//hG6hBMCeFSWKnWdmScBR8+/9DZwOHc0uXkeVWeA8HfOnZLz9J/lfwgpLyio/zbkAWg==
+X-Received: by 2002:a05:6871:51e7:b0:3e0:aec2:8b50 with SMTP id 586e51a60fabf-3e42aba92a0mr60346fac.22.1762483444119;
+        Thu, 06 Nov 2025 18:44:04 -0800 (PST)
+Received: from geday ([2804:7f2:8082:6c9::1])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e41f1ec269sm760868fac.20.2025.11.06.18.43.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 18:44:03 -0800 (PST)
+Date: Thu, 6 Nov 2025 23:43:57 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Johan Jonker <jbx6244@gmail.com>,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: rockchip: align bindings to PCIe spec
+Message-ID: <aQ1c7ZDycxiOIy8Y@geday>
+References: <4b5ffcccfef2a61838aa563521672a171acb27b2.1762321976.git.geraldogabriel@gmail.com>
+ <ba120577-42da-424d-8102-9d085c1494c8@rock-chips.com>
+ <aQsIXcQzeYop6a0B@geday>
+ <67b605b0-7046-448a-bc9b-d3ac56333809@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014031425.93284-1-cuiyunhui@bytedance.com>
- <20251014031425.93284-2-cuiyunhui@bytedance.com> <aQixsIQXTjYyhRVj@willie-the-truck>
-In-Reply-To: <aQixsIQXTjYyhRVj@willie-the-truck>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Fri, 7 Nov 2025 10:42:25 +0800
-X-Gm-Features: AWmQ_bkNdWjndV3isxnVf7u1V6RwPPlMP2i7v5fPfn_48ruw1DHahvSQ2HKDsok
-Message-ID: <CAEEQ3wk5Ru4-=4Ecnc6kQAAbR57806xxYTz0o1z4KfgZE6Cg6w@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v4 1/2] watchdog: move arm64 watchdog_hld
- into common code
-To: Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, alex@ghiti.fr, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, atish.patra@linux.dev, catalin.marinas@arm.com, 
-	dianders@chromium.org, johannes@sipsolutions.net, lihuafei1@huawei.com, 
-	mark.rutland@arm.com, masahiroy@kernel.org, maz@kernel.org, mingo@kernel.org, 
-	nicolas.schier@linux.dev, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	suzuki.poulose@arm.com, thorsten.blum@linux.dev, wangjinchao600@gmail.com, 
-	yangyicong@hisilicon.com, zhanjie9@hisilicon.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <67b605b0-7046-448a-bc9b-d3ac56333809@rock-chips.com>
 
-Hi Will,
+On Wed, Nov 05, 2025 at 04:56:36PM +0800, Shawn Lin wrote:
+> 在 2025/11/05 星期三 16:18, Geraldo Nascimento 写道:
+> > Hi Shawn, glad to hear from you.
+> > 
+> > Perhaps the following change is better? It resolves the issue
+> > without the added complication of open drain. After you questioned
+> > if open drain is actually part of the spec, I remembered that
+> > GPIO_OPEN_DRAIN is actually (GPIO_SINGLE_ENDED | GPIO_LINE_OPEN_DRAIN)
+> > so I decided to test with just GPIO_SINGLE_ENDED and it works.
 
-On Mon, Nov 3, 2025 at 9:44=E2=80=AFPM Will Deacon <will@kernel.org> wrote:
->
-> On Tue, Oct 14, 2025 at 11:14:24AM +0800, Yunhui Cui wrote:
-> > @@ -306,3 +307,85 @@ void __init hardlockup_config_perf_event(const cha=
-r *str)
-> >       wd_hw_attr.type =3D PERF_TYPE_RAW;
-> >       wd_hw_attr.config =3D config;
-> >  }
-> > +
-> > +#ifdef CONFIG_WATCHDOG_PERF_ADJUST_PERIOD
-> > +/*
-> > + * Safe maximum CPU frequency in case a particular platform doesn't im=
-plement
-> > + * cpufreq driver. Although, architecture doesn't put any restrictions=
- on
-> > + * maximum frequency but 5 GHz seems to be safe maximum given the avai=
-lable
-> > + * CPUs in the market which are clocked much less than 5 GHz. On the o=
-ther
-> > + * hand, we can't make it much higher as it would lead to a large hard=
--lockup
-> > + * detection timeout on parts which are running slower (eg. 1GHz on
-> > + * Developerbox) and doesn't possess a cpufreq driver.
-> > + */
-> > +#define SAFE_MAX_CPU_FREQ    5000000000UL // 5 GHz
-> > +__weak u64 hw_nmi_get_sample_period(int watchdog_thresh)
-> > +{
-> > +     unsigned int cpu =3D smp_processor_id();
-> > +     unsigned long max_cpu_freq;
-> > +
-> > +     max_cpu_freq =3D cpufreq_get_hw_max_freq(cpu) * 1000UL;
-> > +     if (!max_cpu_freq)
-> > +             max_cpu_freq =3D SAFE_MAX_CPU_FREQ;
-> > +
-> > +     return (u64)max_cpu_freq * watchdog_thresh;
-> > +}
->
-> Why does this function become __weak? Neither arm64 nor riscv override
-> it afaict.
+Shawn,
 
-Would you say there=E2=80=99s any particular issue here? If some architectu=
-res
-might need to override the hw_nmi_get_sample_period() function later
-on, wouldn=E2=80=99t __weak be a more reasonable choice?
+I quote from the PCIe Mini Card Electromechanical Specification Rev 1.2
 
->
-> Will
+"3.4.1. Logic Signal Requirements
+
+The 3.3V card logic levels for single-ended digital signals (WAKE#,
+CLKREQ#, PERST#, and W_DISABLE#) are given in Table 3-7. [...]"
+
+So while you are correct that PERST# is most definitely not Open Drain,
+there's evidence on the spec that defines this signal as Single-Ended.
 
 Thanks,
-Yunhui
+Geraldo Nascimento
 
