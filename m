@@ -1,363 +1,192 @@
-Return-Path: <linux-kernel+bounces-889875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26977C3EBFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:29:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2E4C3EBF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 335C94EB974
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CD43AAC73
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B2B3090EA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A2B3090CD;
 	Fri,  7 Nov 2025 07:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vgtyt3Qh"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FAF26CE06
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E7B2FB602
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762500566; cv=none; b=PiRja51mTbzETWz1qmW/Hc5GnhN38tv5xe1rxmLpUf683vaynNmpP/nItg5fhN2/ZEefFh/HJtYSbNcfJTSrxFNW6DCBhOVus/W2fcmcS/QkPuagfzY83LC6NlBtoOreI+BvDCcUuPupCZ/VwyM+HPbOVS6Nyz53EY9cDBKtAyA=
+	t=1762500566; cv=none; b=ctTQu2V8hi6h/a4GOCXA2A8rCTKxiXwZ2v4/7BbDIPqkVeeIu/YOnoI6cIQ+StbS40V1/5kd6yNb6pJt2i9gm53zFCL//Cqyj82dW7mYyZMQrQpmyss/R9tmyOpTV219qjD0SHYjqFPneDOKPfeszYftldLOa5fPyxw+Ko5DJSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762500566; c=relaxed/simple;
-	bh=CFQM4Su+Z6JQR/FcapowlXOgnDNjrBaIqDt1QwG+ZZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lu35VxL5ryxDBUOIAD8WtvNN+THYkAPaLpsGSiR6127GWg6mw+NjEMvLseWS5BnLL7163/Co9bOi1IwkOOsFx2FTjcu/U7mSsf+38ViV17+RXQ04q6yftUEDTHt+5frkGe571xFTw/heG1i/Yx8/795J2QxFfLtle9BM8CckRYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vgtyt3Qh; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6409e985505so695602a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:29:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762500561; x=1763105361; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPNTNuB5ohFc6iPRI70eLoN2CCkDClAXffDkFoe9HpU=;
-        b=Vgtyt3QhWrfWN7FtBX8lFl2Ga2t6uD0vrDEngy1/yO/WK68vOpThjiu64ceK3Oozkw
-         713sSotpIwzymmFNNGKqJrjGo9USX83vRjLVGnF3CTjqOTTmuz/LNvP+MU2TJobNvQ6v
-         HRkQk3ka8pPDi5V5+DaRVVkjoVfnChvSajc7lgyhAQAIBE0+bLHErZQUYQtqpgtlLU8p
-         ExpGMrK40aqJGkCZlq9SmVCr8ZA7aG2wtVWdhhYoZI0kv+61ueEm7+LZ3wE9bf/6zir8
-         i8NyWK3z4P2Ek9j5SALg9YpNuhOJYmoY35JRzrXPO6kdpgdsCJndXN2am1GlHoWuDmKe
-         9bbw==
+	bh=3925RX+Ai+tuIaIP2P1jYM5ykyLQre7AGfFASsCc8Wg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B2rwVCZP9MJoGZJqErxhEpVFNJ4/As7UwPX5ncQjx7vj93bSn04nOOHMBl+Nq82TZf/0XEUftYlPZHaCDFe4E3FvMBYbNl7BqcXvUw7jtLyzBCkCu3FvdZt3OhKzYMRyD/fn1ffCMOJw9mqNDwnYoSdZ31M/oeSTfiHir8t0frA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-93e8839f138so39830539f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:29:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762500561; x=1763105361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fPNTNuB5ohFc6iPRI70eLoN2CCkDClAXffDkFoe9HpU=;
-        b=wwg3Y1/CI8holnPR534ANSch2goVuQayzyvPjIAnpuh08vZBOzAVMrZu+Uf2eYrN/9
-         jb3ed1szibTvuuHajI77ogvC8gYTtza23pYKQbNQszTrou7/TEF0oy9A/06fHksOPwOO
-         zkoPEaSLW6kAal1V1/Asl5h7KLfzhNBDyBvEHsSBykNsRHT0rSrycCbAqdg/e+mscc/1
-         0k/4rbu52q+DGBBMpzcD6/YQaEpgybdArh+aN6AB8qTKsAzd+tSKAQeT3qUlXIcDDJds
-         wskhP//+OPdG2uqYrxZaFNa4SHaZq37qVbKPZyd6iTr7KnHkUIgss5KdskQjqhujPH66
-         YuTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVR1QZOEHTMvWmAfY+E85MEYNs3k9Wri082todDYeDs7HXZfBZ+bPa5TczGK4N8UinZdJkmSOp601AtV7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKc9GcfilGcWiMGv9C+rg/YMyeA4zdzXxueeapDWFL2P7o5TtK
-	IZTHyC1SQXULL+m1yHUTPG7Z1w8THvosOt0xp2HF4UN12DaHEjE06s+bPTeOSsVt2gjrgsC6Sam
-	RcNeo/HB4SyZaei+g46muRiuP+y8O9GA=
-X-Gm-Gg: ASbGncuMDQqJFhJp8TmWTqfwhwL1aauRiTEBtedXMGLKGmmBC3L0t4oc7Bymf1hJ9VN
-	1uFIKRW71DgtYUvDStd4U3Uy+7vIJWbMHBv/ySYA8iHJpYR2ZIgBnDLHHjsUgvHmf1Wh/StHGOY
-	yd6Qj0Cwi93+nDXY4WSe7eMjDD0YZcdyeJMcCZZKtx+vxl3fngKtb6Ic9yUggLYaxTKDkxqJc0O
-	tykRxFo2H3Xi+jkVbOOv6WytF+9HmycPdi/jWsDcIGyxKep6g21w3lF2icvgq4rG0dH6r0h
-X-Google-Smtp-Source: AGHT+IGhQDbQz/Cq72U3Tkvve5B3ApTqNOV/YTm1qw/szVTnlVZ1uNqFuI8/fGMqCKXH2QBibdl7K4RAS6hkB02dJvc=
-X-Received: by 2002:a17:907:3e9c:b0:b71:5079:9702 with SMTP id
- a640c23a62f3a-b72c0972fb8mr234805966b.21.1762500561069; Thu, 06 Nov 2025
- 23:29:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762500564; x=1763105364;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=elLBvF3NR3U9sPOSG0QINyPMQhDneG0NFmxvnTGIyos=;
+        b=k4/ZEcs3vzDkLHCqUDObvCooTW5nMqbocFggd2ofh+9Dl6eVCpFYB4FNNSNHSJXH3H
+         kW7ycaKPPRSpI9628k+DnPS9iuqV/Cl5tp2OuQDWg1U4ep1hve6Mr1m2cxrSXPlzLJ4f
+         OD6XNLRP42cycYwodmKVgpbnoVA2gZEiQmEdr2r2XXCct3QrzLcPviLd8YFFQz6Nvt30
+         Yty79NetJ66TJ8LPospYHzObpUCFsXrjLhqRKHOSGzLtZxLdENW+hgd1jLwa9tWDLVbw
+         9el51JXR+GMW1sYOU9gJAIbWkR8UpUPcnNDA7TLwDv8rUeIeUr6pxloC9wqOASUoTZUJ
+         x1JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVUlxoikbN9XYRyjEiG7sjGj/2x/D9oamWSLq9Bgl6T77xO7gYmldnKCFCKv4SRQ87McDtyKvMzNHUBkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoLpCa0+h5b1JqZVOeZXFpGR+7S2Czu0MlhQ77X7AIHagYk7dO
+	o6S/CQiV1xUFHDKNKQDzm1fIslx2Yzx3oZwKFXq6zomaq7OQQxfmeLfFZbNTU7ISHTj069Xpwbx
+	WpgzT7OxhS2VuhopMaiZUEVVdAnyuhHh9LNWE01ynOw024ZtQNmD18RFtoSI=
+X-Google-Smtp-Source: AGHT+IG3lFor0ae7PvaoBhmAsLl69TPWuf62yHSW1JRCxxSsLzReWFsrW+xzJfUk76XMRaO8ppPdJoqUuZao0nT6Q+pjMAw7ZZFz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106131956.1222864-4-dolinux.peng@gmail.com> <20ace4a32dae5b4dcac499d8cb78ac5cab73d75a69b07b67113b7fbbb6e5ef45@mail.kernel.org>
-In-Reply-To: <20ace4a32dae5b4dcac499d8cb78ac5cab73d75a69b07b67113b7fbbb6e5ef45@mail.kernel.org>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Fri, 7 Nov 2025 15:29:09 +0800
-X-Gm-Features: AWmQ_bn6kPbjcyp502WdEuUU_sUBgtmF6oDmPiVl3zZCeZPAxSpoyol6j1JQmZk
-Message-ID: <CAErzpmsYWLBMvkW9eQqAfGOp23oThn=aXt4tqouah5NZus4rBA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/7] libbpf: Optimize type lookup with binary search
- for sorted BTF
-To: bot+bpf-ci@kernel.org
-Cc: ast@kernel.org, eddyz87@gmail.com, andrii.nakryiko@gmail.com, 
-	zhangxiaoqin@xiaomi.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	alan.maguire@oracle.com, song@kernel.org, pengdonglin@xiaomi.com, 
-	andrii@kernel.org, daniel@iogearbox.net, martin.lau@kernel.org, 
-	yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
+X-Received: by 2002:a05:6e02:3485:b0:433:2943:3a78 with SMTP id
+ e9e14a558f8ab-4335f478e35mr32160345ab.31.1762500563895; Thu, 06 Nov 2025
+ 23:29:23 -0800 (PST)
+Date: Thu, 06 Nov 2025 23:29:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690d9fd3.a70a0220.22f260.0021.GAE@google.com>
+Subject: [syzbot] [jfs?] general protection fault in txCommit (2)
+From: syzbot <syzbot+9489c9f9f3d437221ea2@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 6, 2025 at 9:40=E2=80=AFPM <bot+bpf-ci@kernel.org> wrote:
->
-> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > index 97451a929..30be62ee2 100644
-> > --- a/tools/lib/bpf/btf.c
-> > +++ b/tools/lib/bpf/btf.c
-> > @@ -26,6 +26,10 @@
-> >
-> >  #define BTF_MAX_NR_TYPES 0x7fffffffU
-> >  #define BTF_MAX_STR_OFFSET 0x7fffffffU
-> > +/*
-> > + * sort verification occurs lazily upon first btf_find_type_by_name_ki=
-nd() call
-> > + */
-> > +#define BTF_NEED_SORT_CHECK ((__u32)-1)
->
-> [ ... ]
->
-> > @@ -92,6 +96,16 @@ struct btf {
-> >        *   - for split BTF counts number of types added on top of base =
-BTF.
-> >        */
-> >       __u32 nr_types;
-> > +     /* number of sorted and named types in this BTF instance:
-> > +      *   - doesn't include special [0] void type;
-> > +      *   - for split BTF counts number of sorted and named types adde=
-d on
-> > +      *     top of base BTF.
-> > +      *   - BTF_NEED_SORT_CHECK value indicates sort validation will b=
-e performed
-> > +      *     on first call to btf_find_type_by_name_kind.
-> > +      *   - zero value indicates applied sorting check with unsorted B=
-TF or no
-> > +      *     named types.
-> > +      */
-> > +     __u32 nr_sorted_types;
->
-> [ ... ]
->
-> > @@ -897,44 +911,126 @@ int btf__resolve_type(const struct btf *btf, __u=
-32 type_id)
-> >       return type_id;
-> >  }
-> >
-> > -__s32 btf__find_by_name(const struct btf *btf, const char *type_name)
-> > +/* Performs binary search within specified type ID range to find the l=
-eftmost
-> > + * BTF type matching the given name. The search assumes types are sort=
-ed by
-> > + * name in lexicographical order within the specified range.
-> > + *
-> > + * Return: Type ID of leftmost matching type, or -ENOENT if not found
-> > + */
-> > +static __s32 btf_find_type_by_name_bsearch(const struct btf *btf, cons=
-t char *name,
-> > +                                             __s32 start_id, __s32 end=
-_id)
-> >  {
-> > -     __u32 i, nr_types =3D btf__type_cnt(btf);
-> > +     const struct btf_type *t;
-> > +     const char *tname;
-> > +     __s32 l, r, m, lmost =3D -ENOENT;
-> > +     int ret;
-> > +
-> > +     l =3D start_id;
-> > +     r =3D end_id;
-> > +     while (l <=3D r) {
-> > +             m =3D l + (r - l) / 2;
-> > +             t =3D btf_type_by_id(btf, m);
-> > +             tname =3D btf__str_by_offset(btf, t->name_off);
-> > +             ret =3D strcmp(tname, name);
-> >                      ^^^^^^
->
-> Can strcmp receive a NULL tname here? Anonymous types have name_off=3D0,
-> and btf__str_by_offset() can return NULL for invalid offsets. The old
-> btf__find_by_name() checked "if (name && !strcmp(...))" before calling
-> strcmp.
+Hello,
 
-The binary search is effectively disabled in this patch since
-`nr_sorted_types` starts as
-`BTF_NEED_SORT_CHECK`. The actual sorting validation and name verification =
-will
-be handled by `btf_check_sorted()` in the following patch, making this
-implementation
-safe.
+syzbot found the following issue on:
 
->
-> > +             if (ret < 0) {
-> > +                     l =3D m + 1;
-> > +             } else {
-> > +                     if (ret =3D=3D 0)
-> > +                             lmost =3D m;
-> > +                     r =3D m - 1;
-> > +             }
-> > +     }
-> > +
-> > +     return lmost;
-> > +}
-> > +
-> > +/* Searches for a BTF type by name and optionally by kind. The functio=
-n first
-> > + * checks if the search should start from the base BTF (if @start_id i=
-s before
-> > + * current BTF's start_id). If types are sorted, it uses binary search=
- to find
-> > + * the leftmost matching type and then verifies the kind. For unsorted=
- types,
-> > + * it falls back to linear search through all types.
-> > + *
-> > + * The function handles split BTF scenarios by recursively searching i=
-n base
-> > + * BTFs when necessary. When @kind is -1, only the name matching is pe=
-rformed.
-> > + *
-> > + * Return: Type ID of matching type on success, -ENOENT if not found
-> > + */
-> > +static __s32 btf_find_type_by_name_kind(const struct btf *btf, int sta=
-rt_id,
-> > +                                const char *type_name, __u32 kind)
-> > +{
-> > +     const struct btf_type *t;
-> > +     const char *tname;
-> > +     int err =3D -ENOENT;
-> > +
-> > +     if (start_id < btf->start_id) {
-> > +             err =3D btf_find_type_by_name_kind(btf->base_btf, start_i=
-d,
-> > +                     type_name, kind);
-> > +             if (err > 0)
-> > +                     goto out;
-> > +             start_id =3D btf->start_id;
-> > +     }
-> > +
-> > +     if (btf->nr_sorted_types !=3D BTF_NEED_SORT_CHECK) {
->
-> Where is nr_sorted_types updated from BTF_NEED_SORT_CHECK? I only see
-> three assignments in the entire file:
->
->   btf_new_empty():             btf->nr_sorted_types =3D BTF_NEED_SORT_CHE=
-CK;
->   btf_new():                   btf->nr_sorted_types =3D BTF_NEED_SORT_CHE=
-CK;
->   btf_invalidate_raw_data():   btf->nr_sorted_types =3D BTF_NEED_SORT_CHE=
-CK;
->
-> The comment claims "sort verification occurs lazily upon first
-> btf_find_type_by_name_kind() call" but this function never updates
-> nr_sorted_types. Does this mean the binary search path never executes?
+HEAD commit:    8bb886cb8f3a Merge tag 'edac_urgent_for_v6.18_rc5' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1207c114580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=9489c9f9f3d437221ea2
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1033d012580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ea1bcd980000
 
-Yes, at least in the current patch. However, in a subsequent patch,
-the btf_check_sorted
-function will be introduced and invoked during calls to
-btf_find_type_by_name_kind.
-If the BTF data is sorted, btf_check_sorted will return true, enabling
-the execution of
-binary search for improved lookup efficiency.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/393661e2054b/disk-8bb886cb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ba628b757c6a/vmlinux-8bb886cb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/15255c2cc8ad/bzImage-8bb886cb.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/5ffcac92a4cf/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=125bf932580000)
 
->
-> > +             /* binary search */
-> > +             __s32 end_id;
-> > +             bool skip_first;
-> > +             int ret;
-> > +
-> > +             end_id =3D btf->start_id + btf->nr_sorted_types - 1;
-> > +             ret =3D btf_find_type_by_name_bsearch(btf, type_name, sta=
-rt_id, end_id);
-> > +             if (ret < 0)
-> > +                     goto out;
-> > +             if (kind =3D=3D -1)
-> > +                     return ret;
-> > +             skip_first =3D true;
-> > +             do {
-> > +                     t =3D btf_type_by_id(btf, ret);
-> > +                     if (BTF_INFO_KIND(t->info) !=3D kind) {
-> > +                             if (skip_first) {
-> > +                                     skip_first =3D false;
-> > +                                     continue;
-> > +                             }
-> > +                     } else if (skip_first) {
-> > +                             return ret;
-> > +                     }
-> > +                     tname =3D btf__str_by_offset(btf, t->name_off);
-> > +                     if (!strcmp(tname, type_name))
-> >                              ^^^^^^
->
-> Same NULL dereference concern here - tname isn't checked before strcmp.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9489c9f9f3d437221ea2@syzkaller.appspotmail.com
 
-Ditto.
+loop0: detected capacity change from 0 to 32768
+UFO tlock:0xffffc900034fa[  113.512606][ T5985] UFO tlock:0xffffc900034fa1b0
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 UID: 0 PID: 5985 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:txLog fs/jfs/jfs_txnmgr.c:1390 [inline]
+RIP: 0010:txCommit+0xafb/0x5430 fs/jfs/jfs_txnmgr.c:1265
+Code: 3c 10 00 74 12 4c 89 f7 e8 f2 cb e2 fe 48 ba 00 00 00 00 00 fc ff df 4c 89 74 24 68 4d 8b 36 4d 8d 7e 28 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 4c 89 ff e8 c7 cb e2 fe 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc90003fc74e0 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000948 RCX: 1ffff9200069fd48
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003fc76b0 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff1dac5ef R12: 0000000000000002
+R13: ffffc900034fa000 R14: 0000000000000000 R15: 0000000000000028
+FS:  0000555570e52500(0000) GS:ffff888126df9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000038f28000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ jfs_create+0x865/0xa80 fs/jfs/namei.c:156
+ lookup_open fs/namei.c:3796 [inline]
+ open_last_lookups fs/namei.c:3895 [inline]
+ path_openat+0x1500/0x3840 fs/namei.c:4131
+ do_filp_open+0x1fa/0x410 fs/namei.c:4161
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_creat fs/open.c:1530 [inline]
+ __se_sys_creat fs/open.c:1524 [inline]
+ __x64_sys_creat+0x8f/0xc0 fs/open.c:1524
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f575dbcf6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff260cfb28 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007f575de25fa0 RCX: 00007f575dbcf6c9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000200000000580
+RBP: 00007f575dc51f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f575de25fa0 R14: 00007f575de25fa0 R15: 0000000000000002
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:txLog fs/jfs/jfs_txnmgr.c:1390 [inline]
+RIP: 0010:txCommit+0xafb/0x5430 fs/jfs/jfs_txnmgr.c:1265
+Code: 3c 10 00 74 12 4c 89 f7 e8 f2 cb e2 fe 48 ba 00 00 00 00 00 fc ff df 4c 89 74 24 68 4d 8b 36 4d 8d 7e 28 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 4c 89 ff e8 c7 cb e2 fe 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc90003fc74e0 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000948 RCX: 1ffff9200069fd48
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003fc76b0 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff1dac5ef R12: 0000000000000002
+R13: ffffc900034fa000 R14: 0000000000000000 R15: 0000000000000028
+FS:  0000555570e52500(0000) GS:ffff888126df9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000038f28000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	3c 10                	cmp    $0x10,%al
+   2:	00 74 12 4c          	add    %dh,0x4c(%rdx,%rdx,1)
+   6:	89 f7                	mov    %esi,%edi
+   8:	e8 f2 cb e2 fe       	call   0xfee2cbff
+   d:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
+  14:	fc ff df
+  17:	4c 89 74 24 68       	mov    %r14,0x68(%rsp)
+  1c:	4d 8b 36             	mov    (%r14),%r14
+  1f:	4d 8d 7e 28          	lea    0x28(%r14),%r15
+  23:	4c 89 f8             	mov    %r15,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 10 00          	cmpb   $0x0,(%rax,%rdx,1) <-- trapping instruction
+  2e:	74 12                	je     0x42
+  30:	4c 89 ff             	mov    %r15,%rdi
+  33:	e8 c7 cb e2 fe       	call   0xfee2cbff
+  38:	48                   	rex.W
+  39:	ba 00 00 00 00       	mov    $0x0,%edx
+  3e:	00 fc                	add    %bh,%ah
 
->
-> > +                             return ret;
-> > +                     else
-> > +                             break;
-> > +             } while (++ret <=3D end_id);
-> > +     } else {
-> > +             /* linear search */
-> > +             __u32 i, total;
-> >
-> > -     if (!strcmp(type_name, "void"))
-> > -             return 0;
-> > -
-> > -     for (i =3D 1; i < nr_types; i++) {
-> > -             const struct btf_type *t =3D btf__type_by_id(btf, i);
-> > -             const char *name =3D btf__name_by_offset(btf, t->name_off=
-);
-> > -
-> > -             if (name && !strcmp(type_name, name))
-> > -                     return i;
-> > +             total =3D btf__type_cnt(btf);
-> > +             for (i =3D start_id; i < total; i++) {
-> > +                     t =3D btf_type_by_id(btf, i);
-> > +                     if (kind !=3D -1 && btf_kind(t) !=3D kind)
-> > +                             continue;
-> > +                     tname =3D btf__str_by_offset(btf, t->name_off);
-> > +                     if (tname && !strcmp(tname, type_name))
-> > +                             return i;
-> > +             }
-> >       }
-> >
-> > -     return libbpf_err(-ENOENT);
-> > +out:
-> > +     return err;
-> >  }
->
-> [ ... ]
->
-> > @@ -1006,6 +1102,7 @@ static struct btf *btf_new_empty(struct btf *base=
-_btf)
-> >       btf->fd =3D -1;
-> >       btf->ptr_sz =3D sizeof(void *);
-> >       btf->swapped_endian =3D false;
-> > +     btf->nr_sorted_types =3D BTF_NEED_SORT_CHECK;
-> >
-> >       if (base_btf) {
-> >               btf->base_btf =3D base_btf;
->
-> [ ... ]
->
-> > @@ -1057,6 +1154,7 @@ static struct btf *btf_new(const void *data, __u3=
-2 size, struct btf *base_btf, b
-> >       btf->start_id =3D 1;
-> >       btf->start_str_off =3D 0;
-> >       btf->fd =3D -1;
-> > +     btf->nr_sorted_types =3D BTF_NEED_SORT_CHECK;
-> >
-> >       if (base_btf) {
-> >               btf->base_btf =3D base_btf;
->
-> [ ... ]
->
-> > @@ -1715,6 +1813,7 @@ static void btf_invalidate_raw_data(struct btf *b=
-tf)
-> >               free(btf->raw_data_swapped);
-> >               btf->raw_data_swapped =3D NULL;
-> >       }
-> > +     btf->nr_sorted_types =3D BTF_NEED_SORT_CHECK;
-> >  }
->
-> [ ... ]
->
->
-> ---
-> AI reviewed your patch. Please fix the bug or email reply why it's not a =
-bug.
-> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/READM=
-E.md
->
-> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/191371=
-95500
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
