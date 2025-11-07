@@ -1,150 +1,119 @@
-Return-Path: <linux-kernel+bounces-890348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8522FC3FDDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:15:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD85EC3FDF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:17:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E8C94EBABC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD463A6AD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B742417F0;
-	Fri,  7 Nov 2025 12:15:37 +0000 (UTC)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A549728AB0B;
+	Fri,  7 Nov 2025 12:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Lp/QnDRh"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8944E18C31
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 12:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDCC184540;
+	Fri,  7 Nov 2025 12:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762517737; cv=none; b=mLZz56M+mY4rKl59qTTxjKhVt0OgSWsa5MCNv8dHbcIEBShvNVyMXuwDXMONy/+ANsVuVar7tWjsz3BjFXJhQ1YKDmiNHisLpsOSqC2dwmrwgV1nyR/EBIgdfd1qVvR8rFbUVQqGtMvcrqGXOngyqFYneiVd57pbPDB3VVt3Dgc=
+	t=1762517826; cv=none; b=H+ACTOronfuV7X37KSYNe86fottirmEYvu4dff/qTLHKJZlzJ0ph50FZ+jJ2IeNjQQVNzY4goriHe30TaZxHLaEJmlTMrKFV5hdqPCOgnqf9eIrj7kjgmFJTPoVzBSdIMcWfm6Pi5dLo98CozHgXXkPtdreKL8Mgl5wcZG5Ce/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762517737; c=relaxed/simple;
-	bh=nJkqvuboRcE/Q+Tc5FS/2w7Fqq08ZLK98rivwvqUbwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lamLg/PybF4v3HrXsTCn9+buAzrl21u29HdWpNm2ls2Yfbr4iAGMH5g0oZaBRdLAegI7ybI2k75it4D+TJ/VHM8TwlURiX9DhNotirkw+UDZeEYCcJssXQqTNhhVhH557hq2PdmRhMEQLr3tYccDMeZlaiamu7oexq0pHVq6pec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64034284521so1115557a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 04:15:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762517734; x=1763122534;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9TZaiKqhNgkqzTPucju46v7m2DA66SO62KdivqxzuRo=;
-        b=qEo9veyfsJgSLIB5WH+4k+oX+1BopEdV9L7wHzC9UhDcMo2++h/5ea6I/xep6GHOqn
-         YXA7YK+l1Avwv7ltjgQJPR2jQiqNe9ZqqgYmOKalT6V16vwpzsvN7pD+0A8k2AoSpBYG
-         XOYyWDYPkLUboIDdAeKiBlI8OIC61O737y4sv6WJ904an4vl1xF4M86o9BMou3sMBBzu
-         X71hD2E0mtlboZ03v0j5KKgDtF0+9sSnR0CLzrAYEf2+kAq6NYG0rHjyN0YuFbBd146I
-         mJ0rad+2DdfLblX9ZWEs9bHty1AnWlPD+jfB5maqdEyk6EHc/Xbwd8vvKvd3jC/bh1n8
-         8KHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzYHNSvxJwLCMQDCJrAPGTktlJrDYxRBG11eEAduybmy/p/V5vo93ChgCL8o6+AQuwU92N9Sfowg8dNd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhzo4oXsjwRQ+Lh3Uwt/sju3bw6hkppXGfHRRol/jyLYRptzDX
-	qL2aQR3Ywi5m7Gm9JEMdLUnQyLU0/1X1EhnPNRV/Ywqx8rf1yQApyU6d
-X-Gm-Gg: ASbGncstwSP3Ek7v3kJpNLsRc4+2SwrM9gaAJ+8RCgEgqbdFGH5DnswUWhXGvNquFUl
-	a1bAPKutYqHQd+RM0BwJzYc10aQHw5opSV5pVKD+bNekvXTWRYKIsdBF6nA5PgndkFji7RE+sMb
-	mrzcnUbGggVjZydE4JJUlI7puJZmB3ogOnFNoKg3MVqLE1VC7V2haZMWeipNM70ApDPvG5ClqbO
-	mn+tPywa9bWYHB1JfE6q3iqyKiyF9wQz5YnmRSbuhEOmR9CPCPZYkpTe1I+1csIwpMR2//zEHeO
-	OAKTWQ8eaHbqRV6jEH3rXXu1cdfMofzX2XXPkXv8r84q/sgp0HahgT8QXXNmcihS/qkjHgRL6xF
-	0fL/zZUH94wqFbUOiLn+lv3bPKoc7oGFWM7Wd9PIoDo/ARkB1lA67lGIAMUh1QMbNgQ8L+X1f
-X-Google-Smtp-Source: AGHT+IE3/J/dxqkJPk30iDOhIppMHlMoso5VHvUHsgLu5K1wh3uTQSXzctyO2l8Q+jxjQDXMOxbbkA==
-X-Received: by 2002:a17:907:9712:b0:b45:b1f2:fac0 with SMTP id a640c23a62f3a-b72c0a38fe0mr256514066b.29.1762517733686;
-        Fri, 07 Nov 2025 04:15:33 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97e563sm226981766b.41.2025.11.07.04.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 04:15:33 -0800 (PST)
-Date: Fri, 7 Nov 2025 04:15:30 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Gustavo Luiz Duarte <gustavold@gmail.com>
-Cc: Andre Carvalho <asantostc@gmail.com>, Simon Horman <horms@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] netconsole: Simplify send_fragmented_body()
-Message-ID: <s6zjlx2geyjlfwgp2rvw2qolgu6vnsstv5y2rdihxwkt5i45nb@y6jzzo5pvgge>
-References: <20251105-netconsole_dynamic_extradata-v1-0-142890bf4936@meta.com>
- <20251105-netconsole_dynamic_extradata-v1-1-142890bf4936@meta.com>
+	s=arc-20240116; t=1762517826; c=relaxed/simple;
+	bh=fKFaVGRCYqdZdfnsZlL0kIN99ZrW6FxHqWyJRYYzsyk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qYeJYmUUS0lpC/hqsyEhk39mUSUCgvTu6bg0w5OmO83ToFJ788bz1XSqFDOZN1n6PFpVRSrGfpnol26qsYeA2kVJqAHmK5j7KhuIt4hsOUU5fmIepCy+PPixU5UkABHCFQbe518LTijEqsc+FFJvL9X60WwqgFd1hdL5nE1G+nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Lp/QnDRh; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762517824; x=1794053824;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fKFaVGRCYqdZdfnsZlL0kIN99ZrW6FxHqWyJRYYzsyk=;
+  b=Lp/QnDRhmgz3x0DJz7ODMt9yL1lCy6bpB5t2H/f9KwC1tF3xkCXZd3nu
+   9dhcsmGlRfhM8cEHWWSmxgmMnOuume2ByYmur9ZRpM8AT2uvW1ZD/hTW3
+   u/Whkg8TxFAmEzUgzpuqZpY5epJ7TjTqxR5i40d1/icNnZFxoq7v8nGun
+   3PX1ZAeBlUDN3e6plJlJWqSN6Yhz3jnVwPYLtUyYIbqe2cpSj34p9T12E
+   LSQlptnVeChx/E52aHrl0EvR7r0iYI5s0wqanrJM9Kt9bkVKR8EK1J2xP
+   HAWYRvOpR+q0oqnKr5TunhpKNdSPXHCof3qGiN9SCs25jOPCpuYLAM2YT
+   A==;
+X-CSE-ConnectionGUID: BMvHhjAdT6y1+HEhZwPKDQ==
+X-CSE-MsgGUID: Ztzym4YlSXOXoPc+PKmwNg==
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="55218261"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 05:17:03 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Fri, 7 Nov 2025 05:16:34 -0700
+Received: from Lily.microchip.com (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 7 Nov 2025 05:16:32 -0700
+From: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Conor Dooley
+	<conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>, "Cyril
+ Jean" <cyril.jean@microchip.com>, Prajna Rajendra Kumar
+	<prajna.rajendrakumar@microchip.com>
+Subject: [PATCH v3 0/3] Add support for Microchip CoreSPI Controller
+Date: Fri, 7 Nov 2025 12:21:01 +0000
+Message-ID: <20251107122104.1389301-1-prajna.rajendrakumar@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105-netconsole_dynamic_extradata-v1-1-142890bf4936@meta.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, Nov 05, 2025 at 09:06:43AM -0800, Gustavo Luiz Duarte wrote:
-> Refactor send_fragmented_body() to use separate offset tracking for
-> msgbody, and extradata instead of complex conditional logic.
-> The previous implementation used boolean flags and calculated offsets
-> which made the code harder to follow.
-> 
-> The new implementation maintains independent offset counters
-> (msgbody_offset, extradata_offset) and processes each section
-> sequentially, making the data flow more straightforward and the code
-> easier to maintain.
-> 
-> This is a preparatory refactoring with no functional changes, which will
-> allow easily splitting extradata_complete into separate userdata and
-> sysdata buffers in the next patch.
-> 
-> Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
-> ---
->  drivers/net/netconsole.c | 73 ++++++++++++++++--------------------------------
->  1 file changed, 24 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> index 5d8d0214786c..0a8ba7c4bc9d 100644
-> --- a/drivers/net/netconsole.c
-> +++ b/drivers/net/netconsole.c
-> @@ -1553,13 +1553,16 @@ static void send_fragmented_body(struct netconsole_target *nt,
->  				 const char *msgbody, int header_len,
->  				 int msgbody_len, int extradata_len)
->  {
-> -	int sent_extradata, preceding_bytes;
->  	const char *extradata = NULL;
->  	int body_len, offset = 0;
-> +	int extradata_offset = 0;
-> +	int msgbody_offset = 0;
->  
->  #ifdef CONFIG_NETCONSOLE_DYNAMIC
->  	extradata = nt->extradata_complete;
->  #endif
+This patch series adds support for the Microchip FPGA CoreSPI "soft" IP 
+and documents its device tree bindings.
 
+As preparation, the existing Microchip SPI driver is renamed to clearly
+indicate that it supports only the Microchip PolarFire SoC "hard" controller.
+Although it was originally named with the expectation that it might also
+cover the FPGA CoreSPI "soft" IP, the register layouts differ significantly, 
+so separate drivers are required.
 
-extradata could be NULL at this time if CONFIG_NETCONSOLE_DYNAMIC is
-unset. Basically extradata=NULL will not be replaced.
+changes in v3
+--------------
+- Renamed Kconfig symbol to SPI_MICROCHIP_CORE_SPI 
+- Renamed CoreSPI driver from spi-microchip-core.c to spi-microchip-core-spi.c to avoid confusion
 
-> +	if (WARN_ON_ONCE(!extradata && extradata_len != 0))
-> +		return;
+changes in v2
+--------------
+- Moved compatible strings into an enum and kept alphabetical order
+- Replaced .remove_new callback with .remove
+- Dropped unused variable reported by kernel test robot 
+- Updated CoreSPI drivers commit message to include the 8-bit frame size restriction
 
-And entradata_len = 0 for CONFIG_NETCONSOLE_DYNAMIC disabled.
+Prajna Rajendra Kumar (3):
+  spi: microchip: rename driver file and internal identifiers
+  spi: dt-binding: document Microchip CoreSPI
+  spi: add support for microchip "soft" spi controller
 
-> +		/* write msgbody first */
-> +		this_chunk = min(msgbody_len - msgbody_offset,
-> +				 MAX_PRINT_CHUNK - this_header);
-> +		memcpy(nt->buf + this_header, msgbody + msgbody_offset,
-> +		       this_chunk);
-> +		msgbody_offset += this_chunk;
-> +		this_offset += this_chunk;
-> +
-> +		/* after msgbody, append extradata */
-> +		this_chunk = min(extradata_len - extradata_offset,
-> +				 MAX_PRINT_CHUNK - this_header - this_offset);
-> +		memcpy(nt->buf + this_header + this_offset,
-> +		       extradata + extradata_offset, this_chunk);
+ .../bindings/spi/microchip,mpfs-spi.yaml      |  70 ++-
+ drivers/spi/Kconfig                           |  28 +-
+ drivers/spi/Makefile                          |   3 +-
+ drivers/spi/spi-microchip-core-spi.c          | 442 ++++++++++++++++++
+ .../spi/{spi-microchip-core.c => spi-mpfs.c}  | 207 ++++----
+ 5 files changed, 635 insertions(+), 115 deletions(-)
+ create mode 100644 drivers/spi/spi-microchip-core-spi.c
+ rename drivers/spi/{spi-microchip-core.c => spi-mpfs.c} (68%)
 
-then you are going to memcpy from NULL pointer (`extradata + extradata_offset` == 0).
-
-I got this my vim LSP that printed:
-
-	Null pointer passed as 2nd argument to memory copy function [unix.cstring.NullArg]
+-- 
+2.25.1
 
 
