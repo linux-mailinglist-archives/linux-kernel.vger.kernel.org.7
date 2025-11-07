@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-890530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA09C40448
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:13:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2A7C4044E
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:13:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F09B74ED030
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51D8A428356
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B366632863B;
-	Fri,  7 Nov 2025 14:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34BB328637;
+	Fri,  7 Nov 2025 14:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HnAockRi"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l+mqtFSe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gtA08c+p"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A42D32860C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F170322541;
+	Fri,  7 Nov 2025 14:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762524796; cv=none; b=XcvCSc2QBB9O5ejIN5AApxxN3q/XdMsDzQZH9Fa4fn7Z/nXncgTLiuE9Ys0vDDlvWNLdCN6oUvrysowraguPiITF3NsnnFlXLjQF7ZGnAVx3bBM4jEbko4sSqfcTHWXxQJwV01u4Cro6YkGkUDOD1mHTeyjKW3ZYlahKKO19upU=
+	t=1762524831; cv=none; b=j4X+/KTaxGCBb14Hb3e9vznZsvWBrGhM8ck8Hq0KNDGq5skVWLURyt234BvtFqM18VKvbLDy+iOnwA+HfIH66E77KVY8GL/I93LcFkoIkSVrDEOYwrGk4C9IADIV+rq7NA1owHWHryBepP0lekCRK+4WZP0yTCA6EdhA+GDG9ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762524796; c=relaxed/simple;
-	bh=MREIJFcZ2rp1rmZfWwvS3zaB6eT7Dhlq5P2feIRtluo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gg6iWsJT2KSL8dPZBbzF+qTiL45GYwfyr79LqKywr755v1LPQeVQ2fZ6cIJxNxHH12sG23oHW6dAzP+g/lmMY86B9ZnJqdQjokVvrgMW/z0ArLYbLBTRG+i9uFc8lMaK7BkcsrlkMYAwhN+9pakJsVAf0W2hCkY/Pt470QFuJUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HnAockRi; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-471b80b994bso8532915e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:13:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762524790; x=1763129590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zya9CDjAWwz/YQhtW3O1MV9PxrsdkYyA1iOu9tElgJc=;
-        b=HnAockRiA75xWEDQyNFcwrmKxWLGRhYFd3mtTuIAGYtZeRCctXd15tg+Z8kYkl+n53
-         g9kKC52aT22ODg3iwr4J4oUswOMh1hQgj5KaalkJjyJVp0s2kUzbws20pG+DHcoGXAUo
-         hyJCaqytVHLiI0/5yLcWT+JbLMfmvM3TsThgq29Mxowp38lCabLVDBcoVjiX/D1YOvil
-         TT8YGIPPl4pGsiFN0hI2LN63cDk97MccmEJY56A+tXLh3V54IYp9Qoa6NBzynTp5AAHL
-         f8LO6D0tq/3NTQKQO8Jb0d0UPNGEj16dUYdkD+qucyvdjTl/i4mDeKA4w5ZDOAs+O5We
-         W0/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762524790; x=1763129590;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zya9CDjAWwz/YQhtW3O1MV9PxrsdkYyA1iOu9tElgJc=;
-        b=stenSLXrz/fqySVIRVeNlR8/qMSd242K0bwCcvhiEUyPLj0NRcJxsYGoz97FCeYNGV
-         5SNtYF0A928Y2LTUzvkDgnn8rNdnUn7ho7OnAOppzIpqNBL0YyqHJYsEU0IFPh09GTU9
-         XpNMiojigm9MGEmZc/xFRgtpSNZ5eOhHlSUDAY3q0d8pawpr2MXsiVn0nEta5ZHthloW
-         v0lJOIMzV7mQyvWUy3YftjHlXQhPmgrzfZ+Q6NwRlOsC990i2zaG0lxSfSvSBy+sRarC
-         SYp4JJA3aM5O1iNl7+vd06RE+m59o+L3cmmIMJYdFzOnJ1J3RsAXvtnCiXjtZ0VvWZat
-         uwTA==
-X-Gm-Message-State: AOJu0Yyyc4482WVsM6YpOj7cf2FM/2trMF1fQ6ERkErWwjLFmMZHIMeU
-	2le83TRvJ/Ytg5M33JsR+ZAn6duS3wn+8Hvs6NEKSBts9Br2R7zVJThkcs1dETnPJwOiZ2eDtcq
-	PBOoW
-X-Gm-Gg: ASbGncub8dBXUT4TzJhISvEBgJvkY/7hvV/9Afg/ZqtSFQKdfM2NS5F8vdO61BcK9xH
-	ARLeEEd9nhN7zidYapvyOD7vBiwo0R4S4a6Z/HLY6fByZYudYmcKFURSWKvk8Jfc+syhrYYyrXb
-	6D/OlYUtrX2u1M/LdFrps3lwtwYLtatTRp7Y1Rtf38KRKXG/PXNQ/j08lF6pxEyR5/rPxQMOWbt
-	bv/39x4BrIZB6JRFhG2A6YoA1b132vWN3TbaM2FM9EGJ/XDTxtGkAv86TNkwhfIRf/4CuaJTI/e
-	jDJaAYr4I/TtUuj/RVk+fMvVgzxqD/BTqYs+846jneFQzYoHIoBqOXgQm8waNWgPSIBYD4ofDXb
-	pxpbJgzCDjkI2JUAliaJsY1YHK4G3w9vX/plOaKAc4oQoU2T7lupotTaH3v+TD5aALdOVTDDMKO
-	cM7DmN/jRo6G/gX1OetyUMAwbqT5rm3WyWMmU=
-X-Google-Smtp-Source: AGHT+IGp7Uv+Rz0H0a9Tbxc8WVcxFYh+xPnB3f9zZgNkWgNSCruoFQ5+kEx67gRvEzujnx6ZhHmG0g==
-X-Received: by 2002:a05:600c:1f10:b0:475:dbb5:23a2 with SMTP id 5b1f17b1804b1-4776bc904efmr24244345e9.16.1762524790118;
-        Fri, 07 Nov 2025 06:13:10 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477641b622asm42998605e9.4.2025.11.07.06.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 06:13:09 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH] media: platform: mtk-mdp3: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 15:13:03 +0100
-Message-ID: <20251107141303.223254-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762524831; c=relaxed/simple;
+	bh=WV5FPIIQ0i3DEYVmZhlBm8yA6G/UsyKSoEFCNJFfCk8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fVSReH5cTmBIJR0XMcizQYgyO78Ng/TkZSSz63Xa0fC/tOQxovPfsdjjBLaW5L30nPizutWk02emWy99GduIQn6T6PZE1nHUW7eOrmvS9e1PAQfHL/YNkrrpsecjAwXGFyjc6Mb6In151IJmsxiYHvWXE9qd3/+U4vtdv6mYxew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l+mqtFSe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gtA08c+p; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762524824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uwrD8sj8pAGNqMxSEVn8+Q0j58iGwRXFt4Y4zZTLAWg=;
+	b=l+mqtFSeSfbRiTrpq163XYxJvW3DaSi47j60F1A/1LamipJ5jxK5GfQwL1d1YEkuupmn59
+	ZSCwz2zzP9gJ/PN/3R4rZoko+vK7nCrDta9+hvApYcrXGcwrDINhjzVS2tMvlQp1g984VZ
+	HGbtXFoRNHlEfQ87tLbJC1+nfAAC1nE/YwY+6qRlcoGvte7qnXpAroQL31zRGJe3w7d7T8
+	XHkz03Vp3evs79/J+hr5Ubvkmtfu3tXBAffE7l3mX7x+zKV6VbgJ6LED6SlXwFA1qq/OpW
+	NNGNSmsIMXPWB7uPfR/OCoRC/wilZHk/XSjS55qjJKv9Jp0jMS9Q3ZJg/S7G9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762524824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uwrD8sj8pAGNqMxSEVn8+Q0j58iGwRXFt4Y4zZTLAWg=;
+	b=gtA08c+pCHkQx5B2shHcSkAmxNePpFewgeKlmrjOImD7tWQgOwb4M14X5n8fEdGnjGsWf9
+	8+yYHBIf9X8CU8Dw==
+Date: Fri, 07 Nov 2025 15:13:38 +0100
+Subject: [PATCH] tools/nolibc: add support for fchdir()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20251107-nolibc-fchdir-v1-1-4a1ab8141f68@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAJH+DWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQwNz3bz8nMykZN205IyUzCJdIzMT02QjS4tEU2MLJaCegqLUtMwKsHn
+ RsbW1AO+wKrpfAAAA
+X-Change-ID: 20251107-nolibc-fchdir-2645c298a538
+To: Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762524819; l=2388;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=WV5FPIIQ0i3DEYVmZhlBm8yA6G/UsyKSoEFCNJFfCk8=;
+ b=hJuxWrIT/kyzeRcbrVAV8qA7dmcla3vsS4PVeLw6MH6ol2TBxauzr9DSEDysVYg1r1UMV9c4w
+ OXCvrT+ulQNAoshWtMxgxMxEEa1Q3n1cznpV6p7AZ0oC6ZhOE+RZ2lz
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+Add support for the file descriptor based variant of chdir().
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
-
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
-
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
-
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/include/nolibc/sys.h                   | 13 +++++++++++++
+ tools/testing/selftests/nolibc/nolibc-test.c |  2 ++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-index 6559d72d5d42..9083367ae2e4 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-@@ -255,14 +255,16 @@ static int mdp_probe(struct platform_device *pdev)
- 		goto err_free_mutex;
- 	}
+diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
+index c5564f57deec88b8aa70291fcf6f9ca4dbc1d03f..a4b0fdb9b641230174f5e62d62762f59af81a00e 100644
+--- a/tools/include/nolibc/sys.h
++++ b/tools/include/nolibc/sys.h
+@@ -118,6 +118,7 @@ void *sbrk(intptr_t inc)
  
--	mdp->job_wq = alloc_workqueue(MDP_MODULE_NAME, WQ_FREEZABLE, 0);
-+	mdp->job_wq = alloc_workqueue(MDP_MODULE_NAME,
-+				      WQ_FREEZABLE | WQ_PERCPU, 0);
- 	if (!mdp->job_wq) {
- 		dev_err(dev, "Unable to create job workqueue\n");
- 		ret = -ENOMEM;
- 		goto err_deinit_comp;
- 	}
+ /*
+  * int chdir(const char *path);
++ * int fchdir(int fildes);
+  */
  
--	mdp->clock_wq = alloc_workqueue(MDP_MODULE_NAME "-clock", WQ_FREEZABLE,
-+	mdp->clock_wq = alloc_workqueue(MDP_MODULE_NAME "-clock",
-+					WQ_FREEZABLE | WQ_PERCPU,
- 					0);
- 	if (!mdp->clock_wq) {
- 		dev_err(dev, "Unable to create clock workqueue\n");
+ static __attribute__((unused))
+@@ -132,6 +133,18 @@ int chdir(const char *path)
+ 	return __sysret(sys_chdir(path));
+ }
+ 
++static __attribute__((unused))
++int sys_fchdir(int fildes)
++{
++	return my_syscall1(__NR_fchdir, fildes);
++}
++
++static __attribute__((unused))
++int fchdir(int fildes)
++{
++	return __sysret(sys_fchdir(fildes));
++}
++
+ 
+ /*
+  * int chmod(const char *path, mode_t mode);
+diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+index 29de21595fc95341c2aa975375a8d471cb3933fc..5927a84466cc0ede3b99611e134a8c6b8ab91e72 100644
+--- a/tools/testing/selftests/nolibc/nolibc-test.c
++++ b/tools/testing/selftests/nolibc/nolibc-test.c
+@@ -1343,6 +1343,8 @@ int run_syscall(int min, int max)
+ 		CASE_TEST(dup3_0);            tmp = dup3(0, 100, 0);  EXPECT_SYSNE(1, tmp, -1); close(tmp); break;
+ 		CASE_TEST(dup3_m1);           tmp = dup3(-1, 100, 0); EXPECT_SYSER(1, tmp, -1, EBADF); if (tmp != -1) close(tmp); break;
+ 		CASE_TEST(execve_root);       EXPECT_SYSER(1, execve("/", (char*[]){ [0] = "/", [1] = NULL }, NULL), -1, EACCES); break;
++		CASE_TEST(fchdir_stdin);      EXPECT_SYSER(1, fchdir(STDIN_FILENO), -1, ENOTDIR); break;
++		CASE_TEST(fchdir_badfd);      EXPECT_SYSER(1, fchdir(-1), -1, EBADF); break;
+ 		CASE_TEST(file_stream);       EXPECT_SYSZR(1, test_file_stream()); break;
+ 		CASE_TEST(fork);              EXPECT_SYSZR(1, test_fork(FORK_STANDARD)); break;
+ 		CASE_TEST(getdents64_root);   EXPECT_SYSNE(1, test_getdents64("/"), -1); break;
+
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251107-nolibc-fchdir-2645c298a538
+
+Best regards,
 -- 
-2.51.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
