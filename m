@@ -1,105 +1,137 @@
-Return-Path: <linux-kernel+bounces-889676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2478DC3E37E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:12:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1C7C3E393
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6731886AEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:12:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3924D4E6D2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE7D2F25E0;
-	Fri,  7 Nov 2025 02:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB252FB632;
+	Fri,  7 Nov 2025 02:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="oTND7xti"
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mJaZk/BR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E4E2ECE97
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72AA26FA4E;
+	Fri,  7 Nov 2025 02:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762481530; cv=none; b=XvwET415Iab1pSNtiYOm0wnv/E/sDZ40X5yE+xi7G0fjDKQps7HN97Io+GI54ZBvR145iIA4x3d8PL22Yw0ESIJMve051BWWnKa+tp38TYdr5XCKr6Q83TZAgoEFlMjwkIjyWZioVZKXx+2dvNiiSuMvg7S8xvZoIvyvrW0dDWo=
+	t=1762481636; cv=none; b=eF0G0KHLUZ1SZyk8OjliEyCOIYJ5ip+8BQhHy6y2MlfjmQvSQyFXV5cqyxH6MhxqLYtlJDK5pb24ntj5RI4dRmT9+gr5rfcJktyGUDI7cRHmkEKVwFCPZF1B0rV7x09fbBPrDvMF58GuXefGs7E3XeKvSrYuarB6HqHKxM70xfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762481530; c=relaxed/simple;
-	bh=0Kd3k8MrGVEdb2T54AztInB1tCRKQ2x1zCDizw7cUjM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNHBeGIDKHAajuA5aMQPKdg4DvR5xXViheFUPLMDDcYwzjYTcGUNp88+b8C35g3iAe5oRhjsvnjZg++wMLVg+IqUjMVdSBNIMZk5ZHs5HNaqiids66X+GPyLbVHYo7BKz4EVKBX3xYHOx9UVv/YIq3YWFJkxzNNRgxZF6TVzTOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=oTND7xti; arc=none smtp.client-ip=113.46.200.224
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=ttYbeCKJ3OLF2JIak+cm/+0cAJg3a7naHdhTZ5oTJCM=;
-	b=oTND7xti/NC2W3lp57ZxBg2RHkOYc/x3+yPpDVhMGAvw36UguiT3bsave9p82GjGlyyJlPVeJ
-	riF/XR32j7XsPV8Z5V3xtQ+vm+V4FQD0LAWcXx1na6m0zI3r0qH38BwDsXDVzMiYcML6iuRsn1G
-	5/ha/SAcUUlu419yWmwHzwM=
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d2jFb4zgPz1cyV7;
-	Fri,  7 Nov 2025 10:10:27 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4D3F3140159;
-	Fri,  7 Nov 2025 10:12:04 +0800 (CST)
-Received: from kwepemq100008.china.huawei.com (7.202.195.91) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Nov 2025 10:12:04 +0800
-Received: from DESKTOP-DKE2JV6.huawei.com (10.67.110.146) by
- kwepemq100008.china.huawei.com (7.202.195.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Nov 2025 10:12:03 +0800
-From: Liyuan Pang <pangliyuan1@huawei.com>
-To: <markus.elfring@web.de>
-CC: <alexandre.torgue@foss.st.com>, <chengzhihao1@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mtd@lists.infradead.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<mcoquelin.stm32@gmail.com>, <miquel.raynal@bootlin.com>,
-	<pangliyuan1@huawei.com>, <richard@nod.at>, <vigneshr@ti.com>,
-	<wanqian10@huawei.com>, <young.liuyang@huawei.com>
-Subject: Re: [PATCH] ubi: fastmap: fix ubi->fm memory leak
-Date: Fri, 7 Nov 2025 10:11:37 +0800
-Message-ID: <20251107021137.874150-1-pangliyuan1@huawei.com>
+	s=arc-20240116; t=1762481636; c=relaxed/simple;
+	bh=X9R/ZQWOdt8n09fws3g4SuFInCqIiRcFmDI36CbBtDg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t2N6909X9lal9CMmaAak5sfeYS3ixkQvUKahEm4AVbgULEY2Zy5Yu9JNhy1tHR+by3aW73ir/g0H9BF2az9YPxj0iV8YHS1hFgwx4AfFI4e3PPn3R4JQL3XuzzeMl2B8BO/iKjFOtFcjwZARolfLOgoNfedyK7xtzHDApyrY0h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mJaZk/BR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A6H3ns1557548;
+	Fri, 7 Nov 2025 02:13:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=yyShU7oxIVS1HxxAHS2zHkZ/mDoKpVXSN8H
+	N4DeKOtc=; b=mJaZk/BRtaVEFz9kCJ9iR84XX7mIHoN4Xi7X8QNXoCnW8C5ndHX
+	XNCix/YpQBAz9DYkzSXuswxfzuDoI6lprQkuMY9rH6CGm/39FweNG/XAqDtw9dqc
+	0GTW8Unlnwm/bcNPDvMLBrF5PcqoJlcu4FPIi7nQ0hn4nlz+vYxSowNotGpGw3Ik
+	kvP+yD6L4OLxgJA1+GBMEGPdHHblLakwhC1UajMLdYCUYYOTA8GaJ5qUA/aQcji4
+	ScQUE4emtVbT99Jf75aB0oB20k5s5SHaXBND1sG204Jm9QKepIbBFCa1x3dyUfMs
+	PQWHXOFIu5ARW1PnXiekPmIKozYGCFtlLNw==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8yr9sc7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 02:13:50 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A72DmFq025910;
+	Fri, 7 Nov 2025 02:13:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a5b9nbjcm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 02:13:48 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A72Dm6u025903;
+	Fri, 7 Nov 2025 02:13:48 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 5A72Dm5I025902
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 02:13:48 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id 191E722977; Fri,  7 Nov 2025 10:13:47 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_chejiang@quicinc.com, quic_jiaymao@quicinc.com,
+        quic_chezhou@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
+Subject: [PATCH v1] Bluetooth: btusb: add new custom firmwares
+Date: Fri,  7 Nov 2025 10:13:45 +0800
+Message-Id: <20251107021345.2759890-1-quic_shuaz@quicinc.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <dff05531-f5e3-400a-abf0-a5307c50357e@web.de>
-References: <dff05531-f5e3-400a-abf0-a5307c50357e@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="y"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq100008.china.huawei.com (7.202.195.91)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=DrpbOW/+ c=1 sm=1 tr=0 ts=690d55de cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=FwBvamPKdgLavwmduaUA:9 a=zZCYzV9kfG8A:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: puVLsiBOTEaCg81mcRwBgR93ITFp6GW3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDAxNiBTYWx0ZWRfXwP9SsKUcOiAq
+ Q9oAZeQExbSTMt8DZUdCTtAewU5sTTyAqggWxKlfP016uM0LqdTZ8syQhSvj848Cuo38kFXUGOn
+ l8SJnsYynKw+DZO1pGZE7T6KqB6pI+PgDLJzxNAzKV0402IWJEymu/NZgP10bhquCWMZ4j2+J6v
+ jro89ZowH9Q62YNXzfQIzJhwof5mRLjdDALnZDVKaB7H6sDUAteBB9w/2IgzxYAm47soB2Eeuda
+ C0LClPzQDVwlhRcgADwk8iADUKHj+QOON0PXfJkaO7kzLHHkuvGOiEPDjQ5PncTy/69XvBHA/u1
+ LG4KCjLebPnA9iTeLUJXzOk1/28xxs/6TIvDKCn/6k+5/pxcxMylih8AquF8hFDgUw/iDYM38e4
+ jwW1gj6W83XEjoQvflIOeF99ceD9wQ==
+X-Proofpoint-GUID: puVLsiBOTEaCg81mcRwBgR93ITFp6GW3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-06_05,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511070016
 
-On Thu, 6 Nov 2025 16:16:05 +0100, Markus Elfring wrote:
->…
->> +++ b/drivers/mtd/ubi/fastmap.c
->> @@ -1644,3 +1644,15 @@ int ubi_update_fastmap(struct ubi_device *ubi)
->…
->> +void ubi_free_fastmap(struct ubi_device *ubi)
->> +{
->> +	int i;
->> +
->> +	if (ubi->fm) {
-> +		for (i = 0; i < ubi->fm->used_blocks; i++)
-> +			kmem_cache_free(ubi_wl_entry_slab, ubi->fm->e[i]);
->…
-> +	}
-> +}
->…
->
-> May the local variable “i” be defined in the loop header?
+There are custom-made firmwares based on board ID for a given QCA BT
+chip sometimes, and they are different with existing firmwares and put
+in a separate subdirectory to avoid conflict, for example:
+QCA2066, as a variant of WCN6855, has firmwares under 'qca/QCA2066/'
+of linux-firmware repository.
 
-I think it's better to leave it as it is, most of the code in
-ubi defines variables outside the loop header, and defining
-"i" in the loop header may cause compilation error in some old
-kernel versions that use C89.
+Cc: stable@vger.kernel.org
+Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+---
+ drivers/bluetooth/btusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Liyuan
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index dcbff7641..7175e9b2d 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -3273,6 +3273,7 @@ static const struct qca_device_info qca_devices_table[] = {
+ 
+ static const struct qca_custom_firmware qca_custom_btfws[] = {
+ 	{ 0x00130201, 0x030A, "QCA2066" },
++	{ 0x00130201, 0x030B, "QCA2066" },
+ 	{ },
+ };
+ 
+-- 
+2.34.1
+
 
