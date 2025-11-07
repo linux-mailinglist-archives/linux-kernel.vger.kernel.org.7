@@ -1,153 +1,161 @@
-Return-Path: <linux-kernel+bounces-890347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F368FC3FDD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:14:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5046CC3FD43
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B299B3B5E0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5837918938D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D801C32721E;
-	Fri,  7 Nov 2025 12:13:57 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6F2322A21;
+	Fri,  7 Nov 2025 11:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EidR1XSF"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F81A28C5AA;
-	Fri,  7 Nov 2025 12:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B447A2E5B08
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762517637; cv=none; b=Du3DWbRX0tkITRQ6yKsw5ank64dCilXbaqKQFMsxVl6z8OH1cfE1zzhleujutEL4pGBay5TuqIEqbaAl5+B6CjjkJ16fqsAySkdNpbeBVczZTJCZpxq5qpPStcAlUe9TZZn/k79BFPMEkCH0rEUMogbk2pW5oChYTKMPTSCprqk=
+	t=1762516722; cv=none; b=D6fuBiALYkoHlpX/njAqwVJ35JBbXKlpgEAvxXWVchIyy3/WGOnNqCeXH+guL3/z/7zUg6lKftOYOMSOWktzMiJ1Zabq5/dszyiAsrxG2+8ov/sv1uTQ/cw4XwqlAeaAahAxuFGSQXV43x23O9Nuq4vy+pNSHn4RY5PlfYb63H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762517637; c=relaxed/simple;
-	bh=5ZjVwpww/EY5br3PGL108fifenvPQfsey3Rhb2cSp7E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KCldKmAhnaApQN2aFQ094EGKc5PgHEh0dGNONMj1izjQxURSwSCI7BO6eGOD5dYj36SzfFXl1rezNAgBiV5PgzozDa9M2b5VKmkBDuQ1TshSmxyFWiH42F1IiG/hwhHMClKEymneN9I5W4vNkAAOk7m1G5J8x92VUSKi9t/ghOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d2yDb0ffbz1HBKN;
-	Fri,  7 Nov 2025 19:55:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 77416140276;
-	Fri,  7 Nov 2025 19:56:23 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwA39h1d3g1pGVOpAQ--.55115S2;
-	Fri, 07 Nov 2025 12:56:22 +0100 (CET)
-Message-ID: <17e3438f72fd684c0db5c895f824d5e10445ec3c.camel@huaweicloud.com>
-Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Lennart Poettering <mzxreary@0pointer.de>
-Cc: Tahera Fahimi <taherafahimi@linux.microsoft.com>, zohar@linux.ibm.com, 
- roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- code@tyhicks.com
-Date: Fri, 07 Nov 2025 12:56:10 +0100
-In-Reply-To: <aQ3QV03_PtB4qg32@gardel-login>
-References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
-	 <1cc67c25a141aef8982840898a6e7397cbdf10d9.camel@huaweicloud.com>
-	 <aQ3QV03_PtB4qg32@gardel-login>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1762516722; c=relaxed/simple;
+	bh=UDVuq/lrhkMd3aCRzHjBXDEmTc6zljOBa7UFGRfvTZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TRAwxi+kX9ADp9fHR1MFA3LW/L+jNcSF324kMXkViKRPLlXAqJOEGnXuqy4xkXEGJjNOq4wHxd8m1n4Pz56Cd3ZDuvfC6EIkt+7mqChOGbNs/TVk0C5VZgLhaw4tQ8YET3vEHzzrcr+WMdweb8WohdnxRMSujWK8SgMT2iwXIzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EidR1XSF; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 3185BC0FAA1;
+	Fri,  7 Nov 2025 11:58:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2F857606A6;
+	Fri,  7 Nov 2025 11:58:33 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3701111852441;
+	Fri,  7 Nov 2025 12:58:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762516712; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=C4R54YJMw/9k/KwHXpEmkLyJAAbzYMXCXrdeUpMH9Zs=;
+	b=EidR1XSF2KvVll3yLkR6CDO2jbmKN25490panR36DO3hpBFIsHjzhK9CQBsyvzoab0Xz0g
+	IfKQ5zIUH8dzqMb+NRFLHsJPBmqopY8jfxAg15CFL26vqalAQKXFiQUVMAFE0givROlE6O
+	JpXGwiSg/wlhccCMNytyI/EKJkAFiFN0/udUC7yDTJx+PeCAoFGmLIRF/lUoliZl8O/5qq
+	kLNT5qXbLdfuY7lK1f9BjCtamZigehvjMcmuwHQNsUXK6iODqmdEiLLptET7zH30+UGFop
+	/DcgQ8EGhmH7cRbIjGfUSZwxnDYFiLng+wz6M0dVXaz0yseJCOHMy/81vhEvYQ==
+Date: Fri, 7 Nov 2025 12:58:28 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mbrugger@suse.com,
+ guillaume.gardet@arm.com, tiwai@suse.com, Lizhi Hou <lizhi.hou@amd.com>,
+ Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] PCI: of: Downgrade error message on missing of_root
+ node
+Message-ID: <20251107125828.18a034de@bootlin.com>
+In-Reply-To: <aQ28s57R0YfrqwdG@apocalypse>
+References: <20251106182708.03cfb6c6@bootlin.com>
+	<20251106175016.GA1960490@bhelgaas>
+	<aQ28s57R0YfrqwdG@apocalypse>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwA39h1d3g1pGVOpAQ--.55115S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFyxKF1DGr47XryUGF45Wrg_yoW5Wr4rpF
-	W3Ka4qka1kXr1SyrsF93WxX3WFkrZYv345GrZ0k348Aa45G3ZrGw1ftFy5u343Arnakw1j
-	vFWFqayUZas8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBGkNTvkEvAACsp
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 2025-11-07 at 11:56 +0100, Lennart Poettering wrote:
-> On Fr, 07.11.25 10:44, Roberto Sassu (roberto.sassu@huaweicloud.com) wrot=
-e:
->=20
-> > On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
-> > > Prevent redundant IMA policy rules by checking for duplicates before =
-insertion. This ensures that
-> > > rules are not re-added when userspace is restarted (using systemd-sof=
-t-reboot) without a full system
-> > > reboot. ima_rule_exists() detects duplicates in both temporary and ac=
-tive rule lists.
-> >=20
-> > + Lennart
-> >=20
-> > Hi Tahera
-> >=20
-> > thanks for the patch!
-> >=20
-> > Wouldn't be better to enhance systemd-soft-reboot to not send the same
-> > IMA policy again?
->=20
-> the soft-reboot logic doesn't load the IMA policy. It's just that
-> soft-reboot means we reexec PID1: the old pid1 gets replaced by the
-> new one. And that new PID1 then initializes as it usually would, and
-> loads security policies again. It currently has support for selinux
-> policies, ima, ipe, smack.
->=20
-> These policies are supposed to *replace* whatever was loaded
-> before. Looking at our IMA logic, this doesn't happen right now
-> though, it just adds stuff:
+Hi Andrea, Bjorn,
 
-From a functional perspective. As far as integrity is concerned, you
-would probably agree that just replacing PID 1 does not mean resetting
-the integrity of the system to a known state (all the other processes
-are still running). Due to that, I think the concept of soft-reset
-should not be applied to the kernel.
+On Fri, 7 Nov 2025 10:32:35 +0100
+Andrea della Porta <andrea.porta@suse.com> wrote:
 
-> https://github.com/systemd/systemd/blob/main/src/core/ima-setup.c
->=20
-> Is there a way to replace the old IMA policy with the new, with the
-> current IMA userspace interface? If so, we should probably make use of
+> Hi Bjorn,
+> 
+> On 11:50 Thu 06 Nov     , Bjorn Helgaas wrote:
+> > On Thu, Nov 06, 2025 at 06:27:08PM +0100, Herve Codina wrote:  
+> > > On Thu, 6 Nov 2025 16:21:47 +0100
+> > > Andrea della Porta <andrea.porta@suse.com> wrote:  
+> > > > On 13:18 Thu 06 Nov     , Herve Codina wrote:  
+> > > > > On Thu, 6 Nov 2025 12:04:07 +0100
+> > > > > Andrea della Porta <andrea.porta@suse.com> wrote:  
+> > > > > > On 18:23 Wed 05 Nov     , Bjorn Helgaas wrote:    
+> > > > > > > On Wed, Nov 05, 2025 at 07:33:40PM +0100, Andrea della Porta wrote:      
+> > Patch at https://lore.kernel.org/r/955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com,
+> > added back for reference:
+> > 
+> >   diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> >   index 3579265f1198..872c36b195e3 100644
+> >   --- a/drivers/pci/of.c
+> >   +++ b/drivers/pci/of.c
+> >   @@ -775,7 +775,7 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
+> > 
+> > 	  /* Check if there is a DT root node to attach the created node */
+> > 	  if (!of_root) {
+> >   -               pr_err("of_root node is NULL, cannot create PCI host bridge node\n");
+> >   +               pr_info("Missing DeviceTree, cannot create PCI host bridge node\n");
+> > 		  return;
+> > 	  }
+> >   
+> > > > > > > > When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error
+> > > > > > > > message is generated if no 'of_root' node is defined.
+> > > > > > > > 
+> > > > > > > > On DT-based systems, this cannot happen as a root DT node
+> > > > > > > > is always present. On ACPI-based systems, this is not a
+> > > > > > > > true error because a DT is not used.
+> > > > > > > > 
+> > > > > > > > Downgrade the pr_err() to pr_info() and reword the message
+> > > > > > > > text to be less context specific.      
+> > > > > > > 
+> > > > > > > of_pci_make_host_bridge_node() is called in the very generic
+> > > > > > > pci_register_host_bridge() path.  Does that mean every boot
+> > > > > > > of a kernel with CONFIG_PCI_DYNAMIC_OF_NODES on a non-DT
+> > > > > > > system will see this message?      
+> > > > > > 
+> > > > > > This is the case, indeed. That's why downgrading to info seems
+> > > > > > sensible.
+> > > > > >     
+> > > > > > > This message seems like something that will generate user
+> > > > > > > questions.  Or is this really an error, and we were supposed
+> > > > > > > to have created of_root somewhere but it failed?  If so, I
+> > > > > > > would expect a message where the of_root creation failed.      
+> > 
+> > I think we should just remove the message completely.  I don't want
+> > users to enable CONFIG_PCI_DYNAMIC_OF_NODES out of curiosity or
+> > willingness to test, and then ask about this message.  
+> 
+> Agreed. This would be the easy solution, the other being creating the
+> empty DT so that the message will never be printed. But this require some
+> careful thought. The latter solution will be needed if we'll ever want to
+> make drivers like RP1 or lan96xx (which uses the runtime overlay) to work.
+> 
+> > 
+> > "You can avoid the message by also enabling CONFIG_OF_EARLY_FLATTREE"
+> > is not a very satisfactory answer.  
+> 
+> Unfortunately this would work on x86, but not on arm. And who knows on
+> other platforms.
+> 
+> > 
+> > A message at the point of *needing* this, i.e., when loading an
+> > overlay fails for lack of this dynamic DT, is fine.  
+> 
+> It seems fine to me.
+> 
 
-No, only the IMA boot policies specified in the kernel command line can
-be reset (only once, and not completely, secure boot rules still
-persist despite user space loads a new policy). New rules are append-
-only.
+Ok, even if I would prefer having an empty (or not) of_node available on all
+platforms, what is proposed makes sense especially in regards to potential
+users questions.
 
-> that in systemd, and replace the policy that way. Or in other words:
-> under the assumption that one can flush out the old IMA policy and
-> replace it with a new one, I think this should be fixed in systemd,
-> not the kernel. (of there's no api for flushing out the old
-> policy/replacing it with the new, then of course we need something
-> like that in the kernel first).
-
-Assuming that technically it is feasible to flush the old IMA policy
-(except for the permanent secure boot rules). What it would be the
-additional value of changing the policy on the fly on the same system
-as before, but with a different PID 1?
-
-Regarding the duplicate IMA policy load, I guess you could probably
-store the digest of the currently loaded policy in the systemd state
-and not doing it again after soft-reboot, if the digest matches.
-
-Roberto
-
-> My understanding of IMA is kinda limited though. I just know what we
-> do in our codebase.
->=20
-> Lennart
+Best regards,
+Hervé
 
 
