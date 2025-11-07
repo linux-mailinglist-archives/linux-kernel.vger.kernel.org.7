@@ -1,196 +1,272 @@
-Return-Path: <linux-kernel+bounces-890508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF1DC40364
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:56:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF82EC403A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356AE189A151
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:56:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2F644F267E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF861EB9FA;
-	Fri,  7 Nov 2025 13:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jg9mB3H/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B343195EC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F406F30ACF8;
+	Fri,  7 Nov 2025 13:56:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B892F7AC4;
+	Fri,  7 Nov 2025 13:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523769; cv=none; b=XXY9GUaGR38+xMwS3qLO+FgVfs0AnMuyTaCShRa7bkZ/whmXJJdFHAfIm7nO+7iBlP99AbqLq+CPyIicvY/bXinKwin3bUS6INNBpBCUGf+hnOpWi3XGLRzyx90zvPcFrC2KPwLF0MO//xLyA7iqoPLjQPsG+KLK8Qve1mVhd7k=
+	t=1762523789; cv=none; b=I4l0Piaic6gN7GXhtMfx5ZSbuSlcfZ/pTjSTMK4lenOB/PJ9Z446RqYfT8bVAH8IWqDVq1th6i/SqOrzW6XHA4OBiD7ug8h/E/zG1vHlnrnbhTEDd3twxSpCLe83lFEga6Dj5XGbFqDG7dpKw21Q7Pi2yW24mOPu7i0fKuDQfDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523769; c=relaxed/simple;
-	bh=1KlsyB1Qe1cWoEKYCmMfXW6jdatELCLj25BqETfGX9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=rY9MtysJcdF/Ia+fTXD/RR/lq0TRtXEEUm1+M9mxGkc0kkc1GfmNyEdG2ju5h/I8kfMNc69zjUnXHO5rp91BUtsllzx5ckduvjOOcTyAlLnxZsZjHXdTqkbArRnfD1mXy8xfAW90e88MwB6e7weY6JdmrCu25wap3dfOGPUv8ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jg9mB3H/; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762523768; x=1794059768;
-  h=date:from:to:cc:subject:message-id;
-  bh=1KlsyB1Qe1cWoEKYCmMfXW6jdatELCLj25BqETfGX9Y=;
-  b=Jg9mB3H/Xwxe37Z5KaKjL98Qr67Me1kJiq7mRkNm6ngE/ChesWQSejnT
-   qJqWTyGDgCXDrb2XWciaplNpAL6bmOEAx23W4Yh+QAy8i0VHO2m8qrt7v
-   uQlUMxLpRf5EVDk+tAEZhL03ohURpK/Aci5uBFq49L+mYfP2XGjFrjMBr
-   jvgaK1luwicfWSUpMFtb3V1oonkAZUl7tJgb6eDC0nwbu/GB9Oe4+scf7
-   VP9/4jVDb+tVc0FNeJU81+jlYa2AaoCS961pawuVo3vLoN4ajC/W3vHca
-   xourY9os1tJHG3qrCVVqWILI/NbOtU5ZDhaBrtg+CiypANyLe+PS7t8/Z
-   Q==;
-X-CSE-ConnectionGUID: ylk+Yn9KTm2h64MY3+5dWw==
-X-CSE-MsgGUID: Bsn2RSUsQAmaQdHAg6QJxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64598396"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64598396"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 05:56:06 -0800
-X-CSE-ConnectionGUID: XxcPpihLTq+WMq+Ktwqvmw==
-X-CSE-MsgGUID: yi6rqYNmSWur+s1OVLdxgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; 
-   d="scan'208";a="192303399"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 07 Nov 2025 05:56:05 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vHMwd-000VAz-23;
-	Fri, 07 Nov 2025 13:56:03 +0000
-Date: Fri, 07 Nov 2025 21:55:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/urgent] BUILD SUCCESS
- 956dfda6a70885f18c0f8236a461aa2bc4f556ad
-Message-ID: <202511072132.OtvvRWPV-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762523789; c=relaxed/simple;
+	bh=Va4qQyTeB2jj6UdT1RZ8AmuEGlHP9zV/bkngcJuvx+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QWWwZlvDpLLsuJ2lsGfjHv1riblFMctRFmTg53qDZ90F7emjrrsGpWM8nR7S2PCq6PUiN1r5wluzI2RHLtoJSkmObXbARhwjGUG3rKgAMRvVNVN6qqHWeQI1X1PGdj+Qn/nvnWTVyYlC7fbf3rKln3k3tsTIyNvEaoh7DwGJ+2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F05461515;
+	Fri,  7 Nov 2025 05:56:18 -0800 (PST)
+Received: from [10.57.86.134] (unknown [10.57.86.134])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 235F03F66E;
+	Fri,  7 Nov 2025 05:56:22 -0800 (PST)
+Message-ID: <6a9c846f-22b6-4d5f-81dc-6cdcd4905952@arm.com>
+Date: Fri, 7 Nov 2025 13:56:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/12] mm: introduce CONFIG_ARCH_HAS_LAZY_MMU_MODE
+Content-Language: en-GB
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-6-kevin.brodsky@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20251029100909.3381140-6-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/urgent
-branch HEAD: 956dfda6a70885f18c0f8236a461aa2bc4f556ad  sched/fair: Prevent cfs_rq from being unthrottled with zero runtime_remaining
+On 29/10/2025 10:09, Kevin Brodsky wrote:
+> Architectures currently opt in for implementing lazy_mmu helpers by
+> defining __HAVE_ARCH_ENTER_LAZY_MMU_MODE.
+> 
+> In preparation for introducing a generic lazy_mmu layer that will
+> require storage in task_struct, let's switch to a cleaner approach:
+> instead of defining a macro, select a CONFIG option.
+> 
+> This patch introduces CONFIG_ARCH_HAS_LAZY_MMU_MODE and has each
+> arch select it when it implements lazy_mmu helpers.
+> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is removed and <linux/pgtable.h>
+> relies on the new CONFIG instead.
+> 
+> On x86, lazy_mmu helpers are only implemented if PARAVIRT_XXL is
+> selected. This creates some complications in arch/x86/boot/, because
+> a few files manually undefine PARAVIRT* options. As a result
+> <asm/paravirt.h> does not define the lazy_mmu helpers, but this
+> breaks the build as <linux/pgtable.h> only defines them if
+> !CONFIG_ARCH_HAS_LAZY_MMU_MODE. There does not seem to be a clean
+> way out of this - let's just undefine that new CONFIG too.
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+>  arch/arm64/Kconfig                                 | 1 +
+>  arch/arm64/include/asm/pgtable.h                   | 1 -
+>  arch/powerpc/include/asm/book3s/64/tlbflush-hash.h | 2 --
+>  arch/powerpc/platforms/Kconfig.cputype             | 1 +
+>  arch/sparc/Kconfig                                 | 1 +
+>  arch/sparc/include/asm/tlbflush_64.h               | 2 --
+>  arch/x86/Kconfig                                   | 1 +
+>  arch/x86/boot/compressed/misc.h                    | 1 +
+>  arch/x86/boot/startup/sme.c                        | 1 +
+>  arch/x86/include/asm/paravirt.h                    | 1 -
+>  include/linux/pgtable.h                            | 2 +-
+>  mm/Kconfig                                         | 3 +++
+>  12 files changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 6663ffd23f25..e6bf5c7311b5 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -122,6 +122,7 @@ config ARM64
+>  	select ARCH_WANTS_NO_INSTR
+>  	select ARCH_WANTS_THP_SWAP if ARM64_4K_PAGES
+>  	select ARCH_HAS_UBSAN
+> +	select ARCH_HAS_LAZY_MMU_MODE
 
-elapsed time: 1508m
+nit: This list is mostly in alphabetical order. Further up the list there are a
+lot of ARCH_HAS_* entries. Perhaps move it to the correct position in that lot?
+Then ARCH_HAS_UBSAN stays out of order on its own.
 
-configs tested: 104
-configs skipped: 4
+Otherwise, all looks reasonable to me:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                 nsimosci_hs_smp_defconfig    gcc-15.1.0
-arc                   randconfig-001-20251107    gcc-8.5.0
-arc                   randconfig-002-20251107    gcc-9.5.0
-arm                               allnoconfig    clang-22
-arm                        neponset_defconfig    gcc-15.1.0
-arm                   randconfig-001-20251107    clang-17
-arm                   randconfig-002-20251107    gcc-13.4.0
-arm                   randconfig-003-20251107    clang-22
-arm                   randconfig-004-20251107    gcc-8.5.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20251107    gcc-8.5.0
-arm64                 randconfig-002-20251107    clang-22
-arm64                 randconfig-003-20251107    gcc-8.5.0
-arm64                 randconfig-004-20251107    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20251107    gcc-12.5.0
-csky                  randconfig-002-20251107    gcc-13.4.0
-hexagon                           allnoconfig    clang-22
-hexagon               randconfig-001-20251107    clang-22
-hexagon               randconfig-002-20251107    clang-22
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251107    clang-20
-i386        buildonly-randconfig-002-20251107    clang-20
-i386        buildonly-randconfig-003-20251107    gcc-13
-i386        buildonly-randconfig-004-20251107    gcc-14
-i386        buildonly-randconfig-005-20251107    clang-20
-i386        buildonly-randconfig-006-20251107    clang-20
-i386                  randconfig-011-20251107    gcc-14
-i386                  randconfig-013-20251107    clang-20
-i386                  randconfig-014-20251107    gcc-14
-loongarch                        alldefconfig    clang-20
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251107    gcc-15.1.0
-loongarch             randconfig-002-20251107    clang-19
-m68k                              allnoconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251107    gcc-11.5.0
-nios2                 randconfig-002-20251107    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251107    gcc-8.5.0
-parisc                randconfig-002-20251107    gcc-12.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                 linkstation_defconfig    clang-20
-powerpc               randconfig-001-20251107    clang-22
-powerpc               randconfig-002-20251107    clang-22
-powerpc                     tqm8548_defconfig    clang-22
-powerpc64             randconfig-001-20251107    gcc-14.3.0
-powerpc64             randconfig-002-20251107    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251106    clang-22
-riscv                 randconfig-002-20251106    gcc-12.5.0
-s390                              allnoconfig    clang-22
-s390                                defconfig    clang-22
-s390                  randconfig-001-20251106    gcc-8.5.0
-s390                  randconfig-002-20251106    gcc-14.3.0
-sh                                allnoconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20251106    gcc-11.5.0
-sh                    randconfig-002-20251106    gcc-13.4.0
-sh                   sh7724_generic_defconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251107    gcc-11.5.0
-sparc                 randconfig-002-20251107    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251107    gcc-8.5.0
-sparc64               randconfig-002-20251107    gcc-9.5.0
-um                                allnoconfig    clang-22
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251107    clang-22
-um                    randconfig-002-20251107    clang-22
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251107    gcc-14
-x86_64      buildonly-randconfig-003-20251107    gcc-14
-x86_64      buildonly-randconfig-005-20251107    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                randconfig-001-20251107    clang-20
-x86_64                randconfig-004-20251107    clang-20
-x86_64                randconfig-011-20251107    gcc-14
-x86_64                randconfig-012-20251107    gcc-14
-x86_64                randconfig-013-20251107    clang-20
-x86_64                randconfig-014-20251107    clang-20
-x86_64                randconfig-015-20251107    gcc-14
-x86_64                randconfig-016-20251107    gcc-14
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251107    gcc-10.5.0
-xtensa                randconfig-002-20251107    gcc-10.5.0
+>  	select ARM_AMBA
+>  	select ARM_ARCH_TIMER
+>  	select ARM_GIC
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 0944e296dd4a..54f8d6bb6f22 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -80,7 +80,6 @@ static inline void queue_pte_barriers(void)
+>  	}
+>  }
+>  
+> -#define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+>  static inline void arch_enter_lazy_mmu_mode(void)
+>  {
+>  	/*
+> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> index 7704dbe8e88d..623a8a8b2d0e 100644
+> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> @@ -24,8 +24,6 @@ DECLARE_PER_CPU(struct ppc64_tlb_batch, ppc64_tlb_batch);
+>  
+>  extern void __flush_tlb_pending(struct ppc64_tlb_batch *batch);
+>  
+> -#define __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+> -
+>  static inline void arch_enter_lazy_mmu_mode(void)
+>  {
+>  	struct ppc64_tlb_batch *batch;
+> diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+> index 7b527d18aa5e..2942d57cf59c 100644
+> --- a/arch/powerpc/platforms/Kconfig.cputype
+> +++ b/arch/powerpc/platforms/Kconfig.cputype
+> @@ -93,6 +93,7 @@ config PPC_BOOK3S_64
+>  	select IRQ_WORK
+>  	select PPC_64S_HASH_MMU if !PPC_RADIX_MMU
+>  	select KASAN_VMALLOC if KASAN
+> +	select ARCH_HAS_LAZY_MMU_MODE
+>  
+>  config PPC_BOOK3E_64
+>  	bool "Embedded processors"
+> diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+> index a630d373e645..2bad14744ca4 100644
+> --- a/arch/sparc/Kconfig
+> +++ b/arch/sparc/Kconfig
+> @@ -112,6 +112,7 @@ config SPARC64
+>  	select NEED_PER_CPU_PAGE_FIRST_CHUNK
+>  	select ARCH_SUPPORTS_SCHED_SMT if SMP
+>  	select ARCH_SUPPORTS_SCHED_MC  if SMP
+> +	select ARCH_HAS_LAZY_MMU_MODE
+>  
+>  config ARCH_PROC_KCORE_TEXT
+>  	def_bool y
+> diff --git a/arch/sparc/include/asm/tlbflush_64.h b/arch/sparc/include/asm/tlbflush_64.h
+> index 925bb5d7a4e1..4e1036728e2f 100644
+> --- a/arch/sparc/include/asm/tlbflush_64.h
+> +++ b/arch/sparc/include/asm/tlbflush_64.h
+> @@ -39,8 +39,6 @@ static inline void flush_tlb_range(struct vm_area_struct *vma,
+>  
+>  void flush_tlb_kernel_range(unsigned long start, unsigned long end);
+>  
+> -#define __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+> -
+>  void flush_tlb_pending(void);
+>  void arch_enter_lazy_mmu_mode(void);
+>  void arch_flush_lazy_mmu_mode(void);
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index fa3b616af03a..ef4332d720ab 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -804,6 +804,7 @@ config PARAVIRT
+>  config PARAVIRT_XXL
+>  	bool
+>  	depends on X86_64
+> +	select ARCH_HAS_LAZY_MMU_MODE
+>  
+>  config PARAVIRT_DEBUG
+>  	bool "paravirt-ops debugging"
+> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+> index db1048621ea2..cdd7f692d9ee 100644
+> --- a/arch/x86/boot/compressed/misc.h
+> +++ b/arch/x86/boot/compressed/misc.h
+> @@ -11,6 +11,7 @@
+>  #undef CONFIG_PARAVIRT
+>  #undef CONFIG_PARAVIRT_XXL
+>  #undef CONFIG_PARAVIRT_SPINLOCKS
+> +#undef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>  #undef CONFIG_KASAN
+>  #undef CONFIG_KASAN_GENERIC
+>  
+> diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
+> index e7ea65f3f1d6..b76a7c95dfe1 100644
+> --- a/arch/x86/boot/startup/sme.c
+> +++ b/arch/x86/boot/startup/sme.c
+> @@ -24,6 +24,7 @@
+>  #undef CONFIG_PARAVIRT
+>  #undef CONFIG_PARAVIRT_XXL
+>  #undef CONFIG_PARAVIRT_SPINLOCKS
+> +#undef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>  
+>  /*
+>   * This code runs before CPU feature bits are set. By default, the
+> diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+> index b5e59a7ba0d0..13f9cd31c8f8 100644
+> --- a/arch/x86/include/asm/paravirt.h
+> +++ b/arch/x86/include/asm/paravirt.h
+> @@ -526,7 +526,6 @@ static inline void arch_end_context_switch(struct task_struct *next)
+>  	PVOP_VCALL1(cpu.end_context_switch, next);
+>  }
+>  
+> -#define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+>  static inline void arch_enter_lazy_mmu_mode(void)
+>  {
+>  	PVOP_VCALL0(mmu.lazy_mode.enter);
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 32e8457ad535..9894366e768b 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -231,7 +231,7 @@ static inline int pmd_dirty(pmd_t pmd)
+>   * held, but for kernel PTE updates, no lock is held). Nesting is not permitted
+>   * and the mode cannot be used in interrupt context.
+>   */
+> -#ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+> +#ifndef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>  static inline void arch_enter_lazy_mmu_mode(void) {}
+>  static inline void arch_leave_lazy_mmu_mode(void) {}
+>  static inline void arch_flush_lazy_mmu_mode(void) {}
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 0e26f4fc8717..5480c9a1bfb2 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1372,6 +1372,9 @@ config PT_RECLAIM
+>  config FIND_NORMAL_PAGE
+>  	def_bool n
+>  
+> +config ARCH_HAS_LAZY_MMU_MODE
+> +	bool
+> +
+>  source "mm/damon/Kconfig"
+>  
+>  endmenu
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
