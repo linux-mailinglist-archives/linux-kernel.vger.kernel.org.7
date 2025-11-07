@@ -1,163 +1,128 @@
-Return-Path: <linux-kernel+bounces-890453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B84AC40172
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:24:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82519C40181
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1861F4EE180
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2346742376A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C052D97AA;
-	Fri,  7 Nov 2025 13:24:49 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054672DCF5D;
+	Fri,  7 Nov 2025 13:25:43 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B572DAFBF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE3E2D7DDA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762521889; cv=none; b=t0t3dEArv5sCir8u4p2piI3VZc3Z8RDuttHETSn7vYKuBYpa/7cfysiOjmx6nG0A6J6oGBlS6lS5/bcYcVUbkcMjqlk7ubC/Z+8XsrN12x3GSc6HJZtQBx0Fw63cX3VqjLQD5vP91W1GhYGkhTzsASABGdbSGQUM+y19ZhCZgBo=
+	t=1762521942; cv=none; b=u33yWlxWjGr6gJXSyp+UyfOonqW+sDjMQfFWDuCNdq5V+vLCFi0x09S9gBF6X3EHa3gXDP0JtM1Nd+WpvM2qiiV2gluy52ELRodD9+L5Ql0qiCFxUAOUYmrPUnyuwVh1t6zKM140tw4GS7PZPNzNaCq7LH/nhMoDHa54GJ84Jzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762521889; c=relaxed/simple;
-	bh=+kSqEW8KprcnZcsKwMRI/SObqdZug8SKrPXS1WYuDI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PFzthHf8AgbPZBd4BW0cOZarNYJMUk1VVYbIAevP06n1BiS4w4TFzlJVRHwHXaCnqBVe1S9fSnmQGTKE+6JQhPeQ1NE01OONp8pIkQ5EK4t/YjMs+ODaWcqvbexdIgenWGBt2QpdmxoJLt9MaZAhsg7V/N16S6nGQ+/oaR4xqvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 24A004B986;
-	Fri,  7 Nov 2025 13:24:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 3F2B42000D;
-	Fri,  7 Nov 2025 13:24:43 +0000 (UTC)
-Date: Fri, 7 Nov 2025 08:24:44 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Tomas Glozar <tglozar@redhat.com>, John Kacur <jkacur@redhat.com>, Zhang
- Chujun <zhangchujun@cmss.chinamobile.com>, Zilin Guan <zilin@seu.edu.cn>
-Subject: [GIT PULL] tracing: A few minor fixes for v6.18
-Message-ID: <20251107082444.45c4536d@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762521942; c=relaxed/simple;
+	bh=l/skyXq5y5A8hckZbTNRqPDFHhKZkUpF38SVk2lzWOI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rApAOZIckrVYPuYFWT5f3I+qHIbNGF8lYXlZTf5rGN4lRR6foCSBYbpCzfGa/qDA5oC10HCQdVEwsXTHK48jF2ZUQxW76Vcz0Ts909cEZKt+fSgF+2QtYKSsJHPqRNOM5d4fE8NznB/nrss2X4tSB+yf2R3xdWdW0l4SV5tP50Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vHMSu-0003tF-Mg; Fri, 07 Nov 2025 14:25:20 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vHMSu-007XJl-1d;
+	Fri, 07 Nov 2025 14:25:20 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vHMSp-000000007QK-1nKx;
+	Fri, 07 Nov 2025 14:25:15 +0100
+Message-ID: <2841ae5f1f4ccafcbed6c70866d0237b9abdc338.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] dt-bindings: reset: add sky1 reset controller
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Gary Yang <gary.yang@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, cix-kernel-upstream@cixtech.com
+Date: Fri, 07 Nov 2025 14:25:15 +0100
+In-Reply-To: <20251107033819.587712-2-gary.yang@cixtech.com>
+References: <20251107033819.587712-1-gary.yang@cixtech.com>
+	 <20251107033819.587712-2-gary.yang@cixtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: u4zd1qxzaof6u6pk8sqtswmaxpw88q79
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 3F2B42000D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+fmYaqL0zi8T+Bo9Zc/CD7cUNfWYlBuPA=
-X-HE-Tag: 1762521883-120543
-X-HE-Meta: U2FsdGVkX1+h/RreJl5gkdvQtAbGiNXpr/CITmq+n0zTlkdi5IiRBpHEHXl2s8Fe6ej4b9MmWRxxxp3HZC806ZOEoZUFh9o/9k4PySdzfyonKYANhiBptK028sVd5t/PvYQrlpEn9uj1gtrhXreV166OEAyllR9x9G0RtMKoq4EnWwkq1oXtUgeVbwpyZc8lyBK0toPB4ZwBORIUIumLcXLkmx7jOKC8ihHVAd10CrYK2U7yef/uvs9vLiYJxfK8gsQQViBubBDNW9FHTuIAstGr4xCQzb+SpV+Zom5qt0gP3EBy09ANNig3kqlgSHLd0PD0Mt6FqSygCOse9PQI4GmLzedlEsTv
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Fr, 2025-11-07 at 11:38 +0800, Gary Yang wrote:
+> There are two reset controllers on Cix sky1 Soc.
+> One is located in S0 domain, and the other is located
+> in S5 domain.
+>=20
+> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+> ---
+>  .../bindings/reset/cix,sky1-rst.yaml          |  48 +++++
+>  include/dt-bindings/reset/cix,sky1-rst-fch.h  |  45 +++++
+>  include/dt-bindings/reset/cix,sky1-rst.h      | 167 ++++++++++++++++++
+>  3 files changed, 260 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/cix,sky1-rst.=
+yaml
+>  create mode 100644 include/dt-bindings/reset/cix,sky1-rst-fch.h
+>  create mode 100644 include/dt-bindings/reset/cix,sky1-rst.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/reset/cix,sky1-rst.yaml b/=
+Documentation/devicetree/bindings/reset/cix,sky1-rst.yaml
+> new file mode 100644
+> index 000000000000..72de480b064c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/cix,sky1-rst.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reset/cix,sky1-rst.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: CIX Sky1 Reset Controller
+> +
+> +maintainers:
+> +  - Gary Yang <gary.yang@cixtech.com>
+> +
+> +description: |
+> +  CIX Sky1 reset controller can be used to reset various set of peripher=
+als.
+> +  There are two reset controllers, one is located in S0 domain, the othe=
+r
+> +  is located in S5 domain.
+> +
+> +  See also:
+> +  - dt-bindings/reset/cix,sky1-rst.h
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - cix,sky1-rst
+> +          - cix,sky1-rst-fch
+> +      - const: syscon
 
-Linus,
+Why is this syscon? Is there anything besides reset controls in the
+register space?
 
-Fixes for tracing:
-
-- Check for reader catching up in ring_buffer_map_get_reader()
-
-  If the reader catches up to the writer in the memory mapped ring buffer
-  then calling rb_get_reader_page() will return NULL as there's no
-  pages left. But this isn't checked for before calling rb_get_reader_page()
-  and the return of NULL causes a warning.
-
-  If it is detected that the reader caught up to the writer, then simply
-  exit the routine.
-
-- Fix memory leak in histogram create_field_var()
-
-  The couple of the error paths in create_field_var() did not properly clean
-  up what was allocated. Make sure everything is freed properly on error.
-
-- Fix help message of tools latency_collector
-
-  The help message incorrectly stated that "-t" was the same as "--threads"
-  whereas "--threads" is actually represented by "-e".
-
-
-Please pull the latest trace-v6.18-rc4 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.18-rc4
-
-Tag SHA1: a9d5bb4a7261f61be9248ee46ff77fd0c6261970
-Head SHA1: 53afec2c8fb2a562222948cb1c2aac48598578c9
-
-
-Steven Rostedt (1):
-      ring-buffer: Do not warn in ring_buffer_map_get_reader() when reader catches up
-
-Zhang Chujun (1):
-      tracing/tools: Fix incorrcet short option in usage text for --threads
-
-Zilin Guan (1):
-      tracing: Fix memory leaks in create_field_var()
-
-----
- kernel/trace/ring_buffer.c                | 4 ++++
- kernel/trace/trace_events_hist.c          | 6 ++++--
- tools/tracing/latency/latency-collector.c | 2 +-
- 3 files changed, 9 insertions(+), 3 deletions(-)
----------------------------
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 1244d2c5c384..afcd3747264d 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -7344,6 +7344,10 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
- 		goto out;
- 	}
- 
-+	/* Did the reader catch up with the writer? */
-+	if (cpu_buffer->reader_page == cpu_buffer->commit_page)
-+		goto out;
-+
- 	reader = rb_get_reader_page(cpu_buffer);
- 	if (WARN_ON(!reader))
- 		goto out;
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 1d536219b624..6bfaf1210dd2 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -3272,14 +3272,16 @@ static struct field_var *create_field_var(struct hist_trigger_data *hist_data,
- 	var = create_var(hist_data, file, field_name, val->size, val->type);
- 	if (IS_ERR(var)) {
- 		hist_err(tr, HIST_ERR_VAR_CREATE_FIND_FAIL, errpos(field_name));
--		kfree(val);
-+		destroy_hist_field(val, 0);
- 		ret = PTR_ERR(var);
- 		goto err;
- 	}
- 
- 	field_var = kzalloc(sizeof(struct field_var), GFP_KERNEL);
- 	if (!field_var) {
--		kfree(val);
-+		destroy_hist_field(val, 0);
-+		kfree_const(var->type);
-+		kfree(var->var.name);
- 		kfree(var);
- 		ret =  -ENOMEM;
- 		goto err;
-diff --git a/tools/tracing/latency/latency-collector.c b/tools/tracing/latency/latency-collector.c
-index cf263fe9deaf..ef97916e3873 100644
---- a/tools/tracing/latency/latency-collector.c
-+++ b/tools/tracing/latency/latency-collector.c
-@@ -1725,7 +1725,7 @@ static void show_usage(void)
- "-n, --notrace\t\tIf latency is detected, do not print out the content of\n"
- "\t\t\tthe trace file to standard output\n\n"
- 
--"-t, --threads NRTHR\tRun NRTHR threads for printing. Default is %d.\n\n"
-+"-e, --threads NRTHR\tRun NRTHR threads for printing. Default is %d.\n\n"
- 
- "-r, --random\t\tArbitrarily sleep a certain amount of time, default\n"
- "\t\t\t%ld ms, before reading the trace file. The\n"
+regards
+Philipp
 
