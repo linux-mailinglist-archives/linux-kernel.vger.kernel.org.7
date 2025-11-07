@@ -1,212 +1,199 @@
-Return-Path: <linux-kernel+bounces-890434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2332C400B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:09:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6B9C400B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 788524E79A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596653A4E55
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96E42D0C68;
-	Fri,  7 Nov 2025 13:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEBF2D1319;
+	Fri,  7 Nov 2025 13:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="wiJdXsVg"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9T6lKNK";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="bn9o+0xe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9492BDC34;
-	Fri,  7 Nov 2025 13:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1982C21E4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762520978; cv=none; b=M6PhUku/TcmChr2umLRseWfTA6rD4GNsLwCEMepdAgSN2RW13Poc3dti400F0cK00SPGC2qN/ctpAipzsp8mFZAqjmJij7NgSvNOAei36SQ7ZCQ+1h9VNC65Geqzm6cDRMykXdYdyOBbJBo8y0eAVrEUwnkS5x5nxsHcQFKleHc=
+	t=1762521003; cv=none; b=QRIQ5zoYNMZonCDW14i3XtevHHWivpcl+tfIqD8ofgQ3Q47hsMU1ELpMS8eoyM/1E5zCnvACubHz6CqXvcvgwqwK0jku86Vou5l0ni1uKpv4NMy0KPkgqzKuJqrAtShMml3fPTfDbkgyaKQFj4Uw+0Bpx4+IBkelIxmHj6kLw2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762520978; c=relaxed/simple;
-	bh=4Ddae25sqG738EaVw5RvrZNH1hBC2JAp7XDsKznyjlg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cA5avrOqk/mlzIGji5463E9M5vzen5Qu21R4at0YHqTB1kLJgkmaoZgalSD85ODiwQjB75YpvX07Xn8jwzagylBI6jU25K1OBrbuzsoGMBNtXoLlEXZlnbHvMreAEVFbHgZRNAg9jg3HpnNep4rRAzX20wZro/qDxu6A5e+3yKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=wiJdXsVg; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762520960; x=1763125760; i=spasswolf@web.de;
-	bh=C8JSblNcI1zOZZ07ilFFhicMfhhYHjHHDyckzH5IIxQ=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=wiJdXsVg5xGXRmSRup6oB6Yu+BJVKbDkCrbfGndCkEnamI07ZSCQbTNq8koKbF3g
-	 e8UwEwUdveVS+rN1+Jke6MInZeB5r7ZXft/QctwM5ed/EAfX4L7vwjESTdSCbyfxA
-	 YHnB4NF4xs/unnpLI9OV98ZMqDU5PHUGFfDblV+x2aqobRXxBBHf3Mqm8MjRLYR/W
-	 8HamPKJimIoQ1DqOfp/p+73Gmn3O5eW7VlZ5GrEuqosPmT3ywD/DkSm++DLiLD8nA
-	 pT2pb+fOCNiV+5cnVj1DX8QFg9Sf/ObR8r5/A7ov0CJnBuRGKOLoDZhPgZV+7dEGD
-	 lMmzXdZKyr+udcpzxQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkVwi-1vwPz732Ja-00jVXB; Fri, 07
- Nov 2025 14:09:19 +0100
-Message-ID: <0cb75fae3a9cdb8dd82ca82348f4df919d34844d.camel@web.de>
-Subject: Re: [REGRESSION 00/04] Crash during resume of pcie bridge
-From: Bert Karwatzki <spasswolf@web.de>
-To: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?=
-	 <christian.koenig@amd.com>, linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, regressions@lists.linux.dev, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, "Rafael J . Wysocki"
-	 <rafael.j.wysocki@intel.com>, spasswolf@web.de
-Date: Fri, 07 Nov 2025 14:09:17 +0100
-In-Reply-To: <3772b8f5-6d1a-403e-ad27-99a711e78902@kernel.org>
-References: <20251006120944.7880-1-spasswolf@web.de>
-	 <8edcc464-c467-4e83-a93b-19b92a2cf193@kernel.org>
-	 <4903e7c36adf377bcca289dbd3528055dc6cfb32.camel@web.de>
-	 <4a8302a0-209f-446a-9825-36cb267c1718@kernel.org>
-	 <25f36fa7-d1d6-4b81-a42f-64c445d6f065@amd.com>
-	 <1853e2af7f70cf726df278137b6d2d89d9d9dc82.camel@web.de>
-	 <f18bafacbd8316c9623658e2935f8fc3b276af64.camel@web.de>
-	 <26bf82303f661cdd34e4e8c16997e33eb21d1ee4.camel@web.de>
-	 <635b6cb19b5969bed7432dfd1cd651124e63aebb.camel@web.de>
-	 <18e472a0489ee5337465d5dc26685cebaf7c4f8d.camel@web.de>
-	 <3772b8f5-6d1a-403e-ad27-99a711e78902@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762521003; c=relaxed/simple;
+	bh=B4ngeTm/7x3Vu9seNE749EttsB8vxcdtADXSML3VlRY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I/kn7oVXz2Fr5uu9rUeA/gQf/bjJL13XsRYPBk4y60sG2weiceZuB8QbhGqEo/7gCKMkL/rRWPHwxpYLFtbkFU/uMxqio7NYODVd0qjIVlmtd4GxKUJ2xJpZyvYjBQXKFW72cZyrGXZL7K+6rnGBMECj3ddouFxi41LwI3zGkP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9T6lKNK; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=bn9o+0xe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762520999;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wrgsqdcysUxzxTMpusKBNfb3r72+Eorc3mX1btB4ovM=;
+	b=f9T6lKNKnDfm6ZhM+nHg13BvtJZU8W6BDuvmF9oifyuCyi1oxNJ4ynE5ebnocmUu7mq4bC
+	iUCC+A78uaho5RebrKytkLSywCY4Lz5EslNzc5hyPW5K5uRQtG8KNyamYWgKTWqGwaUcg1
+	PiaenXS+/ERBnE3eeQ8WVu5QW+L3r8E=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-622-CW7enYDXPAi_kO5xTo8OJA-1; Fri, 07 Nov 2025 08:09:58 -0500
+X-MC-Unique: CW7enYDXPAi_kO5xTo8OJA-1
+X-Mimecast-MFC-AGG-ID: CW7enYDXPAi_kO5xTo8OJA_1762520996
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-477594aad41so4286945e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:09:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762520996; x=1763125796; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wrgsqdcysUxzxTMpusKBNfb3r72+Eorc3mX1btB4ovM=;
+        b=bn9o+0xe2g6epc8UPu20jtmuRa9DvD6Y3pm0LeY14AqNgMH0sGJdzEdjjYEB4viTzJ
+         iimQyDg1+JFXv2jc0f3eALiFG7Y0IAQLceTtDdAY5whrqRQSmQAO6ISxqNJQxrEWSGZf
+         utBWwJyFDNS7aADZC9beVe9G7/7Q99JJ2ZkptWMXujrCtgDsI8pLCVp7Q5C7LZcao3Yu
+         4Nu8rUT4L49opsJOZaKhY+K2qkIlv32w6Z+grb+LQ/8iL+t2buQanXB5YCN//f8Zy8lI
+         SWScfJRKiQ32lTUKz4WpyAbtqPLsZtpgQtw9uyGMfu/x9+m4r7DIfYqeIlcJHTw1fXps
+         z6Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762520996; x=1763125796;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wrgsqdcysUxzxTMpusKBNfb3r72+Eorc3mX1btB4ovM=;
+        b=gP6XuZlIW4wdTJ3w8/68gzDy6ubhBg0mdof6oDRH+XZEDEYNJE7cz8QD7absLSXbSv
+         LImONRJJ9XFca36g3PWYWhIUR2SEUcP6Poud8YBRT/mmRKt+dTqwLteQgddKwmVd+lG9
+         PdFAXrEFvYaLWZ66O2WlWNAUnk22FF/vPQeEepwAmBKp61858MkTQ+xBDv5xgbLgp9ai
+         nr0r+EpdwjYsxpBEvTMqxSie2yG5+aLxNVSX3Bz0/nTPWaEm6aWX3S89AqhpU1tOe59e
+         8O6mTiw4fptBE9pVGkAUGbaNB4Py8u7FJwtfKj38gii9BuUx95tBkeWWc1RexrvtSyt8
+         Yqxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUApBFOkOm8NdaP9aPsZtUvcf3lE0eRfhPEhcFaJ3q74nji2sOig2N6tVxdOkV0As4NCm6VVMUNRJqkBrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9G5I3cbyuW6qTRnHxMo2ZjTq8l/37Bd8ZLoBUtmC8kSb9fZvq
+	daEG/y1GNHWvlDldqVZHxwY6wHUsxmrJ34lvwtJmGJ+Bpfp7ehJ5WtM94oehGV3QsmDjXRyD/kZ
+	NLXStWiW7iMHYvOZ1IOmnwVNGOqLwAyyu9jb5AsLn5O3gIpUCwqL5OE+gyjfYezPECw==
+X-Gm-Gg: ASbGncv57nN8Lj3tT5JPFoKTpPE8koQYQe4vrv0dqJW0hXjLV6EA32MJnVgKE1w7unA
+	o/DrYpRQrojkzeDIMiRg/Gh0oqN4ptU/xyclfl+oxV/NYjHJ6EKE8leXJA3kqnhCrkvnJ4EVid8
+	S42bbUWDDnA4gKlon+j57CzPg/J49fwZWBGPLJ7CTms0GiRCZT675JSUDlpN3JED8fIPzND9SnF
+	R6WNg+CXjVzd31m31EYT2CbbGSJ/k3yOytR2FG9BuDMCLHf1KigCr7p0EK/ztvzUlUITglMzsUR
+	pPl3PSHxs/A4onke1hHrk0yIm8RghjMGLZa7ay8Wy7QAB8pAng0kKsMj92ktA//igTe0Ayw=
+X-Received: by 2002:a7b:c018:0:b0:477:55ce:f3bc with SMTP id 5b1f17b1804b1-4776bcba012mr17488335e9.19.1762520996359;
+        Fri, 07 Nov 2025 05:09:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFV/Rr5lzgLB/oFrRRCumn/JEzRFlirlNZ45yaTBgHWRSyCOkDHeIleNB5xGBLpvhxqzMlF9g==
+X-Received: by 2002:a7b:c018:0:b0:477:55ce:f3bc with SMTP id 5b1f17b1804b1-4776bcba012mr17488215e9.19.1762520995881;
+        Fri, 07 Nov 2025 05:09:55 -0800 (PST)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd087b1sm55972655e9.16.2025.11.07.05.09.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:09:55 -0800 (PST)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Sean Christopherson <seanjc@google.com>, Sean Christopherson
+ <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] KVM: x86: Use "checked" versions of get_user() and
+ put_user()
+In-Reply-To: <20251106210206.221558-1-seanjc@google.com>
+References: <20251106210206.221558-1-seanjc@google.com>
+Date: Fri, 07 Nov 2025 14:09:54 +0100
+Message-ID: <87zf8yat0d.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cwwvGof3jLSNg0rClU314UgVju483p/vCHF2hs6IGVaZu/tjpEv
- XLagxUR8bhCzzajJaLzlAKYtzmaruWxVp4Gv1Uws9IWnKUJhmdCOJLVLKM3qUc+8Kx8hiDI
- LN9PFB3l1bRaURgD8sYwx1QdB2z6xRj7N3kNcBSHQbRC1IxZamXN4E/p9kVNJX4FZPHPB3P
- RvcbovRRut/r8NhgyCmwA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:I79Uwc4qfLM=;wmwGdeNP/11VC+9fY1jHMNQ9YD4
- 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
+Content-Type: text/plain
 
-Am Mittwoch, dem 05.11.2025 um 15:31 -0600 schrieb Mario Limonciello (AMD)=
- (kernel.org):
->=20
-> Once you're done with your bisect I'd be really interested if you can=20
-> still reproduce the splats and NULL pointer on the recovery path using=
-=20
-> amd-staging-drm-next.
-> >=20
+Sean Christopherson <seanjc@google.com> writes:
 
-There are good news and bad news on this:
+> Use the normal, checked versions for get_user() and put_user() instead of
+> the double-underscore versions that omit range checks, as the checked
+> versions are actually measurably faster on modern CPUs (12%+ on Intel,
+> 25%+ on AMD).
+>
+> The performance hit on the unchecked versions is almost entirely due to
+> the added LFENCE on CPUs where LFENCE is serializing (which is effectively
+> all modern CPUs), which was added by commit 304ec1b05031 ("x86/uaccess:
+> Use __uaccess_begin_nospec() and uaccess_try_nospec").  The small
+> optimizations done by commit b19b74bc99b1 ("x86/mm: Rework address range
+> check in get_user() and put_user()") likely shave a few cycles off, but
+> the bulk of the extra latency comes from the LFENCE.
+>
+> Don't bother trying to open-code an equivalent for performance reasons, as
+> the loss of inlining (e.g. see commit ea6f043fc984 ("x86: Make __get_user()
+> generate an out-of-line call") is largely a non-factor (ignoring setups
+> where RET is something entirely different),
+>
+> As measured across tens of millions of calls of guest PTE reads in
+> FNAME(walk_addr_generic):
+>
+>               __get_user()  get_user()  open-coded  open-coded, no LFENCE
+> Intel (EMR)           75.1        67.6        75.3                   65.5
+> AMD (Turin)           68.1        51.1        67.5                   49.3
+>
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Closes: https://lore.kernel.org/all/CAHk-=wimh_3jM9Xe8Zx0rpuf8CPDu6DkRCGb44azk0Sz5yqSnw@mail.gmail.com
+> Cc: Borislav Petkov <bp@alien8.de>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/hyperv.c          | 2 +-
+>  arch/x86/kvm/mmu/paging_tmpl.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> index 38595ecb990d..de92292eb1f5 100644
+> --- a/arch/x86/kvm/hyperv.c
+> +++ b/arch/x86/kvm/hyperv.c
+> @@ -1568,7 +1568,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+>  		 * only, there can be valuable data in the rest which needs
+>  		 * to be preserved e.g. on migration.
+>  		 */
+> -		if (__put_user(0, (u32 __user *)addr))
 
-The good news: I found out that one can generate a large number of ACPI GP=
-P0 events
-and resumes by scrolling through a large pdf (1305 pages - Gravitation by =
-Wheeler, Misner and Thorne)
-using the arrow keys. This can generate these crashes quite fast.
+Did some history digging on this one, apparently it appeared with
 
-The bad news: Using the method above I could generate these crashes in v6.=
-13 and v6.14,
-so all the previous bisecting was completely useless.
+commit 8b0cedff040b652f3d36b1368778667581b0c140
+Author: Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
+Date:   Sun May 15 23:22:04 2011 +0800
 
-Version v6.12 has not (yet, ...) crashed so I might be able to bisect betw=
-een v6.12 and v6.13.
+    KVM: use __copy_to_user/__clear_user to write guest page
 
-Here's a short log of the recent tests and time to crash (with number of G=
-PP0 wakeup events and GPU resumes)
+and the justification was:
 
-Retest:
-6.14.0-stable		booted 18:11:24, 6.11.2025, crashed 18:45:30 (~34min, 588 G=
-PP0 events, 210 resumes)
+    Simply use __copy_to_user/__clear_user to write guest page since we have
+    already verified the user address when the memslot is set
 
-Retest:
-6.14.11-stable		booted 19:09:33, 6.11.2025, crashed 19:17:42 (~8min (new r=
-ecord!), 122 GPP0 events, 44 resumes)
+Unlike FNAME(walk_addr_generic), I don't belive kvm_hv_set_msr() is
+actually performance critical, normally behaving guests/userspaces
+should never be doing extensive writing to
+HV_X64_MSR_VP_ASSIST_PAGE. I.e. we can probably ignore the performance
+aspect of this change completely.
 
-Testing (this was tested by the old method of starting evolution by script=
-):	=09
-v6.13			booted 23:46:21, 6.11.2025, GPU lost 4:38, 7.11.2025 (~5h, 760 GPP=
-0 events, 807 resumes) no crash
+> +		if (put_user(0, (u32 __user *)addr))
+>  			return 1;
+>  		hv_vcpu->hv_vapic = data;
+>  		kvm_vcpu_mark_page_dirty(vcpu, gfn);
+> diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
+> index ed762bb4b007..901cd2bd40b8 100644
+> --- a/arch/x86/kvm/mmu/paging_tmpl.h
+> +++ b/arch/x86/kvm/mmu/paging_tmpl.h
+> @@ -402,7 +402,7 @@ static int FNAME(walk_addr_generic)(struct guest_walker *walker,
+>  			goto error;
+>  
+>  		ptep_user = (pt_element_t __user *)((void *)host_addr + offset);
+> -		if (unlikely(__get_user(pte, ptep_user)))
+> +		if (unlikely(get_user(pte, ptep_user)))
+>  			goto error;
+>  		walker->ptep_user[walker->level - 1] = ptep_user;
+>  
+>
+> base-commit: a996dd2a5e1ec54dcf7d7b93915ea3f97e14e68a
 
-Retest:
-v6.13			booted 9:12, 7.11.2025 crashed 11:25, 7.11.2025 (~1.25h, 351 GPP0 =
-events, 330 resumes)
+-- 
+Vitaly
 
-Testing:
-v6.12.52		booted 11:27, 7.11.2025 no crash after 1h, 735 GPP0 events, 301 =
-resumes
-
-Testing:
-v6.12			booted 13:00, 7.11.2025 no crash after 1h, 890 GPP0 events, 287 re=
-sumes
-
-
-Bert Karwatzki
 
