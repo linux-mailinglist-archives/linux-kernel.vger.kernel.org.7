@@ -1,580 +1,162 @@
-Return-Path: <linux-kernel+bounces-890351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AB4C3FE0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:17:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCCFC3FE2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7913AF023
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:17:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8DC1A34A5B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347362D0C7A;
-	Fri,  7 Nov 2025 12:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jbXV6M/P"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF38429CB3A;
-	Fri,  7 Nov 2025 12:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2F82BFC8F;
+	Fri,  7 Nov 2025 12:25:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634C4194098;
+	Fri,  7 Nov 2025 12:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762517830; cv=none; b=CLijCgue8pQGWn1MGX+gT5LKP5DEnFMTZ/jY3vbvddHg6IBoxa2v0vDQuzMRn/NZsZQyyFomebImL186D2SdMlHbVVWhUUWppSRLDcY7DWNgbmk8kUL65zHGU2yqB1cABfsUdKq1LqXDhvm82uSXZUB0S3+ynSv/HqxxPQELylc=
+	t=1762518311; cv=none; b=ObYbSB+OhHNMay785H7pPZjuRvD+eTfUhRNCIsPwe6moPrzwcJzUN+OhboPyESCWj5no0kfWbuw4llhRYeB0HDypgcrnLuZMDXxfOVW+RBSh8NxRRirvT+LSq4cD56f/ma40ZfRp24p4Oqa+QncNiw1j/RBq4gq1ipSYkK53lLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762517830; c=relaxed/simple;
-	bh=p3S1s8SsAdnoQcqb9YgHyU3XATbc+wOE5vApBLJf89E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GgT3xmVCGmM2L6fpPfIU3FcT+pVnGNV67S/tUoQj9I2XmcKUBeQWWXcHTGELDMQeOG7GeX3eSM+xix+1/9jGHiHXksVqZyhtiqDXzkt1xbQtgmOJDk4TvH8O8nymSVqip+b8Qk34JT3BYPF4h5wqKK8JWkfikOa5xtajIUkPJ8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jbXV6M/P; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1762517827; x=1794053827;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=p3S1s8SsAdnoQcqb9YgHyU3XATbc+wOE5vApBLJf89E=;
-  b=jbXV6M/PY1DtAqMKzaz2vaqUyLouNFX3bZP9Jv5L2BVcu26KP7hud8b/
-   Fbi1MhQFf09sui2R22QDSMjp6iV7lnCiJi1o0ZVlH5QoKRhkjU28Ganm2
-   9N/URHOmf5OcbIyRIEHzWc+CRhZ9b5ucM5JEh67HbKnTVe6mdpfLHWigc
-   VR3nfNZImRVBZUXaNdIhP9tXB518Ia90bigVH3yCvAzzOXZd+fYZs2KUt
-   gvSzffXFN8gKUH+E5eMzbskT2Cwb9x/ApE5ZwkDGCg9PjNvHc1GDmj2ue
-   fd5gFjBpxkBq6jxOFrEznlBqK2WRxpUSt2nDZxqqXHy8sD54dMi3TeTdQ
-   g==;
-X-CSE-ConnectionGUID: BMvHhjAdT6y1+HEhZwPKDQ==
-X-CSE-MsgGUID: ljYTYjKXTK21cSpnKdZ5fg==
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="55218263"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 05:17:03 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Fri, 7 Nov 2025 05:16:50 -0700
-Received: from Lily.microchip.com (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 7 Nov 2025 05:16:48 -0700
-From: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-To: Mark Brown <broonie@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-spi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Conor Dooley
-	<conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
-	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>, "Cyril
- Jean" <cyril.jean@microchip.com>, Prajna Rajendra Kumar
-	<prajna.rajendrakumar@microchip.com>
-Subject: [PATCH v3 3/3] spi: add support for microchip "soft" spi controller
-Date: Fri, 7 Nov 2025 12:21:04 +0000
-Message-ID: <20251107122104.1389301-4-prajna.rajendrakumar@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251107122104.1389301-1-prajna.rajendrakumar@microchip.com>
-References: <20251107122104.1389301-1-prajna.rajendrakumar@microchip.com>
+	s=arc-20240116; t=1762518311; c=relaxed/simple;
+	bh=3cilhgiSYCIrrJOiI2EwFQzJ+EH2KoTh4JRCuDCd1tg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJwMXggH1ix24W3NWAAc0FSsztjrwm0q0oZZLq0zX4Gog655YMx8kaquu4TfRCFUJMx0yG7G4XAvk1Uc/WqTWsUL0XViaT+S3bhTMls7x64RzYB0FphCx6dbQF+4uTbvKekZigbbVr1h2iUAfMP8NiDBaXhzHEhEOQ0/Kb+0aig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6E851515;
+	Fri,  7 Nov 2025 04:25:00 -0800 (PST)
+Received: from [10.57.86.134] (unknown [10.57.86.134])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF63F3F66E;
+	Fri,  7 Nov 2025 04:25:03 -0800 (PST)
+Message-ID: <daa2025c-43da-4c16-9393-a90574d74f64@arm.com>
+Date: Fri, 7 Nov 2025 12:25:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/12] powerpc/64s: Do not re-activate batched TLB
+ flush
+Content-Language: en-GB
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-2-kevin.brodsky@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20251029100909.3381140-2-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Introduce driver support for the Microchip FPGA CoreSPI IP.
+On 29/10/2025 10:08, Kevin Brodsky wrote:
+> From: Alexander Gordeev <agordeev@linux.ibm.com>
+> 
+> Since commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash
+> lazy mmu mode") a task can not be preempted while in lazy MMU mode.
+> Therefore, the batch re-activation code is never called, so remove it.
+> 
+> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 
-This driver supports only Motorola SPI mode and frame size of 8-bits.
-TI/NSC modes and wider frame sizes are not currently supported.
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-Signed-off-by: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
----
- drivers/spi/Kconfig                  |   9 +
- drivers/spi/Makefile                 |   1 +
- drivers/spi/spi-microchip-core-spi.c | 442 +++++++++++++++++++++++++++
- 3 files changed, 452 insertions(+)
- create mode 100644 drivers/spi/spi-microchip-core-spi.c
-
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index d53798036076..96806806d48b 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -715,6 +715,15 @@ config SPI_MICROCHIP_CORE_QSPI
- 	  PolarFire SoC.
- 	  If built as a module, it will be called spi-microchip-core-qspi.
- 
-+config SPI_MICROCHIP_CORE_SPI
-+	tristate "Microchip FPGA CoreSPI controller"
-+	depends on SPI_MASTER
-+	help
-+	  This enables the SPI driver for Microchip FPGA CoreSPI controller.
-+	  Say Y or M here if you want to use the "soft" controllers on
-+	  PolarFire SoC.
-+	  If built as a module, it will be called spi-microchip-core-spi.
-+
- config SPI_MT65XX
- 	tristate "MediaTek SPI controller"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index 1f7c06a3091d..863b628ff1ec 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -87,6 +87,7 @@ obj-$(CONFIG_SPI_LP8841_RTC)		+= spi-lp8841-rtc.o
- obj-$(CONFIG_SPI_MESON_SPICC)		+= spi-meson-spicc.o
- obj-$(CONFIG_SPI_MESON_SPIFC)		+= spi-meson-spifc.o
- obj-$(CONFIG_SPI_MICROCHIP_CORE_QSPI)	+= spi-microchip-core-qspi.o
-+obj-$(CONFIG_SPI_MICROCHIP_CORE_SPI)	+= spi-microchip-core-spi.o
- obj-$(CONFIG_SPI_MPC512x_PSC)		+= spi-mpc512x-psc.o
- obj-$(CONFIG_SPI_MPC52xx_PSC)		+= spi-mpc52xx-psc.o
- obj-$(CONFIG_SPI_MPC52xx)		+= spi-mpc52xx.o
-diff --git a/drivers/spi/spi-microchip-core-spi.c b/drivers/spi/spi-microchip-core-spi.c
-new file mode 100644
-index 000000000000..b8738190cdcb
---- /dev/null
-+++ b/drivers/spi/spi-microchip-core-spi.c
-@@ -0,0 +1,442 @@
-+// SPDX-License-Identifier: (GPL-2.0)
-+//
-+// Microchip CoreSPI controller driver
-+//
-+// Copyright (c) 2025 Microchip Technology Inc. and its subsidiaries
-+//
-+// Author: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/spi/spi.h>
-+
-+#define MCHP_CORESPI_MAX_CS				(8)
-+#define MCHP_CORESPI_DEFAULT_FIFO_DEPTH			(4)
-+#define MCHP_CORESPI_DEFAULT_MOTOROLA_MODE		(3)
-+
-+#define MCHP_CORESPI_CONTROL_ENABLE			BIT(0)
-+#define MCHP_CORESPI_CONTROL_MASTER			BIT(1)
-+#define MCHP_CORESPI_CONTROL_TX_DATA_INT		BIT(3)
-+#define MCHP_CORESPI_CONTROL_RX_OVER_INT		BIT(4)
-+#define MCHP_CORESPI_CONTROL_TX_UNDER_INT		BIT(5)
-+#define MCHP_CORESPI_CONTROL_FRAMEURUN			BIT(6)
-+#define MCHP_CORESPI_CONTROL_OENOFF			BIT(7)
-+
-+#define MCHP_CORESPI_STATUS_ACTIVE			BIT(7)
-+#define MCHP_CORESPI_STATUS_SSEL			BIT(6)
-+#define MCHP_CORESPI_STATUS_TXFIFO_UNDERFLOW		BIT(5)
-+#define MCHP_CORESPI_STATUS_RXFIFO_FULL			BIT(4)
-+#define MCHP_CORESPI_STATUS_TXFIFO_FULL			BIT(3)
-+#define MCHP_CORESPI_STATUS_RXFIFO_EMPTY		BIT(2)
-+#define MCHP_CORESPI_STATUS_DONE			BIT(1)
-+#define MCHP_CORESPI_STATUS_FIRSTFRAME			BIT(0)
-+
-+#define MCHP_CORESPI_INT_TXDONE				BIT(0)
-+#define MCHP_CORESPI_INT_RX_CHANNEL_OVERFLOW		BIT(2)
-+#define MCHP_CORESPI_INT_TX_CHANNEL_UNDERRUN		BIT(3)
-+#define MCHP_CORESPI_INT_CMDINT				BIT(4)
-+#define MCHP_CORESPI_INT_SSEND				BIT(5)
-+#define MCHP_CORESPI_INT_DATA_RX			BIT(6)
-+#define MCHP_CORESPI_INT_TXRFM				BIT(7)
-+
-+#define MCHP_CORESPI_CONTROL2_INTEN_TXRFMT		BIT(7)
-+#define MCHP_CORESPI_CONTROL2_INTEN_DATA_RX		BIT(6)
-+#define MCHP_CORESPI_CONTROL2_INTEN_SSEND		BIT(5)
-+#define MCHP_CORESPI_CONTROL2_INTEN_CMD			BIT(4)
-+
-+#define INT_ENABLE_MASK (MCHP_CORESPI_CONTROL_TX_DATA_INT | MCHP_CORESPI_CONTROL_RX_OVER_INT | \
-+			 MCHP_CORESPI_CONTROL_TX_UNDER_INT)
-+
-+#define MCHP_CORESPI_REG_CONTROL			(0x00)
-+#define MCHP_CORESPI_REG_INTCLEAR			(0x04)
-+#define MCHP_CORESPI_REG_RXDATA				(0x08)
-+#define MCHP_CORESPI_REG_TXDATA				(0x0c)
-+#define MCHP_CORESPI_REG_INTMASK			(0X10)
-+#define MCHP_CORESPI_REG_INTRAW				(0X14)
-+#define MCHP_CORESPI_REG_CONTROL2			(0x18)
-+#define MCHP_CORESPI_REG_COMMAND			(0x1c)
-+#define MCHP_CORESPI_REG_STAT				(0x20)
-+#define MCHP_CORESPI_REG_SSEL				(0x24)
-+#define MCHP_CORESPI_REG_TXDATA_LAST			(0X28)
-+#define MCHP_CORESPI_REG_CLK_DIV			(0x2c)
-+
-+struct mchp_corespi {
-+	void __iomem *regs;
-+	struct clk *clk;
-+	const u8 *tx_buf;
-+	u8 *rx_buf;
-+	u32 clk_gen;
-+	int irq;
-+	int tx_len;
-+	int rx_len;
-+	u32 fifo_depth;
-+};
-+
-+static inline void mchp_corespi_disable(struct mchp_corespi *spi)
-+{
-+	u8 control = readb(spi->regs + MCHP_CORESPI_REG_CONTROL);
-+
-+	control &= ~MCHP_CORESPI_CONTROL_ENABLE;
-+
-+	writeb(control, spi->regs + MCHP_CORESPI_REG_CONTROL);
-+}
-+
-+static inline void mchp_corespi_read_fifo(struct mchp_corespi *spi, u32 fifo_max)
-+{
-+	for (int i = 0; i < fifo_max; i++) {
-+		u32 data;
-+
-+		while (readb(spi->regs + MCHP_CORESPI_REG_STAT) &
-+		       MCHP_CORESPI_STATUS_RXFIFO_EMPTY)
-+			;
-+
-+		data = readb(spi->regs + MCHP_CORESPI_REG_RXDATA);
-+
-+		spi->rx_len--;
-+		if (!spi->rx_buf)
-+			continue;
-+
-+		*spi->rx_buf = data;
-+
-+		spi->rx_buf++;
-+	}
-+}
-+
-+static void mchp_corespi_enable_ints(struct mchp_corespi *spi)
-+{
-+	u8 control = readb(spi->regs + MCHP_CORESPI_REG_CONTROL);
-+
-+	control |= INT_ENABLE_MASK;
-+	writeb(control, spi->regs + MCHP_CORESPI_REG_CONTROL);
-+}
-+
-+static void mchp_corespi_disable_ints(struct mchp_corespi *spi)
-+{
-+	u8 control = readb(spi->regs + MCHP_CORESPI_REG_CONTROL);
-+
-+	control &= ~INT_ENABLE_MASK;
-+	writeb(control, spi->regs + MCHP_CORESPI_REG_CONTROL);
-+}
-+
-+static inline void mchp_corespi_write_fifo(struct mchp_corespi *spi, u32 fifo_max)
-+{
-+	int i = 0;
-+
-+	while ((i < fifo_max) &&
-+	       !(readb(spi->regs + MCHP_CORESPI_REG_STAT) &
-+		 MCHP_CORESPI_STATUS_TXFIFO_FULL)) {
-+		u32 word;
-+
-+		word = spi->tx_buf ? *spi->tx_buf : 0xaa;
-+		writeb(word, spi->regs + MCHP_CORESPI_REG_TXDATA);
-+
-+		if (spi->tx_buf)
-+			spi->tx_buf++;
-+
-+		i++;
-+	}
-+
-+	spi->tx_len -= i;
-+}
-+
-+static void mchp_corespi_set_cs(struct spi_device *spi, bool disable)
-+{
-+	struct mchp_corespi *corespi = spi_controller_get_devdata(spi->controller);
-+	u32 reg;
-+
-+	reg = readb(corespi->regs + MCHP_CORESPI_REG_SSEL);
-+	reg &= ~BIT(spi_get_chipselect(spi, 0));
-+	reg |= !disable << spi_get_chipselect(spi, 0);
-+
-+	writeb(reg, corespi->regs + MCHP_CORESPI_REG_SSEL);
-+}
-+
-+static int mchp_corespi_setup(struct spi_device *spi)
-+{
-+	u32 dev_mode = spi->mode & (SPI_CPOL | SPI_CPHA);
-+
-+	if (spi_get_csgpiod(spi, 0))
-+		return 0;
-+
-+	if (spi->mode & (SPI_CS_HIGH)) {
-+		dev_err(&spi->dev, "unable to support active-high CS in Motorola mode\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (dev_mode & ~spi->controller->mode_bits) {
-+		dev_err(&spi->dev, "incompatible CPOL/CPHA, must match controller's Motorola mode\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static void mchp_corespi_init(struct spi_controller *host, struct mchp_corespi *spi)
-+{
-+	u8 control = readb(spi->regs + MCHP_CORESPI_REG_CONTROL);
-+
-+	/* Master mode changes require core to be disabled.*/
-+	control = (control & ~MCHP_CORESPI_CONTROL_ENABLE) | MCHP_CORESPI_CONTROL_MASTER;
-+
-+	writeb(control, spi->regs + MCHP_CORESPI_REG_CONTROL);
-+
-+	mchp_corespi_enable_ints(spi);
-+
-+	control = readb(spi->regs + MCHP_CORESPI_REG_CONTROL);
-+	control |= MCHP_CORESPI_CONTROL_ENABLE;
-+
-+	writeb(control, spi->regs + MCHP_CORESPI_REG_CONTROL);
-+}
-+
-+static irqreturn_t mchp_corespi_interrupt(int irq, void *dev_id)
-+{
-+	struct spi_controller *host = dev_id;
-+	struct mchp_corespi *spi = spi_controller_get_devdata(host);
-+	u8 intfield = readb(spi->regs + MCHP_CORESPI_REG_INTMASK) & 0xff;
-+	bool finalise = false;
-+
-+	/* Interrupt line may be shared and not for us at all */
-+	if (intfield == 0)
-+		return IRQ_NONE;
-+
-+	if (intfield & MCHP_CORESPI_INT_TXDONE)
-+		writeb(MCHP_CORESPI_INT_TXDONE, spi->regs + MCHP_CORESPI_REG_INTCLEAR);
-+
-+	if (intfield & MCHP_CORESPI_INT_RX_CHANNEL_OVERFLOW) {
-+		writeb(MCHP_CORESPI_INT_RX_CHANNEL_OVERFLOW,
-+		       spi->regs + MCHP_CORESPI_REG_INTCLEAR);
-+		finalise = true;
-+		dev_err(&host->dev,
-+			"RX OVERFLOW: rxlen: %d, txlen: %d\n",
-+			spi->rx_len, spi->tx_len);
-+	}
-+
-+	if (intfield & MCHP_CORESPI_INT_TX_CHANNEL_UNDERRUN) {
-+		writeb(MCHP_CORESPI_INT_TX_CHANNEL_UNDERRUN,
-+		       spi->regs + MCHP_CORESPI_REG_INTCLEAR);
-+		finalise = true;
-+		dev_err(&host->dev,
-+			"TX UNDERFLOW: rxlen: %d, txlen: %d\n",
-+			spi->rx_len, spi->tx_len);
-+	}
-+
-+	if (finalise)
-+		spi_finalize_current_transfer(host);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mchp_corespi_set_clk_div(struct mchp_corespi *spi,
-+				    unsigned long target_hz)
-+{
-+	unsigned long pclk_hz, spi_hz;
-+	u32 clk_div;
-+
-+	/* Get peripheral clock rate */
-+	pclk_hz = clk_get_rate(spi->clk);
-+	if (!pclk_hz)
-+		return -EINVAL;
-+
-+	/*
-+	 * Calculate clock rate generated by SPI master
-+	 * Formula: SPICLK = PCLK / (2 * (CLK_DIV + 1))
-+	 */
-+	clk_div = DIV_ROUND_UP(pclk_hz, 2 * target_hz) - 1;
-+
-+	if (clk_div > 0xFF)
-+		return -EINVAL;
-+
-+	spi_hz = pclk_hz / (2 * (clk_div + 1));
-+
-+	if (spi_hz > target_hz)
-+		return -EINVAL;
-+
-+	writeb(clk_div, spi->regs + MCHP_CORESPI_REG_CLK_DIV);
-+
-+	return 0;
-+}
-+
-+static int mchp_corespi_transfer_one(struct spi_controller *host,
-+				     struct spi_device *spi_dev,
-+				     struct spi_transfer *xfer)
-+{
-+	struct mchp_corespi *spi = spi_controller_get_devdata(host);
-+	int ret;
-+
-+	ret = mchp_corespi_set_clk_div(spi, (unsigned long)xfer->speed_hz);
-+	if (ret) {
-+		dev_err(&host->dev, "failed to set clock divider for target %u Hz\n",
-+			xfer->speed_hz);
-+		return ret;
-+	}
-+
-+	spi->tx_buf = xfer->tx_buf;
-+	spi->rx_buf = xfer->rx_buf;
-+	spi->tx_len = xfer->len;
-+	spi->rx_len = xfer->len;
-+
-+	while (spi->tx_len) {
-+		int fifo_max = min_t(int, spi->tx_len, spi->fifo_depth);
-+
-+		mchp_corespi_write_fifo(spi, fifo_max);
-+		mchp_corespi_read_fifo(spi, fifo_max);
-+	}
-+
-+	spi_finalize_current_transfer(host);
-+	return 1;
-+}
-+
-+static int mchp_corespi_probe(struct platform_device *pdev)
-+{
-+	struct spi_controller *host;
-+	struct mchp_corespi *spi;
-+	struct resource *res;
-+	const char *protocol;
-+	u32 num_cs, mode, frame_size;
-+	bool assert_ssel;
-+	int ret = 0;
-+
-+	host = devm_spi_alloc_host(&pdev->dev, sizeof(*spi));
-+	if (!host)
-+		return dev_err_probe(&pdev->dev, -ENOMEM,
-+				     "unable to allocate host for SPI controller\n");
-+
-+	platform_set_drvdata(pdev, host);
-+
-+	if (of_property_read_u32(pdev->dev.of_node, "num-cs", &num_cs))
-+		num_cs = MCHP_CORESPI_MAX_CS;
-+
-+	/*
-+	 * Protocol: CFG_MODE
-+	 * CoreSPI can be configured for Motorola, TI or NSC.
-+	 * The current driver supports only Motorola mode.
-+	 */
-+	ret = of_property_read_string(pdev->dev.of_node, "microchip,protocol-configuration",
-+				      &protocol);
-+	if (strcmp(protocol, "motorola") != 0)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "CoreSPI: protocol '%s' not supported by this driver\n",
-+				      protocol);
-+
-+	/*
-+	 * Motorola mode (0-3): CFG_MOT_MODE
-+	 * Mode is fixed in the IP configurator.
-+	 */
-+	ret = of_property_read_u32(pdev->dev.of_node, "microchip,motorola-mode", &mode);
-+	if (ret)
-+		mode = MCHP_CORESPI_DEFAULT_MOTOROLA_MODE;
-+	else if (mode > 3)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "invalid 'microchip,motorola-mode' value %u\n", mode);
-+
-+	/*
-+	 * Frame size: CFG_FRAME_SIZE
-+	 * The hardware allows frame sizes <= APB data width.
-+	 * However, this driver currently only supports 8-bit frames.
-+	 */
-+	ret = of_property_read_u32(pdev->dev.of_node, "microchip,frame-size", &frame_size);
-+	if (!ret && frame_size != 8)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "CoreSPI: frame size %u not supported by this driver\n",
-+				     frame_size);
-+
-+	/*
-+	 * SSEL: CFG_MOT_SSEL
-+	 * CoreSPI deasserts SSEL when the TX FIFO empties.
-+	 * To prevent CS deassertion when TX FIFO drains, the ssel-active property
-+	 * keeps CS asserted for the full SPI transfer.
-+	 */
-+	assert_ssel = of_property_read_bool(pdev->dev.of_node, "microchip,ssel-active");
-+	if (!assert_ssel)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "hardware must enable 'microchip,ssel-active' to keep CS asserted for the SPI transfer\n");
-+
-+	spi = spi_controller_get_devdata(host);
-+
-+	host->num_chipselect = num_cs;
-+	host->mode_bits = mode;
-+	host->setup = mchp_corespi_setup;
-+	host->use_gpio_descriptors = true;
-+	host->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
-+	host->transfer_one = mchp_corespi_transfer_one;
-+	host->set_cs = mchp_corespi_set_cs;
-+	host->dev.of_node = pdev->dev.of_node;
-+
-+	ret = of_property_read_u32(pdev->dev.of_node, "fifo-depth", &spi->fifo_depth);
-+	if (ret)
-+		spi->fifo_depth = MCHP_CORESPI_DEFAULT_FIFO_DEPTH;
-+
-+	spi->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(spi->regs))
-+		return PTR_ERR(spi->regs);
-+
-+	spi->irq = platform_get_irq(pdev, 0);
-+	if (spi->irq < 0)
-+		return spi->irq;
-+
-+	ret = devm_request_irq(&pdev->dev, spi->irq, mchp_corespi_interrupt,
-+			       IRQF_SHARED, dev_name(&pdev->dev), host);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "could not request irq\n");
-+
-+	spi->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-+	if (IS_ERR(spi->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(spi->clk),
-+				     "could not get clk\n");
-+
-+	mchp_corespi_init(host, spi);
-+
-+	ret = devm_spi_register_controller(&pdev->dev, host);
-+	if (ret) {
-+		mchp_corespi_disable(spi);
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "unable to register host for CoreSPI controller\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void mchp_corespi_remove(struct platform_device *pdev)
-+{
-+	struct spi_controller *host = platform_get_drvdata(pdev);
-+	struct mchp_corespi *spi = spi_controller_get_devdata(host);
-+
-+	mchp_corespi_disable_ints(spi);
-+	mchp_corespi_disable(spi);
-+}
-+
-+#define MICROCHIP_SPI_PM_OPS (NULL)
-+
-+/*
-+ * Platform driver data structure
-+ */
-+
-+#if defined(CONFIG_OF)
-+static const struct of_device_id mchp_corespi_dt_ids[] = {
-+	{ .compatible = "microchip,corespi-rtl-v5" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, mchp_corespi_dt_ids);
-+#endif
-+
-+static struct platform_driver mchp_corespi_driver = {
-+	.probe = mchp_corespi_probe,
-+	.driver = {
-+		.name = "microchip-corespi",
-+		.pm = MICROCHIP_SPI_PM_OPS,
-+		.of_match_table = of_match_ptr(mchp_corespi_dt_ids),
-+	},
-+	.remove = mchp_corespi_remove,
-+};
-+module_platform_driver(mchp_corespi_driver);
-+MODULE_DESCRIPTION("Microchip CoreSPI controller driver");
-+MODULE_AUTHOR("Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.25.1
+> ---
+>  arch/powerpc/include/asm/thread_info.h |  2 --
+>  arch/powerpc/kernel/process.c          | 25 -------------------------
+>  2 files changed, 27 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
+> index b0f200aba2b3..97f35f9b1a96 100644
+> --- a/arch/powerpc/include/asm/thread_info.h
+> +++ b/arch/powerpc/include/asm/thread_info.h
+> @@ -154,12 +154,10 @@ void arch_setup_new_exec(void);
+>  /* Don't move TLF_NAPPING without adjusting the code in entry_32.S */
+>  #define TLF_NAPPING		0	/* idle thread enabled NAP mode */
+>  #define TLF_SLEEPING		1	/* suspend code enabled SLEEP mode */
+> -#define TLF_LAZY_MMU		3	/* tlb_batch is active */
+>  #define TLF_RUNLATCH		4	/* Is the runlatch enabled? */
+>  
+>  #define _TLF_NAPPING		(1 << TLF_NAPPING)
+>  #define _TLF_SLEEPING		(1 << TLF_SLEEPING)
+> -#define _TLF_LAZY_MMU		(1 << TLF_LAZY_MMU)
+>  #define _TLF_RUNLATCH		(1 << TLF_RUNLATCH)
+>  
+>  #ifndef __ASSEMBLER__
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index eb23966ac0a9..9237dcbeee4a 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -1281,9 +1281,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>  {
+>  	struct thread_struct *new_thread, *old_thread;
+>  	struct task_struct *last;
+> -#ifdef CONFIG_PPC_64S_HASH_MMU
+> -	struct ppc64_tlb_batch *batch;
+> -#endif
+>  
+>  	new_thread = &new->thread;
+>  	old_thread = &current->thread;
+> @@ -1291,14 +1288,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>  	WARN_ON(!irqs_disabled());
+>  
+>  #ifdef CONFIG_PPC_64S_HASH_MMU
+> -	batch = this_cpu_ptr(&ppc64_tlb_batch);
+> -	if (batch->active) {
+> -		current_thread_info()->local_flags |= _TLF_LAZY_MMU;
+> -		if (batch->index)
+> -			__flush_tlb_pending(batch);
+> -		batch->active = 0;
+> -	}
+> -
+>  	/*
+>  	 * On POWER9 the copy-paste buffer can only paste into
+>  	 * foreign real addresses, so unprivileged processes can not
+> @@ -1369,20 +1358,6 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>  	 */
+>  
+>  #ifdef CONFIG_PPC_BOOK3S_64
+> -#ifdef CONFIG_PPC_64S_HASH_MMU
+> -	/*
+> -	 * This applies to a process that was context switched while inside
+> -	 * arch_enter_lazy_mmu_mode(), to re-activate the batch that was
+> -	 * deactivated above, before _switch(). This will never be the case
+> -	 * for new tasks.
+> -	 */
+> -	if (current_thread_info()->local_flags & _TLF_LAZY_MMU) {
+> -		current_thread_info()->local_flags &= ~_TLF_LAZY_MMU;
+> -		batch = this_cpu_ptr(&ppc64_tlb_batch);
+> -		batch->active = 1;
+> -	}
+> -#endif
+> -
+>  	/*
+>  	 * Math facilities are masked out of the child MSR in copy_thread.
+>  	 * A new task does not need to restore_math because it will
 
 
