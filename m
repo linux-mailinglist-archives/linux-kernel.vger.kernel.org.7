@@ -1,237 +1,327 @@
-Return-Path: <linux-kernel+bounces-891152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC9BC41FCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:38:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84DBC41FD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 08 Nov 2025 00:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 293FE4EDCE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1C74209D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 23:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C633161AB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E47316918;
 	Fri,  7 Nov 2025 23:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="E4OMnSLC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="av+lzygt"
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6vLHDUA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516F0314B87;
-	Fri,  7 Nov 2025 23:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762558689; cv=none; b=jp+v6gFsE+R1LWElwRtiw4Sy6VCcq3lhp6GcnFkmNVY2diWdsoGY20MSR4kqSZ+BNiU8Tzd3IJqppkrnFDFnylk4M3fWj+UVxv8euh5iyIk+Fo+BC/Ru3Th6a0hsx71k1n6UssAozJZmlnFxWVPcQQNaETHm5jPUuxsia8li8zU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762558689; c=relaxed/simple;
-	bh=pHPtbLi2TErUd+MN0LC96eF/g0yHByCgb4Kw0BwbT0o=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Qw/QpLg6fQNVS79CiLfIbxJ4pIVvX9C5nhF4f0ba9B3HrRrNVD9kfscCrlptpnD1lzvQQ5mkqwGQbgXK2HpMv+uw6ffrySFlQJ53Ym5mAAcFBpJk+yXgAleG7xts7iGtnIbsCpkPUflM0O/ipU3XhAmUyj3ukHdp4Px5nnuk0RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=E4OMnSLC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=av+lzygt; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 3696013001EB;
-	Fri,  7 Nov 2025 18:38:03 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 07 Nov 2025 18:38:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762558683; x=1762565883; bh=ZcRWR0XGRVohQHNqpTmVOGqvgKfDCmeABc6
-	Q5B6kVA0=; b=E4OMnSLCME0PmpfRUhAwNxIceLFq3/FAK5GtwevM7iICUCUuV5x
-	chVCFB6fdmay7+ooFw0uv6Azy1ChdRqJqvR+mkrCRIpg73LnR+/X59PszjPwZ/rz
-	8CPuwHb/xwC5N1QSJvSaLdjI57addGAeTJRkLimMYRo6wgCZPhDhW+hNxZlCxMuJ
-	hAPkIxK9zjio+5tvTHBm3a+bqM8CDMop81FHuSYzFd2NCfNmjV5NgDtUDa2Eyf25
-	3VuDhIEZvIbIrGiHuAnMLfItwaVgsWO7Q33GX+ggP6/jGDAegWeYBoQRn47aNko2
-	PunoNsPduYvN8zewgDdm1dEy75bfZgIQYaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762558683; x=
-	1762565883; bh=ZcRWR0XGRVohQHNqpTmVOGqvgKfDCmeABc6Q5B6kVA0=; b=a
-	v+lzygtoc1HX4ZadDskwTpZwJtb1oG3peL6O0gr4iO5O5jYd+vaRP7/no7N27oF3
-	EzxSXy6KoH6IHmfzzAjLPr0QATO37tQfExkHIQ/kLMEtcMIpZa9opvRREQRlIldG
-	Q9D0WkBAPuYtKKTvP1JAxo1/Rx7n6G2bitd51++grbdTyzCWIWx3DW0/Nhivcp1A
-	s7ZtqshuHntLjgQgQJ+crHlgWYzKyD5izePEyTID8AqXRiIHiDEt9qwC/wQbmAXC
-	g/7fHF+pLwFi9swg49B8mIz8mdbJ+nyJwVG9AYbNRT/JTg129nrTn8NZkPgHxX+2
-	7BatW30ZGfoIC5BANZTig==
-X-ME-Sender: <xms:04IOaUS1llkqfnpj0hP0k9hck1nUGtgZum40Y0dtCM64yfklBqqJ5g>
-    <xme:04IOaV4vrSP4x6QNhepje5WcwIcNTd1apJim4xvCzIrniX8SAiYXqKNGGHIuD1WKQ
-    33nU51_RKbR52XMFfrIspvHlzrBn079yJ8CWMmi6dxhoUy63Q>
-X-ME-Received: <xmr:04IOaT3MWpLgDLL757W25o-tMfqjGpak2vFwG2uUDPGL2GuLLHFgVWSCwflcxilp3PZXpLTiHfR-SxGJx5w8TjROMf9sHRUcJd4NP_ZWYt62>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduledutddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegouf
-    hprghmfghrlhculdeftddtmdenucfjughrpegtgfgghffvvefujghffffkrhesthhqredt
-    tddtjeenucfhrhhomheppfgvihhluehrohifnhcuoehnvghilhgssehofihnmhgrihhlrd
-    hnvghtqeenucggtffrrghtthgvrhhnpedvueetleekjeekveetteevtdekgeeludeifedt
-    feetgfdttdeljefglefgveffieenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuuf
-    hprghmfghrlhephhhtthhpshemsddslhhorhgvrdhkvghrnhgvlhdrohhrghdsrghllhds
-    jeeiieeffeeileekvdeltdehuddurdehfedtvdekfeekqdelqdgurghvvgdrhhgrnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsges
-    ohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepleejpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhr
-    tghpthhtohepfhhrrghnkhdrlhhisehvihhvohdrtghomhdprhgtphhtthhopehlihhnuh
-    igqdigfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    uhhnihhonhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhnihhlfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:04IOaUUP8Agp5i-ePskgdOIZ3qDw3X8wH2n0PkSgIS-qUH6nBwUnqg>
-    <xmx:04IOaTnQGxLDK6TRtOgEGVijEWvd6FvZOuwL0vyqcWwYM4LX-zVZXA>
-    <xmx:04IOaVhEuGeVrKovELx7lzKD-9IxEW9YEYZ2LQZX-iUA996QSWwOgg>
-    <xmx:04IOab5K6Z-7wWhbIK2-S_EvLNyL4_2HwgPfi2l7GSRp7-b2X_0qug>
-    <xmx:24IOabMc8-grgTNo-sBp23kB4IC_01hhvLJuap-Y8_HG_nozNoQTctxM>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Nov 2025 18:37:32 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B0E314B93;
+	Fri,  7 Nov 2025 23:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762558690; cv=fail; b=Gu3sQxciKDqfC7PWpYNlZ2hoePpwXJeuahk3IK1GjqnaqSmlEFuVcLPT7qvDaSRs8rBnliLwfTa0ZQ8jW8/n7CkdFGFliitBqGlpBwUlfPky87nLCu+1Qq3+RfUpRbElVADU/UkP0npCpjYWqjAUPQPKPo99SiYAeqiBxhQpxAE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762558690; c=relaxed/simple;
+	bh=nkkb04yZD3oysscFHB7kQCC75JIKhjSU6QymWDo/hy0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V9ADhQFBK5QV+dggVc7fufhQpokxb6eX3LsO9SGgppg0g/WCImxRWE6mLOesTmgAz/O6+7nDY/xEKUj+HzTHo2lYHMKY1CfjjmW/4jffVeIT65A2NV6o05/R1KBAKLBbY2d8s3VsT9/YX7Iyo8FWIuhXTRc+7OcGZqieW2lyobQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6vLHDUA; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762558689; x=1794094689;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:mime-version;
+  bh=nkkb04yZD3oysscFHB7kQCC75JIKhjSU6QymWDo/hy0=;
+  b=g6vLHDUAL1WTLKv6FNDXWajAmFVXlxNlIhGOGBwzN3i6FygOV3QkOpqV
+   x3ZYG6cjC1qY9Gn9nv5p199EuZgZChhVwva0C391czrwkdOVHUtE/Rrit
+   ck4hF2nWeFTPEClfXw3C4ytW2V1MBMZ0/V9wXAugkAwtKx8bQXyvYugz3
+   /YdBwkh+83/eed/yZeqalNPGgkhxr1Q9H8uxSANpR0YFLUHCB8c3qIrgq
+   G9FIpypYRG00eZ9Mfjd4ZMg5OhTdxNsbURcYcP7LPeyNvu53I4YNeITem
+   e8+b8BMRPWQH/7uR3ZlpiFY6Uvm2WTk1Z2aWnan7aNOqyywu44I4YotiC
+   g==;
+X-CSE-ConnectionGUID: Sjtja8+iSni0kDwRmkq3Zg==
+X-CSE-MsgGUID: Al8lgIQlQpaX9yPIIbqXAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="63920824"
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="asc'?scan'208";a="63920824"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 15:38:06 -0800
+X-CSE-ConnectionGUID: 3Tdz7aUoS4iJP/KBqlTQJw==
+X-CSE-MsgGUID: DTccW1KQRdOgKyeQ9QL3/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,288,1754982000"; 
+   d="asc'?scan'208";a="187464302"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 15:38:05 -0800
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 7 Nov 2025 15:38:04 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 7 Nov 2025 15:38:04 -0800
+Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.54) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 7 Nov 2025 15:38:04 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a4Fr6sPr6oPzympH6Mi4hYMyrsaLeEPxDJ10J2J/ygH3pYIO/QM9/XRaDVUstlpPc+eDmzojdB/9y143TeZY0kDpiM9HTWrzwVILgCmnyuukpCSmsWocYnPMRqHfzLXUguYI4pTUJyEJfG+ugi9aVeoEOC7yjHwSff+yU7Uncc/frLzNqrRhQOPuv5TRVWg6QQKatdAb5K//ysAyImmftyU41Ziis900IrC5MrFPzGZ6BvoQISc2Gey5lIaDq/pm1WGHhNHD/ze6xLHGjHDYy/5CgNbmQd0OMjfip3y/wjuEujX9SH3sr8XxnXdRk0Xx6n9CQuFPBTpCuZxwNSpsXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bjydaEjfBi82qzEc0YqJp4EbwXVdRmMrDge1OnbHIQM=;
+ b=PghswtezwN1EKL+0W7t5pU5+jYftAla/y2APVxQD5sBHGdZxZICf2UFMJUJ1fBy2n3KZZOewusImtGUursrdE2PoaK5lXQgNzp2g/32BrdqK2vwM4hSAOEl1IwaLdBy2pFrKAe+vZwNs8lHmkOTjTDOFwV2Npju9tZUyaONlTFvabB+JbM/TOXZ7dzQ0UiN3Pot8V6ebboSh4I+JbHdz/H4r6MOErBC7U4IgvqE5tDuXkpwiZuusa0LVjzPci1WOyOXVA3WlU6AaVyWC1szoVdbHR/nFJCWksna87sKePbT2Kv+2iyHj8GAR3241wWAwffipmRYjZQaL0aYxiZAl/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by PH0PR11MB5061.namprd11.prod.outlook.com (2603:10b6:510:3c::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
+ 2025 23:38:02 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3%3]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 23:38:02 +0000
+Message-ID: <0364cc46-6960-4927-8ab0-23600304d445@intel.com>
+Date: Fri, 7 Nov 2025 15:38:00 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-net] idpf: protect shutdown from
+ reset
+To: Larysa Zaremba <larysa.zaremba@intel.com>,
+	<intel-wired-lan@lists.osuosl.org>, Tony Nguyen <anthony.l.nguyen@intel.com>
+CC: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>, Emil Tantilov
+	<emil.s.tantilov@intel.com>, Madhu Chittim <madhu.chittim@intel.com>, "Josh
+ Hay" <joshua.a.hay@intel.com>, Michal Kubiak <michal.kubiak@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250410115225.59462-1-larysa.zaremba@intel.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <20250410115225.59462-1-larysa.zaremba@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------LkWrSAak60zmqSNrMrorNPdo"
+X-ClientProxiedBy: MW4PR04CA0321.namprd04.prod.outlook.com
+ (2603:10b6:303:82::26) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Jonathan Corbet" <corbet@lwn.net>,
- "Eric Van Hensbergen" <ericvh@kernel.org>,
- "Latchesar Ionkov" <lucho@ionkov.net>,
- "Dominique Martinet" <asmadeus@codewreck.org>,
- "Christian Schoenebeck" <linux_oss@crudebyte.com>,
- "David Sterba" <dsterba@suse.com>, "David Howells" <dhowells@redhat.com>,
- "Marc Dionne" <marc.dionne@auristor.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
- "Chris Mason" <clm@fb.com>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Jan Harkes" <jaharkes@cs.cmu.edu>,
- coda@cs.cmu.edu, "Tyler Hicks" <code@tyhicks.com>,
- "Jeremy Kerr" <jk@ozlabs.org>, "Ard Biesheuvel" <ardb@kernel.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>,
- "Sungjong Seo" <sj1557.seo@samsung.com>,
- "Yuezhang Mo" <yuezhang.mo@sony.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andreas Dilger" <adilger.kernel@dilger.ca>,
- "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
- "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Andreas Gruenbacher" <agruenba@redhat.com>,
- "Viacheslav Dubeyko" <slava@dubeyko.com>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Yangtao Li" <frank.li@vivo.com>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Mikulas Patocka" <mikulas@artax.karlin.mff.cuni.cz>,
- "Muchun Song" <muchun.song@linux.dev>,
- "Oscar Salvador" <osalvador@suse.de>,
- "David Hildenbrand" <david@redhat.com>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Dave Kleikamp" <shaggy@kernel.org>,
- "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>,
- "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
- "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
- "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
- "Joseph Qi" <joseph.qi@linux.alibaba.com>,
- "Bob Copeland" <me@bobcopeland.com>,
- "Mike Marshall" <hubcap@omnibond.com>,
- "Martin Brandenburg" <martin@omnibond.com>,
- "Amir Goldstein" <amir73il@gmail.com>,
- "Steve French" <sfrench@samba.org>, "Paulo Alcantara" <pc@manguebit.org>,
- "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
- "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
- "Bharath SM" <bharathsm@microsoft.com>,
- "Zhihao Cheng" <chengzhihao1@huawei.com>,
- "Hans de Goede" <hansg@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
- "Hugh Dickins" <hughd@google.com>,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Kees Cook" <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, gfs2@lists.linux.dev,
- linux-um@lists.infradead.org, linux-mm@kvack.org,
- linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
- linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
- linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, linux-xfs@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: LLM disclosure (was: [PATCH v2] vfs: remove the excl argument
- from the ->create() inode_operation)
-In-reply-to: <f5a2c41e4f272fef9f1525e17b494dd4b4bcb529.camel@kernel.org>
-References: <20251107-create-excl-v2-1-f678165d7f3f@kernel.org>,
- <176255458305.634289.5577159882824096330@noble.neil.brown.name>,
- <87ikfl1nfe.fsf@trenco.lwn.net>,
- <f5a2c41e4f272fef9f1525e17b494dd4b4bcb529.camel@kernel.org>
-Date: Sat, 08 Nov 2025 10:37:30 +1100
-Message-id: <176255865045.634289.1814933499430115577@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|PH0PR11MB5061:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96714fa4-caa2-4855-1883-08de1e56b11a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RTk2MkFQM0xMVGlGL0xya3FWKytpUDJzRGYyQnRMcGRoLzd2WE1pUEVTOGRV?=
+ =?utf-8?B?ay9LVmlEK2VHdGNiTFFuMlRpWmRUekhpT245T0dWaW5yYy9hdUN1WmVFUWNn?=
+ =?utf-8?B?ZC9BZE9HSGYva3Evc1Bhd2dKSkxnaTMvakdkbWEzTFMzWWpLR2M4VWVoN21H?=
+ =?utf-8?B?TnY5N291dUxPeVMzaW5PYkZFVXR3Ni9JNzdwZ0VkRjlmTUZzWVVISjB5ci9x?=
+ =?utf-8?B?eXk3RENPLzJyYVJxVU04V2ZzWFNHSzZzNTRzWGN1UlVVUkxWUXgzVnF1aHpp?=
+ =?utf-8?B?dHNza0huVjRrcGJEQjloT3IxUXJKNm80NHhnL2ZPQlNmSGRjLzFwOVNlbkE0?=
+ =?utf-8?B?UVpWUS8xcDBCZjhkM3BEM21PRlpJOThlem5vb1FzNDUvNU5ici8xYVBxYThq?=
+ =?utf-8?B?NXV3QS9NeDFxRTZORXRBQjdEdWF2S25TaFZ6UWhRTEd6L0VpUFJPUU5YVE8y?=
+ =?utf-8?B?REZsUjBvbTU5cVVPa0VUdUptZ1FkQmx6NkpwWlFUTU1MWVp5NDl3ayszRk8r?=
+ =?utf-8?B?aU5kd2ZGOGIvV3dWOFRwdGpsMHhwcFl3RWJJdkNzcnZRZG1KVU1QenBKK21K?=
+ =?utf-8?B?WElRcW1DSUdwN0NWWFNjV2U3bWRZWCt6VkZDVjJuSWh3ak5leHVUWXVyNXd5?=
+ =?utf-8?B?aU1oTVNuS3lURjVndlNEOUFqaWEvN0FsUnBNTHdMajIxR2Uwd2huRGNnOUND?=
+ =?utf-8?B?T2NzNzJMZ016VUdjWlJHcTNHS1M2c1ZweGc4dGtDWFJpSzR0SDR6czJVZDRU?=
+ =?utf-8?B?REFTdnp4azlwV0hYczBxQUY1TmdmcWEzbk9INlNzV09UekExUm1LNHBzTFAw?=
+ =?utf-8?B?a3hyV0JvQnNBMlFVL0MvdHI3REFjN2U5MGFvZHZYVnlEY1FwM1Q1UElqdWRa?=
+ =?utf-8?B?akVaQThPYSszcFNGNVF4R2w2aDBxZ1FWemxRcllnald3SEg3MjczQXBVRDE2?=
+ =?utf-8?B?ejVJU1BjQ2txeU9yV1dzNklma2twWVg1UWNBaGNVZTJNVm5FWkpZVG9pUjJL?=
+ =?utf-8?B?WC9Lam91RDVQNWYwbmRNTndvcU0zQkpIc2pDZjZxbzBMcG9XSXp6Y1NsbkNh?=
+ =?utf-8?B?d295UjZYQTQzSE5LRUxjSFBaY3NOd2JFVVFQSHl3R0VzL2JUc0RMS2tFMG00?=
+ =?utf-8?B?M1hnTlZEbmhBWWhqbnVYM004RTlYQUZUanExazgyb1JFQmR3RTJDM2tMdEc4?=
+ =?utf-8?B?Q0VzNXRCTGVZUEpScmp3M3kxelJzd0xGM21CNmVIVnI5YjRtZlMzTEtObzlF?=
+ =?utf-8?B?ZTIyNlVHZXhZSHVTWHJlbHFoZlZ0Nzh3MjJBTUJNUWx5U1U0Sml3d09yZ1Zw?=
+ =?utf-8?B?RVFzd0N1RlBKT011Wko5WDVHVjA1d3FuTzRhRERBOG1mZ0FYN0hxMXlDaTY4?=
+ =?utf-8?B?NnM0MXJUYlBwM3B3SGRMWlF0NHo5Vy9JWlU2dnNzald4UkdCQ3Q4dTE3bFAz?=
+ =?utf-8?B?em9ZMi8ya2RtbHBMamtjVCtQakFnbXpTQ3JXR3JHZVZTSlMrc0dyWnRTZSsv?=
+ =?utf-8?B?YmkyV2k0cFNZVmJOekhXQ1BwdlNpWitHVjJMOFNVQW1SdjZ1bzB1WnBJZ2tD?=
+ =?utf-8?B?VEt1c3dsK01kVWlZRjV5M0tmdVc5aGdid2NtV1ZaNFk1Mjk5Ti9tN05ydERZ?=
+ =?utf-8?B?VDZ5SHE3M1h4dmRFa0NOMHcrMjRnZGNEOVc4eUErRVlGMG0xRmtVcEswclZi?=
+ =?utf-8?B?NzFGeUZ3bXV4UFJudzZzUC9GQTRUbU1HMzhjVEJTM014Q0F0NHkySDVvSHpE?=
+ =?utf-8?B?MTNFLzZhaU5lZnZwbHJJNzc0ZUxseVlnSFN4emxHR2V2dFQ3UDhOUGphbHBa?=
+ =?utf-8?B?bUdoNjdwTmtWaGdNT3l4RFRIcURVZUN0UWcwT3lrZFVweGxyekdTY3pOZjl4?=
+ =?utf-8?B?cjliU1FBLzF6WU1wamdHQWszSUIwY09qRjM4ZVNTcFNkd2FmVVpNK0Q5eW0w?=
+ =?utf-8?Q?Gq3EI0DzvBfFfcQhmXjdWco4+0vIm2eR?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UkE4OHhwSGVLM29yVklFVWFBRUJqOVQzaGtJdVgwcGdCdE5KWjhQa3lMOFh5?=
+ =?utf-8?B?VSt5Q0Vwc3NqRnRQS1Jsb1YzVnYvV2ZVUnhxRVFwdVlWYjBicnIyTzZLZnov?=
+ =?utf-8?B?ZG1wMUVmcFBaK1JDU3EwcVlTR29RbTVCRVZiSjFXalB2SUkxSHZHaXh0RmZR?=
+ =?utf-8?B?OHk2QmlWS1F2UVdXazBHQXJkTkhqYlUvZ3BuQkxFV2hvM21aM2s4V05YNUtL?=
+ =?utf-8?B?cjhQRStCanF3TDE5a3pyKzB0SWozZVJBTXNaWTdMQ0l3Ymo0S1lyaDZVZmt2?=
+ =?utf-8?B?bXp4NEF5RHhHemFROTJ0aHdEdExzTTI2SlZCSWR4SEg4Q2NaMjcwaFI3NitG?=
+ =?utf-8?B?cXF4WGtnTjJWU3h0REx5Znd5K0V0b1VXNFkwdi9rMWpTNVBhcVZHTDFhcDBq?=
+ =?utf-8?B?MjBQTjVrVHFqUGdBU0g1WXBXbnVLWHVIUEZTR3I2MFVSNGFaT29NaytOVkVB?=
+ =?utf-8?B?ZzJ5NmZHY1Q4ZlZ0akhBOEF2VjAzQjhCZ0FGZWErYzlsTnVHQmdBZ3VXZmxp?=
+ =?utf-8?B?bTZVV3Bvdnh0RGJBUWtXZ1g4cmNyMHRrV3ZPZ2VZQ3hhMHVxVG1JNGNoY3FZ?=
+ =?utf-8?B?OUNYcUdnZGI1S21HMCtPcllEUytOb3Q2UzE4Nkh5bGY5QXduZlc0Z1UzdGgy?=
+ =?utf-8?B?KzROMjVLMnRQWmFpRnFYY0ZqaGlkS2VRckg5dXVEN1VpK1ptaHk0eHFReUdS?=
+ =?utf-8?B?Yk9UTDVScnIvYzRJd1l2MGhONUJvekZmbVJMMkFQQ0thQ0JjQ3R1ZGhQMlA3?=
+ =?utf-8?B?SXJQUkduZEo1REhzbU1PSnBvWGh4M0QyT3pOenV3akRSbk5YNG1pL2hCT0d3?=
+ =?utf-8?B?bWlmelg2UDZEaGthWDE5Z0IwZU1NNklKa2RTNU1xSGExc1VCOVhPdEUvaUtU?=
+ =?utf-8?B?TXluRGlYaG9mNjhpeGVTT0FqUjhPM1hWenZKNUgwRWpkN2JGM2czNVZSZjRK?=
+ =?utf-8?B?K0xTKzI2amxEclhoc3VJSGVIclNHcWxvQ0k4dTFBbGhRRHRrYUgvQTZSekdt?=
+ =?utf-8?B?R3RMdkpVcWVGU2tyV3JHWS81SXlaM2RzT1pZWlJFeENlTDZRUnhOczNNN20w?=
+ =?utf-8?B?d2Q1MjBBbU9XNnJ4Nkx4elBkMUpFbVFLR1VOK1dBSmtHQ2JDN3M4dHJQd015?=
+ =?utf-8?B?NjcrUWszN2M1MXBLS2hMazFuVjcvdFducVRZckNhdmhGSlp1VTNEMjhkaTgv?=
+ =?utf-8?B?cnF4NXNnR3B4VVEvTmt2RjhTMnRQVzJ0UUhjSnc1a1krY01Vc2piVjhPVTFk?=
+ =?utf-8?B?WTU3cjNxOURDWU5xMVBwdGVKRlN4OEJKNkwrK3lIQXZiSURjb0hQZEFnQ1F4?=
+ =?utf-8?B?dk5wZ2NzUWsvK0NUOTVBcmNwdGhkTTBreDFxTTJtSm9Dbm02d2hxdDRFYkha?=
+ =?utf-8?B?RzNnVHpKci9ycVFZeGYzTk84VW1zamlnaWRlblVOZ2VPUEtoUmo4enNlaU9m?=
+ =?utf-8?B?VGE1dzNyaEUxbm9yZTVSdUZQZVpMd0JqeXVybUJOVFdMWklhcHlqcjB4UERG?=
+ =?utf-8?B?NWtqOTl0SFpMbXZPMTNybW03TEJsVnlESmZpcEpqSkZRQ0puMzBEWTNvaVg0?=
+ =?utf-8?B?SkFaV0huU2duUnYxV2liUDlZQ0ZQZmJaaFVManozay8xYjc3Q3BCRERrQmJG?=
+ =?utf-8?B?a1BiTnJoVUZUNFpya2oxRjFFMFN3MlB2VEhKY2lSWWp2L0ROY2xHNWVKUStK?=
+ =?utf-8?B?QkQ3ZEM4SGQ1bTNLVnZ0SmtlNm1kdDhxZmw3N3BiM3V6QUdtaTdSVzU0K25S?=
+ =?utf-8?B?Q2IyaW9meVR5RFh3ZXY5MmVVWFY5Y1FnVWJnOFJ3UFFIZVhrZWhscnBLSDlx?=
+ =?utf-8?B?Y1FvZ1BVRk1td0ZVZTlhMEFETmxvUFEzUm5MVHFsdVp4TXVYU2VrL2Q1TTVV?=
+ =?utf-8?B?YmRma2x6V2cxK1Z1VVNnYVFLMStIeEFSMk5MeG95U3ppb2lXZ2dGTDA4OVhO?=
+ =?utf-8?B?NUcyYlNXSnpxa3Vra0k3eGtTWDJCYUYrdVNKZnF1SjRBTWZsd1lYeVNvQ3d3?=
+ =?utf-8?B?UnFCa3JSbEhVUUZidEpUV1ducEthdm13SDIrV1pFbUNZZ1o3aDdMR2RGQnl1?=
+ =?utf-8?B?K1NUZVlyZGdzOW1SZkdBRzAyTE1Od3NDSWkvUXRhL0FLVlV1cytSMW90MUpT?=
+ =?utf-8?B?UVEzbjV5MTJsdlVUMDd6R2RKTEx3VWFYNmd1UkxmQzRrWkF4OGlkYkwzTnBV?=
+ =?utf-8?B?MXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96714fa4-caa2-4855-1883-08de1e56b11a
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 23:38:02.2321
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AS56fFp2Y9uEQNk3Wf2EtrMP7to74nLvzpiHrraQCUYCIoWHE8PvSca6kMhKqwFeUOaW4ypPc7/zUUDwuiQ9wI2CT9Mll7XJGQ5E7q0d/+A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5061
+X-OriginatorOrg: intel.com
 
-On Sat, 08 Nov 2025, Jeff Layton wrote:
-> On Fri, 2025-11-07 at 15:35 -0700, Jonathan Corbet wrote:
-> > NeilBrown <neilb@ownmail.net> writes:
-> >=20
-> > > On Sat, 08 Nov 2025, Jeff Layton wrote:
-> >=20
-> > > > Full disclosure: I did use Claude code to generate the first
-> > > > approximation of this patch, but I had to fix a number of things that=
- it
-> > > > missed.  I probably could have given it better prompts. In any case, =
-I'm
-> > > > not sure how to properly attribute this (or if I even need to).
-> > >=20
-> > > My understanding is that if you fully understand (and can defend) the
-> > > code change with all its motivations and implications as well as if you
-> > > had written it yourself, then you don't need to attribute whatever fancy
-> > > text editor or IDE (e.g.  Claude) that you used to help produce the
-> > > patch.
-> >=20
-> > The proposed policy for such things is here, under review right now:
-> >=20
-> >   https://lore.kernel.org/all/20251105231514.3167738-1-dave.hansen@linux.=
-intel.com/
-> >=20
-> > jon
->=20
-> Thanks Jon.
->=20
-> I'm guessing that this would fall under the "menial task"
-> classification, and therefore doesn't need attribution. This seems
-> applicable:
->=20
-> + - Purely mechanical transformations like variable renaming
->=20
-> This is a little different, but it's a similar rote task.
-> --=20
-> Jeff Layton <jlayton@kernel.org>
->=20
+--------------LkWrSAak60zmqSNrMrorNPdo
+Content-Type: multipart/mixed; boundary="------------yVhI0H1fXg3ISat31fChQg9q";
+ protected-headers="v1"
+Message-ID: <0364cc46-6960-4927-8ab0-23600304d445@intel.com>
+Date: Fri, 7 Nov 2025 15:38:00 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-net] idpf: protect shutdown from
+ reset
+To: Larysa Zaremba <larysa.zaremba@intel.com>,
+ intel-wired-lan@lists.osuosl.org, Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ Emil Tantilov <emil.s.tantilov@intel.com>,
+ Madhu Chittim <madhu.chittim@intel.com>, Josh Hay <joshua.a.hay@intel.com>,
+ Michal Kubiak <michal.kubiak@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250410115225.59462-1-larysa.zaremba@intel.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <20250410115225.59462-1-larysa.zaremba@intel.com>
 
-The bit I particularly liked was:
+--------------yVhI0H1fXg3ISat31fChQg9q
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-+
-+Even if your tool use is out of scope you should still always consider
-+if it would help reviewing your contribution if the reviewer knows
-+about the tool that you used.
-+
 
-"would it help the reviewer"?  I agree that is a key question.  In your
-case I cannot see how it would help.
 
-Thanks,
-NeilBrown
+On 4/10/2025 4:52 AM, Larysa Zaremba wrote:
+> Before the referenced commit, the shutdown just called idpf_remove(),
+> this way IDPF_REMOVE_IN_PROG was protecting us from the serv_task
+> rescheduling reset. Without this flag set the shutdown process is
+> vulnerable to HW reset or any other triggering conditions (such as
+> default mailbox being destroyed).
+>=20
+> When one of conditions checked in idpf_service_task becomes true,
+> vc_event_task can be rescheduled during shutdown, this leads to accessi=
+ng
+> freed memory e.g. idpf_req_rel_vector_indexes() trying to read
+> vport->q_vector_idxs. This in turn causes the system to become defunct
+> during e.g. systemctl kexec.
+>=20
+> Considering using IDPF_REMOVE_IN_PROG would lead to more heavy shutdown=
+
+> process, instead just cancel the serv_task before cancelling
+> adapter->serv_task before cancelling adapter->vc_event_task to ensure t=
+hat
+> reset will not be scheduled while we are doing a shutdown.
+>=20
+> Fixes: 4c9106f4906a ("idpf: fix adapter NULL pointer dereference on reb=
+oot")
+> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> ---
+
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+
+>  drivers/net/ethernet/intel/idpf/idpf_main.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_main.c b/drivers/net/=
+ethernet/intel/idpf/idpf_main.c
+> index bec4a02c5373..b35713036a54 100644
+> --- a/drivers/net/ethernet/intel/idpf/idpf_main.c
+> +++ b/drivers/net/ethernet/intel/idpf/idpf_main.c
+> @@ -89,6 +89,7 @@ static void idpf_shutdown(struct pci_dev *pdev)
+>  {
+>  	struct idpf_adapter *adapter =3D pci_get_drvdata(pdev);
+> =20
+> +	cancel_delayed_work_sync(&adapter->serv_task);
+>  	cancel_delayed_work_sync(&adapter->vc_event_task);
+>  	idpf_vc_core_deinit(adapter);
+>  	idpf_deinit_dflt_mbx(adapter);
+
+
+--------------yVhI0H1fXg3ISat31fChQg9q--
+
+--------------LkWrSAak60zmqSNrMrorNPdo
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaQ6C2AUDAAAAAAAKCRBqll0+bw8o6CN0
+AQCQpj6QhHIeuY5xpuNuzN4E4lnxdv346ZQruQsvXlOrOwEA8PoiMTyA8rWa0p2whDZYijOaak+N
+eh+JaRraD0y/Jwk=
+=BkhW
+-----END PGP SIGNATURE-----
+
+--------------LkWrSAak60zmqSNrMrorNPdo--
 
