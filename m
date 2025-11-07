@@ -1,145 +1,224 @@
-Return-Path: <linux-kernel+bounces-890977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB06C41818
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:07:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D40C41827
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AA2B4E4483
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:07:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1B4189C5C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789A0302CAC;
-	Fri,  7 Nov 2025 20:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10FA309EF4;
+	Fri,  7 Nov 2025 20:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b="UAac69UY"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="NyIEhXoc"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB1B3009F1
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A63C302CB2;
+	Fri,  7 Nov 2025 20:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762546022; cv=none; b=r2hctP5hq20nJsMGCI28rb+BF+qEcxgCyFTdExIlfnwMY5ZBPtpstrqYdy7GQperbp9TsipVqdHe6x2iOFaZvnyUDVcwcf20D+nsD4EC7Z8pXSASpvWZxhpQDW4Opw6kh7G6a8kZwa6oT693F3TW0t97I1wUlUnK4DRjo+jpTOM=
+	t=1762546025; cv=none; b=ALZE2r5v2hbNeHuHYytlCOEh+G32FnT8n9OKFcmnYuSf1ras0GqCqy6WtBXageTvfmcNVzI0MPIzo1XRSI2Ydo6Y4ZslxLPCDCX41UHG3J49vbHa9QzCBTtPcLiSi9jIV+uXYT0D9nBgiw1MNfRNvEZYphHj54Z41dfdpodNibI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762546022; c=relaxed/simple;
-	bh=A4+TOwgqNdQg6f8E1pPnxBWqzpNdAcnfbfRIsLrm7Vw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JoR2DR67CLym3B6M3RISc9PL8fXW00N/HJVM4bnjmGcmtNCx7I4yB9M0r+qUBag2ObjGx6qduJ+bIYELftwKuaZSs77vi5zWM4LloGZcCfep1OobB031PY5gedze4E+pX0lxOuKt1hPdNQ70ohj4KO4GiEA8JMpGF4IKO9nB2dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in; spf=none smtp.mailfrom=ee.vjti.ac.in; dkim=pass (1024-bit key) header.d=vjti.ac.in header.i=@vjti.ac.in header.b=UAac69UY; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ee.vjti.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ee.vjti.ac.in
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3436d6ca17bso63723a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:07:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vjti.ac.in; s=google; t=1762546020; x=1763150820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dhDbgFwqZiDQu1EsSrcetxhJXfZ+td3XRScWxEwgYgY=;
-        b=UAac69UYGUfKgADDRJdIOiH/JdrC/NQpHUPQxYya1I4pUiYVcg6kZBRguzBb9tpmaW
-         uVvOnuy/bsBamnC/knf6wwLgdLitIFh6OV3dMkT8OK84XYBBimsM123YoWUsZ0dlrLqN
-         +O2xTbVXLPz4DEpX7jJAgCcpKvc7VDbLf48K0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762546020; x=1763150820;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dhDbgFwqZiDQu1EsSrcetxhJXfZ+td3XRScWxEwgYgY=;
-        b=rv+gzYmICPLbDTh5nWj4b7NF8pq3SPk2C2NHoYDy7nxtuAZdJqq+zF6oWv1H26ZXO8
-         Rmbf8tPmVFhdVUKvpP4xCtF008tltHXK/lIObirItKB9Q52qdQO17I6fSPr8dCxiooqE
-         AZzyXo3GoKUjoTGAj2ZHOsiH4z77Qg16429l1K/e74ZYqvGAc7DD+doZebo1pxUBIdyD
-         ClSAOd1ecBTGDlcj+7NUD12WB8LMamG/wCEgaty1wi47q28gvFEBMITtwxo4f3amSxV4
-         ed9LVoBT5r3V661g6DdNch7flUFfkBc9KOoh3X9vwPl/IJAryLT02VBHWzqKC7HmVpDa
-         +YxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+gS8H0B1fo+7WJ1aaAzesHd5/EXLKULuJV3RpXcsiS71kUPUSe2ww2vw+qMW9VqQgphEfU+sGCcEQB1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG2PNT9aoM2+iaq4782Bh8wEGKT2RBTEMM32E2TYeSSyUSgGFH
-	Mr7jlp6B1I9dg8lENhdOgnzpoSzSmZoEvOnniMJv78dkk4wxJYX4EMdVvo4fPeQzaQc=
-X-Gm-Gg: ASbGncvqTNM/BVwr5G54eO8GvYXRCM9RKet47oCYHFChw3vNrHuzkkOz0xNWYzU8vG6
-	wi8eMlxoHSEq0+Mw74b0E4oDM21ERqGs3saOiZaY5BoDshUvwbqRmdFu5FKlPX3T5mE/lHto+Y7
-	cRlWsczGZ2nVJPfDMcM/zxoR+j8366tswJ2ufMk+tXGE+39AQTPWGNl7hKAf53xnQD+ZtxyeKjT
-	/wXWNFYkidUOb/Rr5qsZp7BCG84x4jj4EIPNgtDSmj2U3gDLVZIPkDq3g8PhEZwvsp2ipGREvqa
-	+iQbONvlpRpjMX7N6oSU4Ke6qnfmfw7wDBdy9H+73XGgLT87hI9C6KADRtOXYFgAm5cZI7OWMeq
-	IcOGb7U4m0FnoDr9BphOWkImWd+HazvBxkukXZlpAmcpS99lfcQQ4oMWAa/s6ADPVd483TnpA8l
-	rVmX/xsXCA8JScZMe06OEBVfEErv31LOBpeUPpkdiHrW5WvA==
-X-Google-Smtp-Source: AGHT+IE2QH0bYt9evLPt32Zmzpg6IE1jS/NHlYekxZETu/ShdgKYTlNUPI/Uj5DCmlG72yB5wBW9uw==
-X-Received: by 2002:a17:90b:4c8d:b0:33b:cfae:3621 with SMTP id 98e67ed59e1d1-3436cd15e8fmr389381a91.32.1762546019685;
-        Fri, 07 Nov 2025 12:06:59 -0800 (PST)
-Received: from ranegod-HP-ENVY-x360-Convertible-13-bd0xxx.. ([2409:40c0:27:d019:96c1:1e18:c1b7:e182])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c3001f2sm3327186a91.1.2025.11.07.12.06.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 12:06:59 -0800 (PST)
-From: ssrane_b23@ee.vjti.ac.in
-X-Google-Original-From: ssranevjti@gmail.com
-To: shaggy@kernel.org
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	dsterba@suse.com,
-	david@redhat.com,
-	shivankg@amd.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	syzbot+cfc7cab3bb6eaa7c4de2@syzkaller.appspotmail.com
-Subject: [PATCH] jfs: Initialize synclist in metapage allocation
-Date: Sat,  8 Nov 2025 01:36:45 +0530
-Message-Id: <20251107200645.149093-1-ssranevjti@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762546025; c=relaxed/simple;
+	bh=AlyAos5lAGXVNjR2bMAh2pv4DcOio8Uo9RCDmeLoeq4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XodBWxm01aaaTZvn6s/8yJ0BJd9tWp7/GDuXu1jNaZqGQZs7rlz2OQyglt2N/XuGKB2Hm87lfAB/IS6cLOc3zGoxI8PY51ulwP5VDJxlb11CCIg5yZ2jby9zsYDPmQjPiQX0+vV1f9qx34zDTirdSL0hQR2zMc49N/xC5k1aDzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=NyIEhXoc; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:In-Reply-To:References:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=VxdgB3HocQdpr4EL2JWSmprEcBe6YuGBAKZnIFLa3JY=; b=NyIEhXocz2ovspKIq5RVBW3KBy
+	dQF0uDeOqfv0wn+sqbLmAeSi26535o5Rszo8hcFezSaEgLhW4cWxAEzkTYqBRxsj1XJlLjN/5p9qA
+	tYaIk4SVIRaq4rFQp0C2rrAnyFjdIxv1ycd6TK/MaFpGGTn2v3PTlz3g8+oTp/LAJFExwbHC7q73N
+	oZHkOZkar9GIF11QV2mrqynY5gfs2sRpp6cqofRVk3bizkL9HEs2P9ZcsJm7oy+6jHm1vPNz1hMiN
+	SMBv/cZ8H5TjHPv/T9frhKz8dGfb/Si7u1apR8MQZGepfPSmU0hXOdb7GVicp6WRhiyatF13L5LSW
+	7NRC/OkQ==;
+From: Andreas Kemnade <andreas@kemnade.info>
+Date: Fri, 07 Nov 2025 21:06:45 +0100
+Subject: [PATCH 2/3] dt-bindings: regulator: Add Fitipower FP9931/JD9930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251107-fp9931-submit-v1-2-aa7b79d9abb6@kemnade.info>
+References: <20251107-fp9931-submit-v1-0-aa7b79d9abb6@kemnade.info>
+In-Reply-To: <20251107-fp9931-submit-v1-0-aa7b79d9abb6@kemnade.info>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4044; i=andreas@kemnade.info;
+ h=from:subject:message-id; bh=AlyAos5lAGXVNjR2bMAh2pv4DcOio8Uo9RCDmeLoeq4=;
+ b=owGbwMvMwCUm/rzkS6lq2x3G02pJDJl8gbHrbIRk1O43bDtQ47jHWiiK1fz4visv1aY1NOptW
+ DCpwupIRykLgxgXg6yYIssvawW3TyrPcoOnRtjDzGFlAhnCwMUpABMp4WP4Z/nml3nZbu3Nnz6+
+ erb2Ya7ZrO6HGdercrxnv0qOUV3jJczwv3rWQVnzJsWW0KKkf80huyols/a5Vj+TShIy+3TLr5m
+ DBwA=
+X-Developer-Key: i=andreas@kemnade.info; a=openpgp;
+ fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
 
-From: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
+Document the FP9931/JD9930. As the FP9931 is a clear subset of the JD9930,
+define it as a fallback compatible. GPIO names are same as in the datasheet
+except for the EN pad which is described as "enable".
 
-The synclist field in struct metapage was not being initialized during
-allocation in alloc_metapage(), leading to list corruption when the
-metapage is later added to a transaction's sync list.
-
-When diUpdatePMap() calls list_add(&mp->synclist, &tblk->synclist), if
-the synclist field contains stale data from a previous allocation (such
-as LIST_POISON values from a freed list node), the list debugging code
-detects the corruption and triggers a stack segment fault.
-
-This issue is intermittent because it only manifests when recycled
-memory happens to contain poison values in the synclist field. The bug
-was discovered by syzbot, which creates specific filesystem patterns
-that reliably trigger this uninitialized memory usage.
-
-Initialize the synclist field with INIT_LIST_HEAD() in alloc_metapage()
-to ensure it's in a valid state before being used in list operations.
-This is consistent with how the wait queue is initialized in the same
-function.
-
-Reported-by: syzbot+cfc7cab3bb6eaa7c4de2@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=cfc7cab3bb6eaa7c4de2
-Signed-off-by: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>
-
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
-Tested:
- - Tested locally with syzbot reproducer, no errors observed
+ .../devicetree/bindings/regulator/fiti,fp9931.yaml | 133 +++++++++++++++++++++
+ 1 file changed, 133 insertions(+)
 
- fs/jfs/jfs_metapage.c | 1 +
- 1 file changed, 1 insertion(+)
+diff --git a/Documentation/devicetree/bindings/regulator/fiti,fp9931.yaml b/Documentation/devicetree/bindings/regulator/fiti,fp9931.yaml
+new file mode 100644
+index 000000000000..ce44040a3c02
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/fiti,fp9931.yaml
+@@ -0,0 +1,133 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/fiti,fp9931.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: FitiPower FP9931/JD9930 Power Management Integrated Circuit
++
++maintainers:
++  - Andreas Kemnade <andreas@kemnade.info>
++
++description:
++  FP9931 is a Power Management IC to provide Power for EPDs with one 3.3V
++  switch, 2 symmetric LDOs behind 2 DC/DC converters, and one unsymmetric
++  regulator for a compensation voltage.
++  JD9930 has in addition some kind of night mode.
++
++properties:
++  compatible:
++    oneOf:
++      - const: fiti,fp9931
++
++      - items:
++          - const: fiti,jd9930
++          - const: fiti,fp9931
++
++  reg:
++    maxItems: 1
++
++  '#thermal-sensor-cells':
++    const: 0
++
++  enable-gpios:
++    maxItems: 1
++
++  pg-gpios:
++    maxItems: 1
++
++  ts-en-gpios:
++    maxItems: 1
++
++  xon-gpios:
++    maxItems: 1
++
++  vin-supply:
++    description:
++      Supply for the whole chip. Some vendor kernels and devicetrees
++      declare this as a non-existing GPIO named "pwrall".
++
++  fiti,tdly:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    description:
++      Power up soft start delay settings tDLY1-4 bitfields in the
++      POWERON_DELAY register
++
++    minItems: 4
++    maxItems: 4
++
++  VCOM:
++    type: object
++    $ref: /schemas/regulator/regulator.yaml#
++    unevaluatedProperties: false
++    description:
++      The regulator for the compenstation voltage.
++    properties:
++      regulator-name:
++        const: VCOM
++
++  VPOSNEG:
++    type: object
++    $ref: /schemas/regulator/regulator.yaml#
++    unevaluatedProperties: false
++    description:
++      The pair of symmetric LDOs
++    properties:
++      regulator-name:
++        const: VPOSNEG
++
++  V3P3:
++    type: object
++    $ref: /schemas/regulator/regulator.yaml#
++    unevaluatedProperties: false
++    description:
++      The pair of symmetric LDOs
++    properties:
++      regulator-name:
++        const: V3P3
++
++required:
++  - compatible
++  - reg
++  - '#thermal-sensor-cells'
++  - pg-gpios
++  - enable-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        fp9931: pmic@18 {
++          compatible = "fiti,fp9931";
++          reg = <0x18>;
++          pinctrl-names = "default";
++          pinctrl-0 = <&pinctrl_fp9931_gpio>;
++          #thermal-sensor-cells = <0>;
++          vin-supply = <&epd_pmic_supply>;
++          pg-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
++          ts-en-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
++          enable-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
++          fiti,tdly = <2 2 3 3>;
++
++          vcom_reg: VCOM {
++            regulator-name = "VCOM";
++            regulator-min-microvolt = <2352840>;
++            regulator-max-microvolt = <2352840>;
++          };
++
++          vposneg_reg: VPOSNEG {
++            regulator-name = "VPOSNEG";
++            regulator-min-microvolt = <15060000>;
++            regulator-max-microvolt = <15060000>;
++          };
++
++          v3p3_reg: V3P3 {
++            regulator-name = "V3P3";
++          };
++        };
++    };
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 871cf4fb3636..77c512a0a42b 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -269,6 +269,7 @@ static inline struct metapage *alloc_metapage(gfp_t gfp_mask)
- 		mp->data = NULL;
- 		mp->clsn = 0;
- 		mp->log = NULL;
-+		INIT_LIST_HEAD(&mp->synclist);
- 		init_waitqueue_head(&mp->wait);
- 	}
- 	return mp;
 -- 
-2.34.1
+2.47.3
 
 
