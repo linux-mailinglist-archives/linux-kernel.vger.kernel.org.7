@@ -1,167 +1,193 @@
-Return-Path: <linux-kernel+bounces-890480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D68C40275
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:38:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A9FC4028A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:41:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E931A4E3E6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:38:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553DD1883A2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0F22F12A3;
-	Fri,  7 Nov 2025 13:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21EB2F291D;
+	Fri,  7 Nov 2025 13:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsHHdmHG"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rfr252Xc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hOgdHBfo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23E32D63F2
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEDD2F12C5;
+	Fri,  7 Nov 2025 13:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762522730; cv=none; b=NGIJgTjpDixH/uuWhZQjV7H+J+M7GbrhRhJna15E6SOxJom6lcrg4UC7W6fVT3CBwJ//7yetgV5U/umV2tK/m7aYB8vZGZN6nqhPKBKtv+kUQiidy6m5hYANVcGe1WDXmubWCzc2HB+7Ryxf7g3fG8rjJxIqqCtyB3HzlRoAR+4=
+	t=1762522895; cv=none; b=LHnDaqgD7p9P096YDQ2dhZfCChhAirnbmVjaWtGt/QRJmj55tluo5WLtflXBxfC2apVFMUnhm1g8YGqW9ZWnaAzn6z9dqynCqWDGHTbaQmav0VN8BqdNyfk1m7jr2dmSQaurfDzxvgnBczAi4dyFiQM6QZkq7BT7Y3Hc95nLqIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762522730; c=relaxed/simple;
-	bh=BoF2sC78NUVtU68avJid61Dvbiv2tfr1Ba5wKGszNg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=juV3V6q0rpsjMvyM8yhnf2VukM2fu/tKJ6mmbX4KqfhcoxvetaWwcGQm895pxClTIZwOeiY0b/4jpItpXBT81AWp4ZT8h4oII5zhzWgvJ7Vvpi22jDLZ/UGflSDBN+QRFYpYs50O9X4+h2NrwxZFB25FjEBkHl9HZxhf0yd7V/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NsHHdmHG; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-33292adb180so731973a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:38:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762522728; x=1763127528; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJ6i5QFZLIXUsCrEe0mdSHfsDvzDf4P+mBRrC8poWsg=;
-        b=NsHHdmHGjGiWmBfWziAj0lTl698Nbc1tJQUK6EMiGOrUatooKfdwuuJciKmXD8s4MT
-         YFCInu0ZEg4IcLlF+Sc7+2uJNxbRR5B+VUmMlxNVeDRfagR2LZ+U7Cgf1eI3RU5VxixE
-         CeXCEvM+fUcjF3H1O4aCT8FjBcOOmR2fyK2ID5YdPtOBeUVL9ZL1OZIKP25ntSEYrPTm
-         g2/mB5lzMHVPmbIlIa7TBa8c4+w+P1hpuN60VYz4ux1WFXFsNqA/aBABgawpxr9wZU7I
-         yronsNiL6LHo/7h1NY8h8qDjXm3MPkIYeY+dx5Av6nETlGLztO1PlSfapOa9JDdUmRC+
-         aSLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762522728; x=1763127528;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJ6i5QFZLIXUsCrEe0mdSHfsDvzDf4P+mBRrC8poWsg=;
-        b=tmoa2TNBtataFAK4No1K0AnHmdqhWVXhIA9ZdTYiJ1r9scTtrRuFV1ZrZSzIaOZ0HG
-         ke8/m1hrKqRUx6AnMojM64f5yYMjieKTLS3/xaY8AosL5LzxxlOipqsTnmPbmcJSn0B2
-         eXsfOmatT2fPTMsjfM1rUT+sDjpFQeY5JyXk92C2YzHvQPuwGzqDqNp4G97oaZOfn7a4
-         YktV5M0fwmkAIg2CU4laXOgY+a8B/HVZSiIPx7gNBMhY2EfS6zBx7WQ7SBBjGxj/sgjE
-         hcF3dqKd1DtPhIDnvZ/VxruuuOG3VG/g45rBusi1b0sBmje6qGX5TJMQraRUTUOSYDxS
-         LtGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXHGmzDP3mTwwPJjcTuVNeDrbXNjEcM83jeGCsksf0Cy1oZSjhT86bxT51iY5iBZNYA3h5HFP9Wm8PzAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzsfR7D7SgFTdYR9g0EfBU3gnd+dbbdikvm/IZvpSSvgftLjPt
-	/ULLeI6V2/cZPldvNFhSpQ57+U+5lQr9UKnnBfnwe4XEcZ5fDG0FIA4M
-X-Gm-Gg: ASbGncvN6GXcEKsodurw775SZRB08mzSUjrytklw7sW1Ntu3/OFW6hpnxATKSi+iL+a
-	C/jXnhrARxf7XewYrI7VLxlg0oaeFpe5mR6Zqm57oLdyW/qjUDLKxrKOuXwZxKUWn6/Rx5FVz0f
-	ArTz1U5ykYKfnBxkALTinj9d436jfnYcWXtSpxPGnt+WxCUCIObmp/FenM0m8Kll7aiuVegzWxp
-	woOYyoo4JiB+TXWpz0V9gVpGDA5Hw0w/xK8AbR1bBAIjnabShNg3EDNEZsZ9i0WcaOx44da74gg
-	1zZI9e3++crhaoTfeJaGXMQ0PIgoT2Q9OOc0nn8UYQuUZ+UGXazEZC4ZMiJHdsXBRjiZEN+0Q26
-	JmU3/XXhKJCIHZfWD5Rm+4lnHRwMW32HAUN5WVprpIdhuGxRSpWytjTbthXJowswjgrrXe68GXg
-	ppe7YIiQ==
-X-Google-Smtp-Source: AGHT+IG4l7HicS3Le3aL0YFeQkU4o+7MNbGUnvh1G+o7pBk4WXRTmpELgxnyrfcV0IqYR/is61rOeQ==
-X-Received: by 2002:a17:90b:17cb:b0:339:ec9c:b275 with SMTP id 98e67ed59e1d1-3434c4efc0amr3789493a91.6.1762522727993;
-        Fri, 07 Nov 2025 05:38:47 -0800 (PST)
-Received: from server.lan ([103.213.4.16])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c343107sm2705259a91.14.2025.11.07.05.38.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 05:38:47 -0800 (PST)
-From: Coia Prant <coiaprant@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Coia Prant <coiaprant@gmail.com>
-Subject: [PATCH] arm64: dts: rockchip: clean up devicetree for 9Tripod X3568 v4
-Date: Fri,  7 Nov 2025 21:38:38 +0800
-Message-ID: <20251107133839.300252-1-coiaprant@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1762522895; c=relaxed/simple;
+	bh=bX8MCxO0wT49e0+2aFrqM0RJ8xou+QnZeO3rKTGprV4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kyGaGnJfk1A2h59wxui+57FIluVbl5TyZJp0M8Umd3/ce1l76nMoB/DE5iLzqeoHvBrYWr4lb3+XTAo+3yekS7ZRmUeMJD8BZAeylEf7HKNp6epa4pblfDbT1SuGEbx+i/dlFOenenOX1ncEXW1bxAq3HyOwddPtkElf8qLtSFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rfr252Xc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hOgdHBfo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762522890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQ9noBC6jYHpesi21iR41wacPz1nSToTuWL/a29XHiA=;
+	b=Rfr252XcjH5h+UUrJg/pmHzom8K256tRHq3+XOxMpc5mvk/FBD7zawbZc+FBMfzDg6JWJm
+	Mzl2SO/sj/xDa39sASpyyoP6S3G9uyKdvg9R+0IYkbqaYgY3tqtVZnhLlS3+QI2O9Vr/7/
+	vYKOXKTmznhPyndd5YtDpSCKbXlWB6LYpOwd0Fnz7+7kVlmnyltXyB2HxtjOAKHSrnhwHn
+	SbVUOnXSo9BWL+3YQYJLKuQsCT8/sfx49vHreaLzA/2b1m1KtGXTTzw4GpsAwq+cBHytGA
+	6IWsxCA0V1ohfpmidKQc/QVEjs4872qeHPN6LkOdHXDohbnkk9782R/w9rzfSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762522890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UQ9noBC6jYHpesi21iR41wacPz1nSToTuWL/a29XHiA=;
+	b=hOgdHBfoRYMa2wIRjwpw1clVkYTVr9ky7h14gp6dC/iF9rk2OTn09LiBFhE8YiT7N1QP+m
+	r+HFrMbi4idy7RDQ==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, syzbot
+ <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>,
+ "amurray@thegoodpenguin.co.uk" <amurray@thegoodpenguin.co.uk>,
+ brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
+In-Reply-To: <aQ3ck9Bltoac7-0d@pathway.suse.cz>
+References: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
+ <69096836.a70a0220.88fb8.0006.GAE@google.com>
+ <CAJnrk1Yo4dRVSaPCaAGkHc+in03KaTXJ+KxckhLoSrRxbEdDBg@mail.gmail.com>
+ <aQpFLJM96uRpO4S-@pathway.suse.cz> <87ldkk34yj.fsf@jogness.linutronix.de>
+ <aQuABK25fdBVTGZc@pathway.suse.cz> <87bjlgqmk5.fsf@jogness.linutronix.de>
+ <87tsz7iea2.fsf@jogness.linutronix.de> <aQzLX_y8PvBMiZ9f@pathway.suse.cz>
+ <87h5v73s5g.fsf@jogness.linutronix.de> <aQ3ck9Bltoac7-0d@pathway.suse.cz>
+Date: Fri, 07 Nov 2025 14:47:29 +0106
+Message-ID: <871pma0xkm.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Fix indentation, remove unused SDIO properties, and drop the GMAC clock
-that was used for input direction. The board uses the clock as
-output, so the input clock is not needed.
+On 2025-11-07, Petr Mladek <pmladek@suse.com> wrote:
+> What about?
+>
+> /*
+>  * Return true when @lpos1 is lower than @lpos2 and both values
+>  * look sane.
+>  *
+>  * They are considered insane when the difference is bigger than
+>  * the data buffer size. It happens when the values are read
+>  * without locking and another CPU already moved the ring buffer
+>  * head and/or tail.
+>  *
+>  * The caller must behave carefully. The changes based on this
+>  * check must be done using cmpxchg() to confirm that the check
+>  * worked with valid values.
+>  */
+> static bool lpos1_before_lpos2_sane(struct prb_data_ring *data_ring,
+> 				    unsined long lpos1, unsigned long lpos2)
+> {
+> 	return lpos2 - lpos1 - 1 < DATA_SIZE(data_ring);
+> }
+>
+> Feel free to come up with any other function name or description.
 
-Signed-off-by: Coia Prant <coiaprant@gmail.com>
----
- .../dts/rockchip/rk3568-9tripod-x3568-v4.dts  | 25 +++++++------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
+I prefer "_bounded" to "_sane". And I really don't care if it is
+"before" or "lt". I was only stating why I chose "before" instead of
+something else. But I really don't care. Really.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4.dts b/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4.dts
-index 443ed7d4b..ad4d62060 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-9tripod-x3568-v4.dts
-@@ -273,11 +273,10 @@ &gmac0 {
- 	clock_in_out = "output";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&gmac0_miim
--			&gmac0_tx_bus2
--			&gmac0_rx_bus2
--			&gmac0_rgmii_clk
--			&gmac0_rgmii_bus
--			&gmac0_clkinout>;
-+		     &gmac0_tx_bus2
-+		     &gmac0_rx_bus2
-+		     &gmac0_rgmii_clk
-+		     &gmac0_rgmii_bus>;
- 	phy-handle = <&rgmii_phy0>;
- 	phy-mode = "rgmii-id";
- 	status = "okay";
-@@ -290,11 +289,10 @@ &gmac1 {
- 	clock_in_out = "output";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&gmac1m1_miim
--			&gmac1m1_tx_bus2
--			&gmac1m1_rx_bus2
--			&gmac1m1_rgmii_clk
--			&gmac1m1_rgmii_bus
--			&gmac1m1_clkinout>;
-+		     &gmac1m1_tx_bus2
-+		     &gmac1m1_rx_bus2
-+		     &gmac1m1_rgmii_clk
-+		     &gmac1m1_rgmii_bus>;
- 	phy-handle = <&rgmii_phy1>;
- 	phy-mode = "rgmii-id";
- 	status = "okay";
-@@ -674,8 +672,7 @@ led_work_en: led_work_en {
- 
- 	pmic {
- 		pmic_int: pmic_int {
--			rockchip,pins =
--				<0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
-+			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
- 		};
- 	};
- 
-@@ -763,7 +760,6 @@ &sdmmc0 {
- /* used for AP6275S WiFi */
- &sdmmc2 {
- 	bus-width = <4>;
--	disable-wp;
- 	cap-sd-highspeed;
- 	cap-sdio-irq;
- 	keep-power-in-suspend;
-@@ -771,9 +767,6 @@ &sdmmc2 {
- 	non-removable;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc2m0_bus4 &sdmmc2m0_cmd &sdmmc2m0_clk>;
--	sd-uhs-sdr12;
--	sd-uhs-sdr25;
--	sd-uhs-sdr50;
- 	sd-uhs-sdr104;
- 	vmmc-supply = <&vcc3v3_sys>;
- 	vqmmc-supply = <&vcc_1v8>;
--- 
-2.47.3
+My preferences would be:
 
+lpos1_before_lpos2_bounded()
+
+lpos1_lt_lpos2_bounded()
+
+But I can live with lpos1_before_lpos2_sane() if you think "_sane" is
+better.
+
+>> You have overlooked that I inverted the check. It is no longer checking:
+>> 
+>>     next_pos <= head_pos
+>> 
+>> but is instead checking:
+>> 
+>>     !(head_pos < next_pos)
+>> 
+>> IOW, if "next has not overtaken head".
+>
+> I see. I missed this. Hmm, this would be correct when the comparsion was
+> mathemathical (lt, le). But is this correct in our case when take
+> into account the ring buffer wrapping?
+>
+> The original check returned "false" when the difference between head_lpos
+> and next_lpos was bigger than the data ring size.
+>
+> The new check would return "true", aka "!false", in this case.
+
+Sure, but that is not possible. Even if we assume there has been
+corrupted data, the new get_data() will catch that.
+
+> Hmm, it seems that the buffer wrapping is not possible because
+> this code is called when desc_reopen_last() succeeded. And nobody
+> is allowed to free reopened block.
+
+Correct.
+
+> Anyway, I consider using (!lpos1_before_lpos2()) as highly confusing
+> in this case.
+
+I think if you look at what the new check is checking instead of trying
+to mentally map the old check to the new check, it is not confusing.
+
+> I would either keep the code as is.
+
+:-/ That defeats the whole purpose of the new helper, which is simply
+comparing the relative position of two lpos values. That is exactly what
+is being done here.
+
+I would prefer adding an additional lpos1_le_lpos2_bounded() variant
+before leaving the old code. A new variant is unnecessary, but at least
+we would have all logical position comparison code together.
+
+> Maybe we could add a comment explaining that
+>
+> 	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
+>
+> might fail only when the substraction is negative. It should never be
+> positive because head_lpos advanced more than the data buffer size
+> over next_lpos because the data block is reopened and nobody could
+> free it.
+>
+> Maybe, we could even add a check for this.
+
+If data is being illegally manipulated underneath us, we are screwed
+anyway. I see no point in sprinkling checks around in case someone is
+modifying our data even though we have exclusive access to it.
+
+> I think about fixing this in a separate patch and pushing this
+> into linux-next ASAP to fix the regression.
+>
+> We could improve the other comparisons later...
+>
+> How does that sound?
+
+Sure. Are you planning on letting 6.19 pull 2 patches or will you fold
+them for the 6.19 pull?
+
+> Should I prepare the patch for get_data() are you going to do so?
+
+I would prefer you do it so that we do not need any more discussing for
+the quick fix. ;-)
+
+John
 
