@@ -1,172 +1,343 @@
-Return-Path: <linux-kernel+bounces-890662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51B5C409B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:35:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1A3C409B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1AE561246
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D566560E1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B9A2F0C45;
-	Fri,  7 Nov 2025 15:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74982E1C7B;
+	Fri,  7 Nov 2025 15:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DmR+SrlZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZuKBncC"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A56A32C932;
-	Fri,  7 Nov 2025 15:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297102F0C45
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762529687; cv=none; b=PZtYdeh3Zn0OfCuZeaybfmtpiw1R1D5g6TrAeDjGX3BZtcUwwByx7Eeyqc6I9CG7MIEpyxfbcabWFuIGFa4Mwozkyt4KaxNWRWIxf43faRROWxxlbRRd78SAUo+p4EAikBToqsa4kILQUNke/+UxR/4YpkgRiB52aTYD8mjv6cU=
+	t=1762529684; cv=none; b=lkD/waPQdX32Ts2M7ViyfGojFN0hZZ5rORWlU0cDu3Rko+MvjMZcjEGBkoiJs6kO7G7RILtd2m80v3ugYNdrpxdZ9obaCG5MKXZFQw29vWaFF+x/hEirulGnzbo1B7CcyLaemn7d99GXwm48vCThdnf0XbnTp7wzJndrBc1EFg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762529687; c=relaxed/simple;
-	bh=PVOMoLsv/C8FHk8RKmDDwOhTloxRr5gc06LUKvLyMCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pw+n0AUeLooG1pb4Xjq5M5Z1RcP6w4vgDBAmFvUWitx0aBTaebx5YjDPuxaJVSnV2GYXgGyqMEQeqo6JTnltpwxP1uOEsiyitlEJcam9G/C5XW2qat+sosCfXmgxlZ8dvRt/AIaZ7HjwuVubJfrDGI415LKtHdKDmK5R/ksaJPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DmR+SrlZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7Esa9i030417;
-	Fri, 7 Nov 2025 15:34:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=YmobMJ
-	csCJcwwI8/kU9x3dKjZAgMtB9UEjqodE7qgtQ=; b=DmR+SrlZ3fFDk5y5DrqJaT
-	3VNAlrbHI3fbIVIIfQuSOUZmaDcmiW5rtMKGQHOzzJ04wFm8YLMkYv1NcL+KQaJE
-	lPEDYOcTmjFNF/p0YFfCNvmROk0oQEsMOZDvOooongidOY5M2cHVPPAmuLKcSrtv
-	CWF/ZGW/Bi3qlJlf31e6dk8MlfcHFFKuE3yvkdga3zL8u9agbXVY4g9lWbeWVWoN
-	lE17cVSDpz2AhE67XGImcDDsLZeFYoFPDxLCzVQiUV0gbyjYPaIgiRb4oywkLLH3
-	Bwa2yq0OkfHrCI7XuSZhjvG17bg0R4Ty5vqMtj3CS7S8CVGYSLpXVikWDmd82m6A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9jxmr7v7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 15:34:39 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A7FX6mu020594;
-	Fri, 7 Nov 2025 15:34:38 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9jxmr7v3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 15:34:38 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7CTAXt021482;
-	Fri, 7 Nov 2025 15:34:37 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrk37jq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 15:34:37 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A7FYYFb52167018
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Nov 2025 15:34:34 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0097720043;
-	Fri,  7 Nov 2025 15:34:34 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0222A20040;
-	Fri,  7 Nov 2025 15:34:33 +0000 (GMT)
-Received: from [9.111.68.113] (unknown [9.111.68.113])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Nov 2025 15:34:32 +0000 (GMT)
-Message-ID: <72ec25d5-e077-4a84-9eca-ce886e2aaffb@linux.ibm.com>
-Date: Fri, 7 Nov 2025 16:33:40 +0100
+	s=arc-20240116; t=1762529684; c=relaxed/simple;
+	bh=sS1mO9mVY+n0upVSqMY2+JLIYxv51EtgKKHOtGgsa0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UwuAC1Vxf2vYwwKGUlGKJ8quLYDTLpW2uYcsYd8Hh5iX03f1DsLbR5Ig3GC8bswi4DaEYVB9NgPdi6GjXu6uibiuJf1SmhmzTeQc57bleeDC6ZcACs4Z+sfgzQ2nA0UvY3Z2yMyq8CL0EPwy17Oc40+pVaumsbGbduTMwTNrgso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZuKBncC; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-429bcddad32so640628f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:34:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762529680; x=1763134480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gEZVeIp0039U3hcjQwmnwBxA9uxTpd6QC1RB9S7+CrU=;
+        b=UZuKBncCypL+jKCMPscr3E2i4iQJNYuIWpjai0EQJmKJEfbzQbgNX0pa6KjVKl7zt8
+         Obd8nckaYFlhQI81UFFDJlchJTz49BAz66gtTewc5FdRbQHXqovFQIlrBzstKbxW3usA
+         0fX4aSoR7G0GP8xdNLs6xO8gAqyA4zdoxlaWwEZwE3gWWeCKdO0YVdZWp5Fj+xVYtGSk
+         rqafRnMHmvHO6/oJRIGV6J9C1ejaL3U7Kjwebcf0zA7w+0fHxE+e5QT7p5HDwz4fP5w8
+         KSD7PZWOy1gNjJLRUclXeQaYH5OeLD1CANuzh2uIZ/siUav8oYb10MHsJeQEFGt3u9aC
+         ZEPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762529680; x=1763134480;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gEZVeIp0039U3hcjQwmnwBxA9uxTpd6QC1RB9S7+CrU=;
+        b=Q3Guk2xLmPIDv8bOu7yQCnZ7S8sOfXjahVwfQ0et33V9YDLEgQMJloYKBupN+Ogx0b
+         kmpd20m/5GgZHQIPbULlTcu3LpWDSvDnJe1jHu+37VWt7Zn3+yr44psCJHUApiWPUOGJ
+         y4YsRMCy3QslBOoadC8iVT73Eobppj11gTiikeCUSvUlhiMUwx5RDdgDFfUTewV/R0Yw
+         zGv2vVJmTIaVWIh0ZyBRzwpPS/ETLwJGap+t8TpA4Fhx2rGZyObRdpG3SSgIBUMk/zfh
+         fUY6ytpZa3dmXZQzjV6g+g5qebQNGDhlL1cYPsjMoYULbso53SEsxkLyRX1aH8Xlvj4p
+         PfrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCaFx/sOboy/KXLNIE0+TGfl6sw8GfGJMCNB3ly4V1KYUZb/w3IdBVLMzbtN/fO2uFU8deOyypqYMYrCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGvt1zc5iXxzURmg0MrcWO/aGHAklIzTQ1+A/a79XYCQZ4F1H8
+	84KHAYi6hl757mNuiwvM5PXKLDzWK8jcMHDqzNF59fOKDgcyrAqfM/Vy
+X-Gm-Gg: ASbGncuGs40hF9lKo9fbfJW/A1P/eKyRmY1jvBkzWNlm8FHNFohi5NJVuZeCID+1VJn
+	jXykDEI28+oEs0Ra3XS7+5hox4Y93zz7RerooQ6xXUkoJr5gi7/PqbGdnWF5sahaFCLLmuQ3OuY
+	ZEggcNxdASA+djSq0xiflZ9hzQM5ko3fhyv1qG1DGzUA/aqcIF+sidF87egJOJcfEq6/0d4QHtp
+	ZQOtp5nKqR+UEwyr4uKcbj5cKKjhXsi3RlT68fNWQxKiboQwU3UjRwfIz7QngIb1XozcRwJQ+LZ
+	CcLRL5feQrQul0LF6/hT+parNqbWwSP65py78mvvKVPJThhT6rUl4S1OpDY44tIGbRzgdI2tYOW
+	EqXZqVWz752fZcVRDt6Jk2PIlSSMglzuZnHE2iDWZn58Cc0TgsY/1S2NG11jqUiLeDNAlsbd8rq
+	lZrFd8tWt0jCzIL7VT4qi5mjH/ZLxs4b2BDjiy1wzhad3NQfXsYw2v8qdlCD1k/UUtYX+7
+X-Google-Smtp-Source: AGHT+IHhupneGIhhYLefCar228DT2G/CyJxPNnAcGQ7Z0TOciv/vnELQt/uV6goIQtVqRKCfPLfsfQ==
+X-Received: by 2002:a05:6000:2303:b0:429:f050:adbb with SMTP id ffacd0b85a97d-42ae58898c7mr3366126f8f.26.1762529680187;
+        Fri, 07 Nov 2025 07:34:40 -0800 (PST)
+Received: from yd-B55TXL3.. (2a01cb09e0629b811add4a5ce9a2296d.ipv6.abo.wanadoo.fr. [2a01:cb09:e062:9b81:1add:4a5c:e9a2:296d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62bfa0sm6308130f8f.5.2025.11.07.07.34.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 07:34:39 -0800 (PST)
+From: paulhoussel2@gmail.com
+To: paulhoussel2@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paul Houssel <paul.houssel@orange.com>,
+	Martin Horth <martin.horth@telecom-sudparis.eu>,
+	Ouail Derghal <ouail.derghal@imt-atlantique.fr>,
+	Guilhem Jazeron <guilhem.jazeron@inria.fr>,
+	Ludovic Paillat <ludovic.paillat@inria.fr>,
+	Robin Theveniaut <robin.theveniaut@irit.fr>,
+	Tristan d'Audibert <tristan.daudibert@gmail.com>
+Subject: [PATCH] libbpf: fix BTF dedup to support recursive typedef definitions
+Date: Fri,  7 Nov 2025 16:34:08 +0100
+Message-ID: <20251107153408.159342-1-paulhoussel2@gmail.com>
+X-Mailer: git-send-email 2.43.0
+Reply-To: paulhoussel2@gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] s390/fpu: Fix kmsan in fpu_vstl function
-To: Alexander Potapenko <glider@google.com>,
-        Heiko Carstens <hca@linux.ibm.com>
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Juergen Christ <jchrist@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-References: <20251106160845.1334274-2-aleksei.nikiforov@linux.ibm.com>
- <20251106160845.1334274-6-aleksei.nikiforov@linux.ibm.com>
- <CAG_fn=WufanV2DAVusDvGviWqc6woNja-H6WAL5LNgAzeo_uKg@mail.gmail.com>
- <20251107104926.17578C07-hca@linux.ibm.com>
- <CAG_fn=W5TxaPswQzRYO=bJzv6oGNt=_9WVf2nSstsPGd5a5mNw@mail.gmail.com>
-Content-Language: en-US
-From: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
-In-Reply-To: <CAG_fn=W5TxaPswQzRYO=bJzv6oGNt=_9WVf2nSstsPGd5a5mNw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=BZvVE7t2 c=1 sm=1 tr=0 ts=690e118f cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=ZY0oy1BPkzOObeRiG5MA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDEyMiBTYWx0ZWRfX1RZyKuD66vMJ
- eIa01JZb2JMXI/qy3VPM6vE5n8WCXkhlk7uNzUQ3CKuEowwO9zxk+mUQHNTenHEnZ+p6IGqc6XI
- lUSONTvT7bnW9zpujYYljr33v16OeLUdaS47nBkbkEawXqKMz+XDgEPAAfytDy3dTbxtxnDgrJW
- ovTJPyF1HIZj5T6PXTLwZtfN48J6n6gnrTiOCV8S5zcl4D6OLSQG40jW+WsojAHelO+5LE97xNY
- VW4Z6HZst5bBxX/cmR2T36OPbKrYqdy5hBbRAhKslspln/Fq07HojJBxxsdOJzYTmiXz3Rfoeo1
- /p7hLGZymH4A9y/e010XxdUHZrGjT/Book/aNbVF+ojiUDTZ1VdTdQ78J87+EjqUY4wXEmmM/cm
- wq98K0wWihWsN9KYPgB0EC/bfr9+Hg==
-X-Proofpoint-GUID: 9qF3Hk4uKD18vkj_pkFjCP3ioH97AV6j
-X-Proofpoint-ORIG-GUID: b4Vc7OTegufQwkjfSDN4buqtpdpRwd5v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 phishscore=0 suspectscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511070122
 
-On 11/7/25 14:32, Alexander Potapenko wrote:
-> On Fri, Nov 7, 2025 at 11:49 AM Heiko Carstens <hca@linux.ibm.com> wrote:
->>
->> On Fri, Nov 07, 2025 at 11:26:50AM +0100, Alexander Potapenko wrote:
->>> On Thu, Nov 6, 2025 at 5:09 PM Aleksei Nikiforov
->>> <aleksei.nikiforov@linux.ibm.com> wrote:
->>>> @@ -409,6 +410,7 @@ static __always_inline void fpu_vstl(u8 v1, u32 index, const void *vxr)
->>>>                  : [vxr] "=R" (*(u8 *)vxr)
->>>>                  : [index] "d" (index), [v1] "I" (v1)
->>>>                  : "memory", "1");
->>>> +       instrument_write_after(vxr, size);
->>>>   }
->>>
->>> Wouldn't it be easier to just call kmsan_unpoison_memory() here directly?
->>
->> I guess that's your call. Looks like we have already a couple of
->> kmsan_unpoison_memory() behind inline assemblies.
->>
->> So I guess we should either continue using kmsan_unpoison_memory()
->> directly, or convert all of them to such a new helper. Both works of
->> course. What do you prefer?
-> 
-> Upon reflection, I think adding instrument_write_after() is not the best idea.
-> For tools like KASAN and KCSAN, every write has the same semantics,
-> and the instrumentation just notifies the tool that the write
-> occurred.
-> For KMSAN, however, writes may affect metadata differently, requiring
-> us to either poison or unpoison the destination.
-> In certain special cases, like instrument_get_user() or
-> instrument_copy_from_user() the semantics are always fixed, but this
-> is not true for arbitrary writes.
-> 
-> We could make the new annotation's name more verbose, but it will just
-> become a synonym of kmsan_unpoison_memory().
-> So I suggest sticking with kmsan_unpoison_memory() for now.
-> 
-> 
+From: Paul Houssel <paul.houssel@orange.com>
 
-I'll rework changes with that suggestion. Thank you.
+Handle recursive typedefs in BTF deduplication
+
+Pahole fails to encode BTF for some Go projects (e.g. Kubernetes and
+Podman) due to recursive type definitions that create reference loops
+not representable in C. These recursive typedefs trigger a failure in
+the BTF deduplication algorithm.
+
+This patch extends btf_dedup_ref_type() to properly handle potential
+recursion for BTF_KIND_TYPEDEF, similar to how recursion is already
+handled for BTF_KIND_STRUCT. This allows pahole to successfully
+generate BTF for Go binaries using recursive types without impacting
+existing C-based workflows.
+
+Co-developed-by: Martin Horth <martin.horth@telecom-sudparis.eu>
+Signed-off-by: Martin Horth <martin.horth@telecom-sudparis.eu>
+Co-developed-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
+Signed-off-by: Ouail Derghal <ouail.derghal@imt-atlantique.fr>
+Co-developed-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
+Signed-off-by: Guilhem Jazeron <guilhem.jazeron@inria.fr>
+Co-developed-by: Ludovic Paillat <ludovic.paillat@inria.fr>
+Signed-off-by: Ludovic Paillat <ludovic.paillat@inria.fr>
+Co-developed-by: Robin Theveniaut <robin.theveniaut@irit.fr>
+Signed-off-by: Robin Theveniaut <robin.theveniaut@irit.fr>
+Suggested-by: Tristan d'Audibert <tristan.daudibert@gmail.com>
+Signed-off-by: Paul Houssel <paul.houssel@orange.com>
+
+---
+The issue was originally observed when attempting to encode BTF for
+Kubernetes binaries (kubectl, kubeadm):
+
+$ git clone --depth 1 https://github.com/kubernetes/kubernetes
+$ cd ./kubernetes
+$ make kubeadm DBG=1
+$ pahole --btf_encode_detached=kubeadm.btf _output/bin/kubeadm
+btf_encoder__encode: btf__dedup failed!
+Failed to encode BTF
+
+The root cause lies in recursive type definitions that cannot exist
+in C but are valid in Go.
+
+program.go:
+
+"package main
+
+type Foo func() Foo
+
+func main() {
+	bar()
+}
+
+func bar() Foo {
+	return nil
+}"
+
+Building and encoding this program with pahole triggers the same
+deduplication failure:
+
+$ go build -gcflags "all=-N -l" ./program.go
+$ pahole --btf_encode_detached=program.btf program
+btf_encoder__encode: btf__dedup failed!
+Failed to encode BTF
+
+As noted in the comment of btf_dedup_ref_type(), the deduplication
+logic previously assumed recursion only occurs through structs or
+unions:
+
+"[...] there is no danger of encountering cycles because in C type
+system the only way to form type cycle is through struct/union, so
+any chain of reference types, even those taking part in a type
+cycle, will inevitably reach struct/union at some point."
+
+However, Go allows such recursion through typedef-like constructs
+(function types, aliases), requiring a special case for
+BTF_KIND_TYPEDEF.
+
+This patch introduces that special handling, ensuring pahole can
+handle Go-generated BTFs while maintaining compatibility with
+existing C workflows.
+---
+ tools/lib/bpf/btf.c | 97 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 95 insertions(+), 2 deletions(-)
+
+diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+index 9f141395c074..239f52115c53 100644
+--- a/tools/lib/bpf/btf.c
++++ b/tools/lib/bpf/btf.c
+@@ -3408,6 +3408,7 @@ static int btf_dedup_prep(struct btf_dedup *d);
+ static int btf_dedup_strings(struct btf_dedup *d);
+ static int btf_dedup_prim_types(struct btf_dedup *d);
+ static int btf_dedup_struct_types(struct btf_dedup *d);
++static int btf_dedup_typedef_types(struct btf_dedup *d);
+ static int btf_dedup_ref_types(struct btf_dedup *d);
+ static int btf_dedup_resolve_fwds(struct btf_dedup *d);
+ static int btf_dedup_compact_types(struct btf_dedup *d);
+@@ -3590,6 +3591,11 @@ int btf__dedup(struct btf *btf, const struct btf_dedup_opts *opts)
+ 		pr_debug("btf_dedup_struct_types failed: %s\n", errstr(err));
+ 		goto done;
+ 	}
++	err = btf_dedup_typedef_types(d);
++	if (err < 0) {
++		pr_debug("btf_dedup_typedef_types failed: %s\n", errstr(err));
++		goto done;
++	}
+ 	err = btf_dedup_resolve_fwds(d);
+ 	if (err < 0) {
+ 		pr_debug("btf_dedup_resolve_fwds failed: %s\n", errstr(err));
+@@ -3901,6 +3907,20 @@ static int btf_dedup_strings(struct btf_dedup *d)
+ 	return err;
+ }
+ 
++/*
++ * Calculate type signature hash of TYPEDEF, ignoring referenced type IDs,
++ * as referenced type IDs equivalence is established separately during type
++ * graph equivalence check algorithm.
++ */
++static long btf_hash_typedef(struct btf_type *t)
++{
++	long h;
++
++	h = hash_combine(0, t->name_off);
++	h = hash_combine(h, t->info);
++	return h;
++}
++
+ static long btf_hash_common(struct btf_type *t)
+ {
+ 	long h;
+@@ -3918,6 +3938,13 @@ static bool btf_equal_common(struct btf_type *t1, struct btf_type *t2)
+ 	       t1->size == t2->size;
+ }
+ 
++/* Check structural compatibility of two TYPEDEF. */
++static bool btf_equal_typedef(struct btf_type *t1, struct btf_type *t2)
++{
++	return t1->name_off == t2->name_off &&
++	       t1->info == t2->info;
++}
++
+ /* Calculate type signature hash of INT or TAG. */
+ static long btf_hash_int_decl_tag(struct btf_type *t)
+ {
+@@ -4936,10 +4963,77 @@ static int btf_dedup_struct_types(struct btf_dedup *d)
+ 	return 0;
+ }
+ 
++/*
++ * Deduplicate typedef types.
++ *
++ * Similar as for struct/union types, for each typedef type its type
++ * signature hash is calculated, taking into account type's name
++ * and its size, but ignoring type ID's referenced from fields,
++ * because they might not be deduped completely until after
++ * reference types deduplication phase.
++ */
++static int btf_dedup_typedef_type(struct btf_dedup *d, __u32 type_id)
++{
++	struct btf_type *cand_type, *t;
++	struct hashmap_entry *hash_entry;
++	/* if we don't find equivalent type, then we are canonical */
++	__u32 new_id = type_id;
++	__u16 kind;
++	long h;
++
++	if (d->map[type_id] <= BTF_MAX_NR_TYPES)
++		return 0;
++
++	t = btf_type_by_id(d->btf, type_id);
++	kind = btf_kind(t);
++
++	if (kind != BTF_KIND_TYPEDEF)
++		return 0;
++	h = btf_hash_typedef(t);
++	for_each_dedup_cand(d, hash_entry, h) {
++		__u32 cand_id = hash_entry->value;
++		int eq;
++
++		cand_type = btf_type_by_id(d->btf, cand_id);
++		if (!btf_equal_typedef(t, cand_type))
++			continue;
++
++		btf_dedup_clear_hypot_map(d);
++		eq = btf_dedup_is_equiv(d, type_id, cand_id);
++		if (eq < 0)
++			return eq;
++		if (!eq)
++			continue;
++		btf_dedup_merge_hypot_map(d);
++		if (d->hypot_adjust_canon) /* not really equivalent */
++			continue;
++		new_id = cand_id;
++		break;
++	}
++
++	d->map[type_id] = new_id;
++	if (type_id == new_id && btf_dedup_table_add(d, h, type_id))
++		return -ENOMEM;
++
++	return 0;
++}
++
++static int btf_dedup_typedef_types(struct btf_dedup *d)
++{
++	int i, err;
++
++	for (i = 0; i < d->btf->nr_types; i++) {
++		err = btf_dedup_typedef_type(d, d->btf->start_id + i);
++		if (err)
++			return err;
++	}
++	return 0;
++}
++
+ /*
+  * Deduplicate reference type.
+  *
+- * Once all primitive and struct/union types got deduplicated, we can easily
++ * Once all primitive, struct/union and typedef types got deduplicated, we can easily
+  * deduplicate all other (reference) BTF types. This is done in two steps:
+  *
+  * 1. Resolve all referenced type IDs into their canonical type IDs. This
+@@ -4982,7 +5076,6 @@ static int btf_dedup_ref_type(struct btf_dedup *d, __u32 type_id)
+ 	case BTF_KIND_VOLATILE:
+ 	case BTF_KIND_RESTRICT:
+ 	case BTF_KIND_PTR:
+-	case BTF_KIND_TYPEDEF:
+ 	case BTF_KIND_FUNC:
+ 	case BTF_KIND_TYPE_TAG:
+ 		ref_type_id = btf_dedup_ref_type(d, t->type);
+-- 
+2.43.0
+
 
