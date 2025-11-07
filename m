@@ -1,82 +1,118 @@
-Return-Path: <linux-kernel+bounces-889828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F43C3EA07
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:33:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAB3C3EA0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C303188B2A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:34:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7F5E4EAD51
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867D92D739A;
-	Fri,  7 Nov 2025 06:33:37 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82EE239E88;
+	Fri,  7 Nov 2025 06:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bQdP75aO"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF522877D2;
-	Fri,  7 Nov 2025 06:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810C4242D84
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 06:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762497217; cv=none; b=H/tFAZhz814Z8B0ah0RVlcvhAZvCrkM8wI2zYsrBSFaxEkQdhPQntiXiwzQ/OlPp4GSawmY08w+Bwy6nIa/s8isAUUae0iZ0kHCqr/XyJvyg/wgYHXlQrGdWy+LiT45d+yks2LwF7nCvtrytOjhZ/ivfnldNYHR02Q7R0qmlrCc=
+	t=1762497248; cv=none; b=ajHcAiCTCNHAClw9On+hm7m50Edl+t4IP+Ao/zD3u8IKvlub5FXX2yf5JAV5Qa9/sQvnK/wfCdU9X2MHfXaaKQHNYyd0EEE+ZIide7zJG1FAkwQImMM8/1m7No1+2gDIrsKv7+IIH3v8YB0Ho02GDJzjbzria7Ow6SRHV5jWSEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762497217; c=relaxed/simple;
-	bh=gjhNdhbX09NImVbFe6Szl845BIzLIYmjAsrq60zVgOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fBXQESVPj6kIAxt1b4nPWkvIZZPSL2IvbaQcScFkmPqyIZTzxG5Y+MGpE3dkkD/51rkpFDxe2pWEileF9cxsjwOsrfGEtACeK4sI5IEhRQ1igp+iHSOtbEtnd4hBhWD/B5l3aWjaY3M0p6yPey5pzUBMI0HxahoT0qw7rF9MzUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 15FDC2C06414;
-	Fri,  7 Nov 2025 07:33:31 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 0B73549A; Fri,  7 Nov 2025 07:33:31 +0100 (CET)
-Date: Fri, 7 Nov 2025 07:33:31 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Christian Zigotzky <chzigotzky@xenosoft.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	mad skateman <madskateman@gmail.com>,
-	"R . T . Dickinson" <rtd2@xtra.co.nz>,
-	Darren Stevens <darren@stevens-zone.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>,
-	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
-	hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org,
-	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/2] PCI/ASPM: Allow quirks to avoid L0s and L1
-Message-ID: <aQ2Su6wp5DWlkEgb@wunner.de>
-References: <20251106183643.1963801-1-helgaas@kernel.org>
+	s=arc-20240116; t=1762497248; c=relaxed/simple;
+	bh=KBjlpyefpfDjzjvcp2b0XsuLHdk2q32I+eBMxeTlbq4=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=B/su/TS7Ur/rZ0fRf5njjiATFBOgX0vw07BfOucAHEKXckjVIszTduWGvUenL/+3x9jtgTeDeas0zV1nqbR6cbT1XfpuLVr5mrxAKNAp8GREPRwgDkwxdb6zL1/Eux+JJdccCtC/4Xn389gtPc/lmmHAcLmV1dte6vAAZHj8z1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bQdP75aO; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762497239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=w3G6GlUab3e6f4TFCVq8d6T8r0SZ5EJKyXqe5fy/Vgs=;
+	b=bQdP75aOsgI+a8SNUTYqvrM/S6ozyeWpzoROrsCt86/JAAI6P0ZpOjenj8PUGIa6fHQzti
+	VYCX4YIIYn2BaI712sSz0xGTd5GPiYONfZYzyot57wwYYuF0TRjvB9Nv0+8Tp/PMDAsD3I
+	/lHUg867cYMAC56u4oi3TvTFdAf9Id4=
+From: Enlin Mu <enlin.mu@linux.dev>
+To: mani@kernel.org,
+	daniel.lezcano@linaro.org,
+	tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-unisoc@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	enlin.mu@unisoc.com,
+	enlin.mu@linux.dev
+Subject: [PATCH V2] clocksource/drivers/rda: Add sched_clock_register for RDA8810PL SoC
+Date: Fri,  7 Nov 2025 14:33:47 +0800
+Message-Id: <20251107063347.3692-1-enlin.mu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106183643.1963801-1-helgaas@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Nov 06, 2025 at 12:36:37PM -0600, Bjorn Helgaas wrote:
-> L1 PM Substates and Clock PM in particular are a problem because they
-> depend on CLKREQ# and sometimes device-specific configuration, and none of
-> this is discoverable in a generic way.
+From: Enlin Mu <enlin.mu@unisoc.com>
 
-According to PCIe r7.0 sec 7.5.3.7, the "Enable Clock Power Management"
-bit is "applicable only for Upstream Ports and with form factors that
-support a Clock Request (CLKREQ#) mechanism".
+The current system log timestamp accuracy is tick, which can not
+meet the usage requirements and needs to reach nanoseconds.
+Therefore, the sched_clock_register funciton needs to be add.
 
-Thus, if BIOS has set the "Enable Clock Power Management" bit
-on a Downstream Port, we can infer that CLKREQ# is supported.
+Signed-off-by: Enlin Mu <enlin.mu@unisoc.com>
+---
+ drivers/clocksource/timer-rda.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/clocksource/timer-rda.c b/drivers/clocksource/timer-rda.c
+index fd1199c189bf..0be8e05970e2 100644
+--- a/drivers/clocksource/timer-rda.c
++++ b/drivers/clocksource/timer-rda.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
++#include <linux/sched_clock.h>
+ 
+ #include "timer-of.h"
+ 
+@@ -153,7 +154,7 @@ static struct timer_of rda_ostimer_of = {
+ 	},
+ };
+ 
+-static u64 rda_hwtimer_read(struct clocksource *cs)
++static u64 rda_hwtimer_clocksource_read(void)
+ {
+ 	void __iomem *base = timer_of_base(&rda_ostimer_of);
+ 	u32 lo, hi;
+@@ -167,6 +168,11 @@ static u64 rda_hwtimer_read(struct clocksource *cs)
+ 	return ((u64)hi << 32) | lo;
+ }
+ 
++static u64 rda_hwtimer_read(struct clocksource *cs)
++{
++	return rda_hwtimer_clocksource_read();
++}
++
+ static struct clocksource rda_hwtimer_clocksource = {
+ 	.name           = "rda-timer",
+ 	.rating         = 400,
+@@ -185,6 +191,7 @@ static int __init rda_timer_init(struct device_node *np)
+ 		return ret;
+ 
+ 	clocksource_register_hz(&rda_hwtimer_clocksource, rate);
++	sched_clock_register(rda_hwtimer_clocksource_read, 64, rate);
+ 
+ 	clockevents_config_and_register(&rda_ostimer_of.clkevt, rate,
+ 					0x2, UINT_MAX);
+-- 
+2.39.5
 
-Lukas
 
