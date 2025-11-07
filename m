@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-890999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE850C418D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:14:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8B6C418D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A136422F4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:13:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9A394EFDDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0510633C514;
-	Fri,  7 Nov 2025 20:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF6D30B505;
+	Fri,  7 Nov 2025 20:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jv8uKtNc"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZoyBBcBA"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880AE32AAAF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002C309EF1
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762546329; cv=none; b=WKkYFvCLa8v4f2IRHXT/b8nB5BP0sKvcSDFR6nr9msNPrPIFl8RRaYtK+so2dQhA9FI1c5pNv1gyDT1HuPmjLi9P2O7/94y8TLDdpmT8wRF+5ONkBf/rFZ24eUBgEcUINiHFyOd65paa5qkKVMfkbcO8apRvfd2E34qkm+7SpOg=
+	t=1762546370; cv=none; b=fGmHoViOFljfq40uTR9POtUDonm9iQkyZagthwFMD1ZL+H+JWQ5vXt8+tj7ddfe1df5gDxNtogM+XehYB1qIEI+Hw0aTrpjIs909fKFo7MIwaNnuCcZ86arDTfVdocZkHqfti1zxjImq3CFJhZ7/ratL+qd8S51WD9EFgf5xwTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762546329; c=relaxed/simple;
-	bh=A9B2jBetxyTpijSN5qBDOVR7TSExvw4XrrMBpuNK3/E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZauOx5o5324QiWSehL57n4w9F5QjlsCS/e1yHbZlFqBXgHe58p6itfUSIXx/7Z2LDD49nh8Ga8TwRLtIUK0d+4DtXNU8VCt/EtLaKiBdbN0n92ZKTFVNbGKxKryd+48KzGMsI51MbqTVZqn90in/hpu6r4UDRS7ybACbbKliyNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jv8uKtNc; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b630b4d8d52so1051977a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:12:07 -0800 (PST)
+	s=arc-20240116; t=1762546370; c=relaxed/simple;
+	bh=q+Oljg6oRYn/wzyY6ZW+TEK32wEhmKjJz0W0fLoZnGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fkqKkH9qzjTpnEi3hidotP/PiG/CKdjD285Djzqk/sv5SBbgPwDuzolk/E78eLGhLatuz3DiwPUYkau1w2Ee79J/O2SqiKzoMknVhNG+z7l36Wr+eT2G78Coz9oJS2k9KQjsWxVDy8Hf+C8yqVcLmrWQ9tSzug1oYMxhVNJfy5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZoyBBcBA; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7af603c06easo1166136b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:12:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762546327; x=1763151127; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qKeLCCM6sdWIqGdgWzNkrGSaMg8DXqAf6MQfYLasg+w=;
-        b=jv8uKtNcO9dLQzlZlsjVJOnH9E+U7ebI7kqJL259fNr3iIpl8Nc2q1FfsETnVsTEnQ
-         tuIuZP5Twnwd3hWOox2tNgDIdDaxfqTY+LC1sE8hjO396lvpJv238r6na8ZtErldGGV3
-         nrg+qZnYQ7QIz0mJaAqhQNKRIYs/knZoLwZ6YSmF8wGreEcPLADrYuUerpdiK2d+puBo
-         ZUnvjrvECJajAi6CfFKeyG7mlZz8qR4HNndWkTnuNyo/5hln5VJdMnXeuBiwJH4XSOqx
-         aUgXPLzjCTRGYncXW1nlidshokBUDX/wlJTJ10lzMCaWxwpDJe8MFAV7YlxtTvolxZ6R
-         X7xw==
+        d=gmail.com; s=20230601; t=1762546368; x=1763151168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gmLBjJR7+9+QwX0fWKlfYtGSCTKiJyl3M6K88B8Ym2w=;
+        b=ZoyBBcBAOwzb91BZqdRRLIrH1TriFrObJaJMMVxW82w37XJSy864J7U2jSbGfUrD/Y
+         vQDxfPsjNj9qSlm7nAIKnD1SNQAZlu2EKUkp4O2CQLevIENPjDGazHtSYLXtVjn8rvxR
+         s7zLmBy/B9SRweNU4sHDZOI9F1l3uP1J5Ic9SNNw3/uhXiccfgZz3KlMJRks2ZMmR4CQ
+         Eh52G4oAWnkIMQKyQc/I5bcpbQchJpNyCsWihDN0cUGn28Jc74EJrc6HBXd+tzenZuYg
+         0g6OCmm5FFkSqMgv8Ng/seP0OIxUYvIr85akMNAMV/DtP8DuIg46dQhrTurkG94MoS6n
+         fFIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762546327; x=1763151127;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qKeLCCM6sdWIqGdgWzNkrGSaMg8DXqAf6MQfYLasg+w=;
-        b=I1aCkQkEy00gfNDf9UTS5IPlKbXMT/P6k4Dq0LCkdopgaJOiYRxL91Q6Ldeo2/pFDn
-         zeY4RGTDQ5XhFrLSvWwxif/vh/HbRScuVciu3Q5rr+QuTWuwek0rUz9YOGnie+615jck
-         QiAOvbC4XeeXiXPQrXoJkvyUBTLrI29LDTHTp6vgPdIkAOK1ANl5MSD9yke2vnnbDFzP
-         b2UvTcR0EZEr7ZT7eSDJiQr1C+zJHQPa3au9uXbD+nVRW8Xv4/8obKjmVS5VYfYHd9Ax
-         fB2zXJqJ+PEU/HA8Xc9UfEgYixV0HRl4QBr5kmUTVyzgAAB57ccF8qfKhZVGjZ6NbGLu
-         zcJw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2V+3udAnQkXNoBSNm8z1EuQ/2xxuZbTBdPxStCgQLR5OJgKaRqzDbUdez9sh3F96/9cjzlB4gAp2Oo10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiYvrxnAEHYvrtSbfAifFThMKb8Eclz6dbCNOcErLA9ORXI78o
-	MLm4p4dzh8NdS3SNoFjDPMkYQ0SJ4XWX2JhaO40FTpdnGKggtsFKU4hfGt3dwhwu/a2p2UJp78g
-	U37VtX1Tq4VeYyw==
-X-Google-Smtp-Source: AGHT+IEMX81+3tMgOE6zuX67fA9qMfaXSo8kQxA665QBfG7436SzZBgAY0VnspsXWL8BWaeSJWhcyshGWiIDDA==
-X-Received: from pjbgx24.prod.google.com ([2002:a17:90b:1258:b0:341:88c5:20ac])
- (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1d0a:b0:340:e8e9:cc76 with SMTP id 98e67ed59e1d1-3436cb22a57mr496539a91.11.1762546326716;
- Fri, 07 Nov 2025 12:12:06 -0800 (PST)
-Date: Fri,  7 Nov 2025 12:11:29 -0800
-In-Reply-To: <20251107201151.3303170-1-jmattson@google.com>
+        d=1e100.net; s=20230601; t=1762546368; x=1763151168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gmLBjJR7+9+QwX0fWKlfYtGSCTKiJyl3M6K88B8Ym2w=;
+        b=i9gFJdYxaIDtjmn7hfZSly7PnT7Ek2crHhnxkILT3msgL5aJ+lgZ/04+mrouRqZ3ic
+         JcFsGHcA75uioxk/+VboTStbC8zE+yOy5AiapYfgkuFU4Cui/M+zlBIZd+QV5hNlbWLy
+         FQzNHBazX35HGkU+Z7yKaKLFcFXWp7U5Vdz6I8O6MIz1DIkbU9tAFS1Qf3B480dSd4pA
+         vSnrMD5ji9BQiGCFU787wsOI0y0WMZPLHkmi+BedNEXTe2iAPvVHXOgTVXWNscSWWE2G
+         HErvMm/QYUY2PVAuy/gmCyiI095oqxRV/STmI3fm89XivX1MTH8906ujqTBTgDo4HY1M
+         jzwA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7EUhfPgrHuw0891Q08r/vO2ixA1u1qKappkIXgrHeE5MFIPVForgqlkT9CAxWD8MahbXyuBRYOB8eYR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKsqjGG96eAzAM5e79WTgLyAQVFRpUi3DS7ij+mootNjaSvj7W
+	rSo8lRBYuGatA7ldM67vAd4+DhpidTiMoGFNu2gWdVwmq3OXEcW4a1zL
+X-Gm-Gg: ASbGncvGsZNSbrbvBV5IqSvjlxmHAfsS/r812EbYXHH3oEfv33Ga4BvBZaQinvJ3JPe
+	pGtDpoGlXxZ2n84ZkqlYdByQdQO7U7lw+Y3rI9MS7ucK8G0WeDylvTz1VTsYzGxJnCcjXdCzgUX
+	R3CXwtmojDDWOUCp7u+1UXcgYzNDoJCwMjd3rpVuWds4dadZuQio8pb5GBPPZUphxKzU3ymKGCc
+	ZDGWy7iqSfUYRad+hCHLfYGggj+t7eDgYi99qV1oXVj0ltQkbUn37AQKf1TWxAYXXmV0QMWOMqD
+	Akm4nFZkmuDjhVQ4DE+OHzZTGgM/33lKkgd176Q4WoylOpPH3ILUn8xpOtpFwPKpeqCZPAGAs6d
+	jlVD0LxCv99I3QcxaWu+gSnu+kNIlmez9A7hmHQ3X+YDl5BvMSOesRoQZKM2e1F5sdGzF9nJHXB
+	5oYMGW+qRl79HjHUKL0X/qgg==
+X-Google-Smtp-Source: AGHT+IGquAvMPEEx3nkW2d82X3WNn0DCOofSOoddPCdlJEAt8dKqkNI+ctNil0/sdM1xqx2QGMDKyA==
+X-Received: by 2002:a05:6a20:72a4:b0:334:91ab:f189 with SMTP id adf61e73a8af0-3538b000317mr757236637.22.1762546368290;
+        Fri, 07 Nov 2025 12:12:48 -0800 (PST)
+Received: from iku.. ([2401:4900:1c07:5fe8:9724:b1da:3d06:ab48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17784bsm3828553b3a.47.2025.11.07.12.12.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 12:12:47 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v2 0/3] net: phy: mscc: Add support for PHY LED control
+Date: Fri,  7 Nov 2025 20:12:29 +0000
+Message-ID: <20251107201232.282152-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251107201151.3303170-1-jmattson@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251107201151.3303170-7-jmattson@google.com>
-Subject: [RFC PATCH 6/6] KVM: x86: nSVM: Use cached VMCB12 g_pat in VMCB02
- when using NPT
-From: Jim Mattson <jmattson@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Alexander Graf <agraf@suse.de>, Joerg Roedel <joro@8bytes.org>, 
-	Avi Kivity <avi@redhat.com>, 
-	"=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>, David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-When nested paging is enabled in VMCB12, copy the (cached and
-validated) VMCB12 g_pat to VMCB02.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Fixes: 15038e147247 ("KVM: SVM: obey guest PAT")
-Signed-off-by: Jim Mattson <jmattson@google.com>
----
- arch/x86/kvm/svm/nested.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Hi All,
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index 43429399993c..21d8db10525d 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -605,8 +605,10 @@ void nested_vmcb02_compute_g_pat(struct vcpu_svm *svm)
- 	if (!svm->nested.vmcb02.ptr)
- 		return;
- 
--	/* FIXME: merge g_pat from vmcb01 and vmcb12.  */
--	svm->nested.vmcb02.ptr->save.g_pat = svm->vmcb01.ptr->save.g_pat;
-+	if (nested_npt_enabled(svm))
-+		svm->nested.vmcb02.ptr->save.g_pat = svm->nested.ctl.g_pat;
-+	else
-+		svm->nested.vmcb02.ptr->save.g_pat = svm->vmcb01.ptr->save.g_pat;
- }
- 
- static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12)
+This patch series adds support for controlling the PHY LEDs on the
+VSC85xx family of PHYs from Microsemi (now part of Renesas).
+The first two patches simplify and consolidate existing probe code
+the third patch introduces the LED control functionality.
+The LED control feature allows users to configure the LED behavior
+based on link activity, speed, and other criteria.
+
+v1->v2:
+- Patches 1/3 and 2/3 are new.
+- Added LED control support to all VSC85xx PHY variants.
+- Renamed led callbacks to vsc85xx_* for consistency.
+- Defaulted the LEDs on probe to the default array before parsing DT.
+- Used phy_modify() in vsc85xx_led_brightness_set()
+- Return value of phy_read() checked in vsc85xx_led_hw_control_get()
+- Reverse Christmas tree in vsc85xx_led_hw_is_supported()
+- Updated the commit message to clarify the LED combine feature behavior.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (3):
+  net: phy: mscc: Simplify LED mode update using phy_modify()
+  net: phy: mscc: Consolidate probe functions into a common helper
+  net: phy: mscc: Add support for PHY LED control
+
+ drivers/net/phy/mscc/mscc.h      |   4 +
+ drivers/net/phy/mscc/mscc_main.c | 438 ++++++++++++++++++++++++-------
+ 2 files changed, 349 insertions(+), 93 deletions(-)
+
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+2.43.0
 
 
