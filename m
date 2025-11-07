@@ -1,179 +1,482 @@
-Return-Path: <linux-kernel+bounces-889626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF09C3E12F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:04:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC04C3E13A
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94D9E4E17BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:03:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7816B4E20A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D558E2EB5A1;
-	Fri,  7 Nov 2025 01:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2182EDD5F;
+	Fri,  7 Nov 2025 01:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q7Ee4k/G"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010053.outbound.protection.outlook.com [52.101.201.53])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kS0M4ouR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9412F2BF3CC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 01:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762477435; cv=fail; b=sL+tT4tZIL2dpJE9BqAJ2B6CY7Gdc5f2qMKxixXiAwbaXSpgqRSo6n+UxA2qLlgb/1MGwYrgq2yDA0M8QWnhc98SgeQ+uDCvM/CReURNw+q1lDBor2rkfsfg4mFTyNnnRV5s2zxo+LcAEoXRQa6/4t2mZ3POGhp0NDaOHTBATE0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762477435; c=relaxed/simple;
-	bh=zcJ8N0skGCTle7tnPAgoXbtfG9WKvMLPqR47TGqh5sQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ryYN9YDGY74nZUUKMeBOojbtvLuukj9a+YqtF1UPadti5zc65mDzsByZ6Ca6levsyot5Maytdf5Xg/GLjNjrnZzy7eUxjv5JxI+X+CMKXsuw0zvaNTeSKoliELnDZKlFdpPxqMmLF4JFsyhjAY6k8rLM2LFNdDCJ/6r4qtRVXlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q7Ee4k/G; arc=fail smtp.client-ip=52.101.201.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lxjd4YeyH0hdWGDjpg1tfdNlS6mUUoVYqy3IeXbNEg8iIZz3+j+p/lbnNgVRKWvL1iQr7VBX0gAz2wVv7I1Jb2q14wJTCTd95rNa2ANWd6NZrQFogO6bxs5QB4LUFLR/1p9ojRaLP42G+6KlQP032RrdS4hVo8cV/yxcx8hyky/WbbgyPm120txmBo1n39X72XG49j9eV31UxdWEMXud7ObIBCE5X7r4d0orHCtzf0YEq7gn8l4WK09VYv2HY9UMs2qB0q9zcYG5jzn8sjnGctaBpQmk+RGG7ONH5RJSnwMbVjFn4sW3zArUGsStQtdi3UPZIXPOtnm3uwbNcxTEWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8yC+XOzccmcZGeZOpNfqgwPaoJ4j9QK0dV5uPRWFI64=;
- b=EwkAUZ0DOoNHMncTmdy0w23nirPtJ98S6VGZxT4x7ehUw9Z45+rl4Zi4WqlQV6xKyC8lVPtY1IklAmVFIgc9dzFr451NSgVXh9LGWoSPaEIi6Leg++X2460AtBSMCiKJ4ka5FXr1Zvk2K5724+bhFOMKfNhqCxjs3u9aMGt8G3oZcJFkGdrl66+5ZuGrM3vyEyDIp48gZ+IwLB1oUrrGF5TbGhj7A7GvISR2bLO3/Xa3f/tfCNXym3yTTU7nJIzld4AbHihEnxi4vzQPp7YcqZdfFAZeez2KAezgLJXqv3jd8vqLemrGPsIpiosN08z5uPvGCDPoR9XnjzxBTdUj0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8yC+XOzccmcZGeZOpNfqgwPaoJ4j9QK0dV5uPRWFI64=;
- b=Q7Ee4k/GVju4iCCFAlgRo7E3Ugc6ghrb9Z7e3Didfz2SQM60t8JzfEscyBoCaw8oFPrDq4WqRZnJeI5xlSIdW34tfE5Xc9tBEAIfi36N4ipFQE5yJQV8xQjlSFfB2pC1czpqc46TAoclaGnyf2J2anq+LxyPYn+HZ6jHbAsOeQarE9n5Z20jUIm1lzjv5rEa2K1YuOP5UAmXqfUxUoqgBWx8bD6wPBDtCGXcDeARI2E8Ph7WHEkGwlqOASvKgkRn+H+p1ef2eDl9SvpUDgxNLPwkjm2zmfKrD2tuVERBH8hooXIzS4Vj4JWA9AY+0gX6UClCoPujGo+116d4l4vchw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by MN2PR12MB4391.namprd12.prod.outlook.com (2603:10b6:208:269::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 01:03:50 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9298.006; Fri, 7 Nov 2025
- 01:03:50 +0000
-Date: Thu, 6 Nov 2025 21:03:49 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Wei Wang <wei.w.wang@hotmail.com>
-Cc: alex@shazbot.org, suravee.suthikulpanit@amd.com,
-	thomas.lendacky@amd.com, joro@8bytes.org, kevin.tian@intel.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [PATCH v2 2/2] vfio/type1: Set IOMMU_MMIO in dma->prot for
- MMIO-backed addresses
-Message-ID: <20251107010349.GD1708009@nvidia.com>
-References: <SI2PR01MB439373CA7A023D8EC4C42040DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <SI2PR01MB4393DFDCB2788CB823DAEC64DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SI2PR01MB4393DFDCB2788CB823DAEC64DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
-X-ClientProxiedBy: MN0P223CA0015.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:52b::9) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A9D2DBF4B;
+	Fri,  7 Nov 2025 01:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762477475; cv=none; b=r7OoJjeg9yq8rSi2Ljdrz0FES8NInDY7Pqvw3QLfhV22IGl/Ey0qyoREcgy7vDKmxcpbufk+279WR/nqH6m+IKaSd3rJ2M1GfDkHhU5zk4ghwTwhM7h83OaRvD3b1R3MF1t+eMlu87CMZlqOjfy2kWBsl1tQFRlRRh02ZxPaKwI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762477475; c=relaxed/simple;
+	bh=v+c+Eymae4mPcUcmjESZ/+FvJ71Tk/yO42lsdueuE+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OK0WqbPOq7zn++Ume4ETAXeYyoZzhClYJWCemP3h09Xq0AOacxsRJrwiKGR3ZJXXSXOcCWg0mWuYWTS53GPjj6oJ0iwHSFGpd69XS2AUU6fx360y6bH4wpIa4eZIvcJpAnmpPm2q4VP3O9xfP9xzB+kuRjU1sHNfeDiAzl0scMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kS0M4ouR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A11C4CEFB;
+	Fri,  7 Nov 2025 01:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762477474;
+	bh=v+c+Eymae4mPcUcmjESZ/+FvJ71Tk/yO42lsdueuE+k=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=kS0M4ouRiPUZDnSNNGGA5Bd3kYTyyOdBX8CYVbEhuOT+e/YLy9k1OSote4J711A1y
+	 xqNr8xNOsXZMDzyQRk7uu4Nr2w69C/PzO/XqlGRqun3h7xyAM0EpN/VrRVu92fx9jG
+	 Q6rRSvmQqi2zZiqC9Bhxz9yhuJh9YUlwjIupEdFndK1UQdoXeSzdwuzHuJTnuyQ03T
+	 fctOdpz1g/r/thF7FgBMDJfxcJ1GdaSdQjRQxrN0W9K7hvSOtf8d8n0Sp4RP+w/BB5
+	 9mOyrrJpneJNQnEAnTdE54tKeHWOD6jFO/3eqj4i8+eG4f1QXF8rg52P2XjOa6J6UO
+	 DTJLLO4KrLU+w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9023DCE0B24; Thu,  6 Nov 2025 17:04:33 -0800 (PST)
+Date: Thu, 6 Nov 2025 17:04:33 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	bpf@vger.kernel.org, frederic@kernel.org
+Subject: Re: [PATCH v2 10/16] tracing: Guard __DECLARE_TRACE() use of
+ __DO_TRACE_CALL() with SRCU-fast
+Message-ID: <46365769-2b3a-4da1-a926-1b3e489d434a@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
+ <20251105203216.2701005-10-paulmck@kernel.org>
+ <20251106110230.08e877ff@batman.local.home>
+ <522b01cf-0cb6-4766-9102-2d08a3983d8a@paulmck-laptop>
+ <20251106121005.76087677@gandalf.local.home>
+ <eb59555d-f3e8-47c9-b519-a7b628e68885@paulmck-laptop>
+ <20251106190314.5a43cc10@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|MN2PR12MB4391:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b8c2ac8-f7ce-42a1-828b-08de1d99837d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zFUOurx05QI4EU7uds6DWKQwcwxAEHogrnpnqmx1a+ix71kJFD30iGYYnq1X?=
- =?us-ascii?Q?4iXYXvOnEm6TtCDOqolY0mZspXOeoX5YlJKSpRMOaoqciebpwZyMB0acc86I?=
- =?us-ascii?Q?bttuyHb8Bfxa0L0kokfj2WJULOBiKF7HR5Gpdei0Uv6spjOCX4BttRJH9k4A?=
- =?us-ascii?Q?gzdHn71I5CV43k/xLKVL5ZpzL6FM5bWVjLHgDCnh/M2DJcTx0abAhtE5LWZ7?=
- =?us-ascii?Q?HfWiZtyGeOldW7AN1aPONoEVf1KVBuzbKaJjTjjKDJicdTkAI7cCTlEIEypU?=
- =?us-ascii?Q?3t5p4YLfwVe90uucd8cMGGxjmKs25XjKaZ1TEoRKRt5lTc76VtJMq/qwNFsL?=
- =?us-ascii?Q?Yb5CjXDpZ/IvCQKaRxzt9GDcAP8z56CjClemFxnVphDqFABtpgWT2YUUDKGs?=
- =?us-ascii?Q?xtxUSxL5WGqsN/Aa8ZlniHTiMmADWD+L/hZvZgwdeG7qn0DBHywcEEwn5V+e?=
- =?us-ascii?Q?4RLfA9PEfW6qAtEov4NkDo4tG12eQ2IthsRPkb6ezDnWZkD/N/8GfGhGT2Yd?=
- =?us-ascii?Q?qvu850huG3nsxF8auz5TE2E33FydIZSg2Gk4KIOYw2lX+HGne+FSCZeDYWq6?=
- =?us-ascii?Q?ylyogJgmYD/BCag+svlE/JivLVYevc29Ba+ZlOPrhisBciT1EZPzP1UxBnCX?=
- =?us-ascii?Q?e6YNuiexgtEu4zFxOjBBbIUeN73raXjJxgFoRXO20btrVXK49VNPrpviigZx?=
- =?us-ascii?Q?9m87e1MZsHLgw0KfL4bN+h4Dc1WQl7N2oCWdhrDLpHq7C2htbN6o1WOwwX3C?=
- =?us-ascii?Q?r3xHzems/rNs4xknDlW8bgLwN9OkRP78Hnws9lHLazRZ10Y6lbqsYFsJ3g/D?=
- =?us-ascii?Q?dWtx4Ad/+TCiZ8FKlZI4STrwxiwFLoRXssItS9i/A4Ng+bP1d88/NrnSW2Rj?=
- =?us-ascii?Q?42BpQMuQPe7vSz0xYnO+1jQLWfPYN/1WKCuEUxfGSGy6rFufJleIJD7wOPlQ?=
- =?us-ascii?Q?xJA0z1ebSk9icbgoUU4L1BM4tTCv/Z3ubPTDlkZ0pHvQXmejhCmZkvnztPs/?=
- =?us-ascii?Q?LN+o5tWvw4f/hiQKSQ4UAjMXQs+oB7qS02XwVm9x2b8Koo69pJfYdbw9lIai?=
- =?us-ascii?Q?kRgmnbhJbSq+WWuckw+Fi1yzRZhao3HRHctTa34AsOhAyY/YqaC7kcUdfFRD?=
- =?us-ascii?Q?626vFrMfPogs9iIB5zpbC73togICklpor8lxtr49X/enWaPny8MxXAZoouqL?=
- =?us-ascii?Q?XpHrAUVOEbnzeGG93IK4hY+9T6TzlZhgzHjGZpK+NwCCt3rDOeUf9ugP9TPy?=
- =?us-ascii?Q?duKm6K224KQTuCvfvaGTYAn9PsXzHCVJBL1u4J6LQ9YlxW9aVpvKQc+DIKh0?=
- =?us-ascii?Q?ir7+4yCOc3tzGmGsoeiZM3RIwmDWxMYgz4gAVzC350oXzezaV3br6XUCKlga?=
- =?us-ascii?Q?sVyTBYdG5RaFcdXd/YNbaJfbc2Jzeey+SsiVVu4JJ3gpufpIBqg71qbBLcC+?=
- =?us-ascii?Q?x2/5w1AgDTWEGRSJQHuMmglXupNJrR6y?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IBISujpdrPdq8gGuDbLc6riplRFc88UH53EzVRtmY2vPZF37739UpcTE/Hmf?=
- =?us-ascii?Q?gaiLJRmpFlNz7FpBHrY9gV/0BhPP7nXhFmnxJQ2kOrCwJgFXgB6Mcc2OAQhD?=
- =?us-ascii?Q?YTJoV2KDVsdy2b9T631L9hPjhmnwGaf404iRc3ZyIhJ1sT6Yghc95pREaEYz?=
- =?us-ascii?Q?gX3XodjW0g4riQRjvvpvgBZuPNHPGJV4XUxHA2tJmky0yh9n6oZSNFHKO/Yi?=
- =?us-ascii?Q?Khd0GE9umsxy90iJMmU+RoS9+F6eej87TQFnO1DW7S8onO6dZSmBZnda1tbE?=
- =?us-ascii?Q?oY1nDF6J+QSB9nV51d4s/XF4292yOKFjc5gwNG4dPHH5NbW2JWVZqL+biC+B?=
- =?us-ascii?Q?ZbGA+6SMlN9s4lDO5l5shvQ0Kbzm63LBNgu5KIPyaIuV+fj1TxAoU80LFbHo?=
- =?us-ascii?Q?LC9WLCm+fahMCU1Kn5Nt/mIkP487cNHDvKaxSdpfoLj+FJs/NT4QPVkX4k5z?=
- =?us-ascii?Q?3y+SzMlNqg6hLnQzJmzYz+9D+O/Mvp7KjbzFS0+sb2ygx694hYsayPMmZGrA?=
- =?us-ascii?Q?yYHhBFo9BRG7ds1Rt9fBGedib28srf+jXNELNWj5zYCK31hsOZNdAWVnoJ/B?=
- =?us-ascii?Q?xGg74TCu+qyPBnR6ClfIaDElBHLONG504IUx6kdaQu8dcEQo5BBG3Faobfd7?=
- =?us-ascii?Q?2WvBN8QBhPfk2eRJNXYOJRa5ZeopAFGm7c78a6nNP2Kl7PbZCcwKV0vxdl/p?=
- =?us-ascii?Q?eUC8Cb8eQ77HlHgHij57nZ0ikJysUzyda2dBJjVr8ZUl1W4B9TGCIJm30E+D?=
- =?us-ascii?Q?65Wm5MmESF2sSIiiMjwG86RuluCgiCfDQaVpl1zkmEIP/ylz2ro+/AZn3ioM?=
- =?us-ascii?Q?YFGmDqPR19XaSHgBYpPc1SitVIKelqirsH2pvA19SJTMvZgax2xSAEu4u85S?=
- =?us-ascii?Q?ZiRcvk9mmu7QIs3e977NXRfC+nsCr/YXDPnbNReKJGankadGulJgxoukp5Pt?=
- =?us-ascii?Q?Y3pnp1qaFqygF3yOXIFL0lmwg9e4y/WFTG3U6WxySZyyN4Ehzocdh1yTrVOo?=
- =?us-ascii?Q?TyKCoGJcE8aJ+LHMgJ+d37la78pVknwc/bYWPo2I/eZUE8cRVG5B4caC62+C?=
- =?us-ascii?Q?gCx40wdGWeuaCNcXu6UXEMcmlD8K1335PSAItrcxjpm+OISvd0yohbzKY+ef?=
- =?us-ascii?Q?FBzYwLUqUH1XP19OGKEn5uMHJrb5TzwQdqFpjHZkRnMQV12tZF1uMEK0S0sX?=
- =?us-ascii?Q?NMkgXbCLmK7dJgw3AErp7zyqnafp0vJnqeT7FQkluqYU2X7hkX2RxQ6TsDzO?=
- =?us-ascii?Q?p921s4Bfg5JkTqmLM5zsz/Wyfyy81nJlAsAkrlbGneO3Z3BIiUxZcn1gRfXA?=
- =?us-ascii?Q?R4s/E9dN0BaTtHUYeU644iv46Nt5aCoooRJxAy+6hOxgoFOKJOC4n8EfSbB/?=
- =?us-ascii?Q?207zYjSsGeftMnKe9AgOETKrQ2srGiPtRJ9Jk81lnyCVMZt/1K1Bc7nAZX1n?=
- =?us-ascii?Q?d48e8zKmqefd5Wz6XPcxYX584fFPuirCq5Bf7Lu6+xOM39nKlxonTdI3nE9L?=
- =?us-ascii?Q?Fs3+2ngtZ7TZ3YJbUfPiOK61NzucJ/uLWswzc54lPGnmDT7eveHYpH1JLdsu?=
- =?us-ascii?Q?8gX6jEgfNKSybMJ89Zo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b8c2ac8-f7ce-42a1-828b-08de1d99837d
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 01:03:50.8115
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YxFhdZ92qkjnSC5LxE2Xv0CdEcNSHmAEXQ8LjSIHFt5j5M5a2dWH3j0gOMMyE8Z8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4391
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106190314.5a43cc10@gandalf.local.home>
 
-On Mon, Nov 03, 2025 at 10:00:34PM +0800, Wei Wang wrote:
-> Before requesting the IOMMU driver to map an IOVA to a physical address,
-> set the IOMMU_MMIO flag in dma->prot when the physical address corresponds
-> to MMIO. This allows the IOMMU driver to handle MMIO mappings specially.
-> For example, on AMD CPUs with SME enabled, the AMD IOMMU driver avoids
-> setting the C-bit if iommu_map() is called with IOMMU_MMIO set in prot.
-> This prevents issues with PCIe P2P communication, since current PCIe
-> switches and devices do not interpret the C-bit correctly.
+On Thu, Nov 06, 2025 at 07:03:14PM -0500, Steven Rostedt wrote:
+> On Thu, 6 Nov 2025 09:52:28 -0800
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
 > 
-> Signed-off-by: Wei Wang <wei.w.wang@hotmail.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> > Ah, thank you for the clarification!  Will do.
+> 
+> Actually, I was looking to get rid of that preempt disable in that syscall
+> code. You could use this patch instead. I made the necessary updates. It
+> still needs preemption disabled when PREEMPT_RT is not set, but this should
+> be fine, and hopefully doesn't conflict too badly with my own changes.
+> 
+> To get an idea, by blindly adding the preempt disable on non-RT we have this:
+> 
+>          chronyd-544     [006] ...1.   110.216639: lock_release: 0000000099631762 &mm->mmap_lock
+>          chronyd-544     [006] ...1.   110.216640: lock_acquire: 000000003660b68f read rcu_read_lock_trace
+>          chronyd-544     [006] ...1.   110.216641: lock_acquire: 0000000099631762 read &mm->mmap_lock
+>          chronyd-544     [006] ...1.   110.216641: lock_release: 0000000099631762 &mm->mmap_lock
+>          chronyd-544     [006] .....   110.216642: sys_exit: NR 270 = 0
+>          chronyd-544     [006] ...1.   110.216642: lock_acquire: 0000000099631762 read &mm->mmap_lock
+>          chronyd-544     [006] ...1.   110.216643: lock_release: 0000000099631762 &mm->mmap_lock
+>          chronyd-544     [006] .....   110.216643: sys_pselect6 -> 0x0
+>          chronyd-544     [006] ...1.   110.216644: lock_release: 000000003660b68f rcu_read_lock_trace
+>          chronyd-544     [006] d..1.   110.216644: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
+>          chronyd-544     [006] d..1.   110.216645: irq_enable: caller=exit_to_user_mode_loop+0x57/0x140 parent=0x0
+>          chronyd-544     [006] ...1.   110.216646: lock_acquire: 0000000099631762 read &mm->mmap_lock
+> 
+> All those "...1." is the tracer saying that preempt was disabled when it
+> was not. The two without it ("....") are the syscall routines (which didn't
+> change).
+> 
+> Now with RT enabled:
+> 
+>  systemd-journal-435     [006] d..2.    63.884924: lock_release: 00000000ee02c684 &lock->wait_lock
+>  systemd-journal-435     [006] d..2.    63.884924: irq_enable: caller=_raw_spin_unlock_irqrestore+0x44/0x70 parent=0x0
+>  systemd-journal-435     [006] ....1    63.884926: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884926: lock_release: 00000000501e1144 &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884927: lock_acquire: 0000000000a1d734 read rcu_read_lock_trace
+>  systemd-journal-435     [006] ....1    63.884928: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884929: lock_release: 00000000501e1144 &mm->mmap_lock
+>  systemd-journal-435     [006] .....    63.884929: sys_exit: NR 232 = 1
+>  systemd-journal-435     [006] ....1    63.884929: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884930: lock_release: 00000000501e1144 &mm->mmap_lock
+>  systemd-journal-435     [006] .....    63.884930: sys_epoll_wait -> 0x1
+>  systemd-journal-435     [006] ....1    63.884931: lock_release: 0000000000a1d734 rcu_read_lock_trace
+>  systemd-journal-435     [006] d..1.    63.884931: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
+>  systemd-journal-435     [006] d..1.    63.884932: irq_enable: caller=exit_to_user_mode_loop+0x57/0x140 parent=0x0
+>  systemd-journal-435     [006] ....1    63.884933: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884933: lock_release: 00000000501e1144 &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884934: lock_acquire: 00000000501e1144 read &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884935: lock_release: 00000000501e1144 &mm->mmap_lock
+>  systemd-journal-435     [006] ....1    63.884935: rseq_update: cpu_id=6 node_id=0 mm_cid=0
+>  systemd-journal-435     [006] d..1.    63.884936: irq_disable: caller=exit_to_user_mode_loop+0x3d/0x140 parent=0x0
+>  systemd-journal-435     [006] d..1.    63.884937: x86_fpu_regs_activated: x86/fpu: 00000000e86f3727 load: 1 xfeatures: 3 xcomp_bv: 0
+>  systemd-journal-435     [006] d..1.    63.884938: irq_enable: caller=do_syscall_64+0x167/0x9a0 parent=0x0
+>  systemd-journal-435     [006] d..1.    63.884944: irq_disable: caller=do_syscall_64+0x35/0x9a0 parent=0x0
+> 
+> It gets a bit more confusing. We see "migrate disabled" (the last number)
+> except when preemption is enabled.
 
-This may be the best you can do with vfio type1, but just because the
-VMA is special doesn't necessarily mean it is MMIO, nor does it mean
-it is decrypted memory.
+Huh.  Would something like "...11" indicate that both preemption and
+migration are disabled?
 
-I think to really make this work fully properly going forward people
-are going to have to use iommufd's dmabuf.
+>                                    That's because in your code, we only do
+> the migrate dance when preemption is disabled:
+> 
+> > +			if (IS_ENABLED(CONFIG_PREEMPT_RT) && preemptible()) {	\
 
-Jason
+You lost me on this one.  Wouldn't the "preemptible()" condition in that
+"if" statement mean that migration is disabled only when preemption
+is *enabled*?
+
+What am I missing here?
+
+> > +				guard(srcu_fast_notrace)(&tracepoint_srcu);	\
+> > +				guard(migrate)();				\
+> > +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> > +			} else {						\
+> > +				guard(preempt_notrace)();			\
+> > +				__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> > +			}
+> 
+> And that will make accounting in the trace event callback much more
+> difficult, when it's sometimes disabling migration and sometimes disabling
+> preemption. It must do one or the other. It can't be conditional like that.
+> 
+> With my update below, it goes back to normal:
+> 
+>             bash-1040    [004] d..2.    49.339890: lock_release: 000000001d24683a tasklist_lock
+>             bash-1040    [004] d..2.    49.339890: irq_enable: caller=_raw_write_unlock_irq+0x28/0x50 parent=0x0
+>             bash-1040    [004] ...1.    49.339891: lock_release: 00000000246b21a5 rcu_read_lock
+>             bash-1040    [004] .....    49.339891: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+>             bash-1040    [004] .....    49.339892: lock_release: 0000000084e3738a &mm->mmap_lock
+>             bash-1040    [004] .....    49.339892: lock_acquire: 00000000f5b22878 read rcu_read_lock_trace
+>             bash-1040    [004] .....    49.339892: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+>             bash-1040    [004] .....    49.339893: lock_release: 0000000084e3738a &mm->mmap_lock
+>             bash-1040    [004] .....    49.339893: sys_exit: NR 109 = 0
+>             bash-1040    [004] .....    49.339893: lock_acquire: 0000000084e3738a read &mm->mmap_lock
+>             bash-1040    [004] .....    49.339894: lock_release: 0000000084e3738a &mm->mmap_lock
+>             bash-1040    [004] .....    49.339894: sys_setpgid -> 0x0
+>             bash-1040    [004] .....    49.339895: lock_release: 00000000f5b22878 rcu_read_lock_trace
+>             bash-1040    [004] d....    49.339895: irq_disable: caller=do_syscall_64+0x37a/0x9a0 parent=0x0
+>             bash-1040    [004] d....    49.339895: irq_enable: caller=do_syscall_64+0x167/0x9a0 parent=0x0
+>             bash-1040    [004] d....    49.339897: irq_disable: caller=irqentry_enter+0x57/0x60 parent=0x0
+> 
+> I did some minor testing of this patch both with and without PREEMPT_RT
+> enabled. This replaces this current patch. Feel free to use it.
+
+OK, I will add it with your SoB and give it a spin.  Thank you!
+
+							Thanx, Paul
+
+> -- Steve
+> 
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index 04307a19cde3..0a276e51d855 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -221,6 +221,26 @@ static inline unsigned int tracing_gen_ctx_dec(void)
+>  	return trace_ctx;
+>  }
+>  
+> +/*
+> + * When PREEMPT_RT is enabled, trace events are called with disabled
+> + * migration. The trace events need to know if the tracepoint disabled
+> + * migration or not so that what is recorded to the ring buffer shows
+> + * the state of when the trace event triggered, and not the state caused
+> + * by the trace event.
+> + */
+> +#ifdef CONFIG_PREEMPT_RT
+> +static inline unsigned int tracing_gen_ctx_dec_cond(void)
+> +{
+> +	unsigned int trace_ctx;
+> +
+> +	trace_ctx = tracing_gen_ctx_dec();
+> +	/* The migration counter starts at bit 4 */
+> +	return trace_ctx - (1 << 4);
+> +}
+> +#else
+> +# define tracing_gen_ctx_dec_cond() tracing_gen_ctx_dec()
+> +#endif
+> +
+>  struct trace_event_file;
+>  
+>  struct ring_buffer_event *
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 826ce3f8e1f8..5294110c3e84 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -100,6 +100,25 @@ void for_each_tracepoint_in_module(struct module *mod,
+>  }
+>  #endif /* CONFIG_MODULES */
+>  
+> +/*
+> + * BPF programs can attach to the tracepoint callbacks. But if the
+> + * callbacks are called with preemption disabled, the BPF programs
+> + * can cause quite a bit of latency. When PREEMPT_RT is enabled,
+> + * instead of disabling preemption, use srcu_fast_notrace() for
+> + * synchronization. As BPF programs that are attached to tracepoints
+> + * expect to stay on the same CPU, also disable migration.
+> + */
+> +#ifdef CONFIG_PREEMPT_RT
+> +extern struct srcu_struct tracepoint_srcu;
+> +# define tracepoint_sync() synchronize_srcu(&tracepoint_srcu);
+> +# define tracepoint_guard()				\
+> +	guard(srcu_fast_notrace)(&tracepoint_srcu);	\
+> +	guard(migrate)()
+> +#else
+> +# define tracepoint_sync() synchronize_rcu();
+> +# define tracepoint_guard() guard(preempt_notrace)()
+> +#endif
+> +
+>  /*
+>   * tracepoint_synchronize_unregister must be called between the last tracepoint
+>   * probe unregistration and the end of module exit to make sure there is no
+> @@ -115,7 +134,7 @@ void for_each_tracepoint_in_module(struct module *mod,
+>  static inline void tracepoint_synchronize_unregister(void)
+>  {
+>  	synchronize_rcu_tasks_trace();
+> -	synchronize_rcu();
+> +	tracepoint_sync();
+>  }
+>  static inline bool tracepoint_is_faultable(struct tracepoint *tp)
+>  {
+> @@ -266,12 +285,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>  		return static_branch_unlikely(&__tracepoint_##name.key);\
+>  	}
+>  
+> -#define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
+> +#define __DECLARE_TRACE(name, proto, args, cond, data_proto)			\
+>  	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
+>  	static inline void __do_trace_##name(proto)			\
+>  	{								\
+>  		if (cond) {						\
+> -			guard(preempt_notrace)();			\
+> +			tracepoint_guard();				\
+>  			__DO_TRACE_CALL(name, TP_ARGS(args));		\
+>  		}							\
+>  	}								\
+> diff --git a/include/trace/perf.h b/include/trace/perf.h
+> index a1754b73a8f5..348ad1d9b556 100644
+> --- a/include/trace/perf.h
+> +++ b/include/trace/perf.h
+> @@ -71,6 +71,7 @@ perf_trace_##call(void *__data, proto)					\
+>  	u64 __count __attribute__((unused));				\
+>  	struct task_struct *__task __attribute__((unused));		\
+>  									\
+> +	guard(preempt_notrace)();					\
+>  	do_perf_trace_##call(__data, args);				\
+>  }
+>  
+> @@ -85,9 +86,8 @@ perf_trace_##call(void *__data, proto)					\
+>  	struct task_struct *__task __attribute__((unused));		\
+>  									\
+>  	might_fault();							\
+> -	preempt_disable_notrace();					\
+> +	guard(preempt_notrace)();					\
+>  	do_perf_trace_##call(__data, args);				\
+> -	preempt_enable_notrace();					\
+>  }
+>  
+>  /*
+> diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+> index 4f22136fd465..6fb58387e9f1 100644
+> --- a/include/trace/trace_events.h
+> +++ b/include/trace/trace_events.h
+> @@ -429,6 +429,22 @@ do_trace_event_raw_event_##call(void *__data, proto)			\
+>  	trace_event_buffer_commit(&fbuffer);				\
+>  }
+>  
+> +/*
+> + * When PREEMPT_RT is enabled, the tracepoint does not disable preemption
+> + * but instead disables migration. The callbacks for the trace events
+> + * need to have a consistent state so that it can reflect the proper
+> + * preempt_disabled counter.
+> + */
+> +#ifdef CONFIG_PREEMPT_RT
+> +/* disable preemption for RT so that the counters still match */
+> +# define trace_event_guard() guard(preempt_notrace)()
+> +/* Have syscalls up the migrate disable counter to emulate non-syscalls */
+> +# define trace_syscall_event_guard() guard(migrate)()
+> +#else
+> +# define trace_event_guard()
+> +# define trace_syscall_event_guard()
+> +#endif
+> +
+>  #undef DECLARE_EVENT_CLASS
+>  #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print)	\
+>  __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+> @@ -436,6 +452,7 @@ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+>  static notrace void							\
+>  trace_event_raw_event_##call(void *__data, proto)			\
+>  {									\
+> +	trace_event_guard();						\
+>  	do_trace_event_raw_event_##call(__data, args);			\
+>  }
+>  
+> @@ -447,9 +464,9 @@ static notrace void							\
+>  trace_event_raw_event_##call(void *__data, proto)			\
+>  {									\
+>  	might_fault();							\
+> -	preempt_disable_notrace();					\
+> +	trace_syscall_event_guard();					\
+> +	guard(preempt_notrace)();					\
+>  	do_trace_event_raw_event_##call(__data, args);			\
+> -	preempt_enable_notrace();					\
+>  }
+>  
+>  /*
+> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> index e00da4182deb..000665649fcb 100644
+> --- a/kernel/trace/trace_events.c
+> +++ b/kernel/trace/trace_events.c
+> @@ -659,13 +659,7 @@ void *trace_event_buffer_reserve(struct trace_event_buffer *fbuffer,
+>  	    trace_event_ignore_this_pid(trace_file))
+>  		return NULL;
+>  
+> -	/*
+> -	 * If CONFIG_PREEMPTION is enabled, then the tracepoint itself disables
+> -	 * preemption (adding one to the preempt_count). Since we are
+> -	 * interested in the preempt_count at the time the tracepoint was
+> -	 * hit, we need to subtract one to offset the increment.
+> -	 */
+> -	fbuffer->trace_ctx = tracing_gen_ctx_dec();
+> +	fbuffer->trace_ctx = tracing_gen_ctx_dec_cond();
+>  	fbuffer->trace_file = trace_file;
+>  
+>  	fbuffer->event =
+> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+> index 0f932b22f9ec..3f699b198c56 100644
+> --- a/kernel/trace/trace_syscalls.c
+> +++ b/kernel/trace/trace_syscalls.c
+> @@ -28,6 +28,18 @@ syscall_get_enter_fields(struct trace_event_call *call)
+>  	return &entry->enter_fields;
+>  }
+>  
+> +/*
+> + * When PREEMPT_RT is enabled, it disables migration instead
+> + * of preemption. The pseudo syscall trace events need to match
+> + * so that the counter logic recorded into he ring buffer by
+> + * trace_event_buffer_reserve() still matches what it expects.
+> + */
+> +#ifdef CONFIG_PREEMPT_RT
+> +# define preempt_rt_guard()  guard(migrate)()
+> +#else
+> +# define preempt_rt_guard()
+> +#endif
+> +
+>  extern struct syscall_metadata *__start_syscalls_metadata[];
+>  extern struct syscall_metadata *__stop_syscalls_metadata[];
+>  
+> @@ -310,6 +322,7 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+>  	 * buffer and per-cpu data require preemption to be disabled.
+>  	 */
+>  	might_fault();
+> +	preempt_rt_guard();
+>  	guard(preempt_notrace)();
+>  
+>  	syscall_nr = trace_get_syscall_nr(current, regs);
+> @@ -355,6 +368,7 @@ static void ftrace_syscall_exit(void *data, struct pt_regs *regs, long ret)
+>  	 * buffer and per-cpu data require preemption to be disabled.
+>  	 */
+>  	might_fault();
+> +	preempt_rt_guard();
+>  	guard(preempt_notrace)();
+>  
+>  	syscall_nr = trace_get_syscall_nr(current, regs);
+> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+> index 62719d2941c9..6a6bcf86bfbe 100644
+> --- a/kernel/tracepoint.c
+> +++ b/kernel/tracepoint.c
+> @@ -25,6 +25,12 @@ enum tp_func_state {
+>  extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+>  extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+>  
+> +/* In PREEMPT_RT, SRCU is used to protect the tracepoint callbacks */
+> +#ifdef CONFIG_PREEMPT_RT
+> +DEFINE_SRCU_FAST(tracepoint_srcu);
+> +EXPORT_SYMBOL_GPL(tracepoint_srcu);
+> +#endif
+> +
+>  enum tp_transition_sync {
+>  	TP_TRANSITION_SYNC_1_0_1,
+>  	TP_TRANSITION_SYNC_N_2_1,
+> @@ -34,6 +40,7 @@ enum tp_transition_sync {
+>  
+>  struct tp_transition_snapshot {
+>  	unsigned long rcu;
+> +	unsigned long srcu_gp;
+>  	bool ongoing;
+>  };
+>  
+> @@ -46,6 +53,9 @@ static void tp_rcu_get_state(enum tp_transition_sync sync)
+>  
+>  	/* Keep the latest get_state snapshot. */
+>  	snapshot->rcu = get_state_synchronize_rcu();
+> +#ifdef CONFIG_PREEMPT_RT
+> +	snapshot->srcu_gp = start_poll_synchronize_srcu(&tracepoint_srcu);
+> +#endif
+>  	snapshot->ongoing = true;
+>  }
+>  
+> @@ -56,6 +66,10 @@ static void tp_rcu_cond_sync(enum tp_transition_sync sync)
+>  	if (!snapshot->ongoing)
+>  		return;
+>  	cond_synchronize_rcu(snapshot->rcu);
+> +#ifdef CONFIG_PREEMPT_RT
+> +	if (!poll_state_synchronize_srcu(&tracepoint_srcu, snapshot->srcu_gp))
+> +		synchronize_srcu(&tracepoint_srcu);
+> +#endif
+>  	snapshot->ongoing = false;
+>  }
+>  
+> @@ -101,10 +115,22 @@ static inline void *allocate_probes(int count)
+>  	return p == NULL ? NULL : p->probes;
+>  }
+>  
+> +#ifdef CONFIG_PREEMPT_RT
+> +static void srcu_free_old_probes(struct rcu_head *head)
+> +{
+> +	kfree(container_of(head, struct tp_probes, rcu));
+> +}
+> +
+> +static void rcu_free_old_probes(struct rcu_head *head)
+> +{
+> +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+> +}
+> +#else
+>  static void rcu_free_old_probes(struct rcu_head *head)
+>  {
+>  	kfree(container_of(head, struct tp_probes, rcu));
+>  }
+> +#endif
+>  
+>  static inline void release_probes(struct tracepoint *tp, struct tracepoint_func *old)
+>  {
+> @@ -112,6 +138,13 @@ static inline void release_probes(struct tracepoint *tp, struct tracepoint_func
+>  		struct tp_probes *tp_probes = container_of(old,
+>  			struct tp_probes, probes[0]);
+>  
+> +		/*
+> +		 * Tracepoint probes are protected by either RCU or
+> +		 * Tasks Trace RCU and also by SRCU.  By calling the SRCU
+> +		 * callback in the [Tasks Trace] RCU callback we cover
+> +		 * both cases. So let us chain the SRCU and [Tasks Trace]
+> +		 * RCU callbacks to wait for both grace periods.
+> +		 */
+>  		if (tracepoint_is_faultable(tp))
+>  			call_rcu_tasks_trace(&tp_probes->rcu, rcu_free_old_probes);
+>  		else
 
