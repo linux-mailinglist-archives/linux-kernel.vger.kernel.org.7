@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-891042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-891043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E5BC41ADA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 22:06:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB10C41B13
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 22:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B905350C46
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 21:06:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2A0C4F594D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 21:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9E130DD37;
-	Fri,  7 Nov 2025 21:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B4533BBDD;
+	Fri,  7 Nov 2025 21:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="KlrOE5Ab"
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Dxrtp3Dp"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD577276058
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 21:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7791334C35
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 21:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762549543; cv=none; b=RtcawdNLG12VceZsgP9/AaLc9R9bP7EkyucK1teGMv7kKlBAga3qCl+QIqY+69vw2+MtTaU1Zs3kZ+JwMmot3jN1pwswVawvpz+uTS2suTzJbMxo0Ss6G5ySqbbKzWXhM+vATHKg9KkkgzPTTB9BKe01FISdsuKLv+PwvqHfqTg=
+	t=1762549544; cv=none; b=lV1qoa7aukbj+hpjZTrhRCnHP3bXhu0L2wELDOb2UmDdG8rLND+AO9cVBuba0H2kQPyOyYEV/uKNG36lsrQKHznXT8W/Dp5A1lI+xb/t1VT+9NlbgIkaUV+i8JeGuJe9CSOTTH8DfmVFEnDc1N6hHOSrio+7s22aLQ+P/zPfV50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762549543; c=relaxed/simple;
-	bh=2AXBG/P4zHHPE991SiFKrlF/2yl4Orgmw9rox7i8sZA=;
+	s=arc-20240116; t=1762549544; c=relaxed/simple;
+	bh=rJJzACH6ND4KsnbPDxqHJ1cqaNF23c/cUIT9/Mg0NMc=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PzrRGYRuKRMS8ZAmna8LRbB3JSNIiz75oKkr2Ym5haT+vECqhDKN07zBwidYNgc7TpWQs4ib+4Xzkt7l5Lv9EXx3reFryKT1Obadac/G1Rxk3gClFuV4nFBcwKgnJB7lv0nqsoC03ZMgkADyzaKhBpxdr6tvevDBdVH2z4q78fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=KlrOE5Ab; arc=none smtp.client-ip=74.125.224.51
+	 MIME-Version; b=XTgmQe1X1Al3QIWtIhJcEv5JeVKtorpehG1ndYZ541eA/xNv/1IEdJyqdLjEbOsN2f5LSzgsbvl6PBquC3hy7xGm8+6qF1L0qRmuSnxQ0vSSV2ZNRrCSPYXHiRVy/VQwtZq2sJFz7F2Xn+/dujGJho3YFjBWQFlFzw/BA4TSfxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Dxrtp3Dp; arc=none smtp.client-ip=209.85.128.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-640d43060d2so186983d50.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 13:05:40 -0800 (PST)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7866c61a9bbso11319437b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 13:05:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762549540; x=1763154340; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1762549542; x=1763154342; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eG3KZj/IJ+feH5LNOQCm1I/xQEDt38CQ/0swaPI9wVw=;
-        b=KlrOE5AbYBpsv4e2mhXSJRLmPj6kQUoPp8bfWosYQg1KcuemMvi+VqHr20Gs6IG7Np
-         tROfxZpQI8C+VW3/ojJiRzQyNKxTV/977xFgNnfJyA2MQk2dvdlDF+TsDsYh6V77UJEc
-         9OClbSPa4kE5JnGEDErFu+/uMY1tr902iyYZbMbRH7aNvGHIyAtIrwFU+3T5aSrUJsMB
-         NppOm/UVb8f35QJA/XMDdnOe2yxintuvRrqY6dNvJLbkL4wkXpNqLAb59ZQehESpSCaZ
-         CbvGZi3IC0cBOuESBiMXnkUAnGXCPp9eRvXeMC9NLQGPwY+y/ecIm6uohrUxkLeacJPJ
-         c07Q==
+        bh=b9ls15f+4MIh5Yb5Zu+WvMWjZ1HqhhM9dptW1sLofus=;
+        b=Dxrtp3DpJ8bM8lUNVIKmMBmLhQroPEWgsBFR8pWmBfpoVhz3x2TFW2ZT8YQtHeAv8n
+         mAs8UBGOJehkVKbX2yFsXnkNzBIeqH4u7ClYrhMp5O5YSfnK3/n2/8Wy2NQAOspk0USY
+         FORl/pAIc2ra5TUvQR4sPksfOVdfwCboqX2GSOBiSwFsAQROk9+SvC5uE/RfooLsaPPv
+         N++K1UzVnHxCu1NC7n9U0DBz2S2/Q85ORQR9sT4ya/Mjq7+LK0NPTnmlDZPOQjcr/Cpx
+         CpzSlw873HUqc0+aitwaUsBz5vZ9Ea/VlGLVc30uH/RS6F8NliiGwK0NidR+IYJAiT81
+         mxsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762549540; x=1763154340;
+        d=1e100.net; s=20230601; t=1762549542; x=1763154342;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=eG3KZj/IJ+feH5LNOQCm1I/xQEDt38CQ/0swaPI9wVw=;
-        b=o27Ldjvor3fHhGKmYLl3nhyHlEEtSy37Ufh0lrtYC4pvmdP1Kv6aFnhrdFyoiJ/IGd
-         sPPpne3cvmcsUDdPfwNraldB5JJf+jMkcFTLhp+UF73rDn7C4kQ6vhVXDK4XAQXf2MnT
-         K+C0DwQfWAPK6/42XrrbWlzSIWflluPxScffhe4aQxEfwkS5OexEyh3FntYIEPm33B92
-         G5pZD30HXm/H00xicqSaoyEJHXhno3ewQy/3kwtUPJKZjmHfeK1DwP+12i1y/qVnMRkM
-         YLVIUayWIhfFhVfS6UAi7nqwAN4oRuIIrq2X3IIpk4CwbiOCXE1CAnh6fCIX3cjojh1I
-         Sc2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCyPPit7haO3t063OdqHKvNTnq92A7g50Ua07CWNhRHdD7rb9OlpmU9r/MO4lk1hK7w2pNUfss9hkWVYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhokNB+oYS4yd3SZiANdYROJFGgxoGT2SArVuiqnfOLcqgWabG
-	NPBvi4531mAMfF6ZWqEcOTmGRvAKFkpq1LilbFiO9688uB2jG9Yq5Hj2FJd9y2OKXy8=
-X-Gm-Gg: ASbGncs6khyXXCvKvxhzkLtMBcX2YRi5w6HWxta/fD+butXrUfnq6Ahfwgi5GbY/eGR
-	pnn8jwfXGlcnzK+q4npRNHoAZQdjUiGYBOvsJfCr49RB8Scw4D0d+UBm5CbCWDUjscBlZZJs8Z6
-	ohVb0PONn2BWCrdTMmlvftKpcFGZ6I+ftnBVvi7giIZXNWMRMQGd8hdmY6UYkYB2E85S4NcQOBL
-	HCVzkRzzw3EHFrvAkfqWj+I4R4ANBThYdfPI7rxWvhypHlXwTM/pf0ULn8XGnW+JvXRR1k4lDNU
-	K1ILjkbqzjmcci/C53tMo9bQ1afJnmQl75UQc/zeQIjUv5s3mTe6cUKt6Wo1Mq9VnQTyqTn8TQJ
-	sk32/zYcIqt7ThUD7X+U3vjzVBnBo0q1a6kLzB3wXxmo8Q6pufS2OplywUZP4uMwy+7E7hO/VW9
-	Eh3kPfze6rHmtUksoXQHgPDwjB4krIFf9Xq2U8v4Ra7bmF/Kh1k+BXdWWpMOGx2SQ=
-X-Google-Smtp-Source: AGHT+IGgi833lso4oL9ECYqCcFQNiRqXoYUWKz1MoKHjJMaptGXdg+WJ5uxd88A3KFV7TB/Wv9G8Zg==
-X-Received: by 2002:a05:690e:431b:b0:63f:a524:1f93 with SMTP id 956f58d0204a3-640d45ff3e1mr344048d50.68.1762549539784;
-        Fri, 07 Nov 2025 13:05:39 -0800 (PST)
+        bh=b9ls15f+4MIh5Yb5Zu+WvMWjZ1HqhhM9dptW1sLofus=;
+        b=skCLWXO43ahiKy7rVM1ksDRjCYH+N1WUKEXOF1tamHCr4stXKIOc5TCePgPwQwojsR
+         xBy27eq6HEzBBB4waftOQvach7DyGU+KvLDAdvryGM9HTq2gfq9qZ2dg4qE59EaD2oHK
+         /EnjlWxuch+5HPB0+oXA0AQZfJLdwNJkWx2lAZ+zN2BRVofNRYeDBjcTDr1YxSyn/MmA
+         HBFPeAJ8i3oghEZHq4jD82HZkAJWVtLPFpNlVPuqmfs+ZkMMxCBPwp8s0VSRCK+qcVW4
+         BBzH1u7vnq0N+zqgWn8u1MJSEx+k03paSuhhd4Ne+wjmP/dsFEJ6LPO2vz6YOOL02s8q
+         IJzw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0BxBP+3hSDrvdh3QKQlnLFZLE4s2xPQgBmxEzLQYLTDJKi70f0/r9oiBw2tejGeACBw0oZdOCKvlxf5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIKfIB7RI5uj8EnTPh3NtZA5da3O6ahwA6yBN2MDf8pdv7uOIJ
+	xPvEGbKI4KRMmkd356c2w03LTzA0bau+exg9w2ldsM2EUlF5dn5fPnysjYlHIxIQGv0=
+X-Gm-Gg: ASbGncuxcyxafmGudADBLJJNQ6TZcUKOvghBMof9FGW+LTDK1/i41zcQD+MbOKIQJZ9
+	BZATMFteYUK2eXLY8P3xz9jSWaAlh3RMpOxjzn54z9qAfHmpxpoDDtj51wyerdkXLlEaXkEd7LY
+	synOB5d4h9uRcVFHZCIwITnmeEflK+T01ucreb8977NvyAmMlERJM6H9F8ioO2YzYO9V5sH60Pc
+	FtpoHLj2scMM52FdRZekdVycFiFbD38NbzZOpWhQbK3ug0Ee0mIEcf0HSuH1QeZlfN+qZtXH1pZ
+	1yxLJQG6/zq9dhlGvbIYMTiRByH5OqrFehwatjaljXpsFdbEYFZWX1l00aNv3HYo4EgZ1cnCb/P
+	VR9Jhy6iUuWRqHlMRFydgy6LXME9KW8yuAK0UizN5ekPFVrVNcPS0YBnnTUbO5pJ0i69PhqyMJH
+	1uCwciGcMAVHlZ5/J3eO0bE3Dta2fzdNBZ/hn8MdN9H2QxfCmKyMSb/JKNRAnRBJE=
+X-Google-Smtp-Source: AGHT+IFMBy2As0ojpganARRAtGLKmm8lcgodoc22XvJ7tunGfpqLiCKm9BOIEA7E25Bvbl2mUycg2A==
+X-Received: by 2002:a0d:d0c5:0:b0:787:bf16:d489 with SMTP id 00721157ae682-787d5467e1cmr5985997b3.62.1762549541688;
+        Fri, 07 Nov 2025 13:05:41 -0800 (PST)
 Received: from soleen.c.googlers.com.com (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d68754d3sm990817b3.26.2025.11.07.13.05.38
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d68754d3sm990817b3.26.2025.11.07.13.05.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 13:05:39 -0800 (PST)
+        Fri, 07 Nov 2025 13:05:41 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: pratyush@kernel.org,
 	jasonmiu@google.com,
@@ -148,9 +148,9 @@ To: pratyush@kernel.org,
 	hughd@google.com,
 	skhawaja@google.com,
 	chrisl@kernel.org
-Subject: [PATCH v5 04/22] liveupdate: Kconfig: Make debugfs optional
-Date: Fri,  7 Nov 2025 16:03:02 -0500
-Message-ID: <20251107210526.257742-5-pasha.tatashin@soleen.com>
+Subject: [PATCH v5 05/22] liveupdate: kho: when live update add KHO image during kexec load
+Date: Fri,  7 Nov 2025 16:03:03 -0500
+Message-ID: <20251107210526.257742-6-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
 In-Reply-To: <20251107210526.257742-1-pasha.tatashin@soleen.com>
 References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
@@ -162,26 +162,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now, that LUO can drive KHO state internally, the debugfs API became
-optional, so remove the default config.
+In case KHO is driven from within kernel via live update, finalize will
+always happen during reboot, so add the KHO image unconditionally.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- kernel/liveupdate/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/liveupdate/kexec_handover.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-index e1fdcf7f57f3..054f6375a7af 100644
---- a/kernel/liveupdate/Kconfig
-+++ b/kernel/liveupdate/Kconfig
-@@ -54,7 +54,6 @@ config KEXEC_HANDOVER_DEBUG
+diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
+index 9f0913e101be..b54ca665e005 100644
+--- a/kernel/liveupdate/kexec_handover.c
++++ b/kernel/liveupdate/kexec_handover.c
+@@ -15,6 +15,7 @@
+ #include <linux/kexec_handover.h>
+ #include <linux/libfdt.h>
+ #include <linux/list.h>
++#include <linux/liveupdate.h>
+ #include <linux/memblock.h>
+ #include <linux/page-isolation.h>
+ #include <linux/vmalloc.h>
+@@ -1489,7 +1490,7 @@ int kho_fill_kimage(struct kimage *image)
+ 	int err = 0;
+ 	struct kexec_buf scratch;
  
- config KEXEC_HANDOVER_DEBUGFS
- 	bool "kexec handover debugfs interface"
--	default KEXEC_HANDOVER
- 	depends on KEXEC_HANDOVER
- 	select DEBUG_FS
- 	help
+-	if (!kho_out.finalized)
++	if (!kho_out.finalized && !liveupdate_enabled())
+ 		return 0;
+ 
+ 	image->kho.fdt = virt_to_phys(kho_out.fdt);
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
