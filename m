@@ -1,148 +1,216 @@
-Return-Path: <linux-kernel+bounces-890433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8886EC400A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:09:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469AFC4009D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D85F14E9E33
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:09:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0351188A66B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554B2C15A0;
-	Fri,  7 Nov 2025 13:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE66D2BFC8F;
+	Fri,  7 Nov 2025 13:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="W8Ho/N5s";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U14+gSI+"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BupN8VM9"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2397F2D46BD
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F442BEFE4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762520932; cv=none; b=OpEjdTj+tVXHLqcWUmUL2eSLhDpxEMYJcGE9n8RhP2SnIQl65iwLUqgOf9vAmjQFrckFLuSv9JKcb+NwOIGxuiwuAgfaesC8A+rEmlKNJOlsLoCrBnpG4gP7nRiYhJBlxkWLk746MKmdRhnZTx9Sm8lQ90KjwuoPUhQCWhtMX2U=
+	t=1762520927; cv=none; b=TpY1FiZZs9VwABKsnG9pCa4U/6iY++xO8kndYRIVJe1aOxrDbCZZiAyHQEMd3hIn3ik73VzmvsHNd3JPOuQD/zbuVxs32NtTEVNfyggB1j5xkfjgL7CI2H4JrtM71wM3aOMh3VN219z3uncTudai9Ma73j1YytiXJT0JXq9onPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762520932; c=relaxed/simple;
-	bh=94f0bHowDoyXW4zroT0w27Z0xAqxOJaWsQnFvbQvqeg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MPKxpf0/Z3woj0P/2p+lwfz47KrXYScACQA/MnY8i2n8ud8wbNpGkfW/imHqSq0Dx//E48WRKCG4jylP7NjGuWkiYYX8F1wYtRs0wUcIHZUvZS3tAwWBxJnAzkaRyUMtiJEpRyp4/UfihTmRwASTSbe7DsU32GdycaRiNeIOHwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=W8Ho/N5s; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U14+gSI+; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 44A9E1400183;
-	Fri,  7 Nov 2025 08:08:47 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Fri, 07 Nov 2025 08:08:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762520927;
-	 x=1762607327; bh=k25cBgjI8DCYqxj5le4xUj5GQC89TK0sK1KYOn2oFKA=; b=
-	W8Ho/N5sSpnKR+o9dH0s9fxBaOKEUWjHNCPunqol9jvvTfg+evChx+bdUutpuXyh
-	kFbFJ/mZcLQnS+lL7ulwNvblJwSw3p0iX+S4XhswSYhpb8IsSWhb9AbhaQmtNZQk
-	kJJAWIS/SmVzZF/iruBOEuzYdLak3etVnEAGHDu3ITQMbWfC7tyWnNqC3pJqSTVZ
-	e0cxxLQ+yvc88F3fmqFHRVmWUh3wAbDrshsa+RvrlJYe1xSl1tEmnTRD2cIAkWxl
-	+fdN35NoXS6+gZuXvD3BUf8BNG4DHk635eA4chFwuIn5AIFOOq2bv+WlvsB9m+10
-	C9QUEw89cyQ8nCx7DKRu5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762520927; x=
-	1762607327; bh=k25cBgjI8DCYqxj5le4xUj5GQC89TK0sK1KYOn2oFKA=; b=U
-	14+gSI+75VB98v1wajE6c8v0SqCQOrSdhAzCefw/xEsR3Vesrj+NPSNK+7oxt+vO
-	p/AWHQaHMGW4NanhUL3iwdbnZuEUGSSa6HO7sl2byehOiJRtwm+3JI7Jva+cKH3n
-	BjPcwgnZa/FvxpLwf4uuspngC3XEV8LlqwojLmxRcHlZF5YYr5FGhOi2ta+VrwNI
-	BJv6Ay5Wt61N3/BvhHkBXWVyeAd28xulbss4DJPclTRY4pRpVd4IaFDNidBPiO1r
-	AXuSFwqxQ3ST0wg8Cb9WLkkVTDD+FR8K53GjHZUT+GPmIrAY3yYsC8G+ZxV4/Mch
-	ndRRRi8TEQ6e0S/Rc1xvQ==
-X-ME-Sender: <xms:Xu8NaQ0C2eybteYKM-Sngm9Tmzb30YeCCtabJKty1VL5vcnvBDOiyg>
-    <xme:Xu8NaV5hyNV1LP57dpOHOduYx97gZmRJzdAj_zgK_9BUo2LUewJYTqX5Q7MIpmp_9
-    hfOEtdxrLan2LvI9__LHrygWiZM4l2fI15rBFQo7n2WGWbNIITVXS8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeeljeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohephhhuihdrfigrnhhgsegtrghnohhnihgtrghlrdgtohhmpdhrtghpth
-    htohepfhhlohhrvghnthdrthhrihhnhhdqthhhrghisegtshdqshhophhrrghsthgvrhhi
-    rgdrtghomhdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhroh
-    huphdrvghupdhrtghpthhtohepmhifrghllhgvsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtth
-    hopegrlhgvgigrnhguvghrrdhsvhgvrhgulhhinhesshhivghmvghnshdrtghomhdprhgt
-    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Xu8NaVMKWKjxQK1D6JrLRiQSAWN5I5pMZP83U5KYAKDDkTtQ3lGmkw>
-    <xmx:Xu8NaYpl9tNU1hpIhurzx3BledHHaP7_MAYBLR50Q5S6TZtDA1a6ig>
-    <xmx:Xu8NaScMEC6qfsmq1zbvdclHEcwWdRT-Oex8u_7cYjf6TjM8zAb32A>
-    <xmx:Xu8NaWSWAWDT2ImNH9rIfRoBeEKp1e6fqZIyadbP6G5qUVzWURAuVw>
-    <xmx:X-8Nafnb7Ov-_I0qyNy-FntOFvKK2ibcefmn0h5q_7UbseJNB6_vFTsS>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3308B700063; Fri,  7 Nov 2025 08:08:46 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1762520927; c=relaxed/simple;
+	bh=OWiEd8XbPv8RdYmPKuplSxpJVZGnRYjpmY5XLgep+8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJyS2CINVjYJ5AjBs8Fkl3v+XJotRUA1e3Nk2PpSwSNfhl01IavzE6yV4rVtTQuiAXtR/Pukrgs0Q11Pq+Xkd42dI+2lM2otYXsz+VlmTfXBAaqNS0VJRjIqiYqt3oDwX27MfOGuPoxZ8bOmvchrmsxQ7H/hnDu2QAyUvokOgiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BupN8VM9; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so1128755a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 05:08:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762520923; x=1763125723; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=C1ywOlu3fOSK5EDS/96Lv9KyExdYs4hdjZJBrhwyZV0=;
+        b=BupN8VM9+coHpMkoRAxsJOTc5Rp4vj4FXlg+/oDipm87kfldmi9RZo4b2Ib1OXVSQb
+         E2avwPk3CHm88DmnhQAv6bB2WJFQqU6BDKEdzvMfoLwAuKNpCbsiiN3DCQPUN1NRVCjh
+         qa5SMJQh27m+8e1VL9EkmxPaPO3eoqVCvdfqGQAxswXjGAk2wGZTI1El88FuMAw+N1RX
+         y7CrHujXk5aTA1cbkBVPZvvHKXeXc5fWp8ezWBQXzi2LEC6MG2molG4R2me7EBjYz+qd
+         37ej3/IY4jqzfUZqZCfTDlIM71qH9EDqJPxhXEEobynZdXxUrlnI5xUq8r8T67mmoevH
+         os+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762520923; x=1763125723;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1ywOlu3fOSK5EDS/96Lv9KyExdYs4hdjZJBrhwyZV0=;
+        b=QP6ytW0PwHz40DrUGeTFwd9bJxiglLkARWmeLbQM3oOSepLZ6IoarJuifEFGfQ83Rw
+         RRmMDOXpYys/Sg/t0pLuRQ5IDIFI500wvdZXb2Or/gtvm/BtNxTrOwux1S5rhHMMW+Th
+         xUZ4DLK5hiBwEWWIJcYAXuQN9OfJS1gGNudMNR7zZU2DRpMM1oN7WFq2fBeMPNVzNuzz
+         3frFqBcT3e+Oue+rjReigY91ArVol70h9Ccu8+FbrO8xAGvDXHqQK8Ry8fxO5bXEMKRW
+         9XVMGWPNhsNrTFRhhEUC2qaTMHblX3BBpzoIqYFLUG+7W12UdWizDurym9ofZLjV9Hue
+         J3fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKDg09NE9Ye4yG5STCzxSD8NZ3mgNyC8ufboZsOYEZwfJZlDIX+BWkbinYaxCc4QBz4LKu2PVtvlVpdW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKduF+vmp/Ez7VW4hX5alhsSZP7nBJlXXLoFoaYMpIRijHQ6lr
+	jkbccsiCMeaJqJHnWeeggeQ2wQU4wNi1JevY2YXEc4SjBmzFAoyohpB/xKSzkq2TknU=
+X-Gm-Gg: ASbGncsrTTWCtcbPYsZp1dKIAzhxZU0DncuTl6bEOXZvyeJBOlZ6uCCFgTd0Wwv791C
+	A0ICKDVJQR240ewhoKTGBubxRXQvuc8FuPPrt8vwrdNA8gwcbgWDgIgOfWOLJsgYENPRTbvpzx9
+	o6zHuG2K5IChpPqnPuDz/uoyy8Q2D8VbGlxqtWE0UocCm5N1t2ru/axCYjTaDFM+rt7RYVpl0rF
+	9ur58S9Aqt4W+xAcVfUeCsrTsnnKqTXvvbCuyGwZ+cmxBPGYUA/oGY48DtUCtSiglIzJZBl4yhz
+	+79fq+5IMA02ENsL6HmnWy8CQo7bRmnzH3/IUj0NJQ9aNH1PhpsTZEkuQ6XO8Bifjml88kasjvi
+	JmaIr2zxJJfFxbF9860SLuofWsTIO2JlDDPjXBjVszIhClChIYggFekJYHNlcDW/YYpyL5Kq2e5
+	HuC9lgs53xiXhV0A==
+X-Google-Smtp-Source: AGHT+IEouSTBDMcG/tchDfHpDvHcGOn021q8OTyah/7d7vm3vufHhiqKNCiTpyQWqwWHE044VaVj4Q==
+X-Received: by 2002:a05:6402:90a:b0:640:9b11:5d65 with SMTP id 4fb4d7f45d1cf-6413f061d7fmr2900743a12.24.1762520923128;
+        Fri, 07 Nov 2025 05:08:43 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f71394csm3968988a12.6.2025.11.07.05.08.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 05:08:42 -0800 (PST)
+Date: Fri, 7 Nov 2025 14:08:40 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+	linux-modules@vger.kernel.org,
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] kallsyms/bpf: Set module buildid in
+ bpf_address_lookup()
+Message-ID: <aQ3vWIqG31BgE4YD@pathway.suse.cz>
+References: <20251105142319.1139183-1-pmladek@suse.com>
+ <20251105142319.1139183-4-pmladek@suse.com>
+ <CAADnVQ+kbQ4uwtKjD1DRCf702v0rEthy6hU4COAU9CyU53wTHg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Adbv6qxzdhws
-Date: Fri, 07 Nov 2025 14:08:15 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>
-Cc: "Hui Wang" <hui.wang@canonical.com>, "Michael Walle" <mwalle@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "florent.trinh-thai@cs-soprasteria.com" <florent.trinh-thai@cs-soprasteria.com>
-Message-Id: <3e265b9e-c0f4-452d-b1da-3c708517e30a@app.fastmail.com>
-In-Reply-To: <e0037dc532f3aecb101c78e7d91b66430b15d541.camel@siemens.com>
-References: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
- <638496dd-ec60-4e53-bad7-eb657f67d580@csgroup.eu>
- <2025110513-manliness-repayment-d005@gregkh>
- <db80adb8b8006fbdeee77a386feabb81537d27e6.camel@siemens.com>
- <e0037dc532f3aecb101c78e7d91b66430b15d541.camel@siemens.com>
-Subject: Re: [PATCH] eeprom: at25: convert to spi-mem API
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ+kbQ4uwtKjD1DRCf702v0rEthy6hU4COAU9CyU53wTHg@mail.gmail.com>
 
-On Fri, Nov 7, 2025, at 12:49, Sverdlin, Alexander wrote:
+On Wed 2025-11-05 18:53:23, Alexei Starovoitov wrote:
+> On Wed, Nov 5, 2025 at 6:24 AM Petr Mladek <pmladek@suse.com> wrote:
+> >
+> > Make bpf_address_lookup() compatible with module_address_lookup()
+> > and clear the pointer to @modbuildid together with @modname.
+> >
+> > It is not strictly needed because __sprint_symbol() reads @modbuildid
+> > only when @modname is set. But better be on the safe side and make
+> > the API more safe.
+> >
+> > Fixes: 9294523e3768 ("module: add printk formats to add module build ID to stacktraces")
+> > Signed-off-by: Petr Mladek <pmladek@suse.com>
+> > ---
+> >  include/linux/filter.h | 15 +++++++++++----
+> >  kernel/kallsyms.c      |  4 ++--
+> >  2 files changed, 13 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/include/linux/filter.h b/include/linux/filter.h
+> > index f5c859b8131a..b7b95840250a 100644
+> > --- a/include/linux/filter.h
+> > +++ b/include/linux/filter.h
+> > @@ -1362,12 +1362,18 @@ struct bpf_prog *bpf_prog_ksym_find(unsigned long addr);
+> >
+> >  static inline int
+> >  bpf_address_lookup(unsigned long addr, unsigned long *size,
+> > -                  unsigned long *off, char **modname, char *sym)
+> > +                  unsigned long *off, char **modname,
+> > +                  const unsigned char **modbuildid, char *sym)
+> >  {
+> >         int ret = __bpf_address_lookup(addr, size, off, sym);
+> >
+> > -       if (ret && modname)
+> > -               *modname = NULL;
+> > +       if (ret) {
+> > +               if (modname)
+> > +                       *modname = NULL;
+> > +               if (modbuildid)
+> > +                       *modbuildid = NULL;
+> > +       }
+> > +
+> >         return ret;
+> >  }
+> >
+> > @@ -1433,7 +1439,8 @@ static inline struct bpf_prog *bpf_prog_ksym_find(unsigned long addr)
+> >
+> >  static inline int
+> >  bpf_address_lookup(unsigned long addr, unsigned long *size,
+> > -                  unsigned long *off, char **modname, char *sym)
+> > +                  unsigned long *off, char **modname,
+> > +                  const unsigned char **modbuildid, char *sym)
+> >  {
+> >         return 0;
+> >  }
+> > diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+> > index 9455e3bb07fc..efb12b077220 100644
+> > --- a/kernel/kallsyms.c
+> > +++ b/kernel/kallsyms.c
+> > @@ -374,8 +374,8 @@ static int kallsyms_lookup_buildid(unsigned long addr,
+> >         ret = module_address_lookup(addr, symbolsize, offset,
+> >                                     modname, modbuildid, namebuf);
+> >         if (!ret)
+> > -               ret = bpf_address_lookup(addr, symbolsize,
+> > -                                        offset, modname, namebuf);
+> > +               ret = bpf_address_lookup(addr, symbolsize, offset,
+> > +                                        modname, modbuildid, namebuf);
+> 
+> The initial bpf_address_lookup() 8 years ago was trying
+> to copy paste args and style of kallsyms_lookup().
+> It was odd back then. This change is doubling down on the wrong thing.
+> It's really odd to pass a pointer into bpf_address_lookup()
+> so it zero initializes it.
+> bpf ksyms are in the core kernel. They're never in modules.
+> Just call __bpf_address_lookup() here and remove the wrapper.
 
-> Christophe, while I'm trying to get my hands on a PPC32 HW similar to 
-> yours, would
-> you be able to test with CONFIG_DMA_API_DEBUG=y? The fact the KASAN 
-> doesn't detect
-> anything after the fix to spi-fsl-cpm you've mentioned makes me think 
-> the corruption
-> is external to CPU core? Will you post you fix to fsl-cpm code?
+I agree that it is ugly. It would make sense to initialize the
+pointers in kallsyms_lookup_buildid and call there
+__bpf_address_lookup() variant. Something like:
 
-I had a look over the patch and don't didn't see anything extra
-suspicious, but I wonder if this is possibly a problem with a DMA
-to stack, as Christophe mentioned this showing up on a system with
-VMAP_STACK=y.
+static int kallsyms_lookup_buildid(unsigned long addr,
+			unsigned long *symbolsize,
+			unsigned long *offset, char **modname,
+			const unsigned char **modbuildid, char *namebuf)
+{
+	int ret;
 
-If for some reason the original driver used to bounce the data while
-the current version attempts a DMA, that may lead to arbitrary
-data corruption from the invalid virt_to_phys(vmalloc_pointer)
-conversion.
+	if (modname)
+		*modname = NULL;
+	if (modbuildid)
+		*modbuildid = NULL;
+	namebuf[0] = 0;
+[...]
+	if (!ret)
+		ret = __bpf_address_lookup(addr, symbolsize, offset, namebuf);
 
-The opposite might be true as well: if the 'val' pointer passed
-into the read/write functions was previously detected as
-needing a bounce buffer down the stack (spi core or spi
-master driver) but now the added 'bounce' allocation gets
-passed directly into a dma engine, that may also fail if the
-GFP_KERNEL allocation is not sufficient for the range or
-alignment requirements of the DMA master.
+}
 
-Christophe, do you know the CPM DMA has any restrictions
-there, e.g. needing a GFP_DMA allocation?
+As a result bpf_address_lookup() won't have any caller.
+And __bpf_address_lookup() would have two callers.
 
-     Arnd
+It would make sense to remove bpf_address_lookup() and
+rename __bpf_address_lookup() to bpf_address_lookup().
+
+How does that sound?
+Would you prefer to do this in one patch or in two steps, please?
+
+Best Regards,
+Petr
 
