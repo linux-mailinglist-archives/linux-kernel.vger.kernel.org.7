@@ -1,214 +1,227 @@
-Return-Path: <linux-kernel+bounces-889709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0FEC3E4A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:56:38 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BA0C3E4A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 03:57:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5E36434C83A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:56:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C80A2345987
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 02:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42312EBB88;
-	Fri,  7 Nov 2025 02:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343222DEA80;
+	Fri,  7 Nov 2025 02:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="US2fHcAA"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e6tdkOda"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010014.outbound.protection.outlook.com [52.101.46.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850EB1D5CC7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762484189; cv=none; b=ZYjGp3LgWiuw5VTGtkVWGOH9UXgwMdYeFKGU9N+DfmZEoUUAyyw0i19CDuvYmz7Tqg/121bKGMcnO/5Q94GlbIZg3Nj9RzPe5O8xFpbfCtIGeD4gWYfL56kIbN2weplAJT+FonU9+ExokepPsxZDb/aAwpFwZNMAX9syByJsoQQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762484189; c=relaxed/simple;
-	bh=KGyX5E3l/2rEAVe4fMzxCdPllwN1yg3tAT2+mr3+nM8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxiqBzRjaIOkcmlJQdJP5/ub6s/TJl1IV9YNHUH18UwxcjvdAyu2lW9Jw5KlPTRNzjmsmOcIYi8fbP3TiZ2J7FtOwggAobe9SM3zz8vy40d9E0A32QfR9Ma9wg09zQ6Xn4Pvw4EXoaBP9nl3XbQjN1f589xSR2N2r1Dop7jjP+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=US2fHcAA; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ed67a143c5so170711cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 18:56:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762484186; x=1763088986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CQmgj5QKChdvWBZl6l2K3P0Jmw4eVyyr9pwq1Eec+/A=;
-        b=US2fHcAAxOFqj401dhmK2itmJnVSnZY4fpM42aS+n3JX1caMB4TO0AGocHk25PfPkG
-         b/s5/Fbkc0czeiK+QgEMH9UvLjLxXbQFJ4Sufq8hhzwgxREa2HokH9vziTkk6VbJtUGq
-         s8mon1sb2Gt+IcqYCbXHI1jbTlI7Lks5ZLyBdO96teE+YG44O0bLBSc1TTYv4yHwhLYz
-         zkLUnqH/vQBTbVFxX+0wnX+Jg9OkALrT6zIxUX6A+AfYjwxs6YM8j9nTqP068LeCopSC
-         EzkBWwva470U0IAOF5UaNHAbtHh427ykdqQREgMONl5nTCEITWpsWYiTcdCFYMdXg48D
-         ZUEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762484186; x=1763088986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CQmgj5QKChdvWBZl6l2K3P0Jmw4eVyyr9pwq1Eec+/A=;
-        b=HdmD8iQKGbJbIi3H4Dp4KxnaAqq6KWFAli3PD8lvzAq2ZKPl0W88dW+zUgI/7Je29F
-         ntedr7CWbCC7ZzI4D85GFKss4cEFnXWQ1NhfTwuHs5mZM94EIcREEcOThprgsV04cSau
-         gb5GFyj3sAKXvLGyqdlNfP+xwMaRr4QDkPO2ZA0ppEdg0fYiYHKnSRMcjKfOQcBj99tj
-         kZsQXe573Iw9uPTnXvhDaBpWNxkmm3ff37iMfrvWk1q8pEx23G/LwkYf32d5uq9HAS5v
-         jRypAvZ8bLMVQjjpiulilP9660djmh2015pP0N/CPR30k99zzUMyj0yuvahNzU71dpA5
-         /zdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIBZLF8LEskMJs2WFbQSvulIRYLj3kQbgnR3/gGe2KkS5fYMyWG2aApQLJCu4Dms9L1R8nwvxCPoIlpls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCbbRdUsCmW7sWJrbOhGERgAgk89/mXcsGwUUydw4znM3LvLuO
-	TSv4RGm16XPEExqu2ndhNPvR3X+ketbJYhCKbsZDjE/QBZCGIa91ukxNfYij8xeCrST9u9SAGAL
-	14lBhKh2t2EFLW09nNC6zf5Mg+ay7vL3+pTFKnuwS
-X-Gm-Gg: ASbGncuG5/SB0b/OEcnuh1C/qMTa4yNWh4mOf5fy7FAFC9Tav6zYdl0niaz+f8J1MnT
-	mYy74TECnFia636LFelQknUzpj5bDc8dPQBBa5gOlu8nCtUkNndlj30OcpzSYDgnPcLulH6lqDb
-	MdGqWYjqyyj/4cs24v+0fU4D4K/mqt3aeQnL5gBsgcEx+BEeiUOWgA1oXQRkQGdG7WMgJtHaTqc
-	SYWTIS0/VONikI2/Iv9uJiflfsDpFPwVe29gbNCPfZsKQMmkIuwceu6vwZG
-X-Google-Smtp-Source: AGHT+IEGltPMlvWKHIQAUQbc07wVxz4D4r3t1360g0HtPzLaVR/78O7+74fTpgXmKuSxlgcBZCrr9IfOzixdBMHk7v0=
-X-Received: by 2002:a05:622a:14d1:b0:4b7:9617:4b51 with SMTP id
- d75a77b69052e-4ed960aa0f2mr1753261cf.15.1762484186227; Thu, 06 Nov 2025
- 18:56:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B878F1D5CC7
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 02:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762484243; cv=fail; b=J1Gj1rr6sHl9sW7rsCeM0OLz85HfIETJFK59BZvJTJDYTIUQHhiz9OW6+69t4vRgGKcWVeDM64puxAYK7dECRmlSMYNh30QK9pe8aNbzJYvj8gOGyzhuFz/LKlvH0SNyR7TwGWUrlmzJexaHiFYg7FrU/sz8HHK0m0x7r96wuUU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762484243; c=relaxed/simple;
+	bh=BAKOaZyQTOwiKGhFJ9vBQhb8yNm8g/SUDSRobsleBu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=omO2JVo/YFDEcYSBSF8vy5RZvmMqyRhLCmZxkRx6CP63s1DT90mdPW/E9iaqZWawpiAg7XyTaZ7LQqKllJzZGQTVNFpg8WFaiejbJXOWDK/qvt3Co2dNvsPcB9NIGrrgpHFzeYh9otKJi7LmBaBSaoQVeC/bHbb/i/45PMRCtMc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e6tdkOda; arc=fail smtp.client-ip=52.101.46.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IQEcCqwqjwvEzd7J9nA/YlR57xDXzlfyxp8fjOc9rMi2bgUudYuU1sApxtA+fO2ljVsdSDbmngKFwtspHmvn7IeklmkotUlryUGbxwOXmEVQfiZ+mFyJyf4h6DLTrkL0Z1yVXJl7xf90aobv2l04MndfPfVY5WEaRUuMKkflVrQ7181SoEsjSendVTIyHtnM2E+sZbVd03v2XQrfYGm5tKnqtWvQKqYmaUbvMklfttBxbVc8ggrkyl6Hz6rute812DmKF9VIT/2IuHJFW7O7ekgLySyu5563TUKSL0o4moPj9UVT4wq5I4ZJRwgnmejFGW9OcH3hF03XEBfHf/03Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9X6wLt3Zo3gTiTTCEdccdMLwcQvscvr8BsrgAEf9NNY=;
+ b=nsDs2dvevmT6/dpF8MfsQa6SidE9Q2ZGh9cP7JUxqyZyyMS22Wov/o47zY1WFLaRAjTk+UMvRWTjNBm+YfwIwzQlcrGsY1o5sBtj8CuLuZTybooJ0Yjzzhl8lpSihBe7EStzQT6olSvYO/vNoSZ7Np+Fn/XjXMn1dr2SmuEuFPKojT2evUZ6bzSpf3yiePgF//AYRIuII+zWfcJ/wgKYFPtVceMupIYJjjlvZINcseoxRGZq5Bh/3HiE9s683UxpZkcu4dN8OE2hLSQgvc3oxl13IbKP+wVIl38Wz5Y4Fxly9JdqVLLe2E0SEyWhnclomrsxjyrqviHFPoORF7OLYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9X6wLt3Zo3gTiTTCEdccdMLwcQvscvr8BsrgAEf9NNY=;
+ b=e6tdkOdaF6guFDxU4GROr7J6iIntTcHDN0QyeEcdsgwaKDbM0qzEl0EA8rEc2c3r1hUxbySIIiMcjdoSqOPI/FzScSlAqEvHKjjnh+3BtKBhG3HnrCs1mycfSqWbp+WRUx333SP1jpxxyhp1SJbZ2I/YTtjiuOhcuD84Z2tF4Hk=
+Received: from SA1P222CA0063.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2c1::12)
+ by CH2PR12MB4056.namprd12.prod.outlook.com (2603:10b6:610:a5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 02:57:16 +0000
+Received: from SA2PEPF00003AE9.namprd02.prod.outlook.com
+ (2603:10b6:806:2c1:cafe::4f) by SA1P222CA0063.outlook.office365.com
+ (2603:10b6:806:2c1::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
+ 7 Nov 2025 02:57:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SA2PEPF00003AE9.mail.protection.outlook.com (10.167.248.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 02:57:15 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 6 Nov
+ 2025 18:57:15 -0800
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Nov
+ 2025 20:57:14 -0600
+Received: from [10.136.36.70] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 6 Nov 2025 18:57:12 -0800
+Message-ID: <1d6c22aa-c882-4833-b0be-a3999d684885@amd.com>
+Date: Fri, 7 Nov 2025 08:27:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104003536.3601931-1-rananta@google.com> <20251104003536.3601931-5-rananta@google.com>
- <aQvzNZU9x9gmFzH3@google.com> <CAJHc60ycPfeba0hjiHLTgFO2JAjPsuWzHhJqVbqOTEaOPfNy_A@mail.gmail.com>
- <aQzcQ0fJd-aCRThS@google.com>
-In-Reply-To: <aQzcQ0fJd-aCRThS@google.com>
-From: Raghavendra Rao Ananta <rananta@google.com>
-Date: Fri, 7 Nov 2025 08:26:15 +0530
-X-Gm-Features: AWmQ_bn_M54rF3JLR8P7eKkDr2OreZ7Iqye392uow-ms0jUYNX8AdkTca3yQK5I
-Message-ID: <CAJHc60y-0ea=7_WExNzcVNYWkAP43507puJfOEir1r4ezv3CUQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] vfio: selftests: Add tests to validate SR-IOV UAPI
-To: David Matlack <dmatlack@google.com>
-Cc: Alex Williamson <alex@shazbot.org>, Alex Williamson <alex.williamson@redhat.com>, 
-	Josh Hilke <jrhilke@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] sched/fair: Skip sched_balance_running cmpxchg when
+ balance is not due
+To: Tim Chen <tim.c.chen@linux.intel.com>, Peter Zijlstra
+	<peterz@infradead.org>
+CC: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>, Doug Nelson
+	<doug.nelson@intel.com>, Mohini Narkhede <mohini.narkhede@intel.com>,
+	<linux-kernel@vger.kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>
+References: <52fcd1e8582a6b014a70f0ce7795ce0d88cd63a8.1762470554.git.tim.c.chen@linux.intel.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <52fcd1e8582a6b014a70f0ce7795ce0d88cd63a8.1762470554.git.tim.c.chen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE9:EE_|CH2PR12MB4056:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec67ba08-b1aa-4473-0859-08de1da95b8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aWlCQkM4cldRWkZob2htSDlMbXdHTmxRVXlPSk56OXFMbVBEMjZYS2U1RkJQ?=
+ =?utf-8?B?TlJZMWVROXRMbFJWbnlBUFJrYUFqaE9XbGdTTmxUZmlQejJmbFl3OUdUUTJH?=
+ =?utf-8?B?clVyWHFhd29EMVhoOEpiZVBmZ01CRFpMWGVCSHZpa0F1dzBScG1JSU5GVlZn?=
+ =?utf-8?B?ckEwdDdEazdnWS96YmVHSlNXWHpWNHMrWVRVTDZwN3pOREJ4NlFLUWswZmly?=
+ =?utf-8?B?bUloMzB4VmUydFAzeFlzNzNqWTFpeEtlcUwxZi9JckpaVGEvRG9udFc5VTla?=
+ =?utf-8?B?cjhvdldKRExuOVBvRHppUjhCNk5HSVo0eE1xNVltc1dWTnpVVjRqYm54UDYy?=
+ =?utf-8?B?RWU4TjFTN25EMHVQWlFIc3NFRkNzN2o4KzE2STlYT09oUTJTOGpaM2l1MGhE?=
+ =?utf-8?B?U2FVWkNyWFpRT3RNNm9Dc3cxNEtxYWZ2bXJUVWVtWFdISlRkQmdqQnBObWJ4?=
+ =?utf-8?B?MmJzaEg1cEFwTW1iemswSzI0M2ZaSitPY21COTlObVhrenpyRGUyMWVwYlpS?=
+ =?utf-8?B?ZVBOMGlPbzM2OTJhSFNDQkhEbVJsamhxWEtkVFBqSkNnalN4SHcrdFk3L2dD?=
+ =?utf-8?B?aUNpcng3M0VhVjZPZnlQRHBXZUUxL2ZicXZrV1plNitpUTh0UjVYTlkzNGRC?=
+ =?utf-8?B?T2pDZGdlbnRqc2c1eFZCKzJ5dzQ3UER2RkRiaTJGWHNNbFRxZ21WRzdCdWtW?=
+ =?utf-8?B?ZHEzWlg0eHNUT09qSGJlWTlyQ3pKNUxmVWt4MmJSS3VhY1BZWDVWSUNjRW5D?=
+ =?utf-8?B?eFZaaWNaQVEyTC90NzBYRGt1c08vNUc5UjU2UHJ5Nm83STdBYUVtcTcrM0My?=
+ =?utf-8?B?TUxNN0UzTXNLMXdEMHlINklCak5MSGM1YTZSVVFKS0I5ZTZ3b3dQeFZzTWwr?=
+ =?utf-8?B?UmVnbDFVK0psNTU4TnRDb3B4dGtJcFZoL2hGejhscCtDemowS2o3cllnakJY?=
+ =?utf-8?B?L0xvMkRjSXZibjA3MHNLRUdjV1lLUWZMYURxdU4zZGtjWHU1TkRJUCtoZ052?=
+ =?utf-8?B?NFhzS0IwMzk4ZGhNRXVZOWZkK3o3V2k0T1Z3SUJONHFWUGFiRjIrQzNYa1ZE?=
+ =?utf-8?B?UVgrTjA3NzFCYXJ2aHdMbmFXTi9NbjNhUW56aTRld1JpR0c4ZTdkSGMvMjdO?=
+ =?utf-8?B?bU1tc1c0UTlWV1lhK3g2YXIyd09OaTBaV0toWjhmUWtndC9SajJhS1loUXRa?=
+ =?utf-8?B?eXB3QTlibjY3bzlhSFpsbzhRMVVuRUFCSnRhL0ZiNlBmTGhNMUgraHJzY3dG?=
+ =?utf-8?B?ejhGV2Q2cmZJMkFteDh3ZmVhT3VTaVA1YklRQnpSdkVvSTdRRzF5cUliaDhl?=
+ =?utf-8?B?TmdBUld5cmhBUVVZOEtOZkxYTjdVTEtzb09pSUlFdHNBUTNRdzg1Rnk1SmhY?=
+ =?utf-8?B?RFBUbVhtVnlHbHVmb2dSMEtoUUxVWjZGcWE0TVhDSlNnTHZOZDJqWFFYTFBw?=
+ =?utf-8?B?dWlBc1IveDIxSWlDMTErQVhTS1VTK3hjVDZnM2R0SW5jcTZjNXhGVnVXQTY5?=
+ =?utf-8?B?elk2aGR5aEl1VDc1R2hvMS9zSmNqeTIzZXZESSt6V05ZZXNqT0dTYjJYT1ow?=
+ =?utf-8?B?OGpYZDBCRHgyT0VUbjEwUmpaSTRGYTh0b3hONWlLLzFlL2RrYmQzQWpTRXRR?=
+ =?utf-8?B?L0M4d3hsUzdPcnFVajdTb3ZPV3lxVFpmelEwSHVCWmR2ZU9WZmtiek5JVmZN?=
+ =?utf-8?B?UWpBR2xnTTZyek5KTlZrSW5HRjlOREhsMUVSdFErVWVzSnArUFhFV0IyeUpF?=
+ =?utf-8?B?bXhYUXlnQ0Nqak0yUWJYcnFmYWgxa2JWVnA1T2UwK2ZKemZsa1VjM0RmVURP?=
+ =?utf-8?B?SVZwcW0zQVdJMStZVGhveHFKek9hR2lHc3FJakxqUm51NU9iVHFybmNWM1lz?=
+ =?utf-8?B?a1lKUTJVVHAvQ3ZkZzJjdDk5cVE3SGFDOFR4OHpoZ1hOb1A0RkZwL3hadzIy?=
+ =?utf-8?B?WWNmZlpjbWJmWHI0ZGdLYmlacXdib25ROGpoV0tKWnFnYmxTejV4NzJmRVJ6?=
+ =?utf-8?B?dm1pK3dMbkJ1bnk2OWxwQjBpNzFhZjZ0a0tkVGNSZlEyMHpXM3pyWmIvR2k0?=
+ =?utf-8?B?cTkzNXVoUW5UV3l5MFkyQ1dPRjVpVGVEVjlIbjJGSTVRWURDWDQ0ZEovdGZ6?=
+ =?utf-8?Q?XZ88=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 02:57:15.4997
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec67ba08-b1aa-4473-0859-08de1da95b8a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AE9.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4056
 
-On Thu, Nov 6, 2025 at 11:05=E2=80=AFPM David Matlack <dmatlack@google.com>=
- wrote:
->
-> On 2025-11-06 10:35 PM, Raghavendra Rao Ananta wrote:
-> > On Thu, Nov 6, 2025 at 6:30=E2=80=AFAM David Matlack <dmatlack@google.c=
-om> wrote:
-> > >
-> > > On 2025-11-04 12:35 AM, Raghavendra Rao Ananta wrote:
-> > >
-> > > > +static const char *pf_dev_bdf;
-> > > > +static char vf_dev_bdf[16];
-> > >
-> > > vf_dev_bdf can be part of the test fixture instead of a global variab=
-le.
-> > > pf_dev_bdf should be the only global variable since we have to get it
-> > > from main() into the text fixture.
-> > >
-> > My understading is placing vars in FIXTURE() is helpful to get an
-> > access across various other FIXTURE_*() and TEST*() functions. Out of
-> > curiosity, is there an advantage here vs having them global?
->
-> Global variables are just generally a bad design pattern. IMO, only
-> variables that truly need to be global should be global.
->
-> The only variable that needs to be global is pf_dev_bdf.
->
-> Since vf_dev_bdf needs to be accessed within FIXTURE_SETUP(),
-> FIXTURE_TEARDOWN(), and TEST_F(), then FIXTURE() is the right home for
-> it. The whole point of FIXTURE() is to hold state for each TEST_F().
->
-Sounds good. I'll move them into FIXTURE().
+Hello Tim,
 
-> >
-> > > > +
-> > > > +struct vfio_pci_device *pf_device;
-> > > > +struct vfio_pci_device *vf_device;
-> > >
-> > > These can be local variables in the places they are used.
-> > >
-> > I was a bit greedy to save a few lines, as they are reassigned in
-> > every TEST_F() anyway. Is there any advantage by making them local?
->
-> It's easy to mess up global variables. And also when reading the code it
-> is confusing to see a global variable that does not need to be global.
-> It makes me think I must be missing something.
->
-> As a general practice I think it's good to limit the scope of variables
-> to the minimum scope they are needed.
->
-Agreed. I prefer min scope too, but I guess my habit of using global
-variables in other tests and avoiding passing pointers around led me
-to use it here. I'll move it to a local scope.
+On 11/7/2025 4:57 AM, Tim Chen wrote:
+> @@ -11757,6 +11772,7 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+>  		.fbq_type	= all,
+>  		.tasks		= LIST_HEAD_INIT(env.tasks),
+>  	};
+> +	int need_unlock = false;
+>  
+>  	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
+>  
+> @@ -11768,6 +11784,13 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+>  		goto out_balanced;
+>  	}
+>  
+> +	if (idle != CPU_NEWLY_IDLE && (sd->flags & SD_SERIALIZE)) {
+> +		if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1)) {
+> +			goto out_balanced;
+> +		}
+> +		need_unlock = true;
+> +	}
+> +
+>  	group = sched_balance_find_src_group(&env);
+>  	if (!group) {
+>  		schedstat_inc(sd->lb_nobusyg[idle]);
+> @@ -11892,6 +11915,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+>  			if (!cpumask_subset(cpus, env.dst_grpmask)) {
+>  				env.loop = 0;
+>  				env.loop_break = SCHED_NR_MIGRATE_BREAK;
+> +				if (need_unlock)
+> +					atomic_set_release(&sched_balance_running, 0);
 
-> > > > +     snprintf(path, PATH_MAX, "%s/%s/sriov_numvfs", PCI_SYSFS_PATH=
-, pf_dev_bdf);
-> > > > +     ASSERT_GT(fd =3D open(path, O_RDWR), 0);
-> > > > +     ASSERT_GT(read(fd, buf, ARRAY_SIZE(buf)), 0);
-> > > > +     nr_vfs =3D strtoul(buf, NULL, 0);
-> > > > +     if (nr_vfs =3D=3D 0)
-> > >
-> > > If VFs are already enabled, shouldn't the test fail or skip?
-> > >
-> > My idea was to simply "steal" the device that was already created and
-> > use it. Do we want to skip it, as you suggested?
->
-> If a VF already exists it might be bound to a different driver, and may
-> be in use by something else. I think the only safe thing to do is to
-> bail if a VF already exists. If the test creates the VF, then it knows
-> that it owns it.
->
-Makes sense. Let's skip in that case.
+I believe we should reset "need_unlock" to false here since "redo" can
+fail the atomic_cmpxchg_acquire() while still having "need_unlock" set
+to "true" and the "out_balanced" path will then perform the
+atomic_set_release() when another CPU is in middle of a busy / idle
+balance on a SD_SERIALIZE domain.
 
-> > > > +FIXTURE_TEARDOWN(vfio_pci_sriov_uapi_test)
-> > > > +{
-> > > > +}
-> > >
-> > > FIXTURE_TEARDOWN() should undo what FIXTURE_SETUP() did, i.e. write 0=
- to
-> > > sriov_numvfs. Otherwise running this test will leave behind SR-IOV
-> > > enabled on the PF.
-> > >
-> > I had this originally, but then realized that run.sh aready resets the
-> > sriov_numvfs to its original value. We can do it here too, if you'd
-> > like to keep the symmetry and make the test self-sufficient. With some
-> > of your other suggestions, I may have to do some more cleanup here
-> > now.
->
-> I think the test should return the PF back to the state it was in at the
-> start of the test. That way the test doesn't "leak" changes it made. The
-> best way to do that is to clean up in FIXTURE_TEARDOWN(). There might be
-> some other test that wants to run using the PF before run.sh does its
-> cleanup work.
->
-Sure, I'll clean up everything that the test does in FIXTURE_SETUP().
+We can also initialize the "need_unlock" to false just after
+the redo label too - whichever you prefer.
 
-> > > You could also make this the users problem (the user has to provide a=
- PF
-> > > with 1 VF where both PF and VF are bound to vfio-pci). But I think it
-> > > would be nice to make the test work automatically given a PF if we ca=
-n.
-> > Let's go with the latter, assuming it doesn't get too complicated
-> > (currently, the setup part seems bigger than the actual test :) )
->
-> Let's create helpers for all the sysfs operations under lib.
->
-> e.g. tools/testing/selftests/vfio/lib/sysfs.c:
->
->   int sysfs_get_sriov_totalvfs(const char *bdf);
->   void sysfs_set_sriov_numvfs(const char *bdfs, int numvfs);
->   ...
->
-> That will greatly simplify the amount of code in this test, and I think
-> it's highly likely we re-use those functions in other tests. And even if
-> we don't, it's nice to encapsulate all the sysfs code in one place for
-> readability and maintainability.
->
-> If you do this I think there's also some sysfs stuff in
-> vfio_pci_device.c that you can also pull out into this helper file.
-Good idea. I'll create this lib.
+nit. "need_unlock" can just be a bool instead of an int.
 
-Thank you.
-Raghavendra
+Apart from that, feel free to include:
+
+Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+
+> +
+>  				goto redo;
+>  			}
+>  			goto out_all_pinned;
+> @@ -12008,6 +12034,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+>  	    sd->balance_interval < sd->max_interval)
+>  		sd->balance_interval *= 2;
+>  out:
+> +	if (need_unlock)
+> +		atomic_set_release(&sched_balance_running, 0);
+> +
+>  	return ld_moved;
+>  }
+>  
+
+-- 
+Thanks and Regards,
+Prateek
+
 
