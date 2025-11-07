@@ -1,477 +1,86 @@
-Return-Path: <linux-kernel+bounces-890396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB311C3FF52
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:42:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448C6C3FE77
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 13:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F271894D90
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03B713BD512
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 12:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B36432E150;
-	Fri,  7 Nov 2025 12:38:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EB62727ED;
-	Fri,  7 Nov 2025 12:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC625223DD1;
+	Fri,  7 Nov 2025 12:35:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5D91CAA4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 12:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762519103; cv=none; b=Q1pAmFCNb9vg45v69BTOSsQp5nSc+xaST6RWSpn0oNYLUpSrEj5bLyE+y4bZgHLNQ1Eu6yRcUjk/FCmGJ0yVZMX0PhkOXxxx+2E7MDIvX0lIw6pGoete5DxUKsjhpSToCKcMUaWcf4l89SXceBrBpa+haDAxX9HPZJSkHTxmcLQ=
+	t=1762518905; cv=none; b=aMbuxM8vMRYvzXIcRCBjIc8a6UXx8DIzuu17IkbpcpUcHTKYRzFqDKSqrK5TaqW9RU4IJKIXkaggwnlCrpUeQXxT+xP6m8mSdqac5TETt0CrJd5gcPxjcOK1Pnf2UPauLh9A0D8+4uK6MEZI2y0CFWxdzj1DHvtlYxBIlxhqTrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762519103; c=relaxed/simple;
-	bh=lLNEwEM/YzHxx2H+tqoaxUMHFCeAjTtrWLI4LLWmzF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sjzsK79Sn48WwpscOseqPuvXQ1O77rAN6R5ZLpT9XL/TN5fYDAq6e0UTi7FUWBbZ1rb2k9099dDEIK+Y9Z8v6yjSlFJPmHSDlS06qfDT9qLNyeKQiDeissoLd/pMfzhZjuWdusr9c4MpK3Ph1QKncjjdAy+LtgSQC8kxcoaWeGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3E851BCA;
-	Fri,  7 Nov 2025 04:38:12 -0800 (PST)
-Received: from e134344.cambridge.arm.com (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EA46D3F66E;
-	Fri,  7 Nov 2025 04:38:15 -0800 (PST)
-From: Ben Horgan <ben.horgan@arm.com>
-To: james.morse@arm.com
-Cc: amitsinght@marvell.com,
-	baisheng.gao@unisoc.com,
-	baolin.wang@linux.alibaba.com,
-	bobo.shaobowang@huawei.com,
-	carl@os.amperecomputing.com,
-	catalin.marinas@arm.com,
-	dakr@kernel.org,
-	dave.martin@arm.com,
-	david@redhat.com,
-	dfustini@baylibre.com,
-	fenghuay@nvidia.com,
-	gregkh@linuxfoundation.org,
-	gshan@redhat.com,
-	guohanjun@huawei.com,
-	jeremy.linton@arm.com,
-	jonathan.cameron@huawei.com,
-	kobak@nvidia.com,
-	lcherian@marvell.com,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lpieralisi@kernel.org,
-	peternewman@google.com,
-	quic_jiles@quicinc.com,
-	rafael@kernel.org,
-	robh@kernel.org,
-	rohit.mathew@arm.com,
-	scott@os.amperecomputing.com,
-	sdonthineni@nvidia.com,
-	sudeep.holla@arm.com,
-	tan.shaopeng@fujitsu.com,
-	will@kernel.org,
-	xhao@linux.alibaba.com,
-	Ben Horgan <ben.horgan@arm.com>
-Subject: [PATCH 33/33] arm_mpam: Add kunit tests for props_mismatch()
-Date: Fri,  7 Nov 2025 12:34:50 +0000
-Message-ID: <20251107123450.664001-34-ben.horgan@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251107123450.664001-1-ben.horgan@arm.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
+	s=arc-20240116; t=1762518905; c=relaxed/simple;
+	bh=K+VyL2v6Xb/cjJfZDQcGx99HvhCh8sI8pgEiyV6H/I4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bbHOpq2s1tvzqn4MgoWlb6pJyJYN3rjgX3/uU1vNdy2JIjfHBnPQ9b5YeLBWYIqIrzYLXy8BEsUCAgMe810FH5cZvjXjOvk8+5jTsUFlF8BO/NLBHOxlMx40ZHDlGS0/UGiI30IaV84f1CtGvgv6JYBpWcGTM1N5LF6b4vZF5pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43331987addso17910485ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 04:35:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762518902; x=1763123702;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DDx+cyiJJbix0qNr6hQXptfaBVytR7OdoMyRh65WPI=;
+        b=uyQzeJ39y2kMhsYgtO6p/vvwtyWw425f56lH8QvlkrdnjKc6e0Tze74cELlMch3Ms3
+         ksFkqkLKzZdoPHY3cW3BhCcmKwAxJE2ghQ1tSoLg2SsM9dXbALq5kTkJoqEACUdGd/WB
+         75HsF/1hVR6hiRbomIK5aKHcfkxBrFwdB9p9DF0ejH2xuxP3Wy6XA48jT/lO9gLEcDjk
+         ljKm/ICU3JWJ1CnaFt0BY+eiVYoUW9J8JFszJaPd0vCWbWziZphehY12oSoI8AG1rzhq
+         gzuxcTWhG0BWHAHcTLuUy6V/mH82Rvm/gAKVjdZxKBB5D0A1Jj9sZRc+1kY4QBYotRPb
+         5QoA==
+X-Gm-Message-State: AOJu0YyyEN+bdvfltyEc2AIpFpMKCkPNomuUNlL6rTbi1CxJUkBAShDi
+	DCyIMzrDZ+mJWAxxofW2b4kIhMUsClvceO0TqI5h7oLvJVagKq3mKgzJqxXpBIuEpoa1dYFvvyE
+	WPHZlWkdd/jUWp/SiC+DGsyJhjl4Mf5Qd74yzRip6n9UsH3MqCKYoYxpWf+M=
+X-Google-Smtp-Source: AGHT+IHgAJE3Mkk8U3XCEmhD76/hAiNcTbgK6lZ4X/uqXuxa16vyzmAuAyXwdi8MYMzuY0VGW+ATHQvF/afD1/KvIYzSuCDnKDpI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2788:b0:433:2a9b:165c with SMTP id
+ e9e14a558f8ab-4335f5a96c4mr41635405ab.27.1762518902327; Fri, 07 Nov 2025
+ 04:35:02 -0800 (PST)
+Date: Fri, 07 Nov 2025 04:35:02 -0800
+In-Reply-To: <b646126e-591a-43e9-80cd-03cca126115b@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690de776.a70a0220.22f260.004a.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] BUG: corrupted list in dbUpdatePMap
+From: syzbot <syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	yun.zhou@windriver.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: James Morse <james.morse@arm.com>
+Hello,
 
-When features are mismatched between MSC the way features are combined
-to the class determines whether resctrl can support this SoC.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Add some tests to illustrate the sort of thing that is expected to
-work, and those that must be removed.
+Reported-by: syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com
+Tested-by: syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-Signed-off-by: Ben Horgan <ben.horgan@arm.com>
----
- drivers/resctrl/mpam_internal.h     |  14 +-
- drivers/resctrl/test_mpam_devices.c | 320 ++++++++++++++++++++++++++++
- 2 files changed, 333 insertions(+), 1 deletion(-)
+Tested on:
 
-diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-index 0061d355ad3e..622b120bad3b 100644
---- a/drivers/resctrl/mpam_internal.h
-+++ b/drivers/resctrl/mpam_internal.h
-@@ -23,6 +23,12 @@ struct platform_device;
- 
- DECLARE_STATIC_KEY_FALSE(mpam_enabled);
- 
-+#ifdef CONFIG_MPAM_KUNIT_TEST
-+#define PACKED_FOR_KUNIT __packed
-+#else
-+#define PACKED_FOR_KUNIT
-+#endif
-+
- static inline bool mpam_is_enabled(void)
- {
- 	return static_branch_likely(&mpam_enabled);
-@@ -184,7 +190,13 @@ struct mpam_props {
- 	u16			dspri_wd;
- 	u16			num_csu_mon;
- 	u16			num_mbwu_mon;
--};
-+
-+/*
-+ * Kunit tests use memset() to set up feature combinations that should be
-+ * removed, and will false-positive if the compiler introduces padding that
-+ * isn't cleared during sanitisation.
-+ */
-+} PACKED_FOR_KUNIT;
- 
- #define mpam_has_feature(_feat, x)	test_bit(_feat, (x)->features)
- #define mpam_set_feature(_feat, x)	set_bit(_feat, (x)->features)
-diff --git a/drivers/resctrl/test_mpam_devices.c b/drivers/resctrl/test_mpam_devices.c
-index 0cfb41b665c4..3e8d564a0c64 100644
---- a/drivers/resctrl/test_mpam_devices.c
-+++ b/drivers/resctrl/test_mpam_devices.c
-@@ -4,6 +4,324 @@
- 
- #include <kunit/test.h>
- 
-+/*
-+ * This test catches fields that aren't being sanitised - but can't tell you
-+ * which one...
-+ */
-+static void test__props_mismatch(struct kunit *test)
-+{
-+	struct mpam_props parent = { 0 };
-+	struct mpam_props child;
-+
-+	memset(&child, 0xff, sizeof(child));
-+	__props_mismatch(&parent, &child, false);
-+
-+	memset(&child, 0, sizeof(child));
-+	KUNIT_EXPECT_EQ(test, memcmp(&parent, &child, sizeof(child)), 0);
-+
-+	memset(&child, 0xff, sizeof(child));
-+	__props_mismatch(&parent, &child, true);
-+
-+	KUNIT_EXPECT_EQ(test, memcmp(&parent, &child, sizeof(child)), 0);
-+}
-+
-+static struct list_head fake_classes_list;
-+static struct mpam_class fake_class = { 0 };
-+static struct mpam_component fake_comp1 = { 0 };
-+static struct mpam_component fake_comp2 = { 0 };
-+static struct mpam_vmsc fake_vmsc1 = { 0 };
-+static struct mpam_vmsc fake_vmsc2 = { 0 };
-+static struct mpam_msc fake_msc1 = { 0 };
-+static struct mpam_msc fake_msc2 = { 0 };
-+static struct mpam_msc_ris fake_ris1 = { 0 };
-+static struct mpam_msc_ris fake_ris2 = { 0 };
-+static struct platform_device fake_pdev = { 0 };
-+
-+static inline void reset_fake_hierarchy(void)
-+{
-+	INIT_LIST_HEAD(&fake_classes_list);
-+
-+	memset(&fake_class, 0, sizeof(fake_class));
-+	fake_class.level = 3;
-+	fake_class.type = MPAM_CLASS_CACHE;
-+	INIT_LIST_HEAD_RCU(&fake_class.components);
-+	INIT_LIST_HEAD(&fake_class.classes_list);
-+
-+	memset(&fake_comp1, 0, sizeof(fake_comp1));
-+	memset(&fake_comp2, 0, sizeof(fake_comp2));
-+	fake_comp1.comp_id = 1;
-+	fake_comp2.comp_id = 2;
-+	INIT_LIST_HEAD(&fake_comp1.vmsc);
-+	INIT_LIST_HEAD(&fake_comp1.class_list);
-+	INIT_LIST_HEAD(&fake_comp2.vmsc);
-+	INIT_LIST_HEAD(&fake_comp2.class_list);
-+
-+	memset(&fake_vmsc1, 0, sizeof(fake_vmsc1));
-+	memset(&fake_vmsc2, 0, sizeof(fake_vmsc2));
-+	INIT_LIST_HEAD(&fake_vmsc1.ris);
-+	INIT_LIST_HEAD(&fake_vmsc1.comp_list);
-+	fake_vmsc1.msc = &fake_msc1;
-+	INIT_LIST_HEAD(&fake_vmsc2.ris);
-+	INIT_LIST_HEAD(&fake_vmsc2.comp_list);
-+	fake_vmsc2.msc = &fake_msc2;
-+
-+	memset(&fake_ris1, 0, sizeof(fake_ris1));
-+	memset(&fake_ris2, 0, sizeof(fake_ris2));
-+	fake_ris1.ris_idx = 1;
-+	INIT_LIST_HEAD(&fake_ris1.msc_list);
-+	fake_ris2.ris_idx = 2;
-+	INIT_LIST_HEAD(&fake_ris2.msc_list);
-+
-+	fake_msc1.pdev = &fake_pdev;
-+	fake_msc2.pdev = &fake_pdev;
-+
-+	list_add(&fake_class.classes_list, &fake_classes_list);
-+}
-+
-+static void test_mpam_enable_merge_features(struct kunit *test)
-+{
-+	reset_fake_hierarchy();
-+
-+	mutex_lock(&mpam_list_lock);
-+
-+	/* One Class+Comp, two RIS in one vMSC with common features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = NULL;
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc1.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two RIS in one vMSC with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = NULL;
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc1.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/* Multiple RIS within one MSC controlling the same resource can be mismatched */
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_vmsc1.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+	KUNIT_EXPECT_EQ(test, fake_vmsc1.props.cmax_wd, 4);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple RIS in different MSC can't control the same resource,
-+	 * mismatched features can not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 0);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with incompatible overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	mpam_set_feature(mpam_feat_mbw_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_mbw_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 5;
-+	fake_ris2.props.cpbm_wd = 3;
-+	fake_ris1.props.mbw_pbm_bits = 5;
-+	fake_ris2.props.mbw_pbm_bits = 3;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple RIS in different MSC can't control the same resource,
-+	 * mismatched features can not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_mbw_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.mbw_pbm_bits, 0);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class+Comp, two MSC with overlapping features that need tweaking */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = NULL;
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp1;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp1.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_mbw_min, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_mbw_min, &fake_ris2.props);
-+	mpam_set_feature(mpam_feat_cmax_cmax, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmax, &fake_ris2.props);
-+	fake_ris1.props.bwa_wd = 5;
-+	fake_ris2.props.bwa_wd = 3;
-+	fake_ris1.props.cmax_wd = 5;
-+	fake_ris2.props.cmax_wd = 3;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * RIS with different control properties need to be sanitised so the
-+	 * class has the common set of properties.
-+	 */
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_mbw_min, &fake_class.props));
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cmax_cmax, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.bwa_wd, 3);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 3);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class Two Comp with overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = &fake_class;
-+	list_add(&fake_comp2.class_list, &fake_class.components);
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp2;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp2.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cpbm_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	KUNIT_EXPECT_TRUE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 4);
-+
-+	reset_fake_hierarchy();
-+
-+	/* One Class Two Comp with non-overlapping features */
-+	fake_comp1.class = &fake_class;
-+	list_add(&fake_comp1.class_list, &fake_class.components);
-+	fake_comp2.class = &fake_class;
-+	list_add(&fake_comp2.class_list, &fake_class.components);
-+	fake_vmsc1.comp = &fake_comp1;
-+	list_add(&fake_vmsc1.comp_list, &fake_comp1.vmsc);
-+	fake_vmsc2.comp = &fake_comp2;
-+	list_add(&fake_vmsc2.comp_list, &fake_comp2.vmsc);
-+	fake_ris1.vmsc = &fake_vmsc1;
-+	list_add(&fake_ris1.vmsc_list, &fake_vmsc1.ris);
-+	fake_ris2.vmsc = &fake_vmsc2;
-+	list_add(&fake_ris2.vmsc_list, &fake_vmsc2.ris);
-+
-+	mpam_set_feature(mpam_feat_cpor_part, &fake_ris1.props);
-+	mpam_set_feature(mpam_feat_cmax_cmin, &fake_ris2.props);
-+	fake_ris1.props.cpbm_wd = 4;
-+	fake_ris2.props.cmax_wd = 4;
-+
-+	mpam_enable_merge_features(&fake_classes_list);
-+
-+	/*
-+	 * Multiple components can't control the same resource, mismatched features can
-+	 * not be supported.
-+	 */
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cpor_part, &fake_class.props));
-+	KUNIT_EXPECT_FALSE(test, mpam_has_feature(mpam_feat_cmax_cmin, &fake_class.props));
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cpbm_wd, 0);
-+	KUNIT_EXPECT_EQ(test, fake_class.props.cmax_wd, 0);
-+
-+	mutex_unlock(&mpam_list_lock);
-+}
-+
- static void test_mpam_reset_msc_bitmap(struct kunit *test)
- {
- 	char __iomem *buf = kunit_kzalloc(test, SZ_16K, GFP_KERNEL);
-@@ -58,6 +376,8 @@ static void test_mpam_reset_msc_bitmap(struct kunit *test)
- 
- static struct kunit_case mpam_devices_test_cases[] = {
- 	KUNIT_CASE(test_mpam_reset_msc_bitmap),
-+	KUNIT_CASE(test_mpam_enable_merge_features),
-+	KUNIT_CASE(test__props_mismatch),
- 	{}
- };
- 
--- 
-2.43.0
+commit:         4a0c9b33 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f0aa58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d0a0feb49c5138cac46
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11015342580000
 
+Note: testing is done by a robot and is best-effort only.
 
