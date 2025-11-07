@@ -1,121 +1,475 @@
-Return-Path: <linux-kernel+bounces-889852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1894EC3EB08
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:04:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A1CC3EB14
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 08:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A86C4E99D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D92D3ADA51
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 07:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888573054EE;
-	Fri,  7 Nov 2025 07:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE72307487;
+	Fri,  7 Nov 2025 07:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="Gz/gXOQg"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BvKbk7Ci"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902BF306494
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B3E3064BB
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 07:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762499084; cv=none; b=RHpMXU49lVc2fm80WKVFgYTzZZgCV12lqEhcY+yJjokAX9QyKN951Cv2WAX+KD0mNDSUvdYv3Q8jrBoN+MmiNdYp8t+/yWxyfMnhjtz27Kra5hn4tCvIXhEvdB2GQScb6H9k3xT/tUr3q/2JLzKfie9cpw+WFcyhlxCyxlaipR0=
+	t=1762499235; cv=none; b=dXvgwLSAN/gqMTHntcOtXvUAl1Vvtt8ILRexcbloRt4CfexYfjuuWAtDq2X4ABFnGVCrC+61o6HVHD3yXFuK33ooPLiYeisBPOh2D/uIXV5wgeLQFjgQUXp16HaLCLU3ixm0DlVIP1cgnFNWzkOOHeet5OG3W9CudidkXihZSuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762499084; c=relaxed/simple;
-	bh=XtzOsbt2hl6xTu2IJUUbKD60Sc3xgdEK+LN2FPoMKUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FycfPmBanhdv1WfxSqPyFbkZKd0hPhPO/QmsuGEN7k67r54bJ4jDxpIVAyPgnBZ7yD+4qbw9SyKxCMEcwxNTJcFnP5R2rfm4doOBV7uAQqE6RtQT4VEbY+0tCci1OnTwU9/n6BjEFZ8z1aKG5kFmcBw2H4JNtddUHWScq2Rm/Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=Gz/gXOQg; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b109c6b9fcso3405001cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:04:43 -0800 (PST)
+	s=arc-20240116; t=1762499235; c=relaxed/simple;
+	bh=lCs49KFxoMFrIEOoTD/naUkYVoUfAQLWK8wiieZIm4Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bjpV7aoFa0sSSV7dD7QKSv1NCr1whecEhlBuhidX2Kre4YmIVELwftX9l3Kv5gCbvvq3U/RT7KMiKGrgOvXZ0mfmtynYBEGgijYEqONWGHQ+3ztABc751griw1rSssLRjnhP19mEYDZE4UYy+hHOPE3wTDBtdRvlL02kdXs1cAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BvKbk7Ci; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso987719a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 23:07:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1762499082; x=1763103882; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MYnIiKrQX8aCtjj//tDqMdxlWqP5fq15qVk6nPAkZoo=;
-        b=Gz/gXOQgt+dwzIv+KSlNZ9YmsY0aUnJP6LxVbCZDaMfQiel5yb5nr8msIa3TLRFSJu
-         tUQf9T/cXxxnYt9ro9XlGu0YYPoRbxA06W4rs+yDQKtKKVCW3j85YFgi71yb6kp31kme
-         YuxDqNQbxjsPhRULRC4ScjuIHf2kErzsMZw5wSJor4n5G9hI2XkXtd8Iuc/Vn3YQyvGK
-         4llkusVoAhduhwehwrqPBTdt2KI1U68YFh5TAXMu8toCiU8k37dWPufJG6k3oYIB4sjf
-         DP+bfZBlz5cPwwZcJ4c8Zx5vGyuWehxR80ZgKaKwvYJlibs08StXOUUWfjgJcx5DgMJR
-         E6aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762499082; x=1763103882;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1762499233; x=1763104033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MYnIiKrQX8aCtjj//tDqMdxlWqP5fq15qVk6nPAkZoo=;
-        b=HkpGPgmWBw84d4H1LdErXLy2+S2bKSIC+cKoACoLY4ygpzJKxZOgKJQxqFWxN6fP+C
-         6su3miJYfFbxrzAJgSm2SNbVRFyQPGHzdh+kpox2jBxs437evTe5x2bMGPA3CY+dIdCv
-         65+44nh7H9K5Xhc8/yUX6fhHgwnbjDeeKjJw01fRm8ebl3AffOfk5MA0z2kCIvj3aovS
-         h19g/NsVCkHPyW8RQGqf9Y6DUn9thAdJWgnrRPG9Aug1kq9Ec2SryEbAzWpSuDoGEJuc
-         LxVXTQss5G2cmE0dLVq+3ZJSGgOzeXsFaQKBCrjhpGY5gDVmzgQ4opUctyI/29I+2bh/
-         IbAQ==
-X-Gm-Message-State: AOJu0YxIyZGSBk9jqaGAnchF0QbVLphDv92FjmyIBhg+Qmq19PZaNClj
-	T1KyfFkMwaDYtmAh+wdKtzQGltWeSlx5554ki2vFtV8RSMIZ77YIbSEA19ZkkEI57J7/dPG56aG
-	YDw7udU8=
-X-Gm-Gg: ASbGncuwsAJ5BYQy9wOLW1TfB/dVTM17e7hjIc7cyRGJ9S0ZGWKtNLIzSuC2qqmKbat
-	r66R9kxP5NaDe3zTq7qlIPR75zy7lWjOdHH9X4VHgH2GEkWyYxnu3rsRPMKrPEwfzTJATyF1vDl
-	nKUZR6Wtt32QHQe6bk3LOn1Bc1hIZYcFgyfCdRJ9yb/tgGS3hz91HaK8XJK0ZJuUpVQNSNNMHpk
-	wvJUe23GCsgNIdCFXIzYn4wnmhG+SHA0ui/mCZ89ClN/RMf+53/VY0ASFrYK9V5KerzN1aKUDst
-	Ii/3xfVr2jSdwWt/fR7V1RWgTu8W8EVglnBz5mnj8QJh6SO2GOXVWwOTLb5MIGWo3IuLxmNc9JV
-	vC5x+UAAWU8hDRcgyc7GpgBlfGo4RyLk9Bqp2o9h0SU+W7bx7W7jEyBfcABBqCbDVHnSaARm+Pn
-	M5lGNrTeSo4uRlpfwPZeThijJ0KhgdAw==
-X-Google-Smtp-Source: AGHT+IFwNzL1muZtb0IN53C7CPHVqzEIYh0SCwcsQzMl/w3PfdY3Ho9ZrT9AzNk7OQH5c7wzQoWICA==
-X-Received: by 2002:a05:622a:111:b0:4eb:9c80:f6a0 with SMTP id d75a77b69052e-4ed94a4b3bfmr30924711cf.52.1762499082271;
-        Thu, 06 Nov 2025 23:04:42 -0800 (PST)
-Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-88082a3ac4fsm34529256d6.57.2025.11.06.23.04.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 23:04:42 -0800 (PST)
-Date: Fri, 7 Nov 2025 02:04:40 -0500
-From: Nick Bowler <nbowler@draconx.ca>
-To: linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	linux-mips@vger.kernel.org
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
-Subject: PROBLEM: boot hang on Indy R4400SC (regression)
-Message-ID: <g3scb7mfjbsohdszieqkappslj6m7qu3ou766nckt2remg3ide@izgvehzcdbsu>
+        bh=ic3ja93/cQk65eeTH/cK94gVyAPs95zGxwNR/6EByzY=;
+        b=BvKbk7CiJKYMPqTB4IdMgoxVWaI8wNqZSU2VJif88gjbQ3biSC+O6cD3HsG4lkl5s9
+         t5ZFE6R8Tfv7znJJj7nkmPvaKFLO0lRqcOkY34YwuoMvk8jziTvQUMQuN3BFubxiVG0Z
+         SbXaT39JFQAFJCl9peHqOHRbbmUYgInbW6SyfKiEEYZ8ZMV5PF20kE8fwtlQYGAh2+q7
+         s9+adq2qVO4F4jJBTsqzbqNtxdYH2QlGy49pCYxqbpgQPmYSDuhhTkw75sI7n4TXDLUN
+         CCBAkH8wInOLI0BimVt9vHk/lHUyzqnU9x0mAXnKgrxt7PF0rzT28qkywXm7W7wToejW
+         Q+Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762499233; x=1763104033;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ic3ja93/cQk65eeTH/cK94gVyAPs95zGxwNR/6EByzY=;
+        b=IriiU2QYY9ZcJPauyz9Mb9kvjsYk+GH3wnlJIBCwz4woyfaso0hG6dKjZ49nXT+tB9
+         mVnSG3oDChYd9JX6X2+YAWEsNTb7devNwrGMMiXu531RiqFnXO3f6CXJA7Z+VF4EaJoE
+         yL87h4kK87Egd3KLUxgRY3CMIxrhavUtkmdQil5vTJwJPyLe1pX3jjy4hSJoqmcpIlEQ
+         g8LPqMq6UZD13WaF47hXfv7T/C5ag3GIlMfwoaDcr28SBLcNIe31S9jxAy3HczgEgcg5
+         tQ19zs4MvJCcJdeQsE+FJeTqTRHEjXNalXx2pyZXY5IrCNNWPdfo153qvaO1V2eSLxqH
+         0F0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWmS6a72AMZu4h53gvTTCw377uANo0Xcj5zipTay15ZlcllXbkwIHTKefv24I4AL9Gg5xDE7qqzXXfvRbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1QIKta2UTo5XYEulAtskue4SFtM+74XR6RXhom+91DJXjpAl1
+	BVbnrrhxm8Qp0SAjuL6oJvJJ+sX6Y/QYr7B/9Sa6gZIobB0i5DInpvqYLxFbx34cXWI5hNMVd7I
+	DE16PLQ==
+X-Google-Smtp-Source: AGHT+IH2L5WyheD68FMlbVolIrglj717q0H4sRdOJCtkxJmx1Vd7u+k1RenCsJ0Dimw0+3YuwtXbTfHiGzU=
+X-Received: from plav13.prod.google.com ([2002:a17:902:f0cd:b0:290:28e2:ce4b])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d503:b0:295:2cb6:f4a8
+ with SMTP id d9443c01a7336-297c046c3bfmr30844965ad.51.1762499232838; Thu, 06
+ Nov 2025 23:07:12 -0800 (PST)
+Date: Fri,  7 Nov 2025 07:05:42 +0000
+In-Reply-To: <26835ada-4e3a-4f78-8705-4ed2e3d44bd8@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <26835ada-4e3a-4f78-8705-4ed2e3d44bd8@yahoo.com>
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251107070711.2369272-1-kuniyu@google.com>
+Subject: Re: [PATCH v3] selftests: af_unix: Add tests for ECONNRESET and EOF semantics
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: adelodunolaoluwa@yahoo.com
+Cc: davem@davemloft.net, david.hunter.linux@gmail.com, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, kuniyu@google.com, 
+	linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	shuah@kernel.org, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+Date: Tue, 4 Nov 2025 11:42:47 +0100
+> On 11/4/25 01:30, Kuniyuki Iwashima wrote:
+> > On Mon, Nov 3, 2025 at 4:08=E2=80=AFPM Sunday Adelodun
+> > <adelodunolaoluwa@yahoo.com> wrote:
+> >> On 11/2/25 08:32, Kuniyuki Iwashima wrote:
+> >>> On Sat, Nov 1, 2025 at 10:23=E2=80=AFAM Sunday Adelodun
+> >>> <adelodunolaoluwa@yahoo.com> wrote:
+> >>>> Add selftests to verify and document Linux=E2=80=99s intended behavi=
+our for
+> >>>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
+> >>>> The tests verify that:
+> >>>>
+> >>>>    1. SOCK_STREAM returns EOF when the peer closes normally.
+> >>>>    2. SOCK_STREAM returns ECONNRESET if the peer closes with unread =
+data.
+> >>>>    3. SOCK_SEQPACKET returns EOF when the peer closes normally.
+> >>>>    4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with unre=
+ad data.
+> >>>>    5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+> >>>>
+> >>>> This follows up on review feedback suggesting a selftest to clarify
+> >>>> Linux=E2=80=99s semantics.
+> >>>>
+> >>>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
+> >>>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+> >>>> ---
+> >>>>    tools/testing/selftests/net/af_unix/Makefile  |   1 +
+> >>>>    .../selftests/net/af_unix/unix_connreset.c    | 179 +++++++++++++=
++++++
+> >>>>    2 files changed, 180 insertions(+)
+> >>>>    create mode 100644 tools/testing/selftests/net/af_unix/unix_connr=
+eset.c
+> >>>>
+> >>>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/te=
+sting/selftests/net/af_unix/Makefile
+> >>>> index de805cbbdf69..5826a8372451 100644
+> >>>> --- a/tools/testing/selftests/net/af_unix/Makefile
+> >>>> +++ b/tools/testing/selftests/net/af_unix/Makefile
+> >>>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS :=3D \
+> >>>>           scm_pidfd \
+> >>>>           scm_rights \
+> >>>>           unix_connect \
+> >>>> +       unix_connreset \
+> >>> patchwork caught this test is not added to .gitignore.
+> >>> https://patchwork.kernel.org/project/netdevbpf/patch/20251101172230.1=
+0179-1-adelodunolaoluwa@yahoo.com/
+> >>>
+> >>> Could you add it to this file ?
+> >>>
+> >>> tools/testing/selftests/net/.gitignore
+> >> Oh, thank you for this. will add it
+> >>>
+> >>>>    # end of TEST_GEN_PROGS
+> >>>>
+> >>>>    include ../../lib.mk
+> >>>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/=
+tools/testing/selftests/net/af_unix/unix_connreset.c
+> >>>> new file mode 100644
+> >>>> index 000000000000..6f43435d96e2
+> >>>> --- /dev/null
+> >>>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
+> >>>> @@ -0,0 +1,179 @@
+> >>>> +// SPDX-License-Identifier: GPL-2.0
+> >>>> +/*
+> >>>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
+> >>>> + *
+> >>>> + * This test verifies:
+> >>>> + *  1. SOCK_STREAM returns EOF when the peer closes normally.
+> >>>> + *  2. SOCK_STREAM returns ECONNRESET if peer closes with unread da=
+ta.
+> >>>> + *  3. SOCK_SEQPACKET returns EOF when the peer closes normally.
+> >>>> + *  4. SOCK_SEQPACKET returns ECONNRESET if the peer closes with un=
+read data.
+> >>>> + *  5. SOCK_DGRAM does not return ECONNRESET when the peer closes.
+> >>>> + *
+> >>>> + * These tests document the intended Linux behaviour.
+> >>>> + *
+> >>>> + */
+> >>>> +
+> >>>> +#define _GNU_SOURCE
+> >>>> +#include <stdlib.h>
+> >>>> +#include <string.h>
+> >>>> +#include <fcntl.h>
+> >>>> +#include <unistd.h>
+> >>>> +#include <errno.h>
+> >>>> +#include <sys/socket.h>
+> >>>> +#include <sys/un.h>
+> >>>> +#include "../../kselftest_harness.h"
+> >>>> +
+> >>>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
+> >>>> +
+> >>>> +static void remove_socket_file(void)
+> >>>> +{
+> >>>> +       unlink(SOCK_PATH);
+> >>>> +}
+> >>>> +
+> >>>> +FIXTURE(unix_sock)
+> >>>> +{
+> >>>> +       int server;
+> >>>> +       int client;
+> >>>> +       int child;
+> >>>> +};
+> >>>> +
+> >>>> +FIXTURE_VARIANT(unix_sock)
+> >>>> +{
+> >>>> +       int socket_type;
+> >>>> +       const char *name;
+> >>>> +};
+> >>>> +
+> >>>> +/* Define variants: stream and datagram */
+> >>> nit: outdated, maybe simply remove ?
+> >> oh..skipped me.
+> >> will do so.
+> >>>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
+> >>>> +       .socket_type =3D SOCK_STREAM,
+> >>>> +       .name =3D "SOCK_STREAM",
+> >>>> +};
+> >>>> +
+> >>>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
+> >>>> +       .socket_type =3D SOCK_DGRAM,
+> >>>> +       .name =3D "SOCK_DGRAM",
+> >>>> +};
+> >>>> +
+> >>>> +FIXTURE_VARIANT_ADD(unix_sock, seqpacket) {
+> >>>> +       .socket_type =3D SOCK_SEQPACKET,
+> >>>> +       .name =3D "SOCK_SEQPACKET",
+> >>>> +};
+> >>>> +
+> >>>> +FIXTURE_SETUP(unix_sock)
+> >>>> +{
+> >>>> +       struct sockaddr_un addr =3D {};
+> >>>> +       int err;
+> >>>> +
+> >>>> +       addr.sun_family =3D AF_UNIX;
+> >>>> +       strcpy(addr.sun_path, SOCK_PATH);
+> >>>> +       remove_socket_file();
+> >>>> +
+> >>>> +       self->server =3D socket(AF_UNIX, variant->socket_type, 0);
+> >>>> +       ASSERT_LT(-1, self->server);
+> >>>> +
+> >>>> +       err =3D bind(self->server, (struct sockaddr *)&addr, sizeof(=
+addr));
+> >>>> +       ASSERT_EQ(0, err);
+> >>>> +
+> >>>> +       if (variant->socket_type =3D=3D SOCK_STREAM ||
+> >>>> +               variant->socket_type =3D=3D SOCK_SEQPACKET) {
+> >>> patchwork caught mis-alignment here and other places.
+> >>>
+> >>> I'm using this for emacs, and other editors will have a similar confi=
+g.
+> >>>
+> >>> (setq-default c-default-style "linux")
+> >>>
+> >>> You can check if lines are aligned properly by
+> >>>
+> >>> $ git show --format=3Demail | ./scripts/checkpatch.pl
+> >>>
+> >>>
+> >>>> +               err =3D listen(self->server, 1);
+> >>>> +               ASSERT_EQ(0, err);
+> >>>> +
+> >>>> +               self->client =3D socket(AF_UNIX, variant->socket_typ=
+e, 0);
+> >>> Could you add SOCK_NONBLOCK here too ?
+> >> This is noted
+> >>>> +               ASSERT_LT(-1, self->client);
+> >>>> +
+> >>>> +               err =3D connect(self->client, (struct sockaddr *)&ad=
+dr, sizeof(addr));
+> >>>> +               ASSERT_EQ(0, err);
+> >>>> +
+> >>>> +               self->child =3D accept(self->server, NULL, NULL);
+> >>>> +               ASSERT_LT(-1, self->child);
+> >>>> +       } else {
+> >>>> +               /* Datagram: bind and connect only */
+> >>>> +               self->client =3D socket(AF_UNIX, SOCK_DGRAM | SOCK_N=
+ONBLOCK, 0);
+> >>>> +               ASSERT_LT(-1, self->client);
+> >>>> +
+> >>>> +               err =3D connect(self->client, (struct sockaddr *)&ad=
+dr, sizeof(addr));
+> >>>> +               ASSERT_EQ(0, err);
+> >>>> +       }
+> >>>> +}
+> >>>> +
+> >>>> +FIXTURE_TEARDOWN(unix_sock)
+> >>>> +{
+> >>>> +       if (variant->socket_type =3D=3D SOCK_STREAM ||
+> >>>> +               variant->socket_type =3D=3D SOCK_SEQPACKET)
+> >>>> +               close(self->child);
+> >>>> +
+> >>>> +       close(self->client);
+> >>>> +       close(self->server);
+> >>>> +       remove_socket_file();
+> >>>> +}
+> >>>> +
+> >>>> +/* Test 1: peer closes normally */
+> >>>> +TEST_F(unix_sock, eof)
+> >>>> +{
+> >>>> +       char buf[16] =3D {};
+> >>>> +       ssize_t n;
+> >>>> +
+> >>>> +       /* Peer closes normally */
+> >>>> +       if (variant->socket_type =3D=3D SOCK_STREAM ||
+> >>>> +               variant->socket_type =3D=3D SOCK_SEQPACKET)
+> >>>> +               close(self->child);
+> >>>> +       else
+> >>>> +               close(self->server);
+> >>>> +
+> >>>> +       n =3D recv(self->client, buf, sizeof(buf), 0);
+> >>>> +       TH_LOG("%s: recv=3D%zd errno=3D%d (%s)", variant->name, n, e=
+rrno, strerror(errno));
+> >>> errno is undefined if not set, and same for strerror(errno).
+> >>>
+> >>> Also, if ASSERT_XXX() below fails, the same information
+> >>> (test case, errno) is logged.  So, TH_LOG() seems unnecessary.
+> >>>
+> >>> Maybe try modifying the condition below and see how the
+> >>> assertion is logged.
+> >> Oh..thank you. Didn't it through that way.
+> >> I understand.
+> >> I will remove the TH_LOG()'s
+> >>>> +       if (variant->socket_type =3D=3D SOCK_STREAM ||
+> >>>> +               variant->socket_type =3D=3D SOCK_SEQPACKET) {
+> >>>> +               ASSERT_EQ(0, n);
+> >>>> +       } else {
+> >>>> +               ASSERT_EQ(-1, n);
+> >>>> +               ASSERT_EQ(EAGAIN, errno);
+> >>>> +       }
+> >>>> +}
+> >>>> +
+> >>>> +/* Test 2: peer closes with unread data */
+> >>>> +TEST_F(unix_sock, reset_unread)
+> >>>> +{
+> >>>> +       char buf[16] =3D {};
+> >>>> +       ssize_t n;
+> >>>> +
+> >>>> +       /* Send data that will remain unread by client */
+> >>>> +       send(self->client, "hello", 5, 0);
+> >>>> +       close(self->child);
+> >>>> +
+> >>>> +       n =3D recv(self->client, buf, sizeof(buf), 0);
+> >>>> +       TH_LOG("%s: recv=3D%zd errno=3D%d (%s)", variant->name, n, e=
+rrno, strerror(errno));
+> >>>> +       if (variant->socket_type =3D=3D SOCK_STREAM ||
+> >>>> +               variant->socket_type =3D=3D SOCK_SEQPACKET) {
+> >>>> +               ASSERT_EQ(-1, n);
+> >>>> +               ASSERT_EQ(ECONNRESET, errno);
+> >>>> +       } else {
+> >>>> +               ASSERT_EQ(-1, n);
+> >>>> +               ASSERT_EQ(EAGAIN, errno);
+> >>>> +       }
+> >>>> +}
+> >>>> +
+> >>>> +/* Test 3: SOCK_DGRAM peer close */
+> >>>> Now Test 2 and Test 3 look identical ;)
+> >> seems so, but the only difference is:
+> >>
+> >> close(self->child); is used in Test 2, while
+> >> close(self->server); is used in Test 3.
+> >> Maybe I should find a way to collapse Tests 2 and 3 (if statement migh=
+t
+> >> work)
+> >>
+> >> I am just afraid the tests to run will reduce to 6 from 9 and we will =
+have 6
+> >> cases passed as against 7 as before.
+> >>
+> >> What do you think?
+> > The name of Test 2 is a bit confusing, which is not true
+> > for SOCK_DGRAM.  So, I'd use "if" to change which fd
+> > to close() depending on the socket type.
+> >
+> > Also, close(self->server) does nothing for SOCK_STREAM
+> > and SOCK_SEQPACKET after accept().  Rather, that close()
+> > should have the same effect if self->child is not accept()ed.
+> > (In this case, Skip() for SOCK_DGRAM makes sense)
+> >
+> > I think covering that scenario would be nicer.
+> >
+> > If interested, you can check the test coverage with this patch.
+> > https://lore.kernel.org/linux-kselftest/20251028024339.2028774-1-kuniyu=
+@google.com/
+> >
+> > Thanks!
+> Thank you!
+>=20
+> kindly check these if any conforms to what it should be:
+>=20
+> TEST_F(unix_sock, reset_unread_behavior)
+> {
+>          char buf[16] =3D {};
+>          ssize_t n;
+>=20
+>          /* Send data that will remain unread by client */
+>          send(self->client, "hello", 5, 0);
+>=20
+>          if (variant->socket_type =3D=3D SOCK_DGRAM) {
+>                  close(self->server);
+>          }
+>          else {
+>                  if (!self->child)
+>                          SKIP(return);
+>=20
+>                  close(self->child);
+>          }
+>=20
+>          n =3D recv(self->client, buf, sizeof(buf), 0);
+>=20
+>          ASSERT_EQ(-1, n);
+>=20
+>          if (variant->socket_type =3D=3D SOCK_STREAM ||
+>                  variant->socket_type =3D=3D SOCK_SEQPACKET)
+>                  do { ASSERT_EQ(ECONNRESET, errno); } while (0);
+>          else
+>                  ASSERT_EQ(EAGAIN, errno);
+> }
+>=20
+> OR
+>=20
+> TEST_F(unix_sock, reset_unread_behavior)
+> {
+>          char buf[16] =3D {};
+>          ssize_t n;
+>=20
+>          /* Send data that will remain unread by client */
+>          send(self->client, "hello", 5, 0);
+>=20
+>          if (variant->socket_type =3D=3D SOCK_DGRAM) {
+>                  close(self->server);
+>          }
+>          else {
+>                  if (self->child)
+>                      close(self->child);
+>                  else
+>                      close(self->server);
+>          }
+>=20
+>          n =3D recv(self->client, buf, sizeof(buf), 0);
+>=20
+>          ASSERT_EQ(-1, n);
+>=20
+>          if (variant->socket_type =3D=3D SOCK_STREAM ||
+>                  variant->socket_type =3D=3D SOCK_SEQPACKET)
+>                  do { ASSERT_EQ(ECONNRESET, errno); } while (0);
+>          else
+>                  ASSERT_EQ(EAGAIN, errno);
+> }
+>=20
+> OR
+>=20
+> is there a better way to handle this?
 
-After a recent 6.1.y stable kernel update, my Indy (mips64 R4400SC) now
-just stops booting early, just before when I would normally see the
-kernel messages about mounting the root filesystem.
+Sorry for late!
 
-There are no further messages of any kind, and the boot process does not
-appear to ever complete.  However, the kernel is not fully crashed, as
-it does respond to sysrq commands from the keyboard (and I do get output
-on the console from these).
+What I had in mind is to move accept() in FIXTURE_SETUP() to
+Test 1 & 2 (then, only listen() is conditional in FIXTURE_SETUP())
+and rewrite Test 3 to cover the last ECONNRESET case caused by
+close()ing un-accept()ed sockets:
 
-I bisected to the following:
-  
-    794b679a28bb59a4533ae39a7cf945b9d5bbe336 is the first bad commit
-    commit 794b679a28bb59a4533ae39a7cf945b9d5bbe336
-    Author: Jiaxun Yang <jiaxun.yang@flygoat.com>
-    Date:   Sat Jun 7 13:43:56 2025 +0100
-    
-        MIPS: mm: tlb-r4k: Uniquify TLB entries on init
-    
-        commit 35ad7e181541aa5757f9f316768d3e64403ec843 upstream.
+TEST_F(unix_sock, reset_closed_embryo)
+{
+	if (variant->socket_type =3D=3D SOCK_DGRAM)
+		SKIP(return, "This test only applies to SOCK_STREAM and SOCK_SEQPACKET");
 
-This reverts cleanly on top of 6.1.158 and the resulting kernel boots
-normally.  I then reproduced this failure on 6.18-rc4.  Reverting
-35ad7e181541 on top of 6.18-rc4 also results in a normal boot.
+	close(self->server);
 
-Let me know if you need any more info!
+	n =3D recv(self->client, ...);
+	ASSERT_EQ(-1, n);
+	ASSERT_EQ(ECONNRESET, errno);
+}
 
-Thanks,
-  Nick
+
+>=20
+> I ran the KCOV_OUTPUT command using the first *TEST_F above* as the Test=
+=20
+> 2 and got the output below:
+> *$ KCOV_OUTPUT=3Dkcov KCOV_SLOTS=3D8192=20
+> ./tools/testing/selftests/net/af_unix/unix_connreset*
+
+You should be able to see line-by-line coverage by decoding
+files under kcov with addr2line or vock/report.py.
+
+Thanks!
 
