@@ -1,153 +1,156 @@
-Return-Path: <linux-kernel+bounces-890675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E18DC40A4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:43:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2FEC40B16
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:55:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0743422B2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:43:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 15276350178
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C3032E15B;
-	Fri,  7 Nov 2025 15:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A48A330300;
+	Fri,  7 Nov 2025 15:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="I0ZDTvDd"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="owAuX2s4";
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="RN0rp9DZ"
+Received: from mailhub9-fb.kaspersky-labs.com (mailhub9-fb.kaspersky-labs.com [195.122.169.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A5232D0DA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497AA32E753;
+	Fri,  7 Nov 2025 15:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.122.169.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530169; cv=none; b=oHwP3WZh7nn1jX7AvNuKuWNF6KfqI0KkpoJ2O7BqkC4j9clIevVd7LiAmFPylbk9aGlO0foOtaoBOnbP/eym1M17d/csbqRTPKHmU43BMyYUD21xl1O77V8MbasAg8Da6UytLhrnmfU6A4h3CP9Zzj4LBM8zRpMCfdGCwTQ+qGM=
+	t=1762530897; cv=none; b=R7M6zPGZPSgBjYiC898LCtXhUnrZUDAoDiPGd8e9SGSCMZ91HF80JOxW9gm6uCnHMPJgZ0E4hN8Z3t6Vz26zD3HxnhIGm4A5lDcZ2zBfQqOTYFMpZ3Wmmg2LA6cuJBBjM+aWMKc3LaaAwzqfNdEf72RTHYQqwyldeZhPBCm1OWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530169; c=relaxed/simple;
-	bh=FllVlbWS4MtLkyQNg1oOoXS8Gv/IymNyRvTVHqi2Ks4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LBhXYSaHrT4dqBv/C5scUMh8S3ZPu64825XGLkQMX1pIIYup3mMhwo/SraCqrvbhr6tMzSz7YcMfEkzZmbYb1OEe9wXq2vlyiA7OnUIoqNyqT0crOuRn1WuKXwjIdswcEFQfp4XiBOs66a0AR3PeQcjhmT7BdVemISxu7URghTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=I0ZDTvDd; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-421851bca51so698262f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:42:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762530166; x=1763134966; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EEllDksTQmdd3u8PyFwFKXQ1ssazmQ/lfWRUKOA18nI=;
-        b=I0ZDTvDdZasUnpUiGcBtTCkw79yxoN3lP8jisbYQfWrYhOBDmOe/+DqiwXEnCjT/Fr
-         Ywj9Goc3m1tMGbX4CVGUqlPGakpxl/HCS/j48ZgWsMLSwmytZadPTVXS5sVlUpIpF1oU
-         hSLaPwvoea5DKYZ8sAo6rhB7DqsVkekaLWkDYR2wmanaG0RcsnADWO6IpBGnFpAr6kLJ
-         1x1+/4Cj1OxmgOCxkPA5vJX7OlGY2xrHDWHzcKfX2RLk9yjr03eFVqF0m0ZHm+nwa3Si
-         L7ovxpYUW5Lc5BnUrxWNxLr4STTrrk7YkDtVCShjcFG/XzS6aCWpyd80dvr/SeYpB9Gc
-         HqSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762530166; x=1763134966;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EEllDksTQmdd3u8PyFwFKXQ1ssazmQ/lfWRUKOA18nI=;
-        b=bUQVUnhvWlMDez9aBkFuVo6H/ZyXuL/8k/N2JjWUTScW9TTqI40WD25MTux8qLm7q2
-         UcKPscRNtXEUm/8CN3Ohvt5t5Zp42uRiSstlP8fiw57mxrmYcrR24jNwOJBp4JcwYLW0
-         6VgR/V8/bb4Zj+uJBKptWmCEtXFppXKsI/UaOPhTdXo0Tn3HfnR0akHKeNwUEDFXMSp4
-         iXjnFT4K1kh0/FZ/GBQ++8+lq7spVGqp7rWC4lyt8xSEtrqo6n74j9HQXDciwnB2fMay
-         C6kBfwwAIZjIB7shJt5cfd5w92q8FOWz1d0+RZfFc3dLWkMO97Lc+lBFW7a+F3pHyHsN
-         2+AA==
-X-Gm-Message-State: AOJu0Yxc7S8ftFF6WIrWXttjQfJZfmLB4yunMyQ5OTtrJ/Z5sKRY1vT9
-	J2vwjK27NnOBTGBYlhdMHANZGVR+FpUZAVb2t8iPXonW3aMTa8+uMIBYbM6plZq2wSparZ+1kuB
-	mR8r1
-X-Gm-Gg: ASbGncubUmvYo1ZQDgvWBeqIT9b6glC+QAUfMU6MPbTbdLFTShK6kLx7bHSm0KlUD6O
-	MEn1GceZmO8vOCHxumLJM1v4lKiRGo2opznMI0p5n7q86A7mFNIAJbZkneWHRQCajmjrkpb44Z3
-	x/EoxC973DSN+DfPolgWBkTe1olwJFRwq1jOksMIFnVOHBzrKVIJiKrAcq9eRVp3xOGCYPNOD6s
-	JDtvES7Csu0WKWEKYDpPfTvNzmhApKAXEJzobIWSvnVzQwEMHyHA0lStzkRtR2jJrMN9U7A4bfe
-	LrjP1r5fpSfsHZ82BhIbO8R2UCtEhJf3TnztC04TffugiwCti0wVY/EcCyTBTcfHeay0/3LBXLL
-	igT6vqYdkPHhIYu7oaHWi+iCszI7Fj7TIGki2RhakOpXQk6Dq/bKdJL3yKWHBFWZx90PBpM5ihI
-	j1FSPpYd/VnNmc7h83uYIvl+OqrCY4PPpp5Zc=
-X-Google-Smtp-Source: AGHT+IFBda1EcsHmddpDO9LOEIIrlJYCTDL5Rlz+CdU/5vjVJjQIDVH1r/dzDG/W3yb8c7vMr4OskA==
-X-Received: by 2002:a05:6000:1867:b0:429:d19f:d922 with SMTP id ffacd0b85a97d-42adc6895b6mr3593700f8f.11.1762530165930;
-        Fri, 07 Nov 2025 07:42:45 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67921c3sm6213783f8f.40.2025.11.07.07.42.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:42:45 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Oliver Neukum <oneukum@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH] usb: uas: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 16:42:36 +0100
-Message-ID: <20251107154236.306620-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762530897; c=relaxed/simple;
+	bh=0kPZIRWiQDeuxUV2+ZIjVBj0pHRaQ2tC4rF8+P00BW0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZqKkfHiyF5ttxUFlQtWL7VaZ8VAuigYSLopEg5czW+lFyX39UQD/YEsWfknUguoxhfhfy+iaM5tVIAEZflhKqx+3gyIlgqUvmo775bpJ3WY7sxqDvD3AeyiI1CZ9VnPrE4ekd35vSc68YeKBgfMbLxKZSL0ndouimjfvwES1dgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=owAuX2s4; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=RN0rp9DZ; arc=none smtp.client-ip=195.122.169.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1762530332;
+	bh=YoL0rmniGZrR8nKZFcQUMl53tWAqxuZqCMgD831YzeQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=owAuX2s4ve3J1Pqi5nD1xfNa+PgHwEjIVTnL0I8LpsjTUXEtADXylpLPgl1fnrLM8
+	 THOPkPuHZ7mJ0Js6Bh9pmhKe0btnsKv/PqEdLNyBb7HQ9DC10xFGAktTw9BIditFNJ
+	 IuS/8CL0aj70yyj6+MPUnFgW+Z+fMmB1JqIqIlZ0WgnR72GrP4psC7mtVFm+xtnH2u
+	 Uv1kZNLPUhuibYhKgCC7JkppQy5wSs5jim1/whZHJQcEBUfHgHQ0qLtIoayf+h1jTe
+	 ohUyQPrUiYecO2XGDE5mDt7F1Vl2DVG2DKgt+N4x6L01Ri/rvidwXpxTgj7On380k5
+	 jINzPFrbokriQ==
+Received: from mailhub9-fb.kaspersky-labs.com (localhost [127.0.0.1])
+	by mailhub9-fb.kaspersky-labs.com (Postfix) with ESMTP id C5D899002A9;
+	Fri,  7 Nov 2025 18:45:32 +0300 (MSK)
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "mx13.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub9-fb.kaspersky-labs.com (Postfix) with ESMTPS id 9CC489000C3;
+	Fri,  7 Nov 2025 18:45:32 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1762530323;
+	bh=YoL0rmniGZrR8nKZFcQUMl53tWAqxuZqCMgD831YzeQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=RN0rp9DZFnymQdKkreWZiih/4SBJF+FODp1Z3y/hMHuxE9XVBNa6dvKbwrfK/Ltrz
+	 GYefEhqxfaF+KZTIJL06ydPvMvPAvFTOBAcAFxVUisFT9oTz4b4tg3Lfh58KlEIJCX
+	 IlHBW/Z9nadQKLSZkgpSzxPRyOrzAA/WS6M+eUptIbkDxLEvc4tfABlmyLDc4wMs7+
+	 i94SBHfxGW+Rf5yk0pqxeWFWSFMiCUUKUu/SHhQGKobgIW8CK1ZlhKPWYaQomQC1+W
+	 3Jc9+YK+niI1hyq7WT7mny3mYc89hTVMzfwfrMdHKWYMj3rFreh0mQge1rkG83JUEs
+	 q6IbBNJAxPz4w==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id C4BDC3E450E;
+	Fri,  7 Nov 2025 18:45:23 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 1D00A3E1CB8;
+	Fri,  7 Nov 2025 18:45:23 +0300 (MSK)
+Received: from Nalivayko.avp.ru (10.16.105.14) by HQMAILSRV3.avp.ru
+ (10.64.57.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Fri, 7 Nov
+ 2025 18:45:07 +0300
+From: Nalivayko Sergey <Sergey.Nalivayko@kaspersky.com>
+To: <linux-media@vger.kernel.org>
+CC: Nalivayko Sergey <Sergey.Nalivayko@kaspersky.com>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Michael Krufky <mkrufky@linuxtv.org>
+Subject: [PATCH 0/2] media: dvb-usb-v2: add init_ready flag to prevent  race during device initialization
+Date: Fri, 7 Nov 2025 18:44:24 +0300
+Message-ID: <20251107154426.2116743-1-Sergey.Nalivayko@kaspersky.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV3.avp.ru (10.64.57.53) To HQMAILSRV3.avp.ru
+ (10.64.57.53)
+X-KSE-ServerInfo: HQMAILSRV3.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/07/2025 15:33:04
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 197892 [Nov 07 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Sergey.Nalivayko@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 75 0.3.75
+ aab2175a55dcbd410b25b8694e49bbee3c09cdde
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: kaspersky.com:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/07/2025 15:34:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/7/2025 12:14:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/07 15:09:00 #27893311
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+This patch series introduces an atomic init_ready flag in 
+struct dvb_usb_device and adds checks in relevant code paths. 
+Drivers now verify that device initialization has completed before 
+performing operations that rely on initialized device state. 
+If the device is not yet ready, the operation is deferred until 
+initialization finishes, preventing race conditions and improving 
+driver robustness.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+Nalivayko Sergey (2):
+  media: dvb-usb-v2: add device init_ready flag
+  media: mxl111sf: fix i2c race condition during device probe
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+ drivers/media/usb/dvb-usb-v2/dvb_usb.h      | 3 +++
+ drivers/media/usb/dvb-usb-v2/dvb_usb_core.c | 4 ++++
+ drivers/media/usb/dvb-usb-v2/mxl111sf-i2c.c | 2 +-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
-
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/usb/storage/uas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
-index 4ed0dc19afe0..0657f5f7a51f 100644
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -1265,7 +1265,7 @@ static int __init uas_init(void)
- {
- 	int rv;
- 
--	workqueue = alloc_workqueue("uas", WQ_MEM_RECLAIM, 0);
-+	workqueue = alloc_workqueue("uas", WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!workqueue)
- 		return -ENOMEM;
- 
 -- 
-2.51.1
+2.39.5
 
 
