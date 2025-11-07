@@ -1,116 +1,106 @@
-Return-Path: <linux-kernel+bounces-889789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696B5C3E858
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:31:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E148DC3E888
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:41:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 509CD4E839F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1B03AD29C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA53B1DF99A;
-	Fri,  7 Nov 2025 05:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pX9UZxxf"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D194242D72;
+	Fri,  7 Nov 2025 05:40:59 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DECE2C21E7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 05:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910D2F50F;
+	Fri,  7 Nov 2025 05:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762493409; cv=none; b=nPnTSQP0z3dasZywkJQ4IrnZ+S5vjugkm4hGsvu9fgOa+yywYRwc02d+6nL4VFOJEHACUKMtoNDyUml5vWZyjB589GEaIkayeMUPoF4VVu7eL3fQSs5xN2+MmVjRG5D+3ADYDmmudtubBydukdHrNg8nSv3TGHGT/+iXus/q6P4=
+	t=1762494058; cv=none; b=e8qdg9pNV95IVRA4aG7ex8LSccY/OZ41CeEqD8Hwxpp3dhbFvNqYQIST47eY755Strx3Wj7XQPQplJuw+uTx125DEfgdUMg1RF86bNCMVV2TjppbRaoXZDQNbb0D9OHsTMXwbXgx4Lgpq8W+k/h/57BwkdL++MflbsvKBnwDl8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762493409; c=relaxed/simple;
-	bh=Gfa74bvT8g21TTG6UeYJUX49YlH6I28Q/5rLnsXNtu4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WyWKeTf1Nu6EhpL+2uFuw4fZGvRXOSYoplvtYMgKF00rOlxfIY+zDQA602fxx3RvRqomi5264FoxUSLjwKMkAKCX43Uj5nWUegHtLrgvE2WBUcaO3IIPzu6/J08RNhYyp1AhPzzii6VO4ywVlHgpCKwIjqD8j7hN/vVdElTfwcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pX9UZxxf; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-786a589c941so6736947b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 21:30:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762493406; x=1763098206; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gxyC8GUOhbymd0hZW1Wc7AlwN6X8GVnWJwQLTO+kr4=;
-        b=pX9UZxxfciYzQ1uFrIh/3etkrl0QEdGhu3g5Ea3xruo1GWh/xrdLebeOn5l12kmhpm
-         OBuuIUQkzgo4/DkewT8+ykCE0tNkxCjSHfyhT9Br0aVGcfdyyrc2JPSjcfGEBBLdzqme
-         9SGz1/fFLrN/GqENL4xakl1BNwwFsvJkF1+TNYsxmSD7juRN+p9dTFHz++QW0EtmRLsd
-         0S8IY8z2b6PArlfsWHkhWy5gn2YsUt9n8cPk/3DLaBpa77G3glj7VJIMh/Nst4CIwXDw
-         O7xnkm31OroAtg7HKG2tVdpp5x3PbDveHlCl+1CA6Cq2qn3FrNyeISHhb1anp5VX1Hpv
-         /BxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762493406; x=1763098206;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gxyC8GUOhbymd0hZW1Wc7AlwN6X8GVnWJwQLTO+kr4=;
-        b=U3O0V3DoswL1N3qFzLqqMScG9xNb/zu6gyOSYeDsKDtkasWgN61vyM2npAF9wGO15S
-         D3Ns2HDIFBVxEjUb8JQdKvy2ZnH7V0wYFgDJ6XfZAMGHi5whwvgHAopFi8Zd2cmOP/UV
-         A1tGt2OSiX7cSaACiMVBX4L8WeDV+K6CWDbM4LoX8sNGkuLc2skovTOZh3nYq07N6yXY
-         5YglsaSoB3zdOOO+O+X55NYBzvI7q68XYwEwx5xptc7QhO9J10ciq237E3mQlNs05nr3
-         cABkgQH2ATQoSl6iit/aMz/HQonGxx6KBV3/yT+ZEqKj3hs1syylK8Nq89h5X2PR4Uk7
-         Smew==
-X-Forwarded-Encrypted: i=1; AJvYcCUYUU2aPJZXuyQMizVKkVS7fehtJx0j9+ApBXXrLro+QVwi2iobet6PADWW+QftcPMYpUagz4gbg9P1p4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC30Hy2LwHzTuwUAAsCBZGOyGvWWqIaG48rNLrFG9dSm7g4bCe
-	v8qug3YkSdTkYjG98WUDgVTaEqpqcuocADDwkRRkGMvxbafkR/kSHvNU9UVD7V0JDqykgTIly/m
-	EsA==
-X-Google-Smtp-Source: AGHT+IFyTML4kwjlT8XJq9ynWGzbE9ai1eUBXHm+9uVGmQAwTAKz9Wy9ddid4pLEgQKt5V9M2r2fUt9K2g==
-X-Received: from ywbkl8.prod.google.com ([2002:a05:690c:5048:b0:784:9edd:65d8])
- (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:f89:b0:787:c612:f0f6
- with SMTP id 00721157ae682-787c61305eamr15892597b3.1.1762493406390; Thu, 06
- Nov 2025 21:30:06 -0800 (PST)
-Date: Fri,  7 Nov 2025 05:29:26 +0000
-In-Reply-To: <20251107052926.3403265-1-rmoar@google.com>
+	s=arc-20240116; t=1762494058; c=relaxed/simple;
+	bh=yCQqcXPylAJSVA6F49cJItfhjz96aSIGaTzjb2bolhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnTUZVjd++C5lFng9F1vearGv1e2yfdZkH2jV4QNo/iyHDtELNEUFJWc3sbaWxMon3P4UQsCzUsR/Tnmydk/Yvif0BiXFB55JZ/EDCSg3fy0MCwfbKi6gtni7wppPP3qATU5qWYExSi3HDCvvCI1/F18b28zeylSRWdxoR9286s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id B9D872C06417;
+	Fri,  7 Nov 2025 06:32:14 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A8078444; Fri,  7 Nov 2025 06:32:14 +0100 (CET)
+Date: Fri, 7 Nov 2025 06:32:14 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, Christian Zigotzky <chzigotzky@xenosoft.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	mad skateman <madskateman@gmail.com>,
+	"R . T . Dickinson" <rtd2@xtra.co.nz>,
+	Darren Stevens <darren@stevens-zone.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>,
+	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
+	hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org,
+	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 1/2] PCI/ASPM: Cache Link Capabilities so quirks can
+ override them
+Message-ID: <aQ2EXqDvnxjyXq_7@wunner.de>
+References: <20251106183643.1963801-1-helgaas@kernel.org>
+ <20251106183643.1963801-2-helgaas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251107052926.3403265-1-rmoar@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251107052926.3403265-6-rmoar@google.com>
-Subject: [PATCH RESEND 5/5] ktap_v2: change version to 2 in KTAP specification
-From: Rae Moar <rmoar@google.com>
-To: frowand.list@gmail.com, davidgow@google.com, keescook@chromium.org, 
-	raemoar63@gmail.com, Tim.Bird@sony.com, shuah@kernel.org
-Cc: tytso@google.com, gustavo.padovan@collabora.com, 
-	ricardo.canuelo@collabora.com, corbet@lwn.net, kernelci@lists.linux.dev, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rae Moar <rmoar@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106183643.1963801-2-helgaas@kernel.org>
 
-Prepare KTAP specification for the final release of version 2 by
-removing "-rc" in the title. This would previously cause a Sphinx
-warning.
+On Thu, Nov 06, 2025 at 12:36:38PM -0600, Bjorn Helgaas wrote:
+> Cache the PCIe Link Capabilities register in struct pci_dev so quirks can
+> remove features to avoid hardware defects.  The idea is:
+> 
+>   - set_pcie_port_type() reads PCIe Link Capabilities and caches it in
+>     dev->lnkcap
+> 
+>   - HEADER quirks can update the cached dev->lnkcap to remove advertised
+>     features that don't work correctly
+> 
+>   - pcie_aspm_cap_init() relies on dev->lnkcap and ignores any features not
+>     advertised there
 
-This series represents the final version of KTAP version 2 that includes
-the major addition of test metadata.
+I realize that memory is cheap, but it still feels a bit wasteful
+to cache the entire 32-bit register wholesale.  It contains
+reserved bits as of PCIe r7.0, various uninteresting bits and
+portions of it are already cached elsewhere and thus now duplicated.
+I'm wondering if it would make sense to instead only cache the ASPM bits
+that are relevant here?  That's the approach we've followed so far.
 
-Signed-off-by: Rae Moar <rmoar@google.com>
----
- Documentation/dev-tools/ktap.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You're initializing the link_active_reporting bit from the newly
+cached lnkcap register, I'd prefer having a static inline instead
+which extracts the bit from the cached register on demand,
+thus obviating the need to have a duplicate cached copy of the bit.
 
-diff --git a/Documentation/dev-tools/ktap.rst b/Documentation/dev-tools/ktap.rst
-index d118119910f8..1abb30887008 100644
---- a/Documentation/dev-tools/ktap.rst
-+++ b/Documentation/dev-tools/ktap.rst
-@@ -1,7 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0
- 
- ===================================================
--The Kernel Test Anything Protocol (KTAP), version 2-rc
-+The Kernel Test Anything Protocol (KTAP), version 2
- ===================================================
- 
- TAP, or the Test Anything Protocol is a format for specifying test results used
--- 
-2.51.2.1041.gc1ab5b90ca-goog
+pci_set_bus_speed() caches bus->max_bus_speed from the Link
+Capabilities register and isn't converted by this patch to use
+the cached register.  There are various others, e.g.
+get_port_device_capability() in drivers/pci/pcie/portdrv.c
+could also get PCI_EXP_LNKCAP_LBNC from the cached lnkcap
+register.  Same for pcie_get_supported_speeds().  If the
+intention is to convert these in a separate step in v6.19,
+it would be good to mention that in the changelog.
 
+Thanks,
+
+Lukas
 
