@@ -1,125 +1,84 @@
-Return-Path: <linux-kernel+bounces-890124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CCFC3F467
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:55:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF2FC3F76D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:31:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E54C4E9004
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 09:55:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3CA44F1A4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B62F7AD7;
-	Fri,  7 Nov 2025 09:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XGCNyWGu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1638531987A;
+	Fri,  7 Nov 2025 10:30:15 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2098.outbound.protection.partner.outlook.cn [139.219.17.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C002701C4;
-	Fri,  7 Nov 2025 09:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080463115B5;
+	Fri,  7 Nov 2025 10:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.98
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509304; cv=fail; b=KTii3rstnkQzMfkyIHRBLmMnbW8bHc7zwBxAcKMkqB+DMAWh6SuHpXjJPA3/ibfPbcGMVchq0+lSoa3Q+jLcW9o89V7SryQ/Az1FC/0SQOjQaT/HElMb1Zyki86tAbEVnIRFP2FulhRn/a9moVRGuDoPsEYvbI2Jf7HnGMxbgUM=
+	t=1762511412; cv=fail; b=LxvjQGL0cYkoZyvv94wIaf/f09S7o4YYkmOB/FGEIEnNxaiNq3HlHunXH3g7g2gLKCPrvZpDSb3tBDYPwnfbzmvkKoxm9FvAylyHW26olq1soJaLTTFNYyRu9k6qkIcQh3z9AM6CJAwQ9iqVo20EZDBjd542hQTsVz51Ni26quA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509304; c=relaxed/simple;
-	bh=uXxxRpEehkEy6yyOIvFDKCBN12AvCMZ21g1wZk9muwc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jSbIAWpf3KUctMpb8XEUGPokATpkSBCUdx645vQum4Gs21XjXsx1MLwIika1LaUKoo25ot3z5C9JrQc2qnx8qMJmksvPNdOP7HCFnnlpN+wKApPRMJR6U1OqMmGS1Er8vWrADap7Kqj7X26oGgCPHIRqtxbJhrGgUU1y6kBK8ac=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XGCNyWGu; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762509302; x=1794045302;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=uXxxRpEehkEy6yyOIvFDKCBN12AvCMZ21g1wZk9muwc=;
-  b=XGCNyWGugiZzxu86TbmqbYVQnAMB+NRqfXjwQMkPCCzse6Eg0l/TNndM
-   sYcPHjmTAtkjtmpCbOxRWg0teU1Q9pRiNo4a/1untfkquAWvhmtO3Fzlp
-   cVbTIACDMHiIf/yEcrhWXCuU8BeWSsR2bvAL0JA1JES0KpWlV8oTE6Q5O
-   wlsHl0hmG74EXVzSiJmozVRIAZ7YO59xZCmranyQThvurS739Ycy8OtpZ
-   tw3mQd6fHQ+XJRXbOVmrmZkel8tTZfw3ms4O+2Aw5FaekQUiyH3h+l0ZW
-   oEdQKusyrTgJZM+zr6Qmt5/aiCzIRVtrNVUl34VRSfr1MHO2AQPMV0gw6
-   w==;
-X-CSE-ConnectionGUID: 9pOYp8bYTQCizqu1SXwHag==
-X-CSE-MsgGUID: vUr2shBiQUK6tqQ//w1FCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="64753399"
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="64753399"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:55:01 -0800
-X-CSE-ConnectionGUID: nudYGQXtRqaO9yfULISL1g==
-X-CSE-MsgGUID: byN5QIWmR+2A8j8gT3PD+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="218742570"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 01:55:00 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 7 Nov 2025 01:54:58 -0800
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Fri, 7 Nov 2025 01:54:58 -0800
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.35)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 7 Nov 2025 01:54:58 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JcNyI2av84GWyiyfTSTvV0/TsjAFRtfaWhpAAhtJFeMlJ+7biodQ8Yx7XdnHlr8tpNbT2p33Khjd84/FanmlorQDUxlAqFYPWC26tNPvwvAKor9QHLpNG4cH2QDE0hFFsheGiYrzbNc7vDLFqp9fGQC3kgaSYbenf2zmsxsLZWh66AEdEaJj1xL2QHmCbgzm+idi50jrv9GIJ3wRTKzn1UjPjzH4FQjLsDS8GCsvl0JJrTJwbV8C39EPV/shdnEp+qWxmwGBzYObAWTODxmcGMtW5c01IKDxhuOn9VAgeg/tbCwHVVzJfSgb2EDOqKs/1XBCVnbUvj/fRYiGcZgJIQ==
+	s=arc-20240116; t=1762511412; c=relaxed/simple;
+	bh=dZvdAOKsKn4xUz6m9MEOpO0j6/uJ8VN0HQy5nJL/ABo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EdSr6QmByv8imGISxGbp8HERbaN4hii/wrKMkhx4e7tlzgspfuIKm/HgGlDp3Z0EEMuxRtcaBUGE8nBwFMB9CDRNcuw0nyB3K5356nGpDBxRa1vZE0Lbh/iGdSX4XGbRHCq4EcXvTO9Dmar32TG7Qp2SaAXzMU/Crbx63JdYznQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=duBQ2ge1405dCHHZPQ93zIn9xuVIP2E+yTqtpWIRh+OgMVufsAKw2RRfqJkq0vMlixu6pQVLlg0LpzHgpvJSNphnt/LtUMI1dTbt4k/Ik9NLrj78pyicPW91kUFGnc7ynSJ+QK48l3qgRz4/TJXKr1dEsF5LIjaUYBsU8glLAsZzLXVRqLG0nUCfZinD2do7wYCwizyChu4Payg2u0e0oXyGlH4fmfwZF3Rnz60uSfxxdqPAR3H7CxRqoVRGg9FJm4YQELMOqh8sCPkMh7GbuLkkGAqnGLA3glDz6WE3eQq3bnpI5NXjmOYIE5Vyp0QVpeIVkGgjHrSobyzivG7QmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
+ s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9uAxTbvaf+8corwrAxdx/KZkoYQQ8neMlgEKudiQ3dQ=;
- b=cf+Avf08/1ahWiNU4ynJjzjzspLJAPKcnDFfQeIdPqSpKnGIP93jA3NPDgh3SELapOpFiFduL1YTD7o17iWOT4G6ivuCeOcOCWAmIimrg87mhsbjRRUaOBYdF7o0LUrXQRwKqAsVtigJbnG52tThIiM2jmPc41U1U9jr0AuxApfel4XiMd/2/CiNfQG5TsA2dFnUiET/MA9b1/lzIpF0zshYMFSw29ktlGjmSyVklvmq2vLLVQcb65/dWJJEiYciY6EbUCXpWlVf8bzTh/PO0w9uNdY849W7YGN0fcRhS3h/G+Ruteb23MI77xgu+PQvitKg/vABYvtWpCfUy8N/uQ==
+ bh=RopYT9nzxjAG1AgJJOfzvjsouzhfjUNUpcWgGKqJh5Q=;
+ b=EcAtN3MxqSX/J4l1MHCzXg6LCnw5MsdhWEUyKts1NUAN2lHII0dDAhc3SHX5oIrH4mSbiwLvsCafVcGnQjH59i6NmiyoeeQ+IzTYy9zTW19Ddp1HNFMp/jjPWTT34lTZSfP+4Y42S1gkprGHjrLHTSzYkTTyv1IrE25K3VHqvJaVbiVr3m+/RLn688L2oIf68cMVsseB4HSpZwJsjXR7bWugqEZvSjN0SqpqcIlnLxzfP30m1OMfHkJiTOJGzELM917NQy5Jp+K8hUHaN+sN8hfcYQrTORbt0CYItl2DddAZzD06sG0vpcn6v+japaLI7kc3lSM/cGY1LohrbWp1tA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5365.namprd11.prod.outlook.com (2603:10b6:208:308::18)
- by SA2PR11MB4876.namprd11.prod.outlook.com (2603:10b6:806:119::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Fri, 7 Nov
- 2025 09:54:56 +0000
-Received: from BL1PR11MB5365.namprd11.prod.outlook.com
- ([fe80::8637:9cfc:1235:8987]) by BL1PR11MB5365.namprd11.prod.outlook.com
- ([fe80::8637:9cfc:1235:8987%4]) with mapi id 15.20.9298.012; Fri, 7 Nov 2025
- 09:54:56 +0000
-Date: Fri, 7 Nov 2025 10:54:25 +0100
-From: "Winiarski, Michal" <michal.winiarski@intel.com>
-To: "Muqthyar Ahmed, Syed Abdul" <syed.abdul.muqthyar.ahmed@intel.com>
-CC: Alex Williamson <alex@shazbot.org>, "De Marchi, Lucas"
-	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, "Tian,
- Kevin" <kevin.tian@intel.com>, Shameer Kolothum <skolothumtho@nvidia.com>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Brost, Matthew"
-	<matthew.brost@intel.com>, "Wajdeczko, Michal" <Michal.Wajdeczko@intel.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Jani
- Nikula" <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Laguna,
- Lukasz" <lukasz.laguna@intel.com>, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v3 28/28] vfio/xe: Add device specific vfio_pci driver
- variant for Intel graphics
-Message-ID: <cp7slxgwbevlgifr76z2ldqihcukte6vrcr7dquat4pqmcr2ri@x3qwjrfkcmzl>
-References: <20251030203135.337696-1-michal.winiarski@intel.com>
- <20251030203135.337696-29-michal.winiarski@intel.com>
- <DS7PR11MB6104D1246DA5ED88325D2686EEC3A@DS7PR11MB6104.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::14) by ZQ2PR01MB1305.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:6::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 09:55:39 +0000
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7%6]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 09:55:39 +0000
+From: Hal Feng <hal.feng@starfivetech.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	E Shattow <e@freeshell.de>
+Cc: Hal Feng <hal.feng@starfivetech.com>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/8] dt-bindings: PCI: starfive,jh7110-pcie: Add enable-gpios property
+Date: Fri,  7 Nov 2025 17:55:23 +0800
+Message-ID: <20251107095530.114775-2-hal.feng@starfivetech.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20251107095530.114775-1-hal.feng@starfivetech.com>
+References: <20251107095530.114775-1-hal.feng@starfivetech.com>
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DS7PR11MB6104D1246DA5ED88325D2686EEC3A@DS7PR11MB6104.namprd11.prod.outlook.com>
-X-ClientProxiedBy: WA0P291CA0006.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1::18) To DM4PR11MB5373.namprd11.prod.outlook.com
- (2603:10b6:5:394::7)
+Content-Type: text/plain
+X-ClientProxiedBy: ZQ0PR01CA0014.CHNPR01.prod.partner.outlook.cn (10.2.0.83)
+ To ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn (10.2.1.78)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -127,198 +86,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5365:EE_|SA2PR11MB4876:EE_
-X-MS-Office365-Filtering-Correlation-Id: 984fef5c-8c6a-4560-8cba-08de1de3a8b5
+X-MS-TrafficTypeDiagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1305:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7aa2df87-424e-47ad-9324-08de1de3ce5e
 X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?d042b0s1WjBvK3ZEdWJDcFZJNmlKWnkyNWUyS0pEZ0c0MkdkdUkvRXJhd3lq?=
- =?utf-8?B?S1VCNG9oeWFGbmtwNy80WEpHbjE2K05tMnJxQ3EyWDdCeXJCdTkyblp5VW5j?=
- =?utf-8?B?YWNXa21iVC9XcXIwdmVkeUxad1pHMVAzMWUycWJPcWNraWRKcE1HazRONFF6?=
- =?utf-8?B?cFFvRGo3VGdvdmJaRkdxZUNEdm15eVZ5U2toelRlYWhUeUpuRmh1Q2FmUWFL?=
- =?utf-8?B?WThPMTJ2TlBlM2NIbS94dUw1M3NsRC9IYlVzVzBzdWRGN2tMQU9tOXpWWnhz?=
- =?utf-8?B?OVNhY2hQMHhXUFFReERwN2RPNWtrUmtuOWk5c25UUE1LZnhmSjNVZXdMK2dJ?=
- =?utf-8?B?b1Z4MHZRRWJ2bjVsc0J4SWs5VkVNazlhSnZveEtSZXU5cTVOaWVDRUFFbGxI?=
- =?utf-8?B?SmFiZ0gweXY1ODVRbTZGaU0wd2FNMWlvZXV5QmNybjREM2l1MTh6d1VENkE3?=
- =?utf-8?B?Zmk5YlVNSCtVbTFEazMxUmVSY0NQQlVNbnI1REZST3BTREdCd1pacVBSS1dS?=
- =?utf-8?B?d1hoQklGWENtY3V3aU5nckRoQk9odHpubGFoVmVET1NicGJGSUZDbGtSaXlk?=
- =?utf-8?B?QXBMWjZRcFJDK2Y3VXBiTEs4K0J4bjZwYzV5V21hRUVWQ0J3SVFXdHU4aktE?=
- =?utf-8?B?ZmI2VmVDbE5jRjYvUUovSjBmN2I5dVpZelo3cE1CbC9nQXhEbHMxUWxLMGc4?=
- =?utf-8?B?ZWxwb0crMUVra3E2Wi9yK0pBdXRYQmc2SFVKb05tbTh4ZVJlOTBzZjJnNU9N?=
- =?utf-8?B?cElMRE5ZQWt0K1RseDNVQVpMZHF0UzRNM20yMHJMbEJZYjI1S0tTTXN2alJR?=
- =?utf-8?B?TVlHOVNicjBhays3WjJrM282dTNjbzdRS3doM29LOGJ6MGpSS3ZsMVJPQWUx?=
- =?utf-8?B?QVJ0MU1jbXZZR3ZzT3M4SzZ2R0lOOGNlREdsT3plMkRza1NkNFI3V0ZjOGFy?=
- =?utf-8?B?bzJWbTVhZHJqdHUvKzZuOW9TWEpWZGFZV0s2enRGenJwN2xRZjZBVlVpYUgx?=
- =?utf-8?B?cVdtanE5YVU1VEdGaitERnpBN091eHNUazZSRS9XS0oycXJhZzNVbUo1T3Ax?=
- =?utf-8?B?aGM0WjNrcjhreHptZkhBcStBQ2tXOW9HSnliTVBzSFdDQzZEUTRtajVVeTVS?=
- =?utf-8?B?VVlwZGVhVUEvZlcvaHVieDhDbFdxN04xczJ4UVpuR2N0ZVJORzZNd1VXV3pm?=
- =?utf-8?B?aE5wcjU3VG13aTd2dm1VbVgza2hyYnpjZ3pyZTE1QmVTKzJBS29YcmlDZk4x?=
- =?utf-8?B?YTJ5R0d3Mysxay9pdWptenJuSFhDZ1l3UG5WenlkN0gwcmd2OGZhdis1czhk?=
- =?utf-8?B?Z0d4WlZ1Um5yS3dKaWxvN1oyWFlObWs0Qnhja3lYbEk1RGhaOVZMQ2haYkhn?=
- =?utf-8?B?Z1pad1VWcGxZZDM0NG5aT0FjbXN6cE10ZEVRMVFiQVptREZaR0VHZmxJaE5I?=
- =?utf-8?B?ejI5VHliRjNXWjZjaEVnOCsrZ3hSeHFSRWpaTU9uWnZaVFZjL3NLY3BkSWhQ?=
- =?utf-8?B?SWQvRnBNaHJldlkwMjVxNUV5Q2x6dmwzc1ozeE8yWTJ2NDB4aDkzUGlQbmxN?=
- =?utf-8?B?VisybXJMSUdwTlFGMHFDcEJYdHFXc2ZjN0NFakNqYUJrVUZJckQ1VzZ2ZmRq?=
- =?utf-8?B?YjRQTlZhbTlUQkpDWUtuU1gxSUJYV09ZMklRT0lzaUtmTDRHN2d0bGVhbktF?=
- =?utf-8?B?KzNoZHhQTzJiL00rcEhxWFpKKzdMZGhINDRqeHRhcGxTRk5uZ0UvL0QyZGJ4?=
- =?utf-8?B?a2UxeEh1WHZZL1ByRGFsRWZxR2VLZlgvK2JNZDJlVTdlRDlyY1ZUWnYyajFN?=
- =?utf-8?B?N3dacFM4UGRJY0ltTjhPSVF3MmhDS0ZNdDRmM0VqYXR2elNhTVpHSm4ybHJY?=
- =?utf-8?B?ODJzMXlDckszR1QwZkxlSTBBTm5wOGI1QzBlQ3RxVEh3U3JxMGNEMTQwWTVl?=
- =?utf-8?Q?rPyqFLaAQ9uoZCbaxgoJEgN69sV3DW7U?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5365.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|52116014|1800799024|41320700013|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	bmPYnsQGobFnS83YzdcFKYph65yqnS7rsljac/Ik7NqUvJrqjKMnrDUJTbBDF9VzGSyPl/lKoTSTSj8KKyEmfB+CsHr0Kv5CQu8cHqFdbhAS3oU44t38fP+FW7LpCpqdH43PdyQz8oI3h5/0DXCaffT6s0YO05dVYR33LCU3u+22WnlRndRPBwKqfxPClgygAAcuZ7PWjAubWvh2idvJXshX0YMIsplfjxmI0RtlmNXNqIw31D7LgspjfTPzyAt23T+vjYoOCKIpAzPXwQtQYAXD+0KLETn/avl3SunNbQzkcWLafvdtbDaZUux0TndSQqarGNfq25r3HszJK0KwcFPl2qG62RHs6DgtFBTC5HVc5Qjx/AKnLON9kIdyuf21MvDajOSJZWlMwSMoI03yNb2lyM0gbnDx3CxO8omPSonIrjTGB3NDQgGHt2ENwRINHiF8OMCqIuDSM6Vbn9v4WvdBIjggIG0EHq61ZEDIQP1LarZLiV3H4yLtLzFcKbIHMwJVtQCj0inVokMf7NIEu8ayWwUXRWZg96CSiK83okkqorOuohFXL7IhK4wJljPijSZIaMQq3tplOh58G7OsAYHqt5r8mYhBA590QU5Jl2U=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(52116014)(1800799024)(41320700013)(38350700014)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Tm1NcnlBc2xQZUw4bWdyVVByY3dtMDZYMnR6Ymt1MngvT1IwRzAxbTNMNVVZ?=
- =?utf-8?B?cWRLaERpN04vUkhFYnA1TU8vVmpseUJLZSt5ZlFhOHh3N3pGYngzT2hMeUVa?=
- =?utf-8?B?ZUxhNkJHUy9ML0gyd2xYanVxWk1UK3I1Tm8wUTVyQWFncjl2bzNnVHkzdm9I?=
- =?utf-8?B?T3BuSkxGbE1Xa0I4MURXTFBJYVNKSXM0MUdFT3lseWhVMk5WRWVTQTIwaitn?=
- =?utf-8?B?YUVIYWFzVjM0a2d4SmxDTnNCYytZTlZsMnFqSmU2ZmYzNTU2MXl6ZDRoVWky?=
- =?utf-8?B?b1pJcU5FOENkOEhtTjdRdHIvRUhpRy9PTzZBOFpheDZaVy9ZeVFoc2xZVDZY?=
- =?utf-8?B?S1FVbHcveHoxV0ZoYUNYdUg2akgxd2FWNFJYMDNNWG5KdnlibTBsQzUzbHJ6?=
- =?utf-8?B?UTB2WHFzWWhJWXFveDkrNEY0NUJUOU1NamdXZVcxMEs5RFBWTXhsQUNib2Vp?=
- =?utf-8?B?ZG40SmZQMzBudHhuTG82NXJSUnIvK1NFNDNiSlpmQjN6YkVDeXZjNmlYK0tw?=
- =?utf-8?B?TkhLU2ZCTlhYZS9lN3JDaXNHNERvYm5yN3ZtSVhBbDQwekRYdSt5RlJBMGY3?=
- =?utf-8?B?M1REUks3ZkEyM1FuWktPcXM3S1ZWQWJRSklCWURyNFRHazBhSS9sKzFUaU43?=
- =?utf-8?B?bzNWcjM5ek1CeXJUbEEwM1N1aW01RFBwL0JnK0V3bzR6ZC9JYklXbVFLeFZL?=
- =?utf-8?B?RzFFcHZKbFdzSWNuSEpWNEQxZlIvZC9zMG43VHZrNFlPZ3BXRFB3WnpiTGkw?=
- =?utf-8?B?S1NTbm9Za0pyckI4UHBUc09pSmJLWnFCZjJpR1l2eTFlR1NOR3lvQjJ1Z1dt?=
- =?utf-8?B?akJ1cm55enlxa0l4STY2TmtCSG4wb0J6YTc3SFBzb1BmYnBjK2h0bXplN2JT?=
- =?utf-8?B?WU9pZC9vdDBNT1ZJdkNDTjhyTExhWUphc1VzbjhCTlhvWUl4WnQ3SXd2WTlu?=
- =?utf-8?B?U1NsR3ZqNmIzV1lUREg3cDJuQnpWZkJCYWc0LzJ4QlZCN0xWMm5XeXphM0FQ?=
- =?utf-8?B?NUNJb1llMHF5T2ZHNVFRcEhQYThhZUhmMDU5WmhTRnJ1VHVFbys1VFFtY0ZB?=
- =?utf-8?B?K25Ia3lmVWxZYTNBRHdib1FuVXFsVEZEWWZDcXVTelVuV1grcFRlSTdnQy9L?=
- =?utf-8?B?ZFR6K2RYRlNRZE42T28yNkNrWHFWK1BmZHpKSjBVMFg0TGNnaStQQWxPMzUr?=
- =?utf-8?B?TWVuTERIMDhjUjRTTVBFeDRYODRNL3dlcDdBY3Z1OFRyQVBob2hCZGFNem9O?=
- =?utf-8?B?U1AxOTZqdmY2M1lycG90TmNRMDMySHV1NFNneWxRdGVabmNSZzJQQy9uNjJC?=
- =?utf-8?B?ekRVNkIvcURQMnM2ZjMyakZ1OXRMSk1jdVo4TGc3WWhsOVdmZUxoUG43R2lh?=
- =?utf-8?B?R0Fvc0I0SUJIZWxaSFRHUEJKenVyZGpRMGl0Q3hidFdXSk1ISkljbjBZNEda?=
- =?utf-8?B?dU1kUU4wcndhZ25zQzdkdCtRZ3JlaG5OYVR1Qk5nNHdLdnlOb1hiMUZURm83?=
- =?utf-8?B?eHY2RkltdnM0aUswWG1hOFFBVHhJcjdHWXJLVGIyVWtVVjE4cmpFbzFTUHU4?=
- =?utf-8?B?R0daM3diOTJGM082SWxGZnJSOTBiQmtFcFBjeTcrZ2J3MXdyYW05RlNQWVdi?=
- =?utf-8?B?cEZzTFJSRkI1YytBbWFGUWtBeWlONVpwL2VTWkxyVkFZUStPTkZQQlRZUlQw?=
- =?utf-8?B?OUc1UUsrdzlLVDExM3RVSGNOemhkWE1adnk5N0RzR3lnTG41dFd5d293ZklO?=
- =?utf-8?B?MFNXbFNBb2NHS285TnNGaFc3dWdQQ0lpMDVId3Y4ekpkWGN0Y0tNYUtxdXBT?=
- =?utf-8?B?dVp5UklsMmFGWWd3QlV5Sm1KODlnTHV3RGd1RGEvSkRlMG1Id2lNd2hXSVF5?=
- =?utf-8?B?UGdDWHJJR3pyVitWUm5EaFloQ0hRd2xUeW9xaHQvRVBPalpXQ2FqTnh5NStE?=
- =?utf-8?B?YU1xanI3NjZZY3duZXVVWEFkUDZJOWpIVG1jZUdqdEpobWw2d2t2M3Bsa2ZH?=
- =?utf-8?B?UVJkM08vR1hOa29FYjJzNUREL240TGZOYnJhYjNRdzBZYnJvMHUrcHNYVU1R?=
- =?utf-8?B?UlRGNDA3dmUrWGdVNUdRZnZ4YWJVT1BPVFdQZVp3cG00TWVYVmpNNmpXTHBT?=
- =?utf-8?B?SUk5OE9IbEtiSk1zVTdBSklrbC9HZThTU013a01JWmRwREtYbHE3YTZCV2l2?=
- =?utf-8?B?WEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 984fef5c-8c6a-4560-8cba-08de1de3a8b5
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mGLWjjd3DdEM5AQ7kYolD2QuxGvjjmFwmkNfMymG9MHnrE/FhbrdSy6uHWRf?=
+ =?us-ascii?Q?m6alxPT3VqJXPi+SYgGCJIEWS2RTN55ukVkx0gyN8jlJGwgTBacsTn4spR1n?=
+ =?us-ascii?Q?a9a3NeuecJHZgRke6H+uVxffu9xGg7OdAT2T9ngmIgr+vbcC1bnsgQ3Ah+Iq?=
+ =?us-ascii?Q?cn2mFi+UDTfsF+jOSsia4pmAik1f/Md2hL8VtRFEZhiB7r6iLceTQcGg/359?=
+ =?us-ascii?Q?UNG3NODERpsnGGpxiBkMnnfTRreG/jW25Z7OlPHyrPab0ZOxpBQAn2oVc3tS?=
+ =?us-ascii?Q?uTYm/e5tmeZUYUG0deexeq2ptHwzAreH6Zu+iCWys72/rYkaur72CIz5dlfd?=
+ =?us-ascii?Q?c+v6aUsMe9bTFCk9qpt6rCMTGH+6x1CZ4/kB3Bm5wNiHnepQjD/azTT6Lk9x?=
+ =?us-ascii?Q?5J43/nCG1jkLfRKe8+pGs1mYoIciH3fvvQX7gmQzVZdUoMJ9/62sXlEZ4y45?=
+ =?us-ascii?Q?NyTM1A8wl7qs59w3/cHcYLWTIP8m22vlmZz2CqQgTaBTFeJOCHrclEecjCvT?=
+ =?us-ascii?Q?8opWj3U8hprSYKUbxjqfalA+4RHcTcWmsdLsCAelP7hdDidxBGDjops4rxLS?=
+ =?us-ascii?Q?n4bkGfKW8YOJcZxjjsoziekfxnTsuNKKCmI6UO+fDmUG/FuDkamBSxJVSNQI?=
+ =?us-ascii?Q?Eeh4DTtJAh4iiYzgRzeNMnrBDHq6hAR1D9p3YfzwmBFvtzTPP2+wAogxkuVT?=
+ =?us-ascii?Q?rznFrrUzXKEPqmkZyNkriZM9NfuhWfiRi4jPJR2Hea45nTwzOm4LoZj2DeVN?=
+ =?us-ascii?Q?Nyjp87coVOUpp/YSIiDiw4WQKs5cuBA2S47atNc8eV1jYWNPm4Lh3ZKjTmo1?=
+ =?us-ascii?Q?lSotHmZhQ90l0d3p56Bg8PoeAwhRVN5f0E86V/E/td0Qf6roaWIBXPGIgSTe?=
+ =?us-ascii?Q?smwP+tnvtOlO16gTF3Dkp/2NZhBBIksDDiak2F7rrHcnnx4JBbyX38YxcaPI?=
+ =?us-ascii?Q?pCJFGO7jDtiWWaDlGYQSD7WK2iwv1d+SmXky7GugUTAAG4GQFrLnVHK7bDyD?=
+ =?us-ascii?Q?bNl3NdMAP+JqndWLdjZaDNy0cJHXylMw2FJ0SktL0gueQWr9v7aIIofxmTyU?=
+ =?us-ascii?Q?DPLjbzOuvP2ZUX3u19L6zmd572XgdadXoi8hL1d5cRX6kCFcCPlvSPh17+IO?=
+ =?us-ascii?Q?7zIb1vN99UUO/Y9jd8BjW+MujnpQfbheX/1mnuOqNotQ7EcxovOcFxtBlmfQ?=
+ =?us-ascii?Q?JXhdkYmhpALAwdPA9eX8KEO+0jo+zqkZvXeWavYbvu1qHWhjtYLhbG9hSAPv?=
+ =?us-ascii?Q?P8YG1dHR2MzA8GzcX9/GE0tAbTSO9SG1jwdSMHD8zBLelyTYW2AyIiQUN5Ve?=
+ =?us-ascii?Q?OGK0FzIPGYGiBaK+dHR0Sdo/skBZtcqZxXSie10cZtL2PJ0zEXpc8/MSEMvY?=
+ =?us-ascii?Q?4VI+gh42cYTQ4yc+6qcibxF57fQUoLMN1n0JgJmEp3ixWRelyoSP9C0egCJE?=
+ =?us-ascii?Q?BF8OQNlf4G8iFlbyCuqiDDec/IDcK1xY8N1kkA9GslRa+YwMSduIZ7U3ay26?=
+ =?us-ascii?Q?59jUxH5JrEVG1A6uR/a5S4Cy/Oq3GAIVpIIjBs+Kn1cbLaPqmSlJF/4aKvET?=
+ =?us-ascii?Q?L0e0LJoE/+/inRxVzHn1JwOeQvndqOMo5GVt5fK0g5XHv/fZDIV7Yk1rK+No?=
+ =?us-ascii?Q?WA=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7aa2df87-424e-47ad-9324-08de1de3ce5e
+X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 09:54:56.5614
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 09:55:39.1241
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /YOwrDhqFGZVyBFq5FE4QQE1tZeqMX7wVKjT2y6hzmO91n1xZWEPI3p1qBRyOI0oxQkF1v0ZLq6Q0lXFIpBjInp92hUzs5sjoWGCZN46Pnc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4876
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: I9mGPjD4rU54fTz1U1tzYZOUydLohxXqMOfNv0I0eU4gXxRH6YGyshwpv8pdtRebQ4JcBBqrjGRg2opApP+obzzaA9rqWCkJ53BRdkOUs3k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1305
 
-On Fri, Nov 07, 2025 at 10:38:05AM +0100, Muqthyar Ahmed, Syed Abdul wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Intel-xe <intel-xe-bounces@lists.freedesktop.org> On Behalf Of Michał
-> > Winiarski
-> > Sent: Friday, October 31, 2025 2:02 AM
-> > To: Alex Williamson <alex@shazbot.org>; De Marchi, Lucas
-> > <lucas.demarchi@intel.com>; Thomas Hellström
-> > <thomas.hellstrom@linux.intel.com>; Vivi, Rodrigo <rodrigo.vivi@intel.com>;
-> > Jason Gunthorpe <jgg@ziepe.ca>; Yishai Hadas <yishaih@nvidia.com>; Tian,
-> > Kevin <kevin.tian@intel.com>; Shameer Kolothum
-> > <skolothumtho@nvidia.com>; intel-xe@lists.freedesktop.org; linux-
-> > kernel@vger.kernel.org; kvm@vger.kernel.org; Brost, Matthew
-> > <matthew.brost@intel.com>; Wajdeczko, Michal
-> > <Michal.Wajdeczko@intel.com>
-> > Cc: dri-devel@lists.freedesktop.org; Jani Nikula <jani.nikula@linux.intel.com>;
-> > Joonas Lahtinen <joonas.lahtinen@linux.intel.com>; Tvrtko Ursulin
-> > <tursulin@ursulin.net>; David Airlie <airlied@gmail.com>; Simona Vetter
-> > <simona@ffwll.ch>; Laguna, Lukasz <lukasz.laguna@intel.com>; Christoph
-> > Hellwig <hch@infradead.org>; Winiarski, Michal
-> > <michal.winiarski@intel.com>
-> > Subject: [PATCH v3 28/28] vfio/xe: Add device specific vfio_pci driver variant
-> > for Intel graphics
-> > 
-> > In addition to generic VFIO PCI functionality, the driver implements VFIO
-> > migration uAPI, allowing userspace to enable migration for Intel Graphics SR-
-> > IOV Virtual Functions.
-> > The driver binds to VF device, and uses API exposed by Xe driver bound to PF
-> > device to control VF device state and transfer the migration data.
-> > 
-> > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
-> > ---
-> >  MAINTAINERS                  |   7 +
-> >  drivers/vfio/pci/Kconfig     |   2 +
-> >  drivers/vfio/pci/Makefile    |   2 +
-> >  drivers/vfio/pci/xe/Kconfig  |  12 +
-> >  drivers/vfio/pci/xe/Makefile |   3 +
-> >  drivers/vfio/pci/xe/main.c   | 552 +++++++++++++++++++++++++++++++++++
-> >  6 files changed, 578 insertions(+)
-> >  create mode 100644 drivers/vfio/pci/xe/Kconfig  create mode 100644
-> > drivers/vfio/pci/xe/Makefile  create mode 100644 drivers/vfio/pci/xe/main.c
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index b890ff265f03f..d73348c5f3f3e 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -27008,6 +27008,13 @@ L:	virtualization@lists.linux.dev
-> >  S:	Maintained
-> >  F:	drivers/vfio/pci/virtio
-> > 
-> > +VFIO XE PCI DRIVER
-> > +M:	Michał Winiarski <michal.winiarski@intel.com>
-> > +L:	kvm@vger.kernel.org
-> > +L:	intel-xe@lists.freedesktop.org
-> > +S:	Supported
-> > +F:	drivers/vfio/pci/xe
-> > +
-> >  VGA_SWITCHEROO
-> >  R:	Lukas Wunner <lukas@wunner.de>
-> >  S:	Maintained
-> > diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig index
-> > 2b0172f546652..c100f0ab87f2d 100644
-> > --- a/drivers/vfio/pci/Kconfig
-> > +++ b/drivers/vfio/pci/Kconfig
-> > @@ -67,4 +67,6 @@ source "drivers/vfio/pci/nvgrace-gpu/Kconfig"
-> > 
-> >  source "drivers/vfio/pci/qat/Kconfig"
-> > 
-> > +source "drivers/vfio/pci/xe/Kconfig"
-> > +
-> >  endmenu
-> > diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile index
-> > cf00c0a7e55c8..f5d46aa9347b9 100644
-> > --- a/drivers/vfio/pci/Makefile
-> > +++ b/drivers/vfio/pci/Makefile
-> > @@ -19,3 +19,5 @@ obj-$(CONFIG_VIRTIO_VFIO_PCI) += virtio/
-> >  obj-$(CONFIG_NVGRACE_GPU_VFIO_PCI) += nvgrace-gpu/
-> > 
-> >  obj-$(CONFIG_QAT_VFIO_PCI) += qat/
-> > +
-> > +obj-$(CONFIG_XE_VFIO_PCI) += xe/
-> > diff --git a/drivers/vfio/pci/xe/Kconfig b/drivers/vfio/pci/xe/Kconfig new file
-> > mode 100644 index 0000000000000..787be88268685
-> > --- /dev/null
-> > +++ b/drivers/vfio/pci/xe/Kconfig
-> > @@ -0,0 +1,12 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only config XE_VFIO_PCI
-> > +	tristate "VFIO support for Intel Graphics"
-> > +	depends on DRM_XE
-> > +	select VFIO_PCI_CORE
-> Shall we make it default enabled with "default m " so that config gets enabled for first timers and no need to enable explicitly. 
+Add enable-gpios property for controlling the PCI bus device power.
+This property had been supported in the driver but not added in the
+dt-bindings.
 
-No. The disable-by-default rule is intentional.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Fixes: 22fe32239770 ("dt-bindings: PCI: Add StarFive JH7110 PCIe controller")
+Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+---
+ .../devicetree/bindings/pci/starfive,jh7110-pcie.yaml         | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-VFIO driver variants are generally not part of "Hardware or
-infrastructure that everybody expects, such as CONFIG_NET or
-CONFIG_BLOCK".
-There's nothing about xe-vfio-pci that would make it an exception.
+diff --git a/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml b/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+index 33c80626e8ec..1e36f92ec852 100644
+--- a/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+@@ -59,6 +59,10 @@ properties:
+     description:
+       The phandle to System Register Controller syscon node.
+ 
++  enable-gpios:
++    description: GPIO used to enable the PCI bus device power
++    maxItems: 1
++
+   perst-gpios:
+     description: GPIO controlled connection to PERST# signal
+     maxItems: 1
+-- 
+2.43.2
 
-For more information, see:
-https://docs.kernel.org/kbuild/kconfig-language.html#menu-attributes
-
-Thanks,
--Michał
 
