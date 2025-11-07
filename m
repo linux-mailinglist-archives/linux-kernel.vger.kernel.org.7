@@ -1,82 +1,224 @@
-Return-Path: <linux-kernel+bounces-890784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018FEC40F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:57:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E484C40F55
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 17:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A69DB4E20D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:57:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5944A3AAA35
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 16:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B034332EAE;
-	Fri,  7 Nov 2025 16:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E194332EAE;
+	Fri,  7 Nov 2025 16:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0+y0n4T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zGHP78wb"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010003.outbound.protection.outlook.com [52.101.85.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBC926E6F9;
-	Fri,  7 Nov 2025 16:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762534635; cv=none; b=upQyVKNt3wKfcrFOc2nxBRX7jZltGUIv/Na6hY0ymmKxl+If00kJABRoBAwUEYsr2UNSIZnkhiOh+EFTa/nFDUUA/wp6CDs3LF+EiTLvh8JeMDZIdEgRXLi/50DPtwf7JP5VvQ0YVYhwWV2wVrjdEkh82Yn9RrqVjlXU7TzDNOM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762534635; c=relaxed/simple;
-	bh=FC7BBrTdY+EiZ9gICXhEg1UmVOH+HVKMUlJ3F6NHaJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPeslnl/GIy0sIUfa0aV1z4mLZjgp0RoSYDvS96hqf+7Qmw2p0RqcTuOUb4yWoeQw/4y7HZvtX/b7C0RZd5uZ0h49a6IJIIwW286ebGHneqAfyxvWnpOkKJeHfMdFwRY2TBADTG9flrI4pUhhf80K1hF5lTaryenWCJwvkt86Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0+y0n4T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F93C4CEF7;
-	Fri,  7 Nov 2025 16:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762534635;
-	bh=FC7BBrTdY+EiZ9gICXhEg1UmVOH+HVKMUlJ3F6NHaJ8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=k0+y0n4Tal798IkvWqzhtQXPUlR0rZdYQgr2H4ncu/EvEskZFFGRjBGKhuNh7pRhW
-	 UmiPVXIXJPzLb+7TsT17kYX7ALVyuwzpcb25g7dqKV6Bn59sFsl+bUvofQns6AD9Ge
-	 G2dFWrQAXZWIlxzveP3GJzlsnW4cHUuQSQlK0HAU8MDNl5uH82EJnl7FrmlbQq1tgL
-	 yXRYeB1xqoQAGbmgSdZQ3aJzcxIjQH32tVZZZhDDIOO8d7hsul4Wvr5wG2U4TWddyG
-	 TjqdwrTf9STwGSZymawPrsGHj3nv1QTf30xokyxH/0j1KA7Y+p1vNDuTH7zDEg48I9
-	 4F7xFg0Vl27+w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9C3A5CE0D38; Fri,  7 Nov 2025 08:57:11 -0800 (PST)
-Date: Fri, 7 Nov 2025 08:57:11 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2 0/16] SRCU updates for v6.19
-Message-ID: <793fa040-edb3-47d1-8958-d40dcaacc960@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <bb177afd-eea8-4a2a-9600-e36ada26a500@paulmck-laptop>
- <aQvXA3A5XHn-Tjhh@pavilion.home>
- <20251106110610.44599177@batman.local.home>
- <aQ3qmdoxktGZRUiL@localhost.localdomain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C619A30C61C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 16:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762534646; cv=fail; b=CkA1LNtM5Nm2UAYPwAutXhhYl/8nODEu+XOVpGHtYrh1FEkK23zyvSsjAH1mU5UrAqcgDfhobzuFzR46m+hVSgkQWIKitqkjHLFnSKODYziDIaAI/PRtWFm0jWzcLNPTtSrzQi26v+6HWIPw+T5ITdin5ydfCzZpHnfYVXQehZ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762534646; c=relaxed/simple;
+	bh=uQDWR7LxCn4JPEZgFx1XItys5p5cpao2w7rh6JxFkEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EpVarN+eQSs9qlwT12PdKkqZeZP8hO6WGf6eyZRChFHjNdvTNMkIPDFlpT4JgNuiYtvosDvDTpZS/+vYbczhPhDBc4/YA6mgeEmID8XKLtKJtbnl06J94b7j2e4ThbIy2UAaPCj9zng7XXFms0gtYB9rrOsDRRsgCzDWbXYMsGc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zGHP78wb; arc=fail smtp.client-ip=52.101.85.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Go4wpySoH3ry3wUP90OXMkvQnoI3NtXTQxtWUEpZU8fUBOCPNZihWi4kYotYkG9CuGokzDBGkvG0v5iIwRtC3nzF/gze9HG6tV0Kpst7pUmsG1gxMccgoEad9CH4riuLIG23Omgh2xBqK7ee8bNZUJG27iPWYpOs+Nb7lMXUzsaQ8qSigI3X7GLIo5eXNtPwrOcfBpDhO/gl3ITn7O9wpkxztxzXFSq6kUoweWyk9UfsRE9gFKUtNuCyFfY7+jSuAorEBSdwnPTxRoPRMQ2v9XqM2Eq7Buex+12hUONTRdl4cOboyKjwwRneRpdeFZhXivaGkahV180a4sA9US4B4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DmWwot1++YJUNzgqkRNs7sJL7Mr7rA5NBk2k9Z07JRs=;
+ b=TE9yZ9JqVpLbAH7Nis0C91xwrxgUls3tR4hPobgMKrKmHGThy8xIKzhgMtQ4gcUxHMNUJ/VRtnihnoxuhADSzyCB1YhyPMHFGsR45Ceq3iBl7gpbmfkKa4RwGzmvlGFCF2HV4VHc5LNJ6np8bnTjCFGzZVwxKLpN+3BYluqyseDK8AE0dBbAEfJfbtWKnPFW/DznZwhJ5vqvSwiVKcRX2+L+kvoyFk2qK5i/TZIjqEWFg/IDW3PV5ytQKsptmQp45lCc3/6YTSGbvHga+2TyDIH4Na7FTzxE2yU6HyM0hMlTA5/1jMl4qgMH5ulCh+8Q+3zIG38zifjDV7kK99CsHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DmWwot1++YJUNzgqkRNs7sJL7Mr7rA5NBk2k9Z07JRs=;
+ b=zGHP78wbxU9zQi9W50TDkQYYiWZpZUFxo7iJSozQj+apWHyGWQ2Ih8tW7ULksTV5dIGgh6jc8YQuk1bsg7x1nmSnIJ6Pbr9FZBWDMfMi3RZDCYKfoinPYVrGVsBkz6eKURRL4KEErCoI/cfeT+MbzO+gp7Pu6B2L+xoHc4HSdO0=
+Received: from PH8PR02CA0036.namprd02.prod.outlook.com (2603:10b6:510:2da::28)
+ by BN5PR12MB9510.namprd12.prod.outlook.com (2603:10b6:408:2ac::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 16:57:22 +0000
+Received: from CY4PEPF0000E9D7.namprd05.prod.outlook.com
+ (2603:10b6:510:2da:cafe::13) by PH8PR02CA0036.outlook.office365.com
+ (2603:10b6:510:2da::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Fri,
+ 7 Nov 2025 16:57:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CY4PEPF0000E9D7.mail.protection.outlook.com (10.167.241.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 16:57:21 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 7 Nov
+ 2025 08:57:18 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Nov
+ 2025 10:57:18 -0600
+Received: from [172.19.71.207] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 7 Nov 2025 08:57:18 -0800
+Message-ID: <2888a0ce-6d30-1911-0870-0ea37e392cbc@amd.com>
+Date: Fri, 7 Nov 2025 08:57:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] accel/amdxdna: Treat power-off failure as unrecoverable
+ error
+Content-Language: en-US
+To: Mario Limonciello <superm1@kernel.org>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <maciej.falkowski@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20251106180521.1095218-1-lizhi.hou@amd.com>
+ <d21ece5b-d27b-447f-8a8e-5d672fa0c473@amd.com>
+ <978dcea6-4d25-3b33-695a-632a9f58884c@amd.com>
+ <2dcb4668-2c4d-4c73-9805-1af1338c9e7d@kernel.org>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <2dcb4668-2c4d-4c73-9805-1af1338c9e7d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQ3qmdoxktGZRUiL@localhost.localdomain>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D7:EE_|BN5PR12MB9510:EE_
+X-MS-Office365-Filtering-Correlation-Id: 285997f6-47e4-4fc3-4040-08de1e1eb7f8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cldUYnRSTTJSMVBEOGxETFM2TXJNMENVVWhkblF4bHdOVnYwUnhoUGNUZDgr?=
+ =?utf-8?B?NkpDdGM4U2tBZ0dtRFdhWmtLNG1Bemt4emJKaDBiNDNCNWxJV1ZEZ2l3bnkx?=
+ =?utf-8?B?ckpzR0ora3RpcVdDNnRyMHpVRGlNaldyN1pQR0VqU0k3NGtIaHRndHpSYXc1?=
+ =?utf-8?B?ZStEMGp4UWhZV1JIall6QWhBTjF5eCtwcXg4dDRzT1dzNEZwbVU4OHhPUkcw?=
+ =?utf-8?B?a3lhSVJoMTFMWk5heTVFM2oxVks1WUhHRFFJNGdKMDYxVkcyY3FHaDI0NVJr?=
+ =?utf-8?B?RzNITTF6OUxNb21MYzBHZ3lvOUFLbHlncGpKczhOdk92cmhQa1Z0M3JlLzNI?=
+ =?utf-8?B?SXhBK3dkZERaNXJSM01jOVExdmpjQURpRHhuYmR4dUVCQk1WaExQZW5NYnUr?=
+ =?utf-8?B?OFVUd2tDdEFybnJlYzhzaGlDcUZjVXBpSkFXK2hmVU11TFJyNTdkOGRqR044?=
+ =?utf-8?B?cCtOUTF4cnRzaFAwL1c3UFFUSkhlOEdxUzZiREJtV3VYSjdpc0dGT1R6enI1?=
+ =?utf-8?B?a1Y2cjlBV2VBazYxQ09TSmlMa1dlRllvanA1blhBTDR5TDJXZnkvNmtreE1K?=
+ =?utf-8?B?eXJ5cTE5SG50RzUvSUl5T0kvMS94ZHh1QVdDQmM5d3BxcWJ1L01jSFQ1M1pI?=
+ =?utf-8?B?UTdkNmh3N0dSZEZyTm1STHVQeVF0eTFxc1Z0djhkNy9kZkVJYTBrYzdKanZK?=
+ =?utf-8?B?ZWcrN0V5d3M0R3VuaTRVMHpQSWVwMDl0WHdSTmxRWnZsZ3FEazJFZHhNeFNm?=
+ =?utf-8?B?ZDFrRE9YNHo0RTVzallldXg3N0MybmlHeXBPMzlSZkNwdmx6aWIwZEEyQzU0?=
+ =?utf-8?B?TFlXcG5sbmZLZ2VhbTl4bk12SDZ3SzcyYmdqbDFXSmd5TGI0RG9OSTdUQ2Jz?=
+ =?utf-8?B?dFZuU3dsL3I0SDF5TzlIay9EVGhMWmM3S2FhM3g3Ti9vNUFCVml4ZEJQWmU5?=
+ =?utf-8?B?c1J1M2FXanNKeDNHSm85KzJjaU1zRndnUyt6bm9CaVBCVXlTejEySCtydlVt?=
+ =?utf-8?B?em5UUzhGekttQU1ObGdVQzYwMkV5bkFVZmlzN2ZYWlFYVjl4T2hGalo1SDNH?=
+ =?utf-8?B?MXZsZ3RndnZiTTBkNW5LczFGRTBkclc1RDN2VndBUXhrS1I1Y3ZBVndDUFVR?=
+ =?utf-8?B?M2VaZHkzRWZlS1FGQWJ0QXNoVjIzbGo0a2FXSGt6NmhuZFhxZGFsTmJXTU9X?=
+ =?utf-8?B?Qko0OUlNRFg3S0xqNVRZNGpnRlJ0cExQQTRHS2ZMNkxjM05YV2RDWWt2S0VM?=
+ =?utf-8?B?VnFnOGdtaUhDRm5LMkNPZXdDeHBHODF3WFYzb1VCMnp6ZUpiTzB6bWFSVEFh?=
+ =?utf-8?B?VHppOWRESGZZUmJtVzE5ZTM1TXN2RzN1Q1BzSkR5YXpDQ25ISUoxY2txQ0VL?=
+ =?utf-8?B?ejZicHhrY3I3U0t4WVBHcVZsM2NKN1MwT2F4T09Ga0xzK2huL1Njd3ZiTExU?=
+ =?utf-8?B?TEUxV1RNNFhIdFhnMHlpOHVnR0dFZU5McWtJOHI2ekhzeGFxOEdWZTY0ck83?=
+ =?utf-8?B?VTZHa1VjMmFCSFVraWR4MDd0MC9MSTJQZ0tOMVo0YVhGVjJrT3dVTEtDSUNB?=
+ =?utf-8?B?N3BJTmVNZUtoZ0FhTGNnRC9hb3lmb1dvVEZNVWtFWWpRdXgybEVRZVFiVlhQ?=
+ =?utf-8?B?YWhvTUhhWW5vcnl2aWtyZlNyRTlqdDFZUUJ1cGhWdFFtSW0yTVRseFh3SVpn?=
+ =?utf-8?B?WngzU2UvMElJazQrZXd1WWQ4SEhvdDlhc0Z5dXB0cTBsazBjNFkrU01vMWVq?=
+ =?utf-8?B?UTl1TjVHaWQwTk9NR3JxYUhST1NwK2VLMDJDMlA1T2dvVjNoOGY3OHkvZWds?=
+ =?utf-8?B?bW1zS2RRMFYzY0FwWEg1Y3MwanE4bE9UR2xHYUhUa0hKZk9qT3RqSy9PK1Jz?=
+ =?utf-8?B?ZEVROTFRaU0zaTI5Tmt0cSs0Z1lqMFdZMUp2dlQyZTNHaG1MMmJCZHNrdllG?=
+ =?utf-8?B?NjI0S0gyRmI3M2M2b1d3aGJXYXhiNzZBT2Y1cmNUbTl0WUdCR2dUODVtdDZp?=
+ =?utf-8?B?d1VaNkdWOGxyUnNmWlo2NTlsMTJYdFZ5Z1ZlR0hFVDRzWTNoV1JpZ2xPcHlC?=
+ =?utf-8?B?ZzlsSWwvc3FrK1hTbXhlSC9LSEZnZkJWSXBKNlBZWlp2ZEZHdEhibUtsQXVQ?=
+ =?utf-8?Q?wSks=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 16:57:21.6664
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 285997f6-47e4-4fc3-4040-08de1e1eb7f8
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9510
 
-On Fri, Nov 07, 2025 at 01:48:25PM +0100, Frederic Weisbecker wrote:
-> Le Thu, Nov 06, 2025 at 11:06:10AM -0500, Steven Rostedt a �crit :
-> > On Thu, 6 Nov 2025 00:00:19 +0100
-> > Frederic Weisbecker <frederic@kernel.org> wrote:
-> > 
-> > > Applied to rcu/srcu, thanks!
-> > 
-> > I have issues with patch 10, so please do not apply it.
-> 
-> Ok, dropping it, thanks!
+Applied to drm-misc-next.
 
-Thank you, Frederic, and apologies for both the delay and the hassle!
-
-							Thanx, Paul
+On 11/6/25 10:31, Mario Limonciello wrote:
+> On 11/6/25 12:19 PM, Lizhi Hou wrote:
+>>
+>> On 11/6/25 10:12, Mario Limonciello wrote:
+>>> On 11/6/25 12:05 PM, Lizhi Hou wrote:
+>>>> Failing to set power off indicates an unrecoverable hardware or 
+>>>> firmware
+>>>> error. Update the driver to treat such a failure as a fatal condition
+>>>> and stop further operations that depend on successful power state
+>>>> transition.
+>>>>
+>>>> This prevents undefined behavior when the hardware remains in an
+>>>> unexpected state after a failed power-off attempt.
+>>>>
+>>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>>>
+>>> Presumably all versions of hardware in the wild can handle receiving 
+>>> a power off command if they're already powered off?
+>>
+>> Yes for the aie2 platforms. This was verified by xdna-driver pipeline 
+>> tests.
+>>
+>>
+>
+> OK LGTM then.
+>
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+>
+>> Lizhi
+>>
+>>>
+>>>> ---
+>>>>   drivers/accel/amdxdna/aie2_smu.c | 10 ++++++++++
+>>>>   1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/drivers/accel/amdxdna/aie2_smu.c b/drivers/accel/ 
+>>>> amdxdna/aie2_smu.c
+>>>> index 11c0e9e7b03a..bd94ee96c2bc 100644
+>>>> --- a/drivers/accel/amdxdna/aie2_smu.c
+>>>> +++ b/drivers/accel/amdxdna/aie2_smu.c
+>>>> @@ -147,6 +147,16 @@ int aie2_smu_init(struct amdxdna_dev_hdl *ndev)
+>>>>   {
+>>>>       int ret;
+>>>>   +    /*
+>>>> +     * Failing to set power off indicates an unrecoverable 
+>>>> hardware or
+>>>> +     * firmware error.
+>>>> +     */
+>>>> +    ret = aie2_smu_exec(ndev, AIE2_SMU_POWER_OFF, 0, NULL);
+>>>> +    if (ret) {
+>>>> +        XDNA_ERR(ndev->xdna, "Access power failed, ret %d", ret);
+>>>> +        return ret;
+>>>> +    }
+>>>> +
+>>>>       ret = aie2_smu_exec(ndev, AIE2_SMU_POWER_ON, 0, NULL);
+>>>>       if (ret) {
+>>>>           XDNA_ERR(ndev->xdna, "Power on failed, ret %d", ret);
+>>>
+>
 
