@@ -1,270 +1,159 @@
-Return-Path: <linux-kernel+bounces-889596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705F4C3E017
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:44:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6117EC3E038
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E7084E429E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF8C3A64C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EFC2E6127;
-	Fri,  7 Nov 2025 00:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C591246BD8;
+	Fri,  7 Nov 2025 00:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bT8pgge6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VxLJoM6M"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADC72857CA
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762476268; cv=fail; b=jXKiLqcf1VL2qcl2yj9peCuy5sx6XEEFkvJxvdsTnpbkdCHePs81kIooCfkaxQeukAqOgyovakTIlsTEZ1/7ySmY/rrfCBYuA0vWOU0vMMZ/P0xP4x1lDn2yyUPJyLQZMNpN0ZrCIfheRLOpKp/agjxXZdp2QBWuwbWLVkEHJRc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762476268; c=relaxed/simple;
-	bh=lnG64eUBdCZSbsaXCPPI1DgQN+kfNE3Bq3PIITHjYM4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=d2iWPlVj4U3cySSg2ytNtXqn14t2Jyv0Os20UogEG5Lc/0CdQTc7/pD290ObTVVHlFY4/njkrV1X+NBBys8O+aRkPkonQgn3QPT+y8C7vIUIEqKt7rTizR/M5gKFl8cJTbJfn6fBSSuZWH4kjTViJgka8ipkPz/6Ie8blS6B3eM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bT8pgge6; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762476267; x=1794012267;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=lnG64eUBdCZSbsaXCPPI1DgQN+kfNE3Bq3PIITHjYM4=;
-  b=bT8pgge6ZTKwazDu7gJ0/jY+po7lsSAVspuWp13DObE/QL12Ol+3ahoX
-   ZgshNYEn/PMammMWhZChUG5ZpHoST6a5N1ElbhZpemfAHOqU6vYyqqoY8
-   ZeCzFZlHrmvd12f2RlCHwWrOPJ7kPHUrLJMvqSD4VtY0cZFSWQbUznGgF
-   T75V3QuZubEMwTsE4adR3Q8kC2JRiGrzNCqZstxJx1So+UaCCAXNGZmyY
-   Vp1W+MP/wHN3nGNEbn/qKRtpBtEJ4dTIUujOC200jGL7eGsp7/txcEqFG
-   ZqbzFnZ+iCCTZZxflGBUIgV/jpQcUn7m7gamjW1JFLY8OabyhS6iZ25zw
-   g==;
-X-CSE-ConnectionGUID: xX8fFdYESE6q9EjkH9O7vA==
-X-CSE-MsgGUID: efm+KF83T6yVlTLsWcdePw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="68275403"
-X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
-   d="scan'208";a="68275403"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 16:44:26 -0800
-X-CSE-ConnectionGUID: 3yDosQ3ZTJqbD/pDrjikEA==
-X-CSE-MsgGUID: a1NZ0vnLT4iViM9/f6pdfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,285,1754982000"; 
-   d="scan'208";a="188178049"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 16:44:25 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 6 Nov 2025 16:44:25 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 6 Nov 2025 16:44:25 -0800
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.4) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 6 Nov 2025 16:44:25 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V4ZXQJD3rE6+/6dS/3QOPUNouMlH3IxZOJXH4GeqP06RJoSFMQW+zWMj8smsVqeyEOKWfU2Fa4VkxfJd7BTiVOOVBRnhbEpTNsDUnRSTK7P2ajqo2AvKSJEQe2FW/1Rgduxue2UQm5UE6BE6vHH6lnsYgIH4qmziPgv5DhQHSfeVz1d8afax2ihvK78JW+L2n/TnfC1dHwpQQGlexsusc9MkIv9VgnwkU5+GmBhhv/LyC1hOWkxAySlhoofC16408g+6fhIbNcFxde9FiX2mcaao9k9moOoLFZ91fto5uX0peLV6ZjnugohQY0MDHEmCvGpJS49cgX2mCXxo4FeIEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QeB9krLJZaBwDkPxD6hpG9yRMWMSk5l4AKHXM6siqEI=;
- b=WVK5oCRXi4QXrTT2SJ5XHeHRT7gr0NuVJELUoA5GenZ5tNBrZrK7tbgoJrfTbH1nEv1gBI26TTFvsGX8fnE4JRiHCOd8KgRawUNggDU7eYvj2xr7GTDdm0ZjkkrCpfFEhdPSd3KVZiGb7lqsHFYI/TTEakT3o2kk7xoR+u4QWszRG9pwKxLW3XRHERZ4cBAIWdyq7vLGZ+Qta0vj3RT+yoquXRGEzachKDUqy9DvvMtcwjGwzcjcHK6eYEJNf7mF+cf/s0c/2axbXoQMUE4eWXlry/Z5DIY6ZZwW5yi34U0qtcQiB0kMg/jD1APslPYY5qniZzIdVbVTlHC6N5BDPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by SN7PR11MB6603.namprd11.prod.outlook.com
- (2603:10b6:806:271::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 00:44:22 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::8289:cecc:ea5b:f0c]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::8289:cecc:ea5b:f0c%8]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
- 00:44:21 +0000
-Date: Thu, 6 Nov 2025 18:46:48 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ira Weiny
-	<ira.weiny@intel.com>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-CC: Dan Williams <dan.j.williams@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v1 1/1] libnvdimm/labels: Get rid of redundant 'else'
-Message-ID: <690d4178c4d4_29fa161007f@iweiny-mobl.notmuch>
-References: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
-X-ClientProxiedBy: BYAPR11CA0045.namprd11.prod.outlook.com
- (2603:10b6:a03:80::22) To PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4752B9A8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762476535; cv=none; b=Jq3Us05AWmakavGyLn4egU4AZSnaSBoFDoB4TW6E82TnypPKbPx662gLNizYsMc7+pEXtOe2ZTCuHNkWTqGdfqocjoBBYExdf5/ZM3bHY9FrD+UCnqPPzg01v68TNHWTtiIrhdUawAG+Y93WoD5L9sDG+UAJ4/+2cJBjF1mg0dU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762476535; c=relaxed/simple;
+	bh=sn6j/WP+bd+jqgBuRpz17xz8i5sjTIQyCJWXHeB0/S4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ol4qfuP5na/TEkUoXJ9GeGtu+vkuBstX1WN2WVtCmJgQJmKKp/i+ryo20U4bhU8dBLmTzTQSsf0mY6lBkevwQkNQMrCly5gXYgsRTP23xpFjippDU3GBWbcxWBvizChC+vBHlmAZLGmO79mNDAC99ikmZsHJhV6bUrp0R87mMMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VxLJoM6M; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso373951a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:48:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1762476531; x=1763081331; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UJyXy2HPeNxeSWk8AJrSzQ9IAraFkis5RK31sTtcUcA=;
+        b=VxLJoM6MH0mJHKj2SDqXcyCi2dB/t32iAYipnB565BpGVVHzHhgrZF7O3FqIFXrvYW
+         QiwT/v9Xv3hrvHb9e0rNNRrD4EV+mbMZ4BjeMM3JShi+3TQsfB4oHODtp29IMypgm1qU
+         f3Dl4SUgGfAdhKQHz+SrB5pDarAh/AwnzTEG0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762476531; x=1763081331;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UJyXy2HPeNxeSWk8AJrSzQ9IAraFkis5RK31sTtcUcA=;
+        b=MUMy7nPhpYDS+/q+oKbcr86VAVv4OhgLJctHBfFjHuBPFkfZl9rZFORvZ42Bd+LjXj
+         7SpD6B588IK3PrroPkepW0JO3BAZvQa9kVQc5aBmw0HeRelhDDAEvkQY85z6q5iBQ2Nq
+         812uz3K/9sEJWjkHMGDunUYq+BRXugFiKxdxQqEB8XAV94oteg9lQGiMNk8KXYeI4jJQ
+         PW7HRoHNUY/H+PE+o2XAdHg2EKfBVeHu1VDdK7ETGEPSVSPev9f6tP+VoHsRUztGBmnl
+         pSNoysBnVjiFSFIMI0phZQu224gmN8pVwbAL0Yf9dayyvmnW8rPIhXnb7ixXl5dUkI+Z
+         MShA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfUjh47/XEIliMNopzF+afIAuC2XR21jlJ5TOGF+HbgZINadL/9pB4BLE0S+NsSQPQ4wnmGc8gO3ryEc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Upj5giJ3/qQx5AYGCWbjhmD7bCg1KXfzt4p8lj8/tYANqyk2
+	P4LRVOtklWXtC4ujd6Awt2xkc1qx1mPo4Yk5L7y7ljO4OVpY2OeYO6pxptGmye2QvN2aUkdwkWC
+	LCRQiIwY=
+X-Gm-Gg: ASbGncs+JesmRQMIMdcggL3qCK4bhOSBk8T/OigEuPDPoO50RIf/CSjcTBGV/mYzJcd
+	UeNkUMIPhbpITQez4J9z8pbF/pGbIvotSfMOU0xgeS96O2bGRtxVceG/YuaauEcprxFlAIXemxq
+	wyPH6bUbv+Ue1TTp9B+pcsu6Be/wn0dpYHXQbmL2AOmX5qbzTTncj49UlRDWawVWwyGEc1KiJ4G
+	HmONhSZ+CvZB4NILJVcsGS+vWvevAgH9ibQbS9zdR6lo2R2PRNa8qagxCLHwz1jLXF6Li6HvwNl
+	fsQluF9+Bs8hxvd4HhxJGw+sPEaiakmEgQZmmH24kr2hWQFSpfL9pX8UAYhFZDKTwDmx8F2jEwi
+	utMxJC5s/WGepgN72/codQCi9tRpj9S7dnhZ5Yq99VH41Rayo70K1YmtgBftq4BJ3P9ChSMpM0L
+	FKl4PAA1qLafe5bqHGS0YwJ3Fd2W6zefWWCSMDd8B1bbtoAT1tHA==
+X-Google-Smtp-Source: AGHT+IHE9PQEuoTH9UOWqvGGCSU8C9Ruq9AfI/ggNvlQijrcc1X+/GCrqq4sZ3Di/VYSKgFclTSqxw==
+X-Received: by 2002:a17:907:3f02:b0:b4a:e11a:195b with SMTP id a640c23a62f3a-b72c0d5c41cmr119233266b.44.1762476531435;
+        Thu, 06 Nov 2025 16:48:51 -0800 (PST)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbc9656sm90837566b.7.2025.11.06.16.48.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Nov 2025 16:48:50 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b7277324054so31666966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:48:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXPsunz/71zUzs5JN6Tw+Npocmz2uH9w/vJCfGO1FlycKS1Zd7b2vLzImW9b8RrfL4S+nxG5ZrgzCYX2+o=@vger.kernel.org
+X-Received: by 2002:a17:907:d8e:b0:b71:fa4a:e16a with SMTP id
+ a640c23a62f3a-b72c099753amr152181766b.28.1762476530309; Thu, 06 Nov 2025
+ 16:48:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|SN7PR11MB6603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68cfa121-3830-4309-9bf5-08de1d96ca9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JdQKzPYqbkvkNNG5BzcXkF/Bs8fu+ccH3QBe6bY5U2SFNPhZ0noz00FxeNTK?=
- =?us-ascii?Q?oINDwOAzy+Gm9rfTuk7NXQhWWPBlmIeUwGo44Tb+1aN1sWtkGy+8xxY4LmKT?=
- =?us-ascii?Q?vtAbiFq39tiBs0apWQflaJsD03JVIL//wg2vwj0Fol2Vhu7hJ16Ur+a7/MOd?=
- =?us-ascii?Q?VaSS2TUUXnY1J9p7CtuExhFdLKD2gsBUla+USIjtM5FzdIv8LkbFr4S2Szl4?=
- =?us-ascii?Q?PuaO9ndEANTIXMB3gzt0KKk/yO9zWehxz78z3Cr1DG8VgmJUnY4NqSr2mEHg?=
- =?us-ascii?Q?lC4n9hk/JWT/wlLU2OXwiOamwx/2w8cbxNNKRAQf+at1F8zERaslH/VZAlDL?=
- =?us-ascii?Q?p4JTrxlQUEiMbZs5jFVC1vtwqTlp74VdgZ+uB34WaZi87XsU95XQQHk3dXnl?=
- =?us-ascii?Q?ai6DQ1jWCrhCnRieu43uQO6FvHVTPbVLHwvMdle5XmwHlOztT1kQXHG5joT1?=
- =?us-ascii?Q?X/qPsPUFVBc9FkKpKvLRiuEs1ZuBtxG/bHv+oC/mim/39FSmWdoRBssk6GqM?=
- =?us-ascii?Q?1p1YAO18cyQVJb9K+PQlEhnBwiXLZLIG+qD7MaR9PyzRS3ITPkYbefFB+siO?=
- =?us-ascii?Q?Sxgi1rwTkQEzvzb+mjeBOgMwmSV514Z+YzdU9pMNOzFCla4HVwKma4cEZ4eH?=
- =?us-ascii?Q?dUhREkFubvgBypu6AgcaiX4bGSRHrHbR5UCK+eedP0aerDU5C8NWxvPUkkyE?=
- =?us-ascii?Q?9DyFk+BzMgmXNOFETKcZM8LgQSPVZ0+EhVXMWB092Oek9x+0gB2ClN4QLmP9?=
- =?us-ascii?Q?ueE2u2SpTuMpJ901kGaGgngrN3b/DD79sMzFHjnQEeY36qzhyruAUa1TJ5Yp?=
- =?us-ascii?Q?daFln+TZ+Rq/96hIS1OZpoy55nXtMEW/Wx+R7jUFl/cQKtDUSVQ5bvce7TMJ?=
- =?us-ascii?Q?2xD0ofgds5XbYThn+WKt5pjRPkcVn6xKGp2aLoYDMu7JszfWP8X8J/tip0ag?=
- =?us-ascii?Q?D+9QegyXQSfutQkLFel1J6H/Kd6ZbO2VGoHbBQ3Co94mh4nay5eyvsTeaTSC?=
- =?us-ascii?Q?L1BjIZTkHusdWGuFvIkoRRs1XQ0fl0DYSXSwMKPJbYRP1LQ1Ki58tI/+JGyl?=
- =?us-ascii?Q?rRfe1bweVl1uG1F7wKCsDiENF7bnB+b4UxN229D59w7+wxQRWR8iLv0qZfkE?=
- =?us-ascii?Q?NGA+mp0CWIm0s4OVsAM+RHIVEkN226Xs753dYGgdoR/sh7yx/4vXbt+UCWhD?=
- =?us-ascii?Q?0kZ2BiUuKLU1Vy3yGGCwy85hGK0qbnbxqjgbU17+u5LWXp5tGbkHXPKnqf+9?=
- =?us-ascii?Q?3zVKdh1z1GGHInD3Tpf9TKkeI556vXJvwh/Enq3HvmF1yvjYNSFzuxlVFE/Y?=
- =?us-ascii?Q?xmzumknk75PLmEucsoLkWQhKQZQbsEDG2KG6lVcaNOqZFfhNroS4ftDScG98?=
- =?us-ascii?Q?N111Ot1mpC/PGyidp0htj96ZnPAymwd1z1af3N2ORHsiV7lmBSlNvbuososp?=
- =?us-ascii?Q?CifzJ954XUeYnpFLRmVuNXWrqL7HP6RM?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5hVQVOj7A0rXtI+8rM1n9r4rWxxqYim942dirycStuSWdZ8sQuA7vGqOpCSf?=
- =?us-ascii?Q?ol0s0tBq4kORlmcPzoZO0ZfcoLIFGzVWBa4VudXkWcGrrTldsJFGpcIT8sqi?=
- =?us-ascii?Q?jE6synMP9Yystj+6DrkUIZpzbHXcMz5bFC828eJTD5u+znyOmTzOnIz4VIyq?=
- =?us-ascii?Q?JHG9j2eCg/D+KlSzY/4pOIoNLi4u+zr7rKAHqGEfvv8jje3b+AYvqwS+fXKg?=
- =?us-ascii?Q?CL3srSdqTxZ0rhlAQhhD/oP7AKGvXgYfChYjDoSXCH36xYXzXEdn986uJroH?=
- =?us-ascii?Q?8NerZUJ6nxWC86rnRqqfLoXeP0CAzwuy9TE2FmX6R8h+XRfphAQZHXE/VbuV?=
- =?us-ascii?Q?AZaK7lmLnWOgE7k41QcFd01xwF/Tw8ZtgkjtmtBPnLI8VRGpGRI6LQl/m30V?=
- =?us-ascii?Q?m9Lk/sT9D8XanZp1yQWNZexL18SzfrblnguyWVisNi3JKQOqQsmcYKWvhvZt?=
- =?us-ascii?Q?6XvRVqyYlUAfwpl+OltcD6DdYtvep+ZCt2I9Ho7nnfLOZSOInzoH1La4YJE+?=
- =?us-ascii?Q?wxKOxVpk+cku/ra2FPiJ2oBmAE0ilICnaPtXa3KwKR9Jd5MahM+zNf4e0k19?=
- =?us-ascii?Q?KIO48APLcTbMg1qd84UfyZWPtcNyjARLbOA5rhDbKaof2kS9nLJmaukzSXBA?=
- =?us-ascii?Q?BA4xGH/VOFHVY1uAbousmqXMBz0QeDWcdX11O82jfPXvAx/4Z9g7860pXLHt?=
- =?us-ascii?Q?+UCmuQi28hxSmMxBHEP0LkfLKKnimCNHx0ad1OpgJgRlMCq1sIugSIrYktAz?=
- =?us-ascii?Q?28BuZgLbriPtjJ3a9ibs87GtqUZ2IA7DbT5WebnDFhPlxr326n6ef6qVqbs3?=
- =?us-ascii?Q?WB+tHrgcOaDORhyea7AelOH0n/jUbWCzlV1LfKKu3WJpMUK1PXsUAg5YUjQY?=
- =?us-ascii?Q?5ZuubZrVgdFPvS0Lm4zMqPaV1i1CHlOq6rS5Y/mdt/2HwooXQKTWnrTdtVbl?=
- =?us-ascii?Q?bu+rkZ0I/j//WAWl4LYOruaKET79mPoY47bt8bzD/9LpVXn5l5ZYAZEfHnnr?=
- =?us-ascii?Q?E9f2EN2D0vYtG2XdtdrGZE8GihBh0pSB2SZRO5TPxM0O5rrsYdgWULKZUK8H?=
- =?us-ascii?Q?MxAsveXB0aiX1oarY2SwG3O2Nd0XRJQ7LsDpeUO0e5GLri189viot6OJzRZ/?=
- =?us-ascii?Q?qSTqZ6vkwcEWKgwQDnggTTz7NxPpxAH9xj4q4e2/89UkNnf1LV/1c6utoFB4?=
- =?us-ascii?Q?ysRnUogv9L04/Vnnn5ShkFNg3Gs6Nm8xQ8TUBf9B+YzJ6IhRTHoFgDzaJmNl?=
- =?us-ascii?Q?KOHryY9hr8MN2CzMm+BYUluRc6ffS9fBLPUyy/CqBdbFUVyucdYpR6KJ0MzC?=
- =?us-ascii?Q?Zk7Cyetymg4X9xYEPedYgBz8MYPYQ9wB9MO85d7uzDRj0jsq4ub9yxBPH5pI?=
- =?us-ascii?Q?PFaF61ntFoglUsoAUadcYLz0k6CN+Tt2yw9eGVthhmBGGnEICHKAua/gGcoX?=
- =?us-ascii?Q?pCsCpom7RAR883iWnjG5w+PwLFJ/Sc8wU1klYyDs1bIf2qvnglwOMWLIO+Wr?=
- =?us-ascii?Q?L8+gxuDQUkKihCDvj1WlSq0IQVnA4/NzcmCSBS0kAorYmOMmM7Wq8QSw1I9m?=
- =?us-ascii?Q?1LYZjIdOReBhUTBT0TUiL2cpIz2nh2zXHtOWTBD6?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68cfa121-3830-4309-9bf5-08de1d96ca9f
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 00:44:21.7523
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OCmSBz387i64es2kcHxrZBRlB2xZMIoqoxnnOEut5QSZijYwcVghaJwgWsEwI74zOqwzHiM+XOmImKjYfyOoLw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6603
-X-OriginatorOrg: intel.com
+References: <20251106210206.221558-1-seanjc@google.com>
+In-Reply-To: <20251106210206.221558-1-seanjc@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 6 Nov 2025 16:48:33 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiJiDSPZJTV7z3Q-u4DfLgQTNWqUqqrwSBHp0+Dh016FA@mail.gmail.com>
+X-Gm-Features: AWmQ_blj82Vcahx3SOa6MtKIrMn8wu7jk2421gv57pbk7yInk5N0KSx4Ebh8Ack
+Message-ID: <CAHk-=wiJiDSPZJTV7z3Q-u4DfLgQTNWqUqqrwSBHp0+Dh016FA@mail.gmail.com>
+Subject: Re: [PATCH] KVM: x86: Use "checked" versions of get_user() and put_user()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Andy Shevchenko wrote:
-> In the snippets like the following
-> 
-> 	if (...)
-> 		return / goto / break / continue ...;
-> 	else
-> 		...
-> 
-> the 'else' is redundant. Get rid of it.
-> 
+On Thu, 6 Nov 2025 at 13:02, Sean Christopherson <seanjc@google.com> wrote:
+>
+> Use the normal, checked versions for get_user() and put_user() instead of
+> the double-underscore versions that omit range checks, as the checked
+> versions are actually measurably faster on modern CPUs (12%+ on Intel,
+> 25%+ on AMD).
 
-I still need a why to in this commit message.
+Thanks. I'm assuming I'll see this from the regular kvm pull at some point.
 
-[snip]
+We have a number of other cases of this in x86 signal handling, and
+those probably should also be just replaced with plain get_user()
+calls.
 
-> @@ -768,20 +768,20 @@ static const guid_t *to_abstraction_guid(enum nvdimm_claim_class claim_class,
->  {
->  	if (claim_class == NVDIMM_CCLASS_BTT)
->  		return &nvdimm_btt_guid;
-> -	else if (claim_class == NVDIMM_CCLASS_BTT2)
-> +	if (claim_class == NVDIMM_CCLASS_BTT2)
->  		return &nvdimm_btt2_guid;
-> -	else if (claim_class == NVDIMM_CCLASS_PFN)
-> +	if (claim_class == NVDIMM_CCLASS_PFN)
->  		return &nvdimm_pfn_guid;
-> -	else if (claim_class == NVDIMM_CCLASS_DAX)
-> +	if (claim_class == NVDIMM_CCLASS_DAX)
->  		return &nvdimm_dax_guid;
-> -	else if (claim_class == NVDIMM_CCLASS_UNKNOWN) {
-> -		/*
-> -		 * If we're modifying a namespace for which we don't
-> -		 * know the claim_class, don't touch the existing guid.
-> -		 */
-> -		return target;
-> -	} else
-> +	if (claim_class == NVDIMM_CCLASS_NONE)
->  		return &guid_null;
-> +
-> +	/*
-> +	 * If we're modifying a namespace for which we don't
-> +	 * know the claim_class, don't touch the existing guid.
-> +	 */
-> +	return target;
+The x86 FPU context handling in particular is disgusting, and doesn't
+have access_ok() close to the actual accesses.  The access_ok() is in
+copy_fpstate_to_sigframe(), while the __get_user() calls are in a
+different file entirely.
 
-This is not an equivalent change.
+That's almost certainly also a pessimization, in *addition* to being
+an unreadable mess with security implications if anybody ever gets
+that code wrong. So I really think that should be fixed.
 
->  }
->  
->  /* CXL labels store UUIDs instead of GUIDs for the same data */
-> @@ -790,20 +790,20 @@ static const uuid_t *to_abstraction_uuid(enum nvdimm_claim_class claim_class,
->  {
->  	if (claim_class == NVDIMM_CCLASS_BTT)
->  		return &nvdimm_btt_uuid;
-> -	else if (claim_class == NVDIMM_CCLASS_BTT2)
-> +	if (claim_class == NVDIMM_CCLASS_BTT2)
->  		return &nvdimm_btt2_uuid;
-> -	else if (claim_class == NVDIMM_CCLASS_PFN)
-> +	if (claim_class == NVDIMM_CCLASS_PFN)
->  		return &nvdimm_pfn_uuid;
-> -	else if (claim_class == NVDIMM_CCLASS_DAX)
-> +	if (claim_class == NVDIMM_CCLASS_DAX)
->  		return &nvdimm_dax_uuid;
-> -	else if (claim_class == NVDIMM_CCLASS_UNKNOWN) {
-> -		/*
-> -		 * If we're modifying a namespace for which we don't
-> -		 * know the claim_class, don't touch the existing uuid.
-> -		 */
-> -		return target;
-> -	} else
-> +	if (claim_class == NVDIMM_CCLASS_NONE)
->  		return &uuid_null;
-> +
-> +	/*
-> +	 * If we're modifying a namespace for which we don't
-> +	 * know the claim_class, don't touch the existing uuid.
-> +	 */
-> +	return target;
+The perf events core similarly has some odd checking. For a moment I
+thought it used __get_user() as a way to do both user and kernel
+frames, but no, it actually has an alias for access_ok(), except it
+calls it "valid_user_frame()" and for some reason uses "__access_ok()"
+which lacks the compiler "likely()" marking.
 
-This is not an equivalent change.
+Anyway, every single __get_user() call I looked at looked like
+historical garbage.
 
-Ira
+Another example of complete horror: the PCI code uses
+__get_user/__put_user in the /proc handling code.
 
-[snip]
+Which didn't even make sense historically, when the actual data read
+or written is then used with the pci_user_read/write_config_xyz()
+functions.
+
+I suspect it may go back to some *really* old code when the PCI writes
+were also done as just raw inline asm, and while that has not been the
+case for decades, the user accesses remained because they still
+worked. That code predates not just git, but the BK tree too.
+
+End result: I get the feeling that we should just do a global
+search-and-replace of the __get_user/__put_user users, replace them
+with plain get_user/put_user instead, and then fix up any fallout (eg
+the coco code).
+
+Because unlike the "start checking __{get,put}_user() addresses", such
+a global search-and-replace could then be reverted one case at a time
+as people notice "that was one of those horror-cases that actually
+*wanted* to work with kernel addresses too".
+
+Clearly it's much too late to do that for 6.18, but if somebody
+reminds me during the 6.19 merge window, I think I'll do exactly that.
+
+Or even better - some brave heroic soul that wants to deal with the
+fallout do this in a branch for linux-next?
+
+              Linus
 
