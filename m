@@ -1,50 +1,74 @@
-Return-Path: <linux-kernel+bounces-890129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1202DC3F494
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 10:59:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C9CC3F497
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7DF8188B093
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:00:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C78B34D1EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761882FFDF4;
-	Fri,  7 Nov 2025 09:59:50 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E275184;
-	Fri,  7 Nov 2025 09:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBC31FF1B4;
+	Fri,  7 Nov 2025 10:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="UlUdj4FH"
+Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174FF747F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762509590; cv=none; b=V6kqA5ts8SLZvGf/iyI7fEprNX8TAK1UglrPOEXnIzJI2aSTdAAZNAQBMi0k1jsD9EfO67uAkZ4M6SnbASMLsFuN7o8o0Iexrqg3uQpszO62z3sPMpZqzGMnjymdi9NIUXUxsJlJ7zJO7zeDVHyBsak+JGsAHLOS03LHvU/NVoc=
+	t=1762509631; cv=none; b=qUV7jM4xzpoddJrvz/bJSUkOrIx4RrY4P7BD1tVBkz0nno0hFTd3yGsgWD+wosYyjwZ8aeNyuHvpMRf8HtUA8MN0kRuDB+jp2nZRxlyWZ7efTaDL5To3uvbVUSbr86BvRe65LBGVBDS5gKROCrbXkvzfc0jTQaXQaVNeaBEHPD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762509590; c=relaxed/simple;
-	bh=dSn4bpScevxDxseiwBrGPM6q9KPe63Brm/aAq2AAz08=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SgUNynr9KE4J1rd21ByKPOaEZkj7nLZ+hE1L7UoJhcTM944wqcwwInWBKKg30Xbh2GKnRk4D7E+0+CnXr1BZ9sccrY7r3YTieQFhtP+v2YGmc5YBd0oIBXLrrBrWJhUT529GUdolhpRPKBi8mLiDpFhGV2kFIHGrVx6ihWdG/Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.45])
-	by gateway (Coremail) with SMTP id _____8Axz78Lww1pukIgAA--.2298S3;
-	Fri, 07 Nov 2025 17:59:39 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.45])
-	by front1 (Coremail) with SMTP id qMiowJAx_8EGww1ptL4qAQ--.58299S2;
-	Fri, 07 Nov 2025 17:59:38 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Vishal Moola <vishal.moola@gmail.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH Resend] mm: Refine __{pgd,p4d,pud,pmd,pte}_alloc_one_*() about HIGHMEM
-Date: Fri,  7 Nov 2025 17:59:22 +0800
-Message-ID: <20251107095922.3106390-1-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1762509631; c=relaxed/simple;
+	bh=m/8zPMzO3sPR9cj9Hm3+C+88lHXxhZaRiogKHxQ1V3s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b+7zRYXj6vi0kxHZwAFwg58fcMFfUIkeWsgZij4QI/c3g90UI1E2T4Iuwuw8gNRwnUorE7X/HdFdWbxKhVJplKO0cTKqfxQBp35H5rCt2bjvpI36aGvScHbAUBBuyZuqCliMPzmXkY0v7I7BNfb+6IP3J48VgKKe+K9gTnj0qHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=UlUdj4FH; arc=none smtp.client-ip=35.83.148.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1762509630; x=1794045630;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gaK6pACLGs/VVG2+bcRoCnqyEjxUer7HCt5ZvlpCNPw=;
+  b=UlUdj4FHC1/qRLV3rVGjdcWIVmEnmhCNQphThtGQ5DUR1pj9wwIxg27q
+   Th+3rr7yJpw+UZhvSzYzL4DMJObyUXPbodDniKUIcNm2rbDgtwkys9kXp
+   ZGt+CugRQKy9hHJP/QWh/+iQW3ZDjXYk4k22Jh7eJzj1E+HcyKwn2Hd/L
+   Ktc2/7lNRL86umiZqU4JphO8TKL2UcBIwSn3BxYXFyyhMkO+DibCG6haF
+   WxF42tAAHnLUoq9t9+JKVkxIJ7dzAa3UdzA+m1ckbaDXQzchF1kO/R2FU
+   rfZnhecXgLdc/3DlKB39aGOPhqslQOPZITK68RkALrch2c7qYp7SlXKOA
+   Q==;
+X-CSE-ConnectionGUID: OVlOEeg8RvG25Gv2lNLChA==
+X-CSE-MsgGUID: qkPF/1d8QmqgeYjOBuW/GA==
+X-IronPort-AV: E=Sophos;i="6.19,286,1754956800"; 
+   d="scan'208";a="6408377"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 10:00:27 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.234:19663]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.51.49:2525] with esmtp (Farcaster)
+ id 45571d5a-eff0-4b9f-8095-e0e4bc963290; Fri, 7 Nov 2025 10:00:27 +0000 (UTC)
+X-Farcaster-Flow-ID: 45571d5a-eff0-4b9f-8095-e0e4bc963290
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Fri, 7 Nov 2025 10:00:27 +0000
+Received: from dev-dsk-simonlie-1b-d602a7e1.eu-west-1.amazon.com
+ (10.13.232.104) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 7 Nov 2025
+ 10:00:25 +0000
+From: Simon Liebold <simonlie@amazon.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Simon Liebold
+	<lieboldsimonpaul@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND] x86/mm: lower MAP_32BIT begin to reduce heap collisions
+Date: Fri, 7 Nov 2025 10:00:04 +0000
+Message-ID: <20251107100004.66240-1-simonlie@amazon.de>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,83 +76,121 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAx_8EGww1ptL4qAQ--.58299S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uw1fGryUXF4rKr1xAr43urX_yoW8CryxpF
-	s7C3y8X398JFyrWa10y3Z7Cr17tw45GF47AF42gFy5Z3W3tw1xGFyDtFW7ZFZrZFZ5ZFW5
-	Wrsxtay3AFnIvrcCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
-	McIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU82jg7UUUUU==
+X-ClientProxiedBy: EX19D037UWC004.ant.amazon.com (10.13.139.254) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-__{pgd,p4d,pud,pmd,pte}_alloc_one_*() always allocate pages with GFP
-flag GFP_PGTABLE_KERNEL/GFP_PGTABLE_USER. These two macros are defined
-as follows:
+Commit 03475167fda5 ("x86: Increase brk randomness entropy for 64-bit
+systems") increased the brk randomness from 32 MiB to 1 GiB. MAP_32BIT
+looks between 1 GiB and 2 GiB for an unmapped area. Depending on the
+randomization, a heap starting high enough and being big enough can use
+up all the area that MAP_32BIT looks at, leading to allocation failures.
 
- #define GFP_PGTABLE_KERNEL	(GFP_KERNEL | __GFP_ZERO)
- #define GFP_PGTABLE_USER	(GFP_PGTABLE_KERNEL | __GFP_ACCOUNT)
+For example, if the heap starts at 800 MiB and is 1.2 GiB large,
+allocations with MAP_32BIT will always fail despite unused addresses
+below 800 MiB.
 
-There is no __GFP_HIGHMEM in them, so we needn't to clear __GFP_HIGHMEM
-explicitly.
+Lower the begin of the address space which is available to MAP32_BIT
+from 0x40000000 to 0x10000000 to give mmap more room if the randomly
+allocated brk address turns out to be unfavourable high. This allows
+mmap to allocate up to 75% more space.
 
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Simon Liebold <simonlie@amazon.de>
 ---
-Resend because the lines begin with # was eaten by git.
 
- include/asm-generic/pgalloc.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Notes:
+    Re-sending after rebasing and re-testing on v6.18-rc4
+    
+    Background: LuaJIT v2.0 uses MAP32_BIT for allocating memory. Because of
+    the restriction of MAP32_BIT to limit all allocation of mmap to the
+    address space from 1 GiB to 2 GiB, LuaJIT v2.0 can fail to work,
+    depending on the random location of brk.
+    
+    I tested this change using the following reproducer:
+    
+    int main() {
+        uintptr_t mmap_end = 0x80000000;
+        uintptr_t heap_start = (uintptr_t)sbrk(0);
+        printf("heap start: %p\n", heap_start);
+        uintptr_t alloc_size = mmap_end - heap_start;
+        uintptr_t heap_end = (uintptr_t)sbrk(alloc_size);
+        printf("heap allocated until: %p\n", heap_end);
+        void* addr = mmap(NULL,
+            8,
+            PROT_READ | PROT_WRITE,
+            MAP_PRIVATE | MAP_ANONYMOUS | MAP_32BIT,
+            -1,
+            0);
+    
+        if(addr == MAP_FAILED)
+            printf("mmap allocation failed\n");
+        else
+            printf("mmap allocation at %p\n", addr);
+    
+        return 0;
+    }
+    
+    Before the change, the allocation failed:
+        [root@localhost ~]# ./repro
+        heap start: 0x24bce000
+        heap allocated until: 0x24bef000
+        mmap allocation failed
+    
+    After the change, it succeeded:
+        [root@localhost ~]# ./repro
+        heap start: 0x38f24000
+        heap allocated until: 0x38f45000
+        mmap allocation at 0x11962000
+    
+    Note that this does not guarantee to succeed. If the randomized heap
+    start is below 0x10000000, it still fails.
+    
+    This is an excerpt from the output of one of the failure cases on real
+    workloads:
+    
+        00400000-00566000 r-xp 00000000 103:01 4476567               [...]/bin/httpd.orig
+        00765000-0076b000 r--p 00165000 103:01 4476567               [...]/bin/httpd.orig
+        0076b000-00772000 rw-p 0016b000 103:01 4476567               [...]/bin/httpd.orig
+        00772000-00778000 rw-p 00000000 00:00 0
+        34a21000-35021000 rw-p 00000000 00:00 0                      [heap]
+        35021000-82ea7000 rw-p 00000000 00:00 0                      [heap]
+        7fee7c0ba000-7fee7c11f000 r-xp 00000000 103:01 3836609       [...]/lib/libluajit-5.1.so
+        7fee7c11f000-7fee7c31f000 ---p 00065000 103:01 3836609       [...]/lib/libluajit-5.1.so
+        7fee7c31f000-7fee7c321000 r--p 00065000 103:01 3836609       [...]/lib/libluajit-5.1.so
+        7fee7c321000-7fee7c322000 rw-p 00067000 103:01 3836609       [...]/lib/libluajit-5.1.so
+        [Other maps at high addresses...]
 
-diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
-index 3c8ec3bfea44..706e87b43b19 100644
---- a/include/asm-generic/pgalloc.h
-+++ b/include/asm-generic/pgalloc.h
-@@ -18,8 +18,7 @@
-  */
- static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
- {
--	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL &
--			~__GFP_HIGHMEM, 0);
-+	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL, 0);
- 
- 	if (!ptdesc)
- 		return NULL;
-@@ -172,7 +171,6 @@ static inline pud_t *__pud_alloc_one_noprof(struct mm_struct *mm, unsigned long
- 
- 	if (mm == &init_mm)
- 		gfp = GFP_PGTABLE_KERNEL;
--	gfp &= ~__GFP_HIGHMEM;
- 
- 	ptdesc = pagetable_alloc_noprof(gfp, 0);
- 	if (!ptdesc)
-@@ -226,7 +224,6 @@ static inline p4d_t *__p4d_alloc_one_noprof(struct mm_struct *mm, unsigned long
- 
- 	if (mm == &init_mm)
- 		gfp = GFP_PGTABLE_KERNEL;
--	gfp &= ~__GFP_HIGHMEM;
- 
- 	ptdesc = pagetable_alloc_noprof(gfp, 0);
- 	if (!ptdesc)
-@@ -270,7 +267,6 @@ static inline pgd_t *__pgd_alloc_noprof(struct mm_struct *mm, unsigned int order
- 
- 	if (mm == &init_mm)
- 		gfp = GFP_PGTABLE_KERNEL;
--	gfp &= ~__GFP_HIGHMEM;
- 
- 	ptdesc = pagetable_alloc_noprof(gfp, order);
- 	if (!ptdesc)
+ arch/x86/kernel/sys_x86_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/sys_x86_64.c b/arch/x86/kernel/sys_x86_64.c
+index 776ae6fa7f2d6..29c6277aa31e6 100644
+--- a/arch/x86/kernel/sys_x86_64.c
++++ b/arch/x86/kernel/sys_x86_64.c
+@@ -100,7 +100,7 @@ static void find_start_end(unsigned long addr, unsigned long flags,
+ 		   conflicts with the heap, but we assume that glibc
+ 		   malloc knows how to fall back to mmap. Give it 1GB
+ 		   of playground for now. -AK */
+-		*begin = 0x40000000;
++		*begin = 0x10000000;
+ 		*end = 0x80000000;
+ 		if (current->flags & PF_RANDOMIZE) {
+ 			*begin = randomize_page(*begin, 0x02000000);
+
+base-commit: 4a0c9b3391999818e2c5b93719699b255be1f682
 -- 
 2.47.3
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Christof Hellmis
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
