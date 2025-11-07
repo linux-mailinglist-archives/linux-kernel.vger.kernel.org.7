@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-890937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095F6C416AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:17:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB985C416AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85BEE3A7B1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D7D3B34A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65BA30101E;
-	Fri,  7 Nov 2025 19:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2B13009CB;
+	Fri,  7 Nov 2025 19:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fyBMvXcr"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ksn7BBLa"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF542FFF9A;
-	Fri,  7 Nov 2025 19:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D06301492
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543002; cv=none; b=u9as9Q1EzN+RbP1LAD1102WxnMOv+AianGW/KumOIFS/RkULFI/wxJC8rG7Fpylu0PZXV3lmm/RNxJl6zLpBBH8FTPbe/AyJN8+txK6eXZOF36JWuDUSBG8jtBT699OAwTmQiER25DaByN8Aop/s55SWTgo3JSzTuJdpyHKcOoQ=
+	t=1762543013; cv=none; b=btaYzFaFmnqc9OJsQ6LVD9x0DLLwssCIS3fxDwjqe1u6iwJ6rz0F1hVS4kR0oUt3secTBA/3dIaY7i1BLKoHKB9l96uzwM51pi0w4MK3yW9tp61ujpRNrr3x10Xo6b6GJk2YftcuU+autQMw5fi4uyNPCilA4g8zwxeTMe08GXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543002; c=relaxed/simple;
-	bh=nEkZsft9zds0zKPme2K9MtcDeOBr2q3x/Eeje7et7iI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cahbRlr776BwKTEgf3dNL6Z4LelZMLeMXDkadWy8ixNO3AdMspfP4cmRPLTxQa5nGJpwr4vhnraehPzmH9s6ZK0RjRgdyxrmzJKhgH50C0+vQmQascitcOEL2NSDQd7z9kkz8OuamoedAONWtPp/hFCiM6IL0qt3pCOKPc2hYAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fyBMvXcr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=kQk8qhNHeExoeKiNMISlHBwIfA7OPYgr0kEYR2Qaikw=; b=fyBMvXcrSAsSSxbhpRSB3zcRpi
-	NWZHyN78xJVj9iBtAeTHGqsON3eELYVVxjSDIyZR+mNEns7qs6KMWeZDryL+etK+067AnYEWqfIDE
-	8rJZySFnyUl5an0jK1BnEPytHg4CIiWwyNRDTUjsjgYfsrW5l9m4dYIryduRmeUTxzDtCSsV7UfSm
-	oiwg6DWBldT32tFxIe3KfS3Ry9DAXV8AZU+bJ73JyiOfYutsKYIY2AANxZeEQX4lAa5V1msGIoifv
-	GB9Fbcbr7rkwRJ5d3MMfOdI6tgEE1wa0520kmVP0ZY+pTT1qg2LMWhFXOMKth+J1qiDdtF5Hqw5vi
-	sHlK0QPA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vHRwr-00000000g1k-3uy2;
-	Fri, 07 Nov 2025 19:16:37 +0000
-Message-ID: <49ff6f64-b664-4628-af2a-1b46e0fd62ad@infradead.org>
-Date: Fri, 7 Nov 2025 11:16:36 -0800
+	s=arc-20240116; t=1762543013; c=relaxed/simple;
+	bh=VOdPNLzT1eZ1NEB09xe83HjehWmI3iXz/M9xFWPtPBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i6QFDfUjodvYrZevOpJXu6T/grW9r+o+CcauN2Snw5+Ckt5b+kIkBwrheMoOHs2YIr0XQExnqw/UKCkZIoKJjBji1yYpwsO7arPAhB2u6EuVHeQWb042HKb4yeOOCVVLSOMVHfzxmwbKN0G4WeARkqcrM8Tg15clvmFSne8w7Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Ksn7BBLa; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-87dfd3cfafbso10416676d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:16:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1762543008; x=1763147808; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uecw5GuJ6xKMR/52t0KK0j/pRrv42h6jWvdNot4nYIc=;
+        b=Ksn7BBLaoKIGTzBg892R6V+pwjUJqZcA0k73BXvCKD2YpdtItXOamwKrf55QqoDDIb
+         J/lEvZBmacJTDZGzF8UmCWwf+XX7YlMe3Nks3jle0YiAWAoLycIfjl64TFIPCc8CiJTN
+         IAeNuCqIxOLuWHmXKmvZ40nNmbY0Bjgwe8yyke7GVJHVs/oau4BKQkw+IcxLcZZBGaWz
+         xoVSeq2Xv52A/TRCZiFi+9bm25CuAlFaly2elsQKTk2ku1Ra9yESWvq+NCmYCyoEIFFq
+         dMJky1NXNlEk/0teQ9sRAC0wnGqWANdu2YtozK8aeDRmoZOZ5j1F2avVO01y9kE1rCA+
+         fyag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762543008; x=1763147808;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uecw5GuJ6xKMR/52t0KK0j/pRrv42h6jWvdNot4nYIc=;
+        b=WjsEPLL3OmFVG1RN5ZZAdcpEHYB7q7PT1C0PBddptezOqt888/sJrj5PCL+VyBr+te
+         xtqmshKmZoWc+TKgucO/bLoUZi/AT7wwe6SV6anw5t3/QOmh0m7wC/hAFCQc+U0auvQR
+         wh5aSCNUwTVOQIRUcDUE0Wr/9vjzZDZD4GgXrEXts0cc+2QCZ1UVqsQIP/4kZOTWeBkM
+         i+tqwh3yQHFYAB5jCgGwF/RarnChb5UqNKIU6PvFPh4qpQx2biau1v0olRdmT9MZa2OA
+         LLJICdhFPGPntUht0+4S7stA2ZY63oUWkMc23Vd7WlwSJyNd3zfS7QJ3bxoWIMtZamMG
+         mTRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVu+2iSI3WERq1Lts408xIBtT+6WidyfWvnfcwKj5mZqfWuN2oR6A7+1dADjOcSV39weB4hjglnrfQsClU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuxmMRc0V7hPBJbfrdc4pCaEpFkPI+Xl8UKnFGhxeUWEBPF7kB
+	ccjtWwZxe+ESBdZVCIVE0bdPRAtMsPlPdeUjeWEWkvgZENqTcS9dPufQsNsxs66+2sU=
+X-Gm-Gg: ASbGnctkkQjOQn1bSQd/0cYia2KgqFWnwYZGPGOWLkG1+3QLE3++7hdbSohV5Yv9qO9
+	znSh+qSg7mj30sK/nFIazB5SOWSO5Mfb94yy2GAdmscUk+FBh9mRXdDcCwBkWamHkIj67zs5RTZ
+	ybaP41dYcHPlQROWvfx3Gmv8FFzndA/FMYARFNXMZYJQgN093Uwu9bYsoLFafGToalz9MNMyoly
+	KF9fk6A4dIb7JuFBQ9+OHaEUrVJMlzk7j/LjPcBIuQDL/whrQHEDE+A41eX3FYKHpHnJRKQj2VT
+	AOLWnAcZoSib5C9GUTcT/zKNQ/3NqX1oJY1N0UKj5VDkiC/k8FGoFJMpJPib6NpfNEFcDVxCfTf
+	Jh29og3tfqN7AZolwHwJNqUphrzDj1AoYstHHGYwG1men/LHc84/GHiVHxMGIV8ReRhjeN+MbHT
+	InzA+C2bveliYrdeVvjSNZn0oQEox8j1RJstXLd3gfvrV8Jw==
+X-Google-Smtp-Source: AGHT+IFuKO535u2kiOv/DIfBewHOhom5AEVBkvPZuA5a9xJpNKB2nCPzp+ZUXTed1YvzsoYZhtcP/A==
+X-Received: by 2002:ad4:5c66:0:b0:880:224e:aab1 with SMTP id 6a1803df08f44-8823871af07mr2487486d6.66.1762543007674;
+        Fri, 07 Nov 2025 11:16:47 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8823896a8d9sm593576d6.17.2025.11.07.11.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 11:16:47 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vHRx0-00000008LqN-30pE;
+	Fri, 07 Nov 2025 15:16:46 -0400
+Date: Fri, 7 Nov 2025 15:16:46 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Ryan Huang <tzukui@google.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Nicolin Chen <nicolinc@nvidia.com>,
+	Pranjal Shrivastava <praan@google.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Daniel Mentz <danielmentz@google.com>
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix error check in
+ arm_smmu_alloc_cd_tables
+Message-ID: <20251107191646.GB1859178@ziepe.ca>
+References: <20251107190917.2858684-1-tzukui@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] genpt documentation fixes
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux IOMMU <iommu@lists.linux.dev>
-Cc: Jonathan Corbet <corbet@lwn.net>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
- Samiullah Khawaja <skhawaja@google.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Lu Baolu <baolu.lu@linux.intel.com>
-References: <20251107081300.13033-2-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251107081300.13033-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107190917.2858684-1-tzukui@google.com>
 
-
-
-On 11/7/25 12:12 AM, Bagas Sanjaya wrote:
-> Hi,
+On Fri, Nov 07, 2025 at 11:09:17AM -0800, Ryan Huang wrote:
+> In arm_smmu_alloc_cd_tables(), the error check following the
+> dma_alloc_coherent() for cd_table->l2.l1tab incorrectly tests
+> cd_table->l2.l2ptrs.
 > 
-> Here are fixes for two htmldocs warnings in generic radix page table
-> documentation. The first one is reported in linux-next [1], and the
-> second one is also found when making htmldocs locally to reproduce the
-> former.
+> This means an allocation failure for l1tab goes undetected, causing
+> the function to return 0 (success) erroneously.
 > 
-> Enjoy!
+> Correct the check to test cd_table->l2.l1tab.
 > 
-> Changes since v1 [2]:
-> 
->   - s/to set/to read/ (Randy)
+> Fixes: e3b1be2e73db ("iommu/arm-smmu-v3: Reorganize struct arm_smmu_ctx_desc_cfg")
+> Signed-off-by: Daniel Mentz <danielmentz@google.com>
+> Signed-off-by: Ryan Huang <tzukui@google.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-That's not quite what I said (wrote):
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-> @@ -354,6 +354,7 @@ static inline unsigned int pt_max_sw_bit(struct pt_common *common);
->  /**
->   * pt_test_sw_bit_acquire() - Read a software bit in an item
->   * @pts: Entry to set
-> + * @bitnr: Bit to set
-
-| Shouldn't both of these (above) to "to read" instead of "to set"?
-
-
-
-No changes to pt_set_sw_bit_release() [which should say "to set" in 2 places].
-
-
-> 
-> [1]: https://lore.kernel.org/linux-next/20251106143925.578e411b@canb.auug.org.au/
-> [2]: https://lore.kernel.org/linux-doc/20251106073845.36445-1-bagasdotme@gmail.com/
-> 
-> Bagas Sanjaya (2):
->   Documentation: genpt: Don't use code block marker before iommu_amdv1.c
->     include listing
->   iommupt: Describe @bitnr parameter
-> 
->  Documentation/driver-api/generic_pt.rst | 2 +-
->  drivers/iommu/generic_pt/pt_common.h    | 2 ++
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> 
-> base-commit: 75d9ef7cf1e694e5c0fb387be99f04acc7f864a4
--- 
-~Randy
-
+Jason
 
