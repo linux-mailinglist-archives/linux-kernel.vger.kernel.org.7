@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-890995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B96FC418B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:12:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52ACDC418C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 21:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67161886163
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:13:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5DAA3AB9DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 20:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2582E30C60F;
-	Fri,  7 Nov 2025 20:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D3430DEC0;
+	Fri,  7 Nov 2025 20:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JwJeoGOD"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aGv3EwSa"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8097530AADB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6AD30B526
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 20:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762546323; cv=none; b=FADgHANz9eMUdbs/o7DG3KuA3e4Uzm9c6ZjsEUI5JsC7qi4mrl9BmqAT0KR+xMzB7Gulq5c1hAUOxkhTeG6eSttf6sdgK2MAuE4jXweMBrorNx7BU41c5TA/UEq2/fAJI1whzgg0CmvkGW71NCf8dIorhFwq/fLQ4BpneBS6qyQ=
+	t=1762546324; cv=none; b=if9cONrWj15MQDbwJEjbK873TnCQb9JmeQ4uC88Yp2V5QUzDPX3QZ1d01AYgHUwQ4pxy4vmUmkJeqXc9RREMMH7CZJ8NClggtGTKJX9PvJ0l7z+x6Q85SfijvuEIAfRUgPB84XKJzLZbPXOnEqyC11wS9uDFzH0alCGQimQW7G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762546323; c=relaxed/simple;
-	bh=sI2clx6m6yDxI8SOWEjPQNsSFN7NbjLqZ0gLeTraeyA=;
+	s=arc-20240116; t=1762546324; c=relaxed/simple;
+	bh=UBLmYwQUKIRlECodStHOn5ZyGn+RVuUZH1lnC54MR5o=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZmotkEc1Sq2HQJ6tPspJRGisBLrzWfW8NPTboFYt1kaTUXP3b81vF6VOP1XPwv2oI1PwFJ5GxHogy6AVEBeTD7DQi5qcaxNqgjN85nuSsOflT55Mjn6giQ12bWpAbWAzangXQSbm20SPTQkxMXSJ1//abpJy+uEPg7wBVhNXdik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JwJeoGOD; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=BF1IaPDAgQJB7X73SoQQHRnnjEaz98k4hzAv4yduQa7IR9smFzYft5tJL4iXNo+FMRCoFpDTgWjL8FtSqeftX4oOT69OHfroqk77J/Kc0rOSxNHz1Q1ePB0uxmZa3IpTE2fSwzkJLiJrrLxD497PvzSd1XUB8f6LjdQ6OcYY3gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aGv3EwSa; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340562297b9so1070423a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:12:01 -0800 (PST)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7b0e73b0eadso2421819b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 12:12:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762546321; x=1763151121; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762546322; x=1763151122; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxGIOgK9FDWxY7r1m8JPVJNrWZHinYe3MXWstZ+fuD0=;
-        b=JwJeoGOD9qkNcqpLN062nDjTalqw+jTVJgVBuKtjy5DPTLgHmte2qyidY1JQtHJj/p
-         zAgkWnAaNJ36Yv8qvu5JeluUEEZZjUaHh32urGLBjnGGlxI0di8xXYPFnU1hIivWnrVA
-         IXbjRfoQxPZRiAB9EueTRULEyVTU+syPkiMnsyZ5f7jxlBAf06C3GgxcjIvlbBAAQB7L
-         H75mDR9zpHbGCZNao13qmuOH5xJTKjureCUV+5p54VQ8D/0BDZVbv0krhTbWW7zno4hZ
-         1yHiNnUOplBikWum9RQOmtcP3FA5fuhaVU2zTS/vFJRQTYdBEgFeLuzW1/ydOnzOiPUD
-         PhxQ==
+        bh=zY5ooH63yC1l2oevmKp10xqE2ANPXtJ+gHeVu/JOJ04=;
+        b=aGv3EwSaLNkfI1Min+8nUD+YWF+9IozV4stZ4DPEz2mV53idTcNtkxsYoUPtspKrpE
+         0UHXvJQE1dgZQifV3KeIAQjM1o0sQLYwxxmdcJBS5ifmgsqwAqeYl2MH3w7MqFOr9fCJ
+         Kk7Ofk0DSFFfuwwYjx8VUQY09I1WOzD5J6Qix97kxxOEYFzAHrQEtq8AkzzedrNRdUeQ
+         oBHlbtq/NSTUcoUQ4PiwGgT3pQZ15dSmAkocWRnt6816jQTmhwr8YHKPywB0nciia8SH
+         JzqAuCMKaNjNYCAwX5ymqKQSjGLxXWLpbKlAagdLKLDiWc3fRbqt+Jfc+JeMtkfZq7L3
+         Rq4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762546321; x=1763151121;
+        d=1e100.net; s=20230601; t=1762546322; x=1763151122;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxGIOgK9FDWxY7r1m8JPVJNrWZHinYe3MXWstZ+fuD0=;
-        b=TtNmmmzmJyuIsgxVM3+yaZZBpL4n7NqJ0ynbNDO2CedYruiLjUUlFLKwq1rVGRXngM
-         OwCf8kXMeZR6NDGjBHLpOw3O6X/hjGJLvZqS3oOBR8RLZKiMLx5fTNmTjZ6TUGAjuBM8
-         j43fZs3/5glKv+RPsld2a66gv/dHDjyNKh+F21EbXi8yx4deuBFwzrbYU45+hRDSZpJJ
-         +XrRKq0p/JrHmMkHkjByo/COroaDRbxxx8HGOfZIUQBn7hupjRvU2dymO+rvE+FCqSNf
-         l9sN1PbwveW/w7V8owr0tmaUPZSmwhC+S458KLTf3zmbnNXt2tHLji+W5Ish5su3/LWA
-         Q0DA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1b0Orai+rFCM0cNDa7PSQi6Kjl1RuKc+JYE0Ank9ANTc4E6i/NN0zaYO05bW6UIr0gbj9eIt4h6hwi44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgOTgrMx3xMPrmM0C9srXVpq9li4d1/nO4Xa/M2vHJAnE7KAF7
-	YgHUhkICjy9J0OltcaaKY3zgRb1+kWb+iH6N0NA4Nu2TQRNwpmc6jWcc8KnsYoW7msIglWDaS3u
-	DPzs2bCAB9/o/7Q==
-X-Google-Smtp-Source: AGHT+IGch52OnpzoFrGgut3GHntDyv4eE8MmfDX0ABWgIg6EW1CvmgksElczIbEJwEfGnzU2ioOfmfCMWL/5WQ==
-X-Received: from pjbcu24.prod.google.com ([2002:a17:90a:fa98:b0:342:b238:e0a5])
+        bh=zY5ooH63yC1l2oevmKp10xqE2ANPXtJ+gHeVu/JOJ04=;
+        b=n/eNvU3c7u+ny9rOSBWo1H3FyVjo73Kai0YAeXJ+xFQOiuJpvfumHbe0/Tbna4qPAH
+         HY+oY2T1kmAPtbjt28cScKnfRLXdvf5r9fgEFMnrN/4bLpz+YtF5B5v3v9EFEqql1K7P
+         vR0xIskQ9oyCM7npnerTM6f28oB8BRdTsdD5viHNNBYpctvp8WIX3P3Rm7AW3us9oC/H
+         lBwZvwuEPgXl6Oy5Qwx2IN+yV3MjC60KLXBfYJRak6MlqBplYG7hf1HcXo9t8B1FG18s
+         wk3HgTR4aNvJwDTBtC8M8+23296hyUF3toKm/c749jyB27CfO7MOrEomvGtUburRXDMF
+         aWiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrjnLJ8UKB/j0GQTQ2wP+av6c5767bZxFp2xJVtkCAV9IAv3mgJAeHvK8DNyBaWC8vo6GWgOuT3VYgbas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI2h3XLmpX3GRHEy1U80yO6R++bZz7TX0spNdghuCA+Xq5iy7U
+	aH0+VkrBVgMDwU5N/duXSUaVWlLm+hAangDibA/GjxPOaHrmgefokLwUsX2IBhrJxosBnIktA17
+	IPOsc3BTQvF4hLA==
+X-Google-Smtp-Source: AGHT+IGxOHMW9tvmB7BFaZh+51NkzwK3iCtiNQKTGPfozT1eR95viIjcpptukgzHxOaiA2buBP9aC0pf/SuY+g==
+X-Received: from pga20.prod.google.com ([2002:a05:6a02:4f94:b0:b6b:f3ec:692b])
  (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3f85:b0:343:6a63:85d5 with SMTP id 98e67ed59e1d1-3436accd340mr652802a91.16.1762546320755;
- Fri, 07 Nov 2025 12:12:00 -0800 (PST)
-Date: Fri,  7 Nov 2025 12:11:25 -0800
+ 2002:a05:6a20:7f9d:b0:34f:ec32:6a3c with SMTP id adf61e73a8af0-353a1ae2b3bmr494680637.28.1762546322264;
+ Fri, 07 Nov 2025 12:12:02 -0800 (PST)
+Date: Fri,  7 Nov 2025 12:11:26 -0800
 In-Reply-To: <20251107201151.3303170-1-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251107201151.3303170-1-jmattson@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251107201151.3303170-3-jmattson@google.com>
-Subject: [RFC PATCH 2/6] KVM: x86: nSVM: Redirect PAT MSR accesses to gPAT
- when NPT is enabled in vmcb12
+Message-ID: <20251107201151.3303170-4-jmattson@google.com>
+Subject: [RFC PATCH 3/6] KVM: x86: nSVM: Copy current vmcb02 g_pat to vmcb12
+ g_pat on #VMEXIT
 From: Jim Mattson <jmattson@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
@@ -87,85 +87,34 @@ To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-According to the APM volume 2, section 15.25.2: "Replicated State,"
+According to the APM volume 3 pseudo-code for "VMRUN," when nested
+paging is enabled in the VMCB, the guest PAT register is copied into
+the g_pat field of the VMCB on #VMEXIT.
 
-  While nested paging is enabled, all (guest) references to the state of
-  the paging registers by x86 code (MOV to/from CRn, etc.) read and write
-  the guest copy of the registers.
+In KVM, the guest PAT register is the g_pat field of vmcb02. When
+nested paging is enabled in vmcb12, copy the g_pat field of the vmcb02
+to the g_pat field of the vmcb12 in nested_svm_vmexit().
 
-The PAT MSR is explicitly enumerated as a "paging register" in that
-section of the APM.
-
-Implement the architected behavior by redirecting PAT MSR accesses
-from vcpu->arch.pat to svm->vmcb->save.g_pat when L2 is active and
-nested paging is enabled in vmcb12.
-
-Note that the change in KVM_{GET,SET}_MSRS semantics breaks
-serialization. Trigger a fixup in svm_set_nested_state() by setting
-the VALID_GPAT flag in the SVM nested state header.
-
-Fixes: 3d6368ef580a ("KVM: SVM: Add VMRUN handler")
+Fixes: 15038e147247 ("KVM: SVM: obey guest PAT")
 Signed-off-by: Jim Mattson <jmattson@google.com>
 ---
- arch/x86/kvm/svm/nested.c |  1 +
- arch/x86/kvm/svm/svm.c    | 25 +++++++++++++++++--------
- 2 files changed, 18 insertions(+), 8 deletions(-)
+ arch/x86/kvm/svm/nested.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index ad11b11f482e..c68511948501 100644
+index c68511948501..51a89d6aa29f 100644
 --- a/arch/x86/kvm/svm/nested.c
 +++ b/arch/x86/kvm/svm/nested.c
-@@ -1728,6 +1728,7 @@ static int svm_get_nested_state(struct kvm_vcpu *vcpu,
- 	/* First fill in the header and copy it out.  */
- 	if (is_guest_mode(vcpu)) {
- 		kvm_state.hdr.svm.vmcb_pa = svm->nested.vmcb12_gpa;
-+		kvm_state.hdr.svm.flags = KVM_STATE_SVM_VALID_GPAT;
- 		kvm_state.size += KVM_STATE_NESTED_SVM_VMCB_SIZE;
- 		kvm_state.flags |= KVM_STATE_NESTED_GUEST_MODE;
+@@ -1126,6 +1126,9 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
+ 	vmcb12->save.dr6    = svm->vcpu.arch.dr6;
+ 	vmcb12->save.cpl    = vmcb02->save.cpl;
  
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index b4e5a0684f57..7e192fd5fb7f 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -2675,6 +2675,12 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 			return 1;
- 		msr_info->data = svm->tsc_ratio_msr;
- 		break;
-+	case MSR_IA32_CR_PAT:
-+		if (!(is_guest_mode(vcpu) && nested_npt_enabled(svm)))
-+			msr_info->data = vcpu->arch.pat;
-+		else
-+			msr_info->data = svm->vmcb->save.g_pat;
-+		break;
- 	case MSR_STAR:
- 		msr_info->data = svm->vmcb01.ptr->save.star;
- 		break;
-@@ -2864,14 +2870,17 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 
- 		break;
- 	case MSR_IA32_CR_PAT:
--		ret = kvm_set_msr_common(vcpu, msr);
--		if (ret)
--			break;
--
--		svm->vmcb01.ptr->save.g_pat = data;
--		if (is_guest_mode(vcpu))
--			nested_vmcb02_compute_g_pat(svm);
--		vmcb_mark_dirty(svm->vmcb, VMCB_NPT);
-+		if (!kvm_pat_valid(data))
-+			return 1;
-+		if (!(is_guest_mode(vcpu) && nested_npt_enabled(svm))) {
-+			vcpu->arch.pat = data;
-+			svm->vmcb01.ptr->save.g_pat = data;
-+			vmcb_mark_dirty(svm->vmcb01.ptr, VMCB_NPT);
-+		}
-+		if (is_guest_mode(vcpu)) {
-+			svm->vmcb->save.g_pat = data;
-+			vmcb_mark_dirty(svm->vmcb, VMCB_NPT);
-+		}
- 		break;
- 	case MSR_IA32_SPEC_CTRL:
- 		if (!msr->host_initiated &&
++	if (nested_npt_enabled(svm))
++		vmcb12->save.g_pat = vmcb02->save.g_pat;
++
+ 	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK)) {
+ 		vmcb12->save.s_cet	= vmcb02->save.s_cet;
+ 		vmcb12->save.isst_addr	= vmcb02->save.isst_addr;
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
