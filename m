@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-889812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD63DC3E982
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:11:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 255A7C3E97C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 07:11:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C19604E9600
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:11:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84E73A821A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 06:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FAE2D5C74;
-	Fri,  7 Nov 2025 06:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAA32D594B;
+	Fri,  7 Nov 2025 06:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fwswkhzZ"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F1MuBIhi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558942D063C;
-	Fri,  7 Nov 2025 06:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE68617A2E8;
+	Fri,  7 Nov 2025 06:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762495893; cv=none; b=NxVt/Ziu5OajhyfZdsVQhitwGVvNOhT32hJ58aOBD4oqHGmYf14wU2PbjnuKNCpsxCcdDb97DnAII4RmouhFsFghV5wjj/EEQgz86nTcqlT1Qoez2JQqEjeei1jDlhZHeXWn8aB+j1tEHOEo36m4nopcdc7HVC5/XwLVBanokds=
+	t=1762495879; cv=none; b=A6iAVuxfAPBY2QZ+kHRSP4xe0nAKYTsKiq35VXoL9Kc29w18RkLaITMx1WjMLqkHLc6MpfhPnOPpT7bIdQIWgMWkP8IrE0YpsKjfYwP8OFgZ8PBXWb418J9mbT/H7XthLkjwqsD1zCMv+y/dGlt1okKrDPFdjYr5oPpyENdpnAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762495893; c=relaxed/simple;
-	bh=lOpOxoKvkhQOdKC2q5dlK2OnJGPYLZ1QfoWs/zT0E34=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IBftB5bMOhFzUX4hvsQMmfNrZ61SlwB6c6NbkLgGzAo0iwZ9Y6stKD4QwiR8s/6daoqQVm89GKqh+aQ7+wbXH3hPTSQIt3pTQ/XwJeThFXVoELKQ4coNtYJfjBv//HR8vjjVmTT5niINsVtY9foaaMqW0fROG+XZhGFiTB54A1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fwswkhzZ; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=PO
-	/1F22LyRnQppxy3e+nd1++VbIYO9chSNDlRIEVrNw=; b=fwswkhzZktD6I1rsAK
-	pbmU8r/yKG6mE7hWrNIPnIOVe80066SQGpCKa7O8dl22OjH2wwxu734r+dS5d8Xa
-	zx8dyG0RNeQ9sNPrMZGMeAb0bB/bVy2qw9nbiSUnCQwpd9URfTT8gdOTvJwHMIuL
-	tl8ioxK+8/bUUA8qmfMMmpKuE=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgDHYMFojQ1pXhliCw--.29130S2;
-	Fri, 07 Nov 2025 14:10:48 +0800 (CST)
-From: ccc194101@163.com
-To: stern@rowland.harvard.edu,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org,
-	Chen Changcheng <chenchangcheng@kylinos.cn>
-Subject: [PATCH] usb: usb-storage: No additional quirks need to be added to the ECD819-SU3 optical drive.
-Date: Fri,  7 Nov 2025 14:10:46 +0800
-Message-Id: <20251107061046.32339-1-ccc194101@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762495879; c=relaxed/simple;
+	bh=l5tph7wcgt5aBnQKOXSjkNg80MMPbjG+hYLFf0ASMlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T8CUzJVvKiTBiIa0xOyIgwC5ij+fAELa22JO7R4uPkVtMw8QvzUcYXAN/6Cvuh8E26OpAhccWUU4W/jbVkihtvUWYmvhg/uB+slVNE6KaN+K0wykkSlo5ELY8Qh30+zxmj16kYsRJ4rI4gul72Z3+aYSsOIl5HDTwUsudWadzRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F1MuBIhi; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762495877; x=1794031877;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=l5tph7wcgt5aBnQKOXSjkNg80MMPbjG+hYLFf0ASMlM=;
+  b=F1MuBIhi4cVjTQwdTz5DKe2gT8mmtiI8DtzTAX7w0d/SHuVO6a6jTZWx
+   JQhasAlfvNYpWl6aYQ9JZQPQyjesVDzab+Nu75N2zh0lsskyZ/Lubtx3F
+   G3wz+YQHhEHHsqMYpInZI7RZSsOolkiN5usfnkFr4f5N8/ufQ+c4SWM4w
+   ySAiIp4ebcj7mp2BBUX97ieVN14Fsz9QlXc6BLnFwAYI0cLCQipCwpIXJ
+   KlscLGGnDWPyb4D3NNjI5AqNOgcHNDqgfSb0W4mWydlMMZRLo5bgrnAij
+   mpeHc4XFSrZsC2BM+Yq5FO9XyjZ5uel3oAZVnvi/VQc2TmrYaXmnmDVwu
+   A==;
+X-CSE-ConnectionGUID: Aox04W3eSiyCKzqRMFrTxQ==
+X-CSE-MsgGUID: 9PzhqyleSWarhNcQFD6yVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="63655380"
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="63655380"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 22:11:17 -0800
+X-CSE-ConnectionGUID: 0pWOSzl5Q0OO5jEFJRVJxw==
+X-CSE-MsgGUID: rrRN/hZERfuj2u9uwvLrrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
+   d="scan'208";a="192055918"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2025 22:11:12 -0800
+Message-ID: <09210c12-cc61-4af5-bd13-830fd9650f9b@linux.intel.com>
+Date: Fri, 7 Nov 2025 14:11:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgDHYMFojQ1pXhliCw--.29130S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw1UurW8Xr4fZF47GF48Zwb_yoW5JF43pr
-	WUArs8CrWkGF1Sgwn7tFWUZFyft3WkAF48GayUG3y5Xr1Yya1kJr98Aa48J347Cw43ZF4I
-	gayqvry8KFy8J3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYsjUUUUUU=
-X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiQRj+3mkNhLu6qQAAsx
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v9 10/12] perf/x86/intel: Update dyn_constranit base on
+ PEBS event precise level
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>, Zide Chen <zide.chen@intel.com>,
+ Falcon Thomas <thomas.falcon@intel.com>, Xudong Hao <xudong.hao@intel.com>
+References: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
+ <20251029102136.61364-11-dapeng1.mi@linux.intel.com>
+ <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Chen Changcheng <chenchangcheng@kylinos.cn>
 
-The optical drive of ECD819-SU3 has the same vid and pid as INIC-3069,
-as follows:
-T:  Bus=02 Lev=02 Prnt=02 Port=01 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
-D:  Ver= 3.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=13fd ProdID=3940 Rev= 3.10
-S:  Manufacturer=HL-DT-ST
-S:  Product= DVD+-RW GT80N
-S:  SerialNumber=423349524E4E38303338323439202020
-C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=144mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=02 Prot=50 Driver=usb-storage
-E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0a(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+On 11/6/2025 10:52 PM, Peter Zijlstra wrote:
+> On Wed, Oct 29, 2025 at 06:21:34PM +0800, Dapeng Mi wrote:
+>> arch-PEBS provides CPUIDs to enumerate which counters support PEBS
+>> sampling and precise distribution PEBS sampling. Thus PEBS constraints
+>> should be dynamically configured base on these counter and precise
+>> distribution bitmap instead of defining them statically.
+>>
+>> Update event dyn_constraint base on PEBS event precise level.
+> What happened to this:
+>
+>   https://lore.kernel.org/all/e0b25b3e-aec0-4c43-9ab2-907186b56c71@linux.intel.com/
 
-This will result in the optical drive device also adding
-the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
-it will fail, and the reason for the failure is as follows:
-[  388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd 0x00000000d20c33a7
-[  388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-[  388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result: hostbyte=DID_TARGET_FAILURE driverbyte=DRIVER_OK cmd_age=0s
-[  388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-[  388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request [current]
-[  388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in cdb
-[  388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
-[  388.967803] sr 5:0:0:0: Notifying upper driver of completion (result 8100002)
-[  388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes done.
+About the issue, Kan ever posted a patch to mitigate the risk, but it seems
+the patch is not merged yet.
 
-Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
----
- drivers/usb/storage/unusual_uas.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+https://lore.kernel.org/all/20250512175542.2000708-1-kan.liang@linux.intel.com/
 
-diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
-index 1477e31d7763..6d32b787bff8 100644
---- a/drivers/usb/storage/unusual_uas.h
-+++ b/drivers/usb/storage/unusual_uas.h
-@@ -97,6 +97,12 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_NO_ATA_1X),
- 
-+UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
-+		"Initio Corporation",
-+		"external DVD burner ECD819-SU3",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		NULL),
-+
- /* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> */
- UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
- 		"Initio Corporation",
 
-base-commit: 284922f4c563aa3a8558a00f2a05722133237fe8
--- 
-2.25.1
-
+>
+>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  arch/x86/events/intel/core.c | 11 +++++++++++
+>>  arch/x86/events/intel/ds.c   |  1 +
+>>  2 files changed, 12 insertions(+)
+>>
+>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>> index 6e04d73dfae5..40ccfd80d554 100644
+>> --- a/arch/x86/events/intel/core.c
+>> +++ b/arch/x86/events/intel/core.c
+>> @@ -4252,6 +4252,8 @@ static int intel_pmu_hw_config(struct perf_event *event)
+>>  	}
+>>  
+>>  	if (event->attr.precise_ip) {
+>> +		struct arch_pebs_cap pebs_cap = hybrid(event->pmu, arch_pebs_cap);
+>> +
+>>  		if ((event->attr.config & INTEL_ARCH_EVENT_MASK) == INTEL_FIXED_VLBR_EVENT)
+>>  			return -EINVAL;
+>>  
+>> @@ -4265,6 +4267,15 @@ static int intel_pmu_hw_config(struct perf_event *event)
+>>  		}
+>>  		if (x86_pmu.pebs_aliases)
+>>  			x86_pmu.pebs_aliases(event);
+>> +
+>> +		if (x86_pmu.arch_pebs) {
+>> +			u64 cntr_mask = hybrid(event->pmu, intel_ctrl) &
+>> +						~GLOBAL_CTRL_EN_PERF_METRICS;
+>> +			u64 pebs_mask = event->attr.precise_ip >= 3 ?
+>> +						pebs_cap.pdists : pebs_cap.counters;
+>> +			if (cntr_mask != pebs_mask)
+>> +				event->hw.dyn_constraint &= pebs_mask;
+>> +		}
+>>  	}
+>>  
+>>  	if (needs_branch_stack(event)) {
+>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+>> index 5c26a5235f94..1179980f795b 100644
+>> --- a/arch/x86/events/intel/ds.c
+>> +++ b/arch/x86/events/intel/ds.c
+>> @@ -3005,6 +3005,7 @@ static void __init intel_arch_pebs_init(void)
+>>  	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
+>>  	x86_pmu.drain_pebs = intel_pmu_drain_arch_pebs;
+>>  	x86_pmu.pebs_capable = ~0ULL;
+>> +	x86_pmu.flags |= PMU_FL_PEBS_ALL;
+>>  
+>>  	x86_pmu.pebs_enable = __intel_pmu_pebs_enable;
+>>  	x86_pmu.pebs_disable = __intel_pmu_pebs_disable;
+>> -- 
+>> 2.34.1
+>>
 
