@@ -1,106 +1,76 @@
-Return-Path: <linux-kernel+bounces-890945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE09C416EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD5FC4171F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 20:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 91D65349EA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:24:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CEDAC34D258
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 19:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE992FD7DE;
-	Fri,  7 Nov 2025 19:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988B5305E32;
+	Fri,  7 Nov 2025 19:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIBwQuH0"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DUc6SSPx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F9530215F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D28A305066
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 19:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762543469; cv=none; b=PufHAWgSDI9+wayeYLe+K5j/yeUJs2Y5polsTOK3vunLc6HkFENMPep/jYlYxSMMPg4/AHFcqDmFb7YTJZ7MPsClWOwCaSXKpy0WaMNnkMhgG2AIS6Ror8Ttk/GMCzllNs5aAo3cpZ3rWKdjvn7WeABc0MtZK28Ma2N0YUsz35Q=
+	t=1762543945; cv=none; b=OtcsSSXtjg1q4SiaXG8CRkItmL4vW2yOBsIDt3P8ol52eFGX4W+n7sCKyiiFEm7bkJalKhXeLMJ5Rnm7WOCzntkt7Z9inwGp+6H/NVNak+a8N6VKMoQNS0UzVaIigWzrBub6FtB08Mx3LMzkyEZIGC6ta7n8R8ZViY8389qpaEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762543469; c=relaxed/simple;
-	bh=LOvVjmAZ5MAhtj2ca9vDqUWl9AkVu+va9cbqFU44kKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OAZjKsACRUPsd7mc8aSEZS+cSRhC28KujwopDodwdOmHqapfshaak6nOOFD0wp9lfWhNj9lIk3v8I/JOKiTFxVW9siu94w+5mLGfXtqEFA8Ge51D/g4uBsBX7XoE8WOsRB/IJw+rU25mvQNvbpAjE0D0+GeO/Dl4Uvq4ifMHAWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIBwQuH0; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4e89ac45e61so8437381cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 11:24:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762543466; x=1763148266; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TCmaBzQQvD41lWrYJXfLEm28kJch7AJUAU7ZyzHTsQA=;
-        b=XIBwQuH0fCxiuSJGJ478qFxVbi6ZsTjsyuCYzLmFsT1+KNOJudXy5zKlpWMW3jK7LS
-         /h5jDBx8Z50+Rn6WGAu+HM/CbTB4h2ykWmUoFoDX/Y3bZztj/Ey7O40Ic5iIjlmzfbDB
-         O9ayHa6rmSTz+kAS+y3d2SKzsBVJ1j/HrU1GGYiAsL0NRau9CbGz7dTowORaXpvOqIKV
-         E11hI9iPh9PCU4f9AxQKCI/zmokdmEDJM+tMXG8pMBZp7Ff4WTnvNDDj4Q3ulupgUM80
-         ly/ZIZ/ieLFt5NuUz80WkQOIH9//3QY6hveanXtCDA52qiQNm/JKpY+HVuIY+vtg1jwE
-         tZ6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762543466; x=1763148266;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TCmaBzQQvD41lWrYJXfLEm28kJch7AJUAU7ZyzHTsQA=;
-        b=ENYpSs+4VveRrqVZFv2ZuOGqQ4aK/Euw6UnuZyh9u0os/lRaWmQHaB3ww7Oohqc99E
-         BvOI8qd/XzPeVNeaQGpFpJCZoCBBV3t0GRa6kHle8SblOOSAAq+9SVF9yXdzIOJ/N7vM
-         tC87mQtgxaocKgS30bjRmKLgVsfs/f4iqI73GgoEC5VtsPQ9P1+SdB1MJqk2tIge2GdP
-         mkvxDFZQBk/gYpaqtiDELnYhf0LZ/uXrds0Tvd2fmROolLS510Lt0ZE3O/PIYWXsKr/w
-         EvNqu4ooQJ6h8CzF6hknH3A4kItvSJceI4Z3Hnbx/zra80Br55IVAECUIs2sY5v6GQ06
-         fe4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdEACl4BshGPq9qdtKG+A/AGjOjaCYWfPaMWZf+di8+FlyOiKCKePNi7tImC37GHQxFD0UvbWrySCsDQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8BLQbGJX3LMRhdo4Lur1UQCOPn0FpsXhK4R/npK0LLAj/6jQk
-	iGwdRyfe4UrXI5slCeoRty+T+8yDRoCtnRrSBji1vGgSiG7nRa7413oGGJll/fQz
-X-Gm-Gg: ASbGncudrjtLylLf5c3u1t4Pe7z1S+MTGLIIaCcWANEWGaVOAgU4apyR0kg64ltQE/I
-	dS6c3jy+obHJq7MlEGxdnFLc2MqajWZGKLGw+0KyEraSFIsn4itdLY2p/KBzeAQbIjQJEK/43jL
-	z/7wwHMIpQv5HJwmVdb5sVy43sIhild0FmioKQx6IiciMnssM8O+v70t0q2M9Huq7UP5BkwCXhf
-	Bdk02wTh2s0ED6BnQww/8AC+Lul8XUgxyUOuKkLijRqD4iUcpwTM6audkUmXVvysP8mRHGkEh9a
-	9hJe2VfjwgBWwIwp3Fx9H8rkbdzocC0MQEJDMX849cYaxK13aSp4LNufT4vh+EsP5A3mOMJI2As
-	J8b+tYyUIMP+mbUNO5GZRZw933/GmlDMRe4rWh7wDeCLxUr+xXgdh8WhQtAQgjqfeKWKEI8Srl1
-	7+G1HE9lkBlKmCqoAhMFsS6k9g0IukLFhdASuO94ZGwhOWX36AlTmsueJY/BukV/aH2HetU8lni
-	zKvS2Gn8jNdDq6LNf5Trg==
-X-Google-Smtp-Source: AGHT+IHh2qNkWfpzW2xjBtAVFK0LT3qoN3gy8tKHHmONbXSDp33/WjnAgrDQMwxFnd+nkInodHp1VQ==
-X-Received: by 2002:ac8:7f84:0:b0:4d3:1b4f:dda1 with SMTP id d75a77b69052e-4eda4ff2f1fmr2654781cf.61.1762543466488;
-        Fri, 07 Nov 2025 11:24:26 -0800 (PST)
-Received: from lima-default.. (pool-108-50-252-180.nwrknj.fios.verizon.net. [108.50.252.180])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda57bf2cdsm251561cf.31.2025.11.07.11.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 11:24:26 -0800 (PST)
-From: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
-To: ast@kernel.org
-Cc: m.shachnai@rutgers.edu,
-	srinivas.narayana@rutgers.edu,
-	santosh.nagarakatte@rutgers.edu,
-	paul.chaignon@gmail.com,
-	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>,
-	Matan Shachnai <m.shachnai@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/1] bpf, verifier: Introduce tnum_step to step through tnum's members
-Date: Fri,  7 Nov 2025 14:23:28 -0500
-Message-ID: <20251107192328.2190680-2-harishankar.vishwanathan@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251107192328.2190680-1-harishankar.vishwanathan@gmail.com>
-References: <20251107192328.2190680-1-harishankar.vishwanathan@gmail.com>
+	s=arc-20240116; t=1762543945; c=relaxed/simple;
+	bh=lgcFOZMnSF4vxSfKHRw9kiitpRCfT35inblbW8qaD5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MUdG9xevIuyJhZTdpllzdo6SOFH2inFm9Zj0kpKw4He8Bz7YBfbBh5SJznIYuXJwDp6NJ638d3SAjlN01edFTP57Nm+AeF7b+MW+kKCX9UTiLdYGW5wPzhtpNErMsE8nX8D+mP6JvjvXX1SsA7zXRp+Qj3kv3ZSIMqiHyveSMbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DUc6SSPx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762543942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+M/hTarl6Axuw1Mn1ciL73V74gFHO/xeAJFqO2OKURk=;
+	b=DUc6SSPxM8NSqGNoyJRL7RtaYS9VJhFh7Tf4xr0hznC7LWkEamAXwOIQ2Y7gSmSgc/VSKS
+	rtKUe+1VdQj+nVe1NNR5tVffHTMBsV95/jtXGPEskEPlBbUknaR7w0EIj2o0OJ81M8LB1X
+	zLUypHMD08GHGrfEf9KyvqsDXk2IiSE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-eWXdUic0OYy9LQDsX6DXnQ-1; Fri,
+ 07 Nov 2025 14:32:17 -0500
+X-MC-Unique: eWXdUic0OYy9LQDsX6DXnQ-1
+X-Mimecast-MFC-AGG-ID: eWXdUic0OYy9LQDsX6DXnQ_1762543935
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0549F195606F;
+	Fri,  7 Nov 2025 19:32:15 +0000 (UTC)
+Received: from chopper.lan (unknown [10.22.81.9])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9DD761945110;
+	Fri,  7 Nov 2025 19:32:11 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/2] rust: drm: Introduce DeviceCtx
+Date: Fri,  7 Nov 2025 14:23:52 -0500
+Message-ID: <20251107193204.398657-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,236 +78,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-This commit introduces tnum_step(), a function that, when given t, and a
-number z returns the smallest member of t larger than z. The number z
-must be greater or equal to the smallest member of t and less than the
-largest member of t.
+One of the unsolved issues we still have with the rust DRM bindings is
+the ability to limit certain Device operations to contexts where we can
+guarantee that a Device has been fully initialized and registered with
+userspace, or vice-versa (e.g. must be unregistered). This is a bit of
+an issue for KMS bindings, since we need to be able to limit the
+creation of static resources like CRTCs such that they only happen
+before userspace registration.
 
-The first step is to compute j, a number that keeps all of t's known
-bits, and matches all unknown bits to z's bits. Since j is a member of
-the t, it is already a candidate for result. However, we want our result
-to be (minimally) greater than z.
+While the previous solution for this that I had was simply not exposing
+drm::Device at all until the device has been registered with userspace,
+unfortunately this isn't enough since:
 
-There are only two possible cases:
+* As we found out with Tyr, drivers occasionally need to be able to
+  create GEM objects before device registration
+* We would still need to be able to handle KMS callbacks which could be
+  invoked after KMS init but before userspace registration (not handled
+  in this series specifically, but DeviceCtx will be required for
+  handling this).
 
-(1) Case j <= z. In this case, we want to increase the value of j and
-make it > z.
-(2) Case j > z. In this case, we want to decrease the value of j while
-keeping it > z.
+This patch series provides a pretty nice solution to this, by
+implementing a very similar solution to kernel::device::DeviceCtx:
+introducing our own DeviceCtx type state. In the future, we'll likely
+add a DeviceCtx state specifically for KMS devices that aren't
+guaranteed to be registered with userspace.
 
-(Case 1) j <= z
+Lyude Paul (2):
+  rust: drm: Introduce DeviceCtx
+  rust/drm/gem: Use DeviceCtx with GEM objects
 
-t = xx11x0x0
-z = 10111101 (189)
-j = 10111000 (184)
-         ^
-         k
+ drivers/gpu/drm/nova/driver.rs |  10 +-
+ drivers/gpu/drm/nova/gem.rs    |  11 +-
+ drivers/gpu/drm/tyr/driver.rs  |  15 ++-
+ drivers/gpu/drm/tyr/gem.rs     |   3 +-
+ rust/kernel/drm/device.rs      | 181 ++++++++++++++++++++++++++-------
+ rust/kernel/drm/driver.rs      |  37 +++++--
+ rust/kernel/drm/gem/mod.rs     |  66 ++++++++----
+ rust/kernel/drm/mod.rs         |   4 +
+ 8 files changed, 244 insertions(+), 83 deletions(-)
 
-(Case 1.1) Let's first consider the case where j < z. We will address j
-== z later.
 
-Since z > j, there had to be a bit position that was 1 in z and a 0 in
-j, beyond which all positions of higher significance are equal in j and
-z. Further, this position could not have been unknown in a, because the
-unknown positions of a match z. This position had to be a 1 in z and
-known 0 in t.
-
-Let k be position of the most significant 1-to-0 flip. In our example, k
-= 3 (starting the count at 1 at the least significant bit).  Setting (to
-1) the unknown bits of t in positions of significance smaller than
-k will not produce a result > z. Hence, we must set/unset the unknown
-bits at positions of significance higher than k. Specifically, we look
-for the next larger combination of 1s and 0s to place in those
-positions, relative to the combination that exists in z. We can achieve
-this by concatenating bits at unknown positions of t into an integer,
-adding 1, and writing the bits of that result back into the
-corresponding bit positions previously extracted from z.
-
-From our example, considering only positions of significance greater
-than k:
-
-t =  xx..x
-z =  10..1
-    +    1
-     -----
-     11..0
-
-This is the exact combination 1s and 0s we need at the unknown bits of t
-in positions of significance greater than k. Further, our result must
-only increase the value minimally above z. Hence, unknown bits in
-positions of significance smaller than k should remain 0. We finally
-have,
-
-result = 11110000 (240)
-
-(Case 1.2) Now consider the case when j = z, for example
-
-t = 1x1x0xxx
-z = 10110100 (180)
-j = 10110100 (180)
-
-Matching the unknown bits of the t to the bits of z yielded exactly z.
-To produce a number greater than z, we must set/unset the unknown bits
-in t, and *all* the unknown bits of t candidates for being set/unset. We
-can do this similar to Case 1.1, by adding 1 to the bits extracted from
-the masked bit positions of z. Essentially, this case is equivalent to
-Case 1.1, with k = 0.
-
-t =  1x1x0xxx
-z =  .0.1.100
-    +       1
-    ---------
-     .0.1.101
-
-This is the exact combination of bits needed in the unknown positions of
-t. After recalling the known positions of t, we get
-
-result = 10110101 (181)
-
-(Case 2) j > z
-
-t = x00010x1
-z = 10000010 (130)
-j = 10001011 (139)
-	^
-	k
-
-Since j > z, there had to be a bit position which was 0 in z, and a 1 in
-j, beyond which all positions of higher significance are equal in j and
-z. This position had to be a 0 in z and known 1 in t. Let k be the
-position of the most significant 0-to-1 flip. In our example, k = 4.
-
-Because of the 0-to-1 flip at position k, a member of t can become
-greater than z if the bits in positions greater than k are themselves >=
-to z. To make that member *minimally* greater than z, the bits in
-positions greater than k must be exactly = z. Hence, we simply match all
-of t's unknown bits in positions more significant than k to z's bits. In
-positions less significant than k, we set all t's unknonwn bits to 0
-to retain minimality.
-
-In our example, in positions of greater significance than k (=4),
-t=x000. These positions are matched with z (1000) to produce 1000. In
-positions of lower significance than k, t=10x1. All unknown bits are set
-to 0 to produce 1001. The final result is:
-
-result = 10001001 (137)
-
-This concludes the computation for a result > z that is a member of t.
-
-The procedure for tnum_step() in this commit implements the idea
-described above. As a proof of correctness, we verified the algorithm
-against a logical specification of tnum_step. The specification asserts
-the following about the inputs t, z and output res that:
-
-1. res is a member of t, and
-2. res is strictly greater than z, and
-3. there does not exist another value res2 such that
-	3a. res2 is also a member of t, and
-	3b. res2 is greater than z
-	3c. res2 is smaller than res
-
-We checked the implementation against this logical specification using
-an SMT solver. The verification formula in SMTLIB format is available
-at [1]. The verification returned an "unsat": indicating that no input
-assignment exists for which the implementation and the specification
-produce different outputs.
-
-In addition, we also automatically generated the logical encoding of the
-C implementation using Agni [2] and verified it against the same
-specification. This verification also returned an "unsat", confirming
-that the implementation is equivalent to the specification. The formula
-for this check is also available at [3].
-
-[1] https://pastebin.com/raw/2eRWbiit
-[2] https://github.com/bpfverif/agni
-[3] https://pastebin.com/raw/EztVbBJ2
-
-Co-developed-by: Matan Shachnai <m.shachnai@gmail.com>
-Signed-off-by: Matan Shachnai <m.shachnai@gmail.com>
-Co-developed-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
-Signed-off-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
-Co-developed-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
-Signed-off-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
-Signed-off-by: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
----
- include/linux/tnum.h |  3 ++-
- kernel/bpf/tnum.c    | 52 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 54 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/tnum.h b/include/linux/tnum.h
-index c52b862dad45..63987f442b4a 100644
---- a/include/linux/tnum.h
-+++ b/include/linux/tnum.h
-@@ -125,5 +125,6 @@ static inline bool tnum_subreg_is_const(struct tnum a)
- {
- 	return !(tnum_subreg(a)).mask;
- }
--
-+/* Returns the smallest member of t larger than z. */
-+u64 tnum_step(struct tnum t, u64 z);
- #endif /* _LINUX_TNUM_H */
-diff --git a/kernel/bpf/tnum.c b/kernel/bpf/tnum.c
-index f8e70e9c3998..5c12d7d9ba22 100644
---- a/kernel/bpf/tnum.c
-+++ b/kernel/bpf/tnum.c
-@@ -253,3 +253,55 @@ struct tnum tnum_const_subreg(struct tnum a, u32 value)
- {
- 	return tnum_with_subreg(a, tnum_const(value));
- }
-+
-+/* Given tnum t, and a number z such that tmin <= z < tmax, where tmin
-+ * is the smallest member of the t (= t.value) and tmax is the largest
-+ * member of t (= t.value | t.mask) returns the smallest member of t
-+ * larger than z.
-+ *
-+ * For example,
-+ * t      = x11100x0
-+ * z      = 11110001 (241)
-+ * result = 11110010 (242)
-+ *
-+ * Note: if this function is called with z >= tmax, it just returns
-+ * early with tmax; if this function is called with z < tmin, the
-+ * algorithm already returns tmin.
-+ */
-+u64 tnum_step(struct tnum t, u64 z)
-+{
-+	u64 tmax, j, p, q, r, s, v, u, w, res;
-+	u8 k;
-+
-+	tmax = t.value | t.mask;
-+
-+	/* if z >= largest member of t, return largest member of t */
-+	if (z >= tmax)
-+		return tmax;
-+
-+	/* keep t's known bits, and match all unknown bits to z */
-+	j = t.value | z & t.mask;
-+
-+	if (j > z) {
-+		p = ~z & t.value & ~t.mask;
-+		k = fls64(p); /* k is the most-significant 0-to-1 flip */
-+		q = U64_MAX << k;
-+		r = q & z; /* positions > k matched to z */
-+		s = ~q & t.value; /* positions <= k matched to t.value */
-+		v = r | s;
-+		res = v;
-+	} else {
-+		p = z & ~t.value & ~t.mask;
-+		k = fls64(p); /* k is the most-significant 1-to-0 flip */
-+		q = U64_MAX << k;
-+		r = q & t.mask & z; /* unknown positions > k, matched to z */
-+		s = q & ~t.mask; /* known positions > k, set to 1 */
-+		v = r | s;
-+		/* add 1 to unknown positions > k to make value greater than z */
-+		u = v + (1ULL << k);
-+		/* extract bits in unknown positions > k from u, rest from t.value */
-+		w = u & t.mask | t.value;
-+		res = w;
-+	}
-+	return res;
-+}
+base-commit: ade19c5060dfa39b84a9475a4a6b05e2a8a2b3ac
 -- 
-2.45.2
+2.51.1
 
 
