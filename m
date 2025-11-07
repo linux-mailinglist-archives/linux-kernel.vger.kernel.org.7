@@ -1,153 +1,177 @@
-Return-Path: <linux-kernel+bounces-890639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84514C4087A
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:06:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D26C40885
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:07:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0089056237E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:06:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18DE54E66E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 15:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E7223D7CE;
-	Fri,  7 Nov 2025 15:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3C632ABD1;
+	Fri,  7 Nov 2025 15:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gt2nUuvM"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NQqvg3tk";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bm0vsl5C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6691F31AF09
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1145929E115
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 15:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762527980; cv=none; b=I59Vb8RRpEjwmofnZcGqddc4nFaw9qChz7E14OEcISSE7mykCn5OaB4ZwRmGcrqLbqlIuyIb6rPoiTzorF00Stg2mj6SO8AhkrBwRajb5ZypoTdOC0BSYjOqZ1riUWsRspPKoteuXZAc8psmbkUOl2i+4ubZSlOZ2lNUBQIbGSw=
+	t=1762528069; cv=none; b=ty9dvC4WxxibonZgu1yaNqK+i9bZZO537E+fOT+HsxZuht7DcAWyKT0Ndi95t6JcKqFAk/vMpFghXnwYDSuDuo4toHeRKSkpifpE43xOdSJj0T/+AbwBv2iLOLNTG1Op4lIoHS9qQe9UjQ41SublMaB/o9yNr95QMBy7mRXmEgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762527980; c=relaxed/simple;
-	bh=I1uyF94YPCgRaFvl8OfqcySKhRO4bX53+vRKo3KnpXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SfwnyT5RlRzeUWk/8D/mMYv+xjyqP8BT55DvYZXu/paX6FoSt99Z3PrcFQTDdL+SBtHRZ3ZSa7xqO2vBznOu+3e9EvqXPWszwYDsdwglZG4TJoaCDGjfY8bUwU0ICEduD19Jg7h45o1YJAXK9lVWUu+NdSogUHCjTGja5C0nCkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gt2nUuvM; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-471191ac79dso9559845e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:06:18 -0800 (PST)
+	s=arc-20240116; t=1762528069; c=relaxed/simple;
+	bh=E0TnocTKBNnVc3GrPJJgfMEfKP9Lw1C6272/2uJxvxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tljL/oDw8Hc69YN2Zueyft8wgfYQmhjMjDeR/lzFgoeC7KibsuldBDczKFb5jTuOWng9zfOKf0IQsGOl5AL4uSPptQl2WMDJAPF2M+mjDdLTSwhj0Y50a/kFOIWe60CZx/NI72VHTvF5W/ZzyslY0xILebskqRECk8l8WEzsQZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NQqvg3tk; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bm0vsl5C; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762528067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FNbanbYsfxulMVcZrRqggEQbgzsiO6gl6XfzX4tJ3v4=;
+	b=NQqvg3tkY3gXjDW7pbdzdGUVTnuRqFkI8TYl8daUvJvJ3MA1TzT4mR5RpCj8x+1pd48dgE
+	RsfsWh4OLnI/axVNBJ9YJ2twPEBk9Pe9lWWGerAySCh2GgTM14A633ws7CZV5ns7J5tQ9u
+	GQ5UfX10W2g/HcwW98WeRWwjT4NlAt4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-260-oDTVkBXIMTK7HP3FGaOxxg-1; Fri, 07 Nov 2025 10:07:46 -0500
+X-MC-Unique: oDTVkBXIMTK7HP3FGaOxxg-1
+X-Mimecast-MFC-AGG-ID: oDTVkBXIMTK7HP3FGaOxxg_1762528065
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-477212937eeso4450975e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 07:07:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762527976; x=1763132776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=py75GPFijQsPUx0jpTbres5/IKDk4ZsE3rbUHQbz/Yc=;
-        b=gt2nUuvM5rjYgTZZJBN5l2FbDqDK3nccnSq7jgvNxILnZU1egU2dqqhBon1hVv53sn
-         SVY5SC9brsdMEG2ESLfsVyh9ak1dYlJhsQORGe5446FIHOsmBqQKUdXSAXkLyqLmHi6/
-         MfeDgN3f660kyJ2fPtpXn4M4kBG5s8N/FXX0xBZdbwOFNOmD/YR4eAYj5VxCyDVkb3Ez
-         kCCexMNXuyfTtg8kEo/AXBFQoRQTL08pjR+6iT+QmCTeL27/uSPAG1Gcwh3foS2AlQSh
-         23Wx2+H24P/lN/lfW+i2332bD4FsEAQ3inBXdVZJuH4jpbHnjIXhQaXRYca8xKCKSLvz
-         90Bw==
+        d=redhat.com; s=google; t=1762528065; x=1763132865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FNbanbYsfxulMVcZrRqggEQbgzsiO6gl6XfzX4tJ3v4=;
+        b=Bm0vsl5CUNg4F20/E6yTU55u9tHFD7N3uSipuotwu3RzGreI5giXAon6HmMQOf9IdB
+         ShymX0r+TXCyJ5IEzNAMUewacH/9y014MQxEcCCuTi+rNOEeSN9H87q/TF3Ddp1z81ig
+         3fisG363aF+Q3wgz+cyqBQlJYJZt/iyJyesiA2VCM8a6JdGO5xqK7rnHsQnpzqFyitya
+         MSitm21oXZuHK1JcTrMRFaNVjDFNFEZYXlwML1hC3VrD05QNZ9NZxvMZ/3GhJhUp0moP
+         aL0L56F56VUt0dKf7TUlDYZsL24TggPde7EbJfdgbCZD4yoVq4C65z5o8O/mf1uW1X4B
+         ks+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762527976; x=1763132776;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=py75GPFijQsPUx0jpTbres5/IKDk4ZsE3rbUHQbz/Yc=;
-        b=FcAsBUrEVt/zu2Yp8zgssxXhAz6ARFVju4owxN/v35VE5VCqxGPe/fJEU41cfYNejs
-         CGacL/xrPCaCvNcIUMpg3cUUuMc+2vyN6TBcEZMYinYngjbLUFn2sVtnPFZshaWSobsu
-         yYvIv0+409DPVyBiv9dly+h8OkGBkn+bOVMyub705HCyXhkATNM99z5u/zmOmvGtMaTd
-         aW9AS4cyRaST1bplUU0uOExxEOWuovP3PsqnPDF44eljQmO8lSRccpJ9rH9YMHaYv19E
-         /jgHk3P5T9ITcooeBTCiWyZIppe0kltz5idw0KIcDIImOz/5a3nK3COUZzwY/mIvMEYe
-         Qn3g==
-X-Gm-Message-State: AOJu0Yxf9oQUS09gXaUWQZD28+5sgfUl6q3m/Qps+e0p2ETRA6w7gxcV
-	VgfJvn71hL+jabUCDlwDwPoyAxDjhMMXXQBj9BmSt9RwlYdbHAOUCbqAx1LTnIya1kKMsoa25xF
-	BEMHq0mE=
-X-Gm-Gg: ASbGncuLkLkSO8e7afS8Y9roi1NBYp11caZa2vCc/ZVRmvsu5VI9cGpo1O+432HkRxV
-	XFj5qAOzz90EVPSOxvVSAQvXOh8mLaPUPgy7vdK7G59r2qvymg5b0D1SfC9eJb2NkjS5u0f9Pgi
-	k8UU3y8FdOHzvdT8N39e6tMmNCw0afL8IS78Gqktic7gFXJO3cieKUsm9AR82vS7q4nypm0KYj+
-	ktc63+LKfs/zXJnmENUI/Bk8uUJ31gNNzEsEgSzrE9S6iYb8/79X4JjU/8YF1DbkcO1xsry/U1G
-	lKRZoCohO72+ioXRRDvPK/Ch62UMi9O+cdW19JL6iTLYSrBLITgNx1U2cL7BHWV9NpsELba6fJG
-	4YeEsxo82dEwuG2QCsHOHzkHETeluTnZ9MI1t4MAo85ndtuWaFxqd6CdEDkNbDBEldMBTf+YfPK
-	V2fdhBMGuunTv7BDOpIRgpOjqo
-X-Google-Smtp-Source: AGHT+IGz8YM6333JLm588AFc5cKs16RWmjvD1JWcT1yqGgw96JtcAIFnCIm4vEabRZZUth0PEEmaSg==
-X-Received: by 2002:a05:600c:4f53:b0:475:df91:ddf0 with SMTP id 5b1f17b1804b1-4776bcc5494mr28930715e9.33.1762527976212;
-        Fri, 07 Nov 2025 07:06:16 -0800 (PST)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac677b41csm5666982f8f.34.2025.11.07.07.06.14
+        d=1e100.net; s=20230601; t=1762528065; x=1763132865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FNbanbYsfxulMVcZrRqggEQbgzsiO6gl6XfzX4tJ3v4=;
+        b=TcAFyO8jptVE7K1KEBVUG+8gYPatpDjPJc7ZLScoNBpuBtqb5pp8/3BRtQqi9peswP
+         ws1QpCwLHUjLNw8VMo+nvrogP98NRAmGAkfTfwnfVxYSjsBCOqHbl3B60TSCqUc1dEYl
+         KkdHSU2khN6sec/giq/cHRZD9tynxr2M+uv/Lr73K4PlEOaY8uy2WXgYdCL6/rau37Mg
+         fOSzXmLXQCVlKYnZeAVjNxdz8ysjitoqP55uo/2ix1gAy76VSA4u+HTI1UkGJFkhXBKn
+         9tccj2VClRFx+Cy2JhzN0QS8A1GxUC10iOD/FUSKDliLaOC2R8Zp7mtlOuWuGKhrN4dk
+         wFkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlYKtskUHIcbvhkS0zyWh6CyCQt8TBeVMA8hXEGOAKFPZgWMgPZZd/ci0M0zJ6nqlBKwWWCIu/X+bGeys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW01u+CTEE+ea0og1+FhFpaeE0URKIOj05BCaZLPO1SCq8Iah+
+	Y+FCsGZvqTmVBizV7Sucff5fyMHd7QtDm3LQ4R6/ESu9ylMKK9lEMg7h+KWbsFOFqOYWKK4BwL3
+	4WQmg4jNSGM+LlBPXMdVfsy2uuj9bzXxM9cgU9YuExtSgpZYXPbFX4oJu21zAHoeLcw==
+X-Gm-Gg: ASbGncuUUmMefjOtgw4YA0fe5/OcIjLqerPeriQxpNglGdSLZiF1a4QwQsS8JBvRMgc
+	h7XWHRnAEHhRHAQYMnV3QWcM5OOUd3u8SxdUy26Lc4YTrGs4epCzozKHcLEXQtK+t71x9kIDu81
+	xgzH6yQZDE269EndwGOjn5TEdf6FE4mx/UppH/BCyPWJVNzK71KFDy7Di2ozQPeg+EyyD3ncxRo
+	vonHCMzmXvR2dvLZ6JRtfM47he6l7WXYbpdju1U/rQs86b5YCnUD0nNICtps42g3OwkOBRHlL+9
+	R5KtIdKVpyaxff3TrWIlCu/P/TnzkFOs3F4mt9F9neAG9nU3EemBZqeyVwimP7yFYMcvhl7Jpbw
+	AQOafz79Nq9ZsFUoNyGr+y/0Ze2arwgW3DJMkf4Uxd+Jg3DGoFIY=
+X-Received: by 2002:a05:600c:1d07:b0:475:dcbb:7903 with SMTP id 5b1f17b1804b1-4776bc903e6mr26789245e9.9.1762528064559;
+        Fri, 07 Nov 2025 07:07:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEQNTjpNs4/UNPykir5Jo9cymIZysqFSvPmuq5540gA8Si7EGD1eA8R02jdPEwY06PLdnTMig==
+X-Received: by 2002:a05:600c:1d07:b0:475:dcbb:7903 with SMTP id 5b1f17b1804b1-4776bc903e6mr26788905e9.9.1762528063975;
+        Fri, 07 Nov 2025 07:07:43 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd084d4sm69515455e9.14.2025.11.07.07.07.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 07:06:15 -0800 (PST)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Tyrel Datwyler <tyreld@linux.ibm.com>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH] scsi: ibmvscsi_tgt: add WQ_PERCPU to alloc_workqueue users
-Date: Fri,  7 Nov 2025 16:05:42 +0100
-Message-ID: <20251107150542.271229-1-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.1
+        Fri, 07 Nov 2025 07:07:43 -0800 (PST)
+Date: Fri, 7 Nov 2025 16:07:39 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v8 06/14] vsock/virtio: add netns to virtio
+ transport common
+Message-ID: <g34g7deirdtzowtpz5pngfpuzvr62u43psmgct34iliu4bhju4@rkrxdy7n2at3>
+References: <20251023-vsock-vmtest-v8-0-dea984d02bb0@meta.com>
+ <20251023-vsock-vmtest-v8-6-dea984d02bb0@meta.com>
+ <hkwlp6wpiik35zesxqfe6uw7m6uayd4tcbvrg55qhhej3ox33q@lah2dwed477g>
+ <aQ1e3/DZbgnYw4Ja@devvm11784.nha0.facebook.com>
+ <aQ4DPSgu3xJhLkZ4@devvm11784.nha0.facebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aQ4DPSgu3xJhLkZ4@devvm11784.nha0.facebook.com>
 
-Currently if a user enqueues a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistency cannot be addressed without refactoring the API.
+On Fri, Nov 07, 2025 at 06:33:33AM -0800, Bobby Eshleman wrote:
+>> > > diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+>> > > index dcc8a1d5851e..b8e52c71920a 100644
+>> > > --- a/net/vmw_vsock/virtio_transport_common.c
+>> > > +++ b/net/vmw_vsock/virtio_transport_common.c
+>> > > @@ -316,6 +316,15 @@ static struct sk_buff *virtio_transport_alloc_skb(struct virtio_vsock_pkt_info *
+>> > > 					 info->flags,
+>> > > 					 zcopy);
+>> > >
+>> > > +	/*
+>> > > +	 * If there is no corresponding socket, then we don't have a
+>> > > +	 * corresponding namespace. This only happens For VIRTIO_VSOCK_OP_RST.
+>> > > +	 */
+>> >
+>> > So, in virtio_transport_recv_pkt() should we check that `net` is not set?
+>> >
+>> > Should we set it to NULL here?
+>> >
+>>
+>> Sounds good to me.
+>>
+>> > > +	if (vsk) {
+>> > > +		virtio_vsock_skb_set_net(skb, info->net);
+>> >
+>> > Ditto here about the net refcnt, can the net disappear?
+>> > Should we use get_net() in some way, or the socket will prevent that?
+>> >
+>>
+>> As long as the socket has an outstanding skb it can't be destroyed and
+>> so will have a reference to the net, that is after skb_set_owner_w() and
+>> freeing... so I think this is okay.
+>>
+>> But, maybe we could simplify the implied relationship between skb, sk,
+>> and net by removing the VIRTIO_VSOCK_SKB_CB(skb)->net entirely, and only
+>> ever referring to sock_net(skb->sk)? I remember originally having a
+>> reason for adding it to the cb, but my hunch is it that it was probably
+>> some confusion over the !vsk case.
+>>
+>> WDYT?
+>>
+>
+>... now I remember the reason, because I didn't want two different
+>places for storing the net for RX and TX.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+Yeah, but if we can reuse skb->sk for one path and pass it as parameter 
+to the other path (see my prev email), why store it?
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+Or even in the TX maybe it can be passed to .send_pkt() in some way, 
+e.g.  storing it in struct virtio_vsock_sock instead that for each skb.
 
-This continues the effort to refactor workqueue APIs, which began with
-the introduction of new workqueues and a new alloc_workqueue flag in:
-
-commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
-
-This change adds a new WQ_PERCPU flag to explicitly request
-alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-index 5a3787f27369..f259746bc804 100644
---- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-+++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
-@@ -3533,7 +3533,8 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
- 	init_completion(&vscsi->wait_idle);
- 	init_completion(&vscsi->unconfig);
- 
--	vscsi->work_q = alloc_workqueue("ibmvscsis%s", WQ_MEM_RECLAIM, 1,
-+	vscsi->work_q = alloc_workqueue("ibmvscsis%s",
-+					WQ_MEM_RECLAIM | WQ_PERCPU, 1,
- 					dev_name(&vdev->dev));
- 	if (!vscsi->work_q) {
- 		rc = -ENOMEM;
--- 
-2.51.1
+Stefano
 
 
