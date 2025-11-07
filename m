@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-890428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9701EC40080
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:08:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7772AC4007F
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 14:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA7E04E9E48
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:08:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F38B91894851
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 13:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17CA2C3261;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77112D0C7A;
 	Fri,  7 Nov 2025 13:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMobzLOu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyHqf8Tw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFDE1F0E25
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 13:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C053264A9D;
+	Fri,  7 Nov 2025 13:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762520877; cv=none; b=ivshiMTEKu/eS/SDc5W/NR0mcnz1pjWMGNOtQ7byDAsXO08WbLI130WXJoAnK3aoj4X2NWHhiVf5fa23FbA66pGnF9VoG8cfWqWE84Sovl3XAE66m6364XtQQTnxizQCsuWymVtz9iYF0UNLzkQcWt1LdvkrUCvevP1ANMq1LsE=
+	t=1762520877; cv=none; b=fu9DSZkUIV0DP0ZRESGWwSNryH8ihc5nPXdeyk6jwt2aOU46mUAsQ2jWkbbckQ43YF4Yq5gc5WYPyalI7G9TYW3RZrk2i67xA5C5jWIjkTO6FQe4MpUVuXNWA2yB5uLnwnai/DtzoSTYd4uFzbOXqndet6fgvJX9eFaDBnTlv2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762520877; c=relaxed/simple;
-	bh=V8FKGNxdOwawCztEIg+IywPCYuK7h266GoBKtgNL+k0=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=fTykjEXdpngHyuKeieZeDe/pDNjI8jeIdGyYUQKgnyaGZsYPeKvMUOnuUdk1VgkJnrqdW/72lQqrEVTMh7Hicnjtu+ORJGYukWzegWFJzdnUKMOtXwcbrHUjLlggtaW68hyHADzOkc83O2CbX1/TqhmeuwTImAKU8/Jw4vUdTYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMobzLOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A54EDC4CEF8;
+	bh=gTCe6+8DCvvTv/gwaosX0O1LJx32TQrppUBdFg7nEZ4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=GNpGRsyTnQO02YHdK1M5W8CS24Bz3MaCvLXb44ZfGr5eskDEanp9L1KcISkGMP8sJiFcKK1DG+lLfbZDxPcUzCkYMmz/MGNMbNAOI2lMfe+RhzPTTC0MnM7YGgHPUqJ+o+y7ISq34/5qpA734qkY+H4pUj6vO6Sbn9KqcBYrWZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyHqf8Tw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB87EC19421;
 	Fri,  7 Nov 2025 13:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762520876;
-	bh=V8FKGNxdOwawCztEIg+IywPCYuK7h266GoBKtgNL+k0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pMobzLOu1eoHe3j09jmvX93RoOHT9H3qpqoGwJ+2ge4tJArJmQUr3JLlAtvti5QXX
-	 0a+eZ1nNlnc6JhjTySWkiMt1FAchJ9VlqccayyMxb9o9Hyb5phco6TnNxl2GZVYTCJ
-	 bxSjQ3CvfcGaomUctZTe+nWW1JzTz+w57Y111CYg6hgnnwrYodkp/bgju+QycDagif
-	 D2nWUy0jLWbhSUinKGL1TvQhj/6FTpNmKPonokBcIBn7JLxPLCW0TgbnejpppK5jTN
-	 fFnI93pFYUHdGatraCgHOnjO4JTT52YlNxq0BOQI7kG42BRo+G5wsg7a5oeSAUuZrX
-	 G7zn7122DNjsQ==
+	bh=gTCe6+8DCvvTv/gwaosX0O1LJx32TQrppUBdFg7nEZ4=;
+	h=Date:From:To:Cc:Subject:References:From;
+	b=GyHqf8TwIU4rt1cFeUgO4fS4nNJ6DVg8ytscgRw4KL4L3gaewE1KKnGmw/TlKo/nM
+	 SI1mAPSUB/M1mDxvwmNJy+b+fFqF5cMQw4pnAvqNT/cR4+ejYkPpCvrinXK6/UrWYp
+	 FNyqKkviQLAASmtazERNk3yVPzwYzJuv+3VGFXKHoNafAFiph/IaSOohjasYUK/uds
+	 DvlYoDxN3oFoMwi+Jr7e9y2utGowRaqKFw0bDWMfr2uKxDhxUg/sEtIw4csAfP0QjZ
+	 1xnfkBxLLiA7VzG2oq4TpEIpV8+Y0GRaSsL4BkBLXl0ide4d/CHQem41exgdfl0Pc9
+	 OCIrQijE17auA==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vHMC5-00000000GFz-3m8e;
-	Fri, 07 Nov 2025 08:07:57 -0500
-Message-ID: <20251107130730.158197641@kernel.org>
+	id 1vHMC6-00000000GGV-0MR2;
+	Fri, 07 Nov 2025 08:07:58 -0500
+Message-ID: <20251107130757.937218818@kernel.org>
 User-Agent: quilt/0.68
-Date: Fri, 07 Nov 2025 08:07:30 -0500
+Date: Fri, 07 Nov 2025 08:07:31 -0500
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -53,55 +54,68 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  Tomas Glozar <tglozar@redhat.com>,
- John Kacur <jkacur@redhat.com>
-Subject: [for-linus][PATCH 0/3] tracing: Fixes for v6.18
+ John Kacur <jkacur@redhat.com>,
+ stable@vger.kernel.org,
+ Vincent Donnefort <vdonnefort@google.com>,
+ syzbot+92a3745cea5ec6360309@syzkaller.appspotmail.com
+Subject: [for-linus][PATCH 1/3] ring-buffer: Do not warn in ring_buffer_map_get_reader() when reader
+ catches up
+References: <20251107130730.158197641@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+From: Steven Rostedt <rostedt@goodmis.org>
+
+The function ring_buffer_map_get_reader() is a bit more strict than the
+other get reader functions, and except for certain situations the
+rb_get_reader_page() should not return NULL. If it does, it triggers a
+warning.
+
+This warning was triggering but after looking at why, it was because
+another acceptable situation was happening and it wasn't checked for.
+
+If the reader catches up to the writer and there's still data to be read
+on the reader page, then the rb_get_reader_page() will return NULL as
+there's no new page to get.
+
+In this situation, the reader page should not be updated and no warning
+should trigger.
+
+Cc: stable@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Vincent Donnefort <vdonnefort@google.com>
+Reported-by: syzbot+92a3745cea5ec6360309@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/690babec.050a0220.baf87.0064.GAE@google.com/
+Link: https://lore.kernel.org/20251016132848.1b11bb37@gandalf.local.home
+Fixes: 117c39200d9d7 ("ring-buffer: Introducing ring-buffer mapping functions")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/ring_buffer.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 1244d2c5c384..afcd3747264d 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -7344,6 +7344,10 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
+ 		goto out;
+ 	}
+ 
++	/* Did the reader catch up with the writer? */
++	if (cpu_buffer->reader_page == cpu_buffer->commit_page)
++		goto out;
++
+ 	reader = rb_get_reader_page(cpu_buffer);
+ 	if (WARN_ON(!reader))
+ 		goto out;
+-- 
+2.51.0
 
 
-Fixes for tracing:
-
-- Check for reader catching up in ring_buffer_map_get_reader()
-
-  If the reader catches up to the writer in the memory mapped ring buffer
-  then calling rb_get_reader_page() will return NULL as there's no
-  pages left. But this isn't checked for before calling rb_get_reader_page()
-  and the return of NULL causes a warning.
-
-  If it is detected that the reader caught up to the writer, then simply
-  exit the routine.
-
-- Fix memory leak in histogram create_field_var()
-
-  The couple of the error paths in create_field_var() did not properly clean
-  up what was allocated. Make sure everything is freed properly on error.
-
-- Fix help message of tools latency_collector
-
-  The help message incorrectly stated that "-t" was the same as "--threads"
-  whereas "--threads" is actually represented by "-e".
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace/fixes
-
-Head SHA1: 53afec2c8fb2a562222948cb1c2aac48598578c9
-
-
-Steven Rostedt (1):
-      ring-buffer: Do not warn in ring_buffer_map_get_reader() when reader catches up
-
-Zhang Chujun (1):
-      tracing/tools: Fix incorrcet short option in usage text for --threads
-
-Zilin Guan (1):
-      tracing: Fix memory leaks in create_field_var()
-
-----
- kernel/trace/ring_buffer.c                | 4 ++++
- kernel/trace/trace_events_hist.c          | 6 ++++--
- tools/tracing/latency/latency-collector.c | 2 +-
- 3 files changed, 9 insertions(+), 3 deletions(-)
 
