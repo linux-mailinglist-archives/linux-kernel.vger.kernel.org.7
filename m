@@ -1,126 +1,215 @@
-Return-Path: <linux-kernel+bounces-890628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EAAC407BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 15:59:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350C6C407FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 16:01:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0028B4F61A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26FF0560E28
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC4027C842;
-	Fri,  7 Nov 2025 14:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068E9320A38;
+	Fri,  7 Nov 2025 14:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gJ4qfOPU"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2pu3Dah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEA22E3365
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 14:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1709822A7E4;
+	Fri,  7 Nov 2025 14:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762527436; cv=none; b=DWTBzEH0hBgRnyDo6x4RgOP+e6lmV3mrVFJOz3Nic+6G9UtV1/HkDlhZE/rnvSUnmzqg4MAhHb3Ob1XOZmzZSN8pqWz0LehuLEPgnF4/areVDyCnYkBB2wx6cgI074s1WNTl6BvEj7PBLI3X0KpvmSLE+Wg3eaVTYiIWAKIbL/Q=
+	t=1762527516; cv=none; b=i231/NfHcxCKvqs5yqRoVACcYkM/bKVFnAx89E8z/5RxDPyPX5tOqU5xyiw3vb8+6XIEsXXNo+bP8kC8Ww7ZvxKp2IBBDSzzhwS+/RF3R9nCxCESqkHcVjfIVJbMuLs+ksGOqb0gvYqYbj6lIM/GagQI/svKPYWaiSfFpyXNMOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762527436; c=relaxed/simple;
-	bh=qQJHjKYDj9ZPbfC8AYi9XaYrkz84jgNpklj5TFnJRSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ggRxsuxUBe6IIC9zizf7iBBkUsz8l5dWmLz9I0DGmjj3mO7/VwSRKkNnPXdEvyexD3dm4qblKKyO+650qqY0qfuvHU07SAKVEYPhr73j0DH9tPQPGQ5g5sHeB1v40xEh017/MyzQ9DGb8SsjHjzPBrNNJ6AwBwFUxaCFuCX9Udc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gJ4qfOPU; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5942e61f001so791454e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 06:57:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762527432; x=1763132232; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GINQTaI/+dB0Ks7du4nzWDX5WaU5URakHyYNri4cH6c=;
-        b=gJ4qfOPULwcqjDpXTpw9ppo+RdWkTXpYnJ3vPTahNZuZeMVucSWQ/fWB0Imx9ACqdL
-         lHRHNGFmMih2I1oWQj+TbyqhKjt/A6iMH25pnlazHX6pYwu+FlThISGDiQUFo+7r+HCe
-         rckQNOV+veHl4UrscyLhXPz73DJaPBPlMo7OofwfV9qWOm5wLxrJA8G7HJe3a6RDPnDe
-         Ejbptjkcbfn8wikr/TMVi0Cb1dBVXQPI47+6IbrDVMLTcpOX3qeiuNN8fDWbbqjnRSjl
-         V1R1FJEqnCu4OwOkeFD+RFs6VMNNNY/kCzk6hvbR8eIoO5S0qrlUEbloekJOFRab2WcW
-         RRwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762527432; x=1763132232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GINQTaI/+dB0Ks7du4nzWDX5WaU5URakHyYNri4cH6c=;
-        b=iJ2jzOYQVJUqXHQjrlSdS8Y0isH5CpQHeybz8/Zu4TX7POHr7v8LLCuUKbcH8KmBdL
-         QdaysQTgAD5QrZJ0LwAsdVeccZSVjZW7MIgwh57FkTf6mYPJaWylRsV1rUFCAGHBLeRd
-         3XQmjdKKHD/LjL0yXMVMa9jbI/sJ8NLBFioFG7Lry+90I3xjDg2C/TLTd6uJK1NHszDH
-         ngzhZMNvjRcq60QQd8qxJbAoFGsZuHAMW47KjGyZA5cmjP0aGIht74cORoRBfYTPID0n
-         GeLq4TfKHlSlBjMpM8Uw6BHaDdz3hyXsmsyPWQAy5Jpmt0WqYDFncEtvUPXm+d5Pjv8d
-         uiKw==
-X-Gm-Message-State: AOJu0YwTXYOstXdMIBf0Ogo5KT2eIHyi6/VEq4wyfw8xJ2tnAdYjM2dH
-	FhzeSCZPUSOp2/tJh5omDrv0KAII5hI7d9CTFir8Dc36Toqq+4gtldAuFZCAUInnTqIWPKF1ywM
-	q/kCxp1aDemDLeoI6F51BEC8zJ/zEKbs01vvGDKN6PQ==
-X-Gm-Gg: ASbGncvm62tfbiChlLUw2wavZYuY84WaZiyRAFTI1w4Z2vH1hpCRqDlctvnk/weGins
-	3drwhPTxbEKXaD1ltj8ntKf2lS73lWomum4xXfjLiRt3cqzAuU/BqRA8mBt+RVy13pXddbqSt+i
-	wqB/3kJ0rXR8/Bte3px5LC2VWkPTMg9Kj5zqvgJ6UB/XsrsI8XJ9uIoEFA0L33H5Uy38GS+rXc4
-	1TH0pHD27oIUwUAEsw2MilRIdUpM45HFoD/L6ZQEvMwAidmS5b9efGsE1m5yWhmSUfqhinr7rr7
-	GeOrtdLLkkvGf8uKHQ==
-X-Google-Smtp-Source: AGHT+IEPFzUSyWHjxHsSTJV/fYFhTThHxVuOjcENPOd4X1v7VF6LkcdyUhZVrfHiGIFiKWQP6Ie+Xvd4bR35pkEt1+k=
-X-Received: by 2002:a05:6512:ad1:b0:594:2f25:d48f with SMTP id
- 2adb3069b0e04-59456b51a73mr1241122e87.6.1762527432320; Fri, 07 Nov 2025
- 06:57:12 -0800 (PST)
+	s=arc-20240116; t=1762527516; c=relaxed/simple;
+	bh=ojy+Bzf0MwguMVZJCP7SuBfIwC0XckMoTrLg/SyENk0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=og+Gjb3u0onZDg3yIpKHu9/OQo7AHvxWJtEUNNTqdrFuPydu89nuF8Uibo/cKvnPz7pBF3ZHePKYvC5jpGdoRl6CzP6aTa4pgnWze6uyXbzIn9sNtyKIeRT4ljvrIOBLMgEgqYgGj0MGl1MdAntLSZuZ92633WYjDzolonc5U5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2pu3Dah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE63C4CEF5;
+	Fri,  7 Nov 2025 14:58:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762527515;
+	bh=ojy+Bzf0MwguMVZJCP7SuBfIwC0XckMoTrLg/SyENk0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H2pu3DahfPoaTBqNYUbZkowHaXOT1UGdeMguVIfpXuqbNnZghxPeqe5/gUO2Nz8Ff
+	 6VZyRa6s7TnCLlVHZyLmxrr15XAvPLzcCuj0bh4pOb7HPh2DT3Ne3OTEpRlDRP9jEC
+	 ey3BEtQRgFBakA2RQ6311ZV0OuIG05biIXW9Q92fZM2qv7B69HNyD9pf1l9RbPUYLZ
+	 ZSCfSMTaqdw4O83BUPFBhhlEQjOh4VxiVnYRI6EGpuybsU5p/ouhXX/RiDUlAXo8y/
+	 XoUe0PBUtvVE8GyCrb0XizS3HYPZ9ji79VgjEgtOhV4eWMiXLLk4sqZdx0kD3DaBAs
+	 OEnmCk8gAoiwg==
+Message-ID: <8fc8c945-ae67-4c58-837d-40bdf4d60035@kernel.org>
+Date: Fri, 7 Nov 2025 15:58:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106163048.334400-1-marco.crivellari@suse.com> <68ad3747-a912-7644-d9c3-e6137da4e555@outbound.gmail.com>
-In-Reply-To: <68ad3747-a912-7644-d9c3-e6137da4e555@outbound.gmail.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Fri, 7 Nov 2025 15:57:00 +0100
-X-Gm-Features: AWmQ_blOxMd_Ms8mEx1fMRi3lxr3RRX5TQNGo1ZjptpleUogGBHHZOKMxSE6zNY
-Message-ID: <CAAofZF4D6ML8Yvckfv231PXTtKf40H2De2xZ+uS23C70S5zvhA@mail.gmail.com>
-Subject: Re: [PATCH] char: xillybus: add WQ_PERCPU to alloc_workqueue users
-To: Eli Billauer <eli.billauer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/13] soc: qcom: Simplify with
+ of_machine_get_match_data()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org>
+ <20251106-b4-of-match-matchine-data-v1-11-d780ea1780c2@linaro.org>
+ <odmsib3dsxzzggq4gcx7gmh6vq3crlv25fz4z2l2ntezvx6gbi@uelqojwjjait>
+ <a8952b46-94b6-4fe5-a5be-d69aa41d44cd@kernel.org>
+ <a06ed143-c497-4141-8b4d-98fcb322e130@linaro.org>
+ <rxhmiudlnrn2pexqtwuuv2jrenrl2ezepknvrc3o34gaap247u@2tsfw6g33rmr>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <rxhmiudlnrn2pexqtwuuv2jrenrl2ezepknvrc3o34gaap247u@2tsfw6g33rmr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 7, 2025 at 3:53=E2=80=AFPM Eli Billauer <eli.billauer@gmail.com=
-> wrote:
->
-> Hello Marco,
->
-> Thanks for this heads-up. Frankly speaking, I wasn't aware that the said
-> calls to alloc_workqueue() implicitly bind the queue to a CPU, and this
-> was never my intention. I agree that the better choice is an unbound
-> queue, at least in this case.
->
-> This seems to be an example for why the API change of alloc_workqueue()
-> is a good idea.
->
-> As for the patch itself, it perpetuates the incorrect choice, so I vote
-> against. If anything, WQ_UNBOUND should be added, but since it's going
-> to be the default (soon?), maybe just let it be, and let the planned
-> change in the API rectify this.
->
-> Thanks,
->    Eli
+On 07/11/2025 15:23, Dmitry Baryshkov wrote:
+> On Fri, Nov 07, 2025 at 08:08:28AM +0100, Krzysztof Kozlowski wrote:
+>> On 07/11/2025 08:02, Krzysztof Kozlowski wrote:
+>>> On 07/11/2025 04:19, Dmitry Baryshkov wrote:
+>>>> On Thu, Nov 06, 2025 at 08:07:18PM +0100, Krzysztof Kozlowski wrote:
+>>>>> Replace open-coded getting root OF node, matching against it and getting
+>>>>> the match data with new of_machine_get_match_data() helper.
+>>>>>
+>>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>>
+>>>>> ---
+>>>>>
+>>>>> Depends on the first OF patch.
+>>>>> ---
+>>>>>  drivers/soc/qcom/qcom_pd_mapper.c | 17 ++---------------
+>>>>>  1 file changed, 2 insertions(+), 15 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/soc/qcom/qcom_pd_mapper.c b/drivers/soc/qcom/qcom_pd_mapper.c
+>>>>> index 1bcbe69688d2..07198d44b559 100644
+>>>>> --- a/drivers/soc/qcom/qcom_pd_mapper.c
+>>>>> +++ b/drivers/soc/qcom/qcom_pd_mapper.c
+>>>>> @@ -613,25 +613,12 @@ static void qcom_pdm_stop(struct qcom_pdm_data *data)
+>>>>>  static struct qcom_pdm_data *qcom_pdm_start(void)
+>>>>>  {
+>>>>>  	const struct qcom_pdm_domain_data * const *domains;
+>>>>> -	const struct of_device_id *match;
+>>>>>  	struct qcom_pdm_data *data;
+>>>>> -	struct device_node *root;
+>>>>>  	int ret, i;
+>>>>>  
+>>>>> -	root = of_find_node_by_path("/");
+>>>>> -	if (!root)
+>>>>> -		return ERR_PTR(-ENODEV);
+>>>>> -
+>>>>> -	match = of_match_node(qcom_pdm_domains, root);
+>>>>> -	of_node_put(root);
+>>>>> -	if (!match) {
+>>>>> -		pr_notice("PDM: no support for the platform, userspace daemon might be required.\n");
+>>>>> -		return ERR_PTR(-ENODEV);
+>>>>> -	}
+>>>>> -
+>>>>> -	domains = match->data;
+>>>>> +	domains = of_machine_get_match_data(qcom_pdm_domains);
+>>>>>  	if (!domains) {
+>>>>> -		pr_debug("PDM: no domains\n");
+>>>>> +		pr_notice("PDM: no support for the platform or no domains, userspace daemon might be required.\n");
+>>>>>  		return ERR_PTR(-ENODEV);
+>>>>>  	}
+>>>>
+>>>> Here you are mixing two cases:
+>>>> - There is not match in the table (in which case the driver should print
+>>>>   a notice)
+>>>>
+>>>> - There is a match in the table, but the data is NULL (the platform
+>>>>   doesn't have PDM domains). In this case there should be no notice.
+>>>
+>>>
+>>> Why? Existing code printed notice in both cases. Why refactoring which
+>>> tries to keep code functionally equivalent should change it?
+>>
+>> Ah, you mean there was a debug before. Well, then I am a bit confused
+>> because table has entries without data (so expected condition) but old
+>> code returned ERRNO in such case - so unexpected condition.
+>>
+>> Wail failing the probe on expected condition?
+>>
+>> Unless it is not really expected and notice in second case is valid as well.
+> 
+> If we know that there are no domains on the platform, then the notice
+> definitely doesn't apply. Failing the probe is a separate topic. The
+> rest of the code expects that _qcom_pdm_data is not NULL.
 
-Hello Eli,
 
-Considering this workload has no benefit being per-cpu, it's not a problem
-send a v2 converting this with WQ_UNBOUND, in the meantime.
- I've done the same for other subsystems. :-)
+I hoped that separate topic would be the reason, after commit msg
+adjustments, to keep this change, but if you insist that this must stay
+debug, then this patch should be just dropped because it is impossible
+to achieve with current helpers.
 
-Thanks!
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
+Best regards,
+Krzysztof
 
