@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-889981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A9EDC3EFB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:37:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A564CC3EFBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 09:38:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7646C4E3CED
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:37:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82F154E33C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 08:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC510310782;
-	Fri,  7 Nov 2025 08:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D21D3112B0;
+	Fri,  7 Nov 2025 08:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uu8m0Lr6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pm75rkJX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBFD26B0A9;
-	Fri,  7 Nov 2025 08:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6820C2C1580;
+	Fri,  7 Nov 2025 08:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762504625; cv=none; b=QvrSfj8ttfLQqUcx4p6Tz+wiREZGX9hNkNUy3o9FU0805aUNSROVeth8jS+Z1e4gfG2p0I4FdqAmTMB/xrmsnblfQ/e3oTLq2EQVeRd9uAy7wZCfyoH71sJ90X3LytcJ+4GcJ1T28G52VRs6rowuOcS9OJyQNe+YujZz3hc06AM=
+	t=1762504703; cv=none; b=grvFlNyuFjf5EjTBjYxmfnbs977Jjtmr8tCQBDMt7ZObRDnaiUrrV5GVIHMAcdANH5J/bQkCGxg2mNOGSXykk5BGq1C15x8iFgwP1LW8YAj9/0UNPmFQ66s5Zc9+TQAtRUeX/8Tk7QoJ5w4f361+nxunSEImaS7V0DXiDwauNZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762504625; c=relaxed/simple;
-	bh=Y3reWQABlAFnYvu/Zcunyq/onxJiQhoWKZERah3Idzk=;
+	s=arc-20240116; t=1762504703; c=relaxed/simple;
+	bh=JSm9N8W6LxkBD3EWf57DWL/gIR024e3vR+Q1Vh4FnsQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HF6MAqYwi+mvOBiRmWCzq/hX5Kg/wSTHT58TLtD3RioTE+qivg/nQp5h50PYchxgqcqPtRle//gN5oRiAV9eHGq4CFdU4ktnyCQv/yDx6ttXPdc3FfsPQf5FwuqGwRW/8zyUerH/BjvcniMaNydBgmYKfZPdehk5fYVwBm21BK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uu8m0Lr6; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762504616; x=1794040616;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Y3reWQABlAFnYvu/Zcunyq/onxJiQhoWKZERah3Idzk=;
-  b=Uu8m0Lr60TQgPTvFO0OMWcVqdm4Z1RYiX0YpYd8B5uIw3/QOxe52jDl1
-   o0IQYPob9qI6fY9pNtcCVocKDD6ceWvkKv+5gQ4g+OfGkYRP5ZsJ/zEcp
-   f+oTYzHwehTr0PvemXCx99KtSNF+zJHOD7ntmz3QF+dvXBo+LEpA/iO4Y
-   B4YxZefR4errvwNqp/XOJ6mn4EGia0LkdckA7L7j9OojbnHYZ9MttfUdH
-   CfruvKX4MLe9Z7PE/4d+rK+ml/XCocC9KX5hG+qgCoBzLevzmJM0D91qm
-   fIdV/ReOiksLtALedmmvml0cb6LpfvJiBKbjuVZwtoXFRMTdpoqQlamrD
-   Q==;
-X-CSE-ConnectionGUID: Gei2Sza5TOKireD4rKssCQ==
-X-CSE-MsgGUID: ISUPBvJqT6CZZh5lWuCesg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11605"; a="64535860"
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="64535860"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 00:36:53 -0800
-X-CSE-ConnectionGUID: e7KsLRyETqanf53+R0krBg==
-X-CSE-MsgGUID: 77pMSZ+tRD+SLdWPo83SVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; 
-   d="scan'208";a="192081216"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2025 00:36:50 -0800
-Message-ID: <0de9c70b-f298-4a9b-9f9c-279115e5d552@linux.intel.com>
-Date: Fri, 7 Nov 2025 16:36:47 +0800
+	 In-Reply-To:Content-Type; b=IaLOKMCnJq63eoVsAEMiaGGLa6gS1/qIw2afRXZttRLw33EXwMscRkimSGAqgZorxUHCrIN0plLOfUU5tiMow2vfTJx2cqBf/PDduAY3arJ3OiKPQFcHgDB28CtY/c9RJNmf+u6iv/J4QRTsOnm8a8VcafRWMR37FBFR2RH7rXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pm75rkJX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573F6C113D0;
+	Fri,  7 Nov 2025 08:38:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762504702;
+	bh=JSm9N8W6LxkBD3EWf57DWL/gIR024e3vR+Q1Vh4FnsQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pm75rkJX6YeFv6qEGJEVQD9KdwOJw5eh5HcTNGTv+Ue1tdoMuasUjMa01NdHtEi+G
+	 f5cl+yeLQYBopjGmFaQ2ozU0sOj9glIsHhtdzuUp8cz5r/iotW92/f2DcLQCQJBuod
+	 91ZA5b7Nl1w5s4iulQmHRQH09WyEzJZPSwTk0XlZ+79Tn9TPCAfD32drTLmJyV0CI0
+	 NYN9q97oDSM8laopD6MTBqc94kxJ5+w7mIHD5lzJSYTnK0cJBiYY/1Zby5QhKIsZLO
+	 Pcglitk6rHG2frI6wOYxeSZW1dZ1NrEBbBGB/JFJlAeGqwatsLGptstmqPHdsNkhzG
+	 YnGQw2RXmoZAg==
+Message-ID: <20dbf272-b5a0-4fc6-b5c7-54fdaa05173d@kernel.org>
+Date: Fri, 7 Nov 2025 09:38:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,54 +49,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v9 10/12] perf/x86/intel: Update dyn_constranit base on
- PEBS event precise level
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, Zide Chen <zide.chen@intel.com>,
- Falcon Thomas <thomas.falcon@intel.com>, Xudong Hao <xudong.hao@intel.com>
-References: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
- <20251029102136.61364-11-dapeng1.mi@linux.intel.com>
- <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
- <09210c12-cc61-4af5-bd13-830fd9650f9b@linux.intel.com>
- <20251107082845.GB1508773@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH v5 0/2] ARM: dts: aspeed: Add Device Tree for Facebook
+ Anacapa BMC
+To: Peter Shen <sjg168@gmail.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Joel Stanley <joel@jms.id.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, peter.shen@amd.com
+References: <20251104-mellow-denim-dogfish-4affdb@kuoka>
+ <20251107-anacapa-v5-0-peter-shen@sjg168>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251107082845.GB1508773@noisy.programming.kicks-ass.net>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251107-anacapa-v5-0-peter-shen@sjg168>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 07/11/2025 09:22, Peter Shen wrote:
+> This patch series adds the device tree binding and the initial device tree
+> source file for the Facebook Anacapa BMC, which utilizes the Aspeed AST2600
+> SoC.
+> 
+> The patches configure the necessary platform peripherals and aliases for
+> OpenBMC usage.
+> 
+> ---
+> Changes in v5:
+> - Fixed the final DCO mismatch (Broken DCO/email chain). The email sender address (From:) is now corrected to fully match the Signed-off-by: and Author: address (sjg168@gmail.com) to comply with DCO rules.
+> 
+> - (V4 Changelog) Corrected all previous style issues: fixed block comment styles, line length issues, and removed un-documented/unused device tree nodes (amd,helios_cpld and eeprom@53).
 
-On 11/7/2025 4:28 PM, Peter Zijlstra wrote:
-> On Fri, Nov 07, 2025 at 02:11:09PM +0800, Mi, Dapeng wrote:
->> On 11/6/2025 10:52 PM, Peter Zijlstra wrote:
->>> On Wed, Oct 29, 2025 at 06:21:34PM +0800, Dapeng Mi wrote:
->>>> arch-PEBS provides CPUIDs to enumerate which counters support PEBS
->>>> sampling and precise distribution PEBS sampling. Thus PEBS constraints
->>>> should be dynamically configured base on these counter and precise
->>>> distribution bitmap instead of defining them statically.
->>>>
->>>> Update event dyn_constraint base on PEBS event precise level.
->>> What happened to this:
->>>
->>>   https://lore.kernel.org/all/e0b25b3e-aec0-4c43-9ab2-907186b56c71@linux.intel.com/
->> About the issue, Kan ever posted a patch to mitigate the risk, but it seems
->> the patch is not merged yet.
->>
->> https://lore.kernel.org/all/20250512175542.2000708-1-kan.liang@linux.intel.com/
->>
-> Clearly it became a victim of some scatter brained maintainer or
-> something.
->
-> Let me stick that near this set and go read the last few patches.
+Please stop. You already sent v4, then immediately v5. All patches are
+missing and cover letters are incorrectly threaded.
 
-Thanks.
+Can you please slow down and look at commands you are typing (e.g. look
+in manual for explanation of --dry-run).
+
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets. See also:
+https://elixir.bootlin.com/linux/v6.16-rc2/source/Documentation/process/submitting-patches.rst#L830
 
 
->
+Best regards,
+Krzysztof
 
