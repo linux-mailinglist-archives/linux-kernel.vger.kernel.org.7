@@ -1,256 +1,272 @@
-Return-Path: <linux-kernel+bounces-890879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A54C41447
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:20:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A302C41453
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 19:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6405E4EF1B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FAA61887BB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 18:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663D82F83BC;
-	Fri,  7 Nov 2025 18:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351F433971F;
+	Fri,  7 Nov 2025 18:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbIqRCGv"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHcqFUXu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139C23376A5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 18:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699372F83BC;
+	Fri,  7 Nov 2025 18:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762539580; cv=none; b=ADtmi1SyTEflX2KCCeAEhQNqvfrA/rTeH9hpOVC1e8SsKL4fSRDccMJeJAD9/hLhu35winj+NnONRFTf69yeUVY1bipSXzKhhCPZA+nFNeEOS+dduWMsWL+9N0YGdbvmkh6TKe9ik8Y2RIeRNHO2dwCE4ladZew4wVGpbqBSgEA=
+	t=1762539657; cv=none; b=EaxOaQU+DuofxQtBq268ce5ECsGHIKtyLaqg1zNJ7oFB7qc1VFvZCTPjCnyGSxGJjAUo/QUIpvFUPp5YEY5LvrYJbdodfn645XapLCepoSHyjXe/c7NqoOksiE6K14K80ngTvVtxK9QooYQc8V0lmWGtglU/DLRGipkOhiwFAZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762539580; c=relaxed/simple;
-	bh=Nfg8fIlYXrhKTgE7llskapPtirpxksa9elL/wFVTIH4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iqbAS+MmimPA3wiLEwbp661Ja8pgFFU9zKGS7fRKlaLMF3k5l5acvd1N60eJpRnzljjXFtR6UcWg5hrM4d2z56pUbywxUPFtllRCHXyqd+evZeqK90Q5jc4rFYe0B7thdO+SZioNgk/znud3NEccX/gAXmUVn4EUC7m0HYizMIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbIqRCGv; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-29633fdb2bcso11041925ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 10:19:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762539578; x=1763144378; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Nfg8fIlYXrhKTgE7llskapPtirpxksa9elL/wFVTIH4=;
-        b=bbIqRCGvsm5SgJnmK1OeHVeQXYBrxc/Mc2P1C9XF4II1wOpZggGjUJ8Qd6KDE5dm9v
-         9wVCwD9fTzcPDjPHQeQTWKhCO8nhD7LyyWuOxUksoj8G6Obl6tySUMNkpusKeB6v7wYH
-         bGqFzP/nHqMIuCUBLcGNcNeRHFo54h6GM8hAhoA6R4YdKIR1gnuAe9BaM3A/d28sGrhv
-         80nUSPMOToiS7zMHF7D1GM0yz2Ypeu+KbHeDS0VocJk9BaRvFwcVGEM3fjywgjkGsxoJ
-         xZwYn7LTuQrWoWCJ9AgyMwxsQZne+D0Ex3fsyGRnggqRXvgzb1otaVLz37GgvorCc6ni
-         UElw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762539578; x=1763144378;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nfg8fIlYXrhKTgE7llskapPtirpxksa9elL/wFVTIH4=;
-        b=fXQhrcnRuXEya2NSGChOHViSzQYedvTDrp08TQiHoaHz8WzoW5Dlff4tweJY9vVGq1
-         xAWqqh/VJEJxwdQ5q3rrNKCFMR+605odFNht8LMtOEnvCyW3b1WTntSMwZ03qPBQldr7
-         Lqt6iAa42dyKtHP4U4LDYxoNLBseN6Ku/NC+DUfeVnYblaeybqjMf+L1KDxFtcU/XQQC
-         K1KOMUz3HWXbh9WlVFU/6CtqCSBQejk8qKSvCfYFYr5m5kWFcCBG003wAsEPdqsUHp/O
-         MJZib4q1IiS2I0xRR9farEAfSEdgCXqUhtgyJrO9YA4odki6zCTtxqf+uwXkiP2w4/kf
-         a1EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWisEbv8MFcGVnuECtms170x1X4BL+4mGf4hfHZu8IO8SoP+MBFnAWklIRJ4sIS41j8bI1/UkvawwSUmc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbNi5O6J9v+OTx2zMkDKz0WrwLvwlwzS0HdlrV2ReCr2HGuO1V
-	24e4TJOjmiRyKl7jt3XuyvbdiSM2ywhXKeytDPQd+jkbcUZIl5QfQ0/8
-X-Gm-Gg: ASbGnctqHdDfloUS2hjIoyGfef1FOK8UcpPYK8DXiWPwokVP5GGsehScOhGgLIp8uJR
-	NhT2uC3Nqb2Zv+2wPt2cOp28ZLELFdY1IiOZukBmr4gFKHscHDJYzqxpz/qfWyZ8isRLoyK6j6M
-	4LykMl6Z4xr2v+Yo2OIr/P9ElW+a/OuPM3YyICJ3uZtG8HXGPUYCmDKjTTOM/XybxbRu0KVHGXL
-	CXTYpgGwtgi3IgIjncgFmpJgYDjUW/G4/sSNKX8005H0Ez3C7XvD4zWVwbWCu+BYbNU/XpZpMoP
-	PMEGVztYqm8+mJLciH8c3SwsjGBzwtELCJvqdwnRtUs0r6PEFvs+MZZfWABJ2LoYpfnPyPPfCcF
-	bpFimTzc1Z6p+kjo0Sd3WJf7+njs4482iQCNPDmwkvMRa0quNTBmm5LXk30XIVmJHB9FRPUloVt
-	WlK7sLjLo=
-X-Google-Smtp-Source: AGHT+IFOtcW0FjrNxyzQVAwg8/hsWcVkY2/+FOGxCrw+aG6ME/j+PMfoUflj60UThewImLHLIJQRzg==
-X-Received: by 2002:a17:903:3848:b0:294:def6:5961 with SMTP id d9443c01a7336-297e56d0868mr419605ad.45.1762539578179;
-        Fri, 07 Nov 2025 10:19:38 -0800 (PST)
-Received: from [192.168.0.56] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c93e5dsm68382615ad.81.2025.11.07.10.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 10:19:37 -0800 (PST)
-Message-ID: <74d4c8e40e61dad369607ecd8b98f58a515479f0.camel@gmail.com>
-Subject: Re: [PATCH v5 6/7] btf: Add lazy sorting validation for binary
- search
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Donglin Peng <dolinux.peng@gmail.com>, bot+bpf-ci@kernel.org, 
-	ast@kernel.org, andrii.nakryiko@gmail.com
-Cc: zhangxiaoqin@xiaomi.com, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, 	alan.maguire@oracle.com, song@kernel.org,
- pengdonglin@xiaomi.com, 	andrii@kernel.org, daniel@iogearbox.net,
- martin.lau@kernel.org, 	yonghong.song@linux.dev, clm@meta.com,
- ihor.solodrai@linux.dev
-Date: Fri, 07 Nov 2025 10:19:33 -0800
-In-Reply-To: <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
-References: <20251106131956.1222864-7-dolinux.peng@gmail.com>
-	 <d57f3e256038e115f7d82b4e6b26d8da80d3c8d8afb4f0c627e0b435dee7eaf6@mail.kernel.org>
-	 <CAErzpmtRYnSpLuO=oM7GgW0Sss2+kQ2cJsZiDmZmz04fD0Noyg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762539657; c=relaxed/simple;
+	bh=XZ3GzvFfGFXlIB7TajdyAZQIUS5SDDqxmBn+AzTLv+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFX/D8Vq5/6aCtcJcCupEJCqZBRKcLTt1Dw5PZFQTbhkefeA4K/fV27f/lwKXc6C7ghUJ134FczNZTpLMaHCjFHP99bejUW3GOBfUxWadoI5p2fP6LVnlW2KXOklpw9nh+xtHXW5UR5S0T7jtsMRE1otLlSYbGiggIYtGtW3xZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHcqFUXu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A72C4CEF5;
+	Fri,  7 Nov 2025 18:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762539657;
+	bh=XZ3GzvFfGFXlIB7TajdyAZQIUS5SDDqxmBn+AzTLv+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AHcqFUXuzDR1EODPDxnZYlWVZSgOuuZQOxwdT/dxNUBqYTijNmpj3l07OV6gQA0Z6
+	 HkkjWId81zy5CeibiE/k1bZjL0LRBOhbUzNZ2gYk6I27drxEuWTf9PB1lOPMVh9HSV
+	 u6pCM7/XBm0P/aFrWwu3mD7ypKEjBRpg50ABGlnyWDLTQ6TYz+wuPPf6f9V79Eh6LF
+	 5bIy88gatlkmKLWRcfMCl1q+ryb/zU5Ud1bw7LFE8gL4Ym5sSpsJNXI79GpQ3KC1rM
+	 6G0KC924cDPQK3mzmjox2L1rnq25HbX/kjUzxxXfv2n1jQpUXPSEC4Kh5x2xpWfKFo
+	 3tic9dkDo2BIg==
+Date: Fri, 7 Nov 2025 18:20:51 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Support Opensource <support.opensource@diasemi.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Wensheng Wang <wenswang@yeah.net>,
+	Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	Vasileios Amoiridis <vassilisamir@gmail.com>,
+	Dixit Parmar <dixitparmar19@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: mfd: Convert dlg,da9052-i2c.txt to yaml
+ format
+Message-ID: <20251107-matrimony-showdown-ba6ce6996b2f@spud>
+References: <20251106013358.421809-1-Frank.Li@nxp.com>
+ <20251106-hull-petri-42878717ee85@spud>
+ <aQz1Yt9lk+roRq9z@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q9vuaJ9qjpbg+ZRK"
+Content-Disposition: inline
+In-Reply-To: <aQz1Yt9lk+roRq9z@lizhi-Precision-Tower-5810>
 
-On Fri, 2025-11-07 at 15:08 +0800, Donglin Peng wrote:
-> On Thu, Nov 6, 2025 at 9:47=E2=80=AFPM <bot+bpf-ci@kernel.org> wrote:
-> >=20
-> > > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> > > index 66cb739a0..33c327d3c 100644
-> > > --- a/kernel/bpf/btf.c
-> > > +++ b/kernel/bpf/btf.c
-> > > @@ -552,6 +552,70 @@ u32 btf_nr_types(const struct btf *btf)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return total;
-> > > =C2=A0}
-> > >=20
-> > > +/* Verifies that BTF types are sorted in ascending order
-> > > according to their
-> > > + * names, with named types appearing before anonymous types. If
-> > > the ordering
-> > > + * is correct, counts the number of named types and updates the
-> > > BTF object's
-> > > + * nr_sorted_types field.
-> > > + *
-> > > + * Return: true if types are properly sorted, false otherwise
-> > > + */
-> > > +static bool btf_check_sorted(struct btf *btf)
-> > > +{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 const struct btf_type *t;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 int i, n, k =3D 0, nr_sorted_types;
+
+--Q9vuaJ9qjpbg+ZRK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 06, 2025 at 02:22:10PM -0500, Frank Li wrote:
+> On Thu, Nov 06, 2025 at 05:39:47PM +0000, Conor Dooley wrote:
+> > On Wed, Nov 05, 2025 at 08:33:56PM -0500, Frank Li wrote:
+> > > Convert dlg,da9052-i2c.txt to yaml format.
+> > > Additional changes:
+> > > - compatible string fallback to dlg,da9052 to align existing dts file=
+s.
+> > > - Add interrupts property.
+> > > - Add ref to /schemas/spi/spi-peripheral-props.yaml#
+> > >
+> > > Remove dlg,da9053 from trivial-devices.yaml.
+> > >
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  .../devicetree/bindings/mfd/da9052-i2c.txt    | 67 -------------
+> > >  .../devicetree/bindings/mfd/dlg,da9052.yaml   | 93 +++++++++++++++++=
+++
+> > >  .../devicetree/bindings/trivial-devices.yaml  |  2 -
+> > >  3 files changed, 93 insertions(+), 69 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/mfd/da9052-i2c.=
+txt
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/dlg,da9052.=
+yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/mfd/da9052-i2c.txt b/D=
+ocumentation/devicetree/bindings/mfd/da9052-i2c.txt
+> > > deleted file mode 100644
+> > > index 07c69c0c6624c..0000000000000
+> > > --- a/Documentation/devicetree/bindings/mfd/da9052-i2c.txt
+> > > +++ /dev/null
+> > > @@ -1,67 +0,0 @@
+> > > -* Dialog DA9052/53 Power Management Integrated Circuit (PMIC)
+> > > -
+> > > -Required properties:
+> > > -- compatible : Should be "dlg,da9052", "dlg,da9053-aa",
+> > > -			 "dlg,da9053-ab", or "dlg,da9053-bb"
+> > > -
+> > > -Optional properties:
+> > > -- dlg,tsi-as-adc : Boolean, if set the X+, X-, Y+, Y- touchscreen
+> > > -                    input lines are used as general purpose analogue
+> > > -					input.
+> > > -- tsiref-supply: Phandle to the regulator, which provides the refere=
+nce
+> > > -                 voltage for the TSIREF pin. Must be provided when t=
+he
+> > > -			     touchscreen pins are used for ADC purposes.
+> > > -
+> > > -Sub-nodes:
+> > > -- regulators : Contain the regulator nodes. The DA9052/53 regulators=
+ are
+> > > -  bound using their names as listed below:
+> > > -
+> > > -    buck1     : regulator BUCK CORE
+> > > -    buck2     : regulator BUCK PRO
+> > > -    buck3     : regulator BUCK MEM
+> > > -    buck4     : regulator BUCK PERI
+> > > -    ldo1      : regulator LDO1
+> > > -    ldo2      : regulator LDO2
+> > > -    ldo3      : regulator LDO3
+> > > -    ldo4      : regulator LDO4
+> > > -    ldo5      : regulator LDO5
+> > > -    ldo6      : regulator LDO6
+> > > -    ldo7      : regulator LDO7
+> > > -    ldo8      : regulator LDO8
+> > > -    ldo9      : regulator LDO9
+> > > -    ldo10     : regulator LDO10
+> > > -
+> > > -  The bindings details of individual regulator device can be found i=
+n:
+> > > -  Documentation/devicetree/bindings/regulator/regulator.txt
+> > > -
+> > > -Examples:
+> > > -
+> > > -i2c@63fc8000 { /* I2C1 */
+> > > -
+> > > -	pmic: dialog@48 {
+> > > -		compatible =3D "dlg,da9053-aa";
+> > > -		reg =3D <0x48>;
+> > > -
+> > > -		regulators {
+> > > -			buck1 {
+> > > -				regulator-min-microvolt =3D <500000>;
+> > > -				regulator-max-microvolt =3D <2075000>;
+> > > -			};
+> > > -
+> > > -			buck2 {
+> > > -				regulator-min-microvolt =3D <500000>;
+> > > -				regulator-max-microvolt =3D <2075000>;
+> > > -			};
+> > > -
+> > > -			buck3 {
+> > > -				regulator-min-microvolt =3D <925000>;
+> > > -				regulator-max-microvolt =3D <2500000>;
+> > > -			};
+> > > -
+> > > -			buck4 {
+> > > -				regulator-min-microvolt =3D <925000>;
+> > > -				regulator-max-microvolt =3D <2500000>;
+> > > -			};
+> > > -		};
+> > > -	};
+> > > -};
+> > > diff --git a/Documentation/devicetree/bindings/mfd/dlg,da9052.yaml b/=
+Documentation/devicetree/bindings/mfd/dlg,da9052.yaml
+> > > new file mode 100644
+> > > index 0000000000000..4ecd498864e4e
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mfd/dlg,da9052.yaml
+> > > @@ -0,0 +1,93 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/mfd/dlg,da9052.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (likely(btf->nr_sorted_types !=3D BTF_NE=
-ED_SORT_CHECK))
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 goto out;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 btf->nr_sorted_types =3D 0;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ^
-> >=20
-> > Can multiple threads race when writing to btf->nr_sorted_types
-> > here?
-> > Looking at btf_find_by_name_kind()->btf_check_sorted(), I see that
-> > btf_find_by_name_kind() receives a const pointer but casts away the
-> > const
-> > to call btf_check_sorted(). The function bpf_find_btf_id() calls
-> > btf_find_by_name_kind() without holding any locks (line 737), and
-> > later
-> > explicitly unlocks before calling it again (lines 756-757).
-> >=20
-> > This means multiple threads can concurrently enter
-> > btf_check_sorted() and
-> > write to btf->nr_sorted_types. While the validation logic is
-> > idempotent
-> > and all threads would compute the same value, the concurrent writes
-> > to the
-> > same memory location without synchronization could trigger KCSAN
-> > warnings.
-> >=20
-> > Should this use atomic operations, or should the validation be
-> > performed
-> > under a lock during BTF initialization before the BTF becomes
-> > visible to
-> > multiple threads?
+> > > +title: Dialog DA9052/53 Power Management Integrated Circuit (PMIC)
+> > > +
+> > > +maintainers:
+> > > +  - Frank Li <Frank.Li@nxp.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - enum:
+> > > +              - dlg,da9053
+> >
+> > Should this actually exist? It was never in any drivers etc at all, and
+> > as far as I can tell any users use the -XX suffixed ones. Probably this
+> > is the only compatible that /should/ have been used, but it might be
+> > pointless to add now.
 >=20
-> Hi, is it necessary to address this issue?
-> For example, by using atomic_try_cmpxchg or WRITE/READ_ONCE? Using
-> atomic_try_cmpxchg can prevent race conditions on writes but requires
-> an atomic
-> variable, while WRITE_ONCE/READ_ONCE can avoid KCSAN warnings. Since
-> the race condition is unlikely to cause critical issues, I suggest
-> using
-> WRITE_ONCE/READ_ONCE.
+> A old dts arch/arm/boot/dts/nxp/imx/imx53-smd.dts use "dlg,da9053", "dlg,=
+da9052"
 
-Probably use WRITE_ONCE/READ_ONCE?
+Given my observations about the fallback below, I think this one should
+be changed in the dts to whatever dlg,da9053-XX variant it actually is.
 
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (btf->nr_types < 2)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 goto out;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 nr_sorted_types =3D 0;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 n =3D btf_nr_types(btf) - 1;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D btf_start_id(btf); i < n; i++) {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 k =3D i + 1;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 if (btf_compare_type_names(&i, &k, btf) > 0)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 t =3D btf_type_by_id(btf, i);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 if (t->name_off)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nr_sorted_types++;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 t =3D btf_type_by_id(btf, k);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (t->name_off)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 nr_sorted_types++;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (nr_sorted_types)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 btf->nr_sorted_types =3D nr_sorted_types;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 ^
-> >=20
-> > The same race condition applies to this write of nr_sorted_types as
-> > well.
-> >=20
-> > > +
-> > > +out:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 return btf->nr_sorted_types > 0;
-> > > +}
-> >=20
-> > [ ... ]
-> >=20
-> > > @@ -610,7 +674,7 @@ s32 btf_find_by_name_kind(const struct btf
-> > > *btf, const char *name, u8 kind)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > >=20
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 if (btf->nr_sorted_types !=3D BTF_NEED_SORT=
-_CHECK) {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (btf_check_sorted((struct btf *)btf)) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^
-> >=20
-> > The const cast here enables the concurrent writes discussed above.
-> > Is
-> > there a reason to mark the btf parameter as const if we're
-> > modifying it?
+> > > +              - dlg,da9053-aa
+> > > +              - dlg,da9053-ab
+> > > +              - dlg,da9053-bb
+> >
+> > The driver also has a bc, I think that should be added.
+> >
+> > > +          - const: dlg,da9052
+> >
+> > Is this actually a correct fallback?
+> > I know it is being used, but looking at the drivers I see things like:
+> > 	/* Select the appropriate current limit range */
+> > 	if (regulator->da9052->chip_id =3D=3D DA9052)
+> > 		row =3D 0;
+> > 	else if (offset =3D=3D 0)
+> > 		row =3D 1;
+> > in both the battery and regulator drivers.
+> > Might actually be the devicetrees are wrong here?
 >=20
-> Hi team, is casting away const an acceptable approach for our
-> codebase?
-
-Casting away const is undefined behaviour, e.g. see paragraph 6.7.3.6
-N1570 ISO/IEC 9899:201x Programming languages =E2=80=94 C.
-
-Both of the problems above can be avoided if kernel will do sorted
-check non-lazily. But Andrii and Alexei seem to like that property.
-
+> Ideally, not fallback to dlg,da9052, but need update old dts file to clean
+> up warning.
 >=20
-> >=20
-> >=20
-> > ---
-> > AI reviewed your patch. Please fix the bug or email reply why it's
-> > not a bug.
-> > See:
-> > https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.m=
-d
-> >=20
-> > CI run summary:
-> > https://github.com/kernel-patches/bpf/actions/runs/19137195500
+> If you prefer this way, I can remove fallback and update dts files.
+
+Yeah, I think so. If the things need different current limits I don't
+think that the fallback is really suitable.
+
+> > > +      - enum:
+> > > +          - dlg,da9052
+> > > +          - dlg,da9053-aa # Just for match existed old platform
+> >
+> > Could you just change that one old platform using it?
+>=20
+> Yes
+
+And since we are removing the da9052 fallback, this comment can be
+removed and the old platform can stay as it is.
+
+--Q9vuaJ9qjpbg+ZRK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ44gwAKCRB4tDGHoIJi
+0ubIAP4l3CNYFcE166XUJIAGc9GKUzWC2GSixh4YFSNUt35QdgD7Bl4tH71Ban+S
+HuNOGWoZdjtoYu5iqu50nGvoTH9P9gA=
+=lM++
+-----END PGP SIGNATURE-----
+
+--Q9vuaJ9qjpbg+ZRK--
 
