@@ -1,87 +1,109 @@
-Return-Path: <linux-kernel+bounces-889796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5678C3E897
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:44:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D469C3E86D
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 06:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABA6B4E7165
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:44:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C8C188BB44
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 05:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F1524466C;
-	Fri,  7 Nov 2025 05:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3B424466C;
+	Fri,  7 Nov 2025 05:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="KbPVKILl"
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="f5Qk3bd9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDECF50F;
-	Fri,  7 Nov 2025 05:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5EC16F0FE;
+	Fri,  7 Nov 2025 05:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762494291; cv=none; b=kgPEWQMEkKkpe9xKtkFTJsTfm0YIWH/ozSsNyn/HlrszCyk/9ieEBY+4ZQLM2bAx6LZ47ngXBS8D+6bXQNROiZcsdqZylD4llomWbkoJZXImGGBx8w/Hc3rFLy7t6yetvaurbuLGSBaYSwEmva8GjvboBwJpzHSLv9n0lPiUHBo=
+	t=1762493914; cv=none; b=obyEBbJKjimjYZQhzqRp6UZi1XiboJa5HgOhgUYXHEoQma2FYBo/jDpQ5/0weCYz0D537xVBJcLuTLlGlcJSeYbENqKAzjvVY+dWDoDMycz+4ZqaiPo9Kpr4L0RkkB2MKRoCO6uTHE/secvtlniDMLU74875fQGkT/k7jzgtXeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762494291; c=relaxed/simple;
-	bh=s3x8POj7fp9AJimEEYUdWbjwXZwZfT4W0JGXgP0Uydc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=peIJmlaguYeuxvK4x8w5wwxnXfj12B1I1jtg7XY68X5wTJ9SOzhWJVNVJtq2NQT5dsBG29mxrtPX3+nwnwRDzbAiHbHr6Ul+ewZbilk1kPkPceTTJ2NPeht91P5FJXXsFUxcjbSomm7Q9y1WIslutSVnJ7yMoSw1V7TFOB/SQmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=KbPVKILl; arc=none smtp.client-ip=178.154.239.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net [IPv6:2a02:6b8:c37:8120:0:640:c15b:0])
-	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 8B6CD81AAE;
-	Fri, 07 Nov 2025 08:37:35 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UbfSYtKL6Ko0-Xdu2k5Oe;
-	Fri, 07 Nov 2025 08:37:34 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1762493854;
-	bh=M6pGHVl4PoEe+gGfxwEyT3ttybUZaq/N2I4HTt6yjAY=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=KbPVKILlAGeHh3dVwlPEHykfubhwYJ73+FRM971+sW+dOqbvLKAa45OsXJbN+o6/C
-	 q3qNdYPrDknChqG989zNAy5jQAISHYDcyAeYH7bCJVoP2hC9zPoaR9gtoHZ2Udzdve
-	 vjr+g+3nnwQxjWCHC7r4IAWuU5jVxQPuz3fqGNgA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Fri, 7 Nov 2025 08:37:27 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Hang Shu <m18080292938@163.com>
-Cc: ojeda@kernel.org, Hang Shu <hangshu847@gmail.com>, Alex Gaynor
- <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Charalampos
- Mitrodimas <charmitro@posteo.net>, Borys Tyran
- <borys.tyran@protonmail.com>, Daniel Sedlak <daniel@sedlak.dev>, Tamir
- Duberstein <tamird@gmail.com>, Matt Gilbride <mattgilbride@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: rbtree: fix cursor method lifetimes to match tree
- lifetime
-Message-ID: <20251107083727.63c2e524@nimda>
-In-Reply-To: <20251107050700.1086059-1-m18080292938@163.com>
-References: <20251107050700.1086059-1-m18080292938@163.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1762493914; c=relaxed/simple;
+	bh=3TfIUSMvsTncvNbcBo1+XXhAgkdL0rKd3KT7E06BRHI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KhssiYNbfK3bUVTXkTKDfJl/0W41Uqu3lbrn/bSkv8qtHD3Ilh5aPDYWk3NSFQnYgEx24rTcf0yo1fQTOv1cMVAQ034XgMyua6n7ZNka+qOJ9GZMd6P1lOquryfwcM8F3cUdfZ+QAyAPM8EzQwCIEJ8DlHo/D6xKsSwZaBs/Y7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=f5Qk3bd9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F583C4CEF5;
+	Fri,  7 Nov 2025 05:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1762493914;
+	bh=3TfIUSMvsTncvNbcBo1+XXhAgkdL0rKd3KT7E06BRHI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f5Qk3bd95j6Mp2Yvi8a8OptR33mdZ5ZAXUjmebdPGjbaeAtxIjKImi6ermTjEGcRV
+	 vm7lyHDa2QgRJ43b1wp4RP2Vf6WXxDzTUvvnN3quaoNH8tCu9NdkzzmPyn9s5VFuyG
+	 NcAQMroNrorUsYWX5mck9k6u5qJQlUOiow6JGV28=
+Date: Thu, 6 Nov 2025 21:38:33 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Junrui Luo <moonafterrain@outlook.com>
+Cc: linux-kernel@vger.kernel.org, pmladek@suse.com, rostedt@goodmis.org,
+ andriy.shevchenko@linux.intel.com, tiwai@suse.com, perex@perex.cz,
+ linux-sound@vger.kernel.org, mchehab@kernel.org, awalls@md.metrocast.net,
+ linux-media@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/4] lib/sprintf: add scnprintf_append() helper function
+Message-Id: <20251106213833.546c8eaba8aec6aa6a5e30b6@linux-foundation.org>
+In-Reply-To: <SYBPR01MB788110A77D7F0F7A27F0974FAFC3A@SYBPR01MB7881.ausprd01.prod.outlook.com>
+References: <20251107051616.21606-1-moonafterrain@outlook.com>
+	<SYBPR01MB788110A77D7F0F7A27F0974FAFC3A@SYBPR01MB7881.ausprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri,  7 Nov 2025 05:06:56 +0000
-Hang Shu <m18080292938@163.com> wrote:
+On Fri,  7 Nov 2025 13:16:13 +0800 Junrui Luo <moonafterrain@outlook.com> wrote:
 
-> From: Hang Shu <hangshu847@gmail.com>
-> 
+> +/**
+> + * scnprintf_append - Append a formatted string to a buffer
+> + * @buf: The buffer to append to (must be null-terminated)
+> + * @size: The size of the buffer
+> + * @fmt: Format string
+> + * @...: Arguments for the format string
+> + *
+> + * This function appends a formatted string to an existing null-terminated
+> + * buffer. It is safe to use in a chain of calls, as it returns the total
+> + * length of the string.
+> + *
+> + * Returns: The total length of the string in @buf
 
-Jfyi, there is no need for adding this.
+It wouldn't hurt to describe the behavior when this runs out of space
+in *buf.
 
-> The returned keys and values of cursor methods should be bound by
-> the lifetime of the rbtree itself ('a), not the lifetime of the
-> cursor.
-> 
+
+
+The whole thing is a bit unweildy - how much space must the caller
+allocate for `buf'?  I bet that's a wild old guess.
+
+
+I wonder if we should instead implement a kasprintf() version of this
+which reallocs each time and then switch all the callers over to that.
+
+
+um,
+
+int kasprintf_append(char **pbuf, gfp_t gfp_flags, const char *fmt, ...);
+
+
+int caller()
+{
+	char *buf = NULL;
+	while (...) {
+		x = kasprintf_append(&buf, GFP_KERNEL, "%whatever", stuff...);
+		if (x == -ENOMEM)
+			return x;
+	}
+	...
+	kfree(buf);
+}
+
+So much nicer!
 
