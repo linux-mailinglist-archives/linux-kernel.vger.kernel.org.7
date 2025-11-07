@@ -1,138 +1,184 @@
-Return-Path: <linux-kernel+bounces-889740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D485EC3E60D
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:40:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F89EC3E61C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 04:41:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A3AB3AEE0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66DFD3AFCAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 03:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33522FD1B2;
-	Fri,  7 Nov 2025 03:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE382FBDFD;
+	Fri,  7 Nov 2025 03:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R7NCxVhJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WJ8yOBBr"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886CA1E32D3;
-	Fri,  7 Nov 2025 03:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468AC2F7ACD
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 03:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762486776; cv=none; b=Ah1WY1mz8wi1PDJgF//5RFMQ4dTR4R62Mf7rYzpTTMsUMvgWA9eCxXVbDjVmaPThM6wH/fON1IWtlB2Vm8ZkZarEt+LJoKokzawwheghbq8aG5szxkg3AQStGdK1Es9C7sZjWY/rBIkaDG7mGdmwqPGrK3xowrfwxca6b6RBZvc=
+	t=1762486787; cv=none; b=nOvBMmJ/7Sj2knkkV4HvmTQWz//5bud6l9vo1i0ZLQdj71cJ3O5vv9vMlHeZMgMXpBjrMbw3hXygqNx8uc1MQARLe6Tgjeq1bW/jiOL8P01ex4GUPpwcp4F/fIYNa8DLnDnJ5ZL6CyswGhbGYBJgCkdV09oZAlSQADKXfoQdyAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762486776; c=relaxed/simple;
-	bh=TY6AfTS9IE25kyf1VzFS8t6tVnHe0Sw2zjiBp2xWaG0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C7TQu9kaYw5edix00C/GQyATPejBiQPSJIuMHvgBcGjBlb8b++9Ha+VDWXdSpm9UIyWIekWoKsaIS1Jug5b4GY8MNHTA+idDzmAdyAr9Wtfx3MFDcMdyw49O2To75YkqslQfgrGVeNPVa2IVmv4kvDVDwHkHppxjBNJO+0wKd6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R7NCxVhJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A718bOn1710787;
-	Fri, 7 Nov 2025 03:39:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=CG/kbwf3jm9
-	5G/VIBAhWTxS8SVIJcY0oCufgRxYh/C0=; b=R7NCxVhJFSg5+Ua4QpWGJmIQ1WY
-	/tkcVLbqqbkg9mPtzTFblDNQHgPJBb3M1gJiL9sJ1AzO9lFI8KS8f4MFx0IXzmbd
-	X76bgI6rIL2VHKCAUNnUL4yg7EE3CtAql6XH+/n8ECjud2HmDFP/HUkbMOctNHPI
-	dXnZB4KuwUIx9kgo+p2slk+ljmo/g5bKKKzMfNOHVpQwpmZXfe83MSqU2Z9VVr2g
-	3UipdLapVeW3N38jNlCsU5BVkKcxfNQLCS00BPxwTKzDFphkVZWNyPVIuAMTCCL7
-	Bx9b6SPcbLIh6wzFb7bvl2uG4uzOj17eBNWbO5c3xASVUtlUQ7fksn9batA==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a96ue0cn7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 03:39:31 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A73dSQO014121;
-	Fri, 7 Nov 2025 03:39:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a5b9nc06k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 03:39:28 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5A73dReN014107;
-	Fri, 7 Nov 2025 03:39:27 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 5A73dRSk014104
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Nov 2025 03:39:27 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id 6A7982327E; Fri,  7 Nov 2025 11:39:26 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        quic_chejiang@quicinc.com, quic_jiaymao@quicinc.com,
-        quic_chezhou@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
-Subject: [PATCH v3 2/2] Bluetooth: hci_qca: Convert timeout from jiffies to ms
-Date: Fri,  7 Nov 2025 11:39:24 +0800
-Message-Id: <20251107033924.3707495-3-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251107033924.3707495-1-quic_shuaz@quicinc.com>
-References: <20251107033924.3707495-1-quic_shuaz@quicinc.com>
+	s=arc-20240116; t=1762486787; c=relaxed/simple;
+	bh=hYOeoqXmSEIDHI78r81gIByIxvqycJsoQtqBa4+ZRmc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qkEDSCpxg985GPHS+hpZnVTLbV82llNR7nMi0UmmYWyrhVPOk/4Aw7MNw3llGVfhoRBSxEsBUOlPQuvor2wsQmQqLIxOnJutJIAAWx55xT8bsLe6+P/S3fdQDNov0BprOxaz7zKmN66LSYzaF8meTlpHZN78zs5Wp4CcXa6ujaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WJ8yOBBr; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-429b72691b4so225510f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 19:39:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762486783; x=1763091583; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vbO2nTB7Qh4Qw6JsJr6W4VgsgC2mZidOm7iZWG0m/78=;
+        b=WJ8yOBBrnDqu6KHDZuK5drza3tRu8dVg+rG/hNmICmNCO7dTU5mxoekLGBCanXKqVt
+         dSssoBFTwMGKUoUKMAGKrzfW/qD26TU6CIRYw8s2Xm53rOzoCJLFhf7208RpAbVq3Uzb
+         cwO94UjgK45X3edusQNOkkrHHC7VKWhpPQ/Qvozd0/llLpABPdrZyVy3tyB4rmF3F81I
+         TOAeyf07UQl1kRyjW8xINXC62Vd/Buimph0xroSV8A/9rK3JoTWB4ohfDTqAw+RiSP7N
+         ZiExonkST1QmcySFfAUIqUBStH2YZIzTpM1eW5j9ID+bgOwoHCqRgf8CF3qr4R/aPvs/
+         PYFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762486783; x=1763091583;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vbO2nTB7Qh4Qw6JsJr6W4VgsgC2mZidOm7iZWG0m/78=;
+        b=iFmaBOsasjch6T5GpUVizZLdy7WCspxqfRcYGuT8ziSBbnSRONqh2v6ex+6hYBw9tS
+         8pxeHtPcuDI/aumsyWal9NTOXmty6+4oYb0KZa035zQvOwr8wLV6ojJAdulcejI/IU/y
+         297LuIXECLhXZK3tJhkQDsY8ydkkGSfy60A8aGdVXC0cgEmi4UwmnSfck0gRdHDlErJc
+         lNnMSqxASo0EVhi+DRggZZgXeihVIme3L+myidI04LOQO0DgJHkNT2ER7omhbhG6nHDy
+         ySaRw+TnFW8RkQzvvIJTbVIjNHWCffGZUUCnsvAJvLVZVYI8JNR+UVO4ulVfRj9zJJh6
+         FP1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqKPaw9cIpGIT+LKmXVPCn28zikn2vzwP1eFFbhAlO+rty+KEqOK8KxZwXB73iFTjjyjd7ZpdFzboVL8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi6a6RvIMPvftsp+6xUONr72h97J2tYVbl1mW7vvmukSuTI6K7
+	J2I6hSP2futvqNU3VwS+QAp+wP0WK01TLnBiibJX3CeBF8bkvm0p9OlGgMv1kurfgREd+j5Fygo
+	TzHaDmieK22uCtcZHxlEm9NP1QElQymPoe/TgrT8L
+X-Gm-Gg: ASbGnctrQ8AufGYQUhBeCT5vw0njJ5mYJauszzEHp09dyH+77qUPBvDuahZirg+tPFE
+	Bs2Ty5fUUrrzT2Bm3o8uconAhFLomfKcraOvrSNn3vc2jRobwqDX3aJBqzRP64aDSTM6nXopb+3
+	9Hqi9c/sKn9KggcyLzs+wVvw2uVIxnl4lCGPE2M1JSV5/6lQ+S7rmfrvykx6dYBLngGMjSrjXBT
+	4I2urNwyTw2nDPwlNaQk9WCUsVCw1yyW4MX7NP4FhkXzDOQq98Wdglly4hUr6RgwRfZGCwUB+v8
+	TkQSzyOo3zWPs2inXeuXrt6g
+X-Google-Smtp-Source: AGHT+IGEh7IhvQg+TrDD6zZjcWzRpXTsExEgfoQszOkKmBt1xXGm8ca7e3AYQMZfs4zZsYumxirBfUxPg23Zvt75ckw=
+X-Received: by 2002:a05:6000:240a:b0:429:d6dc:ae2f with SMTP id
+ ffacd0b85a97d-42ae5ac513dmr1043717f8f.31.1762486783011; Thu, 06 Nov 2025
+ 19:39:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=fYKgCkQF c=1 sm=1 tr=0 ts=690d69f3 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=70vrXUCaxUCbDeWopUYA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: P9ihKIfk0fy5gtb6RslSXp3mdUvzT4Ex
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDAyNiBTYWx0ZWRfX7sQrYpMphNb9
- bvFOr7V6IdrMJCO768yxvsFdHpe+Jg1k8wEoPSBvV670oZ7ieTndH/lHawMa93YnH55+cRp70Pv
- JKE8zM1CeUVF7YBKKj2qEpf/XR4SncKey56DVBDWSgAw8fl9X/cUpPWjff9mo1YV25H5CzPavRc
- BL4MNSPCjwQeOZCeyyknb+kzIt7cbrbi5Q2iKMnjLb+8PQO+MeEYJGi0lNiv4O234kZJap1jZND
- fVwuZDiVedNbu88/PEN3ADcpLIE6I6hz2yOlh8wsUeYde0TjVvEAceNelKQDsw/sFr1f9bRC5o2
- y0wjUYUUL5WhbSsC7PkChh+pG2ReUazzZOXd9EHrcF3rTatOpK7TwWMeQHxxy4k+z+k220IqdCF
- xHjkhHVYkF0/C5k/UTEjaUoV2w7KNQ==
-X-Proofpoint-GUID: P9ihKIfk0fy5gtb6RslSXp3mdUvzT4Ex
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_05,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 priorityscore=1501 malwarescore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070026
+References: <20251029214032.3175261-1-royluo@google.com> <20251029214032.3175261-2-royluo@google.com>
+In-Reply-To: <20251029214032.3175261-2-royluo@google.com>
+From: Doug Anderson <dianders@google.com>
+Date: Thu, 6 Nov 2025 19:39:31 -0800
+X-Gm-Features: AWmQ_bk0tg9nfbEFrAczn7gf3WHlPnE4d6lMh6R1gsb1gSV599Sr46OpKQ3eUsM
+Message-ID: <CAD=FV=VYOD=33secA=2ozE8EO6Z_Wi_ZjiDMov5oP8Z42JytAg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+To: Roy Luo <royluo@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since the timer uses jiffies as its unit rather than ms, the timeout value
-must be converted from ms to jiffies when configuring the timer. Otherwise,
-the intended 8s timeout is incorrectly set to approximately 33s.
+Hi,
 
-Cc: stable@vger.kernel.org
-Fixes: d841502c79e3 ("Bluetooth: hci_qca: Collect controller memory dump during SSR")
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
----
- drivers/bluetooth/hci_qca.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Oct 29, 2025 at 2:40=E2=80=AFPM Roy Luo <royluo@google.com> wrote:
+>
+> Document the device tree bindings for the USB PHY interfaces integrated
+> with the DWC3 controller on Google Tensor SoCs, starting with G5
+> generation. The USB PHY on Tensor G5 includes two integrated Synopsys
+> PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP.
+>
+> Due to a complete architectural overhaul in the Google Tensor G5, the
+> existing Samsung/Exynos USB PHY binding for older generations of Google
+> silicons such as gs101 are no longer compatible, necessitating this new
+> device tree binding.
+>
+> Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+>  .../bindings/phy/google,gs5-usb-phy.yaml      | 127 ++++++++++++++++++
+>  1 file changed, 127 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/google,gs5-usb-=
+phy.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yam=
+l b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
+> new file mode 100644
+> index 000000000000..8a590036fbac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
+> @@ -0,0 +1,127 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2025, Google LLC
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/google,gs5-usb-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google Tensor Series (G5+) USB PHY
+> +
+> +maintainers:
+> +  - Roy Luo <royluo@google.com>
+> +
+> +description: |
+> +  Describes the USB PHY interfaces integrated with the DWC3 USB controll=
+er on
+> +  Google Tensor SoCs, starting with the G5 generation.
+> +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 =
+PHY IP
+> +  and USB 3.2/DisplayPort combo PHY IP.
+> +
+> +properties:
+> +  compatible:
+> +    const: google,gs5-usb-phy
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index fa6be1992..c14b2fa9d 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1602,7 +1602,7 @@ static void qca_wait_for_dump_collection(struct hci_dev *hdev)
- 	struct qca_data *qca = hu->priv;
- 
- 	wait_on_bit_timeout(&qca->flags, QCA_MEMDUMP_COLLECTION,
--			    TASK_UNINTERRUPTIBLE, MEMDUMP_TIMEOUT_MS);
-+			    TASK_UNINTERRUPTIBLE, msecs_to_jiffies(MEMDUMP_TIMEOUT_MS));
- 
- 	clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
- }
--- 
-2.34.1
+FWIW, we've had some rather heated bikeshedding at Google about the
+use of "gs5" to refer to this processor.
 
+* The processor is almost exclusively referred to as "lga" in code at Googl=
+e.
+
+* The processor's code name is "laguna".
+
+* Nobody is aware of the processor being referred to as "gs5"
+internally. Though this is the 5th Google Silicon ("GS") processor, so
+it makes some sense, "gs5" is not really an official name for it. At
+least one person pointed to the fact that it's a tad bit confusing
+that the first generation Tensor processor is called "gs101" upstream
+and the fifth generation is called "gs5".
+
+* Some folks proposed "gs501" to match the "gs101, gs201, ..." trend.
+The first two Tensor processors were definitely called "gs101" and
+"gs201" and the next two were referred to as "gs301" and "gs401" in
+some internal docs, though this was discouraged. The processor in
+Pixel 10 was never called "gs501" internally as far as I can tell.
+
+
+In any case, it's a bit of a mess. The straw poll I took seemed to
+land on "lga" being the preferred name to continue to refer to this
+processor in upstream code. Would it be possible to change from "gs5"
+to "lga" here? The "laguna" code name for this processor is well known
+publicly and it's generally quite common to refer to processors (and
+boards) by their codenames, since codenames are often available sooner
+than marketing names and also less likely to change. Indeed, I was
+even CCed on a change recently where there were plans to move away
+from a processor ID and back to a codename [1].
+
+
+[1] http://lore.kernel.org/r/20251030-rename-dts-2-v1-2-80c0b81c4d77@oss.qu=
+alcomm.com
 
