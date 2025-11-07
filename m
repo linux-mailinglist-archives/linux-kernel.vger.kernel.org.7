@@ -1,146 +1,171 @@
-Return-Path: <linux-kernel+bounces-890840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DE9C4125C
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:49:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38045C41266
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54923188C519
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6786188CBB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D84B336EDA;
-	Fri,  7 Nov 2025 17:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06DE3358B7;
+	Fri,  7 Nov 2025 17:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzlRLGiF"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgtM8UQ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40682207A22
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D387A2DF148
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762537760; cv=none; b=rsMTV5dz24k17I47ODA8UT/YGs0K341EtIhUreNYDZNt/fcLRBsv4RAY6aYx7MTBABrNcHH7iuRGUuuuNwIJ5cF95mupOb0Z3UMtiW6ecXp3tTm4XPEFcHItQf/YEfbFscFiZQYzIRqdCHGvdTo3NfNLlwJNAmROnBUuD5TiGZs=
+	t=1762537787; cv=none; b=JV8Nq8+vOqlllhkd8SFrqKk12pxdrICPMLLWM78jbNjtjoT23af0LC8lm/M5r/SkP+bX976GuM1lnTT+pMfZSg80Jwu03weB3ZQ6roCi4ypMjcAsDQvVURI1CuwqNAa1HewOvf53N1pdfdYzxL3Z+ZZRTVkr4j7+Hmj7sOSF5gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762537760; c=relaxed/simple;
-	bh=OCNdxRW1IYaC1j6PkP1OCghDlVuNLB2cyrdqHo1Qdqs=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a07XE3NVfogOVjbhBqtu71WROwlrhhmQd6b0pSQP2sNSv6RRx4rnOzUBl16V/yFvLg4ZdYWVzaVw7yUH3l3/vA44nPh8MAi+C0Qdb9uHReOT4CzMYkI5CvHv/pEw4nCiBIehRiIkmZLnwcTk0jBOtltMjbZZ/I8SFikYvC3j+aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzlRLGiF; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso621368f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:49:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762537758; x=1763142558; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cmq9pT7Misz9s4VB/B7TdNfaf15j6zAigKUGG6pS/SY=;
-        b=JzlRLGiFKf1ol41cI2IrFXYPlBuEi+3y7Uj0j7QO3ail9SSUcMHUDYtWTJRT4Y99JH
-         l5FoiZjWFZMlFu+yfACJUgoUAw0ePvsMnWeeAS1ifOCO1N/CRxVUOi+Sl1YTEwwT8iuu
-         mhfv1J+L+vNwgHM1Pq8kMYP1gkk22OtsZgPpSmD0gJbl0dYYdPdLSJ0mnxy3uE5u540i
-         nBX4Al3GPQyCiR90XKNLDodKH0OyhllxgZPua508W201bYjzLJKluWV0QZ9PFbmY3hDc
-         5yhslRN7BfGd6ZJ6CO9xjp1jCJA5qPe4TQJFAVCdnBxwf1uuHn3sQRPfhdz17ZeH71V3
-         gD/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762537758; x=1763142558;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cmq9pT7Misz9s4VB/B7TdNfaf15j6zAigKUGG6pS/SY=;
-        b=ayuYLtLyB1JAruHiFbiWhzA+WvgCNze9yu6NkMUV3x+QCxXQzqcZ+1ztUxD4n3ix2H
-         8gwmkb4tPGV9JgROmkevUOKXRE/gq+Jw8sAnaaElGxPxGrAWX7swbbqy7ZJ6JeaPVlEZ
-         RD9PPF0L0d8TAAqdcnd75cdBcH1ZPiTeXN2GjKATA3SqlaHiIHk48tyZa8Gq4qrVf3/U
-         g44yFCS1P9uAf1hA0wStKmsxJvd3YADsWbkwNHK3ko+44P7rMWa9ryK6sRSjgy9wNAlV
-         jZajS6TME/wuu97wU6VZLL25HdXQ1SwGH8/0/td9s1fOdbbweZH29Qk38Kwh73dgBxd/
-         QRGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUS6mj+sBUGlORtZyHv5lQ5TYxLt6ezO4BVwRbbQwk0VeLHTTxnsIaVjlYhQeBYZ89Zt++3sye8Z7fRqHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK+sijg8KVXNOhjVnECh6ZY2rOqPtWLJUnZ6fYYfMc4dNV2s+M
-	G7VSo+QqmsOGrxR6bsMHCNT3wmG6VY3F04Kmvutwmbx0XJISoaxT2r8o
-X-Gm-Gg: ASbGncuSRzzFO01P7X9NbuvE6Hq9d29W0l/788+Cf9n3mAcEb50+DoHZJQHlTOi7kom
-	Dr9dOFnO7Xqe5laLoDpBecpiPAkGDe5TCFzYQ0uLA78wMvVfwyJ8hfSGVRMQR/+5P9cJvZQDFC3
-	0XKGXJsKWZ3yA6K+GM72maRIY/rruEZCUMq4I1lwfYUjykouayUgl4+enW3qhPHiZG1Bhk0iBbJ
-	70yJSMCj9zvgQqVnvqyrc/owkSP5Jpes8sH1p269S7+9Sw6I+XFUV7UbELO9fMxvPwXmkq/p7TR
-	9GUqRbLo7A90cO4/h/adN8ozHrrfCQmtBRl0zWUUDLGSupDjiNGQpLH0MTKuBtMmOVjPyWG09nP
-	XnNQ49ZKzxKVhH8NsnILE9jpBLXOmAQl/76/mu39jBj/d2F3KwLL7va4TIcdE0nd/VYSrH+620L
-	BYkb2ZrQwklP8b5SBXfkbTSL6VKXf0
-X-Google-Smtp-Source: AGHT+IGejCZdNQWYzzYKXyulx7D4hGO+/hfj3nCbt4DKHyJm8dB3hqEzCyD5AYyGNe1UabBQmO/UtQ==
-X-Received: by 2002:a05:6000:250c:b0:429:8bb2:d0ce with SMTP id ffacd0b85a97d-42b26fb47d7mr2445454f8f.18.1762537757448;
-        Fri, 07 Nov 2025 09:49:17 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63e07asm6575381f8f.17.2025.11.07.09.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 09:49:17 -0800 (PST)
-Message-ID: <690e311d.5d0a0220.2f18f8.2b28@mx.google.com>
-X-Google-Original-Message-ID: <aQ4xGRCSkjsVWQRt@Ansuel-XPS.>
-Date: Fri, 7 Nov 2025 18:49:13 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/5] dt-bindings: pinctrl: airoha: Document AN7583 Pin
- Controller
-References: <20251106235713.1794668-1-ansuelsmth@gmail.com>
- <20251106235713.1794668-5-ansuelsmth@gmail.com>
- <20251107-washstand-motivator-c5e5e5d30dae@spud>
+	s=arc-20240116; t=1762537787; c=relaxed/simple;
+	bh=4um+QvY1U7FK3/P4egf0S22SHqYdSsyehiBykKOwaPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HzrXon111O/5g2mD3aZa0UD3HVVPgqSIYFx1iRldysbjB0hfsjRjg6nRPwaWoNGvl/pBM40s0s/yut3qnLEQWCW45JDnXPzF1r1XIQU52zSSlEAjNy8U+X+W9bKi1entaGlRVLY4wSO2gTgkqncyqBryUlL1u8pgsEAIIYPlDwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgtM8UQ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA88C19422
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762537787;
+	bh=4um+QvY1U7FK3/P4egf0S22SHqYdSsyehiBykKOwaPk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fgtM8UQ6tuFap96NbjxmTxVx26BWnBfMP4tHZas82IdikHK+TfO/d8pNNuG82YZaa
+	 0A7p28XRiJnmtgvRCTG4W4Q/01RhvYdwV1gfAmpmKYj+Mw1aGEDPlX4S20YupaY0IB
+	 NgZruAYHrajuMeqI4hx4eHxBCAZzzPk7hR0qjNSnU0IK5xzsQeRIEd+eqChFVxP7au
+	 kz9RnTIvjIGCrRn71fLfm6OSueiUwP8TIsqflg9AZMwscLhI9MfWhYJb5AtFsDqsLO
+	 My2cv5NVBVL956I4PtiFKQ/r6QAvjEscpep7zgvqaPQK9PTpnYHpFXfIS8mqxvnSJ9
+	 GS6sKOxfbZ15g==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6567607bd65so179347eaf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:49:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUnCGs7yx7RBKWpFRYuosSCmlobfv4Ip2iaMo1z2fbgs/367hJUc+nHmlyWbTllJI+4UhCeVkNThF+AzPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmRJKEoGwqixkznloDz5jDeeQZ+SOY5JHnfgTBn2EtfLRxe1Bi
+	VFCwLorVs78K5xpx5TaoP9qh2broCvRETb/CpAIhXJYlbwx4qBgSj/38tpx4JI5i30RmKGZq9Ne
+	rW15AWYnsrljAsPvgsQURR06H0/TDF1o=
+X-Google-Smtp-Source: AGHT+IER87GrchrdaUz6axnPt/FyUNlukE+Gp8sAmwWRp2wquYizKIjc1M3C+vdg7NcaEPeF1EmIidtalAExy2+3dkg=
+X-Received: by 2002:a05:6820:2188:b0:654:f20e:2d0c with SMTP id
+ 006d021491bc7-656d877e349mr196570eaf.1.1762537786571; Fri, 07 Nov 2025
+ 09:49:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-washstand-motivator-c5e5e5d30dae@spud>
+References: <20251105093647.3557248-1-lihuisong@huawei.com>
+In-Reply-To: <20251105093647.3557248-1-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 7 Nov 2025 18:49:35 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gs4xVKv65NW8A7XPgAqwoM6B-izAFrkySjmgeoNqDirg@mail.gmail.com>
+X-Gm-Features: AWmQ_bldKVVUGi9avp8T4YJW3_2ZWJtKiIOiC9NPyBTLQPnjThz25EBo5eVHVE4
+Message-ID: <CAJZ5v0gs4xVKv65NW8A7XPgAqwoM6B-izAFrkySjmgeoNqDirg@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: processor: idle: Remove useless codes about the
+ verification of cstate count
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 05:24:21PM +0000, Conor Dooley wrote:
-> On Fri, Nov 07, 2025 at 12:57:07AM +0100, Christian Marangi wrote:
-> > Document Airoha AN7583 Pin Controller based on Airoha EN7581 with some
-> > minor difference on some function group (PCM and LED gpio).
-> > 
-> > To not bloat the EN7581 schema with massive if condition, use a
-> > dedicated YAML schema for Airoha AN7583.
-> 
-> You went to more effort than I would have here with that conditional!
+On Wed, Nov 5, 2025 at 10:36=E2=80=AFAM Huisong Li <lihuisong@huawei.com> w=
+rote:
 >
+> The acpi_processor_setup_cstates and acpi_processor_setup_cpuidle_cx will
+> be called after successfully obtaining the power information. These setup
+> functions have their own main role, but also verify the validity of cstat=
+e
+> count.
+>
+> Actually, the acpi_processor_get_power_info_cst will return failure if th=
+e
+> cstate count is zero and acpi_processor_get_power_info will return failur=
+e.
+>
+> So the verification of cstate count in these functions are useless.
+>
+> No intentional functional impact.
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_idle.c | 22 +++++++---------------
+>  1 file changed, 7 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 341825e8ac63..22909fccf0b1 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -732,8 +732,8 @@ static int __cpuidle acpi_idle_enter_s2idle(struct cp=
+uidle_device *dev,
+>         return 0;
+>  }
+>
+> -static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+> -                                          struct cpuidle_device *dev)
+> +static void acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+> +                                           struct cpuidle_device *dev)
+>  {
+>         int i, count =3D ACPI_IDLE_STATE_START;
+>         struct acpi_processor_cx *cx;
+> @@ -753,14 +753,9 @@ static int acpi_processor_setup_cpuidle_cx(struct ac=
+pi_processor *pr,
+>                 if (count =3D=3D CPUIDLE_STATE_MAX)
+>                         break;
+>         }
+> -
+> -       if (!count)
+> -               return -EINVAL;
+> -
+> -       return 0;
+>  }
+>
+> -static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+> +static void acpi_processor_setup_cstates(struct acpi_processor *pr)
+>  {
+>         int i, count;
+>         struct acpi_processor_cx *cx;
+> @@ -822,11 +817,6 @@ static int acpi_processor_setup_cstates(struct acpi_=
+processor *pr)
+>         }
+>
+>         drv->state_count =3D count;
+> -
+> -       if (!count)
+> -               return -EINVAL;
+> -
+> -       return 0;
+>  }
+>
+>  static inline void acpi_processor_cstate_first_run_checks(void)
+> @@ -1241,7 +1231,8 @@ static int acpi_processor_setup_cpuidle_states(stru=
+ct acpi_processor *pr)
+>         if (pr->flags.has_lpi)
+>                 return acpi_processor_setup_lpi_states(pr);
+>
+> -       return acpi_processor_setup_cstates(pr);
+> +       acpi_processor_setup_cstates(pr);
+> +       return 0;
+>  }
+>
+>  /**
+> @@ -1261,7 +1252,8 @@ static int acpi_processor_setup_cpuidle_dev(struct =
+acpi_processor *pr,
+>         if (pr->flags.has_lpi)
+>                 return acpi_processor_ffh_lpi_probe(pr->id);
+>
+> -       return acpi_processor_setup_cpuidle_cx(pr, dev);
+> +       acpi_processor_setup_cpuidle_cx(pr, dev);
+> +       return 0;
+>  }
+>
+>  static int acpi_processor_get_power_info(struct acpi_processor *pr)
+> --
 
-Well it was suggested by Rob and it's honestly a copy paste of en7581
-with the relevant thing changed.
-
-> > +patternProperties:
-> > +  '-pins$':
-> > +    type: object
-> > +
-> > +    patternProperties:
-> > +      '^mux(-|$)':
-> > +        type: object
-> 
-> What's up with this regex? Why does it allow either - or $?
-
-It's to permit either mux-* or unique node name with mux. Pattern is
-also used by mt7622 or other schema. Other use mux- to require a name
-after the mux.
-
-Example
-
-./xlnx,zynqmp-pinctrl.yaml:37:      '^mux':
-./xlnx,pinctrl-zynq.yaml:45:      '^mux':
-./xlnx,versal-pinctrl.yaml:34:      '^mux':
-./microchip,pic64gx-pinctrl-gpio2.yaml:27:  '^mux-':
-./microchip,mpfs-pinctrl-iomux0.yaml:33:  '^mux-':
-./airoha,en7581-pinctrl.yaml:51:      '^mux(-|$)':
-./mediatek,mt7622-pinctrl.yaml:72:      '^mux(-|$)':
-./nuvoton,wpcm450-pinctrl.yaml:64:  "^mux-":
-
--- 
-	Ansuel
+Applied as 6.19 material with rewritten subject and changelog, thanks!
 
