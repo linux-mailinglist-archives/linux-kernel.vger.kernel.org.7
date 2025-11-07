@@ -1,576 +1,307 @@
-Return-Path: <linux-kernel+bounces-890790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7609DC40F8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:01:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D695C40F95
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:02:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33E8B4E4730
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:01:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D2674E405B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BCE2248B9;
-	Fri,  7 Nov 2025 17:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4517F32E121;
+	Fri,  7 Nov 2025 17:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdQXNdel"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PFF3m0Ga";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="RfMP5rRs"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469D92550CC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762534895; cv=none; b=gJguoZn5yp3GlLmvQ/UNyvCNnr3bPPmgI6wZEH6eTk0s3XJBap5/oBNHFeNoNp7wLSXoUzYqAzD6/2Lr/gV+x+xjT4sM6kJlLOm4pjCb8/MyGvCPpNJd6BXSPZUc0Zq8ZsemcMvXlHkFqwJQ1dFcgdFoH7oIuduVmDtfhYVwwyE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762534895; c=relaxed/simple;
-	bh=GM7SPfN52Ses26OPuBQa3rGRjtd6PY/Ix2XTZQu3RmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2tLaNWOfxUbGIxUyMRmpsYuU5O182zzhNAQcjydvAyYNBY0X8+WwS5pMQOyPcdrpkZAoR5hZK03pzaipoy5TxL8UFc8z5sTVOfKwK4TUiuwMYHSRX7u61t3N8njifih2LPtUB2CAJI24K9g1Qnv1jNlQwjG4T3yFeD713bntw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CdQXNdel; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-341d07c020fso1219162a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:01:33 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4CF19C556;
+	Fri,  7 Nov 2025 17:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762534946; cv=fail; b=sT3SEJ/OpA36J3r/LmOwe+UUNy3s6EdJ1mT5L19JDZ18CpOyKLGqwkRsSJo0K8leGcOHIMzuRnZYySpEe9/jzmUSZRvxPMVpU17TotAZEEhh2UCPy4uGEEpzuvWQ8OR7ZZcJJw46dL2U+X4M+2/UXStsjUfjW6KlK50FyktZv3o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762534946; c=relaxed/simple;
+	bh=Afax1b1JfgQBp1PaT6iF8kgFHlAgp8xONSGtpUF01Oc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GWE/A1qQ6aTPcPgLTGDXlyjnkshk7YQ+lyBFxi0yJWigkCn8J/mCat3yjIjoJ/k3myuLFAyEnAVt/Ku4kOEF6OsMsLDsG+8Aiw0pDxMwWDSVRsSKB78tjoIsc+/PLD+1B5UF6k+MpU4E9v70zIqa/p/EuBQHv5nhBplaq9Aqa6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PFF3m0Ga; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=RfMP5rRs; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7FLndU010110;
+	Fri, 7 Nov 2025 17:02:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=hc6SCFKnAYHANwDXfYiYw0JP6+xlAkFMSPoronrPXy4=; b=
+	PFF3m0GahibfJhkkKgxGAbhYvnuVm3+5oJYz1GL/qo0+sN9qe7zxZpXbL47kIX+o
+	Y6ySoK6wJrP71Ob2Cf19F3HiBimwFMnVvWyijKDf8qGxgJGD5zhXnbjQQbj1+rHR
+	uyZ9BxPchw7PA+vMBEKnf4jLdV6DJ1qT3oem4/tNVyrDdltIflb+FumQsExkUvDu
+	jXd+scvlh/SshOS+QzMM7KP0BSTFezADiENefTsJey8Lh6qkZAtu9sva04c3f102
+	C0Gln1mfQPf3eGIYZsSRkO0vPF//cWbdFojTOTvTbQUWJTcig258xYz038XFFoWK
+	ktQanTHBfInGZfanmCPi7g==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a9jgk8bmb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 07 Nov 2025 17:02:07 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A7GAFOC010927;
+	Fri, 7 Nov 2025 17:02:06 GMT
+Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010013.outbound.protection.outlook.com [52.101.201.13])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58ne11jb-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 07 Nov 2025 17:02:06 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R5bCgaQhv4zkZ8rz4mGv1fchO0UBil9sD+erv8kkyCijKHuhdNpECSelmWoG19GLKvF+w0QxpkAywN7bU8abyJB9/ByERCdkf+Femjwi/pNZESbB81Cr6n/isNDEHaRIgZA8Z8k9ytQ6kh0E21BsXNPdIQucC2U2x+yvCTg6mfOnOVoUsrQzODJ1P1/fXwxpRDFpzYofWNx0Qnl6WdThwXap9P2Cu68UxAX5PXDrwseDj9tsnziWUCj4jJOUpCQ2DAPivvkA7X4uO16lWwrlXxY7G2HG+XistzjC+8wXuK05KgXIijE+mfDtiktHPNhi4JPQDJwgR4DxaIVLOuGrBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hc6SCFKnAYHANwDXfYiYw0JP6+xlAkFMSPoronrPXy4=;
+ b=UhMyhsqV6gG3FdSKbt4PDoVS7Pwtv9OZX4PXe3pD25sWmdcV3TiH8jL+Uelo0mxhD07Vg9m6ICtHGsW6JJ7XPNMKZ6TviJL+neR3nhIoJOM4gEwMiJb96VlYtzDsladGpP1SxAt85vpxGbFmjQKri8Z74fjswsRSlDbqv2FSZV7SXF49Kdo4OqWZ4vCGPRzYCM5ZYeR6kXsUdaieKJZ3IEasURmE66WApodfR9uL7clAEPcIjzYQsq1JxJ+42fYjFf6OVGabmDci3S/WsepyHr8XsFB5gFHNw9QRqVDBV2Y0LWkBmjduqQ84XO69Kqcyk8QBNoj8hOorye0CrywIZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762534892; x=1763139692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bygAiAYoGVe+goQzAtu958UIZ0W6fj/x5ogX45PGIco=;
-        b=CdQXNdel7Uwo7oZzbrZlEweBKE0dZC5aEaYsS9DMXxlRmGbvLnAs06g85p89FGnkzK
-         ZB+J0eZI9PQ/0XdfKz9J7MEJ1EiOqARPM8QIOl6XZGKIeg9VG1fUggIpmnHSCClrOcbT
-         Px+X1xDIfnZDXMSFjtZNqEJsvY7Umn8IVrFLLYefgugozB7fCZdccfB2RbJN7rurEn/H
-         6MQ1lx/R0mMsFsQIGKzajfZN5j5vWA62YOnqdFBSiS0j4IrglOfYc46DLDjCXKiE5rXT
-         f70MjM4rV3MoMquQFEUOm/9P8g/oL4QHqGn4i3vQFKUAL0s+tqcqgoGtEL6gEZoVZMfY
-         9VWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762534892; x=1763139692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bygAiAYoGVe+goQzAtu958UIZ0W6fj/x5ogX45PGIco=;
-        b=rcnnzEswgV0w2D/WEQ26iEZ2SW6MdL38GT3S4a8jPkRznF8y3q3yYtEBicr3sgi7L7
-         asf1GyikDSKC5zdp0Wd9HndJQ5TWn/VmiDgqD+NMBrEB7OmcBRVERM4g1+0KHV2FjG87
-         uSdZUpHqr+gAplYTeFlfb13EJff0vJrjdDg7aoVcFqO/vLL0DbBSfQTQV8lGuphHQWTG
-         W7IBQAERBVSslll7QC7hbi+F1CHFZkLR5+7yl04YAZZx0aXkQI4Ae3DlcTuCRLRaTvXx
-         r4Wiky+uawTgQXDqkfa/rPBSxyb5pG5trQcH7ePdF6pybgcLqWMKesf88kqs3rZscPgR
-         h2zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCZKNW3PtRTxr7MpU8AQy3civES51vt6CU9y3Flu4PbGV0LGUjh5y5HeYVxalG7qEw1e30TyNoLpu5XdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLYKWEa42G/CO7bJ0mAfT7CwTppDhS5eR1Uae6lk+cfPQpE+P+
-	loHA99dvZGAcAJe6h3NBgCkLbMDABv0dHvK9MXbSvPD17URL2sER2Qf8vUpDM+NVB4fmRaAsbUq
-	fyRgvdOz8pQ3uCv2wGKK8Vz3frGSmlWc=
-X-Gm-Gg: ASbGnctfNaZNBwinYGqUEloXFdgqqEvVBFx2WaJLKWm/1gM68G+37/tzZ8NZ+ZPA6E8
-	dmWZeEaAGh7jSINu47w/6BpJncDHQD/pm94wQ2kalt8H55YHeFhGvIW9/RaDmY7VzytaWpypmkt
-	v9kSD/7Cx2s9OQE/x45ju68eZ860mLZ2yEDvbCQ2Z72xSh7RMJWiiaBgKPUDLSrNbtWNXpvKICM
-	WkpPzVUilG7JUAA0iW1/ZTpSaxtVX5TQZe5wulF4vBwhrspGJZEmvQanv2LcStvCTzxoiPk2YBN
-	Q9nweX+F5d8=
-X-Google-Smtp-Source: AGHT+IFG+8Ro0rIQVuqPbpk1vyl4Kz8NAkIbE/TzTMmzuxjLq+NvJUAcN4SpVnMs+8gsYW0Ep7C4fEtGoIjzBCIEwVc=
-X-Received: by 2002:a17:90b:51c7:b0:341:88c1:6a7d with SMTP id
- 98e67ed59e1d1-3434c575a30mr4128211a91.18.1762534892323; Fri, 07 Nov 2025
- 09:01:32 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hc6SCFKnAYHANwDXfYiYw0JP6+xlAkFMSPoronrPXy4=;
+ b=RfMP5rRs+FdmnfBfF4BprofuAdm+4SLydOPIQwSw7DI+3J9yQguL531Q6ev2uAtNH89K1CmkrVfur9P0SNopbStoV2+7BXW4xlapYlQkOBgF7/SGoXkWSuJ7o9pQLRzExJJRrNuQ+VNE0127ROZSxAhwHU7erq3KBl6/9sX+VpM=
+Received: from MW6PR10MB7639.namprd10.prod.outlook.com (2603:10b6:303:244::14)
+ by MW4PR10MB6559.namprd10.prod.outlook.com (2603:10b6:303:228::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Fri, 7 Nov
+ 2025 17:01:56 +0000
+Received: from MW6PR10MB7639.namprd10.prod.outlook.com
+ ([fe80::69ee:3509:9565:9cd6]) by MW6PR10MB7639.namprd10.prod.outlook.com
+ ([fe80::69ee:3509:9565:9cd6%4]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 17:01:56 +0000
+Message-ID: <951587b1-0c60-4ea9-9594-b279e8a19e5c@oracle.com>
+Date: Fri, 7 Nov 2025 09:01:53 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] NFSD: Fix server hang when there are multiple layout
+ conflicts
+To: Christoph Hellwig <hch@lst.de>
+Cc: chuck.lever@oracle.com, jlayton@kernel.org, neilb@ownmail.net,
+        okorniev@redhat.com, tom@talpey.com, alex.aring@gmail.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+References: <20251106170729.310683-1-dai.ngo@oracle.com>
+ <20251106170729.310683-3-dai.ngo@oracle.com> <20251107132949.GB4796@lst.de>
+Content-Language: en-US
+From: Dai Ngo <dai.ngo@oracle.com>
+In-Reply-To: <20251107132949.GB4796@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR04CA0017.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::22) To MW6PR10MB7639.namprd10.prod.outlook.com
+ (2603:10b6:303:244::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104134033.344807-1-dolinux.peng@gmail.com>
- <20251104134033.344807-4-dolinux.peng@gmail.com> <CAEf4BzaxU1ea_cVRRD9EenTusDy54tuEpbFqoDQUZVf46zdawg@mail.gmail.com>
- <a2aa0996f076e976b8aef43c94658322150443b6.camel@gmail.com>
- <CAEf4Bzb73ZGjtbwbBDg9wEPtXkL5zXc3SRqfbeyuqNeiPGhyoA@mail.gmail.com>
- <7c77c74a761486c694eba763f9d0371e5c354d31.camel@gmail.com>
- <CAErzpmtu7UuP9ttf1oQSuVh6f4BAkKsmfZBjj_+OHs9-oDUfjQ@mail.gmail.com>
- <CAEf4Bzb3Eu0J83O=Y4KA-LkzBMjtx7cbonxPzkiduzZ1Pedajg@mail.gmail.com>
- <CAErzpmtJq5Qqdvy+9B8WmvZFQxDt6jKidNqtTMezesP0b=K8ZA@mail.gmail.com>
- <CAEf4BzZsgrKWwTZkdv-WviXvGkhV-ZyQbpb8wDqBGNventuRcg@mail.gmail.com> <CAErzpmu_FD_mHcU4uL0XpNU00XngY-1vN5OkKcBBfH2Mr-vY9A@mail.gmail.com>
-In-Reply-To: <CAErzpmu_FD_mHcU4uL0XpNU00XngY-1vN5OkKcBBfH2Mr-vY9A@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 7 Nov 2025 09:01:20 -0800
-X-Gm-Features: AWmQ_bnqoKZQ9c2DjsTg9bHiyuq6B1Oczjem5tiKPMJ4O3S65J_RjJn5PgM8Kmc
-Message-ID: <CAEf4BzaqEPD46LddJHO1-k5KPGyVWf6d=duDAxG1q=jykJkMBg@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 3/7] libbpf: Optimize type lookup with binary
- search for sorted BTF
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>, zhangxiaoqin@xiaomi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR10MB7639:EE_|MW4PR10MB6559:EE_
+X-MS-Office365-Filtering-Correlation-Id: c73a823a-b32f-4a0a-7354-08de1e1f5b46
+X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?d0cwVzV6cHVnZ2lDL1I4RitpV1NkY3ZPSmNHbkhiUVEyTVhDcms2NlRxc0Js?=
+ =?utf-8?B?Q1VIWWhMNWlKTkZHWHFZcy9SWEo5a3hham1FYkt6TmFqVllHSVc0VW84dFdq?=
+ =?utf-8?B?cFp3RXI1UDNBSGZWZytCTithT3BiRlJPdXVQd25JK1NpUWpqS0pvVm1WSU1K?=
+ =?utf-8?B?ODd5Y0Z2RVNodTdnMmdGeEd5UVI5ckNuOXhBSzd0KytOUmRDKzZmaHhhbHNT?=
+ =?utf-8?B?L05aa0xnN2JVcjgvZXhwZ0U4aldtK1hwWUJOd2h6VnhWazMrdFRxTDltRGVB?=
+ =?utf-8?B?V3NBbktOdUNCOHBZcTM4THJSRVJHcXRPN2pTOHEyZFdoYnMyeTBBTCtCZzBY?=
+ =?utf-8?B?ckF1YXpxd3phTnlwSDhTK2dqeWVmMG1rRWNzMTNIcU9vbmw0eTJNN213SkpK?=
+ =?utf-8?B?cUN0dVpraXkyT1VsbHJTNCtveWtTcTVEN2NrUkFMYkRyMzljYWI3N0ptYXFY?=
+ =?utf-8?B?RG44eDlTSUZ6dXBqWXRnNHE2WnFTNnRyTjFnbk9VM0YrWDRvMVpibG1iaFNF?=
+ =?utf-8?B?ODN6VzQ3YUF1TTQzZ1lUbm9HU29jQld4RFBqMzBwaUh4ZlR0cVNuc2xDMklm?=
+ =?utf-8?B?UE1oZWlPT1BTU1VRdUVvL3N0RmRWa2NEb2dKcktiTnFTMU1HMDg4a1FvcUoz?=
+ =?utf-8?B?QnMyeS8xOXArSWVSVHlnbzhBYnFRTDk1YktRWitVQ3ZVK3VvOUdGMzdLdjJ0?=
+ =?utf-8?B?UUpLbllUK2NqRVcrZmNnY2hvTVJsKzJuKzBHdXFKMFFxOTV3dkMrUzJOR2RP?=
+ =?utf-8?B?eStuSVpFNENlbUV6TTVnZjRENnJDWkE0Zkg4bFBVTVVIYXkveTd0eGhXWXZz?=
+ =?utf-8?B?dzJNUktWaFpNRE9HbVM2bmR3QUJxM3NvSWpHcFRNaWM4WkZLOHJvN0ZKUUVq?=
+ =?utf-8?B?aTZXZlIySkhoZ05zbWx5SnJXK1YwV2ZPR05QUU42K2h4U3p6dFptN2hJUFFR?=
+ =?utf-8?B?azBVOGg1SDAvVTJOMTdPYng5UHJpSjBxU1UvQ1ZMZ21KemYyVDdlS1NWQ3g4?=
+ =?utf-8?B?ZnpFakV0elJIWHdFbzFiODl4Sjl0c2ZKL3ZDdE1yaXluVzBVbnJBTXRocGZx?=
+ =?utf-8?B?OWsweDVTVFpxVzlVV3lpZExkaDBON1VmVVFybjdBQWRVNWZ1ODVSL3R6Nk41?=
+ =?utf-8?B?aExOQUpJZFJlY0dncWk3ckFiNGovWWRRRm1VeGtaVHdXcGY4OVZxMEc4WjNi?=
+ =?utf-8?B?RTdLVEZyU3hFL0lYY094K3hhWjA0WkxnSzZBQStoMUVNNmVxNzljekN0cU9j?=
+ =?utf-8?B?UVBTQUtpUmtjZ0xuK1RJb0FpTkhKaXc5b2lsaUdVWldYdFE2ZVNyZVlacHV4?=
+ =?utf-8?B?L09TRmNKUjlnSzQzcG5GSXlIS0xKNWdtSVhiNVpURXU2S20ya2Z2b0dIQWc2?=
+ =?utf-8?B?V3hoVXNiMk1tMll2NlhUc1FZWDlLRnREZXRKS3V4RW0yVnI5b0tLb3FPK2tZ?=
+ =?utf-8?B?d2E3MnJwNi9rdENBZnRJYVNETXJYdnJnRkVwbU51Zjk2Qk1RZHNmUWRGVnVm?=
+ =?utf-8?B?SXZSRGpPNGFRRkZLdE5XVGEwdTMwcFU1aCtpZndFdEZOMFI4K2lYdENzaElN?=
+ =?utf-8?B?RTFyS2U5RlI2dlhEYzhRaGcySWJ6cVY3Y0RleFpRZk9Hc1BUa010SmFWVWZr?=
+ =?utf-8?B?US8vcnl2dzFBNVV2SGxWY0ZiZ3lnS0pHS2RHdkMreE1hNXh2TkI1YnhKMWRC?=
+ =?utf-8?B?UVFVUUYrSThLWGJmVWJ3OWdVdjZyeUJiQUMyaGU4VWphVFFaRHYybkR2Q3Rl?=
+ =?utf-8?B?SWl6M1pQOHFQYzljWm1TUm1leWxQcFNWM0c3NGIvU1dET3JBaFl5OU9NRTV4?=
+ =?utf-8?B?Y1Z2TENNZXFBSzdwSTdrdXlSZEFvUWNqcHZXZnhzTEhKejJ2WnBSOVZBcklh?=
+ =?utf-8?B?Rmw1dld6TzhubWxRV04wWFM0ZUtOZzVTNmVCRFYwS3drelZLbThyTXNsUlRJ?=
+ =?utf-8?Q?p6a8IdNp1cUbxMGvRhuM+17ASHYAa49M?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7639.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?ZHRGS3I4dDRlSVlLM0U4OXNRVkRmM3EzM3lCWVYyQUZ6bXFsOThHMndxTTVL?=
+ =?utf-8?B?R0NtZXpiZmVhRUFlWWRvM3pKMnkrR1dvN3dXYkJUWXZhOWtISUtVTkhyc1dq?=
+ =?utf-8?B?MFJrVEpieXNZbG5CSDg0MmZUR010MG1maEM3Y3RLS2VBZml0V2xEMTZHcDRn?=
+ =?utf-8?B?c0xtWFRXc2ZYakswcWNCRUR4MDZkeWdhWjFhdU00dUZTMHVQYm1MbStmVm1F?=
+ =?utf-8?B?M3BReUs2ZUY4b3FmMm1nU1ZoVWw5cmYveWtiMnNiQ2F5Q0V4TGlQa1FkZTdR?=
+ =?utf-8?B?M2J4aFgxQS8vYm5IdXZyb29kR1FxK1dwQytIOW81YWErUFdQR2g2dTVSVDBR?=
+ =?utf-8?B?U2NrZGJTUTJlKzJPMFFpUUdONFVPdnhyWWJKcks1b3Bva2lZN2xjVUdlalZv?=
+ =?utf-8?B?eE5LUDFhS3pHTTNQMlRhU2lvZ1c0cU9talczT0ZmcUtSWlhvUWJBZ2t0R3J1?=
+ =?utf-8?B?YkhzeGxidFZ3enVzQzhBNEpwTlk1ejBsRndxQ1lrcDdkcmpnQ1BSU1ROSnJr?=
+ =?utf-8?B?R0N5RCtjT2M0VGZqdXNONjJXSmg5Z2VyZVZ4VXA4ZGttYmlxZGJPV2NwcE05?=
+ =?utf-8?B?cDJZNWd2RUpOMFVIZWtnUEl2V3J1c3NLWWc1dTVzUmZsOUtoZ0d6cmFZaDNF?=
+ =?utf-8?B?V1EvMGlPVE5MUGl5eDU3eGF4WFJNTDRWV0Jsb1I1R3UxelRtRXk1ZlhnOEEz?=
+ =?utf-8?B?NW51UjcvdjBnV0tXbHkvaGs0Y0JGVEFUaGJVSmFWcEl0ZmdpVk5jYzVyRk0v?=
+ =?utf-8?B?VHVEejJIeVpZN2tyUXAzb1RYd0hTcVk2T0FIMEdDelNqZTZCcXV1dklaMkpn?=
+ =?utf-8?B?SUIzMzdaRHZ6aEhsVFZkbHNGbU40NTgvRkI1THgzVHRrWWMzeStENTY1MCtF?=
+ =?utf-8?B?WnRBRjNPaHJ3eldDS1pnYnl1ZnB2czdwb0t6RkNQU0ZweXkrSmJ0UXFNdEJD?=
+ =?utf-8?B?dGMzZGd1VXBieitodmxoenA1clVMZFdFc3k1dWNLbVREOG1DbUtBUi9PYTl1?=
+ =?utf-8?B?dzYvOTF5am9aeTdxaTRLaU9xbnNYTGxscWcxMkNIZVpVVVhOSDRxczlIZ3pn?=
+ =?utf-8?B?V0g2YlNIUTN0RXJuTXhSY3BPM1Z3WUhVWjVVbHlNZU9OdGZNOFd3VHlKV2Zt?=
+ =?utf-8?B?OGJzclFXMzJOL2dXSnVacTZOSFF4N3JOYURYSDR2ck0wck4ycGMzR2RlenJn?=
+ =?utf-8?B?TXVOSUx0cVNuWTI3NXo4UEg1YS9ERTdDYmU1ZFMwVW9udmlIYytqemwzc3do?=
+ =?utf-8?B?bGd2RjQ1NXZxZ293Kys4aDBNYlRqTEtEK0dma2Q2L0RML0M2QlByTGdJWXZD?=
+ =?utf-8?B?TE9rSENzK0dONjhLS3d6Tmw2WE5JaVd1ajUyUTlmTzh3Ly9SaHdqcXBVTVJK?=
+ =?utf-8?B?TnFxMis1cWRIOC9JTU5QSjVrQ2lNcjB1YWxia1hROGlPMXhLUGxvMHFkVVJC?=
+ =?utf-8?B?bHMwVWo2T2Vtb21BdzlLTWtpcXJFOW1xcm96Sm9SUnJrbHM0emFPN1ZwOGVU?=
+ =?utf-8?B?ejBwVnhJT3JiUE5vdWcxa2oxc25UUGtWZFBqY3VaRjBZMkEyZVBBb29qRm1M?=
+ =?utf-8?B?aVBXRTMxZG9QTWlVTzhUZ0FmTXBJY0tHL1RSUjNUVXBpS0ZBQ256RUtDUHBp?=
+ =?utf-8?B?ejkzNzg5eDdNUDMvTjE4YVcwUWNHSUpDSURlK3NXanFCTjMvbEVNK3JnVVZY?=
+ =?utf-8?B?Ym9INlhpOHl5RVhVazVHa0pLM1AwTVhFajVvZDJXMFQvaGRiaENvZmY4Zktn?=
+ =?utf-8?B?ckFQa25aR21pRGQwUk85VzZHcGZ1THVGcThtenZ4d3hHamoySnhqV3liMTdI?=
+ =?utf-8?B?RUJoM21QQWNNYkp2UC9MN0pXeXZmR2h4Zkp4S2xDaElTeTcvUThDeW5yV3Bm?=
+ =?utf-8?B?eCtnaEZMNHJTVnBvQVNYYTE2RkFYNHIwNnp3QTNQRWtsZlh3L1BDTDJRVDZK?=
+ =?utf-8?B?bUtmdTVCQlI3SlI0NHNRT2cvMTlGQmxMenpoWFZDU3QrQStjbkdwdVUwOWh1?=
+ =?utf-8?B?ZXVydnNBMnNEZnU5WDh2WGRtNkIzUXU0MkE0cVd3YkRUanJ1NlpOWHZCS3ZP?=
+ =?utf-8?B?ZG8vRTdsR0h3ZnMrd0hMZCt4Y3dKaXExRW1uOU1Jcnltbk9MUWNyUlBORTBn?=
+ =?utf-8?Q?/1+slcbvxdYJ14yYCN9lpvl3W?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	e5tNpMijTFw9AS5yn3HTt0xiZisxQy5L13/G4BtruB5hU9kHQmFUVdpPRjG942Y6yl43/XE99y1kibt0Q5T4fLEOR0eamLjkyuMGHLU5DogT5jAFu+TlL5f2TINC/vhKZXhxaaApmk1sp4tiatNfWUVehkA0nbZWFioYD6CQW9B8BOPgcE3Z/PvGqY2E1r5TSa0R9LRiYpdunUV/ZTwaUyc4DN+2For3aoYxb+tA4R5q4JwCfmcQhyrdlDeSjPOsagGQzOqCSc8dzrW/tP8StHHMAruq83jwdbEurAvSdJU6guU8oFSzRr/L8EGUdfWPNHke7Jd0hE/XTgySjzAHtTF6MCKPZ/skNSUlnE3G1gfA9Ubz+b7tPTi4+aCzn6nsb598Wb1cygi3WYPYVlnTIoAHL30N5ZGfg34udxtqtgyC//5p3QusTQysAxV8jU6b8gTG5NsQmsMhmacXY+rn9R9iL+a7euEQDOtXyEdC7+W0BGCi2A1kApZO/Iw2+reNZtm4FYxv6W6A2jraRcxV4y5NX3zgH4w6nZ4LWRDCo9mfQ1yzhCXQml6ffz6C2U2ptJWaPKlp+hixkb7x1Xgo9WODtqBFTUjKLS1O6eP5vTQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c73a823a-b32f-4a0a-7354-08de1e1f5b46
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7639.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 17:01:55.9280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yhBvUt1NlXWwrqn/Z31C5jGqsfSPW85GsUlUxYYDcVUpRGf0IKCY9VvfrYf4e6WqdRjPJivYCc3YZUDN/B2ZRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6559
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 mlxscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511070141
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDExOCBTYWx0ZWRfX2jTYh0h70bo+
+ yVH2oK0QEC7EZ0KF7CZJZKD8u9yS3LHnguIFMuk1TZfAzdI1mTkkmO6NTTt6a6FMRwj5W/I+jzK
+ A85fsYHsgndmdgG6yBgtRUB4sYQ0lNdfdlHHLilR6YkJ75mDejajw17bFJxTIt3sV4VkKGEMlgd
+ af2tNJ5oLffw6LrID4d55DGWLoE5iuvvhYbUlPwpDjUpSDza8Kk7pZAejImBTySoYXQqBHN5ZzC
+ 4JqeJMXwLFVKow6PYXpy50LDbFK4qb/ErDIYl82oL0lUYaOB5RNKKBPcaYKlZQaSv+P5RXSEGHV
+ ztVg8A2YbVuUTC9w7ppQKv00bWN+YsdLiLTUi0mrPztVXkELk2kebWX4mxyjShWirzPnPj2Cx1T
+ 6bLMRcbM1TXvAXjbUyaPfbvc8fZdmw==
+X-Proofpoint-GUID: qFYzs4WL9pKOlv7-QUjwQ96fo5tblvYL
+X-Proofpoint-ORIG-GUID: qFYzs4WL9pKOlv7-QUjwQ96fo5tblvYL
+X-Authority-Analysis: v=2.4 cv=Utpu9uwB c=1 sm=1 tr=0 ts=690e260f cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yPCof4ZbAAAA:8 a=9L22TkAaFcIsdpkdzAQA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
 
-On Thu, Nov 6, 2025 at 8:57=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.com=
-> wrote:
->
-> On Fri, Nov 7, 2025 at 1:31=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Wed, Nov 5, 2025 at 11:49=E2=80=AFPM Donglin Peng <dolinux.peng@gmai=
-l.com> wrote:
-> > >
-> > > On Thu, Nov 6, 2025 at 2:11=E2=80=AFAM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > On Wed, Nov 5, 2025 at 5:48=E2=80=AFAM Donglin Peng <dolinux.peng@g=
-mail.com> wrote:
-> > > > >
-> > > > > On Wed, Nov 5, 2025 at 9:17=E2=80=AFAM Eduard Zingerman <eddyz87@=
-gmail.com> wrote:
-> > > > > >
-> > > > > > On Tue, 2025-11-04 at 16:54 -0800, Andrii Nakryiko wrote:
-> > > > > > > On Tue, Nov 4, 2025 at 4:19=E2=80=AFPM Eduard Zingerman <eddy=
-z87@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, 2025-11-04 at 16:11 -0800, Andrii Nakryiko wrote:
-> > > > > > > >
-> > > > > > > > [...]
-> > > > > > > >
-> > > > > > > > > > @@ -897,44 +903,134 @@ int btf__resolve_type(const stru=
-ct btf *btf, __u32 type_id)
-> > > > > > > > > >         return type_id;
-> > > > > > > > > >  }
-> > > > > > > > > >
-> > > > > > > > > > -__s32 btf__find_by_name(const struct btf *btf, const c=
-har *type_name)
-> > > > > > > > > > +/*
-> > > > > > > > > > + * Find BTF types with matching names within the [left=
-, right] index range.
-> > > > > > > > > > + * On success, updates *left and *right to the boundar=
-ies of the matching range
-> > > > > > > > > > + * and returns the leftmost matching index.
-> > > > > > > > > > + */
-> > > > > > > > > > +static __s32 btf_find_type_by_name_bsearch(const struc=
-t btf *btf, const char *name,
-> > > > > > > > > > +                                               __s32 *=
-left, __s32 *right)
-> > > > > > > > >
-> > > > > > > > > I thought we discussed this, why do you need "right"? Two=
- binary
-> > > > > > > > > searches where one would do just fine.
-> > > > > > > >
-> > > > > > > > I think the idea is that there would be less strcmp's if th=
-ere is a
-> > > > > > > > long sequence of items with identical names.
-> > > > > > >
-> > > > > > > Sure, it's a tradeoff. But how long is the set of duplicate n=
-ame
-> > > > > > > entries we expect in kernel BTF? Additional O(logN) over 70K+=
- types
-> > > > > > > with high likelihood will take more comparisons.
-> > > > > >
-> > > > > > $ bpftool btf dump file vmlinux | grep '^\[' | awk '{print $3}'=
- | sort | uniq -c | sort -k1nr | head
-> > > > > >   51737 '(anon)'
-> > > > > >     277 'bpf_kfunc'
-> > > > > >       4 'long
-> > > > > >       3 'perf_aux_event'
-> > > > > >       3 'workspace'
-> > > > > >       2 'ata_acpi_gtm'
-> > > > > >       2 'avc_cache_stats'
-> > > > > >       2 'bh_accounting'
-> > > > > >       2 'bp_cpuinfo'
-> > > > > >       2 'bpf_fastcall'
-> > > > > >
-> > > > > > 'bpf_kfunc' is probably for decl_tags.
-> > > > > > So I agree with you regarding the second binary search, it is n=
-ot
-> > > > > > necessary.  But skipping all anonymous types (and thus having t=
-o
-> > > > > > maintain nr_sorted_types) might be useful, on each search two
-> > > > > > iterations would be wasted to skip those.
-> > > >
-> > > > fair enough, eliminating a big chunk of anonymous types is useful, =
-let's do this
-> > > >
-> > > > >
-> > > > > Thank you. After removing the redundant iterations, performance i=
-ncreased
-> > > > > significantly compared with two iterations.
-> > > > >
-> > > > > Test Case: Locate all 58,719 named types in vmlinux BTF
-> > > > > Methodology:
-> > > > > ./vmtest.sh -- ./test_progs -t btf_permute/perf -v
-> > > > >
-> > > > > Two iterations:
-> > > > > | Condition          | Lookup Time | Improvement |
-> > > > > |--------------------|-------------|-------------|
-> > > > > | Unsorted (Linear)  | 17,282 ms   | Baseline    |
-> > > > > | Sorted (Binary)    | 19 ms       | 909x faster |
-> > > > >
-> > > > > One iteration:
-> > > > > Results:
-> > > > > | Condition          | Lookup Time | Improvement |
-> > > > > |--------------------|-------------|-------------|
-> > > > > | Unsorted (Linear)  | 17,619 ms   | Baseline    |
-> > > > > | Sorted (Binary)    | 10 ms       | 1762x faster |
-> > > > >
-> > > > > Here is the code implementation with a single iteration approach.
-> > > > > I believe this scenario differs from find_linfo because we cannot
-> > > > > determine in advance whether the specified type name will be foun=
-d.
-> > > > > Please correct me if I've misunderstood anything, and I welcome a=
-ny
-> > > > > guidance on this matter.
-> > > > >
-> > > > > static __s32 btf_find_type_by_name_bsearch(const struct btf *btf,
-> > > > > const char *name,
-> > > > >                                                 __s32 start_id)
-> > > > > {
-> > > > >         const struct btf_type *t;
-> > > > >         const char *tname;
-> > > > >         __s32 l, r, m, lmost =3D -ENOENT;
-> > > > >         int ret;
-> > > > >
-> > > > >         /* found the leftmost btf_type that matches */
-> > > > >         l =3D start_id;
-> > > > >         r =3D btf__type_cnt(btf) - 1;
-> > > > >         while (l <=3D r) {
-> > > > >                 m =3D l + (r - l) / 2;
-> > > > >                 t =3D btf_type_by_id(btf, m);
-> > > > >                 if (!t->name_off) {
-> > > > >                         ret =3D 1;
-> > > > >                 } else {
-> > > > >                         tname =3D btf__str_by_offset(btf, t->name=
-_off);
-> > > > >                         ret =3D !tname ? 1 : strcmp(tname, name);
-> > > > >                 }
-> > > > >                 if (ret < 0) {
-> > > > >                         l =3D m + 1;
-> > > > >                 } else {
-> > > > >                         if (ret =3D=3D 0)
-> > > > >                                 lmost =3D m;
-> > > > >                         r =3D m - 1;
-> > > > >                 }
-> > > > >         }
-> > > > >
-> > > > >         return lmost;
-> > > > > }
-> > > >
-> > > > There are different ways to implement this. At the highest level,
-> > > > implementation below just searches for leftmost element that has na=
-me
-> > > > >=3D the one we are searching for. One complication is that such el=
-ement
-> > > > might not event exists. We can solve that checking ahead of time
-> > > > whether the rightmost type satisfied the condition, or we could do
-> > > > something similar to what I do in the loop below, where I allow l =
-=3D=3D r
-> > > > and then if that element has name >=3D to what we search, we exit
-> > > > because we found it. And if not, l will become larger than r, we'll
-> > > > break out of the loop and we'll know that we couldn't find the
-> > > > element. I haven't tested it, but please take a look and if you dec=
-ide
-> > > > to go with such approach, do test it for edge cases, of course.
-> > > >
-> > > > /*
-> > > >  * We are searching for the smallest r such that type #r's name is =
->=3D name.
-> > > >  * It might not exist, in which case we'll have l =3D=3D r + 1.
-> > > >  */
-> > > > l =3D start_id;
-> > > > r =3D btf__type_cnt(btf) - 1;
-> > > > while (l < r) {
-> > > >     m =3D l + (r - l) / 2;
-> > > >     t =3D btf_type_by_id(btf, m);
-> > > >     tname =3D btf__str_by_offset(btf, t->name_off);
-> > > >
-> > > >     if (strcmp(tname, name) >=3D 0) {
-> > > >         if (l =3D=3D r)
-> > > >             return r; /* found it! */
-> > >
-> > > It seems that this if condition will never hold, because a while(l < =
-r) loop
-> >
-> > It should be `while (l <=3D r)`, I forgot to update it, but I mentioned
-> > that I do want to allow l =3D=3D r condition.
-> >
-> > > is used. Moreover, even if the condition were to hold, it wouldn't gu=
-arantee
-> > > a successful search.
-> >
-> > Elaborate please on "wouldn't guarantee a successful search".
->
-> I think a successful search is that we can successfully find the element =
-that
-> we want.
->
+On 11/7/25 5:29 AM, Christoph Hellwig wrote:
+> On Thu, Nov 06, 2025 at 09:05:26AM -0800, Dai Ngo wrote:
+>> When a layout conflict triggers a call to __break_lease, the function
+>> nfsd4_layout_lm_break clears the fl_break_time timeout before sending
+>> the CB_LAYOUTRECALL. As a result, __break_lease repeatedly restarts
+>> its loop, waiting indefinitely for the conflicting file lease to be
+>> released.
+>>
+>> If the number of lease conflicts matches the number of NFSD threads
+>> (which defaults to 8), all available NFSD threads become occupied.
+>> Consequently, there are no threads left to handle incoming requests
+>> or callback replies, leading to a total hang of the NFS server.
+>>
+>> This issue is reliably reproducible by running the Git test suite
+>> on a configuration using SCSI layout.
+>>
+>> This patch addresses the problem by using the break lease timeout
+>> and ensures that the unresponsive client is fenced, preventing it from
+>> accessing the data server directly.
+>>
+>> Fixes: f99d4fbdae67 ("nfsd: add SCSI layout support")
+>> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+>> ---
+>>   fs/nfsd/nfs4layouts.c | 25 +++++++++++++++++++++----
+>>   1 file changed, 21 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
+>> index 683bd1130afe..b9b1eb32624c 100644
+>> --- a/fs/nfsd/nfs4layouts.c
+>> +++ b/fs/nfsd/nfs4layouts.c
+>> @@ -747,11 +747,10 @@ static bool
+>>   nfsd4_layout_lm_break(struct file_lease *fl)
+>>   {
+>>   	/*
+>> -	 * We don't want the locks code to timeout the lease for us;
+>> -	 * we'll remove it ourself if a layout isn't returned
+>> -	 * in time:
+>> +	 * Enforce break lease timeout to prevent starvation of
+>> +	 * NFSD threads in __break_lease that causes server to
+>> +	 * hang.
+>>   	 */
+>> -	fl->fl_break_time = 0;
+>>   	nfsd4_recall_file_layout(fl->c.flc_owner);
+>>   	return false;
+>>   }
+>> @@ -764,9 +763,27 @@ nfsd4_layout_lm_change(struct file_lease *onlist, int arg,
+>>   	return lease_modify(onlist, arg, dispose);
+>>   }
+>>   
+>> +static void nfsd_layout_breaker_timedout(struct file_lease *fl)
+>> +{
+>> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
+>> +	struct nfsd_file *nf;
+>> +
+>> +	rcu_read_lock();
+>> +	nf = nfsd_file_get(ls->ls_file);
+>> +	rcu_read_unlock();
+>> +	if (nf) {
+> Just a little note on the existing infrastructure (and not this change
+> that uses it)h ere:  I wish this would be nfsd_file_tryget and the
+> RCU locking was hidden in the helper.  At least some users seems to
+> miss the RCU protection or rely on undocumented locks making it
+> not required (maybe?).
 
-Ok, I never intended to find exact match with that leftmost >=3D element
-as a primitive.
-
-> >
-> > >
-> > > >         r =3D m;
-> > > >     } else {
-> > > >         l =3D m + 1;
-> > > >     }
-> > > > }
-> > > > /* here we know given element doesn't exist, return index beyond en=
-d of types */
-> > > > return btf__type_cnt(btf);
-> > >
-> > > I think that return -ENOENT seems more reasonable.
-> >
-> > Think how you will be using this inside btf_find_type_by_name_kind():
-> >
-> >
-> > int idx =3D btf_find_by_name_bsearch(btf, name);
-> >
-> > for (int n =3D btf__type_cnt(btf); idx < n; idx++) {
-> >     struct btf_type *t =3D btf__type_by_id(btf, idx);
-> >     const char *tname =3D btf__str_by_offset(btf, t->name_off);
-> >     if (strcmp(tname, name) !=3D 0)
-> >         return -ENOENT;
-> >     if (btf_kind(t) =3D=3D kind)
-> >         return idx;
-> > }
-> > return -ENOENT;
->
-> Thanks, it seems cleaner.
-
-ok, great
+Make sense, maybe for another day.
 
 >
-> >
-> >
-> > Having btf_find_by_name_bsearch() return -ENOENT instead of
-> > btf__type_cnt() just will require extra explicit -ENOENT handling. And
-> > given the function now can return "error", we'd need to either handle
-> > other non-ENOENT errors, to at least leave comment that this should
-> > never happen, though interface itself looks like it could.
-> >
-> > This is relatively minor and its all internal implementation, so we
-> > can change that later. But I'm explaining my reasons for why I'd
-> > return index of non-existing type after the end, just like you'd do
-> > with pointer-based interfaces that return pointer after the last
-> > element.
->
-> Thanks, I see.
->
-> >
-> >
-> > >
-> > > >
-> > > >
-> > > > We could have checked instead whether strcmp(btf__str_by_offset(btf=
-,
-> > > > btf__type_by_id(btf, btf__type_cnt() - 1)->name_off), name) < 0 and
-> > > > exit early. That's just a bit more code duplication of essentially
-> > > > what we do inside the loop, so that if (l =3D=3D r) seems fine to m=
-e, but
-> > > > I'm not married to this.
-> > >
-> > > Sorry, I believe that even if strcmp(btf__str_by_offset(btf,
-> > > btf__type_by_id(btf,
-> > > btf__type_cnt() - 1)->name_off), name) >=3D 0, it still doesn't seem =
-to
-> > > guarantee that the search will definitely succeed.
-> >
-> > If the last element has >=3D name, search will definitely find at least
-> > that element. What do you mean by "succeed"? All I care about here is
->
-> Thank you. By "successful search," I mean finding the exact matching
-> element we're looking for=E2=80=94not just the first element that meets t=
-he "=E2=89=A5"
-> condition.
+>> +		int type = ls->ls_layout_type;
+> ls_layout_type is a u32, so please use the same type.
 
-We don't have to find the exact match, just the leftmost >=3D element.
-For search by name+kind you will have to do linear search *anyways*
-and compare name for every single potential candidate (Except maybe
-the very first one as micro-optimization and complication, if we had
-exact matching leftmost element; but I don't care about that
-complication). So leftmost >=3D element is a universal "primitive" that
-allows you to implement exact by name or exact by name+kind search in
-exactly the same fashion.
+will fix.
 
 >
-> Here's a concrete example to illustrate the issue:
->
-> Base BTF contains: {"A", "C", "E", "F"}
-> Split BTF contains: {"B", "D"}
-> Target search: "D" in split BTF
->
-> The current implementation recursively searches from the base BTF first.
-> While "D" is lexicographically =E2=89=A4 "F" (the last element in base BT=
-F), "D" doesn't
-> actually exist in the base BTF. When the binary search reaches the l
-> =3D=3D r condition,
-> it returns the index of "E" instead.
->
-> This requires an extra name comparison check after btf_find_by_name_bsear=
-ch
-> returns, which could be avoided in the first loop iteration if the
-> search directly
-> identified exact matches.
+> Otherwise this looks good to me.
 
-See above, I think this is misguided. There is nothing wrong with
-checking after bsearch returns *candidate* index, and you cannot avoid
-that for name+kind search.
+Thanks,
 
->
-> int idx =3D btf_find_by_name_bsearch(btf, name);
->
-> for (int n =3D btf__type_cnt(btf); idx < n; idx++) {
->     struct btf_type *t =3D btf__type_by_id(btf, idx);
->     const char *tname =3D btf__str_by_offset(btf, t->name_off);
->     if (strcmp(tname, name) !=3D 0)  <<< This check is redundant on the f=
-irst loop
->                                                             iteration
+-Dai
 
-Yes, I think this is absolutely OK and acceptable. Are you worried
-about the overhead of a single strcmp()? See below for notes on having
-single overall name and name+kind implementation using this approach.
-
-> when a matching index is found
->         return -ENOENT;
->     if (btf_kind(t) =3D=3D kind)
->         return idx;
-> }
-> return -ENOENT;
->
-> I tested this with a simple program searching for 3 in {0, 1, 2, 4, 5}:
->
-> int main(int argc, char *argv[])
-> {
->         int values[] =3D {0, 1, 2, 4, 5};
->         int to_find;
->         int i;
->
->         to_find =3D atoi(argv[1]);;
->
->         for (i =3D 0; i < ARRAY_SIZE(values); i++)
->                 printf("[%d] =3D %d\n", i , values[i]);
->
->         printf("To Find %d\n", to_find);
->
->         {
->                 int l, m, r;
->
->                 l =3D 0;
->                 r =3D ARRAY_SIZE(values) - 1;
->
->                 while (l <=3D r) {
->                         m =3D l + (r- l) / 2;
->                         if (values[m] >=3D to_find) {
->                                 if (l =3D=3D r) {
->                                         printf("!!!! Found: [%d] =3D=3D>
-> %d\n", r, values[r]);
->                                         break;
->                                 }
->                                 r =3D m;
->                         } else {
->                                 l =3D m + 1;
->                         }
->                 }
->
->                 printf("END: l: %d, r: %d\n", l, r);
->         }
->
->         return 0;
-> }
->
-> Output:
-> [0] =3D 0
-> [1] =3D 1
-> [2] =3D 2
-> [3] =3D 4
-> [4] =3D 5
-> To Find 3
-> !!!! Found: [3] =3D=3D> 4
-> END: l: 3, r: 3
->
-> The search returns index 3 (value 4), which is the first value =E2=89=A5 =
-3,
-> but since 4 =E2=89=A0 3,
-> it's not an exact match. Thus, the algorithm cannot guarantee a
-> successful search
-> for the exact element without additional checks.
-
-It was never a goal to find an exact match, yes, additional checks
-after the search is necessary to confirm name or name+kind match (and
-the latter will have to check name for every single item, except maybe
-the first one if we had exact match "guarantee", but I think this is
-absolutely unnecessary). And this is unavoidable for name+kind search.
-So instead of optimizing one extra strcmp() let's have uniform
-implementation for both name and name+kind searches. In fact, you can
-even have the same universal implementation of both if you treat kind
-=3D=3D 0 as "don't care about kind".
-
-
->
-> > that binary search loop doesn't loop forever and it returns correct
-> > index (or detects that no element can be found).
-> >
-> > >
-> > > >
-> > > > >
-> > > > > static __s32 btf_find_type_by_name_kind(const struct btf *btf, in=
-t start_id,
-> > > > >                                    const char *type_name, __u32 k=
-ind)
-> > > > > {
-> > > > >         const struct btf_type *t;
-> > > > >         const char *tname;
-> > > > >         int err =3D -ENOENT;
-> > > > >         __u32 total;
-> > > > >
-> > > > >         if (!btf)
-> > > > >                 goto out;
-> > > > >
-> > > > >         if (start_id < btf->start_id) {
-> > > > >                 err =3D btf_find_type_by_name_kind(btf->base_btf,=
- start_id,
-> > > > >                                                  type_name, kind)=
-;
-> > > > >                 if (err =3D=3D -ENOENT)
-> > > > >                         start_id =3D btf->start_id;
-> > > > >         }
-> > > > >
-> > > > >         if (err =3D=3D -ENOENT) {
-> > > > >                 if (btf_check_sorted((struct btf *)btf)) {
-> > > > >                         /* binary search */
-> > > > >                         bool skip_first;
-> > > > >                         int ret;
-> > > > >
-> > > > >                         /* return the leftmost with maching names=
- */
-> > > > >                         ret =3D btf_find_type_by_name_bsearch(btf=
-,
-> > > > > type_name, start_id);
-> > > > >                         if (ret < 0)
-> > > > >                                 goto out;
-> > > > >                         /* skip kind checking */
-> > > > >                         if (kind =3D=3D -1)
-> > > > >                                 return ret;
-> > > > >                         total =3D btf__type_cnt(btf);
-> > > > >                         skip_first =3D true;
-> > > > >                         do {
-> > > > >                                 t =3D btf_type_by_id(btf, ret);
-> > > > >                                 if (btf_kind(t) !=3D kind) {
-> > > > >                                         if (skip_first) {
-> > > > >                                                 skip_first =3D fa=
-lse;
-> > > > >                                                 continue;
-> > > > >                                         }
-> > > > >                                 } else if (skip_first) {
-> > > > >                                         return ret;
-> > > > >                                 }
-> > > > >                                 if (!t->name_off)
-> > > > >                                         break;
-> > > > >                                 tname =3D btf__str_by_offset(btf,=
- t->name_off);
-> > > > >                                 if (tname && !strcmp(tname, type_=
-name))
-> > > > >                                         return ret;
-> > > > >                                 else
-> > > > >                                         break;
-> > > > >                         } while (++ret < total);
-> > > > >                 } else {
-> > > > >                         /* linear search */
-> > > > > ...
-> > > > >                 }
-> > > > >         }
-> > > > >
-> > > > > out:
-> > > > >         return err;
-> > > > > }
 
