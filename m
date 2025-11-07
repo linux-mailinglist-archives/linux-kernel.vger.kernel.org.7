@@ -1,150 +1,83 @@
-Return-Path: <linux-kernel+bounces-890842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E38C41274
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:52:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA811C4127B
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 18:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6241889869
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6406918834B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 17:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0057337694;
-	Fri,  7 Nov 2025 17:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FA23376AA;
+	Fri,  7 Nov 2025 17:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELrQNNZt"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdsPmsDv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CA132AAAC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 17:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF333334695;
+	Fri,  7 Nov 2025 17:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762537889; cv=none; b=JKsoC9KODyUb644sEK7Ry95+bs8dwDfmP3v/3viInHRyKX4ljEpZVxDo12IYLxlTOiWmR4wV3B+vH0KbSc2UbxdKs7RLXs2ADN5jCuI9uuLjs7Z9yKeHyjWmUapsKJrCoPZdP9/ny92SjFTyS8Q/d62uPd7hEnyWJGmgI4VUd5g=
+	t=1762537945; cv=none; b=HrFBHMICI9tE2fOaZ3CbNcZ0aYkZwfdSK+QQZzMqQ+jG3Jjr8sLerTBzoI1n0FxQu0RQQUv4Tl/VUmRuVzXA0rgNQ1ZPVacL5z3tVIdDmiFwx+TZCIcCJH3Apj2Ez0goZaSzIhNntReenpu88IF+x5i0a0GRYbAlN05CEGvrg0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762537889; c=relaxed/simple;
-	bh=zH5Y5kzfZDqM6XSPZXHd+xDsjJay/Ois7rZjMY6UsPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0kuX8miSZwQBPvjnt6PZIMgd6Gh1da+G+7p0hVXBWnHE14+dqRj9k7ytHETf4AIgShVSni+XdFbSF6qdnYbenuPJwyWMzYW2LqbQP24MuvfHjlP+Toi1f3TJYgBnU75oci6cNWJxUUywWIuf7FSAew5aT5CBuGLIAMHUOYKE0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELrQNNZt; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4774f41628bso4908705e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 09:51:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762537886; x=1763142686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Tucutz7IrOhRztkZU3smHLVMxqcaOobL5jt095lc2k=;
-        b=ELrQNNZtZ8xpyrUTaNVMrMLq6edSahgtODjiKm1IKWRWjWseiPqOOQhk1anKez3R3S
-         8T+u+cMNZ7ztTu0DnveXsu7TuI93hL0HOIUEG4uMv+Fbfa2ls1yVSCKK8p/fCbDSC+cm
-         UVNvMrpIn4Y1pzdQWBN7WcbtmJopnlnzNsOmV3c6WrcGlVVwdiZbVTO2BvBdtWuLYhqV
-         qk741iJpVI6iTsleB0+cO0DAi80Wsdt43uMhT8Mxjxo2/h0Z8tFvMESZLdyCV8AhyaM/
-         5QXnZR1Q0oUIjeN+7442j8mCLFcl4Z0SFtewxSlgIKOh0eyzSxJQTcORp34lE4LhEveK
-         QALw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762537886; x=1763142686;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3Tucutz7IrOhRztkZU3smHLVMxqcaOobL5jt095lc2k=;
-        b=cJt3vRNYY3BsegPsbXmu9d45F8s8MLQvs4j8J/Wp7aFJkysPkAYD+4uvkPCqxzS7+h
-         hLDSd+zZ0aKN1Sm/8+oU4UTYf4brxAzBm6ryxxERAop5E7tC2pTEW6QyEO5vhcBhPjTQ
-         sT73xG5USGPjHJHPY6USPb2a5QhV92mUL01Pl20yxx+yHoWjhafV7XtNedgineDjN++V
-         Mt9nA2rVslRKFEUgDBgVN+xC4NYadw3Qabi9Qtcr/BvMfsqPMxLgw7wQ2jA4cQW7fnrK
-         P65BWHpzrebSGOYpUYulNqZ5Km9ePv3GdEbOxrL61Wt0LwkXosLlfHT7Y6mVYA9HNRSQ
-         6chA==
-X-Forwarded-Encrypted: i=1; AJvYcCW02uyX8rbH/uMgcrxffE9kT9DHXBEfsXD3dr917P/XK5s8GQIzln4X37BwvaZk54XTnXKUIDMAHzaS65o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3akHqXKUVMcsuT2yOeui+9HOcubtKtTiCMLFfcIXsBwfIVgoq
-	qGCGVxK1wSD9Z9sHd9SQ0tfcMFSBvtJb+hSJcDKC4ywasmuPeNg7jXbi
-X-Gm-Gg: ASbGncv6PSkHvuyoOdUVSJIPH+yjzvgLJDKxO1IGiA9FU599Vuri7yGtuVcmfkxHchd
-	0TJSY/w443ZaKrFC46vtb5qEe8L2qvhuhOG4WgqBINFAcdpge89TsHU1j/Yfl9qS6+9Oh5iQVIE
-	M/ehCSH+GsdluXHrhHx5vVrZjqJFlenZ5JfEKyWiLMtaQxWMaw+eMs3YiQx+0m9iJ2V3cXgjvUw
-	0oNcDv9AEVwFc9Cyqshs6PlG1jgFZeCxhC63qJJl3ZR6c2kcgOkSgFPuUQJvskqeNF1yroLI4xp
-	i3gARmFklp2HK2LaObxUrjauHYgBQlIhv1KJoljzbF2oygiPC4tq90JYnhoSqHuL/yhbTjqn8Mr
-	ZzoGsbrVFeZXDF1j1St6aMPse6JqEpgxHweaxL9sNCInE2sQU/WVpWVCicj8/PRIssvniqjBbHM
-	LLdkMBzOzp+xgXV6qzXGF8+EpS0vQwd2s+s7/nwB82u7S9EUNRlC4b
-X-Google-Smtp-Source: AGHT+IEoWHsw26cGBlNpbuXd/J8PJbsclbLScfONHz/78/yXn3dKVEpgZr30FQ4+9RfcD30Gp2hhjg==
-X-Received: by 2002:a05:600c:c0c9:b0:475:d7fd:5c59 with SMTP id 5b1f17b1804b1-4776e57b741mr22139575e9.16.1762537885623;
-        Fri, 07 Nov 2025 09:51:25 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e4f89fsm49280675e9.3.2025.11.07.09.51.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Nov 2025 09:51:25 -0800 (PST)
-Date: Fri, 7 Nov 2025 17:51:23 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andrew Morton
- <akpm@linux-foundation.org>, Junrui Luo <moonafterrain@outlook.com>,
- linux-kernel@vger.kernel.org, rostedt@goodmis.org, tiwai@suse.com,
- perex@perex.cz, linux-sound@vger.kernel.org, mchehab@kernel.org,
- awalls@md.metrocast.net, linux-media@vger.kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org
-Subject: Re: [PATCH 1/4] lib/sprintf: add scnprintf_append() helper function
-Message-ID: <20251107175123.70ded89e@pumpkin>
-In-Reply-To: <aQ3riwUO_3v3UOvj@pathway.suse.cz>
-References: <20251107051616.21606-1-moonafterrain@outlook.com>
-	<SYBPR01MB788110A77D7F0F7A27F0974FAFC3A@SYBPR01MB7881.ausprd01.prod.outlook.com>
-	<20251106213833.546c8eaba8aec6aa6a5e30b6@linux-foundation.org>
-	<20251107091246.4e5900f4@pumpkin>
-	<aQ29Zzajef81E2DZ@smile.fi.intel.com>
-	<aQ3riwUO_3v3UOvj@pathway.suse.cz>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1762537945; c=relaxed/simple;
+	bh=zy5i/LESJTmO7E4M3EEK0RfeVUq2RmmTlTfJl4/xLKQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bKT3+hSB27Y2OC6G+y0NImlq+eYgTGxM89fhpkLc6CE0jxXou9ztW/WRqW/GfzevxQOujt9TVa+C7jMRFxs28qldGrQ37RcrcWMHCc62xBt3xMDFaQTZkV1EIS/fUlBkEI9AWLSE16JYKA+yXXo8F12XGGuQF97jEiHSgI3Ig8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdsPmsDv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFBEC4CEF5;
+	Fri,  7 Nov 2025 17:52:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762537944;
+	bh=zy5i/LESJTmO7E4M3EEK0RfeVUq2RmmTlTfJl4/xLKQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=FdsPmsDv9n4OANN/1oK2Jt5rp3ssazPUt3HDCFZdbH95lZ79qv9nvL47t8ReG6CkK
+	 w34pnudC0YmJy8pn6fjKkLSaGJryyGkfSd51Ib/3xNWZSPocT9jPfJ7fxhIxCdW4lA
+	 MyFc+dhdl9J6BBeYAjWlVtMNpEyCROVRBRP+vM09rhA8iL8eFWW6uMYUsWiIEFu0oz
+	 VgRps1jcQf+VA8Nps22e00uaJIaOMSqKtV6nWSE5SghnwiYDnRDa2y7Fe/+K2QtLLd
+	 DfFVZITSGiUDd+Q1HRFDXtTkIplbo2nwbSlANnrJogmO6WkWUbkDv95nNCNCbrjiqN
+	 5JAAZfI6KDl3A==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>, 
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+In-Reply-To: <20251106190023.1772629-1-namhyung@kernel.org>
+References: <20251106190023.1772629-1-namhyung@kernel.org>
+Subject: Re: [PATCH v2] perf record: Make sure to update build-ID cache
+Message-Id: <176253794340.371147.16125840852097744838.b4-ty@kernel.org>
+Date: Fri, 07 Nov 2025 09:52:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c04d2
 
-On Fri, 7 Nov 2025 13:52:27 +0100
-Petr Mladek <pmladek@suse.com> wrote:
-
-> On Fri 2025-11-07 11:35:35, Andy Shevchenko wrote:
-> > On Fri, Nov 07, 2025 at 09:12:46AM +0000, David Laight wrote:  
-> > > On Thu, 6 Nov 2025 21:38:33 -0800
-> > > Andrew Morton <akpm@linux-foundation.org> wrote:  
-> > > > On Fri,  7 Nov 2025 13:16:13 +0800 Junrui Luo <moonafterrain@outlook.com> wrote:  
-> > 
-> > ...
-> >   
-> > > That is true for all the snprintf() functions.
-> > >   
-> > > > I wonder if we should instead implement a kasprintf() version of this
-> > > > which reallocs each time and then switch all the callers over to that.  
-> > > 
-> > > That adds the cost of a malloc, and I, like kasprintf() probably ends up
-> > > doing all the work of snprintf twice.
-> > > 
-> > > I'd be tempted to avoid the strlen() by passing in the offset.
-> > > So (say):
-> > > #define scnprintf_at(buf, len, off, ...) \
-> > > 	scnprintf((buf) + off, (len) - off, __VA_ARGS__)  
+On Thu, 06 Nov 2025 11:00:23 -0800, Namhyung Kim wrote:
+> Recent change on enabling --buildid-mmap by default brought an issue
+> with build-id handling.  With build-ID in MMAP2 records, we don't need
+> to save the build-ID table in the header of a perf data file.
 > 
-> It does not handle correctly the situation when len < off.
-> Othersise, it looks good.
-
-That shouldn't happen unless the calling code is really buggy.
-There is also a WARN_ON_ONCE() at the top of snprintf().
-
-	David
-
+> But the actual file contents still need to be cached in the debug
+> directory for annotation etc.  Split the build-ID header processing and
+> caching and make sure perf record to save hit DSOs in the build-ID cache
+> by moving perf_session__cache_build_ids() to the end of the record__
+> finish_output().
 > 
-> > > Then you can chain calls, eg:
-> > > 	off = scnprintf(buf, sizeof buf, ....);
-> > > 	off += scnprintf_at(buf, sizeof buf, off, ....);  
-> > 
-> > I like this suggestion. Also note, that the original implementation works directly
-> > on static buffers.  
-> 
-> I would prefer this as well. IMHO, it encourages people to write a better code.
-> 
-> Best Regards,
-> Petr
+> [...]
+Applied to perf-tools-next, thanks!
+
+Best regards,
+Namhyung
+
 
 
