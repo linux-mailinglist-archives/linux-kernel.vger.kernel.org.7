@@ -1,132 +1,239 @@
-Return-Path: <linux-kernel+bounces-889575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A69C3DF0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:05:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25755C3DF75
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 01:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE18F4E6DD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:05:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01ED14E49AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 00:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D38C13B;
-	Fri,  7 Nov 2025 00:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C176A26CE02;
+	Fri,  7 Nov 2025 00:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EfZWOr9e"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIl/BCmt"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FD228F5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D97265CC2
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 00:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762473931; cv=none; b=PsbUFK15MD3KmoAnFrwaIaQSnoYTz+pDhYGM5h7ZxaZ5sY2n6KIzAEbVnQYOIBhr2XRNmmIcBBBtpJBRMLSdFvwUJsnFDyDVAlfIGxFxvIWhklGPsrziWYTSU7TTRvlagP0j0WLodfirCSQN80bBXKh1a4V7z+HLgtTGt+tN3uI=
+	t=1762474823; cv=none; b=fuOzuaE7R2FV6u0GE+H0ZTDvlinHg11lYJo98rXUojctpSJC9ERpOcQ742F+V5qfzoFxN4IasV67uwOUuE9acPlC+g5/pXEnA689rvWoSY3ShCRoEG+kxhteVd7fsYFZQ7VD7zADWoTWdT/4lDxQAvRYbO9qjc2HuFquUdYbg6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762473931; c=relaxed/simple;
-	bh=JvQcyTGbIEdjQyW3vauSTT5vF3wwevsDGfMKipoR3Ms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l+lgFQvYT+vl6ASNKKy02DQcHT6iVO4x17650svHAd9THBC8AN+RERFy+ddvnpyRuGdGFywj+5Z6+5r+pbXPveHzDQMbOO/3DYet8hc92RK17+G+1rH+PNKLxF/EN/cSZbtaXpohJVv7KuJ9Hh7sKA2TOKeUnvSOj2hWU7IpzJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EfZWOr9e; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso330216a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:05:29 -0800 (PST)
+	s=arc-20240116; t=1762474823; c=relaxed/simple;
+	bh=Oi4/QdrGjIUzL+doDtA2MEODAayPQRT18bHsBVMEGcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AC64RaymSlmmWtrqQoI8dUVbV85BThud/qEaNApMtVE9RqrxfKSkNCug9smzNdCwP1CDuNAh8JCU7svlUqqccaWUO7KfkiGPrHbUzrpfbvZRo0iIzwuUbi8Atm/TE4soi8OD3Ge2gG2U8HhFzr/pdaYf/++bBP00v5w29y0+oJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIl/BCmt; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-295ceaf8dacso2000725ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:20:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1762473928; x=1763078728; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RFcSpZH70/7YNRB+5bxfaf4cWVrjbOzG9BUCsOhtLR0=;
-        b=EfZWOr9eyyu+mVmeTFR6hsh3L4N3qNuf+73dNefZWCsPgnZuaiUd7bsXWQ44VO0FMb
-         Yx/xwK7etUlGKLDYnB7TBEosyYrD5iJ70c2iU8P03kmrM/lAQR+DrQM61rHeGw5mlpBr
-         taGTENrdq/m/lSm1qSiMPlEcYay0TF3J8A7O4=
+        d=gmail.com; s=20230601; t=1762474821; x=1763079621; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjWAOI4Myk8E4LnUAJ8odzQrrjel6+dwFmS5BcOTxxA=;
+        b=HIl/BCmteaf6A+kZ+IcsSn9ZV5Fp+003U4X8A/Ql5Vob47ELyyFjB/Ryuk/9HZXYaO
+         Fp2BQkrUFtpCVKASM5H6fpN4Dj4WKFk+s1MLHrSSZnWtl4RXPWsIMVjxDF+S+EC2d3Um
+         9K+XjQ36lNLP8UFum+aaNs68bUWaj04RLoolkdbi2lWw4FSmAkHK0S1+j5xLUfwSxf9O
+         y8cOT4Oblyq/2FGy5Y+YqeGC1PbRmjFUyyJ0I8ye30oWFH8Tv/a4PtfkBRKqxzCNHlVD
+         VxRiIUbz9I6StmlNwow/uuvRlgMbk7Idw9DMfBc/tSHtBdKw6QliW1w2Mt7aJHq+0zo+
+         lFbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762473928; x=1763078728;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1762474821; x=1763079621;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RFcSpZH70/7YNRB+5bxfaf4cWVrjbOzG9BUCsOhtLR0=;
-        b=Kq/5KR0I1MvN61tFga9DHOKkEeJ8zoP01A2NcTt5CAu3PfrRL3j8BZqELSG9SuMTks
-         A/+W6Rm43j9gRsHIxT3loKugFiXkE7LtMur4SqEf1tlLblbIA7/BBEYoQrWSCzWnT60T
-         xRBqZ13S1IKDSCIWaq0jHGz8twahuVq42x+h03IT31Fbi66pVDbYxjZ0rV/gwA2e4KNf
-         1pMZxo8tfeCu+g8gb6hfitGblPBar2K/SQWgmmd64D9sF5CBfmv6IHy2W4zg7R2BkmZh
-         7bjQRYwRzkRiRH6ebKvdspOaFgpUGLxwh+7ZU65AjiZU7UOSdrndwrtTfeHVB+adQxvr
-         YCXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAG0QLvyTDeyocM+lFmvQYi6KbZ5ya30igATNW+zUuJJAt/zCfQmmzPWZ57h5/8JYZNIlhib1tsmK2JS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS4ZIgFah5DTcnTiOgOKNDIY8he9NFHwX11m4yLtiygu7VO7O6
-	1735LyRs0KP0Aeq9gyVu4wLxuUycl3tLoohN7UcaPkq4IaYZvTMQbnOGjuE84rtS8/bvdjIH7uH
-	eheLD5sk=
-X-Gm-Gg: ASbGncu2njsEtl5HipOEGHEiO0YKd4fgriBDbTGrPkD6VMyHsB/6C0Zcwh7RHVNCxot
-	ChanSt5nFTWsXkHzCcF5g4mYWPcnI3/1kFA2C0hInfrKKufK2FlqOo/2zITIIrEnp4snxRsoqs3
-	a/nTvP9dqpnMunWG2kgbMKnE8MLP3MX/RghBrcQFLimcgCSdjdoFEmDnVyLcX128HnnUB+RRIzB
-	DgJqoAH87drT5cgPrSXAnz96h9IOmoX0Pabkl9Y2ToP83rwFE68xEU7i2hjrU0MMDGxY9SEoy4/
-	22zioguX2dv5wqyPu4qzSlYlPxr6oI2tRtP/rHAAunT3saiPm6S5GwO6vDyahZVVKnqTSGeXxpi
-	dqe2gGCdLTvpo9H/N6g5pGttbptaiXD7fqVBYV6Y4AtsExBHR9meQl+mvEmEZs70/kf5XNdxaxi
-	Q0Y2XgqlTnWFBAeSkGBwxscFub6RpTNyPuczaLVPHxxxZBc2YwiQ==
-X-Google-Smtp-Source: AGHT+IGsgJ9kR8c/SnP9W2AAXOwI4xoUKv4u7TD/ggVKL7Bn96aoRPNg/iSjzOkmK/UoqK9YSMhmxg==
-X-Received: by 2002:a05:6402:461c:20b0:640:c849:cee3 with SMTP id 4fb4d7f45d1cf-6413f1fa695mr1022109a12.34.1762473927666;
-        Thu, 06 Nov 2025 16:05:27 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713a68sm2874806a12.2.2025.11.06.16.05.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 16:05:26 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so26882566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 16:05:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV022cPVxnoA0obZLDJ38qpAQd6+7d7+Mp2U8Nqv/VH+Q03q/5CuU+BMJ+7y12Gwx5LMQ1yxj59C5Ps7Jk=@vger.kernel.org
-X-Received: by 2002:a17:907:d86:b0:b72:6d3e:848f with SMTP id
- a640c23a62f3a-b72c094e5b9mr108513866b.19.1762473925385; Thu, 06 Nov 2025
- 16:05:25 -0800 (PST)
+        bh=bjWAOI4Myk8E4LnUAJ8odzQrrjel6+dwFmS5BcOTxxA=;
+        b=rrwiAqypPeWv4pNX7FFdON9WTwqsO4iaHuQXiEb+3jYoiIF6YvFhAZxdBbR/R2WDcE
+         bUGN2S5tFhyfbAJMudpdODyX5sLVZoDL6BS6saYWtXzPoBOvPrk+AqYa7ARMI/36jWnm
+         /9YYZMrWECeOtRGHiraqTAUgeM5AHnl8l5DRTAu++04dEYwxd5Dv1DA6YQ2h9L5LFw4k
+         6PXo9jGrGgUa5cbOiurLY/Ldb1XsA6VwhSHy4A5MK0XdSIKPRPCvYNW8zLFrxlk2Go/3
+         zfQqnvsVVjS2WWQXMeF4XS23M2nw5pZvl54U01Nbf8LKEVb760r7j2riAvmNMyn4/hec
+         8KNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUdTISn8tB0k/At+94mqS4T49EG/EZpcSt21ks7W17uM/ggsuOp/aUofDU56IJ9c09eWRxcNbbZdaWkAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp8J8TOaJHwwTZkrwzcKNgNFR6u5LJNvUHgPc3wZBKYBs5rWZX
+	WgFLvcL7aaweoJjDb21TO6UXUvXNGizzwhhVxM/wG+gM3U43+JTX7Wp3
+X-Gm-Gg: ASbGnctzRZTxfJbdsCKNWoFOHLtmXwwzdoSajyVDuEIDnNBKjwKctyGofk6FZYz1fS1
+	uHvK6WPm0/Our4S7gpH3AxY18F6EYS6v4dW0704gQctWf9EyzfbvkZlsD3ABBPIxGhqXCvD0iQ2
+	wqcvMXpCyMFu+lxRVch/294sDICU0iXGroSejMjvaXrDW5NL4kDS428CzvbLmZgzQAc80W0utCH
+	emRVh2WEDhaOZ0dyXU5e/r2rAGQsEXkLzj+2QOK/ZK30zVmkgOsXGmHgoOI6h7+5xNuBfsrcl8I
+	H/Rg5XV30ieu0CcZWzWPY8W05I1P2WA4DhWDOaGFIBMYoNp9h4YACPiMfqaml05zbD25TZSZ1SP
+	wwbwNwdz9gHr6etU6Fn6uR68oOki4gn9HbR1rBzQv77GC0xatV6BdkVJb1gvOxr2hZfJfecEpi7
+	k/uVoejTsgyGI657avhYon5A3gEwQX
+X-Google-Smtp-Source: AGHT+IFVSMamIdPN/iz5MtxlTNX3uy/J+X4jaEmnDwVwubdmf09y4tB0ReLsumcvjpDrlLvYEdU0MQ==
+X-Received: by 2002:a17:903:178b:b0:295:7453:b580 with SMTP id d9443c01a7336-297c04a122dmr18208705ad.58.1762474820692;
+        Thu, 06 Nov 2025 16:20:20 -0800 (PST)
+Received: from localhost.localdomain ([189.6.209.79])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096b8d1sm40357555ad.19.2025.11.06.16.20.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Nov 2025 16:20:20 -0800 (PST)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: gregkh@linuxfoundation.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	davidm@egauge.net
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: usb: maxim,max3421: convert to DT schema
+Date: Thu,  6 Nov 2025 21:06:22 -0300
+Message-ID: <20251107001812.10180-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wi6goUT36sR8GE47_P-aVrd5g38=VTRHpktWARbyE-0ow@mail.gmail.com>
- <ubqjeplvslhnspqw6pnqwo7c6sq2ygdtmkuqr4q3hjlxfkuwii@xn63k6qz22mz>
- <CAHk-=wgs8+xVbv5tu9kv5n=LwWFZ0FW4GPwVmXBPjLQ0goLfjQ@mail.gmail.com>
- <es4awalt6i63cy5kkrbz7f22cxpt4zbmq6zsbol3yafek2375e@6b6stnc6k6h2>
- <CAHk-=wjhcrqXoTLMjTF=pH_+Zq4vRdFY3Y4c_A3TemzSvssRzQ@mail.gmail.com> <20251105195103.GR13846@twin.jikos.cz>
-In-Reply-To: <20251105195103.GR13846@twin.jikos.cz>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 6 Nov 2025 16:05:09 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgb-rq67WdzzK+=tiL1_vGn46KU77KdEHLhNKMPyD4gww@mail.gmail.com>
-X-Gm-Features: AWmQ_bl6ZrEgFK2-yALeh_5th5o4wAcU7GMXqFqu3QLuCqWT9j7WE5ZmQm3JI-c
-Message-ID: <CAHk-=wgb-rq67WdzzK+=tiL1_vGn46KU77KdEHLhNKMPyD4gww@mail.gmail.com>
-Subject: Re: odd objtool 'unreachable instruction' warning
-To: dsterba@suse.cz
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Alexandre Chartre <alexandre.chartre@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 5 Nov 2025 at 11:51, David Sterba <dsterba@suse.cz> wrote:
->
-> FWIW, 'objdump --visualize-jumps' shows the arrows, with
-> '--visualize-jumps=extended-color' they're colored and it's readable.
+Convert legacy maxim,max3421.txt to proper format.
 
-Hey, hey, hey - when did that happen? I've clearly not read the
-man-page in ages.
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+---
+Hi, all
 
-Because that's _almost_ lovely. If objdump just handled relocations
-more sanely, it would be really nice.
+At this v2, I`m reverting my previous idea about documenting new properties
+because this is just a conversion from txt file. At v1, a question
+was raised about that:
 
-[ Looking around in the binutil sources, it's been there for five
-years, and was in the 2.34 release ]
+On 10/9/25 22:34, Krzysztof Kozlowski wrote:
+> maxim,vbus-en-pin, maxim,gpx-pin, reset pin and supplies. Also add a
+> Why new properties? You must explain not only the difference but WHY you
+> are doing this.
+In this case, I`ve kept the maxim,vbus-en-pin prop because it was already
+described in the legacy file and the driver expects that property according
+to [1] and [2].
 
-Because of the insanity of relocation handling, it shows regular
-"call" and "jmp" instructions out of the function as branches to the
-next instruction (because that's the non-relocated info).
+[1] https://github.com/torvalds/linux/blob/a1388fcb52fcad3e0b06e2cdd0ed757a82a5be30/drivers/usb/host/max3421-hcd.c#L1807
+[2] https://github.com/torvalds/linux/blob/a1388fcb52fcad3e0b06e2cdd0ed757a82a5be30/drivers/usb/host/max3421-hcd.c#L1845-L1847
 
-And because it puts the visualized things in front of the
-instructions, the end result has strange random indentation depending
-on complexity of the function.
+Tks and regards to all!
 
-But it's tantalizingly close to great, and it's certainly an
-improvement over not having that at all.
+Changelog:
+v2: - fix subject/commit msg;
+    - remove $ref/desc from spi-max-frequency;
+    - add spi-peripheral-props/unevaluatedProperties;
+    - remove the "new properties";
+    - remove fallback compatible with the 'e' pattern;
+    - fix file name, didn`t notice at previous version;
+v1: https://lore.kernel.org/all/20251009182046.185520-1-rodrigo.gobbi.7@gmail.com/
+---
+ .../devicetree/bindings/usb/maxim,max3421.txt | 23 -------
+ .../bindings/usb/maxim,max3421.yaml           | 67 +++++++++++++++++++
+ 2 files changed, 67 insertions(+), 23 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/maxim,max3421.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/maxim,max3421.yaml
 
-Added to my "disassemble" alias.
+diff --git a/Documentation/devicetree/bindings/usb/maxim,max3421.txt b/Documentation/devicetree/bindings/usb/maxim,max3421.txt
+deleted file mode 100644
+index 90495b1aeec2..000000000000
+--- a/Documentation/devicetree/bindings/usb/maxim,max3421.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-Maxim Integrated SPI-based USB 2.0 host controller MAX3421E
+-
+-Required properties:
+- - compatible: Should be "maxim,max3421"
+- - spi-max-frequency: maximum frequency for this device must not exceed 26 MHz.
+- - reg: chip select number to which this device is connected.
+- - maxim,vbus-en-pin: <GPOUTx ACTIVE_LEVEL>
+-   GPOUTx is the number (1-8) of the GPOUT pin of MAX3421E to drive Vbus.
+-   ACTIVE_LEVEL is 0 or 1.
+- - interrupts: the interrupt line description for the interrupt controller.
+-   The driver configures MAX3421E for active low level triggered interrupts,
+-   configure your interrupt line accordingly.
+-
+-Example:
+-
+-	usb@0 {
+-		compatible = "maxim,max3421";
+-		reg = <0>;
+-		maxim,vbus-en-pin = <3 1>;
+-		spi-max-frequency = <26000000>;
+-		interrupt-parent = <&PIC>;
+-		interrupts = <42>;
+-	};
+diff --git a/Documentation/devicetree/bindings/usb/maxim,max3421.yaml b/Documentation/devicetree/bindings/usb/maxim,max3421.yaml
+new file mode 100644
+index 000000000000..4639be7ab059
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/maxim,max3421.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/maxim,max3421.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MAXIM MAX3421e USB Peripheral/Host Controller
++
++maintainers:
++  - David Mosberger <davidm@egauge.net>
++
++description: |
++  The controller provides USB2.0 compliant with Full Speed or Low Speed when in
++  the host mode. At peripheral, it operates at Full Speed. At both cases, it
++  uses a SPI interface.
++  Datasheet at:
++    https://www.analog.com/media/en/technical-documentation/data-sheets/max3421e.pdf
++
++properties:
++  compatible:
++    const: maxim,max3421
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 26000000
++
++  maxim,vbus-en-pin:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    description:
++      One of eight GPOUT pins to control external VBUS power and the polarity
++      of the active level. It's an array of GPIO number and the active level of it.
++    minItems: 2
++    maxItems: 2
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - maxim,vbus-en-pin
++
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        usb@0 {
++          compatible = "maxim,max3421";
++          reg = <0>;
++          maxim,vbus-en-pin = <3 1>;
++          spi-max-frequency = <26000000>;
++          interrupt-parent = <&gpio>;
++          interrupts = <42>;
++        };
++    };
+-- 
+2.48.1
 
-          Linus
 
