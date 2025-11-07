@@ -1,121 +1,163 @@
-Return-Path: <linux-kernel+bounces-890261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AACC3FA20
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A00E2C3FA2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 12:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4839B4F0BC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:05:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9C464F079A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 11:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45EF31B81C;
-	Fri,  7 Nov 2025 11:04:58 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4C131B804;
+	Fri,  7 Nov 2025 11:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iYRsj9oY"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B029D2FFF9D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B923195E4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 11:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762513498; cv=none; b=Uw5Mu0vvOEWDkFkpopeWH7BgDDz5RZ6MGeUoJSN1dwpw4Xb9k3vgY5ICNF0FzD2PawHXAMTlXQnK8aQBSzYwd2dpffjSagz70ldWLqv3nhvay7+nqz12Epa7LsMavVmVbSHcIqsfhd4HOv2UV3ApLyZj17M3EgQeBw6YFLTuLP0=
+	t=1762513519; cv=none; b=H9XAREsvtA60pKJ3KS1mWRK0UqD2Gnq6y+htCPcfbfB5sAmkE1bqr/DenIUTPsPvB8Xh4g1venbPVPJV0/Ba5w0m4evMWHNqI311POeJTbnPSGE2R2mLA0hcjgdYLjDJwuGi8/j+D9ghaIRnfO5HDCBKiqV4QFW4QGqrF05hr9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762513498; c=relaxed/simple;
-	bh=p0N7L6ikhIfH27UWEziaLqlevCPegI2IZ//SECV84Ew=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kQRBnAeqrjBPoByO9sh4p1HKiPLEAstP/Pp5GQ6uEuMWnyoob6/yVuojNQJ2nWGG/PgHQKqhew/FLTaZCUzVD1O1/edw7RG53YPdKKY9nqi3sVYYHO5Grv9qMHnpS1tGYpfpT+cPKjy0/V5z+gydrHSRmTyAMgUYGlDXLefxZiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-43328dcdac1so16354785ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 03:04:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762513496; x=1763118296;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aEAQ+DJ7d07d0eou6tJUshHnTNtSWeH6xZmZhZyNubA=;
-        b=GqpR7r2njcrvMcbm00igxrWGXqWc2COXoH1fkDRjjphl//G3Xlq/TWccZO5nT9kGm7
-         g8AVfuxPINqEJWus4xW7MZ5lybZ8WsV8I95W9U91DzLXZF9rXvsQsOfth8ouyhhQTajW
-         hUWJwU/gftBIS/Gb2FW65vZfcre77S2FOqxMEbevmXAP1ilSw0nkXBThB/ytXq2HtL9g
-         Q62HP36wjKfTJ5+idCwrSZcBAxT2yuyLSKGB3RbrQnr2+FpdOmR2P8BzIsYl7fpsE147
-         oQKodNEooFyEHhBouTPXX3oOciPzD487EW6S3lDactUzKbQLlHVw9Bj62WGX5V0z7LQV
-         PSyg==
-X-Gm-Message-State: AOJu0Yxv69ah8EGfaxakKGD47B9kB5hrlxxL350+puzSRd9xXGTS/q9T
-	FVXJ37Ni/rLMsZNnyLqlQkYTDvim3Qo04KEphqmUA+Gk3om+usDB2FBbMCieIScPm1j0+ZCUC6N
-	0WjBUTIUPM1DAe/6FBDppiIsN9347xZR++tJkWV/TCMXbodKOyalYzCNzS6c=
-X-Google-Smtp-Source: AGHT+IHH/zDnru4+XqZpfKnAUjqwgYQZ4qrhZRR3HE3LMST7Mpk+Q3wDQ2LhU0USfdjCFvMVFm30q+SDUdPLDcGwXa440A87Z7A+
+	s=arc-20240116; t=1762513519; c=relaxed/simple;
+	bh=ODcL8SYb76gPGjPes1ZBf9PDcCYTi757gqJ3YtFG4OA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mh8o3DrB25dIoRnhFAGz3xXSlMY2soiulIShxeRKi3y1MXAG7KeTzBcLWJVvzDWoekKhkN02PgZTcL7syGdod/gE9t4nJFRyyycIAt6AFSfhQS230zW/lOREdNXDzUR7bOaFCNPJX4A/HBfaA8R6mUzqngFOyBfQ591jaKcG458=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iYRsj9oY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762513515;
+	bh=ODcL8SYb76gPGjPes1ZBf9PDcCYTi757gqJ3YtFG4OA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iYRsj9oYBywQlKcO0CzXLtxljnmCgh//zajN6afaUsbHIHpK0E0scsMrx/dl2jxD9
+	 /frEXcivxX6gTPtuxThXgqWzPbNgj2fUVEHgcdEQJGI2KxllHrK+rYgG2NyPsfq03F
+	 oWzoSFLb6PcZQur+7Z0W7kliEA+lUHYvJhnGU63SccIkDVYAmd5lTAEZJqu223YIkZ
+	 BteoygNI+lb2NNr9Jub6dDBSXOpKHk0/xgtaASndXdFw1Hz3vCcld/woFdTezrmZ5g
+	 FwpCNySIO2EEfnJBffLZLl36c1oUR9IcfB42nUjkYVivPDm6nr/Us3K+/HTXs16+Kd
+	 DGiYf+hxCb7iw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3E8C617E04D6;
+	Fri,  7 Nov 2025 12:05:15 +0100 (CET)
+Date: Fri, 7 Nov 2025 12:05:10 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] drm/panthor: Add support for Mali-G1 GPUs
+Message-ID: <20251107120510.1ad142f9@fedora>
+In-Reply-To: <20251027161334.854650-1-karunika.choo@arm.com>
+References: <20251027161334.854650-1-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2786:b0:433:28c7:6d7c with SMTP id
- e9e14a558f8ab-4335f3f9be5mr40218325ab.12.1762513495935; Fri, 07 Nov 2025
- 03:04:55 -0800 (PST)
-Date: Fri, 07 Nov 2025 03:04:55 -0800
-In-Reply-To: <690be734.050a0220.baf87.007a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690dd257.a70a0220.22f260.003c.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [jfs?] BUG: corrupted list in dbUpdatePMap
-From: syzbot <syzbot+4d0a0feb49c5138cac46@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, 27 Oct 2025 16:13:26 +0000
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-***
+> This patch series extends the Panthor driver with basic support for
+> Mali-G1 GPUs.
+> 
+> The v14 architecture introduces several hardware and register-level
+> changes compared to prior GPUs. This series adds the necessary
+> architecture-specific support infrastructure, power control and reset
+> handling for Mali-G1 GPUs.
+> 
+> Patch Breakdown:
+> [Patch 1-2]:  Refactor panthor_hw to introduce architecture-specific
+>               hooks and abstractions to support the v14 architecture.
+>               These patches introduce architecture-specific HW binding
+>               for function pointers.
+> [Patch 3-5]:  Adds basic L2 power on/off and soft reset support for the
+>               PWR_CONTROL block introduced in v14.
+> [Patch 6]:    Update MCU halt and warm boot operations to reflect the
+>               GLB_REQ.STATE changes in v14. This ensures that the MCU is
+>               properly halted and the correct operations are performed
+>               on warm boot depending on the FW version.
+> [Patch 7]:    Align endpoint_req with changes introduced in v14, where
+>               the register is widened to 64-bit and shifed down by
+>               4-bytes. This patch adds the necessary infrastructure to
+>               discern the correct endpoint_req register to use.
+> [Patch 8]:    Enables Mali-G1 support on Panthor by adding HW bindings
+>               for v14 architecture, product names and path to FW binary.
+> 
+> v3:
+>  * Updated include logic to enable static inline functions in
+>    panthor_hw.h for function pointers and feature checks.
+>  * Fixed missed replacement of CSF_IFACE_VERSION check with
+>    panthor_fw_has_glb_state() check.
+>  * Link to v2: https://lore.kernel.org/all/20251024202117.3241292-1-karunika.choo@arm.com/
 
-Subject: Re: [syzbot] [jfs?] BUG: corrupted list in dbUpdatePMap
-Author: yun.zhou@windriver.com
+Didn't thoroughly review the patchset, but I'm happy with the feature
+checking changes, and I see that Steve has reviewed the whole thing, so
+feel free to stick my
 
-#syz test
+Acked-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 871cf4fb3636..0d6c40e7e551 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -270,6 +270,7 @@ static inline struct metapage *alloc_metapage(gfp_t
-gfp_mask)
-                  mp->clsn = 0;
-                  mp->log = NULL;
-                  init_waitqueue_head(&mp->wait);
-+               INIT_LIST_HEAD(&mp->synclist);
-          }
-          return mp;
-   }
-@@ -379,7 +380,7 @@ static void remove_from_logsync(struct metapage *mp)
-                  mp->lsn = 0;
-                  mp->clsn = 0;
-                  log->count--;
--               list_del(&mp->synclist);
-+               list_del_init(&mp->synclist);
-          }
-          LOGSYNC_UNLOCK(log, flags);
-   }
-diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-index 7840a03e5bcb..a5a5bc0a266d 100644
---- a/fs/jfs/jfs_txnmgr.c
-+++ b/fs/jfs/jfs_txnmgr.c
-@@ -275,6 +275,7 @@ int txInit(void)
-          for (k = 0; k < nTxBlock; k++) {
-                  init_waitqueue_head(&TxBlock[k].gcwait);
-                  init_waitqueue_head(&TxBlock[k].waitor);
-+               INIT_LIST_HEAD(&TxBlock[k].synclist);
-          }
-
-          for (k = 1; k < nTxBlock - 1; k++) {
-@@ -974,7 +975,7 @@ static void txUnlock(struct tblock * tblk)
-          if (tblk->lsn) {
-                  LOGSYNC_LOCK(log, flags);
-                  log->count--;
--               list_del(&tblk->synclist);
-+               list_del_init(&tblk->synclist);
-                  LOGSYNC_UNLOCK(log, flags);
-          }
-   }
+> v2:
+>  * Merged GPU_ID refactoring patch with the arch-specific panthor_hw
+>    binding patch (formerly PATCH 01/10 and PATCH 02/10).
+>  * Dropped panthor_hw feature bitmap patch in favor of functions that
+>    performs the relevant architecture version checks.
+>  * Fixed kernel test bot warnings.
+>  * Replaced function pointer accessor MACROs with static inline
+>    functions.
+>  * Refined power control logic, removed unnecessary checks and redundant
+>    stubs.
+>  * Replaced explicit CSG_IFACE_VERSION checks with functions describing
+>    the feature being checked for.
+>  * General readability improvements, more consistent error handling,
+>    behaviour clarifications, and formatting fixes.
+>  * Link to v1: https://lore.kernel.org/all/20251014094337.1009601-1-karunika.choo@arm.com/
+> 
+> Karunika Choo (8):
+>   drm/panthor: Add arch-specific panthor_hw binding
+>   drm/panthor: Add architecture-specific function operations
+>   drm/panthor: Introduce panthor_pwr API and power control framework
+>   drm/panthor: Implement L2 power on/off via PWR_CONTROL
+>   drm/panthor: Implement soft reset via PWR_CONTROL
+>   drm/panthor: Support GLB_REQ.STATE field for Mali-G1 GPUs
+>   drm/panthor: Support 64-bit endpoint_req register for Mali-G1
+>   drm/panthor: Add support for Mali-G1 GPUs
+> 
+>  drivers/gpu/drm/panthor/Makefile         |   1 +
+>  drivers/gpu/drm/panthor/panthor_device.c |  18 +-
+>  drivers/gpu/drm/panthor/panthor_device.h |   7 +
+>  drivers/gpu/drm/panthor/panthor_fw.c     | 131 +++++-
+>  drivers/gpu/drm/panthor/panthor_fw.h     |  32 +-
+>  drivers/gpu/drm/panthor/panthor_gpu.c    |  12 +-
+>  drivers/gpu/drm/panthor/panthor_gpu.h    |   1 +
+>  drivers/gpu/drm/panthor/panthor_hw.c     | 108 ++++-
+>  drivers/gpu/drm/panthor/panthor_hw.h     |  47 +-
+>  drivers/gpu/drm/panthor/panthor_pwr.c    | 548 +++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_pwr.h    |  23 +
+>  drivers/gpu/drm/panthor/panthor_regs.h   |  79 ++++
+>  drivers/gpu/drm/panthor/panthor_sched.c  |  21 +-
+>  13 files changed, 987 insertions(+), 41 deletions(-)
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_pwr.c
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_pwr.h
+> 
+> --
+> 2.49.0
+> 
 
 
