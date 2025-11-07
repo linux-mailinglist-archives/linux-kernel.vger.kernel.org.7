@@ -1,250 +1,149 @@
-Return-Path: <linux-kernel+bounces-890200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-890211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E320C3F809
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:37:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B2CC3F7D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 11:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0205E188E24C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:37:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 936394F41AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 10:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290A131A7F9;
-	Fri,  7 Nov 2025 10:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3457D326D6F;
+	Fri,  7 Nov 2025 10:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sk+vMQ39"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W46CrsFF"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6F52E6CC0;
-	Fri,  7 Nov 2025 10:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D29321F20
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 10:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762511415; cv=none; b=HJA+oMfjuvFlpDmAHTSGc9n6ss2v4vUdezBdhMCPFcfE4LsQpXG8EojDvGM0XD5v/NA48Zyq1phKNeUz6saXfuHm7SzsAeC2KXu9pRB4ODmS1u6RLpV09t1eqRvHWlrkRkXca1dH8IT7gQvb/wHvD4S/N2d+8xrQykNWOVnjwhk=
+	t=1762511438; cv=none; b=ANR9qyjiEULPiMSr5fOGcx4yUYidoi1G0oz5C4wW5ZRSGhMQu43avqDr3gwlD5EkyPQV+DsEgWOBtlPs1ksGvRDeoZwbaV4M5Yb2YES0oAwaBcAVHL1eoVe5ZGiEQ2xjM9T5X+cH9AKQRqXlx85hrKK6xiaHFajnqEJ2Df+37dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762511415; c=relaxed/simple;
-	bh=aN9XZgVOMPqduB1OEWWocLuGAQbGHagyZvfGA/RInNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DKdoAd6o6TbrdsYkaIQzmJAogr8NMeRGFQ3hmPuJ7xKs7eWq4nHLiXHlsK0g67/4GG/L9lrvAnt+k2c9pMRh3PKmjp3y27uMN94tp9yZOSqpi4k0G0rgbjcZV8+5/E6hMbAjmAuGWU8dk9IGpOpTOjqulrHLoE2ca3ttKI88FIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sk+vMQ39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D31C2BCB0;
-	Fri,  7 Nov 2025 10:30:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762511414;
-	bh=aN9XZgVOMPqduB1OEWWocLuGAQbGHagyZvfGA/RInNI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Sk+vMQ39DlD6Y/mhAE2Is9XvTNJ2eELY5zSNyYZ6YqdOuGLUCYy/HA91QZFhRqa2R
-	 rfqn33lqnl2Y6Rsp+SjTdzDP0czjLza9ZWyk3XexSbW+5RPZ2ARMP4Moj+SfVJZV1J
-	 Qr84BCwtCAxJIH4PljSZXs9C/DbJ0MMLhfCmYc3et7IkVBta9RVaHOjSEad4NwVGBr
-	 FpktY0GH9YoN8Fa8Niajs7kz/mes5PDU5naSJn1Yzx2D4kik50lDIM+G/IqX4T0czn
-	 qHgxCnJlJpeRuwf54oRUH7z2GYIoxVaQ0bTEQCyEIvxzT/GPXjVaQ+S9wrT4aMAx0s
-	 vNvZKAw93CalQ==
-Date: Fri, 7 Nov 2025 07:30:09 -0300
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Akira Yokosawa <akiyks@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula
- <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v3 0/8] Collect documentation-related tools under
- /tools/docs
-Message-ID: <20251107073009.3a9af633@sal.lan>
-In-Reply-To: <affa20b2-b3f4-443c-ad42-735b13d34c5e@infradead.org>
-References: <20251024200834.20644-1-corbet@lwn.net>
-	<d3f4c7ee-6351-4c6f-ae93-f423245c4c9e@gmail.com>
-	<20251026073405.0672c9dd@sal.lan>
-	<affa20b2-b3f4-443c-ad42-735b13d34c5e@infradead.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1762511438; c=relaxed/simple;
+	bh=uBd7OWZIQZwA0teWIseEIoU/S7sDMB9spsfmesIaCQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CMArGLWqJ7YIDnVgme33CgsrEW+n+gGQDDUIMTyRvFYkkHG/y3+m3r6y+IZSIT4wPFs6rEEAxSb9cu4xGP7MRMmxzdWskjZR1hoOf6XY2ooGK7XQ0w8bBp4Dg6IhWvvn0ZLdWlPrXAaXOULsqTvCxCMbXni9Eg/VIsAY5mgOtZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W46CrsFF; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4711810948aso3916565e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Nov 2025 02:30:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762511429; x=1763116229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JdXi1VUn5WnebblzEeFtNSpH8JjcIBHUGIXhJ5CQTgk=;
+        b=W46CrsFF2DzHCCQnc/ve5Hwrr+zw2n+pr/HQzutiIHHGl4jee0onbqf/SZYbVLiTU5
+         m2iO2yGQUWEWnbjqCbUEy6aNpnSSv6f88Sik3aFsQJbk1xmgyt/sAFMt+1zrW80glZHR
+         MYoJqYk4jRdw70+qsI8U6CWy5z/nrvHydnm8h/C0rExcmPfWvKolZYLoHuHlIwg0sFi2
+         SA2W8C6D8bDoPPQsUB8AioN5H+M37TIzS3An9LllTmnpzcCrgMcQXBG+jlC4RkCMJ384
+         FP0KupYBWzb3Y4Os4v4SImKJavzTBarFGnEErzC+UW9YaawuGwUym+Eqpq3GbUuo71E0
+         Pq2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762511429; x=1763116229;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JdXi1VUn5WnebblzEeFtNSpH8JjcIBHUGIXhJ5CQTgk=;
+        b=FXFrhx5el7L3qinTmkFHVVfOx6xuHXfhWyKkMvmxN3ZuY3yA6ZAGJefb6IxZudd6Kw
+         bywVIwVY0gX8NGAhmgpa9Oc6wCy8jHPeczW28/KpKwqhUacj4eDPwvuopXoq0RW/9dZt
+         ix/s/843wP9osnNn59U9VG5qYpvnkGBovPVDMmz5DVpg07q4BN3ZQ0vG3Ojz1Di6ZWWj
+         0J1R5aayCRH4XGr/hDrYhg/8wFh+xmZtvMUQ2U6pF5uqESmy79IBDh1oxaok6coh/fq5
+         3R12su4B2+F5vWjXbmVHbFXo4W9pgU+v9WG7pSd7a3h85anByruGuNeMjF3tCyqJOhSX
+         lSgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRclm//QC7PXs49WZGqQ1n+mxqP4vhU2KZwb+xvkVqj7FpdCMPnZ6iAaPB3sHQ9Jyxml3x4gaFN/ssI0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5PWINgD2t//K8BxMEfsDeqzhooZ7idPCsfk7OFYsYAMmqp99N
+	4w1L1E2o6H62cGpadL2zmeqUvaZcrIRwVmSZqiujp/xXTeALyIVeTmvPO4aUxVFtsl4=
+X-Gm-Gg: ASbGncvGSzmCFlRRNMlBuuP/C0ArfbA3mJpPza0V2vSrR7ST3Qwmzlm35r0ZhR1CIgP
+	v5XUDDdvSDQLmokkWd44P5jQA74kjvfjZ1OZ68boFeKsJnCfxKj/E6t5CQnyyHjG0mHQUwH3hoo
+	/i6mRR4Sdba0oZ6CnDfYS1pWN0PGqq98MbbukZo1sqSSQpXY6u4plkOHFsGedq5xpTRTZPLmWzz
+	UljdnuZi0JVCWXtbtJBRKFotyWFxemcO8iH2x4eHzzjOh8lcLSi4adUhWsvQRuEipPWxYyz9lRI
+	ZwQjyVA/0khUOdFodxK+Opd5DHNOWczF6TI8KN+I3M9gEwGR/rOLZTjyV4scHqeBjaGD6Leq29w
+	fHWA8upAAzzgbJQcAM9a8gHVJ02ggkPdz155QFLPP61JUbHsPAhdXWEZnyPMT9tTGw46gn0j3v4
+	b3KZjkX8XVf3gnLidSNtfEZTCbRX78lhae1Q==
+X-Google-Smtp-Source: AGHT+IE6wGGrTa2Of4J6WHqQuB5miuumaX9005ll7uHOZgbpYuJ46LLqftJ0moP7xlPSeD3ujFGq5g==
+X-Received: by 2002:a05:600c:35d0:b0:477:6d96:b3e7 with SMTP id 5b1f17b1804b1-4776d96b678mr16427785e9.33.1762511429427;
+        Fri, 07 Nov 2025 02:30:29 -0800 (PST)
+Received: from [192.168.27.65] (home.rastines.starnux.net. [82.64.67.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcdd8e3sm39799555e9.10.2025.11.07.02.30.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Nov 2025 02:30:29 -0800 (PST)
+Message-ID: <e928b078-ad35-461e-8aaf-d5ec036ac4db@linaro.org>
+Date: Fri, 7 Nov 2025 11:30:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: Add Akhil as a reviewer for the Adreno
+ driver
+To: Rob Clark <robin.clark@oss.qualcomm.com>, dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251104220245.240480-1-robin.clark@oss.qualcomm.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20251104220245.240480-1-robin.clark@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Em Sun, 26 Oct 2025 14:53:32 -0700
-Randy Dunlap <rdunlap@infradead.org> escreveu:
+On 11/4/25 23:02, Rob Clark wrote:
+> Akhil should be getting tagged to review GPU patches.
+> 
+> Cc: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1083598bb2b6..033675aab0d0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7880,6 +7880,7 @@ DRM DRIVER for Qualcomm Adreno GPUs
+>   M:	Rob Clark <robin.clark@oss.qualcomm.com>
+>   R:	Sean Paul <sean@poorly.run>
+>   R:	Konrad Dybcio <konradybcio@kernel.org>
+> +R:	Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>   L:	linux-arm-msm@vger.kernel.org
+>   L:	dri-devel@lists.freedesktop.org
+>   L:	freedreno@lists.freedesktop.org
 
-> Hi,
-> 
-> On 10/26/25 3:34 AM, Mauro Carvalho Chehab wrote:
-> > Em Sun, 26 Oct 2025 00:14:23 +0900
-> > Akira Yokosawa <akiyks@gmail.com> escreveu:
-> >   
-> >> On Fri, 24 Oct 2025 14:08:21 -0600, Jonathan Corbet wrote:  
-> >>> Our documentation-related tools are spread out over various directories;
-> >>> several are buried in the scripts/ dumping ground.  That makes them harder
-> >>> to discover and harder to maintain.
-> >>>
-> >>> Recent work has started accumulating our documentation-related tools in
-> >>> /tools/docs.  This series completes that task, moving the rest of our
-> >>> various utilities there, hopefully fixing up all of the relevant references
-> >>> in the process.
-> >>>
-> >>> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
-> >>>
-> >>> The big elephant lurking in this small room is the home for Python modules;
-> >>> I left them under scripts/lib, but that is an even less appropriate place
-> >>> than it was before.  I would propose either tools/python or lib/python;
-> >>> thoughts on that matter welcome.
-> >>>
-> >>> Changes in v3:
-> >>>   - Now with more caffeine! Properly based on docs-next.    
-> >>
-> >> :-) :-)
-> >>
-> >> WRT the build error from test robot, it looks to me like we need these
-> >> final touches:
-> >>
-> >> diff --git a/Documentation/conf.py b/Documentation/conf.py
-> >> index 8e3df5db858e..fbd8e3ae23ea 100644
-> >> --- a/Documentation/conf.py
-> >> +++ b/Documentation/conf.py
-> >> @@ -582,7 +582,7 @@ pdf_documents = [
-> >>  # kernel-doc extension configuration for running Sphinx directly (e.g. by Read
-> >>  # the Docs). In a normal build, these are supplied from the Makefile via command
-> >>  # line arguments.
-> >> -kerneldoc_bin = "../tools/docs/kernel-doc.py"
-> >> +kerneldoc_bin = "../tools/docs/kernel-doc"
-> >>  kerneldoc_srctree = ".."
-> >>  
-> >>  def setup(app):
-> >> diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
-> >> index 2586b4d4e494..3c815b40026b 100644
-> >> --- a/Documentation/sphinx/kerneldoc.py
-> >> +++ b/Documentation/sphinx/kerneldoc.py
-> >> @@ -289,13 +289,8 @@ def setup_kfiles(app):
-> >>  
-> >>      kerneldoc_bin = app.env.config.kerneldoc_bin
-> >>  
-> >> -    if kerneldoc_bin and kerneldoc_bin.endswith("kernel-doc.py"):
-> >> -        print("Using Python kernel-doc")
-> >> -        out_style = RestFormat()
-> >> -        kfiles = KernelFiles(out_style=out_style, logger=logger)
-> >> -    else:
-> >> -        print(f"Using {kerneldoc_bin}")
-> >> -
-> >> +    out_style = RestFormat()
-> >> +    kfiles = KernelFiles(out_style=out_style, logger=logger)  
-> > 
-> > Patch is incomplete, as it doesn't drop the logic which forks
-> > kernel-doc script run, but see below.
-> >   
-> >>  def setup(app):
-> >>      app.add_config_value('kerneldoc_bin', None, 'env')
-> >> diff --git a/Makefile b/Makefile
-> >> index d6ff0af5cca6..33b1db1cc0cf 100644
-> >> --- a/Makefile
-> >> +++ b/Makefile
-> >> @@ -460,7 +460,7 @@ HOSTPKG_CONFIG	= pkg-config
-> >>  
-> >>  # the KERNELDOC macro needs to be exported, as scripts/Makefile.build
-> >>  # has a logic to call it
-> >> -KERNELDOC       = $(srctree)/tools/docs/kernel-doc.py
-> >> +KERNELDOC       = $(srctree)/tools/docs/kernel-doc
-> >>  export KERNELDOC
-> >>  
-> >>  KBUILD_USERHOSTCFLAGS := -Wall -Wmissing-prototypes -Wstrict-prototypes \
-> >>
-> >> -----------------------------------------------------------------
-> >>
-> >> The change in Documentation/sphinx/kerneldoc.py is needed because
-> >>
-> >>     kerneldoc_bin == ".../kernel-doc.py"
-> >>
-> >> indicated loading it as python lib into the extension, while
-> >>
-> >>     kerneldoc_bin == ".../kernel-doc"
-> >>
-> >> indicated invoking it as a script.
-> >>
-> >> Now that we don't have kernel-doc.py, loading python lib looks to me
-> >> as a natural choice.
-> >>
-> >> Mauro, what do you think?  
-> > 
-> > Good point. I'm not sure about this. Yeah, on normal cases, we
-> > just want to run kernel-doc classes, instead of actually
-> > executing its binary. Yet, for debugging purposes, it might
-> > still be interesting to run it as separate processes.
-> > 
-> > See, right now, if KERNELDOC is not used, it will use imported
-> > Python classes, running them directly without creating processes.
-> > So, it won't actually call ".../kernel-doc". On such case, in
-> > practice, it will actually ignore KERNELDOC when building docs.
-> > 
-> > Now, (after this series), if one runs:
-> > 
-> > 	KERNELDOC=tools/docs/kernel-doc make htmldocs
-> > 
-> > it will run kernel-doc script as a process. This might be useful
-> > for debugging purposes.
-> > 
-> > Also, please notice that KERNELDOC is used on several files:
-> > 
-> > 	$ git grep -l KERNELDOC
-> > 	Makefile
-> > 	drivers/gpu/drm/Makefile
-> > 	drivers/gpu/drm/i915/Makefile
-> > 	include/drm/Makefile
-> > 	scripts/Makefile.build
-> > 	tools/docs/sphinx-build-wrapper
-> > 
-> > IMHO, we have some alternatives here:
-> > 
-> > 1. completely drop support for KERNELDOC variable.
-> >    On such case, we need to drop from the script:
-> > 
-> > 	- kerneldoc_bin
-> > 	- run_cmd() function
-> > 	- remove KERNELDOC from Makefiles and sphinx-build-wrapper  
-> 
-> No, please don't drop that feature.
-> 
-> I'm confused by the terminology. What does "bin" or "kerneldoc_bin"
-> mean here?  Is there some kernel-doc binary?
-
-kerneldoc_bin is the name of a variable at the Python script.
-It points to KERNELDOC env.
-
-> 
-> > 2. keep it as is, which would help debugging (and eventually
-> >    would allow testing two different implementations of kernel-doc
-> >    without needing to bisect);
-> > 
-> > 3. change the core of the logic to be something like:
-> > 
-> > 	# kerneldoc_bin = env.config.kerneldoc_bin
-> > 	kerneldoc_bin = os.environ.get("KERNELDOC")
-> > 
-> > 	if not kerneldoc_bin:
-> > 	   out_style = RestFormat()
-> > 	   kfiles = KernelFiles(out_style=out_style, logger=logger)
-> > 	else:
-> > 	    print(f"Generating C documentation by running {kerneldoc_bin} binary")
-> > 
-> >    this would still allow using KERNELDOC to point to a binary
-> >    that will handle C files executed as a separate process.
-> > 
-> >    Please notice that the current code does:
-> > 
-> > 	kerneldoc_bin = env.config.kerneldoc_bin
-> > 
-> >    This requires an extra logic at the wrapper tool, as this needs
-> >    to be passed via -D command line option to sphinx-build. That's
-> >    the reason why several Makefiles also use KERNELDOC env var.
-> > 
-> >    If we're willing to adopt this solution, I would simplify
-> >    the wrapper and the makefiles to not touching KERNELDOC var
-> >    anymore.
-> > 
-> > For (2) and (3), I would document KERNELDOC somewhere.
-> > 
-> > My personal preference would be (3), but I don't have strong
-> > feelings.  
-> 
-> 
-> Thanks.
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
