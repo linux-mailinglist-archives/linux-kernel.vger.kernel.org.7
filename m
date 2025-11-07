@@ -1,121 +1,177 @@
-Return-Path: <linux-kernel+bounces-889634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-889640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2662DC3E1C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:19:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853F7C3E1F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 07 Nov 2025 02:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C6F188AE92
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:19:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D373ACD70
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Nov 2025 01:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06D42F5487;
-	Fri,  7 Nov 2025 01:19:02 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CF72F6176;
+	Fri,  7 Nov 2025 01:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="CZ3ws+h3"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C892F531A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Nov 2025 01:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FA92F746D;
+	Fri,  7 Nov 2025 01:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762478342; cv=none; b=BVMhf2csJ0+Sc6PfVOfEVhJKEjRwj37pqSoQ8b5f4F7kA0yR+WDMoYhUsyTRWZvY5iV7qgNaIobfj83HOAhWoj77S1T/yPP0CFsusK0JrOSOgDyliEokKrXweZfeQkrv+69mXMvFARXK3SEX/WMF7WkPmLqmJDp8Tgmn3nPDibQ=
+	t=1762478663; cv=none; b=SHE471MPiD0SJxG02u87yLKjqn3jrbhWDB0LC07EeaaBLG9WCDuaEwZobEtycDbrRf+4JTxlvH1bYx/G51lywDU2/gh25nFbEZEkCf8EeC/p3tyY5zkksIRurm/SoqXrPIl4YO+CGJQFDO643TnuS/MiXXXIEORMJStZI93WuGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762478342; c=relaxed/simple;
-	bh=+KFj5rGnHv27vIKb5+keI4itoupavrQMKtAXgOjiUmw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=szhnX4NTaL8euSMSpNMU0UIFLsZ5w4tFNw07FkMTn9r+EigzWMqwx3dvJRIHJw3CYDlNC8Xzt7rUo9lBsA6oHTX4xt9mWGOvkDw9NKxoZCHaMmhs9Ed2oyUjWLgv9loO/+Wa/wZQ0lmpQxZxlW3O2aPkkKMpXTzoyzfh68fCJeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-93bc56ebb0aso68026039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Nov 2025 17:19:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762478340; x=1763083140;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FWCdtFeRiTYHHo48qr1uxFIsc2bW5Uiytm2WAQQjOmg=;
-        b=f1iEqKnlX90pqhJHQWI24HNnbtVLXmCvQUFLwuhpIl0PRQ7kQw6xR9LwYI84EV4rb0
-         G03Ftbv3mlmdVB71NkQNT8HNw4E0cEyeRmTfqf2HVZNzHUVYPwNg0iX96yt1Ts4SpweY
-         vVpYDP4RBhQJhKqSSMnGSTuNw8ugBJkO4BpQQi1tMnits0X533ReVpamPmIijfNxRAFR
-         MoQcPWatHp05A09/02yc83cpMJmwICGdo+I2LLY2ro0HQZUow9aQPWfMY8W4P66dCI98
-         5tBqegh5vWYzOooRnvMcSr9GGEkAbOeNyCizdO69eLeKqOCl7aH8HulKTCVTY6kNcHCd
-         JAnw==
-X-Gm-Message-State: AOJu0YzETR6yIT+4V2LcBfJV+x2Ym+L9SKRDmpeCm1mV9gCHfIHEv9UI
-	ELt5F0Sb3p5lk0LCCFVfKAekrQCQhqE2NKEawDtaEnZIjHoqvaVZRM9ZVKDqEHYoqc/QgR2ZSCW
-	CJlmbbPPVmlX8nUaBYhz3YokKCw7eGAgsouV1rTTGlmNDPs8SUfImPzGbYOQ=
-X-Google-Smtp-Source: AGHT+IFysJ+Exr5l6lqZ0/zaCMJKXcFqlE+3sTsiBUsIQiz3UNq5mIAgOktC+R6wT9isOCCyqS0o2zHdzh8u2TetVON7miUgGSGg
+	s=arc-20240116; t=1762478663; c=relaxed/simple;
+	bh=RiCZcqBXx0qoO2I1MVaNX2wlPuTAl6GxJCLOENck4q8=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iauOCZc9uxUtDiJDstbdXEGLkozjblN2ffWrwL+r7ssLnvkM78AT9S60hFaA9MBFGgjyl++PutlfEZw9vHd+X42F8cJfGwpXLACg+rOOYkn/FdpdxvG1Y9cME5PCWtGY3OFk7W3ztv6PMEnDpufwP4r5ac34ilAtcijZyFeI9hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=CZ3ws+h3; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762478569;
+	bh=t7tRvyZ7ednKIkr3XeRZc9amYYNTVix6VkI2QvXO0V4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=CZ3ws+h3j0d9TEdczQzd43r2NzM/WoFr3UPHJ30mryhpuiezKavMg0c3hMzMkrdaV
+	 xTxV+gqCxQG8ppTTvYunLvhtU6yhrKD6+hQOq3jwabr7VcMf+34UGJoR7Gih2EjqtT
+	 epJlf8aQWNdTwYBJwjs7cbH9zgO912LnRRpnbxOQ=
+X-QQ-mid: zesmtpsz3t1762478566tf97beed2
+X-QQ-Originating-IP: Jv1aKYQ/MjyLhPILSXPUmj2hn/opOWyMKd601+FeEek=
+Received: from = ( [183.48.246.190])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 07 Nov 2025 09:22:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13905674889772998339
+EX-QQ-RecipientCnt: 10
+Date: Fri, 7 Nov 2025 09:22:44 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH] i2c: spacemit: fix detect issue
+Message-ID: <28675E3B65BB7C20+aQ1J5NTKx6i623ju@kernel.org>
+References: <20251103-fix-k1-detect-failure-v1-1-bb07a8d7de7c@linux.spacemit.com>
+ <aQvTMM0S16gOdiAN@aurel32.net>
+ <12878F9DA586AA19+aQv0bKwLTzw_kJOq@kernel.org>
+ <aQwzYrmv5TAIuqTh@aurel32.net>
+ <0E2B2679F0650AE1+aQw0VgKNbcFqDH33@kernel.org>
+ <aQzmHB2FaPFS4qwj@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216d:b0:431:d721:266d with SMTP id
- e9e14a558f8ab-4335f4a7c75mr23445405ab.31.1762478340096; Thu, 06 Nov 2025
- 17:19:00 -0800 (PST)
-Date: Thu, 06 Nov 2025 17:19:00 -0800
-In-Reply-To: <6907edce.a70a0220.37351b.0014.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690d4904.a70a0220.22f260.0015.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in
- recv_work (3)
-From: syzbot <syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQzmHB2FaPFS4qwj@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: NhdiEwnVOUqExbdtneD2Nu7ZvMKRJvSXJb3DC08ek4AVlnHiOQCf8xaL
+	2LVw1ILvRSjSVTkzdKOyYZPPKLAXX1YIMc5TCutKiqw0Hk58pir8CcQqSInwiTeBBsMSZt/
+	VDC4ZMk+OSC+T12JfVIpOovBi7reZjxUbzEMYK0ss9aSYvzD6frpF1XYJ+mQYZJUrV7GZak
+	IUt7L9dn2OQlYD4YloRLEmj79MuzKMVL90zaMM/BxMAjLJ4ukj1cc0mDn87/2INh+/LgbE7
+	Ru0Zp8gmwXH2lQvk6jxQa4GJ4oedcHZREEWCI6yMsZwz8lbd8b5m07TmyWqHIwGlhZCaQER
+	FncKk8HDoM6tjwgATCtAdhjmzH1P4MrKci3K/UBGGUVLSUp8lIGyJr5/gjUS0srbiE5gbyf
+	NocdKk1Lz38jCHGr990c1cG19xtqoUq3bA5h3LkPYdOqqOjpVSmyxi5N6Aj6UzA3ckVzHoq
+	xM4WF6SbPufYOIKChuH2wMktVwrJiD5mNmey7jYDZG2gKj4ifzxYwpvO/8GGEpNINHMHOxD
+	TViDTem+mKHIWuidtMjPzQ9zMxefUPAF4dNcxKz49VH5DhprVggE3SWsUbQwjT9UXmnpF9Y
+	0iW0MhUwjeN3+NfgiyRywO6HA3I+btzn/0RmVGUqvbsY32yBPFzmWaq/W9pYQ38li8xrjl1
+	H5CjXkOT3bLtp70ut9K3P6dcwVunZX2i/mhnRLmj/AerOX925ozTdufIwHnnVFJiMAnjlUs
+	mb6+H0k1rD+1MD2W3cuN5oes99VFj4zCzTWCyl2iI60PlIvBRX81jcwJ3pt5iLEyKIqvAl9
+	8d4KkJXyinc9Q+jNPWCWEFxvEPWKsOZ1YZwVjCZCEO5++vmDhubCpdFaehTBIS3oNskmzOh
+	2JkFgG2aQ2wYf0UEVEXwRqXgeFDTVBkkJIeQx0vbjaaBqvR9wpQEdAgqOuuboDcokixwzsG
+	q5pPbpYueZnmk1Kju+Lhg9MR4fBJc+yyb9aGsllhBFdJApUmeSJ/pOktS7a2oUuFlCqfUmi
+	Eb7XR+kptktCVVdWPQwbB3AJdYrqRWU45cW90i0qtgMhqyRdmkr7KayD76RvQ=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, Nov 06, 2025 at 07:17:00PM +0100, Aurelien Jarno wrote:
+> Hi,
+> 
+> On 2025-11-06 13:38, Troy Mitchell wrote:
+> > On Thu, Nov 06, 2025 at 06:34:26AM +0100, Aurelien Jarno wrote:
+> > > Hi,
+> > > 
+> > > On 2025-11-06 09:05, Troy Mitchell wrote:
+> > > > On Wed, Nov 05, 2025 at 11:44:00PM +0100, Aurelien Jarno wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On 2025-11-03 15:06, Troy Mitchell wrote:
+> > > > [...]
+> > > > > >  	if (i2c->status & (SPACEMIT_SR_BED | SPACEMIT_SR_ALD)) {
+> > > > > >  		spacemit_i2c_reset(i2c);
+> > > > > > -		return -EAGAIN;
+> > > > > > +		if (i2c->status & SPACEMIT_SR_ALD)
+> > > > > > +			return -EAGAIN;
+> > > > > >  	}
+> > > > > 
+> > > > > This makes the resulting code, while correct, complex to understand as 
+> > > > > it is now two really different errors, as you explained well in the 
+> > > > > commit message.
+> > > > > 
+> > > > > I therefore suggest to organize the code as:
+> > > > > 
+> > > > > 	/* Arbitration Loss Detected */
+> > > > > 	if (i2c->status & SPACEMIT_SR_ALD) {
+> > > > > 		spacemit_i2c_reset(i2c);
+> > > > > 		return -EAGAIN;
+> > > > > 	}
+> > > > > 
+> > > > > 	/* Bus Error No ACK/NAK */
+> > > > > 	if (i2c->status & SPACEMIT_SR_BED) {
+> > > > > 		spacemit_i2c_reset(i2c);
+> > > > > 	}
+> > > > Thanks. I'll fix it in the next version.
+> > > > > 
+> > > > > 
+> > > > > >  	return i2c->status & SPACEMIT_SR_ACKNAK ? -ENXIO : -EIO;
+> > > > > > @@ -491,6 +492,8 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
+> > > > > >  
+> > > > > >  	spacemit_i2c_init(i2c);
+> > > > > >  
+> > > > > > +	spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK);
+> > > > > > +
+> > > > > 
+> > > > > This sounds good to start the transfer with a clean interrupt state. I 
+> > > > > just wonder if it should be moved to spacemit_i2c_init(), ie where the 
+> > > > > corresponding interrupts are enabled.
+> > > > Uh, We can move it actually. But is it essentail?
+> > > 
+> > > For me ensuring that the interrupt status is in a clean state after 
+> > > enabling the interrupt is part of the initialization.
+> > Yes, I agree that.
+> > > Furthermore if 
+> > > spacemit_i2c_init() has to be called from another place, it's very 
+> > > likely that it's also needed to get interrupt status in a clean state.
+> > Why we need to call init() in other place?
+> > Could you give me a cese?
+> 
+> Currently there is no need to do that. However if the driver is extended 
+> (e.g. to add new features) and spacemit_i2c_init() needs to be called 
+> from another place, it is likely that a reset of the interrupt status 
+> should also be included. Therefore it's better to just include it 
+> directly in spacemit_i2c_init().
+I'll move it in init(). But it's not for reuse.
+It's not for reuse, but because the name init() should indeed ensure the
+hardware is in a clean state.
 
-***
+Thanks!
 
-Subject: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in recv_work (3)
-Author: lizhi.xu@windriver.com
-
-#syz test
-
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index a853c65ac65d..d5de9bac68f1 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1024,9 +1024,9 @@ static void recv_work(struct work_struct *work)
- 	nbd_mark_nsock_dead(nbd, nsock, 1);
- 	mutex_unlock(&nsock->tx_lock);
- 
--	nbd_config_put(nbd);
- 	atomic_dec(&config->recv_threads);
- 	wake_up(&config->recv_wq);
-+	nbd_config_put(nbd);
- 	kfree(args);
- }
- 
-@@ -1540,7 +1540,10 @@ static int nbd_start_device(struct nbd_device *nbd)
- 		args->index = i;
- 		queue_work(nbd->recv_workq, &args->work);
- 	}
--	return nbd_set_size(nbd, config->bytesize, nbd_blksize(config));
-+	error = nbd_set_size(nbd, config->bytesize, nbd_blksize(config));
-+	if (error)
-+		flush_workqueue(nbd->recv_workq);
-+	return error;
- }
- 
- static int nbd_start_device_ioctl(struct nbd_device *nbd)
-@@ -2355,6 +2358,7 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
- 	}
- 	mutex_unlock(&nbd_index_mutex);
- 
-+	mutex_lock(&nbd->config_lock);
- 	config = nbd_get_config_unlocked(nbd);
- 	if (!config) {
- 		dev_err(nbd_to_dev(nbd),
-@@ -2363,7 +2367,6 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
- 		return -EINVAL;
- 	}
- 
--	mutex_lock(&nbd->config_lock);
- 	if (!test_bit(NBD_RT_BOUND, &config->runtime_flags) ||
- 	    !nbd->pid) {
- 		dev_err(nbd_to_dev(nbd),
+                                      - Troy
+> 
+> Regards
+> Aurelien
+> 
+> -- 
+> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+> aurelien@aurel32.net                     http://aurel32.net
+> 
 
